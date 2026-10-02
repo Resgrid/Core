@@ -13,6 +13,12 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @addTagHelper *, Resgrid.Web
 @inject IStringLocalizer<Resgrid.Localization.Common> commonLocalizer
+@* Text placed inside a JavaScript string, whether in a script block or an inline on*="..." handler,
+   goes through JsEncoder.Encode rather than Razor's HTML encoding. The browser decodes &#x27; back to
+   an apostrophe before an inline handler runs, so an HTML-encoded "l'élément" ends the JS string early,
+   and in a script block the entities are never decoded at all. Script that puts the text into HTML
+   escapes it there. *@
+@inject System.Text.Encodings.Web.JavaScriptEncoder JsEncoder
 
 @if (Resgrid.Config.ExternalErrorConfig.ApplicationInsightsEnabled)
 {

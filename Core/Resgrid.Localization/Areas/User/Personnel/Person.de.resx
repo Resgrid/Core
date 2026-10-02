@@ -59,86 +59,77 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 
-  <data name="Name1" xml:space="preserve">
-    <value>this is my long string</value>
-  </data>
-  <data name="Bitmap1" xml:space="preserve">
-    <value>[base64 mime encoded serialized .NET Framework object]</value>
-  </data>
-  <data name="Icon1" xml:space="preserve">
-    <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-  </data>
   <data name="AccountInformationHeader" xml:space="preserve">
-    <value>Account Information</value>
+    <value>Kontoinformationen</value>
   </data>
   <data name="AddAPerson" xml:space="preserve">
-    <value>Add a Person</value>
+    <value>Person hinzufügen</value>
   </data>
   <data name="AddAPersonHelp" xml:space="preserve">
-    <value>Add a single person</value>
+    <value>Eine einzelne Person hinzufügen</value>
   </data>
   <data name="AddExistingUserHeader" xml:space="preserve">
-    <value>Existing User Added</value>
+    <value>Bestehender Benutzer hinzugefügt</value>
   </data>
   <data name="AddPersonHeader" xml:space="preserve">
-    <value>Add Person</value>
+    <value>Person hinzufügen</value>
   </data>
   <data name="AddRank" xml:space="preserve">
-    <value>Add Rank</value>
+    <value>Dienstgrad hinzufügen</value>
   </data>
   <data name="AddRoleHeader" xml:space="preserve">
-    <value>Add Role</value>
+    <value>Rolle hinzufügen</value>
   </data>
   <data name="CallOptionsLabel" xml:space="preserve">
-    <value>Call Options</value>
+    <value>Einsatzoptionen</value>
   </data>
   <data name="ChangePassword" xml:space="preserve">
-    <value>Change Password</value>
+    <value>Passwort ändern</value>
   </data>
   <data name="CheckToDelete" xml:space="preserve">
-    <value>Click the checkbox below to delete this user.</value>
+    <value>Aktivieren Sie das Kontrollkästchen unten, um diesen Benutzer zu löschen.</value>
   </data>
   <data name="ConfirmDelete" xml:space="preserve">
-    <value>Confirm Delete?</value>
+    <value>Löschen bestätigen?</value>
   </data>
   <data name="ConfirmPasswordHelp" xml:space="preserve">
-    <value>Confirm the users password (must match the one above)</value>
+    <value>Bestätigen Sie das Passwort des Benutzers (muss mit dem obigen übereinstimmen)</value>
   </data>
   <data name="ConfirmPasswordLabel" xml:space="preserve">
     <value>Passwort bestätigen</value>
   </data>
   <data name="ContactDetailsHeader" xml:space="preserve">
-    <value>Contact Details</value>
+    <value>Kontaktdaten</value>
   </data>
   <data name="DeleteAreYouSure" xml:space="preserve">
-    <value>Are you sure you want to delete this user?</value>
+    <value>Möchten Sie diesen Benutzer wirklich löschen?</value>
   </data>
   <data name="DeleteAreYouSure2" xml:space="preserve">
-    <value>If you choose to delete this user the information below will be permanently deleted. The recommended procedure is to disable the user if they leave the department or organization. Only delete the user after enough time has gone by, the account was a mistake or never used.</value>
+    <value>Wenn Sie diesen Benutzer löschen, werden die unten stehenden Informationen dauerhaft gelöscht. Es wird empfohlen, den Benutzer zu deaktivieren, wenn er die Abteilung oder Organisation verlässt. Löschen Sie den Benutzer erst, wenn genügend Zeit vergangen ist, oder wenn das Konto versehentlich angelegt oder nie verwendet wurde.</value>
   </data>
   <data name="DeletePersonHeader" xml:space="preserve">
-    <value>Delete Person</value>
+    <value>Person löschen</value>
   </data>
   <data name="EditRoleHeader" xml:space="preserve">
-    <value>Edit Role</value>
+    <value>Rolle bearbeiten</value>
   </data>
   <data name="Email" xml:space="preserve">
     <value>E-Mail</value>
   </data>
   <data name="EmailAddressHelp" xml:space="preserve">
-    <value>Email Addresses must be unique</value>
+    <value>E-Mail-Adressen müssen eindeutig sein</value>
   </data>
   <data name="EmailAddressLabel" xml:space="preserve">
     <value>E-Mail-Adresse</value>
   </data>
   <data name="EmailAddressPlaceholder" xml:space="preserve">
-    <value>Email Address (must be unique)</value>
+    <value>E-Mail-Adresse (muss eindeutig sein)</value>
   </data>
   <data name="ExistingUserHelp1" xml:space="preserve">
-    <value>This user</value>
+    <value>Dieser Benutzer</value>
   </data>
   <data name="ExistingUserHelp2" xml:space="preserve">
-    <value>, based on email address, already had a Resgrid account in another department. The user account has now been added &lt;b&gt;with their previous profile settings (name, phone numbers, preferences, etc)&lt;/b&gt; to the department. Because the user is in multiple departments they need activate this department to see it's information from their "View Your Departments" option under their profile dropdown (under the profile picture in the upper left hand corner).</value>
+    <value>, der anhand der E-Mail-Adresse erkannt wurde, hatte bereits ein Resgrid-Konto in einer anderen Abteilung. Das Benutzerkonto wurde der Abteilung jetzt &lt;b&gt;mit den bisherigen Profileinstellungen (Name, Telefonnummern, Einstellungen usw.)&lt;/b&gt; hinzugefügt. Da der Benutzer mehreren Abteilungen angehört, muss er diese Abteilung über "Ihre Abteilungen" im Profilmenü (unter dem Profilbild oben links) aktivieren, um ihre Informationen zu sehen.</value>
   </data>
   <data name="AddExistingUserConfirmHeader" xml:space="preserve">
     <value>Vorhandenen Benutzer hinzufügen</value>
@@ -159,19 +150,19 @@
     <value>Vorname</value>
   </data>
   <data name="GroupLabel" xml:space="preserve">
-    <value>Group</value>
+    <value>Gruppe</value>
   </data>
   <data name="Home" xml:space="preserve">
-    <value>Startseite</value>
+    <value>Privat</value>
   </data>
   <data name="IDNumberLabel" xml:space="preserve">
-    <value>ID Number</value>
+    <value>ID-Nummer</value>
   </data>
   <data name="IDNumberPlaceholder" xml:space="preserve">
-    <value>Custom Identication Number</value>
+    <value>Eigene Kennnummer</value>
   </data>
   <data name="IsGroupAdminLabel" xml:space="preserve">
-    <value>Is Group Admin?</value>
+    <value>Gruppenadministrator?</value>
   </data>
   <data name="LastNameLabel" xml:space="preserve">
     <value>Nachname</value>
@@ -180,49 +171,49 @@
     <value>Nachname</value>
   </data>
   <data name="ManageInvites" xml:space="preserve">
-    <value>Manage Invites</value>
+    <value>Einladungen verwalten</value>
   </data>
   <data name="ManageInvitesHelp" xml:space="preserve">
-    <value>Invite multiple people</value>
+    <value>Mehrere Personen einladen</value>
   </data>
   <data name="ManageRoles" xml:space="preserve">
-    <value>Manage Roles</value>
+    <value>Rollen verwalten</value>
   </data>
   <data name="MessageOptionsLabel" xml:space="preserve">
-    <value>Message Options</value>
+    <value>Nachrichtenoptionen</value>
   </data>
   <data name="Mobile" xml:space="preserve">
-    <value>Mobile</value>
+    <value>Mobil</value>
   </data>
   <data name="MobileCarrierLabel" xml:space="preserve">
-    <value>Mobile Carrier</value>
+    <value>Mobilfunkanbieter</value>
   </data>
   <data name="MobileNumberLabel" xml:space="preserve">
-    <value>Mobile Number</value>
+    <value>Mobilnummer</value>
   </data>
   <data name="MobileNumberPlaceholder" xml:space="preserve">
-    <value>Mobile Phone Number</value>
+    <value>Mobiltelefonnummer</value>
   </data>
   <data name="NewPasswordHelp" xml:space="preserve">
-    <value>Passwords must be 8 characters or longer and include a digit (number), an uppercase and lowercase letter</value>
+    <value>Passwörter müssen mindestens 8 Zeichen lang sein und eine Ziffer sowie einen Groß- und einen Kleinbuchstaben enthalten</value>
   </data>
   <data name="NewPasswordLabel" xml:space="preserve">
-    <value>New Password</value>
+    <value>Neues Passwort</value>
   </data>
   <data name="NoPersonnelInDepartment" xml:space="preserve">
-    <value>No Personnel In Department</value>
+    <value>Kein Personal in der Abteilung</value>
   </data>
   <data name="NoPersonnelInThisGroup" xml:space="preserve">
-    <value>No Personnel in this Group</value>
+    <value>Kein Personal in dieser Gruppe</value>
   </data>
   <data name="NotificationOptionsLabel" xml:space="preserve">
-    <value>Notification Options</value>
+    <value>Benachrichtigungsoptionen</value>
   </data>
   <data name="NotifyUser" xml:space="preserve">
-    <value>Notify User?</value>
+    <value>Benutzer benachrichtigen?</value>
   </data>
   <data name="NotifyWarning" xml:space="preserve">
-    <value>Uncheck if you don't want Resgrid to notify the user of this account creation.</value>
+    <value>Deaktivieren Sie das Kontrollkästchen, wenn Resgrid den Benutzer nicht über die Erstellung dieses Kontos benachrichtigen soll.</value>
   </data>
   <data name="RequirePasswordChange" xml:space="preserve">
     <value>Passwortaenderung erforderlich</value>
@@ -231,34 +222,34 @@
     <value>Der Benutzer muss sein Passwort bei der ersten Anmeldung aendern.</value>
   </data>
   <data name="NoUnGroupedPersonnel" xml:space="preserve">
-    <value>No UnGrouped Personnel</value>
+    <value>Kein nicht gruppiertes Personal</value>
   </data>
   <data name="PersonnelHeader" xml:space="preserve">
     <value>Personal</value>
   </data>
   <data name="PhoneNumbers" xml:space="preserve">
-    <value>Phone Number(s)</value>
+    <value>Telefonnummer(n)</value>
   </data>
   <data name="Push" xml:space="preserve">
     <value>Push</value>
   </data>
   <data name="RankDeleteWarning" xml:space="preserve">
-    <value>WARNING: This will permanently delete this rank. Are you sure you want to delete the rank</value>
+    <value>WARNUNG: Dadurch wird dieser Dienstgrad dauerhaft gelöscht. Dienstgrad wirklich löschen:</value>
   </data>
   <data name="RanksHeader" xml:space="preserve">
-    <value>Personnel Ranks</value>
+    <value>Dienstgrade</value>
   </data>
   <data name="ReactivatePersonHeader" xml:space="preserve">
-    <value>Reactivate Person</value>
+    <value>Person reaktivieren</value>
   </data>
   <data name="ReactivatePersonText1" xml:space="preserve">
-    <value>This user</value>
+    <value>Dieser Benutzer</value>
   </data>
   <data name="ReactivatePersonText2" xml:space="preserve">
-    <value>based on email address, already had an account in the</value>
+    <value>hatte laut E-Mail-Adresse bereits ein Konto in der</value>
   </data>
   <data name="ReactivatePersonText3" xml:space="preserve">
-    <value>department but was deleted previously. The user account has now be un-deleted and reactivated inside this department and will appear &lt;b&gt;with their previous profile settings (name, phone numbers, preferences, etc)&lt;/b&gt; in the department.</value>
+    <value>Abteilung, wurde aber zuvor gelöscht. Das Benutzerkonto wurde jetzt wiederhergestellt, in dieser Abteilung reaktiviert und erscheint &lt;b&gt;mit den bisherigen Profileinstellungen (Name, Telefonnummern, Einstellungen usw.)&lt;/b&gt; in der Abteilung.</value>
   </data>
   <data name="ReactivatePersonConfirmText" xml:space="preserve">
     <value>Abteilung, wurde aber entfernt. Durch die Reaktivierung kehrt das Konto mit seinen bisherigen Profileinstellungen (Name, Telefonnummern, Einstellungen) in diese Abteilung zurück. Die Person kehrt als normales Mitglied zurück; Administratorrechte müssen bei Bedarf separat erneut vergeben werden.</value>
@@ -267,43 +258,43 @@
     <value>Reaktivieren</value>
   </data>
   <data name="RoleDeleteWarning" xml:space="preserve">
-    <value>WARNING: This will permanently delete this role. Are you sure you want to delete the role</value>
+    <value>WARNUNG: Dadurch wird diese Rolle dauerhaft gelöscht. Rolle wirklich löschen:</value>
   </data>
   <data name="RoleDescriptionPlaceholder" xml:space="preserve">
-    <value>A description of the role</value>
+    <value>Eine Beschreibung der Rolle</value>
   </data>
   <data name="RoleNamePlaceholder" xml:space="preserve">
-    <value>Name of the Role</value>
+    <value>Name der Rolle</value>
   </data>
   <data name="RolesHeader" xml:space="preserve">
-    <value>Personnel Roles</value>
+    <value>Personalrollen</value>
   </data>
   <data name="RolesLabel" xml:space="preserve">
     <value>Rollen</value>
   </data>
   <data name="SetPersonStaffingHeader" xml:space="preserve">
-    <value>Set Person Staffing</value>
+    <value>Bereitschaft der Person festlegen</value>
   </data>
   <data name="SetPersonStatusHeader" xml:space="preserve">
-    <value>Set Person Status</value>
+    <value>Status der Person festlegen</value>
   </data>
   <data name="SetStaffing" xml:space="preserve">
-    <value>Set Staffing</value>
+    <value>Bereitschaft festlegen</value>
   </data>
   <data name="SetStaffingForSelectedPersonnel" xml:space="preserve">
-    <value>Set Staffing for Selected Personnel</value>
+    <value>Bereitschaft für ausgewähltes Personal festlegen</value>
   </data>
   <data name="SetStatus" xml:space="preserve">
-    <value>Set Status</value>
+    <value>Status festlegen</value>
   </data>
   <data name="SetStatusForSelectedPersonnel" xml:space="preserve">
-    <value>Set Status for Selected Personnel</value>
+    <value>Status für ausgewähltes Personal festlegen</value>
   </data>
   <data name="SpecialNote" xml:space="preserve">
-    <value>Special Note</value>
+    <value>Besonderer Hinweis</value>
   </data>
   <data name="SpecialNoteText" xml:space="preserve">
-    <value>Underlying user data is retained in the system so that logs, reports and history is properly retained for the department. It is recommended that all PII/PHI in the user account is altered to be removed, i.e. phone numbers, addresses, etc before you delete the user.</value>
+    <value>Die zugrunde liegenden Benutzerdaten bleiben im System erhalten, damit Protokolle, Berichte und Verlauf der Abteilung vollständig bleiben. Es wird empfohlen, vor dem Löschen des Benutzers alle personenbezogenen Daten (PII/PHI) im Benutzerkonto zu entfernen, z. B. Telefonnummern, Adressen usw.</value>
   </data>
   <data name="Staffing" xml:space="preserve">
     <value>Besetzung</value>
@@ -312,58 +303,58 @@
     <value>Bundesland</value>
   </data>
   <data name="Text" xml:space="preserve">
-    <value>Text</value>
+    <value>SMS</value>
   </data>
   <data name="TextWarning" xml:space="preserve">
-    <value>You may incur additional changes for SMS/Text depending on your mobile plan.</value>
+    <value>Je nach Mobilfunktarif können für SMS zusätzliche Kosten anfallen.</value>
   </data>
   <data name="User" xml:space="preserve">
-    <value>User</value>
+    <value>Benutzer</value>
   </data>
   <data name="UserDetailHeader" xml:space="preserve">
-    <value>User Details</value>
+    <value>Benutzerdetails</value>
   </data>
   <data name="UsernameHelp" xml:space="preserve">
-    <value>The User Name must be unique</value>
+    <value>Der Benutzername muss eindeutig sein</value>
   </data>
   <data name="UsernameLabel" xml:space="preserve">
     <value>Benutzername</value>
   </data>
   <data name="UsersInRank" xml:space="preserve">
-    <value>Users in Rank</value>
+    <value>Benutzer mit diesem Dienstgrad</value>
   </data>
   <data name="UsersInRole" xml:space="preserve">
-    <value>Users In Role</value>
+    <value>Benutzer in der Rolle</value>
   </data>
   <data name="ViewPersonHeader" xml:space="preserve">
-    <value>View Person</value>
+    <value>Person anzeigen</value>
   </data>
   <data name="GenerateReport" xml:space="preserve">
     <value>Bericht erstellen</value>
   </data>
   <data name="ViewPersonEventsHeader" xml:space="preserve">
-    <value>View Person Events</value>
+    <value>Ereignisse der Person anzeigen</value>
   </data>
   <data name="ViewEvents" xml:space="preserve">
-    <value>View Events</value>
+    <value>Ereignisse anzeigen</value>
   </data>
   <data name="EventsFor" xml:space="preserve">
-    <value>Events for</value>
+    <value>Ereignisse für</value>
   </data>
   <data name="AreYouSurePersonnel" xml:space="preserve">
-    <value>Are you sure you want to permanently delete all statuses for this person?</value>
+    <value>Möchten Sie wirklich alle Status dieser Person dauerhaft löschen?</value>
   </data>
   <data name="ClearAllStatuses" xml:space="preserve">
-    <value>Clear out all Statuses For Person</value>
+    <value>Alle Status der Person löschen</value>
   </data>
   <data name="DeleteAll" xml:space="preserve">
-    <value>Delete All</value>
+    <value>Alle löschen</value>
   </data>
   <data name="YesImSure" xml:space="preserve">
-    <value>Yes I'm sure</value>
+    <value>Ja, ich bin sicher</value>
   </data>
   <data name="ViewRoleHeader" xml:space="preserve">
-    <value>View Role</value>
+    <value>Rolle anzeigen</value>
   </data>
   <data name="OutstandingRecordsHeader" xml:space="preserve">
     <value>Unfertige Datensätze</value>

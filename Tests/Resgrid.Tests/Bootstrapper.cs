@@ -90,6 +90,12 @@ namespace Resgrid.Tests
 				// test about Records registrations.
 				builder.RegisterInstance(new Moq.Mock<Resgrid.Model.Providers.IProtectedDataBrokerClient>().Object)
 					.As<Resgrid.Model.Providers.IProtectedDataBrokerClient>();
+				// ProtectedReadService checks the credential behind passkey, approval and provider step-up grants; loose mocks
+				// keep these composition tests about their own registrations.
+				builder.RegisterInstance(new Moq.Mock<IUserPasskeyRepository>().Object).As<IUserPasskeyRepository>().IfNotRegistered(typeof(IUserPasskeyRepository));
+				builder.RegisterInstance(new Moq.Mock<IUserSessionsRepository>().Object).As<IUserSessionsRepository>().IfNotRegistered(typeof(IUserSessionsRepository));
+				builder.RegisterInstance(new Moq.Mock<IDepartmentSsoConfigRepository>().Object).As<IDepartmentSsoConfigRepository>()
+					.IfNotRegistered(typeof(IDepartmentSsoConfigRepository));
 				builder.RegisterInstance(new Moq.Mock<IDepartmentDataProtectionKeyRepository>().Object)
 					.As<IDepartmentDataProtectionKeyRepository>();
 				builder.RegisterInstance(new Moq.Mock<IDepartmentDataProtectionMigrationRepository>().Object)

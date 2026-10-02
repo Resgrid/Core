@@ -50,11 +50,11 @@
 {
 	<script type="text/javascript">
 		var inventoryTypesStrings = {
-			name: '@Html.Raw(commonLocalizer["Name"].Value)',
-			expiresDays: '@Html.Raw(localizer["ItemExpiresDays"].Value)',
-			actions: '@Html.Raw(commonLocalizer["Actions"].Value)',
-			edit: '@Html.Raw(localizer["Edit"].Value)',
-			delete: '@Html.Raw(commonLocalizer["Delete"].Value)'
+			name: '@JsEncoder.Encode(commonLocalizer["Name"].Value)',
+			expiresDays: '@JsEncoder.Encode(localizer["ItemExpiresDays"].Value)',
+			actions: '@JsEncoder.Encode(commonLocalizer["Actions"].Value)',
+			edit: '@JsEncoder.Encode(localizer["Edit"].Value)',
+			delete: '@JsEncoder.Encode(commonLocalizer["Delete"].Value)'
 		};
 	</script>
 	<script src="~/js/app/internal/inventory/resgrid.inventory.manageTypes.js" type="text/javascript"></script>

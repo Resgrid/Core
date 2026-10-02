@@ -59,15 +59,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 
-  <data name="Name1" xml:space="preserve">
-    <value>this is my long string</value>
-  </data>
-  <data name="Bitmap1" xml:space="preserve">
-    <value>[base64 mime encoded serialized .NET Framework object]</value>
-  </data>
-  <data name="Icon1" xml:space="preserve">
-    <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-  </data>
   <data name="ActiveCalls" xml:space="preserve">
     <value>Active Calls</value>
   </data>
@@ -943,5 +934,26 @@
   </data>
   <data name="NearestUnitsNoPosition" xml:space="preserve">
     <value>Nessuna posizione</value>
+  </data>
+  <data name="SiteInfo" xml:space="preserve">
+    <value>Informazioni sul sito</value>
+  </data>
+  <data name="NoSiteInfo" xml:space="preserve">
+    <value>Nessun contatto con informazioni sul sito è collegato a questa chiamata.</value>
+  </data>
+  <data name="PremiseHazard" xml:space="preserve">
+    <value>Pericolo del sito</value>
+  </data>
+  <data name="PremiseHazards" xml:space="preserve">
+    <value>Pericoli del sito</value>
+  </data>
+  <data name="AlertNotes" xml:space="preserve">
+    <value>Note di avviso</value>
+  </data>
+  <data name="NoPreplan" xml:space="preserve">
+    <value>Per questo contatto non è stato registrato alcun piano di pre-intervento.</value>
+  </data>
+  <data name="SiteFiles" xml:space="preserve">
+    <value>File del sito</value>
   </data>
 </root>

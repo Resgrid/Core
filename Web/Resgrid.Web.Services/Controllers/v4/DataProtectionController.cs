@@ -61,8 +61,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IDepartmentLockService departmentLockService, IProtectedFieldCatalog protectedFieldCatalog,
 			IDepartmentsService departmentsService, IFeatureToggleService featureToggleService,
 			UserManager<Model.Identity.IdentityUser> userManager, ICacheProvider cacheProvider,
-			IProtectedDataGrantService grantService, IAdpReleaseService adpRelease, Resgrid.Model.Repositories.IAdpAuditRepository adpAudit)
+			IProtectedDataGrantService grantService, IAdpReleaseService adpRelease, Resgrid.Model.Repositories.IAdpAuditRepository adpAudit,
+			IMfaEvidenceService mfaEvidence, IMfaPolicyService mfaPolicy, IAdpStepUpService adpStepUp, IMfaCredentialStateService credentialStates)
 		{
+			_adpStepUp = adpStepUp;
+			_credentialStates = credentialStates;
+			_mfaPolicy = mfaPolicy;
 			_dataProtectionService = dataProtectionService;
 			_departmentLockService = departmentLockService;
 			_protectedFieldCatalog = protectedFieldCatalog;
@@ -73,7 +77,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_grantService = grantService;
 			_adpRelease = adpRelease;
 			_adpAudit = adpAudit;
+			_mfaEvidence = mfaEvidence;
 		}
+
+		private readonly IMfaEvidenceService _mfaEvidence;
+		private readonly IMfaPolicyService _mfaPolicy;
+		private readonly IAdpStepUpService _adpStepUp;
+		private readonly IMfaCredentialStateService _credentialStates;
 
 		/// <summary>
 		/// Value-free ADP capability report for the caller's department: durable state, catalog and
@@ -160,58 +170,33 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize]
 		public async Task<ActionResult<StepUpResult>> RequestGrant()
 		{
-			var clientApp = int.TryParse(User.FindFirst(Model.Security.SessionClaimTypes.ClientApp)?.Value, out var parsed)
-				? (UserSessionClientApplication)parsed
-				: UserSessionClientApplication.Api;
-
-			// The exemption answer and the epoch the grant is stamped with come from ONE policy
-			// snapshot. Asking for them separately let a revocation land in between and mint a grant
-			// carrying the epoch that revocation had just bumped — a grant that outlived its own
-			// revocation.
-			var decision = await _dataProtectionService.GetStepUpDecisionForClientAsync(DepartmentId, clientApp);
-
-			if (decision.StepUpRequired)
-				return Problem(type: "step_up_required",
-					title: "This department requires second-factor verification before protected values are shown.",
-					statusCode: StatusCodes.Status401Unauthorized);
-
-			if (!_grantService.CanIssueGrants)
-				return Problem(type: "grants_not_configured", title: "Protected data grants are not configured.",
-					statusCode: StatusCodes.Status503ServiceUnavailable);
-
-			var windowMinutes = decision.StepUpWindowMinutes > 0
-				? decision.StepUpWindowMinutes
-				: Config.DataProtectionConfig.StepUpWindowDefaultMinutes;
-			windowMinutes = Math.Min(Math.Max(1, windowMinutes), Math.Max(1, Config.DataProtectionConfig.StepUpMaximumMinutes));
-
-			var issued = _grantService.IssueGrant(new ProtectedDataGrantIssueRequest
+			var issued = await _adpStepUp.IssueExemptAsync(Caller());
+			if (issued.Outcome == Model.Security.AdpGrantOutcome.StepUpRequired)
 			{
-				UserId = UserId,
-				DepartmentId = DepartmentId,
-				SessionId = User.FindFirst(Model.Security.SessionClaimTypes.SessionId)?.Value,
-				ClientApp = (int)clientApp,
-				PolicyEpoch = decision.PolicyEpoch,
-				WindowMinutes = windowMinutes,
-				Scopes = new[] { ProtectedDataGrantScopes.Read, ProtectedDataGrantScopes.Write },
-				MfaAtUtc = DateTime.UtcNow,
-				StepUpExempt = true
-			});
-			await _adpAudit.AppendAsync(new AdpAuditEvent { DepartmentId = DepartmentId, Layer = "identity",
-				Operation = "grant-issued", Outcome = "step-up-exempt", ActorId = UserId, CorrelationId = issued.GrantId });
+				// This session's own recent sign-in or unlock MFA, where the department accepts reusing it (plan section 9.1).
+				var reused = await _adpStepUp.IssueFromRecentEvidenceAsync(Caller());
+				if (!reused.Succeeded)
+					return Problem(type: "step_up_required",
+						title: "This department requires second-factor verification before protected values are shown.",
+						statusCode: StatusCodes.Status401Unauthorized);
 
-			var exemptResult = new StepUpResult
-			{
-				GrantId = issued.GrantId,
-				GrantToken = issued.Token,
-				StepUpExpiresOnUtc = issued.ExpiresOnUtc.ToString("O"),
-				StepUpWindowMinutes = windowMinutes,
-				PageSize = 1,
-				Status = ResponseHelper.Success
-			};
+				issued = reused;
+			}
 
-			ResponseHelper.PopulateV4ResponseData(exemptResult);
-			return exemptResult;
+			return Grant(issued);
 		}
+
+		/// <summary>
+		/// A grant from this session's recent sign-in or shared-unlock MFA, with no new prompt (plan sections 7.6 row 9 and 9.1): only
+		/// where the department accepts reusing that method for protected data, and only until the original verification's window
+		/// ends. <c>step_up_required</c> when nothing qualifies; the client then verifies with <c>VerifyStepUp</c> or another method.
+		/// </summary>
+		[HttpPost("RequestGrantFromRecentMfa")]
+		[AllowDuringDepartmentLock]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize]
+		public async Task<ActionResult<StepUpResult>> RequestGrantFromRecentMfa() =>
+			Grant(await _adpStepUp.IssueFromRecentEvidenceAsync(Caller()));
 
 		[HttpPost("VerifyStepUp")]
 		[AllowDuringDepartmentLock]
@@ -223,8 +208,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return Problem(type: "invalid_totp", title: "A verification code is required.",
 					statusCode: StatusCodes.Status400BadRequest);
 
-			// Brute-force limiter (fail open on cache faults: lockout also guards below via TOTP
-			// time-step; a cache outage must not disable step-up entirely).
+			// Brute-force limiter. It fails open on cache faults so an outage does not disable step-up; replay is
+			// still blocked because ResgridAuthenticatorTokenProvider accepts each TOTP time step once, in the database.
 			var attempts = await _cacheProvider.IncrementAsync($"AdpStepUpAttempts_{UserId}", StepUpAttemptWindow);
 			if (attempts > StepUpMaxAttempts)
 				return Problem(type: "too_many_attempts",
@@ -241,58 +226,184 @@ namespace Resgrid.Web.Services.Controllers.v4
 					title: "Two-factor authentication is not enrolled for this account. Enroll an authenticator app in account security settings first.",
 					statusCode: StatusCodes.Status409Conflict);
 
+			// ADP step-up shares the account lockout with sign-in and every other TOTP surface (passkey plan section 7.5 rule 6).
+			if (await _userManager.IsLockedOutAsync(user))
+				return Problem(type: "too_many_attempts",
+					title: "Too many failed attempts. Wait a few minutes and try again.",
+					statusCode: StatusCodes.Status429TooManyRequests);
+
 			var valid = await _userManager.VerifyTwoFactorTokenAsync(user,
 				_userManager.Options.Tokens.AuthenticatorTokenProvider, input.Code.Trim());
 			await _adpAudit.AppendAsync(new AdpAuditEvent { DepartmentId = DepartmentId, Layer = "identity",
 				Operation = "mfa-verify", Outcome = valid ? "verified" : "denied", ActorId = UserId });
 			if (!valid)
+			{
+				await _userManager.AccessFailedAsync(user);
 				return Problem(type: "invalid_totp",
 					title: "The verification code is invalid or has expired.",
 					statusCode: StatusCodes.Status401Unauthorized);
+			}
 
-			var policy = await _dataProtectionService.GetPolicyByDepartmentIdAsync(DepartmentId);
-			var windowMinutes = policy?.StepUpWindowMinutes > 0
-				? policy.StepUpWindowMinutes
-				: Config.DataProtectionConfig.StepUpWindowDefaultMinutes;
+			await _userManager.ResetAccessFailedCountAsync(user);
 
-			// Same clamp IssueGrant applies: the advertised window must never exceed the grant's
-			// actual lifetime, or clients would keep protected values visible past expiry.
-			windowMinutes = Math.Min(Math.Max(1, windowMinutes), Math.Max(1, Config.DataProtectionConfig.StepUpMaximumMinutes));
+			// The verified code becomes AdpStepUp evidence and, through the one issuer every method shares, a grant whose
+			// expiry runs from this verification (passkey plan sections 8.1 and 9.2).
+			return Grant(await _adpStepUp.IssueForTotpAsync(Caller(user), DateTime.UtcNow));
+		}
+
+		/// <summary>
+		/// How the caller can verify for this department's protected data now: the methods it has that the department
+		/// accepts, and which to show first (passkey plan section 7.5 rule 5). Advisory; every verification rechecks.
+		/// </summary>
+		[HttpGet("StepUpMethods")]
+		[AllowDuringDepartmentLock]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize]
+		public async Task<ActionResult<AdpStepUpMethodsResult>> StepUpMethods(System.Threading.CancellationToken cancellationToken)
+		{
+			var user = await _userManager.FindByIdAsync(UserId);
+			if (user == null)
+				return Problem(type: "protected_access_denied", title: "User not found.", statusCode: StatusCodes.Status401Unauthorized);
+
+			var choice = await _adpStepUp.GetMethodChoiceAsync(Caller(user), await _userManager.GetTwoFactorEnabledAsync(user), cancellationToken);
+			var result = new AdpStepUpMethodsResult
+			{
+				Data = new AdpStepUpMethodsResultData
+				{
+					Methods = choice.AllowedMethods.Where(choice.EnrolledMethods.Contains).ToList(),
+					Preferred = choice.Preferred,
+					EnrolledMethods = choice.EnrolledMethods.ToList(),
+					AllowedMethods = choice.AllowedMethods.ToList()
+				},
+				PageSize = 1,
+				Status = ResponseHelper.Success
+			};
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		/// <summary>
+		/// Assertion options for a passkey bound to this app, for this department's protected data (passkey plan section 8.1).
+		/// Needs a tracked session; the department and deployment must accept passkeys for protected data.
+		/// </summary>
+		[HttpPost("PasskeyOptions")]
+		[AllowDuringDepartmentLock]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize]
+		public async Task<ActionResult<Models.v4.Passkeys.PasskeyCeremonyResult>> PasskeyOptions(System.Threading.CancellationToken cancellationToken)
+		{
+			var start = await _adpStepUp.BeginPasskeyAsync(Caller(await _userManager.FindByIdAsync(UserId)), cancellationToken);
+			if (!start.Succeeded)
+				return Problem(type: Model.Security.PasskeyOutcomes.ErrorCode(start.Outcome), title: ApiPasskeys.TitleFor(start.Outcome),
+					statusCode: ApiPasskeys.StatusFor(start.Outcome));
+
+			var result = new Models.v4.Passkeys.PasskeyCeremonyResult
+			{
+				Data = new Models.v4.Passkeys.PasskeyCeremonyResultData { RequestId = start.RequestId, Options = ApiPasskeys.Options(start.OptionsJson) },
+				PageSize = 1,
+				Status = ResponseHelper.Success
+			};
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		/// <summary>Verifies the passkey assertion and returns a <c>passkey</c> grant (the same <see cref="StepUpResult"/> as a code).</summary>
+		[HttpPost("VerifyPasskey")]
+		[AllowDuringDepartmentLock]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize]
+		public async Task<ActionResult<StepUpResult>> VerifyPasskey([FromBody] AdpPasskeyStepUpInput input, System.Threading.CancellationToken cancellationToken)
+		{
+			if (string.IsNullOrWhiteSpace(input?.RequestId) || input.Credential == null)
+				return Problem(type: "invalid_request", title: "A passkey response is required.", statusCode: StatusCodes.Status400BadRequest);
+
+			var user = await _userManager.FindByIdAsync(UserId);
+			if (user == null)
+				return Problem(type: "protected_access_denied", title: "User not found.", statusCode: StatusCodes.Status401Unauthorized);
+			if (await _userManager.IsLockedOutAsync(user))
+				return Problem(type: "too_many_attempts", title: "Too many failed attempts. Wait a few minutes and try again.",
+					statusCode: StatusCodes.Status429TooManyRequests);
+
+			// A passkey is not a guessable secret: its challenge carries its own attempt limit, as at Mfa/VerifyStepUp.
+			return Grant(await _adpStepUp.CompletePasskeyAsync(Caller(user), input.RequestId, ApiPasskeys.CredentialJson(input.Credential), cancellationToken));
+		}
+
+		/// <summary>
+		/// Uses an approved Responder request (<c>MfaApproval/Request</c>, purpose <c>adp</c>, from this session and department)
+		/// once, and returns a <c>passkey_approval</c> grant. Answers 409 <c>approval_pending</c> until it is decided.
+		/// </summary>
+		[HttpPost("CompleteApproval")]
+		[AllowDuringDepartmentLock]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize]
+		public async Task<ActionResult<StepUpResult>> CompleteApproval([FromBody] AdpApprovalStepUpInput input, System.Threading.CancellationToken cancellationToken)
+		{
+			if (string.IsNullOrWhiteSpace(input?.ApprovalRequestId))
+				return Problem(type: "invalid_request", title: "An approval request is required.", statusCode: StatusCodes.Status400BadRequest);
+
+			return Grant(await _adpStepUp.CompleteApprovalAsync(Caller(await _userManager.FindByIdAsync(UserId)), input.ApprovalRequestId, cancellationToken));
+		}
+
+		/// <summary>
+		/// Redeems a brokered provider step-up (<c>Sso/Begin</c>, purpose <c>adp_step_up</c>) once and returns a <c>federated</c>
+		/// grant, where the department accepts its provider's MFA for protected data (passkey plan section 7.8).
+		/// </summary>
+		[HttpPost("CompleteFederated")]
+		[AllowDuringDepartmentLock]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize]
+		public async Task<ActionResult<StepUpResult>> CompleteFederated([FromBody] AdpFederatedStepUpInput input, System.Threading.CancellationToken cancellationToken)
+		{
+			if (string.IsNullOrWhiteSpace(input?.SsoTransactionId) || string.IsNullOrWhiteSpace(input.SsoCode))
+				return Problem(type: "invalid_request", title: "A provider step-up is required.", statusCode: StatusCodes.Status400BadRequest);
+
+			return Grant(await _adpStepUp.CompleteFederatedAsync(Caller(await _userManager.FindByIdAsync(UserId)), input.SsoTransactionId, input.SsoCode,
+				input.CodeVerifier, cancellationToken));
+		}
+
+		/// <summary>The caller as the grant issuer sees it: this user, department and validated session (never client-supplied).</summary>
+		private Model.Security.AdpStepUpCaller Caller(Model.Identity.IdentityUser user = null) => new()
+		{
+			UserId = UserId,
+			UserName = user?.UserName,
+			DepartmentId = DepartmentId,
+			Session = HttpProtectedGrantContext.SessionOf(HttpContext),
+			LegacySessionId = User.FindFirst(Model.Security.SessionClaimTypes.SessionId)?.Value,
+			ClientApplication = int.TryParse(User.FindFirst(Model.Security.SessionClaimTypes.ClientApp)?.Value, out var client)
+				? (UserSessionClientApplication)client
+				: UserSessionClientApplication.Api,
+			AccountAuthenticationGeneration = user?.AuthenticationGeneration ?? 0,
+			EvidenceSessionKey = ApiStepUpEvidence.SessionKey(HttpContext),
+			IpAddress = IpAddressHelper.GetRequestIP(Request, true),
+			AuditSystem = SystemAuditSystems.Api
+		};
+
+		private ActionResult<StepUpResult> Grant(Model.Security.AdpGrantIssue issued)
+		{
+			if (!issued.Succeeded)
+				return Problem(type: issued.ErrorCode, title: issued.Outcome switch
+				{
+					Model.Security.AdpGrantOutcome.NotConfigured => "Protected data grants are not configured.",
+					Model.Security.AdpGrantOutcome.SessionRequired => "Sign in again to verify for protected data.",
+					Model.Security.AdpGrantOutcome.MethodNotAllowed => "That verification method is not available for protected data here.",
+					Model.Security.AdpGrantOutcome.StepUpRequired => "Verify again to view protected data.",
+					Model.Security.AdpGrantOutcome.ApprovalPending => "The request has not been approved yet.",
+					Model.Security.AdpGrantOutcome.ApprovalUnavailable => "The approval could not be used. Request it again.",
+					Model.Security.AdpGrantOutcome.CredentialRevoked => "The credential used was removed or changed. Verify again.",
+					Model.Security.AdpGrantOutcome.VerificationFailed => "The verification failed.",
+					Model.Security.AdpGrantOutcome.InvalidRequest => "The request is not valid.",
+					_ => "Protected data is temporarily unavailable. Try again."
+				}, statusCode: Model.Security.AdpGrantOutcomes.StatusFor(issued.Outcome));
 
 			var result = new StepUpResult
 			{
-				GrantId = null,
-				StepUpExpiresOnUtc = DateTime.UtcNow.AddMinutes(windowMinutes).ToString("O"),
-				StepUpWindowMinutes = windowMinutes
+				GrantId = issued.GrantId,
+				GrantToken = issued.Token,
+				StepUpExpiresOnUtc = issued.ExpiresOnUtc.ToString("O"),
+				StepUpWindowMinutes = issued.WindowMinutes,
+				PageSize = 1,
+				Status = ResponseHelper.Success
 			};
-
-			// When signing key material is configured (identity tier), the verification mints a real
-			// Protected Data Grant bound to user, department, session, client app, policy epoch and
-			// this moment's MFA. Without it, the response keeps the pre-broker shape (null grant).
-			if (_grantService.CanIssueGrants)
-			{
-				var issued = _grantService.IssueGrant(new ProtectedDataGrantIssueRequest
-				{
-					UserId = UserId,
-					DepartmentId = DepartmentId,
-					SessionId = User.FindFirst(Model.Security.SessionClaimTypes.SessionId)?.Value,
-					ClientApp = int.TryParse(User.FindFirst(Model.Security.SessionClaimTypes.ClientApp)?.Value, out var clientApp)
-						? clientApp
-						: (int)UserSessionClientApplication.Api,
-					PolicyEpoch = policy?.PolicyEpoch ?? 0,
-					WindowMinutes = windowMinutes,
-					Scopes = new[] { ProtectedDataGrantScopes.Read, ProtectedDataGrantScopes.Write },
-					MfaAtUtc = DateTime.UtcNow
-				});
-				await _adpAudit.AppendAsync(new AdpAuditEvent { DepartmentId = DepartmentId, Layer = "identity",
-					Operation = "grant-issued", Outcome = "mfa-verified", ActorId = UserId, CorrelationId = issued.GrantId });
-
-				result.GrantId = issued.GrantId;
-				result.GrantToken = issued.Token;
-				result.StepUpExpiresOnUtc = issued.ExpiresOnUtc.ToString("O");
-			}
-			result.PageSize = 1;
-			result.Status = ResponseHelper.Success;
 			ResponseHelper.PopulateV4ResponseData(result);
 			return result;
 		}
@@ -353,13 +464,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 
 		/// <summary>
-		/// MFA-recency gate for enrollment/offboarding commands (plan sections 3.5 and 18): the
-		/// caller must present a currently-valid Protected Data Grant — minted by VerifyStepUp after
-		/// fresh TOTP, absolute lifetime = the department step-up window — in the
-		/// X-Resgrid-Protected-Grant header, bound to THIS user and department at the CURRENT policy
-		/// epoch. On deployments without grant key material (CanValidateGrants false) the gate is
-		/// inactive and the pre-Phase-2 gates (managing member, addon, global flag) stand alone.
-		/// Returns null when the command may proceed.
+		/// MFA-recency gate for enrollment, offboarding and security commands (ADP plan sections 3.5 and 18, passkey plan
+		/// section 7.6 row 10 and section 8.4): actual MFA within the sensitive-operation window (5 minutes), shown either
+		/// by Mfa/VerifyStepUp evidence on this session (operation <c>adp_management</c>) or by a Protected Data Grant in
+		/// the X-Resgrid-Protected-Grant header whose own verification is that recent, bound to THIS user, session and
+		/// department at the CURRENT policy epoch. The department's longer data-access window never stretches this: an
+		/// eight-hour-old grant cannot change the protection lifecycle. Missing grant key material is not proof either;
+		/// the evidence path still works without it. Returns null when the command may proceed.
 		///
 		/// A step-up-EXEMPT grant is refused here. Those are minted by RequestGrant without any second
 		/// factor, for a client the department exempted from the reveal prompt (plan 3.3) — that
@@ -369,22 +480,30 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// </summary>
 		private async Task<ActionResult> RequireRecentMfaAsync()
 		{
-			if (!_grantService.CanValidateGrants)
+			var window = Model.Security.MfaStepUpOperations.WindowFor(Model.Security.MfaStepUpOperations.AdpManagement);
+			if (await ApiStepUpEvidence.HasRecentSecondFactorAsync(_mfaEvidence, _mfaPolicy, UserId, HttpContext, DepartmentId,
+					Model.Security.MfaMethodScope.Adp, window))
 				return null;
 
-			var token = Request.Headers[GrantHeader].ToString();
-			var policy = await _dataProtectionService.GetPolicyByDepartmentIdAsync(DepartmentId);
-			var outcome = _grantService.ValidateGrant(token, DepartmentId, policy?.PolicyEpoch ?? 0,
-				requiredScope: null, out var grant);
+			if (_grantService.CanValidateGrants)
+			{
+				var token = Request.Headers[GrantHeader].ToString();
+				var policy = await _dataProtectionService.GetPolicyByDepartmentIdAsync(DepartmentId);
+				var outcome = _grantService.ValidateGrant(token, DepartmentId, policy?.PolicyEpoch ?? 0,
+					requiredScope: null, out var grant);
 
-			if (outcome != ProtectedDataGrantValidationOutcome.Valid ||
-				grant.StepUpExempt ||
-				!string.Equals(grant.UserId, UserId, StringComparison.OrdinalIgnoreCase))
-				return Problem(type: "step_up_required",
-					title: "Recent multi-factor verification is required for this command. Verify your authenticator code and retry with the issued grant.",
-					statusCode: StatusCodes.Status403Forbidden);
+				var now = DateTime.UtcNow;
+				if (outcome == ProtectedDataGrantValidationOutcome.Valid &&
+					!grant.StepUpExempt &&
+					await Resgrid.Services.ProtectedGrantBinding.CheckAsync(grant, UserId, HttpProtectedGrantContext.SessionOf(HttpContext), policy?.StepUpWindowMinutes,
+						_credentialStates) == Resgrid.Model.Security.ProtectedGrantBindingOutcome.Bound &&
+					grant.MfaAtUtc <= now.AddSeconds(30) && now - grant.MfaAtUtc <= window)
+					return null;
+			}
 
-			return null;
+			return Problem(type: "step_up_required",
+				title: "Recent multi-factor verification is required for this command. Verify a second factor (Mfa/VerifyStepUp, operation adp_management) and retry.",
+				statusCode: StatusCodes.Status403Forbidden);
 		}
 
 		private async Task<ActionResult<EnrollmentCommandResult>> MapCommandOutcomeAsync(DepartmentDataProtectionEnrollmentResult outcome)

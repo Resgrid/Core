@@ -64,8 +64,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IAuthorizationService authorizationService,
 			IEventAggregator eventAggregator,
 			ICacheProvider cacheProvider,
-			UserManager<Model.Identity.IdentityUser> userManager)
+			UserManager<Model.Identity.IdentityUser> userManager,
+			IMfaEvidenceService mfaEvidence,
+			IMfaPolicyService mfaPolicy,
+			IDepartmentSsoService departmentSso)
 		{
+			_mfaPolicy = mfaPolicy;
+			_departmentSso = departmentSso;
 			_chatModerationService = chatModerationService;
 			_chatChannelService = chatChannelService;
 			_chatPermissionService = chatPermissionService;
@@ -75,7 +80,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_eventAggregator = eventAggregator;
 			_cacheProvider = cacheProvider;
 			_userManager = userManager;
+			_mfaEvidence = mfaEvidence;
 		}
+
+		private readonly IMfaEvidenceService _mfaEvidence;
+		private readonly IMfaPolicyService _mfaPolicy;
+		private readonly IDepartmentSsoService _departmentSso;
 
 		private static string GetExportMfaProofCacheKey(string userId) => $"chat:export:mfa:{userId}";
 
@@ -649,10 +659,24 @@ namespace Resgrid.Web.Services.Controllers.v4
 			// don't accumulate toward an account lockout.
 			await _userManager.ResetAccessFailedCountAsync(user);
 
-			await _cacheProvider.SetStringAsync(
-				GetExportMfaProofCacheKey(user.Id),
-				DateTime.UtcNow.ToString("O", CultureInfo.InvariantCulture),
-				TimeSpan.FromMinutes(ExportMfaWindowMinutes));
+			// The proof is step-up evidence on this session (passkey plan section 7.6 row 8), so it cannot be used from
+			// another session or survive a password change. Mfa/VerifyStepUp records the same evidence. A token without a
+			// tracked session keeps the older per-user proof until it is re-issued.
+			var sessionKey = ApiStepUpEvidence.SessionKey(HttpContext);
+			if (sessionKey != null)
+			{
+				var client = HttpProtectedGrantContext.SessionOf(HttpContext)?.ClientApplication ?? (int)UserSessionClientApplication.Api;
+				await _mfaEvidence.RecordAsync(user.Id, sessionKey, (UserSessionClientApplication)client, Model.Security.MfaEvidenceKind.SecondFactor,
+					Model.Security.MfaEvidenceMethod.Totp, Model.Security.MfaEvidencePurpose.StepUp, DateTime.UtcNow, user.AuthenticationGeneration,
+					DepartmentId, cancellationToken: cancellationToken);
+			}
+			else
+			{
+				await _cacheProvider.SetStringAsync(
+					GetExportMfaProofCacheKey(user.Id),
+					DateTime.UtcNow.ToString("O", CultureInfo.InvariantCulture),
+					TimeSpan.FromMinutes(ExportMfaWindowMinutes));
+			}
 
 			result.Success = true;
 			result.Status = ResponseHelper.Success;
@@ -664,14 +688,20 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// Resolves the current user and enforces the export MFA-enrollment precondition shared by the verify
 		/// and gate paths. On success returns the user with a null error; otherwise returns a null user and
 		/// the HTTP result to return: 401 when the principal can't be resolved, 403 when 2FA is not enrolled.
+		/// With <paramref name="acceptProviderStepUp"/>, an SSO member whose department accepts its identity provider's MFA
+		/// for sign-in counts as enrolled without a Resgrid factor (passkey plan section 7.6 row 8, section 7.8): they verify
+		/// through Mfa/VerifyStepUp. The TOTP-only VerifyExportMfa still needs TOTP; passkeys and approval need it anyway.
 		/// </summary>
-		private async Task<(Model.Identity.IdentityUser User, ActionResult Error)> GetMfaEnrolledUserOrErrorAsync()
+		private async Task<(Model.Identity.IdentityUser User, ActionResult Error)> GetMfaEnrolledUserOrErrorAsync(bool acceptProviderStepUp = false)
 		{
 			var user = await _userManager.GetUserAsync(User);
 			if (user == null)
 				return (null, Unauthorized());
 
-			if (!await _userManager.GetTwoFactorEnabledAsync(user))
+			if (!await _userManager.GetTwoFactorEnabledAsync(user) &&
+				!(acceptProviderStepUp &&
+					await _mfaPolicy.IsMethodAcceptedAsync(DepartmentId, Model.Security.MfaMethodScope.Login, Model.Security.MfaEvidenceMethod.Federated) &&
+					await _departmentSso.IsFederatedMfaAvailableAsync(DepartmentId, user.Id)))
 				return (null, StatusCode(StatusCodes.Status403Forbidden, new { error = "mfa_enrollment_required", error_description = "Two-Factor Authentication must be enabled to export chat transcripts." }));
 
 			return (user, null);
@@ -684,9 +714,21 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// </summary>
 		private async Task<ActionResult<GetChatExportsResult>> CheckRecentExportMfaAsync()
 		{
-			var (user, mfaError) = await GetMfaEnrolledUserOrErrorAsync();
+			var (user, mfaError) = await GetMfaEnrolledUserOrErrorAsync(acceptProviderStepUp: true);
 			if (mfaError != null)
 				return mfaError;
+
+			// Explicit step-up evidence on this session, never a sign-in and never another session's proof.
+			var sessionKey = ApiStepUpEvidence.SessionKey(HttpContext);
+			if (sessionKey != null)
+			{
+				var latest = await _mfaEvidence.GetLatestStepUpAsync(user.Id, sessionKey, user.AuthenticationGeneration);
+				if (Resgrid.Services.MfaEvidenceService.IsFresh(latest, TimeSpan.FromMinutes(ExportMfaWindowMinutes), DateTime.UtcNow) &&
+					await _mfaPolicy.IsMethodAcceptedAsync(DepartmentId, Model.Security.MfaMethodScope.Login, (Model.Security.MfaEvidenceMethod)latest.Method))
+					return null;
+
+				return StatusCode(StatusCodes.Status401Unauthorized, new { error = "mfa_required", error_description = $"Recent Two-Factor verification is required. Call VerifyExportMfa (or Mfa/VerifyStepUp with operation chat_export) with your current code, then retry within {ExportMfaWindowMinutes} minutes." });
+			}
 
 			var proof = await _cacheProvider.GetStringAsync(GetExportMfaProofCacheKey(user.Id));
 			if (!string.IsNullOrEmpty(proof)

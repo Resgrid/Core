@@ -50,7 +50,7 @@
                                     <a asp-controller="Certifications" asp-action="EditType" asp-route-area="User" asp-route-id="@type.DepartmentCertificationTypeId" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i> @localizer["Edit"]</a>
                                     <form method="post" asp-controller="Certifications" asp-action="DeleteType" asp-route-area="User" asp-route-id="@type.DepartmentCertificationTypeId" style="display: inline;">
                                         @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@localizer["DeleteTypeConfirm"]');"><i class="fa fa-trash"></i></button>
+                                        <button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@JsEncoder.Encode(localizer["DeleteTypeConfirm"])');"><i class="fa fa-trash"></i></button>
                                     </form>
                                 </td>
                             </tr>

@@ -184,5 +184,5 @@
   <data name="FindLocationVia" xml:space="preserve"><value>ابحث عن الموقع عبر</value></data>
 
   <!-- View -->
-  <data name="ViewDetails" xml:space="preserve"><value>عرض التفاصيل</value></data>
+  <data name="ArchivedRoutes" xml:space="preserve"><value>المسارات المؤرشفة</value></data>
 </root>

@@ -98,7 +98,7 @@
                         }
                         @if (status is Resgrid.Model.Invoicing.BidStatuses.Draft or Resgrid.Model.Invoicing.BidStatuses.Submitted)
                         {
-                            <form method="post" asp-action="SetStatus" asp-route-id="@b.BidId" asp-route-status="@((int)Resgrid.Model.Invoicing.BidStatuses.Withdrawn)" class="m-b-xs" onsubmit="return confirm('@localizer["ConfirmWithdraw"]');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-default btn-block">@localizer["Withdraw"]</button></form>
+                            <form method="post" asp-action="SetStatus" asp-route-id="@b.BidId" asp-route-status="@((int)Resgrid.Model.Invoicing.BidStatuses.Withdrawn)" class="m-b-xs" onsubmit="return confirm('@JsEncoder.Encode(localizer["ConfirmWithdraw"])');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-default btn-block">@localizer["Withdraw"]</button></form>
                         }
                         @if (status == Resgrid.Model.Invoicing.BidStatuses.Accepted && !b.IsConverted && Model.CanManageDeployments)
                         {
@@ -106,7 +106,7 @@
                         }
                         @if (status == Resgrid.Model.Invoicing.BidStatuses.Draft)
                         {
-                            <form method="post" asp-action="Delete" asp-route-id="@b.BidId" class="m-t-sm" onsubmit="return confirm('@localizer["ConfirmDeleteBid"]');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-danger btn-block btn-xs"><i class="fa fa-trash"></i> @localizer["Delete"]</button></form>
+                            <form method="post" asp-action="Delete" asp-route-id="@b.BidId" class="m-t-sm" onsubmit="return confirm('@JsEncoder.Encode(localizer["ConfirmDeleteBid"])');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-danger btn-block btn-xs"><i class="fa fa-trash"></i> @localizer["Delete"]</button></form>
                         }
                     </div>
                 </div>

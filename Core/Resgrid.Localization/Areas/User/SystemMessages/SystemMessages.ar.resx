@@ -153,4 +153,25 @@
   <data name="AdpEgressWarning" xml:space="preserve"><value>أقر بأن التفاصيل المتاحة تغادر Resgrid وقد تحتفظ بها شركات الاتصالات أو المستلمون.</value></data>
   <data name="AdpAllowed" xml:space="preserve"><value>السماح بالمحتوى المحمي</value></data>
   <data name="AdpSupportNotice" xml:space="preserve"><value>طلب موظفو Resgrid الوصول إلى البلاغ المحمي {0} لحالة الدعم {1}. يتطلب الوصول موافقة موظف مستقل وتنتهي صلاحيته خلال 15 دقيقة.</value></data>
+  <data name="SecurityNoticeSubject" xml:space="preserve"><value>تغيير أمني في حسابك على Resgrid</value></data>
+  <data name="SecurityNoticeGreeting" xml:space="preserve"><value>مرحبًا {0}،</value></data>
+  <data name="SecurityNoticeGreetingNoName" xml:space="preserve"><value>مرحبًا،</value></data>
+  <data name="SecurityNoticeTotpEnabled" xml:space="preserve"><value>تم إعداد تطبيق مصادقة لتسجيل الدخول بخطوتين في حسابك.</value></data>
+  <data name="SecurityNoticeTotpReplaced" xml:space="preserve"><value>تم استبدال تطبيق المصادقة في حسابك، وتم إنهاء جميع الجلسات المسجّل الدخول بها.</value></data>
+  <data name="SecurityNoticeTotpDisabled" xml:space="preserve"><value>تمت إزالة تطبيق المصادقة من حسابك، لذا أصبح تسجيل الدخول بخطوتين متوقفًا. وتم إنهاء جميع الجلسات المسجّل الدخول بها.</value></data>
+  <data name="SecurityNoticeRecoveryCodesRegenerated" xml:space="preserve"><value>تم إنشاء رموز استرداد جديدة لحسابك. لم تعد الرموز القديمة تعمل.</value></data>
+  <data name="SecurityNoticeRecoveryCodeUsed" xml:space="preserve"><value>تم استخدام أحد رموز الاسترداد الخاصة بك لتسجيل الدخول أو لبدء استرداد الحساب.</value></data>
+  <data name="SecurityNoticePasskeyRegistered" xml:space="preserve"><value>تمت إضافة مفتاح مرور جديد إلى حسابك.</value></data>
+  <data name="SecurityNoticePasskeyRemoved" xml:space="preserve"><value>تمت إزالة مفتاح مرور من حسابك.</value></data>
+  <data name="SecurityNoticeApprovalTurnedOn" xml:space="preserve"><value>أصبح بإمكان مفتاح مرور في Resgrid Responder الآن الموافقة على تسجيلات الدخول إلى تطبيقات Resgrid الأخرى لديك.</value></data>
+  <data name="SecurityNoticeApprovalTurnedOff" xml:space="preserve"><value>لم يعد بإمكان مفتاح مرور في Resgrid Responder الموافقة على تسجيلات الدخول إلى تطبيقات Resgrid الأخرى لديك.</value></data>
+  <data name="SecurityNoticeApprovalNotMe" xml:space="preserve"><value>أشرت في Resgrid Responder إلى أنك لم تطلب تسجيل الدخول. تم إيقاف تسجيل الدخول هذا، وتم إيقاف طلبات الموافقة مؤقتًا لمدة 15 دقيقة. قد يعرف شخص ما كلمة مرورك، لذا غيّرها الآن.</value></data>
+  <data name="SecurityNoticeApprovalSuspended" xml:space="preserve"><value>تم رفض عدة طلبات موافقة متتالية أو لم تتم الإجابة عنها، لذا تم إيقاف طلبات الموافقة مؤقتًا لمدة 15 دقيقة.</value></data>
+  <data name="SecurityNoticeFactorRecoveryCompleted" xml:space="preserve"><value>تم استرداد حسابك باستخدام رمز استرداد. تم إعداد تطبيق مصادقة جديد، وإنشاء رموز استرداد جديدة، وإنهاء جميع الجلسات المسجّل الدخول بها.</value></data>
+  <data name="SecurityNoticeSharedInstallationFactor" xml:space="preserve"><value>تم إعداد تطبيق مصادقة أو مفتاح مرور على جهاز لوحي مشترك في مركبة أو على محطة عمل مشتركة. إذا كان من الممكن أن يكون شخص آخر قد رأى رمز الإعداد أو يمكنه استخدام ذلك الجهاز، فاستبدل تطبيق المصادقة أو أزِل مفتاح المرور من جهازك الشخصي.</value></data>
+  <data name="SecurityNoticeActivityReported" xml:space="preserve"><value>تم الإبلاغ عن عملية تحقق في حسابك على أنها لم تتم بواسطتك. إذا تم بها تسجيل الدخول على جهاز آخر، فقد تم إنهاء تلك الجلسة. غيّر كلمة المرور وراجع طرق تسجيل الدخول الخاصة بك.</value></data>
+  <data name="SecurityNoticeWhen" xml:space="preserve"><value>الوقت: {0} UTC</value></data>
+  <data name="SecurityNoticeWhere" xml:space="preserve"><value>المكان: {0}</value></data>
+  <data name="SecurityNoticeNotYou" xml:space="preserve"><value>إذا لم تكن أنت، فأعد تعيين كلمة المرور الآن على {0}، ثم سجّل الدخول وراجع طرق تسجيل الدخول الخاصة بك. لا يطلب Resgrid أبدًا رمزًا أو كلمة مرور عبر البريد الإلكتروني.</value></data>
+  <data name="SecurityNoticeFooter" xml:space="preserve"><value>هذا إشعار أمني تلقائي بشأن حسابك على Resgrid.</value></data>
 </root>

@@ -143,6 +143,6 @@
 	</form>
 	@if (!readOnly && Model.Version > 1 || !readOnly && Model.Aggregate?.Published == null)
 	{
-		<form method="post" asp-controller="RecordDefinitions" asp-action="DeleteDraft" asp-route-area="User" asp-route-key="@Model.DefinitionKey" asp-route-version="@Model.Version" onsubmit="return confirm('@localizer["DefinitionDeleteDraftConfirm"]');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-link text-danger">@localizer["DefinitionDeleteDraft"]</button></form>
+		<form method="post" asp-controller="RecordDefinitions" asp-action="DeleteDraft" asp-route-area="User" asp-route-key="@Model.DefinitionKey" asp-route-version="@Model.Version" onsubmit="return confirm('@JsEncoder.Encode(localizer["DefinitionDeleteDraftConfirm"])');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-link text-danger">@localizer["DefinitionDeleteDraft"]</button></form>
 	}
 </div>

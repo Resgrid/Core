@@ -54,7 +54,7 @@
                         }
                         @if (Model.CanCancel && !Model.Cancelled)
                         {
-                            <form method="post" asp-action="CancelRenewal" class="m-t-sm">@Html.AntiForgeryToken()<button type="submit" class="btn btn-default" onclick="return confirm('@localizer["CancelSubscriptionConfirm"]');">@localizer["CancelSubscription"]</button></form>
+                            <form method="post" asp-action="CancelRenewal" class="m-t-sm">@Html.AntiForgeryToken()<button type="submit" class="btn btn-default" onclick="return confirm('@JsEncoder.Encode(localizer["CancelSubscriptionConfirm"])');">@localizer["CancelSubscription"]</button></form>
                         }
                     }
                     <p class="alert alert-danger m-t-sm" id="business-operations-billing-error" hidden></p>

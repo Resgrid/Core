@@ -128,4 +128,205 @@
   <data name="SensitivityPart2" xml:space="preserve">
     <value>42 CFR Part 2</value>
   </data>
+  <data name="PageHeader" xml:space="preserve">
+    <value>Pola zdefiniowane przez użytkownika</value>
+  </data>
+  <data name="PageSubHeader" xml:space="preserve">
+    <value>Zarządzaj polami niestandardowymi dla elementów działu</value>
+  </data>
+  <data name="EntityType" xml:space="preserve">
+    <value>Typ elementu</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>Wersja</value>
+  </data>
+  <data name="FieldCount" xml:space="preserve">
+    <value>Pola</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Akcje</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Aktywna</value>
+  </data>
+  <data name="NoDefinition" xml:space="preserve">
+    <value>Nie skonfigurowano</value>
+  </data>
+  <data name="Configure" xml:space="preserve">
+    <value>Konfiguruj</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Edytuj</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Usuń</value>
+  </data>
+  <data name="DeleteDefinitionConfirm" xml:space="preserve">
+    <value>Usunąć całą konfigurację UDF dla {0}? Tej operacji nie można cofnąć.</value>
+  </data>
+  <data name="UdfSummaryTitle" xml:space="preserve">
+    <value>Definicje UDF według typu elementu</value>
+  </data>
+  <data name="EditDefinitionHeader" xml:space="preserve">
+    <value>Konfiguruj pola — {0}</value>
+  </data>
+  <data name="NewDefinitionHeader" xml:space="preserve">
+    <value>Konfiguruj pola — {0}</value>
+  </data>
+  <data name="FieldsSection" xml:space="preserve">
+    <value>Definicje pól</value>
+  </data>
+  <data name="AddField" xml:space="preserve">
+    <value>Dodaj pole</value>
+  </data>
+  <data name="NoFieldsAdded" xml:space="preserve">
+    <value>Nie dodano jeszcze żadnych pól. Kliknij „Dodaj pole”, aby zdefiniować pierwsze pole.</value>
+  </data>
+  <data name="FieldName" xml:space="preserve">
+    <value>Nazwa systemowa</value>
+  </data>
+  <data name="FieldLabel" xml:space="preserve">
+    <value>Etykieta</value>
+  </data>
+  <data name="FieldDataType" xml:space="preserve">
+    <value>Typ danych</value>
+  </data>
+  <data name="FieldRequired" xml:space="preserve">
+    <value>Wymagane</value>
+  </data>
+  <data name="FieldEnabled" xml:space="preserve">
+    <value>Włączone</value>
+  </data>
+  <data name="FieldVisibleMobile" xml:space="preserve">
+    <value>Mobilne</value>
+  </data>
+  <data name="FieldVisibleReports" xml:space="preserve">
+    <value>Raporty</value>
+  </data>
+  <data name="FieldOrder" xml:space="preserve">
+    <value>Kolejność</value>
+  </data>
+  <data name="RemoveField" xml:space="preserve">
+    <value>Usuń</value>
+  </data>
+  <data name="RemoveFieldConfirm" xml:space="preserve">
+    <value>Usunąć to pole?</value>
+  </data>
+  <data name="SaveDefinition" xml:space="preserve">
+    <value>Zapisz definicję</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Anuluj</value>
+  </data>
+  <data name="FieldModalTitle" xml:space="preserve">
+    <value>Szczegóły pola</value>
+  </data>
+  <data name="FieldNameHelp" xml:space="preserve">
+    <value>Identyfikator wewnętrzny (litery, cyfry, podkreślenia; musi zaczynać się od litery lub podkreślenia). Musi być unikalny w obrębie tego typu elementu.</value>
+  </data>
+  <data name="FieldLabelHelp" xml:space="preserve">
+    <value>Czytelna etykieta wyświetlana użytkownikom.</value>
+  </data>
+  <data name="FieldDescription" xml:space="preserve">
+    <value>Opis / podpowiedź</value>
+  </data>
+  <data name="FieldPlaceholder" xml:space="preserve">
+    <value>Tekst zastępczy</value>
+  </data>
+  <data name="FieldDefaultValue" xml:space="preserve">
+    <value>Wartość domyślna</value>
+  </data>
+  <data name="FieldGroupName" xml:space="preserve">
+    <value>Grupa / sekcja</value>
+  </data>
+  <data name="FieldIsReadOnly" xml:space="preserve">
+    <value>Tylko do odczytu</value>
+  </data>
+  <data name="FieldIsReadOnlyHelp" xml:space="preserve">
+    <value>Po włączeniu pole jest wyświetlane, ale użytkownicy nie mogą go edytować.</value>
+  </data>
+  <data name="ValidationSection" xml:space="preserve">
+    <value>Reguły walidacji</value>
+  </data>
+  <data name="ValidationMinLength" xml:space="preserve">
+    <value>Min. długość</value>
+  </data>
+  <data name="ValidationMaxLength" xml:space="preserve">
+    <value>Maks. długość</value>
+  </data>
+  <data name="ValidationMinValue" xml:space="preserve">
+    <value>Min. wartość</value>
+  </data>
+  <data name="ValidationMaxValue" xml:space="preserve">
+    <value>Maks. wartość</value>
+  </data>
+  <data name="ValidationRegex" xml:space="preserve">
+    <value>Wzorzec wyrażenia regularnego</value>
+  </data>
+  <data name="ValidationRegexError" xml:space="preserve">
+    <value>Komunikat błędu wyrażenia regularnego</value>
+  </data>
+  <data name="DropdownOptions" xml:space="preserve">
+    <value>Opcje (klucz=etykieta, po jednej w wierszu)</value>
+  </data>
+  <data name="DropdownOptionsHelp" xml:space="preserve">
+    <value>Wpisz po jednej opcji w wierszu w formacie klucz=etykieta, np. „tak=Tak” lub „nie=Nie”.</value>
+  </data>
+  <data name="ModalSave" xml:space="preserve">
+    <value>Dodaj pole</value>
+  </data>
+  <data name="ModalClose" xml:space="preserve">
+    <value>Zamknij</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>Strona główna</value>
+  </data>
+  <data name="New" xml:space="preserve">
+    <value>Nowa</value>
+  </data>
+  <data name="UdfModule" xml:space="preserve">
+    <value>Pola zdefiniowane przez użytkownika</value>
+  </data>
+  <data name="EntityCall" xml:space="preserve">
+    <value>Zgłoszenie</value>
+  </data>
+  <data name="EntityPersonnel" xml:space="preserve">
+    <value>Personel</value>
+  </data>
+  <data name="EntityUnit" xml:space="preserve">
+    <value>Jednostka</value>
+  </data>
+  <data name="EntityContact" xml:space="preserve">
+    <value>Kontakt</value>
+  </data>
+  <data name="Preview" xml:space="preserve">
+    <value>Podgląd</value>
+  </data>
+  <data name="PreviewModalTitle" xml:space="preserve">
+    <value>Podgląd pól — {0}</value>
+  </data>
+  <data name="PreviewWarningTitle" xml:space="preserve">
+    <value>Tylko podgląd</value>
+  </data>
+  <data name="PreviewWarningBody" xml:space="preserve">
+    <value>To przykład tego, jak pola będą wyglądać i wyświetlać się na stronie. Żadne dane nie zostaną zapisane.</value>
+  </data>
+  <data name="PreviewNoFields" xml:space="preserve">
+    <value>Brak włączonych pól do podglądu.</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Zamknij</value>
+  </data>
+  <data name="DefinitionSaved" xml:space="preserve">
+    <value>Definicja pól została zapisana.</value>
+  </data>
+  <data name="DefinitionDeleted" xml:space="preserve">
+    <value>Definicja pól została usunięta.</value>
+  </data>
+  <data name="ValidationErrors" xml:space="preserve">
+    <value>Popraw poniższe błędy przed zapisaniem.</value>
+  </data>
 </root>

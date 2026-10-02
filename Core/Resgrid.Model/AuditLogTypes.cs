@@ -349,6 +349,8 @@ ChecklistReminderSettingsUpdated,
 		AdminAssistDiagnosticAccess,
 		/// <summary>AI dispatch department settings saved (enhanced-ai-addon-plan.md §4). Append-only.</summary>
 		AiDispatchSettingsUpdated,
-		AdminAssistPlanAccess
+		AdminAssistPlanAccess,
+		/// <summary>The department security policy changed, including which second factors it accepts (passkey plan section 10.1). Append-only.</summary>
+		DepartmentSecurityPolicyChanged
 	}
 }

@@ -56,10 +56,10 @@
 {
     <script type="text/javascript">
         var inventoryIndexStrings = {
-            name: '@Html.Raw(commonLocalizer["Name"].Value)',
-            group: '@Html.Raw(localizer["Group"].Value)',
-            unit: '@Html.Raw(localizer["Unit"].Value)',
-            count: '@Html.Raw(localizer["Amount"].Value)'
+            name: '@JsEncoder.Encode(commonLocalizer["Name"].Value)',
+            group: '@JsEncoder.Encode(localizer["Group"].Value)',
+            unit: '@JsEncoder.Encode(localizer["Unit"].Value)',
+            count: '@JsEncoder.Encode(localizer["Amount"].Value)'
         };
     </script>
     <script src="~/js/app/internal/inventory/resgrid.inventory.index.js" type="text/javascript"></script>

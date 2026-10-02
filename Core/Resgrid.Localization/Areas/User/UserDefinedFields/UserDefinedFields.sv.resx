@@ -128,4 +128,205 @@
   <data name="SensitivityPart2" xml:space="preserve">
     <value>42 CFR Part 2</value>
   </data>
+  <data name="PageHeader" xml:space="preserve">
+    <value>Användardefinierade fält</value>
+  </data>
+  <data name="PageSubHeader" xml:space="preserve">
+    <value>Hantera anpassade fält för avdelningens entiteter</value>
+  </data>
+  <data name="EntityType" xml:space="preserve">
+    <value>Entitetstyp</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="FieldCount" xml:space="preserve">
+    <value>Fält</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Åtgärder</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Aktiv</value>
+  </data>
+  <data name="NoDefinition" xml:space="preserve">
+    <value>Inte konfigurerad</value>
+  </data>
+  <data name="Configure" xml:space="preserve">
+    <value>Konfigurera</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Redigera</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Ta bort</value>
+  </data>
+  <data name="DeleteDefinitionConfirm" xml:space="preserve">
+    <value>Ta bort all UDF-konfiguration för {0}? Det går inte att ångra.</value>
+  </data>
+  <data name="UdfSummaryTitle" xml:space="preserve">
+    <value>UDF-definitioner per entitet</value>
+  </data>
+  <data name="EditDefinitionHeader" xml:space="preserve">
+    <value>Konfigurera fält — {0}</value>
+  </data>
+  <data name="NewDefinitionHeader" xml:space="preserve">
+    <value>Konfigurera fält — {0}</value>
+  </data>
+  <data name="FieldsSection" xml:space="preserve">
+    <value>Fältdefinitioner</value>
+  </data>
+  <data name="AddField" xml:space="preserve">
+    <value>Lägg till fält</value>
+  </data>
+  <data name="NoFieldsAdded" xml:space="preserve">
+    <value>Inga fält har lagts till ännu. Klicka på ”Lägg till fält” för att definiera det första fältet.</value>
+  </data>
+  <data name="FieldName" xml:space="preserve">
+    <value>Maskinnamn</value>
+  </data>
+  <data name="FieldLabel" xml:space="preserve">
+    <value>Etikett</value>
+  </data>
+  <data name="FieldDataType" xml:space="preserve">
+    <value>Datatyp</value>
+  </data>
+  <data name="FieldRequired" xml:space="preserve">
+    <value>Obligatoriskt</value>
+  </data>
+  <data name="FieldEnabled" xml:space="preserve">
+    <value>Aktiverat</value>
+  </data>
+  <data name="FieldVisibleMobile" xml:space="preserve">
+    <value>Mobil</value>
+  </data>
+  <data name="FieldVisibleReports" xml:space="preserve">
+    <value>Rapporter</value>
+  </data>
+  <data name="FieldOrder" xml:space="preserve">
+    <value>Ordning</value>
+  </data>
+  <data name="RemoveField" xml:space="preserve">
+    <value>Ta bort</value>
+  </data>
+  <data name="RemoveFieldConfirm" xml:space="preserve">
+    <value>Ta bort fältet?</value>
+  </data>
+  <data name="SaveDefinition" xml:space="preserve">
+    <value>Spara definition</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Avbryt</value>
+  </data>
+  <data name="FieldModalTitle" xml:space="preserve">
+    <value>Fältdetaljer</value>
+  </data>
+  <data name="FieldNameHelp" xml:space="preserve">
+    <value>Intern identifierare (bokstäver, siffror och understreck; måste börja med en bokstav eller ett understreck). Måste vara unik inom den här entitetstypen.</value>
+  </data>
+  <data name="FieldLabelHelp" xml:space="preserve">
+    <value>Läsbar etikett som visas för användarna.</value>
+  </data>
+  <data name="FieldDescription" xml:space="preserve">
+    <value>Beskrivning / verktygstips</value>
+  </data>
+  <data name="FieldPlaceholder" xml:space="preserve">
+    <value>Platshållartext</value>
+  </data>
+  <data name="FieldDefaultValue" xml:space="preserve">
+    <value>Standardvärde</value>
+  </data>
+  <data name="FieldGroupName" xml:space="preserve">
+    <value>Grupp / avsnitt</value>
+  </data>
+  <data name="FieldIsReadOnly" xml:space="preserve">
+    <value>Skrivskyddat</value>
+  </data>
+  <data name="FieldIsReadOnlyHelp" xml:space="preserve">
+    <value>När detta är aktiverat visas fältet, men användarna kan inte redigera det.</value>
+  </data>
+  <data name="ValidationSection" xml:space="preserve">
+    <value>Valideringsregler</value>
+  </data>
+  <data name="ValidationMinLength" xml:space="preserve">
+    <value>Minsta längd</value>
+  </data>
+  <data name="ValidationMaxLength" xml:space="preserve">
+    <value>Största längd</value>
+  </data>
+  <data name="ValidationMinValue" xml:space="preserve">
+    <value>Minsta värde</value>
+  </data>
+  <data name="ValidationMaxValue" xml:space="preserve">
+    <value>Största värde</value>
+  </data>
+  <data name="ValidationRegex" xml:space="preserve">
+    <value>Regex-mönster</value>
+  </data>
+  <data name="ValidationRegexError" xml:space="preserve">
+    <value>Felmeddelande för regex</value>
+  </data>
+  <data name="DropdownOptions" xml:space="preserve">
+    <value>Alternativ (nyckel=etikett, ett per rad)</value>
+  </data>
+  <data name="DropdownOptionsHelp" xml:space="preserve">
+    <value>Ange ett alternativ per rad i formatet nyckel=etikett, t.ex. ”yes=Ja” eller ”no=Nej”.</value>
+  </data>
+  <data name="ModalSave" xml:space="preserve">
+    <value>Lägg till fält</value>
+  </data>
+  <data name="ModalClose" xml:space="preserve">
+    <value>Stäng</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>Hem</value>
+  </data>
+  <data name="New" xml:space="preserve">
+    <value>Ny</value>
+  </data>
+  <data name="UdfModule" xml:space="preserve">
+    <value>Användardefinierade fält</value>
+  </data>
+  <data name="EntityCall" xml:space="preserve">
+    <value>Larm</value>
+  </data>
+  <data name="EntityPersonnel" xml:space="preserve">
+    <value>Personal</value>
+  </data>
+  <data name="EntityUnit" xml:space="preserve">
+    <value>Enhet</value>
+  </data>
+  <data name="EntityContact" xml:space="preserve">
+    <value>Kontakt</value>
+  </data>
+  <data name="Preview" xml:space="preserve">
+    <value>Förhandsgranska</value>
+  </data>
+  <data name="PreviewModalTitle" xml:space="preserve">
+    <value>Förhandsgranskning av fält — {0}</value>
+  </data>
+  <data name="PreviewWarningTitle" xml:space="preserve">
+    <value>Endast förhandsgranskning</value>
+  </data>
+  <data name="PreviewWarningBody" xml:space="preserve">
+    <value>Det här är ett exempel på hur fälten ser ut och återges på sidan. Inga data sparas.</value>
+  </data>
+  <data name="PreviewNoFields" xml:space="preserve">
+    <value>Det finns inga aktiverade fält att förhandsgranska.</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Stäng</value>
+  </data>
+  <data name="DefinitionSaved" xml:space="preserve">
+    <value>Fältdefinitionen har sparats.</value>
+  </data>
+  <data name="DefinitionDeleted" xml:space="preserve">
+    <value>Fältdefinitionen har tagits bort.</value>
+  </data>
+  <data name="ValidationErrors" xml:space="preserve">
+    <value>Rätta felen nedan innan du sparar.</value>
+  </data>
 </root>

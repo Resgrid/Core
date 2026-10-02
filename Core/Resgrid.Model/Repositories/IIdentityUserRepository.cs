@@ -37,5 +37,22 @@ namespace Resgrid.Model.Repositories
 		Task<string> GetTokenAsync(string userId, string loginProvider, string name);
 		Task SetTokenAsync(string userId, string loginProvider, string name, string value, CancellationToken cancellationToken);
 		Task RemoveTokenAsync(string userId, string loginProvider, string name, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Replaces a token's value only if it is still exactly <paramref name="expectedValue"/>, in one guarded statement, so
+		/// re-encrypting a seed never overwrites a replacement written meanwhile. Returns true when this call replaced it.
+		/// </summary>
+		Task<bool> TryReplaceTokenAsync(string userId, string loginProvider, string name, string expectedValue, string newValue,
+			CancellationToken cancellationToken);
+
+		/// <summary>One page of a token kind across users, ordered by user id, after <paramref name="afterUserId"/> (null for the first).</summary>
+		Task<IReadOnlyList<UserTokenValue>> GetTokensPageAsync(string loginProvider, string name, string afterUserId, int take,
+			CancellationToken cancellationToken);
+	}
+
+	public sealed class UserTokenValue
+	{
+		public string UserId { get; set; }
+		public string Value { get; set; }
 	}
 }

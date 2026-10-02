@@ -59,15 +59,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 
-  <data name="Name1" xml:space="preserve">
-    <value>this is my long string</value>
-  </data>
-  <data name="Bitmap1" xml:space="preserve">
-    <value>[base64 mime encoded serialized .NET Framework object]</value>
-  </data>
-  <data name="Icon1" xml:space="preserve">
-    <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-  </data>
   <data name="DeleteDepartmentSettingsInfo" xml:space="preserve">
     <value>Request deletion of your department. This is a permanent and non-reversable operation that takes 25 days to complete and needs to run after hours. During the wait period you can cancel the request if you choose.</value>
   </data>
@@ -1111,5 +1102,41 @@
   </data>
   <data name="GroupDispatchScopeNoRoles" xml:space="preserve">
     <value>Nie zdefiniowano jeszcze żadnych ról personelu.</value>
+  </data>
+  <data name="UnitCallDispatchStatusLabel" xml:space="preserve">
+    <value>Status jednostki przy zadysponowaniu do zgłoszenia</value>
+  </data>
+  <data name="UnitCallReleaseStatusLabel" xml:space="preserve">
+    <value>Status jednostki przy zwolnieniu ze zgłoszenia</value>
+  </data>
+  <data name="UnitDefaultStatusesHelp" xml:space="preserve">
+    <value>Te domyślne statusy jednostek korzystają wyłącznie z wbudowanych typów stanów jednostek. Jeśli typ jednostki potrzebuje jednego ze swoich niestandardowych statusów, użyj poniższej tabeli nadpisań dla typów jednostek.</value>
+  </data>
+  <data name="UnitTypeStatusOverridesHeader" xml:space="preserve">
+    <value>Nadpisania statusów dla typów jednostek</value>
+  </data>
+  <data name="UnitTypeStatusOverridesHelp" xml:space="preserve">
+    <value>Widoczne są tu tylko typy jednostek z niestandardowymi statusami jednostek. Pozostaw wartość „Domyślny”, aby użyć ustawionego powyżej wbudowanego statusu obowiązującego w całym dziale.</value>
+  </data>
+  <data name="CheckInTimerActiveStatesLabel" xml:space="preserve">
+    <value>Aktywne stany</value>
+  </data>
+  <data name="CheckInTimerLeaveEmptyForAllStates" xml:space="preserve">
+    <value>Pozostaw puste, aby wybrać „Wszystkie stany”.</value>
+  </data>
+  <data name="CheckInTimerAllStates" xml:space="preserve">
+    <value>Wszystkie</value>
+  </data>
+  <data name="TtsLanguage" xml:space="preserve">
+    <value>Język TTS</value>
+  </data>
+  <data name="TtsLanguageHelp" xml:space="preserve">
+    <value>Wybierz język lub dialekt eSpeak-NG używany w komunikatach głosowych tego działu.</value>
+  </data>
+  <data name="RequirePasswordResetViaEmail" xml:space="preserve">
+    <value>Wymagaj resetowania haseł przez e-mail</value>
+  </data>
+  <data name="RequirePasswordResetViaEmailHelp" xml:space="preserve">
+    <value>Uniemożliwia administratorom działu i grup wybieranie lub oglądanie nowego hasła członka. Zamiast tego akcje resetowania wysyłają członkowi krótkotrwały, jednorazowy link e-mail. Istniejące sesje są unieważniane, gdy członek pomyślnie zmieni hasło.</value>
   </data>
 </root>

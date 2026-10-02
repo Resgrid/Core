@@ -59,86 +59,77 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 
-  <data name="Name1" xml:space="preserve">
-    <value>this is my long string</value>
-  </data>
-  <data name="Bitmap1" xml:space="preserve">
-    <value>[base64 mime encoded serialized .NET Framework object]</value>
-  </data>
-  <data name="Icon1" xml:space="preserve">
-    <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-  </data>
   <data name="AccountInformationHeader" xml:space="preserve">
-    <value>Account Information</value>
+    <value>Kontoinformation</value>
   </data>
   <data name="AddAPerson" xml:space="preserve">
-    <value>Add a Person</value>
+    <value>Lägg till en person</value>
   </data>
   <data name="AddAPersonHelp" xml:space="preserve">
-    <value>Add a single person</value>
+    <value>Lägg till en enskild person</value>
   </data>
   <data name="AddExistingUserHeader" xml:space="preserve">
-    <value>Existing User Added</value>
+    <value>Befintlig användare tillagd</value>
   </data>
   <data name="AddPersonHeader" xml:space="preserve">
-    <value>Add Person</value>
+    <value>Lägg till person</value>
   </data>
   <data name="AddRank" xml:space="preserve">
-    <value>Add Rank</value>
+    <value>Lägg till grad</value>
   </data>
   <data name="AddRoleHeader" xml:space="preserve">
-    <value>Add Role</value>
+    <value>Lägg till roll</value>
   </data>
   <data name="CallOptionsLabel" xml:space="preserve">
-    <value>Call Options</value>
+    <value>Larmalternativ</value>
   </data>
   <data name="ChangePassword" xml:space="preserve">
-    <value>Change Password</value>
+    <value>Byt lösenord</value>
   </data>
   <data name="CheckToDelete" xml:space="preserve">
-    <value>Click the checkbox below to delete this user.</value>
+    <value>Markera kryssrutan nedan för att ta bort användaren.</value>
   </data>
   <data name="ConfirmDelete" xml:space="preserve">
-    <value>Confirm Delete?</value>
+    <value>Bekräfta borttagning?</value>
   </data>
   <data name="ConfirmPasswordHelp" xml:space="preserve">
-    <value>Confirm the users password (must match the one above)</value>
+    <value>Bekräfta användarens lösenord (måste matcha lösenordet ovan)</value>
   </data>
   <data name="ConfirmPasswordLabel" xml:space="preserve">
     <value>Bekräfta lösenord</value>
   </data>
   <data name="ContactDetailsHeader" xml:space="preserve">
-    <value>Contact Details</value>
+    <value>Kontaktuppgifter</value>
   </data>
   <data name="DeleteAreYouSure" xml:space="preserve">
-    <value>Are you sure you want to delete this user?</value>
+    <value>Vill du verkligen ta bort användaren?</value>
   </data>
   <data name="DeleteAreYouSure2" xml:space="preserve">
-    <value>If you choose to delete this user the information below will be permanently deleted. The recommended procedure is to disable the user if they leave the department or organization. Only delete the user after enough time has gone by, the account was a mistake or never used.</value>
+    <value>Om du tar bort användaren raderas informationen nedan permanent. Det rekommenderade förfarandet är att inaktivera användaren om hen lämnar avdelningen eller organisationen. Ta bara bort användaren när tillräckligt lång tid har gått, eller om kontot skapades av misstag eller aldrig har använts.</value>
   </data>
   <data name="DeletePersonHeader" xml:space="preserve">
-    <value>Delete Person</value>
+    <value>Ta bort person</value>
   </data>
   <data name="EditRoleHeader" xml:space="preserve">
-    <value>Edit Role</value>
+    <value>Redigera roll</value>
   </data>
   <data name="Email" xml:space="preserve">
     <value>E-post</value>
   </data>
   <data name="EmailAddressHelp" xml:space="preserve">
-    <value>Email Addresses must be unique</value>
+    <value>E-postadresser måste vara unika</value>
   </data>
   <data name="EmailAddressLabel" xml:space="preserve">
     <value>E-postadress</value>
   </data>
   <data name="EmailAddressPlaceholder" xml:space="preserve">
-    <value>Email Address (must be unique)</value>
+    <value>E-postadress (måste vara unik)</value>
   </data>
   <data name="ExistingUserHelp1" xml:space="preserve">
-    <value>This user</value>
+    <value>Den här användaren</value>
   </data>
   <data name="ExistingUserHelp2" xml:space="preserve">
-    <value>, based on email address, already had a Resgrid account in another department. The user account has now been added &lt;b&gt;with their previous profile settings (name, phone numbers, preferences, etc)&lt;/b&gt; to the department. Because the user is in multiple departments they need activate this department to see it's information from their "View Your Departments" option under their profile dropdown (under the profile picture in the upper left hand corner).</value>
+    <value>, som identifierats via e-postadressen, hade redan ett Resgrid-konto i en annan avdelning. Användarkontot har nu lagts till i avdelningen &lt;b&gt;med sina tidigare profilinställningar (namn, telefonnummer, inställningar osv.)&lt;/b&gt;. Eftersom användaren finns i flera avdelningar måste hen aktivera den här avdelningen via "Dina avdelningar" i profilmenyn (under profilbilden uppe till vänster) för att se dess information.</value>
   </data>
   <data name="AddExistingUserConfirmHeader" xml:space="preserve">
     <value>Lägg till befintlig användare</value>
@@ -159,19 +150,19 @@
     <value>Förnamn</value>
   </data>
   <data name="GroupLabel" xml:space="preserve">
-    <value>Group</value>
+    <value>Grupp</value>
   </data>
   <data name="Home" xml:space="preserve">
     <value>Hem</value>
   </data>
   <data name="IDNumberLabel" xml:space="preserve">
-    <value>ID Number</value>
+    <value>ID-nummer</value>
   </data>
   <data name="IDNumberPlaceholder" xml:space="preserve">
-    <value>Custom Identication Number</value>
+    <value>Eget ID-nummer</value>
   </data>
   <data name="IsGroupAdminLabel" xml:space="preserve">
-    <value>Is Group Admin?</value>
+    <value>Gruppadministratör?</value>
   </data>
   <data name="LastNameLabel" xml:space="preserve">
     <value>Efternamn</value>
@@ -180,49 +171,49 @@
     <value>Efternamn</value>
   </data>
   <data name="ManageInvites" xml:space="preserve">
-    <value>Manage Invites</value>
+    <value>Hantera inbjudningar</value>
   </data>
   <data name="ManageInvitesHelp" xml:space="preserve">
-    <value>Invite multiple people</value>
+    <value>Bjud in flera personer</value>
   </data>
   <data name="ManageRoles" xml:space="preserve">
-    <value>Manage Roles</value>
+    <value>Hantera roller</value>
   </data>
   <data name="MessageOptionsLabel" xml:space="preserve">
-    <value>Message Options</value>
+    <value>Meddelandealternativ</value>
   </data>
   <data name="Mobile" xml:space="preserve">
-    <value>Mobile</value>
+    <value>Mobil</value>
   </data>
   <data name="MobileCarrierLabel" xml:space="preserve">
-    <value>Mobile Carrier</value>
+    <value>Mobiloperatör</value>
   </data>
   <data name="MobileNumberLabel" xml:space="preserve">
-    <value>Mobile Number</value>
+    <value>Mobilnummer</value>
   </data>
   <data name="MobileNumberPlaceholder" xml:space="preserve">
-    <value>Mobile Phone Number</value>
+    <value>Mobiltelefonnummer</value>
   </data>
   <data name="NewPasswordHelp" xml:space="preserve">
-    <value>Passwords must be 8 characters or longer and include a digit (number), an uppercase and lowercase letter</value>
+    <value>Lösenord måste vara minst 8 tecken långa och innehålla en siffra samt en stor och en liten bokstav</value>
   </data>
   <data name="NewPasswordLabel" xml:space="preserve">
-    <value>New Password</value>
+    <value>Nytt lösenord</value>
   </data>
   <data name="NoPersonnelInDepartment" xml:space="preserve">
-    <value>No Personnel In Department</value>
+    <value>Ingen personal i avdelningen</value>
   </data>
   <data name="NoPersonnelInThisGroup" xml:space="preserve">
-    <value>No Personnel in this Group</value>
+    <value>Ingen personal i den här gruppen</value>
   </data>
   <data name="NotificationOptionsLabel" xml:space="preserve">
-    <value>Notification Options</value>
+    <value>Aviseringsalternativ</value>
   </data>
   <data name="NotifyUser" xml:space="preserve">
-    <value>Notify User?</value>
+    <value>Meddela användaren?</value>
   </data>
   <data name="NotifyWarning" xml:space="preserve">
-    <value>Uncheck if you don't want Resgrid to notify the user of this account creation.</value>
+    <value>Avmarkera om du inte vill att Resgrid ska meddela användaren att kontot har skapats.</value>
   </data>
   <data name="RequirePasswordChange" xml:space="preserve">
     <value>Krav pa losenordsbyte</value>
@@ -231,34 +222,34 @@
     <value>Anvandaren maste byta losenord vid forsta inloggningen.</value>
   </data>
   <data name="NoUnGroupedPersonnel" xml:space="preserve">
-    <value>No UnGrouped Personnel</value>
+    <value>Ingen ogrupperad personal</value>
   </data>
   <data name="PersonnelHeader" xml:space="preserve">
     <value>Personal</value>
   </data>
   <data name="PhoneNumbers" xml:space="preserve">
-    <value>Phone Number(s)</value>
+    <value>Telefonnummer</value>
   </data>
   <data name="Push" xml:space="preserve">
     <value>Push</value>
   </data>
   <data name="RankDeleteWarning" xml:space="preserve">
-    <value>WARNING: This will permanently delete this rank. Are you sure you want to delete the rank</value>
+    <value>VARNING: Detta tar bort graden permanent. Vill du verkligen ta bort graden</value>
   </data>
   <data name="RanksHeader" xml:space="preserve">
-    <value>Personnel Ranks</value>
+    <value>Personalgrader</value>
   </data>
   <data name="ReactivatePersonHeader" xml:space="preserve">
-    <value>Reactivate Person</value>
+    <value>Återaktivera person</value>
   </data>
   <data name="ReactivatePersonText1" xml:space="preserve">
-    <value>This user</value>
+    <value>Den här användaren</value>
   </data>
   <data name="ReactivatePersonText2" xml:space="preserve">
-    <value>based on email address, already had an account in the</value>
+    <value>hade enligt e-postadressen redan ett konto i</value>
   </data>
   <data name="ReactivatePersonText3" xml:space="preserve">
-    <value>department but was deleted previously. The user account has now be un-deleted and reactivated inside this department and will appear &lt;b&gt;with their previous profile settings (name, phone numbers, preferences, etc)&lt;/b&gt; in the department.</value>
+    <value>avdelningen men hade tagits bort tidigare. Användarkontot har nu återställts och återaktiverats i den här avdelningen och visas &lt;b&gt;med sina tidigare profilinställningar (namn, telefonnummer, inställningar osv.)&lt;/b&gt; i avdelningen.</value>
   </data>
   <data name="ReactivatePersonConfirmText" xml:space="preserve">
     <value>avdelningen men har tagits bort. Återaktivering för tillbaka kontot i den här avdelningen med dess tidigare profilinställningar (namn, telefonnummer, inställningar). Personen återvänder som vanlig medlem; ge administratörsbehörighet på nytt separat om den behövs.</value>
@@ -267,43 +258,43 @@
     <value>Återaktivera</value>
   </data>
   <data name="RoleDeleteWarning" xml:space="preserve">
-    <value>WARNING: This will permanently delete this role. Are you sure you want to delete the role</value>
+    <value>VARNING: Detta tar bort rollen permanent. Vill du verkligen ta bort rollen</value>
   </data>
   <data name="RoleDescriptionPlaceholder" xml:space="preserve">
-    <value>A description of the role</value>
+    <value>En beskrivning av rollen</value>
   </data>
   <data name="RoleNamePlaceholder" xml:space="preserve">
-    <value>Name of the Role</value>
+    <value>Rollens namn</value>
   </data>
   <data name="RolesHeader" xml:space="preserve">
-    <value>Personnel Roles</value>
+    <value>Personalroller</value>
   </data>
   <data name="RolesLabel" xml:space="preserve">
     <value>Roller</value>
   </data>
   <data name="SetPersonStaffingHeader" xml:space="preserve">
-    <value>Set Person Staffing</value>
+    <value>Ange personens beredskap</value>
   </data>
   <data name="SetPersonStatusHeader" xml:space="preserve">
-    <value>Set Person Status</value>
+    <value>Ange personens status</value>
   </data>
   <data name="SetStaffing" xml:space="preserve">
-    <value>Set Staffing</value>
+    <value>Ange beredskap</value>
   </data>
   <data name="SetStaffingForSelectedPersonnel" xml:space="preserve">
-    <value>Set Staffing for Selected Personnel</value>
+    <value>Ange beredskap för vald personal</value>
   </data>
   <data name="SetStatus" xml:space="preserve">
-    <value>Set Status</value>
+    <value>Ange status</value>
   </data>
   <data name="SetStatusForSelectedPersonnel" xml:space="preserve">
-    <value>Set Status for Selected Personnel</value>
+    <value>Ange status för vald personal</value>
   </data>
   <data name="SpecialNote" xml:space="preserve">
-    <value>Special Note</value>
+    <value>Särskild anmärkning</value>
   </data>
   <data name="SpecialNoteText" xml:space="preserve">
-    <value>Underlying user data is retained in the system so that logs, reports and history is properly retained for the department. It is recommended that all PII/PHI in the user account is altered to be removed, i.e. phone numbers, addresses, etc before you delete the user.</value>
+    <value>Underliggande användardata behålls i systemet så att loggar, rapporter och historik bevaras för avdelningen. Innan du tar bort användaren rekommenderas att du tar bort alla personuppgifter (PII/PHI) från användarkontot, t.ex. telefonnummer, adresser osv.</value>
   </data>
   <data name="Staffing" xml:space="preserve">
     <value>Bemanning</value>
@@ -312,31 +303,31 @@
     <value>Delstat</value>
   </data>
   <data name="Text" xml:space="preserve">
-    <value>Text</value>
+    <value>SMS</value>
   </data>
   <data name="TextWarning" xml:space="preserve">
-    <value>You may incur additional changes for SMS/Text depending on your mobile plan.</value>
+    <value>Beroende på ditt mobilabonnemang kan sms medföra extra kostnader.</value>
   </data>
   <data name="User" xml:space="preserve">
-    <value>User</value>
+    <value>Användare</value>
   </data>
   <data name="UserDetailHeader" xml:space="preserve">
-    <value>User Details</value>
+    <value>Användarinformation</value>
   </data>
   <data name="UsernameHelp" xml:space="preserve">
-    <value>The User Name must be unique</value>
+    <value>Användarnamnet måste vara unikt</value>
   </data>
   <data name="UsernameLabel" xml:space="preserve">
     <value>Användarnamn</value>
   </data>
   <data name="UsersInRank" xml:space="preserve">
-    <value>Users in Rank</value>
+    <value>Användare med graden</value>
   </data>
   <data name="UsersInRole" xml:space="preserve">
-    <value>Users In Role</value>
+    <value>Användare i rollen</value>
   </data>
   <data name="ViewPersonHeader" xml:space="preserve">
-    <value>View Person</value>
+    <value>Visa person</value>
   </data>
   <data name="GenerateReport" xml:space="preserve">
     <value>Generera rapport</value>
@@ -351,7 +342,7 @@
     <value>Händelser för</value>
   </data>
   <data name="AreYouSurePersonnel" xml:space="preserve">
-    <value>Are you sure you want to permanently delete all statuses for this person?</value>
+    <value>Vill du verkligen ta bort alla statusar för den här personen permanent?</value>
   </data>
   <data name="ClearAllStatuses" xml:space="preserve">
     <value>Rensa alla statusar</value>
@@ -363,7 +354,7 @@
     <value>Ja, jag är säker</value>
   </data>
   <data name="ViewRoleHeader" xml:space="preserve">
-    <value>View Role</value>
+    <value>Visa roll</value>
   </data>
   <data name="OutstandingRecordsHeader" xml:space="preserve">
     <value>Ofärdiga poster</value>

@@ -59,15 +59,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 
-  <data name="Name1" xml:space="preserve">
-    <value>this is my long string</value>
-  </data>
-  <data name="Bitmap1" xml:space="preserve">
-    <value>[base64 mime encoded serialized .NET Framework object]</value>
-  </data>
-  <data name="Icon1" xml:space="preserve">
-    <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-  </data>
   <data name="DeleteDepartmentSettingsInfo" xml:space="preserve">
     <value>Request deletion of your department. This is a permanent and non-reversable operation that takes 25 days to complete and needs to run after hours. During the wait period you can cancel the request if you choose.</value>
   </data>
@@ -1111,5 +1102,41 @@
   </data>
   <data name="GroupDispatchScopeNoRoles" xml:space="preserve">
     <value>Inga personalroller har definierats ännu.</value>
+  </data>
+  <data name="UnitCallDispatchStatusLabel" xml:space="preserve">
+    <value>Enhetsstatus vid utlarmning</value>
+  </data>
+  <data name="UnitCallReleaseStatusLabel" xml:space="preserve">
+    <value>Enhetsstatus vid frisläppning från larm</value>
+  </data>
+  <data name="UnitDefaultStatusesHelp" xml:space="preserve">
+    <value>Dessa standardstatusar för enheter använder endast de inbyggda typerna av enhetsstatus. Använd tabellen med åsidosättningar per enhetstyp nedan när en enhetstyp behöver en egen anpassad status.</value>
+  </data>
+  <data name="UnitTypeStatusOverridesHeader" xml:space="preserve">
+    <value>Statusåsidosättningar per enhetstyp</value>
+  </data>
+  <data name="UnitTypeStatusOverridesHelp" xml:space="preserve">
+    <value>Endast enhetstyper med anpassade enhetsstatusar visas här. Låt värdet stå på Standard för att använda den inbyggda status för hela avdelningen som anges ovan.</value>
+  </data>
+  <data name="CheckInTimerActiveStatesLabel" xml:space="preserve">
+    <value>Aktiva statusar</value>
+  </data>
+  <data name="CheckInTimerLeaveEmptyForAllStates" xml:space="preserve">
+    <value>Lämna tomt för ”Alla statusar”.</value>
+  </data>
+  <data name="CheckInTimerAllStates" xml:space="preserve">
+    <value>Alla</value>
+  </data>
+  <data name="TtsLanguage" xml:space="preserve">
+    <value>TTS-språk</value>
+  </data>
+  <data name="TtsLanguageHelp" xml:space="preserve">
+    <value>Välj det eSpeak-NG-språk eller den dialekt som ska användas för avdelningens röstmeddelanden.</value>
+  </data>
+  <data name="RequirePasswordResetViaEmail" xml:space="preserve">
+    <value>Kräv lösenordsåterställning via e-post</value>
+  </data>
+  <data name="RequirePasswordResetViaEmailHelp" xml:space="preserve">
+    <value>Hindrar avdelnings- och gruppadministratörer från att välja eller se en medlems nya lösenord. Vid återställning skickas i stället en kortlivad engångslänk till medlemmen via e-post. Befintliga sessioner återkallas när medlemmen har bytt lösenord.</value>
   </data>
 </root>

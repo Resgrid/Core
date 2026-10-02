@@ -399,4 +399,16 @@
   <data name="PrintSignupSheet" xml:space="preserve">
     <value>Imprimir Hoja de Registro</value>
   </data>
+  <data name="EditRecurrenceParent" xml:space="preserve">
+    <value>Editar entrada principal</value>
+  </data>
+  <data name="CheckInClosed" xml:space="preserve">
+    <value>El registro de entrada ya no está disponible para este evento.</value>
+  </data>
+  <data name="CheckInBy" xml:space="preserve">
+    <value>Entrada registrada por {0}</value>
+  </data>
+  <data name="CheckOutBy" xml:space="preserve">
+    <value>Salida registrada por {0}</value>
+  </data>
 </root>

@@ -1,0 +1,60 @@
+@using Microsoft.Extensions.Localization
+@model Resgrid.Web.Models.AccountViewModels.SsoLogOnViewModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.TwoFactor.TwoFactor> localizer
+@{
+    ViewData["Title"] = "Resgrid | " + localizer["SsoLogOnHeader"];
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    @Html.Partial("_StylePartial")
+</head>
+<body class="gray-bg">
+    <div class="loginColumns animated fadeInDown">
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <div style="text-align: center;">
+                    <img src="~/images/Resgrid_JustText.png" style="width: 200px;" />
+                </div>
+                <h3>@localizer["SsoLogOnHeader"]</h3>
+                <p>@localizer["SsoLogOnDescription"]</p>
+
+                <div class="ibox-content">
+                    <form asp-action="SsoLogOn" asp-controller="Account" method="post" class="m-t" id="ssoLogOnForm">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="ReturnUrl" />
+                        @if (!ViewData.ModelState.IsValid)
+                        {
+                            <div asp-validation-summary="All" class="alert alert-danger"></div>
+                        }
+
+                        <div class="form-group">
+                            <label asp-for="Username">@localizer["SsoUsernameLabel"]</label>
+                            <input asp-for="Username" class="form-control" autocomplete="username" autofocus />
+                        </div>
+                        <p class="text-center text-muted">@localizer["SsoOr"]</p>
+                        <div class="form-group">
+                            <label asp-for="DepartmentCode">@localizer["SsoDepartmentCodeLabel"]</label>
+                            <input asp-for="DepartmentCode" class="form-control" autocomplete="off" />
+                        </div>
+
+                        <button type="submit" class="btn btn-primary block full-width m-b">@localizer["SsoContinueButton"]</button>
+
+                        <p class="m-t text-center">
+                            <a asp-action="LogOn" asp-route-returnUrl="@Model.ReturnUrl">@localizer["SsoUsePasswordLink"]</a>
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @Html.Partial("_ScriptsPartial")
+</body>
+</html>

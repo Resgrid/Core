@@ -10,9 +10,11 @@ using IdentityUser = Resgrid.Model.Identity.IdentityUser;
 namespace Resgrid.Web.Middleware
 {
 	/// <summary>
-	/// Middleware that enforces 2FA enrollment for admin users when the department has
-	/// <c>Require2FAForAdmins</c> enabled. If an in-scope admin has not yet enrolled,
-	/// they are redirected to the 2FA setup page and cannot access any other page until enrolled.
+	/// Middleware that enforces 2FA enrollment: for admin users when the department has
+	/// <c>Require2FAForAdmins</c> enabled, and for every member when the department's security policy has
+	/// <c>RequireMfa</c> and its rollout gate is on (passkey plan section 7.6 rows 1 and 5). A user who must
+	/// enroll is redirected to the 2FA setup page and cannot reach any other page, or the Web API bridge, until
+	/// enrolled: the restricted setup of plan section 6.2.
 	/// </summary>
 	public class Require2FAEnrollmentMiddleware
 	{
@@ -22,6 +24,16 @@ namespace Resgrid.Web.Middleware
 		private static readonly string[] AllowedPaths =
 		{
 			"/User/TwoFactor",
+			// Starting authenticator setup can require confirming the password first.
+			"/User/AccountSecurity/Reauthenticate",
+			// Or, for a member who signs in through the department's identity provider, reauthenticating there: the round trip
+			// starts and ends on these, and completes only what this session began (passkey plan section 6.2).
+			"/Account/SsoSessionBegin",
+			"/Account/SsoReturn",
+			// A shared workstation's lock screen, Lock, End shift and unlock (the provider's too), so the member can always hand
+			// over or resume (plan section 12.5.3).
+			"/SharedSession/",
+			"/Account/SsoUnlockBegin",
 			"/Account/LogOff",
 			"/Account/LogOn",
 			"/favicon.ico",
@@ -60,6 +72,7 @@ namespace Resgrid.Web.Middleware
 			var departmentsService = context.RequestServices.GetService<IDepartmentsService>();
 			var departmentSettingsService = context.RequestServices.GetService<IDepartmentSettingsService>();
 			var departmentGroupsService = context.RequestServices.GetService<IDepartmentGroupsService>();
+			var mfaPolicyService = context.RequestServices.GetService<IMfaPolicyService>();
 
 			if (userManager == null || departmentsService == null || departmentSettingsService == null)
 			{
@@ -74,21 +87,23 @@ namespace Resgrid.Web.Middleware
 				return;
 			}
 
-			try
+			async Task<bool> mustEnroll()
 			{
+				// Enrolled users are never redirected, so check that first and skip the department lookups.
+				if (await userManager.GetTwoFactorEnabledAsync(user))
+					return false;
+
 				var department = await departmentsService.GetDepartmentByUserIdAsync(user.Id);
 				if (department == null)
-				{
-					await _next(context);
-					return;
-				}
+					return false;
+
+				// Department RequireMfa applies to every member, not only administrators.
+				if (mfaPolicyService != null && await mfaPolicyService.IsRequireMfaEnforcedAsync(department.DepartmentId, context.RequestAborted))
+					return true;
 
 				var scope = await departmentSettingsService.GetRequire2FAForAdminsAsync(department.DepartmentId);
 				if (scope == 0)
-				{
-					await _next(context);
-					return;
-				}
+					return false;
 
 				// Determine if user is in scope
 				bool inScope = false;
@@ -105,16 +120,27 @@ namespace Resgrid.Web.Middleware
 						inScope = true;
 				}
 
-				if (inScope && !await userManager.GetTwoFactorEnabledAsync(user))
-				{
-					// Admin has not enrolled — redirect to setup
-					context.Response.Redirect("/User/TwoFactor/Enable2FA?enforced=1");
-					return;
-				}
+				return inScope;
+			}
+
+			// Only the enrollment check fails open. _next must stay outside this try: swallowing a
+			// downstream exception and falling through re-ran the whole request (duplicate side effects,
+			// "Headers are read-only" once the first run had started the response, the real error lost).
+			bool redirectToEnrollment;
+			try
+			{
+				redirectToEnrollment = await mustEnroll();
 			}
 			catch
 			{
-				// Swallow any error to avoid breaking the pipeline — fail open
+				redirectToEnrollment = false;
+			}
+
+			if (redirectToEnrollment)
+			{
+				// Admin has not enrolled — redirect to setup
+				context.Response.Redirect("/User/TwoFactor/Enable2FA?enforced=1");
+				return;
 			}
 
 			await _next(context);

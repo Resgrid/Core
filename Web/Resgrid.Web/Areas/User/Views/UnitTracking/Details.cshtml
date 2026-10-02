@@ -45,13 +45,13 @@
                 <div class="ibox-title"><h5>@localizer["TrackingStatus"]</h5></div>
                 <div class="ibox-content">
                     <dl class="dl-horizontal">
-                        <dt>@commonLocalizer["Status"]</dt><dd><span class="label label-default">@Model.Status</span></dd>
+                        <dt>@commonLocalizer["Status"]</dt><dd><span class="label label-default">@UnitTrackingDisplayHelper.GetLocalizedDeviceStatus(Model.Status, localizer)</span></dd>
                         <dt>@localizer["TrackingProfile"]</dt><dd>@Model.Device.ModelKey</dd>
-                        <dt>@localizer["CertificationStatus"]</dt><dd>@(Model.Profile?.CertificationStatus.ToString() ?? "—")</dd>
+                        <dt>@localizer["CertificationStatus"]</dt><dd>@(Model.Profile == null ? "—" : UnitTrackingDisplayHelper.GetLocalizedCertificationStatus(Model.Profile.CertificationStatus, localizer, commonLocalizer))</dd>
                         <dt>@localizer["DeviceIdentifier"]</dt><dd>@(Model.DisplayIdentifier ?? "—")</dd>
                         <dt>@localizer["FirmwareVersion"]</dt><dd>@(Model.Device.FirmwareVersion ?? "—")</dd>
                         <dt>@localizer["Protocol"]</dt><dd>@(Model.Device.ProtocolKey ?? "—")</dd>
-                        <dt>@localizer["Transport"]</dt><dd>@((Resgrid.Model.UnitTrackingTransportType)Model.Device.TransportType)</dd>
+                        <dt>@localizer["Transport"]</dt><dd>@UnitTrackingDisplayHelper.GetLocalizedTransport((Resgrid.Model.UnitTrackingTransportType)Model.Device.TransportType, localizer, commonLocalizer)</dd>
                         <dt>@localizer["LastSeen"]</dt><dd>@(Model.Device.LastSeenOn?.ToString("g") ?? localizer["Never"])</dd>
                         <dt>@localizer["LastValidFix"]</dt><dd>@(Model.Device.LastPositionOn?.ToString("g") ?? localizer["Never"])</dd>
                         <dt>@localizer["LastReceived"]</dt><dd>@(Model.Device.LastReceivedOn?.ToString("g") ?? localizer["Never"])</dd>
@@ -88,7 +88,7 @@
                                 @foreach (var credential in Model.Credentials)
                                 {
                                     <tr class="@(credential.RevokedOn.HasValue ? "text-muted" : "")">
-                                        <td>@((Resgrid.Model.UnitTrackingAuthMode)credential.AuthMode)</td>
+                                        <td>@UnitTrackingDisplayHelper.GetLocalizedAuthMode((Resgrid.Model.UnitTrackingAuthMode)credential.AuthMode, localizer, commonLocalizer)</td>
                                         <td>@credential.KeyPrefix…</td>
                                         <td>@(credential.ExpiresOn?.ToString("g") ?? "—")</td>
                                         <td>@(credential.LastUsedOn?.ToString("g") ?? localizer["Never"])</td>
@@ -139,7 +139,7 @@
                                     <select asp-for="CredentialInput.AuthMode" class="form-control" id="credential-auth-mode">
                                         @foreach (var authMode in Model.SupportedAuthModes)
                                         {
-                                            <option value="@((int)authMode)">@authMode</option>
+                                            <option value="@((int)authMode)">@UnitTrackingDisplayHelper.GetLocalizedAuthMode(authMode, localizer, commonLocalizer)</option>
                                         }
                                     </select>
                                 </div>

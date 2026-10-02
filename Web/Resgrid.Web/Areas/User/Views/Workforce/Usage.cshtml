@@ -44,7 +44,7 @@
                                 <td>@(u.NeedsReview ? localizer["Review_" + u.ReviewReason] : "")</td>
                                 <td class="text-right">
                                     <a asp-action="Usage" asp-route-deploymentId="@Model.DeploymentId" asp-route-callId="@Model.CallId" asp-route-edit="@u.ResourceUsageEntryId" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i></a>
-                                    <form method="post" asp-action="DeleteUsage" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@u.ResourceUsageEntryId" /><input type="hidden" name="deploymentId" value="@Model.DeploymentId" /><input type="hidden" name="callId" value="@Model.CallId" /><button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@localizer["ConfirmDelete"]');"><i class="fa fa-trash"></i></button></form>
+                                    <form method="post" asp-action="DeleteUsage" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@u.ResourceUsageEntryId" /><input type="hidden" name="deploymentId" value="@Model.DeploymentId" /><input type="hidden" name="callId" value="@Model.CallId" /><button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@JsEncoder.Encode(localizer["ConfirmDelete"])');"><i class="fa fa-trash"></i></button></form>
                                 </td>
                             </tr>
                         }

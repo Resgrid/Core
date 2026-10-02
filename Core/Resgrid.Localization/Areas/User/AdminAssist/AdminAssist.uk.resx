@@ -5190,6 +5190,27 @@
   <data xml:space="preserve" name="TableField.DepartmentNotification.UsersToNotify">
     <value>Сповіщення підрозділу / Користувачі для сповіщення</value>
   </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AcceptRecentLoginMfaForAdp">
+    <value>Політика безпеки підрозділу / Приймати нещодавнє MFA входу для ADP</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AcceptRecentUnlockMfaForAdp">
+    <value>Політика безпеки підрозділу / Приймати нещодавнє MFA розблокування для ADP</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowFederatedMfaForAdp">
+    <value>Політика безпеки підрозділу / Дозволити федеративне MFA для ADP</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowFederatedMfaForLoginMfa">
+    <value>Політика безпеки підрозділу / Дозволити федеративне MFA для MFA входу</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowPasskeysForAdp">
+    <value>Політика безпеки підрозділу / Дозволити ключі доступу для ADP</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowPasskeysForLoginMfa">
+    <value>Політика безпеки підрозділу / Дозволити ключі доступу для MFA входу</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowResponderApproval">
+    <value>Політика безпеки підрозділу / Дозволити підтвердження в Responder</value>
+  </data>
   <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowedIpRanges">
     <value>Політика безпеки підрозділу / Дозволені діапазони IP</value>
   </data>
@@ -5216,6 +5237,15 @@
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.SessionTimeoutMinutes">
     <value>Політика безпеки підрозділу / Тайм-аут сеансу (хвилини)</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.SharedIdleLockMinutes">
+    <value>Політика безпеки підрозділу / Хвилини бездіяльності до блокування спільного сеансу</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.SharedModeRequiredApps">
+    <value>Політика безпеки підрозділу / Застосунки з обов'язковим спільним режимом</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.SharedShiftHours">
+    <value>Політика безпеки підрозділу / Тривалість зміни спільного сеансу (години)</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.AllowLocalLogin">
     <value>SSO підрозділу / Дозволити локальний вхід</value>
@@ -5252,6 +5282,12 @@
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.EntityId">
     <value>SSO підрозділу / ID об'єкта (Entity ID)</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSsoConfig.FederatedMfaMappingJson">
+    <value>SSO підрозділу / JSON зіставлення федеративної MFA</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSsoConfig.IdpSsoUrl">
+    <value>SSO підрозділу / URL єдиного входу IdP</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.IsEnabled">
     <value>SSO підрозділу / Увімкнено</value>
@@ -5427,6 +5463,27 @@
   <data xml:space="preserve" name="TableHelp.DepartmentNotification.UsersToNotify">
     <value>Явно вказані отримувачі-учасники. Належність і придатність каналу оцінюються окремо на момент надсилання.</value>
   </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AcceptRecentLoginMfaForAdp">
+    <value>Дозволяє MFA, виконаному під час входу в тому самому сеансі, відкривати захищені дані в межах вікна посиленої перевірки для методів, дозволених налаштуваннями захищених даних. Зміна завершує поточний доступ до захищених даних. Лише керівний учасник.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AcceptRecentUnlockMfaForAdp">
+    <value>Дозволяє свіжій перевірці розблокування оператора на спільному пристрої відкривати захищені дані. Зміна завершує поточний доступ до захищених даних. Лише керівний учасник.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowFederatedMfaForAdp">
+    <value>Приймає MFA постачальника ідентичності для захищених даних. Потребує перевіреного зіставлення MFA; зміна завершує поточний доступ до захищених даних. Лише керівний учасник.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowFederatedMfaForLoginMfa">
+    <value>Приймає MFA постачальника ідентичності для входу та посиленої перевірки. Потребує перевіреного зіставлення MFA в конфігурації SSO; без нього твердження постачальника ніколи не враховуються. Лише керівний учасник.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowPasskeysForAdp">
+    <value>Приймає ключ доступу для доступу до захищених даних, керування ADP і схвалень захищених робочих процесів. Коди автентифікатора приймаються завжди. Зміна завершує поточний доступ до захищених даних, тож учасники проходять перевірку знову. Лише керівний учасник.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowPasskeysForLoginMfa">
+    <value>Приймає ключ доступу, зареєстрований у застосунку, що надсилає запит, як MFA для входу, зміни підрозділу та посиленої перевірки. Коди автентифікатора приймаються завжди. Зміна підвищує версію політики MFA; сеанси, єдиний другий фактор яких більше не дозволено, проходять перевірку знову. Лише керівний учасник.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowResponderApproval">
+    <value>Приймає підтвердження ключем доступу в застосунку Responder учасника там, де ввімкнено відповідне налаштування ключа доступу; ніколи для змін безпеки чи методів входу облікового запису. Зміна також завершує поточний доступ до захищених даних. Лише керівний учасник.</value>
+  </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowedIpRanges">
     <value>Дозволені мережеві діапазони для входу. Порожнє значення означає відсутність обмеження за діапазоном. Перш ніж звужувати його, перевірте легітимні мережі реагувальників і доступ для відновлення.</value>
   </data>
@@ -5453,6 +5510,15 @@
   </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.SessionTimeoutMinutes">
     <value>Тайм-аут бездіяльності у хвилинах; нуль означає використання поведінки хосту. Перевіряйте керовані політикою сеанси та кожен підтримуваний клієнт, а не покладайтеся на негайний глобальний вихід.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.SharedIdleLockMinutes">
+    <value>Кількість хвилин без активності оператора, після яких сеанс спільного планшета в транспортному засобі або робочої станції блокується, від 1 до 15. Фонові оновлення та вхідні сповіщення не вважаються активністю. Суворіше значення застосовується до поточних сеансів під час їхнього наступного запиту. Лише керівний учасник.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.SharedModeRequiredApps">
+    <value>Сеанси Unit, IC і Dispatch, які цей підрозділ завжди запускає як спільні сеанси, незалежно від налаштування встановлення; також враховуються входи, які не вказують свій застосунок. Потрібні версії застосунків, що підтримують спільний режим. Лише керівний учасник.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.SharedShiftHours">
+    <value>Кількість годин після входу, по завершенні яких спільний сеанс закінчується незалежно від активності, від 1 до 24. Коротше значення завершує поточні сеанси раніше; довше ніколи їх не подовжує. Лише керівний учасник.</value>
   </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.AllowLocalLogin">
     <value>Дозволяє шлях локального пароля поряд із цим провайдером, якщо це допускає політика. Перевіряйте вимогу SSO для всього підрозділу та план відновлення доступу разом.</value>
@@ -5489,6 +5555,12 @@
   </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.EntityId">
     <value>Ідентифікатор постачальника послуг SAML, зареєстрований у постачальника ідентифікації. Він має відповідати налаштованій інтеграції.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.FederatedMfaMappingJson">
+    <value>Які результати входу в постачальника зараховуються як MFA для додаткової перевірки через постачальника. Зміна зіставлення, видавця або клієнта потребує нового успішного тесту, перш ніж MFA постачальника знову буде прийнято.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.IdpSsoUrl">
+    <value>Адреса входу провайдера SAML, на яку вхід, розпочатий з Resgrid, надсилає свій запит. Перевірте її за метаданими провайдера, перш ніж на неї покладатися.</value>
   </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.IsEnabled">
     <value>Робить це налаштування провайдера доступним для підтримуваного процесу SSO. Збережений прапорець увімкнення не є успішним тестом входу.</value>

@@ -153,4 +153,25 @@ Zespół Resgrid</value>
   <data name="AdpEgressWarning" xml:space="preserve"><value>Przyjmuję do wiadomości, że udostępnione szczegóły opuszczają Resgrid i mogą być przechowywane przez operatorów telefonicznych lub odbiorców.</value></data>
   <data name="AdpAllowed" xml:space="preserve"><value>Zezwól na chronioną treść</value></data>
   <data name="AdpSupportNotice" xml:space="preserve"><value>Pracownik Resgrid poprosił o dostęp do chronionego zgłoszenia {0} w sprawie pomocy {1}. Dostęp wymaga niezależnego zatwierdzenia i wygasa w ciągu 15 minut.</value></data>
+  <data name="SecurityNoticeSubject" xml:space="preserve"><value>Zmiana zabezpieczeń na Twoim koncie Resgrid</value></data>
+  <data name="SecurityNoticeGreeting" xml:space="preserve"><value>Cześć {0},</value></data>
+  <data name="SecurityNoticeGreetingNoName" xml:space="preserve"><value>Cześć,</value></data>
+  <data name="SecurityNoticeTotpEnabled" xml:space="preserve"><value>Skonfigurowano aplikację uwierzytelniającą do dwuetapowego logowania na Twoim koncie.</value></data>
+  <data name="SecurityNoticeTotpReplaced" xml:space="preserve"><value>Aplikacja uwierzytelniająca na Twoim koncie została zastąpiona, a wszystkie zalogowane sesje zostały zakończone.</value></data>
+  <data name="SecurityNoticeTotpDisabled" xml:space="preserve"><value>Aplikacja uwierzytelniająca została usunięta z Twojego konta, więc logowanie dwuetapowe jest wyłączone. Wszystkie zalogowane sesje zostały zakończone.</value></data>
+  <data name="SecurityNoticeRecoveryCodesRegenerated" xml:space="preserve"><value>Utworzono nowe kody odzyskiwania dla Twojego konta. Stare kody już nie działają.</value></data>
+  <data name="SecurityNoticeRecoveryCodeUsed" xml:space="preserve"><value>Jeden z Twoich kodów odzyskiwania został użyty do zalogowania się lub do rozpoczęcia odzyskiwania konta.</value></data>
+  <data name="SecurityNoticePasskeyRegistered" xml:space="preserve"><value>Do Twojego konta dodano nowy klucz dostępu.</value></data>
+  <data name="SecurityNoticePasskeyRemoved" xml:space="preserve"><value>Z Twojego konta usunięto klucz dostępu.</value></data>
+  <data name="SecurityNoticeApprovalTurnedOn" xml:space="preserve"><value>Klucz dostępu w aplikacji Resgrid Responder może teraz zatwierdzać logowania do Twoich innych aplikacji Resgrid.</value></data>
+  <data name="SecurityNoticeApprovalTurnedOff" xml:space="preserve"><value>Klucz dostępu w aplikacji Resgrid Responder nie może już zatwierdzać logowań do Twoich innych aplikacji Resgrid.</value></data>
+  <data name="SecurityNoticeApprovalNotMe" xml:space="preserve"><value>W aplikacji Resgrid Responder wskazano, że nie próbowałeś się logować. To logowanie zostało zatrzymane, a prośby o zatwierdzenie są wstrzymane na 15 minut. Ktoś może znać Twoje hasło – zmień je teraz.</value></data>
+  <data name="SecurityNoticeApprovalSuspended" xml:space="preserve"><value>Kilka kolejnych próśb o zatwierdzenie zostało odrzuconych lub pozostało bez odpowiedzi, więc prośby o zatwierdzenie są wstrzymane na 15 minut.</value></data>
+  <data name="SecurityNoticeFactorRecoveryCompleted" xml:space="preserve"><value>Twoje konto zostało odzyskane za pomocą kodu odzyskiwania. Skonfigurowano nową aplikację uwierzytelniającą, utworzono nowe kody odzyskiwania, a wszystkie zalogowane sesje zostały zakończone.</value></data>
+  <data name="SecurityNoticeSharedInstallationFactor" xml:space="preserve"><value>Aplikacja uwierzytelniająca lub klucz dostępu zostały skonfigurowane na współdzielonym tablecie w pojeździe lub stanowisku pracy. Jeśli ktoś inny mógł zobaczyć kod konfiguracji lub może używać tego urządzenia, zastąp aplikację uwierzytelniającą albo usuń klucz dostępu ze swojego urządzenia.</value></data>
+  <data name="SecurityNoticeActivityReported" xml:space="preserve"><value>Weryfikacja na Twoim koncie została zgłoszona jako niewykonana przez Ciebie. Jeśli posłużyła do zalogowania na innym urządzeniu, ta sesja została zakończona. Zmień hasło i sprawdź swoje metody logowania.</value></data>
+  <data name="SecurityNoticeWhen" xml:space="preserve"><value>Kiedy: {0} UTC</value></data>
+  <data name="SecurityNoticeWhere" xml:space="preserve"><value>Gdzie: {0}</value></data>
+  <data name="SecurityNoticeNotYou" xml:space="preserve"><value>Jeśli to nie Ty, zresetuj teraz hasło na stronie {0}, a następnie zaloguj się i sprawdź swoje metody logowania. Resgrid nigdy nie prosi o kod ani hasło przez e-mail.</value></data>
+  <data name="SecurityNoticeFooter" xml:space="preserve"><value>To jest automatyczne powiadomienie o bezpieczeństwie Twojego konta Resgrid.</value></data>
 </root>

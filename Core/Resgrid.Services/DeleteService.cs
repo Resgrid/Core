@@ -52,6 +52,7 @@ namespace Resgrid.Services
 		private readonly IDeploymentService _deploymentService;
 		private readonly IDeploymentPersonnelRepository _deploymentPersonnel;
 		private readonly IWorkforceService _workforceService;
+		private readonly IMfaAccountCleanupService _mfaAccountCleanup;
 
 		public DeleteService(IAuthorizationService authorizationService, IDepartmentsService departmentsService,
 			ICallsService callsService, IActionLogsService actionLogsService, IUsersService usersService,
@@ -65,8 +66,10 @@ namespace Resgrid.Services
 			IDepartmentMemberSensitiveDataService memberSensitiveDataService,
 			IDepartmentMemberEmergencyContactService emergencyContactService,
 			IInventoryStore inventoryStore = null, Resgrid.Model.Repositories.Queries.IUnitOfWork inventoryUnitOfWork = null,
-			IDeploymentService deploymentService = null, IDeploymentPersonnelRepository deploymentPersonnel = null, IWorkforceService workforceService = null)
+			IDeploymentService deploymentService = null, IDeploymentPersonnelRepository deploymentPersonnel = null, IWorkforceService workforceService = null,
+			IMfaAccountCleanupService mfaAccountCleanup = null)
 		{
+			_mfaAccountCleanup = mfaAccountCleanup;
 			_deploymentService = deploymentService;
 			_deploymentPersonnel = deploymentPersonnel;
 			_workforceService = workforceService;
@@ -321,6 +324,10 @@ namespace Resgrid.Services
 			await _userSessionService.RevokeAllAsync(userIdToDelete, userIdToDelete,
 				UserSessionRevocationReason.AccountDeactivated, System.DateTime.UtcNow, cancellationToken);
 			await _usersService.ClearOutUserLoginAsync(userIdToDelete);
+
+			// Passkeys, evidence, pending challenges and approvals, notices and recovery state (passkey plan section 6.4).
+			if (_mfaAccountCleanup != null)
+				await _mfaAccountCleanup.RemoveForDeletedAccountAsync(userIdToDelete, actingUserId, cancellationToken);
 
 			return DeleteUserResults.NoFailure;
 		}

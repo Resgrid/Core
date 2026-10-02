@@ -8,6 +8,11 @@ var resgrid;
                 resgrid.common.analytics.track('Security Audits');
 
                 var textRenderer = $.fn.dataTable.render.text();
+                // Localized text written by Audits.cshtml; table is the DataTables "language" option.
+                var strings = window.resgridAuditLogStrings;
+                var successfulHtml = textRenderer.display(strings.successful);
+                var failedHtml = textRenderer.display(strings.failed);
+                var viewHtml = textRenderer.display(strings.view);
                 var table = $("#auditLogsList").DataTable({
                     ajax: {
                         url: resgrid.absoluteBaseUrl + '/User/Security/GetAuditLogsList',
@@ -15,10 +20,7 @@ var resgrid;
                     },
                     pageLength: 50,
                     order: [[1, 'desc']],
-                    language: {
-                        search: 'Search audit logs:',
-                        searchPlaceholder: 'Name, ID, email, date/time, or type'
-                    },
+                    language: strings.table,
                     initComplete: function () {
                         var api = this.api();
                         var typeColumn = api.column('auditType:name');
@@ -42,7 +44,7 @@ var resgrid;
                         },
                         {
                             data: 'Timestamp',
-                            title: 'Timestamp',
+                            title: strings.columns.timestamp,
                             render: function (data, type, row) {
                                 if (type === 'sort' || type === 'type') {
                                     return row.TimestampSort == null ? -1 : row.TimestampSort;
@@ -55,40 +57,40 @@ var resgrid;
                                 return data;
                             }
                         },
-                        { data: 'Type', name: 'auditType', title: 'Type', render: textRenderer },
-                        { data: 'Name', title: 'Logged By', render: textRenderer },
+                        { data: 'Type', name: 'auditType', title: strings.columns.type, render: textRenderer },
+                        { data: 'Name', title: strings.columns.loggedBy, render: textRenderer },
                         {
                             data: 'Successful',
-                            title: 'Result',
+                            title: strings.columns.result,
                             render: function (data, type) {
                                 if (type === 'display') {
                                     return data
-                                        ? '<span class="label label-success">Successful</span>'
-                                        : '<span class="label label-danger">Failed</span>';
+                                        ? '<span class="label label-success">' + successfulHtml + '</span>'
+                                        : '<span class="label label-danger">' + failedHtml + '</span>';
                                 }
 
                                 if (type === 'filter') {
-                                    return data ? 'Successful' : 'Failed';
+                                    return data ? strings.successful : strings.failed;
                                 }
 
                                 return data ? 1 : 0;
                             }
                         },
-                        { data: 'Message', title: 'Message', render: textRenderer },
+                        { data: 'Message', title: strings.columns.message, render: textRenderer },
                         {
                             data: 'SearchTerms',
-                            title: 'Search Terms',
+                            title: strings.columns.searchTerms,
                             visible: false,
                             searchable: true,
                             orderable: false
                         },
                         {
                             data: 'AuditLogId',
-                            title: 'Actions',
+                            title: strings.columns.actions,
                             orderable: false,
                             searchable: false,
                             render: function (data) {
-                                return '<a class="btn btn-sm btn-primary" href="' + resgrid.absoluteBaseUrl + '/User/Security/ViewAudit?auditLogId=' + data + '">View</a>';
+                                return '<a class="btn btn-sm btn-primary" href="' + resgrid.absoluteBaseUrl + '/User/Security/ViewAudit?auditLogId=' + data + '">' + viewHtml + '</a>';
                             }
                         }
                     ]

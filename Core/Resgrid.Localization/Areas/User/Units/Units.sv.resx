@@ -59,127 +59,394 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 
-  <data name="Name1" xml:space="preserve">
-    <value>this is my long string</value>
-  </data>
-  <data name="Bitmap1" xml:space="preserve">
-    <value>[base64 mime encoded serialized .NET Framework object]</value>
-  </data>
-  <data name="Icon1" xml:space="preserve">
-    <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-  </data>
   <data name="AddLog" xml:space="preserve">
-    <value>Add Log</value>
+    <value>Lägg till logg</value>
   </data>
   <data name="AddRole" xml:space="preserve">
-    <value>Add Role</value>
+    <value>Lägg till roll</value>
   </data>
   <data name="AddUnitLogHeader" xml:space="preserve">
-    <value>Add Unit Log</value>
+    <value>Lägg till enhetslogg</value>
   </data>
   <data name="AreYouSure" xml:space="preserve">
-    <value>Are you sure you want to permanently delete all statuses for this unit?</value>
+    <value>Vill du verkligen ta bort alla statusar för den här enheten permanent?</value>
   </data>
   <data name="ClearAllStatuses" xml:space="preserve">
-    <value>Clear out all Statuses For Unit</value>
+    <value>Rensa alla statusar för enheten</value>
   </data>
   <data name="DeleteAll" xml:space="preserve">
-    <value>Delete All</value>
+    <value>Ta bort alla</value>
   </data>
   <data name="DeleteUnitWarning" xml:space="preserve">
-    <value>WARNING: This will permanently delete this unit. Are you sure you want to delete the unit</value>
+    <value>VARNING: Detta tar bort enheten permanent. Vill du verkligen ta bort enheten</value>
   </data>
   <data name="EditUnitHeader" xml:space="preserve">
-    <value>Edit Unit</value>
+    <value>Redigera enhet</value>
   </data>
   <data name="EventsFor" xml:space="preserve">
-    <value>Events for</value>
+    <value>Händelser för</value>
   </data>
   <data name="GenerateReport" xml:space="preserve">
-    <value>Generate Report</value>
+    <value>Generera rapport</value>
   </data>
   <data name="LogBodyLabel" xml:space="preserve">
-    <value>Log Body (Narrative)</value>
+    <value>Loggtext (berättelse)</value>
   </data>
   <data name="LogBodyPlaceholder" xml:space="preserve">
-    <value>A Narrative for the unit log</value>
+    <value>En berättelse för enhetsloggen</value>
   </data>
   <data name="Logs" xml:space="preserve">
     <value>Loggar</value>
   </data>
   <data name="NewUnitHeader" xml:space="preserve">
-    <value>New Unit</value>
+    <value>Ny enhet</value>
   </data>
   <data name="NotOccupied" xml:space="preserve">
-    <value>Not Occupied</value>
+    <value>Ej tillsatt</value>
   </data>
   <data name="NoUnGroupedUnits" xml:space="preserve">
-    <value>No Un-Grouped Units</value>
+    <value>Inga ogrupperade enheter</value>
   </data>
   <data name="NoUnitsInDepartment" xml:space="preserve">
-    <value>No Units in Department</value>
+    <value>Inga enheter i avdelningen</value>
   </data>
   <data name="NoUnitsInThisGroup" xml:space="preserve">
-    <value>No Units in this Group</value>
+    <value>Inga enheter i den här gruppen</value>
   </data>
   <data name="NoUnitsToStaff" xml:space="preserve">
-    <value>To set staffing on units you need to have Units created and Roles (i.e. Driver, Operator, etc) created within those units. </value>
+    <value>För att ange bemanning för enheter måste du ha skapat enheter och roller (t.ex. förare, operatör osv.) i dessa enheter. </value>
   </data>
   <data name="RemoveThisRole" xml:space="preserve">
-    <value>Remove this role</value>
+    <value>Ta bort den här rollen</value>
   </data>
   <data name="RoleName" xml:space="preserve">
-    <value>Role Name</value>
+    <value>Rollnamn</value>
   </data>
   <data name="RoleNameHeader" xml:space="preserve">
-    <value>Role Name</value>
+    <value>Rollnamn</value>
   </data>
   <data name="SelectUnit" xml:space="preserve">
-    <value>Select Unit</value>
+    <value>Välj enhet</value>
   </data>
   <data name="SetMultipleUnitStatusHeader" xml:space="preserve">
-    <value>Set Status for Units</value>
+    <value>Ange status för enheter</value>
   </data>
   <data name="SetStatus" xml:space="preserve">
-    <value>Set Status</value>
+    <value>Ange status</value>
   </data>
   <data name="SetStatusForSelectedUnits" xml:space="preserve">
-    <value>Set Status for Selected Units</value>
+    <value>Ange status för valda enheter</value>
   </data>
   <data name="SetUnitStatusHeader" xml:space="preserve">
-    <value>Set Unit Status</value>
+    <value>Ange enhetsstatus</value>
   </data>
   <data name="UnitsListStateWarning" xml:space="preserve">
-    <value>You have selected a unit, only other units with the same custom (or default) states can be selected.</value>
+    <value>Du har valt en enhet. Endast andra enheter med samma anpassade (eller standard-) statusar kan väljas.</value>
   </data>
   <data name="UnitStaffing" xml:space="preserve">
-    <value>Unit Staffing</value>
+    <value>Enhetsbemanning</value>
   </data>
   <data name="UnitStaffingHeader" xml:space="preserve">
-    <value>Unit Staffing</value>
+    <value>Enhetsbemanning</value>
   </data>
   <data name="ViewEvents" xml:space="preserve">
-    <value>View Events</value>
+    <value>Visa händelser</value>
   </data>
   <data name="ViewUnitEventsHeader" xml:space="preserve">
-    <value>View Unit Events</value>
+    <value>Visa enhetshändelser</value>
   </data>
   <data name="ViewUnitLogsHeader" xml:space="preserve">
-    <value>View Unit Logs</value>
+    <value>Visa enhetsloggar</value>
   </data>
   <data name="YesImSure" xml:space="preserve">
-    <value>Yes I'm sure</value>
+    <value>Ja, jag är säker</value>
   </data>
   <data name="YouCanAddType1" xml:space="preserve">
-    <value>You can add a new Type</value>
+    <value>Du kan lägga till en ny typ</value>
   </data>
   <data name="YouCanAddType2" xml:space="preserve">
-    <value>here</value>
+    <value>här</value>
   </data>
   <data name="RequiredPersonnelRoleHeader" xml:space="preserve">
     <value>Obligatorisk personalroll</value>
   </data>
   <data name="RequiredHeader" xml:space="preserve">
     <value>Krävs?</value>
+  </data>
+  <data name="AddTrackingBinding" xml:space="preserve">
+    <value>Lägg till spårningskoppling</value>
+  </data>
+  <data name="AllowedSourceCidrs" xml:space="preserve">
+    <value>Tillåtna källnätverk</value>
+  </data>
+  <data name="AllowedSourceCidrsHelp" xml:space="preserve">
+    <value>Valfria CIDR-intervall för IPv4 eller IPv6, avgränsade med kommatecken, som får skicka positioner för den här spåraren.</value>
+  </data>
+  <data name="AuthenticationMode" xml:space="preserve">
+    <value>Autentiseringsläge</value>
+  </data>
+  <data name="BasicUsername" xml:space="preserve">
+    <value>Användarnamn för Basic-autentisering</value>
+  </data>
+  <data name="BasicUsernameRequired" xml:space="preserve">
+    <value>Ett användarnamn för Basic-autentisering krävs.</value>
+  </data>
+  <data name="CertificationStatus" xml:space="preserve">
+    <value>Certifieringsstatus</value>
+  </data>
+  <data name="CopyToClipboard" xml:space="preserve">
+    <value>Kopiera</value>
+  </data>
+  <data name="CreateCredential" xml:space="preserve">
+    <value>Skapa autentiseringsuppgift</value>
+  </data>
+  <data name="CredentialPrefix" xml:space="preserve">
+    <value>Prefix för autentiseringsuppgift</value>
+  </data>
+  <data name="CredentialSaved" xml:space="preserve">
+    <value>Jag har sparat autentiseringsuppgiften</value>
+  </data>
+  <data name="Credentials" xml:space="preserve">
+    <value>Autentiseringsuppgifter</value>
+  </data>
+  <data name="CredentialToken" xml:space="preserve">
+    <value>Token för autentiseringsuppgift</value>
+  </data>
+  <data name="CustomHeaderRequired" xml:space="preserve">
+    <value>Ett namn på den anpassade rubriken krävs.</value>
+  </data>
+  <data name="DeleteTrackingWarning" xml:space="preserve">
+    <value>Ta bort spårningskopplingen? Dess autentiseringsuppgifter återkallas och den slutar ta emot positioner.</value>
+  </data>
+  <data name="DeviceIdentifier" xml:space="preserve">
+    <value>Spårarens identifierare</value>
+  </data>
+  <data name="DeviceIdentifierHelp" xml:space="preserve">
+    <value>Använd den identifierare som spåraren eller vidarebefordringstjänsten skickar. Den normaliseras innan den lagras.</value>
+  </data>
+  <data name="DisableTracking" xml:space="preserve">
+    <value>Inaktivera spårning</value>
+  </data>
+  <data name="DisableTrackingWarning" xml:space="preserve">
+    <value>Inaktivera kopplingen och återkalla alla dess autentiseringsuppgifter?</value>
+  </data>
+  <data name="EditTrackingBinding" xml:space="preserve">
+    <value>Redigera spårningskoppling</value>
+  </data>
+  <data name="EndpointUrl" xml:space="preserve">
+    <value>HTTPS-slutpunkt</value>
+  </data>
+  <data name="ExpiresOn" xml:space="preserve">
+    <value>Upphör</value>
+  </data>
+  <data name="FirmwareVersion" xml:space="preserve">
+    <value>Firmwareversion</value>
+  </data>
+  <data name="HardwareTracking" xml:space="preserve">
+    <value>GPS-spårning med hårdvara</value>
+  </data>
+  <data name="HardwareTrackingDescription" xml:space="preserve">
+    <value>Koppla en hårdvaruspårare eller vidarebefordringstjänst till den här enheten, utfärda autentiseringsuppgifter och övervaka leveransstatus.</value>
+  </data>
+  <data name="HeaderName" xml:space="preserve">
+    <value>Rubriknamn</value>
+  </data>
+  <data name="HeaderValue" xml:space="preserve">
+    <value>Rubrikvärde</value>
+  </data>
+  <data name="LastErrorCode" xml:space="preserve">
+    <value>Senaste felkod</value>
+  </data>
+  <data name="LastReceived" xml:space="preserve">
+    <value>Senast mottagen</value>
+  </data>
+  <data name="LastSeen" xml:space="preserve">
+    <value>Senast sedd</value>
+  </data>
+  <data name="LastUsed" xml:space="preserve">
+    <value>Senast använd</value>
+  </data>
+  <data name="LastValidFix" xml:space="preserve">
+    <value>Senaste giltiga position</value>
+  </data>
+  <data name="JsonPayload" xml:space="preserve">
+    <value>JSON-nyttolast</value>
+  </data>
+  <data name="Never" xml:space="preserve">
+    <value>Aldrig</value>
+  </data>
+  <data name="NoCredentials" xml:space="preserve">
+    <value>Inga autentiseringsuppgifter har utfärdats för den här kopplingen.</value>
+  </data>
+  <data name="NoTrackingBindings" xml:space="preserve">
+    <value>Inga spårningskopplingar för hårdvara är konfigurerade för den här enheten.</value>
+  </data>
+  <data name="OneTimeCredentialHeader" xml:space="preserve">
+    <value>Spara autentiseringsuppgiften för spårning</value>
+  </data>
+  <data name="OneTimeCredentialWarning" xml:space="preserve">
+    <value>Autentiseringsuppgiften visas bara en gång. Kopiera slutpunkten och hemligheten till spårarens konfiguration innan du lämnar sidan.</value>
+  </data>
+  <data name="Protocol" xml:space="preserve">
+    <value>Protokoll</value>
+  </data>
+  <data name="PreviewJson" xml:space="preserve">
+    <value>Validera test-JSON</value>
+  </data>
+  <data name="PreviewJsonMalformed" xml:space="preserve">
+    <value>JSON-nyttolasten är felformaterad, innehåller dubbletter av fält eller överskrider gränsen för nästlingsdjup.</value>
+  </data>
+  <data name="PreviewJsonPositionInvalid" xml:space="preserve">
+    <value>Varje position kräver ett eventId som inte är tomt samt giltiga värden för latitud och longitud.</value>
+  </data>
+  <data name="PreviewJsonPositionsRequired" xml:space="preserve">
+    <value>En batch måste innehålla minst ett JSON-positionsobjekt.</value>
+  </data>
+  <data name="PreviewJsonRequired" xml:space="preserve">
+    <value>Ange en JSON-nyttolast att validera.</value>
+  </data>
+  <data name="PreviewJsonSuccess" xml:space="preserve">
+    <value>Förhandsgranskningen godkände {0} position(er). Inget köades eller lagrades.</value>
+  </data>
+  <data name="PreviewJsonTooLarge" xml:space="preserve">
+    <value>JSON-nyttolasten överskrider den konfigurerade storleksgränsen för begäranden.</value>
+  </data>
+  <data name="PreviewJsonTooManyPositions" xml:space="preserve">
+    <value>JSON-batchen överskrider den konfigurerade gränsen för antal positioner.</value>
+  </data>
+  <data name="RevokeCredential" xml:space="preserve">
+    <value>Återkalla</value>
+  </data>
+  <data name="RevokeCredentialWarning" xml:space="preserve">
+    <value>Återkalla autentiseringsuppgiften? Avsändaren kommer inte längre att kunna använda den.</value>
+  </data>
+  <data name="RetryExpectation" xml:space="preserve">
+    <value>Förväntade återförsök:</value>
+  </data>
+  <data name="Revoked" xml:space="preserve">
+    <value>Återkallad</value>
+  </data>
+  <data name="RotateCredential" xml:space="preserve">
+    <value>Rotera</value>
+  </data>
+  <data name="SaveTrackingBinding" xml:space="preserve">
+    <value>Spara spårningskoppling</value>
+  </data>
+  <data name="SendTestJson" xml:space="preserve">
+    <value>Skicka test-JSON</value>
+  </data>
+  <data name="SendTestJsonDescription" xml:space="preserve">
+    <value>Validera en generisk Resgrid-JSON-nyttolast utan att autentisera, köa eller lagra den. Förhandsgranskningen är endast tillgänglig för avdelningsadministratörer utanför produktionsmiljön.</value>
+  </data>
+  <data name="SetupInstructions" xml:space="preserve">
+    <value>Installationsanvisningar</value>
+  </data>
+  <data name="SecondaryIdentifier" xml:space="preserve">
+    <value>Sekundär identifierare</value>
+  </data>
+  <data name="SelectTrackingProfile" xml:space="preserve">
+    <value>Välj en certifierad spårningsprofil</value>
+  </data>
+  <data name="SelectValidTrackingProfile" xml:space="preserve">
+    <value>Välj en certifierad spårningsprofil.</value>
+  </data>
+  <data name="SourcePriority" xml:space="preserve">
+    <value>Källprioritet</value>
+  </data>
+  <data name="TrackingBindingActions" xml:space="preserve">
+    <value>Åtgärder för spårningskoppling</value>
+  </data>
+  <data name="TrackingBindingCreatedMessage" xml:space="preserve">
+    <value>Spårningskopplingen har skapats. Skapa en autentiseringsuppgift för att slutföra konfigurationen.</value>
+  </data>
+  <data name="TrackingBindingDeletedMessage" xml:space="preserve">
+    <value>Spårningskopplingen har tagits bort.</value>
+  </data>
+  <data name="TrackingBindingDisabledMessage" xml:space="preserve">
+    <value>Spårningskopplingen har inaktiverats och dess autentiseringsuppgifter har återkallats.</value>
+  </data>
+  <data name="TrackingBindingUpdatedMessage" xml:space="preserve">
+    <value>Spårningskopplingen har uppdaterats.</value>
+  </data>
+  <data name="TrackingCredentialRevokedMessage" xml:space="preserve">
+    <value>Autentiseringsuppgiften för spårning har återkallats.</value>
+  </data>
+  <data name="TrackingDisplayName" xml:space="preserve">
+    <value>Visningsnamn</value>
+  </data>
+  <data name="TrackingEnabled" xml:space="preserve">
+    <value>Aktiverad</value>
+  </data>
+  <data name="TrackingIdentifierRequired" xml:space="preserve">
+    <value>Spårarens identifierare krävs för den valda profilen.</value>
+  </data>
+  <data name="TrackingProfile" xml:space="preserve">
+    <value>Spårningsprofil</value>
+  </data>
+  <data name="TrackingStatus" xml:space="preserve">
+    <value>Spårningsstatus</value>
+  </data>
+  <data name="Transport" xml:space="preserve">
+    <value>Transport</value>
+  </data>
+  <data name="UnsupportedTrackingAuth" xml:space="preserve">
+    <value>Det valda autentiseringsläget stöds inte av den här spårningsprofilen.</value>
+  </data>
+  <data name="ViewTrackingStatus" xml:space="preserve">
+    <value>Visa spårningsstatus</value>
+  </data>
+  <data name="AuthModeBearer" xml:space="preserve">
+    <value>Bearer-token</value>
+  </data>
+  <data name="AuthModeBasic" xml:space="preserve">
+    <value>Basic-autentisering</value>
+  </data>
+  <data name="AuthModeCustomHeader" xml:space="preserve">
+    <value>Anpassad rubrik</value>
+  </data>
+  <data name="AuthModeCapabilityPath" xml:space="preserve">
+    <value>URL med token i sökvägen</value>
+  </data>
+  <data name="TransportNativeHttps" xml:space="preserve">
+    <value>Direkt HTTPS</value>
+  </data>
+  <data name="TransportManagedHttpsJson" xml:space="preserve">
+    <value>Hanterad HTTPS (JSON)</value>
+  </data>
+  <data name="TransportNativeTcpUdp" xml:space="preserve">
+    <value>Direkt TCP/UDP</value>
+  </data>
+  <data name="TransportProtocolGateway" xml:space="preserve">
+    <value>Protokollgateway</value>
+  </data>
+  <data name="DeviceStatusNeverSeen" xml:space="preserve">
+    <value>Aldrig sedd</value>
+  </data>
+  <data name="DeviceStatusOnline" xml:space="preserve">
+    <value>Online</value>
+  </data>
+  <data name="DeviceStatusStale" xml:space="preserve">
+    <value>Inga aktuella data</value>
+  </data>
+  <data name="DeviceStatusError" xml:space="preserve">
+    <value>Fel</value>
+  </data>
+  <data name="DeviceStatusDisabled" xml:space="preserve">
+    <value>Inaktiverad</value>
+  </data>
+  <data name="CertificationCandidate" xml:space="preserve">
+    <value>Kandidat</value>
+  </data>
+  <data name="CertificationFixtureVerified" xml:space="preserve">
+    <value>Verifierad med exempeldata</value>
+  </data>
+  <data name="CertificationHardwareVerified" xml:space="preserve">
+    <value>Verifierad på hårdvara</value>
+  </data>
+  <data name="CertificationCertified" xml:space="preserve">
+    <value>Certifierad</value>
+  </data>
+  <data name="CertificationDeprecated" xml:space="preserve">
+    <value>Utfasad</value>
   </data>
 </root>

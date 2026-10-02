@@ -17,6 +17,22 @@ namespace Resgrid.Web.Areas.User.Models.Security
 		public string CurrentPassword { get; set; }
 	}
 
+	/// <summary>Confirms the signed-in user's password before a credential change (passkey plan section 6.2).</summary>
+	public class ReauthenticateView
+	{
+		public string ReturnUrl { get; set; }
+
+		/// <summary>True when this account cannot confirm with a Resgrid password (SSO-managed or SSO required).</summary>
+		public bool PasswordNotAllowed { get; set; }
+
+		/// <summary>True when the department's provider can confirm who this is instead (Web SSO is set up for this department).</summary>
+		public bool SsoAvailable { get; set; }
+
+		[Required, DataType(DataType.Password)]
+		[Display(Name = "Password")]
+		public string Password { get; set; }
+	}
+
 	public class ChangePasswordView
 	{
 		public bool IsSsoManaged { get; set; }

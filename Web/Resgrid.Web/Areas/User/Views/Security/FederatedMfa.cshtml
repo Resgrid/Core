@@ -1,0 +1,173 @@
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Security.FederatedMfaEditView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["FederatedMfaPageTitle"];
+    var locked = !Model.CanChange;
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-6">
+        <h2><i class="fa fa-id-badge"></i> @localizer["FederatedMfaPageTitle"]</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a></li>
+            <li><a asp-controller="Security" asp-action="Index" asp-route-area="User">Security</a></li>
+            <li><a asp-controller="Security" asp-action="Sso" asp-route-area="User">@localizer["SsoBreadcrumb"]</a></li>
+            <li class="active"><strong>@localizer["FederatedMfaPageTitle"]</strong></li>
+        </ol>
+    </div>
+    <div class="col-sm-6">
+        <div class="title-action">
+            <a asp-action="SecurityPolicy" class="btn btn-default"><i class="fa fa-arrow-left"></i> @localizer["SsoSecurityPolicyButton"]</a>
+        </div>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+
+    @if (TempData["FederatedMfaError"] is string federatedMfaError)
+    {
+        <div class="alert alert-warning" id="federatedMfaError"><i class="fa fa-exclamation-triangle"></i> @federatedMfaError</div>
+    }
+
+    @if (TempData["FederatedMfaSuccess"] != null)
+    {
+        <div class="alert alert-success alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
+            <i class="fa fa-check-circle"></i> @TempData["FederatedMfaSuccess"]
+        </div>
+    }
+
+    <div class="ibox">
+        <div class="ibox-content">
+            <p>@localizer["FederatedMfaIntro"]</p>
+            @if (!Model.ProviderStepUpAvailable)
+            {
+                <span class="label label-default">@localizer["SecurityPolicyMethodNotYetAvailable"]</span>
+            }
+        </div>
+    </div>
+
+    @if (!Model.HasActiveSsoConfig)
+    {
+        <div class="alert alert-warning" id="federatedMfaNoSso">
+            <i class="fa fa-exclamation-triangle"></i> @localizer["FederatedMfaNoSso"]
+            <a asp-action="Sso" class="alert-link">@localizer["SecurityPolicyConfigureSsoLink"]</a>
+        </div>
+    }
+    else
+    {
+        <div id="federatedMfaStatus">
+            @if (!Model.HasMapping)
+            {
+                <div class="alert alert-info">@localizer["FederatedMfaStatusNone"]</div>
+            }
+            else if (Model.Effective)
+            {
+                <div class="alert alert-success">@string.Format(localizer["FederatedMfaStatusEffective"].Value, Model.MappingVersion,
+                    Model.TestedOnUtc?.ToString("yyyy-MM-dd HH:mm") + " UTC")</div>
+            }
+            else
+            {
+                <div class="alert alert-warning">@string.Format(localizer["FederatedMfaStatusUntested"].Value, Model.MappingVersion)</div>
+            }
+        </div>
+
+        @if (locked)
+        {
+            <div class="alert alert-info">@localizer["SecurityPolicyMfaMethodsManagingMemberOnly"]</div>
+        }
+
+        <form asp-action="FederatedMfa" method="post" id="federatedMfaForm">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="ibox">
+                        <div class="ibox-title"><h5><i class="fa fa-share"></i> @localizer["FederatedMfaRequestHeader"]</h5></div>
+                        <div class="ibox-content">
+                            @if (Model.IsOidc)
+                            {
+                                <div class="form-group">
+                                    <label asp-for="RequestAcrValues">@localizer["FederatedMfaRequestAcrValuesLabel"]</label>
+                                    <textarea asp-for="RequestAcrValues" class="form-control" rows="3" spellcheck="false" readonly="@locked"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="RequestClaims">@localizer["FederatedMfaRequestClaimsLabel"]</label>
+                                    <textarea asp-for="RequestClaims" class="form-control" rows="4" spellcheck="false" readonly="@locked"></textarea>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="form-group">
+                                    <label asp-for="RequestAuthnContextClassRefs">@localizer["FederatedMfaRequestAuthnContextLabel"]</label>
+                                    <textarea asp-for="RequestAuthnContextClassRefs" class="form-control" rows="3" spellcheck="false" readonly="@locked"></textarea>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="ibox">
+                        <div class="ibox-title"><h5><i class="fa fa-check-square-o"></i> @localizer["FederatedMfaAcceptHeader"]</h5></div>
+                        <div class="ibox-content">
+                            <p class="text-muted">@localizer["FederatedMfaValuesNote"]</p>
+                            @if (Model.IsOidc)
+                            {
+                                <div class="form-group">
+                                    <label asp-for="AcceptAmr">@localizer["FederatedMfaAcceptAmrLabel"]</label>
+                                    <textarea asp-for="AcceptAmr" class="form-control" rows="3" spellcheck="false" readonly="@locked"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="AcceptAcr">@localizer["FederatedMfaAcceptAcrLabel"]</label>
+                                    <textarea asp-for="AcceptAcr" class="form-control" rows="3" spellcheck="false" readonly="@locked"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="AcceptAcrs">@localizer["FederatedMfaAcceptAcrsLabel"]</label>
+                                    <textarea asp-for="AcceptAcrs" class="form-control" rows="3" spellcheck="false" readonly="@locked"></textarea>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="form-group">
+                                    <label asp-for="AcceptAuthnContextClassRefs">@localizer["FederatedMfaAcceptAuthnContextLabel"]</label>
+                                    <textarea asp-for="AcceptAuthnContextClassRefs" class="form-control" rows="3" spellcheck="false" readonly="@locked"></textarea>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @if (!locked)
+            {
+                <div class="ibox-content">
+                    <button type="submit" name="command" value="save" class="btn btn-primary">
+                        <i class="fa fa-save"></i> @localizer["FederatedMfaSaveButton"]
+                    </button>
+                    @if (Model.HasMapping)
+                    {
+                        <button type="submit" name="command" value="remove" class="btn btn-danger m-l-sm">
+                            <i class="fa fa-trash"></i> @localizer["FederatedMfaRemoveButton"]
+                        </button>
+                        <button type="submit" form="federatedMfaTestForm" class="btn btn-default m-l-sm" id="federatedMfaTest">
+                            <i class="fa fa-flask"></i> @localizer["FederatedMfaTestButton"]
+                        </button>
+                    }
+                    <a asp-action="SecurityPolicy" class="btn btn-default m-l-sm">@localizer["SecurityPolicyCancelButton"]</a>
+                </div>
+            }
+        </form>
+
+        @if (!locked && Model.HasMapping)
+        {
+            <p class="text-muted m-t-sm">@localizer["FederatedMfaTestNote"]</p>
+            <form asp-area="" asp-controller="Account" asp-action="SsoSessionBegin" method="post" id="federatedMfaTestForm">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="purpose" value="mapping_test" />
+                <input type="hidden" name="returnUrl" value="@Url.Action("FederatedMfa", "Security", new { area = "User" })" />
+            </form>
+        }
+    }
+</div>

@@ -69,7 +69,7 @@
                         }
                         @if (p.IsEditable)
                         {
-                            <form method="post" asp-action="DeleteRate" asp-route-id="@p.CalOesMarsRateProfileId" class="inline" onsubmit="return confirm('@localizer["ConfirmDelete"]');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i> @localizer["Delete"]</button></form>
+                            <form method="post" asp-action="DeleteRate" asp-route-id="@p.CalOesMarsRateProfileId" class="inline" onsubmit="return confirm('@JsEncoder.Encode(localizer["ConfirmDelete"])');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i> @localizer["Delete"]</button></form>
                         }
                         @if (Model.CanSubmit && p.Status >= (int)Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsRateProfileStatuses.SignedLocally)
                         {
@@ -125,7 +125,7 @@
                         {
                             <div class="alert alert-info m-b-sm">
                                 <i class="fa fa-users"></i> @localizer["SalarySurveyFromWorkforceHelp"]
-                                <form method="post" asp-action="BuildSalarySurvey" asp-route-id="@p.CalOesMarsRateProfileId" class="form-inline m-t-xs" onsubmit="return confirm('@localizer["ConfirmSalarySurveyDraft"]');">
+                                <form method="post" asp-action="BuildSalarySurvey" asp-route-id="@p.CalOesMarsRateProfileId" class="form-inline m-t-xs" onsubmit="return confirm('@JsEncoder.Encode(localizer["ConfirmSalarySurveyDraft"])');">
                                     @Html.AntiForgeryToken()
                                     <input type="date" name="asOf" class="form-control input-sm" value="@departmentTime.Today.ToString("yyyy-MM-dd")" />
                                     <button type="submit" class="btn btn-sm btn-default"><i class="fa fa-calculator"></i> @localizer["BuildSalarySurvey"]</button>

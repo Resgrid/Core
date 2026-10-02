@@ -140,6 +140,49 @@ namespace Resgrid.Tests.Rms
 			}
 		}
 
+		[Test]
+		public void Build_WithLabels_UsesThemForEveryOptionText()
+		{
+			var labels = new PermissionOptionLabels
+			{
+				Everyone = "L3",
+				DepartmentAdmins = "L0",
+				DepartmentAndGroupAdmins = "L1",
+				DepartmentAdminsAndSelectRoles = "L2",
+				DepartmentGroupAdminsAndSelectRoles = "L4"
+			};
+
+			var rows = RecordsPermissionRows.Build(new List<Permission>(), labels: labels);
+
+			foreach (var row in rows)
+				row.Options.Should().OnlyContain(o => o.Text == "L" + o.Value, row.Name);
+		}
+
+		[Test]
+		public void SecurityResx_CarriesEveryPermissionOptionLabelInEveryLanguage()
+		{
+			var root = LocalizationRoot();
+
+			foreach (var language in Languages)
+			{
+				var entries = Load(Path.Combine(root, "Areas", "User", "Security", $"Security.{language}.resx"));
+
+				foreach (var key in PermissionOptionLabels.Keys)
+				{
+					entries.Should().ContainKey(key, $"{language} must carry {key}");
+					entries[key].Should().NotBeNullOrWhiteSpace($"{language} {key}");
+				}
+			}
+
+			// The English fallback used without a localizer must say exactly what the English resources say.
+			var english = Load(Path.Combine(root, "Areas", "User", "Security", "Security.en.resx"));
+			english[PermissionOptionLabels.EveryoneKey].Should().Be(PermissionOptionLabels.English.Everyone);
+			english[PermissionOptionLabels.DepartmentAdminsKey].Should().Be(PermissionOptionLabels.English.DepartmentAdmins);
+			english[PermissionOptionLabels.DepartmentAndGroupAdminsKey].Should().Be(PermissionOptionLabels.English.DepartmentAndGroupAdmins);
+			english[PermissionOptionLabels.DepartmentAdminsAndSelectRolesKey].Should().Be(PermissionOptionLabels.English.DepartmentAdminsAndSelectRoles);
+			english[PermissionOptionLabels.DepartmentGroupAdminsAndSelectRolesKey].Should().Be(PermissionOptionLabels.English.DepartmentGroupAdminsAndSelectRoles);
+		}
+
 		private static string LocalizationRoot()
 		{
 			var directory = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);

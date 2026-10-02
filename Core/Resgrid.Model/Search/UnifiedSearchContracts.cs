@@ -53,6 +53,42 @@ namespace Resgrid.Model.Search
 
 		/// <summary>Typeahead: prefix-match the title of every family; short result list, no records federation.</summary>
 		public bool Prefix { get; set; }
+
+		/// <summary>Only hits that occurred at or after this instant (UTC).</summary>
+		public DateTime? FromUtc { get; set; }
+
+		/// <summary>Only hits that occurred at or before this instant (UTC).</summary>
+		public DateTime? ToUtc { get; set; }
+
+		/// <summary>One of <see cref="SearchSortOrders"/>; null or unknown means relevance.</summary>
+		public string Sort { get; set; }
+
+		/// <summary>
+		/// How many index candidates may be authorized to serve this request (0 = the typeahead default). The search page and
+		/// its export ask for more so a narrowed query can list and count every match; capped by SearchConfig.MaxPageWindow.
+		/// </summary>
+		public int MaxCandidates { get; set; }
+
+		/// <summary>
+		/// Authorize every candidate in the window so an exact total can be returned. A caller that shows no total (the
+		/// command palette) turns it off and authorization stops once the page is full; Total is then null.
+		/// </summary>
+		public bool CountTotal { get; set; } = true;
+	}
+
+	/// <summary>Result orderings the unified endpoint understands.</summary>
+	public static class SearchSortOrders
+	{
+		public const string Relevance = "relevance";
+		public const string Newest = "newest";
+		public const string Oldest = "oldest";
+
+		public static string Normalize(string sort)
+		{
+			if (string.Equals(sort, Newest, StringComparison.OrdinalIgnoreCase)) return Newest;
+			if (string.Equals(sort, Oldest, StringComparison.OrdinalIgnoreCase)) return Oldest;
+			return Relevance;
+		}
 	}
 
 	public class UnifiedSearchHit
@@ -66,6 +102,8 @@ namespace Resgrid.Model.Search
 		public DateTime? OccurredOn { get; set; }
 		public string Category { get; set; }
 		public string Status { get; set; }
+		/// <summary>The part of the indexed text around the first match (full-text queries only); plain text, never HTML.</summary>
+		public string Snippet { get; set; }
 		public IDictionary<string, string> Metadata { get; set; } = new Dictionary<string, string>();
 	}
 
@@ -87,6 +125,9 @@ namespace Resgrid.Model.Search
 		public bool Degraded { get; set; }
 
 		public string DegradedReason { get; set; }
+
+		/// <summary>True while the department's index is queued for, or in the middle of, a build: results may be incomplete.</summary>
+		public bool IndexBuilding { get; set; }
 
 		public int QueryTimeMs { get; set; }
 	}

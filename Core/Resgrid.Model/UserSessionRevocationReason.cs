@@ -15,6 +15,9 @@ namespace Resgrid.Model
 		ConcurrentSessionLimit = 10,
 		Expired = 11,
 		LoggedOut = 12,
-		AccountDeactivated = 13
+		AccountDeactivated = 13,
+		MfaChanged = 14,
+		ShiftEnded = 15,
+		OperatorSwitched = 16
 	}
 }

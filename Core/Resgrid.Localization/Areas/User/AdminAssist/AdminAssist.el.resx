@@ -5190,6 +5190,27 @@
   <data xml:space="preserve" name="TableField.DepartmentNotification.UsersToNotify">
     <value>Ειδοποίηση Τμήματος / Χρήστες προς Ειδοποίηση</value>
   </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AcceptRecentLoginMfaForAdp">
+    <value>Πολιτική Ασφαλείας Τμήματος / Αποδοχή πρόσφατου MFA σύνδεσης για ADP</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AcceptRecentUnlockMfaForAdp">
+    <value>Πολιτική Ασφαλείας Τμήματος / Αποδοχή πρόσφατου MFA ξεκλειδώματος για ADP</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowFederatedMfaForAdp">
+    <value>Πολιτική Ασφαλείας Τμήματος / Επιτρέπεται ομοσπονδιακό MFA για ADP</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowFederatedMfaForLoginMfa">
+    <value>Πολιτική Ασφαλείας Τμήματος / Επιτρέπεται ομοσπονδιακό MFA για MFA σύνδεσης</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowPasskeysForAdp">
+    <value>Πολιτική Ασφαλείας Τμήματος / Επιτρέπονται κλειδιά πρόσβασης για ADP</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowPasskeysForLoginMfa">
+    <value>Πολιτική Ασφαλείας Τμήματος / Επιτρέπονται κλειδιά πρόσβασης για MFA σύνδεσης</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowResponderApproval">
+    <value>Πολιτική Ασφαλείας Τμήματος / Επιτρέπεται έγκριση από το Responder</value>
+  </data>
   <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowedIpRanges">
     <value>Πολιτική Ασφαλείας Τμήματος / Επιτρεπόμενα Εύρη IP</value>
   </data>
@@ -5216,6 +5237,15 @@
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.SessionTimeoutMinutes">
     <value>Πολιτική Ασφαλείας Τμήματος / Λεπτά Λήξης Χρόνου Συνεδρίας</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.SharedIdleLockMinutes">
+    <value>Πολιτική Ασφαλείας Τμήματος / Λεπτά αδράνειας πριν κλειδωθεί κοινόχρηστη συνεδρία</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.SharedModeRequiredApps">
+    <value>Πολιτική Ασφαλείας Τμήματος / Εφαρμογές με υποχρεωτική κοινόχρηστη λειτουργία</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.SharedShiftHours">
+    <value>Πολιτική Ασφαλείας Τμήματος / Ώρες βάρδιας κοινόχρηστης συνεδρίας</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.AllowLocalLogin">
     <value>Ρύθμιση SSO Τμήματος / Αποδοχή Τοπικής Σύνδεσης</value>
@@ -5252,6 +5282,12 @@
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.EntityId">
     <value>Ρύθμιση SSO Τμήματος / Αναγνωριστικό Οντότητας</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSsoConfig.FederatedMfaMappingJson">
+    <value>Ρύθμιση SSO Τμήματος / JSON Αντιστοίχισης Ομοσπονδιακού MFA</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSsoConfig.IdpSsoUrl">
+    <value>Ρύθμιση SSO Τμήματος / URL SSO Παρόχου Ταυτότητας</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.IsEnabled">
     <value>Ρύθμιση SSO Τμήματος / Ενεργοποιημένο</value>
@@ -5427,6 +5463,27 @@
   <data xml:space="preserve" name="TableHelp.DepartmentNotification.UsersToNotify">
     <value>Ρητοί παραλήπτες μελών. Η συμμετοχή και η επιλεξιμότητα καναλιού αξιολογούνται ξεχωριστά κατά την αποστολή.</value>
   </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AcceptRecentLoginMfaForAdp">
+    <value>Επιτρέπει στο MFA που ολοκληρώθηκε κατά τη σύνδεση στην ίδια συνεδρία να ανοίγει προστατευμένα δεδομένα μέσα στο παράθυρο ενισχυμένης επαλήθευσης, για μεθόδους που επιτρέπουν οι ρυθμίσεις προστατευμένων δεδομένων. Η αλλαγή τερματίζει την τρέχουσα πρόσβαση σε προστατευμένα δεδομένα. Μόνο το διαχειριστικό μέλος.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AcceptRecentUnlockMfaForAdp">
+    <value>Επιτρέπει στην πρόσφατη επαλήθευση ξεκλειδώματος του χειριστή σε κοινόχρηστη συσκευή να ανοίγει προστατευμένα δεδομένα. Η αλλαγή τερματίζει την τρέχουσα πρόσβαση σε προστατευμένα δεδομένα. Μόνο το διαχειριστικό μέλος.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowFederatedMfaForAdp">
+    <value>Δέχεται το MFA του παρόχου ταυτότητας για προστατευμένα δεδομένα. Απαιτεί δοκιμασμένη αντιστοίχιση MFA· η αλλαγή τερματίζει την τρέχουσα πρόσβαση σε προστατευμένα δεδομένα. Μόνο το διαχειριστικό μέλος.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowFederatedMfaForLoginMfa">
+    <value>Δέχεται το MFA του παρόχου ταυτότητας για σύνδεση και ενισχυμένη επαλήθευση. Απαιτεί δοκιμασμένη αντιστοίχιση MFA στη διαμόρφωση SSO· χωρίς αυτήν οι δηλώσεις του παρόχου δεν μετρούν ποτέ. Μόνο το διαχειριστικό μέλος.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowPasskeysForAdp">
+    <value>Δέχεται κλειδί πρόσβασης για πρόσβαση σε προστατευμένα δεδομένα, διαχείριση ADP και εγκρίσεις προστατευμένων ροών εργασίας. Οι κωδικοί εφαρμογής ελέγχου ταυτότητας γίνονται πάντα δεκτοί. Η αλλαγή τερματίζει την τρέχουσα πρόσβαση σε προστατευμένα δεδομένα, οπότε τα μέλη επαληθεύουν ξανά. Μόνο το διαχειριστικό μέλος.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowPasskeysForLoginMfa">
+    <value>Δέχεται κλειδί πρόσβασης καταχωρισμένο στην εφαρμογή που υποβάλλει το αίτημα ως MFA για σύνδεση, αλλαγή τμήματος και ενισχυμένη επαλήθευση. Οι κωδικοί εφαρμογής ελέγχου ταυτότητας γίνονται πάντα δεκτοί. Η αλλαγή αυξάνει την έκδοση πολιτικής MFA· οι συνεδρίες των οποίων ο μόνος δεύτερος παράγοντας δεν επιτρέπεται πλέον επαληθεύουν ξανά. Μόνο το διαχειριστικό μέλος.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowResponderApproval">
+    <value>Δέχεται έγκριση με το κλειδί πρόσβασης της εφαρμογής Responder του μέλους όπου η αντίστοιχη ρύθμιση κλειδιού πρόσβασης είναι ενεργή· ποτέ για αλλαγές ασφαλείας ή μεθόδους σύνδεσης του λογαριασμού. Η αλλαγή τερματίζει επίσης την τρέχουσα πρόσβαση σε προστατευμένα δεδομένα. Μόνο το διαχειριστικό μέλος.</value>
+  </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowedIpRanges">
     <value>Επιτρεπόμενα εύρη δικτύου σύνδεσης. Το κενό δεν προσθέτει περιορισμό εύρους. Ελέγξτε τα νόμιμα δίκτυα ανταποκριτών και την πρόσβαση ανάκτησης πριν το περιορίσετε.</value>
   </data>
@@ -5453,6 +5510,15 @@
   </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.SessionTimeoutMinutes">
     <value>Χρόνος λήξης αδράνειας σε λεπτά· το μηδέν παραπέμπει στη συμπεριφορά του διακομιστή. Επαληθεύστε τις συνεδρίες που διαχειρίζεται η πολιτική και κάθε υποστηριζόμενη εφαρμογή-πελάτη αντί να υποθέτετε άμεση καθολική αποσύνδεση.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.SharedIdleLockMinutes">
+    <value>Λεπτά χωρίς δραστηριότητα του χειριστή πριν κλειδωθεί η συνεδρία κοινόχρηστου tablet οχήματος ή σταθμού εργασίας, από 1 έως 15. Οι ενημερώσεις στο παρασκήνιο και οι εισερχόμενες ειδοποιήσεις δεν θεωρούνται δραστηριότητα. Μια αυστηρότερη τιμή ισχύει για τις τρέχουσες συνεδρίες στο επόμενο αίτημά τους. Μόνο το διαχειριστικό μέλος.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.SharedModeRequiredApps">
+    <value>Οι συνεδρίες Unit, IC και Dispatch που αυτό το τμήμα εκτελεί πάντα ως κοινόχρηστες, ανεξάρτητα από τη ρύθμιση της εγκατάστασης· μετρούν επίσης οι συνδέσεις που δεν δηλώνουν την εφαρμογή τους. Απαιτεί εκδόσεις εφαρμογών που υποστηρίζουν την κοινόχρηστη λειτουργία. Μόνο το διαχειριστικό μέλος.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.SharedShiftHours">
+    <value>Ώρες μετά τη σύνδεση κατά τις οποίες τερματίζεται μια κοινόχρηστη συνεδρία ανεξάρτητα από τη δραστηριότητα, από 1 έως 24. Μια μικρότερη τιμή τερματίζει νωρίτερα τις τρέχουσες συνεδρίες· μια μεγαλύτερη δεν τις παρατείνει ποτέ. Μόνο το διαχειριστικό μέλος.</value>
   </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.AllowLocalLogin">
     <value>Επιτρέπει μια διαδρομή τοπικού κωδικού πρόσβασης παράλληλα με αυτόν τον πάροχο όπου το επιτρέπει η πολιτική. Ελέγξτε μαζί την απαίτηση SSO σε επίπεδο τμήματος και το σχέδιο ανάκτησης.</value>
@@ -5489,6 +5555,12 @@
   </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.EntityId">
     <value>Αναγνωριστικό παρόχου υπηρεσίας SAML καταχωρισμένο στον πάροχο ταυτότητας. Πρέπει να συμφωνεί με τη ρυθμισμένη ενσωμάτωση.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.FederatedMfaMappingJson">
+    <value>Ποια αποτελέσματα σύνδεσης στον πάροχο μετρούν ως MFA για την πρόσθετη επαλήθευση μέσω παρόχου. Μια αλλαγή στην αντιστοίχιση, τον εκδότη ή τον πελάτη απαιτεί νέα επιτυχή δοκιμή πριν γίνει ξανά αποδεκτό το MFA του παρόχου.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.IdpSsoUrl">
+    <value>Διεύθυνση σύνδεσης του παρόχου SAML στην οποία η σύνδεση που ξεκινά από το Resgrid στέλνει το αίτημά της. Επαληθεύστε την με τα μεταδεδομένα του παρόχου πριν βασιστείτε σε αυτήν.</value>
   </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.IsEnabled">
     <value>Καθιστά αυτή τη ρύθμιση παρόχου διαθέσιμη στην υποστηριζόμενη ροή SSO. Μια αποθηκευμένη ενεργοποιημένη σημαία δεν αποτελεί επιτυχή δοκιμή σύνδεσης.</value>

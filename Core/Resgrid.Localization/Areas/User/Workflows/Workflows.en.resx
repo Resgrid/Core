@@ -749,5 +749,326 @@
   <data name="Gallery_hl7_mdm_t02_Description" xml:space="preserve">
     <value>When a call closes, sends an MDM^T02 "Crisis Field Response" document to an interface engine over HTTPS: PID-3 is the EHR client id, MSH-10 the idempotency key, one OBX per released custom field. Succeeds only on an AA acknowledgement.</value>
   </data>
+  <data name="OutputTemplate" xml:space="preserve">
+    <value>Output Template</value>
+  </data>
+  <data name="FieldRequired" xml:space="preserve">
+    <value>{0} is required.</value>
+  </data>
+  <data name="CredentialRequired" xml:space="preserve">
+    <value>A credential is required for this action type.</value>
+  </data>
+  <data name="ActionType_SendEmail" xml:space="preserve">
+    <value>Send Email</value>
+  </data>
+  <data name="ActionType_SendSms" xml:space="preserve">
+    <value>Send SMS</value>
+  </data>
+  <data name="ActionType_CallApiGet" xml:space="preserve">
+    <value>HTTP GET</value>
+  </data>
+  <data name="ActionType_CallApiPost" xml:space="preserve">
+    <value>HTTP POST</value>
+  </data>
+  <data name="ActionType_CallApiPut" xml:space="preserve">
+    <value>HTTP PUT</value>
+  </data>
+  <data name="ActionType_CallApiDelete" xml:space="preserve">
+    <value>HTTP DELETE</value>
+  </data>
+  <data name="ActionType_UploadFileFtp" xml:space="preserve">
+    <value>Upload FTP</value>
+  </data>
+  <data name="ActionType_UploadFileSftp" xml:space="preserve">
+    <value>Upload SFTP</value>
+  </data>
+  <data name="ActionType_UploadFileS3" xml:space="preserve">
+    <value>Upload S3</value>
+  </data>
+  <data name="ActionType_SendTeamsMessage" xml:space="preserve">
+    <value>Teams Message</value>
+  </data>
+  <data name="ActionType_SendSlackMessage" xml:space="preserve">
+    <value>Slack Message</value>
+  </data>
+  <data name="ActionType_SendDiscordMessage" xml:space="preserve">
+    <value>Discord Message</value>
+  </data>
+  <data name="ActionType_UploadFileAzureBlob" xml:space="preserve">
+    <value>Azure Blob</value>
+  </data>
+  <data name="ActionType_UploadFileBox" xml:space="preserve">
+    <value>Box Upload</value>
+  </data>
+  <data name="ActionType_UploadFileDropbox" xml:space="preserve">
+    <value>Dropbox Upload</value>
+  </data>
+  <data name="StepConditional" xml:space="preserve">
+    <value>Conditional</value>
+  </data>
+  <data name="TriggerEventLocked" xml:space="preserve">
+    <value>The trigger event type cannot be changed after creation.</value>
+  </data>
+  <data name="FieldTo" xml:space="preserve">
+    <value>To</value>
+  </data>
+  <data name="FieldToHelp" xml:space="preserve">
+    <value>Comma-separated email addresses.</value>
+  </data>
+  <data name="FieldCc" xml:space="preserve">
+    <value>Cc</value>
+  </data>
+  <data name="OptionalPlaceholder" xml:space="preserve">
+    <value>optional</value>
+  </data>
+  <data name="FieldSubject" xml:space="preserve">
+    <value>Subject</value>
+  </data>
+  <data name="FieldToPhone" xml:space="preserve">
+    <value>To (phone)</value>
+  </data>
+  <data name="FieldToPhoneHelp" xml:space="preserve">
+    <value>E.164 format. Requires a Twilio credential.</value>
+  </data>
+  <data name="FieldUrl" xml:space="preserve">
+    <value>URL</value>
+  </data>
+  <data name="FieldTimeoutSeconds" xml:space="preserve">
+    <value>Timeout (seconds)</value>
+  </data>
+  <data name="FieldRemotePath" xml:space="preserve">
+    <value>Remote Path</value>
+  </data>
+  <data name="FieldFilename" xml:space="preserve">
+    <value>Filename</value>
+  </data>
+  <data name="FieldFilenameHelp" xml:space="preserve">
+    <value>Leave blank for auto-generated name.</value>
+  </data>
+  <data name="FieldS3Key" xml:space="preserve">
+    <value>S3 Key (path)</value>
+  </data>
+  <data name="FieldS3KeyHelp" xml:space="preserve">
+    <value>Full key / path within the bucket.</value>
+  </data>
+  <data name="FieldCardTitle" xml:space="preserve">
+    <value>Card Title</value>
+  </data>
+  <data name="FieldThemeColor" xml:space="preserve">
+    <value>Theme Color</value>
+  </data>
+  <data name="FieldThemeColorHelp" xml:space="preserve">
+    <value>Hex without #</value>
+  </data>
+  <data name="FieldChannel" xml:space="preserve">
+    <value>Channel</value>
+  </data>
+  <data name="FieldChannelHelp" xml:space="preserve">
+    <value>Leave blank to use webhook default.</value>
+  </data>
+  <data name="FieldBotUsername" xml:space="preserve">
+    <value>Bot Username</value>
+  </data>
+  <data name="FieldIconEmoji" xml:space="preserve">
+    <value>Icon Emoji</value>
+  </data>
+  <data name="FieldAvatarUrl" xml:space="preserve">
+    <value>Avatar URL</value>
+  </data>
+  <data name="FieldBlobPath" xml:space="preserve">
+    <value>Blob Name / Path</value>
+  </data>
+  <data name="FieldBlobPathHelp" xml:space="preserve">
+    <value>Leave blank for auto-generated path.</value>
+  </data>
+  <data name="FieldFolderId" xml:space="preserve">
+    <value>Folder ID</value>
+  </data>
+  <data name="FieldFolderIdHelp" xml:space="preserve">
+    <value>"0" = root folder.</value>
+  </data>
+  <data name="FieldTargetPath" xml:space="preserve">
+    <value>Target Path</value>
+  </data>
+  <data name="FieldWriteMode" xml:space="preserve">
+    <value>Write Mode</value>
+  </data>
+  <data name="WriteModeOverwrite" xml:space="preserve">
+    <value>Overwrite</value>
+  </data>
+  <data name="WriteModeAdd" xml:space="preserve">
+    <value>Add (rename on conflict)</value>
+  </data>
+  <data name="WriteModeUpdate" xml:space="preserve">
+    <value>Update (fail if not exists)</value>
+  </data>
+  <data name="StepCredential" xml:space="preserve">
+    <value>Credential</value>
+  </data>
+  <data name="CredentialNoneOption" xml:space="preserve">
+    <value>(none)</value>
+  </data>
+  <data name="NoMatchingCredentials" xml:space="preserve">
+    <value>No matching credentials found for this action type.</value>
+  </data>
+  <data name="AddCredentialNow" xml:space="preserve">
+    <value>Add one now →</value>
+  </data>
+  <data name="CredentialHelpSmtp" xml:space="preserve">
+    <value>SMTP credentials to send email from.</value>
+  </data>
+  <data name="CredentialHelpTwilio" xml:space="preserve">
+    <value>Twilio credentials for SMS delivery.</value>
+  </data>
+  <data name="CredentialHelpHttp" xml:space="preserve">
+    <value>Optional HTTP auth credential.</value>
+  </data>
+  <data name="CredentialHelpFtp" xml:space="preserve">
+    <value>FTP server credentials.</value>
+  </data>
+  <data name="CredentialHelpSftp" xml:space="preserve">
+    <value>SFTP server credentials.</value>
+  </data>
+  <data name="CredentialHelpS3" xml:space="preserve">
+    <value>AWS S3 credentials (access key + bucket).</value>
+  </data>
+  <data name="CredentialHelpTeams" xml:space="preserve">
+    <value>Microsoft Teams incoming webhook credential.</value>
+  </data>
+  <data name="CredentialHelpSlack" xml:space="preserve">
+    <value>Slack webhook or bot token credential.</value>
+  </data>
+  <data name="CredentialHelpDiscord" xml:space="preserve">
+    <value>Discord webhook or bot token credential.</value>
+  </data>
+  <data name="CredentialHelpAzure" xml:space="preserve">
+    <value>Azure Blob Storage connection string credential.</value>
+  </data>
+  <data name="CredentialHelpBox" xml:space="preserve">
+    <value>Box application credential (JWT).</value>
+  </data>
+  <data name="CredentialHelpDropbox" xml:space="preserve">
+    <value>Dropbox access token credential.</value>
+  </data>
+  <data name="SelectCredentialOption" xml:space="preserve">
+    <value>— select credential —</value>
+  </data>
+  <data name="CredentialNoneUnauthenticated" xml:space="preserve">
+    <value>(none / unauthenticated)</value>
+  </data>
+  <data name="ConditionExpression" xml:space="preserve">
+    <value>Condition Expression</value>
+  </data>
+  <data name="OptionalSuffix" xml:space="preserve">
+    <value>(optional)</value>
+  </data>
+  <data name="ConditionHelp" xml:space="preserve">
+    <value>Leave blank to always run this step. When set, the step only runs if the condition evaluates to {0}. Uses the same variables as the output template.</value>
+  </data>
+  <data name="VisualBuilder" xml:space="preserve">
+    <value>Visual Builder</value>
+  </data>
+  <data name="RawExpression" xml:space="preserve">
+    <value>Raw Expression</value>
+  </data>
+  <data name="AddRule" xml:space="preserve">
+    <value>Add Rule</value>
+  </data>
+  <data name="RulesJoinedWithAnd" xml:space="preserve">
+    <value>Multiple rules are joined with AND — all must be true.</value>
+  </data>
+  <data name="TestCondition" xml:space="preserve">
+    <value>Test Condition</value>
+  </data>
+  <data name="OpContains" xml:space="preserve">
+    <value>contains</value>
+  </data>
+  <data name="OpNotContains" xml:space="preserve">
+    <value>does not contain</value>
+  </data>
+  <data name="OpEquals" xml:space="preserve">
+    <value>equals</value>
+  </data>
+  <data name="OpNotEquals" xml:space="preserve">
+    <value>does not equal</value>
+  </data>
+  <data name="OpStartsWith" xml:space="preserve">
+    <value>starts with</value>
+  </data>
+  <data name="OpEndsWith" xml:space="preserve">
+    <value>ends with</value>
+  </data>
+  <data name="OpIsEmpty" xml:space="preserve">
+    <value>is empty</value>
+  </data>
+  <data name="OpIsNotEmpty" xml:space="preserve">
+    <value>is not empty</value>
+  </data>
+  <data name="ConditionValuePlaceholder" xml:space="preserve">
+    <value>value</value>
+  </data>
+  <data name="ConditionTooComplex" xml:space="preserve">
+    <value>The current expression is too complex for the visual builder. Edit it in the Raw Expression tab.</value>
+  </data>
+  <data name="ConditionNone" xml:space="preserve">
+    <value>No condition — step will always run.</value>
+  </data>
+  <data name="ConditionTesting" xml:space="preserve">
+    <value>Testing…</value>
+  </data>
+  <data name="ConditionWillRun" xml:space="preserve">
+    <value>Evaluated: "{0}" — step will run</value>
+  </data>
+  <data name="ConditionWillSkip" xml:space="preserve">
+    <value>Evaluated: "{0}" — step will be skipped</value>
+  </data>
+  <data name="ConditionSyntaxValid" xml:space="preserve">
+    <value>Syntax valid (no sample payload to evaluate against)</value>
+  </data>
+  <data name="ConditionTestFailed" xml:space="preserve">
+    <value>Test request failed.</value>
+  </data>
+  <data name="TemplateSyntaxHelp" xml:space="preserve">
+    <value>Use Scriban template syntax. Click variables in the panel on the right to insert them.</value>
+  </data>
+  <data name="VariablesHelpScalar" xml:space="preserve">
+    <value>Click a {0} variable to insert it.</value>
+  </data>
+  <data name="VariablesHelpArray" xml:space="preserve">
+    <value>Click an {0} variable to insert a {1} loop snippet.</value>
+  </data>
+  <data name="VariableKindScalar" xml:space="preserve">
+    <value>scalar</value>
+  </data>
+  <data name="VariableKindArray" xml:space="preserve">
+    <value>array</value>
+  </data>
+  <data name="CallCollectionsHeader" xml:space="preserve">
+    <value>Call Collections (arrays)</value>
+  </data>
+  <data name="CallCollectionsHelp" xml:space="preserve">
+    <value>Click to insert a {0} loop. Available for CallAdded, CallUpdated, CallClosed triggers.</value>
+  </data>
+  <data name="ArrayFieldsTooltip" xml:space="preserve">
+    <value>Fields: {0}</value>
+  </data>
+  <data name="UnitPersonnelVariables" xml:space="preserve">
+    <value>Unit / Personnel</value>
+  </data>
+  <data name="SaveStepFailed" xml:space="preserve">
+    <value>Failed to save step.</value>
+  </data>
+  <data name="DeleteStepFailed" xml:space="preserve">
+    <value>Delete failed: {0}</value>
+  </data>
+  <data name="SubjectPlaceholder" xml:space="preserve">
+    <value>e.g. New Call: {0}</value>
+  </data>
+  <data name="TeamsTitlePlaceholder" xml:space="preserve">
+    <value>Resgrid Notification</value>
+  </data>
+  <data name="BotUsernamePlaceholder" xml:space="preserve">
+    <value>Resgrid Bot</value>
+  </data>
 </root>
 

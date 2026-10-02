@@ -46,9 +46,16 @@
                         <button type="submit" class="btn btn-primary block full-width m-b">@localizer["LoginWithRecoveryCodeButton"]</button>
 
                         <p class="m-t text-center">
-                            <a asp-action="LoginWith2fa" asp-route-returnUrl="@ViewData["ReturnUrl"]">
-                                @localizer["UseAuthenticatorAppLink"]
-                            </a>
+                            @if (ViewData["BackAction"] as string == "LoginMfa")
+                            {
+                                <a asp-action="LoginMfa" asp-route-returnUrl="@ViewData["ReturnUrl"]">@localizer["UseAnotherMethodLink"]</a>
+                            }
+                            else
+                            {
+                                <a asp-action="LoginWith2fa" asp-route-returnUrl="@ViewData["ReturnUrl"]">
+                                    @localizer["UseAuthenticatorAppLink"]
+                                </a>
+                            }
                         </p>
                     </form>
                 </div>

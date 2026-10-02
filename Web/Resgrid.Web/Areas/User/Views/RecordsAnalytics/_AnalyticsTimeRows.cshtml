@@ -19,7 +19,7 @@
 		if (chart != "none")
 		{
 			<div class="rms-chart m-b-sm"><canvas id="@id"></canvas></div>
-			<script>document.addEventListener('DOMContentLoaded', function () { rmsChart('@id', @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(rows.Select(r => r.Label), json)), @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(rows.Select(r => r.TotalResponse.P90Seconds ?? 0), json)), '@chart', '@L["AnalyticsTotalResponse"] @L["AnalyticsP90"] (s)'); });</script>
+			<script>document.addEventListener('DOMContentLoaded', function () { rmsChart('@id', @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(rows.Select(r => r.Label), json)), @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(rows.Select(r => r.TotalResponse.P90Seconds ?? 0), json)), '@chart', '@JsEncoder.Encode(L["AnalyticsTotalResponse"]) @JsEncoder.Encode(L["AnalyticsP90"]) (s)'); });</script>
 		}
 		<div class="table-responsive">
 			<table class="table table-condensed table-striped m-b-none">

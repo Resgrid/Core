@@ -35,6 +35,7 @@ public sealed class ApplicationHostedService : IHostedService, IDisposable
     private ICommandService _oidcUpdateCommand;
     private ICommandService _securityRefreshCommand;
     private ICommandService _featureFlagsCommand;
+    private ICommandService _authenticatorSeedsCommand;
     private ICommandService _helpCommand;
 
     // Cancellation token source used to submit a cancellation request.
@@ -63,6 +64,7 @@ public sealed class ApplicationHostedService : IHostedService, IDisposable
         [FromKeyedServices("OidcUpdateCommand")] ICommandService oidcUpdateCommand,
         [FromKeyedServices("SecurityRefreshCommand")] ICommandService securityRefreshCommand,
         [FromKeyedServices("FeatureFlagsCommand")] ICommandService featureFlagsCommand,
+        [FromKeyedServices("AuthenticatorSeedsCommand")] ICommandService authenticatorSeedsCommand,
         [FromKeyedServices("HelpCommand")] ICommandService helpCommand)
     {
         _hostApplicationLifetime = hostApplicationLifetime;
@@ -78,6 +80,7 @@ public sealed class ApplicationHostedService : IHostedService, IDisposable
         _oidcUpdateCommand = oidcUpdateCommand;
         _securityRefreshCommand = securityRefreshCommand;
         _featureFlagsCommand = featureFlagsCommand;
+        _authenticatorSeedsCommand = authenticatorSeedsCommand;
         _helpCommand = helpCommand;
     }
 
@@ -211,6 +214,8 @@ public sealed class ApplicationHostedService : IHostedService, IDisposable
 		        return await _securityRefreshCommand.ExecuteMainAsync(args, cancellationToken).ConfigureAwait(false);
 	        else if (args.Contains("--FeatureFlags") || args.Contains("--FeatureToggles") || args.Contains("--Toggles"))
 		        return await _featureFlagsCommand.ExecuteMainAsync(args, cancellationToken).ConfigureAwait(false);
+	        else if (args.Contains("--AuthenticatorSeeds"))
+		        return await _authenticatorSeedsCommand.ExecuteMainAsync(args, cancellationToken).ConfigureAwait(false);
 	        else
 	        {
 		        return await _helpCommand.ExecuteMainAsync(args, cancellationToken).ConfigureAwait(false);

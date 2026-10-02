@@ -47,7 +47,7 @@
                                     <a asp-action="ResourceCosts" asp-route-edit="@p.ResourceCostProfileId" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i></a>
                                     @if (canEdit)
                                     {
-                                        <form method="post" asp-action="DeleteResourceCost" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@p.ResourceCostProfileId" /><button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@localizer["ConfirmDelete"]');"><i class="fa fa-trash"></i></button></form>
+                                        <form method="post" asp-action="DeleteResourceCost" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@p.ResourceCostProfileId" /><button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@JsEncoder.Encode(localizer["ConfirmDelete"])');"><i class="fa fa-trash"></i></button></form>
                                     }
                                 </td>
                             </tr>

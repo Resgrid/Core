@@ -59,67 +59,58 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 
-  <data name="Name1" xml:space="preserve">
-    <value>this is my long string</value>
-  </data>
-  <data name="Bitmap1" xml:space="preserve">
-    <value>[base64 mime encoded serialized .NET Framework object]</value>
-  </data>
-  <data name="Icon1" xml:space="preserve">
-    <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-  </data>
   <data name="ActionNote" xml:space="preserve">
-    <value>Action Note (Optional)</value>
+    <value>Nota sull'azione (facoltativa)</value>
   </data>
   <data name="Actions" xml:space="preserve">
     <value>Azioni</value>
   </data>
   <data name="AreYouSureResetAll" xml:space="preserve">
-    <value>Are you sure you want to reset all personnel status to Available?</value>
+    <value>Vuoi davvero reimpostare lo stato di tutto il personale su "Disponibile"?</value>
   </data>
   <data name="CollapseGroups" xml:space="preserve">
-    <value>Collapse Groups (Once)</value>
+    <value>Comprimi i gruppi (una volta)</value>
   </data>
   <data name="ConfirmSetStandByGroup" xml:space="preserve">
-    <value>CONFIRM: Are you sure you want to reset all the users group to the Standing By state? Group:</value>
+    <value>CONFERMA: vuoi davvero reimpostare tutti gli utenti del gruppo sullo stato "In attesa"? Gruppo:</value>
   </data>
   <data name="ConfirmStatusReset" xml:space="preserve">
-    <value>Confirm Status Reset</value>
+    <value>Conferma reimpostazione dello stato</value>
   </data>
   <data name="DepartmentCode" xml:space="preserve">
-    <value>Department Code:</value>
+    <value>Codice del dipartimento:</value>
   </data>
   <data name="DepartmentId" xml:space="preserve">
-    <value>Department Id:</value>
+    <value>ID dipartimento:</value>
   </data>
   <data name="DepartmentInfo" xml:space="preserve">
-    <value>Department Info</value>
+    <value>Informazioni sul dipartimento</value>
   </data>
   <data name="ResetAll" xml:space="preserve">
-    <value>Reset all to Available</value>
+    <value>Reimposta tutti su "Disponibile"</value>
   </data>
   <data name="ResetGroupStandingBy" xml:space="preserve">
-    <value>Reset group to Standing By</value>
+    <value>Reimposta il gruppo su "In attesa"</value>
   </data>
   <data name="ResetStatusButton" xml:space="preserve">
-    <value>Reset Status</value>
+    <value>Reimposta stato</value>
   </data>
   <data name="SetCurrentAction" xml:space="preserve">
-    <value>Set Current Action</value>
+    <value>Imposta l'azione corrente</value>
   </data>
   <data name="SetStaffingLevel" xml:space="preserve">
-    <value>Set Staffing Level</value>
+    <value>Imposta il livello di disponibilità</value>
   </data>
   <data name="StaffingLevel" xml:space="preserve">
-    <value>Staffing Level</value>
+    <value>Livello di disponibilità</value>
   </data>
   <data name="StaffingLevelSubmit" xml:space="preserve">
-    <value>Set Staffing Level</value>
+    <value>Imposta il livello di disponibilità</value>
   </data>
   <data name="TextNumber" xml:space="preserve">
-    <value>Text Number:</value>
+    <value>Numero SMS:</value>
   </data>
   <data name="ToggleCollapseGroupsOnce" xml:space="preserve">
-    <value>Toggle Collapse Groups (Saves)</value>
+    <value>Comprimi/espandi i gruppi (viene salvato)</value>
   </data>
 </root>

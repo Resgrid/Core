@@ -57,14 +57,19 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		/// <summary>
 		/// Full search. <paramref name="types"/> is a comma-separated list of entity types (Call, Unit, Personnel,
-		/// Contact, Message, Document, Note, Record, Action); omit for all.
+		/// Contact, Message, Document, Note, Record, Log, Occupancy, Protocol, Training, CalendarEvent, Poi, Shift, Group, the
+		/// Business Operations families, Action); omit for all. Words must all match; a "quoted phrase" matches as a
+		/// phrase. <paramref name="fromUtc"/> / <paramref name="toUtc"/> bound when the hit occurred, <paramref name="sort"/> is
+		/// relevance (default), newest or oldest. A single family or a date range is authorized over a deeper window so its
+		/// count is exact more often.
 		/// </summary>
 		[HttpGet("Search")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[Authorize(Policy = ResgridResources.Department_View)]
-		public async Task<ActionResult<SearchResult>> Search(string query, string types = null, int skip = 0, int take = 20, CancellationToken cancellationToken = default)
+		public async Task<ActionResult<SearchResult>> Search(string query, string types = null, int skip = 0, int take = 20, DateTime? fromUtc = null,
+			DateTime? toUtc = null, string sort = null, CancellationToken cancellationToken = default)
 		{
 			if (!await _featureToggles.IsEnabledAsync(FeatureFlagKeys.SearchUnified, DepartmentId))
 				return NotFound();
@@ -75,6 +80,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 			// The page metadata must describe the query that ran, so the clamped values feed both.
 			var effectiveSkip = Math.Max(0, skip);
 			var effectiveTake = Math.Max(1, Math.Min(MaxTake, take));
+			var from = AsUtc(fromUtc);
+			var to = AsUtc(toUtc);
+			var narrowed = requestedTypes != null && requestedTypes.Count(t => !string.Equals(t, SearchEntityTypes.Action, StringComparison.OrdinalIgnoreCase)) == 1
+				|| from.HasValue || to.HasValue;
 			var unified = await _unifiedSearch.SearchAsync(new UnifiedSearchRequest
 			{
 				Text = query,
@@ -83,7 +92,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 				Take = effectiveTake,
 				IncludeActions = requestedTypes == null || requestedTypes.Any(t => string.Equals(t, SearchEntityTypes.Action, StringComparison.OrdinalIgnoreCase)),
 				IncludeRecords = requestedTypes == null || requestedTypes.Any(t => string.Equals(t, SearchEntityTypes.Record, StringComparison.OrdinalIgnoreCase)),
-				Prefix = false
+				Prefix = false,
+				FromUtc = from,
+				ToUtc = to,
+				Sort = SearchSortOrders.Normalize(sort),
+				MaxCandidates = narrowed ? Config.SearchConfig.MaxPageWindow : 0
 			}, await BuildPrincipalAsync(), cancellationToken);
 
 			return Ok(Map(unified, effectiveSkip, effectiveTake));
@@ -186,6 +199,19 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return Ok(result);
 		}
 
+		/// <summary>Query-string instants bind as local or unspecified unless they carry an offset; treat a bare value as UTC.</summary>
+		private static DateTime? AsUtc(DateTime? value)
+		{
+			if (!value.HasValue)
+				return null;
+			return value.Value.Kind switch
+			{
+				DateTimeKind.Utc => value.Value,
+				DateTimeKind.Local => value.Value.ToUniversalTime(),
+				_ => DateTime.SpecifyKind(value.Value, DateTimeKind.Utc)
+			};
+		}
+
 		private static List<string> ParseTypes(string types)
 		{
 			if (string.IsNullOrWhiteSpace(types))
@@ -239,6 +265,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					Available = unified.Available,
 					Degraded = unified.Degraded,
 					DegradedReason = unified.DegradedReason,
+					IndexBuilding = unified.IndexBuilding,
 					TotalCount = unified.Total,
 					Truncated = unified.Truncated,
 					QueryTimeMs = unified.QueryTimeMs,
@@ -253,6 +280,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 						OccurredOn = h.OccurredOn,
 						Category = h.Category,
 						Status = h.Status,
+						Snippet = h.Snippet,
 						Metadata = h.Metadata == null ? new Dictionary<string, string>() : new Dictionary<string, string>(h.Metadata)
 					}).ToList(),
 					Actions = unified.Actions.Select(a => new SearchActionData

@@ -131,6 +131,35 @@
                         </div>
 
                         <div class="form-group">
+                            <label class="control-label">@localizer["SsoEditOidcBrokerRedirectLabel"]</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control font-monospace" id="oidcBrokerRedirectDisplay"
+                                       value="@Model.OidcBrokerRedirectUri" readonly />
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-default btn-sm" onclick="copyToClipboard('oidcBrokerRedirectDisplay')"><i class="fa fa-copy"></i></button>
+                                </span>
+                            </div>
+                            <small class="text-muted">@localizer["SsoEditOidcBrokerRedirectNote"]</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label">@localizer["SsoEditOidcAppRedirectLabel"]</label>
+                            @foreach (var app in Model.OidcAppRedirectUris)
+                            {
+                                var fieldId = app.Web ? $"oidcAppRedirect-{app.Name}-web" : $"oidcAppRedirect-{app.Name}";
+                                <div class="input-group" style="margin-bottom: 4px;">
+                                    <span class="input-group-addon">@(app.Web ? localizer["SsoEditOidcAppRedirectWebLabel", app.DisplayName].Value : app.DisplayName)</span>
+                                    <input type="text" class="form-control font-monospace" id="@fieldId"
+                                           value="@app.Uri" readonly />
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default btn-sm" onclick="copyToClipboard('@fieldId')"><i class="fa fa-copy"></i></button>
+                                    </span>
+                                </div>
+                            }
+                            <small class="text-muted">@localizer["SsoEditOidcAppRedirectNote"]</small>
+                        </div>
+
+                        <div class="form-group">
                             <label asp-for="ClientSecret" class="control-label">
                                 @localizer["SsoEditClientSecretLabel"]
                                 @if (!Model.IsNew && Model.HasClientSecret)
@@ -197,6 +226,13 @@
                             <label asp-for="AssertionConsumerServiceUrl" class="control-label">@localizer["SsoEditAcsUrlStoredLabel"]</label>
                             @Html.TextBoxFor(m => m.AssertionConsumerServiceUrl, new { @class = "form-control", placeholder = Model.AcsUrl })
                             <small class="text-muted">@localizer["SsoEditAcsUrlStoredNote"]</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="IdpSsoUrl" class="control-label">@localizer["SsoEditIdpSsoUrlLabel"]</label>
+                            @Html.TextBoxFor(m => m.IdpSsoUrl, new { @class = "form-control", placeholder = "https://idp.example.com/saml2/sso" })
+                            <small class="text-muted">@localizer["SsoEditIdpSsoUrlNote"]</small>
+                            <span asp-validation-for="IdpSsoUrl" class="text-danger"></span>
                         </div>
 
                         <div class="form-group">
@@ -330,7 +366,7 @@
             var el = document.getElementById(fieldId);
             el.select();
             document.execCommand('copy');
-            toastr.success('@localizer["SsoCopiedToClipboard"]');
+            toastr.success('@JsEncoder.Encode(localizer["SsoCopiedToClipboard"])');
         }
 
         // Show/hide provider panels on provider-type change (new form only)

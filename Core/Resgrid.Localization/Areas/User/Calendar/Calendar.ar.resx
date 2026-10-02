@@ -402,4 +402,13 @@
   <data name="PrintSignupSheet" xml:space="preserve">
     <value>طباعة ورقة التسجيل</value>
   </data>
+  <data name="CheckInClosed" xml:space="preserve">
+    <value>لم يعد تسجيل الحضور متاحًا لهذه الفعالية.</value>
+  </data>
+  <data name="CheckInBy" xml:space="preserve">
+    <value>سُجّل الحضور بواسطة {0}</value>
+  </data>
+  <data name="CheckOutBy" xml:space="preserve">
+    <value>سُجّل الانصراف بواسطة {0}</value>
+  </data>
 </root>

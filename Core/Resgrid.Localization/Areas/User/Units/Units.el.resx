@@ -231,4 +231,280 @@
   <data name="RequiredHeader" xml:space="preserve">
     <value>Απαιτείται;</value>
   </data>
+  <data name="AddTrackingBinding" xml:space="preserve">
+    <value>Προσθήκη σύνδεσης εντοπισμού</value>
+  </data>
+  <data name="AllowedSourceCidrs" xml:space="preserve">
+    <value>Επιτρεπόμενα δίκτυα προέλευσης</value>
+  </data>
+  <data name="AllowedSourceCidrsHelp" xml:space="preserve">
+    <value>Προαιρετικές περιοχές CIDR IPv4 ή IPv6, χωρισμένες με κόμμα, από τις οποίες επιτρέπεται η αποστολή θέσεων για αυτή τη συσκευή εντοπισμού.</value>
+  </data>
+  <data name="AuthenticationMode" xml:space="preserve">
+    <value>Τρόπος ελέγχου ταυτότητας</value>
+  </data>
+  <data name="BasicUsername" xml:space="preserve">
+    <value>Όνομα χρήστη για έλεγχο ταυτότητας Basic</value>
+  </data>
+  <data name="BasicUsernameRequired" xml:space="preserve">
+    <value>Απαιτείται όνομα χρήστη για έλεγχο ταυτότητας Basic.</value>
+  </data>
+  <data name="CertificationStatus" xml:space="preserve">
+    <value>Κατάσταση πιστοποίησης</value>
+  </data>
+  <data name="CopyToClipboard" xml:space="preserve">
+    <value>Αντιγραφή</value>
+  </data>
+  <data name="CreateCredential" xml:space="preserve">
+    <value>Δημιουργία διαπιστευτηρίου</value>
+  </data>
+  <data name="CredentialPrefix" xml:space="preserve">
+    <value>Πρόθεμα διαπιστευτηρίου</value>
+  </data>
+  <data name="CredentialSaved" xml:space="preserve">
+    <value>Έχω αποθηκεύσει αυτό το διαπιστευτήριο</value>
+  </data>
+  <data name="Credentials" xml:space="preserve">
+    <value>Διαπιστευτήρια</value>
+  </data>
+  <data name="CredentialToken" xml:space="preserve">
+    <value>Διακριτικό διαπιστευτηρίου</value>
+  </data>
+  <data name="CustomHeaderRequired" xml:space="preserve">
+    <value>Απαιτείται όνομα προσαρμοσμένης κεφαλίδας.</value>
+  </data>
+  <data name="DeleteTrackingWarning" xml:space="preserve">
+    <value>Αφαίρεση αυτής της σύνδεσης εντοπισμού; Τα διαπιστευτήριά της θα ανακληθούν και θα σταματήσει να δέχεται θέσεις.</value>
+  </data>
+  <data name="DeviceIdentifier" xml:space="preserve">
+    <value>Αναγνωριστικό συσκευής</value>
+  </data>
+  <data name="DeviceIdentifierHelp" xml:space="preserve">
+    <value>Χρησιμοποιήστε το αναγνωριστικό που εκπέμπει η συσκευή ή η υπηρεσία προώθησης. Κανονικοποιείται πριν από την αποθήκευση.</value>
+  </data>
+  <data name="DisableTracking" xml:space="preserve">
+    <value>Απενεργοποίηση εντοπισμού</value>
+  </data>
+  <data name="DisableTrackingWarning" xml:space="preserve">
+    <value>Απενεργοποίηση αυτής της σύνδεσης και ανάκληση όλων των διαπιστευτηρίων της;</value>
+  </data>
+  <data name="EditTrackingBinding" xml:space="preserve">
+    <value>Επεξεργασία σύνδεσης εντοπισμού</value>
+  </data>
+  <data name="EndpointUrl" xml:space="preserve">
+    <value>Τελικό σημείο HTTPS</value>
+  </data>
+  <data name="ExpiresOn" xml:space="preserve">
+    <value>Λήγει</value>
+  </data>
+  <data name="FirmwareVersion" xml:space="preserve">
+    <value>Έκδοση υλικολογισμικού</value>
+  </data>
+  <data name="HardwareTracking" xml:space="preserve">
+    <value>Εντοπισμός GPS μέσω συσκευής</value>
+  </data>
+  <data name="HardwareTrackingDescription" xml:space="preserve">
+    <value>Συνδέστε μια συσκευή εντοπισμού ή μια υπηρεσία προώθησης με αυτή τη μονάδα, εκδώστε διαπιστευτήρια και παρακολουθήστε την κατάσταση παράδοσης των δεδομένων.</value>
+  </data>
+  <data name="HeaderName" xml:space="preserve">
+    <value>Όνομα κεφαλίδας</value>
+  </data>
+  <data name="HeaderValue" xml:space="preserve">
+    <value>Τιμή κεφαλίδας</value>
+  </data>
+  <data name="LastErrorCode" xml:space="preserve">
+    <value>Τελευταίος κωδικός σφάλματος</value>
+  </data>
+  <data name="LastReceived" xml:space="preserve">
+    <value>Τελευταία λήψη</value>
+  </data>
+  <data name="LastSeen" xml:space="preserve">
+    <value>Τελευταία δραστηριότητα</value>
+  </data>
+  <data name="LastUsed" xml:space="preserve">
+    <value>Τελευταία χρήση</value>
+  </data>
+  <data name="LastValidFix" xml:space="preserve">
+    <value>Τελευταίο έγκυρο στίγμα</value>
+  </data>
+  <data name="JsonPayload" xml:space="preserve">
+    <value>Ωφέλιμο φορτίο JSON</value>
+  </data>
+  <data name="Never" xml:space="preserve">
+    <value>Ποτέ</value>
+  </data>
+  <data name="NoCredentials" xml:space="preserve">
+    <value>Δεν έχουν εκδοθεί διαπιστευτήρια για αυτή τη σύνδεση.</value>
+  </data>
+  <data name="NoTrackingBindings" xml:space="preserve">
+    <value>Δεν έχουν διαμορφωθεί συνδέσεις εντοπισμού μέσω συσκευής για αυτή τη μονάδα.</value>
+  </data>
+  <data name="OneTimeCredentialHeader" xml:space="preserve">
+    <value>Αποθήκευση διαπιστευτηρίου εντοπισμού</value>
+  </data>
+  <data name="OneTimeCredentialWarning" xml:space="preserve">
+    <value>Αυτό το διαπιστευτήριο εμφανίζεται μόνο μία φορά. Αντιγράψτε το τελικό σημείο και το μυστικό στη διαμόρφωση της συσκευής εντοπισμού πριν φύγετε από αυτή τη σελίδα.</value>
+  </data>
+  <data name="Protocol" xml:space="preserve">
+    <value>Πρωτόκολλο</value>
+  </data>
+  <data name="PreviewJson" xml:space="preserve">
+    <value>Επικύρωση δοκιμαστικού JSON</value>
+  </data>
+  <data name="PreviewJsonMalformed" xml:space="preserve">
+    <value>Το ωφέλιμο φορτίο JSON είναι κακοσχηματισμένο, περιέχει διπλότυπα πεδία ή υπερβαίνει το όριο εμφώλευσης.</value>
+  </data>
+  <data name="PreviewJsonPositionInvalid" xml:space="preserve">
+    <value>Κάθε θέση απαιτεί μη κενό eventId και έγκυρες τιμές γεωγραφικού πλάτους και μήκους.</value>
+  </data>
+  <data name="PreviewJsonPositionsRequired" xml:space="preserve">
+    <value>Μια δέσμη πρέπει να περιέχει τουλάχιστον ένα αντικείμενο θέσης JSON.</value>
+  </data>
+  <data name="PreviewJsonRequired" xml:space="preserve">
+    <value>Εισαγάγετε ωφέλιμο φορτίο JSON για επικύρωση.</value>
+  </data>
+  <data name="PreviewJsonSuccess" xml:space="preserve">
+    <value>Θέσεις που αποδέχθηκε ο αναλυτής προεπισκόπησης: {0}. Τίποτα δεν τέθηκε σε ουρά ούτε αποθηκεύτηκε.</value>
+  </data>
+  <data name="PreviewJsonTooLarge" xml:space="preserve">
+    <value>Το ωφέλιμο φορτίο JSON υπερβαίνει το διαμορφωμένο όριο μεγέθους αιτήματος.</value>
+  </data>
+  <data name="PreviewJsonTooManyPositions" xml:space="preserve">
+    <value>Η δέσμη JSON υπερβαίνει το διαμορφωμένο όριο θέσεων.</value>
+  </data>
+  <data name="RevokeCredential" xml:space="preserve">
+    <value>Ανάκληση</value>
+  </data>
+  <data name="RevokeCredentialWarning" xml:space="preserve">
+    <value>Ανάκληση αυτού του διαπιστευτηρίου; Ο αποστολέας δεν θα μπορεί πλέον να το χρησιμοποιεί.</value>
+  </data>
+  <data name="RetryExpectation" xml:space="preserve">
+    <value>Αναμενόμενη συμπεριφορά επαναποστολής:</value>
+  </data>
+  <data name="Revoked" xml:space="preserve">
+    <value>Ανακλήθηκε</value>
+  </data>
+  <data name="RotateCredential" xml:space="preserve">
+    <value>Εναλλαγή</value>
+  </data>
+  <data name="SaveTrackingBinding" xml:space="preserve">
+    <value>Αποθήκευση σύνδεσης εντοπισμού</value>
+  </data>
+  <data name="SendTestJson" xml:space="preserve">
+    <value>Αποστολή δοκιμαστικού JSON</value>
+  </data>
+  <data name="SendTestJsonDescription" xml:space="preserve">
+    <value>Επικυρώστε ένα γενικό ωφέλιμο φορτίο JSON του Resgrid χωρίς έλεγχο ταυτότητας, τοποθέτηση σε ουρά ή αποθήκευση. Αυτή η προεπισκόπηση είναι διαθέσιμη μόνο στους διαχειριστές τμήματος και μόνο εκτός του περιβάλλοντος παραγωγής.</value>
+  </data>
+  <data name="SetupInstructions" xml:space="preserve">
+    <value>Οδηγίες ρύθμισης</value>
+  </data>
+  <data name="SecondaryIdentifier" xml:space="preserve">
+    <value>Δευτερεύον αναγνωριστικό</value>
+  </data>
+  <data name="SelectTrackingProfile" xml:space="preserve">
+    <value>Επιλέξτε πιστοποιημένο προφίλ εντοπισμού</value>
+  </data>
+  <data name="SelectValidTrackingProfile" xml:space="preserve">
+    <value>Επιλέξτε πιστοποιημένο προφίλ εντοπισμού.</value>
+  </data>
+  <data name="SourcePriority" xml:space="preserve">
+    <value>Προτεραιότητα πηγής</value>
+  </data>
+  <data name="TrackingBindingActions" xml:space="preserve">
+    <value>Ενέργειες σύνδεσης εντοπισμού</value>
+  </data>
+  <data name="TrackingBindingCreatedMessage" xml:space="preserve">
+    <value>Η σύνδεση εντοπισμού δημιουργήθηκε. Δημιουργήστε ένα διαπιστευτήριο για να ολοκληρώσετε τη ρύθμιση.</value>
+  </data>
+  <data name="TrackingBindingDeletedMessage" xml:space="preserve">
+    <value>Η σύνδεση εντοπισμού αφαιρέθηκε.</value>
+  </data>
+  <data name="TrackingBindingDisabledMessage" xml:space="preserve">
+    <value>Η σύνδεση εντοπισμού απενεργοποιήθηκε και τα διαπιστευτήριά της ανακλήθηκαν.</value>
+  </data>
+  <data name="TrackingBindingUpdatedMessage" xml:space="preserve">
+    <value>Η σύνδεση εντοπισμού ενημερώθηκε.</value>
+  </data>
+  <data name="TrackingCredentialRevokedMessage" xml:space="preserve">
+    <value>Το διαπιστευτήριο εντοπισμού ανακλήθηκε.</value>
+  </data>
+  <data name="TrackingDisplayName" xml:space="preserve">
+    <value>Εμφανιζόμενο όνομα</value>
+  </data>
+  <data name="TrackingEnabled" xml:space="preserve">
+    <value>Ενεργή</value>
+  </data>
+  <data name="TrackingIdentifierRequired" xml:space="preserve">
+    <value>Απαιτείται αναγνωριστικό συσκευής για το επιλεγμένο προφίλ.</value>
+  </data>
+  <data name="TrackingProfile" xml:space="preserve">
+    <value>Προφίλ εντοπισμού</value>
+  </data>
+  <data name="TrackingStatus" xml:space="preserve">
+    <value>Κατάσταση εντοπισμού</value>
+  </data>
+  <data name="Transport" xml:space="preserve">
+    <value>Μεταφορά</value>
+  </data>
+  <data name="UnsupportedTrackingAuth" xml:space="preserve">
+    <value>Ο επιλεγμένος τρόπος ελέγχου ταυτότητας δεν υποστηρίζεται από αυτό το προφίλ εντοπισμού.</value>
+  </data>
+  <data name="ViewTrackingStatus" xml:space="preserve">
+    <value>Προβολή κατάστασης εντοπισμού</value>
+  </data>
+  <data name="AuthModeBearer" xml:space="preserve">
+    <value>Διακριτικό Bearer</value>
+  </data>
+  <data name="AuthModeBasic" xml:space="preserve">
+    <value>Έλεγχος ταυτότητας Basic</value>
+  </data>
+  <data name="AuthModeCustomHeader" xml:space="preserve">
+    <value>Προσαρμοσμένη κεφαλίδα</value>
+  </data>
+  <data name="AuthModeCapabilityPath" xml:space="preserve">
+    <value>Διεύθυνση URL με διακριτικό στη διαδρομή</value>
+  </data>
+  <data name="TransportNativeHttps" xml:space="preserve">
+    <value>Εγγενές HTTPS</value>
+  </data>
+  <data name="TransportManagedHttpsJson" xml:space="preserve">
+    <value>Διαχειριζόμενο HTTPS (JSON)</value>
+  </data>
+  <data name="TransportNativeTcpUdp" xml:space="preserve">
+    <value>Εγγενές TCP/UDP</value>
+  </data>
+  <data name="TransportProtocolGateway" xml:space="preserve">
+    <value>Πύλη πρωτοκόλλου</value>
+  </data>
+  <data name="DeviceStatusNeverSeen" xml:space="preserve">
+    <value>Καμία δραστηριότητα ακόμη</value>
+  </data>
+  <data name="DeviceStatusOnline" xml:space="preserve">
+    <value>Σε σύνδεση</value>
+  </data>
+  <data name="DeviceStatusStale" xml:space="preserve">
+    <value>Χωρίς πρόσφατα δεδομένα</value>
+  </data>
+  <data name="DeviceStatusError" xml:space="preserve">
+    <value>Σφάλμα</value>
+  </data>
+  <data name="DeviceStatusDisabled" xml:space="preserve">
+    <value>Ανενεργή</value>
+  </data>
+  <data name="CertificationCandidate" xml:space="preserve">
+    <value>Υποψήφιο</value>
+  </data>
+  <data name="CertificationFixtureVerified" xml:space="preserve">
+    <value>Επαληθευμένο με δείγματα δεδομένων</value>
+  </data>
+  <data name="CertificationHardwareVerified" xml:space="preserve">
+    <value>Επαληθευμένο σε υλικό</value>
+  </data>
+  <data name="CertificationCertified" xml:space="preserve">
+    <value>Πιστοποιημένο</value>
+  </data>
+  <data name="CertificationDeprecated" xml:space="preserve">
+    <value>Καταργημένο</value>
+  </data>
 </root>

@@ -52,7 +52,7 @@ namespace Resgrid.Tests.Search
 
 			var result = await _service.SearchAsync(new UnifiedSearchRequest { Text = "ridge" }, Principal());
 
-			_lastQuery.EntityTypes.Should().Equal(new[] { SearchEntityTypes.Deployment });
+			_lastQuery.EntityTypes.Should().Equal(new[] { SearchEntityTypes.Deployment, SearchEntityTypes.Poi }, "POIs follow the mapping pages, which admit every member");
 			_lastQuery.ViewerScopedEntityTypes.Should().Equal(new[] { SearchEntityTypes.Deployment },
 				"without the claim the index is asked for the caller's own deployments only, so unrostered ones never fill the candidate window");
 			asked.Should().BeEquivalentTo(new[] { "d1", "d2", "d3" }, "one header read covers the whole window");

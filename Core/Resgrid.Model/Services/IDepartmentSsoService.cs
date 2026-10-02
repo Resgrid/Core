@@ -41,6 +41,13 @@ namespace Resgrid.Model.Services
 		/// <summary>Saves (creates or updates) the security policy for a department.</summary>
 		Task<DepartmentSecurityPolicy> SaveSecurityPolicyAsync(DepartmentSecurityPolicy policy, CancellationToken cancellationToken = default);
 
+		/// <summary>
+		/// Saves the policy and, atomically with it, advances MfaPolicyVersion when the sign-in MFA rules change and the ADP
+		/// PolicyEpoch when the rules for Protected Data Grants change (passkey plan section 10.1). <paramref name="changedByUserId"/>
+		/// is recorded on the ADP policy when its epoch advances.
+		/// </summary>
+		Task<DepartmentSecurityPolicy> SaveSecurityPolicyAsync(DepartmentSecurityPolicy policy, string changedByUserId, CancellationToken cancellationToken = default);
+
 		// ── Token Validation & User Provisioning ──────────────────────────────
 
 		/// <summary>
@@ -50,6 +57,33 @@ namespace Resgrid.Model.Services
 		/// For SAML 2.0, <paramref name="externalToken"/> is the base64-encoded SAMLResponse.
 		/// </summary>
 		Task<ClaimsPrincipal> ValidateExternalTokenAsync(int departmentId, SsoProviderType providerType, string externalToken, string departmentCode, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Validates a SAML response to a brokered AuthnRequest (passkey plan section 7.7.2): every legacy check plus the
+		/// signed <c>InResponseTo</c> binding to <paramref name="expectedRequestId"/>, so an unsolicited or another request's
+		/// response is refused. Returns the identity and the IdP's <c>AuthnInstant</c>, or null.
+		/// </summary>
+		Task<Security.SsoIdentityAssertion> ValidateBrokeredSamlResponseAsync(int departmentId, string base64SamlResponse, string departmentCode,
+			string expectedRequestId, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// The department's enabled SSO configuration whose provider step-up mapping has passed its test at the current
+		/// version (plan section 7.8); null when there is none, which means provider step-up is unavailable there.
+		/// </summary>
+		Task<DepartmentSsoConfig> GetTestedFederatedMfaConfigAsync(int departmentId, CancellationToken cancellationToken = default);
+
+		/// <summary>Whether the user can use provider step-up in the department: a tested mapping and an SSO-linked membership.</summary>
+		Task<bool> IsFederatedMfaAvailableAsync(int departmentId, string userId, CancellationToken cancellationToken = default);
+
+		/// <summary>Records a passed mapping test for exactly the version tested; false when the mapping changed meanwhile.</summary>
+		Task<bool> RecordFederatedMfaTestAsync(string departmentSsoConfigId, long version, string userId, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// The Resgrid user already linked to this external identity in the department, without linking, provisioning or
+		/// writing anything; null when there is none. Used where the account must not change, such as reauthentication.
+		/// </summary>
+		Task<string> FindLinkedUserIdAsync(int departmentId, ClaimsPrincipal externalClaims, DepartmentSsoConfig config,
+			CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Provisions a new user or links an existing user from the supplied <paramref name="externalClaims"/>.

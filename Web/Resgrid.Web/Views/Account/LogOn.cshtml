@@ -5,6 +5,7 @@
 @inject SignInManager<Resgrid.Model.Identity.IdentityUser> SignInManager
 @using Microsoft.Extensions.Localization
 @inject IStringLocalizer<Resgrid.Localization.Account.Login> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.TwoFactor.TwoFactor> twoFactorLocalizer
 @{
     ViewData["Title"] = "Resgrid | " + @localizer["LogOnHeader"];
 }
@@ -83,6 +84,17 @@
                             </select>
                         </div>
                     }
+                    @if (ViewData["LoginMfaMessage"] is string loginMfaMessage && !String.IsNullOrWhiteSpace(loginMfaMessage))
+                    {
+                        <div class="alert alert-warning m-t" id="loginMfaMessage">@loginMfaMessage</div>
+                    }
+                    @if (ViewData["SharedWorkstation"] is string sharedWorkstation)
+                    {
+                        <div class="alert alert-info m-t" id="sharedWorkstationNotice">
+                            <i class="fa fa-desktop" aria-hidden="true"></i>
+                            @(string.IsNullOrWhiteSpace(sharedWorkstation) ? twoFactorLocalizer["SharedWorkstationNotice"] : string.Format(twoFactorLocalizer["SharedWorkstationNoticeNamed"].Value, sharedWorkstation))
+                        </div>
+                    }
                     <form class="m-t" role="form" asp-controller="Account" asp-action="LogOn" method="post" asp-route-returnurl="@ViewData["ReturnUrl"]">
                         <div class="form-group">
                             <input type="text" class="form-control" placeholder="Username" asp-for="Username" required="">
@@ -98,6 +110,22 @@
                         <a asp-controller="Account" asp-action="ForgotPassword" asp-route-area="">
                             <small>@localizer["ForgotPassword"]</small>
                         </a>
+                        @if (ViewData["SsoSignInAvailable"] is true)
+                        {
+                            <p class="m-t-sm">
+                                <a asp-controller="Account" asp-action="SsoLogOn" asp-route-area="" asp-route-returnUrl="@ViewData["ReturnUrl"]" id="ssoSignInLink">
+                                    <i class="fa fa-id-badge"></i> @twoFactorLocalizer["SsoSignInLink"]
+                                </a>
+                            </p>
+                        }
+                        @if (ViewData["SharedWorkstationAvailable"] is true)
+                        {
+                            <p class="m-t-sm">
+                                <a asp-controller="SharedSession" asp-action="Workstation" asp-route-area="" id="sharedWorkstationLink">
+                                    <small><i class="fa fa-desktop"></i> @twoFactorLocalizer["SharedWorkstationLink"]</small>
+                                </a>
+                            </p>
+                        }
 
                         @if (!Resgrid.Config.SystemBehaviorConfig.RedirectHomeToLogin)
                         {

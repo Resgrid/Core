@@ -40,7 +40,7 @@
         {
             <form method="post" asp-controller="Invoicing" asp-action="MarkSent" asp-route-area="User" asp-route-id="@invoice.InvoiceId" class="inline">
                 @Html.AntiForgeryToken()
-                <button type="submit" class="btn btn-default" onclick="return confirm('@localizer["MarkSentConfirm"]');"><i class="fa fa-check"></i> @localizer["MarkSentWithoutEmail"]</button>
+                <button type="submit" class="btn btn-default" onclick="return confirm('@JsEncoder.Encode(localizer["MarkSentConfirm"])');"><i class="fa fa-check"></i> @localizer["MarkSentWithoutEmail"]</button>
             </form>
         }
         @if (isOpen && write)
@@ -335,7 +335,7 @@
                 var input = document.getElementById('payUrl');
                 if (!input) return;
                 input.select();
-                var copied = function () { toastr.success('@localizer["LinkCopied"]'); };
+                var copied = function () { toastr.success('@JsEncoder.Encode(localizer["LinkCopied"])'); };
                 var fallback = function () { try { if (document.execCommand('copy')) copied(); } catch (e) { } };
                 if (navigator.clipboard && navigator.clipboard.writeText) {
                     navigator.clipboard.writeText(input.value).then(copied, fallback);

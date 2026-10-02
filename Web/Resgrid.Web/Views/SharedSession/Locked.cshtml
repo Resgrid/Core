@@ -1,0 +1,151 @@
+@using Microsoft.Extensions.Localization
+@model Resgrid.Web.Models.AccountViewModels.SharedSessionLockedViewModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.TwoFactor.TwoFactor> localizer
+@{
+    ViewData["Title"] = "Resgrid | " + localizer["SharedLockedHeader"];
+    Layout = null;
+    string Js(string key) => Newtonsoft.Json.JsonConvert.SerializeObject(localizer[key].Value);
+    var choices = Model.Offers("passkey") || Model.Offers("passkey_approval");
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="no-referrer" />
+    <title>@ViewData["Title"]</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    @Html.Partial("_StylePartial")
+</head>
+<body class="gray-bg">
+    @* A shared workstation's lock screen (passkey plan section 12.5.3): nothing of the locked work, only who may unlock it. *@
+    <div class="loginColumns animated fadeInDown" id="sharedLocked" data-status-url="@Url.Action("Status", "SharedSession")"
+         data-return-url="@Model.ReturnUrl" data-lock-version="@Model.LockVersion">
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <div style="text-align: center;">
+                    <img src="~/images/Resgrid_JustText.png" style="width: 200px;" alt="Resgrid" />
+                </div>
+                <h3><i class="fa fa-lock" aria-hidden="true"></i> @localizer["SharedLockedHeader"]</h3>
+                <p>@(Model.LockedWhenIdle ? localizer["SharedLockedIdle"] : localizer["SharedLockedExplicit"])</p>
+                <p>
+                    <strong id="sharedLockedOperator">@string.Format(localizer["SharedLockedOperator"].Value, Model.Operator)</strong>
+                    @if (!string.IsNullOrWhiteSpace(Model.InstallationLabel))
+                    {
+                        <br /><small class="text-muted">@Model.InstallationLabel</small>
+                    }
+                </p>
+                <p class="text-muted">@string.Format(localizer["SharedLockedInstruction"].Value, Model.Operator)</p>
+
+                <div class="ibox-content">
+                    @if (!string.IsNullOrWhiteSpace(Model.Error))
+                    {
+                        <div class="alert alert-danger" role="alert" id="sharedUnlockError">@Model.Error</div>
+                    }
+
+                    @if (Model.Unavailable != null)
+                    {
+                        <div class="alert alert-warning" role="alert" id="sharedUnlockUnavailable">@Model.Unavailable</div>
+                    }
+                    else
+                    {
+                        <form asp-action="Unlock" asp-controller="SharedSession" method="post" class="m-t" id="sharedUnlockForm" data-shared-unlock="true">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="lockVersion" value="@Model.LockVersion" />
+                            <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" id="ReturnUrl" />
+                            @if (Model.Offers("totp"))
+                            {
+                                <div class="form-group" id="sharedUnlockTotp">
+                                    <label for="code">@localizer["AuthenticatorCodeInputLabel"]</label>
+                                    <input name="code" id="code" class="form-control" placeholder="@localizer["VerificationCodePlaceholder"]"
+                                           autocomplete="one-time-code" inputmode="numeric" maxlength="7" autofocus />
+                                </div>
+                                <button type="submit" class="btn btn-primary block full-width m-b">@localizer["SharedUnlockButton"]</button>
+                            }
+                            @if (Model.Offers("passkey"))
+                            {
+                                <button type="button" class="btn btn-default block full-width m-b" id="mfaUsePasskey">
+                                    <i class="fa fa-key"></i> @localizer["VerifyWithPasskeyButton"]
+                                </button>
+                            }
+                            @if (Model.Offers("passkey_approval"))
+                            {
+                                <button type="button" class="btn btn-default block full-width m-b" id="mfaUseResponder">
+                                    <i class="fa fa-mobile"></i> @localizer["ApproveWithResponderButton"]
+                                </button>
+                            }
+                            @if (Model.Offers("federated"))
+                            {
+                                <button type="submit" formaction="@Url.Action("SsoUnlockBegin", "Account")" formnovalidate="formnovalidate"
+                                        class="btn btn-default block full-width m-b" id="sharedUnlockProvider" data-shared-unlock="true">
+                                    <i class="fa fa-id-badge"></i> @localizer["VerifyWithProviderButton"]
+                                </button>
+                            }
+
+                            <div class="well" id="mfaApprovalPanel" style="display: none;">
+                                <p>@localizer["ApprovalNumberLabel"]</p>
+                                <p class="text-center" style="font-size: 32px; letter-spacing: 4px;"><strong id="mfaApprovalNumber"></strong></p>
+                                <p class="text-muted" id="mfaApprovalStatus"></p>
+                                <button type="button" class="btn btn-default btn-sm" id="mfaApprovalCancel">@localizer["ApprovalCancelButton"]</button>
+                            </div>
+                            <div class="alert alert-danger" id="mfaChoiceError" role="alert" style="display: none;"></div>
+                        </form>
+                    }
+
+                    <hr />
+                    <form asp-action="EndShift" asp-controller="SharedSession" method="post" id="sharedSwitchOperatorForm" class="m-b">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="switchOperator" value="true" />
+                        <button type="submit" class="btn btn-warning block full-width" id="sharedSwitchOperator">
+                            <i class="fa fa-exchange" aria-hidden="true"></i> @localizer["SharedSwitchOperatorButton"]
+                        </button>
+                    </form>
+                    <form asp-action="EndShift" asp-controller="SharedSession" method="post" id="sharedEndShiftForm">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="switchOperator" value="false" />
+                        <button type="submit" class="btn btn-default block full-width" id="sharedEndShift">
+                            <i class="fa fa-sign-out" aria-hidden="true"></i> @localizer["SharedEndShiftButton"]
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @Html.Partial("_ScriptsPartial")
+    <script src="~/js/app/common/shared/resgrid.shared.locked.js" asp-append-version="true"></script>
+    @if (choices && Model.Unavailable == null)
+    {
+        <script src="~/js/app/common/passkeys/resgrid.passkeys.js" type="text/javascript"></script>
+        <script src="~/js/app/common/passkeys/resgrid.mfa.choice.js" type="text/javascript"></script>
+        <script type="text/javascript">
+            $(function () {
+                resgridMfaChoice.init({
+                    antiForgeryToken: function () { return $('#sharedUnlockForm input[name="__RequestVerificationToken"]').val(); },
+                    extra: function () { return { returnUrl: $('#ReturnUrl').val(), lockVersion: '@Model.LockVersion' }; },
+                    passkeyOptionsUrl: '@Url.Action("UnlockPasskeyOptions", "SharedSession")',
+                    verifyPasskeyUrl: '@Url.Action("UnlockPasskey", "SharedSession")',
+                    requestApprovalUrl: '@Url.Action("UnlockApproval", "SharedSession")',
+                    approvalStatusUrl: '@Url.Action("UnlockApprovalStatus", "SharedSession")',
+                    completeApprovalUrl: '@Url.Action("UnlockApprovalComplete", "SharedSession")',
+                    navigate: function (url) { resgridSharedLocked.leave(url); },
+                    messages: {
+                        failed: @Html.Raw(Js("SharedSessionUpdateFailed")),
+                        passkey_failed: @Html.Raw(Js("PasskeyFailed")),
+                        passkey_cancelled: @Html.Raw(Js("PasskeyCancelled")),
+                        passkey_not_supported: @Html.Raw(Js("PasskeyNotSupported")),
+                        approval_waiting: @Html.Raw(Js("ApprovalWaiting")),
+                        approval_denied: @Html.Raw(Js("ApprovalDenied")),
+                        approval_expired: @Html.Raw(Js("ApprovalExpired")),
+                        approval_unavailable: @Html.Raw(Js("ApprovalUnavailable")),
+                        mfa_method_not_allowed: @Html.Raw(Js("LoginMfaMethodUnavailable")),
+                        too_many_attempts: @Html.Raw(Js("SharedUnlockTooManyAttempts")),
+                        shared_session_lock_changed: @Html.Raw(Js("SharedUnlockLockChanged"))
+                    }
+                });
+            });
+        </script>
+    }
+</body>
+</html>

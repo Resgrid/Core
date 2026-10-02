@@ -427,7 +427,7 @@
                                         <form asp-controller="Department" asp-action="DeleteCheckInTimerConfig" asp-route-area="User" method="post" style="display:inline;">
                                             @Html.AntiForgeryToken()
                                             <input type="hidden" name="configId" value="@config.CheckInTimerConfigId" />
-                                            <button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@localizer["CheckInTimerDeleteConfirm"]');">@commonLocalizer["Delete"]</button>
+                                            <button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@JsEncoder.Encode(localizer["CheckInTimerDeleteConfirm"])');">@commonLocalizer["Delete"]</button>
                                         </form>
                                     </td>
                                 </tr>
@@ -557,7 +557,7 @@
                                         <form asp-controller="Department" asp-action="DeleteCheckInTimerOverride" asp-route-area="User" method="post" style="display:inline;">
                                             @Html.AntiForgeryToken()
                                             <input type="hidden" name="overrideId" value="@ovr.CheckInTimerOverrideId" />
-                                            <button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@localizer["CheckInTimerOverrideDeleteConfirm"]');">@commonLocalizer["Delete"]</button>
+                                            <button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@JsEncoder.Encode(localizer["CheckInTimerOverrideDeleteConfirm"])');">@commonLocalizer["Delete"]</button>
                                         </form>
                                     </td>
                                 </tr>

@@ -60,5 +60,15 @@ namespace Resgrid.Web.Services.Helpers
 				return context?.User?.Identity == null || !context.User.Identity.IsAuthenticated;
 			}
 		}
+
+		/// <summary>
+		/// The session the request's session validation accepted (passkey plan section 8.3); null for a workload, an
+		/// untracked session, or a request that did not pass session validation.
+		/// </summary>
+		public Resgrid.Model.Security.ProtectedGrantSessionContext Session => IsWorkloadCaller ? null : SessionOf(_accessor?.HttpContext);
+
+		/// <summary>The validated session of an HTTP request, for controllers that check a grant themselves.</summary>
+		public static Resgrid.Model.Security.ProtectedGrantSessionContext SessionOf(HttpContext context) =>
+			context?.Items[Resgrid.Model.Security.ProtectedGrantSessionContext.HttpItemKey] as Resgrid.Model.Security.ProtectedGrantSessionContext;
 	}
 }

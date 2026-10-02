@@ -81,23 +81,23 @@
 						{
 						  if (!userRecord.Viewed)
 						  {
-                            @Html.Raw("<a href='" + Url.Action("View", "Trainings", new { Area = "User", trainingId = t.TrainingId }) + "' class='btn btn-xs btn-primary'>" + localizer["ViewTrainingButton"] + "</a>")
+                            @Html.Raw("<a href='" + Url.Action("View", "Trainings", new { Area = "User", trainingId = t.TrainingId }) + "' class='btn btn-xs btn-primary'>" + Html.Encode(localizer["ViewTrainingButton"].Value) + "</a>")
 						  }
 						  else if (userRecord.Complete && (t.Questions == null || t.Questions.Count <= 0))
 						  {
-                            @Html.Raw("<a href='" + Url.Action("View", "Trainings", new { Area = "User", trainingId = t.TrainingId }) + "' class='btn btn-xs btn-primary'>" + localizer["ViewTrainingButton"] + "</a>")
+                            @Html.Raw("<a href='" + Url.Action("View", "Trainings", new { Area = "User", trainingId = t.TrainingId }) + "' class='btn btn-xs btn-primary'>" + Html.Encode(localizer["ViewTrainingButton"].Value) + "</a>")
 						  }
 						  else if (userRecord.Complete && userRecord.Score >= t.MinimumScore && (t.Questions != null && t.Questions.Count > 0))
 						  {
-                            @Html.Raw("<a href='" + Url.Action("View", "Trainings", new { Area = "User", trainingId = t.TrainingId }) + "' class='btn btn-xs btn-success'>" + localizer["TrainingCompleteButton"] + "</a>")
+                            @Html.Raw("<a href='" + Url.Action("View", "Trainings", new { Area = "User", trainingId = t.TrainingId }) + "' class='btn btn-xs btn-success'>" + Html.Encode(localizer["TrainingCompleteButton"].Value) + "</a>")
 						  }
 						  else if (userRecord.Complete && userRecord.Score < t.MinimumScore && (t.Questions != null && t.Questions.Count > 0))
 						  {
-                            @Html.Raw("<a href='" + Url.Action("View", "Trainings", new { Area = "User", trainingId = t.TrainingId }) + "' class='btn btn-xs btn-danger'>" + localizer["TrainingCompleteButton"] + "</a>")
+                            @Html.Raw("<a href='" + Url.Action("View", "Trainings", new { Area = "User", trainingId = t.TrainingId }) + "' class='btn btn-xs btn-danger'>" + Html.Encode(localizer["TrainingCompleteButton"].Value) + "</a>")
 						  }
 						  else
 						  {
-                            @Html.Raw("<a href='" + Url.Action("View", "Trainings", new { Area = "User", trainingId = t.TrainingId }) + "' class='btn btn-xs btn-primary'>" + localizer["ViewTrainingButton"] + "</a>")
+                            @Html.Raw("<a href='" + Url.Action("View", "Trainings", new { Area = "User", trainingId = t.TrainingId }) + "' class='btn btn-xs btn-primary'>" + Html.Encode(localizer["ViewTrainingButton"].Value) + "</a>")
 						  }
 						}
 					  }

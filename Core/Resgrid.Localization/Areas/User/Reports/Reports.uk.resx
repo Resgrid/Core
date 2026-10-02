@@ -210,7 +210,6 @@
   <data name="WorkLogType" xml:space="preserve"><value>Робота</value></data>
   <data name="IdLabel" xml:space="preserve"><value>Id</value></data>
   <data name="StationHeader" xml:space="preserve"><value>Станція</value></data>
-  <data name="UnitsLabel" xml:space="preserve"><value>Підрозділи</value></data>
   <data name="ConditionLabel" xml:space="preserve"><value>Стан</value></data>
   <data name="CallNameLabel" xml:space="preserve"><value>Назва Виклику</value></data>
   <data name="CallTypeLabel" xml:space="preserve"><value>Тип Виклику</value></data>
@@ -305,9 +304,6 @@
   </data>
   <data name="NotCheckedOut" xml:space="preserve">
     <value>Вихід не зареєстровано</value>
-  </data>
-  <data name="TotalTimeLabel" xml:space="preserve">
-    <value>Загальний час</value>
   </data>
   <data name="CallUnitTimesReportName" xml:space="preserve">
     <value>Час підрозділів за викликами</value>

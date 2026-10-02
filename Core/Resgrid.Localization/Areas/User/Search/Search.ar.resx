@@ -1,0 +1,228 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>البحث</value>
+  </data>
+  <data name="Placeholder" xml:space="preserve">
+    <value>ابحث في البلاغات وملاحظات البلاغات والأفراد والوحدات والمزيد</value>
+  </data>
+  <data name="SearchButton" xml:space="preserve">
+    <value>بحث</value>
+  </data>
+  <data name="SearchIn" xml:space="preserve">
+    <value>البحث في</value>
+  </data>
+  <data name="AllFamilies" xml:space="preserve">
+    <value>الكل</value>
+  </data>
+  <data name="FromLabel" xml:space="preserve">
+    <value>من</value>
+  </data>
+  <data name="ToLabel" xml:space="preserve">
+    <value>إلى</value>
+  </data>
+  <data name="SortLabel" xml:space="preserve">
+    <value>الترتيب حسب</value>
+  </data>
+  <data name="SortRelevance" xml:space="preserve">
+    <value>الأكثر تطابقًا</value>
+  </data>
+  <data name="SortNewest" xml:space="preserve">
+    <value>الأحدث أولًا</value>
+  </data>
+  <data name="SortOldest" xml:space="preserve">
+    <value>الأقدم أولًا</value>
+  </data>
+  <data name="ExportCsv" xml:space="preserve">
+    <value>تصدير CSV</value>
+  </data>
+  <data name="ExportHelp" xml:space="preserve">
+    <value>نزّل كل النتائج المطابقة التي يمكنك فتحها (حتى {0}) كجدول بيانات.</value>
+  </data>
+  <data name="ResultsOfTotal" xml:space="preserve">
+    <value>عرض {0}–{1} من {2}</value>
+  </data>
+  <data name="ResultsRange" xml:space="preserve">
+    <value>عرض {0}–{1}</value>
+  </data>
+  <data name="NoResults" xml:space="preserve">
+    <value>لا توجد نتائج مطابقة لبحثك.</value>
+  </data>
+  <data name="NoResultsHint" xml:space="preserve">
+    <value>تحقق من الإملاء أو احذف كلمة أو وسّع نطاق التاريخ.</value>
+  </data>
+  <data name="EnterQuery" xml:space="preserve">
+    <value>أدخل الكلمات التي تبحث عنها.</value>
+  </data>
+  <data name="Tips" xml:space="preserve">
+    <value>يجب أن تظهر كل كلمة في النتيجة. ضع العبارة بين علامتي اقتباس لمطابقتها تمامًا، مثل "إنذار عطل" "مبنى 4". اختر نوعًا وتواريخ للحصول على قائمة كاملة يمكنك تصديرها.</value>
+  </data>
+  <data name="IndexBuilding" xml:space="preserve">
+    <value>يجري إنشاء فهرس البحث الخاص بإدارتك. قد تكون النتائج غير مكتملة لبضع دقائق.</value>
+  </data>
+  <data name="IndexUnavailable" xml:space="preserve">
+    <value>فهرس البحث غير متاح حاليًا. حاول مرة أخرى بعد بضع دقائق.</value>
+  </data>
+  <data name="SearchUnavailable" xml:space="preserve">
+    <value>البحث غير متاح لحسابك.</value>
+  </data>
+  <data name="TotalUnknown" xml:space="preserve">
+    <value>هناك نتائج مطابقة أكثر مما يمكن عده هنا. اختر نوعًا أو نطاقًا زمنيًا للحصول على قائمة كاملة.</value>
+  </data>
+  <data name="InvalidDate" xml:space="preserve">
+    <value>تعذرت قراءة تاريخ وتم تجاهله. استخدم أداة اختيار التاريخ.</value>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>السابق</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>التالي</value>
+  </data>
+  <data name="Family.Call" xml:space="preserve">
+    <value>البلاغات</value>
+  </data>
+  <data name="Family.Record" xml:space="preserve">
+    <value>التقارير (Records)</value>
+  </data>
+  <data name="Family.Personnel" xml:space="preserve">
+    <value>الأفراد</value>
+  </data>
+  <data name="Family.Unit" xml:space="preserve">
+    <value>الوحدات</value>
+  </data>
+  <data name="Family.Contact" xml:space="preserve">
+    <value>جهات الاتصال</value>
+  </data>
+  <data name="Family.Message" xml:space="preserve">
+    <value>الرسائل</value>
+  </data>
+  <data name="Family.Note" xml:space="preserve">
+    <value>الملاحظات</value>
+  </data>
+  <data name="Family.Document" xml:space="preserve">
+    <value>المستندات</value>
+  </data>
+  <data name="Family.Deployment" xml:space="preserve">
+    <value>المهام الميدانية</value>
+  </data>
+  <data name="Family.Invoice" xml:space="preserve">
+    <value>الفواتير</value>
+  </data>
+  <data name="Family.Bid" xml:space="preserve">
+    <value>العروض</value>
+  </data>
+  <data name="Family.ServiceContract" xml:space="preserve">
+    <value>العقود</value>
+  </data>
+  <data name="Family.RateCard" xml:space="preserve">
+    <value>جداول الأسعار</value>
+  </data>
+  <data name="Family.CertificationType" xml:space="preserve">
+    <value>أنواع الشهادات</value>
+  </data>
+  <data name="Badge.Call" xml:space="preserve">
+    <value>بلاغ</value>
+  </data>
+  <data name="Badge.Record" xml:space="preserve">
+    <value>تقرير</value>
+  </data>
+  <data name="Badge.Personnel" xml:space="preserve">
+    <value>فرد</value>
+  </data>
+  <data name="Badge.Unit" xml:space="preserve">
+    <value>وحدة</value>
+  </data>
+  <data name="Badge.Contact" xml:space="preserve">
+    <value>جهة اتصال</value>
+  </data>
+  <data name="Badge.Message" xml:space="preserve">
+    <value>رسالة</value>
+  </data>
+  <data name="Badge.Note" xml:space="preserve">
+    <value>ملاحظة</value>
+  </data>
+  <data name="Badge.Document" xml:space="preserve">
+    <value>مستند</value>
+  </data>
+  <data name="Badge.Deployment" xml:space="preserve">
+    <value>مهمة ميدانية</value>
+  </data>
+  <data name="Badge.Invoice" xml:space="preserve">
+    <value>فاتورة</value>
+  </data>
+  <data name="Badge.Bid" xml:space="preserve">
+    <value>عرض</value>
+  </data>
+  <data name="Badge.ServiceContract" xml:space="preserve">
+    <value>عقد</value>
+  </data>
+  <data name="Badge.RateCard" xml:space="preserve">
+    <value>جدول أسعار</value>
+  </data>
+  <data name="Badge.CertificationType" xml:space="preserve">
+    <value>نوع الشهادة</value>
+  </data>
+  <data name="Family.Log" xml:space="preserve">
+    <value>السجلات</value>
+  </data>
+  <data name="Family.Protocol" xml:space="preserve">
+    <value>البروتوكولات</value>
+  </data>
+  <data name="Family.Training" xml:space="preserve">
+    <value>التدريبات</value>
+  </data>
+  <data name="Family.CalendarEvent" xml:space="preserve">
+    <value>التقويم</value>
+  </data>
+  <data name="Family.Poi" xml:space="preserve">
+    <value>نقاط الاهتمام</value>
+  </data>
+  <data name="Family.Shift" xml:space="preserve">
+    <value>الورديات</value>
+  </data>
+  <data name="Family.Group" xml:space="preserve">
+    <value>المجموعات والمحطات</value>
+  </data>
+  <data name="Badge.Log" xml:space="preserve">
+    <value>سجل</value>
+  </data>
+  <data name="Badge.Protocol" xml:space="preserve">
+    <value>بروتوكول</value>
+  </data>
+  <data name="Badge.Training" xml:space="preserve">
+    <value>تدريب</value>
+  </data>
+  <data name="Badge.CalendarEvent" xml:space="preserve">
+    <value>حدث</value>
+  </data>
+  <data name="Badge.Poi" xml:space="preserve">
+    <value>نقطة اهتمام</value>
+  </data>
+  <data name="Badge.Shift" xml:space="preserve">
+    <value>وردية</value>
+  </data>
+  <data name="Badge.Group" xml:space="preserve">
+    <value>مجموعة</value>
+  </data>
+  <data name="Family.Occupancy" xml:space="preserve">
+    <value>المنشآت (الخطط المسبقة)</value>
+  </data>
+  <data name="Badge.Occupancy" xml:space="preserve">
+    <value>منشأة</value>
+  </data>
+  <data name="SearchAllResults" xml:space="preserve">
+    <value>البحث في كل النتائج</value>
+  </data>
+</root>

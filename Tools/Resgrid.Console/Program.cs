@@ -99,7 +99,10 @@ namespace Resgrid.Console
 						config.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
 						config.Lockout.MaxFailedAccessAttempts = 5;
 						config.Lockout.AllowedForNewUsers = true;
-					}).AddDefaultTokenProviders().AddClaimsPrincipalFactory<ClaimsPrincipalFactory<Model.Identity.IdentityUser, Model.Identity.IdentityRole>>();
+					}).AddDefaultTokenProviders()
+						// One-time TOTP steps, as in the web hosts (passkey plan section 7.5 rule 8).
+						.AddTokenProvider<ResgridAuthenticatorTokenProvider>(TokenOptions.DefaultAuthenticatorProvider)
+						.AddClaimsPrincipalFactory<ClaimsPrincipalFactory<Model.Identity.IdentityUser, Model.Identity.IdentityRole>>();
 
 					services.AddKeyedTransient<ICommandService, ResetPasswordCommand>("ResetPasswordCommand");
 					services.AddKeyedTransient<ICommandService, AddHostsCommand>("AddHostsCommand");
@@ -112,6 +115,7 @@ namespace Resgrid.Console
 					services.AddKeyedTransient<ICommandService, OidcUpdateCommand>("OidcUpdateCommand");
 					services.AddKeyedTransient<ICommandService, SecurityRefreshCommand>("SecurityRefreshCommand");
 					services.AddKeyedTransient<ICommandService, FeatureFlagsCommand>("FeatureFlagsCommand");
+					services.AddKeyedTransient<ICommandService, AuthenticatorSeedsCommand>("AuthenticatorSeedsCommand");
 					services.AddKeyedTransient<ICommandService, HelpCommand>("HelpCommand");
 
 					services.AddHostedService<ApplicationHostedService>();

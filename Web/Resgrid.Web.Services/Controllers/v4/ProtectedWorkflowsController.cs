@@ -27,10 +27,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IProtectedWorkflowService _protectedWorkflows;
 		private readonly IDepartmentDataProtectionService _dataProtectionService;
 		private readonly IProtectedDataGrantService _grantService;
+		private readonly IMfaCredentialStateService _credentialStates;
 
 		public ProtectedWorkflowsController(IProtectedWorkflowService protectedWorkflows, IDepartmentDataProtectionService dataProtectionService,
-			IProtectedDataGrantService grantService)
+			IProtectedDataGrantService grantService, IMfaCredentialStateService credentialStates)
 		{
+			_credentialStates = credentialStates;
 			_protectedWorkflows = protectedWorkflows;
 			_dataProtectionService = dataProtectionService;
 			_grantService = grantService;
@@ -247,7 +249,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 					var policy = await _dataProtectionService.GetPolicyByDepartmentIdAsync(DepartmentId, bypassCache: true);
 					var outcome = _grantService.ValidateGrant(token, DepartmentId, policy?.PolicyEpoch ?? 0, requiredScope: null, out var grant);
 					if (outcome == ProtectedDataGrantValidationOutcome.Valid && grant != null && !grant.StepUpExempt &&
-						string.Equals(grant.UserId, UserId, StringComparison.OrdinalIgnoreCase))
+						await Resgrid.Services.ProtectedGrantBinding.CheckAsync(grant, UserId, HttpProtectedGrantContext.SessionOf(HttpContext),
+							policy?.StepUpWindowMinutes, _credentialStates) == Resgrid.Model.Security.ProtectedGrantBindingOutcome.Bound)
 						stepUpAt = grant.MfaAtUtc;
 				}
 			}

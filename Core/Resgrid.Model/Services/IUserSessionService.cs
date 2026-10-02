@@ -26,6 +26,23 @@ namespace Resgrid.Model.Services
 		Task<RevocationResult> RevokeOtherSessionsAsync(string userId, string currentSessionId, UserSessionRevocationReason reason, CancellationToken cancellationToken = default);
 		Task<RevocationResult> RevokeAllAsync(string actorUserId, string targetUserId, UserSessionRevocationReason reason, DateTime validAfterUtc, CancellationToken cancellationToken = default);
 		Task<RevocationResult> RevokeAllAfterCredentialChangeAsync(string actorUserId, string targetUserId, UserSessionRevocationReason reason, DateTime validAfterUtc, CancellationToken cancellationToken = default);
+		/// <summary>
+		/// Moves an unlocked shared session's idle deadline to now, because the operator did something (the client says so
+		/// with <c>X-Resgrid-Operator-Activity</c>; polling and sockets never do). Written at most once per
+		/// <c>PasskeyConfig.SharedActivityWriteIntervalSeconds</c>, and never for a session whose deadline already passed.
+		/// </summary>
+		Task RecordOperatorActivityAsync(UserSession session, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Which of the given sessions can no longer be used: missing, ended, expired, locked, or a shared session past its
+		/// recorded idle deadline. For closing open SignalR connections in bulk (slice 16); a request still gets the full
+		/// validation, which also applies a stricter current department policy.
+		/// </summary>
+		Task<IReadOnlySet<string>> GetUnusableSessionIdsAsync(IReadOnlyCollection<string> sessionIds, CancellationToken cancellationToken = default);
+
+		/// <summary>Asks every SignalR host to close this session's open connections now; best effort.</summary>
+		Task CloseConnectionsAsync(string sessionId);
+
 		Task<RevocationResult> RevokeDepartmentSessionsAsync(string targetUserId, int departmentId, UserSessionRevocationReason reason, CancellationToken cancellationToken = default);
 	}
 }

@@ -42,12 +42,35 @@ namespace Resgrid.Config
 		public static int BrokerTimeoutMs = 10000;
 
 		/// <summary>
-		/// Shared workload secret the application tier presents to the broker (X-Resgrid-Broker-Key).
-		/// Supplied through the environment/secret store only; an empty value on the broker refuses
-		/// every request (fail closed). This is defense-in-depth UNDER network isolation and mTLS —
-		/// never the only control.
+		/// LEGACY shared workload secret (X-Resgrid-Broker-Key with no client id). Superseded by per-host
+		/// credentials (<see cref="BrokerClientCredentials"/>, passkey plan section 8.5); the broker accepts it only
+		/// while <see cref="BrokerLegacySharedKeyEnabled"/> is on, with full authority, logging every use. A client
+		/// sends it only when it has no <see cref="BrokerClientId"/>. Supplied through the environment only.
 		/// </summary>
 		public static string BrokerApiKey = "";
+
+		/// <summary>
+		/// Broker side (passkey plan section 8.5): one credential per calling host role, as
+		/// <c>id=lanes|purposes|keyHash[,nextKeyHash];...</c>. Lanes are <c>attended</c>, <c>workload</c> and
+		/// <c>receipt</c>; purposes (workload lane only) must be in <see cref="BrokerWorkloadPurposes"/>; each key
+		/// hash is the lowercase or uppercase hex SHA-256 of the key's UTF-8 bytes, and a second hash allows rotation
+		/// without downtime. Example:
+		/// <c>api=attended,workload,receipt|records-export,invoicing|3f...;workers=workload|neris-submission|9a...;backoffice=receipt||c1...</c>.
+		/// An invalid map stops the broker at startup.
+		/// </summary>
+		public static string BrokerClientCredentials = "";
+
+		/// <summary>
+		/// Broker side: accept the legacy <see cref="BrokerApiKey"/> during the migration window (plan section 8.5
+		/// rule 6). Turn off, and remove the key, once the broker logs show no legacy use.
+		/// </summary>
+		public static bool BrokerLegacySharedKeyEnabled = true;
+
+		/// <summary>Client side: this host's broker credential id (X-Resgrid-Broker-Client), e.g. <c>api</c> or <c>workers</c>.</summary>
+		public static string BrokerClientId = "";
+
+		/// <summary>Client side: this host's broker credential key, supplied through the environment only.</summary>
+		public static string BrokerClientKey = "";
 
 		/// <summary>Maximum field items one broker request may carry; larger requests are refused.</summary>
 		public static int BrokerMaxItemsPerRequest = 200;
@@ -55,11 +78,12 @@ namespace Resgrid.Config
 		/// <summary>
 		/// Purposes the broker's workload decrypt lane (POST api/v1/broker/workload/decrypt?purpose=) accepts, comma
 		/// separated (RMS plan section 5.9.4). Each purpose is an egress the department acknowledged in the
-		/// application before the caller reaches the broker: neris-submission (worker 41), records-export
-		/// (worker 45 / Workflow renders) and invoicing (invoice delivery, pay links and deployment finance: the
-		/// Workforce &amp; Business Operations plan's document renders and the DTR void-reason append) and
+		/// application before the caller reaches the broker: neris-submission (worker 41), records-export (worker 45,
+		/// Workflow renders, and the Web and API "run now" export), invoicing (the customer contact on invoice and bid
+		/// delivery), workforce-costing and pay-data-reporting (Web workforce costing and CA pay-data runs), and
 		/// protected-workflow (an approved Protected Workflow release sending its allow-listed fields to its pinned
-		/// destination). Empty disables the lane; callers fail closed with workload_purpose_denied.
+		/// destination). Empty disables the lane; callers fail closed with workload_purpose_denied. Each host's
+		/// credential (<see cref="BrokerClientCredentials"/>) narrows this list further.
 		/// </summary>
 		public static string BrokerWorkloadPurposes = "neris-submission,records-export,invoicing,workforce-costing,pay-data-reporting,protected-workflow";
 
@@ -132,6 +156,37 @@ namespace Resgrid.Config
 
 		/// <summary>Bounded clock skew allowed when validating grant lifetimes, in seconds.</summary>
 		public static int GrantClockSkewSeconds = 30;
+
+		/// <summary>
+		/// Filesystem path to the broker session-assertion SIGNING certificate (PFX with an ECDSA P-256 private key), on
+		/// Web and API hosts (passkey workbook section 6.2). A dedicated certificate: never the grant key and never an
+		/// OpenIddict key. Empty means no assertions are minted.
+		/// </summary>
+		public static string SessionAssertionSigningCertificatePath = "";
+
+		/// <summary>PFX password for the session-assertion signing certificate, supplied through the environment only.</summary>
+		public static string SessionAssertionSigningCertificatePassword = "";
+
+		/// <summary>
+		/// Filesystem path to the session-assertion VALIDATION certificate (public key only), on the broker. When empty,
+		/// validation falls back to the signing certificate's public part where that is configured (single-host development).
+		/// </summary>
+		public static string SessionAssertionValidationCertificatePath = "";
+
+		/// <summary>Issuer (iss) on broker session assertions; the audience is <see cref="BrokerAudience"/>.</summary>
+		public static string SessionAssertionIssuer = "resgrid-identity-session";
+
+		/// <summary>Session-assertion lifetime in seconds (the broker applies <see cref="GrantClockSkewSeconds"/> as skew).</summary>
+		public static int SessionAssertionLifetimeSeconds = 60;
+
+		/// <summary>
+		/// When true, the broker refuses attended decrypt and encrypt requests that carry no session assertion, even with a
+		/// version 1 grant. Version 2 grants always require one. Off until every Web and API host mints assertions.
+		/// </summary>
+		public static bool BrokerRequireSessionAssertion = false;
+
+		/// <summary>How long broker request ids and session-assertion ids stay recorded as used, in minutes.</summary>
+		public static int BrokerReplayWindowMinutes = 15;
 
 		/// <summary>
 		/// Key-wrapping provider the broker uses: "OpenBaoTransit" (production default), or "LocalDev"

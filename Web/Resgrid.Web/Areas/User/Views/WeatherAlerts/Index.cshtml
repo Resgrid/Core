@@ -43,18 +43,18 @@
 @section Scripts {
 	<script>
 		var loc = {
-			event: '@localizer["Event"]',
-			severity: '@localizer["Severity"]',
-			area: '@localizer["Area"]',
-			expires: '@localizer["Expires"]',
-			details: '@localizer["Details"]',
-			noActiveAlerts: '@localizer["NoActiveAlerts"]',
-			unableToLoad: '@localizer["UnableToLoad"]',
-			severityExtreme: '@localizer["SeverityExtreme"]',
-			severitySevere: '@localizer["SeveritySevere"]',
-			severityModerate: '@localizer["SeverityModerate"]',
-			severityMinor: '@localizer["SeverityMinor"]',
-			severityUnknown: '@localizer["SeverityUnknown"]'
+			event: '@JsEncoder.Encode(localizer["Event"])',
+			severity: '@JsEncoder.Encode(localizer["Severity"])',
+			area: '@JsEncoder.Encode(localizer["Area"])',
+			expires: '@JsEncoder.Encode(localizer["Expires"])',
+			details: '@JsEncoder.Encode(localizer["Details"])',
+			noActiveAlerts: '@JsEncoder.Encode(localizer["NoActiveAlerts"])',
+			unableToLoad: '@JsEncoder.Encode(localizer["UnableToLoad"])',
+			severityExtreme: '@JsEncoder.Encode(localizer["SeverityExtreme"])',
+			severitySevere: '@JsEncoder.Encode(localizer["SeveritySevere"])',
+			severityModerate: '@JsEncoder.Encode(localizer["SeverityModerate"])',
+			severityMinor: '@JsEncoder.Encode(localizer["SeverityMinor"])',
+			severityUnknown: '@JsEncoder.Encode(localizer["SeverityUnknown"])'
 		};
 
 		$(document).ready(function() {
@@ -95,11 +95,11 @@
 						$table.append($thead).append($tbody);
 						container.append($table);
 					} else {
-						container.html('<div class="alert alert-info">' + loc.noActiveAlerts + '</div>');
+						container.empty().append($('<div class="alert alert-info">').text(loc.noActiveAlerts));
 					}
 				},
 				error: function() {
-					$('#weatherAlertsContainer').html('<div class="alert alert-warning">' + loc.unableToLoad + '</div>');
+					$('#weatherAlertsContainer').empty().append($('<div class="alert alert-warning">').text(loc.unableToLoad));
 				}
 			});
 		});

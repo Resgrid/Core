@@ -115,7 +115,11 @@ namespace Resgrid.Services.AdminAssist
 			return Copy(row ?? new DepartmentSecurityPolicy { DepartmentId = departmentId });
 		}
 		private static DepartmentSecurityPolicy Copy(DepartmentSecurityPolicy p) => new() { DepartmentId = p.DepartmentId, RequireMfa = p.RequireMfa, RequireSso = p.RequireSso,
-			SessionTimeoutMinutes = p.SessionTimeoutMinutes, MaxConcurrentSessions = p.MaxConcurrentSessions, PasswordExpirationDays = p.PasswordExpirationDays, MinPasswordLength = p.MinPasswordLength };
+			SessionTimeoutMinutes = p.SessionTimeoutMinutes, MaxConcurrentSessions = p.MaxConcurrentSessions, PasswordExpirationDays = p.PasswordExpirationDays, MinPasswordLength = p.MinPasswordLength,
+			// The second-factor method switches (passkey plan section 10.1) travel with every preview so a proposal never reads them as off.
+			AllowPasskeysForLoginMfa = p.AllowPasskeysForLoginMfa, AllowPasskeysForAdp = p.AllowPasskeysForAdp, AllowFederatedMfaForLoginMfa = p.AllowFederatedMfaForLoginMfa,
+			AllowFederatedMfaForAdp = p.AllowFederatedMfaForAdp, AllowResponderApproval = p.AllowResponderApproval, AcceptRecentLoginMfaForAdp = p.AcceptRecentLoginMfaForAdp,
+			AcceptRecentUnlockMfaForAdp = p.AcceptRecentUnlockMfaForAdp, MfaPolicyVersion = p.MfaPolicyVersion };
 		private static decimal Value(DepartmentSecurityPolicy p, string field) => field switch { "SessionTimeoutMinutes" => p.SessionTimeoutMinutes,
 			"MaxConcurrentSessions" => p.MaxConcurrentSessions, "PasswordExpirationDays" => p.PasswordExpirationDays, "MinPasswordLength" => p.MinPasswordLength, _ => throw new ArgumentException() };
 		private static void Apply(DepartmentSecurityPolicy p, string field, ConfigurationImpactRequest request)

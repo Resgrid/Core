@@ -267,10 +267,10 @@
     <value>Ρυθμίσεις Twilio</value>
   </data>
   <data name="TwilioAccountSid" xml:space="preserve">
-    <value>Account SID</value>
+    <value>SID Λογαριασμού</value>
   </data>
   <data name="TwilioAuthToken" xml:space="preserve">
-    <value>Auth Token</value>
+    <value>Διακριτικό Πιστοποίησης</value>
   </data>
   <data name="TwilioFromNumber" xml:space="preserve">
     <value>Αριθμός Αποστολέα</value>
@@ -324,10 +324,10 @@
     <value>Ρυθμίσεις AWS S3</value>
   </data>
   <data name="AwsAccessKeyId" xml:space="preserve">
-    <value>Access Key ID</value>
+    <value>Αναγνωριστικό Κλειδιού Πρόσβασης</value>
   </data>
   <data name="AwsSecretAccessKey" xml:space="preserve">
-    <value>Secret Access Key</value>
+    <value>Μυστικό Κλειδί Πρόσβασης</value>
   </data>
   <data name="AwsRegion" xml:space="preserve">
     <value>Περιοχή</value>
@@ -419,16 +419,16 @@
     <value>Box</value>
   </data>
   <data name="BoxClientId" xml:space="preserve">
-    <value>Client ID</value>
+    <value>Αναγνωριστικό Πελάτη</value>
   </data>
   <data name="BoxClientSecret" xml:space="preserve">
-    <value>Client Secret</value>
+    <value>Μυστικό Πελάτη</value>
   </data>
   <data name="BoxEnterpriseId" xml:space="preserve">
-    <value>Enterprise ID</value>
+    <value>Αναγνωριστικό Επιχείρησης</value>
   </data>
   <data name="BoxPublicKeyId" xml:space="preserve">
-    <value>Public Key ID</value>
+    <value>Αναγνωριστικό Δημόσιου Κλειδιού</value>
   </data>
   <data name="BoxPrivateKey" xml:space="preserve">
     <value>Ιδιωτικό Κλειδί (PEM)</value>
@@ -447,16 +447,16 @@
     <value>Dropbox</value>
   </data>
   <data name="DropboxRefreshToken" xml:space="preserve">
-    <value>Refresh Token</value>
+    <value>Διακριτικό Ανανέωσης</value>
   </data>
   <data name="DropboxRefreshTokenHelp" xml:space="preserve">
     <value>Διακριτικό ανανέωσης OAuth2 μακράς διάρκειας που λαμβάνεται από τη ροή εξουσιοδότησης OAuth2 του Dropbox.</value>
   </data>
   <data name="DropboxAppKey" xml:space="preserve">
-    <value>App Key</value>
+    <value>Κλειδί Εφαρμογής</value>
   </data>
   <data name="DropboxAppSecret" xml:space="preserve">
-    <value>App Secret</value>
+    <value>Μυστικό Εφαρμογής</value>
   </data>
   <!-- Pending Runs -->
   <data name="PendingRunningWorkflows" xml:space="preserve">
@@ -748,6 +748,327 @@
   </data>
   <data name="Gallery_hl7_mdm_t02_Description" xml:space="preserve">
     <value>Όταν κλείνει μια κλήση, στέλνει ένα έγγραφο MDM^T02 «Crisis Field Response» σε μηχανή διασύνδεσης μέσω HTTPS: το PID-3 είναι το αναγνωριστικό πελάτη του φακέλου υγείας, το MSH-10 το κλειδί idempotency, ένα OBX για κάθε εγκεκριμένο προσαρμοσμένο πεδίο. Επιτυγχάνει μόνο με επιβεβαίωση AA.</value>
+  </data>
+  <data name="OutputTemplate" xml:space="preserve">
+    <value>Πρότυπο Εξόδου</value>
+  </data>
+  <data name="FieldRequired" xml:space="preserve">
+    <value>Το πεδίο {0} είναι υποχρεωτικό.</value>
+  </data>
+  <data name="CredentialRequired" xml:space="preserve">
+    <value>Απαιτούνται διαπιστευτήρια για αυτόν τον τύπο ενέργειας.</value>
+  </data>
+  <data name="ActionType_SendEmail" xml:space="preserve">
+    <value>Αποστολή Email</value>
+  </data>
+  <data name="ActionType_SendSms" xml:space="preserve">
+    <value>Αποστολή SMS</value>
+  </data>
+  <data name="ActionType_CallApiGet" xml:space="preserve">
+    <value>HTTP GET</value>
+  </data>
+  <data name="ActionType_CallApiPost" xml:space="preserve">
+    <value>HTTP POST</value>
+  </data>
+  <data name="ActionType_CallApiPut" xml:space="preserve">
+    <value>HTTP PUT</value>
+  </data>
+  <data name="ActionType_CallApiDelete" xml:space="preserve">
+    <value>HTTP DELETE</value>
+  </data>
+  <data name="ActionType_UploadFileFtp" xml:space="preserve">
+    <value>Μεταφόρτωση FTP</value>
+  </data>
+  <data name="ActionType_UploadFileSftp" xml:space="preserve">
+    <value>Μεταφόρτωση SFTP</value>
+  </data>
+  <data name="ActionType_UploadFileS3" xml:space="preserve">
+    <value>Μεταφόρτωση S3</value>
+  </data>
+  <data name="ActionType_SendTeamsMessage" xml:space="preserve">
+    <value>Μήνυμα Teams</value>
+  </data>
+  <data name="ActionType_SendSlackMessage" xml:space="preserve">
+    <value>Μήνυμα Slack</value>
+  </data>
+  <data name="ActionType_SendDiscordMessage" xml:space="preserve">
+    <value>Μήνυμα Discord</value>
+  </data>
+  <data name="ActionType_UploadFileAzureBlob" xml:space="preserve">
+    <value>Μεταφόρτωση Azure Blob</value>
+  </data>
+  <data name="ActionType_UploadFileBox" xml:space="preserve">
+    <value>Μεταφόρτωση Box</value>
+  </data>
+  <data name="ActionType_UploadFileDropbox" xml:space="preserve">
+    <value>Μεταφόρτωση Dropbox</value>
+  </data>
+  <data name="StepConditional" xml:space="preserve">
+    <value>Υπό Όρους</value>
+  </data>
+  <data name="TriggerEventLocked" xml:space="preserve">
+    <value>Ο τύπος συμβάντος ενεργοποίησης δεν μπορεί να αλλάξει μετά τη δημιουργία.</value>
+  </data>
+  <data name="FieldTo" xml:space="preserve">
+    <value>Προς</value>
+  </data>
+  <data name="FieldToHelp" xml:space="preserve">
+    <value>Διευθύνσεις email χωρισμένες με κόμμα.</value>
+  </data>
+  <data name="FieldCc" xml:space="preserve">
+    <value>Κοιν.</value>
+  </data>
+  <data name="OptionalPlaceholder" xml:space="preserve">
+    <value>προαιρετικό</value>
+  </data>
+  <data name="FieldSubject" xml:space="preserve">
+    <value>Θέμα</value>
+  </data>
+  <data name="FieldToPhone" xml:space="preserve">
+    <value>Προς (τηλέφωνο)</value>
+  </data>
+  <data name="FieldToPhoneHelp" xml:space="preserve">
+    <value>Μορφή E.164. Απαιτείται διαπιστευτήριο Twilio.</value>
+  </data>
+  <data name="FieldUrl" xml:space="preserve">
+    <value>Διεύθυνση URL</value>
+  </data>
+  <data name="FieldTimeoutSeconds" xml:space="preserve">
+    <value>Χρονικό Όριο (δευτερόλεπτα)</value>
+  </data>
+  <data name="FieldRemotePath" xml:space="preserve">
+    <value>Απομακρυσμένη Διαδρομή</value>
+  </data>
+  <data name="FieldFilename" xml:space="preserve">
+    <value>Όνομα Αρχείου</value>
+  </data>
+  <data name="FieldFilenameHelp" xml:space="preserve">
+    <value>Αφήστε το κενό για αυτόματη δημιουργία ονόματος.</value>
+  </data>
+  <data name="FieldS3Key" xml:space="preserve">
+    <value>Κλειδί S3 (διαδρομή)</value>
+  </data>
+  <data name="FieldS3KeyHelp" xml:space="preserve">
+    <value>Πλήρες κλειδί / διαδρομή μέσα στο bucket.</value>
+  </data>
+  <data name="FieldCardTitle" xml:space="preserve">
+    <value>Τίτλος Κάρτας</value>
+  </data>
+  <data name="FieldThemeColor" xml:space="preserve">
+    <value>Χρώμα Θέματος</value>
+  </data>
+  <data name="FieldThemeColorHelp" xml:space="preserve">
+    <value>Δεκαεξαδική τιμή χωρίς #</value>
+  </data>
+  <data name="FieldChannel" xml:space="preserve">
+    <value>Κανάλι</value>
+  </data>
+  <data name="FieldChannelHelp" xml:space="preserve">
+    <value>Αφήστε το κενό για χρήση του προεπιλεγμένου καναλιού του webhook.</value>
+  </data>
+  <data name="FieldBotUsername" xml:space="preserve">
+    <value>Όνομα Χρήστη Bot</value>
+  </data>
+  <data name="FieldIconEmoji" xml:space="preserve">
+    <value>Emoji Εικονιδίου</value>
+  </data>
+  <data name="FieldAvatarUrl" xml:space="preserve">
+    <value>Διεύθυνση URL Άβαταρ</value>
+  </data>
+  <data name="FieldBlobPath" xml:space="preserve">
+    <value>Όνομα / Διαδρομή Blob</value>
+  </data>
+  <data name="FieldBlobPathHelp" xml:space="preserve">
+    <value>Αφήστε το κενό για αυτόματη δημιουργία διαδρομής.</value>
+  </data>
+  <data name="FieldFolderId" xml:space="preserve">
+    <value>Αναγνωριστικό Φακέλου</value>
+  </data>
+  <data name="FieldFolderIdHelp" xml:space="preserve">
+    <value>"0" = ριζικός φάκελος.</value>
+  </data>
+  <data name="FieldTargetPath" xml:space="preserve">
+    <value>Διαδρομή Προορισμού</value>
+  </data>
+  <data name="FieldWriteMode" xml:space="preserve">
+    <value>Λειτουργία Εγγραφής</value>
+  </data>
+  <data name="WriteModeOverwrite" xml:space="preserve">
+    <value>Αντικατάσταση</value>
+  </data>
+  <data name="WriteModeAdd" xml:space="preserve">
+    <value>Προσθήκη (μετονομασία σε περίπτωση διένεξης)</value>
+  </data>
+  <data name="WriteModeUpdate" xml:space="preserve">
+    <value>Ενημέρωση (αποτυχία αν δεν υπάρχει)</value>
+  </data>
+  <data name="StepCredential" xml:space="preserve">
+    <value>Διαπιστευτήριο</value>
+  </data>
+  <data name="CredentialNoneOption" xml:space="preserve">
+    <value>(κανένα)</value>
+  </data>
+  <data name="NoMatchingCredentials" xml:space="preserve">
+    <value>Δεν βρέθηκαν αντίστοιχα διαπιστευτήρια για αυτόν τον τύπο ενέργειας.</value>
+  </data>
+  <data name="AddCredentialNow" xml:space="preserve">
+    <value>Προσθέστε ένα τώρα →</value>
+  </data>
+  <data name="CredentialHelpSmtp" xml:space="preserve">
+    <value>Διαπιστευτήρια SMTP για την αποστολή email.</value>
+  </data>
+  <data name="CredentialHelpTwilio" xml:space="preserve">
+    <value>Διαπιστευτήρια Twilio για την αποστολή SMS.</value>
+  </data>
+  <data name="CredentialHelpHttp" xml:space="preserve">
+    <value>Προαιρετικό διαπιστευτήριο ελέγχου ταυτότητας HTTP.</value>
+  </data>
+  <data name="CredentialHelpFtp" xml:space="preserve">
+    <value>Διαπιστευτήρια διακομιστή FTP.</value>
+  </data>
+  <data name="CredentialHelpSftp" xml:space="preserve">
+    <value>Διαπιστευτήρια διακομιστή SFTP.</value>
+  </data>
+  <data name="CredentialHelpS3" xml:space="preserve">
+    <value>Διαπιστευτήρια AWS S3 (κλειδί πρόσβασης + bucket).</value>
+  </data>
+  <data name="CredentialHelpTeams" xml:space="preserve">
+    <value>Διαπιστευτήριο εισερχόμενου webhook Microsoft Teams.</value>
+  </data>
+  <data name="CredentialHelpSlack" xml:space="preserve">
+    <value>Διαπιστευτήριο Slack (webhook ή διακριτικό bot).</value>
+  </data>
+  <data name="CredentialHelpDiscord" xml:space="preserve">
+    <value>Διαπιστευτήριο Discord (webhook ή διακριτικό bot).</value>
+  </data>
+  <data name="CredentialHelpAzure" xml:space="preserve">
+    <value>Διαπιστευτήριο συμβολοσειράς σύνδεσης Azure Blob Storage.</value>
+  </data>
+  <data name="CredentialHelpBox" xml:space="preserve">
+    <value>Διαπιστευτήριο εφαρμογής Box (JWT).</value>
+  </data>
+  <data name="CredentialHelpDropbox" xml:space="preserve">
+    <value>Διαπιστευτήριο διακριτικού πρόσβασης Dropbox.</value>
+  </data>
+  <data name="SelectCredentialOption" xml:space="preserve">
+    <value>— επιλέξτε διαπιστευτήριο —</value>
+  </data>
+  <data name="CredentialNoneUnauthenticated" xml:space="preserve">
+    <value>(κανένα / χωρίς έλεγχο ταυτότητας)</value>
+  </data>
+  <data name="ConditionExpression" xml:space="preserve">
+    <value>Έκφραση Συνθήκης</value>
+  </data>
+  <data name="OptionalSuffix" xml:space="preserve">
+    <value>(προαιρετική)</value>
+  </data>
+  <data name="ConditionHelp" xml:space="preserve">
+    <value>Αφήστε το κενό για να εκτελείται πάντα αυτό το βήμα. Όταν οριστεί, το βήμα εκτελείται μόνο αν η συνθήκη αποτιμηθεί ως {0}. Χρησιμοποιεί τις ίδιες μεταβλητές με το πρότυπο εξόδου.</value>
+  </data>
+  <data name="VisualBuilder" xml:space="preserve">
+    <value>Οπτικός Σχεδιαστής</value>
+  </data>
+  <data name="RawExpression" xml:space="preserve">
+    <value>Ακατέργαστη Έκφραση</value>
+  </data>
+  <data name="AddRule" xml:space="preserve">
+    <value>Προσθήκη Κανόνα</value>
+  </data>
+  <data name="RulesJoinedWithAnd" xml:space="preserve">
+    <value>Οι πολλαπλοί κανόνες συνδέονται με AND — πρέπει να ισχύουν όλοι.</value>
+  </data>
+  <data name="TestCondition" xml:space="preserve">
+    <value>Δοκιμή Συνθήκης</value>
+  </data>
+  <data name="OpContains" xml:space="preserve">
+    <value>περιέχει</value>
+  </data>
+  <data name="OpNotContains" xml:space="preserve">
+    <value>δεν περιέχει</value>
+  </data>
+  <data name="OpEquals" xml:space="preserve">
+    <value>ισούται με</value>
+  </data>
+  <data name="OpNotEquals" xml:space="preserve">
+    <value>δεν ισούται με</value>
+  </data>
+  <data name="OpStartsWith" xml:space="preserve">
+    <value>ξεκινά με</value>
+  </data>
+  <data name="OpEndsWith" xml:space="preserve">
+    <value>τελειώνει με</value>
+  </data>
+  <data name="OpIsEmpty" xml:space="preserve">
+    <value>είναι κενό</value>
+  </data>
+  <data name="OpIsNotEmpty" xml:space="preserve">
+    <value>δεν είναι κενό</value>
+  </data>
+  <data name="ConditionValuePlaceholder" xml:space="preserve">
+    <value>τιμή</value>
+  </data>
+  <data name="ConditionTooComplex" xml:space="preserve">
+    <value>Η τρέχουσα έκφραση είναι υπερβολικά σύνθετη για τον οπτικό σχεδιαστή. Επεξεργαστείτε τη στην καρτέλα «Ακατέργαστη Έκφραση».</value>
+  </data>
+  <data name="ConditionNone" xml:space="preserve">
+    <value>Χωρίς συνθήκη — το βήμα θα εκτελείται πάντα.</value>
+  </data>
+  <data name="ConditionTesting" xml:space="preserve">
+    <value>Δοκιμή…</value>
+  </data>
+  <data name="ConditionWillRun" xml:space="preserve">
+    <value>Αποτίμηση: "{0}" — το βήμα θα εκτελεστεί</value>
+  </data>
+  <data name="ConditionWillSkip" xml:space="preserve">
+    <value>Αποτίμηση: "{0}" — το βήμα θα παραλειφθεί</value>
+  </data>
+  <data name="ConditionSyntaxValid" xml:space="preserve">
+    <value>Έγκυρη σύνταξη (δεν υπάρχει δείγμα ωφέλιμου φορτίου για αποτίμηση)</value>
+  </data>
+  <data name="ConditionTestFailed" xml:space="preserve">
+    <value>Το αίτημα δοκιμής απέτυχε.</value>
+  </data>
+  <data name="TemplateSyntaxHelp" xml:space="preserve">
+    <value>Χρησιμοποιήστε σύνταξη προτύπων Scriban. Κάντε κλικ στις μεταβλητές στον πίνακα στα δεξιά για να τις εισαγάγετε.</value>
+  </data>
+  <data name="VariablesHelpScalar" xml:space="preserve">
+    <value>Κάντε κλικ σε μια μεταβλητή με την ένδειξη {0} για να την εισαγάγετε.</value>
+  </data>
+  <data name="VariablesHelpArray" xml:space="preserve">
+    <value>Κάντε κλικ σε μια μεταβλητή με την ένδειξη {0} για να εισαγάγετε ένα απόσπασμα βρόχου {1}.</value>
+  </data>
+  <data name="VariableKindScalar" xml:space="preserve">
+    <value>βαθμωτή</value>
+  </data>
+  <data name="VariableKindArray" xml:space="preserve">
+    <value>πίνακας</value>
+  </data>
+  <data name="CallCollectionsHeader" xml:space="preserve">
+    <value>Συλλογές Κλήσης (πίνακες)</value>
+  </data>
+  <data name="CallCollectionsHelp" xml:space="preserve">
+    <value>Κάντε κλικ για να εισαγάγετε έναν βρόχο {0}. Διατίθεται για τα εναύσματα CallAdded, CallUpdated, CallClosed.</value>
+  </data>
+  <data name="ArrayFieldsTooltip" xml:space="preserve">
+    <value>Πεδία: {0}</value>
+  </data>
+  <data name="UnitPersonnelVariables" xml:space="preserve">
+    <value>Μονάδα / Προσωπικό</value>
+  </data>
+  <data name="SaveStepFailed" xml:space="preserve">
+    <value>Αποτυχία αποθήκευσης βήματος.</value>
+  </data>
+  <data name="DeleteStepFailed" xml:space="preserve">
+    <value>Η διαγραφή απέτυχε: {0}</value>
+  </data>
+  <data name="SubjectPlaceholder" xml:space="preserve">
+    <value>π.χ. Νέα Κλήση: {0}</value>
+  </data>
+  <data name="TeamsTitlePlaceholder" xml:space="preserve">
+    <value>Ειδοποίηση Resgrid</value>
+  </data>
+  <data name="BotUsernamePlaceholder" xml:space="preserve">
+    <value>Bot του Resgrid</value>
   </data>
 </root>
 

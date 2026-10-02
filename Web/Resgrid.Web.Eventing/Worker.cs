@@ -27,10 +27,12 @@ namespace Resgrid.Web.Eventing
 		private readonly IServiceProvider _serviceProvider;
 		private readonly IRabbitInboundEventProvider _rabbitInboundEventProvider;
 		private readonly GeolocationBroadcaster _geolocationBroadcaster;
+		private readonly Resgrid.Services.SessionConnectionRegistry _connections;
 
 		public Worker(IServiceProvider serviceProvider, IHubContext<EventingHub> eventingHub, IHubContext<GeolocationHub> geolocationHub, IHubContext<ChatHub> chatHub,
-			GeolocationBroadcaster geolocationBroadcaster)
+			GeolocationBroadcaster geolocationBroadcaster, Resgrid.Services.SessionConnectionRegistry connections)
 		{
+			_connections = connections;
 			_geolocationBroadcaster = geolocationBroadcaster;
 			_serviceProvider = serviceProvider;
 			_eventingHub = eventingHub;
@@ -58,6 +60,7 @@ namespace Resgrid.Web.Eventing
 
 			_rabbitInboundEventProvider.RegisterForChatEvents(ChatEventReceived);
 			_rabbitInboundEventProvider.RegisterForChecklistEvents((departmentId, id) => _eventingHub.Clients.Group(departmentId.ToString()).SendAsync("checklistUpdated", id));
+			_rabbitInboundEventProvider.RegisterForSessionEvents(SessionEventReceived);
 
 			await StartProviderAsync();
 
@@ -133,6 +136,12 @@ namespace Resgrid.Web.Eventing
 
 		//	await _rabbitInboundEventProvider.Start();
 		//}
+
+		/// <summary>
+		/// An event for one session (passkey workbook section 7.4), sent only to that session's own connections. Only known
+		/// event names are forwarded, with only the request id and state.
+		/// </summary>
+		public Task SessionEventReceived(string sessionId, string payload) => SessionEventRelay.RelayAsync(_eventingHub.Clients, _connections, sessionId, payload);
 
 		public async Task PersonnelStatusUpdated(int departmentId, string id)
 		{

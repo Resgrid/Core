@@ -19,5 +19,21 @@ namespace Resgrid.Web.Broker.Models
 		public string RequestId { get; set; }
 
 		public List<ProtectedFieldOperationItem> Items { get; set; }
+
+		/// <summary>
+		/// The caller's session assertion (passkey workbook section 6.2). Read from the X-Resgrid-Session-Assertion header
+		/// by the controller, never from the request body.
+		/// </summary>
+		[System.Text.Json.Serialization.JsonIgnore]
+		[Newtonsoft.Json.JsonIgnore]
+		public string SessionAssertion { get; set; }
+
+		/// <summary>
+		/// The calling host's authenticated credential (passkey plan section 8.5), set by the controller from the
+		/// credential middleware, never from the request body. A request without one is refused.
+		/// </summary>
+		[System.Text.Json.Serialization.JsonIgnore]
+		[Newtonsoft.Json.JsonIgnore]
+		public Services.BrokerCredential Caller { get; set; }
 	}
 }

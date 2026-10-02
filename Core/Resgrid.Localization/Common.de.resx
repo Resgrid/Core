@@ -59,15 +59,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 
-  <data name="Name1" xml:space="preserve">
-    <value>this is my long string</value>
-  </data>
-  <data name="Bitmap1" xml:space="preserve">
-    <value>[base64 mime encoded serialized .NET Framework object]</value>
-  </data>
-  <data name="Icon1" xml:space="preserve">
-    <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-  </data>
   <data name="Action" xml:space="preserve">
     <value>Aktion</value>
   </data>
@@ -758,5 +749,44 @@
   </data>
   <data name="JsonInputSchema" xml:space="preserve">
     <value>JSON-Schema (Feldnamen und Datentypen)</value>
+  </data>
+  <data name="AdpUsePasskey" xml:space="preserve">
+    <value>Passkey verwenden</value>
+  </data>
+  <data name="AdpUseResponder" xml:space="preserve">
+    <value>Mit Responder bestätigen</value>
+  </data>
+  <data name="AdpUseCode" xml:space="preserve">
+    <value>Authenticator-Code verwenden</value>
+  </data>
+  <data name="AdpApprovalInstructions" xml:space="preserve">
+    <value>Öffnen Sie Resgrid Responder auf Ihrem Telefon, prüfen Sie die Anfrage und geben Sie diese Nummer ein:</value>
+  </data>
+  <data name="AdpApprovalWaiting" xml:space="preserve">
+    <value>Warten auf Ihre Bestätigung in Responder…</value>
+  </data>
+  <data name="AdpApprovalDenied" xml:space="preserve">
+    <value>Die Anfrage wurde in Responder abgelehnt.</value>
+  </data>
+  <data name="AdpApprovalExpired" xml:space="preserve">
+    <value>Die Anfrage ist abgelaufen, bevor sie bestätigt wurde. Beginnen Sie erneut.</value>
+  </data>
+  <data name="AdpPasskeyCancelled" xml:space="preserve">
+    <value>Die Passkey-Abfrage wurde geschlossen. Es wurde nichts geändert.</value>
+  </data>
+  <data name="AdpPasskeyFailed" xml:space="preserve">
+    <value>Der Passkey konnte nicht verwendet werden. Versuchen Sie es erneut oder verwenden Sie Ihre Authenticator-App.</value>
+  </data>
+  <data name="AdpUseProvider" xml:space="preserve">
+    <value>Identitätsanbieter verwenden</value>
+  </data>
+  <data name="AdpProviderPopupBlocked" xml:space="preserve">
+    <value>Erlauben Sie Pop-ups für diese Website, um sich bei Ihrem Identitätsanbieter zu bestätigen.</value>
+  </data>
+  <data name="POI" xml:space="preserve">
+    <value>POI</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Bearbeiten</value>
   </data>
 </root>

@@ -65,7 +65,9 @@ namespace Resgrid.Tests.AdminAssist
 		[Test]
 		public void Dedicated_configuration_tables_have_field_inventory_without_secret_values()
 		{
-			var metadata = new[] { "DepartmentSecurityPolicyId", "DepartmentSsoConfigId", "DepartmentCallEmailId", "WeatherAlertZoneId", "Id", "DepartmentNotificationId", "DepartmentId", "CreatedOn", "UpdatedOn", "CreatedAt", "UpdatedAt", "CreatedByUserId", "UpdatedByUserId", "ReferringDepartmentId", "AffiliateCode" }.ToHashSet();
+			// MfaPolicyVersion is advanced by the server with every sign-in MFA rule change; it is metadata, not a setting. So are
+			// the provider step-up mapping's version and test result, which only the server's guarded test flow writes.
+			var metadata = new[] { "MfaPolicyVersion", "FederatedMfaMappingVersion", "FederatedMfaTestedVersion", "FederatedMfaTestedOnUtc", "FederatedMfaTestedByUserId", "DepartmentSecurityPolicyId", "DepartmentSsoConfigId", "DepartmentCallEmailId", "WeatherAlertZoneId", "Id", "DepartmentNotificationId", "DepartmentId", "CreatedOn", "UpdatedOn", "CreatedAt", "UpdatedAt", "CreatedByUserId", "UpdatedByUserId", "ReferringDepartmentId", "AffiliateCode" }.ToHashSet();
 			foreach (var type in new[] { typeof(Department), typeof(DepartmentSecurityPolicy), typeof(DepartmentSsoConfig), typeof(DepartmentCallEmail), typeof(WeatherAlertZone), typeof(ChatbotDepartmentConfig), typeof(DepartmentNotification) })
 			{
 				var fields = type.GetProperties().Where(p => p.CanWrite && p.GetCustomAttribute<System.ComponentModel.DataAnnotations.Schema.NotMappedAttribute>() == null &&

@@ -60,10 +60,64 @@ namespace Resgrid.Config
 		public static string SamlAcsPath = "/api/v4/connect/saml-mobile-callback";
 
 		/// <summary>
+		/// Relative URL path of the page that starts a legacy (unbrokered) SAML sign-in for an app: it sends the browser to the
+		/// department's IdP with an AuthnRequest. Discovery names it, with the department token, as <c>SamlLoginUrl</c>.
+		/// Example result: https://api.resgrid.com/api/v4/connect/saml-mobile-login
+		/// </summary>
+		public static string SamlLoginPath = "/api/v4/connect/saml-mobile-login";
+
+		/// <summary>
 		/// Relative URL path segment used to construct SAML SP Entity IDs.
 		/// Example result: https://api.resgrid.com/saml/{configId}
 		/// </summary>
 		public static string SamlEntityIdBasePath = "/saml/";
+
+		// ── Server-brokered SSO (passkey plan section 7.7.2; workbook section 7.3) ──
+
+		/// <summary>
+		/// Rollout gate for server-brokered SSO (<c>Sso/Begin</c>, the OIDC callback and brokered SAML, <c>Sso/Redeem</c>).
+		/// Off: those endpoints refuse, and the legacy client-run OIDC flow, SAML relay and <c>external-token</c> are unchanged.
+		/// </summary>
+		public static bool BrokeredSsoEnabled = false;
+
+		/// <summary>
+		/// Relative path of the OIDC redirect URI every department registers with its IdP for brokered SSO, appended to
+		/// <see cref="SystemBehaviorConfig.ResgridApiBaseUrl"/>. Example result: https://api.resgrid.com/api/v4/connect/oidc-callback
+		/// </summary>
+		public static string OidcCallbackPath = "/api/v4/connect/oidc-callback";
+
+		/// <summary>
+		/// The deployment's return-target registry: where the server may send the one-time <c>sso_code</c>, per client,
+		/// matched exactly. Entries are <c>client=target,target</c> separated by ";", where client is web, responder, unit,
+		/// dispatch or ic. A target is an https URL, an app's own custom scheme (never shared between apps), or an RFC 8252
+		/// loopback redirect written <c>http://127.0.0.1:*/path</c> (any port). Example:
+		/// <c>web=https://app.resgrid.com/Account/SsoReturn;unit=resgridunit://sso-return,https://unit.resgrid.com/sso-return,http://127.0.0.1:*/sso-return</c>.
+		/// Empty means brokered SSO has nowhere to return and is unavailable.
+		/// </summary>
+		public static string BrokeredReturnTargets = "";
+
+		/// <summary>
+		/// Where each app's web build is served, for the SSO pages' list of redirect URIs a department registers with its IdP
+		/// (a web build's legacy OIDC sign-in returns to its own page: <c>/auth/callback</c>, or <c>/login/sso</c> for Dispatch).
+		/// Entries are <c>client=origin</c> separated by ";", where client is responder, unit, dispatch or ic and origin is
+		/// <c>https://host[:port]</c> (http only for localhost or a .local host). An app with no entry has no web build here.
+		/// Defaults to the development hosts, like the other URL settings. The hosted US service's web editions are
+		/// <c>responder=https://responder.resgrid.com;unit=https://unit.resgrid.com;dispatch=https://dispatch.resgrid.com</c>;
+		/// a region lists its own hosts once it serves web editions. Only shown to admins: nothing is redirected by it.
+		/// </summary>
+		public static string AppWebOrigins = "responder=https://responder.resgrid.local;unit=https://unit.resgrid.local;dispatch=https://dispatch.resgrid.local";
+
+		/// <summary>How long a brokered SSO transaction waits for the IdP. Non-sliding.</summary>
+		public static int BrokeredTransactionLifetimeSeconds = 600;
+
+		/// <summary>How long the one-time <c>sso_code</c> can be redeemed.</summary>
+		public static int BrokeredCodeLifetimeSeconds = 60;
+
+		/// <summary>
+		/// For SSO reauthentication: the most time the IdP's own sign-in (<c>auth_time</c> or <c>AuthnInstant</c>) may
+		/// predate the callback. Sent as OIDC <c>max_age</c>; SAML sends <c>ForceAuthn</c>.
+		/// </summary>
+		public static int ReauthenticationMaxAgeSeconds = 300;
 
 		// ── Feature flags ─────────────────────────────────────────────────────
 

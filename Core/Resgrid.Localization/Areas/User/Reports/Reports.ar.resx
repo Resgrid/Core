@@ -210,7 +210,6 @@
   <data name="WorkLogType" xml:space="preserve"><value>عمل</value></data>
   <data name="IdLabel" xml:space="preserve"><value>المعرف</value></data>
   <data name="StationHeader" xml:space="preserve"><value>المحطة</value></data>
-  <data name="UnitsLabel" xml:space="preserve"><value>الوحدات</value></data>
   <data name="ConditionLabel" xml:space="preserve"><value>الحالة</value></data>
   <data name="CallNameLabel" xml:space="preserve"><value>اسم المكالمة</value></data>
   <data name="CallTypeLabel" xml:space="preserve"><value>نوع المكالمة</value></data>
@@ -305,9 +304,6 @@
   </data>
   <data name="NotCheckedOut" xml:space="preserve">
     <value>لم يتم تسجيل الانصراف</value>
-  </data>
-  <data name="TotalTimeLabel" xml:space="preserve">
-    <value>الوقت الإجمالي</value>
   </data>
   <data name="CallUnitTimesReportName" xml:space="preserve">
     <value>أوقات الوحدات لكل بلاغ</value>

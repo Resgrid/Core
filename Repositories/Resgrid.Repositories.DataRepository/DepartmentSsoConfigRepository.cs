@@ -117,6 +117,45 @@ namespace Resgrid.Repositories.DataRepository
 			}
 			catch (Exception ex) { Logging.LogException(ex); throw; }
 		}
+
+		public async Task<long> AdvanceFederatedMfaMappingVersionAsync(string departmentSsoConfigId,
+			System.Threading.CancellationToken cancellationToken = default)
+		{
+			// One statement advances the version and clears the test, so no reader sees a new mapping as tested.
+			var postgres = Resgrid.Config.DataConfig.DatabaseType == Resgrid.Config.DatabaseTypes.Postgres;
+			var sql = postgres
+				? $@"UPDATE {_sqlConfiguration.SchemaName}.departmentssoconfigs SET federatedmfamappingversion = federatedmfamappingversion + 1,
+					federatedmfatestedversion = NULL, federatedmfatestedonutc = NULL, federatedmfatestedbyuserid = NULL
+					WHERE departmentssoconfigid = @Id RETURNING federatedmfamappingversion"
+				: $@"UPDATE {_sqlConfiguration.SchemaName}.[DepartmentSsoConfigs] SET [FederatedMfaMappingVersion] = [FederatedMfaMappingVersion] + 1,
+					[FederatedMfaTestedVersion] = NULL, [FederatedMfaTestedOnUtc] = NULL, [FederatedMfaTestedByUserId] = NULL
+					OUTPUT INSERTED.[FederatedMfaMappingVersion] WHERE [DepartmentSsoConfigId] = @Id";
+
+			await using var connection = _connectionProvider.Create();
+			await connection.OpenAsync(cancellationToken);
+			return await connection.QueryFirstOrDefaultAsync<long>(new Dapper.CommandDefinition(sql, new { Id = departmentSsoConfigId },
+				cancellationToken: cancellationToken));
+		}
+
+		public async Task<bool> TryRecordFederatedMfaTestAsync(string departmentSsoConfigId, long version, string userId, DateTime utcNow,
+			System.Threading.CancellationToken cancellationToken = default)
+		{
+			var postgres = Resgrid.Config.DataConfig.DatabaseType == Resgrid.Config.DatabaseTypes.Postgres;
+			var sql = postgres
+				? $@"UPDATE {_sqlConfiguration.SchemaName}.departmentssoconfigs SET federatedmfatestedversion = @Version, federatedmfatestedonutc = @Now,
+					federatedmfatestedbyuserid = @UserId WHERE departmentssoconfigid = @Id AND federatedmfamappingversion = @Version"
+				: $@"UPDATE {_sqlConfiguration.SchemaName}.[DepartmentSsoConfigs] SET [FederatedMfaTestedVersion] = @Version, [FederatedMfaTestedOnUtc] = @Now,
+					[FederatedMfaTestedByUserId] = @UserId WHERE [DepartmentSsoConfigId] = @Id AND [FederatedMfaMappingVersion] = @Version";
+
+			await using var connection = _connectionProvider.Create();
+			await connection.OpenAsync(cancellationToken);
+			return await connection.ExecuteAsync(new Dapper.CommandDefinition(sql, new
+			{
+				Id = departmentSsoConfigId,
+				Version = version,
+				UserId = userId,
+				Now = postgres ? DateTime.SpecifyKind(utcNow, DateTimeKind.Unspecified) : utcNow
+			}, cancellationToken: cancellationToken)) == 1;
+		}
 	}
 }
-

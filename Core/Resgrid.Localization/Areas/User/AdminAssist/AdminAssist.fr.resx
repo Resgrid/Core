@@ -5190,6 +5190,27 @@
   <data xml:space="preserve" name="TableField.DepartmentNotification.UsersToNotify">
     <value>Notification du département / Utilisateurs à notifier</value>
   </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AcceptRecentLoginMfaForAdp">
+    <value>Politique de sécurité du département / Accepter la MFA de connexion récente pour ADP</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AcceptRecentUnlockMfaForAdp">
+    <value>Politique de sécurité du département / Accepter la MFA de déverrouillage récente pour ADP</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowFederatedMfaForAdp">
+    <value>Politique de sécurité du département / Autoriser la MFA fédérée pour ADP</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowFederatedMfaForLoginMfa">
+    <value>Politique de sécurité du département / Autoriser la MFA fédérée pour la MFA de connexion</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowPasskeysForAdp">
+    <value>Politique de sécurité du département / Autoriser les clés d'accès pour ADP</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowPasskeysForLoginMfa">
+    <value>Politique de sécurité du département / Autoriser les clés d'accès pour la MFA de connexion</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowResponderApproval">
+    <value>Politique de sécurité du département / Autoriser l'approbation Responder</value>
+  </data>
   <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowedIpRanges">
     <value>Politique de sécurité du département / Plages d’adresses IP autorisées</value>
   </data>
@@ -5216,6 +5237,15 @@
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.SessionTimeoutMinutes">
     <value>Politique de sécurité du département / Délai d’expiration de session (minutes)</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.SharedIdleLockMinutes">
+    <value>Politique de sécurité du département / Minutes d'inactivité avant le verrouillage des sessions partagées</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.SharedModeRequiredApps">
+    <value>Politique de sécurité du département / Applications en mode partagé obligatoire</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.SharedShiftHours">
+    <value>Politique de sécurité du département / Durée de service des sessions partagées (heures)</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.AllowLocalLogin">
     <value>Configuration SSO du département / Autoriser la connexion locale</value>
@@ -5252,6 +5282,12 @@
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.EntityId">
     <value>Configuration SSO du département / ID d’entité</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSsoConfig.FederatedMfaMappingJson">
+    <value>Configuration SSO du département / Mappage MFA fédérée (JSON)</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSsoConfig.IdpSsoUrl">
+    <value>Configuration SSO du département / URL SSO de l’IdP</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.IsEnabled">
     <value>Configuration SSO du département / Activé</value>
@@ -5427,6 +5463,27 @@
   <data xml:space="preserve" name="TableHelp.DepartmentNotification.UsersToNotify">
     <value>Destinataires membres explicites. L’appartenance et l’éligibilité des canaux sont évaluées séparément au moment de l’envoi.</value>
   </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AcceptRecentLoginMfaForAdp">
+    <value>Permet à la MFA effectuée à la connexion, dans la même session, d'ouvrir les données protégées pendant la fenêtre de vérification renforcée, pour les méthodes autorisées par les paramètres des données protégées. Une modification met fin à l'accès actuel aux données protégées. Membre gestionnaire uniquement.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AcceptRecentUnlockMfaForAdp">
+    <value>Permet à la vérification de déverrouillage récente de l'opérateur sur un appareil partagé d'ouvrir les données protégées. Une modification met fin à l'accès actuel aux données protégées. Membre gestionnaire uniquement.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowFederatedMfaForAdp">
+    <value>Accepte la MFA du fournisseur d'identité pour les données protégées. Nécessite un mappage MFA testé ; une modification met fin à l'accès actuel aux données protégées. Membre gestionnaire uniquement.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowFederatedMfaForLoginMfa">
+    <value>Accepte la MFA du fournisseur d'identité pour la connexion et la vérification renforcée. Nécessite un mappage MFA testé dans la configuration SSO ; sans lui, les assertions du fournisseur ne comptent jamais. Membre gestionnaire uniquement.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowPasskeysForAdp">
+    <value>Accepte une clé d'accès pour l'accès aux données protégées, la gestion ADP et les approbations de workflows protégés. Les codes d'authentificateur sont toujours acceptés. Une modification met fin à l'accès actuel aux données protégées ; les membres se vérifient à nouveau. Membre gestionnaire uniquement.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowPasskeysForLoginMfa">
+    <value>Accepte une clé d'accès enregistrée dans l'application demandeuse comme MFA pour la connexion, le changement de département et la vérification renforcée. Les codes d'authentificateur sont toujours acceptés. Une modification incrémente la version de la politique MFA ; les sessions dont le seul second facteur n'est plus autorisé se vérifient à nouveau. Membre gestionnaire uniquement.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowResponderApproval">
+    <value>Accepte l'approbation avec la clé d'accès de l'application Responder du membre lorsque le paramètre de clé d'accès correspondant est activé ; jamais pour les modifications de sécurité ni les méthodes de connexion du compte. Une modification met aussi fin à l'accès actuel aux données protégées. Membre gestionnaire uniquement.</value>
+  </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowedIpRanges">
     <value>Plages réseau autorisées pour la connexion. Une valeur vide n’ajoute aucune restriction de plage. Examinez les réseaux légitimes des intervenants et l’accès de récupération avant de la restreindre.</value>
   </data>
@@ -5453,6 +5510,15 @@
   </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.SessionTimeoutMinutes">
     <value>Délai d’inactivité en minutes ; zéro s’en remet au comportement de l’hébergeur. Vérifiez les sessions gérées par la politique et chaque client pris en charge plutôt que de supposer une déconnexion globale immédiate.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.SharedIdleLockMinutes">
+    <value>Minutes sans activité de l'opérateur avant le verrouillage de la session d'une tablette de véhicule ou d'un poste de travail partagé, de 1 à 15. Les mises à jour en arrière-plan et les alertes entrantes ne comptent pas comme activité. Une valeur plus stricte s'applique aux sessions en cours à leur prochaine requête. Membre gestionnaire uniquement.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.SharedModeRequiredApps">
+    <value>Sessions Unit, IC et Dispatch que ce département exécute toujours comme sessions partagées, quel que soit le réglage de l'installation ; les connexions qui n'indiquent pas leur application comptent aussi. Nécessite des versions d'application compatibles avec le mode partagé. Membre gestionnaire uniquement.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.SharedShiftHours">
+    <value>Nombre d'heures après la connexion au bout desquelles une session partagée se termine, quelle que soit l'activité, de 1 à 24. Une valeur plus courte termine plus tôt les sessions en cours ; une valeur plus longue ne les prolonge jamais. Membre gestionnaire uniquement.</value>
   </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.AllowLocalLogin">
     <value>Autorise un mode de connexion par mot de passe local en parallèle de ce fournisseur, lorsque la politique le permet. Examinez ensemble l’exigence de SSO à l’échelle du département et le plan de récupération.</value>
@@ -5489,6 +5555,12 @@
   </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.EntityId">
     <value>Identifiant du fournisseur de service SAML enregistré auprès du fournisseur d’identité. Il doit correspondre à l’intégration configurée.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.FederatedMfaMappingJson">
+    <value>Les résultats de connexion du fournisseur qui comptent comme MFA pour la vérification renforcée par le fournisseur. Une modification du mappage, de l’émetteur ou du client exige un nouveau test réussi avant que la MFA du fournisseur soit de nouveau acceptée.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.IdpSsoUrl">
+    <value>Adresse de connexion du fournisseur SAML à laquelle une connexion lancée depuis Resgrid envoie sa demande. Vérifiez-la par rapport aux métadonnées du fournisseur avant de vous y fier.</value>
   </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.IsEnabled">
     <value>Rend cette configuration de fournisseur disponible pour le flux SSO pris en charge. Un indicateur d’activation enregistré ne constitue pas un test de connexion réussi.</value>

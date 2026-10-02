@@ -59,127 +59,394 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 
-  <data name="Name1" xml:space="preserve">
-    <value>this is my long string</value>
-  </data>
-  <data name="Bitmap1" xml:space="preserve">
-    <value>[base64 mime encoded serialized .NET Framework object]</value>
-  </data>
-  <data name="Icon1" xml:space="preserve">
-    <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-  </data>
   <data name="AddLog" xml:space="preserve">
-    <value>Add Log</value>
+    <value>Aggiungi log</value>
   </data>
   <data name="AddRole" xml:space="preserve">
-    <value>Add Role</value>
+    <value>Aggiungi ruolo</value>
   </data>
   <data name="AddUnitLogHeader" xml:space="preserve">
-    <value>Add Unit Log</value>
+    <value>Aggiungi log dell'unità</value>
   </data>
   <data name="AreYouSure" xml:space="preserve">
-    <value>Are you sure you want to permanently delete all statuses for this unit?</value>
+    <value>Vuoi davvero eliminare definitivamente tutti gli stati di questa unità?</value>
   </data>
   <data name="ClearAllStatuses" xml:space="preserve">
-    <value>Clear out all Statuses For Unit</value>
+    <value>Cancella tutti gli stati dell'unità</value>
   </data>
   <data name="DeleteAll" xml:space="preserve">
-    <value>Delete All</value>
+    <value>Elimina tutto</value>
   </data>
   <data name="DeleteUnitWarning" xml:space="preserve">
-    <value>WARNING: This will permanently delete this unit. Are you sure you want to delete the unit</value>
+    <value>ATTENZIONE: questa unità verrà eliminata definitivamente. Vuoi davvero eliminare l’unità</value>
   </data>
   <data name="EditUnitHeader" xml:space="preserve">
-    <value>Edit Unit</value>
+    <value>Modifica unità</value>
   </data>
   <data name="EventsFor" xml:space="preserve">
-    <value>Events for</value>
+    <value>Eventi per</value>
   </data>
   <data name="GenerateReport" xml:space="preserve">
-    <value>Generate Report</value>
+    <value>Genera rapporto</value>
   </data>
   <data name="LogBodyLabel" xml:space="preserve">
-    <value>Log Body (Narrative)</value>
+    <value>Testo del log (narrativa)</value>
   </data>
   <data name="LogBodyPlaceholder" xml:space="preserve">
-    <value>A Narrative for the unit log</value>
+    <value>Una narrativa per il log dell'unità</value>
   </data>
   <data name="Logs" xml:space="preserve">
-    <value>Registri</value>
+    <value>Log</value>
   </data>
   <data name="NewUnitHeader" xml:space="preserve">
-    <value>New Unit</value>
+    <value>Nuova unità</value>
   </data>
   <data name="NotOccupied" xml:space="preserve">
-    <value>Not Occupied</value>
+    <value>Non occupato</value>
   </data>
   <data name="NoUnGroupedUnits" xml:space="preserve">
-    <value>No Un-Grouped Units</value>
+    <value>Nessuna unità non raggruppata</value>
   </data>
   <data name="NoUnitsInDepartment" xml:space="preserve">
-    <value>No Units in Department</value>
+    <value>Nessuna unità nel dipartimento</value>
   </data>
   <data name="NoUnitsInThisGroup" xml:space="preserve">
-    <value>No Units in this Group</value>
+    <value>Nessuna unità in questo gruppo</value>
   </data>
   <data name="NoUnitsToStaff" xml:space="preserve">
-    <value>To set staffing on units you need to have Units created and Roles (i.e. Driver, Operator, etc) created within those units. </value>
+    <value>Per assegnare il personale alle unità devi aver creato le unità e, al loro interno, i ruoli (ad es. autista, operatore, ecc.). </value>
   </data>
   <data name="RemoveThisRole" xml:space="preserve">
-    <value>Remove this role</value>
+    <value>Rimuovi questo ruolo</value>
   </data>
   <data name="RoleName" xml:space="preserve">
-    <value>Role Name</value>
+    <value>Nome del ruolo</value>
   </data>
   <data name="RoleNameHeader" xml:space="preserve">
-    <value>Role Name</value>
+    <value>Nome del ruolo</value>
   </data>
   <data name="SelectUnit" xml:space="preserve">
-    <value>Select Unit</value>
+    <value>Seleziona unità</value>
   </data>
   <data name="SetMultipleUnitStatusHeader" xml:space="preserve">
-    <value>Set Status for Units</value>
+    <value>Imposta lo stato delle unità</value>
   </data>
   <data name="SetStatus" xml:space="preserve">
-    <value>Set Status</value>
+    <value>Imposta stato</value>
   </data>
   <data name="SetStatusForSelectedUnits" xml:space="preserve">
-    <value>Set Status for Selected Units</value>
+    <value>Imposta lo stato delle unità selezionate</value>
   </data>
   <data name="SetUnitStatusHeader" xml:space="preserve">
-    <value>Set Unit Status</value>
+    <value>Imposta lo stato dell'unità</value>
   </data>
   <data name="UnitsListStateWarning" xml:space="preserve">
-    <value>You have selected a unit, only other units with the same custom (or default) states can be selected.</value>
+    <value>Hai selezionato un'unità: puoi selezionare solo altre unità con gli stessi stati personalizzati (o predefiniti).</value>
   </data>
   <data name="UnitStaffing" xml:space="preserve">
-    <value>Unit Staffing</value>
+    <value>Personale delle unità</value>
   </data>
   <data name="UnitStaffingHeader" xml:space="preserve">
-    <value>Unit Staffing</value>
+    <value>Personale delle unità</value>
   </data>
   <data name="ViewEvents" xml:space="preserve">
-    <value>View Events</value>
+    <value>Visualizza eventi</value>
   </data>
   <data name="ViewUnitEventsHeader" xml:space="preserve">
-    <value>View Unit Events</value>
+    <value>Visualizza gli eventi dell'unità</value>
   </data>
   <data name="ViewUnitLogsHeader" xml:space="preserve">
-    <value>View Unit Logs</value>
+    <value>Visualizza i log dell'unità</value>
   </data>
   <data name="YesImSure" xml:space="preserve">
-    <value>Yes I'm sure</value>
+    <value>Sì, confermo</value>
   </data>
   <data name="YouCanAddType1" xml:space="preserve">
-    <value>You can add a new Type</value>
+    <value>Puoi aggiungere un nuovo tipo</value>
   </data>
   <data name="YouCanAddType2" xml:space="preserve">
-    <value>here</value>
+    <value>qui</value>
   </data>
   <data name="RequiredPersonnelRoleHeader" xml:space="preserve">
     <value>Ruolo del personale richiesto</value>
   </data>
   <data name="RequiredHeader" xml:space="preserve">
     <value>Richiesto?</value>
+  </data>
+  <data name="AddTrackingBinding" xml:space="preserve">
+    <value>Aggiungi collegamento di tracciamento</value>
+  </data>
+  <data name="AllowedSourceCidrs" xml:space="preserve">
+    <value>Reti di origine consentite</value>
+  </data>
+  <data name="AllowedSourceCidrsHelp" xml:space="preserve">
+    <value>Intervalli CIDR IPv4 o IPv6 facoltativi, separati da virgole, autorizzati a inviare posizioni per questo tracker.</value>
+  </data>
+  <data name="AuthenticationMode" xml:space="preserve">
+    <value>Modalità di autenticazione</value>
+  </data>
+  <data name="BasicUsername" xml:space="preserve">
+    <value>Nome utente per l'autenticazione Basic</value>
+  </data>
+  <data name="BasicUsernameRequired" xml:space="preserve">
+    <value>È necessario un nome utente per l'autenticazione Basic.</value>
+  </data>
+  <data name="CertificationStatus" xml:space="preserve">
+    <value>Stato della certificazione</value>
+  </data>
+  <data name="CopyToClipboard" xml:space="preserve">
+    <value>Copia</value>
+  </data>
+  <data name="CreateCredential" xml:space="preserve">
+    <value>Crea credenziale</value>
+  </data>
+  <data name="CredentialPrefix" xml:space="preserve">
+    <value>Prefisso della credenziale</value>
+  </data>
+  <data name="CredentialSaved" xml:space="preserve">
+    <value>Ho salvato questa credenziale</value>
+  </data>
+  <data name="Credentials" xml:space="preserve">
+    <value>Credenziali</value>
+  </data>
+  <data name="CredentialToken" xml:space="preserve">
+    <value>Token della credenziale</value>
+  </data>
+  <data name="CustomHeaderRequired" xml:space="preserve">
+    <value>È necessario il nome di un'intestazione personalizzata.</value>
+  </data>
+  <data name="DeleteTrackingWarning" xml:space="preserve">
+    <value>Rimuovere questo collegamento di tracciamento? Le sue credenziali verranno revocate e smetterà di accettare posizioni.</value>
+  </data>
+  <data name="DeviceIdentifier" xml:space="preserve">
+    <value>Identificatore del dispositivo</value>
+  </data>
+  <data name="DeviceIdentifierHelp" xml:space="preserve">
+    <value>Usa l'identificatore inviato dal dispositivo o dal servizio di inoltro. Viene normalizzato prima di essere memorizzato.</value>
+  </data>
+  <data name="DisableTracking" xml:space="preserve">
+    <value>Disattiva tracciamento</value>
+  </data>
+  <data name="DisableTrackingWarning" xml:space="preserve">
+    <value>Disattivare questo collegamento e revocare tutte le sue credenziali?</value>
+  </data>
+  <data name="EditTrackingBinding" xml:space="preserve">
+    <value>Modifica collegamento di tracciamento</value>
+  </data>
+  <data name="EndpointUrl" xml:space="preserve">
+    <value>Endpoint HTTPS</value>
+  </data>
+  <data name="ExpiresOn" xml:space="preserve">
+    <value>Scadenza</value>
+  </data>
+  <data name="FirmwareVersion" xml:space="preserve">
+    <value>Versione firmware</value>
+  </data>
+  <data name="HardwareTracking" xml:space="preserve">
+    <value>Tracciamento GPS hardware</value>
+  </data>
+  <data name="HardwareTrackingDescription" xml:space="preserve">
+    <value>Collega un tracker hardware o un servizio di inoltro a questa unità, emetti le credenziali e monitora lo stato della consegna.</value>
+  </data>
+  <data name="HeaderName" xml:space="preserve">
+    <value>Nome dell'intestazione</value>
+  </data>
+  <data name="HeaderValue" xml:space="preserve">
+    <value>Valore dell'intestazione</value>
+  </data>
+  <data name="LastErrorCode" xml:space="preserve">
+    <value>Ultimo codice di errore</value>
+  </data>
+  <data name="LastReceived" xml:space="preserve">
+    <value>Ultima ricezione</value>
+  </data>
+  <data name="LastSeen" xml:space="preserve">
+    <value>Ultimo contatto</value>
+  </data>
+  <data name="LastUsed" xml:space="preserve">
+    <value>Ultimo utilizzo</value>
+  </data>
+  <data name="LastValidFix" xml:space="preserve">
+    <value>Ultimo fix valido</value>
+  </data>
+  <data name="JsonPayload" xml:space="preserve">
+    <value>Payload JSON</value>
+  </data>
+  <data name="Never" xml:space="preserve">
+    <value>Mai</value>
+  </data>
+  <data name="NoCredentials" xml:space="preserve">
+    <value>Non è stata emessa alcuna credenziale per questo collegamento.</value>
+  </data>
+  <data name="NoTrackingBindings" xml:space="preserve">
+    <value>Nessun collegamento di tracciamento hardware configurato per questa unità.</value>
+  </data>
+  <data name="OneTimeCredentialHeader" xml:space="preserve">
+    <value>Salva la credenziale di tracciamento</value>
+  </data>
+  <data name="OneTimeCredentialWarning" xml:space="preserve">
+    <value>Questa credenziale viene mostrata una sola volta. Copia l'endpoint e il segreto nella configurazione del tracker prima di lasciare questa pagina.</value>
+  </data>
+  <data name="Protocol" xml:space="preserve">
+    <value>Protocollo</value>
+  </data>
+  <data name="PreviewJson" xml:space="preserve">
+    <value>Convalida JSON di prova</value>
+  </data>
+  <data name="PreviewJsonMalformed" xml:space="preserve">
+    <value>Il payload JSON non è valido, contiene campi duplicati o supera il limite di annidamento.</value>
+  </data>
+  <data name="PreviewJsonPositionInvalid" xml:space="preserve">
+    <value>Ogni posizione richiede un eventId non vuoto e valori di latitudine e longitudine validi.</value>
+  </data>
+  <data name="PreviewJsonPositionsRequired" xml:space="preserve">
+    <value>Un batch deve contenere almeno un oggetto posizione JSON.</value>
+  </data>
+  <data name="PreviewJsonRequired" xml:space="preserve">
+    <value>Inserisci un payload JSON da convalidare.</value>
+  </data>
+  <data name="PreviewJsonSuccess" xml:space="preserve">
+    <value>Il parser di anteprima ha accettato {0} posizione/i. Nulla è stato messo in coda o memorizzato.</value>
+  </data>
+  <data name="PreviewJsonTooLarge" xml:space="preserve">
+    <value>Il payload JSON supera il limite di dimensione della richiesta configurato.</value>
+  </data>
+  <data name="PreviewJsonTooManyPositions" xml:space="preserve">
+    <value>Il batch JSON supera il limite di posizioni configurato.</value>
+  </data>
+  <data name="RevokeCredential" xml:space="preserve">
+    <value>Revoca</value>
+  </data>
+  <data name="RevokeCredentialWarning" xml:space="preserve">
+    <value>Revocare questa credenziale? Il mittente non potrà più usarla.</value>
+  </data>
+  <data name="RetryExpectation" xml:space="preserve">
+    <value>Comportamento previsto per i nuovi tentativi:</value>
+  </data>
+  <data name="Revoked" xml:space="preserve">
+    <value>Revocata</value>
+  </data>
+  <data name="RotateCredential" xml:space="preserve">
+    <value>Ruota</value>
+  </data>
+  <data name="SaveTrackingBinding" xml:space="preserve">
+    <value>Salva collegamento di tracciamento</value>
+  </data>
+  <data name="SendTestJson" xml:space="preserve">
+    <value>Invia JSON di prova</value>
+  </data>
+  <data name="SendTestJsonDescription" xml:space="preserve">
+    <value>Convalida un payload JSON Resgrid generico senza autenticarlo, metterlo in coda o memorizzarlo. Questa anteprima è disponibile solo per gli amministratori del dipartimento al di fuori dell'ambiente di produzione.</value>
+  </data>
+  <data name="SetupInstructions" xml:space="preserve">
+    <value>Istruzioni di configurazione</value>
+  </data>
+  <data name="SecondaryIdentifier" xml:space="preserve">
+    <value>Identificatore secondario</value>
+  </data>
+  <data name="SelectTrackingProfile" xml:space="preserve">
+    <value>Seleziona un profilo di tracciamento certificato</value>
+  </data>
+  <data name="SelectValidTrackingProfile" xml:space="preserve">
+    <value>Seleziona un profilo di tracciamento certificato.</value>
+  </data>
+  <data name="SourcePriority" xml:space="preserve">
+    <value>Priorità dell'origine</value>
+  </data>
+  <data name="TrackingBindingActions" xml:space="preserve">
+    <value>Azioni sul collegamento di tracciamento</value>
+  </data>
+  <data name="TrackingBindingCreatedMessage" xml:space="preserve">
+    <value>Collegamento di tracciamento creato. Genera una credenziale per completare la configurazione.</value>
+  </data>
+  <data name="TrackingBindingDeletedMessage" xml:space="preserve">
+    <value>Collegamento di tracciamento rimosso.</value>
+  </data>
+  <data name="TrackingBindingDisabledMessage" xml:space="preserve">
+    <value>Collegamento di tracciamento disattivato e relative credenziali revocate.</value>
+  </data>
+  <data name="TrackingBindingUpdatedMessage" xml:space="preserve">
+    <value>Collegamento di tracciamento aggiornato.</value>
+  </data>
+  <data name="TrackingCredentialRevokedMessage" xml:space="preserve">
+    <value>Credenziale di tracciamento revocata.</value>
+  </data>
+  <data name="TrackingDisplayName" xml:space="preserve">
+    <value>Nome visualizzato</value>
+  </data>
+  <data name="TrackingEnabled" xml:space="preserve">
+    <value>Abilitato</value>
+  </data>
+  <data name="TrackingIdentifierRequired" xml:space="preserve">
+    <value>Per il profilo selezionato è necessario un identificatore del dispositivo.</value>
+  </data>
+  <data name="TrackingProfile" xml:space="preserve">
+    <value>Profilo di tracciamento</value>
+  </data>
+  <data name="TrackingStatus" xml:space="preserve">
+    <value>Stato del tracciamento</value>
+  </data>
+  <data name="Transport" xml:space="preserve">
+    <value>Trasporto</value>
+  </data>
+  <data name="UnsupportedTrackingAuth" xml:space="preserve">
+    <value>La modalità di autenticazione selezionata non è supportata da questo profilo di tracciamento.</value>
+  </data>
+  <data name="ViewTrackingStatus" xml:space="preserve">
+    <value>Visualizza stato del tracciamento</value>
+  </data>
+  <data name="AuthModeBearer" xml:space="preserve">
+    <value>Token Bearer</value>
+  </data>
+  <data name="AuthModeBasic" xml:space="preserve">
+    <value>Autenticazione Basic</value>
+  </data>
+  <data name="AuthModeCustomHeader" xml:space="preserve">
+    <value>Intestazione personalizzata</value>
+  </data>
+  <data name="AuthModeCapabilityPath" xml:space="preserve">
+    <value>URL con token nel percorso</value>
+  </data>
+  <data name="TransportNativeHttps" xml:space="preserve">
+    <value>HTTPS nativo</value>
+  </data>
+  <data name="TransportManagedHttpsJson" xml:space="preserve">
+    <value>HTTPS gestito (JSON)</value>
+  </data>
+  <data name="TransportNativeTcpUdp" xml:space="preserve">
+    <value>TCP/UDP nativo</value>
+  </data>
+  <data name="TransportProtocolGateway" xml:space="preserve">
+    <value>Gateway di protocollo</value>
+  </data>
+  <data name="DeviceStatusNeverSeen" xml:space="preserve">
+    <value>Nessun contatto</value>
+  </data>
+  <data name="DeviceStatusOnline" xml:space="preserve">
+    <value>Online</value>
+  </data>
+  <data name="DeviceStatusStale" xml:space="preserve">
+    <value>Nessun dato recente</value>
+  </data>
+  <data name="DeviceStatusError" xml:space="preserve">
+    <value>Errore</value>
+  </data>
+  <data name="DeviceStatusDisabled" xml:space="preserve">
+    <value>Disabilitato</value>
+  </data>
+  <data name="CertificationCandidate" xml:space="preserve">
+    <value>Candidato</value>
+  </data>
+  <data name="CertificationFixtureVerified" xml:space="preserve">
+    <value>Verificato con dati di esempio</value>
+  </data>
+  <data name="CertificationHardwareVerified" xml:space="preserve">
+    <value>Verificato su hardware</value>
+  </data>
+  <data name="CertificationCertified" xml:space="preserve">
+    <value>Certificato</value>
+  </data>
+  <data name="CertificationDeprecated" xml:space="preserve">
+    <value>Obsoleto</value>
   </data>
 </root>

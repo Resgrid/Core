@@ -13,10 +13,12 @@ namespace Resgrid.Web.Services.Middleware
 	public class SessionValidationHubFilter : IHubFilter
 	{
 		private readonly IUserSessionService _userSessionService;
+		private readonly Resgrid.Services.SessionConnectionRegistry _connections;
 
-		public SessionValidationHubFilter(IUserSessionService userSessionService)
+		public SessionValidationHubFilter(IUserSessionService userSessionService, Resgrid.Services.SessionConnectionRegistry connections)
 		{
 			_userSessionService = userSessionService;
+			_connections = connections;
 		}
 
 		public async ValueTask<object> InvokeMethodAsync(HubInvocationContext invocationContext,
@@ -31,11 +33,54 @@ namespace Resgrid.Web.Services.Middleware
 			return await next(invocationContext);
 		}
 
-		public Task OnConnectedAsync(HubLifetimeContext context, Func<HubLifetimeContext, Task> next) =>
-			next(context);
+		/// <summary>
+		/// A connection with a user session joins that session's group, for events meant for it alone, and is tracked so the
+		/// sweep can close it once the session ends or locks (slice 16).
+		/// </summary>
+		public async Task OnConnectedAsync(HubLifetimeContext context, Func<HubLifetimeContext, Task> next)
+		{
+			var sessionId = SessionIdOf(context.Context.User);
+			if (sessionId == null)
+			{
+				await next(context);
+				return;
+			}
+
+			_connections.Register(context.Context.ConnectionId, sessionId, context.Context.Abort);
+			try
+			{
+				await context.Hub.Groups.AddToGroupAsync(context.Context.ConnectionId, SessionEvents.GroupFor(sessionId));
+				await next(context);
+			}
+			catch
+			{
+				// SignalR never calls OnDisconnectedAsync for a connection whose OnConnectedAsync failed.
+				_connections.Unregister(context.Context.ConnectionId);
+				throw;
+			}
+		}
 
 		public Task OnDisconnectedAsync(HubLifetimeContext context, Exception exception,
-			Func<HubLifetimeContext, Exception, Task> next) => next(context, exception);
+			Func<HubLifetimeContext, Exception, Task> next)
+		{
+			_connections.Unregister(context.Context.ConnectionId);
+			return next(context, exception);
+		}
+
+		/// <summary>The tracked user session a connection belongs to; null for workloads and pre-session tokens.</summary>
+		private static string SessionIdOf(ClaimsPrincipal principal)
+		{
+			if (principal?.Identity?.IsAuthenticated != true)
+				return null;
+
+			var userId = principal.FindFirstValue(ClaimTypes.NameIdentifier) ?? principal.FindFirstValue(ClaimTypes.PrimarySid) ??
+				principal.FindFirstValue(OpenIddictConstants.Claims.Subject);
+			if (string.IsNullOrWhiteSpace(userId) || userId.StartsWith("dept_", StringComparison.Ordinal) || userId.StartsWith("system_", StringComparison.Ordinal))
+				return null;
+
+			var sessionId = principal.FindFirstValue(SessionClaimTypes.SessionId);
+			return string.IsNullOrWhiteSpace(sessionId) ? null : sessionId;
+		}
 
 		private async Task<bool> IsValidAsync(HubCallerContext context)
 		{

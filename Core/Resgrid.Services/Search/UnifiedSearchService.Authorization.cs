@@ -43,6 +43,8 @@ namespace Resgrid.Services.Search
 			public Dictionary<string, Deployment> Deployments;
 			/// <summary>Deployments the caller is rostered on; loaded only when the caller lacks the Deployments/View claim.</summary>
 			public HashSet<string> RosteredDeploymentIds;
+			/// <summary>Records occupancy module open for this caller (module flag, Records usable, active Records member); null until checked.</summary>
+			public bool? OccupancyOpen;
 			public string GlobalGeneration => GlobalSearchGeneration.Compute(CatalogVersion, PolicyEpoch);
 			public string RecordsGeneration => RecordsSearchGeneration.Compute(CatalogVersion, PolicyEpoch);
 		}
@@ -178,6 +180,42 @@ namespace Resgrid.Services.Search
 						if (deployment.DepartmentId != departmentId || deployment.IsDeleted) return false;
 						// Rostered members reach their own deployments without the claim, exactly as the deployment page does.
 						return principal.IsDepartmentAdmin || principal.HasResourceClaim("Deployments", "View") || access.RosteredDeploymentIds?.Contains(deployment.DeploymentId) == true;
+					// Operations reference families: the row must still exist in the caller's department; the family's claim and
+					// module switch were applied when the family was admitted (AllowedTypes), as the pages apply them.
+					case SearchEntityTypes.Protocol:
+						if (!int.TryParse(hit.EntityId, out var protocolId)) return false;
+						return await _authorization.CanUserViewProtocolAsync(userId, protocolId);
+					case SearchEntityTypes.Training:
+						if (_trainings?.Value == null || !int.TryParse(hit.EntityId, out var trainingId)) return false;
+						var training = await _trainings.Value.GetTrainingByIdAsync(trainingId);
+						return training != null && training.DepartmentId == departmentId;
+					case SearchEntityTypes.CalendarEvent:
+						if (_calendar?.Value == null || !int.TryParse(hit.EntityId, out var calendarItemId)) return false;
+						var calendarItem = await _calendar.Value.GetCalendarItemByIdAsync(calendarItemId);
+						return calendarItem != null && calendarItem.DepartmentId == departmentId && access.ProtectedTextAllowed;
+					case SearchEntityTypes.Log:
+						if (_logs?.Value == null || !int.TryParse(hit.EntityId, out var logId)) return false;
+						var log = await _logs.Value.GetWorkLogByIdAsync(logId);
+						return log != null && log.DepartmentId == departmentId;
+					case SearchEntityTypes.Poi:
+						if (_mapping?.Value == null || !int.TryParse(hit.EntityId, out var poiId)) return false;
+						var poi = await _mapping.Value.GetPOIByIdAsync(poiId);
+						if (poi == null) return false;
+						var poiType = await _mapping.Value.GetTypeByIdAsync(poi.PoiTypeId);
+						return poiType != null && poiType.DepartmentId == departmentId;
+					case SearchEntityTypes.Shift:
+						if (_shifts?.Value == null || !int.TryParse(hit.EntityId, out var shiftId)) return false;
+						var shift = await _shifts.Value.GetShiftByIdAsync(shiftId);
+						return shift != null && shift.DepartmentId == departmentId;
+					case SearchEntityTypes.Occupancy:
+						if (_occupancies == null || !await OccupancyModuleOpenAsync(access)) return false;
+						var occupancy = await _occupancies.GetByIdForDepartmentAsync(departmentId, hit.EntityId);
+						return occupancy != null && occupancy.DepartmentId == departmentId && !occupancy.DeletedOn.HasValue &&
+							occupancy.Status != (int)RmsOccupancyStatus.Merged;
+					case SearchEntityTypes.Group:
+						if (!int.TryParse(hit.EntityId, out var groupId)) return false;
+						var departmentGroup = await _groups.GetGroupByIdAsync(groupId);
+						return departmentGroup != null && departmentGroup.DepartmentId == departmentId;
 					case SearchEntityTypes.CertificationType:
 						if (_certifications?.Value == null || !int.TryParse(hit.EntityId, out var typeId) || !principal.HasResourceClaim("Certifications", "View") && !principal.IsDepartmentAdmin) return false;
 						var certificationType = await _certifications.Value.GetCertificationTypeByIdAsync(typeId);
@@ -227,6 +265,27 @@ namespace Resgrid.Services.Search
 				access.Deployments = new Dictionary<string, Deployment>(StringComparer.OrdinalIgnoreCase);
 				access.RosteredDeploymentIds = null;
 			}
+		}
+
+		/// <summary>The occupancy pages' gate: the module flag on a usable Records module, and an active member with Records access.</summary>
+		private async Task<bool> OccupancyModuleOpenAsync(SearchAccess access)
+		{
+			if (access.OccupancyOpen.HasValue)
+				return access.OccupancyOpen.Value;
+			var open = false;
+			try
+			{
+				var gate = _preventionGate?.Value;
+				open = gate != null && _occupancies != null &&
+					await gate.IsEnabledAsync(access.Principal.DepartmentId, RecordsPreventionModule.Occupancy) &&
+					await _recordsAuthorization.IsActiveMemberAsync(access.Principal.UserId, access.Principal.DepartmentId);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, "Records occupancy access could not be verified for search.");
+			}
+			access.OccupancyOpen = open;
+			return open;
 		}
 
 		private bool CanViewGroup(Permission permission, int? targetGroupId, SearchAccess access)

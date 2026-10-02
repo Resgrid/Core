@@ -59,15 +59,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 
-  <data name="Name1" xml:space="preserve">
-    <value>this is my long string</value>
-  </data>
-  <data name="Bitmap1" xml:space="preserve">
-    <value>[base64 mime encoded serialized .NET Framework object]</value>
-  </data>
-  <data name="Icon1" xml:space="preserve">
-    <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-  </data>
   <data name="Action" xml:space="preserve">
     <value>Åtgärd</value>
   </data>
@@ -758,5 +749,44 @@
   </data>
   <data name="JsonInputSchema" xml:space="preserve">
     <value>JSON-schema (fältnamn och typer)</value>
+  </data>
+  <data name="AdpUsePasskey" xml:space="preserve">
+    <value>Använd en nyckel</value>
+  </data>
+  <data name="AdpUseResponder" xml:space="preserve">
+    <value>Godkänn med Responder</value>
+  </data>
+  <data name="AdpUseCode" xml:space="preserve">
+    <value>Använd en autentiseringskod</value>
+  </data>
+  <data name="AdpApprovalInstructions" xml:space="preserve">
+    <value>Öppna Resgrid Responder på telefonen, kontrollera begäran och ange det här numret:</value>
+  </data>
+  <data name="AdpApprovalWaiting" xml:space="preserve">
+    <value>Väntar på ditt godkännande i Responder…</value>
+  </data>
+  <data name="AdpApprovalDenied" xml:space="preserve">
+    <value>Begäran nekades i Responder.</value>
+  </data>
+  <data name="AdpApprovalExpired" xml:space="preserve">
+    <value>Begäran gick ut innan den godkändes. Börja om.</value>
+  </data>
+  <data name="AdpPasskeyCancelled" xml:space="preserve">
+    <value>Nyckeldialogen stängdes. Inget ändrades.</value>
+  </data>
+  <data name="AdpPasskeyFailed" xml:space="preserve">
+    <value>Nyckeln kunde inte användas. Försök igen eller använd din autentiseringsapp.</value>
+  </data>
+  <data name="AdpUseProvider" xml:space="preserve">
+    <value>Använd din identitetsleverantör</value>
+  </data>
+  <data name="AdpProviderPopupBlocked" xml:space="preserve">
+    <value>Tillåt popup-fönster för webbplatsen för att verifiera med din identitetsleverantör.</value>
+  </data>
+  <data name="POI" xml:space="preserve">
+    <value>POI</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Redigera</value>
   </data>
 </root>

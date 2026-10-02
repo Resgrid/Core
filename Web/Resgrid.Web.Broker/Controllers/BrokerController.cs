@@ -9,7 +9,7 @@ using Resgrid.Web.Broker.Services;
 namespace Resgrid.Web.Broker.Controllers
 {
 	/// <summary>
-	/// Field-crypto endpoints for the application tier (behind WorkloadKeyMiddleware). The response
+	/// Field-crypto endpoints for the application tier (behind BrokerCredentialMiddleware). The response
 	/// body is always a ProtectedDataBrokerResult; the HTTP status mirrors its error code so plain
 	/// HTTP clients and infrastructure see failures too. No endpoint here exposes key material, a
 	/// general unwrap, or any bulk/no-grant path.
@@ -29,6 +29,8 @@ namespace Resgrid.Web.Broker.Controllers
 		public async Task<ActionResult<ProtectedDataBrokerResult>> Decrypt([FromBody] BrokerFieldOperationRequest request,
 			CancellationToken cancellationToken)
 		{
+			AttachCaller(request);
+			AttachSessionAssertion(request);
 			var result = await _operationService.DecryptAsync(request, cancellationToken);
 			return StatusCode(MapStatusCode(result), result);
 		}
@@ -37,6 +39,8 @@ namespace Resgrid.Web.Broker.Controllers
 		public async Task<ActionResult<ProtectedDataBrokerResult>> Encrypt([FromBody] BrokerFieldOperationRequest request,
 			CancellationToken cancellationToken)
 		{
+			AttachCaller(request);
+			AttachSessionAssertion(request);
 			var result = await _operationService.EncryptAsync(request, cancellationToken);
 			return StatusCode(MapStatusCode(result), result);
 		}
@@ -49,8 +53,26 @@ namespace Resgrid.Web.Broker.Controllers
 		public async Task<ActionResult<ProtectedDataBrokerResult>> DecryptForWorkload([FromQuery] string purpose,
 			[FromBody] BrokerFieldOperationRequest request, CancellationToken cancellationToken)
 		{
+			AttachCaller(request);
 			var result = await _operationService.DecryptForWorkloadAsync(request, purpose, cancellationToken);
 			return StatusCode(MapStatusCode(result), result);
+		}
+
+		/// <summary>The credential the middleware authenticated; the lanes it grants are enforced by the service.</summary>
+		private void AttachCaller(BrokerFieldOperationRequest request)
+		{
+			if (request != null)
+				request.Caller = HttpContext.Items[Middleware.BrokerCredentialMiddleware.CredentialItemKey] as BrokerCredential;
+		}
+
+		/// <summary>The session assertion travels in a header; the workload lane never uses one.</summary>
+		private void AttachSessionAssertion(BrokerFieldOperationRequest request)
+		{
+			if (request == null)
+				return;
+
+			string assertion = Request.Headers[Resgrid.Model.Security.BrokerSessionAssertion.HeaderName];
+			request.SessionAssertion = string.IsNullOrWhiteSpace(assertion) ? null : assertion.Trim();
 		}
 
 		private static int MapStatusCode(ProtectedDataBrokerResult result)
@@ -68,8 +90,16 @@ namespace Resgrid.Web.Broker.Controllers
 					return StatusCodes.Status409Conflict;
 				case "grant_expired":
 				case "grant_invalid":
+				case "grant_version_unsupported":
+				case "session_assertion_required":
+				case "session_assertion_invalid":
+				case "session_revoked":
 					return StatusCodes.Status401Unauthorized;
 				case "grant_revoked":
+				case "lane_denied":
+				case "grant_session_mismatch":
+				case "grant_client_mismatch":
+				case "grant_session_locked":
 				case "workload_purpose_denied":
 					return StatusCodes.Status403Forbidden;
 				case "no_active_key":

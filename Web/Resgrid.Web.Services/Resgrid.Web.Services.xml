@@ -75,6 +75,54 @@
             Text-To-Call has always done it.
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.AccountSecurityController">
+            <summary>
+            The account "Sign-in methods" view (passkey plan section 6.5): the signed-in user's own authenticator app and
+            passkeys, grouped by the app each passkey works in. Viewing needs only a signed-in session; every change goes
+            through a command that checks fresh MFA.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AccountSecurityController.ReportActivity(Resgrid.Web.Services.Models.v4.AccountSecurity.ReportActivityInput,System.Threading.CancellationToken)">
+            <summary>
+            "This wasn't me" (plan section 6.5): marks a verification as not the account holder's, ends the session it opened or
+            served (never the one reporting it) and sends a security notice. Its effect is ending a session, which any session of
+            the account may already do, so it needs no fresh MFA: a user whose factor was taken can still report.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AccountSecurityController.ApprovalInstallationsAsync(Resgrid.Model.Identity.IdentityUser,System.Collections.Generic.IReadOnlyList{Resgrid.Model.Security.UserPasskey},System.Collections.Generic.IReadOnlyList{Resgrid.Model.Security.MfaActivity},System.String)">
+            <summary>
+            The user's Responder installations that can receive approval requests (plan section 6.5): active, personal (never
+            shared) Responder sessions. Push delivery is per account, not per installation, so no push state is shown.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AccountSecurityController.LinkedIdentitiesAsync(System.String,System.Collections.Generic.IReadOnlyList{Resgrid.Model.Security.MfaActivity},System.Threading.CancellationToken)">
+            <summary>The user's department identity-provider links; informational, managed by the department and SCIM.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AccountSecurityController.Reauthenticate(Resgrid.Web.Services.Models.v4.AccountSecurity.ReauthenticateInput,System.Threading.CancellationToken)">
+            <summary>
+            Confirms the password for this session: fresh first-factor evidence for operations that need it (adding a passkey,
+            replacing the authenticator). Failures count toward the account lockout. SSO accounts reauthenticate through
+            <c>Sso/Begin</c> with purpose <c>reauth</c>.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AccountSecurityController.ReplaceTotpOptions(System.Threading.CancellationToken)">
+            <summary>
+            Stages a new authenticator key. Needs the password (or SSO) confirmed within five minutes and the current
+            authenticator or a passkey for this app verified within five minutes (plan section 7.6 row 14).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AccountSecurityController.ReplaceTotp(Resgrid.Web.Services.Models.v4.AccountSecurity.ReplaceTotpInput,System.Threading.CancellationToken)">
+            <summary>
+            Makes the staged key the authenticator once its code verifies. Everything the old one authorized ends: every
+            session (this one too), all evidence, and the old recovery codes. The new codes are returned once.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AccountSecurityController.ReplacementAuthorityAsync(System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            The authority to replace the authenticator: this session's first factor within <paramref name="firstFactorMinutes"/>,
+            and TOTP or a passkey for this app within five minutes. Never approval or provider step-up (plan section 7.6 row 14).
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.AdminAssistController">
             <summary>Deterministic department setup and configuration guidance. Source configuration remains read-only; Ask is separately gated.</summary>
         </member>
@@ -203,6 +251,65 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.DeleteConversationRequest.#ctor(System.String,System.Int64)">
             <summary>Only an owned conversation identifier and expected revision are accepted.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.AuthenticationController">
+            <summary>
+            Second-factor completion for a login MFA transaction (passkey plan sections 7.2 and 7.5 rule 3; workbook section
+            7.1). The transaction secret from the password grant is the only authority here: no password or IdP token is
+            resent, and nothing here issues a token. TOTP, a passkey bound to the signing-in app, or a recovery code completes it
+            once; failures of any method share the transaction's attempt limit and the account lockout (section 7.5 rule 6).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AuthenticationController.CompleteTotp(Resgrid.Web.Services.Models.v4.Authentication.CompleteLoginCodeInput,System.Threading.CancellationToken)">
+            <summary>Completes the sign-in with the current authenticator code.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AuthenticationController.PasskeyOptions(Resgrid.Web.Services.Models.v4.Authentication.LoginTransactionInput,System.Threading.CancellationToken)">
+            <summary>Assertion options for the user's passkeys bound to the signing-in app, bound to this transaction.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AuthenticationController.CompletePasskey(Resgrid.Web.Services.Models.v4.Authentication.CompleteLoginPasskeyInput,System.Threading.CancellationToken)">
+            <summary>Completes the sign-in with a passkey assertion for the request from <see cref="M:Resgrid.Web.Services.Controllers.v4.AuthenticationController.PasskeyOptions(Resgrid.Web.Services.Models.v4.Authentication.LoginTransactionInput,System.Threading.CancellationToken)"/>.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AuthenticationController.CompleteFederated(Resgrid.Web.Services.Models.v4.Authentication.CompleteLoginFederatedInput,System.Threading.CancellationToken)">
+            <summary>
+            Completes the sign-in with provider step-up (plan sections 7.6 row 3 and 7.8): the brokered round trip begun
+            through <c>Sso/Begin</c> with purpose <c>step_up</c> and this transaction, redeemed once here with its one-time code
+            and PKCE verifier. The provider must have signed in this account after the step-up began, with a value the
+            department's tested mapping counts as MFA; the evidence carries the provider's authentication time.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AuthenticationController.CompleteApproval(Resgrid.Web.Services.Models.v4.Authentication.CompleteLoginApprovalInput,System.Threading.CancellationToken)">
+            <summary>
+            Completes the sign-in with a Responder approval (plan section 7.9 step 6): the request made for this transaction
+            through <c>MfaApproval/Request</c> and approved in the user's Responder. It is used once, while the approving
+            passkey and Responder session still count; the evidence names them and carries the approval time.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AuthenticationController.CompleteRecoveryCode(Resgrid.Web.Services.Models.v4.Authentication.CompleteLoginCodeInput,System.Threading.CancellationToken)">
+            <summary>
+            Completes the sign-in with a one-time recovery code. The session is recovery-classified: it never satisfies a
+            later MFA check or ADP, and the user should replace the lost factor (plan sections 6.1 item 10 and 6.3).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AuthenticationController.TotpSetupOptions(Resgrid.Web.Services.Models.v4.Authentication.LoginTransactionInput,System.Threading.CancellationToken)">
+            <summary>
+            For a sign-in that must have MFA the account does not have yet (<c>mfa_setup_transaction</c>): stages a new
+            authenticator key. The transaction permits only this setup; it grants nothing until a code from the new key verifies.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AuthenticationController.CompleteTotpSetup(Resgrid.Web.Services.Models.v4.Authentication.CompleteLoginCodeInput,System.Threading.CancellationToken)">
+            <summary>
+            Turns the new authenticator on once its code verifies, and completes the sign-in with it: the completion code
+            redeems at the token endpoint like any other, and the recovery codes are returned once.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AuthenticationController.OpenForSetupAsync(Resgrid.Web.Services.Models.v4.Authentication.LoginTransactionInput,System.Threading.CancellationToken)">
+            <summary>A pending transaction whose account has no authenticator yet: the only thing it may do is set one up.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AuthenticationController.OpenAsync(Resgrid.Web.Services.Models.v4.Authentication.LoginTransactionInput,Resgrid.Model.Security.MfaEvidenceMethod,System.Threading.CancellationToken)">
+            <summary>
+            The pending transaction for this client and its user, or the refusal: an unusable transaction, a locked account,
+            a method the department does not accept, or TOTP-based methods (TOTP and recovery codes) for an account without TOTP.
+            </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.AutofillsController">
             <summary>
@@ -1208,11 +1315,14 @@
             <param name="input">The caller's current authenticator (TOTP) code</param>
             <returns>ChatActionResult indicating whether the step-up succeeded</returns>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatModerationController.GetMfaEnrolledUserOrErrorAsync">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatModerationController.GetMfaEnrolledUserOrErrorAsync(System.Boolean)">
             <summary>
             Resolves the current user and enforces the export MFA-enrollment precondition shared by the verify
             and gate paths. On success returns the user with a null error; otherwise returns a null user and
             the HTTP result to return: 401 when the principal can't be resolved, 403 when 2FA is not enrolled.
+            With <paramref name="acceptProviderStepUp"/>, an SSO member whose department accepts its identity provider's MFA
+            for sign-in counts as enrolled without a Resgrid factor (passkey plan section 7.6 row 8, section 7.8): they verify
+            through Mfa/VerifyStepUp. The TOTP-only VerifyExportMfa still needs TOTP; passkeys and approval need it anyway.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ChatModerationController.CheckRecentExportMfaAsync">
@@ -1509,11 +1619,55 @@
             Service to generate an authentication token that is required to communicate with all other v4 services
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.ConnectController.MfaEnrollmentUri">
+            <summary>Where a member whose department requires MFA sets up an authenticator (plan section 7.6 rollout).</summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ConnectController.Token">
             <summary>
             Generates a token that is then used for subsquent requests to the API.
             </summary>
             <returns>ValidateResult object, with IsValid set if the settings are correct</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ConnectController.BeginLoginTransactionAsync(Resgrid.Model.Identity.IdentityUser,System.Int32,OpenIddict.Abstractions.OpenIddictRequest,Resgrid.Model.SystemAudit,System.Boolean)">
+            <summary>
+            Starts the restricted login transaction after a verified password (workbook section 7.1): no tokens, only the
+            transaction secret and the methods it accepts. Null when it could not start, so the caller falls back to the
+            legacy <c>totp_code</c> response, which still requires the second factor.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ConnectController.BeginSetupTransactionAsync(Resgrid.Model.Identity.IdentityUser,System.Int32,OpenIddict.Abstractions.OpenIddictRequest)">
+            <summary>
+            A setup transaction (plan section 6.2): a login transaction for an account with no factor, which can only set up an
+            authenticator and then complete with it. Null when it could not start; the enrollment error stands on its own.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ConnectController.RedeemLoginTransactionAsync(OpenIddict.Abstractions.OpenIddictRequest)">
+            <summary>
+            Redeems a login transaction's one-use completion code for the normal token response (workbook section 7.1). The
+            account, department policy and first-factor rules are rechecked; the session records the original first-factor
+            time and the second factor actually verified. A lost response means signing in again: nothing is issued twice.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ConnectController.SsoAuthenticationMethodAsync(System.Int32,System.String)">
+            <summary>
+            The session's first-factor method for an SSO login, from the department configuration that authenticated it;
+            <see cref="F:Resgrid.Model.UserSessionAuthenticationMethod.LocalPassword"/> when that configuration is gone or disabled.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ConnectController.GrantableScopes(System.Collections.Generic.IEnumerable{System.String})">
+            <summary>The scopes a password sign-in grants, limited to what the client asked for.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ConnectController.IsLocalLoginAllowedAsync(System.String,System.Int32)">
+            <summary>
+            Whether a password may sign this user in to the department: no SSO-only account link, and the department does
+            not require SSO. Checked at the first factor and again when a login transaction is redeemed.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ConnectController.AddDepartmentIdentity(Resgrid.Web.Services.Models.v4.Sso.GetDepartmentSsoConfigResultData,Resgrid.Model.Department,Resgrid.Model.DepartmentSsoConfig)">
+            <summary>
+            The discovery fields every client needs to continue without a department code (plan section 7.7.4): the
+            system-encrypted department token, the department id, and whether brokered SSO can run for this department.
+            </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ConnectController.GetSsoConfig(System.String,System.String,System.Threading.CancellationToken)">
             <summary>
@@ -1552,14 +1706,58 @@
             in addition to the IdP token.
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.ConnectController.SamlMobileCallback(System.String,System.String,System.String,System.Threading.CancellationToken)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ConnectController.SamlMobileCallback(System.String,System.String,System.String,System.String,System.Threading.CancellationToken)">
             <summary>
             SAML 2.0 Assertion Consumer Service (ACS) relay for mobile apps.
-            Receives the SAMLResponse POST from the IdP, then redirects to the
-            resgrid:// deep-link scheme so the mobile app can complete authentication
-            via the external-token endpoint.
+            Receives the SAMLResponse POST from the IdP, then redirects to the app that started the sign-in
+            (named in its RelayState, see <see cref="T:Resgrid.Web.Services.Helpers.LegacySamlRelay"/>) so it can complete authentication
+            via the external-token endpoint. An untagged RelayState returns to Responder, as before.
             Configure your IdP's ACS URL to point here:
               POST /api/v4/connect/saml-mobile-callback?departmentCode=DEPT
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ConnectController.OidcCallback(System.String,System.String,System.String,System.Threading.CancellationToken)">
+            <summary>
+            The IdP's OIDC redirect for brokered SSO (passkey plan section 7.7.2 step 2). Departments register
+            <c>{api}/api/v4/connect/oidc-callback</c> with their IdP. The server exchanges the code and validates the id_token
+            (state, nonce, PKCE), then sends the browser to the client's registered return target with a one-time
+            <c>sso_code</c>. No token or assertion is ever in the URL.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ConnectController.SsoCallbackResponse(Resgrid.Model.Security.SsoCallbackResult)">
+            <summary>
+            Redirects to the registered return target when the transaction is known; otherwise there is nowhere trusted to
+            send the browser, so the callback answers with the error itself.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ConnectController.SamlMobileLogin(System.String,System.String,System.String,System.Threading.CancellationToken,System.Boolean)">
+            <summary>
+            Starts a legacy (unbrokered) SAML sign-in for an app (workbook section 12, slice 35). An app cannot build a SAML
+            AuthnRequest, so it opens this page, which sends the browser to the department's IdP with one. The RelayState must be
+            the app's own tagged value (<c>unit.&lt;nonce&gt;</c>): the IdP returns it with the response, and the relay
+            (<see cref="M:Resgrid.Web.Services.Controllers.v4.ConnectController.SamlMobileCallback(System.String,System.String,System.String,System.String,System.Threading.CancellationToken)"/>) sends the member back to that app and echoes it. Anything else is refused, so
+            this page never names another destination. Nothing is stored here.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.ConnectController.SharedSignInMaxAge">
+            <summary>How long ago the provider may have authenticated a shared installation's member (the reauthentication window).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ConnectController.SharedInstallationAsync(System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            A sign-in from a shared installation: it says so, or the department makes this app's sessions shared (the broker's
+            rule for its own round trips).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ConnectController.LegacySamlLoginUrl(Resgrid.Model.Department,Resgrid.Model.DepartmentSsoConfig)">
+            <summary>
+            This server's legacy SAML start page for the department, when its configuration can start a sign-in. Discovery calls
+            it only for a SAML configuration.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ConnectController.LegacyOidcRedirectUri">
+            <summary>
+            The legacy OIDC redirect URI for the app asking (<c>X-Resgrid-Client</c>): each app has its own scheme, and the
+            department's IdP must list each one. A caller that names no app gets Responder's, as every caller did before.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ConnectController.ResolveDepartmentAsync(System.String,System.String)">
@@ -1567,6 +1765,34 @@
             Decrypts a departmentToken (format: {departmentId}:{departmentCode}) produced by the
             web UI and returns the resolved Department, or null if the token is invalid.
             Falls back to a plain departmentCode name-lookup when departmentToken is absent.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ConnectController.SamlRelayId(System.String)">
+            <summary>The 64 hex digits of a relay token, or null when it is not one.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.ConnectController.SamlMfaContinuation">
+            <summary>What a relayed SAML exchange that stopped at the member's Resgrid code validated, for the code retry.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ConnectController.SamlMfaContinuation.#ctor(System.String,System.Int32,System.String,System.Int64)">
+            <summary>What a relayed SAML exchange that stopped at the member's Resgrid code validated, for the code retry.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ConnectController.KeepSamlMfaContinuationAsync(System.String,Resgrid.Model.Identity.IdentityUser,Resgrid.Model.Department,Resgrid.Model.DepartmentSsoConfig)">
+            <summary>
+            Keeps what the first exchange validated under its relay token, encrypted, for the relay's own lifetime (not sliding),
+            so the member's code retry can finish the sign-in the spent assertion can no longer start again.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ConnectController.CountSamlMfaFailureAsync(System.String)">
+            <summary>A wrong code on a relayed SAML sign-in; the retry state ends after the transaction attempt limit.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ConnectController.ClaimSamlMfaContinuationAsync(System.String)">
+            <summary>The one retry that finishes the sign-in: atomic, so racing retries cannot both sign in.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ConnectController.RecordLoginEvidenceAsync(Resgrid.Model.Identity.IdentityUser,Resgrid.Model.UserSession,Resgrid.Model.Security.MfaEvidenceMethod,System.Nullable{System.DateTime},System.Threading.CancellationToken,System.Nullable{System.DateTime},Resgrid.Model.Security.MfaEvidenceMethod,System.String)">
+            <summary>
+            Records what this sign-in verified as server-side evidence for the new API session (passkey plan section 5.3), so
+            a TOTP sign-in satisfies a following step-up window the same way it does on Web. A failure here never blocks the
+            sign-in; the user is simply asked to verify again for a sensitive operation.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ConnectController.AddAllResourceClaims(System.Security.Claims.ClaimsIdentity)">
@@ -1804,6 +2030,43 @@
              epoch, still expires, and still authorizes an audited read.
              </summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DataProtectionController.RequestGrantFromRecentMfa">
+            <summary>
+            A grant from this session's recent sign-in or shared-unlock MFA, with no new prompt (plan sections 7.6 row 9 and 9.1): only
+            where the department accepts reusing that method for protected data, and only until the original verification's window
+            ends. <c>step_up_required</c> when nothing qualifies; the client then verifies with <c>VerifyStepUp</c> or another method.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DataProtectionController.StepUpMethods(System.Threading.CancellationToken)">
+            <summary>
+            How the caller can verify for this department's protected data now: the methods it has that the department
+            accepts, and which to show first (passkey plan section 7.5 rule 5). Advisory; every verification rechecks.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DataProtectionController.PasskeyOptions(System.Threading.CancellationToken)">
+            <summary>
+            Assertion options for a passkey bound to this app, for this department's protected data (passkey plan section 8.1).
+            Needs a tracked session; the department and deployment must accept passkeys for protected data.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DataProtectionController.VerifyPasskey(Resgrid.Web.Services.Models.v4.DataProtection.AdpPasskeyStepUpInput,System.Threading.CancellationToken)">
+            <summary>Verifies the passkey assertion and returns a <c>passkey</c> grant (the same <see cref="T:Resgrid.Web.Services.Models.v4.DataProtection.StepUpResult"/> as a code).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DataProtectionController.CompleteApproval(Resgrid.Web.Services.Models.v4.DataProtection.AdpApprovalStepUpInput,System.Threading.CancellationToken)">
+            <summary>
+            Uses an approved Responder request (<c>MfaApproval/Request</c>, purpose <c>adp</c>, from this session and department)
+            once, and returns a <c>passkey_approval</c> grant. Answers 409 <c>approval_pending</c> until it is decided.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DataProtectionController.CompleteFederated(Resgrid.Web.Services.Models.v4.DataProtection.AdpFederatedStepUpInput,System.Threading.CancellationToken)">
+            <summary>
+            Redeems a brokered provider step-up (<c>Sso/Begin</c>, purpose <c>adp_step_up</c>) once and returns a <c>federated</c>
+            grant, where the department accepts its provider's MFA for protected data (passkey plan section 7.8).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DataProtectionController.Caller(Resgrid.Model.Identity.IdentityUser)">
+            <summary>The caller as the grant issuer sees it: this user, department and validated session (never client-supplied).</summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.DataProtectionController.QueueEnrollment(Resgrid.Web.Services.Models.v4.DataProtection.QueueEnrollmentInput)">
             <summary>
             Queues enrollment (Disabled -> EnrollmentQueued). Managing member only; requires an active
@@ -1826,13 +2089,13 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.DataProtectionController.RequireRecentMfaAsync">
              <summary>
-             MFA-recency gate for enrollment/offboarding commands (plan sections 3.5 and 18): the
-             caller must present a currently-valid Protected Data Grant — minted by VerifyStepUp after
-             fresh TOTP, absolute lifetime = the department step-up window — in the
-             X-Resgrid-Protected-Grant header, bound to THIS user and department at the CURRENT policy
-             epoch. On deployments without grant key material (CanValidateGrants false) the gate is
-             inactive and the pre-Phase-2 gates (managing member, addon, global flag) stand alone.
-             Returns null when the command may proceed.
+             MFA-recency gate for enrollment, offboarding and security commands (ADP plan sections 3.5 and 18, passkey plan
+             section 7.6 row 10 and section 8.4): actual MFA within the sensitive-operation window (5 minutes), shown either
+             by Mfa/VerifyStepUp evidence on this session (operation <c>adp_management</c>) or by a Protected Data Grant in
+             the X-Resgrid-Protected-Grant header whose own verification is that recent, bound to THIS user, session and
+             department at the CURRENT policy epoch. The department's longer data-access window never stretches this: an
+             eight-hour-old grant cannot change the protection lifecycle. Missing grant key material is not proof either;
+             the evidence path still works without it. Returns null when the command may proceed.
             
              A step-up-EXEMPT grant is refused here. Those are minted by RequestGrant without any second
              factor, for a client the department exempted from the reveal prompt (plan 3.3) — that
@@ -2009,6 +2272,36 @@
             Returns all the call quick templates
             </summary>
             <returns>Array of CallTemplateResult objects for each role in the department</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.FactorRecoveryController">
+            <summary>
+            "I lost my authenticator" (passkey plan sections 5.4 and 6.3). A sign-in's verified first factor (its login
+            transaction) and a recovery code open a restricted recovery; its secret permits only status, staging a new
+            authenticator, completing and canceling. Completion replaces the authenticator, rotates the recovery codes, removes
+            the lost passkeys the user chose, and ends every session; the user then signs in normally. Nothing here issues a token.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.FactorRecoveryController.BeginFactorRecovery(Resgrid.Web.Services.Models.v4.AccountSecurity.BeginFactorRecoveryInput,System.Threading.CancellationToken)">
+            <summary>
+            Opens a recovery from a sign-in in progress (<c>mfa_transaction</c>) and a recovery code. The code is spent and the
+            sign-in ends; the recovery secret is returned once. A wrong code counts against the sign-in and the account lockout.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.FactorRecoveryController.FactorRecoveryStatus(Resgrid.Web.Services.Models.v4.AccountSecurity.FactorRecoveryInput,System.Threading.CancellationToken)">
+            <summary>What the recovery allows next, and the passkeys the user may choose to remove. No factor secret is ever returned.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.FactorRecoveryController.PrepareReplacement(Resgrid.Web.Services.Models.v4.AccountSecurity.FactorRecoveryInput,System.Threading.CancellationToken)">
+            <summary>Stages the replacement authenticator; the current one keeps working until the recovery completes.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.FactorRecoveryController.CompleteFactorRecovery(Resgrid.Web.Services.Models.v4.AccountSecurity.CompleteFactorRecoveryInput,System.Threading.CancellationToken)">
+            <summary>
+            Completes the recovery with a code from the new authenticator: it becomes the authenticator, the recovery codes are
+            replaced (returned once), the chosen passkeys are removed, and every session and piece of evidence ends. A wrong
+            code counts against the recovery; nothing changes until the code verifies.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.FactorRecoveryController.CancelFactorRecovery(Resgrid.Web.Services.Models.v4.AccountSecurity.FactorRecoveryInput,System.Threading.CancellationToken)">
+            <summary>Ends the recovery; the recovery code that opened it stays spent, and nothing about the account changes.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.FeatureTogglesController">
             <summary>
@@ -2848,6 +3141,77 @@
             <param name="messageId">MessageId of the message to delete</param>
             <returns>Returns OK status code if successful</returns>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.MfaApprovalController">
+            <summary>
+            Responder approval (passkey plan section 7.9; workbook section 7.4). The requesting app asks with its login
+            transaction (sign-in) or its signed-in session (step-up) and shows the returned number; the user's own Responder
+            reviews the request, types that number and approves with its passkey; the requester then completes through
+            <c>Authentication/CompleteApproval</c> or <c>Mfa/VerifyStepUp</c>. Nothing here issues a token, and nothing is issued
+            to Responder.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MfaApprovalController.RequestApproval(Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalRequestInput,System.Threading.CancellationToken)">
+            <summary>Asks the user's Responder to approve; returns the number to show on this screen only.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MfaApprovalController.Status(Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalReferenceInput,System.Threading.CancellationToken)">
+            <summary>The request's state, for the requester that made it. Poll every 2 seconds.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MfaApprovalController.Pending(System.Threading.CancellationToken)">
+            <summary>The request waiting for this user's approval, for their own signed-in Responder; empty when none.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MfaApprovalController.Options(Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalOptionsInput,System.Threading.CancellationToken)">
+            <summary>Assertion options for this Responder's approval passkeys, bound to the request.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MfaApprovalController.Approve(Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalApproveInput,System.Threading.CancellationToken)">
+            <summary>Approves with the number from the requesting screen and a Responder passkey assertion.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MfaApprovalController.Deny(Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalDenyInput,System.Threading.CancellationToken)">
+            <summary>Denies the request; <c>not_me</c> also ends that sign-in and suspends approval requests for 15 minutes.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MfaApprovalController.DisableInstallations(Resgrid.Web.Services.Models.v4.MfaApproval.DisableApprovalInstallationsInput,System.Threading.CancellationToken)">
+            <summary>
+            Stops approval requests on one Responder installation (<c>InstallationId</c> from <c>AccountSecurity/Methods</c>), or
+            on all of them with <c>All</c>, which also turns approval off on every Responder passkey. Works from any app; needs
+            the authenticator or a passkey for this app within five minutes, never an approval (plan section 7.6 row 14).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MfaApprovalController.Approver">
+            <summary>The approver: the validated session asking, if it is one (the service checks it is a personal Responder session).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MfaApprovalController.RequesterAsync(System.String,System.Threading.CancellationToken)">
+            <summary>The requester: the login transaction whose secret was sent, otherwise the signed-in session.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.MfaController">
+            <summary>
+            API step-up for sensitive operations (passkey plan sections 7.6 and 11): the v4 replacement for per-feature
+            verification. A verified second factor becomes server-side evidence on the caller's validated session, with its
+            method and time; it returns no token and authorizes nothing by itself. The guarded commands check the evidence.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MfaController.StepUpOptions(System.String,System.Threading.CancellationToken)">
+            <summary>The methods the caller can use for <paramref name="operation"/>, and which to show first.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MfaController.VerifyStepUp(Resgrid.Web.Services.Models.v4.Mfa.VerifyStepUpInput,System.Threading.CancellationToken)">
+            <summary>
+            Verifies a second factor for <c>operation</c> and records it as evidence on this session. A TOTP failure counts
+            against the account lockout shared with sign-in (plan section 7.5 rule 6); a passkey is limited by its single-use
+            request instead, since a signature cannot be guessed.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MfaController.VerifyApprovalAsync(Resgrid.Web.Services.Models.v4.Mfa.VerifyStepUpInput,Resgrid.Model.Identity.IdentityUser,System.Threading.CancellationToken)">
+            <summary>
+            Uses a Responder approval requested by this session for this operation (plan section 7.9 step 6). The department
+            must accept approval here (never security changes or account factors), and the approving passkey and Responder
+            session must still count; the evidence names them and carries the approval time.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MfaController.VerifyFederatedAsync(Resgrid.Web.Services.Models.v4.Mfa.VerifyStepUpInput,System.Threading.CancellationToken)">
+            <summary>
+            Redeems a provider step-up begun through <c>Sso/Begin</c> (purpose <c>step_up</c>) for this session and operation.
+            Evidence carries the provider's own authentication time and names the SSO configuration and mapping version, so a
+            mapping change retires it (plan section 7.8).
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.ModerationController">
             <summary>Department and group-scoped moderation requests across supported content types.</summary>
         </member>
@@ -2942,6 +3306,38 @@
             Get's all the note Categories for a Department
             </summary>
             <returns>List of string of distinct note category.</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.PasskeysController">
+            <summary>
+            Passkey enrollment and the user's own inventory (passkey plan sections 6.1, 6.5 and 11). A passkey is registered for
+            the calling app only and works only there; the inventory covers every app, so a passkey made in one app can be
+            removed from any other. Every command rechecks the rollout gate and the session's server-side evidence.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.PasskeysController.RegistrationOptions(System.Threading.CancellationToken)">
+            <summary>
+            Creation options for a new passkey bound to this app. Needs a password or SSO verification and a second factor
+            for this session within five minutes, and an authenticator app with recovery codes already set up.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.PasskeysController.CompleteRegistration(Resgrid.Web.Services.Models.v4.Passkeys.CompletePasskeyRegistrationInput,System.Threading.CancellationToken)">
+            <summary>Verifies the platform's response and stores the passkey. The key is not usable until this returns.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.PasskeysController.List(System.Threading.CancellationToken)">
+            <summary>The caller's own active passkeys in every app. Never another user's.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.PasskeysController.Revoke(Resgrid.Web.Services.Models.v4.Passkeys.RevokePasskeyInput,System.Threading.CancellationToken)">
+            <summary>
+            Removes one passkey at Resgrid, in any app, after a second factor within five minutes (authenticator app, or a
+            passkey for this app). It may remain in the device or password manager but can no longer be used. Sessions that
+            signed in with it end, possibly including this one (<c>CurrentSessionEnded</c>).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.PasskeysController.RevokeAllForClient(Resgrid.Web.Services.Models.v4.Passkeys.RevokeAllPasskeysForClientInput,System.Threading.CancellationToken)">
+            <summary>Removes every passkey the caller has for one app, under the same verification rule as <see cref="M:Resgrid.Web.Services.Controllers.v4.PasskeysController.Revoke(Resgrid.Web.Services.Models.v4.Passkeys.RevokePasskeyInput,System.Threading.CancellationToken)"/>.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.PasskeysController.SetApproval(Resgrid.Web.Services.Models.v4.Passkeys.SetPasskeyApprovalInput,System.Threading.CancellationToken)">
+            <summary>Responder passkeys only: allow or stop approving other apps' requests.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.PersonnelController">
             <summary>
@@ -3893,7 +4289,75 @@
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.SessionsController">
-            <summary>User authentication session inventory and revocation.</summary>
+            <summary>
+            User authentication session inventory and revocation, and the shared vehicle and workstation session lifecycle (passkey
+            plan sections 11 and 12.5): status, lock, unlock and end shift. Those are the only endpoints a locked shared session can
+            reach; session validation refuses it everywhere else.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SessionsController.Current(System.Threading.CancellationToken)">
+            <summary>This session's operator, lock state and deadlines. Available while locked.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SessionsController.Lock(System.Threading.CancellationToken)">
+            <summary>
+            Locks this shared session now (Lock, an OS lock, or the app going to the background). Everything issued before it,
+            including Protected Data Grants and pending verifications, stops working. Locking a locked session is fine.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SessionsController.EndShift(Resgrid.Web.Services.Models.v4.Sessions.EndShiftInput,System.Threading.CancellationToken)">
+            <summary>
+            End shift or Switch operator: ends this shared session. The client then clears the operator's tokens, caches and
+            connections and signs the next operator in normally. Available while locked.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SessionsController.UnlockOptions(Resgrid.Web.Services.Models.v4.Sessions.UnlockOptionsInput,System.Threading.CancellationToken)">
+            <summary>
+            How the locked session's own operator can unlock it, bound to its current lock version. Empty methods mean quick
+            unlock is unavailable (no factor, or the department's rules exclude them): end the shift and sign in normally.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SessionsController.RequestUnlockApproval(Resgrid.Web.Services.Models.v4.Sessions.UnlockApprovalInput,System.Threading.CancellationToken)">
+            <summary>
+            Asks the operator's own Responder to approve this unlock (plan section 7.9). The request is bound to this lock
+            version; show the number on this screen only, then poll <c>unlock-approval/{id}</c>.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SessionsController.BeginUnlockSso(Resgrid.Web.Services.Models.v4.Sessions.UnlockSsoInput,System.Threading.CancellationToken)">
+            <summary>
+            Begins an unlock through the department's identity provider, which must perform MFA the department's tested mapping
+            accepts (plan section 7.8). The provider is asked to let the operator choose the account. The transaction is bound
+            to this session and counts only for the lock it began in; finish with <c>complete-unlock</c> method <c>federated</c>.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SessionsController.UnlockApprovalStatus(System.String,System.Threading.CancellationToken)">
+            <summary>The unlock approval's state, for this session only. Poll every 2 seconds.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SessionsController.CancelUnlockApproval(System.String,System.Threading.CancellationToken)">
+            <summary>Cancels this session's unlock approval request.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SessionsController.CompleteUnlock(Resgrid.Web.Services.Models.v4.Sessions.CompleteUnlockInput,System.Threading.CancellationToken)">
+            <summary>
+            Unlocks this locked shared session for its own operator with a TOTP code, a passkey for this app, or an approved
+            Responder request, all at the lock version from <c>unlock-options</c>. The same session resumes: the first-factor
+            time and the shift end do not change, and nothing from before the lock works again.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SessionsController.VerifyFederatedUnlockAsync(Resgrid.Model.UserSession,Resgrid.Model.Identity.IdentityUser,Resgrid.Web.Services.Models.v4.Sessions.CompleteUnlockInput,System.Threading.CancellationToken)">
+            <summary>
+            Redeems a provider step-up begun with <c>unlock-sso</c> for this session and lock: the same department and tested
+            mapping, this session and operator, the current generation, and begun after the session's last lock, so a round
+            trip from before a lock or for anything else never unlocks it. Evidence names the SSO configuration and mapping
+            version, so a mapping change retires it.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SessionsController.OpenUnlockAsync(System.Nullable{System.Int64},System.Threading.CancellationToken)">
+            <summary>
+            The locked session this request is about, its operator, and whether they may try to unlock it now: shared, locked,
+            still at the lock version the client saw, and not waiting on an SSO sign-in.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SessionsController.OwnSession">
+            <summary>The session request validation accepted for this caller; for a locked session, only on these endpoints.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.ShiftsController">
             <summary>
@@ -4033,8 +4497,15 @@
             on input and encrypted before storage — they are NEVER returned in any response.
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.SsoAdminController.#ctor(Resgrid.Model.Services.IDepartmentSsoService,Resgrid.Model.Services.IDepartmentsService,Resgrid.Model.Services.IPermissionsService,Resgrid.Model.Services.IDepartmentGroupsService,Resgrid.Model.Services.IPersonnelRolesService)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SsoAdminController.#ctor(Resgrid.Model.Services.IDepartmentSsoService,Resgrid.Model.Services.IDepartmentsService,Resgrid.Model.Services.IPermissionsService,Resgrid.Model.Services.IDepartmentGroupsService,Resgrid.Model.Services.IPersonnelRolesService,Resgrid.Model.Services.IMfaEvidenceService,Resgrid.Model.Services.IMfaPolicyService,Resgrid.Model.Services.ISsoBrokerService,Resgrid.Model.Services.ISystemAuditsService,Resgrid.Model.Services.IPasskeyFeatureGates)">
             <summary>Constructor.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SsoAdminController.RequireRecentMfaAsync(System.Threading.CancellationToken,System.Boolean)">
+            <summary>
+            Security, SSO, SCIM and MFA policy changes need an actual second factor on this session within the last few
+            minutes (passkey plan section 7.6 row 13): call Mfa/VerifyStepUp with operation <c>security_change</c>, then
+            retry. Null when the change may proceed.
+            </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.SsoAdminController.GetSsoConfigs(System.Threading.CancellationToken)">
             <summary>
@@ -4091,11 +4562,62 @@
             a password — ensure at least one working SSO configuration exists first.
             </summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SsoAdminController.GetFederatedMfaMapping(System.Threading.CancellationToken)">
+            <summary>The active SSO configuration's provider step-up mapping and whether it has passed its test.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SsoAdminController.SaveFederatedMfaMapping(Resgrid.Web.Services.Models.v4.Sso.SaveFederatedMfaMappingInput,System.Threading.CancellationToken)">
+            <summary>
+            Saves (or removes, with a null mapping) the provider step-up mapping. Managing member only, after an authenticator
+            app or passkey step-up; every change advances the version and needs a new test before it counts.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SsoAdminController.BeginFederatedMfaTest(Resgrid.Web.Services.Models.v4.Sso.FederatedMfaTestBeginInput,System.Threading.CancellationToken)">
+            <summary>Starts the managing member's test step-up with the saved mapping; it proves the provider returns a mapped MFA value.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SsoAdminController.CompleteFederatedMfaTest(Resgrid.Web.Services.Models.v4.Sso.FederatedMfaTestCompleteInput,System.Threading.CancellationToken)">
+            <summary>
+            Completes the test: the provider's fresh response carried a value the mapping counts as MFA, so that exact mapping
+            version becomes effective. A mapping changed during the test must be tested again.
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.SsoAdminController.TestScimConnection(System.String,System.Threading.CancellationToken)">
             <summary>
             Validates that the SCIM endpoint is reachable and the stored SCIM bearer token
             is correctly configured by performing a test GET /scim/v2/Users request against
             the local SCIM controller. Returns success/failure and the HTTP status received.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.SsoController">
+            <summary>
+            Server-brokered SSO for every client (passkey plan section 7.7.2; workbook section 7.3). <c>Begin</c> returns the
+            IdP URL; the IdP returns to the server, which sends a one-time code to the client's registered return target;
+            <c>Redeem</c> exchanges that code and the PKCE verifier for the login MFA transaction (or reauthentication). No IdP
+            token or assertion ever reaches the client, and SAML + TOTP works because nothing is resent.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SsoController.Redeem(Resgrid.Web.Services.Models.v4.Sso.SsoRedeemInput,System.Threading.CancellationToken)">
+            <summary>
+            Redeems the one-time code with the PKCE verifier. A login continues exactly like a password sign-in: MFA through
+            the login transaction when the account has it, a direct completion code when it needs none (plan section 7.6 row
+            4), and <c>mfa_enrollment_required</c> when the department requires MFA the account lacks.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SsoController.ReauthenticatedAsync(Resgrid.Model.Security.SsoLoginTransaction,System.Threading.CancellationToken)">
+            <summary>
+            Fresh SSO proof for the session that asked for it (plan section 6.2): the same session, account and generation,
+            recorded as first-factor evidence at the IdP's own authentication time. It signs nobody in.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SsoController.ProviderMfaSatisfiedAsync(Resgrid.Model.Security.SsoLoginTransaction,System.Threading.CancellationToken)">
+            <summary>
+            The tested SSO configuration when the sign-in's round trip carried provider MFA the department accepts for login
+            under its current mapping; null otherwise, and the sign-in continues as any SSO first factor.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SsoController.SharedInstallationAsync(System.Int32,Resgrid.Model.UserSessionClientApplication,System.Threading.CancellationToken)">
+            <summary>
+            Whether a sign-in is from a shared installation: it says so, or the department makes this app's sessions shared.
+            Either way the provider is asked to let the operator choose the account (plan section 12.5.2).
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.StatusesController">
@@ -6939,12 +7461,89 @@
             part of the shallow /health liveness endpoint.
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Helpers.ApiClientApplication">
+            <summary>
+            The client application a sign-in request says it is (<c>X-Resgrid-Client</c>). A label for session metadata and for
+            binding a login transaction to the app that started it; never proof of the app's identity.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Helpers.ApiPasskeys">
+            <summary>
+            Shared v4 plumbing for passkey ceremonies: the caller comes from the session that request validation accepted, and
+            each service outcome maps to one status and one code from the shared vocabulary (workbook section 7.6).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Helpers.ApiPasskeys.CredentialJson(Newtonsoft.Json.Linq.JToken)">
+            <summary>
+            The WebAuthn credential JSON as the client sent it: a JSON object (PublicKeyCredential.toJSON()) or a string
+            holding one. Null when absent.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Helpers.ApiPasskeys.Options(System.String)">
+            <summary>Embeds the server's options JSON unchanged, as an object rather than an escaped string.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Helpers.ApiPasskeys.ClientName(Resgrid.Model.UserSessionClientApplication)">
+            <summary>The API name of a client, as the relying-party configuration uses it.</summary>
+        </member>
+        <member name="F:Resgrid.Web.Services.Helpers.ApiPasskeys.PasskeyClients">
+            <summary>The clients a passkey can be bound to, in display order (plan section 6.5).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Helpers.ApiStepUpEvidence">
+            <summary>
+            Server-side MFA evidence for the API caller's validated session (passkey plan section 7.6). The session and the
+            generation come from session validation, never from token claims; without a tracked session there is no evidence.
+            A Web session's API bridge carries the Web session's id, so evidence recorded on Web counts here too.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Helpers.ApiStepUpEvidence.HasRecentSecondFactorAsync(Resgrid.Model.Services.IMfaEvidenceService,Resgrid.Model.Services.IMfaPolicyService,System.String,Microsoft.AspNetCore.Http.HttpContext,System.Nullable{System.Int32},Resgrid.Model.Security.MfaMethodScope,System.TimeSpan,System.Threading.CancellationToken,System.Boolean)">
+            <summary>
+            True when this session completed an actual second factor within <paramref name="window"/>, with a method the
+            department accepts for <paramref name="scope"/> now (passkey plan section 10.1). With
+            <paramref name="excludeFederated"/>, provider step-up does not count: it cannot authorize turning itself on or
+            changing its own mapping (plan section 7.8).
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Helpers.HttpProtectedGrantContext">
             <summary>
             Request-bound <see cref="T:Resgrid.Model.Services.IProtectedGrantContext"/> (ADP plan 3.3 / 7.2): the caller's Protected Data
             Grant is the <c>X-Resgrid-Protected-Grant</c> header of the current request, and a request without an
             authenticated user is a workload (relay or system principal). Registered after ServicesModule so it
             replaces the workload default the module ships for hosts without requests.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Helpers.HttpProtectedGrantContext.Session">
+            <summary>
+            The session the request's session validation accepted (passkey plan section 8.3); null for a workload, an
+            untracked session, or a request that did not pass session validation.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Helpers.HttpProtectedGrantContext.SessionOf(Microsoft.AspNetCore.Http.HttpContext)">
+            <summary>The validated session of an HTTP request, for controllers that check a grant themselves.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Helpers.LegacySamlRelay">
+            <summary>
+            Where the legacy SAML relay (<c>connect/saml-mobile-callback</c>) sends the app back. Every department registers the
+            same ACS URL with its IdP, so the only per-sign-in value that comes back is the RelayState the app sent. An app tags
+            it with its own name (<c>unit.&lt;nonce&gt;</c>), and the relay returns to that app's own <c>auth/callback</c>,
+            echoing the RelayState as <c>relay_state</c> so the app can check that the sign-in is the one it started (login CSRF).
+            The return targets are the fixed ones in <see cref="T:Resgrid.Model.Security.LegacyAppCallbacks"/>, one custom scheme per app; a RelayState
+            naming a target is never trusted. An untagged or unrecognized RelayState keeps the original behavior: Responder's
+            scheme, with nothing echoed.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Helpers.LegacySamlRelay.DefaultClient">
+            <summary>The app an untagged RelayState returns to, as the relay always did before apps tagged it.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Helpers.LegacySamlRelay.AppReturn">
+            <summary>The app to return to, its callback, and the RelayState to echo (null when there is nothing to echo).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Helpers.LegacySamlRelay.AppReturn.#ctor(System.String,System.String,System.String)">
+            <summary>The app to return to, its callback, and the RelayState to echo (null when there is nothing to echo).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Helpers.LegacySamlRelay.DeepLink(Resgrid.Web.Services.Helpers.LegacySamlRelay.AppReturn,System.String,System.String)">
+            <summary>
+            The deep link for the app: the single-use relay token (never the assertion), the encrypted department token the app
+            sends back to <c>external-token</c>, and the echoed RelayState when the app sent one.
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Helpers.LegacyZonelessUtcDateTimeConverter">
@@ -7075,6 +7674,36 @@
             the department. Callers treat null-with-a-system-principal as a denial, not as "unrestricted".
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Helpers.ResgridTokenEndpoints">
+            <summary>
+            The OpenIddict token endpoints and grants the API serves, shared by Startup and the HTTP tests so both run the same
+            configuration.
+            </summary>
+        </member>
+        <member name="F:Resgrid.Web.Services.Helpers.ResgridTokenEndpoints.ExternalTokenPath">
+            <summary>The legacy SSO exchange (plan section 7.7.4), which answers with a token response like the token endpoint.</summary>
+        </member>
+        <member name="F:Resgrid.Web.Services.Helpers.ResgridTokenEndpoints.ExternalTokenGrantType">
+            <summary>
+            The grant every request to <see cref="F:Resgrid.Web.Services.Helpers.ResgridTokenEndpoints.ExternalTokenPath"/> carries. App builds post there without a
+            <c>grant_type</c>, so the server supplies it; the route only ever performs the SSO exchange.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Helpers.SharedSessionEndpoints">
+            <summary>
+            The narrow set of API endpoints a locked shared session may still reach (passkey plan section 12.5.3): its own status,
+            lock, unlock and end shift. Everything else refuses it, including refresh, grants and SignalR.
+            </summary>
+        </member>
+        <member name="F:Resgrid.Web.Services.Helpers.SharedSessionEndpoints.SessionItemKey">
+            <summary>HttpContext.Items key under which session validation leaves the validated (or locked) session row.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Helpers.SharedSessionEndpoints.SessionOf(Microsoft.AspNetCore.Http.HttpContext)">
+            <summary>The session row this request was validated against (locked only on the endpoints above); null otherwise.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Helpers.SharedSessionEndpoints.IsOperatorActivity(Microsoft.AspNetCore.Http.HttpRequest)">
+            <summary>True when the client marked this request as caused by the operator (<c>X-Resgrid-Operator-Activity: 1</c>).</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Helpers.UnitLocationVisibility">
             <summary>
             The one rule for a unit's coordinates leaving the v4 API, the same one the map applies: they go out only when
@@ -7137,8 +7766,24 @@
             <param name="context">The context.</param>
             <returns>Task.</returns>
         </member>
+        <member name="T:Resgrid.Web.Services.Middleware.SessionConnectionSweepService">
+            <summary>
+            Closes this host's SignalR connections whose session ended, locked or passed its idle deadline, every
+            <c>SessionSecurityConfig.ConnectionSweepIntervalSeconds</c> (passkey workbook section 12, slice 16). Invocations are
+            validated as they arrive; this stops a connection that only listens from receiving broadcasts after its session ends.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Middleware.SessionValidationHubFilter">
             <summary>Revalidates user session state for every invocation on an open API SignalR connection.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Middleware.SessionValidationHubFilter.OnConnectedAsync(Microsoft.AspNetCore.SignalR.HubLifetimeContext,System.Func{Microsoft.AspNetCore.SignalR.HubLifetimeContext,System.Threading.Tasks.Task})">
+            <summary>
+            A connection with a user session joins that session's group, for events meant for it alone, and is tracked so the
+            sweep can close it once the session ends or locks (slice 16).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Middleware.SessionValidationHubFilter.SessionIdOf(System.Security.Claims.ClaimsPrincipal)">
+            <summary>The tracked user session a connection belongs to; null for workloads and pre-session tokens.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Middleware.SessionValidationMiddleware">
             <summary>
@@ -7221,6 +7866,173 @@
             <summary>
             cropped image height
             </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.AccountSecurity.AccountMethodsResult">
+            <summary>
+            The signed-in user's own sign-in methods (plan section 6.5): the same view in every app.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AccountSecurity.AccountMethodsResultData.CurrentClient">
+            <summary>The app this request came from: web, responder, unit, dispatch or ic.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AccountSecurity.AccountMethodsResultData.PasskeyGroups">
+            <summary>One group per app a passkey can be bound to, in display order.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AccountSecurity.AccountMethodsResultData.ApprovalInstallations">
+            <summary>Responder installations that can receive approval requests; stop them through <c>MfaApproval/Installations/Disable</c>.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AccountSecurity.AccountMethodsResultData.LinkedIdentities">
+            <summary>Department identity-provider links. Informational: the department and SCIM manage them.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AccountSecurity.AccountMethodsResultData.RecentActivity">
+            <summary>Verifications in the last <c>TwoFactorConfig.MfaActivityRetentionDays</c> days, newest first (at most 100).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AccountSecurity.ApprovalInstallationData.InstallationId">
+            <summary>Pass to <c>MfaApproval/Installations/Disable</c>.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AccountSecurity.ApprovalInstallationData.IsCurrent">
+            <summary>This request came from this installation.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AccountSecurity.ApprovalInstallationData.ApprovalsOn">
+            <summary>Requests reach it now: approvals are not stopped here and a Responder passkey can approve.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AccountSecurity.ApprovalInstallationData.LastDecision">
+            <summary>approved or denied; null when it has decided nothing recently.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AccountSecurity.LinkedIdentityData.ProviderType">
+            <summary>saml2 or oidc.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AccountSecurity.LinkedIdentityData.AcceptsProviderStepUp">
+            <summary>The department accepts provider step-up and its mapping is tested, so this identity can verify there.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AccountSecurity.MfaActivityData.ActivityId">
+            <summary>Pass to <c>AccountSecurity/ReportActivity</c>.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AccountSecurity.MfaActivityData.Method">
+            <summary>totp, passkey, passkey_approval, federated or recovery_code.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AccountSecurity.MfaActivityData.Purpose">
+            <summary>login, reauthentication, step_up, adp_step_up or shared_unlock.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AccountSecurity.MfaActivityData.Successful">
+            <summary>False for a denied verification: a wrong code, a failed passkey or a denied approval.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AccountSecurity.MfaActivityData.IsCurrentSession">
+            <summary>It was for the session making this request; reporting it does not end this session.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AccountSecurity.ReportActivityResultData.SessionEnded">
+            <summary>The session the verification opened or served was ended.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AccountSecurity.ReportActivityResultData.NextSteps">
+            <summary>What the app should offer next: change_password, review_methods.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.AccountSecurity.TotpMethodData">
+            <summary>Resgrid cannot see where copies of an authenticator's setup key exist; replacing it is the remedy.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AccountSecurity.TotpMethodData.SetUpOnSharedInstallation">
+            <summary>The current authenticator was set up on a shared installation, so its setup key may have been seen there.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AccountSecurity.TotpMethodData.EnrolledClient">
+            <summary>The app and installation the current authenticator was set up or last replaced from, when recorded.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AccountSecurity.TotpMethodData.LastUsedClient">
+            <summary>Where its last successful use in the recent-activity window came from.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AccountSecurity.TotpMethodData.CanTurnOff">
+            <summary>False while any passkey exists: turning TOTP off is blocked in this release (plan section 7.5 rule 7).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AccountSecurity.PasskeyClientGroupData.RegistrationAvailable">
+            <summary>Whether a passkey for this app can be registered on this deployment now (from that app).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.AccountSecurity.ReplaceTotpOptionsResult">
+            <summary>A new authenticator key, staged; add it to an authenticator app, then send a code from it to <c>ReplaceTotp</c>.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AccountSecurity.ReplaceTotpOptionsResultData.SharedKey">
+            <summary>The key to type into an authenticator app, in groups of four.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AccountSecurity.ReplaceTotpOptionsResultData.AuthenticatorUri">
+            <summary>The otpauth:// URI to show as a QR code.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AccountSecurity.ReplaceTotpInput.Code">
+            <summary>A code from the new authenticator.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AccountSecurity.ReplaceTotpResultData.RecoveryCodes">
+            <summary>The new recovery codes, shown once; every earlier code no longer works.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AccountSecurity.ReplaceTotpResultData.SignInAgain">
+            <summary>Always true: every session, this one too, has ended.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.AccountSecurity.BeginFactorRecoveryInput">
+            <summary>Starts "I lost my authenticator": the sign-in in progress (<c>mfa_transaction</c>) and one recovery code.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.AccountSecurity.FactorRecoveryInput">
+            <summary>The recovery secret from <c>BeginFactorRecovery</c>; keep it in memory only.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AccountSecurity.CompleteFactorRecoveryInput.Code">
+            <summary>A code from the new authenticator staged by <c>PrepareReplacement</c>.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AccountSecurity.CompleteFactorRecoveryInput.RemovePasskeyIds">
+            <summary>Lost passkeys to remove, from the recovery status; others are kept.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AccountSecurity.FactorRecoveryStatusResultData.Transaction">
+            <summary>The recovery secret, returned once by <c>BeginFactorRecovery</c>; null otherwise.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AccountSecurity.FactorRecoveryStatusResultData.State">
+            <summary><c>pending</c> or <c>canceled</c>.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AccountSecurity.FactorRecoveryStatusResultData.NextActions">
+            <summary><c>prepare_replacement</c>, <c>complete</c> and <c>cancel</c>.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AccountSecurity.FactorRecoveryStatusResultData.Passkeys">
+            <summary>The account's passkeys, to choose any that were lost.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Authentication.LoginTransactionInput">
+            <summary>
+            The login MFA transaction a password grant returned as <c>mfa_transaction</c> (workbook section 7.1). The secret is
+            the only authority these endpoints accept; keep it in memory and send it only in request bodies.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Authentication.CompleteLoginCodeInput">
+            <summary>A TOTP code or a recovery code for the transaction.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Authentication.CompleteLoginPasskeyInput.RequestId">
+            <summary>The request id from <c>Authentication/PasskeyOptions</c>.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Authentication.CompleteLoginPasskeyInput.Credential">
+            <summary>The platform's assertion (PublicKeyCredential.toJSON()), as an object or a JSON string.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Authentication.TotpSetupResult">
+            <summary>A new authenticator key staged for the setup transaction; add it to an authenticator app, then send a code.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Authentication.TotpSetupResultData.SharedKey">
+            <summary>The key to type into an authenticator app, in groups of four.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Authentication.TotpSetupResultData.AuthenticatorUri">
+            <summary>The otpauth:// URI to show as a QR code.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Authentication.CompleteLoginApprovalInput">
+            <summary>A Responder approval requested for the transaction (<c>MfaApproval/Request</c> with purpose <c>login</c>) and approved.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Authentication.CompleteLoginFederatedInput">
+            <summary>Provider step-up for the transaction: the round trip from <c>Sso/Begin</c> (purpose <c>step_up</c>, same transaction).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Authentication.CompleteLoginFederatedInput.SsoCode">
+            <summary>The one-time <c>sso_code</c> the return target received.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Authentication.CompleteLoginFederatedInput.CodeVerifier">
+            <summary>The PKCE verifier whose S256 challenge began the step-up.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Authentication.LoginCompletionResult">
+            <summary>
+            The one-use completion code. Redeem it at <c>/api/v4/connect/token</c> with
+            <c>grant_type=urn:resgrid:params:oauth:grant-type:mfa_completion</c>, <c>completion_code</c> and <c>transaction</c>.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Authentication.LoginCompletionResultData.Recovery">
+            <summary>True when a recovery code completed the sign-in: the session is recovery-classified; replace the lost factor.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Authentication.LoginCompletionResultData.RecoveryCodes">
+            <summary>After <c>CompleteTotpSetup</c>: the new recovery codes, shown once. Null otherwise.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Autofills.GetAutofillsResult">
             <summary>
@@ -11633,6 +12445,21 @@
             Step-up verification payload: the user's current authenticator (TOTP) code. Never logged.
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.DataProtection.AdpPasskeyStepUpInput">
+            <summary>A passkey assertion for <c>DataProtection/VerifyPasskey</c> (passkey plan section 8.1).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DataProtection.AdpPasskeyStepUpInput.RequestId">
+            <summary>The request id from <c>DataProtection/PasskeyOptions</c>.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DataProtection.AdpPasskeyStepUpInput.Credential">
+            <summary>The platform's assertion (PublicKeyCredential.toJSON()), as an object or a JSON string.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.DataProtection.AdpApprovalStepUpInput">
+            <summary>An approved <c>MfaApproval/Request</c> (purpose <c>adp</c>) to use once for a grant.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.DataProtection.AdpFederatedStepUpInput">
+            <summary>A brokered provider step-up (<c>Sso/Begin</c>, purpose <c>adp_step_up</c>) to redeem once for a grant.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.DataProtection.QueueEnrollmentInput">
             <summary>
             Enrollment Wizard final-confirmation payload (ADP plan section 18.1 step 8). Everything here is
@@ -11728,24 +12555,35 @@
             <summary>
             Result of a successful step-up verification. The window is ABSOLUTE (never sliding): clients
             conceal protected values at StepUpExpiresOnUtc and prompt again on the next reveal/edit.
-            When grant signing is configured on this deployment, GrantId/GrantToken carry a signed
-            Protected Data Grant the client presents alongside its access token on protected operations;
-            clients hold the token in MEMORY ONLY (never persisted) and discard it at expiry. On
-            deployments without signing key material both stay null and the verification itself remains
-            the capability (pre-broker behavior).
+            GrantId/GrantToken carry a signed Protected Data Grant the client presents alongside its access
+            token on protected operations; clients hold the token in MEMORY ONLY (never persisted) and discard
+            it at expiry. A deployment without signing key material answers 503 <c>grants_not_configured</c>
+            instead: a verification without a grant is not access (passkey plan section 8.1).
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.DataProtection.StepUpResult.GrantId">
-            <summary>Unique grant id (jti) for display/audit correlation; null when grants are not configured.</summary>
+            <summary>Unique grant id (jti) for display/audit correlation.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.DataProtection.StepUpResult.GrantToken">
-            <summary>Signed Protected Data Grant token; null when grants are not configured. MEMORY ONLY.</summary>
+            <summary>Signed Protected Data Grant token. MEMORY ONLY.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.DataProtection.StepUpResult.StepUpExpiresOnUtc">
-            <summary>Absolute UTC expiry of this step-up window (ISO 8601).</summary>
+            <summary>
+            The grant's absolute UTC expiry (ISO 8601): the verification time plus the department's window, never past the
+            session's end (passkey plan section 9.2). Conceal at this time; never add the window to the client's own clock.
+            </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.DataProtection.StepUpResult.StepUpWindowMinutes">
             <summary>The department's effective step-up window in minutes.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.DataProtection.AdpStepUpMethodsResult">
+            <summary>
+            How the caller can verify for this department's protected data now (passkey plan section 7.5 rule 5): every usable
+            method is an equal choice, and <see cref="!:Preferred"/> is the one to show first. Advisory: every command rechecks.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DataProtection.AdpStepUpMethodsResultData.Methods">
+            <summary>Methods the caller has and the department accepts for protected data: totp, passkey, passkey_approval, federated.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Departments.DepartmentResult">
             <summary>
@@ -13062,6 +13900,126 @@
             Identifier of the new message
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Mfa.StepUpOptionsResult">
+            <summary>
+            The second-factor choice for a named operation (passkey workbook section 7.2). Advisory: <c>VerifyStepUp</c>
+            re-checks everything.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.StepUpOptionsResultData.Methods">
+            <summary>Methods the user can verify with now: enrolled and allowed.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.StepUpOptionsResultData.Preferred">
+            <summary>The method to show first; null when nothing is usable.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.StepUpOptionsResultData.EnrollmentRequired">
+            <summary>True when the user must enroll a second factor before this operation.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.StepUpOptionsResultData.WindowMinutes">
+            <summary>How long one verification serves this operation.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.StepUpOptionsResultData.Passkey">
+            <summary>
+            Assertion options for this app's passkeys, when a passkey is usable for the operation; send its request id and
+            the platform's response to <c>VerifyStepUp</c> with method <c>passkey</c>.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.VerifyStepUpInput.Operation">
+            <summary>One of <c>security_change</c>, <c>adp_management</c>, <c>chat_export</c> or <c>account_security</c>.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.VerifyStepUpInput.Method">
+            <summary><c>totp</c> (the default), <c>passkey</c>, <c>passkey_approval</c> (Responder approval) or <c>federated</c> (provider step-up).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.VerifyStepUpInput.Code">
+            <summary>The current authenticator code, for <c>totp</c>.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.VerifyStepUpInput.RequestId">
+            <summary>The request id from <c>StepUpOptions</c>, for <c>passkey</c>.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.VerifyStepUpInput.Credential">
+            <summary>The platform's assertion (PublicKeyCredential.toJSON()), for <c>passkey</c>.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.VerifyStepUpInput.ApprovalRequestId">
+            <summary>For <c>passkey_approval</c>: the approved request from <c>MfaApproval/Request</c> (purpose <c>step_up</c>, same operation).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.VerifyStepUpInput.SsoTransactionId">
+            <summary>For <c>federated</c>: the transaction from <c>Sso/Begin</c> (purpose <c>step_up</c>, same operation).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.VerifyStepUpInput.SsoCode">
+            <summary>For <c>federated</c>: the one-time <c>sso_code</c> the return target received.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.VerifyStepUpInput.CodeVerifier">
+            <summary>For <c>federated</c>: the PKCE verifier whose challenge began the step-up.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Mfa.VerifyStepUpResult">
+            <summary>Evidence stays on the server; no token is returned (workbook section 7.2).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.VerifyStepUpResultData.VerifiedAt">
+            <summary>When the second factor was verified (ISO 8601 UTC).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.VerifyStepUpResultData.ExpiresAt">
+            <summary>When this verification stops serving the operation (ISO 8601 UTC).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalRequestInput">
+            <summary>
+            Asks the user's Responder to approve (workbook section 7.4). Send only after the user chose "Approve with Responder";
+            never automatically.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalRequestInput.Purpose">
+            <summary><c>login</c> (with <see cref="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalRequestInput.Transaction"/>) or <c>step_up</c> (the signed-in session, with <see cref="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalRequestInput.Operation"/>).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalRequestInput.Operation">
+            <summary>For <c>step_up</c>: <c>adp_management</c> or <c>chat_export</c>. Security changes and account factors never accept approval.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalRequestInput.Transaction">
+            <summary>For <c>login</c>: the login MFA transaction secret.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalRequestResultData.MatchNumber">
+            <summary>Show this on the requesting screen only; the user types it in Responder. It is never pushed.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalReferenceInput">
+            <summary>A request the caller made: by its login transaction secret, or by the signed-in session when absent.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalStatusResultData.State">
+            <summary><c>pending</c>, <c>approved</c>, <c>denied</c>, <c>expired</c>, <c>canceled</c> or <c>consumed</c>. Poll every 2 seconds.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalPendingResult.Data">
+            <summary>Null when nothing is waiting.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalPendingResultData">
+            <summary>What Responder shows before Approve and Deny. The number is not here: the user reads it from the requesting screen.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalPendingResultData.RequestingApp">
+            <summary>web, unit, dispatch or ic.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalPendingResultData.Purpose">
+            <summary><c>login</c> or <c>step_up</c>.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalPendingResultData.OriginRegion">
+            <summary>Region and country only.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalApproveInput.MatchNumber">
+            <summary>The two digits the user read from the requesting screen.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalApproveInput.RequestId">
+            <summary>The request id from <c>MfaApproval/Options</c>.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalApproveInput.Credential">
+            <summary>The Responder passkey assertion (PublicKeyCredential.toJSON()), as an object or a JSON string.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.DisableApprovalInstallationsInput.InstallationId">
+            <summary>The installation to stop, from <c>AccountSecurity/Methods</c>. Leave empty with <see cref="P:Resgrid.Web.Services.Models.v4.MfaApproval.DisableApprovalInstallationsInput.All"/>.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.DisableApprovalInstallationsInput.All">
+            <summary>Stop every installation and turn approval off on every Responder passkey.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.DisableApprovalInstallationsResultData.InstallationsStopped">
+            <summary>Zero when nothing was taking requests (already stopped, or not this account's installation).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalDenyInput.Reason">
+            <summary><c>declined</c>, or <c>not_me</c> ("I didn't request this": ends that sign-in and suspends approval requests).</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Notes.GetAllNotesResult">
             <summary>
             Result containing all the data required to populate the Notes form
@@ -13190,6 +14148,176 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Notes.SaveNoteResult.Id">
             <summary>
             Identifier of the new npte
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Personnel.FilterResult">
+            <summary>
+            The result of getting all personnel filters for the system
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.FilterResult.Id">
+            <summary>
+            The Id value of the filter
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.FilterResult.Type">
+            <summary>
+            The type of the filter
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.FilterResult.Name">
+            <summary>
+            The filters name
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Personnel.GetAllPersonnelInfosResult">
+            <summary>
+            Result containing all the data required to populate the New Call form
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.GetAllPersonnelInfosResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Personnel.GetPersonnelFilterOptionsResult">
+            <summary>
+            Result that contains all the options available to filter personnel against compatible Resgrid APIs
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.GetPersonnelFilterOptionsResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResult">
+            <summary>
+            Result containing all the data required to populate the New Call form
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData">
+            <summary>
+            Information about a User
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.UserId">
+            <summary>
+            The UserId GUID/UUID for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.DepartmentId">
+            <summary>
+            DepartmentId of the deparment the user belongs to
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.IdentificationNumber">
+            <summary>
+            Department specificed ID number for this user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.FirstName">
+            <summary>
+            The Users First Name
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.LastName">
+            <summary>
+            The Users Last Name
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.EmailAddress">
+            <summary>
+            The Users Email Address
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.MobilePhone">
+            <summary>
+            The Users Mobile Telephone Number
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.GroupId">
+            <summary>
+            GroupId the user is assigned to (0 for no group)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.GroupName">
+            <summary>
+            Name of the group the user is assigned to
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.Roles">
+            <summary>
+            Enumeration/List of roles the user currently holds
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StatusId">
+            <summary>
+            The current action/status type for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.Status">
+            <summary>
+            The current action/status string for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StatusColor">
+            <summary>
+            The current action/status color hex string for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StatusTimestamp">
+            <summary>
+            The timestamp of the last action. This is converted UTC to the departments, or users, TimeZone.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StatusDestinationId">
+            <summary>
+            The current action/status destination id for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StatusDestinationName">
+            <summary>
+            The current action/status destination name for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StaffingId">
+            <summary>
+            The current staffing level (state) type for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.Staffing">
+            <summary>
+            The current staffing level (state) string for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StaffingColor">
+            <summary>
+            The current staffing level (state) color hex string for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StaffingTimestamp">
+            <summary>
+            The timestamp of the last state/staffing level. This is converted UTC to the departments, or users, TimeZone.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.Location">
+            <summary>
+            Users last known location
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.Weight">
+            <summary>
+            Sorting weight for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.UdfValues">
+            <summary>
+            User Defined Field values for this personnel record
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.PersonnelLocation.PersonnelLocationInput">
@@ -14705,6 +15833,91 @@
             Is the user a group admin
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Sessions.CurrentSessionResult">
+            <summary>The caller's own session state (passkey plan section 12.5). A locked shared session may read it.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sessions.CurrentSessionResultData.Client">
+            <summary>The app the session belongs to: <c>web</c>, <c>responder</c>, <c>unit</c>, <c>dispatch</c> or <c>command</c>.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sessions.CurrentSessionResultData.LockVersion">
+            <summary>Send it back to unlock; it changes with every lock.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sessions.CurrentSessionResultData.LockReason">
+            <summary><c>explicit</c> or <c>idle</c> while locked.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sessions.CurrentSessionResultData.IdleLocksAt">
+            <summary>When the session locks unless the operator does something (ISO 8601 UTC); null while locked.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sessions.CurrentSessionResultData.ShiftEndsAt">
+            <summary>When the shift ends whatever happens (ISO 8601 UTC). Warn before it.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sessions.EndShiftInput.SwitchOperator">
+            <summary>True for <b>Switch operator</b>: the same as ending the shift, audited as a handoff.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sessions.EndShiftResultData.Ended">
+            <summary>Always true: discard this session's tokens and caches, then sign the next operator in normally.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Sessions.UnlockOptionsInput">
+            <summary>How the locked session's operator can unlock it (plan section 12.5.3). Nothing verifies here.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sessions.UnlockOptionsInput.LockVersion">
+            <summary>The lock version the client last saw; a newer lock means a newer screen.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sessions.UnlockOptionsResultData.Methods">
+            <summary>
+            What this operator can unlock with here: <c>totp</c>, <c>passkey</c>, <c>passkey_approval</c> and <c>federated</c>
+            (the identity provider's MFA, begun with <c>unlock-sso</c>). Empty means quick unlock is unavailable; end the shift
+            and sign in normally.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sessions.UnlockOptionsResultData.Preferred">
+            <summary>The method to offer first. Shared installations never start the passkey prompt on their own.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sessions.UnlockOptionsResultData.Passkey">
+            <summary>Assertion options bound to this lock, when <c>passkey</c> is offered.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sessions.CompleteUnlockInput.LockVersion">
+            <summary>The lock version from <c>unlock-options</c>. A lock since then refuses the unlock.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sessions.CompleteUnlockInput.Method">
+            <summary><c>totp</c>, <c>passkey</c>, <c>passkey_approval</c> or <c>federated</c>.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sessions.CompleteUnlockInput.Code">
+            <summary>For <c>totp</c>: the current authenticator code.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sessions.CompleteUnlockInput.RequestId">
+            <summary>For <c>passkey</c>: the request id from <c>unlock-options</c>.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sessions.CompleteUnlockInput.Credential">
+            <summary>For <c>passkey</c>: the platform's assertion (PublicKeyCredential.toJSON()).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sessions.CompleteUnlockInput.ApprovalRequestId">
+            <summary>For <c>passkey_approval</c>: the approved request from <c>unlock-approval</c>.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sessions.CompleteUnlockInput.SsoTransactionId">
+            <summary>For <c>federated</c>: the transaction from <c>unlock-sso</c>.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sessions.CompleteUnlockInput.SsoCode">
+            <summary>For <c>federated</c>: the one-time <c>sso_code</c> the return target received.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sessions.CompleteUnlockInput.CodeVerifier">
+            <summary>For <c>federated</c>: the PKCE verifier whose challenge began the unlock.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Sessions.UnlockSsoInput">
+            <summary>Begins an unlock through the department's identity provider with MFA (provider step-up, plan section 7.8).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sessions.UnlockSsoInput.Platform">
+            <summary><c>ios</c>, <c>android</c>, <c>web</c> or <c>desktop</c>.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sessions.UnlockSsoInput.ReturnTarget">
+            <summary>This app's registered return target.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sessions.UnlockSsoInput.State">
+            <summary>Opaque client state returned with the code.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sessions.UnlockSsoInput.CodeChallenge">
+            <summary>S256 PKCE challenge; the verifier goes to <c>complete-unlock</c>.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Shifts.GetShiftDayResult">
             <summary>
             A single Shift day result
@@ -15078,6 +16291,95 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Shifts.SignupShiftDayResult.ErrorCode">
             <summary>Why the signup failed (snake_case code), empty on success</summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Sso.SsoBeginInput">
+            <summary>
+            Starts a server-brokered SSO sign-in (workbook section 7.3). Name the department with one of the three
+            identifiers. The client keeps its PKCE verifier in memory and sends only the S256 challenge.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoBeginInput.ClientApp">
+            <summary>web, responder, unit, dispatch or ic; defaults to the <c>X-Resgrid-Client</c> header.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoBeginInput.Platform">
+            <summary>ios, android, web or electron; a label only.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoBeginInput.ReturnTarget">
+            <summary>Where the one-time code is sent: a return target registered for this client, matched exactly.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoBeginInput.State">
+            <summary>The client's CSRF value, echoed back unchanged on return.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoBeginInput.CodeChallengeMethod">
+            <summary>Only <c>S256</c>.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoBeginInput.Purpose">
+            <summary>
+            <c>login</c> (default), <c>reauth</c> (fresh proof for the signed-in session), or <c>step_up</c> (provider MFA:
+            for the signed-in session's <see cref="P:Resgrid.Web.Services.Models.v4.Sso.SsoBeginInput.Operation"/>, or to complete the password sign-in in <see cref="P:Resgrid.Web.Services.Models.v4.Sso.SsoBeginInput.Transaction"/>).
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoBeginInput.Operation">
+            <summary>For a session <c>step_up</c>: the operation it serves (<c>security_change</c>, <c>adp_management</c>, <c>chat_export</c>).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoBeginInput.Transaction">
+            <summary>
+            For a <c>step_up</c> that completes a password sign-in: the login MFA transaction secret. Redeem the step-up's code
+            at <c>Authentication/CompleteFederated</c>.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoBeginResultData.AuthorizeUrl">
+            <summary>Open this in the platform's authentication session, the system browser, or a top-level redirect.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoRedeemInput.SsoCode">
+            <summary>The one-time <c>sso_code</c> from the return target.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoRedeemInput.CodeVerifier">
+            <summary>The PKCE verifier whose S256 challenge began the sign-in.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoRedeemInput.ClientId">
+            <summary>Optional OAuth client_id, as the password grant takes it (refresh-token lifetime).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Sso.SsoRedeemResultData">
+            <summary>
+            <c>mfa_required</c>: complete the second factor through <c>Authentication/*</c> with <see cref="P:Resgrid.Web.Services.Models.v4.Sso.SsoRedeemResultData.Transaction"/>.
+            <c>completed</c>: no second factor is required; redeem <see cref="P:Resgrid.Web.Services.Models.v4.Sso.SsoRedeemResultData.CompletionCode"/> and <see cref="P:Resgrid.Web.Services.Models.v4.Sso.SsoRedeemResultData.Transaction"/>
+            with the <c>mfa_completion</c> grant. <c>reauthenticated</c>: the session has fresh SSO proof.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoRedeemResultData.Transaction">
+            <summary>The login MFA transaction secret (for <c>mfa_required</c> and <c>completed</c>).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoRedeemResultData.MfaSatisfiedBy">
+            <summary>For <c>completed</c>: <c>federated</c> when the provider's MFA satisfied the sign-in; null when none was needed.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Sso.FederatedMfaMappingResult">
+            <summary>
+            The department's provider step-up mapping (passkey plan section 7.8) on its active SSO configuration, and whether it
+            is effective: a mapping counts only after a successful test at its current version.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.FederatedMfaMappingResultData.ProviderType">
+            <summary>oidc or saml2: which mapping fields apply.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.FederatedMfaMappingResultData.Mapping">
+            <summary>
+            The mapping: <c>requestAcrValues</c>, <c>requestClaims</c> (OIDC), <c>requestAuthnContextClassRefs</c> (SAML), and
+            what counts as MFA: <c>acceptAmr</c>, <c>acceptAcr</c>, <c>acceptAcrs</c> (OIDC) or <c>acceptAuthnContextClassRefs</c>
+            (SAML). Null when none is set.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.FederatedMfaMappingResultData.Effective">
+            <summary>True when the mapping passed its test at the current version and so can be used.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveFederatedMfaMappingInput.Mapping">
+            <summary>The mapping object (see <see cref="P:Resgrid.Web.Services.Models.v4.Sso.FederatedMfaMappingResultData.Mapping"/>), or null to remove it.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Sso.FederatedMfaTestBeginInput">
+            <summary>Starts the managing member's test step-up with the saved mapping, through brokered SSO.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.FederatedMfaTestResultData.MatchedValue">
+            <summary>The returned value the mapping counted as MFA, as <c>kind:value</c>.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Sso.GetDepartmentSsoConfigResult">
             <summary>
             Response for the SSO configuration discovery endpoint consumed by mobile apps.
@@ -15113,6 +16415,14 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Sso.GetDepartmentSsoConfigResultData.EntityId">
             <summary>SAML entity ID / service-provider identifier (SAML only).</summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.GetDepartmentSsoConfigResultData.SamlLoginUrl">
+            <summary>
+            Where an app opens a legacy (unbrokered) SAML sign-in, with <c>RelayState=&lt;app&gt;.&lt;nonce&gt;</c> added: this
+            server's start page, which sends the browser to the department's IdP with an AuthnRequest. The response returns to
+            the app through <c>connect/saml-mobile-callback</c>. SAML only, and only when the department's configuration can
+            start one (its IdP SSO URL, entity ID, ACS URL and IdP certificate).
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Sso.GetDepartmentSsoConfigResultData.AllowLocalLogin">
             <summary>Whether local username/password login is permitted in addition to SSO.</summary>
         </member>
@@ -15124,8 +16434,9 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Sso.GetDepartmentSsoConfigResultData.OidcRedirectUri">
             <summary>
-            The redirect URI the mobile app must use for the OIDC authorization-code flow.
-            Format: resgrid://auth/callback
+            The redirect URI the calling app uses for the legacy (unbrokered) OIDC authorization-code flow: its own scheme, by
+            the app named in <c>X-Resgrid-Client</c> (for example <c>resgridunit://auth/callback</c>). A caller that names no
+            app gets Responder's <c>resgrid://auth/callback</c>.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Sso.GetDepartmentSsoConfigResultData.OidcScopes">
@@ -15133,6 +16444,18 @@
             OIDC scopes the mobile app should request (space-separated).
             e.g. "openid email profile offline_access"
             </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.GetDepartmentSsoConfigResultData.DepartmentId">
+            <summary>The department, for clients that must name it again (for example Dispatch's department selection).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.GetDepartmentSsoConfigResultData.DepartmentToken">
+            <summary>
+            Opaque, system-encrypted department token: send it as <c>department_token</c> (legacy <c>external-token</c>) or
+            <c>DepartmentToken</c> (<c>Sso/Begin</c>) instead of a department code or username.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.GetDepartmentSsoConfigResultData.BrokeredSsoAvailable">
+            <summary>True when this department can sign in through server-brokered SSO (<c>Sso/Begin</c>).</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Sso.GetSsoConfigsResult">
             <summary>Response wrapper for a list of SSO configurations.</summary>
@@ -15230,6 +16553,22 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoConfigDetailData.AssertionConsumerServiceUrl">
             <summary>SAML Assertion Consumer Service URL.</summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoConfigDetailData.IdpSsoUrl">
+            <summary>The IdP's SAML single sign-on URL that brokered sign-in sends its AuthnRequest to.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoConfigDetailData.OidcBrokerRedirectUri">
+            <summary>
+            The OIDC redirect URI to register with the IdP for brokered sign-in (plan section 7.7.2 item 7). It is added
+            alongside any existing registration, which older app builds keep using.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoConfigDetailData.OidcAppRedirectUris">
+            <summary>
+            Each app's own redirect URIs for sign-in the app runs itself (older app versions, or while brokered sign-in is off):
+            its native scheme, and its web edition's page where this deployment serves one. The department registers every one
+            with its IdP; an app can only receive a redirect on an address it owns. OIDC only.
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoConfigDetailData.AttributeMappingJson">
             <summary>
             JSON attribute mapping from IdP claim names to Resgrid user fields.
@@ -15250,6 +16589,15 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoConfigDetailData.HasScimBearerToken">
             <summary>Whether a SCIM bearer token is currently stored.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Sso.SsoAppRedirectUriData">
+            <summary>One of an app's legacy OIDC redirect URIs.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoAppRedirectUriData.Client">
+            <summary>The app, as <c>X-Resgrid-Client</c> names it: responder, unit, dispatch or ic.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SsoAppRedirectUriData.Web">
+            <summary>True for the app's web edition (a page on its web host), false for the native app's own scheme.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Sso.SecurityPolicyData">
             <summary>Department security policy data.</summary>
@@ -15283,6 +16631,39 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Sso.SecurityPolicyData.DataClassificationLevel">
             <summary>Data classification level: 0=Unclassified, 1=CUI, 2=Confidential.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SecurityPolicyData.AllowPasskeysForLoginMfa">
+            <summary>Accept a passkey as sign-in and step-up MFA.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SecurityPolicyData.AllowPasskeysForAdp">
+            <summary>Accept a passkey for protected data.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SecurityPolicyData.AllowFederatedMfaForLoginMfa">
+            <summary>Accept provider step-up for sign-in and step-up MFA.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SecurityPolicyData.AllowFederatedMfaForAdp">
+            <summary>Accept provider step-up for protected data.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SecurityPolicyData.AllowResponderApproval">
+            <summary>Accept Responder approval.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SecurityPolicyData.AcceptRecentLoginMfaForAdp">
+            <summary>Let recent sign-in MFA serve protected data.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SecurityPolicyData.AcceptRecentUnlockMfaForAdp">
+            <summary>Let fresh unlock MFA serve protected data.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SecurityPolicyData.SharedIdleLockMinutes">
+            <summary>Minutes of no operator activity before a shared session locks.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SecurityPolicyData.SharedShiftHours">
+            <summary>Hours after sign-in when a shared session ends.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SecurityPolicyData.SharedModeRequiredApps">
+            <summary>Apps whose sessions are always shared (flags: Unit 1, IC 2, Dispatch 4).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SecurityPolicyData.MfaPolicyVersion">
+            <summary>Advanced by the server whenever the sign-in MFA rules change; read-only.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Sso.SecurityPolicyData.CreatedOn">
             <summary>Date/time the policy was created.</summary>
@@ -15319,6 +16700,9 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveSsoConfigInput.AssertionConsumerServiceUrl">
             <summary>SAML Assertion Consumer Service URL.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveSsoConfigInput.IdpSsoUrl">
+            <summary>The IdP's SAML single sign-on URL (HTTP-Redirect binding) for brokered sign-in. Optional; https.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveSsoConfigInput.IdpCertificate">
             <summary>
@@ -15376,6 +16760,39 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveSecurityPolicyInput.DataClassificationLevel">
             <summary>Data classification level: 0=Unclassified, 1=CUI, 2=Confidential.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveSecurityPolicyInput.AllowPasskeysForLoginMfa">
+            <summary>Accept a passkey bound to the requesting app as sign-in and step-up MFA. TOTP is always accepted.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveSecurityPolicyInput.AllowPasskeysForAdp">
+            <summary>Accept a passkey for Protected Data Grants, ADP management and protected workflows.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveSecurityPolicyInput.AllowFederatedMfaForLoginMfa">
+            <summary>Accept provider step-up for sign-in and step-up MFA (needs a tested mapping).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveSecurityPolicyInput.AllowFederatedMfaForAdp">
+            <summary>Accept provider step-up for protected data (needs a tested mapping).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveSecurityPolicyInput.AllowResponderApproval">
+            <summary>Accept Responder approval where the matching passkey switch is on.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveSecurityPolicyInput.AcceptRecentLoginMfaForAdp">
+            <summary>Let recent same-session sign-in MFA serve protected data without another verification.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveSecurityPolicyInput.AcceptRecentUnlockMfaForAdp">
+            <summary>Let fresh same-operator unlock MFA serve protected data on a shared session.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveSecurityPolicyInput.SharedIdleLockMinutes">
+            <summary>Shared sessions lock after this many idle minutes (1-15). Managing member only; omitted leaves it unchanged.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveSecurityPolicyInput.SharedShiftHours">
+            <summary>Shared sessions end this many hours after sign-in (1-24). Managing member only.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Sso.SaveSecurityPolicyInput.SharedModeRequiredApps">
+            <summary>
+            The apps whose sessions are always shared: flags Unit 1, IC 2, Dispatch 4. Sign-ins that do not name their app count
+            too. Managing member only; a new app needs the deployment's shared-device mode.
+            </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.StandardApiResponseV4Base">
             <summary>

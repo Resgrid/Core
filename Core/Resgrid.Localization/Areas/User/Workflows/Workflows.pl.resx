@@ -60,115 +60,115 @@
   </resheader>
 
   <data name="WorkflowsHeader" xml:space="preserve">
-    <value>Workflows</value>
+    <value>Przepływy pracy</value>
   </data>
   <data name="DepartmentWorkflows" xml:space="preserve">
-    <value>Department Workflows</value>
+    <value>Przepływy pracy działu</value>
   </data>
   <data name="NewWorkflow" xml:space="preserve">
-    <value>New Workflow</value>
+    <value>Nowy przepływ pracy</value>
   </data>
   <data name="Credentials" xml:space="preserve">
-    <value>Credentials</value>
+    <value>Poświadczenia</value>
   </data>
   <data name="PendingRuns" xml:space="preserve">
-    <value>Pending Runs</value>
+    <value>Oczekujące uruchomienia</value>
   </data>
   <data name="NoWorkflowsCreated" xml:space="preserve">
-    <value>No workflows have been created yet.</value>
+    <value>Nie utworzono jeszcze żadnych przepływów pracy.</value>
   </data>
   <data name="CreateFirstWorkflow" xml:space="preserve">
-    <value>Create your first workflow.</value>
+    <value>Utwórz swój pierwszy przepływ pracy.</value>
   </data>
   <data name="Name" xml:space="preserve">
     <value>Nazwa</value>
   </data>
   <data name="TriggerEvent" xml:space="preserve">
-    <value>Trigger Event</value>
+    <value>Zdarzenie wyzwalające</value>
   </data>
   <data name="Status" xml:space="preserve">
     <value>Status</value>
   </data>
   <data name="Created" xml:space="preserve">
-    <value>Created</value>
+    <value>Utworzono</value>
   </data>
   <data name="Actions" xml:space="preserve">
     <value>Akcje</value>
   </data>
   <data name="Enabled" xml:space="preserve">
-    <value>Enabled</value>
+    <value>Włączony</value>
   </data>
   <data name="Disabled" xml:space="preserve">
-    <value>Disabled</value>
+    <value>Wyłączony</value>
   </data>
   <data name="Edit" xml:space="preserve">
     <value>Edytuj</value>
   </data>
   <data name="Runs" xml:space="preserve">
-    <value>Runs</value>
+    <value>Uruchomienia</value>
   </data>
   <data name="Health" xml:space="preserve">
-    <value>Health</value>
+    <value>Kondycja</value>
   </data>
   <data name="Delete" xml:space="preserve">
     <value>Usuń</value>
   </data>
   <data name="DeleteWorkflowConfirm" xml:space="preserve">
-    <value>Delete workflow {0}?</value>
+    <value>Usunąć przepływ pracy {0}?</value>
   </data>
   <data name="NewWorkflowHeader" xml:space="preserve">
-    <value>New Workflow</value>
+    <value>Nowy przepływ pracy</value>
   </data>
   <data name="CreateWorkflow" xml:space="preserve">
-    <value>Create Workflow</value>
+    <value>Utwórz przepływ pracy</value>
   </data>
   <data name="Description" xml:space="preserve">
     <value>Opis</value>
   </data>
   <data name="MaxRetryCount" xml:space="preserve">
-    <value>Max Retry Count</value>
+    <value>Maksymalna liczba ponowień</value>
   </data>
   <data name="RetryBackoffBaseSeconds" xml:space="preserve">
-    <value>Retry Backoff Base (seconds)</value>
+    <value>Bazowe opóźnienie ponowień (sekundy)</value>
   </data>
   <data name="NamePlaceholder" xml:space="preserve">
-    <value>e.g. Notify Slack on New Call</value>
+    <value>np. Powiadom Slack o nowym zgłoszeniu</value>
   </data>
   <data name="DescriptionPlaceholder" xml:space="preserve">
-    <value>Optional description</value>
+    <value>Opcjonalny opis</value>
   </data>
   <data name="Cancel" xml:space="preserve">
     <value>Anuluj</value>
   </data>
   <data name="EditWorkflowHeader" xml:space="preserve">
-    <value>Edit Workflow</value>
+    <value>Edytuj przepływ pracy</value>
   </data>
   <data name="WorkflowSettings" xml:space="preserve">
-    <value>Workflow Settings</value>
+    <value>Ustawienia przepływu pracy</value>
   </data>
   <data name="MaxRetries" xml:space="preserve">
-    <value>Max Retries</value>
+    <value>Maks. ponowień</value>
   </data>
   <data name="BackoffSeconds" xml:space="preserve">
-    <value>Backoff (s)</value>
+    <value>Opóźnienie (s)</value>
   </data>
   <data name="SaveChanges" xml:space="preserve">
-    <value>Save Changes</value>
+    <value>Zapisz zmiany</value>
   </data>
   <data name="Steps" xml:space="preserve">
-    <value>Steps</value>
+    <value>Kroki</value>
   </data>
   <data name="AddStep" xml:space="preserve">
-    <value>Add Step</value>
+    <value>Dodaj krok</value>
   </data>
   <data name="ActionType" xml:space="preserve">
-    <value>Action Type</value>
+    <value>Typ akcji</value>
   </data>
   <data name="Order" xml:space="preserve">
-    <value>Zamówienie</value>
+    <value>Kolejność</value>
   </data>
   <data name="TemplatePeek" xml:space="preserve">
-    <value>Template (first 120 chars)</value>
+    <value>Szablon (pierwsze 120 znaków)</value>
   </data>
   <data name="Yes" xml:space="preserve">
     <value>Tak</value>
@@ -177,64 +177,64 @@
     <value>Nie</value>
   </data>
   <data name="DeleteStepConfirm" xml:space="preserve">
-    <value>Are you sure you want to delete this step? This action cannot be undone.</value>
+    <value>Czy na pewno chcesz usunąć ten krok? Tej operacji nie można cofnąć.</value>
   </data>
   <data name="DeleteStep" xml:space="preserve">
-    <value>Delete Step</value>
+    <value>Usuń krok</value>
   </data>
   <data name="TemplateVariables" xml:space="preserve">
-    <value>Template Variables</value>
+    <value>Zmienne szablonu</value>
   </data>
   <data name="CommonVariables" xml:space="preserve">
-    <value>Common variables (always available):</value>
+    <value>Zmienne wspólne (zawsze dostępne):</value>
   </data>
   <data name="CallEventVariables" xml:space="preserve">
-    <value>Call event variables:</value>
+    <value>Zmienne zdarzenia zgłoszenia:</value>
   </data>
   <data name="WorkflowCredentialsHeader" xml:space="preserve">
-    <value>Workflow Credentials</value>
+    <value>Poświadczenia przepływów pracy</value>
   </data>
   <data name="StoredCredentials" xml:space="preserve">
-    <value>Stored Credentials</value>
+    <value>Zapisane poświadczenia</value>
   </data>
   <data name="AddCredential" xml:space="preserve">
-    <value>Add Credential</value>
+    <value>Dodaj poświadczenie</value>
   </data>
   <data name="NoCredentialsConfigured" xml:space="preserve">
-    <value>No credentials configured. Add credentials to use with workflow action steps.</value>
+    <value>Nie skonfigurowano żadnych poświadczeń. Dodaj poświadczenia, aby używać ich w krokach akcji przepływów pracy.</value>
   </data>
   <data name="Type" xml:space="preserve">
     <value>Typ</value>
   </data>
   <data name="SecretData" xml:space="preserve">
-    <value>Secret Data</value>
+    <value>Dane poufne</value>
   </data>
   <data name="DeleteCredentialConfirm" xml:space="preserve">
-    <value>Delete credential {0}?</value>
+    <value>Usunąć poświadczenie {0}?</value>
   </data>
   <data name="ValidationErrorHeader" xml:space="preserve">
-    <value>Please correct the following errors before saving.</value>
+    <value>Przed zapisaniem popraw następujące błędy.</value>
   </data>
   <data name="AddCredentialHeader" xml:space="preserve">
-    <value>Add Credential</value>
+    <value>Dodaj poświadczenie</value>
   </data>
   <data name="EditCredentialHeader" xml:space="preserve">
-    <value>Edit Credential</value>
+    <value>Edytuj poświadczenie</value>
   </data>
   <data name="CredentialDetails" xml:space="preserve">
-    <value>Credential Details</value>
+    <value>Szczegóły poświadczenia</value>
   </data>
   <data name="CredentialType" xml:space="preserve">
     <value>Typ</value>
   </data>
   <data name="SaveCredential" xml:space="preserve">
-    <value>Save Credential</value>
+    <value>Zapisz poświadczenie</value>
   </data>
   <data name="ExistingSecretsInfo" xml:space="preserve">
-    <value>Existing secrets are stored encrypted and cannot be displayed. Fill in the fields below to replace them, or leave all fields blank to keep the current secrets.</value>
+    <value>Istniejące dane poufne są przechowywane w postaci zaszyfrowanej i nie można ich wyświetlić. Wypełnij poniższe pola, aby je zastąpić, lub pozostaw wszystkie pola puste, aby zachować bieżące dane poufne.</value>
   </data>
   <data name="SmtpSettings" xml:space="preserve">
-    <value>SMTP Settings</value>
+    <value>Ustawienia SMTP</value>
   </data>
   <data name="SmtpHost" xml:space="preserve">
     <value>Host</value>
@@ -249,31 +249,31 @@
     <value>Hasło</value>
   </data>
   <data name="SmtpUseSsl" xml:space="preserve">
-    <value>Use SSL/TLS</value>
+    <value>Użyj SSL/TLS</value>
   </data>
   <data name="SmtpFromAddress" xml:space="preserve">
-    <value>From Address</value>
+    <value>Adres nadawcy</value>
   </data>
   <data name="SmtpFromAddressHelp" xml:space="preserve">
-    <value>The email address that will appear in the "From" field of sent messages.</value>
+    <value>Adres e-mail, który pojawi się w polu „Od” wysyłanych wiadomości.</value>
   </data>
   <data name="TwilioSettings" xml:space="preserve">
-    <value>Twilio Settings</value>
+    <value>Ustawienia Twilio</value>
   </data>
   <data name="TwilioAccountSid" xml:space="preserve">
-    <value>Account SID</value>
+    <value>SID konta</value>
   </data>
   <data name="TwilioAuthToken" xml:space="preserve">
-    <value>Auth Token</value>
+    <value>Token uwierzytelniania</value>
   </data>
   <data name="TwilioFromNumber" xml:space="preserve">
-    <value>From Number</value>
+    <value>Numer nadawcy</value>
   </data>
   <data name="TwilioFromNumberHelp" xml:space="preserve">
-    <value>E.164 format, e.g. +15551234567</value>
+    <value>Format E.164, np. +15551234567</value>
   </data>
   <data name="FtpSettings" xml:space="preserve">
-    <value>FTP Settings</value>
+    <value>Ustawienia FTP</value>
   </data>
   <data name="FtpHost" xml:space="preserve">
     <value>Host</value>
@@ -288,10 +288,10 @@
     <value>Hasło</value>
   </data>
   <data name="FtpPassiveMode" xml:space="preserve">
-    <value>Use Passive Mode</value>
+    <value>Użyj trybu pasywnego</value>
   </data>
   <data name="SftpSettings" xml:space="preserve">
-    <value>SFTP Settings</value>
+    <value>Ustawienia SFTP</value>
   </data>
   <data name="SftpHost" xml:space="preserve">
     <value>Host</value>
@@ -306,37 +306,37 @@
     <value>Hasło</value>
   </data>
   <data name="SftpPrivateKey" xml:space="preserve">
-    <value>Private Key (PEM)</value>
+    <value>Klucz prywatny (PEM)</value>
   </data>
   <data name="SftpPrivateKeyHelp" xml:space="preserve">
-    <value>Provide either a password or a private key (or both if the key is passphrase-protected).</value>
+    <value>Podaj hasło lub klucz prywatny (albo oba, jeśli klucz jest chroniony hasłem).</value>
   </data>
   <data name="AwsS3Settings" xml:space="preserve">
-    <value>AWS S3 Settings</value>
+    <value>Ustawienia AWS S3</value>
   </data>
   <data name="AwsAccessKeyId" xml:space="preserve">
-    <value>Access Key ID</value>
+    <value>Identyfikator klucza dostępu</value>
   </data>
   <data name="AwsSecretAccessKey" xml:space="preserve">
-    <value>Secret Access Key</value>
+    <value>Tajny klucz dostępu</value>
   </data>
   <data name="AwsRegion" xml:space="preserve">
     <value>Region</value>
   </data>
   <data name="AwsBucketName" xml:space="preserve">
-    <value>Bucket Name</value>
+    <value>Nazwa zasobnika</value>
   </data>
   <data name="HttpBearerSettings" xml:space="preserve">
-    <value>HTTP Bearer Token</value>
+    <value>Token HTTP Bearer</value>
   </data>
   <data name="HttpBearerToken" xml:space="preserve">
-    <value>Bearer Token</value>
+    <value>Token Bearer</value>
   </data>
   <data name="HttpBearerHelp" xml:space="preserve">
-    <value>Sent as Authorization: Bearer &lt;token&gt;</value>
+    <value>Wysyłany jako nagłówek Authorization: Bearer &lt;token&gt;</value>
   </data>
   <data name="HttpBasicSettings" xml:space="preserve">
-    <value>HTTP Basic Auth</value>
+    <value>Uwierzytelnianie HTTP Basic</value>
   </data>
   <data name="HttpBasicUsername" xml:space="preserve">
     <value>Nazwa użytkownika</value>
@@ -345,148 +345,148 @@
     <value>Hasło</value>
   </data>
   <data name="HttpApiKeySettings" xml:space="preserve">
-    <value>HTTP API Key</value>
+    <value>Klucz API HTTP</value>
   </data>
   <data name="ApiKeyHeaderName" xml:space="preserve">
-    <value>Header Name</value>
+    <value>Nazwa nagłówka</value>
   </data>
   <data name="ApiKeyHeaderNameHelp" xml:space="preserve">
-    <value>The HTTP header name that carries the API key.</value>
+    <value>Nazwa nagłówka HTTP, w którym przesyłany jest klucz API.</value>
   </data>
   <data name="ApiKeyValue" xml:space="preserve">
-    <value>API Key</value>
+    <value>Klucz API</value>
   </data>
   <data name="TeamsSettings" xml:space="preserve">
-    <value>Microsoft Teams Webhook</value>
+    <value>Webhook Microsoft Teams</value>
   </data>
   <data name="TeamsWebhookUrl" xml:space="preserve">
-    <value>Incoming Webhook URL</value>
+    <value>Adres URL przychodzącego webhooka</value>
   </data>
   <data name="TeamsWebhookHelp" xml:space="preserve">
-    <value>Create an Incoming Webhook connector inside the desired Teams channel.</value>
+    <value>Utwórz łącznik przychodzącego webhooka (Incoming Webhook) w wybranym kanale Teams.</value>
   </data>
   <data name="SlackSettings" xml:space="preserve">
     <value>Slack</value>
   </data>
   <data name="SlackWebhookUrl" xml:space="preserve">
-    <value>Incoming Webhook URL</value>
+    <value>Adres URL przychodzącego webhooka</value>
   </data>
   <data name="SlackBotToken" xml:space="preserve">
-    <value>Bot Token</value>
+    <value>Token bota</value>
   </data>
   <data name="SlackHelp" xml:space="preserve">
-    <value>Provide a webhook URL, a bot token, or both.</value>
+    <value>Podaj adres URL webhooka, token bota lub oba.</value>
   </data>
   <data name="DiscordSettings" xml:space="preserve">
     <value>Discord</value>
   </data>
   <data name="DiscordWebhookUrl" xml:space="preserve">
-    <value>Webhook URL</value>
+    <value>Adres URL webhooka</value>
   </data>
   <data name="DiscordBotToken" xml:space="preserve">
-    <value>Bot Token</value>
+    <value>Token bota</value>
   </data>
   <data name="DiscordHelp" xml:space="preserve">
-    <value>Provide a webhook URL, a bot token, or both.</value>
+    <value>Podaj adres URL webhooka, token bota lub oba.</value>
   </data>
   <data name="AzureBlobSettings" xml:space="preserve">
     <value>Azure Blob Storage</value>
   </data>
   <data name="AzureConnectionString" xml:space="preserve">
-    <value>Connection String</value>
+    <value>Parametry połączenia</value>
   </data>
   <data name="AzureContainerName" xml:space="preserve">
-    <value>Container Name</value>
+    <value>Nazwa kontenera</value>
   </data>
   <data name="BoxSettings" xml:space="preserve">
     <value>Box</value>
   </data>
   <data name="BoxClientId" xml:space="preserve">
-    <value>Client ID</value>
+    <value>Identyfikator klienta</value>
   </data>
   <data name="BoxClientSecret" xml:space="preserve">
-    <value>Client Secret</value>
+    <value>Klucz tajny klienta</value>
   </data>
   <data name="BoxEnterpriseId" xml:space="preserve">
-    <value>Enterprise ID</value>
+    <value>Identyfikator przedsiębiorstwa</value>
   </data>
   <data name="BoxPublicKeyId" xml:space="preserve">
-    <value>Public Key ID</value>
+    <value>Identyfikator klucza publicznego</value>
   </data>
   <data name="BoxPrivateKey" xml:space="preserve">
-    <value>Private Key (PEM)</value>
+    <value>Klucz prywatny (PEM)</value>
   </data>
   <data name="BoxPrivateKeyHelp" xml:space="preserve">
-    <value>The RSA private key from your Box JWT application configuration (PEM format).</value>
+    <value>Klucz prywatny RSA z konfiguracji Twojej aplikacji Box JWT (format PEM).</value>
   </data>
   <data name="BoxPrivateKeyPassword" xml:space="preserve">
-    <value>Private Key Passphrase</value>
+    <value>Hasło klucza prywatnego</value>
   </data>
   <data name="BoxPrivateKeyPasswordHelp" xml:space="preserve">
-    <value>Optional passphrase used to decrypt the private key, if it is passphrase-protected.</value>
+    <value>Opcjonalne hasło służące do odszyfrowania klucza prywatnego, jeśli jest on chroniony hasłem.</value>
   </data>
   <data name="DropboxSettings" xml:space="preserve">
     <value>Dropbox</value>
   </data>
   <data name="DropboxRefreshToken" xml:space="preserve">
-    <value>Refresh Token</value>
+    <value>Token odświeżania</value>
   </data>
   <data name="DropboxRefreshTokenHelp" xml:space="preserve">
-    <value>Long-lived OAuth2 refresh token obtained from the Dropbox OAuth2 authorization flow.</value>
+    <value>Długotrwały token odświeżania OAuth2 uzyskany w procesie autoryzacji OAuth2 Dropbox.</value>
   </data>
   <data name="DropboxAppKey" xml:space="preserve">
-    <value>App Key</value>
+    <value>Klucz aplikacji</value>
   </data>
   <data name="DropboxAppSecret" xml:space="preserve">
-    <value>App Secret</value>
+    <value>Klucz tajny aplikacji</value>
   </data>
   <data name="PendingRunningWorkflows" xml:space="preserve">
-    <value>Pending / Running Workflows</value>
+    <value>Oczekujące / wykonywane przepływy pracy</value>
   </data>
   <data name="ActiveRuns" xml:space="preserve">
-    <value>Active Runs</value>
+    <value>Aktywne uruchomienia</value>
   </data>
   <data name="ClearAllPending" xml:space="preserve">
-    <value>Clear All Pending</value>
+    <value>Wyczyść wszystkie oczekujące</value>
   </data>
   <data name="ClearAllPendingConfirm" xml:space="preserve">
-    <value>Cancel ALL pending runs for this department?</value>
+    <value>Anulować WSZYSTKIE oczekujące uruchomienia dla tego działu?</value>
   </data>
   <data name="NoPendingRuns" xml:space="preserve">
-    <value>No pending or running workflow runs.</value>
+    <value>Brak oczekujących lub wykonywanych uruchomień przepływów pracy.</value>
   </data>
   <data name="RunId" xml:space="preserve">
-    <value>Run ID</value>
+    <value>ID uruchomienia</value>
   </data>
   <data name="Workflow" xml:space="preserve">
-    <value>Workflow</value>
+    <value>Przepływ pracy</value>
   </data>
   <data name="Queued" xml:space="preserve">
-    <value>Queued</value>
+    <value>Dodano do kolejki</value>
   </data>
   <data name="Attempt" xml:space="preserve">
-    <value>Attempt</value>
+    <value>Próba</value>
   </data>
   <data name="CancelRun" xml:space="preserve">
     <value>Anuluj</value>
   </data>
   <data name="CancelRunConfirm" xml:space="preserve">
-    <value>Cancel this run?</value>
+    <value>Anulować to uruchomienie?</value>
   </data>
   <data name="WorkflowRunsHeader" xml:space="preserve">
-    <value>Workflow Runs</value>
+    <value>Uruchomienia przepływu pracy</value>
   </data>
   <data name="RunHistory" xml:space="preserve">
-    <value>Run History</value>
+    <value>Historia uruchomień</value>
   </data>
   <data name="NoRunsFound" xml:space="preserve">
-    <value>No runs found for this workflow.</value>
+    <value>Nie znaleziono uruchomień dla tego przepływu pracy.</value>
   </data>
   <data name="Started" xml:space="preserve">
-    <value>Started</value>
+    <value>Rozpoczęto</value>
   </data>
   <data name="Completed" xml:space="preserve">
-    <value>Completed</value>
+    <value>Zakończono</value>
   </data>
   <data name="Error" xml:space="preserve">
     <value>Błąd</value>
@@ -498,46 +498,46 @@
     <value>Następny</value>
   </data>
   <data name="WorkflowHealthHeader" xml:space="preserve">
-    <value>Workflow Health</value>
+    <value>Kondycja przepływu pracy</value>
   </data>
   <data name="NoHealthData" xml:space="preserve">
-    <value>No health data available for this workflow yet.</value>
+    <value>Brak jeszcze danych o kondycji dla tego przepływu pracy.</value>
   </data>
   <data name="Last24Hours" xml:space="preserve">
-    <value>Last 24 Hours</value>
+    <value>Ostatnie 24 godziny</value>
   </data>
   <data name="Last7Days" xml:space="preserve">
-    <value>Last 7 Days</value>
+    <value>Ostatnie 7 dni</value>
   </data>
   <data name="Last30Days" xml:space="preserve">
-    <value>Last 30 Days</value>
+    <value>Ostatnie 30 dni</value>
   </data>
   <data name="Successful" xml:space="preserve">
-    <value>Successful</value>
+    <value>Udane</value>
   </data>
   <data name="Failed" xml:space="preserve">
-    <value>Failed</value>
+    <value>Nieudane</value>
   </data>
   <data name="Total" xml:space="preserve">
-    <value>Total</value>
+    <value>Łącznie</value>
   </data>
   <data name="SuccessRate" xml:space="preserve">
-    <value>Success rate</value>
+    <value>Wskaźnik powodzenia</value>
   </data>
   <data name="Performance" xml:space="preserve">
-    <value>Performance</value>
+    <value>Wydajność</value>
   </data>
   <data name="AvgDuration" xml:space="preserve">
-    <value>Avg Duration</value>
+    <value>Śr. czas trwania</value>
   </data>
   <data name="LastRun" xml:space="preserve">
-    <value>Last Run</value>
+    <value>Ostatnie uruchomienie</value>
   </data>
   <data name="LastError" xml:space="preserve">
-    <value>Last Error</value>
+    <value>Ostatni błąd</value>
   </data>
   <data name="ViewRuns" xml:space="preserve">
-    <value>View Runs</value>
+    <value>Wyświetl uruchomienia</value>
   </data>
   <data name="Never" xml:space="preserve">
     <value>Nigdy</value>
@@ -725,5 +725,326 @@
   </data>
   <data name="Gallery_hl7_mdm_t02_Description" xml:space="preserve">
     <value>Po zamknięciu zgłoszenia wysyła dokument MDM^T02 „Crisis Field Response” do silnika integracyjnego przez HTTPS: PID-3 to identyfikator klienta w dokumentacji medycznej, MSH-10 to klucz idempotencji, jeden OBX na każde udostępnione pole niestandardowe. Kończy się sukcesem tylko przy potwierdzeniu AA.</value>
+  </data>
+  <data name="OutputTemplate" xml:space="preserve">
+    <value>Szablon wyjściowy</value>
+  </data>
+  <data name="FieldRequired" xml:space="preserve">
+    <value>Pole {0} jest wymagane.</value>
+  </data>
+  <data name="CredentialRequired" xml:space="preserve">
+    <value>Ten typ akcji wymaga poświadczeń.</value>
+  </data>
+  <data name="ActionType_SendEmail" xml:space="preserve">
+    <value>Wyślij e-mail</value>
+  </data>
+  <data name="ActionType_SendSms" xml:space="preserve">
+    <value>Wyślij SMS</value>
+  </data>
+  <data name="ActionType_CallApiGet" xml:space="preserve">
+    <value>HTTP GET</value>
+  </data>
+  <data name="ActionType_CallApiPost" xml:space="preserve">
+    <value>HTTP POST</value>
+  </data>
+  <data name="ActionType_CallApiPut" xml:space="preserve">
+    <value>HTTP PUT</value>
+  </data>
+  <data name="ActionType_CallApiDelete" xml:space="preserve">
+    <value>HTTP DELETE</value>
+  </data>
+  <data name="ActionType_UploadFileFtp" xml:space="preserve">
+    <value>Przesyłanie FTP</value>
+  </data>
+  <data name="ActionType_UploadFileSftp" xml:space="preserve">
+    <value>Przesyłanie SFTP</value>
+  </data>
+  <data name="ActionType_UploadFileS3" xml:space="preserve">
+    <value>Przesyłanie do S3</value>
+  </data>
+  <data name="ActionType_SendTeamsMessage" xml:space="preserve">
+    <value>Wiadomość Teams</value>
+  </data>
+  <data name="ActionType_SendSlackMessage" xml:space="preserve">
+    <value>Wiadomość Slack</value>
+  </data>
+  <data name="ActionType_SendDiscordMessage" xml:space="preserve">
+    <value>Wiadomość Discord</value>
+  </data>
+  <data name="ActionType_UploadFileAzureBlob" xml:space="preserve">
+    <value>Przesyłanie do Azure Blob</value>
+  </data>
+  <data name="ActionType_UploadFileBox" xml:space="preserve">
+    <value>Przesyłanie do Box</value>
+  </data>
+  <data name="ActionType_UploadFileDropbox" xml:space="preserve">
+    <value>Przesyłanie do Dropbox</value>
+  </data>
+  <data name="StepConditional" xml:space="preserve">
+    <value>Warunkowy</value>
+  </data>
+  <data name="TriggerEventLocked" xml:space="preserve">
+    <value>Typu zdarzenia wyzwalającego nie można zmienić po utworzeniu.</value>
+  </data>
+  <data name="FieldTo" xml:space="preserve">
+    <value>Do</value>
+  </data>
+  <data name="FieldToHelp" xml:space="preserve">
+    <value>Adresy e-mail rozdzielone przecinkami.</value>
+  </data>
+  <data name="FieldCc" xml:space="preserve">
+    <value>DW</value>
+  </data>
+  <data name="OptionalPlaceholder" xml:space="preserve">
+    <value>opcjonalnie</value>
+  </data>
+  <data name="FieldSubject" xml:space="preserve">
+    <value>Temat</value>
+  </data>
+  <data name="FieldToPhone" xml:space="preserve">
+    <value>Do (telefon)</value>
+  </data>
+  <data name="FieldToPhoneHelp" xml:space="preserve">
+    <value>Format E.164. Wymaga poświadczenia Twilio.</value>
+  </data>
+  <data name="FieldUrl" xml:space="preserve">
+    <value>Adres URL</value>
+  </data>
+  <data name="FieldTimeoutSeconds" xml:space="preserve">
+    <value>Limit czasu (sekundy)</value>
+  </data>
+  <data name="FieldRemotePath" xml:space="preserve">
+    <value>Ścieżka zdalna</value>
+  </data>
+  <data name="FieldFilename" xml:space="preserve">
+    <value>Nazwa pliku</value>
+  </data>
+  <data name="FieldFilenameHelp" xml:space="preserve">
+    <value>Pozostaw puste, aby nazwa została wygenerowana automatycznie.</value>
+  </data>
+  <data name="FieldS3Key" xml:space="preserve">
+    <value>Klucz S3 (ścieżka)</value>
+  </data>
+  <data name="FieldS3KeyHelp" xml:space="preserve">
+    <value>Pełny klucz / ścieżka w zasobniku.</value>
+  </data>
+  <data name="FieldCardTitle" xml:space="preserve">
+    <value>Tytuł karty</value>
+  </data>
+  <data name="FieldThemeColor" xml:space="preserve">
+    <value>Kolor motywu</value>
+  </data>
+  <data name="FieldThemeColorHelp" xml:space="preserve">
+    <value>Kod szesnastkowy bez #</value>
+  </data>
+  <data name="FieldChannel" xml:space="preserve">
+    <value>Kanał</value>
+  </data>
+  <data name="FieldChannelHelp" xml:space="preserve">
+    <value>Pozostaw puste, aby użyć domyślnego kanału webhooka.</value>
+  </data>
+  <data name="FieldBotUsername" xml:space="preserve">
+    <value>Nazwa użytkownika bota</value>
+  </data>
+  <data name="FieldIconEmoji" xml:space="preserve">
+    <value>Emoji ikony</value>
+  </data>
+  <data name="FieldAvatarUrl" xml:space="preserve">
+    <value>Adres URL awatara</value>
+  </data>
+  <data name="FieldBlobPath" xml:space="preserve">
+    <value>Nazwa / ścieżka obiektu blob</value>
+  </data>
+  <data name="FieldBlobPathHelp" xml:space="preserve">
+    <value>Pozostaw puste, aby ścieżka została wygenerowana automatycznie.</value>
+  </data>
+  <data name="FieldFolderId" xml:space="preserve">
+    <value>ID folderu</value>
+  </data>
+  <data name="FieldFolderIdHelp" xml:space="preserve">
+    <value>"0" = folder główny.</value>
+  </data>
+  <data name="FieldTargetPath" xml:space="preserve">
+    <value>Ścieżka docelowa</value>
+  </data>
+  <data name="FieldWriteMode" xml:space="preserve">
+    <value>Tryb zapisu</value>
+  </data>
+  <data name="WriteModeOverwrite" xml:space="preserve">
+    <value>Nadpisz</value>
+  </data>
+  <data name="WriteModeAdd" xml:space="preserve">
+    <value>Dodaj (zmień nazwę w razie konfliktu)</value>
+  </data>
+  <data name="WriteModeUpdate" xml:space="preserve">
+    <value>Aktualizuj (błąd, jeśli plik nie istnieje)</value>
+  </data>
+  <data name="StepCredential" xml:space="preserve">
+    <value>Poświadczenie</value>
+  </data>
+  <data name="CredentialNoneOption" xml:space="preserve">
+    <value>(brak)</value>
+  </data>
+  <data name="NoMatchingCredentials" xml:space="preserve">
+    <value>Nie znaleziono pasujących poświadczeń dla tego typu akcji.</value>
+  </data>
+  <data name="AddCredentialNow" xml:space="preserve">
+    <value>Dodaj teraz →</value>
+  </data>
+  <data name="CredentialHelpSmtp" xml:space="preserve">
+    <value>Poświadczenia SMTP używane do wysyłania e-maili.</value>
+  </data>
+  <data name="CredentialHelpTwilio" xml:space="preserve">
+    <value>Poświadczenia Twilio do wysyłania SMS-ów.</value>
+  </data>
+  <data name="CredentialHelpHttp" xml:space="preserve">
+    <value>Opcjonalne poświadczenie uwierzytelniania HTTP.</value>
+  </data>
+  <data name="CredentialHelpFtp" xml:space="preserve">
+    <value>Poświadczenia serwera FTP.</value>
+  </data>
+  <data name="CredentialHelpSftp" xml:space="preserve">
+    <value>Poświadczenia serwera SFTP.</value>
+  </data>
+  <data name="CredentialHelpS3" xml:space="preserve">
+    <value>Poświadczenia AWS S3 (klucz dostępu + zasobnik).</value>
+  </data>
+  <data name="CredentialHelpTeams" xml:space="preserve">
+    <value>Poświadczenie przychodzącego webhooka Microsoft Teams.</value>
+  </data>
+  <data name="CredentialHelpSlack" xml:space="preserve">
+    <value>Poświadczenie webhooka lub tokenu bota Slack.</value>
+  </data>
+  <data name="CredentialHelpDiscord" xml:space="preserve">
+    <value>Poświadczenie webhooka lub tokenu bota Discord.</value>
+  </data>
+  <data name="CredentialHelpAzure" xml:space="preserve">
+    <value>Poświadczenie z parametrami połączenia Azure Blob Storage.</value>
+  </data>
+  <data name="CredentialHelpBox" xml:space="preserve">
+    <value>Poświadczenie aplikacji Box (JWT).</value>
+  </data>
+  <data name="CredentialHelpDropbox" xml:space="preserve">
+    <value>Poświadczenie z tokenem dostępu Dropbox.</value>
+  </data>
+  <data name="SelectCredentialOption" xml:space="preserve">
+    <value>— wybierz poświadczenie —</value>
+  </data>
+  <data name="CredentialNoneUnauthenticated" xml:space="preserve">
+    <value>(brak / bez uwierzytelniania)</value>
+  </data>
+  <data name="ConditionExpression" xml:space="preserve">
+    <value>Wyrażenie warunku</value>
+  </data>
+  <data name="OptionalSuffix" xml:space="preserve">
+    <value>(opcjonalnie)</value>
+  </data>
+  <data name="ConditionHelp" xml:space="preserve">
+    <value>Pozostaw puste, aby ten krok był zawsze uruchamiany. Jeśli wyrażenie jest ustawione, krok zostanie uruchomiony tylko wtedy, gdy warunek zwróci wartość {0}. Wyrażenie korzysta z tych samych zmiennych co szablon wyjściowy.</value>
+  </data>
+  <data name="VisualBuilder" xml:space="preserve">
+    <value>Kreator wizualny</value>
+  </data>
+  <data name="RawExpression" xml:space="preserve">
+    <value>Surowe wyrażenie</value>
+  </data>
+  <data name="AddRule" xml:space="preserve">
+    <value>Dodaj regułę</value>
+  </data>
+  <data name="RulesJoinedWithAnd" xml:space="preserve">
+    <value>Wiele reguł łączy się operatorem AND — wszystkie muszą być spełnione.</value>
+  </data>
+  <data name="TestCondition" xml:space="preserve">
+    <value>Testuj warunek</value>
+  </data>
+  <data name="OpContains" xml:space="preserve">
+    <value>zawiera</value>
+  </data>
+  <data name="OpNotContains" xml:space="preserve">
+    <value>nie zawiera</value>
+  </data>
+  <data name="OpEquals" xml:space="preserve">
+    <value>równa się</value>
+  </data>
+  <data name="OpNotEquals" xml:space="preserve">
+    <value>nie równa się</value>
+  </data>
+  <data name="OpStartsWith" xml:space="preserve">
+    <value>zaczyna się od</value>
+  </data>
+  <data name="OpEndsWith" xml:space="preserve">
+    <value>kończy się na</value>
+  </data>
+  <data name="OpIsEmpty" xml:space="preserve">
+    <value>jest puste</value>
+  </data>
+  <data name="OpIsNotEmpty" xml:space="preserve">
+    <value>nie jest puste</value>
+  </data>
+  <data name="ConditionValuePlaceholder" xml:space="preserve">
+    <value>wartość</value>
+  </data>
+  <data name="ConditionTooComplex" xml:space="preserve">
+    <value>Bieżące wyrażenie jest zbyt złożone dla kreatora wizualnego. Edytuj je na karcie Surowe wyrażenie.</value>
+  </data>
+  <data name="ConditionNone" xml:space="preserve">
+    <value>Brak warunku — krok będzie zawsze uruchamiany.</value>
+  </data>
+  <data name="ConditionTesting" xml:space="preserve">
+    <value>Testowanie…</value>
+  </data>
+  <data name="ConditionWillRun" xml:space="preserve">
+    <value>Wynik: "{0}" — krok zostanie uruchomiony</value>
+  </data>
+  <data name="ConditionWillSkip" xml:space="preserve">
+    <value>Wynik: "{0}" — krok zostanie pominięty</value>
+  </data>
+  <data name="ConditionSyntaxValid" xml:space="preserve">
+    <value>Składnia poprawna (brak przykładowych danych, na których można obliczyć wynik)</value>
+  </data>
+  <data name="ConditionTestFailed" xml:space="preserve">
+    <value>Żądanie testowe nie powiodło się.</value>
+  </data>
+  <data name="TemplateSyntaxHelp" xml:space="preserve">
+    <value>Użyj składni szablonów Scriban. Kliknij zmienne w panelu po prawej, aby je wstawić.</value>
+  </data>
+  <data name="VariablesHelpScalar" xml:space="preserve">
+    <value>Kliknij zmienną typu {0}, aby ją wstawić.</value>
+  </data>
+  <data name="VariablesHelpArray" xml:space="preserve">
+    <value>Kliknij zmienną typu {0}, aby wstawić fragment pętli {1}.</value>
+  </data>
+  <data name="VariableKindScalar" xml:space="preserve">
+    <value>skalar</value>
+  </data>
+  <data name="VariableKindArray" xml:space="preserve">
+    <value>tablica</value>
+  </data>
+  <data name="CallCollectionsHeader" xml:space="preserve">
+    <value>Kolekcje zgłoszenia (tablice)</value>
+  </data>
+  <data name="CallCollectionsHelp" xml:space="preserve">
+    <value>Kliknij, aby wstawić pętlę {0}. Dostępne dla wyzwalaczy CallAdded, CallUpdated, CallClosed.</value>
+  </data>
+  <data name="ArrayFieldsTooltip" xml:space="preserve">
+    <value>Pola: {0}</value>
+  </data>
+  <data name="UnitPersonnelVariables" xml:space="preserve">
+    <value>Jednostka / personel</value>
+  </data>
+  <data name="SaveStepFailed" xml:space="preserve">
+    <value>Nie udało się zapisać kroku.</value>
+  </data>
+  <data name="DeleteStepFailed" xml:space="preserve">
+    <value>Usuwanie nie powiodło się: {0}</value>
+  </data>
+  <data name="SubjectPlaceholder" xml:space="preserve">
+    <value>np. Nowe zgłoszenie: {0}</value>
+  </data>
+  <data name="TeamsTitlePlaceholder" xml:space="preserve">
+    <value>Powiadomienie Resgrid</value>
+  </data>
+  <data name="BotUsernamePlaceholder" xml:space="preserve">
+    <value>Bot Resgrid</value>
   </data>
 </root>

@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Shared -->
+  <data name="Cancel" xml:space="preserve">
+    <value>Avbryt</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Spara</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Namn</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Beskrivning</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Redigera</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Ta bort</value>
+  </data>
+  <data name="Import" xml:space="preserve">
+    <value>Importera</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="Created" xml:space="preserve">
+    <value>Skapad</value>
+  </data>
+  <data name="Order" xml:space="preserve">
+    <value>Ordning</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Ja</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Nej</value>
+  </data>
+  <!-- Index -->
+  <data name="CustomMapsPageTitle" xml:space="preserve">
+    <value>Anpassade kartor</value>
+  </data>
+  <data name="CustomMapsHeader" xml:space="preserve">
+    <value>Anpassade kartor</value>
+  </data>
+  <data name="NewCustomMap" xml:space="preserve">
+    <value>Ny anpassad karta</value>
+  </data>
+  <data name="TabAll" xml:space="preserve">
+    <value>Alla</value>
+  </data>
+  <data name="TabIndoor" xml:space="preserve">
+    <value>Inomhus</value>
+  </data>
+  <data name="TabOutdoor" xml:space="preserve">
+    <value>Utomhus</value>
+  </data>
+  <data name="TabEvent" xml:space="preserve">
+    <value>Evenemang</value>
+  </data>
+  <data name="TabCustom" xml:space="preserve">
+    <value>Anpassad</value>
+  </data>
+  <data name="Layers" xml:space="preserve">
+    <value>Lager</value>
+  </data>
+  <data name="DeleteMapConfirm" xml:space="preserve">
+    <value>Är du säker på att du vill ta bort den här kartan?</value>
+  </data>
+  <!-- New -->
+  <data name="NewCustomMapPageTitle" xml:space="preserve">
+    <value>Ny anpassad karta</value>
+  </data>
+  <data name="NewCustomMapHeader" xml:space="preserve">
+    <value>Ny anpassad karta</value>
+  </data>
+  <data name="NewBreadcrumb" xml:space="preserve">
+    <value>Ny</value>
+  </data>
+  <data name="MapType" xml:space="preserve">
+    <value>Karttyp</value>
+  </data>
+  <data name="MapTypeIndoor" xml:space="preserve">
+    <value>Inomhus</value>
+  </data>
+  <data name="MapTypeOutdoor" xml:space="preserve">
+    <value>Utomhus</value>
+  </data>
+  <data name="MapTypeEvent" xml:space="preserve">
+    <value>Evenemang</value>
+  </data>
+  <data name="MapTypeCustom" xml:space="preserve">
+    <value>Anpassad</value>
+  </data>
+  <data name="NamePlaceholder" xml:space="preserve">
+    <value>t.ex. Huvudsjukhuset, Konsertarenan</value>
+  </data>
+  <data name="DescriptionPlaceholder" xml:space="preserve">
+    <value>Valfri beskrivning</value>
+  </data>
+  <data name="DrawBounds" xml:space="preserve">
+    <value>Rita gränser</value>
+  </data>
+  <data name="DrawBoundsHelp" xml:space="preserve">
+    <value>Rita en rektangel på kartan nedan för att ange gränserna. Klicka på kartan för att ange mittpunkten.</value>
+  </data>
+  <data name="DrawBoundsEditHelp" xml:space="preserve">
+    <value>Rita en rektangel på kartan nedan för att uppdatera gränserna. Klicka på kartan för att ange mittpunkten.</value>
+  </data>
+  <!-- Edit -->
+  <data name="EditCustomMapPageTitle" xml:space="preserve">
+    <value>Redigera anpassad karta</value>
+  </data>
+  <data name="EditCustomMapHeader" xml:space="preserve">
+    <value>Redigera anpassad karta</value>
+  </data>
+  <data name="EditBreadcrumb" xml:space="preserve">
+    <value>Redigera</value>
+  </data>
+  <!-- Layers -->
+  <data name="LayersPageTitlePrefix" xml:space="preserve">
+    <value>Lager</value>
+  </data>
+  <data name="LayersHeaderPrefix" xml:space="preserve">
+    <value>Lager</value>
+  </data>
+  <data name="LayersBreadcrumb" xml:space="preserve">
+    <value>Lager</value>
+  </data>
+  <data name="AddLayerTitle" xml:space="preserve">
+    <value>Lägg till lager</value>
+  </data>
+  <data name="LayerName" xml:space="preserve">
+    <value>Lagernamn</value>
+  </data>
+  <data name="LayerNamePlaceholder" xml:space="preserve">
+    <value>t.ex. Våning 1, Baskarta, Infrastruktur</value>
+  </data>
+  <data name="LayerOrder" xml:space="preserve">
+    <value>Ordning</value>
+  </data>
+  <data name="LayerType" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="LayerTypeFloorPlan" xml:space="preserve">
+    <value>Planritning</value>
+  </data>
+  <data name="LayerTypeOverlay" xml:space="preserve">
+    <value>Överlägg</value>
+  </data>
+  <data name="LayerTypeDataLayer" xml:space="preserve">
+    <value>Datalager</value>
+  </data>
+  <data name="LayerTypeInfrastructure" xml:space="preserve">
+    <value>Infrastruktur</value>
+  </data>
+  <data name="LayerImage" xml:space="preserve">
+    <value>Lagerbild</value>
+  </data>
+  <data name="LayerImageHelp" xml:space="preserve">
+    <value>Bilder större än 2048 px delas automatiskt upp i plattor.</value>
+  </data>
+  <data name="AddLayerButton" xml:space="preserve">
+    <value>Lägg till lager</value>
+  </data>
+  <data name="HasImage" xml:space="preserve">
+    <value>Har bild</value>
+  </data>
+  <data name="Tiled" xml:space="preserve">
+    <value>Plattindelad</value>
+  </data>
+  <data name="RegionEditor" xml:space="preserve">
+    <value>Områdesredigerare</value>
+  </data>
+  <data name="DeleteLayerConfirm" xml:space="preserve">
+    <value>Ta bort lagret?</value>
+  </data>
+  <!-- RegionEditor -->
+  <data name="RegionEditorPageTitlePrefix" xml:space="preserve">
+    <value>Områdesredigerare</value>
+  </data>
+  <data name="RegionEditorBreadcrumb" xml:space="preserve">
+    <value>Områdesredigerare</value>
+  </data>
+  <data name="RegionsTitle" xml:space="preserve">
+    <value>Områden</value>
+  </data>
+  <data name="RegionPropertiesTitle" xml:space="preserve">
+    <value>Områdesegenskaper</value>
+  </data>
+  <data name="RegionNameLabel" xml:space="preserve">
+    <value>Namn</value>
+  </data>
+  <data name="RegionTypeLabel" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="RegionTypeRoom" xml:space="preserve">
+    <value>Rum</value>
+  </data>
+  <data name="RegionTypeWing" xml:space="preserve">
+    <value>Flygel</value>
+  </data>
+  <data name="RegionTypeCorridor" xml:space="preserve">
+    <value>Korridor</value>
+  </data>
+  <data name="RegionTypeStairwell" xml:space="preserve">
+    <value>Trapphus</value>
+  </data>
+  <data name="RegionTypeElevator" xml:space="preserve">
+    <value>Hiss</value>
+  </data>
+  <data name="RegionTypeHazardZone" xml:space="preserve">
+    <value>Riskzon</value>
+  </data>
+  <data name="RegionTypeAssemblyPoint" xml:space="preserve">
+    <value>Återsamlingsplats</value>
+  </data>
+  <data name="RegionTypeStagingArea" xml:space="preserve">
+    <value>Uppställningsplats</value>
+  </data>
+  <data name="RegionTypeAccessPoint" xml:space="preserve">
+    <value>Åtkomstpunkt</value>
+  </data>
+  <data name="RegionTypeUtility" xml:space="preserve">
+    <value>Försörjning</value>
+  </data>
+  <data name="RegionTypeSearchGrid" xml:space="preserve">
+    <value>Sökruta</value>
+  </data>
+  <data name="RegionTypeStage" xml:space="preserve">
+    <value>Scen</value>
+  </data>
+  <data name="RegionTypeGate" xml:space="preserve">
+    <value>Grind</value>
+  </data>
+  <data name="RegionTypeEntrance" xml:space="preserve">
+    <value>Ingång</value>
+  </data>
+  <data name="RegionTypeParkingArea" xml:space="preserve">
+    <value>Parkeringsområde</value>
+  </data>
+  <data name="RegionTypeVendorArea" xml:space="preserve">
+    <value>Försäljningsområde</value>
+  </data>
+  <data name="RegionTypeEmergencyLane" xml:space="preserve">
+    <value>Räddningsväg</value>
+  </data>
+  <data name="RegionTypeDistrict" xml:space="preserve">
+    <value>Distrikt</value>
+  </data>
+  <data name="RegionTypeCustom" xml:space="preserve">
+    <value>Anpassad</value>
+  </data>
+  <data name="RegionColorLabel" xml:space="preserve">
+    <value>Färg</value>
+  </data>
+  <data name="RegionDescriptionLabel" xml:space="preserve">
+    <value>Beskrivning</value>
+  </data>
+  <data name="RegionSearchable" xml:space="preserve">
+    <value>Sökbar vid utlarmning</value>
+  </data>
+  <data name="RegionDispatchable" xml:space="preserve">
+    <value>Larmbar</value>
+  </data>
+  <data name="SaveRegion" xml:space="preserve">
+    <value>Spara område</value>
+  </data>
+  <data name="Dispatchable" xml:space="preserve">
+    <value>Larmbar</value>
+  </data>
+  <!-- Import -->
+  <data name="ImportPageTitlePrefix" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="ImportHeaderPrefix" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="ImportBreadcrumb" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="ImportGeospatialTitle" xml:space="preserve">
+    <value>Importera geodata</value>
+  </data>
+  <data name="TargetLayer" xml:space="preserve">
+    <value>Mållager</value>
+  </data>
+  <data name="File" xml:space="preserve">
+    <value>Fil</value>
+  </data>
+  <data name="ImportFileHelp" xml:space="preserve">
+    <value>Format som stöds: GeoJSON (.geojson, .json), KML (.kml), KMZ (.kmz)</value>
+  </data>
+  <data name="ImportButton" xml:space="preserve">
+    <value>Importera</value>
+  </data>
+  <data name="ImportHistoryTitle" xml:space="preserve">
+    <value>Importhistorik</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>Datum</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Fel</value>
+  </data>
+  <data name="NoLayersAvailable" xml:space="preserve">
+    <value>Det finns inga lager. Skapa ett lager innan du importerar.</value>
+  </data>
+  <data name="PleaseSelectTargetLayer" xml:space="preserve">
+    <value>Välj ett mållager innan du importerar. Skapa först ett lager om det inte finns något.</value>
+  </data>
+</root>

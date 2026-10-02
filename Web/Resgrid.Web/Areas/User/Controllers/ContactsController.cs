@@ -121,7 +121,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					var tree = new BSTreeModel();
 					tree.id = $"TreeGroup_{category.ContactCategoryId.ToString()}";
-					tree.text = category.Name;
+					// bstreeview appends node text as HTML, so the user-entered category name must be encoded.
+					tree.text = System.Net.WebUtility.HtmlEncode(category.Name);
 					tree.icon = "";
 
 					trees.Add(tree);

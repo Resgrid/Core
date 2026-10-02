@@ -6,10 +6,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Model;
+using Resgrid.Model.Security;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
 using Resgrid.Web.Services.Helpers;
 using Resgrid.Web.Services.Models.v4.Sso;
+using SsoBeginResult = Resgrid.Web.Services.Models.v4.Sso.SsoBeginResult;
 
 namespace Resgrid.Web.Services.Controllers.v4
 {
@@ -30,6 +32,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IPermissionsService _permissionsService;
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly IPersonnelRolesService _personnelRolesService;
+		private readonly IMfaEvidenceService _mfaEvidence;
+		private readonly IMfaPolicyService _mfaPolicy;
 
 		/// <summary>Constructor.</summary>
 		public SsoAdminController(
@@ -37,14 +41,47 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IDepartmentsService departmentsService,
 			IPermissionsService permissionsService,
 			IDepartmentGroupsService departmentGroupsService,
-			IPersonnelRolesService personnelRolesService)
+			IPersonnelRolesService personnelRolesService,
+			IMfaEvidenceService mfaEvidence,
+			IMfaPolicyService mfaPolicy,
+			ISsoBrokerService ssoBroker,
+			ISystemAuditsService systemAuditsService,
+			IPasskeyFeatureGates passkeyGates)
 		{
+			_passkeyGates = passkeyGates;
+			_ssoBroker = ssoBroker;
+			_systemAuditsService = systemAuditsService;
+			_mfaPolicy = mfaPolicy;
 			_ssoService = ssoService;
 			_departmentsService = departmentsService;
 			_permissionsService = permissionsService;
 			_departmentGroupsService = departmentGroupsService;
 			_personnelRolesService = personnelRolesService;
+			_mfaEvidence = mfaEvidence;
 		}
+
+		/// <summary>
+		/// Security, SSO, SCIM and MFA policy changes need an actual second factor on this session within the last few
+		/// minutes (passkey plan section 7.6 row 13): call Mfa/VerifyStepUp with operation <c>security_change</c>, then
+		/// retry. Null when the change may proceed.
+		/// </summary>
+		private async Task<ActionResult> RequireRecentMfaAsync(CancellationToken cancellationToken, bool excludeFederated = false)
+		{
+			var window = MfaStepUpOperations.WindowFor(MfaStepUpOperations.SecurityChange);
+			if (await ApiStepUpEvidence.HasRecentSecondFactorAsync(_mfaEvidence, _mfaPolicy, UserId, HttpContext, DepartmentId,
+					MfaMethodScope.SecurityChange, window, cancellationToken, excludeFederated))
+				return null;
+
+			return Problem(type: "step_up_required",
+				title: excludeFederated
+					? $"Verify with your authenticator app or a passkey (Mfa/VerifyStepUp, operation {MfaStepUpOperations.SecurityChange}) within the last {(int)window.TotalMinutes} minutes; provider step-up cannot authorize changes to itself."
+					: $"Verify a second factor (Mfa/VerifyStepUp, operation {MfaStepUpOperations.SecurityChange}) within the last {(int)window.TotalMinutes} minutes, then retry.",
+				statusCode: StatusCodes.Status403Forbidden);
+		}
+
+		private readonly ISsoBrokerService _ssoBroker;
+		private readonly IPasskeyFeatureGates _passkeyGates;
+		private readonly ISystemAuditsService _systemAuditsService;
 
 		// ── SSO Config — list / get ───────────────────────────────────────────
 
@@ -125,6 +162,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			if (!ModelState.IsValid) return BadRequest(ModelState);
 			if (!await IsAdminAsync()) return Forbid();
+			var mfaProblem = await RequireRecentMfaAsync(cancellationToken);
+			if (mfaProblem != null) return mfaProblem;
 
 			if (!Enum.TryParse<SsoProviderType>(input.ProviderType, ignoreCase: true, out var providerType) || !Enum.IsDefined(providerType))
 				return BadRequest(new { error = "Invalid providerType. Must be 'saml2' or 'oidc'." });
@@ -168,6 +207,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			if (!ModelState.IsValid) return BadRequest(ModelState);
 			if (!await IsAdminAsync()) return Forbid();
+			var mfaProblem = await RequireRecentMfaAsync(cancellationToken);
+			if (mfaProblem != null) return mfaProblem;
 
 			var configs = await _ssoService.GetSsoConfigsForDepartmentAsync(DepartmentId, cancellationToken);
 			var config = configs.FirstOrDefault(c => c.DepartmentSsoConfigId == id);
@@ -196,6 +237,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			config.MetadataUrl = input.MetadataUrl ?? config.MetadataUrl;
 			config.EntityId = input.EntityId ?? config.EntityId;
 			config.AssertionConsumerServiceUrl = input.AssertionConsumerServiceUrl ?? config.AssertionConsumerServiceUrl;
+			config.IdpSsoUrl = input.IdpSsoUrl ?? config.IdpSsoUrl;
 			config.AttributeMappingJson = input.AttributeMappingJson ?? config.AttributeMappingJson;
 			config.AllowLocalLogin = input.AllowLocalLogin;
 			config.AutoProvisionUsers = input.AutoProvisionUsers;
@@ -244,6 +286,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			CancellationToken cancellationToken)
 		{
 			if (!await IsAdminAsync()) return Forbid();
+			var mfaProblem = await RequireRecentMfaAsync(cancellationToken);
+			if (mfaProblem != null) return mfaProblem;
 
 			if (!Enum.TryParse<SsoProviderType>(providerType, ignoreCase: true, out var provider) || !Enum.IsDefined(provider))
 				return BadRequest(new { error = "Invalid providerType. Must be 'saml2' or 'oidc'." });
@@ -283,6 +327,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			CancellationToken cancellationToken)
 		{
 			if (!await IsAdminAsync()) return Forbid();
+			var mfaProblem = await RequireRecentMfaAsync(cancellationToken);
+			if (mfaProblem != null) return mfaProblem;
 
 			if (!Enum.TryParse<SsoProviderType>(providerType, ignoreCase: true, out var provider) || !Enum.IsDefined(provider))
 				return BadRequest(new { error = "Invalid providerType. Must be 'saml2' or 'oidc'." });
@@ -341,11 +387,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 			ResponseHelper.PopulateV4ResponseData(result);
 			result.Status = ResponseHelper.Success;
 			result.PageSize = 1;
-			result.Data = policy != null ? MapToSecurityPolicyData(policy) : new SecurityPolicyData
-			{
-				CreatedOn = DateTime.UtcNow,
-				MinPasswordLength = 8
-			};
+			// No row behaves as the defaults (passkey plan section 10.1), so report them rather than all-false switches.
+			var data = MapToSecurityPolicyData(policy ?? new DepartmentSecurityPolicy { CreatedOn = DateTime.UtcNow, MinPasswordLength = 8 });
+			if (policy == null)
+				data.UpdatedOn = null;
+			result.Data = data;
 
 			return Ok(result);
 		}
@@ -366,6 +412,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			if (!ModelState.IsValid) return BadRequest(ModelState);
 			if (!await IsAdminAsync()) return Forbid();
+			var mfaProblem = await RequireRecentMfaAsync(cancellationToken);
+			if (mfaProblem != null) return mfaProblem;
 
 			// Safety guard: disallow RequireSso=true when no active SSO config exists
 			if (input.RequireSso)
@@ -387,6 +435,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				CreatedOn = DateTime.UtcNow
 			};
 
+			var storedRules = DepartmentSecurityPolicyDecisions.SnapshotMfaRules(policy);
+
 			policy.RequireMfa = input.RequireMfa;
 			policy.RequireSso = input.RequireSso;
 			policy.SessionTimeoutMinutes = input.SessionTimeoutMinutes;
@@ -397,13 +447,264 @@ namespace Resgrid.Web.Services.Controllers.v4
 			policy.RequirePasswordComplexity = input.RequirePasswordComplexity;
 			policy.DataClassificationLevel = input.DataClassificationLevel;
 
-			var saved = await _ssoService.SaveSecurityPolicyAsync(policy, cancellationToken);
+			policy.AllowPasskeysForLoginMfa = input.AllowPasskeysForLoginMfa ?? policy.AllowPasskeysForLoginMfa;
+			policy.AllowPasskeysForAdp = input.AllowPasskeysForAdp ?? policy.AllowPasskeysForAdp;
+			policy.AllowFederatedMfaForLoginMfa = input.AllowFederatedMfaForLoginMfa ?? policy.AllowFederatedMfaForLoginMfa;
+			policy.AllowFederatedMfaForAdp = input.AllowFederatedMfaForAdp ?? policy.AllowFederatedMfaForAdp;
+			policy.AllowResponderApproval = input.AllowResponderApproval ?? policy.AllowResponderApproval;
+			policy.AcceptRecentLoginMfaForAdp = input.AcceptRecentLoginMfaForAdp ?? policy.AcceptRecentLoginMfaForAdp;
+			policy.AcceptRecentUnlockMfaForAdp = input.AcceptRecentUnlockMfaForAdp ?? policy.AcceptRecentUnlockMfaForAdp;
+			policy.SharedIdleLockMinutes = input.SharedIdleLockMinutes ?? policy.SharedIdleLockMinutes;
+			policy.SharedShiftHours = input.SharedShiftHours ?? policy.SharedShiftHours;
+			policy.SharedModeRequiredApps = input.SharedModeRequiredApps ?? policy.SharedModeRequiredApps;
+
+			// Which second factors the department accepts is the managing member's decision, like the other ADP and
+			// security controls it owns (passkey plan section 10.1). Other administrators can change everything else.
+			if (DepartmentSecurityPolicyDecisions.MethodSwitchesChanged(storedRules, policy) && !await IsManagingMemberAsync())
+				return Problem(type: "managing_member_required",
+					title: "Only the department's managing member can change which sign-in methods are accepted.",
+					statusCode: StatusCodes.Status403Forbidden);
+
+			// The shared-device policy is the managing member's too (plan section 10.5). Stricter values reach running shared
+			// sessions at their next request; requiring shared mode for another app needs the deployment to offer it.
+			if (DepartmentSecurityPolicyDecisions.SharedPolicyChanged(storedRules, policy))
+			{
+				if (!await IsManagingMemberAsync())
+					return Problem(type: "managing_member_required",
+						title: "Only the department's managing member can change the shared-device policy.",
+						statusCode: StatusCodes.Status403Forbidden);
+				if (!DepartmentSecurityPolicyDecisions.SharedPolicyValid(policy))
+					return Problem(type: "invalid_request",
+						title: $"Choose an idle lock of 1-{SharedSessionRules.MaxIdleLockMinutes} minutes, a shift of 1-{SharedSessionRules.MaxShiftHours} hours, and apps from Unit (1), IC (2) and Dispatch (4).",
+						statusCode: StatusCodes.Status400BadRequest);
+				if (!_passkeyGates.SharedDeviceModeEnabled && DepartmentSecurityPolicyDecisions.AddsSharedRequirement(storedRules, policy))
+					return Problem(type: "shared_mode_unavailable",
+						title: "Shared-device mode is not available on this deployment yet, so it cannot be required for another app.",
+						statusCode: StatusCodes.Status409Conflict);
+			}
+
+			// Turning provider step-up on needs a mapping that passed its test, and cannot be authorized by provider step-up.
+			if (DepartmentSecurityPolicyDecisions.EnablesFederatedMfa(storedRules, policy))
+			{
+				if (await _ssoService.GetTestedFederatedMfaConfigAsync(DepartmentId, cancellationToken) == null)
+					return Problem(type: "federated_mapping_untested",
+						title: "Save and successfully test a provider step-up mapping (SsoAdmin/FederatedMfaTest) before accepting provider MFA.",
+						statusCode: StatusCodes.Status409Conflict);
+
+				var federatedProblem = await RequireRecentMfaAsync(cancellationToken, excludeFederated: true);
+				if (federatedProblem != null) return federatedProblem;
+			}
+
+			var saved = await _ssoService.SaveSecurityPolicyAsync(policy, UserId, cancellationToken);
 
 			var result = new SaveSecurityPolicyResult();
 			ResponseHelper.PopulateV4ResponseData(result);
 			result.Status = existing == null ? ResponseHelper.Created : ResponseHelper.Updated;
 			result.DepartmentSecurityPolicyId = saved.DepartmentSecurityPolicyId;
 			return Ok(result);
+		}
+
+		// ── Provider step-up mapping (passkey plan section 7.8) ──────────────
+
+		/// <summary>The active SSO configuration's provider step-up mapping and whether it has passed its test.</summary>
+		[HttpGet("FederatedMfaMapping")]
+		[Authorize(Policy = ResgridResources.Sso_View)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		public async Task<ActionResult<FederatedMfaMappingResult>> GetFederatedMfaMapping(CancellationToken cancellationToken)
+		{
+			if (!await IsAdminAsync()) return Forbid();
+
+			var config = await ActiveConfigAsync(cancellationToken);
+			return config == null ? NotFound() : MappingResult(config);
+		}
+
+		/// <summary>
+		/// Saves (or removes, with a null mapping) the provider step-up mapping. Managing member only, after an authenticator
+		/// app or passkey step-up; every change advances the version and needs a new test before it counts.
+		/// </summary>
+		[HttpPut("FederatedMfaMapping")]
+		[Authorize(Policy = ResgridResources.Sso_Update)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		public async Task<ActionResult<FederatedMfaMappingResult>> SaveFederatedMfaMapping([FromBody] SaveFederatedMfaMappingInput input,
+			CancellationToken cancellationToken)
+		{
+			if (!await IsManagingMemberAsync())
+				return Problem(type: "managing_member_required", title: "Only the department's managing member can change the provider step-up mapping.",
+					statusCode: StatusCodes.Status403Forbidden);
+			var mfaProblem = await RequireRecentMfaAsync(cancellationToken, excludeFederated: true);
+			if (mfaProblem != null) return mfaProblem;
+
+			var config = await ActiveConfigAsync(cancellationToken);
+			if (config == null) return NotFound();
+
+			string mappingJson = null;
+			if (input?.Mapping != null && input.Mapping.Type != Newtonsoft.Json.Linq.JTokenType.Null)
+			{
+				var mapping = Resgrid.Model.Security.FederatedMfaMapping.Parse(input.Mapping.ToString(Newtonsoft.Json.Formatting.None));
+				var problem = Resgrid.Model.Security.FederatedMfaMapping.Validate(mapping, (SsoProviderType)config.SsoProviderType);
+				if (problem != null)
+					return Problem(type: "invalid_request", title: problem, statusCode: StatusCodes.Status400BadRequest);
+				mappingJson = mapping.Serialize();
+			}
+
+			var changed = !string.Equals(config.FederatedMfaMappingJson ?? string.Empty, mappingJson ?? string.Empty, StringComparison.Ordinal);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			config.FederatedMfaMappingJson = mappingJson;
+			config.UpdatedByUserId = UserId;
+			var saved = await _ssoService.SaveSsoConfigAsync(config, department.Code, cancellationToken);
+
+			// Who changed what counts as MFA is audited (plan section 7.8), whichever surface changed it.
+			if (changed)
+				await _systemAuditsService.SaveSystemAuditAsync(new SystemAudit
+				{
+					System = (int)SystemAuditSystems.Api,
+					Type = (int)SystemAuditTypes.FederatedMfaMappingChanged,
+					UserId = UserId,
+					Username = UserName,
+					Successful = true,
+					IpAddress = IpAddressHelper.GetRequestIP(Request, true),
+					ServerName = Environment.MachineName,
+					Data = mappingJson == null
+						? $"Provider step-up mapping for SSO configuration {config.DepartmentSsoConfigId} removed (now version {saved?.FederatedMfaMappingVersion})."
+						: $"Provider step-up mapping for SSO configuration {config.DepartmentSsoConfigId} saved as version {saved?.FederatedMfaMappingVersion}; " +
+						  "it counts once it passes its test."
+				}, cancellationToken);
+
+			return MappingResult(saved);
+		}
+
+		/// <summary>Starts the managing member's test step-up with the saved mapping; it proves the provider returns a mapped MFA value.</summary>
+		[HttpPost("FederatedMfaTest/Begin")]
+		[Authorize(Policy = ResgridResources.Sso_Update)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		public async Task<ActionResult<SsoBeginResult>> BeginFederatedMfaTest([FromBody] FederatedMfaTestBeginInput input, CancellationToken cancellationToken)
+		{
+			if (!await IsManagingMemberAsync())
+				return Problem(type: "managing_member_required", title: "Only the department's managing member can test the provider step-up mapping.",
+					statusCode: StatusCodes.Status403Forbidden);
+			var mfaProblem = await RequireRecentMfaAsync(cancellationToken, excludeFederated: true);
+			if (mfaProblem != null) return mfaProblem;
+
+			var session = HttpProtectedGrantContext.SessionOf(HttpContext);
+			if (session == null || input == null)
+				return Problem(type: "session_required", title: "Sign in again to test the mapping.", statusCode: StatusCodes.Status409Conflict);
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			var begun = await _ssoBroker.BeginAsync(new Resgrid.Model.Security.SsoBeginRequest
+			{
+				DepartmentId = DepartmentId,
+				DepartmentCode = department?.Code,
+				Purpose = Resgrid.Model.Security.SsoTransactionPurpose.MappingTest,
+				ClientApplication = (UserSessionClientApplication)session.ClientApplication,
+				Platform = input.Platform,
+				ReturnTarget = input.ReturnTarget,
+				ClientState = input.State,
+				CodeChallenge = input.CodeChallenge,
+				CodeChallengeMethod = input.CodeChallengeMethod,
+				SessionId = session.SessionId,
+				UserId = UserId,
+				AuthenticationGeneration = session.AuthenticationGeneration
+			}, cancellationToken);
+			if (!begun.Succeeded)
+				return Problem(type: Resgrid.Model.Security.SsoBrokerOutcomes.ErrorCode(begun.Outcome) ?? "sso_failed",
+					title: "The mapping test could not be started.", statusCode: begun.Outcome == Resgrid.Model.Security.SsoBrokerOutcome.ServiceUnavailable
+						? StatusCodes.Status503ServiceUnavailable
+						: StatusCodes.Status400BadRequest);
+
+			var result = new SsoBeginResult
+			{
+				Data = new SsoBeginResultData { AuthorizeUrl = begun.AuthorizeUrl, SsoTransactionId = begun.TransactionId, ExpiresIn = begun.ExpiresInSeconds },
+				PageSize = 1,
+				Status = ResponseHelper.Success
+			};
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		/// <summary>
+		/// Completes the test: the provider's fresh response carried a value the mapping counts as MFA, so that exact mapping
+		/// version becomes effective. A mapping changed during the test must be tested again.
+		/// </summary>
+		[HttpPost("FederatedMfaTest/Complete")]
+		[Authorize(Policy = ResgridResources.Sso_Update)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		public async Task<ActionResult<FederatedMfaTestResult>> CompleteFederatedMfaTest([FromBody] FederatedMfaTestCompleteInput input,
+			CancellationToken cancellationToken)
+		{
+			if (!await IsManagingMemberAsync())
+				return Problem(type: "managing_member_required", title: "Only the department's managing member can test the provider step-up mapping.",
+					statusCode: StatusCodes.Status403Forbidden);
+
+			var session = HttpProtectedGrantContext.SessionOf(HttpContext);
+			if (session == null)
+				return Problem(type: "session_required", title: "Sign in again to test the mapping.", statusCode: StatusCodes.Status409Conflict);
+
+			var redeemed = await _ssoBroker.RedeemAsync(input?.SsoTransactionId, input?.SsoCode, input?.CodeVerifier,
+				(UserSessionClientApplication)session.ClientApplication, cancellationToken, Resgrid.Model.Security.SsoTransactionPurpose.MappingTest);
+			var transaction = redeemed.Transaction;
+			if (!redeemed.Succeeded || !string.Equals(transaction.SessionId, session.SessionId, StringComparison.Ordinal) ||
+				!string.Equals(transaction.ExpectedUserId, UserId, StringComparison.OrdinalIgnoreCase) ||
+				string.IsNullOrWhiteSpace(transaction.FederatedMfaValue) || transaction.FederatedMappingVersion == null)
+				return Problem(type: Resgrid.Model.Security.SsoBrokerOutcomes.ErrorCode(redeemed.Succeeded
+						? Resgrid.Model.Security.SsoBrokerOutcome.TransactionInvalid
+						: redeemed.Outcome) ?? "sso_failed",
+					title: "The mapping test could not be completed. Start it again.", statusCode: StatusCodes.Status400BadRequest);
+
+			if (!await _ssoService.RecordFederatedMfaTestAsync(transaction.DepartmentSsoConfigId, transaction.FederatedMappingVersion.Value, UserId, cancellationToken))
+				return Problem(type: "federated_mapping_changed", title: "The mapping changed during the test. Test it again.",
+					statusCode: StatusCodes.Status409Conflict);
+
+			await _systemAuditsService.SaveSystemAuditAsync(new SystemAudit
+			{
+				System = (int)SystemAuditSystems.Api,
+				Type = (int)SystemAuditTypes.FederatedMfaMappingTested,
+				UserId = UserId,
+				Username = UserName,
+				Successful = true,
+				IpAddress = IpAddressHelper.GetRequestIP(Request, true),
+				ServerName = Environment.MachineName,
+				Data = $"Provider step-up mapping version {transaction.FederatedMappingVersion} for SSO configuration {transaction.DepartmentSsoConfigId} " +
+					$"passed its test ({transaction.FederatedMfaValue})."
+			}, cancellationToken);
+
+			var result = new FederatedMfaTestResult
+			{
+				Data = new FederatedMfaTestResultData
+				{
+					Tested = true,
+					MatchedValue = transaction.FederatedMfaValue,
+					MappingVersion = transaction.FederatedMappingVersion.Value
+				},
+				PageSize = 1,
+				Status = ResponseHelper.Success
+			};
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		private async Task<DepartmentSsoConfig> ActiveConfigAsync(CancellationToken cancellationToken) =>
+			(await _ssoService.GetSsoConfigsForDepartmentAsync(DepartmentId, cancellationToken))?.FirstOrDefault(c => c.IsEnabled);
+
+		private ActionResult<FederatedMfaMappingResult> MappingResult(DepartmentSsoConfig config)
+		{
+			var result = new FederatedMfaMappingResult
+			{
+				Data = new FederatedMfaMappingResultData
+				{
+					DepartmentSsoConfigId = config.DepartmentSsoConfigId,
+					ProviderType = ((SsoProviderType)config.SsoProviderType).ToString().ToLowerInvariant(),
+					Mapping = string.IsNullOrWhiteSpace(config.FederatedMfaMappingJson) ? null : Newtonsoft.Json.Linq.JToken.Parse(config.FederatedMfaMappingJson),
+					MappingVersion = config.FederatedMfaMappingVersion,
+					TestedVersion = config.FederatedMfaTestedVersion,
+					TestedOn = config.FederatedMfaTestedOnUtc,
+					TestedByUserId = config.FederatedMfaTestedByUserId,
+					Effective = Resgrid.Model.Security.FederatedMfaMapping.IsTested(config)
+				},
+				PageSize = 1,
+				Status = ResponseHelper.Success
+			};
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
 		}
 
 		// ── Test / Validation helpers ─────────────────────────────────────────
@@ -446,6 +747,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		// ── Private helpers ───────────────────────────────────────────────────
 
+		private async Task<bool> IsManagingMemberAsync()
+		{
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			return department != null && department.ManagingUserId == UserId;
+		}
+
 		private async Task<bool> IsAdminAsync()
 		{
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
@@ -477,6 +784,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (string.IsNullOrWhiteSpace(input.IdpCertificate) && string.IsNullOrWhiteSpace(existing?.EncryptedIdpCertificate))
 				return "An IdP signing certificate is required to validate SAML assertions.";
 
+			var idpSsoUrl = input.IdpSsoUrl ?? existing?.IdpSsoUrl;
+			if (!string.IsNullOrWhiteSpace(idpSsoUrl) && (!Uri.TryCreate(idpSsoUrl, UriKind.Absolute, out var idpSso) || idpSso.Scheme != Uri.UriSchemeHttps))
+				return "SAML idpSsoUrl must be a valid HTTPS URL.";
+
 			return null;
 		}
 
@@ -499,6 +810,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				MetadataUrl = input.MetadataUrl,
 				EntityId = input.EntityId,
 				AssertionConsumerServiceUrl = input.AssertionConsumerServiceUrl,
+				IdpSsoUrl = input.IdpSsoUrl,
 				EncryptedIdpCertificate = input.IdpCertificate,
 				EncryptedSigningCertificate = input.SigningCertificate,
 				AttributeMappingJson = input.AttributeMappingJson,
@@ -545,6 +857,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 				MetadataUrl = c.MetadataUrl,
 				EntityId = c.EntityId,
 				AssertionConsumerServiceUrl = c.AssertionConsumerServiceUrl,
+				IdpSsoUrl = c.IdpSsoUrl,
+				OidcBrokerRedirectUri = c.SsoProviderType == (int)SsoProviderType.Oidc
+					? $"{Config.SystemBehaviorConfig.ResgridApiBaseUrl?.TrimEnd('/')}{Config.SsoConfig.OidcCallbackPath}"
+					: null,
+				OidcAppRedirectUris = c.SsoProviderType == (int)SsoProviderType.Oidc
+					? LegacyAppCallbacks.RedirectUris(Config.SsoConfig.AppWebOrigins)
+						.Select(a => new SsoAppRedirectUriData { Client = a.Name, DisplayName = a.DisplayName, Web = a.Web, RedirectUri = a.Uri }).ToList()
+					: null,
 				AttributeMappingJson = c.AttributeMappingJson,
 				DefaultRankId = c.DefaultRankId,
 				// Secret presence flags — values never returned
@@ -567,6 +887,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 				MinPasswordLength = p.MinPasswordLength,
 				RequirePasswordComplexity = p.RequirePasswordComplexity,
 				DataClassificationLevel = p.DataClassificationLevel,
+				AllowPasskeysForLoginMfa = p.AllowPasskeysForLoginMfa,
+				AllowPasskeysForAdp = p.AllowPasskeysForAdp,
+				AllowFederatedMfaForLoginMfa = p.AllowFederatedMfaForLoginMfa,
+				AllowFederatedMfaForAdp = p.AllowFederatedMfaForAdp,
+				AllowResponderApproval = p.AllowResponderApproval,
+				AcceptRecentLoginMfaForAdp = p.AcceptRecentLoginMfaForAdp,
+				AcceptRecentUnlockMfaForAdp = p.AcceptRecentUnlockMfaForAdp,
+				SharedIdleLockMinutes = p.SharedIdleLockMinutes,
+				SharedShiftHours = p.SharedShiftHours,
+				SharedModeRequiredApps = p.SharedModeRequiredApps,
+				MfaPolicyVersion = p.MfaPolicyVersion,
 				CreatedOn = p.CreatedOn,
 				UpdatedOn = p.UpdatedOn
 			};

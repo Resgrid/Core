@@ -1,0 +1,77 @@
+@model Resgrid.Web.Areas.User.Models.TwoFactor.TwoFactorIndexViewModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.TwoFactor.TwoFactor> localizer
+@*
+	Passkeys on the Web account security page (passkey plan sections 6.1 and 6.5): the user's passkeys in every app,
+	with rename and remove, and adding one for the web. The page script only runs the browser's ceremony; the server
+	checks every rule. Values are rendered with Razor encoding; the script inserts text only.
+*@
+<div class="ibox float-e-margins" id="passkeys">
+    <div class="ibox-title">
+        <h5>@localizer["PasskeysHeader"]</h5>
+    </div>
+    <div class="ibox-content">
+        <p>@localizer["PasskeysDescription"]</p>
+        <div class="alert alert-danger" id="passkeyError" role="alert" style="display: none;"></div>
+        <div class="alert alert-success" id="passkeyStatus" role="status" style="display: none;"></div>
+
+        @if (Model.Passkeys.Count == 0)
+        {
+            <p class="text-muted">@localizer["PasskeysNone"]</p>
+        }
+        else
+        {
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">@localizer["PasskeyNameLabel"]</th>
+                        <th scope="col">@localizer["PasskeyAppLabel"]</th>
+                        <th scope="col">@localizer["PasskeyCreatedLabel"]</th>
+                        <th scope="col">@localizer["PasskeyLastUsedLabel"]</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var passkey in Model.Passkeys)
+                    {
+                        <tr data-passkey-id="@passkey.Id">
+                            <td>
+                                <span class="passkey-name">@passkey.DisplayName</span>
+                                @if (passkey.CreatedOnSharedInstallation)
+                                {
+                                    <br /><span class="label label-warning"><i class="fa fa-exclamation-triangle"></i> @localizer["PasskeySharedWarning"]</span>
+                                }
+                            </td>
+                            <td>@localizer[passkey.AppLabelKey]</td>
+                            <td>@passkey.CreatedOn.ToString("d")</td>
+                            <td>@(passkey.LastUsedOn.HasValue ? passkey.LastUsedOn.Value.ToString("g") : localizer["PasskeyNeverUsed"].Value)</td>
+                            <td class="text-right">
+                                <button type="button" class="btn btn-default btn-xs passkey-rename">@localizer["PasskeyRenameButton"]</button>
+                                <button type="button" class="btn btn-danger btn-xs passkey-remove">@localizer["PasskeyRemoveButton"]</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+
+        @if (!Model.Is2FAEnabled)
+        {
+            <p class="text-muted">@localizer["PasskeysNeedAuthenticator"]</p>
+        }
+        else if (!Model.WebPasskeyRegistrationAvailable)
+        {
+            <p class="text-muted">@localizer["PasskeysUnavailable"]</p>
+        }
+        else
+        {
+            <div class="form-inline">
+                <div class="form-group">
+                    <label for="passkeyName" class="sr-only">@localizer["PasskeyNameLabel"]</label>
+                    <input type="text" class="form-control" id="passkeyName" maxlength="100" placeholder="@localizer["PasskeyNameLabel"]" />
+                </div>
+                <button type="button" class="btn btn-primary" id="passkeyAdd"><i class="fa fa-key"></i> @localizer["PasskeysAddButton"]</button>
+            </div>
+        }
+    </div>
+</div>
+<form id="passkeyAntiForgery">@Html.AntiForgeryToken()</form>

@@ -1161,4 +1161,40 @@
   <data name="GroupDispatchScopeNoRoles" xml:space="preserve">
     <value>لم يتم تعريف أي أدوار للأفراد بعد.</value>
   </data>
+  <data name="UnitCallDispatchStatusLabel" xml:space="preserve">
+    <value>حالة الوحدة عند توزيع البلاغ</value>
+  </data>
+  <data name="UnitCallReleaseStatusLabel" xml:space="preserve">
+    <value>حالة الوحدة عند إغلاق البلاغ</value>
+  </data>
+  <data name="UnitDefaultStatusesHelp" xml:space="preserve">
+    <value>تستخدم حالات الوحدات الافتراضية هذه أنواع حالات الوحدات المدمجة فقط. استخدم جدول تجاوزات أنواع الوحدات أدناه عندما يحتاج نوع وحدة إلى إحدى حالاته المخصصة.</value>
+  </data>
+  <data name="UnitTypeStatusOverridesHeader" xml:space="preserve">
+    <value>تجاوزات حالات أنواع الوحدات</value>
+  </data>
+  <data name="UnitTypeStatusOverridesHelp" xml:space="preserve">
+    <value>تظهر هنا فقط أنواع الوحدات التي لها حالات وحدات مخصصة. اترك القيمة على "افتراضي" لاستخدام الحالة المدمجة المطبّقة على مستوى القسم أعلاه.</value>
+  </data>
+  <data name="CheckInTimerActiveStatesLabel" xml:space="preserve">
+    <value>الحالات النشطة</value>
+  </data>
+  <data name="CheckInTimerLeaveEmptyForAllStates" xml:space="preserve">
+    <value>اتركه فارغًا لاختيار "جميع الحالات".</value>
+  </data>
+  <data name="CheckInTimerAllStates" xml:space="preserve">
+    <value>الكل</value>
+  </data>
+  <data name="TtsLanguage" xml:space="preserve">
+    <value>لغة تحويل النص إلى كلام (TTS)</value>
+  </data>
+  <data name="TtsLanguageHelp" xml:space="preserve">
+    <value>اختر لغة أو لهجة eSpeak-NG المستخدمة في الرسائل الصوتية لهذا القسم.</value>
+  </data>
+  <data name="RequirePasswordResetViaEmail" xml:space="preserve">
+    <value>اشتراط إعادة تعيين كلمات المرور عبر البريد الإلكتروني</value>
+  </data>
+  <data name="RequirePasswordResetViaEmailHelp" xml:space="preserve">
+    <value>يمنع مسؤولي القسم والمجموعات من اختيار كلمة المرور الجديدة للعضو أو الاطلاع عليها. بدلًا من ذلك، تُرسل إجراءات إعادة التعيين إلى العضو رابطًا عبر البريد الإلكتروني قصير الصلاحية يُستخدم لمرة واحدة. تُلغى الجلسات الحالية بعد أن يغيّر العضو كلمة المرور بنجاح.</value>
+  </data>
 </root>

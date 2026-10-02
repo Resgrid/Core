@@ -1,0 +1,55 @@
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.TwoFactor.TwoFactor> sharedLocalizer
+@{
+    // The operator and the controls a shared workstation always offers (passkey plan section 12.5.4): Lock, Switch operator and
+    // End shift, with the idle deadline the server keeps. Rendered only for a shared session.
+    var sharedSession = Resgrid.Web.Helpers.WebSharedSession.SessionOf(Context);
+    string SharedJs(string key) => Newtonsoft.Json.JsonConvert.SerializeObject(sharedLocalizer[key].Value);
+    var here = Context.Request.PathBase + Context.Request.Path + Context.Request.QueryString;
+}
+@if (sharedSession?.SharedMode == true)
+{
+    <div class="row" id="rgSharedSession" role="region" aria-label="@sharedLocalizer["SharedWorkstationTitle"]"
+         data-status-url="@Url.Action("Status", "SharedSession", new { area = "" })"
+         data-locked-url="@Url.Action("Locked", "SharedSession", new { area = "" })"
+         data-shift-ended-url="@Url.Action("LogOn", "Account", new { area = "", reason = "shift_ended" })"
+         style="background: #fcf8e3; border-bottom: 1px solid #faebcc; padding: 6px 15px;">
+        <span><i class="fa fa-desktop" aria-hidden="true"></i> <strong>@(Context.User.Identity?.Name)</strong></span>
+        @if (!string.IsNullOrWhiteSpace(sharedSession.DeviceName))
+        {
+            <span class="text-muted">· @sharedSession.DeviceName</span>
+        }
+        <span class="text-muted" id="rgSharedCountdown" aria-live="off"></span>
+        <span class="pull-right">
+            <form asp-controller="SharedSession" asp-action="Lock" asp-route-area="" method="post" style="display:inline" id="rgSharedLockForm">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="returnUrl" value="@here" />
+                <button type="submit" class="btn btn-xs btn-default" id="rgSharedLock"><i class="fa fa-lock" aria-hidden="true"></i> @sharedLocalizer["SharedLockButton"]</button>
+            </form>
+            <form asp-controller="SharedSession" asp-action="EndShift" asp-route-area="" method="post" style="display:inline">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="switchOperator" value="true" />
+                <button type="submit" class="btn btn-xs btn-warning" id="rgSharedSwitch"><i class="fa fa-exchange" aria-hidden="true"></i> @sharedLocalizer["SharedSwitchOperatorButton"]</button>
+            </form>
+            <form asp-controller="SharedSession" asp-action="EndShift" asp-route-area="" method="post" style="display:inline">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="switchOperator" value="false" />
+                <button type="submit" class="btn btn-xs btn-default" id="rgSharedEndShift"><i class="fa fa-sign-out" aria-hidden="true"></i> @sharedLocalizer["SharedEndShiftButton"]</button>
+            </form>
+        </span>
+        <div class="alert alert-warning" id="rgSharedWarning" role="alert" style="display:none; margin: 6px 0 0 0;">
+            <span id="rgSharedWarningText"></span>
+            <button type="button" class="btn btn-xs btn-primary" id="rgSharedStay">@sharedLocalizer["SharedStaySignedInButton"]</button>
+        </div>
+    </div>
+    <script src="~/js/app/common/shared/resgrid.shared.session.js" asp-append-version="true"></script>
+    <script>
+        resgridSharedSession.init({
+            messages: {
+                locksIn: @Html.Raw(SharedJs("SharedBarLocksIn")),
+                idleWarning: @Html.Raw(SharedJs("SharedIdleWarning")),
+                shiftEndsSoon: @Html.Raw(SharedJs("SharedShiftEndsSoon"))
+            }
+        });
+    </script>
+}

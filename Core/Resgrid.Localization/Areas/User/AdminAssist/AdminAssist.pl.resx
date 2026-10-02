@@ -5190,6 +5190,27 @@
   <data xml:space="preserve" name="TableField.DepartmentNotification.UsersToNotify">
     <value>Powiadomienie oddziału / Użytkownicy do powiadomienia</value>
   </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AcceptRecentLoginMfaForAdp">
+    <value>Zasady zabezpieczeń oddziału / Akceptuj niedawne MFA logowania dla ADP</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AcceptRecentUnlockMfaForAdp">
+    <value>Zasady zabezpieczeń oddziału / Akceptuj niedawne MFA odblokowania dla ADP</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowFederatedMfaForAdp">
+    <value>Zasady zabezpieczeń oddziału / Zezwalaj na federacyjne MFA dla ADP</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowFederatedMfaForLoginMfa">
+    <value>Zasady zabezpieczeń oddziału / Zezwalaj na federacyjne MFA dla MFA logowania</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowPasskeysForAdp">
+    <value>Zasady zabezpieczeń oddziału / Zezwalaj na klucze dostępu dla ADP</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowPasskeysForLoginMfa">
+    <value>Zasady zabezpieczeń oddziału / Zezwalaj na klucze dostępu dla MFA logowania</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowResponderApproval">
+    <value>Zasady zabezpieczeń oddziału / Zezwalaj na zatwierdzanie w aplikacji Responder</value>
+  </data>
   <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowedIpRanges">
     <value>Zasady zabezpieczeń oddziału / Dozwolone zakresy adresów IP</value>
   </data>
@@ -5216,6 +5237,15 @@
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.SessionTimeoutMinutes">
     <value>Zasady zabezpieczeń oddziału / Limit czasu sesji (w minutach)</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.SharedIdleLockMinutes">
+    <value>Zasady zabezpieczeń oddziału / Minuty bezczynności przed zablokowaniem sesji współdzielonej</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.SharedModeRequiredApps">
+    <value>Zasady zabezpieczeń oddziału / Aplikacje z wymuszonym trybem współdzielonym</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.SharedShiftHours">
+    <value>Zasady zabezpieczeń oddziału / Długość zmiany sesji współdzielonej (w godzinach)</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.AllowLocalLogin">
     <value>Konfiguracja SSO oddziału / Zezwalaj na logowanie lokalne</value>
@@ -5252,6 +5282,12 @@
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.EntityId">
     <value>Konfiguracja SSO oddziału / Identyfikator jednostki (Entity ID)</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSsoConfig.FederatedMfaMappingJson">
+    <value>Konfiguracja SSO oddziału / Mapowanie federacyjnego MFA (JSON)</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSsoConfig.IdpSsoUrl">
+    <value>Konfiguracja SSO oddziału / Adres URL SSO dostawcy tożsamości</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.IsEnabled">
     <value>Konfiguracja SSO oddziału / Włączone</value>
@@ -5427,6 +5463,27 @@
   <data xml:space="preserve" name="TableHelp.DepartmentNotification.UsersToNotify">
     <value>Jawnie wskazani odbiorcy spośród członków. Członkostwo i kwalifikowalność kanału są oceniane osobno w chwili wysyłki.</value>
   </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AcceptRecentLoginMfaForAdp">
+    <value>Pozwala, aby MFA ukończone przy logowaniu w tej samej sesji otwierało dane chronione w oknie wzmocnionej weryfikacji, dla metod dozwolonych przez ustawienia danych chronionych. Zmiana kończy bieżący dostęp do danych chronionych. Tylko członek zarządzający.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AcceptRecentUnlockMfaForAdp">
+    <value>Pozwala, aby świeża weryfikacja odblokowania operatora na urządzeniu współdzielonym otwierała dane chronione. Zmiana kończy bieżący dostęp do danych chronionych. Tylko członek zarządzający.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowFederatedMfaForAdp">
+    <value>Akceptuje MFA dostawcy tożsamości dla danych chronionych. Wymaga przetestowanego mapowania MFA; zmiana kończy bieżący dostęp do danych chronionych. Tylko członek zarządzający.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowFederatedMfaForLoginMfa">
+    <value>Akceptuje MFA dostawcy tożsamości przy logowaniu i wzmocnionej weryfikacji. Wymaga przetestowanego mapowania MFA w konfiguracji SSO; bez niego oświadczenia dostawcy nigdy się nie liczą. Tylko członek zarządzający.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowPasskeysForAdp">
+    <value>Akceptuje klucz dostępu przy dostępie do danych chronionych, zarządzaniu ADP i zatwierdzaniu chronionych przepływów pracy. Kody z aplikacji uwierzytelniającej są zawsze akceptowane. Zmiana kończy bieżący dostęp do danych chronionych, więc członkowie weryfikują się ponownie. Tylko członek zarządzający.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowPasskeysForLoginMfa">
+    <value>Akceptuje klucz dostępu zarejestrowany w aplikacji zgłaszającej żądanie jako MFA przy logowaniu, zmianie oddziału i wzmocnionej weryfikacji. Kody z aplikacji uwierzytelniającej są zawsze akceptowane. Zmiana podnosi wersję zasad MFA; sesje, których jedyny drugi składnik nie jest już dozwolony, weryfikują się ponownie. Tylko członek zarządzający.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowResponderApproval">
+    <value>Akceptuje zatwierdzenie kluczem dostępu w aplikacji Responder członka tam, gdzie odpowiednie ustawienie klucza dostępu jest włączone; nigdy przy zmianach zabezpieczeń ani metodach logowania konta. Zmiana kończy też bieżący dostęp do danych chronionych. Tylko członek zarządzający.</value>
+  </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowedIpRanges">
     <value>Dozwolone zakresy sieciowe do logowania. Puste pole oznacza brak ograniczenia zakresu. Przed zawężeniem sprawdź sieci uprawnionych ratowników oraz dostęp do odzyskiwania.</value>
   </data>
@@ -5453,6 +5510,15 @@
   </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.SessionTimeoutMinutes">
     <value>Limit czasu bezczynności w minutach — zero oznacza zachowanie zgodne z ustawieniami hosta. Zweryfikuj sesje zarządzane przez zasady oraz każdą obsługiwaną aplikację kliencką, zamiast zakładać natychmiastowe globalne wylogowanie.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.SharedIdleLockMinutes">
+    <value>Liczba minut bez aktywności operatora, po których sesja współdzielonego tabletu w pojeździe lub stanowiska pracy zostaje zablokowana, od 1 do 15. Aktualizacje w tle i przychodzące alerty nie są aktywnością. Bardziej restrykcyjna wartość obejmuje trwające sesje przy ich następnym żądaniu. Tylko członek zarządzający.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.SharedModeRequiredApps">
+    <value>Sesje Unit, IC i Dispatch, które ten oddział zawsze prowadzi jako sesje współdzielone, niezależnie od ustawienia instalacji; liczą się też logowania, które nie podają swojej aplikacji. Wymaga wersji aplikacji obsługujących tryb współdzielony. Tylko członek zarządzający.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.SharedShiftHours">
+    <value>Liczba godzin od zalogowania, po których sesja współdzielona kończy się niezależnie od aktywności, od 1 do 24. Krótsza wartość wcześniej kończy trwające sesje; dłuższa nigdy ich nie wydłuża. Tylko członek zarządzający.</value>
   </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.AllowLocalLogin">
     <value>Zezwala na ścieżkę logowania hasłem lokalnym obok tego dostawcy tam, gdzie pozwalają na to zasady. Sprawdź razem wymóg SSO obowiązujący w całym oddziale oraz plan odzyskiwania dostępu.</value>
@@ -5489,6 +5555,12 @@
   </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.EntityId">
     <value>Identyfikator dostawcy usługi SAML zarejestrowany u dostawcy tożsamości. Musi być zgodny ze skonfigurowaną integracją.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.FederatedMfaMappingJson">
+    <value>Które wyniki logowania u dostawcy są uznawane za MFA przy dodatkowej weryfikacji przez dostawcę. Zmiana mapowania, wystawcy lub klienta wymaga nowego udanego testu, zanim MFA dostawcy zostanie ponownie zaakceptowane.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.IdpSsoUrl">
+    <value>Adres logowania dostawcy SAML, do którego logowanie rozpoczęte w Resgrid wysyła żądanie. Sprawdź go z metadanymi dostawcy, zanim zaczniesz na nim polegać.</value>
   </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.IsEnabled">
     <value>Udostępnia tę konfigurację dostawcy obsługiwanemu procesowi SSO. Zapisana flaga włączenia nie jest dowodem powodzenia testu logowania.</value>

@@ -43,7 +43,7 @@
 		</form>
 		@if (!Model.IsNew)
 		{
-			<form method="post" asp-controller="RecordCrr" asp-action="Delete" asp-route-area="User" onsubmit="return confirm('@L["DeleteCrrConfirm"]');">
+			<form method="post" asp-controller="RecordCrr" asp-action="Delete" asp-route-area="User" onsubmit="return confirm('@JsEncoder.Encode(L["DeleteCrrConfirm"])');">
 				@Html.AntiForgeryToken()<input type="hidden" name="id" value="@Model.Activity.RmsCrrActivityId" />
 				<button class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> @L["DeleteCrr"]</button>
 			</form>

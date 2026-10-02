@@ -383,8 +383,8 @@
                         '<td>' + esc(h.LocationDescription) + (h.GpsCoordinates ? '<br/><small>' + esc(h.GpsCoordinates) + '</small>' : '') + '</td>' +
                         '<td>' + (h.ShouldAlert ? '<i class="fa fa-bell text-danger"></i>' : '') + '</td>' +
                         '<td class="text-right">' +
-                        '<button type="button" class="btn btn-xs btn-warning edit-hazard" data-id="' + esc(h.ContactPreplanHazardId) + '">@commonLocalizer["Edit"]</button> ' +
-                        '<button type="button" class="btn btn-xs btn-danger delete-hazard" data-id="' + esc(h.ContactPreplanHazardId) + '">@commonLocalizer["Delete"]</button>' +
+                        '<button type="button" class="btn btn-xs btn-warning edit-hazard" data-id="' + esc(h.ContactPreplanHazardId) + '">' + esc('@JsEncoder.Encode(commonLocalizer["Edit"])') + '</button> ' +
+                        '<button type="button" class="btn btn-xs btn-danger delete-hazard" data-id="' + esc(h.ContactPreplanHazardId) + '">' + esc('@JsEncoder.Encode(commonLocalizer["Delete"])') + '</button>' +
                         '</td></tr>';
                     $body.append(row);
                 });
@@ -406,7 +406,7 @@
                 $('#hazardLocation').val(h ? h.LocationDescription : '');
                 $('#hazardGps').val(h ? h.GpsCoordinates : '');
                 $('#hazardShouldAlert').prop('checked', h ? h.ShouldAlert : false);
-                $('#hazardModalLabel').text(h ? '@localizer["EditHazard"]' : '@localizer["AddHazard"]');
+                $('#hazardModalLabel').text(h ? '@JsEncoder.Encode(localizer["EditHazard"])' : '@JsEncoder.Encode(localizer["AddHazard"])');
                 $('#hazardModal').modal('show');
             }
 
@@ -419,20 +419,20 @@
             });
 
             $('#hazardsBody').on('click', '.delete-hazard', function () {
-                if (!confirm('@localizer["DeleteHazardConfirm"]')) return;
+                if (!confirm('@JsEncoder.Encode(localizer["DeleteHazardConfirm"])')) return;
                 $.ajax({
                     url: resgrid.absoluteBaseUrl + '/User/Contacts/DeleteHazard',
                     type: 'POST',
                     data: { contactPreplanHazardId: $(this).data('id'), __RequestVerificationToken: token },
                     success: function () { loadHazards(); },
-                    error: function () { toastr.error('@localizer["HazardSaveError"]'); }
+                    error: function () { toastr.error('@JsEncoder.Encode(localizer["HazardSaveError"])'); }
                 });
             });
 
             $('#saveHazardBtn').on('click', function () {
                 var title = $('#hazardTitle').val().trim();
                 if (!title) {
-                    toastr.error('@localizer["HazardTitleRequired"]');
+                    toastr.error('@JsEncoder.Encode(localizer["HazardTitleRequired"])');
                     return;
                 }
                 var payload = {
@@ -456,10 +456,10 @@
                             $('#hazardModal').modal('hide');
                             loadHazards();
                         } else {
-                            toastr.error((response && response.error) || '@localizer["HazardSaveError"]');
+                            toastr.error((response && response.error) || '@JsEncoder.Encode(localizer["HazardSaveError"])');
                         }
                     },
-                    error: function () { toastr.error('@localizer["HazardSaveError"]'); }
+                    error: function () { toastr.error('@JsEncoder.Encode(localizer["HazardSaveError"])'); }
                 });
             });
 

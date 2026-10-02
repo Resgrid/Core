@@ -464,6 +464,11 @@ namespace Resgrid.Repositories.DataRepository
 							await db.ExecuteAsync(@"DELETE FROM public.pushuris WHERE userid = @userId", new { userId = userId }, transaction);
 							await db.ExecuteAsync(@"DELETE FROM public.chatbotuseridentities WHERE userid = @userId", new { userId = userId }, transaction);
 							await db.ExecuteAsync(@"DELETE FROM public.chatbotlinkingcodes WHERE userid = @userId", new { userId = userId }, transaction);
+							// The authenticator key (current and staged), recovery codes and their state: no factor outlives the account.
+							await db.ExecuteAsync(@"DELETE FROM public.aspnetusertokens WHERE userid = @userId", new { userId = userId }, transaction);
+							await db.ExecuteAsync(@"DELETE FROM public.userrecoverycodes WHERE userid = @userId", new { userId = userId }, transaction);
+							await db.ExecuteAsync(@"DELETE FROM public.usertotpstates WHERE userid = @userId", new { userId = userId }, transaction);
+							await db.ExecuteAsync(@"DELETE FROM public.usermfapreferences WHERE userid = @userId", new { userId = userId }, transaction);
 
 							transaction.Commit();
 						}
@@ -512,6 +517,11 @@ namespace Resgrid.Repositories.DataRepository
 							await db.ExecuteAsync(@"DELETE FROM PushUris WHERE UserId = @userId", new { userId = userId }, transaction);
 							await db.ExecuteAsync(@"DELETE FROM ChatbotUserIdentities WHERE UserId = @userId", new { userId = userId }, transaction);
 							await db.ExecuteAsync(@"DELETE FROM ChatbotLinkingCodes WHERE UserId = @userId", new { userId = userId }, transaction);
+							// The authenticator key (current and staged), recovery codes and their state: no factor outlives the account.
+							await db.ExecuteAsync(@"DELETE FROM AspNetUserTokens WHERE UserId = @userId", new { userId = userId }, transaction);
+							await db.ExecuteAsync(@"DELETE FROM UserRecoveryCodes WHERE UserId = @userId", new { userId = userId }, transaction);
+							await db.ExecuteAsync(@"DELETE FROM UserTotpStates WHERE UserId = @userId", new { userId = userId }, transaction);
+							await db.ExecuteAsync(@"DELETE FROM UserMfaPreferences WHERE UserId = @userId", new { userId = userId }, transaction);
 
 							transaction.Commit();
 						}

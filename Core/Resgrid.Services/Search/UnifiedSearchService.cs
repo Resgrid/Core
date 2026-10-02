@@ -1,10 +1,12 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Resgrid.Config;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Invoicing;
@@ -25,12 +27,29 @@ namespace Resgrid.Services.Search
 	{
 		private const int CandidateWindow = 200;
 
+		/// <summary>How long this process trusts that a department's state row exists and is Ready before reading it again.</summary>
+		private static readonly TimeSpan ReadyMemo = TimeSpan.FromMinutes(5);
+
+		/// <summary>
+		/// Departments seen with a Ready state row at a generation, and when. Typeahead sends a query per keystroke; without the
+		/// memo every one would read the state row. Only Ready is remembered, so a department still building is re-read until
+		/// it is done, and a new generation (schema bump, protection change) is never answered from the memo.
+		/// </summary>
+		private static readonly ConcurrentDictionary<int, (DateTime Seen, string Generation)> ReadyDepartments = new ConcurrentDictionary<int, (DateTime Seen, string Generation)>();
+
 		private readonly IGlobalSearchService _global;
 		private readonly Lazy<IInvoicingService> _invoicing;
 		private readonly Lazy<IBidsService> _bids;
 		private readonly Lazy<IServiceContractService> _contracts;
 		private readonly Lazy<IDeploymentService> _deploymentsService;
 		private readonly Lazy<ICertificationService> _certifications;
+		private readonly Lazy<ITrainingService> _trainings;
+		private readonly Lazy<ICalendarService> _calendar;
+		private readonly Lazy<IWorkLogsService> _logs;
+		private readonly Lazy<IMappingService> _mapping;
+		private readonly Lazy<IShiftsService> _shifts;
+		private readonly Lazy<Records.RecordsPreventionGate> _preventionGate;
+		private readonly IRmsOccupanciesRepository _occupancies;
 		private readonly ISystemActionsService _actions;
 		private readonly IFeatureToggleService _featureToggles;
 		private readonly IAuthorizationService _authorization;
@@ -49,8 +68,18 @@ namespace Resgrid.Services.Search
 			IDepartmentDataProtectionService dataProtection, IDepartmentSettingsService departmentSettings,
 			ISearchProjectionsRepository projections,
 			Lazy<IInvoicingService> invoicing = null, Lazy<IBidsService> bids = null, Lazy<IServiceContractService> contracts = null,
-			Lazy<IDeploymentService> deployments = null, Lazy<ICertificationService> certifications = null)
+			Lazy<IDeploymentService> deployments = null, Lazy<ICertificationService> certifications = null,
+			Lazy<ITrainingService> trainings = null, Lazy<ICalendarService> calendar = null, Lazy<IWorkLogsService> logs = null,
+			Lazy<IMappingService> mapping = null, Lazy<IShiftsService> shifts = null,
+			Lazy<Records.RecordsPreventionGate> preventionGate = null, IRmsOccupanciesRepository occupancies = null)
 		{
+			_preventionGate = preventionGate;
+			_occupancies = occupancies;
+			_trainings = trainings;
+			_calendar = calendar;
+			_logs = logs;
+			_mapping = mapping;
+			_shifts = shifts;
 			_invoicing = invoicing;
 			_bids = bids;
 			_contracts = contracts;
@@ -131,22 +160,32 @@ namespace Resgrid.Services.Search
 				return Finish(result, watch);
 			}
 
-			var types = AllowedTypes(request.EntityTypes, principal);
+			var types = await WithoutClosedModulesAsync(AllowedTypes(request.EntityTypes, principal), access);
+			var window = request.MaxCandidates > CandidateWindow
+				? Math.Min(request.MaxCandidates, Math.Max(CandidateWindow, SearchConfig.MaxPageWindow))
+				: CandidateWindow;
 			var skip = Math.Max(0, request.Skip);
-			var take = Math.Max(1, Math.Min(100, request.Take));
-			var needed = Math.Min(skip, CandidateWindow) + take;
+			// A page is at most 100 hits; an export (MaxCandidates past the default window) may take the whole window at once.
+			var take = Math.Max(1, Math.Min(request.MaxCandidates > CandidateWindow ? window : 100, request.Take));
+			var needed = Math.Min(skip, window) + take;
+			var sort = SearchSortOrders.Normalize(request.Sort);
+			var snippetTerms = request.Prefix ? null : SearchSnippets.Terms(text);
 			var dropped = 0;
 			var authorized = new List<UnifiedSearchHit>();
 			var windowCoveredAll = true;
+			var stoppedEarly = false;
 
 			if (types.Count > 0)
 			{
+				// Activation runs on every search, not only while the index is missing: once any department had built the
+				// shared index, a department that had never searched before never got a state row and was never indexed.
+				result.IndexBuilding = !await EnsureStateAsync(principal.DepartmentId, access.GlobalGeneration, cancellationToken);
+
 				if (!_global.IsAvailable)
 				{
 					windowCoveredAll = false;
 					result.Degraded = true;
 					result.DegradedReason = "The search index is not available yet.";
-					await EnsureStateAsync(principal.DepartmentId, cancellationToken);
 				}
 				else
 				{
@@ -162,8 +201,12 @@ namespace Resgrid.Services.Search
 							ViewerScopedEntityTypes = ViewerScopedTypes(principal),
 							IncludeAdminOnly = principal.IsDepartmentAdmin,
 							Prefix = request.Prefix,
+							FromUtc = request.FromUtc,
+							ToUtc = request.ToUtc,
+							Sort = sort,
+							MaxWindow = window,
 							Skip = 0,
-							Take = CandidateWindow
+							Take = window
 						}, cancellationToken);
 					}
 					catch (Exception ex)
@@ -177,7 +220,6 @@ namespace Resgrid.Services.Search
 						windowCoveredAll = false;
 						result.Degraded = true;
 						result.DegradedReason = "The search index is not available yet.";
-						await EnsureStateAsync(principal.DepartmentId, cancellationToken);
 					}
 					else
 					{
@@ -189,13 +231,17 @@ namespace Resgrid.Services.Search
 						foreach (var hit in indexResult.Hits)
 						{
 							cancellationToken.ThrowIfCancellationRequested();
-							// An incomplete window can never yield an authorized total; stop once the page is filled.
-							if (!windowCoveredAll && authorized.Count >= needed)
+							// An incomplete window can never yield an authorized total, and a caller that shows none (the command
+							// palette) does not need one: stop once the page is filled instead of authorizing every candidate.
+							if ((!windowCoveredAll || !request.CountTotal) && authorized.Count >= needed)
+							{
+								stoppedEarly = true;
 								break;
+							}
 							if (hit != null && types.Contains(hit.EntityType) &&
 								projections.TryGetValue(hit.ProjectionId ?? string.Empty, out var projection) &&
 								ProjectionIsCurrent(hit, projection, access) && await AuthorizeAsync(hit, access))
-								authorized.Add(Map(projection, hit.Score));
+								authorized.Add(Map(projection, hit.Score, snippetTerms));
 							else
 								dropped++;
 						}
@@ -211,7 +257,16 @@ namespace Resgrid.Services.Search
 			{
 				try
 				{
-					(recordHits, recordsTotal) = await FederateRecordsAsync(text, access, Math.Min(Math.Min(skip, CandidateWindow) + take, CandidateWindow), cancellationToken);
+					(recordHits, recordsTotal) = await FederateRecordsAsync(text, access, Math.Min(Math.Min(skip, window) + take, window), cancellationToken);
+					if (request.FromUtc.HasValue || request.ToUtc.HasValue)
+					{
+						// Records carry no date filter of their own; the range applies to the authorized hits, so the total
+						// stays a count of hits the caller may open.
+						var inRange = recordHits.Where(h => InRange(h.OccurredOn, request.FromUtc, request.ToUtc)).ToList();
+						if (recordsTotal.HasValue)
+							recordsTotal = inRange.Count;
+						recordHits = inRange;
+					}
 				}
 				catch (Exception ex)
 				{
@@ -221,13 +276,18 @@ namespace Resgrid.Services.Search
 			}
 
 			// One sequence, index hits then the records federation, paged as a whole: special-casing the first page
-			// dropped the Records family from every later page.
-			result.Hits = authorized.Concat(recordHits).Skip(skip).Take(take).ToList();
+			// dropped the Records family from every later page. A date ordering spans both families.
+			var combined = authorized.Concat(recordHits);
+			if (sort == SearchSortOrders.Newest)
+				combined = combined.OrderByDescending(h => h.OccurredOn ?? DateTime.MinValue);
+			else if (sort == SearchSortOrders.Oldest)
+				combined = combined.OrderBy(h => h.OccurredOn ?? DateTime.MaxValue);
+			result.Hits = combined.Skip(skip).Take(take).ToList();
 			// A raw index truncation flag also discloses unauthorized matches. Only expose authorized metadata.
 			result.Truncated = false;
 
 			// Totals only when they can be proven from authorized results (plan 2026-08-15 correction).
-			if (dropped == 0 && windowCoveredAll && recordsTotal.HasValue)
+			if (dropped == 0 && windowCoveredAll && !stoppedEarly && recordsTotal.HasValue)
 				result.Total = authorized.Count + recordsTotal.Value;
 			else
 				result.Total = null;
@@ -235,10 +295,53 @@ namespace Resgrid.Services.Search
 			return Finish(result, watch);
 		}
 
+		public async Task<List<string>> GetSearchableEntityTypesAsync(SearchPrincipal principal, CancellationToken cancellationToken = default)
+		{
+			var types = new List<string>();
+			if (principal == null || principal.DepartmentId <= 0 || string.IsNullOrWhiteSpace(principal.UserId))
+				return types;
+			if (!await FlagOnAsync(principal.DepartmentId))
+				return types;
+
+			var access = await LoadAccessAsync(principal);
+			if (access == null)
+				return types;
+
+			types.AddRange(await WithoutClosedModulesAsync(AllowedTypes(null, access.Principal), access));
+			try
+			{
+				if (await RecordsSearchableAsync(access.Principal))
+					types.Add(SearchEntityTypes.Record);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, "Records search availability could not be determined.");
+			}
+
+			return types;
+		}
+
 		private static UnifiedSearchResult Finish(UnifiedSearchResult result, Stopwatch watch)
 		{
 			result.QueryTimeMs = (int)watch.ElapsedMilliseconds;
 			return result;
+		}
+
+		/// <summary>Drops the families whose module is closed for the department in ways the claim set does not show (the Records occupancy module).</summary>
+		private async Task<List<string>> WithoutClosedModulesAsync(List<string> types, SearchAccess access)
+		{
+			if (types.Contains(SearchEntityTypes.Occupancy) && !await OccupancyModuleOpenAsync(access))
+				types.Remove(SearchEntityTypes.Occupancy);
+			return types;
+		}
+
+		private static bool InRange(DateTime? value, DateTime? fromUtc, DateTime? toUtc)
+		{
+			if (!fromUtc.HasValue && !toUtc.HasValue)
+				return true;
+			if (!value.HasValue)
+				return false;
+			return (!fromUtc.HasValue || value.Value >= fromUtc.Value) && (!toUtc.HasValue || value.Value <= toUtc.Value);
 		}
 
 		private static bool WantsType(List<string> requested, string type)
@@ -278,6 +381,19 @@ namespace Resgrid.Services.Search
 			if (WantsType(requested, SearchEntityTypes.Deployment))
 				allowed.Add(SearchEntityTypes.Deployment);
 			Add(SearchEntityTypes.CertificationType, "Certifications");
+			// Operations reference families (plan R3 Tier 2): the claim and module switch of each family's own page. POIs have
+			// no claim of their own: the mapping pages admit every member.
+			Add(SearchEntityTypes.Log, "Log", SystemActionModules.Logs);
+			Add(SearchEntityTypes.Protocol, "Protocols");
+			Add(SearchEntityTypes.Training, "Training", SystemActionModules.Training);
+			Add(SearchEntityTypes.CalendarEvent, "Schedule", SystemActionModules.Calendar);
+			Add(SearchEntityTypes.Shift, "Shift", SystemActionModules.Shifts);
+			Add(SearchEntityTypes.Group, "GenericGroup");
+			// Occupancies sit behind Record_View like their pages; the Records cutover and the module flag are checked by
+			// WithoutClosedModulesAsync, which is asynchronous.
+			Add(SearchEntityTypes.Occupancy, "Record");
+			if (WantsType(requested, SearchEntityTypes.Poi) && principal.ModuleEnabled(SystemActionModules.Mapping))
+				allowed.Add(SearchEntityTypes.Poi);
 			return allowed;
 		}
 
@@ -292,7 +408,7 @@ namespace Resgrid.Services.Search
 				? null
 				: new List<string> { SearchEntityTypes.Deployment };
 
-		private static UnifiedSearchHit Map(SearchProjection hit, float score)
+		private static UnifiedSearchHit Map(SearchProjection hit, float score, IReadOnlyList<string> snippetTerms = null)
 		{
 			IDictionary<string, string> metadata = new Dictionary<string, string>();
 			if (!string.IsNullOrWhiteSpace(hit.MetadataJson))
@@ -312,6 +428,8 @@ namespace Resgrid.Services.Search
 				OccurredOn = hit.OccurredOn,
 				Category = hit.Category,
 				Status = hit.Status,
+				Snippet = snippetTerms == null || snippetTerms.Count == 0 ? null
+					: SearchSnippets.Build(hit.SearchText, snippetTerms) ?? SearchSnippets.Build(hit.Summary, snippetTerms),
 				Metadata = metadata
 			};
 		}
@@ -320,15 +438,7 @@ namespace Resgrid.Services.Search
 		{
 			var principal = access.Principal;
 			var hits = new List<UnifiedSearchHit>();
-			if (!principal.IsDepartmentAdmin && !principal.HasResourceClaim("Record", "View"))
-				return (hits, 0);
-			if (_recordsSearch == null || !_recordsSearch.IsAvailable)
-				return (hits, 0);
-
-			var module = await _recordsCutover.GetModuleStateAsync(principal.DepartmentId);
-			if (module == null || !module.FlagEnabled || !module.Activated)
-				return (hits, 0);
-			if (!await _recordsAuthorization.IsActiveMemberAsync(principal.UserId, principal.DepartmentId))
+			if (!await RecordsSearchableAsync(principal))
 				return (hits, 0);
 
 			List<int> visibleGroups = null;
@@ -393,13 +503,44 @@ namespace Resgrid.Services.Search
 			return (hits, dropped == 0 && !search.Truncated && search.Hits.Count == search.Total ? hits.Count : (int?)null);
 		}
 
-		private async Task EnsureStateAsync(int departmentId, CancellationToken cancellationToken)
+		/// <summary>The caller may search Records: the view claim (or admin), an activated Records module, current membership and a live records index.</summary>
+		private async Task<bool> RecordsSearchableAsync(SearchPrincipal principal)
 		{
+			if (!principal.IsDepartmentAdmin && !principal.HasResourceClaim("Record", "View"))
+				return false;
+			if (_recordsSearch == null || !_recordsSearch.IsAvailable)
+				return false;
+
+			var module = await _recordsCutover.GetModuleStateAsync(principal.DepartmentId);
+			if (module == null || !module.FlagEnabled || !module.Activated)
+				return false;
+			return await _recordsAuthorization.IsActiveMemberAsync(principal.UserId, principal.DepartmentId);
+		}
+
+		/// <summary>
+		/// Makes sure worker 70 sweeps the department: creates its state row on first use (lazy activation). Returns true when
+		/// the department's index is built (Ready) at the current generation; false while it is queued, rebuilding, failed,
+		/// just created, or still built at an older generation (the query filters on the current one, so it finds nothing yet).
+		/// </summary>
+		private async Task<bool> EnsureStateAsync(int departmentId, string generation, CancellationToken cancellationToken)
+		{
+			if (ReadyDepartments.TryGetValue(departmentId, out var seen) && DateTime.UtcNow - seen.Seen < ReadyMemo &&
+				string.Equals(seen.Generation, generation, StringComparison.Ordinal))
+				return true;
+
 			try
 			{
 				var existing = await _states.GetAsync(SearchIndexNames.Global, departmentId);
 				if (existing != null)
-					return;
+				{
+					var ready = existing.State == (int)SearchIndexBuildState.Ready && !existing.RebuildRequestedOn.HasValue &&
+						(string.IsNullOrEmpty(existing.Generation) || string.Equals(existing.Generation, generation, StringComparison.Ordinal));
+					if (ready)
+						ReadyDepartments[departmentId] = (DateTime.UtcNow, generation);
+					else
+						ReadyDepartments.TryRemove(departmentId, out _);
+					return ready;
+				}
 				var now = DateTime.UtcNow;
 				// A department's first searches arrive together (typeahead sends one per keystroke) and all see no row
 				// above, so the create has to be conditional or every request but one fails on the unique index.
@@ -414,12 +555,17 @@ namespace Resgrid.Services.Search
 					CreatedOn = now,
 					ModifiedOn = now
 				}, cancellationToken);
+				return false;
 			}
 			catch (Exception ex)
 			{
 				Logging.LogException(ex, $"Could not create the search index state row for department {departmentId}.");
+				return false;
 			}
 		}
+
+		/// <summary>Test seam: forget every department this process has seen Ready.</summary>
+		public static void ResetReadyMemo() => ReadyDepartments.Clear();
 
 		private async Task<bool> FlagOnAsync(int departmentId)
 		{

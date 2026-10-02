@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,6 +22,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 	// an empty UserId and blows up in the Identity store instead of being sent to the sign-in page.
 	[Area("User")]
 	[Authorize]
+	// Authentication and session flows stay available during a department operation lock (ADP plan section 20.2): signing in
+	// and out, locking and unlocking a shared session, and verifying a second factor touch no department data.
+	[Resgrid.Web.Filters.AllowDuringDepartmentLock]
 	public class AccountSecurityController : SecureBaseController
 	{
 		private readonly IUserSessionService _userSessionService;
@@ -29,17 +33,103 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IDepartmentSsoService _departmentSsoService;
 		private readonly IExternalIdentityLinkService _externalIdentityLinkService;
 		private readonly IDepartmentsService _departmentsService;
+		private readonly SignInManager<IdentityUser> _signInManager;
+		private readonly IMfaEvidenceService _mfaEvidenceService;
+		private readonly ISsoBrokerService _ssoBroker;
+		private readonly ISsoReturnTargetRegistry _ssoReturnTargets;
 
 		public AccountSecurityController(IUserSessionService userSessionService, ISystemAuditsService systemAuditsService,
 			UserManager<IdentityUser> userManager, IDepartmentSsoService departmentSsoService,
-			IExternalIdentityLinkService externalIdentityLinkService, IDepartmentsService departmentsService)
+			IExternalIdentityLinkService externalIdentityLinkService, IDepartmentsService departmentsService,
+			SignInManager<IdentityUser> signInManager, IMfaEvidenceService mfaEvidenceService, ISsoBrokerService ssoBroker,
+			ISsoReturnTargetRegistry ssoReturnTargets)
 		{
+			_ssoBroker = ssoBroker;
+			_ssoReturnTargets = ssoReturnTargets;
 			_userSessionService = userSessionService;
 			_systemAuditsService = systemAuditsService;
 			_userManager = userManager;
 			_departmentSsoService = departmentSsoService;
 			_externalIdentityLinkService = externalIdentityLinkService;
 			_departmentsService = departmentsService;
+			_signInManager = signInManager;
+			_mfaEvidenceService = mfaEvidenceService;
+		}
+
+		// ── Reauthenticate (passkey plan section 6.2) ─────────────────────────────────
+
+		/// <summary>Whether this department's provider can confirm the account instead of a password (plan section 7.7.2 item 9).</summary>
+		private async Task<bool> SsoReauthenticationAvailableAsync(CancellationToken cancellationToken)
+		{
+			if (!WebSsoRoundTrip.IsAvailable(_ssoBroker, _ssoReturnTargets) || HttpProtectedGrantContext.SessionOf(HttpContext) == null)
+				return false;
+
+			var configs = await _departmentSsoService.GetSsoConfigsForDepartmentAsync(DepartmentId, cancellationToken);
+			return configs?.Any(c => c.IsEnabled && _ssoBroker.SupportsBrokered(c)) == true;
+		}
+		// Confirms the password of the account ALREADY signed in to this session and records fresh first-factor evidence
+		// for it. It cannot switch accounts, does not extend the session, and a refresh or remembered browser never counts.
+
+		[HttpGet]
+		public async Task<IActionResult> Reauthenticate(string returnUrl, CancellationToken cancellationToken)
+		{
+			var user = await _userManager.FindByIdAsync(UserId);
+			if (user == null)
+				return NotFound();
+
+			return View(new ReauthenticateView
+			{
+				ReturnUrl = SafeReturnUrl(returnUrl),
+				PasswordNotAllowed = !await IsPasswordReauthenticationAllowedAsync(user, cancellationToken),
+				SsoAvailable = await SsoReauthenticationAvailableAsync(cancellationToken)
+			});
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Reauthenticate(ReauthenticateView model, CancellationToken cancellationToken)
+		{
+			var user = await _userManager.FindByIdAsync(UserId);
+			if (user == null)
+				return NotFound();
+
+			model.ReturnUrl = SafeReturnUrl(model.ReturnUrl);
+			model.PasswordNotAllowed = !await IsPasswordReauthenticationAllowedAsync(user, cancellationToken);
+			model.SsoAvailable = await SsoReauthenticationAvailableAsync(cancellationToken);
+			if (model.PasswordNotAllowed)
+			{
+				ModelState.AddModelError(string.Empty, "This account signs in through your organization. Sign out and sign in again with single sign-on to continue.");
+				return View(model);
+			}
+
+			if (!ModelState.IsValid)
+				return View(model);
+
+			// Same lockout accounting as sign-in, so this is not an unthrottled password oracle.
+			var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, lockoutOnFailure: true);
+			await AuditReauthenticationAsync(result.Succeeded, result.IsLockedOut ? "locked-out" : null, cancellationToken);
+
+			if (result.IsLockedOut)
+			{
+				ModelState.AddModelError(string.Empty, "Too many incorrect attempts. Your account is temporarily locked; try again later.");
+				return View(model);
+			}
+
+			if (!result.Succeeded)
+			{
+				ModelState.AddModelError(nameof(model.Password), "That password is not correct.");
+				return View(model);
+			}
+
+			var sessionKey = MfaEvidenceSession.KeyFor(User, HttpContext);
+			if (sessionKey != null)
+			{
+				await _mfaEvidenceService.RecordAsync(user.Id, sessionKey, UserSessionClientApplication.Web, MfaEvidenceKind.FirstFactor,
+					MfaEvidenceMethod.Password, MfaEvidencePurpose.Reauthentication, DateTime.UtcNow, user.AuthenticationGeneration,
+					cancellationToken: cancellationToken);
+			}
+
+			return Redirect(model.ReturnUrl);
 		}
 
 		[HttpGet]
@@ -227,6 +317,44 @@ namespace Resgrid.Web.Areas.User.Controllers
 			string.IsNullOrWhiteSpace(sessionId) || sessionId.Length <= 8
 				? sessionId
 				: sessionId.Substring(sessionId.Length - 8);
+
+		// Mirrors AccountController.IsPasswordLoginAllowedAsync: if a password could not sign this account in, it cannot
+		// reauthenticate it either.
+		private async Task<bool> IsPasswordReauthenticationAllowedAsync(IdentityUser user, CancellationToken cancellationToken)
+		{
+			if (!await _externalIdentityLinkService.IsLocalLoginAllowedAsync(user.Id, cancellationToken))
+				return false;
+
+			var department = await _departmentsService.GetDepartmentForUserAsync(user.UserName);
+			if (department == null)
+				return true;
+
+			if (!await _externalIdentityLinkService.IsLocalLoginAllowedAsync(user.Id, department.DepartmentId, cancellationToken))
+				return false;
+
+			var requiresSso = await _departmentSsoService.IsRequireSsoPolicyActiveAsync(department.DepartmentId, cancellationToken);
+			return !requiresSso || !await _departmentSsoService.IsSsoEnabledForDepartmentAsync(department.DepartmentId, cancellationToken);
+		}
+
+		private string SafeReturnUrl(string returnUrl)
+			=> !string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl) ? returnUrl : Url.Action("Index", "TwoFactor", new { area = "User" });
+
+		private Task AuditReauthenticationAsync(bool successful, string detail, CancellationToken cancellationToken)
+		{
+			return _systemAuditsService.SaveSystemAuditAsync(new SystemAudit
+			{
+				System = (int)SystemAuditSystems.Website,
+				Type = (int)SystemAuditTypes.AccountReauthenticated,
+				UserId = UserId,
+				TargetUserId = UserId,
+				Successful = successful,
+				IpAddress = IpAddressHelper.GetRequestIP(Request, true),
+				ServerName = Environment.MachineName,
+				CorrelationId = HttpContext.TraceIdentifier,
+				Data = $"Password reauthentication{(detail == null ? string.Empty : $" ({detail})")}. Agent={BoundAuditValue(Request.Headers.UserAgent.ToString(), 256)}",
+				LoggedOn = DateTime.UtcNow
+			}, cancellationToken);
+		}
 
 		private async Task<bool> IsSsoManagedAsync(CancellationToken cancellationToken)
 		{

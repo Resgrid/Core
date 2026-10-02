@@ -19,6 +19,12 @@ namespace Resgrid.Config
 		/// <summary>Hard limit on hits a single query may return.</summary>
 		public static int MaxResults = 200;
 
+		/// <summary>
+		/// Deepest window the search page and its CSV export may authorize for one narrowed query (a single family, a date
+		/// range), so a "how many calls mention X" question gets a complete list and an exact count. Typeahead stays on MaxResults.
+		/// </summary>
+		public static int MaxPageWindow = 1000;
+
 		/// <summary>IndexWriter RAM buffer before a flush.</summary>
 		public static int RamBufferSizeMb = 16;
 

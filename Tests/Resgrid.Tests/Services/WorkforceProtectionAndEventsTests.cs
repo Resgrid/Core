@@ -37,6 +37,7 @@ namespace Resgrid.Tests.Services
 			public string GrantToken { get; set; }
 			public string UserId { get; set; }
 			public bool IsWorkloadCaller => UserId == null;
+			public Resgrid.Model.Security.ProtectedGrantSessionContext Session => null;
 		}
 
 		#region Catalog and bindings

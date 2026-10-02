@@ -12,6 +12,9 @@ namespace Resgrid.Model
 		UnitLocationUpdated = 8,
 		IncidentCommandUpdated = 9,
 		ChatEvent = 10,
-		ChecklistUpdated = 11
+		ChecklistUpdated = 11,
+
+		/// <summary>An event for one signed-in session only, such as an approval decision (passkey workbook section 7.4).</summary>
+		SessionEvent = 12
 	}
 }

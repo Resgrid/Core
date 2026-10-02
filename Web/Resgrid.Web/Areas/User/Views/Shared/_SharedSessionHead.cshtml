@@ -1,0 +1,9 @@
+@{
+    // Shared workstation sessions only (passkey plan section 12.5.4): a page brought back from history stays hidden until the
+    // server confirms the session is not locked, so the back button never shows a locked operator's work.
+    var sharedSession = Resgrid.Web.Helpers.WebSharedSession.SessionOf(Context);
+}
+@if (sharedSession?.SharedMode == true)
+{
+    <script src="~/js/app/common/shared/resgrid.shared.guard.js" asp-append-version="true"></script>
+}

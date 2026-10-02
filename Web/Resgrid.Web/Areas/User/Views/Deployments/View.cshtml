@@ -118,7 +118,7 @@
                             <select name="status" class="form-control input-sm">
                                 @foreach (var candidate in next) { <option value="@((int)candidate)">@localizer["Status" + candidate]</option> }
                             </select>
-                            <button type="submit" class="btn btn-sm btn-primary" onclick="return confirm('@localizer["StatusConfirm"]');">@localizer["ChangeStatus"]</button>
+                            <button type="submit" class="btn btn-sm btn-primary" onclick="return confirm('@JsEncoder.Encode(localizer["StatusConfirm"])');">@localizer["ChangeStatus"]</button>
                         </form>
                     }
                 </div>
@@ -158,7 +158,7 @@
                                     {
                                         <tr>
                                             <td>@(u.UnitName ?? u.UnitId.ToString())</td><td>@u.CallSign</td><td>@activePeople.Count(p => p.DeploymentUnitId == u.DeploymentUnitId)</td>
-                                            <td class="text-right">@if (Model.CanManage && d.IsOpen) { <form method="post" asp-action="RemoveUnit" asp-route-id="@d.DeploymentId" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="deploymentUnitId" value="@u.DeploymentUnitId" /><button class="btn btn-xs btn-danger" onclick="return confirm('@localizer["RemoveConfirm"]');"><i class="fa fa-times"></i></button></form> }</td>
+                                            <td class="text-right">@if (Model.CanManage && d.IsOpen) { <form method="post" asp-action="RemoveUnit" asp-route-id="@d.DeploymentId" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="deploymentUnitId" value="@u.DeploymentUnitId" /><button class="btn btn-xs btn-danger" onclick="return confirm('@JsEncoder.Encode(localizer["RemoveConfirm"])');"><i class="fa fa-times"></i></button></form> }</td>
                                         </tr>
                                     }
                                 </tbody>
@@ -217,7 +217,7 @@
                                         var seat = p.UnitRoleId.HasValue ? Model.UnitRoles.Values.SelectMany(r => r).FirstOrDefault(r => r.UnitRoleId == p.UnitRoleId.Value)?.Name : null;
                                         <tr>
                                             <td>@(p.DisplayName ?? UserName(p.UserId))</td><td>@UnitName(p.DeploymentUnitId)</td><td>@seat</td><td>@p.CertificationCode</td>
-                                            <td class="text-right">@if (Model.CanManage && d.IsOpen) { <form method="post" asp-action="RemovePersonnel" asp-route-id="@d.DeploymentId" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="deploymentPersonnelId" value="@p.DeploymentPersonnelId" /><button class="btn btn-xs btn-danger" onclick="return confirm('@localizer["RemoveConfirm"]');"><i class="fa fa-times"></i></button></form> }</td>
+                                            <td class="text-right">@if (Model.CanManage && d.IsOpen) { <form method="post" asp-action="RemovePersonnel" asp-route-id="@d.DeploymentId" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="deploymentPersonnelId" value="@p.DeploymentPersonnelId" /><button class="btn btn-xs btn-danger" onclick="return confirm('@JsEncoder.Encode(localizer["RemoveConfirm"])');"><i class="fa fa-times"></i></button></form> }</td>
                                         </tr>
                                     }
                                 </tbody>
@@ -320,7 +320,7 @@
                                     <td class="text-right">@e.Amount.ToString("N2") @e.Currency</td>
                                     <td>@if (e.ReceiptAttachmentId.HasValue) { <a asp-action="GetAttachment" asp-route-id="@e.ReceiptAttachmentId" target="_blank"><i class="fa fa-paperclip"></i></a> }</td>
                                     <td>@if (!string.IsNullOrWhiteSpace(e.DeploymentTimeReportId)) { var r = Model.TimeReports.FirstOrDefault(x => x.DeploymentTimeReportId == e.DeploymentTimeReportId); <a asp-action="TimeReport" asp-route-id="@e.DeploymentTimeReportId">#@(r?.ReportNumber)</a> }</td>
-                                    <td class="text-right">@if (Model.CanEditTime) { <form method="post" asp-action="DeleteExpense" asp-route-id="@d.DeploymentId" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="deploymentExpenseId" value="@e.DeploymentExpenseId" /><button class="btn btn-xs btn-danger" onclick="return confirm('@localizer["RemoveConfirm"]');"><i class="fa fa-trash"></i></button></form> }</td>
+                                    <td class="text-right">@if (Model.CanEditTime) { <form method="post" asp-action="DeleteExpense" asp-route-id="@d.DeploymentId" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="deploymentExpenseId" value="@e.DeploymentExpenseId" /><button class="btn btn-xs btn-danger" onclick="return confirm('@JsEncoder.Encode(localizer["RemoveConfirm"])');"><i class="fa fa-trash"></i></button></form> }</td>
                                 </tr>
                             }
                         </tbody>
@@ -369,7 +369,7 @@
                                         <tr class="font-bold"><td colspan="4" class="text-right">@contractorStrings["TotalBeforeTax"]</td><td class="text-right">@Model.Charges.TotalBeforeTax.ToString("N2") @Model.Charges.Currency</td></tr>
                                     </tfoot>
                                 </table>
-                                <form method="post" asp-action="GenerateInvoice" asp-route-id="@d.DeploymentId" class="form-inline" onsubmit="return confirm('@contractorStrings["ConfirmGenerateInvoice"]');">
+                                <form method="post" asp-action="GenerateInvoice" asp-route-id="@d.DeploymentId" class="form-inline" onsubmit="return confirm('@JsEncoder.Encode(contractorStrings["ConfirmGenerateInvoice"])');">
                                     @Html.AntiForgeryToken()
                                     <label>@contractorStrings["ThroughDate"]</label> <input type="date" name="throughDate" class="form-control input-sm" />
                                     <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-file-text-o"></i> @contractorStrings["GenerateInvoice"]</button>
@@ -457,7 +457,7 @@
                             {
                                 <tr>
                                     <td><span>@a.Name</span></td><td>@localizer["Attachment" + (Resgrid.Model.Invoicing.DeploymentAttachmentTypes)a.AttachmentType]</td><td><span>@a.FileName</span></td><td>@((a.FileSize ?? 0) / 1024) KB</td><td>@Local(a.AddedOn) · @UserName(a.AddedByUserId)</td>
-                                    <td class="text-right"><a asp-action="GetAttachment" asp-route-id="@a.DeploymentAttachmentId" class="btn btn-xs btn-default" target="_blank"><i class="fa fa-download"></i></a> @if (Model.CanManage) { <form method="post" asp-action="DeleteAttachment" asp-route-id="@d.DeploymentId" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="deploymentAttachmentId" value="@a.DeploymentAttachmentId" /><button class="btn btn-xs btn-danger" onclick="return confirm('@localizer["RemoveConfirm"]');"><i class="fa fa-trash"></i></button></form> }</td>
+                                    <td class="text-right"><a asp-action="GetAttachment" asp-route-id="@a.DeploymentAttachmentId" class="btn btn-xs btn-default" target="_blank"><i class="fa fa-download"></i></a> @if (Model.CanManage) { <form method="post" asp-action="DeleteAttachment" asp-route-id="@d.DeploymentId" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="deploymentAttachmentId" value="@a.DeploymentAttachmentId" /><button class="btn btn-xs btn-danger" onclick="return confirm('@JsEncoder.Encode(localizer["RemoveConfirm"])');"><i class="fa fa-trash"></i></button></form> }</td>
                                 </tr>
                             }
                         </tbody>

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Resgrid.Config;
+using Resgrid.Model;
 using Resgrid.Model.Security;
 using Resgrid.Model.Services;
 using Resgrid.Web.Helpers;
@@ -72,11 +73,37 @@ namespace Resgrid.Web.Middleware
 
 			if (!validation.IsValid)
 			{
+				// A locked shared session keeps its cookie: the same operator unlocks it (plan section 12.5.3). It reaches only its
+				// lock screen, status, unlock and end-shift routes, which read the locked row from here; it gets no grant context and
+				// records no activity. A page load goes to the lock screen; anything else is refused and told why.
+				if (validation.IsLocked && validation.Session != null)
+				{
+					if (WebSharedSession.AcceptsLockedSession(context.Request))
+					{
+						context.Items[WebSharedSession.SessionItemKey] = validation.Session;
+						await _next(context);
+						return;
+					}
+
+					if (WebSharedSession.IsNavigation(context.Request))
+					{
+						context.Response.Redirect(WebSharedSession.LockedUrl(context.Request.PathBase + context.Request.Path + context.Request.QueryString));
+						return;
+					}
+
+					context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+					await context.Response.WriteAsJsonAsync(new { error = validation.FailureCode, lock_version = validation.Session.LockVersion },
+						context.RequestAborted);
+					return;
+				}
+
 				await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 				if (HttpMethods.IsGet(context.Request.Method) && !context.Request.Path.StartsWithSegments("/Account"))
 				{
 					var returnUrl = Uri.EscapeDataString(context.Request.PathBase + context.Request.Path + context.Request.QueryString);
-					context.Response.Redirect($"/Account/LogOn?returnUrl={returnUrl}");
+					// A shared session past its shift ceiling says so on the sign-in page; the next operator signs in normally.
+					var reason = validation.FailureCode == SharedSessionRules.ExpiredFailureCode ? "&reason=shift_ended" : string.Empty;
+					context.Response.Redirect($"/Account/LogOn?returnUrl={returnUrl}{reason}");
 				}
 				else
 				{
@@ -117,6 +144,29 @@ namespace Resgrid.Web.Middleware
 					Resgrid.Framework.Logging.LogException(ex, "Legacy Web session adoption unavailable.");
 					context.Response.StatusCode = StatusCodes.Status503ServiceUnavailable;
 					return;
+				}
+			}
+
+			// The session this request was just validated against (or adopted into) is what a version 2
+			// Protected Data Grant must match (passkey plan section 8.3); nothing downstream re-derives it
+			// from claims.
+			var grantSession = ProtectedGrantSessionContext.From(session, authentication.Properties?.IssuedUtc?.UtcDateTime);
+			if (grantSession != null)
+				context.Items[ProtectedGrantSessionContext.HttpItemKey] = grantSession;
+			if (session != null)
+				context.Items[WebSharedSession.SessionItemKey] = session;
+
+			// Operator activity moves a shared session's idle deadline only when the operator caused the request (plan section
+			// 10.5): a user-activated navigation, or input the page reports. Background polling and sockets never do.
+			if (session?.SharedMode == true && WebSharedSession.IsOperatorActivity(context.Request))
+			{
+				try
+				{
+					await userSessionService.RecordOperatorActivityAsync(session, context.RequestAborted);
+				}
+				catch (Exception ex) when (!(ex is OperationCanceledException))
+				{
+					Resgrid.Framework.Logging.LogException(ex, "Shared session operator activity update failed.");
 				}
 			}
 

@@ -61,11 +61,37 @@ namespace Resgrid.Model
 		[MaxLength(1024)]
 		public string AssertionConsumerServiceUrl { get; set; }
 
+		/// <summary>
+		/// The IdP's SAML single sign-on URL (HTTP-Redirect binding) that brokered sign-in sends its AuthnRequest to
+		/// (passkey plan section 7.7.2). Without it, SAML stays on the legacy IdP-initiated relay.
+		/// </summary>
+		[MaxLength(1024)]
+		public string IdpSsoUrl { get; set; }
+
 		/// <summary>AES-encrypted IdP public certificate (PEM) used to verify SAML assertions.</summary>
 		public string EncryptedIdpCertificate { get; set; }
 
 		/// <summary>AES-encrypted SP signing certificate private key (PEM) used to sign SAML requests.</summary>
 		public string EncryptedSigningCertificate { get; set; }
+
+		// ── Provider step-up (federated MFA, passkey plan section 7.8) ───────────────────
+
+		/// <summary>
+		/// The validated <see cref="Security.FederatedMfaMapping"/>: what to request from the provider and which returned values
+		/// count as MFA. Changed only by the managing member with fresh MFA; every change needs a new test.
+		/// </summary>
+		public string FederatedMfaMappingJson { get; set; }
+
+		/// <summary>Server-owned: advances whenever the mapping, issuer, client, entity, SSO URL or certificate changes.</summary>
+		public long FederatedMfaMappingVersion { get; set; }
+
+		/// <summary>Server-owned: the mapping version that last passed a test step-up. Effective only when it is the current version.</summary>
+		public long? FederatedMfaTestedVersion { get; set; }
+
+		public DateTime? FederatedMfaTestedOnUtc { get; set; }
+
+		[MaxLength(128)]
+		public string FederatedMfaTestedByUserId { get; set; }
 
 		// ── Claim / attribute mapping ─────────────────────────────────────────
 
@@ -128,7 +154,9 @@ namespace Resgrid.Model
 
 		[NotMapped]
 		public IEnumerable<string> IgnoredProperties =>
-			new[] { "IdValue", "IdType", "TableName", "IdName", "Department", "DefaultRank" };
+			new[] { "IdValue", "IdType", "TableName", "IdName", "Department", "DefaultRank",
+				// Server-owned provider step-up state, changed only by guarded statements so a stale save cannot restore a test.
+				"FederatedMfaMappingVersion", "FederatedMfaTestedVersion", "FederatedMfaTestedOnUtc", "FederatedMfaTestedByUserId" };
 	}
 }
 

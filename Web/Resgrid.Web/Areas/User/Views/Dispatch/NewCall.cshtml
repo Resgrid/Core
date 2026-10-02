@@ -352,7 +352,7 @@
 
                                             if (ungroupedUnits != null && ungroupedUnits.Any())
                                             {
-                                                @Html.Raw("<li role='presentation' class='active'><a href='#unitsTab0' aria-controls='home' role='tab' data-toggle='tab'>" + @commonLocalizer["Units"] + "</a></li>")
+                                                @Html.Raw("<li role='presentation' class='active'><a href='#unitsTab0' aria-controls='home' role='tab' data-toggle='tab'>" + Html.Encode(commonLocalizer["Units"].Value) + "</a></li>")
                                                 ;
                                                 count++;
                                             }
@@ -366,12 +366,12 @@
                                                 {
                                                     if (count == 0)
                                                     {
-                                                        @Html.Raw("<li role='presentation' class='active'><a href='#unitsTab" + Model.Groups[i].DepartmentGroupId + "' aria-controls='home' role='tab' data-toggle='tab'>" + Model.Groups[i].Name + "</a></li>")
+                                                        @Html.Raw("<li role='presentation' class='active'><a href='#unitsTab" + Model.Groups[i].DepartmentGroupId + "' aria-controls='home' role='tab' data-toggle='tab'>" + Html.Encode(Model.Groups[i].Name) + "</a></li>")
                                                         ;
                                                     }
                                                     else
                                                     {
-                                                        @Html.Raw("<li role='presentation'><a href='#unitsTab" + Model.Groups[i].DepartmentGroupId + "' aria-controls='home' role='tab' data-toggle='tab'>" + Model.Groups[i].Name + "</a></li>")
+                                                        @Html.Raw("<li role='presentation'><a href='#unitsTab" + Model.Groups[i].DepartmentGroupId + "' aria-controls='home' role='tab' data-toggle='tab'>" + Html.Encode(Model.Groups[i].Name) + "</a></li>")
                                                         ;
                                                     }
 
@@ -390,7 +390,7 @@
                                             {
                                                 @Html.Raw("<div role='tabpanel' class='tab-pane active' id='unitsTab0'>")
                                                 ;
-                                                @Html.Raw("<div class='table-responsive'><table class='table table-striped'><thead><tr><th class='span1'><input type='checkbox' id='checkAllUnits0' class='check-all-units' data-unit-grid='unitGroups_0'/></th><th>" + @commonLocalizer["Name"] + "</th><th>" + @commonLocalizer["Type"] + "</th><th>" + @commonLocalizer["Status"] + "</th></tr></thead><tbody id='unitGroups_0'>")
+                                                @Html.Raw("<div class='table-responsive'><table class='table table-striped'><thead><tr><th class='span1'><input type='checkbox' id='checkAllUnits0' class='check-all-units' data-unit-grid='unitGroups_0'/></th><th>" + Html.Encode(commonLocalizer["Name"].Value) + "</th><th>" + Html.Encode(commonLocalizer["Type"].Value) + "</th><th>" + Html.Encode(commonLocalizer["Status"].Value) + "</th></tr></thead><tbody id='unitGroups_0'>")
                                                 ;
 
                                                 if (ungroupedUnits2 != null && ungroupedUnits2.Any())
@@ -414,7 +414,7 @@
                                                             }
                                                         }
 
-                                                        @Html.Raw("<tr><td><input type='checkbox' id='dispatchUnit_" + u.UnitId + "' name='dispatchUnit_" + u.UnitId + "' /></td><td>" + u.Name + "</td><td>" + u.Type + "</td><td><span class='label label-default' style='color:" + stateTextColor + ";background-color:" + stateColor + ";'>" + stateText + "</span></td></tr>")
+                                                        @Html.Raw("<tr><td><input type='checkbox' id='dispatchUnit_" + u.UnitId + "' name='dispatchUnit_" + u.UnitId + "' /></td><td>" + Html.Encode(u.Name) + "</td><td>" + Html.Encode(u.Type) + "</td><td><span class='label label-default' style='color:" + Html.Encode(stateTextColor) + ";background-color:" + Html.Encode(stateColor) + ";'>" + Html.Encode(stateText) + "</span></td></tr>")
                                                         ;
                                                     }
                                                 }
@@ -441,7 +441,7 @@
                                                         ;
                                                     }
 
-                                                    @Html.Raw("<div class='table-responsive'><table class='table table-striped'><thead><tr><th class='span1'><input type='checkbox' id='checkAllUnits" + Model.Groups[i].DepartmentGroupId + "' class='check-all-units' data-unit-grid='unitGroups_" + Model.Groups[i].DepartmentGroupId + "'/></th><th>" + @commonLocalizer["Name"] + "</th><th>" + @commonLocalizer["Type"] + "</th><th>" + @commonLocalizer["Status"] + "</th></tr></thead><tbody id='unitGroups_" + Model.Groups[i].DepartmentGroupId + "'>")
+                                                    @Html.Raw("<div class='table-responsive'><table class='table table-striped'><thead><tr><th class='span1'><input type='checkbox' id='checkAllUnits" + Model.Groups[i].DepartmentGroupId + "' class='check-all-units' data-unit-grid='unitGroups_" + Model.Groups[i].DepartmentGroupId + "'/></th><th>" + Html.Encode(commonLocalizer["Name"].Value) + "</th><th>" + Html.Encode(commonLocalizer["Type"].Value) + "</th><th>" + Html.Encode(commonLocalizer["Status"].Value) + "</th></tr></thead><tbody id='unitGroups_" + Model.Groups[i].DepartmentGroupId + "'>")
                                                     ;
 
                                                     if (groupUnits != null && groupUnits.Any())
@@ -465,7 +465,7 @@
                                                                 }
                                                             }
 
-                                                            @Html.Raw("<tr><td><input type='checkbox' id='dispatchUnit_" + u.UnitId + "' name='dispatchUnit_" + u.UnitId + "' /></td><td>" + u.Name + "</td><td>" + u.Type + "</td><td><span class='label label-default' style='color:" + stateTextColor + ";background-color:" + stateColor + ";'>" + stateText + "</span></td></tr>")
+                                                            @Html.Raw("<tr><td><input type='checkbox' id='dispatchUnit_" + u.UnitId + "' name='dispatchUnit_" + u.UnitId + "' /></td><td>" + Html.Encode(u.Name) + "</td><td>" + Html.Encode(u.Type) + "</td><td><span class='label label-default' style='color:" + Html.Encode(stateTextColor) + ";background-color:" + Html.Encode(stateColor) + ";'>" + Html.Encode(stateText) + "</span></td></tr>")
                                                             ;
                                                         }
                                                     }

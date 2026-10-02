@@ -13,7 +13,9 @@ const MINUTE = 60 * 1000;
 
 const chrome = `
 <div id="adpProtectedBanner"><button id="adpRevealButton">Reveal</button><button id="adpConcealButton">Conceal</button></div>
-<div id="adpStepUpModal"><div id="adpStepUpError"></div><input id="adpStepUpCode"><button id="adpStepUpSubmit">Verify</button></div>`;
+<div id="adpStepUpModal"><div id="adpStepUpError"></div><input id="adpStepUpCode"><button id="adpStepUpSubmit">Verify</button>
+<button id="adpUsePasskey">Passkey</button><button id="adpUseResponder">Responder</button><button id="adpUseProvider">Provider</button>
+<div id="adpApprovalPanel"><span id="adpApprovalNumber"></span><span id="adpApprovalStatus"></span></div></div>`;
 
 async function harness(page, html, options) {
     await page.clock.install({ time: new Date('2026-09-05T12:00:00Z') });
@@ -146,6 +148,147 @@ const expiresIn = (page, minutes) => page.evaluate((m) => new Date(Date.now() + 
         await page.clock.fastForward(2 * MINUTE);
         assert.equal(await page.inputValue('#notes'), 'REDACTED', 'revealed values leave the DOM at expiry');
         assert.equal(await warningText(page), null, 'a page without a form has nothing to hold; the banner takes over');
+        await page.close();
+
+        // ---- Other ways to verify (slice 19): offered only when the server lists them; a closed passkey prompt is no failure ----
+        const choices = { methodsUrl: '/methods', passkeyOptionsUrl: '/passkey-options', verifyPasskeyUrl: '/verify-passkey',
+            requestApprovalUrl: '/request-approval', approvalStatusUrl: '/approval-status', completeApprovalUrl: '/complete-approval' };
+        const openPrompt = async (methods) => {
+            await page.click('#adpRevealButton');
+            await resolvePost(page, 0, { success: false, error: 'step_up_required' });
+            assert.equal(await page.isVisible('#adpUsePasskey'), false, 'nothing but the code before the server answers');
+            assert.deepEqual(await page.evaluate(() => [ajaxCalls[0].options.url, ajaxCalls[0].options.method]), ['/methods', 'GET']);
+            await page.evaluate((m) => ajaxCalls[0].d.resolve({ success: true, methods: m }), methods);
+        };
+        page = await browser.newPage();
+        await harness(page, `<input id="notes" data-adp-field="calls.notes:1" value="REDACTED">`, choices);
+        await page.evaluate(() => {
+            window.passkeyCalls = [];
+            window.resgridPasskeys = { isSupported: () => true, authenticate: (o) => new Promise((resolve, reject) => window.passkeyCalls.push({ options: o, resolve, reject })) };
+        });
+        await openPrompt(['totp', 'passkey', 'passkey_approval']);
+        assert.equal(await page.isVisible('#adpUsePasskey'), true);
+        assert.equal(await page.isVisible('#adpUseResponder'), true);
+
+        await page.click('#adpUsePasskey');
+        assert.equal(await page.evaluate(() => posts[1].url), '/passkey-options');
+        await resolvePost(page, 1, { success: true, requestId: 'q1', options: '{"challenge":"abc"}' });
+        assert.equal(await page.evaluate(() => passkeyCalls[0].options), '{"challenge":"abc"}', 'the server options go to the browser unchanged');
+        await page.evaluate(() => passkeyCalls[0].reject({ outcome: 'cancelled' }));
+        assert.match(await page.textContent('#adpStepUpError'), /closed/, 'a closed prompt is told as such');
+        assert.equal(await page.evaluate(() => posts.length), 2, 'nothing is sent for a cancelled prompt');
+
+        await page.click('#adpUsePasskey');
+        await resolvePost(page, 2, { success: true, requestId: 'q2', options: '{"challenge":"def"}' });
+        await page.evaluate(() => passkeyCalls[1].resolve({ id: 'cred-1', type: 'public-key' }));
+        assert.deepEqual(await page.evaluate(() => [posts[3].url, posts[3].data.requestId, posts[3].data.credential]),
+            ['/verify-passkey', 'q2', '{"id":"cred-1","type":"public-key"}']);
+        await resolvePost(page, 3, { success: true, grantToken: 'P1', expiresOnUtc: await expiresIn(page, 15) });
+        assert.equal(await page.evaluate(() => modalCalls.slice(-1)[0]), 'hide');
+        assert.equal(await page.evaluate(() => ajaxCalls[1].options.headers['X-Resgrid-Protected-Grant']), 'P1', 'the passkey grant reveals');
+        await page.close();
+
+        // ---- Approve with Responder: the number shows here, the decision is polled, then used once ----
+        page = await browser.newPage();
+        await harness(page, `<input id="notes" data-adp-field="calls.notes:1" value="REDACTED">`, choices);
+        await page.evaluate(() => { window.resgridPasskeys = { isSupported: () => true, authenticate: () => new Promise(() => {}) }; });
+        await openPrompt(['totp', 'passkey_approval']);
+        assert.equal(await page.isVisible('#adpUsePasskey'), false, 'no passkey offered when the server lists none, even where the browser can');
+        await page.click('#adpUseResponder');
+        assert.equal(await page.evaluate(() => posts[1].url), '/request-approval');
+        await resolvePost(page, 1, { success: true, approvalRequestId: 'a1', matchNumber: '42', expiresIn: 120 });
+        assert.equal(await page.textContent('#adpApprovalNumber'), '42');
+        assert.match(await page.textContent('#adpApprovalStatus'), /Waiting/);
+        await page.clock.fastForward(2000);
+        assert.deepEqual(await page.evaluate(() => [posts[2].url, posts[2].data.approvalRequestId]), ['/approval-status', 'a1']);
+        await resolvePost(page, 2, { success: true, state: 'pending' });
+        await page.clock.fastForward(2000);
+        await resolvePost(page, 3, { success: true, state: 'approved' });
+        assert.deepEqual(await page.evaluate(() => [posts[4].url, posts[4].data.approvalRequestId]), ['/complete-approval', 'a1']);
+        await resolvePost(page, 4, { success: true, grantToken: 'A1', expiresOnUtc: await expiresIn(page, 15) });
+        assert.equal(await page.evaluate(() => ajaxCalls[1].options.headers['X-Resgrid-Protected-Grant']), 'A1');
+        await page.clock.fastForward(10000);
+        assert.equal(await page.evaluate(() => posts.length), 5, 'polling stops once the approval is used');
+        await page.close();
+
+        page = await browser.newPage();
+        await harness(page, `<input id="notes" data-adp-field="calls.notes:1" value="REDACTED">`, choices);
+        await openPrompt(['totp', 'passkey_approval']);
+        await page.click('#adpUseResponder');
+        await resolvePost(page, 1, { success: true, approvalRequestId: 'a2', matchNumber: '17', expiresIn: 120 });
+        await page.clock.fastForward(2000);
+        await resolvePost(page, 2, { success: true, state: 'denied' });
+        assert.match(await page.textContent('#adpStepUpError'), /denied/);
+        assert.equal(await page.isVisible('#adpApprovalPanel'), false);
+        await page.clock.fastForward(10000);
+        assert.equal(await page.evaluate(() => posts.length), 3, 'a denial ends the wait');
+
+        await page.click('#adpUseResponder');
+        await resolvePost(page, 3, { success: true, approvalRequestId: 'a3', matchNumber: '55', expiresIn: 120 });
+        await page.evaluate(() => $('#adpStepUpModal').modal('hide'));
+        await page.clock.fastForward(10000);
+        assert.equal(await page.evaluate(() => posts.length), 4, 'closing the prompt stops waiting for the approval');
+        await page.close();
+
+        // ---- Provider step-up (slice 22): a popup through the identity provider hands the grant back, and only that popup's answer counts ----
+        page = await browser.newPage();
+        await harness(page, `<input id="notes" data-adp-field="calls.notes:1" value="REDACTED">`, choices);
+        await openPrompt(['totp', 'federated']);
+        assert.equal(await page.isVisible('#adpUseProvider'), false, 'no provider button where the Web cannot return from the provider');
+        await page.close();
+
+        page = await browser.newPage();
+        await harness(page, `<input id="notes" data-adp-field="calls.notes:1" value="REDACTED">`, Object.assign({ federatedUrl: '/Account/SsoSessionBegin' }, choices));
+        await page.evaluate(() => {
+            window.opened = []; window.formsSent = [];
+            // A real window object stands in for the popup, so the page can recognise its messages.
+            window.open = function (url, name) {
+                var frame = document.createElement('iframe');
+                document.body.appendChild(frame);
+                window.opened.push({ url: url, name: name, win: frame.contentWindow });
+                return frame.contentWindow;
+            };
+            HTMLFormElement.prototype.submit = function () {
+                window.formsSent.push({ action: this.getAttribute('action'), target: this.target, method: this.method,
+                    purpose: this.querySelector('[name=purpose]').value, token: this.querySelector('[name=__RequestVerificationToken]').value });
+            };
+        });
+        await openPrompt(['totp', 'federated']);
+        assert.equal(await page.isVisible('#adpUseProvider'), true);
+        await page.click('#adpUseProvider');
+        assert.deepEqual(await page.evaluate(() => [opened[0].name, formsSent[0].action, formsSent[0].target, formsSent[0].method, formsSent[0].purpose, formsSent[0].token]),
+            ['resgridAdpProvider', '/Account/SsoSessionBegin', 'resgridAdpProvider', 'post', 'adp', 'af'], 'the popup posts the begin with the antiforgery token');
+        assert.equal(await page.evaluate(() => document.querySelectorAll('form[target=resgridAdpProvider]').length), 0, 'the begin form is not left behind');
+
+        const grantMessage = (source, token) => page.evaluate(([s, t]) => {
+            var from = s === 'popup' ? opened[0].win : window;
+            window.dispatchEvent(new MessageEvent('message', { origin: window.location.origin, source: from,
+                data: { type: 'resgrid-adp-grant', success: true, grantToken: t, expiresOnUtc: new Date(Date.now() + 15 * 60000).toISOString() } }));
+        }, [source, token]);
+        await grantMessage('self', 'FORGED');
+        assert.equal(await page.evaluate(() => ajaxCalls.length), 1, 'an answer from any other window is ignored');
+        await grantMessage('popup', 'F1');
+        assert.equal(await page.evaluate(() => modalCalls.slice(-1)[0]), 'hide');
+        assert.equal(await page.evaluate(() => ajaxCalls[1].options.headers['X-Resgrid-Protected-Grant']), 'F1', 'the provider grant reveals');
+        await grantMessage('popup', 'F2');
+        assert.equal(await page.evaluate(() => ajaxCalls.length), 2, 'the popup answers once');
+        await page.close();
+
+        page = await browser.newPage();
+        await harness(page, `<input id="notes" data-adp-field="calls.notes:1" value="REDACTED">`, Object.assign({ federatedUrl: '/Account/SsoSessionBegin' }, choices));
+        await page.evaluate(() => { window.open = function () { return null; }; });
+        await openPrompt(['totp', 'federated']);
+        await page.click('#adpUseProvider');
+        assert.match(await page.textContent('#adpStepUpError'), /pop-ups/, 'a blocked popup is told as such');
+        await page.evaluate(() => {
+            window.open = function (url, name) { var f = document.createElement('iframe'); document.body.appendChild(f); window.popup = f.contentWindow; return f.contentWindow; };
+            HTMLFormElement.prototype.submit = function () {};
+        });
+        await page.click('#adpUseProvider');
+        await page.evaluate(() => window.dispatchEvent(new MessageEvent('message', { origin: window.location.origin, source: window.popup,
+            data: { type: 'resgrid-adp-grant', success: false, error: 'mfa_verification_failed' } })));
+        assert.notEqual(await page.textContent('#adpStepUpError'), '', 'a failed provider step-up says so');
+        assert.equal(await page.evaluate(() => ajaxCalls.length), 1, 'and reveals nothing');
         await page.close();
 
         console.log('resgrid-adp-reveal.test.cjs passed');

@@ -184,7 +184,7 @@
     <value>Dirección de correo electrónico (debe ser única)</value>
   </data>
   <data name="ExistingUserHelp1" xml:space="preserve">
-    <value>este usuario</value>
+    <value>Este usuario</value>
   </data>
   <data name="ExistingUserHelp2" xml:space="preserve">
     <value>, según la dirección de correo electrónico, ya tenía una cuenta de Resgrid en otro departamento. La cuenta de usuario ahora se ha agregado &lt;b&gt;con su configuración de perfil anterior (nombre, números de teléfono, preferencias, etc.)&lt;/b&gt; al departamento. Debido a que el usuario está en varios departamentos, necesita activar este departamento para ver su información desde su opción "Ver sus departamentos" en el menú desplegable de su perfil (debajo de la imagen de perfil en la esquina superior izquierda).</value>
@@ -211,7 +211,7 @@
     <value>Grupo</value>
   </data>
   <data name="Home" xml:space="preserve">
-    <value>Hogar</value>
+    <value>Casa</value>
   </data>
   <data name="IDNumberLabel" xml:space="preserve">
     <value>Número de identificación</value>
@@ -286,13 +286,13 @@
     <value>Personal</value>
   </data>
   <data name="PhoneNumbers" xml:space="preserve">
-    <value>Números de teléfono)</value>
+    <value>Número(s) de teléfono</value>
   </data>
   <data name="Push" xml:space="preserve">
-    <value>Empujar</value>
+    <value>Push</value>
   </data>
   <data name="RankDeleteWarning" xml:space="preserve">
-    <value>ADVERTENCIA: Esto eliminará permanentemente este rango. ¿Está seguro de que desea eliminar el rango?</value>
+    <value>ADVERTENCIA: Esto eliminará permanentemente este rango. ¿Está seguro de que desea eliminar el rango</value>
   </data>
   <data name="RanksHeader" xml:space="preserve">
     <value>Rangos de personal</value>
@@ -301,7 +301,7 @@
     <value>Reactivar persona</value>
   </data>
   <data name="ReactivatePersonText1" xml:space="preserve">
-    <value>este usuario</value>
+    <value>Este usuario</value>
   </data>
   <data name="ReactivatePersonText2" xml:space="preserve">
     <value>basado en la dirección de correo electrónico, ya tenía una cuenta en el</value>
@@ -316,7 +316,7 @@
     <value>Reactivar</value>
   </data>
   <data name="RoleDeleteWarning" xml:space="preserve">
-    <value>ADVERTENCIA: Esto eliminará permanentemente este rol. ¿Estás seguro de que quieres eliminar el rol?</value>
+    <value>ADVERTENCIA: Esto eliminará permanentemente este rol. ¿Está seguro de que desea eliminar el rol</value>
   </data>
   <data name="RoleDescriptionPlaceholder" xml:space="preserve">
     <value>Una descripción del rol.</value>
@@ -352,7 +352,7 @@
     <value>Nota especial</value>
   </data>
   <data name="SpecialNoteText" xml:space="preserve">
-    <value>Los datos de usuario subyacentes se conservan en el sistema para que los registros, los informes y el historial se conserven correctamente para el departamento. Se recomienda modificar toda la PII/PHI de la cuenta de usuario para eliminarla, es decir, números de teléfono, direcciones, etc., antes de eliminar al usuario.</value>
+    <value>Los datos de usuario subyacentes se conservan en el sistema para que las bitácoras, los informes y el historial se conserven correctamente para el departamento. Se recomienda modificar toda la PII/PHI de la cuenta de usuario para eliminarla, es decir, números de teléfono, direcciones, etc., antes de eliminar al usuario.</value>
   </data>
   <data name="Staffing" xml:space="preserve">
     <value>dotación de personal</value>
@@ -400,7 +400,7 @@
     <value>Eventos para</value>
   </data>
   <data name="AreYouSurePersonnel" xml:space="preserve">
-    <value>Are you sure you want to permanently delete all statuses for this person?</value>
+    <value>¿Está seguro de que desea eliminar permanentemente todos los estados de esta persona?</value>
   </data>
   <data name="ClearAllStatuses" xml:space="preserve">
     <value>Borrar todos los estados</value>
@@ -409,7 +409,7 @@
     <value>Eliminar todo</value>
   </data>
   <data name="YesImSure" xml:space="preserve">
-    <value>Sí, estoy seguro</value>
+    <value>Sí, confirmo</value>
   </data>
   <data name="ViewRoleHeader" xml:space="preserve">
     <value>Ver rol</value>

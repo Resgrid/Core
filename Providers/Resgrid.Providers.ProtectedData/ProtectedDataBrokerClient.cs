@@ -11,6 +11,8 @@ using Resgrid.Framework;
 using Resgrid.Model.Providers;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Security;
+using Resgrid.Model.Services;
 
 namespace Resgrid.Providers.ProtectedData
 {
@@ -25,6 +27,11 @@ namespace Resgrid.Providers.ProtectedData
 	public class ProtectedDataBrokerClient : IProtectedDataBrokerClient, IDisposable
 	{
 		internal const string WorkloadKeyHeader = "X-Resgrid-Broker-Key";
+		internal const string ClientIdHeader = "X-Resgrid-Broker-Client";
+		internal const string HostHeader = "X-Resgrid-Broker-Host";
+
+		// Informational only: lets the broker's legacy-key log name the calling process during the migration window.
+		private static readonly string HostName = System.Reflection.Assembly.GetEntryAssembly()?.GetName().Name ?? "unknown";
 		internal const string BrokerUnavailableErrorCode = "broker_unavailable";
 
 		// The client is scoped (its audit repository is), so the connection pool must outlive it: a handler per
@@ -36,21 +43,28 @@ namespace Resgrid.Providers.ProtectedData
 
 		private readonly HttpClient _httpClient;
 		private readonly IAdpAuditRepository _audit;
+		private readonly IBrokerSessionAssertionService _assertions;
+		private readonly IProtectedGrantContext _grantContext;
 
-		public ProtectedDataBrokerClient(IAdpAuditRepository audit)
-			: this(SharedHandler, audit, disposeHandler: false)
+		public ProtectedDataBrokerClient(IAdpAuditRepository audit, IBrokerSessionAssertionService assertions,
+			IProtectedGrantContext grantContext)
+			: this(SharedHandler, audit, disposeHandler: false, assertions, grantContext)
 		{
 		}
 
 		/// <summary>Test seam: inject a message handler.</summary>
-		public ProtectedDataBrokerClient(HttpMessageHandler handler, IAdpAuditRepository audit)
-			: this(handler, audit, disposeHandler: true)
+		public ProtectedDataBrokerClient(HttpMessageHandler handler, IAdpAuditRepository audit,
+			IBrokerSessionAssertionService assertions = null, IProtectedGrantContext grantContext = null)
+			: this(handler, audit, disposeHandler: true, assertions, grantContext)
 		{
 		}
 
-		private ProtectedDataBrokerClient(HttpMessageHandler handler, IAdpAuditRepository audit, bool disposeHandler)
+		private ProtectedDataBrokerClient(HttpMessageHandler handler, IAdpAuditRepository audit, bool disposeHandler,
+			IBrokerSessionAssertionService assertions, IProtectedGrantContext grantContext)
 		{
 			_audit = audit;
+			_assertions = assertions;
+			_grantContext = grantContext;
 			_httpClient = new HttpClient(handler, disposeHandler)
 			{
 				Timeout = TimeSpan.FromMilliseconds(DataProtectionConfig.BrokerTimeoutMs > 0
@@ -165,7 +179,11 @@ namespace Resgrid.Providers.ProtectedData
 				{
 					Content = new StringContent(payload, Encoding.UTF8, "application/json")
 				};
-				request.Headers.TryAddWithoutValidation(WorkloadKeyHeader, DataProtectionConfig.BrokerApiKey);
+				AddCredentialHeaders(request);
+
+				var assertion = TryMintSessionAssertion(path, departmentId, grantToken, requestId, items);
+				if (assertion != null)
+					request.Headers.TryAddWithoutValidation(BrokerSessionAssertion.HeaderName, assertion);
 
 				using var response = await _httpClient.SendAsync(request, cancellationToken);
 				var body = await response.Content.ReadAsStringAsync(cancellationToken);
@@ -199,6 +217,66 @@ namespace Resgrid.Providers.ProtectedData
 			{
 				Logging.LogError($"Protected Data Broker call {path} failed: {ex.GetType().Name}.");
 				return Failed(BrokerUnavailableErrorCode);
+			}
+		}
+
+		/// <summary>
+		/// This host's broker credential (passkey plan section 8.5): its own id and key when configured, otherwise the
+		/// legacy shared key, which the broker accepts only during the migration window.
+		/// </summary>
+		internal static void AddCredentialHeaders(HttpRequestMessage request)
+		{
+			if (!string.IsNullOrWhiteSpace(DataProtectionConfig.BrokerClientId) && !string.IsNullOrWhiteSpace(DataProtectionConfig.BrokerClientKey))
+			{
+				request.Headers.TryAddWithoutValidation(ClientIdHeader, DataProtectionConfig.BrokerClientId.Trim());
+				request.Headers.TryAddWithoutValidation(WorkloadKeyHeader, DataProtectionConfig.BrokerClientKey);
+			}
+			else
+			{
+				request.Headers.TryAddWithoutValidation(WorkloadKeyHeader, DataProtectionConfig.BrokerApiKey);
+			}
+
+			request.Headers.TryAddWithoutValidation(HostHeader, HostName);
+		}
+
+		/// <summary>
+		/// The identity tier's statement of which live session is behind an attended request (passkey workbook section
+		/// 6.2), minted only when a user grant is presented and the request passed session validation. Workload calls and
+		/// release receipts carry none. A mint failure sends the request without one; the broker decides whether that is
+		/// acceptable (never for a version 2 grant).
+		/// </summary>
+		private string TryMintSessionAssertion(string path, int departmentId, string grantToken, string requestId,
+			IReadOnlyList<ProtectedFieldOperationItem> items)
+		{
+			if (_assertions == null || _grantContext == null || string.IsNullOrWhiteSpace(grantToken) ||
+				grantToken.StartsWith("adpr.", StringComparison.Ordinal) || _grantContext.IsWorkloadCaller)
+				return null;
+
+			var operation = path.EndsWith("/decrypt", StringComparison.Ordinal) ? "decrypt"
+				: path.EndsWith("/encrypt", StringComparison.Ordinal) ? "encrypt" : null;
+			var session = _grantContext.Session;
+			if (operation == null || session == null || string.IsNullOrWhiteSpace(_grantContext.UserId) || !_assertions.CanMint)
+				return null;
+
+			try
+			{
+				return _assertions.Mint(new BrokerSessionAssertion
+				{
+					UserId = _grantContext.UserId,
+					SessionId = session.SessionId,
+					AuthenticationGeneration = session.AuthenticationGeneration,
+					DepartmentId = departmentId,
+					ClientApplication = session.ClientApplication,
+					SessionLockVersion = session.SessionLockVersion,
+					CredentialIssuedOnUtc = session.CredentialIssuedOnUtc,
+					RequestDigest = BrokerRequestDigest.Compute(operation, departmentId, requestId, items)
+				});
+			}
+			catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException ||
+				ex is System.Security.Cryptography.CryptographicException)
+			{
+				Logging.LogError($"Broker session assertion could not be minted: {ex.GetType().Name}.");
+				return null;
 			}
 		}
 

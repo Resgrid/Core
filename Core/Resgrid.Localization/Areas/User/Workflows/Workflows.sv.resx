@@ -60,115 +60,115 @@
   </resheader>
 
   <data name="WorkflowsHeader" xml:space="preserve">
-    <value>Workflows</value>
+    <value>Arbetsflöden</value>
   </data>
   <data name="DepartmentWorkflows" xml:space="preserve">
-    <value>Department Workflows</value>
+    <value>Avdelningens arbetsflöden</value>
   </data>
   <data name="NewWorkflow" xml:space="preserve">
-    <value>New Workflow</value>
+    <value>Nytt arbetsflöde</value>
   </data>
   <data name="Credentials" xml:space="preserve">
-    <value>Credentials</value>
+    <value>Autentiseringsuppgifter</value>
   </data>
   <data name="PendingRuns" xml:space="preserve">
-    <value>Pending Runs</value>
+    <value>Väntande körningar</value>
   </data>
   <data name="NoWorkflowsCreated" xml:space="preserve">
-    <value>No workflows have been created yet.</value>
+    <value>Inga arbetsflöden har skapats ännu.</value>
   </data>
   <data name="CreateFirstWorkflow" xml:space="preserve">
-    <value>Create your first workflow.</value>
+    <value>Skapa ditt första arbetsflöde.</value>
   </data>
   <data name="Name" xml:space="preserve">
     <value>Namn</value>
   </data>
   <data name="TriggerEvent" xml:space="preserve">
-    <value>Trigger Event</value>
+    <value>Utlösande händelse</value>
   </data>
   <data name="Status" xml:space="preserve">
     <value>Status</value>
   </data>
   <data name="Created" xml:space="preserve">
-    <value>Created</value>
+    <value>Skapad</value>
   </data>
   <data name="Actions" xml:space="preserve">
     <value>Åtgärder</value>
   </data>
   <data name="Enabled" xml:space="preserve">
-    <value>Enabled</value>
+    <value>Aktiverat</value>
   </data>
   <data name="Disabled" xml:space="preserve">
-    <value>Disabled</value>
+    <value>Inaktiverat</value>
   </data>
   <data name="Edit" xml:space="preserve">
     <value>Redigera</value>
   </data>
   <data name="Runs" xml:space="preserve">
-    <value>Runs</value>
+    <value>Körningar</value>
   </data>
   <data name="Health" xml:space="preserve">
-    <value>Health</value>
+    <value>Hälsa</value>
   </data>
   <data name="Delete" xml:space="preserve">
     <value>Ta bort</value>
   </data>
   <data name="DeleteWorkflowConfirm" xml:space="preserve">
-    <value>Delete workflow {0}?</value>
+    <value>Ta bort arbetsflödet {0}?</value>
   </data>
   <data name="NewWorkflowHeader" xml:space="preserve">
-    <value>New Workflow</value>
+    <value>Nytt arbetsflöde</value>
   </data>
   <data name="CreateWorkflow" xml:space="preserve">
-    <value>Create Workflow</value>
+    <value>Skapa arbetsflöde</value>
   </data>
   <data name="Description" xml:space="preserve">
     <value>Beskrivning</value>
   </data>
   <data name="MaxRetryCount" xml:space="preserve">
-    <value>Max Retry Count</value>
+    <value>Maximalt antal omförsök</value>
   </data>
   <data name="RetryBackoffBaseSeconds" xml:space="preserve">
-    <value>Retry Backoff Base (seconds)</value>
+    <value>Basfördröjning för omförsök (sekunder)</value>
   </data>
   <data name="NamePlaceholder" xml:space="preserve">
-    <value>e.g. Notify Slack on New Call</value>
+    <value>t.ex. Meddela Slack vid nytt larm</value>
   </data>
   <data name="DescriptionPlaceholder" xml:space="preserve">
-    <value>Optional description</value>
+    <value>Valfri beskrivning</value>
   </data>
   <data name="Cancel" xml:space="preserve">
     <value>Avbryt</value>
   </data>
   <data name="EditWorkflowHeader" xml:space="preserve">
-    <value>Edit Workflow</value>
+    <value>Redigera arbetsflöde</value>
   </data>
   <data name="WorkflowSettings" xml:space="preserve">
-    <value>Workflow Settings</value>
+    <value>Arbetsflödesinställningar</value>
   </data>
   <data name="MaxRetries" xml:space="preserve">
-    <value>Max Retries</value>
+    <value>Max antal omförsök</value>
   </data>
   <data name="BackoffSeconds" xml:space="preserve">
-    <value>Backoff (s)</value>
+    <value>Fördröjning (s)</value>
   </data>
   <data name="SaveChanges" xml:space="preserve">
-    <value>Save Changes</value>
+    <value>Spara ändringar</value>
   </data>
   <data name="Steps" xml:space="preserve">
-    <value>Steps</value>
+    <value>Steg</value>
   </data>
   <data name="AddStep" xml:space="preserve">
-    <value>Add Step</value>
+    <value>Lägg till steg</value>
   </data>
   <data name="ActionType" xml:space="preserve">
-    <value>Action Type</value>
+    <value>Åtgärdstyp</value>
   </data>
   <data name="Order" xml:space="preserve">
-    <value>Beställning</value>
+    <value>Ordning</value>
   </data>
   <data name="TemplatePeek" xml:space="preserve">
-    <value>Template (first 120 chars)</value>
+    <value>Mall (första 120 tecknen)</value>
   </data>
   <data name="Yes" xml:space="preserve">
     <value>Ja</value>
@@ -177,67 +177,67 @@
     <value>Nej</value>
   </data>
   <data name="DeleteStepConfirm" xml:space="preserve">
-    <value>Are you sure you want to delete this step? This action cannot be undone.</value>
+    <value>Är du säker på att du vill ta bort det här steget? Det går inte att ångra.</value>
   </data>
   <data name="DeleteStep" xml:space="preserve">
-    <value>Delete Step</value>
+    <value>Ta bort steg</value>
   </data>
   <data name="TemplateVariables" xml:space="preserve">
-    <value>Template Variables</value>
+    <value>Mallvariabler</value>
   </data>
   <data name="CommonVariables" xml:space="preserve">
-    <value>Common variables (always available):</value>
+    <value>Gemensamma variabler (alltid tillgängliga):</value>
   </data>
   <data name="CallEventVariables" xml:space="preserve">
-    <value>Call event variables:</value>
+    <value>Variabler för larmhändelser:</value>
   </data>
   <data name="WorkflowCredentialsHeader" xml:space="preserve">
-    <value>Workflow Credentials</value>
+    <value>Autentiseringsuppgifter för arbetsflöden</value>
   </data>
   <data name="StoredCredentials" xml:space="preserve">
-    <value>Stored Credentials</value>
+    <value>Sparade autentiseringsuppgifter</value>
   </data>
   <data name="AddCredential" xml:space="preserve">
-    <value>Add Credential</value>
+    <value>Lägg till autentiseringsuppgift</value>
   </data>
   <data name="NoCredentialsConfigured" xml:space="preserve">
-    <value>No credentials configured. Add credentials to use with workflow action steps.</value>
+    <value>Inga autentiseringsuppgifter har konfigurerats. Lägg till autentiseringsuppgifter som kan användas i arbetsflödenas åtgärdssteg.</value>
   </data>
   <data name="Type" xml:space="preserve">
     <value>Typ</value>
   </data>
   <data name="SecretData" xml:space="preserve">
-    <value>Secret Data</value>
+    <value>Hemliga uppgifter</value>
   </data>
   <data name="DeleteCredentialConfirm" xml:space="preserve">
-    <value>Delete credential {0}?</value>
+    <value>Ta bort autentiseringsuppgiften {0}?</value>
   </data>
   <data name="ValidationErrorHeader" xml:space="preserve">
-    <value>Please correct the following errors before saving.</value>
+    <value>Rätta följande fel innan du sparar.</value>
   </data>
   <data name="AddCredentialHeader" xml:space="preserve">
-    <value>Add Credential</value>
+    <value>Lägg till autentiseringsuppgift</value>
   </data>
   <data name="EditCredentialHeader" xml:space="preserve">
-    <value>Edit Credential</value>
+    <value>Redigera autentiseringsuppgift</value>
   </data>
   <data name="CredentialDetails" xml:space="preserve">
-    <value>Credential Details</value>
+    <value>Detaljer om autentiseringsuppgiften</value>
   </data>
   <data name="CredentialType" xml:space="preserve">
     <value>Typ</value>
   </data>
   <data name="SaveCredential" xml:space="preserve">
-    <value>Save Credential</value>
+    <value>Spara autentiseringsuppgift</value>
   </data>
   <data name="ExistingSecretsInfo" xml:space="preserve">
-    <value>Existing secrets are stored encrypted and cannot be displayed. Fill in the fields below to replace them, or leave all fields blank to keep the current secrets.</value>
+    <value>Befintliga hemligheter lagras krypterade och kan inte visas. Fyll i fälten nedan för att ersätta dem, eller lämna alla fält tomma för att behålla de nuvarande hemligheterna.</value>
   </data>
   <data name="SmtpSettings" xml:space="preserve">
-    <value>SMTP Settings</value>
+    <value>SMTP-inställningar</value>
   </data>
   <data name="SmtpHost" xml:space="preserve">
-    <value>Host</value>
+    <value>Värd</value>
   </data>
   <data name="SmtpPort" xml:space="preserve">
     <value>Port</value>
@@ -249,34 +249,34 @@
     <value>Lösenord</value>
   </data>
   <data name="SmtpUseSsl" xml:space="preserve">
-    <value>Use SSL/TLS</value>
+    <value>Använd SSL/TLS</value>
   </data>
   <data name="SmtpFromAddress" xml:space="preserve">
-    <value>From Address</value>
+    <value>Avsändaradress</value>
   </data>
   <data name="SmtpFromAddressHelp" xml:space="preserve">
-    <value>The email address that will appear in the "From" field of sent messages.</value>
+    <value>E-postadressen som visas i fältet "Från" i skickade meddelanden.</value>
   </data>
   <data name="TwilioSettings" xml:space="preserve">
-    <value>Twilio Settings</value>
+    <value>Twilio-inställningar</value>
   </data>
   <data name="TwilioAccountSid" xml:space="preserve">
-    <value>Account SID</value>
+    <value>Konto-SID</value>
   </data>
   <data name="TwilioAuthToken" xml:space="preserve">
-    <value>Auth Token</value>
+    <value>Autentiseringstoken</value>
   </data>
   <data name="TwilioFromNumber" xml:space="preserve">
-    <value>From Number</value>
+    <value>Avsändarnummer</value>
   </data>
   <data name="TwilioFromNumberHelp" xml:space="preserve">
-    <value>E.164 format, e.g. +15551234567</value>
+    <value>E.164-format, t.ex. +15551234567</value>
   </data>
   <data name="FtpSettings" xml:space="preserve">
-    <value>FTP Settings</value>
+    <value>FTP-inställningar</value>
   </data>
   <data name="FtpHost" xml:space="preserve">
-    <value>Host</value>
+    <value>Värd</value>
   </data>
   <data name="FtpPort" xml:space="preserve">
     <value>Port</value>
@@ -288,13 +288,13 @@
     <value>Lösenord</value>
   </data>
   <data name="FtpPassiveMode" xml:space="preserve">
-    <value>Use Passive Mode</value>
+    <value>Använd passivt läge</value>
   </data>
   <data name="SftpSettings" xml:space="preserve">
-    <value>SFTP Settings</value>
+    <value>SFTP-inställningar</value>
   </data>
   <data name="SftpHost" xml:space="preserve">
-    <value>Host</value>
+    <value>Värd</value>
   </data>
   <data name="SftpPort" xml:space="preserve">
     <value>Port</value>
@@ -306,37 +306,37 @@
     <value>Lösenord</value>
   </data>
   <data name="SftpPrivateKey" xml:space="preserve">
-    <value>Private Key (PEM)</value>
+    <value>Privat nyckel (PEM)</value>
   </data>
   <data name="SftpPrivateKeyHelp" xml:space="preserve">
-    <value>Provide either a password or a private key (or both if the key is passphrase-protected).</value>
+    <value>Ange antingen ett lösenord eller en privat nyckel (eller båda om nyckeln är skyddad med en lösenfras).</value>
   </data>
   <data name="AwsS3Settings" xml:space="preserve">
-    <value>AWS S3 Settings</value>
+    <value>AWS S3-inställningar</value>
   </data>
   <data name="AwsAccessKeyId" xml:space="preserve">
-    <value>Access Key ID</value>
+    <value>Åtkomstnyckel-ID</value>
   </data>
   <data name="AwsSecretAccessKey" xml:space="preserve">
-    <value>Secret Access Key</value>
+    <value>Hemlig åtkomstnyckel</value>
   </data>
   <data name="AwsRegion" xml:space="preserve">
     <value>Region</value>
   </data>
   <data name="AwsBucketName" xml:space="preserve">
-    <value>Bucket Name</value>
+    <value>Bucket-namn</value>
   </data>
   <data name="HttpBearerSettings" xml:space="preserve">
-    <value>HTTP Bearer Token</value>
+    <value>HTTP Bearer-token</value>
   </data>
   <data name="HttpBearerToken" xml:space="preserve">
-    <value>Bearer Token</value>
+    <value>Bearer-token</value>
   </data>
   <data name="HttpBearerHelp" xml:space="preserve">
-    <value>Sent as Authorization: Bearer &lt;token&gt;</value>
+    <value>Skickas som Authorization: Bearer &lt;token&gt;</value>
   </data>
   <data name="HttpBasicSettings" xml:space="preserve">
-    <value>HTTP Basic Auth</value>
+    <value>HTTP Basic-autentisering</value>
   </data>
   <data name="HttpBasicUsername" xml:space="preserve">
     <value>Användarnamn</value>
@@ -345,148 +345,148 @@
     <value>Lösenord</value>
   </data>
   <data name="HttpApiKeySettings" xml:space="preserve">
-    <value>HTTP API Key</value>
+    <value>HTTP API-nyckel</value>
   </data>
   <data name="ApiKeyHeaderName" xml:space="preserve">
-    <value>Header Name</value>
+    <value>Huvudnamn</value>
   </data>
   <data name="ApiKeyHeaderNameHelp" xml:space="preserve">
-    <value>The HTTP header name that carries the API key.</value>
+    <value>Namnet på det HTTP-huvud som innehåller API-nyckeln.</value>
   </data>
   <data name="ApiKeyValue" xml:space="preserve">
-    <value>API Key</value>
+    <value>API-nyckel</value>
   </data>
   <data name="TeamsSettings" xml:space="preserve">
-    <value>Microsoft Teams Webhook</value>
+    <value>Microsoft Teams-webhook</value>
   </data>
   <data name="TeamsWebhookUrl" xml:space="preserve">
-    <value>Incoming Webhook URL</value>
+    <value>URL för inkommande webhook</value>
   </data>
   <data name="TeamsWebhookHelp" xml:space="preserve">
-    <value>Create an Incoming Webhook connector inside the desired Teams channel.</value>
+    <value>Skapa en anslutning för inkommande webhook i önskad Teams-kanal.</value>
   </data>
   <data name="SlackSettings" xml:space="preserve">
     <value>Slack</value>
   </data>
   <data name="SlackWebhookUrl" xml:space="preserve">
-    <value>Incoming Webhook URL</value>
+    <value>URL för inkommande webhook</value>
   </data>
   <data name="SlackBotToken" xml:space="preserve">
-    <value>Bot Token</value>
+    <value>Bot-token</value>
   </data>
   <data name="SlackHelp" xml:space="preserve">
-    <value>Provide a webhook URL, a bot token, or both.</value>
+    <value>Ange en webhook-URL, en bot-token eller båda.</value>
   </data>
   <data name="DiscordSettings" xml:space="preserve">
     <value>Discord</value>
   </data>
   <data name="DiscordWebhookUrl" xml:space="preserve">
-    <value>Webhook URL</value>
+    <value>Webhook-URL</value>
   </data>
   <data name="DiscordBotToken" xml:space="preserve">
-    <value>Bot Token</value>
+    <value>Bot-token</value>
   </data>
   <data name="DiscordHelp" xml:space="preserve">
-    <value>Provide a webhook URL, a bot token, or both.</value>
+    <value>Ange en webhook-URL, en bot-token eller båda.</value>
   </data>
   <data name="AzureBlobSettings" xml:space="preserve">
     <value>Azure Blob Storage</value>
   </data>
   <data name="AzureConnectionString" xml:space="preserve">
-    <value>Connection String</value>
+    <value>Anslutningssträng</value>
   </data>
   <data name="AzureContainerName" xml:space="preserve">
-    <value>Container Name</value>
+    <value>Containernamn</value>
   </data>
   <data name="BoxSettings" xml:space="preserve">
     <value>Box</value>
   </data>
   <data name="BoxClientId" xml:space="preserve">
-    <value>Client ID</value>
+    <value>Klient-ID</value>
   </data>
   <data name="BoxClientSecret" xml:space="preserve">
-    <value>Client Secret</value>
+    <value>Klienthemlighet</value>
   </data>
   <data name="BoxEnterpriseId" xml:space="preserve">
-    <value>Enterprise ID</value>
+    <value>Företags-ID</value>
   </data>
   <data name="BoxPublicKeyId" xml:space="preserve">
-    <value>Public Key ID</value>
+    <value>ID för publik nyckel</value>
   </data>
   <data name="BoxPrivateKey" xml:space="preserve">
-    <value>Private Key (PEM)</value>
+    <value>Privat nyckel (PEM)</value>
   </data>
   <data name="BoxPrivateKeyHelp" xml:space="preserve">
-    <value>The RSA private key from your Box JWT application configuration (PEM format).</value>
+    <value>Den privata RSA-nyckeln från konfigurationen av din JWT-applikation i Box (PEM-format).</value>
   </data>
   <data name="BoxPrivateKeyPassword" xml:space="preserve">
-    <value>Private Key Passphrase</value>
+    <value>Lösenfras för privat nyckel</value>
   </data>
   <data name="BoxPrivateKeyPasswordHelp" xml:space="preserve">
-    <value>Optional passphrase used to decrypt the private key, if it is passphrase-protected.</value>
+    <value>Valfri lösenfras som används för att dekryptera den privata nyckeln, om den är skyddad med en lösenfras.</value>
   </data>
   <data name="DropboxSettings" xml:space="preserve">
     <value>Dropbox</value>
   </data>
   <data name="DropboxRefreshToken" xml:space="preserve">
-    <value>Refresh Token</value>
+    <value>Uppdateringstoken</value>
   </data>
   <data name="DropboxRefreshTokenHelp" xml:space="preserve">
-    <value>Long-lived OAuth2 refresh token obtained from the Dropbox OAuth2 authorization flow.</value>
+    <value>Långlivad OAuth2-uppdateringstoken som hämtats via OAuth2-auktoriseringsflödet i Dropbox.</value>
   </data>
   <data name="DropboxAppKey" xml:space="preserve">
-    <value>App Key</value>
+    <value>Appnyckel</value>
   </data>
   <data name="DropboxAppSecret" xml:space="preserve">
-    <value>App Secret</value>
+    <value>Apphemlighet</value>
   </data>
   <data name="PendingRunningWorkflows" xml:space="preserve">
-    <value>Pending / Running Workflows</value>
+    <value>Väntande / pågående arbetsflöden</value>
   </data>
   <data name="ActiveRuns" xml:space="preserve">
-    <value>Active Runs</value>
+    <value>Aktiva körningar</value>
   </data>
   <data name="ClearAllPending" xml:space="preserve">
-    <value>Clear All Pending</value>
+    <value>Rensa alla väntande</value>
   </data>
   <data name="ClearAllPendingConfirm" xml:space="preserve">
-    <value>Cancel ALL pending runs for this department?</value>
+    <value>Avbryt ALLA väntande körningar för den här avdelningen?</value>
   </data>
   <data name="NoPendingRuns" xml:space="preserve">
-    <value>No pending or running workflow runs.</value>
+    <value>Inga väntande eller pågående körningar av arbetsflöden.</value>
   </data>
   <data name="RunId" xml:space="preserve">
-    <value>Run ID</value>
+    <value>Körnings-ID</value>
   </data>
   <data name="Workflow" xml:space="preserve">
-    <value>Workflow</value>
+    <value>Arbetsflöde</value>
   </data>
   <data name="Queued" xml:space="preserve">
-    <value>Queued</value>
+    <value>Köad</value>
   </data>
   <data name="Attempt" xml:space="preserve">
-    <value>Attempt</value>
+    <value>Försök</value>
   </data>
   <data name="CancelRun" xml:space="preserve">
     <value>Avbryt</value>
   </data>
   <data name="CancelRunConfirm" xml:space="preserve">
-    <value>Cancel this run?</value>
+    <value>Avbryt den här körningen?</value>
   </data>
   <data name="WorkflowRunsHeader" xml:space="preserve">
-    <value>Workflow Runs</value>
+    <value>Arbetsflödeskörningar</value>
   </data>
   <data name="RunHistory" xml:space="preserve">
-    <value>Run History</value>
+    <value>Körningshistorik</value>
   </data>
   <data name="NoRunsFound" xml:space="preserve">
-    <value>No runs found for this workflow.</value>
+    <value>Inga körningar hittades för det här arbetsflödet.</value>
   </data>
   <data name="Started" xml:space="preserve">
-    <value>Started</value>
+    <value>Startad</value>
   </data>
   <data name="Completed" xml:space="preserve">
-    <value>Completed</value>
+    <value>Slutförd</value>
   </data>
   <data name="Error" xml:space="preserve">
     <value>Fel</value>
@@ -498,46 +498,46 @@
     <value>Nästa</value>
   </data>
   <data name="WorkflowHealthHeader" xml:space="preserve">
-    <value>Workflow Health</value>
+    <value>Arbetsflödets hälsa</value>
   </data>
   <data name="NoHealthData" xml:space="preserve">
-    <value>No health data available for this workflow yet.</value>
+    <value>Det finns inga hälsodata för det här arbetsflödet ännu.</value>
   </data>
   <data name="Last24Hours" xml:space="preserve">
-    <value>Last 24 Hours</value>
+    <value>Senaste 24 timmarna</value>
   </data>
   <data name="Last7Days" xml:space="preserve">
-    <value>Last 7 Days</value>
+    <value>Senaste 7 dagarna</value>
   </data>
   <data name="Last30Days" xml:space="preserve">
-    <value>Last 30 Days</value>
+    <value>Senaste 30 dagarna</value>
   </data>
   <data name="Successful" xml:space="preserve">
-    <value>Successful</value>
+    <value>Lyckade</value>
   </data>
   <data name="Failed" xml:space="preserve">
-    <value>Failed</value>
+    <value>Misslyckade</value>
   </data>
   <data name="Total" xml:space="preserve">
-    <value>Total</value>
+    <value>Totalt</value>
   </data>
   <data name="SuccessRate" xml:space="preserve">
-    <value>Success rate</value>
+    <value>Andel lyckade</value>
   </data>
   <data name="Performance" xml:space="preserve">
-    <value>Performance</value>
+    <value>Prestanda</value>
   </data>
   <data name="AvgDuration" xml:space="preserve">
-    <value>Avg Duration</value>
+    <value>Genomsnittlig varaktighet</value>
   </data>
   <data name="LastRun" xml:space="preserve">
-    <value>Last Run</value>
+    <value>Senaste körning</value>
   </data>
   <data name="LastError" xml:space="preserve">
-    <value>Last Error</value>
+    <value>Senaste fel</value>
   </data>
   <data name="ViewRuns" xml:space="preserve">
-    <value>View Runs</value>
+    <value>Visa körningar</value>
   </data>
   <data name="Never" xml:space="preserve">
     <value>Aldrig</value>
@@ -725,5 +725,326 @@
   </data>
   <data name="Gallery_hl7_mdm_t02_Description" xml:space="preserve">
     <value>När ett larm avslutas skickas ett MDM^T02-dokument "Crisis Field Response" till en integrationsmotor via HTTPS: PID-3 är journalsystemets klient-id, MSH-10 idempotensnyckeln och en OBX per frisläppt anpassat fält. Lyckas endast vid kvittensen AA.</value>
+  </data>
+  <data name="OutputTemplate" xml:space="preserve">
+    <value>Utdatamall</value>
+  </data>
+  <data name="FieldRequired" xml:space="preserve">
+    <value>Fältet {0} är obligatoriskt.</value>
+  </data>
+  <data name="CredentialRequired" xml:space="preserve">
+    <value>Den här åtgärdstypen kräver autentiseringsuppgifter.</value>
+  </data>
+  <data name="ActionType_SendEmail" xml:space="preserve">
+    <value>Skicka e-post</value>
+  </data>
+  <data name="ActionType_SendSms" xml:space="preserve">
+    <value>Skicka SMS</value>
+  </data>
+  <data name="ActionType_CallApiGet" xml:space="preserve">
+    <value>HTTP GET</value>
+  </data>
+  <data name="ActionType_CallApiPost" xml:space="preserve">
+    <value>HTTP POST</value>
+  </data>
+  <data name="ActionType_CallApiPut" xml:space="preserve">
+    <value>HTTP PUT</value>
+  </data>
+  <data name="ActionType_CallApiDelete" xml:space="preserve">
+    <value>HTTP DELETE</value>
+  </data>
+  <data name="ActionType_UploadFileFtp" xml:space="preserve">
+    <value>Ladda upp via FTP</value>
+  </data>
+  <data name="ActionType_UploadFileSftp" xml:space="preserve">
+    <value>Ladda upp via SFTP</value>
+  </data>
+  <data name="ActionType_UploadFileS3" xml:space="preserve">
+    <value>Ladda upp till S3</value>
+  </data>
+  <data name="ActionType_SendTeamsMessage" xml:space="preserve">
+    <value>Teams-meddelande</value>
+  </data>
+  <data name="ActionType_SendSlackMessage" xml:space="preserve">
+    <value>Slack-meddelande</value>
+  </data>
+  <data name="ActionType_SendDiscordMessage" xml:space="preserve">
+    <value>Discord-meddelande</value>
+  </data>
+  <data name="ActionType_UploadFileAzureBlob" xml:space="preserve">
+    <value>Ladda upp till Azure Blob</value>
+  </data>
+  <data name="ActionType_UploadFileBox" xml:space="preserve">
+    <value>Ladda upp till Box</value>
+  </data>
+  <data name="ActionType_UploadFileDropbox" xml:space="preserve">
+    <value>Ladda upp till Dropbox</value>
+  </data>
+  <data name="StepConditional" xml:space="preserve">
+    <value>Villkorat</value>
+  </data>
+  <data name="TriggerEventLocked" xml:space="preserve">
+    <value>Typen av utlösande händelse kan inte ändras efter att arbetsflödet har skapats.</value>
+  </data>
+  <data name="FieldTo" xml:space="preserve">
+    <value>Till</value>
+  </data>
+  <data name="FieldToHelp" xml:space="preserve">
+    <value>Kommaseparerade e-postadresser.</value>
+  </data>
+  <data name="FieldCc" xml:space="preserve">
+    <value>Kopia</value>
+  </data>
+  <data name="OptionalPlaceholder" xml:space="preserve">
+    <value>valfritt</value>
+  </data>
+  <data name="FieldSubject" xml:space="preserve">
+    <value>Ämne</value>
+  </data>
+  <data name="FieldToPhone" xml:space="preserve">
+    <value>Till (telefon)</value>
+  </data>
+  <data name="FieldToPhoneHelp" xml:space="preserve">
+    <value>E.164-format. Kräver en autentiseringsuppgift för Twilio.</value>
+  </data>
+  <data name="FieldUrl" xml:space="preserve">
+    <value>URL</value>
+  </data>
+  <data name="FieldTimeoutSeconds" xml:space="preserve">
+    <value>Tidsgräns (sekunder)</value>
+  </data>
+  <data name="FieldRemotePath" xml:space="preserve">
+    <value>Fjärrsökväg</value>
+  </data>
+  <data name="FieldFilename" xml:space="preserve">
+    <value>Filnamn</value>
+  </data>
+  <data name="FieldFilenameHelp" xml:space="preserve">
+    <value>Lämna tomt för ett automatiskt genererat namn.</value>
+  </data>
+  <data name="FieldS3Key" xml:space="preserve">
+    <value>S3-nyckel (sökväg)</value>
+  </data>
+  <data name="FieldS3KeyHelp" xml:space="preserve">
+    <value>Fullständig nyckel/sökväg i bucketen.</value>
+  </data>
+  <data name="FieldCardTitle" xml:space="preserve">
+    <value>Korttitel</value>
+  </data>
+  <data name="FieldThemeColor" xml:space="preserve">
+    <value>Temafärg</value>
+  </data>
+  <data name="FieldThemeColorHelp" xml:space="preserve">
+    <value>Hexkod utan #</value>
+  </data>
+  <data name="FieldChannel" xml:space="preserve">
+    <value>Kanal</value>
+  </data>
+  <data name="FieldChannelHelp" xml:space="preserve">
+    <value>Lämna tomt för att använda webhookens standardkanal.</value>
+  </data>
+  <data name="FieldBotUsername" xml:space="preserve">
+    <value>Botens användarnamn</value>
+  </data>
+  <data name="FieldIconEmoji" xml:space="preserve">
+    <value>Ikon-emoji</value>
+  </data>
+  <data name="FieldAvatarUrl" xml:space="preserve">
+    <value>Avatar-URL</value>
+  </data>
+  <data name="FieldBlobPath" xml:space="preserve">
+    <value>Blobnamn / sökväg</value>
+  </data>
+  <data name="FieldBlobPathHelp" xml:space="preserve">
+    <value>Lämna tomt för en automatiskt genererad sökväg.</value>
+  </data>
+  <data name="FieldFolderId" xml:space="preserve">
+    <value>Mapp-ID</value>
+  </data>
+  <data name="FieldFolderIdHelp" xml:space="preserve">
+    <value>"0" = rotmappen.</value>
+  </data>
+  <data name="FieldTargetPath" xml:space="preserve">
+    <value>Målsökväg</value>
+  </data>
+  <data name="FieldWriteMode" xml:space="preserve">
+    <value>Skrivläge</value>
+  </data>
+  <data name="WriteModeOverwrite" xml:space="preserve">
+    <value>Skriv över</value>
+  </data>
+  <data name="WriteModeAdd" xml:space="preserve">
+    <value>Lägg till (byt namn vid konflikt)</value>
+  </data>
+  <data name="WriteModeUpdate" xml:space="preserve">
+    <value>Uppdatera (misslyckas om filen inte finns)</value>
+  </data>
+  <data name="StepCredential" xml:space="preserve">
+    <value>Autentiseringsuppgift</value>
+  </data>
+  <data name="CredentialNoneOption" xml:space="preserve">
+    <value>(ingen)</value>
+  </data>
+  <data name="NoMatchingCredentials" xml:space="preserve">
+    <value>Inga matchande autentiseringsuppgifter hittades för den här åtgärdstypen.</value>
+  </data>
+  <data name="AddCredentialNow" xml:space="preserve">
+    <value>Lägg till en nu →</value>
+  </data>
+  <data name="CredentialHelpSmtp" xml:space="preserve">
+    <value>SMTP-autentiseringsuppgifter för att skicka e-post.</value>
+  </data>
+  <data name="CredentialHelpTwilio" xml:space="preserve">
+    <value>Twilio-autentiseringsuppgifter för SMS-leverans.</value>
+  </data>
+  <data name="CredentialHelpHttp" xml:space="preserve">
+    <value>Valfri autentiseringsuppgift för HTTP-autentisering.</value>
+  </data>
+  <data name="CredentialHelpFtp" xml:space="preserve">
+    <value>Autentiseringsuppgifter för FTP-servern.</value>
+  </data>
+  <data name="CredentialHelpSftp" xml:space="preserve">
+    <value>Autentiseringsuppgifter för SFTP-servern.</value>
+  </data>
+  <data name="CredentialHelpS3" xml:space="preserve">
+    <value>Autentiseringsuppgifter för AWS S3 (åtkomstnyckel + bucket).</value>
+  </data>
+  <data name="CredentialHelpTeams" xml:space="preserve">
+    <value>Autentiseringsuppgift för inkommande webhook i Microsoft Teams.</value>
+  </data>
+  <data name="CredentialHelpSlack" xml:space="preserve">
+    <value>Autentiseringsuppgift med Slack-webhook eller bot-token.</value>
+  </data>
+  <data name="CredentialHelpDiscord" xml:space="preserve">
+    <value>Autentiseringsuppgift med Discord-webhook eller bot-token.</value>
+  </data>
+  <data name="CredentialHelpAzure" xml:space="preserve">
+    <value>Autentiseringsuppgift med anslutningssträng för Azure Blob Storage.</value>
+  </data>
+  <data name="CredentialHelpBox" xml:space="preserve">
+    <value>Autentiseringsuppgift för Box-applikation (JWT).</value>
+  </data>
+  <data name="CredentialHelpDropbox" xml:space="preserve">
+    <value>Autentiseringsuppgift med åtkomsttoken för Dropbox.</value>
+  </data>
+  <data name="SelectCredentialOption" xml:space="preserve">
+    <value>— välj autentiseringsuppgift —</value>
+  </data>
+  <data name="CredentialNoneUnauthenticated" xml:space="preserve">
+    <value>(ingen / utan autentisering)</value>
+  </data>
+  <data name="ConditionExpression" xml:space="preserve">
+    <value>Villkorsuttryck</value>
+  </data>
+  <data name="OptionalSuffix" xml:space="preserve">
+    <value>(valfritt)</value>
+  </data>
+  <data name="ConditionHelp" xml:space="preserve">
+    <value>Lämna tomt för att alltid köra det här steget. Om ett villkor anges körs steget bara när villkoret utvärderas till {0}. Använder samma variabler som utdatamallen.</value>
+  </data>
+  <data name="VisualBuilder" xml:space="preserve">
+    <value>Visuell redigerare</value>
+  </data>
+  <data name="RawExpression" xml:space="preserve">
+    <value>Råuttryck</value>
+  </data>
+  <data name="AddRule" xml:space="preserve">
+    <value>Lägg till regel</value>
+  </data>
+  <data name="RulesJoinedWithAnd" xml:space="preserve">
+    <value>Flera regler kombineras med AND — alla måste vara uppfyllda.</value>
+  </data>
+  <data name="TestCondition" xml:space="preserve">
+    <value>Testa villkor</value>
+  </data>
+  <data name="OpContains" xml:space="preserve">
+    <value>innehåller</value>
+  </data>
+  <data name="OpNotContains" xml:space="preserve">
+    <value>innehåller inte</value>
+  </data>
+  <data name="OpEquals" xml:space="preserve">
+    <value>är lika med</value>
+  </data>
+  <data name="OpNotEquals" xml:space="preserve">
+    <value>är inte lika med</value>
+  </data>
+  <data name="OpStartsWith" xml:space="preserve">
+    <value>börjar med</value>
+  </data>
+  <data name="OpEndsWith" xml:space="preserve">
+    <value>slutar med</value>
+  </data>
+  <data name="OpIsEmpty" xml:space="preserve">
+    <value>är tom</value>
+  </data>
+  <data name="OpIsNotEmpty" xml:space="preserve">
+    <value>är inte tom</value>
+  </data>
+  <data name="ConditionValuePlaceholder" xml:space="preserve">
+    <value>värde</value>
+  </data>
+  <data name="ConditionTooComplex" xml:space="preserve">
+    <value>Det aktuella uttrycket är för komplext för den visuella redigeraren. Redigera det på fliken Råuttryck.</value>
+  </data>
+  <data name="ConditionNone" xml:space="preserve">
+    <value>Inget villkor — steget körs alltid.</value>
+  </data>
+  <data name="ConditionTesting" xml:space="preserve">
+    <value>Testar…</value>
+  </data>
+  <data name="ConditionWillRun" xml:space="preserve">
+    <value>Utvärderat: "{0}" — steget körs</value>
+  </data>
+  <data name="ConditionWillSkip" xml:space="preserve">
+    <value>Utvärderat: "{0}" — steget hoppas över</value>
+  </data>
+  <data name="ConditionSyntaxValid" xml:space="preserve">
+    <value>Syntaxen är giltig (ingen exempelnyttolast att utvärdera mot)</value>
+  </data>
+  <data name="ConditionTestFailed" xml:space="preserve">
+    <value>Testbegäran misslyckades.</value>
+  </data>
+  <data name="TemplateSyntaxHelp" xml:space="preserve">
+    <value>Använd Scriban-mallsyntax. Klicka på variablerna i panelen till höger för att infoga dem.</value>
+  </data>
+  <data name="VariablesHelpScalar" xml:space="preserve">
+    <value>Klicka på en variabel av typen {0} för att infoga den.</value>
+  </data>
+  <data name="VariablesHelpArray" xml:space="preserve">
+    <value>Klicka på en variabel av typen {0} för att infoga ett kodavsnitt med en {1}-loop.</value>
+  </data>
+  <data name="VariableKindScalar" xml:space="preserve">
+    <value>skalär</value>
+  </data>
+  <data name="VariableKindArray" xml:space="preserve">
+    <value>array</value>
+  </data>
+  <data name="CallCollectionsHeader" xml:space="preserve">
+    <value>Larmsamlingar (arrayer)</value>
+  </data>
+  <data name="CallCollectionsHelp" xml:space="preserve">
+    <value>Klicka för att infoga en {0}-loop. Tillgängligt för utlösarna CallAdded, CallUpdated och CallClosed.</value>
+  </data>
+  <data name="ArrayFieldsTooltip" xml:space="preserve">
+    <value>Fält: {0}</value>
+  </data>
+  <data name="UnitPersonnelVariables" xml:space="preserve">
+    <value>Enhet / personal</value>
+  </data>
+  <data name="SaveStepFailed" xml:space="preserve">
+    <value>Det gick inte att spara steget.</value>
+  </data>
+  <data name="DeleteStepFailed" xml:space="preserve">
+    <value>Borttagningen misslyckades: {0}</value>
+  </data>
+  <data name="SubjectPlaceholder" xml:space="preserve">
+    <value>t.ex. Nytt larm: {0}</value>
+  </data>
+  <data name="TeamsTitlePlaceholder" xml:space="preserve">
+    <value>Resgrid-avisering</value>
+  </data>
+  <data name="BotUsernamePlaceholder" xml:space="preserve">
+    <value>Resgrid-bot</value>
   </data>
 </root>

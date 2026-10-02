@@ -59,15 +59,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 
-  <data name="Name1" xml:space="preserve">
-    <value>this is my long string</value>
-  </data>
-  <data name="Bitmap1" xml:space="preserve">
-    <value>[base64 mime encoded serialized .NET Framework object]</value>
-  </data>
-  <data name="Icon1" xml:space="preserve">
-    <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-  </data>
   <data name="ActiveCalls" xml:space="preserve">
     <value>Active Calls</value>
   </data>
@@ -943,5 +934,26 @@
   </data>
   <data name="NearestUnitsNoPosition" xml:space="preserve">
     <value>Brak pozycji</value>
+  </data>
+  <data name="SiteInfo" xml:space="preserve">
+    <value>Informacje o obiekcie</value>
+  </data>
+  <data name="NoSiteInfo" xml:space="preserve">
+    <value>Z tym zgłoszeniem nie powiązano żadnych kontaktów z informacjami o obiekcie.</value>
+  </data>
+  <data name="PremiseHazard" xml:space="preserve">
+    <value>Zagrożenie na obiekcie</value>
+  </data>
+  <data name="PremiseHazards" xml:space="preserve">
+    <value>Zagrożenia na obiekcie</value>
+  </data>
+  <data name="AlertNotes" xml:space="preserve">
+    <value>Notatki z alertem</value>
+  </data>
+  <data name="NoPreplan" xml:space="preserve">
+    <value>Dla tego kontaktu nie zarejestrowano planu operacyjnego.</value>
+  </data>
+  <data name="SiteFiles" xml:space="preserve">
+    <value>Pliki obiektu</value>
   </data>
 </root>

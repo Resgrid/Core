@@ -92,7 +92,7 @@
                     </form>
                     @if (!Model.IsNew && canEdit)
                     {
-                        <form method="post" asp-action="Delete" asp-route-id="@s.RateScheduleId" onsubmit="return confirm('@localizer["ConfirmDeleteSchedule"]');" class="m-t-sm">@Html.AntiForgeryToken()<button type="submit" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> @localizer["DeleteSchedule"]</button></form>
+                        <form method="post" asp-action="Delete" asp-route-id="@s.RateScheduleId" onsubmit="return confirm('@JsEncoder.Encode(localizer["ConfirmDeleteSchedule"])');" class="m-t-sm">@Html.AntiForgeryToken()<button type="submit" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> @localizer["DeleteSchedule"]</button></form>
                     }
                 </div>
             </div>
@@ -116,7 +116,7 @@
                                             @if (canEdit)
                                             {
                                                 <button type="button" class="btn btn-xs btn-default js-edit-premium" data-premium='@Newtonsoft.Json.JsonConvert.SerializeObject(new { premium.RatePremiumId, premium.Name, premium.Code, premium.StandbyAdder, premium.DeploymentAdder, premium.Overtime1Adder, premium.Overtime2Adder, premium.IsActive })'><i class="fa fa-pencil"></i></button>
-                                                <form method="post" asp-action="DeletePremium" asp-route-id="@premium.RatePremiumId" asp-route-scheduleId="@s.RateScheduleId" class="inline" onsubmit="return confirm('@localizer["ConfirmDelete"]');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></button></form>
+                                                <form method="post" asp-action="DeletePremium" asp-route-id="@premium.RatePremiumId" asp-route-scheduleId="@s.RateScheduleId" class="inline" onsubmit="return confirm('@JsEncoder.Encode(localizer["ConfirmDelete"])');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></button></form>
                                             }
                                         </td>
                                     </tr>
@@ -163,7 +163,7 @@
                                         @if (canEdit)
                                         {
                                             <button type="button" class="btn btn-xs btn-default js-edit-entry" data-entry='@Newtonsoft.Json.JsonConvert.SerializeObject(new { e.RateScheduleEntryId, e.EntryType, e.Name, e.Code, e.GroupKey, e.CrewSize, e.CertificationCode, e.UnitTypeId, e.InventoryItemId, e.BillingBasis, e.RequiredCertificationsJson, e.SortOrder, e.IsActive, Bands = e.Bands.Select(b => new { b.BandType, b.Rate, b.ThresholdStartHours, b.ThresholdEndHours, b.DailyTierMinHours, b.DailyTierMaxHours, b.FreeUnitsPerDay, b.RequiresAirTravel, b.MealCode, b.Label, b.SortOrder }) })'><i class="fa fa-pencil"></i></button>
-                                            <form method="post" asp-action="DeleteEntry" asp-route-id="@e.RateScheduleEntryId" asp-route-scheduleId="@s.RateScheduleId" class="inline" onsubmit="return confirm('@localizer["ConfirmDelete"]');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></button></form>
+                                            <form method="post" asp-action="DeleteEntry" asp-route-id="@e.RateScheduleEntryId" asp-route-scheduleId="@s.RateScheduleId" class="inline" onsubmit="return confirm('@JsEncoder.Encode(localizer["ConfirmDelete"])');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></button></form>
                                         }
                                     </td>
                                 </tr>
@@ -262,9 +262,10 @@
             (function () {
                 var bandTypes = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(bandTypes.Select(b => new { v = (int)b, t = localizer["Band" + b].Value })));
                 function val(v) { return v === null || v === undefined ? '' : v; }
+                function esc(v) { return String(val(v)).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
                 function bandRow(b) {
                     b = b || {};
-                    var opts = bandTypes.map(function (t) { return '<option value="' + t.v + '"' + (t.v === b.BandType ? ' selected' : '') + '>' + t.t + '</option>'; }).join('');
+                    var opts = bandTypes.map(function (t) { return '<option value="' + t.v + '"' + (t.v === b.BandType ? ' selected' : '') + '>' + esc(t.t) + '</option>'; }).join('');
                     return '<tr>' +
                         '<td><select class="form-control input-sm b-type">' + opts + '</select></td>' +
                         '<td><input type="number" step="0.0001" class="form-control input-sm b-rate" value="' + val(b.Rate) + '" /></td>' +
@@ -274,8 +275,8 @@
                         '<td><input type="number" step="0.5" class="form-control input-sm b-tmax" value="' + val(b.DailyTierMaxHours) + '" /></td>' +
                         '<td><input type="number" step="0.01" class="form-control input-sm b-free" value="' + val(b.FreeUnitsPerDay) + '" /></td>' +
                         '<td><input type="checkbox" class="b-air"' + (b.RequiresAirTravel ? ' checked' : '') + ' /></td>' +
-                        '<td><input type="text" maxlength="10" class="form-control input-sm b-meal" value="' + val(b.MealCode) + '" /></td>' +
-                        '<td><input type="text" maxlength="200" class="form-control input-sm b-label" value="' + val(b.Label) + '" /></td>' +
+                        '<td><input type="text" maxlength="10" class="form-control input-sm b-meal" value="' + esc(b.MealCode) + '" /></td>' +
+                        '<td><input type="text" maxlength="200" class="form-control input-sm b-label" value="' + esc(b.Label) + '" /></td>' +
                         '<td><button type="button" class="btn btn-xs btn-danger b-del"><i class="fa fa-times"></i></button></td></tr>';
                 }
                 function num(el) { var v = $(el).val(); return v === '' ? null : parseFloat(v); }
@@ -296,9 +297,9 @@
                 $('#pf-apply').on('click', function () {
                     var base = parseFloat($('#pf-base').val()); if (isNaN(base)) return;
                     var rows = [];
-                    var standby = parseFloat($('#pf-standby').val()); if (!isNaN(standby)) rows.push({ BandType: 0, Rate: standby, Label: '@localizer["BandStandby"]' });
+                    var standby = parseFloat($('#pf-standby').val()); if (!isNaN(standby)) rows.push({ BandType: 0, Rate: standby, Label: '@JsEncoder.Encode(localizer["BandStandby"])' });
                     var ot1m = parseFloat($('#pf-ot1m').val()), ot1h = parseFloat($('#pf-ot1h').val()), ot2m = parseFloat($('#pf-ot2m').val()), ot2h = parseFloat($('#pf-ot2h').val());
-                    rows.push({ BandType: 1, Rate: base, ThresholdStartHours: 0, ThresholdEndHours: isNaN(ot1h) ? null : ot1h, Label: '@localizer["BandDeployment"]' });
+                    rows.push({ BandType: 1, Rate: base, ThresholdStartHours: 0, ThresholdEndHours: isNaN(ot1h) ? null : ot1h, Label: '@JsEncoder.Encode(localizer["BandDeployment"])' });
                     if (!isNaN(ot1m) && !isNaN(ot1h)) rows.push({ BandType: 2, Rate: Math.round(base * ot1m * 100) / 100, ThresholdStartHours: ot1h, ThresholdEndHours: isNaN(ot2h) ? null : ot2h, Label: 'OT ×' + ot1m });
                     if (!isNaN(ot2m) && !isNaN(ot2h)) rows.push({ BandType: 3, Rate: Math.round(base * ot2m * 100) / 100, ThresholdStartHours: ot2h, Label: 'OT ×' + ot2m });
                     $('#bandTable tbody').html(rows.map(bandRow).join(''));

@@ -74,7 +74,7 @@
                                         <form asp-controller="Routes" asp-action="Delete" asp-route-area="User" method="post" style="display:inline;">
                                             @Html.AntiForgeryToken()
                                             <input type="hidden" name="id" value="@plan.RoutePlanId" />
-                                            <button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@localizer["DeleteRoutePlanConfirm"]');">
+                                            <button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@JsEncoder.Encode(localizer["DeleteRoutePlanConfirm"])');">
                                                 <i class="fa fa-trash"></i>
                                             </button>
                                         </form>

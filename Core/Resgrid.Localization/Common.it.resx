@@ -59,15 +59,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 
-  <data name="Name1" xml:space="preserve">
-    <value>this is my long string</value>
-  </data>
-  <data name="Bitmap1" xml:space="preserve">
-    <value>[base64 mime encoded serialized .NET Framework object]</value>
-  </data>
-  <data name="Icon1" xml:space="preserve">
-    <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-  </data>
   <data name="Action" xml:space="preserve">
     <value>Azione</value>
   </data>
@@ -306,7 +297,7 @@
     <value>Esci</value>
   </data>
   <data name="LogsModule" xml:space="preserve">
-    <value>Registri</value>
+    <value>Log</value>
   </data>
   <data name="Mailbox" xml:space="preserve">
     <value>Casella di posta</value>
@@ -609,7 +600,7 @@
     <value>Settimane</value>
   </data>
   <data name="WorkLog" xml:space="preserve">
-    <value>Registro di lavoro</value>
+    <value>Log di lavoro</value>
   </data>
   <data name="Yearly" xml:space="preserve">
     <value>Annuale</value>
@@ -663,7 +654,7 @@
     <value>Coda di moderazione protetta</value>
   </data>
   <data name="AdpProtectedUnitLogs" xml:space="preserve">
-    <value>Registri unità protetti</value>
+    <value>Log unità protetti</value>
   </data>
   <data name="AdpProtectedBannerDescription" xml:space="preserve">
     <value>crittografato a riposo per questo dipartimento. Gli utenti autorizzati e i canali approvati possono comunque divulgarlo.</value>
@@ -758,5 +749,44 @@
   </data>
   <data name="JsonInputSchema" xml:space="preserve">
     <value>Schema JSON (nomi e tipi dei campi)</value>
+  </data>
+  <data name="AdpUsePasskey" xml:space="preserve">
+    <value>Usa una passkey</value>
+  </data>
+  <data name="AdpUseResponder" xml:space="preserve">
+    <value>Approva con Responder</value>
+  </data>
+  <data name="AdpUseCode" xml:space="preserve">
+    <value>Usa un codice di autenticazione</value>
+  </data>
+  <data name="AdpApprovalInstructions" xml:space="preserve">
+    <value>Apri Resgrid Responder sul telefono, controlla la richiesta e inserisci questo numero:</value>
+  </data>
+  <data name="AdpApprovalWaiting" xml:space="preserve">
+    <value>In attesa della tua approvazione in Responder…</value>
+  </data>
+  <data name="AdpApprovalDenied" xml:space="preserve">
+    <value>La richiesta è stata rifiutata in Responder.</value>
+  </data>
+  <data name="AdpApprovalExpired" xml:space="preserve">
+    <value>La richiesta è scaduta prima dell'approvazione. Ricomincia.</value>
+  </data>
+  <data name="AdpPasskeyCancelled" xml:space="preserve">
+    <value>La richiesta della passkey è stata chiusa. Non è stato modificato nulla.</value>
+  </data>
+  <data name="AdpPasskeyFailed" xml:space="preserve">
+    <value>Non è stato possibile usare la passkey. Riprova o usa la tua app di autenticazione.</value>
+  </data>
+  <data name="AdpUseProvider" xml:space="preserve">
+    <value>Usa il tuo provider di identità</value>
+  </data>
+  <data name="AdpProviderPopupBlocked" xml:space="preserve">
+    <value>Consenti i popup per questo sito per verificare con il tuo provider di identità.</value>
+  </data>
+  <data name="POI" xml:space="preserve">
+    <value>POI</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Modifica</value>
   </data>
 </root>

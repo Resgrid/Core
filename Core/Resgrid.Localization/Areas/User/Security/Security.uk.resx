@@ -60,379 +60,1468 @@
   </resheader>
 
   <data name="SecurityPermissionsHeader" xml:space="preserve">
-    <value>Security and Permissions</value>
+    <value>Безпека та дозволи</value>
   </data>
   <data name="SecurityPermissionsDescription" xml:space="preserve">
-    <value>Here you can set the permissions for your department, for example which users or roles can create calls, or who is authorized to create and remove users. Changes to the permissions will take effect on the next login to the Resgrid web application.</value>
+    <value>Тут можна налаштувати дозволи для вашого підрозділу, наприклад які користувачі або ролі можуть створювати виклики або хто має право додавати й видаляти користувачів. Зміни дозволів набудуть чинності під час наступного входу у вебзастосунок Resgrid.</value>
   </data>
   <data name="AuditLogsButton" xml:space="preserve">
-    <value>Audit Logs</value>
+    <value>Журнали аудиту</value>
+  </data>
+  <data name="AuditLogsTypeFilterLabel" xml:space="preserve">
+    <value>Фільтрувати за типом аудиту</value>
+  </data>
+  <data name="AuditLogsTypeFilterAll" xml:space="preserve">
+    <value>Усі типи аудиту</value>
+  </data>
+  <data name="AuditLogsSearchHelp" xml:space="preserve">
+    <value>Шукайте за іменем користувача, ID користувача чи аудиту, адресою електронної пошти, датою/часом або типом аудиту. Пошук і сортування застосовуються в межах вибраного типу аудиту.</value>
+  </data>
+  <data name="AuditLogsSearchLabel" xml:space="preserve">
+    <value>Пошук у журналах аудиту:</value>
+  </data>
+  <data name="AuditLogsSearchPlaceholder" xml:space="preserve">
+    <value>Ім'я, ID, ел. пошта, дата/час або тип</value>
+  </data>
+  <data name="AuditLogsColumnTimestamp" xml:space="preserve">
+    <value>Мітка часу</value>
+  </data>
+  <data name="AuditLogsColumnType" xml:space="preserve">
+    <value>Тип</value>
+  </data>
+  <data name="AuditLogsColumnLoggedBy" xml:space="preserve">
+    <value>Ким записано</value>
+  </data>
+  <data name="AuditLogsColumnResult" xml:space="preserve">
+    <value>Результат</value>
+  </data>
+  <data name="AuditLogsColumnMessage" xml:space="preserve">
+    <value>Повідомлення</value>
+  </data>
+  <data name="AuditLogsColumnSearchTerms" xml:space="preserve">
+    <value>Пошукові терміни</value>
+  </data>
+  <data name="AuditLogsColumnActions" xml:space="preserve">
+    <value>Дії</value>
+  </data>
+  <data name="AuditLogsResultSuccessful" xml:space="preserve">
+    <value>Успішно</value>
+  </data>
+  <data name="AuditLogsResultFailed" xml:space="preserve">
+    <value>Не вдалося</value>
+  </data>
+  <data name="AuditLogsViewButton" xml:space="preserve">
+    <value>Переглянути</value>
+  </data>
+  <data name="AuditLogsTableInfo" xml:space="preserve">
+    <value>Показано записи з _START_ по _END_ із _TOTAL_</value>
+  </data>
+  <data name="AuditLogsTableInfoEmpty" xml:space="preserve">
+    <value>Показано записи з 0 по 0 із 0</value>
+  </data>
+  <data name="AuditLogsTableInfoFiltered" xml:space="preserve">
+    <value>(відфільтровано з _MAX_ записів)</value>
+  </data>
+  <data name="AuditLogsTableLengthMenu" xml:space="preserve">
+    <value>Показати _MENU_ записів</value>
+  </data>
+  <data name="AuditLogsTableLoading" xml:space="preserve">
+    <value>Завантаження...</value>
+  </data>
+  <data name="AuditLogsTableEmpty" xml:space="preserve">
+    <value>Немає записів журналу аудиту</value>
+  </data>
+  <data name="AuditLogsTableZeroRecords" xml:space="preserve">
+    <value>Відповідних записів журналу аудиту не знайдено</value>
+  </data>
+  <data name="AuditLogsTableFirst" xml:space="preserve">
+    <value>Перша</value>
+  </data>
+  <data name="AuditLogsTableLast" xml:space="preserve">
+    <value>Остання</value>
+  </data>
+  <data name="AuditLogsTableNext" xml:space="preserve">
+    <value>Наступна</value>
+  </data>
+  <data name="AuditLogsTablePrevious" xml:space="preserve">
+    <value>Попередня</value>
+  </data>
+  <data name="AuditLogsTableSortAscending" xml:space="preserve">
+    <value>: активуйте, щоб відсортувати стовпець за зростанням</value>
+  </data>
+  <data name="AuditLogsTableSortDescending" xml:space="preserve">
+    <value>: активуйте, щоб відсортувати стовпець за спаданням</value>
+  </data>
+  <data name="AuditLogsSystemActor" xml:space="preserve">
+    <value>Система</value>
+  </data>
+  <data name="AuditLogsUnknownTime" xml:space="preserve">
+    <value>Невідомо</value>
+  </data>
+  <data name="AuditLogViewTitle" xml:space="preserve">
+    <value>Перегляд запису журналу аудиту</value>
+  </data>
+  <data name="AuditLogViewPanelTitle" xml:space="preserve">
+    <value>Запис журналу аудиту</value>
+  </data>
+  <data name="AuditLogViewAuditLogId" xml:space="preserve">
+    <value>ID запису журналу аудиту:</value>
+  </data>
+  <data name="AuditLogViewDepartmentId" xml:space="preserve">
+    <value>ID підрозділу:</value>
+  </data>
+  <data name="AuditLogViewAuditType" xml:space="preserve">
+    <value>Тип аудиту:</value>
+  </data>
+  <data name="AuditLogViewLogTypeId" xml:space="preserve">
+    <value>ID типу запису:</value>
+  </data>
+  <data name="AuditLogViewTypeDescription" xml:space="preserve">
+    <value>Опис типу:</value>
+  </data>
+  <data name="AuditLogViewResult" xml:space="preserve">
+    <value>Результат:</value>
+  </data>
+  <data name="AuditLogViewLoggedBy" xml:space="preserve">
+    <value>Ким записано:</value>
+  </data>
+  <data name="AuditLogViewUserId" xml:space="preserve">
+    <value>ID користувача:</value>
+  </data>
+  <data name="AuditLogViewLoggedOnLocal" xml:space="preserve">
+    <value>Записано (місцевий час):</value>
+  </data>
+  <data name="AuditLogViewLoggedOnUtc" xml:space="preserve">
+    <value>Записано (UTC):</value>
+  </data>
+  <data name="AuditLogViewIpAddress" xml:space="preserve">
+    <value>IP-адреса:</value>
+  </data>
+  <data name="AuditLogViewServerName" xml:space="preserve">
+    <value>Ім'я сервера:</value>
+  </data>
+  <data name="AuditLogViewObjectId" xml:space="preserve">
+    <value>ID об'єкта:</value>
+  </data>
+  <data name="AuditLogViewObjectDepartmentId" xml:space="preserve">
+    <value>ID підрозділу об'єкта:</value>
+  </data>
+  <data name="AuditLogViewUserAgent" xml:space="preserve">
+    <value>Агент користувача:</value>
+  </data>
+  <data name="AuditLogViewMessage" xml:space="preserve">
+    <value>Повідомлення:</value>
+  </data>
+  <data name="AuditLogViewData" xml:space="preserve">
+    <value>Дані:</value>
+  </data>
+  <data name="AuditLogViewNotRecorded" xml:space="preserve">
+    <value>Не записано</value>
+  </data>
+  <data name="AuditLogTypeDepartmentSettingsChanged" xml:space="preserve">
+    <value>Налаштування підрозділу змінено</value>
+  </data>
+  <data name="AuditLogTypeUserAdded" xml:space="preserve">
+    <value>Користувача додано</value>
+  </data>
+  <data name="AuditLogTypeUserRemoved" xml:space="preserve">
+    <value>Користувача вилучено</value>
+  </data>
+  <data name="AuditLogTypeGroupAdded" xml:space="preserve">
+    <value>Групу додано</value>
+  </data>
+  <data name="AuditLogTypeGroupRemoved" xml:space="preserve">
+    <value>Групу вилучено</value>
+  </data>
+  <data name="AuditLogTypeGroupChanged" xml:space="preserve">
+    <value>Групу змінено</value>
+  </data>
+  <data name="AuditLogTypeUnitAdded" xml:space="preserve">
+    <value>Одиницю додано</value>
+  </data>
+  <data name="AuditLogTypeUnitRemoved" xml:space="preserve">
+    <value>Одиницю вилучено</value>
+  </data>
+  <data name="AuditLogTypeUnitChanged" xml:space="preserve">
+    <value>Одиницю змінено</value>
+  </data>
+  <data name="AuditLogTypeProfileUpdated" xml:space="preserve">
+    <value>Профіль оновлено</value>
+  </data>
+  <data name="AuditLogTypePermissionsChanged" xml:space="preserve">
+    <value>Дозволи змінено</value>
+  </data>
+  <data name="AuditLogTypeSubscriptionUpdated" xml:space="preserve">
+    <value>Підписку оновлено</value>
+  </data>
+  <data name="AuditLogTypeSubscriptionCreated" xml:space="preserve">
+    <value>Підписку створено</value>
+  </data>
+  <data name="AuditLogTypeSubscriptionCancelled" xml:space="preserve">
+    <value>Підписку скасовано</value>
+  </data>
+  <data name="AuditLogTypeSubscriptionBillingInfoUpdated" xml:space="preserve">
+    <value>Платіжні дані підписки оновлено</value>
+  </data>
+  <data name="AuditLogTypeCallReactivated" xml:space="preserve">
+    <value>Виклик повторно активовано</value>
+  </data>
+  <data name="AuditLogTypeUserAccountDeleted" xml:space="preserve">
+    <value>Обліковий запис користувача видалено</value>
+  </data>
+  <data name="AuditLogTypeAddonSubscriptionModified" xml:space="preserve">
+    <value>Підписку на доповнення змінено</value>
+  </data>
+  <data name="AuditLogTypeDeleteDepartmentRequested" xml:space="preserve">
+    <value>Видалення підрозділу запитано</value>
+  </data>
+  <data name="AuditLogTypeDeleteDepartmentRequestedCancelled" xml:space="preserve">
+    <value>Запит на видалення підрозділу скасовано</value>
+  </data>
+  <data name="AuditLogTypeDeleteStaticShift" xml:space="preserve">
+    <value>Статичну зміну видалено</value>
+  </data>
+  <data name="AuditLogTypeUpdateStaticShift" xml:space="preserve">
+    <value>Статичну зміну оновлено</value>
+  </data>
+  <data name="AuditLogTypeCustomStatusAdded" xml:space="preserve">
+    <value>Власний статус додано</value>
+  </data>
+  <data name="AuditLogTypeCustomStatusRemoved" xml:space="preserve">
+    <value>Власний статус вилучено</value>
+  </data>
+  <data name="AuditLogTypeCustomStatusUpdated" xml:space="preserve">
+    <value>Власний статус оновлено</value>
+  </data>
+  <data name="AuditLogTypeCustomStatusDetailUpdated" xml:space="preserve">
+    <value>Деталі власного статусу оновлено</value>
+  </data>
+  <data name="AuditLogTypeCallTypeAdded" xml:space="preserve">
+    <value>Тип виклику додано</value>
+  </data>
+  <data name="AuditLogTypeCallTypeEdited" xml:space="preserve">
+    <value>Тип виклику відредаговано</value>
+  </data>
+  <data name="AuditLogTypeCallTypeRemoved" xml:space="preserve">
+    <value>Тип виклику вилучено</value>
+  </data>
+  <data name="AuditLogTypeCallPriorityAdded" xml:space="preserve">
+    <value>Пріоритет виклику додано</value>
+  </data>
+  <data name="AuditLogTypeCallPriorityEdited" xml:space="preserve">
+    <value>Пріоритет виклику відредаговано</value>
+  </data>
+  <data name="AuditLogTypeCallPriorityRemoved" xml:space="preserve">
+    <value>Пріоритет виклику вилучено</value>
+  </data>
+  <data name="AuditLogTypeUnitTypeAdded" xml:space="preserve">
+    <value>Тип одиниці додано</value>
+  </data>
+  <data name="AuditLogTypeUnitTypeEdited" xml:space="preserve">
+    <value>Тип одиниці відредаговано</value>
+  </data>
+  <data name="AuditLogTypeUnitTypeRemoved" xml:space="preserve">
+    <value>Тип одиниці вилучено</value>
+  </data>
+  <data name="AuditLogTypeCertificationTypeAdded" xml:space="preserve">
+    <value>Тип сертифіката додано</value>
+  </data>
+  <data name="AuditLogTypeCertificationTypeEdited" xml:space="preserve">
+    <value>Тип сертифіката відредаговано</value>
+  </data>
+  <data name="AuditLogTypeCertificationTypeRemoved" xml:space="preserve">
+    <value>Тип сертифіката вилучено</value>
+  </data>
+  <data name="AuditLogTypeDocumentCategoryAdded" xml:space="preserve">
+    <value>Категорію документів додано</value>
+  </data>
+  <data name="AuditLogTypeDocumentCategoryEdited" xml:space="preserve">
+    <value>Категорію документів відредаговано</value>
+  </data>
+  <data name="AuditLogTypeDocumentCategoryRemoved" xml:space="preserve">
+    <value>Категорію документів вилучено</value>
+  </data>
+  <data name="AuditLogTypeDocumentAdded" xml:space="preserve">
+    <value>Документ додано</value>
+  </data>
+  <data name="AuditLogTypeDocumentEdited" xml:space="preserve">
+    <value>Документ відредаговано</value>
+  </data>
+  <data name="AuditLogTypeDocumentRemoved" xml:space="preserve">
+    <value>Документ вилучено</value>
+  </data>
+  <data name="AuditLogTypeNoteCategoryAdded" xml:space="preserve">
+    <value>Категорію нотаток додано</value>
+  </data>
+  <data name="AuditLogTypeNoteCategoryEdited" xml:space="preserve">
+    <value>Категорію нотаток відредаговано</value>
+  </data>
+  <data name="AuditLogTypeNoteCategoryRemoved" xml:space="preserve">
+    <value>Категорію нотаток вилучено</value>
+  </data>
+  <data name="AuditLogTypeNoteAdded" xml:space="preserve">
+    <value>Нотатку додано</value>
+  </data>
+  <data name="AuditLogTypeNoteEdited" xml:space="preserve">
+    <value>Нотатку відредаговано</value>
+  </data>
+  <data name="AuditLogTypeNoteRemoved" xml:space="preserve">
+    <value>Нотатку вилучено</value>
+  </data>
+  <data name="AuditLogTypeContactAdded" xml:space="preserve">
+    <value>Контакт додано</value>
+  </data>
+  <data name="AuditLogTypeContactEdited" xml:space="preserve">
+    <value>Контакт відредаговано</value>
+  </data>
+  <data name="AuditLogTypeContactRemoved" xml:space="preserve">
+    <value>Контакт вилучено</value>
+  </data>
+  <data name="AuditLogTypeContactCategoryAdded" xml:space="preserve">
+    <value>Категорію контактів додано</value>
+  </data>
+  <data name="AuditLogTypeContactCategoryEdited" xml:space="preserve">
+    <value>Категорію контактів відредаговано</value>
+  </data>
+  <data name="AuditLogTypeContactCategoryRemoved" xml:space="preserve">
+    <value>Категорію контактів вилучено</value>
+  </data>
+  <data name="AuditLogTypeContactNoteTypeAdded" xml:space="preserve">
+    <value>Тип нотатки контакту додано</value>
+  </data>
+  <data name="AuditLogTypeContactNoteTypeEdited" xml:space="preserve">
+    <value>Тип нотатки контакту відредаговано</value>
+  </data>
+  <data name="AuditLogTypeContactNoteTypeRemoved" xml:space="preserve">
+    <value>Тип нотатки контакту вилучено</value>
+  </data>
+  <data name="AuditLogTypeWorkflowAdded" xml:space="preserve">
+    <value>Робочий процес створено</value>
+  </data>
+  <data name="AuditLogTypeWorkflowEdited" xml:space="preserve">
+    <value>Робочий процес оновлено</value>
+  </data>
+  <data name="AuditLogTypeWorkflowDeleted" xml:space="preserve">
+    <value>Робочий процес видалено</value>
+  </data>
+  <data name="AuditLogTypeWorkflowStepAdded" xml:space="preserve">
+    <value>Крок робочого процесу додано</value>
+  </data>
+  <data name="AuditLogTypeWorkflowStepEdited" xml:space="preserve">
+    <value>Крок робочого процесу оновлено</value>
+  </data>
+  <data name="AuditLogTypeWorkflowStepDeleted" xml:space="preserve">
+    <value>Крок робочого процесу видалено</value>
+  </data>
+  <data name="AuditLogTypeWorkflowCredentialAdded" xml:space="preserve">
+    <value>Облікові дані робочого процесу додано</value>
+  </data>
+  <data name="AuditLogTypeWorkflowCredentialEdited" xml:space="preserve">
+    <value>Облікові дані робочого процесу оновлено</value>
+  </data>
+  <data name="AuditLogTypeWorkflowCredentialDeleted" xml:space="preserve">
+    <value>Облікові дані робочого процесу видалено</value>
+  </data>
+  <data name="AuditLogTypeContactVerificationCodeSent" xml:space="preserve">
+    <value>Код підтвердження контакту надіслано</value>
+  </data>
+  <data name="AuditLogTypeContactVerificationConfirmed" xml:space="preserve">
+    <value>Контакт підтверджено</value>
+  </data>
+  <data name="AuditLogTypeContactVerificationFailed" xml:space="preserve">
+    <value>Підтвердження контакту не вдалося</value>
+  </data>
+  <data name="AuditLogTypeTwoFactorEnabled" xml:space="preserve">
+    <value>Двофакторну автентифікацію ввімкнено</value>
+  </data>
+  <data name="AuditLogTypeTwoFactorDisabled" xml:space="preserve">
+    <value>Двофакторну автентифікацію вимкнено</value>
+  </data>
+  <data name="AuditLogTypeTwoFactorLoginVerified" xml:space="preserve">
+    <value>Двофакторний вхід підтверджено</value>
+  </data>
+  <data name="AuditLogTypeTwoFactorRecoveryCodeUsed" xml:space="preserve">
+    <value>Двофакторний код відновлення використано</value>
+  </data>
+  <data name="AuditLogTypeTwoFactorStepUpVerified" xml:space="preserve">
+    <value>Додаткову двофакторну перевірку підтверджено</value>
+  </data>
+  <data name="AuditLogTypeSsoConfigCreated" xml:space="preserve">
+    <value>Конфігурацію SSO створено</value>
+  </data>
+  <data name="AuditLogTypeSsoConfigUpdated" xml:space="preserve">
+    <value>Конфігурацію SSO оновлено</value>
+  </data>
+  <data name="AuditLogTypeSsoConfigDeleted" xml:space="preserve">
+    <value>Конфігурацію SSO видалено</value>
+  </data>
+  <data name="AuditLogTypeSsoLoginSucceeded" xml:space="preserve">
+    <value>Вхід через SSO виконано</value>
+  </data>
+  <data name="AuditLogTypeSsoLoginFailed" xml:space="preserve">
+    <value>Вхід через SSO не вдався</value>
+  </data>
+  <data name="AuditLogTypeSsoUserProvisioned" xml:space="preserve">
+    <value>Користувача SSO підготовлено</value>
+  </data>
+  <data name="AuditLogTypeScimUserCreated" xml:space="preserve">
+    <value>Користувача SCIM створено</value>
+  </data>
+  <data name="AuditLogTypeScimUserUpdated" xml:space="preserve">
+    <value>Користувача SCIM оновлено</value>
+  </data>
+  <data name="AuditLogTypeScimUserDeactivated" xml:space="preserve">
+    <value>Користувача SCIM деактивовано</value>
+  </data>
+  <data name="AuditLogTypeScimUserDeleted" xml:space="preserve">
+    <value>Користувача SCIM видалено</value>
+  </data>
+  <data name="AuditLogTypeScimAuthFailed" xml:space="preserve">
+    <value>Автентифікація SCIM не вдалася</value>
+  </data>
+  <data name="AuditLogTypeScimUserReactivated" xml:space="preserve">
+    <value>Користувача SCIM повторно активовано</value>
+  </data>
+  <data name="AuditLogTypeScimGroupListed" xml:space="preserve">
+    <value>Групи SCIM перелічено</value>
+  </data>
+  <data name="AuditLogTypeScimUserListed" xml:space="preserve">
+    <value>Користувачів SCIM перелічено</value>
+  </data>
+  <data name="AuditLogTypeScimUserRetrieved" xml:space="preserve">
+    <value>Користувача SCIM отримано</value>
+  </data>
+  <data name="AuditLogTypeScimBearerTokenProvisioned" xml:space="preserve">
+    <value>Токен Bearer SCIM підготовлено</value>
+  </data>
+  <data name="AuditLogTypeScimBearerTokenRotated" xml:space="preserve">
+    <value>Токен Bearer SCIM замінено</value>
+  </data>
+  <data name="AuditLogTypeUdfDefinitionCreated" xml:space="preserve">
+    <value>Визначення UDF створено</value>
+  </data>
+  <data name="AuditLogTypeUdfDefinitionUpdated" xml:space="preserve">
+    <value>Визначення UDF оновлено</value>
+  </data>
+  <data name="AuditLogTypeUdfDefinitionDeleted" xml:space="preserve">
+    <value>Визначення UDF видалено</value>
+  </data>
+  <data name="AuditLogTypeUdfFieldAdded" xml:space="preserve">
+    <value>Поле UDF додано</value>
+  </data>
+  <data name="AuditLogTypeUdfFieldUpdated" xml:space="preserve">
+    <value>Поле UDF оновлено</value>
+  </data>
+  <data name="AuditLogTypeUdfFieldRemoved" xml:space="preserve">
+    <value>Поле UDF вилучено</value>
+  </data>
+  <data name="AuditLogTypeUdfFieldValueSaved" xml:space="preserve">
+    <value>Значення полів UDF збережено</value>
+  </data>
+  <data name="AuditLogTypeRouteCreated" xml:space="preserve">
+    <value>Маршрут створено</value>
+  </data>
+  <data name="AuditLogTypeRouteUpdated" xml:space="preserve">
+    <value>Маршрут оновлено</value>
+  </data>
+  <data name="AuditLogTypeRouteDeleted" xml:space="preserve">
+    <value>Маршрут видалено</value>
+  </data>
+  <data name="AuditLogTypeRouteStarted" xml:space="preserve">
+    <value>Маршрут розпочато</value>
+  </data>
+  <data name="AuditLogTypeRouteCompleted" xml:space="preserve">
+    <value>Маршрут завершено</value>
+  </data>
+  <data name="AuditLogTypeRouteCancelled" xml:space="preserve">
+    <value>Маршрут скасовано</value>
+  </data>
+  <data name="AuditLogTypeRoutePaused" xml:space="preserve">
+    <value>Маршрут призупинено</value>
+  </data>
+  <data name="AuditLogTypeRouteResumed" xml:space="preserve">
+    <value>Маршрут відновлено</value>
+  </data>
+  <data name="AuditLogTypeRouteStopCheckedIn" xml:space="preserve">
+    <value>Прибуття на зупинку маршруту зареєстровано</value>
+  </data>
+  <data name="AuditLogTypeRouteStopCheckedOut" xml:space="preserve">
+    <value>Відбуття із зупинки маршруту зареєстровано</value>
+  </data>
+  <data name="AuditLogTypeRouteStopSkipped" xml:space="preserve">
+    <value>Зупинку маршруту пропущено</value>
+  </data>
+  <data name="AuditLogTypeRouteDeviationDetected" xml:space="preserve">
+    <value>Відхилення від маршруту виявлено</value>
+  </data>
+  <data name="AuditLogTypeRouteDeviationAcknowledged" xml:space="preserve">
+    <value>Відхилення від маршруту прийнято до відома</value>
+  </data>
+  <data name="AuditLogTypeCheckInTimerConfigCreated" xml:space="preserve">
+    <value>Конфігурацію таймера реєстрації створено</value>
+  </data>
+  <data name="AuditLogTypeCheckInTimerConfigUpdated" xml:space="preserve">
+    <value>Конфігурацію таймера реєстрації оновлено</value>
+  </data>
+  <data name="AuditLogTypeCheckInTimerConfigDeleted" xml:space="preserve">
+    <value>Конфігурацію таймера реєстрації видалено</value>
+  </data>
+  <data name="AuditLogTypeCheckInTimerOverrideCreated" xml:space="preserve">
+    <value>Перевизначення таймера реєстрації створено</value>
+  </data>
+  <data name="AuditLogTypeCheckInTimerOverrideUpdated" xml:space="preserve">
+    <value>Перевизначення таймера реєстрації оновлено</value>
+  </data>
+  <data name="AuditLogTypeCheckInTimerOverrideDeleted" xml:space="preserve">
+    <value>Перевизначення таймера реєстрації видалено</value>
+  </data>
+  <data name="AuditLogTypeCheckInPerformed" xml:space="preserve">
+    <value>Реєстрацію виконано</value>
+  </data>
+  <data name="AuditLogTypeCheckInTimerEnabledOnCall" xml:space="preserve">
+    <value>Таймер реєстрації для виклику ввімкнено</value>
+  </data>
+  <data name="AuditLogTypeCheckInTimerDisabledOnCall" xml:space="preserve">
+    <value>Таймер реєстрації для виклику вимкнено</value>
+  </data>
+  <data name="AuditLogTypeCalendarCheckInPerformed" xml:space="preserve">
+    <value>Реєстрація входу на подію календаря</value>
+  </data>
+  <data name="AuditLogTypeCalendarCheckOutPerformed" xml:space="preserve">
+    <value>Реєстрація виходу з події календаря</value>
+  </data>
+  <data name="AuditLogTypeCalendarCheckInUpdated" xml:space="preserve">
+    <value>Час реєстрації в календарі оновлено</value>
+  </data>
+  <data name="AuditLogTypeCalendarCheckInDeleted" xml:space="preserve">
+    <value>Запис реєстрації в календарі видалено</value>
+  </data>
+  <data name="AuditLogTypeCalendarAdminCheckInPerformed" xml:space="preserve">
+    <value>Реєстрація в календарі адміністратором</value>
+  </data>
+  <data name="AuditLogTypeLogCreated" xml:space="preserve">
+    <value>Запис журналу створено</value>
+  </data>
+  <data name="AuditLogTypeLogDeleted" xml:space="preserve">
+    <value>Запис журналу видалено</value>
+  </data>
+  <data name="AuditLogTypeCommunicationTestCreated" xml:space="preserve">
+    <value>Тест зв'язку створено</value>
+  </data>
+  <data name="AuditLogTypeCommunicationTestUpdated" xml:space="preserve">
+    <value>Тест зв'язку оновлено</value>
+  </data>
+  <data name="AuditLogTypeCommunicationTestDeleted" xml:space="preserve">
+    <value>Тест зв'язку видалено</value>
+  </data>
+  <data name="AuditLogTypeCommunicationTestRunStarted" xml:space="preserve">
+    <value>Запуск тесту зв'язку розпочато</value>
+  </data>
+  <data name="AuditLogTypeWeatherAlertSourceCreated" xml:space="preserve">
+    <value>Джерело попереджень про погоду створено</value>
+  </data>
+  <data name="AuditLogTypeWeatherAlertSourceUpdated" xml:space="preserve">
+    <value>Джерело попереджень про погоду оновлено</value>
+  </data>
+  <data name="AuditLogTypeWeatherAlertSourceDeleted" xml:space="preserve">
+    <value>Джерело попереджень про погоду видалено</value>
+  </data>
+  <data name="AuditLogTypeWeatherAlertSourceEnabled" xml:space="preserve">
+    <value>Джерело попереджень про погоду ввімкнено</value>
+  </data>
+  <data name="AuditLogTypeWeatherAlertSourceDisabled" xml:space="preserve">
+    <value>Джерело попереджень про погоду вимкнено</value>
+  </data>
+  <data name="AuditLogTypeWeatherAlertZoneCreated" xml:space="preserve">
+    <value>Зону попереджень про погоду створено</value>
+  </data>
+  <data name="AuditLogTypeWeatherAlertZoneUpdated" xml:space="preserve">
+    <value>Зону попереджень про погоду оновлено</value>
+  </data>
+  <data name="AuditLogTypeWeatherAlertZoneDeleted" xml:space="preserve">
+    <value>Зону попереджень про погоду видалено</value>
+  </data>
+  <data name="AuditLogTypeWeatherAlertZoneEnabled" xml:space="preserve">
+    <value>Зону попереджень про погоду ввімкнено</value>
+  </data>
+  <data name="AuditLogTypeWeatherAlertZoneDisabled" xml:space="preserve">
+    <value>Зону попереджень про погоду вимкнено</value>
+  </data>
+  <data name="AuditLogTypeWeatherAlertSettingsChanged" xml:space="preserve">
+    <value>Налаштування попереджень про погоду змінено</value>
+  </data>
+  <data name="AuditLogTypeFeatureFlagChanged" xml:space="preserve">
+    <value>Прапорець функції змінено</value>
+  </data>
+  <data name="AuditLogTypeFeatureFlagOverrideChanged" xml:space="preserve">
+    <value>Перевизначення прапорця функції змінено</value>
+  </data>
+  <data name="AuditLogTypeUnitTrackingDeviceCreated" xml:space="preserve">
+    <value>Пристрій відстеження одиниці створено</value>
+  </data>
+  <data name="AuditLogTypeUnitTrackingDeviceUpdated" xml:space="preserve">
+    <value>Пристрій відстеження одиниці оновлено</value>
+  </data>
+  <data name="AuditLogTypeUnitTrackingDeviceDisabled" xml:space="preserve">
+    <value>Пристрій відстеження одиниці вимкнено</value>
+  </data>
+  <data name="AuditLogTypeUnitTrackingDeviceDeleted" xml:space="preserve">
+    <value>Пристрій відстеження одиниці видалено</value>
+  </data>
+  <data name="AuditLogTypeUnitTrackingCredentialCreated" xml:space="preserve">
+    <value>Облікові дані відстеження одиниці створено</value>
+  </data>
+  <data name="AuditLogTypeUnitTrackingCredentialRotated" xml:space="preserve">
+    <value>Облікові дані відстеження одиниці замінено</value>
+  </data>
+  <data name="AuditLogTypeUnitTrackingCredentialRevoked" xml:space="preserve">
+    <value>Облікові дані відстеження одиниці відкликано</value>
+  </data>
+  <data name="AuditLogTypeDeleteDepartmentRequestExecuted" xml:space="preserve">
+    <value>Видалення підрозділу здійснено</value>
+  </data>
+  <data name="AuditLogTypeChatMessageDeletedByModerator" xml:space="preserve">
+    <value>Повідомлення чату видалено модератором</value>
+  </data>
+  <data name="AuditLogTypeChatUserMuted" xml:space="preserve">
+    <value>Користувачеві чату вимкнено звук</value>
+  </data>
+  <data name="AuditLogTypeChatUserUnmuted" xml:space="preserve">
+    <value>Користувачеві чату ввімкнено звук</value>
+  </data>
+  <data name="AuditLogTypeChatUserBanned" xml:space="preserve">
+    <value>Користувача чату заблоковано</value>
+  </data>
+  <data name="AuditLogTypeChatUserUnbanned" xml:space="preserve">
+    <value>Користувача чату розблоковано</value>
+  </data>
+  <data name="AuditLogTypeChatChannelLocked" xml:space="preserve">
+    <value>Канал чату заблоковано</value>
+  </data>
+  <data name="AuditLogTypeChatChannelUnlocked" xml:space="preserve">
+    <value>Канал чату розблоковано</value>
+  </data>
+  <data name="AuditLogTypeChatChannelArchived" xml:space="preserve">
+    <value>Канал чату архівовано</value>
+  </data>
+  <data name="AuditLogTypeChatFlagResolved" xml:space="preserve">
+    <value>Позначку в чаті розглянуто</value>
+  </data>
+  <data name="AuditLogTypeChatSettingsChanged" xml:space="preserve">
+    <value>Налаштування чату змінено</value>
+  </data>
+  <data name="AuditLogTypeChatExportRequested" xml:space="preserve">
+    <value>Експорт чату запитано</value>
+  </data>
+  <data name="AuditLogTypeChatExportDownloaded" xml:space="preserve">
+    <value>Експорт чату завантажено</value>
+  </data>
+  <data name="AuditLogTypeModerationReportSubmitted" xml:space="preserve">
+    <value>Повідомлення для модерації подано</value>
+  </data>
+  <data name="AuditLogTypeModerationRequestReopened" xml:space="preserve">
+    <value>Запит на модерацію повторно відкрито</value>
+  </data>
+  <data name="AuditLogTypeModerationRequestCompleted" xml:space="preserve">
+    <value>Запит на модерацію завершено</value>
+  </data>
+  <data name="AuditLogTypeModerationEvidenceDownloaded" xml:space="preserve">
+    <value>Доказ модерації завантажено</value>
+  </data>
+  <data name="AuditLogTypePasswordResetByAdministrator" xml:space="preserve">
+    <value>Пароль скинуто адміністратором</value>
+  </data>
+  <data name="AuditLogTypeUserAuthenticationSessionsRevoked" xml:space="preserve">
+    <value>Сеанси входу користувача відкликано</value>
+  </data>
+  <data name="AuditLogTypeDataProtectionStepUpExemptionsChanged" xml:space="preserve">
+    <value>Винятки з додаткової перевірки захисту даних змінено</value>
+  </data>
+  <data name="AuditLogTypeContactPreplanAdded" xml:space="preserve">
+    <value>План реагування контакту додано</value>
+  </data>
+  <data name="AuditLogTypeContactPreplanUpdated" xml:space="preserve">
+    <value>План реагування контакту оновлено</value>
+  </data>
+  <data name="AuditLogTypeContactPreplanRemoved" xml:space="preserve">
+    <value>План реагування контакту вилучено</value>
+  </data>
+  <data name="AuditLogTypeContactAttachmentAdded" xml:space="preserve">
+    <value>Вкладення контакту додано</value>
+  </data>
+  <data name="AuditLogTypeContactAttachmentRemoved" xml:space="preserve">
+    <value>Вкладення контакту вилучено</value>
+  </data>
+  <data name="AuditLogTypeChecklistDefinitionAdded" xml:space="preserve">
+    <value>Шаблон контрольного списку додано</value>
+  </data>
+  <data name="AuditLogTypeChecklistDefinitionUpdated" xml:space="preserve">
+    <value>Шаблон контрольного списку оновлено</value>
+  </data>
+  <data name="AuditLogTypeChecklistDefinitionPublished" xml:space="preserve">
+    <value>Шаблон контрольного списку опубліковано</value>
+  </data>
+  <data name="AuditLogTypeChecklistDefinitionRetired" xml:space="preserve">
+    <value>Шаблон контрольного списку виведено з використання</value>
+  </data>
+  <data name="AuditLogTypeChecklistDefinitionRemoved" xml:space="preserve">
+    <value>Шаблон контрольного списку вилучено</value>
+  </data>
+  <data name="AuditLogTypeChecklistCompletionStarted" xml:space="preserve">
+    <value>Виконання контрольного списку розпочато</value>
+  </data>
+  <data name="AuditLogTypeChecklistProgressSaved" xml:space="preserve">
+    <value>Хід виконання контрольного списку збережено</value>
+  </data>
+  <data name="AuditLogTypeChecklistCompletionSubmitted" xml:space="preserve">
+    <value>Виконання контрольного списку подано</value>
+  </data>
+  <data name="AuditLogTypeChecklistWitnessAttested" xml:space="preserve">
+    <value>Виконання контрольного списку засвідчено свідком</value>
+  </data>
+  <data name="AuditLogTypeChecklistFileAdded" xml:space="preserve">
+    <value>Файл контрольного списку додано</value>
+  </data>
+  <data name="AuditLogTypeChecklistFileRemoved" xml:space="preserve">
+    <value>Файл контрольного списку вилучено</value>
+  </data>
+  <data name="AuditLogTypeChecklistScheduleAdded" xml:space="preserve">
+    <value>Розклад контрольного списку додано</value>
+  </data>
+  <data name="AuditLogTypeChecklistScheduleUpdated" xml:space="preserve">
+    <value>Розклад контрольного списку оновлено</value>
+  </data>
+  <data name="AuditLogTypeChecklistOccurrenceMissed" xml:space="preserve">
+    <value>Заплановану перевірку за контрольним списком не виконано</value>
+  </data>
+  <data name="AuditLogTypeChecklistOccurrenceSkipped" xml:space="preserve">
+    <value>Заплановану перевірку за контрольним списком пропущено</value>
+  </data>
+  <data name="AuditLogTypeChecklistReminderSettingsUpdated" xml:space="preserve">
+    <value>Налаштування нагадувань про контрольні списки оновлено</value>
+  </data>
+  <data name="AuditLogTypeWorkOrderChanged" xml:space="preserve">
+    <value>Наряд на роботи змінено</value>
+  </data>
+  <data name="AuditLogTypeInventoryChanged" xml:space="preserve">
+    <value>Інвентар змінено</value>
+  </data>
+  <data name="AuditLogTypeBillingProfileChanged" xml:space="preserve">
+    <value>Профіль оплати змінено</value>
+  </data>
+  <data name="AuditLogTypeRateCardChanged" xml:space="preserve">
+    <value>Тариф змінено</value>
+  </data>
+  <data name="AuditLogTypeInvoiceCreated" xml:space="preserve">
+    <value>Рахунок створено</value>
+  </data>
+  <data name="AuditLogTypeInvoiceUpdated" xml:space="preserve">
+    <value>Рахунок оновлено</value>
+  </data>
+  <data name="AuditLogTypeInvoiceSent" xml:space="preserve">
+    <value>Рахунок надіслано</value>
+  </data>
+  <data name="AuditLogTypeInvoiceVoided" xml:space="preserve">
+    <value>Рахунок анульовано</value>
+  </data>
+  <data name="AuditLogTypeInvoicePaymentRecorded" xml:space="preserve">
+    <value>Платіж за рахунком зареєстровано</value>
+  </data>
+  <data name="AuditLogTypeDepartmentBillingIdentityChanged" xml:space="preserve">
+    <value>Реквізити підрозділу для рахунків змінено</value>
+  </data>
+  <data name="AuditLogTypePaymentConnectionConnected" xml:space="preserve">
+    <value>Платіжне підключення встановлено</value>
+  </data>
+  <data name="AuditLogTypePaymentConnectionDisconnected" xml:space="preserve">
+    <value>Платіжне підключення відключено</value>
+  </data>
+  <data name="AuditLogTypePaymentConnectionRevoked" xml:space="preserve">
+    <value>Платіжне підключення відкликано</value>
+  </data>
+  <data name="AuditLogTypePaymentConnectionActionRequired" xml:space="preserve">
+    <value>Платіжне підключення потребує дії</value>
+  </data>
+  <data name="AuditLogTypeInvoicePaymentRequestCreated" xml:space="preserve">
+    <value>Запит на оплату рахунку створено</value>
+  </data>
+  <data name="AuditLogTypeInvoicePaymentRefunded" xml:space="preserve">
+    <value>Платіж за рахунком повернуто</value>
+  </data>
+  <data name="AuditLogTypeInvoicePaymentDisputed" xml:space="preserve">
+    <value>Платіж за рахунком оскаржено</value>
+  </data>
+  <data name="AuditLogTypePaymentWebhookRejected" xml:space="preserve">
+    <value>Платіжний вебхук відхилено</value>
+  </data>
+  <data name="AuditLogTypeInvoicePaymentRequestFailed" xml:space="preserve">
+    <value>Запит на оплату рахунку не вдався</value>
+  </data>
+  <data name="AuditLogTypeInvoicePaymentRequestExpired" xml:space="preserve">
+    <value>Запит на оплату рахунку прострочено</value>
+  </data>
+  <data name="AuditLogTypeCertificationAdded" xml:space="preserve">
+    <value>Сертифікат додано</value>
+  </data>
+  <data name="AuditLogTypeCertificationUpdated" xml:space="preserve">
+    <value>Сертифікат оновлено</value>
+  </data>
+  <data name="AuditLogTypeCertificationRemoved" xml:space="preserve">
+    <value>Сертифікат вилучено</value>
+  </data>
+  <data name="AuditLogTypeCertificationStatusChanged" xml:space="preserve">
+    <value>Стан сертифіката змінено</value>
+  </data>
+  <data name="AuditLogTypeCertificationVerified" xml:space="preserve">
+    <value>Сертифікат підтверджено</value>
+  </data>
+  <data name="AuditLogTypeCertificationCreditAdded" xml:space="preserve">
+    <value>Кредит сертифіката додано</value>
+  </data>
+  <data name="AuditLogTypeCertificationCreditRemoved" xml:space="preserve">
+    <value>Кредит сертифіката вилучено</value>
+  </data>
+  <data name="AuditLogTypeRoleCertificationRequirementChanged" xml:space="preserve">
+    <value>Вимогу ролі щодо сертифікатів змінено</value>
+  </data>
+  <data name="AuditLogTypeDepartmentCertificationSettingsChanged" xml:space="preserve">
+    <value>Налаштування сертифікатів підрозділу змінено</value>
+  </data>
+  <data name="AuditLogTypeRoleMemberAdded" xml:space="preserve">
+    <value>Учасника ролі додано</value>
+  </data>
+  <data name="AuditLogTypeRoleMemberRemoved" xml:space="preserve">
+    <value>Учасника ролі вилучено</value>
+  </data>
+  <data name="AuditLogTypeRoleMemberRemovedByCertification" xml:space="preserve">
+    <value>Учасника ролі вилучено через сертифікат</value>
+  </data>
+  <data name="AuditLogTypeUnitCertificationAdded" xml:space="preserve">
+    <value>Сертифікат одиниці додано</value>
+  </data>
+  <data name="AuditLogTypeUnitCertificationUpdated" xml:space="preserve">
+    <value>Сертифікат одиниці оновлено</value>
+  </data>
+  <data name="AuditLogTypeUnitCertificationRemoved" xml:space="preserve">
+    <value>Сертифікат одиниці вилучено</value>
+  </data>
+  <data name="AuditLogTypeUnitCertificationStatusChanged" xml:space="preserve">
+    <value>Стан сертифіката одиниці змінено</value>
+  </data>
+  <data name="AuditLogTypeDeploymentCreated" xml:space="preserve">
+    <value>Розгортання створено</value>
+  </data>
+  <data name="AuditLogTypeDeploymentUpdated" xml:space="preserve">
+    <value>Розгортання оновлено</value>
+  </data>
+  <data name="AuditLogTypeDeploymentStatusChanged" xml:space="preserve">
+    <value>Статус розгортання змінено</value>
+  </data>
+  <data name="AuditLogTypeDeploymentRosterChanged" xml:space="preserve">
+    <value>Склад розгортання змінено</value>
+  </data>
+  <data name="AuditLogTypeDeploymentEquipmentChanged" xml:space="preserve">
+    <value>Обладнання розгортання змінено</value>
+  </data>
+  <data name="AuditLogTypeDeploymentAttachmentAdded" xml:space="preserve">
+    <value>Вкладення розгортання додано</value>
+  </data>
+  <data name="AuditLogTypeDeploymentAttachmentRemoved" xml:space="preserve">
+    <value>Вкладення розгортання вилучено</value>
+  </data>
+  <data name="AuditLogTypeTimeReportCreated" xml:space="preserve">
+    <value>Звіт про час створено</value>
+  </data>
+  <data name="AuditLogTypeTimeReportUpdated" xml:space="preserve">
+    <value>Звіт про час оновлено</value>
+  </data>
+  <data name="AuditLogTypeTimeReportSubmitted" xml:space="preserve">
+    <value>Звіт про час подано</value>
+  </data>
+  <data name="AuditLogTypeTimeReportApproved" xml:space="preserve">
+    <value>Звіт про час затверджено</value>
+  </data>
+  <data name="AuditLogTypeTimeReportVoided" xml:space="preserve">
+    <value>Звіт про час анульовано</value>
+  </data>
+  <data name="AuditLogTypeDeploymentExpenseAdded" xml:space="preserve">
+    <value>Витрату розгортання додано</value>
+  </data>
+  <data name="AuditLogTypeDeploymentExpenseUpdated" xml:space="preserve">
+    <value>Витрату розгортання оновлено</value>
+  </data>
+  <data name="AuditLogTypeDeploymentExpenseRemoved" xml:space="preserve">
+    <value>Витрату розгортання вилучено</value>
+  </data>
+  <data name="AuditLogTypeRateScheduleCreated" xml:space="preserve">
+    <value>Тарифний план створено</value>
+  </data>
+  <data name="AuditLogTypeRateScheduleUpdated" xml:space="preserve">
+    <value>Тарифний план оновлено</value>
+  </data>
+  <data name="AuditLogTypeRateScheduleDeleted" xml:space="preserve">
+    <value>Тарифний план видалено</value>
+  </data>
+  <data name="AuditLogTypeRateScheduleEntryChanged" xml:space="preserve">
+    <value>Позицію тарифного плану змінено</value>
+  </data>
+  <data name="AuditLogTypeRatePremiumChanged" xml:space="preserve">
+    <value>Тарифну надбавку змінено</value>
+  </data>
+  <data name="AuditLogTypeServiceContractCreated" xml:space="preserve">
+    <value>Договір на обслуговування створено</value>
+  </data>
+  <data name="AuditLogTypeServiceContractUpdated" xml:space="preserve">
+    <value>Договір на обслуговування оновлено</value>
+  </data>
+  <data name="AuditLogTypeServiceContractStatusChanged" xml:space="preserve">
+    <value>Статус договору на обслуговування змінено</value>
+  </data>
+  <data name="AuditLogTypeServiceContractDeleted" xml:space="preserve">
+    <value>Договір на обслуговування видалено</value>
+  </data>
+  <data name="AuditLogTypeComplianceDocumentAdded" xml:space="preserve">
+    <value>Документ відповідності додано</value>
+  </data>
+  <data name="AuditLogTypeComplianceDocumentUpdated" xml:space="preserve">
+    <value>Документ відповідності оновлено</value>
+  </data>
+  <data name="AuditLogTypeComplianceDocumentRemoved" xml:space="preserve">
+    <value>Документ відповідності вилучено</value>
+  </data>
+  <data name="AuditLogTypeBidCreated" xml:space="preserve">
+    <value>Пропозицію створено</value>
+  </data>
+  <data name="AuditLogTypeBidUpdated" xml:space="preserve">
+    <value>Пропозицію оновлено</value>
+  </data>
+  <data name="AuditLogTypeBidSent" xml:space="preserve">
+    <value>Пропозицію надіслано</value>
+  </data>
+  <data name="AuditLogTypeBidAccepted" xml:space="preserve">
+    <value>Пропозицію прийнято</value>
+  </data>
+  <data name="AuditLogTypeBidDeclined" xml:space="preserve">
+    <value>Пропозицію відхилено</value>
+  </data>
+  <data name="AuditLogTypeBidWithdrawn" xml:space="preserve">
+    <value>Пропозицію відкликано</value>
+  </data>
+  <data name="AuditLogTypeBidExpired" xml:space="preserve">
+    <value>Пропозицію прострочено</value>
+  </data>
+  <data name="AuditLogTypeBidConverted" xml:space="preserve">
+    <value>Пропозицію перетворено на розгортання</value>
+  </data>
+  <data name="AuditLogTypeBidDeleted" xml:space="preserve">
+    <value>Пропозицію видалено</value>
+  </data>
+  <data name="AuditLogTypeTimeReportBilled" xml:space="preserve">
+    <value>Звіт про час включено в рахунок</value>
+  </data>
+  <data name="AuditLogTypeDeploymentInvoiceGenerated" xml:space="preserve">
+    <value>Рахунок розгортання сформовано</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsAgencyProfileChanged" xml:space="preserve">
+    <value>Профіль агенції Cal OES MARS змінено</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsResourceProfileChanged" xml:space="preserve">
+    <value>Профіль ресурсу Cal OES MARS змінено</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsRateProfileChanged" xml:space="preserve">
+    <value>Профіль ставок Cal OES MARS змінено</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsRateDraftBuilt" xml:space="preserve">
+    <value>Чернетку ставок Cal OES MARS складено</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsRateReviewed" xml:space="preserve">
+    <value>Ставку Cal OES MARS переглянуто</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsAgreementChanged" xml:space="preserve">
+    <value>Угоду Cal OES MARS змінено</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsAgreementObserved" xml:space="preserve">
+    <value>Угоду Cal OES MARS зафіксовано</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsWorkItemPrepared" xml:space="preserve">
+    <value>Робочий елемент Cal OES MARS підготовлено</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsWorkItemValidated" xml:space="preserve">
+    <value>Робочий елемент Cal OES MARS перевірено</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsReimbursementCalculated" xml:space="preserve">
+    <value>Відшкодування Cal OES MARS обчислено</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsWorkItemOpenedForHandoff" xml:space="preserve">
+    <value>Робочий елемент Cal OES MARS відкрито для передачі</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsExternalStatusObserved" xml:space="preserve">
+    <value>Зовнішній статус Cal OES MARS зафіксовано</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsInvoiceApproved" xml:space="preserve">
+    <value>Рахунок Cal OES MARS затверджено</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsInvoiceRejected" xml:space="preserve">
+    <value>Рахунок Cal OES MARS відхилено</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsPaymentReconciled" xml:space="preserve">
+    <value>Платіж Cal OES MARS звірено</value>
+  </data>
+  <data name="AuditLogTypeCalOesMarsWorkItemDeleted" xml:space="preserve">
+    <value>Робочий елемент Cal OES MARS видалено</value>
+  </data>
+  <data name="AuditLogTypeWorkforceEmployerProfileChanged" xml:space="preserve">
+    <value>Профіль роботодавця змінено</value>
+  </data>
+  <data name="AuditLogTypeWorkforceEstablishmentChanged" xml:space="preserve">
+    <value>Установу персоналу змінено</value>
+  </data>
+  <data name="AuditLogTypeWorkforceEmploymentChanged" xml:space="preserve">
+    <value>Працевлаштування змінено</value>
+  </data>
+  <data name="AuditLogTypeWorkforceCompensationChanged" xml:space="preserve">
+    <value>Оплату персоналу змінено</value>
+  </data>
+  <data name="AuditLogTypeWorkforceAnnualPayFactImported" xml:space="preserve">
+    <value>Річні дані оплати персоналу імпортовано</value>
+  </data>
+  <data name="AuditLogTypePayDataDemographicChanged" xml:space="preserve">
+    <value>Демографічні дані звітності про оплату змінено</value>
+  </data>
+  <data name="AuditLogTypePayDataReportCreated" xml:space="preserve">
+    <value>Звіт про оплату створено</value>
+  </data>
+  <data name="AuditLogTypePayDataReportValidated" xml:space="preserve">
+    <value>Звіт про оплату перевірено</value>
+  </data>
+  <data name="AuditLogTypePayDataReportFrozen" xml:space="preserve">
+    <value>Звіт про оплату заморожено</value>
+  </data>
+  <data name="AuditLogTypePayDataReportExported" xml:space="preserve">
+    <value>Звіт про оплату експортовано</value>
+  </data>
+  <data name="AuditLogTypePayDataReportMarkedCertified" xml:space="preserve">
+    <value>Звіт про оплату позначено засвідченим</value>
+  </data>
+  <data name="AuditLogTypePayDataReportCorrected" xml:space="preserve">
+    <value>Звіт про оплату виправлено</value>
+  </data>
+  <data name="AuditLogTypeResourceCostProfileChanged" xml:space="preserve">
+    <value>Профіль витрат ресурсу змінено</value>
+  </data>
+  <data name="AuditLogTypeResourceUsageChanged" xml:space="preserve">
+    <value>Використання ресурсів змінено</value>
+  </data>
+  <data name="AuditLogTypeFieldCostRunCreated" xml:space="preserve">
+    <value>Розрахунок польових витрат створено</value>
+  </data>
+  <data name="AuditLogTypeFieldCostRunFrozen" xml:space="preserve">
+    <value>Розрахунок польових витрат заморожено</value>
+  </data>
+  <data name="AuditLogTypeUserReactivated" xml:space="preserve">
+    <value>Користувача повторно активовано</value>
+  </data>
+  <data name="AuditLogTypeDepartmentConfigurationChanged" xml:space="preserve">
+    <value>Конфігурацію підрозділу змінено</value>
+  </data>
+  <data name="AuditLogTypeAdminAssistReviewChanged" xml:space="preserve">
+    <value>Перегляд Admin Assist змінено</value>
+  </data>
+  <data name="AuditLogTypeAdminAssistDiagnosticAccess" xml:space="preserve">
+    <value>Доступ до діагностики Admin Assist</value>
+  </data>
+  <data name="AuditLogTypeAiDispatchSettingsUpdated" xml:space="preserve">
+    <value>Налаштування диспетчеризації з ШІ оновлено</value>
+  </data>
+  <data name="AuditLogTypeAdminAssistPlanAccess" xml:space="preserve">
+    <value>Доступ до плану Admin Assist</value>
+  </data>
+  <data name="AuditLogTypeDepartmentSecurityPolicyChanged" xml:space="preserve">
+    <value>Політику безпеки змінено</value>
   </data>
   <data name="PermissionColumn" xml:space="preserve">
-    <value>Permission</value>
+    <value>Дозвіл</value>
   </data>
   <data name="NoteColumn" xml:space="preserve">
     <value>Нотатка</value>
   </data>
   <data name="ValueColumn" xml:space="preserve">
-    <value>Value</value>
+    <value>Значення</value>
   </data>
   <data name="RolesColumn" xml:space="preserve">
     <value>Ролі</value>
   </data>
   <data name="TwoFactorEnforcementHeader" xml:space="preserve">
-    <value>Two-Factor Authentication (2FA) Enforcement</value>
+    <value>Обов'язкова двофакторна автентифікація (2FA)</value>
   </data>
   <data name="TwoFactorEnforcementDescription" xml:space="preserve">
-    <value>Require authenticator-app 2FA for admin users. When enabled, admins who have not set up 2FA will be redirected to enroll before accessing administrative features.</value>
+    <value>Вимагати 2FA через застосунок автентифікації для адміністраторів. Якщо ввімкнено, адміністраторів, які не налаштували 2FA, буде перенаправлено на її налаштування, перш ніж вони отримають доступ до адміністративних функцій.</value>
   </data>
   <data name="Require2FAForAdminsLabel" xml:space="preserve">
-    <value>Require 2FA for Admins</value>
+    <value>Вимагати 2FA для адміністраторів</value>
   </data>
   <data name="Require2FAForAdminsDescription" xml:space="preserve">
-    <value>Controls which admin-level users must enroll in authenticator-app 2FA (Google Authenticator, Microsoft Authenticator, Authy, etc.).</value>
+    <value>Визначає, які користувачі з правами адміністратора повинні налаштувати 2FA через застосунок автентифікації (Google Authenticator, Microsoft Authenticator, Authy тощо).</value>
   </data>
   <data name="Require2FADisabled" xml:space="preserve">
-    <value>Disabled (no requirement)</value>
+    <value>Вимкнено (без вимоги)</value>
   </data>
   <data name="Require2FADeptAdmins" xml:space="preserve">
-    <value>Department Admins + Managing User</value>
+    <value>Адміністратори підрозділу + керівний користувач</value>
   </data>
   <data name="Require2FAAllAdmins" xml:space="preserve">
-    <value>Department Admins + Managing User + Group Admins</value>
+    <value>Адміністратори підрозділу + керівний користувач + адміністратори груп</value>
   </data>
   <data name="Require2FASettingSaved" xml:space="preserve">
-    <value>2FA enforcement setting saved.</value>
+    <value>Налаштування обов'язкової 2FA збережено.</value>
   </data>
   <data name="Require2FASettingFailed" xml:space="preserve">
-    <value>Failed to save 2FA enforcement setting.</value>
+    <value>Не вдалося зберегти налаштування обов'язкової 2FA.</value>
   </data>
   <data name="Require2FACannotEnableNoManagingUser2FA" xml:space="preserve">
-    <value>Cannot enable 2FA enforcement: the managing user of this department does not have two-factor authentication enabled on their account. The managing user must enable 2FA before this setting can be turned on.</value>
+    <value>Неможливо ввімкнути обов'язкову 2FA: керівний користувач цього підрозділу не ввімкнув двофакторну автентифікацію у своєму обліковому записі. Керівний користувач має ввімкнути 2FA, перш ніж це налаштування можна буде ввімкнути.</value>
   </data>
   <data name="Require2FACannotEnableNoCurrentUser2FA" xml:space="preserve">
-    <value>Cannot enable 2FA enforcement: you do not have two-factor authentication enabled on your own account. You must enable 2FA before you can require it for others.</value>
+    <value>Неможливо ввімкнути обов'язкову 2FA: у вашому власному обліковому записі не ввімкнено двофакторну автентифікацію. Ви повинні ввімкнути 2FA, перш ніж вимагати її від інших.</value>
   </data>
   <data name="Require2FABothMustEnable" xml:space="preserve">
-    <value>Cannot enable 2FA enforcement: neither you nor the managing user have two-factor authentication enabled. Both must enable 2FA before this setting can be turned on.</value>
+    <value>Неможливо ввімкнути обов'язкову 2FA: ні у вас, ні в керівного користувача не ввімкнено двофакторну автентифікацію. Ви обоє маєте ввімкнути 2FA, перш ніж це налаштування можна буде ввімкнути.</value>
   </data>
   <data name="Require2FASettingLocked" xml:space="preserve">
-    <value>This setting is locked until the above conditions are met.</value>
+    <value>Це налаштування заблоковано, доки не буде виконано наведені вище умови.</value>
   </data>
   <data name="PermissionNameColumn" xml:space="preserve">
-    <value>Permission</value>
+    <value>Дозвіл</value>
   </data>
   <data name="PermissionNoteColumn" xml:space="preserve">
     <value>Нотатка</value>
   </data>
   <data name="PermissionSelectionColumn" xml:space="preserve">
-    <value>Selection</value>
+    <value>Вибір</value>
   </data>
   <data name="PermissionGroupOnlyColumn" xml:space="preserve">
-    <value>Group Only</value>
+    <value>Лише група</value>
   </data>
   <data name="PermissionRolesColumn" xml:space="preserve">
     <value>Ролі</value>
   </data>
   <data name="PermissionNoRoles" xml:space="preserve">
-    <value>No Roles</value>
+    <value>Без ролей</value>
   </data>
   <data name="PermissionNA" xml:space="preserve">
-    <value>N/A</value>
+    <value>Н/Д</value>
+  </data>
+  <data name="PermOptionEveryone" xml:space="preserve">
+    <value>Усі</value>
+  </data>
+  <data name="PermOptionDepartmentAdmins" xml:space="preserve">
+    <value>Адміністратори підрозділу</value>
+  </data>
+  <data name="PermOptionDepartmentAndGroupAdmins" xml:space="preserve">
+    <value>Адміністратори підрозділу та груп</value>
+  </data>
+  <data name="PermOptionDepartmentAdminsAndSelectRoles" xml:space="preserve">
+    <value>Адміністратори підрозділу та вибрані ролі</value>
+  </data>
+  <data name="PermOptionDepartmentGroupAdminsAndSelectRoles" xml:space="preserve">
+    <value>Адміністратори підрозділу та груп, а також вибрані ролі</value>
   </data>
   <data name="BreadcrumbSecurity" xml:space="preserve">
-    <value>Security and Permissions</value>
+    <value>Безпека та дозволи</value>
+  </data>
+  <data name="BreadcrumbHome" xml:space="preserve">
+    <value>Головна</value>
   </data>
   <data name="SecurityDescription" xml:space="preserve">
-    <value>Here you can set the permissions for your department, for example which users or roles can create calls, or who is authorized to create and remove users. Changes to the permissions will take effect on the next login to the Resgrid web application.</value>
+    <value>Тут можна налаштувати дозволи для вашого підрозділу, наприклад які користувачі або ролі можуть створювати виклики або хто має право додавати й видаляти користувачів. Зміни дозволів набудуть чинності під час наступного входу у вебзастосунок Resgrid.</value>
   </data>
   <data name="PermAddUsersLabel" xml:space="preserve">
-    <value>Who can Add Users</value>
+    <value>Хто може додавати користувачів</value>
   </data>
   <data name="PermAddUsersNote" xml:space="preserve">
-    <value>This option determines who can add users/personnel to the department. By default only Department Administrators (and the managing member) can add users. But Group Admins can also be allowed to add users (limited only to the group they are an admin of).</value>
+    <value>Визначає, хто може додавати користувачів/персонал до підрозділу. За замовчуванням додавати користувачів можуть лише адміністратори підрозділу (і керівний учасник). Проте це можна дозволити й адміністраторам груп (лише в межах групи, адміністраторами якої вони є).</value>
   </data>
   <data name="PermRemoveUsersLabel" xml:space="preserve">
-    <value>Who can Remove Users</value>
+    <value>Хто може видаляти користувачів</value>
   </data>
   <data name="PermRemoveUsersNote" xml:space="preserve">
-    <value>This option determines who can remove users/personnel from the department. By default only Department Administrators (and the managing member) can remove users. But Group Admins can also be allowed to remove users (limited only to the users in the group they are an admin of).</value>
+    <value>Визначає, хто може видаляти користувачів/персонал із підрозділу. За замовчуванням видаляти користувачів можуть лише адміністратори підрозділу (і керівний учасник). Проте це можна дозволити й адміністраторам груп (лише для користувачів групи, адміністраторами якої вони є).</value>
   </data>
   <data name="PermCreateCallLabel" xml:space="preserve">
-    <value>Who can Create Calls</value>
+    <value>Хто може створювати виклики</value>
   </data>
   <data name="PermCreateCallNote" xml:space="preserve">
-    <value>This option determines who can manually create calls from the Resgrid system. By default Everyone can create calls.</value>
+    <value>Визначає, хто може вручну створювати виклики в системі Resgrid. За замовчуванням створювати виклики можуть усі.</value>
   </data>
   <data name="PermDeleteCallLabel" xml:space="preserve">
-    <value>Who can Delete Calls</value>
+    <value>Хто може видаляти виклики</value>
   </data>
   <data name="PermDeleteCallNote" xml:space="preserve">
-    <value>This option determines who can delete calls from the Resgrid system. By default Everyone can delete calls.</value>
+    <value>Визначає, хто може видаляти виклики із системи Resgrid. За замовчуванням видаляти виклики можуть усі.</value>
   </data>
   <data name="PermCloseCallLabel" xml:space="preserve">
-    <value>Who can Close Calls</value>
+    <value>Хто може закривати виклики</value>
   </data>
   <data name="PermCloseCallNote" xml:space="preserve">
-    <value>This option determines who can close calls from the Resgrid system. By default Everyone can close calls.</value>
+    <value>Визначає, хто може закривати виклики в системі Resgrid. За замовчуванням закривати виклики можуть усі.</value>
   </data>
   <data name="PermAddCallDataLabel" xml:space="preserve">
-    <value>Who can Add Data To Calls</value>
+    <value>Хто може додавати дані до викликів</value>
   </data>
   <data name="PermAddCallDataNote" xml:space="preserve">
-    <value>This option determines who can add data; like images, notes and files, to calls from the Resgrid system. By default Everyone can add data to calls.</value>
+    <value>Визначає, хто може додавати до викликів у системі Resgrid дані, як-от зображення, нотатки та файли. За замовчуванням додавати дані до викликів можуть усі.</value>
   </data>
   <data name="PermCreateTrainingLabel" xml:space="preserve">
-    <value>Who can Create Trainings</value>
+    <value>Хто може створювати навчання</value>
   </data>
   <data name="PermCreateTrainingNote" xml:space="preserve">
-    <value>This option determines who can create trainings. By default only Department Admins can create trainings.</value>
+    <value>Визначає, хто може створювати навчання. За замовчуванням створювати навчання можуть лише адміністратори підрозділу.</value>
   </data>
   <data name="PermCreateDocumentLabel" xml:space="preserve">
-    <value>Who can Add Documents</value>
+    <value>Хто може додавати документи</value>
   </data>
   <data name="PermCreateDocumentNote" xml:space="preserve">
-    <value>This option determines who can add documents. By default Everyone can add documents.</value>
+    <value>Визначає, хто може додавати документи. За замовчуванням додавати документи можуть усі.</value>
   </data>
   <data name="PermCreateCalendarEntryLabel" xml:space="preserve">
-    <value>Who can Create Calendar Entries</value>
+    <value>Хто може створювати записи календаря</value>
   </data>
   <data name="PermCreateCalendarEntryNote" xml:space="preserve">
-    <value>This option determines who can create calendar entries. By default Everyone can create calendar entries.</value>
+    <value>Визначає, хто може створювати записи календаря. За замовчуванням створювати записи календаря можуть усі.</value>
   </data>
   <data name="PermCreateNoteLabel" xml:space="preserve">
-    <value>Who can Create Notes</value>
+    <value>Хто може створювати нотатки</value>
   </data>
   <data name="PermCreateNoteNote" xml:space="preserve">
-    <value>This option determines who can create notes. By default Everyone can create notes.</value>
+    <value>Визначає, хто може створювати нотатки. За замовчуванням створювати нотатки можуть усі.</value>
   </data>
   <data name="PermCreateLogLabel" xml:space="preserve">
-    <value>Who can Add Log Entries</value>
+    <value>Хто може додавати записи журналу</value>
   </data>
   <data name="PermCreateLogNote" xml:space="preserve">
-    <value>This option determines who can add log entries. By default Everyone can add log entries.</value>
+    <value>Визначає, хто може додавати записи журналу. За замовчуванням додавати записи журналу можуть усі.</value>
   </data>
   <data name="PermCreateShiftLabel" xml:space="preserve">
-    <value>Who can Create Shifts</value>
+    <value>Хто може створювати зміни</value>
   </data>
   <data name="PermCreateShiftNote" xml:space="preserve">
-    <value>This option determines who can create and edit shifts. By default only Department Admins can create and edit shifts.</value>
+    <value>Визначає, хто може створювати й редагувати зміни. За замовчуванням створювати й редагувати зміни можуть лише адміністратори підрозділу.</value>
   </data>
   <data name="PermViewPersonalInfoLabel" xml:space="preserve">
-    <value>Who can View Personal Info</value>
+    <value>Хто може переглядати персональні дані</value>
   </data>
   <data name="PermViewPersonalInfoNote" xml:space="preserve">
-    <value>This option determines who can view personal information (PII) about personnel in the system. For example: Email Address, Phone Numbers, etc. By default Everyone can view this information.</value>
+    <value>Визначає, хто може переглядати персональні дані (PII) персоналу в системі, наприклад адресу електронної пошти, номери телефонів тощо. За замовчуванням цю інформацію можуть переглядати всі.</value>
   </data>
   <data name="PermAdjustInventoryLabel" xml:space="preserve">
-    <value>Who can Adjust Inventory</value>
+    <value>Хто може коригувати інвентар</value>
   </data>
   <data name="PermAdjustInventoryNote" xml:space="preserve">
-    <value>This option determines who can adjust inventory levels in the system. By default Everyone can adjust inventory.</value>
+    <value>Визначає, хто може коригувати залишки інвентарю в системі. За замовчуванням коригувати інвентар можуть усі.</value>
   </data>
   <data name="PermViewPersonnelLocationLabel" xml:space="preserve">
-    <value>Who can see the Location of Personnel</value>
+    <value>Хто може бачити місцезнаходження персоналу</value>
   </data>
   <data name="PermViewPersonnelLocationNote" xml:space="preserve">
-    <value>This option determines who can see the location of personnel on the maps. To lock the option to just group admins and roles within a group you need to check the Group Only option.</value>
+    <value>Визначає, хто може бачити місцезнаходження персоналу на картах. Щоб обмежити цей параметр лише адміністраторами груп і ролями в межах групи, поставте позначку «Лише група».</value>
   </data>
   <data name="PermViewUnitLocationLabel" xml:space="preserve">
-    <value>Who can see the Location of Units</value>
+    <value>Хто може бачити місцезнаходження одиниць</value>
   </data>
   <data name="PermViewUnitLocationNote" xml:space="preserve">
-    <value>This option determines who can see the location of units on the maps. To lock the option to just group admins and roles within a group you need to check the Group Only option.</value>
+    <value>Визначає, хто може бачити місцезнаходження одиниць на картах. Щоб обмежити цей параметр лише адміністраторами груп і ролями в межах групи, поставте позначку «Лише група».</value>
   </data>
   <data name="PermCreateMessageLabel" xml:space="preserve">
-    <value>Who can send messages</value>
+    <value>Хто може надсилати повідомлення</value>
   </data>
   <data name="PermCreateMessageNote" xml:space="preserve">
-    <value>This option determines who can create and send messages (in-system mail). By default everyone can create and send messages.</value>
+    <value>Визначає, хто може створювати й надсилати повідомлення (внутрішню пошту системи). За замовчуванням створювати й надсилати повідомлення можуть усі.</value>
   </data>
   <data name="PermViewGroupsUsersLabel" xml:space="preserve">
-    <value>Who can view users</value>
+    <value>Хто може переглядати користувачів</value>
   </data>
   <data name="PermViewGroupsUsersNote" xml:space="preserve">
-    <value>By default all users can see all other users in the system. This option allows you to limit who can see users in the system.</value>
+    <value>За замовчуванням усі користувачі бачать усіх інших користувачів у системі. Цей параметр дає змогу обмежити, хто може бачити користувачів у системі.</value>
   </data>
   <data name="PermViewGroupsUnitsLabel" xml:space="preserve">
-    <value>Who can view units</value>
+    <value>Хто може переглядати одиниці</value>
   </data>
   <data name="PermViewGroupsUnitsNote" xml:space="preserve">
-    <value>By default all users can see all units in the system. This option allows you to limit who can view units in the system.</value>
+    <value>За замовчуванням усі користувачі бачать усі одиниці в системі. Цей параметр дає змогу обмежити, хто може переглядати одиниці в системі.</value>
   </data>
   <data name="PermViewContactsLabel" xml:space="preserve">
-    <value>Who can view Contacts</value>
+    <value>Хто може переглядати контакти</value>
   </data>
   <data name="PermViewContactsNote" xml:space="preserve">
-    <value>By default all users can see all contacts in the system. This option allows you to limit who can view contacts in the system. If a user cannot view Contacts they also won't be able to add them to a call.</value>
+    <value>За замовчуванням усі користувачі бачать усі контакти в системі. Цей параметр дає змогу обмежити, хто може переглядати контакти в системі. Якщо користувач не може переглядати контакти, він також не зможе додавати їх до виклику.</value>
   </data>
   <data name="PermEditContactsLabel" xml:space="preserve">
-    <value>Who can edit or create Contacts</value>
+    <value>Хто може редагувати або створювати контакти</value>
   </data>
   <data name="PermEditContactsNote" xml:space="preserve">
-    <value>By default all users can create and edit contacts in the system. This option allows you to limit who can create or edit contacts in the system.</value>
+    <value>За замовчуванням усі користувачі можуть створювати й редагувати контакти в системі. Цей параметр дає змогу обмежити, хто може створювати або редагувати контакти в системі.</value>
   </data>
   <data name="PermDeleteContactsLabel" xml:space="preserve">
-    <value>Who can delete Contacts</value>
+    <value>Хто може видаляти контакти</value>
   </data>
   <data name="PermDeleteContactsNote" xml:space="preserve">
-    <value>By default all users can delete contacts in the system. This option allows you to limit who can delete contacts in the system.</value>
+    <value>За замовчуванням усі користувачі можуть видаляти контакти в системі. Цей параметр дає змогу обмежити, хто може видаляти контакти в системі.</value>
   </data>
   <data name="PermCreateWorkflowLabel" xml:space="preserve">
-    <value>Who can Create/Edit Workflows</value>
+    <value>Хто може створювати/редагувати робочі процеси</value>
   </data>
   <data name="PermCreateWorkflowNote" xml:space="preserve">
-    <value>This option determines who can create, edit, and delete workflows and workflow steps. By default only Department Admins can manage workflows.</value>
+    <value>Визначає, хто може створювати, редагувати й видаляти робочі процеси та їхні кроки. За замовчуванням керувати робочими процесами можуть лише адміністратори підрозділу.</value>
   </data>
   <data name="PermManageWorkflowCredentialsLabel" xml:space="preserve">
-    <value>Who can Manage Workflow Credentials</value>
+    <value>Хто може керувати обліковими даними робочих процесів</value>
   </data>
   <data name="PermManageWorkflowCredentialsNote" xml:space="preserve">
-    <value>This option determines who can create, edit, and delete encrypted credentials used by workflow actions (e.g., SMTP passwords, API keys). By default only Department Admins can manage credentials.</value>
+    <value>Визначає, хто може створювати, редагувати й видаляти зашифровані облікові дані, які використовують дії робочих процесів (наприклад, паролі SMTP, ключі API). За замовчуванням керувати обліковими даними можуть лише адміністратори підрозділу.</value>
   </data>
   <data name="PermViewWorkflowRunsLabel" xml:space="preserve">
-    <value>Who can View Workflow Runs</value>
+    <value>Хто може переглядати запуски робочих процесів</value>
   </data>
   <data name="PermViewWorkflowRunsNote" xml:space="preserve">
-    <value>This option determines who can view workflow execution history, run logs, and health dashboards. By default only Department Admins can view workflow runs.</value>
+    <value>Визначає, хто може переглядати історію виконання робочих процесів, журнали запусків і панелі стану. За замовчуванням переглядати запуски робочих процесів можуть лише адміністратори підрозділу.</value>
   </data>
   <data name="SsoPageTitle" xml:space="preserve">
-    <value>Single Sign-On (SSO) &amp; SCIM</value>
+    <value>Єдиний вхід (SSO) і SCIM</value>
   </data>
   <data name="SsoPageHeader" xml:space="preserve">
-    <value>Single Sign-On &amp; Identity Provisioning</value>
+    <value>Єдиний вхід і підготовка облікових записів</value>
   </data>
   <data name="SsoBreadcrumb" xml:space="preserve">
     <value>SSO / SCIM</value>
   </data>
   <data name="SsoSecurityPolicyButton" xml:space="preserve">
-    <value>Security Policy</value>
+    <value>Політика безпеки</value>
   </data>
   <data name="SsoAddOidcButton" xml:space="preserve">
-    <value>Add OIDC Config</value>
+    <value>Додати конфігурацію OIDC</value>
   </data>
   <data name="SsoAddSamlButton" xml:space="preserve">
-    <value>Add SAML 2.0 Config</value>
+    <value>Додати конфігурацію SAML 2.0</value>
   </data>
   <data name="SsoWhatIsSsoHeader" xml:space="preserve">
-    <value>What is SSO &amp; SCIM?</value>
+    <value>Що таке SSO і SCIM?</value>
   </data>
   <data name="SsoSingleSignOnHeader" xml:space="preserve">
-    <value>Single Sign-On (SSO)</value>
+    <value>Єдиний вхід (SSO)</value>
   </data>
   <data name="SsoSingleSignOnDescription" xml:space="preserve">
-    <value>Allow department members to log in with their existing corporate identity (Microsoft Entra ID, Okta, Google Workspace, etc.) instead of a separate Resgrid password.</value>
+    <value>Дозвольте учасникам підрозділу входити за допомогою наявного корпоративного облікового запису (Microsoft Entra ID, Okta, Google Workspace тощо) замість окремого пароля Resgrid.</value>
   </data>
   <data name="SsoOidcDescription" xml:space="preserve">
-    <value>OIDC — Modern protocol, ideal for Entra, Okta, Auth0, Google</value>
+    <value>OIDC — сучасний протокол, ідеальний для Entra, Okta, Auth0, Google</value>
   </data>
   <data name="SsoSamlDescription" xml:space="preserve">
-    <value>SAML 2.0 — Widely supported by government &amp; enterprise IdPs</value>
+    <value>SAML 2.0 — широко підтримується державними та корпоративними IdP</value>
   </data>
   <data name="SsoScimHeader" xml:space="preserve">
-    <value>SCIM 2.0 Provisioning</value>
+    <value>Підготовка SCIM 2.0</value>
   </data>
   <data name="SsoScimDescription" xml:space="preserve">
-    <value>Automatically sync users from your identity provider. When you onboard or offboard staff in your corporate directory, Resgrid reflects those changes automatically — no manual invite/remove steps.</value>
+    <value>Автоматично синхронізуйте користувачів із вашого постачальника ідентичності. Коли ви приймаєте або звільняєте співробітників у корпоративному каталозі, Resgrid автоматично відображає ці зміни — без ручного запрошення чи видалення.</value>
   </data>
   <data name="SsoScimAutoCreate" xml:space="preserve">
-    <value>Auto-create new members when added in your IdP</value>
+    <value>Автоматично створювати нових учасників, коли їх додано у вашому IdP</value>
   </data>
   <data name="SsoScimAutoDisable" xml:space="preserve">
-    <value>Disable/remove members when deprovisioned</value>
+    <value>Вимикати/видаляти учасників, коли їхню підготовку скасовано</value>
   </data>
   <data name="SsoScimSyncNames" xml:space="preserve">
-    <value>Keep names &amp; email addresses in sync</value>
+    <value>Синхронізувати імена та адреси електронної пошти</value>
   </data>
   <data name="SsoSecurityPolicyHeader" xml:space="preserve">
-    <value>Security Policy</value>
+    <value>Політика безпеки</value>
   </data>
   <data name="SsoSecurityPolicyDescription" xml:space="preserve">
-    <value>Enforce department-wide compliance controls alongside SSO:</value>
+    <value>Застосовуйте засоби контролю відповідності для всього підрозділу разом із SSO:</value>
   </data>
   <data name="SsoSecurityPolicyMandateMfa" xml:space="preserve">
-    <value>Mandate MFA for all members</value>
+    <value>Обов'язкова MFA для всіх учасників</value>
   </data>
   <data name="SsoSecurityPolicyRestrictLogin" xml:space="preserve">
-    <value>Restrict login to SSO only (disable passwords)</value>
+    <value>Вхід лише через SSO (вимкнення паролів)</value>
   </data>
   <data name="SsoSecurityPolicyIpRestrict" xml:space="preserve">
-    <value>Limit logins to specific IP CIDR ranges</value>
+    <value>Обмеження входу певними діапазонами IP (CIDR)</value>
   </data>
   <data name="SsoSecurityPolicyPasswordRules" xml:space="preserve">
-    <value>Set password expiration &amp; complexity rules</value>
+    <value>Правила строку дії та складності паролів</value>
   </data>
   <data name="SsoSecurityPolicyDataClassification" xml:space="preserve">
-    <value>Classify data level (Unclassified / CUI / Confidential)</value>
+    <value>Класифікація рівня даних (некласифіковані / CUI / конфіденційні)</value>
   </data>
   <data name="SsoDiscoveryUrlCalloutTitle" xml:space="preserve">
-    <value>Mobile App Discovery URL</value>
+    <value>URL виявлення для мобільного застосунку</value>
   </data>
   <data name="SsoDiscoveryUrlCalloutDescription" xml:space="preserve">
-    <value>The Resgrid mobile app uses this URL to discover your SSO settings before showing the login screen. Share it with your mobile team if needed.</value>
+    <value>Мобільний застосунок Resgrid використовує цю URL-адресу, щоб виявити ваші налаштування SSO перед показом екрана входу. За потреби передайте її команді, що відповідає за мобільні пристрої.</value>
   </data>
   <data name="SsoCopyButton" xml:space="preserve">
-    <value>Copy</value>
+    <value>Копіювати</value>
   </data>
   <data name="SsoCopiedToClipboard" xml:space="preserve">
-    <value>Copied to clipboard!</value>
+    <value>Скопійовано в буфер обміну!</value>
   </data>
   <data name="SsoConfigurationsHeader" xml:space="preserve">
-    <value>SSO Configurations</value>
+    <value>Конфігурації SSO</value>
   </data>
   <data name="SsoNoConfigurationsWarning" xml:space="preserve">
-    <value>No SSO configurations yet. Use the buttons above to add OIDC or SAML 2.0.</value>
+    <value>Конфігурацій SSO ще немає. Скористайтеся кнопками вище, щоб додати OIDC або SAML 2.0.</value>
   </data>
   <data name="SsoTableColProvider" xml:space="preserve">
-    <value>Provider</value>
+    <value>Постачальник</value>
   </data>
   <data name="SsoTableColIdentifier" xml:space="preserve">
-    <value>Identifier / Endpoint</value>
+    <value>Ідентифікатор / кінцева точка</value>
   </data>
   <data name="SsoTableColStatus" xml:space="preserve">
     <value>Статус</value>
   </data>
   <data name="SsoTableColLocalLogin" xml:space="preserve">
-    <value>Local Login</value>
+    <value>Локальний вхід</value>
   </data>
   <data name="SsoTableColAutoProvision" xml:space="preserve">
-    <value>Auto-Provision</value>
+    <value>Автопідготовка</value>
   </data>
   <data name="SsoTableColScim" xml:space="preserve">
     <value>SCIM</value>
   </data>
   <data name="SsoTableColCreated" xml:space="preserve">
-    <value>Created</value>
+    <value>Створено</value>
   </data>
   <data name="SsoTableColActions" xml:space="preserve">
     <value>Дії</value>
   </data>
   <data name="SsoStatusEnabled" xml:space="preserve">
-    <value>Enabled</value>
+    <value>Увімкнено</value>
   </data>
   <data name="SsoStatusDisabled" xml:space="preserve">
-    <value>Disabled</value>
+    <value>Вимкнено</value>
   </data>
   <data name="SsoLocalLoginYes" xml:space="preserve">
     <value>Так</value>
   </data>
   <data name="SsoLocalLoginSsoOnly" xml:space="preserve">
-    <value>SSO Only</value>
+    <value>Лише SSO</value>
   </data>
   <data name="SsoAutoProvisionOn" xml:space="preserve">
-    <value>On</value>
+    <value>Увімк.</value>
   </data>
   <data name="SsoAutoProvisionOff" xml:space="preserve">
-    <value>Off</value>
+    <value>Вимк.</value>
   </data>
   <data name="SsoScimStatusActive" xml:space="preserve">
     <value>Активний</value>
   </data>
   <data name="SsoScimStatusNoToken" xml:space="preserve">
-    <value>No Token</value>
+    <value>Немає токена</value>
   </data>
   <data name="SsoScimStatusOff" xml:space="preserve">
-    <value>Off</value>
+    <value>Вимк.</value>
   </data>
   <data name="SsoEditButton" xml:space="preserve">
     <value>Редагувати</value>
@@ -441,10 +1530,37 @@
     <value>SCIM</value>
   </data>
   <data name="SsoDeleteConfirmTitle" xml:space="preserve">
-    <value>Confirm Delete</value>
+    <value>Підтвердження видалення</value>
   </data>
   <data name="SsoDeleteConfirmMessage" xml:space="preserve">
-    <value>Are you sure you want to delete the {0} SSO configuration? This cannot be undone.</value>
+    <value>Ви впевнені, що хочете видалити конфігурацію SSO {0}? Цю дію неможливо скасувати.</value>
+  </data>
+  <data name="SsoErrorInvalidProviderType" xml:space="preserve">
+    <value>Недійсний тип постачальника.</value>
+  </data>
+  <data name="SsoErrorConfigAlreadyExists" xml:space="preserve">
+    <value>Конфігурація SSO для {0} уже існує. Щоб змінити її, скористайтеся кнопкою «Редагувати».</value>
+  </data>
+  <data name="SsoErrorOidcClientIdRequired" xml:space="preserve">
+    <value>Потрібно вказати ID клієнта OIDC.</value>
+  </data>
+  <data name="SsoErrorOidcAuthorityInvalid" xml:space="preserve">
+    <value>Центр автентифікації OIDC має бути дійсною URL-адресою HTTPS.</value>
+  </data>
+  <data name="SsoErrorSamlCertificateRequired" xml:space="preserve">
+    <value>Для перевірки тверджень SAML потрібен сертифікат підпису IdP.</value>
+  </data>
+  <data name="SsoErrorIdpSsoUrlInvalid" xml:space="preserve">
+    <value>URL єдиного входу постачальника ідентичності має бути дійсною URL-адресою HTTPS.</value>
+  </data>
+  <data name="SsoConfigCreatedSuccess" xml:space="preserve">
+    <value>Конфігурацію SSO {0} успішно створено.</value>
+  </data>
+  <data name="SsoConfigUpdatedSuccess" xml:space="preserve">
+    <value>Конфігурацію SSO успішно оновлено.</value>
+  </data>
+  <data name="SsoConfigDeletedSuccess" xml:space="preserve">
+    <value>Конфігурацію SSO {0} видалено.</value>
   </data>
   <data name="SsoDeleteCancelButton" xml:space="preserve">
     <value>Скасувати</value>
@@ -453,10 +1569,10 @@
     <value>Видалити</value>
   </data>
   <data name="SsoEditPageTitleNew" xml:space="preserve">
-    <value>New SSO Configuration</value>
+    <value>Нова конфігурація SSO</value>
   </data>
   <data name="SsoEditPageTitleEdit" xml:space="preserve">
-    <value>Edit SSO Configuration</value>
+    <value>Редагування конфігурації SSO</value>
   </data>
   <data name="SsoEditBreadcrumbNew" xml:space="preserve">
     <value>Новий</value>
@@ -465,226 +1581,256 @@
     <value>Редагувати</value>
   </data>
   <data name="SsoEditStep1Label" xml:space="preserve">
-    <value>Step 1</value>
+    <value>Крок 1</value>
   </data>
   <data name="SsoEditStep1Header" xml:space="preserve">
-    <value>Provider &amp; Basic Settings</value>
+    <value>Постачальник і основні налаштування</value>
   </data>
   <data name="SsoEditProviderTypeLabel" xml:space="preserve">
-    <value>Identity Provider Protocol</value>
+    <value>Протокол постачальника ідентичності</value>
+  </data>
+  <data name="SsoEditProviderTypeOidcOption" xml:space="preserve">
+    <value>OIDC (OpenID Connect) — Microsoft Entra, Okta, Google, Auth0</value>
+  </data>
+  <data name="SsoEditProviderTypeSamlOption" xml:space="preserve">
+    <value>SAML 2.0 — більшість корпоративних і державних IdP</value>
   </data>
   <data name="SsoEditEnableLabel" xml:space="preserve">
-    <value>Enable this SSO configuration</value>
+    <value>Увімкнути цю конфігурацію SSO</value>
   </data>
   <data name="SsoEditEnableDescription" xml:space="preserve">
-    <value>Only one configuration per provider type is active at a time.</value>
+    <value>Одночасно може бути активна лише одна конфігурація кожного типу постачальника.</value>
   </data>
   <data name="SsoEditAllowLocalLoginLabel" xml:space="preserve">
-    <value>Allow local password login</value>
+    <value>Дозволити локальний вхід за паролем</value>
   </data>
   <data name="SsoEditAllowLocalLoginDescription" xml:space="preserve">
-    <value>When checked, users can still log in with username &amp; password in addition to SSO. Disable this together with the Security Policy's Require SSO flag to enforce SSO-only login.</value>
+    <value>Якщо позначено, користувачі й надалі можуть входити за ім'ям користувача та паролем на додаток до SSO. Щоб дозволити вхід лише через SSO, вимкніть цей параметр разом із прапорцем «Вимагати SSO» в політиці безпеки.</value>
   </data>
   <data name="SsoEditAutoProvisionLabel" xml:space="preserve">
-    <value>Auto-provision new users</value>
+    <value>Автоматична підготовка нових користувачів</value>
   </data>
   <data name="SsoEditAutoProvisionDescription" xml:space="preserve">
-    <value>Automatically create a Resgrid account when a user authenticates via SSO for the first time and no matching email is found. Leave off to require manual invitation first.</value>
+    <value>Автоматично створювати обліковий запис Resgrid, коли користувач уперше автентифікується через SSO, а відповідної адреси електронної пошти не знайдено. Залиште вимкненим, щоб спершу вимагати запрошення вручну.</value>
   </data>
   <data name="SsoEditScimEnableLabel" xml:space="preserve">
-    <value>Enable SCIM 2.0 provisioning</value>
+    <value>Увімкнути підготовку SCIM 2.0</value>
   </data>
   <data name="SsoEditScimEnableDescription" xml:space="preserve">
-    <value>Allows your IdP to automatically create/update/deactivate members. After saving, go to the SCIM Setup page to generate a bearer token.</value>
+    <value>Дозволяє вашому IdP автоматично створювати, оновлювати й деактивувати учасників. Після збереження перейдіть на сторінку налаштування SCIM, щоб згенерувати токен Bearer.</value>
   </data>
   <data name="SsoEditDefaultRankLabel" xml:space="preserve">
-    <value>Default Rank for Auto-Provisioned Users</value>
+    <value>Звання за замовчуванням для автоматично підготовлених користувачів</value>
+  </data>
+  <data name="SsoEditDefaultRankNone" xml:space="preserve">
+    <value>(Без звання за замовчуванням)</value>
   </data>
   <data name="SsoEditDefaultRankDescription" xml:space="preserve">
-    <value>Optional. Applied only when Auto-Provision creates a new member.</value>
+    <value>Необов'язково. Застосовується лише тоді, коли автоматична підготовка створює нового учасника.</value>
   </data>
   <data name="SsoEditStep2OidcLabel" xml:space="preserve">
-    <value>Step 2 — OIDC</value>
+    <value>Крок 2 — OIDC</value>
   </data>
   <data name="SsoEditStep2OidcHeader" xml:space="preserve">
-    <value>OpenID Connect Settings</value>
+    <value>Налаштування OpenID Connect</value>
   </data>
   <data name="SsoEditOidcInfoAlert" xml:space="preserve">
-    <value>Where to find these values: In your IdP, register Resgrid as a Public Client (PKCE, no client secret required for mobile) or Web App (with secret for server-side flows). Copy the Client ID and Issuer URL from the registered application.</value>
+    <value>Де знайти ці значення: зареєструйте Resgrid у своєму IdP як публічний клієнт (PKCE, для мобільних застосунків секрет клієнта не потрібен) або як вебзастосунок (із секретом для серверних потоків). Скопіюйте ID клієнта та URL видавця (Issuer) із зареєстрованого застосунку.</value>
   </data>
   <data name="SsoEditAuthorityLabel" xml:space="preserve">
-    <value>Authority / Issuer URL</value>
+    <value>URL центру автентифікації / видавця (Authority / Issuer)</value>
   </data>
   <data name="SsoEditAuthorityPlaceholder" xml:space="preserve">
     <value>https://login.microsoftonline.com/{tenant-id}/v2.0</value>
   </data>
   <data name="SsoEditAuthorityDescription" xml:space="preserve">
-    <value>Examples: Entra ID: https://login.microsoftonline.com/{tenant-id}/v2.0 | Okta: https://{your-domain}.okta.com/oauth2/default | Google: https://accounts.google.com</value>
+    <value>Приклади: Entra ID: https://login.microsoftonline.com/{tenant-id}/v2.0 | Okta: https://{your-domain}.okta.com/oauth2/default | Google: https://accounts.google.com</value>
   </data>
   <data name="SsoEditClientIdLabel" xml:space="preserve">
-    <value>Client ID</value>
+    <value>ID клієнта</value>
   </data>
   <data name="SsoEditClientIdPlaceholder" xml:space="preserve">
     <value>xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</value>
   </data>
   <data name="SsoEditClientIdDescription" xml:space="preserve">
-    <value>The public client identifier assigned by your IdP. Safe to display — not a secret.</value>
+    <value>Публічний ідентифікатор клієнта, призначений вашим IdP. Його безпечно показувати — це не секрет.</value>
   </data>
   <data name="SsoEditClientSecretLabel" xml:space="preserve">
-    <value>Client Secret</value>
+    <value>Секрет клієнта</value>
   </data>
   <data name="SsoEditClientSecretStored" xml:space="preserve">
-    <value>Secret stored</value>
+    <value>Секрет збережено</value>
   </data>
   <data name="SsoEditClientSecretDescription" xml:space="preserve">
-    <value>Encrypted at rest using your department-specific key. Leave blank if using PKCE (mobile/SPA — no secret needed).</value>
+    <value>Зберігається в зашифрованому вигляді за допомогою окремого ключа вашого підрозділу. Залиште порожнім, якщо використовуєте PKCE (мобільні застосунки/SPA — секрет не потрібен).</value>
   </data>
   <data name="SsoEditClientSecretKeepExisting" xml:space="preserve">
-    <value>Leave blank to keep the existing secret unchanged.</value>
+    <value>Залиште порожнім, щоб не змінювати наявний секрет.</value>
   </data>
   <data name="SsoEditStep2SamlLabel" xml:space="preserve">
-    <value>Step 2 — SAML 2.0</value>
+    <value>Крок 2 — SAML 2.0</value>
   </data>
   <data name="SsoEditStep2SamlHeader" xml:space="preserve">
-    <value>SAML 2.0 Settings</value>
+    <value>Налаштування SAML 2.0</value>
   </data>
   <data name="SsoEditSamlInfoAlert" xml:space="preserve">
-    <value>Where to find these values: In your IdP, create a new SAML application. Enter the SP Entity ID and ACS URL shown below into your IdP, then paste the IdP metadata URL or certificate back here.</value>
+    <value>Де знайти ці значення: створіть у своєму IdP новий застосунок SAML. Введіть у свій IdP наведені нижче SP Entity ID та URL ACS, а потім вставте сюди URL метаданих IdP або сертифікат.</value>
   </data>
   <data name="SsoEditSpEntityIdLabel" xml:space="preserve">
-    <value>SP Entity ID (enter this into your IdP)</value>
+    <value>SP Entity ID (введіть його у свій IdP)</value>
   </data>
   <data name="SsoEditAcsUrlLabel" xml:space="preserve">
-    <value>ACS URL (Assertion Consumer Service — enter this into your IdP)</value>
+    <value>URL ACS (служба обробки тверджень — введіть його у свій IdP)</value>
   </data>
   <data name="SsoEditAcsUrlNote" xml:space="preserve">
-    <value>This URL uses an encrypted department token — never exposes your plain department code.</value>
+    <value>Ця URL-адреса використовує зашифрований токен підрозділу — ваш код підрозділу ніколи не розкривається у відкритому вигляді.</value>
   </data>
   <data name="SsoEditEntityIdEditableLabel" xml:space="preserve">
-    <value>SP Entity ID (editable)</value>
+    <value>SP Entity ID (можна редагувати)</value>
   </data>
   <data name="SsoEditEntityIdEditablePlaceholder" xml:space="preserve">
     <value>https://app.resgrid.com/saml/DEPT</value>
   </data>
   <data name="SsoEditEntityIdEditableNote" xml:space="preserve">
-    <value>Must match exactly what you entered in the IdP.</value>
+    <value>Має точно збігатися з тим, що ви ввели в IdP.</value>
   </data>
   <data name="SsoEditMetadataUrlLabel" xml:space="preserve">
-    <value>IdP Metadata URL</value>
+    <value>URL метаданих IdP</value>
   </data>
   <data name="SsoEditMetadataUrlPlaceholder" xml:space="preserve">
     <value>https://idp.example.com/metadata.xml</value>
   </data>
   <data name="SsoEditMetadataUrlNote" xml:space="preserve">
-    <value>Resgrid will periodically fetch this URL to stay up to date with IdP certificates.</value>
+    <value>Resgrid періодично завантажуватиме цю URL-адресу, щоб підтримувати сертифікати IdP в актуальному стані.</value>
   </data>
   <data name="SsoEditAcsUrlStoredLabel" xml:space="preserve">
-    <value>ACS URL (stored)</value>
+    <value>URL ACS (збережений)</value>
   </data>
   <data name="SsoEditAcsUrlStoredNote" xml:space="preserve">
-    <value>Auto-filled from the generated URL above. Modify only if you configured a different ACS URL in your IdP.</value>
+    <value>Автоматично заповнюється згенерованою вище URL-адресою. Змінюйте лише тоді, коли ви налаштували у своєму IdP іншу URL-адресу ACS.</value>
+  </data>
+  <data name="SsoEditOidcBrokerRedirectLabel" xml:space="preserve">
+    <value>URI перенаправлення для входу, розпочатого з Resgrid (введіть його у постачальника ідентичності)</value>
+  </data>
+  <data name="SsoEditOidcBrokerRedirectNote" xml:space="preserve">
+    <value>Додайте його поряд з уже зареєстрованими URI перенаправлення; старіші версії застосунків Resgrid і далі використовують свої.</value>
+  </data>
+  <data name="SsoEditOidcAppRedirectLabel" xml:space="preserve">
+    <value>URI перенаправлення для входу в застосунках Resgrid (введіть кожен у постачальника ідентичності)</value>
+  </data>
+  <data name="SsoEditOidcAppRedirectNote" xml:space="preserve">
+    <value>Кожен застосунок і вебверсія кожного застосунку повертаються на власну адресу, тож зареєструйте їх усі. Їх використовують старіші версії застосунків і застосунки, вхід у яких не розпочинається з Resgrid.</value>
+  </data>
+  <data name="SsoEditOidcAppRedirectWebLabel" xml:space="preserve">
+    <value>{0} (веб)</value>
+  </data>
+  <data name="SsoEditIdpSsoUrlLabel" xml:space="preserve">
+    <value>URL єдиного входу постачальника ідентичності</value>
+  </data>
+  <data name="SsoEditIdpSsoUrlNote" xml:space="preserve">
+    <value>Адреса входу SAML постачальника ідентичності (прив'язка HTTP-Redirect). Потрібна для входу, розпочатого із застосунків і вебсайту Resgrid.</value>
   </data>
   <data name="SsoEditIdpCertLabel" xml:space="preserve">
-    <value>IdP Signing Certificate (PEM)</value>
+    <value>Сертифікат підпису IdP (PEM)</value>
   </data>
   <data name="SsoEditIdpCertStored" xml:space="preserve">
-    <value>Certificate stored</value>
+    <value>Сертифікат збережено</value>
   </data>
   <data name="SsoEditIdpCertNote" xml:space="preserve">
-    <value>Encrypted at rest. Leave blank to keep the existing certificate.</value>
+    <value>Зберігається в зашифрованому вигляді. Залиште порожнім, щоб зберегти наявний сертифікат.</value>
   </data>
   <data name="SsoEditSigningKeyLabel" xml:space="preserve">
-    <value>SP Signing Key (PEM, optional)</value>
+    <value>Ключ підпису SP (PEM, необов'язково)</value>
   </data>
   <data name="SsoEditSigningKeyStored" xml:space="preserve">
-    <value>Key stored</value>
+    <value>Ключ збережено</value>
   </data>
   <data name="SsoEditSigningKeyNote" xml:space="preserve">
-    <value>Encrypted at rest. Leave blank if your IdP does not require signed requests.</value>
+    <value>Зберігається в зашифрованому вигляді. Залиште порожнім, якщо ваш IdP не вимагає підписаних запитів.</value>
   </data>
   <data name="SsoEditStep3Label" xml:space="preserve">
-    <value>Step 3</value>
+    <value>Крок 3</value>
   </data>
   <data name="SsoEditStep3Header" xml:space="preserve">
-    <value>Attribute Mapping</value>
+    <value>Зіставлення атрибутів</value>
   </data>
   <data name="SsoEditAttrMapDescription" xml:space="preserve">
-    <value>Map claim names your IdP sends to the Resgrid user fields. Leave blank to use the standard claim URIs automatically. The value is the claim name as emitted by your IdP.</value>
+    <value>Зіставте назви клеймів, які надсилає ваш IdP, з полями користувача Resgrid. Залиште порожнім, щоб автоматично використовувати стандартні URI клеймів. Значення — це назва клейму в тому вигляді, у якому її видає ваш IdP.</value>
   </data>
   <data name="SsoEditAttrMapJsonLabel" xml:space="preserve">
-    <value>Attribute Mapping JSON</value>
+    <value>JSON зіставлення атрибутів</value>
   </data>
   <data name="SsoEditAttrMapJsonNote" xml:space="preserve">
-    <value>Must be valid JSON. Use the quick-fill buttons on the right.</value>
+    <value>Має бути дійсним JSON. Скористайтеся кнопками швидкого заповнення праворуч.</value>
   </data>
   <data name="SsoEditQuickFillHeader" xml:space="preserve">
-    <value>Quick-fill presets</value>
+    <value>Шаблони швидкого заповнення</value>
   </data>
   <data name="SsoEditQuickFillDescription" xml:space="preserve">
-    <value>Click to auto-fill the mapping JSON with known defaults for your IdP.</value>
+    <value>Натисніть, щоб автоматично заповнити JSON зіставлення відомими типовими значеннями для вашого IdP.</value>
   </data>
   <data name="SsoEditFieldMappingHeader" xml:space="preserve">
-    <value>Supported Resgrid field keys</value>
+    <value>Підтримувані ключі полів Resgrid</value>
   </data>
   <data name="SsoEditFieldKeyColumn" xml:space="preserve">
-    <value>Key</value>
+    <value>Ключ</value>
   </data>
   <data name="SsoEditFieldDescColumn" xml:space="preserve">
     <value>Опис</value>
   </data>
   <data name="SsoEditFieldEmailDesc" xml:space="preserve">
-    <value>User's email address</value>
+    <value>Адреса електронної пошти користувача</value>
   </data>
   <data name="SsoEditFieldFirstNameDesc" xml:space="preserve">
-    <value>Given / first name</value>
+    <value>Ім'я</value>
   </data>
   <data name="SsoEditFieldLastNameDesc" xml:space="preserve">
-    <value>Surname / family name</value>
+    <value>Прізвище</value>
   </data>
   <data name="SsoEditFieldSubjectDesc" xml:space="preserve">
-    <value>Unique IdP subject (for account linking)</value>
+    <value>Унікальний суб'єкт (subject) IdP (для зв'язування облікових записів)</value>
   </data>
   <data name="SsoEditCreateButton" xml:space="preserve">
-    <value>Create Configuration</value>
+    <value>Створити конфігурацію</value>
   </data>
   <data name="SsoEditSaveButton" xml:space="preserve">
-    <value>Save Changes</value>
+    <value>Зберегти зміни</value>
   </data>
   <data name="SsoEditCancelButton" xml:space="preserve">
     <value>Скасувати</value>
   </data>
   <data name="ScimSetupPageTitle" xml:space="preserve">
-    <value>SCIM 2.0 Setup</value>
+    <value>Налаштування SCIM 2.0</value>
   </data>
   <data name="ScimSetupPageHeader" xml:space="preserve">
-    <value>SCIM 2.0 Provisioning Setup</value>
+    <value>Налаштування підготовки SCIM 2.0</value>
   </data>
   <data name="ScimSetupBreadcrumb" xml:space="preserve">
-    <value>SCIM Setup</value>
+    <value>Налаштування SCIM</value>
   </data>
   <data name="ScimSetupBackButton" xml:space="preserve">
-    <value>Back to SSO</value>
+    <value>Назад до SSO</value>
   </data>
   <data name="ScimSetupTokenWarningTitle" xml:space="preserve">
-    <value>Important — Copy your SCIM Bearer Token Now</value>
+    <value>Важливо — скопіюйте токен Bearer SCIM зараз</value>
   </data>
   <data name="ScimSetupTokenWarningBody" xml:space="preserve">
-    <value>This token is displayed only once and cannot be retrieved again. Copy it immediately and paste it into your identity provider's SCIM configuration. If you lose it, click Rotate Token to generate a new one.</value>
+    <value>Цей токен відображається лише один раз, і його неможливо отримати знову. Негайно скопіюйте його та вставте в конфігурацію SCIM вашого постачальника ідентичності. Якщо ви його втратите, натисніть «Ротація токена SCIM», щоб згенерувати новий.</value>
   </data>
   <data name="ScimSetupCopyTokenButton" xml:space="preserve">
-    <value>Copy Token</value>
+    <value>Копіювати токен</value>
   </data>
   <data name="ScimSetupTokenEncryptedNote" xml:space="preserve">
-    <value>This token is stored encrypted in the Resgrid database using your department-specific encryption key.</value>
+    <value>Цей токен зберігається в базі даних Resgrid у зашифрованому вигляді за допомогою окремого ключа шифрування вашого підрозділу.</value>
   </data>
   <data name="ScimSetupStatusHeader" xml:space="preserve">
-    <value>SCIM Status</value>
+    <value>Стан SCIM</value>
   </data>
   <data name="ScimSetupStatusProvider" xml:space="preserve">
-    <value>Provider</value>
+    <value>Постачальник</value>
   </data>
   <data name="ScimSetupStatusEnabled" xml:space="preserve">
-    <value>SCIM Enabled</value>
+    <value>SCIM увімкнено</value>
   </data>
   <data name="ScimSetupStatusEnabledYes" xml:space="preserve">
     <value>Так</value>
@@ -693,61 +1839,61 @@
     <value>Ні</value>
   </data>
   <data name="ScimSetupStatusBearerToken" xml:space="preserve">
-    <value>Bearer Token</value>
+    <value>Токен Bearer</value>
   </data>
   <data name="ScimSetupStatusTokenConfigured" xml:space="preserve">
-    <value>Configured</value>
+    <value>Налаштовано</value>
   </data>
   <data name="ScimSetupStatusTokenNotSet" xml:space="preserve">
-    <value>Not Set</value>
+    <value>Не задано</value>
   </data>
   <data name="ScimSetupRotateTokenButton" xml:space="preserve">
-    <value>Rotate SCIM Token</value>
+    <value>Ротація токена SCIM</value>
   </data>
   <data name="ScimSetupGenerateTokenButton" xml:space="preserve">
-    <value>Generate SCIM Token</value>
+    <value>Згенерувати токен SCIM</value>
   </data>
   <data name="ScimSetupRotateTokenNote" xml:space="preserve">
-    <value>Rotating generates a new token and invalidates the old one.</value>
+    <value>Ротація генерує новий токен і анулює старий.</value>
   </data>
   <data name="ScimSetupRotateTokenConfirm" xml:space="preserve">
-    <value>Are you sure? Any existing SCIM integration will break until you update the token in your IdP.</value>
+    <value>Ви впевнені? Будь-яка наявна інтеграція SCIM перестане працювати, доки ви не оновите токен у своєму IdP.</value>
   </data>
   <data name="ScimSetupConnectorHeader" xml:space="preserve">
-    <value>SCIM Connector Settings</value>
+    <value>Налаштування конектора SCIM</value>
   </data>
   <data name="ScimSetupConnectorDescription" xml:space="preserve">
-    <value>Enter these values into your identity provider's SCIM provisioning configuration.</value>
+    <value>Введіть ці значення в конфігурацію підготовки SCIM вашого постачальника ідентичності.</value>
   </data>
   <data name="ScimSetupSettingColumn" xml:space="preserve">
-    <value>Setting</value>
+    <value>Налаштування</value>
   </data>
   <data name="ScimSetupValueColumn" xml:space="preserve">
-    <value>Value</value>
+    <value>Значення</value>
   </data>
   <data name="ScimSetupBaseUrlLabel" xml:space="preserve">
-    <value>SCIM Connector Base URL</value>
+    <value>Базова URL-адреса конектора SCIM</value>
   </data>
   <data name="ScimSetupAuthMethodLabel" xml:space="preserve">
-    <value>Authentication Method</value>
+    <value>Метод автентифікації</value>
   </data>
   <data name="ScimSetupAuthHeaderLabel" xml:space="preserve">
-    <value>Authorization Header</value>
+    <value>Заголовок авторизації</value>
   </data>
   <data name="ScimSetupCustomHeaderNameLabel" xml:space="preserve">
-    <value>Custom Header Name</value>
+    <value>Назва власного заголовка</value>
   </data>
   <data name="ScimSetupCustomHeaderValueLabel" xml:space="preserve">
-    <value>Custom Header Value</value>
+    <value>Значення власного заголовка</value>
   </data>
   <data name="ScimSetupSupportedResourcesLabel" xml:space="preserve">
-    <value>Supported Resources</value>
+    <value>Підтримувані ресурси</value>
   </data>
   <data name="ScimSetupSupportedUpdateMethodLabel" xml:space="preserve">
-    <value>Supported Update Method</value>
+    <value>Підтримуваний метод оновлення</value>
   </data>
   <data name="ScimSetupGuideHeader" xml:space="preserve">
-    <value>Step-by-Step Setup Guide</value>
+    <value>Покроковий посібник з налаштування</value>
   </data>
   <data name="ScimSetupTabOkta" xml:space="preserve">
     <value>Okta</value>
@@ -759,22 +1905,22 @@
     <value>Google Workspace</value>
   </data>
   <data name="ScimSetupTabGeneric" xml:space="preserve">
-    <value>Other / Generic</value>
+    <value>Інше / загальне</value>
   </data>
   <data name="ScimSetupGenericHeader" xml:space="preserve">
-    <value>Any SCIM 2.0 compatible client can be configured with the following:</value>
+    <value>Будь-який клієнт, сумісний із SCIM 2.0, можна налаштувати так:</value>
   </data>
   <data name="ScimSetupFieldMappingHeader" xml:space="preserve">
-    <value>Resgrid SCIM field mapping</value>
+    <value>Зіставлення полів SCIM у Resgrid</value>
   </data>
   <data name="ScimSetupParamColumn" xml:space="preserve">
-    <value>Parameter</value>
+    <value>Параметр</value>
   </data>
   <data name="ScimSetupScimFieldColumn" xml:space="preserve">
-    <value>SCIM field</value>
+    <value>Поле SCIM</value>
   </data>
   <data name="ScimSetupResgridEffectColumn" xml:space="preserve">
-    <value>Resgrid effect</value>
+    <value>Дія в Resgrid</value>
   </data>
 
   <!-- SSO / SCIM — Sso.cshtml SCIM section (inline token + API reference) -->
@@ -804,7 +1950,7 @@
   <data name="SsoScimProvisionTokenDescription" xml:space="preserve"><value>Згенеруйте або поверніть Bearer Token, який ваш постачальник ідентифікаційних даних використовує для автентифікації запитів SCIM. Токен відображається лише один раз — скопіюйте його до закриття цього діалогу.</value></data>
   <data name="SsoScimProvisionTokenButton" xml:space="preserve"><value>Підготувати токен</value></data>
   <data name="SsoScimRotateTokenButton" xml:space="preserve"><value>Ротація токена</value></data>
-  <data name="SsoScimTokenModalTitle" xml:space="preserve"><value>SCIM Bearer Token</value></data>
+  <data name="SsoScimTokenModalTitle" xml:space="preserve"><value>Токен Bearer SCIM</value></data>
   <data name="SsoScimTokenModalWarning" xml:space="preserve"><value>Цей токен відображається лише один раз і не може бути відновлений. Скопіюйте його зараз і вставте в конфігурацію SCIM вашого постачальника ідентифікаційних даних.</value></data>
   <data name="SsoScimTokenModalRotateConfirm" xml:space="preserve"><value>Ротація токена негайно анулює поточний токен. Будь-яка активна синхронізація SCIM буде невдалою, поки ви не оновите токен у своєму IdP. Продовжити?</value></data>
   <data name="SsoScimTokenModalProvisionConfirm" xml:space="preserve"><value>Це створить новий токен SCIM для цієї конфігурації. Скопіюйте та збережіть його надійно — він буде показаний лише один раз. Продовжити?</value></data>
@@ -814,112 +1960,136 @@
   <data name="SsoScimSetupPageNote" xml:space="preserve"><value>Для покрокових інструкцій, специфічних для вашого IdP (Okta, Microsoft Entra ID, Google Workspace), та керування токенами відвідайте сторінку налаштування SCIM для кожної конфігурації.</value></data>
 
   <data name="SecurityPolicyPageTitle" xml:space="preserve">
-    <value>Department Security Policy</value>
+    <value>Політика безпеки підрозділу</value>
   </data>
   <data name="SecurityPolicyPageHeader" xml:space="preserve">
-    <value>Department Security Policy</value>
+    <value>Політика безпеки підрозділу</value>
   </data>
   <data name="SecurityPolicyBreadcrumb" xml:space="preserve">
-    <value>Security Policy</value>
+    <value>Політика безпеки</value>
   </data>
   <data name="SecurityPolicyBackButton" xml:space="preserve">
-    <value>Back to SSO</value>
+    <value>Назад до SSO</value>
   </data>
   <data name="SecurityPolicySaveSuccess" xml:space="preserve">
-    <value>Security policy saved successfully.</value>
+    <value>Політику безпеки успішно збережено.</value>
   </data>
   <data name="SecurityPolicyNoSsoWarning" xml:space="preserve">
-    <value>No active SSO configuration. You can configure password policies below, but Require SSO cannot be enabled until you have an active SSO configuration.</value>
+    <value>Немає активної конфігурації SSO. Ви можете налаштувати політики паролів нижче, але «Вимагати SSO» не можна ввімкнути, доки у вас не буде активної конфігурації SSO.</value>
   </data>
   <data name="SecurityPolicyConfigureSsoLink" xml:space="preserve">
-    <value>Configure SSO →</value>
+    <value>Налаштувати SSO →</value>
   </data>
   <data name="SecurityPolicyAuthControlsHeader" xml:space="preserve">
-    <value>Authentication Controls</value>
+    <value>Параметри автентифікації</value>
   </data>
   <data name="SecurityPolicyRequireMfaLabel" xml:space="preserve">
-    <value>Require MFA for all members</value>
+    <value>Вимагати MFA для всіх учасників</value>
   </data>
   <data name="SecurityPolicyRequireMfaNote" xml:space="preserve">
-    <value>Members who have not enrolled in MFA will be prompted to do so on next login.</value>
+    <value>Учасникам, які не налаштували MFA, буде запропоновано зробити це під час наступного входу.</value>
   </data>
   <data name="SecurityPolicyRequireSsoLabel" xml:space="preserve">
-    <value>Require SSO — disable password login</value>
+    <value>Вимагати SSO — вимкнути вхід за паролем</value>
   </data>
   <data name="SecurityPolicyRequiresSsoConfig" xml:space="preserve">
-    <value>Requires active SSO config</value>
+    <value>Потрібна активна конфігурація SSO</value>
   </data>
   <data name="SecurityPolicyRequireSsoWarning" xml:space="preserve">
-    <value>Warning: Enabling this blocks all username/password logins. Ensure at least one admin has tested SSO login successfully before enabling.</value>
+    <value>Попередження: увімкнення цього параметра блокує всі входи за ім'ям користувача та паролем. Перш ніж вмикати, переконайтеся, що принаймні один адміністратор успішно перевірив вхід через SSO.</value>
   </data>
   <data name="SecurityPolicySessionTimeoutLabel" xml:space="preserve">
-    <value>Session Timeout (minutes)</value>
+    <value>Тайм-аут сеансу (хвилин)</value>
   </data>
   <data name="SecurityPolicySessionTimeoutNote" xml:space="preserve">
-    <value>0 = use system default. 480 = 8 hours.</value>
+    <value>0 = використовувати системне значення за замовчуванням. 480 = 8 годин.</value>
   </data>
   <data name="SecurityPolicyMaxSessionsLabel" xml:space="preserve">
-    <value>Max Concurrent Sessions per User</value>
+    <value>Максимум одночасних сеансів на користувача</value>
   </data>
   <data name="SecurityPolicyMaxSessionsNote" xml:space="preserve">
-    <value>0 = unlimited. Government environments typically set 1.</value>
+    <value>0 = без обмежень. У державних установах зазвичай встановлюють 1.</value>
   </data>
   <data name="SecurityPolicyIpRangesLabel" xml:space="preserve">
-    <value>Allowed IP Ranges (CIDR)</value>
+    <value>Дозволені діапазони IP (CIDR)</value>
   </data>
   <data name="SecurityPolicyIpRangesNote" xml:space="preserve">
-    <value>One CIDR block per line, or comma-separated. Empty = allow all. Logins from outside these ranges will be denied.</value>
+    <value>Один блок CIDR на рядок або через кому. Порожнє поле = дозволити всі. Входи з-поза цих діапазонів буде відхилено.</value>
   </data>
   <data name="SecurityPolicyDataClassLabel" xml:space="preserve">
-    <value>Data Classification Level</value>
+    <value>Рівень класифікації даних</value>
+  </data>
+  <data name="SecurityPolicyDataClassUnclassified" xml:space="preserve">
+    <value>Некласифіковані</value>
+  </data>
+  <data name="SecurityPolicyDataClassCui" xml:space="preserve">
+    <value>CUI - Контрольована некласифікована інформація</value>
+  </data>
+  <data name="SecurityPolicyDataClassConfidential" xml:space="preserve">
+    <value>Конфіденційні</value>
   </data>
   <data name="SecurityPolicyDataClassNote" xml:space="preserve">
-    <value>Used for compliance reporting and audit logs.</value>
+    <value>Використовується у звітності про відповідність вимогам і в журналах аудиту.</value>
   </data>
   <data name="SecurityPolicyPasswordHeader" xml:space="preserve">
-    <value>Password Policy</value>
+    <value>Політика паролів</value>
   </data>
   <data name="SecurityPolicyPasswordInfoAlert" xml:space="preserve">
-    <value>Password policies apply to local (non-SSO) logins only. If you enable Require SSO above, these settings have no effect.</value>
+    <value>Політики паролів застосовуються лише до локальних входів (не через SSO). Якщо ви ввімкнете «Вимагати SSO» вище, ці налаштування не діятимуть.</value>
   </data>
   <data name="SecurityPolicyPasswordExpirationLabel" xml:space="preserve">
-    <value>Password Expiration (days)</value>
+    <value>Строк дії пароля (днів)</value>
   </data>
   <data name="SecurityPolicyPasswordExpirationNote" xml:space="preserve">
-    <value>0 = passwords never expire. 90 is typical for CUI environments.</value>
+    <value>0 = строк дії паролів не обмежено. Для середовищ CUI типове значення — 90.</value>
   </data>
   <data name="SecurityPolicyMinPasswordLengthLabel" xml:space="preserve">
-    <value>Minimum Password Length</value>
+    <value>Мінімальна довжина пароля</value>
   </data>
   <data name="SecurityPolicyMinPasswordLengthNote" xml:space="preserve">
-    <value>0 = system default (8). NIST recommends 12+; CUI requires 14+.</value>
+    <value>Мінімум 8 (системне значення за замовчуванням). Політика підрозділу може лише збільшити це значення. NIST рекомендує 12+; CUI вимагає 14+.</value>
+  </data>
+  <data name="SecurityPolicySystemComplexityHeader" xml:space="preserve">
+    <value>Складність пароля, яку вимагає система</value>
+  </data>
+  <data name="SecurityPolicySystemComplexityNote" xml:space="preserve">
+    <value>Усі облікові записи Resgrid повинні відповідати наведеному нижче стандарту складності пароля. Його не можна вимкнути політикою підрозділу.</value>
+  </data>
+  <data name="SecurityPolicyComplexityRule1" xml:space="preserve">
+    <value>Щонайменше 8 символів (або мінімальна довжина підрозділу, указана вище)</value>
+  </data>
+  <data name="SecurityPolicyComplexityRule2" xml:space="preserve">
+    <value>Щонайменше одна цифра</value>
+  </data>
+  <data name="SecurityPolicyComplexityRule3" xml:space="preserve">
+    <value>Щонайменше одна велика та одна мала літера</value>
   </data>
   <data name="SecurityPolicyPasswordComplexityLabel" xml:space="preserve">
-    <value>Require password complexity</value>
+    <value>Вимагати складний пароль</value>
   </data>
   <data name="SecurityPolicyPasswordComplexityNote" xml:space="preserve">
-    <value>Enforces at least one uppercase letter, one digit, and one special character.</value>
+    <value>Вимагає щонайменше однієї великої літери, однієї цифри та одного спеціального символу.</value>
   </data>
   <data name="SecurityPolicyQuickPresetsHeader" xml:space="preserve">
-    <value>Quick presets</value>
+    <value>Швидкі шаблони</value>
   </data>
   <data name="SecurityPolicyPresetGovernment" xml:space="preserve">
-    <value>Government / CUI</value>
+    <value>Державні установи / CUI</value>
   </data>
   <data name="SecurityPolicyPresetEnterprise" xml:space="preserve">
-    <value>Standard Enterprise</value>
+    <value>Стандартний корпоративний</value>
   </data>
   <data name="SecurityPolicyPresetMinimal" xml:space="preserve">
-    <value>Minimal</value>
+    <value>Мінімальний</value>
   </data>
   <data name="SecurityPolicySaveButton" xml:space="preserve">
-    <value>Save Security Policy</value>
+    <value>Зберегти політику безпеки</value>
   </data>
   <data name="SecurityPolicyCancelButton" xml:space="preserve">
     <value>Скасувати</value>
   </data>
   <data name="SecurityPolicyCannotEnableRequireSso" xml:space="preserve">
-    <value>Cannot enable SSO-only login: no active SSO configuration exists. Create and enable an SSO configuration first.</value>
+    <value>Неможливо ввімкнути вхід лише через SSO: немає активної конфігурації SSO. Спершу створіть і ввімкніть конфігурацію SSO.</value>
   </data>
   <data name="PwdErrorEmpty" xml:space="preserve"><value>Пароль не може бути порожнім.</value></data>
   <data name="PwdErrorNoDigit" xml:space="preserve"><value>Пароль повинен містити щонайменше одну цифру.</value></data>
@@ -927,32 +2097,34 @@
   <data name="PwdErrorNoLowercase" xml:space="preserve"><value>Пароль повинен містити щонайменше одну малу літеру.</value></data>
   <data name="PwdErrorTooShort" xml:space="preserve"><value>Пароль повинен містити щонайменше {0} символів.</value></data>
   <data name="PwdMinLengthTooLow" xml:space="preserve"><value>Мінімальна довжина пароля не може бути меншою за системний мінімум — 8 символів.</value></data>
-  <data name="PermUseCalendarSyncLabel" xml:space="preserve"><value>Use Calendar Sync</value></data>
-  <data name="PermUseCalendarSyncNote" xml:space="preserve"><value>Controls who can activate and use calendar subscription URLs to sync Resgrid calendar events to external calendar applications.</value></data>
-  <data name="PermDispatchAppLoginLabel" xml:space="preserve"><value>Dispatch App Login</value></data>
-  <data name="PermDispatchAppLoginNote" xml:space="preserve"><value>Controls who can sign in to the Dispatch app. Dispatch shows private command, unit and responder communications for every incident, so restrict this if your members are not all dispatchers.</value></data>
-  <data name="PermCommandAppLoginLabel" xml:space="preserve"><value>Command App Login</value></data>
-  <data name="PermCommandAppLoginNote" xml:space="preserve"><value>Controls who can act as a commander: sign in to the IC app, establish incident command on a call, and view command boards. Narrowing this beyond Everyone also lets the people you pick help work any command board (assign and move resources, run timers and accountability) without holding an ICS position on it &#8212; useful for giving dispatchers a hand in the Dispatch app. While set to Everyone, board actions stay limited to the incident commander and assigned ICS roles.</value></data>
-  <data name="PermAdpSectionHeader" xml:space="preserve"><value>Advanced Data Protection</value></data>
-  <data name="PermAdpSectionNote" xml:space="preserve"><value>These permissions control who may work with encrypted (protected) data when the Advanced Data Protection addon is active. Every reveal or edit additionally requires a recent two-factor verification; these settings choose who may even attempt it. Unlike most Resgrid permissions, unset values default to the restrictive selection shown.</value></data>
-  <data name="PermAdpManageLabel" xml:space="preserve"><value>Manage Data Protection Settings</value></data>
-  <data name="PermAdpManageNote" xml:space="preserve"><value>Who can change Advanced Data Protection settings such as the verification window and notification content options. Purchasing, enrollment and cancellation always remain restricted to the department managing member.</value></data>
-  <data name="PermAdpViewCallLabel" xml:space="preserve"><value>View Protected Call Data</value></data>
-  <data name="PermAdpViewCallNote" xml:space="preserve"><value>Who can reveal protected call fields (nature, address, contact info, notes) after two-factor verification. Defaults to Everyone because responding personnel must be able to read a dispatch.</value></data>
-  <data name="PermAdpEditCallLabel" xml:space="preserve"><value>Edit Protected Call Data</value></data>
-  <data name="PermAdpEditCallNote" xml:space="preserve"><value>Who can edit protected call fields after two-factor verification. Defaults to Everyone to match the normal call workflow.</value></data>
-  <data name="PermAdpViewPersonnelLabel" xml:space="preserve"><value>View Protected Personnel Data</value></data>
-  <data name="PermAdpViewPersonnelNote" xml:space="preserve"><value>Who can reveal protected personnel information (employee IDs, emergency contacts) after two-factor verification. Defaults to Department Admins.</value></data>
-  <data name="PermAdpViewContactLabel" xml:space="preserve"><value>View Protected Contact Data</value></data>
-  <data name="PermAdpViewContactNote" xml:space="preserve"><value>Who can reveal protected contact information (names, phone numbers, government IDs, locations) after two-factor verification. Defaults to Department Admins.</value></data>
-  <data name="PermAdpViewOperationalLabel" xml:space="preserve"><value>View Protected Operational Data</value></data>
-  <data name="PermAdpViewOperationalNote" xml:space="preserve"><value>Who can reveal protected operational content (logs, form submissions, incident command notes and attachments) after two-factor verification. Defaults to Department and Group Admins.</value></data>
-  <data name="PermAdpExportLabel" xml:space="preserve"><value>Export Protected Data</value></data>
-  <data name="PermAdpExportNote" xml:space="preserve"><value>Who can export data containing protected fields. Exports leave the protection of Resgrid, so every export is separately audited. Defaults to Department Admins; Everyone is deliberately not offered.</value></data>
-  <data name="PermAdpEgressLabel" xml:space="preserve"><value>Configure Protected Data Delivery</value></data>
-  <data name="PermAdpEgressNote" xml:space="preserve"><value>Who can change how protected content leaves Resgrid over push, SMS, email and voice. Defaults to Department Admins; Everyone is deliberately not offered.</value></data>
-  <data name="PermAdpBreakGlassLabel" xml:space="preserve"><value>Emergency Break-Glass Access</value></data>
-  <data name="PermAdpBreakGlassNote" xml:space="preserve"><value>Who may use the audited emergency access path for protected data. It only works if break-glass is enabled in the department protection policy, requires a recorded reason, and notifies the department. Defaults to Department Admins; Everyone is deliberately not offered.</value></data>
+  <data name="PermDeleteLogLabel" xml:space="preserve"><value>Видалення записів журналу</value></data>
+  <data name="PermDeleteLogNote" xml:space="preserve"><value>Хто у вашому підрозділі може видаляти записи журналу</value></data>
+  <data name="PermUseCalendarSyncLabel" xml:space="preserve"><value>Використання синхронізації календаря</value></data>
+  <data name="PermUseCalendarSyncNote" xml:space="preserve"><value>Визначає, хто може активувати й використовувати URL-адреси підписки на календар, щоб синхронізувати події календаря Resgrid із зовнішніми календарними застосунками.</value></data>
+  <data name="PermDispatchAppLoginLabel" xml:space="preserve"><value>Вхід у застосунок Dispatch</value></data>
+  <data name="PermDispatchAppLoginNote" xml:space="preserve"><value>Визначає, хто може входити в застосунок Dispatch. Dispatch показує закриті переговори командування, одиниць і учасників реагування щодо кожного інциденту, тому обмежте цей доступ, якщо не всі ваші учасники є диспетчерами.</value></data>
+  <data name="PermCommandAppLoginLabel" xml:space="preserve"><value>Вхід у застосунок командування</value></data>
+  <data name="PermCommandAppLoginNote" xml:space="preserve"><value>Визначає, хто може діяти як командир: входити в застосунок IC, встановлювати командування інцидентом на виклику та переглядати командні дошки. Якщо звузити цей дозвіл порівняно з «Усі», вибрані вами люди також зможуть працювати з будь-якою командною дошкою (призначати й переміщувати ресурси, запускати таймери та контроль особового складу), не обіймаючи на ній посади ICS, — це зручно, щоб диспетчери могли допомагати в застосунку Dispatch. Поки вибрано «Усі», дії на дошці доступні лише керівнику інциденту та призначеним ролям ICS.</value></data>
+  <data name="PermAdpSectionHeader" xml:space="preserve"><value>Розширений захист даних</value></data>
+  <data name="PermAdpSectionNote" xml:space="preserve"><value>Ці дозволи визначають, хто може працювати із зашифрованими (захищеними) даними, коли активне доповнення «Розширений захист даних». Кожен показ або редагування додатково потребує недавнього двофакторного підтвердження; ці налаштування визначають, хто взагалі може спробувати це зробити. На відміну від більшості дозволів Resgrid, для незаданих значень діє показаний обмежувальний вибір.</value></data>
+  <data name="PermAdpManageLabel" xml:space="preserve"><value>Керування налаштуваннями захисту даних</value></data>
+  <data name="PermAdpManageNote" xml:space="preserve"><value>Хто може змінювати налаштування розширеного захисту даних, як-от вікно підтвердження та параметри вмісту сповіщень. Придбання, реєстрація та скасування завжди залишаються доступними лише керівному учаснику підрозділу.</value></data>
+  <data name="PermAdpViewCallLabel" xml:space="preserve"><value>Перегляд захищених даних викликів</value></data>
+  <data name="PermAdpViewCallNote" xml:space="preserve"><value>Хто може показувати захищені поля виклику (характер, адреса, контактні дані, нотатки) після двофакторного підтвердження. За замовчуванням — «Усі», оскільки персонал, що реагує на виклик, повинен мати змогу прочитати диспетчерське повідомлення.</value></data>
+  <data name="PermAdpEditCallLabel" xml:space="preserve"><value>Редагування захищених даних викликів</value></data>
+  <data name="PermAdpEditCallNote" xml:space="preserve"><value>Хто може редагувати захищені поля виклику після двофакторного підтвердження. За замовчуванням — «Усі», відповідно до звичайного процесу роботи з викликами.</value></data>
+  <data name="PermAdpViewPersonnelLabel" xml:space="preserve"><value>Перегляд захищених даних персоналу</value></data>
+  <data name="PermAdpViewPersonnelNote" xml:space="preserve"><value>Хто може показувати захищену інформацію про персонал (табельні номери, екстрені контакти) після двофакторного підтвердження. За замовчуванням — адміністратори підрозділу.</value></data>
+  <data name="PermAdpViewContactLabel" xml:space="preserve"><value>Перегляд захищених даних контактів</value></data>
+  <data name="PermAdpViewContactNote" xml:space="preserve"><value>Хто може показувати захищену контактну інформацію (імена, номери телефонів, державні ідентифікатори, місцезнаходження) після двофакторного підтвердження. За замовчуванням — адміністратори підрозділу.</value></data>
+  <data name="PermAdpViewOperationalLabel" xml:space="preserve"><value>Перегляд захищених оперативних даних</value></data>
+  <data name="PermAdpViewOperationalNote" xml:space="preserve"><value>Хто може показувати захищений оперативний вміст (журнали, подані форми, нотатки та вкладення командування інцидентом) після двофакторного підтвердження. За замовчуванням — адміністратори підрозділу та груп.</value></data>
+  <data name="PermAdpExportLabel" xml:space="preserve"><value>Експорт захищених даних</value></data>
+  <data name="PermAdpExportNote" xml:space="preserve"><value>Хто може експортувати дані, що містять захищені поля. Експортовані дані виходять з-під захисту Resgrid, тому кожен експорт окремо реєструється в журналі аудиту. За замовчуванням — адміністратори підрозділу; варіант «Усі» навмисно не пропонується.</value></data>
+  <data name="PermAdpEgressLabel" xml:space="preserve"><value>Налаштування доставки захищених даних</value></data>
+  <data name="PermAdpEgressNote" xml:space="preserve"><value>Хто може змінювати, як захищений вміст залишає Resgrid через push-сповіщення, SMS, електронну пошту та голосові дзвінки. За замовчуванням — адміністратори підрозділу; варіант «Усі» навмисно не пропонується.</value></data>
+  <data name="PermAdpBreakGlassLabel" xml:space="preserve"><value>Аварійний доступ (break-glass)</value></data>
+  <data name="PermAdpBreakGlassNote" xml:space="preserve"><value>Хто може використовувати аудитований шлях аварійного доступу до захищених даних. Він працює, лише якщо аварійний доступ увімкнено в політиці захисту підрозділу, потребує зазначення причини, яка записується, і сповіщає підрозділ. За замовчуванням — адміністратори підрозділу; варіант «Усі» навмисно не пропонується.</value></data>
   <data name="PermRecordsSectionHeader" xml:space="preserve"><value>Звіти</value></data>
   <data name="PermRecordsSectionNote" xml:space="preserve"><value>Ці дозволи керують модулем Звіти, наступником Журналів. Як і для більшості дозволів Resgrid, для неналаштованого рядка діє показане значення за замовчуванням, яке відповідає поточній поведінці Журналів. Під час активації Звітів для вашого підрозділу налаштування «Створити запис журналу» та «Видалити запис журналу» також копіюються у відповідні рядки, якщо ви ще не задали їх тут.</value></data>
   <data name="PermRecordsNotActivatedNote" xml:space="preserve"><value>Звіти ще не активовано для цього підрозділу. Ви можете підготувати ці налаштування зараз; вони набудуть чинності після активації Звітів.</value></data>
@@ -1011,5 +2183,191 @@
   </data>
   <data name="PermRecordsTransferInventoryNote" xml:space="preserve">
     <value>Визначає, хто може переміщувати інвентар між місцями зберігання. За замовчуванням це дозволено адміністраторам департаменту.</value>
+  </data>
+  <data name="SecurityPolicyMfaMethodsHeader" xml:space="preserve">
+    <value>Методи другого фактора</value>
+  </data>
+  <data name="SecurityPolicyMfaMethodsIntro" xml:space="preserve">
+    <value>Виберіть, які методи підтвердження вважаються багатофакторною автентифікацією в цьому підрозділі. Коди застосунку автентифікації (TOTP) приймаються завжди, тому вимкнення методу нікого не блокує; учасників, які ним користувалися, попросять підтвердити ще раз.</value>
+  </data>
+  <data name="SecurityPolicyMfaMethodsManagingMemberOnly" xml:space="preserve">
+    <value>Лише керівний учасник підрозділу може змінювати ці налаштування.</value>
+  </data>
+  <data name="SecurityPolicyMfaMethodsNotYetAvailable" xml:space="preserve">
+    <value>Ключі доступу ще недоступні в цій системі. Ці налаштування набудуть чинності, коли стануть доступними.</value>
+  </data>
+  <data name="SecurityPolicyMethodNotYetAvailable" xml:space="preserve">
+    <value>Ще недоступно</value>
+  </data>
+  <data name="SecurityPolicyAllowPasskeysForLoginMfaLabel" xml:space="preserve">
+    <value>Приймати ключі доступу для входу та перевірок безпеки</value>
+  </data>
+  <data name="SecurityPolicyAllowPasskeysForLoginMfaNote" xml:space="preserve">
+    <value>Ключ доступу, зареєстрований у тому самому застосунку, вважається MFA для входу, зміни підрозділу та чутливих дій.</value>
+  </data>
+  <data name="SecurityPolicyAllowPasskeysForAdpLabel" xml:space="preserve">
+    <value>Приймати ключі доступу для захищених даних</value>
+  </data>
+  <data name="SecurityPolicyAllowPasskeysForAdpNote" xml:space="preserve">
+    <value>Ключ доступу вважається MFA для показу й редагування захищених даних. Зміна завершує поточний доступ до захищених даних, тож учасники підтверджують ще раз.</value>
+  </data>
+  <data name="SecurityPolicyAllowResponderApprovalLabel" xml:space="preserve">
+    <value>Приймати підтвердження із застосунку Responder</value>
+  </data>
+  <data name="SecurityPolicyAllowResponderApprovalNote" xml:space="preserve">
+    <value>Там, де приймаються ключі доступу, учасник може підтвердити вхід або запит на захищені дані ключем доступу у своєму застосунку Responder. Ніколи не використовується для змін безпеки. Зміна завершує поточний доступ до захищених даних.</value>
+  </data>
+  <data name="SecurityPolicyAllowFederatedMfaForLoginMfaLabel" xml:space="preserve">
+    <value>Приймати MFA вашого постачальника ідентичності для входу та перевірок безпеки</value>
+  </data>
+  <data name="SecurityPolicyAllowFederatedMfaForLoginMfaNote" xml:space="preserve">
+    <value>Потрібне перевірене зіставлення MFA у вашій конфігурації SSO.</value>
+  </data>
+  <data name="SecurityPolicyAllowFederatedMfaForAdpLabel" xml:space="preserve">
+    <value>Приймати MFA вашого постачальника ідентичності для захищених даних</value>
+  </data>
+  <data name="SecurityPolicyAllowFederatedMfaForAdpNote" xml:space="preserve">
+    <value>Потрібне перевірене зіставлення MFA у вашій конфігурації SSO. Зміна завершує поточний доступ до захищених даних.</value>
+  </data>
+  <data name="SecurityPolicyFederatedMappingUntested" xml:space="preserve">
+    <value>У вашій конфігурації SSO немає перевіреного зіставлення MFA. Збережіть зіставлення та завершіть його перевірку, перш ніж приймати MFA постачальника ідентичності.</value>
+  </data>
+  <data name="SecurityPolicyFederatedNeedsResgridMfa" xml:space="preserve">
+    <value>Щоб приймати MFA постачальника ідентичності, спершу підтвердьте особу застосунком автентифікації або ключем доступу. MFA постачальника ідентичності не може схвалити цю зміну.</value>
+  </data>
+  <data name="SecurityPolicyAcceptRecentLoginMfaForAdpLabel" xml:space="preserve">
+    <value>Дозволити недавньому підтвердженню під час входу відкривати захищені дані</value>
+  </data>
+  <data name="SecurityPolicyAcceptRecentLoginMfaForAdpNote" xml:space="preserve">
+    <value>Учасникам, які пройшли MFA під час входу, не потрібно підтверджувати ще раз, щоб показати захищені дані в межах вікна підтвердження. Зміна завершує поточний доступ до захищених даних.</value>
+  </data>
+  <data name="SecurityPolicyAcceptRecentUnlockMfaForAdpLabel" xml:space="preserve">
+    <value>Дозволити розблокуванню спільного пристрою відкривати захищені дані</value>
+  </data>
+  <data name="SecurityPolicyAcceptRecentUnlockMfaForAdpNote" xml:space="preserve">
+    <value>На спільних планшетах у транспорті та робочих станціях недавнє підтвердження розблокування оператора дає змогу показувати захищені дані. Зміна завершує поточний доступ до захищених даних.</value>
+  </data>
+  <data name="SecurityPolicySharedDevicesHeader" xml:space="preserve">
+    <value>Спільні пристрої в транспорті та на робочих станціях</value>
+  </data>
+  <data name="SecurityPolicySharedDevicesIntro" xml:space="preserve">
+    <value>Спільні планшети в транспорті та робочі станції диспетчерів блокуються, коли ними ніхто не користується, і завершуються разом зі зміною. Оператори розблоковують їх власним застосунком автентифікації, ключем доступу або підтвердженням у Responder, ніколи паролем, збереженим на пристрої. Суворіше значення тут діє й для вже активних сеансів.</value>
+  </data>
+  <data name="SecurityPolicySharedDevicesManagingMemberOnly" xml:space="preserve">
+    <value>Лише керівний учасник підрозділу може змінювати політику спільних пристроїв.</value>
+  </data>
+  <data name="SecurityPolicySharedDevicesNotYetAvailable" xml:space="preserve">
+    <value>Режим спільного пристрою в цьому розгортанні ще недоступний. Ці значення зберігаються, і його не можна вимагати для іншого застосунку, доки він не стане доступним.</value>
+  </data>
+  <data name="SecurityPolicySharedIdleLockLabel" xml:space="preserve">
+    <value>Блокувати після стількох хвилин бездіяльності</value>
+  </data>
+  <data name="SecurityPolicySharedIdleLockNote" xml:space="preserve">
+    <value>Від 1 до {0} хвилин. Враховується лише власна активність оператора; фонові оновлення та вхідні сповіщення — ні.</value>
+  </data>
+  <data name="SecurityPolicySharedShiftLabel" xml:space="preserve">
+    <value>Завершувати зміну після стількох годин</value>
+  </data>
+  <data name="SecurityPolicySharedShiftNote" xml:space="preserve">
+    <value>Від 1 до {0} годин після входу, незалежно від активності. Наступна зміна входить знову.</value>
+  </data>
+  <data name="SecurityPolicySharedRequiredLabel" xml:space="preserve">
+    <value>Завжди використовувати спільний режим для</value>
+  </data>
+  <data name="SecurityPolicySharedRequiredNote" xml:space="preserve">
+    <value>Сеанси цих застосунків у цьому підрозділі завжди блокуються через бездіяльність і завершуються разом зі зміною, незалежно від налаштування інсталяції. Враховуються й входи, які не вказують застосунок, тож інтеграції, що входять за паролем, також блокуються. Використовуйте версії застосунків із підтримкою спільного режиму.</value>
+  </data>
+  <data name="SecurityPolicySharedRequiredUnit" xml:space="preserve">
+    <value>Unit</value>
+  </data>
+  <data name="SecurityPolicySharedRequiredCommand" xml:space="preserve">
+    <value>IC (Командування)</value>
+  </data>
+  <data name="SecurityPolicySharedRequiredDispatch" xml:space="preserve">
+    <value>Dispatch</value>
+  </data>
+  <data name="SecurityPolicySharedIdleOutOfRange" xml:space="preserve">
+    <value>Виберіть блокування через бездіяльність від 1 до {0} хвилин.</value>
+  </data>
+  <data name="SecurityPolicySharedShiftOutOfRange" xml:space="preserve">
+    <value>Виберіть тривалість зміни від 1 до {0} годин.</value>
+  </data>
+  <data name="SecurityPolicySharedRequirementUnavailable" xml:space="preserve">
+    <value>Режим спільного пристрою в цьому розгортанні ще недоступний, тому його не можна вимагати для іншого застосунку.</value>
+  </data>
+  <data name="FederatedMfaPageTitle" xml:space="preserve">
+    <value>MFA постачальника ідентичності</value>
+  </data>
+  <data name="FederatedMfaIntro" xml:space="preserve">
+    <value>Укажіть Resgrid, як ваш постачальник ідентичності повідомляє, що підтвердив учасника за допомогою MFA. Там, де цей підрозділ приймає MFA постачальника ідентичності, вхід або підтвердження з одним із цих значень вважається MFA, і учасникам не потрібен автентифікатор Resgrid. Кожна зміна має пройти тестовий вхід, перш ніж набуде чинності.</value>
+  </data>
+  <data name="FederatedMfaNoSso" xml:space="preserve">
+    <value>Спершу налаштуйте й увімкніть конфігурацію SSO.</value>
+  </data>
+  <data name="FederatedMfaStatusEffective" xml:space="preserve">
+    <value>Чинне: версія {0}, перевірено {1}.</value>
+  </data>
+  <data name="FederatedMfaStatusUntested" xml:space="preserve">
+    <value>Не чинне: версія {0} ще не пройшла перевірку.</value>
+  </data>
+  <data name="FederatedMfaStatusNone" xml:space="preserve">
+    <value>Зіставлення не збережено.</value>
+  </data>
+  <data name="FederatedMfaRequestHeader" xml:space="preserve">
+    <value>Що запитує Resgrid</value>
+  </data>
+  <data name="FederatedMfaAcceptHeader" xml:space="preserve">
+    <value>Що вважається MFA</value>
+  </data>
+  <data name="FederatedMfaValuesNote" xml:space="preserve">
+    <value>Одне значення в рядку. Значення мають збігатися точно, з урахуванням регістру. Відповідь має містити хоча б одне з них.</value>
+  </data>
+  <data name="FederatedMfaRequestAcrValuesLabel" xml:space="preserve">
+    <value>acr_values для запиту (OIDC)</value>
+  </data>
+  <data name="FederatedMfaRequestClaimsLabel" xml:space="preserve">
+    <value>Запит claims (OIDC, JSON)</value>
+  </data>
+  <data name="FederatedMfaRequestAuthnContextLabel" xml:space="preserve">
+    <value>Посилання на класи RequestedAuthnContext (SAML)</value>
+  </data>
+  <data name="FederatedMfaAcceptAmrLabel" xml:space="preserve">
+    <value>Значення amr (OIDC)</value>
+  </data>
+  <data name="FederatedMfaAcceptAcrLabel" xml:space="preserve">
+    <value>Значення acr (OIDC)</value>
+  </data>
+  <data name="FederatedMfaAcceptAcrsLabel" xml:space="preserve">
+    <value>Значення acrs (OIDC, контекст автентифікації)</value>
+  </data>
+  <data name="FederatedMfaAcceptAuthnContextLabel" xml:space="preserve">
+    <value>Значення AuthnContextClassRef (SAML)</value>
+  </data>
+  <data name="FederatedMfaSaveButton" xml:space="preserve">
+    <value>Зберегти зіставлення</value>
+  </data>
+  <data name="FederatedMfaRemoveButton" xml:space="preserve">
+    <value>Видалити зіставлення</value>
+  </data>
+  <data name="FederatedMfaSaved" xml:space="preserve">
+    <value>Зіставлення збережено. Воно набуде чинності після успішного тестового входу.</value>
+  </data>
+  <data name="FederatedMfaRemoved" xml:space="preserve">
+    <value>Зіставлення видалено. MFA постачальника ідентичності більше не враховується в цьому підрозділі.</value>
+  </data>
+  <data name="FederatedMfaInvalid" xml:space="preserve">
+    <value>Зіставлення не можна використати: {0}</value>
+  </data>
+  <data name="FederatedMfaNeedsResgridMfa" xml:space="preserve">
+    <value>Для зміни зіставлення потрібне недавнє підтвердження застосунком автентифікації або ключем доступу. MFA постачальника ідентичності не може схвалити цю зміну.</value>
+  </data>
+  <data name="FederatedMfaLink" xml:space="preserve">
+    <value>Зіставлення MFA постачальника ідентичності</value>
+  </data>
+  <data name="FederatedMfaTestButton" xml:space="preserve">
+    <value>Перевірити входом</value>
+  </data>
+  <data name="FederatedMfaTestNote" xml:space="preserve">
+    <value>Перевірка зараз перенаправить вас до постачальника ідентичності із запитом MFA. Коли він поверне значення, яке враховує зіставлення, ця версія набуде чинності.</value>
   </data>
 </root>

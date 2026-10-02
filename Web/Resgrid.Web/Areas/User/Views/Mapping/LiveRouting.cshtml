@@ -91,7 +91,9 @@
                         var distKm = (routeData.distance / 1000).toFixed(1);
                         var durationMin = Math.round(routeData.duration / 60);
                         var dvDistance = document.getElementById('dvDistance');
-                        dvDistance.innerHTML = '@localizer["DistanceLabel"] ' + distKm + ' km<br />@localizer["DurationLabel"] ' + durationMin + ' min';
+                        dvDistance.textContent = '@JsEncoder.Encode(localizer["DistanceLabel"]) ' + distKm + ' km';
+                        dvDistance.appendChild(document.createElement('br'));
+                        dvDistance.appendChild(document.createTextNode('@JsEncoder.Encode(localizer["DurationLabel"]) ' + durationMin + ' min'));
 
                         if (routeData.legs.length > 0) {
                             var steps = routeData.legs[0].steps;

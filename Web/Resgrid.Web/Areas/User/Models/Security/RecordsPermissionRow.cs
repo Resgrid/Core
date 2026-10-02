@@ -35,7 +35,7 @@ namespace Resgrid.Web.Areas.User.Models.Security
 		public const string EveryoneValue = "3";
 		public const string DepartmentAndGroupAdminsAndSelectRolesValue = "4";
 
-		public static List<RecordsPermissionRow> Build(IEnumerable<Permission> permissions, IEnumerable<RecordPermissionDescriptor> descriptors = null)
+		public static List<RecordsPermissionRow> Build(IEnumerable<Permission> permissions, IEnumerable<RecordPermissionDescriptor> descriptors = null, PermissionOptionLabels labels = null)
 		{
 			var existing = (permissions ?? Enumerable.Empty<Permission>()).Where(p => p != null).ToList();
 			var rows = new List<RecordsPermissionRow>();
@@ -54,7 +54,7 @@ namespace Resgrid.Web.Areas.User.Models.Security
 					HasRow = row != null,
 					LockToGroup = row != null ? row.LockToGroup : descriptor.Type == PermissionTypes.ViewChecklistResults,
 					ShowLockToGroup = descriptor.LockToGroupMeaningful,
-					Options = BuildOptions(descriptor.EveryoneOffered, value)
+					Options = BuildOptions(descriptor.EveryoneOffered, value, labels)
 				});
 			}
 
@@ -64,20 +64,22 @@ namespace Resgrid.Web.Areas.User.Models.Security
 		/// <summary>
 		/// The action dropdown. Value 4 (department and group admins plus selected roles) is offered on every
 		/// Records row; "Everyone" only where the catalog allows it. A stored value that the catalog would not
-		/// offer is still listed so the dropdown never misrepresents what is saved.
+		/// offer is still listed so the dropdown never misrepresents what is saved. Option text comes from
+		/// <paramref name="labels"/> (the localized Security resources), falling back to English.
 		/// </summary>
-		public static SelectList BuildOptions(bool includeEveryone, int selected)
+		public static SelectList BuildOptions(bool includeEveryone, int selected, PermissionOptionLabels labels = null)
 		{
+			labels ??= PermissionOptionLabels.English;
 			var options = new List<SelectListItem>();
 			var selectedValue = selected.ToString();
 
 			if (includeEveryone || selectedValue == EveryoneValue)
-				options.Add(new SelectListItem { Value = EveryoneValue, Text = "Everyone" });
+				options.Add(new SelectListItem { Value = EveryoneValue, Text = labels.Everyone });
 
-			options.Add(new SelectListItem { Value = "0", Text = "Department Admins" });
-			options.Add(new SelectListItem { Value = "1", Text = "Department and Group Admins" });
-			options.Add(new SelectListItem { Value = "2", Text = "Department Admins and Select Roles" });
-			options.Add(new SelectListItem { Value = DepartmentAndGroupAdminsAndSelectRolesValue, Text = "Department, Group Admins and Select Roles" });
+			options.Add(new SelectListItem { Value = "0", Text = labels.DepartmentAdmins });
+			options.Add(new SelectListItem { Value = "1", Text = labels.DepartmentAndGroupAdmins });
+			options.Add(new SelectListItem { Value = "2", Text = labels.DepartmentAdminsAndSelectRoles });
+			options.Add(new SelectListItem { Value = DepartmentAndGroupAdminsAndSelectRolesValue, Text = labels.DepartmentGroupAdminsAndSelectRoles });
 
 			return new SelectList(options, "Value", "Text", selectedValue);
 		}

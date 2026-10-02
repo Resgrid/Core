@@ -1,0 +1,38 @@
+@model Resgrid.Web.Areas.User.Models.Security.ReauthenticateView
+@inject Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.TwoFactor.TwoFactor> twoFactorLocalizer
+@{
+    ViewBag.Title = "Confirm Your Password";
+    Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+}
+<div class="row wrapper border-bottom white-bg page-heading"><div class="col-lg-10"><h2>Confirm your password</h2></div></div>
+<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-content">
+    <div class="alert alert-info">For your security, confirm your password before changing how you sign in. This does not sign you out or extend your session.</div>
+    @if (TempData["StepUpMessage"] is string stepUpMessage)
+    {
+        <div class="alert alert-warning" id="stepUpMessage">@stepUpMessage</div>
+    }
+    @if (Model.PasswordNotAllowed)
+    {
+        <div class="alert alert-warning">This account signs in through your organization's single sign-on. Sign out and sign in again with single sign-on to continue.</div>
+    }
+    <form asp-area="User" asp-controller="AccountSecurity" asp-action="Reauthenticate" method="post" class="form-horizontal">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="ReturnUrl" />
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <div class="form-group"><label asp-for="Password" class="col-sm-2 control-label"></label><div class="col-sm-10"><input asp-for="Password" class="form-control" autocomplete="current-password" autofocus disabled="@Model.PasswordNotAllowed" /><span asp-validation-for="Password" class="text-danger"></span></div></div>
+        <div class="form-group"><div class="col-sm-10 col-sm-offset-2"><a class="btn btn-white" asp-area="User" asp-controller="TwoFactor" asp-action="Index">Cancel</a> <button class="btn btn-primary" type="submit" disabled="@Model.PasswordNotAllowed">Continue</button>
+            @if (Model.SsoAvailable)
+            {
+                <button class="btn btn-default" type="submit" form="reauthenticateSsoForm" id="reauthenticateWithSso"><i class="fa fa-id-badge"></i> @twoFactorLocalizer["ReauthenticateWithSsoButton"]</button>
+            }
+        </div></div>
+    </form>
+    @if (Model.SsoAvailable)
+    {
+        <form asp-area="" asp-controller="Account" asp-action="SsoSessionBegin" method="post" id="reauthenticateSsoForm">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="purpose" value="reauthenticate" />
+            <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
+        </form>
+    }
+</div></div></div>

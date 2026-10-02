@@ -128,4 +128,205 @@
   <data name="SensitivityPart2" xml:space="preserve">
     <value>42 CFR Part 2</value>
   </data>
+  <data name="PageHeader" xml:space="preserve">
+    <value>Користувацькі поля</value>
+  </data>
+  <data name="PageSubHeader" xml:space="preserve">
+    <value>Керування власними полями для сутностей підрозділу</value>
+  </data>
+  <data name="EntityType" xml:space="preserve">
+    <value>Тип сутності</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>Версія</value>
+  </data>
+  <data name="FieldCount" xml:space="preserve">
+    <value>Поля</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Дії</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Активне</value>
+  </data>
+  <data name="NoDefinition" xml:space="preserve">
+    <value>Не налаштовано</value>
+  </data>
+  <data name="Configure" xml:space="preserve">
+    <value>Налаштувати</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Редагувати</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Видалити</value>
+  </data>
+  <data name="DeleteDefinitionConfirm" xml:space="preserve">
+    <value>Видалити всю конфігурацію користувацьких полів для {0}? Цю дію неможливо скасувати.</value>
+  </data>
+  <data name="UdfSummaryTitle" xml:space="preserve">
+    <value>Визначення користувацьких полів за сутностями</value>
+  </data>
+  <data name="EditDefinitionHeader" xml:space="preserve">
+    <value>Налаштування полів — {0}</value>
+  </data>
+  <data name="NewDefinitionHeader" xml:space="preserve">
+    <value>Налаштування полів — {0}</value>
+  </data>
+  <data name="FieldsSection" xml:space="preserve">
+    <value>Визначення полів</value>
+  </data>
+  <data name="AddField" xml:space="preserve">
+    <value>Додати поле</value>
+  </data>
+  <data name="NoFieldsAdded" xml:space="preserve">
+    <value>Поля ще не додано. Натисніть «Додати поле», щоб визначити перше поле.</value>
+  </data>
+  <data name="FieldName" xml:space="preserve">
+    <value>Системна назва</value>
+  </data>
+  <data name="FieldLabel" xml:space="preserve">
+    <value>Підпис</value>
+  </data>
+  <data name="FieldDataType" xml:space="preserve">
+    <value>Тип даних</value>
+  </data>
+  <data name="FieldRequired" xml:space="preserve">
+    <value>Обов'язкове</value>
+  </data>
+  <data name="FieldEnabled" xml:space="preserve">
+    <value>Увімкнено</value>
+  </data>
+  <data name="FieldVisibleMobile" xml:space="preserve">
+    <value>Мобільні</value>
+  </data>
+  <data name="FieldVisibleReports" xml:space="preserve">
+    <value>Звіти</value>
+  </data>
+  <data name="FieldOrder" xml:space="preserve">
+    <value>Порядок</value>
+  </data>
+  <data name="RemoveField" xml:space="preserve">
+    <value>Видалити</value>
+  </data>
+  <data name="RemoveFieldConfirm" xml:space="preserve">
+    <value>Видалити це поле?</value>
+  </data>
+  <data name="SaveDefinition" xml:space="preserve">
+    <value>Зберегти визначення</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Скасувати</value>
+  </data>
+  <data name="FieldModalTitle" xml:space="preserve">
+    <value>Параметри поля</value>
+  </data>
+  <data name="FieldNameHelp" xml:space="preserve">
+    <value>Внутрішній ідентифікатор (літери, цифри, символи підкреслення; має починатися з літери або символу підкреслення). Має бути унікальним у межах цього типу сутності.</value>
+  </data>
+  <data name="FieldLabelHelp" xml:space="preserve">
+    <value>Зрозумілий підпис, який бачать користувачі.</value>
+  </data>
+  <data name="FieldDescription" xml:space="preserve">
+    <value>Опис / підказка</value>
+  </data>
+  <data name="FieldPlaceholder" xml:space="preserve">
+    <value>Текст-заповнювач</value>
+  </data>
+  <data name="FieldDefaultValue" xml:space="preserve">
+    <value>Значення за замовчуванням</value>
+  </data>
+  <data name="FieldGroupName" xml:space="preserve">
+    <value>Група / розділ</value>
+  </data>
+  <data name="FieldIsReadOnly" xml:space="preserve">
+    <value>Лише для читання</value>
+  </data>
+  <data name="FieldIsReadOnlyHelp" xml:space="preserve">
+    <value>Якщо ввімкнено, поле відображається, але користувачі не можуть його редагувати.</value>
+  </data>
+  <data name="ValidationSection" xml:space="preserve">
+    <value>Правила перевірки</value>
+  </data>
+  <data name="ValidationMinLength" xml:space="preserve">
+    <value>Мін. довжина</value>
+  </data>
+  <data name="ValidationMaxLength" xml:space="preserve">
+    <value>Макс. довжина</value>
+  </data>
+  <data name="ValidationMinValue" xml:space="preserve">
+    <value>Мін. значення</value>
+  </data>
+  <data name="ValidationMaxValue" xml:space="preserve">
+    <value>Макс. значення</value>
+  </data>
+  <data name="ValidationRegex" xml:space="preserve">
+    <value>Шаблон регулярного виразу</value>
+  </data>
+  <data name="ValidationRegexError" xml:space="preserve">
+    <value>Повідомлення про помилку регулярного виразу</value>
+  </data>
+  <data name="DropdownOptions" xml:space="preserve">
+    <value>Варіанти (Ключ=Підпис, по одному на рядок)</value>
+  </data>
+  <data name="DropdownOptionsHelp" xml:space="preserve">
+    <value>Вводьте по одному варіанту на рядок у форматі Ключ=Підпис, наприклад «yes=Так» або «no=Ні».</value>
+  </data>
+  <data name="ModalSave" xml:space="preserve">
+    <value>Додати поле</value>
+  </data>
+  <data name="ModalClose" xml:space="preserve">
+    <value>Закрити</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>Головна</value>
+  </data>
+  <data name="New" xml:space="preserve">
+    <value>Нове</value>
+  </data>
+  <data name="UdfModule" xml:space="preserve">
+    <value>Користувацькі поля</value>
+  </data>
+  <data name="EntityCall" xml:space="preserve">
+    <value>Виклик</value>
+  </data>
+  <data name="EntityPersonnel" xml:space="preserve">
+    <value>Персонал</value>
+  </data>
+  <data name="EntityUnit" xml:space="preserve">
+    <value>Одиниця</value>
+  </data>
+  <data name="EntityContact" xml:space="preserve">
+    <value>Контакт</value>
+  </data>
+  <data name="Preview" xml:space="preserve">
+    <value>Попередній перегляд</value>
+  </data>
+  <data name="PreviewModalTitle" xml:space="preserve">
+    <value>Попередній перегляд полів — {0}</value>
+  </data>
+  <data name="PreviewWarningTitle" xml:space="preserve">
+    <value>Лише попередній перегляд</value>
+  </data>
+  <data name="PreviewWarningBody" xml:space="preserve">
+    <value>Це зразок того, як поля виглядатимуть і відображатимуться на сторінці. Дані не буде збережено.</value>
+  </data>
+  <data name="PreviewNoFields" xml:space="preserve">
+    <value>Немає увімкнених полів для попереднього перегляду.</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Закрити</value>
+  </data>
+  <data name="DefinitionSaved" xml:space="preserve">
+    <value>Визначення полів успішно збережено.</value>
+  </data>
+  <data name="DefinitionDeleted" xml:space="preserve">
+    <value>Визначення полів видалено.</value>
+  </data>
+  <data name="ValidationErrors" xml:space="preserve">
+    <value>Виправте наведені нижче помилки перед збереженням.</value>
+  </data>
 </root>

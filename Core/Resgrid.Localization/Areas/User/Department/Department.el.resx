@@ -1191,4 +1191,10 @@
   <data name="GroupDispatchScopeNoRoles" xml:space="preserve">
     <value>Δεν έχουν οριστεί ακόμη ρόλοι προσωπικού.</value>
   </data>
+  <data name="RequirePasswordResetViaEmail" xml:space="preserve">
+    <value>Απαίτηση επαναφοράς κωδικού πρόσβασης μέσω email</value>
+  </data>
+  <data name="RequirePasswordResetViaEmailHelp" xml:space="preserve">
+    <value>Εμποδίζει τους διαχειριστές του τμήματος και των ομάδων να επιλέγουν ή να βλέπουν τον νέο κωδικό πρόσβασης ενός μέλους. Αντί γι' αυτό, οι ενέργειες επαναφοράς στέλνουν στο μέλος έναν σύνδεσμο email σύντομης διάρκειας και μίας χρήσης. Οι υπάρχουσες συνεδρίες ανακαλούνται αφού το μέλος αλλάξει επιτυχώς τον κωδικό πρόσβασης.</value>
+  </data>
 </root>

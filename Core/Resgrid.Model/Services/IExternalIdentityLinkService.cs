@@ -9,6 +9,9 @@ namespace Resgrid.Model.Services
 		Task<UserExternalIdentityLink> GetBySubjectAsync(string departmentSsoConfigId, string externalSubject, CancellationToken cancellationToken = default);
 		Task<UserExternalIdentityLink> SaveAsync(UserExternalIdentityLink link, CancellationToken cancellationToken = default);
 		Task<SsoManagementState> GetSsoManagementStateAsync(string userId, CancellationToken cancellationToken = default);
+
+		/// <summary>The user's active links to department identity providers (plan section 6.5, read-only).</summary>
+		Task<System.Collections.Generic.IReadOnlyList<UserExternalIdentityLink>> GetActiveLinksAsync(string userId, CancellationToken cancellationToken = default);
 		Task<bool> IsLocalLoginAllowedAsync(string userId, CancellationToken cancellationToken = default);
 		Task<bool> IsLocalLoginAllowedAsync(string userId, int departmentId, CancellationToken cancellationToken = default);
 	}

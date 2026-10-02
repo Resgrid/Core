@@ -153,4 +153,25 @@ Il team Resgrid</value>
   <data name="AdpEgressWarning" xml:space="preserve"><value>Riconosco che i dettagli rilasciati escono da Resgrid e possono essere conservati dagli operatori telefonici o dai destinatari.</value></data>
   <data name="AdpAllowed" xml:space="preserve"><value>Consenti contenuti protetti</value></data>
   <data name="AdpSupportNotice" xml:space="preserve"><value>Il personale Resgrid ha richiesto accesso all’intervento protetto {0} per la richiesta di assistenza {1}. L’accesso richiede un approvatore indipendente e scade entro 15 minuti.</value></data>
+  <data name="SecurityNoticeSubject" xml:space="preserve"><value>Modifica di sicurezza sul tuo account Resgrid</value></data>
+  <data name="SecurityNoticeGreeting" xml:space="preserve"><value>Ciao {0},</value></data>
+  <data name="SecurityNoticeGreetingNoName" xml:space="preserve"><value>Ciao,</value></data>
+  <data name="SecurityNoticeTotpEnabled" xml:space="preserve"><value>È stata configurata un'app di autenticazione per l'accesso in due passaggi al tuo account.</value></data>
+  <data name="SecurityNoticeTotpReplaced" xml:space="preserve"><value>L'app di autenticazione del tuo account è stata sostituita e tutte le sessioni aperte sono state chiuse.</value></data>
+  <data name="SecurityNoticeTotpDisabled" xml:space="preserve"><value>L'app di autenticazione è stata rimossa dal tuo account, quindi l'accesso in due passaggi è disattivato. Tutte le sessioni aperte sono state chiuse.</value></data>
+  <data name="SecurityNoticeRecoveryCodesRegenerated" xml:space="preserve"><value>Sono stati creati nuovi codici di recupero per il tuo account. I vecchi codici non funzionano più.</value></data>
+  <data name="SecurityNoticeRecoveryCodeUsed" xml:space="preserve"><value>Uno dei tuoi codici di recupero è stato usato per accedere o per avviare il recupero dell'account.</value></data>
+  <data name="SecurityNoticePasskeyRegistered" xml:space="preserve"><value>Al tuo account è stata aggiunta una nuova passkey.</value></data>
+  <data name="SecurityNoticePasskeyRemoved" xml:space="preserve"><value>Una passkey è stata rimossa dal tuo account.</value></data>
+  <data name="SecurityNoticeApprovalTurnedOn" xml:space="preserve"><value>Una passkey in Resgrid Responder ora può approvare gli accessi alle tue altre app Resgrid.</value></data>
+  <data name="SecurityNoticeApprovalTurnedOff" xml:space="preserve"><value>Una passkey in Resgrid Responder non può più approvare gli accessi alle tue altre app Resgrid.</value></data>
+  <data name="SecurityNoticeApprovalNotMe" xml:space="preserve"><value>Hai indicato in Resgrid Responder di non aver chiesto di accedere. Quell'accesso è stato bloccato e le richieste di approvazione sono sospese per 15 minuti. Qualcuno potrebbe conoscere la tua password: cambiala subito.</value></data>
+  <data name="SecurityNoticeApprovalSuspended" xml:space="preserve"><value>Diverse richieste di approvazione consecutive sono state rifiutate o non hanno avuto risposta, quindi le richieste di approvazione sono sospese per 15 minuti.</value></data>
+  <data name="SecurityNoticeFactorRecoveryCompleted" xml:space="preserve"><value>Il tuo account è stato recuperato con un codice di recupero. È stata configurata una nuova app di autenticazione, sono stati creati nuovi codici di recupero e tutte le sessioni aperte sono state chiuse.</value></data>
+  <data name="SecurityNoticeSharedInstallationFactor" xml:space="preserve"><value>Un'app di autenticazione o una passkey è stata configurata su un tablet di un veicolo o una postazione condivisa. Se qualcun altro potrebbe aver visto il codice di configurazione o può usare quel dispositivo, sostituisci l'app di autenticazione o rimuovi la passkey dal tuo dispositivo personale.</value></data>
+  <data name="SecurityNoticeActivityReported" xml:space="preserve"><value>Una verifica sul tuo account è stata segnalata come non tua. Se ha effettuato l'accesso su un altro dispositivo, quella sessione è stata chiusa. Cambia la password e controlla i tuoi metodi di accesso.</value></data>
+  <data name="SecurityNoticeWhen" xml:space="preserve"><value>Quando: {0} UTC</value></data>
+  <data name="SecurityNoticeWhere" xml:space="preserve"><value>Dove: {0}</value></data>
+  <data name="SecurityNoticeNotYou" xml:space="preserve"><value>Se non sei stato tu, reimposta subito la password su {0}, poi accedi e controlla i tuoi metodi di accesso. Resgrid non chiede mai codici o password via e-mail.</value></data>
+  <data name="SecurityNoticeFooter" xml:space="preserve"><value>Questo è un avviso di sicurezza automatico sul tuo account Resgrid.</value></data>
 </root>

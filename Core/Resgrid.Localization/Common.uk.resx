@@ -59,15 +59,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 
-  <data name="Name1" xml:space="preserve">
-    <value>this is my long string</value>
-  </data>
-  <data name="Bitmap1" xml:space="preserve">
-    <value>[base64 mime encoded serialized .NET Framework object]</value>
-  </data>
-  <data name="Icon1" xml:space="preserve">
-    <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-  </data>
   <data name="Action" xml:space="preserve">
     <value>Дія</value>
   </data>
@@ -758,5 +749,44 @@
   </data>
   <data name="JsonInputSchema" xml:space="preserve">
     <value>Схема JSON (назви й типи полів)</value>
+  </data>
+  <data name="AdpUsePasskey" xml:space="preserve">
+    <value>Використати ключ доступу</value>
+  </data>
+  <data name="AdpUseResponder" xml:space="preserve">
+    <value>Підтвердити в Responder</value>
+  </data>
+  <data name="AdpUseCode" xml:space="preserve">
+    <value>Використати код автентифікації</value>
+  </data>
+  <data name="AdpApprovalInstructions" xml:space="preserve">
+    <value>Відкрийте Resgrid Responder на телефоні, перевірте запит і введіть це число:</value>
+  </data>
+  <data name="AdpApprovalWaiting" xml:space="preserve">
+    <value>Очікування вашого підтвердження в Responder…</value>
+  </data>
+  <data name="AdpApprovalDenied" xml:space="preserve">
+    <value>Запит відхилено в Responder.</value>
+  </data>
+  <data name="AdpApprovalExpired" xml:space="preserve">
+    <value>Термін дії запиту минув до підтвердження. Почніть знову.</value>
+  </data>
+  <data name="AdpPasskeyCancelled" xml:space="preserve">
+    <value>Вікно ключа доступу закрито. Нічого не змінено.</value>
+  </data>
+  <data name="AdpPasskeyFailed" xml:space="preserve">
+    <value>Не вдалося скористатися ключем доступу. Спробуйте ще раз або скористайтеся застосунком автентифікації.</value>
+  </data>
+  <data name="AdpUseProvider" xml:space="preserve">
+    <value>Використати постачальника ідентичності</value>
+  </data>
+  <data name="AdpProviderPopupBlocked" xml:space="preserve">
+    <value>Дозвольте спливні вікна для цього сайту, щоб підтвердити через постачальника ідентичності.</value>
+  </data>
+  <data name="POI" xml:space="preserve">
+    <value>POI</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Редагувати</value>
   </data>
 </root>

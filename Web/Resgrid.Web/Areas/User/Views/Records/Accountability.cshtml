@@ -118,7 +118,7 @@
 											}
 											@if (Model.CanRemind && row.OpenRecords.Count > 0)
 											{
-												<form method="post" style="display:inline" asp-controller="Records" asp-action="RemindAll" asp-route-area="User" onsubmit="return confirm('@localizer["RemindAll"]?');">
+												<form method="post" style="display:inline" asp-controller="Records" asp-action="RemindAll" asp-route-area="User" onsubmit="return confirm('@JsEncoder.Encode(localizer["RemindAll"])?');">
 													@Html.AntiForgeryToken()
 													<input type="hidden" name="key" value="@row.Key" />
 													<input type="hidden" name="pivot" value="@pivotName" />

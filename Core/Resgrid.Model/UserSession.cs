@@ -47,6 +47,51 @@ namespace Resgrid.Model
 		[MaxLength(128)] public string RevokedByUserId { get; set; }
 		public int? RevocationReason { get; set; }
 
+		/// <summary>
+		/// The second factor this session's sign-in verified (<c>MfaEvidenceMethod</c>), kept apart from the first-factor
+		/// <see cref="AuthenticationMethod"/> (passkey plan section 5.3). Null when sign-in verified none or predates it.
+		/// </summary>
+		public int? LoginMfaMethod { get; set; }
+
+		/// <summary>The factor instance that sign-in used, such as <c>passkey:{id}</c>, so removing it can end this session.</summary>
+		[MaxLength(256)] public string LoginMfaFactorReference { get; set; }
+
+		/// <summary>
+		/// A shared vehicle tablet or workstation session (passkey plan sections 5.5 and 12.5): it locks when idle, ends at the
+		/// shift ceiling (<see cref="ExpiresOn"/>), and a locked session reaches only its status, unlock and end-shift endpoints.
+		/// Set once at sign-in; nothing turns it off.
+		/// </summary>
+		public bool SharedMode { get; set; }
+
+		/// <summary>Why the session is shared (<c>SharedModeSource</c>): the installation asked, or the department requires it.</summary>
+		public int SharedModeSource { get; set; }
+
+		/// <summary>The idle lock the department's policy set at sign-in. A stricter current policy still applies.</summary>
+		public int? SharedIdleLockMinutes { get; set; }
+
+		/// <summary>
+		/// Advanced by every lock, never by an unlock. Grants, challenges and approvals are bound to the version they were
+		/// issued at, so nothing from before a lock is usable after it.
+		/// </summary>
+		public long LockVersion { get; set; }
+
+		public bool IsLocked { get; set; }
+
+		/// <summary>When the session last locked. Kept after unlock: evidence verified before it no longer counts.</summary>
+		public DateTime? LockedOnUtc { get; set; }
+
+		/// <summary>Why it last locked (<c>SharedSessionLockReason</c>).</summary>
+		public int? LockReason { get; set; }
+
+		/// <summary>
+		/// The last operator activity the client reported (server time). The idle deadline counts from here; polling and
+		/// socket traffic never move it.
+		/// </summary>
+		public DateTime? LastOperatorActivityOn { get; set; }
+
+		/// <summary>A Responder installation that stopped taking approval requests (plan section 6.5); it no longer approves.</summary>
+		public DateTime? ApprovalsDisabledOnUtc { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue

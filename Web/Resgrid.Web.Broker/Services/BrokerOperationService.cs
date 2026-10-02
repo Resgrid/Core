@@ -5,12 +5,13 @@ using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
-using Microsoft.Extensions.Caching.Memory;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Security;
 using Resgrid.Model.Services;
+using Resgrid.Services;
 using Resgrid.Web.Broker.Models;
 
 namespace Resgrid.Web.Broker.Services
@@ -22,31 +23,36 @@ namespace Resgrid.Web.Broker.Services
 	/// key material, and emit a value-free audit line. Every failure is closed — a request-level
 	/// fault processes NO items, and item-level faults return error codes, never partial values.
 	/// Plaintext and ciphertext values are never logged.
+	///
+	/// Attended requests are also bound to the end user's live session (passkey workbook section 6.2):
+	/// the calling host's session assertion is verified, must agree with the grant, is single use, and
+	/// the session it names must still validate. Replay records live in a shared store, so every
+	/// broker replica refuses a replay.
 	/// </summary>
 	public class BrokerOperationService
 	{
-		// Replayed request ids are refused for this long; grants outlive it, so a replayed id can
-		// never slip back in while its grant is still valid.
-		private static readonly TimeSpan ReplayWindow = TimeSpan.FromMinutes(15);
-
 		private readonly ILifetimeScope _rootScope;
 		private readonly IProtectedDataGrantService _grantService;
 		private readonly IProtectedFieldCryptoService _cryptoService;
 		private readonly IKeyWrappingProvider _keyWrappingProvider;
-		private readonly IMemoryCache _replayCache;
 		private readonly IAdpAuditRepository _audit;
+		private readonly IBrokerSessionAssertionService _assertions;
 
 		public BrokerOperationService(ILifetimeScope rootScope, IProtectedDataGrantService grantService,
 			IProtectedFieldCryptoService cryptoService, IKeyWrappingProvider keyWrappingProvider,
-			IMemoryCache replayCache, IAdpAuditRepository audit)
+			IAdpAuditRepository audit, IBrokerSessionAssertionService assertions)
 		{
 			_rootScope = rootScope;
 			_grantService = grantService;
 			_cryptoService = cryptoService;
 			_keyWrappingProvider = keyWrappingProvider;
-			_replayCache = replayCache;
 			_audit = audit;
+			_assertions = assertions;
 		}
+
+		// Replayed ids are refused for at least this long; grants outlive it, so a replayed id can never slip
+		// back in while its grant is still valid.
+		private static TimeSpan ReplayWindow => TimeSpan.FromMinutes(Math.Max(15, Config.DataProtectionConfig.BrokerReplayWindowMinutes));
 
 		public Task<ProtectedDataBrokerResult> DecryptAsync(BrokerFieldOperationRequest request, CancellationToken cancellationToken) =>
 			ProcessAsync(request, decrypt: true, cancellationToken);
@@ -82,41 +88,81 @@ namespace Resgrid.Web.Broker.Services
 			CancellationToken cancellationToken, string workloadPurpose = null)
 		{
 			if (request == null || request.DepartmentId <= 0) return Fail("invalid_request");
+
+			// Only an authenticated host reaches here (BrokerCredentialMiddleware); anything else is refused outright.
+			var caller = request.Caller;
+			if (caller == null) return Fail("lane_denied");
+
 			var operation = workloadPurpose != null ? "workload-decrypt" : decrypt ? "decrypt" : "encrypt";
+			var lane = Classify(request, decrypt, workloadPurpose);
+			var layer = lane == null ? $"broker/{caller.Id}/refused" : caller.AuditLayer(lane.Value);
 			try
 			{
-				await _audit.AppendAsync(new AdpAuditEvent { DepartmentId = request.DepartmentId, Layer = "broker",
+				await _audit.AppendAsync(new AdpAuditEvent { DepartmentId = request.DepartmentId, Layer = layer,
 					Operation = operation, Outcome = "requested", CorrelationId = request.RequestId }, cancellationToken);
-				var result = await ProcessCoreAsync(request, decrypt, cancellationToken, workloadPurpose);
-				await _audit.AppendAsync(new AdpAuditEvent { DepartmentId = request.DepartmentId, Layer = "broker",
-					Operation = operation, Outcome = result.Success ? "completed" : "denied", CorrelationId = request.RequestId }, cancellationToken);
+
+				// The lane gate runs before anything is consumed: no request id burned, no grant or receipt read,
+				// no key touched. A refusal never falls through to another lane.
+				var result = lane == null || !caller.Allows(lane.Value)
+					? Fail("lane_denied")
+					: await ProcessCoreAsync(request, decrypt, cancellationToken, workloadPurpose, layer);
+
+				// A purpose the broker allows but this host was not granted is a cross-lane attempt too; a purpose off
+				// the global list, or a department not actively protected, is an ordinary refusal.
+				var laneRefused = result.ErrorCode == "lane_denied" ||
+					result.ErrorCode == "workload_purpose_denied" && IsAllowedWorkloadPurpose(workloadPurpose) && !caller.AllowsPurpose(workloadPurpose);
+				if (laneRefused)
+					Logging.LogError($"ADP broker refused a cross-lane request: credential {caller.Id}, lane {(lane == null ? "none" : BrokerCredential.LaneName(lane.Value))}, " +
+						$"operation {operation}, department {request.DepartmentId}{(workloadPurpose == null ? string.Empty : $", purpose {workloadPurpose}")}.");
+
+				await _audit.AppendAsync(new AdpAuditEvent { DepartmentId = request.DepartmentId, Layer = layer,
+					Operation = operation, Outcome = result.Success ? "completed" : laneRefused ? "lane-denied" : "denied",
+					CorrelationId = request.RequestId }, cancellationToken);
 				return result;
 			}
 			catch (OperationCanceledException) { throw; }
 			catch (Exception) { return Fail("audit_unavailable"); }
 		}
 
+		/// <summary>
+		/// The one lane a request belongs to (passkey plan section 8.5): workload decrypt takes a purpose and never a
+		/// token; decrypt with an adpr. receipt is the receipt lane; encrypt without a token is the workload lane; any other
+		/// decrypt or encrypt is attended. Null means the request fits no lane.
+		/// </summary>
+		public static BrokerLane? Classify(BrokerFieldOperationRequest request, bool decrypt, string workloadPurpose)
+		{
+			var hasToken = !string.IsNullOrWhiteSpace(request.GrantToken);
+			if (workloadPurpose != null)
+				return hasToken ? null : BrokerLane.Workload;
+			if (decrypt)
+				return hasToken && request.GrantToken.StartsWith("adpr.", StringComparison.Ordinal) ? BrokerLane.Receipt : BrokerLane.Attended;
+			return hasToken ? BrokerLane.Attended : BrokerLane.Workload;
+		}
+
 		private async Task<ProtectedDataBrokerResult> ProcessCoreAsync(BrokerFieldOperationRequest request, bool decrypt,
-			CancellationToken cancellationToken, string workloadPurpose)
+			CancellationToken cancellationToken, string workloadPurpose, string layer)
 		{
 			if (request == null || request.DepartmentId <= 0 || string.IsNullOrWhiteSpace(request.RequestId) ||
 				request.Items == null || request.Items.Count == 0)
 				return Fail("invalid_request");
 
-			// Workload lane: the purpose gate runs before anything is consumed (no request id burned, no key touched).
-			if (workloadPurpose != null && !IsAllowedWorkloadPurpose(workloadPurpose))
+			// Workload lane: the purpose must be on the broker's allow-list AND granted to this host's credential, and
+			// the gate runs before anything is consumed (no request id burned, no key touched).
+			if (workloadPurpose != null && (!IsAllowedWorkloadPurpose(workloadPurpose) || !request.Caller.AllowsPurpose(workloadPurpose)))
 				return Fail("workload_purpose_denied");
 
 			var maxItems = Math.Max(1, Config.DataProtectionConfig.BrokerMaxItemsPerRequest);
 			if (request.Items.Count > maxItems)
 				return Fail("too_many_items");
 
-			// Replay: a request id is single-use per department (plan section 2.2).
-			var replayKey = $"adp-broker-request:{request.DepartmentId}:{request.RequestId}";
-			if (!TryClaimRequestId(replayKey))
-				return Fail("replayed_request");
-
 			using var scope = _rootScope.BeginLifetimeScope();
+
+			// Replay: a request id is single-use per department (plan section 2.2), across every broker replica.
+			var claim = await TryClaimAsync(scope, $"adp-broker-request:{request.DepartmentId}:{request.RequestId}",
+				BrokerReplayKind.RequestId, cancellationToken);
+			if (claim != null)
+				return Fail(claim);
+
 			var policyRepository = scope.Resolve<IDepartmentDataProtectionPolicyRepository>();
 			var keyService = scope.Resolve<IDepartmentKeyService>();
 
@@ -151,9 +197,14 @@ namespace Resgrid.Web.Broker.Services
 					requiredScope, out grant);
 				if (outcome != ProtectedDataGrantValidationOutcome.Valid)
 					return Fail(MapGrantOutcome(outcome));
+
+				// A failed session check never falls through to the workload lane.
+				var sessionRefusal = await CheckAttendedSessionAsync(scope, request, grant, policy, decrypt, cancellationToken);
+				if (sessionRefusal != null)
+					return Fail(sessionRefusal);
 			}
 
-			await _audit.AppendAsync(new AdpAuditEvent { DepartmentId = request.DepartmentId, Layer = "broker",
+			await _audit.AppendAsync(new AdpAuditEvent { DepartmentId = request.DepartmentId, Layer = layer,
 				Operation = decrypt ? "decrypt-authorized" : "encrypt-authorized", Outcome = "authorized",
 				ActorId = grant?.UserId, ResourceId = grant?.GrantId, CorrelationId = request.RequestId,
 				PolicyEpoch = currentEpoch }, cancellationToken);
@@ -178,7 +229,7 @@ namespace Resgrid.Web.Broker.Services
 					CryptographicOperations.ZeroMemory(dek);
 			}
 
-			Audit(workloadPurpose != null ? "workload-decrypt" : decrypt ? "decrypt" : "encrypt", request, grant, result, workloadPurpose);
+			Audit(workloadPurpose != null ? "workload-decrypt" : decrypt ? "decrypt" : "encrypt", request, grant, result, layer, workloadPurpose);
 			return result;
 		}
 
@@ -381,15 +432,97 @@ namespace Resgrid.Web.Broker.Services
 			return dek;
 		}
 
-		private bool TryClaimRequestId(string replayKey)
+		/// <summary>
+		/// Binds an attended request to the end user's live session (passkey workbook section 6.2); null when it may
+		/// proceed, otherwise the value-free refusal. A version 2 grant always needs a valid assertion. A version 1
+		/// grant needs one only once <c>BrokerRequireSessionAssertion</c> is on, but an assertion that is presented
+		/// must be valid either way.
+		/// </summary>
+		private async Task<string> CheckAttendedSessionAsync(ILifetimeScope scope, BrokerFieldOperationRequest request,
+			ProtectedDataGrant grant, DepartmentDataProtectionPolicy policy, bool decrypt, CancellationToken cancellationToken)
 		{
-			lock (_replayCache)
-			{
-				if (_replayCache.TryGetValue(replayKey, out _))
-					return false;
+			var required = grant.Version >= 2 || Config.DataProtectionConfig.BrokerRequireSessionAssertion;
+			if (string.IsNullOrWhiteSpace(request.SessionAssertion))
+				return required ? "session_assertion_required" : null;
 
-				_replayCache.Set(replayKey, true, ReplayWindow);
-				return true;
+			var digest = BrokerRequestDigest.Compute(decrypt ? "decrypt" : "encrypt", request.DepartmentId, request.RequestId, request.Items);
+			var outcome = _assertions.Validate(request.SessionAssertion, digest, out var assertion);
+			if (outcome == BrokerSessionAssertionOutcome.NotConfigured)
+				return required ? "session_assertion_unavailable" : null;
+			if (outcome != BrokerSessionAssertionOutcome.Valid)
+				return "session_assertion_invalid";
+
+			var claim = await TryClaimAsync(scope, "adp-broker-assertion:" + assertion.AssertionId,
+				BrokerReplayKind.SessionAssertion, cancellationToken);
+			if (claim != null)
+				return claim;
+
+			// The assertion and the grant must describe the same user and department; a version 2 grant must also
+			// match the asserted session, client, generation and lock version exactly.
+			if (!string.Equals(assertion.UserId, grant.UserId, StringComparison.OrdinalIgnoreCase) ||
+				assertion.DepartmentId != request.DepartmentId)
+				return "grant_session_mismatch";
+
+			var binding = await ProtectedGrantBinding.CheckAsync(grant, assertion.UserId, new ProtectedGrantSessionContext
+			{
+				SessionId = assertion.SessionId,
+				ClientApplication = assertion.ClientApplication,
+				AuthenticationGeneration = assertion.AuthenticationGeneration,
+				SessionLockVersion = assertion.SessionLockVersion
+			}, policy?.StepUpWindowMinutes, scope.ResolveOptional<IMfaCredentialStateService>(), cancellationToken);
+			if (binding != ProtectedGrantBindingOutcome.Bound)
+				return ProtectedGrantBinding.ErrorCode(binding);
+
+			// The live session: active, unexpired, same generation, department membership, idle timeout, and the
+			// credential cutoff checked with the issue time the calling host validated.
+			SessionValidationResult validation;
+			try
+			{
+				validation = await scope.Resolve<IUserSessionService>().ValidateAsync(new SessionPrincipalContext
+				{
+					UserId = assertion.UserId,
+					SessionId = assertion.SessionId,
+					AuthenticationGeneration = assertion.AuthenticationGeneration,
+					DepartmentId = assertion.DepartmentId,
+					CredentialIssuedOn = assertion.CredentialIssuedOnUtc
+				}, cancellationToken);
+			}
+			catch (Exception ex) when (!(ex is OperationCanceledException))
+			{
+				Logging.LogError($"ADP broker session validation failed closed for department {request.DepartmentId}: {ex.GetType().Name}.");
+				return "session_validation_unavailable";
+			}
+
+			if (validation.IsLocked)
+				return SharedSessionRules.LockedFailureCode;
+			if (!validation.IsValid || validation.Session == null)
+				return "session_revoked";
+			if (validation.Session.ClientApplication != assertion.ClientApplication)
+				return "grant_client_mismatch";
+
+			// The assertion's lock version must still be the session's (plan section 12.5.3): an assertion or grant minted
+			// before a lock stays unusable after the unlock, even though both still agree with each other.
+			if (SharedSessionRules.LockVersionOf(validation.Session) != assertion.SessionLockVersion)
+				return "grant_session_locked";
+
+			return null;
+		}
+
+		/// <summary>Claims a replay key in the shared store: null when claimed, otherwise the refusal. Faults refuse.</summary>
+		private async Task<string> TryClaimAsync(ILifetimeScope scope, string key, BrokerReplayKind kind, CancellationToken cancellationToken)
+		{
+			var digest = Convert.ToHexString(SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(key)));
+			var now = DateTime.UtcNow;
+			try
+			{
+				var claimed = await scope.Resolve<IBrokerReplayRepository>().TryClaimAsync(digest, kind, now.Add(ReplayWindow), now,
+					cancellationToken);
+				return claimed ? null : "replayed_request";
+			}
+			catch (Exception ex) when (!(ex is OperationCanceledException))
+			{
+				Logging.LogError($"ADP broker replay store failed closed: {ex.GetType().Name}.");
+				return "replay_store_unavailable";
 			}
 		}
 
@@ -403,6 +536,8 @@ namespace Resgrid.Web.Broker.Services
 					return "grant_expired";
 				case ProtectedDataGrantValidationOutcome.EpochRevoked:
 					return "grant_revoked";
+				case ProtectedDataGrantValidationOutcome.VersionUnsupported:
+					return "grant_version_unsupported";
 				default:
 					return "grant_invalid";
 			}
@@ -413,12 +548,12 @@ namespace Resgrid.Web.Broker.Services
 
 		/// <summary>Value-free audit line: identifiers and counts only, never field values.</summary>
 		private static void Audit(string operation, BrokerFieldOperationRequest request, ProtectedDataGrant grant,
-			ProtectedDataBrokerResult result, string workloadPurpose = null)
+			ProtectedDataBrokerResult result, string layer, string workloadPurpose = null)
 		{
 			var failed = result.Items.Count(i => i.ErrorCode != null);
 			var fields = string.Join(",", request.Items.Where(i => i?.FieldId != null).Select(i => i.FieldId).Distinct());
 			var identity = grant == null ? (workloadPurpose == null ? "workload" : $"workload purpose {workloadPurpose}") : $"user {grant.UserId}, grant {grant.GrantId}";
-			Logging.LogInfo($"ADP broker {operation}: department {request.DepartmentId}, {identity}, request {request.RequestId}, items {result.Items.Count}, failed {failed}, fields [{fields}]");
+			Logging.LogInfo($"ADP broker {operation} ({layer}): department {request.DepartmentId}, {identity}, request {request.RequestId}, items {result.Items.Count}, failed {failed}, fields [{fields}]");
 		}
 	}
 }

@@ -107,7 +107,7 @@
                             <button type="submit" name="action" value="save" class="btn btn-primary btn-block"><i class="fa fa-save"></i> @localizer["Save"]</button>
                             @if (canSubmit)
                             {
-                                <button type="submit" name="action" value="submit" class="btn btn-success btn-block" onclick="return confirm('@localizer["SubmitConfirm"]');"><i class="fa fa-check"></i> @localizer["SaveAndSubmit"]</button>
+                                <button type="submit" name="action" value="submit" class="btn btn-success btn-block" onclick="return confirm('@JsEncoder.Encode(localizer["SubmitConfirm"])');"><i class="fa fa-check"></i> @localizer["SaveAndSubmit"]</button>
                             }
                         }
                         <dl class="dl-horizontal m-t-md">
@@ -172,11 +172,11 @@
                     <div class="ibox-content">
                         @if (canApprove)
                         {
-                            <form method="post" asp-action="ApproveTimeReport" asp-route-id="@r.DeploymentTimeReportId">@Html.AntiForgeryToken()<button class="btn btn-success btn-block" onclick="return confirm('@localizer["ApproveConfirm"]');"><i class="fa fa-thumbs-up"></i> @localizer["Approve"]</button></form>
+                            <form method="post" asp-action="ApproveTimeReport" asp-route-id="@r.DeploymentTimeReportId">@Html.AntiForgeryToken()<button class="btn btn-success btn-block" onclick="return confirm('@JsEncoder.Encode(localizer["ApproveConfirm"])');"><i class="fa fa-thumbs-up"></i> @localizer["Approve"]</button></form>
                         }
                         @if (canVoid)
                         {
-                            <form method="post" asp-action="VoidTimeReport" asp-route-id="@r.DeploymentTimeReportId" class="m-t-sm">@Html.AntiForgeryToken()<input type="text" name="reason" class="form-control input-sm m-b-xs" placeholder="@localizer["VoidReason"]" maxlength="250" /><button class="btn btn-danger btn-block" onclick="return confirm('@localizer["VoidConfirm"]');"><i class="fa fa-ban"></i> @localizer["Void"]</button></form>
+                            <form method="post" asp-action="VoidTimeReport" asp-route-id="@r.DeploymentTimeReportId" class="m-t-sm">@Html.AntiForgeryToken()<input type="text" name="reason" class="form-control input-sm m-b-xs" placeholder="@localizer["VoidReason"]" maxlength="250" /><button class="btn btn-danger btn-block" onclick="return confirm('@JsEncoder.Encode(localizer["VoidConfirm"])');"><i class="fa fa-ban"></i> @localizer["Void"]</button></form>
                         }
                         @if (Model.CanActOnReport)
                         {
@@ -207,8 +207,8 @@
                 if (rows.length) { clone = rows[rows.length - 1].cloneNode(true); clone.querySelectorAll('input[type=text],input[type=number],input.entry-id,input[name$=".CertificationCode"]').forEach(function (i) { i.value = ''; i.removeAttribute('data-adp-field'); }); }
                 else {
                     clone = document.createElement('tr');
-                    clone.innerHTML = '<td><select name="entries[0].SubjectId" class="form-control input-sm">@Html.Raw(string.Join("", Model.Subjects.Select(s => $"<option value=\"{s.Id}\">{System.Net.WebUtility.HtmlEncode(s.Name)}</option>")))</select></td>' +
-                        '<td><select name="entries[0].EntryType" class="form-control input-sm">@Html.Raw(string.Join("", Enum.GetValues(typeof(Resgrid.Model.Invoicing.DeploymentTimeEntryTypes)).Cast<Resgrid.Model.Invoicing.DeploymentTimeEntryTypes>().Select(t => $"<option value=\"{(int)t}\">{System.Net.WebUtility.HtmlEncode(localizer["Entry" + t].Value)}</option>")))</select></td>' +
+                    clone.innerHTML = '<td><select name="entries[0].SubjectId" class="form-control input-sm">@JsEncoder.Encode(string.Join("", Model.Subjects.Select(s => $"<option value=\"{s.Id}\">{System.Net.WebUtility.HtmlEncode(s.Name)}</option>")))</select></td>' +
+                        '<td><select name="entries[0].EntryType" class="form-control input-sm">@JsEncoder.Encode(string.Join("", Enum.GetValues(typeof(Resgrid.Model.Invoicing.DeploymentTimeEntryTypes)).Cast<Resgrid.Model.Invoicing.DeploymentTimeEntryTypes>().Select(t => $"<option value=\"{(int)t}\">{System.Net.WebUtility.HtmlEncode(localizer["Entry" + t].Value)}</option>")))</select></td>' +
                         '<td><input type="datetime-local" step="0.001" name="entries[0].Start" class="form-control input-sm" value="@r.ReportDate.ToString("yyyy-MM-dd")T08:00" /></td><td><input type="datetime-local" step="0.001" name="entries[0].End" class="form-control input-sm" value="@r.ReportDate.ToString("yyyy-MM-dd")T16:00" /></td>' +
                         '<td><input type="number" name="entries[0].PaidBreakMinutes" class="form-control input-sm" value="0" min="0" /></td><td><input type="number" name="entries[0].UnpaidBreakMinutes" class="form-control input-sm" value="0" min="0" /></td>' +
                         '<td><input type="number" step="0.1" name="entries[0].MileageKm" class="form-control input-sm" min="0" /></td><td><input type="text" name="entries[0].Notes" class="form-control input-sm" maxlength="500" /></td>' +

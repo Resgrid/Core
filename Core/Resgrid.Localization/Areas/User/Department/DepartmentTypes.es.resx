@@ -98,4 +98,196 @@
 	<resheader name="writer">
 		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
 	</resheader>
+  <data name="AddNewCallTypeButtonAltText" xml:space="preserve">
+    <value>Agregar un nuevo tipo de llamada</value>
+  </data>
+  <data name="CallPrioritiesHeader" xml:space="preserve">
+    <value>Prioridades de llamada</value>
+  </data>
+  <data name="CallPriorityAlertSound" xml:space="preserve">
+    <value>Sonido de alerta</value>
+  </data>
+  <data name="CallPriorityIsDefault" xml:space="preserve">
+    <value>Predeterminada</value>
+  </data>
+  <data name="CallPriorityUsingCustomText" xml:space="preserve">
+    <value>Tiene habilitadas prioridades de llamada personalizadas. Para volver a las predeterminadas, deberá eliminar todas las personalizadas. Al editar una prioridad de llamada existente, se actualizará en todas las llamadas que la usaron.</value>
+  </data>
+  <data name="CallPriorityUsingDefaultText" xml:space="preserve">
+    <value>Actualmente usa las prioridades de llamada predeterminadas. Si agrega prioridades de llamada personalizadas, ya no podrá utilizar las predeterminadas (incluidos sus sonidos). Si no especifica un sonido personalizado para sus nuevas prioridades de llamada, usarán el sonido de notificación push y el sonido de alerta de las llamadas de prioridad alta. Los usuarios de la versión 5 o anterior de la aplicación Responder y de la versión 2 o anterior de la aplicación Unit no admiten prioridades de llamada personalizadas. Si tiene usuarios con esas versiones de las aplicaciones, le recomendamos no crear prioridades de llamada personalizadas.</value>
+  </data>
+  <data name="CallTypeMapIconHeader" xml:space="preserve">
+    <value>Ícono de mapa del tipo de llamada</value>
+  </data>
+  <data name="CallTypeMapIconLabel" xml:space="preserve">
+    <value>Ícono de mapa</value>
+  </data>
+  <data name="CallTypeNameHeader" xml:space="preserve">
+    <value>Nombre del tipo de llamada</value>
+  </data>
+  <data name="CallTypeNameLabel" xml:space="preserve">
+    <value>Nombre del tipo de llamada</value>
+  </data>
+  <data name="CallTypeNamePlaceholder" xml:space="preserve">
+    <value>Nombre del tipo</value>
+  </data>
+  <data name="CallTypesHeader" xml:space="preserve">
+    <value>Tipos de llamada</value>
+  </data>
+  <data name="CertificationTypeNameLabel" xml:space="preserve">
+    <value>Nombre de la certificación</value>
+  </data>
+  <data name="CertificationTypeNamePlaceholder" xml:space="preserve">
+    <value>Nombre de la certificación</value>
+  </data>
+  <data name="CertificationTypesDeleteWarning" xml:space="preserve">
+    <value>ADVERTENCIA: Esto eliminará permanentemente este tipo de certificación. ¿Está seguro de que desea eliminar el tipo de certificación</value>
+  </data>
+  <data name="CertificationTypesHeader" xml:space="preserve">
+    <value>Tipos de certificación</value>
+  </data>
+  <data name="CertificationTypesName" xml:space="preserve">
+    <value>Nombre del tipo</value>
+  </data>
+  <data name="DefaultUnitActionsLabel" xml:space="preserve">
+    <value>Acciones de unidad predeterminadas</value>
+  </data>
+  <data name="DeleteCallTypeWarning" xml:space="preserve">
+    <value>ADVERTENCIA: Esto eliminará permanentemente este tipo de llamada. ¿Está seguro de que desea eliminar el tipo de llamada</value>
+  </data>
+  <data name="DeleteDocumentTypesWarning" xml:space="preserve">
+    <value>ADVERTENCIA: Esto eliminará permanentemente esta categoría de documentos. ¿Está seguro de que desea eliminar la categoría</value>
+  </data>
+  <data name="DeleteNoteTypesWarning" xml:space="preserve">
+    <value>ADVERTENCIA: Esto eliminará permanentemente este tipo de nota. ¿Está seguro de que desea eliminar el tipo de nota</value>
+  </data>
+  <data name="DeleteUnitTypeWarning" xml:space="preserve">
+    <value>ADVERTENCIA: Esto eliminará permanentemente este tipo de unidad. ¿Está seguro de que desea eliminar el tipo de unidad</value>
+  </data>
+  <data name="DepartmentTypesHeader" xml:space="preserve">
+    <value>Tipos de departamento</value>
+  </data>
+  <data name="DocumentTypeNameLabel" xml:space="preserve">
+    <value>Nombre de la categoría</value>
+  </data>
+  <data name="DocumentTypeNamePlaceholder" xml:space="preserve">
+    <value>Nombre de la nueva categoría (tipo) de documento</value>
+  </data>
+  <data name="DocumentTypesHeader" xml:space="preserve">
+    <value>Categorías de documentos</value>
+  </data>
+  <data name="EditCallPriorityHeader" xml:space="preserve">
+    <value>Editar prioridad de llamada</value>
+  </data>
+  <data name="EditCallTypeHeader" xml:space="preserve">
+    <value>Editar tipo de llamada</value>
+  </data>
+  <data name="EditUnitTypeHeader" xml:space="preserve">
+    <value>Editar tipo de unidad</value>
+  </data>
+  <data name="ManagedListOrderingHeader" xml:space="preserve">
+    <value>Administrar el orden de las listas</value>
+  </data>
+  <data name="NewCallPriorityButtonAlt" xml:space="preserve">
+    <value>Agregar una nueva prioridad de llamada</value>
+  </data>
+  <data name="NewCallPriorityHeader" xml:space="preserve">
+    <value>Nueva prioridad de llamada</value>
+  </data>
+  <data name="NewCallTypeButton" xml:space="preserve">
+    <value>Nuevo tipo de llamada</value>
+  </data>
+  <data name="NewCertificationTypeHeader" xml:space="preserve">
+    <value>Nuevo tipo de certificación</value>
+  </data>
+  <data name="NewDocumentTypeHeader" xml:space="preserve">
+    <value>Nueva categoría de documentos</value>
+  </data>
+  <data name="NewDocumentTypesHeader" xml:space="preserve">
+    <value>Nueva categoría de documentos</value>
+  </data>
+  <data name="NewNoteTypesHeader" xml:space="preserve">
+    <value>Nuevo tipo de nota</value>
+  </data>
+  <data name="NewUnitTypeHeader" xml:space="preserve">
+    <value>Nuevo tipo de unidad</value>
+  </data>
+  <data name="NoteTypeNamePlaceholder" xml:space="preserve">
+    <value>Nombre del tipo de nota (categoría)</value>
+  </data>
+  <data name="NoteTypesHeader" xml:space="preserve">
+    <value>Tipos de nota</value>
+  </data>
+  <data name="NoteTypesName" xml:space="preserve">
+    <value>Tipo de nota</value>
+  </data>
+  <data name="PriorityColorLabel" xml:space="preserve">
+    <value>Color de la prioridad</value>
+  </data>
+  <data name="PriorityIsDefaultLabel" xml:space="preserve">
+    <value>Predeterminada</value>
+  </data>
+  <data name="PriorityNameLabel" xml:space="preserve">
+    <value>Nombre de la prioridad</value>
+  </data>
+  <data name="PriorityNameText" xml:space="preserve">
+    <value>Nombre de la prioridad</value>
+  </data>
+  <data name="PriorityPersonnelLabel" xml:space="preserve">
+    <value>Despachar personal</value>
+  </data>
+  <data name="PrioritySortLabel" xml:space="preserve">
+    <value>Orden</value>
+  </data>
+  <data name="PrioritySoundLabel" xml:space="preserve">
+    <value>Sonido de alerta</value>
+  </data>
+  <data name="PriorityUnitsLabel" xml:space="preserve">
+    <value>Despachar unidades</value>
+  </data>
+  <data name="UnitTypeActionsLabel" xml:space="preserve">
+    <value>Acciones (estados de unidad personalizados)</value>
+  </data>
+  <data name="UnitTypeMapIconLabel" xml:space="preserve">
+    <value>Ícono de mapa</value>
+  </data>
+  <data name="UnitTypeNameLabel" xml:space="preserve">
+    <value>Nombre del tipo de unidad</value>
+  </data>
+  <data name="UnitTypeNameText" xml:space="preserve">
+    <value>Nombre del tipo de unidad</value>
+  </data>
+  <data name="UnitTypesHeader" xml:space="preserve">
+    <value>Tipos de unidad</value>
+  </data>
+  <data name="ContactNoteTypesHeader" xml:space="preserve">
+    <value>Tipos de nota de contacto</value>
+  </data>
+  <data name="NewContactNoteTypesHeader" xml:space="preserve">
+    <value>Agregar nuevo tipo de nota de contacto</value>
+  </data>
+  <data name="NewContactNoteTypes" xml:space="preserve">
+    <value>Nuevo tipo de nota de contacto</value>
+  </data>
+  <data name="ContactNoteTypesName" xml:space="preserve">
+    <value>Nombre del tipo de nota de contacto</value>
+  </data>
+  <data name="DeleteContactNoteTypesWarning" xml:space="preserve">
+    <value>¿Está seguro de que desea eliminar el tipo de nota de contacto llamado</value>
+  </data>
+  <data name="ContactNoteTypeNameLabel" xml:space="preserve">
+    <value>Nombre del tipo de nota de contacto</value>
+  </data>
+  <data name="ContactNoteTypeNameText" xml:space="preserve">
+    <value>El nombre del tipo de nota de contacto</value>
+  </data>
+  <data name="ContactNoteTypeColorLabel" xml:space="preserve">
+    <value>Color del tipo de nota de contacto</value>
+  </data>
+  <data name="EditContactNoteTypeHeader" xml:space="preserve">
+    <value>Editar tipo de nota de contacto</value>
+  </data>
+  <data name="NewContactNoteTypeHeader" xml:space="preserve">
+    <value>Nuevo tipo de nota de contacto</value>
+  </data>
 </root>

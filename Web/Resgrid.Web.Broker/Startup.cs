@@ -105,6 +105,9 @@ namespace Resgrid.Web.Broker
 			builder.RegisterModule(new ProtectedDataProviderModule());
 
 			builder.RegisterType<BrokerOperationService>().AsSelf().SingleInstance();
+
+			// Per-host credentials and their lanes (passkey plan section 8.5), parsed once from configuration.
+			builder.Register(_ => new BrokerCredentialRegistry()).AsSelf().SingleInstance();
 		}
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -118,8 +121,8 @@ namespace Resgrid.Web.Broker
 
 			app.UseRouting();
 
-			// Workload gate for every broker API call; /health stays open for k8s probes.
-			app.UseMiddleware<Middleware.WorkloadKeyMiddleware>();
+			// Per-host credential gate for every broker API call; /health stays open for k8s probes.
+			app.UseMiddleware<Middleware.BrokerCredentialMiddleware>();
 
 			app.UseEndpoints(endpoints =>
 			{
@@ -147,9 +150,21 @@ namespace Resgrid.Web.Broker
 				Framework.Logging.LogError(
 					"Protected Data Broker: no grant validation certificate is configured (DataProtectionConfig.GrantValidationCertificatePath). Every attended field-crypto request will be refused until one is provided.");
 
-			if (string.IsNullOrWhiteSpace(DataProtectionConfig.BrokerApiKey))
+			// An invalid credential map is a configuration error, not a degraded mode: refuse to start (plan section 8.5 rule 3).
+			var credentials = AutofacContainer.Resolve<BrokerCredentialRegistry>();
+			if (!credentials.IsValid)
+				throw new InvalidOperationException("Protected Data Broker: DataProtectionConfig.BrokerClientCredentials is invalid. " +
+					string.Join(" ", credentials.Problems));
+
+			if (!credentials.HasCredentials && !BrokerCredentialRegistry.LegacyKeyAccepted)
 				Framework.Logging.LogError(
-					"Protected Data Broker: DataProtectionConfig.BrokerApiKey is empty. Every request will be refused (503) until the workload key is provided.");
+					"Protected Data Broker: no client credentials are configured (DataProtectionConfig.BrokerClientCredentials) and the legacy shared key is not accepted. Every request will be refused (503).");
+			else if (BrokerCredentialRegistry.LegacyKeyAccepted)
+				Framework.Logging.LogInfo(
+					$"Protected Data Broker: the legacy shared key is still accepted with full authority (migration window). Per-host credentials: {string.Join(", ", credentials.CredentialIds)}.");
+			else
+				Framework.Logging.LogInfo(
+					$"Protected Data Broker: per-host credentials only ({string.Join(", ", credentials.CredentialIds)}); the legacy shared key is retired.");
 		}
 	}
 }

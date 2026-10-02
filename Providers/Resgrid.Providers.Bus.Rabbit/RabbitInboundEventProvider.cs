@@ -30,6 +30,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 		public Func<int, string, Task> ProcessIncidentCommandUpdated;
 		public Func<int, string, Task> ProcessChatEvent;
 		public Func<int, string, Task> ProcessChecklistEvent;
+		public Func<string, string, Task> ProcessSessionEvent;
 
 		public async Task Start(string clientName, string queueName)
 		{
@@ -176,6 +177,9 @@ namespace Resgrid.Providers.Bus.Rabbit
 							case EventingTypes.ChecklistUpdated:
 								if (ProcessChecklistEvent != null) await ProcessChecklistEvent.Invoke(eventingMessage.DepartmentId, eventingMessage.ItemId);
 								break;
+							case EventingTypes.SessionEvent:
+								if (ProcessSessionEvent != null) await ProcessSessionEvent.Invoke(eventingMessage.ItemId, eventingMessage.Payload);
+								break;
 							case EventingTypes.ChatEvent:
 								if (ProcessChatEvent != null)
 									await ProcessChatEvent.Invoke(eventingMessage.DepartmentId, eventingMessage.Payload);
@@ -241,6 +245,8 @@ namespace Resgrid.Providers.Bus.Rabbit
 		}
 
 		public void RegisterForChecklistEvents(Func<int, string, Task> checklistEvent) => ProcessChecklistEvent = checklistEvent;
+
+		public void RegisterForSessionEvents(Func<string, string, Task> sessionEvent) => ProcessSessionEvent = sessionEvent;
 
 		public void RegisterForChatEvents(Func<int, string, Task> chatEvent)
 		{

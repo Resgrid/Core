@@ -69,7 +69,7 @@
                                     {
                                         <a asp-action="Worker" asp-route-id="@w.WorkforceWorkerId" asp-route-employment="@e.WorkforceEmploymentId" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i></a>
                                         <a asp-action="Worker" asp-route-id="@w.WorkforceWorkerId" asp-route-assignment="@(e.WorkforceEmploymentId + ":new")" class="btn btn-xs btn-default"><i class="fa fa-plus"></i> @localizer["AddAssignment"]</a>
-                                        <form method="post" asp-action="DeleteEmployment" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@e.WorkforceEmploymentId" /><input type="hidden" name="workerId" value="@w.WorkforceWorkerId" /><button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@localizer["ConfirmDelete"]');"><i class="fa fa-trash"></i></button></form>
+                                        <form method="post" asp-action="DeleteEmployment" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@e.WorkforceEmploymentId" /><input type="hidden" name="workerId" value="@w.WorkforceWorkerId" /><button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@JsEncoder.Encode(localizer["ConfirmDelete"])');"><i class="fa fa-trash"></i></button></form>
                                     }
                                 </span>
                             </div>
@@ -89,7 +89,7 @@
                                                 @if (Model.CanManage)
                                                 {
                                                     <a asp-action="Worker" asp-route-id="@w.WorkforceWorkerId" asp-route-assignment="@(e.WorkforceEmploymentId + ":" + a.WorkforceJobAssignmentId)" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i></a>
-                                                    <form method="post" asp-action="DeleteJobAssignment" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@a.WorkforceJobAssignmentId" /><input type="hidden" name="workerId" value="@w.WorkforceWorkerId" /><button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@localizer["ConfirmDelete"]');"><i class="fa fa-trash"></i></button></form>
+                                                    <form method="post" asp-action="DeleteJobAssignment" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@a.WorkforceJobAssignmentId" /><input type="hidden" name="workerId" value="@w.WorkforceWorkerId" /><button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@JsEncoder.Encode(localizer["ConfirmDelete"])');"><i class="fa fa-trash"></i></button></form>
                                                 }
                                             </td>
                                         </tr>

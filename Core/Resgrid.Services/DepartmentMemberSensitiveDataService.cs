@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Search;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Services
@@ -17,10 +18,13 @@ namespace Resgrid.Services
 		// Lazy: defers the protected graph (broker client) until a save or resolve actually needs it.
 		private readonly Lazy<IProtectedWriteService> _protectedWriteService;
 		private readonly Lazy<IProtectedReadService> _protectedReadService;
+		private readonly Lazy<ISearchProjectionService> _searchProjections;
 
 		public DepartmentMemberSensitiveDataService(IDepartmentMemberSensitiveDataRepository repository,
-			Lazy<IProtectedWriteService> protectedWriteService, Lazy<IProtectedReadService> protectedReadService)
+			Lazy<IProtectedWriteService> protectedWriteService, Lazy<IProtectedReadService> protectedReadService,
+			Lazy<ISearchProjectionService> searchProjections = null)
 		{
+			_searchProjections = searchProjections;
 			_repository = repository;
 			_protectedWriteService = protectedWriteService;
 			_protectedReadService = protectedReadService;
@@ -129,6 +133,9 @@ namespace Resgrid.Services
 					saved = await _repository.SaveOrUpdateAsync(saved, cancellationToken);
 			}
 
+			// The identification number is part of the member's search projection.
+			if (_searchProjections != null && saved != null)
+				await _searchProjections.Value.RefreshAsync(saved.DepartmentId, SearchEntityTypes.Personnel, saved.UserId, cancellationToken);
 			return saved;
 		}
 	}

@@ -118,19 +118,76 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DeleteDepartmentSettingsInfo" xml:space="preserve">
-    <value />
+    <value>Solicite la eliminación de su departamento. Es una operación permanente e irreversible que tarda 25 días en completarse y debe ejecutarse fuera del horario laboral. Durante el período de espera puede cancelar la solicitud si lo desea.</value>
+  </data>
+  <data name="RequestDepartmentDeletion" xml:space="preserve">
+    <value>Solicitar la eliminación del departamento</value>
+  </data>
+  <data name="DeleteDepartmentCurrentlyPendingInfo" xml:space="preserve">
+    <value>Su departamento tiene una solicitud de eliminación pendiente. Si desea que la solicitud siga adelante, no tiene que hacer nada: después de la fecha y hora indicadas abajo (durante nuestro proceso nocturno) se eliminarán su departamento y todos sus datos. Si desea cancelar la solicitud y no eliminar el departamento, pulse el botón «Cancelar la eliminación del departamento» que aparece abajo. Tenga en cuenta que cualquier cambio en los administradores o propietarios impedirá que el proceso se complete; se recomienda usar el sistema solo en modo de lectura para descargar los datos que desee conservar.</value>
+  </data>
+  <data name="MappingSettingsHeader" xml:space="preserve">
+    <value>Configuración de mapas y Big Board</value>
+  </data>
+  <data name="SavedMappingSettings" xml:space="preserve">
+    <value>La configuración de mapas se guardó correctamente.</value>
+  </data>
+  <data name="MappingSettingsPersonnelHeader" xml:space="preserve">
+    <value>Configuración de mapas del personal</value>
+  </data>
+  <data name="MappingSettingsUnitsHeader" xml:space="preserve">
+    <value>Configuración de mapas de las unidades</value>
+  </data>
+  <data name="MappingSettingsPersonnelAllowOverwriteLabel" xml:space="preserve">
+    <value>Permitir que un estado sin datos de ubicación oculte la ubicación anterior</value>
+  </data>
+  <data name="MappingSettingsPersonnelTTLLabel" xml:space="preserve">
+    <value>TTL en minutos para las ubicaciones del personal</value>
+  </data>
+  <data name="MappingSettingsUnitAllowOverwriteLabel" xml:space="preserve">
+    <value>Permitir que un estado de unidad sin datos de ubicación oculte la ubicación anterior</value>
+  </data>
+  <data name="MappingSettingsUnitTTLLabel" xml:space="preserve">
+    <value>TTL en minutos para las ubicaciones de las unidades</value>
+  </data>
+  <data name="PersonnelAllowOverwriteHelp" xml:space="preserve">
+    <value>Si está habilitado y llega un estado de ese usuario (p. ej., En espera) sin geolocalización, se ocultará la ubicación del usuario en el mapa. De lo contrario, se mostrará la última ubicación del usuario aunque sea antigua.</value>
+  </data>
+  <data name="UnitAllowOverwriteHelp" xml:space="preserve">
+    <value>Si está habilitado y llega un estado de esa unidad (p. ej., En el cuartel) sin geolocalización, se ocultará la ubicación de la unidad en el mapa. De lo contrario, se mostrará la última ubicación de la unidad aunque sea antigua.</value>
+  </data>
+  <data name="PersonnelTTLHelp" xml:space="preserve">
+    <value>En minutos, durante cuánto tiempo una ubicación es válida para mostrarse en el mapa. Por ejemplo, un valor de 60 significa que el marcador de una persona se mostrará en los mapas hasta 60 minutos y después dejará de mostrarse. Con 0 se desactiva el TTL y cualquier ubicación se mostrará en el mapa, sin importar su antigüedad.</value>
+  </data>
+  <data name="UnitTTLHelp" xml:space="preserve">
+    <value>En minutos, durante cuánto tiempo una ubicación es válida para mostrarse en el mapa. Por ejemplo, un valor de 60 significa que el marcador de una unidad se mostrará en los mapas hasta 60 minutos y después dejará de mostrarse. Con 0 se desactiva el TTL y cualquier ubicación se mostrará en el mapa, sin importar su antigüedad.</value>
   </data>
   <data name="GroupDispatchSettingsHeader" xml:space="preserve">
-    <value />
+    <value>Configuración de despacho de grupos</value>
   </data>
   <data name="UnitDispatchSettingsHeader" xml:space="preserve">
-    <value />
+    <value>Configuración de despacho de unidades</value>
   </data>
   <data name="UnitDispatchAlsoDispatchToAssignedPersonnelLabel" xml:space="preserve">
-    <value />
+    <value>Despachar también al personal asignado</value>
   </data>
   <data name="UnitDispatchAlsoDispatchToGroupLabel" xml:space="preserve">
-    <value />
+    <value>Despachar también a todo el grupo</value>
+  </data>
+  <data name="ShiftSettingsHeader" xml:space="preserve">
+    <value>Configuración de turnos</value>
+  </data>
+  <data name="SaveShiftSettingsText" xml:space="preserve">
+    <value>La configuración de turnos se guardó correctamente.</value>
+  </data>
+  <data name="ShiftSignupSettingsHeader" xml:space="preserve">
+    <value>Configuración de inscripciones en turnos</value>
+  </data>
+  <data name="ShiftSignupsMultipleGroupsHeader" xml:space="preserve">
+    <value>Permitir inscripciones en varios grupos</value>
+  </data>
+  <data name="PersonnelOnUnitSetUnitStatusLabel" xml:space="preserve">
+    <value>Actualizar el estado del personal de la unidad</value>
   </data>
   <data name="AccountOwner" xml:space="preserve">
     <value>Propietario de la cuenta</value>
@@ -178,7 +235,7 @@
     <value>Eliminar invitación</value>
   </data>
   <data name="DeleteInviteWarning" xml:space="preserve">
-    <value>ADVERTENCIA: Esto eliminará permanentemente esta invitación y el enlace que el usuario tiene en el correo electrónico dará como resultado un error. ¿Estás seguro de que quieres eliminar la invitación?</value>
+    <value>ADVERTENCIA: Esto eliminará permanentemente esta invitación y el enlace que el usuario tiene en el correo electrónico dará como resultado un error. ¿Está seguro de que desea eliminar la invitación?</value>
   </data>
   <data name="DepartmentAddressHeader" xml:space="preserve">
     <value>Dirección del departamento</value>
@@ -196,16 +253,16 @@
     <value>Desactivar automáticamente establecer el estado del personal en el que esté disponible después de una hora</value>
   </data>
   <data name="DispatchImportEmail" xml:space="preserve">
-    <value>Enviar correo electrónico de importación</value>
+    <value>Correo electrónico de importación de despachos</value>
   </data>
   <data name="DispatchImportEmailHelp" xml:space="preserve">
-    <value>Esta es su dirección de correo electrónico de atención, todos los usuarios de su departamento (que tienen notificaciones de llamadas habilitadas) recibirán la alerta de llamadas</value>
+    <value>Esta es su dirección de correo electrónico de llamada general (ALL-CALL): todos los usuarios de su departamento (que tengan habilitadas las notificaciones de llamadas) recibirán la alerta de la llamada</value>
   </data>
   <data name="DispatchSettings" xml:space="preserve">
-    <value>Configuración de envío</value>
+    <value>Configuración de despacho</value>
   </data>
   <data name="DispatchSettingsHeader" xml:space="preserve">
-    <value>Configuración de envío</value>
+    <value>Configuración de despacho</value>
   </data>
   <data name="EmailAddress" xml:space="preserve">
     <value>Dirección de correo electrónico</value>
@@ -223,7 +280,7 @@
     <value>Actualización del departamento de fuerza</value>
   </data>
   <data name="ForceDepartmentUpdateInfo" xml:space="preserve">
-    <value>REgrid almacena en caché algunos datos del departamento para aumentar el rendimiento. Algunos ejemplos de datos almacenados en caché son los niveles de personal, la configuración del departamento, los roles de personal \ Groups \ Names. Si tiene problemas en los que algunos datos del departamento son incorrectos, es posible que desee borrar el caché de los departamentos.</value>
+    <value>Resgrid almacena en caché algunos datos del departamento para mejorar el rendimiento. Algunos ejemplos de datos almacenados en caché son los niveles de dotación, la configuración del departamento y los roles, grupos y nombres del personal. Si algunos datos del departamento no son correctos, puede borrar la caché de su departamento.</value>
   </data>
   <data name="InvitesHeader" xml:space="preserve">
     <value>Invitaciones</value>
@@ -250,19 +307,34 @@
     <value>Pendiente</value>
   </data>
   <data name="PersonCallDispatchStatusLabel" xml:space="preserve">
-    <value>Estado de envío de llamadas de persona</value>
+    <value>Estado de la persona al despachar una llamada</value>
   </data>
   <data name="PersonCallReleaseStatusLabel" xml:space="preserve">
-    <value>Estado de liberación de llamadas de la persona</value>
+    <value>Estado de la persona al liberar una llamada</value>
+  </data>
+  <data name="UnitCallDispatchStatusLabel" xml:space="preserve">
+    <value>Estado de la unidad al despachar una llamada</value>
+  </data>
+  <data name="UnitCallReleaseStatusLabel" xml:space="preserve">
+    <value>Estado de la unidad al liberar una llamada</value>
+  </data>
+  <data name="UnitDefaultStatusesHelp" xml:space="preserve">
+    <value>Estos estados de unidad predeterminados solo usan los tipos de estado de unidad integrados. Use la tabla de anulaciones por tipo de unidad que aparece abajo cuando un tipo de unidad necesite uno de sus propios estados personalizados.</value>
+  </data>
+  <data name="UnitTypeStatusOverridesHeader" xml:space="preserve">
+    <value>Anulaciones de estado por tipo de unidad</value>
+  </data>
+  <data name="UnitTypeStatusOverridesHelp" xml:space="preserve">
+    <value>Aquí solo aparecen los tipos de unidad con estados de unidad personalizados. Deje la opción predeterminada («Default») para usar el estado integrado de todo el departamento indicado arriba.</value>
   </data>
   <data name="PersonnelSorting" xml:space="preserve">
     <value>Clasificación de personal</value>
   </data>
   <data name="PersonnelStaffingResetHeader" xml:space="preserve">
-    <value>Restablecimiento de personal de personal</value>
+    <value>Restablecimiento de la dotación del personal</value>
   </data>
   <data name="PersonnelStaffingResetInfo" xml:space="preserve">
-    <value>Si necesita restablecer todo el nivel de personal de su personal todos los días, puede configurarlo aquí. Un ejemplo sería restablecer el personal para que no esté disponible todos los días, de modo que para los días de flag roja está seguro de que el personal está marcado disponible después del reinicio.</value>
+    <value>Si necesita restablecer cada día el nivel de dotación de todo su personal, puede configurarlo aquí. Por ejemplo, puede restablecer la dotación a «No disponible» cada día para que, en los días de alerta roja, tenga la seguridad de que el personal marcado como disponible lo hizo después del restablecimiento.</value>
   </data>
   <data name="PersonnelStatusResetHeader" xml:space="preserve">
     <value>Restablecer el estado del personal</value>
@@ -292,13 +364,13 @@
     <value>Regenerar URL RSS</value>
   </data>
   <data name="RegenerateWarning" xml:space="preserve">
-    <value>Advertencia: la regeneración de sus URL RSS \ Atom requerirá que todos los lectores \ consumidores actualicen a la nueva URL. ¿Estás seguro de que quieres regenerar?</value>
+    <value>ADVERTENCIA: Si regenera sus URL de RSS/Atom, todos los lectores y consumidores tendrán que actualizarse a la nueva URL. ¿Está seguro de que desea regenerarlas?</value>
   </data>
   <data name="ResendInvite" xml:space="preserve">
     <value>Reenviar Invitación</value>
   </data>
   <data name="ResendInviteWarning" xml:space="preserve">
-    <value>ADVERTENCIA: Esto reenviará esta invitación a la dirección de correo electrónico de invitación y restablecerá la fecha enviada. ¿Estás seguro de que quieres reenviar esta invitación?</value>
+    <value>ADVERTENCIA: Esto reenviará esta invitación a la dirección de correo electrónico invitada y restablecerá la fecha de envío. ¿Está seguro de que desea reenviar esta invitación?</value>
   </data>
   <data name="ResetStaffingDaily" xml:space="preserve">
     <value>Reiniciar personal diariamente?</value>
@@ -325,7 +397,7 @@
     <value>Su departamento no tiene URL de alimentación RSS aprovisionadas. Haga clic en el botón a continuación para provocar sus URL RSS. Solo elaborar URL RSS \ Atom cuando su departamento lo necesite.</value>
   </data>
   <data name="SavedDispatchSettings" xml:space="preserve">
-    <value>Configurado con éxito la configuración de envío.</value>
+    <value>La configuración de despacho se guardó correctamente.</value>
   </data>
   <data name="SendInvites" xml:space="preserve">
     <value>Enviar invitaciones</value>
@@ -334,7 +406,7 @@
     <value>Enviado</value>
   </data>
   <data name="SetStatusforShiftPersonnelOnDispatchLabel" xml:space="preserve">
-    <value>Establecer el estado para el personal de turno en el envío</value>
+    <value>Establecer el estado del personal de turno al despachar</value>
   </data>
   <data name="ShiftSettings" xml:space="preserve">
     <value>Configuración de cambio</value>
@@ -364,34 +436,91 @@
     <value>Use tiempo las 24 horas</value>
   </data>
   <data name="UseShiftForGroupDispatchLabel" xml:space="preserve">
-    <value>Usar turno para el envío grupal</value>
+    <value>Usar el turno para el despacho de grupos</value>
   </data>
   <data name="Zip" xml:space="preserve">
     <value>Código postal/postal</value>
   </data>
   <data name="DeleteDepartmentHeader" xml:space="preserve">
-    <value />
+    <value>Eliminar departamento</value>
   </data>
   <data name="DeleteDepartmentInfo" xml:space="preserve">
-    <value />
+    <value>Aquí puede solicitar la eliminación de su departamento. Solo el propietario de la cuenta puede solicitar la eliminación del departamento. Todos los usuarios y datos asociados a su departamento se eliminarán del sistema Resgrid cuando termine el proceso. ¡Este proceso es irreversible! En cualquier momento antes de que termine el proceso puede cancelar la solicitud y conservar sus datos. Su departamento se eliminará 25 días después de la solicitud.</value>
   </data>
   <data name="RequestDeletion" xml:space="preserve">
-    <value />
+    <value>Solicitar eliminación</value>
   </data>
   <data name="CheckToDelete" xml:space="preserve">
-    <value />
+    <value>Marque la casilla siguiente para confirmar su solicitud de eliminación</value>
   </data>
   <data name="ConfirmDelete" xml:space="preserve">
-    <value />
+    <value>Entiendo y acepto el proceso de eliminación</value>
   </data>
   <data name="CancelDepartmentDeletion" xml:space="preserve">
-    <value />
+    <value>Cancelar la eliminación del departamento</value>
   </data>
   <data name="DeleteDepartmentSettingsHeader" xml:space="preserve">
-    <value />
+    <value>Eliminar su departamento</value>
+  </data>
+  <data name="EnableSupressStaffings" xml:space="preserve">
+    <value>Habilitar la supresión por nivel de dotación</value>
+  </data>
+  <data name="SupressStaffingsHeader" xml:space="preserve">
+    <value>Suprimir (silenciar) estos niveles de dotación</value>
+  </data>
+  <data name="SupressStaffingsInfo" xml:space="preserve">
+    <value>Seleccione abajo los niveles de dotación del personal que no recibirán notificaciones, despachos, alertas, mensajes ni ninguna otra comunicación. Lo más habitual es que sean sus niveles «Fuera de servicio» o «De permiso».</value>
+  </data>
+  <data name="AddContact" xml:space="preserve">
+    <value>Agregar contacto</value>
+  </data>
+  <data name="ContactTypeLabel" xml:space="preserve">
+    <value>Tipo de contacto</value>
+  </data>
+  <data name="DepartmentModuleSettingsInfo" xml:space="preserve">
+    <value>Aquí puede controlar la configuración general de cada módulo del sistema Resgrid. Las nuevas opciones generales de módulos se agregarán aquí. Esta configuración está en sus primeras etapas y es posible que todavía no se aplique en todas las partes del sistema Resgrid. Por ejemplo, si deshabilita el módulo de Capacitación, puede seguir apareciendo en una pantalla dentro de otra función. Trabajaremos en el futuro para que sea coherente.</value>
+  </data>
+  <data name="DisabledCalendarLabel" xml:space="preserve">
+    <value>Calendario</value>
+  </data>
+  <data name="DisabledInventoryLabel" xml:space="preserve">
+    <value>Inventario</value>
+  </data>
+  <data name="DisabledLogsLabel" xml:space="preserve">
+    <value>Bitácoras</value>
+  </data>
+  <data name="DisabledMaintenanceLabel" xml:space="preserve">
+    <value>Mantenimiento</value>
+  </data>
+  <data name="DisabledNotesLabel" xml:space="preserve">
+    <value>Notas</value>
+  </data>
+  <data name="DisabledReportsLabel" xml:space="preserve">
+    <value>Informes</value>
+  </data>
+  <data name="DisabledTrainingLabel" xml:space="preserve">
+    <value>Capacitación</value>
+  </data>
+  <data name="DisableMappingLabel" xml:space="preserve">
+    <value>Cartografía</value>
+  </data>
+  <data name="DisableMessagingLabel" xml:space="preserve">
+    <value>Mensajería</value>
+  </data>
+  <data name="DisableShiftsLabel" xml:space="preserve">
+    <value>Turnos</value>
+  </data>
+  <data name="DispatchSettingsModuleHeader" xml:space="preserve">
+    <value>Módulos del departamento</value>
+  </data>
+  <data name="ReportsDocumentsLabel" xml:space="preserve">
+    <value>Deshabilitar documentos</value>
+  </data>
+  <data name="SavedModuleSettings" xml:space="preserve">
+    <value>Se guardó la configuración de módulos del departamento</value>
   </data>
   <data name="PersonnelOnUnitSetUnitStatusHelp" xml:space="preserve">
-    <value />
+    <value>Cuando una unidad envía un estado y hay usuarios configurados en sus funciones, el estado de esos usuarios se cambiará a «En la unidad» (On Unit).</value>
   </data>
   <data name="CallDispatchSettingsHeader" xml:space="preserve">
     <value>Configuraciones de Llamadas y Despacho</value>
@@ -521,6 +650,21 @@
   </data>
   <data name="CheckInTimerSaveGeneral" xml:space="preserve">
     <value>Guardar Configuraciones Generales</value>
+  </data>
+  <data name="CheckInTimerActiveStatesLabel" xml:space="preserve">
+    <value>Estados activos</value>
+  </data>
+  <data name="CheckInTimerLeaveEmptyForAllStates" xml:space="preserve">
+    <value>Déjelo vacío para usar todos los estados.</value>
+  </data>
+  <data name="CheckInTimerAllStates" xml:space="preserve">
+    <value>Todos</value>
+  </data>
+  <data name="TtsLanguage" xml:space="preserve">
+    <value>Idioma de TTS</value>
+  </data>
+  <data name="TtsLanguageHelp" xml:space="preserve">
+    <value>Seleccione el idioma o dialecto de eSpeak-NG que se usará para los mensajes de voz de este departamento.</value>
   </data>
   <data name="ChatbotSettingsHeader" xml:space="preserve">
     <value>Ajustes del asistente</value>
@@ -829,13 +973,13 @@
     <value>Tarjetas de despacho</value>
   </data>
   <data name="DefaultMapCenterHelp" xml:space="preserve">
-    <value>Todos los mapas de Resgrid y de las aplicaciones se abren aquí. Deja ambos campos vacíos y lo calcularemos a partir de la dirección del departamento al guardar; rellénalos para fijar un punto exacto, que nunca se sobrescribe.</value>
+    <value>Todos los mapas de Resgrid y de las aplicaciones se abren aquí. Deje ambos campos vacíos y lo calcularemos a partir de la dirección del departamento al guardar; rellénelos para fijar un punto exacto, que nunca se sobrescribe.</value>
   </data>
   <data name="NewCallFieldsLabel" xml:space="preserve">
-    <value>Campos del formulario de aviso</value>
+    <value>Campos del formulario de nueva llamada</value>
   </data>
   <data name="NewCallFieldsHelp" xml:space="preserve">
-    <value>Elige qué campos integrados aparecen en el formulario de nuevo aviso y cuáles deben completarse antes de crear el aviso y enviarlo al terreno. Nombre, naturaleza, prioridad y tipo se muestran siempre y son siempre obligatorios.</value>
+    <value>Elija qué campos integrados aparecen en el formulario de nueva llamada y cuáles deben completarse antes de crear la llamada y enviarla al terreno. Nombre, naturaleza, prioridad y tipo se muestran siempre y son siempre obligatorios.</value>
   </data>
   <data name="NewCallFieldsFieldColumn" xml:space="preserve">
     <value>Campo</value>
@@ -874,7 +1018,7 @@
     <value>Datos de contacto del informante</value>
   </data>
   <data name="NewCallField_externalId" xml:space="preserve">
-    <value>ID externo del aviso</value>
+    <value>ID externo de la llamada</value>
   </data>
   <data name="NewCallField_incidentId" xml:space="preserve">
     <value>ID del incidente</value>
@@ -886,7 +1030,7 @@
     <value>Protocolos</value>
   </data>
   <data name="NewCallField_linkedCall" xml:space="preserve">
-    <value>Aviso vinculado</value>
+    <value>Llamada vinculada</value>
   </data>
   <data name="NewCallField_dispatchOn" xml:space="preserve">
     <value>Despacho programado</value>
@@ -898,7 +1042,7 @@
     <value>Temporizadores de estado de unidad</value>
   </data>
   <data name="UnitStatusThresholdsHelp" xml:space="preserve">
-    <value>Resalta una unidad en el Big Board cuando lleva demasiado tiempo en un estado — por ejemplo, despachada más de cuatro minutos sin informar de que ha salido. Deja ambas columnas en 0 para no controlar nada.</value>
+    <value>Resalta una unidad en el Big Board cuando lleva demasiado tiempo en un estado — por ejemplo, despachada más de cuatro minutos sin informar de que ha salido. Deje ambas columnas en 0 para no controlar nada.</value>
   </data>
   <data name="UnitStatusThresholdsStatusColumn" xml:space="preserve">
     <value>Estado</value>
@@ -935,6 +1079,12 @@
   </data>
   <data name="UnitStatusBaseType_8" xml:space="preserve">
     <value>Regresando</value>
+  </data>
+  <data name="RequirePasswordResetViaEmail" xml:space="preserve">
+    <value>Exigir el restablecimiento de contraseñas por correo electrónico</value>
+  </data>
+  <data name="RequirePasswordResetViaEmailHelp" xml:space="preserve">
+    <value>Impide que los administradores del departamento y de grupo elijan o vean la nueva contraseña de un miembro. En su lugar, las acciones de restablecimiento envían al miembro un enlace de un solo uso y de corta duración por correo electrónico. Las sesiones existentes se revocan cuando el miembro cambia la contraseña correctamente.</value>
   </data>
   <data name="DepartmentProfileHeader" xml:space="preserve">
     <value>Perfil del departamento</value>

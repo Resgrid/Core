@@ -79,6 +79,65 @@ namespace Resgrid.Model
 		[ProtoMember(13)]
 		public DateTime? UpdatedOn { get; set; }
 
+		// ── Second-factor methods (passkey plan section 10.1) ────────────────
+		// These choose which verification is acceptable; RequireMfa and Require2FAForAdmins still decide whether MFA
+		// is required. TOTP is always accepted. A department with no policy row behaves as these defaults.
+
+		/// <summary>A passkey bound to the requesting app counts as MFA for sign-in, department entry and step-up here.</summary>
+		[ProtoMember(14)]
+		public bool AllowPasskeysForLoginMfa { get; set; } = true;
+
+		/// <summary>A passkey counts for this department's Protected Data Grants, ADP management and protected workflows.</summary>
+		[ProtoMember(15)]
+		public bool AllowPasskeysForAdp { get; set; } = true;
+
+		/// <summary>Provider step-up (plan section 7.8) for the scope of <see cref="AllowPasskeysForLoginMfa"/>. Needs a tested mapping.</summary>
+		[ProtoMember(16)]
+		public bool AllowFederatedMfaForLoginMfa { get; set; }
+
+		/// <summary>Provider step-up for the scope of <see cref="AllowPasskeysForAdp"/>. Needs a tested mapping.</summary>
+		[ProtoMember(17)]
+		public bool AllowFederatedMfaForAdp { get; set; }
+
+		/// <summary>Responder approval (plan section 7.9) wherever the row's passkey switch is also on; never security changes or account factors.</summary>
+		[ProtoMember(18)]
+		public bool AllowResponderApproval { get; set; } = true;
+
+		/// <summary>Same-session login evidence may serve an ADP grant instead of another verification (plan section 9.1).</summary>
+		[ProtoMember(19)]
+		public bool AcceptRecentLoginMfaForAdp { get; set; } = true;
+
+		/// <summary>Fresh same-operator unlock evidence may serve an ADP reveal on a shared session.</summary>
+		[ProtoMember(20)]
+		public bool AcceptRecentUnlockMfaForAdp { get; set; } = true;
+
+		/// <summary>
+		/// Advanced by the server whenever RequireMfa or a sign-in method switch changes, in the same transaction as the
+		/// change. Never written from this entity: saves leave it alone, and the save service advances it with one guarded
+		/// statement so concurrent changes cannot lose an increment.
+		/// </summary>
+		[ProtoMember(21)]
+		public long MfaPolicyVersion { get; set; }
+
+		// ── Shared vehicle and workstation sessions (passkey plan section 10.5) ─────
+		// The server's effective policy for shared sessions. An installation may ask for stricter behavior, never looser, and
+		// a stricter value here applies to sessions already running.
+
+		/// <summary>Minutes without operator activity before a shared session locks (1-15).</summary>
+		[ProtoMember(22)]
+		public int SharedIdleLockMinutes { get; set; } = SharedSessionRules.DefaultIdleLockMinutes;
+
+		/// <summary>Hours after sign-in when a shared session ends, whatever the activity (1-24).</summary>
+		[ProtoMember(23)]
+		public int SharedShiftHours { get; set; } = SharedSessionRules.DefaultShiftHours;
+
+		/// <summary>
+		/// The apps (<see cref="SharedModeApps"/> flags) whose sessions in this department are always shared. Sessions that do
+		/// not say which app they are count as required too, so leaving the app header out never relaxes this.
+		/// </summary>
+		[ProtoMember(24)]
+		public int SharedModeRequiredApps { get; set; }
+
 		// ── IEntity ──────────────────────────────────────────────────────────
 
 		[NotMapped]
@@ -95,7 +154,7 @@ namespace Resgrid.Model
 
 		[NotMapped]
 		public IEnumerable<string> IgnoredProperties =>
-			new[] { "IdValue", "IdType", "TableName", "IdName", "Department" };
+			new[] { "IdValue", "IdType", "TableName", "IdName", "Department", "MfaPolicyVersion" };
 	}
 }
 

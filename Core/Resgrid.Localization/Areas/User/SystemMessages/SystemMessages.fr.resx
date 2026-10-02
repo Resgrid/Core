@@ -153,4 +153,25 @@ L'équipe Resgrid</value>
   <data name="AdpEgressWarning" xml:space="preserve"><value>Je reconnais que les détails transmis quittent Resgrid et peuvent être conservés par les opérateurs téléphoniques ou les destinataires.</value></data>
   <data name="AdpAllowed" xml:space="preserve"><value>Autoriser le contenu protégé</value></data>
   <data name="AdpSupportNotice" xml:space="preserve"><value>Le personnel Resgrid a demandé l’accès à l’intervention protégée {0} pour le dossier d’assistance {1}. L’accès nécessite un approbateur indépendant et expire sous 15 minutes.</value></data>
+  <data name="SecurityNoticeSubject" xml:space="preserve"><value>Modification de sécurité sur votre compte Resgrid</value></data>
+  <data name="SecurityNoticeGreeting" xml:space="preserve"><value>Bonjour {0},</value></data>
+  <data name="SecurityNoticeGreetingNoName" xml:space="preserve"><value>Bonjour,</value></data>
+  <data name="SecurityNoticeTotpEnabled" xml:space="preserve"><value>Une application d'authentification a été configurée pour la connexion en deux étapes de votre compte.</value></data>
+  <data name="SecurityNoticeTotpReplaced" xml:space="preserve"><value>L'application d'authentification de votre compte a été remplacée et toutes les sessions ouvertes ont été fermées.</value></data>
+  <data name="SecurityNoticeTotpDisabled" xml:space="preserve"><value>L'application d'authentification a été retirée de votre compte : la connexion en deux étapes est désactivée. Toutes les sessions ouvertes ont été fermées.</value></data>
+  <data name="SecurityNoticeRecoveryCodesRegenerated" xml:space="preserve"><value>De nouveaux codes de récupération ont été créés pour votre compte. Les anciens codes ne fonctionnent plus.</value></data>
+  <data name="SecurityNoticeRecoveryCodeUsed" xml:space="preserve"><value>L'un de vos codes de récupération a été utilisé pour vous connecter ou pour lancer la récupération du compte.</value></data>
+  <data name="SecurityNoticePasskeyRegistered" xml:space="preserve"><value>Une nouvelle clé d'accès a été ajoutée à votre compte.</value></data>
+  <data name="SecurityNoticePasskeyRemoved" xml:space="preserve"><value>Une clé d'accès a été retirée de votre compte.</value></data>
+  <data name="SecurityNoticeApprovalTurnedOn" xml:space="preserve"><value>Une clé d'accès dans Resgrid Responder peut désormais approuver les connexions à vos autres applications Resgrid.</value></data>
+  <data name="SecurityNoticeApprovalTurnedOff" xml:space="preserve"><value>Une clé d'accès dans Resgrid Responder ne peut plus approuver les connexions à vos autres applications Resgrid.</value></data>
+  <data name="SecurityNoticeApprovalNotMe" xml:space="preserve"><value>Vous avez indiqué dans Resgrid Responder que vous n'aviez pas demandé à vous connecter. Cette connexion a été arrêtée et les demandes d'approbation sont suspendues pendant 15 minutes. Quelqu'un connaît peut-être votre mot de passe : changez-le dès maintenant.</value></data>
+  <data name="SecurityNoticeApprovalSuspended" xml:space="preserve"><value>Plusieurs demandes d'approbation consécutives ont été refusées ou sont restées sans réponse ; les demandes d'approbation sont donc suspendues pendant 15 minutes.</value></data>
+  <data name="SecurityNoticeFactorRecoveryCompleted" xml:space="preserve"><value>Votre compte a été récupéré avec un code de récupération. Une nouvelle application d'authentification a été configurée, de nouveaux codes de récupération ont été créés et toutes les sessions ouvertes ont été fermées.</value></data>
+  <data name="SecurityNoticeSharedInstallationFactor" xml:space="preserve"><value>Une application d'authentification ou une clé d'accès a été configurée sur une tablette de véhicule ou un poste de travail partagé. Si quelqu'un d'autre a pu voir le code de configuration ou peut utiliser cet appareil, remplacez l'application d'authentification ou supprimez la clé d'accès depuis votre propre appareil.</value></data>
+  <data name="SecurityNoticeActivityReported" xml:space="preserve"><value>Une vérification sur votre compte a été signalée comme ne venant pas de vous. Si elle a ouvert une session sur un autre appareil, cette session a été fermée. Changez votre mot de passe et vérifiez vos méthodes de connexion.</value></data>
+  <data name="SecurityNoticeWhen" xml:space="preserve"><value>Quand : {0} UTC</value></data>
+  <data name="SecurityNoticeWhere" xml:space="preserve"><value>Où : {0}</value></data>
+  <data name="SecurityNoticeNotYou" xml:space="preserve"><value>Si ce n'était pas vous, réinitialisez votre mot de passe dès maintenant sur {0}, puis connectez-vous et vérifiez vos méthodes de connexion. Resgrid ne vous demande jamais de code ni de mot de passe par e-mail.</value></data>
+  <data name="SecurityNoticeFooter" xml:space="preserve"><value>Ceci est un avis de sécurité automatique concernant votre compte Resgrid.</value></data>
 </root>

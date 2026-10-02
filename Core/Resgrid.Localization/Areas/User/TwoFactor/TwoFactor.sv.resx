@@ -155,6 +155,9 @@
   <data name="DisableConfirmationText" xml:space="preserve">
     <value>Enter your current authenticator code to confirm you wish to disable 2FA:</value>
   </data>
+  <data name="DisableBlockedByPasskeys" xml:space="preserve">
+    <value>Du kan inte stänga av 2FA medan du har passkeys. Ta först bort dina passkeys och stäng sedan av 2FA.</value>
+  </data>
   <data name="AuthenticatorCodeLabel" xml:space="preserve">
     <value>Authenticator Code</value>
   </data>
@@ -211,5 +214,422 @@
   </data>
   <data name="InvalidRecoveryCode" xml:space="preserve">
     <value>Invalid recovery code.</value>
+  </data>
+  <data name="ReplaceAuthenticatorButton" xml:space="preserve">
+    <value>Replace Authenticator</value>
+  </data>
+  <data name="ReplaceHeader" xml:space="preserve">
+    <value>Replace Your Authenticator App</value>
+  </data>
+  <data name="ReplaceInstructions" xml:space="preserve">
+    <value>Scan this new key with the authenticator app you want to use, then enter a code from it. When you confirm, your old authenticator stops working, new recovery codes are issued, and every device is signed out.</value>
+  </data>
+  <data name="ReplaceAndSignOutButton" xml:space="preserve">
+    <value>Verify, Replace and Sign Out Everywhere</value>
+  </data>
+  <data name="SignInAgainNotice" xml:space="preserve">
+    <value>Your authenticator was replaced and every session was signed out. Save these recovery codes, then sign in again with your new authenticator.</value>
+  </data>
+  <data name="SignInAgainButton" xml:space="preserve">
+    <value>Sign In Again</value>
+  </data>
+  <data name="PasskeysHeader" xml:space="preserve">
+    <value>Nycklar (passkeys)</value>
+  </data>
+  <data name="PasskeysDescription" xml:space="preserve">
+    <value>En nyckel (passkey) verifierar dig med enhetens skärmlås eller en säkerhetsnyckel. Varje nyckel fungerar bara i appen där den lades till; lägg till en här för webben. När du tar bort en nyckel slutar den genast fungera i Resgrid, även om den kan finnas kvar på enheten eller i din lösenordshanterare.</value>
+  </data>
+  <data name="PasskeysNone" xml:space="preserve">
+    <value>Du har inga nycklar ännu.</value>
+  </data>
+  <data name="PasskeysAddButton" xml:space="preserve">
+    <value>Lägg till en nyckel för webben</value>
+  </data>
+  <data name="PasskeysUnavailable" xml:space="preserve">
+    <value>Det går ännu inte att lägga till nycklar för webben i den här installationen.</value>
+  </data>
+  <data name="PasskeysNeedAuthenticator" xml:space="preserve">
+    <value>Konfigurera en autentiseringsapp och spara återställningskoder innan du lägger till en nyckel.</value>
+  </data>
+  <data name="PasskeyNameLabel" xml:space="preserve">
+    <value>Namn</value>
+  </data>
+  <data name="PasskeyAppLabel" xml:space="preserve">
+    <value>Fungerar i</value>
+  </data>
+  <data name="PasskeyCreatedLabel" xml:space="preserve">
+    <value>Tillagd</value>
+  </data>
+  <data name="PasskeyLastUsedLabel" xml:space="preserve">
+    <value>Senast använd</value>
+  </data>
+  <data name="PasskeyNeverUsed" xml:space="preserve">
+    <value>Inte ännu</value>
+  </data>
+  <data name="PasskeySharedWarning" xml:space="preserve">
+    <value>Tillagd på en delad installation</value>
+  </data>
+  <data name="PasskeyRenameButton" xml:space="preserve">
+    <value>Byt namn</value>
+  </data>
+  <data name="PasskeyRemoveButton" xml:space="preserve">
+    <value>Ta bort</value>
+  </data>
+  <data name="PasskeyRenamePrompt" xml:space="preserve">
+    <value>Nytt namn på nyckeln:</value>
+  </data>
+  <data name="PasskeyRemoveConfirm" xml:space="preserve">
+    <value>Ta bort nyckeln? Den slutar genast fungera i Resgrid, och sessioner som loggades in med den avslutas.</value>
+  </data>
+  <data name="PasskeyAdded" xml:space="preserve">
+    <value>Nyckeln har lagts till.</value>
+  </data>
+  <data name="PasskeyRemoved" xml:space="preserve">
+    <value>Nyckeln har tagits bort.</value>
+  </data>
+  <data name="PasskeyCancelled" xml:space="preserve">
+    <value>Nyckeldialogen stängdes. Inget ändrades.</value>
+  </data>
+  <data name="PasskeyNotSupported" xml:space="preserve">
+    <value>Den här webbläsaren kan inte använda nycklar. Använd din autentiseringsapp i stället.</value>
+  </data>
+  <data name="PasskeyFailed" xml:space="preserve">
+    <value>Nyckeln kunde inte användas. Försök igen eller använd din autentiseringsapp.</value>
+  </data>
+  <data name="PasskeyLimitReached" xml:space="preserve">
+    <value>Du har redan det högsta tillåtna antalet nycklar för webben. Ta bort en först.</value>
+  </data>
+  <data name="VerifyWithPasskeyButton" xml:space="preserve">
+    <value>Använd en nyckel</value>
+  </data>
+  <data name="PasskeyAppWeb" xml:space="preserve">
+    <value>Webben</value>
+  </data>
+  <data name="PasskeyAppResponder" xml:space="preserve">
+    <value>Responder</value>
+  </data>
+  <data name="PasskeyAppUnit" xml:space="preserve">
+    <value>Unit</value>
+  </data>
+  <data name="PasskeyAppDispatch" xml:space="preserve">
+    <value>Dispatch</value>
+  </data>
+  <data name="PasskeyAppCommand" xml:space="preserve">
+    <value>IC</value>
+  </data>
+  <data name="PasskeyRenamed" xml:space="preserve">
+    <value>Nyckeln har bytt namn.</value>
+  </data>
+  <data name="PasskeyAlreadyRegistered" xml:space="preserve">
+    <value>Den här enheten eller säkerhetsnyckeln har redan en nyckel för ditt konto i den här appen.</value>
+  </data>
+  <data name="LoginMfaDescription" xml:space="preserve">
+    <value>Lösenordet godkändes. Slutför inloggningen med en av dina verifieringsmetoder.</value>
+  </data>
+  <data name="ApproveWithResponderButton" xml:space="preserve">
+    <value>Godkänn med Responder</value>
+  </data>
+  <data name="ApprovalNumberLabel" xml:space="preserve">
+    <value>Öppna Responder i telefonen och godkänn begäran. Kontrollera att den visar det här numret:</value>
+  </data>
+  <data name="ApprovalWaiting" xml:space="preserve">
+    <value>Väntar på ditt godkännande i Responder…</value>
+  </data>
+  <data name="ApprovalDenied" xml:space="preserve">
+    <value>Begäran nekades i Responder. Använd en annan metod.</value>
+  </data>
+  <data name="ApprovalExpired" xml:space="preserve">
+    <value>Begäran upphörde innan den godkändes. Börja om.</value>
+  </data>
+  <data name="ApprovalCancelButton" xml:space="preserve">
+    <value>Sluta vänta</value>
+  </data>
+  <data name="ApprovalUnavailable" xml:space="preserve">
+    <value>Godkännande med Responder är inte tillgängligt just nu. Använd en annan metod.</value>
+  </data>
+  <data name="LoginMfaFailed" xml:space="preserve">
+    <value>Det fungerade inte. Försök igen eller använd en annan metod.</value>
+  </data>
+  <data name="LoginMfaExpired" xml:space="preserve">
+    <value>Inloggningen tog för lång tid. Logga in igen.</value>
+  </data>
+  <data name="LoginMfaTooManyAttempts" xml:space="preserve">
+    <value>För många misslyckade försök. Vänta några minuter och logga in igen.</value>
+  </data>
+  <data name="LoginMfaPolicyChanged" xml:space="preserve">
+    <value>Organisationens inloggningspolicy har ändrats. Logga in igen.</value>
+  </data>
+  <data name="LoginMfaSignInChanged" xml:space="preserve">
+    <value>Kontots inloggningsuppgifter har ändrats. Logga in igen.</value>
+  </data>
+  <data name="LoginMfaUnavailable" xml:space="preserve">
+    <value>Inloggningen är tillfälligt otillgänglig. Försök igen om en stund.</value>
+  </data>
+  <data name="LoginMfaInvalid" xml:space="preserve">
+    <value>Den här inloggningen är inte längre giltig. Logga in igen.</value>
+  </data>
+  <data name="LoginMfaMethodUnavailable" xml:space="preserve">
+    <value>Den verifieringsmetoden är inte tillgänglig för den här inloggningen. Använd en annan metod.</value>
+  </data>
+  <data name="LoginMfaMaximumSessions" xml:space="preserve">
+    <value>Organisationens högsta antal aktiva sessioner har nåtts. Avsluta en av dina sessioner eller kontakta din administratör.</value>
+  </data>
+  <data name="LoginMfaRecoveryUsed" xml:space="preserve">
+    <value>Du loggade in med en återställningskod. Om du inte längre har din autentiseringsapp, ersätt den nu.</value>
+  </data>
+  <data name="UseAnotherMethodLink" xml:space="preserve">
+    <value>Använd en annan metod</value>
+  </data>
+  <data name="SsoSignInLink" xml:space="preserve">
+    <value>Logga in med enkel inloggning</value>
+  </data>
+  <data name="SsoLogOnHeader" xml:space="preserve">
+    <value>Enkel inloggning</value>
+  </data>
+  <data name="SsoLogOnDescription" xml:space="preserve">
+    <value>Ange ditt användarnamn eller organisationens kod. Du loggar in med din organisations identitetsleverantör.</value>
+  </data>
+  <data name="SsoUsernameLabel" xml:space="preserve">
+    <value>Användarnamn</value>
+  </data>
+  <data name="SsoOr" xml:space="preserve">
+    <value>eller</value>
+  </data>
+  <data name="SsoDepartmentCodeLabel" xml:space="preserve">
+    <value>Organisationskod</value>
+  </data>
+  <data name="SsoContinueButton" xml:space="preserve">
+    <value>Fortsätt</value>
+  </data>
+  <data name="SsoUsePasswordLink" xml:space="preserve">
+    <value>Logga in med lösenord i stället</value>
+  </data>
+  <data name="SsoLogOnNeedsEntry" xml:space="preserve">
+    <value>Ange ditt användarnamn eller organisationens kod.</value>
+  </data>
+  <data name="SsoUnavailable" xml:space="preserve">
+    <value>Enkel inloggning är inte tillgänglig för den här inloggningen.</value>
+  </data>
+  <data name="SsoRestart" xml:space="preserve">
+    <value>Inloggningen kunde inte kopplas till den här webbläsaren. Börja om.</value>
+  </data>
+  <data name="SsoDeniedByProvider" xml:space="preserve">
+    <value>Identitetsleverantören loggade inte in dig.</value>
+  </data>
+  <data name="SsoFailed" xml:space="preserve">
+    <value>Den enkla inloggningen kunde inte slutföras. Börja om.</value>
+  </data>
+  <data name="SsoExpired" xml:space="preserve">
+    <value>Den enkla inloggningen tog för lång tid. Börja om.</value>
+  </data>
+  <data name="SsoAccessDenied" xml:space="preserve">
+    <value>Kontot kan inte logga in här med enkel inloggning.</value>
+  </data>
+  <data name="SsoAccountMismatch" xml:space="preserve">
+    <value>Identitetsleverantören loggade in ett annat konto. Börja om med kontot du använder här.</value>
+  </data>
+  <data name="SsoNotFresh" xml:space="preserve">
+    <value>Identitetsleverantören bekräftade ingen ny inloggning. Börja om.</value>
+  </data>
+  <data name="SsoProviderMfaNotConfirmed" xml:space="preserve">
+    <value>Identitetsleverantören bekräftade inte multifaktorautentisering. Använd en annan metod.</value>
+  </data>
+  <data name="SsoMfaEnrollmentRequired" xml:space="preserve">
+    <value>Organisationen kräver multifaktorautentisering och kontot har ingen ännu. Fråga din administratör hur du konfigurerar den.</value>
+  </data>
+  <data name="VerifyWithProviderButton" xml:space="preserve">
+    <value>Verifiera med din identitetsleverantör</value>
+  </data>
+  <data name="ReauthenticateWithSsoButton" xml:space="preserve">
+    <value>Bekräfta med enkel inloggning</value>
+  </data>
+  <data name="FederatedMfaNeedsResgridMfaShort" xml:space="preserve">
+    <value>För att testa mappningen krävs en nylig verifiering med din autentiseringsapp eller en nyckel.</value>
+  </data>
+  <data name="FederatedMfaTestFailed" xml:space="preserve">
+    <value>Testinloggningen innehöll inget värde som mappningen räknar som MFA. Kontrollera mappningen och identitetsleverantören och testa igen.</value>
+  </data>
+  <data name="FederatedMfaTestChanged" xml:space="preserve">
+    <value>Mappningen ändrades under testet. Testa den igen.</value>
+  </data>
+  <data name="FederatedMfaTestPassed" xml:space="preserve">
+    <value>Mappningen klarade testet och gäller nu.</value>
+  </data>
+  <data name="LoginMfaSetupHeader" xml:space="preserve">
+    <value>Konfigurera din autentiseringsapp</value>
+  </data>
+  <data name="LoginMfaSetupDescription" xml:space="preserve">
+    <value>Organisationen kräver en andra faktor och kontot har ingen ännu. Konfigurera en autentiseringsapp för att slutföra inloggningen.</value>
+  </data>
+  <data name="SetupCompleteButton" xml:space="preserve">
+    <value>Verifiera och logga in</value>
+  </data>
+  <data name="SetupExpired" xml:space="preserve">
+    <value>Konfigurationskoden har gått ut. En ny visas; skanna den igen.</value>
+  </data>
+  <data name="BackToSignInLink" xml:space="preserve">
+    <value>Tillbaka till inloggningen</value>
+  </data>
+  <data name="LostFactorLink" xml:space="preserve">
+    <value>Jag har förlorat min autentiserare</value>
+  </data>
+  <data name="LostFactorHeader" xml:space="preserve">
+    <value>Har du förlorat din autentiserare?</value>
+  </data>
+  <data name="LostFactorWithCodeDescription" xml:space="preserve">
+    <value>Om du har sparat dina återställningskoder anger du en för att konfigurera en ny autentiseringsapp och ta bort nycklar du har förlorat. Alla sessioner loggas ut och sedan loggar du in igen.</value>
+  </data>
+  <data name="StartRecoveryButton" xml:space="preserve">
+    <value>Ersätt min autentiserare</value>
+  </data>
+  <data name="LostFactorSignInFirst" xml:space="preserve">
+    <value>För att använda en återställningskod loggar du först in med lösenord eller enkel inloggning och väljer sedan ”Jag har förlorat min autentiserare”.</value>
+  </data>
+  <data name="LostFactorNoCodeHeader" xml:space="preserve">
+    <value>Ingen återställningskod?</value>
+  </data>
+  <data name="LostFactorNoCodeDescription" xml:space="preserve">
+    <value>Resgrid kan inte återställa en förlorad autentiserare automatiskt. Be organisationens administratörer kontakta Resgrids support, som bekräftar vem du är med organisationen innan något ändras. Följ organisationens egna rutiner tills dess.</value>
+  </data>
+  <data name="RecoveryHeader" xml:space="preserve">
+    <value>Ersätt din autentiserare</value>
+  </data>
+  <data name="RecoveryDescription" xml:space="preserve">
+    <value>Konfigurera din nya autentiseringsapp och ange koden den visar. Välj de nycklar du har förlorat; de tas bort.</value>
+  </data>
+  <data name="RecoveryPasskeysLabel" xml:space="preserve">
+    <value>Nycklar att ta bort som förlorade</value>
+  </data>
+  <data name="RecoveryCompleteButton" xml:space="preserve">
+    <value>Ersätt och logga ut överallt</value>
+  </data>
+  <data name="RecoveryCancelButton" xml:space="preserve">
+    <value>Avbryt återställningen</value>
+  </data>
+  <data name="RecoveryCompleteHeader" xml:space="preserve">
+    <value>Din autentiserare har ersatts</value>
+  </data>
+  <data name="RecoveryCompleteDescription" xml:space="preserve">
+    <value>Alla sessioner har loggats ut. Spara dina nya återställningskoder och logga sedan in igen med din nya autentiserare.</value>
+  </data>
+  <data name="RecoverySignInAgainButton" xml:space="preserve">
+    <value>Logga in</value>
+  </data>
+  <data name="RecoveryEnded" xml:space="preserve">
+    <value>Den här återställningen är inte längre giltig. Logga in och börja om.</value>
+  </data>
+  <data name="RecoveryUnavailable" xml:space="preserve">
+    <value>Återställningen är tillfälligt otillgänglig. Logga in och försök igen med en annan återställningskod.</value>
+  </data>
+  <data name="RecoveryPasskeyNotFound" xml:space="preserve">
+    <value>En av nycklarna som ska tas bort är inte din eller har redan tagits bort.</value>
+  </data>
+  <data name="SsoReturnContinuing" xml:space="preserve">
+    <value>Återvänder från din organisations inloggning…</value>
+  </data>
+  <data name="SsoReturnContinue" xml:space="preserve">
+    <value>Fortsätt</value>
+  </data>
+  <data name="SharedWorkstationTitle" xml:space="preserve">
+    <value>Delad arbetsstation</value>
+  </data>
+  <data name="SharedWorkstationDescription" xml:space="preserve">
+    <value>På en delad arbetsstation låses varje inloggning i den här webbläsaren vid inaktivitet, avslutas vid skiftgränsen och kommer aldrig ihåg webbläsaren. Varje operatör loggar in med sitt eget konto.</value>
+  </data>
+  <data name="SharedWorkstationUseLabel" xml:space="preserve">
+    <value>Använd den här webbläsaren som delad arbetsstation</value>
+  </data>
+  <data name="SharedWorkstationLabelLabel" xml:space="preserve">
+    <value>Arbetsstationens namn (valfritt)</value>
+  </data>
+  <data name="SharedWorkstationLabelHelp" xml:space="preserve">
+    <value>Ett namn för supporten, till exempel "Larmplats 2". Det identifierar stationen, inte en person.</value>
+  </data>
+  <data name="SharedWorkstationSaveButton" xml:space="preserve">
+    <value>Spara</value>
+  </data>
+  <data name="SharedWorkstationSaved" xml:space="preserve">
+    <value>Den här webbläsaren är nu en delad arbetsstation. Det gäller från nästa inloggning.</value>
+  </data>
+  <data name="SharedWorkstationRemoved" xml:space="preserve">
+    <value>Den här webbläsaren är inte längre en delad arbetsstation. Det gäller från nästa inloggning.</value>
+  </data>
+  <data name="SharedWorkstationUnavailable" xml:space="preserve">
+    <value>Läget för delad arbetsstation är inte tillgängligt i den här Resgrid-installationen.</value>
+  </data>
+  <data name="SharedWorkstationLink" xml:space="preserve">
+    <value>Inställningar för delad arbetsstation</value>
+  </data>
+  <data name="SharedWorkstationNotice" xml:space="preserve">
+    <value>Delad arbetsstation: inloggningar här låses vid inaktivitet och kommer aldrig ihåg den här webbläsaren.</value>
+  </data>
+  <data name="SharedWorkstationNoticeNamed" xml:space="preserve">
+    <value>Delad arbetsstation ({0}): inloggningar här låses vid inaktivitet och kommer aldrig ihåg den här webbläsaren.</value>
+  </data>
+  <data name="SharedLockedHeader" xml:space="preserve">
+    <value>Arbetsstationen är låst</value>
+  </data>
+  <data name="SharedLockedIdle" xml:space="preserve">
+    <value>Den här arbetsstationen låstes på grund av inaktivitet.</value>
+  </data>
+  <data name="SharedLockedExplicit" xml:space="preserve">
+    <value>Den här arbetsstationen är låst.</value>
+  </data>
+  <data name="SharedLockedOperator" xml:space="preserve">
+    <value>Inloggad som {0}</value>
+  </data>
+  <data name="SharedLockedInstruction" xml:space="preserve">
+    <value>Endast {0} kan låsa upp den. Alla andra: byt operatör eller avsluta skiftet.</value>
+  </data>
+  <data name="SharedUnlockButton" xml:space="preserve">
+    <value>Lås upp</value>
+  </data>
+  <data name="SharedSwitchOperatorButton" xml:space="preserve">
+    <value>Byt operatör</value>
+  </data>
+  <data name="SharedEndShiftButton" xml:space="preserve">
+    <value>Avsluta skift</value>
+  </data>
+  <data name="SharedLockButton" xml:space="preserve">
+    <value>Lås</value>
+  </data>
+  <data name="SharedStaySignedInButton" xml:space="preserve">
+    <value>Förbli inloggad</value>
+  </data>
+  <data name="SharedBarLocksIn" xml:space="preserve">
+    <value>Låses om {0}</value>
+  </data>
+  <data name="SharedIdleWarning" xml:space="preserve">
+    <value>Den här arbetsstationen låses om {0} sekunder på grund av inaktivitet.</value>
+  </data>
+  <data name="SharedShiftEndsSoon" xml:space="preserve">
+    <value>Skiftet slutar om {0} minuter.</value>
+  </data>
+  <data name="SharedUnlockNeedsAuthenticator" xml:space="preserve">
+    <value>Snabb upplåsning kräver en autentiseringsapp eller en annan verifieringsmetod. Avsluta skiftet och logga in igen.</value>
+  </data>
+  <data name="SharedUnlockNeedsSso" xml:space="preserve">
+    <value>Din avdelning kräver enkel inloggning. Avsluta skiftet och logga in med SSO.</value>
+  </data>
+  <data name="SharedUnlockLockChanged" xml:space="preserve">
+    <value>Arbetsstationen låstes igen. Lås upp den igen.</value>
+  </data>
+  <data name="SharedUnlockSessionEnded" xml:space="preserve">
+    <value>Den här sessionen har avslutats. Avsluta skiftet och logga in igen.</value>
+  </data>
+  <data name="SharedUnlockTooManyAttempts" xml:space="preserve">
+    <value>För många upplåsningsförsök. Vänta några minuter eller avsluta skiftet och logga in igen.</value>
+  </data>
+  <data name="SharedSessionUpdateFailed" xml:space="preserve">
+    <value>Sessionen kunde inte uppdateras. Försök igen.</value>
+  </data>
+  <data name="SharedShiftEnded" xml:space="preserve">
+    <value>Skiftet på den här delade arbetsstationen har slutat. Logga in igen.</value>
+  </data>
+  <data name="SharedShiftEndedByOperator" xml:space="preserve">
+    <value>Skiftet avslutat. Den här arbetsstationen är redo för nästa inloggning.</value>
+  </data>
+  <data name="SharedSwitchOperatorDone" xml:space="preserve">
+    <value>Utloggad. Nästa operatör kan logga in nu.</value>
   </data>
 </root>

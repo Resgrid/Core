@@ -26,6 +26,18 @@ namespace Resgrid.Model.Security
 		public string City { get; set; }
 		public string UserAgent { get; set; }
 		public bool IsLegacyAdopted { get; set; }
+
+		/// <summary>The second factor the sign-in verified (<see cref="MfaEvidenceMethod"/>), when it verified one.</summary>
+		public MfaEvidenceMethod? LoginMfaMethod { get; set; }
+
+		/// <summary>The factor instance the sign-in used, such as <c>passkey:{id}</c>.</summary>
+		public string LoginMfaFactorReference { get; set; }
+
+		/// <summary>
+		/// The installation asked for a shared session (<c>X-Resgrid-Shared-Installation</c>). Honored only while
+		/// <c>PasskeyConfig.SharedDeviceModeEnabled</c> is on; a department that requires shared mode needs no request.
+		/// </summary>
+		public bool SharedModeRequested { get; set; }
 	}
 
 	public class SessionPrincipalContext
@@ -77,11 +89,20 @@ namespace Resgrid.Model.Security
 		public string FailureCode { get; set; }
 		public UserSession Session { get; set; }
 
+		/// <summary>
+		/// A shared session that is otherwise valid but locked (plan section 12.5.3). It is still invalid for every caller;
+		/// only the locked-session endpoints (status, unlock, lock, end shift) accept it, and they read <see cref="Session"/>.
+		/// </summary>
+		public bool IsLocked { get; set; }
+
 		public static SessionValidationResult Valid(UserSession session = null, bool canAdoptLegacy = false) =>
 			new SessionValidationResult { IsValid = true, CanAdoptLegacy = canAdoptLegacy, Session = session };
 
 		public static SessionValidationResult Invalid(string code) =>
 			new SessionValidationResult { IsValid = false, FailureCode = code };
+
+		public static SessionValidationResult Locked(UserSession session) =>
+			new SessionValidationResult { IsValid = false, IsLocked = true, FailureCode = SharedSessionRules.LockedFailureCode, Session = session };
 	}
 
 	public class UserSessionSummary
@@ -106,6 +127,11 @@ namespace Resgrid.Model.Security
 		public string UserAgent { get; set; }
 		public bool IsLegacyAdopted { get; set; }
 		public bool IsCurrent { get; set; }
+
+		/// <summary>A shared vehicle or workstation session (plan section 12.5.5 support view).</summary>
+		public bool SharedMode { get; set; }
+
+		public bool IsLocked { get; set; }
 	}
 
 	public class RevocationResult

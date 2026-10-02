@@ -1005,14 +1005,14 @@
         var rgVerifySendUrl = resgrid.absoluteBaseUrl + '/User/Home/SendContactVerificationCode';
         var rgVerifyConfirmUrl = resgrid.absoluteBaseUrl + '/User/Home/ConfirmContactVerificationCode';
         var rgVerifyLabels = {
-            sent: '@Html.Raw(localizer["VerificationCodeSent"].Value)',
-            voiceCallSent: '@Html.Raw(localizer["VerificationCodeVoiceCallSent"].Value)',
-            success: '@Html.Raw(localizer["VerificationSuccessful"].Value)',
-            failed: '@Html.Raw(localizer["VerificationFailed"].Value)',
-            contactNotConfigured: '@Html.Raw(localizer["VerificationContactNotConfigured"].Value)',
-            invalidContact: '@Html.Raw(localizer["VerificationInvalidContact"].Value)',
-            deliveryFailed: '@Html.Raw(localizer["VerificationDeliveryFailed"].Value)',
-            rateLimited: '@Html.Raw(localizer["VerificationRateLimited"].Value)'
+            sent: '@JsEncoder.Encode(localizer["VerificationCodeSent"].Value)',
+            voiceCallSent: '@JsEncoder.Encode(localizer["VerificationCodeVoiceCallSent"].Value)',
+            success: '@JsEncoder.Encode(localizer["VerificationSuccessful"].Value)',
+            failed: '@JsEncoder.Encode(localizer["VerificationFailed"].Value)',
+            contactNotConfigured: '@JsEncoder.Encode(localizer["VerificationContactNotConfigured"].Value)',
+            invalidContact: '@JsEncoder.Encode(localizer["VerificationInvalidContact"].Value)',
+            deliveryFailed: '@JsEncoder.Encode(localizer["VerificationDeliveryFailed"].Value)',
+            rateLimited: '@JsEncoder.Encode(localizer["VerificationRateLimited"].Value)'
         };
     </script>
     <script src="~/clib/croppic/js/croppic.js" type="text/javascript"></script>

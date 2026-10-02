@@ -44,6 +44,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IEncryptionService _encryptionService;
 		private readonly IRecordsCutoverService _recordsCutoverService;
 
+		private readonly IPasskeyFeatureGates _passkeyGates;
+		private readonly IMfaEvidenceService _mfaEvidence;
+		private readonly IMfaPolicyService _mfaPolicy;
+
 		public SecurityController(IDepartmentsService departmentsService, IAuditService auditService,
 			IPermissionsService permissionsService, IEventAggregator eventAggregator,
 			IDepartmentSettingsService departmentSettingsService, ISystemAuditsService systemAuditsService,
@@ -51,8 +55,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> secLocalizer,
 			IDepartmentSsoService ssoService,
 			IEncryptionService encryptionService,
-			IRecordsCutoverService recordsCutoverService)
+			IRecordsCutoverService recordsCutoverService,
+			IPasskeyFeatureGates passkeyGates,
+			IMfaEvidenceService mfaEvidence,
+			IMfaPolicyService mfaPolicy)
 		{
+			_mfaEvidence = mfaEvidence;
+			_mfaPolicy = mfaPolicy;
+			_passkeyGates = passkeyGates;
 			_departmentsService = departmentsService;
 			_auditService = auditService;
 			_permissionsService = permissionsService;
@@ -87,21 +97,24 @@ namespace Resgrid.Web.Areas.User.Controllers
 			else
 				model.CreateCall = 3;
 
+			// Option text is localized: the permission notes refer to these options by name in each language.
+			var optionLabels = PermissionOptionLabels.From(_secLocalizer);
+
 			var userAddPermissions = new List<dynamic>();
-			userAddPermissions.Add(new { Id = 0, Name = "Department Admins" });
-			userAddPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
+			userAddPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
+			userAddPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
 			model.AddUserPermissions = new SelectList(userAddPermissions, "Id", "Name");
 
 			var userDeletePermissions = new List<dynamic>();
-			userDeletePermissions.Add(new { Id = 0, Name = "Department Admins" });
-			userDeletePermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
+			userDeletePermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
+			userDeletePermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
 			model.RemoveUserPermissions = new SelectList(userDeletePermissions, "Id", "Name");
 
 			var createCallPermissions = new List<dynamic>();
-			createCallPermissions.Add(new { Id = 3, Name = "Everyone" });
-			createCallPermissions.Add(new { Id = 0, Name = "Department Admins" });
-			createCallPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
-			createCallPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			createCallPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
+			createCallPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
+			createCallPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
+			createCallPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
 			model.CreateCallPermissions = new SelectList(createCallPermissions, "Id", "Name");
 
 
@@ -109,9 +122,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.CreateTraining = permissions.First(x => x.PermissionType == (int)PermissionTypes.CreateTraining).Action;
 
 			var createTrainingPermissions = new List<dynamic>();
-			createTrainingPermissions.Add(new { Id = 0, Name = "Department Admins" });
-			createTrainingPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
-			createTrainingPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			createTrainingPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
+			createTrainingPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
+			createTrainingPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
 			model.CreateTrainingPermissions = new SelectList(createTrainingPermissions, "Id", "Name");
 
 
@@ -121,10 +134,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.CreateDocument = 3;
 
 			var createDocumentPermissions = new List<dynamic>();
-			createDocumentPermissions.Add(new { Id = 3, Name = "Everyone" });
-			createDocumentPermissions.Add(new { Id = 0, Name = "Department Admins" });
-			createDocumentPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
-			createDocumentPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			createDocumentPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
+			createDocumentPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
+			createDocumentPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
+			createDocumentPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
 			model.CreateDocumentPermissions = new SelectList(createDocumentPermissions, "Id", "Name");
 
 
@@ -134,10 +147,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.CreateCalendarEntry = 3;
 
 			var createCalendarEntryPermissions = new List<dynamic>();
-			createCalendarEntryPermissions.Add(new { Id = 3, Name = "Everyone" });
-			createCalendarEntryPermissions.Add(new { Id = 0, Name = "Department Admins" });
-			createCalendarEntryPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
-			createCalendarEntryPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			createCalendarEntryPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
+			createCalendarEntryPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
+			createCalendarEntryPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
+			createCalendarEntryPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
 			model.CreateCalendarEntryPermissions = new SelectList(createCalendarEntryPermissions, "Id", "Name");
 
 
@@ -147,10 +160,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.CreateNote = 3;
 
 			var createNotePermissions = new List<dynamic>();
-			createNotePermissions.Add(new { Id = 3, Name = "Everyone" });
-			createNotePermissions.Add(new { Id = 0, Name = "Department Admins" });
-			createNotePermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
-			createNotePermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			createNotePermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
+			createNotePermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
+			createNotePermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
+			createNotePermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
 			model.CreateNotePermissions = new SelectList(createNotePermissions, "Id", "Name");
 
 
@@ -160,10 +173,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.CreateLog = 3;
 
 			var createLogPermissions = new List<dynamic>();
-			createLogPermissions.Add(new { Id = 3, Name = "Everyone" });
-			createLogPermissions.Add(new { Id = 0, Name = "Department Admins" });
-			createLogPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
-			createLogPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			createLogPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
+			createLogPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
+			createLogPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
+			createLogPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
 			model.CreateLogPermissions = new SelectList(createLogPermissions, "Id", "Name");
 
 
@@ -173,10 +186,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.DeleteLog = 3;
 
 			var deleteLogPermissions = new List<dynamic>();
-			deleteLogPermissions.Add(new { Id = 3, Name = "Everyone" });
-			deleteLogPermissions.Add(new { Id = 0, Name = "Department Admins" });
-			deleteLogPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
-			deleteLogPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			deleteLogPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
+			deleteLogPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
+			deleteLogPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
+			deleteLogPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
 			model.DeleteLogPermissions = new SelectList(deleteLogPermissions, "Id", "Name");
 
 
@@ -184,9 +197,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.CreateShift = permissions.First(x => x.PermissionType == (int)PermissionTypes.CreateShift).Action;
 
 			var createShiftPermissions = new List<dynamic>();
-			createShiftPermissions.Add(new { Id = 0, Name = "Department Admins" });
-			createShiftPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
-			createShiftPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			createShiftPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
+			createShiftPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
+			createShiftPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
 			model.CreateShiftPermissions = new SelectList(createShiftPermissions, "Id", "Name");
 
 			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.ViewPersonalInfo))
@@ -195,10 +208,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.ViewPersonalInfo = 3;
 
 			var viewPersonalInfoPermissions = new List<dynamic>();
-			viewPersonalInfoPermissions.Add(new { Id = 3, Name = "Everyone" });
-			viewPersonalInfoPermissions.Add(new { Id = 0, Name = "Department Admins" });
-			viewPersonalInfoPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
-			viewPersonalInfoPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			viewPersonalInfoPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
+			viewPersonalInfoPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
+			viewPersonalInfoPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
+			viewPersonalInfoPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
 			model.ViewPersonalInfoPermissions = new SelectList(viewPersonalInfoPermissions, "Id", "Name");
 
 			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.AdjustInventory))
@@ -207,10 +220,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.AdjustInventory = 3;
 
 			var adjustInventoryPermissions = new List<dynamic>();
-			adjustInventoryPermissions.Add(new { Id = 3, Name = "Everyone" });
-			adjustInventoryPermissions.Add(new { Id = 0, Name = "Department Admins" });
-			adjustInventoryPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
-			adjustInventoryPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			adjustInventoryPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
+			adjustInventoryPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
+			adjustInventoryPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
+			adjustInventoryPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
 			model.AdjustInventoryPermissions = new SelectList(adjustInventoryPermissions, "Id", "Name");
 
 			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.CanSeePersonnelLocations))
@@ -222,10 +235,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.ViewPersonnelLocation = 3;
 
 			var viewPersonnelLocationPermissions = new List<dynamic>();
-			viewPersonnelLocationPermissions.Add(new { Id = 3, Name = "Everyone" });
-			viewPersonnelLocationPermissions.Add(new { Id = 0, Name = "Department Admins" });
-			viewPersonnelLocationPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
-			viewPersonnelLocationPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			viewPersonnelLocationPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
+			viewPersonnelLocationPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
+			viewPersonnelLocationPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
+			viewPersonnelLocationPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
 			model.ViewPersonnelLocationPermissions = new SelectList(viewPersonnelLocationPermissions, "Id", "Name");
 
 			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.CanSeeUnitLocations))
@@ -237,10 +250,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.ViewUnitLocation = 3;
 
 			var viewUnitLocationPermissions = new List<dynamic>();
-			viewUnitLocationPermissions.Add(new { Id = 3, Name = "Everyone" });
-			viewUnitLocationPermissions.Add(new { Id = 0, Name = "Department Admins" });
-			viewUnitLocationPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
-			viewUnitLocationPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			viewUnitLocationPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
+			viewUnitLocationPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
+			viewUnitLocationPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
+			viewUnitLocationPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
 			model.ViewUnitLocationPermissions = new SelectList(viewUnitLocationPermissions, "Id", "Name");
 
 
@@ -250,10 +263,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.CreateMessage = 3;
 
 			var createMessagePermissions = new List<dynamic>();
-			createMessagePermissions.Add(new { Id = 3, Name = "Everyone" });
-			createMessagePermissions.Add(new { Id = 0, Name = "Department Admins" });
-			createMessagePermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
-			createMessagePermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			createMessagePermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
+			createMessagePermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
+			createMessagePermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
+			createMessagePermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
 			model.CreateMessagePermissions = new SelectList(createMessagePermissions, "Id", "Name");
 
 
@@ -267,10 +280,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.ViewGroupsUsers = 3;
 
 			var viewGroupUsersPermissions = new List<dynamic>();
-			viewGroupUsersPermissions.Add(new { Id = 3, Name = "Everyone" });
-			viewGroupUsersPermissions.Add(new { Id = 0, Name = "Department Admins" });
-			viewGroupUsersPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
-			viewGroupUsersPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			viewGroupUsersPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
+			viewGroupUsersPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
+			viewGroupUsersPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
+			viewGroupUsersPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
 			model.ViewGroupUsersPermissions = new SelectList(viewGroupUsersPermissions, "Id", "Name");
 
 
@@ -280,10 +293,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.DeleteCall = 3;
 
 			var deleteCallPermissions = new List<dynamic>();
-			deleteCallPermissions.Add(new { Id = 3, Name = "Everyone" });
-			deleteCallPermissions.Add(new { Id = 0, Name = "Department Admins" });
-			deleteCallPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
-			deleteCallPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			deleteCallPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
+			deleteCallPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
+			deleteCallPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
+			deleteCallPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
 			model.DeleteCallPermissions = new SelectList(deleteCallPermissions, "Id", "Name");
 
 
@@ -293,10 +306,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.CloseCall = 3;
 
 			var closeCallPermissions = new List<dynamic>();
-			closeCallPermissions.Add(new { Id = 3, Name = "Everyone" });
-			closeCallPermissions.Add(new { Id = 0, Name = "Department Admins" });
-			closeCallPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
-			closeCallPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			closeCallPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
+			closeCallPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
+			closeCallPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
+			closeCallPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
 			model.CloseCallPermissions = new SelectList(closeCallPermissions, "Id", "Name");
 
 			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.AddCallData))
@@ -305,10 +318,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.AddCallData = 3;
 
 			var addCallDataPermissions = new List<dynamic>();
-			addCallDataPermissions.Add(new { Id = 3, Name = "Everyone" });
-			addCallDataPermissions.Add(new { Id = 0, Name = "Department Admins" });
-			addCallDataPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
-			addCallDataPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			addCallDataPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
+			addCallDataPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
+			addCallDataPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
+			addCallDataPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
 			model.AddCallDataPermissions = new SelectList(addCallDataPermissions, "Id", "Name");
 
 			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.ViewGroupUnits))
@@ -320,17 +333,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.ViewGroupsUnits = 3;
 
 			var viewGroupUnitsPermissions = new List<dynamic>();
-			viewGroupUnitsPermissions.Add(new { Id = 3, Name = "Everyone" });
-			viewGroupUnitsPermissions.Add(new { Id = 0, Name = "Department Admins" });
-			viewGroupUnitsPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
-			viewGroupUnitsPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			viewGroupUnitsPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
+			viewGroupUnitsPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
+			viewGroupUnitsPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
+			viewGroupUnitsPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
 			model.ViewGrouUnitsPermissions = new SelectList(viewGroupUnitsPermissions, "Id", "Name");
 
 			var viewContactsPermissions = new List<dynamic>();
-			viewContactsPermissions.Add(new { Id = 3, Name = "Everyone" });
-			viewContactsPermissions.Add(new { Id = 0, Name = "Department Admins" });
-			viewContactsPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
-			viewContactsPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			viewContactsPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
+			viewContactsPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
+			viewContactsPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
+			viewContactsPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
 			model.ViewContactsPermissions = new SelectList(viewContactsPermissions, "Id", "Name");
 
 			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.ContactView))
@@ -339,10 +352,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.ViewContacts = 3;
 
 			var editContactsPermissions = new List<dynamic>();
-			editContactsPermissions.Add(new { Id = 3, Name = "Everyone" });
-			editContactsPermissions.Add(new { Id = 0, Name = "Department Admins" });
-			editContactsPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
-			editContactsPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			editContactsPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
+			editContactsPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
+			editContactsPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
+			editContactsPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
 			model.EditContactsPermissions = new SelectList(editContactsPermissions, "Id", "Name");
 
 			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.ContactEdit))
@@ -351,10 +364,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.EditContacts = 3;
 
 			var deleteContactsPermissions = new List<dynamic>();
-			deleteContactsPermissions.Add(new { Id = 3, Name = "Everyone" });
-			deleteContactsPermissions.Add(new { Id = 0, Name = "Department Admins" });
-			deleteContactsPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
-			deleteContactsPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			deleteContactsPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
+			deleteContactsPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
+			deleteContactsPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
+			deleteContactsPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
 			model.DeleteContactsPermissions = new SelectList(deleteContactsPermissions, "Id", "Name");
 
 			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.ContactDelete))
@@ -366,28 +379,28 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.CreateWorkflow = permissions.First(x => x.PermissionType == (int)PermissionTypes.CreateWorkflow).Action;
 
 			var createWorkflowPermissions = new List<dynamic>();
-			createWorkflowPermissions.Add(new { Id = 0, Name = "Department Admins" });
-			createWorkflowPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
-			createWorkflowPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			createWorkflowPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
+			createWorkflowPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
+			createWorkflowPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
 			model.CreateWorkflowPermissions = new SelectList(createWorkflowPermissions, "Id", "Name");
 
 			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.ManageWorkflowCredentials))
 				model.ManageWorkflowCredentials = permissions.First(x => x.PermissionType == (int)PermissionTypes.ManageWorkflowCredentials).Action;
 
 			var manageWorkflowCredentialsPermissions = new List<dynamic>();
-			manageWorkflowCredentialsPermissions.Add(new { Id = 0, Name = "Department Admins" });
-			manageWorkflowCredentialsPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
-			manageWorkflowCredentialsPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			manageWorkflowCredentialsPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
+			manageWorkflowCredentialsPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
+			manageWorkflowCredentialsPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
 			model.ManageWorkflowCredentialsPermissions = new SelectList(manageWorkflowCredentialsPermissions, "Id", "Name");
 
 			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.ViewWorkflowRuns))
 				model.ViewWorkflowRuns = permissions.First(x => x.PermissionType == (int)PermissionTypes.ViewWorkflowRuns).Action;
 
 			var viewWorkflowRunsPermissions = new List<dynamic>();
-			viewWorkflowRunsPermissions.Add(new { Id = 0, Name = "Department Admins" });
-			viewWorkflowRunsPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
-			viewWorkflowRunsPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
-			viewWorkflowRunsPermissions.Add(new { Id = 3, Name = "Everyone" });
+			viewWorkflowRunsPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
+			viewWorkflowRunsPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
+			viewWorkflowRunsPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
+			viewWorkflowRunsPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
 			model.ViewWorkflowRunsPermissions = new SelectList(viewWorkflowRunsPermissions, "Id", "Name");
 
 			// 2FA enforcement scope � only managingUser can change this
@@ -397,10 +410,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.UseCalendarSync = 3;
 
 			var useCalendarSyncPermissions = new List<dynamic>();
-			useCalendarSyncPermissions.Add(new { Id = 3, Name = "Everyone" });
-			useCalendarSyncPermissions.Add(new { Id = 0, Name = "Department Admins" });
-			useCalendarSyncPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
-			useCalendarSyncPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			useCalendarSyncPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
+			useCalendarSyncPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
+			useCalendarSyncPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
+			useCalendarSyncPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
 			model.UseCalendarSyncPermissions = new SelectList(useCalendarSyncPermissions, "Id", "Name");
 
 			// Dispatch app login: defaults to Everyone so departments that never configure it are unaffected.
@@ -410,10 +423,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.DispatchAppLogin = 3;
 
 			var dispatchAppLoginPermissions = new List<dynamic>();
-			dispatchAppLoginPermissions.Add(new { Id = 3, Name = "Everyone" });
-			dispatchAppLoginPermissions.Add(new { Id = 0, Name = "Department Admins" });
-			dispatchAppLoginPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
-			dispatchAppLoginPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			dispatchAppLoginPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
+			dispatchAppLoginPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
+			dispatchAppLoginPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
+			dispatchAppLoginPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
 			model.DispatchAppLoginPermissions = new SelectList(dispatchAppLoginPermissions, "Id", "Name");
 
 			// Commander access: defaults to Everyone so departments that never configure it are unaffected.
@@ -423,10 +436,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.CommandAppLogin = 3;
 
 			var commandAppLoginPermissions = new List<dynamic>();
-			commandAppLoginPermissions.Add(new { Id = 3, Name = "Everyone" });
-			commandAppLoginPermissions.Add(new { Id = 0, Name = "Department Admins" });
-			commandAppLoginPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
-			commandAppLoginPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			commandAppLoginPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
+			commandAppLoginPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
+			commandAppLoginPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
+			commandAppLoginPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
 			model.CommandAppLoginPermissions = new SelectList(commandAppLoginPermissions, "Id", "Name");
 
 			// ── Advanced Data Protection (ADP) permissions ─────────────────────────────
@@ -441,10 +454,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				var options = new List<dynamic>();
 				if (includeEveryone)
-					options.Add(new { Id = 3, Name = "Everyone" });
-				options.Add(new { Id = 0, Name = "Department Admins" });
-				options.Add(new { Id = 1, Name = "Department and Group Admins" });
-				options.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+					options.Add(new { Id = 3, Name = optionLabels.Everyone });
+				options.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
+				options.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
+				options.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
 				return new SelectList(options, "Id", "Name");
 			}
 
@@ -482,7 +495,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			// Rows come from RecordPermissionCatalog so this screen, ClaimsLogic.AddRecordClaims and the
 			// activation-time row migration share one set of no-row defaults. A missing row preselects that
 			// default, which for the Logs-parity types equals today's CreateLog/DeleteLog fall-through.
-			model.RecordsPermissions = RecordsPermissionRows.Build(permissions).Concat(RecordsPermissionRows.Build(permissions, ChecklistPermissionCatalog.All)).Concat(RecordsPermissionRows.Build(permissions, WorkOrderPermissionCatalog.All)).Concat(RecordsPermissionRows.Build(permissions, InventoryPermissionCatalog.All)).Concat(RecordsPermissionRows.Build(permissions, InvoicingPermissionCatalog.All)).Concat(RecordsPermissionRows.Build(permissions, CertificationPermissionCatalog.All)).Concat(RecordsPermissionRows.Build(permissions, DeploymentPermissionCatalog.All)).Concat(RecordsPermissionRows.Build(permissions, WorkforcePermissionCatalog.All)).ToList();
+			model.RecordsPermissions = new[]
+				{
+					RecordPermissionCatalog.All, ChecklistPermissionCatalog.All, WorkOrderPermissionCatalog.All, InventoryPermissionCatalog.All,
+					InvoicingPermissionCatalog.All, CertificationPermissionCatalog.All, DeploymentPermissionCatalog.All, WorkforcePermissionCatalog.All
+				}.SelectMany(catalog => RecordsPermissionRows.Build(permissions, catalog, optionLabels)).ToList();
 			var recordsState = await _recordsCutoverService.GetModuleStateAsync(DepartmentId);
 			model.RecordsFlagEnabled = recordsState != null && recordsState.FlagEnabled;
 			model.RecordsActivated = recordsState != null && recordsState.RecordsUsable;
@@ -532,6 +549,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				.Where(x => x != null && !String.IsNullOrWhiteSpace(x.UserId))
 				.GroupBy(x => x.UserId, StringComparer.OrdinalIgnoreCase)
 				.ToDictionary(x => x.Key, x => x.First(), StringComparer.OrdinalIgnoreCase);
+			var systemActor = _secLocalizer["AuditLogsSystemActor"].Value;
+			var unknownTime = _secLocalizer["AuditLogsUnknownTime"].Value;
 
 			foreach (var auditLog in auditLogs)
 			{
@@ -541,7 +560,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				usersByUserId.TryGetValue(auditLog.UserId ?? String.Empty, out var user);
 				auditJson.Name = personName != null && !String.IsNullOrWhiteSpace(personName.Name)
 					? personName.Name
-					: (!String.IsNullOrWhiteSpace(auditLog.UserId) ? auditLog.UserId : "System");
+					: (!String.IsNullOrWhiteSpace(auditLog.UserId) ? auditLog.UserId : systemActor);
 				auditJson.Message = auditLog.Message;
 				auditJson.Successful = auditLog.Successful;
 
@@ -551,9 +570,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 					auditJson.TimestampSort = auditLog.LoggedOn.Value.Ticks / TimeSpan.TicksPerMillisecond;
 				}
 				else
-					auditJson.Timestamp = "Unknown";
+					auditJson.Timestamp = unknownTime;
 
-				auditJson.Type = _auditService.GetAuditLogTypeString((AuditLogTypes)auditLog.LogType);
+				auditJson.Type = GetAuditLogTypeDisplayName((AuditLogTypes)auditLog.LogType);
 				auditJson.SearchTerms = String.Join(" ", new[]
 				{
 					auditJson.Name,
@@ -579,6 +598,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return Json(auditLogsJson);
 		}
 
+		/// <summary>
+		/// The audit type as shown on the audit log list and detail pages, in the viewer's language. A type with no Security
+		/// resource yet (a newly added AuditLogTypes value) falls back to the audit service's English name
+		/// rather than showing the raw resource key.
+		/// </summary>
+		private string GetAuditLogTypeDisplayName(AuditLogTypes type)
+		{
+			var localized = _secLocalizer["AuditLogType" + type];
+			return localized.ResourceNotFound ? _auditService.GetAuditLogTypeString(type) : localized.Value;
+		}
+
 		public async Task<IActionResult> ViewAudit(int auditLogId)
 		{
 			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
@@ -596,7 +626,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				AuditLog = auditLog,
 				Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId),
 				Type = (AuditLogTypes)auditLog.LogType,
-				TypeName = _auditService.GetAuditLogTypeString((AuditLogTypes)auditLog.LogType)
+				TypeName = GetAuditLogTypeDisplayName((AuditLogTypes)auditLog.LogType)
 			};
 
 			return View(model);
@@ -610,7 +640,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		/// </summary>
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		[RequiresRecentTwoFactor]
+		[RequiresRecentTwoFactor(RequireForOperation = true, VerificationWindowMinutes = 5, MethodScope = Resgrid.Model.Security.MfaMethodScope.SecurityChange)]
 		public async Task<IActionResult> Set2FARequirement(int scope, CancellationToken cancellationToken)
 		{
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
@@ -652,9 +682,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		// POST + antiforgery: permission changes are state-changing and must never be reachable by a
 		// cross-site top-level GET navigation riding the SameSite=Lax auth cookie.
+		// Permissions are a security change (passkey plan section 7.6 row 13): the sign-in methods count, Responder approval does not.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		[RequiresRecentTwoFactor]
+		[RequiresRecentTwoFactor(MethodScope = Resgrid.Model.Security.MfaMethodScope.SecurityChange)]
 		public async Task<IActionResult> SetPermission(int type, int perm, bool? lockToGroup)
 		{
 			if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
@@ -710,6 +741,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 		[HttpPost]
 		[ValidateAntiForgeryToken]
+		[RequiresRecentTwoFactor(MethodScope = Resgrid.Model.Security.MfaMethodScope.SecurityChange)]
 		public async Task<IActionResult> SetPermissionData(int type, string data, bool? lockToGroup)
 		{
 			if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
@@ -830,6 +862,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		// -- Create SSO config ------------------------------------------------
 
 		[HttpGet]
+		[RequiresRecentTwoFactor(RequireForOperation = true, VerificationWindowMinutes = 5, MethodScope = Resgrid.Model.Security.MfaMethodScope.SecurityChange)]
 		public async Task<IActionResult> SsoNew(string providerType, CancellationToken cancellationToken)
 		{
 			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
@@ -853,7 +886,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				ProviderTypes = BuildProviderTypeList(providerType ?? "oidc"),
 				RankList = await BuildRankListAsync(null),
 				AcsUrl = $"{apiBase}{Config.SsoConfig.SamlAcsPath}?departmentToken={Uri.EscapeDataString(_encryptionService.Encrypt(plainToken))}",
-				ApiBaseUrl = apiBase
+				ApiBaseUrl = apiBase,
+				OidcBrokerRedirectUri = OidcBrokerRedirectUri(apiBase)
 			};
 
 			return View("SsoEdit", model);
@@ -861,6 +895,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
+		[RequiresRecentTwoFactor(RequireForOperation = true, VerificationWindowMinutes = 5, MethodScope = Resgrid.Model.Security.MfaMethodScope.SecurityChange)]
 		public async Task<IActionResult> SsoNew(SsoConfigEditView model, CancellationToken cancellationToken)
 		{
 			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
@@ -874,7 +909,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (!System.Enum.TryParse<SsoProviderType>(model.ProviderType, ignoreCase: true, out var providerType) || !System.Enum.IsDefined(providerType))
 			{
-				ModelState.AddModelError("ProviderType", "Invalid provider type.");
+				ModelState.AddModelError("ProviderType", _secLocalizer["SsoErrorInvalidProviderType"].Value);
 				await PopulateSsoEditViewContextAsync(model);
 				return View("SsoEdit", model);
 			}
@@ -889,7 +924,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var existing = await _ssoService.GetSsoConfigForDepartmentAsync(DepartmentId, providerType, cancellationToken);
 			if (existing != null)
 			{
-				ModelState.AddModelError("", $"An SSO configuration for {model.ProviderType.ToUpperInvariant()} already exists. Use Edit to modify it.");
+				ModelState.AddModelError("", string.Format(_secLocalizer["SsoErrorConfigAlreadyExists"].Value, model.ProviderType.ToUpperInvariant()));
 				await PopulateSsoEditViewContextAsync(model);
 				return View("SsoEdit", model);
 			}
@@ -916,6 +951,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				AssertionConsumerServiceUrl = providerType == SsoProviderType.Saml2 && string.IsNullOrWhiteSpace(model.AssertionConsumerServiceUrl)
 					? $"{apiBase}{Config.SsoConfig.SamlAcsPath}?departmentToken={Uri.EscapeDataString(encryptedDepartmentToken)}"
 					: model.AssertionConsumerServiceUrl,
+				IdpSsoUrl = model.IdpSsoUrl,
 				EncryptedIdpCertificate = model.IdpCertificate,
 				EncryptedSigningCertificate = model.SigningCertificate,
 				AttributeMappingJson = model.AttributeMappingJson,
@@ -928,13 +964,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			};
 
 			await _ssoService.SaveSsoConfigAsync(config, department.Code, cancellationToken);
-			TempData["SsoSuccess"] = $"{model.ProviderType.ToUpperInvariant()} SSO configuration created successfully.";
+			TempData["SsoSuccess"] = string.Format(_secLocalizer["SsoConfigCreatedSuccess"].Value, model.ProviderType.ToUpperInvariant());
 			return RedirectToAction("Sso");
 		}
 
 		// -- Edit SSO config --------------------------------------------------
 
 		[HttpGet]
+		[RequiresRecentTwoFactor(RequireForOperation = true, VerificationWindowMinutes = 5, MethodScope = Resgrid.Model.Security.MfaMethodScope.SecurityChange)]
 		public async Task<IActionResult> SsoEdit(string id, CancellationToken cancellationToken)
 		{
 			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
@@ -959,6 +996,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				MetadataUrl = config.MetadataUrl,
 				EntityId = config.EntityId,
 				AssertionConsumerServiceUrl = config.AssertionConsumerServiceUrl,
+				IdpSsoUrl = config.IdpSsoUrl,
 				AttributeMappingJson = config.AttributeMappingJson,
 				AllowLocalLogin = config.AllowLocalLogin,
 				AutoProvisionUsers = config.AutoProvisionUsers,
@@ -970,7 +1008,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				ProviderTypes = BuildProviderTypeList(((SsoProviderType)config.SsoProviderType).ToString().ToLowerInvariant()),
 				RankList = await BuildRankListAsync(config.DefaultRankId),
 				AcsUrl = $"{apiBase}{Config.SsoConfig.SamlAcsPath}?departmentToken={Uri.EscapeDataString(_encryptionService.Encrypt($"{department.DepartmentId}:{department.Code}"))}",
-				ApiBaseUrl = apiBase
+				ApiBaseUrl = apiBase,
+				OidcBrokerRedirectUri = OidcBrokerRedirectUri(apiBase)
 			};
 
 			return View("SsoEdit", model);
@@ -978,6 +1017,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
+		[RequiresRecentTwoFactor(RequireForOperation = true, VerificationWindowMinutes = 5, MethodScope = Resgrid.Model.Security.MfaMethodScope.SecurityChange)]
 		public async Task<IActionResult> SsoEdit(SsoConfigEditView model, CancellationToken cancellationToken)
 		{
 			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
@@ -1013,6 +1053,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			config.MetadataUrl = model.MetadataUrl ?? config.MetadataUrl;
 			config.EntityId = model.EntityId ?? config.EntityId;
 			config.AssertionConsumerServiceUrl = model.AssertionConsumerServiceUrl ?? config.AssertionConsumerServiceUrl;
+			config.IdpSsoUrl = model.IdpSsoUrl ?? config.IdpSsoUrl;
 			config.AttributeMappingJson = model.AttributeMappingJson ?? config.AttributeMappingJson;
 			config.AllowLocalLogin = model.AllowLocalLogin;
 			config.AutoProvisionUsers = model.AutoProvisionUsers;
@@ -1026,7 +1067,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			config.EncryptedSigningCertificate = !string.IsNullOrWhiteSpace(model.SigningCertificate) ? model.SigningCertificate : null;
 
 			await _ssoService.SaveSsoConfigAsync(config, department.Code, cancellationToken);
-			TempData["SsoSuccess"] = "SSO configuration updated successfully.";
+			TempData["SsoSuccess"] = _secLocalizer["SsoConfigUpdatedSuccess"].Value;
 			return RedirectToAction("Sso");
 		}
 
@@ -1034,6 +1075,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
+		[RequiresRecentTwoFactor(RequireForOperation = true, VerificationWindowMinutes = 5, MethodScope = Resgrid.Model.Security.MfaMethodScope.SecurityChange)]
 		public async Task<IActionResult> SsoDelete(string id, CancellationToken cancellationToken)
 		{
 			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
@@ -1047,7 +1089,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var providerType = (SsoProviderType)config.SsoProviderType;
 			await _ssoService.DeleteSsoConfigAsync(DepartmentId, providerType, cancellationToken);
 
-			TempData["SsoSuccess"] = $"{providerType.ToString().ToUpperInvariant()} SSO configuration deleted.";
+			TempData["SsoSuccess"] = string.Format(_secLocalizer["SsoConfigDeletedSuccess"].Value, providerType.ToString().ToUpperInvariant());
 			return RedirectToAction("Sso");
 		}
 
@@ -1055,7 +1097,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		[RequiresRecentTwoFactor]
+		[RequiresRecentTwoFactor(RequireForOperation = true, VerificationWindowMinutes = 5, MethodScope = Resgrid.Model.Security.MfaMethodScope.SecurityChange)]
 		public async Task<IActionResult> GenerateScimTokenFromSso(string id, CancellationToken cancellationToken)
 		{
 			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
@@ -1170,6 +1212,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
+		[RequiresRecentTwoFactor(RequireForOperation = true, VerificationWindowMinutes = 5, MethodScope = Resgrid.Model.Security.MfaMethodScope.SecurityChange)]
 		public async Task<IActionResult> RotateScimToken(string id, CancellationToken cancellationToken)
 		{
 			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
@@ -1217,6 +1260,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		// -- Security policy --------------------------------------------------
 
 		[HttpGet]
+		[RequiresRecentTwoFactor(RequireForOperation = true, VerificationWindowMinutes = 5, MethodScope = Resgrid.Model.Security.MfaMethodScope.SecurityChange)]
 		public async Task<IActionResult> SecurityPolicy(CancellationToken cancellationToken)
 		{
 			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
@@ -1229,12 +1273,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var model = new SecurityPolicyEditView
 			{
 				HasActiveSsoConfig = hasActiveConfig,
-				DataClassificationLevels = new SelectList(new[]
-				{
-					new { Id = 0, Name = "Unclassified" },
-					new { Id = 1, Name = "CUI - Controlled Unclassified Information" },
-					new { Id = 2, Name = "Confidential" }
-				}, "Id", "Name", policy?.DataClassificationLevel ?? 0)
+				DataClassificationLevels = BuildDataClassificationList(policy?.DataClassificationLevel ?? 0)
 			};
 
 			if (policy != null)
@@ -1254,11 +1293,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.MinPasswordLength = 8;
 			}
 
+			CopyMethodSwitches(policy ?? new DepartmentSecurityPolicy(), model);
+			await DescribeMethodSwitchesAsync(model);
+
 			return View(model);
 		}
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
+		[RequiresRecentTwoFactor(RequireForOperation = true, VerificationWindowMinutes = 5, MethodScope = Resgrid.Model.Security.MfaMethodScope.SecurityChange)]
 		public async Task<IActionResult> SecurityPolicy(SecurityPolicyEditView model, CancellationToken cancellationToken)
 		{
 			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
@@ -1267,12 +1310,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var configs = await _ssoService.GetSsoConfigsForDepartmentAsync(DepartmentId, cancellationToken);
 			var hasActiveConfig = configs?.Any(c => c.IsEnabled) ?? false;
 			model.HasActiveSsoConfig = hasActiveConfig;
-			model.DataClassificationLevels = new SelectList(new[]
-			{
-				new { Id = 0, Name = "Unclassified" },
-				new { Id = 1, Name = "CUI - Controlled Unclassified Information" },
-				new { Id = 2, Name = "Confidential" }
-			}, "Id", "Name", model.DataClassificationLevel);
+			await DescribeMethodSwitchesAsync(model);
+			model.DataClassificationLevels = BuildDataClassificationList(model.DataClassificationLevel);
 
 			if (!ModelState.IsValid)
 				return View(model);
@@ -1296,6 +1335,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				DepartmentId = DepartmentId,
 				CreatedOn = DateTime.UtcNow
 			};
+			var before = DepartmentSecurityPolicyDecisions.SnapshotMfaRules(policy);
 
 			policy.RequireMfa = model.RequireMfa;
 			policy.RequireSso = model.RequireSso;
@@ -1309,18 +1349,220 @@ namespace Resgrid.Web.Areas.User.Controllers
 			policy.RequirePasswordComplexity = true;
 			policy.DataClassificationLevel = model.DataClassificationLevel;
 
-			await _ssoService.SaveSecurityPolicyAsync(policy, cancellationToken);
+			// Which second factors are accepted is the managing member's decision (passkey plan section 10.1). Other
+			// administrators see the switches read-only, and whatever their form posts for them is ignored: a disabled
+			// checkbox still posts its hidden "false", which must never switch a method off.
+			if (model.CanChangeMethodSwitches)
+			{
+				policy.AllowPasskeysForLoginMfa = model.AllowPasskeysForLoginMfa;
+				policy.AllowPasskeysForAdp = model.AllowPasskeysForAdp;
+				policy.AllowFederatedMfaForLoginMfa = model.AllowFederatedMfaForLoginMfa;
+				policy.AllowFederatedMfaForAdp = model.AllowFederatedMfaForAdp;
+				policy.AllowResponderApproval = model.AllowResponderApproval;
+				policy.AcceptRecentLoginMfaForAdp = model.AcceptRecentLoginMfaForAdp;
+				policy.AcceptRecentUnlockMfaForAdp = model.AcceptRecentUnlockMfaForAdp;
+
+				// The shared-device policy is the managing member's too (plan section 10.5). Stricter values reach running
+				// sessions at their next request; a new app requirement needs the deployment to offer shared mode.
+				policy.SharedIdleLockMinutes = model.SharedIdleLockMinutes;
+				policy.SharedShiftHours = model.SharedShiftHours;
+				policy.SharedModeRequiredApps = model.SharedModeRequiredApps;
+				if (policy.SharedIdleLockMinutes < 1 || policy.SharedIdleLockMinutes > SharedSessionRules.MaxIdleLockMinutes)
+				{
+					ModelState.AddModelError("SharedIdleLockMinutes", string.Format(_secLocalizer["SecurityPolicySharedIdleOutOfRange"].Value,
+						SharedSessionRules.MaxIdleLockMinutes));
+					return View(model);
+				}
+				if (policy.SharedShiftHours < 1 || policy.SharedShiftHours > SharedSessionRules.MaxShiftHours)
+				{
+					ModelState.AddModelError("SharedShiftHours", string.Format(_secLocalizer["SecurityPolicySharedShiftOutOfRange"].Value,
+						SharedSessionRules.MaxShiftHours));
+					return View(model);
+				}
+				if (!_passkeyGates.SharedDeviceModeEnabled && DepartmentSecurityPolicyDecisions.AddsSharedRequirement(before, policy))
+				{
+					ModelState.AddModelError(string.Empty, _secLocalizer["SecurityPolicySharedRequirementUnavailable"].Value);
+					return View(model);
+				}
+			}
+
+			// Turning provider step-up on needs a mapping that passed its test, and cannot be authorized by provider step-up
+			// itself: the 5-minute proof above must be a Resgrid factor (plan section 7.8).
+			if (DepartmentSecurityPolicyDecisions.EnablesFederatedMfa(before, policy))
+			{
+				if (await _ssoService.GetTestedFederatedMfaConfigAsync(DepartmentId, cancellationToken) == null)
+				{
+					ModelState.AddModelError(string.Empty, _secLocalizer["SecurityPolicyFederatedMappingUntested"].Value);
+					return View(model);
+				}
+
+				var user = await _userManager.GetUserAsync(User);
+				if (await StepUpEvidence.GetLatestSecondFactorUtcAsync(_mfaEvidence, user, HttpContext, _mfaPolicy, DepartmentId,
+						Resgrid.Model.Security.MfaMethodScope.SecurityChange, cancellationToken, excludeFederated: true) == null)
+				{
+					ModelState.AddModelError(string.Empty, _secLocalizer["SecurityPolicyFederatedNeedsResgridMfa"].Value);
+					return View(model);
+				}
+			}
+
+			await _ssoService.SaveSecurityPolicyAsync(policy, UserId, cancellationToken);
 			TempData["PolicySuccess"] = _secLocalizer["SecurityPolicySaveSuccess"].Value;
 			return RedirectToAction("SecurityPolicy");
 		}
 
+		// -- Provider step-up mapping (passkey plan section 7.8) --------------
+
+		[HttpGet]
+		[RequiresRecentTwoFactor(RequireForOperation = true, VerificationWindowMinutes = 5, MethodScope = Resgrid.Model.Security.MfaMethodScope.SecurityChange)]
+		public async Task<IActionResult> FederatedMfa(CancellationToken cancellationToken)
+		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return RedirectToAction("Index");
+
+			var config = await ActiveSsoConfigAsync(cancellationToken);
+			var model = new FederatedMfaEditView();
+			model.CopyFrom(Resgrid.Model.Security.FederatedMfaMapping.Parse(config?.FederatedMfaMappingJson));
+			await DescribeFederatedMfaAsync(model, config);
+
+			return View(model);
+		}
+
+		/// <summary>
+		/// Saves, or with <paramref name="command"/> "remove" removes, the active SSO configuration's provider step-up mapping.
+		/// Managing member only. Every change advances the mapping version, so the new mapping counts only after its own test,
+		/// and provider step-up cannot approve a change to what counts as provider step-up.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[RequiresRecentTwoFactor(RequireForOperation = true, VerificationWindowMinutes = 5, MethodScope = Resgrid.Model.Security.MfaMethodScope.SecurityChange)]
+		public async Task<IActionResult> FederatedMfa(FederatedMfaEditView model, string command, CancellationToken cancellationToken)
+		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return RedirectToAction("Index");
+
+			model ??= new FederatedMfaEditView();
+			var config = await ActiveSsoConfigAsync(cancellationToken);
+			await DescribeFederatedMfaAsync(model, config);
+			if (config == null)
+				return View(model);
+
+			if (!model.CanChange)
+			{
+				ModelState.AddModelError(string.Empty, _secLocalizer["SecurityPolicyMfaMethodsManagingMemberOnly"].Value);
+				return View(model);
+			}
+
+			var user = await _userManager.GetUserAsync(User);
+			if (await StepUpEvidence.GetLatestSecondFactorUtcAsync(_mfaEvidence, user, HttpContext, _mfaPolicy, DepartmentId,
+					Resgrid.Model.Security.MfaMethodScope.SecurityChange, cancellationToken, excludeFederated: true) == null)
+			{
+				ModelState.AddModelError(string.Empty, _secLocalizer["FederatedMfaNeedsResgridMfa"].Value);
+				return View(model);
+			}
+
+			var removing = string.Equals(command, "remove", StringComparison.Ordinal);
+			string mappingJson = null;
+			if (!removing)
+			{
+				var mapping = model.ToMapping();
+				var problem = Resgrid.Model.Security.FederatedMfaMapping.Validate(mapping, (SsoProviderType)config.SsoProviderType);
+				if (problem != null)
+				{
+					ModelState.AddModelError(string.Empty, string.Format(_secLocalizer["FederatedMfaInvalid"].Value, problem));
+					return View(model);
+				}
+				mappingJson = mapping.Serialize();
+			}
+
+			if (!string.Equals(config.FederatedMfaMappingJson ?? string.Empty, mappingJson ?? string.Empty, StringComparison.Ordinal))
+			{
+				var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+				config.FederatedMfaMappingJson = mappingJson;
+				config.UpdatedByUserId = UserId;
+				var saved = await _ssoService.SaveSsoConfigAsync(config, department.Code, cancellationToken);
+
+				await _systemAuditsService.SaveSystemAuditAsync(new SystemAudit
+				{
+					System = (int)SystemAuditSystems.Website,
+					Type = (int)SystemAuditTypes.FederatedMfaMappingChanged,
+					UserId = UserId,
+					Username = UserName,
+					Successful = true,
+					IpAddress = IpAddressHelper.GetRequestIP(Request, true),
+					ServerName = Environment.MachineName,
+					Data = removing
+						? $"Provider step-up mapping for SSO configuration {config.DepartmentSsoConfigId} removed (now version {saved?.FederatedMfaMappingVersion})."
+						: $"Provider step-up mapping for SSO configuration {config.DepartmentSsoConfigId} saved as version {saved?.FederatedMfaMappingVersion}; " +
+						  "it counts once it passes its test."
+				}, cancellationToken);
+			}
+
+			TempData["FederatedMfaSuccess"] = _secLocalizer[removing ? "FederatedMfaRemoved" : "FederatedMfaSaved"].Value;
+			return RedirectToAction("FederatedMfa");
+		}
+
 		// -- Private helpers --------------------------------------------------
 
-		private static SelectList BuildProviderTypeList(string selected) =>
+		private async Task<DepartmentSsoConfig> ActiveSsoConfigAsync(CancellationToken cancellationToken) =>
+			(await _ssoService.GetSsoConfigsForDepartmentAsync(DepartmentId, cancellationToken))?.FirstOrDefault(c => c.IsEnabled);
+
+		/// <summary>The stored mapping's state and who may change it, always from the server.</summary>
+		private async Task DescribeFederatedMfaAsync(FederatedMfaEditView model, DepartmentSsoConfig config)
+		{
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			model.CanChange = department != null && department.ManagingUserId == UserId;
+			model.ProviderStepUpAvailable = _passkeyGates.ProviderStepUpEnabled;
+			model.HasActiveSsoConfig = config != null;
+			model.IsOidc = config?.SsoProviderType == (int)SsoProviderType.Oidc;
+			model.HasMapping = !string.IsNullOrWhiteSpace(config?.FederatedMfaMappingJson);
+			model.MappingVersion = config?.FederatedMfaMappingVersion ?? 0;
+			model.Effective = Resgrid.Model.Security.FederatedMfaMapping.IsTested(config);
+			model.TestedOnUtc = model.Effective ? config.FederatedMfaTestedOnUtc : null;
+		}
+
+		/// <summary>Who may change the method switches, and which methods this deployment offers yet (never from the client).</summary>
+		private async Task DescribeMethodSwitchesAsync(SecurityPolicyEditView model)
+		{
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			model.CanChangeMethodSwitches = department != null && department.ManagingUserId == UserId;
+			model.PasskeysAvailable = _passkeyGates.LoginAcceptanceEnabled || _passkeyGates.AdpAcceptanceEnabled;
+			model.ResponderApprovalAvailable = _passkeyGates.ResponderApprovalEnabled;
+			model.ProviderStepUpAvailable = _passkeyGates.ProviderStepUpEnabled;
+			model.SharedDeviceModeAvailable = _passkeyGates.SharedDeviceModeEnabled;
+			model.MaxSharedIdleLockMinutes = SharedSessionRules.MaxIdleLockMinutes;
+			model.MaxSharedShiftHours = SharedSessionRules.MaxShiftHours;
+		}
+
+		private static void CopyMethodSwitches(DepartmentSecurityPolicy policy, SecurityPolicyEditView model)
+		{
+			model.AllowPasskeysForLoginMfa = policy.AllowPasskeysForLoginMfa;
+			model.AllowPasskeysForAdp = policy.AllowPasskeysForAdp;
+			model.AllowFederatedMfaForLoginMfa = policy.AllowFederatedMfaForLoginMfa;
+			model.AllowFederatedMfaForAdp = policy.AllowFederatedMfaForAdp;
+			model.AllowResponderApproval = policy.AllowResponderApproval;
+			model.AcceptRecentLoginMfaForAdp = policy.AcceptRecentLoginMfaForAdp;
+			model.AcceptRecentUnlockMfaForAdp = policy.AcceptRecentUnlockMfaForAdp;
+			model.SharedIdleLockMinutes = policy.SharedIdleLockMinutes;
+			model.SharedShiftHours = policy.SharedShiftHours;
+			var required = (SharedModeApps)policy.SharedModeRequiredApps;
+			model.RequireSharedModeForUnit = required.HasFlag(SharedModeApps.Unit);
+			model.RequireSharedModeForCommand = required.HasFlag(SharedModeApps.Command);
+			model.RequireSharedModeForDispatch = required.HasFlag(SharedModeApps.Dispatch);
+		}
+
+		private SelectList BuildDataClassificationList(int selected) =>
 			new SelectList(new[]
 			{
-				new { Id = "oidc", Name = "OIDC (OpenID Connect) � Microsoft Entra, Okta, Google, Auth0" },
-				new { Id = "saml2", Name = "SAML 2.0 � Most enterprise / government IdPs" }
+				new { Id = 0, Name = _secLocalizer["SecurityPolicyDataClassUnclassified"].Value },
+				new { Id = 1, Name = _secLocalizer["SecurityPolicyDataClassCui"].Value },
+				new { Id = 2, Name = _secLocalizer["SecurityPolicyDataClassConfidential"].Value }
+			}, "Id", "Name", selected);
+
+		private SelectList BuildProviderTypeList(string selected) =>
+			new SelectList(new[]
+			{
+				new { Id = "oidc", Name = _secLocalizer["SsoEditProviderTypeOidcOption"].Value },
+				new { Id = "saml2", Name = _secLocalizer["SsoEditProviderTypeSamlOption"].Value }
 			}, "Id", "Name", selected);
 
 		private void ValidateSsoProviderConfiguration(SsoConfigEditView model, SsoProviderType providerType, bool hasStoredIdpCertificate)
@@ -1328,17 +1570,24 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (providerType == SsoProviderType.Oidc)
 			{
 				if (string.IsNullOrWhiteSpace(model.ClientId))
-					ModelState.AddModelError("ClientId", "OIDC client ID is required.");
+					ModelState.AddModelError("ClientId", _secLocalizer["SsoErrorOidcClientIdRequired"].Value);
 
 				if (!Uri.TryCreate(model.Authority, UriKind.Absolute, out var authority) || authority.Scheme != Uri.UriSchemeHttps)
-					ModelState.AddModelError("Authority", "OIDC authority must be a valid HTTPS URL.");
+					ModelState.AddModelError("Authority", _secLocalizer["SsoErrorOidcAuthorityInvalid"].Value);
 
 				return;
 			}
 
 			if (!hasStoredIdpCertificate && string.IsNullOrWhiteSpace(model.IdpCertificate))
-				ModelState.AddModelError("IdpCertificate", "An IdP signing certificate is required to validate SAML assertions.");
+				ModelState.AddModelError("IdpCertificate", _secLocalizer["SsoErrorSamlCertificateRequired"].Value);
+
+			if (!string.IsNullOrWhiteSpace(model.IdpSsoUrl) &&
+				(!Uri.TryCreate(model.IdpSsoUrl, UriKind.Absolute, out var idpSsoUrl) || idpSsoUrl.Scheme != Uri.UriSchemeHttps))
+				ModelState.AddModelError("IdpSsoUrl", _secLocalizer["SsoErrorIdpSsoUrlInvalid"].Value);
 		}
+
+		/// <summary>The redirect URI a department registers with its OIDC IdP for brokered sign-in (plan section 7.7.2 item 7).</summary>
+		private static string OidcBrokerRedirectUri(string apiBase) => $"{apiBase?.TrimEnd('/')}{Config.SsoConfig.OidcCallbackPath}";
 
 		private async Task PopulateSsoEditViewContextAsync(SsoConfigEditView model)
 		{
@@ -1347,6 +1596,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.ProviderTypes = BuildProviderTypeList(model.ProviderType);
 			model.RankList = await BuildRankListAsync(model.DefaultRankId);
 			model.ApiBaseUrl = apiBase;
+			model.OidcBrokerRedirectUri = OidcBrokerRedirectUri(apiBase);
 			model.AcsUrl = $"{apiBase}{Config.SsoConfig.SamlAcsPath}?departmentToken={Uri.EscapeDataString(_encryptionService.Encrypt($"{department.DepartmentId}:{department.Code}"))}";
 		}
 
@@ -1355,7 +1605,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			// Ranks are not currently implemented as a standalone service � return empty with placeholder
 			await Task.CompletedTask;
 			return new SelectList(
-				new[] { new { Id = (int?)null, Name = "(No default rank)" } },
+				new[] { new { Id = (int?)null, Name = _secLocalizer["SsoEditDefaultRankNone"].Value } },
 				"Id", "Name", selectedRankId);
 		}
 

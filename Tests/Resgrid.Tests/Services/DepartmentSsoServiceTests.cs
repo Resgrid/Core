@@ -24,6 +24,7 @@ namespace Resgrid.Tests.Services
 		private Mock<IDepartmentSsoConfigRepository> _ssoConfigRepository;
 		private Mock<IEncryptionService> _encryptionService;
 		private Mock<ICacheProvider> _cacheProvider;
+		private Mock<IUserSessionMfaEvidenceRepository> _mfaEvidence;
 		private int _samlReplayUseCount;
 		private DepartmentSsoService _service;
 
@@ -33,6 +34,7 @@ namespace Resgrid.Tests.Services
 			_ssoConfigRepository = new Mock<IDepartmentSsoConfigRepository>();
 			_encryptionService = new Mock<IEncryptionService>();
 			_cacheProvider = new Mock<ICacheProvider>();
+			_mfaEvidence = new Mock<IUserSessionMfaEvidenceRepository>();
 			_samlReplayUseCount = 0;
 			_encryptionService
 				.Setup(x => x.EncryptForDepartment(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>()))
@@ -50,7 +52,12 @@ namespace Resgrid.Tests.Services
 				_encryptionService.Object,
 				_cacheProvider.Object,
 				new Mock<IExternalIdentityLinkService>().Object,
-				new Mock<ILimitsService>().Object);
+				new Mock<ILimitsService>().Object,
+				new Mock<Resgrid.Model.Repositories.Queries.IUnitOfWork>().Object,
+				new Mock<IDepartmentDataProtectionPolicyRepository>().Object,
+				new Lazy<IDepartmentDataProtectionService>(() => new Mock<IDepartmentDataProtectionService>().Object),
+				_mfaEvidence.Object,
+				Mock.Of<IAuditLogsRepository>());
 		}
 
 		[Test]

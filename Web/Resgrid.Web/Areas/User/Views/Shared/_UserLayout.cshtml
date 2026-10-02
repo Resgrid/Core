@@ -19,6 +19,7 @@
 	<meta name="request-verification-token" content="@Antiforgery.GetAndStoreTokens(Context).RequestToken" />
     <title>@documentTitle</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    @await Html.PartialAsync("_SharedSessionHead")
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.0/css/bootstrap.min.css"
           asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
@@ -101,6 +102,7 @@
 
             <!-- Top Navbar -->
             @await Html.PartialAsync("_TopNavbar")
+            @await Html.PartialAsync("_SharedSessionBar")
 
             <!-- Main view  -->
             @await Component.InvokeAsync("AdminAssistReturn")

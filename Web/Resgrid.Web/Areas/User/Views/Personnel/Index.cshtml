@@ -2,6 +2,7 @@
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.PersonnelModel
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Personnel.Person> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Profile.Profile> profileLocalizer
 @{
     ViewBag.Title = "Resgrid | " + @localizer["PersonnelHeader"];
 }
@@ -66,7 +67,7 @@
                         {
                             @Html.Raw("<div id='personnelTab-1' class='personnelTabPannel'>")
                             @Html.Raw("<div class='table-responsive'><table class='table table-striped' id='personnelTable1' data-page-length='100' width='100%'>")
-                            @Html.Raw($"<thead><tr><th class='span1' data-searchable='false' data-orderable='false' data-width='20px'><input type='checkbox' class='checkAllPersonnel' value='-1'/></th><th>{@commonLocalizer["Name"]}</th><th>{@commonLocalizer["Roles"]}</th><th>{@commonLocalizer["Staffing"]}</th><th>{@commonLocalizer["Status"]}</th><th>{@localizer["State"]}</th><th data-searchable='false' data-orderable='false'>{@localizer["SetStaffing"]}</th><th data-searchable='false' data-orderable='false'>{@localizer["SetStatus"]}</th><th data-searchable='false' data-orderable='false'></th></tr></thead>")
+                            @Html.Raw($"<thead><tr><th class='span1' data-searchable='false' data-orderable='false' data-width='20px'><input type='checkbox' class='checkAllPersonnel' value='-1'/></th><th>{Html.Encode(commonLocalizer["Name"].Value)}</th><th>{Html.Encode(commonLocalizer["Roles"].Value)}</th><th>{Html.Encode(commonLocalizer["Staffing"].Value)}</th><th>{Html.Encode(commonLocalizer["Status"].Value)}</th><th>{Html.Encode(localizer["State"].Value)}</th><th data-searchable='false' data-orderable='false'>{Html.Encode(localizer["SetStaffing"].Value)}</th><th data-searchable='false' data-orderable='false'>{Html.Encode(localizer["SetStatus"].Value)}</th><th data-searchable='false' data-orderable='false'></th></tr></thead>")
                             @Html.Raw("<tbody id='personnelGroups_-1'>")
 
                             foreach (var person in Model.Persons)
@@ -74,11 +75,11 @@
                                 var personStatus = Model.PersonnelStates.FirstOrDefault(x => x.CustomStateDetailId == person.StatusId);
                                 var personStaffing = Model.PersonnelStaffings.FirstOrDefault(x => x.CustomStateDetailId == person.StaffingId);
 
-                                var stateText = "Unknown";
+                                var stateText = commonLocalizer["Unknown"].Value;
                                 var stateColor = "#000000";
                                 var stateTextColor = "#FFFFFF";
 
-                                var staffingText = "Unknown";
+                                var staffingText = commonLocalizer["Unknown"].Value;
                                 var staffingColor = "#000000";
                                 var staffingTextColor = "#FFFFFF";
 
@@ -106,7 +107,7 @@
                         }
                         else
                         {
-                            @Html.Raw($"<div style='text-align:center;'><h3>{@localizer["NoPersonnelInDepartment"]}</h3></div>")
+                            @Html.Raw($"<div style='text-align:center;'><h3>{Html.Encode(localizer["NoPersonnelInDepartment"].Value)}</h3></div>")
                         }
                     }
 
@@ -119,7 +120,7 @@
                             @Html.Raw("<div id='personnelTab0' class='personnelTabPannel' style='display: none;'>")
 
                             @Html.Raw("<div class='table-responsive'><table class='table table-striped' id='personnelTable0' data-page-length='100' width='100%'>")
-                            @Html.Raw($"<thead><tr><th class='span1' data-searchable='false' data-orderable='false' data-width='20px'><input type='checkbox' class='checkAllPersonnel' value='0'/></th><th>{@commonLocalizer["Name"]}</th><th>{@commonLocalizer["Roles"]}</th><th>{@commonLocalizer["Staffing"]}</th><th>{@commonLocalizer["Status"]}</th><th>{@localizer["State"]}</th><th data-searchable='false' data-orderable='false'>{@localizer["SetStaffing"]}</th><th data-searchable='false' data-orderable='false'>{@localizer["SetStatus"]}</th><th data-searchable='false' data-orderable='false'></th></tr></thead>")
+                            @Html.Raw($"<thead><tr><th class='span1' data-searchable='false' data-orderable='false' data-width='20px'><input type='checkbox' class='checkAllPersonnel' value='0'/></th><th>{Html.Encode(commonLocalizer["Name"].Value)}</th><th>{Html.Encode(commonLocalizer["Roles"].Value)}</th><th>{Html.Encode(commonLocalizer["Staffing"].Value)}</th><th>{Html.Encode(commonLocalizer["Status"].Value)}</th><th>{Html.Encode(localizer["State"].Value)}</th><th data-searchable='false' data-orderable='false'>{Html.Encode(localizer["SetStaffing"].Value)}</th><th data-searchable='false' data-orderable='false'>{Html.Encode(localizer["SetStatus"].Value)}</th><th data-searchable='false' data-orderable='false'></th></tr></thead>")
                             @Html.Raw("<tbody id='personnelGroups_0'>")
 
                             if (ungroupedPersonnel2 != null && ungroupedPersonnel2.Any())
@@ -129,11 +130,11 @@
                                     var personStatus = Model.PersonnelStates.FirstOrDefault(x => x.CustomStateDetailId == person.StatusId);
                                     var personStaffing = Model.PersonnelStaffings.FirstOrDefault(x => x.CustomStateDetailId == person.StaffingId);
 
-                                    var stateText = "Unknown";
+                                    var stateText = commonLocalizer["Unknown"].Value;
                                     var stateColor = "#000000";
                                     var stateTextColor = "#FFFFFF";
 
-                                    var staffingText = "Unknown";
+                                    var staffingText = commonLocalizer["Unknown"].Value;
                                     var staffingColor = "#000000";
                                     var staffingTextColor = "#FFFFFF";
 
@@ -164,7 +165,7 @@
                         }
                         else
                         {
-                            @Html.Raw($"<div style='text-align:center;'><h3>{@localizer["NoUnGroupedPersonnel"]}</h3></div>")
+                            @Html.Raw($"<div style='text-align:center;'><h3>{Html.Encode(localizer["NoUnGroupedPersonnel"].Value)}</h3></div>")
                         }
                     }
 
@@ -186,7 +187,7 @@
                                 @Html.Raw($"<div id='personnelTab{Model.Groups[i].DepartmentGroupId}' class='personnelTabPannel' style='display: none;width: 100%;'>")
 
                                 @Html.Raw("<div class='table-responsive'><table class='table table-striped' data-page-length='100' width='100%'>")
-                                @Html.Raw($"<thead><tr><th class='span1' data-searchable='false' data-orderable='false' data-width='20px'><input type='checkbox' class='checkAllPersonnel' value='{Model.Groups[i].DepartmentGroupId}'/></th><th>{@commonLocalizer["Name"]}</th><th>{@commonLocalizer["Roles"]}</th><th>{@commonLocalizer["Staffing"]}</th><th>{@commonLocalizer["Status"]}</th><th>{@localizer["State"]}</th><th data-searchable='false' data-orderable='false'>{@localizer["SetStaffing"]}</th><th data-searchable='false' data-orderable='false'>{@localizer["SetStatus"]}</th><th data-searchable='false' data-orderable='false'></th></tr></thead>")
+                                @Html.Raw($"<thead><tr><th class='span1' data-searchable='false' data-orderable='false' data-width='20px'><input type='checkbox' class='checkAllPersonnel' value='{Model.Groups[i].DepartmentGroupId}'/></th><th>{Html.Encode(commonLocalizer["Name"].Value)}</th><th>{Html.Encode(commonLocalizer["Roles"].Value)}</th><th>{Html.Encode(commonLocalizer["Staffing"].Value)}</th><th>{Html.Encode(commonLocalizer["Status"].Value)}</th><th>{Html.Encode(localizer["State"].Value)}</th><th data-searchable='false' data-orderable='false'>{Html.Encode(localizer["SetStaffing"].Value)}</th><th data-searchable='false' data-orderable='false'>{Html.Encode(localizer["SetStatus"].Value)}</th><th data-searchable='false' data-orderable='false'></th></tr></thead>")
                                 @Html.Raw($"<tbody id='personnelGroups_{Model.Groups[i].DepartmentGroupId}'>")
 
                                 if (groupPersons != null && groupPersons.Any())
@@ -196,11 +197,11 @@
                                         var personStatus = Model.PersonnelStates.FirstOrDefault(x => x.CustomStateDetailId == person.StatusId);
                                         var personStaffing = Model.PersonnelStaffings.FirstOrDefault(x => x.CustomStateDetailId == person.StaffingId);
 
-                                        var stateText = "Unknown";
+                                        var stateText = commonLocalizer["Unknown"].Value;
                                         var stateColor = "#000000";
                                         var stateTextColor = "#FFFFFF";
 
-                                        var staffingText = "Unknown";
+                                        var staffingText = commonLocalizer["Unknown"].Value;
                                         var staffingColor = "#000000";
                                         var staffingTextColor = "#FFFFFF";
 
@@ -232,7 +233,7 @@
                             else
                             {
                                 @Html.Raw("<div id='personnelTab" + Model.Groups[i].DepartmentGroupId + "' class='personnelTabPannel' style='display: none;'>")
-                                @Html.Raw($"<div style='text-align:center;'><h3>{@localizer["NoPersonnelInThisGroup"]}</h3></div>")
+                                @Html.Raw($"<div style='text-align:center;'><h3>{Html.Encode(localizer["NoPersonnelInThisGroup"].Value)}</h3></div>")
                                 @Html.Raw("</div>")
                             }
                         }
@@ -473,37 +474,39 @@
 @{
     void PersonnelTableRowTemplate(PersonnelForListJson p, string stateTextColor, string stateColor, string stateText, string staffingTextColor, string staffingColor, string staffingText, int groupType)
     {
+        // Razor does not encode text built inside Html.Raw: person fields, custom staffing/status text and colors,
+        // and labels all go through Html.Encode, which also escapes apostrophes for the single-quoted attributes.
         @if (p.CanEditUser)
         {
-            @Html.Raw($"<tr><td><input type='checkbox' id='selectPerson_{p.UserId}' class='selectPersonCheckbox' data-grouptype='{groupType}' data-staffingid='{Model.PersonnelCustomStaffingId}' data-statusid='{Model.PersonnelCustomStatusesId}' value='{p.UserId}'/></td><td>{p.Name}</td><td>{p.Roles}</td><td><span class='label' style='color:{staffingTextColor};background-color:{staffingColor};'>{staffingText}</span></td><td><span class='label' style='color:{stateTextColor};background-color:{stateColor};'>{stateText}</span></td><td>{p.State}</td>")
-            @Html.Raw($"<td><button class='btn btn-xs btn-primary' data-toggle='modal' data-target='#setPersonStaffingModal' data-id='{p.UserId}' data-customstateid='{Model.PersonnelCustomStaffingId}'>{@localizer["SetStaffing"]}</button></td>")
-            @Html.Raw($"<td><button class='btn btn-xs btn-primary' data-toggle='modal' data-target='#setPersonStatusModal' data-id='{p.UserId}' data-customstateid='{Model.PersonnelCustomStatusesId}'>{@localizer["SetStatus"]}</button></td>")
+            @Html.Raw($"<tr><td><input type='checkbox' id='selectPerson_{p.UserId}' class='selectPersonCheckbox' data-grouptype='{groupType}' data-staffingid='{Model.PersonnelCustomStaffingId}' data-statusid='{Model.PersonnelCustomStatusesId}' value='{p.UserId}'/></td><td>{Html.Encode(p.Name)}</td><td>{Html.Encode(p.Roles)}</td><td><span class='label' style='color:{Html.Encode(staffingTextColor)};background-color:{Html.Encode(staffingColor)};'>{Html.Encode(staffingText)}</span></td><td><span class='label' style='color:{Html.Encode(stateTextColor)};background-color:{Html.Encode(stateColor)};'>{Html.Encode(stateText)}</span></td><td>{Html.Encode(p.State)}</td>")
+            @Html.Raw($"<td><button class='btn btn-xs btn-primary' data-toggle='modal' data-target='#setPersonStaffingModal' data-id='{p.UserId}' data-customstateid='{Model.PersonnelCustomStaffingId}'>{Html.Encode(localizer["SetStaffing"].Value)}</button></td>")
+            @Html.Raw($"<td><button class='btn btn-xs btn-primary' data-toggle='modal' data-target='#setPersonStatusModal' data-id='{p.UserId}' data-customstateid='{Model.PersonnelCustomStatusesId}'>{Html.Encode(localizer["SetStatus"].Value)}</button></td>")
         }
         else
         {
-            @Html.Raw($"<tr><td></td><td>{p.Name}</td><td>{p.Roles}</td><td><span class='label' style='color:{staffingTextColor};background-color:{staffingColor};'>{staffingText}</span></td><td><span class='label' style='color:{stateTextColor};background-color:{stateColor};'>{stateText}</span></td><td>{p.State}</td>")
+            @Html.Raw($"<tr><td></td><td>{Html.Encode(p.Name)}</td><td>{Html.Encode(p.Roles)}</td><td><span class='label' style='color:{Html.Encode(staffingTextColor)};background-color:{Html.Encode(staffingColor)};'>{Html.Encode(staffingText)}</span></td><td><span class='label' style='color:{Html.Encode(stateTextColor)};background-color:{Html.Encode(stateColor)};'>{Html.Encode(stateText)}</span></td><td>{Html.Encode(p.State)}</td>")
             @Html.Raw("<td></td><td></td>")
         }
 
         @Html.Raw("<td>")
 
-        @Html.Raw($"<a style='text-decoration:none;' class='btn btn-xs btn-info' href='{@Url.Action("ViewPerson", "Personnel", new { area = "User" })}?userId={p.UserId}'>{@commonLocalizer["View"]}</a>&nbsp;")
+        @Html.Raw($"<a style='text-decoration:none;' class='btn btn-xs btn-info' href='{@Url.Action("ViewPerson", "Personnel", new { area = "User" })}?userId={p.UserId}'>{Html.Encode(commonLocalizer["View"].Value)}</a>&nbsp;")
 
         @if (p.CanEditUser)
         {
             @Html.Raw("<div class='btn-group'>")
-            @Html.Raw($"<a href='{@Url.Action("EditUserProfile", "Home", new { area = "User" })}?userId={p.UserId}' class='btn btn-xs btn-primary'>{@commonLocalizer["Edit"]}</a>")
+            @Html.Raw($"<a href='{@Url.Action("EditUserProfile", "Home", new { area = "User" })}?userId={p.UserId}' class='btn btn-xs btn-primary'>{Html.Encode(commonLocalizer["Edit"].Value)}</a>")
             @Html.Raw("<button type='button' class='btn btn-xs btn-primary dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>")
             @Html.Raw("<span class='caret'></span>")
-            @Html.Raw("<span class='sr-only'>Toggle Dropdown</span>")
+            @Html.Raw($"<span class='sr-only'>{Html.Encode(commonLocalizer["Options"].Value)}</span>")
             @Html.Raw("</button>")
             @Html.Raw("<ul class='dropdown-menu'>")
 			@if (p.CanResetPassword && !p.IsSsoManaged)
 			{
 				var passwordActionLabel = Model.RequirePasswordResetViaEmail
-					? "Send Password Reset Email"
+					? profileLocalizer["SendPasswordResetEmail"].Value
 					: localizer["ChangePassword"].Value;
-				@Html.Raw($"<li><a href='{@Url.Action("ResetPasswordForUser", "Profile", new { area = "User" })}?userId={p.UserId}'>{passwordActionLabel}</a></li>")
+				@Html.Raw($"<li><a href='{@Url.Action("ResetPasswordForUser", "Profile", new { area = "User" })}?userId={p.UserId}'>{Html.Encode(passwordActionLabel)}</a></li>")
 			}
             @Html.Raw("</ul>")
             @Html.Raw("</div>&nbsp;")
@@ -511,7 +514,7 @@
 
         @if (p.CanRemoveUser)
         {
-            @Html.Raw($"<a style='text-decoration:none;' class='btn btn-xs btn-danger' href='{@Url.Action("DeletePerson", "Personnel", new { area = "User" })}?userId={p.UserId}'>{@commonLocalizer["Delete"]}</a>")
+            @Html.Raw($"<a style='text-decoration:none;' class='btn btn-xs btn-danger' href='{@Url.Action("DeletePerson", "Personnel", new { area = "User" })}?userId={p.UserId}'>{Html.Encode(commonLocalizer["Delete"].Value)}</a>")
         }
     }
 }

@@ -706,7 +706,7 @@
   <data name="SkipHint" xml:space="preserve"><value>Las comprobaciones excusadas quedan registradas con el motivo que indique aquí.</value></data>
   <data name="RetireHint" xml:space="preserve"><value>Retirarla impide nuevas ejecuciones y comprobaciones programadas futuras. El historial existente se conserva.</value></data>
   <data name="ReportRangeHint" xml:space="preserve"><value>Las comprobaciones se seleccionan por su hora de inicio, no por cuándo se completaron.</value></data>
-  <data name="HelpFieldCallId" xml:space="preserve"><value>El aviso para el que se prepara el paquete.</value></data>
+  <data name="HelpFieldCallId" xml:space="preserve"><value>La llamada para la que se prepara el paquete.</value></data>
   <data name="StepScheduleBasics" xml:space="preserve"><value>Nombre la programación</value></data>
   <data name="StepScheduleBasicsHint" xml:space="preserve"><value>Cómo se llama esta programación y sobre qué se ejecuta.</value></data>
   <data name="StepScheduleTiming" xml:space="preserve"><value>Cuándo se ejecuta</value></data>

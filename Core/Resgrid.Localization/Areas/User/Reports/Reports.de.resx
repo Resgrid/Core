@@ -210,7 +210,6 @@
   <data name="WorkLogType" xml:space="preserve"><value>Arbeit</value></data>
   <data name="IdLabel" xml:space="preserve"><value>Id</value></data>
   <data name="StationHeader" xml:space="preserve"><value>Station</value></data>
-  <data name="UnitsLabel" xml:space="preserve"><value>Einheiten</value></data>
   <data name="ConditionLabel" xml:space="preserve"><value>Zustand</value></data>
   <data name="CallNameLabel" xml:space="preserve"><value>Einsatzname</value></data>
   <data name="CallTypeLabel" xml:space="preserve"><value>Einsatztyp</value></data>
@@ -305,9 +304,6 @@
   </data>
   <data name="NotCheckedOut" xml:space="preserve">
     <value>Nicht ausgecheckt</value>
-  </data>
-  <data name="TotalTimeLabel" xml:space="preserve">
-    <value>Gesamtzeit</value>
   </data>
   <data name="CallUnitTimesReportName" xml:space="preserve">
     <value>Einheitenzeiten je Einsatz</value>

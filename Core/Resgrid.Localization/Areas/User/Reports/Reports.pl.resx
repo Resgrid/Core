@@ -210,7 +210,6 @@
   <data name="WorkLogType" xml:space="preserve"><value>Praca</value></data>
   <data name="IdLabel" xml:space="preserve"><value>Id</value></data>
   <data name="StationHeader" xml:space="preserve"><value>Stacja</value></data>
-  <data name="UnitsLabel" xml:space="preserve"><value>Jednostki</value></data>
   <data name="ConditionLabel" xml:space="preserve"><value>Stan</value></data>
   <data name="CallNameLabel" xml:space="preserve"><value>Nazwa Zgłoszenia</value></data>
   <data name="CallTypeLabel" xml:space="preserve"><value>Typ Zgłoszenia</value></data>
@@ -305,9 +304,6 @@
   </data>
   <data name="NotCheckedOut" xml:space="preserve">
     <value>Nie wymeldowany</value>
-  </data>
-  <data name="TotalTimeLabel" xml:space="preserve">
-    <value>Łączny czas</value>
   </data>
   <data name="CallUnitTimesReportName" xml:space="preserve">
     <value>Czasy jednostek w zgłoszeniach</value>

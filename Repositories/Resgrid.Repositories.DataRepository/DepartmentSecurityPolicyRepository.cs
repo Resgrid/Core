@@ -59,6 +59,34 @@ namespace Resgrid.Repositories.DataRepository
 			}
 			catch (Exception ex) { Logging.LogException(ex); throw; }
 		}
+
+		public async Task<DepartmentSecurityPolicy> GetByDepartmentIdForUpdateAsync(int departmentId, System.Threading.CancellationToken cancellationToken = default)
+		{
+			if (_unitOfWork?.Transaction == null)
+				throw new InvalidOperationException("A locking read needs the caller's unit-of-work transaction.");
+
+			var postgres = Resgrid.Config.DataConfig.DatabaseType == Resgrid.Config.DatabaseTypes.Postgres;
+			var sql = postgres
+				? $"SELECT * FROM {_sqlConfiguration.SchemaName}.departmentsecuritypolicies WHERE departmentid = @DepartmentId LIMIT 1 FOR UPDATE"
+				: $"SELECT TOP 1 * FROM {_sqlConfiguration.SchemaName}.[DepartmentSecurityPolicies] WITH (UPDLOCK, HOLDLOCK) WHERE [DepartmentId] = @DepartmentId";
+
+			return await _unitOfWork.CreateOrGetConnection().QueryFirstOrDefaultAsync<DepartmentSecurityPolicy>(
+				new Dapper.CommandDefinition(sql, new { DepartmentId = departmentId }, _unitOfWork.Transaction, cancellationToken: cancellationToken));
+		}
+
+		public async Task<long> IncrementMfaPolicyVersionAsync(int departmentId, System.Threading.CancellationToken cancellationToken = default)
+		{
+			if (_unitOfWork?.Transaction == null)
+				throw new InvalidOperationException("The MFA policy version advances only inside the policy change's transaction.");
+
+			var postgres = Resgrid.Config.DataConfig.DatabaseType == Resgrid.Config.DatabaseTypes.Postgres;
+			var sql = postgres
+				? $"UPDATE {_sqlConfiguration.SchemaName}.departmentsecuritypolicies SET mfapolicyversion = mfapolicyversion + 1 WHERE departmentid = @DepartmentId RETURNING mfapolicyversion"
+				: $"UPDATE {_sqlConfiguration.SchemaName}.[DepartmentSecurityPolicies] SET [MfaPolicyVersion] = [MfaPolicyVersion] + 1 OUTPUT INSERTED.[MfaPolicyVersion] WHERE [DepartmentId] = @DepartmentId";
+
+			return await _unitOfWork.CreateOrGetConnection().QueryFirstOrDefaultAsync<long>(
+				new Dapper.CommandDefinition(sql, new { DepartmentId = departmentId }, _unitOfWork.Transaction, cancellationToken: cancellationToken));
+		}
 	}
 }
 

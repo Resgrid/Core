@@ -5190,6 +5190,27 @@
   <data xml:space="preserve" name="TableField.DepartmentNotification.UsersToNotify">
     <value>إشعار القسم / المستخدمون المراد إشعارهم</value>
   </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AcceptRecentLoginMfaForAdp">
+    <value>سياسة أمان القسم / قبول المصادقة الثنائية الحديثة عند تسجيل الدخول لـ ADP</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AcceptRecentUnlockMfaForAdp">
+    <value>سياسة أمان القسم / قبول المصادقة الثنائية الحديثة عند إلغاء القفل لـ ADP</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowFederatedMfaForAdp">
+    <value>سياسة أمان القسم / السماح بالمصادقة الثنائية الموحدة لـ ADP</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowFederatedMfaForLoginMfa">
+    <value>سياسة أمان القسم / السماح بالمصادقة الثنائية الموحدة لتسجيل الدخول</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowPasskeysForAdp">
+    <value>سياسة أمان القسم / السماح بمفاتيح المرور لـ ADP</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowPasskeysForLoginMfa">
+    <value>سياسة أمان القسم / السماح بمفاتيح المرور لمصادقة تسجيل الدخول الثنائية</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowResponderApproval">
+    <value>سياسة أمان القسم / السماح بالموافقة عبر Responder</value>
+  </data>
   <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.AllowedIpRanges">
     <value>سياسة أمان القسم / نطاقات IP المسموح بها</value>
   </data>
@@ -5216,6 +5237,15 @@
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.SessionTimeoutMinutes">
     <value>سياسة أمان القسم / مهلة الجلسة بالدقائق</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.SharedIdleLockMinutes">
+    <value>سياسة أمان القسم / دقائق الخمول قبل قفل الجلسة المشتركة</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.SharedModeRequiredApps">
+    <value>سياسة أمان القسم / التطبيقات التي تتطلب الوضع المشترك</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSecurityPolicy.SharedShiftHours">
+    <value>سياسة أمان القسم / ساعات المناوبة للجلسة المشتركة</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.AllowLocalLogin">
     <value>إعداد تسجيل الدخول الموحد (SSO) للقسم / السماح بتسجيل الدخول المحلي</value>
@@ -5252,6 +5282,12 @@
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.EntityId">
     <value>إعداد تسجيل الدخول الموحد (SSO) للقسم / معرّف الكيان</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSsoConfig.FederatedMfaMappingJson">
+    <value>إعداد تسجيل الدخول الموحد (SSO) للقسم / تعيين المصادقة متعددة العوامل الاتحادية بصيغة JSON</value>
+  </data>
+  <data xml:space="preserve" name="TableField.DepartmentSsoConfig.IdpSsoUrl">
+    <value>إعداد تسجيل الدخول الموحد (SSO) للقسم / رابط تسجيل الدخول الموحد لدى موفر الهوية</value>
   </data>
   <data xml:space="preserve" name="TableField.DepartmentSsoConfig.IsEnabled">
     <value>إعداد تسجيل الدخول الموحد (SSO) للقسم / مفعّل</value>
@@ -5427,6 +5463,27 @@
   <data xml:space="preserve" name="TableHelp.DepartmentNotification.UsersToNotify">
     <value>مستلمون صريحون من الأعضاء. تُقيَّم العضوية وأهلية القناة بشكل منفصل عند وقت الإرسال.</value>
   </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AcceptRecentLoginMfaForAdp">
+    <value>يسمح للمصادقة الثنائية المكتملة عند تسجيل الدخول في الجلسة نفسها بفتح البيانات المحمية ضمن نافذة التحقق المعزز، للطرق التي تسمح بها إعدادات البيانات المحمية. يؤدي التغيير إلى إنهاء الوصول الحالي إلى البيانات المحمية. للعضو المسؤول فقط.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AcceptRecentUnlockMfaForAdp">
+    <value>يسمح للتحقق الحديث من إلغاء القفل الذي أجراه المشغل على جهاز مشترك بفتح البيانات المحمية. يؤدي التغيير إلى إنهاء الوصول الحالي إلى البيانات المحمية. للعضو المسؤول فقط.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowFederatedMfaForAdp">
+    <value>يقبل المصادقة الثنائية لموفر الهوية للبيانات المحمية. يتطلب ربطًا مختبرًا للمصادقة الثنائية؛ ويؤدي التغيير إلى إنهاء الوصول الحالي إلى البيانات المحمية. للعضو المسؤول فقط.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowFederatedMfaForLoginMfa">
+    <value>يقبل المصادقة الثنائية لموفر الهوية لتسجيل الدخول والتحقق المعزز. يتطلب ربطًا مختبرًا للمصادقة الثنائية في إعداد SSO؛ وبدونه لا تُحتسب مطالبات الموفر أبدًا. للعضو المسؤول فقط.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowPasskeysForAdp">
+    <value>يقبل مفتاح المرور للوصول إلى البيانات المحمية وإدارة ADP والموافقة على مسارات العمل المحمية. تُقبل رموز تطبيق المصادقة دائمًا. يؤدي التغيير إلى إنهاء الوصول الحالي إلى البيانات المحمية، فيتحقق الأعضاء مرة أخرى. للعضو المسؤول فقط.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowPasskeysForLoginMfa">
+    <value>يقبل مفتاح مرور مسجلًا في التطبيق الطالب كمصادقة ثنائية لتسجيل الدخول وتغيير القسم والتحقق المعزز. تُقبل رموز تطبيق المصادقة دائمًا. يرفع التغيير إصدار سياسة المصادقة الثنائية؛ والجلسات التي لم يعد عاملها الثاني الوحيد مسموحًا به تتحقق مرة أخرى. للعضو المسؤول فقط.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowResponderApproval">
+    <value>يقبل الموافقة باستخدام مفتاح المرور في تطبيق Responder الخاص بالعضو حيث يكون إعداد مفتاح المرور المقابل مفعّلًا؛ ولا يُستخدم أبدًا لتغييرات الأمان أو طرق تسجيل الدخول إلى الحساب. يؤدي التغيير أيضًا إلى إنهاء الوصول الحالي إلى البيانات المحمية. للعضو المسؤول فقط.</value>
+  </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.AllowedIpRanges">
     <value>نطاقات الشبكة المسموح بها لتسجيل الدخول. الحقل الفارغ لا يضيف أي قيد على النطاق. راجع شبكات المستجيبين الشرعية ووصول الاسترداد قبل تضييقه.</value>
   </data>
@@ -5453,6 +5510,15 @@
   </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.SessionTimeoutMinutes">
     <value>مهلة الخمول بالدقائق؛ الصفر يترك السلوك لإعداد المضيف. تحقق من الجلسات التي تديرها السياسة ومن كل عميل مدعوم بدلًا من افتراض تسجيل خروج شامل فوري.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.SharedIdleLockMinutes">
+    <value>عدد الدقائق دون نشاط من المشغل قبل قفل جلسة جهاز لوحي في مركبة أو محطة عمل مشتركة، من 1 إلى 15. التحديثات في الخلفية والتنبيهات الواردة لا تُعد نشاطًا. تسري القيمة الأكثر صرامة على الجلسات الجارية عند طلبها التالي. للعضو المسؤول فقط.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.SharedModeRequiredApps">
+    <value>جلسات Unit وIC وDispatch التي يشغّلها هذا القسم دائمًا كجلسات مشتركة، أيًا كان إعداد التثبيت؛ وتُحتسب أيضًا عمليات تسجيل الدخول التي لا تذكر تطبيقها. يتطلب إصدارات تطبيقات تدعم الوضع المشترك. للعضو المسؤول فقط.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSecurityPolicy.SharedShiftHours">
+    <value>عدد الساعات بعد تسجيل الدخول التي تنتهي عندها الجلسة المشتركة أيًا كان النشاط، من 1 إلى 24. القيمة الأقصر تنهي الجلسات الجارية في وقت أبكر؛ والقيمة الأطول لا تمددها أبدًا. للعضو المسؤول فقط.</value>
   </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.AllowLocalLogin">
     <value>يسمح بمسار كلمة مرور محلية إلى جانب هذا المزوّد حيثما تسمح السياسة. راجع متطلب تسجيل الدخول الموحد على مستوى القسم وخطة الاسترداد معًا.</value>
@@ -5489,6 +5555,12 @@
   </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.EntityId">
     <value>معرّف مزوّد خدمة SAML المسجَّل لدى مزوّد الهوية. يجب أن يتطابق مع التكامل المُعدّ.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.FederatedMfaMappingJson">
+    <value>نتائج تسجيل الدخول لدى المزوّد التي تُحتسب مصادقةً متعددة العوامل للتحقق الإضافي عبر المزوّد. أي تغيير في التعيين أو الجهة المُصدِرة أو العميل يتطلب اختبارًا ناجحًا جديدًا قبل قبول المصادقة متعددة العوامل من المزوّد مرة أخرى.</value>
+  </data>
+  <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.IdpSsoUrl">
+    <value>عنوان تسجيل الدخول لدى مزوّد SAML الذي يرسل إليه تسجيل الدخول الذي يبدأ من Resgrid طلبه. تحقّق منه مقابل البيانات الوصفية للمزوّد قبل الاعتماد عليه.</value>
   </data>
   <data xml:space="preserve" name="TableHelp.DepartmentSsoConfig.IsEnabled">
     <value>يجعل إعداد هذا المزوّد متاحًا لمسار تسجيل الدخول الموحد المدعوم. علامة التفعيل المحفوظة ليست اختبار تسجيل دخول ناجحًا.</value>

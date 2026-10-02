@@ -144,19 +144,19 @@
   <data name="PrintedOn" xml:space="preserve"><value>Stampato il</value></data>
   <data name="PrintLayout" xml:space="preserve"><value>Impaginazione</value></data>
   <data name="ExportLimitNotice" xml:space="preserve"><value>Le esportazioni includono al massimo {0} righe; restringete il filtro per esportarne di più.</value></data>
-  <data name="SearchPlaceholder" xml:space="preserve"><value>Cerca rapporti</value></data>
+  <data name="SearchPlaceholder" xml:space="preserve"><value>Cerca registri</value></data>
   <data name="SearchUnavailable" xml:space="preserve"><value>La ricerca non è disponibile al momento; l'elenco sottostante è filtrato senza il testo di ricerca.</value></data>
   <data name="SearchTruncated" xml:space="preserve"><value>Vengono mostrate solo le corrispondenze più vicine; restringete la ricerca per vederne di più.</value></data>
   <data name="NarrativeSearchOn" xml:space="preserve"><value>Il testo della narrativa è incluso nella ricerca.</value></data>
-  <data name="NarrativeSearchOff" xml:space="preserve"><value>Il testo della narrativa non è indicizzato per questo dipartimento; la ricerca copre numeri di rapporto, riepiloghi e altri campi sicuri.</value></data>
+  <data name="NarrativeSearchOff" xml:space="preserve"><value>Il testo della narrativa non è indicizzato per questo dipartimento; la ricerca copre numeri di registro, riepiloghi e altri campi sicuri.</value></data>
   <data name="SearchIndexStatus" xml:space="preserve"><value>Indice di ricerca</value></data>
   <data name="SearchDisabled" xml:space="preserve"><value>Disattivato</value></data>
   <data name="SearchOnline" xml:space="preserve"><value>In linea</value></data>
   <data name="SearchOffline" xml:space="preserve"><value>Non in linea</value></data>
-  <data name="SearchDocuments" xml:space="preserve"><value>Rapporti indicizzati</value></data>
+  <data name="SearchDocuments" xml:space="preserve"><value>Registri indicizzati</value></data>
   <data name="SearchIndexNote" xml:space="preserve"><value>Il worker ricostruisce automaticamente l'indice di ricerca ogni volta che cambiano la politica di protezione o la versione del catalogo del dipartimento. La ricerca nella narrativa viene ritirata con l'adesione alla Protezione avanzata dei dati.</value></data>
   <data name="PrintLayoutHeader" xml:space="preserve"><value>Impaginazione di stampa</value></data>
-  <data name="PrintLayoutIntro" xml:space="preserve"><value>Come viene resa l'intestazione sulle stampe dei rapporti. Identità e logo provengono dal profilo del dipartimento; il contenuto del rapporto si stampa sempre dalla revisione bloccata.</value></data>
+  <data name="PrintLayoutIntro" xml:space="preserve"><value>Come viene resa l'intestazione sulle stampe dei registri. Identità e logo provengono dal profilo del dipartimento; il contenuto del registro si stampa sempre dalla revisione bloccata.</value></data>
   <data name="PrintShowLogo" xml:space="preserve"><value>Mostra logo</value></data>
   <data name="PrintUseShortName" xml:space="preserve"><value>Usa il nome breve</value></data>
   <data name="PrintShowAddress" xml:space="preserve"><value>Mostra indirizzo</value></data>
@@ -584,7 +584,7 @@
     <value>Rapporti d'intervento non ancora finalizzati</value>
   </data>
   <data name="IncludeLegacy" xml:space="preserve">
-    <value>Includi le voci del registro storico</value>
+    <value>Includi le voci dei log storici</value>
   </data>
   <data name="Incomplete" xml:space="preserve">
     <value>Incompleto</value>

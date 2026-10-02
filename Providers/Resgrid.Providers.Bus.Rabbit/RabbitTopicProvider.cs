@@ -86,6 +86,12 @@ namespace Resgrid.Providers.Bus.Rabbit
 			Id = Guid.NewGuid(), Type = (int)EventingTypes.ChecklistUpdated, TimeStamp = DateTime.UtcNow, DepartmentId = departmentId, ItemId = completionId
 		}.SerializeJson());
 
+		/// <summary>An event for one session's realtime connections (passkey workbook section 7.4).</summary>
+		public Task<bool> SessionEvent(string sessionId, string payload) => SendMessage(Topics.EventingTopic, new EventingMessage
+		{
+			Id = Guid.NewGuid(), Type = (int)EventingTypes.SessionEvent, TimeStamp = DateTime.UtcNow, ItemId = sessionId, Payload = payload
+		}.SerializeJson());
+
 		public async Task<bool> IncidentCommandUpdated(IncidentCommandUpdatedEvent message)
 		{
 			return await SendMessage(Topics.EventingTopic, new EventingMessage

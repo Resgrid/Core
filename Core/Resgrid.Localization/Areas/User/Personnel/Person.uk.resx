@@ -59,86 +59,77 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 
-  <data name="Name1" xml:space="preserve">
-    <value>this is my long string</value>
-  </data>
-  <data name="Bitmap1" xml:space="preserve">
-    <value>[base64 mime encoded serialized .NET Framework object]</value>
-  </data>
-  <data name="Icon1" xml:space="preserve">
-    <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-  </data>
   <data name="AccountInformationHeader" xml:space="preserve">
-    <value>Account Information</value>
+    <value>Інформація про обліковий запис</value>
   </data>
   <data name="AddAPerson" xml:space="preserve">
-    <value>Add a Person</value>
+    <value>Додати особу</value>
   </data>
   <data name="AddAPersonHelp" xml:space="preserve">
-    <value>Add a single person</value>
+    <value>Додати одну особу</value>
   </data>
   <data name="AddExistingUserHeader" xml:space="preserve">
-    <value>Existing User Added</value>
+    <value>Наявного користувача додано</value>
   </data>
   <data name="AddPersonHeader" xml:space="preserve">
-    <value>Add Person</value>
+    <value>Додати особу</value>
   </data>
   <data name="AddRank" xml:space="preserve">
-    <value>Add Rank</value>
+    <value>Додати звання</value>
   </data>
   <data name="AddRoleHeader" xml:space="preserve">
-    <value>Add Role</value>
+    <value>Додати роль</value>
   </data>
   <data name="CallOptionsLabel" xml:space="preserve">
-    <value>Call Options</value>
+    <value>Параметри викликів</value>
   </data>
   <data name="ChangePassword" xml:space="preserve">
-    <value>Change Password</value>
+    <value>Змінити пароль</value>
   </data>
   <data name="CheckToDelete" xml:space="preserve">
-    <value>Click the checkbox below to delete this user.</value>
+    <value>Позначте прапорець нижче, щоб видалити цього користувача.</value>
   </data>
   <data name="ConfirmDelete" xml:space="preserve">
-    <value>Confirm Delete?</value>
+    <value>Підтвердити видалення?</value>
   </data>
   <data name="ConfirmPasswordHelp" xml:space="preserve">
-    <value>Confirm the users password (must match the one above)</value>
+    <value>Підтвердьте пароль користувача (має збігатися з указаним вище)</value>
   </data>
   <data name="ConfirmPasswordLabel" xml:space="preserve">
     <value>Підтвердити пароль</value>
   </data>
   <data name="ContactDetailsHeader" xml:space="preserve">
-    <value>Contact Details</value>
+    <value>Контактні дані</value>
   </data>
   <data name="DeleteAreYouSure" xml:space="preserve">
-    <value>Are you sure you want to delete this user?</value>
+    <value>Ви дійсно бажаєте видалити цього користувача?</value>
   </data>
   <data name="DeleteAreYouSure2" xml:space="preserve">
-    <value>If you choose to delete this user the information below will be permanently deleted. The recommended procedure is to disable the user if they leave the department or organization. Only delete the user after enough time has gone by, the account was a mistake or never used.</value>
+    <value>Якщо ви видалите цього користувача, наведену нижче інформацію буде видалено остаточно. Рекомендовано вимкнути користувача, якщо він залишає підрозділ або організацію. Видаляйте користувача лише після того, як мине достатньо часу, або якщо обліковий запис створено помилково чи він ніколи не використовувався.</value>
   </data>
   <data name="DeletePersonHeader" xml:space="preserve">
-    <value>Delete Person</value>
+    <value>Видалити особу</value>
   </data>
   <data name="EditRoleHeader" xml:space="preserve">
-    <value>Edit Role</value>
+    <value>Редагувати роль</value>
   </data>
   <data name="Email" xml:space="preserve">
     <value>Електронна пошта</value>
   </data>
   <data name="EmailAddressHelp" xml:space="preserve">
-    <value>Email Addresses must be unique</value>
+    <value>Адреси електронної пошти мають бути унікальними</value>
   </data>
   <data name="EmailAddressLabel" xml:space="preserve">
     <value>Адреса електронної пошти</value>
   </data>
   <data name="EmailAddressPlaceholder" xml:space="preserve">
-    <value>Email Address (must be unique)</value>
+    <value>Адреса електронної пошти (має бути унікальною)</value>
   </data>
   <data name="ExistingUserHelp1" xml:space="preserve">
-    <value>This user</value>
+    <value>Цей користувач</value>
   </data>
   <data name="ExistingUserHelp2" xml:space="preserve">
-    <value>, based on email address, already had a Resgrid account in another department. The user account has now been added &lt;b&gt;with their previous profile settings (name, phone numbers, preferences, etc)&lt;/b&gt; to the department. Because the user is in multiple departments they need activate this department to see it's information from their "View Your Departments" option under their profile dropdown (under the profile picture in the upper left hand corner).</value>
+    <value>, судячи з адреси електронної пошти, уже мав обліковий запис Resgrid в іншому підрозділі. Тепер обліковий запис додано до підрозділу &lt;b&gt;з попередніми налаштуваннями профілю (ім'я, номери телефонів, налаштування тощо)&lt;/b&gt;. Оскільки користувач належить до кількох підрозділів, йому потрібно активувати цей підрозділ через "Ваші підрозділи" в меню профілю (під фото профілю у верхньому лівому куті), щоб бачити його інформацію.</value>
   </data>
   <data name="AddExistingUserConfirmHeader" xml:space="preserve">
     <value>Додати наявного користувача</value>
@@ -159,19 +150,19 @@
     <value>Ім'я</value>
   </data>
   <data name="GroupLabel" xml:space="preserve">
-    <value>Group</value>
+    <value>Група</value>
   </data>
   <data name="Home" xml:space="preserve">
-    <value>Головна</value>
+    <value>Домашній</value>
   </data>
   <data name="IDNumberLabel" xml:space="preserve">
-    <value>ID Number</value>
+    <value>Ідентифікаційний номер</value>
   </data>
   <data name="IDNumberPlaceholder" xml:space="preserve">
-    <value>Custom Identication Number</value>
+    <value>Власний ідентифікаційний номер</value>
   </data>
   <data name="IsGroupAdminLabel" xml:space="preserve">
-    <value>Is Group Admin?</value>
+    <value>Адміністратор групи?</value>
   </data>
   <data name="LastNameLabel" xml:space="preserve">
     <value>Прізвище</value>
@@ -180,49 +171,49 @@
     <value>Прізвище</value>
   </data>
   <data name="ManageInvites" xml:space="preserve">
-    <value>Manage Invites</value>
+    <value>Керування запрошеннями</value>
   </data>
   <data name="ManageInvitesHelp" xml:space="preserve">
-    <value>Invite multiple people</value>
+    <value>Запросити кількох осіб</value>
   </data>
   <data name="ManageRoles" xml:space="preserve">
-    <value>Manage Roles</value>
+    <value>Керування ролями</value>
   </data>
   <data name="MessageOptionsLabel" xml:space="preserve">
-    <value>Message Options</value>
+    <value>Параметри повідомлень</value>
   </data>
   <data name="Mobile" xml:space="preserve">
-    <value>Mobile</value>
+    <value>Мобільний</value>
   </data>
   <data name="MobileCarrierLabel" xml:space="preserve">
-    <value>Mobile Carrier</value>
+    <value>Мобільний оператор</value>
   </data>
   <data name="MobileNumberLabel" xml:space="preserve">
-    <value>Mobile Number</value>
+    <value>Номер мобільного</value>
   </data>
   <data name="MobileNumberPlaceholder" xml:space="preserve">
-    <value>Mobile Phone Number</value>
+    <value>Номер мобільного телефону</value>
   </data>
   <data name="NewPasswordHelp" xml:space="preserve">
-    <value>Passwords must be 8 characters or longer and include a digit (number), an uppercase and lowercase letter</value>
+    <value>Пароль має містити щонайменше 8 символів, зокрема цифру, велику та малу літери</value>
   </data>
   <data name="NewPasswordLabel" xml:space="preserve">
-    <value>New Password</value>
+    <value>Новий пароль</value>
   </data>
   <data name="NoPersonnelInDepartment" xml:space="preserve">
-    <value>No Personnel In Department</value>
+    <value>У підрозділі немає персоналу</value>
   </data>
   <data name="NoPersonnelInThisGroup" xml:space="preserve">
-    <value>No Personnel in this Group</value>
+    <value>У цій групі немає персоналу</value>
   </data>
   <data name="NotificationOptionsLabel" xml:space="preserve">
-    <value>Notification Options</value>
+    <value>Параметри сповіщень</value>
   </data>
   <data name="NotifyUser" xml:space="preserve">
-    <value>Notify User?</value>
+    <value>Сповістити користувача?</value>
   </data>
   <data name="NotifyWarning" xml:space="preserve">
-    <value>Uncheck if you don't want Resgrid to notify the user of this account creation.</value>
+    <value>Зніміть позначку, якщо не хочете, щоб Resgrid сповіщав користувача про створення цього облікового запису.</value>
   </data>
   <data name="RequirePasswordChange" xml:space="preserve">
     <value>Vymahaty zminu parolya</value>
@@ -231,34 +222,34 @@
     <value>Korystuvach povynen zminyty parol pid chas pershoho vkhodu.</value>
   </data>
   <data name="NoUnGroupedPersonnel" xml:space="preserve">
-    <value>No UnGrouped Personnel</value>
+    <value>Немає незгрупованого персоналу</value>
   </data>
   <data name="PersonnelHeader" xml:space="preserve">
     <value>Персонал</value>
   </data>
   <data name="PhoneNumbers" xml:space="preserve">
-    <value>Phone Number(s)</value>
+    <value>Номери телефонів</value>
   </data>
   <data name="Push" xml:space="preserve">
     <value>Push</value>
   </data>
   <data name="RankDeleteWarning" xml:space="preserve">
-    <value>WARNING: This will permanently delete this rank. Are you sure you want to delete the rank</value>
+    <value>ПОПЕРЕДЖЕННЯ: це звання буде видалено остаточно. Ви дійсно бажаєте видалити звання</value>
   </data>
   <data name="RanksHeader" xml:space="preserve">
-    <value>Personnel Ranks</value>
+    <value>Звання персоналу</value>
   </data>
   <data name="ReactivatePersonHeader" xml:space="preserve">
-    <value>Reactivate Person</value>
+    <value>Повторно активувати особу</value>
   </data>
   <data name="ReactivatePersonText1" xml:space="preserve">
-    <value>This user</value>
+    <value>Цей користувач</value>
   </data>
   <data name="ReactivatePersonText2" xml:space="preserve">
-    <value>based on email address, already had an account in the</value>
+    <value>судячи з адреси електронної пошти, уже мав обліковий запис у</value>
   </data>
   <data name="ReactivatePersonText3" xml:space="preserve">
-    <value>department but was deleted previously. The user account has now be un-deleted and reactivated inside this department and will appear &lt;b&gt;with their previous profile settings (name, phone numbers, preferences, etc)&lt;/b&gt; in the department.</value>
+    <value>підрозділі, але раніше був видалений. Тепер обліковий запис користувача відновлено й повторно активовано в цьому підрозділі, і він відображатиметься в підрозділі &lt;b&gt;з попередніми налаштуваннями профілю (ім'я, номери телефонів, налаштування тощо)&lt;/b&gt;.</value>
   </data>
   <data name="ReactivatePersonConfirmText" xml:space="preserve">
     <value>підрозділі, але був видалений. Повторна активація повертає обліковий запис у цей підрозділ із попередніми налаштуваннями профілю (ім'я, номери телефонів, уподобання). Особа повертається як звичайний член; за потреби надайте права адміністратора окремо.</value>
@@ -267,43 +258,43 @@
     <value>Активувати повторно</value>
   </data>
   <data name="RoleDeleteWarning" xml:space="preserve">
-    <value>WARNING: This will permanently delete this role. Are you sure you want to delete the role</value>
+    <value>ПОПЕРЕДЖЕННЯ: цю роль буде видалено остаточно. Ви дійсно бажаєте видалити роль</value>
   </data>
   <data name="RoleDescriptionPlaceholder" xml:space="preserve">
-    <value>A description of the role</value>
+    <value>Опис ролі</value>
   </data>
   <data name="RoleNamePlaceholder" xml:space="preserve">
-    <value>Name of the Role</value>
+    <value>Назва ролі</value>
   </data>
   <data name="RolesHeader" xml:space="preserve">
-    <value>Personnel Roles</value>
+    <value>Ролі персоналу</value>
   </data>
   <data name="RolesLabel" xml:space="preserve">
     <value>Ролі</value>
   </data>
   <data name="SetPersonStaffingHeader" xml:space="preserve">
-    <value>Set Person Staffing</value>
+    <value>Встановити готовність особи</value>
   </data>
   <data name="SetPersonStatusHeader" xml:space="preserve">
-    <value>Set Person Status</value>
+    <value>Встановити статус особи</value>
   </data>
   <data name="SetStaffing" xml:space="preserve">
-    <value>Set Staffing</value>
+    <value>Встановити готовність</value>
   </data>
   <data name="SetStaffingForSelectedPersonnel" xml:space="preserve">
-    <value>Set Staffing for Selected Personnel</value>
+    <value>Встановити готовність вибраного персоналу</value>
   </data>
   <data name="SetStatus" xml:space="preserve">
-    <value>Set Status</value>
+    <value>Встановити статус</value>
   </data>
   <data name="SetStatusForSelectedPersonnel" xml:space="preserve">
-    <value>Set Status for Selected Personnel</value>
+    <value>Встановити статус вибраного персоналу</value>
   </data>
   <data name="SpecialNote" xml:space="preserve">
-    <value>Special Note</value>
+    <value>Особлива примітка</value>
   </data>
   <data name="SpecialNoteText" xml:space="preserve">
-    <value>Underlying user data is retained in the system so that logs, reports and history is properly retained for the department. It is recommended that all PII/PHI in the user account is altered to be removed, i.e. phone numbers, addresses, etc before you delete the user.</value>
+    <value>Базові дані користувача зберігаються в системі, щоб журнали, звіти та історія підрозділу залишалися повними. Перед видаленням користувача рекомендовано вилучити з облікового запису всі персональні та медичні дані (PII/PHI), наприклад номери телефонів, адреси тощо.</value>
   </data>
   <data name="Staffing" xml:space="preserve">
     <value>Укомплектованість</value>
@@ -315,28 +306,28 @@
     <value>Текст</value>
   </data>
   <data name="TextWarning" xml:space="preserve">
-    <value>You may incur additional changes for SMS/Text depending on your mobile plan.</value>
+    <value>Залежно від вашого тарифного плану за SMS може стягуватися додаткова плата.</value>
   </data>
   <data name="User" xml:space="preserve">
-    <value>User</value>
+    <value>Користувач</value>
   </data>
   <data name="UserDetailHeader" xml:space="preserve">
-    <value>User Details</value>
+    <value>Відомості про користувача</value>
   </data>
   <data name="UsernameHelp" xml:space="preserve">
-    <value>The User Name must be unique</value>
+    <value>Ім'я користувача має бути унікальним</value>
   </data>
   <data name="UsernameLabel" xml:space="preserve">
     <value>Ім'я користувача</value>
   </data>
   <data name="UsersInRank" xml:space="preserve">
-    <value>Users in Rank</value>
+    <value>Користувачі з цим званням</value>
   </data>
   <data name="UsersInRole" xml:space="preserve">
-    <value>Users In Role</value>
+    <value>Користувачі в ролі</value>
   </data>
   <data name="ViewPersonHeader" xml:space="preserve">
-    <value>View Person</value>
+    <value>Переглянути особу</value>
   </data>
   <data name="GenerateReport" xml:space="preserve">
     <value>Згенерувати звіт</value>
@@ -351,7 +342,7 @@
     <value>Події для</value>
   </data>
   <data name="AreYouSurePersonnel" xml:space="preserve">
-    <value>Are you sure you want to permanently delete all statuses for this person?</value>
+    <value>Ви дійсно бажаєте остаточно видалити всі статуси цієї особи?</value>
   </data>
   <data name="ClearAllStatuses" xml:space="preserve">
     <value>Очистити всі статуси</value>
@@ -360,10 +351,10 @@
     <value>Видалити все</value>
   </data>
   <data name="YesImSure" xml:space="preserve">
-    <value>Так, я впевнений</value>
+    <value>Так, підтверджую</value>
   </data>
   <data name="ViewRoleHeader" xml:space="preserve">
-    <value>View Role</value>
+    <value>Переглянути роль</value>
   </data>
   <data name="OutstandingRecordsHeader" xml:space="preserve">
     <value>Незавершені записи</value>

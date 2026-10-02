@@ -9,6 +9,363 @@
   <data name="SecurityPermissionsHeader" xml:space="preserve"><value>Ασφάλεια και Δικαιώματα</value></data>
   <data name="SecurityPermissionsDescription" xml:space="preserve"><value>Εδώ μπορείτε να ορίσετε τα δικαιώματα του τμήματός σας, για παράδειγμα ποιοι χρήστες ή ρόλοι μπορούν να δημιουργούν κλήσεις ή ποιος είναι εξουσιοδοτημένος να δημιουργεί και να αφαιρεί χρήστες. Οι αλλαγές στα δικαιώματα θα τεθούν σε ισχύ κατά την επόμενη σύνδεση στη διαδικτυακή εφαρμογή Resgrid.</value></data>
   <data name="AuditLogsButton" xml:space="preserve"><value>Αρχεία Ελέγχου</value></data>
+  <data name="AuditLogsTypeFilterLabel" xml:space="preserve"><value>Φιλτράρισμα κατά τύπο ελέγχου</value></data>
+  <data name="AuditLogsTypeFilterAll" xml:space="preserve"><value>Όλοι οι τύποι ελέγχου</value></data>
+  <data name="AuditLogsSearchHelp" xml:space="preserve"><value>Αναζήτηση κατά όνομα χρήστη, αναγνωριστικό χρήστη ή ελέγχου, διεύθυνση email, ημερομηνία/ώρα ή τύπο ελέγχου. Η αναζήτηση και η ταξινόμηση εφαρμόζονται εντός του επιλεγμένου τύπου ελέγχου.</value></data>
+  <data name="AuditLogsSearchLabel" xml:space="preserve"><value>Αναζήτηση στα αρχεία ελέγχου:</value></data>
+  <data name="AuditLogsSearchPlaceholder" xml:space="preserve"><value>Όνομα, αναγνωριστικό, email, ημερομηνία/ώρα ή τύπος</value></data>
+  <data name="AuditLogsColumnTimestamp" xml:space="preserve"><value>Χρονική Σήμανση</value></data>
+  <data name="AuditLogsColumnType" xml:space="preserve"><value>Τύπος</value></data>
+  <data name="AuditLogsColumnLoggedBy" xml:space="preserve"><value>Καταγράφηκε Από</value></data>
+  <data name="AuditLogsColumnResult" xml:space="preserve"><value>Αποτέλεσμα</value></data>
+  <data name="AuditLogsColumnMessage" xml:space="preserve"><value>Μήνυμα</value></data>
+  <data name="AuditLogsColumnSearchTerms" xml:space="preserve"><value>Όροι Αναζήτησης</value></data>
+  <data name="AuditLogsColumnActions" xml:space="preserve"><value>Ενέργειες</value></data>
+  <data name="AuditLogsResultSuccessful" xml:space="preserve"><value>Επιτυχία</value></data>
+  <data name="AuditLogsResultFailed" xml:space="preserve"><value>Αποτυχία</value></data>
+  <data name="AuditLogsViewButton" xml:space="preserve"><value>Προβολή</value></data>
+  <data name="AuditLogsTableInfo" xml:space="preserve"><value>Εμφάνιση _START_ έως _END_ από _TOTAL_ καταχωρίσεις</value></data>
+  <data name="AuditLogsTableInfoEmpty" xml:space="preserve"><value>Εμφάνιση 0 έως 0 από 0 καταχωρίσεις</value></data>
+  <data name="AuditLogsTableInfoFiltered" xml:space="preserve"><value>(φιλτραρισμένες από _MAX_ συνολικά καταχωρίσεις)</value></data>
+  <data name="AuditLogsTableLengthMenu" xml:space="preserve"><value>Εμφάνιση _MENU_ καταχωρίσεων</value></data>
+  <data name="AuditLogsTableLoading" xml:space="preserve"><value>Φόρτωση...</value></data>
+  <data name="AuditLogsTableEmpty" xml:space="preserve"><value>Δεν υπάρχουν καταχωρίσεις αρχείων ελέγχου</value></data>
+  <data name="AuditLogsTableZeroRecords" xml:space="preserve"><value>Δεν βρέθηκαν αντίστοιχες καταχωρίσεις αρχείων ελέγχου</value></data>
+  <data name="AuditLogsTableFirst" xml:space="preserve"><value>Πρώτη</value></data>
+  <data name="AuditLogsTableLast" xml:space="preserve"><value>Τελευταία</value></data>
+  <data name="AuditLogsTableNext" xml:space="preserve"><value>Επόμενη</value></data>
+  <data name="AuditLogsTablePrevious" xml:space="preserve"><value>Προηγούμενη</value></data>
+  <data name="AuditLogsTableSortAscending" xml:space="preserve"><value>: ενεργοποιήστε για αύξουσα ταξινόμηση της στήλης</value></data>
+  <data name="AuditLogsTableSortDescending" xml:space="preserve"><value>: ενεργοποιήστε για φθίνουσα ταξινόμηση της στήλης</value></data>
+  <data name="AuditLogsSystemActor" xml:space="preserve"><value>Σύστημα</value></data>
+  <data name="AuditLogsUnknownTime" xml:space="preserve"><value>Άγνωστη</value></data>
+  <data name="AuditLogViewTitle" xml:space="preserve"><value>Προβολή Καταχώρισης Αρχείου Ελέγχου</value></data>
+  <data name="AuditLogViewPanelTitle" xml:space="preserve"><value>Καταχώριση Αρχείου Ελέγχου</value></data>
+  <data name="AuditLogViewAuditLogId" xml:space="preserve"><value>Αναγνωριστικό Καταχώρισης:</value></data>
+  <data name="AuditLogViewDepartmentId" xml:space="preserve"><value>Αναγνωριστικό Τμήματος:</value></data>
+  <data name="AuditLogViewAuditType" xml:space="preserve"><value>Τύπος Ελέγχου:</value></data>
+  <data name="AuditLogViewLogTypeId" xml:space="preserve"><value>Αναγνωριστικό Τύπου Καταγραφής:</value></data>
+  <data name="AuditLogViewTypeDescription" xml:space="preserve"><value>Περιγραφή Τύπου:</value></data>
+  <data name="AuditLogViewResult" xml:space="preserve"><value>Αποτέλεσμα:</value></data>
+  <data name="AuditLogViewLoggedBy" xml:space="preserve"><value>Καταγράφηκε Από:</value></data>
+  <data name="AuditLogViewUserId" xml:space="preserve"><value>Αναγνωριστικό Χρήστη:</value></data>
+  <data name="AuditLogViewLoggedOnLocal" xml:space="preserve"><value>Καταγράφηκε Στις (Τοπική Ώρα):</value></data>
+  <data name="AuditLogViewLoggedOnUtc" xml:space="preserve"><value>Καταγράφηκε Στις (UTC):</value></data>
+  <data name="AuditLogViewIpAddress" xml:space="preserve"><value>Διεύθυνση IP:</value></data>
+  <data name="AuditLogViewServerName" xml:space="preserve"><value>Όνομα Διακομιστή:</value></data>
+  <data name="AuditLogViewObjectId" xml:space="preserve"><value>Αναγνωριστικό Αντικειμένου:</value></data>
+  <data name="AuditLogViewObjectDepartmentId" xml:space="preserve"><value>Αναγνωριστικό Τμήματος Αντικειμένου:</value></data>
+  <data name="AuditLogViewUserAgent" xml:space="preserve"><value>User Agent:</value></data>
+  <data name="AuditLogViewMessage" xml:space="preserve"><value>Μήνυμα:</value></data>
+  <data name="AuditLogViewData" xml:space="preserve"><value>Δεδομένα:</value></data>
+  <data name="AuditLogViewNotRecorded" xml:space="preserve"><value>Δεν καταγράφηκε</value></data>
+  <data name="AuditLogTypeDepartmentSettingsChanged" xml:space="preserve"><value>Άλλαξαν ρυθμίσεις τμήματος</value></data>
+  <data name="AuditLogTypeUserAdded" xml:space="preserve"><value>Προστέθηκε χρήστης</value></data>
+  <data name="AuditLogTypeUserRemoved" xml:space="preserve"><value>Αφαιρέθηκε χρήστης</value></data>
+  <data name="AuditLogTypeGroupAdded" xml:space="preserve"><value>Προστέθηκε ομάδα</value></data>
+  <data name="AuditLogTypeGroupRemoved" xml:space="preserve"><value>Αφαιρέθηκε ομάδα</value></data>
+  <data name="AuditLogTypeGroupChanged" xml:space="preserve"><value>Άλλαξε ομάδα</value></data>
+  <data name="AuditLogTypeUnitAdded" xml:space="preserve"><value>Προστέθηκε μονάδα</value></data>
+  <data name="AuditLogTypeUnitRemoved" xml:space="preserve"><value>Αφαιρέθηκε μονάδα</value></data>
+  <data name="AuditLogTypeUnitChanged" xml:space="preserve"><value>Άλλαξε μονάδα</value></data>
+  <data name="AuditLogTypeProfileUpdated" xml:space="preserve"><value>Ενημερώθηκε προφίλ</value></data>
+  <data name="AuditLogTypePermissionsChanged" xml:space="preserve"><value>Άλλαξαν δικαιώματα</value></data>
+  <data name="AuditLogTypeSubscriptionUpdated" xml:space="preserve"><value>Ενημερώθηκε συνδρομή</value></data>
+  <data name="AuditLogTypeSubscriptionCreated" xml:space="preserve"><value>Δημιουργήθηκε συνδρομή</value></data>
+  <data name="AuditLogTypeSubscriptionCancelled" xml:space="preserve"><value>Ακυρώθηκε συνδρομή</value></data>
+  <data name="AuditLogTypeSubscriptionBillingInfoUpdated" xml:space="preserve"><value>Ενημερώθηκαν στοιχεία χρέωσης συνδρομής</value></data>
+  <data name="AuditLogTypeCallReactivated" xml:space="preserve"><value>Επανενεργοποιήθηκε κλήση</value></data>
+  <data name="AuditLogTypeUserAccountDeleted" xml:space="preserve"><value>Διαγράφηκε λογαριασμός χρήστη</value></data>
+  <data name="AuditLogTypeAddonSubscriptionModified" xml:space="preserve"><value>Τροποποιήθηκε συνδρομή πρόσθετου</value></data>
+  <data name="AuditLogTypeDeleteDepartmentRequested" xml:space="preserve"><value>Ζητήθηκε διαγραφή τμήματος</value></data>
+  <data name="AuditLogTypeDeleteDepartmentRequestedCancelled" xml:space="preserve"><value>Ακυρώθηκε αίτημα διαγραφής τμήματος</value></data>
+  <data name="AuditLogTypeDeleteStaticShift" xml:space="preserve"><value>Διαγράφηκε στατική βάρδια</value></data>
+  <data name="AuditLogTypeUpdateStaticShift" xml:space="preserve"><value>Ενημερώθηκε στατική βάρδια</value></data>
+  <data name="AuditLogTypeCustomStatusAdded" xml:space="preserve"><value>Προστέθηκε προσαρμοσμένη κατάσταση</value></data>
+  <data name="AuditLogTypeCustomStatusRemoved" xml:space="preserve"><value>Αφαιρέθηκε προσαρμοσμένη κατάσταση</value></data>
+  <data name="AuditLogTypeCustomStatusUpdated" xml:space="preserve"><value>Ενημερώθηκε προσαρμοσμένη κατάσταση</value></data>
+  <data name="AuditLogTypeCustomStatusDetailUpdated" xml:space="preserve"><value>Ενημερώθηκε λεπτομέρεια προσαρμοσμένης κατάστασης</value></data>
+  <data name="AuditLogTypeCallTypeAdded" xml:space="preserve"><value>Προστέθηκε τύπος κλήσης</value></data>
+  <data name="AuditLogTypeCallTypeEdited" xml:space="preserve"><value>Επεξεργάστηκε τύπος κλήσης</value></data>
+  <data name="AuditLogTypeCallTypeRemoved" xml:space="preserve"><value>Αφαιρέθηκε τύπος κλήσης</value></data>
+  <data name="AuditLogTypeCallPriorityAdded" xml:space="preserve"><value>Προστέθηκε προτεραιότητα κλήσης</value></data>
+  <data name="AuditLogTypeCallPriorityEdited" xml:space="preserve"><value>Επεξεργάστηκε προτεραιότητα κλήσης</value></data>
+  <data name="AuditLogTypeCallPriorityRemoved" xml:space="preserve"><value>Αφαιρέθηκε προτεραιότητα κλήσης</value></data>
+  <data name="AuditLogTypeUnitTypeAdded" xml:space="preserve"><value>Προστέθηκε τύπος μονάδας</value></data>
+  <data name="AuditLogTypeUnitTypeEdited" xml:space="preserve"><value>Επεξεργάστηκε τύπος μονάδας</value></data>
+  <data name="AuditLogTypeUnitTypeRemoved" xml:space="preserve"><value>Αφαιρέθηκε τύπος μονάδας</value></data>
+  <data name="AuditLogTypeCertificationTypeAdded" xml:space="preserve"><value>Προστέθηκε τύπος πιστοποίησης</value></data>
+  <data name="AuditLogTypeCertificationTypeEdited" xml:space="preserve"><value>Επεξεργάστηκε τύπος πιστοποίησης</value></data>
+  <data name="AuditLogTypeCertificationTypeRemoved" xml:space="preserve"><value>Αφαιρέθηκε τύπος πιστοποίησης</value></data>
+  <data name="AuditLogTypeDocumentCategoryAdded" xml:space="preserve"><value>Προστέθηκε κατηγορία εγγράφων</value></data>
+  <data name="AuditLogTypeDocumentCategoryEdited" xml:space="preserve"><value>Επεξεργάστηκε κατηγορία εγγράφων</value></data>
+  <data name="AuditLogTypeDocumentCategoryRemoved" xml:space="preserve"><value>Αφαιρέθηκε κατηγορία εγγράφων</value></data>
+  <data name="AuditLogTypeDocumentAdded" xml:space="preserve"><value>Προστέθηκε έγγραφο</value></data>
+  <data name="AuditLogTypeDocumentEdited" xml:space="preserve"><value>Επεξεργάστηκε έγγραφο</value></data>
+  <data name="AuditLogTypeDocumentRemoved" xml:space="preserve"><value>Αφαιρέθηκε έγγραφο</value></data>
+  <data name="AuditLogTypeNoteCategoryAdded" xml:space="preserve"><value>Προστέθηκε κατηγορία σημειώσεων</value></data>
+  <data name="AuditLogTypeNoteCategoryEdited" xml:space="preserve"><value>Επεξεργάστηκε κατηγορία σημειώσεων</value></data>
+  <data name="AuditLogTypeNoteCategoryRemoved" xml:space="preserve"><value>Αφαιρέθηκε κατηγορία σημειώσεων</value></data>
+  <data name="AuditLogTypeNoteAdded" xml:space="preserve"><value>Προστέθηκε σημείωση</value></data>
+  <data name="AuditLogTypeNoteEdited" xml:space="preserve"><value>Επεξεργάστηκε σημείωση</value></data>
+  <data name="AuditLogTypeNoteRemoved" xml:space="preserve"><value>Αφαιρέθηκε σημείωση</value></data>
+  <data name="AuditLogTypeContactAdded" xml:space="preserve"><value>Προστέθηκε επαφή</value></data>
+  <data name="AuditLogTypeContactEdited" xml:space="preserve"><value>Επεξεργάστηκε επαφή</value></data>
+  <data name="AuditLogTypeContactRemoved" xml:space="preserve"><value>Αφαιρέθηκε επαφή</value></data>
+  <data name="AuditLogTypeContactCategoryAdded" xml:space="preserve"><value>Προστέθηκε κατηγορία επαφών</value></data>
+  <data name="AuditLogTypeContactCategoryEdited" xml:space="preserve"><value>Επεξεργάστηκε κατηγορία επαφών</value></data>
+  <data name="AuditLogTypeContactCategoryRemoved" xml:space="preserve"><value>Αφαιρέθηκε κατηγορία επαφών</value></data>
+  <data name="AuditLogTypeContactNoteTypeAdded" xml:space="preserve"><value>Προστέθηκε τύπος σημείωσης επαφής</value></data>
+  <data name="AuditLogTypeContactNoteTypeEdited" xml:space="preserve"><value>Επεξεργάστηκε τύπος σημείωσης επαφής</value></data>
+  <data name="AuditLogTypeContactNoteTypeRemoved" xml:space="preserve"><value>Αφαιρέθηκε τύπος σημείωσης επαφής</value></data>
+  <data name="AuditLogTypeWorkflowAdded" xml:space="preserve"><value>Δημιουργήθηκε ροή εργασίας</value></data>
+  <data name="AuditLogTypeWorkflowEdited" xml:space="preserve"><value>Ενημερώθηκε ροή εργασίας</value></data>
+  <data name="AuditLogTypeWorkflowDeleted" xml:space="preserve"><value>Διαγράφηκε ροή εργασίας</value></data>
+  <data name="AuditLogTypeWorkflowStepAdded" xml:space="preserve"><value>Προστέθηκε βήμα ροής εργασίας</value></data>
+  <data name="AuditLogTypeWorkflowStepEdited" xml:space="preserve"><value>Ενημερώθηκε βήμα ροής εργασίας</value></data>
+  <data name="AuditLogTypeWorkflowStepDeleted" xml:space="preserve"><value>Διαγράφηκε βήμα ροής εργασίας</value></data>
+  <data name="AuditLogTypeWorkflowCredentialAdded" xml:space="preserve"><value>Προστέθηκε διαπιστευτήριο ροής εργασίας</value></data>
+  <data name="AuditLogTypeWorkflowCredentialEdited" xml:space="preserve"><value>Ενημερώθηκε διαπιστευτήριο ροής εργασίας</value></data>
+  <data name="AuditLogTypeWorkflowCredentialDeleted" xml:space="preserve"><value>Διαγράφηκε διαπιστευτήριο ροής εργασίας</value></data>
+  <data name="AuditLogTypeContactVerificationCodeSent" xml:space="preserve"><value>Απεστάλη κωδικός επαλήθευσης επικοινωνίας</value></data>
+  <data name="AuditLogTypeContactVerificationConfirmed" xml:space="preserve"><value>Επιβεβαιώθηκε επαλήθευση επικοινωνίας</value></data>
+  <data name="AuditLogTypeContactVerificationFailed" xml:space="preserve"><value>Απέτυχε επαλήθευση επικοινωνίας</value></data>
+  <data name="AuditLogTypeTwoFactorEnabled" xml:space="preserve"><value>Ενεργοποιήθηκε έλεγχος ταυτότητας δύο παραγόντων</value></data>
+  <data name="AuditLogTypeTwoFactorDisabled" xml:space="preserve"><value>Απενεργοποιήθηκε έλεγχος ταυτότητας δύο παραγόντων</value></data>
+  <data name="AuditLogTypeTwoFactorLoginVerified" xml:space="preserve"><value>Επαληθεύτηκε σύνδεση δύο παραγόντων</value></data>
+  <data name="AuditLogTypeTwoFactorRecoveryCodeUsed" xml:space="preserve"><value>Χρησιμοποιήθηκε κωδικός ανάκτησης δύο παραγόντων</value></data>
+  <data name="AuditLogTypeTwoFactorStepUpVerified" xml:space="preserve"><value>Επαληθεύτηκε ενισχυμένος έλεγχος δύο παραγόντων</value></data>
+  <data name="AuditLogTypeSsoConfigCreated" xml:space="preserve"><value>Δημιουργήθηκε διαμόρφωση SSO</value></data>
+  <data name="AuditLogTypeSsoConfigUpdated" xml:space="preserve"><value>Ενημερώθηκε διαμόρφωση SSO</value></data>
+  <data name="AuditLogTypeSsoConfigDeleted" xml:space="preserve"><value>Διαγράφηκε διαμόρφωση SSO</value></data>
+  <data name="AuditLogTypeSsoLoginSucceeded" xml:space="preserve"><value>Επιτεύχθηκε σύνδεση SSO</value></data>
+  <data name="AuditLogTypeSsoLoginFailed" xml:space="preserve"><value>Απέτυχε σύνδεση SSO</value></data>
+  <data name="AuditLogTypeSsoUserProvisioned" xml:space="preserve"><value>Παρασχέθηκε χρήστης SSO</value></data>
+  <data name="AuditLogTypeScimUserCreated" xml:space="preserve"><value>Δημιουργήθηκε χρήστης SCIM</value></data>
+  <data name="AuditLogTypeScimUserUpdated" xml:space="preserve"><value>Ενημερώθηκε χρήστης SCIM</value></data>
+  <data name="AuditLogTypeScimUserDeactivated" xml:space="preserve"><value>Απενεργοποιήθηκε χρήστης SCIM</value></data>
+  <data name="AuditLogTypeScimUserDeleted" xml:space="preserve"><value>Διαγράφηκε χρήστης SCIM</value></data>
+  <data name="AuditLogTypeScimAuthFailed" xml:space="preserve"><value>Απέτυχε έλεγχος ταυτότητας SCIM</value></data>
+  <data name="AuditLogTypeScimUserReactivated" xml:space="preserve"><value>Επανενεργοποιήθηκε χρήστης SCIM</value></data>
+  <data name="AuditLogTypeScimGroupListed" xml:space="preserve"><value>Ανακτήθηκε λίστα ομάδων SCIM</value></data>
+  <data name="AuditLogTypeScimUserListed" xml:space="preserve"><value>Ανακτήθηκε λίστα χρηστών SCIM</value></data>
+  <data name="AuditLogTypeScimUserRetrieved" xml:space="preserve"><value>Ανακτήθηκε χρήστης SCIM</value></data>
+  <data name="AuditLogTypeScimBearerTokenProvisioned" xml:space="preserve"><value>Παρασχέθηκε διακριτικό Bearer SCIM</value></data>
+  <data name="AuditLogTypeScimBearerTokenRotated" xml:space="preserve"><value>Έγινε εναλλαγή διακριτικού Bearer SCIM</value></data>
+  <data name="AuditLogTypeUdfDefinitionCreated" xml:space="preserve"><value>Δημιουργήθηκε ορισμός UDF</value></data>
+  <data name="AuditLogTypeUdfDefinitionUpdated" xml:space="preserve"><value>Ενημερώθηκε ορισμός UDF</value></data>
+  <data name="AuditLogTypeUdfDefinitionDeleted" xml:space="preserve"><value>Διαγράφηκε ορισμός UDF</value></data>
+  <data name="AuditLogTypeUdfFieldAdded" xml:space="preserve"><value>Προστέθηκε πεδίο UDF</value></data>
+  <data name="AuditLogTypeUdfFieldUpdated" xml:space="preserve"><value>Ενημερώθηκε πεδίο UDF</value></data>
+  <data name="AuditLogTypeUdfFieldRemoved" xml:space="preserve"><value>Αφαιρέθηκε πεδίο UDF</value></data>
+  <data name="AuditLogTypeUdfFieldValueSaved" xml:space="preserve"><value>Αποθηκεύτηκαν τιμές πεδίων UDF</value></data>
+  <data name="AuditLogTypeRouteCreated" xml:space="preserve"><value>Δημιουργήθηκε διαδρομή</value></data>
+  <data name="AuditLogTypeRouteUpdated" xml:space="preserve"><value>Ενημερώθηκε διαδρομή</value></data>
+  <data name="AuditLogTypeRouteDeleted" xml:space="preserve"><value>Διαγράφηκε διαδρομή</value></data>
+  <data name="AuditLogTypeRouteStarted" xml:space="preserve"><value>Ξεκίνησε διαδρομή</value></data>
+  <data name="AuditLogTypeRouteCompleted" xml:space="preserve"><value>Ολοκληρώθηκε διαδρομή</value></data>
+  <data name="AuditLogTypeRouteCancelled" xml:space="preserve"><value>Ακυρώθηκε διαδρομή</value></data>
+  <data name="AuditLogTypeRoutePaused" xml:space="preserve"><value>Τέθηκε σε παύση διαδρομή</value></data>
+  <data name="AuditLogTypeRouteResumed" xml:space="preserve"><value>Συνεχίστηκε διαδρομή</value></data>
+  <data name="AuditLogTypeRouteStopCheckedIn" xml:space="preserve"><value>Δηλώθηκε άφιξη σε στάση διαδρομής</value></data>
+  <data name="AuditLogTypeRouteStopCheckedOut" xml:space="preserve"><value>Δηλώθηκε αναχώρηση από στάση διαδρομής</value></data>
+  <data name="AuditLogTypeRouteStopSkipped" xml:space="preserve"><value>Παραλείφθηκε στάση διαδρομής</value></data>
+  <data name="AuditLogTypeRouteDeviationDetected" xml:space="preserve"><value>Εντοπίστηκε απόκλιση διαδρομής</value></data>
+  <data name="AuditLogTypeRouteDeviationAcknowledged" xml:space="preserve"><value>Αναγνωρίστηκε απόκλιση διαδρομής</value></data>
+  <data name="AuditLogTypeCheckInTimerConfigCreated" xml:space="preserve"><value>Δημιουργήθηκε διαμόρφωση χρονομέτρου παρουσίας</value></data>
+  <data name="AuditLogTypeCheckInTimerConfigUpdated" xml:space="preserve"><value>Ενημερώθηκε διαμόρφωση χρονομέτρου παρουσίας</value></data>
+  <data name="AuditLogTypeCheckInTimerConfigDeleted" xml:space="preserve"><value>Διαγράφηκε διαμόρφωση χρονομέτρου παρουσίας</value></data>
+  <data name="AuditLogTypeCheckInTimerOverrideCreated" xml:space="preserve"><value>Δημιουργήθηκε παράκαμψη χρονομέτρου παρουσίας</value></data>
+  <data name="AuditLogTypeCheckInTimerOverrideUpdated" xml:space="preserve"><value>Ενημερώθηκε παράκαμψη χρονομέτρου παρουσίας</value></data>
+  <data name="AuditLogTypeCheckInTimerOverrideDeleted" xml:space="preserve"><value>Διαγράφηκε παράκαμψη χρονομέτρου παρουσίας</value></data>
+  <data name="AuditLogTypeCheckInPerformed" xml:space="preserve"><value>Πραγματοποιήθηκε δήλωση παρουσίας</value></data>
+  <data name="AuditLogTypeCheckInTimerEnabledOnCall" xml:space="preserve"><value>Ενεργοποιήθηκε χρονόμετρο παρουσίας σε κλήση</value></data>
+  <data name="AuditLogTypeCheckInTimerDisabledOnCall" xml:space="preserve"><value>Απενεργοποιήθηκε χρονόμετρο παρουσίας σε κλήση</value></data>
+  <data name="AuditLogTypeCalendarCheckInPerformed" xml:space="preserve"><value>Δηλώθηκε άφιξη σε συμβάν ημερολογίου</value></data>
+  <data name="AuditLogTypeCalendarCheckOutPerformed" xml:space="preserve"><value>Δηλώθηκε αναχώρηση από συμβάν ημερολογίου</value></data>
+  <data name="AuditLogTypeCalendarCheckInUpdated" xml:space="preserve"><value>Ενημερώθηκαν ώρες άφιξης ημερολογίου</value></data>
+  <data name="AuditLogTypeCalendarCheckInDeleted" xml:space="preserve"><value>Διαγράφηκε δήλωση άφιξης ημερολογίου</value></data>
+  <data name="AuditLogTypeCalendarAdminCheckInPerformed" xml:space="preserve"><value>Δηλώθηκε άφιξη ημερολογίου από διαχειριστή</value></data>
+  <data name="AuditLogTypeLogCreated" xml:space="preserve"><value>Δημιουργήθηκε καταγραφή</value></data>
+  <data name="AuditLogTypeLogDeleted" xml:space="preserve"><value>Διαγράφηκε καταγραφή</value></data>
+  <data name="AuditLogTypeCommunicationTestCreated" xml:space="preserve"><value>Δημιουργήθηκε δοκιμή επικοινωνίας</value></data>
+  <data name="AuditLogTypeCommunicationTestUpdated" xml:space="preserve"><value>Ενημερώθηκε δοκιμή επικοινωνίας</value></data>
+  <data name="AuditLogTypeCommunicationTestDeleted" xml:space="preserve"><value>Διαγράφηκε δοκιμή επικοινωνίας</value></data>
+  <data name="AuditLogTypeCommunicationTestRunStarted" xml:space="preserve"><value>Ξεκίνησε εκτέλεση δοκιμής επικοινωνίας</value></data>
+  <data name="AuditLogTypeWeatherAlertSourceCreated" xml:space="preserve"><value>Δημιουργήθηκε πηγή καιρικών ειδοποιήσεων</value></data>
+  <data name="AuditLogTypeWeatherAlertSourceUpdated" xml:space="preserve"><value>Ενημερώθηκε πηγή καιρικών ειδοποιήσεων</value></data>
+  <data name="AuditLogTypeWeatherAlertSourceDeleted" xml:space="preserve"><value>Διαγράφηκε πηγή καιρικών ειδοποιήσεων</value></data>
+  <data name="AuditLogTypeWeatherAlertSourceEnabled" xml:space="preserve"><value>Ενεργοποιήθηκε πηγή καιρικών ειδοποιήσεων</value></data>
+  <data name="AuditLogTypeWeatherAlertSourceDisabled" xml:space="preserve"><value>Απενεργοποιήθηκε πηγή καιρικών ειδοποιήσεων</value></data>
+  <data name="AuditLogTypeWeatherAlertZoneCreated" xml:space="preserve"><value>Δημιουργήθηκε ζώνη καιρικών ειδοποιήσεων</value></data>
+  <data name="AuditLogTypeWeatherAlertZoneUpdated" xml:space="preserve"><value>Ενημερώθηκε ζώνη καιρικών ειδοποιήσεων</value></data>
+  <data name="AuditLogTypeWeatherAlertZoneDeleted" xml:space="preserve"><value>Διαγράφηκε ζώνη καιρικών ειδοποιήσεων</value></data>
+  <data name="AuditLogTypeWeatherAlertZoneEnabled" xml:space="preserve"><value>Ενεργοποιήθηκε ζώνη καιρικών ειδοποιήσεων</value></data>
+  <data name="AuditLogTypeWeatherAlertZoneDisabled" xml:space="preserve"><value>Απενεργοποιήθηκε ζώνη καιρικών ειδοποιήσεων</value></data>
+  <data name="AuditLogTypeWeatherAlertSettingsChanged" xml:space="preserve"><value>Άλλαξαν ρυθμίσεις καιρικών ειδοποιήσεων</value></data>
+  <data name="AuditLogTypeFeatureFlagChanged" xml:space="preserve"><value>Άλλαξε σημαία λειτουργίας</value></data>
+  <data name="AuditLogTypeFeatureFlagOverrideChanged" xml:space="preserve"><value>Άλλαξε παράκαμψη σημαίας λειτουργίας</value></data>
+  <data name="AuditLogTypeUnitTrackingDeviceCreated" xml:space="preserve"><value>Δημιουργήθηκε συσκευή εντοπισμού μονάδας</value></data>
+  <data name="AuditLogTypeUnitTrackingDeviceUpdated" xml:space="preserve"><value>Ενημερώθηκε συσκευή εντοπισμού μονάδας</value></data>
+  <data name="AuditLogTypeUnitTrackingDeviceDisabled" xml:space="preserve"><value>Απενεργοποιήθηκε συσκευή εντοπισμού μονάδας</value></data>
+  <data name="AuditLogTypeUnitTrackingDeviceDeleted" xml:space="preserve"><value>Διαγράφηκε συσκευή εντοπισμού μονάδας</value></data>
+  <data name="AuditLogTypeUnitTrackingCredentialCreated" xml:space="preserve"><value>Δημιουργήθηκε διαπιστευτήριο εντοπισμού μονάδας</value></data>
+  <data name="AuditLogTypeUnitTrackingCredentialRotated" xml:space="preserve"><value>Έγινε εναλλαγή διαπιστευτηρίου εντοπισμού μονάδας</value></data>
+  <data name="AuditLogTypeUnitTrackingCredentialRevoked" xml:space="preserve"><value>Ανακλήθηκε διαπιστευτήριο εντοπισμού μονάδας</value></data>
+  <data name="AuditLogTypeDeleteDepartmentRequestExecuted" xml:space="preserve"><value>Εκτελέστηκε διαγραφή τμήματος</value></data>
+  <data name="AuditLogTypeChatMessageDeletedByModerator" xml:space="preserve"><value>Διαγράφηκε μήνυμα συνομιλίας από συντονιστή</value></data>
+  <data name="AuditLogTypeChatUserMuted" xml:space="preserve"><value>Τέθηκε σε σίγαση χρήστης συνομιλίας</value></data>
+  <data name="AuditLogTypeChatUserUnmuted" xml:space="preserve"><value>Άρθηκε σίγαση χρήστη συνομιλίας</value></data>
+  <data name="AuditLogTypeChatUserBanned" xml:space="preserve"><value>Αποκλείστηκε χρήστης συνομιλίας</value></data>
+  <data name="AuditLogTypeChatUserUnbanned" xml:space="preserve"><value>Άρθηκε αποκλεισμός χρήστη συνομιλίας</value></data>
+  <data name="AuditLogTypeChatChannelLocked" xml:space="preserve"><value>Κλειδώθηκε κανάλι συνομιλίας</value></data>
+  <data name="AuditLogTypeChatChannelUnlocked" xml:space="preserve"><value>Ξεκλειδώθηκε κανάλι συνομιλίας</value></data>
+  <data name="AuditLogTypeChatChannelArchived" xml:space="preserve"><value>Αρχειοθετήθηκε κανάλι συνομιλίας</value></data>
+  <data name="AuditLogTypeChatFlagResolved" xml:space="preserve"><value>Επιλύθηκε σήμανση συνομιλίας</value></data>
+  <data name="AuditLogTypeChatSettingsChanged" xml:space="preserve"><value>Άλλαξαν ρυθμίσεις συνομιλίας</value></data>
+  <data name="AuditLogTypeChatExportRequested" xml:space="preserve"><value>Ζητήθηκε εξαγωγή συνομιλίας</value></data>
+  <data name="AuditLogTypeChatExportDownloaded" xml:space="preserve"><value>Λήφθηκε εξαγωγή συνομιλίας</value></data>
+  <data name="AuditLogTypeModerationReportSubmitted" xml:space="preserve"><value>Υποβλήθηκε αναφορά εποπτείας</value></data>
+  <data name="AuditLogTypeModerationRequestReopened" xml:space="preserve"><value>Άνοιξε ξανά αίτημα εποπτείας</value></data>
+  <data name="AuditLogTypeModerationRequestCompleted" xml:space="preserve"><value>Ολοκληρώθηκε αίτημα εποπτείας</value></data>
+  <data name="AuditLogTypeModerationEvidenceDownloaded" xml:space="preserve"><value>Λήφθηκαν αποδεικτικά στοιχεία εποπτείας</value></data>
+  <data name="AuditLogTypePasswordResetByAdministrator" xml:space="preserve"><value>Επαναφέρθηκε κωδικός πρόσβασης από διαχειριστή</value></data>
+  <data name="AuditLogTypeUserAuthenticationSessionsRevoked" xml:space="preserve"><value>Ανακλήθηκαν συνεδρίες σύνδεσης χρήστη</value></data>
+  <data name="AuditLogTypeDataProtectionStepUpExemptionsChanged" xml:space="preserve"><value>Άλλαξαν εξαιρέσεις ενισχυμένης επαλήθευσης προστασίας δεδομένων</value></data>
+  <data name="AuditLogTypeContactPreplanAdded" xml:space="preserve"><value>Προστέθηκε προσχέδιο επαφής</value></data>
+  <data name="AuditLogTypeContactPreplanUpdated" xml:space="preserve"><value>Ενημερώθηκε προσχέδιο επαφής</value></data>
+  <data name="AuditLogTypeContactPreplanRemoved" xml:space="preserve"><value>Αφαιρέθηκε προσχέδιο επαφής</value></data>
+  <data name="AuditLogTypeContactAttachmentAdded" xml:space="preserve"><value>Προστέθηκε συνημμένο επαφής</value></data>
+  <data name="AuditLogTypeContactAttachmentRemoved" xml:space="preserve"><value>Αφαιρέθηκε συνημμένο επαφής</value></data>
+  <data name="AuditLogTypeChecklistDefinitionAdded" xml:space="preserve"><value>Προστέθηκε ορισμός λίστας ελέγχου</value></data>
+  <data name="AuditLogTypeChecklistDefinitionUpdated" xml:space="preserve"><value>Ενημερώθηκε ορισμός λίστας ελέγχου</value></data>
+  <data name="AuditLogTypeChecklistDefinitionPublished" xml:space="preserve"><value>Δημοσιεύτηκε ορισμός λίστας ελέγχου</value></data>
+  <data name="AuditLogTypeChecklistDefinitionRetired" xml:space="preserve"><value>Αποσύρθηκε ορισμός λίστας ελέγχου</value></data>
+  <data name="AuditLogTypeChecklistDefinitionRemoved" xml:space="preserve"><value>Αφαιρέθηκε ορισμός λίστας ελέγχου</value></data>
+  <data name="AuditLogTypeChecklistCompletionStarted" xml:space="preserve"><value>Ξεκίνησε συμπλήρωση λίστας ελέγχου</value></data>
+  <data name="AuditLogTypeChecklistProgressSaved" xml:space="preserve"><value>Αποθηκεύτηκε πρόοδος λίστας ελέγχου</value></data>
+  <data name="AuditLogTypeChecklistCompletionSubmitted" xml:space="preserve"><value>Υποβλήθηκε συμπλήρωση λίστας ελέγχου</value></data>
+  <data name="AuditLogTypeChecklistWitnessAttested" xml:space="preserve"><value>Βεβαιώθηκε λίστα ελέγχου από μάρτυρα</value></data>
+  <data name="AuditLogTypeChecklistFileAdded" xml:space="preserve"><value>Προστέθηκε αρχείο λίστας ελέγχου</value></data>
+  <data name="AuditLogTypeChecklistFileRemoved" xml:space="preserve"><value>Αφαιρέθηκε αρχείο λίστας ελέγχου</value></data>
+  <data name="AuditLogTypeChecklistScheduleAdded" xml:space="preserve"><value>Προστέθηκε πρόγραμμα λίστας ελέγχου</value></data>
+  <data name="AuditLogTypeChecklistScheduleUpdated" xml:space="preserve"><value>Ενημερώθηκε πρόγραμμα λίστας ελέγχου</value></data>
+  <data name="AuditLogTypeChecklistOccurrenceMissed" xml:space="preserve"><value>Δεν εκτελέστηκε προγραμματισμένη λίστα ελέγχου</value></data>
+  <data name="AuditLogTypeChecklistOccurrenceSkipped" xml:space="preserve"><value>Παραλείφθηκε προγραμματισμένη λίστα ελέγχου</value></data>
+  <data name="AuditLogTypeChecklistReminderSettingsUpdated" xml:space="preserve"><value>Ενημερώθηκαν ρυθμίσεις υπενθυμίσεων λιστών ελέγχου</value></data>
+  <data name="AuditLogTypeWorkOrderChanged" xml:space="preserve"><value>Άλλαξε εντολή εργασίας</value></data>
+  <data name="AuditLogTypeInventoryChanged" xml:space="preserve"><value>Άλλαξε απόθεμα</value></data>
+  <data name="AuditLogTypeBillingProfileChanged" xml:space="preserve"><value>Άλλαξε προφίλ χρέωσης</value></data>
+  <data name="AuditLogTypeRateCardChanged" xml:space="preserve"><value>Άλλαξε τιμοκατάλογος τιμολόγησης</value></data>
+  <data name="AuditLogTypeInvoiceCreated" xml:space="preserve"><value>Δημιουργήθηκε τιμολόγιο</value></data>
+  <data name="AuditLogTypeInvoiceUpdated" xml:space="preserve"><value>Ενημερώθηκε τιμολόγιο</value></data>
+  <data name="AuditLogTypeInvoiceSent" xml:space="preserve"><value>Απεστάλη τιμολόγιο</value></data>
+  <data name="AuditLogTypeInvoiceVoided" xml:space="preserve"><value>Ακυρώθηκε τιμολόγιο</value></data>
+  <data name="AuditLogTypeInvoicePaymentRecorded" xml:space="preserve"><value>Καταχωρίστηκε πληρωμή τιμολογίου</value></data>
+  <data name="AuditLogTypeDepartmentBillingIdentityChanged" xml:space="preserve"><value>Άλλαξε ταυτότητα χρέωσης τμήματος</value></data>
+  <data name="AuditLogTypePaymentConnectionConnected" xml:space="preserve"><value>Συνδέθηκε λογαριασμός πληρωμών</value></data>
+  <data name="AuditLogTypePaymentConnectionDisconnected" xml:space="preserve"><value>Αποσυνδέθηκε λογαριασμός πληρωμών</value></data>
+  <data name="AuditLogTypePaymentConnectionRevoked" xml:space="preserve"><value>Ανακλήθηκε σύνδεση λογαριασμού πληρωμών</value></data>
+  <data name="AuditLogTypePaymentConnectionActionRequired" xml:space="preserve"><value>Απαιτείται ενέργεια για λογαριασμό πληρωμών</value></data>
+  <data name="AuditLogTypeInvoicePaymentRequestCreated" xml:space="preserve"><value>Δημιουργήθηκε αίτημα πληρωμής τιμολογίου</value></data>
+  <data name="AuditLogTypeInvoicePaymentRefunded" xml:space="preserve"><value>Επιστράφηκε πληρωμή τιμολογίου</value></data>
+  <data name="AuditLogTypeInvoicePaymentDisputed" xml:space="preserve"><value>Αμφισβητήθηκε πληρωμή τιμολογίου</value></data>
+  <data name="AuditLogTypePaymentWebhookRejected" xml:space="preserve"><value>Απορρίφθηκε webhook πληρωμής</value></data>
+  <data name="AuditLogTypeInvoicePaymentRequestFailed" xml:space="preserve"><value>Απέτυχε αίτημα πληρωμής τιμολογίου</value></data>
+  <data name="AuditLogTypeInvoicePaymentRequestExpired" xml:space="preserve"><value>Έληξε αίτημα πληρωμής τιμολογίου</value></data>
+  <data name="AuditLogTypeCertificationAdded" xml:space="preserve"><value>Προστέθηκε πιστοποίηση</value></data>
+  <data name="AuditLogTypeCertificationUpdated" xml:space="preserve"><value>Ενημερώθηκε πιστοποίηση</value></data>
+  <data name="AuditLogTypeCertificationRemoved" xml:space="preserve"><value>Αφαιρέθηκε πιστοποίηση</value></data>
+  <data name="AuditLogTypeCertificationStatusChanged" xml:space="preserve"><value>Άλλαξε κατάσταση πιστοποίησης</value></data>
+  <data name="AuditLogTypeCertificationVerified" xml:space="preserve"><value>Επαληθεύτηκε πιστοποίηση</value></data>
+  <data name="AuditLogTypeCertificationCreditAdded" xml:space="preserve"><value>Προστέθηκαν μονάδες πιστοποίησης</value></data>
+  <data name="AuditLogTypeCertificationCreditRemoved" xml:space="preserve"><value>Αφαιρέθηκαν μονάδες πιστοποίησης</value></data>
+  <data name="AuditLogTypeRoleCertificationRequirementChanged" xml:space="preserve"><value>Άλλαξε απαίτηση πιστοποίησης ρόλου</value></data>
+  <data name="AuditLogTypeDepartmentCertificationSettingsChanged" xml:space="preserve"><value>Άλλαξαν ρυθμίσεις πιστοποιήσεων τμήματος</value></data>
+  <data name="AuditLogTypeRoleMemberAdded" xml:space="preserve"><value>Προστέθηκε μέλος ρόλου</value></data>
+  <data name="AuditLogTypeRoleMemberRemoved" xml:space="preserve"><value>Αφαιρέθηκε μέλος ρόλου</value></data>
+  <data name="AuditLogTypeRoleMemberRemovedByCertification" xml:space="preserve"><value>Αφαιρέθηκε μέλος ρόλου λόγω πιστοποίησης</value></data>
+  <data name="AuditLogTypeUnitCertificationAdded" xml:space="preserve"><value>Προστέθηκε πιστοποίηση μονάδας</value></data>
+  <data name="AuditLogTypeUnitCertificationUpdated" xml:space="preserve"><value>Ενημερώθηκε πιστοποίηση μονάδας</value></data>
+  <data name="AuditLogTypeUnitCertificationRemoved" xml:space="preserve"><value>Αφαιρέθηκε πιστοποίηση μονάδας</value></data>
+  <data name="AuditLogTypeUnitCertificationStatusChanged" xml:space="preserve"><value>Άλλαξε κατάσταση πιστοποίησης μονάδας</value></data>
+  <data name="AuditLogTypeDeploymentCreated" xml:space="preserve"><value>Δημιουργήθηκε αποστολή</value></data>
+  <data name="AuditLogTypeDeploymentUpdated" xml:space="preserve"><value>Ενημερώθηκε αποστολή</value></data>
+  <data name="AuditLogTypeDeploymentStatusChanged" xml:space="preserve"><value>Άλλαξε κατάσταση αποστολής</value></data>
+  <data name="AuditLogTypeDeploymentRosterChanged" xml:space="preserve"><value>Άλλαξε σύνθεση αποστολής</value></data>
+  <data name="AuditLogTypeDeploymentEquipmentChanged" xml:space="preserve"><value>Άλλαξε εξοπλισμός αποστολής</value></data>
+  <data name="AuditLogTypeDeploymentAttachmentAdded" xml:space="preserve"><value>Προστέθηκε συνημμένο αποστολής</value></data>
+  <data name="AuditLogTypeDeploymentAttachmentRemoved" xml:space="preserve"><value>Αφαιρέθηκε συνημμένο αποστολής</value></data>
+  <data name="AuditLogTypeTimeReportCreated" xml:space="preserve"><value>Δημιουργήθηκε αναφορά χρόνου</value></data>
+  <data name="AuditLogTypeTimeReportUpdated" xml:space="preserve"><value>Ενημερώθηκε αναφορά χρόνου</value></data>
+  <data name="AuditLogTypeTimeReportSubmitted" xml:space="preserve"><value>Υποβλήθηκε αναφορά χρόνου</value></data>
+  <data name="AuditLogTypeTimeReportApproved" xml:space="preserve"><value>Εγκρίθηκε αναφορά χρόνου</value></data>
+  <data name="AuditLogTypeTimeReportVoided" xml:space="preserve"><value>Ακυρώθηκε αναφορά χρόνου</value></data>
+  <data name="AuditLogTypeDeploymentExpenseAdded" xml:space="preserve"><value>Προστέθηκε έξοδο αποστολής</value></data>
+  <data name="AuditLogTypeDeploymentExpenseUpdated" xml:space="preserve"><value>Ενημερώθηκε έξοδο αποστολής</value></data>
+  <data name="AuditLogTypeDeploymentExpenseRemoved" xml:space="preserve"><value>Αφαιρέθηκε έξοδο αποστολής</value></data>
+  <data name="AuditLogTypeRateScheduleCreated" xml:space="preserve"><value>Δημιουργήθηκε τιμοκατάλογος</value></data>
+  <data name="AuditLogTypeRateScheduleUpdated" xml:space="preserve"><value>Ενημερώθηκε τιμοκατάλογος</value></data>
+  <data name="AuditLogTypeRateScheduleDeleted" xml:space="preserve"><value>Διαγράφηκε τιμοκατάλογος</value></data>
+  <data name="AuditLogTypeRateScheduleEntryChanged" xml:space="preserve"><value>Άλλαξε καταχώριση τιμοκαταλόγου</value></data>
+  <data name="AuditLogTypeRatePremiumChanged" xml:space="preserve"><value>Άλλαξε προσαύξηση τιμής</value></data>
+  <data name="AuditLogTypeServiceContractCreated" xml:space="preserve"><value>Δημιουργήθηκε σύμβαση υπηρεσιών</value></data>
+  <data name="AuditLogTypeServiceContractUpdated" xml:space="preserve"><value>Ενημερώθηκε σύμβαση υπηρεσιών</value></data>
+  <data name="AuditLogTypeServiceContractStatusChanged" xml:space="preserve"><value>Άλλαξε κατάσταση σύμβασης υπηρεσιών</value></data>
+  <data name="AuditLogTypeServiceContractDeleted" xml:space="preserve"><value>Διαγράφηκε σύμβαση υπηρεσιών</value></data>
+  <data name="AuditLogTypeComplianceDocumentAdded" xml:space="preserve"><value>Προστέθηκε έγγραφο συμμόρφωσης</value></data>
+  <data name="AuditLogTypeComplianceDocumentUpdated" xml:space="preserve"><value>Ενημερώθηκε έγγραφο συμμόρφωσης</value></data>
+  <data name="AuditLogTypeComplianceDocumentRemoved" xml:space="preserve"><value>Αφαιρέθηκε έγγραφο συμμόρφωσης</value></data>
+  <data name="AuditLogTypeBidCreated" xml:space="preserve"><value>Δημιουργήθηκε προσφορά</value></data>
+  <data name="AuditLogTypeBidUpdated" xml:space="preserve"><value>Ενημερώθηκε προσφορά</value></data>
+  <data name="AuditLogTypeBidSent" xml:space="preserve"><value>Απεστάλη προσφορά</value></data>
+  <data name="AuditLogTypeBidAccepted" xml:space="preserve"><value>Έγινε αποδεκτή προσφορά</value></data>
+  <data name="AuditLogTypeBidDeclined" xml:space="preserve"><value>Απορρίφθηκε προσφορά</value></data>
+  <data name="AuditLogTypeBidWithdrawn" xml:space="preserve"><value>Αποσύρθηκε προσφορά</value></data>
+  <data name="AuditLogTypeBidExpired" xml:space="preserve"><value>Έληξε προσφορά</value></data>
+  <data name="AuditLogTypeBidConverted" xml:space="preserve"><value>Μετατράπηκε προσφορά</value></data>
+  <data name="AuditLogTypeBidDeleted" xml:space="preserve"><value>Διαγράφηκε προσφορά</value></data>
+  <data name="AuditLogTypeTimeReportBilled" xml:space="preserve"><value>Τιμολογήθηκε αναφορά χρόνου</value></data>
+  <data name="AuditLogTypeDeploymentInvoiceGenerated" xml:space="preserve"><value>Εκδόθηκε τιμολόγιο αποστολής</value></data>
+  <data name="AuditLogTypeCalOesMarsAgencyProfileChanged" xml:space="preserve"><value>Άλλαξε προφίλ υπηρεσίας Cal OES MARS</value></data>
+  <data name="AuditLogTypeCalOesMarsResourceProfileChanged" xml:space="preserve"><value>Άλλαξε προφίλ πόρου Cal OES MARS</value></data>
+  <data name="AuditLogTypeCalOesMarsRateProfileChanged" xml:space="preserve"><value>Άλλαξε προφίλ τιμών Cal OES MARS</value></data>
+  <data name="AuditLogTypeCalOesMarsRateDraftBuilt" xml:space="preserve"><value>Συντάχθηκε πρόχειρο τιμών Cal OES MARS</value></data>
+  <data name="AuditLogTypeCalOesMarsRateReviewed" xml:space="preserve"><value>Ελέγχθηκε τιμή Cal OES MARS</value></data>
+  <data name="AuditLogTypeCalOesMarsAgreementChanged" xml:space="preserve"><value>Άλλαξε συμφωνία Cal OES MARS</value></data>
+  <data name="AuditLogTypeCalOesMarsAgreementObserved" xml:space="preserve"><value>Παρατηρήθηκε συμφωνία Cal OES MARS</value></data>
+  <data name="AuditLogTypeCalOesMarsWorkItemPrepared" xml:space="preserve"><value>Προετοιμάστηκε στοιχείο εργασίας Cal OES MARS</value></data>
+  <data name="AuditLogTypeCalOesMarsWorkItemValidated" xml:space="preserve"><value>Επικυρώθηκε στοιχείο εργασίας Cal OES MARS</value></data>
+  <data name="AuditLogTypeCalOesMarsReimbursementCalculated" xml:space="preserve"><value>Υπολογίστηκε αποζημίωση Cal OES MARS</value></data>
+  <data name="AuditLogTypeCalOesMarsWorkItemOpenedForHandoff" xml:space="preserve"><value>Ανοίχτηκε στοιχείο εργασίας Cal OES MARS για παράδοση</value></data>
+  <data name="AuditLogTypeCalOesMarsExternalStatusObserved" xml:space="preserve"><value>Παρατηρήθηκε εξωτερική κατάσταση Cal OES MARS</value></data>
+  <data name="AuditLogTypeCalOesMarsInvoiceApproved" xml:space="preserve"><value>Εγκρίθηκε τιμολόγιο Cal OES MARS</value></data>
+  <data name="AuditLogTypeCalOesMarsInvoiceRejected" xml:space="preserve"><value>Απορρίφθηκε τιμολόγιο Cal OES MARS</value></data>
+  <data name="AuditLogTypeCalOesMarsPaymentReconciled" xml:space="preserve"><value>Συμφωνήθηκε πληρωμή Cal OES MARS</value></data>
+  <data name="AuditLogTypeCalOesMarsWorkItemDeleted" xml:space="preserve"><value>Διαγράφηκε στοιχείο εργασίας Cal OES MARS</value></data>
+  <data name="AuditLogTypeWorkforceEmployerProfileChanged" xml:space="preserve"><value>Άλλαξε προφίλ εργοδότη εργατικού δυναμικού</value></data>
+  <data name="AuditLogTypeWorkforceEstablishmentChanged" xml:space="preserve"><value>Άλλαξε εγκατάσταση εργατικού δυναμικού</value></data>
+  <data name="AuditLogTypeWorkforceEmploymentChanged" xml:space="preserve"><value>Άλλαξε απασχόληση εργατικού δυναμικού</value></data>
+  <data name="AuditLogTypeWorkforceCompensationChanged" xml:space="preserve"><value>Άλλαξαν αμοιβές εργατικού δυναμικού</value></data>
+  <data name="AuditLogTypeWorkforceAnnualPayFactImported" xml:space="preserve"><value>Εισήχθησαν ετήσια στοιχεία αμοιβών εργατικού δυναμικού</value></data>
+  <data name="AuditLogTypePayDataDemographicChanged" xml:space="preserve"><value>Άλλαξαν δημογραφικά στοιχεία δεδομένων αμοιβών</value></data>
+  <data name="AuditLogTypePayDataReportCreated" xml:space="preserve"><value>Δημιουργήθηκε αναφορά δεδομένων αμοιβών</value></data>
+  <data name="AuditLogTypePayDataReportValidated" xml:space="preserve"><value>Επικυρώθηκε αναφορά δεδομένων αμοιβών</value></data>
+  <data name="AuditLogTypePayDataReportFrozen" xml:space="preserve"><value>Παγώθηκε αναφορά δεδομένων αμοιβών</value></data>
+  <data name="AuditLogTypePayDataReportExported" xml:space="preserve"><value>Εξήχθη αναφορά δεδομένων αμοιβών</value></data>
+  <data name="AuditLogTypePayDataReportMarkedCertified" xml:space="preserve"><value>Σημειώθηκε πιστοποίηση αναφοράς δεδομένων αμοιβών</value></data>
+  <data name="AuditLogTypePayDataReportCorrected" xml:space="preserve"><value>Διορθώθηκε αναφορά δεδομένων αμοιβών</value></data>
+  <data name="AuditLogTypeResourceCostProfileChanged" xml:space="preserve"><value>Άλλαξε προφίλ κόστους πόρων</value></data>
+  <data name="AuditLogTypeResourceUsageChanged" xml:space="preserve"><value>Άλλαξε χρήση πόρων</value></data>
+  <data name="AuditLogTypeFieldCostRunCreated" xml:space="preserve"><value>Δημιουργήθηκε υπολογισμός κόστους πεδίου</value></data>
+  <data name="AuditLogTypeFieldCostRunFrozen" xml:space="preserve"><value>Παγώθηκε υπολογισμός κόστους πεδίου</value></data>
+  <data name="AuditLogTypeUserReactivated" xml:space="preserve"><value>Επανενεργοποιήθηκε χρήστης</value></data>
+  <data name="AuditLogTypeDepartmentConfigurationChanged" xml:space="preserve"><value>Άλλαξε διαμόρφωση τμήματος</value></data>
+  <data name="AuditLogTypeAdminAssistReviewChanged" xml:space="preserve"><value>Άλλαξε έλεγχος Admin Assist</value></data>
+  <data name="AuditLogTypeAdminAssistDiagnosticAccess" xml:space="preserve"><value>Έγινε πρόσβαση σε διαγνωστικό Admin Assist</value></data>
+  <data name="AuditLogTypeAiDispatchSettingsUpdated" xml:space="preserve"><value>Ενημερώθηκαν ρυθμίσεις διάθεσης με τεχνητή νοημοσύνη</value></data>
+  <data name="AuditLogTypeAdminAssistPlanAccess" xml:space="preserve"><value>Έγινε πρόσβαση σε σχέδιο αλλαγής Admin Assist</value></data>
+  <data name="AuditLogTypeDepartmentSecurityPolicyChanged" xml:space="preserve"><value>Άλλαξε πολιτική ασφαλείας</value></data>
   <data name="PermissionColumn" xml:space="preserve"><value>Δικαίωμα</value></data>
   <data name="NoteColumn" xml:space="preserve"><value>Σημείωση</value></data>
   <data name="ValueColumn" xml:space="preserve"><value>Τιμή</value></data>
@@ -37,9 +394,15 @@
   <data name="PermissionRolesColumn" xml:space="preserve"><value>Ρόλοι</value></data>
   <data name="PermissionNoRoles" xml:space="preserve"><value>Χωρίς Ρόλους</value></data>
   <data name="PermissionNA" xml:space="preserve"><value>Μ/Δ</value></data>
+  <data name="PermOptionEveryone" xml:space="preserve"><value>Όλοι</value></data>
+  <data name="PermOptionDepartmentAdmins" xml:space="preserve"><value>Διαχειριστές Τμήματος</value></data>
+  <data name="PermOptionDepartmentAndGroupAdmins" xml:space="preserve"><value>Διαχειριστές Τμήματος και Ομάδων</value></data>
+  <data name="PermOptionDepartmentAdminsAndSelectRoles" xml:space="preserve"><value>Διαχειριστές Τμήματος και επιλεγμένοι ρόλοι</value></data>
+  <data name="PermOptionDepartmentGroupAdminsAndSelectRoles" xml:space="preserve"><value>Διαχειριστές Τμήματος και Ομάδων, καθώς και επιλεγμένοι ρόλοι</value></data>
 
   <!-- Permissions page header -->
   <data name="BreadcrumbSecurity" xml:space="preserve"><value>Ασφάλεια και Δικαιώματα</value></data>
+  <data name="BreadcrumbHome" xml:space="preserve"><value>Αρχική</value></data>
   <data name="SecurityDescription" xml:space="preserve"><value>Εδώ μπορείτε να ορίσετε τα δικαιώματα του τμήματός σας, για παράδειγμα ποιοι χρήστες ή ρόλοι μπορούν να δημιουργούν κλήσεις ή ποιος είναι εξουσιοδοτημένος να δημιουργεί και να αφαιρεί χρήστες. Οι αλλαγές στα δικαιώματα θα τεθούν σε ισχύ κατά την επόμενη σύνδεση στη διαδικτυακή εφαρμογή Resgrid.</value></data>
 
   <!-- Individual permission labels and notes -->
@@ -169,6 +532,15 @@
   <data name="SsoScimSetupButton" xml:space="preserve"><value>SCIM</value></data>
   <data name="SsoDeleteConfirmTitle" xml:space="preserve"><value>Επιβεβαίωση Διαγραφής</value></data>
   <data name="SsoDeleteConfirmMessage" xml:space="preserve"><value>Είστε βέβαιοι ότι θέλετε να διαγράψετε τη διαμόρφωση SSO {0}; Αυτό δεν μπορεί να αναιρεθεί.</value></data>
+  <data name="SsoErrorInvalidProviderType" xml:space="preserve"><value>Μη έγκυρος τύπος παρόχου.</value></data>
+  <data name="SsoErrorConfigAlreadyExists" xml:space="preserve"><value>Υπάρχει ήδη διαμόρφωση SSO για {0}. Χρησιμοποιήστε την «Επεξεργασία» για να την τροποποιήσετε.</value></data>
+  <data name="SsoErrorOidcClientIdRequired" xml:space="preserve"><value>Το Client ID του OIDC είναι υποχρεωτικό.</value></data>
+  <data name="SsoErrorOidcAuthorityInvalid" xml:space="preserve"><value>Η αρχή OIDC πρέπει να είναι έγκυρη διεύθυνση URL HTTPS.</value></data>
+  <data name="SsoErrorSamlCertificateRequired" xml:space="preserve"><value>Απαιτείται πιστοποιητικό υπογραφής του παρόχου ταυτότητας για την επικύρωση των διαβεβαιώσεων SAML.</value></data>
+  <data name="SsoErrorIdpSsoUrlInvalid" xml:space="preserve"><value>Η διεύθυνση URL ενιαίας σύνδεσης του παρόχου ταυτότητας πρέπει να είναι έγκυρη διεύθυνση URL HTTPS.</value></data>
+  <data name="SsoConfigCreatedSuccess" xml:space="preserve"><value>Η διαμόρφωση SSO {0} δημιουργήθηκε με επιτυχία.</value></data>
+  <data name="SsoConfigUpdatedSuccess" xml:space="preserve"><value>Η διαμόρφωση SSO ενημερώθηκε με επιτυχία.</value></data>
+  <data name="SsoConfigDeletedSuccess" xml:space="preserve"><value>Η διαμόρφωση SSO {0} διαγράφηκε.</value></data>
   <data name="SsoDeleteCancelButton" xml:space="preserve"><value>Ακύρωση</value></data>
   <data name="SsoDeleteButton" xml:space="preserve"><value>Διαγραφή</value></data>
 
@@ -180,6 +552,8 @@
   <data name="SsoEditStep1Label" xml:space="preserve"><value>Βήμα 1</value></data>
   <data name="SsoEditStep1Header" xml:space="preserve"><value>Πάροχος και Βασικές Ρυθμίσεις</value></data>
   <data name="SsoEditProviderTypeLabel" xml:space="preserve"><value>Πρωτόκολλο Παρόχου Ταυτότητας</value></data>
+  <data name="SsoEditProviderTypeOidcOption" xml:space="preserve"><value>OIDC (OpenID Connect) — Microsoft Entra, Okta, Google, Auth0</value></data>
+  <data name="SsoEditProviderTypeSamlOption" xml:space="preserve"><value>SAML 2.0 — Οι περισσότεροι εταιρικοί και κυβερνητικοί πάροχοι ταυτότητας</value></data>
   <data name="SsoEditEnableLabel" xml:space="preserve"><value>Ενεργοποίηση αυτής της διαμόρφωσης SSO</value></data>
   <data name="SsoEditEnableDescription" xml:space="preserve"><value>Μόνο μία διαμόρφωση ανά τύπο παρόχου είναι ενεργή κάθε φορά.</value></data>
   <data name="SsoEditAllowLocalLoginLabel" xml:space="preserve"><value>Να επιτρέπεται τοπική σύνδεση με κωδικό πρόσβασης</value></data>
@@ -189,6 +563,7 @@
   <data name="SsoEditScimEnableLabel" xml:space="preserve"><value>Ενεργοποίηση παροχής SCIM 2.0</value></data>
   <data name="SsoEditScimEnableDescription" xml:space="preserve"><value>Επιτρέπει στον πάροχο ταυτότητάς σας να δημιουργεί/ενημερώνει/απενεργοποιεί αυτόματα μέλη. Μετά την αποθήκευση, μεταβείτε στη σελίδα Ρύθμισης SCIM για να δημιουργήσετε διακριτικό bearer.</value></data>
   <data name="SsoEditDefaultRankLabel" xml:space="preserve"><value>Προεπιλεγμένος Βαθμός για Χρήστες Αυτόματης Παροχής</value></data>
+  <data name="SsoEditDefaultRankNone" xml:space="preserve"><value>(Χωρίς προεπιλεγμένο βαθμό)</value></data>
   <data name="SsoEditDefaultRankDescription" xml:space="preserve"><value>Προαιρετικό. Εφαρμόζεται μόνο όταν η Αυτόματη Παροχή δημιουργεί νέο μέλος.</value></data>
   <data name="SsoEditStep2OidcLabel" xml:space="preserve"><value>Βήμα 2 — OIDC</value></data>
   <data name="SsoEditStep2OidcHeader" xml:space="preserve"><value>Ρυθμίσεις OpenID Connect</value></data>
@@ -217,6 +592,13 @@
   <data name="SsoEditMetadataUrlNote" xml:space="preserve"><value>Το Resgrid θα ανακτά περιοδικά αυτή τη διεύθυνση URL ώστε να παραμένει ενημερωμένο με τα πιστοποιητικά του παρόχου ταυτότητας.</value></data>
   <data name="SsoEditAcsUrlStoredLabel" xml:space="preserve"><value>Διεύθυνση URL ACS (αποθηκευμένη)</value></data>
   <data name="SsoEditAcsUrlStoredNote" xml:space="preserve"><value>Συμπληρώνεται αυτόματα από την παραπάνω παραγόμενη διεύθυνση URL. Τροποποιήστε την μόνο αν διαμορφώσατε διαφορετική διεύθυνση URL ACS στον πάροχο ταυτότητάς σας.</value></data>
+  <data name="SsoEditOidcBrokerRedirectLabel" xml:space="preserve"><value>URI ανακατεύθυνσης για σύνδεση που ξεκινά από το Resgrid (καταχωρίστε το στον πάροχο ταυτότητας)</value></data>
+  <data name="SsoEditOidcBrokerRedirectNote" xml:space="preserve"><value>Προσθέστε το δίπλα σε όποιο URI ανακατεύθυνσης έχετε ήδη καταχωρίσει· οι παλαιότερες εκδόσεις των εφαρμογών Resgrid συνεχίζουν να χρησιμοποιούν τα δικά τους.</value></data>
+  <data name="SsoEditOidcAppRedirectLabel" xml:space="preserve"><value>URI ανακατεύθυνσης για σύνδεση στις εφαρμογές Resgrid (καταχωρίστε το καθένα στον πάροχο ταυτότητας)</value></data>
+  <data name="SsoEditOidcAppRedirectNote" xml:space="preserve"><value>Κάθε εφαρμογή, και η έκδοση web κάθε εφαρμογής, επιστρέφει στη δική της διεύθυνση, επομένως καταχωρίστε τα όλα. Τα χρησιμοποιούν οι παλαιότερες εκδόσεις των εφαρμογών και οι εφαρμογές των οποίων η σύνδεση δεν ξεκινά από το Resgrid.</value></data>
+  <data name="SsoEditOidcAppRedirectWebLabel" xml:space="preserve"><value>{0} (web)</value></data>
+  <data name="SsoEditIdpSsoUrlLabel" xml:space="preserve"><value>URL ενιαίας σύνδεσης του παρόχου ταυτότητας</value></data>
+  <data name="SsoEditIdpSsoUrlNote" xml:space="preserve"><value>Η διεύθυνση σύνδεσης SAML του παρόχου ταυτότητας (σύνδεση HTTP-Redirect). Απαιτείται για συνδέσεις που ξεκινούν από τις εφαρμογές και τον ιστότοπο του Resgrid.</value></data>
   <data name="SsoEditIdpCertLabel" xml:space="preserve"><value>Πιστοποιητικό Υπογραφής Παρόχου Ταυτότητας (PEM)</value></data>
   <data name="SsoEditIdpCertStored" xml:space="preserve"><value>Το πιστοποιητικό αποθηκεύτηκε</value></data>
   <data name="SsoEditIdpCertNote" xml:space="preserve"><value>Κρυπτογραφημένο κατά την αποθήκευση. Αφήστε το κενό για να διατηρήσετε το υπάρχον πιστοποιητικό.</value></data>
@@ -341,6 +723,9 @@
   <data name="SecurityPolicyIpRangesLabel" xml:space="preserve"><value>Επιτρεπόμενα Εύρη IP (CIDR)</value></data>
   <data name="SecurityPolicyIpRangesNote" xml:space="preserve"><value>Ένα μπλοκ CIDR ανά γραμμή ή χωρισμένα με κόμμα. Κενό = να επιτρέπονται όλα. Οι συνδέσεις εκτός αυτών των ευρών θα απορρίπτονται.</value></data>
   <data name="SecurityPolicyDataClassLabel" xml:space="preserve"><value>Επίπεδο Ταξινόμησης Δεδομένων</value></data>
+  <data name="SecurityPolicyDataClassUnclassified" xml:space="preserve"><value>Αδιαβάθμητα</value></data>
+  <data name="SecurityPolicyDataClassCui" xml:space="preserve"><value>CUI - Ελεγχόμενες αδιαβάθμητες πληροφορίες</value></data>
+  <data name="SecurityPolicyDataClassConfidential" xml:space="preserve"><value>Εμπιστευτικά</value></data>
   <data name="SecurityPolicyDataClassNote" xml:space="preserve"><value>Χρησιμοποιείται για αναφορές συμμόρφωσης και αρχεία ελέγχου.</value></data>
   <data name="SecurityPolicyPasswordHeader" xml:space="preserve"><value>Πολιτική Κωδικών Πρόσβασης</value></data>
   <data name="SecurityPolicyPasswordInfoAlert" xml:space="preserve"><value>Οι πολιτικές κωδικών πρόσβασης ισχύουν μόνο για τοπικές συνδέσεις (εκτός SSO). Αν ενεργοποιήσετε την Απαίτηση SSO παραπάνω, αυτές οι ρυθμίσεις δεν έχουν αποτέλεσμα.</value></data>
@@ -456,6 +841,192 @@
   </data>
   <data name="PermRecordsTransferInventoryNote" xml:space="preserve">
     <value>Καθορίζει ποιος μπορεί να μεταφέρει αποθέματα μεταξύ τοποθεσιών. Από προεπιλογή, επιτρέπεται στους διαχειριστές του τμήματος.</value>
+  </data>
+  <data name="SecurityPolicyMfaMethodsHeader" xml:space="preserve">
+    <value>Μέθοδοι δεύτερου παράγοντα</value>
+  </data>
+  <data name="SecurityPolicyMfaMethodsIntro" xml:space="preserve">
+    <value>Επιλέξτε ποιες μέθοδοι επαλήθευσης μετρούν ως έλεγχος ταυτότητας πολλών παραγόντων σε αυτό το τμήμα. Οι κωδικοί εφαρμογής ελέγχου ταυτότητας (TOTP) γίνονται πάντα δεκτοί, οπότε η απενεργοποίηση μιας μεθόδου δεν αποκλείει κανέναν· τα μέλη που τη χρησιμοποίησαν καλούνται να επαληθεύσουν ξανά.</value>
+  </data>
+  <data name="SecurityPolicyMfaMethodsManagingMemberOnly" xml:space="preserve">
+    <value>Μόνο το διαχειριστικό μέλος του τμήματος μπορεί να αλλάξει αυτές τις ρυθμίσεις.</value>
+  </data>
+  <data name="SecurityPolicyMfaMethodsNotYetAvailable" xml:space="preserve">
+    <value>Τα κλειδιά πρόσβασης δεν είναι ακόμη διαθέσιμα σε αυτό το σύστημα. Αυτές οι επιλογές θα ισχύσουν όταν γίνουν.</value>
+  </data>
+  <data name="SecurityPolicyMethodNotYetAvailable" xml:space="preserve">
+    <value>Δεν είναι ακόμη διαθέσιμο</value>
+  </data>
+  <data name="SecurityPolicyAllowPasskeysForLoginMfaLabel" xml:space="preserve">
+    <value>Αποδοχή κλειδιών πρόσβασης για σύνδεση και ελέγχους ασφαλείας</value>
+  </data>
+  <data name="SecurityPolicyAllowPasskeysForLoginMfaNote" xml:space="preserve">
+    <value>Ένα κλειδί πρόσβασης καταχωρισμένο στην ίδια εφαρμογή μετρά ως MFA για σύνδεση, αλλαγή τμήματος και ευαίσθητες ενέργειες.</value>
+  </data>
+  <data name="SecurityPolicyAllowPasskeysForAdpLabel" xml:space="preserve">
+    <value>Αποδοχή κλειδιών πρόσβασης για προστατευμένα δεδομένα</value>
+  </data>
+  <data name="SecurityPolicyAllowPasskeysForAdpNote" xml:space="preserve">
+    <value>Ένα κλειδί πρόσβασης μετρά ως MFA για την εμφάνιση και την επεξεργασία προστατευμένων δεδομένων. Η αλλαγή τερματίζει την τρέχουσα πρόσβαση σε προστατευμένα δεδομένα, οπότε τα μέλη επαληθεύουν ξανά.</value>
+  </data>
+  <data name="SecurityPolicyAllowResponderApprovalLabel" xml:space="preserve">
+    <value>Αποδοχή έγκρισης από την εφαρμογή Responder</value>
+  </data>
+  <data name="SecurityPolicyAllowResponderApprovalNote" xml:space="preserve">
+    <value>Όπου γίνονται δεκτά κλειδιά πρόσβασης, ένα μέλος μπορεί να εγκρίνει μια σύνδεση ή ένα αίτημα για προστατευμένα δεδομένα με το κλειδί πρόσβασης στην εφαρμογή Responder του. Δεν χρησιμοποιείται ποτέ για αλλαγές ασφαλείας. Η αλλαγή τερματίζει την τρέχουσα πρόσβαση σε προστατευμένα δεδομένα.</value>
+  </data>
+  <data name="SecurityPolicyAllowFederatedMfaForLoginMfaLabel" xml:space="preserve">
+    <value>Αποδοχή του MFA του παρόχου ταυτότητάς σας για σύνδεση και ελέγχους ασφαλείας</value>
+  </data>
+  <data name="SecurityPolicyAllowFederatedMfaForLoginMfaNote" xml:space="preserve">
+    <value>Απαιτεί δοκιμασμένη αντιστοίχιση MFA στη ρύθμιση SSO σας.</value>
+  </data>
+  <data name="SecurityPolicyAllowFederatedMfaForAdpLabel" xml:space="preserve">
+    <value>Αποδοχή του MFA του παρόχου ταυτότητάς σας για προστατευμένα δεδομένα</value>
+  </data>
+  <data name="SecurityPolicyAllowFederatedMfaForAdpNote" xml:space="preserve">
+    <value>Απαιτεί δοκιμασμένη αντιστοίχιση MFA στη ρύθμιση SSO σας. Η αλλαγή τερματίζει την τρέχουσα πρόσβαση σε προστατευμένα δεδομένα.</value>
+  </data>
+  <data name="SecurityPolicyFederatedMappingUntested" xml:space="preserve">
+    <value>Η ρύθμιση SSO σας δεν έχει δοκιμασμένη αντιστοίχιση MFA. Αποθηκεύστε μια αντιστοίχιση και ολοκληρώστε τη δοκιμή της πριν αποδεχτείτε το MFA του παρόχου ταυτότητάς σας.</value>
+  </data>
+  <data name="SecurityPolicyFederatedNeedsResgridMfa" xml:space="preserve">
+    <value>Για να αποδεχτείτε το MFA του παρόχου ταυτότητάς σας, επαληθεύστε πρώτα με την εφαρμογή ελέγχου ταυτότητας ή ένα κλειδί πρόσβασης. Το MFA του παρόχου ταυτότητας δεν μπορεί να εγκρίνει αυτή την αλλαγή.</value>
+  </data>
+  <data name="SecurityPolicyAcceptRecentLoginMfaForAdpLabel" xml:space="preserve">
+    <value>Να ανοίγει τα προστατευμένα δεδομένα μια πρόσφατη επαλήθευση κατά τη σύνδεση</value>
+  </data>
+  <data name="SecurityPolicyAcceptRecentLoginMfaForAdpNote" xml:space="preserve">
+    <value>Τα μέλη που επαλήθευσαν MFA κατά τη σύνδεση δεν χρειάζεται να επαληθεύσουν ξανά για να εμφανίσουν προστατευμένα δεδομένα μέσα στο παράθυρο επαλήθευσης. Η αλλαγή τερματίζει την τρέχουσα πρόσβαση σε προστατευμένα δεδομένα.</value>
+  </data>
+  <data name="SecurityPolicyAcceptRecentUnlockMfaForAdpLabel" xml:space="preserve">
+    <value>Να ανοίγει τα προστατευμένα δεδομένα το ξεκλείδωμα κοινόχρηστης συσκευής</value>
+  </data>
+  <data name="SecurityPolicyAcceptRecentUnlockMfaForAdpNote" xml:space="preserve">
+    <value>Σε κοινόχρηστα tablet οχημάτων και σταθμούς εργασίας, η πρόσφατη επαλήθευση ξεκλειδώματος του χειριστή μετρά για την εμφάνιση προστατευμένων δεδομένων. Η αλλαγή τερματίζει την τρέχουσα πρόσβαση σε προστατευμένα δεδομένα.</value>
+  </data>
+  <data name="SecurityPolicySharedDevicesHeader" xml:space="preserve">
+    <value>Κοινόχρηστες συσκευές οχημάτων και σταθμών εργασίας</value>
+  </data>
+  <data name="SecurityPolicySharedDevicesIntro" xml:space="preserve">
+    <value>Τα κοινόχρηστα tablet οχημάτων και οι σταθμοί εργασίας κέντρου αποστολής κλειδώνουν όταν δεν τα χρησιμοποιεί κανείς και τερματίζονται με τη βάρδια. Οι χειριστές ξεκλειδώνουν με τη δική τους εφαρμογή ελέγχου ταυτότητας, κλειδί πρόσβασης ή έγκριση Responder, ποτέ με κωδικό πρόσβασης αποθηκευμένο στη συσκευή. Μια αυστηρότερη τιμή εδώ ισχύει και για συνεδρίες που βρίσκονται ήδη σε εξέλιξη.</value>
+  </data>
+  <data name="SecurityPolicySharedDevicesManagingMemberOnly" xml:space="preserve">
+    <value>Μόνο το διαχειριστικό μέλος του τμήματος μπορεί να αλλάξει την πολιτική κοινόχρηστων συσκευών.</value>
+  </data>
+  <data name="SecurityPolicySharedDevicesNotYetAvailable" xml:space="preserve">
+    <value>Η λειτουργία κοινόχρηστων συσκευών δεν είναι ακόμη διαθέσιμη σε αυτή την εγκατάσταση. Οι τιμές διατηρούνται και δεν μπορεί να απαιτηθεί για άλλη εφαρμογή μέχρι να γίνει διαθέσιμη.</value>
+  </data>
+  <data name="SecurityPolicySharedIdleLockLabel" xml:space="preserve">
+    <value>Κλείδωμα μετά από τόσα λεπτά αδράνειας</value>
+  </data>
+  <data name="SecurityPolicySharedIdleLockNote" xml:space="preserve">
+    <value>1 έως {0} λεπτά. Μετρά μόνο η δραστηριότητα του ίδιου του χειριστή· οι ενημερώσεις στο παρασκήνιο και οι εισερχόμενες ειδοποιήσεις όχι.</value>
+  </data>
+  <data name="SecurityPolicySharedShiftLabel" xml:space="preserve">
+    <value>Λήξη της βάρδιας μετά από τόσες ώρες</value>
+  </data>
+  <data name="SecurityPolicySharedShiftNote" xml:space="preserve">
+    <value>1 έως {0} ώρες μετά τη σύνδεση, ανεξάρτητα από τη δραστηριότητα. Η επόμενη βάρδια συνδέεται ξανά.</value>
+  </data>
+  <data name="SecurityPolicySharedRequiredLabel" xml:space="preserve">
+    <value>Να χρησιμοποιείται πάντα η κοινόχρηστη λειτουργία για</value>
+  </data>
+  <data name="SecurityPolicySharedRequiredNote" xml:space="preserve">
+    <value>Οι συνεδρίες αυτών των εφαρμογών σε αυτό το τμήμα κλειδώνουν πάντα σε αδράνεια και τερματίζονται με τη βάρδια, ανεξάρτητα από τη ρύθμιση της εγκατάστασης. Μετρούν και οι συνδέσεις που δεν δηλώνουν εφαρμογή, οπότε κλειδώνουν και οι ενσωματώσεις που συνδέονται με κωδικό πρόσβασης. Χρησιμοποιήστε εκδόσεις εφαρμογών που υποστηρίζουν την κοινόχρηστη λειτουργία.</value>
+  </data>
+  <data name="SecurityPolicySharedRequiredUnit" xml:space="preserve">
+    <value>Unit</value>
+  </data>
+  <data name="SecurityPolicySharedRequiredCommand" xml:space="preserve">
+    <value>IC (Διοίκηση)</value>
+  </data>
+  <data name="SecurityPolicySharedRequiredDispatch" xml:space="preserve">
+    <value>Dispatch</value>
+  </data>
+  <data name="SecurityPolicySharedIdleOutOfRange" xml:space="preserve">
+    <value>Επιλέξτε κλείδωμα αδράνειας από 1 έως {0} λεπτά.</value>
+  </data>
+  <data name="SecurityPolicySharedShiftOutOfRange" xml:space="preserve">
+    <value>Επιλέξτε διάρκεια βάρδιας από 1 έως {0} ώρες.</value>
+  </data>
+  <data name="SecurityPolicySharedRequirementUnavailable" xml:space="preserve">
+    <value>Η λειτουργία κοινόχρηστων συσκευών δεν είναι ακόμη διαθέσιμη σε αυτή την εγκατάσταση, οπότε δεν μπορεί να απαιτηθεί για άλλη εφαρμογή.</value>
+  </data>
+  <data name="FederatedMfaPageTitle" xml:space="preserve">
+    <value>MFA του παρόχου ταυτότητας</value>
+  </data>
+  <data name="FederatedMfaIntro" xml:space="preserve">
+    <value>Ενημερώστε το Resgrid πώς ο πάροχος ταυτότητάς σας δηλώνει ότι επαλήθευσε ένα μέλος με MFA. Όπου αυτό το τμήμα αποδέχεται το MFA του παρόχου ταυτότητάς σας, μια σύνδεση ή επαλήθευση που φέρει μία από αυτές τις τιμές μετρά ως MFA και τα μέλη δεν χρειάζονται εφαρμογή ελέγχου ταυτότητας του Resgrid. Κάθε αλλαγή πρέπει να περάσει μια δοκιμαστική σύνδεση πριν ισχύσει.</value>
+  </data>
+  <data name="FederatedMfaNoSso" xml:space="preserve">
+    <value>Ρυθμίστε και ενεργοποιήστε πρώτα μια ρύθμιση SSO.</value>
+  </data>
+  <data name="FederatedMfaStatusEffective" xml:space="preserve">
+    <value>Σε ισχύ: έκδοση {0}, δοκιμάστηκε {1}.</value>
+  </data>
+  <data name="FederatedMfaStatusUntested" xml:space="preserve">
+    <value>Εκτός ισχύος: η έκδοση {0} δεν έχει περάσει ακόμη τη δοκιμή της.</value>
+  </data>
+  <data name="FederatedMfaStatusNone" xml:space="preserve">
+    <value>Δεν υπάρχει αποθηκευμένη αντιστοίχιση.</value>
+  </data>
+  <data name="FederatedMfaRequestHeader" xml:space="preserve">
+    <value>Τι ζητά το Resgrid</value>
+  </data>
+  <data name="FederatedMfaAcceptHeader" xml:space="preserve">
+    <value>Τι μετρά ως MFA</value>
+  </data>
+  <data name="FederatedMfaValuesNote" xml:space="preserve">
+    <value>Μία τιμή ανά γραμμή. Οι τιμές συγκρίνονται ακριβώς, συμπεριλαμβανομένων πεζών και κεφαλαίων. Μια απάντηση χρειάζεται τουλάχιστον μία από τις τιμές.</value>
+  </data>
+  <data name="FederatedMfaRequestAcrValuesLabel" xml:space="preserve">
+    <value>acr_values προς αίτηση (OIDC)</value>
+  </data>
+  <data name="FederatedMfaRequestClaimsLabel" xml:space="preserve">
+    <value>Αίτημα claims (OIDC, JSON)</value>
+  </data>
+  <data name="FederatedMfaRequestAuthnContextLabel" xml:space="preserve">
+    <value>Αναφορές κλάσεων RequestedAuthnContext (SAML)</value>
+  </data>
+  <data name="FederatedMfaAcceptAmrLabel" xml:space="preserve">
+    <value>Τιμές amr (OIDC)</value>
+  </data>
+  <data name="FederatedMfaAcceptAcrLabel" xml:space="preserve">
+    <value>Τιμές acr (OIDC)</value>
+  </data>
+  <data name="FederatedMfaAcceptAcrsLabel" xml:space="preserve">
+    <value>Τιμές acrs (OIDC, πλαίσιο ελέγχου ταυτότητας)</value>
+  </data>
+  <data name="FederatedMfaAcceptAuthnContextLabel" xml:space="preserve">
+    <value>Τιμές AuthnContextClassRef (SAML)</value>
+  </data>
+  <data name="FederatedMfaSaveButton" xml:space="preserve">
+    <value>Αποθήκευση αντιστοίχισης</value>
+  </data>
+  <data name="FederatedMfaRemoveButton" xml:space="preserve">
+    <value>Κατάργηση αντιστοίχισης</value>
+  </data>
+  <data name="FederatedMfaSaved" xml:space="preserve">
+    <value>Η αντιστοίχιση αποθηκεύτηκε. Θα ισχύσει μόλις περάσει μια δοκιμαστική σύνδεση.</value>
+  </data>
+  <data name="FederatedMfaRemoved" xml:space="preserve">
+    <value>Η αντιστοίχιση καταργήθηκε. Το MFA του παρόχου ταυτότητας δεν μετρά πλέον σε αυτό το τμήμα.</value>
+  </data>
+  <data name="FederatedMfaInvalid" xml:space="preserve">
+    <value>Η αντιστοίχιση δεν μπορεί να χρησιμοποιηθεί: {0}</value>
+  </data>
+  <data name="FederatedMfaNeedsResgridMfa" xml:space="preserve">
+    <value>Η αλλαγή της αντιστοίχισης απαιτεί πρόσφατη επαλήθευση με την εφαρμογή ελέγχου ταυτότητας ή ένα κλειδί πρόσβασης. Το MFA του παρόχου ταυτότητας δεν μπορεί να εγκρίνει αυτή την αλλαγή.</value>
+  </data>
+  <data name="FederatedMfaLink" xml:space="preserve">
+    <value>Αντιστοίχιση MFA του παρόχου ταυτότητας</value>
+  </data>
+  <data name="FederatedMfaTestButton" xml:space="preserve">
+    <value>Δοκιμή με σύνδεση</value>
+  </data>
+  <data name="FederatedMfaTestNote" xml:space="preserve">
+    <value>Η δοκιμή σας στέλνει τώρα στον πάροχο ταυτότητας ζητώντας MFA. Όταν επιστρέψει τιμή που μετρά η αντιστοίχιση, αυτή η έκδοση τίθεται σε ισχύ.</value>
   </data>
 </root>
 

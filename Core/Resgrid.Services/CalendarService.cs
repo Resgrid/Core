@@ -3,6 +3,7 @@ using Resgrid.Model;
 using Resgrid.Model.Helpers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Repositories.Queries;
+using Resgrid.Model.Search;
 using Resgrid.Model.Services;
 using System;
 using System.Collections.Generic;
@@ -30,6 +31,7 @@ namespace Resgrid.Services
 		private readonly ITextResponsePromptService _textResponsePromptService;
 		private readonly IMessageRecipientRepository _messageRecipientRepository;
 		private readonly IUnitOfWork _unitOfWork;
+		private readonly Lazy<ISearchProjectionService> _searchProjections;
 
 		public CalendarService(ICalendarItemsRepository calendarItemRepository, ICalendarItemTypeRepository calendarItemTypeRepository,
 			ICalendarItemAttendeeRepository calendarItemAttendeeRepository, IDepartmentsService departmentsService, ICommunicationService communicationService,
@@ -37,8 +39,9 @@ namespace Resgrid.Services
 			IEncryptionService encryptionService, ICalendarItemCheckInRepository calendarItemCheckInRepository,
 			IMessageRecipientRepository messageRecipientRepository, IUnitOfWork unitOfWork,
 			Lazy<IProtectedWriteService> protectedWriteService,
-			ITextResponsePromptService textResponsePromptService = null)
+			ITextResponsePromptService textResponsePromptService = null, Lazy<ISearchProjectionService> searchProjections = null)
 		{
+			_searchProjections = searchProjections;
 			_protectedWriteService = protectedWriteService;
 			_calendarItemRepository = calendarItemRepository;
 			_calendarItemTypeRepository = calendarItemTypeRepository;
@@ -127,6 +130,9 @@ namespace Resgrid.Services
 					saved = await _calendarItemRepository.SaveOrUpdateAsync(saved, cancellationToken);
 			}
 
+			// Occurrences of a recurring series repeat the parent's text; only the parent is indexed.
+			if (_searchProjections != null && saved != null && string.IsNullOrWhiteSpace(saved.RecurrenceId))
+				await _searchProjections.Value.ProjectCalendarItemAsync(saved, cancellationToken);
 			return saved;
 		}
 
@@ -145,7 +151,12 @@ namespace Resgrid.Services
 			var item = await GetCalendarItemByIdAsync(calendarItemId);
 
 			if (item != null)
-				return await _calendarItemRepository.DeleteAsync(item, cancellationToken);
+			{
+				var deleted = await _calendarItemRepository.DeleteAsync(item, cancellationToken);
+				if (deleted && _searchProjections != null)
+					await _searchProjections.Value.RemoveAsync(item.DepartmentId, SearchEntityTypes.CalendarEvent, item.CalendarItemId.ToString(), cancellationToken);
+				return deleted;
+			}
 
 			return false;
 		}
@@ -334,7 +345,11 @@ namespace Resgrid.Services
 
 		public async Task<bool> DeleteCalendarItemAndRecurrences(int calendarItemId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return await _calendarItemRepository.DeleteCalendarItemAndRecurrencesAsync(calendarItemId, cancellationToken);
+			var item = _searchProjections != null ? await GetCalendarItemByIdAsync(calendarItemId) : null;
+			var deleted = await _calendarItemRepository.DeleteCalendarItemAndRecurrencesAsync(calendarItemId, cancellationToken);
+			if (deleted && item != null)
+				await _searchProjections.Value.RemoveAsync(item.DepartmentId, SearchEntityTypes.CalendarEvent, item.CalendarItemId.ToString(), cancellationToken);
+			return deleted;
 		}
 
 		public async Task<List<CalendarItem>> CreateRecurrenceCalendarItemsAsync(CalendarItem item, DateTime start)

@@ -127,7 +127,7 @@
                                         <td class="text-right">
                                             @if (Model.CanManage)
                                             {
-                                                <form method="post" asp-controller="Certifications" asp-action="DeleteCredit" asp-route-area="User" asp-route-id="@c.PersonnelCertificationCreditId" style="display: inline;">@Html.AntiForgeryToken()<button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@localizer["DeleteCreditConfirm"]');"><i class="fa fa-trash"></i></button></form>
+                                                <form method="post" asp-controller="Certifications" asp-action="DeleteCredit" asp-route-area="User" asp-route-id="@c.PersonnelCertificationCreditId" style="display: inline;">@Html.AntiForgeryToken()<button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@JsEncoder.Encode(localizer["DeleteCreditConfirm"])');"><i class="fa fa-trash"></i></button></form>
                                             }
                                         </td>
                                     </tr>

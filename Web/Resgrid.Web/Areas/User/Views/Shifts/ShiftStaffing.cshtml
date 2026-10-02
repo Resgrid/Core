@@ -102,10 +102,10 @@
 		// (GetShiftGroups flags which ones).
 		var isAdmin = @(Model.IsDepartmentAdmin ? "true" : "false");
 		var resgridShiftsI18n = {
-			selectNonGroupPersonnel: '@localizer["SelectNonGroupPersonnel"]',
-			selectPersonnelForGroup: '@localizer["SelectPersonnelForGroup"]',
-			selectPerson: '@localizer["SelectPerson"]',
-			nonGroupPersonnel: '@localizer["NonGroupPersonnelStaffing"]'
+			selectNonGroupPersonnel: '@JsEncoder.Encode(localizer["SelectNonGroupPersonnel"])',
+			selectPersonnelForGroup: '@JsEncoder.Encode(localizer["SelectPersonnelForGroup"])',
+			selectPerson: '@JsEncoder.Encode(localizer["SelectPerson"])',
+			nonGroupPersonnel: '@JsEncoder.Encode(localizer["NonGroupPersonnelStaffing"])'
 		};
 	</script>
 

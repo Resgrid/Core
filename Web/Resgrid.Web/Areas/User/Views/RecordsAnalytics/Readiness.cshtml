@@ -73,8 +73,8 @@
 							<script>document.addEventListener('DOMContentLoaded', function () {
 								var el = document.getElementById('@trendId'); if (!el || !window.Chart) return;
 								new Chart(el, { type: 'bar', data: { labels: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ck.Trend.Select(t => t.Day.ToString("MM-dd")))), datasets: [
-									{ label: '@L["ReadinessChecksExpected"]', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ck.Trend.Select(t => t.Expected))), backgroundColor: 'rgba(26,179,148,0.5)' },
-									{ label: '@L["ReadinessMissed"]', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ck.Trend.Select(t => t.Missed))), backgroundColor: 'rgba(237,85,101,0.7)' }] },
+									{ label: '@JsEncoder.Encode(L["ReadinessChecksExpected"])', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ck.Trend.Select(t => t.Expected))), backgroundColor: 'rgba(26,179,148,0.5)' },
+									{ label: '@JsEncoder.Encode(L["ReadinessMissed"])', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ck.Trend.Select(t => t.Missed))), backgroundColor: 'rgba(237,85,101,0.7)' }] },
 									options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true }, x: { ticks: { maxRotation: 45, autoSkip: true } } } } });
 							});</script>
 						}

@@ -24,7 +24,7 @@
                 <a asp-action="CompensationProfile" asp-route-id="@p.EmployeeCompensationProfileId" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i></a>
                 @if (page.CanManageCompensation)
                 {
-                    <form method="post" asp-action="DeleteCompensationProfile" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@p.EmployeeCompensationProfileId" /><input type="hidden" name="employmentId" value="@employmentId" /><button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@localizer["ConfirmDelete"]');"><i class="fa fa-trash"></i></button></form>
+                    <form method="post" asp-action="DeleteCompensationProfile" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@p.EmployeeCompensationProfileId" /><input type="hidden" name="employmentId" value="@employmentId" /><button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@JsEncoder.Encode(localizer["ConfirmDelete"])');"><i class="fa fa-trash"></i></button></form>
                 }
             </td>
         </tr>

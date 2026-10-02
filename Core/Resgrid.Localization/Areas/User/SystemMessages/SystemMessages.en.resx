@@ -153,4 +153,25 @@ The Resgrid Team</value>
   <data name="AdpEgressWarning" xml:space="preserve"><value>I acknowledge that released details leave Resgrid and may be retained by phone carriers or recipients.</value></data>
   <data name="AdpAllowed" xml:space="preserve"><value>Allow protected content</value></data>
   <data name="AdpSupportNotice" xml:space="preserve"><value>Resgrid staff requested access to protected dispatch {0} for support case {1}. Access requires an independent staff approver and expires within 15 minutes.</value></data>
+  <data name="SecurityNoticeSubject" xml:space="preserve"><value>Security change on your Resgrid account</value></data>
+  <data name="SecurityNoticeGreeting" xml:space="preserve"><value>Hi {0},</value></data>
+  <data name="SecurityNoticeGreetingNoName" xml:space="preserve"><value>Hi,</value></data>
+  <data name="SecurityNoticeTotpEnabled" xml:space="preserve"><value>An authenticator app was set up for two-step sign-in on your account.</value></data>
+  <data name="SecurityNoticeTotpReplaced" xml:space="preserve"><value>The authenticator app on your account was replaced, and every signed-in session was ended.</value></data>
+  <data name="SecurityNoticeTotpDisabled" xml:space="preserve"><value>The authenticator app was removed from your account, so two-step sign-in is off. Every signed-in session was ended.</value></data>
+  <data name="SecurityNoticeRecoveryCodesRegenerated" xml:space="preserve"><value>New recovery codes were created for your account. The old codes no longer work.</value></data>
+  <data name="SecurityNoticeRecoveryCodeUsed" xml:space="preserve"><value>One of your recovery codes was used to sign in or to start account recovery.</value></data>
+  <data name="SecurityNoticePasskeyRegistered" xml:space="preserve"><value>A new passkey was added to your account.</value></data>
+  <data name="SecurityNoticePasskeyRemoved" xml:space="preserve"><value>A passkey was removed from your account.</value></data>
+  <data name="SecurityNoticeApprovalTurnedOn" xml:space="preserve"><value>A passkey in Resgrid Responder can now approve sign-ins to your other Resgrid apps.</value></data>
+  <data name="SecurityNoticeApprovalTurnedOff" xml:space="preserve"><value>A passkey in Resgrid Responder can no longer approve sign-ins to your other Resgrid apps.</value></data>
+  <data name="SecurityNoticeApprovalNotMe" xml:space="preserve"><value>You told Resgrid Responder that you did not ask to sign in. That sign-in was stopped, and approval requests are paused for 15 minutes. Someone may know your password, so change it now.</value></data>
+  <data name="SecurityNoticeApprovalSuspended" xml:space="preserve"><value>Several approval requests in a row were denied or went unanswered, so approval requests are paused for 15 minutes.</value></data>
+  <data name="SecurityNoticeFactorRecoveryCompleted" xml:space="preserve"><value>Your account was recovered with a recovery code. A new authenticator app was set up, new recovery codes were created, and every signed-in session was ended.</value></data>
+  <data name="SecurityNoticeSharedInstallationFactor" xml:space="preserve"><value>An authenticator app or passkey was set up on a shared vehicle tablet or workstation. If anyone else could have seen its setup code or can use that device, replace the authenticator app or remove the passkey from your own device.</value></data>
+  <data name="SecurityNoticeActivityReported" xml:space="preserve"><value>A verification on your account was reported as not yours. If it signed in on another device, that session was ended. Change your password and review your sign-in methods.</value></data>
+  <data name="SecurityNoticeWhen" xml:space="preserve"><value>When: {0} UTC</value></data>
+  <data name="SecurityNoticeWhere" xml:space="preserve"><value>Where: {0}</value></data>
+  <data name="SecurityNoticeNotYou" xml:space="preserve"><value>If this wasn't you, reset your password now at {0}, then sign in and review your sign-in methods. Resgrid never asks for a code or password by email.</value></data>
+  <data name="SecurityNoticeFooter" xml:space="preserve"><value>This is an automatic security notice about your Resgrid account.</value></data>
 </root>

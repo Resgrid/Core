@@ -1,16 +1,17 @@
 @model Resgrid.Web.Areas.User.Models.Security.ViewAuditLogView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> localizer
 @functions {
   public string DisplayValue(string value)
   {
-    return String.IsNullOrWhiteSpace(value) ? "Not recorded" : value;
+    return String.IsNullOrWhiteSpace(value) ? localizer["AuditLogViewNotRecorded"].Value : value;
   }
 }
 @{
-  ViewBag.Title = "Resgrid | View Audit Log";
+  ViewBag.Title = "Resgrid | " + localizer["AuditLogViewTitle"];
   var loggedBy = await UserHelper.GetFullNameForUser(Model.AuditLog.UserId);
   if (String.IsNullOrWhiteSpace(loggedBy))
   {
-    loggedBy = "Not recorded";
+    loggedBy = localizer["AuditLogViewNotRecorded"].Value;
   }
 }
 @section Styles
@@ -29,19 +30,19 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
   <div class="col-sm-4">
-    <h2>View Audit Log</h2>
+    <h2>@localizer["AuditLogViewTitle"]</h2>
     <ol class="breadcrumb">
       <li>
-        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@localizer["BreadcrumbHome"]</a>
       </li>
       <li>
-        <a asp-controller="Security" asp-action="Index" asp-route-area="User">Security and Permissions</a>
+        <a asp-controller="Security" asp-action="Index" asp-route-area="User">@localizer["BreadcrumbSecurity"]</a>
       </li>
       <li>
-        <a asp-controller="Security" asp-action="Audits" asp-route-area="User">Audit Logs</a>
+        <a asp-controller="Security" asp-action="Audits" asp-route-area="User">@localizer["AuditLogsButton"]</a>
       </li>
       <li class="active">
-        <strong>View Audit Log</strong>
+        <strong>@localizer["AuditLogViewTitle"]</strong>
       </li>
     </ol>
   </div>
@@ -52,7 +53,7 @@
     <div class="wrapper wrapper-content animated fadeInUp">
       <div class="ibox">
         <div class="ibox-title">
-          <h5>Audit Log</h5>
+          <h5>@localizer["AuditLogViewPanelTitle"]</h5>
           <div class="ibox-tools">
           </div>
         </div>
@@ -60,13 +61,13 @@
           <div class="row">
             <div class="col-lg-6">
               <dl class="dl-horizontal">
-                <dt>Audit Log ID:</dt>
+                <dt>@localizer["AuditLogViewAuditLogId"]</dt>
                 <dd>@Model.AuditLog.AuditLogId</dd>
               </dl>
             </div>
             <div class="col-lg-6">
               <dl class="dl-horizontal">
-                <dt>Department ID:</dt>
+                <dt>@localizer["AuditLogViewDepartmentId"]</dt>
                 <dd>@Model.AuditLog.DepartmentId</dd>
               </dl>
             </div>
@@ -74,13 +75,13 @@
           <div class="row">
             <div class="col-lg-6">
               <dl class="dl-horizontal">
-                <dt>Audit Type:</dt>
+                <dt>@localizer["AuditLogViewAuditType"]</dt>
                 <dd>@Model.Type.ToString()</dd>
               </dl>
             </div>
             <div class="col-lg-6">
               <dl class="dl-horizontal">
-                <dt>Log Type ID:</dt>
+                <dt>@localizer["AuditLogViewLogTypeId"]</dt>
                 <dd>@Model.AuditLog.LogType</dd>
               </dl>
             </div>
@@ -88,21 +89,21 @@
           <div class="row">
             <div class="col-lg-6">
               <dl class="dl-horizontal">
-                <dt>Type Description:</dt>
+                <dt>@localizer["AuditLogViewTypeDescription"]</dt>
                 <dd>@DisplayValue(Model.TypeName)</dd>
               </dl>
             </div>
             <div class="col-lg-6">
               <dl class="dl-horizontal">
-                <dt>Result:</dt>
+                <dt>@localizer["AuditLogViewResult"]</dt>
                 <dd>
                   @if (Model.AuditLog.Successful)
                   {
-                    <span class="label label-success">Successful</span>
+                    <span class="label label-success">@localizer["AuditLogsResultSuccessful"]</span>
                   }
                   else
                   {
-                    <span class="label label-danger">Failed</span>
+                    <span class="label label-danger">@localizer["AuditLogsResultFailed"]</span>
                   }
                 </dd>
               </dl>
@@ -111,13 +112,13 @@
           <div class="row">
             <div class="col-lg-6">
               <dl class="dl-horizontal">
-                <dt>Logged By:</dt>
+                <dt>@localizer["AuditLogViewLoggedBy"]</dt>
                 <dd>@loggedBy</dd>
               </dl>
             </div>
             <div class="col-lg-6">
               <dl class="dl-horizontal">
-                <dt>User ID:</dt>
+                <dt>@localizer["AuditLogViewUserId"]</dt>
                 <dd>@DisplayValue(Model.AuditLog.UserId)</dd>
               </dl>
             </div>
@@ -125,13 +126,13 @@
           <div class="row">
             <div class="col-lg-6">
               <dl class="dl-horizontal">
-                <dt>Logged On (Local):</dt>
-                <dd>@(Model.AuditLog.LoggedOn.HasValue ? Model.AuditLog.LoggedOn.Value.TimeConverterToString(Model.Department) : "Unknown")</dd>
+                <dt>@localizer["AuditLogViewLoggedOnLocal"]</dt>
+                <dd>@(Model.AuditLog.LoggedOn.HasValue ? Model.AuditLog.LoggedOn.Value.TimeConverterToString(Model.Department) : localizer["AuditLogsUnknownTime"].Value)</dd>
               </dl>
             </div>
             <div class="col-lg-6">
               <dl class="dl-horizontal">
-                <dt>Logged On (UTC):</dt>
+                <dt>@localizer["AuditLogViewLoggedOnUtc"]</dt>
                 <dd>
                   @if (Model.AuditLog.LoggedOn.HasValue)
                   {
@@ -139,7 +140,7 @@
                   }
                   else
                   {
-                    @:Unknown
+                    @localizer["AuditLogsUnknownTime"]
                   }
                 </dd>
               </dl>
@@ -148,13 +149,13 @@
           <div class="row">
             <div class="col-lg-6">
               <dl class="dl-horizontal">
-                <dt>IP Address:</dt>
+                <dt>@localizer["AuditLogViewIpAddress"]</dt>
                 <dd>@DisplayValue(Model.AuditLog.IpAddress)</dd>
               </dl>
             </div>
             <div class="col-lg-6">
               <dl class="dl-horizontal">
-                <dt>Server Name:</dt>
+                <dt>@localizer["AuditLogViewServerName"]</dt>
                 <dd>@DisplayValue(Model.AuditLog.ServerName)</dd>
               </dl>
             </div>
@@ -162,13 +163,13 @@
           <div class="row">
             <div class="col-lg-6">
               <dl class="dl-horizontal">
-                <dt>Object ID:</dt>
+                <dt>@localizer["AuditLogViewObjectId"]</dt>
                 <dd>@DisplayValue(Model.AuditLog.ObjectId)</dd>
               </dl>
             </div>
             <div class="col-lg-6">
               <dl class="dl-horizontal">
-                <dt>Object Department ID:</dt>
+                <dt>@localizer["AuditLogViewObjectDepartmentId"]</dt>
                 <dd>@Model.AuditLog.ObjectDepartmentId</dd>
               </dl>
             </div>
@@ -176,7 +177,7 @@
           <div class="row">
             <div class="col-lg-12">
               <dl class="dl-horizontal">
-                <dt>User Agent:</dt>
+                <dt>@localizer["AuditLogViewUserAgent"]</dt>
                 <dd>@DisplayValue(Model.AuditLog.UserAgent)</dd>
               </dl>
             </div>
@@ -184,7 +185,7 @@
           <div class="row">
             <div class="col-lg-12">
               <dl>
-                <dt>Message:</dt>
+                <dt>@localizer["AuditLogViewMessage"]</dt>
                 <dd><pre class="audit-log-value">@DisplayValue(Model.AuditLog.Message)</pre></dd>
               </dl>
             </div>
@@ -192,7 +193,7 @@
           <div class="row">
             <div class="col-lg-12">
               <dl>
-                <dt>Data:</dt>
+                <dt>@localizer["AuditLogViewData"]</dt>
                 <dd><pre class="audit-log-value">@DisplayValue(Model.AuditLog.Data)</pre></dd>
               </dl>
             </div>

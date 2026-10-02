@@ -59,15 +59,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 
-  <data name="Name1" xml:space="preserve">
-    <value>this is my long string</value>
-  </data>
-  <data name="Bitmap1" xml:space="preserve">
-    <value>[base64 mime encoded serialized .NET Framework object]</value>
-  </data>
-  <data name="Icon1" xml:space="preserve">
-    <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-  </data>
   <data name="AddCategoryHeader" xml:space="preserve">
     <value>Add Category</value>
   </data>
@@ -440,5 +431,269 @@
   <data name="ContactHasOpenBillingNotice" xml:space="preserve"><value>Цей контакт не можна видалити, поки в нього є платіжний профіль із неанульованими рахунками. Спочатку анулюйте або оплатіть рахунки.</value></data>
   <data name="PreplanOpenOccupancy" xml:space="preserve">
     <value>Відкрити об'єкт</value>
+  </data>
+  <data name="Routes" xml:space="preserve">
+    <value>Маршрути</value>
+  </data>
+  <data name="Route" xml:space="preserve">
+    <value>Маршрут</value>
+  </data>
+  <data name="StopName" xml:space="preserve">
+    <value>Назва зупинки</value>
+  </data>
+  <data name="PriorityNormal" xml:space="preserve">
+    <value>Звичайний</value>
+  </data>
+  <data name="PriorityHigh" xml:space="preserve">
+    <value>Високий</value>
+  </data>
+  <data name="PriorityCritical" xml:space="preserve">
+    <value>Критичний</value>
+  </data>
+  <data name="PriorityOptional" xml:space="preserve">
+    <value>Необов'язковий</value>
+  </data>
+  <data name="PreplanTitle" xml:space="preserve">
+    <value>План реагування</value>
+  </data>
+  <data name="PreplanTab" xml:space="preserve">
+    <value>План реагування</value>
+  </data>
+  <data name="SiteFiles" xml:space="preserve">
+    <value>Файли об'єкта</value>
+  </data>
+  <data name="ManageFiles" xml:space="preserve">
+    <value>Керування файлами</value>
+  </data>
+  <data name="PreplanOccupancySection" xml:space="preserve">
+    <value>Конструкція та використання</value>
+  </data>
+  <data name="ConstructionType" xml:space="preserve">
+    <value>Тип конструкції</value>
+  </data>
+  <data name="RoofType" xml:space="preserve">
+    <value>Тип даху</value>
+  </data>
+  <data name="OccupancyType" xml:space="preserve">
+    <value>Тип об'єкта</value>
+  </data>
+  <data name="OccupancyHours" xml:space="preserve">
+    <value>Години використання</value>
+  </data>
+  <data name="OccupancyHoursPlaceholder" xml:space="preserve">
+    <value>напр. Пн–Пт 08:00–17:00, уночі є персонал</value>
+  </data>
+  <data name="OccupantLoad" xml:space="preserve">
+    <value>Місткість</value>
+  </data>
+  <data name="OccupantsNeedingAssistance" xml:space="preserve">
+    <value>Люди, які потребують допомоги</value>
+  </data>
+  <data name="OccupantsNeedingAssistanceYes" xml:space="preserve">
+    <value>Людям на об'єкті може знадобитися допомога під час евакуації</value>
+  </data>
+  <data name="OccupantsNeedingAssistanceNotes" xml:space="preserve">
+    <value>Хто, де і якої допомоги потребує</value>
+  </data>
+  <data name="OccupancyNotes" xml:space="preserve">
+    <value>Примітки щодо використання</value>
+  </data>
+  <data name="PreplanUtilitiesSection" xml:space="preserve">
+    <value>Відключення комунікацій</value>
+  </data>
+  <data name="GasShutoff" xml:space="preserve">
+    <value>Перекриття газу</value>
+  </data>
+  <data name="ElectricShutoff" xml:space="preserve">
+    <value>Вимкнення електрики</value>
+  </data>
+  <data name="WaterShutoff" xml:space="preserve">
+    <value>Перекриття води</value>
+  </data>
+  <data name="UtilityNotes" xml:space="preserve">
+    <value>Примітки про комунікації</value>
+  </data>
+  <data name="PreplanWaterSection" xml:space="preserve">
+    <value>Водопостачання</value>
+  </data>
+  <data name="NearestHydrant" xml:space="preserve">
+    <value>Найближчий гідрант</value>
+  </data>
+  <data name="RequiredFireFlow" xml:space="preserve">
+    <value>Потрібна витрата води (гал/хв)</value>
+  </data>
+  <data name="WaterSupplyNotes" xml:space="preserve">
+    <value>Примітки про водопостачання</value>
+  </data>
+  <data name="PreplanAccessSection" xml:space="preserve">
+    <value>Доступ</value>
+  </data>
+  <data name="KnoxBox" xml:space="preserve">
+    <value>Розташування ключового сейфа</value>
+  </data>
+  <data name="GateCode" xml:space="preserve">
+    <value>Код воріт</value>
+  </data>
+  <data name="GateCodeInfo" xml:space="preserve">
+    <value>Зберігається в зашифрованому вигляді. Показується учасникам, які можуть переглядати цей контакт, і учасникам реагування на пов'язані виклики.</value>
+  </data>
+  <data name="AlarmPanel" xml:space="preserve">
+    <value>Розташування панелі сигналізації</value>
+  </data>
+  <data name="AlarmCompany" xml:space="preserve">
+    <value>Охоронна компанія</value>
+  </data>
+  <data name="Phone" xml:space="preserve">
+    <value>Телефон</value>
+  </data>
+  <data name="AccessNotes" xml:space="preserve">
+    <value>Примітки щодо доступу</value>
+  </data>
+  <data name="PreplanContactsSection" xml:space="preserve">
+    <value>Контакти на об'єкті</value>
+  </data>
+  <data name="EmergencyContact" xml:space="preserve">
+    <value>Контакт для екстрених випадків</value>
+  </data>
+  <data name="SecondaryContact" xml:space="preserve">
+    <value>Додатковий контакт</value>
+  </data>
+  <data name="PreplanTacticalSection" xml:space="preserve">
+    <value>Небезпеки й тактика</value>
+  </data>
+  <data name="HazmatOnSite" xml:space="preserve">
+    <value>Небезпечні матеріали на об'єкті</value>
+  </data>
+  <data name="HazmatOnSiteYes" xml:space="preserve">
+    <value>На об'єкті зберігаються або використовуються небезпечні матеріали</value>
+  </data>
+  <data name="GeneralHazardNotes" xml:space="preserve">
+    <value>Загальні примітки про небезпеки</value>
+  </data>
+  <data name="TacticalSummary" xml:space="preserve">
+    <value>Тактичний підсумок</value>
+  </data>
+  <data name="PreplanReviewSection" xml:space="preserve">
+    <value>Цикл перегляду</value>
+  </data>
+  <data name="LastReviewed" xml:space="preserve">
+    <value>Останній перегляд</value>
+  </data>
+  <data name="NeverReviewed" xml:space="preserve">
+    <value>Ще не переглядався</value>
+  </data>
+  <data name="MarkReviewedNow" xml:space="preserve">
+    <value>Позначити цей план реагування як переглянутий зараз</value>
+  </data>
+  <data name="NextReviewDue" xml:space="preserve">
+    <value>Термін наступного перегляду</value>
+  </data>
+  <data name="SavePreplan" xml:space="preserve">
+    <value>Зберегти план реагування</value>
+  </data>
+  <data name="PremiseHazards" xml:space="preserve">
+    <value>Небезпеки на об'єкті</value>
+  </data>
+  <data name="PremiseHazardsInfo" xml:space="preserve">
+    <value>Небезпеки за типами із зазначенням серйозності. Небезпеки, позначені для сповіщення, показуються диспетчерам, коли цей контакт додається до виклику.</value>
+  </data>
+  <data name="AddHazard" xml:space="preserve">
+    <value>Додати небезпеку</value>
+  </data>
+  <data name="EditHazard" xml:space="preserve">
+    <value>Редагувати небезпеку</value>
+  </data>
+  <data name="SaveHazard" xml:space="preserve">
+    <value>Зберегти небезпеку</value>
+  </data>
+  <data name="DeleteHazardConfirm" xml:space="preserve">
+    <value>Видалити цю небезпеку?</value>
+  </data>
+  <data name="HazardSaveError" xml:space="preserve">
+    <value>Не вдалося зберегти небезпеку.</value>
+  </data>
+  <data name="HazardTitleRequired" xml:space="preserve">
+    <value>Вкажіть назву небезпеки.</value>
+  </data>
+  <data name="HazardShouldAlert" xml:space="preserve">
+    <value>Сповіщати диспетчерів, коли цей контакт додається до виклику</value>
+  </data>
+  <data name="Severity" xml:space="preserve">
+    <value>Серйозність</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Назва</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>Місце</value>
+  </data>
+  <data name="Alert" xml:space="preserve">
+    <value>Сповіщення</value>
+  </data>
+  <data name="NoHazards" xml:space="preserve">
+    <value>Небезпек на об'єкті не зафіксовано.</value>
+  </data>
+  <data name="GpsCoordinates" xml:space="preserve">
+    <value>GPS-координати</value>
+  </data>
+  <data name="PreplanReviewOverdue" xml:space="preserve">
+    <value>Дата перегляду плану реагування минула.</value>
+  </data>
+  <data name="PreplanReviewDue" xml:space="preserve">
+    <value>Термін перегляду плану реагування</value>
+  </data>
+  <data name="CreatePreplan" xml:space="preserve">
+    <value>Створити план реагування</value>
+  </data>
+  <data name="EditPreplan" xml:space="preserve">
+    <value>Редагувати план реагування</value>
+  </data>
+  <data name="NoPreplan" xml:space="preserve">
+    <value>Для цього контакту не зафіксовано плану реагування.</value>
+  </data>
+  <data name="NoFiles" xml:space="preserve">
+    <value>До цього контакту не додано жодного файлу.</value>
+  </data>
+  <data name="UploadFile" xml:space="preserve">
+    <value>Завантажити файл</value>
+  </data>
+  <data name="UploadFileInfo" xml:space="preserve">
+    <value>Зображення, PDF, документи Office, текст, CSV, DWG або DXF розміром до 30 МБ.</value>
+  </data>
+  <data name="FileType" xml:space="preserve">
+    <value>Тип файлу</value>
+  </data>
+  <data name="FileTitle" xml:space="preserve">
+    <value>Назва</value>
+  </data>
+  <data name="FileTitlePlaceholder" xml:space="preserve">
+    <value>Необов'язкова назва (за замовчуванням — назва файлу)</value>
+  </data>
+  <data name="FileName" xml:space="preserve">
+    <value>Назва файлу</value>
+  </data>
+  <data name="Upload" xml:space="preserve">
+    <value>Завантажити</value>
+  </data>
+  <data name="DeleteFileConfirm" xml:space="preserve">
+    <value>Видалити цей файл?</value>
+  </data>
+  <data name="Download" xml:space="preserve">
+    <value>Завантажити</value>
+  </data>
+  <data name="Size" xml:space="preserve">
+    <value>Розмір</value>
+  </data>
+  <data name="AddedOn" xml:space="preserve">
+    <value>Додано</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Ні</value>
+  </data>
+  <data name="Calls" xml:space="preserve">
+    <value>Виклики</value>
+  </data>
+  <data name="Notes" xml:space="preserve">
+    <value>Нотатки</value>
   </data>
 </root>

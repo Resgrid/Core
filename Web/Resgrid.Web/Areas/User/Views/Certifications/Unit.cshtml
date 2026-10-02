@@ -84,7 +84,7 @@
                                         }
                                         <form method="post" asp-controller="Certifications" asp-action="DeleteUnitCertification" asp-route-area="User" asp-route-id="@r.UnitCertificationId" style="display: inline;">
                                             @Html.AntiForgeryToken()
-                                            <button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@localizer["DeleteRecordConfirm"]');"><i class="fa fa-trash"></i></button>
+                                            <button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@JsEncoder.Encode(localizer["DeleteRecordConfirm"])');"><i class="fa fa-trash"></i></button>
                                         </form>
                                     }
                                 </td>

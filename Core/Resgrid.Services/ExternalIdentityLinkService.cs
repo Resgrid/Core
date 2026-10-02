@@ -42,6 +42,10 @@ namespace Resgrid.Services
 			return await _linksRepository.SaveOrUpdateAsync(link, cancellationToken, true);
 		}
 
+		public async Task<System.Collections.Generic.IReadOnlyList<UserExternalIdentityLink>> GetActiveLinksAsync(string userId,
+			CancellationToken cancellationToken = default) =>
+			(await _linksRepository.GetActiveByUserAsync(userId)).ToList();
+
 		public async Task<SsoManagementState> GetSsoManagementStateAsync(string userId, CancellationToken cancellationToken = default)
 		{
 			var links = await _linksRepository.GetActiveByUserAsync(userId);

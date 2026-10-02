@@ -121,7 +121,7 @@
     <value>Acción</value>
   </data>
   <data name="Actions" xml:space="preserve">
-    <value>Comportamiento</value>
+    <value>Acciones</value>
   </data>
   <data name="Activate" xml:space="preserve">
     <value>Activar</value>
@@ -138,6 +138,9 @@
   <data name="Attachments" xml:space="preserve">
     <value>Archivos adjuntos</value>
   </data>
+  <data name="AudioPushToTalk" xml:space="preserve">
+    <value>Audio y pulsar para hablar</value>
+  </data>
   <data name="Available" xml:space="preserve">
     <value>Disponible</value>
   </data>
@@ -145,10 +148,10 @@
     <value>Disponible en</value>
   </data>
   <data name="AvailableStation" xml:space="preserve">
-    <value>Estación disponible</value>
+    <value>Disponible en estación</value>
   </data>
   <data name="BigBoard" xml:space="preserve">
-    <value>tablero grande</value>
+    <value>Big Board</value>
   </data>
   <data name="Blog" xml:space="preserve">
     <value>Blog</value>
@@ -157,10 +160,10 @@
     <value>Calendario</value>
   </data>
   <data name="Call" xml:space="preserve">
-    <value>Llamar</value>
+    <value>Llamada</value>
   </data>
   <data name="CallAddress" xml:space="preserve">
-    <value>Dirección de llamada</value>
+    <value>Dirección de la llamada</value>
   </data>
   <data name="CallImportSettings" xml:space="preserve">
     <value>Configuración de importación de llamadas</value>
@@ -169,7 +172,7 @@
     <value>Llamadas</value>
   </data>
   <data name="CallTimestamp" xml:space="preserve">
-    <value>Marca de tiempo de la llamada</value>
+    <value>Fecha y hora de la llamada</value>
   </data>
   <data name="Cancel" xml:space="preserve">
     <value>Cancelar</value>
@@ -216,6 +219,9 @@
   <data name="ContactUs" xml:space="preserve">
     <value>Contáctenos</value>
   </data>
+  <data name="CreatedOn" xml:space="preserve">
+    <value>Creado el</value>
+  </data>
   <data name="CustomStatuses" xml:space="preserve">
     <value>Estados personalizados</value>
   </data>
@@ -246,14 +252,17 @@
   <data name="DepartmentSettings" xml:space="preserve">
     <value>Configuración del departamento</value>
   </data>
+  <data name="DepartmentTypes" xml:space="preserve">
+    <value>Tipos de departamento</value>
+  </data>
   <data name="Description" xml:space="preserve">
     <value>Descripción</value>
   </data>
   <data name="Discard" xml:space="preserve">
-    <value>Desechar</value>
+    <value>Descartar</value>
   </data>
   <data name="Dispatched" xml:space="preserve">
-    <value>Enviado</value>
+    <value>Despachado</value>
   </data>
   <data name="DistributionLists" xml:space="preserve">
     <value>Listas de distribución</value>
@@ -271,19 +280,19 @@
     <value>Fin</value>
   </data>
   <data name="EtaColumn" xml:space="preserve">
-    <value>eta</value>
+    <value>ETA</value>
   </data>
   <data name="Event" xml:space="preserve">
     <value>Evento</value>
   </data>
   <data name="Expired" xml:space="preserve">
-    <value>Venció</value>
+    <value>Caducado</value>
   </data>
   <data name="Export" xml:space="preserve">
     <value>Exportar</value>
   </data>
   <data name="Files" xml:space="preserve">
-    <value>archivos</value>
+    <value>Archivos</value>
   </data>
   <data name="Forms" xml:space="preserve">
     <value>Formularios</value>
@@ -301,10 +310,10 @@
     <value>Ayuda</value>
   </data>
   <data name="HelpAndSupport" xml:space="preserve">
-    <value>Servicio de asistencia</value>
+    <value>Ayuda y soporte</value>
   </data>
   <data name="HomeModule" xml:space="preserve">
-    <value>Hogar</value>
+    <value>Inicio</value>
   </data>
   <data name="Hour" xml:space="preserve">
     <value>Hora</value>
@@ -313,7 +322,7 @@
     <value>Horas</value>
   </data>
   <data name="Id" xml:space="preserve">
-    <value>Identificación</value>
+    <value>ID</value>
   </data>
   <data name="Images" xml:space="preserve">
     <value>Imágenes</value>
@@ -322,10 +331,10 @@
     <value>Información</value>
   </data>
   <data name="InQuarters" xml:space="preserve">
-    <value>en cuartos</value>
+    <value>En el cuartel</value>
   </data>
   <data name="Instructors" xml:space="preserve">
-    <value>instructores</value>
+    <value>Instructores</value>
   </data>
   <data name="InventoryModule" xml:space="preserve">
     <value>Inventario</value>
@@ -346,7 +355,7 @@
     <value>Cerrar sesión</value>
   </data>
   <data name="LogsModule" xml:space="preserve">
-    <value>Registros</value>
+    <value>Bitácoras</value>
   </data>
   <data name="Mailbox" xml:space="preserve">
     <value>Buzón</value>
@@ -391,10 +400,10 @@
     <value>Nota</value>
   </data>
   <data name="Notes" xml:space="preserve">
-    <value>notas</value>
+    <value>Notas</value>
   </data>
   <data name="NotesModule" xml:space="preserve">
-    <value>notas</value>
+    <value>Notas</value>
   </data>
   <data name="Notifications" xml:space="preserve">
     <value>Notificaciones</value>
@@ -406,10 +415,10 @@
     <value>Número</value>
   </data>
   <data name="OnScene" xml:space="preserve">
-    <value>En escena</value>
+    <value>En el lugar</value>
   </data>
   <data name="OnShift" xml:space="preserve">
-    <value>En el turno</value>
+    <value>De turno</value>
   </data>
   <data name="Optional" xml:space="preserve">
     <value>Opcional</value>
@@ -430,7 +439,7 @@
     <value>Personal</value>
   </data>
   <data name="Preview" xml:space="preserve">
-    <value>Avance</value>
+    <value>Vista previa</value>
   </data>
   <data name="Print" xml:space="preserve">
     <value>Imprimir</value>
@@ -439,13 +448,16 @@
     <value>Prioridad</value>
   </data>
   <data name="Process" xml:space="preserve">
-    <value>Proceso</value>
+    <value>Procesar</value>
   </data>
   <data name="Profile" xml:space="preserve">
     <value>Perfil</value>
   </data>
   <data name="Protocols" xml:space="preserve">
     <value>Protocolos</value>
+  </data>
+  <data name="POI" xml:space="preserve">
+    <value>PDI</value>
   </data>
   <data name="PushToTalk" xml:space="preserve">
     <value>Pulsar para hablar</value>
@@ -466,7 +478,7 @@
     <value>Requerido</value>
   </data>
   <data name="Responding" xml:space="preserve">
-    <value>respondiendo</value>
+    <value>Respondiendo</value>
   </data>
   <data name="RespondingTo" xml:space="preserve">
     <value>Respondiendo a</value>
@@ -478,7 +490,7 @@
     <value>Responder a una estación</value>
   </data>
   <data name="Roles" xml:space="preserve">
-    <value>roles</value>
+    <value>Roles</value>
   </data>
   <data name="Route" xml:space="preserve">
     <value>Ruta</value>
@@ -487,10 +499,10 @@
     <value>Sábado</value>
   </data>
   <data name="Save" xml:space="preserve">
-    <value>Ahorrar</value>
+    <value>Guardar</value>
   </data>
   <data name="Saving" xml:space="preserve">
-    <value>Ahorro</value>
+    <value>Guardando</value>
   </data>
   <data name="SecurityAndPermissions" xml:space="preserve">
     <value>Seguridad y permisos</value>
@@ -502,13 +514,13 @@
     <value>Turnos</value>
   </data>
   <data name="Signup" xml:space="preserve">
-    <value>Inscribirse</value>
+    <value>Registrarse</value>
   </data>
   <data name="Size" xml:space="preserve">
     <value>Tamaño</value>
   </data>
   <data name="StaffingColumn" xml:space="preserve">
-    <value>dotación de personal</value>
+    <value>Dotación de personal</value>
   </data>
   <data name="StandingBy" xml:space="preserve">
     <value>En espera</value>
@@ -517,13 +529,13 @@
     <value>En espera en la estación</value>
   </data>
   <data name="Start" xml:space="preserve">
-    <value>Comenzar</value>
+    <value>Inicio</value>
   </data>
   <data name="Station" xml:space="preserve">
     <value>Estación</value>
   </data>
   <data name="StationAndGroups" xml:space="preserve">
-    <value>Estaciones y Grupos</value>
+    <value>Estaciones y grupos</value>
   </data>
   <data name="Status" xml:space="preserve">
     <value>Estado</value>
@@ -532,10 +544,10 @@
     <value>Estado</value>
   </data>
   <data name="StatusPage" xml:space="preserve">
-    <value />
+    <value>Estado del sistema</value>
   </data>
   <data name="String1" xml:space="preserve">
-    <value>Formulario de nueva convocatoria</value>
+    <value>Formulario de nueva llamada</value>
   </data>
   <data name="SubAndBilling" xml:space="preserve">
     <value>Suscripción y facturación</value>
@@ -553,13 +565,13 @@
     <value>Texto</value>
   </data>
   <data name="TextMessaging" xml:space="preserve">
-    <value>Mensaje de texto</value>
+    <value>Mensajería de texto</value>
   </data>
   <data name="Thursday" xml:space="preserve">
     <value>Jueves</value>
   </data>
   <data name="Timestamp" xml:space="preserve">
-    <value>marca de tiempo</value>
+    <value>Fecha y hora</value>
   </data>
   <data name="Title" xml:space="preserve">
     <value>Título</value>
@@ -568,13 +580,13 @@
     <value>Capacitación</value>
   </data>
   <data name="TrainingCode" xml:space="preserve">
-    <value>Curso\Código de entrenamiento</value>
+    <value>Curso\Código de capacitación</value>
   </data>
   <data name="TrainingOrCourse" xml:space="preserve">
-    <value>Curso\Formación</value>
+    <value>Curso\Capacitación</value>
   </data>
   <data name="TrainingsModule" xml:space="preserve">
-    <value>Entrenamientos</value>
+    <value>Capacitaciones</value>
   </data>
   <data name="Tuesday" xml:space="preserve">
     <value>Martes</value>
@@ -586,7 +598,7 @@
     <value>Tipos</value>
   </data>
   <data name="Unavailable" xml:space="preserve">
-    <value>Indisponible</value>
+    <value>No disponible</value>
   </data>
   <data name="Unfounded" xml:space="preserve">
     <value>Infundado</value>
@@ -610,7 +622,7 @@
     <value>Subido por</value>
   </data>
   <data name="UploadedOn" xml:space="preserve">
-    <value>Subido en</value>
+    <value>Subido el</value>
   </data>
   <data name="UsersHeader" xml:space="preserve">
     <value>Usuarios</value>
@@ -622,10 +634,10 @@
     <value>Video</value>
   </data>
   <data name="Videos" xml:space="preserve">
-    <value>Vídeos</value>
+    <value>Videos</value>
   </data>
   <data name="View" xml:space="preserve">
-    <value>Vista</value>
+    <value>Ver</value>
   </data>
   <data name="ViewCalls" xml:space="preserve">
     <value>Ver todas las llamadas</value>
@@ -643,13 +655,13 @@
     <value>Semana</value>
   </data>
   <data name="Weekly" xml:space="preserve">
-    <value>Semanalmente</value>
+    <value>Semanal</value>
   </data>
   <data name="Weeks" xml:space="preserve">
     <value>Semanas</value>
   </data>
   <data name="WorkLog" xml:space="preserve">
-    <value>Registro de trabajo</value>
+    <value>Bitácora de trabajo</value>
   </data>
   <data name="Yearly" xml:space="preserve">
     <value>Anual</value>
@@ -658,10 +670,10 @@
     <value>Sí</value>
   </data>
   <data name="UserDefinedFields" xml:space="preserve">
-    <value>User Defined Fields</value>
+    <value>Campos definidos por el usuario</value>
   </data>
   <data name="YourDepartments" xml:space="preserve">
-    <value>Tus Departamentos</value>
+    <value>Sus departamentos</value>
   </data>
   <data name="Calls" xml:space="preserve">
     <value>Llamadas</value>
@@ -703,7 +715,7 @@
     <value>Cola de moderación protegida</value>
   </data>
   <data name="AdpProtectedUnitLogs" xml:space="preserve">
-    <value>Registros de unidad protegidos</value>
+    <value>Bitácoras de unidad protegidas</value>
   </data>
   <data name="AdpProtectedBannerDescription" xml:space="preserve">
     <value>cifrado en reposo para este departamento. Los usuarios autorizados y los canales aprobados aún pueden divulgarlo.</value>
@@ -769,21 +781,21 @@
   <data name="DepartmentProfile" xml:space="preserve">
     <value>Perfil del departamento</value>
   </data>
-  <data name="RecordsLegalHoldsModule" xml:space="preserve"><value>Retenciones de conservación de registros</value></data>
+  <data name="RecordsLegalHoldsModule" xml:space="preserve"><value>Retenciones legales</value></data>
   <data name="RecordsAllModule" xml:space="preserve"><value>Todos los registros</value></data>
   <data name="ChatAccountsTitle" xml:space="preserve"><value>Cuentas de mensajería</value></data>
   <data name="ChatAccountsGenerate" xml:space="preserve"><value>Generar código de vinculación</value></data>
-  <data name="ChatAccountsInstructions" xml:space="preserve"><value>Genera un código y envía LINK seguido del código en una conversación privada con el bot de Resgrid.</value></data>
+  <data name="ChatAccountsInstructions" xml:space="preserve"><value>Genere un código y envíe LINK seguido del código en una conversación privada con el bot de Resgrid.</value></data>
   <data name="ChatAccountsCode" xml:space="preserve"><value>Código de vinculación</value></data>
   <data name="ChatAccountsExpires" xml:space="preserve"><value>Caduca (UTC)</value></data>
   <data name="ChatAccountsUnlink" xml:space="preserve"><value>Desvincular</value></data>
   <data name="ChatAccountsLinked" xml:space="preserve"><value>Cuentas vinculadas</value></data>
   <data name="ChatAccountsAvailable" xml:space="preserve"><value>Plataformas de mensajería</value></data>
   <data name="ChatAccountsNone" xml:space="preserve"><value>No hay cuentas de mensajería vinculadas.</value></data>
-  <data name="ChatAccountsError" xml:space="preserve"><value>No se pudieron actualizar las cuentas de mensajería. Inténtalo de nuevo.</value></data>
+  <data name="ChatAccountsError" xml:space="preserve"><value>No se pudieron actualizar las cuentas de mensajería. Inténtelo de nuevo.</value></data>
   <data name="ChatAccountsBack" xml:space="preserve"><value>Volver al perfil</value></data>
-  <data name="ChatAccountsCodeReady" xml:space="preserve"><value>Tu código de vinculación está listo.</value></data>
-  <data name="ChatAccountsDiscordInstructions" xml:space="preserve"><value>En Discord, usa /resgrid e introduce LINK seguido de tu código en la opción message. Usa /resgrid también para los comandos siguientes.</value></data>
+  <data name="ChatAccountsCodeReady" xml:space="preserve"><value>Su código de vinculación está listo.</value></data>
+  <data name="ChatAccountsDiscordInstructions" xml:space="preserve"><value>En Discord, use /resgrid e introduzca LINK seguido de su código en la opción message. Use /resgrid también para los comandos siguientes.</value></data>
   <data name="NavigationWorkforceBusiness" xml:space="preserve"><value>Personal y operaciones</value></data>
   <data name="NavigationReadiness" xml:space="preserve"><value>Preparación</value></data>
   <data name="NavigationDashboard" xml:space="preserve"><value>Panel</value></data>
@@ -798,5 +810,41 @@
   </data>
   <data name="JsonInputSchema" xml:space="preserve">
     <value>Esquema JSON (nombres y tipos de campos)</value>
+  </data>
+  <data name="AdpUsePasskey" xml:space="preserve">
+    <value>Usar una clave de acceso</value>
+  </data>
+  <data name="AdpUseResponder" xml:space="preserve">
+    <value>Aprobar con Responder</value>
+  </data>
+  <data name="AdpUseCode" xml:space="preserve">
+    <value>Usar un código de autenticación</value>
+  </data>
+  <data name="AdpApprovalInstructions" xml:space="preserve">
+    <value>Abra Resgrid Responder en su teléfono, revise la solicitud e introduzca este número:</value>
+  </data>
+  <data name="AdpApprovalWaiting" xml:space="preserve">
+    <value>Esperando su aprobación en Responder…</value>
+  </data>
+  <data name="AdpApprovalDenied" xml:space="preserve">
+    <value>La solicitud se rechazó en Responder.</value>
+  </data>
+  <data name="AdpApprovalExpired" xml:space="preserve">
+    <value>La solicitud caducó antes de aprobarse. Vuelva a empezar.</value>
+  </data>
+  <data name="AdpPasskeyCancelled" xml:space="preserve">
+    <value>Se cerró la solicitud de la clave de acceso. No se cambió nada.</value>
+  </data>
+  <data name="AdpPasskeyFailed" xml:space="preserve">
+    <value>No se pudo usar la clave de acceso. Inténtelo de nuevo o use su aplicación de autenticación.</value>
+  </data>
+  <data name="AdpUseProvider" xml:space="preserve">
+    <value>Usar su proveedor de identidad</value>
+  </data>
+  <data name="AdpProviderPopupBlocked" xml:space="preserve">
+    <value>Permita las ventanas emergentes de este sitio para verificar con su proveedor de identidad.</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Editar</value>
   </data>
 </root>

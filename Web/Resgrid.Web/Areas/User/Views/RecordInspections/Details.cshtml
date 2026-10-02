@@ -59,7 +59,7 @@
 					}
 					@if (i.State == (int)RmsInspectionState.Scheduled || i.State == (int)RmsInspectionState.InProgress)
 					{
-						<form method="post" class="m-t-xs" asp-controller="RecordInspections" asp-action="Cancel" asp-route-area="User" onsubmit="return confirm('@L["CancelInspectionConfirm"]');">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@i.RmsInspectionId" />
+						<form method="post" class="m-t-xs" asp-controller="RecordInspections" asp-action="Cancel" asp-route-area="User" onsubmit="return confirm('@JsEncoder.Encode(L["CancelInspectionConfirm"])');">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@i.RmsInspectionId" />
 							<div class="input-group"><input class="form-control" name="reason" maxlength="500" placeholder="@L["ReasonText"]" required /><span class="input-group-btn"><button class="btn btn-danger"><i class="fa fa-times"></i> @L["CancelInspection"]</button></span></div></form>
 					}
 				</div></div>

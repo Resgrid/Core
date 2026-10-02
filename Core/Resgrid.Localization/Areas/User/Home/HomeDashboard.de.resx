@@ -59,67 +59,58 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 
-  <data name="Name1" xml:space="preserve">
-    <value>this is my long string</value>
-  </data>
-  <data name="Bitmap1" xml:space="preserve">
-    <value>[base64 mime encoded serialized .NET Framework object]</value>
-  </data>
-  <data name="Icon1" xml:space="preserve">
-    <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-  </data>
   <data name="ActionNote" xml:space="preserve">
-    <value>Action Note (Optional)</value>
+    <value>Notiz zur Aktion (optional)</value>
   </data>
   <data name="Actions" xml:space="preserve">
     <value>Aktionen</value>
   </data>
   <data name="AreYouSureResetAll" xml:space="preserve">
-    <value>Are you sure you want to reset all personnel status to Available?</value>
+    <value>Möchten Sie den Status des gesamten Personals wirklich auf „Verfügbar“ zurücksetzen?</value>
   </data>
   <data name="CollapseGroups" xml:space="preserve">
-    <value>Collapse Groups (Once)</value>
+    <value>Gruppen einklappen (einmalig)</value>
   </data>
   <data name="ConfirmSetStandByGroup" xml:space="preserve">
-    <value>CONFIRM: Are you sure you want to reset all the users group to the Standing By state? Group:</value>
+    <value>BESTÄTIGEN: Möchten Sie wirklich alle Benutzer der Gruppe auf den Status „Bereitschaft“ zurücksetzen? Gruppe:</value>
   </data>
   <data name="ConfirmStatusReset" xml:space="preserve">
-    <value>Confirm Status Reset</value>
+    <value>Zurücksetzen des Status bestätigen</value>
   </data>
   <data name="DepartmentCode" xml:space="preserve">
-    <value>Department Code:</value>
+    <value>Abteilungscode:</value>
   </data>
   <data name="DepartmentId" xml:space="preserve">
-    <value>Department Id:</value>
+    <value>Abteilungs-ID:</value>
   </data>
   <data name="DepartmentInfo" xml:space="preserve">
-    <value>Department Info</value>
+    <value>Abteilungsinformationen</value>
   </data>
   <data name="ResetAll" xml:space="preserve">
-    <value>Reset all to Available</value>
+    <value>Alle auf „Verfügbar“ zurücksetzen</value>
   </data>
   <data name="ResetGroupStandingBy" xml:space="preserve">
-    <value>Reset group to Standing By</value>
+    <value>Gruppe auf „Bereitschaft“ zurücksetzen</value>
   </data>
   <data name="ResetStatusButton" xml:space="preserve">
-    <value>Reset Status</value>
+    <value>Status zurücksetzen</value>
   </data>
   <data name="SetCurrentAction" xml:space="preserve">
-    <value>Set Current Action</value>
+    <value>Aktuelle Aktion festlegen</value>
   </data>
   <data name="SetStaffingLevel" xml:space="preserve">
-    <value>Set Staffing Level</value>
+    <value>Bereitschaftsstufe festlegen</value>
   </data>
   <data name="StaffingLevel" xml:space="preserve">
-    <value>Staffing Level</value>
+    <value>Bereitschaftsstufe</value>
   </data>
   <data name="StaffingLevelSubmit" xml:space="preserve">
-    <value>Set Staffing Level</value>
+    <value>Bereitschaftsstufe festlegen</value>
   </data>
   <data name="TextNumber" xml:space="preserve">
-    <value>Text Number:</value>
+    <value>SMS-Nummer:</value>
   </data>
   <data name="ToggleCollapseGroupsOnce" xml:space="preserve">
-    <value>Toggle Collapse Groups (Saves)</value>
+    <value>Gruppen ein-/ausklappen (wird gespeichert)</value>
   </data>
 </root>

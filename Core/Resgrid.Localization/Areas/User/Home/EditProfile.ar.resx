@@ -131,4 +131,7 @@
   <data name="SecurityPinPlaceholder" xml:space="preserve">
     <value>رمز PIN من 4 أرقام</value>
   </data>
+  <data name="VerificationCodeVoiceCallSent" xml:space="preserve">
+    <value>جارٍ إجراء مكالمة تحقق. يُرجى الرد وتدوين الرمز الذي سيُتلى عليك.</value>
+  </data>
 </root>

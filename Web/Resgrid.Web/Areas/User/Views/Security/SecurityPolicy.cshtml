@@ -174,6 +174,157 @@
             </div>
         </div>
 
+        <!-- ── Second-factor methods (passkey plan section 10.1) ── -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox">
+                    <div class="ibox-title"><h5><i class="fa fa-key"></i> @localizer["SecurityPolicyMfaMethodsHeader"]</h5></div>
+                    <div class="ibox-content">
+                        <p>@localizer["SecurityPolicyMfaMethodsIntro"]</p>
+                        @if (!Model.CanChangeMethodSwitches)
+                        {
+                            <div class="alert alert-info">@localizer["SecurityPolicyMfaMethodsManagingMemberOnly"]</div>
+                        }
+                        @if (!Model.PasskeysAvailable)
+                        {
+                            <div class="alert alert-warning">@localizer["SecurityPolicyMfaMethodsNotYetAvailable"]</div>
+                        }
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <label>
+                                    <input asp-for="AllowPasskeysForLoginMfa" disabled="@(!Model.CanChangeMethodSwitches)" />
+                                    <strong>@localizer["SecurityPolicyAllowPasskeysForLoginMfaLabel"]</strong>
+                                </label>
+                                <small class="text-muted d-block m-l-lg">@localizer["SecurityPolicyAllowPasskeysForLoginMfaNote"]</small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <label>
+                                    <input asp-for="AllowPasskeysForAdp" disabled="@(!Model.CanChangeMethodSwitches)" />
+                                    <strong>@localizer["SecurityPolicyAllowPasskeysForAdpLabel"]</strong>
+                                </label>
+                                <small class="text-muted d-block m-l-lg">@localizer["SecurityPolicyAllowPasskeysForAdpNote"]</small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <label>
+                                    <input asp-for="AllowResponderApproval" disabled="@(!Model.CanChangeMethodSwitches)" />
+                                    <strong>@localizer["SecurityPolicyAllowResponderApprovalLabel"]</strong>
+                                    @if (!Model.ResponderApprovalAvailable)
+                                    {
+                                        <span class="label label-default m-l-xs">@localizer["SecurityPolicyMethodNotYetAvailable"]</span>
+                                    }
+                                </label>
+                                <small class="text-muted d-block m-l-lg">@localizer["SecurityPolicyAllowResponderApprovalNote"]</small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <label>
+                                    <input asp-for="AllowFederatedMfaForLoginMfa" disabled="@(!Model.CanChangeMethodSwitches)" />
+                                    <strong>@localizer["SecurityPolicyAllowFederatedMfaForLoginMfaLabel"]</strong>
+                                    @if (!Model.ProviderStepUpAvailable)
+                                    {
+                                        <span class="label label-default m-l-xs">@localizer["SecurityPolicyMethodNotYetAvailable"]</span>
+                                    }
+                                </label>
+                                <small class="text-muted d-block m-l-lg">@localizer["SecurityPolicyAllowFederatedMfaForLoginMfaNote"]</small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <label>
+                                    <input asp-for="AllowFederatedMfaForAdp" disabled="@(!Model.CanChangeMethodSwitches)" />
+                                    <strong>@localizer["SecurityPolicyAllowFederatedMfaForAdpLabel"]</strong>
+                                    @if (!Model.ProviderStepUpAvailable)
+                                    {
+                                        <span class="label label-default m-l-xs">@localizer["SecurityPolicyMethodNotYetAvailable"]</span>
+                                    }
+                                </label>
+                                <small class="text-muted d-block m-l-lg">@localizer["SecurityPolicyAllowFederatedMfaForAdpNote"]</small>
+                            </div>
+                        </div>
+                        @if (Model.HasActiveSsoConfig)
+                        {
+                            <p class="m-l-lg"><a asp-action="FederatedMfa" id="federatedMfaLink"><i class="fa fa-id-badge"></i> @localizer["FederatedMfaLink"]</a></p>
+                        }
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <label>
+                                    <input asp-for="AcceptRecentLoginMfaForAdp" disabled="@(!Model.CanChangeMethodSwitches)" />
+                                    <strong>@localizer["SecurityPolicyAcceptRecentLoginMfaForAdpLabel"]</strong>
+                                </label>
+                                <small class="text-muted d-block m-l-lg">@localizer["SecurityPolicyAcceptRecentLoginMfaForAdpNote"]</small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <label>
+                                    <input asp-for="AcceptRecentUnlockMfaForAdp" disabled="@(!Model.CanChangeMethodSwitches)" />
+                                    <strong>@localizer["SecurityPolicyAcceptRecentUnlockMfaForAdpLabel"]</strong>
+                                </label>
+                                <small class="text-muted d-block m-l-lg">@localizer["SecurityPolicyAcceptRecentUnlockMfaForAdpNote"]</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Shared vehicle and workstation devices (passkey plan section 10.5) ── -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox">
+                    <div class="ibox-title"><h5><i class="fa fa-tablet"></i> @localizer["SecurityPolicySharedDevicesHeader"]</h5></div>
+                    <div class="ibox-content">
+                        <p>@localizer["SecurityPolicySharedDevicesIntro"]</p>
+                        @if (!Model.CanChangeMethodSwitches)
+                        {
+                            <div class="alert alert-info">@localizer["SecurityPolicySharedDevicesManagingMemberOnly"]</div>
+                        }
+                        @if (!Model.SharedDeviceModeAvailable)
+                        {
+                            <div class="alert alert-warning">@localizer["SecurityPolicySharedDevicesNotYetAvailable"]</div>
+                        }
+                        <div class="form-group">
+                            <label asp-for="SharedIdleLockMinutes" class="control-label">@localizer["SecurityPolicySharedIdleLockLabel"]</label>
+                            <input asp-for="SharedIdleLockMinutes" class="form-control" type="number" min="1" max="@Model.MaxSharedIdleLockMinutes"
+                                   disabled="@(!Model.CanChangeMethodSwitches)" />
+                            <small class="text-muted">@string.Format(localizer["SecurityPolicySharedIdleLockNote"].Value, Model.MaxSharedIdleLockMinutes)</small>
+                            <span asp-validation-for="SharedIdleLockMinutes" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="SharedShiftHours" class="control-label">@localizer["SecurityPolicySharedShiftLabel"]</label>
+                            <input asp-for="SharedShiftHours" class="form-control" type="number" min="1" max="@Model.MaxSharedShiftHours"
+                                   disabled="@(!Model.CanChangeMethodSwitches)" />
+                            <small class="text-muted">@string.Format(localizer["SecurityPolicySharedShiftNote"].Value, Model.MaxSharedShiftHours)</small>
+                            <span asp-validation-for="SharedShiftHours" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">@localizer["SecurityPolicySharedRequiredLabel"]</label>
+                            <div class="checkbox">
+                                <label class="m-r-md">
+                                    <input asp-for="RequireSharedModeForUnit" disabled="@(!Model.CanChangeMethodSwitches)" />
+                                    @localizer["SecurityPolicySharedRequiredUnit"]
+                                </label>
+                                <label class="m-r-md">
+                                    <input asp-for="RequireSharedModeForCommand" disabled="@(!Model.CanChangeMethodSwitches)" />
+                                    @localizer["SecurityPolicySharedRequiredCommand"]
+                                </label>
+                                <label>
+                                    <input asp-for="RequireSharedModeForDispatch" disabled="@(!Model.CanChangeMethodSwitches)" />
+                                    @localizer["SecurityPolicySharedRequiredDispatch"]
+                                </label>
+                            </div>
+                            <small class="text-muted d-block">@localizer["SecurityPolicySharedRequiredNote"]</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-lg-12">
                 <div class="ibox-content">

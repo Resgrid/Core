@@ -499,6 +499,8 @@ namespace Resgrid.Services
 			if (protectedWrite.Changed || restored)
 				saved = await _callNotesRepository.SaveOrUpdateAsync(saved, cancellationToken);
 
+			// The note text is part of the call's search projection; refresh it so the catch-up sweep re-indexes the call.
+			if (_searchProjections != null) await _searchProjections.Value.ProjectCallAsync(call, cancellationToken);
 			return saved;
 		}
 

@@ -377,4 +377,25 @@
   <data name="NearestUnitsNoPosition" xml:space="preserve">
     <value>لا يوجد موقع</value>
   </data>
+  <data name="SiteInfo" xml:space="preserve">
+    <value>معلومات الموقع</value>
+  </data>
+  <data name="NoSiteInfo" xml:space="preserve">
+    <value>لا توجد جهات اتصال ذات معلومات موقع مرتبطة بهذا البلاغ.</value>
+  </data>
+  <data name="PremiseHazard" xml:space="preserve">
+    <value>خطر في المنشأة</value>
+  </data>
+  <data name="PremiseHazards" xml:space="preserve">
+    <value>مخاطر المنشأة</value>
+  </data>
+  <data name="AlertNotes" xml:space="preserve">
+    <value>ملاحظات التنبيه</value>
+  </data>
+  <data name="NoPreplan" xml:space="preserve">
+    <value>لم تُسجَّل خطة ما قبل الحادث لجهة الاتصال هذه.</value>
+  </data>
+  <data name="SiteFiles" xml:space="preserve">
+    <value>ملفات الموقع</value>
+  </data>
 </root>

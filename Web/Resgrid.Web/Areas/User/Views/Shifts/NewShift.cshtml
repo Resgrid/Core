@@ -246,21 +246,21 @@
                     Shift_Name: {
                         validators: {
                             notEmpty: {
-                                message: '@localizer["ShiftNameRequired"]'
+                                message: '@JsEncoder.Encode(localizer["ShiftNameRequired"])'
                             }
                         }
                     },
                     Shift_Code: {
                         validators: {
                             notEmpty: {
-                                message: '@localizer["ShiftCodeRequired"]'
+                                message: '@JsEncoder.Encode(localizer["ShiftCodeRequired"])'
                             }
                         }
                     },
                     Shift_StartTime: {
                         validators: {
                             notEmpty: {
-                                message: '@localizer["ShiftStartTimeRequired"]'
+                                message: '@JsEncoder.Encode(localizer["ShiftStartTimeRequired"])'
                             }
                         }
                     }
@@ -345,19 +345,19 @@
             groupIds: [@String.Join(",", Model.ManageableGroupIds)]
         };
         var resgridShiftsI18n = {
-            addGroupToShift: '@localizer["AddGroupToShift"]',
-            shiftGroupColumn: '@localizer["ShiftGroupColumn"]',
-            shiftRolesColumn: '@localizer["ShiftRolesColumn"]',
-            shiftRoleColumn: '@localizer["ShiftRoleColumn"]',
-            rolesCountColumn: '@localizer["RolesCountColumn"]',
-            addRoleToGroup: '@localizer["AddRoleToGroup"]',
-            addShiftRolesToGroup: '@localizer["AddShiftRolesToGroup"]',
-            removeGroup: '@localizer["RemoveGroup"]',
-            removeRole: '@localizer["RemoveRole"]',
-            removeRoleFromGroup: '@localizer["RemoveRoleFromGroup"]',
-            roleCountRequired: '@localizer["RoleCountRequired"]',
-            selectNonGroupPersonnel: '@localizer["SelectNonGroupPersonnel"]',
-            selectPersonnelForGroup: '@localizer["SelectPersonnelForGroup"]'
+            addGroupToShift: '@JsEncoder.Encode(localizer["AddGroupToShift"])',
+            shiftGroupColumn: '@JsEncoder.Encode(localizer["ShiftGroupColumn"])',
+            shiftRolesColumn: '@JsEncoder.Encode(localizer["ShiftRolesColumn"])',
+            shiftRoleColumn: '@JsEncoder.Encode(localizer["ShiftRoleColumn"])',
+            rolesCountColumn: '@JsEncoder.Encode(localizer["RolesCountColumn"])',
+            addRoleToGroup: '@JsEncoder.Encode(localizer["AddRoleToGroup"])',
+            addShiftRolesToGroup: '@JsEncoder.Encode(localizer["AddShiftRolesToGroup"])',
+            removeGroup: '@JsEncoder.Encode(localizer["RemoveGroup"])',
+            removeRole: '@JsEncoder.Encode(localizer["RemoveRole"])',
+            removeRoleFromGroup: '@JsEncoder.Encode(localizer["RemoveRoleFromGroup"])',
+            roleCountRequired: '@JsEncoder.Encode(localizer["RoleCountRequired"])',
+            selectNonGroupPersonnel: '@JsEncoder.Encode(localizer["SelectNonGroupPersonnel"])',
+            selectPersonnelForGroup: '@JsEncoder.Encode(localizer["SelectPersonnelForGroup"])'
         };
     </script>
     <script src="~/js/app/internal/shifts/resgrid.shifts.newshift.js"></script>

@@ -47,7 +47,7 @@
 								@if (Model.CanManage)
 								{
 									<a class="btn btn-xs btn-default" asp-controller="RecordSavedReports" asp-action="Edit" asp-route-area="User" asp-route-id="@r.RmsSavedReportDefinitionId">@localizer["Edit"]</a>
-									<form method="post" asp-controller="RecordSavedReports" asp-action="Delete" asp-route-area="User" asp-route-id="@r.RmsSavedReportDefinitionId" style="display:inline" onsubmit="return confirm('@localizer["ReportDeleteConfirm"]');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-xs btn-danger">@commonLocalizer["Delete"]</button></form>
+									<form method="post" asp-controller="RecordSavedReports" asp-action="Delete" asp-route-area="User" asp-route-id="@r.RmsSavedReportDefinitionId" style="display:inline" onsubmit="return confirm('@JsEncoder.Encode(localizer["ReportDeleteConfirm"])');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-xs btn-danger">@commonLocalizer["Delete"]</button></form>
 								}
 							</td>
 						</tr>

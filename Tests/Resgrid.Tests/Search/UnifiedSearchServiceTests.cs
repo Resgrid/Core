@@ -49,6 +49,7 @@ namespace Resgrid.Tests.Search
 		[SetUp]
 		public void SetUp()
 		{
+			UnifiedSearchService.ResetReadyMemo();
 			_flagOn = true;
 			_lastQuery = null;
 			_global = new Mock<IGlobalSearchService>();
@@ -186,13 +187,14 @@ namespace Resgrid.Tests.Search
 		public async Task Claims_decide_which_families_reach_the_index()
 		{
 			await _service.SearchAsync(new UnifiedSearchRequest { Text = "one" }, Principal("Call:View", "Notes:View"));
-			_lastQuery.EntityTypes.Should().BeEquivalentTo(new[] { SearchEntityTypes.Call, SearchEntityTypes.Note, SearchEntityTypes.Deployment }, "deployments are roster-scoped per hit rather than claim-gated as a family");
+			_lastQuery.EntityTypes.Should().BeEquivalentTo(new[] { SearchEntityTypes.Call, SearchEntityTypes.Note, SearchEntityTypes.Deployment, SearchEntityTypes.Poi },
+				"deployments are roster-scoped per hit and POIs follow the mapping pages, which admit every member");
 			_lastQuery.ViewerUserId.Should().Be("u1");
 			_lastQuery.IncludeAdminOnly.Should().BeFalse();
 
 			_lastQuery = null;
 			var none = await _service.SearchAsync(new UnifiedSearchRequest { Text = "one" }, Principal());
-			_lastQuery.EntityTypes.Should().Equal(new[] { SearchEntityTypes.Deployment }, "only the roster-scoped deployment family is searchable without a view claim");
+			_lastQuery.EntityTypes.Should().Equal(new[] { SearchEntityTypes.Deployment, SearchEntityTypes.Poi }, "only the roster-scoped deployments and the member-wide POIs are searchable without a view claim");
 			none.Hits.Should().BeEmpty();
 		}
 

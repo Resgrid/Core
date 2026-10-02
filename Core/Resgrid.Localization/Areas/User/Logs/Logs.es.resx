@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddUnitsToLog" xml:space="preserve">
-    <value>Agregar unidad al registro</value>
+    <value>Agregar unidad a la bitácora</value>
   </data>
   <data name="Attachments" xml:space="preserve">
     <value>Archivos adjuntos</value>
@@ -129,11 +129,17 @@
   <data name="BodyLocationReq" xml:space="preserve">
     <value>Se requiere la ubicación del cuerpo.</value>
   </data>
+  <data name="CallAddress" xml:space="preserve">
+    <value>Dirección de la llamada (ubicación)</value>
+  </data>
   <data name="CallName" xml:space="preserve">
     <value>Nombre de llamada</value>
   </data>
   <data name="CallPriority" xml:space="preserve">
     <value>Prioridad de llamadas</value>
+  </data>
+  <data name="CallTimestamp" xml:space="preserve">
+    <value>Fecha y hora de la llamada</value>
   </data>
   <data name="CaseNumber" xml:space="preserve">
     <value>Caso #</value>
@@ -145,13 +151,13 @@
     <value>Condición</value>
   </data>
   <data name="Coroner" xml:space="preserve">
-    <value>Juez de instrucción</value>
+    <value>Médico forense</value>
   </data>
   <data name="Date" xml:space="preserve">
     <value>Fecha</value>
   </data>
   <data name="DeleteWarning" xml:space="preserve">
-    <value>ADVERTENCIA: Esto eliminará permanentemente este registro. ¿Estás seguro de que quieres eliminar el registro?</value>
+    <value>ADVERTENCIA: Esto eliminará permanentemente esta bitácora. ¿Está seguro de que desea eliminar la bitácora?</value>
   </data>
   <data name="DestinationLocation" xml:space="preserve">
     <value>Ubicación de destino</value>
@@ -160,19 +166,19 @@
     <value>Enviada</value>
   </data>
   <data name="Investigator" xml:space="preserve">
-    <value>Investigadora</value>
+    <value>Investigador</value>
   </data>
   <data name="Location" xml:space="preserve">
     <value>Ubicación</value>
   </data>
   <data name="LogInfo" xml:space="preserve">
-    <value>Información de registro</value>
+    <value>Información de la bitácora</value>
   </data>
   <data name="LogsForYear" xml:space="preserve">
-    <value>Registros para el año</value>
+    <value>Bitácoras del año</value>
   </data>
   <data name="LogsHeader" xml:space="preserve">
-    <value>Registro</value>
+    <value>Bitácoras</value>
   </data>
   <data name="Meeting" xml:space="preserve">
     <value>Reunión</value>
@@ -195,17 +201,20 @@
   <data name="Narrative" xml:space="preserve">
     <value>Narrativa</value>
   </data>
+  <data name="NatureOfCall" xml:space="preserve">
+    <value>Naturaleza de la llamada</value>
+  </data>
   <data name="NewCall" xml:space="preserve">
     <value>Nueva llamada</value>
   </data>
   <data name="NewLog" xml:space="preserve">
-    <value>Nuevo registro</value>
+    <value>Nueva bitácora</value>
   </data>
   <data name="NewLogHeader" xml:space="preserve">
-    <value>Nuevo registro</value>
+    <value>Nueva bitácora</value>
   </data>
   <data name="NewLogInfo" xml:space="preserve">
-    <value>A continuación puede agregar un nuevo registro al sistema (es decir, el informe de ejecución, el trabajo de la estación, la capacitación, el evento, etc.). Los registros se utilizarán para detallar la información sobre las ejecuciones de llamadas, reuniones y entrenamientos. Se requieren campos en cursiva azul.</value>
+    <value>A continuación puede agregar una nueva bitácora al sistema (por ejemplo, un informe de intervención, trabajo en la estación, una capacitación o un evento). Las bitácoras sirven para detallar la información sobre intervenciones, reuniones y capacitaciones. Los campos en cursiva azul son obligatorios.</value>
   </data>
   <data name="OtherAttendees" xml:space="preserve">
     <value>Otros asistentes</value>
@@ -220,13 +229,13 @@
     <value>requerido el personal</value>
   </data>
   <data name="PresidingPeople" xml:space="preserve">
-    <value>Personas presidiadas</value>
+    <value>Persona(s) que preside(n)</value>
   </data>
   <data name="PronouncedDeceasedBy" xml:space="preserve">
-    <value>Pronunciado fallecido por</value>
+    <value>Declarado fallecido por</value>
   </data>
   <data name="PronouncedDeceasedByReq" xml:space="preserve">
-    <value>Se requiere pronunciado fallecido por.</value>
+    <value>Se requiere indicar quién declaró el fallecimiento.</value>
   </data>
   <data name="PronouncedDeceasedDateReq" xml:space="preserve">
     <value>Se requiere fecha.</value>
@@ -235,7 +244,7 @@
     <value>Seleccionar llamada</value>
   </data>
   <data name="SeniorOIC" xml:space="preserve">
-    <value>Senior (OIC)</value>
+    <value>Oficial a cargo (OIC)</value>
   </data>
   <data name="TrainingEndError" xml:space="preserve">
     <value>Se requiere tiempo de finalización de capacitación.</value>
@@ -259,91 +268,91 @@
     <value>Se requiere la hora de inicio del trabajo.</value>
   </data>
   <data name="ViewLogHeader" xml:space="preserve">
-    <value>View Log</value>
+    <value>Ver bitácora</value>
   </data>
   <data name="BackToLogs" xml:space="preserve">
-    <value>Back to Logs</value>
+    <value>Volver a las bitácoras</value>
   </data>
   <data name="GeneralInformation" xml:space="preserve">
-    <value>General Information</value>
+    <value>Información general</value>
   </data>
   <data name="LogSummary" xml:space="preserve">
-    <value>Log Summary</value>
+    <value>Resumen de la bitácora</value>
   </data>
   <data name="LogId" xml:space="preserve">
-    <value>Log ID</value>
+    <value>ID de la bitácora</value>
   </data>
   <data name="LogType" xml:space="preserve">
-    <value>Log Type</value>
+    <value>Tipo de bitácora</value>
   </data>
   <data name="LoggedOn" xml:space="preserve">
-    <value>Logged On</value>
+    <value>Fecha de registro</value>
   </data>
   <data name="LoggedBy" xml:space="preserve">
-    <value>Logged By</value>
+    <value>Registrado por</value>
   </data>
   <data name="Duration" xml:space="preserve">
-    <value>Duration</value>
+    <value>Duración</value>
   </data>
   <data name="CallInformation" xml:space="preserve">
-    <value>Call Information</value>
+    <value>Información de la llamada</value>
   </data>
   <data name="CallNumber" xml:space="preserve">
-    <value>Call Number</value>
+    <value>Número de llamada</value>
   </data>
   <data name="ViewFullCall" xml:space="preserve">
-    <value>View Full Call</value>
+    <value>Ver la llamada completa</value>
   </data>
   <data name="TrainingInformation" xml:space="preserve">
-    <value>Training Information</value>
+    <value>Información de la capacitación</value>
   </data>
   <data name="MeetingInformation" xml:space="preserve">
-    <value>Meeting Information</value>
+    <value>Información de la reunión</value>
   </data>
   <data name="CoronerInformation" xml:space="preserve">
-    <value>Coroner Information</value>
+    <value>Información forense</value>
   </data>
   <data name="LogDetails" xml:space="preserve">
-    <value>Log Details</value>
+    <value>Detalles de la bitácora</value>
   </data>
   <data name="ConditionInitialReport" xml:space="preserve">
-    <value>Condition / Initial Report</value>
+    <value>Condición / Informe inicial</value>
   </data>
   <data name="PersonnelNotAssignedUnit" xml:space="preserve">
-    <value>Not Assigned to a Unit</value>
+    <value>No asignado a una unidad</value>
   </data>
   <data name="PrintExport" xml:space="preserve">
-    <value>Print / Export</value>
+    <value>Imprimir / Exportar</value>
   </data>
   <data name="PrintExportView" xml:space="preserve">
-    <value>Print (Export) View</value>
+    <value>Vista de impresión (exportación)</value>
   </data>
   <data name="DeleteLog" xml:space="preserve">
-    <value>Delete Log</value>
+    <value>Eliminar bitácora</value>
   </data>
   <data name="DeleteLogConfirm" xml:space="preserve">
-    <value>Are you sure you want to delete this log? This action cannot be undone.</value>
+    <value>¿Está seguro de que desea eliminar esta bitácora? Esta acción no se puede deshacer.</value>
   </data>
   <data name="LogReport" xml:space="preserve">
-    <value>Log Report</value>
+    <value>Informe de bitácora</value>
   </data>
   <data name="GeneratedLabel" xml:space="preserve">
-    <value>Generated</value>
+    <value>Generado</value>
   </data>
   <data name="ExternalId" xml:space="preserve">
-    <value>External ID</value>
+    <value>ID externo</value>
   </data>
   <data name="NoType" xml:space="preserve">
-    <value>No Type</value>
+    <value>Sin tipo</value>
   </data>
   <data name="NotSupplied" xml:space="preserve">
-    <value>Not Supplied</value>
+    <value>No proporcionado</value>
   </data>
   <data name="Presiding" xml:space="preserve">
-    <value>Presiding</value>
+    <value>Presidido por</value>
   </data>
   <data name="WorkLogInformation" xml:space="preserve">
-    <value>Work Log Information</value>
+    <value>Información de la bitácora de trabajo</value>
   </data>
   <data name="LogsReadOnly" xml:space="preserve"><value>Registros está activo para este departamento. Las bitácoras existentes son de solo lectura: se pueden ver, imprimir y exportar, pero no crear, editar ni eliminar.</value></data>
 </root>

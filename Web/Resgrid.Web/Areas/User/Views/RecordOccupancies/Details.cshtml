@@ -217,12 +217,12 @@
 			@if (Model.CanAdminister && o.Status != (int)RmsOccupancyStatus.Merged)
 			{
 				<div class="ibox"><div class="ibox-title"><h5>@L["Actions"]</h5></div><div class="ibox-content">
-					<form method="post" class="form-inline" asp-controller="RecordOccupancies" asp-action="Merge" asp-route-area="User" onsubmit="return confirm('@L["MergeConfirm"]');">
+					<form method="post" class="form-inline" asp-controller="RecordOccupancies" asp-action="Merge" asp-route-area="User" onsubmit="return confirm('@JsEncoder.Encode(L["MergeConfirm"])');">
 						@Html.AntiForgeryToken()<input type="hidden" name="id" value="@o.RmsOccupancyId" />
 						<input class="form-control" name="targetOccupancyId" placeholder="@L["MergeTargetId"]" maxlength="36" required />
 						<button class="btn btn-sm btn-warning"><i class="fa fa-compress"></i> @L["MergeInto"]</button>
 					</form>
-					<form method="post" class="m-t-sm" asp-controller="RecordOccupancies" asp-action="Delete" asp-route-area="User" onsubmit="return confirm('@L["DeleteOccupancyConfirm"]');">
+					<form method="post" class="m-t-sm" asp-controller="RecordOccupancies" asp-action="Delete" asp-route-area="User" onsubmit="return confirm('@JsEncoder.Encode(L["DeleteOccupancyConfirm"])');">
 						@Html.AntiForgeryToken()<input type="hidden" name="id" value="@o.RmsOccupancyId" />
 						<button class="btn btn-sm btn-danger"><i class="fa fa-trash"></i> @L["DeleteOccupancy"]</button>
 					</form>

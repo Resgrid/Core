@@ -19,6 +19,9 @@ namespace Resgrid.Web.Services.Models.v4.Search
 
 		public string DegradedReason { get; set; }
 
+		/// <summary>True while the department's index is queued for, or in the middle of, a build: results may be incomplete.</summary>
+		public bool IndexBuilding { get; set; }
+
 		public List<SearchHitData> Results { get; set; } = new List<SearchHitData>();
 
 		public List<SearchActionData> Actions { get; set; } = new List<SearchActionData>();
@@ -43,6 +46,8 @@ namespace Resgrid.Web.Services.Models.v4.Search
 		public DateTime? OccurredOn { get; set; }
 		public string Category { get; set; }
 		public string Status { get; set; }
+		/// <summary>Plain-text excerpt of the indexed text around the first match (full search only), e.g. the call note that matched.</summary>
+		public string Snippet { get; set; }
 		public Dictionary<string, string> Metadata { get; set; } = new Dictionary<string, string>();
 	}
 

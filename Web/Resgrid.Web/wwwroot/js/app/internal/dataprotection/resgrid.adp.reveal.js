@@ -16,7 +16,9 @@
 	var EXPIRES_FIELD = '__ResgridProtectedGrantExpiresOn';
 	var DEFAULT_WARN_SECONDS = 120;
 
-	var settings = null;      // { verifyUrl, requestGrantUrl, revealUrl, revealData, antiForgeryToken, messages, onRevealed, onConcealed, onRenewed, grantExpiresOnUtc, bindForms, warnBeforeSeconds }
+	var settings = null;      // { verifyUrl, requestGrantUrl, revealUrl, revealData, antiForgeryToken, messages, onRevealed, onConcealed, onRenewed, grantExpiresOnUtc, bindForms, warnBeforeSeconds,
+	                          //   methodsUrl, passkeyOptionsUrl, verifyPasskeyUrl, requestApprovalUrl, approvalStatusUrl, completeApprovalUrl }
+	var APPROVAL_POLL_MS = 2000;
 	var grantToken = null;
 	var serverGrant = false;  // the page arrived holding a grant in a bound form's hidden field (the *Revealed actions)
 	var expiresAt = null;     // epoch milliseconds when known
@@ -28,6 +30,9 @@
 	var pendingAction = null; // what to do once a grant is acquired; the reveal when nothing else is waiting
 	var pendingForm = null;
 	var passThrough = null;   // the form whose submit is being re-dispatched with the grant attached
+	var approvalId = null;    // this page's pending Responder request, while the prompt waits for it
+	var approvalTimer = null;
+	var providerWindow = null; // the popup running this page's provider step-up, the only window whose answer is accepted
 
 	function fields() {
 		return $('[data-adp-field], [data-adp-name]');
@@ -380,7 +385,13 @@
 		generic: 'The request failed. Try again.',
 		expiring: 'Your verification expires in {0}. Re-verify now to keep working without losing changes.',
 		expired: 'Your verification has expired. Re-verify to continue; unsaved changes stay on this page until you do.',
-		renew: 'Re-verify'
+		renew: 'Re-verify',
+		passkey_cancelled: 'The passkey prompt was closed. Nothing was changed.',
+		passkey_failed: 'The passkey could not be used. Try again, or use your authenticator app.',
+		approval_waiting: 'Waiting for your approval in Responder...',
+		approval_denied: 'The request was denied in Responder.',
+		approval_expired: 'The request expired before it was approved. Start again.',
+		provider_popup_blocked: 'Allow pop-ups for this site to verify with your identity provider.'
 	};
 
 	function messageText(key) {
@@ -461,9 +472,155 @@
 	}
 
 	function showStepUpModal() {
+		stopApproval();
 		$('#adpStepUpError').hide().text('');
 		$('#adpStepUpCode').val('');
+		$('#adpUsePasskey, #adpUseResponder, #adpUseProvider').hide();
 		$('#adpStepUpModal').modal('show');
+		loadMethods();
+	}
+
+	function stepUpError(code) {
+		$('#adpStepUpError').text(errorText(code)).show();
+	}
+
+	// Which other ways the server says this user can verify here (passkey plan section 7.5 rule 5). The code stays the
+	// default; a passkey or Responder approval appears only when the server lists it. A host without the endpoint, or any
+	// failure, keeps the code alone.
+	function loadMethods() {
+		if (!settings.methodsUrl)
+			return;
+
+		$.ajax({ url: settings.methodsUrl, method: 'GET' }).done(function (response) {
+			var methods = (response && response.success && response.methods) || [];
+			var passkeys = window.resgridPasskeys && window.resgridPasskeys.isSupported();
+			$('#adpUsePasskey').toggle(methods.indexOf('passkey') >= 0 && !!passkeys);
+			$('#adpUseResponder').toggle(methods.indexOf('passkey_approval') >= 0);
+			$('#adpUseProvider').toggle(methods.indexOf('federated') >= 0 && !!settings.federatedUrl);
+		});
+	}
+
+	// A verification the server turned into a grant: the waiting action runs before the prompt closes.
+	function onVerified(response) {
+		if (response && response.success) {
+			stopApproval();
+			grantAcquired(response.grantToken, response.expiresOnUtc);
+			$('#adpStepUpModal').modal('hide');
+			return;
+		}
+
+		stepUpError(response && response.error);
+	}
+
+	function verifyWithPasskey() {
+		stopApproval();
+		$('#adpStepUpError').hide();
+		$.post(settings.passkeyOptionsUrl, { __RequestVerificationToken: settings.antiForgeryToken }).done(function (start) {
+			if (!start || !start.success) {
+				stepUpError(start && start.error);
+				return;
+			}
+
+			window.resgridPasskeys.authenticate(start.options).then(function (credential) {
+				$.post(settings.verifyPasskeyUrl, {
+					__RequestVerificationToken: settings.antiForgeryToken,
+					requestId: start.requestId,
+					credential: JSON.stringify(credential)
+				}).done(onVerified).fail(function () {
+					stepUpError(null);
+				});
+			}, function (error) {
+				// A closed prompt is the user's choice, never a failed verification.
+				stepUpError(error && error.outcome === 'cancelled' ? 'passkey_cancelled' : 'passkey_failed');
+			});
+		}).fail(function () {
+			stepUpError(null);
+		});
+	}
+
+	// Provider step-up (plan section 7.8): the department's identity provider runs in a popup, which posts the grant back to this
+	// page on this site only. The page accepts an answer only from the popup it opened.
+	function verifyWithProvider() {
+		stopApproval();
+		$('#adpStepUpError').hide();
+		var name = 'resgridAdpProvider';
+		var popup = window.open('about:blank', name, 'width=520,height=680');
+		if (!popup) {
+			stepUpError('provider_popup_blocked');
+			return;
+		}
+
+		providerWindow = popup;
+		var form = $('<form method="post" style="display:none"></form>').attr('action', settings.federatedUrl).attr('target', name);
+		form.append($('<input type="hidden" name="__RequestVerificationToken">').val(settings.antiForgeryToken));
+		form.append($('<input type="hidden" name="purpose" value="adp">'));
+		$('body').append(form);
+		form[0].submit();
+		form.remove();
+	}
+
+	function onProviderMessage(event) {
+		var data = event && event.data;
+		if (!providerWindow || event.source !== providerWindow || event.origin !== window.location.origin || !data || data.type !== 'resgrid-adp-grant')
+			return;
+
+		providerWindow = null;
+		onVerified(data.success ? { success: true, grantToken: data.grantToken, expiresOnUtc: data.expiresOnUtc } : { success: false, error: data.error });
+	}
+
+	function stopApproval() {
+		if (approvalTimer) {
+			window.clearInterval(approvalTimer);
+			approvalTimer = null;
+		}
+		approvalId = null;
+		$('#adpApprovalPanel').hide();
+	}
+
+	// Approve with Responder (plan section 7.9): show the number on this screen only, wait for the decision, then use it.
+	function requestApproval() {
+		stopApproval();
+		$('#adpStepUpError').hide();
+		$.post(settings.requestApprovalUrl, { __RequestVerificationToken: settings.antiForgeryToken }).done(function (response) {
+			if (!response || !response.success) {
+				stepUpError(response && response.error);
+				return;
+			}
+
+			approvalId = response.approvalRequestId;
+			$('#adpApprovalNumber').text(response.matchNumber);
+			$('#adpApprovalStatus').text(messageText('approval_waiting'));
+			$('#adpApprovalPanel').show();
+			approvalTimer = window.setInterval(pollApproval, APPROVAL_POLL_MS);
+		}).fail(function () {
+			stepUpError(null);
+		});
+	}
+
+	function pollApproval() {
+		var id = approvalId;
+		if (!id)
+			return;
+
+		$.post(settings.approvalStatusUrl, { __RequestVerificationToken: settings.antiForgeryToken, approvalRequestId: id }).done(function (response) {
+			if (approvalId !== id)
+				return;
+
+			var state = response && response.success ? response.state : null;
+			if (state === 'pending')
+				return;
+
+			stopApproval();
+			if (state === 'approved') {
+				$.post(settings.completeApprovalUrl, { __RequestVerificationToken: settings.antiForgeryToken, approvalRequestId: id })
+					.done(onVerified).fail(function () {
+						stepUpError(null);
+					});
+				return;
+			}
+
+			stepUpError(state === 'denied' ? 'approval_denied' : 'approval_expired');
+		});
 	}
 
 	function verify() {
@@ -642,6 +799,10 @@
 			$('#adpConcealButton').on('click', conceal).hide();
 
 			$('#adpStepUpSubmit').on('click', verify);
+			$('#adpUsePasskey').on('click', verifyWithPasskey).hide();
+			$('#adpUseResponder').on('click', requestApproval).hide();
+			$('#adpUseProvider').on('click', verifyWithProvider).hide();
+			window.addEventListener('message', onProviderMessage);
 			$('#adpStepUpCode').on('keypress', function (e) {
 				if (e.which === 13) {
 					e.preventDefault();
@@ -651,6 +812,7 @@
 
 			// Closing the prompt without a code abandons whatever was waiting on the grant.
 			$('#adpStepUpModal').on('hidden.bs.modal', function () {
+				stopApproval();
 				if (!pendingAction)
 					return;
 				var form = pendingForm;

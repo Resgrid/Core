@@ -1,0 +1,228 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Ricerca</value>
+  </data>
+  <data name="Placeholder" xml:space="preserve">
+    <value>Cerca chiamate, note delle chiamate, persone, unità e altro</value>
+  </data>
+  <data name="SearchButton" xml:space="preserve">
+    <value>Cerca</value>
+  </data>
+  <data name="SearchIn" xml:space="preserve">
+    <value>Cerca in</value>
+  </data>
+  <data name="AllFamilies" xml:space="preserve">
+    <value>Tutto</value>
+  </data>
+  <data name="FromLabel" xml:space="preserve">
+    <value>Dal</value>
+  </data>
+  <data name="ToLabel" xml:space="preserve">
+    <value>Al</value>
+  </data>
+  <data name="SortLabel" xml:space="preserve">
+    <value>Ordina per</value>
+  </data>
+  <data name="SortRelevance" xml:space="preserve">
+    <value>Migliore corrispondenza</value>
+  </data>
+  <data name="SortNewest" xml:space="preserve">
+    <value>Prima i più recenti</value>
+  </data>
+  <data name="SortOldest" xml:space="preserve">
+    <value>Prima i meno recenti</value>
+  </data>
+  <data name="ExportCsv" xml:space="preserve">
+    <value>Esporta CSV</value>
+  </data>
+  <data name="ExportHelp" xml:space="preserve">
+    <value>Scarica come foglio di calcolo tutti i risultati corrispondenti che puoi aprire (fino a {0}).</value>
+  </data>
+  <data name="ResultsOfTotal" xml:space="preserve">
+    <value>Visualizzati {0}–{1} di {2}</value>
+  </data>
+  <data name="ResultsRange" xml:space="preserve">
+    <value>Visualizzati {0}–{1}</value>
+  </data>
+  <data name="NoResults" xml:space="preserve">
+    <value>Nessun risultato corrisponde alla ricerca.</value>
+  </data>
+  <data name="NoResultsHint" xml:space="preserve">
+    <value>Controlla l'ortografia, rimuovi una parola o amplia l'intervallo di date.</value>
+  </data>
+  <data name="EnterQuery" xml:space="preserve">
+    <value>Inserisci le parole da cercare.</value>
+  </data>
+  <data name="Tips" xml:space="preserve">
+    <value>Ogni parola deve comparire nel risultato. Metti una frase tra virgolette per trovarla esatta, ad esempio "allarme guasto" "edificio 4". Scegli un tipo e delle date per ottenere un elenco completo da esportare.</value>
+  </data>
+  <data name="IndexBuilding" xml:space="preserve">
+    <value>L'indice di ricerca del tuo dipartimento è in fase di creazione. I risultati potrebbero essere incompleti per qualche minuto.</value>
+  </data>
+  <data name="IndexUnavailable" xml:space="preserve">
+    <value>L'indice di ricerca non è al momento disponibile. Riprova tra qualche minuto.</value>
+  </data>
+  <data name="SearchUnavailable" xml:space="preserve">
+    <value>La ricerca non è disponibile per il tuo account.</value>
+  </data>
+  <data name="TotalUnknown" xml:space="preserve">
+    <value>Ci sono più corrispondenze di quante se ne possano contare qui. Scegli un tipo o un intervallo di date per un elenco completo.</value>
+  </data>
+  <data name="InvalidDate" xml:space="preserve">
+    <value>Una data non è stata riconosciuta ed è stata ignorata. Usa il selettore di data.</value>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>Precedente</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>Successiva</value>
+  </data>
+  <data name="Family.Call" xml:space="preserve">
+    <value>Chiamate</value>
+  </data>
+  <data name="Family.Record" xml:space="preserve">
+    <value>Rapporti (Records)</value>
+  </data>
+  <data name="Family.Personnel" xml:space="preserve">
+    <value>Personale</value>
+  </data>
+  <data name="Family.Unit" xml:space="preserve">
+    <value>Unità</value>
+  </data>
+  <data name="Family.Contact" xml:space="preserve">
+    <value>Contatti</value>
+  </data>
+  <data name="Family.Message" xml:space="preserve">
+    <value>Messaggi</value>
+  </data>
+  <data name="Family.Note" xml:space="preserve">
+    <value>Note</value>
+  </data>
+  <data name="Family.Document" xml:space="preserve">
+    <value>Documenti</value>
+  </data>
+  <data name="Family.Deployment" xml:space="preserve">
+    <value>Impieghi</value>
+  </data>
+  <data name="Family.Invoice" xml:space="preserve">
+    <value>Fatture</value>
+  </data>
+  <data name="Family.Bid" xml:space="preserve">
+    <value>Offerte</value>
+  </data>
+  <data name="Family.ServiceContract" xml:space="preserve">
+    <value>Contratti</value>
+  </data>
+  <data name="Family.RateCard" xml:space="preserve">
+    <value>Tariffari</value>
+  </data>
+  <data name="Family.CertificationType" xml:space="preserve">
+    <value>Tipi di certificazione</value>
+  </data>
+  <data name="Badge.Call" xml:space="preserve">
+    <value>Chiamata</value>
+  </data>
+  <data name="Badge.Record" xml:space="preserve">
+    <value>Rapporto</value>
+  </data>
+  <data name="Badge.Personnel" xml:space="preserve">
+    <value>Persona</value>
+  </data>
+  <data name="Badge.Unit" xml:space="preserve">
+    <value>Unità</value>
+  </data>
+  <data name="Badge.Contact" xml:space="preserve">
+    <value>Contatto</value>
+  </data>
+  <data name="Badge.Message" xml:space="preserve">
+    <value>Messaggio</value>
+  </data>
+  <data name="Badge.Note" xml:space="preserve">
+    <value>Nota</value>
+  </data>
+  <data name="Badge.Document" xml:space="preserve">
+    <value>Documento</value>
+  </data>
+  <data name="Badge.Deployment" xml:space="preserve">
+    <value>Impiego</value>
+  </data>
+  <data name="Badge.Invoice" xml:space="preserve">
+    <value>Fattura</value>
+  </data>
+  <data name="Badge.Bid" xml:space="preserve">
+    <value>Offerta</value>
+  </data>
+  <data name="Badge.ServiceContract" xml:space="preserve">
+    <value>Contratto</value>
+  </data>
+  <data name="Badge.RateCard" xml:space="preserve">
+    <value>Tariffario</value>
+  </data>
+  <data name="Badge.CertificationType" xml:space="preserve">
+    <value>Tipo di certificazione</value>
+  </data>
+  <data name="Family.Log" xml:space="preserve">
+    <value>Log</value>
+  </data>
+  <data name="Family.Protocol" xml:space="preserve">
+    <value>Protocolli</value>
+  </data>
+  <data name="Family.Training" xml:space="preserve">
+    <value>Formazioni</value>
+  </data>
+  <data name="Family.CalendarEvent" xml:space="preserve">
+    <value>Calendario</value>
+  </data>
+  <data name="Family.Poi" xml:space="preserve">
+    <value>Punti di interesse</value>
+  </data>
+  <data name="Family.Shift" xml:space="preserve">
+    <value>Turni</value>
+  </data>
+  <data name="Family.Group" xml:space="preserve">
+    <value>Gruppi e sedi</value>
+  </data>
+  <data name="Badge.Log" xml:space="preserve">
+    <value>Log</value>
+  </data>
+  <data name="Badge.Protocol" xml:space="preserve">
+    <value>Protocollo</value>
+  </data>
+  <data name="Badge.Training" xml:space="preserve">
+    <value>Formazione</value>
+  </data>
+  <data name="Badge.CalendarEvent" xml:space="preserve">
+    <value>Evento</value>
+  </data>
+  <data name="Badge.Poi" xml:space="preserve">
+    <value>Punto di interesse</value>
+  </data>
+  <data name="Badge.Shift" xml:space="preserve">
+    <value>Turno</value>
+  </data>
+  <data name="Badge.Group" xml:space="preserve">
+    <value>Gruppo</value>
+  </data>
+  <data name="Family.Occupancy" xml:space="preserve">
+    <value>Occupazioni (Piani preincidente)</value>
+  </data>
+  <data name="Badge.Occupancy" xml:space="preserve">
+    <value>Occupazione</value>
+  </data>
+  <data name="SearchAllResults" xml:space="preserve">
+    <value>Cerca tra tutti i risultati</value>
+  </data>
+</root>

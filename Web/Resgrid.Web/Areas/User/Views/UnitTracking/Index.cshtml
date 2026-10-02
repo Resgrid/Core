@@ -63,7 +63,7 @@
                                 <td>@(item.Device.DisplayName ?? item.Device.UnitTrackingDeviceId)</td>
                                 <td>@item.Device.ModelKey</td>
                                 <td>@(item.DisplayIdentifier ?? "—")</td>
-                                <td><span class="label label-default">@item.Status</span></td>
+                                <td><span class="label label-default">@UnitTrackingDisplayHelper.GetLocalizedDeviceStatus(item.Status, localizer)</span></td>
                                 <td>@(item.Device.LastSeenOn?.ToString("g") ?? localizer["Never"])</td>
                                 <td>@(item.Device.LastPositionOn?.ToString("g") ?? localizer["Never"])</td>
                                 <td>

@@ -14150,43 +14150,6 @@
             Identifier of the new npte
             </summary>
         </member>
-<<<<<<< HEAD
-        <member name="T:Resgrid.Web.Services.Models.v4.Passkeys.PasskeyCeremonyResult">
-            <summary>A started WebAuthn ceremony (workbook section 7.1): the request id to send back and the options for the platform.</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Passkeys.PasskeyCeremonyResultData.Options">
-            <summary>WebAuthn PublicKeyCredentialCreationOptions (registration) or PublicKeyCredentialRequestOptions (assertion) JSON.</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Passkeys.CompletePasskeyRegistrationInput.Credential">
-            <summary>The platform's response: PublicKeyCredential.toJSON(), as an object or a JSON string.</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Passkeys.CompletePasskeyRegistrationInput.DisplayName">
-            <summary>Optional name for the passkey; at most 100 characters. A default naming the app is used when empty.</summary>
-        </member>
-        <member name="T:Resgrid.Web.Services.Models.v4.Passkeys.PasskeyResultData">
-            <summary>
-            One passkey in the user's own inventory (plan section 6.5). Registration context, attachment and backup state are
-            server-observed or client-reported hints, not proof of a device.
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Passkeys.PasskeyResultData.Client">
-            <summary>The app the passkey works in: web, responder, unit, dispatch or ic.</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Passkeys.PasskeyResultData.ApprovalEnabled">
-            <summary>Responder passkeys only: whether it may approve other apps' requests. Null for other apps.</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Passkeys.RevokeAllPasskeysForClientInput.Client">
-            <summary>web, responder, unit, dispatch or ic.</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Passkeys.PasskeyChangeResultData.Revoked">
-            <summary>How many passkeys the change revoked (0 for a rename or approval change).</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Passkeys.PasskeyChangeResultData.SessionsEnded">
-            <summary>How many sessions that signed in with a removed passkey were ended.</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Passkeys.PasskeyChangeResultData.CurrentSessionEnded">
-            <summary>True when this session was one of them: the client signs in again.</summary>
-        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Personnel.FilterResult">
             <summary>
             The result of getting all personnel filters for the system
@@ -14357,8 +14320,6 @@
             User Defined Field values for this personnel record
             </summary>
         </member>
-=======
->>>>>>> master
         <member name="T:Resgrid.Web.Services.Models.v4.PersonnelLocation.PersonnelLocationInput">
             <summary>
             A GPS location for a point in time of a specificed person

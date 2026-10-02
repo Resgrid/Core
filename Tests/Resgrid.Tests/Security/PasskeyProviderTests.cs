@@ -228,6 +228,13 @@ namespace Resgrid.Tests.Security
 			writer.WriteInt32(3); writer.WriteInt32(-257);
 			writer.WriteEndMap();
 			Fido2PasskeyProvider.ReadCoseAlgorithm(writer.Encode()).Should().Be(-257);
+
+			// 2^32 - 7 would truncate to -7 (ES256) in an unchecked cast.
+			var outOfRange = new System.Formats.Cbor.CborWriter();
+			outOfRange.WriteStartMap(1);
+			outOfRange.WriteInt32(3); outOfRange.WriteInt64(4294967289L);
+			outOfRange.WriteEndMap();
+			Fido2PasskeyProvider.ReadCoseAlgorithm(outOfRange.Encode()).Should().BeNull("an algorithm outside the int range is unreadable, not another algorithm");
 		}
 	}
 }

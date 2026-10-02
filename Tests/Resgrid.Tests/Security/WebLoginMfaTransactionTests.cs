@@ -700,6 +700,39 @@ namespace Resgrid.Tests.Security
 		}
 
 		[Test]
+		public async Task Activating_a_new_authenticator_needs_the_first_factor_inside_the_operation_window()
+		{
+			// The GETs stage a key inside the reauthentication window; the POSTs that activate it must still be inside the operation
+			// window, as Disable2FA and the API's ReplaceTotp are (plan section 6.2).
+			var fresh = true;
+			var evidence = new Mock<IMfaEvidenceService>();
+			evidence.Setup(e => e.HasFreshFirstFactorAsync(UserId, It.IsAny<string>(), 4, It.IsAny<TimeSpan>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(() => fresh);
+			var operationWindow = TimeSpan.FromMinutes(TwoFactorConfig.FirstFactorOperationWindowMinutes);
+
+			_users.Setup(m => m.GetTwoFactorEnabledAsync(It.IsAny<IdentityUser>())).ReturnsAsync(false);
+			((ViewResult)await StepUp(evidence).Enable2FA()).Model.Should().BeOfType<EnableAuthenticatorViewModel>();
+			_tokens.Should().NotBeEmpty("the setup key is staged");
+
+			fresh = false;
+			var enable = (RedirectToActionResult)await StepUp(evidence).Enable2FA(new EnableAuthenticatorViewModel { Code = "123456" }, CancellationToken.None);
+			enable.ActionName.Should().Be("Reauthenticate");
+			((string)enable.RouteValues["returnUrl"]).Should().EndWith("/Enable2FA");
+			_totpTurnedOn.Should().BeFalse();
+			_tokens.Should().NotBeEmpty("nothing was activated");
+
+			_users.Setup(m => m.GetTwoFactorEnabledAsync(It.IsAny<IdentityUser>())).ReturnsAsync(true);
+			var replace = (RedirectToActionResult)await StepUp(evidence).ReplaceAuthenticator(new EnableAuthenticatorViewModel { Code = "123456" },
+				CancellationToken.None);
+			replace.ActionName.Should().Be("Reauthenticate");
+			((string)replace.RouteValues["returnUrl"]).Should().EndWith("/ReplaceAuthenticator");
+			_users.Verify(m => m.UpdateSecurityStampAsync(It.IsAny<IdentityUser>()), Times.Never);
+
+			evidence.Verify(e => e.HasFreshFirstFactorAsync(UserId, It.IsAny<string>(), 4, operationWindow, It.IsAny<DateTime>(), It.IsAny<CancellationToken>()),
+				Times.Exactly(2));
+		}
+
+		[Test]
 		public async Task Verify2FA_offers_approval_only_where_the_guarded_action_accepts_it()
 		{
 			_approvals.Setup(a => a.IsAvailableAsync(UserId, UserSessionClientApplication.Web, It.IsAny<CancellationToken>())).ReturnsAsync(true);

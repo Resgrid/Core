@@ -177,6 +177,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (await _userManager.GetTwoFactorEnabledAsync(user))
 				return RedirectToAction(nameof(Index));
 
+			// The change started inside the reauthentication window; it must also finish inside the operation window.
+			if (!await HasFreshFirstFactorAsync(user, TwoFactorConfig.FirstFactorOperationWindowMinutes))
+				return RedirectToReauthenticate(Url.Action(nameof(Enable2FA)));
+
 			var stagedKey = await GetStagedAuthenticatorKeyAsync(user);
 			if (string.IsNullOrEmpty(stagedKey))
 				return RedirectToAction(nameof(Enable2FA));
@@ -250,6 +254,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (!await _userManager.GetTwoFactorEnabledAsync(user))
 				return RedirectToAction(nameof(Enable2FA));
+
+			if (!await HasFreshFirstFactorAsync(user, TwoFactorConfig.FirstFactorOperationWindowMinutes))
+				return RedirectToReauthenticate(Url.Action(nameof(ReplaceAuthenticator)));
 
 			if (!await HasReplacementAuthorityAsync(user, cancellationToken))
 				return RedirectToStepUp();

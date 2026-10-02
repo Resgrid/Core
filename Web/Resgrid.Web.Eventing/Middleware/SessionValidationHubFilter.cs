@@ -44,13 +44,24 @@ namespace Resgrid.Web.Eventing.Middleware
 		public async Task OnConnectedAsync(HubLifetimeContext context, Func<HubLifetimeContext, Task> next)
 		{
 			var sessionId = SessionIdOf(context.Context.User);
-			if (sessionId != null)
+			if (sessionId == null)
 			{
-				_connections.Register(context.Context.ConnectionId, sessionId, context.Context.Abort);
-				await context.Hub.Groups.AddToGroupAsync(context.Context.ConnectionId, SessionEvents.GroupFor(sessionId));
+				await next(context);
+				return;
 			}
 
-			await next(context);
+			_connections.Register(context.Context.ConnectionId, sessionId, context.Context.Abort);
+			try
+			{
+				await context.Hub.Groups.AddToGroupAsync(context.Context.ConnectionId, SessionEvents.GroupFor(sessionId));
+				await next(context);
+			}
+			catch
+			{
+				// SignalR never calls OnDisconnectedAsync for a connection whose OnConnectedAsync failed.
+				_connections.Unregister(context.Context.ConnectionId);
+				throw;
+			}
 		}
 
 		public Task OnDisconnectedAsync(HubLifetimeContext context, Exception exception,

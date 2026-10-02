@@ -8,6 +8,7 @@ using Resgrid.Model;
 using Resgrid.Model.Helpers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Repositories.Queries;
+using Resgrid.Model.Search;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Services
@@ -19,14 +20,17 @@ namespace Resgrid.Services
 		private readonly IUdfFieldValueRepository _valueRepository;
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly IProtectedWorkflowService _protectedWorkflows;
+		private readonly Lazy<ISearchProjectionService> _searchProjections;
 
 		public UserDefinedFieldsService(
 			IUdfDefinitionRepository definitionRepository,
 			IUdfFieldRepository fieldRepository,
 			IUdfFieldValueRepository valueRepository,
 			IUnitOfWork unitOfWork,
-			IProtectedWorkflowService protectedWorkflows = null)
+			IProtectedWorkflowService protectedWorkflows = null,
+			Lazy<ISearchProjectionService> searchProjections = null)
 		{
+			_searchProjections = searchProjections;
 			_protectedWorkflows = protectedWorkflows;
 			_definitionRepository = definitionRepository;
 			_fieldRepository = fieldRepository;
@@ -297,7 +301,23 @@ namespace Resgrid.Services
 				throw;
 			}
 
+			// Custom field values are part of the owning entity's search text; the entity was saved before its values.
+			if (_searchProjections != null && SearchFamily(entityType) is string family)
+				await _searchProjections.Value.RefreshAsync(departmentId, family, entityId, cancellationToken);
+
 			return new Dictionary<string, List<string>>();
+		}
+
+		private static string SearchFamily(int entityType)
+		{
+			switch ((UdfEntityType)entityType)
+			{
+				case UdfEntityType.Call: return SearchEntityTypes.Call;
+				case UdfEntityType.Unit: return SearchEntityTypes.Unit;
+				case UdfEntityType.Personnel: return SearchEntityTypes.Personnel;
+				case UdfEntityType.Contact: return SearchEntityTypes.Contact;
+				default: return null;
+			}
 		}
 
 		public async Task<UdfDefinition> DeleteFieldFromDefinitionAsync(string fieldId, int departmentId,

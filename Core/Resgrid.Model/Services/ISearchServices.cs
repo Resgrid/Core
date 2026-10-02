@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -36,6 +37,26 @@ namespace Resgrid.Model.Services
 		Task ProjectDeploymentAsync(Invoicing.Deployment deployment, CancellationToken cancellationToken = default);
 		Task ProjectCertificationTypeAsync(DepartmentCertificationType type, CancellationToken cancellationToken = default);
 
+		// Operations reference families (plan R3 Tier 2).
+		Task ProjectProtocolAsync(DispatchProtocol protocol, CancellationToken cancellationToken = default);
+		Task ProjectTrainingAsync(Training training, CancellationToken cancellationToken = default);
+		Task ProjectCalendarItemAsync(CalendarItem item, CancellationToken cancellationToken = default);
+		Task ProjectLogAsync(Log log, CancellationToken cancellationToken = default);
+		Task ProjectPoiAsync(Poi poi, CancellationToken cancellationToken = default);
+		Task ProjectShiftAsync(Shift shift, CancellationToken cancellationToken = default);
+		Task ProjectGroupAsync(DepartmentGroup group, CancellationToken cancellationToken = default);
+		Task ProjectOccupancyAsync(RmsOccupancy occupancy, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Re-reads the entity and rewrites its projection, for writes that change a projected child or related row without
+		/// passing the entity itself: custom field values, role and group membership, member identification numbers, contact
+		/// notes. Supported for Call, Unit, Personnel, Contact and Occupancy; never throws.
+		/// </summary>
+		Task RefreshAsync(int departmentId, string entityType, string entityId, CancellationToken cancellationToken = default);
+
+		/// <summary>A group was renamed or moved: re-project its members and its units, whose projections carry the group name.</summary>
+		Task RefreshGroupDependentsAsync(int departmentId, int departmentGroupId, CancellationToken cancellationToken = default);
+
 		Task RemoveAsync(int departmentId, string entityType, string entityId, CancellationToken cancellationToken = default);
 
 		/// <summary>Builds the projection row without saving it (used by rebuilds and tests). Null when nothing safe can be indexed.</summary>
@@ -52,6 +73,17 @@ namespace Resgrid.Model.Services
 		Task<SearchProjection> BuildServiceContractAsync(Invoicing.ServiceContract contract);
 		Task<SearchProjection> BuildDeploymentAsync(Invoicing.Deployment deployment);
 		Task<SearchProjection> BuildCertificationTypeAsync(DepartmentCertificationType type);
+		Task<SearchProjection> BuildProtocolAsync(DispatchProtocol protocol);
+		Task<SearchProjection> BuildTrainingAsync(Training training);
+		/// <summary>Null for an occurrence of a recurring series: the series parent carries the event.</summary>
+		Task<SearchProjection> BuildCalendarItemAsync(CalendarItem item);
+		Task<SearchProjection> BuildLogAsync(Log log);
+		/// <param name="type">The POI's type; POIs carry their department only through it.</param>
+		Task<SearchProjection> BuildPoiAsync(Poi poi, PoiType type);
+		Task<SearchProjection> BuildShiftAsync(Shift shift);
+		Task<SearchProjection> BuildGroupAsync(DepartmentGroup group);
+		/// <summary>Null for a removed or merged occupancy.</summary>
+		Task<SearchProjection> BuildOccupancyAsync(RmsOccupancy occupancy);
 
 		/// <summary>Upserts a prebuilt row (rebuild path).</summary>
 		Task<SearchProjection> UpsertAsync(SearchProjection projection, CancellationToken cancellationToken = default);
@@ -90,6 +122,12 @@ namespace Resgrid.Model.Services
 
 		Task<int> CountDocumentsAsync(int departmentId);
 
+		/// <summary>
+		/// The RowVersion each of these projections currently carries in the index, keyed by projection id; rows that are
+		/// not indexed are absent. The catch-up sweep uses it to skip rows its overlap window re-reads unchanged.
+		/// </summary>
+		Task<IDictionary<string, long>> GetIndexedRowVersionsAsync(int departmentId, IEnumerable<SearchProjection> projections);
+
 		/// <summary>True when a local index exists for this process (after a pull or a write).</summary>
 		bool IndexExists { get; }
 	}
@@ -112,6 +150,14 @@ namespace Resgrid.Model.Services
 		public bool Prefix { get; set; }
 		public int Skip { get; set; }
 		public int Take { get; set; } = 50;
+		/// <summary>Only documents that occurred at or after this instant (UTC).</summary>
+		public DateTime? FromUtc { get; set; }
+		/// <summary>Only documents that occurred at or before this instant (UTC).</summary>
+		public DateTime? ToUtc { get; set; }
+		/// <summary>One of <see cref="SearchSortOrders"/>; relevance when null. A query without text is always newest first.</summary>
+		public string Sort { get; set; }
+		/// <summary>Deepest hit (skip + take) this query may reach; 0 = SearchConfig.MaxResults. Capped by SearchConfig.MaxPageWindow.</summary>
+		public int MaxWindow { get; set; }
 	}
 
 	public class GlobalSearchHit
@@ -157,6 +203,12 @@ namespace Resgrid.Model.Services
 	public interface IUnifiedSearchService
 	{
 		Task<UnifiedSearchResult> SearchAsync(UnifiedSearchRequest request, SearchPrincipal principal, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// The entity families (<see cref="SearchEntityTypes"/>, Record included) this caller may search right now: flag,
+		/// membership, view claims and module switches applied. Empty when search is unavailable to the caller.
+		/// </summary>
+		Task<List<string>> GetSearchableEntityTypesAsync(SearchPrincipal principal, CancellationToken cancellationToken = default);
 	}
 
 	/// <summary>Searches the static system-functionality catalog for one caller.</summary>

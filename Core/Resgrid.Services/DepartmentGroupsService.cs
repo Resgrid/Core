@@ -8,6 +8,7 @@ using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Repositories.Queries;
+using Resgrid.Model.Search;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Bus;
 using Resgrid.Model.Identity;
@@ -31,12 +32,15 @@ namespace Resgrid.Services
 		private readonly IIdentityRepository _identityRepository;
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly IInventoryStore _inventoryStore;
+		private readonly Lazy<ISearchProjectionService> _searchProjections;
 
 		public DepartmentGroupsService(IDepartmentGroupsRepository departmentGroupsRepository, IDepartmentGroupMembersRepository departmentGroupMembersRepository,
 			ISubscriptionsService subscriptionsService, IAddressService addressService, IDepartmentsService departmentsService, IGeoLocationProvider geoLocationProvider,
 			IDepartmentSettingsService departmentSettingsService, IEventAggregator eventAggregator, ICacheProvider cacheProvider,
-			IIdentityRepository identityRepository, IUnitOfWork unitOfWork, IInventoryStore inventoryStore = null)
+			IIdentityRepository identityRepository, IUnitOfWork unitOfWork, IInventoryStore inventoryStore = null,
+			Lazy<ISearchProjectionService> searchProjections = null)
 		{
+			_searchProjections = searchProjections;
 			_departmentGroupsRepository = departmentGroupsRepository;
 			_departmentGroupMembersRepository = departmentGroupMembersRepository;
 			_subscriptionsService = subscriptionsService;
@@ -105,8 +109,27 @@ namespace Resgrid.Services
 			// Invalidate after the transaction commits so the cache is refreshed from the fully consistent state.
 			await InvalidateGroupInCache(saved.DepartmentGroupId);
 			SendGroupVisibilityRefresh(saved.DepartmentId);
+			await ProjectGroupAndDependentsAsync(saved, null, cancellationToken);
 
 			return saved;
+		}
+
+		/// <summary>The group's own projection, then its members and units (theirs carry the group name), then members who just left it.</summary>
+		private async Task ProjectGroupAndDependentsAsync(DepartmentGroup group, IEnumerable<string> formerMembers, CancellationToken cancellationToken)
+		{
+			if (_searchProjections == null || group == null)
+				return;
+			await _searchProjections.Value.ProjectGroupAsync(group, cancellationToken);
+			await _searchProjections.Value.RefreshGroupDependentsAsync(group.DepartmentId, group.DepartmentGroupId, cancellationToken);
+			await RefreshPersonnelProjectionsAsync(group.DepartmentId, formerMembers, cancellationToken);
+		}
+
+		private async Task RefreshPersonnelProjectionsAsync(int departmentId, IEnumerable<string> userIds, CancellationToken cancellationToken)
+		{
+			if (_searchProjections == null || userIds == null)
+				return;
+			foreach (var userId in userIds.Where(u => !string.IsNullOrWhiteSpace(u)).Distinct(StringComparer.OrdinalIgnoreCase))
+				await _searchProjections.Value.RefreshAsync(departmentId, SearchEntityTypes.Personnel, userId, cancellationToken);
 		}
 
 		public async Task<List<DepartmentGroup>> GetAllGroupsForDepartmentAsync(int departmentId)
@@ -254,9 +277,11 @@ namespace Resgrid.Services
 		{
 			var group = await GetGroupByIdAsync(groupId);
 			if (group == null) return false;
-			return await InventoryHolderRetention.DeleteAsync(_inventoryStore, _unitOfWork, group.DepartmentId, groupId, false, async () =>
+			var formerMembers = new List<string>();
+			var deleted = await InventoryHolderRetention.DeleteAsync(_inventoryStore, _unitOfWork, group.DepartmentId, groupId, false, async () =>
 			{
 			var members = await _departmentGroupMembersRepository.GetAllGroupMembersByGroupIdAsync(groupId);
+			formerMembers.AddRange((members ?? Enumerable.Empty<DepartmentGroupMember>()).Select(m => m.UserId));
 
 			foreach (var departmentGroupMember in members)
 			{
@@ -269,6 +294,13 @@ namespace Resgrid.Services
 
 			return true;
 			}, cancellationToken);
+
+			if (deleted && _searchProjections != null)
+			{
+				await _searchProjections.Value.RemoveAsync(group.DepartmentId, SearchEntityTypes.Group, groupId.ToString(), cancellationToken);
+				await RefreshPersonnelProjectionsAsync(group.DepartmentId, formerMembers, cancellationToken);
+			}
+			return deleted;
 		}
 
 		public async Task<DepartmentGroup> UpdateAsync(DepartmentGroup departmentGroup, CancellationToken cancellationToken = default(CancellationToken))
@@ -319,6 +351,7 @@ namespace Resgrid.Services
 
 			await InvalidateGroupInCache(departmentGroup.DepartmentGroupId);
 			SendGroupVisibilityRefresh(saved?.DepartmentId ?? departmentGroup.DepartmentId);
+			await ProjectGroupAndDependentsAsync(saved, members.Select(m => m.UserId), cancellationToken);
 
 			return saved;
 		}
@@ -389,6 +422,7 @@ namespace Resgrid.Services
 			}
 
 			SendGroupVisibilityRefresh(departmentId);
+			await RefreshPersonnelProjectionsAsync(departmentId, new[] { userId }, cancellationToken);
 
 			return true;
 		}
@@ -444,6 +478,7 @@ namespace Resgrid.Services
 
 			await InvalidateGroupInCache(depMember.DepartmentGroupId);
 			SendGroupVisibilityRefresh(depMember.DepartmentId);
+			await RefreshPersonnelProjectionsAsync(depMember.DepartmentId, new[] { depMember.UserId }, cancellationToken);
 
 			return depMember;
 		}
@@ -559,6 +594,7 @@ namespace Resgrid.Services
 
 			_eventAggregator.SendMessage<UserAssignedToGroupEvent>(new UserAssignedToGroupEvent() { DepartmentId = departmentGroup.DepartmentId, UserId = userId, Group = departmentGroup });
 			SendGroupVisibilityRefresh(departmentGroup.DepartmentId);
+			await RefreshPersonnelProjectionsAsync(departmentGroup.DepartmentId, new[] { userId }, cancellationToken);
 
 			return saved;
 		}
@@ -638,10 +674,14 @@ namespace Resgrid.Services
 
 		public async Task<bool> DeleteGroupMembersByGroupIdAsync(int groupId, int departmentId, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			var formerMembers = _searchProjections != null
+				? (await _departmentGroupMembersRepository.GetAllGroupMembersByGroupIdAsync(groupId) ?? Enumerable.Empty<DepartmentGroupMember>()).Select(m => m.UserId).ToList()
+				: null;
 			var result = await _departmentGroupMembersRepository.DeleteGroupMembersByGroupIdAsync(groupId, departmentId, cancellationToken);
 
 			await InvalidateGroupInCache(groupId);
 			SendGroupVisibilityRefresh(departmentId);
+			await RefreshPersonnelProjectionsAsync(departmentId, formerMembers, cancellationToken);
 
 			return result;
 		}

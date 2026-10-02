@@ -7,6 +7,7 @@ using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Repositories.Queries;
+using Resgrid.Model.Search;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Services.Records
@@ -45,13 +46,16 @@ namespace Resgrid.Services.Records
 		private readonly IProtectedGrantContext _grant;
 		private readonly IRecordsProtectionService _protection;
 		private readonly IUnitOfWork _unitOfWork;
+		private readonly Lazy<ISearchProjectionService> _searchProjections;
 
 		public RecordsOccupancyService(RecordsPreventionGate gate, IRmsOccupanciesRepository occupancies, IRmsOccupancyContactLinksRepository links,
 			IRmsOccupancyHazardsRepository hazards, IRmsOccupancyCrosswalksRepository crosswalks, IRmsOccupancyFieldProvenancesRepository provenance,
 			IRmsOccupancyOwnershipsRepository ownerships, IRmsViolationsRepository violations, IRmsHydrantsRepository hydrants,
 			IContactPreplanRepository contactPreplans, IContactPreplanHazardRepository contactHazards, IContactsRepository contacts, IAddressRepository addresses,
-			IPoisRepository pois, IPoiTypesRepository poiTypes, IProtectedReadService protectedReads, IProtectedGrantContext grant, IRecordsProtectionService protection, IUnitOfWork unitOfWork)
+			IPoisRepository pois, IPoiTypesRepository poiTypes, IProtectedReadService protectedReads, IProtectedGrantContext grant, IRecordsProtectionService protection, IUnitOfWork unitOfWork,
+			Lazy<ISearchProjectionService> searchProjections = null)
 		{
+			_searchProjections = searchProjections;
 			_gate = gate;
 			_occupancies = occupancies;
 			_links = links;
@@ -172,7 +176,15 @@ namespace Resgrid.Services.Records
 			}
 			catch { _unitOfWork.DiscardChanges(); throw; }
 			plaintext.Restore();
+			await ReprojectAsync(departmentId, entity.RmsOccupancyId, cancellationToken);
 			return entity;
+		}
+
+		/// <summary>Re-reads the occupancy and rewrites its search projection (removed or merged ones leave the index).</summary>
+		private async Task ReprojectAsync(int departmentId, string occupancyId, CancellationToken cancellationToken)
+		{
+			if (_searchProjections != null && !string.IsNullOrWhiteSpace(occupancyId))
+				await _searchProjections.Value.RefreshAsync(departmentId, SearchEntityTypes.Occupancy, occupancyId, cancellationToken);
 		}
 
 		public async Task DeleteAsync(int departmentId, string userId, string occupancyId, CancellationToken cancellationToken = default)
@@ -186,6 +198,7 @@ namespace Resgrid.Services.Records
 			occupancy.DeletedOn = DateTime.UtcNow; occupancy.ModifiedOn = occupancy.DeletedOn.Value; occupancy.ModifiedByUserId = userId; occupancy.RowVersion++;
 			await _occupancies.UpdateAsync(occupancy, cancellationToken, true);
 			await _gate.AuditAsync(departmentId, userId, RmsAccessAuditAction.Change, "Occupancy removed", occupancyId, new { occupancy.OccupancyNumber }, cancellationToken: cancellationToken);
+			await ReprojectAsync(departmentId, occupancyId, cancellationToken);
 		}
 
 		public async Task<RmsOccupancy> MarkReviewedAsync(int departmentId, string userId, string occupancyId, int nextReviewMonths, CancellationToken cancellationToken = default)
@@ -302,6 +315,7 @@ namespace Resgrid.Services.Records
 			if (existing == null) await _hazards.InsertAsync(entity, cancellationToken, true); else await _hazards.UpdateAsync(entity, cancellationToken, true);
 			plaintext.Restore();
 			await _gate.AuditAsync(departmentId, userId, RmsAccessAuditAction.Change, existing == null ? "Occupancy hazard added" : "Occupancy hazard updated", occupancy.RmsOccupancyId, new { entity.RmsOccupancyHazardId, entity.Severity, entity.ShouldAlert }, cancellationToken: cancellationToken);
+			await ReprojectAsync(departmentId, occupancy.RmsOccupancyId, cancellationToken);
 			return entity;
 		}
 
@@ -314,6 +328,7 @@ namespace Resgrid.Services.Records
 			hazard.DeletedOn = DateTime.UtcNow; hazard.ModifiedOn = hazard.DeletedOn.Value; hazard.RowVersion++;
 			await _hazards.UpdateAsync(hazard, cancellationToken, true);
 			await _gate.AuditAsync(departmentId, userId, RmsAccessAuditAction.Change, "Occupancy hazard removed", hazard.RmsOccupancyId, new { hazardId }, cancellationToken: cancellationToken);
+			await ReprojectAsync(departmentId, hazard.RmsOccupancyId, cancellationToken);
 		}
 
 		public async Task<RmsOccupancyContactLink> LinkContactAsync(int departmentId, string userId, string occupancyId, string contactId, RmsOccupancyContactRole role, bool isPrimary, CancellationToken cancellationToken = default)
@@ -564,6 +579,7 @@ namespace Resgrid.Services.Records
 				_unitOfWork.CommitChanges();
 			}
 			catch { _unitOfWork.DiscardChanges(); throw; }
+			await ReprojectAsync(departmentId, occupancy.RmsOccupancyId, cancellationToken);
 			return occupancy;
 		}
 
@@ -696,6 +712,9 @@ namespace Resgrid.Services.Records
 				_unitOfWork.CommitChanges();
 			}
 			catch { _unitOfWork.DiscardChanges(); throw; }
+			// The merged source leaves the index; the survivor picks up the source's hazards.
+			await ReprojectAsync(departmentId, sourceOccupancyId, cancellationToken);
+			await ReprojectAsync(departmentId, targetOccupancyId, cancellationToken);
 			return target;
 		}
 

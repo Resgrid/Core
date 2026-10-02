@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Search;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Services
@@ -16,11 +17,13 @@ namespace Resgrid.Services
 		private readonly IDispatchProtocolQuestionsRepository _dispatchProtocolQuestionsRepository;
 		private readonly IDispatchProtocolTriggersRepository _dispatchProtocolTriggersRepository;
 		private readonly IDispatchProtocolQuestionAnswersRepository _dispatchProtocolQuestionAnswersRepository;
+		private readonly Lazy<ISearchProjectionService> _searchProjections;
 
 		public ProtocolsService(IDispatchProtocolRepository dispatchProtocolRepository, IDispatchProtocolAttachmentRepository dispatchProtocolAttachmentRepository,
 			IDispatchProtocolQuestionsRepository dispatchProtocolQuestionsRepository, IDispatchProtocolTriggersRepository dispatchProtocolTriggersRepository,
-			IDispatchProtocolQuestionAnswersRepository dispatchProtocolQuestionAnswersRepository)
+			IDispatchProtocolQuestionAnswersRepository dispatchProtocolQuestionAnswersRepository, Lazy<ISearchProjectionService> searchProjections = null)
 		{
+			_searchProjections = searchProjections;
 			_dispatchProtocolRepository = dispatchProtocolRepository;
 			_dispatchProtocolAttachmentRepository = dispatchProtocolAttachmentRepository;
 			_dispatchProtocolQuestionsRepository = dispatchProtocolQuestionsRepository;
@@ -64,6 +67,7 @@ namespace Resgrid.Services
 				}
 			}
 
+			if (_searchProjections != null) await _searchProjections.Value.ProjectProtocolAsync(saved, cancellationToken);
 			return saved;
 		}
 
@@ -98,7 +102,10 @@ namespace Resgrid.Services
 		public async Task<bool> DeleteProtocol(int id, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var procotol = await GetProtocolByIdAsync(id);
-			return await _dispatchProtocolRepository.DeleteAsync(procotol, cancellationToken);
+			var deleted = await _dispatchProtocolRepository.DeleteAsync(procotol, cancellationToken);
+			if (deleted && procotol != null && _searchProjections != null)
+				await _searchProjections.Value.RemoveAsync(procotol.DepartmentId, SearchEntityTypes.Protocol, procotol.DispatchProtocolId.ToString(), cancellationToken);
+			return deleted;
 		}
 
 		public List<DispatchProtocol> ProcessTriggers(List<DispatchProtocol> protocols, Call call)

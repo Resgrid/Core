@@ -9,6 +9,7 @@ using Resgrid.Model.Helpers;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Queue;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Search;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Services
@@ -32,6 +33,7 @@ namespace Resgrid.Services
 		private readonly IShiftGroupRolesRepository _shiftGroupRolesRepository;
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
+		private readonly Lazy<ISearchProjectionService> _searchProjections;
 
 		public ShiftsService(IShiftsRepository shiftsRepository, IShiftPersonRepository shiftPersonRepository,
 			IShiftDaysRepository shiftDaysRepository, IShiftGroupsRepository shiftGroupsRepository,
@@ -39,8 +41,9 @@ namespace Resgrid.Services
 			IShiftSignupTradeUserRepository shiftSignupTradeUserRepository, IShiftSignupTradeUserShiftsRepository shiftSignupTradeUserShiftsRepository,
 			IShiftStaffingRepository shiftStaffingRepository, IShiftStaffingPersonRepository shiftStaffingPersonRepository, IDepartmentsService departmentsService,
 			IDepartmentGroupsService departmentGroupsService, IShiftGroupAssignmentsRepository shiftGroupAssignmentsRepository, IShiftGroupRolesRepository shiftGroupRolesRepositor,
-			IEventAggregator eventAggregator, IDepartmentSettingsService departmentSettingsService)
+			IEventAggregator eventAggregator, IDepartmentSettingsService departmentSettingsService, Lazy<ISearchProjectionService> searchProjections = null)
 		{
+			_searchProjections = searchProjections;
 			_shiftsRepository = shiftsRepository;
 			_shiftPersonRepository = shiftPersonRepository;
 			_shiftDaysRepository = shiftDaysRepository;
@@ -128,6 +131,7 @@ namespace Resgrid.Services
 				}
 			}
 
+			if (_searchProjections != null && saved != null) await _searchProjections.Value.ProjectShiftAsync(saved, cancellationToken);
 			return saved;
 		}
 
@@ -136,7 +140,9 @@ namespace Resgrid.Services
 			if (shift == null)
 				return null;
 
-			return await _shiftsRepository.SaveOrUpdateAsync(shift, cancellationToken, true);
+			var saved = await _shiftsRepository.SaveOrUpdateAsync(shift, cancellationToken, true);
+			if (_searchProjections != null && saved != null) await _searchProjections.Value.ProjectShiftAsync(saved, cancellationToken);
+			return saved;
 		}
 
 		public async Task<Shift> UpdateShiftStartDayAsync(Shift shift, DateTime startDay, CancellationToken cancellationToken = default(CancellationToken))
@@ -260,7 +266,10 @@ namespace Resgrid.Services
 			foreach (var signup in signups ?? Enumerable.Empty<ShiftSignup>())
 				await ReleaseTradeReferencesToSignupAsync(signup.ShiftSignupId, cancellationToken);
 
-			return await _shiftsRepository.DeleteAsync(shift, cancellationToken);
+			var deleted = await _shiftsRepository.DeleteAsync(shift, cancellationToken);
+			if (deleted && _searchProjections != null)
+				await _searchProjections.Value.RemoveAsync(shift.DepartmentId, SearchEntityTypes.Shift, shift.ShiftId.ToString(), cancellationToken);
+			return deleted;
 		}
 
 		public async Task<bool> DeleteShiftGroupsByGroupIdAsync(int departmentGroupId, CancellationToken cancellationToken = default(CancellationToken))

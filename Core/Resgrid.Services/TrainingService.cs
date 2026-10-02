@@ -7,6 +7,7 @@ using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Helpers;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Search;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Services
@@ -19,10 +20,13 @@ namespace Resgrid.Services
 		private readonly ITrainingUserRepository _trainingUserRepository;
 		private readonly ICommunicationService _communicationService;
 		private readonly IDepartmentsService _departmentService;
+		private readonly Lazy<ISearchProjectionService> _searchProjections;
 
 		public TrainingService(ITrainingRepository trainingRepository, ITrainingAttachmentRepository trainingAttachmentRepository,
-			ITrainingUserRepository trainingUserRepository, ITrainingQuestionRepository trainingQuestionRepository, ICommunicationService communicationService, IDepartmentsService departmentService)
+			ITrainingUserRepository trainingUserRepository, ITrainingQuestionRepository trainingQuestionRepository, ICommunicationService communicationService, IDepartmentsService departmentService,
+			Lazy<ISearchProjectionService> searchProjections = null)
 		{
+			_searchProjections = searchProjections;
 			_trainingRepository = trainingRepository;
 			_trainingAttachmentRepository = trainingAttachmentRepository;
 			_trainingUserRepository = trainingUserRepository;
@@ -86,6 +90,7 @@ namespace Resgrid.Services
 				saved.Users = users;
 			}
 
+			if (_searchProjections != null) await _searchProjections.Value.ProjectTrainingAsync(saved, cancellationToken);
 			return saved;
 		}
 
@@ -151,7 +156,10 @@ namespace Resgrid.Services
 		public async Task<bool> DeleteTrainingAsync(int trainingId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var training = await GetTrainingByIdAsync(trainingId);
-			return await _trainingRepository.DeleteAsync(training, cancellationToken);
+			var deleted = await _trainingRepository.DeleteAsync(training, cancellationToken);
+			if (deleted && training != null && _searchProjections != null)
+				await _searchProjections.Value.RemoveAsync(training.DepartmentId, SearchEntityTypes.Training, training.TrainingId.ToString(), cancellationToken);
+			return deleted;
 		}
 
 		public async Task<TrainingUser> ResetUserAsync(int trainingId, string userId, CancellationToken cancellationToken = default(CancellationToken))

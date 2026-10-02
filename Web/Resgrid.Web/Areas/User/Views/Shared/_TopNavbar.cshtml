@@ -1,6 +1,7 @@
 ﻿@using Resgrid.Framework
 @inject Resgrid.Model.Services.IFeatureToggleService featureToggleService
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.AdminAssist.AdminAssist> aaLocalizer
+@inject Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Search.Search> searchLocalizer
 @{
 	// Admin Assist opens on its setup tabs (Admin.Setup), or on its Admin AI tab once Admin.Assist and Ai.AdminAssist are on.
 	var adminAssistVisible = ClaimsAuthorizationHelper.IsUserDepartmentAdmin() &&
@@ -17,7 +18,7 @@
             </div>
 
             <div class="hidden-xs hidden-sm" style="float:right; width: 70%; padding-top: 4px;"> 
-                <div id="autocomplete"></div>
+                <div id="autocomplete" data-placeholder="@searchLocalizer["Placeholder"]" data-search-all-label="@searchLocalizer["SearchAllResults"]"></div>
             </div>
         </div>
         <ul class="nav navbar-top-links navbar-right">

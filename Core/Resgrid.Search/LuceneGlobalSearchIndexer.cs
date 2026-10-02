@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Lucene.Net.Index;
@@ -81,6 +82,43 @@ namespace Resgrid.Search
 		{
 			cancellationToken.ThrowIfCancellationRequested();
 			return SearchIndexPublishCoordinator.ExpungeAndPublishAsync(_host, _leases, cancellationToken);
+		}
+
+		public Task<IDictionary<string, long>> GetIndexedRowVersionsAsync(int departmentId, IEnumerable<SearchProjection> projections)
+		{
+			IDictionary<string, long> versions = new Dictionary<string, long>(StringComparer.Ordinal);
+			var rows = (projections ?? Array.Empty<SearchProjection>())
+				.Where(p => p != null && p.DepartmentId == departmentId && !string.IsNullOrWhiteSpace(p.SearchProjectionId)
+					&& !string.IsNullOrWhiteSpace(p.EntityType) && !string.IsNullOrWhiteSpace(p.EntityId))
+				.ToList();
+			if (rows.Count == 0)
+				return Task.FromResult(versions);
+
+			var manager = _host.GetSearcherManager();
+			if (manager == null)
+				return Task.FromResult(versions);
+
+			_host.MaybeRefresh();
+			var searcher = manager.Acquire();
+			try
+			{
+				foreach (var row in rows)
+				{
+					var key = SearchProjection.BuildKey(row.DepartmentId, row.EntityType, row.EntityId);
+					var hit = searcher.Search(new TermQuery(new Term(GlobalIndexFields.Key, key)), 1);
+					if (hit.TotalHits == 0)
+						continue;
+					var doc = searcher.Doc(hit.ScoreDocs[0].Doc);
+					if (long.TryParse(doc.Get(GlobalIndexFields.RowVersion), out var version))
+						versions[row.SearchProjectionId] = version;
+				}
+			}
+			finally
+			{
+				manager.Release(searcher);
+			}
+
+			return Task.FromResult(versions);
 		}
 
 		public Task<int> CountDocumentsAsync(int departmentId)

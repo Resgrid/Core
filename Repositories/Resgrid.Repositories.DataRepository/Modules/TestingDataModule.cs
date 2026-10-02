@@ -361,6 +361,10 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<RmsAccessAuditsRepository>().As<IRmsAccessAuditsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsRecordSearchProjectionsRepository>().As<IRmsRecordSearchProjectionsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsSearchIndexStatesRepository>().As<IRmsSearchIndexStatesRepository>().InstancePerLifetimeScope();
+			// Unified Search (M0208), mirroring DataModule: services that refresh a search projection resolve these.
+			builder.RegisterType<SearchProjectionsRepository>().As<ISearchProjectionsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<SearchIndexStatesRepository>().As<ISearchIndexStatesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<SearchIndexLeasesRepository>().As<ISearchIndexLeasesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsRecordGroupScopesRepository>().As<IRmsRecordGroupScopesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsRecordSharesRepository>().As<IRmsRecordSharesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsLegacyStatsRepository>().As<IRmsLegacyStatsRepository>().InstancePerLifetimeScope();

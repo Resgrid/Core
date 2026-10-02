@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Search;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Services
@@ -25,12 +26,15 @@ namespace Resgrid.Services
 
 		// Lazy: the Records cutover guard (RMS plan section 4.1) is consulted only on a legacy write.
 		private readonly Lazy<IRecordsCutoverService> _recordsCutoverService;
+		private readonly Lazy<ISearchProjectionService> _searchProjections;
 
 		public WorkLogsService(ILogsRepository logsRepository, ICallLogsRepository callLogsRepository, ILogUsersRepository logUsersRepository,
 			ILogAttachmentRepository logAttachmentRepository, ILogUnitsRepository logUnitsRepository, IDepartmentsService departmentsService,
 			IDepartmentGroupsService departmentGroupsService, ICallsService callsService,
-			Lazy<IProtectedWriteService> protectedWriteService, Lazy<IRecordsCutoverService> recordsCutoverService)
+			Lazy<IProtectedWriteService> protectedWriteService, Lazy<IRecordsCutoverService> recordsCutoverService,
+			Lazy<ISearchProjectionService> searchProjections = null)
 		{
+			_searchProjections = searchProjections;
 			_recordsCutoverService = recordsCutoverService;
 			_logsRepository = logsRepository;
 			_callLogsRepository = callLogsRepository;
@@ -139,6 +143,7 @@ namespace Resgrid.Services
 			if (protectedWrite.Changed)
 				savedLog = await _logsRepository.SaveOrUpdateAsync(savedLog, cancellationToken, true);
 
+			if (_searchProjections != null) await _searchProjections.Value.ProjectLogAsync(savedLog, cancellationToken);
 			return savedLog;
 		}
 
@@ -221,7 +226,10 @@ namespace Resgrid.Services
 			{
 				await _recordsCutoverService.Value.EnsureLegacyWriteAllowedAsync(log.DepartmentId, "WorkLogsService.DeleteLogAsync");
 
-				return await _logsRepository.DeleteAsync(log, cancellationToken);
+				var deleted = await _logsRepository.DeleteAsync(log, cancellationToken);
+				if (deleted && _searchProjections != null)
+					await _searchProjections.Value.RemoveAsync(log.DepartmentId, SearchEntityTypes.Log, log.LogId.ToString(), cancellationToken);
+				return deleted;
 			}
 
 			return false;

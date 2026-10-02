@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Index;
-using Lucene.Net.QueryParsers.Classic;
 using Lucene.Net.Search;
 using Resgrid.Config;
 using Resgrid.Framework;
@@ -81,7 +81,7 @@ namespace Resgrid.Search
 			var lucene = BuildQuery(departmentId, query);
 			// Skip is clamped to the candidate ceiling before the addition: an unbounded offset would overflow the window
 			// negative and IndexSearcher.Search rejects a non-positive hit count instead of returning an empty page.
-			var max = Math.Max(1, SearchConfig.MaxResults);
+			var max = MaxWindow(query);
 			var take = query.Take <= 0 ? 50 : Math.Min(query.Take, max);
 			var skip = Math.Min(Math.Max(0, query.Skip), max);
 			var window = Math.Min(skip + take, max);
@@ -90,12 +90,13 @@ namespace Resgrid.Search
 			try
 			{
 				var hasText = !string.IsNullOrWhiteSpace(query.Text);
-				var topDocs = hasText
+				var sort = SearchSortOrders.Normalize(query.Sort);
+				var topDocs = hasText && sort == SearchSortOrders.Relevance
 					? searcher.Search(lucene, window)
-					: searcher.Search(lucene, window, new Sort(new SortField(GlobalIndexFields.OccurredOnSort, SortFieldType.INT64, true)));
+					: searcher.Search(lucene, window, new Sort(new SortField(GlobalIndexFields.OccurredOnSort, SortFieldType.INT64, sort != SearchSortOrders.Oldest)));
 
 				result.Total = topDocs.TotalHits;
-				result.Truncated = topDocs.TotalHits > SearchConfig.MaxResults;
+				result.Truncated = topDocs.TotalHits > max;
 
 				foreach (var scoreDoc in topDocs.ScoreDocs.Skip(skip).Take(take))
 				{
@@ -173,6 +174,15 @@ namespace Resgrid.Search
 			return Task.FromResult(health);
 		}
 
+		/// <summary>The deepest hit a query may reach: SearchConfig.MaxResults, or the caller's larger window up to SearchConfig.MaxPageWindow.</summary>
+		public static int MaxWindow(GlobalSearchQuery query)
+		{
+			var max = Math.Max(1, SearchConfig.MaxResults);
+			if (query != null && query.MaxWindow > max)
+				max = Math.Max(max, Math.Min(query.MaxWindow, Math.Max(1, SearchConfig.MaxPageWindow)));
+			return max;
+		}
+
 		/// <summary>Visible for tests: the exact query the service runs.</summary>
 		public static Query BuildQuery(int departmentId, GlobalSearchQuery request)
 		{
@@ -231,6 +241,13 @@ namespace Resgrid.Search
 			if (!request.IncludeAdminOnly)
 				query.Add(new TermQuery(new Term(GlobalIndexFields.IsAdminOnly, "1")), Occur.MUST_NOT);
 
+			if (request.FromUtc.HasValue || request.ToUtc.HasValue)
+			{
+				long? from = request.FromUtc.HasValue ? request.FromUtc.Value.Ticks : (long?)null;
+				long? to = request.ToUtc.HasValue ? request.ToUtc.Value.Ticks : (long?)null;
+				query.Add(NumericRangeQuery.NewInt64Range(GlobalIndexFields.OccurredOn, from, to, true, true), Occur.MUST);
+			}
+
 			if (!string.IsNullOrWhiteSpace(request.Text))
 			{
 				var text = request.Text.Trim();
@@ -255,43 +272,39 @@ namespace Resgrid.Search
 				}
 				else
 				{
-					using var analyzer = GlobalIndexFields.CreateQueryAnalyzer();
-					var parser = new MultiFieldQueryParser(GlobalIndexFields.Version, TextFields, analyzer, TextBoosts)
+					// Every word, and every "quoted phrase" as a phrase, must occur in some text field (title, keywords,
+					// summary or the full text, which carries call notes). The clauses are built here from analyzed tokens
+					// rather than handed to a query parser, so no request syntax beyond the quotes reaches Lucene (plan R2.4).
+					var clauses = ParseClauses(text);
+					if (clauses.Count > 0)
 					{
-						DefaultOperator = Operator.AND,
-						AllowLeadingWildcard = false
-					};
-					Query parsed;
-					try
-					{
-						parsed = parser.Parse(QueryParserBase.Escape(text));
-					}
-					catch (ParseException)
-					{
-						parsed = null;
-					}
-					if (parsed != null)
-						textQuery.Add(parsed, Occur.SHOULD);
+						var all = new BooleanQuery();
+						foreach (var clause in clauses)
+							all.Add(TextClause(clause), Occur.MUST);
+						textQuery.Add(all, Occur.SHOULD);
 
-					// A final partial token still prefix-matches (the user is mid-word).
-					if (tokens.Count > 0)
-					{
-						var last = tokens[tokens.Count - 1];
-						var lastPrefix = new BooleanQuery();
-						foreach (var token in tokens.Take(tokens.Count - 1))
+						// A final unquoted word still prefix-matches (the user is mid-word): titles and identifiers through
+						// their edge n-grams, the summary and full text through a prefix query once the stub is long enough.
+						var last = clauses[clauses.Count - 1];
+						if (!last.Quoted && last.Tokens.Count == 1)
 						{
-							lastPrefix.Add(new BooleanQuery
+							var stub = last.Tokens[0].Text;
+							var lastPrefix = new BooleanQuery();
+							foreach (var clause in clauses.Take(clauses.Count - 1))
+								lastPrefix.Add(TextClause(clause), Occur.MUST);
+							var stubQuery = new BooleanQuery
 							{
-								{ new TermQuery(new Term(GlobalIndexFields.TitlePrefix, token)), Occur.SHOULD },
-								{ new TermQuery(new Term(GlobalIndexFields.KeywordsPrefix, token)), Occur.SHOULD }
-							}, Occur.MUST);
+								{ new TermQuery(new Term(GlobalIndexFields.TitlePrefix, stub)) { Boost = 2f }, Occur.SHOULD },
+								{ new TermQuery(new Term(GlobalIndexFields.KeywordsPrefix, stub)) { Boost = 3f }, Occur.SHOULD }
+							};
+							if (stub.Length >= MinTextPrefixLength)
+							{
+								stubQuery.Add(new PrefixQuery(new Term(GlobalIndexFields.Summary, stub)) { Boost = 1.5f }, Occur.SHOULD);
+								stubQuery.Add(new PrefixQuery(new Term(GlobalIndexFields.SearchText, stub)), Occur.SHOULD);
+							}
+							lastPrefix.Add(stubQuery, Occur.MUST);
+							textQuery.Add(lastPrefix, Occur.SHOULD);
 						}
-						lastPrefix.Add(new BooleanQuery
-						{
-							{ new TermQuery(new Term(GlobalIndexFields.TitlePrefix, last)) { Boost = 2f }, Occur.SHOULD },
-							{ new TermQuery(new Term(GlobalIndexFields.KeywordsPrefix, last)) { Boost = 3f }, Occur.SHOULD }
-						}, Occur.MUST);
-						textQuery.Add(lastPrefix, Occur.SHOULD);
 					}
 				}
 
@@ -300,6 +313,104 @@ namespace Resgrid.Search
 			}
 
 			return query;
+		}
+
+		/// <summary>Shortest mid-word stub expanded against the summary and full text; shorter stubs match titles and identifiers only.</summary>
+		public const int MinTextPrefixLength = 3;
+
+		private const int MaxClauses = 12;
+
+		private static readonly Regex QueryParts = new Regex("\"([^\"]*)\"|([^\\s\"]+)", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
+
+		/// <summary>One analyzed token and its position inside its clause (stop words leave gaps).</summary>
+		public sealed class ClauseToken
+		{
+			public string Text { get; set; }
+			public int Position { get; set; }
+		}
+
+		/// <summary>A word or a phrase of the user's query, already analyzed.</summary>
+		public sealed class QueryClause
+		{
+			public bool Quoted { get; set; }
+			public List<ClauseToken> Tokens { get; set; } = new List<ClauseToken>();
+		}
+
+		/// <summary>
+		/// Splits the user text into clauses: each "quoted phrase" is one clause, each other word is one clause (a word the
+		/// analyzer splits, such as 2026-000123, stays one phrase clause). Stop words vanish; an unmatched quote is ignored.
+		/// </summary>
+		public static List<QueryClause> ParseClauses(string text)
+		{
+			var clauses = new List<QueryClause>();
+			if (string.IsNullOrWhiteSpace(text))
+				return clauses;
+
+			foreach (Match match in QueryParts.Matches(text))
+			{
+				if (clauses.Count >= MaxClauses)
+					break;
+				var quoted = match.Groups[1].Success;
+				var tokens = AnalyzeWithPositions(quoted ? match.Groups[1].Value : match.Groups[2].Value);
+				if (tokens.Count > 0)
+					clauses.Add(new QueryClause { Quoted = quoted, Tokens = tokens });
+			}
+
+			return clauses;
+		}
+
+		private static Query TextClause(QueryClause clause)
+		{
+			var any = new BooleanQuery();
+			foreach (var field in TextFields)
+			{
+				Query fieldQuery;
+				if (clause.Tokens.Count == 1)
+				{
+					fieldQuery = new TermQuery(new Term(field, clause.Tokens[0].Text));
+				}
+				else
+				{
+					var phrase = new PhraseQuery();
+					foreach (var token in clause.Tokens)
+						phrase.Add(new Term(field, token.Text), token.Position);
+					fieldQuery = phrase;
+				}
+				fieldQuery.Boost = TextBoosts[field];
+				any.Add(fieldQuery, Occur.SHOULD);
+			}
+			return any;
+		}
+
+		private static List<ClauseToken> AnalyzeWithPositions(string text)
+		{
+			var tokens = new List<ClauseToken>();
+			if (string.IsNullOrWhiteSpace(text))
+				return tokens;
+
+			using var analyzer = GlobalIndexFields.CreateQueryAnalyzer();
+			using var stream = analyzer.GetTokenStream(GlobalIndexFields.SearchText, new StringReader(text));
+			var term = stream.AddAttribute<ICharTermAttribute>();
+			var increment = stream.AddAttribute<IPositionIncrementAttribute>();
+			stream.Reset();
+			var position = -1;
+			while (stream.IncrementToken() && tokens.Count < 16)
+			{
+				position += Math.Max(1, increment.PositionIncrement);
+				var value = term.ToString();
+				if (value.Length > 0)
+					tokens.Add(new ClauseToken { Text = value, Position = position });
+			}
+			stream.End();
+
+			// Positions relative to the clause: a leading stop word must not shift the whole phrase.
+			if (tokens.Count > 0)
+			{
+				var first = tokens[0].Position;
+				foreach (var token in tokens)
+					token.Position -= first;
+			}
+			return tokens;
 		}
 
 		/// <summary>Standard-analyzer tokens of the user text (lower-cased, stop words removed), never more than 12.</summary>

@@ -30,6 +30,14 @@ namespace Resgrid.Services.Search
 		/// </summary>
 		private const int RebuildPageSize = 500;
 
+		/// <summary>
+		/// One sweep per process at a time. The scheduler starts a sweep every minute (and retries a failed one) whether or not
+		/// the previous run has finished. Two sweeps in one worker shared the host's single writer and the publish lease — the
+		/// lease admits its own owner, so both got in — raced the manifest ETag, and the loser's conflict reset wiped the local
+		/// index under the winner. An overlapping sweep now skips instead.
+		/// </summary>
+		private static readonly SemaphoreSlim SweepGate = new SemaphoreSlim(1, 1);
+
 		private readonly ISearchIndexStatesRepository _states;
 		private readonly ISearchProjectionsRepository _projections;
 		private readonly IGlobalSearchIndexer _indexer;
@@ -50,14 +58,31 @@ namespace Resgrid.Services.Search
 		private readonly Lazy<IServiceContractService> _contracts;
 		private readonly Lazy<IDeploymentService> _deploymentsService;
 		private readonly Lazy<ICertificationService> _certifications;
+		private readonly Lazy<IProtocolsService> _protocols;
+		private readonly Lazy<ITrainingService> _trainings;
+		private readonly Lazy<ICalendarService> _calendar;
+		private readonly Lazy<IWorkLogsService> _logs;
+		private readonly Lazy<IMappingService> _mapping;
+		private readonly Lazy<IShiftsService> _shifts;
+		private readonly IRmsOccupanciesRepository _occupancies;
 
 		public SearchIndexMaintenanceService(ISearchIndexStatesRepository states, ISearchProjectionsRepository projections, IGlobalSearchIndexer indexer,
 			IDepartmentDataProtectionService dataProtection, IFeatureToggleService featureToggles, ISearchProjectionService projectionService,
 			ICallsService calls, IUnitsService units, IUserProfileService profiles, IDepartmentsService departments, IDepartmentGroupsService groups,
 			IContactsService contacts, IMessageService messages, IDocumentsService documents, INotesService notes,
 			Lazy<IInvoicingService> invoicing = null, Lazy<IBidsService> bids = null, Lazy<IServiceContractService> contracts = null,
-			Lazy<IDeploymentService> deploymentsService = null, Lazy<ICertificationService> certifications = null)
+			Lazy<IDeploymentService> deploymentsService = null, Lazy<ICertificationService> certifications = null,
+			Lazy<IProtocolsService> protocols = null, Lazy<ITrainingService> trainings = null, Lazy<ICalendarService> calendar = null,
+			Lazy<IWorkLogsService> logs = null, Lazy<IMappingService> mapping = null, Lazy<IShiftsService> shifts = null,
+			IRmsOccupanciesRepository occupancies = null)
 		{
+			_occupancies = occupancies;
+			_protocols = protocols;
+			_trainings = trainings;
+			_calendar = calendar;
+			_logs = logs;
+			_mapping = mapping;
+			_shifts = shifts;
 			_invoicing = invoicing;
 			_bids = bids;
 			_contracts = contracts;
@@ -90,8 +115,32 @@ namespace Resgrid.Services.Search
 				return result;
 			}
 
+			if (!await SweepGate.WaitAsync(0, cancellationToken))
+			{
+				result.Skipped = true;
+				result.Message = "The previous global index sweep is still running in this process; skipped.";
+				return result;
+			}
+
+			try
+			{
+				await SweepCoreAsync(result, cancellationToken);
+			}
+			finally
+			{
+				SweepGate.Release();
+			}
+
+			result.Message = $"Checked {result.DepartmentsChecked} department(s); rebuilt {result.DepartmentsRebuilt} ({result.ProjectionsRebuilt} projections); indexed {result.DocumentsIndexed}; deleted {result.DocumentsDeleted}; errors {result.Errors}.";
+			return result;
+		}
+
+		private async Task SweepCoreAsync(SearchIndexSweepResult result, CancellationToken cancellationToken)
+		{
 			var states = (await _states.GetAllForIndexAsync(SearchIndexNames.Global))?.ToList() ?? new List<SearchIndexState>();
 			var rebuilds = 0;
+			// Catch-up checkpoints wait for the sweep's single commit: a checkpoint must never lead the committed segments.
+			var pending = new List<(SearchIndexState State, DateTime? Checkpoint)>();
 
 			foreach (var state in states)
 			{
@@ -121,7 +170,9 @@ namespace Resgrid.Services.Search
 					}
 					else
 					{
-						await CatchUpAsync(state.DepartmentId, generation, state, result, cancellationToken);
+						var (changed, checkpoint) = await CatchUpAsync(state.DepartmentId, generation, state, result, cancellationToken);
+						if (changed)
+							pending.Add((state, checkpoint));
 					}
 				}
 				catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -135,8 +186,46 @@ namespace Resgrid.Services.Search
 				}
 			}
 
-			result.Message = $"Checked {result.DepartmentsChecked} department(s); rebuilt {result.DepartmentsRebuilt} ({result.ProjectionsRebuilt} projections); indexed {result.DocumentsIndexed}; deleted {result.DocumentsDeleted}; errors {result.Errors}.";
-			return result;
+			if (pending.Count == 0)
+				return;
+
+			try
+			{
+				// One commit-and-publish per sweep, not one per department: each publish lists the bucket, uploads the new
+				// segments and conditionally replaces the manifest, so a per-department commit made every quiet minute with N
+				// activated departments cost N publishes.
+				await _indexer.CommitAsync(cancellationToken);
+			}
+			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+			{
+				throw;
+			}
+			catch (Exception ex)
+			{
+				result.Errors++;
+				Logging.LogException(ex, $"Global search index commit failed; {pending.Count} department checkpoint(s) were not advanced and the next sweep re-reads their rows.");
+				return;
+			}
+
+			foreach (var (state, checkpoint) in pending)
+			{
+				try
+				{
+					state.LastIndexedModifiedOn = checkpoint;
+					state.DocumentCount = await _indexer.CountDocumentsAsync(state.DepartmentId);
+					state.ModifiedOn = DateTime.UtcNow;
+					await _states.SaveOrUpdateAsync(state, cancellationToken, true);
+				}
+				catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+				{
+					throw;
+				}
+				catch (Exception ex)
+				{
+					result.Errors++;
+					Logging.LogException(ex, $"Global search index checkpoint could not be saved for department {state.DepartmentId}; the next sweep re-reads its rows.");
+				}
+			}
 		}
 
 		public async Task<SearchIndexSweepResult> RebuildDepartmentAsync(int departmentId, CancellationToken cancellationToken = default)
@@ -149,9 +238,18 @@ namespace Resgrid.Services.Search
 				return result;
 			}
 
-			var generation = await ComputeGenerationAsync(departmentId);
-			var state = await _states.GetAsync(SearchIndexNames.Global, departmentId);
-			await RebuildAsync(departmentId, generation, state, result, cancellationToken);
+			await SweepGate.WaitAsync(cancellationToken);
+			try
+			{
+				var generation = await ComputeGenerationAsync(departmentId);
+				var state = await _states.GetAsync(SearchIndexNames.Global, departmentId);
+				await RebuildAsync(departmentId, generation, state, result, cancellationToken);
+			}
+			finally
+			{
+				SweepGate.Release();
+			}
+
 			result.Message = $"Rebuilt department {departmentId}: {result.ProjectionsRebuilt} projection(s), {result.DocumentsIndexed} document(s).";
 			return result;
 		}
@@ -222,10 +320,18 @@ namespace Resgrid.Services.Search
 			}
 		}
 
-		private async Task CatchUpAsync(int departmentId, string generation, SearchIndexState state, SearchIndexSweepResult result, CancellationToken cancellationToken)
+		/// <summary>
+		/// Writes the rows modified since the department's checkpoint into the index without committing. Returns whether the
+		/// index changed and the checkpoint to save once the caller's commit has succeeded.
+		/// </summary>
+		private async Task<(bool Changed, DateTime? Checkpoint)> CatchUpAsync(int departmentId, string generation, SearchIndexState state, SearchIndexSweepResult result, CancellationToken cancellationToken)
 		{
-			var checkpoint = state.LastIndexedModifiedOn;
-			var since = checkpoint.HasValue && checkpoint.Value > DateTime.MinValue.AddSeconds(1) ? checkpoint.Value.AddSeconds(-1) : checkpoint;
+			var stored = state.LastIndexedModifiedOn;
+			var checkpoint = stored;
+			// The read re-covers the last second before the checkpoint so a row stamped just before it but committed after
+			// the previous read is not lost. Rows it re-reads unchanged are skipped below; re-indexing them made every quiet
+			// sweep commit and publish every department.
+			var since = stored.HasValue && stored.Value > DateTime.MinValue.AddSeconds(1) ? stored.Value.AddSeconds(-1) : stored;
 			string sinceId = null;
 			var batch = Math.Max(50, Math.Min(5000, SearchConfig.IndexBatchSize));
 			var touched = false;
@@ -237,15 +343,17 @@ namespace Resgrid.Services.Search
 				if (page.Count == 0)
 					break;
 
-				var deleted = page.Where(p => p.DeletedOn.HasValue).ToList();
-				var live = page.Where(p => !p.DeletedOn.HasValue).ToList();
+				var changed = await WithoutUnchangedOverlapAsync(departmentId, page, stored);
+				var deleted = changed.Where(p => p.DeletedOn.HasValue).ToList();
+				var live = changed.Where(p => !p.DeletedOn.HasValue).ToList();
 
 				foreach (var gone in deleted)
 					await _indexer.DeleteAsync(departmentId, gone.EntityType, gone.EntityId, cancellationToken);
 
-				result.DocumentsIndexed += await _indexer.IndexAsync(live, generation, cancellationToken);
+				if (live.Count > 0)
+					result.DocumentsIndexed += await _indexer.IndexAsync(live, generation, cancellationToken);
 				result.DocumentsDeleted += deleted.Count;
-				touched = true;
+				touched |= changed.Count > 0;
 
 				var last = page[page.Count - 1];
 				if (since.HasValue && (last.ModifiedOn < since.Value || last.ModifiedOn == since.Value && string.Equals(last.SearchProjectionId, sinceId, StringComparison.Ordinal)))
@@ -258,14 +366,30 @@ namespace Resgrid.Services.Search
 					break;
 			}
 
-			if (touched)
+			return (touched, checkpoint);
+		}
+
+		/// <summary>
+		/// Drops the rows of the overlap window (stamped at or before the stored checkpoint) that the index already holds at
+		/// the same RowVersion, and deleted rows the index no longer holds. Rows past the checkpoint are always kept.
+		/// </summary>
+		private async Task<List<SearchProjection>> WithoutUnchangedOverlapAsync(int departmentId, List<SearchProjection> page, DateTime? stored)
+		{
+			if (!stored.HasValue)
+				return page;
+
+			var overlap = page.Where(p => p.ModifiedOn <= stored.Value).ToList();
+			if (overlap.Count == 0)
+				return page;
+
+			var indexed = await _indexer.GetIndexedRowVersionsAsync(departmentId, overlap) ?? new Dictionary<string, long>();
+			return page.Where(p =>
 			{
-				await _indexer.CommitAsync(cancellationToken);
-				state.LastIndexedModifiedOn = checkpoint;
-				state.DocumentCount = await _indexer.CountDocumentsAsync(departmentId);
-				state.ModifiedOn = DateTime.UtcNow;
-				await _states.SaveOrUpdateAsync(state, cancellationToken, true);
-			}
+				if (p.ModifiedOn > stored.Value)
+					return true;
+				var present = indexed.TryGetValue(p.SearchProjectionId ?? string.Empty, out var version);
+				return p.DeletedOn.HasValue ? present : !present || version != p.RowVersion;
+			}).ToList();
 		}
 
 		/// <summary>Regenerates every projection row of the department from the entity services, then soft-deletes rows no longer present.</summary>
@@ -465,6 +589,108 @@ namespace Resgrid.Services.Search
 					return n;
 				}, started, cancellationToken);
 			}
+
+			// Operations reference families (plan R3 Tier 2). Lazy for the same reason as the Business Operations ones.
+			count += await Family(departmentId, SearchEntityTypes.Group, async () =>
+			{
+				var n = 0;
+				foreach (var group in await _groups.GetAllGroupsForDepartmentUnlimitedAsync(departmentId) ?? new List<DepartmentGroup>())
+				{
+					cancellationToken.ThrowIfCancellationRequested();
+					var p = await _projectionService.BuildGroupAsync(group);
+					if (p != null) { await _projectionService.UpsertAsync(p, cancellationToken); n++; }
+				}
+				return n;
+			}, started, cancellationToken);
+			if (_protocols?.Value != null)
+				count += await Family(departmentId, SearchEntityTypes.Protocol, async () =>
+				{
+					var n = 0;
+					foreach (var protocol in await _protocols.Value.GetAllProtocolsForDepartmentAsync(departmentId) ?? new List<DispatchProtocol>())
+					{
+						cancellationToken.ThrowIfCancellationRequested();
+						var p = await _projectionService.BuildProtocolAsync(protocol);
+						if (p != null) { await _projectionService.UpsertAsync(p, cancellationToken); n++; }
+					}
+					return n;
+				}, started, cancellationToken);
+			if (_trainings?.Value != null)
+				count += await Family(departmentId, SearchEntityTypes.Training, async () =>
+				{
+					var n = 0;
+					foreach (var training in await _trainings.Value.GetAllTrainingsForDepartmentAsync(departmentId) ?? new List<Training>())
+					{
+						cancellationToken.ThrowIfCancellationRequested();
+						var p = await _projectionService.BuildTrainingAsync(training);
+						if (p != null) { await _projectionService.UpsertAsync(p, cancellationToken); n++; }
+					}
+					return n;
+				}, started, cancellationToken);
+			if (_calendar?.Value != null)
+				count += await Family(departmentId, SearchEntityTypes.CalendarEvent, async () =>
+				{
+					var n = 0;
+					// Occurrences of a recurring series build to null; the parent row carries the event.
+					foreach (var item in await _calendar.Value.GetAllCalendarItemsForDepartmentAsync(departmentId) ?? new List<CalendarItem>())
+					{
+						cancellationToken.ThrowIfCancellationRequested();
+						var p = await _projectionService.BuildCalendarItemAsync(item);
+						if (p != null) { await _projectionService.UpsertAsync(p, cancellationToken); n++; }
+					}
+					return n;
+				}, started, cancellationToken);
+			if (_logs?.Value != null)
+				count += await Family(departmentId, SearchEntityTypes.Log, async () =>
+				{
+					var n = 0;
+					foreach (var log in await _logs.Value.GetAllLogsForDepartmentAsync(departmentId) ?? new List<Log>())
+					{
+						cancellationToken.ThrowIfCancellationRequested();
+						var p = await _projectionService.BuildLogAsync(log);
+						if (p != null) { await _projectionService.UpsertAsync(p, cancellationToken); n++; }
+					}
+					return n;
+				}, started, cancellationToken);
+			if (_mapping?.Value != null)
+				count += await Family(departmentId, SearchEntityTypes.Poi, async () =>
+				{
+					var n = 0;
+					// The department read returns each POI with its type attached; POIs carry their department only through it.
+					foreach (var poi in await _mapping.Value.GetPOIsForDepartmentAsync(departmentId) ?? new List<Poi>())
+					{
+						cancellationToken.ThrowIfCancellationRequested();
+						var p = await _projectionService.BuildPoiAsync(poi, poi.Type);
+						if (p != null) { await _projectionService.UpsertAsync(p, cancellationToken); n++; }
+					}
+					return n;
+				}, started, cancellationToken);
+			if (_shifts?.Value != null)
+				count += await Family(departmentId, SearchEntityTypes.Shift, async () =>
+				{
+					var n = 0;
+					foreach (var shift in await _shifts.Value.GetAllShiftsByDepartmentAsync(departmentId) ?? new List<Shift>())
+					{
+						cancellationToken.ThrowIfCancellationRequested();
+						var p = await _projectionService.BuildShiftAsync(shift);
+						if (p != null) { await _projectionService.UpsertAsync(p, cancellationToken); n++; }
+					}
+					return n;
+				}, started, cancellationToken);
+
+			if (_occupancies != null)
+				count += await Family(departmentId, SearchEntityTypes.Occupancy, async () =>
+				{
+					// Read straight from the repository: the occupancy service's reads are per viewer, and a rebuild has none.
+					// Removed and merged occupancies build to null.
+					var n = 0;
+					foreach (var occupancy in await _occupancies.GetAllLiveAsync(departmentId) ?? Enumerable.Empty<RmsOccupancy>())
+					{
+						cancellationToken.ThrowIfCancellationRequested();
+						var p = await _projectionService.BuildOccupancyAsync(occupancy);
+						if (p != null) { await _projectionService.UpsertAsync(p, cancellationToken); n++; }
+					}
+					return n;
+				}, started, cancellationToken);
 
 			count += await Family(departmentId, SearchEntityTypes.Message, async () =>
 			{

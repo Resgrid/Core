@@ -1,0 +1,228 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Αναζήτηση</value>
+  </data>
+  <data name="Placeholder" xml:space="preserve">
+    <value>Αναζήτηση κλήσεων, σημειώσεων κλήσεων, ατόμων, μονάδων και άλλων</value>
+  </data>
+  <data name="SearchButton" xml:space="preserve">
+    <value>Αναζήτηση</value>
+  </data>
+  <data name="SearchIn" xml:space="preserve">
+    <value>Αναζήτηση σε</value>
+  </data>
+  <data name="AllFamilies" xml:space="preserve">
+    <value>Όλα</value>
+  </data>
+  <data name="FromLabel" xml:space="preserve">
+    <value>Από</value>
+  </data>
+  <data name="ToLabel" xml:space="preserve">
+    <value>Έως</value>
+  </data>
+  <data name="SortLabel" xml:space="preserve">
+    <value>Ταξινόμηση κατά</value>
+  </data>
+  <data name="SortRelevance" xml:space="preserve">
+    <value>Καλύτερη αντιστοιχία</value>
+  </data>
+  <data name="SortNewest" xml:space="preserve">
+    <value>Πρώτα τα νεότερα</value>
+  </data>
+  <data name="SortOldest" xml:space="preserve">
+    <value>Πρώτα τα παλαιότερα</value>
+  </data>
+  <data name="ExportCsv" xml:space="preserve">
+    <value>Εξαγωγή CSV</value>
+  </data>
+  <data name="ExportHelp" xml:space="preserve">
+    <value>Λήψη όλων των αποτελεσμάτων που ταιριάζουν και μπορείτε να ανοίξετε (έως {0}) ως υπολογιστικό φύλλο.</value>
+  </data>
+  <data name="ResultsOfTotal" xml:space="preserve">
+    <value>Εμφάνιση {0}–{1} από {2}</value>
+  </data>
+  <data name="ResultsRange" xml:space="preserve">
+    <value>Εμφάνιση {0}–{1}</value>
+  </data>
+  <data name="NoResults" xml:space="preserve">
+    <value>Δεν βρέθηκαν αποτελέσματα για την αναζήτησή σας.</value>
+  </data>
+  <data name="NoResultsHint" xml:space="preserve">
+    <value>Ελέγξτε την ορθογραφία, αφαιρέστε μια λέξη ή διευρύνετε το εύρος ημερομηνιών.</value>
+  </data>
+  <data name="EnterQuery" xml:space="preserve">
+    <value>Εισαγάγετε τις λέξεις που αναζητάτε.</value>
+  </data>
+  <data name="Tips" xml:space="preserve">
+    <value>Κάθε λέξη πρέπει να υπάρχει στο αποτέλεσμα. Βάλτε μια φράση σε εισαγωγικά για ακριβή αντιστοίχιση, για παράδειγμα "συναγερμός βλάβης" "κτίριο 4". Επιλέξτε τύπο και ημερομηνίες για πλήρη λίστα προς εξαγωγή.</value>
+  </data>
+  <data name="IndexBuilding" xml:space="preserve">
+    <value>Το ευρετήριο αναζήτησης του τμήματός σας δημιουργείται. Τα αποτελέσματα μπορεί να είναι ελλιπή για λίγα λεπτά.</value>
+  </data>
+  <data name="IndexUnavailable" xml:space="preserve">
+    <value>Το ευρετήριο αναζήτησης δεν είναι διαθέσιμο αυτή τη στιγμή. Δοκιμάστε ξανά σε λίγα λεπτά.</value>
+  </data>
+  <data name="SearchUnavailable" xml:space="preserve">
+    <value>Η αναζήτηση δεν είναι διαθέσιμη για τον λογαριασμό σας.</value>
+  </data>
+  <data name="TotalUnknown" xml:space="preserve">
+    <value>Υπάρχουν περισσότερες αντιστοιχίες από όσες μπορούν να μετρηθούν εδώ. Επιλέξτε τύπο ή εύρος ημερομηνιών για πλήρη λίστα.</value>
+  </data>
+  <data name="InvalidDate" xml:space="preserve">
+    <value>Μια ημερομηνία δεν ήταν δυνατό να διαβαστεί και αγνοήθηκε. Χρησιμοποιήστε την επιλογή ημερομηνίας.</value>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>Προηγούμενη</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>Επόμενη</value>
+  </data>
+  <data name="Family.Call" xml:space="preserve">
+    <value>Κλήσεις</value>
+  </data>
+  <data name="Family.Record" xml:space="preserve">
+    <value>Αναφορές (Records)</value>
+  </data>
+  <data name="Family.Personnel" xml:space="preserve">
+    <value>Προσωπικό</value>
+  </data>
+  <data name="Family.Unit" xml:space="preserve">
+    <value>Μονάδες</value>
+  </data>
+  <data name="Family.Contact" xml:space="preserve">
+    <value>Επαφές</value>
+  </data>
+  <data name="Family.Message" xml:space="preserve">
+    <value>Μηνύματα</value>
+  </data>
+  <data name="Family.Note" xml:space="preserve">
+    <value>Σημειώσεις</value>
+  </data>
+  <data name="Family.Document" xml:space="preserve">
+    <value>Έγγραφα</value>
+  </data>
+  <data name="Family.Deployment" xml:space="preserve">
+    <value>Αποστολές</value>
+  </data>
+  <data name="Family.Invoice" xml:space="preserve">
+    <value>Τιμολόγια</value>
+  </data>
+  <data name="Family.Bid" xml:space="preserve">
+    <value>Προσφορές</value>
+  </data>
+  <data name="Family.ServiceContract" xml:space="preserve">
+    <value>Συμβάσεις</value>
+  </data>
+  <data name="Family.RateCard" xml:space="preserve">
+    <value>Τιμοκατάλογοι</value>
+  </data>
+  <data name="Family.CertificationType" xml:space="preserve">
+    <value>Τύποι πιστοποίησης</value>
+  </data>
+  <data name="Badge.Call" xml:space="preserve">
+    <value>Κλήση</value>
+  </data>
+  <data name="Badge.Record" xml:space="preserve">
+    <value>Αναφορά</value>
+  </data>
+  <data name="Badge.Personnel" xml:space="preserve">
+    <value>Άτομο</value>
+  </data>
+  <data name="Badge.Unit" xml:space="preserve">
+    <value>Μονάδα</value>
+  </data>
+  <data name="Badge.Contact" xml:space="preserve">
+    <value>Επαφή</value>
+  </data>
+  <data name="Badge.Message" xml:space="preserve">
+    <value>Μήνυμα</value>
+  </data>
+  <data name="Badge.Note" xml:space="preserve">
+    <value>Σημείωση</value>
+  </data>
+  <data name="Badge.Document" xml:space="preserve">
+    <value>Έγγραφο</value>
+  </data>
+  <data name="Badge.Deployment" xml:space="preserve">
+    <value>Αποστολή</value>
+  </data>
+  <data name="Badge.Invoice" xml:space="preserve">
+    <value>Τιμολόγιο</value>
+  </data>
+  <data name="Badge.Bid" xml:space="preserve">
+    <value>Προσφορά</value>
+  </data>
+  <data name="Badge.ServiceContract" xml:space="preserve">
+    <value>Σύμβαση</value>
+  </data>
+  <data name="Badge.RateCard" xml:space="preserve">
+    <value>Τιμοκατάλογος</value>
+  </data>
+  <data name="Badge.CertificationType" xml:space="preserve">
+    <value>Τύπος πιστοποίησης</value>
+  </data>
+  <data name="Family.Log" xml:space="preserve">
+    <value>Καταγραφές</value>
+  </data>
+  <data name="Family.Protocol" xml:space="preserve">
+    <value>Πρωτόκολλα</value>
+  </data>
+  <data name="Family.Training" xml:space="preserve">
+    <value>Εκπαιδεύσεις</value>
+  </data>
+  <data name="Family.CalendarEvent" xml:space="preserve">
+    <value>Ημερολόγιο</value>
+  </data>
+  <data name="Family.Poi" xml:space="preserve">
+    <value>Σημεία ενδιαφέροντος</value>
+  </data>
+  <data name="Family.Shift" xml:space="preserve">
+    <value>Βάρδιες</value>
+  </data>
+  <data name="Family.Group" xml:space="preserve">
+    <value>Ομάδες και σταθμοί</value>
+  </data>
+  <data name="Badge.Log" xml:space="preserve">
+    <value>Καταγραφή</value>
+  </data>
+  <data name="Badge.Protocol" xml:space="preserve">
+    <value>Πρωτόκολλο</value>
+  </data>
+  <data name="Badge.Training" xml:space="preserve">
+    <value>Εκπαίδευση</value>
+  </data>
+  <data name="Badge.CalendarEvent" xml:space="preserve">
+    <value>Εκδήλωση</value>
+  </data>
+  <data name="Badge.Poi" xml:space="preserve">
+    <value>Σημείο ενδιαφέροντος</value>
+  </data>
+  <data name="Badge.Shift" xml:space="preserve">
+    <value>Βάρδια</value>
+  </data>
+  <data name="Badge.Group" xml:space="preserve">
+    <value>Ομάδα</value>
+  </data>
+  <data name="Family.Occupancy" xml:space="preserve">
+    <value>Ακίνητα (Προσχέδια)</value>
+  </data>
+  <data name="Badge.Occupancy" xml:space="preserve">
+    <value>Ακίνητο</value>
+  </data>
+  <data name="SearchAllResults" xml:space="preserve">
+    <value>Αναζήτηση σε όλα τα αποτελέσματα</value>
+  </data>
+</root>

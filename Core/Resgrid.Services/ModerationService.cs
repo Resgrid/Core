@@ -46,6 +46,7 @@ namespace Resgrid.Services
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly IOutboundQueueProvider _outboundQueueProvider;
 		private readonly Lazy<IProtectedWriteService> _protectedWriteService;
+		private readonly Lazy<ISearchProjectionService> _searchProjections;
 
 		public ModerationService(IModerationRequestRepository moderationRequestRepository,
 			IModerationReportRepository moderationReportRepository, IModerationActionRepository moderationActionRepository,
@@ -56,7 +57,8 @@ namespace Resgrid.Services
 			ICallsService callsService, IDepartmentGroupsService departmentGroupsService,
 			IAuthorizationService authorizationService, IAuditService auditService,
 			IUserProfileService userProfileService, IUnitOfWork unitOfWork,
-			IOutboundQueueProvider outboundQueueProvider, Lazy<IProtectedWriteService> protectedWriteService)
+			IOutboundQueueProvider outboundQueueProvider, Lazy<IProtectedWriteService> protectedWriteService,
+			Lazy<ISearchProjectionService> searchProjections = null)
 		{
 			_moderationRequestRepository = moderationRequestRepository;
 			_moderationReportRepository = moderationReportRepository;
@@ -77,6 +79,7 @@ namespace Resgrid.Services
 			_unitOfWork = unitOfWork;
 			_outboundQueueProvider = outboundQueueProvider;
 			_protectedWriteService = protectedWriteService;
+			_searchProjections = searchProjections;
 		}
 
 		/// <summary>
@@ -392,6 +395,10 @@ namespace Resgrid.Services
 				throw;
 			}
 
+			// A removed call note must leave the call's search text too. After the commit: the projection reads the note rows.
+			if (removeContent && request.ItemType == (int)ModerationItemType.CallNote)
+				await RefreshCallProjectionForNoteAsync(request.ItemId, cancellationToken);
+
 			if (!await _outboundQueueProvider.EnqueueNotification(new NotificationItem
 			{
 				DepartmentId = request.DepartmentId,
@@ -590,6 +597,24 @@ namespace Resgrid.Services
 
 				default:
 					throw new ArgumentOutOfRangeException(nameof(itemType));
+			}
+		}
+
+		private async Task RefreshCallProjectionForNoteAsync(string itemId, CancellationToken cancellationToken)
+		{
+			if (_searchProjections == null || !int.TryParse(itemId, out var callNoteId))
+				return;
+			try
+			{
+				var note = await _callNotesRepository.GetByIdAsync(callNoteId);
+				var call = note == null ? null : await _callsService.GetCallByIdAsync(note.CallId, true);
+				if (call != null)
+					await _searchProjections.Value.ProjectCallAsync(call, cancellationToken);
+			}
+			catch (Exception ex)
+			{
+				// The content is already removed; the next rebuild reconciles the projection.
+				Logging.LogException(ex, $"Search projection refresh failed after removing call note {callNoteId}.");
 			}
 		}
 

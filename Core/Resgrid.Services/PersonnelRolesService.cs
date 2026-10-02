@@ -8,6 +8,7 @@ using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Repositories.Queries;
+using Resgrid.Model.Search;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Services
@@ -22,11 +23,14 @@ namespace Resgrid.Services
 		private readonly IUnitOfWork _unitOfWork;
 		// Lazy: the certification service evaluates role requirements and calls back here for members (plan D4).
 		private readonly Lazy<ICertificationService> _certifications;
+		private readonly Lazy<ISearchProjectionService> _searchProjections;
 
 		public PersonnelRolesService(IPersonnelRolesRepository personnelRolesRepository, IPersonnelRoleUsersRepository personnelRoleUsersRepository,
 			ISubscriptionsService subscriptionsService, IDepartmentMembersRepository departmentMemberRepository,
-			IEventAggregator eventAggregator, IUnitOfWork unitOfWork, Lazy<ICertificationService> certifications = null)
+			IEventAggregator eventAggregator, IUnitOfWork unitOfWork, Lazy<ICertificationService> certifications = null,
+			Lazy<ISearchProjectionService> searchProjections = null)
 		{
+			_searchProjections = searchProjections;
 			_personnelRolesRepository = personnelRolesRepository;
 			_personnelRoleUsersRepository = personnelRoleUsersRepository;
 			_subscriptionsService = subscriptionsService;
@@ -138,7 +142,17 @@ namespace Resgrid.Services
 			var saved = await _personnelRolesRepository.SaveOrUpdateAsync(role, cancellationToken);
 			foreach (var userId in added)
 				AuditMembership(role.DepartmentId, actingUserId, AuditLogTypes.RoleMemberAdded, userId, saved.PersonnelRoleId, saved.Name);
+			// Member projections carry role names: a rename touches every member, a membership change the members it moved.
+			await RefreshPersonnelProjectionsAsync(role.DepartmentId, previous.Concat(incoming), cancellationToken);
 			return saved;
+		}
+
+		private async Task RefreshPersonnelProjectionsAsync(int departmentId, IEnumerable<string> userIds, CancellationToken cancellationToken)
+		{
+			if (_searchProjections == null || userIds == null)
+				return;
+			foreach (var userId in userIds.Where(u => !string.IsNullOrWhiteSpace(u)).Distinct(StringComparer.OrdinalIgnoreCase))
+				await _searchProjections.Value.RefreshAsync(departmentId, SearchEntityTypes.Personnel, userId, cancellationToken);
 		}
 
 		public async Task<PersonnelRole> ReplaceRoleMembersAsync(PersonnelRole role, IEnumerable<string> userIds, CancellationToken cancellationToken = default(CancellationToken), string actingUserId = null)
@@ -189,6 +203,7 @@ namespace Resgrid.Services
 			foreach (var userId in added)
 				AuditMembership(role.DepartmentId, actingUserId, AuditLogTypes.RoleMemberAdded, userId, saved.PersonnelRoleId, saved.Name);
 			SendRoleVisibilityRefresh(role.DepartmentId);
+			await RefreshPersonnelProjectionsAsync(role.DepartmentId, current.Select(m => m.UserId).Concat(incoming), cancellationToken);
 			return saved;
 		}
 
@@ -220,6 +235,10 @@ namespace Resgrid.Services
 			if (role == null)
 				return false;
 
+			var formerMembers = _searchProjections != null
+				? (await _personnelRoleUsersRepository.GetAllMembersOfRoleAsync(roleId) ?? Enumerable.Empty<PersonnelRoleUser>()).Select(m => m.UserId).ToList()
+				: null;
+
 			// Call dispatches, shift group requirements, run cards and the rest all point back at the
 			// role row; CallDispatchRoles has a non-cascading FK, so the delete below fails outright for
 			// any role that has ever been dispatched unless those rows go first. Both steps share one
@@ -242,6 +261,7 @@ namespace Resgrid.Services
 			}
 
 			SendRoleVisibilityRefresh(role.DepartmentId);
+			await RefreshPersonnelProjectionsAsync(role.DepartmentId, formerMembers, cancellationToken);
 
 			return result;
 		}
@@ -260,7 +280,10 @@ namespace Resgrid.Services
 			if (users != null)
 			{
 				foreach (var departmentId in users.Where(x => x != null).Select(x => x.DepartmentId).Distinct())
+				{
 					SendRoleVisibilityRefresh(departmentId);
+					await RefreshPersonnelProjectionsAsync(departmentId, users.Where(x => x != null && x.DepartmentId == departmentId).Select(x => x.UserId), cancellationToken);
+				}
 			}
 
 			return true;
@@ -295,16 +318,21 @@ namespace Resgrid.Services
 
 		public async Task<bool> RemoveUserFromAllRolesAsync(string userId, int departmentId, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			await RemoveUserRoleRowsAsync(userId, departmentId, cancellationToken);
+			SendRoleVisibilityRefresh(departmentId);
+			await RefreshPersonnelProjectionsAsync(departmentId, new[] { userId }, cancellationToken);
+
+			return true;
+		}
+
+		private async Task RemoveUserRoleRowsAsync(string userId, int departmentId, CancellationToken cancellationToken)
+		{
 			var personnelRoleUsers = await _personnelRoleUsersRepository.GetAllRoleUsersForUserAsync(departmentId, userId);
 
 			foreach (var personnelRoleUser in personnelRoleUsers)
 			{
 				await _personnelRoleUsersRepository.DeleteAsync(personnelRoleUser, cancellationToken);
 			}
-
-			SendRoleVisibilityRefresh(departmentId);
-
-			return true;
 		}
 
 		public async Task<bool> SetRolesForUserAsync(int departmentId, string userId, string[] roleIds, CancellationToken cancellationToken = default(CancellationToken), string actingUserId = null)
@@ -320,7 +348,7 @@ namespace Resgrid.Services
 			if (gaining.Count > 0 && (await CheckRoleMembershipAsync(departmentId, userId, gaining)).IsBlocked)
 				throw new RoleMembershipException(RoleMembershipException.RequirementsUnmet, userId);
 
-			await RemoveUserFromAllRolesAsync(userId, departmentId, cancellationToken);
+			await RemoveUserRoleRowsAsync(userId, departmentId, cancellationToken);
 
 			foreach (var role in wanted)
 			{
@@ -338,6 +366,7 @@ namespace Resgrid.Services
 				AuditMembership(departmentId, actingUserId, AuditLogTypes.RoleMemberRemoved, userId, roleId, roles.FirstOrDefault(r => r.PersonnelRoleId == roleId)?.Name);
 
 			SendRoleVisibilityRefresh(departmentId);
+			await RefreshPersonnelProjectionsAsync(departmentId, new[] { userId }, cancellationToken);
 
 			return true;
 		}

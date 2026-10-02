@@ -1,0 +1,228 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="Placeholder" xml:space="preserve">
+    <value>Search calls, call notes, people, units and more</value>
+  </data>
+  <data name="SearchButton" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="SearchIn" xml:space="preserve">
+    <value>Search in</value>
+  </data>
+  <data name="AllFamilies" xml:space="preserve">
+    <value>Everything</value>
+  </data>
+  <data name="FromLabel" xml:space="preserve">
+    <value>From</value>
+  </data>
+  <data name="ToLabel" xml:space="preserve">
+    <value>To</value>
+  </data>
+  <data name="SortLabel" xml:space="preserve">
+    <value>Sort by</value>
+  </data>
+  <data name="SortRelevance" xml:space="preserve">
+    <value>Best match</value>
+  </data>
+  <data name="SortNewest" xml:space="preserve">
+    <value>Newest first</value>
+  </data>
+  <data name="SortOldest" xml:space="preserve">
+    <value>Oldest first</value>
+  </data>
+  <data name="ExportCsv" xml:space="preserve">
+    <value>Export CSV</value>
+  </data>
+  <data name="ExportHelp" xml:space="preserve">
+    <value>Download every matching result you can open (up to {0}) as a spreadsheet.</value>
+  </data>
+  <data name="ResultsOfTotal" xml:space="preserve">
+    <value>Showing {0}–{1} of {2}</value>
+  </data>
+  <data name="ResultsRange" xml:space="preserve">
+    <value>Showing {0}–{1}</value>
+  </data>
+  <data name="NoResults" xml:space="preserve">
+    <value>No results match your search.</value>
+  </data>
+  <data name="NoResultsHint" xml:space="preserve">
+    <value>Check the spelling, remove a word or widen the date range.</value>
+  </data>
+  <data name="EnterQuery" xml:space="preserve">
+    <value>Enter the words to look for.</value>
+  </data>
+  <data name="Tips" xml:space="preserve">
+    <value>Every word must appear somewhere in the result. Put a phrase in quotes to match it exactly, for example "trouble alarm" "building 4". Choose a type and dates for a complete list you can export.</value>
+  </data>
+  <data name="IndexBuilding" xml:space="preserve">
+    <value>Your department's search index is being built. Results may be incomplete for a few minutes.</value>
+  </data>
+  <data name="IndexUnavailable" xml:space="preserve">
+    <value>The search index is not available right now. Try again in a few minutes.</value>
+  </data>
+  <data name="SearchUnavailable" xml:space="preserve">
+    <value>Search is not available for your account.</value>
+  </data>
+  <data name="TotalUnknown" xml:space="preserve">
+    <value>There are more matches than can be counted here. Choose a type or a date range for a complete list.</value>
+  </data>
+  <data name="InvalidDate" xml:space="preserve">
+    <value>A date could not be read and was ignored. Use the date picker.</value>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>Previous</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="Family.Call" xml:space="preserve">
+    <value>Calls</value>
+  </data>
+  <data name="Family.Record" xml:space="preserve">
+    <value>Reports (Records)</value>
+  </data>
+  <data name="Family.Personnel" xml:space="preserve">
+    <value>Personnel</value>
+  </data>
+  <data name="Family.Unit" xml:space="preserve">
+    <value>Units</value>
+  </data>
+  <data name="Family.Contact" xml:space="preserve">
+    <value>Contacts</value>
+  </data>
+  <data name="Family.Message" xml:space="preserve">
+    <value>Messages</value>
+  </data>
+  <data name="Family.Note" xml:space="preserve">
+    <value>Notes</value>
+  </data>
+  <data name="Family.Document" xml:space="preserve">
+    <value>Documents</value>
+  </data>
+  <data name="Family.Deployment" xml:space="preserve">
+    <value>Deployments</value>
+  </data>
+  <data name="Family.Invoice" xml:space="preserve">
+    <value>Invoices</value>
+  </data>
+  <data name="Family.Bid" xml:space="preserve">
+    <value>Bids</value>
+  </data>
+  <data name="Family.ServiceContract" xml:space="preserve">
+    <value>Contracts</value>
+  </data>
+  <data name="Family.RateCard" xml:space="preserve">
+    <value>Rate Cards</value>
+  </data>
+  <data name="Family.CertificationType" xml:space="preserve">
+    <value>Certification Types</value>
+  </data>
+  <data name="Badge.Call" xml:space="preserve">
+    <value>Call</value>
+  </data>
+  <data name="Badge.Record" xml:space="preserve">
+    <value>Report</value>
+  </data>
+  <data name="Badge.Personnel" xml:space="preserve">
+    <value>Person</value>
+  </data>
+  <data name="Badge.Unit" xml:space="preserve">
+    <value>Unit</value>
+  </data>
+  <data name="Badge.Contact" xml:space="preserve">
+    <value>Contact</value>
+  </data>
+  <data name="Badge.Message" xml:space="preserve">
+    <value>Message</value>
+  </data>
+  <data name="Badge.Note" xml:space="preserve">
+    <value>Note</value>
+  </data>
+  <data name="Badge.Document" xml:space="preserve">
+    <value>Document</value>
+  </data>
+  <data name="Badge.Deployment" xml:space="preserve">
+    <value>Deployment</value>
+  </data>
+  <data name="Badge.Invoice" xml:space="preserve">
+    <value>Invoice</value>
+  </data>
+  <data name="Badge.Bid" xml:space="preserve">
+    <value>Bid</value>
+  </data>
+  <data name="Badge.ServiceContract" xml:space="preserve">
+    <value>Contract</value>
+  </data>
+  <data name="Badge.RateCard" xml:space="preserve">
+    <value>Rate Card</value>
+  </data>
+  <data name="Badge.CertificationType" xml:space="preserve">
+    <value>Certification Type</value>
+  </data>
+  <data name="Family.Log" xml:space="preserve">
+    <value>Logs</value>
+  </data>
+  <data name="Family.Protocol" xml:space="preserve">
+    <value>Protocols</value>
+  </data>
+  <data name="Family.Training" xml:space="preserve">
+    <value>Trainings</value>
+  </data>
+  <data name="Family.CalendarEvent" xml:space="preserve">
+    <value>Calendar</value>
+  </data>
+  <data name="Family.Poi" xml:space="preserve">
+    <value>Points of Interest</value>
+  </data>
+  <data name="Family.Shift" xml:space="preserve">
+    <value>Shifts</value>
+  </data>
+  <data name="Family.Group" xml:space="preserve">
+    <value>Groups &amp; Stations</value>
+  </data>
+  <data name="Badge.Log" xml:space="preserve">
+    <value>Log</value>
+  </data>
+  <data name="Badge.Protocol" xml:space="preserve">
+    <value>Protocol</value>
+  </data>
+  <data name="Badge.Training" xml:space="preserve">
+    <value>Training</value>
+  </data>
+  <data name="Badge.CalendarEvent" xml:space="preserve">
+    <value>Event</value>
+  </data>
+  <data name="Badge.Poi" xml:space="preserve">
+    <value>Point of Interest</value>
+  </data>
+  <data name="Badge.Shift" xml:space="preserve">
+    <value>Shift</value>
+  </data>
+  <data name="Badge.Group" xml:space="preserve">
+    <value>Group</value>
+  </data>
+  <data name="Family.Occupancy" xml:space="preserve">
+    <value>Occupancies (Pre-plans)</value>
+  </data>
+  <data name="Badge.Occupancy" xml:space="preserve">
+    <value>Occupancy</value>
+  </data>
+  <data name="SearchAllResults" xml:space="preserve">
+    <value>Search all results</value>
+  </data>
+</root>

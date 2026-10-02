@@ -1,6 +1,7 @@
 using System;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Search;
 using Resgrid.Model.Services;
 using System.Collections.Generic;
 using System.Linq;
@@ -141,7 +142,15 @@ namespace Resgrid.Services
 
 		public async Task<ContactCategory> SaveContactCategoryAsync(ContactCategory category, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return await _contactCategoryRepository.SaveOrUpdateAsync(category, cancellationToken);
+			var isRename = category != null && !string.IsNullOrWhiteSpace(category.ContactCategoryId);
+			var saved = await _contactCategoryRepository.SaveOrUpdateAsync(category, cancellationToken);
+
+			// Contact projections carry their category name.
+			if (isRename && saved != null && _searchProjections != null)
+				foreach (var contact in await _contactsRepository.GetContactsByCategoryIdAsync(saved.DepartmentId, saved.ContactCategoryId) ?? Enumerable.Empty<Contact>())
+					await _searchProjections.Value.ProjectContactAsync(contact, cancellationToken);
+
+			return saved;
 		}
 
 		public async Task<ContactCategory> GetContactCategoryByIdAsync(string contactCategoryId)
@@ -193,7 +202,8 @@ namespace Resgrid.Services
 				}
 			}
 
-			return notes.ToList();
+			// The filtered list: returning the raw rows handed deleted notes to every caller that asked for live ones.
+			return notesResult;
 		}
 
 		public async Task<List<ContactNoteType>> GetContactNoteTypesByDepartmentIdAsync(int departmentId)
@@ -242,6 +252,9 @@ namespace Resgrid.Services
 			if (protectedWrite.Changed)
 				savedNote = await _contactNotesRepository.SaveOrUpdateAsync(savedNote, cancellationToken);
 
+			// The contact's live notes are part of its search text (a deleted note leaves it the same way).
+			if (_searchProjections != null && savedNote != null)
+				await _searchProjections.Value.RefreshAsync(savedNote.DepartmentId, SearchEntityTypes.Contact, savedNote.ContactId, cancellationToken);
 			return savedNote;
 		}
 

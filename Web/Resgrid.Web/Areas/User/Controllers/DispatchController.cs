@@ -252,7 +252,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				Note = model.Call?.Notes,
 				Address = model.Call?.Address,
-				Geolocation = model.Call?.GeoLocationData,
+				// A placed pin. An address alone does not count even though it is geocoded on save, matching the v4
+				// SaveCall, which also checks the policy before geocoding.
+				Geolocation = model.PostedGeoLocation() ?? model.Call?.GeoLocationData,
 				What3Words = model.What3Word,
 				ContactName = model.Call?.ContactName,
 				ContactInfo = model.Call?.ContactNumber,

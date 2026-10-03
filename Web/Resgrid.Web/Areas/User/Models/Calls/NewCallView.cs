@@ -50,5 +50,13 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 			AdditionalContacts = new List<string>();
 			DestinationPois = new List<SelectListItem>();
 		}
+
+		/// <summary>
+		/// The pin the form posted, in the call's "lat,lon" form; null when none was placed. The form posts the pin as
+		/// <see cref="Latitude"/>/<see cref="Longitude"/>, never as Call.GeoLocationData, so this is what the new-call field
+		/// policy checks.
+		/// </summary>
+		public string PostedGeoLocation() =>
+			!string.IsNullOrEmpty(Latitude) && !string.IsNullOrEmpty(Longitude) ? string.Format("{0},{1}", Latitude, Longitude) : null;
 	}
 }

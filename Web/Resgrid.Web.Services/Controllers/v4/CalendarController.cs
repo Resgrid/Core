@@ -670,7 +670,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (department.IsUserAnAdmin(currentUserId))
 				calendarItem.IsAdminOrCreator = true;
-			else if (!String.IsNullOrWhiteSpace(item.CreatorUserId) && item.CreatorUserId == currentUserId)
+			else if (!String.IsNullOrWhiteSpace(item.CreatorUserId) && string.Equals(item.CreatorUserId, currentUserId, StringComparison.OrdinalIgnoreCase))
 				calendarItem.IsAdminOrCreator = true;
 			else
 				calendarItem.IsAdminOrCreator = false;

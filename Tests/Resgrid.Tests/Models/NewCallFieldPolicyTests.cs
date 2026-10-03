@@ -222,5 +222,29 @@ namespace Resgrid.Tests.Models
 
 			description.Should().Contain(NewCallFieldKeys.Address);
 		}
+
+		[Test]
+		public void A_pin_placed_on_the_web_form_satisfies_a_required_geolocation()
+		{
+			// The web form posts the pin as Latitude/Longitude; Call.GeoLocationData is only filled in once the call is saved,
+			// so a policy reading it rejected every web call, pin or no pin.
+			var policy = Requiring(NewCallFieldKeys.Geolocation);
+			var model = new Resgrid.Web.Areas.User.Models.Calls.NewCallView { Call = new Call(), Latitude = "39.2733", Longitude = "-119.5841" };
+
+			model.PostedGeoLocation().Should().Be("39.2733,-119.5841");
+			NewCallFieldPolicyValidator.Validate(policy, new NewCallFieldValues { Geolocation = model.PostedGeoLocation() }).Should().BeEmpty();
+		}
+
+		[Test]
+		public void An_address_without_a_pin_does_not_satisfy_a_required_geolocation()
+		{
+			// Same rule as the v4 SaveCall, which checks the policy before it geocodes the address.
+			var policy = Requiring(NewCallFieldKeys.Geolocation);
+			var model = new Resgrid.Web.Areas.User.Models.Calls.NewCallView { Call = new Call { Address = "1 Main St" }, Latitude = "39.2733", Longitude = "" };
+
+			model.PostedGeoLocation().Should().BeNull();
+			NewCallFieldPolicyValidator.Validate(policy, new NewCallFieldValues { Address = model.Call.Address, Geolocation = model.PostedGeoLocation() })
+				.Should().ContainSingle().Which.Key.Should().Be(NewCallFieldKeys.Geolocation);
+		}
 	}
 }

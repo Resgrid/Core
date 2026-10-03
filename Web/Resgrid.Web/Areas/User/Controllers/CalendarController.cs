@@ -606,7 +606,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (department.IsUserAnAdmin(UserId))
 					calendarItem.IsAdminOrCreator = true;
-				else if (!String.IsNullOrWhiteSpace(item.CreatorUserId) && item.CreatorUserId == UserId)
+				else if (!String.IsNullOrWhiteSpace(item.CreatorUserId) && string.Equals(item.CreatorUserId, UserId, StringComparison.OrdinalIgnoreCase))
 					calendarItem.IsAdminOrCreator = true;
 				else
 					calendarItem.IsAdminOrCreator = false;
@@ -724,7 +724,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			// Check if user is event creator or group admin (for admin check-in buttons)
 			var isDepartmentAdminOrCreator = model.Department.IsUserAnAdmin(UserId)
-				|| (!string.IsNullOrWhiteSpace(model.CalendarItem.CreatorUserId) && model.CalendarItem.CreatorUserId == UserId);
+				|| (!string.IsNullOrWhiteSpace(model.CalendarItem.CreatorUserId) && string.Equals(model.CalendarItem.CreatorUserId, UserId, StringComparison.OrdinalIgnoreCase));
 			DepartmentGroup adminGroup = null;
 			if (!isDepartmentAdminOrCreator)
 			{

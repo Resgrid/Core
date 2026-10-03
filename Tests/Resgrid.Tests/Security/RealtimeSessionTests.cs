@@ -186,5 +186,26 @@ namespace Resgrid.Tests.Security
 
 			registry.Count.Should().Be(0);
 		}
+
+		[TestCase(typeof(EventingMiddleware.SessionValidationHubFilter))]
+		[TestCase(typeof(Resgrid.Web.Services.Middleware.SessionValidationHubFilter))]
+		public async Task A_connection_that_fails_to_connect_is_not_left_tracked(Type filterType)
+		{
+			// SignalR skips OnDisconnectedAsync when OnConnectedAsync throws, so the filter has to remove the entry itself.
+			var registry = new SessionConnectionRegistry();
+			var filter = (IHubFilter)Activator.CreateInstance(filterType, Mock.Of<IUserSessionService>(), registry);
+			var claims = new[] { new Claim(ClaimTypes.NameIdentifier, "user-1"), new Claim(SessionClaimTypes.SessionId, "session-9") };
+
+			var (joinFails, groups, _) = Connection(claims);
+			groups.Setup(g => g.AddToGroupAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new InvalidOperationException("backplane unavailable"));
+			await FluentActions.Awaiting(() => filter.OnConnectedAsync(joinFails, _ => Task.CompletedTask)).Should().ThrowAsync<InvalidOperationException>();
+			registry.Count.Should().Be(0, "a failed group join leaves nothing for the sweep");
+
+			var (hubFails, _, _) = Connection(claims);
+			await FluentActions.Awaiting(() => filter.OnConnectedAsync(hubFails, _ => throw new InvalidOperationException("hub refused")))
+				.Should().ThrowAsync<InvalidOperationException>();
+			registry.Count.Should().Be(0, "a hub that refuses the connection leaves nothing for the sweep");
+		}
 	}
 }

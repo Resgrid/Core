@@ -226,8 +226,9 @@ namespace Resgrid.Providers.Authentication
 					if (reader.PeekState() is CborReaderState.UnsignedInteger or CborReaderState.NegativeInteger)
 					{
 						var label = reader.ReadInt64();
+						// Checked: an alg outside the int range is unreadable, never truncated into a different algorithm.
 						if (label == 3 && reader.PeekState() is CborReaderState.UnsignedInteger or CborReaderState.NegativeInteger)
-							return (int)reader.ReadInt64();
+							return checked((int)reader.ReadInt64());
 					}
 					else
 					{

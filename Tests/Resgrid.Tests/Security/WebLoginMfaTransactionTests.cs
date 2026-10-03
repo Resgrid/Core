@@ -692,7 +692,7 @@ namespace Resgrid.Tests.Security
 			localizer.Setup(l => l[It.IsAny<string>()]).Returns((string key) => new LocalizedString(key, key));
 			return new TwoFactorController(_users.Object, null, _audits.Object, UrlEncoder.Default, localizer.Object, Mock.Of<IUserStore<IdentityUser>>(),
 				new InMemoryUserMfaStateRepository(), Mock.Of<IUserSessionService>(), (evidence ?? _evidence).Object, _policyService, new InMemoryUserPasskeyRepository(),
-				_notices.Object, _activity.Object, _passkeys.Object, _approvals.Object, _broker.Object, _returnTargets.Object, _sso.Object, _departments.Object)
+				_notices.Object, _activity.Object, _passkeys.Object, _approvals.Object, _broker.Object, _returnTargets.Object, _sso.Object, _departments.Object, Mock.Of<Resgrid.Model.Providers.ICacheProvider>(), new Microsoft.AspNetCore.DataProtection.EphemeralDataProtectionProvider())
 			{
 				ControllerContext = new ControllerContext { HttpContext = http },
 				Url = Urls()

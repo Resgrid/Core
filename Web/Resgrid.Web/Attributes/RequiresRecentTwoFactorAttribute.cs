@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -9,8 +10,10 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Resgrid.Config;
+using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Model.TwoFactor;
+using Resgrid.Web.Helpers;
 using IdentityUser = Resgrid.Model.Identity.IdentityUser;
 
 namespace Resgrid.Web.Attributes
@@ -27,11 +30,19 @@ namespace Resgrid.Web.Attributes
 	///   <item><see cref="TwoFactorEnforcementOutcome.EnrollmentRequired"/> — redirect to enrollment.</item>
 	///   <item><see cref="TwoFactorEnforcementOutcome.StepUpRequired"/> — redirect to Verify2FA.</item>
 	/// </list>
+	/// <para>
+	/// A submission stopped for step-up is not lost: it is held (<see cref="StepUpFormReplay"/>), Verify2FA returns to a page that
+	/// posts it back, and the global <see cref="Filters.HeldSubmissionReplayFilter"/> puts the held form in place before model
+	/// binding. A script call is answered 403 with the Verify2FA address instead of a redirect it cannot follow.
+	/// </para>
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = false)]
 	public sealed class RequiresRecentTwoFactorAttribute : Attribute, IAsyncActionFilter
 	{
 		internal const string MfaVerifiedAtHttpContextItemKey = "mfa_verified_at";
+
+		/// <summary>The response header a script call reads for where to send the user to verify.</summary>
+		public const string StepUpRedirectHeader = "X-Resgrid-Step-Up";
 
 		/// <summary>
 		/// Requires MFA for the decorated operation even when the department-wide administrator
@@ -126,12 +137,10 @@ namespace Resgrid.Web.Attributes
 
 			// The proof is server-side evidence bound to this session and the account's current generation (passkey plan
 			// section 7.6 row 7), so a password change or authenticator change ends it everywhere at once.
+			var activeDepartmentId = StepUpFormReplay.ActiveDepartmentOf(claimsPrincipal);
 			DateTime? lastStepUpVerifiedAtUtc;
 			try
 			{
-				int? activeDepartmentId = int.TryParse(claimsPrincipal.FindFirst(ClaimTypes.PrimaryGroupSid)?.Value, out var parsedDepartment)
-					? parsedDepartment
-					: null;
 				lastStepUpVerifiedAtUtc = await Helpers.StepUpEvidence.GetLatestSecondFactorUtcAsync(
 					services.GetService<IMfaEvidenceService>(), identityUser, context.HttpContext, services.GetService<IMfaPolicyService>(),
 					activeDepartmentId, MethodScope, context.HttpContext.RequestAborted);
@@ -176,8 +185,13 @@ namespace Resgrid.Web.Attributes
 
 				case TwoFactorEnforcementOutcome.StepUpRequired:
 				default:
-					var returnUrl = ReturnUrlFor(context.HttpContext.Request);
-					context.Result = new RedirectToRouteResult(new RouteValueDictionary
+					var request = context.HttpContext.Request;
+
+					// A submission is held so verifying finishes it; only one that cannot be held must be made again.
+					var (returnUrl, submissionLost) = await StepUpFormReplay.HoldForVerificationAsync(context.HttpContext,
+						services.GetService<ICacheProvider>(), services.GetService<IDataProtectionProvider>(), identityUser.Id, ReturnUrlFor(request));
+
+					var verifyRoute = new RouteValueDictionary
 					{
 						{ "area", "User" },
 						{ "controller", "TwoFactor" },
@@ -185,7 +199,25 @@ namespace Resgrid.Web.Attributes
 						{ "returnUrl", returnUrl },
 						// A display hint only: Verify2FA offers a passkey where this scope accepts one; this filter still decides.
 						{ "scope", MethodScope.ToString() }
-					});
+					};
+					if (submissionLost)
+						verifyRoute["resubmit"] = "1";
+
+					if (StepUpFormReplay.IsScriptRequest(request))
+					{
+						// A script would follow a redirect and read the Verify2FA page as its answer (a "successful" save that never
+						// happened). Tell it where the user must go; the page's ajaxError handler navigates there.
+						var verifyUrl = $"{request.PathBase}/User/TwoFactor/Verify2FA?returnUrl={Uri.EscapeDataString(returnUrl)}" +
+							$"&scope={Uri.EscapeDataString(MethodScope.ToString())}" + (submissionLost ? "&resubmit=1" : "");
+						context.HttpContext.Response.Headers[StepUpRedirectHeader] = verifyUrl;
+						context.Result = new JsonResult(new { success = false, error = "step_up_required", redirect = verifyUrl })
+						{
+							StatusCode = StatusCodes.Status403Forbidden
+						};
+						return;
+					}
+
+					context.Result = new RedirectToRouteResult(verifyRoute);
 					return;
 			}
 		}

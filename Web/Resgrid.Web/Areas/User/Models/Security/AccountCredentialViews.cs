@@ -31,6 +31,13 @@ namespace Resgrid.Web.Areas.User.Models.Security
 		[Required, DataType(DataType.Password)]
 		[Display(Name = "Password")]
 		public string Password { get; set; }
+
+		/// <summary>The gate could not hold what the user submitted; after confirming they must submit it again.</summary>
+		public bool SubmissionNotHeld { get; set; }
+
+		/// <summary>The gate is holding what the user submitted; confirming finishes it.</summary>
+		public bool HoldingSubmission =>
+			ReturnUrl != null && ReturnUrl.Contains(Resgrid.Web.Helpers.StepUpFormReplay.ResumePath + "?", System.StringComparison.OrdinalIgnoreCase);
 	}
 
 	public class ChangePasswordView

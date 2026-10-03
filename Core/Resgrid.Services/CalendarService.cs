@@ -273,6 +273,7 @@ namespace Resgrid.Services
 			calendarItem.IsAllDay = item.IsAllDay;
 			calendarItem.ItemType = item.ItemType;
 			calendarItem.SignupType = item.SignupType;
+			calendarItem.CheckInType = item.CheckInType;
 			calendarItem.Public = item.Public;
 			calendarItem.StartTimezone = timeZone;
 			calendarItem.EndTimezone = timeZone;
@@ -322,9 +323,10 @@ namespace Resgrid.Services
 					calItem.IsAllDay = saved.IsAllDay;
 					calItem.ItemType = saved.ItemType;
 					calItem.SignupType = saved.SignupType;
+					calItem.CheckInType = saved.CheckInType;
 					calItem.Public = saved.Public;
-					calendarItem.StartTimezone = timeZone;
-					calendarItem.EndTimezone = timeZone;
+					calItem.StartTimezone = timeZone;
+					calItem.EndTimezone = timeZone;
 
 					var saved2 = await SaveCalendarItemAsync(calItem, cancellationToken);
 				}
@@ -594,11 +596,17 @@ namespace Resgrid.Services
 
 				if (ConfigHelper.CanTransmit(department.DepartmentId))
 				{
+					// Notifications address active members only: removed, disabled and hidden memberships are skipped.
+					var activeUserIds = await GetActiveMemberUserIdsAsync(calendarItem.DepartmentId);
+
 					if (items.Any(x => x.StartsWith("D:")))
 					{
 						// Notify the entire department
 						foreach (var profile in profiles)
 						{
+							if (!activeUserIds.Contains(profile.Key))
+								continue;
+
 							await SendCalendarPromptAsync(calendarItem, profile.Key, message, departmentNumber, title, profile.Value, department);
 						}
 					}
@@ -616,6 +624,9 @@ namespace Resgrid.Services
 								{
 									foreach (var member in group.Members)
 									{
+										if (!activeUserIds.Contains(member.UserId))
+											continue;
+
 										if (profiles.ContainsKey(member.UserId))
 											await SendCalendarPromptAsync(calendarItem, member.UserId, message, departmentNumber, title, profiles[member.UserId], department);
 										else
@@ -655,8 +666,14 @@ namespace Resgrid.Services
 
 			if (ConfigHelper.CanTransmit(department.DepartmentId))
 			{
+				var activeUserIds = await GetActiveMemberUserIdsAsync(calendarItem.DepartmentId);
+
 				foreach (var userId in userIds)
 				{
+					// Removed, disabled and hidden members are not notified.
+					if (!activeUserIds.Contains(userId))
+						continue;
+
 					if (profiles.ContainsKey(userId))
 						await SendCalendarPromptAsync(calendarItem, userId, message, departmentNumber, title, profiles[userId], department);
 					else
@@ -665,6 +682,13 @@ namespace Resgrid.Services
 			}
 
 			return true;
+		}
+
+		/// <summary>The department's active member ids (case-insensitive); never null.</summary>
+		private async Task<HashSet<string>> GetActiveMemberUserIdsAsync(int departmentId)
+		{
+			return await _departmentsService.GetActiveMemberUserIdsAsync(departmentId)
+				?? new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 		}
 
 		private async System.Threading.Tasks.Task SendCalendarPromptAsync(CalendarItem calendarItem, string userId, string message,
@@ -877,6 +901,9 @@ namespace Resgrid.Services
 			if (calendarItem == null)
 				return null;
 
+			// A string-keyed entity with its id already set looks like an existing row to SaveOrUpdateAsync,
+			// which then runs an UPDATE that matches nothing and the check-in is silently lost. This is
+			// always a new row, so insert it explicitly.
 			var checkIn = new CalendarItemCheckIn
 			{
 				CalendarItemCheckInId = Guid.NewGuid().ToString(),
@@ -892,7 +919,7 @@ namespace Resgrid.Services
 				Timestamp = DateTime.UtcNow
 			};
 
-			var saved = await _calendarItemCheckInRepository.SaveOrUpdateAsync(checkIn, cancellationToken);
+			var saved = await _calendarItemCheckInRepository.InsertAsync(checkIn, cancellationToken);
 			return saved;
 		}
 

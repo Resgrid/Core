@@ -26,6 +26,9 @@ var resgrid;
             $(document).ready(function () {
                 callMarker = null;
                 map = null;
+                // A typed (or previously saved) address always wins over a reverse-geocoded one; only an
+                // empty field is filled from the map pin.
+                userSuppliedAddress = jQuery.trim($("#Call_Address").val() || '') !== '';
 
                 let quillNature = new Quill('#nature-container', {
                     placeholder: '',
@@ -64,6 +67,9 @@ var resgrid;
                         $("#searchButton").click();
                         return false;
                     }
+                });
+                $("#Call_Address").on("input", function () {
+                    userSuppliedAddress = jQuery.trim($(this).val() || '') !== '';
                 });
                 $("#What3Word").bind("keypress", function (event) {
                     if (event.keyCode == 13) {
@@ -393,7 +399,7 @@ var resgrid;
                         return r.json();
                     })
                     .then(function(result) {
-                        if (result && result.Data && result.Data.Address) {
+                        if (result && result.Data && result.Data.Address && !userSuppliedAddress) {
                             $("#Call_Address").val(result.Data.Address);
                         }
                     })

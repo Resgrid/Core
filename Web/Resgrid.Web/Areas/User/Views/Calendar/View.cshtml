@@ -534,42 +534,40 @@
             </div>
         </div>
     }
-    @* Admin Check-In on Behalf — admins can always check in users, even after the event *@
-    @if (Model.IsAdmin && Model.CalendarItem.Attendees != null && Model.CalendarItem.Attendees.Any())
+    @* Admin Check-In on Behalf — admins can always check in users, even after the event. The candidates are active
+       department members (a group admin's own groups only) not yet checked in; they need not be attendees. *@
+    var adminCheckInCandidates = ViewBag.AdminCheckInCandidates as List<SelectListItem>;
+    @if (Model.IsAdmin && adminCheckInCandidates != null && adminCheckInCandidates.Any())
     {
-        var uncheckedAttendees = Model.CalendarItem.Attendees
-            .Where(a => Model.CheckIns == null || !Model.CheckIns.Any(c => string.Equals(c.UserId, a.UserId, StringComparison.OrdinalIgnoreCase)))
-            .ToList();
-        if (uncheckedAttendees.Any())
-        {
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="ibox float-e-margins">
-                        <div class="ibox-title">
-                            <h5><i class="fa fa-user-plus"></i> @localizer["AdminCheckIn"]</h5>
-                        </div>
-                        <div class="ibox-content">
-                            <p class="text-muted">@localizer["CheckInOnBehalf"]</p>
-                            <div class="list-group">
-                                @foreach (var attendee in uncheckedAttendees)
-                                {
-                                    var aName = Model.PersonnelNames?.FirstOrDefault(x => string.Equals(x.UserId, attendee.UserId, StringComparison.OrdinalIgnoreCase));
-                                    @using (Html.BeginForm("AdminCheckIn", "Calendar", FormMethod.Post, new { area = "User", style = "display:inline;" }))
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5><i class="fa fa-user-plus"></i> @localizer["AdminCheckIn"]</h5>
+                    </div>
+                    <div class="ibox-content">
+                        @using (Html.BeginForm("AdminCheckIn", "Calendar", FormMethod.Post, new { area = "User" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="calendarItemId" value="@Model.CalendarItem.CalendarItemId" />
+                            <div class="form-group">
+                                <label class="control-label" for="adminCheckInUserId">@localizer["CheckInOnBehalf"]</label>
+                                <select id="adminCheckInUserId" name="userId" class="form-control" style="width:100%;" required>
+                                    <option value=""></option>
+                                    @foreach (var candidate in adminCheckInCandidates)
                                     {
-                                        @Html.AntiForgeryToken()
-                                        <input type="hidden" name="calendarItemId" value="@Model.CalendarItem.CalendarItemId" />
-                                        <input type="hidden" name="userId" value="@attendee.UserId" />
-                                        <button type="submit" class="list-group-item list-group-item-action" style="cursor:pointer;">
-                                            <i class="fa fa-sign-in text-primary"></i> @(aName?.Name ?? attendee.UserId)
-                                        </button>
+                                        <option value="@candidate.Value">@candidate.Text</option>
                                     }
-                                }
+                                </select>
                             </div>
-                        </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa fa-sign-in"></i> @localizer["CheckIn"]
+                            </button>
+                        }
                     </div>
                 </div>
             </div>
-        }
+        </div>
     }
     } @* end CheckInType != Disabled *@
 </div>
@@ -577,6 +575,13 @@
 {
     <script type="text/javascript">
         $(document).ready(function () {
+            if ($.fn.select2 && $('#adminCheckInUserId').length) {
+                $('#adminCheckInUserId').select2({
+                    placeholder: '@JsEncoder.Encode(localizer["CheckInOnBehalf"])',
+                    allowClear: true
+                });
+            }
+
             $.ajax({
                 url: resgrid.absoluteBaseUrl + '/User/Calendar/GetMapDataForItem?calendarItemId=@Model.CalendarItem.CalendarItemId',
                 contentType: 'application/json; charset=utf-8',

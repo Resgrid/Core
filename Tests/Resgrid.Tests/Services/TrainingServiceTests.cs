@@ -23,6 +23,7 @@ namespace Resgrid.Tests.Services
 		private MockTrainingUserRepository _userRepository;
 		private Mock<ICommunicationService> _communicationServiceMock;
 		private Mock<IDepartmentsService> _departmentServiceMock;
+		private Mock<IDepartmentSettingsService> _departmentSettingsServiceMock;
 		private TrainingService _trainingService;
 
 		[SetUp]
@@ -34,6 +35,7 @@ namespace Resgrid.Tests.Services
 			_userRepository = new MockTrainingUserRepository();
 			_communicationServiceMock = new Mock<ICommunicationService>();
 			_departmentServiceMock = new Mock<IDepartmentsService>();
+			_departmentSettingsServiceMock = new Mock<IDepartmentSettingsService>();
 
 			_trainingService = new TrainingService(
 				_trainingRepository,
@@ -41,7 +43,8 @@ namespace Resgrid.Tests.Services
 				_userRepository,
 				_questionRepository,
 				_communicationServiceMock.Object,
-				_departmentServiceMock.Object
+				_departmentServiceMock.Object,
+				_departmentSettingsServiceMock.Object
 			);
 		}
 
@@ -271,6 +274,204 @@ namespace Resgrid.Tests.Services
 			// Assert
 			result.Description.Should().NotContain("<script>");
 			result.TrainingText.Should().NotContain("<script>");
+		}
+
+		[Test]
+		public async Task SaveAsync_Should_Keep_Underlined_And_Escaped_Text_In_Training_Content()
+		{
+			// Arrange - what Quill posts for an underlined acronym and an escaped address (#181)
+			var training = new Training
+			{
+				Name = "Training",
+				Description = "<p>The <u>NORA</u> program</p>",
+				TrainingText = "<p>Contact NORA &lt;nora@example.org&gt; today</p>",
+				DepartmentId = 1,
+				CreatedByUserId = TestData.Users.TestUser1Id,
+				CreatedOn = DateTime.UtcNow
+			};
+
+			// Act
+			var result = await _trainingService.SaveAsync(training);
+
+			// Assert
+			result.Description.Should().Be("<p>The <u>NORA</u> program</p>");
+			result.TrainingText.Should().Be("<p>Contact NORA &lt;nora@example.org&gt; today</p>");
+		}
+
+		#endregion
+
+		#region SaveAsync Question Editing Tests (#180)
+
+		private void SeedTrainingWithTwoQuestions()
+		{
+			_trainingRepository.SeedTraining(new Training
+			{
+				TrainingId = 1,
+				DepartmentId = 1,
+				Name = "Quiz Training",
+				Description = "Description",
+				TrainingText = "Text",
+				CreatedByUserId = TestData.Users.TestUser1Id,
+				CreatedOn = DateTime.UtcNow
+			});
+
+			_questionRepository.SeedQuestion(new TrainingQuestion
+			{
+				TrainingQuestionId = 1,
+				TrainingId = 1,
+				Question = "Q1",
+				Answers = new List<TrainingQuestionAnswer>
+				{
+					new TrainingQuestionAnswer { TrainingQuestionAnswerId = 10, TrainingQuestionId = 1, Answer = "A", Correct = true },
+					new TrainingQuestionAnswer { TrainingQuestionAnswerId = 11, TrainingQuestionId = 1, Answer = "B" }
+				}
+			});
+
+			_questionRepository.SeedQuestion(new TrainingQuestion
+			{
+				TrainingQuestionId = 2,
+				TrainingId = 1,
+				Question = "Q2",
+				Answers = new List<TrainingQuestionAnswer>
+				{
+					new TrainingQuestionAnswer { TrainingQuestionAnswerId = 20, TrainingQuestionId = 2, Answer = "C", Correct = true },
+					new TrainingQuestionAnswer { TrainingQuestionAnswerId = 21, TrainingQuestionId = 2, Answer = "D" }
+				}
+			});
+		}
+
+		private static TrainingQuestion PostedQuestion(int questionId, string text, params (int id, string answer)[] answers)
+		{
+			return new TrainingQuestion
+			{
+				TrainingQuestionId = questionId,
+				TrainingId = 1,
+				Question = text,
+				Answers = answers.Select(a => new TrainingQuestionAnswer { TrainingQuestionAnswerId = a.id, TrainingQuestionId = questionId, Answer = a.answer }).ToList()
+			};
+		}
+
+		private async Task<Training> EditTrainingAsync(params TrainingQuestion[] postedQuestions)
+		{
+			var existing = await _trainingService.GetTrainingByIdAsync(1);
+			existing.Questions = postedQuestions.ToList();
+
+			return await _trainingService.SaveAsync(existing);
+		}
+
+		[Test]
+		public async Task SaveAsync_Editing_Unchanged_Questions_Should_Not_Duplicate_Them()
+		{
+			SeedTrainingWithTwoQuestions();
+
+			// Save the same questions twice, as two consecutive edits would
+			await EditTrainingAsync(PostedQuestion(1, "Q1", (10, "A"), (11, "B")), PostedQuestion(2, "Q2", (20, "C"), (21, "D")));
+			await EditTrainingAsync(PostedQuestion(1, "Q1", (10, "A"), (11, "B")), PostedQuestion(2, "Q2", (20, "C"), (21, "D")));
+
+			var stored = (await _questionRepository.GetTrainingQuestionsByTrainingIdAsync(1)).ToList();
+			stored.Should().HaveCount(2);
+			stored.Select(x => x.TrainingQuestionId).Should().BeEquivalentTo(new[] { 1, 2 });
+		}
+
+		[Test]
+		public async Task SaveAsync_Editing_Should_Update_Questions_In_Place_And_Delete_Removed_Ones()
+		{
+			SeedTrainingWithTwoQuestions();
+
+			// Q1 reworded, Q2 removed, a new question added
+			await EditTrainingAsync(PostedQuestion(1, "Q1 reworded", (10, "A"), (11, "B")), PostedQuestion(0, "Q3", (0, "E")));
+
+			var stored = (await _questionRepository.GetTrainingQuestionsByTrainingIdAsync(1)).ToList();
+			stored.Should().HaveCount(2);
+			stored.Should().Contain(x => x.TrainingQuestionId == 1 && x.Question == "Q1 reworded");
+			stored.Should().Contain(x => x.Question == "Q3" && x.TrainingQuestionId > 2);
+			stored.Should().NotContain(x => x.TrainingQuestionId == 2);
+		}
+
+		[Test]
+		public async Task SaveAsync_Editing_Should_Not_Touch_Questions_Of_Another_Training()
+		{
+			SeedTrainingWithTwoQuestions();
+			_questionRepository.SeedQuestion(new TrainingQuestion { TrainingQuestionId = 99, TrainingId = 2, Question = "Other training" });
+
+			// A posted id that is not one of this training's questions is added as a new question
+			await EditTrainingAsync(PostedQuestion(1, "Q1", (10, "A")), PostedQuestion(99, "Hijacked", (0, "X")));
+
+			(await _questionRepository.GetByIdAsync(99)).Question.Should().Be("Other training");
+			(await _questionRepository.GetByIdAsync(99)).TrainingId.Should().Be(2);
+
+			var stored = (await _questionRepository.GetTrainingQuestionsByTrainingIdAsync(1)).ToList();
+			stored.Should().HaveCount(2);
+			stored.Should().Contain(x => x.Question == "Hijacked" && x.TrainingQuestionId != 99);
+		}
+
+		[Test]
+		public async Task SaveAsync_Editing_Question_With_All_Answers_Replaced_Should_Recreate_It()
+		{
+			SeedTrainingWithTwoQuestions();
+
+			// None of Q2's stored answers survive, so the old row (and its answers) has to go
+			await EditTrainingAsync(PostedQuestion(1, "Q1", (10, "A"), (11, "B")), PostedQuestion(2, "Q2", (0, "New answer")));
+
+			var stored = (await _questionRepository.GetTrainingQuestionsByTrainingIdAsync(1)).ToList();
+			stored.Should().HaveCount(2);
+			stored.Should().NotContain(x => x.TrainingQuestionId == 2);
+
+			var recreated = stored.Single(x => x.Question == "Q2");
+			recreated.TrainingQuestionId.Should().BeGreaterThan(2);
+			recreated.Answers.Should().ContainSingle(x => x.Answer == "New answer");
+		}
+
+		[Test]
+		public async Task SaveAsync_Editing_Without_Questions_Loaded_Should_Leave_Stored_Questions()
+		{
+			SeedTrainingWithTwoQuestions();
+
+			var existing = await _trainingRepository.GetByIdAsync(1);
+			existing.Questions = null;
+			await _trainingService.SaveAsync(existing);
+
+			(await _questionRepository.GetTrainingQuestionsByTrainingIdAsync(1)).Should().HaveCount(2);
+		}
+
+		#endregion
+
+		#region SendInitialTrainingNoticeAsync Tests
+
+		[Test]
+		public async Task SendInitialTrainingNoticeAsync_Should_Notify_Each_User_From_The_Department_Number()
+		{
+			var previousDoNotBroadcast = Resgrid.Config.SystemBehaviorConfig.DoNotBroadcast;
+			Resgrid.Config.SystemBehaviorConfig.DoNotBroadcast = false;
+
+			try
+			{
+				_departmentSettingsServiceMock.Setup(x => x.GetTextToCallNumberForDepartmentAsync(1)).ReturnsAsync("15555550100");
+
+				var training = new Training
+				{
+					TrainingId = 1,
+					DepartmentId = 1,
+					Name = "Hose Lays",
+					Users = new List<TrainingUser>
+					{
+						new TrainingUser { UserId = TestData.Users.TestUser1Id },
+						new TrainingUser { UserId = TestData.Users.TestUser2Id }
+					}
+				};
+
+				var result = await _trainingService.SendInitialTrainingNoticeAsync(training);
+
+				result.Should().BeTrue();
+				_communicationServiceMock.Verify(x => x.SendNotificationAsync(It.IsAny<string>(), 1, "New Training (Hose Lays) assigned to you", "15555550100",
+					It.IsAny<Department>(), "New Training Notice", It.IsAny<UserProfile>(), It.IsAny<bool>()), Times.Exactly(2));
+				_communicationServiceMock.Verify(x => x.SendNotificationAsync(TestData.Users.TestUser2Id, It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(),
+					It.IsAny<Department>(), It.IsAny<string>(), It.IsAny<UserProfile>(), It.IsAny<bool>()), Times.Once);
+			}
+			finally
+			{
+				Resgrid.Config.SystemBehaviorConfig.DoNotBroadcast = previousDoNotBroadcast;
+			}
 		}
 
 		#endregion

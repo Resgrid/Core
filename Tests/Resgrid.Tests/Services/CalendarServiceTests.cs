@@ -106,6 +106,12 @@ namespace Resgrid.Tests.Services
 				Resgrid.Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Add(_testDepartment.DepartmentId);
 				_userProfileServiceMock.Setup(x => x.GetAllProfilesForDepartmentAsync(999, false))
 					.ReturnsAsync(new Dictionary<string, UserProfile>());
+				_departmentsServiceMock.Setup(x => x.GetActiveMemberUserIdsAsync(999))
+					.ReturnsAsync(new HashSet<string>(StringComparer.OrdinalIgnoreCase) { UserId });
+
+				// The mocks live for the whole fixture; each test verifies only its own calls.
+				_communicationServiceMock.Invocations.Clear();
+				_textResponsePromptServiceMock.Invocations.Clear();
 			}
 
 			protected override void After_all_tests()
@@ -143,6 +149,56 @@ namespace Resgrid.Tests.Services
 				// Assert
 				_textResponsePromptServiceMock.Verify(x => x.RecordCalendarRsvpPromptAsync(It.IsAny<CalendarItem>(), It.IsAny<string>(),
 					It.IsAny<System.Threading.CancellationToken>()), Times.Never);
+			}
+
+			[Test]
+			public async Task should_not_notify_removed_disabled_or_hidden_members()
+			{
+				// Arrange: "inactive-1" is not in the active member set (removed, disabled or hidden)
+				var calendarItem = CreateRsvpCalendarItem();
+				_communicationServiceMock.Setup(x => x.SendCalendarAsync(It.IsAny<string>(), 999, It.IsAny<string>(),
+					It.IsAny<string>(), It.IsAny<string>(), null, _testDepartment)).ReturnsAsync(true);
+
+				// Act
+				await _calendarService.NotifyUsersAboutCalendarItemAsync(calendarItem, new List<string> { "inactive-1", UserId.ToUpperInvariant() });
+
+				// Assert
+				_communicationServiceMock.Verify(x => x.SendCalendarAsync("inactive-1", It.IsAny<int>(), It.IsAny<string>(),
+					It.IsAny<string>(), It.IsAny<string>(), It.IsAny<UserProfile>(), It.IsAny<Department>()), Times.Never);
+				_communicationServiceMock.Verify(x => x.SendCalendarAsync(UserId.ToUpperInvariant(), 999, It.IsAny<string>(),
+					It.IsAny<string>(), It.IsAny<string>(), null, _testDepartment), Times.Once);
+			}
+
+			[Test]
+			public async Task should_not_notify_inactive_department_or_group_members_of_a_new_item()
+			{
+				// Arrange
+				var calendarItem = CreateRsvpCalendarItem();
+				calendarItem.Entities = "G:7";
+				_departmentGroupsServiceMock.Setup(x => x.GetAllGroupsForDepartmentAsync(999)).ReturnsAsync(new List<DepartmentGroup>
+				{
+					new DepartmentGroup
+					{
+						DepartmentGroupId = 7,
+						DepartmentId = 999,
+						Members = new List<DepartmentGroupMember>
+						{
+							new DepartmentGroupMember { DepartmentGroupId = 7, UserId = UserId },
+							new DepartmentGroupMember { DepartmentGroupId = 7, UserId = "inactive-2" }
+						}
+					}
+				});
+				_communicationServiceMock.Setup(x => x.SendCalendarAsync(It.IsAny<string>(), 999, It.IsAny<string>(),
+					It.IsAny<string>(), It.IsAny<string>(), It.IsAny<UserProfile>(), _testDepartment)).ReturnsAsync(true);
+
+				// Act
+				await _calendarService.NotifyNewCalendarItemAsync(calendarItem);
+
+				// Assert
+				_communicationServiceMock.Verify(x => x.SendCalendarAsync("inactive-2", It.IsAny<int>(), It.IsAny<string>(),
+					It.IsAny<string>(), It.IsAny<string>(), It.IsAny<UserProfile>(), It.IsAny<Department>()), Times.Never);
+				_communicationServiceMock.Verify(x => x.SendCalendarAsync(UserId, 999, It.IsAny<string>(),
+					It.IsAny<string>(), It.IsAny<string>(), It.IsAny<UserProfile>(), _testDepartment), Times.Once);
 			}
 
 			private static CalendarItem CreateRsvpCalendarItem()

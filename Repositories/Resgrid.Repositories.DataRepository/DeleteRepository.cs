@@ -75,6 +75,9 @@ namespace Resgrid.Repositories.DataRepository
 								DELETE FROM [dbo].[UnitTrackingCredentials] WHERE UnitTrackingDeviceId IN (SELECT UnitTrackingDeviceId FROM [dbo].[UnitTrackingDevices] WHERE DepartmentId = @DepartmentId)
 								DELETE FROM [dbo].[UnitTrackingDevices] WHERE DepartmentId = @DepartmentId
 
+								-- Status timer acknowledgements reference Units (DepartmentId, UnitId) and UnitStates (cascades, but be explicit)
+								DELETE FROM [dbo].[UnitStatusAlertAcknowledgements] WHERE DepartmentId = @DepartmentId
+
 								OPEN unit_cursor
 								FETCH NEXT FROM unit_cursor INTO @UnitId
 

@@ -84,6 +84,16 @@ var resgrid;
                     }
                 });
                 resgrid.training.edittraining.questionsCount = maxIndex;
+
+                // Existing answers are rendered as answerForQuestion_<q>_<0..n>; start new answer ids above them so an
+                // answer added to an existing question does not reuse a rendered field name.
+                $('#questions input[name^="answerForQuestion_"], #questions textarea[name^="answerForQuestion_"]').each(function () {
+                    var match = $(this).attr('name').match(/^answerForQuestion_\d+_(\d+)$/);
+                    if (match) {
+                        var idx = parseInt(match[1], 10);
+                        if (idx > _answerIdCounter) _answerIdCounter = idx;
+                    }
+                });
             });
             function addQuestion() {
                 var removeTooltip = escapeHtml(i18n.removeQuestionTooltip || 'Remove this question');

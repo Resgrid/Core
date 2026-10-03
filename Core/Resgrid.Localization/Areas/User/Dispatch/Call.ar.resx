@@ -248,6 +248,7 @@
   <data name="File" xml:space="preserve"><value>ملف</value></data>
   <data name="Inactive" xml:space="preserve"><value>غير نشط</value></data>
   <data name="InvalidDestinationPoi" xml:space="preserve"><value>يرجى تحديد نقطة اهتمام صالحة للوجهة.</value></data>
+  <data name="InvalidCallCoordinates" xml:space="preserve"><value>يجب أن يكون خط العرض وخط الطول رقمين عشريين: خط العرض بين -90 و90، وخط الطول بين -180 و180.</value></data>
   <data name="LoggedOff" xml:space="preserve"><value>قام بتسجيل الخروج.</value></data>
   <data name="AttachFileRequired" xml:space="preserve"><value>يجب تحديد ملف لإرفاقه.</value></data>
   <data name="DocumentTypeNotImportable" xml:space="preserve"><value>نوع المستند ({0}) غير قابل للاستيراد.</value></data>

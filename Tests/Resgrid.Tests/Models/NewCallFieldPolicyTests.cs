@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using FluentAssertions;
 using NUnit.Framework;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Helpers;
 
@@ -85,6 +86,45 @@ namespace Resgrid.Tests.Models
 			policy.Rules.Should().HaveCount(1);
 			policy.Rules[0].Required.Should().BeTrue();
 			policy.Rules[0].Visible.Should().BeTrue();
+		}
+
+		[Test]
+		public void A_hidden_field_survives_the_stored_round_trip()
+		{
+			// The policy is stored protobuf-serialized. Visible defaults to true, so an unmarked false is
+			// the wire's implicit zero: it is never written, and reading it back leaves the initializer's
+			// true in place -- Normalize then drops the rule and every hidden field comes back visible.
+			var policy = PolicyWith(
+				new NewCallFieldRule { Key = NewCallFieldKeys.Address, Visible = false },
+				new NewCallFieldRule { Key = NewCallFieldKeys.Note, Visible = false, Required = true },
+				new NewCallFieldRule { Key = NewCallFieldKeys.IncidentId, Visible = true, Required = true }).Normalize();
+
+			var stored = ObjectSerialization.Serialize(policy);
+			var restored = ObjectSerialization.Deserialize<NewCallFieldPolicy>(stored).Normalize();
+
+			restored.Rules.Should().HaveCount(3);
+			restored.IsVisible(NewCallFieldKeys.Address).Should().BeFalse();
+			restored.IsVisible(NewCallFieldKeys.Note).Should().BeFalse();
+			restored.IsRequired(NewCallFieldKeys.Note).Should().BeFalse();
+			restored.IsVisible(NewCallFieldKeys.IncidentId).Should().BeTrue();
+			restored.IsRequired(NewCallFieldKeys.IncidentId).Should().BeTrue();
+			restored.IsVisible(NewCallFieldKeys.DispatchList).Should().BeTrue();
+		}
+
+		[Test]
+		public void A_policy_stored_before_visibility_was_written_still_reads_as_visible()
+		{
+			// Blobs already in the database never carry field 2 for a visible rule; they must keep
+			// reading as visible after the contract change.
+			var legacy = new NewCallFieldPolicy
+			{
+				Rules = new List<NewCallFieldRule> { new NewCallFieldRule { Key = NewCallFieldKeys.Address, Visible = true, Required = true } }
+			};
+
+			var restored = ObjectSerialization.Deserialize<NewCallFieldPolicy>(ObjectSerialization.Serialize(legacy));
+
+			restored.IsVisible(NewCallFieldKeys.Address).Should().BeTrue();
+			restored.IsRequired(NewCallFieldKeys.Address).Should().BeTrue();
 		}
 	}
 
@@ -181,6 +221,55 @@ namespace Resgrid.Tests.Models
 				NewCallFieldPolicyValidator.Validate(policy, new NewCallFieldValues()));
 
 			description.Should().Contain(NewCallFieldKeys.Address);
+		}
+
+		[Test]
+		public void A_pin_placed_on_the_web_form_satisfies_a_required_geolocation()
+		{
+			// The web form posts the pin as Latitude/Longitude; Call.GeoLocationData is only filled in once the call is saved,
+			// so a policy reading it rejected every web call, pin or no pin.
+			var policy = Requiring(NewCallFieldKeys.Geolocation);
+			var model = new Resgrid.Web.Areas.User.Models.Calls.NewCallView { Call = new Call(), Latitude = "39.2733", Longitude = "-119.5841" };
+
+			model.PostedGeoLocation().Should().Be("39.2733,-119.5841");
+			NewCallFieldPolicyValidator.Validate(policy, new NewCallFieldValues { Geolocation = model.PostedGeoLocation() }).Should().BeEmpty();
+		}
+
+		[Test]
+		public void An_address_without_a_pin_does_not_satisfy_a_required_geolocation()
+		{
+			// Same rule as the v4 SaveCall, which checks the policy before it geocodes the address.
+			var policy = Requiring(NewCallFieldKeys.Geolocation);
+			var model = new Resgrid.Web.Areas.User.Models.Calls.NewCallView { Call = new Call { Address = "1 Main St" }, Latitude = "39.2733", Longitude = "" };
+
+			model.PostedGeoLocation().Should().BeNull();
+			NewCallFieldPolicyValidator.Validate(policy, new NewCallFieldValues { Address = model.Call.Address, Geolocation = model.PostedGeoLocation() })
+				.Should().ContainSingle().Which.Key.Should().Be(NewCallFieldKeys.Geolocation);
+		}
+
+		[TestCase("39.2733", "-119.5841", false)]
+		[TestCase(" 39.2733 ", "-119.5841 ", false)]
+		[TestCase(null, null, false)]
+		[TestCase(" ", "", false)]
+		[TestCase("39.2733", "", true)]
+		[TestCase("", "-119.5841", true)]
+		[TestCase("90.5", "-119.5841", true)]
+		[TestCase("39.2733", "-180.5", true)]
+		[TestCase("39.2733a", "-119.5841", true)]
+		public void A_typed_pin_must_be_a_real_coordinate(string latitude, string longitude, bool invalid)
+		{
+			// NewCall refuses an invalid pin before the policy runs, so a typo cannot satisfy a required geolocation.
+			var model = new Resgrid.Web.Areas.User.Models.Calls.NewCallView { Call = new Call(), Latitude = latitude, Longitude = longitude };
+
+			model.HasInvalidPin().Should().Be(invalid);
+		}
+
+		[Test]
+		public void A_posted_pin_is_stored_without_surrounding_spaces()
+		{
+			var model = new Resgrid.Web.Areas.User.Models.Calls.NewCallView { Call = new Call(), Latitude = " 39.2733 ", Longitude = "-119.5841 " };
+
+			model.PostedGeoLocation().Should().Be("39.2733,-119.5841");
 		}
 	}
 }

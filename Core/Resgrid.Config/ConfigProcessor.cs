@@ -61,6 +61,7 @@ namespace Resgrid.Config
 						}
 					}
 
+					ApplyConnectionStringFallback();
 					return true;
 				}
 			}
@@ -127,7 +128,45 @@ namespace Resgrid.Config
 				}
 			}
 
+			ApplyConnectionStringFallback();
 			return hasSetAtLeastOneVariable;
+		}
+
+		// The CoreConnectionString value this processor filled in itself (null when it was configured explicitly).
+		private static string _derivedCoreConnectionString;
+
+		/// <summary>
+		/// SQL Server installs have long configured only DataConfig.ConnectionString, but the database upgrade
+		/// (FluentMigrator), identity and claims read DataConfig.CoreConnectionString. Left empty, FluentMigrator
+		/// silently falls back to its connectionless preview processor: no DDL is applied and the first
+		/// Exists() check throws NotImplementedException (GitHub #536). On SQL Server, an unset core connection
+		/// string therefore follows ConnectionString. An explicitly configured value always wins, and because the
+		/// config file and the environment variables are applied in turn, this re-runs after each and only ever
+		/// replaces a value it derived itself.
+		/// </summary>
+		private static void ApplyConnectionStringFallback()
+		{
+			var coreIsUnset = String.IsNullOrWhiteSpace(DataConfig.CoreConnectionString) ||
+				(_derivedCoreConnectionString != null && DataConfig.CoreConnectionString == _derivedCoreConnectionString);
+
+			if (!coreIsUnset)
+			{
+				_derivedCoreConnectionString = null;
+				return;
+			}
+
+			if (DataConfig.DatabaseType == DatabaseTypes.SqlServer && !String.IsNullOrWhiteSpace(DataConfig.ConnectionString))
+			{
+				DataConfig.CoreConnectionString = DataConfig.ConnectionString;
+				_derivedCoreConnectionString = DataConfig.ConnectionString;
+			}
+			else if (_derivedCoreConnectionString != null)
+			{
+				// No longer SQL Server (e.g. DatabaseType switched to Postgres later in loading): PostgreSQL needs an
+				// explicit core connection string, so don't leave the SQL Server one behind.
+				DataConfig.CoreConnectionString = "";
+				_derivedCoreConnectionString = null;
+			}
 		}
 	}
 }

@@ -360,6 +360,7 @@ namespace Resgrid.Services
 			builder.RegisterType<CustomMapService>().As<ICustomMapService>().SingleInstance();
 			builder.RegisterType<RouteService>().As<IRouteService>().SingleInstance();
 			builder.RegisterType<CheckInTimerService>().As<ICheckInTimerService>().InstancePerLifetimeScope();
+			builder.RegisterType<UnitStatusAlertsService>().As<IUnitStatusAlertsService>().InstancePerLifetimeScope();
 			builder.RegisterType<RunCardsService>().As<IRunCardsService>().InstancePerLifetimeScope();
 			builder.RegisterType<PersonnelLocationResolver>().As<IPersonnelLocationResolver>().InstancePerLifetimeScope();
 			// Singleton: it keeps each department's reduced visibility matrix in memory between location pings.

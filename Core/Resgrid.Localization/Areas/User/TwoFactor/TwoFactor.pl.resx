@@ -632,4 +632,28 @@
   <data name="SharedSwitchOperatorDone" xml:space="preserve">
     <value>Wylogowano. Następny operator może się teraz zalogować.</value>
   </data>
+  <data name="StepUpHoldingSubmission" xml:space="preserve">
+    <value>Zapisywane dane zostały zachowane. Po weryfikacji poniżej zostaną zapisane.</value>
+  </data>
+  <data name="StepUpSubmissionNotHeld" xml:space="preserve">
+    <value>Nie udało się zachować przesłanych danych. Po weryfikacji wróć i prześlij je ponownie.</value>
+  </data>
+  <data name="ResumePageTitle" xml:space="preserve">
+    <value>Kończenie zapisywania</value>
+  </data>
+  <data name="ResumeSaving" xml:space="preserve">
+    <value>Kończenie zapisywania...</value>
+  </data>
+  <data name="ResumeContinueButton" xml:space="preserve">
+    <value>Kontynuuj</value>
+  </data>
+  <data name="ResumeUnavailable" xml:space="preserve">
+    <value>Ten zapis został już wysłany lub wygasł. Wróć i prześlij go ponownie.</value>
+  </data>
+  <data name="ResumeScriptFailed" xml:space="preserve">
+    <value>Nie udało się zapisać zmiany. Wróć i spróbuj ponownie.</value>
+  </data>
+  <data name="ResumeGoBack" xml:space="preserve">
+    <value>Wróć</value>
+  </data>
 </root>

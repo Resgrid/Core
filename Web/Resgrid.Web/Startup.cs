@@ -500,6 +500,9 @@ namespace Resgrid.Web
 				options.Filters.Add<Filters.ProtectedDataEgressFilter>();
 				// RMS protected content (plan 5.9.3): a refused reveal becomes a step-up prompt, never a 500.
 				options.Filters.Add<Filters.RecordProtectedContentExceptionFilter>();
+				// A submission held while the user verified (2FA step-up, password re-confirmation) is put back as the form when
+				// the resume page posts it; a replay post is restored or refused, never bound bare.
+				options.Filters.Add<Filters.HeldSubmissionReplayFilter>();
 			}).AddJsonOptions(jsonOptions =>
 			{
 				jsonOptions.JsonSerializerOptions.PropertyNamingPolicy = null;

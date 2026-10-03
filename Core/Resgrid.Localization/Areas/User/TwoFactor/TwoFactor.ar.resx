@@ -462,4 +462,28 @@
   <data name="SharedSwitchOperatorDone" xml:space="preserve">
     <value>تم تسجيل الخروج. يمكن للمشغل التالي تسجيل الدخول الآن.</value>
   </data>
+  <data name="StepUpHoldingSubmission" xml:space="preserve">
+    <value>يتم الاحتفاظ بما كنت تحفظه. تحقق أدناه وسيتم حفظه.</value>
+  </data>
+  <data name="StepUpSubmissionNotHeld" xml:space="preserve">
+    <value>تعذر الاحتفاظ بما أرسلته. بعد التحقق، ارجع وأرسله مرة أخرى.</value>
+  </data>
+  <data name="ResumePageTitle" xml:space="preserve">
+    <value>إكمال الحفظ</value>
+  </data>
+  <data name="ResumeSaving" xml:space="preserve">
+    <value>جارٍ إكمال ما كنت تحفظه...</value>
+  </data>
+  <data name="ResumeContinueButton" xml:space="preserve">
+    <value>متابعة</value>
+  </data>
+  <data name="ResumeUnavailable" xml:space="preserve">
+    <value>تم إرسال عملية الحفظ هذه بالفعل أو انتهت صلاحيتها. ارجع وأرسلها مرة أخرى.</value>
+  </data>
+  <data name="ResumeScriptFailed" xml:space="preserve">
+    <value>تعذر حفظ التغيير. ارجع وحاول مرة أخرى.</value>
+  </data>
+  <data name="ResumeGoBack" xml:space="preserve">
+    <value>رجوع</value>
+  </data>
 </root>

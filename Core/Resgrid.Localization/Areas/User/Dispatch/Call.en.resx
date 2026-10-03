@@ -718,6 +718,7 @@
   <data name="File" xml:space="preserve"><value>File</value></data>
   <data name="Inactive" xml:space="preserve"><value>Inactive</value></data>
   <data name="InvalidDestinationPoi" xml:space="preserve"><value>Please select a valid destination POI.</value></data>
+  <data name="InvalidCallCoordinates" xml:space="preserve"><value>Latitude and longitude must be decimal numbers: latitude between -90 and 90, longitude between -180 and 180.</value></data>
   <data name="LoggedOff" xml:space="preserve"><value>logged off.</value></data>
   <data name="AttachFileRequired" xml:space="preserve"><value>You must select a file to attach.</value></data>
   <data name="DocumentTypeNotImportable" xml:space="preserve"><value>Document type ({0}) is not importable.</value></data>

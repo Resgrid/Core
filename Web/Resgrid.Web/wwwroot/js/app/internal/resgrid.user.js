@@ -32,6 +32,19 @@ var resgrid;
         }
 
         $(document).ajaxError(function (event, jqxhr) {
+            // A change that needs a recent second factor: the server is holding it, and verifying finishes it
+            // (RequiresRecentTwoFactorAttribute answers a script call with where to go instead of a redirect).
+            // Only ever a page on this site: a response from anywhere else must not choose where the user goes.
+            var stepUp = jqxhr && jqxhr.status === 403 ? jqxhr.getResponseHeader('X-Resgrid-Step-Up') : null;
+            var stepUpUrl = null;
+            if (stepUp) {
+                try { stepUpUrl = new URL(stepUp, window.location.origin); } catch (e) { stepUpUrl = null; }
+            }
+            if (stepUpUrl && stepUpUrl.origin === window.location.origin) {
+                window.location.assign(stepUpUrl.href);
+                return;
+            }
+
             if (jqxhr && jqxhr.status === 401) {
                 window.location.assign(resgrid.absoluteBaseUrl + '/Account/LogOn?returnUrl=' + encodeURIComponent(window.location.pathname + window.location.search));
             }

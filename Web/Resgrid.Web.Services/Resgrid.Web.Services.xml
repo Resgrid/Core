@@ -4250,10 +4250,14 @@
             own authorization rule; totals are null when any hit was dropped. Typeahead is the same query in prefix mode.
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.SearchController.Search(System.String,System.String,System.Int32,System.Int32,System.Threading.CancellationToken)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SearchController.Search(System.String,System.String,System.Int32,System.Int32,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.String,System.Threading.CancellationToken)">
             <summary>
             Full search. <paramref name="types"/> is a comma-separated list of entity types (Call, Unit, Personnel,
-            Contact, Message, Document, Note, Record, Action); omit for all.
+            Contact, Message, Document, Note, Record, Log, Occupancy, Protocol, Training, CalendarEvent, Poi, Shift, Group, the
+            Business Operations families, Action); omit for all. Words must all match; a "quoted phrase" matches as a
+            phrase. <paramref name="fromUtc"/> / <paramref name="toUtc"/> bound when the hit occurred, <paramref name="sort"/> is
+            relevance (default), newest or oldest. A single family or a date range is authorized over a deeper window so its
+            count is exact more often.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.SearchController.Typeahead(System.String,System.String,System.Int32,System.Threading.CancellationToken)">
@@ -4264,6 +4268,9 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.SearchController.Health">
             <summary>Department admins: host and index health plus this department's index state.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SearchController.AsUtc(System.Nullable{System.DateTime})">
+            <summary>Query-string instants bind as local or unspecified unless they carry an offset; treat a bare value as UTC.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.SecurityController">
             <summary>
@@ -4812,6 +4819,31 @@
             <param name="name">The unit name to look up.</param>
             <param name="departmentId">Optional department override for SystemApiKey (hosted multi-department) mode.</param>
             <returns>UnitResult with the matching unit, or a not-found response.</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.UnitStatusAlertsController">
+            <summary>
+            Acknowledging, muting and annotating the alerts raised when a unit sits in a status longer than the
+            department's Unit Status Timers allow. Reading is open to anyone who can see units. Acknowledging and
+            clearing require the Create Call permission, the same people who dispatch the units.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.UnitStatusAlertsController.GetActiveAcknowledgements">
+            <summary>
+            Gets the acknowledgements that cover each unit's current status episode. Acknowledgements for units
+            the caller cannot see are left out.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.UnitStatusAlertsController.Acknowledge(Resgrid.Web.Services.Models.v4.UnitStatusAlerts.AcknowledgeUnitStatusAlertInput,System.Threading.CancellationToken)">
+            <summary>
+            Acknowledges or mutes the status timer alert for a unit's current status, optionally with a note.
+            Replaces any earlier acknowledgement of the same status.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.UnitStatusAlertsController.Clear(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Withdraws an acknowledgement, so the alert shows as unacknowledged again. Clearing one that is already
+            cleared succeeds.
+            </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.UnitStatusController">
             <summary>
@@ -13900,66 +13932,6 @@
             Identifier of the new message
             </summary>
         </member>
-        <member name="T:Resgrid.Web.Services.Models.v4.Mfa.StepUpOptionsResult">
-            <summary>
-            The second-factor choice for a named operation (passkey workbook section 7.2). Advisory: <c>VerifyStepUp</c>
-            re-checks everything.
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.StepUpOptionsResultData.Methods">
-            <summary>Methods the user can verify with now: enrolled and allowed.</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.StepUpOptionsResultData.Preferred">
-            <summary>The method to show first; null when nothing is usable.</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.StepUpOptionsResultData.EnrollmentRequired">
-            <summary>True when the user must enroll a second factor before this operation.</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.StepUpOptionsResultData.WindowMinutes">
-            <summary>How long one verification serves this operation.</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.StepUpOptionsResultData.Passkey">
-            <summary>
-            Assertion options for this app's passkeys, when a passkey is usable for the operation; send its request id and
-            the platform's response to <c>VerifyStepUp</c> with method <c>passkey</c>.
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.VerifyStepUpInput.Operation">
-            <summary>One of <c>security_change</c>, <c>adp_management</c>, <c>chat_export</c> or <c>account_security</c>.</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.VerifyStepUpInput.Method">
-            <summary><c>totp</c> (the default), <c>passkey</c>, <c>passkey_approval</c> (Responder approval) or <c>federated</c> (provider step-up).</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.VerifyStepUpInput.Code">
-            <summary>The current authenticator code, for <c>totp</c>.</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.VerifyStepUpInput.RequestId">
-            <summary>The request id from <c>StepUpOptions</c>, for <c>passkey</c>.</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.VerifyStepUpInput.Credential">
-            <summary>The platform's assertion (PublicKeyCredential.toJSON()), for <c>passkey</c>.</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.VerifyStepUpInput.ApprovalRequestId">
-            <summary>For <c>passkey_approval</c>: the approved request from <c>MfaApproval/Request</c> (purpose <c>step_up</c>, same operation).</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.VerifyStepUpInput.SsoTransactionId">
-            <summary>For <c>federated</c>: the transaction from <c>Sso/Begin</c> (purpose <c>step_up</c>, same operation).</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.VerifyStepUpInput.SsoCode">
-            <summary>For <c>federated</c>: the one-time <c>sso_code</c> the return target received.</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.VerifyStepUpInput.CodeVerifier">
-            <summary>For <c>federated</c>: the PKCE verifier whose challenge began the step-up.</summary>
-        </member>
-        <member name="T:Resgrid.Web.Services.Models.v4.Mfa.VerifyStepUpResult">
-            <summary>Evidence stays on the server; no token is returned (workbook section 7.2).</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.VerifyStepUpResultData.VerifiedAt">
-            <summary>When the second factor was verified (ISO 8601 UTC).</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.VerifyStepUpResultData.ExpiresAt">
-            <summary>When this verification stops serving the operation (ISO 8601 UTC).</summary>
-        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalRequestInput">
             <summary>
             Asks the user's Responder to approve (workbook section 7.4). Send only after the user chose "Approve with Responder";
@@ -14019,6 +13991,66 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalDenyInput.Reason">
             <summary><c>declined</c>, or <c>not_me</c> ("I didn't request this": ends that sign-in and suspends approval requests).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Mfa.StepUpOptionsResult">
+            <summary>
+            The second-factor choice for a named operation (passkey workbook section 7.2). Advisory: <c>VerifyStepUp</c>
+            re-checks everything.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.StepUpOptionsResultData.Methods">
+            <summary>Methods the user can verify with now: enrolled and allowed.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.StepUpOptionsResultData.Preferred">
+            <summary>The method to show first; null when nothing is usable.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.StepUpOptionsResultData.EnrollmentRequired">
+            <summary>True when the user must enroll a second factor before this operation.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.StepUpOptionsResultData.WindowMinutes">
+            <summary>How long one verification serves this operation.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.StepUpOptionsResultData.Passkey">
+            <summary>
+            Assertion options for this app's passkeys, when a passkey is usable for the operation; send its request id and
+            the platform's response to <c>VerifyStepUp</c> with method <c>passkey</c>.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.VerifyStepUpInput.Operation">
+            <summary>One of <c>security_change</c>, <c>adp_management</c>, <c>chat_export</c> or <c>account_security</c>.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.VerifyStepUpInput.Method">
+            <summary><c>totp</c> (the default), <c>passkey</c>, <c>passkey_approval</c> (Responder approval) or <c>federated</c> (provider step-up).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.VerifyStepUpInput.Code">
+            <summary>The current authenticator code, for <c>totp</c>.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.VerifyStepUpInput.RequestId">
+            <summary>The request id from <c>StepUpOptions</c>, for <c>passkey</c>.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.VerifyStepUpInput.Credential">
+            <summary>The platform's assertion (PublicKeyCredential.toJSON()), for <c>passkey</c>.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.VerifyStepUpInput.ApprovalRequestId">
+            <summary>For <c>passkey_approval</c>: the approved request from <c>MfaApproval/Request</c> (purpose <c>step_up</c>, same operation).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.VerifyStepUpInput.SsoTransactionId">
+            <summary>For <c>federated</c>: the transaction from <c>Sso/Begin</c> (purpose <c>step_up</c>, same operation).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.VerifyStepUpInput.SsoCode">
+            <summary>For <c>federated</c>: the one-time <c>sso_code</c> the return target received.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.VerifyStepUpInput.CodeVerifier">
+            <summary>For <c>federated</c>: the PKCE verifier whose challenge began the step-up.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Mfa.VerifyStepUpResult">
+            <summary>Evidence stays on the server; no token is returned (workbook section 7.2).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.VerifyStepUpResultData.VerifiedAt">
+            <summary>When the second factor was verified (ISO 8601 UTC).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mfa.VerifyStepUpResultData.ExpiresAt">
+            <summary>When this verification stops serving the operation (ISO 8601 UTC).</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Notes.GetAllNotesResult">
             <summary>
@@ -14150,175 +14182,41 @@
             Identifier of the new npte
             </summary>
         </member>
-        <member name="T:Resgrid.Web.Services.Models.v4.Personnel.FilterResult">
+        <member name="T:Resgrid.Web.Services.Models.v4.Passkeys.PasskeyCeremonyResult">
+            <summary>A started WebAuthn ceremony (workbook section 7.1): the request id to send back and the options for the platform.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Passkeys.PasskeyCeremonyResultData.Options">
+            <summary>WebAuthn PublicKeyCredentialCreationOptions (registration) or PublicKeyCredentialRequestOptions (assertion) JSON.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Passkeys.CompletePasskeyRegistrationInput.Credential">
+            <summary>The platform's response: PublicKeyCredential.toJSON(), as an object or a JSON string.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Passkeys.CompletePasskeyRegistrationInput.DisplayName">
+            <summary>Optional name for the passkey; at most 100 characters. A default naming the app is used when empty.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Passkeys.PasskeyResultData">
             <summary>
-            The result of getting all personnel filters for the system
+            One passkey in the user's own inventory (plan section 6.5). Registration context, attachment and backup state are
+            server-observed or client-reported hints, not proof of a device.
             </summary>
         </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.FilterResult.Id">
-            <summary>
-            The Id value of the filter
-            </summary>
+        <member name="P:Resgrid.Web.Services.Models.v4.Passkeys.PasskeyResultData.Client">
+            <summary>The app the passkey works in: web, responder, unit, dispatch or ic.</summary>
         </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.FilterResult.Type">
-            <summary>
-            The type of the filter
-            </summary>
+        <member name="P:Resgrid.Web.Services.Models.v4.Passkeys.PasskeyResultData.ApprovalEnabled">
+            <summary>Responder passkeys only: whether it may approve other apps' requests. Null for other apps.</summary>
         </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.FilterResult.Name">
-            <summary>
-            The filters name
-            </summary>
+        <member name="P:Resgrid.Web.Services.Models.v4.Passkeys.RevokeAllPasskeysForClientInput.Client">
+            <summary>web, responder, unit, dispatch or ic.</summary>
         </member>
-        <member name="T:Resgrid.Web.Services.Models.v4.Personnel.GetAllPersonnelInfosResult">
-            <summary>
-            Result containing all the data required to populate the New Call form
-            </summary>
+        <member name="P:Resgrid.Web.Services.Models.v4.Passkeys.PasskeyChangeResultData.Revoked">
+            <summary>How many passkeys the change revoked (0 for a rename or approval change).</summary>
         </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.GetAllPersonnelInfosResult.Data">
-            <summary>
-            Response Data
-            </summary>
+        <member name="P:Resgrid.Web.Services.Models.v4.Passkeys.PasskeyChangeResultData.SessionsEnded">
+            <summary>How many sessions that signed in with a removed passkey were ended.</summary>
         </member>
-        <member name="T:Resgrid.Web.Services.Models.v4.Personnel.GetPersonnelFilterOptionsResult">
-            <summary>
-            Result that contains all the options available to filter personnel against compatible Resgrid APIs
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.GetPersonnelFilterOptionsResult.Data">
-            <summary>
-            Response Data
-            </summary>
-        </member>
-        <member name="T:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResult">
-            <summary>
-            Result containing all the data required to populate the New Call form
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResult.Data">
-            <summary>
-            Response Data
-            </summary>
-        </member>
-        <member name="T:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData">
-            <summary>
-            Information about a User
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.UserId">
-            <summary>
-            The UserId GUID/UUID for the user
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.DepartmentId">
-            <summary>
-            DepartmentId of the deparment the user belongs to
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.IdentificationNumber">
-            <summary>
-            Department specificed ID number for this user
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.FirstName">
-            <summary>
-            The Users First Name
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.LastName">
-            <summary>
-            The Users Last Name
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.EmailAddress">
-            <summary>
-            The Users Email Address
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.MobilePhone">
-            <summary>
-            The Users Mobile Telephone Number
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.GroupId">
-            <summary>
-            GroupId the user is assigned to (0 for no group)
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.GroupName">
-            <summary>
-            Name of the group the user is assigned to
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.Roles">
-            <summary>
-            Enumeration/List of roles the user currently holds
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StatusId">
-            <summary>
-            The current action/status type for the user
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.Status">
-            <summary>
-            The current action/status string for the user
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StatusColor">
-            <summary>
-            The current action/status color hex string for the user
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StatusTimestamp">
-            <summary>
-            The timestamp of the last action. This is converted UTC to the departments, or users, TimeZone.
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StatusDestinationId">
-            <summary>
-            The current action/status destination id for the user
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StatusDestinationName">
-            <summary>
-            The current action/status destination name for the user
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StaffingId">
-            <summary>
-            The current staffing level (state) type for the user
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.Staffing">
-            <summary>
-            The current staffing level (state) string for the user
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StaffingColor">
-            <summary>
-            The current staffing level (state) color hex string for the user
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StaffingTimestamp">
-            <summary>
-            The timestamp of the last state/staffing level. This is converted UTC to the departments, or users, TimeZone.
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.Location">
-            <summary>
-            Users last known location
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.Weight">
-            <summary>
-            Sorting weight for the user
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.UdfValues">
-            <summary>
-            User Defined Field values for this personnel record
-            </summary>
+        <member name="P:Resgrid.Web.Services.Models.v4.Passkeys.PasskeyChangeResultData.CurrentSessionEnded">
+            <summary>True when this session was one of them: the client signs in again.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.PersonnelLocation.PersonnelLocationInput">
             <summary>
@@ -15712,11 +15610,17 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Search.SearchResultData.Degraded">
             <summary>True when the index could not serve; actions still return.</summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Search.SearchResultData.IndexBuilding">
+            <summary>True while the department's index is queued for, or in the middle of, a build: results may be incomplete.</summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Search.SearchResultData.TotalCount">
             <summary>Authorized total, or null when a hit was dropped by per-entity authorization.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Search.SearchHitData.Url">
             <summary>Relative web path; clients with native screens switch on EntityType/EntityId instead.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Search.SearchHitData.Snippet">
+            <summary>Plain-text excerpt of the indexed text around the first match (full search only), e.g. the call note that matched.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Search.SearchHealthData.GlobalDocumentCount">
             <summary>Suppressed: shared-index counts include other departments.</summary>
@@ -17364,6 +17268,51 @@
             Default constructor
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.UnitStatusAlerts.GetUnitStatusAlertAcknowledgementsResult">
+            <summary>
+            The acknowledgements covering each unit's current status episode.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.UnitStatusAlerts.SaveUnitStatusAlertAcknowledgementResult">
+            <summary>
+            The outcome of acknowledging or clearing a unit status timer alert.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatusAlerts.SaveUnitStatusAlertAcknowledgementResult.Error">
+            <summary>
+            Null on success. Otherwise one of: unit_alert_not_found, unit_alert_status_changed (the unit moved to a
+            new status since the board loaded), unit_alert_not_overdue, unit_alert_conflict (another dispatcher
+            acknowledged it first; their acknowledgement is in Data), unit_alert_invalid_mode,
+            unit_alert_invalid_level, unit_alert_note_too_long.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatusAlerts.UnitStatusAlertAcknowledgementResultData.UnitStateId">
+            <summary>The status record this acknowledgement covers. Compare it with the unit's CurrentUnitStateId.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatusAlerts.UnitStatusAlertAcknowledgementResultData.Level">
+            <summary>1 = warning, 2 = alert. If the unit goes past this level, the acknowledgement no longer covers it.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatusAlerts.UnitStatusAlertAcknowledgementResultData.Mode">
+            <summary>0 = acknowledged (still highlighted, marked as seen), 1 = muted.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatusAlerts.UnitStatusAlertAcknowledgementResultData.MutedUntilUtc">
+            <summary>When a mute runs out. Null on a mute means it lasts until the unit changes status.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatusAlerts.UnitStatusAlertAcknowledgementResultData.ClearedOnUtc">
+            <summary>Set when the acknowledgement has been withdrawn (only returned by Clear).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatusAlerts.AcknowledgeUnitStatusAlertInput.UnitStateId">
+            <summary>The unit's CurrentUnitStateId as the board saw it.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatusAlerts.AcknowledgeUnitStatusAlertInput.Level">
+            <summary>The level the board is showing: 1 = warning, 2 = alert.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatusAlerts.AcknowledgeUnitStatusAlertInput.Mode">
+            <summary>0 = acknowledge, 1 = mute.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatusAlerts.AcknowledgeUnitStatusAlertInput.MuteMinutes">
+            <summary>For a mute, the minutes to mute for. 0 mutes until the unit changes status.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.UnitStatus.SaveUnitStatusResult">
             <summary>
             Depicts a result after saving a unit status
@@ -17868,6 +17817,13 @@
             or null when the status has no base type. Clients need this to answer "is this unit
             available/responding/on scene" -- the status id itself is department-specific and the unit's
             TypeId is the unit type, not a status.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Units.UnitsInfoResultData.CurrentUnitStateId">
+            <summary>
+            Id of the unit's current status record, or 0 when the unit has never reported a status. A status
+            timer acknowledgement names the status record it covers, so a board compares the two to tell
+            whether an acknowledgement still applies.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Units.UnitsInfoResultData.CurrentStatusTimestamp">

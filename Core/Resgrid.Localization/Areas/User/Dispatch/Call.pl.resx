@@ -776,6 +776,7 @@
   <data name="InvalidDestinationPoi" xml:space="preserve">
     <value>Wybierz prawidłowy docelowy POI.</value>
   </data>
+  <data name="InvalidCallCoordinates" xml:space="preserve"><value>Szerokość i długość geograficzna muszą być liczbami dziesiętnymi: szerokość od -90 do 90, długość od -180 do 180.</value></data>
   <data name="LoggedOff" xml:space="preserve">
     <value>wylogował się.</value>
   </data>

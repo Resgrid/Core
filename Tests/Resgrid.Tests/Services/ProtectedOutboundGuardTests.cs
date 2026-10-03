@@ -171,7 +171,7 @@ namespace Resgrid.Tests.Services
 			public System.Threading.Tasks.Task<bool> PushCall(Resgrid.Model.Messages.StandardPushCall call, string userId, UserProfile profile = null, DepartmentCallPriority priority = null) => Record();
 			public System.Threading.Tasks.Task<bool> Register(PushUri pushUri) => Record();
 			public System.Threading.Tasks.Task<bool> UnRegister(PushUri pushUri) => Record();
-			public void UnRegisterNotificationOnly(PushUri pushUri) { }
+			public System.Threading.Tasks.Task UnRegisterNotificationOnly(PushUri pushUri) => System.Threading.Tasks.Task.CompletedTask;
 			public System.Threading.Tasks.Task<bool> PushNotification(Resgrid.Model.Messages.StandardPushMessage message, string userId, UserProfile profile = null) => Record();
 			public System.Threading.Tasks.Task<bool> PushICNotification(Resgrid.Model.Messages.StandardPushMessage message, string userId, UserProfile profile = null) => Record();
 			public System.Threading.Tasks.Task<bool> RegisterUnit(PushUri pushUri) => Record();

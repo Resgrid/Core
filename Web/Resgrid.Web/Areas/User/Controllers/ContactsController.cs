@@ -777,7 +777,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
-		[Authorize(Policy = ResgridResources.Contacts_Create)]
+		[Authorize(Policy = ResgridResources.Contacts_Delete)]
 		public async Task<IActionResult> Delete(string contactId, CancellationToken cancellationToken)
 		{
 			if (String.IsNullOrWhiteSpace(contactId))

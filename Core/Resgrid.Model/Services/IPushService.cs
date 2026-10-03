@@ -10,7 +10,7 @@ namespace Resgrid.Model.Services
 		Task<bool> PushCall(StandardPushCall call, string userId, UserProfile profile = null, DepartmentCallPriority priority = null);
 		Task<bool> Register(PushUri pushUri);
 		Task<bool> UnRegister(PushUri pushUri);
-		void UnRegisterNotificationOnly(PushUri pushUri);
+		Task UnRegisterNotificationOnly(PushUri pushUri);
 		Task<bool> PushNotification(StandardPushMessage message, string userId, UserProfile profile = null);
 		Task<bool> PushICNotification(StandardPushMessage message, string userId, UserProfile profile = null);
 		Task<bool> RegisterUnit(PushUri pushUri);

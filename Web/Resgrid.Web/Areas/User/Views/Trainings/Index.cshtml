@@ -4,6 +4,13 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
 @{
   ViewBag.Title = "Resgrid | " + localizer["TrainingsHeader"];
+
+  // Mirror the controller policies (Training_Create / Training_Update / Training_Delete): group admins and roles
+  // granted training permissions hold these claims too, not only department admins.
+  var canCreateTraining = ClaimsAuthorizationHelper.CanCreateTraining();
+  var canUpdateTraining = User.HasClaim(Resgrid.Providers.Claims.ResgridClaimTypes.Resources.Training, Resgrid.Providers.Claims.ResgridClaimTypes.Actions.Update);
+  var canDeleteTraining = User.HasClaim(Resgrid.Providers.Claims.ResgridClaimTypes.Resources.Training, Resgrid.Providers.Claims.ResgridClaimTypes.Actions.Delete);
+  var currentUserId = ClaimsAuthorizationHelper.GetUserId();
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -18,7 +25,7 @@
       </li>
     </ol>
   </div>
-  @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+  @if (canCreateTraining)
   {
     <div class="col-sm-8">
       <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
@@ -74,9 +81,9 @@
 					  }
                     </td>
                     <td>
-                      @if (t.Users.Any(x => x.UserId == ClaimsAuthorizationHelper.GetUserId()))
+                      @if (t.Users != null && t.Users.Any(x => x.UserId == currentUserId))
 					  {
-						var userRecord = t.Users.FirstOrDefault(x => x.UserId == ClaimsAuthorizationHelper.GetUserId());
+						var userRecord = t.Users.FirstOrDefault(x => x.UserId == currentUserId);
 						if (userRecord != null)
 						{
 						  if (!userRecord.Viewed)
@@ -101,9 +108,14 @@
 						  }
 						}
 					  }
+					  else if (canUpdateTraining || t.CreatedByUserId == currentUserId)
+					  {
+                        @* Not assigned, but manages or created it: the View action admits any department member. *@
+                        <a href="@Url.Action("View", "Trainings", new { area = "User", trainingId = t.TrainingId })" class='btn btn-xs btn-primary'>@localizer["ViewTrainingButton"]</a>
+					  }
                     </td>
                     <td>
-                      @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+                      @if (canUpdateTraining)
 					  {
                         <a href="@Url.Action("Edit", "Trainings", new { area = "User", trainingId = t.TrainingId })" class='btn btn-xs btn-info'>
                           <i class='icon-pencil'></i> @localizer["EditButton"]
@@ -111,6 +123,9 @@
                         <a href="@Url.Action("Report", "Trainings", new { area = "User", trainingId = t.TrainingId })" class='btn btn-xs btn-primary'>
                           <i class='icon-eye-open'></i> @localizer["ReportButton"]
                         </a>
+					  }
+                      @if (canDeleteTraining)
+					  {
                         <a href="@Url.Action("DeleteTraining", "Trainings", new { area = "User", trainingId = t.TrainingId })" class='btn btn-xs btn-danger' data-confirm="@localizer["DeleteTrainingWarning"] @t.Name ?" rel="nofollow">
                           <i class="icon-trash">
                           </i> @localizer["DeleteButton"]

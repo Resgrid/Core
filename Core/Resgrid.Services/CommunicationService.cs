@@ -997,7 +997,7 @@ namespace Resgrid.Services
 					{
 						try
 						{
-							_smsService.SendTroubleAlert(unit, smsCall, smsSanitized ? null : unitAddress, departmentNumber, departmentId, recipient);
+							await _smsService.SendTroubleAlertAsync(unit, smsCall, smsSanitized ? null : unitAddress, departmentNumber, departmentId, recipient);
 						}
 						catch (Exception ex)
 						{

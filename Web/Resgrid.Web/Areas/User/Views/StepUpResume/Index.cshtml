@@ -1,0 +1,44 @@
+@model Resgrid.Web.Areas.User.Models.TwoFactor.StepUpResumeViewModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.TwoFactor.TwoFactor> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["ResumePageTitle"];
+    // Posts the held submission back to the action it was made to. The page carries only the hold's id and a fresh antiforgery
+    // token: the held fields (passwords and secrets included) never come back to the browser.
+}
+
+<div class="row">
+    <div class="col-xs-12 col-md-6">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    @if (Model.Id != null)
+                    {
+                        <form id="stepUpResumeForm" method="post" action="@Model.Target" asp-antiforgery="false"
+                              data-script="@(Model.Script ? "true" : "false")" data-back="@Model.BackUrl">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="@Resgrid.Web.Helpers.StepUpFormReplay.FieldName" value="@Model.Id" />
+                            <p><i class="fa fa-spinner fa-spin"></i> @localizer["ResumeSaving"]</p>
+                            <button type="submit" class="btn btn-primary">@localizer["ResumeContinueButton"]</button>
+                        </form>
+                        <div id="stepUpResumeFailed" style="display: none;">
+                            <div class="alert alert-danger">@localizer["ResumeScriptFailed"]</div>
+                            <a class="btn btn-default" href="@Model.BackUrl">@localizer["ResumeGoBack"]</a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning">@localizer["ResumeUnavailable"]</div>
+                        <a class="btn btn-default" href="@Model.BackUrl">@localizer["ResumeGoBack"]</a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @if (Model.Id != null)
+    {
+        <script src="~/js/app/common/stepup/resgrid.stepup.resume.js" asp-append-version="true"></script>
+    }
+}

@@ -28,12 +28,21 @@
                     {
                         <div class="alert alert-warning" id="stepUpMessage">@stepUpMessage</div>
                     }
+                    @if (Model.HoldingSubmission)
+                    {
+                        <div class="alert alert-success" id="stepUpHoldingSubmission"><i class="fa fa-floppy-o"></i> @localizer["StepUpHoldingSubmission"]</div>
+                    }
+                    else if (Model.SubmissionNotHeld)
+                    {
+                        <div class="alert alert-warning" id="stepUpSubmissionNotHeld">@localizer["StepUpSubmissionNotHeld"]</div>
+                    }
 
                     <form asp-action="Verify2FA" method="post" class="form-horizontal" id="verify2faForm">
                         @Html.AntiForgeryToken()
                         <input type="hidden" asp-for="ReturnUrl" />
                         <input type="hidden" asp-for="Scope" />
                         <input type="hidden" asp-for="EntryDepartmentId" />
+                        <input type="hidden" asp-for="SubmissionNotHeld" />
                         <div asp-validation-summary="All" class="text-danger"></div>
 
                         <div class="form-group">

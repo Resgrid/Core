@@ -49,7 +49,7 @@ namespace Resgrid.Model.Services
 		/// <param name="departmentNumber">The department number.</param>
 		/// <param name="departmentId">The department identifier.</param>
 		/// <param name="profile">The profile.</param>
-		void SendTroubleAlert(Unit unit, Call call, string unitAddress, string departmentNumber, int departmentId,
+		Task SendTroubleAlertAsync(Unit unit, Call call, string unitAddress, string departmentNumber, int departmentId,
 			UserProfile profile);
 
 		/// <summary>

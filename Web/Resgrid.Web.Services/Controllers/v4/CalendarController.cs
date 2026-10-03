@@ -320,8 +320,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (input == null || input.CalendarEventId <= 0)
 				return BadRequest();
 
-			var targetUserId = !string.IsNullOrWhiteSpace(input.UserId) && input.UserId != UserId ? input.UserId : UserId;
+			// Same id in another casing is still the caller checking themselves in, not an admin check-in.
+			var targetUserId = !string.IsNullOrWhiteSpace(input.UserId) && !string.Equals(input.UserId, UserId, StringComparison.OrdinalIgnoreCase) ? input.UserId : UserId;
 			var isAdminCheckIn = targetUserId != UserId;
+
+			// The check-in authorization resolves the event's own department; the API acts in the active department only.
+			if (!await IsCalendarItemInActiveDepartmentAsync(input.CalendarEventId))
+				return Unauthorized();
 
 			if (isAdminCheckIn)
 			{
@@ -381,8 +386,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (input == null || input.CalendarEventId <= 0)
 				return BadRequest();
 
-			var targetUserId = !string.IsNullOrWhiteSpace(input.UserId) && input.UserId != UserId ? input.UserId : UserId;
+			var targetUserId = !string.IsNullOrWhiteSpace(input.UserId) && !string.Equals(input.UserId, UserId, StringComparison.OrdinalIgnoreCase) ? input.UserId : UserId;
 			var isAdminCheckOut = targetUserId != UserId;
+
+			if (!await IsCalendarItemInActiveDepartmentAsync(input.CalendarEventId))
+				return Unauthorized();
 
 			if (isAdminCheckOut)
 			{
@@ -446,6 +454,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return Unauthorized();
 
 			var existing = await _calendarService.GetCheckInByIdAsync(input.CheckInId);
+			if (existing != null && existing.DepartmentId != DepartmentId)
+				return Unauthorized();
+
 			var beforeJson = existing?.CloneJsonToString();
 
 			var checkIn = await _calendarService.UpdateCheckInTimesAsync(input.CheckInId, input.CheckInTime,
@@ -591,6 +602,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return Ok(result);
 		}
 
+		private async Task<bool> IsCalendarItemInActiveDepartmentAsync(int calendarItemId)
+		{
+			var item = await _calendarService.GetCalendarItemByIdAsync(calendarItemId);
+			return item != null && item.DepartmentId == DepartmentId;
+		}
+
 		public static GetAllCalendarItemResultData ConvertCalendarItemData(CalendarItem item, Department department, string currentUserId, CalendarItemType type, List<PersonName> personnelNames)
 		{
 			var calendarItem = new GetAllCalendarItemResultData();
@@ -653,7 +670,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (department.IsUserAnAdmin(currentUserId))
 				calendarItem.IsAdminOrCreator = true;
-			else if (!String.IsNullOrWhiteSpace(item.CreatorUserId) && item.CreatorUserId == currentUserId)
+			else if (!String.IsNullOrWhiteSpace(item.CreatorUserId) && string.Equals(item.CreatorUserId, currentUserId, StringComparison.OrdinalIgnoreCase))
 				calendarItem.IsAdminOrCreator = true;
 			else
 				calendarItem.IsAdminOrCreator = false;

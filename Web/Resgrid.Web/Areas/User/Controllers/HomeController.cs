@@ -904,7 +904,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 						if (member != null)
 						{
 							member.IsAdmin = model.IsUserGroupAdmin;
-							_departmentGroupsService.SaveGroupMember(member);
+							await _departmentGroupsService.SaveGroupMember(member, cancellationToken);
 						}
 					}
 					else if (model.UserGroup <= 0)

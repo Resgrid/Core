@@ -776,6 +776,7 @@
   <data name="InvalidDestinationPoi" xml:space="preserve">
     <value>Виберіть дійсний POI призначення.</value>
   </data>
+  <data name="InvalidCallCoordinates" xml:space="preserve"><value>Широта і довгота мають бути десятковими числами: широта від -90 до 90, довгота від -180 до 180.</value></data>
   <data name="LoggedOff" xml:space="preserve">
     <value>вийшов із системи.</value>
   </data>

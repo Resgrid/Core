@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Resgrid.Model;
@@ -59,7 +60,7 @@ namespace Resgrid.Web.Controllers
 		}
 
 		[HttpPost, ValidateAntiForgeryToken]
-		public IActionResult Contact(ContactView model)
+		public async Task<IActionResult> Contact(ContactView model)
 		{
 			CaptchaResponse response = ValidateCaptcha(Request.Form["g-recaptcha-response"]);
 
@@ -73,7 +74,7 @@ namespace Resgrid.Web.Controllers
 					email.From = model.Email;
 					email.Body = model.Message;
 
-					_emailService.Notify(email);
+					await _emailService.Notify(email);
 
 					model.Result = "Your message has been sent. We will get back to you within 48 hours M-F.";
 					model.Name = String.Empty;

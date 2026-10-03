@@ -632,4 +632,28 @@
   <data name="SharedSwitchOperatorDone" xml:space="preserve">
     <value>Abgemeldet. Die nächste Bedienperson kann sich jetzt anmelden.</value>
   </data>
+  <data name="StepUpHoldingSubmission" xml:space="preserve">
+    <value>Ihre Eingaben werden aufbewahrt. Bestätigen Sie unten, dann werden sie gespeichert.</value>
+  </data>
+  <data name="StepUpSubmissionNotHeld" xml:space="preserve">
+    <value>Ihre Eingaben konnten nicht aufbewahrt werden. Gehen Sie nach der Bestätigung zurück und senden Sie sie erneut.</value>
+  </data>
+  <data name="ResumePageTitle" xml:space="preserve">
+    <value>Speichern wird abgeschlossen</value>
+  </data>
+  <data name="ResumeSaving" xml:space="preserve">
+    <value>Ihre Änderungen werden gespeichert...</value>
+  </data>
+  <data name="ResumeContinueButton" xml:space="preserve">
+    <value>Weiter</value>
+  </data>
+  <data name="ResumeUnavailable" xml:space="preserve">
+    <value>Dieser Speichervorgang wurde bereits gesendet oder ist abgelaufen. Gehen Sie zurück und senden Sie ihn erneut.</value>
+  </data>
+  <data name="ResumeScriptFailed" xml:space="preserve">
+    <value>Ihre Änderung konnte nicht gespeichert werden. Gehen Sie zurück und versuchen Sie es erneut.</value>
+  </data>
+  <data name="ResumeGoBack" xml:space="preserve">
+    <value>Zurück</value>
+  </data>
 </root>

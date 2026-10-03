@@ -183,7 +183,7 @@ namespace Resgrid.Tests.Security
 				Mock.Of<IUserStore<IdentityUser>>(), new InMemoryUserMfaStateRepository(), Mock.Of<IUserSessionService>(), (evidence ?? new Mock<IMfaEvidenceService>()).Object,
 				policy ?? Mock.Of<IMfaPolicyService>(), new InMemoryUserPasskeyRepository(), Mock.Of<ISecurityNoticeService>(),
 				(activity ?? new Mock<IMfaActivityService>()).Object, _passkeys.Object, Mock.Of<IMfaApprovalService>(), Mock.Of<ISsoBrokerService>(),
-				Mock.Of<ISsoReturnTargetRegistry>(), Mock.Of<IDepartmentSsoService>(), Mock.Of<IDepartmentsService>())
+				Mock.Of<ISsoReturnTargetRegistry>(), Mock.Of<IDepartmentSsoService>(), Mock.Of<IDepartmentsService>(), Mock.Of<Resgrid.Model.Providers.ICacheProvider>(), new Microsoft.AspNetCore.DataProtection.EphemeralDataProtectionProvider())
 			{
 				ControllerContext = new ControllerContext { HttpContext = Http() },
 				Url = Urls()

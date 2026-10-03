@@ -520,7 +520,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ViewBag.TimeZones = new SelectList(TimeZones.Zones, "Key", "Value");
 
 			model.IsUserGroupAdmin = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
-			if (model.IsUserGroupAdmin)
+			if (model.IsUserGroupAdmin && !ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 			{
 				var group = await _departmentGroupsService.GetGroupForUserAsync(UserId, DepartmentId);
 				model.Groups = new SelectList(groups.Where(x => x.DepartmentGroupId == group.DepartmentGroupId), "DepartmentGroupId", "Name");
@@ -666,8 +666,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 					auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
 					_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
+					// Only a department admin may grant group admin (same rule as the profile edit page); a
+					// group admin adding someone to their own group can't hand out the flag.
 					if (model.UserGroup != 0)
-						await _departmentGroupsService.MoveUserIntoGroupAsync(user.UserId, model.UserGroup, model.IsGroupAdminAdding, DepartmentId, cancellationToken);
+						await _departmentGroupsService.MoveUserIntoGroupAsync(user.UserId, model.UserGroup, model.IsGroupAdminAdding && ClaimsAuthorizationHelper.IsUserDepartmentAdmin(), DepartmentId, cancellationToken);
 
 					if (form.ContainsKey("roles"))
 					{

@@ -55,22 +55,25 @@ namespace Resgrid.Console.Commands
 					}
 				}
 
+				// A failed insert is logged and the rest still migrate (a re-run skips what already moved), but the command
+				// must not report success while documents are missing.
+				var failedInserts = 0;
+
 				logger.LogInformation("Migrating Map Layers...");
 
 				var layers = mapLayersRepository.AsQueryable().ToList();
 
 				if (layers != null && layers.Any())
 				{
-					Parallel.ForEach(layers, layer =>
+					await Parallel.ForEachAsync(layers, cancellationToken, async (layer, _) =>
 					{
-						var existingLayer = mapLayersDocRepository.GetByOldIdAsync(layer.Id.ToString()).Result;
+						var existingLayer = await mapLayersDocRepository.GetByOldIdAsync(layer.Id.ToString());
 
 						if (existingLayer == null)
 						{
 							logger.LogInformation($"Migrating Map: {layer.Id.ToString()}");
-							mapLayersDocRepository.InsertAsync(layer).
-								ContinueWith(t => logger.LogError(t.Exception?.ToString()),
-									TaskContinuationOptions.OnlyOnFaulted);
+							try { await mapLayersDocRepository.InsertAsync(layer); }
+							catch (Exception ex) { Interlocked.Increment(ref failedInserts); logger.LogError(ex.ToString()); }
 						}
 					});
 				}
@@ -79,16 +82,15 @@ namespace Resgrid.Console.Commands
 
 				if (unitLocations != null && unitLocations.Any())
 				{
-					Parallel.ForEach(unitLocations, unitLocation =>
+					await Parallel.ForEachAsync(unitLocations, cancellationToken, async (unitLocation, _) =>
 					{
-						var existingLocation = unitsLocationsDocRepository.GetByOldIdAsync(unitLocation.Id.ToString()).Result;
+						var existingLocation = await unitsLocationsDocRepository.GetByOldIdAsync(unitLocation.Id.ToString());
 
 						if (existingLocation == null)
 						{
 							logger.LogInformation($"Migrating Unit Location: {unitLocation.Id.ToString()}");
-							unitsLocationsDocRepository.InsertAsync(unitLocation).
-								ContinueWith(t => logger.LogError(t.Exception?.ToString()),
-									TaskContinuationOptions.OnlyOnFaulted);
+							try { await unitsLocationsDocRepository.InsertAsync(unitLocation); }
+							catch (Exception ex) { Interlocked.Increment(ref failedInserts); logger.LogError(ex.ToString()); }
 						}
 					});
 				}
@@ -97,18 +99,23 @@ namespace Resgrid.Console.Commands
 
 				if (personnelLocations != null && personnelLocations.Any())
 				{
-					Parallel.ForEach(personnelLocations, personLocation =>
+					await Parallel.ForEachAsync(personnelLocations, cancellationToken, async (personLocation, _) =>
 					{
-						var existingLocation = personnelLocationsDocRepository.GetByOldIdAsync(personLocation.Id.ToString()).Result;
+						var existingLocation = await personnelLocationsDocRepository.GetByOldIdAsync(personLocation.Id.ToString());
 
 						if (existingLocation == null)
 						{
 							logger.LogInformation($"Migrating Personnel Location: {personLocation.Id.ToString()}");
-							personnelLocationsDocRepository.InsertAsync(personLocation).
-								ContinueWith(t => logger.LogError(t.Exception?.ToString()),
-									TaskContinuationOptions.OnlyOnFaulted);
+							try { await personnelLocationsDocRepository.InsertAsync(personLocation); }
+							catch (Exception ex) { Interlocked.Increment(ref failedInserts); logger.LogError(ex.ToString()); }
 						}
 					});
+				}
+
+				if (failedInserts > 0)
+				{
+					logger.LogError($"Finished Migrating Documents, but {failedInserts} document(s) could not be inserted; see the errors above and run the migration again.");
+					return ExitCode.Failed;
 				}
 
 				logger.LogInformation("Finished Migrating Documents.");

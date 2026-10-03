@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using HtmlAgilityPack;
 using Vereyon.Web;
 
 namespace Resgrid.Framework
@@ -82,24 +83,16 @@ namespace Resgrid.Framework
 			string temp = source;
 
 			// get rid of unnecessary tag spans (comments and title)
-			sc.Add(@"<!--(w|W)+?-->");
-			sc.Add(@"<title>(w|W)+?</title>");
+			sc.Add(@"<!--[\s\S]*?-->");
+			sc.Add(@"<title>[\s\S]*?</title>");
 
-			// Get rid of classes and styles
-			sc.Add(@"s?class=w+");
-			sc.Add(@"s+style='[^']+'");
+			// Get rid of unnecessary tags but keep the text they wrap (document wrappers, Word's <o:p> and <st1:place> smart tags)
+			sc.Add(@"<(meta|link|/?o:|/?style|/?st\d|/?head|/?html|body|/?body)[^>]*?>");
 
-			// Get rid of unnecessary tags
-			sc.Add(@"<(meta|link|/?o:|/?style|/?std|/?head|/?html|body|/?body)[^>]*?>");
-
-			// Get rid of empty paragraph tags
-			sc.Add(@"(<[^>]+>)+&nbsp;(</w+>)+");
-
-			// remove bizarre v: element attached to <img> tag
-			sc.Add(@"s+v:w+=""[^""]+""");
-
-			// remove extra lines
-			sc.Add(@"(nr){2,}");
+			// The rest of the classic Word clean-up list (class=, style='', v: attributes, &nbsp;-only tags, repeated line
+			// breaks) is intentionally not applied: the sanitizer below already drops every attribute it does not allow, and
+			// those patterns ran over the whole string, so they deleted matching user text too. With their backslashes lost
+			// they were stripping "nr", "s" and "w" sequences out of ordinary words (#181).
 
 			foreach (string s in sc)
 			{
@@ -118,6 +111,7 @@ namespace Resgrid.Framework
 			sanitizer.Tag("h3").RemoveEmpty();
 			sanitizer.Tag("h4").RemoveEmpty();
 			sanitizer.Tag("h5").RemoveEmpty();
+			sanitizer.Tag("h6").RemoveEmpty();
 			sanitizer.Tag("strong").RemoveEmpty();
 			sanitizer.Tag("b").Rename("strong").RemoveEmpty();
 			sanitizer.Tag("div").Rename("p").RemoveEmpty();
@@ -130,10 +124,29 @@ namespace Resgrid.Framework
 			sanitizer.Tag("ul");
 			sanitizer.Tag("ol");
 			sanitizer.Tag("li");
-			sanitizer.Tag("img").CheckAttribute("src", HtmlSanitizerCheckType.Url)
+
+			// Formatting the rich text editors (Quill) produce. The sanitizer runs in white list mode, where an unlisted
+			// tag is removed together with its text, so underlined words, pasted links (usually wrapped in <u>) and code
+			// blocks vanished on save (#181). None of these get any attributes.
+			sanitizer.Tag("u").RemoveEmpty();
+			sanitizer.Tag("ins").Rename("u").RemoveEmpty();
+			sanitizer.Tag("s").RemoveEmpty();
+			sanitizer.Tag("strike").Rename("s").RemoveEmpty();
+			sanitizer.Tag("del").Rename("s").RemoveEmpty();
+			sanitizer.Tag("sub").RemoveEmpty();
+			sanitizer.Tag("sup").RemoveEmpty();
+			sanitizer.Tag("blockquote").RemoveEmpty();
+			sanitizer.Tag("pre").RemoveEmpty();
+			sanitizer.Tag("code").RemoveEmpty();
+
+			// Presentational and structural wrappers from pasted Word, e-mail and web content: drop the tag, keep its text.
+			foreach (var tag in FlattenedHtmlTags)
+				sanitizer.Tag(tag).Operation(SanitizerOperation.FlattenTag);
+
+			sanitizer.Tag("img").SanitizeAttributes("src", new SpaceEncodingUrlAttributeSanitizer())
 				.RemoveEmpty();
 			sanitizer.Tag("a").SetAttribute("rel", "nofollow")
-							  .CheckAttribute("href", HtmlSanitizerCheckType.Url)
+							  .SanitizeAttributes("href", new SpaceEncodingUrlAttributeSanitizer())
 							  .RemoveEmpty();
 
 			string cleanHtml = sanitizer.Sanitize(source);
@@ -143,6 +156,39 @@ namespace Resgrid.Framework
 
 			//Logging.LogError("Following string could not be sanitized: " + source);
 			return "Invalid HTML in Source String";
+		}
+
+		/// <summary>
+		/// Tags <see cref="SanitizeHtmlInString"/> unwraps (tag removed, text kept) instead of deleting with their content.
+		/// </summary>
+		private static readonly string[] FlattenedHtmlTags =
+		{
+			"font", "center", "small", "big", "mark", "abbr", "cite", "q", "tt", "kbd", "samp", "var", "time",
+			"section", "article", "header", "footer", "main", "address", "figure", "figcaption"
+		};
+
+		/// <summary>
+		/// Link/image URL check used by <see cref="SanitizeHtmlInString"/>. Runs the sanitizer's standard URL check (same
+		/// http/https/mailto/tel allow-list, so javascript:, data: etc. are still rejected) but percent-encodes interior
+		/// spaces first, so a link to "some file.pdf" is kept instead of dropped. The check writes the URL back unescaped,
+		/// so the spaces are re-encoded afterwards; otherwise "%20" became a space and the link was lost on the next save.
+		/// </summary>
+		private sealed class SpaceEncodingUrlAttributeSanitizer : IHtmlAttributeSanitizer
+		{
+			private readonly UrlCheckerAttributeSanitizer _urlChecker = new UrlCheckerAttributeSanitizer();
+
+			public SanitizerOperation SanitizeAttribute(HtmlAttribute attribute, HtmlSanitizerTagRule tagRule)
+			{
+				if (!string.IsNullOrEmpty(attribute.Value))
+					attribute.Value = attribute.Value.Trim().Replace(" ", "%20");
+
+				var operation = _urlChecker.SanitizeAttribute(attribute, tagRule);
+
+				if (operation == SanitizerOperation.DoNothing && !string.IsNullOrEmpty(attribute.Value))
+					attribute.Value = attribute.Value.Replace(" ", "%20");
+
+				return operation;
+			}
 		}
 
 		public static string Truncate(this string value, int maxLength)

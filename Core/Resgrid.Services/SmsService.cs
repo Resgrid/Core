@@ -247,7 +247,7 @@ namespace Resgrid.Services
 				}
 				else
 				{
-					SendCallViaEmailSmsGateway(call, address, profile);
+					await SendCallViaEmailSmsGatewayAsync(call, address, profile);
 				}
 			}
 
@@ -350,7 +350,7 @@ namespace Resgrid.Services
 			}
 		}
 
-		private void SendCallViaEmailSmsGateway(Call call, string address, UserProfile profile)
+		private async Task SendCallViaEmailSmsGatewayAsync(Call call, string address, UserProfile profile)
 		{
 			MailMessage email = new MailMessage();
 			email.To.Add(string.Format(Carriers.CarriersMap[(MobileCarriers)profile.MobileCarrier], ResolveGatewayNumber(profile)));
@@ -377,10 +377,17 @@ namespace Resgrid.Services
 
 			email.IsBodyHtml = false;
 
-			_emailSender.SendEmail(email);
+			try
+			{
+				await _emailSender.SendEmail(email);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+			}
 		}
 
-		public void SendTroubleAlert(Unit unit, Call call, string unitAddress, string departmentNumber, int departmentId, UserProfile profile)
+		public async Task SendTroubleAlertAsync(Unit unit, Call call, string unitAddress, string departmentNumber, int departmentId, UserProfile profile)
 		{
 			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(unit.DepartmentId))
 				return;
@@ -391,11 +398,11 @@ namespace Resgrid.Services
 
 				if (Config.SystemBehaviorConfig.DepartmentsToForceSmsGateway.Contains(departmentId))
 				{
-					_textMessageProvider.SendTextMessage(ResolveDirectSendNumber(profile), FormatTextForMessage("Trouble Alert", text, ShouldDiscloseOptOut(profile.UserId)), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, true, false);
+					await _textMessageProvider.SendTextMessage(ResolveDirectSendNumber(profile), FormatTextForMessage("Trouble Alert", text, ShouldDiscloseOptOut(profile.UserId)), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, true, false);
 				}
 				else if (Carriers.DirectSendCarriers.Contains((MobileCarriers)profile.MobileCarrier))
 				{
-					_textMessageProvider.SendTextMessage(ResolveDirectSendNumber(profile), FormatTextForMessage("Trouble Alert", text, ShouldDiscloseOptOut(profile.UserId)), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, false, false);
+					await _textMessageProvider.SendTextMessage(ResolveDirectSendNumber(profile), FormatTextForMessage("Trouble Alert", text, ShouldDiscloseOptOut(profile.UserId)), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, false, false);
 				}
 				else
 				{
@@ -408,7 +415,7 @@ namespace Resgrid.Services
 					email.Body = text;
 					email.IsBodyHtml = false;
 
-					_emailSender.SendEmail(email);
+					await _emailSender.SendEmail(email);
 				}
 			}
 		}

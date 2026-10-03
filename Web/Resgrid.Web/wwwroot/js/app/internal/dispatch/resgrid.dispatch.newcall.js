@@ -22,7 +22,9 @@ var resgrid;
             $(document).ready(function () {
                 callMarker = null;
                 map = null;
-                userSuppliedAddress = false;
+                // A typed address always wins over a reverse-geocoded one (a re-rendered form after a
+                // validation failure already carries the dispatcher's address).
+                userSuppliedAddress = jQuery.trim($("#Call_Address").val() || '') !== '';
                 resgrid.dispatch.newcall.protocolCount = 0;
                 resgrid.dispatch.newcall.protocolData = {};
 
@@ -39,8 +41,11 @@ var resgrid;
                         $("#searchButton").click();
                         return false;
                     }
-
-                    userSuppliedAddress = true;
+                });
+                // "input" also covers paste, autofill and mobile keyboards, which never fire keypress.
+                // Clearing the field hands it back to the map pin's reverse geocode.
+                $("#Call_Address").on("input", function () {
+                    userSuppliedAddress = jQuery.trim($(this).val() || '') !== '';
                 });
                 $("#What3Word").bind("keypress", function (event) {
                     if (event.keyCode == 13) {

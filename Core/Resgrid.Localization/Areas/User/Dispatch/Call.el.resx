@@ -718,6 +718,7 @@
   <data name="File" xml:space="preserve"><value>Αρχείο</value></data>
   <data name="Inactive" xml:space="preserve"><value>Ανενεργή</value></data>
   <data name="InvalidDestinationPoi" xml:space="preserve"><value>Επιλέξτε έγκυρο σημείο ενδιαφέροντος προορισμού.</value></data>
+  <data name="InvalidCallCoordinates" xml:space="preserve"><value>Το γεωγραφικό πλάτος και μήκος πρέπει να είναι δεκαδικοί αριθμοί: πλάτος από -90 έως 90, μήκος από -180 έως 180.</value></data>
   <data name="LoggedOff" xml:space="preserve"><value>αποσυνδέθηκε.</value></data>
   <data name="AttachFileRequired" xml:space="preserve"><value>Πρέπει να επιλέξετε αρχείο για επισύναψη.</value></data>
   <data name="DocumentTypeNotImportable" xml:space="preserve"><value>Ο τύπος εγγράφου ({0}) δεν μπορεί να εισαχθεί.</value></data>

@@ -632,4 +632,28 @@
   <data name="SharedSwitchOperatorDone" xml:space="preserve">
     <value>Utloggad. Nästa operatör kan logga in nu.</value>
   </data>
+  <data name="StepUpHoldingSubmission" xml:space="preserve">
+    <value>Det du sparade hålls kvar. Verifiera nedan så sparas det.</value>
+  </data>
+  <data name="StepUpSubmissionNotHeld" xml:space="preserve">
+    <value>Det du skickade kunde inte hållas kvar. Gå tillbaka och skicka det igen efter verifieringen.</value>
+  </data>
+  <data name="ResumePageTitle" xml:space="preserve">
+    <value>Slutför sparandet</value>
+  </data>
+  <data name="ResumeSaving" xml:space="preserve">
+    <value>Slutför det du sparade...</value>
+  </data>
+  <data name="ResumeContinueButton" xml:space="preserve">
+    <value>Fortsätt</value>
+  </data>
+  <data name="ResumeUnavailable" xml:space="preserve">
+    <value>Det här sparandet har redan skickats eller har gått ut. Gå tillbaka och skicka det igen.</value>
+  </data>
+  <data name="ResumeScriptFailed" xml:space="preserve">
+    <value>Din ändring kunde inte sparas. Gå tillbaka och försök igen.</value>
+  </data>
+  <data name="ResumeGoBack" xml:space="preserve">
+    <value>Gå tillbaka</value>
+  </data>
 </root>

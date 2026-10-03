@@ -180,9 +180,20 @@ namespace Resgrid.Services
 			}
 			else
 			{
-				var layers = await _mapLayersRepository.Value.FilterByAsync(filter => filter.DepartmentId == departmentId && filter.Type == (int)type && filter.IsDeleted == false);
+				// Layers are an optional overlay on every map page. An unreachable or misconfigured Mongo (common on
+				// self-hosted installs) must not take the whole map down with it (GitHub #243): log it and draw the
+				// map without layers.
+				try
+				{
+					var layers = await _mapLayersRepository.Value.FilterByAsync(filter => filter.DepartmentId == departmentId && filter.Type == (int)type && filter.IsDeleted == false);
 
-				return layers.ToList();
+					return layers.ToList();
+				}
+				catch (Exception ex)
+				{
+					Framework.Logging.LogException(ex, $"Unable to read map layers for department {departmentId} from the document database.");
+					return new List<MapLayer>();
+				}
 			}
 		}
 

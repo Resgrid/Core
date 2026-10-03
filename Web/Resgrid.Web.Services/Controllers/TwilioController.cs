@@ -107,6 +107,12 @@ namespace Resgrid.Web.Services.Controllers
 
 		private const int MAX_DISPATCH_RETRY = 3;
 
+		// How many extra times an outbound dispatch call replays the dispatch and menu when the
+		// callee presses nothing. Someone answering while the app's alert tone is still sounding
+		// misses the first read, so the call repeats instead of hanging up after one menu
+		// (GitHub #267). Replays reuse the cached dispatch audio.
+		private const int MAX_DISPATCH_REPLAY = 2;
+
 		// Retry budget for the inbound-menu dynamic listings (active calls, statuses,
 		// calendar). Same please-wait-and-redirect pattern as dispatch playback.
 		private const int MAX_LISTING_RETRY = 3;
@@ -789,8 +795,11 @@ namespace Resgrid.Web.Services.Controllers
 		[HttpGet("VoiceCall")]
 		[Produces("application/xml")]
 		[ValidateRequest]
-		public async Task<ActionResult> VoiceCall(string userId, int callId, [FromQuery] string retry = null)
+		public async Task<ActionResult> VoiceCall(string userId, int callId, [FromQuery] string retry = null, [FromQuery] string replay = null)
 		{
+			if (!int.TryParse(replay, out var replayCount) || replayCount < 0)
+				replayCount = 0;
+
 			var response = new VoiceResponse();
 			var call = await _callsService.GetCallByIdAsync(callId);
 			call = await _callsService.PopulateCallData(call, true, true, false, false, false, false, false, false, false);
@@ -882,9 +891,11 @@ namespace Resgrid.Web.Services.Controllers
 					// <Say>) so a hung TTS service can't stall this webhook past Twilio's
 					// 15-second limit.
 					await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.PleaseWaitForDispatch, call.DepartmentId);
+					// Carry the replay count through the retry hop so a dispatch whose audio never
+					// becomes ready still runs out of replays and hangs up.
 					var nextRetry = retryCount + 1;
 					response.Redirect(
-						new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/VoiceCall?userId={userId}&callId={callId}&retry={nextRetry}"),
+						new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/VoiceCall?userId={userId}&callId={callId}&retry={nextRetry}{(replayCount > 0 ? $"&replay={replayCount}" : "")}"),
 						"GET");
 					return CreateVoiceContentResult(response);
 				}
@@ -898,7 +909,14 @@ namespace Resgrid.Web.Services.Controllers
 			await AppendVoicePromptAsync(gather, TwilioVoicePromptCatalog.OutboundDispatchMenu, call.DepartmentId);
 			response.Append(gather);
 
-			response.Hangup();
+			// No key pressed: Twilio falls through the Gather. Read the dispatch again (bounded)
+			// rather than hanging up on someone who may not have heard it.
+			if (replayCount < MAX_DISPATCH_REPLAY)
+				response.Redirect(
+					new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/VoiceCall?userId={userId}&callId={callId}&replay={replayCount + 1}"),
+					"GET");
+			else
+				response.Hangup();
 
 			return CreateVoiceContentResult(response);
 		}

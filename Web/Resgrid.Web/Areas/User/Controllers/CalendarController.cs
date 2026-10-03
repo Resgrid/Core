@@ -302,7 +302,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				// Snapshot existing attendees before update so we can diff for notifications
 				var existingItem = await _calendarService.GetCalendarItemByIdAsync(model.Item.CalendarItemId);
-				var existingAttendeeIds = new HashSet<string>();
+				var existingAttendeeIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 				if (existingItem?.Attendees != null)
 				{
 					foreach (var a in existingItem.Attendees)
@@ -313,7 +313,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Item.End = model.EndTime;
 				model.Item.RecurrenceEnd = model.RecurrenceEndLocal;
 				model.Item.DepartmentId = DepartmentId;
-				model.Item.CreatorUserId = UserId;
+				// Editing does not transfer ownership: the creator keeps the creator's check-in and edit rights.
+				model.Item.CreatorUserId = !string.IsNullOrWhiteSpace(existingItem?.CreatorUserId) ? existingItem.CreatorUserId : UserId;
 				model.Item.Entities = model.entities;
 
 				if (model.Item.RecurrenceType == 2)
@@ -440,6 +441,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				var calendarItem = await _calendarService.GetCalendarItemByIdAsync(item.CalendarItemId);
 
+				// Same gate as the Edit page: an item id from another department (or one this user can't modify)
+				// must not be overwritten and pulled into the caller's department.
+				if (calendarItem != null && (calendarItem.DepartmentId != DepartmentId ||
+					!await _authorizationService.CanUserModifyCalendarEntryAsync(UserId, item.CalendarItemId)))
+					return null;
+
 				if (calendarItem != null)
 				{
 					calendarItem.DepartmentId = DepartmentId;
@@ -477,7 +484,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 					calendarItem.Entities = item.Entities;
 					calendarItem.RequiredAttendes = item.RequiredAttendes;
 					calendarItem.OptionalAttendes = item.OptionalAttendes;
-					calendarItem.CreatorUserId = UserId;
+					if (string.IsNullOrWhiteSpace(calendarItem.CreatorUserId))
+						calendarItem.CreatorUserId = UserId;
 					calendarItem.Public = item.Public;
 
 					calendarItem.StartTimezone = DateTimeHelpers.WindowsToIana(department.TimeZone);
@@ -598,7 +606,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (department.IsUserAnAdmin(UserId))
 					calendarItem.IsAdminOrCreator = true;
-				else if (!String.IsNullOrWhiteSpace(item.CreatorUserId) && item.CreatorUserId == UserId)
+				else if (!String.IsNullOrWhiteSpace(item.CreatorUserId) && string.Equals(item.CreatorUserId, UserId, StringComparison.OrdinalIgnoreCase))
 					calendarItem.IsAdminOrCreator = true;
 				else
 					calendarItem.IsAdminOrCreator = false;
@@ -713,20 +721,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.UserCheckIn = await _calendarService.GetCheckInByCalendarItemAndUserAsync(calendarItemId, UserId);
 			model.CheckIns = await _calendarService.GetCheckInsByCalendarItemAsync(calendarItemId);
 			model.PersonnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
-			model.IsAdmin = model.Department.IsUserAnAdmin(UserId);
 
 			// Check if user is event creator or group admin (for admin check-in buttons)
-			if (!model.IsAdmin)
+			var isDepartmentAdminOrCreator = model.Department.IsUserAnAdmin(UserId)
+				|| (!string.IsNullOrWhiteSpace(model.CalendarItem.CreatorUserId) && string.Equals(model.CalendarItem.CreatorUserId, UserId, StringComparison.OrdinalIgnoreCase));
+			DepartmentGroup adminGroup = null;
+			if (!isDepartmentAdminOrCreator)
 			{
-				if (!string.IsNullOrWhiteSpace(model.CalendarItem.CreatorUserId) && model.CalendarItem.CreatorUserId == UserId)
-					model.IsAdmin = true;
-				else
-				{
-					var group = await _departmentGroupsService.GetGroupForUserAsync(UserId, DepartmentId);
-					if (group != null && group.IsUserGroupAdmin(UserId))
-						model.IsAdmin = true;
-				}
+				var group = await _departmentGroupsService.GetGroupForUserAsync(UserId, DepartmentId);
+				if (group != null && group.IsUserGroupAdmin(UserId))
+					adminGroup = group;
 			}
+			model.IsAdmin = isDepartmentAdminOrCreator || adminGroup != null;
+
+			if (model.IsAdmin && model.CalendarItem.CheckInType != (int)CalendarItemCheckInTypes.Disabled)
+				ViewBag.AdminCheckInCandidates = await GetAdminCheckInCandidatesAsync(model, adminGroup);
 
 			return View(model);
 		}
@@ -1033,7 +1042,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> CheckIn(int calendarItemId, string checkInNote, CancellationToken cancellationToken)
 		{
-			if (!await _authorizationService.CanUserCheckInToCalendarEventAsync(UserId, calendarItemId))
+			if (!await IsCalendarItemInActiveDepartmentAsync(calendarItemId)
+				|| !await _authorizationService.CanUserCheckInToCalendarEventAsync(UserId, calendarItemId))
 				return Unauthorized();
 
 			var checkIn = await _calendarService.CheckInToEventAsync(calendarItemId, UserId, checkInNote, cancellationToken: cancellationToken);
@@ -1057,7 +1067,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> CheckOut(int calendarItemId, string checkOutNote, CancellationToken cancellationToken)
 		{
-			if (!await _authorizationService.CanUserCheckInToCalendarEventAsync(UserId, calendarItemId))
+			if (!await IsCalendarItemInActiveDepartmentAsync(calendarItemId)
+				|| !await _authorizationService.CanUserCheckInToCalendarEventAsync(UserId, calendarItemId))
 				return Unauthorized();
 
 			var checkIn = await _calendarService.CheckOutFromEventAsync(calendarItemId, UserId, checkOutNote, cancellationToken: cancellationToken);
@@ -1081,7 +1092,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> AdminCheckIn(int calendarItemId, string userId, CancellationToken cancellationToken)
 		{
-			if (!await _authorizationService.CanUserAdminCheckInCalendarEventAsync(UserId, calendarItemId, userId))
+			// The target need not be an attendee; the authorization check requires a current member of the event's department.
+			if (!await IsCalendarItemInActiveDepartmentAsync(calendarItemId)
+				|| !await _authorizationService.CanUserAdminCheckInCalendarEventAsync(UserId, calendarItemId, userId))
 				return Unauthorized();
 
 			var checkIn = await _calendarService.CheckInToEventAsync(calendarItemId, userId, null, UserId, cancellationToken: cancellationToken);
@@ -1105,7 +1118,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> AdminCheckOut(int calendarItemId, string userId, CancellationToken cancellationToken)
 		{
-			if (!await _authorizationService.CanUserAdminCheckInCalendarEventAsync(UserId, calendarItemId, userId))
+			if (!await IsCalendarItemInActiveDepartmentAsync(calendarItemId)
+				|| !await _authorizationService.CanUserAdminCheckInCalendarEventAsync(UserId, calendarItemId, userId))
 				return Unauthorized();
 
 			var checkIn = await _calendarService.CheckOutFromEventAsync(calendarItemId, userId, null, UserId, cancellationToken: cancellationToken);
@@ -1136,6 +1150,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (checkIn == null)
 				return NotFound();
 
+			if (checkIn.DepartmentId != DepartmentId)
+				return Unauthorized();
+
 			var model = new EditCalendarCheckInView();
 			model.CheckIn = checkIn;
 
@@ -1151,6 +1168,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return Unauthorized();
 
 			var existing = await _calendarService.GetCheckInByIdAsync(model.CheckIn.CalendarItemCheckInId);
+			if (existing != null && existing.DepartmentId != DepartmentId)
+				return Unauthorized();
+
 			var beforeJson = existing?.CloneJsonToString();
 
 			var updated = await _calendarService.UpdateCheckInTimesAsync(
@@ -1181,9 +1201,55 @@ namespace Resgrid.Web.Areas.User.Controllers
 		// -- Helpers ------------------------------------------------------------------
 
 		/// <summary>
+		/// The check-in authorization resolves the event's own department, which admits a member of several departments
+		/// to an event in any of them; the web session acts in its active department only.
+		/// </summary>
+		private async Task<bool> IsCalendarItemInActiveDepartmentAsync(int calendarItemId)
+		{
+			var item = await _calendarService.GetCalendarItemByIdAsync(calendarItemId);
+			return item != null && item.DepartmentId == DepartmentId;
+		}
+
+		/// <summary>
+		/// The people an admin, creator or group admin may check in on behalf of: the department's active members (or, for
+		/// a group admin, the members of their group and its child groups, matching CanUserAdminCheckInCalendarEventAsync)
+		/// not yet checked in. Attendance is not required, so nobody has to be invited (and notified) first. Values carry
+		/// the member row's id casing: PersonName upper-cases its UserId and the group test compares ids as stored.
+		/// </summary>
+		private async Task<List<SelectListItem>> GetAdminCheckInCandidatesAsync(CalendarItemView model, DepartmentGroup adminGroup)
+		{
+			var activeUserIds = await _departmentsService.GetActiveMemberUserIdsAsync(model.CalendarItem.DepartmentId)
+				?? new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+			HashSet<string> groupScope = null;
+			if (adminGroup != null)
+			{
+				var groups = new List<DepartmentGroup> { adminGroup };
+				var childGroups = await _departmentGroupsService.GetAllChildDepartmentGroupsAsync(adminGroup.DepartmentGroupId);
+				if (childGroups != null)
+					groups.AddRange(childGroups);
+
+				groupScope = new HashSet<string>(groups.Where(g => g?.Members != null).SelectMany(g => g.Members)
+					.Select(m => m.UserId).Where(id => !string.IsNullOrWhiteSpace(id)), StringComparer.OrdinalIgnoreCase);
+			}
+
+			var checkedIn = new HashSet<string>((model.CheckIns ?? new List<CalendarItemCheckIn>())
+				.Select(c => c.UserId).Where(id => !string.IsNullOrWhiteSpace(id)), StringComparer.OrdinalIgnoreCase);
+
+			return (model.PersonnelNames ?? new List<PersonName>())
+				.Where(n => n != null && activeUserIds.Contains(n.UserId) && !checkedIn.Contains(n.UserId)
+					&& (groupScope == null || groupScope.Contains(n.UserId)))
+				.GroupBy(n => n.UserId, StringComparer.OrdinalIgnoreCase).Select(g => g.First())
+				.OrderBy(n => n.LastName, StringComparer.CurrentCultureIgnoreCase).ThenBy(n => n.FirstName, StringComparer.CurrentCultureIgnoreCase)
+				.Select(n => new SelectListItem(n.Name, activeUserIds.TryGetValue(n.UserId, out var storedId) ? storedId : n.UserId))
+				.ToList();
+		}
+
+		/// <summary>
 		/// Resolves entity strings (D: for department, G:123 for groups) into individual users,
 		/// creates attendee records for any user not already attending, and returns the list of
-		/// newly added user IDs (so only they can be notified).
+		/// newly added user IDs (so only they can be notified). Only active members are added:
+		/// removed, disabled and hidden members are neither attached nor notified.
 		/// </summary>
 		private async Task<List<string>> AddEntitiesAsAttendeesAsync(CalendarItem calendarItem, string entities,
 			HashSet<string> existingAttendeeUserIds, CancellationToken cancellationToken)
@@ -1193,23 +1259,23 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return newlyAdded;
 
 			var items = entities.Split(',');
-			var processedUserIds = new HashSet<string>();
+			var processedUserIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			var existingUserIds = new HashSet<string>(existingAttendeeUserIds ?? new HashSet<string>(), StringComparer.OrdinalIgnoreCase);
+			var activeUserIds = await _departmentsService.GetActiveMemberUserIdsAsync(calendarItem.DepartmentId)
+				?? new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
 			foreach (var val in items)
 			{
 				if (val.StartsWith("D:"))
 				{
-					var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(calendarItem.DepartmentId);
-					if (personnelNames != null)
+					// The active member ids carry the stored casing (PersonName upper-cases its UserId).
+					foreach (var userId in activeUserIds)
 					{
-						foreach (var person in personnelNames)
+						if (processedUserIds.Add(userId) && !existingUserIds.Contains(userId))
 						{
-							if (processedUserIds.Add(person.UserId) && !existingAttendeeUserIds.Contains(person.UserId))
-							{
-								await _calendarService.SignupForEvent(calendarItem.CalendarItemId, person.UserId, null,
-									(int)CalendarItemAttendeeTypes.Required, cancellationToken);
-								newlyAdded.Add(person.UserId);
-							}
+							await _calendarService.SignupForEvent(calendarItem.CalendarItemId, userId, null,
+								(int)CalendarItemAttendeeTypes.Required, cancellationToken);
+							newlyAdded.Add(userId);
 						}
 					}
 				}
@@ -1223,7 +1289,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 						{
 							foreach (var member in group.Members)
 							{
-								if (processedUserIds.Add(member.UserId) && !existingAttendeeUserIds.Contains(member.UserId))
+								if (string.IsNullOrWhiteSpace(member.UserId) || !activeUserIds.Contains(member.UserId))
+									continue;
+
+								if (processedUserIds.Add(member.UserId) && !existingUserIds.Contains(member.UserId))
 								{
 									await _calendarService.SignupForEvent(calendarItem.CalendarItemId, member.UserId, null,
 										(int)CalendarItemAttendeeTypes.Required, cancellationToken);

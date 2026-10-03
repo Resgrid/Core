@@ -17,7 +17,14 @@ namespace Resgrid.Model.Providers
 		/// <summary>Decrypts the stored credential for one call; never cached, never logged.</summary>
 		Task<NerisCredential> GetCredentialAsync(RmsNerisProfile profile);
 
-		/// <summary>True when NerisConfig.Enabled, the profile is enabled, and it carries an entity ID and a credential.</summary>
+		/// <summary>
+		/// False when the department turned its NERIS workflows off on the Records Settings screen (department setting 111).
+		/// Off means no NERIS validation gate, no submission or destination call, and no NERIS setup screens; incident
+		/// reports remain ordinary Records. The profile, crosswalks and submission history are kept.
+		/// </summary>
+		Task<bool> IsWorkflowEnabledAsync(int departmentId);
+
+		/// <summary>True when NerisConfig.Enabled, the department's NERIS workflows are on, the profile is enabled, and it carries an entity ID and a credential.</summary>
 		Task<bool> IsSubmissionEnabledAsync(int departmentId);
 
 		/// <summary>A value set of the pinned contract, from the embedded snapshot (seeded to RmsNerisValueSets on first use).</summary>

@@ -87,6 +87,28 @@ namespace Resgrid.Web.Services.Models.v4.Configs
 		public string MapAttribution { get; set; }
 
 		/// <summary>
+		/// Mapbox style url (mapbox://styles/...) the department's maps use in a light theme. Always
+		/// populated: Streets when the department has not chosen a style, or the department's own custom
+		/// style when its Mapbox override is on.
+		/// </summary>
+		public string MapDayStyleUrl { get; set; }
+
+		/// <summary>
+		/// Mapbox style url (mapbox://styles/...) the department's maps use in a dark theme. Always
+		/// populated: when the department has not chosen a night style it pairs with the day style
+		/// (Dark for road maps, Navigation Night for Navigation Day, unchanged for Outdoors and imagery).
+		/// The department's custom style when its Mapbox override is on.
+		/// </summary>
+		public string MapNightStyleUrl { get; set; }
+
+		/// <summary>
+		/// Public (pk.) Mapbox token the native apps should render maps and call Mapbox services with:
+		/// the department's own token when its Mapbox override is on, otherwise the server's token for
+		/// the requesting app. Empty means keep the token built into the app. Only signed-in callers get one.
+		/// </summary>
+		public string AppMapboxAccessToken { get; set; }
+
+		/// <summary>
 		/// Latitude every map in every client should open on for this department. Resolved from the
 		/// department's configured map center, falling back to its address and finally to a system
 		/// default, so this is always populated.

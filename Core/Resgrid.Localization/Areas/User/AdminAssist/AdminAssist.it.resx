@@ -4650,6 +4650,12 @@
   <data xml:space="preserve" name="Setting.MappingUseMapboxOverride">
     <value>Usa override Mapbox</value>
   </data>
+  <data xml:space="preserve" name="Setting.MappingMapStyle">
+    <value>Stile mappa</value>
+  </data>
+  <data xml:space="preserve" name="Setting.MappingMapStyleNight">
+    <value>Stile mappa notturno</value>
+  </data>
   <data xml:space="preserve" name="Setting.ModuleSettings">
     <value>Impostazioni dei moduli</value>
   </data>
@@ -4685,6 +4691,9 @@
   </data>
   <data xml:space="preserve" name="Setting.RecordsRetentionPolicy">
     <value>Policy di conservazione dei record</value>
+  </data>
+  <data xml:space="preserve" name="Setting.RecordsNerisWorkflowsEnabled">
+    <value>Flussi di lavoro NERIS dei Registri attivati</value>
   </data>
   <data xml:space="preserve" name="Setting.RecordsReviewDueHours">
     <value>Ore entro cui è dovuta la revisione dei record</value>
@@ -4869,6 +4878,12 @@
   <data xml:space="preserve" name="SettingHelp.MappingUseMapboxOverride">
     <value>Usa l'override del fornitore mappe del dipartimento. Disattivarlo nella schermata di origine rimuove lo stile e il token salvati.</value>
   </data>
+  <data xml:space="preserve" name="SettingHelp.MappingMapStyle">
+    <value>Mappa di base Mapbox mostrata da ogni mappa del dipartimento in modalità chiara, sul sito web e in tutte le app. Automatico corrisponde a Strade; il sito web richiede un token Mapbox del server e la sostituzione Mapbox del dipartimento lo sostituisce ovunque.</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.MappingMapStyleNight">
+    <value>Mappa di base mostrata dalle app in modalità scura. Automatico si abbina allo stile diurno (Scuro per le mappe stradali, Navigazione notte per Navigazione giorno; Outdoor e satellite invariati). Il sito web usa sempre lo stile diurno.</value>
+  </data>
   <data xml:space="preserve" name="SettingHelp.ModuleSettings">
     <value>Controlla la navigazione dei moduli e i gate delle funzionalità supportate. Nascondere un modulo non elimina i suoi record né dimostra che le impostazioni indipendenti della centrale operativa siano disattivate.</value>
   </data>
@@ -4904,6 +4919,9 @@
   </data>
   <data xml:space="preserve" name="SettingHelp.RecordsRetentionPolicy">
     <value>Conservazione predefinita e specifica per definizione, inclusa la cronologia delle policy precedenti. I blocchi e le regole per classi con accesso limitato possono impedire l'idoneità all'eliminazione.</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.RecordsNerisWorkflowsEnabled">
+    <value>Attiva o disattiva la convalida, l’invio e le schermate di configurazione NERIS di questo dipartimento. Le altre impostazioni dei Registri, i registri e lo storico restano invariati; il profilo NERIS e gli invii in coda vengono conservati per la riattivazione.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.RecordsReviewDueHours">
     <value>Scadenza predefinita per la revisione amministrativa; un override a livello di definizione ha la precedenza. Non è una deduzione di scadenza normativa.</value>

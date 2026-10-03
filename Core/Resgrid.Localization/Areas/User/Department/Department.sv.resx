@@ -1139,4 +1139,61 @@
   <data name="RequirePasswordResetViaEmailHelp" xml:space="preserve">
     <value>Hindrar avdelnings- och gruppadministratörer från att välja eller se en medlems nya lösenord. Vid återställning skickas i stället en kortlivad engångslänk till medlemmen via e-post. Befintliga sessioner återkallas när medlemmen har bytt lösenord.</value>
   </data>
+  <data name="MapStyleHeader" xml:space="preserve">
+    <value>Kartstil</value>
+  </data>
+  <data name="MapStyleHelp" xml:space="preserve">
+    <value>Baskartan som din avdelning ser på varje karta i Resgrid: webbplatsen, Dispatch, Responder, Unit, IC och BigBoard.</value>
+  </data>
+  <data name="MapStyleWebsiteUnavailable" xml:space="preserve">
+    <value>Den här Resgrid-servern har ingen Mapbox-token för webbplatsen, så webbplatsens kartor behåller standardkartan. Den valda stilen gäller fortfarande i apparna.</value>
+  </data>
+  <data name="MapStyleOverrideActive" xml:space="preserve">
+    <value>Avdelningens Mapbox-åsidosättning nedan är aktiverad, så webbplatsen och apparna använder den anpassade stilen i stället för stilarna som väljs här.</value>
+  </data>
+  <data name="MapStyleDayLabel" xml:space="preserve">
+    <value>Kartstil dag</value>
+  </data>
+  <data name="MapStyleDayHelp" xml:space="preserve">
+    <value>Används på webbplatsen och i apparna när enheten är i ljust läge.</value>
+  </data>
+  <data name="MapStyleNightLabel" xml:space="preserve">
+    <value>Kartstil natt</value>
+  </data>
+  <data name="MapStyleNightHelp" xml:space="preserve">
+    <value>Används i apparna när enheten är i mörkt läge. Automatiskt väljer nattversionen av dagstilen.</value>
+  </data>
+  <data name="MapStyleAutomaticDay" xml:space="preserve">
+    <value>Automatiskt (Gator)</value>
+  </data>
+  <data name="MapStyleAutomaticNight" xml:space="preserve">
+    <value>Automatiskt ({0})</value>
+  </data>
+  <data name="MapStylePreviewAlt" xml:space="preserve">
+    <value>Förhandsvisning av kartstil</value>
+  </data>
+  <data name="MapStyle_Streets" xml:space="preserve">
+    <value>Gator</value>
+  </data>
+  <data name="MapStyle_Outdoors" xml:space="preserve">
+    <value>Friluft (terräng)</value>
+  </data>
+  <data name="MapStyle_Light" xml:space="preserve">
+    <value>Ljus</value>
+  </data>
+  <data name="MapStyle_Dark" xml:space="preserve">
+    <value>Mörk</value>
+  </data>
+  <data name="MapStyle_Satellite" xml:space="preserve">
+    <value>Satellit</value>
+  </data>
+  <data name="MapStyle_SatelliteStreets" xml:space="preserve">
+    <value>Satellit med gator</value>
+  </data>
+  <data name="MapStyle_NavigationDay" xml:space="preserve">
+    <value>Navigering dag</value>
+  </data>
+  <data name="MapStyle_NavigationNight" xml:space="preserve">
+    <value>Navigering natt</value>
+  </data>
 </root>

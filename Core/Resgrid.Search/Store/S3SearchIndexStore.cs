@@ -118,8 +118,18 @@ namespace Resgrid.Search
 
 		public async Task DownloadFileAsync(string indexName, string fileName, string localPath, CancellationToken cancellationToken = default)
 		{
-			using var response = await _client.Value.GetObjectAsync(new GetObjectRequest { BucketName = SearchConfig.S3Bucket, Key = Key(indexName, fileName) }, cancellationToken);
-			await response.WriteResponseStreamToFileAsync(localPath, false, cancellationToken);
+			GetObjectResponse response;
+			try
+			{
+				response = await _client.Value.GetObjectAsync(new GetObjectRequest { BucketName = SearchConfig.S3Bucket, Key = Key(indexName, fileName) }, cancellationToken);
+			}
+			catch (AmazonS3Exception ex) when (ex.StatusCode == HttpStatusCode.NotFound || string.Equals(ex.ErrorCode, "NoSuchKey", StringComparison.OrdinalIgnoreCase))
+			{
+				throw new SearchIndexObjectNotFoundException(indexName, fileName, $"Search index '{indexName}' object '{fileName}' is not in the store.", ex);
+			}
+
+			using (response)
+				await response.WriteResponseStreamToFileAsync(localPath, false, cancellationToken);
 		}
 
 		public async Task DeleteFilesAsync(string indexName, IEnumerable<string> fileNames, CancellationToken cancellationToken = default)

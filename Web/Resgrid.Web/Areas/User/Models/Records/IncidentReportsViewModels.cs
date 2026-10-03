@@ -16,6 +16,8 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public bool SubmissionEnabled { get; set; }
 		public bool ProfileConfigured { get; set; }
 		public bool SystemEnabled { get; set; }
+		/// <summary>Setting 111. Off hides NERIS validation and submission; the report stays an ordinary record.</summary>
+		public bool NerisWorkflowsEnabled { get; set; } = true;
 		public List<RmsIncidentReport> Reports { get; set; } = new List<RmsIncidentReport>();
 		public int Total { get; set; }
 		public int Page { get; set; } = 1;
@@ -44,6 +46,8 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public Department Department { get; set; }
 		public RmsNerisProfile Profile { get; set; }
 		public bool SubmissionEnabled { get; set; }
+		/// <summary>Setting 111. Off hides NERIS validation and submission; the report stays an ordinary record.</summary>
+		public bool NerisWorkflowsEnabled { get; set; } = true;
 		public Dictionary<string, string> PersonnelNames { get; set; } = new Dictionary<string, string>();
 		public Dictionary<int, string> GroupNames { get; set; } = new Dictionary<int, string>();
 		public bool CanEdit { get; set; }
@@ -115,6 +119,8 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public RecordUdfInput CustomFields { get; set; }
 		[Microsoft.AspNetCore.Mvc.ModelBinding.BindNever]
 		public RecordUdfSection CustomFieldForm { get; set; }
+		[Microsoft.AspNetCore.Mvc.ModelBinding.BindNever]
+		public bool NerisWorkflowsEnabled { get; set; } = true;
 		public const int TypeRows = 3;
 		public const int AidRows = 3;
 		public const int TacticRows = 5;

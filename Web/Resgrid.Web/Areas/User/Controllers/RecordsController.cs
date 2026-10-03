@@ -225,7 +225,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (moduleState.RecordsUsable)
 			{
 				model.Dashboard = await _dashboard.GetAsync(DepartmentId, UserId, cancellationToken);
-				model.Coverage = await _dashboard.GetCrosswalkCoverageAsync(DepartmentId, cancellationToken);
+				model.NerisWorkflowsEnabled = await _departmentSettingsService.GetRecordsNerisWorkflowsEnabledAsync(DepartmentId);
+				if (model.NerisWorkflowsEnabled)
+					model.Coverage = await _dashboard.GetCrosswalkCoverageAsync(DepartmentId, cancellationToken);
 			}
 
 			if (TempData["RecordsMessage"] is string message)
@@ -1109,7 +1111,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!moduleState.FlagEnabled)
 				return NotFound();
 
-			return View(await BuildSettingsAsync(moduleState));
+			var model = await BuildSettingsAsync(moduleState);
+			// The NERIS setup screens redirect here while NERIS workflows are off, carrying the reason.
+			if (TempData["RecordsMessage"] is string message)
+				model.Message = message;
+			return View(model);
 		}
 
 		[HttpPost]
@@ -1182,9 +1188,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			retention.LastChangedOn = DateTime.UtcNow;
 			await _departmentSettingsService.SetRecordsRetentionPolicyAsync(DepartmentId, retention, cancellationToken);
 
-			var searchConfig = await _departmentSettingsService.GetRecordsSearchConfigAsync(DepartmentId, true);
-			searchConfig.IndexNarrative = model.IndexNarrative;
-			await _departmentSettingsService.SetRecordsSearchConfigAsync(DepartmentId, searchConfig, cancellationToken);
+			// Setting 73 is not written here: the form has no narrative-index editor, so copying the unposted
+			// IndexNarrative (always false) would silently withdraw narrative search on every save.
+
+			// Setting 111: only the NERIS workflows switch. The NERIS profile, crosswalks and submission history stay
+			// as they are, so turning it back on resumes where the department left off.
+			await _departmentSettingsService.SetRecordsNerisWorkflowsEnabledAsync(DepartmentId, model.NerisWorkflowsEnabled, cancellationToken);
 
 			// Setting 77 (plan section 4.9): the statutory clock is bounded, the profile must be one the disclosure
 			// workflow knows, and a newly chosen release approver must be a current member so a departed user is never made the gate.
@@ -1235,7 +1244,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				GroupVisibilityMode = await _departmentSettingsService.GetRecordsGroupVisibilityModeAsync(DepartmentId, true),
 				GroupScopePreview = await _recordsAuthorizationService.PreviewGroupScopingAsync(DepartmentId),
 				IndexNarrative = search.IndexNarrative,
-				Presets = Enum.GetValues(typeof(RmsLifecyclePreset)).Cast<RmsLifecyclePreset>().Select(p => new SelectListItem { Value = ((int)p).ToString(), Text = p.ToString() }).ToList(),
+				NerisWorkflowsEnabled = await _departmentSettingsService.GetRecordsNerisWorkflowsEnabledAsync(DepartmentId, true),
+				NerisSystemEnabled = Config.NerisConfig.Enabled,
+				Presets =Enum.GetValues(typeof(RmsLifecyclePreset)).Cast<RmsLifecyclePreset>().Select(p => new SelectListItem { Value = ((int)p).ToString(), Text = p.ToString() }).ToList(),
 				VisibilityModes = new List<SelectListItem>
 				{
 					new SelectListItem { Value = ((int)RecordsGroupVisibilityMode.DepartmentWide).ToString(), Text = _localizer["GroupVisibilityDepartmentWide"] },

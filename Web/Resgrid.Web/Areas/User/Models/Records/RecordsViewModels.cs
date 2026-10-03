@@ -309,6 +309,10 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		/// <summary>Required to switch from DepartmentWide to GroupScoped.</summary>
 		public bool ConfirmGroupScoping { get; set; }
 		public bool IndexNarrative { get; set; }
+		/// <summary>Setting 111: the department's NERIS workflows. Off leaves every other Records setting and system as it is.</summary>
+		public bool NerisWorkflowsEnabled { get; set; }
+		/// <summary>NerisConfig.Enabled, the system-wide outbound switch; shown so the page does not imply submission works when it is off.</summary>
+		public bool NerisSystemEnabled { get; set; }
 		public List<SelectListItem> Presets { get; set; } = new List<SelectListItem>();
 		public List<SelectListItem> VisibilityModes { get; set; } = new List<SelectListItem>();
 		public RecordsSearchHealth SearchHealth { get; set; }

@@ -119,6 +119,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			// app fell back to its own hardcoded coordinates, which is how departments ended up staring
 			// at the wrong continent.
 			await PopulateMapCenterAsync(result, departmentId);
+			await PopulateAppMapAsync(result, departmentId, key);
 			await PopulateUnitStatusThresholdsAsync(result, departmentId);
 
 			result.Data.EventingUrl = SystemBehaviorConfig.ResgridEventingBaseUrl;
@@ -218,6 +219,35 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				Resgrid.Framework.Logging.LogException(ex,
 					$"{nameof(PopulateUnitStatusThresholdsAsync)}: threshold lookup failed for departmentId {departmentId}.");
+			}
+		}
+
+		/// <summary>
+		/// Resolves the Mapbox token and day/night base maps the apps render with. Always leaves both styles
+		/// populated: seeded with the Automatic pair (Streets / Dark) and no token, so an unauthenticated
+		/// caller or a failed lookup still gets the map every client showed before, on the app's built-in token.
+		/// </summary>
+		private async Task PopulateAppMapAsync(GetConfigResult result, int departmentId, string key)
+		{
+			result.Data.MapDayStyleUrl = MapStylePresets.GetStyleUrl(MapStyleTypes.Automatic);
+			result.Data.MapNightStyleUrl = MapStylePresets.GetStyleUrl(MapStylePresets.ResolveNightStyle(MapStyleTypes.Automatic, MapStyleTypes.Automatic));
+			result.Data.AppMapboxAccessToken = string.Empty;
+
+			if (departmentId <= 0)
+				return;
+
+			try
+			{
+				var appMap = await _departmentSettingsService.GetAppMapConfigForDepartmentAsync(departmentId, key);
+
+				result.Data.MapDayStyleUrl = appMap.DayStyleUrl;
+				result.Data.MapNightStyleUrl = appMap.NightStyleUrl;
+				result.Data.AppMapboxAccessToken = appMap.AccessToken ?? string.Empty;
+			}
+			catch (System.Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex,
+					$"{nameof(PopulateAppMapAsync)}: app map lookup failed for departmentId {departmentId}.");
 			}
 		}
 

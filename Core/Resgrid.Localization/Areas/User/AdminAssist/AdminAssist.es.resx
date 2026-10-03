@@ -4650,6 +4650,12 @@
   <data xml:space="preserve" name="Setting.MappingUseMapboxOverride">
     <value>Usar anulación de Mapbox para el mapa</value>
   </data>
+  <data xml:space="preserve" name="Setting.MappingMapStyle">
+    <value>Estilo de mapa</value>
+  </data>
+  <data xml:space="preserve" name="Setting.MappingMapStyleNight">
+    <value>Estilo de mapa nocturno</value>
+  </data>
   <data xml:space="preserve" name="Setting.ModuleSettings">
     <value>Configuración de módulos</value>
   </data>
@@ -4685,6 +4691,9 @@
   </data>
   <data xml:space="preserve" name="Setting.RecordsRetentionPolicy">
     <value>Política de retención de registros</value>
+  </data>
+  <data xml:space="preserve" name="Setting.RecordsNerisWorkflowsEnabled">
+    <value>Flujos de trabajo NERIS de Registros activados</value>
   </data>
   <data xml:space="preserve" name="Setting.RecordsReviewDueHours">
     <value>Horas de vencimiento de revisión de registros</value>
@@ -4869,6 +4878,12 @@
   <data xml:space="preserve" name="SettingHelp.MappingUseMapboxOverride">
     <value>Usa la anulación del proveedor de mapas del departamento. Desactivarla en la pantalla correspondiente elimina el estilo y el token almacenados.</value>
   </data>
+  <data xml:space="preserve" name="SettingHelp.MappingMapStyle">
+    <value>Mapa base de Mapbox que muestra cada mapa del departamento en modo claro, en el sitio web y en todas las aplicaciones. Automático es Calles; el sitio web necesita un token de Mapbox del servidor y la anulación de Mapbox del departamento lo reemplaza en todas partes.</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.MappingMapStyleNight">
+    <value>Mapa base que muestran las aplicaciones en modo oscuro. Automático se empareja con el estilo diurno (Oscuro para mapas de carreteras, Navegación nocturna para Navegación diurna; Exterior y satélite sin cambios). El sitio web siempre usa el estilo diurno.</value>
+  </data>
   <data xml:space="preserve" name="SettingHelp.ModuleSettings">
     <value>Controla la navegación de módulos y los controles de funciones admitidos. Ocultar un módulo no elimina sus registros ni demuestra que la configuración de despacho independiente esté deshabilitada.</value>
   </data>
@@ -4904,6 +4919,9 @@
   </data>
   <data xml:space="preserve" name="SettingHelp.RecordsRetentionPolicy">
     <value>Retención predeterminada y específica por definición, incluido el historial de políticas anteriores. Las retenciones legales y las reglas de clase restringida pueden impedir la elegibilidad para depuración.</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.RecordsNerisWorkflowsEnabled">
+    <value>Activa o desactiva la validación, el envío y las pantallas de configuración de NERIS de este departamento. El resto de la configuración de Registros, los registros y el historial no cambian; el perfil de NERIS y los envíos en cola se conservan para cuando se vuelva a activar.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.RecordsReviewDueHours">
     <value>Plazo administrativo predeterminado de revisión; una anulación a nivel de definición tiene prioridad. Esto no implica un plazo legal.</value>

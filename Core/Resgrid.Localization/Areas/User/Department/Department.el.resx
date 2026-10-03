@@ -1197,4 +1197,61 @@
   <data name="RequirePasswordResetViaEmailHelp" xml:space="preserve">
     <value>Εμποδίζει τους διαχειριστές του τμήματος και των ομάδων να επιλέγουν ή να βλέπουν τον νέο κωδικό πρόσβασης ενός μέλους. Αντί γι' αυτό, οι ενέργειες επαναφοράς στέλνουν στο μέλος έναν σύνδεσμο email σύντομης διάρκειας και μίας χρήσης. Οι υπάρχουσες συνεδρίες ανακαλούνται αφού το μέλος αλλάξει επιτυχώς τον κωδικό πρόσβασης.</value>
   </data>
+  <data name="MapStyleHeader" xml:space="preserve">
+    <value>Στυλ χάρτη</value>
+  </data>
+  <data name="MapStyleHelp" xml:space="preserve">
+    <value>Ο βασικός χάρτης που βλέπει η υπηρεσία σας σε κάθε χάρτη του Resgrid: στον ιστότοπο, στο Dispatch, Responder, Unit, IC και BigBoard.</value>
+  </data>
+  <data name="MapStyleWebsiteUnavailable" xml:space="preserve">
+    <value>Αυτός ο διακομιστής Resgrid δεν έχει διακριτικό Mapbox για τον ιστότοπο, οπότε οι χάρτες του ιστότοπου διατηρούν τον τυπικό χάρτη. Το στυλ που επιλέγετε εξακολουθεί να ισχύει στις εφαρμογές.</value>
+  </data>
+  <data name="MapStyleOverrideActive" xml:space="preserve">
+    <value>Η παράκαμψη Mapbox της υπηρεσίας παρακάτω είναι ενεργή, οπότε ο ιστότοπος και οι εφαρμογές χρησιμοποιούν αυτό το προσαρμοσμένο στυλ αντί για τα στυλ που επιλέγονται εδώ.</value>
+  </data>
+  <data name="MapStyleDayLabel" xml:space="preserve">
+    <value>Στυλ χάρτη ημέρας</value>
+  </data>
+  <data name="MapStyleDayHelp" xml:space="preserve">
+    <value>Χρησιμοποιείται στον ιστότοπο και στις εφαρμογές όταν η συσκευή είναι σε φωτεινή λειτουργία.</value>
+  </data>
+  <data name="MapStyleNightLabel" xml:space="preserve">
+    <value>Στυλ χάρτη νύχτας</value>
+  </data>
+  <data name="MapStyleNightHelp" xml:space="preserve">
+    <value>Χρησιμοποιείται στις εφαρμογές όταν η συσκευή είναι σε σκοτεινή λειτουργία. Η αυτόματη επιλογή διαλέγει τη νυχτερινή έκδοση του στυλ ημέρας.</value>
+  </data>
+  <data name="MapStyleAutomaticDay" xml:space="preserve">
+    <value>Αυτόματο (Δρόμοι)</value>
+  </data>
+  <data name="MapStyleAutomaticNight" xml:space="preserve">
+    <value>Αυτόματο ({0})</value>
+  </data>
+  <data name="MapStylePreviewAlt" xml:space="preserve">
+    <value>Προεπισκόπηση στυλ χάρτη</value>
+  </data>
+  <data name="MapStyle_Streets" xml:space="preserve">
+    <value>Δρόμοι</value>
+  </data>
+  <data name="MapStyle_Outdoors" xml:space="preserve">
+    <value>Ύπαιθρος (ανάγλυφο)</value>
+  </data>
+  <data name="MapStyle_Light" xml:space="preserve">
+    <value>Φωτεινό</value>
+  </data>
+  <data name="MapStyle_Dark" xml:space="preserve">
+    <value>Σκοτεινό</value>
+  </data>
+  <data name="MapStyle_Satellite" xml:space="preserve">
+    <value>Δορυφορικό</value>
+  </data>
+  <data name="MapStyle_SatelliteStreets" xml:space="preserve">
+    <value>Δορυφορικό με δρόμους</value>
+  </data>
+  <data name="MapStyle_NavigationDay" xml:space="preserve">
+    <value>Πλοήγηση ημέρας</value>
+  </data>
+  <data name="MapStyle_NavigationNight" xml:space="preserve">
+    <value>Πλοήγηση νύχτας</value>
+  </data>
 </root>

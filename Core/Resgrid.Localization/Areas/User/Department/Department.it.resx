@@ -1139,4 +1139,61 @@
   <data name="RequirePasswordResetViaEmailHelp" xml:space="preserve">
     <value>Impedisce agli amministratori del dipartimento e dei gruppi di scegliere o vedere la nuova password di un membro. Le azioni di ripristino inviano invece al membro un link via e-mail monouso e di breve durata. Le sessioni esistenti vengono chiuse dopo che il membro ha cambiato la password.</value>
   </data>
+  <data name="MapStyleHeader" xml:space="preserve">
+    <value>Stile mappa</value>
+  </data>
+  <data name="MapStyleHelp" xml:space="preserve">
+    <value>La mappa di base che il tuo dipartimento vede su ogni mappa di Resgrid: il sito web, Dispatch, Responder, Unit, IC e BigBoard.</value>
+  </data>
+  <data name="MapStyleWebsiteUnavailable" xml:space="preserve">
+    <value>Questo server Resgrid non ha un token Mapbox per il sito web, quindi le mappe del sito web mantengono la mappa standard. Lo stile scelto si applica comunque nelle app.</value>
+  </data>
+  <data name="MapStyleOverrideActive" xml:space="preserve">
+    <value>La sostituzione Mapbox del dipartimento qui sotto è attiva, quindi il sito web e le app usano quello stile personalizzato invece degli stili scelti qui.</value>
+  </data>
+  <data name="MapStyleDayLabel" xml:space="preserve">
+    <value>Stile mappa diurno</value>
+  </data>
+  <data name="MapStyleDayHelp" xml:space="preserve">
+    <value>Usato sul sito web e nelle app quando il dispositivo è in modalità chiara.</value>
+  </data>
+  <data name="MapStyleNightLabel" xml:space="preserve">
+    <value>Stile mappa notturno</value>
+  </data>
+  <data name="MapStyleNightHelp" xml:space="preserve">
+    <value>Usato nelle app quando il dispositivo è in modalità scura. Automatico sceglie la versione notturna dello stile diurno.</value>
+  </data>
+  <data name="MapStyleAutomaticDay" xml:space="preserve">
+    <value>Automatico (Strade)</value>
+  </data>
+  <data name="MapStyleAutomaticNight" xml:space="preserve">
+    <value>Automatico ({0})</value>
+  </data>
+  <data name="MapStylePreviewAlt" xml:space="preserve">
+    <value>Anteprima dello stile mappa</value>
+  </data>
+  <data name="MapStyle_Streets" xml:space="preserve">
+    <value>Strade</value>
+  </data>
+  <data name="MapStyle_Outdoors" xml:space="preserve">
+    <value>Outdoor (terreno)</value>
+  </data>
+  <data name="MapStyle_Light" xml:space="preserve">
+    <value>Chiaro</value>
+  </data>
+  <data name="MapStyle_Dark" xml:space="preserve">
+    <value>Scuro</value>
+  </data>
+  <data name="MapStyle_Satellite" xml:space="preserve">
+    <value>Satellite</value>
+  </data>
+  <data name="MapStyle_SatelliteStreets" xml:space="preserve">
+    <value>Satellite con strade</value>
+  </data>
+  <data name="MapStyle_NavigationDay" xml:space="preserve">
+    <value>Navigazione giorno</value>
+  </data>
+  <data name="MapStyle_NavigationNight" xml:space="preserve">
+    <value>Navigazione notte</value>
+  </data>
 </root>

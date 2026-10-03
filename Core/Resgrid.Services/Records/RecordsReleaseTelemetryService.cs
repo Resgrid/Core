@@ -38,13 +38,15 @@ namespace Resgrid.Services.Records
 		private readonly IRmsHydrantsRepository _hydrants;
 		private readonly IDepartmentDataProtectionService _dataProtection;
 		private readonly RecordsPreventionGate _gate;
+		private readonly IDepartmentSettingsService _settings;
 
 		public RecordsReleaseTelemetryService(IRecordsCutoverService cutover, IRecordsAuthorizationService authorization, IRmsAccessAuditsRepository audits, IDomainEventOutboxRepository outbox,
 			IWorkflowRunRepository workflowRuns, IRmsRecordAttachmentsRepository attachments, IRmsOperationalRecordsRepository records, IRmsRecordDueStatesRepository dueStates, IRmsSubmissionsRepository submissions,
-			IRmsInspectionsRepository inspections, IRmsViolationsRepository violations, IRmsPermitsRepository permits, IRmsHydrantsRepository hydrants, IDepartmentDataProtectionService dataProtection, RecordsPreventionGate gate)
+			IRmsInspectionsRepository inspections, IRmsViolationsRepository violations, IRmsPermitsRepository permits, IRmsHydrantsRepository hydrants, IDepartmentDataProtectionService dataProtection, RecordsPreventionGate gate,
+			IDepartmentSettingsService settings)
 		{
 			_cutover = cutover; _authorization = authorization; _audits = audits; _outbox = outbox; _workflowRuns = workflowRuns; _attachments = attachments; _records = records; _dueStates = dueStates;
-			_submissions = submissions; _inspections = inspections; _violations = violations; _permits = permits; _hydrants = hydrants; _dataProtection = dataProtection; _gate = gate;
+			_submissions = submissions; _inspections = inspections; _violations = violations; _permits = permits; _hydrants = hydrants; _dataProtection = dataProtection; _gate = gate; _settings = settings;
 		}
 
 		public async Task<RecordsReleaseTelemetry> GetAsync(int departmentId, string userId, int windowHours = 24)
@@ -106,6 +108,10 @@ namespace Resgrid.Services.Records
 			});
 			await Try(t, "submissions", async () =>
 			{
+				// NERIS workflows off (setting 111): queued rows wait on purpose and failed ones cannot be recovered until it is
+				// turned back on, so they are not raised as an alert the administrator cannot act on.
+				if (!await _settings.GetRecordsNerisWorkflowsEnabledAsync(departmentId))
+					return;
 				t.SubmissionsFailed = await _submissions.CountByStateAsync(departmentId, (int)RmsSubmissionState.Failed);
 				t.SubmissionsAwaiting = await _submissions.CountByStateAsync(departmentId, (int)RmsSubmissionState.Queued) + await _submissions.CountByStateAsync(departmentId, (int)RmsSubmissionState.InFlight) + await _submissions.CountByStateAsync(departmentId, (int)RmsSubmissionState.AwaitingDestination);
 			});

@@ -30,6 +30,7 @@ namespace Resgrid.Search
 		private const string LockFileName = "write.lock";
 		private static readonly TimeSpan OrphanedTempAge = TimeSpan.FromHours(1);
 		private static readonly TimeSpan MaxPullBackoff = TimeSpan.FromMinutes(10);
+		private const int MaxSupersededPullRestarts = 3;
 
 		private readonly object _sync = new object();
 		private readonly object _writerSyncGate = new object();
@@ -422,33 +423,55 @@ namespace Resgrid.Search
 		{
 			_lastPullAttemptUtc = DateTime.UtcNow;
 			var manifest = await _store.GetManifestAsync(IndexName, cancellationToken);
-			if (manifest == null)
-				return false;
-			if (string.Equals(manifest.Revision, _appliedRevision, StringComparison.Ordinal))
-			{
-				_manifestETag = manifest.ETag ?? _manifestETag;
-				return false;
-			}
-
 			var localPath = IndexPath;
-			System.IO.Directory.CreateDirectory(localPath);
-
-			// A generation that went backwards means the writer was rebuilt from scratch: file names will be reused
-			// with different content, so start from an empty directory rather than trusting name+length matches.
-			if (_appliedGeneration >= 0 && manifest.SegmentsGeneration < _appliedGeneration)
+			var highestGeneration = _appliedGeneration;
+			Dictionary<string, long> wanted;
+			for (var restarts = 0; ; restarts++)
 			{
-				lock (_sync) { WipeLocalFiles(keepOpenHandles: true); }
+				if (manifest == null)
+					return false;
+				if (string.Equals(manifest.Revision, _appliedRevision, StringComparison.Ordinal))
+				{
+					_manifestETag = manifest.ETag ?? _manifestETag;
+					return false;
+				}
+
+				System.IO.Directory.CreateDirectory(localPath);
+
+				// A generation that went backwards means the writer was rebuilt from scratch: file names will be reused
+				// with different content, so start from an empty directory rather than trusting name+length matches.
+				// Compared against an abandoned attempt's generation too, since its files are already on disk.
+				if (highestGeneration >= 0 && manifest.SegmentsGeneration < highestGeneration)
+				{
+					lock (_sync) { WipeLocalFiles(keepOpenHandles: true); }
+				}
+
+				wanted = new Dictionary<string, long>(StringComparer.Ordinal);
+				foreach (var f in manifest.Files ?? new List<SearchIndexManifestFile>())
+					wanted[f.Name] = f.Length;
+
+				try
+				{
+					string segmentsFile = wanted.Keys.FirstOrDefault(n => n.StartsWith("segments_", StringComparison.Ordinal));
+					foreach (var pair in wanted.Where(p => !string.Equals(p.Key, segmentsFile, StringComparison.Ordinal)))
+						await DownloadIfNeededAsync(localPath, pair.Key, pair.Value, cancellationToken);
+					if (segmentsFile != null)
+						await DownloadIfNeededAsync(localPath, segmentsFile, wanted[segmentsFile], cancellationToken);
+					break;
+				}
+				catch (SearchIndexObjectNotFoundException) when (restarts < MaxSupersededPullRestarts)
+				{
+					// The writer prunes superseded objects as soon as its next manifest is in place (erasure needs them
+					// gone), so a pull still working through the older manifest can find a file already deleted. The
+					// segments file is downloaded last, so the local commit is still the previous one: start over against
+					// the newer manifest. A missing object under an unchanged manifest is a broken publish, not a race.
+					var latest = await _store.GetManifestAsync(IndexName, cancellationToken);
+					if (latest == null || string.Equals(latest.Revision, manifest.Revision, StringComparison.Ordinal))
+						throw;
+					highestGeneration = Math.Max(highestGeneration, manifest.SegmentsGeneration);
+					manifest = latest;
+				}
 			}
-
-			var wanted = new Dictionary<string, long>(StringComparer.Ordinal);
-			foreach (var f in manifest.Files ?? new List<SearchIndexManifestFile>())
-				wanted[f.Name] = f.Length;
-
-			string segmentsFile = wanted.Keys.FirstOrDefault(n => n.StartsWith("segments_", StringComparison.Ordinal));
-			foreach (var pair in wanted.Where(p => !string.Equals(p.Key, segmentsFile, StringComparison.Ordinal)))
-				await DownloadIfNeededAsync(localPath, pair.Key, pair.Value, cancellationToken);
-			if (segmentsFile != null)
-				await DownloadIfNeededAsync(localPath, segmentsFile, wanted[segmentsFile], cancellationToken);
 
 			foreach (var existing in System.IO.Directory.EnumerateFiles(localPath))
 			{

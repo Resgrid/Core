@@ -36,6 +36,7 @@ namespace Resgrid.Tests.Rms
 		private Mock<ICallsService> _calls;
 		private Mock<IDepartmentDataProtectionService> _adp;
 		private Mock<INerisProfileService> _neris;
+		private bool _nerisWorkflows;
 		private Mock<INerisValidationService> _validation;
 		private Mock<IEventAggregator> _aggregator;
 		private RmsNerisProfile _profile;
@@ -114,6 +115,8 @@ namespace Resgrid.Tests.Rms
 			_neris.SetupGet(n => n.ContractVersion).Returns("1.4.78");
 			_neris.Setup(n => n.GetProfileAsync(Dept)).ReturnsAsync(() => _profile);
 			_neris.Setup(n => n.IsSubmissionEnabledAsync(Dept)).ReturnsAsync(() => _submissionEnabled);
+			_nerisWorkflows = true;
+			_neris.Setup(n => n.IsWorkflowEnabledAsync(Dept)).ReturnsAsync(() => _nerisWorkflows);
 			_neris.Setup(n => n.ResolveCrosswalkAsync(Dept, "incident_type", NerisCrosswalkSources.CallType, "Fire")).ReturnsAsync("FIRE||STRUCTURE_FIRE||RESIDENTIAL");
 
 			_feeds = new Mock<IIncidentSourceFeedService>();
@@ -457,6 +460,76 @@ namespace Resgrid.Tests.Rms
 
 			Func<Task> act = () => _service.QueueSubmissionAsync(Dept, "author", started.Report.RmsIncidentReportId);
 			await act.Should().ThrowAsync<InvalidOperationException>();
+		}
+
+		[Test]
+		public async Task With_neris_workflows_off_finalize_signs_without_neris_validation_and_queues_nothing()
+		{
+			_nerisWorkflows = false;
+			_submissionEnabled = false; // NerisProfileService.IsSubmissionEnabledAsync folds the department switch in
+			var started = await _service.StartFromCallAsync(Dept, "author", CallId);
+			var reportId = started.Report.RmsIncidentReportId;
+			_localIssues.Add(new RmsValidationIssue { RuleKey = "neris.profile.entity", Severity = (int)RmsValidationSeverity.Error, FieldPath = "base.department_neris_id", Message = "no entity" });
+
+			var final = await _service.FinalizeAsync(Dept, "author", reportId, started.Report.RowVersion, null, "10.0.0.1", null, null);
+
+			final.State.Should().Be(RmsRecordState.Finalized, "the report is an ordinary department record");
+			final.Report.RecordNumber.Should().NotBeNullOrEmpty();
+			_store.Revisions.Should().ContainSingle();
+			_store.Signatures.Should().ContainSingle();
+			_store.Submissions.Should().BeEmpty();
+			_store.Issues.Should().BeEmpty();
+			_validation.Verify(v => v.ValidateLocal(It.IsAny<NerisIncidentSnapshot>(), It.IsAny<RmsNerisProfile>()), Times.Never);
+			_store.Outbox.Select(o => o.TriggerEventType).Should().NotContain((int)WorkflowTriggerEventType.RecordSubmissionQueued);
+		}
+
+		[Test]
+		public async Task With_neris_workflows_off_validate_clears_earlier_findings_and_reports_none()
+		{
+			var started = await _service.StartFromCallAsync(Dept, "author", CallId);
+			var reportId = started.Report.RmsIncidentReportId;
+			_localIssues.Add(new RmsValidationIssue { RuleKey = "neris.base.location", Severity = (int)RmsValidationSeverity.Error, FieldPath = "base.location", Message = "required" });
+			(await _service.ValidateAsync(Dept, reportId, false)).Should().ContainSingle();
+
+			_nerisWorkflows = false;
+
+			(await _service.ValidateAsync(Dept, reportId, true)).Should().BeEmpty();
+			_store.Issues.Should().NotContain(i => i.RecordId == reportId);
+		}
+
+		[Test]
+		public async Task With_neris_workflows_off_queue_submission_names_the_records_setting()
+		{
+			_profile.AutoSubmitOnFinalize = false;
+			var started = await _service.StartFromCallAsync(Dept, "author", CallId);
+			var final = await _service.FinalizeAsync(Dept, "author", started.Report.RmsIncidentReportId, started.Report.RowVersion, null, null, null, null);
+			_nerisWorkflows = false;
+			_submissionEnabled = false;
+
+			Func<Task> act = () => _service.QueueSubmissionAsync(Dept, "author", final.Report.RmsIncidentReportId);
+
+			(await act.Should().ThrowAsync<InvalidOperationException>()).WithMessage(NerisWorkflows.OffMessage);
+			_store.Submissions.Should().BeEmpty();
+		}
+
+		[Test]
+		public async Task With_neris_workflows_off_section_requirements_become_suggestions()
+		{
+			_validation.Setup(v => v.GetSectionRequirements(It.IsAny<IEnumerable<string>>())).Returns(new List<NerisSectionRequirement>
+			{
+				new NerisSectionRequirement { Kind = RmsIncidentModuleKind.Fire, Required = true, Reason = "Fire incident type", PrimaryCodeSet = "water_supply" }
+			});
+			var started = await _service.StartFromCallAsync(Dept, "author", CallId);
+			var reportId = started.Report.RmsIncidentReportId;
+			(await _service.GetSectionRequirementsAsync(Dept, reportId)).Single().Required.Should().BeTrue();
+
+			_nerisWorkflows = false;
+			var off = (await _service.GetSectionRequirementsAsync(Dept, reportId)).Single();
+
+			off.Required.Should().BeFalse("nothing enforces a NERIS section while the workflows are off");
+			off.Kind.Should().Be(RmsIncidentModuleKind.Fire);
+			off.Reason.Should().Be("Fire incident type");
+			off.PrimaryCodeSet.Should().Be("water_supply", "the form keeps its code lists");
 		}
 
 		[Test]

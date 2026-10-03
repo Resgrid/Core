@@ -4650,6 +4650,12 @@
   <data xml:space="preserve" name="Setting.MappingUseMapboxOverride">
     <value>Kartläggning – använd Mapbox-åsidosättning</value>
   </data>
+  <data xml:space="preserve" name="Setting.MappingMapStyle">
+    <value>Kartstil</value>
+  </data>
+  <data xml:space="preserve" name="Setting.MappingMapStyleNight">
+    <value>Kartstil natt</value>
+  </data>
   <data xml:space="preserve" name="Setting.ModuleSettings">
     <value>Modulinställningar</value>
   </data>
@@ -4685,6 +4691,9 @@
   </data>
   <data xml:space="preserve" name="Setting.RecordsRetentionPolicy">
     <value>Policy för lagring av poster</value>
+  </data>
+  <data xml:space="preserve" name="Setting.RecordsNerisWorkflowsEnabled">
+    <value>NERIS-flöden för Register aktiverade</value>
   </data>
   <data xml:space="preserve" name="Setting.RecordsReviewDueHours">
     <value>Timmar till granskningsfrist för poster</value>
@@ -4869,6 +4878,12 @@
   <data xml:space="preserve" name="SettingHelp.MappingUseMapboxOverride">
     <value>Använd avdelningens kartleverantörsåsidosättning. Att stänga av den på tillhörande skärm tar bort den sparade stilen och token.</value>
   </data>
+  <data xml:space="preserve" name="SettingHelp.MappingMapStyle">
+    <value>Mapbox-baskarta som varje karta för avdelningen visar i ljust läge, på webbplatsen och i alla appar. Automatiskt är Gator; webbplatsen kräver en Mapbox-token på servern och avdelningens Mapbox-åsidosättning ersätter den överallt.</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.MappingMapStyleNight">
+    <value>Baskarta som apparna visar i mörkt läge. Automatiskt paras ihop med dagstilen (Mörk för vägkartor, Navigering natt för Navigering dag; Friluft och satellit oförändrade). Webbplatsen använder alltid dagstilen.</value>
+  </data>
   <data xml:space="preserve" name="SettingHelp.ModuleSettings">
     <value>Styr modulnavigering och funktionsspärrar som stöds. Att dölja en modul tar inte bort dess poster eller bevisar att oberoende utlarmningsinställningar är inaktiverade.</value>
   </data>
@@ -4904,6 +4919,9 @@
   </data>
   <data xml:space="preserve" name="SettingHelp.RecordsRetentionPolicy">
     <value>Standard- och definitionsspecifik lagring, inklusive historik för tidigare policyer. Spärrar och regler för begränsade klasser kan förhindra gallringsberättigande.</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.RecordsNerisWorkflowsEnabled">
+    <value>Slår på eller av avdelningens NERIS-validering, inskickning och NERIS-inställningssidor. Övriga inställningar för Register, register och historik påverkas inte; NERIS-profilen och köade inskickningar behålls tills funktionen slås på igen.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.RecordsReviewDueHours">
     <value>Standardfrist för administrativ granskning; en åsidosättning på definitionsnivå har företräde. Detta är inte en härledd lagstadgad frist.</value>

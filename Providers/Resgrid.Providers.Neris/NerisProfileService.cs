@@ -28,15 +28,17 @@ namespace Resgrid.Providers.Neris
 		private readonly IRmsNerisCrosswalksRepository _crosswalks;
 		private readonly IDepartmentsService _departments;
 		private readonly IEncryptionService _encryption;
+		private readonly IDepartmentSettingsService _settings;
 
 		public NerisProfileService(IRmsNerisProfilesRepository profiles, IRmsNerisValueSetsRepository valueSets, IRmsNerisCrosswalksRepository crosswalks,
-			IDepartmentsService departments, IEncryptionService encryption)
+			IDepartmentsService departments, IEncryptionService encryption, IDepartmentSettingsService settings)
 		{
 			_profiles = profiles;
 			_valueSets = valueSets;
 			_crosswalks = crosswalks;
 			_departments = departments;
 			_encryption = encryption;
+			_settings = settings;
 		}
 
 		public string ContractVersion => NerisValueSetCatalog.Instance.ContractVersion;
@@ -145,9 +147,17 @@ namespace Resgrid.Providers.Neris
 			return string.IsNullOrWhiteSpace(json) ? null : JsonConvert.DeserializeObject<NerisCredential>(json);
 		}
 
+		public Task<bool> IsWorkflowEnabledAsync(int departmentId)
+		{
+			return _settings.GetRecordsNerisWorkflowsEnabledAsync(departmentId);
+		}
+
 		public async Task<bool> IsSubmissionEnabledAsync(int departmentId)
 		{
 			if (!NerisConfig.Enabled)
+				return false;
+
+			if (!await IsWorkflowEnabledAsync(departmentId))
 				return false;
 
 			var profile = await _profiles.GetByDepartmentIdAsync(departmentId);

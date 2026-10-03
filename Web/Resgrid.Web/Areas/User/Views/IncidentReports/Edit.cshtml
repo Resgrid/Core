@@ -592,7 +592,10 @@
 					<div class="col-sm-12">
 						<a class="btn btn-white" asp-controller="IncidentReports" asp-action="Details" asp-route-area="User" asp-route-id="@Model.ReportId">@commonLocalizer["Cancel"]</a>
 						<button type="submit" disabled data-neris-save="true" class="btn btn-primary" name="ValidateAfterSave" value="false">@localizer["SaveDraft"]</button>
-						<button type="submit" disabled data-neris-save="true" class="btn btn-success" name="ValidateAfterSave" value="true">@localizer["SaveAndValidate"]</button>
+						@if (Model.NerisWorkflowsEnabled)
+						{
+							<button type="submit" disabled data-neris-save="true" class="btn btn-success" name="ValidateAfterSave" value="true">@localizer["SaveAndValidate"]</button>
+						}
 					</div>
 				</div>
 			</div>

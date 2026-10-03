@@ -176,6 +176,14 @@ namespace Resgrid.Services.Records
 			if (snapshot == null)
 				return new List<RmsValidationIssue>();
 
+			// NERIS workflows off (setting 111): every analysis rule is a NERIS contract rule, so there is nothing to
+			// check; clear what an earlier run left so the record does not show stale findings.
+			if (!await _neris.IsWorkflowEnabledAsync(departmentId))
+			{
+				await _issues.ReplaceForRecordAsync(departmentId, analysisId, RmsValidationSource.Local, Enumerable.Empty<RmsValidationIssue>(), cancellationToken);
+				return new List<RmsValidationIssue>();
+			}
+
 			var profile = await _neris.GetProfileAsync(departmentId);
 			var issues = _validation.ValidateAnalysisLocal(snapshot, profile);
 			await _issues.ReplaceForRecordAsync(departmentId, analysisId, RmsValidationSource.Local, issues, cancellationToken);
@@ -239,6 +247,8 @@ namespace Resgrid.Services.Records
 
 			if (string.IsNullOrWhiteSpace(analysis.CurrentRevisionId))
 				throw new InvalidOperationException("The analysis has not been finalized.");
+			if (!await _neris.IsWorkflowEnabledAsync(departmentId))
+				throw new InvalidOperationException(NerisWorkflows.OffMessage);
 			if (report == null || string.IsNullOrWhiteSpace(report.NerisIncidentId))
 				throw new InvalidOperationException("The incident must be filed with NERIS before its analysis can be.");
 			if (!await _neris.IsSubmissionEnabledAsync(departmentId))

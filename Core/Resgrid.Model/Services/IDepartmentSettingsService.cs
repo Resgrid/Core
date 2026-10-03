@@ -323,7 +323,33 @@ namespace Resgrid.Model.Services
 
 		Task<string> GetMappingMapboxAccessTokenAsync(int departmentId);
 
+		/// <summary>The department's day (light theme) base map choice. Missing row = Automatic.</summary>
+		Task<MapStyleTypes> GetMappingMapStyleAsync(int departmentId, bool bypassCache = false);
+
+		/// <summary>The department's night (dark theme) base map choice. Missing row = Automatic.</summary>
+		Task<MapStyleTypes> GetMappingMapStyleNightAsync(int departmentId, bool bypassCache = false);
+
+		/// <summary>
+		/// Persists both base map choices. Automatic removes the row rather than storing 0, so "has this
+		/// department chosen a style" stays a presence check.
+		/// </summary>
+		Task SaveMappingMapStylesAsync(int departmentId, MapStyleTypes dayStyle, MapStyleTypes nightStyle, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// The map a surface renders for a department. Precedence: the department's own Mapbox account
+		/// override, then the department's chosen day style on the system Mapbox token for that surface
+		/// (when the surface has one), then the system default.
+		/// </summary>
 		Task<ResolvedMapConfig> GetMapConfigForDepartmentAsync(int departmentId, string key = null);
+
+		/// <summary>
+		/// The Mapbox token and day/night styles a native app (Unit, Responder, Dispatch, IC, BigBoard) renders
+		/// with. Precedence: the department's own Mapbox override (its token, and its custom style day and
+		/// night), then the system token for that app with the department's chosen preset styles. An empty
+		/// token tells the app to keep its built-in one. departmentId 0 (an unauthenticated caller) never gets
+		/// a token.
+		/// </summary>
+		Task<ResolvedAppMapConfig> GetAppMapConfigForDepartmentAsync(int departmentId, string key);
 
 		Task<DepartmentModuleSettings> GetDepartmentModuleSettingsAsync(int departmentId, bool bypassCache = false);
 
@@ -416,5 +442,9 @@ namespace Resgrid.Model.Services
 		Task<DepartmentSetting> SetRecordsGroupVisibilityModeAsync(int departmentId, RecordsGroupVisibilityMode mode, CancellationToken cancellationToken = default(CancellationToken));
 		Task<RecordsDisclosureConfig> GetRecordsDisclosureConfigAsync(int departmentId, bool bypassCache = false);
 		Task<DepartmentSetting> SetRecordsDisclosureConfigAsync(int departmentId, RecordsDisclosureConfig config, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>Setting 111: false when the department has turned its NERIS workflows off. Missing or unreadable means on.</summary>
+		Task<bool> GetRecordsNerisWorkflowsEnabledAsync(int departmentId, bool bypassCache = false);
+		Task<DepartmentSetting> SetRecordsNerisWorkflowsEnabledAsync(int departmentId, bool enabled, CancellationToken cancellationToken = default(CancellationToken));
 	}
 }

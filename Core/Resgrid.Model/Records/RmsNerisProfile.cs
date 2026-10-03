@@ -15,6 +15,13 @@ namespace Resgrid.Model
 		public const string Password = "password";
 	}
 
+	/// <summary>The department-level NERIS switch on the Records Settings screen (department setting 111).</summary>
+	public static class NerisWorkflows
+	{
+		/// <summary>Refusal text for a NERIS action while the department has NERIS workflows turned off.</summary>
+		public const string OffMessage = "NERIS workflows are turned off for this department. Turn them on in Records Settings to validate or submit to NERIS.";
+	}
+
 	/// <summary>
 	/// A department's NERIS reporting profile (registry M0166): its NERIS entity ID, environment, and integration
 	/// credential (encrypted per department through IEncryptionService). Records is useful without one (plan

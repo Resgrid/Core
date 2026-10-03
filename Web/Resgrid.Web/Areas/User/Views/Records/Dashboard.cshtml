@@ -101,10 +101,13 @@
 							<tbody>
 								<tr><td>@localizer["Incomplete"]</td><td class="text-right"><strong>@d.IncidentIncomplete</strong></td></tr>
 								<tr><td>@localizer["AwaitingReview"]</td><td class="text-right"><strong>@d.IncidentAwaitingReview</strong></td></tr>
-								<tr><td>@localizer["Submitted"]</td><td class="text-right"><strong>@d.IncidentSubmitted</strong></td></tr>
-								<tr><td>@localizer["Accepted"]</td><td class="text-right"><strong>@d.IncidentAccepted</strong></td></tr>
-								<tr class="@(d.IncidentRejected > 0 ? "danger" : string.Empty)"><td>@localizer["Rejected"]</td><td class="text-right"><strong>@d.IncidentRejected</strong></td></tr>
-								<tr><td>@localizer["AnalysesAwaitingFiling"]</td><td class="text-right"><strong>@d.AnalysesAwaitingFiling</strong></td></tr>
+								@if (Model.NerisWorkflowsEnabled)
+								{
+									<tr><td>@localizer["Submitted"]</td><td class="text-right"><strong>@d.IncidentSubmitted</strong></td></tr>
+									<tr><td>@localizer["Accepted"]</td><td class="text-right"><strong>@d.IncidentAccepted</strong></td></tr>
+									<tr class="@(d.IncidentRejected > 0 ? "danger" : string.Empty)"><td>@localizer["Rejected"]</td><td class="text-right"><strong>@d.IncidentRejected</strong></td></tr>
+									<tr><td>@localizer["AnalysesAwaitingFiling"]</td><td class="text-right"><strong>@d.AnalysesAwaitingFiling</strong></td></tr>
+								}
 							</tbody>
 						</table>
 						<a class="btn btn-white btn-sm" asp-controller="IncidentReports" asp-action="Index" asp-route-area="User">@localizer["OpenIncidentQueue"]</a>

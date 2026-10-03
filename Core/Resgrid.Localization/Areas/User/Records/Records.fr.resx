@@ -2160,4 +2160,11 @@
   <data name="SourceInferred" xml:space="preserve"><value>Déduit</value></data>
   <data name="SourceAutoLinked" xml:space="preserve"><value>Lié automatiquement</value></data>
   <data name="UnitTimesDerivedHint" xml:space="preserve"><value>Certains horaires d'unité proviennent de statuts que l'unité n'a pas liés elle-même à cet appel : Resgrid les a liés automatiquement (d'après le statut précédent de l'unité ou son envoi) ou déduits (définis sans destination alors que l'unité était envoyée ici). Vérifiez-les avant de finaliser.</value></data>
+  <data name="NerisWorkflowsHeader" xml:space="preserve"><value>Déclaration NERIS</value></data>
+  <data name="NerisWorkflowsEnabled" xml:space="preserve"><value>Utiliser les processus NERIS</value></data>
+  <data name="NerisWorkflowsIntro" xml:space="preserve"><value>Lorsque cette option est activée, les rapports d’intervention sont contrôlés selon les règles NERIS avant de pouvoir être finalisés, et les rapports finalisés peuvent être transmis à NERIS. Désactivez-la si votre service ne déclare pas à NERIS.</value></data>
+  <data name="NerisWorkflowsOffHelp" xml:space="preserve"><value>Désactiver NERIS arrête la validation, la transmission et les vérifications d’état NERIS, et masque les écrans de configuration et les indicateurs NERIS. Les rapports d’intervention et tous les autres paramètres des dossiers continuent de fonctionner. Votre profil NERIS, vos correspondances de codes et l’historique des transmissions sont conservés, et les transmissions en file d’attente patientent jusqu’à la réactivation de NERIS.</value></data>
+  <data name="NerisWorkflowsOffNotice" xml:space="preserve"><value>Les processus NERIS sont désactivés pour ce service. Les rapports d’intervention sont conservés comme dossiers du service et ne sont ni validés selon NERIS ni transmis à NERIS. Un administrateur peut réactiver NERIS dans les paramètres des dossiers.</value></data>
+  <data name="ManageNerisProfile" xml:space="preserve"><value>Profil NERIS et correspondances de codes</value></data>
+  <data name="CorrectWithoutNeris" xml:space="preserve"><value>Enregistrer la correction (non transmise à NERIS)</value></data>
 </root>

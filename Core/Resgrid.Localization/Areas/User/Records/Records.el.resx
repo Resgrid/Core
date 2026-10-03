@@ -2160,4 +2160,11 @@
   <data name="SourceInferred" xml:space="preserve"><value>Συναγόμενο</value></data>
   <data name="SourceAutoLinked" xml:space="preserve"><value>Αυτόματη σύνδεση</value></data>
   <data name="UnitTimesDerivedHint" xml:space="preserve"><value>Ορισμένοι χρόνοι μονάδων προέρχονται από καταστάσεις που η μονάδα δεν συνέδεσε η ίδια με αυτή την κλήση: το Resgrid τις συνέδεσε αυτόματα (από την προηγούμενη κατάσταση ή την αποστολή της μονάδας) ή τις συνήγαγε (ορίστηκαν χωρίς προορισμό ενώ η μονάδα είχε σταλεί εδώ). Ελέγξτε τις πριν από την οριστικοποίηση.</value></data>
+  <data name="NerisWorkflowsHeader" xml:space="preserve"><value>Αναφορές NERIS</value></data>
+  <data name="NerisWorkflowsEnabled" xml:space="preserve"><value>Χρήση ροών εργασίας NERIS</value></data>
+  <data name="NerisWorkflowsIntro" xml:space="preserve"><value>Όταν είναι ενεργό, οι αναφορές συμβάντων ελέγχονται με βάση τους κανόνες NERIS πριν οριστικοποιηθούν και οι οριστικοποιημένες αναφορές μπορούν να υποβληθούν στο NERIS. Απενεργοποιήστε το αν η υπηρεσία σας δεν αναφέρει στο NERIS.</value></data>
+  <data name="NerisWorkflowsOffHelp" xml:space="preserve"><value>Η απενεργοποίηση του NERIS σταματά την επικύρωση, την υποβολή και τους ελέγχους κατάστασης NERIS και αποκρύπτει τις οθόνες ρύθμισης και τα στοιχεία NERIS. Οι αναφορές συμβάντων και όλες οι άλλες ρυθμίσεις Αρχείων συνεχίζουν να λειτουργούν. Το προφίλ NERIS, οι αντιστοιχίσεις κωδικών και το ιστορικό υποβολών διατηρούνται, και οι υποβολές σε αναμονή περιμένουν μέχρι να ενεργοποιηθεί ξανά το NERIS.</value></data>
+  <data name="NerisWorkflowsOffNotice" xml:space="preserve"><value>Οι ροές εργασίας NERIS είναι απενεργοποιημένες για αυτή την υπηρεσία. Οι αναφορές συμβάντων διατηρούνται ως αρχεία της υπηρεσίας και δεν επικυρώνονται ούτε υποβάλλονται στο NERIS. Ένας διαχειριστής μπορεί να ενεργοποιήσει ξανά το NERIS στις ρυθμίσεις Αρχείων.</value></data>
+  <data name="ManageNerisProfile" xml:space="preserve"><value>Προφίλ NERIS και αντιστοιχίσεις κωδικών</value></data>
+  <data name="CorrectWithoutNeris" xml:space="preserve"><value>Αποθήκευση διόρθωσης (δεν υποβάλλεται στο NERIS)</value></data>
 </root>

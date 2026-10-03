@@ -318,9 +318,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				ModelState.AddModelError("EntranceGpsLongitude", "Entrance Longitude value seems invalid, MUST be decimal format.");
 			}
 
-			if (!String.IsNullOrWhiteSpace(model.ExitGpsLatitude) && !LocationHelpers.IsValidLongitude(model.ExitGpsLatitude))
+			if (!String.IsNullOrWhiteSpace(model.ExitGpsLatitude) && !LocationHelpers.IsValidLatitude(model.ExitGpsLatitude))
 			{
-				ModelState.AddModelError("ExitGpsLatitude", "Exit Longitude value seems invalid, MUST be decimal format.");
+				ModelState.AddModelError("ExitGpsLatitude", "Exit Latitude value seems invalid, MUST be decimal format.");
 			}
 
 			if (!String.IsNullOrWhiteSpace(model.ExitGpsLongitude) && !LocationHelpers.IsValidLongitude(model.ExitGpsLongitude))
@@ -608,9 +608,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				ModelState.AddModelError("EntranceGpsLongitude", "Entrance Longitude value seems invalid, MUST be decimal format.");
 			}
 
-			if (!String.IsNullOrWhiteSpace(model.ExitGpsLatitude) && !LocationHelpers.IsValidLongitude(model.ExitGpsLatitude))
+			if (!String.IsNullOrWhiteSpace(model.ExitGpsLatitude) && !LocationHelpers.IsValidLatitude(model.ExitGpsLatitude))
 			{
-				ModelState.AddModelError("ExitGpsLatitude", "Exit Longitude value seems invalid, MUST be decimal format.");
+				ModelState.AddModelError("ExitGpsLatitude", "Exit Latitude value seems invalid, MUST be decimal format.");
 			}
 
 			if (!String.IsNullOrWhiteSpace(model.ExitGpsLongitude) && !LocationHelpers.IsValidLongitude(model.ExitGpsLongitude))

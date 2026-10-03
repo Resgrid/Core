@@ -29,7 +29,7 @@
 	{
 		<div class="ibox"><div class="ibox-title"><h5>@L["AnalyticsHeadline"]</h5><span class="text-muted pull-right">@L["AnalyticsPriorPeriod"]: @departmentTime.Date(s.PriorStart) - @departmentTime.Date(s.PriorEnd.AddDays(-1))</span></div><div class="ibox-content">
 			<div class="row">
-				@foreach (var k in s.Kpis)
+				@foreach (var k in s.Kpis.Where(k => Model.NerisWorkflowsEnabled || (k.Key != "nerisAccepted" && k.Key != "nerisRejected")))
 				{
 					<div class="col-md-2 col-sm-4 col-xs-6 rms-kpi">
 						<div class="value">@RmsAnalyticsDisplay.Number(k.Current)</div>
@@ -46,7 +46,10 @@
 						<dt>@L["AnalyticsMedianHoursToFinalize"]</dt><dd>@RmsAnalyticsDisplay.Number(s.MedianHoursToFinalize)</dd>
 						<dt>@L["AnalyticsMedianReviewHours"]</dt><dd>@RmsAnalyticsDisplay.Number(s.MedianReviewHours)</dd>
 						<dt>@L["AnalyticsReturnRate"]</dt><dd>@RmsAnalyticsDisplay.Percent(s.ReturnRatePercent)</dd>
-						<dt>@L["AnalyticsNerisAcceptance"]</dt><dd>@RmsAnalyticsDisplay.Percent(s.NerisAcceptanceRatePercent)</dd>
+						@if (Model.NerisWorkflowsEnabled)
+						{
+							<dt>@L["AnalyticsNerisAcceptance"]</dt><dd>@RmsAnalyticsDisplay.Percent(s.NerisAcceptanceRatePercent)</dd>
+						}
 						<dt>@L["AnalyticsTurnout"] @L["AnalyticsP90"]</dt><dd>@RmsAnalyticsDisplay.Seconds(s.TurnoutP90Seconds)</dd>
 						<dt>@L["AnalyticsTotalResponse"] @L["AnalyticsP90"]</dt><dd>@RmsAnalyticsDisplay.Seconds(s.TotalResponseP90Seconds)</dd>
 						<dt>@L["AnalyticsFirstArrival"] @L["AnalyticsP90"]</dt><dd>@RmsAnalyticsDisplay.Seconds(s.FirstArrivalP90Seconds)</dd>

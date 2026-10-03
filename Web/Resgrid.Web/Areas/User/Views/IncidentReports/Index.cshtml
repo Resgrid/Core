@@ -21,7 +21,7 @@
 	<div class="col-sm-8">
 		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
 			<a class="btn btn-default" asp-controller="Records" asp-action="Index" asp-route-area="User"><i class="fa fa-arrow-left"></i> @localizer["BackToRecords"]</a>
-			@if (Model.IsDepartmentAdmin)
+			@if (Model.IsDepartmentAdmin && Model.NerisWorkflowsEnabled)
 			{
 				<a class="btn btn-inverse" asp-controller="IncidentReports" asp-action="Settings" asp-route-area="User"><i class="fa fa-cog"></i> @localizer["NerisSettingsHeader"]</a>
 			}
@@ -43,6 +43,10 @@
 			@if (!Model.ModuleState.RecordsUsable)
 			{
 				<div class="alert alert-warning">@localizer["NotActivatedNotice"]</div>
+			}
+			else if (!Model.NerisWorkflowsEnabled)
+			{
+				<div class="alert alert-info">@localizer["NerisWorkflowsOffNotice"]</div>
 			}
 			else if (!Model.SystemEnabled)
 			{
@@ -111,8 +115,11 @@
 										<th>@localizer["IncidentNumber"]</th>
 										<th>@localizer["Summary"]</th>
 										<th>@localizer["State"]</th>
-										<th>@localizer["SubmissionState"]</th>
-										<th>@localizer["NerisIncidentId"]</th>
+										@if (Model.NerisWorkflowsEnabled)
+										{
+											<th>@localizer["SubmissionState"]</th>
+											<th>@localizer["NerisIncidentId"]</th>
+										}
 										<th>@localizer["Owner"]</th>
 										<th>@localizer["Created"]</th>
 										<th>@localizer["Actions"]</th>
@@ -126,8 +133,11 @@
 											<td>@r.IncidentNumber</td>
 											<td>@r.DisplaySummary</td>
 											<td><span class="label label-primary">@(((RmsRecordState)r.State).ToString())</span></td>
-											<td>@(r.LastSubmissionState.HasValue ? ((RmsSubmissionState)r.LastSubmissionState.Value).ToString() : "-")</td>
-											<td>@(r.NerisIncidentId ?? "-")</td>
+											@if (Model.NerisWorkflowsEnabled)
+											{
+												<td>@(r.LastSubmissionState.HasValue ? ((RmsSubmissionState)r.LastSubmissionState.Value).ToString() : "-")</td>
+												<td>@(r.NerisIncidentId ?? "-")</td>
+											}
 											<td>@Name(r.OwnerUserId)</td>
 											<td>@When(r.CreatedOn)</td>
 											<td><a class="btn btn-xs btn-info" asp-controller="IncidentReports" asp-action="Details" asp-route-area="User" asp-route-id="@r.RmsIncidentReportId">@localizer["ViewRevision"]</a></td>

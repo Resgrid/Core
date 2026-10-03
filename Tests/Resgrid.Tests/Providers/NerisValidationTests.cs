@@ -98,6 +98,7 @@ namespace Resgrid.Tests.Providers
 
 			issues.Select(i => i.RuleKey).Should().Contain(new[] { "neris.unit.id.shape", "neris.unit.response_mode", "neris.unit.sequence" });
 			issues.Where(i => i.FieldPath != null && i.FieldPath.StartsWith("dispatch.unit_responses[0]")).Should().HaveCount(3);
+			issues.Single(i => i.RuleKey == "neris.unit.sequence").Message.Should().StartWith("Unit E1: 'On scene' is earlier than 'En route'.");
 		}
 
 		[Test]

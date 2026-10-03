@@ -25,7 +25,8 @@ namespace Resgrid.Web.Services.Models.v4.Records
 		public RecordsSearchCapabilityData Search { get; set; } = new RecordsSearchCapabilityData();
 		/// <summary>
 		/// Department setting 111 (Records Settings). False: hide NERIS validation, submission and NERIS identifiers;
-		/// incident reports finalize without NERIS rules and nothing is queued. Every other Records capability is unchanged.
+		/// incident reports finalize without NERIS rules and no NERIS submission is queued (the Records lifecycle event
+		/// still fires). Every other Records capability is unchanged.
 		/// </summary>
 		public bool NerisWorkflowsEnabled { get; set; } = true;
 		/// <summary>Protected Data block (plan 5.9.1): same shape before and after enrollment.</summary>

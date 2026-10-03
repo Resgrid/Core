@@ -141,7 +141,7 @@ namespace Resgrid.Config
 			{
 				MapProvider = MapboxMapProvider,
 				TileUrl = $"https://api.mapbox.com/styles/v1/{styleId}/tiles/256/{{z}}/{{x}}/{{y}}@2x?access_token={publicAccessToken}",
-				StyleUrl = NormalizeMapboxStyleUrl(styleUrl, styleId),
+				StyleUrl = NormalizeMapboxStyleUrl(styleId),
 				AccessToken = publicAccessToken,
 				Attribution = MapBoxAttribution,
 				IsDepartmentOverride = isDepartmentOverride
@@ -205,7 +205,7 @@ namespace Resgrid.Config
 		{
 			var styleId = GetMapboxStyleId(styleUrl);
 
-			return string.IsNullOrWhiteSpace(styleId) ? null : NormalizeMapboxStyleUrl(styleUrl.Trim(), styleId);
+			return string.IsNullOrWhiteSpace(styleId) ? null : NormalizeMapboxStyleUrl(styleId);
 		}
 
 		/// <summary>The public token the website uses for Mapbox, or empty when there is none.</summary>
@@ -363,11 +363,10 @@ namespace Resgrid.Config
 			return normalizedTileUrl.Replace("{0}", key, StringComparison.InvariantCulture);
 		}
 
-		private static string NormalizeMapboxStyleUrl(string styleUrl, string styleId)
+		// Rebuilt from the parsed id for mapbox:// input too, so a pasted ".html"/".json" suffix, query text, a
+		// trailing "/draft" or an upper-case scheme never reaches the renderer.
+		private static string NormalizeMapboxStyleUrl(string styleId)
 		{
-			if (styleUrl.StartsWith("mapbox://styles/", StringComparison.InvariantCultureIgnoreCase))
-				return styleUrl;
-
 			return $"mapbox://styles/{styleId}";
 		}
 
@@ -420,8 +419,9 @@ namespace Resgrid.Config
 				return null;
 
 			// Mapbox Studio's share link ends the style id with ".html" (and the Styles API with ".json");
-			// style ids themselves never contain a dot.
-			var styleId = pathSegments[1].Split('.')[0];
+			// style ids themselves never contain a dot. A mapbox:// value is not parsed as a Uri, so its
+			// query or fragment is still on the segment here.
+			var styleId = pathSegments[1].Split('.', '?', '#')[0];
 
 			if (string.IsNullOrWhiteSpace(styleId))
 				return null;

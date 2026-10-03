@@ -492,9 +492,11 @@ namespace Resgrid.Tests.Rms
 			(await _service.ValidateAsync(Dept, reportId, false)).Should().ContainSingle();
 
 			_nerisWorkflows = false;
+			var commitsBefore = _store.Shared.Commits;
 
 			(await _service.ValidateAsync(Dept, reportId, true)).Should().BeEmpty();
 			_store.Issues.Should().NotContain(i => i.RecordId == reportId);
+			_store.Shared.Commits.Should().Be(commitsBefore + 1, "the local and destination clears land in one transaction");
 		}
 
 		[Test]

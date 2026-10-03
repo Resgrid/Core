@@ -430,7 +430,8 @@ namespace Resgrid.Services.Records
 			// NERIS run left behind rather than showing stale destination findings on an ordinary record.
 			if (!await _neris.IsWorkflowEnabledAsync(departmentId))
 			{
-				await ClearNerisValidationAsync(departmentId, reportId, cancellationToken);
+				// Finalize clears inside its own transaction; this standalone clear gets one so it never leaves half the findings.
+				await InTransactionAsync(() => ClearNerisValidationAsync(departmentId, reportId, cancellationToken));
 				return new List<RmsValidationIssue>();
 			}
 

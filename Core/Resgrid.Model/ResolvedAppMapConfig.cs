@@ -8,7 +8,8 @@ namespace Resgrid.Model
 	{
 		/// <summary>
 		/// Public (pk.) Mapbox token the app should use, or empty to keep the token built into the app.
-		/// The department's own token when its Mapbox override is on, otherwise the system token for the app.
+		/// The department's own token when its Mapbox override is on with a public token and a valid style url,
+		/// otherwise the system token for the app.
 		/// </summary>
 		public string AccessToken { get; set; } = string.Empty;
 

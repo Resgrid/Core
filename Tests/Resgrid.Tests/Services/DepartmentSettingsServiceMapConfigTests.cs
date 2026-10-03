@@ -92,6 +92,30 @@ namespace Resgrid.Tests.Services
 			result.NightStyleUrl.Should().Be(result.DayStyleUrl);
 		}
 
+		[TestCase("mapbox://styles/dept/custom123.json")]
+		[TestCase("mapbox://styles/dept/custom123.html?title=view")]
+		[TestCase("mapbox://styles/dept/custom123?fresh=true")]
+		[TestCase("mapbox://styles/dept/custom123#map")]
+		[TestCase("mapbox://styles/dept/custom123/draft")]
+		[TestCase("MAPBOX://styles/dept/custom123")]
+		[TestCase(" mapbox://styles/dept/custom123/ ")]
+		[TestCase("https://api.mapbox.com/styles/v1/dept/custom123.html?title=view&access_token=pk.share")]
+		public async Task override_style_should_reach_every_surface_as_the_canonical_mapbox_url(string storedStyleUrl)
+		{
+			MappingConfig.ResponderAppMapboxKey = "pk.responder-system";
+			SetupOverride("true", storedStyleUrl, "pk.department-token");
+			SetupMapStyles(null);
+
+			var app = await _service.GetAppMapConfigForDepartmentAsync(7, InfoConfig.ResponderAppKey);
+			var website = await _service.GetMapConfigForDepartmentAsync(7, InfoConfig.WebsiteKey);
+
+			app.IsDepartmentOverride.Should().BeTrue();
+			app.DayStyleUrl.Should().Be("mapbox://styles/dept/custom123");
+			website.IsDepartmentOverride.Should().BeTrue();
+			website.StyleUrl.Should().Be("mapbox://styles/dept/custom123");
+			website.TileUrl.Should().StartWith("https://api.mapbox.com/styles/v1/dept/custom123/tiles/");
+		}
+
 		[Test]
 		public async Task app_map_should_never_hand_out_a_secret_override_token()
 		{

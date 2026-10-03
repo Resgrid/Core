@@ -40,7 +40,7 @@
 				@if (Model.Issues.Count > 0)
                 {
                     <div class="alert alert-warning" role="alert"><strong>@localizer["ValidationIssues"]</strong><ul>
-                    @foreach (var issue in Model.Issues) { <li data-neris-issue="@issue.FieldPath"><span>@issue.FieldPath</span> @issue.Message</li> }
+                    @foreach (var issue in Model.Issues) { <li data-neris-issue="@issue.FieldPath" title="@issue.FieldPath">@issue.Message</li> }
                     </ul></div>
                 }
                 <div class="ibox float-e-margins">

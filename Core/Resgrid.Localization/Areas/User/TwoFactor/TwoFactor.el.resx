@@ -479,5 +479,29 @@
   <data name="SharedSwitchOperatorDone" xml:space="preserve">
     <value>Αποσυνδεθήκατε. Ο επόμενος χειριστής μπορεί να συνδεθεί τώρα.</value>
   </data>
+  <data name="StepUpHoldingSubmission" xml:space="preserve">
+    <value>Αυτό που αποθηκεύατε διατηρείται. Επαληθεύστε παρακάτω και θα αποθηκευτεί.</value>
+  </data>
+  <data name="StepUpSubmissionNotHeld" xml:space="preserve">
+    <value>Αυτό που υποβάλατε δεν ήταν δυνατό να διατηρηθεί. Μετά την επαλήθευση, επιστρέψτε και υποβάλετέ το ξανά.</value>
+  </data>
+  <data name="ResumePageTitle" xml:space="preserve">
+    <value>Ολοκλήρωση αποθήκευσης</value>
+  </data>
+  <data name="ResumeSaving" xml:space="preserve">
+    <value>Ολοκληρώνεται η αποθήκευση...</value>
+  </data>
+  <data name="ResumeContinueButton" xml:space="preserve">
+    <value>Συνέχεια</value>
+  </data>
+  <data name="ResumeUnavailable" xml:space="preserve">
+    <value>Αυτή η αποθήκευση έχει ήδη σταλεί ή έχει λήξει. Επιστρέψτε και υποβάλετέ την ξανά.</value>
+  </data>
+  <data name="ResumeScriptFailed" xml:space="preserve">
+    <value>Η αλλαγή σας δεν ήταν δυνατό να αποθηκευτεί. Επιστρέψτε και δοκιμάστε ξανά.</value>
+  </data>
+  <data name="ResumeGoBack" xml:space="preserve">
+    <value>Επιστροφή</value>
+  </data>
 </root>
 

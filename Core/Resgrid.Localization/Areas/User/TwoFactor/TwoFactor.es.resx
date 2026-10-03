@@ -466,5 +466,29 @@
   <data name="RecoveryCodePlaceholder" xml:space="preserve">
     <value>xxxx-xxxx-xxxx</value>
   </data>
+  <data name="StepUpHoldingSubmission" xml:space="preserve">
+    <value>Lo que estaba guardando se mantiene en espera. Verifique a continuación y se guardará.</value>
+  </data>
+  <data name="StepUpSubmissionNotHeld" xml:space="preserve">
+    <value>No se pudo conservar lo que envió. Después de verificar, regrese y envíelo de nuevo.</value>
+  </data>
+  <data name="ResumePageTitle" xml:space="preserve">
+    <value>Finalizando el guardado</value>
+  </data>
+  <data name="ResumeSaving" xml:space="preserve">
+    <value>Finalizando lo que estaba guardando...</value>
+  </data>
+  <data name="ResumeContinueButton" xml:space="preserve">
+    <value>Continuar</value>
+  </data>
+  <data name="ResumeUnavailable" xml:space="preserve">
+    <value>Este guardado ya se envió o ha caducado. Regrese y envíelo de nuevo.</value>
+  </data>
+  <data name="ResumeScriptFailed" xml:space="preserve">
+    <value>No se pudo guardar su cambio. Regrese e inténtelo de nuevo.</value>
+  </data>
+  <data name="ResumeGoBack" xml:space="preserve">
+    <value>Volver</value>
+  </data>
 </root>
 

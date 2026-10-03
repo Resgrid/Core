@@ -15,6 +15,9 @@ namespace Resgrid.Model
 		ChecklistUpdated = 11,
 
 		/// <summary>An event for one signed-in session only, such as an approval decision (passkey workbook section 7.4).</summary>
-		SessionEvent = 12
+		SessionEvent = 12,
+
+		/// <summary>A unit status timer acknowledgement changed; the item id is the unit id.</summary>
+		UnitStatusAlertUpdated = 13
 	}
 }

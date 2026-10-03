@@ -106,6 +106,28 @@ namespace Resgrid.Web.Areas.User.Models.TwoFactor
 
 		/// <summary>The department being entered, when this verification is for entering it (plan section 7.6 row 5).</summary>
 		public int? EntryDepartmentId { get; set; }
+
+		/// <summary>The guard could not hold what the user submitted; after verifying they must submit it again.</summary>
+		public bool SubmissionNotHeld { get; set; }
+
+		/// <summary>The guard is holding what the user submitted; verifying finishes it.</summary>
+		public bool HoldingSubmission =>
+			ReturnUrl != null && ReturnUrl.Contains(Resgrid.Web.Helpers.StepUpFormReplay.ResumePath + "?", System.StringComparison.OrdinalIgnoreCase);
+	}
+
+	/// <summary>The page that posts a held submission back after step-up (<see cref="Resgrid.Web.Helpers.StepUpFormReplay"/>).</summary>
+	public class StepUpResumeViewModel
+	{
+		/// <summary>The held submission; null when it has expired, was already sent, or is not this session's.</summary>
+		public string Id { get; set; }
+
+		/// <summary>The address it was made to.</summary>
+		public string Target { get; set; }
+
+		/// <summary>It was a script call: replay it in the background, then return to <see cref="BackUrl"/>.</summary>
+		public bool Script { get; set; }
+
+		public string BackUrl { get; set; }
 	}
 }
 

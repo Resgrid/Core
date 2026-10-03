@@ -5,6 +5,7 @@ using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +16,7 @@ using Resgrid.Framework;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Resgrid.Model;
+using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Security;
 using Resgrid.Model.Services;
@@ -71,9 +73,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ISsoBrokerService ssoBroker,
 			ISsoReturnTargetRegistry ssoReturnTargets,
 			IDepartmentSsoService departmentSso,
-			IDepartmentsService departments)
+			IDepartmentsService departments,
+			ICacheProvider cacheProvider,
+			IDataProtectionProvider dataProtection)
 		{
 			_departments = departments;
+			_cacheProvider = cacheProvider;
+			_dataProtection = dataProtection;
 			_passkeys = passkeys;
 			_approvals = approvals;
 			_ssoBroker = ssoBroker;
@@ -104,6 +110,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly ISsoReturnTargetRegistry _ssoReturnTargets;
 		private readonly IDepartmentSsoService _departmentSso;
 		private readonly IDepartmentsService _departments;
+		private readonly ICacheProvider _cacheProvider;
+		private readonly IDataProtectionProvider _dataProtection;
 
 		// ── Index ─────────────────────────────────────────────────────────────────
 
@@ -162,7 +170,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			// Setting up a factor needs a recent password (or SSO) verification for this session (plan section 6.2).
 			if (!await HasFreshFirstFactorAsync(user, TwoFactorConfig.FirstFactorReauthWindowMinutes))
-				return RedirectToReauthenticate();
+				return await RedirectToReauthenticateAsync();
 
 			return View(await BuildAuthenticatorModelAsync(user, await StageNewAuthenticatorKeyAsync(user), isReplacement: false));
 		}
@@ -233,7 +241,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			// Replacement needs a fresh first factor AND an existing factor (or recovery authority).
 			if (!await HasFreshFirstFactorAsync(user, TwoFactorConfig.FirstFactorReauthWindowMinutes))
-				return RedirectToReauthenticate();
+				return await RedirectToReauthenticateAsync();
 
 			if (!await HasReplacementAuthorityAsync(user, cancellationToken))
 				return RedirectToStepUp();
@@ -355,7 +363,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (user == null) return NotFound();
 
 			if (!await HasFreshFirstFactorAsync(user, TwoFactorConfig.FirstFactorReauthWindowMinutes))
-				return RedirectToReauthenticate();
+				return await RedirectToReauthenticateAsync();
 
 			return View(new Disable2FAViewModel { BlockedByPasskeys = await _passkeyRepository.CountActiveForUserAsync(user.Id) > 0 });
 		}
@@ -368,7 +376,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (user == null) return NotFound();
 
 			if (!await HasFreshFirstFactorAsync(user, TwoFactorConfig.FirstFactorOperationWindowMinutes))
-				return RedirectToReauthenticate(Url.Action(nameof(Disable2FA)));
+				return await RedirectToReauthenticateAsync(Url.Action(nameof(Disable2FA)));
 
 			// TOTP is the fallback every passkey relies on in this release, so it cannot be turned off while any passkey
 			// exists (plan section 7.5 rule 7). Remove the passkeys first.
@@ -428,7 +436,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		[AllowAnonymous]
 		public async Task<IActionResult> Verify2FA(string returnUrl = null, string scope = null, CancellationToken cancellationToken = default,
-			int? entry = null)
+			int? entry = null, bool resubmit = false)
 		{
 			var methodScope = ParseScope(scope);
 			var entering = await EntryDepartmentAsync(entry);
@@ -437,6 +445,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				ReturnUrl = returnUrl,
 				Scope = methodScope.ToString(),
 				EntryDepartmentId = entering,
+				SubmissionNotHeld = resubmit,
 				PasskeyAvailable = await PasskeyStepUpAvailableAsync(scope, cancellationToken, entering),
 				ApprovalAvailable = await ApprovalStepUpAvailableAsync(methodScope, cancellationToken, entering),
 				FederatedAvailable = entering == null && await FederatedStepUpAvailableAsync(methodScope, cancellationToken)
@@ -847,10 +856,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 			=> _mfaEvidenceService.HasFreshFirstFactorAsync(user.Id, MfaEvidenceSession.KeyFor(User, HttpContext),
 				user.AuthenticationGeneration, TimeSpan.FromMinutes(Math.Max(1, maxAgeMinutes)), DateTime.UtcNow);
 
-		/// <summary>Sends the user to confirm their password, then back to <paramref name="returnUrl"/> (default: this page).</summary>
-		private IActionResult RedirectToReauthenticate(string returnUrl = null)
-			=> RedirectToAction("Reauthenticate", "AccountSecurity",
-				new { area = "User", returnUrl = returnUrl ?? $"{Request.Path}{Request.QueryString}" });
+		/// <summary>
+		/// Sends the user to confirm their password, then back to <paramref name="returnUrl"/> (default: this page). A submission
+		/// is held and finished after confirming (<see cref="StepUpFormReplay"/>) rather than discarded.
+		/// </summary>
+		private async Task<IActionResult> RedirectToReauthenticateAsync(string returnUrl = null)
+		{
+			var (returnTo, submissionLost) = await StepUpFormReplay.HoldForVerificationAsync(HttpContext, _cacheProvider, _dataProtection,
+				_userManager.GetUserId(User), returnUrl ?? $"{Request.Path}{Request.QueryString}");
+
+			return RedirectToAction("Reauthenticate", "AccountSecurity",
+				new { area = "User", returnUrl = returnTo, resubmit = submissionLost ? "1" : null });
+		}
 
 		/// <summary>Records server-side evidence for this session; false when it could not be recorded.</summary>
 		private async Task<bool> RecordEvidenceAsync(IdentityUser user, MfaEvidenceKind kind, MfaEvidenceMethod method,

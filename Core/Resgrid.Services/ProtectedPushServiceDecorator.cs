@@ -61,7 +61,7 @@ namespace Resgrid.Services
 
 		public Task<bool> UnRegister(PushUri pushUri) => _inner.UnRegister(pushUri);
 
-		public void UnRegisterNotificationOnly(PushUri pushUri) => _inner.UnRegisterNotificationOnly(pushUri);
+		public Task UnRegisterNotificationOnly(PushUri pushUri) => _inner.UnRegisterNotificationOnly(pushUri);
 
 		public Task<bool> RegisterUnit(PushUri pushUri) => _inner.RegisterUnit(pushUri);
 

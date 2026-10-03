@@ -61,6 +61,7 @@ namespace Resgrid.Web.Eventing
 			_rabbitInboundEventProvider.RegisterForChatEvents(ChatEventReceived);
 			_rabbitInboundEventProvider.RegisterForChecklistEvents((departmentId, id) => _eventingHub.Clients.Group(departmentId.ToString()).SendAsync("checklistUpdated", id));
 			_rabbitInboundEventProvider.RegisterForSessionEvents(SessionEventReceived);
+			_rabbitInboundEventProvider.RegisterForUnitStatusAlertEvents((departmentId, id) => _eventingHub.Clients.Group(departmentId.ToString()).SendAsync("unitStatusAlertUpdated", id));
 
 			await StartProviderAsync();
 

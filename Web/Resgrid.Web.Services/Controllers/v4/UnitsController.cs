@@ -390,6 +390,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				data.CurrentStatusTimestamp = state.Timestamp.TimeConverter(new Department() { TimeZone = timeZone });
 
 				data.CurrentStatusTimestampUtc = state.Timestamp;
+				data.CurrentUnitStateId = state.UnitStateId;
 				data.Note = ProtectedDataEnvelope.SafeDisplay(state.Note);
 
 				if (state.DestinationId.HasValue)
@@ -479,7 +480,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			var stations = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 
-			Parallel.ForEach(stations, s =>
+			// List<T>.Add is not thread-safe; the old Parallel.ForEach could drop or corrupt entries.
+			foreach (var s in stations)
 			{
 				var respondingTo = new FilterResult();
 				respondingTo.Id = $"G:{s.DepartmentGroupId}";
@@ -487,7 +489,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				respondingTo.Name = s.Name;
 
 				result.Add(respondingTo);
-			});
+			}
 
 			return result;
 		}

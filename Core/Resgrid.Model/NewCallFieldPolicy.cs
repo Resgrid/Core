@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using ProtoBuf;
 
@@ -66,6 +67,11 @@ namespace Resgrid.Model
 		public string Key { get; set; }
 
 		/// <summary>False hides the field from every call-creation surface.</summary>
+		/// <remarks>
+		/// DefaultValue must match the initializer. Without it protobuf-net treats false as the implicit
+		/// zero default and never writes it, so a hidden field read back as visible and the rule was lost.
+		/// </remarks>
+		[DefaultValue(true)]
 		[ProtoMember(2)]
 		public bool Visible { get; set; } = true;
 

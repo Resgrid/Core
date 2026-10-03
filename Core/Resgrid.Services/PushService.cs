@@ -187,9 +187,9 @@ namespace Resgrid.Services
 			return true;
 		}
 
-		public void UnRegisterNotificationOnly(PushUri pushUri)
+		public Task UnRegisterNotificationOnly(PushUri pushUri)
 		{
-			_notificationProvider.UnRegisterPushByUserDeviceId(pushUri);
+			return _notificationProvider.UnRegisterPushByUserDeviceId(pushUri);
 		}
 
 		public async Task<bool> PushMessage(StandardPushMessage message, string userId, UserProfile profile = null)

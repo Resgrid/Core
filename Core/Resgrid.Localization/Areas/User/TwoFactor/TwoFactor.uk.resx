@@ -632,4 +632,28 @@
   <data name="SharedSwitchOperatorDone" xml:space="preserve">
     <value>Ви вийшли. Наступний оператор може увійти зараз.</value>
   </data>
+  <data name="StepUpHoldingSubmission" xml:space="preserve">
+    <value>Те, що ви зберігали, утримується. Пройдіть перевірку нижче, і його буде збережено.</value>
+  </data>
+  <data name="StepUpSubmissionNotHeld" xml:space="preserve">
+    <value>Не вдалося утримати надіслані дані. Після перевірки поверніться та надішліть їх ще раз.</value>
+  </data>
+  <data name="ResumePageTitle" xml:space="preserve">
+    <value>Завершення збереження</value>
+  </data>
+  <data name="ResumeSaving" xml:space="preserve">
+    <value>Завершуємо збереження...</value>
+  </data>
+  <data name="ResumeContinueButton" xml:space="preserve">
+    <value>Продовжити</value>
+  </data>
+  <data name="ResumeUnavailable" xml:space="preserve">
+    <value>Це збереження вже надіслано або термін його дії минув. Поверніться та надішліть ще раз.</value>
+  </data>
+  <data name="ResumeScriptFailed" xml:space="preserve">
+    <value>Не вдалося зберегти зміну. Поверніться та спробуйте ще раз.</value>
+  </data>
+  <data name="ResumeGoBack" xml:space="preserve">
+    <value>Назад</value>
+  </data>
 </root>

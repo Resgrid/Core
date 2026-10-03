@@ -71,7 +71,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		// for it. It cannot switch accounts, does not extend the session, and a refresh or remembered browser never counts.
 
 		[HttpGet]
-		public async Task<IActionResult> Reauthenticate(string returnUrl, CancellationToken cancellationToken)
+		public async Task<IActionResult> Reauthenticate(string returnUrl, CancellationToken cancellationToken, bool resubmit = false)
 		{
 			var user = await _userManager.FindByIdAsync(UserId);
 			if (user == null)
@@ -80,6 +80,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(new ReauthenticateView
 			{
 				ReturnUrl = SafeReturnUrl(returnUrl),
+				SubmissionNotHeld = resubmit,
 				PasswordNotAllowed = !await IsPasswordReauthenticationAllowedAsync(user, cancellationToken),
 				SsoAvailable = await SsoReauthenticationAvailableAsync(cancellationToken)
 			});

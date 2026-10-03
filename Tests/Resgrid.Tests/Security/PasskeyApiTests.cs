@@ -320,7 +320,7 @@ namespace Resgrid.Tests.Security
 			var controller = new TwoFactorController(users.Object, null, Mock.Of<ISystemAuditsService>(), UrlEncoder.Default, localizer.Object,
 				Mock.Of<IUserStore<IdentityUser>>(), new InMemoryUserMfaStateRepository(), Mock.Of<IUserSessionService>(), evidence.Object,
 				Mock.Of<IMfaPolicyService>(), passkeyRows, Mock.Of<ISecurityNoticeService>(), Mock.Of<IMfaActivityService>(), Mock.Of<IPasskeyService>(),
-				Mock.Of<IMfaApprovalService>(), Mock.Of<ISsoBrokerService>(), Mock.Of<ISsoReturnTargetRegistry>(), Mock.Of<IDepartmentSsoService>(), Mock.Of<IDepartmentsService>())
+				Mock.Of<IMfaApprovalService>(), Mock.Of<ISsoBrokerService>(), Mock.Of<ISsoReturnTargetRegistry>(), Mock.Of<IDepartmentSsoService>(), Mock.Of<IDepartmentsService>(), Mock.Of<Resgrid.Model.Providers.ICacheProvider>(), new Microsoft.AspNetCore.DataProtection.EphemeralDataProtectionProvider())
 			{
 				ControllerContext = new ControllerContext
 				{

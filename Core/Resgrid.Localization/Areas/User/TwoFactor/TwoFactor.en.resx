@@ -479,5 +479,29 @@
   <data name="SharedSwitchOperatorDone" xml:space="preserve">
     <value>Signed out. The next operator can sign in now.</value>
   </data>
+  <data name="StepUpHoldingSubmission" xml:space="preserve">
+    <value>What you were saving is being held. Verify below and it will be saved.</value>
+  </data>
+  <data name="StepUpSubmissionNotHeld" xml:space="preserve">
+    <value>What you submitted could not be held. After you verify, go back and submit it again.</value>
+  </data>
+  <data name="ResumePageTitle" xml:space="preserve">
+    <value>Finishing Your Save</value>
+  </data>
+  <data name="ResumeSaving" xml:space="preserve">
+    <value>Finishing what you were saving...</value>
+  </data>
+  <data name="ResumeContinueButton" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="ResumeUnavailable" xml:space="preserve">
+    <value>This save was already sent or has expired. Go back and submit it again.</value>
+  </data>
+  <data name="ResumeScriptFailed" xml:space="preserve">
+    <value>Your change could not be saved. Go back and try again.</value>
+  </data>
+  <data name="ResumeGoBack" xml:space="preserve">
+    <value>Go Back</value>
+  </data>
 </root>
 

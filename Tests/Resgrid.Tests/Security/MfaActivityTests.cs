@@ -394,7 +394,8 @@ namespace Resgrid.Tests.Security
 				System.Text.Encodings.Web.UrlEncoder.Default, localizer.Object, Mock.Of<IUserStore<IdentityUser>>(), new InMemoryUserMfaStateRepository(),
 				Mock.Of<IUserSessionService>(), Mock.Of<IMfaEvidenceService>(), Mock.Of<IMfaPolicyService>(), new InMemoryUserPasskeyRepository(),
 				Mock.Of<ISecurityNoticeService>(), activity.Object, Mock.Of<IPasskeyService>(), Mock.Of<IMfaApprovalService>(), Mock.Of<ISsoBrokerService>(),
-				Mock.Of<ISsoReturnTargetRegistry>(), Mock.Of<IDepartmentSsoService>(), Mock.Of<IDepartmentsService>())
+				Mock.Of<ISsoReturnTargetRegistry>(), Mock.Of<IDepartmentSsoService>(), Mock.Of<IDepartmentsService>(),
+				Mock.Of<Resgrid.Model.Providers.ICacheProvider>(), new Microsoft.AspNetCore.DataProtection.EphemeralDataProtectionProvider())
 			{
 				ControllerContext = new ControllerContext
 				{

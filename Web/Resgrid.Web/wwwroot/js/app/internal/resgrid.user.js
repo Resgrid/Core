@@ -32,6 +32,14 @@ var resgrid;
         }
 
         $(document).ajaxError(function (event, jqxhr) {
+            // A change that needs a recent second factor: the server is holding it, and verifying finishes it
+            // (RequiresRecentTwoFactorAttribute answers a script call with where to go instead of a redirect).
+            var stepUp = jqxhr && jqxhr.status === 403 ? jqxhr.getResponseHeader('X-Resgrid-Step-Up') : null;
+            if (stepUp) {
+                window.location.assign(stepUp);
+                return;
+            }
+
             if (jqxhr && jqxhr.status === 401) {
                 window.location.assign(resgrid.absoluteBaseUrl + '/Account/LogOn?returnUrl=' + encodeURIComponent(window.location.pathname + window.location.search));
             }

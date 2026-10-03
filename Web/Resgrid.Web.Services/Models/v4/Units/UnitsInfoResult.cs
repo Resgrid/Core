@@ -124,6 +124,13 @@ namespace Resgrid.Web.Services.Models.v4.Units
 		public int? CurrentStatusBaseType { get; set; }
 
 		/// <summary>
+		/// Id of the unit's current status record, or 0 when the unit has never reported a status. A status
+		/// timer acknowledgement names the status record it covers, so a board compares the two to tell
+		/// whether an acknowledgement still applies.
+		/// </summary>
+		public int CurrentUnitStateId { get; set; }
+
+		/// <summary>
 		/// The Timestamp of the status, in the department's timezone.
 		/// </summary>
 		public DateTime CurrentStatusTimestamp { get; set; }

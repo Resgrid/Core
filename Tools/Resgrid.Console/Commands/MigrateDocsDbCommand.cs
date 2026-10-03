@@ -68,9 +68,8 @@ namespace Resgrid.Console.Commands
 						if (existingLayer == null)
 						{
 							logger.LogInformation($"Migrating Map: {layer.Id.ToString()}");
-							mapLayersDocRepository.InsertAsync(layer).
-								ContinueWith(t => logger.LogError(t.Exception?.ToString()),
-									TaskContinuationOptions.OnlyOnFaulted);
+							try { mapLayersDocRepository.InsertAsync(layer).GetAwaiter().GetResult(); }
+							catch (Exception ex) { logger.LogError(ex.ToString()); }
 						}
 					});
 				}
@@ -86,9 +85,8 @@ namespace Resgrid.Console.Commands
 						if (existingLocation == null)
 						{
 							logger.LogInformation($"Migrating Unit Location: {unitLocation.Id.ToString()}");
-							unitsLocationsDocRepository.InsertAsync(unitLocation).
-								ContinueWith(t => logger.LogError(t.Exception?.ToString()),
-									TaskContinuationOptions.OnlyOnFaulted);
+							try { unitsLocationsDocRepository.InsertAsync(unitLocation).GetAwaiter().GetResult(); }
+							catch (Exception ex) { logger.LogError(ex.ToString()); }
 						}
 					});
 				}
@@ -104,9 +102,8 @@ namespace Resgrid.Console.Commands
 						if (existingLocation == null)
 						{
 							logger.LogInformation($"Migrating Personnel Location: {personLocation.Id.ToString()}");
-							personnelLocationsDocRepository.InsertAsync(personLocation).
-								ContinueWith(t => logger.LogError(t.Exception?.ToString()),
-									TaskContinuationOptions.OnlyOnFaulted);
+							try { personnelLocationsDocRepository.InsertAsync(personLocation).GetAwaiter().GetResult(); }
+							catch (Exception ex) { logger.LogError(ex.ToString()); }
 						}
 					});
 				}

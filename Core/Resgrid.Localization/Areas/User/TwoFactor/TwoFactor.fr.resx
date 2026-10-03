@@ -632,4 +632,28 @@
   <data name="SharedSwitchOperatorDone" xml:space="preserve">
     <value>Déconnecté. L’opérateur suivant peut se connecter maintenant.</value>
   </data>
+  <data name="StepUpHoldingSubmission" xml:space="preserve">
+    <value>Ce que vous enregistriez est conservé. Vérifiez ci-dessous et ce sera enregistré.</value>
+  </data>
+  <data name="StepUpSubmissionNotHeld" xml:space="preserve">
+    <value>Ce que vous avez envoyé n'a pas pu être conservé. Après la vérification, revenez en arrière et envoyez-le à nouveau.</value>
+  </data>
+  <data name="ResumePageTitle" xml:space="preserve">
+    <value>Finalisation de l'enregistrement</value>
+  </data>
+  <data name="ResumeSaving" xml:space="preserve">
+    <value>Finalisation de votre enregistrement...</value>
+  </data>
+  <data name="ResumeContinueButton" xml:space="preserve">
+    <value>Continuer</value>
+  </data>
+  <data name="ResumeUnavailable" xml:space="preserve">
+    <value>Cet enregistrement a déjà été envoyé ou a expiré. Revenez en arrière et envoyez-le à nouveau.</value>
+  </data>
+  <data name="ResumeScriptFailed" xml:space="preserve">
+    <value>Votre modification n'a pas pu être enregistrée. Revenez en arrière et réessayez.</value>
+  </data>
+  <data name="ResumeGoBack" xml:space="preserve">
+    <value>Retour</value>
+  </data>
 </root>

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using FluentAssertions;
 using NUnit.Framework;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Helpers;
 
@@ -85,6 +86,45 @@ namespace Resgrid.Tests.Models
 			policy.Rules.Should().HaveCount(1);
 			policy.Rules[0].Required.Should().BeTrue();
 			policy.Rules[0].Visible.Should().BeTrue();
+		}
+
+		[Test]
+		public void A_hidden_field_survives_the_stored_round_trip()
+		{
+			// The policy is stored protobuf-serialized. Visible defaults to true, so an unmarked false is
+			// the wire's implicit zero: it is never written, and reading it back leaves the initializer's
+			// true in place -- Normalize then drops the rule and every hidden field comes back visible.
+			var policy = PolicyWith(
+				new NewCallFieldRule { Key = NewCallFieldKeys.Address, Visible = false },
+				new NewCallFieldRule { Key = NewCallFieldKeys.Note, Visible = false, Required = true },
+				new NewCallFieldRule { Key = NewCallFieldKeys.IncidentId, Visible = true, Required = true }).Normalize();
+
+			var stored = ObjectSerialization.Serialize(policy);
+			var restored = ObjectSerialization.Deserialize<NewCallFieldPolicy>(stored).Normalize();
+
+			restored.Rules.Should().HaveCount(3);
+			restored.IsVisible(NewCallFieldKeys.Address).Should().BeFalse();
+			restored.IsVisible(NewCallFieldKeys.Note).Should().BeFalse();
+			restored.IsRequired(NewCallFieldKeys.Note).Should().BeFalse();
+			restored.IsVisible(NewCallFieldKeys.IncidentId).Should().BeTrue();
+			restored.IsRequired(NewCallFieldKeys.IncidentId).Should().BeTrue();
+			restored.IsVisible(NewCallFieldKeys.DispatchList).Should().BeTrue();
+		}
+
+		[Test]
+		public void A_policy_stored_before_visibility_was_written_still_reads_as_visible()
+		{
+			// Blobs already in the database never carry field 2 for a visible rule; they must keep
+			// reading as visible after the contract change.
+			var legacy = new NewCallFieldPolicy
+			{
+				Rules = new List<NewCallFieldRule> { new NewCallFieldRule { Key = NewCallFieldKeys.Address, Visible = true, Required = true } }
+			};
+
+			var restored = ObjectSerialization.Deserialize<NewCallFieldPolicy>(ObjectSerialization.Serialize(legacy));
+
+			restored.IsVisible(NewCallFieldKeys.Address).Should().BeTrue();
+			restored.IsRequired(NewCallFieldKeys.Address).Should().BeTrue();
 		}
 	}
 

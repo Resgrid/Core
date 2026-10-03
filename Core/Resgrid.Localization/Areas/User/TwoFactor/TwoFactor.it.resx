@@ -632,4 +632,28 @@
   <data name="SharedSwitchOperatorDone" xml:space="preserve">
     <value>Disconnesso. Il prossimo operatore può accedere ora.</value>
   </data>
+  <data name="StepUpHoldingSubmission" xml:space="preserve">
+    <value>Ciò che stavi salvando è in attesa. Verifica qui sotto e verrà salvato.</value>
+  </data>
+  <data name="StepUpSubmissionNotHeld" xml:space="preserve">
+    <value>Ciò che hai inviato non è stato conservato. Dopo la verifica, torna indietro e invialo di nuovo.</value>
+  </data>
+  <data name="ResumePageTitle" xml:space="preserve">
+    <value>Completamento del salvataggio</value>
+  </data>
+  <data name="ResumeSaving" xml:space="preserve">
+    <value>Completamento del salvataggio in corso...</value>
+  </data>
+  <data name="ResumeContinueButton" xml:space="preserve">
+    <value>Continua</value>
+  </data>
+  <data name="ResumeUnavailable" xml:space="preserve">
+    <value>Questo salvataggio è già stato inviato o è scaduto. Torna indietro e invialo di nuovo.</value>
+  </data>
+  <data name="ResumeScriptFailed" xml:space="preserve">
+    <value>Non è stato possibile salvare la modifica. Torna indietro e riprova.</value>
+  </data>
+  <data name="ResumeGoBack" xml:space="preserve">
+    <value>Indietro</value>
+  </data>
 </root>

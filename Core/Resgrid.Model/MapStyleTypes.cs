@@ -33,6 +33,30 @@ namespace Resgrid.Model
 		NavigationDay = 7,
 
 		/// <summary>Night counterpart of <see cref="NavigationDay"/>.</summary>
-		NavigationNight = 8
+		NavigationNight = 8,
+
+		// -- Community styles: designer styles from the Mapbox gallery's "Community templates", all public,
+		// so they load on any account's token. See MapStylePresets for the style ids and who designed them.
+
+		AmericanMemory = 9,
+		Basic = 10,
+		BasicOvercast = 11,
+		Blueprint = 12,
+		Bubble = 13,
+		CaliTerrain = 14,
+		Decimal = 15,
+		FinlandTopo = 16,
+		Frank = 17,
+		IceCream = 18,
+		LeShine = 19,
+		StreetsJapan = 20,
+		Mineral = 21,
+		Minimo = 22,
+		Moonlight = 23,
+		NeonGlow = 24,
+		NorthStar = 25,
+		Pencil = 26,
+		StandardOil = 27,
+		Unicorn = 28
 	}
 }

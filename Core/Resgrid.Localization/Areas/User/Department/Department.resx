@@ -849,4 +849,73 @@
   <data name="MapStyle_NavigationNight" xml:space="preserve">
     <value>Navigation Night</value>
   </data>
+  <data name="MapStyleMapboxGroup" xml:space="preserve">
+    <value>Mapbox styles</value>
+  </data>
+  <data name="MapStyleCommunityGroup" xml:space="preserve">
+    <value>Community styles</value>
+  </data>
+  <data name="MapStyleCommunityHelp" xml:space="preserve">
+    <value>Community styles are designer maps from the Mapbox gallery; several show little street detail, so check the preview before using one for dispatch.</value>
+  </data>
+  <data name="MapStyle_AmericanMemory" xml:space="preserve">
+    <value>American Memory</value>
+  </data>
+  <data name="MapStyle_Basic" xml:space="preserve">
+    <value>Basic</value>
+  </data>
+  <data name="MapStyle_BasicOvercast" xml:space="preserve">
+    <value>Basic Overcast</value>
+  </data>
+  <data name="MapStyle_Blueprint" xml:space="preserve">
+    <value>Blueprint</value>
+  </data>
+  <data name="MapStyle_Bubble" xml:space="preserve">
+    <value>Bubble</value>
+  </data>
+  <data name="MapStyle_CaliTerrain" xml:space="preserve">
+    <value>Cali Terrain</value>
+  </data>
+  <data name="MapStyle_Decimal" xml:space="preserve">
+    <value>Decimal</value>
+  </data>
+  <data name="MapStyle_FinlandTopo" xml:space="preserve">
+    <value>Finland Topo</value>
+  </data>
+  <data name="MapStyle_Frank" xml:space="preserve">
+    <value>Frank</value>
+  </data>
+  <data name="MapStyle_IceCream" xml:space="preserve">
+    <value>Ice Cream</value>
+  </data>
+  <data name="MapStyle_LeShine" xml:space="preserve">
+    <value>Lè Shine</value>
+  </data>
+  <data name="MapStyle_StreetsJapan" xml:space="preserve">
+    <value>Mapbox Streets Japan</value>
+  </data>
+  <data name="MapStyle_Mineral" xml:space="preserve">
+    <value>Mineral</value>
+  </data>
+  <data name="MapStyle_Minimo" xml:space="preserve">
+    <value>Minimo</value>
+  </data>
+  <data name="MapStyle_Moonlight" xml:space="preserve">
+    <value>Moonlight</value>
+  </data>
+  <data name="MapStyle_NeonGlow" xml:space="preserve">
+    <value>Neon Glow</value>
+  </data>
+  <data name="MapStyle_NorthStar" xml:space="preserve">
+    <value>North Star</value>
+  </data>
+  <data name="MapStyle_Pencil" xml:space="preserve">
+    <value>Pencil</value>
+  </data>
+  <data name="MapStyle_StandardOil" xml:space="preserve">
+    <value>Standard Oil Company</value>
+  </data>
+  <data name="MapStyle_Unicorn" xml:space="preserve">
+    <value>Unicorn</value>
+  </data>
 </root>

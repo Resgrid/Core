@@ -114,12 +114,20 @@
 								<div class="col-sm-6">
 									<select class="form-control" asp-for="MapStyle">
 										<option value="@MapStyleTypes.Automatic">@localizer["MapStyleAutomaticDay"]</option>
-										@foreach (var style in MapStylePresets.SelectableStyles)
-										{
-											<option value="@style">@localizer["MapStyle_" + style]</option>
-										}
+										<optgroup label="@localizer["MapStyleMapboxGroup"]">
+											@foreach (var style in MapStylePresets.MapboxStyles)
+											{
+												<option value="@style">@localizer["MapStyle_" + style]</option>
+											}
+										</optgroup>
+										<optgroup label="@localizer["MapStyleCommunityGroup"]">
+											@foreach (var style in MapStylePresets.CommunityStyles)
+											{
+												<option value="@style">@localizer["MapStyle_" + style]</option>
+											}
+										</optgroup>
 									</select>
-									<span class="help-block m-b-none">@localizer["MapStyleDayHelp"]</span>
+									<span class="help-block m-b-none">@localizer["MapStyleDayHelp"] @localizer["MapStyleCommunityHelp"]</span>
 									<img id="mapStyleDayPreview" class="img-responsive m-t-sm" style="display: none; border-radius: 4px;" width="600" height="240" loading="lazy" alt="@localizer["MapStylePreviewAlt"]" />
 								</div>
 							</div>
@@ -128,10 +136,18 @@
 								<div class="col-sm-6">
 									<select class="form-control" asp-for="MapStyleNight">
 										<option value="@MapStyleTypes.Automatic">@string.Format(localizer["MapStyleAutomaticNight"].Value, localizer["MapStyle_" + MapStylePresets.ResolveNightStyle(Model.MapStyle, MapStyleTypes.Automatic)].Value)</option>
-										@foreach (var style in MapStylePresets.SelectableStyles)
-										{
-											<option value="@style">@localizer["MapStyle_" + style]</option>
-										}
+										<optgroup label="@localizer["MapStyleMapboxGroup"]">
+											@foreach (var style in MapStylePresets.MapboxStyles)
+											{
+												<option value="@style">@localizer["MapStyle_" + style]</option>
+											}
+										</optgroup>
+										<optgroup label="@localizer["MapStyleCommunityGroup"]">
+											@foreach (var style in MapStylePresets.CommunityStyles)
+											{
+												<option value="@style">@localizer["MapStyle_" + style]</option>
+											}
+										</optgroup>
 									</select>
 									<span class="help-block m-b-none">@localizer["MapStyleNightHelp"]</span>
 									<img id="mapStyleNightPreview" class="img-responsive m-t-sm" style="display: none; border-radius: 4px;" width="600" height="240" loading="lazy" alt="@localizer["MapStylePreviewAlt"]" />

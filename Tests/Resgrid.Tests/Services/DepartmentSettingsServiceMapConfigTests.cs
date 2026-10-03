@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
@@ -41,6 +42,279 @@ namespace Resgrid.Tests.Services
 			MappingConfig.WebsiteMapboxAccessToken = string.Empty;
 			MappingConfig.WebsiteMapMode = MappingConfig.LeafletMapProvider;
 			MappingConfig.LeafletTileUrl = "https://tiles.example.com/{z}/{x}/{y}.png";
+			MappingConfig.UnitAppMapBoxKey = string.Empty;
+			MappingConfig.DispatchAppMapboxKey = string.Empty;
+			MappingConfig.ResponderAppMapboxKey = string.Empty;
+			MappingConfig.ICAppMapboxKey = string.Empty;
+			MappingConfig.BigBoardMapboxKey = string.Empty;
+
+			// Pass-through cache so the cached map style reads reach the repository mocks.
+			_cacheProvider
+				.Setup(x => x.RetrieveAsync<string>(It.IsAny<string>(), It.IsAny<Func<Task<string>>>(), It.IsAny<TimeSpan>()))
+				.Returns((string key, Func<Task<string>> fallback, TimeSpan expiration) => fallback());
+		}
+
+		private void SetupMapStyles(MapStyleTypes? day, MapStyleTypes? night = null)
+		{
+			_departmentSettingsRepository
+				.Setup(x => x.GetDepartmentSettingByIdTypeAsync(7, DepartmentSettingTypes.MappingMapStyle))
+				.ReturnsAsync(day.HasValue ? new DepartmentSetting { DepartmentId = 7, Setting = ((int)day.Value).ToString(), SettingType = (int)DepartmentSettingTypes.MappingMapStyle } : null);
+			_departmentSettingsRepository
+				.Setup(x => x.GetDepartmentSettingByIdTypeAsync(7, DepartmentSettingTypes.MappingMapStyleNight))
+				.ReturnsAsync(night.HasValue ? new DepartmentSetting { DepartmentId = 7, Setting = ((int)night.Value).ToString(), SettingType = (int)DepartmentSettingTypes.MappingMapStyleNight } : null);
+		}
+
+		private void SetupOverride(string enabled, string styleUrl, string token)
+		{
+			_departmentSettingsRepository
+				.Setup(x => x.GetDepartmentSettingByIdTypeAsync(7, DepartmentSettingTypes.MappingUseMapboxOverride))
+				.ReturnsAsync(new DepartmentSetting { DepartmentId = 7, Setting = enabled, SettingType = (int)DepartmentSettingTypes.MappingUseMapboxOverride });
+			_departmentSettingsRepository
+				.Setup(x => x.GetDepartmentSettingByIdTypeAsync(7, DepartmentSettingTypes.MappingMapboxStyleUrl))
+				.ReturnsAsync(styleUrl == null ? null : new DepartmentSetting { DepartmentId = 7, Setting = styleUrl, SettingType = (int)DepartmentSettingTypes.MappingMapboxStyleUrl });
+			_departmentSettingsRepository
+				.Setup(x => x.GetDepartmentSettingByIdTypeAsync(7, DepartmentSettingTypes.MappingMapboxAccessToken))
+				.ReturnsAsync(token == null ? null : new DepartmentSetting { DepartmentId = 7, Setting = token, SettingType = (int)DepartmentSettingTypes.MappingMapboxAccessToken });
+		}
+
+		[Test]
+		public async Task app_map_should_hand_out_department_override_token_and_custom_style_day_and_night()
+		{
+			MappingConfig.ResponderAppMapboxKey = "pk.responder-system";
+			SetupOverride("true", "https://api.mapbox.com/styles/v1/dept/custom123.html", " pk.department-token ");
+			SetupMapStyles(MapStyleTypes.Satellite);
+
+			var result = await _service.GetAppMapConfigForDepartmentAsync(7, InfoConfig.ResponderAppKey);
+
+			result.IsDepartmentOverride.Should().BeTrue();
+			result.AccessToken.Should().Be("pk.department-token");
+			result.DayStyleUrl.Should().Be("mapbox://styles/dept/custom123");
+			result.NightStyleUrl.Should().Be(result.DayStyleUrl);
+		}
+
+		[TestCase("mapbox://styles/dept/custom123.json")]
+		[TestCase("mapbox://styles/dept/custom123.html?title=view")]
+		[TestCase("mapbox://styles/dept/custom123?fresh=true")]
+		[TestCase("mapbox://styles/dept/custom123#map")]
+		[TestCase("mapbox://styles/dept/custom123/draft")]
+		[TestCase("MAPBOX://styles/dept/custom123")]
+		[TestCase(" mapbox://styles/dept/custom123/ ")]
+		[TestCase("https://api.mapbox.com/styles/v1/dept/custom123.html?title=view&access_token=pk.share")]
+		public async Task override_style_should_reach_every_surface_as_the_canonical_mapbox_url(string storedStyleUrl)
+		{
+			MappingConfig.ResponderAppMapboxKey = "pk.responder-system";
+			SetupOverride("true", storedStyleUrl, "pk.department-token");
+			SetupMapStyles(null);
+
+			var app = await _service.GetAppMapConfigForDepartmentAsync(7, InfoConfig.ResponderAppKey);
+			var website = await _service.GetMapConfigForDepartmentAsync(7, InfoConfig.WebsiteKey);
+
+			app.IsDepartmentOverride.Should().BeTrue();
+			app.DayStyleUrl.Should().Be("mapbox://styles/dept/custom123");
+			website.IsDepartmentOverride.Should().BeTrue();
+			website.StyleUrl.Should().Be("mapbox://styles/dept/custom123");
+			website.TileUrl.Should().StartWith("https://api.mapbox.com/styles/v1/dept/custom123/tiles/");
+		}
+
+		[Test]
+		public async Task app_map_should_never_hand_out_a_secret_override_token()
+		{
+			MappingConfig.UnitAppMapBoxKey = "pk.unit-system";
+			SetupOverride("true", "mapbox://styles/dept/custom", "sk.department-secret");
+			SetupMapStyles(MapStyleTypes.NavigationDay);
+
+			var result = await _service.GetAppMapConfigForDepartmentAsync(7, InfoConfig.UnitAppKey);
+
+			result.IsDepartmentOverride.Should().BeFalse();
+			result.AccessToken.Should().Be("pk.unit-system");
+			result.DayStyleUrl.Should().Be(MapStylePresets.NavigationDayStyleUrl);
+			result.NightStyleUrl.Should().Be(MapStylePresets.NavigationNightStyleUrl);
+		}
+
+		[Test]
+		public async Task app_map_should_ignore_override_token_without_a_usable_style()
+		{
+			SetupOverride("true", null, "pk.department-token");
+			SetupMapStyles(null);
+
+			var result = await _service.GetAppMapConfigForDepartmentAsync(7, InfoConfig.DispatchAppKey);
+
+			result.IsDepartmentOverride.Should().BeFalse();
+			result.AccessToken.Should().BeEmpty();
+			result.DayStyleUrl.Should().Be(MapStylePresets.StreetsStyleUrl);
+			result.NightStyleUrl.Should().Be(MapStylePresets.DarkStyleUrl);
+		}
+
+		[TestCase("ResponderAppKey")]
+		[TestCase("UnitAppKey")]
+		[TestCase("DispatchAppKey")]
+		[TestCase("ICAppKey")]
+		[TestCase("BigBoardKey")]
+		public async Task app_map_should_hand_out_the_system_token_for_each_app(string key)
+		{
+			MappingConfig.ResponderAppMapboxKey = "pk.responder";
+			MappingConfig.UnitAppMapBoxKey = "pk.unit";
+			MappingConfig.DispatchAppMapboxKey = "pk.dispatch";
+			MappingConfig.ICAppMapboxKey = "pk.ic";
+			MappingConfig.BigBoardMapboxKey = "pk.bigboard";
+			SetupMapStyles(null);
+
+			var result = await _service.GetAppMapConfigForDepartmentAsync(7, key);
+
+			var expected = key switch
+			{
+				"ResponderAppKey" => "pk.responder",
+				"UnitAppKey" => "pk.unit",
+				"DispatchAppKey" => "pk.dispatch",
+				"ICAppKey" => "pk.ic",
+				_ => "pk.bigboard"
+			};
+			result.AccessToken.Should().Be(expected);
+		}
+
+		[Test]
+		public async Task app_map_should_send_no_token_when_the_system_token_is_secret_or_unknown_app()
+		{
+			MappingConfig.ICAppMapboxKey = "sk.ic-secret";
+			SetupMapStyles(null);
+
+			(await _service.GetAppMapConfigForDepartmentAsync(7, InfoConfig.ICAppKey)).AccessToken.Should().BeEmpty();
+			(await _service.GetAppMapConfigForDepartmentAsync(7, InfoConfig.WebsiteKey)).AccessToken.Should().BeEmpty();
+		}
+
+		[Test]
+		public async Task app_map_should_send_no_token_to_an_anonymous_caller()
+		{
+			MappingConfig.ResponderAppMapboxKey = "pk.responder";
+
+			var result = await _service.GetAppMapConfigForDepartmentAsync(0, InfoConfig.ResponderAppKey);
+
+			result.AccessToken.Should().BeEmpty();
+			result.DayStyleUrl.Should().Be(MapStylePresets.StreetsStyleUrl);
+			result.NightStyleUrl.Should().Be(MapStylePresets.DarkStyleUrl);
+			_departmentSettingsRepository.Verify(x => x.GetDepartmentSettingByIdTypeAsync(It.IsAny<int>(), It.IsAny<DepartmentSettingTypes>()), Times.Never);
+		}
+
+		[Test]
+		public async Task should_render_department_style_on_website_with_system_token_even_when_system_is_leaflet()
+		{
+			MappingConfig.WebsiteMapboxAccessToken = "pk.website-token";
+			SetupMapStyles(MapStyleTypes.Satellite);
+
+			var result = await _service.GetMapConfigForDepartmentAsync(7, InfoConfig.WebsiteKey);
+
+			result.IsDepartmentOverride.Should().BeFalse();
+			result.MapProvider.Should().Be(MappingConfig.MapboxMapProvider);
+			result.StyleUrl.Should().Be(MapStylePresets.SatelliteStyleUrl);
+			result.AccessToken.Should().Be("pk.website-token");
+			result.TileUrl.Should().Be("https://api.mapbox.com/styles/v1/mapbox/satellite-v9/tiles/256/{z}/{x}/{y}@2x?access_token=pk.website-token");
+		}
+
+		[Test]
+		public async Task should_replace_system_mapbox_style_with_department_style()
+		{
+			MappingConfig.WebsiteMapMode = MappingConfig.MapboxMapProvider;
+			MappingConfig.WebsiteOSMKey = "pk.system-token";
+			SetupMapStyles(MapStyleTypes.Outdoors);
+
+			var result = await _service.GetMapConfigForDepartmentAsync(7, InfoConfig.WebsiteKey);
+
+			result.StyleUrl.Should().Be(MapStylePresets.OutdoorsStyleUrl);
+			result.AccessToken.Should().Be("pk.system-token");
+		}
+
+		[Test]
+		public async Task should_keep_system_tiles_when_department_style_is_automatic()
+		{
+			MappingConfig.WebsiteMapboxAccessToken = "pk.website-token";
+			SetupMapStyles(null);
+
+			var result = await _service.GetMapConfigForDepartmentAsync(7, InfoConfig.WebsiteKey);
+
+			result.MapProvider.Should().Be(MappingConfig.LeafletMapProvider);
+			result.TileUrl.Should().Be("https://tiles.example.com/{z}/{x}/{y}.png");
+		}
+
+		[Test]
+		public async Task should_keep_system_tiles_when_department_style_has_no_system_token()
+		{
+			MappingConfig.WebsiteOSMKey = "maptiler-key";
+			SetupMapStyles(MapStyleTypes.Dark);
+
+			var result = await _service.GetMapConfigForDepartmentAsync(7, InfoConfig.WebsiteKey);
+
+			result.MapProvider.Should().Be(MappingConfig.LeafletMapProvider);
+			result.AccessToken.Should().BeEmpty();
+		}
+
+		[Test]
+		public async Task should_prefer_department_override_over_department_style()
+		{
+			MappingConfig.WebsiteMapboxAccessToken = "pk.website-token";
+			SetupMapStyles(MapStyleTypes.Satellite);
+			_departmentSettingsRepository
+				.Setup(x => x.GetDepartmentSettingByIdTypeAsync(7, DepartmentSettingTypes.MappingUseMapboxOverride))
+				.ReturnsAsync(new DepartmentSetting { DepartmentId = 7, Setting = "true", SettingType = (int)DepartmentSettingTypes.MappingUseMapboxOverride });
+			_departmentSettingsRepository
+				.Setup(x => x.GetDepartmentSettingByIdTypeAsync(7, DepartmentSettingTypes.MappingMapboxStyleUrl))
+				.ReturnsAsync(new DepartmentSetting { DepartmentId = 7, Setting = "mapbox://styles/department/customstyle", SettingType = (int)DepartmentSettingTypes.MappingMapboxStyleUrl });
+			_departmentSettingsRepository
+				.Setup(x => x.GetDepartmentSettingByIdTypeAsync(7, DepartmentSettingTypes.MappingMapboxAccessToken))
+				.ReturnsAsync(new DepartmentSetting { DepartmentId = 7, Setting = "pk.department-token", SettingType = (int)DepartmentSettingTypes.MappingMapboxAccessToken });
+
+			var result = await _service.GetMapConfigForDepartmentAsync(7, InfoConfig.WebsiteKey);
+
+			result.IsDepartmentOverride.Should().BeTrue();
+			result.StyleUrl.Should().Be("mapbox://styles/department/customstyle");
+		}
+
+		[Test]
+		public async Task should_render_department_style_for_unit_app_on_its_system_token()
+		{
+			MappingConfig.UnitAppMapBoxKey = "pk.unit-system-token";
+			SetupMapStyles(MapStyleTypes.NavigationDay);
+
+			var result = await _service.GetMapConfigForDepartmentAsync(7, InfoConfig.UnitAppKey);
+
+			result.StyleUrl.Should().Be(MapStylePresets.NavigationDayStyleUrl);
+			result.AccessToken.Should().Be("pk.unit-system-token");
+		}
+
+		[Test]
+		public async Task should_read_unknown_stored_style_as_automatic()
+		{
+			_departmentSettingsRepository
+				.Setup(x => x.GetDepartmentSettingByIdTypeAsync(7, DepartmentSettingTypes.MappingMapStyle))
+				.ReturnsAsync(new DepartmentSetting { DepartmentId = 7, Setting = "99", SettingType = (int)DepartmentSettingTypes.MappingMapStyle });
+
+			var result = await _service.GetMappingMapStyleAsync(7);
+
+			result.Should().Be(MapStyleTypes.Automatic);
+		}
+
+		[Test]
+		public async Task should_delete_rows_when_saving_automatic_styles()
+		{
+			_departmentSettingsRepository
+				.Setup(x => x.GetDepartmentSettingByIdTypeAsync(7, DepartmentSettingTypes.MappingMapStyle))
+				.ReturnsAsync(new DepartmentSetting { DepartmentId = 7, Setting = "5", SettingType = (int)DepartmentSettingTypes.MappingMapStyle });
+			_departmentSettingsRepository
+				.Setup(x => x.DeleteAsync(It.IsAny<DepartmentSetting>(), It.IsAny<System.Threading.CancellationToken>()))
+				.ReturnsAsync(true);
+
+			await _service.SaveMappingMapStylesAsync(7, MapStyleTypes.Automatic, (MapStyleTypes)42);
+
+			_departmentSettingsRepository.Verify(x => x.DeleteAsync(It.Is<DepartmentSetting>(s => s.SettingType == (int)DepartmentSettingTypes.MappingMapStyle), It.IsAny<System.Threading.CancellationToken>()), Times.Once);
+			_departmentSettingsRepository.Verify(x => x.SaveOrUpdateAsync(It.IsAny<DepartmentSetting>(), It.IsAny<System.Threading.CancellationToken>(), It.IsAny<bool>()), Times.Never);
+		}
+
+		[Test]
+		public async Task should_store_explicit_styles_as_integers()
+		{
+			await _service.SaveMappingMapStylesAsync(7, MapStyleTypes.SatelliteStreets, MapStyleTypes.NavigationNight);
+
+			_departmentSettingsRepository.Verify(x => x.SaveOrUpdateAsync(It.Is<DepartmentSetting>(s => s.SettingType == (int)DepartmentSettingTypes.MappingMapStyle && s.Setting == "6"), It.IsAny<System.Threading.CancellationToken>(), It.IsAny<bool>()), Times.Once);
+			_departmentSettingsRepository.Verify(x => x.SaveOrUpdateAsync(It.Is<DepartmentSetting>(s => s.SettingType == (int)DepartmentSettingTypes.MappingMapStyleNight && s.Setting == "8"), It.IsAny<System.Threading.CancellationToken>(), It.IsAny<bool>()), Times.Once);
 		}
 
 		[Test]

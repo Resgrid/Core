@@ -648,6 +648,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			// what validation will enforce and never keeps its own copy of either.
 			var sections = await _incidentReports.GetSectionRequirementsAsync(DepartmentId, aggregate.Report.RmsIncidentReportId);
 			var analysis = await _analysis.GetForReportAsync(DepartmentId, aggregate.Report.RmsIncidentReportId);
+			// NERIS workflows off (setting 111): findings left by an earlier NERIS run gate nothing and are not returned.
+			if (!await _neris.IsWorkflowEnabledAsync(DepartmentId))
+				aggregate.Issues = new List<RmsValidationIssue>();
 
 			var data = IncidentReportsApiMapper.ToReport(aggregate, await _neris.IsSubmissionEnabledAsync(DepartmentId),
 				await CanViewRestrictedAsync(), sections, analysis?.Analysis?.RmsIncidentAnalysisId);

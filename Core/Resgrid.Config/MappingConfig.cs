@@ -60,6 +60,16 @@ namespace Resgrid.Config
 		public static string BigBoardOSMKey = "";
 
 		public static string DispatchAppMapboxKey = "";
+
+		/***********************************
+		 * Mapbox public (pk.) tokens handed to the native apps in config so a token can be rotated
+		 * without an app release. Empty = the app keeps the token built into it. Unit and Dispatch use
+		 * UnitAppMapBoxKey / DispatchAppMapboxKey above.
+		 ***********************************/
+		public static string ResponderAppMapboxKey = "";
+		public static string ICAppMapboxKey = "";
+		public static string BigBoardMapboxKey = "";
+
 		public static string WebsiteMapboxKey = "";
 		public static string WebsiteMapboxAccessToken = "";
 		public static string WebsiteMapMode = LeafletMapProvider;
@@ -131,13 +141,77 @@ namespace Resgrid.Config
 			{
 				MapProvider = MapboxMapProvider,
 				TileUrl = $"https://api.mapbox.com/styles/v1/{styleId}/tiles/256/{{z}}/{{x}}/{{y}}@2x?access_token={publicAccessToken}",
-				StyleUrl = NormalizeMapboxStyleUrl(styleUrl, styleId),
+				StyleUrl = NormalizeMapboxStyleUrl(styleId),
 				AccessToken = publicAccessToken,
 				Attribution = MapBoxAttribution,
 				IsDepartmentOverride = isDepartmentOverride
 			};
 
 			return true;
+		}
+
+		/// <summary>
+		/// Builds a Mapbox config for a department-chosen style on the system's own public token for this
+		/// surface. Independent of the surface's preferred provider: a department that picked a style gets
+		/// it on the website even when the system default there is Leaflet, as long as a public token exists.
+		/// </summary>
+		public static bool TryCreateSystemMapboxConfig(string key, string styleUrl, out ResolvedMapConfig mapConfig)
+		{
+			var surfaceKey = string.IsNullOrWhiteSpace(key) ? InfoConfig.WebsiteKey : key;
+
+			return TryCreateMapboxConfig(styleUrl, GetSystemMapboxAccessToken(surfaceKey), false, out mapConfig);
+		}
+
+		/// <summary>True when this surface has a public (pk.) Mapbox token to render a department style with.</summary>
+		public static bool HasSystemMapboxAccessToken(string key)
+		{
+			var surfaceKey = string.IsNullOrWhiteSpace(key) ? InfoConfig.WebsiteKey : key;
+
+			return !string.IsNullOrWhiteSpace(NormalizePublicMapboxAccessToken(GetSystemMapboxAccessToken(surfaceKey)));
+		}
+
+		/// <summary>
+		/// The system public (pk.) Mapbox token for a native app surface, or empty when the operator has not
+		/// configured one (the app then keeps its built-in token). Secret (sk.) tokens are never returned.
+		/// </summary>
+		public static string GetAppMapboxPublicAccessToken(string key)
+		{
+			string token;
+
+			if (key == InfoConfig.UnitAppKey)
+				token = UnitAppMapBoxKey;
+			else if (key == InfoConfig.DispatchAppKey)
+				token = DispatchAppMapboxKey;
+			else if (key == InfoConfig.ResponderAppKey)
+				token = ResponderAppMapboxKey;
+			else if (key == InfoConfig.ICAppKey)
+				token = ICAppMapboxKey;
+			else if (key == InfoConfig.BigBoardKey)
+				token = BigBoardMapboxKey;
+			else
+				token = string.Empty;
+
+			return NormalizePublicMapboxAccessToken(token);
+		}
+
+		/// <summary>True for a public (pk.) Mapbox token; secret (sk.) and temporary (tk.) tokens are refused.</summary>
+		public static bool IsPublicMapboxAccessToken(string accessToken)
+		{
+			return !string.IsNullOrWhiteSpace(NormalizePublicMapboxAccessToken(accessToken));
+		}
+
+		/// <summary>The style url a department override renders, normalized to mapbox://styles/owner/id; null when unusable.</summary>
+		public static string GetNormalizedMapboxStyleUrl(string styleUrl)
+		{
+			var styleId = GetMapboxStyleId(styleUrl);
+
+			return string.IsNullOrWhiteSpace(styleId) ? null : NormalizeMapboxStyleUrl(styleId);
+		}
+
+		/// <summary>The public token the website uses for Mapbox, or empty when there is none.</summary>
+		public static string GetWebsiteMapboxPublicAccessToken()
+		{
+			return NormalizePublicMapboxAccessToken(GetSystemMapboxAccessToken(InfoConfig.WebsiteKey));
 		}
 
 		public static bool IsSupportedMapboxStyleUrl(string styleUrl)
@@ -289,11 +363,10 @@ namespace Resgrid.Config
 			return normalizedTileUrl.Replace("{0}", key, StringComparison.InvariantCulture);
 		}
 
-		private static string NormalizeMapboxStyleUrl(string styleUrl, string styleId)
+		// Rebuilt from the parsed id for mapbox:// input too, so a pasted ".html"/".json" suffix, query text, a
+		// trailing "/draft" or an upper-case scheme never reaches the renderer.
+		private static string NormalizeMapboxStyleUrl(string styleId)
 		{
-			if (styleUrl.StartsWith("mapbox://styles/", StringComparison.InvariantCultureIgnoreCase))
-				return styleUrl;
-
 			return $"mapbox://styles/{styleId}";
 		}
 
@@ -345,7 +418,15 @@ namespace Resgrid.Config
 			if (pathSegments.Length < 2)
 				return null;
 
-			return $"{pathSegments[0]}/{pathSegments[1]}";
+			// Mapbox Studio's share link ends the style id with ".html" (and the Styles API with ".json");
+			// style ids themselves never contain a dot. A mapbox:// value is not parsed as a Uri, so its
+			// query or fragment is still on the segment here.
+			var styleId = pathSegments[1].Split('.', '?', '#')[0];
+
+			if (string.IsNullOrWhiteSpace(styleId))
+				return null;
+
+			return $"{pathSegments[0]}/{styleId}";
 		}
 	}
 }

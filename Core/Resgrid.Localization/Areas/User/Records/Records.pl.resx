@@ -2160,4 +2160,11 @@
   <data name="SourceInferred" xml:space="preserve"><value>Wywnioskowane</value></data>
   <data name="SourceAutoLinked" xml:space="preserve"><value>Powiązane automatycznie</value></data>
   <data name="UnitTimesDerivedHint" xml:space="preserve"><value>Niektóre czasy jednostek pochodzą ze statusów, których jednostka sama nie powiązała z tym zgłoszeniem: Resgrid powiązał je automatycznie (na podstawie poprzedniego statusu jednostki lub jej zadysponowania) albo je wywnioskował (ustawione bez celu, gdy jednostka była tu zadysponowana). Sprawdź je przed zatwierdzeniem.</value></data>
+  <data name="NerisWorkflowsHeader" xml:space="preserve"><value>Raportowanie NERIS</value></data>
+  <data name="NerisWorkflowsEnabled" xml:space="preserve"><value>Używaj procesów NERIS</value></data>
+  <data name="NerisWorkflowsIntro" xml:space="preserve"><value>Gdy opcja jest włączona, raporty ze zdarzeń są sprawdzane według reguł NERIS przed zatwierdzeniem, a zatwierdzone raporty można przesłać do NERIS. Wyłącz ją, jeśli Twoja jednostka nie raportuje do NERIS.</value></data>
+  <data name="NerisWorkflowsOffHelp" xml:space="preserve"><value>Wyłączenie NERIS zatrzymuje walidację, przesyłanie i sprawdzanie statusu NERIS oraz ukrywa ekrany konfiguracji i wskaźniki NERIS. Raporty ze zdarzeń i wszystkie pozostałe ustawienia Rejestrów działają dalej. Profil NERIS, mapowania kodów i historia przesyłek są zachowywane, a przesyłki w kolejce czekają do ponownego włączenia NERIS.</value></data>
+  <data name="NerisWorkflowsOffNotice" xml:space="preserve"><value>Procesy NERIS są wyłączone dla tej jednostki. Raporty ze zdarzeń są przechowywane jako rejestry jednostki i nie są walidowane według NERIS ani do niego przesyłane. Administrator może ponownie włączyć NERIS w ustawieniach Rejestrów.</value></data>
+  <data name="ManageNerisProfile" xml:space="preserve"><value>Profil NERIS i mapowania kodów</value></data>
+  <data name="CorrectWithoutNeris" xml:space="preserve"><value>Zapisz korektę (bez przesyłania do NERIS)</value></data>
 </root>

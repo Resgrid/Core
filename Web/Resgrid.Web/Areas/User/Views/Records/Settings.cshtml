@@ -50,6 +50,25 @@
 				</div>
 
 				<div class="ibox float-e-margins">
+					<div class="ibox-title"><h5>@localizer["NerisWorkflowsHeader"]</h5></div>
+					<div class="ibox-content">
+						<p class="text-muted">@localizer["NerisWorkflowsIntro"]</p>
+						<div class="form-group">
+							<div class="col-sm-offset-3 col-sm-9"><label><input type="checkbox" asp-for="NerisWorkflowsEnabled" /> @localizer["NerisWorkflowsEnabled"]</label></div>
+						</div>
+						<p class="text-muted">@localizer["NerisWorkflowsOffHelp"]</p>
+						@if (Model.NerisWorkflowsEnabled)
+						{
+							if (!Model.NerisSystemEnabled)
+							{
+								<p class="text-warning">@localizer["SystemDisabledNotice"]</p>
+							}
+							<p><a asp-controller="IncidentReports" asp-action="Settings" asp-route-area="User"><i class="fa fa-cog"></i> @localizer["ManageNerisProfile"]</a></p>
+						}
+					</div>
+				</div>
+
+				<div class="ibox float-e-margins">
 					<div class="ibox-title"><h5>@localizer["Numbering"]</h5></div>
 					<div class="ibox-content">
 						<div class="form-group">

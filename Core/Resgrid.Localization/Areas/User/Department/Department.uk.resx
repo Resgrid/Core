@@ -1139,4 +1139,61 @@
   <data name="RequirePasswordResetViaEmailHelp" xml:space="preserve">
     <value>Не дає адміністраторам підрозділу та груп вибирати або бачити новий пароль учасника. Натомість під час скидання учаснику надсилається електронною поштою короткочасне одноразове посилання. Наявні сеанси відкликаються після того, як учасник успішно змінить пароль.</value>
   </data>
+  <data name="MapStyleHeader" xml:space="preserve">
+    <value>Стиль карти</value>
+  </data>
+  <data name="MapStyleHelp" xml:space="preserve">
+    <value>Базова карта, яку ваш підрозділ бачить на кожній карті в Resgrid: на вебсайті, у Dispatch, Responder, Unit, IC і BigBoard.</value>
+  </data>
+  <data name="MapStyleWebsiteUnavailable" xml:space="preserve">
+    <value>Цей сервер Resgrid не має токена Mapbox для вебсайту, тому карти на вебсайті залишаються стандартними. Вибраний стиль усе одно застосовується в застосунках.</value>
+  </data>
+  <data name="MapStyleOverrideActive" xml:space="preserve">
+    <value>Перевизначення Mapbox підрозділу нижче ввімкнено, тому вебсайт і застосунки використовують цей власний стиль замість стилів, вибраних тут.</value>
+  </data>
+  <data name="MapStyleDayLabel" xml:space="preserve">
+    <value>Денний стиль карти</value>
+  </data>
+  <data name="MapStyleDayHelp" xml:space="preserve">
+    <value>Використовується на вебсайті та в застосунках, коли пристрій у світлому режимі.</value>
+  </data>
+  <data name="MapStyleNightLabel" xml:space="preserve">
+    <value>Нічний стиль карти</value>
+  </data>
+  <data name="MapStyleNightHelp" xml:space="preserve">
+    <value>Використовується в застосунках, коли пристрій у темному режимі. Автоматичний вибирає нічну версію денного стилю.</value>
+  </data>
+  <data name="MapStyleAutomaticDay" xml:space="preserve">
+    <value>Автоматично (Вулиці)</value>
+  </data>
+  <data name="MapStyleAutomaticNight" xml:space="preserve">
+    <value>Автоматично ({0})</value>
+  </data>
+  <data name="MapStylePreviewAlt" xml:space="preserve">
+    <value>Попередній перегляд стилю карти</value>
+  </data>
+  <data name="MapStyle_Streets" xml:space="preserve">
+    <value>Вулиці</value>
+  </data>
+  <data name="MapStyle_Outdoors" xml:space="preserve">
+    <value>Місцевість (рельєф)</value>
+  </data>
+  <data name="MapStyle_Light" xml:space="preserve">
+    <value>Світлий</value>
+  </data>
+  <data name="MapStyle_Dark" xml:space="preserve">
+    <value>Темний</value>
+  </data>
+  <data name="MapStyle_Satellite" xml:space="preserve">
+    <value>Супутник</value>
+  </data>
+  <data name="MapStyle_SatelliteStreets" xml:space="preserve">
+    <value>Супутник із вулицями</value>
+  </data>
+  <data name="MapStyle_NavigationDay" xml:space="preserve">
+    <value>Навігація вдень</value>
+  </data>
+  <data name="MapStyle_NavigationNight" xml:space="preserve">
+    <value>Навігація вночі</value>
+  </data>
 </root>

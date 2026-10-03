@@ -792,4 +792,61 @@
   <data name="GroupDispatchScopeNoRoles" xml:space="preserve">
     <value>No personnel roles are defined yet.</value>
   </data>
+  <data name="MapStyleHeader" xml:space="preserve">
+    <value>Map Style</value>
+  </data>
+  <data name="MapStyleHelp" xml:space="preserve">
+    <value>The base map your department sees on every map in Resgrid: the website, Dispatch, Responder, Unit, IC and BigBoard.</value>
+  </data>
+  <data name="MapStyleWebsiteUnavailable" xml:space="preserve">
+    <value>This Resgrid server has no Mapbox token for the website, so website maps keep the standard map. The style you choose still applies in the apps.</value>
+  </data>
+  <data name="MapStyleOverrideActive" xml:space="preserve">
+    <value>The Department Mapbox Override below is on, so the website and the apps use that custom style instead of the styles chosen here.</value>
+  </data>
+  <data name="MapStyleDayLabel" xml:space="preserve">
+    <value>Day Map Style</value>
+  </data>
+  <data name="MapStyleDayHelp" xml:space="preserve">
+    <value>Used on the website, and in the apps when the device is in light mode.</value>
+  </data>
+  <data name="MapStyleNightLabel" xml:space="preserve">
+    <value>Night Map Style</value>
+  </data>
+  <data name="MapStyleNightHelp" xml:space="preserve">
+    <value>Used in the apps when the device is in dark mode. Automatic picks the night version of the day style.</value>
+  </data>
+  <data name="MapStyleAutomaticDay" xml:space="preserve">
+    <value>Automatic (Streets)</value>
+  </data>
+  <data name="MapStyleAutomaticNight" xml:space="preserve">
+    <value>Automatic ({0})</value>
+  </data>
+  <data name="MapStylePreviewAlt" xml:space="preserve">
+    <value>Map style preview</value>
+  </data>
+  <data name="MapStyle_Streets" xml:space="preserve">
+    <value>Streets</value>
+  </data>
+  <data name="MapStyle_Outdoors" xml:space="preserve">
+    <value>Outdoors (terrain)</value>
+  </data>
+  <data name="MapStyle_Light" xml:space="preserve">
+    <value>Light</value>
+  </data>
+  <data name="MapStyle_Dark" xml:space="preserve">
+    <value>Dark</value>
+  </data>
+  <data name="MapStyle_Satellite" xml:space="preserve">
+    <value>Satellite</value>
+  </data>
+  <data name="MapStyle_SatelliteStreets" xml:space="preserve">
+    <value>Satellite with Streets</value>
+  </data>
+  <data name="MapStyle_NavigationDay" xml:space="preserve">
+    <value>Navigation Day</value>
+  </data>
+  <data name="MapStyle_NavigationNight" xml:space="preserve">
+    <value>Navigation Night</value>
+  </data>
 </root>

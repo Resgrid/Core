@@ -167,6 +167,8 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public string AnalysisId { get; set; }
 		public string ReportId { get; set; }
 		public long RowVersion { get; set; }
+		[Microsoft.AspNetCore.Mvc.ModelBinding.BindNever]
+		public bool NerisWorkflowsEnabled { get; set; } = true;
 		public string Reference { get; set; }
 		public RmsIncidentAnalysisState State { get; set; }
 		public string GeneralCause { get; set; }
@@ -201,6 +203,8 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public IncidentAnalysisAggregate Aggregate { get; set; }
 		public Department Department { get; set; }
 		public bool SubmissionEnabled { get; set; }
+		/// <summary>Setting 111. Off hides NERIS validation and filing; the analysis stays an ordinary record.</summary>
+		public bool NerisWorkflowsEnabled { get; set; } = true;
 		public bool CanEdit { get; set; }
 		public bool CanFinalize { get; set; }
 		public bool CanSubmit { get; set; }

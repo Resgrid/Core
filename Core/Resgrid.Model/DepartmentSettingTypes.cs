@@ -117,5 +117,24 @@
 
 		/// <summary>Declared, reviewed administrative operating profile; registry section 4G.</summary>
 		DepartmentOperatingProfile = 110,
+
+		/// <summary>
+		/// Cached scalar, Records Settings screen: "false" turns off this department's NERIS workflows (guided NERIS
+		/// sections, NERIS validation, submission and the NERIS setup screens). A missing row means on. The rest of
+		/// Records is untouched, and the NERIS profile, crosswalks and submission history are kept for re-enabling.
+		/// </summary>
+		RecordsNerisWorkflowsEnabled = 111,
+
+		/// <summary>
+		/// Cached scalar <see cref="MapStyleTypes"/>: the Mapbox base map every map surface (website and all
+		/// apps) shows in a light theme. Missing = Automatic (Streets). Edited on the Mapping Settings screen.
+		/// </summary>
+		MappingMapStyle = 112,
+
+		/// <summary>
+		/// Cached scalar <see cref="MapStyleTypes"/>: the base map the apps show in a dark theme. Missing =
+		/// Automatic, which pairs with <see cref="MappingMapStyle"/> (see <see cref="MapStylePresets.ResolveNightStyle"/>).
+		/// </summary>
+		MappingMapStyleNight = 113,
 	}
 }

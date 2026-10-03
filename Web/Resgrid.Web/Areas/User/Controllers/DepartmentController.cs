@@ -2593,9 +2593,43 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.UseMapboxOverride = await _departmentSettingsService.GetMappingUseMapboxOverrideAsync(DepartmentId);
 			model.MapboxStyleUrl = await _departmentSettingsService.GetMappingMapboxStyleUrlAsync(DepartmentId);
 			model.MapboxAccessToken = await _departmentSettingsService.GetMappingMapboxAccessTokenAsync(DepartmentId);
+			model.MapStyle = await _departmentSettingsService.GetMappingMapStyleAsync(DepartmentId, true);
+			model.MapStyleNight = await _departmentSettingsService.GetMappingMapStyleNightAsync(DepartmentId, true);
 			model.UnitStatusThresholds = await BuildUnitStatusThresholdRowsAsync();
+			await PopulateMapStyleContextAsync(model);
 
 			return View(model);
+		}
+
+		/// <summary>
+		/// Server-side facts the map style section needs on every render (GET, saved POST and rejected
+		/// POST alike): none of them round-trip through the form.
+		/// </summary>
+		private async Task PopulateMapStyleContextAsync(MappingSettingsView model)
+		{
+			model.WebsiteSupportsMapStyle = Config.MappingConfig.HasSystemMapboxAccessToken(Config.InfoConfig.WebsiteKey);
+			model.PreviewAccessToken = Config.MappingConfig.GetWebsiteMapboxPublicAccessToken();
+
+			// Same system default the config API seeds, so a department with no center still previews somewhere real.
+			model.PreviewLatitude = 39.14086268299356;
+			model.PreviewLongitude = -119.7583809782715;
+
+			try
+			{
+				var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+				var coordinates = await _departmentSettingsService.GetMapCenterCoordinatesAsync(department);
+
+				if (coordinates?.Latitude != null && coordinates.Longitude != null)
+				{
+					model.PreviewLatitude = coordinates.Latitude.Value;
+					model.PreviewLongitude = coordinates.Longitude.Value;
+				}
+			}
+			catch (Exception ex)
+			{
+				// A preview centred on the default is better than a settings page that will not open.
+				Logging.LogException(ex, $"{nameof(PopulateMapStyleContextAsync)}: map center lookup failed for departmentId {DepartmentId}.");
+			}
 		}
 
 		[HttpPost]
@@ -2616,6 +2650,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (!String.IsNullOrWhiteSpace(model.MapboxStyleUrl) && !Config.MappingConfig.IsSupportedMapboxStyleUrl(model.MapboxStyleUrl))
 					ModelState.AddModelError(nameof(model.MapboxStyleUrl), "The Mapbox style url must be a mapbox://styles/... value or a https://api.mapbox.com/styles/v1/... url.");
+
+				// The token is handed to every member's browser and app, so only a public token may be saved;
+				// a secret (sk.) token pasted here would otherwise sit in settings unused at best.
+				if (!String.IsNullOrWhiteSpace(model.MapboxAccessToken) && !Config.MappingConfig.IsPublicMapboxAccessToken(model.MapboxAccessToken))
+					ModelState.AddModelError(nameof(model.MapboxAccessToken), "The Mapbox access token must be a public token starting with pk. Never use a secret (sk.) token here: it is sent to every member's browser and app.");
 			}
 
 			if (ModelState.IsValid)
@@ -2646,6 +2685,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					DepartmentSettingTypes.MappingUnitAllowStatusWithNoLocationToOverwrite, cancellationToken);
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.UseMapboxOverride.ToString(),
 					DepartmentSettingTypes.MappingUseMapboxOverride, cancellationToken);
+				await _departmentSettingsService.SaveMappingMapStylesAsync(DepartmentId, model.MapStyle, model.MapStyleNight, cancellationToken);
 
 				if (model.UseMapboxOverride)
 				{
@@ -2660,6 +2700,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 					await _departmentSettingsService.DeleteSettingAsync(DepartmentId, DepartmentSettingTypes.MappingMapboxAccessToken, cancellationToken);
 				}
 
+				model.MapStyle = MapStylePresets.Normalize(model.MapStyle);
+				model.MapStyleNight = MapStylePresets.Normalize(model.MapStyleNight);
+				await PopulateMapStyleContextAsync(model);
+
 				model.SaveSuccess = true;
 				return View(model);
 			}
@@ -2668,6 +2712,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			// binding. Only rebuild from storage when nothing came back at all.
 			if (model.UnitStatusThresholds == null || model.UnitStatusThresholds.Count == 0)
 				model.UnitStatusThresholds = await BuildUnitStatusThresholdRowsAsync();
+
+			await PopulateMapStyleContextAsync(model);
 
 			model.SaveSuccess = false;
 			return View(model);

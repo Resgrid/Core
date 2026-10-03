@@ -1197,4 +1197,61 @@
   <data name="RequirePasswordResetViaEmailHelp" xml:space="preserve">
     <value>يمنع مسؤولي القسم والمجموعات من اختيار كلمة المرور الجديدة للعضو أو الاطلاع عليها. بدلًا من ذلك، تُرسل إجراءات إعادة التعيين إلى العضو رابطًا عبر البريد الإلكتروني قصير الصلاحية يُستخدم لمرة واحدة. تُلغى الجلسات الحالية بعد أن يغيّر العضو كلمة المرور بنجاح.</value>
   </data>
+  <data name="MapStyleHeader" xml:space="preserve">
+    <value>نمط الخريطة</value>
+  </data>
+  <data name="MapStyleHelp" xml:space="preserve">
+    <value>الخريطة الأساسية التي يراها قسمك في كل خريطة في Resgrid: الموقع الإلكتروني وDispatch وResponder وUnit وIC وBigBoard.</value>
+  </data>
+  <data name="MapStyleWebsiteUnavailable" xml:space="preserve">
+    <value>لا يحتوي خادم Resgrid هذا على رمز Mapbox للموقع الإلكتروني، لذلك تحتفظ خرائط الموقع بالخريطة القياسية. يظل النمط الذي تختاره مطبقًا في التطبيقات.</value>
+  </data>
+  <data name="MapStyleOverrideActive" xml:space="preserve">
+    <value>تجاوز Mapbox الخاص بالقسم أدناه مفعّل، لذلك يستخدم الموقع الإلكتروني والتطبيقات ذلك النمط المخصص بدلاً من الأنماط المحددة هنا.</value>
+  </data>
+  <data name="MapStyleDayLabel" xml:space="preserve">
+    <value>نمط الخريطة النهاري</value>
+  </data>
+  <data name="MapStyleDayHelp" xml:space="preserve">
+    <value>يُستخدم على الموقع الإلكتروني وفي التطبيقات عندما يكون الجهاز في الوضع الفاتح.</value>
+  </data>
+  <data name="MapStyleNightLabel" xml:space="preserve">
+    <value>نمط الخريطة الليلي</value>
+  </data>
+  <data name="MapStyleNightHelp" xml:space="preserve">
+    <value>يُستخدم في التطبيقات عندما يكون الجهاز في الوضع الداكن. يختار الوضع التلقائي النسخة الليلية من النمط النهاري.</value>
+  </data>
+  <data name="MapStyleAutomaticDay" xml:space="preserve">
+    <value>تلقائي (الشوارع)</value>
+  </data>
+  <data name="MapStyleAutomaticNight" xml:space="preserve">
+    <value>تلقائي ({0})</value>
+  </data>
+  <data name="MapStylePreviewAlt" xml:space="preserve">
+    <value>معاينة نمط الخريطة</value>
+  </data>
+  <data name="MapStyle_Streets" xml:space="preserve">
+    <value>الشوارع</value>
+  </data>
+  <data name="MapStyle_Outdoors" xml:space="preserve">
+    <value>الهواء الطلق (التضاريس)</value>
+  </data>
+  <data name="MapStyle_Light" xml:space="preserve">
+    <value>فاتح</value>
+  </data>
+  <data name="MapStyle_Dark" xml:space="preserve">
+    <value>داكن</value>
+  </data>
+  <data name="MapStyle_Satellite" xml:space="preserve">
+    <value>القمر الصناعي</value>
+  </data>
+  <data name="MapStyle_SatelliteStreets" xml:space="preserve">
+    <value>القمر الصناعي مع الشوارع</value>
+  </data>
+  <data name="MapStyle_NavigationDay" xml:space="preserve">
+    <value>ملاحة نهارية</value>
+  </data>
+  <data name="MapStyle_NavigationNight" xml:space="preserve">
+    <value>ملاحة ليلية</value>
+  </data>
 </root>

@@ -4650,6 +4650,12 @@
   <data xml:space="preserve" name="Setting.MappingUseMapboxOverride">
     <value>Mapowanie – używaj zastąpienia Mapbox</value>
   </data>
+  <data xml:space="preserve" name="Setting.MappingMapStyle">
+    <value>Styl mapy</value>
+  </data>
+  <data xml:space="preserve" name="Setting.MappingMapStyleNight">
+    <value>Styl mapy nocnej</value>
+  </data>
   <data xml:space="preserve" name="Setting.ModuleSettings">
     <value>Ustawienia modułów</value>
   </data>
@@ -4685,6 +4691,9 @@
   </data>
   <data xml:space="preserve" name="Setting.RecordsRetentionPolicy">
     <value>Zasady przechowywania rekordów</value>
+  </data>
+  <data xml:space="preserve" name="Setting.RecordsNerisWorkflowsEnabled">
+    <value>Procesy NERIS w Rejestrach włączone</value>
   </data>
   <data xml:space="preserve" name="Setting.RecordsReviewDueHours">
     <value>Liczba godzin do terminu przeglądu rekordów</value>
@@ -4869,6 +4878,12 @@
   <data xml:space="preserve" name="SettingHelp.MappingUseMapboxOverride">
     <value>Używa zastąpienia dostawcy map oddziału. Wyłączenie go na właściwym ekranie usuwa zapisany styl i token.</value>
   </data>
+  <data xml:space="preserve" name="SettingHelp.MappingMapStyle">
+    <value>Mapa bazowa Mapbox wyświetlana na każdej mapie departamentu w trybie jasnym, na stronie internetowej i we wszystkich aplikacjach. Automatyczny oznacza Ulice; strona wymaga tokenu Mapbox serwera, a nadpisanie Mapbox departamentu zastępuje go wszędzie.</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.MappingMapStyleNight">
+    <value>Mapa bazowa wyświetlana przez aplikacje w trybie ciemnym. Automatyczny dopasowuje się do stylu dziennego (Ciemny dla map drogowych, Nawigacja nocna dla Nawigacji dziennej; Teren i satelita bez zmian). Strona internetowa zawsze używa stylu dziennego.</value>
+  </data>
   <data xml:space="preserve" name="SettingHelp.ModuleSettings">
     <value>Kontroluje nawigację po modułach i obsługiwane bramki funkcji. Ukrycie modułu nie usuwa jego rekordów ani nie jest dowodem wyłączenia niezależnych ustawień dyspozytorskich.</value>
   </data>
@@ -4904,6 +4919,9 @@
   </data>
   <data xml:space="preserve" name="SettingHelp.RecordsRetentionPolicy">
     <value>Domyślny oraz właściwy dla definicji okres przechowywania, wraz z historią wcześniejszych zasad. Wstrzymania oraz reguły klas ograniczonych mogą uniemożliwić kwalifikację do usunięcia.</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.RecordsNerisWorkflowsEnabled">
+    <value>Włącza lub wyłącza walidację, przesyłanie i ekrany konfiguracji NERIS tej jednostki. Pozostałe ustawienia Rejestrów, rejestry i historia pozostają bez zmian; profil NERIS i przesyłki w kolejce są zachowywane do ponownego włączenia.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.RecordsReviewDueHours">
     <value>Domyślny termin przeglądu administracyjnego — zastąpienie na poziomie definicji ma pierwszeństwo. Nie jest to wnioskowanie o terminie ustawowym.</value>

@@ -40,7 +40,7 @@
 				@if (Model.Issues.Count > 0)
                 {
                     <div class="alert alert-warning" role="alert"><strong>@localizer["ValidationIssues"]</strong><ul>
-                    @foreach (var issue in Model.Issues) { <li data-neris-issue="@issue.FieldPath"><span>@issue.FieldPath</span> @issue.Message</li> }
+                    @foreach (var issue in Model.Issues) { <li data-neris-issue="@issue.FieldPath" title="@issue.FieldPath">@issue.Message</li> }
                     </ul></div>
                 }
                 <div class="ibox float-e-margins">
@@ -204,7 +204,10 @@
 					<div class="col-sm-12">
 						<a class="btn btn-white" asp-controller="IncidentAnalysis" asp-action="Details" asp-route-area="User" asp-route-id="@Model.AnalysisId">@commonLocalizer["Cancel"]</a>
 						<button type="submit" disabled data-neris-save="true" class="btn btn-primary" name="ValidateAfterSave" value="false">@localizer["SaveDraft"]</button>
-						<button type="submit" disabled data-neris-save="true" class="btn btn-success" name="ValidateAfterSave" value="true">@localizer["SaveAndValidate"]</button>
+						@if (Model.NerisWorkflowsEnabled)
+						{
+							<button type="submit" disabled data-neris-save="true" class="btn btn-success" name="ValidateAfterSave" value="true">@localizer["SaveAndValidate"]</button>
+						}
 					</div>
 				</div>
 			</div>

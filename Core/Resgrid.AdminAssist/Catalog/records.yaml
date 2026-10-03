@@ -284,6 +284,39 @@
       "Availability": "available"
     },
     {
+      "Id": "setting.RecordsNerisWorkflowsEnabled",
+      "AreaId": "records",
+      "LabelKey": "Setting.RecordsNerisWorkflowsEnabled",
+      "HelpKey": "SettingHelp.RecordsNerisWorkflowsEnabled",
+      "Binding": "DepartmentSettingTypes.RecordsNerisWorkflowsEnabled",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": "RecordsNerisWorkflowsEnabled"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-03T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.RecordsNerisWorkflowsEnabled",
+      "DefaultValue": "true",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
       "Id": "module.LogsDisabled",
       "AreaId": "records",
       "LabelKey": "Module.LogsDisabled",
@@ -1368,6 +1401,7 @@
         "setting.RecordsDisclosureConfig",
         "setting.RecordsGroupScopeConfig",
         "setting.RecordsGroupVisibilityMode",
+        "setting.RecordsNerisWorkflowsEnabled",
         "setting.RecordsNumberingConfig",
         "setting.RecordsRetentionPolicy",
         "setting.RecordsReviewDueHours",
@@ -1827,6 +1861,17 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "setting.RecordsNerisWorkflowsEnabled",
+      "Locale": "en",
+      "TitleKey": "Setting.RecordsNerisWorkflowsEnabled",
+      "Body": "Records NERIS Workflows Enabled. Turns this department's NERIS validation, submission and NERIS setup screens on or off. Other Records settings, records and history are unchanged; the NERIS profile and queued submissions are kept for re-enabling.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-recordsnerisworkflowsenabled",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-03T00:00:00Z"
     },
     {
       "Id": "module.LogsDisabled",

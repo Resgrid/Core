@@ -24,6 +24,10 @@ namespace Resgrid.Model.Providers
 
 		Task UploadFileAsync(string indexName, string fileName, string localPath, CancellationToken cancellationToken = default);
 
+		/// <summary>
+		/// Downloads one object to <paramref name="localPath"/>. Throws <see cref="SearchIndexObjectNotFoundException"/>
+		/// when the object does not exist, so a pull can tell a pruned (superseded) file from a store failure.
+		/// </summary>
 		Task DownloadFileAsync(string indexName, string fileName, string localPath, CancellationToken cancellationToken = default);
 
 		Task DeleteFilesAsync(string indexName, IEnumerable<string> fileNames, CancellationToken cancellationToken = default);

@@ -4650,6 +4650,12 @@
   <data xml:space="preserve" name="Setting.MappingUseMapboxOverride">
     <value>استخدام تجاوز Mapbox للخرائط</value>
   </data>
+  <data xml:space="preserve" name="Setting.MappingMapStyle">
+    <value>نمط الخريطة</value>
+  </data>
+  <data xml:space="preserve" name="Setting.MappingMapStyleNight">
+    <value>نمط الخريطة الليلي</value>
+  </data>
   <data xml:space="preserve" name="Setting.ModuleSettings">
     <value>إعدادات الوحدات</value>
   </data>
@@ -4685,6 +4691,9 @@
   </data>
   <data xml:space="preserve" name="Setting.RecordsRetentionPolicy">
     <value>سياسة الاحتفاظ بالسجلات</value>
+  </data>
+  <data xml:space="preserve" name="Setting.RecordsNerisWorkflowsEnabled">
+    <value>تفعيل سير عمل NERIS للسجلات</value>
   </data>
   <data xml:space="preserve" name="Setting.RecordsReviewDueHours">
     <value>ساعات استحقاق مراجعة السجلات</value>
@@ -4869,6 +4878,12 @@
   <data xml:space="preserve" name="SettingHelp.MappingUseMapboxOverride">
     <value>يستخدم تجاوز مزوّد الخريطة الخاص بالقسم. إيقافه في الشاشة المالكة يزيل النمط والرمز المحفوظين.</value>
   </data>
+  <data xml:space="preserve" name="SettingHelp.MappingMapStyle">
+    <value>الخريطة الأساسية من Mapbox التي تعرضها كل خرائط القسم في الوضع الفاتح، على الموقع الإلكتروني وفي جميع التطبيقات. الوضع التلقائي هو الشوارع؛ يحتاج الموقع الإلكتروني إلى رمز Mapbox على الخادم، ويحل تجاوز Mapbox الخاص بالقسم محلها في كل مكان.</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.MappingMapStyleNight">
+    <value>الخريطة الأساسية التي تعرضها التطبيقات في الوضع الداكن. يقترن الوضع التلقائي بالنمط النهاري (داكن لخرائط الطرق، وملاحة ليلية للملاحة النهارية؛ الهواء الطلق والقمر الصناعي دون تغيير). يستخدم الموقع الإلكتروني النمط النهاري دائمًا.</value>
+  </data>
   <data xml:space="preserve" name="SettingHelp.ModuleSettings">
     <value>يتحكم في التنقل بين الوحدات وبوابات الميزات المدعومة. إخفاء وحدة لا يحذف سجلاتها ولا يثبت تعطيل إعدادات إرسال مستقلة.</value>
   </data>
@@ -4904,6 +4919,9 @@
   </data>
   <data xml:space="preserve" name="SettingHelp.RecordsRetentionPolicy">
     <value>الاحتفاظ الافتراضي والخاص بكل تعريف، بما في ذلك سجل السياسات السابقة. يمكن للحجوزات وقواعد الفئات المقيدة منع أهلية الحذف النهائي.</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.RecordsNerisWorkflowsEnabled">
+    <value>يشغّل أو يوقف التحقق والإرسال وشاشات إعداد NERIS لهذه الإدارة. لا تتغير إعدادات السجلات الأخرى ولا السجلات ولا السجل التاريخي؛ ويُحتفظ بملف NERIS وعمليات الإرسال المنتظرة لحين إعادة التفعيل.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.RecordsReviewDueHours">
     <value>الموعد النهائي الافتراضي للمراجعة الإدارية؛ لتجاوز على مستوى التعريف الأولوية. هذا ليس استنتاجًا لموعد نهائي قانوني.</value>

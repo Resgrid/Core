@@ -82,7 +82,28 @@ namespace Resgrid.Tests.Providers
 		public void Unit_arrival_cannot_be_used_as_dispatch_call_arrival()
 		{
 			var snapshot = Scenario("outside"); snapshot.Report.CallArrivalOn = snapshot.Units[0].OnSceneOn;
-			Validator().ValidateLocal(snapshot, NerisMappingTests.Profile()).Should().Contain(i => i.RuleKey == "neris.dispatch.sequence");
+			Validator().ValidateLocal(snapshot, NerisMappingTests.Profile()).Single(i => i.RuleKey == "neris.dispatch.sequence")
+				.Message.Should().StartWith("'Call answered' is earlier than 'Call received at dispatch'.");
+		}
+
+		[Test]
+		public void Dispatch_sequence_names_the_inverted_pair_across_a_blank_step()
+		{
+			// The common field mistake: "Call created" pre-filled from the call, answered left blank, a later time typed as received.
+			var snapshot = Scenario("outside");
+			snapshot.Report.CallAnsweredOn = null;
+			snapshot.Report.CallArrivalOn = snapshot.Report.CallCreatedOn.Value.AddMinutes(4);
+
+			var issue = Validator().ValidateLocal(snapshot, NerisMappingTests.Profile()).Single(i => i.RuleKey == "neris.dispatch.sequence");
+
+			issue.Message.Should().StartWith("'Call created' is earlier than 'Call received at dispatch'.");
+			issue.Message.Should().Contain("call received at dispatch, then call answered, then call created");
+		}
+
+		[Test]
+		public void In_order_dispatch_times_raise_no_sequence_issue()
+		{
+			Validator().ValidateLocal(Scenario("outside"), NerisMappingTests.Profile()).Should().NotContain(i => i.RuleKey == "neris.dispatch.sequence");
 		}
 
 		[Test]

@@ -188,6 +188,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				},
 				Definitions = RecordsApiMapper.ToDefinitions(),
 				Search = new RecordsSearchCapabilityData { Available = _recordsSearch.IsAvailable, NarrativeAvailable = await NarrativeSearchAvailableAsync() },
+				NerisWorkflowsEnabled = await _departmentSettingsService.GetRecordsNerisWorkflowsEnabledAsync(DepartmentId),
 				Protection = await ProtectionAsync(),
 				UploadChunkSize = _uploads.ChunkSize,
 				MaxAttachmentBytes = RecordAttachmentHygiene.MaxBytes,

@@ -2146,6 +2146,20 @@ Mapping Mapbox Access Token. Map-provider access token. Only presence is reporte
 
 Default: unset. Source: DepartmentSettingTypes.MappingMapboxAccessToken.
 
+<a id="setting-mappingmapstyle"></a>
+## Mapping Map Style
+
+Mapping Map Style. The Mapbox base map (Streets, Outdoors, Light, Dark, Satellite, Satellite with Streets, Navigation Day or Navigation Night) every department map shows in a light theme: the website and the Dispatch, Responder, Unit, IC and BigBoard apps. Automatic is Streets. The website uses it only when the server has a website Mapbox token. When the department Mapbox override is on, its custom style and token replace this on the website and in the apps.
+
+Default: 0. Source: DepartmentSettingTypes.MappingMapStyle.
+
+<a id="setting-mappingmapstylenight"></a>
+## Mapping Map Style Night
+
+Mapping Map Style Night. The base map the apps show when the device is in dark mode. Automatic pairs with the day style: road maps use Dark, Navigation Day uses Navigation Night, and Outdoors and the satellite styles stay as they are. The website always uses the day style.
+
+Default: 0. Source: DepartmentSettingTypes.MappingMapStyleNight.
+
 <a id="setting-hardwaretrackingstaleafterseconds"></a>
 ## Hardware Tracking Stale After Seconds
 
@@ -2540,6 +2554,13 @@ Default: unused. Source: DepartmentSettingTypes.RecordsGroupScopeConfig.
 Records Disclosure Config. Disclosure review clock, redaction profile and release approver. Review local obligations through the authorized disclosure workflow.
 
 Default: RecordsDisclosureConfig constructor. Source: DepartmentSettingTypes.RecordsDisclosureConfig.
+
+<a id="setting-recordsnerisworkflowsenabled"></a>
+## Records NERIS Workflows Enabled
+
+Records NERIS Workflows Enabled. Turns this department's NERIS validation, submission and NERIS setup screens on or off. Other Records settings, records and history are unchanged; the NERIS profile and queued submissions are kept for re-enabling.
+
+Default: true. Source: DepartmentSettingTypes.RecordsNerisWorkflowsEnabled.
 
 <a id="module-logsdisabled"></a>
 ## Logs availability

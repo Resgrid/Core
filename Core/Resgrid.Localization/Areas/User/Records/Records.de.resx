@@ -2160,4 +2160,11 @@
   <data name="SourceInferred" xml:space="preserve"><value>Erschlossen</value></data>
   <data name="SourceAutoLinked" xml:space="preserve"><value>Automatisch verknüpft</value></data>
   <data name="UnitTimesDerivedHint" xml:space="preserve"><value>Einige Einheitenzeiten stammen aus Status, die die Einheit nicht selbst mit diesem Einsatz verknüpft hat: Resgrid hat sie automatisch verknüpft (aus dem vorherigen Status oder der Alarmierung der Einheit) oder abgeleitet (ohne Ziel gesetzt, während die Einheit hierher alarmiert war). Prüfen Sie sie vor dem Abschluss.</value></data>
+  <data name="NerisWorkflowsHeader" xml:space="preserve"><value>NERIS-Meldung</value></data>
+  <data name="NerisWorkflowsEnabled" xml:space="preserve"><value>NERIS-Abläufe verwenden</value></data>
+  <data name="NerisWorkflowsIntro" xml:space="preserve"><value>Wenn aktiviert, werden Einsatzberichte vor dem Abschließen anhand der NERIS-Regeln geprüft, und abgeschlossene Berichte können an NERIS übermittelt werden. Deaktivieren Sie dies, wenn Ihre Abteilung nicht an NERIS meldet.</value></data>
+  <data name="NerisWorkflowsOffHelp" xml:space="preserve"><value>Das Deaktivieren von NERIS beendet die NERIS-Prüfung, -Übermittlung und -Statusabfragen und blendet die NERIS-Einrichtungsseiten und -Kennzahlen aus. Einsatzberichte und alle anderen Datensatz-Einstellungen funktionieren weiter. Ihr NERIS-Profil, Ihre Code-Zuordnungen und der Übermittlungsverlauf bleiben erhalten, und wartende Übermittlungen warten, bis NERIS wieder aktiviert wird.</value></data>
+  <data name="NerisWorkflowsOffNotice" xml:space="preserve"><value>NERIS-Abläufe sind für diese Abteilung deaktiviert. Einsatzberichte werden als Datensätze der Abteilung geführt und weder anhand von NERIS geprüft noch an NERIS übermittelt. Ein Administrator kann NERIS in den Datensatz-Einstellungen wieder aktivieren.</value></data>
+  <data name="ManageNerisProfile" xml:space="preserve"><value>NERIS-Profil und Code-Zuordnungen</value></data>
+  <data name="CorrectWithoutNeris" xml:space="preserve"><value>Korrektur speichern (nicht an NERIS übermittelt)</value></data>
 </root>

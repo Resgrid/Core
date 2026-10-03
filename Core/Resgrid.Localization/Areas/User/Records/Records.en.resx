@@ -2160,4 +2160,11 @@
   <data name="SourceInferred" xml:space="preserve"><value>Inferred</value></data>
   <data name="SourceAutoLinked" xml:space="preserve"><value>Auto-linked</value></data>
   <data name="UnitTimesDerivedHint" xml:space="preserve"><value>Some unit times come from statuses the unit did not link to this call itself: Resgrid auto-linked them (from the unit's previous status or its dispatch) or inferred them (set with no destination while the unit was dispatched here). Check them before finalizing.</value></data>
+  <data name="NerisWorkflowsHeader" xml:space="preserve"><value>NERIS reporting</value></data>
+  <data name="NerisWorkflowsEnabled" xml:space="preserve"><value>Use NERIS workflows</value></data>
+  <data name="NerisWorkflowsIntro" xml:space="preserve"><value>When on, incident reports are checked against the NERIS rules before they can be finalized, and finalized reports can be submitted to NERIS. Turn it off if your department does not report to NERIS.</value></data>
+  <data name="NerisWorkflowsOffHelp" xml:space="preserve"><value>Turning NERIS off stops NERIS validation, submission and status checks, and hides the NERIS setup screens and figures. Incident reports and every other Records setting keep working. Your NERIS profile, code mappings and submission history are kept, and queued submissions wait until NERIS is turned back on.</value></data>
+  <data name="NerisWorkflowsOffNotice" xml:space="preserve"><value>NERIS workflows are turned off for this department. Incident reports are kept as department records and are not validated against or submitted to NERIS. An administrator can turn NERIS back on in Records Settings.</value></data>
+  <data name="ManageNerisProfile" xml:space="preserve"><value>NERIS profile and code mappings</value></data>
+  <data name="CorrectWithoutNeris" xml:space="preserve"><value>Save correction (not submitted to NERIS)</value></data>
 </root>

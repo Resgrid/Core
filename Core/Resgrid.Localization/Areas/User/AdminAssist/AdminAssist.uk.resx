@@ -4650,6 +4650,12 @@
   <data xml:space="preserve" name="Setting.MappingUseMapboxOverride">
     <value>Карти: використовувати власні налаштування Mapbox</value>
   </data>
+  <data xml:space="preserve" name="Setting.MappingMapStyle">
+    <value>Стиль карти</value>
+  </data>
+  <data xml:space="preserve" name="Setting.MappingMapStyleNight">
+    <value>Нічний стиль карти</value>
+  </data>
   <data xml:space="preserve" name="Setting.ModuleSettings">
     <value>Налаштування модулів</value>
   </data>
@@ -4685,6 +4691,9 @@
   </data>
   <data xml:space="preserve" name="Setting.RecordsRetentionPolicy">
     <value>Політика зберігання записів</value>
+  </data>
+  <data xml:space="preserve" name="Setting.RecordsNerisWorkflowsEnabled">
+    <value>Процеси NERIS для Записів увімкнено</value>
   </data>
   <data xml:space="preserve" name="Setting.RecordsReviewDueHours">
     <value>Термін перегляду записів (години)</value>
@@ -4869,6 +4878,12 @@
   <data xml:space="preserve" name="SettingHelp.MappingUseMapboxOverride">
     <value>Використовує перевизначення постачальника карт для підрозділу. Вимкнення на відповідному екрані видаляє збережені стиль і токен.</value>
   </data>
+  <data xml:space="preserve" name="SettingHelp.MappingMapStyle">
+    <value>Базова карта Mapbox, яку показує кожна карта підрозділу у світлому режимі, на вебсайті та в усіх застосунках. Автоматично означає Вулиці; вебсайту потрібен токен Mapbox сервера, а перевизначення Mapbox підрозділу замінює її всюди.</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.MappingMapStyleNight">
+    <value>Базова карта, яку застосунки показують у темному режимі. Автоматичний підбирається до денного стилю (Темний для дорожніх карт, Навігація вночі для Навігації вдень; Місцевість і супутник без змін). Вебсайт завжди використовує денний стиль.</value>
+  </data>
   <data xml:space="preserve" name="SettingHelp.ModuleSettings">
     <value>Керує навігацією модулів і підтримуваними перемикачами функцій. Приховування модуля не видаляє його записи та не свідчить про те, що незалежні налаштування диспетчеризації вимкнено.</value>
   </data>
@@ -4904,6 +4919,9 @@
   </data>
   <data xml:space="preserve" name="SettingHelp.RecordsRetentionPolicy">
     <value>Типовий і специфічний для визначення строк зберігання, зокрема історія попередніх політик. Утримання та правила обмежених категорій можуть унеможливити видалення.</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.RecordsNerisWorkflowsEnabled">
+    <value>Вмикає або вимикає перевірку, надсилання та екрани налаштування NERIS для цього підрозділу. Інші налаштування Записів, записи та історія не змінюються; профіль NERIS і надсилання в черзі зберігаються для повторного ввімкнення.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.RecordsReviewDueHours">
     <value>Типовий термін адміністративного перегляду; перевизначення на рівні визначення має пріоритет. Це не є висновком щодо законодавчо встановленого терміну.</value>

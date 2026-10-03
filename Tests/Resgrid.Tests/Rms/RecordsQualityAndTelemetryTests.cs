@@ -105,6 +105,7 @@ namespace Resgrid.Tests.Rms
 		private Mock<IRmsOperationalRecordsRepository> _records;
 		private Mock<IRmsRecordDueStatesRepository> _dueStates;
 		private Mock<IRmsSubmissionsRepository> _submissions;
+		private Mock<IDepartmentSettingsService> _settings;
 		private Mock<IWorkflowRunRepository> _runs;
 		private Mock<IDepartmentDataProtectionService> _protection;
 		private RmsPreventionHarness _h;
@@ -121,6 +122,8 @@ namespace Resgrid.Tests.Rms
 			_submissions = new Mock<IRmsSubmissionsRepository>();
 			_runs = new Mock<IWorkflowRunRepository>();
 			_protection = new Mock<IDepartmentDataProtectionService>();
+			_settings = new Mock<IDepartmentSettingsService>();
+			_settings.Setup(s => s.GetRecordsNerisWorkflowsEnabledAsync(Dept, It.IsAny<bool>())).ReturnsAsync(true);
 			_runs.Setup(r => r.GetByDepartmentIdPagedAsync(Dept, 1, 500)).ReturnsAsync(new List<WorkflowRun>
 			{
 				new WorkflowRun { Status = (int)WorkflowRunStatus.Completed, StartedOn = DateTime.UtcNow.AddHours(-1) },
@@ -131,7 +134,7 @@ namespace Resgrid.Tests.Rms
 			_protection.Setup(p => p.IsProtectionEnforcedAsync(Dept)).ReturnsAsync(true);
 			_protection.Setup(p => p.GetPinnedCatalogVersionAsync(Dept)).ReturnsAsync(13);
 			_service = new RecordsReleaseTelemetryService(_h.Cutover.Object, _h.Authorization.Object, _h.Audits, _outbox.Object, _runs.Object, _attachments.Object, _records.Object, _dueStates.Object, _submissions.Object,
-				_h.Inspections, _h.Violations, _h.Permits, _h.Hydrants, _protection.Object, _h.Gate);
+				_h.Inspections, _h.Violations, _h.Permits, _h.Hydrants, _protection.Object, _h.Gate, _settings.Object);
 		}
 
 		[Test]
@@ -166,6 +169,21 @@ namespace Resgrid.Tests.Rms
 
 			Func<Task> member = () => _service.GetAsync(Dept, Member, 24);
 			await member.Should().ThrowAsync<UnauthorizedAccessException>();
+		}
+
+		[Test]
+		public async Task With_neris_workflows_off_submission_counters_raise_no_alert()
+		{
+			_settings.Setup(s => s.GetRecordsNerisWorkflowsEnabledAsync(Dept, It.IsAny<bool>())).ReturnsAsync(false);
+			_submissions.Setup(s => s.CountByStateAsync(Dept, It.IsAny<int>())).ReturnsAsync(3);
+			_dueStates.Setup(d => d.CountOverdueAsync(Dept)).ReturnsAsync(2);
+
+			var t = await _service.GetAsync(Dept, Admin, 24);
+
+			t.SubmissionsFailed.Should().Be(0);
+			t.SubmissionsAwaiting.Should().Be(0);
+			t.Alerts.Should().NotContain(a => a.Contains("NERIS submission"));
+			t.RecordsOverdue.Should().Be(2, "every other Records counter is unchanged");
 		}
 
 		[Test]

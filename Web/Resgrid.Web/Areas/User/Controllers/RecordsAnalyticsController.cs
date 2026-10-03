@@ -28,19 +28,25 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IRecordsAnalyticsService _analytics;
 		private readonly IRecordDefinitionsService _definitions;
 		private readonly IDepartmentGroupsService _groups;
+		private readonly IDepartmentSettingsService _settings;
 
 		public RecordsAnalyticsController(IRecordsAnalyticsService analytics, IRecordDefinitionsService definitions, IDepartmentGroupsService groups, IRecordsCutoverService cutover,
-			IFeatureToggleService featureToggles, IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer) : base(cutover, featureToggles, localizer)
+			IFeatureToggleService featureToggles, IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer, IDepartmentSettingsService settings) : base(cutover, featureToggles, localizer)
 		{
 			_analytics = analytics;
 			_definitions = definitions;
 			_groups = groups;
+			_settings = settings;
 		}
 
 		[HttpGet]
 		public Task<IActionResult> Index(string start = null, string end = null, int? stationGroupId = null, string definitionKey = null)
 			=> Page(new RecordsExecutiveView { Action = nameof(Index), ShowDefinitionFilter = true }, start, end, stationGroupId, definitionKey, null, null,
-				async (m, q, ct) => m.Summary = await _analytics.GetExecutiveSummaryAsync(DepartmentId, UserId, q, ct));
+				async (m, q, ct) =>
+				{
+					m.Summary = await _analytics.GetExecutiveSummaryAsync(DepartmentId, UserId, q, ct);
+					m.NerisWorkflowsEnabled = await _settings.GetRecordsNerisWorkflowsEnabledAsync(DepartmentId);
+				});
 
 		[HttpGet]
 		public Task<IActionResult> ResponsePerformance(string start = null, string end = null, int? stationGroupId = null, string definitionKey = null, int? turnoutTargetSeconds = null, int? travelTargetSeconds = null)

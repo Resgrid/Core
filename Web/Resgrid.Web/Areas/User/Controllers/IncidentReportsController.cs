@@ -172,6 +172,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false),
 				IsDepartmentAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin(),
 				SystemEnabled = Config.NerisConfig.Enabled,
+				NerisWorkflowsEnabled = await _neris.IsWorkflowEnabledAsync(DepartmentId),
 				ProfileConfigured = profile != null && !string.IsNullOrWhiteSpace(profile.NerisEntityId),
 				SubmissionEnabled = await _neris.IsSubmissionEnabledAsync(DepartmentId),
 				Year = year,
@@ -430,7 +431,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			try
 			{
 				await _incidentReports.SaveDraftAsync(DepartmentId, UserId, model.ReportId, model.RowVersion, BuildInput(model, department), await CanViewRestrictedAsync(), cancellationToken);
-				if (model.ValidateAfterSave)
+				if (model.ValidateAfterSave && await _neris.IsWorkflowEnabledAsync(DepartmentId))
 				{
 					var issues = await _incidentReports.ValidateAsync(DepartmentId, model.ReportId, true, cancellationToken);
 					TempData["RecordsMessage"] = issues.Count == 0 ? _localizer["NoValidationIssues"].Value : string.Format(_localizer["ValidationRun"].Value, issues.Count);
@@ -459,6 +460,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var aggregate = await LoadAuthorizedAsync(id);
 			if (aggregate == null)
 				return NotFound();
+			if (!await _neris.IsWorkflowEnabledAsync(DepartmentId))
+				return await DetailsWithErrorAsync(id, _localizer["NerisWorkflowsOffNotice"]);
 
 			try
 			{
@@ -519,6 +522,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Record_Submit)]
 		public async Task<IActionResult> Submit(string id, CancellationToken cancellationToken)
 		{
+			if (!await _neris.IsWorkflowEnabledAsync(DepartmentId))
+				return await LoadAuthorizedAsync(id) == null ? NotFound() : await DetailsWithErrorAsync(id, _localizer["NerisWorkflowsOffNotice"]);
+
 			var result = await TransitionAsync(id, () => _incidentReports.QueueSubmissionAsync(DepartmentId, UserId, id, cancellationToken));
 			if (result is RedirectToActionResult)
 				TempData["RecordsMessage"] = _localizer["SubmissionQueued"].Value;
@@ -617,6 +623,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var moduleState = await _cutoverService.GetModuleStateAsync(DepartmentId);
 			if (!moduleState.FlagEnabled)
 				return NotFound();
+			if (!await _neris.IsWorkflowEnabledAsync(DepartmentId))
+				return NerisWorkflowsOffRedirect();
 
 			var model = await BuildSettingsAsync(moduleState);
 			if (TempData["RecordsMessage"] is string message)
@@ -635,6 +643,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var moduleState = await _cutoverService.GetModuleStateAsync(DepartmentId);
 			if (!moduleState.FlagEnabled)
 				return NotFound();
+			// NERIS workflows off: the profile, credential and crosswalks are kept exactly as they were and are not editable.
+			if (!await _neris.IsWorkflowEnabledAsync(DepartmentId))
+				return NerisWorkflowsOffRedirect();
 
 			try
 			{
@@ -743,6 +754,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return model;
 		}
 
+		/// <summary>The NERIS setup screens belong to the NERIS workflows; with them off, send the administrator to the switch.</summary>
+		private IActionResult NerisWorkflowsOffRedirect()
+		{
+			TempData["RecordsMessage"] = _localizer["NerisWorkflowsOffNotice"].Value;
+			return RedirectToAction("Settings", "Records", new { area = "User" });
+		}
+
 		#endregion
 
 		#region Helpers
@@ -755,8 +773,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId) ?? new List<DepartmentGroup>();
 			var analysis = await _analysis.GetForReportAsync(DepartmentId, id);
+			var nerisWorkflows = await _neris.IsWorkflowEnabledAsync(DepartmentId);
+			// Findings from a NERIS run before the department turned NERIS off no longer gate anything; do not show them.
+			if (!nerisWorkflows)
+				aggregate.Issues = new List<RmsValidationIssue>();
 			return new IncidentReportDetailView
 			{
+				NerisWorkflowsEnabled = nerisWorkflows,
 				SectionRequirements = await _incidentReports.GetSectionRequirementsAsync(DepartmentId, id),
 				Analysis = analysis?.Analysis,
 				Evidence = aggregate.Evidence,
@@ -835,9 +858,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var r = aggregate.Report;
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+			var nerisWorkflows = await _neris.IsWorkflowEnabledAsync(DepartmentId);
 			// The report has its own captured incident number. Opening it does not authorize a fresh read of Call metadata.
 			var model = new IncidentReportEditView
 			{
+				NerisWorkflowsEnabled = nerisWorkflows,
 				CustomFieldForm = await _udf.ProjectAsync(DepartmentId, UserId, aggregate.CustomFields),
 				ReportId = r.RmsIncidentReportId,
 				RowVersion = r.RowVersion,
@@ -868,7 +893,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				OutcomeNarrative = aggregate.Narrative?.OutcomeNarrative,
 				Department = department,
 				Facts = aggregate.Facts.Where(f => !string.IsNullOrWhiteSpace(f.FactKey)).GroupBy(f => f.FactKey, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.First(), StringComparer.Ordinal),
-				Issues = aggregate.Issues
+				Issues = nerisWorkflows ? aggregate.Issues : new List<RmsValidationIssue>()
 			};
 
 			if (aggregate.Location != null)

@@ -65,6 +65,8 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public Department Department { get; set; }
 		public RecordsDashboard Dashboard { get; set; }
 		public NerisCrosswalkCoverage Coverage { get; set; }
+		/// <summary>Setting 111. Off hides the NERIS filing counts and crosswalk coverage; the record counts stay.</summary>
+		public bool NerisWorkflowsEnabled { get; set; } = true;
 		public bool CanManageDisclosures { get; set; }
 		public bool IsDepartmentAdmin { get; set; }
 	}

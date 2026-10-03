@@ -132,7 +132,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				await _analysis.SaveDraftAsync(DepartmentId, UserId, model.AnalysisId, model.RowVersion, BuildInput(model, department),
 					await CanViewRestrictedAsync(), cancellationToken);
 
-				if (model.ValidateAfterSave)
+				if (model.ValidateAfterSave && await _neris.IsWorkflowEnabledAsync(DepartmentId))
 				{
 					var issues = await _analysis.ValidateAsync(DepartmentId, model.AnalysisId, cancellationToken);
 					TempData["RecordsMessage"] = issues.Count == 0 ? _localizer["NoValidationIssues"].Value : string.Format(_localizer["ValidationRun"].Value, issues.Count);
@@ -160,6 +160,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			if (await LoadAuthorizedAsync(id) == null)
 				return NotFound();
+			if (!await _neris.IsWorkflowEnabledAsync(DepartmentId))
+				return await DetailsWithErrorAsync(id, _localizer["NerisWorkflowsOffNotice"]);
 
 			try
 			{
@@ -191,6 +193,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Record_Submit)]
 		public async Task<IActionResult> Submit(string id, CancellationToken cancellationToken)
 		{
+			if (!await _neris.IsWorkflowEnabledAsync(DepartmentId))
+				return await LoadAuthorizedAsync(id) == null ? NotFound() : await DetailsWithErrorAsync(id, _localizer["NerisWorkflowsOffNotice"]);
+
 			var result = await TransitionAsync(id, () => _analysis.QueueSubmissionAsync(DepartmentId, UserId, id, cancellationToken));
 			if (result is RedirectToActionResult)
 				TempData["RecordsMessage"] = _localizer["SubmissionQueued"].Value;
@@ -280,6 +285,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Aggregate = aggregate,
 				Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false),
 				SubmissionEnabled = await _neris.IsSubmissionEnabledAsync(DepartmentId),
+				NerisWorkflowsEnabled = await _neris.IsWorkflowEnabledAsync(DepartmentId),
 				Reference = report?.RecordNumber ?? report?.DraftReference,
 				PersonnelNames = await PersonnelNamesAsync(),
 				CanEdit = CanEdit(aggregate),
@@ -314,6 +320,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var model = new IncidentAnalysisEditView
 			{
 				AnalysisId = analysis.RmsIncidentAnalysisId, Issues = await _analysis.ValidateAsync(DepartmentId, analysis.RmsIncidentAnalysisId),
+				NerisWorkflowsEnabled = await _neris.IsWorkflowEnabledAsync(DepartmentId),
 				ReportId = analysis.IncidentReportId,
 				RowVersion = analysis.RowVersion,
 				Reference = aggregate.Report?.RecordNumber ?? aggregate.Report?.DraftReference,

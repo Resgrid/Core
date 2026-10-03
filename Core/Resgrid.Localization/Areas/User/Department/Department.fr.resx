@@ -1139,4 +1139,61 @@
   <data name="RequirePasswordResetViaEmailHelp" xml:space="preserve">
     <value>Empêche les administrateurs de département et de groupe de choisir ou de voir le nouveau mot de passe d'un membre. Les actions de réinitialisation envoient à la place au membre un lien par e-mail à usage unique et de courte durée. Les sessions existantes sont révoquées une fois que le membre a modifié son mot de passe avec succès.</value>
   </data>
+  <data name="MapStyleHeader" xml:space="preserve">
+    <value>Style de carte</value>
+  </data>
+  <data name="MapStyleHelp" xml:space="preserve">
+    <value>La carte de fond que votre service voit sur toutes les cartes de Resgrid : le site web, Dispatch, Responder, Unit, IC et BigBoard.</value>
+  </data>
+  <data name="MapStyleWebsiteUnavailable" xml:space="preserve">
+    <value>Ce serveur Resgrid n'a pas de jeton Mapbox pour le site web, les cartes du site web conservent donc la carte standard. Le style choisi s'applique toujours dans les applications.</value>
+  </data>
+  <data name="MapStyleOverrideActive" xml:space="preserve">
+    <value>Le remplacement Mapbox du service ci-dessous est activé, le site web et les applications utilisent donc ce style personnalisé au lieu des styles choisis ici.</value>
+  </data>
+  <data name="MapStyleDayLabel" xml:space="preserve">
+    <value>Style de carte de jour</value>
+  </data>
+  <data name="MapStyleDayHelp" xml:space="preserve">
+    <value>Utilisé sur le site web et dans les applications lorsque l'appareil est en mode clair.</value>
+  </data>
+  <data name="MapStyleNightLabel" xml:space="preserve">
+    <value>Style de carte de nuit</value>
+  </data>
+  <data name="MapStyleNightHelp" xml:space="preserve">
+    <value>Utilisé dans les applications lorsque l'appareil est en mode sombre. Automatique choisit la version nocturne du style de jour.</value>
+  </data>
+  <data name="MapStyleAutomaticDay" xml:space="preserve">
+    <value>Automatique (Rues)</value>
+  </data>
+  <data name="MapStyleAutomaticNight" xml:space="preserve">
+    <value>Automatique ({0})</value>
+  </data>
+  <data name="MapStylePreviewAlt" xml:space="preserve">
+    <value>Aperçu du style de carte</value>
+  </data>
+  <data name="MapStyle_Streets" xml:space="preserve">
+    <value>Rues</value>
+  </data>
+  <data name="MapStyle_Outdoors" xml:space="preserve">
+    <value>Plein air (relief)</value>
+  </data>
+  <data name="MapStyle_Light" xml:space="preserve">
+    <value>Clair</value>
+  </data>
+  <data name="MapStyle_Dark" xml:space="preserve">
+    <value>Sombre</value>
+  </data>
+  <data name="MapStyle_Satellite" xml:space="preserve">
+    <value>Satellite</value>
+  </data>
+  <data name="MapStyle_SatelliteStreets" xml:space="preserve">
+    <value>Satellite avec rues</value>
+  </data>
+  <data name="MapStyle_NavigationDay" xml:space="preserve">
+    <value>Navigation jour</value>
+  </data>
+  <data name="MapStyle_NavigationNight" xml:space="preserve">
+    <value>Navigation nuit</value>
+  </data>
 </root>

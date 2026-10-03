@@ -49,6 +49,8 @@ namespace Resgrid.Web.Areas.User.Models.Records
 	public class RecordsExecutiveView : RecordsAnalyticsBaseView
 	{
 		public RecordsExecutiveSummary Summary { get; set; }
+		/// <summary>Setting 111. Off hides the NERIS acceptance figures; the record KPIs stay.</summary>
+		public bool NerisWorkflowsEnabled { get; set; } = true;
 		public override RecordsAnalyticsBase Result => Summary;
 	}
 

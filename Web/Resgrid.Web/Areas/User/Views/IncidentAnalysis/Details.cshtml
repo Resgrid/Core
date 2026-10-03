@@ -32,7 +32,11 @@
 	{
 		<div class="alert alert-success">@Model.Message</div>
 	}
-	@if (Model.State == RmsIncidentAnalysisState.Finalized && !a.IncidentIsFiled)
+	@if (!Model.NerisWorkflowsEnabled)
+	{
+		<div class="alert alert-info">@localizer["NerisWorkflowsOffNotice"]</div>
+	}
+	else if (Model.State == RmsIncidentAnalysisState.Finalized && !a.IncidentIsFiled)
 	{
 		<div class="alert alert-info">@localizer["AnalysisAwaitingIncident"]</div>
 	}
@@ -51,7 +55,10 @@
 						<dt>@localizer["InvestigationTypes"]</dt><dd>@(string.IsNullOrWhiteSpace(analysis.InvestigationTypesCsv) ? "-" : analysis.InvestigationTypesCsv.Replace(",", ", "))</dd>
 						<dt>@localizer["EstimatedValue"]</dt><dd>@(analysis.EstimatedValueTotal?.ToString("0.##") ?? "-") @analysis.CurrencyCode</dd>
 						<dt>@localizer["EstimatedLoss"]</dt><dd>@(analysis.EstimatedLossTotal?.ToString("0.##") ?? "-") @analysis.CurrencyCode</dd>
-						<dt>@localizer["NerisAnalysisId"]</dt><dd>@(analysis.NerisAnalysisId ?? "-")</dd>
+						@if (Model.NerisWorkflowsEnabled || !string.IsNullOrWhiteSpace(analysis.NerisAnalysisId))
+						{
+							<dt>@localizer["NerisAnalysisId"]</dt><dd>@(analysis.NerisAnalysisId ?? "-")</dd>
+						}
 						<dt>@localizer["Author"]</dt><dd>@Name(analysis.AuthorUserId)</dd>
 						<dt>@localizer["FinalizedOn"]</dt><dd>@When(analysis.FinalizedOn)</dd>
 						<dt>@localizer["ProfileVersion"]</dt><dd><code>@analysis.ProfileVersion</code></dd>
@@ -193,11 +200,14 @@
 					<div class="ibox-title"><h5><i class="fa fa-pencil"></i> @commonLocalizer["Edit"]</h5></div>
 					<div class="ibox-content">
 						<a class="btn btn-primary btn-block" asp-controller="IncidentAnalysis" asp-action="Edit" asp-route-area="User" asp-route-id="@analysis.RmsIncidentAnalysisId">@localizer["EditIncidentAnalysis"]</a>
-						<form method="post" asp-controller="IncidentAnalysis" asp-action="Validate" asp-route-area="User" style="margin-top:8px">
-							@Html.AntiForgeryToken()
-							<input type="hidden" name="id" value="@analysis.RmsIncidentAnalysisId" />
-							<button type="submit" class="btn btn-white btn-block">@localizer["Validate"]</button>
-						</form>
+						@if (Model.NerisWorkflowsEnabled)
+						{
+							<form method="post" asp-controller="IncidentAnalysis" asp-action="Validate" asp-route-area="User" style="margin-top:8px">
+								@Html.AntiForgeryToken()
+								<input type="hidden" name="id" value="@analysis.RmsIncidentAnalysisId" />
+								<button type="submit" class="btn btn-white btn-block">@localizer["Validate"]</button>
+							</form>
+						}
 					</div>
 				</div>
 			}

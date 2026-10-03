@@ -2160,4 +2160,11 @@
   <data name="SourceInferred" xml:space="preserve"><value>Виведено</value></data>
   <data name="SourceAutoLinked" xml:space="preserve"><value>Пов’язано автоматично</value></data>
   <data name="UnitTimesDerivedHint" xml:space="preserve"><value>Деякі часи підрозділів узято зі статусів, які підрозділ сам не пов’язав із цим викликом: Resgrid пов’язав їх автоматично (за попереднім статусом підрозділу або його направленням) або вивів (встановлені без пункту призначення, коли підрозділ був направлений сюди). Перевірте їх перед завершенням.</value></data>
+  <data name="NerisWorkflowsHeader" xml:space="preserve"><value>Звітування NERIS</value></data>
+  <data name="NerisWorkflowsEnabled" xml:space="preserve"><value>Використовувати процеси NERIS</value></data>
+  <data name="NerisWorkflowsIntro" xml:space="preserve"><value>Якщо ввімкнено, звіти про інциденти перевіряються за правилами NERIS перед завершенням, а завершені звіти можна надсилати до NERIS. Вимкніть це, якщо ваш підрозділ не звітує до NERIS.</value></data>
+  <data name="NerisWorkflowsOffHelp" xml:space="preserve"><value>Вимкнення NERIS зупиняє перевірку, надсилання та перевірку статусу NERIS і приховує екрани налаштування та показники NERIS. Звіти про інциденти та всі інші налаштування Записів продовжують працювати. Ваш профіль NERIS, зіставлення кодів та історія надсилань зберігаються, а надсилання в черзі чекатимуть, доки NERIS не буде знову ввімкнено.</value></data>
+  <data name="NerisWorkflowsOffNotice" xml:space="preserve"><value>Процеси NERIS вимкнено для цього підрозділу. Звіти про інциденти зберігаються як записи підрозділу і не перевіряються за NERIS та не надсилаються до NERIS. Адміністратор може знову ввімкнути NERIS у налаштуваннях Записів.</value></data>
+  <data name="ManageNerisProfile" xml:space="preserve"><value>Профіль NERIS і зіставлення кодів</value></data>
+  <data name="CorrectWithoutNeris" xml:space="preserve"><value>Зберегти виправлення (не надсилається до NERIS)</value></data>
 </root>

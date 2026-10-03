@@ -4650,6 +4650,12 @@
   <data xml:space="preserve" name="Setting.MappingUseMapboxOverride">
     <value>Χαρτογράφηση: Χρήση Παράκαμψης Mapbox</value>
   </data>
+  <data xml:space="preserve" name="Setting.MappingMapStyle">
+    <value>Στυλ χάρτη</value>
+  </data>
+  <data xml:space="preserve" name="Setting.MappingMapStyleNight">
+    <value>Στυλ χάρτη νύχτας</value>
+  </data>
   <data xml:space="preserve" name="Setting.ModuleSettings">
     <value>Ρυθμίσεις Ενοτήτων</value>
   </data>
@@ -4685,6 +4691,9 @@
   </data>
   <data xml:space="preserve" name="Setting.RecordsRetentionPolicy">
     <value>Πολιτική Διατήρησης Εγγραφών</value>
+  </data>
+  <data xml:space="preserve" name="Setting.RecordsNerisWorkflowsEnabled">
+    <value>Ροές εργασίας NERIS Αρχείων ενεργές</value>
   </data>
   <data xml:space="preserve" name="Setting.RecordsReviewDueHours">
     <value>Ώρες Προθεσμίας Ελέγχου Εγγραφών</value>
@@ -4869,6 +4878,12 @@
   <data xml:space="preserve" name="SettingHelp.MappingUseMapboxOverride">
     <value>Χρησιμοποιεί την παράκαμψη παρόχου χάρτη του τμήματος. Η απενεργοποίησή της στην αντίστοιχη οθόνη αφαιρεί το αποθηκευμένο στυλ και token.</value>
   </data>
+  <data xml:space="preserve" name="SettingHelp.MappingMapStyle">
+    <value>Βασικός χάρτης Mapbox που εμφανίζει κάθε χάρτης της υπηρεσίας σε φωτεινή λειτουργία, στον ιστότοπο και σε όλες τις εφαρμογές. Το αυτόματο είναι Δρόμοι· ο ιστότοπος χρειάζεται διακριτικό Mapbox του διακομιστή και η παράκαμψη Mapbox της υπηρεσίας τον αντικαθιστά παντού.</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.MappingMapStyleNight">
+    <value>Βασικός χάρτης που εμφανίζουν οι εφαρμογές σε σκοτεινή λειτουργία. Το αυτόματο ταιριάζει με το στυλ ημέρας (Σκοτεινό για οδικούς χάρτες, Πλοήγηση νύχτας για Πλοήγηση ημέρας· Ύπαιθρος και δορυφορικά αμετάβλητα). Ο ιστότοπος χρησιμοποιεί πάντα το στυλ ημέρας.</value>
+  </data>
   <data xml:space="preserve" name="SettingHelp.ModuleSettings">
     <value>Ελέγχει την πλοήγηση ενοτήτων και τις υποστηριζόμενες πύλες λειτουργιών. Η απόκρυψη μιας ενότητας δεν διαγράφει τις εγγραφές της ούτε αποδεικνύει ότι είναι απενεργοποιημένες ανεξάρτητες ρυθμίσεις αποστολής.</value>
   </data>
@@ -4904,6 +4919,9 @@
   </data>
   <data xml:space="preserve" name="SettingHelp.RecordsRetentionPolicy">
     <value>Προεπιλεγμένη και ειδική ανά ορισμό διατήρηση, συμπεριλαμβανομένου του ιστορικού προηγούμενης πολιτικής. Δεσμεύσεις και κανόνες περιορισμένης κατηγορίας μπορούν να εμποδίσουν την επιλεξιμότητα διαγραφής.</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.RecordsNerisWorkflowsEnabled">
+    <value>Ενεργοποιεί ή απενεργοποιεί την επικύρωση, την υποβολή και τις οθόνες ρύθμισης NERIS αυτής της υπηρεσίας. Οι άλλες ρυθμίσεις Αρχείων, τα αρχεία και το ιστορικό δεν αλλάζουν· το προφίλ NERIS και οι υποβολές σε αναμονή διατηρούνται για την επανενεργοποίηση.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.RecordsReviewDueHours">
     <value>Προεπιλεγμένη προθεσμία διοικητικού ελέγχου· μια παράκαμψη σε επίπεδο ορισμού υπερισχύει. Αυτό δεν αποτελεί συναγωγή νόμιμης προθεσμίας.</value>

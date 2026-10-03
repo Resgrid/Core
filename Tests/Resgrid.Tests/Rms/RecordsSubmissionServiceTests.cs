@@ -31,6 +31,7 @@ namespace Resgrid.Tests.Rms
 
 		private FakeIncidentStore _store;
 		private Mock<INerisProfileService> _profiles;
+		private bool _nerisWorkflows;
 		private Mock<INerisSubmissionService> _delivery;
 		private Mock<IRecordsAuthorizationService> _authorization;
 		private Mock<IOutboundQueueProvider> _outboundQueue;
@@ -61,6 +62,8 @@ namespace Resgrid.Tests.Rms
 			_profiles = new Mock<INerisProfileService>();
 			_profiles.Setup(p => p.GetProfileAsync(Dept)).ReturnsAsync(() => _profile);
 			_profiles.Setup(p => p.IsSubmissionEnabledAsync(Dept)).ReturnsAsync(() => _enabled);
+			_nerisWorkflows = true;
+			_profiles.Setup(p => p.IsWorkflowEnabledAsync(It.IsAny<int>())).ReturnsAsync(() => _nerisWorkflows);
 			_profiles.Setup(p => p.GetDestinationIdentity(It.IsAny<RmsNerisProfile>())).Returns("test-destination");
 
 			_delivery = new Mock<INerisSubmissionService>();
@@ -545,6 +548,22 @@ namespace Resgrid.Tests.Rms
 			result.State.Should().Be((int)RmsSubmissionState.Failed);
 			result.ErrorSummary.Should().Contain("another destination");
 			_delivery.Invocations.Should().BeEmpty();
+		}
+
+		[Test]
+		public async Task With_neris_workflows_off_recovery_makes_no_destination_call_and_changes_nothing()
+		{
+			var row = SeedUncertain();
+			_nerisWorkflows = false;
+
+			Func<Task> reconcile = () => _service.ReconcileAsync(Dept, "officer", row.RmsSubmissionId, row.RowVersion, "known-id", "Verified matching number in NERIS.");
+			Func<Task> absent = () => _service.ConfirmNotCreatedAsync(Dept, "officer", row.RmsSubmissionId, row.RowVersion, "ticket-1", "Checked with NERIS support.");
+
+			(await reconcile.Should().ThrowAsync<InvalidOperationException>()).WithMessage(NerisWorkflows.OffMessage);
+			(await absent.Should().ThrowAsync<InvalidOperationException>()).WithMessage(NerisWorkflows.OffMessage);
+			_delivery.Invocations.Should().BeEmpty();
+			_store.Submissions.Single().RequiresReconciliation.Should().BeTrue("the ambiguous row waits, untouched, for NERIS to be turned back on");
+			_store.Exchanges.Should().BeEmpty();
 		}
 
 		private RmsSubmission SeedUncertain()

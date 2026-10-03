@@ -2160,4 +2160,11 @@
   <data name="SourceInferred" xml:space="preserve"><value>مستنتج</value></data>
   <data name="SourceAutoLinked" xml:space="preserve"><value>مرتبط تلقائيًا</value></data>
   <data name="UnitTimesDerivedHint" xml:space="preserve"><value>بعض أوقات الوحدات مأخوذة من حالات لم تربطها الوحدة بهذا البلاغ بنفسها: ربطها Resgrid تلقائيًا (من الحالة السابقة للوحدة أو إرسالها) أو استنتجها (حُدّدت دون وجهة أثناء إرسال الوحدة إلى هنا). تحقّق منها قبل الإنهاء.</value></data>
+  <data name="NerisWorkflowsHeader" xml:space="preserve"><value>إبلاغ NERIS</value></data>
+  <data name="NerisWorkflowsEnabled" xml:space="preserve"><value>استخدام سير عمل NERIS</value></data>
+  <data name="NerisWorkflowsIntro" xml:space="preserve"><value>عند التفعيل، يتم التحقق من تقارير الحوادث وفق قواعد NERIS قبل اعتمادها، ويمكن إرسال التقارير المعتمدة إلى NERIS. أوقف هذا الخيار إذا كانت إدارتك لا تُبلغ NERIS.</value></data>
+  <data name="NerisWorkflowsOffHelp" xml:space="preserve"><value>يؤدي إيقاف NERIS إلى إيقاف التحقق والإرسال وفحوصات الحالة الخاصة بـ NERIS، وإخفاء شاشات إعداد NERIS وأرقامه. تستمر تقارير الحوادث وجميع إعدادات السجلات الأخرى في العمل. يتم الاحتفاظ بملف NERIS وربط الرموز وسجل الإرسال، وتنتظر عمليات الإرسال الموجودة في قائمة الانتظار حتى يُعاد تشغيل NERIS.</value></data>
+  <data name="NerisWorkflowsOffNotice" xml:space="preserve"><value>سير عمل NERIS متوقف لهذه الإدارة. تُحفظ تقارير الحوادث كسجلات للإدارة ولا يتم التحقق منها وفق NERIS أو إرسالها إليه. يمكن للمسؤول إعادة تشغيل NERIS من إعدادات السجلات.</value></data>
+  <data name="ManageNerisProfile" xml:space="preserve"><value>ملف NERIS وربط الرموز</value></data>
+  <data name="CorrectWithoutNeris" xml:space="preserve"><value>حفظ التصحيح (دون إرساله إلى NERIS)</value></data>
 </root>

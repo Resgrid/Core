@@ -4650,6 +4650,12 @@
   <data xml:space="preserve" name="Setting.MappingUseMapboxOverride">
     <value>Cartographie : utiliser la substitution Mapbox</value>
   </data>
+  <data xml:space="preserve" name="Setting.MappingMapStyle">
+    <value>Style de carte</value>
+  </data>
+  <data xml:space="preserve" name="Setting.MappingMapStyleNight">
+    <value>Style de carte de nuit</value>
+  </data>
   <data xml:space="preserve" name="Setting.ModuleSettings">
     <value>Paramètres des modules</value>
   </data>
@@ -4685,6 +4691,9 @@
   </data>
   <data xml:space="preserve" name="Setting.RecordsRetentionPolicy">
     <value>Politique de conservation des dossiers</value>
+  </data>
+  <data xml:space="preserve" name="Setting.RecordsNerisWorkflowsEnabled">
+    <value>Processus NERIS des dossiers activés</value>
   </data>
   <data xml:space="preserve" name="Setting.RecordsReviewDueHours">
     <value>Délai d’examen des dossiers (heures)</value>
@@ -4869,6 +4878,12 @@
   <data xml:space="preserve" name="SettingHelp.MappingUseMapboxOverride">
     <value>Utiliser la substitution du prestataire de carte du département. La désactiver sur la page de configuration correspondante supprime le style et le jeton enregistrés.</value>
   </data>
+  <data xml:space="preserve" name="SettingHelp.MappingMapStyle">
+    <value>Carte de fond Mapbox affichée par chaque carte du service en mode clair, sur le site web et dans toutes les applications. Automatique correspond à Rues ; le site web nécessite un jeton Mapbox du serveur et le remplacement Mapbox du service le remplace partout.</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.MappingMapStyleNight">
+    <value>Carte de fond affichée par les applications en mode sombre. Automatique s'associe au style de jour (Sombre pour les cartes routières, Navigation nuit pour Navigation jour ; Plein air et satellite inchangés). Le site web utilise toujours le style de jour.</value>
+  </data>
   <data xml:space="preserve" name="SettingHelp.ModuleSettings">
     <value>Contrôle la navigation des modules et les restrictions de fonctionnalités prises en charge. Masquer un module ne supprime pas ses dossiers et ne prouve pas que les paramètres de régulation indépendants sont désactivés.</value>
   </data>
@@ -4904,6 +4919,9 @@
   </data>
   <data xml:space="preserve" name="SettingHelp.RecordsRetentionPolicy">
     <value>Conservation par défaut et spécifique à la définition, y compris l’historique des politiques antérieures. Les restrictions et les règles de classe restreinte peuvent empêcher l’éligibilité à la purge.</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.RecordsNerisWorkflowsEnabled">
+    <value>Active ou désactive la validation, la transmission et les écrans de configuration NERIS de ce service. Les autres paramètres des dossiers, les dossiers et l’historique ne changent pas ; le profil NERIS et les transmissions en attente sont conservés pour la réactivation.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.RecordsReviewDueHours">
     <value>Échéance d’examen administratif par défaut ; une substitution au niveau de la définition a priorité. Il ne s’agit pas d’une déduction d’échéance légale.</value>

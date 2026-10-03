@@ -1,7 +1,16 @@
 ﻿@model Resgrid.Web.Areas.User.Models.Departments.MappingSettingsView
+@using System.Globalization
+@using Newtonsoft.Json
+@using Resgrid.Model
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> localizer
 @{
     ViewBag.Title = "Resgrid | " + @localizer["MappingSettingsHeader"];
+
+    // Lookup tables for the preview script, keyed by enum name because that is what the selects post.
+    var jsonSettings = new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml };
+    var styleIds = MapStylePresets.SelectableStyles.ToDictionary(s => s.ToString(), s => MapStylePresets.GetStyleUrl(s).Replace("mapbox://styles/", string.Empty));
+    var styleNames = MapStylePresets.SelectableStyles.ToDictionary(s => s.ToString(), s => localizer["MapStyle_" + s].Value);
+    var nightPairs = MapStylePresets.SelectableStyles.ToDictionary(s => s.ToString(), s => MapStylePresets.ResolveNightStyle(s, MapStyleTypes.Automatic).ToString());
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -86,6 +95,49 @@
                                 </div>
                             </div>
 
+							<h3>@localizer["MapStyleHeader"]</h3>
+							<div class="form-group">
+								<div class="col-sm-6 col-sm-offset-3">
+									<span class="help-block">@localizer["MapStyleHelp"]</span>
+									@if (!Model.WebsiteSupportsMapStyle)
+									{
+										<div class="alert alert-info">@localizer["MapStyleWebsiteUnavailable"]</div>
+									}
+									@if (Model.UseMapboxOverride)
+									{
+										<div class="alert alert-warning">@localizer["MapStyleOverrideActive"]</div>
+									}
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label" asp-for="MapStyle">@localizer["MapStyleDayLabel"]</label>
+								<div class="col-sm-6">
+									<select class="form-control" asp-for="MapStyle">
+										<option value="@MapStyleTypes.Automatic">@localizer["MapStyleAutomaticDay"]</option>
+										@foreach (var style in MapStylePresets.SelectableStyles)
+										{
+											<option value="@style">@localizer["MapStyle_" + style]</option>
+										}
+									</select>
+									<span class="help-block m-b-none">@localizer["MapStyleDayHelp"]</span>
+									<img id="mapStyleDayPreview" class="img-responsive m-t-sm" style="display: none; border-radius: 4px;" width="600" height="240" loading="lazy" alt="@localizer["MapStylePreviewAlt"]" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label" asp-for="MapStyleNight">@localizer["MapStyleNightLabel"]</label>
+								<div class="col-sm-6">
+									<select class="form-control" asp-for="MapStyleNight">
+										<option value="@MapStyleTypes.Automatic">@string.Format(localizer["MapStyleAutomaticNight"].Value, localizer["MapStyle_" + MapStylePresets.ResolveNightStyle(Model.MapStyle, MapStyleTypes.Automatic)].Value)</option>
+										@foreach (var style in MapStylePresets.SelectableStyles)
+										{
+											<option value="@style">@localizer["MapStyle_" + style]</option>
+										}
+									</select>
+									<span class="help-block m-b-none">@localizer["MapStyleNightHelp"]</span>
+									<img id="mapStyleNightPreview" class="img-responsive m-t-sm" style="display: none; border-radius: 4px;" width="600" height="240" loading="lazy" alt="@localizer["MapStylePreviewAlt"]" />
+								</div>
+							</div>
+
 							<h3>Department Mapbox Override</h3>
 							<div class="form-group">
 								<label class="col-sm-3 control-label">Use Department Mapbox Map</label>
@@ -95,7 +147,7 @@
 											<input type="checkbox" asp-for="UseMapboxOverride">
 										</div>
 									</div>
-									<span class="help-block m-b-none">When enabled, this department's Mapbox style and public token override the system map mode for the department website views and authenticated mobile/API clients, even when the system stays on Leaflet.</span>
+									<span class="help-block m-b-none">When enabled, this department's own Mapbox style and public token replace the Map Style above everywhere: the department website views (even when the system stays on Leaflet) and the Dispatch, Responder, Unit, IC and BigBoard apps, which load the token and style the next time they fetch their configuration. The custom style is used in both light and dark mode.</span>
 								</div>
 							</div>
 							<div class="form-group">
@@ -109,7 +161,7 @@
 								<label class="col-sm-3 control-label">Mapbox Public Access Token</label>
 								<div class="col-sm-6">
 									<input type="text" class="form-control" asp-for="MapboxAccessToken" placeholder="pk.ey...">
-									<span class="help-block m-b-none">Use a public Mapbox token intended for website and mobile client-side map rendering for this department.</span>
+									<span class="help-block m-b-none">Use a public (pk.) Mapbox token intended for website and mobile client-side map rendering for this department. It is sent to every member's browser and app; never use a secret (sk.) token.</span>
 								</div>
 							</div>
  
@@ -158,5 +210,58 @@
 
 @section Scripts
 {
+	<script>
+		(function () {
+			var token = @Html.Raw(JsonConvert.SerializeObject(Model.PreviewAccessToken ?? string.Empty, jsonSettings));
+			var center = [@Model.PreviewLongitude.ToString(CultureInfo.InvariantCulture), @Model.PreviewLatitude.ToString(CultureInfo.InvariantCulture)];
+			var styleIds = @Html.Raw(JsonConvert.SerializeObject(styleIds, jsonSettings));
+			var styleNames = @Html.Raw(JsonConvert.SerializeObject(styleNames, jsonSettings));
+			var nightPairs = @Html.Raw(JsonConvert.SerializeObject(nightPairs, jsonSettings));
+			var automaticNightFormat = @Html.Raw(JsonConvert.SerializeObject(localizer["MapStyleAutomaticNight"].Value, jsonSettings));
 
+			var daySelect = document.getElementById('MapStyle');
+			var nightSelect = document.getElementById('MapStyleNight');
+			var dayPreview = document.getElementById('mapStyleDayPreview');
+			var nightPreview = document.getElementById('mapStyleNightPreview');
+
+			if (!daySelect || !nightSelect)
+				return;
+
+			function resolveDay(value) {
+				return value === 'Automatic' ? 'Streets' : value;
+			}
+
+			function resolveNight(dayValue, nightValue) {
+				return nightValue === 'Automatic' ? nightPairs[resolveDay(dayValue)] : nightValue;
+			}
+
+			function showPreview(img, style) {
+				if (!img)
+					return;
+
+				if (!token || !styleIds[style]) {
+					img.style.display = 'none';
+					return;
+				}
+
+				img.src = 'https://api.mapbox.com/styles/v1/' + styleIds[style] + '/static/' + center[0] + ',' + center[1] + ',11,0/600x240@2x?access_token=' + encodeURIComponent(token);
+				img.style.display = 'block';
+			}
+
+			function update() {
+				var nightAutomatic = nightSelect.querySelector('option[value="Automatic"]');
+				var pairedNight = nightPairs[resolveDay(daySelect.value)];
+
+				if (nightAutomatic && pairedNight)
+					nightAutomatic.textContent = automaticNightFormat.replace('{0}', styleNames[pairedNight] || pairedNight);
+
+				showPreview(dayPreview, resolveDay(daySelect.value));
+				showPreview(nightPreview, resolveNight(daySelect.value, nightSelect.value));
+			}
+
+			daySelect.addEventListener('change', update);
+			nightSelect.addEventListener('change', update);
+			update();
+		})();
+	</script>
 }

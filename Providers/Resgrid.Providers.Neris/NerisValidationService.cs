@@ -102,10 +102,14 @@ namespace Resgrid.Providers.Neris
 				Add("neris.dispatch.call_answered", RmsValidationSeverity.Error, "dispatch.call_answered", "The call answered time is required.");
 			if (!report.CallArrivalOn.HasValue)
 				Add("neris.dispatch.call_arrival", RmsValidationSeverity.Error, "dispatch.call_arrival", "The call's arrival time at the dispatch center is required.");
-			if (!InOrder(report.CallArrivalOn, report.CallAnsweredOn, report.CallCreatedOn))
-				Add("neris.dispatch.sequence", RmsValidationSeverity.Error, "dispatch.call_arrival", "Call arrival at dispatch, call answered, and call creation must be in time order. Unit arrival is recorded separately.");
+			// Names the offending pair by its on-screen label: officers commonly type a unit's on-scene time into
+			// "Call received at dispatch", which lands after "Call created" (pre-filled from the call).
+			var dispatchOrder = FirstOutOfOrder(("Call received at dispatch", report.CallArrivalOn), ("Call answered", report.CallAnsweredOn), ("Call created", report.CallCreatedOn));
+			if (dispatchOrder != null)
+				Add("neris.dispatch.sequence", RmsValidationSeverity.Error, "dispatch.call_arrival",
+					$"'{dispatchOrder.Value.Later}' is earlier than '{dispatchOrder.Value.Earlier}'. Dispatch times must go in this order: call received at dispatch, then call answered, then call created. A unit's on-scene time is not a dispatch time; enter it on the unit.");
 			if (report.CallCreatedOn.HasValue && report.IncidentClearedOn.HasValue && report.IncidentClearedOn < report.CallCreatedOn)
-				Add("neris.dispatch.clear_sequence", RmsValidationSeverity.Error, "dispatch.incident_clear", "Incident clear cannot be before the call was created.");
+				Add("neris.dispatch.clear_sequence", RmsValidationSeverity.Error, "dispatch.incident_clear", "'Incident cleared' is earlier than 'Call created'. The incident cannot clear before the call was created.");
 
 			// unit_responses
 			if (snapshot.Units.Count == 0)
@@ -120,8 +124,10 @@ namespace Resgrid.Providers.Neris
 					Add("neris.unit.identity", RmsValidationSeverity.Error, path, "A unit response needs a NERIS unit ID or a reported unit ID.");
 				if (!string.IsNullOrWhiteSpace(unit.ResponseMode) && !catalog.Contains("response_mode", unit.ResponseMode))
 					Add("neris.unit.response_mode", RmsValidationSeverity.Error, path + ".response_mode", $"'{unit.ResponseMode}' is not a NERIS response mode.");
-				if (!InOrder(unit.DispatchedOn, unit.EnrouteOn, unit.OnSceneOn, unit.ClearedOn))
-					Add("neris.unit.sequence", RmsValidationSeverity.Error, path, $"Unit {unit.UnitNameSnapshot}: dispatch, en route, on scene and clear must be in time order.");
+				var unitOrder = FirstOutOfOrder(("Dispatched", unit.DispatchedOn), ("En route", unit.EnrouteOn), ("On scene", unit.OnSceneOn), ("Cleared", unit.ClearedOn));
+				if (unitOrder != null)
+					Add("neris.unit.sequence", RmsValidationSeverity.Error, path,
+						$"Unit {unit.UnitNameSnapshot ?? unit.UnitNerisId}: '{unitOrder.Value.Later}' is earlier than '{unitOrder.Value.Earlier}'. Unit times must go in this order: dispatched, en route, on scene, cleared.");
 			}
 
 			// aids
@@ -481,18 +487,22 @@ namespace Resgrid.Providers.Neris
 			return issues;
 		}
 
-		private static bool InOrder(params DateTime?[] times)
+		/// <summary>
+		/// First pair of present times that runs backwards, as (the step that should come first, the step recorded before it).
+		/// Missing times are skipped, so a blank step never hides an inversion between its neighbours. Null when in order.
+		/// </summary>
+		private static (string Earlier, string Later)? FirstOutOfOrder(params (string Label, DateTime? Time)[] steps)
 		{
-			DateTime? previous = null;
-			foreach (var time in times)
+			(string Label, DateTime Time)? previous = null;
+			foreach (var step in steps)
 			{
-				if (!time.HasValue)
+				if (!step.Time.HasValue)
 					continue;
-				if (previous.HasValue && time.Value < previous.Value)
-					return false;
-				previous = time;
+				if (previous.HasValue && step.Time.Value < previous.Value.Time)
+					return (previous.Value.Label, step.Label);
+				previous = (step.Label, step.Time.Value);
 			}
-			return true;
+			return null;
 		}
 	}
 }

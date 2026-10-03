@@ -48,7 +48,10 @@
 				<div class="btn-group">
 					<a class="btn btn-primary" id="adp-edit-link" asp-controller="IncidentReports" asp-action="Edit" asp-route-area="User" asp-route-id="@r.RmsIncidentReportId"><i class="fa fa-pencil"></i> @commonLocalizer["Edit"]</a>
 				</div>
-				<form class="btn-group" method="post" asp-controller="IncidentReports" asp-action="Validate" asp-route-area="User" asp-route-id="@r.RmsIncidentReportId">@Html.AntiForgeryToken()<button type="submit" class="btn btn-default"><i class="fa fa-check"></i> @(Model.SubmissionEnabled ? localizer["ValidateWithDestination"] : localizer["Validate"])</button></form>
+				if (Model.NerisWorkflowsEnabled)
+				{
+					<form class="btn-group" method="post" asp-controller="IncidentReports" asp-action="Validate" asp-route-area="User" asp-route-id="@r.RmsIncidentReportId">@Html.AntiForgeryToken()<button type="submit" class="btn btn-default"><i class="fa fa-check"></i> @(Model.SubmissionEnabled ? localizer["ValidateWithDestination"] : localizer["Validate"])</button></form>
+				}
 			}
 			@if (Model.CanSubmit && Model.CanQueueSubmission)
 			{
@@ -139,7 +142,11 @@
 			{
 				<div class="alert alert-success">@localizer["AcceptedNotice"]</div>
 			}
-			@if (!Model.SubmissionEnabled && RmsLifecycle.IsEditable(state))
+			@if (!Model.NerisWorkflowsEnabled)
+			{
+				<div class="alert alert-info">@localizer["NerisWorkflowsOffNotice"]</div>
+			}
+			else if (!Model.SubmissionEnabled && RmsLifecycle.IsEditable(state))
 			{
 				<div class="alert alert-warning">@localizer["SubmissionDisabledNotice"]</div>
 			}
@@ -153,7 +160,10 @@
 								<dt>@localizer["RecordNumber"]</dt><dd>@(r.RecordNumber ?? "-")</dd>
 								<dt>@localizer["DraftReference"]</dt><dd>@r.DraftReference</dd>
 								<dt>@localizer["IncidentNumber"]</dt><dd>@(r.IncidentNumber ?? "-")</dd>
-								<dt>@localizer["NerisIncidentId"]</dt><dd>@(r.NerisIncidentId ?? "-")</dd>
+								@if (Model.NerisWorkflowsEnabled || !string.IsNullOrWhiteSpace(r.NerisIncidentId))
+								{
+									<dt>@localizer["NerisIncidentId"]</dt><dd>@(r.NerisIncidentId ?? "-")</dd>
+								}
 								<dt>@localizer["Call"]</dt><dd><a asp-controller="Dispatch" asp-action="ViewCall" asp-route-area="User" asp-route-callId="@r.CallId">@r.CallId</a></dd>
 								<dt>@localizer["Author"]</dt><dd>@Name(r.AuthorUserId)</dd>
 								<dt>@localizer["Owner"]</dt><dd>@Name(r.OwnerUserId)</dd>
@@ -584,7 +594,15 @@
 							<div class="form-group"><label>@localizer["ReasonCode"]</label><input type="text" class="form-control" name="reasonCode" maxlength="64" value="destination-rejection" /></div>
 							<div class="form-group"><label>@localizer["ReasonText"]</label><textarea class="form-control" name="reasonText" rows="2"></textarea></div>
 							<div class="checkbox"><label><input type="checkbox" name="attested" value="true" /> @localizer["Attestation"]</label></div>
-							<button type="submit" class="btn btn-success btn-block" @(Model.SubmissionEnabled ? string.Empty : "disabled")>@localizer["Resubmit"]</button>
+							@if (Model.NerisWorkflowsEnabled)
+							{
+								<button type="submit" class="btn btn-success btn-block" @(Model.SubmissionEnabled ? string.Empty : "disabled")>@localizer["Resubmit"]</button>
+							}
+							else
+							{
+								@* NERIS off: the correction is signed as a new revision and nothing is queued. *@
+								<button type="submit" class="btn btn-success btn-block">@localizer["CorrectWithoutNeris"]</button>
+							}
 						</form>
 					</div>
 				</div>
@@ -641,6 +659,8 @@
 				</div>
 			}
 
+			@if (Model.NerisWorkflowsEnabled || a.Submissions.Count > 0)
+			{
 			<div class="ibox">
 				<div class="ibox-title"><h5><i class="fa fa-cloud-upload"></i> @localizer["Submissions"]</h5></div>
 				<div class="ibox-content">
@@ -675,7 +695,7 @@
 									<dt>@localizer["Payload"]</dt><dd><a asp-controller="IncidentReports" asp-action="Payload" asp-route-area="User" asp-route-id="@r.RmsIncidentReportId" asp-route-submissionId="@s.RmsSubmissionId"><i class="fa fa-download"></i> JSON</a> <small class="text-muted">@s.PayloadChecksum?.Substring(0, Math.Min(12, s.PayloadChecksum.Length))</small></dd>
 								}
 							</dl>
-							@if (Model.CanSubmit && (s.RequiresReconciliation || s.CreatePendingReceipt || s.DestinationIdentity == null))
+							@if (Model.NerisWorkflowsEnabled && Model.CanSubmit && (s.RequiresReconciliation || s.CreatePendingReceipt || s.DestinationIdentity == null))
 							{
 								var canBind = s.DestinationIdentity == null && s.SentOn == null && s.Attempts == 0 && s.ExternalId == null && !s.RequiresReconciliation && !s.CreatePendingReceipt;
 								<form method="post" asp-controller="IncidentReports" asp-action="Reconcile" asp-route-area="User" asp-route-id="@r.RmsIncidentReportId">
@@ -700,6 +720,7 @@
 					}
 				</div>
 			</div>
+			}
 
 			<div class="ibox">
 				<div class="ibox-title"><h5><i class="fa fa-history"></i> @localizer["History"]</h5></div>

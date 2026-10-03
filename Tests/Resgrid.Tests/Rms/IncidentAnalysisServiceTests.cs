@@ -27,6 +27,7 @@ namespace Resgrid.Tests.Rms
 
 		private FakeIncidentStore _store;
 		private Mock<INerisProfileService> _neris;
+		private bool _nerisWorkflows;
 		private RmsNerisProfile _profile;
 		private bool _submissionEnabled;
 		private IncidentAnalysisService _service;
@@ -44,6 +45,8 @@ namespace Resgrid.Tests.Rms
 			_neris.SetupGet(n => n.ContractVersion).Returns("1.4.78");
 			_neris.Setup(n => n.GetProfileAsync(Dept)).ReturnsAsync(() => _profile);
 			_neris.Setup(n => n.IsSubmissionEnabledAsync(Dept)).ReturnsAsync(() => _submissionEnabled);
+			_nerisWorkflows = true;
+			_neris.Setup(n => n.IsWorkflowEnabledAsync(Dept)).ReturnsAsync(() => _nerisWorkflows);
 
 			_report = new RmsIncidentReport
 			{
@@ -277,6 +280,30 @@ namespace Resgrid.Tests.Rms
 			await act.Should().ThrowAsync<IncidentReportValidationException>();
 			_report.State.Should().Be((int)RmsRecordState.Finalized, "the incident report is untouched by its analysis failing");
 			_store.Issues.Should().OnlyContain(i => i.RecordId == bad.Analysis.RmsIncidentAnalysisId);
+		}
+
+		[Test]
+		public async Task With_neris_workflows_off_an_analysis_finalizes_without_neris_rules_and_is_never_queued()
+		{
+			var saved = await StartAndFillAsync();
+			var input = CompleteDraft();
+			input.GeneralCause = "NOT_A_NERIS_CAUSE";
+			var bad = await _service.SaveDraftAsync(Dept, "investigator", saved.Analysis.RmsIncidentAnalysisId, saved.Analysis.RowVersion, input, true);
+			(await _service.ValidateAsync(Dept, bad.Analysis.RmsIncidentAnalysisId)).Should().NotBeEmpty("NERIS rules apply while the workflows are on");
+
+			_nerisWorkflows = false;
+			_submissionEnabled = false; // NerisProfileService.IsSubmissionEnabledAsync folds the department switch in
+			_report.NerisIncidentId = "FD24027000|2026-000200";
+
+			(await _service.ValidateAsync(Dept, bad.Analysis.RmsIncidentAnalysisId)).Should().BeEmpty();
+			_store.Issues.Should().BeEmpty("findings from the earlier NERIS run are cleared");
+			var final = await _service.FinalizeAsync(Dept, "investigator", bad.Analysis.RmsIncidentAnalysisId, bad.Analysis.RowVersion);
+			final.State.Should().Be(RmsIncidentAnalysisState.Finalized);
+			_store.Submissions.Should().BeEmpty();
+
+			Func<Task> queue = () => _service.QueueSubmissionAsync(Dept, "investigator", bad.Analysis.RmsIncidentAnalysisId);
+			(await queue.Should().ThrowAsync<InvalidOperationException>()).WithMessage(NerisWorkflows.OffMessage);
+			(await _service.QueueAwaitingIncidentAsync(Dept)).Should().Be(0);
 		}
 
 		[Test]

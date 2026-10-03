@@ -116,6 +116,24 @@ namespace Resgrid.Model.Search
 		public string IndexName { get; }
 	}
 
+	/// <summary>
+	/// A file named by a manifest is not in the object store. Normally the writer pruned it after publishing a newer
+	/// manifest while a reader was still pulling the older one; the reader re-reads the manifest and starts over.
+	/// </summary>
+	public class SearchIndexObjectNotFoundException : Exception
+	{
+		public SearchIndexObjectNotFoundException(string indexName, string fileName, string message, Exception innerException = null)
+			: base(message, innerException)
+		{
+			IndexName = indexName;
+			FileName = fileName;
+		}
+
+		public string IndexName { get; }
+
+		public string FileName { get; }
+	}
+
 	/// <summary>Outcome of one maintenance sweep of the global index (worker 70).</summary>
 	public class SearchIndexSweepResult
 	{

@@ -302,7 +302,13 @@ namespace Resgrid.Services.Records
 		public async Task<List<NerisSectionRequirement>> GetSectionRequirementsAsync(int departmentId, string reportId)
 		{
 			var types = (await _types.GetForRecordAsync(departmentId, reportId, null))?.ToList() ?? new List<RmsIncidentType>();
-			return _validation.GetSectionRequirements(types.Select(t => t.TypeCode)).ToList();
+			var requirements = _validation.GetSectionRequirements(types.Select(t => t.TypeCode)).ToList();
+			// Required means "NERIS validation blocks finalize"; with NERIS workflows off nothing enforces it, so the
+			// sections stay as suggestions rather than claiming a requirement that no longer exists.
+			if (!await _neris.IsWorkflowEnabledAsync(departmentId))
+				requirements = requirements.Select(r => new NerisSectionRequirement { Kind = r.Kind, Required = false, Reason = r.Reason,
+					PrimaryCodeSet = r.PrimaryCodeSet, SecondaryCodeSet = r.SecondaryCodeSet }).ToList();
+			return requirements;
 		}
 
 		public async Task<NerisIncidentSnapshot> BuildSnapshotAsync(int departmentId, string reportId, string revisionId = null)
@@ -419,6 +425,16 @@ namespace Resgrid.Services.Records
 			var report = await LoadAsync(departmentId, reportId);
 			var aggregate = await HydrateAsync(report, null, false);
 			aggregate.Protection.RequireRevealed("validate");
+
+			// NERIS workflows turned off (setting 111): there is nothing to validate against, so clear what an earlier
+			// NERIS run left behind rather than showing stale destination findings on an ordinary record.
+			if (!await _neris.IsWorkflowEnabledAsync(departmentId))
+			{
+				// Finalize clears inside its own transaction; this standalone clear gets one so it never leaves half the findings.
+				await InTransactionAsync(() => ClearNerisValidationAsync(departmentId, reportId, cancellationToken));
+				return new List<RmsValidationIssue>();
+			}
+
 			var profile = await _neris.GetProfileAsync(departmentId);
 			var snapshot = ToSnapshot(aggregate);
 
@@ -442,6 +458,12 @@ namespace Resgrid.Services.Records
 
 			await AuditAsync(departmentId, null, reportId, null, RmsAccessAuditAction.Change, includeDestination ? "Validate (local + destination)" : "Validate (local)", RmsOriginClient.Web, cancellationToken, new { errors = local.Count(i => i.Severity == (int)RmsValidationSeverity.Error) });
 			return (await _issues.GetForRecordAsync(departmentId, reportId))?.ToList() ?? new List<RmsValidationIssue>();
+		}
+
+		private async Task ClearNerisValidationAsync(int departmentId, string reportId, CancellationToken cancellationToken)
+		{
+			await _issues.ReplaceForRecordAsync(departmentId, reportId, RmsValidationSource.Local, Enumerable.Empty<RmsValidationIssue>(), cancellationToken);
+			await _issues.ReplaceForRecordAsync(departmentId, reportId, RmsValidationSource.Destination, Enumerable.Empty<RmsValidationIssue>(), cancellationToken);
 		}
 
 		#endregion
@@ -540,6 +562,7 @@ namespace Resgrid.Services.Records
 
 			var now = DateTime.UtcNow;
 			var profile = await _neris.GetProfileAsync(departmentId);
+			var nerisWorkflows = await _neris.IsWorkflowEnabledAsync(departmentId);
 			var outboxIds = new List<long>();
 			await InTransactionAsync(async () =>
 			{
@@ -550,11 +573,20 @@ namespace Resgrid.Services.Records
 				await _evidenceService.RequireInventoryCoverageAsync(departmentId, reportId, draft.Evidence);
 
 				// Validation blocks the signature (plan 4.2 "progressive validation"): the issues stay on the report for the author.
-				var local = _validation.ValidateLocal(ToSnapshot(draft), profile);
-				await _issues.ReplaceForRecordAsync(departmentId, reportId, RmsValidationSource.Local, local, cancellationToken);
-				var errors = local.Where(i => i.Severity == (int)RmsValidationSeverity.Error).ToList();
-				if (errors.Count > 0)
-					throw new IncidentReportValidationException(reportId, errors);
+				// Every local rule is a NERIS contract rule, so a department with NERIS workflows off signs without them;
+				// the custom-field and evidence gates above still apply.
+				if (nerisWorkflows)
+				{
+					var local = _validation.ValidateLocal(ToSnapshot(draft), profile);
+					await _issues.ReplaceForRecordAsync(departmentId, reportId, RmsValidationSource.Local, local, cancellationToken);
+					var errors = local.Where(i => i.Severity == (int)RmsValidationSeverity.Error).ToList();
+					if (errors.Count > 0)
+						throw new IncidentReportValidationException(reportId, errors);
+				}
+				else
+				{
+					await ClearNerisValidationAsync(departmentId, reportId, cancellationToken);
+				}
 
 				if (string.IsNullOrWhiteSpace(report.RecordNumber))
 					report.RecordNumber = await AllocateRecordNumberAsync(report, cancellationToken);
@@ -607,6 +639,8 @@ namespace Resgrid.Services.Records
 				throw new RecordTransitionException(reportId, state, RmsRecordState.Submitted, "only a finalized revision can be submitted");
 			if (report.AmendsRevisionId != null)
 				throw new RecordTransitionException(reportId, state, RmsRecordState.Submitted, "close the open amendment before submitting");
+			if (!await _neris.IsWorkflowEnabledAsync(departmentId))
+				throw new InvalidOperationException(NerisWorkflows.OffMessage);
 			if (!await _neris.IsSubmissionEnabledAsync(departmentId))
 				throw new InvalidOperationException("NERIS submission is not enabled for this department.");
 

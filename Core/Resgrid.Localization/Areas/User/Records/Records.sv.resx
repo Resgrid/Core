@@ -2160,4 +2160,11 @@
   <data name="SourceInferred" xml:space="preserve"><value>Härledd</value></data>
   <data name="SourceAutoLinked" xml:space="preserve"><value>Automatiskt kopplad</value></data>
   <data name="UnitTimesDerivedHint" xml:space="preserve"><value>Vissa enhetstider kommer från statusar som enheten inte själv kopplade till detta larm: Resgrid kopplade dem automatiskt (utifrån enhetens föregående status eller dess utlarmning) eller härledde dem (satta utan destination medan enheten var larmad hit). Kontrollera dem innan du slutför.</value></data>
+  <data name="NerisWorkflowsHeader" xml:space="preserve"><value>NERIS-rapportering</value></data>
+  <data name="NerisWorkflowsEnabled" xml:space="preserve"><value>Använd NERIS-flöden</value></data>
+  <data name="NerisWorkflowsIntro" xml:space="preserve"><value>När detta är på kontrolleras insatsrapporter mot NERIS-reglerna innan de kan slutföras, och slutförda rapporter kan skickas till NERIS. Stäng av det om er avdelning inte rapporterar till NERIS.</value></data>
+  <data name="NerisWorkflowsOffHelp" xml:space="preserve"><value>Att stänga av NERIS stoppar NERIS-validering, inskickning och statuskontroller och döljer NERIS-inställningssidorna och -siffrorna. Insatsrapporter och alla andra inställningar för Register fortsätter att fungera. Er NERIS-profil, kodmappningar och inskickningshistorik behålls, och köade inskickningar väntar tills NERIS slås på igen.</value></data>
+  <data name="NerisWorkflowsOffNotice" xml:space="preserve"><value>NERIS-flöden är avstängda för den här avdelningen. Insatsrapporter sparas som avdelningens register och valideras inte mot eller skickas till NERIS. En administratör kan slå på NERIS igen i inställningarna för Register.</value></data>
+  <data name="ManageNerisProfile" xml:space="preserve"><value>NERIS-profil och kodmappningar</value></data>
+  <data name="CorrectWithoutNeris" xml:space="preserve"><value>Spara rättelse (skickas inte till NERIS)</value></data>
 </root>

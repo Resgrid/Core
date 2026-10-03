@@ -4650,6 +4650,12 @@
   <data xml:space="preserve" name="Setting.MappingUseMapboxOverride">
     <value>Mapbox-Überschreibung für Kartierung verwenden</value>
   </data>
+  <data xml:space="preserve" name="Setting.MappingMapStyle">
+    <value>Kartenstil</value>
+  </data>
+  <data xml:space="preserve" name="Setting.MappingMapStyleNight">
+    <value>Kartenstil Nacht</value>
+  </data>
   <data xml:space="preserve" name="Setting.ModuleSettings">
     <value>Moduleinstellungen</value>
   </data>
@@ -4685,6 +4691,9 @@
   </data>
   <data xml:space="preserve" name="Setting.RecordsRetentionPolicy">
     <value>Aufbewahrungsrichtlinie für Datensätze</value>
+  </data>
+  <data xml:space="preserve" name="Setting.RecordsNerisWorkflowsEnabled">
+    <value>NERIS-Abläufe für Datensätze aktiviert</value>
   </data>
   <data xml:space="preserve" name="Setting.RecordsReviewDueHours">
     <value>Fälligkeitsfrist der Datensatzprüfung (Stunden)</value>
@@ -4869,6 +4878,12 @@
   <data xml:space="preserve" name="SettingHelp.MappingUseMapboxOverride">
     <value>Verwendet die Kartenanbieter-Überschreibung der Abteilung. Das Deaktivieren auf der zuständigen Seite entfernt den gespeicherten Stil und das Token.</value>
   </data>
+  <data xml:space="preserve" name="SettingHelp.MappingMapStyle">
+    <value>Mapbox-Grundkarte, die jede Karte der Abteilung im hellen Modus zeigt, auf der Website und in allen Apps. Automatisch ist Straßen; die Website benötigt ein Mapbox-Token des Servers, und die Mapbox-Überschreibung der Abteilung ersetzt den Stil überall.</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.MappingMapStyleNight">
+    <value>Grundkarte, die die Apps im dunklen Modus zeigen. Automatisch passt zum Tagesstil (Dunkel für Straßenkarten, Navigation Nacht für Navigation Tag; Outdoor und Satellit unverändert). Die Website verwendet immer den Tagesstil.</value>
+  </data>
   <data xml:space="preserve" name="SettingHelp.ModuleSettings">
     <value>Steuert die Modulnavigation und unterstützte Funktionsschalter. Das Ausblenden eines Moduls löscht weder dessen Datensätze noch belegt es, dass unabhängige Dispositionseinstellungen deaktiviert sind.</value>
   </data>
@@ -4904,6 +4919,9 @@
   </data>
   <data xml:space="preserve" name="SettingHelp.RecordsRetentionPolicy">
     <value>Standard- und definitionsspezifische Aufbewahrung, einschließlich früherer Richtlinienverläufe. Sperren und Regeln für eingeschränkte Klassen können die Löschberechtigung verhindern.</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.RecordsNerisWorkflowsEnabled">
+    <value>Schaltet die NERIS-Prüfung, -Übermittlung und die NERIS-Einrichtungsseiten dieser Abteilung ein oder aus. Andere Datensatz-Einstellungen, Datensätze und Verläufe bleiben unverändert; das NERIS-Profil und wartende Übermittlungen bleiben für die Wiederaktivierung erhalten.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.RecordsReviewDueHours">
     <value>Standardfrist für die administrative Prüfung; eine Überschreibung auf Definitionsebene hat Vorrang. Dies ist keine gesetzliche Fristableitung.</value>

@@ -172,7 +172,8 @@ namespace Resgrid.Repositories.DataRepository
 			DepartmentSettingTypes.HardwareTrackingMobileFallbackEnabled, DepartmentSettingTypes.HardwareTrackingLocationRetentionDays,
 			DepartmentSettingTypes.DispatchRecommendationMode, DepartmentSettingTypes.DispatchRecommendationAutoDispatch,
 			DepartmentSettingTypes.RequirePasswordResetViaEmail, DepartmentSettingTypes.RecordsDefaultLifecyclePreset,
-			DepartmentSettingTypes.RecordsReviewDueHours, DepartmentSettingTypes.RecordsGroupVisibilityMode
+			DepartmentSettingTypes.RecordsReviewDueHours, DepartmentSettingTypes.RecordsGroupVisibilityMode,
+			DepartmentSettingTypes.MappingMapStyle, DepartmentSettingTypes.MappingMapStyleNight
 		};
 		public static ConfigurationChangeStamp Project(IEntity entity)
 		{

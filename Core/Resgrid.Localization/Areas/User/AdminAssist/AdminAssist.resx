@@ -4650,6 +4650,12 @@
   <data xml:space="preserve" name="Setting.MappingUseMapboxOverride">
     <value>Mapping Use Mapbox Override</value>
   </data>
+  <data xml:space="preserve" name="Setting.MappingMapStyle">
+    <value>Mapping Map Style</value>
+  </data>
+  <data xml:space="preserve" name="Setting.MappingMapStyleNight">
+    <value>Mapping Map Style Night</value>
+  </data>
   <data xml:space="preserve" name="Setting.ModuleSettings">
     <value>Module Settings</value>
   </data>
@@ -4685,6 +4691,9 @@
   </data>
   <data xml:space="preserve" name="Setting.RecordsRetentionPolicy">
     <value>Records Retention Policy</value>
+  </data>
+  <data xml:space="preserve" name="Setting.RecordsNerisWorkflowsEnabled">
+    <value>Records NERIS Workflows Enabled</value>
   </data>
   <data xml:space="preserve" name="Setting.RecordsReviewDueHours">
     <value>Records Review Due Hours</value>
@@ -4869,6 +4878,12 @@
   <data xml:space="preserve" name="SettingHelp.MappingUseMapboxOverride">
     <value>Use the department map provider override. Turning it off on the owning screen removes the stored style and token.</value>
   </data>
+  <data xml:space="preserve" name="SettingHelp.MappingMapStyle">
+    <value>Mapbox base map every department map shows in a light theme, on the website and in all apps. Automatic is Streets; the website needs a server Mapbox token, and the department Mapbox override replaces it everywhere.</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.MappingMapStyleNight">
+    <value>Base map the apps show in dark mode. Automatic pairs with the day style (Dark for road maps, Navigation Night for Navigation Day; Outdoors and satellite unchanged). The website always uses the day style.</value>
+  </data>
   <data xml:space="preserve" name="SettingHelp.ModuleSettings">
     <value>Controls module navigation and supported feature gates. Hiding a module does not delete its records or prove independent dispatch settings are disabled.</value>
   </data>
@@ -4904,6 +4919,9 @@
   </data>
   <data xml:space="preserve" name="SettingHelp.RecordsRetentionPolicy">
     <value>Default and definition-specific retention, including prior-policy history. Holds and restricted-class rules can prevent purge eligibility.</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.RecordsNerisWorkflowsEnabled">
+    <value>Turns this department's NERIS validation, submission and NERIS setup screens on or off. Other Records settings, records and history are unchanged; the NERIS profile and queued submissions are kept for re-enabling.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.RecordsReviewDueHours">
     <value>Default administrative review deadline; a definition-level override takes precedence. This is not a statutory deadline inference.</value>

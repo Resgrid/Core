@@ -156,6 +156,54 @@ namespace Resgrid.Tests.Search
 		}
 
 		[Test]
+		public async Task A_pull_overtaken_by_a_publish_and_prune_restarts_on_the_newer_manifest()
+		{
+			// RESGRID-API-9S: the reader read manifest N, the writer published N+1 and pruned N's superseded objects,
+			// and the reader's next download came back NoSuchKey.
+			var store = new InMemorySearchIndexStore();
+			var writer = Host(TempDir(), store);
+			var indexer = new LuceneGlobalSearchIndexer(writer);
+			await indexer.IndexAsync(new[] { GlobalSearchTests.Projection(1, SearchEntityTypes.Call, "1", "Brush fire on Ridge Rd") }, "1.0.0");
+			await indexer.CommitAsync();
+			var first = store.Manifests[SearchIndexNames.Global];
+
+			var racing = new PublishBeforeFirstDownloadStore(store, async () =>
+			{
+				await indexer.IndexAsync(new[] { GlobalSearchTests.Projection(1, SearchEntityTypes.Unit, "2", "Brush 41") }, "1.0.0");
+				await indexer.ExpungeDeletesAsync();
+			});
+			var reader = Host(TempDir(), racing);
+
+			(await reader.PullAsync()).Should().BeTrue();
+
+			var second = store.Manifests[SearchIndexNames.Global];
+			second.Revision.Should().NotBe(first.Revision);
+			first.Files.Select(f => f.Name).Except(second.Files.Select(f => f.Name)).Should().NotBeEmpty("the race needs an object the first manifest named to have been pruned");
+			reader.LastSyncedRevision.Should().Be(second.Revision);
+			var search = new LuceneGlobalSearchService(reader);
+			(await search.SearchAsync(1, new GlobalSearchQuery { Text = "brush" })).Hits.Should().HaveCount(2);
+			System.IO.Directory.EnumerateFiles(reader.IndexPath).Select(Path.GetFileName).Where(n => n != "write.lock").Should().BeEquivalentTo(second.Files.Select(f => f.Name), "files from the abandoned attempt are cleaned up");
+		}
+
+		[Test]
+		public async Task A_missing_object_under_an_unchanged_manifest_still_fails_the_pull()
+		{
+			var store = new InMemorySearchIndexStore();
+			var writer = Host(TempDir(), store);
+			var indexer = new LuceneGlobalSearchIndexer(writer);
+			await indexer.IndexAsync(new[] { GlobalSearchTests.Projection(1, SearchEntityTypes.Call, "1", "Brush fire on Ridge Rd") }, "1.0.0");
+			await indexer.CommitAsync();
+
+			var victim = store.Manifests[SearchIndexNames.Global].Files.First(f => !f.Name.StartsWith("segments_")).Name;
+			await store.DeleteFilesAsync(SearchIndexNames.Global, new[] { victim });
+
+			var reader = Host(TempDir(), store);
+			Func<Task> act = () => reader.PullAsync();
+			await act.Should().ThrowAsync<SearchIndexObjectNotFoundException>("a manifest naming an object that was never there is a broken publish, not a race");
+			reader.LastSyncedRevision.Should().BeNull();
+		}
+
+		[Test]
 		public async Task Without_a_store_commit_is_local_only()
 		{
 			var writer = Host(TempDir(), null);
@@ -191,6 +239,39 @@ namespace Resgrid.Tests.Search
 		public Task DeleteFilesAsync(string indexName, IEnumerable<string> fileNames, CancellationToken cancellationToken = default) => throw new InvalidOperationException("SignatureDoesNotMatch");
 
 		public Task<SearchIndexManifest> PutManifestAsync(string indexName, SearchIndexManifest manifest, string expectedETag, CancellationToken cancellationToken = default) => throw new InvalidOperationException("SignatureDoesNotMatch");
+	}
+
+	/// <summary>Runs a writer step once, after the reader has read the manifest but before its first download.</summary>
+	public sealed class PublishBeforeFirstDownloadStore : ISearchIndexStore
+	{
+		private readonly ISearchIndexStore _inner;
+		private readonly Func<Task> _beforeFirstDownload;
+		private int _downloads;
+
+		public PublishBeforeFirstDownloadStore(ISearchIndexStore inner, Func<Task> beforeFirstDownload)
+		{
+			_inner = inner;
+			_beforeFirstDownload = beforeFirstDownload;
+		}
+
+		public bool Enabled => true;
+
+		public Task<SearchIndexManifest> GetManifestAsync(string indexName, CancellationToken cancellationToken = default) => _inner.GetManifestAsync(indexName, cancellationToken);
+
+		public Task<HashSet<string>> ListFilesAsync(string indexName, CancellationToken cancellationToken = default) => _inner.ListFilesAsync(indexName, cancellationToken);
+
+		public Task UploadFileAsync(string indexName, string fileName, string localPath, CancellationToken cancellationToken = default) => _inner.UploadFileAsync(indexName, fileName, localPath, cancellationToken);
+
+		public async Task DownloadFileAsync(string indexName, string fileName, string localPath, CancellationToken cancellationToken = default)
+		{
+			if (Interlocked.Increment(ref _downloads) == 1)
+				await _beforeFirstDownload();
+			await _inner.DownloadFileAsync(indexName, fileName, localPath, cancellationToken);
+		}
+
+		public Task DeleteFilesAsync(string indexName, IEnumerable<string> fileNames, CancellationToken cancellationToken = default) => _inner.DeleteFilesAsync(indexName, fileNames, cancellationToken);
+
+		public Task<SearchIndexManifest> PutManifestAsync(string indexName, SearchIndexManifest manifest, string expectedETag, CancellationToken cancellationToken = default) => _inner.PutManifestAsync(indexName, manifest, expectedETag, cancellationToken);
 	}
 
 	/// <summary>S3 semantics in memory: immutable objects, one manifest per index, If-None-Match:* / If-Match on the manifest.</summary>
@@ -238,7 +319,7 @@ namespace Resgrid.Tests.Search
 			lock (_sync)
 			{
 				if (!Objects.TryGetValue(indexName, out var files) || !files.TryGetValue(fileName, out bytes))
-					throw new FileNotFoundException(fileName);
+					throw new SearchIndexObjectNotFoundException(indexName, fileName, $"NoSuchKey: {fileName}");
 			}
 			File.WriteAllBytes(localPath, bytes);
 			return Task.CompletedTask;

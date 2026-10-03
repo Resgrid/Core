@@ -35,6 +35,8 @@ namespace Resgrid.Services
 		private static string GroupDispatchScopeConfigCacheKey = "DSetGroupDispatchScope_{0}";
 		private static string NewCallFieldPolicyCacheKey = "DSetNewCallFieldPolicy_{0}";
 		private static string UnitStatusThresholdsCacheKey = "DSetUnitStatusThresholds_{0}";
+		private static string MapStyleCacheKey = "DSetMapStyle_{0}";
+		private static string MapStyleNightCacheKey = "DSetMapStyleNight_{0}";
 		private static TimeSpan LongCacheLength = TimeSpan.FromDays(14);
 		// Security-relevant settings ride the standard department-data window instead, so a missed
 		// invalidation cannot keep an old policy in force for two weeks.
@@ -784,6 +786,52 @@ namespace Resgrid.Services
 			return settingValue?.Setting;
 		}
 
+		public async Task<MapStyleTypes> GetMappingMapStyleAsync(int departmentId, bool bypassCache = false)
+		{
+			return await GetMapStyleSettingAsync(departmentId, DepartmentSettingTypes.MappingMapStyle, MapStyleCacheKey, bypassCache);
+		}
+
+		public async Task<MapStyleTypes> GetMappingMapStyleNightAsync(int departmentId, bool bypassCache = false)
+		{
+			return await GetMapStyleSettingAsync(departmentId, DepartmentSettingTypes.MappingMapStyleNight, MapStyleNightCacheKey, bypassCache);
+		}
+
+		public async Task SaveMappingMapStylesAsync(int departmentId, MapStyleTypes dayStyle, MapStyleTypes nightStyle, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			await SaveMapStyleSettingAsync(departmentId, DepartmentSettingTypes.MappingMapStyle, dayStyle, cancellationToken);
+			await SaveMapStyleSettingAsync(departmentId, DepartmentSettingTypes.MappingMapStyleNight, nightStyle, cancellationToken);
+		}
+
+		private async Task<MapStyleTypes> GetMapStyleSettingAsync(int departmentId, DepartmentSettingTypes type, string cacheKeyFormat, bool bypassCache)
+		{
+			if (departmentId <= 0)
+				return MapStyleTypes.Automatic;
+
+			async Task<string> getSetting()
+			{
+				var s = await GetSettingByDepartmentIdType(departmentId, type);
+				return s?.Setting ?? ((int)MapStyleTypes.Automatic).ToString();
+			}
+
+			string value;
+			if (Config.SystemBehaviorConfig.CacheEnabled && !bypassCache)
+				value = await _cacheProvider.RetrieveAsync<string>(string.Format(cacheKeyFormat, departmentId), getSetting, LongCacheLength);
+			else
+				value = await getSetting();
+
+			return MapStylePresets.Parse(value);
+		}
+
+		private async Task SaveMapStyleSettingAsync(int departmentId, DepartmentSettingTypes type, MapStyleTypes style, CancellationToken cancellationToken)
+		{
+			var normalized = MapStylePresets.Normalize(style);
+
+			if (normalized == MapStyleTypes.Automatic)
+				await DeleteSettingAsync(departmentId, type, cancellationToken);
+			else
+				await SaveOrUpdateSettingAsync(departmentId, ((int)normalized).ToString(), type, cancellationToken);
+		}
+
 		public async Task<ResolvedMapConfig> GetMapConfigForDepartmentAsync(int departmentId, string key = null)
 		{
 			if (departmentId > 0 && await GetMappingUseMapboxOverrideAsync(departmentId))
@@ -795,7 +843,55 @@ namespace Resgrid.Services
 					return mapConfig;
 			}
 
+			// Automatic leaves the surface on the system default, so a department that never touches the
+			// setting keeps exactly the tiles (and the tile bill) it had before.
+			var dayStyle = await GetMappingMapStyleAsync(departmentId);
+
+			if (dayStyle != MapStyleTypes.Automatic &&
+				MappingConfig.TryCreateSystemMapboxConfig(key, MapStylePresets.GetStyleUrl(dayStyle), out var departmentStyleConfig))
+				return departmentStyleConfig;
+
 			return MappingConfig.GetMapConfig(key);
+		}
+
+		public async Task<ResolvedAppMapConfig> GetAppMapConfigForDepartmentAsync(int departmentId, string key)
+		{
+			var result = new ResolvedAppMapConfig
+			{
+				DayStyleUrl = MapStylePresets.GetStyleUrl(MapStyleTypes.Automatic),
+				NightStyleUrl = MapStylePresets.GetStyleUrl(MapStylePresets.ResolveNightStyle(MapStyleTypes.Automatic, MapStyleTypes.Automatic))
+			};
+
+			// Tokens go to signed-in department members only; an anonymous caller keeps the app's built-in token.
+			if (departmentId <= 0)
+				return result;
+
+			if (await GetMappingUseMapboxOverrideAsync(departmentId))
+			{
+				var overrideToken = (await GetMappingMapboxAccessTokenAsync(departmentId))?.Trim();
+				var overrideStyleUrl = MappingConfig.GetNormalizedMapboxStyleUrl(await GetMappingMapboxStyleUrlAsync(departmentId));
+
+				// Both halves or neither: a custom style only loads with its owner's token, and a department
+				// token on its own would just move the tile bill without changing the map.
+				if (MappingConfig.IsPublicMapboxAccessToken(overrideToken) && !string.IsNullOrWhiteSpace(overrideStyleUrl))
+				{
+					result.AccessToken = overrideToken;
+					result.DayStyleUrl = overrideStyleUrl;
+					result.NightStyleUrl = overrideStyleUrl;
+					result.IsDepartmentOverride = true;
+
+					return result;
+				}
+			}
+
+			var dayStyle = await GetMappingMapStyleAsync(departmentId);
+			var nightStyle = await GetMappingMapStyleNightAsync(departmentId);
+
+			result.AccessToken = MappingConfig.GetAppMapboxPublicAccessToken(key);
+			result.DayStyleUrl = MapStylePresets.GetStyleUrl(MapStylePresets.ResolveDayStyle(dayStyle));
+			result.NightStyleUrl = MapStylePresets.GetStyleUrl(MapStylePresets.ResolveNightStyle(dayStyle, nightStyle));
+
+			return result;
 		}
 		#endregion Department Mapping Settings
 
@@ -1471,6 +1567,12 @@ namespace Resgrid.Services
 				case DepartmentSettingTypes.UnitStatusThresholds:
 					cacheKey = string.Format(UnitStatusThresholdsCacheKey, departmentId);
 					break;
+				case DepartmentSettingTypes.MappingMapStyle:
+					cacheKey = string.Format(MapStyleCacheKey, departmentId);
+					break;
+				case DepartmentSettingTypes.MappingMapStyleNight:
+					cacheKey = string.Format(MapStyleNightCacheKey, departmentId);
+					break;
 				case DepartmentSettingTypes.RecordsDefaultLifecyclePreset:
 				case DepartmentSettingTypes.RecordsReviewDueHours:
 				case DepartmentSettingTypes.RecordsNumberingConfig:
@@ -1479,6 +1581,7 @@ namespace Resgrid.Services
 				case DepartmentSettingTypes.RecordsGroupVisibilityMode:
 				case DepartmentSettingTypes.RecordsGroupScopeConfig:
 				case DepartmentSettingTypes.RecordsDisclosureConfig:
+				case DepartmentSettingTypes.RecordsNerisWorkflowsEnabled:
 					cacheKey = string.Format(RecordsSettingCacheKey, (int)type, departmentId);
 					break;
 			}
@@ -1619,6 +1722,18 @@ namespace Resgrid.Services
 		public Task<DepartmentSetting> SetRecordsDisclosureConfigAsync(int departmentId, RecordsDisclosureConfig config, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return SetRecordsSettingAsync(departmentId, DepartmentSettingTypes.RecordsDisclosureConfig, ObjectSerialization.Serialize(config ?? new RecordsDisclosureConfig()), cancellationToken);
+		}
+
+		public async Task<bool> GetRecordsNerisWorkflowsEnabledAsync(int departmentId, bool bypassCache = false)
+		{
+			// Only an explicit "false" turns NERIS off, so departments that never saved the setting keep today's behavior.
+			var value = await GetRecordsSettingStringAsync(departmentId, DepartmentSettingTypes.RecordsNerisWorkflowsEnabled, bypassCache);
+			return !(bool.TryParse(value, out var enabled) && !enabled);
+		}
+
+		public Task<DepartmentSetting> SetRecordsNerisWorkflowsEnabledAsync(int departmentId, bool enabled, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return SetRecordsSettingAsync(departmentId, DepartmentSettingTypes.RecordsNerisWorkflowsEnabled, enabled.ToString(), cancellationToken);
 		}
 
 		#endregion Records (RMS) department settings

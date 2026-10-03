@@ -29,6 +29,9 @@ namespace Resgrid.Tests.Services
 		[TestCase(MapStyleTypes.SatelliteStreets, MapStyleTypes.SatelliteStreets)]
 		[TestCase(MapStyleTypes.NavigationDay, MapStyleTypes.NavigationNight)]
 		[TestCase(MapStyleTypes.NavigationNight, MapStyleTypes.NavigationNight)]
+		[TestCase(MapStyleTypes.Blueprint, MapStyleTypes.Blueprint)]
+		[TestCase(MapStyleTypes.NorthStar, MapStyleTypes.NorthStar)]
+		[TestCase(MapStyleTypes.Unicorn, MapStyleTypes.Unicorn)]
 		public void should_pair_automatic_night_style_with_day_style(MapStyleTypes day, MapStyleTypes expectedNight)
 		{
 			MapStylePresets.ResolveNightStyle(day, MapStyleTypes.Automatic).Should().Be(expectedNight);
@@ -56,11 +59,30 @@ namespace Resgrid.Tests.Services
 			{
 				var url = MapStylePresets.GetStyleUrl(style);
 
-				url.Should().StartWith("mapbox://styles/mapbox/");
+				// Only Mapbox-run accounts: the gallery's public styles live under mapbox and mapbox-map-design.
+				url.Should().MatchRegex("^mapbox://styles/(mapbox|mapbox-map-design)/[A-Za-z0-9-]+$");
 				urls.Add(url).Should().BeTrue($"{style} must not share a style url with another preset");
 			}
 
 			MapStylePresets.GetStyleUrl(MapStyleTypes.Automatic).Should().Be(MapStylePresets.StreetsStyleUrl);
+		}
+
+		[Test]
+		public void should_split_selectable_styles_into_mapbox_and_community_groups()
+		{
+			MapStylePresets.MapboxStyles.Should().NotIntersectWith(MapStylePresets.CommunityStyles);
+			MapStylePresets.MapboxStyles.Should().OnlyContain(s => !MapStylePresets.IsCommunityStyle(s));
+			MapStylePresets.CommunityStyles.Should().OnlyContain(s => MapStylePresets.IsCommunityStyle(s));
+			MapStylePresets.CommunityStyles.Should().HaveCount(20);
+		}
+
+		[Test]
+		public void should_resolve_community_styles_to_their_gallery_ids()
+		{
+			MapStylePresets.GetStyleUrl(MapStyleTypes.Blueprint).Should().Be("mapbox://styles/mapbox-map-design/cks97e1e37nsd17nzg7p0308g");
+			MapStylePresets.GetStyleUrl(MapStyleTypes.NorthStar).Should().Be("mapbox://styles/mapbox/cj44mfrt20f082snokim4ungi");
+			MapStylePresets.Parse("28").Should().Be(MapStyleTypes.Unicorn);
+			MapStylePresets.Parse("29").Should().Be(MapStyleTypes.Automatic);
 		}
 
 		[Test]

@@ -834,6 +834,7 @@
   <data name="InvalidDestinationPoi" xml:space="preserve">
     <value>Seleccione un PDI de destino válido.</value>
   </data>
+  <data name="InvalidCallCoordinates" xml:space="preserve"><value>La latitud y la longitud deben ser números decimales: latitud entre -90 y 90, longitud entre -180 y 180.</value></data>
   <data name="LoggedOff" xml:space="preserve">
     <value>cerró sesión.</value>
   </data>

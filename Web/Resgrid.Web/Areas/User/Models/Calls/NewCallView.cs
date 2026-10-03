@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Identity;
 
@@ -54,9 +55,17 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 		/// <summary>
 		/// The pin the form posted, in the call's "lat,lon" form; null when none was placed. The form posts the pin as
 		/// <see cref="Latitude"/>/<see cref="Longitude"/>, never as Call.GeoLocationData, so this is what the new-call field
-		/// policy checks.
+		/// policy checks and what the call stores.
 		/// </summary>
 		public string PostedGeoLocation() =>
-			!string.IsNullOrEmpty(Latitude) && !string.IsNullOrEmpty(Longitude) ? string.Format("{0},{1}", Latitude, Longitude) : null;
+			!string.IsNullOrWhiteSpace(Latitude) && !string.IsNullOrWhiteSpace(Longitude) ? string.Format("{0},{1}", Latitude.Trim(), Longitude.Trim()) : null;
+
+		/// <summary>
+		/// True when a pin was typed or placed but is not a real coordinate: either half missing, not a decimal number, or out
+		/// of range (latitude -90 to 90, longitude -180 to 180).
+		/// </summary>
+		public bool HasInvalidPin() =>
+			(!string.IsNullOrWhiteSpace(Latitude) || !string.IsNullOrWhiteSpace(Longitude)) &&
+			(!LocationHelpers.IsValidLatitude(Latitude) || !LocationHelpers.IsValidLongitude(Longitude));
 	}
 }

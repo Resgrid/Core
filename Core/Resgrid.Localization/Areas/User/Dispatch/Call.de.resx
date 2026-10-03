@@ -776,6 +776,7 @@
   <data name="InvalidDestinationPoi" xml:space="preserve">
     <value>Bitte wählen Sie einen gültigen Ziel-POI aus.</value>
   </data>
+  <data name="InvalidCallCoordinates" xml:space="preserve"><value>Breiten- und Längengrad müssen Dezimalzahlen sein: Breitengrad zwischen -90 und 90, Längengrad zwischen -180 und 180.</value></data>
   <data name="LoggedOff" xml:space="preserve">
     <value>hat sich abgemeldet.</value>
   </data>

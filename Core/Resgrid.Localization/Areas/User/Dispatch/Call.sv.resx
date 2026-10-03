@@ -776,6 +776,7 @@
   <data name="InvalidDestinationPoi" xml:space="preserve">
     <value>Välj en giltig destinations-POI.</value>
   </data>
+  <data name="InvalidCallCoordinates" xml:space="preserve"><value>Latitud och longitud måste vara decimaltal: latitud mellan -90 och 90, longitud mellan -180 och 180.</value></data>
   <data name="LoggedOff" xml:space="preserve">
     <value>loggade ut.</value>
   </data>

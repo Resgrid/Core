@@ -246,5 +246,30 @@ namespace Resgrid.Tests.Models
 			NewCallFieldPolicyValidator.Validate(policy, new NewCallFieldValues { Address = model.Call.Address, Geolocation = model.PostedGeoLocation() })
 				.Should().ContainSingle().Which.Key.Should().Be(NewCallFieldKeys.Geolocation);
 		}
+
+		[TestCase("39.2733", "-119.5841", false)]
+		[TestCase(" 39.2733 ", "-119.5841 ", false)]
+		[TestCase(null, null, false)]
+		[TestCase(" ", "", false)]
+		[TestCase("39.2733", "", true)]
+		[TestCase("", "-119.5841", true)]
+		[TestCase("90.5", "-119.5841", true)]
+		[TestCase("39.2733", "-180.5", true)]
+		[TestCase("39.2733a", "-119.5841", true)]
+		public void A_typed_pin_must_be_a_real_coordinate(string latitude, string longitude, bool invalid)
+		{
+			// NewCall refuses an invalid pin before the policy runs, so a typo cannot satisfy a required geolocation.
+			var model = new Resgrid.Web.Areas.User.Models.Calls.NewCallView { Call = new Call(), Latitude = latitude, Longitude = longitude };
+
+			model.HasInvalidPin().Should().Be(invalid);
+		}
+
+		[Test]
+		public void A_posted_pin_is_stored_without_surrounding_spaces()
+		{
+			var model = new Resgrid.Web.Areas.User.Models.Calls.NewCallView { Call = new Call(), Latitude = " 39.2733 ", Longitude = "-119.5841 " };
+
+			model.PostedGeoLocation().Should().Be("39.2733,-119.5841");
+		}
 	}
 }

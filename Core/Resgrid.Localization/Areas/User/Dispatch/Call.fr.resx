@@ -776,6 +776,7 @@
   <data name="InvalidDestinationPoi" xml:space="preserve">
     <value>Veuillez sélectionner un POI de destination valide.</value>
   </data>
+  <data name="InvalidCallCoordinates" xml:space="preserve"><value>La latitude et la longitude doivent être des nombres décimaux : latitude entre -90 et 90, longitude entre -180 et 180.</value></data>
   <data name="LoggedOff" xml:space="preserve">
     <value>s'est déconnecté.</value>
   </data>

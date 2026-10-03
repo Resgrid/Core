@@ -254,7 +254,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Address = model.Call?.Address,
 				// A placed pin. An address alone does not count even though it is geocoded on save, matching the v4
 				// SaveCall, which also checks the policy before geocoding.
-				Geolocation = model.PostedGeoLocation() ?? model.Call?.GeoLocationData,
+				Geolocation = model.PostedGeoLocation(),
 				What3Words = model.What3Word,
 				ContactName = model.Call?.ContactName,
 				ContactInfo = model.Call?.ContactNumber,
@@ -298,6 +298,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (model.Call?.DestinationPoiId.HasValue == true && model.Call.DestinationPoiId.Value > 0 && destinationPoi == null)
 				ModelState.AddModelError("Call.DestinationPoiId", _dispatchLocalizer["InvalidDestinationPoi"].Value);
 
+			// The form posts the pin only as Latitude/Longitude. Call.GeoLocationData is model-bound, so drop anything
+			// posted into it (as with CallFormData below) rather than let an unchecked value satisfy the policy or be saved.
+			if (model.Call != null)
+				model.Call.GeoLocationData = null;
+
+			if (model.HasInvalidPin())
+				ModelState.AddModelError(nameof(model.Latitude), _dispatchLocalizer["InvalidCallCoordinates"].Value);
+
 			// Same policy the apps apply and the v4 API enforces: a call-taker cannot forward an
 			// incident to the field until the information the crews need is on it. Departments with no
 			// policy configured are unaffected.
@@ -325,8 +333,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (model.Call.Type == _dispatchLocalizer["NoType"].Value)
 					model.Call.Type = null;
 
-				if (!String.IsNullOrEmpty(model.Latitude) && !String.IsNullOrEmpty(model.Longitude))
-					model.Call.GeoLocationData = string.Format("{0},{1}", model.Latitude, model.Longitude);
+				var pin = model.PostedGeoLocation();
+				if (pin != null)
+					model.Call.GeoLocationData = pin;
 				// Address typed with no pin placed: locate it the same way the v4 SaveCall does, so the call
 				// still gets a map in the web and mobile apps.
 				else if (!string.IsNullOrWhiteSpace(model.Call.Address))

@@ -78,7 +78,7 @@
                         {
                             for (var i = 0; i < Model.ContactCategories.Count; i++)
                             {
-                                var categoryContacts = Model.Contacts.Where(x => x.ContactCategoryId == Model.ContactCategories[i].ContactCategoryId).ToList();
+                                var categoryContacts = (Model.Contacts ?? new List<Contact>()).Where(x => x.ContactCategoryId == Model.ContactCategories[i].ContactCategoryId).ToList();
 
                                 if (categoryContacts != null && categoryContacts.Any())
                                 {
@@ -99,11 +99,38 @@
                                 }
                                 else
                                 {
-                                    @Html.Raw("<div id='contactsTab' class='contactsTabPannel' style='display: none;'>")
+                                    @Html.Raw("<div id='contactsTab" + Model.ContactCategories[i].ContactCategoryId + "' class='contactsTabPannel' style='display: none;'>")
                                     @Html.Raw($"<div style='text-align:center;'><h3>{Html.Encode(localizer["NoContactsInThisCategory"].Value)}</h3></div>")
                                     @Html.Raw("</div>")
                                 }
                             }
+                        }
+
+                        // "No Category Contacts" tree node (TreeGroup_0): contacts with no category, or whose
+                        // category has since been deleted.
+                        var categoryIds = new HashSet<string>((Model.ContactCategories ?? new List<ContactCategory>()).Select(x => x.ContactCategoryId));
+                        var uncategorizedContacts = (Model.Contacts ?? new List<Contact>()).Where(x => string.IsNullOrWhiteSpace(x.ContactCategoryId) || !categoryIds.Contains(x.ContactCategoryId)).ToList();
+
+                        if (uncategorizedContacts.Any())
+                        {
+                            @Html.Raw("<div id='contactsTab0' class='contactsTabPannel' style='display: none;'>")
+                            @Html.Raw($"<div class='table-responsive'><table class='table table-striped' data-page-length='100' width='100%'><thead><tr><th class='span1'></th><th>{Html.Encode(commonLocalizer["Name"].Value)}</th><th>{Html.Encode(commonLocalizer["Type"].Value)}</th><th>{Html.Encode(commonLocalizer["Category"].Value)}</th><th>{Html.Encode(localizer["LastUpdated"].Value)}</th><th data-searchable='false' data-orderable='false'></th></tr></thead><tbody id='contactsCategory_none'>")
+
+                            foreach (var c in uncategorizedContacts)
+                            {
+                                ContactsTableButtonTemplate(c);
+
+                                @Html.Raw("</td>")
+                                @Html.Raw("</tr>")
+                            }
+
+                            @Html.Raw("</tbody></table></div></div>")
+                        }
+                        else
+                        {
+                            @Html.Raw("<div id='contactsTab0' class='contactsTabPannel' style='display: none;'>")
+                            @Html.Raw($"<div style='text-align:center;'><h3>{Html.Encode(localizer["NoContactsInThisCategory"].Value)}</h3></div>")
+                            @Html.Raw("</div>")
                         }
                     }
                 </div>

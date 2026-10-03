@@ -312,6 +312,39 @@ namespace Resgrid.Tests.Web.Services
 		}
 
 		[Test]
+		public async System.Threading.Tasks.Task should_replay_dispatch_when_no_key_is_pressed_then_hang_up_after_the_last_replay()
+		{
+			var call = new Call
+			{
+				CallId = 42,
+				DepartmentId = 7,
+				Number = "42",
+				Name = "Call 42",
+				Priority = (int)CallPriority.High,
+				Address = "123 Main St",
+				NatureOfCall = "Structure fire"
+			};
+
+			_callsServiceMock.Setup(x => x.GetCallByIdAsync(42, true)).ReturnsAsync(call);
+			_callsServiceMock
+				.Setup(x => x.PopulateCallData(It.Is<Call>(c => c.CallId == 42), true, true, false, false, false, false, false, false, false, false))
+				.ReturnsAsync(call);
+
+			var dispatchPrompt = Uri.EscapeDataString("New call, Call 42. Nature, Structure fire. Address, 123 Main St. Priority, High.");
+
+			var first = ((ContentResult)await BuildController().VoiceCall("user1", 42)).Content;
+			first.Should().Contain(dispatchPrompt);
+			first.Should().Contain("https://resgridapi.local/api/Twilio/VoiceCall?userId=user1&amp;callId=42&amp;replay=1");
+			first.Should().NotContain("<Hangup");
+			first.IndexOf("VoiceCallAction", StringComparison.Ordinal).Should().BeLessThan(first.IndexOf("replay=1", StringComparison.Ordinal));
+
+			var last = ((ContentResult)await BuildController().VoiceCall("user1", 42, replay: "2")).Content;
+			last.Should().Contain(dispatchPrompt);
+			last.Should().Contain("<Hangup");
+			last.Should().NotContain("replay=3");
+		}
+
+		[Test]
 		public void dispatch_prompt_helpers_should_end_with_sentence_punctuation()
 		{
 			var call = new Call

@@ -256,6 +256,28 @@ namespace Resgrid.Tests.Services
 			mapLayersDocRepository.Verify(x => x.GetAllMapLayersByDepartmentIdAsync(7, MapLayerTypes.TopLevel), Times.Once);
 		}
 
+		[Test]
+		public async Task GetMapLayersForTypeDepartmentAsync_should_return_no_layers_when_mongo_is_unreachable()
+		{
+			// GitHub #243: a self-hosted install pointing at an unreachable Mongo must still draw its maps.
+			DataConfig.DocDatabaseType = DatabaseTypes.MongoDb;
+
+			var mongoRepository = new Mock<IMongoRepository<MapLayer>>();
+			mongoRepository
+				.Setup(x => x.FilterByAsync(It.IsAny<System.Linq.Expressions.Expression<Func<MapLayer, bool>>>()))
+				.ThrowsAsync(new TimeoutException("A timeout occurred after 5000ms selecting a server."));
+
+			var service = new MappingService(
+				new Mock<IPoiTypesRepository>().Object,
+				new Mock<IPoisRepository>().Object,
+				new Lazy<IMongoRepository<MapLayer>>(() => mongoRepository.Object),
+				new Mock<IMapLayersDocRepository>().Object);
+
+			var result = await service.GetMapLayersForTypeDepartmentAsync(7, MapLayerTypes.TopLevel);
+
+			result.Should().BeEmpty();
+		}
+
 		private static UnitsService CreateUnitsService(IEventAggregator eventAggregator, Lazy<IMongoRepository<UnitsLocation>> mongoRepository, IUnitLocationsDocRepository unitLocationsDocRepository)
 		{
 			return new UnitsService(

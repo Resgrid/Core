@@ -10,6 +10,7 @@ using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Repositories.Queries;
 using Resgrid.Model.Services;
 using Resgrid.Services;
 
@@ -28,6 +29,7 @@ namespace Resgrid.Tests.Services
 		private Mock<ICustomStateService> _customStateService;
 		private Mock<IDepartmentSettingsService> _settingsService;
 		private Mock<IEventAggregator> _eventAggregator;
+		private Mock<IUnitOfWork> _unitOfWork;
 		private List<UnitStatusAlertAcknowledgement> _inserted;
 		private List<UnitStatusAlertAcknowledgement> _updated;
 		private UnitStatusAlertsService _service;
@@ -60,8 +62,14 @@ namespace Resgrid.Tests.Services
 				.Callback<UnitStatusAlertAcknowledgement, CancellationToken, bool>((a, _, _) => _updated.Add(a))
 				.ReturnsAsync((UnitStatusAlertAcknowledgement a, CancellationToken _, bool _) => a);
 
-			_service = new UnitStatusAlertsService(_repository.Object, _unitsService.Object, _customStateService.Object, _settingsService.Object, _eventAggregator.Object);
+			_unitOfWork = new Mock<IUnitOfWork>();
+
+			_service = new UnitStatusAlertsService(_repository.Object, _unitsService.Object, _customStateService.Object, _settingsService.Object, _eventAggregator.Object,
+				_unitOfWork.Object);
 		}
+
+		private static Npgsql.PostgresException UniqueViolation() =>
+			new Npgsql.PostgresException("duplicate key value violates unique constraint \"ux_unitstatusalertacknowledgements_activeepisode\"", "ERROR", "ERROR", "23505");
 
 		private void GivenCurrentState(int unitStateId, DateTime timestampUtc) =>
 			_unitsService.Setup(x => x.GetLastUnitStateByUnitIdAsync(UnitId)).ReturnsAsync(new UnitState { UnitStateId = unitStateId, UnitId = UnitId, Timestamp = timestampUtc });
@@ -251,31 +259,78 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task Replacing_clears_and_inserts_in_one_committed_transaction()
+		{
+			var order = new List<string>();
+			_unitOfWork.Setup(x => x.CreateOrGetConnectionAsync(It.IsAny<CancellationToken>())).Callback(() => order.Add("open")).ReturnsAsync((System.Data.Common.DbConnection)null);
+			_unitOfWork.Setup(x => x.CommitChanges()).Callback(() => order.Add("commit"));
+			var earlier = new UnitStatusAlertAcknowledgement { UnitStatusAlertAcknowledgementId = "earlier", DepartmentId = DepartmentId, UnitId = UnitId, UnitStateId = UnitStateId };
+			_repository.Setup(x => x.GetActiveForUnitStateAsync(DepartmentId, UnitId, UnitStateId)).ReturnsAsync(new List<UnitStatusAlertAcknowledgement> { earlier });
+			_repository.Setup(x => x.UpdateAsync(It.IsAny<UnitStatusAlertAcknowledgement>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.Callback(() => order.Add("clear")).ReturnsAsync((UnitStatusAlertAcknowledgement a, CancellationToken _, bool _) => a);
+			_repository.Setup(x => x.InsertAsync(It.IsAny<UnitStatusAlertAcknowledgement>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.Callback(() => order.Add("insert")).ReturnsAsync((UnitStatusAlertAcknowledgement a, CancellationToken _, bool _) => a);
+
+			var result = await Acknowledge();
+
+			result.Success.Should().BeTrue();
+			order.Should().Equal(new[] { "open", "clear", "insert", "commit" });
+			_unitOfWork.Verify(x => x.DiscardChanges(), Times.Never);
+		}
+
+		[Test]
 		public async Task Losing_a_race_hands_back_the_winning_acknowledgement()
 		{
 			var winner = new UnitStatusAlertAcknowledgement { UnitStatusAlertAcknowledgementId = "winner", DepartmentId = DepartmentId, UnitId = UnitId, UnitStateId = UnitStateId };
+			var rolledBack = false;
+			_unitOfWork.Setup(x => x.DiscardChanges()).Callback(() => rolledBack = true);
 			_repository.SetupSequence(x => x.GetActiveForUnitStateAsync(DepartmentId, UnitId, UnitStateId))
 				.ReturnsAsync(new List<UnitStatusAlertAcknowledgement>())
-				.ReturnsAsync(new List<UnitStatusAlertAcknowledgement> { winner });
+				.ReturnsAsync(() => rolledBack ? new List<UnitStatusAlertAcknowledgement> { winner } : throw new InvalidOperationException("read inside the failed transaction"));
 			_repository.Setup(x => x.InsertAsync(It.IsAny<UnitStatusAlertAcknowledgement>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
-				.ThrowsAsync(new InvalidOperationException("unique index"));
+				.ThrowsAsync(UniqueViolation());
 
 			var result = await Acknowledge();
 
 			result.Success.Should().BeFalse();
 			result.Error.Should().Be(UnitStatusAlertAcknowledgementResult.Conflict);
 			result.Acknowledgement.Should().BeSameAs(winner);
+			_unitOfWork.Verify(x => x.DiscardChanges(), Times.Once);
+			_unitOfWork.Verify(x => x.CommitChanges(), Times.Never);
 		}
 
 		[Test]
-		public async Task An_insert_failure_that_is_not_a_race_is_not_swallowed()
+		public async Task An_insert_failure_that_is_not_a_race_is_rolled_back_and_not_swallowed()
 		{
+			var earlier = new UnitStatusAlertAcknowledgement { UnitStatusAlertAcknowledgementId = "earlier", DepartmentId = DepartmentId, UnitId = UnitId, UnitStateId = UnitStateId };
+			_repository.Setup(x => x.GetActiveForUnitStateAsync(DepartmentId, UnitId, UnitStateId)).ReturnsAsync(new List<UnitStatusAlertAcknowledgement> { earlier });
 			_repository.Setup(x => x.InsertAsync(It.IsAny<UnitStatusAlertAcknowledgement>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
 				.ThrowsAsync(new InvalidOperationException("database down"));
 
 			Func<Task> act = () => Acknowledge();
 
 			await act.Should().ThrowAsync<InvalidOperationException>();
+			_unitOfWork.Verify(x => x.DiscardChanges(), Times.Once);
+			_unitOfWork.Verify(x => x.CommitChanges(), Times.Never);
+			// Not mistaken for a lost race: nobody looks for a winner.
+			_repository.Verify(x => x.GetActiveForUnitStateAsync(DepartmentId, UnitId, UnitStateId), Times.Once);
+			_eventAggregator.Verify(x => x.SendMessageAsync(It.IsAny<UnitStatusAlertUpdatedEvent>()), Times.Never);
+		}
+
+		[Test]
+		public async Task A_cancelled_insert_is_not_reported_as_a_conflict()
+		{
+			var winner = new UnitStatusAlertAcknowledgement { UnitStatusAlertAcknowledgementId = "winner", DepartmentId = DepartmentId, UnitId = UnitId, UnitStateId = UnitStateId };
+			_repository.SetupSequence(x => x.GetActiveForUnitStateAsync(DepartmentId, UnitId, UnitStateId))
+				.ReturnsAsync(new List<UnitStatusAlertAcknowledgement>())
+				.ReturnsAsync(new List<UnitStatusAlertAcknowledgement> { winner });
+			_repository.Setup(x => x.InsertAsync(It.IsAny<UnitStatusAlertAcknowledgement>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ThrowsAsync(new OperationCanceledException());
+
+			Func<Task> act = () => Acknowledge();
+
+			await act.Should().ThrowAsync<OperationCanceledException>();
+			_unitOfWork.Verify(x => x.DiscardChanges(), Times.Once);
 		}
 
 		[Test]

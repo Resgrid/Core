@@ -7,6 +7,7 @@ using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Repositories.Queries;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Services
@@ -24,15 +25,18 @@ namespace Resgrid.Services
 		private readonly ICustomStateService _customStateService;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IEventAggregator _eventAggregator;
+		private readonly IUnitOfWork _unitOfWork;
 
 		public UnitStatusAlertsService(IUnitStatusAlertAcknowledgementsRepository acknowledgementsRepository, IUnitsService unitsService,
-			ICustomStateService customStateService, IDepartmentSettingsService departmentSettingsService, IEventAggregator eventAggregator)
+			ICustomStateService customStateService, IDepartmentSettingsService departmentSettingsService, IEventAggregator eventAggregator,
+			IUnitOfWork unitOfWork)
 		{
 			_acknowledgementsRepository = acknowledgementsRepository;
 			_unitsService = unitsService;
 			_customStateService = customStateService;
 			_departmentSettingsService = departmentSettingsService;
 			_eventAggregator = eventAggregator;
+			_unitOfWork = unitOfWork;
 		}
 
 		public async Task<List<UnitStatusAlertAcknowledgement>> GetCurrentAcknowledgementsForDepartmentAsync(int departmentId)
@@ -104,14 +108,22 @@ namespace Resgrid.Services
 				AcknowledgedOn = now
 			};
 
-			await ClearActiveAsync(departmentId, unitId, unitStateId, userId, now, cancellationToken);
+			// The clear and the insert are one transaction, so a failed insert puts the earlier acknowledgement back
+			// instead of leaving the episode with none.
+			await _unitOfWork.CreateOrGetConnectionAsync(cancellationToken);
 
 			try
 			{
+				await ClearActiveAsync(departmentId, unitId, unitStateId, userId, now, cancellationToken);
 				await _acknowledgementsRepository.InsertAsync(acknowledgement, cancellationToken);
+
+				_unitOfWork.CommitChanges();
 			}
-			catch (Exception)
+			catch (Exception ex) when (IsUniqueViolation(ex))
 			{
+				// Rolled back before reading: PostgreSQL refuses every statement in a transaction that has failed.
+				_unitOfWork.DiscardChanges();
+
 				// The filtered unique index allows one uncleared row per episode. If another dispatcher's insert got
 				// in between our clear and our insert, theirs stands; hand it back so the board can show it.
 				var winner = (await _acknowledgementsRepository.GetActiveForUnitStateAsync(departmentId, unitId, unitStateId))?.FirstOrDefault();
@@ -120,6 +132,11 @@ namespace Resgrid.Services
 					throw;
 
 				return UnitStatusAlertAcknowledgementResult.Fail(UnitStatusAlertAcknowledgementResult.Conflict, winner);
+			}
+			catch
+			{
+				_unitOfWork.DiscardChanges();
+				throw;
 			}
 
 			await NotifyAsync(departmentId, unitId);
@@ -183,8 +200,18 @@ namespace Resgrid.Services
 			}
 			catch (Exception ex)
 			{
-				Framework.Logging.LogException(ex);
+				Framework.Logging.LogException(ex, $"Unit status alert update could not be published for department {departmentId}, unit {unitId}.");
 			}
+		}
+
+		/// <summary>PostgreSQL 23505 or SQL Server 2601/2627: the only insert failure that means another dispatcher acknowledged first.</summary>
+		private static bool IsUniqueViolation(Exception ex)
+		{
+			if (ex is Npgsql.PostgresException postgres)
+				return postgres.SqlState == "23505";
+			if (ex is Microsoft.Data.SqlClient.SqlException sql)
+				return sql.Number == 2601 || sql.Number == 2627;
+			return false;
 		}
 	}
 }

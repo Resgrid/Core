@@ -100,7 +100,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					result.PageSize = 1;
 					result.Status = ResponseHelper.Success;
 				}
-				else if (dispatchCategoryNote != null && (!explicitDispatchNote.ExpiresOn.HasValue || explicitDispatchNote.ExpiresOn.Value >= System.DateTime.UtcNow))
+				else if (dispatchCategoryNote != null && (!dispatchCategoryNote.ExpiresOn.HasValue || dispatchCategoryNote.ExpiresOn.Value >= System.DateTime.UtcNow))
 				{
 					result.Data = ConvertNoteData(dispatchCategoryNote, department);
 

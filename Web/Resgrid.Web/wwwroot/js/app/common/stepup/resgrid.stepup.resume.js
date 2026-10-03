@@ -9,8 +9,18 @@
         if (failed) { failed.style.display = ''; }
     }
 
+    // The server only renders a local page here; anything else (another origin, a javascript: address) goes to the site root.
+    function sameOriginOrRoot(address) {
+        try {
+            var url = new URL(address || '/', window.location.origin);
+            return url.origin === window.location.origin ? url.href : '/';
+        } catch (e) {
+            return '/';
+        }
+    }
+
     function replayScriptCall(form) {
-        var back = form.getAttribute('data-back') || '/';
+        var back = sameOriginOrRoot(form.getAttribute('data-back'));
         var body = new URLSearchParams(new FormData(form));
 
         fetch(form.getAttribute('action'), {

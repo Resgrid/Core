@@ -773,6 +773,11 @@ namespace Resgrid.Workers.Console
 
 		private static IServiceProvider CreateServices()
 		{
+			// FluentMigrator quietly swaps in its connectionless preview processor when the connection string is
+			// empty: nothing is applied and the first Exists() check throws NotImplementedException (GitHub #536).
+			if (String.IsNullOrWhiteSpace(Config.DataConfig.CoreConnectionString))
+				throw new InvalidOperationException("DataConfig.CoreConnectionString is empty, so the database upgrade cannot connect. Set RESGRID__DataConfig__CoreConnectionString (and RESGRID__DataConfig__DatabaseType: 0 = SQL Server, 1 = PostgreSQL).");
+
 			if (Config.DataConfig.DatabaseType == Config.DatabaseTypes.Postgres)
 			{
 				return new ServiceCollection()

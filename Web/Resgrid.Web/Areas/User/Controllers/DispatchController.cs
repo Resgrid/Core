@@ -325,6 +325,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (!String.IsNullOrEmpty(model.Latitude) && !String.IsNullOrEmpty(model.Longitude))
 					model.Call.GeoLocationData = string.Format("{0},{1}", model.Latitude, model.Longitude);
+				// Address typed with no pin placed: locate it the same way the v4 SaveCall does, so the call
+				// still gets a map in the web and mobile apps.
+				else if (!string.IsNullOrWhiteSpace(model.Call.Address))
+					model.Call.GeoLocationData = await _geoLocationProvider.GetLatLonFromAddress(model.Call.Address);
 
 				// Check-in timers
 				var checkInTimersValue = collection["Call.CheckInTimersEnabled"].FirstOrDefault();
@@ -1552,6 +1556,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (!String.IsNullOrEmpty(model.Latitude) && !String.IsNullOrEmpty(model.Longitude))
 					model.Call.GeoLocationData = string.Format("{0},{1}", model.Latitude, model.Longitude);
+				// Address typed with no pin placed: locate it the same way the v4 SaveCall does, so the call
+				// still gets a map in the web and mobile apps.
+				else if (!string.IsNullOrWhiteSpace(model.Call.Address))
+					model.Call.GeoLocationData = await _geoLocationProvider.GetLatLonFromAddress(model.Call.Address);
 
 				List<string> dispatchingUserIds = new List<string>();
 				List<int> dispatchingGroupIds = new List<int>();

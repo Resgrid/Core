@@ -56,6 +56,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Training_Create)]
 		public async Task<IActionResult> New(NewTrainingModel model, IFormCollection form, ICollection<IFormFile> attachments)
 		{
@@ -84,11 +85,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 						var attachment = new TrainingAttachment();
 						attachment.FileType = file.ContentType;
 						attachment.FileName = file.FileName;
+						attachment.Data = await ReadUploadedFileAsync(file);
 
-						var uploadedFile = new byte[file.OpenReadStream().Length];
-						file.OpenReadStream().Read(uploadedFile, 0, uploadedFile.Length);
-
-						attachment.Data = uploadedFile;
 						model.Training.Attachments.Add(attachment);
 					}
 				}
@@ -178,10 +176,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Training.GroupsToAdd = form["groupsToAdd"];
 				model.Training.RolesToAdd = form["rolesToAdd"];
 				model.Training.UsersToAdd = form["usersToAdd"];
-				model.Training.Description = System.Net.WebUtility.HtmlDecode(model.Training.Description);
-				model.Training.TrainingText = System.Net.WebUtility.HtmlDecode(model.Training.TrainingText);
+				// Description/TrainingText are posted as the editor's HTML and sanitized by the service. They must not be
+				// HTML-decoded first: that turned escaped text such as "NORA &lt;nora@example.org&gt;" into a tag the
+				// sanitizer then removed along with the text (#181).
 
-				
 				foreach (var i in questions)
 				{
 					if (form.ContainsKey("question_" + i))
@@ -224,6 +222,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				return RedirectToAction("Index");
 			}
+
+			// The editors are re-filled with Html.Raw, so never echo the posted HTML back unsanitized.
+			model.Training.Description = StringHelpers.SanitizeHtmlInString(model.Training.Description);
+			model.Training.TrainingText = StringHelpers.SanitizeHtmlInString(model.Training.TrainingText);
 
 			return View(model);
 		}
@@ -316,12 +318,8 @@ var extension = System.IO.Path.GetExtension(file.FileName)?.TrimStart('.') ?? st
 						attachment.FileType = file.ContentType;
 						attachment.FileName = file.FileName;
 						attachment.TrainingId = trainingId;
+						attachment.Data = await ReadUploadedFileAsync(file);
 
-						using var stream = file.OpenReadStream();
-						var uploadedFile = new byte[stream.Length];
-						await stream.ReadAsync(uploadedFile, 0, uploadedFile.Length);
-
-						attachment.Data = uploadedFile;
 						existingTraining.Attachments.Add(attachment);
 					}
 				}
@@ -420,21 +418,20 @@ var extension = System.IO.Path.GetExtension(file.FileName)?.TrimStart('.') ?? st
 
 			if (ModelState.IsValid)
 			{
-				// Update basic properties
+				// Update basic properties. Description/TrainingText are the editor's HTML and are sanitized by the service;
+				// they must not be HTML-decoded first (that turned escaped "<text>" into tags the sanitizer removed, #181).
 				existingTraining.Name = model.Training.Name;
-				existingTraining.Description = System.Net.WebUtility.HtmlDecode(model.Training.Description);
-				existingTraining.TrainingText = System.Net.WebUtility.HtmlDecode(model.Training.TrainingText);
+				existingTraining.Description = model.Training.Description;
+				existingTraining.TrainingText = model.Training.TrainingText;
 				existingTraining.MinimumScore = model.Training.MinimumScore;
 				existingTraining.ToBeCompletedBy = model.Training.ToBeCompletedBy;
 				existingTraining.GroupsToAdd = form["groupsToAdd"];
 				existingTraining.RolesToAdd = form["rolesToAdd"];
 				existingTraining.UsersToAdd = form["usersToAdd"];
 
-				// Handle questions - clear and repopulate so SyncChildArrayUpdates can detect deletions
-				if (existingTraining.Questions == null)
-					existingTraining.Questions = new Collection<TrainingQuestion>();
-				else
-					existingTraining.Questions.Clear();
+				// Handle questions - rows for existing questions/answers post their ids (questionId_N / answerId_N_M) so the
+				// service updates them in place and deletes the ones that were removed, instead of adding a duplicate set.
+				existingTraining.Questions = new Collection<TrainingQuestion>();
 
 				List<int> questions = form.Keys
 						.Where(k => k.StartsWith("question_"))
@@ -449,6 +446,9 @@ var extension = System.IO.Path.GetExtension(file.FileName)?.TrimStart('.') ?? st
 						var question = new TrainingQuestion();
 						question.Question = questionText;
 						question.TrainingId = trainingId;
+
+						if (int.TryParse(form["questionId_" + i].ToString(), out var questionId) && questionId > 0)
+							question.TrainingQuestionId = questionId;
 
 						var answerPrefix = "answerForQuestion_" + i + "_";
 						List<int> answers = form.Keys
@@ -468,6 +468,9 @@ var extension = System.IO.Path.GetExtension(file.FileName)?.TrimStart('.') ?? st
 							trainingQuestionAnswer.Answer = answerForQuestion;
 							trainingQuestionAnswer.TrainingQuestionId = question.TrainingQuestionId;
 
+							if (int.TryParse(form["answerId_" + i + "_" + answer].ToString(), out var answerId) && answerId > 0)
+								trainingQuestionAnswer.TrainingQuestionAnswerId = answerId;
+
 							if (!string.IsNullOrWhiteSpace(possibleAnswer))
 							{
 								if ("answerForQuestion_" + i + "_" + answer == possibleAnswer)
@@ -481,7 +484,31 @@ var extension = System.IO.Path.GetExtension(file.FileName)?.TrimStart('.') ?? st
 					}
 				}
 
+				var addedUsers = existingTraining.Users?.Where(x => x.TrainingUserId == 0).ToList() ?? new List<TrainingUser>();
+
 				await _trainingService.SaveAsync(existingTraining);
+
+				// The notifier worker announces a training only once (while Notified is empty), so people added after that
+				// would never be told about it. Before the first notice goes out the worker includes them anyway.
+				if (existingTraining.Notified.HasValue && addedUsers.Any())
+				{
+					try
+					{
+						await _trainingService.SendInitialTrainingNoticeAsync(new Training
+						{
+							TrainingId = existingTraining.TrainingId,
+							DepartmentId = existingTraining.DepartmentId,
+							Name = existingTraining.Name,
+							ToBeCompletedBy = existingTraining.ToBeCompletedBy,
+							Users = addedUsers
+						});
+					}
+					catch (Exception ex)
+					{
+						// The training is already saved; a failed notice must not turn the save into an error page.
+						Logging.LogException(ex);
+					}
+				}
 
 				return RedirectToAction("Index");
 			}
@@ -602,7 +629,9 @@ var extension = System.IO.Path.GetExtension(file.FileName)?.TrimStart('.') ?? st
 		}
 
 		[HttpGet]
-		[Authorize(Policy = ResgridResources.Training_View)]
+		// Every member holds Training_View; the report lists everyone's progress and scores and its only actions (reset)
+		// need Training_Update, so it is limited to the people who can manage trainings - the same set the Index shows it to.
+		[Authorize(Policy = ResgridResources.Training_Update)]
 		public async Task<IActionResult> Report(int trainingId)
 		{
 			var model = new TrainingReportView();
@@ -626,6 +655,16 @@ var extension = System.IO.Path.GetExtension(file.FileName)?.TrimStart('.') ?? st
 			}
 
 			return View(model);
+		}
+
+		private static async Task<byte[]> ReadUploadedFileAsync(IFormFile file)
+		{
+			// Read the whole upload: a single Stream.Read is not guaranteed to fill the buffer.
+			using var stream = file.OpenReadStream();
+			using var memoryStream = new System.IO.MemoryStream();
+			await stream.CopyToAsync(memoryStream);
+
+			return memoryStream.ToArray();
 		}
 	}
 }

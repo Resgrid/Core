@@ -61,14 +61,14 @@ namespace Resgrid.Console.Commands
 
 				if (layers != null && layers.Any())
 				{
-					Parallel.ForEach(layers, layer =>
+					await Parallel.ForEachAsync(layers, cancellationToken, async (layer, _) =>
 					{
-						var existingLayer = mapLayersDocRepository.GetByOldIdAsync(layer.Id.ToString()).Result;
+						var existingLayer = await mapLayersDocRepository.GetByOldIdAsync(layer.Id.ToString());
 
 						if (existingLayer == null)
 						{
 							logger.LogInformation($"Migrating Map: {layer.Id.ToString()}");
-							try { mapLayersDocRepository.InsertAsync(layer).GetAwaiter().GetResult(); }
+							try { await mapLayersDocRepository.InsertAsync(layer); }
 							catch (Exception ex) { logger.LogError(ex.ToString()); }
 						}
 					});
@@ -78,14 +78,14 @@ namespace Resgrid.Console.Commands
 
 				if (unitLocations != null && unitLocations.Any())
 				{
-					Parallel.ForEach(unitLocations, unitLocation =>
+					await Parallel.ForEachAsync(unitLocations, cancellationToken, async (unitLocation, _) =>
 					{
-						var existingLocation = unitsLocationsDocRepository.GetByOldIdAsync(unitLocation.Id.ToString()).Result;
+						var existingLocation = await unitsLocationsDocRepository.GetByOldIdAsync(unitLocation.Id.ToString());
 
 						if (existingLocation == null)
 						{
 							logger.LogInformation($"Migrating Unit Location: {unitLocation.Id.ToString()}");
-							try { unitsLocationsDocRepository.InsertAsync(unitLocation).GetAwaiter().GetResult(); }
+							try { await unitsLocationsDocRepository.InsertAsync(unitLocation); }
 							catch (Exception ex) { logger.LogError(ex.ToString()); }
 						}
 					});
@@ -95,14 +95,14 @@ namespace Resgrid.Console.Commands
 
 				if (personnelLocations != null && personnelLocations.Any())
 				{
-					Parallel.ForEach(personnelLocations, personLocation =>
+					await Parallel.ForEachAsync(personnelLocations, cancellationToken, async (personLocation, _) =>
 					{
-						var existingLocation = personnelLocationsDocRepository.GetByOldIdAsync(personLocation.Id.ToString()).Result;
+						var existingLocation = await personnelLocationsDocRepository.GetByOldIdAsync(personLocation.Id.ToString());
 
 						if (existingLocation == null)
 						{
 							logger.LogInformation($"Migrating Personnel Location: {personLocation.Id.ToString()}");
-							try { personnelLocationsDocRepository.InsertAsync(personLocation).GetAwaiter().GetResult(); }
+							try { await personnelLocationsDocRepository.InsertAsync(personLocation); }
 							catch (Exception ex) { logger.LogError(ex.ToString()); }
 						}
 					});

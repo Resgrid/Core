@@ -298,19 +298,15 @@ IF NOT exists (select constraint_name from information_schema.table_constraints 
       REFERENCES public."AspNetRoles"("Id") ON DELETE CASCADE ON UPDATE NO ACTION INITIALLY IMMEDIATE;
 END IF;
 
+  -- INSERT ... SELECT ... FROM "__Efmigrationshistory" inserted nothing while the table was empty, so
+  -- these rows were never written and this whole block re-ran on every upgrade (GitHub #286).
   INSERT INTO public."__Efmigrationshistory" ("MigrationId", "ProductVersion")
-  SELECT '20210904153137_CreateOpenIddictModels' AS "MigrationId",'5.0.9' AS "ProductVersion" FROM public."__Efmigrationshistory"
-  WHERE NOT EXISTS(
-              SELECT "MigrationId" FROM public."__Efmigrationshistory" WHERE "MigrationId" = '20210904153137_CreateOpenIddictModels'
-      )
-  LIMIT 1;
+  VALUES ('20210904153137_CreateOpenIddictModels', '5.0.9')
+  ON CONFLICT ("MigrationId") DO NOTHING;
 
   INSERT INTO public."__Efmigrationshistory" ("MigrationId", "ProductVersion")
-  SELECT '20240412153137_UpdateOpenIddictModelsToV5' AS "MigrationId",'5.0.9' AS "ProductVersion" FROM public."__Efmigrationshistory"
-  WHERE NOT EXISTS(
-              SELECT "MigrationId" FROM public."__Efmigrationshistory" WHERE "MigrationId" = '20240412153137_UpdateOpenIddictModelsToV5'
-      )
-  LIMIT 1;
+  VALUES ('20240412153137_UpdateOpenIddictModelsToV5', '5.0.9')
+  ON CONFLICT ("MigrationId") DO NOTHING;
 
   END IF;
 END $$;

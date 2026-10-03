@@ -1623,13 +1623,16 @@ namespace Resgrid.Services
 
 		public async Task<bool> CanUserCheckInToCalendarEventAsync(string userId, int calendarItemId)
 		{
-			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
 			var item = await _calendarService.GetCalendarItemByIdAsync(calendarItemId);
 
-			if (department == null || item == null)
+			if (item == null || string.IsNullOrWhiteSpace(userId))
 				return false;
 
-			if (item.DepartmentId != department.DepartmentId)
+			// The event's own department, with its full roster. GetDepartmentByUserIdAsync returns whichever
+			// department the user's active/default membership lands on first, and only the caller's row.
+			var department = await _departmentsService.GetDepartmentByIdAsync(item.DepartmentId);
+
+			if (!IsCurrentCalendarDepartmentMember(department, userId))
 				return false;
 
 			// Check-in disabled for this event
@@ -1643,10 +1646,10 @@ namespace Resgrid.Services
 			// Admin-only mode: only creator, dept admin, or group admin can perform check-ins
 			if (item.CheckInType == (int)CalendarItemCheckInTypes.AdminOnly)
 			{
-				if (department.IsUserAnAdmin(userId))
+				if (IsCalendarDepartmentAdmin(department, userId))
 					return true;
 
-				if (!string.IsNullOrWhiteSpace(item.CreatorUserId) && item.CreatorUserId == userId)
+				if (IsCalendarItemCreator(item, userId))
 					return true;
 
 				var group = await _departmentGroupsService.GetGroupForUserAsync(userId, department.DepartmentId);
@@ -1661,101 +1664,136 @@ namespace Resgrid.Services
 
 		public async Task<bool> CanUserAdminCheckInCalendarEventAsync(string userId, int calendarItemId, string targetUserId)
 		{
-			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
 			var item = await _calendarService.GetCalendarItemByIdAsync(calendarItemId);
 
-			if (department == null || item == null)
-				return false;
-
-			if (item.DepartmentId != department.DepartmentId)
+			if (item == null || string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(targetUserId))
 				return false;
 
 			// Check-in disabled for this event
 			if (item.CheckInType == (int)CalendarItemCheckInTypes.Disabled)
 				return false;
 
-			// Department admins can check in users in their department
-			if (department.IsUserAnAdmin(userId))
-			{
-				if (department.IsUserInDepartment(targetUserId))
-					return true;
+			// The event's department with every member row: the target has to be found in it, and the
+			// target need not be an attendee. (GetDepartmentByUserIdAsync carries the caller's row only,
+			// so every target looked like a non-member.)
+			var department = await _departmentsService.GetDepartmentByIdAsync(item.DepartmentId);
 
+			if (!IsCurrentCalendarDepartmentMember(department, userId))
 				return false;
-			}
+
+			// Removed and disabled members cannot be checked in
+			if (!IsCurrentCalendarDepartmentMember(department, targetUserId))
+				return false;
+
+			// Department admins can check in users in their department
+			if (IsCalendarDepartmentAdmin(department, userId))
+				return true;
 
 			// Calendar item creator can check in users in their department
-			if (!string.IsNullOrWhiteSpace(item.CreatorUserId) && item.CreatorUserId == userId)
-			{
-				if (department.IsUserInDepartment(targetUserId))
-					return true;
-
-				return false;
-			}
+			if (IsCalendarItemCreator(item, userId))
+				return true;
 
 			// Group admins can check in users in their group or child groups
-			var adminGroup = await _departmentGroupsService.GetGroupForUserAsync(userId, department.DepartmentId);
-			if (adminGroup != null && adminGroup.IsUserGroupAdmin(userId))
-			{
-				// Check if the target user is in the admin's group
-				if (adminGroup.IsUserInGroup(targetUserId))
-					return true;
+			return await IsUserInCalendarAdminGroupScopeAsync(userId, department.DepartmentId, targetUserId);
+		}
 
-				// Check child groups
-				var childGroups = await _departmentGroupsService.GetAllChildDepartmentGroupsAsync(adminGroup.DepartmentGroupId);
-				if (childGroups != null)
+		public async Task<bool> CanUserEditCalendarCheckInAsync(string userId, string checkInId)
+		{
+			var checkIn = await _calendarService.GetCheckInByIdAsync(checkInId);
+
+			if (checkIn == null || string.IsNullOrWhiteSpace(userId))
+				return false;
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(checkIn.DepartmentId);
+
+			if (!IsCurrentCalendarDepartmentMember(department, userId))
+				return false;
+
+			if (string.Equals(checkIn.UserId, userId, StringComparison.OrdinalIgnoreCase))
+				return true;
+
+			if (IsCalendarDepartmentAdmin(department, userId))
+				return true;
+
+			// Calendar item creator can edit check-ins
+			var item = await _calendarService.GetCalendarItemByIdAsync(checkIn.CalendarItemId);
+			if (item != null && IsCalendarItemCreator(item, userId))
+				return true;
+
+			// Group admins can edit check-ins for their group members
+			return await IsUserInCalendarAdminGroupScopeAsync(userId, department.DepartmentId, checkIn.UserId);
+		}
+
+		/// <summary>
+		/// Whether the user holds a current membership (not removed, not disabled) in the department. The
+		/// managing user always counts, as in <see cref="Department.IsUserInDepartment"/>.
+		/// </summary>
+		private static bool IsCurrentCalendarDepartmentMember(Department department, string userId)
+		{
+			if (department == null || string.IsNullOrWhiteSpace(userId))
+				return false;
+
+			if (string.Equals(department.ManagingUserId, userId, StringComparison.OrdinalIgnoreCase))
+				return true;
+
+			return department.Members != null && department.Members.Any(m =>
+				string.Equals(m.UserId, userId, StringComparison.OrdinalIgnoreCase)
+				&& DepartmentMemberStateHelper.IsCurrentMember(m, department.DepartmentId));
+		}
+
+		/// <summary>
+		/// Admin test over current rows only: the full roster also carries removed rows, and removal leaves
+		/// IsAdmin set.
+		/// </summary>
+		private static bool IsCalendarDepartmentAdmin(Department department, string userId)
+		{
+			if (department == null || string.IsNullOrWhiteSpace(userId))
+				return false;
+
+			if (string.Equals(department.ManagingUserId, userId, StringComparison.OrdinalIgnoreCase))
+				return true;
+
+			return department.Members != null && department.Members.Any(m =>
+				m.IsAdmin.GetValueOrDefault()
+				&& string.Equals(m.UserId, userId, StringComparison.OrdinalIgnoreCase)
+				&& DepartmentMemberStateHelper.IsCurrentMember(m, department.DepartmentId));
+		}
+
+		private static bool IsCalendarItemCreator(CalendarItem item, string userId)
+		{
+			return !string.IsNullOrWhiteSpace(item.CreatorUserId)
+				&& string.Equals(item.CreatorUserId, userId, StringComparison.OrdinalIgnoreCase);
+		}
+
+		/// <summary>
+		/// Whether the user is a group admin and the target is a member of that group or one of its child groups.
+		/// </summary>
+		private async Task<bool> IsUserInCalendarAdminGroupScopeAsync(string userId, int departmentId, string targetUserId)
+		{
+			var adminGroup = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
+			if (adminGroup == null || !adminGroup.IsUserGroupAdmin(userId))
+				return false;
+
+			if (IsUserInCalendarGroup(adminGroup, targetUserId))
+				return true;
+
+			var childGroups = await _departmentGroupsService.GetAllChildDepartmentGroupsAsync(adminGroup.DepartmentGroupId);
+			if (childGroups != null)
+			{
+				foreach (var childGroup in childGroups)
 				{
-					foreach (var childGroup in childGroups)
-					{
-						if (childGroup.IsUserInGroup(targetUserId))
-							return true;
-					}
+					if (IsUserInCalendarGroup(childGroup, targetUserId))
+						return true;
 				}
 			}
 
 			return false;
 		}
 
-		public async Task<bool> CanUserEditCalendarCheckInAsync(string userId, string checkInId)
+		private static bool IsUserInCalendarGroup(DepartmentGroup group, string userId)
 		{
-			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
-			var checkIn = await _calendarService.GetCheckInByIdAsync(checkInId);
-
-			if (department == null || checkIn == null)
-				return false;
-
-			if (checkIn.DepartmentId != department.DepartmentId)
-				return false;
-
-			if (checkIn.UserId == userId)
-				return true;
-
-			if (department.IsUserAnAdmin(userId))
-				return true;
-
-			// Calendar item creator can edit check-ins
-			var item = await _calendarService.GetCalendarItemByIdAsync(checkIn.CalendarItemId);
-			if (item != null && !string.IsNullOrWhiteSpace(item.CreatorUserId) && item.CreatorUserId == userId)
-				return true;
-
-			// Group admins can edit check-ins for their group members
-			var adminGroup = await _departmentGroupsService.GetGroupForUserAsync(userId, department.DepartmentId);
-			if (adminGroup != null && adminGroup.IsUserGroupAdmin(userId))
-			{
-				if (adminGroup.IsUserInGroup(checkIn.UserId))
-					return true;
-
-				var childGroups = await _departmentGroupsService.GetAllChildDepartmentGroupsAsync(adminGroup.DepartmentGroupId);
-				if (childGroups != null)
-				{
-					foreach (var childGroup in childGroups)
-					{
-						if (childGroup.IsUserInGroup(checkIn.UserId))
-							return true;
-					}
-				}
-			}
-
-			return false;
+			return group?.Members != null
+				&& group.Members.Any(m => string.Equals(m.UserId, userId, StringComparison.OrdinalIgnoreCase));
 		}
 
 		public async Task<bool> CanUserDeleteCalendarCheckInAsync(string userId, string checkInId)

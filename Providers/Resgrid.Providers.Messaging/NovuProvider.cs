@@ -443,6 +443,184 @@ namespace Resgrid.Providers.Messaging
 			return await UpdateSubscriberApns($"{code}_Unit_{unitId}", token, null, ChatConfig.NovuUnitFcmProviderId);
 		}
 
+		#region Web Push (browser and desktop)
+
+		/// <summary>Integration identifier → the integration ids Novu answered with, and when.</summary>
+		private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, (HashSet<string> Ids, DateTime FetchedOn)> WebPushIntegrationIds = new();
+
+		private static readonly TimeSpan WebPushIntegrationIdLifetime = TimeSpan.FromHours(1);
+
+		/// <summary>
+		/// One writer per subscriber within this process. The token list is read, changed and written back,
+		/// so two registrations for one person (Core Web and an app signing in together) would otherwise
+		/// each write a list missing the other's token. Across processes the loser is restored the next
+		/// time its client refreshes its registration.
+		/// </summary>
+		private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, SemaphoreSlim> WebPushSubscriberLocks = new();
+
+		public async Task<bool> AddUserSubscriberWebPushToken(string userId, string code, string token)
+		{
+			return await ChangeWebPushTokens($"{code}_User_{userId}", ChatConfig.NovuResponderWebFcmProviderId, token, true);
+		}
+
+		public async Task<bool> RemoveUserSubscriberWebPushToken(string userId, string code, string token)
+		{
+			return await ChangeWebPushTokens($"{code}_User_{userId}", ChatConfig.NovuResponderWebFcmProviderId, token, false);
+		}
+
+		public async Task<bool> AddICUserSubscriberWebPushToken(string userId, string code, string token)
+		{
+			return await ChangeWebPushTokens($"{code}_IC_User_{userId}", ChatConfig.NovuICWebFcmProviderId, token, true);
+		}
+
+		public async Task<bool> RemoveICUserSubscriberWebPushToken(string userId, string code, string token)
+		{
+			return await ChangeWebPushTokens($"{code}_IC_User_{userId}", ChatConfig.NovuICWebFcmProviderId, token, false);
+		}
+
+		public async Task<bool> AddUnitSubscriberWebPushToken(int unitId, string code, string token)
+		{
+			return await ChangeWebPushTokens($"{code}_Unit_{unitId}", ChatConfig.NovuUnitWebFcmProviderId, token, true);
+		}
+
+		public async Task<bool> RemoveUnitSubscriberWebPushToken(int unitId, string code, string token)
+		{
+			return await ChangeWebPushTokens($"{code}_Unit_{unitId}", ChatConfig.NovuUnitWebFcmProviderId, token, false);
+		}
+
+		private async Task<bool> ChangeWebPushTokens(string subscriberId, string integrationIdentifier, string token, bool add)
+		{
+			if (string.IsNullOrWhiteSpace(token))
+				return false;
+
+			if (string.IsNullOrWhiteSpace(integrationIdentifier))
+			{
+				Logging.LogWarning($"Novu web push token {(add ? "add" : "removal")} skipped for subscriber '{subscriberId}': no web FCM integration is configured.");
+				return false;
+			}
+
+			var subscriberLock = WebPushSubscriberLocks.GetOrAdd(subscriberId, _ => new SemaphoreSlim(1, 1));
+			await subscriberLock.WaitAsync();
+
+			try
+			{
+				using (var client = new HttpClient())
+				{
+					client.DefaultRequestHeaders.Add("Accept", "application/json");
+					client.DefaultRequestHeaders.Add("Authorization", $"ApiKey {ChatConfig.NovuSecretKey}");
+
+					var integrationIds = await GetWebPushIntegrationIds(client, integrationIdentifier);
+					if (integrationIds == null)
+						return false;
+
+					// A list that could not be read is never written over: the PUT below replaces the channel's
+					// tokens, and guessing would sign every other browser out of push.
+					var existing = await GetSubscriberChannelTokens(client, subscriberId, integrationIds);
+					if (existing == null)
+						return false;
+
+					var updated = add
+						? NovuWebPushTokens.Add(existing, token, WebPushConfig.MaxTokensPerSubscriber)
+						: NovuWebPushTokens.Remove(existing, token);
+
+					if (updated.SequenceEqual(existing))
+						return true;
+
+					using var request = new HttpRequestMessage(HttpMethod.Put, $"{ChatConfig.NovuBackendUrl}/v1/subscribers/{subscriberId}/credentials");
+					request.Headers.Add("idempotency-key", Guid.NewGuid().ToString());
+
+					var payload = new
+					{
+						providerId = "fcm",
+						credentials = new
+						{
+							deviceTokens = updated.ToArray()
+						},
+						integrationIdentifier = integrationIdentifier
+					};
+
+					request.Content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
+					using var response = await client.SendAsync(request);
+
+					if (!response.IsSuccessStatusCode)
+					{
+						var error = await response.Content.ReadAsStringAsync();
+						Logging.LogError($"Novu web push credential write failed ({(int)response.StatusCode} {response.StatusCode}) subscriber '{subscriberId}' integration '{integrationIdentifier}' ({(add ? "add" : "removal")}, {updated.Count} tokens): {DescribeErrorBody(error)}");
+
+						return false;
+					}
+
+					return true;
+				}
+			}
+			catch (Exception e)
+			{
+				Logging.LogException(e, $"Failed to {(add ? "add" : "remove")} a web push token on novu subscriber '{subscriberId}'");
+				return false;
+			}
+			finally
+			{
+				subscriberLock.Release();
+			}
+		}
+
+		private async Task<HashSet<string>?> GetWebPushIntegrationIds(HttpClient client, string integrationIdentifier)
+		{
+			if (WebPushIntegrationIds.TryGetValue(integrationIdentifier, out var cached) && cached.Ids.Count > 0 &&
+				DateTime.UtcNow - cached.FetchedOn < WebPushIntegrationIdLifetime)
+				return cached.Ids;
+
+			var response = await client.GetAsync($"{ChatConfig.NovuBackendUrl}/v1/integrations");
+			var body = await response.Content.ReadAsStringAsync();
+
+			if (!response.IsSuccessStatusCode)
+			{
+				Logging.LogError($"Novu integration list failed ({(int)response.StatusCode} {response.StatusCode}) looking up web push integration '{integrationIdentifier}': {DescribeErrorBody(body)}");
+				return null;
+			}
+
+			var ids = NovuWebPushTokens.FindIntegrationIds(body, integrationIdentifier);
+			if (ids == null)
+			{
+				Logging.LogError($"Novu integration list for web push integration '{integrationIdentifier}' came back in an unrecognized shape ({body.Length} chars).");
+				return null;
+			}
+
+			if (ids.Count == 0)
+			{
+				Logging.LogError($"Novu has no integration with identifier '{integrationIdentifier}'; browser and desktop push cannot be registered until it is created (an FCM integration on the Firebase project the web apps use).");
+				return null;
+			}
+
+			WebPushIntegrationIds[integrationIdentifier] = (ids, DateTime.UtcNow);
+			return ids;
+		}
+
+		private async Task<List<string>?> GetSubscriberChannelTokens(HttpClient client, string subscriberId, ISet<string> integrationIds)
+		{
+			var response = await client.GetAsync($"{ChatConfig.NovuBackendUrl}/v1/subscribers/{subscriberId}");
+			var body = await response.Content.ReadAsStringAsync();
+
+			// No subscriber means no channel: nothing to remove, and an add creates the channel (or reports
+			// the missing subscriber itself).
+			if (response.StatusCode == HttpStatusCode.NotFound)
+				return new List<string>();
+
+			if (!response.IsSuccessStatusCode)
+			{
+				Logging.LogError($"Novu subscriber read failed ({(int)response.StatusCode} {response.StatusCode}) subscriber '{subscriberId}' while changing web push tokens: {DescribeErrorBody(body)}");
+				return null;
+			}
+
+			var tokens = NovuWebPushTokens.FindChannelTokens(body, integrationIds);
+			if (tokens == null)
+				Logging.LogError($"Novu subscriber '{subscriberId}' came back in an unrecognized shape ({body.Length} chars); web push tokens left unchanged.");
+
+			return tokens;
+		}
+
+		#endregion Web Push (browser and desktop)
+
 		private async Task<bool> SendNotification(string title, string body, string recipientId, string eventCode,
 			string type, bool enableCustomSounds, int count, string color, string workflowIdentifier, string sound)
 		{
@@ -521,6 +699,34 @@ namespace Resgrid.Providers.Messaging
 										eventCode = eventCode,
 										type = type
 									},
+								},
+								// Browser and desktop (Electron) tokens on the web channel. Their service worker or
+								// main process shows the notification itself and routes a click by eventCode, so
+								// everything it needs travels in data (FCM only accepts string values there).
+								// The native android/apns blocks above are ignored for these tokens, and this block
+								// is ignored for native ones.
+								webPush = new
+								{
+									headers = new Dictionary<string, string>
+									{
+										["Urgency"] = channelName == "calls" ? "high" : "normal"
+									},
+									notification = new
+									{
+										title = title,
+										body = body,
+										tag = eventCode,
+										renotify = true,
+										requireInteraction = channelName == "calls"
+									},
+									data = new Dictionary<string, string>
+									{
+										["title"] = title ?? string.Empty,
+										["message"] = body ?? string.Empty,
+										["eventCode"] = eventCode ?? string.Empty,
+										["type"] = type ?? string.Empty,
+										["category"] = channelName
+									}
 								},
 							},
 							apns = new Dictionary<string, object>

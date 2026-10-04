@@ -565,7 +565,7 @@ INSERT INTO {Q("Departments")} VALUES (7),(8),(9),(10),(11),(12),(13);");
 		public async Task Profile_references_reject_cross_tenant_expired_and_non_numeric_identifiers()
 		{
 			await using var db = Connect(_connection);
-			await db.ExecuteAsync($"INSERT INTO {Q("DepartmentGroups")} VALUES (7,101),(8,102); INSERT INTO {Q("Documents")} VALUES (7,201,NULL),(8,202,NULL),(7,203,@Expired)", new { Expired = DateTime.SpecifyKind(DateTime.UtcNow.AddDays(-1), DateTimeKind.Unspecified) });
+			await db.ExecuteAsync($"INSERT INTO {Q("DepartmentGroups")} VALUES (7,101),(8,102); INSERT INTO {Q("Documents")} ({Q("DepartmentId")},{Q("DocumentId")},{Q("RemoveOn")}) VALUES (7,201,NULL),(8,202,NULL),(7,203,@Expired)", new { Expired = DateTime.SpecifyKind(DateTime.UtcNow.AddDays(-1), DateTimeKind.Unspecified) });
 			var unit = new UnitOfWork(Connections()); var repository = Repository(unit);
 			await unit.CreateOrGetConnectionAsync();
 			try

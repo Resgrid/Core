@@ -16,6 +16,20 @@
 		public static string NovuResponderApnsProviderId = "respond-apns";
 		public static string NovuICFcmProviderId = "ic-firebase-cloud-messaging";
 		public static string NovuICApnsProviderId = "ic-apns";
+
+		/// <summary>
+		/// Novu FCM integrations that carry browser and desktop (Electron) push tokens. They are kept apart from
+		/// the native FCM integrations because a native registration replaces its channel's whole token list,
+		/// while a person can have several browsers signed in at once: web tokens are appended to their own
+		/// channel instead (capped by WebPushConfig.MaxTokensPerSubscriber). The three subscriber kinds may share
+		/// one integration, since a channel belongs to a subscriber; the tokens must come from a Firebase web app
+		/// in the same Firebase project as the integration's service account. Empty turns web push off for that
+		/// subscriber kind.
+		/// </summary>
+		public static string NovuResponderWebFcmProviderId = "resgrid-web-fcm";
+		public static string NovuICWebFcmProviderId = "resgrid-web-fcm";
+		public static string NovuUnitWebFcmProviderId = "resgrid-web-fcm";
+
 		public static string NovuDispatchUnitWorkflowId = "unit-dispatch";
 		public static string NovuDispatchUserWorkflowId = "user-dispatch";
 		public static string NovuMessageUserWorkflowId = "user-message";

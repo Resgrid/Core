@@ -98,6 +98,30 @@ public interface INovuProvider
 	Task<bool> UpdateICUserSubscriberApns(string userId, string code, string token);
 
 	/// <summary>
+	/// Adds a browser or desktop (Electron) FCM token to a user subscriber's web channel. Unlike the native
+	/// credential writes this appends: the channel keeps every signed-in browser, newest last, up to
+	/// WebPushConfig.MaxTokensPerSubscriber.
+	/// </summary>
+	/// <returns>True when the token is on the channel afterwards; otherwise, false.</returns>
+	Task<bool> AddUserSubscriberWebPushToken(string userId, string code, string token);
+
+	/// <summary>Removes a browser or desktop token from a user subscriber's web channel (sign-out, notifications turned off).</summary>
+	/// <returns>True when the token is no longer on the channel; otherwise, false.</returns>
+	Task<bool> RemoveUserSubscriberWebPushToken(string userId, string code, string token);
+
+	/// <summary>Adds a browser or desktop token to an IC app user subscriber's ({code}_IC_User_{userId}) web channel.</summary>
+	Task<bool> AddICUserSubscriberWebPushToken(string userId, string code, string token);
+
+	/// <summary>Removes a browser or desktop token from an IC app user subscriber's web channel.</summary>
+	Task<bool> RemoveICUserSubscriberWebPushToken(string userId, string code, string token);
+
+	/// <summary>Adds a browser or desktop token to a unit subscriber's ({code}_Unit_{unitId}) web channel.</summary>
+	Task<bool> AddUnitSubscriberWebPushToken(int unitId, string code, string token);
+
+	/// <summary>Removes a browser or desktop token from a unit subscriber's web channel.</summary>
+	Task<bool> RemoveUnitSubscriberWebPushToken(int unitId, string code, string token);
+
+	/// <summary>
 	/// Sends a dispatch notification to a unit.
 	/// </summary>
 	/// <param name="title">The notification title.</param>

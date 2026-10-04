@@ -568,6 +568,14 @@ namespace Resgrid.Workers.Console
 					Cron.MinuteIntervals(1),
 					stoppingToken);
 
+				// Worker ID 73 (call location history, M0259): purge the location index for departments that enrolled in
+				// Advanced Data Protection, resume ones that left it, and backfill calls newest first in a 45-second budget.
+				_logger.Log(LogLevel.Information, "Scheduling Call Location Index");
+				await Client.ScheduleAsync("Call Location Index",
+					new Commands.CallLocationIndexCommand(73),
+					Cron.MinuteIntervals(5),
+					stoppingToken);
+
 				// Worker ID 41 (Identifier Allocation Registry section 3.3, RMS-2): NERIS submission sweep. Claims due
 				// submissions with a lease, talks to the destination outside any transaction, no-op while NerisConfig.Enabled is off.
 				_logger.Log(LogLevel.Information, "Scheduling Records Submission");

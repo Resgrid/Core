@@ -25,6 +25,14 @@ namespace Resgrid.Model.Services
 		/// </summary>
 		Task<RunCard> SaveRunCardAsync(RunCard runCard, CancellationToken cancellationToken = default(CancellationToken));
 
+		/// <summary>
+		/// Strips, in memory, every reference on a hydrated card to a unit type, role, call
+		/// type, station or status the department no longer has — the ids SaveRunCardAsync
+		/// would reject. Call before handing a stored card to an editor, so the card can be
+		/// saved again after one of those was deleted. Returns how many entries were removed.
+		/// </summary>
+		Task<int> RemoveDetachedReferencesAsync(RunCard runCard);
+
 		Task<bool> DeleteRunCardAsync(int runCardId, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>

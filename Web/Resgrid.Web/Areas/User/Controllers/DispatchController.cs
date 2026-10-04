@@ -73,6 +73,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IModerationService _moderationService;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> _dispatchLocalizer;
 		private readonly IStringLocalizer<Resgrid.Localization.Common> _commonLocalizer;
+		private readonly ICallLocationHistoryService _callLocationHistoryService;
+		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.LocationHistory> _locationHistoryLocalizer;
 		private readonly IDispatchRecommendationService _dispatchRecommendationService;
 		private readonly IDispatchScopeService _dispatchScopeService;
 		private readonly INearestUnitService _nearestUnitService;
@@ -94,8 +96,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> dispatchLocalizer, IStringLocalizer<Resgrid.Localization.Common> commonLocalizer,
 			IDispatchRecommendationService dispatchRecommendationService, IFeatureToggleService featureToggleService,
 			IProtectedReadService protectedReadService, IRecordsCutoverService recordsCutoverService, IRecordsProtectionService recordsProtection,
-			IDispatchScopeService dispatchScopeService, INearestUnitService nearestUnitService)
+			IDispatchScopeService dispatchScopeService, INearestUnitService nearestUnitService,
+			ICallLocationHistoryService callLocationHistoryService, IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.LocationHistory> locationHistoryLocalizer)
 		{
+			_callLocationHistoryService = callLocationHistoryService;
+			_locationHistoryLocalizer = locationHistoryLocalizer;
 			_departmentsService = departmentsService;
 			_usersService = usersService;
 			_callsService = callsService;
@@ -2188,6 +2193,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			return Json(callNotes);
+		}
+
+		/// <summary>Previous calls at this call's location or with its contacts (the call page's Location History tab).</summary>
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<IActionResult> GetCallLocationHistory(int callId)
+		{
+			var history = await _callLocationHistoryService.GetHistoryForCallAsync(DepartmentId, UserId, callId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			return Json(await CallLocationHistoryJson.FromAsync(history, department, _callsService, _departmentsService, _locationHistoryLocalizer));
 		}
 
 		[HttpGet]

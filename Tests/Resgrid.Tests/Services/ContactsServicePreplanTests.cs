@@ -111,6 +111,7 @@ namespace Resgrid.Tests.Services
 			_ownershipGate = new Mock<IContactPreplanOwnershipGate>();
 			_ownershipGate.Setup(x => x.IsRecordsOwnedAsync(It.IsAny<int>())).ReturnsAsync(false);
 			_ownershipGate.Setup(x => x.GetPreplanProjectionsAsync(It.IsAny<int>(), It.IsAny<IEnumerable<string>>(), It.IsAny<CancellationToken>())).ReturnsAsync(new Dictionary<string, ContactPreplan>());
+			_ownershipGate.Setup(x => x.GetPreplanProjectionsNearAsync(It.IsAny<int>(), It.IsAny<IEnumerable<string>>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(new Dictionary<string, ContactPreplan>());
 
 			_service = new ContactsService(_contactsRepo.Object, _notesRepo.Object, _categoryRepo.Object, _noteTypesRepo.Object,
 				_associationsRepo.Object, _preplanRepo.Object, _hazardRepo.Object, _attachmentRepo.Object, _callsRepo.Object,

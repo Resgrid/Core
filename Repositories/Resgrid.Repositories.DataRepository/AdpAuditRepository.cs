@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Threading;
@@ -46,10 +47,14 @@ namespace Resgrid.Repositories.DataRepository
 				AdpAuditChain.Link(record, tail);
 				try
 				{
+					// Dapper's default DateTime binding uses SQL Server datetime (3.33 ms), which changes the hashed value.
+					var parameters = new DynamicParameters(record);
+					if (!_postgres)
+						parameters.Add(nameof(record.OccurredUtc), record.OccurredUtc, DbType.DateTime2);
 					await connection.ExecuteAsync(new Dapper.CommandDefinition($@"INSERT INTO {_table}
 (EventId,DepartmentId,Sequence,Layer,Operation,Outcome,ActorId,CorrelationId,ResourceId,PolicyEpoch,OccurredUtc,PreviousHash,Hash)
 VALUES (@EventId,@DepartmentId,@Sequence,@Layer,@Operation,@Outcome,@ActorId,@CorrelationId,@ResourceId,@PolicyEpoch,@OccurredUtc,@PreviousHash,@Hash)",
-						record, cancellationToken: cancellationToken));
+						parameters, cancellationToken: cancellationToken));
 					return;
 				}
 				catch (DbException) when (attempt < 31)

@@ -94,3 +94,14 @@ defineReactElement<import('./components/adminAssist/AdminAssistElement').AdminAs
     { attribute: 'retrylabel', property: 'retryLabel', type: 'string' },
   ],
 );
+
+// Browser push, like the phone apps' push, has no setting of its own: every signed-in page keeps this browser
+// registered while it has notification permission, and asks for that permission once. What is sent is decided by
+// the profile's push preferences on the server, the same as for a phone. Only where the layout configured it.
+if (window.rgWebPush) {
+  void import('./runtime/webPush').then(({ installSignOutHook, refreshWebPush, askForPermissionOnce }) => {
+    installSignOutHook();
+    refreshWebPush().catch((error: unknown) => console.warn('Web push: refresh failed', error));
+    askForPermissionOnce();
+  });
+}

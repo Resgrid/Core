@@ -70,7 +70,28 @@ namespace Resgrid.Model.Services
 		Task<bool> IsRecordsOwnedAsync(int departmentId);
 		/// <summary>The occupancy projection for each contact that is linked to one, in the Contacts pre-plan shape; empty when Contacts still owns writes.</summary>
 		Task<Dictionary<string, ContactPreplan>> GetPreplanProjectionsAsync(int departmentId, IEnumerable<string> contactIds, CancellationToken cancellationToken = default);
-		/// <summary>The occupancy id a contact projects from, when any.</summary>
+		/// <summary>
+		/// As <see cref="GetPreplanProjectionsAsync"/>, but a contact linked to several occupancies (a business with more
+		/// than one location) projects from the one at the given location: a call's Address and "lat,lng" GeoLocationData.
+		/// Falls back to the contact's primary site when no linked occupancy is at the location.
+		/// </summary>
+		Task<Dictionary<string, ContactPreplan>> GetPreplanProjectionsNearAsync(int departmentId, IEnumerable<string> contactIds, string nearAddress, string nearGeoLocation, CancellationToken cancellationToken = default);
+		/// <summary>The occupancy id a contact projects from (its primary site), when any.</summary>
 		Task<string> GetOccupancyIdForContactAsync(int departmentId, string contactId);
+	}
+
+	/// <summary>
+	/// Occupancy identity and location for Contacts, Calls and the call location history: which occupancies a contact is
+	/// linked to (one contact can be linked to many, e.g. a business with several locations), where an occupancy is, and
+	/// who is linked to it. Every method returns empty when the occupancy module is off for the department, whichever
+	/// system owns structure writes. Implemented in Records.
+	/// </summary>
+	public interface IOccupancyLocationLookup
+	{
+		/// <summary>Live occupancies the contact is linked to in any role (or through a Linked crosswalk row), site links first.</summary>
+		Task<List<OccupancyLocationSummary>> GetOccupanciesForContactAsync(int departmentId, string contactId);
+		/// <summary>The occupancy's location and every contact linked to it; null when missing, deleted or the module is off.</summary>
+		Task<OccupancyLocationSummary> GetOccupancyLocationAsync(int departmentId, string occupancyId);
+		Task<Dictionary<string, OccupancyLocationSummary>> GetOccupancyLocationsAsync(int departmentId, IEnumerable<string> occupancyIds);
 	}
 }

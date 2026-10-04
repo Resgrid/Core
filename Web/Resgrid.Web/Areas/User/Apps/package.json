@@ -12,6 +12,7 @@
     "@microsoft/signalr": "^8.0.7",
     "@types/geojson": "^7946.0.16",
     "date-fns": "^2.30.0",
+    "firebase": "^12.19.0",
     "leaflet": "^1.9.4",
     "mapbox-gl": "^3.22.0",
     "react": "^18.3.1",

@@ -16,6 +16,9 @@ namespace Resgrid.Web.Areas.User.Models.RunCards
 
 		public bool IsNew { get; set; }
 
+		/// <summary>References to deleted unit types, roles, call types, stations or statuses dropped from the stored card on load.</summary>
+		public int RemovedReferenceCount { get; set; }
+
 		public SelectList CallPriorities { get; set; }
 
 		public List<CallType> CallTypes { get; set; } = new List<CallType>();

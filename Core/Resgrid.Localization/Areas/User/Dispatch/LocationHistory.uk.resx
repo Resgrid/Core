@@ -1,0 +1,282 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="LocationHistoryTab" xml:space="preserve">
+    <value>Історія місця</value>
+  </data>
+  <data name="LocationHistoryHeader" xml:space="preserve">
+    <value>Попередні виклики за цим місцем</value>
+  </data>
+  <data name="LocationHistoryHelp" xml:space="preserve">
+    <value>Виклики за тією самою адресою, хоч би як її записали, виклики поблизу без адреси вулиці та виклики, пов’язані з тим самим контактом.</value>
+  </data>
+  <data name="RelatedCallsHeader" xml:space="preserve">
+    <value>Пов’язані виклики</value>
+  </data>
+  <data name="RelatedCallsHelp" xml:space="preserve">
+    <value>Виклики, пов’язані з цим контактом, а також виклики на будь-якому об’єкті, з яким пов’язаний цей контакт.</value>
+  </data>
+  <data name="ResponseHistoryHeader" xml:space="preserve">
+    <value>Історія реагування</value>
+  </data>
+  <data name="ResponseHistoryHelp" xml:space="preserve">
+    <value>Виклики за адресою цього об’єкта, хоч би як її записали, виклики поблизу без адреси вулиці та виклики, пов’язані з його контактами, що не мають власної адреси.</value>
+  </data>
+  <data name="Loading" xml:space="preserve">
+    <value>Завантаження викликів...</value>
+  </data>
+  <data name="NoCalls" xml:space="preserve">
+    <value>Пов’язаних викликів не знайдено.</value>
+  </data>
+  <data name="LoadFailed" xml:space="preserve">
+    <value>Не вдалося завантажити історію викликів.</value>
+  </data>
+  <data name="MatchedAs" xml:space="preserve">
+    <value>Розпізнано як</value>
+  </data>
+  <data name="FilterPlaceholder" xml:space="preserve">
+    <value>Фільтрувати ці виклики</value>
+  </data>
+  <data name="MatchSameContact" xml:space="preserve">
+    <value>Той самий контакт</value>
+  </data>
+  <data name="MatchSameAddress" xml:space="preserve">
+    <value>Та сама адреса</value>
+  </data>
+  <data name="MatchSimilarAddress" xml:space="preserve">
+    <value>Схожа адреса</value>
+  </data>
+  <data name="MatchNearby" xml:space="preserve">
+    <value>Поблизу</value>
+  </data>
+  <data name="MetersAway" xml:space="preserve">
+    <value>за {0} м</value>
+  </data>
+  <data name="AddressMatchingOff" xml:space="preserve">
+    <value>Для цього підрозділу ввімкнено розширений захист даних, тому адреси викликів зашифровані й показано лише виклики, пов’язані через контакт.</value>
+  </data>
+  <data name="IndexIncomplete" xml:space="preserve">
+    <value>Старіші виклики ще індексуються, тому деякі можуть поки не відображатися.</value>
+  </data>
+  <data name="HasMore" xml:space="preserve">
+    <value>Показано лише найновіші виклики.</value>
+  </data>
+  <data name="ColumnCall" xml:space="preserve">
+    <value>Виклик</value>
+  </data>
+  <data name="ColumnLoggedOn" xml:space="preserve">
+    <value>Зареєстровано</value>
+  </data>
+  <data name="ColumnName" xml:space="preserve">
+    <value>Назва</value>
+  </data>
+  <data name="ColumnAddress" xml:space="preserve">
+    <value>Адреса</value>
+  </data>
+  <data name="ColumnState" xml:space="preserve">
+    <value>Стан</value>
+  </data>
+  <data name="ColumnPriority" xml:space="preserve">
+    <value>Пріоритет</value>
+  </data>
+  <data name="ColumnMatch" xml:space="preserve">
+    <value>Причина</value>
+  </data>
+  <data name="ColumnNotes" xml:space="preserve">
+    <value>Нотатки</value>
+  </data>
+  <data name="ShowNotes" xml:space="preserve">
+    <value>Нотатки ({0})</value>
+  </data>
+  <data name="HideNotes" xml:space="preserve">
+    <value>Сховати нотатки</value>
+  </data>
+  <data name="NoNotes" xml:space="preserve">
+    <value>Цей виклик не має нотаток.</value>
+  </data>
+  <data name="ClosingNotes" xml:space="preserve">
+    <value>Нотатки закриття</value>
+  </data>
+  <data name="CallNotes" xml:space="preserve">
+    <value>Нотатки виклику</value>
+  </data>
+  <data name="StateActive" xml:space="preserve">
+    <value>Активний</value>
+  </data>
+  <data name="StateClosed" xml:space="preserve">
+    <value>Закритий</value>
+  </data>
+  <data name="StateCancelled" xml:space="preserve">
+    <value>Скасований</value>
+  </data>
+  <data name="StateUnfounded" xml:space="preserve">
+    <value>Безпідставний</value>
+  </data>
+  <data name="StateFounded" xml:space="preserve">
+    <value>Обґрунтований</value>
+  </data>
+  <data name="StateMinor" xml:space="preserve">
+    <value>Незначний</value>
+  </data>
+  <data name="UnknownPriority" xml:space="preserve">
+    <value>Невідомий</value>
+  </data>
+  <data name="UnknownUser" xml:space="preserve">
+    <value>Невідомий користувач</value>
+  </data>
+  <data name="CallsColumn" xml:space="preserve">
+    <value>Виклики</value>
+  </data>
+  <data name="OccupanciesHeader" xml:space="preserve">
+    <value>Об’єкти</value>
+  </data>
+  <data name="OccupanciesHelp" xml:space="preserve">
+    <value>Місця, з якими цей контакт пов’язаний у Записах. Один контакт може бути пов’язаний із кількома об’єктами, наприклад компанія з кількома локаціями.</value>
+  </data>
+  <data name="NoOccupancies" xml:space="preserve">
+    <value>Цей контакт не пов’язаний із жодним об’єктом.</value>
+  </data>
+  <data name="OccupancyRoleSite" xml:space="preserve">
+    <value>Місце</value>
+  </data>
+  <data name="OccupancyRoleOwner" xml:space="preserve">
+    <value>Власник</value>
+  </data>
+  <data name="OccupancyRoleEmergencyContact" xml:space="preserve">
+    <value>Екстрений контакт</value>
+  </data>
+  <data name="OccupancyRoleBillTo" xml:space="preserve">
+    <value>Платник</value>
+  </data>
+  <data name="OccupancyRoleTenant" xml:space="preserve">
+    <value>Орендар</value>
+  </data>
+  <data name="OccupancyRolePropertyManager" xml:space="preserve">
+    <value>Керуючий нерухомістю</value>
+  </data>
+  <data name="Primary" xml:space="preserve">
+    <value>Основний</value>
+  </data>
+  <data name="OpenOccupancy" xml:space="preserve">
+    <value>Відкрити об’єкт</value>
+  </data>
+  <data name="PreplansOnOccupancies" xml:space="preserve">
+    <value>Плани реагування цього підрозділу зберігаються на об’єктах у Записах. Відкрийте об’єкт нижче, щоб переглянути або змінити його план реагування.</value>
+  </data>
+</root>

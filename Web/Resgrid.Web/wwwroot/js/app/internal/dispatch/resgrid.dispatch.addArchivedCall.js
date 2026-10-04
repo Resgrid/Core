@@ -256,10 +256,37 @@
                     }
                 });
 
-                $('#addNewLinkedCall').click(function () {
+                $('#addNewLinkedCall').click(function (e) {
                     var data = $('#selectLinkedCall').select2('data');
 
-                    $('#linkedCalls tbody').first().append(`<tr><td style='max-width: 215px;'>${data[0].text}<input type='hidden' id='linkedCall_${data[0].id}' name='linkedCall_${data[0].id}' value='${data[0].id}' /></td><td>${$('#selectCallNote').val()}<input type='hidden' id='linkedCallNote_${data[0].id}' name='linkedCallNote_${data[0].id}' value='${$('#selectCallNote').val()}' /></td><td style='text-align:center;'><a onclick='$(this).parent().parent().remove();' class='tip-top' data-original-title='${getText('removeThisCallLink', 'Remove this call link')}'><i class='fa fa-minus' style='color: red;'></i></a></td></tr>`);
+                    // Nothing picked yet: keep the modal open (stopping propagation keeps Bootstrap's delegated
+                    // data-dismiss handler from closing it) and open the picker instead.
+                    if (!data || !data.length || !data[0].id) {
+                        e.stopPropagation();
+                        $('#selectLinkedCall').select2('open');
+                        return;
+                    }
+
+                    var callId = Number(data[0].id);
+                    var note = $('#selectCallNote').val() || '';
+
+                    // Built with DOM calls, not an HTML string: the call name and note are user-entered text.
+                    if ($('#linkedCall_' + callId).length === 0) {
+                        var row = $('<tr></tr>');
+                        $('<td style="max-width: 215px;"></td>').text(data[0].text || '')
+                            .append($('<input type="hidden" />').attr({ id: 'linkedCall_' + callId, name: 'linkedCall_' + callId }).val(callId))
+                            .appendTo(row);
+                        $('<td></td>').text(note)
+                            .append($('<input type="hidden" />').attr({ id: 'linkedCallNote_' + callId, name: 'linkedCallNote_' + callId }).val(note))
+                            .appendTo(row);
+                        $('<td style="text-align:center;"></td>')
+                            .append($('<a class="tip-top"><i class="fa fa-minus" style="color: red;"></i></a>')
+                                .attr('data-original-title', getText('removeThisCallLink', 'Remove this call link'))
+                                .on('click', function () { $(this).closest('tr').remove(); }))
+                            .appendTo(row);
+                        $('#linkedCalls tbody').first().append(row);
+                    }
+
                     $('#selectCallNote').val('');
                     $('#selectLinkedCall').empty();
                 });

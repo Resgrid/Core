@@ -24,6 +24,11 @@ namespace Resgrid.Web.Areas.User.Models.Contacts
 		/// <summary>ADP: true when this contact carries protected fields rendered as REDACTED (plan 7.2).</summary>
 		public bool IsProtectedContact { get; set; }
 
+		/// <summary>Records owns structure data: pre-plans are created and edited on occupancies, not on the contact.</summary>
+		public bool IsPreplanRecordsOwned { get; set; }
+		/// <summary>Occupancies this contact is linked to in any role; empty when the occupancy module is off.</summary>
+		public List<OccupancyLocationSummary> Occupancies { get; set; } = new List<OccupancyLocationSummary>();
+
 		/// <summary>Billing tab (Workforce &amp; Business Operations plan, Phase B): shown when invoicing is on for the department and the member may view it.</summary>
 		public bool InvoicingAvailable { get; set; }
 		public CustomerBillingProfile BillingProfile { get; set; }

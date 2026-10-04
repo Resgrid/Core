@@ -1,0 +1,44 @@
+@model Resgrid.Web.Areas.User.Models.Contacts.ViewContactView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.LocationHistory> historyLocalizer
+@if (ClaimsAuthorizationHelper.CanViewRecords() && (Model.IsPreplanRecordsOwned || Model.Occupancies.Count > 0))
+{
+    <h4><i class="fa fa-building"></i> @historyLocalizer["OccupanciesHeader"] <span class="badge">@Model.Occupancies.Count</span></h4>
+    <p class="text-muted small">@historyLocalizer["OccupanciesHelp"]</p>
+    @if (Model.Occupancies.Count == 0)
+    {
+        <p class="text-muted">@historyLocalizer["NoOccupancies"]</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-striped table-condensed">
+                <tbody>
+                    @foreach (var occupancy in Model.Occupancies)
+                    {
+                        var roleKey = "OccupancyRole" + ((Resgrid.Model.RmsOccupancyContactRole)occupancy.Role).ToString();
+                        <tr>
+                            <td>
+                                <a asp-controller="RecordOccupancies" asp-action="Details" asp-route-area="User" asp-route-id="@occupancy.OccupancyId"><strong>@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(occupancy.Name)</strong></a>
+                                @if (!string.IsNullOrWhiteSpace(occupancy.OccupancyNumber))
+                                {
+                                    <small class="text-muted">@occupancy.OccupancyNumber</small>
+                                }
+                                <br /><span>@occupancy.FullAddress</span>
+                            </td>
+                            <td>
+                                <span class="label label-default">@historyLocalizer[roleKey]</span>
+                                @if (occupancy.IsPrimary)
+                                {
+                                    <span class="label label-primary">@historyLocalizer["Primary"]</span>
+                                }
+                            </td>
+                            <td class="text-right">
+                                <a asp-controller="RecordOccupancies" asp-action="Details" asp-route-area="User" asp-route-id="@occupancy.OccupancyId" class="btn btn-xs btn-primary">@historyLocalizer["OpenOccupancy"]</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+}

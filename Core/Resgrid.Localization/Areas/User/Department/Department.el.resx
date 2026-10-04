@@ -963,6 +963,9 @@
   <data name="RunCardSavedMessage" xml:space="preserve">
     <value>Η κάρτα εξόδου αποθηκεύτηκε.</value>
   </data>
+  <data name="RunCardDetachedReferencesRemoved" xml:space="preserve">
+    <value>Αφαιρέθηκαν {0} στοιχεία αυτής της κάρτας εξόδου που παρέπεμπαν σε τύπους μονάδων, ρόλους, τύπους κλήσεων, σταθμούς ή καταστάσεις που έχουν πλέον διαγραφεί. Ελέγξτε την κάρτα και αποθηκεύστε την για να διατηρηθεί η αλλαγή.</value>
+  </data>
   <data name="CallPriority" xml:space="preserve">
     <value>Προτεραιότητα Κλήσης</value>
   </data>
@@ -1322,5 +1325,8 @@
   </data>
   <data name="MapStyle_Unicorn" xml:space="preserve">
     <value>Unicorn</value>
+  </data>
+  <data name="RunCardTriggerRequired" xml:space="preserve">
+    <value>Προσθέστε τουλάχιστον έναν κανόνα ενεργοποίησης πριν αποθηκεύσετε αυτήν την κάρτα αποστολής.</value>
   </data>
 </root>

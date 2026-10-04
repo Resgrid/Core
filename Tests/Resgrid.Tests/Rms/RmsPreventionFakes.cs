@@ -70,6 +70,7 @@ namespace Resgrid.Tests.Rms
 	public class FakeContactLinks : InMemoryRepo<RmsOccupancyContactLink>, IRmsOccupancyContactLinksRepository
 	{
 		public Task<IEnumerable<RmsOccupancyContactLink>> GetForOccupancyAsync(int departmentId, string occupancyId) => Task.FromResult<IEnumerable<RmsOccupancyContactLink>>(Live(departmentId).Where(l => l.RmsOccupancyId == occupancyId).ToList());
+		public Task<IEnumerable<RmsOccupancyContactLink>> GetForOccupanciesAsync(int departmentId, IEnumerable<string> occupancyIds) { var ids = occupancyIds.ToHashSet(); return Task.FromResult<IEnumerable<RmsOccupancyContactLink>>(Live(departmentId).Where(l => ids.Contains(l.RmsOccupancyId)).ToList()); }
 		public Task<IEnumerable<RmsOccupancyContactLink>> GetForContactAsync(int departmentId, string contactId) => Task.FromResult<IEnumerable<RmsOccupancyContactLink>>(Live(departmentId).Where(l => l.ContactId == contactId).ToList());
 		public Task<IEnumerable<RmsOccupancyContactLink>> GetForContactsAsync(int departmentId, IEnumerable<string> contactIds) { var ids = contactIds.ToHashSet(); return Task.FromResult<IEnumerable<RmsOccupancyContactLink>>(Live(departmentId).Where(l => ids.Contains(l.ContactId)).ToList()); }
 		public Task<RmsOccupancyContactLink> GetByIdForDepartmentAsync(int departmentId, string linkId) => Task.FromResult(Rows.FirstOrDefault(l => l.DepartmentId == departmentId && l.RmsOccupancyContactLinkId == linkId));
@@ -84,6 +85,7 @@ namespace Resgrid.Tests.Rms
 
 	public class FakeCrosswalks : InMemoryRepo<RmsOccupancyCrosswalk>, IRmsOccupancyCrosswalksRepository
 	{
+		public Task<IEnumerable<RmsOccupancyCrosswalk>> GetForOccupanciesAsync(int departmentId, IEnumerable<string> occupancyIds) { var ids = occupancyIds.ToHashSet(); return Task.FromResult<IEnumerable<RmsOccupancyCrosswalk>>(Rows.Where(c => c.DepartmentId == departmentId && ids.Contains(c.RmsOccupancyId)).ToList()); }
 		public Task<RmsOccupancyCrosswalk> GetByIdForDepartmentAsync(int departmentId, string crosswalkId) => Task.FromResult(Rows.FirstOrDefault(c => c.DepartmentId == departmentId && c.RmsOccupancyCrosswalkId == crosswalkId));
 		public Task<RmsOccupancyCrosswalk> GetBySourceAsync(int departmentId, RmsOccupancyCrosswalkSourceKind sourceKind, string sourceId) => Task.FromResult(Rows.FirstOrDefault(c => c.DepartmentId == departmentId && c.SourceKind == (int)sourceKind && c.SourceId == sourceId));
 		public Task<IEnumerable<RmsOccupancyCrosswalk>> GetByStateAsync(int departmentId, RmsOccupancyCrosswalkState state, int skip, int take) => Task.FromResult<IEnumerable<RmsOccupancyCrosswalk>>(Rows.Where(c => c.DepartmentId == departmentId && c.State == (int)state).Skip(skip).Take(take).ToList());

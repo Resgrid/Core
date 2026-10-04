@@ -91,7 +91,7 @@ namespace Resgrid.Tests.Services
             await repository.AllocateAsync(intent);
             var part = new WorkOrderPart { DepartmentId=77, WorkOrderId=order.Id, CreatedBy="actor", CreatedOn=DateTime.UtcNow, UpdatedOn=DateTime.UtcNow };
             await repository.AllocateAsync(part); owner.CommitChanges();
-            await owner.CreateOrGetConnectionAsync(); intent.Id="00000000-0000-0000-0000-000000000000";
+            await owner.CreateOrGetConnectionAsync(); intent.Id=null;
             await FluentActions.Awaiting(() => repository.AllocateAsync(intent)).Should().ThrowAsync<DbException>(); owner.DiscardChanges();
             await using var db = Connect(_connection);
             await FluentActions.Awaiting(() => db.ExecuteAsync($"INSERT INTO {Q("InventoryTransactions")} ({Q("Id")},{Q("DepartmentId")},{Q("WorkOrderPartId")}) VALUES(@id,88,@part)",new {id=Guid.NewGuid().ToString("D"),part=part.Id})).Should().ThrowAsync<DbException>();

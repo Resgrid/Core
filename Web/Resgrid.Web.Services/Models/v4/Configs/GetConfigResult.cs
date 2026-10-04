@@ -195,6 +195,37 @@ namespace Resgrid.Web.Services.Models.v4.Configs
 		public string NovuEnvironmentId { get; set; }
 
 		/// <summary>
+		/// Firebase web app for browser and desktop push (WebPushConfig). The web and Electron editions mint
+		/// their FCM token with it and register that token as Platform 3. All empty while web push is off.
+		/// </summary>
+		public string WebPushApiKey { get; set; }
+
+		/// <summary>
+		/// Firebase web app auth domain for browser and desktop push
+		/// </summary>
+		public string WebPushAuthDomain { get; set; }
+
+		/// <summary>
+		/// Firebase project id for browser and desktop push
+		/// </summary>
+		public string WebPushProjectId { get; set; }
+
+		/// <summary>
+		/// Firebase messaging sender id for browser and desktop push
+		/// </summary>
+		public string WebPushMessagingSenderId { get; set; }
+
+		/// <summary>
+		/// Firebase web app id for browser and desktop push
+		/// </summary>
+		public string WebPushAppId { get; set; }
+
+		/// <summary>
+		/// Public VAPID key of the Firebase project's Web Push certificate
+		/// </summary>
+		public string WebPushVapidKey { get; set; }
+
+		/// <summary>
 		/// Analytics Api Key
 		/// </summary>
 		public string AnalyticsApiKey { get; set; }

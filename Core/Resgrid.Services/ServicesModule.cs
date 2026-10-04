@@ -361,6 +361,7 @@ namespace Resgrid.Services
 			builder.RegisterType<RouteService>().As<IRouteService>().SingleInstance();
 			builder.RegisterType<CheckInTimerService>().As<ICheckInTimerService>().InstancePerLifetimeScope();
 			builder.RegisterType<UnitStatusAlertsService>().As<IUnitStatusAlertsService>().InstancePerLifetimeScope();
+			builder.RegisterType<CallLocationHistoryService>().As<ICallLocationHistoryService>().InstancePerLifetimeScope();
 			builder.RegisterType<RunCardsService>().As<IRunCardsService>().InstancePerLifetimeScope();
 			builder.RegisterType<PersonnelLocationResolver>().As<IPersonnelLocationResolver>().InstancePerLifetimeScope();
 			// Singleton: it keeps each department's reduced visibility matrix in memory between location pings.
@@ -458,7 +459,7 @@ namespace Resgrid.Services
 			builder.RegisterType<Records.RecordsFieldRolloutService>().As<IRecordsFieldRolloutService>().InstancePerLifetimeScope();
 			// RMS-5 prevention + investigations, RMS-4 quality review and release telemetry
 			builder.RegisterType<Records.RecordsPreventionGate>().AsSelf().InstancePerLifetimeScope();
-			builder.RegisterType<Records.RecordsOccupancyService>().As<IRecordsOccupancyService>().As<IContactPreplanOwnershipGate>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.RecordsOccupancyService>().As<IRecordsOccupancyService>().As<IContactPreplanOwnershipGate>().As<IOccupancyLocationLookup>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RecordsInspectionsService>().As<IRecordsInspectionsService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RecordsHydrantsService>().As<IRecordsHydrantsService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RecordsPermitsService>().As<IRecordsPermitsService>().InstancePerLifetimeScope();

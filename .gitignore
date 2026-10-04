@@ -286,3 +286,4 @@ opencode.json
 # articles (CatalogTests checks their anchors), so it must be committed.
 /docs/*
 !/docs/admin-assist/
+.claude/settings.local.json

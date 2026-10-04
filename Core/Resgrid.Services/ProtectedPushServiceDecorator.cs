@@ -67,6 +67,10 @@ namespace Resgrid.Services
 
 		public Task<bool> UnRegisterUnit(PushUri pushUri) => _inner.UnRegisterUnit(pushUri);
 
+		public Task<bool> UnRegisterWebPush(PushUri pushUri) => _inner.UnRegisterWebPush(pushUri);
+
+		public Task<bool> UnRegisterUnitWebPush(PushUri pushUri) => _inner.UnRegisterUnitWebPush(pushUri);
+
 		private static StandardPushMessage Sanitize(StandardPushMessage message, string kind)
 		{
 			if (message == null)

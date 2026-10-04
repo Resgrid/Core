@@ -145,7 +145,7 @@ namespace Resgrid.Tests.Security
 		{
 			await using var db = Connect(_connection);
 			var row = await db.QuerySingleAsync(type == DatabaseTypes.Postgres
-				? "SELECT islocked AS Locked, lockversion AS LockVersion, lastoperatoractivityon AS Activity FROM usersessions WHERE usersessionid = @Id"
+				? "SELECT islocked AS \"Locked\", lockversion AS \"LockVersion\", lastoperatoractivityon AS \"Activity\" FROM usersessions WHERE usersessionid = @Id"
 				: "SELECT IsLocked AS Locked, LockVersion, LastOperatorActivityOn AS Activity FROM UserSessions WHERE UserSessionId = @Id", new { Id = id });
 			return ((bool)row.Locked, (long)row.LockVersion, (DateTime?)row.Activity);
 		}
@@ -155,7 +155,7 @@ namespace Resgrid.Tests.Security
 		{
 			await using var db = Connect(_connection);
 			var session = await db.QuerySingleAsync(type == DatabaseTypes.Postgres
-				? "SELECT sharedmode AS SharedMode, sharedmodesource AS Source, lockversion AS LockVersion, islocked AS Locked, lockedonutc AS LockedOn FROM usersessions WHERE usersessionid = 'existing'"
+				? "SELECT sharedmode AS \"SharedMode\", sharedmodesource AS \"Source\", lockversion AS \"LockVersion\", islocked AS \"Locked\", lockedonutc AS \"LockedOn\" FROM usersessions WHERE usersessionid = 'existing'"
 				: "SELECT SharedMode, SharedModeSource AS Source, LockVersion, IsLocked AS Locked, LockedOnUtc AS LockedOn FROM UserSessions WHERE UserSessionId = 'existing'");
 			((bool)session.SharedMode).Should().BeFalse();
 			((int)session.Source).Should().Be(0);
@@ -164,7 +164,7 @@ namespace Resgrid.Tests.Security
 			((DateTime?)session.LockedOn).Should().BeNull();
 
 			var policy = await db.QuerySingleAsync(type == DatabaseTypes.Postgres
-				? "SELECT sharedidlelockminutes AS Idle, sharedshifthours AS Shift, sharedmoderequiredapps AS Apps FROM departmentsecuritypolicies WHERE departmentid = 7"
+				? "SELECT sharedidlelockminutes AS \"Idle\", sharedshifthours AS \"Shift\", sharedmoderequiredapps AS \"Apps\" FROM departmentsecuritypolicies WHERE departmentid = 7"
 				: "SELECT SharedIdleLockMinutes AS Idle, SharedShiftHours AS Shift, SharedModeRequiredApps AS Apps FROM DepartmentSecurityPolicies WHERE DepartmentId = 7");
 			((int)policy.Idle).Should().Be(5);
 			((int)policy.Shift).Should().Be(12);

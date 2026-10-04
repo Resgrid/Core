@@ -11,6 +11,7 @@ using Resgrid.Model;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
+using Resgrid.Web.Areas.User.Models.Calls;
 using Resgrid.Web.Areas.User.Models.Records;
 
 namespace Resgrid.Web.Areas.User.Controllers
@@ -30,11 +31,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IRecordsHydrantsService _hydrants;
 		private readonly IRecordsPreventionAttachmentsService _attachments;
 		private readonly IContactsService _contacts;
+		private readonly ICallLocationHistoryService _callLocationHistory;
+		private readonly ICallsService _calls;
+		private readonly IDepartmentsService _departments;
+		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.LocationHistory> _historyLocalizer;
 
 		public RecordOccupanciesController(IRecordsOccupancyService occupancies, IRecordsInspectionsService inspections, IRecordsPermitsService permits, IRecordsHydrantsService hydrants,
 			IRecordsPreventionAttachmentsService attachments, IContactsService contacts, IRecordsCutoverService cutover, IFeatureToggleService featureToggles,
-			IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer) : base(cutover, featureToggles, localizer)
+			IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer, ICallLocationHistoryService callLocationHistory, ICallsService calls,
+			IDepartmentsService departments, IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.LocationHistory> historyLocalizer) : base(cutover, featureToggles, localizer)
 		{
+			_callLocationHistory = callLocationHistory;
+			_calls = calls;
+			_departments = departments;
+			_historyLocalizer = historyLocalizer;
 			_occupancies = occupancies;
 			_inspections = inspections;
 			_permits = permits;
@@ -56,6 +66,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Occupancies = await _occupancies.ListAsync(DepartmentId, UserId, query);
 				model.Total = await _occupancies.CountAsync(DepartmentId, UserId, query);
 				model.Reconciliation = await _occupancies.GetReconciliationStatusAsync(DepartmentId);
+				// Null when the user's dispatch scope is not department-wide: the Calls column is left off.
+				model.CallCounts = await _callLocationHistory.GetCallCountsForOccupanciesAsync(DepartmentId, UserId, model.Occupancies.Select(o => o.RmsOccupancyId));
 				return View(model);
 			}
 			catch (UnauthorizedAccessException) { return Forbid(); }
@@ -84,6 +96,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (model.PermitsOn) model.Permits = await _permits.ListAsync(DepartmentId, UserId, new RmsPermitQuery { OccupancyId = id, Take = 25 });
 				model.Attachments = await _attachments.GetMetadataAsync(DepartmentId, UserId, RmsPreventionParentKind.Occupancy, id);
 				return View(model);
+			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
+		}
+
+		/// <summary>The occupancy's response history: calls at its address (however typed) or nearby, and calls linked to its contacts that have no location of their own.</summary>
+		[HttpGet]
+		public async Task<IActionResult> CallHistory(string id)
+		{
+			if (!await ModuleOnAsync(Flag)) return NotFound();
+			try
+			{
+				var history = await _callLocationHistory.GetHistoryForOccupancyAsync(DepartmentId, UserId, id);
+				var department = await _departments.GetDepartmentByIdAsync(DepartmentId);
+				return Json(await CallLocationHistoryJson.FromAsync(history, department, _calls, _departments, _historyLocalizer));
 			}
 			catch (UnauthorizedAccessException) { return Forbid(); }
 		}

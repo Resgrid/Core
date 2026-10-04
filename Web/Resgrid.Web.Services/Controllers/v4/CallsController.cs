@@ -63,6 +63,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IFeatureToggleService _featureToggleService;
 		private readonly IDepartmentDataProtectionService _dataProtectionService;
 		private readonly IProtectedReadService _protectedCallReadService;
+		private readonly ICallLocationHistoryService _callLocationHistoryService;
 		private readonly IContactsService _contactsService;
 		private readonly IDispatchScopeService _dispatchScopeService;
 		private readonly IProtectedWriteService _protectedWriteService;
@@ -95,9 +96,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IProtectedReadService protectedCallReadService,
 			IProtectedWriteService protectedWriteService,
 			IContactsService contactsService,
-			IDispatchScopeService dispatchScopeService
+			IDispatchScopeService dispatchScopeService,
+			ICallLocationHistoryService callLocationHistoryService
 			)
 		{
+			_callLocationHistoryService = callLocationHistoryService;
 			_contactsService = contactsService;
 			_dispatchScopeService = dispatchScopeService;
 			_dataProtectionService = dataProtectionService;
@@ -390,6 +393,42 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			ResponseHelper.PopulateV4ResponseData(result);
 
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Previous calls at this call's location: other calls at the same address however it was typed, nearby calls
+		/// without a street address, and calls linked to the same contacts, newest first with their notes. Limited to
+		/// the calls the user may see; address matching is off while the department's Advanced Data Protection is on.
+		/// </summary>
+		/// <param name="callId">Id of the call</param>
+		[HttpGet("GetCallLocationHistory")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<ActionResult<LocationHistoryResult>> GetCallLocationHistory(string callId)
+		{
+			if (!int.TryParse(callId, NumberStyles.Integer, CultureInfo.InvariantCulture, out int parsedCallId))
+				return BadRequest();
+
+			var result = new LocationHistoryResult();
+			var call = await _callsService.GetCallByIdAsync(parsedCallId);
+			if (call == null)
+			{
+				ResponseHelper.PopulateV4ResponseNotFound(result);
+				return Ok(result);
+			}
+
+			if (call.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			if (!IsSystemApiKeyRequest && !await _authorizationService.CanUserViewCallAsync(UserId, parsedCallId))
+				return Unauthorized();
+
+			var history = await _callLocationHistoryService.GetHistoryForCallAsync(DepartmentId, UserId, parsedCallId);
+			result.Data = await LocationHistoryResultBuilder.BuildAsync(history, DepartmentId, ProtectedGrantToken, UserId, _protectedCallReadService, _callsService, _departmentsService);
+			result.PageSize = result.Data.Calls.Count;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
 			return Ok(result);
 		}
 

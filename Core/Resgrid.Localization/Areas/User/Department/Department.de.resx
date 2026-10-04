@@ -875,6 +875,9 @@
   <data name="RunCardSavedMessage" xml:space="preserve">
     <value>Ausrückeordnung gespeichert.</value>
   </data>
+  <data name="RunCardDetachedReferencesRemoved" xml:space="preserve">
+    <value>{0} Einträge dieser Ausrückeordnung verwiesen auf inzwischen gelöschte Einheitentypen, Personalrollen, Einsatzarten, Wachen oder Status und wurden entfernt. Prüfen Sie die Ausrückeordnung und speichern Sie sie, um die Änderung zu übernehmen.</value>
+  </data>
   <data name="CallPriority" xml:space="preserve">
     <value>Einsatzpriorität</value>
   </data>
@@ -1264,5 +1267,8 @@
   </data>
   <data name="MapStyle_Unicorn" xml:space="preserve">
     <value>Unicorn</value>
+  </data>
+  <data name="RunCardTriggerRequired" xml:space="preserve">
+    <value>Fügen Sie mindestens einen Auslöser hinzu, bevor Sie diese Ausrückeordnung speichern.</value>
   </data>
 </root>

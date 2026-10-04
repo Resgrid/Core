@@ -679,8 +679,9 @@ namespace Resgrid.Services
 			List<ContactPreplanHazard> hazards;
 			if (await _ownershipGate.Value.IsRecordsOwnedAsync(departmentId))
 			{
-				// RMS owns the structure master (plan section 4.3): project from the occupancy in the Phase A shape.
-				var projected = await _ownershipGate.Value.GetPreplanProjectionsAsync(departmentId, contactIds);
+				// RMS owns the structure master (plan section 4.3): project from the occupancy in the Phase A shape. A contact
+				// with several locations projects from the occupancy at this call's location.
+				var projected = await _ownershipGate.Value.GetPreplanProjectionsNearAsync(departmentId, contactIds, call.Address, call.GeoLocationData);
 				preplans = projected.Values.ToList();
 				hazards = preplans.SelectMany(x => x.Hazards ?? new List<ContactPreplanHazard>()).ToList();
 			}

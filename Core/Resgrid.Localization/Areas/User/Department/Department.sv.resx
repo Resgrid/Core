@@ -875,6 +875,9 @@
   <data name="RunCardSavedMessage" xml:space="preserve">
     <value>Larmplan sparad.</value>
   </data>
+  <data name="RunCardDetachedReferencesRemoved" xml:space="preserve">
+    <value>{0} post(er) i den här larmplanen hänvisade till enhetstyper, roller, larmtyper, stationer eller statusar som sedan dess raderats och har tagits bort. Granska larmplanen och spara den för att behålla ändringen.</value>
+  </data>
   <data name="CallPriority" xml:space="preserve">
     <value>Larmprioritet</value>
   </data>
@@ -1264,5 +1267,8 @@
   </data>
   <data name="MapStyle_Unicorn" xml:space="preserve">
     <value>Unicorn</value>
+  </data>
+  <data name="RunCardTriggerRequired" xml:space="preserve">
+    <value>Lägg till minst en utlösare innan du sparar detta utryckningskort.</value>
   </data>
 </root>

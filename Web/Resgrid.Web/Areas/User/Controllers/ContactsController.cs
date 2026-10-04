@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
 using Resgrid.Model.Helpers;
 using Resgrid.Localization;
+using Resgrid.Web.Areas.User.Models.Calls;
 using Resgrid.Web.Areas.User.Models.Contacts;
 using Resgrid.WebCore.Areas.User.Models;
 using Resgrid.WebCore.Areas.User.Models.Contacts;
@@ -49,6 +50,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Contacts.Contacts> _localizer;
 		private readonly IInvoicingService _invoicingService;
 		private readonly IFeatureToggleService _featureToggleService;
+		private readonly ICallLocationHistoryService _callLocationHistoryService;
+		private readonly IOccupancyLocationLookup _occupancyLocations;
+		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.LocationHistory> _locationHistoryLocalizer;
 
 		public ContactsController(IContactsService contactsService, IDepartmentsService departmentsService, IUserProfileService userProfileService,
 			IAddressService addressService, IEventAggregator eventAggregator, ICallsService callsService, IAuthorizationService authorizationService,
@@ -56,8 +60,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IDepartmentGroupsService departmentGroupsService, IRouteService routeService, IPhoneNumberProcesserProvider phoneNumberProcesser,
 			IProtectedReadService protectedReadService, IContactPreplanOwnershipGate preplanOwnership,
 			IStringLocalizer<Resgrid.Localization.Areas.User.Contacts.Contacts> localizer,
-			IInvoicingService invoicingService, IFeatureToggleService featureToggleService)
+			IInvoicingService invoicingService, IFeatureToggleService featureToggleService,
+			ICallLocationHistoryService callLocationHistoryService, IOccupancyLocationLookup occupancyLocations,
+			IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.LocationHistory> locationHistoryLocalizer)
 		{
+			_callLocationHistoryService = callLocationHistoryService;
+			_occupancyLocations = occupancyLocations;
+			_locationHistoryLocalizer = locationHistoryLocalizer;
 			_invoicingService = invoicingService;
 			_featureToggleService = featureToggleService;
 			_preplanOwnership = preplanOwnership;
@@ -88,6 +97,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			model.PreplanReviewOverdueContactIds = new HashSet<string>(
 				(await _contactsService.GetPreplansDueForReviewAsync(DepartmentId)).Select(x => x.ContactId), StringComparer.Ordinal);
+			// Null when the user's dispatch scope is not department-wide: counts are not filtered call by call, so the column is left off.
+			model.CallCounts = await _callLocationHistoryService.GetCallCountsForContactsAsync(DepartmentId, UserId);
 
 			// ADP: server-rendered lists show REDACTED for protected values (no grant server-side).
 			await _protectedReadService.ResolveContactsForReadAsync(DepartmentId, model.Contacts, null, UserId);
@@ -171,6 +182,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Preplan = await _contactsService.GetPreplanByContactIdAsync(contactId, DepartmentId);
 			model.Hazards = await _contactsService.GetHazardsByContactIdAsync(contactId, DepartmentId);
 			model.Attachments = await _contactsService.GetContactAttachmentsAsync(contactId, DepartmentId);
+			// Once Records owns structure data (the occupancy crosswalk is done) pre-plans are edited on occupancies, and a
+			// contact can be linked to several of them (a business with more than one location).
+			model.IsPreplanRecordsOwned = await _preplanOwnership.IsRecordsOwnedAsync(DepartmentId);
+			model.Occupancies = await _occupancyLocations.GetOccupanciesForContactAsync(DepartmentId, contactId) ?? new List<OccupancyLocationSummary>();
 			if (model.Preplan != null)
 				await _protectedReadService.ResolveContactPreplansForReadAsync(DepartmentId, new List<ContactPreplan> { model.Preplan }, null, UserId);
 			await _protectedReadService.ResolveContactPreplanHazardsForReadAsync(DepartmentId, model.Hazards, null, UserId);
@@ -1173,6 +1188,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			return Json(callsJson);
 		}
+		/// <summary>The contact page's Calls tab: calls linked to the contact plus calls at every occupancy it is linked to.</summary>
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Contacts_View)]
+		public async Task<IActionResult> GetContactCallHistoryJson(string contactId)
+		{
+			var contact = string.IsNullOrWhiteSpace(contactId) ? null : await _contactsService.GetContactByIdAsync(contactId);
+			if (contact == null || contact.DepartmentId != DepartmentId || contact.IsDeleted)
+				return NotFound();
+
+			var history = await _callLocationHistoryService.GetHistoryForContactAsync(DepartmentId, UserId, contactId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			return Json(await CallLocationHistoryJson.FromAsync(history, department, _callsService, _departmentsService, _locationHistoryLocalizer));
+		}
+
 		#region Pre-plans and site attachments (Contacts plan Phase A, A6)
 
 		private static readonly HashSet<string> AllowedAttachmentExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)

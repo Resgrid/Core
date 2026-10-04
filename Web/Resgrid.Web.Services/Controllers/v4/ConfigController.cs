@@ -134,6 +134,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 			result.Data.NovuBackendApiUrl = ChatConfig.NovuBackendUrl;
 			result.Data.NovuSocketUrl = ChatConfig.NovuSocketUrl;
 
+			// Browser and desktop push: public Firebase web app identifiers, sent only once every one is set.
+			if (WebPushConfig.IsConfigured())
+			{
+				result.Data.WebPushApiKey = WebPushConfig.FirebaseApiKey;
+				result.Data.WebPushAuthDomain = WebPushConfig.FirebaseAuthDomain;
+				result.Data.WebPushProjectId = WebPushConfig.FirebaseProjectId;
+				result.Data.WebPushMessagingSenderId = WebPushConfig.FirebaseMessagingSenderId;
+				result.Data.WebPushAppId = WebPushConfig.FirebaseAppId;
+				result.Data.WebPushVapidKey = WebPushConfig.FirebaseVapidKey;
+			}
+
 			result.Data.AnalyticsApiKey = "";
 			result.Data.AnalyticsHost = "";
 

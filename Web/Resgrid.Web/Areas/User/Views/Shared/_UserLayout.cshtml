@@ -146,6 +146,23 @@
         window.rgIsDepartmentAdmin = "@(ClaimsAuthorizationHelper.IsUserDepartmentAdmin().ToString().ToLowerInvariant())";
         window.rgUserDisplayName = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ClaimsAuthorizationHelper.GetFullName() ?? ""));
         window.rgModerationI18n = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(moderationLocalizer.GetAllStrings(true).ToDictionary(x => x.Name, x => x.Value)));
+        @if (Resgrid.Config.WebPushConfig.IsConfigured())
+        {
+            // Browser push (runtime/webPush.ts): public Firebase web app identifiers, plus who is signed in
+            // here so a browser left registered for someone else is rotated on the next page.
+            <text>window.rgWebPush = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(new
+            {
+                apiKey = Resgrid.Config.WebPushConfig.FirebaseApiKey,
+                authDomain = Resgrid.Config.WebPushConfig.FirebaseAuthDomain,
+                projectId = Resgrid.Config.WebPushConfig.FirebaseProjectId,
+                messagingSenderId = Resgrid.Config.WebPushConfig.FirebaseMessagingSenderId,
+                appId = Resgrid.Config.WebPushConfig.FirebaseAppId,
+                vapidKey = Resgrid.Config.WebPushConfig.FirebaseVapidKey,
+                serviceWorkerUrl = "/rg-push-sw.js",
+                userId = ClaimsAuthorizationHelper.GetUserId(),
+                departmentId = ClaimsAuthorizationHelper.GetDepartmentId().ToString()
+            }));</text>
+        }
 
         resgrid.absoluteBaseUrl = "@Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl";
         resgrid.absoluteApiBaseUrl = "@Resgrid.Config.SystemBehaviorConfig.ResgridApiBaseUrl";

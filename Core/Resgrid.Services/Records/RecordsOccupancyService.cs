@@ -21,7 +21,7 @@ namespace Resgrid.Services.Records
 	/// <see cref="IContactPreplanOwnershipGate"/>, so dispatch, the apps and the v4 contract keep their shape.
 	/// </para>
 	/// </summary>
-	public class RecordsOccupancyService : IRecordsOccupancyService, IContactPreplanOwnershipGate
+	public class RecordsOccupancyService : IRecordsOccupancyService, IContactPreplanOwnershipGate, IOccupancyLocationLookup
 	{
 		/// <summary>Two sources closer than this describe the same structure for grouping purposes.</summary>
 		public const double ProximityMeters = 50;
@@ -376,9 +376,15 @@ namespace Resgrid.Services.Records
 			public string ContactId;
 			public string DisplayName;
 			public string NormalizedAddress;
+			/// <summary>The same address parsed, so "110 South Main" groups with "110 S Main St" where the folded text differs.</summary>
+			public ParsedStreetAddress Parsed;
 			public decimal? Latitude;
 			public decimal? Longitude;
 		}
+
+		private static bool SameAddress(SourceCandidate a, SourceCandidate b)
+			=> (a.NormalizedAddress != null && a.NormalizedAddress == b.NormalizedAddress)
+				|| StreetAddressMatcher.Compare(a.Parsed, b.Parsed) == StreetAddressMatch.Same;
 
 		public async Task<OccupancyCrosswalkInventoryResult> InventoryCandidatesAsync(int departmentId, string userId, CancellationToken cancellationToken = default)
 		{
@@ -391,14 +397,15 @@ namespace Resgrid.Services.Records
 			result.SourcesScanned = sources.Count;
 			var existingRows = (await _crosswalks.GetAllForDepartmentAsync(departmentId))?.ToList() ?? new List<RmsOccupancyCrosswalk>();
 			var occupancies = (await _occupancies.GetAllLiveAsync(departmentId))?.ToList() ?? new List<RmsOccupancy>();
+			var parsedOccupancies = occupancies.ToDictionary(o => o.RmsOccupancyId, ParseOccupancyAddress, StringComparer.Ordinal);
 
 			// Group by folded address first, then by proximity for sources that only carry coordinates.
 			var groups = new List<List<SourceCandidate>>();
 			foreach (var source in sources)
 			{
 				List<SourceCandidate> group = null;
-				if (source.NormalizedAddress != null)
-					group = groups.FirstOrDefault(g => g.Any(s => s.NormalizedAddress != null && s.NormalizedAddress == source.NormalizedAddress));
+				if (source.NormalizedAddress != null || source.Parsed != null)
+					group = groups.FirstOrDefault(g => g.Any(s => SameAddress(s, source)));
 				if (group == null && source.Latitude.HasValue && source.Longitude.HasValue)
 					group = groups.FirstOrDefault(g => g.Any(s => s.Latitude.HasValue && s.Longitude.HasValue && Meters(s, source) <= ProximityMeters));
 				if (group == null) { group = new List<SourceCandidate>(); groups.Add(group); }
@@ -416,7 +423,7 @@ namespace Resgrid.Services.Records
 					var groupKey = $"g{groupIndex:0000}";
 					foreach (var source in group)
 					{
-						var suggestion = Suggest(source, occupancies, out var confidence, out var reason);
+						var suggestion = Suggest(source, occupancies, parsedOccupancies, out var confidence, out var reason);
 						var row = existingRows.FirstOrDefault(r => r.SourceKind == (int)source.Kind && r.SourceId == source.SourceId);
 						if (row != null && row.State != (int)RmsOccupancyCrosswalkState.Candidate) { result.AlreadyDecided++; continue; }
 						var isNewRow = row == null;
@@ -453,13 +460,17 @@ namespace Resgrid.Services.Records
 		private static double Meters(SourceCandidate a, SourceCandidate b)
 			=> GeoMath.HaversineMeters((double)a.Latitude.Value, (double)a.Longitude.Value, (double)b.Latitude.Value, (double)b.Longitude.Value);
 
-		private static RmsOccupancy Suggest(SourceCandidate source, List<RmsOccupancy> occupancies, out int confidence, out string reason)
+		private static RmsOccupancy Suggest(SourceCandidate source, List<RmsOccupancy> occupancies, Dictionary<string, ParsedStreetAddress> parsedOccupancies, out int confidence, out string reason)
 		{
-			if (source.NormalizedAddress != null)
+			ParsedStreetAddress ParsedOf(RmsOccupancy o) => parsedOccupancies != null && parsedOccupancies.TryGetValue(o.RmsOccupancyId, out var p) ? p : null;
+
+			if (source.NormalizedAddress != null || source.Parsed != null)
 			{
-				var byAddress = occupancies.FirstOrDefault(o => o.NormalizedAddress != null && o.NormalizedAddress == source.NormalizedAddress);
+				var byAddress = occupancies.FirstOrDefault(o => o.NormalizedAddress != null && o.NormalizedAddress == source.NormalizedAddress)
+					?? occupancies.FirstOrDefault(o => StreetAddressMatcher.Compare(source.Parsed, ParsedOf(o)) == StreetAddressMatch.Same);
 				if (byAddress != null) { confidence = 90; reason = "Same address"; return byAddress; }
 			}
+			RmsOccupancy similar = source.Parsed == null ? null : occupancies.FirstOrDefault(o => StreetAddressMatcher.Compare(source.Parsed, ParsedOf(o)) == StreetAddressMatch.Similar);
 			if (source.Latitude.HasValue && source.Longitude.HasValue)
 			{
 				RmsOccupancy best = null; var bestMeters = double.MaxValue;
@@ -469,8 +480,10 @@ namespace Resgrid.Services.Records
 					if (m < bestMeters) { bestMeters = m; best = o; }
 				}
 				if (best != null && bestMeters <= 25) { confidence = 75; reason = $"Within {Math.Round(bestMeters)} m"; return best; }
+				if (similar != null) { confidence = 70; reason = "Similar address"; return similar; }
 				if (best != null && bestMeters <= ProximityMeters) { confidence = 60; reason = $"Within {Math.Round(bestMeters)} m"; return best; }
 			}
+			if (similar != null) { confidence = 70; reason = "Similar address"; return similar; }
 			confidence = 0; reason = "No matching occupancy";
 			return null;
 		}
@@ -481,32 +494,34 @@ namespace Resgrid.Services.Records
 			var contacts = ((await _contacts.GetAllByDepartmentIdAsync(departmentId)) ?? Enumerable.Empty<Contact>()).Where(c => !c.IsDeleted).ToList();
 			var preplans = ((await _contactPreplans.GetPreplansByDepartmentIdAsync(departmentId)) ?? Enumerable.Empty<ContactPreplan>()).Where(p => !p.IsDeleted).ToList();
 			var preplanContacts = new HashSet<string>(preplans.Select(p => p.ContactId), StringComparer.Ordinal);
-			var addressCache = new Dictionary<int, string>();
+			var addressCache = new Dictionary<int, (string Folded, ParsedStreetAddress Parsed)>();
 
-			async Task<string> AddressOf(Contact c)
+			async Task<(string Folded, ParsedStreetAddress Parsed)> AddressOf(Contact c)
 			{
-				if (!c.PhysicalAddressId.HasValue) return null;
+				if (!c.PhysicalAddressId.HasValue) return (null, null);
 				if (addressCache.TryGetValue(c.PhysicalAddressId.Value, out var cached)) return cached;
 				var address = await _addresses.GetByIdAsync(c.PhysicalAddressId.Value) as Address;
 				var folded = address == null ? null : AddressNormalizer.Normalize(string.Join(" ", new[] { address.Address1, address.City, address.State, address.PostalCode }.Where(x => !string.IsNullOrWhiteSpace(x))));
-				addressCache[c.PhysicalAddressId.Value] = folded;
-				return folded;
+				var parsed = address == null ? null : StreetAddressParser.Parse(address.Address1, address.City, address.PostalCode);
+				addressCache[c.PhysicalAddressId.Value] = (folded, parsed);
+				return (folded, parsed);
 			}
 
 			foreach (var preplan in preplans)
 			{
 				var contact = contacts.FirstOrDefault(c => c.ContactId == preplan.ContactId);
 				var point = GeoMath.ParseLatLonString(contact?.LocationGpsCoordinates);
+				var address = contact == null ? default : await AddressOf(contact);
 				list.Add(new SourceCandidate { Kind = RmsOccupancyCrosswalkSourceKind.ContactPreplan, SourceId = preplan.ContactPreplanId, ContactId = preplan.ContactId, DisplayName = contact?.Name ?? preplan.ContactId,
-					NormalizedAddress = contact == null ? null : await AddressOf(contact), Latitude = point.HasValue ? (decimal?)(decimal)point.Value.Latitude : null, Longitude = point.HasValue ? (decimal?)(decimal)point.Value.Longitude : null });
+					NormalizedAddress = address.Folded, Parsed = address.Parsed, Latitude = point.HasValue ? (decimal?)(decimal)point.Value.Latitude : null, Longitude = point.HasValue ? (decimal?)(decimal)point.Value.Longitude : null });
 			}
 			foreach (var contact in contacts.Where(c => c.ContactType == 1 && !preplanContacts.Contains(c.ContactId)))
 			{
 				var point = GeoMath.ParseLatLonString(contact.LocationGpsCoordinates);
 				var address = await AddressOf(contact);
-				if (!point.HasValue && address == null) continue; // a company with no site is not a structure candidate
+				if (!point.HasValue && address.Folded == null) continue; // a company with no site is not a structure candidate
 				list.Add(new SourceCandidate { Kind = RmsOccupancyCrosswalkSourceKind.Contact, SourceId = contact.ContactId, ContactId = contact.ContactId, DisplayName = contact.Name,
-					NormalizedAddress = address, Latitude = point.HasValue ? (decimal?)(decimal)point.Value.Latitude : null, Longitude = point.HasValue ? (decimal?)(decimal)point.Value.Longitude : null });
+					NormalizedAddress = address.Folded, Parsed = address.Parsed, Latitude = point.HasValue ? (decimal?)(decimal)point.Value.Latitude : null, Longitude = point.HasValue ? (decimal?)(decimal)point.Value.Longitude : null });
 			}
 			// Pois carry no DepartmentId column; a department owns its POIs through their POI type. The repository logs and
 			// returns null on failure (an empty query is an empty list), and treating that as "no POIs" would stamp an
@@ -515,7 +530,7 @@ namespace Resgrid.Services.Records
 				?? throw new InvalidOperationException("The department's points of interest could not be loaded, so the inventory was not recorded. Try again.");
 			foreach (var poi in poiTypes.Where(t => t?.Pois != null).SelectMany(t => t.Pois).Where(p => p != null))
 			{
-				list.Add(new SourceCandidate { Kind = RmsOccupancyCrosswalkSourceKind.Poi, SourceId = poi.PoiId.ToString(), DisplayName = poi.Name, NormalizedAddress = AddressNormalizer.Normalize(poi.Address),
+				list.Add(new SourceCandidate { Kind = RmsOccupancyCrosswalkSourceKind.Poi, SourceId = poi.PoiId.ToString(), DisplayName = poi.Name, NormalizedAddress = AddressNormalizer.Normalize(poi.Address), Parsed = StreetAddressParser.Parse(poi.Address),
 					Latitude = poi.Latitude == 0 && poi.Longitude == 0 ? (decimal?)null : (decimal)poi.Latitude, Longitude = poi.Latitude == 0 && poi.Longitude == 0 ? (decimal?)null : (decimal)poi.Longitude });
 			}
 			return list;
@@ -787,12 +802,15 @@ namespace Resgrid.Services.Records
 			return map.TryGetValue(contactId, out var projection) ? projection : null;
 		}
 
-		public async Task<Dictionary<string, OccupancyDispatchProjectionV1>> GetDispatchProjectionsForContactsAsync(int departmentId, IEnumerable<string> contactIds, CancellationToken cancellationToken = default)
+		public Task<Dictionary<string, OccupancyDispatchProjectionV1>> GetDispatchProjectionsForContactsAsync(int departmentId, IEnumerable<string> contactIds, CancellationToken cancellationToken = default)
+			=> ProjectionsForContactsAsync(departmentId, contactIds, null, null, cancellationToken);
+
+		private async Task<Dictionary<string, OccupancyDispatchProjectionV1>> ProjectionsForContactsAsync(int departmentId, IEnumerable<string> contactIds, string nearAddress, string nearGeoLocation, CancellationToken cancellationToken)
 		{
 			var result = new Dictionary<string, OccupancyDispatchProjectionV1>(StringComparer.Ordinal);
 			var ids = (contactIds ?? Enumerable.Empty<string>()).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct().ToList();
 			if (ids.Count == 0) return result;
-			var byContact = await OccupancyIdsForContactsAsync(departmentId, ids);
+			var byContact = await OccupancyIdsForContactsAsync(departmentId, ids, nearAddress, nearGeoLocation);
 			if (byContact.Count == 0) return result;
 			var occupancies = ((await _occupancies.GetByIdsAsync(departmentId, byContact.Values.Distinct())) ?? Enumerable.Empty<RmsOccupancy>()).Where(o => o.DeletedOn == null).ToList();
 			var projections = await BuildProjectionsAsync(departmentId, occupancies, cancellationToken);
@@ -801,19 +819,93 @@ namespace Resgrid.Services.Records
 			return result;
 		}
 
-		private async Task<Dictionary<string, string>> OccupancyIdsForContactsAsync(int departmentId, List<string> contactIds)
+		/// <summary>A located occupancy beats the contact's default only within this distance (when neither address decides).</summary>
+		public const double NearLocationMeters = 100;
+
+		/// <summary>
+		/// The one occupancy each contact projects from. Without a location: the primary site link, then the oldest site
+		/// link, then a Linked crosswalk row. With a location (a call's address and "lat,lng"), a multi-site contact
+		/// projects from the occupancy at that location; any linked role qualifies there, because a business contact is
+		/// often the owner rather than the site contact of its other locations. Merges are followed to the survivor.
+		/// </summary>
+		private async Task<Dictionary<string, string>> OccupancyIdsForContactsAsync(int departmentId, List<string> contactIds, string nearAddress = null, string nearGeoLocation = null)
 		{
-			var map = new Dictionary<string, string>(StringComparer.Ordinal);
+			// (occupancy id, rank): 0 primary site, 1 site, 2 Linked crosswalk, 3 any other role (eligible only by location).
+			var candidates = new Dictionary<string, List<(string OccupancyId, int Rank, DateTime CreatedOn)>>(StringComparer.Ordinal);
+			void Add(string contactId, string occupancyId, int rank, DateTime createdOn)
+			{
+				if (string.IsNullOrWhiteSpace(contactId) || string.IsNullOrWhiteSpace(occupancyId)) return;
+				if (!candidates.TryGetValue(contactId, out var list)) candidates[contactId] = list = new List<(string, int, DateTime)>();
+				list.Add((occupancyId, rank, createdOn));
+			}
+
 			foreach (var link in (await _links.GetForContactsAsync(departmentId, contactIds)) ?? Enumerable.Empty<RmsOccupancyContactLink>())
-				if (link.Role == (int)RmsOccupancyContactRole.Site && !map.ContainsKey(link.ContactId)) map[link.ContactId] = link.RmsOccupancyId;
+				Add(link.ContactId, link.RmsOccupancyId, link.Role == (int)RmsOccupancyContactRole.Site ? (link.IsPrimary ? 0 : 1) : 3, link.CreatedOn);
 			foreach (var cw in (await _crosswalks.GetForContactsAsync(departmentId, contactIds)) ?? Enumerable.Empty<RmsOccupancyCrosswalk>())
-				if (cw.State == (int)RmsOccupancyCrosswalkState.Linked && cw.RmsOccupancyId != null && cw.ContactId != null && !map.ContainsKey(cw.ContactId)) map[cw.ContactId] = cw.RmsOccupancyId;
+				if (cw.State == (int)RmsOccupancyCrosswalkState.Linked)
+					Add(cw.ContactId, cw.RmsOccupancyId, 2, cw.CreatedOn);
+
+			var map = new Dictionary<string, string>(StringComparer.Ordinal);
+			if (candidates.Count == 0) return map;
+
 			// Follow merges so a contact linked to a merged-away occupancy projects from the survivor.
-			var live = ((await _occupancies.GetByIdsAsync(departmentId, map.Values.Distinct())) ?? Enumerable.Empty<RmsOccupancy>()).ToDictionary(o => o.RmsOccupancyId);
-			foreach (var key in map.Keys.ToList())
-				if (live.TryGetValue(map[key], out var o) && o.Status == (int)RmsOccupancyStatus.Merged && !string.IsNullOrWhiteSpace(o.MergedIntoOccupancyId)) map[key] = o.MergedIntoOccupancyId;
+			var rows = ((await _occupancies.GetByIdsAsync(departmentId, candidates.Values.SelectMany(l => l.Select(c => c.OccupancyId)).Distinct())) ?? Enumerable.Empty<RmsOccupancy>()).ToDictionary(o => o.RmsOccupancyId);
+			string Survivor(string id) => rows.TryGetValue(id, out var o) && o.Status == (int)RmsOccupancyStatus.Merged && !string.IsNullOrWhiteSpace(o.MergedIntoOccupancyId) ? o.MergedIntoOccupancyId : id;
+
+			var located = !string.IsNullOrWhiteSpace(nearAddress) || !string.IsNullOrWhiteSpace(nearGeoLocation);
+			var nearParsed = located ? StreetAddressParser.Parse(ProtectedDataEnvelope.HasEnvelopePrefix(nearAddress) ? null : nearAddress) : null;
+			var nearPoint = located && !ProtectedDataEnvelope.HasEnvelopePrefix(nearGeoLocation) ? GeoMath.ParseLatLonString(nearGeoLocation) : null;
+			if (located && candidates.Values.Any(l => l.Select(c => Survivor(c.OccupancyId)).Distinct().Count() > 1 || l.Any(c => c.Rank == 3)))
+			{
+				var missing = candidates.Values.SelectMany(l => l.Select(c => Survivor(c.OccupancyId))).Where(id => !rows.ContainsKey(id)).Distinct().ToList();
+				if (missing.Count > 0)
+					foreach (var o in (await _occupancies.GetByIdsAsync(departmentId, missing)) ?? Enumerable.Empty<RmsOccupancy>())
+						rows[o.RmsOccupancyId] = o;
+			}
+			else
+			{
+				located = false;
+			}
+
+			foreach (var pair in candidates)
+			{
+				var options = pair.Value.Select(c => (OccupancyId: Survivor(c.OccupancyId), c.Rank, c.CreatedOn))
+					.Where(c => !rows.TryGetValue(c.OccupancyId, out var o) || o.DeletedOn == null)
+					.ToList();
+				if (options.Count == 0) continue;
+
+				string chosen = null;
+				if (located)
+				{
+					// Same address 3, similar address 2, within NearLocationMeters 1 (nearer wins); ties fall back to rank.
+					var best = options.Select(c => (c.OccupancyId, c.Rank, c.CreatedOn, Score: LocationScore(rows.TryGetValue(c.OccupancyId, out var o) ? o : null, nearParsed, nearPoint, out var meters), Meters: meters))
+						.Where(c => c.Score > 0)
+						.OrderByDescending(c => c.Score).ThenBy(c => c.Meters).ThenBy(c => c.Rank).ThenBy(c => c.CreatedOn)
+						.FirstOrDefault();
+					chosen = best.OccupancyId;
+				}
+
+				chosen ??= options.Where(c => c.Rank < 3).OrderBy(c => c.Rank).ThenBy(c => c.CreatedOn).Select(c => c.OccupancyId).FirstOrDefault();
+				if (chosen != null) map[pair.Key] = chosen;
+			}
+
 			return map;
 		}
+
+		private static int LocationScore(RmsOccupancy occupancy, ParsedStreetAddress nearParsed, GeoMath.GeoPoint? nearPoint, out double meters)
+		{
+			meters = double.MaxValue;
+			if (occupancy == null) return 0;
+			if (nearPoint.HasValue && occupancy.Latitude.HasValue && occupancy.Longitude.HasValue)
+				meters = GeoMath.HaversineMeters(nearPoint.Value.Latitude, nearPoint.Value.Longitude, (double)occupancy.Latitude.Value, (double)occupancy.Longitude.Value);
+			var match = nearParsed == null ? StreetAddressMatch.None : StreetAddressMatcher.Compare(nearParsed, ParseOccupancyAddress(occupancy));
+			if (match == StreetAddressMatch.Same) return 3;
+			if (match == StreetAddressMatch.Similar) return 2;
+			return meters <= NearLocationMeters ? 1 : 0;
+		}
+
+		private static ParsedStreetAddress ParseOccupancyAddress(RmsOccupancy occupancy)
+			=> occupancy == null ? null : StreetAddressParser.Parse(occupancy.AddressText, occupancy.City, occupancy.PostalCode);
 
 		private async Task<Dictionary<string, OccupancyDispatchProjectionV1>> BuildProjectionsAsync(int departmentId, List<RmsOccupancy> occupancies, CancellationToken cancellationToken)
 		{
@@ -888,12 +980,113 @@ namespace Resgrid.Services.Records
 			return result;
 		}
 
+		public async Task<Dictionary<string, ContactPreplan>> GetPreplanProjectionsNearAsync(int departmentId, IEnumerable<string> contactIds, string nearAddress, string nearGeoLocation, CancellationToken cancellationToken = default)
+		{
+			var result = new Dictionary<string, ContactPreplan>(StringComparer.Ordinal);
+			if (!await IsRecordsOwnedAsync(departmentId)) return result;
+			foreach (var pair in await ProjectionsForContactsAsync(departmentId, contactIds, nearAddress, nearGeoLocation, cancellationToken))
+				result[pair.Key] = pair.Value.ToContactPreplanView(pair.Key, departmentId);
+			return result;
+		}
+
 		public async Task<string> GetOccupancyIdForContactAsync(int departmentId, string contactId)
 		{
 			if (string.IsNullOrWhiteSpace(contactId)) return null;
 			var map = await OccupancyIdsForContactsAsync(departmentId, new List<string> { contactId });
 			return map.TryGetValue(contactId, out var id) ? id : null;
 		}
+
+		#endregion
+
+		#region Occupancy locations (IOccupancyLocationLookup: contact pages and call location history)
+
+		/// <summary>The lookup must never take a Contacts or Calls page down: a department without the module, or without its tables, has no occupancies.</summary>
+		private async Task<bool> LocationLookupEnabledAsync(int departmentId)
+		{
+			try
+			{
+				return await IsModuleEnabledAsync(departmentId);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Occupancy module check failed for department {departmentId}; treating it as off for location lookups.");
+				return false;
+			}
+		}
+
+		public async Task<List<OccupancyLocationSummary>> GetOccupanciesForContactAsync(int departmentId, string contactId)
+		{
+			var result = new List<OccupancyLocationSummary>();
+			if (string.IsNullOrWhiteSpace(contactId) || !await LocationLookupEnabledAsync(departmentId)) return result;
+
+			var links = ((await _links.GetForContactAsync(departmentId, contactId)) ?? Enumerable.Empty<RmsOccupancyContactLink>()).ToList();
+			var linked = ((await _crosswalks.GetForContactAsync(departmentId, contactId)) ?? Enumerable.Empty<RmsOccupancyCrosswalk>())
+				.Where(c => c.State == (int)RmsOccupancyCrosswalkState.Linked && !string.IsNullOrWhiteSpace(c.RmsOccupancyId)).Select(c => c.RmsOccupancyId).ToList();
+			var ids = links.Select(l => l.RmsOccupancyId).Concat(linked).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct().ToList();
+			if (ids.Count == 0) return result;
+
+			var rows = ((await _occupancies.GetByIdsAsync(departmentId, ids)) ?? Enumerable.Empty<RmsOccupancy>()).Where(o => o.DeletedOn == null).ToList();
+			var survivors = rows.Where(o => o.Status == (int)RmsOccupancyStatus.Merged && !string.IsNullOrWhiteSpace(o.MergedIntoOccupancyId)).Select(o => o.MergedIntoOccupancyId)
+				.Where(id => rows.All(r => r.RmsOccupancyId != id)).Distinct().ToList();
+			if (survivors.Count > 0)
+				rows.AddRange(((await _occupancies.GetByIdsAsync(departmentId, survivors)) ?? Enumerable.Empty<RmsOccupancy>()).Where(o => o.DeletedOn == null));
+
+			string Survivor(string id) => rows.FirstOrDefault(r => r.RmsOccupancyId == id) is RmsOccupancy o && o.Status == (int)RmsOccupancyStatus.Merged && !string.IsNullOrWhiteSpace(o.MergedIntoOccupancyId) ? o.MergedIntoOccupancyId : id;
+
+			foreach (var occupancy in rows.Where(o => o.Status != (int)RmsOccupancyStatus.Merged))
+			{
+				// The contact's strongest link to this occupancy: primary site first, then site, then any role.
+				var link = links.Where(l => Survivor(l.RmsOccupancyId) == occupancy.RmsOccupancyId)
+					.OrderBy(l => l.Role == (int)RmsOccupancyContactRole.Site ? 0 : 1).ThenByDescending(l => l.IsPrimary).FirstOrDefault();
+				var summary = ToLocationSummary(occupancy);
+				summary.Role = link?.Role ?? (int)RmsOccupancyContactRole.Site;
+				summary.IsPrimary = link?.IsPrimary ?? false;
+				summary.ContactIds.Add(contactId);
+				result.Add(summary);
+			}
+
+			return result.OrderBy(s => s.Role == (int)RmsOccupancyContactRole.Site ? 0 : 1).ThenByDescending(s => s.IsPrimary).ThenBy(s => s.Name, StringComparer.OrdinalIgnoreCase).ToList();
+		}
+
+		public async Task<OccupancyLocationSummary> GetOccupancyLocationAsync(int departmentId, string occupancyId)
+		{
+			if (string.IsNullOrWhiteSpace(occupancyId) || !await LocationLookupEnabledAsync(departmentId)) return null;
+			var map = await GetOccupancyLocationsAsync(departmentId, new[] { occupancyId });
+			return map.TryGetValue(occupancyId, out var summary) ? summary : null;
+		}
+
+		public async Task<Dictionary<string, OccupancyLocationSummary>> GetOccupancyLocationsAsync(int departmentId, IEnumerable<string> occupancyIds)
+		{
+			var result = new Dictionary<string, OccupancyLocationSummary>(StringComparer.Ordinal);
+			var ids = (occupancyIds ?? Enumerable.Empty<string>()).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct().ToList();
+			if (ids.Count == 0 || !await LocationLookupEnabledAsync(departmentId)) return result;
+
+			var occupancies = ((await _occupancies.GetByIdsAsync(departmentId, ids)) ?? Enumerable.Empty<RmsOccupancy>()).Where(o => o.DeletedOn == null).ToList();
+			var links = ((await _links.GetForOccupanciesAsync(departmentId, occupancies.Select(o => o.RmsOccupancyId))) ?? Enumerable.Empty<RmsOccupancyContactLink>()).ToList();
+			foreach (var occupancy in occupancies)
+			{
+				var summary = ToLocationSummary(occupancy);
+				summary.ContactIds.AddRange(links.Where(l => l.RmsOccupancyId == occupancy.RmsOccupancyId)
+					.Select(l => l.ContactId).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct());
+				result[occupancy.RmsOccupancyId] = summary;
+			}
+
+			return result;
+		}
+
+		private static OccupancyLocationSummary ToLocationSummary(RmsOccupancy o) => new OccupancyLocationSummary
+		{
+			OccupancyId = o.RmsOccupancyId,
+			OccupancyNumber = o.OccupancyNumber,
+			Name = o.Name,
+			Status = o.Status,
+			AddressText = o.AddressText,
+			City = o.City,
+			StateProvince = o.StateProvince,
+			PostalCode = o.PostalCode,
+			Latitude = o.Latitude,
+			Longitude = o.Longitude
+		};
 
 		#endregion
 	}

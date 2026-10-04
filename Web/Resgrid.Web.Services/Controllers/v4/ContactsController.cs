@@ -40,6 +40,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IProtectedWriteService _protectedWriteService;
 		private readonly IAddressService _addressService;
 		private readonly IUdfRenderingService _udfRenderingService;
+		private readonly ICallsService _callsService;
+		private readonly ICallLocationHistoryService _callLocationHistoryService;
 
 		public ContactsController(
 			IContactsService contactsService,
@@ -51,9 +53,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IProtectedReadService protectedReadService,
 			IProtectedWriteService protectedWriteService,
 			IAddressService addressService,
-			IUdfRenderingService udfRenderingService
+			IUdfRenderingService udfRenderingService,
+			ICallsService callsService,
+			ICallLocationHistoryService callLocationHistoryService
 			)
 		{
+			_callsService = callsService;
+			_callLocationHistoryService = callLocationHistoryService;
 			_addressService = addressService;
 			_udfRenderingService = udfRenderingService;
 			_protectedReadService = protectedReadService;
@@ -310,6 +316,36 @@ namespace Resgrid.Web.Services.Controllers.v4
 			ResponseHelper.PopulateV4ResponseData(result);
 
 			return result;
+		}
+
+		/// <summary>
+		/// Calls related to a contact: calls linked to it, plus calls at every occupancy it is linked to (one contact can
+		/// be linked to several, such as a business with more than one location), newest first with their notes.
+		/// </summary>
+		/// <param name="contactId">Id of the contact</param>
+		[HttpGet("GetContactCallHistory")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Contacts_View)]
+		public async Task<ActionResult<Resgrid.Web.Services.Models.v4.Calls.LocationHistoryResult>> GetContactCallHistory(string contactId)
+		{
+			var result = new Resgrid.Web.Services.Models.v4.Calls.LocationHistoryResult();
+
+			var contact = string.IsNullOrWhiteSpace(contactId) ? null : await _contactsService.GetContactByIdAsync(contactId);
+			if (contact == null || contact.IsDeleted)
+			{
+				ResponseHelper.PopulateV4ResponseNotFound(result);
+				return Ok(result);
+			}
+
+			if (contact.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			var history = await _callLocationHistoryService.GetHistoryForContactAsync(DepartmentId, UserId, contactId);
+			result.Data = await LocationHistoryResultBuilder.BuildAsync(history, DepartmentId, ProtectedGrantToken, UserId, _protectedReadService, _callsService, _departmentsService);
+			result.PageSize = result.Data.Calls.Count;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+			return Ok(result);
 		}
 
 		// ── Pre-plans and hazards (Contacts plan Phase A, A5) ─────────────────────

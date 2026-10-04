@@ -1,0 +1,30 @@
+@model Resgrid.Web.Areas.User.Models.Calls.CallLocationHistoryPanel
+@using System.Linq
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.LocationHistory> historyLocalizer
+@{
+    // The widget script (resgrid.dispatch.locationhistory.js) builds every element with textContent; the strings travel
+    // as an encoded attribute, never as inline script.
+    var keys = new[]
+    {
+        "Loading", "NoCalls", "LoadFailed", "MatchedAs", "FilterPlaceholder", "AddressMatchingOff", "IndexIncomplete", "HasMore",
+        "ColumnCall", "ColumnLoggedOn", "ColumnName", "ColumnAddress", "ColumnState", "ColumnPriority", "ColumnMatch", "ColumnNotes",
+        "ShowNotes", "HideNotes", "NoNotes", "ClosingNotes", "CallNotes"
+    };
+    var strings = keys.ToDictionary(k => k, k => historyLocalizer[k].Value);
+}
+<div class="rg-location-history" id="@Model.Id"
+     data-url="@Model.Url"
+     data-call-url="@Url.Action("ViewCall", "Dispatch", new { area = "User" })"
+     data-autoload="@(Model.AutoLoad ? "true" : "false")"
+     data-trigger="@Model.TriggerSelector"
+     data-strings="@System.Text.Json.JsonSerializer.Serialize(strings)">
+    @if (!string.IsNullOrWhiteSpace(Model.Header))
+    {
+        <h4><i class="fa fa-history"></i> @Model.Header</h4>
+    }
+    @if (!string.IsNullOrWhiteSpace(Model.Help))
+    {
+        <p class="text-muted small">@Model.Help</p>
+    }
+    <div class="rg-location-history-body"></div>
+</div>

@@ -33,6 +33,7 @@ namespace Resgrid.Model.Repositories
 	public interface IRmsOccupancyContactLinksRepository : IRepository<RmsOccupancyContactLink>
 	{
 		Task<IEnumerable<RmsOccupancyContactLink>> GetForOccupancyAsync(int departmentId, string occupancyId);
+		Task<IEnumerable<RmsOccupancyContactLink>> GetForOccupanciesAsync(int departmentId, IEnumerable<string> occupancyIds);
 		Task<IEnumerable<RmsOccupancyContactLink>> GetForContactAsync(int departmentId, string contactId);
 		Task<IEnumerable<RmsOccupancyContactLink>> GetForContactsAsync(int departmentId, IEnumerable<string> contactIds);
 		Task<RmsOccupancyContactLink> GetByIdForDepartmentAsync(int departmentId, string linkId);

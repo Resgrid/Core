@@ -2,6 +2,7 @@
 @using Resgrid.Web.Areas.User.Models.Records
 @model RecordOccupancyDetailsView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.LocationHistory> historyLocalizer
 @{
     var departmentTime = DepartmentTime.From(ViewData);
 	var o = Model.Occupancy;
@@ -230,4 +231,26 @@
 			}
 		</div>
 	</div>
+	<div class="row" id="responseHistory">
+		<div class="col-md-12">
+			<div class="ibox"><div class="ibox-content">
+				@{
+					var responseHistoryPanel = new Resgrid.Web.Areas.User.Models.Calls.CallLocationHistoryPanel
+					{
+						Id = "occupancyResponseHistory",
+						Url = Url.Action("CallHistory", "RecordOccupancies", new { area = "User", id = o.RmsOccupancyId }),
+						Header = historyLocalizer["ResponseHistoryHeader"].Value,
+						Help = historyLocalizer["ResponseHistoryHelp"].Value,
+						AutoLoad = true
+					};
+				}
+				<partial name="_CallLocationHistory" model="responseHistoryPanel" />
+			</div></div>
+		</div>
+	</div>
 </div>
+
+@section Scripts
+{
+	<script src="~/js/app/internal/dispatch/resgrid.dispatch.locationhistory.js" asp-append-version="true" type="text/javascript"></script>
+}

@@ -105,6 +105,8 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public int Page { get; set; } = 1;
 		public int PageSize { get; set; } = 50;
 		public OccupancyReconciliationStatus Reconciliation { get; set; }
+		/// <summary>Calls per occupancy on this page; null leaves the Calls column off (the user's dispatch scope is not department-wide).</summary>
+		public Dictionary<string, int> CallCounts { get; set; }
 		public List<SelectListItem> Statuses => RmsEnumDisplay.Items<RmsOccupancyStatus>(Status);
 	}
 

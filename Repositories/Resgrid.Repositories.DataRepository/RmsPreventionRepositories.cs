@@ -101,6 +101,13 @@ namespace Resgrid.Repositories.DataRepository
 		public Task<IEnumerable<RmsOccupancyContactLink>> GetForOccupancyAsync(int departmentId, string occupancyId)
 			=> QueryAsync<RmsOccupancyContactLink>($"SELECT * FROM {Tbl("RmsOccupancyContactLinks")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsOccupancyId")} = {P}Id AND {Col("DeletedOn")} IS NULL ORDER BY {Col("Role")}, {Col("CreatedOn")}", new { DepartmentId = departmentId, Id = occupancyId });
 
+		public Task<IEnumerable<RmsOccupancyContactLink>> GetForOccupanciesAsync(int departmentId, IEnumerable<string> occupancyIds)
+		{
+			var ids = InListValue(occupancyIds);
+			if (ids.Length == 0) return Task.FromResult<IEnumerable<RmsOccupancyContactLink>>(new List<RmsOccupancyContactLink>());
+			return QueryAsync<RmsOccupancyContactLink>($"SELECT * FROM {Tbl("RmsOccupancyContactLinks")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {InList("RmsOccupancyId", "Ids")} AND {Col("DeletedOn")} IS NULL ORDER BY {Col("Role")}, {Col("CreatedOn")}", new { DepartmentId = departmentId, Ids = ids });
+		}
+
 		public Task<IEnumerable<RmsOccupancyContactLink>> GetForContactAsync(int departmentId, string contactId)
 			=> QueryAsync<RmsOccupancyContactLink>($"SELECT * FROM {Tbl("RmsOccupancyContactLinks")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("ContactId")} = {P}ContactId AND {Col("DeletedOn")} IS NULL", new { DepartmentId = departmentId, ContactId = contactId });
 

@@ -2,8 +2,11 @@
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Contacts.ContactsIndexView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Contacts.Contacts> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.LocationHistory> historyLocalizer
 @{
     ViewBag.Title = "Resgrid | " + @commonLocalizer["ContactsModule"];
+    // Linked calls per contact; null (the user's dispatch scope is not department-wide) leaves the column off.
+    var callsHeader = Model.CallCounts != null ? $"<th>{Html.Encode(historyLocalizer["CallsColumn"].Value)}</th>" : "";
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -54,7 +57,7 @@
                         if (Model.Contacts != null && Model.Contacts.Any())
                         {
                             @Html.Raw("<div id='contactsTab-1' class='contactsTabPannel'>")
-                            @Html.Raw($"<div class='table-responsive'><table class='table table-striped' data-page-length='100' width='100%'><thead><tr><th class='span1'></th><th>{Html.Encode(commonLocalizer["Name"].Value)}</th><th>{Html.Encode(commonLocalizer["Type"].Value)}</th><th>{Html.Encode(commonLocalizer["Category"].Value)}</th><th>{Html.Encode(localizer["LastUpdated"].Value)}</th><th data-searchable='false' data-orderable='false'></th></tr></thead><tbody id='contactsCategory_0'>")
+                            @Html.Raw($"<div class='table-responsive'><table class='table table-striped' data-page-length='100' width='100%'><thead><tr><th class='span1'></th><th>{Html.Encode(commonLocalizer["Name"].Value)}</th><th>{Html.Encode(commonLocalizer["Type"].Value)}</th><th>{Html.Encode(commonLocalizer["Category"].Value)}</th>{callsHeader}<th>{Html.Encode(localizer["LastUpdated"].Value)}</th><th data-searchable='false' data-orderable='false'></th></tr></thead><tbody id='contactsCategory_0'>")
 
                             foreach (var c in Model.Contacts)
                             {
@@ -84,7 +87,7 @@
                                 {
                                     @Html.Raw("<div id='contactsTab" + Model.ContactCategories[i].ContactCategoryId + "' class='contactsTabPannel' style='display: none;'>")
 
-                                    @Html.Raw($"<div class='table-responsive'><table class='table table-striped' data-page-length='100' width='100%'><thead><tr><th class='span1'></th><th>{Html.Encode(commonLocalizer["Name"].Value)}</th><th>{Html.Encode(commonLocalizer["Type"].Value)}</th><th>{Html.Encode(commonLocalizer["Category"].Value)}</th><th>{Html.Encode(localizer["LastUpdated"].Value)}</th><th data-searchable='false' data-orderable='false'></th></tr></thead><tbody id='contactsCategory_{Model.ContactCategories[i].ContactCategoryId}'>")
+                                    @Html.Raw($"<div class='table-responsive'><table class='table table-striped' data-page-length='100' width='100%'><thead><tr><th class='span1'></th><th>{Html.Encode(commonLocalizer["Name"].Value)}</th><th>{Html.Encode(commonLocalizer["Type"].Value)}</th><th>{Html.Encode(commonLocalizer["Category"].Value)}</th>{callsHeader}<th>{Html.Encode(localizer["LastUpdated"].Value)}</th><th data-searchable='false' data-orderable='false'></th></tr></thead><tbody id='contactsCategory_{Model.ContactCategories[i].ContactCategoryId}'>")
 
 
                                     foreach (var c in categoryContacts)
@@ -114,7 +117,7 @@
                         if (uncategorizedContacts.Any())
                         {
                             @Html.Raw("<div id='contactsTab0' class='contactsTabPannel' style='display: none;'>")
-                            @Html.Raw($"<div class='table-responsive'><table class='table table-striped' data-page-length='100' width='100%'><thead><tr><th class='span1'></th><th>{Html.Encode(commonLocalizer["Name"].Value)}</th><th>{Html.Encode(commonLocalizer["Type"].Value)}</th><th>{Html.Encode(commonLocalizer["Category"].Value)}</th><th>{Html.Encode(localizer["LastUpdated"].Value)}</th><th data-searchable='false' data-orderable='false'></th></tr></thead><tbody id='contactsCategory_none'>")
+                            @Html.Raw($"<div class='table-responsive'><table class='table table-striped' data-page-length='100' width='100%'><thead><tr><th class='span1'></th><th>{Html.Encode(commonLocalizer["Name"].Value)}</th><th>{Html.Encode(commonLocalizer["Type"].Value)}</th><th>{Html.Encode(commonLocalizer["Category"].Value)}</th>{callsHeader}<th>{Html.Encode(localizer["LastUpdated"].Value)}</th><th data-searchable='false' data-orderable='false'></th></tr></thead><tbody id='contactsCategory_none'>")
 
                             foreach (var c in uncategorizedContacts)
                             {
@@ -157,7 +160,13 @@
         var reviewBadge = Model.PreplanReviewOverdueContactIds != null && Model.PreplanReviewOverdueContactIds.Contains(c.ContactId)
             ? " <span class='badge badge-warning' title='" + Html.Encode(localizer["PreplanReviewOverdue"].Value) + "'>" + Html.Encode(localizer["PreplanReviewDue"].Value) + "</span>"
             : "";
-        @Html.Raw("<tr><td></td><td>" + Html.Encode(c.GetName()) + reviewBadge + "</td><td>" + Html.Encode(c.GetTypeName()) + "</td><td>" + Html.Encode(c.GetCategoryName()) + "</td><td>" + Html.Encode(timestamp) + "</td>")
+        var callsCell = "";
+        if (Model.CallCounts != null)
+        {
+            var callCount = Model.CallCounts.TryGetValue(c.ContactId, out var linkedCalls) ? linkedCalls : 0;
+            callsCell = "<td data-order='" + callCount + "'>" + (callCount > 0 ? "<span class='badge badge-info'>" + callCount + "</span>" : "<span class='text-muted'>0</span>") + "</td>";
+        }
+        @Html.Raw("<tr><td></td><td>" + Html.Encode(c.GetName()) + reviewBadge + "</td><td>" + Html.Encode(c.GetTypeName()) + "</td><td>" + Html.Encode(c.GetCategoryName()) + "</td>" + callsCell + "<td>" + Html.Encode(timestamp) + "</td>")
 
         @Html.Raw("<td>")
 

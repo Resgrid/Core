@@ -2,6 +2,7 @@
 @using Resgrid.Web.Areas.User.Models.Records
 @model RecordOccupanciesIndexView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.LocationHistory> historyLocalizer
 @{
     var departmentTime = DepartmentTime.From(ViewData);
 	ViewBag.Title = "Resgrid | " + L["Occupancies"];
@@ -51,7 +52,7 @@
 			{
 				<div class="table-responsive">
 					<table class="table table-striped table-hover">
-						<thead><tr><th>@L["OccupancyNumber"]</th><th>@L["DefinitionName"]</th><th>@L["AddressText"]</th><th>@L["DeploymentStatus"]</th><th>@L["ReviewDue"]</th><th>@L["LastInspectedOn"]</th><th></th></tr></thead>
+						<thead><tr><th>@L["OccupancyNumber"]</th><th>@L["DefinitionName"]</th><th>@L["AddressText"]</th><th>@L["DeploymentStatus"]</th><th>@L["ReviewDue"]</th><th>@L["LastInspectedOn"]</th>@if (Model.CallCounts != null) { <th>@historyLocalizer["CallsColumn"]</th> }<th></th></tr></thead>
 						<tbody>
 						@foreach (var o in Model.Occupancies)
 						{
@@ -62,6 +63,11 @@
 								<td>@(RmsEnumDisplay.Label<RmsOccupancyStatus>(o.Status))</td>
 								<td>@RmsEnumDisplay.Day(o.NextReviewDue)</td>
 								<td>@departmentTime.Date(o.LastInspectedOn)</td>
+								@if (Model.CallCounts != null)
+								{
+									var callCount = Model.CallCounts.TryGetValue(o.RmsOccupancyId, out var occupancyCalls) ? occupancyCalls : 0;
+									<td>@if (callCount > 0) { <a class="badge badge-info" asp-controller="RecordOccupancies" asp-action="Details" asp-route-area="User" asp-route-id="@o.RmsOccupancyId" asp-fragment="responseHistory">@callCount</a> } else { <span class="text-muted">0</span> }</td>
+								}
 								<td><a class="btn btn-xs btn-default" asp-controller="RecordOccupancies" asp-action="Details" asp-route-area="User" asp-route-id="@o.RmsOccupancyId">@L["ViewRecordHeader"]</a></td>
 							</tr>
 						}

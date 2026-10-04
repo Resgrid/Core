@@ -61,6 +61,9 @@ namespace Resgrid.Repositories.DataRepository
 								-- CallUnits reference UnitStates and CallDispatches reference ActionLogs, both deleted there.
 								DELETE FROM [dbo].[CallAttachments] WHERE CallId IN (SELECT CallId FROM [dbo].[Calls] WHERE DepartmentId = @DepartmentId)
 								DELETE FROM [dbo].[CallNotes] WHERE CallId IN (SELECT CallId FROM [dbo].[Calls] WHERE DepartmentId = @DepartmentId)
+								-- Call location index rows cascade with their call, but be explicit; the state row has no FK
+								DELETE FROM [dbo].[CallLocationKeys] WHERE DepartmentId = @DepartmentId OR CallId IN (SELECT CallId FROM [dbo].[Calls] WHERE DepartmentId = @DepartmentId)
+								DELETE FROM [dbo].[CallLocationIndexStates] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[CallDispatches] WHERE CallId IN (SELECT CallId FROM [dbo].[Calls] WHERE DepartmentId = @DepartmentId)
 								DELETE FROM [dbo].[CallDispatchGroups] WHERE CallId IN (SELECT CallId FROM [dbo].[Calls] WHERE DepartmentId = @DepartmentId)
 								DELETE FROM [dbo].[CallDispatchRoles] WHERE CallId IN (SELECT CallId FROM [dbo].[Calls] WHERE DepartmentId = @DepartmentId)

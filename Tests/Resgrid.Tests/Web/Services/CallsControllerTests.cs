@@ -111,7 +111,8 @@ namespace Resgrid.Tests.Web.Services
 				_protectedCallReadService.Object,
 				_protectedWriteService.Object,
 				Mock.Of<IContactsService>(),
-				_dispatchScope.Object)
+				_dispatchScope.Object,
+				Mock.Of<ICallLocationHistoryService>())
 			{
 				ControllerContext = new ControllerContext { HttpContext = httpContext }
 			};

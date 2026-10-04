@@ -239,6 +239,49 @@ namespace Resgrid.Tests.Rms
 		}
 
 		[Test]
+		public async Task A_multi_site_contact_projects_from_the_occupancy_at_the_calls_location()
+		{
+			var north = _h.SeedOccupancy("Acme North", "100 N Main St", 39.80m, -89.65m);
+			var south = _h.SeedOccupancy("Acme South", "110 S Main St", 39.78m, -89.65m);
+			_h.Links.Rows.Add(new RmsOccupancyContactLink { RmsOccupancyContactLinkId = "l1", DepartmentId = Dept, RmsOccupancyId = north.RmsOccupancyId, ContactId = "acme", Role = (int)RmsOccupancyContactRole.Site, IsPrimary = true, CreatedOn = DateTime.UtcNow.AddDays(-5) });
+			_h.Links.Rows.Add(new RmsOccupancyContactLink { RmsOccupancyContactLinkId = "l2", DepartmentId = Dept, RmsOccupancyId = south.RmsOccupancyId, ContactId = "acme", Role = (int)RmsOccupancyContactRole.Owner, CreatedOn = DateTime.UtcNow });
+			_h.Ownerships.Rows.Add(new RmsOccupancyOwnership { RmsOccupancyOwnershipId = "own", DepartmentId = Dept, State = (int)RmsOccupancyOwnershipState.RecordsOwned, RowVersion = 1 });
+
+			(await _h.OccupancyService.GetPreplanProjectionsNearAsync(Dept, new[] { "acme" }, "110 South Main", null))["acme"].ContactPreplanId
+				.Should().Be("occ:" + south.RmsOccupancyId, "the call is at the south site, typed differently");
+			(await _h.OccupancyService.GetPreplanProjectionsNearAsync(Dept, new[] { "acme" }, null, "39.7801,-89.6501"))["acme"].ContactPreplanId
+				.Should().Be("occ:" + south.RmsOccupancyId, "a pin at the south site picks it");
+			(await _h.OccupancyService.GetPreplanProjectionsNearAsync(Dept, new[] { "acme" }, "999 Elm St", null))["acme"].ContactPreplanId
+				.Should().Be("occ:" + north.RmsOccupancyId, "no linked occupancy is at the call, so the primary site projects");
+			(await _h.OccupancyService.GetOccupancyIdForContactAsync(Dept, "acme")).Should().Be(north.RmsOccupancyId);
+
+			var linked = await _h.OccupancyService.GetOccupanciesForContactAsync(Dept, "acme");
+			linked.Select(o => o.OccupancyId).Should().Equal(north.RmsOccupancyId, south.RmsOccupancyId);
+			linked[1].Role.Should().Be((int)RmsOccupancyContactRole.Owner);
+			(await _h.OccupancyService.GetOccupancyLocationAsync(Dept, south.RmsOccupancyId)).ContactIds.Should().Equal("acme");
+		}
+
+		[Test]
+		public async Task The_crosswalk_matches_a_contact_address_typed_differently_from_the_occupancy()
+		{
+			_h.Contacts.Setup(c => c.GetAllByDepartmentIdAsync(Dept)).ReturnsAsync(new List<Contact>
+			{
+				new Contact { ContactId = "c5", DepartmentId = Dept, CompanyName = "Main Street Grocery", ContactType = 1, PhysicalAddressId = 20 }
+			});
+			_h.Addresses.Setup(a => a.GetByIdAsync(20)).ReturnsAsync(new Address { AddressId = 20, Address1 = "110 South Main" });
+			_h.ContactPreplans.Setup(p => p.GetPreplansByDepartmentIdAsync(Dept)).ReturnsAsync(new List<ContactPreplan>());
+			_h.PoiTypes.Setup(p => p.GetPoiTypesByDepartmentIdAsync(Dept)).ReturnsAsync(new List<PoiType>());
+			var existing = _h.SeedOccupancy("Main Street Grocery", "110 S Main St", null, null);
+
+			await _h.OccupancyService.InventoryCandidatesAsync(Dept, Admin);
+
+			var row = _h.Crosswalks.Rows.Single(r => r.SourceId == "c5");
+			row.SuggestedOccupancyId.Should().Be(existing.RmsOccupancyId);
+			row.MatchConfidence.Should().Be(90);
+			row.MatchReason.Should().Be("Same address");
+		}
+
+		[Test]
 		public async Task Ownership_lookup_failures_leave_contacts_in_charge()
 		{
 			var broken = new Mock<IRmsOccupancyOwnershipsRepository>();

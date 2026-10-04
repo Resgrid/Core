@@ -11,6 +11,8 @@ using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
 using Resgrid.Web.Services.Models.v4.Records;
 using Resgrid.Web.Services.Models.v4;
+using Resgrid.Web.Services.Models.v4.Calls;
+using Resgrid.Web.Helpers;
 
 namespace Resgrid.Web.Services.Controllers.v4
 {
@@ -27,9 +29,20 @@ namespace Resgrid.Web.Services.Controllers.v4
 	{
 		private readonly IRecordsOccupancyService _occupancies;
 
-		public RecordOccupanciesController(IRecordsOccupancyService occupancies, IRecordsCutoverService cutover) : base(cutover)
+		private string ProtectedGrantToken => Request.Headers[DataProtectionController.GrantHeader].ToString();
+		private readonly ICallLocationHistoryService _callLocationHistory;
+		private readonly IProtectedReadService _protectedReads;
+		private readonly ICallsService _calls;
+		private readonly IDepartmentsService _departments;
+
+		public RecordOccupanciesController(IRecordsOccupancyService occupancies, IRecordsCutoverService cutover, ICallLocationHistoryService callLocationHistory,
+			IProtectedReadService protectedReads, ICallsService calls, IDepartmentsService departments) : base(cutover)
 		{
 			_occupancies = occupancies;
+			_callLocationHistory = callLocationHistory;
+			_protectedReads = protectedReads;
+			_calls = calls;
+			_departments = departments;
 		}
 
 		[HttpGet("List")]
@@ -216,6 +229,29 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				await _occupancies.SwitchWriteOwnershipAsync(DepartmentId, UserId, reason, cancellationToken);
 				return Ok(Done(new OccupancyReconciliationResult { Data = RecordsRms5ApiMapper.ToReconciliation(await _occupancies.GetReconciliationStatusAsync(DepartmentId)), PageSize = 1 }));
+			}
+			catch (Exception ex) { return Fail(ex); }
+		}
+
+		/// <summary>
+		/// The occupancy's response history: calls at its address however it was typed, nearby calls without a street
+		/// address, and calls linked to its contacts that carry no location of their own, newest first with their notes.
+		/// </summary>
+		[HttpGet("CallHistory")]
+		[Authorize(Policy = ResgridResources.Record_View)]
+		public async Task<ActionResult<LocationHistoryResult>> CallHistory(string occupancyId)
+		{
+			if (!await FlagOnAsync()) return NotFound();
+			try
+			{
+				if (!await _occupancies.IsModuleEnabledAsync(DepartmentId)) return NotFound();
+				var history = await _callLocationHistory.GetHistoryForOccupancyAsync(DepartmentId, UserId, occupancyId);
+				var result = new LocationHistoryResult
+				{
+					Data = await LocationHistoryResultBuilder.BuildAsync(history, DepartmentId, ProtectedGrantToken, UserId, _protectedReads, _calls, _departments)
+				};
+				result.PageSize = result.Data.Calls.Count;
+				return Ok(Done(result));
 			}
 			catch (Exception ex) { return Fail(ex); }
 		}

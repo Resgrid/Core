@@ -607,6 +607,14 @@
             <param name="callId">Id of the call trying to be retrived</param>
             <returns>CallResult of the call in the Resgrid system</returns>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.GetCallLocationHistory(System.String)">
+            <summary>
+            Previous calls at this call's location: other calls at the same address however it was typed, nearby calls
+            without a street address, and calls linked to the same contacts, newest first with their notes. Limited to
+            the calls the user may see; address matching is off while the department's Advanced Data Protection is on.
+            </summary>
+            <param name="callId">Id of the call</param>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.GetCallSiteInfo(System.String)">
             <summary>
             Gets the site information for every contact linked to a call in one round trip: the contact,
@@ -1906,6 +1914,13 @@
             Gets all the Notes for a Contact by the contact id
             </summary>
             <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ContactsController.GetContactCallHistory(System.String)">
+            <summary>
+            Calls related to a contact: calls linked to it, plus calls at every occupancy it is linked to (one contact can
+            be linked to several, such as a business with more than one location), newest first with their notes.
+            </summary>
+            <param name="contactId">Id of the contact</param>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ContactsController.GetContactPreplan(System.String)">
             <summary>
@@ -3732,6 +3747,12 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.RecordOccupanciesController.SwitchOwnership(System.String,System.Threading.CancellationToken)">
             <summary>Switches structure writes from Contacts pre-plans to RMS. Refused until every candidate and pre-plan is decided.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordOccupanciesController.CallHistory(System.String)">
+            <summary>
+            The occupancy's response history: calls at its address however it was typed, nearby calls without a street
+            address, and calls linked to its contacts that carry no location of their own, newest first with their notes.
+            </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.RecordOccupanciesController.DispatchProjection(System.String,System.String,System.Threading.CancellationToken)">
             <summary>OccupancyDispatchProjectionV1 for an occupancy, or for the occupancy a contact is linked to.</summary>
@@ -9505,6 +9526,111 @@
             <summary>
             Response Data
             </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Calls.LocationHistoryResult">
+            <summary>
+            Previous calls at a location: the calls related to a call, a contact or an occupancy, found by contact link and by
+            address (compared parsed, so "110 S Main St" and "110 South Main" match) or proximity.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.LocationHistoryResult.Data">
+            <summary>Response Data</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Calls.LocationHistoryResultData">
+            <summary>A location history.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.LocationHistoryResultData.AddressMatchingAvailable">
+            <summary>False while the department's Advanced Data Protection is on: call addresses are encrypted, so only contact links were searched.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.LocationHistoryResultData.IndexComplete">
+            <summary>False while older calls are still being indexed; some may be missing.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.LocationHistoryResultData.HasMore">
+            <summary>More calls matched than were returned; the newest are returned.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.LocationHistoryResultData.InterpretedAddress">
+            <summary>How the address was understood ("110 S MAIN ST"); null when it did not parse.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.LocationHistoryResultData.IsProtected">
+            <summary>True when call fields are protected; values read as REDACTED without a valid grant.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.LocationHistoryResultData.ProtectedReason">
+            <summary>Why protected values were withheld, when they were.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.LocationHistoryResultData.Calls">
+            <summary>The calls, newest first.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Calls.LocationHistoryCallData">
+            <summary>One call in a location history.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.LocationHistoryCallData.CallId">
+            <summary>Id of the call</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.LocationHistoryCallData.Number">
+            <summary>Department call number</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.LocationHistoryCallData.Name">
+            <summary>Call name</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.LocationHistoryCallData.Nature">
+            <summary>Nature of the call</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.LocationHistoryCallData.Address">
+            <summary>Call address as entered</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.LocationHistoryCallData.Type">
+            <summary>Call type</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.LocationHistoryCallData.Priority">
+            <summary>Priority value</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.LocationHistoryCallData.PriorityText">
+            <summary>Priority name</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.LocationHistoryCallData.PriorityColor">
+            <summary>Priority color (hex)</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.LocationHistoryCallData.State">
+            <summary>CallStates value: 0 Active, 1 Closed, 2 Cancelled, 3 Unfounded, 4 Founded, 5 Minor</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.LocationHistoryCallData.LoggedOnUtc">
+            <summary>When the call was logged (UTC)</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.LocationHistoryCallData.LoggedOn">
+            <summary>When the call was logged, formatted in the department's time zone</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.LocationHistoryCallData.ClosedOnUtc">
+            <summary>When the call was closed (UTC), if it was</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.LocationHistoryCallData.CompletedNotes">
+            <summary>Notes entered when the call was closed</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.LocationHistoryCallData.Matches">
+            <summary>Why the call is in the history: any of SameContact, SameAddress, SimilarAddress, Nearby</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.LocationHistoryCallData.DistanceMeters">
+            <summary>Meters from the looked-up location, when both have coordinates</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.LocationHistoryCallData.Notes">
+            <summary>The call's notes, oldest first</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Calls.LocationHistoryNoteData">
+            <summary>A note on a call in a location history.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.LocationHistoryNoteData.CallNoteId">
+            <summary>Id of the note</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.LocationHistoryNoteData.UserId">
+            <summary>Author user id</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.LocationHistoryNoteData.FullName">
+            <summary>Author name</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.LocationHistoryNoteData.Note">
+            <summary>Note text</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.LocationHistoryNoteData.TimestampUtc">
+            <summary>When the note was added (UTC)</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Calls.NewCallFieldPolicyResult">
             <summary>
@@ -18151,6 +18277,9 @@
             <param name="prefix">The entry prefix to collect, i.e. "G:", "R:" or "U:".</param>
             <param name="resolveByName">Looks up an id for an entry that isn't numeric, null when there's no match.</param>
             <returns>The distinct ids found for that prefix, in the order they appeared.</returns>
+        </member>
+        <member name="T:Resgrid.Web.Helpers.LocationHistoryResultBuilder">
+            <summary>Shapes a <see cref="T:Resgrid.Model.CallLocationHistoryResult"/> for the v4 API, through the attended protected read.</summary>
         </member>
     </members>
 </doc>

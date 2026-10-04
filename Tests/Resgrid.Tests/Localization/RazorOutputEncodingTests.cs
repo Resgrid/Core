@@ -67,7 +67,9 @@ namespace Resgrid.Tests.Localization
 		{
 			"customState", // int (Units/Index)
 			"groupType",   // int (Personnel/Index)
-			"reviewBadge"  // badge built from Html.Encode'd text (Contacts/Index)
+			"reviewBadge", // badge built from Html.Encode'd text (Contacts/Index)
+			"callsHeader", // <th> built from Html.Encode'd localized text, or empty (Contacts/Index)
+			"callsCell"    // <td> built from an int call count, or empty (Contacts/Index)
 		};
 
 		private static readonly HashSet<string> RazorKeywords = new HashSet<string>(StringComparer.Ordinal)

@@ -2,6 +2,7 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Contacts.Contacts> localizer
 @inject IStringLocalizer<Resgrid.Localization.Common> commonLocalizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Invoicing.Invoicing> invoicingLocalizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.LocationHistory> historyLocalizer
 @using System.Linq
 @{
     ViewBag.Title = "Resgrid | " + @localizer["ViewContactHeader"];
@@ -455,47 +456,17 @@
                             <div class="row m-t-sm">
                                 <div class="col-md-12">
                                     <div class="panel-body">
-                                        <!-- Search and filter section -->
-                                        <div class="row m-b-sm">
-                                            <div class="col-md-6">
-                                                <div class="input-group">
-                                                    <input type="text" id="callsSearchInput" class="form-control"
-                                                           placeholder="@localizer["SearchCalls"]">
-                                                    <span class="input-group-btn">
-                                            <button type="button" class="btn btn-primary" id="searchCallsBtn">
-                                                <i class="fa fa-search"></i> @localizer["Search"]
-                                            </button>
-                                        </span>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="input-group">
-                                                    <span class="input-group-addon">@localizer["SortBy"]</span>
-                                                    <select id="callsSortSelect" class="form-control">
-                                                        <option value="recent">@localizer["MostRecent"]</option>
-                                                        <option value="oldest">@localizer["Oldest"]</option>
-                                                        <option value="priority">@localizer["Priority"]</option>
-                                                        <option value="number">@localizer["CallNumber"]</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- Loading indicator -->
-                                        <div id="callsLoading" class="text-center p-md">
-                                            <i class="fa fa-spinner fa-spin fa-3x"></i>
-                                            <p>@localizer["LoadingCalls"]</p>
-                                        </div>
-
-                                        <!-- Calls container - will be populated by JavaScript -->
-                                        <div class="row" id="callsContainer"></div>
-
-                                        <!-- No results message -->
-                                        <div id="noCallsFound" class="text-center p-md" style="display: none;">
-                                            <h3>
-                                                <i class="fa fa-search-minus"></i> @localizer["NoCallsFound"]
-                                            </h3>
-                                        </div>
+                                        @{
+                                            var callHistoryPanel = new Resgrid.Web.Areas.User.Models.Calls.CallLocationHistoryPanel
+                                            {
+                                                Id = "contactCallHistory",
+                                                Url = Url.Action("GetContactCallHistoryJson", "Contacts", new { area = "User", contactId = Model.Contact.ContactId }),
+                                                Header = historyLocalizer["RelatedCallsHeader"].Value,
+                                                Help = historyLocalizer["RelatedCallsHelp"].Value,
+                                                TriggerSelector = "a[href='#calls']"
+                                            };
+                                        }
+                                        <partial name="_CallLocationHistory" model="callHistoryPanel" />
                                     </div>
                                 </div>
                             </div>
@@ -505,13 +476,60 @@
                             <div class="row m-t-sm">
                                 <div class="col-md-12">
                                     <div class="panel-body">
-                                        @if (ClaimsAuthorizationHelper.CanEditContacts())
+                                        @if (Model.IsPreplanRecordsOwned)
+                                        {
+                                            <div class="alert alert-info">@historyLocalizer["PreplansOnOccupancies"]</div>
+                                        }
+                                        else if (ClaimsAuthorizationHelper.CanEditContacts())
                                         {
                                             <div class="m-b-sm">
                                                 <a asp-controller="Contacts" asp-action="Preplan" asp-route-area="User" asp-route-contactId="@Model.Contact.ContactId" class="btn btn-primary btn-sm">
                                                     <i class="fa fa-pencil"></i> @(Model.Preplan == null ? localizer["CreatePreplan"] : localizer["EditPreplan"])
                                                 </a>
                                             </div>
+                                        }
+                                        @if (Model.IsPreplanRecordsOwned || Model.Occupancies.Count > 0)
+                                        {
+                                            <h4><i class="fa fa-building"></i> @historyLocalizer["OccupanciesHeader"]</h4>
+                                            <p class="text-muted small">@historyLocalizer["OccupanciesHelp"]</p>
+                                            @if (Model.Occupancies.Count == 0)
+                                            {
+                                                <p class="text-muted">@historyLocalizer["NoOccupancies"]</p>
+                                            }
+                                            else
+                                            {
+                                                <table class="table table-striped table-condensed">
+                                                    <tbody>
+                                                        @foreach (var occupancy in Model.Occupancies)
+                                                        {
+                                                            var roleKey = "OccupancyRole" + ((Resgrid.Model.RmsOccupancyContactRole)occupancy.Role).ToString();
+                                                            <tr>
+                                                                <td>
+                                                                    <strong>@occupancy.Name</strong>
+                                                                    @if (!string.IsNullOrWhiteSpace(occupancy.OccupancyNumber))
+                                                                    {
+                                                                        <small class="text-muted">@occupancy.OccupancyNumber</small>
+                                                                    }
+                                                                    <br /><span>@occupancy.FullAddress</span>
+                                                                </td>
+                                                                <td>
+                                                                    <span class="label label-default">@historyLocalizer[roleKey]</span>
+                                                                    @if (occupancy.IsPrimary)
+                                                                    {
+                                                                        <span class="label label-primary">@historyLocalizer["Primary"]</span>
+                                                                    }
+                                                                </td>
+                                                                <td class="text-right">
+                                                                    @if (ClaimsAuthorizationHelper.CanViewRecords())
+                                                                    {
+                                                                        <a asp-controller="RecordOccupancies" asp-action="Details" asp-route-area="User" asp-route-id="@occupancy.OccupancyId" class="btn btn-xs btn-primary">@historyLocalizer["OpenOccupancy"]</a>
+                                                                    }
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            }
                                         }
                                         @if (Model.Preplan == null)
                                         {
@@ -816,6 +834,7 @@
     {
         <partial name="_AdpRevealScripts" model="adpReveal" />
     }
+    <script src="~/js/app/internal/dispatch/resgrid.dispatch.locationhistory.js" asp-append-version="true" type="text/javascript"></script>
     <script>
         const contactId = '@Model.Contact.ContactId';
 
@@ -857,16 +876,6 @@
             // Initial load if notes tab is active
             if ($('a[data-toggle="tab"][href="#notes"]').parent().hasClass('active')) {
                 loadNotes();
-            }
-
-            // Load calls when the calls tab is shown
-            $('a[data-toggle="tab"][href="#calls"]').on('shown.bs.tab', function (e) {
-                loadCalls();
-            });
-
-            // Initial load if calls tab is active
-            if ($('a[data-toggle="tab"][href="#calls"]').parent().hasClass('active')) {
-                loadCalls();
             }
 
             // Notes search and filter functionality
@@ -1059,173 +1068,6 @@
                 });
             });
 
-            // Calls functionality
-            let $callCards = $('.call-card');
-            const $callsContainer = $('#callsContainer');
-            const $noCallsFound = $('#noCallsFound');
-
-            // Function to load calls asynchronously
-            function loadCalls() {
-                $('#callsLoading').show();
-                $('#callsContainer').empty();
-                $('#noCallsFound').hide();
-
-                $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Contacts/GetCallsJson?contactId=' + contactId,
-                    type: 'GET',
-                    data: {contactId: contactId},
-                    dataType: 'json',
-                    success: function (data) {
-                        $('#callsLoading').hide();
-
-                        if (data && data.length > 0) {
-                            renderCalls(data);
-                        } else {
-                            $('#noCallsFound').show();
-                        }
-
-                        // Apply sort if selected
-                        if ($('#callsSortSelect').val()) {
-                            sortCalls();
-                        }
-
-                        // Apply search if there's a term
-                        if ($('#callsSearchInput').val().trim().length > 0) {
-                            searchCalls();
-                        }
-                    },
-                    error: function () {
-                        $('#callsLoading').hide();
-                        toastr.error('Error loading calls');
-                    }
-                });
-            }
-
-            function renderCalls(calls) {
-                const $container = $('#callsContainer');
-
-                calls.forEach(function (call) {
-                    // Format the priority badge
-                    let priorityClass = 'badge-info';
-                    if (call.Priority === 1) priorityClass = 'badge-danger';
-                    else if (call.Priority === 2) priorityClass = 'badge-warning';
-                    else if (call.Priority === 3) priorityClass = 'badge-primary';
-                    else if (call.Priority === 4) priorityClass = 'badge-success';
-
-                    const $callCard = $(`
-                                        <div class="col-md-4 call-card" data-date="${call.LoggedOn}" data-priority="${call.Priority}" data-number="${call.Number}">
-                                            <div class="ibox">
-                                                <div class="ibox-content">
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            <h4>
-                                                                <span class="badge" style="background-color: ${call.PriorityColor}">${call.PriorityName}</span>
-                                                                ${call.CallName}
-                                                            </h4>
-                                                            <p class="small text-muted">
-                                                                <i class="fa fa-hashtag"></i> ${call.CallNumber}
-                                                                | <i class="fa fa-clock-o"></i> ${call.LoggedOn}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            <p>${call.CallNature || ''}</p>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-12 text-right">
-                                                            <a href="${resgrid.absoluteBaseUrl}/User/Dispatch/ViewCall?callId=${call.CallId}" class="btn btn-sm btn-primary">
-                                                                <i class="fa fa-eye"></i> View
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    `);
-
-                    $container.append($callCard);
-                })
-            }
-
-            // Search functionality
-            function searchCalls() {
-                const searchTerm = $('#callsSearchInput').val().toLowerCase();
-                $callCards = $('.call-card');
-                let foundCount = 0;
-
-                $callCards.each(function () {
-                    const $card = $(this);
-                    const cardText = $card.text().toLowerCase();
-
-                    if (cardText.includes(searchTerm)) {
-                        $card.show();
-                        foundCount++;
-                    } else {
-                        $card.hide();
-                    }
-                });
-
-                if (foundCount === 0) {
-                    $noCallsFound.show();
-                } else {
-                    $noCallsFound.hide();
-                }
-            }
-
-            // Sort functionality
-            function sortCalls() {
-                const sortValue = $('#callsSortSelect').val();
-                $callCards = $('.call-card');
-                let calls = $callCards.toArray();
-
-                if (sortValue === 'recent') {
-                    calls.sort((a, b) => {
-                        const dateA = $(a).data('date');
-                        const dateB = $(b).data('date');
-                        return dateB.localeCompare(dateA);
-                    });
-                } else if (sortValue === 'oldest') {
-                    calls.sort((a, b) => {
-                        const dateA = $(a).data('date');
-                        const dateB = $(b).data('date');
-                        return dateA.localeCompare(dateB);
-                    });
-                } else if (sortValue === 'priority') {
-                    calls.sort((a, b) => {
-                        const priorityA = $(a).data('priority');
-                        const priorityB = $(b).data('priority');
-                        return priorityA - priorityB; // Lower number = higher priority
-                    });
-                } else if (sortValue === 'number') {
-                    calls.sort((a, b) => {
-                        const numA = $(a).data('number');
-                        const numB = $(b).data('number');
-                        return numA.localeCompare(numB);
-                    });
-                }
-
-                $callsContainer.empty();
-                $(calls).each(function () {
-                    $callsContainer.append(this);
-                });
-
-                // Re-apply search if there's a search term
-                if ($('#callsSearchInput').val().trim().length > 0) {
-                    searchCalls();
-                }
-            }
-
-            // Event handlers
-            $('#searchCallsBtn').on('click', searchCalls);
-            $('#callsSearchInput').on('keyup', function (e) {
-                if (e.key === 'Enter') {
-                    searchCalls();
-                }
-            });
-
-            $('#callsSortSelect').on('change', sortCalls);
 
         });
 

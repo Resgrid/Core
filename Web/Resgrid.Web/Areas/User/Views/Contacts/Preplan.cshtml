@@ -57,7 +57,7 @@
     {
         <div class="alert alert-info">
             <i class="fa fa-lock"></i> @localizer["PreplanRecordsOwnedNotice"]
-            @if (!string.IsNullOrWhiteSpace(Model.OccupancyId))
+            @if (!string.IsNullOrWhiteSpace(Model.OccupancyId) && ClaimsAuthorizationHelper.CanViewRecords())
             {
                 <a asp-controller="RecordOccupancies" asp-action="Details" asp-route-area="User" asp-route-id="@Model.OccupancyId" class="btn btn-xs btn-default m-l-sm">@localizer["PreplanOpenOccupancy"]</a>
             }
@@ -69,6 +69,8 @@
         @Html.AntiForgeryToken()
         <input type="hidden" asp-for="Contact.ContactId" />
         <input type="hidden" asp-for="Preplan.ContactPreplanId" />
+        @* Records owns pre-plans once the occupancy crosswalk is done: the page is read-only (the service refuses writes too). *@
+        <fieldset disabled="@Model.IsRecordsOwned" style="border:0;margin:0;padding:0;min-width:0;">
 
         <div class="row">
             <div class="col-lg-6">
@@ -262,6 +264,7 @@
                 </div>
             </div>
         </div>
+        </fieldset>
     </form>
 
     <div class="row">
@@ -367,6 +370,9 @@
                 return $('<div/>').text(value || '').html();
             }
 
+            // Records owns pre-plans: hazards are listed but not editable here.
+            var preplanReadOnly = @(Model.IsRecordsOwned ? "true" : "false");
+
             function renderHazards() {
                 var $body = $('#hazardsBody');
                 $body.empty();
@@ -383,8 +389,9 @@
                         '<td>' + esc(h.LocationDescription) + (h.GpsCoordinates ? '<br/><small>' + esc(h.GpsCoordinates) + '</small>' : '') + '</td>' +
                         '<td>' + (h.ShouldAlert ? '<i class="fa fa-bell text-danger"></i>' : '') + '</td>' +
                         '<td class="text-right">' +
+                        (preplanReadOnly ? '' :
                         '<button type="button" class="btn btn-xs btn-warning edit-hazard" data-id="' + esc(h.ContactPreplanHazardId) + '">' + esc('@JsEncoder.Encode(commonLocalizer["Edit"])') + '</button> ' +
-                        '<button type="button" class="btn btn-xs btn-danger delete-hazard" data-id="' + esc(h.ContactPreplanHazardId) + '">' + esc('@JsEncoder.Encode(commonLocalizer["Delete"])') + '</button>' +
+                        '<button type="button" class="btn btn-xs btn-danger delete-hazard" data-id="' + esc(h.ContactPreplanHazardId) + '">' + esc('@JsEncoder.Encode(commonLocalizer["Delete"])') + '</button>') +
                         '</td></tr>';
                     $body.append(row);
                 });

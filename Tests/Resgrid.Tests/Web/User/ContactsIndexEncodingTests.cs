@@ -62,7 +62,8 @@ namespace Resgrid.Tests.Web.User
 				Mock.Of<IUserDefinedFieldsService>(), Mock.Of<IUdfRenderingService>(), Mock.Of<IDepartmentGroupsService>(),
 				Mock.Of<IRouteService>(), Mock.Of<IPhoneNumberProcesserProvider>(), Mock.Of<IProtectedReadService>(),
 				Mock.Of<IContactPreplanOwnershipGate>(), Mock.Of<IStringLocalizer<Resgrid.Localization.Areas.User.Contacts.Contacts>>(),
-				Mock.Of<IInvoicingService>(), Mock.Of<IFeatureToggleService>())
+				Mock.Of<IInvoicingService>(), Mock.Of<IFeatureToggleService>(), Mock.Of<ICallLocationHistoryService>(),
+				Mock.Of<IOccupancyLocationLookup>(), Mock.Of<IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.LocationHistory>>())
 			{
 				ControllerContext = new ControllerContext { HttpContext = httpContext }
 			};

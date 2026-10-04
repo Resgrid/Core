@@ -51,6 +51,9 @@ namespace Resgrid.Services
 
 		private readonly Lazy<ISearchProjectionService> _searchProjections;
 
+		// Lazy: the location history service reads back through dispatch scope, which depends on this service.
+		private readonly Lazy<ICallLocationHistoryService> _callLocationHistory;
+
 		public CallsService(ICallsRepository callsRepository, ICommunicationService communicationService,
 			ICallDispatchesRepository callDispatchesRepository, ICallTypesRepository callTypesRepository, ICallEmailFactory callEmailFactory,
 			ICacheProvider cacheProvider, ICallNotesRepository callNotesRepository,
@@ -60,9 +63,11 @@ namespace Resgrid.Services
 			ICallProtocolsRepository callProtocolsRepository, IGeoLocationProvider geoLocationProvider, IDepartmentsService departmentsService,
 			ICallReferencesRepository callReferencesRepository, ICallContactsRepository callContactsRepository,
 			IIndoorMapService indoorMapService, ICallVideoFeedRepository callVideoFeedRepository,
-			Lazy<IProtectedWriteService> protectedWriteService, Lazy<ISearchProjectionService> searchProjections = null)
+			Lazy<IProtectedWriteService> protectedWriteService, Lazy<ISearchProjectionService> searchProjections = null,
+			Lazy<ICallLocationHistoryService> callLocationHistory = null)
 		{
 			_protectedWriteService = protectedWriteService;
+			_callLocationHistory = callLocationHistory;
 			_callsRepository = callsRepository;
 			_communicationService = communicationService;
 			_callDispatchesRepository = callDispatchesRepository;
@@ -242,6 +247,7 @@ namespace Resgrid.Services
 			}
 
 			if (_searchProjections != null) await _searchProjections.Value.ProjectCallAsync(savedCall, cancellationToken);
+			if (_callLocationHistory != null) await _callLocationHistory.Value.IndexCallAsync(savedCall, cancellationToken);
 			return savedCall;
 		}
 

@@ -42,7 +42,9 @@ namespace Resgrid.Web.Controllers
 			// GetRecipients backs the message composer. Both are called by the app through this
 			// facade, so leaving them off the list 404s them.
 			"api/v4/Avatars/",
-			"api/v4/Messages/"
+			"api/v4/Messages/",
+			// Browser push: the page registers its own FCM web token and takes it off again on sign-out.
+			"api/v4/Devices/"
 		};
 
 		private readonly IHttpClientFactory _httpClientFactory;

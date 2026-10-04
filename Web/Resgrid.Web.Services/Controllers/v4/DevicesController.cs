@@ -12,6 +12,7 @@ using Resgrid.Model.Events;
 using Resgrid.Framework;
 using Resgrid.Web.Services.Controllers.Version3.Models.Devices;
 using System.Threading;
+using Resgrid.Web.Services.Filters;
 
 namespace Resgrid.Web.Services.Controllers.v4
 {
@@ -27,12 +28,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IPushService _pushService;
 		private readonly IDepartmentsService _departmentsService;
 		private readonly ICqrsProvider _cqrsProvider;
+		private readonly IUnitsService _unitsService;
 
-		public DevicesController(IPushService pushService, ICqrsProvider cqrsProvider, IDepartmentsService departmentsService)
+		public DevicesController(IPushService pushService, ICqrsProvider cqrsProvider, IDepartmentsService departmentsService,
+			IUnitsService unitsService)
 		{
 			_pushService = pushService;
 			_cqrsProvider = cqrsProvider;
 			_departmentsService = departmentsService;
+			_unitsService = unitsService;
 		}
 		#endregion Members and Constructors
 
@@ -211,6 +215,85 @@ namespace Resgrid.Web.Services.Controllers.v4
 				//await _pushService.UnRegister(new PushUri() { UserId = UserId, DeviceId = deviceId, PushUriId = input.Pid });
 				await _pushService.UnRegister(new PushUri() { UserId = UserId, DeviceId = deviceId });
 				result.Status = ResponseHelper.Success;
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex);
+				result.Status = ResponseHelper.Failure;
+			}
+
+			result.Id = "";
+			result.PageSize = 0;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return result;
+		}
+
+		/// <summary>
+		/// Takes a browser or desktop (Electron) push token off the web push channel it was registered on, so
+		/// that browser stops receiving this user's (or unit's) pushes. Called when someone signs out of a
+		/// browser or turns its notifications off. Runs at once, not through the queue.
+		/// </summary>
+		/// <param name="input">The token and where it was registered</param>
+		/// <returns>Success when the token is no longer on the channel</returns>
+		[HttpPost("UnRegisterWebPush")]
+		// Part of signing out: a department operation lock must not leave a signed-out browser receiving pushes.
+		[AllowDuringDepartmentLock]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		public async Task<ActionResult<PushRegistrationResult>> UnRegisterWebPush([FromBody] WebPushUnRegistrationInput input)
+		{
+			if (input == null || String.IsNullOrWhiteSpace(input.Token))
+				return BadRequest();
+
+			int? unitId = null;
+			if (!String.IsNullOrWhiteSpace(input.UnitId) && input.UnitId != "0")
+			{
+				if (!int.TryParse(input.UnitId, out var parsedUnitId))
+					return BadRequest();
+
+				unitId = parsedUnitId;
+			}
+
+			var result = new PushRegistrationResult();
+
+			try
+			{
+				var prefix = input.Prefix;
+				if (String.IsNullOrWhiteSpace(prefix))
+				{
+					var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+					prefix = department?.Code;
+				}
+
+				var push = new PushUri
+				{
+					UserId = UserId,
+					DepartmentId = DepartmentId,
+					PlatformType = (int)Platforms.Web,
+					PushLocation = prefix,
+					DeviceId = input.Token,
+					Source = input.Source
+				};
+
+				bool removed;
+				if (unitId.HasValue)
+				{
+					// The unit subscriber is department-wide, not the caller's own, so only a unit in the
+					// caller's department can be touched.
+					var unit = await _unitsService.GetUnitByIdAsync(unitId.Value);
+					if (unit == null || unit.DepartmentId != DepartmentId)
+						return BadRequest();
+
+					push.UnitId = unitId;
+					removed = await _pushService.UnRegisterUnitWebPush(push);
+				}
+				else
+				{
+					removed = await _pushService.UnRegisterWebPush(push);
+				}
+
+				result.Status = removed ? ResponseHelper.Success : ResponseHelper.Failure;
 			}
 			catch (Exception ex)
 			{

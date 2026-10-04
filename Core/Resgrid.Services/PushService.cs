@@ -69,7 +69,13 @@ namespace Resgrid.Services
 					? await _novuProvider.UpdateICUserSubscriberFcm(pushUri.UserId, code, pushUri.DeviceId)
 					: await _novuProvider.UpdateUserSubscriberFcm(pushUri.UserId, code, pushUri.DeviceId);
 			}
-			// 3) TODO: Web Push (other platforms)
+			// 3) Web -> FCM web token (browser or Electron), added beside the user's other browsers
+			else if (pushUri.PlatformType == (int)Platforms.Web)
+			{
+				registered = isICApp
+					? await _novuProvider.AddICUserSubscriberWebPushToken(pushUri.UserId, code, pushUri.DeviceId)
+					: await _novuProvider.AddUserSubscriberWebPushToken(pushUri.UserId, code, pushUri.DeviceId);
+			}
 			else
 			{
 				Framework.Logging.LogWarning($"PushService.Register: unsupported platform {pushUri.PlatformType} for user {pushUri.UserId} (prefix '{code}', IC {isICApp}), no push channel registered.");
@@ -87,6 +93,25 @@ namespace Resgrid.Services
 			await _notificationProvider.UnRegisterPushByUserDeviceId(pushUri);
 
 			return true;
+		}
+
+		public async Task<bool> UnRegisterWebPush(PushUri pushUri)
+		{
+			if (pushUri == null || string.IsNullOrWhiteSpace(pushUri.UserId) || string.IsNullOrWhiteSpace(pushUri.DeviceId) || string.IsNullOrWhiteSpace(pushUri.PushLocation))
+				return false;
+
+			var isICApp = string.Equals(pushUri.Source, "IC", StringComparison.OrdinalIgnoreCase);
+
+			var removed = isICApp
+				? await _novuProvider.RemoveICUserSubscriberWebPushToken(pushUri.UserId, pushUri.PushLocation, pushUri.DeviceId)
+				: await _novuProvider.RemoveUserSubscriberWebPushToken(pushUri.UserId, pushUri.PushLocation, pushUri.DeviceId);
+
+			// A browser that stays on the channel keeps showing this person's calls after they signed out of it,
+			// which on a shared workstation is the next person's screen.
+			if (!removed)
+				Framework.Logging.LogError($"PushService.UnRegisterWebPush: the web push token could not be removed for user {pushUri.UserId} (prefix '{pushUri.PushLocation}', IC {isICApp}); that browser may keep receiving their pushes.");
+
+			return removed;
 		}
 
 		/// <summary>
@@ -144,7 +169,11 @@ namespace Resgrid.Services
 			{
 				registered = await _novuProvider.UpdateUnitSubscriberFcm(unitId, code, pushUri.DeviceId);
 			}
-			// 3) TODO: Web Push (other platforms)
+			// 3) Web -> FCM web token (browser or Electron), added beside the unit's other browsers
+			else if (pushUri.PlatformType == (int)Platforms.Web)
+			{
+				registered = await _novuProvider.AddUnitSubscriberWebPushToken(unitId, code, pushUri.DeviceId);
+			}
 			else
 			{
 				Framework.Logging.LogWarning($"PushService.RegisterUnit: unsupported platform {pushUri.PlatformType} for unit {unitId} (prefix '{code}'), no push channel registered.");
@@ -185,6 +214,19 @@ namespace Resgrid.Services
 			await _unitNotificationProvider.UnRegisterPush(pushUri);
 
 			return true;
+		}
+
+		public async Task<bool> UnRegisterUnitWebPush(PushUri pushUri)
+		{
+			if (pushUri == null || !pushUri.UnitId.HasValue || string.IsNullOrWhiteSpace(pushUri.DeviceId) || string.IsNullOrWhiteSpace(pushUri.PushLocation))
+				return false;
+
+			var removed = await _novuProvider.RemoveUnitSubscriberWebPushToken(pushUri.UnitId.Value, pushUri.PushLocation, pushUri.DeviceId);
+
+			if (!removed)
+				Framework.Logging.LogError($"PushService.UnRegisterUnitWebPush: the web push token could not be removed for unit {pushUri.UnitId} (prefix '{pushUri.PushLocation}'); that browser may keep receiving the unit's pushes.");
+
+			return removed;
 		}
 
 		public Task UnRegisterNotificationOnly(PushUri pushUri)

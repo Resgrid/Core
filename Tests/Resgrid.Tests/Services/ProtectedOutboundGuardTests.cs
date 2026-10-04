@@ -176,6 +176,8 @@ namespace Resgrid.Tests.Services
 			public System.Threading.Tasks.Task<bool> PushICNotification(Resgrid.Model.Messages.StandardPushMessage message, string userId, UserProfile profile = null) => Record();
 			public System.Threading.Tasks.Task<bool> RegisterUnit(PushUri pushUri) => Record();
 			public System.Threading.Tasks.Task<bool> UnRegisterUnit(PushUri pushUri) => Record();
+			public System.Threading.Tasks.Task<bool> UnRegisterWebPush(PushUri pushUri) => Record();
+			public System.Threading.Tasks.Task<bool> UnRegisterUnitWebPush(PushUri pushUri) => Record();
 			public System.Threading.Tasks.Task<bool> PushChat(Resgrid.Model.Messages.StandardPushMessage message, string userId, UserProfile profile = null) => Record();
 			public System.Threading.Tasks.Task<bool> PushCallUnit(Resgrid.Model.Messages.StandardPushCall call, int unitId, DepartmentCallPriority priority = null) => Record();
 			public System.Threading.Tasks.Task<bool> PushChatMessage(Resgrid.Model.Messages.StandardPushMessage message, string userId, string eventCode, int unreadCount, bool includeIncidentCommandApp, UserProfile profile = null) => Record();

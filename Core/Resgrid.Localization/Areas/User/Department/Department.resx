@@ -921,4 +921,7 @@
   <data name="MapStyle_Unicorn" xml:space="preserve">
     <value>Unicorn</value>
   </data>
+  <data name="RunCardTriggerRequired" xml:space="preserve">
+    <value>Add at least one trigger before saving this run card.</value>
+  </data>
 </root>

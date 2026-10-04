@@ -91,6 +91,8 @@
                         <div class="alert alert-warning">@localizer["RunCardDetachedReferencesRemoved", Model.RemovedReferenceCount]</div>
                     }
 
+                    <div class="alert alert-warning" id="triggerRequired" role="alert" style="display: none">@localizer["RunCardTriggerRequired"]</div>
+
                     <div class="tabs-container">
                         <ul class="nav nav-tabs">
                             <li class="active"><a data-toggle="tab" href="#tab-general">@localizer["RunCardGeneralTab"]</a></li>
@@ -262,6 +264,8 @@
         // ── Triggers tab ──
         function renderTriggers() {
             var $body = $('#triggersTable tbody').empty();
+            $('#triggerRequired').toggle(card.triggers.length === 0);
+            $('#saveCardButton').prop('disabled', card.triggers.length === 0);
             $.each(card.triggers, function (index, trigger) {
                 var row = '<tr data-index="' + index + '">';
                 row += '<td><select class="form-control trigger-type">';
@@ -487,8 +491,8 @@
                         $('#saveError').show().text(response.message);
                     }
                 },
-                error: function () {
-                    $('#saveError').show().text('Save failed.');
+                error: function (xhr) {
+                    $('#saveError').show().text(xhr.responseJSON && xhr.responseJSON.message || 'Save failed.');
                 }
             });
         });

@@ -365,7 +365,58 @@ namespace Resgrid.Tests.Services
 
 			var counts = await _service.GetCallCountsForOccupanciesAsync(DepartmentId, UserId, new[] { "occ-1" });
 
-			counts["occ-1"].Should().Be(1205, "matching by both address and contact must not duplicate calls");
+			counts["occ-1"].Count.Should().Be(1205, "matching by both address and contact must not duplicate calls");
+			counts["occ-1"].IsLowerBound.Should().BeFalse();
+		}
+
+		[TestCase("address", false)]
+		[TestCase("address", true)]
+		[TestCase("contact", false)]
+		[TestCase("contact", true)]
+		[TestCase("nearby", false)]
+		[TestCase("nearby", true)]
+		public async Task Occupancy_counts_bound_each_candidate_source_and_identify_lower_bounds(string source, bool exceedsCap)
+		{
+			var cap = CallLocationHistoryService.MaxOccupancyCountCandidates;
+			var occupancy = new OccupancyLocationSummary { OccupancyId = "occ-1",
+				AddressText = source == "address" ? "110 S Main St" : null,
+				Latitude = source == "nearby" ? 39.78m : null, Longitude = source == "nearby" ? -89.65m : null,
+				ContactIds = source == "contact" ? new List<string> { "acme" } : new List<string>() };
+			_occupancies.Setup(x => x.GetOccupancyLocationsAsync(DepartmentId, It.IsAny<IEnumerable<string>>()))
+				.ReturnsAsync(new Dictionary<string, OccupancyLocationSummary> { ["occ-1"] = occupancy });
+			var rows = Enumerable.Range(1, cap + (exceedsCap ? 1 : 0))
+				.Select(id => Candidate(AddCall(id, occupancy.AddressText, source == "nearby" ? "39.78,-89.65" : null))).ToList();
+			var requested = 0;
+			if (source == "address")
+				_keys.Setup(x => x.GetByAddressKeysAsync(DepartmentId, It.IsAny<IEnumerable<string>>(), It.IsAny<int>()))
+					.ReturnsAsync((int _, IEnumerable<string> __, int take) => { requested = take; return rows.Take(take).ToList(); });
+			else if (source == "contact")
+				_keys.Setup(x => x.GetContactCallCandidatesAsync(DepartmentId, It.IsAny<IEnumerable<string>>(), It.IsAny<int>()))
+					.ReturnsAsync((int _, IEnumerable<string> __, int take) => { requested = take; return rows.Take(take).ToList(); });
+			else
+				_keys.Setup(x => x.GetWithinBoundsAsync(DepartmentId, It.IsAny<decimal>(), It.IsAny<decimal>(), It.IsAny<decimal>(), It.IsAny<decimal>(), It.IsAny<int>()))
+					.ReturnsAsync((int _, decimal __, decimal ___, decimal ____, decimal _____, int take) => { requested = take; return rows.Take(take).ToList(); });
+
+			var counts = await _service.GetCallCountsForOccupanciesAsync(DepartmentId, UserId, new[] { "occ-1" });
+
+			requested.Should().Be(cap + 1);
+			counts["occ-1"].Count.Should().Be(cap);
+			counts["occ-1"].IsLowerBound.Should().Be(exceedsCap);
+		}
+
+		[Test]
+		public async Task A_full_candidate_window_is_a_lower_bound_even_when_directional_matching_rejects_rows()
+		{
+			_occupancies.Setup(x => x.GetOccupancyLocationsAsync(DepartmentId, It.IsAny<IEnumerable<string>>()))
+				.ReturnsAsync(new Dictionary<string, OccupancyLocationSummary> {
+					["occ-1"] = new OccupancyLocationSummary { OccupancyId = "occ-1", AddressText = "110 S Main St" } });
+			IndexByAddress("110|MAIN", Enumerable.Range(1, CallLocationHistoryService.MaxOccupancyCountCandidates + 1)
+				.Select(id => AddCall(id, "110 N Main St")).ToArray());
+
+			var counts = await _service.GetCallCountsForOccupanciesAsync(DepartmentId, UserId, new[] { "occ-1" });
+
+			counts["occ-1"].Count.Should().Be(0);
+			counts["occ-1"].IsLowerBound.Should().BeTrue("later candidates could match the occupancy");
 		}
 
 		[Test]

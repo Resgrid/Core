@@ -208,11 +208,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				saved = await _runCardsService.SaveRunCardAsync(card, cancellationToken);
 			}
-			catch (ArgumentException ex)
+			catch (ArgumentException)
 			{
 				// The service rejects ids the department does not own, e.g. a unit type deleted
 				// while this editor was open; reloading the editor drops those.
-				return Json(new { success = false, message = ex.Message });
+				return BadRequest(new { success = false, message = "The run card contains invalid references. Reload the editor and review the card." });
 			}
 
 			return Json(new { success = true, runCardId = saved.RunCardId });

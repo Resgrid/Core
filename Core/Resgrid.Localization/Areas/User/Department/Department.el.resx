@@ -1326,4 +1326,7 @@
   <data name="MapStyle_Unicorn" xml:space="preserve">
     <value>Unicorn</value>
   </data>
+  <data name="RunCardTriggerRequired" xml:space="preserve">
+    <value>Προσθέστε τουλάχιστον έναν κανόνα ενεργοποίησης πριν αποθηκεύσετε αυτήν την κάρτα αποστολής.</value>
+  </data>
 </root>

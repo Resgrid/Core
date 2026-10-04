@@ -1326,4 +1326,7 @@
   <data name="MapStyle_Unicorn" xml:space="preserve">
     <value>Unicorn</value>
   </data>
+  <data name="RunCardTriggerRequired" xml:space="preserve">
+    <value>Añada al menos un activador antes de guardar esta tarjeta de despacho.</value>
+  </data>
 </root>

@@ -65,8 +65,8 @@
 								<td>@departmentTime.Date(o.LastInspectedOn)</td>
 								@if (Model.CallCounts != null)
 								{
-									var callCount = Model.CallCounts.TryGetValue(o.RmsOccupancyId, out var occupancyCalls) ? occupancyCalls : 0;
-									<td>@if (callCount > 0) { <a class="badge badge-info" asp-controller="RecordOccupancies" asp-action="Details" asp-route-area="User" asp-route-id="@o.RmsOccupancyId" asp-fragment="responseHistory">@callCount</a> } else { <span class="text-muted">0</span> }</td>
+									var callCount = Model.CallCounts.TryGetValue(o.RmsOccupancyId, out var occupancyCalls) ? occupancyCalls : new Resgrid.Model.CallLocationCount();
+									<td>@if (callCount.Count > 0 || callCount.IsLowerBound) { <a class="badge badge-info" asp-controller="RecordOccupancies" asp-action="Details" asp-route-area="User" asp-route-id="@o.RmsOccupancyId" asp-fragment="responseHistory">@callCount.Count@(callCount.IsLowerBound ? "+" : "")</a> } else { <span class="text-muted">0</span> }</td>
 								}
 								<td><a class="btn btn-xs btn-default" asp-controller="RecordOccupancies" asp-action="Details" asp-route-area="User" asp-route-id="@o.RmsOccupancyId">@L["ViewRecordHeader"]</a></td>
 							</tr>

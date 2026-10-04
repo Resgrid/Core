@@ -58,6 +58,13 @@ namespace Resgrid.Model
 		public List<CallNote> Notes { get; set; } = new List<CallNote>();
 	}
 
+	/// <summary>A count from bounded candidate lookups; a lower bound displays as N+ rather than an exact total.</summary>
+	public class CallLocationCount
+	{
+		public int Count { get; set; }
+		public bool IsLowerBound { get; set; }
+	}
+
 	public class CallLocationHistoryResult
 	{
 		public List<CallLocationHistoryEntry> Entries { get; set; } = new List<CallLocationHistoryEntry>();
@@ -134,7 +141,7 @@ namespace Resgrid.Model
 		/// <summary>Every contact linked to the occupancy, any role.</summary>
 		public List<string> ContactIds { get; set; } = new List<string>();
 
-		public string FullAddress => string.Join(", ", new[] { AddressText, City, string.Join(" ", new[] { StateProvince, PostalCode }) }.WhereNotBlank());
+		public string FullAddress => string.Join(", ", new[] { ProtectedDataEnvelope.SafeDisplay(AddressText), ProtectedDataEnvelope.SafeDisplay(City), string.Join(" ", new[] { ProtectedDataEnvelope.SafeDisplay(StateProvince), ProtectedDataEnvelope.SafeDisplay(PostalCode) }) }.WhereNotBlank());
 
 		public CallLocationQuery ToLocationQuery() => new CallLocationQuery
 		{

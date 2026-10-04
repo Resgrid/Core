@@ -1268,4 +1268,7 @@
   <data name="MapStyle_Unicorn" xml:space="preserve">
     <value>Unicorn</value>
   </data>
+  <data name="RunCardTriggerRequired" xml:space="preserve">
+    <value>Lägg till minst en utlösare innan du sparar detta utryckningskort.</value>
+  </data>
 </root>

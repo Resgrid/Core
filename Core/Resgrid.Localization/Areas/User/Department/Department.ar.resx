@@ -1326,4 +1326,7 @@
   <data name="MapStyle_Unicorn" xml:space="preserve">
     <value>Unicorn</value>
   </data>
+  <data name="RunCardTriggerRequired" xml:space="preserve">
+    <value>أضف مشغّلًا واحدًا على الأقل قبل حفظ بطاقة الإرسال هذه.</value>
+  </data>
 </root>

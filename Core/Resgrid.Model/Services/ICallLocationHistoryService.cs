@@ -36,7 +36,7 @@ namespace Resgrid.Model.Services
 		/// <summary>Linked call counts per contact for the contacts list; null when the user's dispatch scope is not department-wide (counts are not filtered call by call).</summary>
 		Task<Dictionary<string, int>> GetCallCountsForContactsAsync(int departmentId, string userId);
 
-		/// <summary>Call counts per occupancy for the occupancies list; null when the user's dispatch scope is not department-wide.</summary>
-		Task<Dictionary<string, int>> GetCallCountsForOccupanciesAsync(int departmentId, string userId, IEnumerable<string> occupancyIds);
+		/// <summary>Bounded call counts per occupancy for the occupancies list, marked as lower bounds when candidates are truncated; null when the user's dispatch scope is not department-wide.</summary>
+		Task<Dictionary<string, CallLocationCount>> GetCallCountsForOccupanciesAsync(int departmentId, string userId, IEnumerable<string> occupancyIds);
 	}
 }

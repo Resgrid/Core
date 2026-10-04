@@ -20,6 +20,7 @@ namespace Resgrid.Services
 		public const int BackfillBatchSize = 1000;
 		private const int DepartmentsPerFetch = 50;
 		private const int MaxCandidates = 1000;
+		public const int MaxOccupancyCountCandidates = 10000;
 
 		private readonly ICallLocationKeysRepository _keys;
 		private readonly ICallContactsRepository _callContacts;
@@ -291,12 +292,12 @@ namespace Resgrid.Services
 			}
 		}
 
-		public async Task<Dictionary<string, int>> GetCallCountsForOccupanciesAsync(int departmentId, string userId, IEnumerable<string> occupancyIds)
+		public async Task<Dictionary<string, CallLocationCount>> GetCallCountsForOccupanciesAsync(int departmentId, string userId, IEnumerable<string> occupancyIds)
 		{
 			if (!await CanCountAsync(departmentId, userId))
 				return null;
 
-			var result = new Dictionary<string, int>(StringComparer.Ordinal);
+			var result = new Dictionary<string, CallLocationCount>(StringComparer.Ordinal);
 			var ids = (occupancyIds ?? Enumerable.Empty<string>()).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct().ToList();
 			if (ids.Count == 0)
 				return result;
@@ -306,9 +307,12 @@ namespace Resgrid.Services
 				var addressMatching = await IsAddressMatchingAvailableAsync(departmentId);
 				foreach (var pair in await _occupancies.Value.GetOccupancyLocationsAsync(departmentId, ids))
 				{
-					// Counts cover every match; the bounded candidate window is only for history pages.
-					var matches = await GatherAsync(departmentId, new[] { pair.Value.ToLocationQuery() }, pair.Value.ContactIds, true, addressMatching, int.MaxValue, null);
-					result[pair.Key] = matches.Count;
+					// Probe one past the cap so a bounded candidate window is never presented as an exact total.
+					var candidatesTruncated = false;
+					var matches = await GatherAsync(departmentId, new[] { pair.Value.ToLocationQuery() }, pair.Value.ContactIds, true, addressMatching,
+						MaxOccupancyCountCandidates + 1, null, () => candidatesTruncated = true);
+					result[pair.Key] = new CallLocationCount { Count = Math.Min(matches.Count, MaxOccupancyCountCandidates),
+						IsLowerBound = candidatesTruncated || matches.Count > MaxOccupancyCountCandidates };
 				}
 
 				return result;
@@ -378,7 +382,7 @@ namespace Resgrid.Services
 		}
 
 		private async Task<Dictionary<int, MatchState>> GatherAsync(int departmentId, IReadOnlyList<CallLocationQuery> locations, IReadOnlyCollection<string> contactIds,
-			bool contactCallsOnlyWithoutLocation, bool addressMatching, int fetch, Action<string> interpreted)
+			bool contactCallsOnlyWithoutLocation, bool addressMatching, int fetch, Action<string> interpreted, Action candidatesTruncated = null)
 		{
 			var matches = new Dictionary<int, MatchState>();
 			void Add(CallLocationCandidate row, CallLocationMatch match, double? meters)
@@ -398,6 +402,7 @@ namespace Resgrid.Services
 				? new List<CallLocationCandidate>()
 				: await _keys.GetByAddressKeysAsync(departmentId, addressKeys, fetch);
 			var byAddress = addressRows.ToLookup(r => r.AddressKey);
+			if (byAddress.Any(group => group.Count() >= fetch)) candidatesTruncated?.Invoke();
 			var points = new List<GeoMath.GeoPoint>();
 			foreach (var parsedLocation in parsedLocations)
 			{
@@ -431,7 +436,9 @@ namespace Resgrid.Services
 				{
 					var radius = location.NearbyMeters > 0 ? Math.Min(location.NearbyMeters, MaxNearbyMeters) : CallLocationQuery.DefaultNearbyMeters;
 					var (minLat, maxLat, minLng, maxLng) = Bounds(point.Value, radius);
-					foreach (var row in await _keys.GetWithinBoundsAsync(departmentId, minLat, maxLat, minLng, maxLng, fetch))
+					var nearbyRows = await _keys.GetWithinBoundsAsync(departmentId, minLat, maxLat, minLng, maxLng, fetch);
+					if (nearbyRows.Count >= fetch) candidatesTruncated?.Invoke();
+					foreach (var row in nearbyRows)
 					{
 						var meters = Meters(point, row);
 						if (!meters.HasValue || meters > radius)
@@ -448,7 +455,9 @@ namespace Resgrid.Services
 			var contacts = (contactIds ?? Array.Empty<string>()).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
 			if (contacts.Count > 0)
 			{
-				foreach (var row in await _keys.GetContactCallCandidatesAsync(departmentId, contacts, fetch))
+				var contactRows = await _keys.GetContactCallCandidatesAsync(departmentId, contacts, fetch);
+				if (contactRows.Count >= fetch) candidatesTruncated?.Invoke();
+				foreach (var row in contactRows)
 				{
 					var hasOwnLocation = row.Indexed && (row.AddressKey != null || row.Latitude.HasValue);
 					if (contactCallsOnlyWithoutLocation && addressMatching && hasOwnLocation)

@@ -282,7 +282,7 @@ var resgrid;
                     // Built with DOM calls, not an HTML string: the call name and note are user-entered text.
                     if ($('#linkedCall_' + callId).length === 0) {
                         var row = $('<tr></tr>');
-                        $('<td style="max-width: 215px;"></td>').text(data[0].text)
+                        $('<td style="max-width: 215px;"></td>').text(data[0].text || '')
                             .append($('<input type="hidden" />').attr({ id: 'linkedCall_' + callId, name: 'linkedCall_' + callId }).val(callId))
                             .appendTo(row);
                         $('<td></td>').text(note)

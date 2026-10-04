@@ -86,6 +86,10 @@
                 <div class="ibox-content">
                     <div class="alert alert-danger" id="saveError" style="display: none"></div>
                     <div class="alert alert-success" id="saveSuccess" style="display: none">@localizer["RunCardSavedMessage"]</div>
+                    @if (Model.RemovedReferenceCount > 0)
+                    {
+                        <div class="alert alert-warning">@localizer["RunCardDetachedReferencesRemoved", Model.RemovedReferenceCount]</div>
+                    }
 
                     <div class="tabs-container">
                         <ul class="nav nav-tabs">
@@ -341,16 +345,19 @@
         });
 
         $('#alarmLevels').on('click', '.add-unit-req', function () {
+            // With nothing to pick, a row would post id 0, which the save rejects.
+            if (!lookups.unitTypes.length) { return; }
             var level = card.alarmLevels[$(this).closest('.panel').data('level-index')];
             level.unitRequirements = level.unitRequirements || [];
-            level.unitRequirements.push({ runCardUnitRequirementId: 0, unitTypeId: lookups.unitTypes.length ? lookups.unitTypes[0].id : 0, requiredCount: 1 });
+            level.unitRequirements.push({ runCardUnitRequirementId: 0, unitTypeId: lookups.unitTypes[0].id, requiredCount: 1 });
             renderAlarmLevels();
         });
 
         $('#alarmLevels').on('click', '.add-role-req', function () {
+            if (!lookups.roles.length) { return; }
             var level = card.alarmLevels[$(this).closest('.panel').data('level-index')];
             level.roleRequirements = level.roleRequirements || [];
-            level.roleRequirements.push({ runCardRoleRequirementId: 0, personnelRoleId: lookups.roles.length ? lookups.roles[0].id : 0, requiredCount: 1 });
+            level.roleRequirements.push({ runCardRoleRequirementId: 0, personnelRoleId: lookups.roles[0].id, requiredCount: 1 });
             renderAlarmLevels();
         });
 

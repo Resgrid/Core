@@ -15,6 +15,8 @@ namespace Resgrid.Model.Repositories
 		Task<int> DeleteForDepartmentAsync(int departmentId, CancellationToken cancellationToken = default);
 
 		Task<List<CallLocationCandidate>> GetByAddressKeyAsync(int departmentId, string addressKey, int take);
+		/// <summary>Newest live candidates for each address key, capped at <paramref name="takePerKey"/> per key.</summary>
+		Task<List<CallLocationCandidate>> GetByAddressKeysAsync(int departmentId, IEnumerable<string> addressKeys, int takePerKey);
 		Task<List<CallLocationCandidate>> GetWithinBoundsAsync(int departmentId, decimal minLatitude, decimal maxLatitude, decimal minLongitude, decimal maxLongitude, int take);
 		/// <summary>Calls linked to any of the contacts, with their index row when they have one.</summary>
 		Task<List<CallLocationCandidate>> GetContactCallCandidatesAsync(int departmentId, IEnumerable<string> contactIds, int take);
@@ -28,7 +30,7 @@ namespace Resgrid.Model.Repositories
 		Task SaveStateAsync(CallLocationIndexState state, CancellationToken cancellationToken = default);
 		/// <summary>Departments with no state row, or one that is neither complete at <paramref name="keyVersion"/> nor suppressed.</summary>
 		Task<List<int>> GetDepartmentsNeedingIndexAsync(int keyVersion, int take);
-		/// <summary>Unsuppressed departments whose data protection policy is no longer Disabled.</summary>
+		/// <summary>Protected departments needing suppression or containing keys left by a racing write.</summary>
 		Task<List<int>> GetDepartmentsToSuppressAsync(int take);
 		/// <summary>Suppressed departments whose data protection policy is Disabled again (or gone).</summary>
 		Task<List<int>> GetDepartmentsToResumeAsync(int take);

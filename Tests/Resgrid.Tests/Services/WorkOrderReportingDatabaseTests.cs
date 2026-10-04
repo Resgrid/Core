@@ -90,6 +90,9 @@ namespace Resgrid.Tests.Services
             await uow.CreateOrGetConnectionAsync(); row.SlaPolicyRevision = null; row.ResponseDueOn = null; row.RepairDueOn = null; await store.WriteAsync(row); uow.CommitChanges();
             FluentActions.Invoking(() => _runner.GetRequiredService<IMigrationRunner>().MigrateDown(205)).Should().Throw<Exception>();
             (await store.ReportSnapshotsAsync(77, new[] { row.Id }, at)).Single().Should().BeEquivalentTo(first);
+            // Earlier migrations may have completed their own rollback transactions before the retained-evidence guard.
+            _runner.GetRequiredService<IVersionLoader>().LoadVersionInfo();
+            _runner.GetRequiredService<IMigrationRunner>().MigrateUp();
         }
         [Test, Order(14)]
         public async Task P2M4_large_organization_selective_history_and_date_queries_use_indexes()

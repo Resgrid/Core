@@ -19,8 +19,8 @@ namespace Resgrid.Tests.Services
             var order = await Insert(store); var originalContent = order.Content;
             order.CurrencyCode = "CAD"; await store.WriteAsync(order);
             var policy = new WorkOrderPolicy { DepartmentId = 77, CreatedBy = "manager", CreatedOn = DateTime.UtcNow,
-                UpdatedOn = DateTime.UtcNow, CurrencyCode = "EUR", Content = "{\"SpendingThreshold\":125}", CalendarJson = "{}" };
-            await store.AllocateAsync(policy); await store.WriteAsync(policy); uow.CommitChanges();
+                UpdatedOn = DateTime.UtcNow, CurrencyCode = "EUR", CalendarJson = "{}" };
+            await store.AllocateAsync(policy); policy.Content = "{\"SpendingThreshold\":125}"; await store.WriteAsync(policy); uow.CommitChanges();
             var loaded = await store.GetAsync<WorkOrder>(77, order.Id);
             loaded.CurrencyCode.Should().Be("CAD"); loaded.Content.Should().Be(originalContent);
             (await store.GetAsync<WorkOrderPolicy>(77, policy.Id)).CurrencyCode.Should().Be("EUR");

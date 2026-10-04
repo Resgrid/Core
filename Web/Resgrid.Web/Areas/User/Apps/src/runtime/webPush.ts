@@ -260,6 +260,8 @@ export async function refreshWebPush(): Promise<void> {
     return;
   }
 
+  await registerToken(config, token);
+
   if (current && current.token !== token) {
     try {
       await unregisterToken(current.token);
@@ -267,8 +269,6 @@ export async function refreshWebPush(): Promise<void> {
       // a rotated token is already dead at FCM; this only tidies the channel
     }
   }
-
-  await registerToken(config, token);
 }
 
 /**

@@ -933,6 +933,9 @@
   <data name="RunCardSavedMessage" xml:space="preserve">
     <value>تم حفظ البطاقة.</value>
   </data>
+  <data name="RunCardDetachedReferencesRemoved" xml:space="preserve">
+    <value>تمت إزالة {0} عنصر من بطاقة الإرسال هذه كانت تشير إلى أنواع وحدات أو أدوار أو أنواع نداءات أو محطات أو حالات تم حذفها. راجع البطاقة واحفظها للإبقاء على التغيير.</value>
+  </data>
   <data name="CallPriority" xml:space="preserve">
     <value>أولوية النداء</value>
   </data>

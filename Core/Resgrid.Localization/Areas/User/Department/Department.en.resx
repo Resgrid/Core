@@ -963,6 +963,9 @@
   <data name="RunCardSavedMessage" xml:space="preserve">
     <value>Run card saved.</value>
   </data>
+  <data name="RunCardDetachedReferencesRemoved" xml:space="preserve">
+    <value>{0} item(s) on this run card pointed at unit types, roles, call types, stations or statuses that have since been deleted, and were removed. Review the card and save it to keep the change.</value>
+  </data>
   <data name="CallPriority" xml:space="preserve">
     <value>Call Priority</value>
   </data>

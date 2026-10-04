@@ -105,9 +105,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> CallHistory(string id)
 		{
 			if (!await ModuleOnAsync(Flag)) return NotFound();
-			var history = await _callLocationHistory.GetHistoryForOccupancyAsync(DepartmentId, UserId, id);
-			var department = await _departments.GetDepartmentByIdAsync(DepartmentId);
-			return Json(await CallLocationHistoryJson.FromAsync(history, department, _calls, _departments, _historyLocalizer));
+			try
+			{
+				var history = await _callLocationHistory.GetHistoryForOccupancyAsync(DepartmentId, UserId, id);
+				var department = await _departments.GetDepartmentByIdAsync(DepartmentId);
+				return Json(await CallLocationHistoryJson.FromAsync(history, department, _calls, _departments, _historyLocalizer));
+			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
 		}
 
 		[HttpGet]

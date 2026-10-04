@@ -526,7 +526,7 @@ namespace Resgrid.Providers.Messaging
 					if (updated.SequenceEqual(existing))
 						return true;
 
-					var request = new HttpRequestMessage(HttpMethod.Put, $"{ChatConfig.NovuBackendUrl}/v1/subscribers/{subscriberId}/credentials");
+					using var request = new HttpRequestMessage(HttpMethod.Put, $"{ChatConfig.NovuBackendUrl}/v1/subscribers/{subscriberId}/credentials");
 					request.Headers.Add("idempotency-key", Guid.NewGuid().ToString());
 
 					var payload = new
@@ -540,7 +540,7 @@ namespace Resgrid.Providers.Messaging
 					};
 
 					request.Content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
-					var response = await client.SendAsync(request);
+					using var response = await client.SendAsync(request);
 
 					if (!response.IsSuccessStatusCode)
 					{

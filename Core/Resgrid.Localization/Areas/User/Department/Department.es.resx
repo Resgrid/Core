@@ -963,6 +963,9 @@
   <data name="RunCardSavedMessage" xml:space="preserve">
     <value>Tarjeta guardada.</value>
   </data>
+  <data name="RunCardDetachedReferencesRemoved" xml:space="preserve">
+    <value>Se quitaron {0} elemento(s) de esta tarjeta de despacho que hacían referencia a tipos de unidad, roles, tipos de llamada, estaciones o estados ya eliminados. Revise la tarjeta y guárdela para conservar el cambio.</value>
+  </data>
   <data name="CallPriority" xml:space="preserve">
     <value>Prioridad de llamada</value>
   </data>

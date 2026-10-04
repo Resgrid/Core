@@ -2191,6 +2191,15 @@
             <param name="deviceUuid">Input to deregister the device for</param>
             <returns>Result for the unregistration</returns>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DevicesController.UnRegisterWebPush(Resgrid.Web.Services.Models.v4.Device.WebPushUnRegistrationInput)">
+            <summary>
+            Takes a browser or desktop (Electron) push token off the web push channel it was registered on, so
+            that browser stops receiving this user's (or unit's) pushes. Called when someone signs out of a
+            browser or turns its notifications off. Runs at once, not through the queue.
+            </summary>
+            <param name="input">The token and where it was registered</param>
+            <returns>Success when the token is no longer on the channel</returns>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.DisclosuresController">
             <summary>
             Public-records and access-to-information requests over the v4 Records contract (RMS plan section 4.7, RMS-3).
@@ -12159,6 +12168,37 @@
             Novu Environment Id
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.WebPushApiKey">
+            <summary>
+            Firebase web app for browser and desktop push (WebPushConfig). The web and Electron editions mint
+            their FCM token with it and register that token as Platform 3. All empty while web push is off.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.WebPushAuthDomain">
+            <summary>
+            Firebase web app auth domain for browser and desktop push
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.WebPushProjectId">
+            <summary>
+            Firebase project id for browser and desktop push
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.WebPushMessagingSenderId">
+            <summary>
+            Firebase messaging sender id for browser and desktop push
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.WebPushAppId">
+            <summary>
+            Firebase web app id for browser and desktop push
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.WebPushVapidKey">
+            <summary>
+            Public VAPID key of the Firebase project's Web Push certificate
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.AnalyticsApiKey">
             <summary>
             Analytics Api Key
@@ -12938,6 +12978,33 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Device.PushUnRegistrationInput.DeviceUuid">
             <summary>
             Device UDID
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Device.WebPushUnRegistrationInput">
+            <summary>
+            Takes a browser or desktop push token off the web push channel it was registered on (RegisterDevice or
+            RegisterUnitDevice with Platform 3). Sent in the body rather than the query string so the token never
+            lands in request logs.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Device.WebPushUnRegistrationInput.Token">
+            <summary>
+            The FCM web token the browser or desktop app registered
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Device.WebPushUnRegistrationInput.Prefix">
+            <summary>
+            The department code the token was registered under; empty means the caller's active department
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Device.WebPushUnRegistrationInput.Source">
+            <summary>
+            Source app of the registration ("IC" for the Incident Command app); null/empty means the user's default subscriber
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Device.WebPushUnRegistrationInput.UnitId">
+            <summary>
+            The unit the token was registered for (Unit app); empty for a user registration
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Dispatch.GetCallTemplatesResult">

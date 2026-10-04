@@ -138,6 +138,12 @@ function fcmPush(eventCode, category, title = 'Structure Fire', message = '123 M
         assert.deepEqual(worker.opened, [`${origin}/User/Dispatch/ViewCall?callId=1234`]);
         console.log('ok - a click opens the call in a new tab rather than navigating an open one');
     }
+    for (const url of ['https://untrusted.test/call', '//untrusted.test/call', 'javascript:alert(1)', 'data:text/html,redirect', 'https://[invalid']) {
+        const worker = loadWorker();
+        await worker.click({ url });
+        assert.deepEqual(worker.opened, [`${origin}/User/Home/Dashboard`], `invalid or external notification target: ${url}`);
+    }
+    console.log('ok - notification clicks stay on this origin and malformed targets use the dashboard');
 })().catch((error) => {
     console.error(error);
     process.exit(1);

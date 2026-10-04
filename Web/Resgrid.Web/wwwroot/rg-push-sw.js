@@ -89,7 +89,13 @@ self.addEventListener('push', function (event) {
 self.addEventListener('notificationclick', function (event) {
 	event.notification.close();
 
-	var target = new URL((event.notification.data && event.notification.data.url) || '/User/Home/Dashboard', self.location.origin).href;
+	var target = new URL('/User/Home/Dashboard', self.location.origin).href;
+	try {
+		var requested = new URL((event.notification.data && event.notification.data.url) || target, self.location.origin);
+		if (requested.origin === self.location.origin) { target = requested.href; }
+	} catch (e) {
+		// An old or malformed notification still opens the dashboard.
+	}
 
 	// A tab already showing the target is brought forward; otherwise the target opens in a new tab, so an
 	// open tab mid-form is never navigated away from.

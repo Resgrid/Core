@@ -162,6 +162,216 @@ namespace Resgrid.Tests.Services
 		}
 
 		[TestFixture]
+		public class when_removing_detached_run_card_references
+		{
+			// Sentry 3573: a unit type deleted after the card was built left its id on the
+			// card, the editor could neither show nor remove it, and every save threw
+			// "A unit type does not belong to this department."
+			private const int DepartmentId = 1;
+			private const int OwnedUnitTypeId = 100;
+			private const int DeletedUnitTypeId = 101;
+			private const int OwnedStationId = 10;
+			private const int OwnedCallTypeId = 20;
+			private const int DeletedCallTypeId = 21;
+			private const int OwnedRoleId = 30;
+			private const int DeletedRoleId = 31;
+			private const int ActiveDetailId = 40;
+			private const int DeletedDetailId = 41;
+
+			private RunCardsService BuildService()
+			{
+				var unitsService = new Mock<IUnitsService>();
+				unitsService.Setup(x => x.GetUnitTypesForDepartmentAsync(DepartmentId))
+					.ReturnsAsync(new List<UnitType> { new UnitType { UnitTypeId = OwnedUnitTypeId, DepartmentId = DepartmentId, Type = "Engine" } });
+
+				var departmentGroupsService = new Mock<IDepartmentGroupsService>();
+				departmentGroupsService.Setup(x => x.GetAllStationGroupsForDepartmentAsync(DepartmentId))
+					.ReturnsAsync(new List<DepartmentGroup> { new DepartmentGroup { DepartmentGroupId = OwnedStationId, DepartmentId = DepartmentId } });
+
+				var callTypesRepository = new Mock<ICallTypesRepository>();
+				callTypesRepository.Setup(x => x.GetAllByDepartmentIdAsync(DepartmentId))
+					.ReturnsAsync(new List<CallType> { new CallType { CallTypeId = OwnedCallTypeId, DepartmentId = DepartmentId, Type = "Fire" } });
+
+				var personnelRolesService = new Mock<IPersonnelRolesService>();
+				personnelRolesService.Setup(x => x.GetRolesForDepartmentAsync(DepartmentId))
+					.ReturnsAsync(new List<PersonnelRole> { new PersonnelRole { PersonnelRoleId = OwnedRoleId, DepartmentId = DepartmentId, Name = "Driver" } });
+
+				// Status details are soft-deleted, so a removed status button stays on the
+				// state with IsDeleted set and drops out of GetActiveDetails.
+				var customStateService = new Mock<ICustomStateService>();
+				customStateService.Setup(x => x.GetAllActiveUnitStatesForDepartmentAsync(DepartmentId))
+					.ReturnsAsync(new List<CustomState>
+					{
+						new CustomState
+						{
+							CustomStateId = 1,
+							DepartmentId = DepartmentId,
+							Details = new List<CustomStateDetail>
+							{
+								new CustomStateDetail { CustomStateDetailId = ActiveDetailId, ButtonText = "Available" },
+								new CustomStateDetail { CustomStateDetailId = DeletedDetailId, ButtonText = "Old", IsDeleted = true }
+							}
+						}
+					});
+
+				return new RunCardsService(
+					Mock.Of<IRunCardsRepository>(),
+					Mock.Of<IRunCardTriggersRepository>(),
+					Mock.Of<IRunCardAlarmLevelsRepository>(),
+					Mock.Of<IRunCardUnitRequirementsRepository>(),
+					Mock.Of<IRunCardRoleRequirementsRepository>(),
+					Mock.Of<IRunCardAvailabilitySelectionsRepository>(),
+					Mock.Of<IStationCoverageRequirementsRepository>(),
+					callTypesRepository.Object,
+					Mock.Of<ICacheProvider>(),
+					Mock.Of<IUnitOfWork>(),
+					unitsService.Object,
+					personnelRolesService.Object,
+					departmentGroupsService.Object,
+					customStateService.Object);
+			}
+
+			private static RunCard StoredCard()
+			{
+				return new RunCard
+				{
+					RunCardId = 0,
+					DepartmentId = DepartmentId,
+					Name = "Structure Fire",
+					HomeStationGroupId = OwnedStationId,
+					Triggers = new List<RunCardTrigger>
+					{
+						new RunCardTrigger { TriggerType = (int)RunCardTriggerTypes.CallPriority, Priority = 3 },
+						new RunCardTrigger { TriggerType = (int)RunCardTriggerTypes.CallType, CallTypeId = OwnedCallTypeId }
+					},
+					AlarmLevels = new List<RunCardAlarmLevel>
+					{
+						new RunCardAlarmLevel
+						{
+							AlarmLevel = 1,
+							UnitRequirements = new List<RunCardUnitRequirement> { new RunCardUnitRequirement { UnitTypeId = OwnedUnitTypeId, RequiredCount = 2 } },
+							RoleRequirements = new List<RunCardRoleRequirement> { new RunCardRoleRequirement { PersonnelRoleId = OwnedRoleId, RequiredCount = 1 } }
+						}
+					},
+					AvailabilitySelections = new List<RunCardAvailabilitySelection>
+					{
+						new RunCardAvailabilitySelection { SelectionType = 1, UnitTypeId = OwnedUnitTypeId, IsCustomState = true, StateId = ActiveDetailId },
+						new RunCardAvailabilitySelection { SelectionType = 2, IsCustomState = false, StateId = 0 }
+					}
+				};
+			}
+
+			[Test]
+			public async Task should_leave_a_card_with_only_owned_references_untouched()
+			{
+				var card = StoredCard();
+
+				var removed = await BuildService().RemoveDetachedReferencesAsync(card);
+
+				removed.Should().Be(0);
+				card.HomeStationGroupId.Should().Be(OwnedStationId);
+				card.Triggers.Should().HaveCount(2);
+				card.AlarmLevels.First().UnitRequirements.Should().HaveCount(1);
+				card.AlarmLevels.First().RoleRequirements.Should().HaveCount(1);
+				card.AvailabilitySelections.Should().HaveCount(2);
+			}
+
+			[Test]
+			public async Task should_drop_requirements_and_selections_for_a_deleted_unit_type()
+			{
+				var card = StoredCard();
+				card.AlarmLevels.First().UnitRequirements.Add(new RunCardUnitRequirement { UnitTypeId = DeletedUnitTypeId, RequiredCount = 1 });
+				card.AvailabilitySelections.Add(new RunCardAvailabilitySelection { SelectionType = 1, UnitTypeId = DeletedUnitTypeId, IsCustomState = false, StateId = 0 });
+
+				var removed = await BuildService().RemoveDetachedReferencesAsync(card);
+
+				removed.Should().Be(2);
+				card.AlarmLevels.First().UnitRequirements.Select(r => r.UnitTypeId).Should().Equal(OwnedUnitTypeId);
+				card.AvailabilitySelections.Should().NotContain(s => s.UnitTypeId == DeletedUnitTypeId);
+			}
+
+			[Test]
+			public async Task should_drop_role_requirements_for_a_deleted_role()
+			{
+				var card = StoredCard();
+				card.AlarmLevels.First().RoleRequirements.Add(new RunCardRoleRequirement { PersonnelRoleId = DeletedRoleId, RequiredCount = 1 });
+
+				var removed = await BuildService().RemoveDetachedReferencesAsync(card);
+
+				removed.Should().Be(1);
+				card.AlarmLevels.First().RoleRequirements.Select(r => r.PersonnelRoleId).Should().Equal(OwnedRoleId);
+			}
+
+			[Test]
+			public async Task should_drop_selections_for_a_deleted_status()
+			{
+				var card = StoredCard();
+				card.AvailabilitySelections.Add(new RunCardAvailabilitySelection { SelectionType = 1, UnitTypeId = OwnedUnitTypeId, IsCustomState = true, StateId = DeletedDetailId });
+
+				var removed = await BuildService().RemoveDetachedReferencesAsync(card);
+
+				removed.Should().Be(1);
+				card.AvailabilitySelections.Should().NotContain(s => s.StateId == DeletedDetailId);
+			}
+
+			[Test]
+			public async Task should_drop_a_type_trigger_but_keep_a_priority_trigger_for_a_deleted_call_type()
+			{
+				// A priority-only trigger never reads its call type, so it must keep matching.
+				var card = StoredCard();
+				card.Triggers = new List<RunCardTrigger>
+				{
+					new RunCardTrigger { TriggerType = (int)RunCardTriggerTypes.CallPriority, Priority = 3, CallTypeId = DeletedCallTypeId },
+					new RunCardTrigger { TriggerType = (int)RunCardTriggerTypes.CallType, CallTypeId = DeletedCallTypeId },
+					new RunCardTrigger { TriggerType = (int)RunCardTriggerTypes.CallPriorityAndType, Priority = 2, CallTypeId = DeletedCallTypeId },
+					new RunCardTrigger { TriggerType = (int)RunCardTriggerTypes.CallType, CallTypeId = OwnedCallTypeId }
+				};
+
+				var removed = await BuildService().RemoveDetachedReferencesAsync(card);
+
+				removed.Should().Be(3);
+				card.Triggers.Should().HaveCount(2);
+				card.Triggers.Should().ContainSingle(t => t.TriggerType == (int)RunCardTriggerTypes.CallPriority && t.Priority == 3 && t.CallTypeId == null);
+				card.Triggers.Should().ContainSingle(t => t.CallTypeId == OwnedCallTypeId);
+			}
+
+			[Test]
+			public async Task should_clear_a_deleted_home_station()
+			{
+				var card = StoredCard();
+				card.HomeStationGroupId = 999;
+
+				var removed = await BuildService().RemoveDetachedReferencesAsync(card);
+
+				removed.Should().Be(1);
+				card.HomeStationGroupId.Should().BeNull();
+			}
+
+			[Test]
+			public async Task should_leave_a_card_that_saves_after_every_kind_of_deletion()
+			{
+				// The pruning and the save validation must agree exactly, or the editor
+				// still hands the user a card that cannot be saved.
+				var card = StoredCard();
+				card.HomeStationGroupId = 999;
+				card.Triggers.Add(new RunCardTrigger { TriggerType = (int)RunCardTriggerTypes.CallType, CallTypeId = DeletedCallTypeId });
+				card.AlarmLevels.First().UnitRequirements.Add(new RunCardUnitRequirement { UnitTypeId = DeletedUnitTypeId, RequiredCount = 1 });
+				card.AlarmLevels.First().RoleRequirements.Add(new RunCardRoleRequirement { PersonnelRoleId = DeletedRoleId, RequiredCount = 1 });
+				card.AvailabilitySelections.Add(new RunCardAvailabilitySelection { SelectionType = 1, UnitTypeId = DeletedUnitTypeId, IsCustomState = false, StateId = 0 });
+				card.AvailabilitySelections.Add(new RunCardAvailabilitySelection { SelectionType = 1, UnitTypeId = OwnedUnitTypeId, IsCustomState = true, StateId = DeletedDetailId });
+
+				var service = BuildService();
+
+				Assert.ThrowsAsync<ArgumentException>(async () => await service.SaveRunCardAsync(card));
+
+				var removed = await service.RemoveDetachedReferencesAsync(card);
+
+				removed.Should().Be(6);
+				Assert.DoesNotThrowAsync(async () => await service.SaveRunCardAsync(card));
+			}
+		}
+
+		[TestFixture]
 		public class when_evaluating_run_card_trigger_specificity
 		{
 			private static readonly DateTime Now = new DateTime(2026, 6, 15, 12, 0, 0, DateTimeKind.Utc);

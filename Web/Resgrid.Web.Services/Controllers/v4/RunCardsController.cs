@@ -199,7 +199,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 				StateId = s.StateId
 			}).ToList();
 
-			var saved = await _runCardsService.SaveRunCardAsync(card, cancellationToken);
+			RunCard saved;
+			try
+			{
+				saved = await _runCardsService.SaveRunCardAsync(card, cancellationToken);
+			}
+			catch (ArgumentException ex)
+			{
+				// An id the department does not own (often one deleted since the card was read).
+				return Problem(statusCode: StatusCodes.Status400BadRequest, title: ex.Message);
+			}
 
 			var result = new SaveRunCardResult
 			{

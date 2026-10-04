@@ -299,13 +299,9 @@ namespace Resgrid.Services
 		/// </summary>
 		private async Task ValidateRunCardReferencesAsync(RunCard runCard)
 		{
-			if (runCard.HomeStationGroupId.HasValue)
-			{
-				var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(runCard.DepartmentId);
-
-				if (stations == null || stations.All(s => s.DepartmentGroupId != runCard.HomeStationGroupId.Value))
-					throw new ArgumentException("The home station does not belong to this department.", nameof(runCard));
-			}
+			if (runCard.HomeStationGroupId.HasValue
+				&& !(await GetDepartmentStationIdsAsync(runCard.DepartmentId)).Contains(runCard.HomeStationGroupId.Value))
+				throw new ArgumentException("The home station does not belong to this department.", nameof(runCard));
 
 			var triggerCallTypeIds = (runCard.Triggers ?? new List<RunCardTrigger>())
 				.Where(t => t.CallTypeId.HasValue)
@@ -315,8 +311,7 @@ namespace Resgrid.Services
 
 			if (triggerCallTypeIds.Any())
 			{
-				var callTypes = await _callTypesRepository.GetAllByDepartmentIdAsync(runCard.DepartmentId);
-				var callTypeIds = new HashSet<int>((callTypes ?? Enumerable.Empty<CallType>()).Select(t => t.CallTypeId));
+				var callTypeIds = await GetDepartmentCallTypeIdsAsync(runCard.DepartmentId);
 
 				if (triggerCallTypeIds.Any(id => !callTypeIds.Contains(id)))
 					throw new ArgumentException("A trigger references a call type from another department.", nameof(runCard));
@@ -334,8 +329,7 @@ namespace Resgrid.Services
 
 			if (referencedUnitTypeIds.Any())
 			{
-				var unitTypes = await _unitsService.GetUnitTypesForDepartmentAsync(runCard.DepartmentId);
-				var unitTypeIds = new HashSet<int>((unitTypes ?? new List<UnitType>()).Select(t => t.UnitTypeId));
+				var unitTypeIds = await GetDepartmentUnitTypeIdsAsync(runCard.DepartmentId);
 
 				if (referencedUnitTypeIds.Any(id => !unitTypeIds.Contains(id)))
 					throw new ArgumentException("A unit type does not belong to this department.", nameof(runCard));
@@ -349,8 +343,7 @@ namespace Resgrid.Services
 
 			if (referencedRoleIds.Any())
 			{
-				var roles = await _personnelRolesService.GetRolesForDepartmentAsync(runCard.DepartmentId);
-				var roleIds = new HashSet<int>((roles ?? new List<PersonnelRole>()).Select(r => r.PersonnelRoleId));
+				var roleIds = await GetDepartmentRoleIdsAsync(runCard.DepartmentId);
 
 				if (referencedRoleIds.Any(id => !roleIds.Contains(id)))
 					throw new ArgumentException("A personnel role does not belong to this department.", nameof(runCard));
@@ -362,17 +355,151 @@ namespace Resgrid.Services
 
 			if (customStateIds.Any())
 			{
-				var owned = new HashSet<int>();
-
-				foreach (var state in await _customStateService.GetAllActiveUnitStatesForDepartmentAsync(runCard.DepartmentId) ?? new List<CustomState>())
-					AddActiveDetailIds(owned, state);
-
-				AddActiveDetailIds(owned, await _customStateService.GetActivePersonnelStateForDepartmentAsync(runCard.DepartmentId));
-				AddActiveDetailIds(owned, await _customStateService.GetActiveStaffingLevelsForDepartmentAsync(runCard.DepartmentId));
+				var owned = await GetDepartmentActiveCustomStateDetailIdsAsync(runCard.DepartmentId);
 
 				if (customStateIds.Any(id => !owned.Contains(id)))
 					throw new ArgumentException("A status selection does not belong to this department.", nameof(runCard));
 			}
+		}
+
+		/// <summary>
+		/// Nothing ties a stored run card to the unit types, roles, call types, stations and
+		/// status details it names, so deleting one of those leaves the card holding an id
+		/// that ValidateRunCardReferencesAsync now rejects. The editor cannot show such an id
+		/// (it only lists what the department still has), so it cannot be removed by hand
+		/// either, and every save of the card fails. This strips exactly what the validator
+		/// would reject, using the same lookups, so a graph loaded for editing can be saved.
+		/// Each stripped entry could never have matched anything; none of it is persisted
+		/// until the caller saves.
+		/// </summary>
+		public async Task<int> RemoveDetachedReferencesAsync(RunCard runCard)
+		{
+			if (runCard == null)
+				return 0;
+
+			var removed = 0;
+
+			if (runCard.HomeStationGroupId.HasValue
+				&& !(await GetDepartmentStationIdsAsync(runCard.DepartmentId)).Contains(runCard.HomeStationGroupId.Value))
+			{
+				runCard.HomeStationGroupId = null;
+				removed++;
+			}
+
+			var triggers = runCard.Triggers?.ToList() ?? new List<RunCardTrigger>();
+
+			if (triggers.Any(t => t.CallTypeId.HasValue))
+			{
+				var callTypeIds = await GetDepartmentCallTypeIdsAsync(runCard.DepartmentId);
+				var kept = new List<RunCardTrigger>();
+
+				foreach (var trigger in triggers)
+				{
+					if (!trigger.CallTypeId.HasValue || callTypeIds.Contains(trigger.CallTypeId.Value))
+					{
+						kept.Add(trigger);
+						continue;
+					}
+
+					removed++;
+
+					// A priority-only trigger never reads its call type, so it keeps matching with
+					// the dead id cleared; a type trigger could never match again and is dropped.
+					if (trigger.TriggerType == (int)RunCardTriggerTypes.CallPriority)
+					{
+						trigger.CallTypeId = null;
+						kept.Add(trigger);
+					}
+				}
+
+				runCard.Triggers = kept;
+			}
+
+			var levels = runCard.AlarmLevels?.ToList() ?? new List<RunCardAlarmLevel>();
+			var selections = runCard.AvailabilitySelections?.ToList() ?? new List<RunCardAvailabilitySelection>();
+
+			if (levels.Any(l => l.UnitRequirements != null && l.UnitRequirements.Any()) || selections.Any(s => s.UnitTypeId.HasValue))
+			{
+				var unitTypeIds = await GetDepartmentUnitTypeIdsAsync(runCard.DepartmentId);
+
+				foreach (var level in levels.Where(l => l.UnitRequirements != null))
+				{
+					var keptRequirements = level.UnitRequirements.Where(r => unitTypeIds.Contains(r.UnitTypeId)).ToList();
+					removed += level.UnitRequirements.Count - keptRequirements.Count;
+					level.UnitRequirements = keptRequirements;
+				}
+
+				var keptSelections = selections.Where(s => !s.UnitTypeId.HasValue || unitTypeIds.Contains(s.UnitTypeId.Value)).ToList();
+				removed += selections.Count - keptSelections.Count;
+				selections = keptSelections;
+			}
+
+			if (levels.Any(l => l.RoleRequirements != null && l.RoleRequirements.Any()))
+			{
+				var roleIds = await GetDepartmentRoleIdsAsync(runCard.DepartmentId);
+
+				foreach (var level in levels.Where(l => l.RoleRequirements != null))
+				{
+					var keptRequirements = level.RoleRequirements.Where(r => roleIds.Contains(r.PersonnelRoleId)).ToList();
+					removed += level.RoleRequirements.Count - keptRequirements.Count;
+					level.RoleRequirements = keptRequirements;
+				}
+			}
+
+			if (selections.Any(s => s.IsCustomState))
+			{
+				var owned = await GetDepartmentActiveCustomStateDetailIdsAsync(runCard.DepartmentId);
+
+				var keptSelections = selections.Where(s => !s.IsCustomState || owned.Contains(s.StateId)).ToList();
+				removed += selections.Count - keptSelections.Count;
+				selections = keptSelections;
+			}
+
+			if (runCard.AvailabilitySelections != null)
+				runCard.AvailabilitySelections = selections;
+
+			return removed;
+		}
+
+		private async Task<HashSet<int>> GetDepartmentStationIdsAsync(int departmentId)
+		{
+			var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(departmentId);
+
+			return new HashSet<int>((stations ?? new List<DepartmentGroup>()).Select(s => s.DepartmentGroupId));
+		}
+
+		private async Task<HashSet<int>> GetDepartmentCallTypeIdsAsync(int departmentId)
+		{
+			var callTypes = await _callTypesRepository.GetAllByDepartmentIdAsync(departmentId);
+
+			return new HashSet<int>((callTypes ?? Enumerable.Empty<CallType>()).Select(t => t.CallTypeId));
+		}
+
+		private async Task<HashSet<int>> GetDepartmentUnitTypeIdsAsync(int departmentId)
+		{
+			var unitTypes = await _unitsService.GetUnitTypesForDepartmentAsync(departmentId);
+
+			return new HashSet<int>((unitTypes ?? new List<UnitType>()).Select(t => t.UnitTypeId));
+		}
+
+		private async Task<HashSet<int>> GetDepartmentRoleIdsAsync(int departmentId)
+		{
+			var roles = await _personnelRolesService.GetRolesForDepartmentAsync(departmentId);
+
+			return new HashSet<int>((roles ?? new List<PersonnelRole>()).Select(r => r.PersonnelRoleId));
+		}
+
+		private async Task<HashSet<int>> GetDepartmentActiveCustomStateDetailIdsAsync(int departmentId)
+		{
+			var owned = new HashSet<int>();
+
+			foreach (var state in await _customStateService.GetAllActiveUnitStatesForDepartmentAsync(departmentId) ?? new List<CustomState>())
+				AddActiveDetailIds(owned, state);
+
+			AddActiveDetailIds(owned, await _customStateService.GetActivePersonnelStateForDepartmentAsync(departmentId));
+			AddActiveDetailIds(owned, await _customStateService.GetActiveStaffingLevelsForDepartmentAsync(departmentId));
+
+			return owned;
 		}
 
 		private static void AddActiveDetailIds(HashSet<int> ids, CustomState state)

@@ -254,6 +254,8 @@ namespace Resgrid.Tests.Security
 			foreach (var evidence in new[] { first, second, alreadyRevoked, current })
 				await Evidence().InsertAsync(evidence);
 
+			// InsertAsync creates fresh evidence; seed revocation through the repository's revocation operation.
+			await Evidence().RevokeForFactorAsync(alreadyRevoked.UserId, retired, now.AddMinutes(-5));
 			(await Evidence().RevokeByFactorReferenceAsync(retired, now)).Should().Be(2, "both users' live rows, not the one already revoked");
 			(await Evidence().GetLatestAsync(first.UserId, "sid:a", MfaEvidenceKind.SecondFactor, 7, now)).FactorReference
 				.Should().Be(current.FactorReference, "the new version's evidence is untouched");

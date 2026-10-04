@@ -318,5 +318,35 @@ namespace Resgrid.Tests.Repositories
 			(await Repository().DeleteForDepartmentAsync(purgeDepartment)).Should().Be(2);
 			(await Repository().GetByAddressKeyAsync(purgeDepartment, "1|A", 10)).Should().BeEmpty();
 		}
+
+		[Test]
+		public async Task Batched_address_candidates_preserve_the_newest_cap_for_each_key()
+		{
+			const int dept = 811;
+			var old = await SeedCallAsync("110 Main St", Now.AddDays(-2), dept);
+			var latest = await SeedCallAsync("110 Main St", Now, dept);
+			var elm = await SeedCallAsync("500 Elm St", Now.AddDays(-3), dept);
+			var deleted = await SeedCallAsync("500 Elm St", Now, dept, deleted: true);
+			await Repository().UpsertAsync(new[] { Key(old, "110 Main St", Now.AddDays(-2), departmentId: dept), Key(latest, "110 Main St", Now, departmentId: dept),
+				Key(elm, "500 Elm St", Now.AddDays(-3), departmentId: dept), Key(deleted, "500 Elm St", Now, departmentId: dept) });
+			var rows = await Repository().GetByAddressKeysAsync(dept, new[] { "110|MAIN", "500|ELM", "110|MAIN" }, 1);
+			rows.Select(r => r.CallId).Should().Equal(latest, elm);
+		}
+
+		[TestCase(true)]
+		[TestCase(false)]
+		public async Task Protected_departments_with_late_keys_are_selected_even_without_an_unsuppressed_state(bool hasState)
+		{
+			var dept = await SeedDepartmentAsync();
+			var call = await SeedCallAsync("110 Main St", Now, dept);
+			await using (var database = Connect(_connection))
+				await database.ExecuteAsync(IsPostgres ? "INSERT INTO departmentdataprotectionpolicies (departmentid, state) VALUES (@D, 5)"
+					: "INSERT INTO DepartmentDataProtectionPolicies (DepartmentId, State) VALUES (@D, 5)", new { D = dept });
+			if (hasState) await Repository().SaveStateAsync(new CallLocationIndexState { DepartmentId = dept, IsSuppressed = true, ModifiedOn = Now });
+			await Repository().UpsertAsync(new[] { Key(call, "110 Main St", Now, departmentId: dept) });
+			(await Repository().GetDepartmentsToSuppressAsync(100)).Should().Contain(dept);
+			await Repository().DeleteForDepartmentAsync(dept);
+			(await Repository().GetDepartmentsToSuppressAsync(100)).Should().NotContain(dept);
+		}
 	}
 }

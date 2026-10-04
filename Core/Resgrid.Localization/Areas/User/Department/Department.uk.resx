@@ -875,6 +875,9 @@
   <data name="RunCardSavedMessage" xml:space="preserve">
     <value>Картку збережено.</value>
   </data>
+  <data name="RunCardDetachedReferencesRemoved" xml:space="preserve">
+    <value>Із цієї картки виїзду вилучено {0} елемент(и), що посилалися на вже видалені типи підрозділів, ролі, типи викликів, станції або статуси. Перевірте картку та збережіть її, щоб зберегти зміну.</value>
+  </data>
   <data name="CallPriority" xml:space="preserve">
     <value>Пріоритет виклику</value>
   </data>

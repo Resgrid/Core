@@ -187,11 +187,19 @@ namespace Resgrid.Tests.Security
 			(await sessions.DisableApprovalsAsync(user, someoneElses, now, default)).Should().Be(0, "another account's installation");
 			(await sessions.DisableApprovalsAsync(user, null, now, default)).Should().Be(1, "every other active Responder installation: the tablet");
 
-			((UserSession)await sessions.GetByIdAsync(phone)).ApprovalsDisabledOnUtc.Should().Be(now);
-			((UserSession)await sessions.GetByIdAsync(tablet)).ApprovalsDisabledOnUtc.Should().Be(now);
-			((UserSession)await sessions.GetByIdAsync(unit)).ApprovalsDisabledOnUtc.Should().BeNull();
-			((UserSession)await sessions.GetByIdAsync(ended)).ApprovalsDisabledOnUtc.Should().BeNull();
-			((UserSession)await sessions.GetByIdAsync(someoneElses)).ApprovalsDisabledOnUtc.Should().BeNull();
+			// This fixture supplies a minimal session schema and no generic repository query factory.
+			async Task<DateTime?> DisabledOn(string id)
+			{
+				await using var db = Connect(_connection);
+				return await db.QuerySingleAsync<DateTime?>(type == DatabaseTypes.Postgres
+					? "SELECT approvalsdisabledonutc FROM usersessions WHERE usersessionid = @Id"
+					: "SELECT ApprovalsDisabledOnUtc FROM UserSessions WHERE UserSessionId = @Id", new { Id = id });
+			}
+			(await DisabledOn(phone)).Should().Be(now);
+			(await DisabledOn(tablet)).Should().Be(now);
+			(await DisabledOn(unit)).Should().BeNull();
+			(await DisabledOn(ended)).Should().BeNull();
+			(await DisabledOn(someoneElses)).Should().BeNull();
 		}
 	}
 }

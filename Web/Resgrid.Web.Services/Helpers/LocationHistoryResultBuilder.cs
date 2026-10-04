@@ -40,13 +40,15 @@ namespace Resgrid.Web.Helpers
 				? ((await departmentsService.GetAllPersonnelNamesForDepartmentAsync(departmentId)) ?? new List<PersonName>())
 					.Where(n => n.UserId != null).GroupBy(n => n.UserId, StringComparer.OrdinalIgnoreCase).ToDictionary(g => g.Key, g => g.First().Name, StringComparer.OrdinalIgnoreCase)
 				: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-			var priorities = new Dictionary<int, DepartmentCallPriority>();
+			var priorities = ((await callsService.GetCallPrioritiesForDepartmentAsync(departmentId)) ?? new List<DepartmentCallPriority>())
+				.Where(p => p.DepartmentCallPriorityId > 3)
+				.Concat(callsService.GetDefaultCallPriorities() ?? new List<DepartmentCallPriority>())
+				.GroupBy(p => p.DepartmentCallPriorityId).ToDictionary(g => g.Key, g => g.First());
 
 			foreach (var entry in history.Entries)
 			{
 				var call = revealed.TryGetValue(entry.Call.CallId, out var read) ? read.Call : entry.Call;
-				if (!priorities.TryGetValue(call.Priority, out var priority))
-					priorities[call.Priority] = priority = await callsService.GetCallPrioritiesByIdAsync(departmentId, call.Priority);
+				priorities.TryGetValue(call.Priority, out var priority);
 
 				var item = new LocationHistoryCallData
 				{
@@ -55,7 +57,7 @@ namespace Resgrid.Web.Helpers
 					Name = ProtectedDataEnvelope.SafeDisplay(call.Name),
 					Nature = ProtectedDataEnvelope.SafeDisplay(call.NatureOfCall),
 					Address = ProtectedDataEnvelope.SafeDisplay(call.Address),
-					Type = call.Type,
+					Type = ProtectedDataEnvelope.SafeDisplay(call.Type),
 					Priority = call.Priority,
 					PriorityText = priority?.Name,
 					PriorityColor = priority?.Color,

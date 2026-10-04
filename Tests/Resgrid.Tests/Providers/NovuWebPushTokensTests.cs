@@ -112,5 +112,21 @@ namespace Resgrid.Tests.Providers
 		{
 			NovuWebPushTokens.FindChannelTokens(body, new HashSet<string> { "int-prod" }).Should().BeNull();
 		}
+
+		[TestCase("{}")]
+		[TestCase("{\"deviceTokens\":null}")]
+		[TestCase("{\"deviceTokens\":\"browser\"}")]
+		[TestCase("{\"deviceTokens\":[\"browser\",42]}")]
+		public void An_unreadable_matching_channel_must_not_be_treated_as_empty(string credentials)
+		{
+			var json = "{\"channels\":[{\"_integrationId\":\"web\",\"credentials\":" + credentials + "}]}";
+			NovuWebPushTokens.FindChannelTokens(json, new HashSet<string> { "web" }).Should().BeNull();
+		}
+
+		[Test]
+		public void A_valid_empty_matching_channel_can_receive_its_first_token()
+		{
+			NovuWebPushTokens.FindChannelTokens("{\"channels\":[{\"_integrationId\":\"web\",\"credentials\":{\"deviceTokens\":[]}}]}", new HashSet<string> { "web" }).Should().BeEmpty();
+		}
 	}
 }

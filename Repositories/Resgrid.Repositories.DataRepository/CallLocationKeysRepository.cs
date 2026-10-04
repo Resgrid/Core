@@ -77,15 +77,23 @@ namespace Resgrid.Repositories.DataRepository
 		public Task<int> DeleteForDepartmentAsync(int departmentId, CancellationToken cancellationToken = default) =>
 			ExecuteAsync($"DELETE FROM {Tbl("CallLocationKeys")} WHERE {Col("DepartmentId")} = {P}DepartmentId", new { DepartmentId = departmentId }, cancellationToken);
 
-		public async Task<List<CallLocationCandidate>> GetByAddressKeyAsync(int departmentId, string addressKey, int take)
-		{
-			var sql = $@"SELECT {Top}{CandidateColumns("k", "k." + Col("LoggedOn"))}, {True} AS Indexed
-				FROM {Tbl("CallLocationKeys")} k
-				INNER JOIN {Tbl("Calls")} c ON c.{Col("CallId")} = k.{Col("CallId")} AND c.{Col("IsDeleted")} = {False}
-				WHERE k.{Col("DepartmentId")} = {P}DepartmentId AND k.{Col("AddressKey")} = {P}AddressKey
-				ORDER BY k.{Col("LoggedOn")} DESC{Limit}";
+		public Task<List<CallLocationCandidate>> GetByAddressKeyAsync(int departmentId, string addressKey, int take)
+			=> GetByAddressKeysAsync(departmentId, new[] { addressKey }, take);
 
-			return (await QueryAsync<CallLocationCandidate>(sql, new { DepartmentId = departmentId, AddressKey = addressKey, Take = take })).ToList();
+		public async Task<List<CallLocationCandidate>> GetByAddressKeysAsync(int departmentId, IEnumerable<string> addressKeys, int takePerKey)
+		{
+			var keys = InListValue(addressKeys?.Where(k => !string.IsNullOrWhiteSpace(k)).Distinct());
+			if (keys.Length == 0 || takePerKey <= 0)
+				return new List<CallLocationCandidate>();
+
+			var sql = $@"SELECT * FROM (SELECT {CandidateColumns("k", "k." + Col("LoggedOn"))}, {True} AS Indexed,
+					ROW_NUMBER() OVER (PARTITION BY k.{Col("AddressKey")} ORDER BY k.{Col("LoggedOn")} DESC, k.{Col("CallId")} DESC) AS CandidateRank
+				FROM {Tbl("CallLocationKeys")} k
+				INNER JOIN {Tbl("Calls")} c ON c.{Col("CallId")} = k.{Col("CallId")} AND c.{Col("DepartmentId")} = {P}DepartmentId AND c.{Col("IsDeleted")} = {False}
+				WHERE k.{Col("DepartmentId")} = {P}DepartmentId AND {InList("AddressKey", "AddressKeys", "k")}) candidates
+				WHERE CandidateRank <= {P}Take ORDER BY LoggedOn DESC, CallId DESC";
+
+			return (await QueryAsync<CallLocationCandidate>(sql, new { DepartmentId = departmentId, AddressKeys = keys, Take = takePerKey })).ToList();
 		}
 
 		public async Task<List<CallLocationCandidate>> GetWithinBoundsAsync(int departmentId, decimal minLatitude, decimal maxLatitude, decimal minLongitude, decimal maxLongitude, int take)
@@ -215,11 +223,12 @@ namespace Resgrid.Repositories.DataRepository
 
 		public async Task<List<int>> GetDepartmentsToSuppressAsync(int take)
 		{
-			var sql = $@"SELECT {Top}s.{Col("DepartmentId")}
-				FROM {Tbl("CallLocationIndexStates")} s
-				INNER JOIN {Tbl("DepartmentDataProtectionPolicies")} p ON p.{Col("DepartmentId")} = s.{Col("DepartmentId")}
-				WHERE s.{Col("IsSuppressed")} = {False} AND p.{Col("State")} <> 0
-				ORDER BY s.{Col("DepartmentId")}{Limit}";
+			var sql = $@"SELECT {Top}p.{Col("DepartmentId")}
+				FROM {Tbl("DepartmentDataProtectionPolicies")} p
+				LEFT JOIN {Tbl("CallLocationIndexStates")} s ON s.{Col("DepartmentId")} = p.{Col("DepartmentId")}
+				WHERE p.{Col("State")} <> 0 AND (s.{Col("IsSuppressed")} = {False}
+					OR EXISTS (SELECT 1 FROM {Tbl("CallLocationKeys")} k WHERE k.{Col("DepartmentId")} = p.{Col("DepartmentId")}))
+				ORDER BY p.{Col("DepartmentId")}{Limit}";
 
 			return (await QueryAsync<int>(sql, new { Take = take })).ToList();
 		}

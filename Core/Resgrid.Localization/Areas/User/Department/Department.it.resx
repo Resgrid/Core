@@ -875,6 +875,9 @@
   <data name="RunCardSavedMessage" xml:space="preserve">
     <value>Scheda salvata.</value>
   </data>
+  <data name="RunCardDetachedReferencesRemoved" xml:space="preserve">
+    <value>{0} elemento/i di questa scheda di intervento facevano riferimento a tipi di unità, ruoli, tipi di chiamata, stazioni o stati nel frattempo eliminati e sono stati rimossi. Controlla la scheda e salvala per mantenere la modifica.</value>
+  </data>
   <data name="CallPriority" xml:space="preserve">
     <value>Priorità chiamata</value>
   </data>

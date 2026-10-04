@@ -307,5 +307,20 @@ namespace Resgrid.Tests.Rms
 			await _h.OccupancyService.DeleteAsync(Dept, Admin, o.RmsOccupancyId);
 			(await _h.OccupancyService.GetAsync(Dept, Admin, o.RmsOccupancyId)).Should().BeNull();
 		}
+
+		[Test]
+		public async Task Occupancy_location_contacts_include_only_linked_crosswalks_and_deduplicate_links()
+		{
+			var occupancy = _h.SeedOccupancy("Acme", "110 Main St");
+			_h.Links.Rows.Add(new RmsOccupancyContactLink { DepartmentId = Dept, RmsOccupancyId = occupancy.RmsOccupancyId, ContactId = "acme" });
+			foreach (var contact in new[] { "acme", "legacy" })
+				_h.Crosswalks.Rows.Add(new RmsOccupancyCrosswalk { DepartmentId = Dept, RmsOccupancyId = occupancy.RmsOccupancyId, ContactId = contact, State = (int)RmsOccupancyCrosswalkState.Linked });
+			_h.Crosswalks.Rows.Add(new RmsOccupancyCrosswalk { DepartmentId = Dept, RmsOccupancyId = occupancy.RmsOccupancyId, ContactId = "candidate", State = (int)RmsOccupancyCrosswalkState.Candidate });
+			_h.Crosswalks.Rows.Add(new RmsOccupancyCrosswalk { DepartmentId = Dept + 1, RmsOccupancyId = occupancy.RmsOccupancyId, ContactId = "foreign", State = (int)RmsOccupancyCrosswalkState.Linked });
+
+			var result = await _h.OccupancyService.GetOccupancyLocationAsync(Dept, occupancy.RmsOccupancyId);
+
+			result.ContactIds.Should().BeEquivalentTo(new[] { "acme", "legacy" });
+		}
 	}
 }

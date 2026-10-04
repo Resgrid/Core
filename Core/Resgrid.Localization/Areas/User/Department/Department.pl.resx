@@ -875,6 +875,9 @@
   <data name="RunCardSavedMessage" xml:space="preserve">
     <value>Karta zapisana.</value>
   </data>
+  <data name="RunCardDetachedReferencesRemoved" xml:space="preserve">
+    <value>Usunięto {0} element(y) tej karty dysponowania, które wskazywały na usunięte już typy jednostek, role, typy zgłoszeń, stacje lub statusy. Sprawdź kartę i zapisz ją, aby zachować zmianę.</value>
+  </data>
   <data name="CallPriority" xml:space="preserve">
     <value>Priorytet zgłoszenia</value>
   </data>

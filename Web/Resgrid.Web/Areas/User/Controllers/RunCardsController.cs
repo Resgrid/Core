@@ -88,7 +88,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (card == null || card.DepartmentId != DepartmentId)
 				return Unauthorized();
 
-			var model = new EditRunCardModel { RunCard = card };
+			// A deleted unit type, role, call type, station or status leaves its id on the card,
+			// where the editor cannot show it and every save would reject it.
+			var model = new EditRunCardModel
+			{
+				RunCard = card,
+				RemovedReferenceCount = await _runCardsService.RemoveDetachedReferencesAsync(card)
+			};
 			await PopulateEditModelAsync(model);
 
 			return View(model);
@@ -197,7 +203,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 				StateId = s.StateId
 			}).ToList();
 
-			var saved = await _runCardsService.SaveRunCardAsync(card, cancellationToken);
+			RunCard saved;
+			try
+			{
+				saved = await _runCardsService.SaveRunCardAsync(card, cancellationToken);
+			}
+			catch (ArgumentException ex)
+			{
+				// The service rejects ids the department does not own, e.g. a unit type deleted
+				// while this editor was open; reloading the editor drops those.
+				return Json(new { success = false, message = ex.Message });
+			}
 
 			return Json(new { success = true, runCardId = saved.RunCardId });
 		}

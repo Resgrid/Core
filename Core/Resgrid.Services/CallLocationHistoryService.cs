@@ -51,14 +51,20 @@ namespace Resgrid.Services
 			{
 				// Keys are derived from protected call fields: none are written while protection is not Disabled, and
 				// worker 73 purges any that exist when a department enrolls.
-				if (!await IsAddressMatchingAvailableAsync(call.DepartmentId))
+				if (!await IsAddressMatchingAvailableAsync(call.DepartmentId, bypassCache: true))
 					return;
 
 				var key = BuildKey(call.CallId, call.DepartmentId, call.Address, call.GeoLocationData, call.LoggedOn, DateTime.UtcNow);
 				if (key == null)
 					await _keys.DeleteForCallAsync(call.CallId, cancellationToken);
 				else
+				{
 					await _keys.UpsertAsync(new[] { key }, cancellationToken);
+					// Enrollment can purge the index while this write is in flight.
+					if (!await IsAddressMatchingAvailableAsync(call.DepartmentId, bypassCache: true) ||
+						(await _keys.GetStateAsync(call.DepartmentId))?.IsSuppressed == true)
+						await _keys.DeleteForCallAsync(call.CallId, cancellationToken);
+				}
 			}
 			catch (Exception ex)
 			{
@@ -114,8 +120,16 @@ namespace Resgrid.Services
 			foreach (var departmentId in await _keys.GetDepartmentsToResumeAsync(100))
 			{
 				if (!InBudget()) return result;
-				await _keys.SaveStateAsync(new CallLocationIndexState { DepartmentId = departmentId, KeyVersion = ParsedStreetAddress.Version, ModifiedOn = DateTime.UtcNow }, cancellationToken);
-				result.DepartmentsReset++;
+				try
+				{
+					await _keys.SaveStateAsync(new CallLocationIndexState { DepartmentId = departmentId, KeyVersion = ParsedStreetAddress.Version, ModifiedOn = DateTime.UtcNow }, cancellationToken);
+					result.DepartmentsReset++;
+				}
+				catch (Exception ex)
+				{
+					result.Errors++;
+					Logging.LogException(ex, $"Resuming the call location index for department {departmentId} failed.");
+				}
 			}
 
 			var visited = new HashSet<int>();
@@ -155,7 +169,7 @@ namespace Resgrid.Services
 				state.IsSuppressed = false;
 			}
 
-			if (!await IsAddressMatchingAvailableAsync(departmentId))
+			if (!await IsAddressMatchingAvailableAsync(departmentId, bypassCache: true))
 			{
 				await SuppressAsync(departmentId, state, cancellationToken);
 				result.DepartmentsSuppressed++;
@@ -169,6 +183,13 @@ namespace Resgrid.Services
 				var keys = sources.Select(s => BuildKey(s.CallId, s.DepartmentId, s.Address, s.GeoLocationData, s.LoggedOn, now)).Where(k => k != null).ToList();
 				await _keys.UpsertAsync(keys, cancellationToken);
 				result.CallsIndexed += keys.Count;
+
+				if (!await IsAddressMatchingAvailableAsync(departmentId, bypassCache: true))
+				{
+					await SuppressAsync(departmentId, state, cancellationToken);
+					result.DepartmentsSuppressed++;
+					return;
+				}
 
 				if (sources.Count > 0)
 					state.NextCallId = sources[^1].CallId;
@@ -285,7 +306,8 @@ namespace Resgrid.Services
 				var addressMatching = await IsAddressMatchingAvailableAsync(departmentId);
 				foreach (var pair in await _occupancies.Value.GetOccupancyLocationsAsync(departmentId, ids))
 				{
-					var matches = await GatherAsync(departmentId, new[] { pair.Value.ToLocationQuery() }, pair.Value.ContactIds, true, addressMatching, MaxCandidates, null);
+					// Counts cover every match; the bounded candidate window is only for history pages.
+					var matches = await GatherAsync(departmentId, new[] { pair.Value.ToLocationQuery() }, pair.Value.ContactIds, true, addressMatching, int.MaxValue, null);
 					result[pair.Key] = matches.Count;
 				}
 
@@ -368,23 +390,32 @@ namespace Resgrid.Services
 					state.DistanceMeters = meters;
 			}
 
+			var parsedLocations = (locations ?? Array.Empty<CallLocationQuery>()).Where(l => l != null)
+				.Select(l => new { Location = l, Street = addressMatching ? StreetAddressParser.Parse(l.Address, l.Locality, l.PostalCode) : null }).ToList();
+			var addressKeys = parsedLocations.Where(l => l.Street?.HasStreetLocation == true && l.Street.IndexKey != null)
+				.Select(l => l.Street.IndexKey).Distinct().ToList();
+			var addressRows = addressKeys.Count == 0
+				? new List<CallLocationCandidate>()
+				: await _keys.GetByAddressKeysAsync(departmentId, addressKeys, fetch);
+			var byAddress = addressRows.ToLookup(r => r.AddressKey);
 			var points = new List<GeoMath.GeoPoint>();
-			foreach (var location in (locations ?? Array.Empty<CallLocationQuery>()).Where(l => l != null))
+			foreach (var parsedLocation in parsedLocations)
 			{
+				var location = parsedLocation.Location;
 				var point = location.Latitude.HasValue && location.Longitude.HasValue ? ValidPoint(new GeoMath.GeoPoint(location.Latitude.Value, location.Longitude.Value)) : null;
 				if (point.HasValue)
 					points.Add(point.Value);
 				if (!addressMatching)
 					continue;
 
-				var parsed = StreetAddressParser.Parse(location.Address, location.Locality, location.PostalCode);
+				var parsed = parsedLocation.Street;
 				var street = parsed?.HasStreetLocation == true ? parsed : null;
 				if (street != null)
 					interpreted?.Invoke(street.ToString());
 
 				if (street?.IndexKey != null)
 				{
-					foreach (var row in await _keys.GetByAddressKeyAsync(departmentId, street.IndexKey, fetch))
+					foreach (var row in byAddress[street.IndexKey])
 					{
 						var match = StreetAddressMatcher.Compare(street, ParsedStreetAddress.FromCanonical(row.AddressCanonical));
 						if (match == StreetAddressMatch.None)
@@ -456,9 +487,9 @@ namespace Resgrid.Services
 
 		#region Helpers
 
-		private async Task<bool> IsAddressMatchingAvailableAsync(int departmentId)
+		private async Task<bool> IsAddressMatchingAvailableAsync(int departmentId, bool bypassCache = false)
 		{
-			var policy = await _dataProtection.GetPolicyByDepartmentIdAsync(departmentId);
+			var policy = await _dataProtection.GetPolicyByDepartmentIdAsync(departmentId, bypassCache);
 			return policy == null || policy.State == (int)DepartmentDataProtectionState.Disabled;
 		}
 

@@ -161,6 +161,13 @@ namespace Resgrid.Repositories.DataRepository
 		public Task<IEnumerable<RmsOccupancyCrosswalk>> GetForOccupancyAsync(int departmentId, string occupancyId)
 			=> QueryAsync<RmsOccupancyCrosswalk>($"SELECT * FROM {Tbl("RmsOccupancyCrosswalks")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsOccupancyId")} = {P}Id", new { DepartmentId = departmentId, Id = occupancyId });
 
+		public Task<IEnumerable<RmsOccupancyCrosswalk>> GetForOccupanciesAsync(int departmentId, IEnumerable<string> occupancyIds)
+		{
+			var ids = InListValue(occupancyIds);
+			if (ids.Length == 0) return Task.FromResult<IEnumerable<RmsOccupancyCrosswalk>>(new List<RmsOccupancyCrosswalk>());
+			return QueryAsync<RmsOccupancyCrosswalk>($"SELECT * FROM {Tbl("RmsOccupancyCrosswalks")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {InList("RmsOccupancyId", "Ids")}", new { DepartmentId = departmentId, Ids = ids });
+		}
+
 		public Task<IEnumerable<RmsOccupancyCrosswalk>> GetForContactAsync(int departmentId, string contactId)
 			=> QueryAsync<RmsOccupancyCrosswalk>($"SELECT * FROM {Tbl("RmsOccupancyCrosswalks")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("ContactId")} = {P}ContactId", new { DepartmentId = departmentId, ContactId = contactId });
 

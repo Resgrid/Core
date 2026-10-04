@@ -61,6 +61,17 @@ namespace Resgrid.Tests.Services
         }
 
         [Test]
+        public async Task Audit_timestamp_keeps_millisecond_precision_and_its_hash_survives_roundtrip()
+        {
+            var audit = new AdpAuditRepository(Connections(), Configuration());
+            var occurred = new DateTime(2026, 10, 4, 12, 0, 0, DateTimeKind.Utc).AddMilliseconds(2);
+            await audit.AppendAsync(new AdpAuditEvent { DepartmentId = 98, Layer = "broker", Operation = "decrypt", Outcome = "requested", OccurredUtc = occurred });
+            var row = (await audit.ReadAsync(98, 0, 1)).Should().ContainSingle().Subject;
+            row.OccurredUtc.Should().Be(occurred, "SQL datetime rounding would change 2 ms to 3 ms and invalidate the hash");
+            AdpAuditChain.ComputeHash(row).Should().Be(row.Hash);
+        }
+
+        [Test]
         public async Task Concurrent_appends_form_one_chain_that_survives_database_roundtrip()
         {
             var audit = new AdpAuditRepository(Connections(), Configuration());

@@ -1063,11 +1063,14 @@ namespace Resgrid.Services.Records
 
 			var occupancies = ((await _occupancies.GetByIdsAsync(departmentId, ids)) ?? Enumerable.Empty<RmsOccupancy>()).Where(o => o.DeletedOn == null).ToList();
 			var links = ((await _links.GetForOccupanciesAsync(departmentId, occupancies.Select(o => o.RmsOccupancyId))) ?? Enumerable.Empty<RmsOccupancyContactLink>()).ToList();
+			var crosswalks = ((await _crosswalks.GetForOccupanciesAsync(departmentId, occupancies.Select(o => o.RmsOccupancyId))) ?? Enumerable.Empty<RmsOccupancyCrosswalk>())
+				.Where(c => c.State == (int)RmsOccupancyCrosswalkState.Linked).ToList();
 			foreach (var occupancy in occupancies)
 			{
 				var summary = ToLocationSummary(occupancy);
 				summary.ContactIds.AddRange(links.Where(l => l.RmsOccupancyId == occupancy.RmsOccupancyId)
-					.Select(l => l.ContactId).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct());
+					.Select(l => l.ContactId).Concat(crosswalks.Where(c => c.RmsOccupancyId == occupancy.RmsOccupancyId).Select(c => c.ContactId))
+					.Where(x => !string.IsNullOrWhiteSpace(x)).Distinct());
 				result[occupancy.RmsOccupancyId] = summary;
 			}
 

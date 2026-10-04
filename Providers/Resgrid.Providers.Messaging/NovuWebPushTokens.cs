@@ -87,8 +87,8 @@ namespace Resgrid.Providers.Messaging
 					continue;
 
 				var deviceTokens = channel.SelectToken("credentials.deviceTokens");
-				if (deviceTokens == null || deviceTokens.Type != JTokenType.Array)
-					return new List<string>();
+				if (deviceTokens == null || deviceTokens.Type != JTokenType.Array || deviceTokens.Children().Any(x => x.Type != JTokenType.String))
+					return null;
 
 				return Clean(deviceTokens.Children().Where(x => x.Type == JTokenType.String).Select(x => x.ToString())).ToList();
 			}

@@ -875,6 +875,9 @@
   <data name="RunCardSavedMessage" xml:space="preserve">
     <value>Plan de départ enregistré.</value>
   </data>
+  <data name="RunCardDetachedReferencesRemoved" xml:space="preserve">
+    <value>{0} élément(s) de ce plan de départ faisaient référence à des types d'unités, rôles, types d'appel, casernes ou statuts supprimés depuis et ont été retirés. Vérifiez le plan et enregistrez-le pour conserver la modification.</value>
+  </data>
   <data name="CallPriority" xml:space="preserve">
     <value>Priorité d'appel</value>
   </data>

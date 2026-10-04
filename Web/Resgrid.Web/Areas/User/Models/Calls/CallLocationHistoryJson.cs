@@ -39,9 +39,10 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 			if (result.Entries.Count == 0)
 				return json;
 
-			var priorities = new Dictionary<int, DepartmentCallPriority>();
-			foreach (var priority in result.Entries.Select(e => e.Call.Priority).Distinct())
-				priorities[priority] = await callsService.GetCallPrioritiesByIdAsync(department.DepartmentId, priority);
+			var priorities = ((await callsService.GetCallPrioritiesForDepartmentAsync(department.DepartmentId)) ?? new List<DepartmentCallPriority>())
+				.Where(p => p.DepartmentCallPriorityId > 3)
+				.Concat(callsService.GetDefaultCallPriorities() ?? new List<DepartmentCallPriority>())
+				.GroupBy(p => p.DepartmentCallPriorityId).ToDictionary(g => g.Key, g => g.First());
 
 			var names = result.Entries.Any(e => e.Notes.Count > 0)
 				? ((await departmentsService.GetAllPersonnelNamesForDepartmentAsync(department.DepartmentId)) ?? new List<PersonName>())
@@ -60,7 +61,7 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 					Name = ProtectedDataEnvelope.SafeDisplay(call.Name),
 					Nature = ProtectedDataEnvelope.SafeDisplay(call.NatureOfCall),
 					Address = ProtectedDataEnvelope.SafeDisplay(call.Address),
-					Type = call.Type,
+					Type = ProtectedDataEnvelope.SafeDisplay(call.Type),
 					LoggedOn = call.LoggedOn.TimeConverter(department).FormatForDepartment(department),
 					LoggedOnSort = call.LoggedOn.ToString("o", CultureInfo.InvariantCulture),
 					ClosedOn = call.ClosedOn.HasValue ? call.ClosedOn.Value.TimeConverter(department).FormatForDepartment(department) : null,

@@ -50,6 +50,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IIncidentAttachmentsService _attachments;
 		private readonly IRecordsNfirsLegacyService _nfirs;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> _localizer;
+		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Records.ReportSources> _sourcesLocalizer;
 
 		private readonly IRecordsProtectionService _protection;
 		private readonly IProtectedGrantContext _grantContext;
@@ -59,8 +60,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IDepartmentsService departmentsService, IDepartmentGroupsService departmentGroupsService, IUnitsService unitsService, ICallsService callsService,
 			INerisProfileService neris, IRmsSubmissionsRepository submissions, IIncidentAnalysisService analysis, IRecordsEvidenceService evidence,
 			IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer, IRecordsSubmissionService submissionWorker, IIncidentAttachmentsService attachments, IRecordsUdfService udf,
-			IRecordsNfirsLegacyService nfirs, IRecordsProtectionService protection, IProtectedGrantContext grantContext, IRecordsRevealService reveal)
+			IRecordsNfirsLegacyService nfirs, IRecordsProtectionService protection, IProtectedGrantContext grantContext, IRecordsRevealService reveal,
+			IStringLocalizer<Resgrid.Localization.Areas.User.Records.ReportSources> sourcesLocalizer)
 		{
+			_sourcesLocalizer = sourcesLocalizer;
 			_protection = protection;
 			_grantContext = grantContext;
 			_reveal = reveal;
@@ -509,6 +512,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Record_Submit)]
+		[Authorize(Policy = ResgridResources.Record_Finalize)]
 		public async Task<IActionResult> CorrectAndResubmit(string id, long rowVersion, bool attested, string reasonCode, string reasonText, CancellationToken cancellationToken)
 		{
 			if (!attested)
@@ -564,6 +568,44 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return result is RedirectToActionResult ? RedirectToAction("Index") : result;
 		}
 
+		/// <summary>
+		/// Re-reads the call, unit and personnel statuses and Incident Command into the draft (fills blanks, follows sources
+		/// the author never changed, adds units and mutual aid), for a report started while the incident was still running.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Record_Create)]
+		public async Task<IActionResult> RefreshFromSources(string id, long rowVersion, string returnTo, CancellationToken cancellationToken)
+		{
+			var aggregate = await LoadAuthorizedAsync(id);
+			if (aggregate == null)
+				return NotFound();
+			if (!CanEditReport(aggregate.Report) || !ClaimsAuthorizationHelper.CanViewCalls())
+				return Unauthorized();
+
+			var successAction = string.Equals(returnTo, "Edit", StringComparison.Ordinal) ? "Edit" : "Details";
+			try
+			{
+				var result = await _incidentReports.RefreshFromSourcesAsync(DepartmentId, UserId, id, rowVersion, RmsOriginClient.Web, cancellationToken);
+				var message = result.Changed
+					? string.Format(_sourcesLocalizer["RefreshedFromCall"].Value, result.FilledCount, result.UpdatedCount, result.AddedCount)
+					: _sourcesLocalizer["RefreshNothingNew"].Value;
+				if (result.Warnings.Count > 0)
+					message += " " + string.Format(_sourcesLocalizer["PartialSources"].Value, string.Join(", ", result.Warnings));
+				TempData["RecordsMessage"] = message;
+				return RedirectToAction(successAction, new { id });
+			}
+			catch (RecordConcurrencyException)
+			{
+				return await DetailsWithErrorAsync(id, _localizer["ConcurrencyError"]);
+			}
+			catch (Exception ex) when (ex is ArgumentException || ex is RecordTransitionException || ex is InvalidOperationException)
+			{
+				return await DetailsWithErrorAsync(id, ex.Message);
+			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
+		}
+
 		private async Task<IActionResult> TransitionAsync(string id, Func<Task<IncidentReportAggregate>> action, string successAction = "Details")
 		{
 			if (await LoadAuthorizedAsync(id) == null)
@@ -574,6 +616,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				await action();
 				return RedirectToAction(successAction, new { id });
 			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
 			catch (RecordConcurrencyException)
 			{
 				return await DetailsWithErrorAsync(id, _localizer["ConcurrencyError"]);
@@ -793,10 +836,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 				GroupNames = groups.ToDictionary(g => g.DepartmentGroupId, g => g.Name),
 				CanEdit = CanEditReport(aggregate.Report),
 				CanReview = ClaimsAuthorizationHelper.CanReviewRecords(),
-				CanFinalize = ClaimsAuthorizationHelper.CanFinalizeRecords(),
+				CanFinalize = ClaimsAuthorizationHelper.CanFinalizeRecords() && RecordsLifecycleClaims.MayFinalize(UserId, (RmsRecordState)aggregate.Report.State,
+					aggregate.Report.AmendsRevisionId != null || aggregate.Report.State == (int)RmsRecordState.Rejected,
+					aggregate.Report.AuthorUserId, aggregate.Report.OwnerUserId, aggregate.Report.ReviewerUserId, aggregate.Report.ApproverUserId),
 				CanSubmit = ClaimsAuthorizationHelper.CanSubmitRecords(),
 				CanAmend = ClaimsAuthorizationHelper.CanAmendRecords(),
-				CanVoid = ClaimsAuthorizationHelper.CanVoidRecords(),
+				CanVoid = ClaimsAuthorizationHelper.CanVoidRecords() && RecordsLifecycleClaims.MayVoidOrCancel(UserId, aggregate.Report.StationGroupId, aggregate.GroupScope,
+					aggregate.Report.AuthorUserId, aggregate.Report.OwnerUserId, aggregate.Report.ReviewerUserId, aggregate.Report.ApproverUserId),
 				CanExport = ClaimsAuthorizationHelper.CanExportRecords(),
 				IsDepartmentAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin()
 			};
@@ -988,6 +1034,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 					kinds.Add(kind);
 			}
 
+			// Tactic timestamps have their own block of time fields (department-local, like every other time on the form).
+			var tactics = aggregate.Modules.FirstOrDefault(m => m.ModuleKind == (int)RmsIncidentModuleKind.TacticTimestamps);
+			model.TacticTimestampsModuleId = tactics?.RmsIncidentModuleId;
+			foreach (var (field, value) in IncidentTacticTimestampsForm.Read(tactics?.DetailJson))
+				model.TacticTimestamps[field] = value.TimeConverter(model.Department);
+			kinds.Remove(RmsIncidentModuleKind.TacticTimestamps);
+
 			foreach (var kind in kinds)
 			{
 				var requirement = requirements.FirstOrDefault(r => r.Kind == kind);
@@ -1086,12 +1139,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 				OutcomeNarrative = model.OutcomeNarrative,
 				// The Web form always renders every section, so it always posts every section: an empty list here
 				// means the author removed the rows, not that the client could not show them.
-				Modules = (model.Modules ?? new List<IncidentModuleRow>()).Where(m => m.Included && m.Kind > 0).Select(m => new IncidentModuleInput
+				Modules = (model.Modules ?? new List<IncidentModuleRow>()).Where(m => m.Included && m.Kind > 0 && m.Kind != (int)RmsIncidentModuleKind.TacticTimestamps).Select(m => new IncidentModuleInput
 				{
 					ModuleId = m.ModuleId,
 					Kind = (RmsIncidentModuleKind)m.Kind, PrimaryCode = m.PrimaryCode, SecondaryCode = m.SecondaryCode, Quantity = m.Quantity,
 					QuantityUnit = m.QuantityUnit, OccurredOn = ToUtc(m.OccurredOn, department), DetailJson = m.DetailJson
-				}).ToList(),
+				}).Concat(IncidentTacticTimestampsForm.ToModule(model.TacticTimestampsModuleId,
+					(model.TacticTimestamps ?? new Dictionary<string, DateTime?>()).ToDictionary(kv => kv.Key, kv => ToUtc(kv.Value, department)))).ToList(),
 				Resources = (model.Resources ?? new List<IncidentResourceRow>()).Where(r => !string.IsNullOrWhiteSpace(r.ResourceCode))
 					.Select(r => new IncidentResourceInput { ResourceId = r.ResourceId, ResourceCode = r.ResourceCode, Quantity = r.Quantity, Detail = r.Detail }).ToList(),
 				Casualties = (model.Casualties ?? new List<IncidentCasualtyRow>()).Where(c => c.Included).Select(c => c.Guided ? IncidentGuidedFormMapper.Casualty(c, ToUtc(c.OccurredOn, department)) : new IncidentCasualtyRescueInput

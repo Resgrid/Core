@@ -35,6 +35,12 @@ namespace Resgrid.Model
 		/// <summary>How the destination was decided (<see cref="StatusDestinationSources"/>); null on rows before M0228.</summary>
 		public int? DestinationSource { get; set; }
 
+		/// <summary>The member who submitted the state (<see cref="StatusWriteActor"/>); null when none was known or before M0260.</summary>
+		public string SetByUserId { get; set; }
+
+		/// <summary>Where the state was submitted from (<see cref="StatusSetOrigins"/>); null on rows before M0260.</summary>
+		public int? SetByOrigin { get; set; }
+
 		public DateTime? LocalTimestamp { get; set; }
 
 		public string Note { get; set; }

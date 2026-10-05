@@ -70,13 +70,19 @@
                                             {
                                                 @if (!i.CompletedOn.HasValue)
                                                 {
-                                                    <a asp-controller="Department" asp-action="ResendInvite" asp-route-area="User" asp-route-inviteId="@i.InviteId" class="btn btn-info btn-xs" data-confirm="@localizer["ResendInviteWarning"]" rel="nofollow">
-                                                        @localizer["ResendInvite"]
-                                                    </a>
+                                                    <form method="post" asp-controller="Department" asp-action="ResendInvite" asp-route-area="User" asp-route-inviteId="@i.InviteId" style="display: inline;">
+                                                        @Html.AntiForgeryToken()
+                                                        <button type="submit" class="btn btn-info btn-xs" data-confirm="@localizer["ResendInviteWarning"]">
+                                                            @localizer["ResendInvite"]
+                                                        </button>
+                                                    </form>
                                                 }
-                                                <a asp-controller="Department" asp-action="DeleteInvite" asp-route-area="User" asp-route-inviteId="@i.InviteId" class="btn btn-danger btn-xs" data-confirm="@localizer["DeleteInviteWarning"]" rel="nofollow">
-                                                    @localizer["DeleteInvite"]
-                                                </a>
+                                                <form method="post" asp-controller="Department" asp-action="DeleteInvite" asp-route-area="User" asp-route-inviteId="@i.InviteId" style="display: inline;">
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="btn btn-danger btn-xs" data-confirm="@localizer["DeleteInviteWarning"]">
+                                                        @localizer["DeleteInvite"]
+                                                    </button>
+                                                </form>
                                             }
                                         </td>
 

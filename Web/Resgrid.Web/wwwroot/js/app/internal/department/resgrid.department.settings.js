@@ -68,7 +68,8 @@ var resgrid;
 						$.ajax({
 							url: resgrid.absoluteBaseUrl + '/User/Department/ClearDepartmentCache',
 							contentType: 'application/json',
-							type: 'GET'
+							type: 'POST',
+							headers: { 'RequestVerificationToken': $('meta[name="request-verification-token"]').attr('content') }
 						}).done(function (data) {
 							swal("Request Sent!", "Your request to have your departments data cache cleared has been sent. Please note it may take up to 15 minutes to clear the data.", "success");
 						});

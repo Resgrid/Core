@@ -112,9 +112,21 @@
   <data name="DefaultLifecyclePreset" xml:space="preserve"><value>Типовий життєвий цикл для визначень підрозділу</value></data>
   <data name="ReviewDueHours" xml:space="preserve"><value>Термін перевірки (години)</value></data>
   <data name="Numbering" xml:space="preserve"><value>Нумерація записів</value></data>
-  <data name="IncludeYear" xml:space="preserve"><value>Включати рік у номери</value></data>
   <data name="SequenceWidth" xml:space="preserve"><value>Цифри послідовності</value></data>
-  <data name="PerGroupSequence" xml:space="preserve"><value>Окрема послідовність для станції/групи</value></data>
+  <data name="NumberPattern" xml:space="preserve"><value>Шаблон нумерації</value></data>
+  <data name="NumberPatternExample" xml:space="preserve"><value>Приклад:</value></data>
+  <data name="NumberPatternHelp" xml:space="preserve"><value>Використовуйте {PREFIX} для типу запису (RUN, TRN, INC тощо), {YYYY} або {YY} для року, {GROUP} для станції чи групи (G та її ідентифікатор; після нього має йти -, _ або .) та {SEQ} для послідовності, яка є обов'язковою. Літери, цифри, -, _ і . залишаються як написано. Послідовність починається заново, коли змінюється текст навколо {SEQ}: якщо включити рік, вона починається заново щороку, а без {PREFIX} усі типи записів мають одну спільну послідовність.</value></data>
+  <data name="NumberPatternInvalid" xml:space="preserve"><value>Шаблон нумерації не збережено. Використовуйте лише літери, цифри, -, _, . та позначки {PREFIX}, {YYYY}, {YY}, {GROUP} і {SEQ}; {SEQ} рівно один раз, кожну позначку не більше одного разу, а після {GROUP} має йти -, _ або . (до 40 символів).</value></data>
+  <data name="NextNumbersHeader" xml:space="preserve"><value>Наступні номери на {0} рік</value></data>
+  <data name="NextNumbersIntro" xml:space="preserve"><value>Підвищте наступний номер послідовності, щоб продовжити номери, видані до Resgrid: після 2026-0001–2026-0152 введіть 153. Залиште поле порожнім, щоб не змінювати послідовність. Наступний номер можна лише підвищити, але не знизити, тож жоден номер не буде видано двічі.</value></data>
+  <data name="NextNumberSequence" xml:space="preserve"><value>Послідовність</value></data>
+  <data name="NextNumberCurrent" xml:space="preserve"><value>Наступний номер</value></data>
+  <data name="NextNumberRaiseTo" xml:space="preserve"><value>Підвищити наступний до</value></data>
+  <data name="NextNumberBelowCurrent" xml:space="preserve"><value>Наступний номер можна лише підвищити. Ці послідовності залишено без змін, бо введене число менше за номер, який вони видадуть наступним:</value></data>
+  <data name="NextNumberPatternChanged" xml:space="preserve"><value>Шаблон нумерації змінено, тому введені наступні номери не застосовано. Перегляньте послідовності для нового шаблону та збережіть ще раз.</value></data>
+  <data name="NextNumberConfirm" xml:space="preserve"><value>Підвищений наступний номер не можна знову знизити. Зберегти ці зміни?</value></data>
+  <data name="NumberingAllTypes" xml:space="preserve"><value>Усі типи записів</value></data>
+  <data name="NumberingNoGroup" xml:space="preserve"><value>Без станції/групи</value></data>
   <data name="Retention" xml:space="preserve"><value>Зберігання</value></data>
   <data name="RetentionIntro" xml:space="preserve"><value>Типово: 7 років для стандартних записів; безстроково для коронера та інших обмежених класів. Зберігання є відповідальністю підрозділу. Зміни діють на майбутнє та аудитуються.</value></data>
   <data name="DepartmentDefaultYears" xml:space="preserve"><value>Типово для підрозділу (роки, порожньо = системне)</value></data>

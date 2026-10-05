@@ -129,7 +129,8 @@ namespace Resgrid.Services
 
 				var release = authorization.Release;
 				var credential = await _credentialRepository.GetByIdAsync(step.WorkflowCredentialId);
-				if (credential == null)
+				// A credential id is a global key: only the workflow's own department's credential may sign the release.
+				if (credential == null || credential.DepartmentId != workflow.DepartmentId)
 					return Fail(ProtectedWorkflowDisclosureOutcomes.BlockedRelease, ProtectedWorkflowErrorCodes.CredentialNotAllowed);
 
 				// The step options as rendered: declared content type, success rule, capture, idempotency.

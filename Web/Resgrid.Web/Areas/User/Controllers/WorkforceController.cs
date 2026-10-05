@@ -73,6 +73,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private static bool CanManageCompensation => IsAdmin || ClaimsAuthorizationHelper.CanManageWorkforceCompensation();
 		private static bool CanViewCompensation => CanManageCompensation || ClaimsAuthorizationHelper.CanViewWorkforceCompensation();
 		private static bool CanViewInternalCosts => IsAdmin || ClaimsAuthorizationHelper.CanViewInternalCosts();
+		/// <summary>
+		/// Writing cost data (others' usage rows, approvals, cost runs) is the resource-cost profiles' rule: ViewInternalCosts
+		/// (74) to see the figures plus Workforce_Update (75, ManageWorkforceCompensation). ViewInternalCosts alone only reads.
+		/// </summary>
+		private static bool CanManageInternalCosts => CanViewInternalCosts && CanManage;
 		private static bool CanManagePayData => IsAdmin || ClaimsAuthorizationHelper.CanManagePayDataReporting();
 		private static bool CanViewPayData => CanManagePayData || ClaimsAuthorizationHelper.CanViewPayDataReporting();
 		private static bool CanExportPayData => IsAdmin || ClaimsAuthorizationHelper.CanExportPayDataReporting();
@@ -552,7 +557,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost, ValidateAntiForgeryToken]
 		public Task<IActionResult> SaveResourceCost(ResourceCostProfile input, string componentsJson) => GuardedAsync(async () =>
 		{
-			if (!CanViewInternalCosts || !CanManage) return Unauthorized();
+			if (!CanManageInternalCosts) return Unauthorized();
 			input.DepartmentId = DepartmentId;
 			var saved = await _costing.SaveResourceProfileAsync(input, UserId, Ip, Agent);
 			var components = string.IsNullOrWhiteSpace(componentsJson) ? new List<ResourceCostComponent>() : JsonConvert.DeserializeObject<List<ResourceCostComponent>>(componentsJson) ?? new List<ResourceCostComponent>();
@@ -563,7 +568,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost, ValidateAntiForgeryToken]
 		public Task<IActionResult> DeleteResourceCost(string id) => GuardedAsync(async () =>
 		{
-			if (!CanViewInternalCosts || !CanManage) return Unauthorized();
+			if (!CanManageInternalCosts) return Unauthorized();
 			await _costing.DeleteResourceProfileAsync(id, DepartmentId, UserId, Ip, Agent);
 			return Saved("ResourceCosts");
 		}, "ResourceCosts");
@@ -585,8 +590,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost, ValidateAntiForgeryToken]
 		public Task<IActionResult> SaveUsage(ResourceUsageEntry input) => GuardedAsync(async () =>
 		{
-			if (!CanViewInternalCosts) return Unauthorized();
+			if (input == null) return BadRequest();
 			input.DepartmentId = DepartmentId;
+			if (!CanManageInternalCosts)
+			{
+				// Without the manage right a caller files readings the way v4 AddResourceUsage takes them: a new entry, or one
+				// they filed themselves and nobody approved yet, never pre-approved. Approval and everyone else's rows need the right.
+				if (!CanViewInternalCosts && !await IsRosteredAsync(input.DeploymentId)) return Unauthorized();
+				if (!CanViewInternalCosts && !await IsUnitOnDeploymentAsync(input.DeploymentId, input.UnitId)) return Unauthorized();
+				if (!string.IsNullOrWhiteSpace(input.ResourceUsageEntryId) && !await IsOwnUnapprovedUsageAsync(input.ResourceUsageEntryId, input.DeploymentId, input.CallId)) return Unauthorized();
+				input.IsApproved = false;
+			}
 			await _costing.SaveUsageEntryAsync(input, UserId, Ip, Agent);
 			return Saved("Usage", new { deploymentId = input.DeploymentId, callId = input.CallId });
 		}, "CostRuns");
@@ -594,10 +608,32 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost, ValidateAntiForgeryToken]
 		public Task<IActionResult> DeleteUsage(string id, string deploymentId, int? callId) => GuardedAsync(async () =>
 		{
-			if (!CanViewInternalCosts) return Unauthorized();
+			if (!CanManageInternalCosts && !await IsOwnUnapprovedUsageAsync(id, deploymentId, callId)) return Unauthorized();
 			await _costing.DeleteUsageEntryAsync(id, DepartmentId, UserId, Ip, Agent);
 			return Saved("Usage", new { deploymentId, callId });
 		}, "CostRuns");
+
+		/// <summary>The stored row (never the posted one) is the caller's own reading, still unapproved, in the context they named.</summary>
+		private async Task<bool> IsOwnUnapprovedUsageAsync(string usageId, string deploymentId, int? callId)
+		{
+			if (string.IsNullOrWhiteSpace(usageId)) return false;
+			var rows = !string.IsNullOrWhiteSpace(deploymentId) ? await _costing.GetUsageForDeploymentAsync(deploymentId, DepartmentId)
+				: callId.HasValue ? await _costing.GetUsageForCallAsync(callId.Value, DepartmentId) : new List<ResourceUsageEntry>();
+			var row = rows?.FirstOrDefault(u => string.Equals(u.ResourceUsageEntryId, usageId, StringComparison.OrdinalIgnoreCase));
+			return row != null && row.DepartmentId == DepartmentId && !row.IsApproved && string.Equals(row.AddedByUserId, UserId, StringComparison.OrdinalIgnoreCase);
+		}
+
+		/// <summary>v4 FieldCostController's member rule: the caller is on the deployment's roster.</summary>
+		private async Task<bool> IsRosteredAsync(string deploymentId) =>
+			!string.IsNullOrWhiteSpace(deploymentId) && await _deployments.IsRosteredAsync(deploymentId, DepartmentId, UserId);
+
+		/// <summary>v4 FieldCostController's member rule: a rostered member files readings only for the units on that deployment.</summary>
+		private async Task<bool> IsUnitOnDeploymentAsync(string deploymentId, int? unitId)
+		{
+			if (string.IsNullOrWhiteSpace(deploymentId) || !unitId.HasValue) return false;
+			var deployment = await _deployments.GetDeploymentByIdAsync(deploymentId, DepartmentId);
+			return deployment?.Units?.Any(u => u.IsActive && u.UnitId == unitId.Value) == true;
+		}
 
 		#endregion
 
@@ -633,7 +669,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost, ValidateAntiForgeryToken]
 		public Task<IActionResult> RunBidEstimate(string bidId) => GuardedAsync(async () =>
 		{
-			if (!CanViewInternalCosts) return Unauthorized();
+			if (!CanManageInternalCosts) return Unauthorized();
 			var run = await _costing.EstimateBidCostAsync(bidId, DepartmentId, UserId, Ip, Agent);
 			return Saved("CostRun", new { id = run.FieldCostRunId });
 		}, "CostRuns");
@@ -641,7 +677,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost, ValidateAntiForgeryToken]
 		public Task<IActionResult> RunCallCost(int callId) => GuardedAsync(async () =>
 		{
-			if (!CanViewInternalCosts) return Unauthorized();
+			if (!CanManageInternalCosts) return Unauthorized();
 			var run = await _costing.CalculateCallCostAsync(callId, DepartmentId, UserId, Ip, Agent);
 			return Saved("CostRun", new { id = run.FieldCostRunId });
 		}, "CostRuns");
@@ -649,7 +685,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost, ValidateAntiForgeryToken]
 		public Task<IActionResult> RunDeploymentCost(string deploymentId, DateTime? throughDate, int revenueSource) => GuardedAsync(async () =>
 		{
-			if (!CanViewInternalCosts) return Unauthorized();
+			if (!CanManageInternalCosts) return Unauthorized();
 			var run = await _costing.CalculateDeploymentCostAsync(deploymentId, DepartmentId, throughDate, Enum.IsDefined(typeof(RevenueSources), revenueSource) ? (RevenueSources)revenueSource : RevenueSources.None, UserId, Ip, Agent);
 			return Saved("CostRun", new { id = run.FieldCostRunId });
 		}, "CostRuns");
@@ -657,7 +693,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost, ValidateAntiForgeryToken]
 		public Task<IActionResult> FreezeCostRun(string id) => GuardedAsync(async () =>
 		{
-			if (!CanViewInternalCosts) return Unauthorized();
+			if (!CanManageInternalCosts) return Unauthorized();
 			await _costing.FreezeCostRunAsync(id, DepartmentId, UserId, Ip, Agent);
 			return Saved("CostRun", new { id });
 		}, "CostRun", new { id });
@@ -665,7 +701,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost, ValidateAntiForgeryToken]
 		public Task<IActionResult> DeleteCostRun(string id) => GuardedAsync(async () =>
 		{
-			if (!CanViewInternalCosts) return Unauthorized();
+			if (!CanManageInternalCosts) return Unauthorized();
 			await _costing.DeleteRunAsync(id, DepartmentId, UserId, Ip, Agent);
 			return Saved("CostRuns");
 		}, "CostRun", new { id });
@@ -699,8 +735,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!CanViewPayData) return Unauthorized();
 			var run = await _reporting.GetRunAsync(id, DepartmentId);
 			if (run == null) return NotFound();
+			// Employee snapshots are per-worker pay records: the report wizard's right (ManagePayDataReporting, 77). Export (78)
+			// also grants PayDataReporting_View so the exporter reaches the run, its aggregate rows and artifacts — not the people.
+			if (!CanManagePayData && string.Equals(tab, "snapshots", StringComparison.OrdinalIgnoreCase)) tab = "rows";
 			var view = Page(new WorkforcePayDataRunView { Run = run, Profile = CaPayDataSchemaProfile.Get(run.SchemaProfileCode) ?? CaPayDataSchemaProfile.Current, Tab = tab });
-			view.Snapshots = await _reporting.GetSnapshotsAsync(id, DepartmentId);
+			view.Snapshots = CanManagePayData ? await _reporting.GetSnapshotsAsync(id, DepartmentId) : new List<PayDataReportEmployeeSnapshot>();
 			view.Rows = await _reporting.GetRowsAsync(id, DepartmentId);
 			view.Artifacts = await _reporting.GetArtifactsAsync(id, DepartmentId);
 			view.EstablishmentLabels = (await _workforce.GetEstablishmentsAsync(DepartmentId)).ToDictionary(e => e.WorkforceEstablishmentId, e => $"{e.Code} — {e.Name}");

@@ -105,8 +105,10 @@ namespace Resgrid.Services
 
 			var assignments = await _incidentCommandService.GetAssignmentsForCallAsync(departmentId, callId);
 			var objectives = await _incidentCommandService.GetObjectivesForCallAsync(departmentId, callId);
-			var adHocUnits = await _incidentResourcesService.GetAdHocUnitsForCallAsync(departmentId, callId);
-			var adHocPersonnel = await _incidentResourcesService.GetAdHocPersonnelForCallAsync(departmentId, callId);
+			// Released mutual aid still worked the incident: a times report read after the command closed (when everything has
+			// been released) must not count it as zero.
+			var adHocUnits = await _incidentResourcesService.GetAdHocUnitsForCallAsync(departmentId, callId, includeReleased: true);
+			var adHocPersonnel = await _incidentResourcesService.GetAdHocPersonnelForCallAsync(departmentId, callId, includeReleased: true);
 
 			var alarm = call?.LoggedOn;
 			var completedBenchmarks = objectives

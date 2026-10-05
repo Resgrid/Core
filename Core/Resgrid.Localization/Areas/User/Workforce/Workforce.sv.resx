@@ -691,6 +691,7 @@
   <data name="workforce_naics_invalid" xml:space="preserve"><value>NAICS måste vara sex siffror.</value></data>
   <data name="workforce_no_inputs" xml:space="preserve"><value>Inget att kostnadsberäkna: inga arbetsposter eller användningsavläsningar.</value></data>
   <data name="workforce_not_found" xml:space="preserve"><value>Posten hittades inte.</value></data>
+  <data name="workforce_self_approval" xml:space="preserve"><value>Du kan inte godkänna den här ersättningsprofilen: den gäller din egen lön eller så gjorde du den senaste ändringen. En annan ansvarig måste godkänna den.</value></data>
   <data name="workforce_pay_basis_invalid" xml:space="preserve"><value>Lönegrunden är ogiltig.</value></data>
   <data name="workforce_profile_overlap" xml:space="preserve"><value>Perioden överlappar en annan profil med samma omfattning.</value></data>
   <data name="workforce_protected_write_refused" xml:space="preserve"><value>Den skyddade skrivningen nekades.</value></data>

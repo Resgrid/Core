@@ -56,6 +56,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private static bool CanView => IsManager || ClaimsAuthorizationHelper.CanViewMutualAidReimbursement();
 		private static bool CanSubmit => IsAdmin || ClaimsAuthorizationHelper.CanSubmitMutualAidReimbursement();
 		private static bool CanReconcile => IsAdmin || ClaimsAuthorizationHelper.CanReconcileMutualAidReimbursement();
+		/// <summary>The Salary Survey draft is built from members' pay: it also needs ViewWorkforceCompensation (76), the compensation pages' read right.</summary>
+		private static bool CanViewCompensation => IsAdmin || ClaimsAuthorizationHelper.CanViewWorkforceCompensation() || ClaimsAuthorizationHelper.CanManageWorkforceCompensation();
 		private static readonly HashSet<string> FieldActions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "Queue", "WorkItem", "BuildF42", "BuildExpense", "SaveF42", "SaveExpense", "Validate", "Print", "Packet" };
 		// JSON that lands inside a <script> block: user text with < > & is unicode-escaped so a stored "</script>" cannot end the element.
 		private static readonly JsonSerializerSettings ScriptJson = new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml };
@@ -227,7 +229,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				view.Profile = await _mars.GetRateProfileAsync(id, DepartmentId);
 				if (view.Profile == null) return NotFound();
 				view.AdministrativeDraft = CostRecoveryDraft(view.Profile);
-				view.WorkforceEnabled = await _access.CanUseWorkforceAsync(DepartmentId);
+				// Offers the Salary Survey draft only to a caller BuildSalarySurvey admits (ViewWorkforceCompensation as well).
+				view.WorkforceEnabled = CanViewCompensation && await _access.CanUseWorkforceAsync(DepartmentId);
 				view.NextStatuses = Enum.GetValues<CalOesMarsRateProfileStatuses>().Where(s => Resgrid.Services.CostRecovery.CalOesMarsService.IsValidRateTransition((CalOesMarsRateProfileStatuses)view.Profile.Status, s)).ToList();
 			}
 			else view.Profile = new CalOesMarsRateProfile { DepartmentId = DepartmentId, SubmissionYear = Resgrid.Web.Helpers.DepartmentTime.From(ViewData).Today.Year, SubmissionType = type ?? (int)CalOesMarsSubmissionTypes.SalarySurvey, EffectiveOn = new DateTime(Resgrid.Web.Helpers.DepartmentTime.From(ViewData).Today.Year, 1, 1) };
@@ -302,12 +305,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost, ValidateAntiForgeryToken]
 		public Task<IActionResult> BuildSalarySurvey(string id, DateTime? asOf) => GuardedAsync(async () =>
 		{
-			if (!IsManager) return Unauthorized();
+			if (!IsManager || !CanViewCompensation) return Unauthorized();
 			if (!await _access.CanUseWorkforceAsync(DepartmentId)) return Refused(403, "workforce_disabled", "Rate", new { id });
 			var draft = await _mars.BuildSalarySurveyDraftAsync(id, DepartmentId, asOf ?? Resgrid.Web.Helpers.DepartmentTime.From(ViewData).Today, UserId, Ip, Agent);
 			if (!draft.IsReady) { TempData["CalOesMarsMessage"] = string.Join(" ", draft.Blockers.Select(b => ErrorText("SurveyBlocker_" + b))); return RedirectToAction("Rate", new { id }); }
 			TempData["CalOesMarsSaved"] = true;
-			TempData["CalOesMarsMessage"] = string.Format(_strings["SalarySurveyDraftBuilt"].Value, draft.LinesWritten, draft.EmployeesIncluded, draft.UnknownClassifications.Count, draft.Classifications.Count(c => c.SingleEmployee));
+			// {3}: classifications smaller than this are never drafted (CalOesMarsService.MinimumClassificationGroupSize).
+			TempData["CalOesMarsMessage"] = string.Format(_strings["SalarySurveyDraftBuilt"].Value, draft.LinesWritten, draft.EmployeesIncluded, draft.UnknownClassifications.Count, Resgrid.Services.CostRecovery.CalOesMarsService.MinimumClassificationGroupSize);
 			return RedirectToAction("Rate", new { id });
 		}, "Rate", new { id });
 
@@ -503,7 +507,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var (item, rostered) = await LoadItemAsync(id);
 			if (item == null) return NotFound();
 			if (!IsManager && !CanView && !rostered) return Unauthorized();
+			// v4 GetWorkItem's rule for a rostered member without MutualAidReimbursement_View: their own draft, but not the
+			// expected reimbursement (rates, amounts, total) and never an observed MARS invoice.
+			var redact = !IsManager && !CanView;
+			if (redact && item.RecordType == (int)CalOesMarsRecordTypes.GeneratedInvoice) return Unauthorized();
 			var bytes = await _mars.BuildEvidencePacketAsync(id, DepartmentId, UserId);
+			if (redact) bytes = Resgrid.Services.CostRecovery.CalOesMarsService.WithoutExpectedReimbursement(bytes);
 			return File(bytes, "application/zip", $"mars-evidence-{item.CalOesMarsWorkItemId}.zip");
 		}
 
@@ -513,7 +522,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var (item, rostered) = await LoadItemAsync(id);
 			if (item == null) return NotFound();
 			if (!IsManager && !CanView && !rostered) return Unauthorized();
-			return Content(await _mars.RenderWorkItemHtmlAsync(id, DepartmentId), "text/html");
+			// Same redaction as Packet (and v4 GetWorkItem) for a rostered member without the view claim.
+			var redact = !IsManager && !CanView;
+			if (redact && item.RecordType == (int)CalOesMarsRecordTypes.GeneratedInvoice) return Unauthorized();
+			var html = await _mars.RenderWorkItemHtmlAsync(id, DepartmentId);
+			return Content(redact ? Resgrid.Services.CostRecovery.CalOesMarsService.WithoutExpectedReimbursement(html) : html, "text/html");
 		}
 
 		[HttpPost, ValidateAntiForgeryToken]

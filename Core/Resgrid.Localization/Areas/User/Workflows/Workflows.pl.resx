@@ -1047,4 +1047,19 @@
   <data name="BotUsernamePlaceholder" xml:space="preserve">
     <value>Bot Resgrid</value>
   </data>
+  <data name="StepCredentialNotFound" xml:space="preserve">
+    <value>Nie znaleziono poświadczeń wybranych dla tego kroku.</value>
+  </data>
+  <data name="ExportAttachmentTemplateNotFound" xml:space="preserve">
+    <value>Nie znaleziono eksportu raportu rekordów wybranego dla tego kroku.</value>
+  </data>
+  <data name="ExportAttachmentRequiresRecordsRights" xml:space="preserve">
+    <value>Dołączenie eksportu raportu rekordów do kroku wymaga uprawnień "Drukowanie i eksport raportów" oraz "Zarządzanie zestawieniami raportów".</value>
+  </data>
+  <data name="ExportAttachmentRequiresRestrictedRights" xml:space="preserve">
+    <value>Ten eksport raportu rekordów zawiera sekcje zastrzeżone; dołączenie go do kroku wymaga także uprawnienia "Wyświetlanie sekcji zastrzeżonych".</value>
+  </data>
+  <data name="CredentialDeliversRecordsExport" xml:space="preserve">
+    <value>Krok przepływu pracy wysyła eksport raportu rekordów za pomocą tych poświadczeń, więc ich zmiana wymaga uprawnień "Drukowanie i eksport raportów" oraz "Zarządzanie zestawieniami raportów" (oraz "Wyświetlanie sekcji zastrzeżonych", gdy eksport zawiera sekcje zastrzeżone).</value>
+  </data>
 </root>

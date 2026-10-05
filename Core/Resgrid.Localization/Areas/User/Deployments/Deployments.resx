@@ -242,6 +242,7 @@
   <data name="timereports_date_exists" xml:space="preserve"><value>A time report already exists for that date.</value></data>
   <data name="timereports_not_found" xml:space="preserve"><value>The time report was not found.</value></data>
   <data name="timereports_locked" xml:space="preserve"><value>The time report is approved, billed or void and can no longer be edited.</value></data>
+  <data name="BillingNeedsInvoicingView" xml:space="preserve"><value>Charges and invoices need the View Invoicing permission.</value></data>
   <data name="timereports_status_transition_invalid" xml:space="preserve"><value>That status change is not allowed for this time report.</value></data>
   <data name="timereports_time_invalid" xml:space="preserve"><value>Enter start and end times as HH:mm.</value></data>
   <data name="timereports_validation" xml:space="preserve"><value>Fix the errors below before submitting.</value></data>
@@ -252,7 +253,7 @@
   <data name="ManageDeployments" xml:space="preserve"><value>Manage deployments</value></data>
   <data name="ManageDeploymentsNote" xml:space="preserve"><value>Create and edit deployments, rosters, equipment, expenses, files and status changes, and see every deployment. Rostered members always see their own deployments and file time without this.</value></data>
   <data name="ApproveTimeReports" xml:space="preserve"><value>Approve time reports</value></data>
-  <data name="ApproveTimeReportsNote" xml:space="preserve"><value>Approve and void submitted daily time reports. Approved reports feed billing.</value></data>
+  <data name="ApproveTimeReportsNote" xml:space="preserve"><value>Approve and void submitted daily time reports. Approved reports feed billing. Nobody can approve a report they submitted or that carries their own hours; another approver must.</value></data>
   <data name="DeploymentCreated" xml:space="preserve"><value>Deployment created</value></data>
   <data name="DeploymentStatusChanged" xml:space="preserve"><value>Deployment status changed</value></data>
   <data name="DeploymentRosterChanged" xml:space="preserve"><value>Deployment roster changed</value></data>
@@ -283,4 +284,5 @@
   <data name="Issuesubject_on_other_report" xml:space="preserve"><value>This subject already has time on another report for the same day</value></data>
   <data name="timereports_scope_invalid" xml:space="preserve"><value>That crew or person is not active on this deployment.</value></data>
   <data name="timereports_subject_covered" xml:space="preserve"><value>That crew or person already has time on another report for this day.</value></data>
+  <data name="timereports_self_approval" xml:space="preserve"><value>You submitted this time report or have hours on it, so another approver must approve it.</value></data>
 </root>

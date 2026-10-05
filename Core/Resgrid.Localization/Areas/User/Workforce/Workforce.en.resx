@@ -691,6 +691,7 @@
   <data name="workforce_naics_invalid" xml:space="preserve"><value>NAICS must be six digits.</value></data>
   <data name="workforce_no_inputs" xml:space="preserve"><value>Nothing to cost: no work entries or usage readings.</value></data>
   <data name="workforce_not_found" xml:space="preserve"><value>The record was not found.</value></data>
+  <data name="workforce_self_approval" xml:space="preserve"><value>You cannot approve this compensation profile: it is your own pay or you made its latest change. Another manager must approve it.</value></data>
   <data name="workforce_pay_basis_invalid" xml:space="preserve"><value>The pay basis is not valid.</value></data>
   <data name="workforce_profile_overlap" xml:space="preserve"><value>The period overlaps another profile of the same scope.</value></data>
   <data name="workforce_protected_write_refused" xml:space="preserve"><value>The protected write was refused.</value></data>

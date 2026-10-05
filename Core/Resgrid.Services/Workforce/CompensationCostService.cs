@@ -31,11 +31,17 @@ namespace Resgrid.Services.Workforce
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly WorkforceProtectionSeam _seam;
+		private readonly IWorkforceWorkerRepository _workers;
+
+		/// <summary>Domain error: separation of duties on compensation approval (own pay, or the last change to the profile).</summary>
+		public const string SelfApprovalRefused = "workforce_self_approval";
 
 		public CompensationCostService(IEmployeeCompensationProfileRepository profiles, IEmployeePayComponentRepository payComponents, IEmployeeCostComponentRepository costComponents,
 			IWorkforceEmploymentRepository employments, IWorkforceJobAssignmentRepository assignments, IEventAggregator eventAggregator, IUnitOfWork unitOfWork,
-			Lazy<IProtectedWriteService> protectedWrite = null, Lazy<IProtectedReadService> protectedRead = null, IProtectedGrantContext grant = null)
+			Lazy<IProtectedWriteService> protectedWrite = null, Lazy<IProtectedReadService> protectedRead = null, IProtectedGrantContext grant = null,
+			IWorkforceWorkerRepository workers = null)
 		{
+			_workers = workers;
 			_profiles = profiles;
 			_payComponents = payComponents;
 			_costComponents = costComponents;
@@ -225,11 +231,29 @@ namespace Resgrid.Services.Workforce
 			var profile = await _profiles.GetByIdForDepartmentAsync(profileId ?? string.Empty, departmentId);
 			if (profile == null || profile.IsDeleted) throw new InvalidOperationException("workforce_not_found");
 			if (profile.IsApproved) return await GetProfileAsync(profile.EmployeeCompensationProfileId, departmentId);
+			// Separation of duties, the TimeReportApproval rule for pay: nobody approves their own compensation, nor the rates
+			// they entered or last changed (the profile's last edit, components included, is its maker).
+			if (await IsOwnCompensationAsync(profile, departmentId, userId)) throw new InvalidOperationException(SelfApprovalRefused);
 			var before = Snapshot(profile);
 			profile.IsApproved = true; profile.ApprovedByUserId = userId; profile.ApprovedOn = DateTime.UtcNow; profile.RowVersion++; profile.EditedOn = profile.ApprovedOn; profile.EditedByUserId = userId;
 			await _profiles.SaveOrUpdateAsync(profile, cancellationToken);
 			Audit(departmentId, userId, AuditLogTypes.WorkforceCompensationChanged, ipAddress, userAgent, before, profile);
 			return await GetProfileAsync(profile.EmployeeCompensationProfileId, departmentId);
+		}
+
+		/// <summary>The approver made the pending change, or the profile is an employee profile for the approver's own employment.</summary>
+		private async Task<bool> IsOwnCompensationAsync(EmployeeCompensationProfile profile, int departmentId, string userId)
+		{
+			if (string.IsNullOrWhiteSpace(userId)) return false;
+			var maker = string.IsNullOrWhiteSpace(profile.EditedByUserId) ? profile.AddedByUserId : profile.EditedByUserId;
+			if (string.Equals(maker, userId, StringComparison.OrdinalIgnoreCase)) return true;
+			if (profile.Scope != (int)CompensationScopes.Employee || string.IsNullOrWhiteSpace(profile.WorkforceEmploymentId)) return false;
+			var employment = await _employments.GetByIdForDepartmentAsync(profile.WorkforceEmploymentId, departmentId);
+			if (employment == null || string.IsNullOrWhiteSpace(employment.WorkforceWorkerId)) return false;
+			// Fails closed: a profile whose worker cannot be checked is not approvable here.
+			if (_workers == null) return true;
+			var worker = await _workers.GetByIdForDepartmentAsync(employment.WorkforceWorkerId, departmentId);
+			return worker != null && string.Equals(worker.UserId, userId, StringComparison.OrdinalIgnoreCase);
 		}
 
 		public async Task<bool> DeleteProfileAsync(string profileId, int departmentId, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default)

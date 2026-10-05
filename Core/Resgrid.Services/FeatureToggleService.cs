@@ -169,7 +169,18 @@ namespace Resgrid.Services
 				var overrides = await GetOverridesForDepartmentAsync(departmentId, bypassCache || _mutationActive);
 				var departmentOverride = overrides.FirstOrDefault(o => o.FeatureFlagId == flag.FeatureFlagId);
 				if (departmentOverride != null && (!departmentOverride.ExpiresOn.HasValue || departmentOverride.ExpiresOn.Value > now))
-					return evaluation = Build(flag, departmentOverride.IsEnabled, departmentOverride.FlagValue, FeatureFlagEvaluationSource.Override);
+				{
+					// A department's own admins can write overrides (v4 SetOverride). One written from inside the department may
+					// switch the flag off, but switching it on stays inside the operator's settings: not while the flag is off
+					// globally (the kill switch) and not below its minimum plan. Such an override is ignored and evaluation goes on
+					// as if it were absent. Operator overrides (console, system admins) keep rolling a globally-off flag out
+					// department by department, which is how seeded-off flags are enabled.
+					var outsideOperatorSettings = departmentOverride.IsEnabled && (!flag.IsEnabledGlobally ||
+						(flag.MinimumPlanType.HasValue && !await PassesPlanGateAsync(flag.MinimumPlanType.Value, departmentId)));
+
+					if (!outsideOperatorSettings || !await IsSelfServiceOverrideAsync(departmentOverride, departmentId))
+						return evaluation = Build(flag, departmentOverride.IsEnabled, departmentOverride.FlagValue, FeatureFlagEvaluationSource.Override);
+				}
 
 				// 7) Optional plan gate.
 				if (flag.MinimumPlanType.HasValue)
@@ -215,6 +226,24 @@ namespace Resgrid.Services
 				visited.Remove(flag.FeatureFlagId);
 				RecordEvaluation(flag.FeatureFlagId, departmentId, evaluation?.IsEnabled);
 			}
+		}
+
+		/// <summary>
+		/// True when the override was last written by someone in the department it applies to (its own admins, through v4
+		/// SetOverride) rather than by an operator acting from outside it. Membership rows of removed members still count:
+		/// the override was written from inside the department either way.
+		/// </summary>
+		private async Task<bool> IsSelfServiceOverrideAsync(FeatureFlagOverride departmentOverride, int departmentId)
+		{
+			var authorUserId = !string.IsNullOrWhiteSpace(departmentOverride.UpdatedByUserId) ? departmentOverride.UpdatedByUserId : departmentOverride.CreatedByUserId;
+
+			if (string.IsNullOrWhiteSpace(authorUserId))
+				return false;
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
+
+			return department?.Members != null &&
+				department.Members.Any(m => m != null && string.Equals(m.UserId, authorUserId, StringComparison.OrdinalIgnoreCase));
 		}
 
 		private async Task<bool> PassesPlanGateAsync(int minimumPlanType, int departmentId)

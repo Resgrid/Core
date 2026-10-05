@@ -93,6 +93,16 @@ namespace Resgrid.Services
 			}
 			else
 			{
+				// UpdateAsync writes by key alone: an update must name a stored workflow of the same department, or a
+				// caller that trusted a posted WorkflowId would overwrite (and move) another department's workflow.
+				var existing = await _workflowRepository.GetByIdAsync(workflow.WorkflowId);
+				if (existing == null)
+					throw new KeyNotFoundException($"Workflow '{workflow.WorkflowId}' was not found. It may have been deleted or the ID is stale.");
+				if (existing.DepartmentId != workflow.DepartmentId)
+					throw new InvalidOperationException("Workflow tenant mismatch.");
+
+				workflow.CreatedOn = existing.CreatedOn;
+				workflow.CreatedByUserId = existing.CreatedByUserId;
 				workflow.UpdatedOn = DateTime.UtcNow;
 				await _workflowRepository.UpdateAsync(workflow, cancellationToken);
 				await OnProtectedConfigurationChangedAsync(workflow.WorkflowId, null, cancellationToken);
@@ -181,6 +191,15 @@ namespace Resgrid.Services
 			var existing = await _stepRepository.GetByIdAsync(step.WorkflowStepId);
 			if (existing == null)
 				throw new KeyNotFoundException($"WorkflowStep '{step.WorkflowStepId}' was not found. It may have been deleted or the ID is stale.");
+
+			// Steps carry no DepartmentId: a step may only move between workflows of one department.
+			if (!string.Equals(existing.WorkflowId, step.WorkflowId, StringComparison.OrdinalIgnoreCase))
+			{
+				var from = await _workflowRepository.GetByIdAsync(existing.WorkflowId);
+				var to = await _workflowRepository.GetByIdAsync(step.WorkflowId);
+				if (from == null || to == null || from.DepartmentId != to.DepartmentId)
+					throw new InvalidOperationException("Workflow step tenant mismatch.");
+			}
 
 			step.CreatedOn = existing.CreatedOn;
 			step.CreatedByUserId = existing.CreatedByUserId;
@@ -743,7 +762,8 @@ namespace Resgrid.Services
 					if (!string.IsNullOrEmpty(step.WorkflowCredentialId))
 					{
 						var cred = await _credentialRepository.GetByIdAsync(step.WorkflowCredentialId);
-						if (cred != null)
+						// A step only ever sends with its own department's credential.
+						if (cred != null && cred.DepartmentId == departmentId)
 						{
 							credentialType = cred.CredentialType;
 							decryptedCredJson = _encryptionService.DecryptForDepartment(
@@ -764,6 +784,21 @@ namespace Resgrid.Services
 							sw.Stop();
 							logEntry.Status       = (int)WorkflowRunStatus.Failed;
 							logEntry.ErrorMessage = "A report export can only be attached to a Records trigger.";
+							logEntry.DurationMs   = sw.ElapsedMilliseconds;
+							logEntry.CompletedOn  = DateTime.UtcNow;
+							await InsertLogAsync(departmentId, checklist, logEntry, cancellationToken);
+							anyFailure = true;
+							continue;
+						}
+
+						// The export is the one the step was saved with, and authorized for (WorkflowExportAttachmentRule),
+						// never one a template expression picks from the event at run time. The template itself is read
+						// department-scoped by ResolveForWorkflowAsync, which also refuses another department's template.
+						if (!string.Equals(exportTemplateId, ReadExportTemplateId(step.ActionConfig), StringComparison.Ordinal))
+						{
+							sw.Stop();
+							logEntry.Status       = (int)WorkflowRunStatus.Failed;
+							logEntry.ErrorMessage = "A report export must name a fixed export template, not one chosen by a template expression.";
 							logEntry.DurationMs   = sw.ElapsedMilliseconds;
 							logEntry.CompletedOn  = DateTime.UtcNow;
 							await InsertLogAsync(departmentId, checklist, logEntry, cancellationToken);

@@ -395,6 +395,9 @@
   <data name="PermOptionDepartmentAndGroupAdmins" xml:space="preserve"><value>Administradores del departamento y de grupos</value></data>
   <data name="PermOptionDepartmentAdminsAndSelectRoles" xml:space="preserve"><value>Administradores del departamento y roles seleccionados</value></data>
   <data name="PermOptionDepartmentGroupAdminsAndSelectRoles" xml:space="preserve"><value>Administradores del departamento y de grupos, y roles seleccionados</value></data>
+  <data name="PermOptionNotSavedCreateWorkflow" xml:space="preserve"><value>Sin guardar: los administradores del departamento editan, todos pueden ver</value></data>
+  <data name="PermOptionNotSavedManageWorkflowCredentials" xml:space="preserve"><value>Sin guardar: los administradores del departamento editan, todos ven los nombres</value></data>
+  <data name="PermOptionNotSavedViewWorkflowRuns" xml:space="preserve"><value>Sin guardar: todos pueden ver, los administradores del departamento cancelan</value></data>
   <data name="BreadcrumbSecurity" xml:space="preserve"><value>Seguridad y Permisos</value></data>
   <data name="BreadcrumbHome" xml:space="preserve"><value>Inicio</value></data>
   <data name="SecurityDescription" xml:space="preserve"><value>Aquí puede establecer los permisos para su departamento.</value></data>
@@ -425,7 +428,7 @@
   <data name="PermViewPersonalInfoLabel" xml:space="preserve"><value>Quién puede Ver Información Personal</value></data>
   <data name="PermViewPersonalInfoNote" xml:space="preserve"><value>Esta opción determina quién puede ver información personal (PII) del personal. Por defecto, todos pueden verla.</value></data>
   <data name="PermAdjustInventoryLabel" xml:space="preserve"><value>Quién puede Ajustar el Inventario</value></data>
-  <data name="PermAdjustInventoryNote" xml:space="preserve"><value>Esta opción determina quién puede ajustar los niveles de inventario. Por defecto, todos pueden ajustarlo.</value></data>
+  <data name="PermAdjustInventoryNote" xml:space="preserve"><value>Esta opción determina quién puede ajustar los niveles de inventario. Mientras no se guarde un valor, solo los administradores del departamento pueden ajustarlo.</value></data>
   <data name="PermViewPersonnelLocationLabel" xml:space="preserve"><value>Quién puede ver la Ubicación del Personal</value></data>
   <data name="PermViewPersonnelLocationNote" xml:space="preserve"><value>Esta opción determina quién puede ver la ubicación del personal en los mapas.</value></data>
   <data name="PermViewUnitLocationLabel" xml:space="preserve"><value>Quién puede ver la Ubicación de las Unidades</value></data>
@@ -443,11 +446,11 @@
   <data name="PermDeleteContactsLabel" xml:space="preserve"><value>Quién puede eliminar Contactos</value></data>
   <data name="PermDeleteContactsNote" xml:space="preserve"><value>Por defecto, todos los usuarios pueden eliminar contactos del sistema.</value></data>
   <data name="PermCreateWorkflowLabel" xml:space="preserve"><value>Quién puede Crear/Editar Flujos de Trabajo</value></data>
-  <data name="PermCreateWorkflowNote" xml:space="preserve"><value>Esta opción determina quién puede crear, editar y eliminar flujos de trabajo. Por defecto, solo los administradores del departamento.</value></data>
+  <data name="PermCreateWorkflowNote" xml:space="preserve"><value>Esta opción determina quién puede crear, editar y eliminar flujos de trabajo. Mientras no se guarde un valor, solo los administradores del departamento pueden gestionarlos y todos los miembros pueden verlos; guardar cualquier valor también limita quién puede verlos.</value></data>
   <data name="PermManageWorkflowCredentialsLabel" xml:space="preserve"><value>Quién puede Gestionar Credenciales de Flujo de Trabajo</value></data>
-  <data name="PermManageWorkflowCredentialsNote" xml:space="preserve"><value>Esta opción determina quién puede gestionar las credenciales cifradas usadas por las acciones del flujo de trabajo.</value></data>
+  <data name="PermManageWorkflowCredentialsNote" xml:space="preserve"><value>Esta opción determina quién puede gestionar las credenciales cifradas usadas por las acciones del flujo de trabajo. Mientras no se guarde un valor, solo los administradores del departamento pueden gestionarlas y todos los miembros ven sus nombres; guardar cualquier valor también limita quién puede verlas.</value></data>
   <data name="PermViewWorkflowRunsLabel" xml:space="preserve"><value>Quién puede Ver Ejecuciones de Flujo de Trabajo</value></data>
-  <data name="PermViewWorkflowRunsNote" xml:space="preserve"><value>Esta opción determina quién puede ver el historial de ejecución de flujos de trabajo.</value></data>
+  <data name="PermViewWorkflowRunsNote" xml:space="preserve"><value>Esta opción determina quién puede ver el historial de ejecución de flujos de trabajo. Mientras no se guarde un valor, todos los miembros pueden ver las ejecuciones y solo los administradores del departamento pueden cancelarlas o borrarlas; guardar otro valor limita quién puede verlas, y guardar Todos permite además a todos cancelarlas y borrarlas.</value></data>
 
   <!-- SSO / SCIM — Sso.cshtml page -->
   <data name="SsoPageTitle" xml:space="preserve"><value>Inicio de Sesión Único (SSO) y SCIM</value></data>
@@ -730,11 +733,11 @@
   <data name="PermCommandAppLoginLabel" xml:space="preserve"><value>Command App Login</value></data>
   <data name="PermCommandAppLoginNote" xml:space="preserve"><value>Controls who can act as a commander: sign in to the IC app, establish incident command on a call, and view command boards. Narrowing this beyond Everyone also lets the people you pick help work any command board (assign and move resources, run timers and accountability) without holding an ICS position on it &#8212; useful for giving dispatchers a hand in the Dispatch app. While set to Everyone, board actions stay limited to the incident commander and assigned ICS roles.</value></data>
   <data name="PermAdpSectionHeader" xml:space="preserve"><value>Advanced Data Protection</value></data>
-  <data name="PermAdpSectionNote" xml:space="preserve"><value>These permissions control who may work with encrypted (protected) data when the Advanced Data Protection addon is active. Every reveal or edit additionally requires a recent two-factor verification; these settings choose who may even attempt it. Unlike most Resgrid permissions, unset values default to the restrictive selection shown.</value></data>
+  <data name="PermAdpSectionNote" xml:space="preserve"><value>Cuando el complemento Protección de datos avanzada está activo, estos dos permisos deciden quién puede recibir los detalles protegidos de una llamada por SMS o voz después de introducir su PIN, y quién puede cambiar cómo sale el contenido protegido de Resgrid. Mostrar o editar datos protegidos en pantalla sigue las reglas de acceso de cada página más una verificación en dos pasos reciente. A diferencia de la mayoría de los permisos de Resgrid, los valores sin configurar usan de forma predeterminada la selección mostrada.</value></data>
   <data name="PermAdpManageLabel" xml:space="preserve"><value>Manage Data Protection Settings</value></data>
   <data name="PermAdpManageNote" xml:space="preserve"><value>Who can change Advanced Data Protection settings such as the verification window and notification content options. Purchasing, enrollment and cancellation always remain restricted to the department managing member.</value></data>
   <data name="PermAdpViewCallLabel" xml:space="preserve"><value>View Protected Call Data</value></data>
-  <data name="PermAdpViewCallNote" xml:space="preserve"><value>Who can reveal protected call fields (nature, address, contact info, notes) after two-factor verification. Defaults to Everyone because responding personnel must be able to read a dispatch.</value></data>
+  <data name="PermAdpViewCallNote" xml:space="preserve"><value>Quién puede recibir los detalles protegidos de una llamada (naturaleza, dirección, datos de contacto, notas) por SMS o voz después de introducir su PIN, cuando la entrega con PIN está activada. Mostrarlos en pantalla y en las aplicaciones sigue el acceso a la llamada más una verificación en dos pasos. El valor predeterminado es Todos, porque el personal que responde debe poder leer un despacho.</value></data>
   <data name="PermAdpEditCallLabel" xml:space="preserve"><value>Edit Protected Call Data</value></data>
   <data name="PermAdpEditCallNote" xml:space="preserve"><value>Who can edit protected call fields after two-factor verification. Defaults to Everyone to match the normal call workflow.</value></data>
   <data name="PermAdpViewPersonnelLabel" xml:space="preserve"><value>View Protected Personnel Data</value></data>

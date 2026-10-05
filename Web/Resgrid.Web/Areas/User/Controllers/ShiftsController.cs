@@ -110,6 +110,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return RedirectToAction("NewShift");
 
 			model.Shift = model.Shift ?? new Shift();
+
+			// A new shift is always a new row with new children: posted ids would make the save update other rows by key.
+			// The form never posts the child collections; groups, days and personnel are rebuilt from their own fields below.
+			model.Shift.ShiftId = 0;
+			model.Shift.Groups = null;
+			model.Shift.Days = null;
+			model.Shift.Personnel = null;
+			model.Shift.Admins = null;
+			model.Shift.Signups = null;
+
 			model.Shift.AssignmentType = (int)model.AssignmentType;
 			model.Shift.DepartmentId = DepartmentId;
 			model.Shift.ScheduleType = (int)ShiftScheduleTypes.Manual;

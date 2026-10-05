@@ -54,7 +54,7 @@
                 }
                 else
                 {
-                    <a asp-controller="Calendar" asp-action="DeleteAllCalendarItems" asp-route-area="User" asp-route-itemId="@Model.Item.CalendarItemId" class="btn btn-danger">@localizer["DeleteEventOccurrences"]</a>
+                    <form method="post" asp-controller="Calendar" asp-action="DeleteAllCalendarItems" asp-route-area="User" asp-route-itemId="@Model.Item.CalendarItemId" style="display: inline;">@Html.AntiForgeryToken()<button type="submit" class="btn btn-danger">@localizer["DeleteEventOccurrences"]</button></form>
                 }
             </div>
         </div>

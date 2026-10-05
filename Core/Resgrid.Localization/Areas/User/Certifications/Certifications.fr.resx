@@ -207,6 +207,7 @@
   <data name="certifications_record_not_found" xml:space="preserve"><value>La certification est introuvable.</value></data>
   <data name="certifications_status_invalid" xml:space="preserve"><value>Ce statut ne peut pas être défini manuellement.</value></data>
   <data name="certifications_not_pending" xml:space="preserve"><value>Seule une certification en attente de vérification peut être vérifiée.</value></data>
+  <data name="certifications_self_verification" xml:space="preserve"><value>Vous ne pouvez pas vérifier ni rétablir votre propre dossier de certification ; un autre responsable doit le valider.</value></data>
   <data name="certifications_expiry_required" xml:space="preserve"><value>Ce type expire ; une nouvelle date d'expiration est requise.</value></data>
   <data name="certifications_expiry_not_later" xml:space="preserve"><value>La nouvelle expiration doit être postérieure à l'actuelle.</value></data>
   <data name="certifications_credit_hours_invalid" xml:space="preserve"><value>Les heures de crédit doivent être supérieures à zéro.</value></data>

@@ -112,9 +112,21 @@
   <data name="DefaultLifecyclePreset" xml:space="preserve"><value>Προεπιλεγμένος κύκλος ζωής για ορισμούς τμήματος</value></data>
   <data name="ReviewDueHours" xml:space="preserve"><value>Προθεσμία ελέγχου (ώρες)</value></data>
   <data name="Numbering" xml:space="preserve"><value>Αρίθμηση αρχείων</value></data>
-  <data name="IncludeYear" xml:space="preserve"><value>Συμπερίληψη έτους στους αριθμούς</value></data>
   <data name="SequenceWidth" xml:space="preserve"><value>Ψηφία ακολουθίας</value></data>
-  <data name="PerGroupSequence" xml:space="preserve"><value>Ξεχωριστή ακολουθία ανά σταθμό/ομάδα</value></data>
+  <data name="NumberPattern" xml:space="preserve"><value>Μοτίβο αρίθμησης</value></data>
+  <data name="NumberPatternExample" xml:space="preserve"><value>Παράδειγμα:</value></data>
+  <data name="NumberPatternHelp" xml:space="preserve"><value>Χρησιμοποιήστε {PREFIX} για τον τύπο αρχείου (RUN, TRN, INC κ.λπ.), {YYYY} ή {YY} για το έτος, {GROUP} για τον σταθμό ή την ομάδα (G και το αναγνωριστικό της· πρέπει να ακολουθεί -, _ ή .) και {SEQ} για την ακολουθία, η οποία είναι υποχρεωτική. Γράμματα, ψηφία, -, _ και . διατηρούνται όπως γράφονται. Η ακολουθία ξεκινά από την αρχή όταν αλλάζει το κείμενο γύρω από το {SEQ}: με το έτος ξεκινά από την αρχή κάθε χρόνο, και χωρίς {PREFIX} όλοι οι τύποι αρχείων μοιράζονται μία κοινή ακολουθία.</value></data>
+  <data name="NumberPatternInvalid" xml:space="preserve"><value>Το μοτίβο αρίθμησης δεν αποθηκεύτηκε. Χρησιμοποιήστε μόνο γράμματα, ψηφία, -, _, . και τα σύμβολα {PREFIX}, {YYYY}, {YY}, {GROUP} και {SEQ}· το {SEQ} ακριβώς μία φορά, κάθε σύμβολο το πολύ μία φορά, και μετά το {GROUP} πρέπει να ακολουθεί -, _ ή . (έως 40 χαρακτήρες).</value></data>
+  <data name="NextNumbersHeader" xml:space="preserve"><value>Επόμενοι αριθμοί για το {0}</value></data>
+  <data name="NextNumbersIntro" xml:space="preserve"><value>Αυξήστε τον επόμενο αριθμό μιας ακολουθίας για να συνεχίσει από αριθμούς που εκδόθηκαν πριν από το Resgrid: μετά τα 2026-0001 έως 2026-0152, εισαγάγετε 153. Αφήστε ένα πεδίο κενό για να μείνει η ακολουθία ως έχει. Ο επόμενος αριθμός μπορεί μόνο να αυξηθεί, ποτέ να μειωθεί, ώστε κανένας αριθμός να μην εκδοθεί δύο φορές.</value></data>
+  <data name="NextNumberSequence" xml:space="preserve"><value>Ακολουθία</value></data>
+  <data name="NextNumberCurrent" xml:space="preserve"><value>Επόμενος αριθμός</value></data>
+  <data name="NextNumberRaiseTo" xml:space="preserve"><value>Αύξηση επόμενου σε</value></data>
+  <data name="NextNumberBelowCurrent" xml:space="preserve"><value>Ο επόμενος αριθμός μπορεί μόνο να αυξηθεί. Αυτές οι ακολουθίες δεν άλλαξαν, επειδή ο αριθμός που εισαγάγατε ήταν μικρότερος από αυτόν που θα εκδώσουν στη συνέχεια:</value></data>
+  <data name="NextNumberPatternChanged" xml:space="preserve"><value>Το μοτίβο αρίθμησης άλλαξε, οπότε οι επόμενοι αριθμοί που εισαγάγατε δεν εφαρμόστηκαν. Ελέγξτε τις ακολουθίες του νέου μοτίβου και αποθηκεύστε ξανά.</value></data>
+  <data name="NextNumberConfirm" xml:space="preserve"><value>Ένας αυξημένος επόμενος αριθμός δεν μπορεί να μειωθεί ξανά. Αποθήκευση αλλαγών;</value></data>
+  <data name="NumberingAllTypes" xml:space="preserve"><value>Όλοι οι τύποι αρχείων</value></data>
+  <data name="NumberingNoGroup" xml:space="preserve"><value>Χωρίς σταθμό/ομάδα</value></data>
   <data name="Retention" xml:space="preserve"><value>Διατήρηση</value></data>
   <data name="RetentionIntro" xml:space="preserve"><value>Προεπιλογές: 7 έτη για τυπικά αρχεία· μόνιμα για Ιατροδικαστή και άλλες περιορισμένες κλάσεις. Η διατήρηση είναι ευθύνη του τμήματος. Οι αλλαγές ισχύουν μελλοντικά και ελέγχονται.</value></data>
   <data name="DepartmentDefaultYears" xml:space="preserve"><value>Προεπιλογή τμήματος (έτη, κενό = συστήματος)</value></data>

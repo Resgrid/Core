@@ -11,6 +11,7 @@ using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
 using Resgrid.Web.Services.Models.v4.Workflows;
+using Resgrid.Web.ServicesCore.Helpers;
 using Scriban;
 
 namespace Resgrid.Web.Services.Controllers.v4
@@ -31,12 +32,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly ISubscriptionsService _subscriptionsService;
 		private readonly IWorkflowTemplateContextBuilder _contextBuilder;
 		private readonly IProtectedWorkflowService _protectedWorkflows;
+		private readonly IRecordsExportService _recordsExportService;
 
 		public WorkflowsController(IWorkflowService workflowService, IDepartmentsService departmentsService,
 			IPermissionsService permissionsService, IDepartmentGroupsService departmentGroupsService,
 			IPersonnelRolesService personnelRolesService, ISubscriptionsService subscriptionsService,
-			IWorkflowTemplateContextBuilder contextBuilder, IProtectedWorkflowService protectedWorkflows)
+			IWorkflowTemplateContextBuilder contextBuilder, IProtectedWorkflowService protectedWorkflows,
+			IRecordsExportService recordsExportService)
 		{
+			_recordsExportService    = recordsExportService;
 			_protectedWorkflows      = protectedWorkflows;
 			_workflowService         = workflowService;
 			_departmentsService      = departmentsService;
@@ -49,12 +53,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		// ── Workflows ─────────────────────────────────────────────────────────────────
 
-		/// <summary>Gets all workflows for the current department.</summary>
+		/// <summary>Gets all workflows for the current department (the members the web Workflows list admits).</summary>
 		[HttpGet("GetAll")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status403Forbidden)]
 		[Authorize(Policy = ResgridResources.Workflow_View)]
 		public async Task<ActionResult<GetWorkflowsResult>> GetAll(CancellationToken ct)
 		{
+			if (!await CanUserManageWorkflowsAsync()) return Forbid();
+
 			var workflows = await _workflowService.GetWorkflowsByDepartmentIdAsync(DepartmentId, ct);
 			var result = new GetWorkflowsResult
 			{
@@ -63,7 +70,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return Ok(result);
 		}
 
-		/// <summary>Gets a single workflow by ID (with steps).</summary>
+		/// <summary>Gets a single workflow by ID (with steps), for the members the web workflow designer admits.</summary>
 		[HttpGet("GetById/{workflowId}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -74,13 +81,20 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var workflow = await _workflowService.GetWorkflowByIdAsync(workflowId, ct);
 			if (workflow == null || workflow.DepartmentId != DepartmentId) return NotFound();
 
+			// Step configuration carries destinations, headers, recipients and templates.
+			if (!await CanUserManageWorkflowsAsync()) return Forbid();
+
 			var steps = await _workflowService.GetStepsByWorkflowIdAsync(workflowId, ct);
 			return Ok(new WorkflowDetailResult { Workflow = MapWorkflowDetail(workflow, steps) });
 		}
 
-		/// <summary>Creates or updates a workflow.</summary>
+		/// <summary>
+		/// Creates (no WorkflowId) or updates a workflow. An update changes the stored workflow of this department only, and
+		/// as on the web designer the trigger event type is locked after creation (a posted TriggerEventType is ignored).
+		/// </summary>
 		[HttpPost("Save")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[Authorize(Policy = ResgridResources.Workflow_Create)]
 		public async Task<ActionResult<WorkflowDetailResult>> Save([FromBody] SaveWorkflowInput input, CancellationToken ct)
 		{
@@ -88,28 +102,36 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (!await CanUserManageWorkflowsAsync()) return Forbid();
 
-			// Enforce per-plan workflow count cap for new workflows
+			Workflow workflow;
 			bool isNewWorkflow = string.IsNullOrWhiteSpace(input.WorkflowId);
 			if (isNewWorkflow)
 			{
+				// Enforce per-plan workflow count cap for new workflows
 				var plan      = await _subscriptionsService.GetCurrentPlanForDepartmentAsync(DepartmentId);
 				var isFreePlan = plan?.IsFree ?? false;
 				if (!await _workflowService.CanAddWorkflowAsync(DepartmentId, isFreePlan, ct))
 					return UnprocessableEntity(new { error = "Workflow limit reached for your plan. Please upgrade to add more workflows." });
+
+				workflow = new Workflow
+				{
+					DepartmentId       = DepartmentId,
+					TriggerEventType   = input.TriggerEventType,
+					CreatedByUserId    = UserId
+				};
+			}
+			else
+			{
+				// The posted id is only a name for the stored row: load it, refuse another department's, and keep what
+				// the web Edit keeps (creator, creation time, trigger).
+				workflow = await _workflowService.GetWorkflowByIdAsync(input.WorkflowId, ct);
+				if (workflow == null || workflow.DepartmentId != DepartmentId) return NotFound();
 			}
 
-			var workflow = new Workflow
-			{
-				WorkflowId         = input.WorkflowId,
-				DepartmentId       = DepartmentId,
-				Name               = input.Name,
-				Description        = input.Description,
-				TriggerEventType   = input.TriggerEventType,
-				IsEnabled          = input.IsEnabled,
-				MaxRetryCount      = input.MaxRetryCount > 0 ? input.MaxRetryCount : 3,
-				RetryBackoffBaseSeconds = input.RetryBackoffBaseSeconds > 0 ? input.RetryBackoffBaseSeconds : 5,
-				CreatedByUserId    = UserId
-			};
+			workflow.Name                    = input.Name;
+			workflow.Description             = input.Description;
+			workflow.IsEnabled               = input.IsEnabled;
+			workflow.MaxRetryCount           = input.MaxRetryCount > 0 ? input.MaxRetryCount : 3;
+			workflow.RetryBackoffBaseSeconds = input.RetryBackoffBaseSeconds > 0 ? input.RetryBackoffBaseSeconds : 5;
 
 			workflow = await _workflowService.SaveWorkflowAsync(workflow, ct);
 			var steps = await _workflowService.GetStepsByWorkflowIdAsync(workflow.WorkflowId, ct);
@@ -138,6 +160,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>Saves (creates or updates) a workflow step.</summary>
 		[HttpPost("SaveStep")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[Authorize(Policy = ResgridResources.Workflow_Create)]
 		public async Task<ActionResult<WorkflowStepResult>> SaveStep([FromBody] SaveWorkflowStepInput input, CancellationToken ct)
 		{
@@ -150,6 +173,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			// Enforce per-plan step count cap for new steps
 			bool isNewStep = string.IsNullOrWhiteSpace(input.WorkflowStepId);
+
+			// An update names an existing step by id; the target workflow being ours says nothing about the step,
+			// and saving would rewrite (and move) another department's step.
+			if (!isNewStep)
+			{
+				var existingStep = await _workflowService.GetStepByIdAsync(input.WorkflowStepId, ct);
+				if (existingStep == null) return NotFound();
+
+				var existingWorkflow = await _workflowService.GetWorkflowByIdAsync(existingStep.WorkflowId, ct);
+				if (existingWorkflow == null || existingWorkflow.DepartmentId != DepartmentId) return NotFound();
+			}
+
 			if (isNewStep)
 			{
 				var plan       = await _subscriptionsService.GetCurrentPlanForDepartmentAsync(DepartmentId);
@@ -170,6 +205,25 @@ namespace Resgrid.Web.Services.Controllers.v4
 				IsEnabled            = input.IsEnabled,
 				ConditionExpression  = input.ConditionExpression
 			};
+
+			if (isNewStep)
+				step.CreatedByUserId = UserId;
+			else
+				step.UpdatedByUserId = UserId;
+
+			// A step only ever sends with its own department's credential.
+			if (!string.IsNullOrWhiteSpace(input.WorkflowCredentialId))
+			{
+				var credential = await _workflowService.GetCredentialByIdAsync(input.WorkflowCredentialId, ct);
+				if (credential == null || credential.DepartmentId != DepartmentId) return NotFound();
+			}
+
+			// A Records report export attached to the step is rendered on every run with no acting user, so the member
+			// saving the step must hold the rights the Records report export pages require.
+			var exportError = await Resgrid.Services.WorkflowExportAttachmentRule.CheckStepAsync(_recordsExportService, DepartmentId, step.ActionConfig,
+				ClaimsAuthorizationHelper.CanExportRecords(), ClaimsAuthorizationHelper.CanManageRecordReports(), ClaimsAuthorizationHelper.CanViewRestrictedRecords());
+			if (exportError != null)
+				return ExportAttachmentRefusal(exportError);
 
 			// Protected Workflows: protected.* is never allowed in a condition, URL or header, and only renders in an
 			// output template of a workflow with a protected release.
@@ -203,12 +257,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		// ── Credentials ───────────────────────────────────────────────────────────────
 
-		/// <summary>Gets all credentials for the department (names/types only — no encrypted data exposed).</summary>
+		/// <summary>Gets all credentials for the department (names/types only — no encrypted data exposed), for the members the web Credentials page admits.</summary>
 		[HttpGet("GetCredentials")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status403Forbidden)]
 		[Authorize(Policy = ResgridResources.WorkflowCredential_View)]
 		public async Task<ActionResult<GetCredentialsResult>> GetCredentials(CancellationToken ct)
 		{
+			if (!await CanUserManageWorkflowCredentialsAsync()) return Forbid();
+
 			var creds = await _workflowService.GetCredentialsByDepartmentIdAsync(DepartmentId, ct);
 			return Ok(new GetCredentialsResult
 			{
@@ -232,23 +289,32 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (!await CanUserManageWorkflowCredentialsAsync()) return Forbid();
 
+			WorkflowCredential cred;
 			if (!string.IsNullOrWhiteSpace(input.WorkflowCredentialId))
 			{
-				var existing = await _workflowService.GetCredentialByIdAsync(input.WorkflowCredentialId, ct);
-				if (existing == null || existing.DepartmentId != DepartmentId) return NotFound();
+				// Update the stored row (keeping its creator and creation time), never one built from the posted id.
+				cred = await _workflowService.GetCredentialByIdAsync(input.WorkflowCredentialId, ct);
+				if (cred == null || cred.DepartmentId != DepartmentId) return NotFound();
+
+				// The credential may hold the destination of a Records report export a step delivers through it.
+				var exportError = await Resgrid.Services.WorkflowExportAttachmentRule.CheckCredentialAsync(_workflowService, _recordsExportService, DepartmentId,
+					cred.WorkflowCredentialId, ClaimsAuthorizationHelper.CanExportRecords(), ClaimsAuthorizationHelper.CanManageRecordReports(),
+					ClaimsAuthorizationHelper.CanViewRestrictedRecords(), ct);
+				if (exportError != null)
+					return StatusCode(StatusCodes.Status403Forbidden, new { error = CredentialDeliversExportMessage });
+
+				cred.UpdatedByUserId = UserId;
+			}
+			else
+			{
+				cred = new WorkflowCredential { DepartmentId = DepartmentId, CreatedByUserId = UserId };
 			}
 
-			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
-			var cred = new WorkflowCredential
-			{
-				WorkflowCredentialId = input.WorkflowCredentialId,
-				DepartmentId         = DepartmentId,
-				Name                 = input.Name,
-				CredentialType       = input.CredentialType,
-				EncryptedData        = input.PlaintextCredentialJson,
-				CreatedByUserId      = UserId
-			};
+			cred.Name           = input.Name;
+			cred.CredentialType = input.CredentialType;
+			cred.EncryptedData  = input.PlaintextCredentialJson;
 
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			cred = await _workflowService.SaveCredentialAsync(cred, department?.Code ?? string.Empty, ct);
 			return Ok(new SaveCredentialResult { WorkflowCredentialId = cred.WorkflowCredentialId });
 		}
@@ -320,8 +386,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (!await CanUserViewWorkflowRunsAsync()) return Forbid();
 
+			// The rendered output and action result carry what was sent (call data, names, recipients): only members who
+			// may see the step configuration see them; everyone else gets status, timings and errors.
+			var includeOutput = await CanUserManageWorkflowsAsync();
 			var logs = await _workflowService.GetLogsForRunAsync(runId, ct);
-			return Ok(new GetWorkflowRunLogsResult { Data = logs.Select(MapLog).ToList() });
+			return Ok(new GetWorkflowRunLogsResult { Data = logs.Select(l => MapLog(l, includeOutput)).ToList() });
 		}
 
 		/// <summary>Gets health summary for a specific workflow.</summary>
@@ -395,6 +464,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			[FromBody] ValidateConditionInput input, CancellationToken ct)
 		{
 			if (!ModelState.IsValid) return BadRequest(ModelState);
+
+			// The evaluation renders department data into the result, as the designer does: designers only.
+			if (!await CanUserManageWorkflowsAsync()) return Forbid();
 
 			// Step 1: syntax check
 			var parsed = Template.Parse(input.ConditionExpression);
@@ -471,6 +543,21 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return _permissionsService.IsUserAllowed(permission, department.IsUserAnAdmin(UserId), isGroupAdmin, roles);
 		}
 
+		private const string CredentialDeliversExportMessage = "A workflow step sends a Records report export through this credential, so changing it requires the Print and Export Records and Manage Record Reports permissions (and View Restricted Sections when the export includes restricted sections).";
+
+		private ActionResult ExportAttachmentRefusal(string error)
+		{
+			switch (error)
+			{
+				case Resgrid.Services.WorkflowExportAttachmentRule.TemplateNotFound:
+					return UnprocessableEntity(new { error = "The Records report export named by this step was not found." });
+				case Resgrid.Services.WorkflowExportAttachmentRule.RestrictedRightsRequired:
+					return StatusCode(StatusCodes.Status403Forbidden, new { error = "This Records report export includes restricted sections; attaching it to a step also requires the View Restricted Sections permission." });
+				default:
+					return StatusCode(StatusCodes.Status403Forbidden, new { error = "Attaching a Records report export to a step requires the Print and Export Records and Manage Record Reports permissions." });
+			}
+		}
+
 		// ── Private Mappers ───────────────────────────────────────────────────────────
 
 		private static WorkflowSummaryData MapWorkflowSummary(Workflow w) => new WorkflowSummaryData
@@ -524,15 +611,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 			AttemptNumber    = r.AttemptNumber
 		};
 
-		private static WorkflowRunLogData MapLog(WorkflowRunLog l) => new WorkflowRunLogData
+		private static WorkflowRunLogData MapLog(WorkflowRunLog l, bool includeOutput) => new WorkflowRunLogData
 		{
 			WorkflowRunLogId = l.WorkflowRunLogId,
 			WorkflowRunId    = l.WorkflowRunId,
 			WorkflowStepId   = l.WorkflowStepId,
 			Status           = l.Status,
 			StatusText       = ((WorkflowRunStatus)l.Status).ToString(),
-			RenderedOutput   = l.RenderedOutput,
-			ActionResult     = l.ActionResult,
+			RenderedOutput   = includeOutput ? l.RenderedOutput : null,
+			ActionResult     = includeOutput ? l.ActionResult : null,
 			ErrorMessage     = l.ErrorMessage,
 			StartedOn        = l.StartedOn,
 			CompletedOn      = l.CompletedOn,

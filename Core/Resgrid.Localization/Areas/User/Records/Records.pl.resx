@@ -112,9 +112,21 @@
   <data name="DefaultLifecyclePreset" xml:space="preserve"><value>Domyślny cykl życia dla definicji wydziału</value></data>
   <data name="ReviewDueHours" xml:space="preserve"><value>Termin przeglądu (godziny)</value></data>
   <data name="Numbering" xml:space="preserve"><value>Numeracja rejestrów</value></data>
-  <data name="IncludeYear" xml:space="preserve"><value>Uwzględnij rok w numerach</value></data>
   <data name="SequenceWidth" xml:space="preserve"><value>Cyfry sekwencji</value></data>
-  <data name="PerGroupSequence" xml:space="preserve"><value>Osobna sekwencja dla stacji/grupy</value></data>
+  <data name="NumberPattern" xml:space="preserve"><value>Wzorzec numeracji</value></data>
+  <data name="NumberPatternExample" xml:space="preserve"><value>Przykład:</value></data>
+  <data name="NumberPatternHelp" xml:space="preserve"><value>Użyj {PREFIX} dla typu rejestru (RUN, TRN, INC itd.), {YYYY} lub {YY} dla roku, {GROUP} dla stacji lub grupy (G i jej identyfikator; po nim musi wystąpić -, _ lub .) oraz {SEQ} dla sekwencji, która jest wymagana. Litery, cyfry, -, _ i . pozostają bez zmian. Sekwencja zaczyna się od nowa, gdy zmienia się tekst wokół {SEQ}: uwzględnienie roku powoduje restart co roku, a pominięcie {PREFIX} daje wszystkim typom rejestrów jedną wspólną sekwencję.</value></data>
+  <data name="NumberPatternInvalid" xml:space="preserve"><value>Wzorzec numeracji nie został zapisany. Używaj tylko liter, cyfr, -, _, . oraz znaczników {PREFIX}, {YYYY}, {YY}, {GROUP} i {SEQ}; {SEQ} dokładnie raz, każdy znacznik najwyżej raz, a po {GROUP} musi wystąpić -, _ lub . (maksymalnie 40 znaków).</value></data>
+  <data name="NextNumbersHeader" xml:space="preserve"><value>Następne numery na rok {0}</value></data>
+  <data name="NextNumbersIntro" xml:space="preserve"><value>Podnieś następny numer sekwencji, aby kontynuować numery nadane przed Resgrid: po 2026-0001–2026-0152 wpisz 153. Pozostaw pole puste, aby nie zmieniać sekwencji. Następny numer można tylko podnieść, nigdy obniżyć, więc żaden numer nie zostanie nadany dwa razy.</value></data>
+  <data name="NextNumberSequence" xml:space="preserve"><value>Sekwencja</value></data>
+  <data name="NextNumberCurrent" xml:space="preserve"><value>Następny numer</value></data>
+  <data name="NextNumberRaiseTo" xml:space="preserve"><value>Podnieś następny do</value></data>
+  <data name="NextNumberBelowCurrent" xml:space="preserve"><value>Następny numer można tylko podnieść. Te sekwencje pozostały bez zmian, ponieważ wpisana liczba była niższa niż numer, który nadadzą jako następny:</value></data>
+  <data name="NextNumberPatternChanged" xml:space="preserve"><value>Wzorzec numeracji się zmienił, więc wpisane następne numery nie zostały zastosowane. Sprawdź sekwencje nowego wzorca i zapisz ponownie.</value></data>
+  <data name="NextNumberConfirm" xml:space="preserve"><value>Podniesionego następnego numeru nie można ponownie obniżyć. Zapisać te zmiany?</value></data>
+  <data name="NumberingAllTypes" xml:space="preserve"><value>Wszystkie typy rejestrów</value></data>
+  <data name="NumberingNoGroup" xml:space="preserve"><value>Brak stacji/grupy</value></data>
   <data name="Retention" xml:space="preserve"><value>Retencja</value></data>
   <data name="RetentionIntro" xml:space="preserve"><value>Domyślnie: 7 lat dla rejestrów standardowych; bezterminowo dla koronera i innych klas zastrzeżonych. Retencja jest obowiązkiem wydziału. Zmiany działają prospektywnie i są audytowane.</value></data>
   <data name="DepartmentDefaultYears" xml:space="preserve"><value>Domyślne wydziału (lata, puste = systemowe)</value></data>

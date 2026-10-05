@@ -63,7 +63,8 @@ namespace Resgrid.Tests.Web.Services
 				Mock.Of<IDepartmentSettingsService>(),
 				Mock.Of<IDepartmentsService>(),
 				Mock.Of<IUserProfileService>(),
-				_incidentCommandService.Object)
+				_incidentCommandService.Object,
+				Mock.Of<IAuthorizationService>())
 			{
 				ControllerContext = new ControllerContext { HttpContext = httpContext }
 			};

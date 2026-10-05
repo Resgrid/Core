@@ -221,6 +221,40 @@ namespace Resgrid.Web.Services.Controllers.v4
 					: "Recent multi-factor verification is required to modify protected data.",
 				statusCode: write.Reason == "broker_unavailable" ? StatusCodes.Status503ServiceUnavailable : StatusCodes.Status403Forbidden);
 
+		/// <summary>
+		/// The people, of those given, whose position the caller may see (Security &gt; See Personnel Locations, the
+		/// location matrix the map uses). A department system key sees all of them.
+		/// </summary>
+		private async Task<HashSet<string>> GetLocatablePersonIdsAsync(IEnumerable<string> userIds)
+		{
+			var locatable = new HashSet<string>(StringComparer.Ordinal);
+
+			foreach (var userId in userIds.Where(x => !string.IsNullOrWhiteSpace(x)).Distinct())
+			{
+				if (IsSystemApiKeyRequest || await _authorizationService.CanUserViewPersonLocationViaMatrixAsync(userId, UserId, DepartmentId))
+					locatable.Add(userId);
+			}
+
+			return locatable;
+		}
+
+		/// <summary>
+		/// The units, of those given, whose position the caller may see (Security &gt; See Unit Locations, the location
+		/// matrix the map uses). A department system key sees all of them.
+		/// </summary>
+		private async Task<HashSet<int>> GetLocatableUnitIdsAsync(IEnumerable<int> unitIds)
+		{
+			var locatable = new HashSet<int>();
+
+			foreach (var unitId in unitIds.Distinct())
+			{
+				if (IsSystemApiKeyRequest || await UnitLocationVisibility.CanSeeAsync(_authorizationService, unitId, UserId, DepartmentId))
+					locatable.Add(unitId);
+			}
+
+			return locatable;
+		}
+
 		private static void ApplyProtectedReadMetadata(CallResultData data, ProtectedReadResult read)
 		{
 			if (data == null || read == null)
@@ -373,8 +407,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return Ok(result);
 			}
 
-			// Populate UDF values
+			// Populate UDF values the caller may see: the Udf view right (ViewUdfFields) and each field's visibility,
+			// the same rule the UserDefinedFields endpoints apply.
 			var udfValues = await _userDefinedFieldsService.GetFieldValuesForEntityAsync(effectiveDepartmentId, (int)UdfEntityType.Call, c.CallId.ToString());
+			if (udfValues != null && udfValues.Any())
+				udfValues = await _userDefinedFieldsService.FilterValuesVisibleToUserAsync(effectiveDepartmentId, (int)UdfEntityType.Call, udfValues,
+					IsSystemApiKeyRequest || HttpContext.User.HasClaim(ResgridClaimTypes.Resources.Udf, ResgridClaimTypes.Actions.View),
+					IsSystemApiKeyRequest || ClaimsAuthorizationHelper.IsUserDepartmentAdmin(),
+					HttpContext.User.Claims.Any(x => x.Type.StartsWith(ResgridClaimTypes.Resources.Group + "/", StringComparison.Ordinal) && x.Value == ResgridClaimTypes.Actions.Update));
 			if (udfValues != null && udfValues.Any())
 			{
 				result.Data.UdfValues = udfValues.Select(v => new UdfFieldValueResultData
@@ -463,7 +503,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return Unauthorized();
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
-			var siteInfo = await _contactsService.GetCallSiteInfoAsync(parsedCallId, DepartmentId);
+
+			// Security > View Contacts: without it the call carries no site information (an empty list, not a refusal).
+			var siteInfo = IsSystemApiKeyRequest || User.HasClaim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.View)
+				? await _contactsService.GetCallSiteInfoAsync(parsedCallId, DepartmentId)
+				: null;
 
 			result.Data = new CallSiteInfoData { CallId = parsedCallId.ToString() };
 
@@ -626,6 +670,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 				result.Data.Priority = CallPrioritiesController.ConvertPriorityData(priority);
 			}
 
+			// The positions each status was set at go out under See Personnel Locations / See Unit Locations, the rules the map applies.
+			var locatablePeople = await GetLocatablePersonIdsAsync(actionLogs.Select(x => x.UserId));
+			var locatableUnits = await GetLocatableUnitIdsAsync(unitStates.Select(x => x.UnitId));
+
 			foreach (var actionLog in actionLogs)
 			{
 				var eventResult = new DispatchedEventResultData();
@@ -650,7 +698,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				}
 
 				eventResult.StatusId = actionLog.ActionTypeId;
-				eventResult.Location = actionLog.GeoLocationData;
+				eventResult.Location = locatablePeople.Contains(actionLog.UserId) ? actionLog.GeoLocationData : null;
 				eventResult.Note = actionLog.Note;
 				eventResult.DestinationSource = actionLog.DestinationSource;
 
@@ -690,7 +738,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				}
 
 				eventResult.StatusId = unitLog.State;
-				eventResult.Location = unitLog.GeoLocationData;
+				eventResult.Location = locatableUnits.Contains(unitLog.UnitId) ? unitLog.GeoLocationData : null;
 				eventResult.Note = unitLog.Note;
 				eventResult.DestinationSource = unitLog.DestinationSource;
 
@@ -2137,6 +2185,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var defaultUnitStatuses = _customStateService.GetDefaultUnitStatuses();
 			var defaultUserStatuses = _customStateService.GetDefaultPersonStatuses();
 
+			// The positions each status was set at go out under See Personnel Locations / See Unit Locations, the rules the map applies.
+			var locatablePeople = await GetLocatablePersonIdsAsync(actionLogs.Select(x => x.UserId));
+			var locatableUnits = await GetLocatableUnitIdsAsync(unitStates.Select(x => x.UnitId));
 
 			foreach (var actionLog in actionLogs)
 			{
@@ -2152,7 +2203,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 						TimestampUtc = actionLog.Timestamp,
 						Timestamp = actionLog.Timestamp.TimeConverter(department),
 						Type = 2,
-						Info = $"{nameInfo.LastName},{nameInfo.FirstName} set status to {statusText} at {actionLog.GeoLocationData}{LinkSuffix(actionLog.DestinationSource)}",
+						Info = $"{nameInfo.LastName},{nameInfo.FirstName} set status to {statusText} at {(locatablePeople.Contains(actionLog.UserId) ? actionLog.GeoLocationData : null)}{LinkSuffix(actionLog.DestinationSource)}",
 						DestinationSource = actionLog.DestinationSource
 					});
 				}
@@ -2170,7 +2221,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					TimestampUtc = unitLog.Timestamp,
 					Timestamp = unitLog.Timestamp.TimeConverter(department),
 					Type = 3,
-					Info = $"{unitName} set status to {statusText} at {unitLog.GeoLocationData}{LinkSuffix(unitLog.DestinationSource)}",
+					Info = $"{unitName} set status to {statusText} at {(locatableUnits.Contains(unitLog.UnitId) ? unitLog.GeoLocationData : null)}{LinkSuffix(unitLog.DestinationSource)}",
 					DestinationSource = unitLog.DestinationSource
 				});
 			}

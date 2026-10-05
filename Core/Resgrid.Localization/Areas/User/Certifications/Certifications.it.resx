@@ -207,6 +207,7 @@
   <data name="certifications_record_not_found" xml:space="preserve"><value>Record di certificazione non trovato.</value></data>
   <data name="certifications_status_invalid" xml:space="preserve"><value>Quello stato non può essere impostato manualmente.</value></data>
   <data name="certifications_not_pending" xml:space="preserve"><value>Solo un record in attesa di verifica può essere verificato.</value></data>
+  <data name="certifications_self_verification" xml:space="preserve"><value>Non puoi verificare o ripristinare il tuo record di certificazione; deve approvarlo un altro responsabile.</value></data>
   <data name="certifications_expiry_required" xml:space="preserve"><value>Questo tipo scade, quindi è richiesta una nuova data di scadenza.</value></data>
   <data name="certifications_expiry_not_later" xml:space="preserve"><value>La nuova scadenza deve essere successiva a quella attuale.</value></data>
   <data name="certifications_credit_hours_invalid" xml:space="preserve"><value>Le ore di credito devono essere maggiori di zero.</value></data>

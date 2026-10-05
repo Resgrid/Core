@@ -78,6 +78,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private static bool CanManage => IsAdmin || ClaimsAuthorizationHelper.CanManageDeployments();
 		private static bool CanView => CanManage || ClaimsAuthorizationHelper.CanViewDeployments();
 		private static bool CanApprove => IsAdmin || ClaimsAuthorizationHelper.CanApproveTimeReports();
+		// The Billing tab composes other families' data, so each part follows its own page's permission: the charge preview
+		// and invoices are Invoicing_View (v4 GetDeploymentCharges / the invoice pages), the compliance checklist
+		// ServiceContracts_View (the contract pages), and generating the invoice Invoicing_Update (v4 GenerateDeploymentInvoice).
+		private static bool CanViewInvoicing => IsAdmin || ClaimsAuthorizationHelper.CanViewInvoicing();
+		private static bool CanManageInvoicing => IsAdmin || ClaimsAuthorizationHelper.CanManageInvoicing();
+		private static bool CanViewContracts => IsAdmin || ClaimsAuthorizationHelper.CanViewContracts();
 
 		public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
 		{
@@ -393,16 +399,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				view.CostRuns = await _costing.Value.GetRunsForDeploymentAsync(deployment.DeploymentId, DepartmentId);
 				var defaultRevenue = deployment.FinanceMode == (int)DeploymentFinanceModes.CostRecovery ? Resgrid.Model.Workforce.RevenueSources.CalOesMarsExpected : !string.IsNullOrWhiteSpace(deployment.BidId) ? Resgrid.Model.Workforce.RevenueSources.BidEstimate : Resgrid.Model.Workforce.RevenueSources.CustomerInvoice;
-				view.CostCard = new Resgrid.Web.Areas.User.Models.Workforce.FieldCostCardView { DeploymentId = deployment.DeploymentId, Latest = view.CostRuns.OrderByDescending(r => r.AddedOn).FirstOrDefault(), CanRun = true, DefaultRevenueSource = defaultRevenue };
+				// Running a cost run writes cost data: WorkforceController.RunDeploymentCost also needs Workforce_Update.
+				view.CostCard = new Resgrid.Web.Areas.User.Models.Workforce.FieldCostCardView { DeploymentId = deployment.DeploymentId, Latest = view.CostRuns.OrderByDescending(r => r.AddedOn).FirstOrDefault(), CanRun = IsAdmin || ClaimsAuthorizationHelper.CanManageWorkforce(), DefaultRevenueSource = defaultRevenue };
 				if (view.Tab == "costs") view.CostComparison = await _costing.Value.CompareEstimateToActualAsync(deployment.DeploymentId, DepartmentId);
 			}
+			ViewData["DepCanViewInvoicing"] = CanViewInvoicing;
+			ViewData["DepCanManageInvoicing"] = CanManageInvoicing;
+			ViewData["DepCanViewContracts"] = CanViewContracts;
 			if (view.ContractorBilling && view.Tab == "billing")
 			{
 				try
 				{
-					view.Charges = await _engine.CalculateDeploymentChargesAsync(id, DepartmentId);
-					view.Compliance = await _contracts.GetContractComplianceAsync(id, DepartmentId);
-					if (!string.IsNullOrWhiteSpace(deployment.ContactId))
+					if (CanViewInvoicing) view.Charges = await _engine.CalculateDeploymentChargesAsync(id, DepartmentId);
+					if (CanViewContracts) view.Compliance = await _contracts.GetContractComplianceAsync(id, DepartmentId);
+					if (CanViewInvoicing && !string.IsNullOrWhiteSpace(deployment.ContactId))
 						view.Invoices = (await _invoicing.GetInvoicesForDepartmentAsync(DepartmentId, new Resgrid.Model.Repositories.InvoiceListFilter { ContactId = deployment.ContactId, Take = 200 })).Where(i => string.Equals(i.DeploymentId, id, StringComparison.OrdinalIgnoreCase)).ToList();
 				}
 				catch (Exception ex) { Logging.LogException(ex, "Deployment billing tab could not be prepared."); }
@@ -414,7 +424,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost, ValidateAntiForgeryToken]
 		public async Task<IActionResult> GenerateInvoice(string id, DateTime? throughDate, CancellationToken cancellationToken)
 		{
-			if (!CanManage || !await _access.CanUseContractorBillingAsync(DepartmentId)) return Unauthorized();
+			// An invoice is created here, so it takes Invoicing_Update exactly as v4 GenerateDeploymentInvoice does, on top of the deployment page's manage right.
+			if (!CanManage || !CanManageInvoicing || !await _access.CanUseContractorBillingAsync(DepartmentId)) return Unauthorized();
 			try
 			{
 				var invoice = await _engine.GenerateInvoiceFromDeploymentAsync(id, DepartmentId, throughDate, UserId, Ip, Agent, cancellationToken);
@@ -612,6 +623,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var view = Page(new TimeReportEditView { Report = report, Deployment = deployment, IsRostered = deployment.Personnel.Any(p => p.UserId == UserId), Access = await TimeAccessAsync(deployment) });
 			view.Department = await _departments.GetDepartmentByIdAsync(DepartmentId);
 			view.TimeZone = Resgrid.Web.Helpers.DepartmentTime.From(ViewData).ZoneId;
+			view.IsOwnReport = TimeReportApproval.IsOwnReport(report, deployment.Personnel, UserId);
 			foreach (var p in deployment.Personnel) { view.SubjectNames[p.DeploymentPersonnelId] = p.DisplayName ?? p.UserId; if (p.IsActive) view.Subjects.Add((p.DeploymentPersonnelId, (int)DeploymentTimeSubjectTypes.Personnel, p.DisplayName ?? p.UserId)); }
 			foreach (var u in deployment.Units) { view.SubjectNames[u.DeploymentUnitId] = u.UnitName ?? u.UnitId.ToString(); if (u.IsActive) view.Subjects.Add((u.DeploymentUnitId, (int)DeploymentTimeSubjectTypes.Unit, u.UnitName ?? u.UnitId.ToString())); }
 			foreach (var e in deployment.Equipment) { var n = e.FreeTextName ?? e.InventoryAssetId ?? e.InventoryItemId; view.SubjectNames[e.DeploymentEquipmentId] = n; if (e.IsActive) view.Subjects.Add((e.DeploymentEquipmentId, (int)DeploymentTimeSubjectTypes.Equipment, n)); }
@@ -772,12 +784,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var access = await TimeAccessAsync(deployment);
 			if (!access.CanWrite) return Unauthorized();
 			// A member edits only the expenses they added and links them only to a report that is theirs; managers edit any.
+			DeploymentExpense existing = null;
 			if (!access.CanManage && !string.IsNullOrWhiteSpace(input.DeploymentExpenseId))
 			{
-				var existing = await _timeTracking.GetExpenseByIdAsync(input.DeploymentExpenseId, DepartmentId);
+				existing = await _timeTracking.GetExpenseByIdAsync(input.DeploymentExpenseId, DepartmentId);
 				if (existing == null) return NotFound();
 				if (!string.Equals(existing.AddedByUserId, UserId, StringComparison.OrdinalIgnoreCase)) return Unauthorized();
 			}
+			// Pre-approval is an approver's statement (Cal OES MARS treats an un-pre-approved expense as uncertain): only a
+			// manager sets or clears it; a member's save keeps what is stored, and a new member expense starts unapproved.
+			var preApproved = access.CanManage ? input.PreApproved : existing?.PreApproved ?? false;
 			if (!access.CanManage && !string.IsNullOrWhiteSpace(input.DeploymentTimeReportId))
 			{
 				var linked = await _timeTracking.GetTimeReportByIdAsync(input.DeploymentTimeReportId, DepartmentId);
@@ -793,7 +809,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					DeploymentExpenseId = string.IsNullOrWhiteSpace(input.DeploymentExpenseId) ? null : input.DeploymentExpenseId, DeploymentId = input.DeploymentId, DeploymentTimeReportId = string.IsNullOrWhiteSpace(input.DeploymentTimeReportId) ? null : input.DeploymentTimeReportId,
 					DepartmentId = DepartmentId, ExpenseDate = input.ExpenseDate ?? Resgrid.Web.Helpers.DepartmentTime.From(ViewData).Today, ExpenseType = input.ExpenseType, MealCode = input.MealCode, City = input.City, Description = input.Description, Amount = input.Amount,
-					Currency = input.Currency, PreApproved = input.PreApproved, Billable = input.Billable
+					Currency = input.Currency, PreApproved = preApproved, Billable = input.Billable
 				}, upload.Data, upload.FileName, upload.FileType, UserId, Ip, Agent, cancellationToken);
 				return Saved(back.Item1, back.Item2);
 			}

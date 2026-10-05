@@ -11,6 +11,7 @@ using Resgrid.Web.Services.Models.v4.UserDefinedFields;
 using Resgrid.Web.ServicesCore.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net.Mime;
 using System.Text.Json;
@@ -32,17 +33,26 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IUdfRenderingService _renderingService;
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IProtectedReadService _protectedReadService;
+		private readonly Model.Services.IAuthorizationService _authorizationService;
+		private readonly IDepartmentsService _departmentsService;
+		private readonly IContactsService _contactsService;
 
 		public UserDefinedFieldsController(
 			IUserDefinedFieldsService udfService,
 			IUdfRenderingService renderingService,
 			IEventAggregator eventAggregator,
-			IProtectedReadService protectedReadService)
+			IProtectedReadService protectedReadService,
+			Model.Services.IAuthorizationService authorizationService,
+			IDepartmentsService departmentsService,
+			IContactsService contactsService)
 		{
 			_udfService = udfService;
 			_renderingService = renderingService;
 			_eventAggregator = eventAggregator;
 			_protectedReadService = protectedReadService;
+			_authorizationService = authorizationService;
+			_departmentsService = departmentsService;
+			_contactsService = contactsService;
 		}
 
 		/// <summary>Gets the active UDF definition and fields for the given entity type, filtered by the caller's role.</summary>
@@ -159,6 +169,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		public async Task<ActionResult<UdfFieldValuesResult>> GetFieldValues(int entityType, string entityId, CancellationToken cancellationToken)
 		{
+			if (!await CanAccessEntityAsync(entityType, entityId, false))
+				return Forbid();
+
 			bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
 			bool isGroupAdmin = IsCallerGroupAdmin();
 			var visibleFields = await _udfService.GetVisibleFieldsForActiveDefinitionAsync(DepartmentId, entityType, isDeptAdmin, isGroupAdmin);
@@ -199,6 +212,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			if (!ModelState.IsValid)
 				return BadRequest();
+
+			// The values belong to the entity, so writing them takes the entity's own edit rule.
+			if (!await CanAccessEntityAsync(input.EntityType, input.EntityId, true))
+				return Forbid();
 
 			bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
 			bool isGroupAdmin = IsCallerGroupAdmin();
@@ -298,6 +315,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		public async Task<ActionResult<UdfSchemaResult>> GetSchemaForEntity(int entityType, string entityId, CancellationToken cancellationToken)
 		{
+			if (!await CanAccessEntityAsync(entityType, entityId, false))
+				return Forbid();
+
 			var definition = await _udfService.GetActiveDefinitionAsync(DepartmentId, entityType);
 			bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
 			bool isGroupAdmin = IsCallerGroupAdmin();
@@ -322,6 +342,47 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 
 		// ── Private helpers ──────────────────────────────────────────────────────
+
+		/// <summary>
+		/// Whether the caller may read (or, with <paramref name="edit"/>, write) the custom-field values of one entity:
+		/// the rule each entity's own page applies. A call takes CanUserViewCallAsync / CanUserEditCallAsync, a unit
+		/// CanUserViewUnitAsync / CanUserModifyUnitAsync, a person department membership plus the personnel visibility
+		/// matrix / CanUserEditProfileAsync, and a contact the department's Contacts view / update claim. Record values
+		/// go through the RMS workflow, never here.
+		/// </summary>
+		private async Task<bool> CanAccessEntityAsync(int entityType, string entityId, bool edit)
+		{
+			if (string.IsNullOrWhiteSpace(entityId))
+				return false;
+
+			switch ((UdfEntityType)entityType)
+			{
+				case UdfEntityType.Call:
+					if (!int.TryParse(entityId, NumberStyles.Integer, CultureInfo.InvariantCulture, out var callId))
+						return false;
+					return edit ? await _authorizationService.CanUserEditCallAsync(UserId, callId) : await _authorizationService.CanUserViewCallAsync(UserId, callId);
+
+				case UdfEntityType.Unit:
+					if (!int.TryParse(entityId, NumberStyles.Integer, CultureInfo.InvariantCulture, out var unitId))
+						return false;
+					return edit ? await _authorizationService.CanUserModifyUnitAsync(UserId, unitId) : await _authorizationService.CanUserViewUnitAsync(UserId, unitId);
+
+				case UdfEntityType.Personnel:
+					var member = await _departmentsService.GetDepartmentMemberAsync(entityId, DepartmentId);
+					if (member == null || member.DepartmentId != DepartmentId || member.IsDeleted)
+						return false;
+					return edit ? await _authorizationService.CanUserEditProfileAsync(UserId, DepartmentId, entityId) : await _authorizationService.CanUserViewPersonViaMatrixAsync(entityId, UserId, DepartmentId);
+
+				case UdfEntityType.Contact:
+					var contact = await _contactsService.GetContactByIdAsync(entityId);
+					if (contact == null || contact.DepartmentId != DepartmentId)
+						return false;
+					return HttpContext.User.HasClaim(ResgridClaimTypes.Resources.Contacts, edit ? ResgridClaimTypes.Actions.Update : ResgridClaimTypes.Actions.View);
+
+				default:
+					return false;
+			}
+		}
 
 		/// <summary>
 		/// Returns true if the current caller holds a group-admin claim for any group.

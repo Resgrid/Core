@@ -41,6 +41,11 @@ namespace Resgrid.Tests.Services
 				DepartmentsServiceMock
 					.Setup(s => s.GetDepartmentByIdAsync(It.IsAny<int>(), It.IsAny<bool>()))
 					.ReturnsAsync(TestDepartment);
+				// Every user these fixtures name is a member of the department being rendered: the builder only loads
+				// profile data for members (another department's user renders blank).
+				DepartmentsServiceMock
+					.Setup(s => s.GetDepartmentMemberAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<bool>()))
+					.ReturnsAsync((string userId, int departmentId, bool _) => new DepartmentMember { UserId = userId, DepartmentId = departmentId });
 
 				DepartmentSettingsServiceMock = new Mock<IDepartmentSettingsService>();
 				DepartmentSettingsServiceMock

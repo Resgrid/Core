@@ -594,6 +594,18 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.ProtectedWriteProblem(Resgrid.Model.ProtectedWriteResult)">
             <summary>Maps a blocked protected write to its value-free problem response (plan 3.3/19.2).</summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.GetLocatablePersonIdsAsync(System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            The people, of those given, whose position the caller may see (Security &gt; See Personnel Locations, the
+            location matrix the map uses). A department system key sees all of them.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.GetLocatableUnitIdsAsync(System.Collections.Generic.IEnumerable{System.Int32})">
+            <summary>
+            The units, of those given, whose position the caller may see (Security &gt; See Unit Locations, the location
+            matrix the map uses). A department system key sees all of them.
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.GetActiveCalls">
             <summary>
             Returns all the active calls for the department
@@ -751,6 +763,12 @@
         <member name="T:Resgrid.Web.Services.Controllers.v4.CallVideoFeedsController">
             <summary>
             Video feeds attached to calls for live video monitoring during incidents
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallVideoFeedsController.CanChangeFeedAsync(System.Int32)">
+            <summary>
+            Changing a call's existing feed: the call must be one the member may view (group-scoped dispatch), and they need
+            Add Call Data or edit rights to the call.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.CallVideoFeedsController.GetCallVideoFeeds(System.String)">
@@ -2769,6 +2787,9 @@
             <summary>Gets the append-only command (ICS-201) timeline for a call.</summary>
         </member>
         <!-- Badly formed XML comment ignored for member "T:Resgrid.Web.Services.Controllers.v4.IncidentReportingController" -->
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentReportingController.CanReadBoardsAsync">
+            <summary>The command-board read gate IncidentCommandController applies (CommandAppLogin); Command_View alone is a plan-level claim.</summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentReportingController.GetIncidentSummary(System.Int32)">
             <summary>Gets the ICS-201/209-style incident status summary.</summary>
         </member>
@@ -2836,6 +2857,14 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentReportsController.SaveDraft(Resgrid.Web.Services.Models.v4.Records.SaveIncidentReportDraftInput,System.Threading.CancellationToken)">
             <summary>ETag-guarded draft save; 409 with the current report on a stale row version.</summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentReportsController.RefreshFromSources(Resgrid.Web.Services.Models.v4.Records.IncidentReportCommandInput,System.Threading.CancellationToken)">
+            <summary>
+            Re-reads the call, unit and personnel statuses and Incident Command into an editable draft: blank fields are filled,
+            prefilled values the author never changed follow their source, and units, mutual aid and tactic timestamps the
+            sources now hold are added. Nothing the author typed or corrected is overwritten. For a report started while the
+            incident was still running. 409 with the current report on a stale row version.
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentReportsController.Validate(Resgrid.Web.Services.Models.v4.Records.IncidentReportCommandInput,System.Threading.CancellationToken)">
             <summary>Runs local validation (and the destination's validate endpoint when IncludeDestination and submission is enabled); issues stay on the report.</summary>
         </member>
@@ -2860,6 +2889,9 @@
             Incident-scoped ad-hoc resources: create units/personnel on the fly for non-Resgrid resources, build
             rosters, and form a unit from on-scene personnel (§3.10).
             </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentResourcesController.CanReadBoardsAsync">
+            <summary>The command-board read gate IncidentCommandController applies (CommandAppLogin); Command_View alone is a plan-level claim.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentResourcesController.CreateAdHocUnit(Resgrid.Model.IncidentAdHocUnit)">
             <summary>Creates an ad-hoc unit for a non-Resgrid resource.</summary>
@@ -2891,6 +2923,9 @@
             Rehab Officer, Section Chiefs, ...) which drive each user's specialized app view and capabilities.
             </summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentRolesController.CanReadBoardsAsync">
+            <summary>The command-board read gate IncidentCommandController applies (CommandAppLogin); Command_View alone is a plan-level claim.</summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentRolesController.AssignRole(Resgrid.Model.IncidentRoleAssignment)">
             <summary>Assigns a Resgrid user to a functional incident-command role.</summary>
         </member>
@@ -2907,6 +2942,9 @@
             <summary>
             On-demand PTT tactical voice channels scoped to an incident (§3.4). Requires the department PTT voice addon.
             </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentVoiceController.CanReadBoardsAsync">
+            <summary>The command-board read gate IncidentCommandController applies (CommandAppLogin); Command_View alone is a plan-level claim.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentVoiceController.CreateIncidentChannel(Resgrid.Web.Services.Models.v4.IncidentCommand.CreateIncidentChannelInput)">
             <summary>Creates an on-demand tactical channel scoped to a call (requires the voice addon).</summary>
@@ -3285,6 +3323,9 @@
             color-coded, for the IC resource picker (§3.9).
             </summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MutualAidController.CanReadBoardsAsync">
+            <summary>The command-board read gate IncidentCommandController applies (CommandAppLogin); Command_View alone is a plan-level claim.</summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.MutualAidController.GetAssignableResources">
             <summary>
             Gets all resources the commander can assign to lanes: own-department units/personnel plus those
@@ -3394,6 +3435,12 @@
             Gets all the options available to filter personnel against compatible Resgrid APIs
             </summary>
             <returns>GetPersonnelFilterOptionsResult with information pertaining to each filter option</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.PersonnelController.ConvertPersonnelInfo(Resgrid.Model.Identity.IdentityUser,Resgrid.Model.Department,Resgrid.Model.UserProfile,Resgrid.Model.DepartmentGroup,System.Collections.Generic.List{Resgrid.Model.PersonnelRole},Resgrid.Model.ActionLog,Resgrid.Model.UserState,System.Boolean,System.Boolean)">
+            <summary>
+            The person's info for a caller. Without Security &gt; See Personnel Locations for this person (canViewLocation,
+            from CanUserViewPersonLocationViaMatrixAsync) the last status position is left out.
+            </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.PersonnelController.ApplyMemberIdentificationNumberAsync(Resgrid.Model.UserProfile)">
             <summary>
@@ -3800,6 +3847,9 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.RecordSavedReportsController.Save(Resgrid.Web.Services.Models.v4.Records.SaveRecordSavedReportInput,System.Threading.CancellationToken)">
             <summary>Creates (no ReportId) or updates (ReportId + RowVersion / If-Match) a saved report.</summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordSavedReportsController.RunCsv(System.String,System.Threading.CancellationToken)">
+            <summary>The run as a CSV file. A file leaves Resgrid, so it needs ExportRecords on top of running the report.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.RecordsController">
             <summary>
             Records (RMS) client contract, RMS-1B (plan sections 5.3, 5.4, 5.9.1): capability manifest with the locked
@@ -4026,6 +4076,20 @@
             <summary>
             Returns the standardized required fields the given export profile cannot fill from Resgrid data
             (the gap report). 0 = Generic, 1 = NFIRS, 2 = NEMSIS.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.ReportSourcesController">
+            <summary>
+            What a report author needs to look up about a call: its times, every unit and personnel status with who set it and
+            from which app (the crew's own, a dispatcher's, or Incident Command's), crews, dispatches, check-ins, the command's
+            timeline, objectives, tactic timestamps and mutual aid, and the run reports other stations and members wrote for it.
+            Read-only; the apps use it to fill and check incident and run reports.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ReportSourcesController.GetCallSources(System.Int32,System.String)">
+            <summary>
+            The call's report sources. <paramref name="recordId"/> is the report being written (incident or run report): it is
+            left out of the run report list and named in the access audit of every run report returned.
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.RolesController">
@@ -4695,6 +4759,12 @@
             then replays its outbox. See docs/architecture/offline-first-architecture.md.
             </summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SyncController.CanReadBoardsAsync">
+            <summary>
+            The commander gate (Security &gt; Command App Login) that IncidentCommandController applies to every board read.
+            Command_View is a plan-level claim; this is the department's choice of who commands.
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.SyncController.Changes(System.Int64)">
             <summary>
             Returns incident-command rows changed since <paramref name="since"/> (Unix epoch milliseconds; 0 or omitted
@@ -4742,7 +4812,7 @@
             <summary>
             Daily time reports, entries and expenses (Workforce &amp; Business Operations plan, Phase C5). Mobile crews file from the
             field without any new claim: a member writes their own roster row (individual report) and, for every deployed unit they
-            crew (on the deployment roster for that unit, or seated on the apparatus through an active unit role), that unit's Crew
+            crew on the deployment roster (a live unit seat is self-service and grants nothing here), that unit's Crew
             Time Report — the unit, its crew and its equipment (M0227). Entries of subjects a caller may not write are kept as stored.
             Approval and void need TimeReports_Approve. Entry times travel as UTC instants plus department-local wall clock
             (StartLocal/EndLocal) so field apps never do zone math. Receipts upload as base64; DTOs carry UpdatedOn for delta-sync.
@@ -4938,6 +5008,15 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.UserDefinedFieldsController.GetSchemaForEntity(System.Int32,System.String,System.Threading.CancellationToken)">
             <summary>Returns the React Native JSON schema pre-populated with an entity's existing values, filtered by caller role.</summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.UserDefinedFieldsController.CanAccessEntityAsync(System.Int32,System.String,System.Boolean)">
+            <summary>
+            Whether the caller may read (or, with <paramref name="edit"/>, write) the custom-field values of one entity:
+            the rule each entity's own page applies. A call takes CanUserViewCallAsync / CanUserEditCallAsync, a unit
+            CanUserViewUnitAsync / CanUserModifyUnitAsync, a person department membership plus the personnel visibility
+            matrix / CanUserEditProfileAsync, and a contact the department's Contacts view / update claim. Record values
+            go through the RMS workflow, never here.
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.UserDefinedFieldsController.IsCallerGroupAdmin">
             <summary>
             Returns true if the current caller holds a group-admin claim for any group.
@@ -5122,7 +5201,7 @@
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.WorkflowCredentialsController.GetAll(System.Threading.CancellationToken)">
-            <summary>Lists all credentials for the current department (secrets masked).</summary>
+            <summary>Lists all credentials for the current department (secrets masked), for the members the web Credentials page admits.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.WorkflowCredentialsController.GetById(System.String,System.Threading.CancellationToken)">
             <summary>Gets a single credential by ID (secrets masked).</summary>
@@ -5145,13 +5224,16 @@
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.WorkflowsController.GetAll(System.Threading.CancellationToken)">
-            <summary>Gets all workflows for the current department.</summary>
+            <summary>Gets all workflows for the current department (the members the web Workflows list admits).</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.WorkflowsController.GetById(System.String,System.Threading.CancellationToken)">
-            <summary>Gets a single workflow by ID (with steps).</summary>
+            <summary>Gets a single workflow by ID (with steps), for the members the web workflow designer admits.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.WorkflowsController.Save(Resgrid.Web.Services.Models.v4.Workflows.SaveWorkflowInput,System.Threading.CancellationToken)">
-            <summary>Creates or updates a workflow.</summary>
+            <summary>
+            Creates (no WorkflowId) or updates a workflow. An update changes the stored workflow of this department only, and
+            as on the web designer the trigger event type is locked after creation (a posted TriggerEventType is ignored).
+            </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.WorkflowsController.Delete(System.String,System.Threading.CancellationToken)">
             <summary>Deletes a workflow.</summary>
@@ -5163,7 +5245,7 @@
             <summary>Deletes a workflow step.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.WorkflowsController.GetCredentials(System.Threading.CancellationToken)">
-            <summary>Gets all credentials for the department (names/types only — no encrypted data exposed).</summary>
+            <summary>Gets all credentials for the department (names/types only — no encrypted data exposed), for the members the web Credentials page admits.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.WorkflowsController.SaveCredential(Resgrid.Web.Services.Models.v4.Workflows.SaveCredentialInput,System.Threading.CancellationToken)">
             <summary>Saves a credential (plaintext JSON is encrypted server-side).</summary>
@@ -7492,6 +7574,14 @@
             Determines the target Call for the request, preferring the most authoritative source:
             (1) an explicit <c>callId</c> route/argument, (2) an <c>IncidentCommandId</c> (route/arg/body) resolved
             to its Call and department-ownership checked, then (3) a <c>CallId</c> on a bound request body object.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Filters.StatusWriteActorFilter">
+            <summary>
+            Opens a <see cref="T:Resgrid.Model.StatusWriteActor"/> scope for every signed-in API request, so a unit state or personnel status the
+            request saves records who submitted it and from which app (M0260). The app comes from the session's
+            <c>client_app</c> claim, which the app asserted at sign-in; a token without it reads as a plain API client.
+            Anonymous endpoints (SMS, voice) open their own scopes.
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Health.FullHealthCheckAccess">
@@ -15595,6 +15685,19 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordOperationalSummariesResult.ContractVersion">
             <summary>Contract version every row in <see cref="P:Resgrid.Web.Services.Models.v4.Records.RecordOperationalSummariesResult.Data"/> conforms to.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.CallSourcesResult">
+            <summary>A call's report sources and the run reports written for it (GET ReportSources/GetCallSources).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.CallSourcesResultData.Sources">
+            <summary>
+            The call's times, units (with crews), personnel, the full status/dispatch/command timeline with who set each entry
+            (<see cref="P:Resgrid.Model.CallSourceEntry.Origin"/> is a <see cref="T:Resgrid.Model.StatusSetOrigins"/> value) and the Incident Command summary,
+            including the NERIS tactic timestamps its objectives name. Times are UTC.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.CallSourcesResultData.RunReports">
+            <summary>The run and callback reports on the call the caller may view, newest first (the report being written excluded).</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Reporting.DashboardReportResult">
             <summary>Composite dashboard report (scalar totals, dense series, breakdowns).</summary>

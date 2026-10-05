@@ -556,9 +556,10 @@
   <data name="calmars_work_item_type_mismatch" xml:space="preserve"><value>Posten är inte av förväntad typ.</value></data>
   <data name="BuildSalarySurvey" xml:space="preserve"><value>Bygg från lönedata</value></data>
   <data name="ConfirmSalarySurveyDraft" xml:space="preserve"><value>Ersätt ordinarie och övertidssats för varje matchande klassificeringsrad med medelvärdena?</value></data>
-  <data name="SalarySurveyDraftBuilt" xml:space="preserve"><value>{0} klassificeringsrad(er) byggda från {1} anställd(a); {2} omappade klassificering(ar); {3} klassificering(ar) med en anställd att granska.</value></data>
+  <data name="SalarySurveyDraftBuilt" xml:space="preserve"><value>{0} klassificeringsrad(er) byggda från {1} anställd(a); {2} omappade klassificering(ar). Klassificeringar med färre än {3} anställda utelämnas så att ingens lön kan utläsas ur undersökningen; ange deras taxor manuellt.</value></data>
   <data name="SalarySurveyFromWorkforceHelp" xml:space="preserve"><value>Fas E: medelvärdet av de aktuella godkända individuella timlönerna per MARS-klassificering (plus komponenter som betalas per övertidstimme) fyller ordinarie och övertidssats. Endast aggregat — aldrig ett intervallmittvärde, aldrig en individ. Ett granskningsstöd; den behöriga företrädaren signerar fortfarande i MARS.</value></data>
   <data name="SurveyBlocker_no_classifications" xml:space="preserve"><value>Ingen godkänd ersättningsprofil bär en MARS-klassificering för denna auktoritetsprofil.</value></data>
+  <data name="SurveyBlocker_classifications_too_small" xml:space="preserve"><value>Varje MARS-klassificering i lönedata har för få anställda för att byggas utan att någons lön avslöjas. Ange taxorna manuellt.</value></data>
   <data name="SurveyBlocker_profile_type" xml:space="preserve"><value>Endast en Salary Survey- eller Attachment A-profil tar ett lönedatautkast.</value></data>
   <data name="SurveyBlocker_rate_locked" xml:space="preserve"><value>Satsprofilen kan inte längre redigeras.</value></data>
   <data name="SurveyBlocker_workforce_unavailable" xml:space="preserve"><value>Lönedata är inte tillgängliga för denna avdelning.</value></data>

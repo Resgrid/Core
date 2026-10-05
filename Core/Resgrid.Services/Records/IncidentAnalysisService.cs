@@ -194,6 +194,11 @@ namespace Resgrid.Services.Records
 		{
 			var analysis = await LoadAsync(departmentId, analysisId);
 			await RequirePermissionAsync(departmentId, userId, analysis.IncidentReportId, PermissionTypes.FinalizeRecords);
+			// Ownership, as for incident reports (RecordsLifecycleAuthority): the author or owner, a department administrator
+			// or a ReviewRecords holder may finalize; FinalizeRecords alone does not reach another member's analysis.
+			if (!await RecordsLifecycleAuthority.CanFinalizeAsync(_authorization, userId, departmentId, RmsRecordState.Draft, false,
+				analysis.AuthorUserId, analysis.OwnerUserId, null, null))
+				throw new UnauthorizedAccessException("Finalizing another member's analysis needs ReviewRecords or a department administrator.");
 			var report = await _reports.GetByIdForDepartmentAsync(departmentId, analysis.IncidentReportId);
 
 			var issues = await ValidateAsync(departmentId, analysisId, cancellationToken);
@@ -314,6 +319,11 @@ namespace Resgrid.Services.Records
 
 			var analysis = await LoadAsync(departmentId, analysisId);
 			await RequirePermissionAsync(departmentId, userId, analysis.IncidentReportId, PermissionTypes.DeleteRecord);
+			// Ownership floor of the legacy Logs delete (admin or the person who logged it): DeleteRecord alone does not void
+			// another member's analysis.
+			if (!string.Equals(userId, analysis.AuthorUserId, StringComparison.Ordinal) && !string.Equals(userId, analysis.OwnerUserId, StringComparison.Ordinal)
+				&& !await _authorization.IsDepartmentAdminAsync(userId, departmentId))
+				throw new UnauthorizedAccessException("Voiding another member's analysis needs a department administrator.");
 			if ((RmsIncidentAnalysisState)analysis.State == RmsIncidentAnalysisState.Submitted)
 				throw new InvalidOperationException("The analysis is in flight to the destination and cannot be voided until it settles.");
 

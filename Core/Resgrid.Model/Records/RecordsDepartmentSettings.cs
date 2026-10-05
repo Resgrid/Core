@@ -18,6 +18,7 @@ namespace Resgrid.Model
 			ResetYearly = true;
 			SequenceWidth = 4;
 			IncludeYear = true;
+			Floors = new List<RecordsNumberingFloor>();
 		}
 
 		/// <summary>RmsNumberAssignment value; default OnFinalize so abandoned drafts leave no gaps.</summary>
@@ -39,6 +40,65 @@ namespace Resgrid.Model
 		/// <summary>Scope the sequence per station/group instead of department-wide.</summary>
 		[ProtoMember(5)]
 		public bool PerGroupSequence { get; set; }
+
+		/// <summary>
+		/// The department's number pattern (see <see cref="RecordNumberFormat"/>), e.g. "{PREFIX}-{YYYY}-{SEQ}". Null keeps
+		/// the pattern IncludeYear and PerGroupSequence describe; when set, those two flags are kept in step with it.
+		/// </summary>
+		[ProtoMember(6)]
+		public string Pattern { get; set; }
+
+		/// <summary>
+		/// Raised starting points, one per sequence scope: a department that moved to Resgrid after issuing 2026-0001
+		/// through 2026-0152 elsewhere sets that scope's next number to 153. A floor only ever rises.
+		/// </summary>
+		[ProtoMember(7)]
+		public List<RecordsNumberingFloor> Floors { get; set; }
+
+		/// <summary>
+		/// The sequence to issue next in a scope: one past the highest already issued, but never below its floor.
+		/// Numbers that exist always win, so a floor can never cause a duplicate.
+		/// </summary>
+		public int NextSequence(string scopeKey, int highestIssued)
+		{
+			return Math.Max(Math.Max(0, highestIssued) + 1, FloorFor(scopeKey));
+		}
+
+		public int FloorFor(string scopeKey)
+		{
+			return (Floors ?? new List<RecordsNumberingFloor>()).Where(f => f != null && string.Equals(f.ScopeKey, scopeKey, StringComparison.Ordinal))
+				.Select(f => f.NextSequence).DefaultIfEmpty(1).Max();
+		}
+
+		/// <summary>Records a raised floor; a value at or below the current floor changes nothing.</summary>
+		public void RaiseFloor(string scopeKey, int nextSequence, string userId, DateTime now)
+		{
+			if (string.IsNullOrEmpty(scopeKey) || nextSequence <= FloorFor(scopeKey))
+				return;
+
+			Floors ??= new List<RecordsNumberingFloor>();
+			Floors.RemoveAll(f => f == null || string.Equals(f.ScopeKey, scopeKey, StringComparison.Ordinal));
+			Floors.Add(new RecordsNumberingFloor { ScopeKey = scopeKey, NextSequence = nextSequence, SetOn = now, SetByUserId = userId });
+		}
+	}
+
+	/// <summary>One raised starting point inside <see cref="RecordsNumberingConfig"/>.</summary>
+	[ProtoContract]
+	public class RecordsNumberingFloor
+	{
+		/// <summary><see cref="RecordNumberScope.Key"/> of the sequence, e.g. "INC-2026-#".</summary>
+		[ProtoMember(1)]
+		public string ScopeKey { get; set; }
+
+		/// <summary>The lowest sequence the scope may issue next.</summary>
+		[ProtoMember(2)]
+		public int NextSequence { get; set; }
+
+		[ProtoMember(3)]
+		public DateTime SetOn { get; set; }
+
+		[ProtoMember(4)]
+		public string SetByUserId { get; set; }
 	}
 
 	/// <summary>Department setting 73 (RecordsSearchConfig): index scope and the protected degrade mode notice.</summary>

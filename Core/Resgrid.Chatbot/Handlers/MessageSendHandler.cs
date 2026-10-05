@@ -13,16 +13,27 @@ namespace Resgrid.Chatbot.Handlers
 	/// <summary>
 	/// Sends a message to a single department member resolved by name (intent <see cref="ChatbotIntentType.SendMessage"/>).
 	/// Recipient resolution is department-scoped (security addendum §2/§3); responses localized to the user's culture.
+	/// Sending needs Security &gt; Permissions &gt; Create Message, evaluated exactly as ClaimsLogic derives the Messages_Create
+	/// claim the web and v4 SendMessage require (no row means everyone).
 	/// </summary>
 	public class MessageSendHandler : IChatbotActionHandler
 	{
 		private readonly IMessageService _messageService;
 		private readonly IChatbotUserSearchService _userSearchService;
+		private readonly IPermissionsService _permissionsService;
+		private readonly IDepartmentsService _departmentsService;
+		private readonly IDepartmentGroupsService _departmentGroupsService;
+		private readonly IPersonnelRolesService _personnelRolesService;
 
-		public MessageSendHandler(IMessageService messageService, IChatbotUserSearchService userSearchService)
+		public MessageSendHandler(IMessageService messageService, IChatbotUserSearchService userSearchService, IPermissionsService permissionsService,
+			IDepartmentsService departmentsService, IDepartmentGroupsService departmentGroupsService, IPersonnelRolesService personnelRolesService)
 		{
 			_messageService = messageService;
 			_userSearchService = userSearchService;
+			_permissionsService = permissionsService;
+			_departmentsService = departmentsService;
+			_departmentGroupsService = departmentGroupsService;
+			_personnelRolesService = personnelRolesService;
 		}
 
 		public ChatbotIntentType IntentType => ChatbotIntentType.SendMessage;
@@ -37,6 +48,9 @@ namespace Resgrid.Chatbot.Handlers
 
 				if (string.IsNullOrWhiteSpace(recipient) || string.IsNullOrWhiteSpace(body))
 					return new ChatbotResponse { Text = ChatbotResources.Get("Msg_SendUsage", culture), Processed = false };
+
+				if (!await CanUserCreateMessageAsync(session.UserId, session.DepartmentId))
+					return new ChatbotResponse { Text = ChatbotResources.Get("Msg_NoSendPermission", culture), Processed = false };
 
 				// Resolve the recipient strictly within the sender's active department.
 				var match = await _userSearchService.ResolveSingleAsync(session.DepartmentId, recipient);
@@ -65,6 +79,19 @@ namespace Resgrid.Chatbot.Handlers
 				Framework.Logging.LogException(ex);
 				return new ChatbotResponse { Text = ChatbotResources.Get("Msg_ErrorSending", culture), Processed = false };
 			}
+		}
+
+		/// <summary>The Create Message row, read the way ClaimsLogic.AddMessageClaims grants Messages_Create.</summary>
+		private async Task<bool> CanUserCreateMessageAsync(string userId, int departmentId)
+		{
+			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.CreateMessage);
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
+			var group = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
+			var roles = await _personnelRolesService.GetRolesForUserAsync(userId, departmentId);
+
+			return _permissionsService.IsUserAllowed(permission, department != null && department.IsUserAnAdmin(userId),
+				group != null && group.IsUserGroupAdmin(userId), roles);
 		}
 	}
 }

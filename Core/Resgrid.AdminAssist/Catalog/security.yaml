@@ -63,8 +63,7 @@
       "Secret": false,
       "Location": {
         "Controller": "Department",
-        "Action": "Settings",
-        "Field": "TestEnabled"
+        "Action": "Settings"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -96,8 +95,7 @@
       "Secret": false,
       "Location": {
         "Controller": "Department",
-        "Action": "Settings",
-        "Field": "UpdateTimestamp"
+        "Action": "Settings"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -129,8 +127,7 @@
       "Secret": false,
       "Location": {
         "Controller": "Department",
-        "Action": "ModuleSettings",
-        "Field": "ModuleSettings"
+        "Action": "ModuleSettings"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -261,8 +258,7 @@
       "Secret": false,
       "Location": {
         "Controller": "Department",
-        "Action": "OperatingProfile",
-        "Field": "DepartmentOperatingProfile"
+        "Action": "OperatingProfile"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -942,8 +938,8 @@
       "Conflicts": [],
       "DocumentationId": "permission.CreateCall",
       "DefaultValue": "No permission row: everyone; no group lock",
-      "AllowedValues": "Actions 0–3, selected department role IDs for action 2, and group lock for resource visibility gates only",
-      "EvidenceSource": "PermissionsService.IsUserAllowed / ResourceVisibilityPermission",
+      "AllowedValues": "Actions 3, 0, 1, 2 and selected department role IDs for action 2; no group lock",
+      "EvidenceSource": "ClaimsLogic.AddCallClaims derives Call:View/Update/Create/Delete from this row → Call_* policies on MVC Dispatch, Logs (Run logs create and edit calls), v4 Calls; AuthorizationService.CanUserCreateCallAsync on MVC NewCall, Logs NewLog, v4 SaveCall and the chatbot dispatch and close handlers. Narrowing it also removes edit, close, re-open and delete rights for non-qualifying members",
       "Availability": "available"
     },
     {
@@ -974,9 +970,9 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.CreateNote",
-      "DefaultValue": "No permission row: everyone; no group lock",
-      "AllowedValues": "Actions 0–3, selected department role IDs for action 2, and group lock for resource visibility gates only",
-      "EvidenceSource": "PermissionsService.IsUserAllowed / ResourceVisibilityPermission",
+      "DefaultValue": "No permission row: everyone may create notes in the apps; on the web creating, editing and deleting notes always needs a department admin",
+      "AllowedValues": "Actions 3, 0, 1, 2 and selected department role IDs for action 2; no group lock",
+      "EvidenceSource": "ClaimsLogic.AddNotesClaims (Notes:*) → Notes_Create on v4 NotesController SaveNote; MVC NotesController uses AuthorizationService.CanUserAddNoteAsync / CanUserEditNoteAsync (department admins) for create, edit and delete regardless of this row",
       "Availability": "available"
     },
     {
@@ -1008,8 +1004,8 @@
       "Conflicts": [],
       "DocumentationId": "permission.ViewPersonalInfo",
       "DefaultValue": "No permission row: everyone; no group lock",
-      "AllowedValues": "Actions 0–3, selected department role IDs for action 2, and group lock for resource visibility gates only",
-      "EvidenceSource": "PermissionsService.IsUserAllowed / ResourceVisibilityPermission",
+      "AllowedValues": "Actions 3, 0, 1, 2 and selected department role IDs for action 2; no group lock",
+      "EvidenceSource": "ClaimsLogic.AddPIIClaims → ClaimsAuthorizationHelper.CanViewPII on MVC PersonnelController, Reports PersonnelReport and Home EditUserProfile; AuthorizationService.CanUserViewPIIAsync on v4 PersonnelController, DispatchController, SyncController and the scheduled Personnel report (ReportsController.InternalRunReport, subscriber passed by ReportDeliveryLogic)",
       "Availability": "available"
     },
     {
@@ -1041,8 +1037,8 @@
       "Conflicts": [],
       "DocumentationId": "permission.ViewGroupUsers",
       "DefaultValue": "No permission row: everyone; no group lock",
-      "AllowedValues": "Actions 0–3, selected department role IDs for action 2, and group lock for resource visibility gates only",
-      "EvidenceSource": "PermissionsService.IsUserAllowed / ResourceVisibilityPermission",
+      "AllowedValues": "Actions 3, 0, 1, 2 and selected department role IDs for action 2; the group-only box limits group admins and role holders to their own group",
+      "EvidenceSource": "Who-can-see-personnel matrix (SecurityLogic) read by AuthorizationService.CanUserViewPersonViaMatrixAsync, with a live answer from the permission rows when the matrix is not cached, plus CanUserViewPersonAsync / CanUserViewAllPeopleAsync: MVC Personnel (view, reveal, events, grids), Reports, Dispatch call grids; v4 Personnel, PersonnelStatuses, Dispatch, Sync; chatbot roster; Unified Search",
       "Availability": "available"
     },
     {
@@ -1074,8 +1070,8 @@
       "Conflicts": [],
       "DocumentationId": "permission.ViewGroupUnits",
       "DefaultValue": "No permission row: everyone; no group lock",
-      "AllowedValues": "Actions 0–3, selected department role IDs for action 2, and group lock for resource visibility gates only",
-      "EvidenceSource": "PermissionsService.IsUserAllowed / ResourceVisibilityPermission",
+      "AllowedValues": "Actions 3, 0, 1, 2 and selected department role IDs for action 2; the group-only box limits non-admins to units of their own station",
+      "EvidenceSource": "Who-can-see-units matrix (SecurityLogic) read by AuthorizationService.CanUserViewUnitViaMatrixAsync, with a live answer from the permission rows when the matrix is not cached, plus CanUserViewUnitAsync: MVC Units lists/grids/status changes, Dispatch NewCall/UpdateCall pickers, Mapping; v4 Units, UnitStatus (SaveUnitStatus, MCP set_unit_status), UnitRoles, Dispatch; chatbot units and calls-for-unit; Twilio; Unified Search",
       "Availability": "available"
     },
     {
@@ -1107,8 +1103,8 @@
       "Conflicts": [],
       "DocumentationId": "permission.CanSeePersonnelLocations",
       "DefaultValue": "No permission row: everyone; no group lock",
-      "AllowedValues": "Actions 0–3, selected department role IDs for action 2, and group lock for resource visibility gates only",
-      "EvidenceSource": "PermissionsService.IsUserAllowed / ResourceVisibilityPermission",
+      "AllowedValues": "Actions 3, 0, 1, 2 and selected department role IDs for action 2; the group-only box limits non-admins to members of their own group",
+      "EvidenceSource": "Who-can-see-personnel-locations matrix (SecurityLogic) read by AuthorizationService.CanUserViewPersonLocationViaMatrixAsync and LocationVisibilityService, with a live answer from the permission rows when the matrix is not cached: MVC Mapping, Personnel events, Units/Dispatch grids; v4 Mapping, Personnel, PersonnelStatuses, Dispatch, Calls extra data and history, CheckInTimers, Reports; NearestUnitService; Eventing GeolocationHub",
       "Availability": "available"
     },
     {
@@ -1140,8 +1136,8 @@
       "Conflicts": [],
       "DocumentationId": "permission.CanSeeUnitLocations",
       "DefaultValue": "No permission row: everyone; no group lock",
-      "AllowedValues": "Actions 0–3, selected department role IDs for action 2, and group lock for resource visibility gates only",
-      "EvidenceSource": "PermissionsService.IsUserAllowed / ResourceVisibilityPermission",
+      "AllowedValues": "Actions 3, 0, 1, 2 and selected department role IDs for action 2; the group-only box limits non-admins to units of their own station",
+      "EvidenceSource": "Who-can-see-unit-locations matrix (SecurityLogic) read by AuthorizationService.CanUserViewUnitLocationViaMatrixAsync, with a live answer from the permission rows when the matrix is not cached: MVC Mapping GetMapData, Units events/report/ETA grid, Dispatch; v4 Units, UnitLocation, UnitStatus, Mapping, Dispatch, Calls extra data and history, CheckInTimers, Routes deviations; NearestUnitService (no distance or ETA for hidden units); Eventing GeolocationHub",
       "Availability": "available"
     },
     {
@@ -1155,10 +1151,11 @@
       "Secret": false,
       "Location": {
         "Controller": "Security",
-        "Action": "Index"
+        "Action": "Index",
+        "Field": "AddUsers"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -1171,12 +1168,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.AddPersonnel",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.AddPersonnel",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: department admins only; no group lock",
+      "AllowedValues": "Actions 0 and 1 only; no roles; no group lock. With action 1 group admins can add people to their own group, and members they reactivate or add from an existing account are moved into the group admin's own group",
+      "EvidenceSource": "ClaimsLogic.AddPersonnelClaims (Personnel:Create, Update, Delete) → Personnel_Create on MVC PersonnelController add/reactivate/add-existing, re-checked by AuthorizationService.CanUserAddNewUserAsync; group admins' reactivate/add-existing place the member in the group admin's own group (web only)",
+      "Availability": "available"
     },
     {
       "Id": "permission.RemovePersonnel",
@@ -1189,10 +1184,11 @@
       "Secret": false,
       "Location": {
         "Controller": "Security",
-        "Action": "Index"
+        "Action": "Index",
+        "Field": "RemoveUsers"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -1205,12 +1201,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.RemovePersonnel",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.RemovePersonnel",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: department admins only; no group lock",
+      "AllowedValues": "Actions 0 and 1 only; no roles; no group lock. With action 1 group admins can remove members of their own group, never a department admin or the managing member",
+      "EvidenceSource": "AuthorizationService.CanUserDeleteUserAsync (no claim; refuses a group admin removing a department admin or the managing member) on MVC PersonnelController delete and clear-events, re-checked in DeleteService.DeleteUserAsync; the Personnel_Delete claim comes from Add Personnel (web only)",
+      "Availability": "available"
     },
     {
       "Id": "permission.CreateTraining",
@@ -1223,10 +1217,11 @@
       "Secret": false,
       "Location": {
         "Controller": "Security",
-        "Action": "Index"
+        "Action": "Index",
+        "Field": "CreateTraining"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -1239,12 +1234,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.CreateTraining",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.CreateTraining",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: department admins create, edit and delete trainings; everyone can view",
+      "AllowedValues": "Actions 0, 1, 2 and selected department role IDs for action 2; no group lock",
+      "EvidenceSource": "ClaimsLogic.AddTrainingClaims (Training:*) → Training_Create / _Update / _Delete on MVC TrainingsController (web only)",
+      "Availability": "available"
     },
     {
       "Id": "permission.CreateDocument",
@@ -1257,10 +1250,11 @@
       "Secret": false,
       "Location": {
         "Controller": "Security",
-        "Action": "Index"
+        "Action": "Index",
+        "Field": "CreateDocument"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -1273,12 +1267,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.CreateDocument",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.CreateDocument",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: everyone may upload documents; no group lock",
+      "AllowedValues": "Actions 3, 0, 1, 2 and selected department role IDs for action 2; no group lock",
+      "EvidenceSource": "ClaimsLogic.AddDocumentsClaims (Documents:*) → Documents_Create / _Update / _Delete on MVC DocumentsController; edits and deletes are limited to the uploader or a department admin (web only)",
+      "Availability": "available"
     },
     {
       "Id": "permission.CreateCalendarEntry",
@@ -1291,10 +1283,11 @@
       "Secret": false,
       "Location": {
         "Controller": "Security",
-        "Action": "Index"
+        "Action": "Index",
+        "Field": "CreateCalendarEntry"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -1307,12 +1300,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.CreateCalendarEntry",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.CreateCalendarEntry",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: everyone may create, edit and delete calendar entries; no group lock",
+      "AllowedValues": "Actions 3, 0, 1, 2 and selected department role IDs for action 2; no group lock",
+      "EvidenceSource": "ClaimsLogic.AddScheduleClaims (Schedule:*) → Schedule_Create / _Update / _Delete on MVC CalendarController (entries and calendar types) and v4 calendar check-in edit/delete; editing and deleting entries also need AuthorizationService.CanUserModifyCalendarEntryAsync (creator or department admin), and RemoveFromEvent needs the attendee or the same check",
+      "Availability": "available"
     },
     {
       "Id": "permission.CreateLog",
@@ -1325,10 +1316,11 @@
       "Secret": false,
       "Location": {
         "Controller": "Security",
-        "Action": "Index"
+        "Action": "Index",
+        "Field": "CreateLog"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -1341,12 +1333,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.CreateLog",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.CreateLog",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: everyone may create logs; no group lock",
+      "AllowedValues": "Actions 3, 0, 1, 2 and selected department role IDs for action 2; no group lock",
+      "EvidenceSource": "ClaimsLogic.AddLogClaims (Log:View, Update, Create) → Log_Create on MVC LogsController (web only); copied to Create Record and Finalize Records at Records activation",
+      "Availability": "available"
     },
     {
       "Id": "permission.CreateShift",
@@ -1359,10 +1349,11 @@
       "Secret": false,
       "Location": {
         "Controller": "Security",
-        "Action": "Index"
+        "Action": "Index",
+        "Field": "CreateShift"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -1375,12 +1366,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.CreateShift",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.CreateShift",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: department admins create, edit and delete shifts; everyone can view; group admins still manage sign-ups for their own groups",
+      "AllowedValues": "Actions 0, 1, 2 and selected department role IDs for action 2; no group lock",
+      "EvidenceSource": "ClaimsLogic.AddShiftClaims (Shift:*) → Shift_* on MVC ShiftsController and WorkshiftsController; AuthorizationService.GetShiftManagementScopeAsync for sign-up review in the apps; sign-ups on the web, in the apps and through the chatbot (ShiftSignupHandler) go through ShiftsService.SignupUserForShiftDayAsync",
+      "Availability": "available"
     },
     {
       "Id": "permission.AdjustInventory",
@@ -1393,10 +1382,11 @@
       "Secret": false,
       "Location": {
         "Controller": "Security",
-        "Action": "Index"
+        "Action": "Index",
+        "Field": "AdjustInventory"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -1409,12 +1399,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.AdjustInventory",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.AdjustInventory",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: department admins only for inventory changes and Records inventory usage; the Security screen preselects Department admins",
+      "AllowedValues": "Actions 3, 0, 1, 2 and selected department role IDs for action 2; the screen always saves no group lock",
+      "EvidenceSource": "InventoryAuthorizationService.RequireAsync on every inventory write (MVC and v4 InventoryController, apps) and ClaimsLogic.AddInventoryClaims (Inventory:*) for archive; RecordsAuthorizationService.CanUseSourceInventoryAsync for Records usage (missing row = department admins)",
+      "Availability": "available"
     },
     {
       "Id": "permission.CreateMessage",
@@ -1427,10 +1415,11 @@
       "Secret": false,
       "Location": {
         "Controller": "Security",
-        "Action": "Index"
+        "Action": "Index",
+        "Field": "CreateMessage"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -1443,12 +1432,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.CreateMessage",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.CreateMessage",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: everyone may send messages and post in chat; no group lock",
+      "AllowedValues": "Actions 3, 0, 1, 2 and selected department role IDs for action 2; no group lock",
+      "EvidenceSource": "ClaimsLogic.AddMessageClaims (Messages:*) → Messages_Create / _Update on MVC MessagesController and v4 MessagesController, ChatController and ChatbotController; the chatbot MessageSendHandler evaluates the same row; v4 rights CanCreateMessage",
+      "Availability": "available"
     },
     {
       "Id": "permission.DeleteCall",
@@ -1461,10 +1448,11 @@
       "Secret": false,
       "Location": {
         "Controller": "Security",
-        "Action": "Index"
+        "Action": "Index",
+        "Field": "DeleteCall"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -1477,12 +1465,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.DeleteCall",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.DeleteCall",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: any member who can see the call may delete it; group-only lock off",
+      "AllowedValues": "Actions 3, 0, 1, 2 and selected department role IDs for action 2; the group-only box limits everyone but department admins to calls their own group was dispatched on, including with Everyone",
+      "EvidenceSource": "AuthorizationService.CanUserDeleteCallAsync via PermissionsService.IsUserAllowed (source-group overload; Everyone + group lock admits department admins and members of a dispatched group) with the Call_Delete claim on MVC DispatchController and v4 CallsController",
+      "Availability": "available"
     },
     {
       "Id": "permission.CloseCall",
@@ -1495,10 +1481,11 @@
       "Secret": false,
       "Location": {
         "Controller": "Security",
-        "Action": "Index"
+        "Action": "Index",
+        "Field": "CloseCall"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -1511,12 +1498,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.CloseCall",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.CloseCall",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: any member who can see the call may close or re-open it; group-only lock off",
+      "AllowedValues": "Actions 3, 0, 1, 2 and selected department role IDs for action 2; the group-only box limits everyone but department admins to calls their own group was dispatched on, including with Everyone",
+      "EvidenceSource": "AuthorizationService.CanUserCloseCallAsync via PermissionsService.IsUserAllowed (source-group overload; Everyone + group lock admits department admins and members of a dispatched group) with the Call_Update claim on MVC DispatchController CloseCall and ReOpenCall and v4 CallsController; the chatbot close-call path checks the same Create Call rule first (CanUserCreateCallAsync)",
+      "Availability": "available"
     },
     {
       "Id": "permission.AddCallData",
@@ -1529,10 +1514,11 @@
       "Secret": false,
       "Location": {
         "Controller": "Security",
-        "Action": "Index"
+        "Action": "Index",
+        "Field": "AddCallData"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -1545,12 +1531,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.AddCallData",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.AddCallData",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: anyone who can see the call may add notes, images, files and video feeds; group-only lock off",
+      "AllowedValues": "Actions 3, 0, 1, 2 and selected department role IDs for action 2; the group-only box limits everyone but department admins to calls their own group was dispatched on, including with Everyone",
+      "EvidenceSource": "AuthorizationService.CanUserAddCallDataAsync via PermissionsService.IsUserAllowed (source-group overload) plus group-scoped dispatch: MVC DispatchController AddCallNote and AttachCallFile (file attach also needs CanUserEditCallAsync), FilesController call file and image upload (also CanUserEditCallAsync), v4 CallNotesController SaveCallNote, CallFilesController SaveCallFile and CallVideoFeedsController save/edit/delete (the SMTP relay system key is exempt); notes and files are always authored by the signed-in member",
+      "Availability": "available"
     },
     {
       "Id": "permission.ContactEdit",
@@ -1563,10 +1547,11 @@
       "Secret": false,
       "Location": {
         "Controller": "Security",
-        "Action": "Index"
+        "Action": "Index",
+        "Field": "EditContacts"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -1579,12 +1564,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ContactEdit",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ContactEdit",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: everyone may add and edit contacts; no group lock",
+      "AllowedValues": "Actions 3, 0, 1, 2 and selected department role IDs for action 2; no group lock",
+      "EvidenceSource": "ClaimsLogic.AddContactsClaims (Contacts:Create, Contacts:Update) → Contacts_Create / Contacts_Update policies (MVC ContactsController add/edit, categories, pre-plans, hazards, attachments; v4 pre-plan, hazard and file uploads)",
+      "Availability": "available"
     },
     {
       "Id": "permission.ContactView",
@@ -1597,10 +1580,11 @@
       "Secret": false,
       "Location": {
         "Controller": "Security",
-        "Action": "Index"
+        "Action": "Index",
+        "Field": "ViewContacts"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -1613,12 +1597,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ContactView",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ContactView",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: everyone may view contacts; no group lock. Exception: inventory purchasing and vendor-contact reads treat a missing row as department admins only",
+      "AllowedValues": "Actions 3, 0, 1, 2 and selected department role IDs for action 2; no group lock",
+      "EvidenceSource": "ClaimsLogic.AddContactsClaims (Contacts:View) → Contacts_View policy (MVC and v4 ContactsController, ContactFilesController, Unified Search contact family) and the claim on call paths: MVC Dispatch ViewCall site info and contacts tab, RevealCall, GetAlertNotesForContact, NewCall/UpdateCall pickers, CallExport; v4 Calls GetCallSiteInfo; InventoryAuthorizationService for vendor contacts",
+      "Availability": "available"
     },
     {
       "Id": "permission.ContactDelete",
@@ -1631,10 +1613,11 @@
       "Secret": false,
       "Location": {
         "Controller": "Security",
-        "Action": "Index"
+        "Action": "Index",
+        "Field": "DeleteContacts"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -1647,12 +1630,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ContactDelete",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ContactDelete",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: everyone may delete contacts; no group lock",
+      "AllowedValues": "Actions 3, 0, 1, 2 and selected department role IDs for action 2; no group lock",
+      "EvidenceSource": "ClaimsLogic.AddContactsClaims (Contacts:Delete) → Contacts_Delete policy plus AuthorizationService.CanUserDeleteContactAsync (MVC ContactsController delete, categories, pre-plans, hazards, attachments; v4 pre-plan, hazard and file deletes)",
+      "Availability": "available"
     },
     {
       "Id": "permission.CreateWorkflow",
@@ -1665,10 +1646,11 @@
       "Secret": false,
       "Location": {
         "Controller": "Security",
-        "Action": "Index"
+        "Action": "Index",
+        "Field": "CreateWorkflow"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -1681,12 +1663,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.CreateWorkflow",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.CreateWorkflow",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: department admins create, edit and delete workflows; every member can open and read workflows. The screen shows a disabled \"not saved\" option, and saving Department admins also hides workflows from non-admins on the web and in the API",
+      "AllowedValues": "Actions 0, 1, 2 and selected department role IDs for action 2 (Everyone is not offered); no group lock",
+      "EvidenceSource": "ClaimsLogic.AddWorkflowClaims (Workflow:*) → Workflow_* policies paired with the controllers' own manage check (MVC and v4 WorkflowsController, including v4 GetAll/GetById, ValidateCondition and run-log rendered output); WorkflowExportAttachmentRule requires Export Records and Manage Record Reports for Records export steps; v4 rights CanCreateWorkflow",
+      "Availability": "available"
     },
     {
       "Id": "permission.ManageWorkflowCredentials",
@@ -1699,10 +1679,11 @@
       "Secret": false,
       "Location": {
         "Controller": "Security",
-        "Action": "Index"
+        "Action": "Index",
+        "Field": "ManageWorkflowCredentials"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -1715,12 +1696,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ManageWorkflowCredentials",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ManageWorkflowCredentials",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: department admins create, edit and delete credentials; every member can list credential names and types (secrets are always masked). The screen shows a disabled \"not saved\" option, and saving Department admins also hides credentials from non-admins on the web and in the API",
+      "AllowedValues": "Actions 0, 1, 2 and selected department role IDs for action 2 (Everyone is not offered); no group lock",
+      "EvidenceSource": "ClaimsLogic.AddWorkflowCredentialClaims (WorkflowCredential:*) → WorkflowCredential_* policies paired with the manage-credentials check (MVC WorkflowsController, v4 WorkflowsController GetCredentials and WorkflowCredentialsController); credentials that deliver a Records export also follow WorkflowExportAttachmentRule",
+      "Availability": "available"
     },
     {
       "Id": "permission.ViewWorkflowRuns",
@@ -1733,10 +1712,11 @@
       "Secret": false,
       "Location": {
         "Controller": "Security",
-        "Action": "Index"
+        "Action": "Index",
+        "Field": "ViewWorkflowRuns"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -1749,12 +1729,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ViewWorkflowRuns",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ViewWorkflowRuns",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: every member can view workflow runs, logs, health and pending runs; only department admins can cancel or clear them. The screen shows a disabled \"not saved\" option, and saving Department admins hides runs from non-admins. Rendered output and results show only to people who may edit workflows",
+      "AllowedValues": "Actions 0, 1, 2, 3 and selected department role IDs for action 2; no group lock. Choosing Everyone also lets every member cancel and clear runs",
+      "EvidenceSource": "ClaimsLogic.AddWorkflowRunClaims (WorkflowRun:*) → WorkflowRun_* policies paired with the view-runs check (MVC and v4 WorkflowsController runs, health, pending, cancel, clear); RenderedOutput and ActionResult blanked unless the CreateWorkflow check passes",
+      "Availability": "available"
     },
     {
       "Id": "permission.ViewUdfFields",
@@ -1770,7 +1748,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -1783,12 +1761,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ViewUdfFields",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ViewUdfFields",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "Not shown on any configuration screen. No permission row: every member may view and fill in custom field values through the API; department admins always have full access",
+      "AllowedValues": "Not configurable from the web today",
+      "EvidenceSource": "ClaimsLogic.AddUdfClaims (Udf:View, Udf:Update) → Udf_View / Udf_Update on v4 UserDefinedFieldsController (plus the entity's own view/edit rule) and MVC UserDefinedFieldsController; UserDefinedFieldsService.FilterValuesVisibleToUserAsync applies the claim and each field's visibility on v4 Calls, Units and Personnel reads; the custom field admin pages require a department administrator regardless",
+      "Availability": "available"
     },
     {
       "Id": "permission.ManageRoutes",
@@ -1804,7 +1780,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -1817,12 +1793,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ManageRoutes",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ManageRoutes",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "Not shown on any configuration screen. No permission row: every member may view routes and group admins may also create and edit them; department admins always have full access",
+      "AllowedValues": "Not configurable from the web today",
+      "EvidenceSource": "ClaimsLogic.AddRouteClaims (Route:*) → Route_* policies on MVC and v4 RoutesController; starting, stopping and checking in at stops need Route_Update",
+      "Availability": "available"
     },
     {
       "Id": "permission.DeleteLog",
@@ -1835,10 +1809,11 @@
       "Secret": false,
       "Location": {
         "Controller": "Security",
-        "Action": "Index"
+        "Action": "Index",
+        "Field": "DeleteLog"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -1851,12 +1826,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.DeleteLog",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.DeleteLog",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: everyone may delete logs; no group lock",
+      "AllowedValues": "Actions 3, 0, 1, 2 and selected department role IDs for action 2; no group lock",
+      "EvidenceSource": "ClaimsLogic.AddDeleteLogClaims (Log:Delete) → Log_Delete on MVC LogsController (web only); copied to Delete Record at Records activation",
+      "Availability": "available"
     },
     {
       "Id": "permission.UseCalendarSync",
@@ -1869,10 +1842,11 @@
       "Secret": false,
       "Location": {
         "Controller": "Security",
-        "Action": "Index"
+        "Action": "Index",
+        "Field": "UseCalendarSync"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -1885,12 +1859,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.UseCalendarSync",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.UseCalendarSync",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: everyone may turn on calendar sync and the feed is served; no group lock",
+      "AllowedValues": "Actions 3, 0, 1, 2 and selected department role IDs for action 2; no group lock",
+      "EvidenceSource": "PermissionsService.IsUserAllowed in CalendarController (subscribe, activate, regenerate) and v4 CalendarExportController (subscription URL and the anonymous feed, re-checked on every fetch); CalendarService.ValidateCalendarFeedTokenAsync also refuses the feed once the member is removed from or disabled in the token's department",
+      "Availability": "available"
     },
     {
       "Id": "permission.DispatchAppLogin",
@@ -1903,10 +1875,11 @@
       "Secret": false,
       "Location": {
         "Controller": "Security",
-        "Action": "Index"
+        "Action": "Index",
+        "Field": "DispatchAppLogin"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -1919,12 +1892,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.DispatchAppLogin",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.DispatchAppLogin",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: every active member counts as a dispatcher; no group lock",
+      "AllowedValues": "Actions 3, 0, 1, 2 and selected department role IDs for action 2; no group lock",
+      "EvidenceSource": "DispatchAccessService.CanUseDispatchAsync / GetDispatchUserIdsAsync via PermissionGateServiceBase (IsUserAllowed); v4 rights CanLoginToDispatchApp; ChatPermissionService dispatch-visible channels",
+      "Availability": "available"
     },
     {
       "Id": "permission.CommandAppLogin",
@@ -1937,10 +1908,11 @@
       "Secret": false,
       "Location": {
         "Controller": "Security",
-        "Action": "Index"
+        "Action": "Index",
+        "Field": "CommandAppLogin"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -1953,12 +1925,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.CommandAppLogin",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.CommandAppLogin",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: every active member may use incident command; no group lock. Command assist is only granted when a rule other than Everyone is saved",
+      "AllowedValues": "Actions 3, 0, 1, 2 and selected department role IDs for action 2; no group lock",
+      "EvidenceSource": "CommandAccessService.CanUseCommandAsync via PermissionGateServiceBase (IsUserAllowed); v4 RequiresIncidentCapability filter and per-action checks on every IncidentCommand, IncidentResources, IncidentRoles, IncidentVoice, IncidentReporting and MutualAid read; v4 Sync Changes/Bundle board payload; chatbot IncidentContextResolver; v4 rights CanLoginToCommandApp",
+      "Availability": "available"
     },
     {
       "Id": "permission.ManageDepartmentDataProtection",
@@ -1974,7 +1944,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -1987,12 +1957,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ManageDepartmentDataProtection",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ManageDepartmentDataProtection",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "Not offered on the Security screen; not read by any runtime check",
+      "AllowedValues": "None — not offered on the Security screen and refused by SetPermission (PermissionScreenCatalog); a previously stored row still loads but grants and restricts nothing",
+      "EvidenceSource": "No runtime consumer (no claim, no IsUserAllowed call); DataProtectionController checks IsUserDepartmentAdmin and DepartmentDataProtectionService checks Department.ManagingUserId",
+      "Availability": "available"
     },
     {
       "Id": "permission.ViewProtectedCallData",
@@ -2005,10 +1973,11 @@
       "Secret": false,
       "Location": {
         "Controller": "Security",
-        "Action": "Index"
+        "Action": "Index",
+        "Field": "ViewProtectedCallData"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -2021,12 +1990,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ViewProtectedCallData",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ViewProtectedCallData",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: everyone (every active member who can view the call is eligible for SMS and voice PIN release); no group lock",
+      "AllowedValues": "Actions 3, 0, 1, 2 and selected department role IDs for action 2; no group lock",
+      "EvidenceSource": "AdpReleaseService.Eligible via PermissionsService.IsUserAllowed — SMS dispatch and voice PIN challenge and release (CommunicationService, TwilioController)",
+      "Availability": "available"
     },
     {
       "Id": "permission.EditProtectedCallData",
@@ -2042,7 +2009,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -2055,12 +2022,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.EditProtectedCallData",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.EditProtectedCallData",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "Not offered on the Security screen; not read by any runtime check",
+      "AllowedValues": "None — not offered on the Security screen and refused by SetPermission (PermissionScreenCatalog); a previously stored row still loads but grants and restricts nothing",
+      "EvidenceSource": "No runtime consumer; protected call edits follow the call edit policies plus a Protected Data Grant",
+      "Availability": "available"
     },
     {
       "Id": "permission.ViewProtectedPersonnelData",
@@ -2076,7 +2041,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -2089,12 +2054,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ViewProtectedPersonnelData",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ViewProtectedPersonnelData",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "Not offered on the Security screen; not read by any runtime check",
+      "AllowedValues": "None — not offered on the Security screen and refused by SetPermission (PermissionScreenCatalog); a previously stored row still loads but grants and restricts nothing",
+      "EvidenceSource": "No runtime consumer; personnel reveal is gated by Personnel_View, CanUserViewUserAsync and a Protected Data Grant (PersonnelController.RevealPerson)",
+      "Availability": "available"
     },
     {
       "Id": "permission.ViewProtectedContactData",
@@ -2110,7 +2073,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -2123,12 +2086,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ViewProtectedContactData",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ViewProtectedContactData",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "Not offered on the Security screen; not read by any runtime check",
+      "AllowedValues": "None — not offered on the Security screen and refused by SetPermission (PermissionScreenCatalog); a previously stored row still loads but grants and restricts nothing",
+      "EvidenceSource": "No runtime consumer; contact reveal is gated by Contacts_View (pre-plans by Contacts_Update) and a Protected Data Grant (ContactsController)",
+      "Availability": "available"
     },
     {
       "Id": "permission.ViewProtectedOperationalData",
@@ -2144,7 +2105,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -2157,12 +2118,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ViewProtectedOperationalData",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ViewProtectedOperationalData",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "Not offered on the Security screen; not read by any runtime check",
+      "AllowedValues": "None — not offered on the Security screen and refused by SetPermission (PermissionScreenCatalog); a previously stored row still loads but grants and restricts nothing",
+      "EvidenceSource": "No runtime consumer; operational reveal (logs, documents, calendar, custom fields, Records) follows each module's own policy plus a Protected Data Grant (ProtectedReadService.AuthorizeGrantAsync)",
+      "Availability": "available"
     },
     {
       "Id": "permission.ExportProtectedData",
@@ -2178,7 +2137,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -2191,12 +2150,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ExportProtectedData",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ExportProtectedData",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "Not offered on the Security screen; not read by any runtime check",
+      "AllowedValues": "None — not offered on the Security screen and refused by SetPermission (PermissionScreenCatalog); a previously stored row still loads but grants and restricts nothing",
+      "EvidenceSource": "No runtime consumer; each export follows its own module's export permission",
+      "Availability": "available"
     },
     {
       "Id": "permission.ConfigureProtectedDataEgress",
@@ -2209,10 +2166,11 @@
       "Secret": false,
       "Location": {
         "Controller": "Security",
-        "Action": "Index"
+        "Action": "Index",
+        "Field": "ConfigureProtectedDataEgress"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -2225,12 +2183,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ConfigureProtectedDataEgress",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ConfigureProtectedDataEgress",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: department admins only; no group lock",
+      "AllowedValues": "Actions 0–2 and selected department role IDs for action 2 (Everyone is not offered); no group lock",
+      "EvidenceSource": "ProtectedWorkflowService.CanAdministerAsync via PermissionsService.IsUserAllowed (MVC and v4 ProtectedWorkflowsController, WorkflowsController); the DataProtection release settings (SMS/voice PIN modes) additionally require a department administrator, so actions 1 and 2 do not reach them",
+      "Availability": "available"
     },
     {
       "Id": "permission.BreakGlassProtectedData",
@@ -2246,7 +2202,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -2259,12 +2215,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.BreakGlassProtectedData",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.BreakGlassProtectedData",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "Not offered on the Security screen; not read by any runtime check",
+      "AllowedValues": "None — a retired identifier kept so previously stored rows still load; SetPermission refuses it (PermissionScreenCatalog)",
+      "EvidenceSource": "No runtime consumer; staff support access uses the BackOffice flow with customer consent, fresh MFA and independent approval (support consent on the Data Protection page)",
+      "Availability": "available"
     },
     {
       "Id": "permission.CreateRecord",
@@ -2280,7 +2234,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -2293,12 +2247,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.CreateRecord",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.CreateRecord",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: everyone; no group lock",
+      "AllowedValues": "Actions 3, 0, 1, 2, 4 and selected department role IDs for actions 2 and 4; no group lock (the group-only box is not offered and a lock saved earlier is ignored)",
+      "EvidenceSource": "ClaimsLogic.AddRecordClaims (Record:Create) → Record_Create policy (MVC and v4 RecordsController, IncidentReportsController, FieldRecordsController); RecordsAuthorizationService.HasPermissionAsync",
+      "Availability": "available"
     },
     {
       "Id": "permission.DeleteRecord",
@@ -2314,7 +2266,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -2327,12 +2279,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.DeleteRecord",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.DeleteRecord",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: everyone; no group lock",
+      "AllowedValues": "Actions 3, 0, 1, 2, 4 and selected department role IDs for actions 2 and 4; no group lock (the group-only box is not offered and a lock saved earlier is ignored)",
+      "EvidenceSource": "ClaimsLogic.AddRecordClaims (Record:Void) → Record_Void policy (MVC and v4 RecordsController Void/Cancel, IncidentReportsController) plus RecordsLifecycleAuthority.CanVoidOrCancelAsync in RecordsService and IncidentReportsService (author, owner, reviewer, approver, department admin or the Record's group admin); IncidentAnalysisService void needs the author, owner or a department admin",
+      "Availability": "available"
     },
     {
       "Id": "permission.ReviewRecords",
@@ -2348,7 +2298,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -2361,12 +2311,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ReviewRecords",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ReviewRecords",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: department and group admins; no group lock",
+      "AllowedValues": "Actions 3, 0, 1, 2, 4 and selected department role IDs for actions 2 and 4; no group lock (the group-only box is not offered and a lock saved earlier is ignored), so group admins can review in every group",
+      "EvidenceSource": "ClaimsLogic.AddRecordClaims (Record:Review) → Record_Review policy (IncidentReportsController, RecordsQualityController, v4 RecordsController, FieldRecordsController); RecordsService and RecordsQualityReviewService checks",
+      "Availability": "available"
     },
     {
       "Id": "permission.ApproveRecords",
@@ -2382,7 +2330,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -2395,12 +2343,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ApproveRecords",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ApproveRecords",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: department admins only; no group lock",
+      "AllowedValues": "Actions 3, 0, 1, 2, 4 and selected department role IDs for actions 2 and 4; no group lock (the group-only box is not offered and a lock saved earlier is ignored)",
+      "EvidenceSource": "ClaimsLogic.AddRecordClaims (Record:Approve) → Record_Approve policy on v4 RecordsController Approve only; RecordsService.ApproveAsync enforces approver ≠ author and the definition's approver roles",
+      "Availability": "available"
     },
     {
       "Id": "permission.FinalizeRecords",
@@ -2416,7 +2362,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -2429,12 +2375,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.FinalizeRecords",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.FinalizeRecords",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: everyone; no group lock",
+      "AllowedValues": "Actions 3, 0, 1, 2, 4 and selected department role IDs for actions 2 and 4; no group lock (the group-only box is not offered and a lock saved earlier is ignored)",
+      "EvidenceSource": "ClaimsLogic.AddRecordClaims (Record:Finalize) → Record_Finalize policy (MVC and v4 RecordsController, IncidentReportsController including CorrectAndResubmit, IncidentAnalysisController) plus RecordsLifecycleAuthority.CanFinalizeAsync (author, owner, reviewer, approver, department admin, ReviewRecords, ApproveRecords once approved, AmendRecords for amendments)",
+      "Availability": "available"
     },
     {
       "Id": "permission.AmendRecords",
@@ -2450,7 +2394,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -2463,12 +2407,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.AmendRecords",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.AmendRecords",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: department and group admins; no group lock",
+      "AllowedValues": "Actions 3, 0, 1, 2, 4 and selected department role IDs for actions 2 and 4; no group lock (the group-only box is not offered and a lock saved earlier is ignored)",
+      "EvidenceSource": "ClaimsLogic.AddRecordClaims (Record:Amend) → Record_Amend policy (MVC and v4 RecordsController Amend/AbandonAmendment, IncidentReportsController); IncidentReportsService, RecordsService, RecordsEvidenceService checks",
+      "Availability": "available"
     },
     {
       "Id": "permission.SubmitRecords",
@@ -2484,7 +2426,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -2497,12 +2439,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.SubmitRecords",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.SubmitRecords",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: department admins only; no group lock",
+      "AllowedValues": "Actions 0, 1, 2, 4 and selected department role IDs for actions 2 and 4 (Everyone is not offered); no group lock",
+      "EvidenceSource": "ClaimsLogic.AddRecordClaims (Record:Submit) → Record_Submit policy (RecordSubmissionsController, IncidentReportsController, IncidentAnalysisController, v4); RecordsSubmissionService requires restricted-section access only to read the exchange history",
+      "Availability": "available"
     },
     {
       "Id": "permission.ExportRecords",
@@ -2518,7 +2458,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -2531,12 +2471,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ExportRecords",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ExportRecords",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: everyone; no group lock",
+      "AllowedValues": "Actions 3, 0, 1, 2, 4 and selected department role IDs for actions 2 and 4; no group lock (the group-only box is not offered and a lock saved earlier is ignored)",
+      "EvidenceSource": "ClaimsLogic.AddRecordClaims (Record:Export) → Record_Export policy (RecordsController Export, RecordDocumentsController, RecordDeploymentsController, export templates, saved-report CSV, v4 bulk packet); RecordsExportService (export runs scoped to their builder or Manage Record Reports) and RecordsBulkPacketService",
+      "Availability": "available"
     },
     {
       "Id": "permission.ShareRecordsExternally",
@@ -2552,7 +2490,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -2565,12 +2503,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ShareRecordsExternally",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ShareRecordsExternally",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "Not offered on the Security screen; the claim is still issued (department admins only with no saved row) but nothing uses it yet",
+      "AllowedValues": "None — not offered on the Security screen and refused by SetPermission until a feature uses it (RecordPermissionCatalog ShownOnSecurityScreen = false); a previously stored row still loads",
+      "EvidenceSource": "ClaimsLogic.AddRecordClaims (Record:Share); the Record_Share policy is registered but applied to no endpoint, and no feature creates shares (only reported as CanShare by v4 Records capabilities)",
+      "Availability": "available"
     },
     {
       "Id": "permission.ViewRestrictedRecords",
@@ -2586,7 +2522,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -2599,12 +2535,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ViewRestrictedRecords",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ViewRestrictedRecords",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: department admins only; no group lock",
+      "AllowedValues": "Actions 0, 1, 2, 4 and selected department role IDs for actions 2 and 4 (Everyone is not offered); no group lock (the group-only box is not offered and a lock saved earlier is ignored)",
+      "EvidenceSource": "ClaimsLogic.AddRecordClaims (RecordRestricted:View) → RecordRestricted_View policy (RecordInvestigationsController, MVC and v4) plus live RecordsAuthorizationService checks (RecordsService, RecordsPreventionGate, RecordsDisclosureService, IncidentAttachmentsService, RecordsExportService runs, submission exchange history)",
+      "Availability": "available"
     },
     {
       "Id": "permission.ViewLegacyRecords",
@@ -2620,7 +2554,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -2633,12 +2567,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ViewLegacyRecords",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ViewLegacyRecords",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "Not offered on the Security screen; the claim is still issued (everyone with no saved row) but nothing uses it yet",
+      "AllowedValues": "None — not offered on the Security screen and refused by SetPermission until a page uses it (RecordPermissionCatalog ShownOnSecurityScreen = false); a previously stored row still loads",
+      "EvidenceSource": "ClaimsLogic.AddRecordClaims (RecordLegacy:View); the RecordLegacy_View policy is registered but applied to no endpoint; LogsController remains gated by Log_View",
+      "Availability": "available"
     },
     {
       "Id": "permission.ViewGroupRecords",
@@ -2654,7 +2586,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -2667,12 +2599,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ViewGroupRecords",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ViewGroupRecords",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: no group scoping — every active member sees all department Records",
+      "AllowedValues": "Only the group-only box changes behaviour: with it ticked and Records group visibility set to group-scoped on Records Settings, non-admins see only their own group's Records plus Records they authored, own, review, approve or take part in. The action and role choices do not widen visibility",
+      "EvidenceSource": "RecordsAuthorizationService.GetVisibleGroupIdsAsync / CanUserViewRecordAsync (no claim) — used by Records lists, incident reports, field records, the Records dashboard and Unified Search",
+      "Availability": "available"
     },
     {
       "Id": "permission.ManageRecordDefinitions",
@@ -2688,7 +2618,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -2701,12 +2631,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ManageRecordDefinitions",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ManageRecordDefinitions",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: department admins only; no group lock",
+      "AllowedValues": "Actions 0, 1, 2, 4 and selected department role IDs for actions 2 and 4 (Everyone is not offered); no group lock",
+      "EvidenceSource": "ClaimsLogic.AddRecordClaims (RecordDefinition:Update) → RecordDefinition_Update policy (RecordDefinitionsController, MVC and v4); RecordDefinitionsService.RequireManageAsync",
+      "Availability": "available"
     },
     {
       "Id": "permission.PublishRecordDefinitions",
@@ -2722,7 +2650,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -2735,12 +2663,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.PublishRecordDefinitions",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.PublishRecordDefinitions",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: department admins only; no group lock",
+      "AllowedValues": "Actions 0, 1, 2, 4 and selected department role IDs for actions 2 and 4 (Everyone is not offered); no group lock",
+      "EvidenceSource": "ClaimsLogic.AddRecordClaims (RecordDefinition:Publish) → RecordDefinition_Publish policy (RecordDefinitionsController Publish/Retire); RecordDefinitionsService.RequirePublishAsync, which first requires Manage",
+      "Availability": "available"
     },
     {
       "Id": "permission.ManageRecordReports",
@@ -2756,7 +2682,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -2769,12 +2695,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ManageRecordReports",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ManageRecordReports",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: department admins only; no group lock",
+      "AllowedValues": "Actions 0, 1, 2, 4 and selected department role IDs for actions 2 and 4 (Everyone is not offered); no group lock",
+      "EvidenceSource": "ClaimsLogic.AddRecordClaims (RecordReport:Update) → RecordReport_Update policy (RecordSavedReportsController, MVC and v4); RecordSavedReportsService, RecordsExportService export templates and GetRunAsync/GetRunsAsync (template and scheduled runs), RecordsBulkPacketService DeliverToEmail (or a department admin)",
+      "Availability": "available"
     },
     {
       "Id": "permission.ManageRecordDisclosures",
@@ -2790,7 +2714,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -2803,12 +2727,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ManageRecordDisclosures",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ManageRecordDisclosures",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: department admins only; no group lock",
+      "AllowedValues": "Actions 0, 1, 2, 4 and selected department role IDs for actions 2 and 4 (Everyone is not offered); no group lock",
+      "EvidenceSource": "ClaimsLogic.AddRecordClaims (RecordDisclosure:Update) → RecordDisclosure_Update policy (DisclosuresController, MVC and v4, including reads); RecordsDisclosureService",
+      "Availability": "available"
     },
     {
       "Id": "permission.ManageRecordLegalHold",
@@ -2824,7 +2746,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -2837,12 +2759,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ManageRecordLegalHold",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ManageRecordLegalHold",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: department admins only; no group lock",
+      "AllowedValues": "Actions 0, 1, 2, 4 and selected department role IDs for actions 2 and 4 (Everyone is not offered); no group lock",
+      "EvidenceSource": "ClaimsLogic.AddRecordClaims (RecordLegalHold:Update) → RecordLegalHold_Update policy (RecordLegalHoldsController, MVC and v4); RecordsLegalHoldService checks the permission plus per-Record visibility",
+      "Availability": "available"
     },
     {
       "Id": "permission.ReassignRecordDrafts",
@@ -2858,7 +2778,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -2871,12 +2791,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ReassignRecordDrafts",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ReassignRecordDrafts",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: department and group admins; no group lock",
+      "AllowedValues": "Actions 3, 0, 1, 2, 4 and selected department role IDs for actions 2 and 4; no group lock (the group-only box is not offered and a lock saved earlier is ignored), so group admins can reassign drafts in any group they can see",
+      "EvidenceSource": "ClaimsLogic.AddRecordClaims (Record:Reassign) → Record_Reassign policy (MVC and v4 RecordsController Reassign); RecordsService.ReassignDraftAsync validates the new owner",
+      "Availability": "available"
     },
     {
       "Id": "permission.RecordsPreventionAdmin",
@@ -2892,7 +2810,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -2905,12 +2823,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.RecordsPreventionAdmin",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.RecordsPreventionAdmin",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: department admins only; no group lock",
+      "AllowedValues": "Actions 0, 1, 2, 4 and selected department role IDs for actions 2 and 4 (Everyone is not offered); no group lock",
+      "EvidenceSource": "ClaimsLogic.AddRecordClaims (Record:PreventionAdmin) → Record_PreventionAdmin policy (occupancy, inspection, hydrant and permit controllers, MVC and v4); RecordsPreventionGate.RequireAdminAsync",
+      "Availability": "available"
     },
     {
       "Id": "permission.ManageChecklists",
@@ -2926,7 +2842,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -2939,12 +2855,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ManageChecklists",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ManageChecklists",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: department admins only; no group lock",
+      "AllowedValues": "Actions 0, 1, 2, 4 and selected department role IDs for actions 2 and 4 (Everyone is not offered); no group lock",
+      "EvidenceSource": "ClaimsLogic.AddRecordClaims (Checklist:Update) → Checklist_Update policy (ChecklistsController, scheduling and reminders, v4 ChecklistManagementController) plus live ChecklistAuthorizationService.CanManageAsync",
+      "Availability": "available"
     },
     {
       "Id": "permission.ViewChecklistResults",
@@ -2960,7 +2874,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -2973,12 +2887,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ViewChecklistResults",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ViewChecklistResults",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: department and group admins, with group admins limited to their own group; everyone still sees runs they created or witnessed",
+      "AllowedValues": "Actions 0, 1, 2, 3, 4 and selected department role IDs for actions 2 and 4; the group-only box limits non-admins to their own group's results (ticked by default)",
+      "EvidenceSource": "ChecklistAuthorizationService.ReadFilterAsync / CanReadAsync (ChecklistsService run and history reads, ChecklistReporting, ChecklistMobile for the apps); the ChecklistResults claim is issued but no policy uses it",
+      "Availability": "available"
     },
     {
       "Id": "permission.ManageWorkOrders",
@@ -2994,7 +2906,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -3007,12 +2919,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ManageWorkOrders",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ManageWorkOrders",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: department admins only; no group lock. Others can still raise work orders for their own group and work orders assigned to them",
+      "AllowedValues": "Actions 0, 1, 2, 4 and selected department role IDs for actions 2 and 4 (Everyone is not offered); no group lock",
+      "EvidenceSource": "WorkOrderAuthorizationService.CanManageAsync (WorkOrdersService, policies, recurrences, vendor charges, bulk operations, maintenance) behind MVC and v4 WorkOrdersController; the WorkOrder claim feeds the search palette",
+      "Availability": "available"
     },
     {
       "Id": "permission.ViewAllWorkOrders",
@@ -3028,7 +2938,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -3041,12 +2951,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ViewAllWorkOrders",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ViewAllWorkOrders",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: department and group admins, with group admins limited to their own group; everyone else sees work orders they raised or that are assigned to them or their roles",
+      "AllowedValues": "Actions 0, 1, 2, 3, 4 and selected department role IDs for actions 2 and 4; the group-only box limits non-admins to their own group. With no saved rule the box shows ticked, matching the group limit that applies",
+      "EvidenceSource": "WorkOrderAuthorizationService.ScopeAsync (WorkOrdersService reads and lists, WorkOrderReporting, WorkOrderTimeAnalytics) behind MVC and v4 WorkOrdersController",
+      "Availability": "available"
     },
     {
       "Id": "permission.TransferInventory",
@@ -3062,7 +2970,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -3075,12 +2983,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.TransferInventory",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.TransferInventory",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: follows the Adjust Inventory rule (action, roles and group lock); with neither saved, department admins only",
+      "AllowedValues": "Actions 0, 1, 2, 3, 4 and selected department role IDs for actions 2 and 4; the group-only box requires each location involved to be in the person's own group",
+      "EvidenceSource": "InventoryAuthorizationService.RequireAsync on every transfer line (InventoryPosting) behind MVC InventoryController and v4 PostTransaction / CreateTransfer; no claim",
+      "Availability": "available"
     },
     {
       "Id": "permission.IssueInventory",
@@ -3096,7 +3002,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -3109,12 +3015,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.IssueInventory",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.IssueInventory",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: follows the Adjust Inventory rule (action, roles and group lock); with neither saved, department admins only",
+      "AllowedValues": "Actions 0, 1, 2, 3, 4 and selected department role IDs for actions 2 and 4; the group-only box requires the source location and the recipient to be in the person's own group",
+      "EvidenceSource": "InventoryAuthorizationService.RequireAsync on issue and return lines (InventoryPosting, InventoryIssuance, InventoryCatalog) behind MVC InventoryController and v4 Issue / Return / IssueKit; no claim",
+      "Availability": "available"
     },
     {
       "Id": "permission.ManageControlledSubstances",
@@ -3130,7 +3034,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -3143,12 +3047,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ManageControlledSubstances",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ManageControlledSubstances",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: department admins only; no group lock and no fallback rule",
+      "AllowedValues": "Actions 0, 1, 2, 4 and selected department role IDs for actions 2 and 4 (Everyone is not offered); no group lock",
+      "EvidenceSource": "InventoryAuthorizationService.RequireAsync for controlled items (posting, witness and performer checks, catalog, reports, Records usage, alerts); no claim",
+      "Availability": "available"
     },
     {
       "Id": "permission.ManageInvoicing",
@@ -3164,7 +3066,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -3177,12 +3079,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ManageInvoicing",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ManageInvoicing",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: department admins only; no group lock",
+      "AllowedValues": "Actions 0, 1, 2, 4 and selected department role IDs for actions 2 and 4 (Everyone is not offered); no group lock",
+      "EvidenceSource": "ClaimsLogic.AddRecordClaims (Invoicing:*) → Invoicing_* policies on MVC InvoicingController (including the invoice packet) and Deployments GenerateInvoice, v4 InvoicesController, RateSchedulesController and Bids charges; BusinessOperationsAccessService for entitlement",
+      "Availability": "available"
     },
     {
       "Id": "permission.ViewInvoicing",
@@ -3198,7 +3098,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -3211,12 +3111,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ViewInvoicing",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ViewInvoicing",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: department admins only; no group lock",
+      "AllowedValues": "Actions 0, 1, 2, 4 and selected department role IDs for actions 2 and 4 (Everyone is not offered); no group lock",
+      "EvidenceSource": "ClaimsLogic.AddRecordClaims (Invoicing:View) → Invoicing_View policy on MVC InvoicingController reads (behind the Business Ops module switch), deployment Billing tab charges and invoices, contract detail invoice list, Contacts billing profile, v4 InvoicesController and RateSchedulesController reads; Unified Search invoice and rate-card hits also need the module flags",
+      "Availability": "available"
     },
     {
       "Id": "permission.ManageCertifications",
@@ -3232,7 +3130,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -3245,12 +3143,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ManageCertifications",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ManageCertifications",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: department admins only; no group lock. Every member can still manage their own certification records",
+      "AllowedValues": "Actions 0, 1, 2, 4 and selected department role IDs for actions 2 and 4 (Everyone is not offered); no group lock",
+      "EvidenceSource": "ClaimsLogic.AddRecordClaims (Certifications:*) → Certifications_Update / _Delete policies and CanManage checks on MVC and v4 CertificationsController and the legacy Profile certification actions; CertificationService refuses self-verification and clears the verification of a holder's own changed record",
+      "Availability": "available"
     },
     {
       "Id": "permission.ViewCertifications",
@@ -3266,7 +3162,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -3279,12 +3175,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ViewCertifications",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ViewCertifications",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: department admins only; no group lock. Members always see their own records",
+      "AllowedValues": "Actions 0, 1, 2, 4 and selected department role IDs for actions 2 and 4 (Everyone is not offered); no group lock",
+      "EvidenceSource": "ClaimsLogic.AddRecordClaims (Certifications:View) → Certifications_View policy and CanView checks on MVC and v4 CertificationsController (person, expiring list, unit records, role eligibility) and the legacy Profile certification list, reveal and files; group admin status does not substitute",
+      "Availability": "available"
     },
     {
       "Id": "permission.ManageCertificationSetup",
@@ -3300,7 +3194,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -3313,12 +3207,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ManageCertificationSetup",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ManageCertificationSetup",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: department admins only; no group lock",
+      "AllowedValues": "Actions 0, 1, 2, 4 and selected department role IDs for actions 2 and 4 (Everyone is not offered); no group lock",
+      "EvidenceSource": "ClaimsLogic.AddRecordClaims (Certifications:Setup only) → Certifications_Setup policy and CanSetup checks on MVC and v4 CertificationsController (types, templates, role requirements, settings); setup-only holders land on Types, and Unified Search certification types admit them",
+      "Availability": "available"
     },
     {
       "Id": "permission.ManageBids",
@@ -3334,7 +3226,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -3347,12 +3239,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ManageBids",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ManageBids",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: department admins only; no group lock",
+      "AllowedValues": "Actions 0, 1, 2, 4 and selected department role IDs for actions 2 and 4 (Everyone is not offered); no group lock",
+      "EvidenceSource": "ClaimsLogic.AddRecordClaims (Bids:*) → Bids_* policies on v4 BidsController and CanManage/CanView in MVC BidsController; the deployment wizard needs this and Manage Deployments",
+      "Availability": "available"
     },
     {
       "Id": "permission.ManageContracts",
@@ -3368,7 +3258,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -3381,12 +3271,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ManageContracts",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ManageContracts",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: department admins only; no group lock",
+      "AllowedValues": "Actions 0, 1, 2, 4 and selected department role IDs for actions 2 and 4 (Everyone is not offered); no group lock",
+      "EvidenceSource": "ClaimsLogic.AddRecordClaims (ServiceContracts:View, Update) → ServiceContracts_* policies on v4 ServiceContractsController and CanManage/CanView in MVC ContractsController; the deployment Billing tab compliance checklist; Unified Search contract hits also need the module flags",
+      "Availability": "available"
     },
     {
       "Id": "permission.ManageDeployments",
@@ -3402,7 +3290,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -3415,12 +3303,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ManageDeployments",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ManageDeployments",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: department admins only; no group lock. Members on a deployment's roster (directly or through their unit's crew on the roster) still see it and file their own time and expenses; a live unit seat grants nothing",
+      "AllowedValues": "Actions 0, 1, 2, 4 and selected department role IDs for actions 2 and 4 (Everyone is not offered); no group lock",
+      "EvidenceSource": "ClaimsLogic.AddRecordClaims (Deployments:Update, View) → Deployments_Update policy on v4 DeploymentsController, deployment orders (MVC DeploymentOrdersController, v4 DeploymentOrders) and bid conversion; CanManage/CanView in MVC DeploymentsController; DeploymentService field-member scope from roster rows only; PreApproved expenses set only by managers",
+      "Availability": "available"
     },
     {
       "Id": "permission.ApproveTimeReports",
@@ -3436,7 +3322,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -3449,12 +3335,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ApproveTimeReports",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ApproveTimeReports",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: department admins only; no group lock",
+      "AllowedValues": "Actions 0, 1, 2, 4 and selected department role IDs for actions 2 and 4 (Everyone is not offered); no group lock",
+      "EvidenceSource": "ClaimsLogic.AddRecordClaims (TimeReports:Approve) → TimeReports_Approve policy on v4 TimeReportsController approve and void, and CanApprove in MVC DeploymentsController; TimeTrackingService.ApproveTimeReportAsync refuses the submitter and anyone whose roster seat has hours on the report (TimeReportApproval, timereports_self_approval); SaveExpenseAsync refuses expenses on or dated for an approved or billed report (timereports_locked)",
+      "Availability": "available"
     },
     {
       "Id": "permission.ManageMutualAidReimbursement",
@@ -3470,7 +3354,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -3483,12 +3367,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ManageMutualAidReimbursement",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ManageMutualAidReimbursement",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: department admins only; no group lock. Rostered members still reach their own F-42 and expense drafts",
+      "AllowedValues": "Actions 0, 1, 2, 4 and selected department role IDs for actions 2 and 4 (Everyone is not offered); no group lock",
+      "EvidenceSource": "ClaimsLogic.AddRecordClaims (MutualAidReimbursement:View, Update, Submit, Reconcile) → MutualAidReimbursement_* policies on v4 CalOesMarsController and manager checks in MVC CalOesMarsController; the salary survey also needs View Workforce Compensation and suppresses classifications under three members; Print/Packet hide reimbursement lines from rostered non-viewers",
+      "Availability": "available"
     },
     {
       "Id": "permission.ViewInternalCosts",
@@ -3504,7 +3386,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -3517,12 +3399,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ViewInternalCosts",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ViewInternalCosts",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: department admins only; no group lock. Rostered members still file their own resource usage",
+      "AllowedValues": "Actions 0, 1, 2, 4 and selected department role IDs for actions 2 and 4 (Everyone is not offered); no group lock",
+      "EvidenceSource": "ClaimsLogic.AddRecordClaims (InternalCosts:View) → InternalCosts_View policy on v4 FieldCostController and CanViewInternalCosts in MVC WorkforceController, deployment and bid cost cards; cost-run run/freeze/delete, usage approval and changing others' usage also need Workforce_Update (Manage Workforce Compensation)",
+      "Availability": "available"
     },
     {
       "Id": "permission.ManageWorkforceCompensation",
@@ -3538,7 +3418,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -3551,12 +3431,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ManageWorkforceCompensation",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ManageWorkforceCompensation",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: department admins only; no group lock",
+      "AllowedValues": "Actions 0, 1, 2, 4 and selected department role IDs for actions 2 and 4 (Everyone is not offered); no group lock",
+      "EvidenceSource": "ClaimsLogic.AddRecordClaims (Workforce:View, Update; WorkforceCompensation:View, Update) → CanManage / CanManageCompensation in MVC WorkforceController (web only, including cost runs); CompensationCostService.ApproveProfileAsync refuses the last editor and the employee's own pay (workforce_self_approval)",
+      "Availability": "available"
     },
     {
       "Id": "permission.ViewWorkforceCompensation",
@@ -3572,7 +3450,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -3585,12 +3463,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ViewWorkforceCompensation",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ViewWorkforceCompensation",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: department admins only; no group lock",
+      "AllowedValues": "Actions 0, 1, 2, 4 and selected department role IDs for actions 2 and 4 (Everyone is not offered); no group lock",
+      "EvidenceSource": "ClaimsLogic.AddRecordClaims (Workforce:View, WorkforceCompensation:View) → CanView / CanViewCompensation in MVC WorkforceController (web only) and the Cal OES MARS salary-survey build (CalOesMarsController / CalOesMarsService)",
+      "Availability": "available"
     },
     {
       "Id": "permission.ManagePayDataReporting",
@@ -3606,7 +3482,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -3619,12 +3495,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ManagePayDataReporting",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ManagePayDataReporting",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: department admins only; no group lock",
+      "AllowedValues": "Actions 0, 1, 2, 4 and selected department role IDs for actions 2 and 4 (Everyone is not offered); no group lock",
+      "EvidenceSource": "ClaimsLogic.AddRecordClaims (Workforce:View, PayDataReporting:View, Update) → CanManagePayData in MVC WorkforceController (web only), including the per-worker snapshots on PayDataRun",
+      "Availability": "available"
     },
     {
       "Id": "permission.ExportPayDataReporting",
@@ -3640,7 +3514,7 @@
         "Action": "Index"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
       "Impact": {
         "Risk": "High",
         "AudienceKey": "Impact.Audience",
@@ -3653,12 +3527,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "permission.ExportPayDataReporting",
-      "DefaultValue": "Awaiting consumer review; do not infer access from an absent row",
-      "AllowedValues": "Use the choices validated by the owning Security screen",
-      "EvidenceSource": "Permission inventory; runtime consumer review pending",
-      "Availability": "review-required",
-      "ReviewGap": "Review no-row default, action values, role/group scope, dependent grants, source screens and web/API/mobile enforcement for PermissionTypes.ExportPayDataReporting",
-      "ReviewGapExpiresOn": "2026-10-08T00:00:00Z"
+      "DefaultValue": "No permission row: department admins only; no group lock",
+      "AllowedValues": "Actions 0, 1, 2, 4 and selected department role IDs for actions 2 and 4 (Everyone is not offered); no group lock",
+      "EvidenceSource": "ClaimsLogic.AddRecordClaims (PayDataReporting:View, Export) → CanExportPayData and the artifact download in MVC WorkforceController (web only); runs and aggregate rows only — per-worker snapshots need Manage Pay Data Reporting",
+      "Availability": "available"
     },
     {
       "Id": "table.Department.Name",
@@ -4628,8 +4500,7 @@
       "Secret": false,
       "Location": {
         "Controller": "Security",
-        "Action": "SecurityPolicy",
-        "Field": "SharedModeRequiredApps"
+        "Action": "SecurityPolicy"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",

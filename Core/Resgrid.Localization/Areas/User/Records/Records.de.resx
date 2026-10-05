@@ -112,9 +112,21 @@
   <data name="DefaultLifecyclePreset" xml:space="preserve"><value>Standard-Lebenszyklus für Abteilungsdefinitionen</value></data>
   <data name="ReviewDueHours" xml:space="preserve"><value>Prüffrist (Stunden)</value></data>
   <data name="Numbering" xml:space="preserve"><value>Aktennummerierung</value></data>
-  <data name="IncludeYear" xml:space="preserve"><value>Jahr in Aktennummern aufnehmen</value></data>
   <data name="SequenceWidth" xml:space="preserve"><value>Stellen der Laufnummer</value></data>
-  <data name="PerGroupSequence" xml:space="preserve"><value>Eigene Laufnummer je Wache/Gruppe</value></data>
+  <data name="NumberPattern" xml:space="preserve"><value>Nummernmuster</value></data>
+  <data name="NumberPatternExample" xml:space="preserve"><value>Beispiel:</value></data>
+  <data name="NumberPatternHelp" xml:space="preserve"><value>Verwenden Sie {PREFIX} für den Aktentyp (RUN, TRN, INC usw.), {YYYY} oder {YY} für das Jahr, {GROUP} für die Wache oder Gruppe (G gefolgt von ihrer ID; danach muss -, _ oder . folgen) und {SEQ} für die Laufnummer, die erforderlich ist. Buchstaben, Ziffern, -, _ und . bleiben wie eingegeben. Die Laufnummer beginnt neu, sobald sich der Text um {SEQ} ändert: Mit dem Jahr beginnt sie jedes Jahr neu, und ohne {PREFIX} teilen sich alle Aktentypen eine gemeinsame Laufnummer.</value></data>
+  <data name="NumberPatternInvalid" xml:space="preserve"><value>Das Nummernmuster wurde nicht gespeichert. Verwenden Sie nur Buchstaben, Ziffern, -, _, . und die Platzhalter {PREFIX}, {YYYY}, {YY}, {GROUP} und {SEQ}; {SEQ} genau einmal, jeden Platzhalter höchstens einmal, und nach {GROUP} muss -, _ oder . folgen (höchstens 40 Zeichen).</value></data>
+  <data name="NextNumbersHeader" xml:space="preserve"><value>Nächste Nummern für {0}</value></data>
+  <data name="NextNumbersIntro" xml:space="preserve"><value>Erhöhen Sie die nächste Nummer einer Laufnummer, um an vor Resgrid vergebene Nummern anzuschließen: Nach 2026-0001 bis 2026-0152 geben Sie 153 ein. Lassen Sie ein Feld leer, um die Laufnummer unverändert zu lassen. Eine nächste Nummer kann nur erhöht, nie gesenkt werden, damit keine Nummer doppelt vergeben wird.</value></data>
+  <data name="NextNumberSequence" xml:space="preserve"><value>Laufnummer</value></data>
+  <data name="NextNumberCurrent" xml:space="preserve"><value>Nächste Nummer</value></data>
+  <data name="NextNumberRaiseTo" xml:space="preserve"><value>Nächste erhöhen auf</value></data>
+  <data name="NextNumberBelowCurrent" xml:space="preserve"><value>Eine nächste Nummer kann nur erhöht werden. Diese Laufnummern blieben unverändert, weil die eingegebene Zahl unter der lag, die sie als Nächstes vergeben:</value></data>
+  <data name="NextNumberPatternChanged" xml:space="preserve"><value>Das Nummernmuster wurde geändert, daher wurden die eingegebenen nächsten Nummern nicht übernommen. Prüfen Sie die Laufnummern des neuen Musters und speichern Sie erneut.</value></data>
+  <data name="NextNumberConfirm" xml:space="preserve"><value>Eine erhöhte nächste Nummer kann nicht wieder gesenkt werden. Änderungen speichern?</value></data>
+  <data name="NumberingAllTypes" xml:space="preserve"><value>Alle Aktentypen</value></data>
+  <data name="NumberingNoGroup" xml:space="preserve"><value>Keine Wache/Gruppe</value></data>
   <data name="Retention" xml:space="preserve"><value>Aufbewahrung</value></data>
   <data name="RetentionIntro" xml:space="preserve"><value>Standard: 7 Jahre für normale Akten; unbefristet für Leichenschau und andere eingeschränkte Klassen. Die Aufbewahrungskonfiguration liegt in der Verantwortung dieser Abteilung. Änderungen gelten für die Zukunft und werden protokolliert.</value></data>
   <data name="DepartmentDefaultYears" xml:space="preserve"><value>Abteilungsstandard (Jahre, leer = Systemstandard)</value></data>

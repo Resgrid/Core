@@ -103,6 +103,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IRecordDefinitionsService _definitions;
 		private readonly IRecordTypedValuesService _typedValues;
 		private readonly IContactsService _contacts;
+		private readonly IRecordsNumberingService _numbering;
 
 		public RecordsController(IRecordsService recordsService, IRecordsCutoverService cutoverService, IRecordsAuthorizationService recordsAuthorizationService,
 			IDepartmentsService departmentsService, IDepartmentGroupsService departmentGroupsService, IUnitsService unitsService, ICallsService callsService,
@@ -111,8 +112,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ICompositeViewEngine viewEngine, IPdfProvider pdfProvider, IRecordsSearchService recordsSearch, IDepartmentDataProtectionService dataProtection,
 			IDepartmentProfileMediaService branding, IRecordsPrintLayoutService printLayouts, IRecordsAccountabilityService accountability, IRecordsDashboardService dashboard, IRecordsUdfService udf,
 			IRecordsProtectionService protection, IProtectedGrantContext grantContext, IRecordsRevealService reveal, IRecordDefinitionsService definitions, IRecordTypedValuesService typedValues, IContactsService contacts,
-			IRecordsBulkPacketService bulk, IRecordsFieldRolloutService fieldRollout, IFeatureToggleService featureToggles)
+			IRecordsBulkPacketService bulk, IRecordsFieldRolloutService fieldRollout, IFeatureToggleService featureToggles, IRecordsNumberingService numbering)
 		{
+			_numbering = numbering;
 			_fieldRollout = fieldRollout;
 			_bulk = bulk;
 			_contacts = contacts;
@@ -680,6 +682,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				await _recordsService.FinalizeAsync(DepartmentId, UserId, id, rowVersion, "1", reasonCode, reasonText, cancellationToken);
 				return RedirectToAction("Details", new { id });
 			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
 			catch (RecordConcurrencyException)
 			{
 				return await DetailsWithErrorAsync(id, _localizer["ConcurrencyError"]);
@@ -734,6 +737,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				await _recordsService.VoidAsync(DepartmentId, UserId, id, reasonCode, reasonText, cancellationToken);
 				return RedirectToAction("Details", new { id });
 			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
 			catch (Exception ex) when (ex is ArgumentException || ex is RecordTransitionException)
 			{
 				return await DetailsWithErrorAsync(id, ex.Message);
@@ -773,6 +777,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				await _recordsService.CancelAsync(DepartmentId, UserId, id, cancellationToken);
 				return RedirectToAction("Index");
 			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
 			catch (RecordTransitionException ex)
 			{
 				return await DetailsWithErrorAsync(id, ex.Message);
@@ -1134,13 +1139,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			await _departmentSettingsService.SetRecordsDefaultLifecyclePresetAsync(DepartmentId, model.DefaultLifecyclePreset, cancellationToken);
 			await _departmentSettingsService.SetRecordsReviewDueHoursAsync(DepartmentId, model.ReviewDueHours, cancellationToken);
-			await _departmentSettingsService.SetRecordsNumberingConfigAsync(DepartmentId, new RecordsNumberingConfig
+			// Setting 72: a next number is checked against the pattern being saved and may only rise, so no number is issued twice.
+			var numbering = await _numbering.SaveAsync(DepartmentId, UserId, new RecordsNumberingUpdate
 			{
-				IncludeYear = model.IncludeYear,
+				Pattern = model.NumberPattern,
 				SequenceWidth = model.SequenceWidth,
-				PerGroupSequence = model.PerGroupSequence,
-				NumberAssignment = (int)RmsNumberAssignment.OnFinalize,
-				ResetYearly = model.IncludeYear
+				Year = model.NumberingYear > 0 ? model.NumberingYear : DateTime.UtcNow.Year,
+				NextNumbers = (model.NextNumbers ?? new List<RecordsNextNumberRow>()).Where(r => r?.NextSequence != null)
+					.Select(r => new RecordNextNumberRequest { ScopeKey = r.ScopeKey, NextSequence = r.NextSequence.Value }).ToList()
 			}, cancellationToken);
 			// Turning group scoping on is a deliberate action with a preview (plan 5.7.1): the switch needs the
 			// explicit confirmation; every other change on the form still saves.
@@ -1213,10 +1219,25 @@ namespace Resgrid.Web.Areas.User.Controllers
 			SendAudit(AuditLogTypes.DepartmentSettingsChanged, before.CloneJsonToString(), after.CloneJsonToString());
 
 			after.Message = _localizer["SettingsSaved"];
+			var errors = new List<string>();
 			if (skippedRestricted.Count > 0)
-				after.ErrorMessage = _localizer["RestrictedOverrideConfirm"] + " (" + string.Join(", ", skippedRestricted) + ")";
+				errors.Add(_localizer["RestrictedOverrideConfirm"] + " (" + string.Join(", ", skippedRestricted) + ")");
 			if (groupScopingBlocked)
-				after.ErrorMessage = string.IsNullOrEmpty(after.ErrorMessage) ? _localizer["GroupScopeConfirmRequired"].Value : after.ErrorMessage + " " + _localizer["GroupScopeConfirmRequired"];
+				errors.Add(_localizer["GroupScopeConfirmRequired"]);
+			if (numbering.PatternRejected)
+				errors.Add(_localizer["NumberPatternInvalid"]);
+			if (numbering.BelowCurrent.Count > 0)
+				errors.Add(_localizer["NextNumberBelowCurrent"] + " (" + string.Join(", ", numbering.BelowCurrent.Select(s => s.NextNumber)) + ")");
+			if (numbering.NotApplied > 0)
+				errors.Add(_localizer["NextNumberPatternChanged"]);
+			if (errors.Count > 0)
+				after.ErrorMessage = string.Join(" ", errors);
+
+			// Show what was saved, not what was posted: the sequences can change with the pattern, and a raised number
+			// left in its box would be resubmitted against whichever row lands there. A refused pattern stays for correcting.
+			foreach (var key in ModelState.Keys.Where(k => k.StartsWith(nameof(RecordsSettingsView.NextNumbers), StringComparison.Ordinal)
+				|| k == nameof(RecordsSettingsView.SequenceWidth) || (k == nameof(RecordsSettingsView.NumberPattern) && !numbering.PatternRejected)).ToList())
+				ModelState.Remove(key);
 
 			return View(after);
 		}
@@ -1237,9 +1258,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false),
 				DefaultLifecyclePreset = await _departmentSettingsService.GetRecordsDefaultLifecyclePresetAsync(DepartmentId, true),
 				ReviewDueHours = await _departmentSettingsService.GetRecordsReviewDueHoursAsync(DepartmentId, true),
-				IncludeYear = numbering.IncludeYear,
-				SequenceWidth = numbering.SequenceWidth,
-				PerGroupSequence = numbering.PerGroupSequence,
+				NumberPattern = RecordNumberFormat.EffectivePattern(numbering),
+				SequenceWidth = RecordNumberFormat.EffectiveWidth(numbering.SequenceWidth),
+				NumberingYear = DateTime.UtcNow.Year,
 				DepartmentDefaultYears = retention.DepartmentDefaultYears,
 				GroupVisibilityMode = await _departmentSettingsService.GetRecordsGroupVisibilityModeAsync(DepartmentId, true),
 				GroupScopePreview = await _recordsAuthorizationService.PreviewGroupScopingAsync(DepartmentId),
@@ -1264,6 +1285,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 					Restricted = RmsDefinitionKeys.RestrictedClass.Contains(kv.Key),
 					RetentionYears = existing?.RetentionYears
 				});
+			}
+
+			var sequences = await _numbering.GetSequencesAsync(DepartmentId, numbering, model.NumberingYear);
+			var grouped = sequences.Any(s => s.GroupId.HasValue);
+			var groupNames = grouped
+				? (await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId) ?? new List<DepartmentGroup>()).ToDictionary(g => g.DepartmentGroupId, g => g.Name)
+				: new Dictionary<int, string>();
+			var numberedTypes = RecordsNumberingService.NumberedTypes().Count();
+			foreach (var sequence in sequences)
+			{
+				var label = sequence.DefinitionKeys.Count == numberedTypes ? _localizer["NumberingAllTypes"].Value
+					: string.Join(", ", sequence.DefinitionKeys.Select(k => RmsDefinitionKeys.LockedTypes.TryGetValue(k, out var type) ? type.ToString() : _localizer["IncidentReports"].Value));
+				if (grouped)
+					label += " - " + (sequence.GroupId.HasValue ? (groupNames.TryGetValue(sequence.GroupId.Value, out var groupName) ? groupName : sequence.GroupId.Value.ToString()) : _localizer["NumberingNoGroup"].Value);
+				model.NextNumbers.Add(new RecordsNextNumberRow { ScopeKey = sequence.ScopeKey, Label = label, NextNumber = sequence.NextNumber, CurrentNextSequence = sequence.NextSequence });
 			}
 
 			model.SearchHealth = await _recordsSearch.GetHealthAsync();
@@ -1399,9 +1435,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 				ReassignCandidates = await SelectablePersonnelNamesAsync(),
 				GroupNames = groups.ToDictionary(g => g.DepartmentGroupId, g => g.Name),
 				CanEdit = CanEditRecord(aggregate.Record),
-				CanFinalize = ClaimsAuthorizationHelper.CanFinalizeRecords(),
+				CanFinalize = ClaimsAuthorizationHelper.CanFinalizeRecords() && RecordsLifecycleClaims.MayFinalize(UserId, (RmsRecordState)aggregate.Record.State, aggregate.Record.AmendsRevisionId != null,
+					aggregate.Record.AuthorUserId, aggregate.Record.OwnerUserId, aggregate.Record.ReviewerUserId, aggregate.Record.ApproverUserId),
 				CanAmend = ClaimsAuthorizationHelper.CanAmendRecords(),
-				CanVoid = ClaimsAuthorizationHelper.CanVoidRecords(),
+				CanVoid = ClaimsAuthorizationHelper.CanVoidRecords() && RecordsLifecycleClaims.MayVoidOrCancel(UserId, aggregate.Record.StationGroupId, aggregate.GroupScope,
+					aggregate.Record.AuthorUserId, aggregate.Record.OwnerUserId, aggregate.Record.ReviewerUserId, aggregate.Record.ApproverUserId),
 				CanExport = ClaimsAuthorizationHelper.CanExportRecords(),
 				CanViewRestricted = await CanViewRestrictedAsync(),
 				CanReassign = ClaimsAuthorizationHelper.CanReassignRecordDrafts(),

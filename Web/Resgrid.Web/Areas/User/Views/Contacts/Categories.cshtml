@@ -102,7 +102,7 @@
                                                 <a style="text-decoration:none;" class="btn btn-xs btn-primary" asp-controller="Contacts" asp-action="EditCategory" asp-route-area="User" asp-route-categoryId="@u.ContactCategoryId">@commonLocalizer["Edit"]</a>
                                                 if (u.Contacts.Count() == 0)
                                                 {
-                                                    <a style="text-decoration:none;" class="btn btn-xs btn-danger" asp-controller="Contacts" asp-action="DeleteCategory" asp-route-area="User" asp-route-categoryId="@u.ContactCategoryId" data-confirm="@localizer["RoleCategoryWarning"] @u.Name?" rel="nofollow">@commonLocalizer["Delete"]</a>
+                                                    <button type="button" class="btn btn-xs btn-danger contact-category-delete" data-category-id="@u.ContactCategoryId" data-delete-confirm="@localizer["RoleCategoryWarning"] @u.Name?" disabled>@commonLocalizer["Delete"]</button>
                                                 }
                                             }
                                         </td>
@@ -117,7 +117,15 @@
     </div>
 </div>
 
-@section Scripts
-    {
+@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+{
+    @* DeleteCategory is POST + antiforgery; the row buttons post this form once the page script binds them. *@
+    <form id="deleteCategoryForm" method="post" asp-controller="Contacts" asp-action="DeleteCategory" asp-route-area="User" asp-antiforgery="true" class="hidden">
+        <input type="hidden" name="categoryId" value="" />
+    </form>
+}
 
+@section Scripts
+{
+    <script src="~/js/app/internal/contacts/resgrid.contacts.categories.js" asp-append-version="true" type="text/javascript"></script>
 }

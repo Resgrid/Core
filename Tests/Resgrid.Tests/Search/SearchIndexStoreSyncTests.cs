@@ -130,6 +130,30 @@ namespace Resgrid.Tests.Search
 		}
 
 		[Test]
+		public async Task A_fresh_reader_pulls_when_availability_is_checked()
+		{
+			// UnifiedSearchService checks IsAvailable before it ever calls SearchAsync, so a reader whose local cache starts
+			// empty (a new web pod) never reached GetSearcherManager and never pulled: the index stayed unavailable for good.
+			var store = new InMemorySearchIndexStore();
+			var writer = Host(TempDir(), store);
+			var indexer = new LuceneGlobalSearchIndexer(writer);
+			await indexer.IndexAsync(new[] { GlobalSearchTests.Projection(1, SearchEntityTypes.Call, "1", "Brush fire on Ridge Rd") }, "1.0.0");
+			await indexer.CommitAsync();
+
+			var reader = Host(TempDir(), store);
+			var search = new LuceneGlobalSearchService(reader);
+			System.IO.Directory.EnumerateFiles(reader.IndexPath).Should().BeEmpty("the reader starts with an empty local cache");
+
+			var deadline = DateTime.UtcNow.AddSeconds(10);
+			while (!search.IsAvailable && DateTime.UtcNow < deadline)
+				await Task.Delay(10);
+
+			search.IsAvailable.Should().BeTrue("the availability check starts the first pull");
+			reader.LastSyncedRevision.Should().Be(store.Manifests[SearchIndexNames.Global].Revision);
+			(await search.SearchAsync(1, new GlobalSearchQuery { Text = "brush" })).Hits.Should().ContainSingle();
+		}
+
+		[Test]
 		public async Task A_failing_store_is_not_polled_on_every_reader_call()
 		{
 			// The anonymous health endpoint calls GetSearcherManager on every probe; with no revision applied yet each call

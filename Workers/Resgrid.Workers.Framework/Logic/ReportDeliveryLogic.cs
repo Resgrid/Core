@@ -98,6 +98,8 @@ namespace Resgrid.Workers.Framework.Logic
 					var request = new RestRequest("User/Reports/InternalRunReport", Method.Get);
 					request.AddParameter("type", item.ScheduledTask.Data);
 					request.AddParameter("departmentId", item.Department.DepartmentId);
+					// The subscriber: the endpoint shows what that member may see (contact details need View Personal Info).
+					request.AddParameter("userId", item.ScheduledTask.UserId);
 					request.AddHeader("X-Internal-Reports-Token", Config.SecurityConfig.InternalReportsToken);
 
 						var response = await client.ExecuteAsync(request);

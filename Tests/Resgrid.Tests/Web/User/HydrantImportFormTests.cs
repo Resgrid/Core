@@ -101,6 +101,8 @@ namespace Resgrid.Tests.Web.User
 			builder.Services.AddSingleton(Mock.Of<IRecordsCutoverService>());
 			builder.Services.AddSingleton(Mock.Of<IFeatureToggleService>());
 			builder.Services.AddSingleton(Mock.Of<IDispatchScopeService>());
+			// MappingController filters unit/person positions through the location rules (audit 2026-10-05).
+			builder.Services.AddSingleton(Mock.Of<Resgrid.Model.Services.IAuthorizationService>());
 			builder.Services.AddSingleton(Mock.Of<IDepartmentsService>(d => d.GetDepartmentByIdAsync(77, false) == Task.FromResult(new Department { DepartmentId = 77, TimeZone = "Pacific Standard Time" })));
 			await using var app = builder.Build();
 			var previous = ClaimsAuthorizationHelper._httpContextAccessor;

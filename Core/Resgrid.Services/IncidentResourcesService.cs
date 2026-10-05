@@ -75,13 +75,13 @@ namespace Resgrid.Services
 			return await _adHocUnitRepository.GetByIdAsync(incidentAdHocUnitId);
 		}
 
-		public async Task<List<IncidentAdHocUnit>> GetAdHocUnitsForCallAsync(int departmentId, int callId)
+		public async Task<List<IncidentAdHocUnit>> GetAdHocUnitsForCallAsync(int departmentId, int callId, bool includeReleased = false)
 		{
 			var items = await _adHocUnitRepository.GetAllByDepartmentIdAsync(departmentId);
 			if (items == null)
 				return new List<IncidentAdHocUnit>();
 
-			return items.Where(x => x.CallId == callId && x.ReleasedOn == null).ToList();
+			return items.Where(x => x.CallId == callId && (includeReleased || x.ReleasedOn == null)).ToList();
 		}
 
 		public async Task<bool> ReleaseAdHocUnitAsync(int departmentId, string incidentAdHocUnitId, string userId, CancellationToken cancellationToken = default(CancellationToken))
@@ -133,13 +133,13 @@ namespace Resgrid.Services
 			return personnel;
 		}
 
-		public async Task<List<IncidentAdHocPersonnel>> GetAdHocPersonnelForCallAsync(int departmentId, int callId)
+		public async Task<List<IncidentAdHocPersonnel>> GetAdHocPersonnelForCallAsync(int departmentId, int callId, bool includeReleased = false)
 		{
 			var items = await _adHocPersonnelRepository.GetAllByDepartmentIdAsync(departmentId);
 			if (items == null)
 				return new List<IncidentAdHocPersonnel>();
 
-			return items.Where(x => x.CallId == callId && x.ReleasedOn == null).ToList();
+			return items.Where(x => x.CallId == callId && (includeReleased || x.ReleasedOn == null)).ToList();
 		}
 
 		public async Task<bool> ReleaseAdHocPersonnelAsync(int departmentId, string incidentAdHocPersonnelId, string userId, CancellationToken cancellationToken = default(CancellationToken))

@@ -103,7 +103,9 @@ namespace Resgrid.Services
 			var unitCandidates = await BuildUnitCandidatesAsync(request, scope, config, units, groupsById, now);
 			var personnelCandidates = await BuildPersonnelCandidatesAsync(request, scope, people, groupsById);
 
-			foreach (var candidate in unitCandidates.Cast<Candidate>().Concat(personnelCandidates).Where(c => c.Latitude.HasValue && c.Longitude.HasValue))
+			// A distance or ETA from a position the viewer may not see would let them work the position out, so a hidden
+			// position gets neither (and so no drive-time lookup): it ranks after the rows that have one.
+			foreach (var candidate in unitCandidates.Cast<Candidate>().Concat(personnelCandidates).Where(c => !c.LocationHidden && c.Latitude.HasValue && c.Longitude.HasValue))
 			{
 				var distance = GeoMath.HaversineMeters(request.Latitude, request.Longitude, candidate.Latitude.Value, candidate.Longitude.Value);
 				candidate.DistanceMeters = distance;
@@ -204,7 +206,7 @@ namespace Resgrid.Services
 					IncidentInParentBoundary = ancestors.Any(boundaryGroupIds.Contains),
 					StatusText = StatusText,
 					IsAvailable = IsAvailable,
-					// A position the viewer may not see is withheld here, after it has fed the ranking.
+					// A position the viewer may not see is withheld, and was never measured (see GetBoardAsync).
 					Latitude = LocationHidden ? null : Latitude,
 					Longitude = LocationHidden ? null : Longitude,
 					PositionTimestamp = PositionTimestamp,

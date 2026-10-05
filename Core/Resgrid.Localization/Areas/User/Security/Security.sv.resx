@@ -1226,6 +1226,15 @@
   <data name="PermOptionDepartmentGroupAdminsAndSelectRoles" xml:space="preserve">
     <value>Avdelnings- och gruppadministratörer samt valda roller</value>
   </data>
+  <data name="PermOptionNotSavedCreateWorkflow" xml:space="preserve">
+    <value>Inte sparat: avdelningsadministratörer redigerar, alla kan se</value>
+  </data>
+  <data name="PermOptionNotSavedManageWorkflowCredentials" xml:space="preserve">
+    <value>Inte sparat: avdelningsadministratörer redigerar, alla ser namnen</value>
+  </data>
+  <data name="PermOptionNotSavedViewWorkflowRuns" xml:space="preserve">
+    <value>Inte sparat: alla kan se, avdelningsadministratörer avbryter</value>
+  </data>
   <data name="BreadcrumbSecurity" xml:space="preserve">
     <value>Säkerhet och behörigheter</value>
   </data>
@@ -1317,7 +1326,7 @@
     <value>Vem kan justera lager</value>
   </data>
   <data name="PermAdjustInventoryNote" xml:space="preserve">
-    <value>Det här alternativet avgör vem som får justera lagernivåer i systemet. Som standard kan alla justera lager.</value>
+    <value>Det här alternativet avgör vem som får justera lagernivåer i systemet. Tills ett värde sparas kan bara avdelningsadministratörer justera lager.</value>
   </data>
   <data name="PermViewPersonnelLocationLabel" xml:space="preserve">
     <value>Vem kan se personalens position</value>
@@ -1371,19 +1380,19 @@
     <value>Vem kan skapa/redigera arbetsflöden</value>
   </data>
   <data name="PermCreateWorkflowNote" xml:space="preserve">
-    <value>Det här alternativet avgör vem som får skapa, redigera och ta bort arbetsflöden och arbetsflödessteg. Som standard kan bara avdelningsadministratörer hantera arbetsflöden.</value>
+    <value>Det här alternativet avgör vem som får skapa, redigera och ta bort arbetsflöden och arbetsflödessteg. Tills ett värde sparas kan bara avdelningsadministratörer hantera arbetsflöden och alla medlemmar se dem; att spara ett värde begränsar också vem som kan se dem.</value>
   </data>
   <data name="PermManageWorkflowCredentialsLabel" xml:space="preserve">
     <value>Vem kan hantera autentiseringsuppgifter för arbetsflöden</value>
   </data>
   <data name="PermManageWorkflowCredentialsNote" xml:space="preserve">
-    <value>Det här alternativet avgör vem som får skapa, redigera och ta bort krypterade autentiseringsuppgifter som används av arbetsflödesåtgärder (t.ex. SMTP-lösenord och API-nycklar). Som standard kan bara avdelningsadministratörer hantera autentiseringsuppgifter.</value>
+    <value>Det här alternativet avgör vem som får skapa, redigera och ta bort krypterade autentiseringsuppgifter som används av arbetsflödesåtgärder (t.ex. SMTP-lösenord och API-nycklar). Tills ett värde sparas kan bara avdelningsadministratörer hantera autentiseringsuppgifter och alla medlemmar se deras namn; att spara ett värde begränsar också vem som kan se dem.</value>
   </data>
   <data name="PermViewWorkflowRunsLabel" xml:space="preserve">
     <value>Vem kan se arbetsflödeskörningar</value>
   </data>
   <data name="PermViewWorkflowRunsNote" xml:space="preserve">
-    <value>Det här alternativet avgör vem som får se körhistorik, körloggar och hälsoöversikter för arbetsflöden. Som standard kan bara avdelningsadministratörer se arbetsflödeskörningar.</value>
+    <value>Det här alternativet avgör vem som får se körhistorik, körloggar och hälsoöversikter för arbetsflöden. Tills ett värde sparas kan alla medlemmar se arbetsflödeskörningar och bara avdelningsadministratörer avbryta eller rensa dem; att spara ett annat värde begränsar vem som kan se dem, och att spara Alla låter alla även avbryta och rensa körningar.</value>
   </data>
   <data name="SsoPageTitle" xml:space="preserve">
     <value>Enkel inloggning (SSO) och SCIM</value>
@@ -2106,11 +2115,11 @@
   <data name="PermCommandAppLoginLabel" xml:space="preserve"><value>Inloggning i Command-appen</value></data>
   <data name="PermCommandAppLoginNote" xml:space="preserve"><value>Styr vem som får agera som insatsledare: logga in i IC-appen, upprätta insatsledning för ett larm och visa ledningstavlor. Om du begränsar detta till något annat än Alla kan de personer du väljer också hjälpa till med valfri ledningstavla (tilldela och flytta resurser, köra timers och personalredovisning) utan att ha en ICS-befattning på den — användbart för att låta larmoperatörer hjälpa till i Dispatch-appen. Så länge inställningen är Alla är åtgärder på tavlan begränsade till insatsledaren och tilldelade ICS-roller.</value></data>
   <data name="PermAdpSectionHeader" xml:space="preserve"><value>Avancerat dataskydd</value></data>
-  <data name="PermAdpSectionNote" xml:space="preserve"><value>De här behörigheterna styr vem som får arbeta med krypterade (skyddade) data när tillägget Avancerat dataskydd är aktivt. Varje visning eller redigering kräver dessutom en nylig tvåfaktorsverifiering; de här inställningarna avgör vem som ens får försöka. Till skillnad från de flesta Resgrid-behörigheter får värden som inte har ställts in det visade restriktiva valet som standard.</value></data>
+  <data name="PermAdpSectionNote" xml:space="preserve"><value>När tillägget Avancerat dataskydd är aktivt avgör de här två behörigheterna vem som får ta emot skyddade larmuppgifter via sms eller röstsamtal efter att ha angett sin PIN-kod, och vem som får ändra hur skyddat innehåll lämnar Resgrid. Visning eller redigering av skyddade data på skärmen följer varje sidas egna åtkomstregler plus en nylig tvåfaktorsverifiering. Till skillnad från de flesta Resgrid-behörigheter får värden som inte har ställts in det visade valet som standard.</value></data>
   <data name="PermAdpManageLabel" xml:space="preserve"><value>Hantera inställningar för dataskydd</value></data>
   <data name="PermAdpManageNote" xml:space="preserve"><value>Vem som får ändra inställningar för Avancerat dataskydd, till exempel verifieringsfönstret och alternativ för aviseringarnas innehåll. Köp, registrering och uppsägning är alltid förbehållna avdelningens ansvariga medlem.</value></data>
   <data name="PermAdpViewCallLabel" xml:space="preserve"><value>Visa skyddade larmdata</value></data>
-  <data name="PermAdpViewCallNote" xml:space="preserve"><value>Vem som får visa skyddade larmfält (art, adress, kontaktuppgifter, anteckningar) efter tvåfaktorsverifiering. Standard är Alla eftersom insatspersonal måste kunna läsa ett larm.</value></data>
+  <data name="PermAdpViewCallNote" xml:space="preserve"><value>Vem som får ta emot skyddade larmuppgifter (art, adress, kontaktuppgifter, anteckningar) via sms eller röstsamtal efter att ha angett sin PIN-kod, när PIN-utlämning är aktiverad. Visning på skärmen och i apparna följer åtkomsten till larmet plus tvåfaktorsverifiering. Standard är Alla eftersom insatspersonal måste kunna läsa ett larm.</value></data>
   <data name="PermAdpEditCallLabel" xml:space="preserve"><value>Redigera skyddade larmdata</value></data>
   <data name="PermAdpEditCallNote" xml:space="preserve"><value>Vem som får redigera skyddade larmfält efter tvåfaktorsverifiering. Standard är Alla för att matcha det vanliga arbetsflödet för larm.</value></data>
   <data name="PermAdpViewPersonnelLabel" xml:space="preserve"><value>Visa skyddade personaldata</value></data>

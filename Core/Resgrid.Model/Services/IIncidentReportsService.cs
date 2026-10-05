@@ -27,6 +27,14 @@ namespace Resgrid.Model.Services
 		/// </summary>
 		Task<IncidentReportAggregate> SaveDraftAsync(int departmentId, string userId, string reportId, long expectedRowVersion, IncidentReportDraftInput input, bool canWriteRestricted = false, CancellationToken cancellationToken = default);
 
+		/// <summary>
+		/// Re-reads the source Call, unit and personnel statuses and Incident Command into an editable draft: blank fields
+		/// are filled, a prefilled value the author never corrected follows its source when the source has moved on, and
+		/// units, mutual aid and tactic timestamps the sources now hold are added. Anything the author typed or corrected is
+		/// left alone. For a report started while the incident was still running.
+		/// </summary>
+		Task<IncidentReportRefreshResult> RefreshFromSourcesAsync(int departmentId, string userId, string reportId, long expectedRowVersion, RmsOriginClient origin = RmsOriginClient.Web, CancellationToken cancellationToken = default);
+
 		/// <summary>Runs local validation (and the destination's validate endpoint when asked and configured) and stores the issues on the report.</summary>
 		Task<List<RmsValidationIssue>> ValidateAsync(int departmentId, string reportId, bool includeDestination, CancellationToken cancellationToken = default);
 

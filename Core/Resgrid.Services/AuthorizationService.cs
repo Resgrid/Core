@@ -83,10 +83,9 @@ namespace Resgrid.Services
 
 		/// <summary>
 		/// The visibility matrix is a snapshot: entities created after it was built are simply absent,
-		/// and every matrix check treats "absent" as unrestricted. That is why a unit added yesterday is
-		/// visible to everyone and a user added to a group yesterday can see nothing -- the snapshot
-		/// never mentions either of them. Rather than guess, ask for a rebuild and answer this one
-		/// request permissively; the next request reads a correct matrix.
+		/// and so is the whole matrix when the cache is off or has dropped it. Ask for a rebuild and answer
+		/// this one request from the permission rows (the live helpers below); the next request reads a
+		/// correct matrix.
 		/// </summary>
 		private void RequestMatrixRefresh(int departmentId, SecurityCacheTypes type)
 		{
@@ -475,7 +474,14 @@ namespace Resgrid.Services
 			if (department.IsUserAnAdmin(userId))
 				return true;
 
-			if (permission != null && permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && (adminGroup.IsUserGroupAdmin(userId) && destGroup.DepartmentGroupId == adminGroup.DepartmentGroupId))
+			// A group admin never removes a department admin or the managing user, even one in their own group: the
+			// removal can deactivate the whole account, and only a department admin outranks another.
+			if (department.IsUserAnAdmin(userIdToDelete))
+				return false;
+
+			// Either member can be in no group: then there is no shared group for a group admin to act on.
+			if (permission != null && permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && adminGroup != null && destGroup != null
+			    && adminGroup.IsUserGroupAdmin(userId) && destGroup.DepartmentGroupId == adminGroup.DepartmentGroupId)
 				return true;
 
 			return false;
@@ -912,6 +918,8 @@ namespace Resgrid.Services
 			if (group != null)
 				isGroupAdmin = group.IsUserGroupAdmin(userId);
 
+			// "All" means every person in the department, so this is true only where ResourceVisibilityPermission would
+			// admit every target: locked to group, a group admin sees their own group (and the groups below it), never all.
 			if (permission.Action == (int)PermissionActions.DepartmentAdminsOnly && department.IsUserAnAdmin(userId))
 			{ // Department Admins only
 				return true;
@@ -920,9 +928,9 @@ namespace Resgrid.Services
 			{ // Department and group Admins (not locked to group)
 				return true;
 			}
-			else if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && permission.LockToGroup && (department.IsUserAnAdmin(userId) || isGroupAdmin))
-			{ // Department and group Admins (locked to group)
-				return true; // Department Admins have access.
+			else if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && permission.LockToGroup && department.IsUserAnAdmin(userId))
+			{ // Department and group Admins (locked to group): only department admins see everyone.
+				return true;
 			}
 			else if (permission.Action == (int)PermissionActions.DepartmentAdminsAndSelectRoles && department.IsUserAnAdmin(userId))
 			{
@@ -947,8 +955,8 @@ namespace Resgrid.Services
 				}
 
 			}
-			else if (permission.Action == (int)PermissionActions.Everyone && !permission.LockToGroup)
-			{
+			else if (permission.Action == (int)PermissionActions.Everyone && (!permission.LockToGroup || department.IsUserAnAdmin(userId)))
+			{ // Everyone; locked to group, department admins still see everyone.
 				return true;
 			}
 
@@ -1390,109 +1398,276 @@ namespace Resgrid.Services
 
 		public async Task<bool> CanUserViewPersonViaMatrixAsync(string userToView, string userId, int departmentId)
 		{
-			var matrix = await _cacheProvider.GetAsync<VisibilityPayloadUsers>(string.Format(WhoCanViewPersonnelCacheKey, departmentId));
-
-			// Fail open if the cache is not available for now. -SJ 8-26-2024
-			if (matrix == null)
-				return true;
-
-			if (matrix.EveryoneNoGroupLock)
-				return true;
-
 			if (userToView == userId)
 				return true;
 
-			if (matrix.Users == null || !matrix.Users.ContainsKey(userToView))
-			{
-				RequestMatrixRefresh(departmentId, SecurityCacheTypes.WhoCanViewPersonnel);
-				return true;
-			}
+			var matrix = await _cacheProvider.GetAsync<VisibilityPayloadUsers>(string.Format(WhoCanViewPersonnelCacheKey, departmentId));
 
-			var userViewList = matrix.Users[userToView];
-
-			if (userViewList.Contains(userId))
+			if (matrix != null && matrix.EveryoneNoGroupLock)
 				return true;
 
-			return false;
+			if (matrix?.Users != null && matrix.Users.TryGetValue(userToView, out var userViewList))
+				return userViewList != null && userViewList.Contains(userId);
+
+			// No matrix (cache off, expired or unreadable) or one built before this person existed: answer from the
+			// permission rows. Answering "yes" here let everyone through whenever the cache was off.
+			RequestMatrixRefreshForMissing(departmentId, SecurityCacheTypes.WhoCanViewPersonnel, matrix);
+			return await CanUserViewPersonLiveAsync(userToView, userId, departmentId, PermissionTypes.ViewGroupUsers);
 		}
 
 		public async Task<bool> CanUserViewPersonLocationViaMatrixAsync(string userToView, string userId, int departmentId)
 		{
-			var matrix = await _cacheProvider.GetAsync<VisibilityPayloadUsers>(string.Format(WhoCanViewPersonnelLocationsCacheKey, departmentId));
-
-			// Fail open if the cache is not available for now. -SJ 8-26-2024
-			if (matrix == null)
-				return true;
-
-			if (matrix.EveryoneNoGroupLock)
-				return true;
-
 			if (userToView == userId)
 				return true;
 
-			if (matrix.Users == null || !matrix.Users.ContainsKey(userToView))
-			{
-				RequestMatrixRefresh(departmentId, SecurityCacheTypes.WhoCanViewPersonnelLocations);
-				return true;
-			}
+			var matrix = await _cacheProvider.GetAsync<VisibilityPayloadUsers>(string.Format(WhoCanViewPersonnelLocationsCacheKey, departmentId));
 
-			var userViewList = matrix.Users[userToView];
-
-			if (userViewList.Contains(userId))
+			if (matrix != null && matrix.EveryoneNoGroupLock)
 				return true;
 
-			return false;
+			if (matrix?.Users != null && matrix.Users.TryGetValue(userToView, out var userViewList))
+				return userViewList != null && userViewList.Contains(userId);
+
+			RequestMatrixRefreshForMissing(departmentId, SecurityCacheTypes.WhoCanViewPersonnelLocations, matrix);
+			return await CanUserViewPersonLiveAsync(userToView, userId, departmentId, PermissionTypes.CanSeePersonnelLocations);
 		}
 
 		public async Task<bool> CanUserViewUnitViaMatrixAsync(int unitToView, string userId, int departmentId)
 		{
 			var matrix = await _cacheProvider.GetAsync<VisibilityPayloadUnits>(string.Format(WhoCanViewUnitsCacheKey, departmentId));
 
-			// Fail open if the cache is not available for now. -SJ 8-26-2024
-			if (matrix == null)
+			if (matrix != null && matrix.EveryoneNoGroupLock)
 				return true;
 
-			if (matrix.EveryoneNoGroupLock)
-				return true;
+			if (matrix?.Units != null && matrix.Units.TryGetValue(unitToView, out var userViewList))
+				return userViewList != null && userViewList.Contains(userId);
 
-			if (matrix.Units == null || !matrix.Units.ContainsKey(unitToView))
-			{
-				RequestMatrixRefresh(departmentId, SecurityCacheTypes.WhoCanViewUnits);
-				return true;
-			}
-
-			var userViewList = matrix.Units[unitToView];
-
-			if (userViewList.Contains(userId))
-				return true;
-
-			return false;
+			RequestMatrixRefreshForMissing(departmentId, SecurityCacheTypes.WhoCanViewUnits, matrix);
+			return await CanUserViewUnitLiveAsync(unitToView, userId, departmentId, PermissionTypes.ViewGroupUnits);
 		}
 
 		public async Task<bool> CanUserViewUnitLocationViaMatrixAsync(int unitToView, string userId, int departmentId)
 		{
 			var matrix = await _cacheProvider.GetAsync<VisibilityPayloadUnits>(string.Format(WhoCanViewUnitLocationsCacheKey, departmentId));
 
-			// Fail open if the cache is not available for now. -SJ 8-26-2024
-			if (matrix == null)
+			if (matrix != null && matrix.EveryoneNoGroupLock)
 				return true;
 
-			if (matrix.EveryoneNoGroupLock)
-				return true;
+			if (matrix?.Units != null && matrix.Units.TryGetValue(unitToView, out var userViewList))
+				return userViewList != null && userViewList.Contains(userId);
 
-			if (matrix.Units == null || !matrix.Units.ContainsKey(unitToView))
+			RequestMatrixRefreshForMissing(departmentId, SecurityCacheTypes.WhoCanViewUnitLocations, matrix);
+			return await CanUserViewUnitLiveAsync(unitToView, userId, departmentId, PermissionTypes.CanSeeUnitLocations);
+		}
+
+		public async Task<VisibilityPayloadUnits> GetLiveUnitVisibilityAsync(int departmentId, PermissionTypes permissionType)
+		{
+			var payload = new VisibilityPayloadUnits { GeneratedOn = DateTime.UtcNow };
+			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, permissionType);
+
+			// The same "everyone" shortcut the matrix build takes: no row, or Everyone without the group lock.
+			if (permission == null || (permission.Action == (int)PermissionActions.Everyone && !permission.LockToGroup))
 			{
-				RequestMatrixRefresh(departmentId, SecurityCacheTypes.WhoCanViewUnitLocations);
-				return true;
+				payload.EveryoneNoGroupLock = true;
+				return payload;
 			}
 
-			var userViewList = matrix.Units[unitToView];
+			var viewers = await GetLiveDepartmentViewersAsync(departmentId);
+			var units = await _unitsService.GetUnitsForDepartmentAsync(departmentId) ?? new List<Unit>();
+			var ancestorAdmins = new Dictionary<int, HashSet<string>>();
 
-			if (userViewList.Contains(userId))
+			payload.Units = new Dictionary<int, List<string>>();
+			foreach (var unit in units.Where(x => x != null && x.DepartmentId == departmentId))
+				payload.Units[unit.UnitId] = await GetLiveViewerListAsync(permission, viewers, unit.StationGroupId, ancestorAdmins);
+
+			return payload;
+		}
+
+		public async Task<VisibilityPayloadUsers> GetLivePersonnelVisibilityAsync(int departmentId, PermissionTypes permissionType)
+		{
+			var payload = new VisibilityPayloadUsers { GeneratedOn = DateTime.UtcNow };
+			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, permissionType);
+
+			if (permission == null || (permission.Action == (int)PermissionActions.Everyone && !permission.LockToGroup))
+			{
+				payload.EveryoneNoGroupLock = true;
+				return payload;
+			}
+
+			// Every member is both a target and a viewer.
+			var viewers = await GetLiveDepartmentViewersAsync(departmentId);
+			var ancestorAdmins = new Dictionary<int, HashSet<string>>();
+
+			payload.Users = new Dictionary<string, List<string>>();
+			foreach (var target in viewers)
+				payload.Users[target.UserId] = await GetLiveViewerListAsync(permission, viewers, target.GroupId, ancestorAdmins);
+
+			return payload;
+		}
+
+		#region Live visibility (matrix fallback)
+		/// <summary>
+		/// What a live visibility answer needs to know about the viewer: the permission row, the viewer's admin standing,
+		/// group and roles -- the inputs <see cref="CanUserViewPersonAsync"/> and <see cref="IsUserAllowedForUnitAsync"/>
+		/// read. Kept per instance because the matrix fallback runs once per row of a roster when the matrix is missing;
+		/// reused only briefly in case a scope outlives a request.
+		/// </summary>
+		private sealed class LiveViewer
+		{
+			public string UserId { get; set; }
+			public DateTime LoadedOn { get; set; }
+			public Permission Permission { get; set; }
+			public bool DepartmentFound { get; set; }
+			public bool DepartmentAdmin { get; set; }
+			public bool GroupAdmin { get; set; }
+			public int? GroupId { get; set; }
+			public int[] RoleIds { get; set; }
+		}
+
+		private static readonly TimeSpan LiveViewerLifetime = TimeSpan.FromSeconds(30);
+		private readonly ConcurrentDictionary<string, LiveViewer> _liveViewers = new ConcurrentDictionary<string, LiveViewer>(StringComparer.Ordinal);
+
+		/// <summary>
+		/// A missing matrix is rebuilt only when there is a cache to rebuild it into; one that does not list the entity is
+		/// always stale.
+		/// </summary>
+		private void RequestMatrixRefreshForMissing(int departmentId, SecurityCacheTypes type, object matrix)
+		{
+			if (matrix != null || Config.SystemBehaviorConfig.CacheEnabled)
+				RequestMatrixRefresh(departmentId, type);
+		}
+
+		private async Task<LiveViewer> GetLiveViewerAsync(string userId, int departmentId, PermissionTypes type)
+		{
+			var key = $"{departmentId}_{(int)type}_{userId}";
+
+			if (_liveViewers.TryGetValue(key, out var cached) && DateTime.UtcNow - cached.LoadedOn < LiveViewerLifetime)
+				return cached;
+
+			var viewer = new LiveViewer { UserId = userId, LoadedOn = DateTime.UtcNow };
+			viewer.Permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, type);
+
+			// No row: everyone sees everything, and nothing else needs reading.
+			if (viewer.Permission != null)
+			{
+				var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
+				var group = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
+				var roles = await _personnelRolesService.GetRolesForUserAsync(userId, departmentId);
+
+				viewer.DepartmentFound = department != null;
+				viewer.DepartmentAdmin = department != null && department.IsUserAnAdmin(userId);
+				viewer.GroupAdmin = group != null && group.IsUserGroupAdmin(userId);
+				viewer.GroupId = group?.DepartmentGroupId;
+				viewer.RoleIds = roles?.Select(r => r.PersonnelRoleId).ToArray();
+			}
+
+			_liveViewers[key] = viewer;
+			return viewer;
+		}
+
+		/// <summary>The decision <see cref="CanUserViewPersonAsync"/> and <see cref="IsUserAllowedForUnitAsync"/> make, for a target in <paramref name="targetGroupId"/>.</summary>
+		private async Task<bool> IsVisibleLiveAsync(LiveViewer viewer, int? targetGroupId)
+		{
+			if (viewer.Permission == null)
 				return true;
 
-			return false;
+			if (!viewer.DepartmentFound)
+				return false;
+
+			var ancestorAdmin = !viewer.DepartmentAdmin && viewer.GroupAdmin && viewer.Permission.LockToGroup &&
+				viewer.Permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins &&
+				await IsAdminOfGroupOrAncestorAsync(viewer.UserId, targetGroupId);
+
+			return ResourceVisibilityPermission.Allows(viewer.Permission, viewer.DepartmentAdmin, viewer.GroupAdmin,
+				viewer.GroupId, targetGroupId, viewer.RoleIds, ancestorAdmin);
 		}
+
+		private async Task<bool> CanUserViewPersonLiveAsync(string targetUserId, string userId, int departmentId, PermissionTypes type)
+		{
+			var viewer = await GetLiveViewerAsync(userId, departmentId, type);
+
+			if (viewer.Permission == null)
+				return true;
+
+			var targetGroup = await _departmentGroupsService.GetGroupForUserAsync(targetUserId, departmentId);
+
+			return await IsVisibleLiveAsync(viewer, targetGroup?.DepartmentGroupId);
+		}
+
+		private async Task<bool> CanUserViewUnitLiveAsync(int unitId, string userId, int departmentId, PermissionTypes type)
+		{
+			var viewer = await GetLiveViewerAsync(userId, departmentId, type);
+
+			if (viewer.Permission == null)
+				return true;
+
+			var unit = await _unitsService.GetUnitByIdAsync(unitId);
+
+			if (unit == null || unit.DepartmentId != departmentId)
+				return false;
+
+			return await IsVisibleLiveAsync(viewer, unit.StationGroupId);
+		}
+
+		/// <summary>
+		/// Every current member of the department as a viewer, read in a handful of queries for the whole department.
+		/// The group is the one <see cref="IDepartmentGroupsService.GetGroupForUserAsync"/> would pick.
+		/// </summary>
+		private async Task<List<LiveViewer>> GetLiveDepartmentViewersAsync(int departmentId)
+		{
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
+
+			if (department == null)
+				return new List<LiveViewer>();
+
+			var members = await _departmentsService.GetAllMembersForDepartmentIncludingDeletedAsync(departmentId) ?? new List<DepartmentMember>();
+			var groupIds = await _departmentGroupsService.GetGroupIdsForAllUsersInDepartmentAsync(departmentId) ?? new Dictionary<string, int>();
+			var groups = (await _departmentGroupsService.GetAllGroupsForDepartmentAsync(departmentId) ?? new List<DepartmentGroup>())
+				.Where(x => x != null).GroupBy(x => x.DepartmentGroupId).ToDictionary(x => x.Key, x => x.First());
+			var roles = await _personnelRolesService.GetAllRolesForUsersInDepartmentAsync(departmentId) ?? new Dictionary<string, List<PersonnelRole>>();
+
+			var userIds = members.Where(x => x != null && !x.IsDeleted && !String.IsNullOrWhiteSpace(x.UserId)).Select(x => x.UserId).ToList();
+
+			if (!String.IsNullOrWhiteSpace(department.ManagingUserId))
+				userIds.Add(department.ManagingUserId);
+
+			return userIds.Distinct(StringComparer.OrdinalIgnoreCase).Select(userId =>
+			{
+				int? groupId = groupIds.TryGetValue(userId, out var id) ? id : (int?)null;
+				var group = groupId.HasValue && groups.TryGetValue(groupId.Value, out var found) ? found : null;
+
+				return new LiveViewer
+				{
+					UserId = userId,
+					Permission = null,
+					DepartmentFound = true,
+					DepartmentAdmin = department.IsUserAnAdmin(userId),
+					GroupAdmin = group != null && group.IsUserGroupAdmin(userId),
+					GroupId = groupId,
+					RoleIds = roles.TryGetValue(userId, out var userRoles) ? userRoles?.Select(r => r.PersonnelRoleId).ToArray() : null
+				};
+			}).ToList();
+		}
+
+		/// <summary>Who among <paramref name="viewers"/> may see a target in <paramref name="targetGroupId"/>.</summary>
+		private async Task<List<string>> GetLiveViewerListAsync(Permission permission, List<LiveViewer> viewers, int? targetGroupId,
+			Dictionary<int, HashSet<string>> ancestorAdmins)
+		{
+			HashSet<string> targetAdmins = null;
+
+			if (permission.LockToGroup && permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && targetGroupId.HasValue &&
+			    !ancestorAdmins.TryGetValue(targetGroupId.Value, out targetAdmins))
+			{
+				var admins = await _departmentGroupsService.GetAllAdminsForGroupAndAncestorsAsync(targetGroupId.Value) ?? new List<DepartmentGroupMember>();
+				ancestorAdmins[targetGroupId.Value] = targetAdmins = new HashSet<string>(admins.Where(x => x?.UserId != null).Select(x => x.UserId), StringComparer.OrdinalIgnoreCase);
+			}
+
+			return viewers.Where(viewer => ResourceVisibilityPermission.Allows(permission, viewer.DepartmentAdmin, viewer.GroupAdmin,
+					viewer.GroupId, targetGroupId, viewer.RoleIds,
+					!viewer.DepartmentAdmin && viewer.GroupAdmin && targetAdmins != null && targetAdmins.Contains(viewer.UserId)))
+				.Select(viewer => viewer.UserId).ToList();
+		}
+		#endregion Live visibility (matrix fallback)
 
 		public async Task<bool> CanUserDeleteContactNoteTypeAsync(string userId, string contactNoteTypeId)
 		{

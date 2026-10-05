@@ -487,6 +487,8 @@ namespace Resgrid.Services.Records
 				throw new ArgumentException("A reason code is required to finalize an amendment.", nameof(reasonCode));
 			if (from == RmsRecordState.ReadyForReview)
 				await RequireDefinitionRoleAsync(record, userId, false);
+			if (!await RecordsLifecycleAuthority.CanFinalizeAsync(_authorization, userId, departmentId, from, isAmendment, record.AuthorUserId, record.OwnerUserId, record.ReviewerUserId, record.ApproverUserId))
+				throw new UnauthorizedAccessException("Finalizing another member's Record needs ReviewRecords, AmendRecords for an amendment, or a department administrator.");
 
 			var now = DateTime.UtcNow;
 			var recordType = (RmsOperationalRecordType)record.RecordType.GetValueOrDefault();
@@ -613,6 +615,7 @@ namespace Resgrid.Services.Records
 			RequireTransition(record, from, RmsRecordState.Voided);
 			if (record.AmendsRevisionId != null)
 				throw new RecordTransitionException(recordId, from, RmsRecordState.Voided, "abandon the open amendment first");
+			await RequireCloseOutAsync(record, userId);
 
 			var now = DateTime.UtcNow;
 			var outboxIds = new List<long>();
@@ -651,6 +654,7 @@ namespace Resgrid.Services.Records
 			var record = await LoadRecordAsync(departmentId, recordId);
 			var from = (RmsRecordState)record.State;
 			RequireTransition(record, from, RmsRecordState.Cancelled);
+			await RequireCloseOutAsync(record, userId);
 
 			var now = DateTime.UtcNow;
 			var outboxIds = new List<long>();
@@ -1016,6 +1020,14 @@ namespace Resgrid.Services.Records
 		}
 
 		/// <summary>Roles assigned per definition narrow the underlying permission, never widen it (plan 4.1 presets table).</summary>
+		/// <summary>DeleteRecord voids or cancels only Records the caller wrote, owns, reviews or approves, unless they administer the department or the Record's group.</summary>
+		private async Task RequireCloseOutAsync(RmsOperationalRecord record, string userId)
+		{
+			if (!await RecordsLifecycleAuthority.CanVoidOrCancelAsync(_authorization, _groups, _scopes, userId, record.DepartmentId, record.RmsOperationalRecordId, record.StationGroupId,
+				record.AuthorUserId, record.OwnerUserId, record.ReviewerUserId, record.ApproverUserId))
+				throw new UnauthorizedAccessException("Voiding or cancelling another member's Record needs a department or group administrator.");
+		}
+
 		private async Task RequireDefinitionRoleAsync(RmsOperationalRecord record, string userId, bool approver)
 		{
 			var version = await DefinitionVersionForAsync(record);
@@ -1268,37 +1280,30 @@ namespace Resgrid.Services.Records
 			var config = await _settings.GetRecordsNumberingConfigAsync(record.DepartmentId);
 			var prefixBase = RmsDefinitionKeys.DefaultNumberPrefix(record.DefinitionKey);
 			var year = (record.StartedOn ?? DateTime.UtcNow).Year;
-			var perGroup = config.PerGroupSequence;
-			var perIncident = false;
-			var includeYear = config.IncludeYear;
-			var configuredWidth = config.SequenceWidth;
-			if (record.RecordType == null)
+			// Department definitions carry their own numbering policy (plan 4.1 "Numbering"); the department pattern is the fallback.
+			var numbering = record.RecordType == null ? (await DefinitionVersionForAsync(record))?.Numbering : null;
+			RecordNumberScope scope;
+			if (numbering != null)
 			{
-				// Department definitions carry their own numbering policy (plan 4.1 "Numbering"); the department setting is the fallback.
-				var numbering = (await DefinitionVersionForAsync(record))?.Numbering;
-				if (numbering != null)
-				{
-					if (!string.IsNullOrWhiteSpace(numbering.Prefix)) prefixBase = numbering.Prefix;
-					perGroup = numbering.PerGroupSequence;
-					perIncident = numbering.PerIncidentSequence;
-					includeYear = numbering.ResetYearly;
-					configuredWidth = numbering.SequenceWidth;
-				}
+				var prefix = (string.IsNullOrWhiteSpace(numbering.Prefix) ? prefixBase : numbering.Prefix) + "-";
+				// Incident scope is the narrowest and comes first: ICS-style forms number per incident, and the sequence
+				// resets with the Call rather than with the year. A Record with no Call keeps the wider scope.
+				var incidentScoped = numbering.PerIncidentSequence && record.CallId.HasValue;
+				if (incidentScoped)
+					prefix += "C" + record.CallId.Value + "-";
+				if (numbering.PerGroupSequence && record.StationGroupId.HasValue)
+					prefix += "G" + record.StationGroupId.Value + "-";
+				if (numbering.ResetYearly && !incidentScoped)
+					prefix += year + "-";
+				scope = new RecordNumberScope(prefix, string.Empty, RecordNumberFormat.EffectiveWidth(numbering.SequenceWidth));
 			}
-			var prefix = prefixBase + "-";
-			// Incident scope is the narrowest and comes first: ICS-style forms number per incident, and the sequence
-			// resets with the Call rather than with the year. A Record with no Call keeps the wider scope.
-			var incidentScoped = perIncident && record.CallId.HasValue;
-			if (incidentScoped)
-				prefix += "C" + record.CallId.Value + "-";
-			if (perGroup && record.StationGroupId.HasValue)
-				prefix += "G" + record.StationGroupId.Value + "-";
-			if (includeYear && !incidentScoped)
-				prefix += year + "-";
+			else
+			{
+				scope = RecordNumberFormat.Resolve(RecordNumberFormat.EffectivePattern(config), config.SequenceWidth, prefixBase, year, record.StationGroupId);
+			}
 
-			var width = Math.Max(3, Math.Min(8, configuredWidth <= 0 ? 4 : configuredWidth));
-			var sequence = await _records.GetMaxRecordNumberSequenceAsync(record.DepartmentId, prefix) + 1;
-			return prefix + sequence.ToString("D" + width);
+			var highest = await _records.GetMaxRecordNumberSequenceAsync(record.DepartmentId, scope.Prefix, scope.Suffix);
+			return scope.Format(config.NextSequence(scope.Key, highest));
 		}
 
 		private async Task RecomputeGroupScopeAsync(RecordAggregate aggregate, CancellationToken cancellationToken)

@@ -426,6 +426,13 @@
     </div>
 </div>
 
+@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+{
+    <form id="deleteUnitForm" method="post" asp-controller="Units" asp-action="DeleteUnit" asp-route-area="User" asp-antiforgery="true" class="hidden">
+        <input type="hidden" name="unitId" />
+    </form>
+}
+
 @{
     void UnitTableButtonTemplate(Unit u, int customState, string stateTextColor, string stateColor, string stateText, UnitState unitStatus)
     {
@@ -454,7 +461,8 @@
 
         @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
         {
-            @Html.Raw($"<a type='button' href='{@Url.Action("EditUnit", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-warning'>{Html.Encode(commonLocalizer["Edit"].Value)}</a>&nbsp;<a type='button' href='{@Url.Action("DeleteUnit", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-danger' data-confirm='{Html.Encode(localizer["DeleteUnitWarning"].Value)} {Html.Encode(u.Name)}?' rel='nofollow'>{Html.Encode(commonLocalizer["Delete"].Value)}</a>")
+            // DeleteUnit is POST + antiforgery: the button posts #deleteUnitForm and stays disabled until the page script binds it.
+            @Html.Raw($"<a type='button' href='{@Url.Action("EditUnit", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-warning'>{Html.Encode(commonLocalizer["Edit"].Value)}</a>&nbsp;<button type='button' class='btn btn-xs btn-danger unit-delete' data-unit-id='{u.UnitId}' data-delete-confirm='{Html.Encode(localizer["DeleteUnitWarning"].Value)} {Html.Encode(u.Name)}?' disabled>{Html.Encode(commonLocalizer["Delete"].Value)}</button>")
         }
     }
 }

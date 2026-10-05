@@ -46,7 +46,9 @@ var resgrid;
                         data.split(',').forEach(function (v) {
                             if (v) { $(selector).append(new Option(v, v, true, true)); }
                         });
-                        $(selector).trigger('change');
+                        // Only redraw select2: a plain 'change' would run the handler above and post the
+                        // loaded roles straight back, resetting the group lock on every page load.
+                        $(selector).trigger('change.select2');
                     }
                 });
             }
@@ -360,7 +362,7 @@ var resgrid;
                     $('#viewPersonnelLocationRolesSpan').show();
                     $('#viewPersonnelLocationRolesDiv').hide();
                 }
-                initPermRoles("#viewPersonnelLocationRoles", 11);
+                initPermRoles("#viewPersonnelLocationRoles", 11, function () { return $('#LockViewPersonneLocationToGroup').is(':checked'); });
                 $('#LockViewPersonneLocationToGroup').change(function () {
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=11&perm=' + $('#ViewPersonnelLocation').val() + '&lockToGroup=' + $('#LockViewPersonneLocationToGroup').is(':checked'),
@@ -374,7 +376,7 @@ var resgrid;
                 $('#ViewUnitLocation').change(function () {
                     var val = this.value;
                     $.ajax({
-                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=12&perm=' + val + '&lockToGroup=' + $('#LockViewPersonneLocationToGroup').is(':checked'),
+                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=12&perm=' + val + '&lockToGroup=' + $('#LockViewUnitLocationToGroup').is(':checked'),
                         type: 'POST',
                         headers: { 'RequestVerificationToken': antiForgeryToken() }
                     }).done(function (results) {
@@ -396,7 +398,7 @@ var resgrid;
                     $('#viewUnitLocationsRolesSpan').show();
                     $('#viewUnitLocationsRolesDiv').hide();
                 }
-                initPermRoles("#viewUnitLocationsRoles", 12);
+                initPermRoles("#viewUnitLocationsRoles", 12, function () { return $('#LockViewUnitLocationToGroup').is(':checked'); });
                 $('#LockViewUnitLocationToGroup').change(function () {
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=12&perm=' + $('#ViewUnitLocation').val() + '&lockToGroup=' + $('#LockViewUnitLocationToGroup').is(':checked'),
@@ -442,7 +444,7 @@ var resgrid;
                 $('#ViewGroupsUsers').change(function () {
                     var val = this.value;
                     $.ajax({
-                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=14&perm=' + val,
+                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=14&perm=' + val + '&lockToGroup=' + $('#LockViewGroupsUsersToGroup').is(':checked'),
                         type: 'POST',
                         headers: { 'RequestVerificationToken': antiForgeryToken() }
                     }).done(function (results) {
@@ -466,14 +468,14 @@ var resgrid;
                 }
                 $('#LockViewGroupsUsersToGroup').change(function () {
                     $.ajax({
-                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=14&perm=' + $('#LockViewGroupsUsersToGroup').val() + '&lockToGroup=' + $('#LockViewGroupsUsersToGroup').is(':checked'),
+                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=14&perm=' + $('#ViewGroupsUsers').val() + '&lockToGroup=' + $('#LockViewGroupsUsersToGroup').is(':checked'),
                         type: 'POST',
                         headers: { 'RequestVerificationToken': antiForgeryToken() }
                     }).done(function (results) {
                     });
                 });
 
-                initPermRoles("#viewUsersRoles", 14);
+                initPermRoles("#viewUsersRoles", 14, function () { return $('#LockViewGroupsUsersToGroup').is(':checked'); });
                 ////////////////////////////////////////////////////////
 
                 // Delete Call
@@ -503,7 +505,7 @@ var resgrid;
                     $('#deleteCallsRolesSpan').show();
                     $('#deleteCallsRolesDiv').hide();
                 }
-                initPermRoles("#deleteCallsRoles", 15);
+                initPermRoles("#deleteCallsRoles", 15, function () { return $('#LockDeleteCallToGroup').is(':checked'); });
                 $('#LockDeleteCallToGroup').change(function () {
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=15&perm=' + $('#DeleteCall').val() + '&lockToGroup=' + $('#LockDeleteCallToGroup').is(':checked'),
@@ -541,7 +543,7 @@ var resgrid;
                     $('#closeCallsRolesSpan').show();
                     $('#closeCallsRolesDiv').hide();
                 }
-                initPermRoles("#closeCallsRoles", 16);
+                initPermRoles("#closeCallsRoles", 16, function () { return $('#LockCloseCallToGroup').is(':checked'); });
                 $('#LockCloseCallToGroup').change(function () {
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=16&perm=' + $('#CloseCall').val() + '&lockToGroup=' + $('#LockCloseCallToGroup').is(':checked'),
@@ -579,7 +581,7 @@ var resgrid;
                     $('#addCallDataRolesSpan').show();
                     $('#addCallDataRolesDiv').hide();
                 }
-                initPermRoles("#addCallDataRoles", 17);
+                initPermRoles("#addCallDataRoles", 17, function () { return $('#LockAddCallDataToGroup').is(':checked'); });
                 $('#LockAddCallDataToGroup').change(function () {
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=17&perm=' + $('#AddCallData').val() + '&lockToGroup=' + $('#LockAddCallDataToGroup').is(':checked'),
@@ -617,7 +619,7 @@ var resgrid;
                     $('#viewUnitsRolesSpan').show();
                     $('#viewUnitsRolesDiv').hide();
                 }
-                initPermRoles("#viewUnitsRoles", 18);
+                initPermRoles("#viewUnitsRoles", 18, function () { return $('#LockViewGroupsUnitsToGroup').is(':checked'); });
                 $('#LockViewGroupsUnitsToGroup').change(function () {
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=18&perm=' + $('#ViewGroupsUnits').val() + '&lockToGroup=' + $('#LockViewGroupsUnitsToGroup').is(':checked'),
@@ -886,16 +888,10 @@ var resgrid;
                 initPermRoles("#commandAppLoginRoles", 30);
                 ////////////////////////////////////////////////////////
 
-                // Advanced Data Protection permissions (PermissionTypes 31-39)
+                // Advanced Data Protection permissions: only 32 and 38 are on the screen (31, 33-37 and 39 are enforced nowhere)
                 ////////////////////////////////////////////////////////
                 var adpPermissions = [
-                    { sel: '#ManageDataProtection', type: 31, roles: '#adpManageRoles', span: '#adpManageNoRolesSpan', div: '#adpManageRolesDiv' },
                     { sel: '#ViewProtectedCallData', type: 32, roles: '#adpViewCallRoles', span: '#adpViewCallNoRolesSpan', div: '#adpViewCallRolesDiv' },
-                    { sel: '#EditProtectedCallData', type: 33, roles: '#adpEditCallRoles', span: '#adpEditCallNoRolesSpan', div: '#adpEditCallRolesDiv' },
-                    { sel: '#ViewProtectedPersonnelData', type: 34, roles: '#adpViewPersonnelRoles', span: '#adpViewPersonnelNoRolesSpan', div: '#adpViewPersonnelRolesDiv' },
-                    { sel: '#ViewProtectedContactData', type: 35, roles: '#adpViewContactRoles', span: '#adpViewContactNoRolesSpan', div: '#adpViewContactRolesDiv' },
-                    { sel: '#ViewProtectedOperationalData', type: 36, roles: '#adpViewOperationalRoles', span: '#adpViewOperationalNoRolesSpan', div: '#adpViewOperationalRolesDiv' },
-                    { sel: '#ExportProtectedData', type: 37, roles: '#adpExportRoles', span: '#adpExportNoRolesSpan', div: '#adpExportRolesDiv' },
                     { sel: '#ConfigureProtectedDataEgress', type: 38, roles: '#adpEgressRoles', span: '#adpEgressNoRolesSpan', div: '#adpEgressRolesDiv' },
                 ];
                 adpPermissions.forEach(function (p) {
@@ -925,7 +921,8 @@ var resgrid;
                 // Records (RMS) permissions (PermissionTypes 50-67). Rows are rendered from
                 // RecordPermissionCatalog, so the wiring reads each row's data attributes instead of a
                 // fixed list. Values 2 and 4 both take selected roles; rows with a lock checkbox send it
-                // on every write so a dropdown or role change never resets the group lock.
+                // on every write so a dropdown or role change never resets the group lock, and
+                // SetPermission keeps the saved roles when only the action changes.
                 ////////////////////////////////////////////////////////
                 $('tr[data-record-perm]').each(function () {
                     var row = $(this);
@@ -962,10 +959,7 @@ var resgrid;
                         });
                     };
                     $(sel).change(function () {
-                        // SetPermission clears the stored roles; re-apply the ones still selected on screen.
-                        postAction().done(function () {
-                            if (($(roles).val() || []).length > 0) { postRoles(); }
-                        });
+                        postAction();
                         toggleRoles();
                     });
                     $(lock).change(function () { postRoles(); });

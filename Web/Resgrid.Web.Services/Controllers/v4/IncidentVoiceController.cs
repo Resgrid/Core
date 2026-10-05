@@ -22,11 +22,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 	{
 		#region Members and Constructors
 		private readonly IIncidentVoiceService _incidentVoiceService;
+		private readonly ICommandAccessService _commandAccessService;
 
-		public IncidentVoiceController(IIncidentVoiceService incidentVoiceService)
+		public IncidentVoiceController(IIncidentVoiceService incidentVoiceService, ICommandAccessService commandAccessService)
 		{
 			_incidentVoiceService = incidentVoiceService;
+			_commandAccessService = commandAccessService;
 		}
+
+		/// <summary>The command-board read gate IncidentCommandController applies (CommandAppLogin); Command_View alone is a plan-level claim.</summary>
+		private Task<bool> CanReadBoardsAsync() => _commandAccessService.CanUseCommandAsync(DepartmentId, UserId);
 		#endregion Members and Constructors
 
 		/// <summary>Creates an on-demand tactical channel scoped to a call (requires the voice addon).</summary>
@@ -63,6 +68,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.IncidentVoiceChannelsResult>> GetChannelsForCall(int callId)
 		{
+			if (!await CanReadBoardsAsync())
+				return Unauthorized();
+
 			var result = new ICModels.IncidentVoiceChannelsResult();
 			result.Data = await _incidentVoiceService.GetChannelsForCallAsync(DepartmentId, callId);
 			result.PageSize = result.Data.Count;
@@ -77,6 +85,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.VoiceTransmissionLogResult>> LogTransmission([FromBody] ICModels.LogTransmissionInput input)
 		{
+			if (!await CanReadBoardsAsync())
+				return Unauthorized();
+
 			if (input == null || input.CallId <= 0 || string.IsNullOrWhiteSpace(input.DepartmentVoiceChannelId))
 				return BadRequest();
 
@@ -117,6 +128,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.VoiceTransmissionLogsResult>> GetTransmissionLog(int callId)
 		{
+			if (!await CanReadBoardsAsync())
+				return Unauthorized();
+
 			var result = new ICModels.VoiceTransmissionLogsResult();
 			result.Data = await _incidentVoiceService.GetTransmissionLogForCallAsync(DepartmentId, callId);
 			result.PageSize = result.Data.Count;

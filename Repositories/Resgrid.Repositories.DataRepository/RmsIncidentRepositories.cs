@@ -181,16 +181,9 @@ namespace Resgrid.Repositories.DataRepository
 				new { DepartmentId = departmentId });
 		}
 
-		public Task<int> GetMaxRecordNumberSequenceAsync(int departmentId, string numberPrefix)
+		public Task<int> GetMaxRecordNumberSequenceAsync(int departmentId, string numberPrefix, string numberSuffix)
 		{
-			// Numbers are "{prefix}-{sequence}"; the sequence is the trailing numeric segment. A row whose suffix
-			// is missing or non-numeric is ignored on both dialects: PostgreSQL's pattern simply does not match,
-			// and SQL Server needs the CASE plus TRY_CAST or it raises a conversion error instead.
-			return ScalarAsync<int>(
-				IsPostgres
-					? $"SELECT COALESCE(MAX(CAST(SUBSTRING({Col("RecordNumber")} FROM '[0-9]+$') AS INTEGER)), 0) FROM {Tbl("RmsIncidentReports")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RecordNumber")} LIKE {P}Prefix"
-					: $"SELECT ISNULL(MAX(CASE WHEN CHARINDEX('-', REVERSE({Col("RecordNumber")})) > 1 THEN TRY_CAST(RIGHT({Col("RecordNumber")}, CHARINDEX('-', REVERSE({Col("RecordNumber")})) - 1) AS INT) END), 0) FROM {Tbl("RmsIncidentReports")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RecordNumber")} LIKE {P}Prefix",
-				new { DepartmentId = departmentId, Prefix = numberPrefix + "-%" });
+			return GetMaxRecordNumberSequenceAcrossRecordsAsync(departmentId, numberPrefix, numberSuffix);
 		}
 
 		public async Task<bool> TryBumpRowVersionAsync(int departmentId, string reportId, long expectedRowVersion, CancellationToken cancellationToken = default)

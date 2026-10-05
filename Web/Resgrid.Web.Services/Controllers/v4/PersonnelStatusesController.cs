@@ -87,6 +87,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (string.IsNullOrEmpty(userId))
 				userId = UserId;
 
+			// Someone else's status: only a person the personnel list shows (Security > View Group Users), answered as not
+			// found like GetPersonnelInfo.
+			if (userId != UserId && !await _authorizationService.CanUserViewPersonViaMatrixAsync(userId, UserId, DepartmentId))
+			{
+				result.Data = null;
+				result.PageSize = 0;
+				result.Status = ResponseHelper.NotFound;
+				ResponseHelper.PopulateV4ResponseData(result);
+
+				return result;
+			}
+
 			var action = await _actionLogsService.GetLastActionLogForUserAsync(userId, DepartmentId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 			var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
@@ -96,6 +108,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (action != null)
 			{
 				result.Data = ConvertPersonStatus(action, department, userId, activeCalls, stations, pois);
+
+				// The status position needs Security > See Personnel Locations (always true for one's own).
+				if (!await _authorizationService.CanUserViewPersonLocationViaMatrixAsync(userId, UserId, DepartmentId))
+					result.Data.GeoLocationData = null;
+
 				result.PageSize = 1;
 				result.Status = ResponseHelper.Success;
 			}

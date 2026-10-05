@@ -635,10 +635,13 @@
                     </a>
                     @if (Model.CanDelete)
                     {
-                        <a class="btn btn-danger btn-block" asp-controller="Logs" asp-action="DeleteWorkLog" asp-route-area="User" asp-route-logId="@Model.WorkLog.LogId"
-                           onclick="return confirm('@JsEncoder.Encode(localizer["DeleteLogConfirm"])');">
-                            <i class="fa fa-trash-o"></i> @localizer["DeleteLog"]
-                        </a>
+                        <form method="post" asp-controller="Logs" asp-action="DeleteWorkLog" asp-route-area="User" asp-antiforgery="true"
+                              onsubmit="return confirm('@JsEncoder.Encode(localizer["DeleteLogConfirm"])');">
+                            <input type="hidden" name="logId" value="@Model.WorkLog.LogId" />
+                            <button type="submit" class="btn btn-danger btn-block">
+                                <i class="fa fa-trash-o"></i> @localizer["DeleteLog"]
+                            </button>
+                        </form>
                     }
                 </div>
             </div>

@@ -56,11 +56,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Shift_Create)]
 		public async Task<IActionResult> New(NewWorkshiftView model, CancellationToken cancellationToken)
 		{
 			if (ModelState.IsValid)
 			{
+				// A new shift is always a new row with new units: posted ids would make the save update other rows by key.
+				model.Shift.WorkshiftId = null;
+				model.Shift.Entities = null;
 				model.Shift.DepartmentId = DepartmentId;
 				model.Shift.AddedOn = DateTime.UtcNow;
 				model.Shift.AddedById = UserId;
@@ -107,6 +111,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Shift_Update)]
 		public async Task<IActionResult> Edit(NewWorkshiftView model, CancellationToken cancellationToken)
 		{
@@ -184,6 +189,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Shift_Delete)]
 		public async Task<IActionResult> DeleteShift(DeleteStaticShiftView model, CancellationToken cancellationToken)
 		{

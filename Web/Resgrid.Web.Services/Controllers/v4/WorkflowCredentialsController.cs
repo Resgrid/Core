@@ -8,6 +8,7 @@ using Resgrid.Model;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
 using Resgrid.Web.Services.Models.v4.Workflows;
+using Resgrid.Web.ServicesCore.Helpers;
 
 namespace Resgrid.Web.Services.Controllers.v4
 {
@@ -25,11 +26,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IPermissionsService _permissionsService;
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly IPersonnelRolesService _personnelRolesService;
+		private readonly IRecordsExportService _recordsExportService;
 
 		public WorkflowCredentialsController(IWorkflowService workflowService, IDepartmentsService departmentsService,
 			IPermissionsService permissionsService, IDepartmentGroupsService departmentGroupsService,
-			IPersonnelRolesService personnelRolesService)
+			IPersonnelRolesService personnelRolesService, IRecordsExportService recordsExportService)
 		{
+			_recordsExportService = recordsExportService;
 			_workflowService    = workflowService;
 			_departmentsService = departmentsService;
 			_permissionsService = permissionsService;
@@ -37,12 +40,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_personnelRolesService = personnelRolesService;
 		}
 
-		/// <summary>Lists all credentials for the current department (secrets masked).</summary>
+		/// <summary>Lists all credentials for the current department (secrets masked), for the members the web Credentials page admits.</summary>
 		[HttpGet("GetAll")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status403Forbidden)]
 		[Authorize(Policy = ResgridResources.WorkflowCredential_View)]
 		public async Task<ActionResult<GetCredentialsResult>> GetAll(CancellationToken ct)
 		{
+			if (!await CanUserManageWorkflowCredentialsAsync()) return Forbid();
+
 			var creds = await _workflowService.GetCredentialsByDepartmentIdAsync(DepartmentId, ct);
 			return Ok(new GetCredentialsResult
 			{
@@ -53,6 +59,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>Gets a single credential by ID (secrets masked).</summary>
 		[HttpGet("GetById/{credentialId}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status403Forbidden)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[Authorize(Policy = ResgridResources.WorkflowCredential_View)]
 		public async Task<ActionResult<CredentialSummaryData>> GetById(string credentialId, CancellationToken ct)
@@ -60,6 +67,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var cred = await _workflowService.GetCredentialByIdAsync(credentialId, ct);
 			if (cred == null || cred.DepartmentId != DepartmentId)
 				return NotFound();
+
+			if (!await CanUserManageWorkflowCredentialsAsync()) return Forbid();
 
 			return Ok(MapCredentialSummary(cred));
 		}
@@ -102,7 +111,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (!await CanUserManageWorkflowCredentialsAsync()) return Forbid();
 
+			// The credential may hold the destination of a Records report export a step delivers through it.
+			var exportError = await Resgrid.Services.WorkflowExportAttachmentRule.CheckCredentialAsync(_workflowService, _recordsExportService, DepartmentId,
+				existing.WorkflowCredentialId, ClaimsAuthorizationHelper.CanExportRecords(), ClaimsAuthorizationHelper.CanManageRecordReports(),
+				ClaimsAuthorizationHelper.CanViewRestrictedRecords(), ct);
+			if (exportError != null)
+				return StatusCode(StatusCodes.Status403Forbidden, new { error = "A workflow step sends a Records report export through this credential, so changing it requires the Print and Export Records and Manage Record Reports permissions (and View Restricted Sections when the export includes restricted sections)." });
+
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			existing.UpdatedByUserId = UserId;
 			existing.Name          = input.Name;
 			existing.CredentialType = input.CredentialType;
 

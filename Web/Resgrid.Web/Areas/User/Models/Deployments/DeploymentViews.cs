@@ -154,6 +154,8 @@ namespace Resgrid.Web.Areas.User.Models.Deployments
 		public List<DeploymentExpense> Expenses { get; set; } = new List<DeploymentExpense>();
 		public TimeReportValidation Validation { get; set; } = new TimeReportValidation();
 		public bool IsRostered { get; set; }
+		/// <summary>The viewer submitted this report or has hours on it, so they may not approve it (TimeReportApproval).</summary>
+		public bool IsOwnReport { get; set; }
 		/// <summary>The viewer's time scope (M0227). A scoped report is editable only by its crew/person; on a deployment-wide report a member edits their own subjects' rows.</summary>
 		public DeploymentTimeAccess Access { get; set; }
 		public bool CanEdit => Report != null && Report.IsEditable && (CanManage || (Access != null && (Access.CanActOn(Report) || (Report.Scope == DeploymentTimeReportScopes.Deployment && Access.CanWrite))));

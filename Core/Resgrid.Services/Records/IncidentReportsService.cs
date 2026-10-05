@@ -24,7 +24,7 @@ namespace Resgrid.Services.Records
 	/// per prefilled value, local validation against the pinned NERIS contract before finalize, an attestation
 	/// signature bound to the revision checksum, and a submission row per revision with its own idempotency key.
 	/// </summary>
-	public class IncidentReportsService : IIncidentReportsService
+	public partial class IncidentReportsService : IIncidentReportsService
 	{
 		public const string AttestationStatementVersion = "1";
 		public const string IncidentAggregate = DomainEventProducers.IncidentReportAggregate;
@@ -169,7 +169,7 @@ namespace Resgrid.Services.Records
 				LifecyclePreset = (int)RmsDefinitionKeys.LockedDefaultPreset,
 				State = (int)RmsRecordState.Draft,
 				DraftReference = NewDraftReference(),
-				IncidentNumber = string.IsNullOrWhiteSpace(call.Number) ? null : call.Number,
+				IncidentNumber = PreferredIncidentNumber(call),
 				DispatchIncidentCode = string.IsNullOrWhiteSpace(call.Type) ? null : call.Type,
 				CallCreatedOn = call.LoggedOn,
 				IncidentClearedOn = call.ClosedOn,
@@ -183,7 +183,7 @@ namespace Resgrid.Services.Records
 				ModifiedByUserId = userId,
 				RowVersion = 1
 			};
-			facts.Add(Fact(report, NerisFactKeys.IncidentNumber, RmsSourceKind.Dispatch, "Calls", "Call", callId.ToString(), call.Number, call.LoggedOn, now));
+			facts.Add(Fact(report, NerisFactKeys.IncidentNumber, RmsSourceKind.Dispatch, "Calls", "Call", callId.ToString(), report.IncidentNumber, call.LoggedOn, now));
 			facts.Add(Fact(report, NerisFactKeys.IncidentCode, RmsSourceKind.Dispatch, "Calls", "Call", callId.ToString(), call.Type, call.LoggedOn, now));
 			facts.Add(Fact(report, NerisFactKeys.CallCreate, RmsSourceKind.Dispatch, "Calls", "Call", callId.ToString(), Iso(call.LoggedOn), call.LoggedOn, now));
 			// PSAP arrival and answer times are not held by the source Call. The officer must supply them;
@@ -199,13 +199,20 @@ namespace Resgrid.Services.Records
 					facts.Add(Fact(report, NerisFactKeys.Point, RmsSourceKind.Dispatch, "Calls", "Call", callId.ToString(), $"{location.Latitude},{location.Longitude}", call.LoggedOn, now));
 			}
 
-			var units = await BuildUnitsFromCallAsync(report, call, facts, now);
+			// Units, crews and statuses (with who set them), command assignments and mutual aid, read once (see IncidentReportsService.SourcePrefill).
+			var sources = await _feeds.GetCallSourceDataAsync(departmentId, call);
+			var units = await BuildUnitsFromSourcesAsync(report, call, sources, facts, now);
 
 			// RMS-3 feeds: command key times and the contact/place snapshot arrive as Derived facts with their source
 			// named, so the officer sees a tactical proxy for what it is. The only typed prefill they make is the clear
 			// time, and only when dispatch never recorded one (plan section 4.2).
 			await AddCommandKeyTimeFactsAsync(report, call, facts, now);
 			await AddPreplanFactsAsync(report, call, facts, now);
+			var modules = new List<RmsIncidentModule>();
+			var tacticTimestamps = BuildTacticTimestampsModule(report, sources, facts, now);
+			if (tacticTimestamps != null)
+				modules.Add(tacticTimestamps);
+			var aids = await BuildMutualAidAsync(report, sources, new List<RmsAid>(), facts, now);
 
 			var types = new List<RmsIncidentType>();
 			var mappedType = await _neris.ResolveCrosswalkAsync(departmentId, "incident_type", NerisCrosswalkSources.CallType, call.Type);
@@ -246,6 +253,13 @@ namespace Resgrid.Services.Records
 				}
 				foreach (var unit in units)
 					await _units.InsertAsync(unit, cancellationToken, true);
+				foreach (var module in modules)
+				{
+					await _protection.ProtectModuleAsync(departmentId, module, null, userId, cancellationToken);
+					await _modules.InsertAsync(module, cancellationToken, true);
+				}
+				foreach (var aid in aids)
+					await _aids.InsertAsync(aid, cancellationToken, true);
 				foreach (var type in types)
 					await _types.InsertAsync(type, cancellationToken, true);
 				await _protection.ProtectNarrativeAsync(departmentId, narrative, null, userId, cancellationToken);
@@ -256,7 +270,7 @@ namespace Resgrid.Services.Records
 					await _facts.InsertAsync(fact, cancellationToken, true);
 				}
 
-				var aggregate = new IncidentReportAggregate { Report = report, Location = location, Units = units, Types = types, Narrative = narrative, Facts = facts };
+				var aggregate = new IncidentReportAggregate { Report = report, Location = location, Units = units, Types = types, Narrative = narrative, Facts = facts, Modules = modules, Aids = aids };
 				await RecomputeGroupScopeAsync(aggregate, authorGroup?.DepartmentGroupId, cancellationToken);
 				await UpsertProjectionAsync(aggregate, cancellationToken);
 				outboxIds.Add((await EnqueueLifecycleEventAsync(report, null, WorkflowTriggerEventType.RecordCreated, RmsRecordState.Draft, RmsRecordState.Draft, null, null, cancellationToken)).DomainEventOutboxId);
@@ -393,6 +407,8 @@ namespace Resgrid.Services.Records
 				var tactics = await ReplaceTacticsAsync(report, input.Tactics, now, cancellationToken);
 				var narrative = await ReplaceNarrativeAsync(report, input, now, cancellationToken);
 				var modules = await ReplaceModulesAsync(report, input.Modules, report.ProfileVersion ?? _neris.ContractVersion, now, cancellationToken);
+				if (input.Modules != null)
+					CorrectTacticTimestamps(modules, facts, userId, now);
 				var resources = await ReplaceResourcesAsync(report, input.Resources, now, cancellationToken);
 				var casualties = await ReplaceCasualtiesAsync(report, input.Casualties, canWriteRestricted, now, cancellationToken);
 				var exposures = await ReplaceExposuresAsync(report, input.Exposures, now, cancellationToken);
@@ -559,6 +575,12 @@ namespace Resgrid.Services.Records
 			var needsReason = isAmendment || correction;
 			if (needsReason && string.IsNullOrWhiteSpace(reasonCode))
 				throw new ArgumentException("A reason code is required to finalize an amendment or a correction.", nameof(reasonCode));
+			// The correction is a signature like finalize, so it needs the same grant, and either one needs the report
+			// to be the caller's (or their review, amendment or administration) rather than any visible report.
+			if (correction && !await _authorization.HasPermissionAsync(userId, departmentId, PermissionTypes.FinalizeRecords))
+				throw new UnauthorizedAccessException("Correcting and resubmitting a report requires the FinalizeRecords permission.");
+			if (!await RecordsLifecycleAuthority.CanFinalizeAsync(_authorization, userId, departmentId, from, isAmendment || correction, report.AuthorUserId, report.OwnerUserId, report.ReviewerUserId, report.ApproverUserId))
+				throw new UnauthorizedAccessException("Finalizing another member's report needs ReviewRecords, AmendRecords for an amendment, or a department administrator.");
 
 			var now = DateTime.UtcNow;
 			var profile = await _neris.GetProfileAsync(departmentId);
@@ -816,6 +838,7 @@ namespace Resgrid.Services.Records
 			RequireTransition(report, from, RmsRecordState.Voided);
 			if (report.AmendsRevisionId != null)
 				throw new RecordTransitionException(reportId, from, RmsRecordState.Voided, "abandon the open amendment first");
+			await RequireCloseOutAsync(report, userId);
 
 			var now = DateTime.UtcNow;
 			var outboxIds = new List<long>();
@@ -849,6 +872,7 @@ namespace Resgrid.Services.Records
 			var report = await LoadAsync(departmentId, reportId);
 			var from = (RmsRecordState)report.State;
 			RequireTransition(report, from, RmsRecordState.Cancelled);
+			await RequireCloseOutAsync(report, userId);
 
 			var now = DateTime.UtcNow;
 			var outboxIds = new List<long>();
@@ -867,6 +891,14 @@ namespace Resgrid.Services.Records
 			});
 			await _outbox.DispatchAfterCommitAsync(outboxIds, cancellationToken);
 			return await GetAsync(departmentId, reportId, false);
+		}
+
+		/// <summary>DeleteRecord voids or cancels only reports the caller wrote, owns or reviews, unless they administer the department or the report's group.</summary>
+		private async Task RequireCloseOutAsync(RmsIncidentReport report, string userId)
+		{
+			if (!await RecordsLifecycleAuthority.CanVoidOrCancelAsync(_authorization, _groups, _scopes, userId, report.DepartmentId, report.RmsIncidentReportId, report.StationGroupId,
+				report.AuthorUserId, report.OwnerUserId, report.ReviewerUserId, report.ApproverUserId))
+				throw new UnauthorizedAccessException("Voiding or cancelling another member's report needs a department or group administrator.");
 		}
 
 		#endregion
@@ -936,7 +968,6 @@ namespace Resgrid.Services.Records
 			};
 		}
 
-		/// <summary>One unit response per dispatched unit; times come from the unit state log (App) and the dispatch row (Dispatch), each with a provenance fact.</summary>
 		private async Task AddCommandKeyTimeFactsAsync(RmsIncidentReport report, Call call, List<RmsSourceFact> facts, DateTime now)
 		{
 			IncidentCommandKeyTimes times;
@@ -1011,93 +1042,6 @@ namespace Resgrid.Services.Records
 					.Where(v => !string.IsNullOrWhiteSpace(v)));
 				facts.Add(Fact(report, NerisFactKeys.PreplanPlace, RmsSourceKind.Derived, "Mapping", "Poi", place.PoiId.ToString(CultureInfo.InvariantCulture), value, null, now));
 			}
-		}
-
-		private async Task<List<RmsUnitResponse>> BuildUnitsFromCallAsync(RmsIncidentReport report, Call call, List<RmsSourceFact> facts, DateTime now)
-		{
-			var result = new List<RmsUnitResponse>();
-			var dispatches = (call.UnitDispatches ?? new List<CallDispatchUnit>()).GroupBy(d => d.UnitId).Select(g => g.OrderBy(d => d.DispatchedOn).First()).ToList();
-			if (dispatches.Count == 0)
-				return result;
-
-			var states = (await _unitsService.GetUnitStatesForCallAsync(report.DepartmentId, call.CallId) ?? new List<UnitState>()).OrderBy(s => s.Timestamp).ToList();
-			// A department's custom unit statuses store their detail id, not a UnitStateTypes value; they resolve
-			// through the status's base type so custom-status departments still get enroute/on-scene/clear times.
-			var customBaseTypes = await _unitsService.GetCustomUnitStateBaseTypesAsync(report.DepartmentId);
-			var ordinal = 0;
-			foreach (var dispatch in dispatches)
-			{
-				var unit = await _unitsService.GetUnitByIdAsync(dispatch.UnitId);
-				if (unit == null || unit.DepartmentId != report.DepartmentId)
-					continue;
-
-				var unitStates = states.Where(s => s.UnitId == dispatch.UnitId).ToList();
-				UnitStateTypes? KindOf(UnitState s) => CallStatusLinkage.ResolveUnitStateKind(s.State, customBaseTypes);
-				UnitState First(params UnitStateTypes[] kinds) => unitStates.FirstOrDefault(s => KindOf(s) is UnitStateTypes kind && kinds.Contains(kind));
-				var enrouteState = First(UnitStateTypes.Responding, UnitStateTypes.Enroute);
-				var onSceneState = First(UnitStateTypes.OnScene);
-				var stagingState = First(UnitStateTypes.Staging);
-				var canceledState = onSceneState != null ? null : First(UnitStateTypes.Cancelled);
-				var onScene = onSceneState?.Timestamp;
-				var clearedState = unitStates.FirstOrDefault(s => onScene.HasValue && s.Timestamp >= onScene.Value && (KindOf(s) == UnitStateTypes.Released || KindOf(s) == UnitStateTypes.Returning || KindOf(s) == UnitStateTypes.Available));
-				var cleared = clearedState?.Timestamp;
-				// A time taken from a status Resgrid linked to the call (auto-linked on save, or inferred for a dispatched unit)
-				// is Derived provenance, so the reviewer sees it was not the unit naming the call.
-				var timeStates = new[] { enrouteState, onSceneState, stagingState, canceledState, clearedState };
-				var anyServerLinked = timeStates.Any(s => s != null && (CallStatusAttribution.IsAutoLinked(s.DestinationSource) || CallStatusAttribution.IsInferred(s.DestinationSource)));
-
-				var response = new RmsUnitResponse
-				{
-					RmsUnitResponseId = Guid.NewGuid().ToString(),
-					DepartmentId = report.DepartmentId,
-					ProtectionId = Guid.NewGuid().ToString(),
-					RecordId = report.RmsIncidentReportId,
-					UnitId = unit.UnitId,
-					UnitNameSnapshot = unit.Name,
-					UnitTypeSnapshot = unit.Type,
-					StationGroupIdSnapshot = unit.StationGroupId,
-					DispatchedOn = dispatch.DispatchedOn,
-					EnrouteOn = enrouteState?.Timestamp,
-					OnSceneOn = onScene,
-					StagingOn = stagingState?.Timestamp,
-					CanceledEnrouteOn = canceledState?.Timestamp,
-					ClearedOn = cleared,
-					ResponseMode = "EMERGENT",
-					TimesSourceKind = anyServerLinked ? (int)RmsSourceKind.Derived : (int)RmsSourceKind.App,
-					Ordinal = ordinal++,
-					CreatedOn = now,
-					ModifiedOn = now,
-					RowVersion = 1
-				};
-				result.Add(response);
-
-				facts.Add(Fact(report, NerisFactKeys.UnitTime(unit.UnitId, "dispatch"), RmsSourceKind.Dispatch, "Calls", "CallDispatchUnit", dispatch.CallDispatchUnitId.ToString(), Iso(dispatch.DispatchedOn), dispatch.DispatchedOn, now));
-				foreach (var (field, state) in new[] { ("enroute_to_scene", enrouteState), ("on_scene", onSceneState), ("staging", stagingState), ("canceled_enroute", canceledState), ("unit_clear", clearedState) })
-				{
-					if (state == null)
-						continue;
-
-					var (kind, system) = UnitTimeProvenance(state);
-					facts.Add(Fact(report, NerisFactKeys.UnitTime(unit.UnitId, field), kind, system, "Unit", unit.UnitId.ToString(), Iso(state.Timestamp), state.Timestamp, now));
-				}
-			}
-
-			return result;
-		}
-
-		/// <summary>
-		/// Provenance of a unit time taken from a unit state: App when the unit linked the status to the call itself, Derived
-		/// (with the reason in the source system) when Resgrid auto-linked it on save or inferred it for a dispatched unit.
-		/// </summary>
-		private static (RmsSourceKind Kind, string System) UnitTimeProvenance(UnitState state)
-		{
-			if (CallStatusAttribution.IsInferred(state.DestinationSource))
-				return (RmsSourceKind.Derived, "UnitStates (inferred)");
-
-			if (CallStatusAttribution.IsAutoLinked(state.DestinationSource))
-				return (RmsSourceKind.Derived, "UnitStates (auto-linked)");
-
-			return (RmsSourceKind.App, "UnitStates");
 		}
 
 		private static RmsSourceFact Fact(RmsIncidentReport report, string key, RmsSourceKind kind, string system, string entityType, string entityId, string value, DateTime? sourceTime, DateTime now)
@@ -1257,6 +1201,7 @@ namespace Resgrid.Services.Records
 					Correct(facts, NerisFactKeys.UnitTime(unit.UnitId, "staging"), Iso(row.StagingOn), userId, now);
 					Correct(facts, NerisFactKeys.UnitTime(unit.UnitId, "canceled_enroute"), Iso(row.CanceledEnrouteOn), userId, now);
 					Correct(facts, NerisFactKeys.UnitTime(unit.UnitId, "unit_clear"), Iso(row.ClearedOn), userId, now);
+					Correct(facts, IncidentSourceFactKeys.UnitStaffing(unit.UnitId), row.Staffing?.ToString(CultureInfo.InvariantCulture), userId, now);
 					// Provenance survives an edit: the fact keeps its App/Dispatch/Derived origin, the row shows the source that still
 					// applies (Derived while any uncorrected time rests on a status Resgrid linked to the call).
 					var uncorrected = facts.Where(f => f.FactKey.StartsWith($"unit.{unit.UnitId}.", StringComparison.Ordinal) && f.CorrectedOn == null).ToList();
@@ -1276,7 +1221,8 @@ namespace Resgrid.Services.Records
 			var ordinal = 0;
 			foreach (var input in inputs ?? new List<IncidentAidInput>())
 			{
-				if (!input.IsNonFireDepartment && string.IsNullOrWhiteSpace(input.AidType) && string.IsNullOrWhiteSpace(input.CounterpartNerisId))
+				// A row naming only the agency is kept: mutual aid prefilled from Incident Command waits there for its aid type.
+				if (!input.IsNonFireDepartment && string.IsNullOrWhiteSpace(input.AidType) && string.IsNullOrWhiteSpace(input.CounterpartNerisId) && string.IsNullOrWhiteSpace(input.CounterpartName))
 					continue;
 				if (input.IsNonFireDepartment && string.IsNullOrWhiteSpace(input.NonFdType))
 					continue;
@@ -1655,14 +1601,9 @@ namespace Resgrid.Services.Records
 		{
 			var config = await _settings.GetRecordsNumberingConfigAsync(report.DepartmentId);
 			var year = (report.CallCreatedOn ?? DateTime.UtcNow).Year;
-			var prefix = NumberPrefix + "-";
-			if (config.PerGroupSequence && report.StationGroupId.HasValue)
-				prefix += "G" + report.StationGroupId.Value + "-";
-			if (config.IncludeYear)
-				prefix += year + "-";
-			var width = Math.Max(3, Math.Min(8, config.SequenceWidth <= 0 ? 4 : config.SequenceWidth));
-			var sequence = await _reports.GetMaxRecordNumberSequenceAsync(report.DepartmentId, prefix) + 1;
-			return prefix + sequence.ToString("D" + width);
+			var scope = RecordNumberFormat.Resolve(RecordNumberFormat.EffectivePattern(config), config.SequenceWidth, NumberPrefix, year, report.StationGroupId);
+			var highest = await _reports.GetMaxRecordNumberSequenceAsync(report.DepartmentId, scope.Prefix, scope.Suffix);
+			return scope.Format(config.NextSequence(scope.Key, highest));
 		}
 
 		/// <summary>Scoped idempotency key (plan 5.3): stable for a revision, new for every new revision.</summary>

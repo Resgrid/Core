@@ -40,11 +40,9 @@ namespace Resgrid.Web.Areas.User.Models.Security
 			var existing = (permissions ?? Enumerable.Empty<Permission>()).Where(p => p != null).ToList();
 			var rows = new List<RecordsPermissionRow>();
 
-			foreach (var descriptor in descriptors ?? RecordPermissionCatalog.All)
+			foreach (var descriptor in (descriptors ?? RecordPermissionCatalog.All).Where(d => d.ShownOnSecurityScreen))
 			{
-				var row = existing.FirstOrDefault(p => p.PermissionType == (int)descriptor.Type);
-				if (row == null && descriptor.Type is PermissionTypes.TransferInventory or PermissionTypes.IssueInventory)
-					row = existing.FirstOrDefault(p => p.PermissionType == (int)PermissionTypes.AdjustInventory);
+				var row = PermissionScreenCatalog.EffectiveRow(existing, descriptor.Type);
 				var value = row != null ? row.Action : (int)descriptor.NoRowDefault;
 
 				rows.Add(new RecordsPermissionRow
@@ -52,7 +50,7 @@ namespace Resgrid.Web.Areas.User.Models.Security
 					Type = descriptor.Type,
 					Value = value,
 					HasRow = row != null,
-					LockToGroup = row != null ? row.LockToGroup : descriptor.Type == PermissionTypes.ViewChecklistResults,
+					LockToGroup = row != null ? row.LockToGroup : descriptor.NoRowLockToGroup,
 					ShowLockToGroup = descriptor.LockToGroupMeaningful,
 					Options = BuildOptions(descriptor.EveryoneOffered, value, labels)
 				});

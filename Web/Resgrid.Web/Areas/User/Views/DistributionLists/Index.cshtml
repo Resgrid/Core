@@ -90,13 +90,13 @@
 
 											@if (!g.IsDisabled)
 											{
-												<a style="text-decoration:none;" class="btn btn-xs btn-warning" asp-controller="DistributionLists" asp-action="SetListStatus" asp-route-area="User" asp-route-distributionListId="@g.DistributionListId" asp-route-disable="true">Disable</a>
+												<form method="post" asp-controller="DistributionLists" asp-action="SetListStatus" asp-route-area="User" asp-route-distributionListId="@g.DistributionListId" asp-route-disable="true" style="display: inline;">@Html.AntiForgeryToken()<button type="submit" style="text-decoration:none;" class="btn btn-xs btn-warning">Disable</button></form>
 											}
 											else
 											{
-												<a style="text-decoration:none;" class="btn btn-xs btn-success" asp-controller="DistributionLists" asp-action="SetListStatus" asp-route-area="User" asp-route-distributionListId="@g.DistributionListId" asp-route-disable="false">Enable</a>
+												<form method="post" asp-controller="DistributionLists" asp-action="SetListStatus" asp-route-area="User" asp-route-distributionListId="@g.DistributionListId" asp-route-disable="false" style="display: inline;">@Html.AntiForgeryToken()<button type="submit" style="text-decoration:none;" class="btn btn-xs btn-success">Enable</button></form>
 											}
-											<a style="text-decoration:none;" class="btn btn-xs btn-danger" asp-controller="DistributionLists" asp-action="DeleteList" asp-route-area="User" asp-route-distributionListId="@g.DistributionListId" data-confirm="WARNING: This will permanently delete this distribution list! Are you sure you want to delete the list @g.Name ?" rel="nofollow">Delete</a>
+											<form method="post" asp-controller="DistributionLists" asp-action="DeleteList" asp-route-area="User" asp-route-distributionListId="@g.DistributionListId" style="display: inline;">@Html.AntiForgeryToken()<button type="submit" style="text-decoration:none;" class="btn btn-xs btn-danger" data-confirm="WARNING: This will permanently delete this distribution list! Are you sure you want to delete the list @g.Name ?">Delete</button></form>
 										</td>
 									</tr>
 								}

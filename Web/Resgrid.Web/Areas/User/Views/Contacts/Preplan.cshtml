@@ -372,6 +372,8 @@
 
             // Records owns pre-plans: hazards are listed but not editable here.
             var preplanReadOnly = @(Model.IsRecordsOwned ? "true" : "false");
+            // Removing a hazard is a contact delete (Contact Delete permission), like the other contact deletes.
+            var canDeleteHazards = @(User.HasClaim(Resgrid.Providers.Claims.ResgridClaimTypes.Resources.Contacts, Resgrid.Providers.Claims.ResgridClaimTypes.Actions.Delete) ? "true" : "false");
 
             function renderHazards() {
                 var $body = $('#hazardsBody');
@@ -391,7 +393,7 @@
                         '<td class="text-right">' +
                         (preplanReadOnly ? '' :
                         '<button type="button" class="btn btn-xs btn-warning edit-hazard" data-id="' + esc(h.ContactPreplanHazardId) + '">' + esc('@JsEncoder.Encode(commonLocalizer["Edit"])') + '</button> ' +
-                        '<button type="button" class="btn btn-xs btn-danger delete-hazard" data-id="' + esc(h.ContactPreplanHazardId) + '">' + esc('@JsEncoder.Encode(commonLocalizer["Delete"])') + '</button>') +
+                        (canDeleteHazards ? '<button type="button" class="btn btn-xs btn-danger delete-hazard" data-id="' + esc(h.ContactPreplanHazardId) + '">' + esc('@JsEncoder.Encode(commonLocalizer["Delete"])') + '</button>' : '')) +
                         '</td></tr>';
                     $body.append(row);
                 });
@@ -457,6 +459,7 @@
                     url: resgrid.absoluteBaseUrl + '/User/Contacts/SaveHazard',
                     type: 'POST',
                     contentType: 'application/json',
+                    headers: { 'RequestVerificationToken': token },
                     data: JSON.stringify(payload),
                     success: function (response) {
                         if (response && response.success) {

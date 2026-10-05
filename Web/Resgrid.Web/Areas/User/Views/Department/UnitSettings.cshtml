@@ -68,7 +68,7 @@
                                 </td>
 
                                 <td>
-                                    <a class="btn btn-xs btn-primary" href="@Url.Action("DeleteUnitType", "Department", new { area = "User", unitTypeId = c.UnitTypeId })" data-confirm="WARNING: This will permanently delete this unit type. Are you sure you want to delete the unit type @c.Type ?" rel="nofollow"><i class="icon-trash"></i> Delete</a>
+                                    <form method="post" action="@Url.Action("DeleteUnitType", "Types", new { area = "User", unitTypeId = c.UnitTypeId })" style="display: inline;">@Html.AntiForgeryToken()<button type="submit" class="btn btn-xs btn-primary" data-confirm="WARNING: This will permanently delete this unit type. Are you sure you want to delete the unit type @c.Type ?"><i class="icon-trash"></i> Delete</button></form>
                                 </td>
                             </tr>
                         }

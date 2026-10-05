@@ -33,6 +33,8 @@ namespace Resgrid.Tests.Services
 	{
 		private const int DeptId = 9;
 		private const string User = "officer";
+		/// <summary>Separation of duties (audit 2026-10-05 item 2.18): the profiles "officer" enters are approved by someone else.</summary>
+		private const string Approver = "payroll-approver";
 
 		private List<WorkforceEmployerProfile> _employers; private List<WorkforceAffiliatedEntity> _affiliates; private List<WorkforceEstablishment> _establishments; private List<WorkforceLaborContractor> _contractors;
 		private List<WorkforceWorker> _workers; private List<WorkforceEmployment> _employments; private List<WorkforceJobAssignment> _assignments; private List<WorkforceWorkEntry> _workEntries; private List<WorkforceAnnualPayFact> _facts;
@@ -175,7 +177,7 @@ namespace Resgrid.Tests.Services
 			_workforce = new WorkforceService(employers.Object, affiliates.Object, establishments.Object, contractors.Object, workers.Object, employments.Object, assignments.Object, workEntries.Object, facts.Object, userProfiles.Object, events.Object, departments.Object);
 			_payComponentRepository = payComponents;
 			_unitOfWork = TransactionalStores(_profiles, _payComponents, _costComponents);
-			_compensation = new CompensationCostService(profiles.Object, payComponents.Object, costComponents.Object, employments.Object, assignments.Object, events.Object, _unitOfWork.Object);
+			_compensation = new CompensationCostService(profiles.Object, payComponents.Object, costComponents.Object, employments.Object, assignments.Object, events.Object, _unitOfWork.Object, workers: workers.Object);
 			_costing = new FieldCostingService(resourceProfiles.Object, resourceComponents.Object, usage.Object, runs.Object, lines.Object, workers.Object, employments.Object, workEntries.Object, _compensation,
 				bids.Object, bidLines.Object, deployments.Object, personnel.Object, units.Object, reports.Object, entries.Object, expenses.Object, invoices.Object, new Lazy<ICalOesMarsService>(() => mars.Object), unitsService.Object, events.Object);
 			_demographicsService = new PayDataDemographicsService(demographics.Object, workers.Object, employments.Object, _workforce, events.Object);
@@ -327,12 +329,12 @@ namespace Resgrid.Tests.Services
 		{
 			var (_, employment, _) = await SeedWorkerAsync(roleId: 3);
 			var department = await _compensation.SaveProfileAsync(new EmployeeCompensationProfile { DepartmentId = DeptId, Scope = (int)CompensationScopes.DepartmentDefault, PayBasis = (int)PayBases.Hourly, BaseAmountValue = 20m, EffectiveOn = new DateTime(2024, 1, 1) }, User, null, null);
-			await _compensation.ApproveProfileAsync(department.EmployeeCompensationProfileId, DeptId, User, null, null);
+			await _compensation.ApproveProfileAsync(department.EmployeeCompensationProfileId, DeptId, Approver, null, null);
 			var resolved = await _compensation.ResolveProfileAsync(employment.WorkforceEmploymentId, null, DeptId, new DateTime(2026, 6, 1));
 			resolved.Profile.Scope.Should().Be((int)CompensationScopes.DepartmentDefault); resolved.IsFallback.Should().BeTrue();
 
 			var role = await _compensation.SaveProfileAsync(new EmployeeCompensationProfile { DepartmentId = DeptId, Scope = (int)CompensationScopes.RoleDefault, PersonnelRoleId = 3, PayBasis = (int)PayBases.Hourly, BaseAmountValue = 25m, EffectiveOn = new DateTime(2024, 1, 1) }, User, null, null);
-			await _compensation.ApproveProfileAsync(role.EmployeeCompensationProfileId, DeptId, User, null, null);
+			await _compensation.ApproveProfileAsync(role.EmployeeCompensationProfileId, DeptId, Approver, null, null);
 			resolved = await _compensation.ResolveProfileAsync(employment.WorkforceEmploymentId, null, DeptId, new DateTime(2026, 6, 1));
 			resolved.Profile.Scope.Should().Be((int)CompensationScopes.RoleDefault, "the employment's personnel role picks the role default");
 
@@ -340,7 +342,7 @@ namespace Resgrid.Tests.Services
 			await _compensation.SaveComponentsAsync(employee.EmployeeCompensationProfileId, DeptId,
 				new List<EmployeePayComponent> { new EmployeePayComponent { Category = (int)PayComponentCategories.Ems, Basis = (int)PayComponentBases.PerHour, AmountValue = 4m, PaidForEachOvertimeHour = true } },
 				new List<EmployeeCostComponent> { new EmployeeCostComponent { Category = (int)CostComponentCategories.EmployerPayrollTax, Basis = (int)CostComponentBases.PercentOfEligiblePay, RateAmountValue = 35m } }, User, null, null);
-			await _compensation.ApproveProfileAsync(employee.EmployeeCompensationProfileId, DeptId, User, null, null);
+			await _compensation.ApproveProfileAsync(employee.EmployeeCompensationProfileId, DeptId, Approver, null, null);
 			resolved = await _compensation.ResolveProfileAsync(employment.WorkforceEmploymentId, null, DeptId, new DateTime(2026, 6, 1));
 			resolved.Profile.Scope.Should().Be((int)CompensationScopes.Employee); resolved.IsFallback.Should().BeFalse();
 			resolved.Profile.PayComponents.Should().HaveCount(1); resolved.Profile.CostComponents.Should().HaveCount(1);
@@ -363,7 +365,7 @@ namespace Resgrid.Tests.Services
 		{
 			var (worker, employment, _) = await SeedWorkerAsync();
 			var profile = await _compensation.SaveProfileAsync(new EmployeeCompensationProfile { DepartmentId = DeptId, Scope = (int)CompensationScopes.Employee, WorkforceEmploymentId = employment.WorkforceEmploymentId, PayBasis = (int)PayBases.Hourly, BaseAmountValue = 30m, EffectiveOn = new DateTime(2024, 1, 1) }, User, null, null);
-			await _compensation.ApproveProfileAsync(profile.EmployeeCompensationProfileId, DeptId, User, null, null);
+			await _compensation.ApproveProfileAsync(profile.EmployeeCompensationProfileId, DeptId, Approver, null, null);
 			var engine = await _costing.SaveResourceProfileAsync(new ResourceCostProfile { DepartmentId = DeptId, SubjectType = (int)ResourceSubjectTypes.Unit, UnitId = 5, Name = "Engine 1", AcquisitionCost = 60000m, SalvageValue = 12000m, UsefulLifeQuantity = 40000m, AllocationBasis = (int)AllocationBases.Mile, EffectiveOn = new DateTime(2024, 1, 1), IsApproved = true }, User, null, null);
 			await _costing.SaveResourceComponentsAsync(engine.ResourceCostProfileId, DeptId, new List<ResourceCostComponent> { new ResourceCostComponent { Category = (int)ResourceCostCategories.FuelEnergy, Basis = (int)ResourceCostBases.PerMile, Rate = 1m, IsApproved = true } }, User, null, null);
 

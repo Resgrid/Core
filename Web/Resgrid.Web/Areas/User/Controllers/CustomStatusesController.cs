@@ -95,9 +95,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.CustomStates_Create)]
 		public async Task<IActionResult> New(NewCustomStateView model, IFormCollection form, CancellationToken cancellationToken)
 		{
+			// A new status set is always a new row: a posted id would make the save update another row by key.
+			if (model.State != null)
+				model.State.CustomStateId = 0;
+
 			List<int> options = (from object key in form.Keys
 													 where key.ToString().StartsWith("buttonText_")
 													 select int.Parse(key.ToString().Replace("buttonText_", ""))).ToList();
@@ -166,14 +171,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.CustomStates_Delete)]
 		public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
 		{
-			var state = await _customStateService.GetCustomSateByIdAsync(id);
-
-			if (!await _authorizationService.CanUserModifyCustomStatusAsync(UserId, state.CustomStateId))
+			if (!await _authorizationService.CanUserModifyCustomStatusAsync(UserId, id))
 				return Unauthorized();
+
+			var state = await _customStateService.GetCustomSateByIdAsync(id);
 
 			var auditEvent = new AuditEvent();
 			auditEvent.DepartmentId = DepartmentId;
@@ -237,6 +243,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.CustomStates_Update)]
 		public async Task<IActionResult> EditDetail(EditDetailView model, CancellationToken cancellationToken)
 		{
@@ -288,6 +295,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.CustomStates_Update)]
 		public async Task<IActionResult> Edit(EditStatusView model, IFormCollection form, CancellationToken cancellationToken)
 		{

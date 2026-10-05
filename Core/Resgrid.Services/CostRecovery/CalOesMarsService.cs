@@ -35,6 +35,13 @@ namespace Resgrid.Services.CostRecovery
 	{
 		private static readonly HashSet<int> RemindedToday = new HashSet<int>();
 
+		/// <summary>
+		/// The smallest classification the Salary Survey draft fills from workforce pay data. A mean over one or two people is
+		/// their pay (or their pay against a colleague's), so smaller classifications are left for the reviewer to enter by
+		/// hand. Three is the usual minimum cell size for published aggregates; the code base defines no other threshold.
+		/// </summary>
+		public const int MinimumClassificationGroupSize = 3;
+
 		private readonly ICalOesMarsAgencyProfileRepository _agencies;
 		private readonly ICalOesMarsResourceProfileRepository _resources;
 		private readonly ICalOesMarsRateProfileRepository _rateProfiles;
@@ -528,9 +535,12 @@ namespace Resgrid.Services.CostRecovery
 			var aggregate = await _compensation.Value.GetClassificationRateAggregateAsync(departmentId, asOf.Date, authority.Code);
 			if (aggregate.Count == 0) { draft.Blockers.Add("no_classifications"); return draft; }
 			var lines = profile.Lines.Where(l => !l.IsDeleted).Select(l => l.CloneJson()).ToList();
+			var suppressed = 0;
 			foreach (var (classification, count, meanRate, meanAdder) in aggregate.OrderBy(a => a.ClassificationCode))
 			{
 				if (!authority.SalaryClassifications.Contains(classification, StringComparer.OrdinalIgnoreCase)) { draft.UnknownClassifications.Add(classification); continue; }
+				// Below the minimum group size the mean is an individual's rate: never drafted, never shown, never audited as a rate.
+				if (count < MinimumClassificationGroupSize) { suppressed++; continue; }
 				var straight = Math.Round(meanRate, 2, MidpointRounding.AwayFromZero);
 				// CFAA salary survey overtime: time-and-a-half on the straight rate plus the components paid for each overtime hour.
 				var overtime = Math.Round(meanRate * 1.5m + meanAdder, 2, MidpointRounding.AwayFromZero);
@@ -546,10 +556,10 @@ namespace Resgrid.Services.CostRecovery
 				line.SourceInputVersions = JsonConvert.SerializeObject(new { Source = "workforce-aggregate", AsOf = asOf.Date, Employees = count });
 				draft.LinesWritten++;
 			}
-			if (draft.LinesWritten == 0) { draft.Blockers.Add("no_classifications"); return draft; }
+			if (draft.LinesWritten == 0) { draft.Blockers.Add(suppressed > 0 ? "classifications_too_small" : "no_classifications"); return draft; }
 			await SaveRateLinesAsync(profile.CalOesMarsRateProfileId, departmentId, lines, userId, ipAddress, userAgent, cancellationToken);
 			var audit = Invoicing.DeploymentService.NewAuditEvent(departmentId, userId, AuditLogTypes.CalOesMarsRateDraftBuilt, ipAddress, userAgent);
-			audit.After = JsonConvert.SerializeObject(new { profile.CalOesMarsRateProfileId, draft.AsOf, draft.LinesWritten, draft.EmployeesIncluded, Classifications = draft.Classifications.Select(c => new { c.ClassificationCode, c.Count }).ToList(), draft.UnknownClassifications });
+			audit.After = JsonConvert.SerializeObject(new { profile.CalOesMarsRateProfileId, draft.AsOf, draft.LinesWritten, draft.EmployeesIncluded, Classifications = draft.Classifications.Select(c => new { c.ClassificationCode, c.Count }).ToList(), draft.UnknownClassifications, SuppressedClassifications = suppressed });
 			_eventAggregator.SendMessage<AuditEvent>(audit);
 			return draft;
 		}

@@ -73,7 +73,7 @@
                   <td>
                     @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
                     {
-                      <a class="btn btn-xs btn-danger" asp-controller="CustomStatuses" asp-action="Delete" asp-route-area="User" asp-route-id="@g.CustomStateId" data-confirm="@localizer["DeleteCustomStatusWarning"]" rel="nofollow">@commonLocalizer["Delete"]</a>
+                      <form method="post" asp-controller="CustomStatuses" asp-action="Delete" asp-route-area="User" asp-route-id="@g.CustomStateId" style="display: inline;">@Html.AntiForgeryToken()<button type="submit" class="btn btn-xs btn-danger" data-confirm="@localizer["DeleteCustomStatusWarning"]">@commonLocalizer["Delete"]</button></form>
                       <a class="btn btn-xs btn-primary" asp-controller="CustomStatuses" asp-action="Edit" asp-route-area="User" asp-route-id="@g.CustomStateId">@commonLocalizer["Edit"]</a>
                     }
                   </td>

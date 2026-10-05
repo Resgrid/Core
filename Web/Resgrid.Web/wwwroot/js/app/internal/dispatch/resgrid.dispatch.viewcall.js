@@ -24,16 +24,20 @@ var resgrid;
                 callMarker = null;
                 map = null;
 
-                noteQuillDescription = new Quill('#note-container', {
-                    placeholder: '',
-                    theme: 'snow'
-                });
-                // addCallNote1 reads noteQuillDescription, so its button is enabled only once the
-                // editor exists. Bound here rather than inline (RESGRID-WEB-1MA).
-                $('#note-box-submit1').on('click', addCallNote1).prop('disabled', false);
+                // The note editor is rendered only for members Add Call Data allows (ViewCallView.CanAddCallData).
+                if ($('#note-container').length) {
+                    noteQuillDescription = new Quill('#note-container', {
+                        placeholder: '',
+                        theme: 'snow'
+                    });
+                    // addCallNote1 reads noteQuillDescription, so its button is enabled only once the
+                    // editor exists. Bound here rather than inline (RESGRID-WEB-1MA).
+                    $('#note-box-submit1').on('click', addCallNote1).prop('disabled', false);
+                }
 
                 $(document).on('submit', '#newCallForm', function () {
-                    $('#Call_Notes').val(noteQuillDescription.root.innerHTML);
+                    if (noteQuillDescription)
+                        $('#Call_Notes').val(noteQuillDescription.root.innerHTML);
 
                     return true;
                 });
@@ -117,7 +121,9 @@ var resgrid;
 						Note: $('#note-box').val()
 					}),
 					contentType: 'application/json',
-					type: 'POST'
+					type: 'POST',
+					// JSON bodies cannot carry the antiforgery field, so the token travels as a header.
+					headers: { 'RequestVerificationToken': $('#callNoteTokenForm input[name="__RequestVerificationToken"]').val() }
 				}).done(function (data) {
 					$('#note-box').val('');
 					getCallNotes(false);
@@ -136,7 +142,8 @@ var resgrid;
                         Note: noteQuillDescription.root.innerHTML
 					}),
 					contentType: 'application/json',
-					type: 'POST'
+					type: 'POST',
+					headers: { 'RequestVerificationToken': $('#callNoteTokenForm input[name="__RequestVerificationToken"]').val() }
 				}).done(function (data) {
 					//$('#note-box1').val('');
                     noteQuillDescription.root.innerHTML = '';
@@ -196,10 +203,14 @@ var resgrid;
 					dangerMode: true
 				}).then((willDelete) => {
 					if (willDelete) {
+						// ReOpenCall is POST + antiforgery (the page's #reOpenCallForm token).
 						$.ajax({
-							url: resgrid.absoluteBaseUrl + '/User/Dispatch/ReOpenCall?callId=' + callId,
-							contentType: 'application/json',
-							type: 'GET'
+							url: resgrid.absoluteBaseUrl + '/User/Dispatch/ReOpenCall',
+							type: 'POST',
+							data: {
+								callId: callId,
+								__RequestVerificationToken: $('#reOpenCallForm input[name="__RequestVerificationToken"]').val()
+							}
 						}).done(function (data) {
 							swal(
                                 getText('requestSent', 'Request Sent!'),

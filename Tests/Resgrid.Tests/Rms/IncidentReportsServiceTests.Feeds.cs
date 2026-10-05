@@ -142,7 +142,7 @@ namespace Resgrid.Tests.Rms
 			_commands = new Mock<IIncidentCommandService>();
 			_contacts = new Mock<IContactsService>();
 			_mapping = new Mock<IMappingService>();
-			_service = new IncidentSourceFeedService(_reporting.Object, _commands.Object, _contacts.Object, _mapping.Object);
+			_service = new IncidentSourceFeedService(_reporting.Object, _commands.Object, _contacts.Object, _mapping.Object, Mock.Of<ICallSourceDataService>());
 		}
 
 		[Test]

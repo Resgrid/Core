@@ -3,6 +3,7 @@
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Records.IncidentReportDetailView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.ReportSources> sourcesLocalizer
 @{
 	ViewBag.Title = "Resgrid | " + localizer["ViewIncidentReport"];
 	var a = Model.Aggregate;
@@ -48,6 +49,10 @@
 				<div class="btn-group">
 					<a class="btn btn-primary" id="adp-edit-link" asp-controller="IncidentReports" asp-action="Edit" asp-route-area="User" asp-route-id="@r.RmsIncidentReportId"><i class="fa fa-pencil"></i> @commonLocalizer["Edit"]</a>
 				</div>
+				if (ClaimsAuthorizationHelper.CanViewCalls())
+				{
+					<form class="btn-group" method="post" asp-controller="IncidentReports" asp-action="RefreshFromSources" asp-route-area="User" asp-route-id="@r.RmsIncidentReportId">@Html.AntiForgeryToken()<input type="hidden" name="rowVersion" value="@r.RowVersion" /><button type="submit" class="btn btn-default" title="@sourcesLocalizer["RefreshFromCallHint"]"><i class="fa fa-refresh"></i> @sourcesLocalizer["RefreshFromCall"]</button></form>
+				}
 				if (Model.NerisWorkflowsEnabled)
 				{
 					<form class="btn-group" method="post" asp-controller="IncidentReports" asp-action="Validate" asp-route-area="User" asp-route-id="@r.RmsIncidentReportId">@Html.AntiForgeryToken()<button type="submit" class="btn btn-default"><i class="fa fa-check"></i> @(Model.SubmissionEnabled ? localizer["ValidateWithDestination"] : localizer["Validate"])</button></form>
@@ -346,7 +351,7 @@
 											<td>@string.Join(", ", rows.Where(m => m.Quantity.HasValue).Select(m => m.Quantity.Value.ToString("0.##") + " " + m.QuantityUnit))</td>
 										</tr>
 									}
-									@foreach (var module in a.Modules.Where(m => Model.SectionRequirements.All(x => (int)x.Kind != m.ModuleKind)).OrderBy(m => m.Ordinal))
+									@foreach (var module in a.Modules.Where(m => m.ModuleKind != (int)RmsIncidentModuleKind.TacticTimestamps && Model.SectionRequirements.All(x => (int)x.Kind != m.ModuleKind)).OrderBy(m => m.Ordinal))
 									{
 										<tr class="warning">
 											<td>@localizer["Section" + ((RmsIncidentModuleKind)module.ModuleKind).ToString()]</td>
@@ -359,6 +364,20 @@
 								</tbody>
 							</table>
 						</div>
+
+						@{
+							var tacticTimes = Resgrid.Web.Areas.User.Models.Records.IncidentTacticTimestampsForm.Read(a.Modules.FirstOrDefault(m => m.ModuleKind == (int)RmsIncidentModuleKind.TacticTimestamps)?.DetailJson).ToList();
+						}
+						@if (tacticTimes.Count > 0)
+						{
+							<h4>@sourcesLocalizer["TacticTimestamps"]</h4>
+							<dl class="dl-horizontal">
+								@foreach (var (field, utc) in tacticTimes)
+								{
+									<dt>@sourcesLocalizer["Tactic_" + field]</dt><dd>@When(utc)</dd>
+								}
+							</dl>
+						}
 
 						@if (a.Casualties.Count > 0)
 						{
@@ -583,7 +602,7 @@
 					</div>
 				</div>
 			}
-			@if (Model.CanSubmit && state == RmsRecordState.Rejected && r.AmendsRevisionId == null)
+			@if (Model.CanSubmit && Model.CanFinalize && state == RmsRecordState.Rejected && r.AmendsRevisionId == null)
 			{
 				<div class="ibox">
 					<div class="ibox-title"><h5><i class="fa fa-refresh"></i> @localizer["Resubmit"]</h5></div>

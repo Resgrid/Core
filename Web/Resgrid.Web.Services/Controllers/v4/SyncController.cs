@@ -7,6 +7,7 @@ using Resgrid.Providers.Claims;
 using Resgrid.Web.Services.Helpers;
 using Resgrid.Web.Services.Models.v4.Sync;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Resgrid.Web.Services.Controllers.v4
@@ -26,14 +27,23 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IIncidentResourcesService _incidentResourcesService;
 		private readonly ISyncService _syncService;
 		private readonly Model.Services.IAuthorizationService _authorizationService;
+		private readonly ICommandAccessService _commandAccessService;
 
-		public SyncController(IIncidentCommandService incidentCommandService, IIncidentResourcesService incidentResourcesService, ISyncService syncService, Model.Services.IAuthorizationService authorizationService)
+		public SyncController(IIncidentCommandService incidentCommandService, IIncidentResourcesService incidentResourcesService, ISyncService syncService,
+			Model.Services.IAuthorizationService authorizationService, ICommandAccessService commandAccessService)
 		{
 			_incidentCommandService = incidentCommandService;
 			_incidentResourcesService = incidentResourcesService;
 			_syncService = syncService;
 			_authorizationService = authorizationService;
+			_commandAccessService = commandAccessService;
 		}
+
+		/// <summary>
+		/// The commander gate (Security &gt; Command App Login) that IncidentCommandController applies to every board read.
+		/// Command_View is a plan-level claim; this is the department's choice of who commands.
+		/// </summary>
+		private Task<bool> CanReadBoardsAsync() => _commandAccessService.CanUseCommandAsync(DepartmentId, UserId);
 		#endregion Members and Constructors
 
 		/// <summary>
@@ -47,6 +57,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<SyncChangesResult>> Changes(long since = 0)
 		{
+			// Every row here is command-board data. A caller the commander gate refuses gets an empty delta with the cursor
+			// left where it was, so a later grant still pulls everything since then.
+			if (!await CanReadBoardsAsync())
+			{
+				var none = new SyncChangesResult { Data = new IncidentCommandChanges { ServerTimestampMs = Math.Max(since, 0) } };
+				none.PageSize = 0;
+				none.Status = ResponseHelper.Success;
+				ResponseHelper.PopulateV4ResponseData(none);
+				return none;
+			}
+
 			var sinceUtc = since <= 0
 				? DateTime.MinValue
 				: DateTimeOffset.FromUnixTimeMilliseconds(since).UtcDateTime;
@@ -78,6 +99,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<SyncBundleResult>> Bundle(bool includeAccountability = true)
 		{
+			// Boards and accountability only for a caller the commander gate admits; a zero cursor makes the next Changes a full pull.
+			if (!await CanReadBoardsAsync())
+			{
+				var none = new SyncBundleResult { Data = new IncidentCommandBundle { ServerTimestampMs = 0 } };
+				none.PageSize = 0;
+				none.Status = ResponseHelper.Success;
+				ResponseHelper.PopulateV4ResponseData(none);
+				return none;
+			}
+
 			var bundle = await _incidentCommandService.GetBundleForDepartmentAsync(DepartmentId, includeAccountability);
 
 			// Ad-hoc resources live in IncidentResourcesService; pull them for ALL active incidents in one batched call
@@ -114,6 +145,20 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				foreach (var person in data.Personnel)
 					person.MobilePhone = null;
+			}
+
+			// Same per-caller treatment for who is on the roster: the people the personnel list shows the caller
+			// (Security > View Group Users), not the department-wide build.
+			if (data.Personnel != null)
+			{
+				var visiblePersonnel = new List<ReferencePersonnel>();
+				foreach (var person in data.Personnel)
+				{
+					if (person != null && await _authorizationService.CanUserViewPersonViaMatrixAsync(person.UserId, UserId, DepartmentId))
+						visiblePersonnel.Add(person);
+				}
+
+				data.Personnel = visiblePersonnel;
 			}
 
 			var result = new SyncReferenceResult { Data = data };

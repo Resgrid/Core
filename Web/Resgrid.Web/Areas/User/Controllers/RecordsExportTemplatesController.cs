@@ -167,7 +167,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				Department = await _departments.GetDepartmentByIdAsync(DepartmentId, false),
 				Template = template,
-				Runs = await _exports.GetRunsAsync(DepartmentId, id, 100)
+				Runs = await _exports.GetRunsAsync(DepartmentId, UserId, id, 100)
 			};
 			if (TempData["RecordsMessage"] is string message) model.Message = message;
 			if (TempData["RecordsError"] is string error) model.ErrorMessage = error;
@@ -178,7 +178,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> Download(string id)
 		{
 			if (!await RequireAsync()) return Forbid();
-			var run = await _exports.GetRunAsync(DepartmentId, id, true);
+			var run = await _exports.GetRunAsync(DepartmentId, UserId, id, true);
 			if (run?.Data == null) return NotFound();
 			return File(run.Data, run.ContentType ?? "application/octet-stream", run.FileName ?? "export");
 		}

@@ -242,6 +242,7 @@
   <data name="timereports_date_exists" xml:space="preserve"><value>Ya existe un parte de horas para esa fecha.</value></data>
   <data name="timereports_not_found" xml:space="preserve"><value>No se encontró el parte de horas.</value></data>
   <data name="timereports_locked" xml:space="preserve"><value>El parte de horas está aprobado, facturado o anulado y ya no puede editarse.</value></data>
+  <data name="BillingNeedsInvoicingView" xml:space="preserve"><value>Los cargos y las facturas requieren el permiso Ver facturación.</value></data>
   <data name="timereports_status_transition_invalid" xml:space="preserve"><value>Ese cambio de estado no está permitido para este parte de horas.</value></data>
   <data name="timereports_time_invalid" xml:space="preserve"><value>Introduzca las horas de inicio y fin como HH:mm.</value></data>
   <data name="timereports_validation" xml:space="preserve"><value>Corrija los errores siguientes antes de enviar.</value></data>
@@ -252,7 +253,7 @@
   <data name="ManageDeployments" xml:space="preserve"><value>Gestionar despliegues</value></data>
   <data name="ManageDeploymentsNote" xml:space="preserve"><value>Crear y editar despliegues, dotaciones, equipo, gastos, archivos y cambios de estado, y ver todos los despliegues. Los miembros asignados siempre ven sus propios despliegues y registran horas sin este permiso.</value></data>
   <data name="ApproveTimeReports" xml:space="preserve"><value>Aprobar partes de horas</value></data>
-  <data name="ApproveTimeReportsNote" xml:space="preserve"><value>Aprobar y anular partes diarios de horas enviados. Los partes aprobados alimentan la facturación.</value></data>
+  <data name="ApproveTimeReportsNote" xml:space="preserve"><value>Aprobar y anular partes diarios de horas enviados. Los partes aprobados alimentan la facturación. Nadie puede aprobar un parte que haya enviado o que incluya sus propias horas; debe hacerlo otro aprobador.</value></data>
   <data name="DeploymentCreated" xml:space="preserve"><value>Despliegue creado</value></data>
   <data name="DeploymentStatusChanged" xml:space="preserve"><value>Estado del despliegue cambiado</value></data>
   <data name="DeploymentRosterChanged" xml:space="preserve"><value>Dotación del despliegue cambiada</value></data>
@@ -283,4 +284,5 @@
   <data name="Issuesubject_on_other_report" xml:space="preserve"><value>Este sujeto ya tiene horas en otro parte del mismo día</value></data>
   <data name="timereports_scope_invalid" xml:space="preserve"><value>Esa tripulación o persona no está activa en este despliegue.</value></data>
   <data name="timereports_subject_covered" xml:space="preserve"><value>Esa tripulación o persona ya tiene horas en otro parte de este día.</value></data>
+  <data name="timereports_self_approval" xml:space="preserve"><value>Usted envió este informe de horas o tiene horas en él, por lo que debe aprobarlo otro aprobador.</value></data>
 </root>

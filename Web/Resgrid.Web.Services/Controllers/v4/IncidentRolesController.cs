@@ -24,11 +24,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 	{
 		#region Members and Constructors
 		private readonly IIncidentCommandService _incidentCommandService;
+		private readonly ICommandAccessService _commandAccessService;
 
-		public IncidentRolesController(IIncidentCommandService incidentCommandService)
+		public IncidentRolesController(IIncidentCommandService incidentCommandService, ICommandAccessService commandAccessService)
 		{
 			_incidentCommandService = incidentCommandService;
+			_commandAccessService = commandAccessService;
 		}
+
+		/// <summary>The command-board read gate IncidentCommandController applies (CommandAppLogin); Command_View alone is a plan-level claim.</summary>
+		private Task<bool> CanReadBoardsAsync() => _commandAccessService.CanUseCommandAsync(DepartmentId, UserId);
 		#endregion Members and Constructors
 
 		/// <summary>Assigns a Resgrid user to a functional incident-command role.</summary>
@@ -80,6 +85,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.IncidentRolesResult>> GetRoles(int callId)
 		{
+			if (!await CanReadBoardsAsync())
+				return Unauthorized();
+
 			var result = new ICModels.IncidentRolesResult();
 			result.Data = await _incidentCommandService.GetIncidentRolesAsync(DepartmentId, callId);
 			result.PageSize = result.Data.Count;
@@ -94,6 +102,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.IncidentCapabilitiesResult>> GetMyCapabilities(int callId)
 		{
+			if (!await CanReadBoardsAsync())
+				return Unauthorized();
+
 			var caps = await _incidentCommandService.GetCapabilitiesForUserAsync(DepartmentId, callId, UserId);
 
 			var result = new ICModels.IncidentCapabilitiesResult();

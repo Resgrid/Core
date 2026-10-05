@@ -28,6 +28,17 @@ namespace Resgrid.Model.Services
 			bool isDepartmentAdmin, bool isGroupAdmin);
 
 		/// <summary>
+		/// Keeps only the values a caller may read: none when <paramref name="canViewUdfFields"/> is false (the caller
+		/// lacks the Udf_View claim that ViewUdfFields grants), otherwise the values whose field belongs to the active
+		/// definition and is visible to the caller's role under
+		/// <see cref="GetVisibleFieldsForActiveDefinitionAsync"/>. Values of disabled or superseded fields are dropped.
+		/// Use it on every read that returns stored values next to an entity, so the entity endpoint shows no more
+		/// than the custom-field endpoints do.
+		/// </summary>
+		Task<List<UdfFieldValue>> FilterValuesVisibleToUserAsync(int departmentId, int entityType, IEnumerable<UdfFieldValue> values,
+			bool canViewUdfFields, bool isDepartmentAdmin, bool isGroupAdmin);
+
+		/// <summary>
 		/// Saves a new UDF definition version with the supplied fields.
 		/// The previous active definition is marked inactive (history preserved).
 		/// </summary>

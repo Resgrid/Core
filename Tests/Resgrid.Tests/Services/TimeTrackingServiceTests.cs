@@ -341,5 +341,67 @@ namespace Resgrid.Tests.Services
 			_storedExpenses.Single().Amount.Should().Be(10m);
 			_audits.Should().NotContain(a => a.Type == AuditLogTypes.DeploymentExpenseUpdated);
 		}
+
+		[Test]
+		public async Task The_submitter_cannot_approve_their_own_report_but_another_approver_can()
+		{
+			var report = await _service.CreateTimeReportAsync("dep-1", DeptId, Day, Approver, null, null);
+			await _service.SubmitTimeReportAsync(report.DeploymentTimeReportId, DeptId, Approver, null, null);
+
+			(await FluentActions.Awaiting(() => _service.ApproveTimeReportAsync(report.DeploymentTimeReportId, DeptId, Approver, null, null)).Should().ThrowAsync<InvalidOperationException>())
+				.Which.Message.Should().Be(TimeReportApproval.SelfApprovalRefused);
+			_storedReports.Single().Status.Should().Be((int)DeploymentTimeReportStatuses.Submitted);
+			_storedReports.Single().ApprovedByUserId.Should().BeNull();
+			_audits.Should().NotContain(a => a.Type == AuditLogTypes.TimeReportApproved);
+
+			var approved = await _service.ApproveTimeReportAsync(report.DeploymentTimeReportId, DeptId, "deputy", null, null);
+			approved.Status.Should().Be((int)DeploymentTimeReportStatuses.Approved);
+			approved.ApprovedByUserId.Should().Be("deputy");
+		}
+
+		[TestCase(false)]
+		[TestCase(true)]
+		public async Task An_approver_cannot_approve_a_report_that_carries_their_own_hours(bool seatRemovedSinceTheReport)
+		{
+			var seat = new DeploymentPersonnel { DeploymentPersonnelId = "per-3", DeploymentId = "dep-1", DepartmentId = DeptId, UserId = Approver, DeploymentUnitId = "unit-1", DisplayName = "Chief" };
+			_deployment.Personnel.Add(seat);
+			var report = await _service.CreateTimeReportAsync("dep-1", DeptId, Day, Crew, null, null);
+			_storedEntries.Should().Contain(e => e.DeploymentTimeReportId == report.DeploymentTimeReportId && e.DeploymentPersonnelId == "per-3");
+			await _service.SubmitTimeReportAsync(report.DeploymentTimeReportId, DeptId, Crew, null, null);
+			if (seatRemovedSinceTheReport)
+				seat.RemovedOn = DateTime.UtcNow;
+
+			(await FluentActions.Awaiting(() => _service.ApproveTimeReportAsync(report.DeploymentTimeReportId, DeptId, Approver, null, null)).Should().ThrowAsync<InvalidOperationException>())
+				.Which.Message.Should().Be(TimeReportApproval.SelfApprovalRefused);
+			_storedReports.Single().Status.Should().Be((int)DeploymentTimeReportStatuses.Submitted);
+		}
+
+		[Test]
+		public async Task The_submitter_may_still_void_their_own_report()
+		{
+			var report = await _service.CreateTimeReportAsync("dep-1", DeptId, Day, Approver, null, null);
+			await _service.SubmitTimeReportAsync(report.DeploymentTimeReportId, DeptId, Approver, null, null);
+
+			var voided = await _service.VoidTimeReportAsync(report.DeploymentTimeReportId, DeptId, "entered twice", Approver, null, null);
+
+			voided.Status.Should().Be((int)DeploymentTimeReportStatuses.Void);
+		}
+
+		[Test]
+		public void Own_report_rule_covers_the_submitter_the_individual_seat_and_any_entry_for_the_seat()
+		{
+			var roster = new[]
+			{
+				new DeploymentPersonnel { DeploymentPersonnelId = "per-1", UserId = Crew },
+				new DeploymentPersonnel { DeploymentPersonnelId = "per-9", UserId = Approver, RemovedOn = DateTime.UtcNow }
+			};
+
+			TimeReportApproval.IsOwnReport(new DeploymentTimeReport { SubmittedByUserId = "CHIEF" }, roster, Approver).Should().BeTrue("user ids compare case-insensitively");
+			TimeReportApproval.IsOwnReport(new DeploymentTimeReport { SubmittedByUserId = Crew, DeploymentPersonnelId = "per-9" }, roster, Approver).Should().BeTrue();
+			TimeReportApproval.IsOwnReport(new DeploymentTimeReport { SubmittedByUserId = Crew, Entries = { new DeploymentTimeEntry { DeploymentPersonnelId = "per-9" } } }, roster, Approver).Should().BeTrue();
+			TimeReportApproval.IsOwnReport(new DeploymentTimeReport { SubmittedByUserId = Crew, Entries = { new DeploymentTimeEntry { DeploymentPersonnelId = "per-1" }, new DeploymentTimeEntry { DeploymentUnitId = "unit-1" } } }, roster, Approver).Should().BeFalse();
+			TimeReportApproval.IsOwnReport(new DeploymentTimeReport { SubmittedByUserId = Crew, DeploymentPersonnelId = "per-1" }, null, Approver).Should().BeFalse();
+			TimeReportApproval.IsOwnReport(new DeploymentTimeReport { SubmittedByUserId = Crew }, roster, null).Should().BeFalse();
+		}
 	}
 }

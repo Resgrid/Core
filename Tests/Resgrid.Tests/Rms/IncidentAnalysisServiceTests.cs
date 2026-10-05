@@ -80,6 +80,8 @@ namespace Resgrid.Tests.Rms
             var auth = new Mock<IRecordsAuthorizationService>();
             auth.Setup(a => a.HasPermissionAsync(It.IsAny<string>(), Dept, It.IsAny<PermissionTypes>())).ReturnsAsync(true);
             auth.Setup(a => a.CanUserViewRecordAsync(It.IsAny<string>(), It.IsAny<string>(), Dept)).ReturnsAsync(true);
+			// The chief is a department administrator: voiding someone else's analysis needs one (audit 2026-10-05).
+			auth.Setup(a => a.IsDepartmentAdminAsync("chief", Dept)).ReturnsAsync(true);
 			_authorization = auth;
             return auth.Object;
         }
@@ -353,6 +355,32 @@ namespace Resgrid.Tests.Rms
 
 			voided.State.Should().Be(RmsIncidentAnalysisState.Voided);
 			_store.Submissions.Single().State.Should().Be((int)RmsSubmissionState.Superseded);
+		}
+
+		[Test]
+		public async Task A_member_who_neither_wrote_nor_owns_the_analysis_cannot_void_it()
+		{
+			_report.NerisIncidentId = "FD24027000|2026-000200|1788436800";
+			var saved = await StartAndFillAsync();
+			var finalized = await _service.FinalizeAsync(Dept, "investigator", saved.Analysis.RmsIncidentAnalysisId, saved.Analysis.RowVersion);
+			_store.Analyses.Single().State = (int)RmsIncidentAnalysisState.Rejected;
+
+			Func<Task> act = () => _service.VoidAsync(Dept, "bystander", finalized.Analysis.RmsIncidentAnalysisId, "Superseded", "Not mine to void.");
+
+			await act.Should().ThrowAsync<UnauthorizedAccessException>();
+			_store.Analyses.Single().State.Should().Be((int)RmsIncidentAnalysisState.Rejected);
+		}
+
+		[Test]
+		public async Task Finalize_rights_alone_do_not_reach_another_members_analysis()
+		{
+			_report.NerisIncidentId = "FD24027000|2026-000200|1788436800";
+			var saved = await StartAndFillAsync();
+			_authorization.Setup(a => a.HasPermissionAsync("bystander", Dept, PermissionTypes.ReviewRecords)).ReturnsAsync(false);
+
+			Func<Task> act = () => _service.FinalizeAsync(Dept, "bystander", saved.Analysis.RmsIncidentAnalysisId, saved.Analysis.RowVersion);
+
+			await act.Should().ThrowAsync<UnauthorizedAccessException>();
 		}
 
 		[Test]

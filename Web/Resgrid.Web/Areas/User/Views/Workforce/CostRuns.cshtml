@@ -47,6 +47,9 @@
                 </div>
             </div>
         </div>
+        @* Running a cost run writes cost data: ViewInternalCosts plus Workforce_Update (WorkforceController.CanManageInternalCosts). *@
+        @if (Model.CanViewInternalCosts && Model.CanManage)
+        {
         <div class="col-md-4">
             <div class="ibox float-e-margins">
                 <div class="ibox-title"><h5>@localizer["NewRun"]</h5></div>
@@ -78,6 +81,7 @@
                 </div>
             </div>
         </div>
+        }
     </div>
 </div>
 

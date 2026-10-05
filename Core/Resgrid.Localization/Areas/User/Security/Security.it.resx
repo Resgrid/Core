@@ -1226,6 +1226,15 @@
   <data name="PermOptionDepartmentGroupAdminsAndSelectRoles" xml:space="preserve">
     <value>Amministratori del dipartimento e dei gruppi, più ruoli selezionati</value>
   </data>
+  <data name="PermOptionNotSavedCreateWorkflow" xml:space="preserve">
+    <value>Non salvato: gli amministratori del dipartimento modificano, tutti possono visualizzare</value>
+  </data>
+  <data name="PermOptionNotSavedManageWorkflowCredentials" xml:space="preserve">
+    <value>Non salvato: gli amministratori del dipartimento modificano, tutti vedono i nomi</value>
+  </data>
+  <data name="PermOptionNotSavedViewWorkflowRuns" xml:space="preserve">
+    <value>Non salvato: tutti possono visualizzare, gli amministratori del dipartimento annullano</value>
+  </data>
   <data name="BreadcrumbSecurity" xml:space="preserve">
     <value>Sicurezza e autorizzazioni</value>
   </data>
@@ -1317,7 +1326,7 @@
     <value>Chi può rettificare l'inventario</value>
   </data>
   <data name="PermAdjustInventoryNote" xml:space="preserve">
-    <value>Questa opzione stabilisce chi può rettificare le giacenze di inventario nel sistema. Per impostazione predefinita tutti possono rettificare l'inventario.</value>
+    <value>Questa opzione stabilisce chi può rettificare le giacenze di inventario nel sistema. Finché non viene salvato un valore, solo gli amministratori del dipartimento possono rettificare l'inventario.</value>
   </data>
   <data name="PermViewPersonnelLocationLabel" xml:space="preserve">
     <value>Chi può vedere la posizione del personale</value>
@@ -1371,19 +1380,19 @@
     <value>Chi può creare/modificare flussi di lavoro</value>
   </data>
   <data name="PermCreateWorkflowNote" xml:space="preserve">
-    <value>Questa opzione stabilisce chi può creare, modificare ed eliminare flussi di lavoro e i relativi passaggi. Per impostazione predefinita solo gli amministratori del dipartimento possono gestire i flussi di lavoro.</value>
+    <value>Questa opzione stabilisce chi può creare, modificare ed eliminare flussi di lavoro e i relativi passaggi. Finché non viene salvato un valore, solo gli amministratori del dipartimento possono gestirli e tutti i membri possono visualizzarli; salvare un valore limita anche chi può visualizzarli.</value>
   </data>
   <data name="PermManageWorkflowCredentialsLabel" xml:space="preserve">
     <value>Chi può gestire le credenziali dei flussi di lavoro</value>
   </data>
   <data name="PermManageWorkflowCredentialsNote" xml:space="preserve">
-    <value>Questa opzione stabilisce chi può creare, modificare ed eliminare le credenziali crittografate usate dalle azioni dei flussi di lavoro (ad es. password SMTP, chiavi API). Per impostazione predefinita solo gli amministratori del dipartimento possono gestire le credenziali.</value>
+    <value>Questa opzione stabilisce chi può creare, modificare ed eliminare le credenziali crittografate usate dalle azioni dei flussi di lavoro (ad es. password SMTP, chiavi API). Finché non viene salvato un valore, solo gli amministratori del dipartimento possono gestirle e tutti i membri ne vedono i nomi; salvare un valore limita anche chi può vederle.</value>
   </data>
   <data name="PermViewWorkflowRunsLabel" xml:space="preserve">
     <value>Chi può visualizzare le esecuzioni dei flussi di lavoro</value>
   </data>
   <data name="PermViewWorkflowRunsNote" xml:space="preserve">
-    <value>Questa opzione stabilisce chi può visualizzare la cronologia di esecuzione dei flussi di lavoro, i log delle esecuzioni e le dashboard di stato. Per impostazione predefinita solo gli amministratori del dipartimento possono visualizzare le esecuzioni dei flussi di lavoro.</value>
+    <value>Questa opzione stabilisce chi può visualizzare la cronologia di esecuzione dei flussi di lavoro, i log delle esecuzioni e le dashboard di stato. Finché non viene salvato un valore, tutti i membri possono visualizzare le esecuzioni e solo gli amministratori del dipartimento possono annullarle o cancellarle; salvare un altro valore limita chi può visualizzarle, e salvare Tutti consente a tutti anche di annullarle e cancellarle.</value>
   </data>
   <data name="SsoPageTitle" xml:space="preserve">
     <value>Single Sign-On (SSO) e SCIM</value>
@@ -2106,11 +2115,11 @@
   <data name="PermCommandAppLoginLabel" xml:space="preserve"><value>Accesso all'app Command</value></data>
   <data name="PermCommandAppLoginNote" xml:space="preserve"><value>Definisce chi può agire come comandante: accedere all'app IC, stabilire il comando dell'incidente su una chiamata e visualizzare le lavagne di comando. Se restringi questa impostazione rispetto a Tutti, le persone che scegli possono anche collaborare su qualsiasi lavagna di comando (assegnare e spostare risorse, gestire timer e accountability) senza ricoprire una posizione ICS su di essa: utile per consentire agli operatori di centrale di dare una mano dall'app Dispatch. Finché è impostata su Tutti, le azioni sulla lavagna restano limitate al comandante dell'incidente e ai ruoli ICS assegnati.</value></data>
   <data name="PermAdpSectionHeader" xml:space="preserve"><value>Protezione avanzata dei dati</value></data>
-  <data name="PermAdpSectionNote" xml:space="preserve"><value>Queste autorizzazioni stabiliscono chi può lavorare con i dati crittografati (protetti) quando il componente aggiuntivo Protezione avanzata dei dati è attivo. Ogni visualizzazione o modifica richiede inoltre una verifica a due fattori recente; queste impostazioni stabiliscono chi può anche solo tentarla. A differenza della maggior parte delle autorizzazioni Resgrid, i valori non impostati usano per impostazione predefinita la selezione restrittiva mostrata.</value></data>
+  <data name="PermAdpSectionNote" xml:space="preserve"><value>Quando il componente aggiuntivo Protezione avanzata dei dati è attivo, queste due autorizzazioni stabiliscono chi può ricevere i dettagli protetti di una chiamata via SMS o chiamata vocale dopo aver inserito il proprio PIN e chi può modificare il modo in cui i contenuti protetti escono da Resgrid. La visualizzazione o la modifica dei dati protetti sullo schermo segue le regole di accesso di ogni pagina più una verifica a due fattori recente. A differenza della maggior parte delle autorizzazioni Resgrid, i valori non impostati usano per impostazione predefinita la selezione mostrata.</value></data>
   <data name="PermAdpManageLabel" xml:space="preserve"><value>Gestire le impostazioni di protezione dei dati</value></data>
   <data name="PermAdpManageNote" xml:space="preserve"><value>Chi può modificare le impostazioni di Protezione avanzata dei dati, come la finestra di verifica e le opzioni sul contenuto delle notifiche. Acquisto, registrazione e disdetta restano sempre riservati al membro responsabile del dipartimento.</value></data>
   <data name="PermAdpViewCallLabel" xml:space="preserve"><value>Visualizzare i dati protetti delle chiamate</value></data>
-  <data name="PermAdpViewCallNote" xml:space="preserve"><value>Chi può mostrare i campi protetti delle chiamate (natura, indirizzo, dati di contatto, note) dopo la verifica a due fattori. Il valore predefinito è Tutti, perché il personale che interviene deve poter leggere un dispaccio.</value></data>
+  <data name="PermAdpViewCallNote" xml:space="preserve"><value>Chi può ricevere i dettagli protetti delle chiamate (natura, indirizzo, dati di contatto, note) via SMS o chiamata vocale dopo aver inserito il proprio PIN, quando il rilascio tramite PIN è attivo. La visualizzazione sullo schermo e nelle app segue l'accesso alla chiamata più la verifica a due fattori. Il valore predefinito è Tutti, perché il personale che interviene deve poter leggere un dispaccio.</value></data>
   <data name="PermAdpEditCallLabel" xml:space="preserve"><value>Modificare i dati protetti delle chiamate</value></data>
   <data name="PermAdpEditCallNote" xml:space="preserve"><value>Chi può modificare i campi protetti delle chiamate dopo la verifica a due fattori. Il valore predefinito è Tutti, in linea con il normale flusso di lavoro delle chiamate.</value></data>
   <data name="PermAdpViewPersonnelLabel" xml:space="preserve"><value>Visualizzare i dati protetti del personale</value></data>

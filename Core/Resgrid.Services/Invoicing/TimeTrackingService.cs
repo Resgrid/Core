@@ -442,6 +442,11 @@ namespace Resgrid.Services.Invoicing
 			if (report.Status != (int)DeploymentTimeReportStatuses.Submitted) throw new InvalidOperationException("timereports_status_transition_invalid");
 			var deployment = await _deployments.GetByIdForDepartmentAsync(report.DeploymentId, departmentId);
 
+			// Separation of duties: nobody certifies hours they submitted or that are their own (TimeReportApproval).
+			report.Entries = (await _entries.GetByReportAsync(deploymentTimeReportId))?.ToList() ?? new List<DeploymentTimeEntry>();
+			var roster = (await _deploymentService.GetDeploymentByIdAsync(report.DeploymentId, departmentId))?.Personnel;
+			if (TimeReportApproval.IsOwnReport(report, roster, userId)) throw new InvalidOperationException(TimeReportApproval.SelfApprovalRefused);
+
 			var before = DeploymentService.Snapshot(report);
 			report.Status = (int)DeploymentTimeReportStatuses.Approved;
 			report.ApprovedByUserId = userId;
@@ -677,6 +682,12 @@ namespace Resgrid.Services.Invoicing
 				expense.AddedOn = DateTime.UtcNow;
 				expense.AddedByUserId = userId;
 			}
+			// DeleteExpenseAsync's lock, for saves: neither the stored row nor the saved one may sit on a report that is past
+			// approval, because the billing engine bills Billable expenses with approved reports — linked ones, and unlinked
+			// ones by their date. Nobody approved an expense added or changed after its report was.
+			if (existing != null)
+				await EnsureExpenseUnlockedAsync(existing.DeploymentId, existing.DeploymentTimeReportId, existing.ExpenseDate, expense.DepartmentId);
+			await EnsureExpenseUnlockedAsync(expense.DeploymentId, expense.DeploymentTimeReportId, expense.ExpenseDate == default ? DateTime.UtcNow.Date : expense.ExpenseDate, expense.DepartmentId);
 			expense.IsDeleted = false;
 			expense.Currency = string.IsNullOrWhiteSpace(expense.Currency) ? deployment.Currency : expense.Currency.Trim().ToUpperInvariant();
 			expense.Description = Trim(expense.Description);
@@ -722,6 +733,27 @@ namespace Resgrid.Services.Invoicing
 		#endregion
 
 		#region Helpers
+
+		/// <summary>
+		/// A linked expense is locked once its report is Approved, Billed or Void; an unlinked one once any report of its day
+		/// is Approved or Billed (the billing engine bills it with that report). A void day bills nothing, so it does not lock
+		/// an unlinked expense: a replacement report for the day still picks it up for approval.
+		/// </summary>
+		private async Task EnsureExpenseUnlockedAsync(string deploymentId, string deploymentTimeReportId, DateTime expenseDate, int departmentId)
+		{
+			if (!string.IsNullOrWhiteSpace(deploymentTimeReportId))
+			{
+				var report = await _reports.GetByIdForDepartmentAsync(deploymentTimeReportId, departmentId);
+				if (report != null && !report.IsDeleted && report.Status is (int)DeploymentTimeReportStatuses.Approved or (int)DeploymentTimeReportStatuses.Billed or (int)DeploymentTimeReportStatuses.Void)
+					throw new InvalidOperationException("timereports_locked");
+				return;
+			}
+			if (string.IsNullOrWhiteSpace(deploymentId)) return;
+			var day = expenseDate.Date;
+			var reports = await _reports.GetByDeploymentAsync(deploymentId);
+			if (reports != null && reports.Any(r => r != null && r.DepartmentId == departmentId && !r.IsDeleted && r.ReportDate.Date == day && r.Status is (int)DeploymentTimeReportStatuses.Approved or (int)DeploymentTimeReportStatuses.Billed))
+				throw new InvalidOperationException("timereports_locked");
+		}
 
 		private void Audit<T>(int departmentId, string userId, AuditLogTypes type, string ipAddress, string userAgent, string before, T after)
 		{

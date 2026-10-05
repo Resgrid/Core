@@ -10,6 +10,7 @@ using Resgrid.Web.Services.Models.v4.Forms;
 using Resgrid.Web.Services.Helpers;
 using Resgrid.Web.Services.Models.v4.UnitRoles;
 using Resgrid.Model;
+using Resgrid.Model.Helpers;
 using Resgrid.Web.Helpers;
 using System.Net.Mime;
 using System.Threading;
@@ -29,12 +30,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IUnitsService _unitsService;
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IPersonnelRolesService _personnelRolesService;
+		private readonly Model.Services.IAuthorizationService _authorizationService;
 
-		public UnitRolesController(IUnitsService unitsService, IDepartmentsService departmentsService, IPersonnelRolesService personnelRolesService)
+		public UnitRolesController(IUnitsService unitsService, IDepartmentsService departmentsService, IPersonnelRolesService personnelRolesService,
+			Model.Services.IAuthorizationService authorizationService)
 		{
 			_unitsService = unitsService;
 			_departmentsService = departmentsService;
 			_personnelRolesService = personnelRolesService;
+			_authorizationService = authorizationService;
 		}
 		#endregion Members and Constructors
 
@@ -226,12 +230,20 @@ namespace Resgrid.Web.Services.Controllers.v4
 					}
 				}
 
+				// The UserId is caller-supplied too: only a current (not removed, not disabled) member of this department is seated.
+				var currentMemberIds = new HashSet<string>(((await _departmentsService.GetAllMembersForDepartmentAsync(DepartmentId)) ?? new List<DepartmentMember>())
+					.Where(m => DepartmentMemberStateHelper.IsCurrentMember(m, DepartmentId))
+					.Select(m => m.UserId), StringComparer.OrdinalIgnoreCase);
+
 				await _unitsService.DeleteActiveRolesForUnitAsync(unit.UnitId, cancellationToken);
 
 				foreach (var unitRole in setRolesInput.Roles)
 				{
 					if (string.IsNullOrWhiteSpace(unitRole.UserId) || string.IsNullOrWhiteSpace(unitRole.RoleId)
 						|| !int.TryParse(unitRole.RoleId, out var roleId))
+						continue;
+
+					if (!currentMemberIds.Contains(unitRole.UserId))
 						continue;
 
 					var role = await _unitsService.GetRoleByIdAsync(roleId);
@@ -283,6 +295,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 				foreach (var unit in units)
 				{
+					// Security > View Units, the same filter Units/GetAllUnits applies.
+					if (!await _authorizationService.CanUserViewUnitViaMatrixAsync(unit.UnitId, UserId, DepartmentId))
+						continue;
+
 					if (unit.Roles != null && unit.Roles.Any())
 					{
 						foreach (var unitRole in unit.Roles)

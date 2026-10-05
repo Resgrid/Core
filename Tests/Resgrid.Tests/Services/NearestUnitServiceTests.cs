@@ -339,16 +339,17 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
-		public async Task a_hidden_unit_location_is_withheld_but_still_ranked()
+		public async Task a_hidden_unit_location_is_withheld_with_its_distance_and_eta()
 		{
+			// Security > See Unit Locations: a distance or ETA would give the position away (trilateration).
 			_authorizationService.Setup(x => x.CanUserViewUnitLocationViaMatrixAsync(TeamUnit, Viewer, DepartmentId)).ReturnsAsync(false);
 
 			var team = UnitRow(await GetBoardAsync(), TeamUnit);
 
 			team.LocationHidden.Should().BeTrue();
 			team.Latitude.Should().BeNull();
-			team.DistanceMeters.Should().NotBeNull();
-			team.EtaSeconds.Should().NotBeNull();
+			team.DistanceMeters.Should().BeNull();
+			team.EtaSeconds.Should().BeNull();
 		}
 
 		[Test]

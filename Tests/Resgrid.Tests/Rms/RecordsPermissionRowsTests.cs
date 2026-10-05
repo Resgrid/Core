@@ -38,7 +38,7 @@ namespace Resgrid.Tests.Rms
 		{
 			var rows = RecordsPermissionRows.Build(new List<Permission>());
 
-			rows.Select(r => r.Type).Should().Equal(RecordPermissionCatalog.All.Select(d => d.Type));
+			rows.Select(r => r.Type).Should().Equal(RecordPermissionCatalog.All.Where(d => d.ShownOnSecurityScreen).Select(d => d.Type));
 
 			foreach (var row in rows)
 			{
@@ -54,6 +54,25 @@ namespace Resgrid.Tests.Rms
 				options.Any(o => o.Value == RecordsPermissionRows.EveryoneValue).Should().Be(descriptor.EveryoneOffered, row.Name);
 				options.Single(o => o.Selected).Value.Should().Be(row.Value.ToString(), row.Name);
 			}
+		}
+
+		[Test]
+		public void Only_the_enforced_Records_rows_are_on_the_screen_and_only_View_Group_Records_offers_the_group_lock()
+		{
+			// Share and legacy history issue claims no endpoint uses yet; every other Records action ignores LockToGroup
+			// (RecordsAuthorizationService reads it only for ViewGroupRecords), so the box would promise nothing.
+			var rows = RecordsPermissionRows.Build(new[]
+			{
+				new Permission { PermissionType = (int)PermissionTypes.ShareRecordsExternally, Action = (int)PermissionActions.DepartmentAdminsOnly },
+				new Permission { PermissionType = (int)PermissionTypes.ViewLegacyRecords, Action = (int)PermissionActions.DepartmentAdminsOnly }
+			});
+
+			rows.Select(r => r.Type).Should().NotContain(new[] { PermissionTypes.ShareRecordsExternally, PermissionTypes.ViewLegacyRecords });
+			rows.Where(r => r.ShowLockToGroup).Select(r => r.Type).Should().Equal(PermissionTypes.ViewGroupRecords);
+
+			// The claims keep flowing from the catalog: both descriptors still exist with their no-row defaults.
+			RecordPermissionCatalog.Get(PermissionTypes.ShareRecordsExternally).NoRowDefault.Should().Be(PermissionActions.DepartmentAdminsOnly);
+			RecordPermissionCatalog.Get(PermissionTypes.ViewLegacyRecords).NoRowDefault.Should().Be(PermissionActions.Everyone);
 		}
 
 		[Test]

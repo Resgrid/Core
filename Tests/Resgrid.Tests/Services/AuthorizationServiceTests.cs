@@ -176,6 +176,86 @@ namespace Resgrid.Tests.Services
 			}
 		}
 
+		/// <summary>
+		/// Remove Personnel set to department and group admins (action 1): a group admin may remove members of their
+		/// own group, and a member on either side with no group used to throw instead of being refused.
+		/// </summary>
+		[TestFixture]
+		public class when_a_group_admin_removes_personnel : with_the_authorization_service
+		{
+			private const string GroupAdmin = "group-admin";
+			private const string Target = "target-member";
+
+			[SetUp]
+			public void Setup()
+			{
+				_departmentsServiceMock.Setup(m => m.GetDepartmentByIdAsync(1, It.IsAny<bool>()))
+					.ReturnsAsync(CreateDepartmentWithAdmins(1, "owner"));
+				_permissionsServiceMock.Setup(m => m.GetPermissionByDepartmentTypeAsync(1, PermissionTypes.RemovePersonnel))
+					.ReturnsAsync(new Permission { DepartmentId = 1, PermissionType = (int)PermissionTypes.RemovePersonnel, Action = (int)PermissionActions.DepartmentAndGroupAdmins });
+			}
+
+			private void InGroup(string userId, int? groupId, bool isAdmin = false) =>
+				_departmentGroupsServiceMock.Setup(m => m.GetGroupForUserAsync(userId, 1)).ReturnsAsync(groupId.HasValue
+					? new DepartmentGroup
+					{
+						DepartmentId = 1,
+						DepartmentGroupId = groupId.Value,
+						Members = new System.Collections.Generic.List<DepartmentGroupMember>
+						{
+							new DepartmentGroupMember { DepartmentGroupId = groupId.Value, UserId = userId, IsAdmin = isAdmin }
+						}
+					}
+					: null);
+
+			[Test]
+			public async Task a_group_admin_can_remove_a_member_of_their_own_group()
+			{
+				InGroup(GroupAdmin, 5, isAdmin: true);
+				InGroup(Target, 5);
+
+				(await _authorizationService.CanUserDeleteUserAsync(1, GroupAdmin, Target)).Should().BeTrue();
+			}
+
+			[Test]
+			public async Task a_group_admin_cannot_remove_a_member_of_another_group()
+			{
+				InGroup(GroupAdmin, 5, isAdmin: true);
+				InGroup(Target, 6);
+
+				(await _authorizationService.CanUserDeleteUserAsync(1, GroupAdmin, Target)).Should().BeFalse();
+			}
+
+			[Test]
+			public async Task an_actor_in_no_group_is_refused_without_throwing()
+			{
+				InGroup(GroupAdmin, null);
+				InGroup(Target, 5);
+
+				(await _authorizationService.CanUserDeleteUserAsync(1, GroupAdmin, Target)).Should().BeFalse();
+			}
+
+			[Test]
+			public async Task a_target_in_no_group_is_refused_without_throwing()
+			{
+				InGroup(GroupAdmin, 5, isAdmin: true);
+				InGroup(Target, null);
+
+				(await _authorizationService.CanUserDeleteUserAsync(1, GroupAdmin, Target)).Should().BeFalse();
+			}
+
+			[Test]
+			public async Task a_department_admin_can_remove_a_member_in_no_group()
+			{
+				_departmentsServiceMock.Setup(m => m.GetDepartmentByIdAsync(1, It.IsAny<bool>()))
+					.ReturnsAsync(CreateDepartmentWithAdmins(1, "owner", GroupAdmin));
+				InGroup(GroupAdmin, null);
+				InGroup(Target, null);
+
+				(await _authorizationService.CanUserDeleteUserAsync(1, GroupAdmin, Target)).Should().BeTrue();
+			}
+		}
+
 		[TestFixture]
 		public class when_authroizing_managing_invites : with_the_authorization_service
 		{

@@ -28,11 +28,26 @@ namespace Resgrid.Web.Services.Controllers.v4
 		#region Members and Constructors
 		private readonly ICallsService _callsService;
 		private readonly IDepartmentsService _departmentsService;
+		private readonly Model.Services.IAuthorizationService _authorizationService;
 
-		public CallVideoFeedsController(ICallsService callsService, IDepartmentsService departmentsService)
+		public CallVideoFeedsController(ICallsService callsService, IDepartmentsService departmentsService, Model.Services.IAuthorizationService authorizationService)
 		{
 			_callsService = callsService;
 			_departmentsService = departmentsService;
+			_authorizationService = authorizationService;
+		}
+
+		/// <summary>
+		/// Changing a call's existing feed: the call must be one the member may view (group-scoped dispatch), and they need
+		/// Add Call Data or edit rights to the call.
+		/// </summary>
+		private async Task<bool> CanChangeFeedAsync(int callId)
+		{
+			if (!await _authorizationService.CanUserViewCallAsync(UserId, callId))
+				return false;
+
+			return await _authorizationService.CanUserAddCallDataAsync(UserId, callId, DepartmentId) ||
+				await _authorizationService.CanUserEditCallAsync(UserId, callId);
 		}
 		#endregion Members and Constructors
 
@@ -62,6 +77,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 
 			if (call.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			// Group-scoped dispatch, as on Calls/GetCall.
+			if (!await _authorizationService.CanUserViewCallAsync(UserId, cId))
 				return Unauthorized();
 
 			var feeds = await _callsService.GetCallVideoFeedsByCallIdAsync(cId);
@@ -113,6 +132,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return BadRequest();
 
 			if (call.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			// A feed is call data: Security > Add Call Data on a call the member may view, as for call notes and files.
+			if (!await _authorizationService.CanUserViewCallAsync(UserId, parsedCallId) ||
+				!await _authorizationService.CanUserAddCallDataAsync(UserId, parsedCallId, DepartmentId))
 				return Unauthorized();
 
 			var result = new SaveCallVideoFeedResult();
@@ -175,6 +199,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (feed.DepartmentId != DepartmentId)
 				return Unauthorized();
 
+			if (!await CanChangeFeedAsync(feed.CallId))
+				return Unauthorized();
+
 			var result = new SaveCallVideoFeedResult();
 
 			feed.Name = input.Name;
@@ -227,6 +254,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return BadRequest();
 
 			if (feed.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			if (!await CanChangeFeedAsync(feed.CallId))
 				return Unauthorized();
 
 			var result = new DeleteCallVideoFeedResult();

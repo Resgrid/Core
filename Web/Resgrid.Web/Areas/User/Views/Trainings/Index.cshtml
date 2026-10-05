@@ -126,10 +126,13 @@
 					  }
                       @if (canDeleteTraining)
 					  {
-                        <a href="@Url.Action("DeleteTraining", "Trainings", new { area = "User", trainingId = t.TrainingId })" class='btn btn-xs btn-danger' data-confirm="@localizer["DeleteTrainingWarning"] @t.Name ?" rel="nofollow">
-                          <i class="icon-trash">
-                          </i> @localizer["DeleteButton"]
-                        </a>
+                        <form method="post" action="@Url.Action("DeleteTraining", "Trainings", new { area = "User", trainingId = t.TrainingId })" style="display: inline;">
+                          @Html.AntiForgeryToken()
+                          <button type="submit" class='btn btn-xs btn-danger' data-confirm="@localizer["DeleteTrainingWarning"] @t.Name ?">
+                            <i class="icon-trash">
+                            </i> @localizer["DeleteButton"]
+                          </button>
+                        </form>
 					  }
                     </td>
                   </tr>

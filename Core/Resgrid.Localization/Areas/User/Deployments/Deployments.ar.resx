@@ -242,6 +242,7 @@
   <data name="timereports_date_exists" xml:space="preserve"><value>يوجد تقرير وقت لهذا التاريخ بالفعل.</value></data>
   <data name="timereports_not_found" xml:space="preserve"><value>لم يتم العثور على تقرير الوقت.</value></data>
   <data name="timereports_locked" xml:space="preserve"><value>تقرير الوقت موافق عليه أو مفوتر أو مبطل ولا يمكن تعديله بعد الآن.</value></data>
+  <data name="BillingNeedsInvoicingView" xml:space="preserve"><value>تتطلب الرسوم والفواتير صلاحية عرض الفوترة.</value></data>
   <data name="timereports_status_transition_invalid" xml:space="preserve"><value>تغيير الحالة هذا غير مسموح لتقرير الوقت هذا.</value></data>
   <data name="timereports_time_invalid" xml:space="preserve"><value>أدخل وقتي البداية والنهاية بصيغة HH:mm.</value></data>
   <data name="timereports_validation" xml:space="preserve"><value>صحّح الأخطاء أدناه قبل الإرسال.</value></data>
@@ -252,7 +253,7 @@
   <data name="ManageDeployments" xml:space="preserve"><value>إدارة عمليات الانتشار</value></data>
   <data name="ManageDeploymentsNote" xml:space="preserve"><value>إنشاء وتعديل عمليات الانتشار والتشكيلات والمعدات والمصروفات والملفات وتغييرات الحالة، ورؤية كل عمليات الانتشار. يرى الأعضاء المعيّنون دائمًا انتشاراتهم ويسجلون الوقت بدون هذا الإذن.</value></data>
   <data name="ApproveTimeReports" xml:space="preserve"><value>الموافقة على تقارير الوقت</value></data>
-  <data name="ApproveTimeReportsNote" xml:space="preserve"><value>الموافقة على تقارير الوقت اليومية المرسلة وإبطالها. التقارير الموافق عليها تغذي الفوترة.</value></data>
+  <data name="ApproveTimeReportsNote" xml:space="preserve"><value>الموافقة على تقارير الوقت اليومية المرسلة وإبطالها. التقارير الموافق عليها تغذي الفوترة. لا يمكن لأي شخص الموافقة على تقرير قدّمه أو يتضمن ساعاته الخاصة؛ يجب أن يوافق عليه معتمِد آخر.</value></data>
   <data name="DeploymentCreated" xml:space="preserve"><value>تم إنشاء انتشار</value></data>
   <data name="DeploymentStatusChanged" xml:space="preserve"><value>تغيرت حالة الانتشار</value></data>
   <data name="DeploymentRosterChanged" xml:space="preserve"><value>تغير تشكيل الانتشار</value></data>
@@ -283,4 +284,5 @@
   <data name="Issuesubject_on_other_report" xml:space="preserve"><value>لهذا البند وقت مسجل بالفعل في تقرير آخر لنفس اليوم</value></data>
   <data name="timereports_scope_invalid" xml:space="preserve"><value>هذا الطاقم أو الشخص غير نشط في عملية النشر هذه.</value></data>
   <data name="timereports_subject_covered" xml:space="preserve"><value>لهذا الطاقم أو الشخص وقت مسجل بالفعل في تقرير آخر لهذا اليوم.</value></data>
+  <data name="timereports_self_approval" xml:space="preserve"><value>لقد قدّمت تقرير الوقت هذا أو لديك ساعات مسجّلة فيه، لذا يجب أن يعتمده معتمِد آخر.</value></data>
 </root>

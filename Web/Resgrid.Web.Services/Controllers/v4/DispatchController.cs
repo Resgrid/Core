@@ -141,6 +141,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			foreach (var user in users)
 			{
+				// Security > View Personnel, the same filter Personnel/GetAllPersonnelInfos applies.
+				if (!await _authorizationService.CanUserViewPersonViaMatrixAsync(user.UserId, UserId, DepartmentId))
+					continue;
+
 				UserProfile profile = null;
 				if (allProfiles.ContainsKey(user.UserId))
 					profile = allProfiles[user.UserId];
@@ -156,7 +160,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 				var action = await _actionLogsService.GetLastActionLogForUserAsync(user.UserId, DepartmentId);
 				var userState = await _userStateService.GetLastUserStateByUserIdAsync(user.UserId);
 
-				result.Personnel.Add(await PersonnelController.ConvertPersonnelInfo(user, department, profile, group, roles, action, userState, canViewPII));
+				// Security > See Personnel Locations, the rule the map applies: the last status position is withheld otherwise.
+				var canViewLocation = await _authorizationService.CanUserViewPersonLocationViaMatrixAsync(user.UserId, UserId, DepartmentId);
+				var personnelInfo = await PersonnelController.ConvertPersonnelInfo(user, department, profile, group, roles, action, userState, canViewPII, canViewLocation);
+
+				result.Personnel.Add(personnelInfo);
 			}
 
 			foreach (var group in allGroups)
@@ -415,6 +423,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			foreach (var user in users)
 			{
+				// Security > View Personnel, the same filter Personnel/GetAllPersonnelInfos applies.
+				if (!await _authorizationService.CanUserViewPersonViaMatrixAsync(user.UserId, UserId, DepartmentId))
+					continue;
+
 				var person = new GetPersonnelForCallGridResultData();
 				person.UserId = user.UserId;
 				person.Name = await UserHelper.GetFullNameForUser(personnelNames, user.UserName, user.UserId);
@@ -458,7 +470,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 						person.StatusColor = status.ButtonClassToColor();
 					}
 
-					person.Location = currentStatus.GeoLocationData;
+					// Security > See Personnel Locations, the rule the map applies.
+					if (await _authorizationService.CanUserViewPersonLocationViaMatrixAsync(user.UserId, UserId, DepartmentId))
+						person.Location = currentStatus.GeoLocationData;
 				}
 				else
 				{

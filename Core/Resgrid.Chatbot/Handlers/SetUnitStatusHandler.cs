@@ -83,7 +83,8 @@ namespace Resgrid.Chatbot.Handlers
 					};
 				}
 
-				await _unitsService.SetUnitStateAsync(unit.UnitId, matchedState.CustomStateDetailId, session.DepartmentId);
+				using (StatusWriteActor.Begin(session.UserId, StatusSetOrigins.Chat))
+					await _unitsService.SetUnitStateAsync(unit.UnitId, matchedState.CustomStateDetailId, session.DepartmentId);
 
 				return new ChatbotResponse { Text = ChatbotResources.Get("Unit_SetDone", culture, unit.Name, matchedState.ButtonText), Processed = true };
 			}

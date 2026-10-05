@@ -7,7 +7,7 @@ namespace Resgrid.Model
 		public static readonly IReadOnlyList<RecordPermissionDescriptor> All = new[]
 		{
 			new RecordPermissionDescriptor(PermissionTypes.ManageChecklists, PermissionActions.DepartmentAdminsOnly, false, "Create, edit, publish and retire checklists", false),
-			new RecordPermissionDescriptor(PermissionTypes.ViewChecklistResults, PermissionActions.DepartmentAndGroupAdmins, true, "View other members' checklist results")
+			new RecordPermissionDescriptor(PermissionTypes.ViewChecklistResults, PermissionActions.DepartmentAndGroupAdmins, true, "View other members' checklist results", noRowLockToGroup: true)
 		};
 	}
 }

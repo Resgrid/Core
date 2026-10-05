@@ -28,6 +28,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IUserProfileService _userProfileService;
 		private readonly IIncidentCommandService _incidentCommandService;
+		private readonly Model.Services.IAuthorizationService _authorizationService;
 
 		public CheckInTimersController(
 			ICheckInTimerService checkInTimerService,
@@ -35,7 +36,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IDepartmentSettingsService departmentSettingsService,
 			IDepartmentsService departmentsService,
 			IUserProfileService userProfileService,
-			IIncidentCommandService incidentCommandService)
+			IIncidentCommandService incidentCommandService,
+			Model.Services.IAuthorizationService authorizationService)
 		{
 			_checkInTimerService = checkInTimerService;
 			_callsService = callsService;
@@ -43,6 +45,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_departmentsService = departmentsService;
 			_userProfileService = userProfileService;
 			_incidentCommandService = incidentCommandService;
+			_authorizationService = authorizationService;
 		}
 
 		#region Timer Configuration
@@ -442,19 +445,30 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			var records = await _checkInTimerService.GetCheckInsForCallAsync(callId);
 
-			result.Data = records.Select(r => new CheckInRecordResultData
+			result.Data = new List<CheckInRecordResultData>();
+
+			foreach (var r in records)
 			{
-				CheckInRecordId = r.CheckInRecordId,
-				CallId = r.CallId,
-				CheckInType = r.CheckInType,
-				CheckInTypeName = ((CheckInTimerTargetType)r.CheckInType).ToString(),
-				UserId = r.UserId,
-				UnitId = r.UnitId,
-				Latitude = r.Latitude,
-				Longitude = r.Longitude,
-				Timestamp = r.Timestamp,
-				Note = r.Note
-			}).ToList();
+				// A check-in's position is the unit's or the person's: it goes out under See Unit Locations or
+				// See Personnel Locations, the rules the map applies, and is withheld (null) otherwise.
+				var canSeeLocation = r.UnitId.HasValue
+					? await _authorizationService.CanUserViewUnitLocationViaMatrixAsync(r.UnitId.Value, UserId, DepartmentId)
+					: string.IsNullOrWhiteSpace(r.UserId) || await _authorizationService.CanUserViewPersonLocationViaMatrixAsync(r.UserId, UserId, DepartmentId);
+
+				result.Data.Add(new CheckInRecordResultData
+				{
+					CheckInRecordId = r.CheckInRecordId,
+					CallId = r.CallId,
+					CheckInType = r.CheckInType,
+					CheckInTypeName = ((CheckInTimerTargetType)r.CheckInType).ToString(),
+					UserId = r.UserId,
+					UnitId = r.UnitId,
+					Latitude = canSeeLocation ? r.Latitude : null,
+					Longitude = canSeeLocation ? r.Longitude : null,
+					Timestamp = r.Timestamp,
+					Note = r.Note
+				});
+			}
 
 			result.PageSize = result.Data.Count;
 			result.Status = ResponseHelper.Success;
@@ -481,6 +495,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var call = await _callsService.GetCallByIdAsync(callId);
 			if (call == null || call.DepartmentId != DepartmentId)
 				return NotFound();
+
+			// Turning timers on or off edits the call, so it needs what Calls/EditCall needs.
+			if (!await _authorizationService.CanUserEditCallAsync(UserId, callId))
+				return Unauthorized();
 
 			call.CheckInTimersEnabled = enabled;
 			await _callsService.SaveCallAsync(call, cancellationToken);

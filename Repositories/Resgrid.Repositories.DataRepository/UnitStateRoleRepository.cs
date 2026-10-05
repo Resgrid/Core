@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
+using Resgrid.Config;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
@@ -61,6 +63,50 @@ namespace Resgrid.Repositories.DataRepository
 
 					return await selectFunction(conn);
 				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
+
+		public async Task<IEnumerable<UnitStateRole>> GetRolesForUnitStatesAsync(IReadOnlyCollection<int> unitStateIds)
+		{
+			var ids = (unitStateIds ?? Array.Empty<int>()).Where(x => x > 0).Distinct().ToArray();
+			if (ids.Length == 0)
+				return Enumerable.Empty<UnitStateRole>();
+
+			try
+			{
+				var isPostgres = DataConfig.DatabaseType == DatabaseTypes.Postgres;
+				// Postgres does not expand IN @p; = ANY(@p) binds the array (see the Dapper IN-list note in the repo docs).
+				var query = isPostgres
+					? $"SELECT * FROM {_sqlConfiguration.SchemaName}.{_sqlConfiguration.UnitStateRolesTable} WHERE UnitStateId = ANY(@Ids)"
+					: $"SELECT * FROM {_sqlConfiguration.SchemaName}.[{_sqlConfiguration.UnitStateRolesTable}] WHERE [UnitStateId] IN @Ids";
+
+				var result = new List<UnitStateRole>();
+				foreach (var batch in ids.Chunk(1000))
+				{
+					var selectFunction = new Func<DbConnection, Task<IEnumerable<UnitStateRole>>>(async x =>
+						await x.QueryAsync<UnitStateRole>(sql: query, param: new { Ids = batch }, transaction: _unitOfWork.Transaction));
+
+					if (_unitOfWork?.Connection == null)
+					{
+						using (var conn = _connectionProvider.Create())
+						{
+							await conn.OpenAsync();
+							result.AddRange(await selectFunction(conn));
+						}
+					}
+					else
+					{
+						result.AddRange(await selectFunction(_unitOfWork.CreateOrGetConnection()));
+					}
+				}
+
+				return result;
 			}
 			catch (Exception ex)
 			{

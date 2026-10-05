@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="PanelTitle" xml:space="preserve"><value>Einsatzdaten</value></data>
+  <data name="PanelIntro" xml:space="preserve"><value>Status, Alarmierungen, Einträge der Einsatzleitung und weitere Einsatzberichte zu diesem Einsatz, jeweils mit Urheber. Zeitfeld im Bericht anklicken, dann Übernehmen.</value></data>
+  <data name="Reload" xml:space="preserve"><value>Neu laden</value></data>
+  <data name="FillFromCall" xml:space="preserve"><value>Aus Einsatz übernehmen</value></data>
+  <data name="FillFromCallHint" xml:space="preserve"><value>Füllt leere Beginn- und Endzeiten, Einsatzort, Erstmeldung, Einheiten und Personal aus dem Einsatz.</value></data>
+  <data name="TabTimeline" xml:space="preserve"><value>Zeitleiste</value></data>
+  <data name="TabUnits" xml:space="preserve"><value>Einheiten</value></data>
+  <data name="TabPersonnel" xml:space="preserve"><value>Personal</value></data>
+  <data name="TabCommand" xml:space="preserve"><value>Einsatzleitung</value></data>
+  <data name="TabRunReports" xml:space="preserve"><value>Einsatzberichte</value></data>
+  <data name="NoTarget" xml:space="preserve"><value>Zuerst ein Zeitfeld im Bericht anklicken, dann Übernehmen.</value></data>
+  <data name="UsedTime" xml:space="preserve"><value>Auf {0} gesetzt.</value></data>
+  <data name="Use" xml:space="preserve"><value>Übernehmen</value></data>
+  <data name="UseHint" xml:space="preserve"><value>Diese Zeit in das zuletzt angeklickte Zeitfeld übernehmen</value></data>
+  <data name="UnitNotOnReport" xml:space="preserve"><value>{0} steht nicht in der Einheitenliste dieses Berichts.</value></data>
+  <data name="NothingToFill" xml:space="preserve"><value>Für {0} gibt es nichts zu füllen.</value></data>
+  <data name="FilledUnit" xml:space="preserve"><value>{0} Feld(er) für {1} gefüllt.</value></data>
+  <data name="FilledFromCall" xml:space="preserve"><value>{0} Feld(er) aus dem Einsatz gefüllt.</value></data>
+  <data name="NothingNew" xml:space="preserve"><value>Nichts Neues zu füllen.</value></data>
+  <data name="SetBy" xml:space="preserve"><value>Gesetzt von {0}</value></data>
+  <data name="SetByVia" xml:space="preserve"><value>Gesetzt von {0} · {1}</value></data>
+  <data name="Via" xml:space="preserve"><value>über {0}</value></data>
+  <data name="FilterAll" xml:space="preserve"><value>Alle</value></data>
+  <data name="FilterUnits" xml:space="preserve"><value>Einheiten</value></data>
+  <data name="FilterPersonnel" xml:space="preserve"><value>Personal</value></data>
+  <data name="FilterDispatch" xml:space="preserve"><value>Alarmierung</value></data>
+  <data name="FilterCommand" xml:space="preserve"><value>Einsatzleitung</value></data>
+  <data name="NoEntries" xml:space="preserve"><value>Zu diesem Einsatz ist noch nichts erfasst.</value></data>
+  <data name="KindCall" xml:space="preserve"><value>Einsatz</value></data>
+  <data name="KindUnitDispatch" xml:space="preserve"><value>Alarmierung</value></data>
+  <data name="KindPersonnelDispatch" xml:space="preserve"><value>Alarmierung</value></data>
+  <data name="KindUnitStatus" xml:space="preserve"><value>Einheit</value></data>
+  <data name="KindPersonnelStatus" xml:space="preserve"><value>Personal</value></data>
+  <data name="KindCommand" xml:space="preserve"><value>Einsatzleitung</value></data>
+  <data name="KindObjective" xml:space="preserve"><value>Ziel</value></data>
+  <data name="KindCheckIn" xml:space="preserve"><value>Rückmeldung</value></data>
+  <data name="LinkInferred" xml:space="preserve"><value>Abgeleitet</value></data>
+  <data name="LinkAuto" xml:space="preserve"><value>Automatisch zugeordnet</value></data>
+  <data name="LinkHint" xml:space="preserve"><value>Resgrid hat diesen Status dem Einsatz zugeordnet; bitte vor der Verwendung prüfen.</value></data>
+  <data name="FillBlanks" xml:space="preserve"><value>Leere füllen</value></data>
+  <data name="Replace" xml:space="preserve"><value>Ersetzen</value></data>
+  <data name="NoUnits" xml:space="preserve"><value>Keine Einheiten bei diesem Einsatz.</value></data>
+  <data name="Dispatched" xml:space="preserve"><value>Alarmiert</value></data>
+  <data name="AssignedByCommand" xml:space="preserve"><value>Von der Einsatzleitung zugewiesen</value></data>
+  <data name="Enroute" xml:space="preserve"><value>Unterwegs</value></data>
+  <data name="OnScene" xml:space="preserve"><value>Vor Ort</value></data>
+  <data name="Staging" xml:space="preserve"><value>Bereitstellung</value></data>
+  <data name="Cancelled" xml:space="preserve"><value>Abgebrochen</value></data>
+  <data name="Cleared" xml:space="preserve"><value>Frei</value></data>
+  <data name="InService" xml:space="preserve"><value>Wieder einsatzbereit</value></data>
+  <data name="CommandAssigned" xml:space="preserve"><value>Zugewiesen (Einsatzleitung)</value></data>
+  <data name="CommandReleased" xml:space="preserve"><value>Entlassen (Einsatzleitung)</value></data>
+  <data name="CrewList" xml:space="preserve"><value>Besatzung ({0}): {1}</value></data>
+  <data name="NoPersonnel" xml:space="preserve"><value>Kein Personal bei diesem Einsatz.</value></data>
+  <data name="NotEngaged" xml:space="preserve"><value>Alarmiert, keine Rückmeldung</value></data>
+  <data name="Responding" xml:space="preserve"><value>Rückt aus</value></data>
+  <data name="First" xml:space="preserve"><value>Erster Status</value></data>
+  <data name="Last" xml:space="preserve"><value>Letzter Status</value></data>
+  <data name="NoCommand" xml:space="preserve"><value>Dieser Einsatz lief ohne Einsatzleitung im System.</value></data>
+  <data name="CommandEstablished" xml:space="preserve"><value>Einsatzleitung übernommen</value></data>
+  <data name="CommandClosed" xml:space="preserve"><value>Einsatzleitung beendet</value></data>
+  <data name="Commanders" xml:space="preserve"><value>Einsatzleiter: {0}</value></data>
+  <data name="TacticTimestamps" xml:space="preserve"><value>Taktische Zeitpunkte</value></data>
+  <data name="TacticTimestampsHint" xml:space="preserve"><value>Vorbelegt aus den Zielen der Einsatzleitung, wenn deren Name den Meilenstein eindeutig nennt. Feld leer lassen, wenn der Meilenstein nicht erreicht wurde.</value></data>
+  <data name="NoTactics" xml:space="preserve"><value>Kein Ziel der Einsatzleitung nennt einen taktischen Meilenstein.</value></data>
+  <data name="FillTactics" xml:space="preserve"><value>Leere taktische Zeitpunkte füllen</value></data>
+  <data name="FilledCount" xml:space="preserve"><value>{0} Feld(er) gefüllt.</value></data>
+  <data name="MutualAid" xml:space="preserve"><value>Nachbarschaftshilfe</value></data>
+  <data name="NoMutualAid" xml:space="preserve"><value>Keine Nachbarschaftshilfe erfasst.</value></data>
+  <data name="NoRunReports" xml:space="preserve"><value>Keine weiteren Einsatzberichte zu diesem Einsatz.</value></data>
+  <data name="Final" xml:space="preserve"><value>Abgeschlossen</value></data>
+  <data name="NotFinal" xml:space="preserve"><value>Entwurf</value></data>
+  <data name="ByAuthor" xml:space="preserve"><value>Von {0}</value></data>
+  <data name="Withheld" xml:space="preserve"><value>Einige Inhalte sind geschützt und werden nicht angezeigt.</value></data>
+  <data name="Started" xml:space="preserve"><value>Beginn</value></data>
+  <data name="Ended" xml:space="preserve"><value>Ende</value></data>
+  <data name="CrewCount" xml:space="preserve"><value>{0} Besatzung</value></data>
+  <data name="PersonnelList" xml:space="preserve"><value>Personal: {0}</value></data>
+  <data name="Location" xml:space="preserve"><value>Einsatzort</value></data>
+  <data name="InitialReport" xml:space="preserve"><value>Erstmeldung</value></data>
+  <data name="Cause" xml:space="preserve"><value>Ursache</value></data>
+  <data name="OtherAgencies" xml:space="preserve"><value>Andere Organisationen</value></data>
+  <data name="OtherUnits" xml:space="preserve"><value>Andere Einheiten</value></data>
+  <data name="Narrative" xml:space="preserve"><value>Bericht</value></data>
+  <data name="AddToNarrative" xml:space="preserve"><value>Zum Bericht hinzufügen</value></data>
+  <data name="NarrativeAdded" xml:space="preserve"><value>Text zum Bericht hinzugefügt.</value></data>
+  <data name="PickCall" xml:space="preserve"><value>Einsatz auswählen, um seine Daten zu sehen.</value></data>
+  <data name="Loading" xml:space="preserve"><value>Einsatzdaten werden geladen…</value></data>
+  <data name="PartialSources" xml:space="preserve"><value>Einige Quellen konnten nicht gelesen werden: {0}.</value></data>
+  <data name="LoadFailed" xml:space="preserve"><value>Einsatzdaten konnten nicht geladen werden.</value></data>
+  <data name="OriginWeb" xml:space="preserve"><value>Website</value></data>
+  <data name="OriginResponderApp" xml:space="preserve"><value>Responder-App</value></data>
+  <data name="OriginUnitApp" xml:space="preserve"><value>Einheiten-App</value></data>
+  <data name="OriginDispatchApp" xml:space="preserve"><value>Leitstellen-App</value></data>
+  <data name="OriginBigBoard" xml:space="preserve"><value>Big-Board-Anzeige</value></data>
+  <data name="OriginCommandApp" xml:space="preserve"><value>Einsatzleitungs-App</value></data>
+  <data name="OriginMcp" xml:space="preserve"><value>KI-Assistent</value></data>
+  <data name="OriginApi" xml:space="preserve"><value>API-Client</value></data>
+  <data name="OriginSms" xml:space="preserve"><value>SMS-Nachricht</value></data>
+  <data name="OriginVoice" xml:space="preserve"><value>Telefonanruf</value></data>
+  <data name="OriginChat" xml:space="preserve"><value>Chat-Nachricht</value></data>
+  <data name="OriginDispatchAutomation" xml:space="preserve"><value>automatisch bei Alarmierung</value></data>
+  <data name="OriginSchedule" xml:space="preserve"><value>geplante Zurücksetzung</value></data>
+  <data name="OriginMaintenance" xml:space="preserve"><value>Wartungssperre</value></data>
+  <data name="Tactic_command_established" xml:space="preserve"><value>Einsatzleitung übernommen</value></data>
+  <data name="Tactic_completed_sizeup" xml:space="preserve"><value>Erkundung abgeschlossen</value></data>
+  <data name="Tactic_suppression_complete" xml:space="preserve"><value>Brandbekämpfung abgeschlossen</value></data>
+  <data name="Tactic_primary_search_begin" xml:space="preserve"><value>Erstsuche begonnen</value></data>
+  <data name="Tactic_primary_search_complete" xml:space="preserve"><value>Erstsuche abgeschlossen</value></data>
+  <data name="Tactic_water_on_fire" xml:space="preserve"><value>Wasser am Brandherd</value></data>
+  <data name="Tactic_fire_under_control" xml:space="preserve"><value>Feuer unter Kontrolle</value></data>
+  <data name="Tactic_fire_knocked_down" xml:space="preserve"><value>Feuer niedergeschlagen</value></data>
+  <data name="Tactic_extrication_complete" xml:space="preserve"><value>Technische Rettung abgeschlossen</value></data>
+  <data name="RefreshFromCall" xml:space="preserve"><value>Aus Einsatz aktualisieren</value></data>
+  <data name="RefreshFromCallHint" xml:space="preserve"><value>Füllt leere Felder und aktualisiert nicht geänderte Werte aus Einsatz, Einheiten- und Personalstatus und Einsatzleitung. Eigene Eingaben bleiben erhalten.</value></data>
+  <data name="RefreshUnsavedWarning" xml:space="preserve"><value>Beim Aktualisieren wird der gespeicherte Entwurf neu geladen. Nicht gespeicherte Änderungen auf dieser Seite gehen verloren. Fortfahren?</value></data>
+  <data name="RefreshedFromCall" xml:space="preserve"><value>Aus dem Einsatz aktualisiert: {0} gefüllt, {1} aktualisiert, {2} hinzugefügt.</value></data>
+  <data name="RefreshNothingNew" xml:space="preserve"><value>Aus dem Einsatz aktualisiert: nichts Neues.</value></data>
+  <data name="StartRunReport" xml:space="preserve"><value>Einsatzbericht</value></data>
+</root>

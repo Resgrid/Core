@@ -97,17 +97,21 @@
             <div class="buttons-actions">
                 @if (Model.CanEdit && Model.IsRecurrenceParent == false)
                 {
-                    <a asp-controller="Calendar" asp-action="DeleteCalendarItem" asp-route-area="User" asp-route-itemId="@Model.CalendarItem.CalendarItemId"
-                       class="btn btn-danger" onclick="return confirm('@JsEncoder.Encode(localizer["DeleteEventConfirm"])');">
-                        <i class="fa fa-trash"></i> @localizer["DeleteEvent"]
-                    </a>
+                    <form method="post" asp-controller="Calendar" asp-action="DeleteCalendarItem" asp-route-area="User" asp-route-itemId="@Model.CalendarItem.CalendarItemId" style="display: inline;">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('@JsEncoder.Encode(localizer["DeleteEventConfirm"])');">
+                            <i class="fa fa-trash"></i> @localizer["DeleteEvent"]
+                        </button>
+                    </form>
                 }
                 else if (Model.CanEdit)
                 {
-                    <a asp-controller="Calendar" asp-action="DeleteAllCalendarItems" asp-route-area="User" asp-route-itemId="@Model.CalendarItem.CalendarItemId"
-                       class="btn btn-danger" onclick="return confirm('@JsEncoder.Encode(localizer["DeleteEventOccurrencesConfirm"])');">
-                        <i class="fa fa-trash"></i> @localizer["DeleteEventOccurrences"]
-                    </a>
+                    <form method="post" asp-controller="Calendar" asp-action="DeleteAllCalendarItems" asp-route-area="User" asp-route-itemId="@Model.CalendarItem.CalendarItemId" style="display: inline;">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('@JsEncoder.Encode(localizer["DeleteEventOccurrencesConfirm"])');">
+                            <i class="fa fa-trash"></i> @localizer["DeleteEventOccurrences"]
+                        </button>
+                    </form>
                 }
                 @if (Model.CanEdit)
                 {
@@ -307,17 +311,21 @@
                                             <td class="text-right">
                                                 @if (string.Equals(attendee.UserId, ClaimsAuthorizationHelper.GetUserId(), StringComparison.OrdinalIgnoreCase) && Model.CalendarItem.Start >= DateTime.UtcNow)
                                                 {
-                                                    <a title="@localizer["RemoveHelp"]" class="btn btn-xs btn-danger"
-                                                       href="@Url.Action("RemoveFromEvent", "Calendar", new { area = "User", id = attendee.CalendarItemAttendeeId })">
-                                                        <i class="fa fa-times"></i> @localizer["RemoveMe"]
-                                                    </a>
+                                                    <form method="post" action="@Url.Action("RemoveFromEvent", "Calendar", new { area = "User", id = attendee.CalendarItemAttendeeId })" style="display: inline;">
+                                                        @Html.AntiForgeryToken()
+                                                        <button type="submit" title="@localizer["RemoveHelp"]" class="btn btn-xs btn-danger">
+                                                            <i class="fa fa-times"></i> @localizer["RemoveMe"]
+                                                        </button>
+                                                    </form>
                                                 }
                                                 else if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
                                                 {
-                                                    <a title="@localizer["RemoveHelp"]" class="btn btn-xs btn-danger"
-                                                       href="@Url.Action("RemoveFromEvent", "Calendar", new { area = "User", id = attendee.CalendarItemAttendeeId })">
-                                                        <i class="fa fa-times"></i> @commonLocalizer["Remove"]
-                                                    </a>
+                                                    <form method="post" action="@Url.Action("RemoveFromEvent", "Calendar", new { area = "User", id = attendee.CalendarItemAttendeeId })" style="display: inline;">
+                                                        @Html.AntiForgeryToken()
+                                                        <button type="submit" title="@localizer["RemoveHelp"]" class="btn btn-xs btn-danger">
+                                                            <i class="fa fa-times"></i> @commonLocalizer["Remove"]
+                                                        </button>
+                                                    </form>
                                                 }
                                             </td>
                                         </tr>

@@ -76,12 +76,23 @@ var resgrid;
                     });
                 });
 
+                // Status and staffing changes are POSTs that need the antiforgery token the layout publishes.
+                function postWithToken(url, success) {
+                    var meta = document.querySelector('meta[name="request-verification-token"]');
+                    return $.ajax({
+                        url: url,
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': meta ? meta.content : $('input[name="__RequestVerificationToken"]').first().val() },
+                        success: success
+                    });
+                }
+
                 $(document).on('click', '#savingPersonnelStatusButton',
                     function () {
                         $('#savingPersonnelStatusButtonLoader').show();
                         $('#savingPersonnelStatusButton').hide();
                         const selection = parseDestinationSelection($('#PersonnelStatusDestinationDropdown').val());
-                        $.get(resgrid.absoluteBaseUrl + '/User/Personnel/SetActionForUser?userId=' + $('#setPersonStatusUserId').val() + '&actionType=' + $("#PersonnelStatusDropdown").val() + '&type=' + selection.type + '&destination=' + selection.destination + '&note=' + encodeURI($('#PersonnelStatusNote').val()), function (data) {
+                        postWithToken(resgrid.absoluteBaseUrl + '/User/Personnel/SetActionForUser?userId=' + $('#setPersonStatusUserId').val() + '&actionType=' + $("#PersonnelStatusDropdown").val() + '&type=' + selection.type + '&destination=' + selection.destination + '&note=' + encodeURI($('#PersonnelStatusNote').val()), function (data) {
                             location.reload();
                         });
                     });
@@ -105,7 +116,7 @@ var resgrid;
                     function () {
                         $('#savingPersonnelStaffingButtonLoader').show();
                         $('#savingPersonnelStaffingButton').hide();
-                        $.get(resgrid.absoluteBaseUrl + '/User/Personnel/SetStaffingForUser?userId=' + $('#setPersonStaffingUserId').val() + '&staffing=' + $("#PersonnelStaffingDropdown").val() + '&note=' + encodeURI($('#PersonnelStaffingNote').val()), function (data) {
+                        postWithToken(resgrid.absoluteBaseUrl + '/User/Personnel/SetStaffingForUser?userId=' + $('#setPersonStaffingUserId').val() + '&staffing=' + $("#PersonnelStaffingDropdown").val() + '&note=' + encodeURI($('#PersonnelStaffingNote').val()), function (data) {
                             location.reload();
                         });
                     });
@@ -139,7 +150,7 @@ var resgrid;
                         $('#savingSelectedPersonnelStatusButtonLoader').show();
                         $('#savingSelectedPersonnelStatusButton').hide();
                         const selection = parseDestinationSelection($('#SelectedPersonnelStatusDestinationDropdown').val());
-                        $.get(resgrid.absoluteBaseUrl + '/User/Personnel/SetUserActionForMultiple?userIds=' + getSelectedUsers() + '&actionType=' + $("#SelectedPersonnelStatusDropdown").val() + '&type=' + selection.type + '&destination=' + selection.destination + '&note=' + encodeURI($('#SelectedPersonnelStatusNote').val()), function (data) {
+                        postWithToken(resgrid.absoluteBaseUrl + '/User/Personnel/SetUserActionForMultiple?userIds=' + getSelectedUsers() + '&actionType=' + $("#SelectedPersonnelStatusDropdown").val() + '&type=' + selection.type + '&destination=' + selection.destination + '&note=' + encodeURI($('#SelectedPersonnelStatusNote').val()), function (data) {
                             location.reload();
                         });
                     });
@@ -158,7 +169,7 @@ var resgrid;
                     function () {
                         $('#savingSelectedPersonnelStaffingButtonLoader').show();
                         $('#savingSelectedPersonnelStaffingButton').hide();
-                        $.get(resgrid.absoluteBaseUrl + '/User/Personnel/SetUserStaffingForMultiple?userIds=' + getSelectedUsers() + '&staffing=' + $("#SelectedPersonnelStaffingDropdown").val() + '&note=' + encodeURI($('#SelectedPersonnelStaffingNote').val()), function (data) {
+                        postWithToken(resgrid.absoluteBaseUrl + '/User/Personnel/SetUserStaffingForMultiple?userIds=' + getSelectedUsers() + '&staffing=' + $("#SelectedPersonnelStaffingDropdown").val() + '&note=' + encodeURI($('#SelectedPersonnelStaffingNote').val()), function (data) {
                             location.reload();
                         });
                     });

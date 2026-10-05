@@ -1047,4 +1047,19 @@
   <data name="BotUsernamePlaceholder" xml:space="preserve">
     <value>Бот Resgrid</value>
   </data>
+  <data name="StepCredentialNotFound" xml:space="preserve">
+    <value>Облікові дані, вибрані для цього кроку, не знайдено.</value>
+  </data>
+  <data name="ExportAttachmentTemplateNotFound" xml:space="preserve">
+    <value>Експорт звіту записів, вибраний для цього кроку, не знайдено.</value>
+  </data>
+  <data name="ExportAttachmentRequiresRecordsRights" xml:space="preserve">
+    <value>Щоб додати експорт звіту записів до кроку, потрібні дозволи "Друк та експорт звітів" і "Керування зведеннями звітів".</value>
+  </data>
+  <data name="ExportAttachmentRequiresRestrictedRights" xml:space="preserve">
+    <value>Цей експорт звіту записів містить обмежені розділи; щоб додати його до кроку, також потрібен дозвіл "Перегляд обмежених розділів".</value>
+  </data>
+  <data name="CredentialDeliversRecordsExport" xml:space="preserve">
+    <value>Крок робочого процесу надсилає експорт звіту записів через ці облікові дані, тому для їх зміни потрібні дозволи "Друк та експорт звітів" і "Керування зведеннями звітів" (а також "Перегляд обмежених розділів", коли експорт містить обмежені розділи).</value>
+  </data>
 </root>

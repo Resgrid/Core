@@ -21,11 +21,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 	{
 		#region Members and Constructors
 		private readonly IIncidentReportingService _incidentReportingService;
+		private readonly ICommandAccessService _commandAccessService;
 
-		public IncidentReportingController(IIncidentReportingService incidentReportingService)
+		public IncidentReportingController(IIncidentReportingService incidentReportingService, ICommandAccessService commandAccessService)
 		{
 			_incidentReportingService = incidentReportingService;
+			_commandAccessService = commandAccessService;
 		}
+
+		/// <summary>The command-board read gate IncidentCommandController applies (CommandAppLogin); Command_View alone is a plan-level claim.</summary>
+		private Task<bool> CanReadBoardsAsync() => _commandAccessService.CanUseCommandAsync(DepartmentId, UserId);
 		#endregion Members and Constructors
 
 		/// <summary>Gets the ICS-201/209-style incident status summary.</summary>
@@ -34,6 +39,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.IncidentReportSummaryResult>> GetIncidentSummary(int callId)
 		{
+			if (!await CanReadBoardsAsync())
+				return Unauthorized();
+
 			var result = new ICModels.IncidentReportSummaryResult();
 			var summary = await _incidentReportingService.GetIncidentSummaryAsync(DepartmentId, callId);
 
@@ -57,6 +65,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.IncidentAfterActionReportResult>> GetAfterActionReport(int callId)
 		{
+			if (!await CanReadBoardsAsync())
+				return Unauthorized();
+
 			var result = new ICModels.IncidentAfterActionReportResult();
 			var report = await _incidentReportingService.GetAfterActionReportAsync(DepartmentId, callId);
 
@@ -80,6 +91,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<IActionResult> ExportIncident(int callId)
 		{
+			if (!await CanReadBoardsAsync())
+				return Unauthorized();
+
 			var csv = await _incidentReportingService.ExportTimelineCsvAsync(DepartmentId, callId);
 			var bytes = Encoding.UTF8.GetBytes(csv);
 			return File(bytes, "text/csv", $"incident-{callId}-timeline.csv");
@@ -91,6 +105,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.IncidentTimesReportResult>> GetIncidentTimes(int callId)
 		{
+			if (!await CanReadBoardsAsync())
+				return Unauthorized();
+
 			var result = new ICModels.IncidentTimesReportResult();
 			var report = await _incidentReportingService.GetIncidentTimesReportAsync(DepartmentId, callId);
 
@@ -114,6 +131,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.ResourceUtilizationReportResult>> GetResourceUtilization(int callId)
 		{
+			if (!await CanReadBoardsAsync())
+				return Unauthorized();
+
 			var result = new ICModels.ResourceUtilizationReportResult();
 			var report = await _incidentReportingService.GetResourceUtilizationReportAsync(DepartmentId, callId);
 
@@ -137,6 +157,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<IActionResult> ExportAfterAction(int callId)
 		{
+			if (!await CanReadBoardsAsync())
+				return Unauthorized();
+
 			var csv = await _incidentReportingService.ExportAfterActionCsvAsync(DepartmentId, callId);
 			if (string.IsNullOrEmpty(csv))
 				return NotFound();

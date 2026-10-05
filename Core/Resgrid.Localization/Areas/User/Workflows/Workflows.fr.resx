@@ -1047,4 +1047,19 @@
   <data name="BotUsernamePlaceholder" xml:space="preserve">
     <value>Bot Resgrid</value>
   </data>
+  <data name="StepCredentialNotFound" xml:space="preserve">
+    <value>Les identifiants choisis pour cette étape sont introuvables.</value>
+  </data>
+  <data name="ExportAttachmentTemplateNotFound" xml:space="preserve">
+    <value>L'export de rapport (enregistrements) choisi pour cette étape est introuvable.</value>
+  </data>
+  <data name="ExportAttachmentRequiresRecordsRights" xml:space="preserve">
+    <value>Joindre un export de rapport (enregistrements) à une étape nécessite les autorisations « Imprimer et exporter des rapports » et « Gérer les états de rapports ».</value>
+  </data>
+  <data name="ExportAttachmentRequiresRestrictedRights" xml:space="preserve">
+    <value>Cet export de rapport (enregistrements) comprend des sections restreintes ; le joindre à une étape nécessite aussi l'autorisation « Voir les sections restreintes ».</value>
+  </data>
+  <data name="CredentialDeliversRecordsExport" xml:space="preserve">
+    <value>Une étape de workflow envoie un export de rapport (enregistrements) avec ces identifiants ; leur modification nécessite donc les autorisations « Imprimer et exporter des rapports » et « Gérer les états de rapports » (ainsi que « Voir les sections restreintes » lorsque l'export comprend des sections restreintes).</value>
+  </data>
 </root>

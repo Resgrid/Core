@@ -33,8 +33,8 @@ namespace Resgrid.Services.CostRecovery
 			var items = (await _workItems.GetActionQueueAsync(departmentId))?.ToList() ?? new List<CalOesMarsWorkItem>();
 			var deploymentIds = items.Where(i => !string.IsNullOrWhiteSpace(i.DeploymentId)).Select(i => i.DeploymentId).Distinct().ToList();
 			var deployments = new Dictionary<string, Deployment>(StringComparer.OrdinalIgnoreCase);
-			// "Mine" is the same rule IsRosteredForWorkItemAsync opens the item with (roster, or a seat on a deployed unit),
-			// answered once per deployment, so a field user finds in the queue every item they can open.
+			// "Mine" is the same rule IsRosteredForWorkItemAsync opens the item with (the deployment roster; a live unit seat
+			// is not a grant), answered once per deployment, so a field user finds in the queue every item they can open.
 			var visible = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 			foreach (var id in deploymentIds)
 			{
@@ -42,7 +42,7 @@ namespace Resgrid.Services.CostRecovery
 				if (deployment == null) continue;
 				deployments[id] = deployment;
 				if (string.IsNullOrWhiteSpace(userId)) continue;
-				// The roster is already loaded; only a member it does not name costs the seat lookup.
+				// The roster is already loaded; only a member it does not name costs the deployment service's roster check.
 				if (deployment.Personnel.Any(p => string.Equals(p.UserId, userId, StringComparison.OrdinalIgnoreCase)) || await _deploymentService.CanFieldMemberSeeAsync(id, departmentId, userId)) visible.Add(id);
 			}
 			var result = new List<CalOesMarsQueueItem>();
@@ -619,13 +619,56 @@ namespace Resgrid.Services.CostRecovery
 			sb.Append("</tbody></table>");
 			if (item.Lines.Count > 0)
 			{
+				sb.Append(ExpectedReimbursementStart);
 				sb.Append("<h2>Expected reimbursement (estimate; Cal OES determines the allowed amount)</h2><table><thead><tr><th>Kind</th><th>Subject</th><th class=\"right\">Qty</th><th>Unit</th><th class=\"right\">Rate</th><th class=\"right\">Expected</th><th>Eligibility</th></tr></thead><tbody>");
 				foreach (var line in item.Lines)
 					sb.Append("<tr><td>").Append((CalOesMarsLineKinds)line.LineKind).Append("</td><td>").Append(WebUtility.HtmlEncode(line.SubjectName ?? line.SubjectId ?? "")).Append("</td><td class=\"right\">").Append(line.Quantity.ToString("0.##")).Append("</td><td>").Append(WebUtility.HtmlEncode(line.Unit ?? "")).Append("</td><td class=\"right\">").Append(line.Rate.ToString("N2")).Append("</td><td class=\"right\">").Append(line.ExpectedAmount.ToString("N2")).Append("</td><td>").Append((CalOesMarsEligibilityStates)line.EligibilityState).Append(string.IsNullOrWhiteSpace(line.EligibilityReason) ? "" : " · " + WebUtility.HtmlEncode(line.EligibilityReason)).Append("</td></tr>");
 				sb.Append("<tr><td colspan=\"5\" class=\"right\"><strong>Expected total</strong></td><td class=\"right\"><strong>").Append((item.ExpectedTotal ?? 0).ToString("N2")).Append("</strong></td><td></td></tr></tbody></table>");
+				sb.Append(ExpectedReimbursementEnd);
 			}
 			sb.Append("</body></html>");
 			return sb.ToString();
+		}
+
+		private const string ExpectedReimbursementStart = "<!--rg:expected-reimbursement-->";
+		private const string ExpectedReimbursementEnd = "<!--/rg:expected-reimbursement-->";
+
+		/// <summary>
+		/// The printable record without the expected-reimbursement section (rates and amounts). Rostered members who reach
+		/// their own F-42 / expense drafts without MutualAidReimbursement_View get this, exactly as v4 GetWorkItem leaves out
+		/// ExpectedTotal and the lines for them.
+		/// </summary>
+		public static string WithoutExpectedReimbursement(string html)
+		{
+			if (string.IsNullOrEmpty(html)) return html;
+			var start = html.IndexOf(ExpectedReimbursementStart, StringComparison.Ordinal);
+			if (start < 0) return html;
+			var end = html.IndexOf(ExpectedReimbursementEnd, start, StringComparison.Ordinal);
+			// A start marker without its end means the section ran to the end of the body: cut to there rather than leave it.
+			var stop = end < 0 ? html.LastIndexOf("</body>", StringComparison.Ordinal) : end + ExpectedReimbursementEnd.Length;
+			return stop <= start ? html.Substring(0, start) : html.Remove(start, stop - start);
+		}
+
+		/// <summary>The evidence packet with its record.html rewritten by <see cref="WithoutExpectedReimbursement(string)"/>; every other entry is copied as is.</summary>
+		public static byte[] WithoutExpectedReimbursement(byte[] packet)
+		{
+			if (packet == null || packet.Length == 0) return packet;
+			using var source = new ZipArchive(new MemoryStream(packet), ZipArchiveMode.Read);
+			using var output = new MemoryStream();
+			using (var zip = new ZipArchive(output, ZipArchiveMode.Create, leaveOpen: true))
+			{
+				foreach (var entry in source.Entries)
+				{
+					using var read = entry.Open();
+					using var buffer = new MemoryStream();
+					read.CopyTo(buffer);
+					var data = buffer.ToArray();
+					if (string.Equals(entry.FullName, "record.html", StringComparison.Ordinal))
+						data = Encoding.UTF8.GetBytes(WithoutExpectedReimbursement(Encoding.UTF8.GetString(data)));
+					Add(zip, entry.FullName, data);
+				}
+			}
+			return output.ToArray();
 		}
 
 		#endregion

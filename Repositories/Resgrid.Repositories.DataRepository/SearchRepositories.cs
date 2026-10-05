@@ -137,6 +137,24 @@ namespace Resgrid.Repositories.DataRepository
 			return rows;
 		}
 
+		public async Task<IEnumerable<SearchProjection>> GetByEntityIdsAsync(int departmentId, string entityType, IEnumerable<string> entityIds)
+		{
+			var rows = new List<SearchProjection>();
+			if (string.IsNullOrWhiteSpace(entityType))
+				return rows;
+			foreach (var ids in (entityIds ?? Enumerable.Empty<string>()).Where(id => !string.IsNullOrWhiteSpace(id)).Distinct().Chunk(1000))
+			{
+				var parameters = new DynamicParameters();
+				parameters.Add("DepartmentId", departmentId);
+				parameters.Add("EntityType", entityType);
+				parameters.Add("Ids", IsPostgres ? (object)ids : ids.ToList());
+				rows.AddRange(await QueryAsync<SearchProjection>(
+					$"SELECT * FROM {Tbl("SearchProjections")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("EntityType")} = {P}EntityType AND {Col("DeletedOn")} IS NULL AND {InList("EntityId", "Ids")}",
+					parameters));
+			}
+			return rows;
+		}
+
 		public Task<int> HardDeleteDepartmentAsync(int departmentId, CancellationToken cancellationToken = default)
 		{
 			return ExecuteAsync($"DELETE FROM {Tbl("SearchProjections")} WHERE {Col("DepartmentId")} = {P}DepartmentId", new { DepartmentId = departmentId }, cancellationToken);

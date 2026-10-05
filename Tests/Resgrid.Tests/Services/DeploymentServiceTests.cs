@@ -461,7 +461,7 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
-		public async Task Time_access_covers_own_row_rostered_crew_and_the_crew_seated_on_a_deployed_unit()
+		public async Task Time_access_covers_own_row_and_rostered_crew_but_never_a_live_unit_seat()
 		{
 			var deployment = new Deployment
 			{
@@ -476,7 +476,8 @@ namespace Resgrid.Tests.Services
 				},
 				Equipment = { new DeploymentEquipment { DeploymentEquipmentId = "de-1", DeploymentUnitId = "du-2" } }
 			};
-			// The Engine 2 tablet signs in as "tablet", seated on unit 2 (and on unit 3, whose deployment row was released).
+			// "tablet" seats itself on unit 2 (and on unit 3, whose deployment row was released) in the Unit app. Seats are
+			// self-service, so they are not a deployment grant (audit 2026-10-05 item 2.15 / 5.6): only the roster is.
 			_unitsService.Setup(u => u.GetAllActiveRolesForUnitsByDepartmentIdAsync(DeptId)).ReturnsAsync(new List<UnitActiveRole>
 			{
 				new UnitActiveRole { UnitId = 2, UserId = "tablet", DepartmentId = DeptId }, new UnitActiveRole { UnitId = 3, UserId = "tablet", DepartmentId = DeptId }
@@ -491,11 +492,15 @@ namespace Resgrid.Tests.Services
 			dave.CrewUnitIds.Should().BeEmpty();
 			dave.WritableSubjectIds.Should().BeEquivalentTo(new[] { "dp-d" });
 
+			var carol = await _service.GetTimeAccessAsync(deployment, "carol", false);
+			carol.CrewUnitIds.Should().Equal("du-2");
+			carol.WritableSubjectIds.Should().BeEquivalentTo(new[] { "du-2", "dp-c", "de-1" }, "the roster seats carol on Engine 2, so she reports its crew time");
+
 			var tablet = await _service.GetTimeAccessAsync(deployment, "tablet", false);
 			tablet.IsRostered.Should().BeFalse();
-			tablet.CanRead.Should().BeTrue();
-			tablet.CrewUnitIds.Should().Equal("du-2");
-			tablet.WritableSubjectIds.Should().BeEquivalentTo(new[] { "du-2", "dp-c", "de-1" });
+			tablet.CanRead.Should().BeFalse("a live unit seat is not on the roster");
+			tablet.CrewUnitIds.Should().BeEmpty();
+			tablet.WritableSubjectIds.Should().BeEmpty();
 
 			var stranger = await _service.GetTimeAccessAsync(deployment, "eve", false);
 			stranger.CanRead.Should().BeFalse();
@@ -504,10 +509,11 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
-		public async Task A_unit_seat_reaches_only_open_deployments_while_the_roster_keeps_closed_history()
+		public async Task A_unit_seat_reaches_no_deployment_while_the_roster_keeps_closed_history()
 		{
 			// Engine 2 served on a deployment that has since completed (closing leaves its unit row active) and serves on an open one
-			// now. The tablet is seated on Engine 2 today; alice is too, and was on the closed deployment's roster.
+			// now. The tablet is seated on Engine 2 today; alice is too, and was on the closed deployment's roster. A seat is
+			// self-service, so it opens neither deployment; alice's roster row keeps the closed one.
 			_storedDeployments.Add(new Deployment { DeploymentId = "dep-open", DepartmentId = DeptId, Name = "Open", Status = (int)DeploymentStatuses.Active });
 			_storedDeployments.Add(new Deployment { DeploymentId = "dep-closed", DepartmentId = DeptId, Name = "Closed", Status = (int)DeploymentStatuses.Completed });
 			_storedUnits.Add(new DeploymentUnit { DeploymentUnitId = "du-open", DeploymentId = "dep-open", DepartmentId = DeptId, UnitId = 2 });
@@ -526,14 +532,14 @@ namespace Resgrid.Tests.Services
 				Units = { _storedUnits.Single(u => u.DeploymentUnitId == "du-closed") }, Personnel = { _storedPersonnel.Single() }
 			};
 
-			(await _service.GetDeploymentsForUserAsync(DeptId, "tablet", false)).Select(d => d.DeploymentId).Should().Equal(new[] { "dep-open" }, "today's seat is not a place in a finished deployment's history");
-			(await _service.CanFieldMemberSeeAsync("dep-open", DeptId, "tablet")).Should().BeTrue();
+			(await _service.GetDeploymentsForUserAsync(DeptId, "tablet", false)).Should().BeEmpty("a seat on a deployed unit is not a roster row");
+			(await _service.CanFieldMemberSeeAsync("dep-open", DeptId, "tablet")).Should().BeFalse();
 			(await _service.CanFieldMemberSeeAsync("dep-closed", DeptId, "tablet")).Should().BeFalse();
 			var tablet = await _service.GetTimeAccessAsync(closed, "tablet", false);
 			tablet.CanRead.Should().BeFalse("the seat no longer opens the closed deployment's reports");
 			tablet.CanWrite.Should().BeFalse("nor lets it edit or sign them");
 
-			(await _service.GetDeploymentsForUserAsync(DeptId, "alice", false)).Select(d => d.DeploymentId).Should().BeEquivalentTo(new[] { "dep-open", "dep-closed" }, "a roster row keeps its history");
+			(await _service.GetDeploymentsForUserAsync(DeptId, "alice", false)).Select(d => d.DeploymentId).Should().BeEquivalentTo(new[] { "dep-closed" }, "a roster row keeps its history; her seat on Engine 2 adds nothing");
 			(await _service.CanFieldMemberSeeAsync("dep-closed", DeptId, "alice")).Should().BeTrue();
 			var alice = await _service.GetTimeAccessAsync(closed, "alice", false);
 			alice.CrewUnitIds.Should().Equal(new[] { "du-closed" }, "rostered crew still report for the unit they crewed");

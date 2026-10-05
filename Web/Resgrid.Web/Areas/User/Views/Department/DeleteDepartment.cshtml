@@ -41,7 +41,7 @@
                             </dl>
 
                             <fieldset class="form-actions">
-                                <a class="btn btn-large btn-info" href="@Url.Action("CancelDepartmentDeleteRequest", "Department", new { area = "User" })">@localizer["CancelDepartmentDeletion"]</a>
+                                <form method="post" action="@Url.Action("CancelDepartmentDeleteRequest", "Department", new { area = "User" })" style="display: inline;">@Html.AntiForgeryToken()<button type="submit" class="btn btn-large btn-info">@localizer["CancelDepartmentDeletion"]</button></form>
                             </fieldset>
                         }
                         else

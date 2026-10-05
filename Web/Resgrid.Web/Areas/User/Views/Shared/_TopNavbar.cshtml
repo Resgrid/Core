@@ -18,7 +18,7 @@
             </div>
 
             <div class="hidden-xs hidden-sm" style="float:right; width: 70%; padding-top: 4px;"> 
-                <div id="autocomplete" data-placeholder="@searchLocalizer["Placeholder"]" data-search-all-label="@searchLocalizer["SearchAllResults"]"></div>
+                <div id="autocomplete" data-placeholder="@searchLocalizer["Placeholder"]" data-search-all-label="@searchLocalizer["SearchAllResults"]" data-search-button-label="@searchLocalizer["SearchButton"]"></div>
             </div>
         </div>
         <ul class="nav navbar-top-links navbar-right">
@@ -60,7 +60,11 @@
                     <li class="@Html.IsSelected(controller: "Voice", action: "Index")"><a asp-controller="Voice" asp-action="Index" asp-route-area="User">@commonLocalizer["AudioPushToTalk"]</a></li>
                     @*<li class="@Html.IsSelected(controller: "Orders", action: "Index")"><a asp-controller="Orders" asp-action="Index" asp-route-area="User">@commonLocalizer["Orders"]</a></li>*@
                     <li class="@Html.IsSelected(controller: "Links", action: "Index")"><a asp-controller="Links" asp-action="Index" asp-route-area="User">@commonLocalizer["Links"]</a></li>
-                    <li class="@Html.IsSelected(controller: "Notifications", action: "Index")"><a asp-controller="Notifications" asp-action="Index" asp-route-area="User">@commonLocalizer["Notifications"]</a></li>
+                    @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+                    {
+                        @* Alert rules are department-admin only (NotificationsController). *@
+                        <li class="@Html.IsSelected(controller: "Notifications", action: "Index")"><a asp-controller="Notifications" asp-action="Index" asp-route-area="User">@commonLocalizer["Notifications"]</a></li>
+                    }
                     @*<li class="@Html.IsSelected(controller: "WeatherAlerts", action: "Index")"><a asp-controller="WeatherAlerts" asp-action="Index" asp-route-area="User">Weather Alerts</a></li>*@
                     <li class="@Html.IsSelected(controller: "Command", action: "Index")"><a asp-controller="Command" asp-action="Index" asp-route-area="User">@commonLocalizer["Commands"]</a></li>
                     <li><a href="https://bigboard.resgrid.com" target="_blank">@commonLocalizer["BigBoard"]</a></li>

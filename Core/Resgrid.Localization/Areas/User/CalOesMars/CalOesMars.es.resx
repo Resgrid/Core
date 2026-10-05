@@ -556,9 +556,10 @@
   <data name="calmars_work_item_type_mismatch" xml:space="preserve"><value>El registro no es del tipo esperado.</value></data>
   <data name="BuildSalarySurvey" xml:space="preserve"><value>Generar desde datos salariales</value></data>
   <data name="ConfirmSalarySurveyDraft" xml:space="preserve"><value>¿Reemplazar las tarifas normal y extra de cada línea de clasificación coincidente por las medias?</value></data>
-  <data name="SalarySurveyDraftBuilt" xml:space="preserve"><value>{0} línea(s) de clasificación generada(s) de {1} empleado(s); {2} clasificación(es) sin asignar; {3} clasificación(es) de un solo empleado por revisar.</value></data>
+  <data name="SalarySurveyDraftBuilt" xml:space="preserve"><value>{0} línea(s) de clasificación generada(s) de {1} empleado(s); {2} clasificación(es) sin asignar. Las clasificaciones con menos de {3} empleados se omiten para que no se pueda deducir la remuneración de nadie; introduzca sus tarifas manualmente.</value></data>
   <data name="SalarySurveyFromWorkforceHelp" xml:space="preserve"><value>Fase E: la media de las tarifas horarias individuales aprobadas por clasificación MARS (más componentes pagados por hora extra) rellena las tarifas normal y extra. Solo agregados — nunca un punto medio de rango ni una persona. Es una ayuda de revisión; el representante autorizado sigue firmando en MARS.</value></data>
   <data name="SurveyBlocker_no_classifications" xml:space="preserve"><value>Ningún perfil de compensación aprobado lleva una clasificación MARS para este perfil de autoridad.</value></data>
+  <data name="SurveyBlocker_classifications_too_small" xml:space="preserve"><value>Cada clasificación MARS de los datos de remuneración tiene muy pocos empleados para generarla sin revelar la remuneración de alguien. Introduzca las tarifas manualmente.</value></data>
   <data name="SurveyBlocker_profile_type" xml:space="preserve"><value>Solo un perfil Salary Survey o Attachment A admite un borrador desde datos salariales.</value></data>
   <data name="SurveyBlocker_rate_locked" xml:space="preserve"><value>El perfil de tarifas ya no es editable.</value></data>
   <data name="SurveyBlocker_workforce_unavailable" xml:space="preserve"><value>Los datos salariales no están disponibles para este departamento.</value></data>

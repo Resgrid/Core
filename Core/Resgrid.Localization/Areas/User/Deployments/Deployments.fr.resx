@@ -242,6 +242,7 @@
   <data name="timereports_date_exists" xml:space="preserve"><value>Un rapport de temps existe déjà pour cette date.</value></data>
   <data name="timereports_not_found" xml:space="preserve"><value>Le rapport de temps est introuvable.</value></data>
   <data name="timereports_locked" xml:space="preserve"><value>Le rapport de temps est approuvé, facturé ou annulé et ne peut plus être modifié.</value></data>
+  <data name="BillingNeedsInvoicingView" xml:space="preserve"><value>Les frais et les factures nécessitent l'autorisation Afficher la facturation.</value></data>
   <data name="timereports_status_transition_invalid" xml:space="preserve"><value>Ce changement de statut n'est pas autorisé pour ce rapport de temps.</value></data>
   <data name="timereports_time_invalid" xml:space="preserve"><value>Saisissez les heures de début et de fin au format HH:mm.</value></data>
   <data name="timereports_validation" xml:space="preserve"><value>Corrigez les erreurs ci-dessous avant de soumettre.</value></data>
@@ -252,7 +253,7 @@
   <data name="ManageDeployments" xml:space="preserve"><value>Gérer les déploiements</value></data>
   <data name="ManageDeploymentsNote" xml:space="preserve"><value>Créer et modifier les déploiements, effectifs, équipements, dépenses, fichiers et changements de statut, et voir tous les déploiements. Les membres affectés voient toujours leurs propres déploiements et saisissent leurs temps sans cette permission.</value></data>
   <data name="ApproveTimeReports" xml:space="preserve"><value>Approuver les rapports de temps</value></data>
-  <data name="ApproveTimeReportsNote" xml:space="preserve"><value>Approuver et annuler les rapports de temps quotidiens soumis. Les rapports approuvés alimentent la facturation.</value></data>
+  <data name="ApproveTimeReportsNote" xml:space="preserve"><value>Approuver et annuler les rapports de temps quotidiens soumis. Les rapports approuvés alimentent la facturation. Personne ne peut approuver un rapport qu'il a soumis ou qui contient ses propres heures ; un autre approbateur doit le faire.</value></data>
   <data name="DeploymentCreated" xml:space="preserve"><value>Déploiement créé</value></data>
   <data name="DeploymentStatusChanged" xml:space="preserve"><value>Statut du déploiement modifié</value></data>
   <data name="DeploymentRosterChanged" xml:space="preserve"><value>Effectif du déploiement modifié</value></data>
@@ -283,4 +284,5 @@
   <data name="Issuesubject_on_other_report" xml:space="preserve"><value>Ce sujet a déjà du temps sur un autre rapport pour la même journée</value></data>
   <data name="timereports_scope_invalid" xml:space="preserve"><value>Cet équipage ou cette personne n'est pas actif sur ce déploiement.</value></data>
   <data name="timereports_subject_covered" xml:space="preserve"><value>Cet équipage ou cette personne a déjà du temps sur un autre rapport pour cette journée.</value></data>
+  <data name="timereports_self_approval" xml:space="preserve"><value>Vous avez soumis ce rapport de temps ou il contient vos heures ; un autre approbateur doit donc l'approuver.</value></data>
 </root>

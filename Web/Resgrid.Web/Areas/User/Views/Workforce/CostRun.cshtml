@@ -36,7 +36,7 @@
                         <tr><td>@localizer["ThroughDate"]</td><td class="text-right">@(s.ThroughDate?.ToString("yyyy-MM-dd") ?? "—")</td></tr>
                         <tr><td>@localizer["Frozen"]</td><td class="text-right">@(departmentTime.Format(s.FrozenOn) ?? "—")</td></tr>
                     </table>
-                    @if (!r.IsFrozen)
+                    @if (!r.IsFrozen && Model.CanViewInternalCosts && Model.CanManage)
                     {
                         <form method="post" asp-action="FreezeCostRun" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@r.FieldCostRunId" /><button type="submit" class="btn btn-sm btn-primary" onclick="return confirm('@JsEncoder.Encode(localizer["ConfirmFreeze"])');"><i class="fa fa-lock"></i> @localizer["Freeze"]</button></form>
                         <form method="post" asp-action="DeleteCostRun" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@r.FieldCostRunId" /><button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('@JsEncoder.Encode(localizer["ConfirmDelete"])');"><i class="fa fa-trash"></i> @localizer["Delete"]</button></form>

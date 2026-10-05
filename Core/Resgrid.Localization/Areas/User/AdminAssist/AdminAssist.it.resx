@@ -2070,6 +2070,24 @@
   <data xml:space="preserve" name="Field.RecordsNumberingConfig.SequenceWidth">
     <value>Configurazione numerazione record / Larghezza sequenza</value>
   </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingConfig.Floors">
+    <value>Configurazione numerazione record / Soglie minime</value>
+  </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingConfig.Pattern">
+    <value>Configurazione numerazione record / Schema</value>
+  </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingFloor.NextSequence">
+    <value>Soglia minima numerazione record / Sequenza successiva</value>
+  </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingFloor.ScopeKey">
+    <value>Soglia minima numerazione record / Chiave ambito</value>
+  </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingFloor.SetByUserId">
+    <value>Soglia minima numerazione record / ID utente che l'ha impostato</value>
+  </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingFloor.SetOn">
+    <value>Soglia minima numerazione record / Impostato il</value>
+  </data>
   <data xml:space="preserve" name="Field.RecordsRetentionOverride.AppliesFrom">
     <value>Deroga conservazione record / Valida a partire da</value>
   </data>
@@ -2213,6 +2231,24 @@
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.SequenceWidth">
     <value>Larghezza della sequenza con zeri iniziali per le definizioni che utilizzano i valori predefiniti del dipartimento. L'editor Record convalida la larghezza supportata.</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.Floors">
+    <value>Prossimi numeri aumentati, uno per sequenza di numerazione, per i dipartimenti che proseguono numeri assegnati prima di Resgrid. Un prossimo numero può solo salire e i numeri già assegnati prevalgono sempre, quindi un prossimo numero aumentato non crea mai duplicati.</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.Pattern">
+    <value>Schema di numerazione per i tipi di record predefiniti e i rapporti di intervento, composto da testo fisso e dai segnaposto PREFIX, YYYY, YY, GROUP e SEQ. Se non impostato, resta lo schema descritto da «Includi anno» e «Sequenza per gruppo». La sequenza riparte quando cambia il testo attorno a SEQ.</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingFloor.NextSequence">
+    <value>Il numero di sequenza più basso che quella sequenza può assegnare successivamente.</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingFloor.ScopeKey">
+    <value>La sequenza a cui si applica un prossimo numero aumentato: il testo che lo schema genera attorno alla sequenza, con # al suo posto.</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingFloor.SetByUserId">
+    <value>L'amministratore che ha aumentato il prossimo numero.</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingFloor.SetOn">
+    <value>Quando è stato aumentato il prossimo numero (UTC).</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsRetentionOverride.AppliesFrom">
     <value>Limite prospettico per le revisioni idonee alla deroga, valutato dal ciclo di vita dei Record.</value>
@@ -3358,247 +3394,247 @@
     <value>Visualizza retribuzione del personale</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.AddCallData">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di aggiungere note, immagini, file e feed video alle chiamate sul web e nelle app. La persona deve anche poter vedere la chiamata e, sul web, allegare un file richiede inoltre i diritti di modifica della chiamata (amministratori del dipartimento o il membro che ha registrato la chiamata). Con la casella Solo gruppo selezionata, solo gli amministratori del dipartimento e le persone il cui gruppo è stato inviato alla chiamata possono aggiungervi contenuti, anche quando la regola è Tutti. Senza una regola salvata, può farlo chiunque possa vedere la chiamata.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.AddPersonnel">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di aggiungere, invitare e riattivare membri. Scegli Amministratori del dipartimento e dei gruppi per consentire agli amministratori di gruppo di aggiungere persone al proprio gruppo; anche i membri che riattivano o aggiungono da un account esistente vengono inseriti nel gruppo dell'amministratore di gruppo stesso. Senza una regola salvata, possono farlo solo gli amministratori del dipartimento. Gli amministratori di gruppo che devono anche rimuovere persone devono essere inclusi in questo permesso, perché anche la rimozione lo verifica.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.AdjustInventory">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di ricevere, rettificare e archiviare l'inventario, usare scorte dai Record, ed è la regola di partenza per Trasferisci inventario e Assegna Inventario finché queste non vengono salvate. Senza una regola salvata, possono farlo solo gli amministratori del dipartimento, e la schermata Sicurezza lo mostra.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.AmendRecords">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di aprire una rettifica su un record finalizzato e di abbandonarla. La rettifica si completa con la finalizzazione, quindi abbina questo permesso a Finalizzare registri. Senza una regola salvata, possono farlo gli amministratori del dipartimento e di gruppo.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ApproveRecords">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di approvare i record. Attualmente l'approvazione avviene dalle app e dall'API; sul web amplia soltanto la vista delle responsabilità. Senza una regola salvata, possono farlo solo gli amministratori del dipartimento. Un approvatore non può mai approvare un proprio record, e i ruoli di approvatore di una definizione possono restringerlo ulteriormente.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ApproveTimeReports">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di approvare e annullare i rapporti ore inviati per gli impieghi, anche dall'app Incident Command. Nessuno può approvare un rapporto che ha inviato o che contiene le proprie ore, quindi per questi serve un secondo approvatore; l'annullamento resta consentito. Una volta approvato un rapporto, le sue spese (e le spese di quel giorno) non possono più essere modificate. Sul web l'approvatore deve anche poter vedere l'impiego. Senza una regola salvata, possono farlo solo gli amministratori del dipartimento.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.BreakGlassProtectedData">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Identificatore dismesso, mantenuto affinché le impostazioni salvate in precedenza continuino a essere caricate. Non concede nulla, non è mostrato nella schermata Sicurezza e non può essere salvato; l'accesso del personale di assistenza è controllato dall'impostazione di consenso all'assistenza nella pagina Protezione dei dati.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CanSeePersonnelLocations">
-    <value>Controlla la visibilità della posizione per ciascuna coppia osservatore-persona. L'anteprima conta le coppie di accesso, non i marcatori attuali sulla mappa, il consenso al tracciamento o la disponibilità del GPS.</value>
+    <value>Stabilisce di quali membri una persona può vedere le posizioni: la mappa, il tracciamento in tempo reale, le distanze e i tempi di percorrenza dei soccorritori più vicini, le posizioni di stato nell'attività del personale e delle chiamate, i check-in e la cronologia degli eventi del personale. Con la casella Solo gruppo selezionata, le persone vedono solo i membri del proprio gruppo. Senza una regola salvata, tutti possono farlo. Viene nascosta la posizione, non la persona.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CanSeeUnitLocations">
-    <value>Controlla la visibilità della posizione per ciascuna coppia osservatore-unità. Un blocco di gruppo si riferisce alla stazione dell'unità e alla gerarchia del gruppo proprietario, non a una stazione che l'osservatore può altrimenti vedere.</value>
+    <value>Stabilisce di quali unità un membro può vedere le posizioni: la mappa, il tracciamento in tempo reale, le distanze e i tempi di percorrenza delle unità più vicine, la cronologia degli eventi e i report delle unità, i check-in, le deviazioni di percorso e l'attività delle chiamate. Con la casella Solo gruppo selezionata, le persone vedono solo le unità della propria stazione. Senza una regola salvata, tutti possono farlo. Viene nascosta la posizione, non l'unità.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CloseCall">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di chiudere e riaprire chiamate. Con la casella Solo gruppo selezionata, solo gli amministratori del dipartimento e le persone il cui gruppo è stato inviato alla chiamata possono chiuderla o riaprirla, anche quando la regola è Tutti. Sul web, nelle app e nel chatbot servono anche i diritti sulle chiamate concessi da Crea chiamate. Senza una regola salvata, chiunque possa vedere la chiamata può chiuderla.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CommandAppLogin">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Stabilisce chi può usare l'app Incident Command e leggere le lavagne di comando: ogni lavagna e ogni lettura di accountability, esigenze, cronologia, mappa, ruoli, voce e risorse, la sincronizzazione offline delle lavagne nelle app e le risposte del chatbot sugli incidenti. Senza una regola salvata, ogni membro attivo può farlo. Quando salvi una regola più restrittiva, le persone che essa consente ottengono anche funzionalità di supporto al comando su qualsiasi lavagna. Stabilire il comando e modificare le lavagne richiede comunque i diritti di comando degli amministratori del dipartimento.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ConfigureProtectedDataEgress">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Determina chi può amministrare i flussi di lavoro protetti e le relative approvazioni di rilascio. Attivare, approvare o rinnovare un flusso di lavoro protetto richiede anche una nuova verifica rafforzata, e le impostazioni di rilascio tramite PIN per SMS e chiamate vocali richiedono inoltre un amministratore del dipartimento. Si applica solo quando il dipartimento è registrato alla Protezione avanzata dei dati.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ContactDelete">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di eliminare contatti, categorie, piani di pre-intervento, pericoli dei locali e file del sito. Senza una regola salvata, tutti possono farlo. Un contatto con fatturazione aperta in Business Ops non può essere eliminato.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ContactEdit">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di aggiungere e modificare contatti, categorie, piani di pre-intervento, pericoli e file del sito. Senza una regola salvata, tutti possono farlo. La pagina di modifica mostra l'intero contatto, quindi chi può modificare può anche leggere; i campi protetti restano oscurati senza una concessione per i dati protetti.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ContactView">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di visualizzare i contatti, le relative note, chiamate e file sul web e nelle app, di trovarli nella ricerca e di vedere i dettagli dei contatti nelle chiamate: informazioni sul sito, avvisi sui contatti, i selettori dei contatti della chiamata e l'esportazione della chiamata. Senza una regola salvata, tutti possono farlo, tranne negli acquisti di inventario, che mostrano i contatti dei fornitori solo agli amministratori del dipartimento finché non salvi una regola. Anche i percorsi e la pagina di modifica del contatto possono mostrare i dettagli dei contatti.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateCalendarEntry">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di creare e modificare voci e tipi di calendario e di modificare i check-in del calendario dalle app. Per modificare o eliminare una voce bisogna anche esserne il creatore o un amministratore del dipartimento, e solo il partecipante stesso o chi può modificare l'evento può rimuovere un partecipante. Tutti possono comunque visualizzare il calendario. Senza una regola salvata, tutti possono farlo.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateCall">
-    <value>Consente di avviare una chiamata. L'azione a livello di dipartimento usa lo stato amministratore effettivo e i ruoli del personale di ciascun membro; la successiva convalida della centrale operativa resta autorevole.</value>
+    <value>Consente di creare chiamate e, con esse, concede i diritti sulle chiamate necessari anche per modificarle, chiuderle, riaprirle ed eliminarle, sul web, nelle app, dalla pagina Log e nel chatbot. Chi non soddisfa questo requisito può comunque visualizzare le chiamate. Senza una regola salvata, tutti possono farlo.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateDocument">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di caricare documenti. Le persone possono modificare o eliminare solo i documenti che hanno caricato, a meno che non siano amministratori del dipartimento. Tutti possono comunque visualizzare i documenti. Senza una regola salvata, tutti possono caricare documenti.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateLog">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di scrivere log. Tutti possono comunque visualizzarli. Dopo l'attivazione del modulo Record, i log legacy diventano di sola lettura e questa regola viene copiata nei permessi Crea Record e Finalizzare registri. Senza una regola salvata, tutti possono farlo.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateMessage">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di inviare messaggi, pubblicare e reagire in chat, avviare messaggi diretti e usare il chatbot, incluso l'invio di un messaggio via SMS al chatbot. Chi non dispone di questo permesso può comunque leggere ed eliminare i propri messaggi, ma non può contrassegnarli come letti né modificare i post in chat. Senza una regola salvata, tutti possono farlo.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateNote">
-    <value>Consente di creare una nota di dipartimento. L'azione non concede l'accesso al contenuto protetto delle note o a un altro dipartimento.</value>
+    <value>Consente di creare note dalle app. Sul web, creare, modificare ed eliminare note richiede sempre un amministratore del dipartimento, indipendentemente da questa regola. Le note riservate agli amministratori restano visibili solo agli amministratori del dipartimento. Senza una regola salvata, tutti possono creare note nelle app.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateRecord">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di redigere record, inclusi rapporti di incidente, record sul campo, prove e allegati. Senza una regola salvata, tutti possono redigerli. Ha effetto dopo l'attivazione del modulo Record; l'attivazione copia qui la tua regola di Crea log. Le app sul campo richiedono anche i relativi flag di Record per il campo.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateShift">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di creare, modificare ed eliminare turni e turni di lavoro e di gestire le iscrizioni per ogni gruppo. Gli amministratori di gruppo gestiscono sempre le iscrizioni dei propri gruppi. I membri che si iscrivono (sul web, nelle app o tramite il chatbot) devono rispettare le regole del turno: niente giorni passati, i turni assegnati richiedono un'assegnazione e i turni di gruppo richiedono il gruppo del membro. Tutti possono comunque visualizzare i turni. Senza una regola salvata, solo gli amministratori del dipartimento possono modificare i turni.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateTraining">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di creare, modificare ed eliminare formazioni e di azzerare l'avanzamento della formazione dei membri. Tutti possono comunque visualizzare e completare le formazioni. Senza una regola salvata, possono farlo solo gli amministratori del dipartimento.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateWorkflow">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di creare, modificare ed eliminare flussi di lavoro, visualizzare l'anteprima delle loro condizioni, leggere la configurazione dei passaggi nelle app e nell'API e vedere l'output generato dalle esecuzioni dei flussi di lavoro. Senza una regola salvata, solo gli amministratori del dipartimento possono modificare i flussi di lavoro, ma ogni membro può aprire la pagina Flussi di lavoro e leggerne le definizioni; salvando Amministratori del dipartimento i flussi di lavoro vengono anche nascosti a tutti gli altri. I passaggi che inviano un'esportazione dei Record richiedono anche Esporta Record e Gestire report sui rapporti. I piani gratuiti hanno un limite al numero di flussi di lavoro.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.DeleteCall">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di eliminare chiamate. Con la casella Solo gruppo selezionata, solo gli amministratori del dipartimento e le persone il cui gruppo è stato inviato alla chiamata possono eliminarla, anche quando la regola è Tutti. Servono anche i diritti sulle chiamate concessi da Crea chiamate. Senza una regola salvata, chiunque possa vedere la chiamata può eliminarla.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.DeleteLog">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di eliminare log. È distinto dal permesso Crea log. Dopo l'attivazione del modulo Record, i log legacy diventano di sola lettura e questa regola viene copiata nel permesso Elimina Record. Senza una regola salvata, tutti possono farlo.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.DeleteRecord">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di annullare record e bozze; senza questo permesso le persone non possono annullare nemmeno le proprie bozze. Un membro può annullare solo i record che ha redatto, di cui è titolare, o che revisiona o approva, a meno che non sia un amministratore del dipartimento o l'amministratore del gruppo del record. Senza una regola salvata, tutti possono farlo. Ha effetto dopo l'attivazione del modulo Record; l'attivazione copia qui la tua regola di Elimina log.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.DispatchAppLogin">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Stabilisce chi è considerato operatore di centrale. L'app Dispatch lo verifica all'accesso (il server stesso non blocca l'accesso) e gli operatori di centrale possono leggere i canali di chat visibili alla centrale, compresi i canali di comando dell'incidente e di gruppo, e ricevono notifiche su di essi. Senza una regola salvata, ogni membro attivo è considerato tale. Salvarlo aggiorna l'accesso alla chat.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.EditProtectedCallData">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Non è offerto nella schermata Sicurezza perché nessun controllo in fase di esecuzione lo legge: la modifica dei campi protetti delle chiamate segue i normali permessi di modifica delle chiamate più una concessione valida per i dati protetti. Una regola salvata in precedenza viene mantenuta ma non ha alcun effetto.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ExportPayDataReporting">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di congelare, esportare e scaricare i report sui dati retributivi della California e di leggere le esecuzioni dei report e i relativi totali. Le istantanee per lavoratore e la creazione del report richiedono Gestisci Rendicontazione Dati Retributivi. Richiede un componente aggiuntivo Business Ops attivo e la Protezione avanzata dei dati abilitata. Senza una regola salvata, possono farlo solo gli amministratori del dipartimento.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ExportProtectedData">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Non è offerto nella schermata Sicurezza perché nessun controllo in fase di esecuzione lo legge: ogni esportazione segue il permesso di esportazione del proprio modulo. Una regola salvata in precedenza viene mantenuta ma non ha alcun effetto.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ExportRecords">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di stampare ed esportare record, documenti, report degli impieghi, file CSV dei report salvati e pacchetti cumulativi. Senza una regola salvata, tutti possono farlo. Le sezioni riservate richiedono inoltre Visualizza record con accesso limitato; la gestione dei modelli di esportazione, l'apertura delle esecuzioni di esportazione di altre persone e l'invio di un pacchetto via email a un indirizzo esterno richiedono Gestire report sui rapporti.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.FinalizeRecords">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di finalizzare i record, bloccandoli come versione ufficiale. Un membro può finalizzare i record che ha redatto, di cui è titolare, o che revisiona o approva; per finalizzare quelli di altri servono Revisionare registri (Approvare registri dopo l'approvazione, Modifica Record per una rettifica) o un amministratore del dipartimento. Anche le rettifiche e le correzioni si completano con la finalizzazione, quindi anche chi apporta rettifiche ha bisogno di questo permesso. Senza una regola salvata, tutti possono farlo. L'attivazione copia qui la tua regola di Crea log.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.IssueInventory">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di assegnare attrezzature e materiali a persone e unità, ricevere le restituzioni, assegnare kit e aggiungere nuovi assegnatari. Finché non salvi una regola qui, segue Rettifica inventario. Le sostanze controllate richiedono anche Gestisci Sostanze Controllate e, dove previsto, un testimone.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageBids">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di creare, modificare ed eliminare offerte e preventivi e di convertirli in impieghi. La conversione e l'uso della procedura guidata degli impieghi richiedono anche Gestisci Impieghi, e le schede dei costi delle offerte richiedono Visualizza costi interni. Senza una regola salvata, possono farlo solo gli amministratori del dipartimento. Richiede la funzione Fatturazione appaltatore e un componente aggiuntivo Business Ops attivo.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageCertificationSetup">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di gestire il catalogo delle certificazioni, i modelli, i requisiti dei ruoli e le impostazioni di applicazione. Da solo non mostra i record di certificazione dei membri; per questo serve Visualizza certificazioni. Senza una regola salvata, possono farlo solo gli amministratori del dipartimento.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageCertifications">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di aggiungere, verificare, modificare e rimuovere i record di certificazione e i crediti di formazione continua di altri membri e delle unità. Include la visualizzazione. I membri possono sempre gestire i propri record, ma nessuno può verificare i propri, e modificare un proprio record verificato ne annulla la verifica. Senza una regola salvata, possono farlo solo gli amministratori del dipartimento.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageChecklists">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di redigere, pubblicare, ritirare e pianificare liste di controllo e di inviare attività delle liste di controllo ad altri gruppi. Non include la lettura dei risultati. Senza una regola salvata, possono farlo solo gli amministratori del dipartimento. Richiede l'attivazione di Liste di controllo; le azioni in caso di esito negativo che aprono ordini di lavoro richiedono anche Ordini di Lavoro e Readiness Pro.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageContracts">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di visualizzare e gestire contratti di servizio e documenti di conformità, inclusa la lista di controllo di conformità nella scheda di fatturazione di un impiego. Senza una regola salvata, possono farlo solo gli amministratori del dipartimento. Richiede la funzione Fatturazione appaltatore e un componente aggiuntivo Business Ops attivo.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageControlledSubstances">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di gestire gli articoli di sostanze controllate: riceverli, spostarli, assegnarli, utilizzarli, attestarli come testimone, segnalarli e aggiungerli al catalogo. Si aggiunge ai normali permessi di inventario anziché sostituirli, e i passaggi con testimone richiedono una seconda persona qualificata. Senza una regola salvata, possono farlo solo gli amministratori del dipartimento.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageDepartmentDataProtection">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Non è offerto nella schermata Sicurezza perché nessun controllo in fase di esecuzione lo legge: le pagine Protezione dei dati richiedono un amministratore del dipartimento, mentre registrazione, disattivazione, esenzioni dalla verifica rafforzata e fatturazione sono riservate al membro responsabile. Una regola salvata in precedenza viene mantenuta ma non ha alcun effetto.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageDeployments">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di creare e gestire impieghi e ordini di impiego esterni: organico, attrezzature, tempi, spese e chiusura, e di contrassegnare le spese come pre-approvate. Non esiste un permesso di visualizzazione separato; i membri inseriti nell'organico di un impiego (direttamente o tramite l'equipaggio della propria unità inserito nell'organico) continuano a vederlo, mentre occupare un posto su un'unità impiegata non basta. Senza una regola salvata, possono farlo solo gli amministratori del dipartimento. La creazione da un ordine esterno richiede anche Crea Record con il modulo Record attivato.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageInvoicing">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di creare, inviare, modificare e annullare fatture, generare fatture dagli impieghi, scaricare il pacchetto della fattura, registrare pagamenti e gestire listini e profili di fatturazione. Include la visualizzazione. Senza una regola salvata, possono farlo solo gli amministratori del dipartimento. Richiede l'attivazione della funzione Fatturazione clienti; le modifiche richiedono un componente aggiuntivo Business Ops attivo.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageMutualAidReimbursement">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di preparare, trasmettere e riconciliare le pratiche di rimborso Cal OES MARS. La compilazione dell'indagine retributiva richiede anche Visualizza retribuzione del personale, e le classificazioni professionali con meno di tre membri vengono escluse. I membri inseriti nell'organico possono comunque compilare il proprio F-42 e le proprie spese, ma i pacchetti stampati non mostrano loro tariffe di rimborso né totali. Senza una regola salvata, possono farlo solo gli amministratori del dipartimento. Richiede l'attivazione di Cal OES MARS e un componente aggiuntivo Business Ops attivo.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManagePayDataReporting">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di creare i report sui dati retributivi della California nella procedura guidata e di vedere le istantanee per lavoratore su cui si basano. Congelare ed esportare un report richiede Esporta Rendicontazione Dati Retributivi. Ogni membro risponde comunque alle proprie domande demografiche. Richiede il modulo di rendicontazione dei dati retributivi, un componente aggiuntivo Business Ops attivo e la Protezione avanzata dei dati abilitata. Senza una regola salvata, possono farlo solo gli amministratori del dipartimento.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageRecordDefinitions">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di creare e modificare le definizioni dei record nel designer. La pubblicazione richiede anche Pubblicare definizioni di registro, e la gestione dei campi personalizzati dei record richiede inoltre un amministratore del dipartimento. Senza una regola salvata, possono farlo solo gli amministratori del dipartimento.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageRecordDisclosures">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di gestire le richieste di accesso agli atti pubblici e di divulgazione, inclusa la lettura della coda delle divulgazioni e la produzione dei rilasci. I contenuti riservati richiedono inoltre Visualizza record con accesso limitato. Senza una regola salvata, possono farlo solo gli amministratori del dipartimento.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageRecordLegalHold">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di applicare e revocare i fermi legali, che impediscono l'eliminazione definitiva dei record. I fermi su un record specifico sono limitati ai record che la persona può vedere. Senza una regola salvata, possono farlo solo gli amministratori del dipartimento.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageRecordReports">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di creare, pianificare ed eseguire report salvati sui record, gestire i modelli di esportazione, aprire le esecuzioni di esportazione da modello e pianificate e inviare pacchetti cumulativi via email a indirizzi esterni; mostra inoltre la vista delle responsabilità. I modelli di esportazione e i download CSV richiedono anche Esporta Record, e i report e le esecuzioni riservati richiedono Visualizza record con accesso limitato. Un pacchetto cumulativo si apre sempre solo per il membro che lo ha creato. Senza una regola salvata, possono farlo solo gli amministratori del dipartimento.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageRoutes">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Regola i percorsi. Non è mostrato in alcuna schermata di configurazione, quindi i membri possono visualizzare i percorsi, gli amministratori di gruppo possono anche crearli e modificarli e solo gli amministratori del dipartimento possono eliminarli. Avviare un percorso ed effettuare il check-in alle fermate richiede l'accesso in modifica. La visualizzazione dei percorsi mostra anche i contatti del dipartimento.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageWorkOrders">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di gestire gli ordini di lavoro in tutto il dipartimento: approvazioni, costi, risoluzioni, sospensioni, manutenzione ricorrente, addebiti dei fornitori e ordini di altri gruppi. Include la visualizzazione di tutti gli ordini di lavoro. Senza una regola salvata, possono farlo solo gli amministratori del dipartimento. Richiede l'attivazione di Ordini di Lavoro e il componente aggiuntivo Readiness Pro.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageWorkflowCredentials">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di creare, modificare ed eliminare le credenziali usate dai flussi di lavoro per accedere a servizi esterni. I segreti sono sempre mascherati. Senza una regola salvata, solo gli amministratori del dipartimento possono modificarle, ma i membri possono vedere i nomi e i tipi delle credenziali; salvando Amministratori del dipartimento vengono nascosti anche questi, sul web e nell'API. Per modificare una credenziale che consegna un'esportazione dei Record servono anche Esporta Record e Gestire report sui rapporti. Utile solo insieme a Crea Flusso di Lavoro.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageWorkforceCompensation">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di gestire il profilo del datore di lavoro, le sedi, i lavoratori e i dati sui rapporti di lavoro e sulle retribuzioni, ed eseguire i calcoli dei costi. Include la visualizzazione. Nessuno può approvare un profilo retributivo che ha modificato per ultimo né la propria retribuzione. Gli importi retributivi sono protetti e appaiono oscurati senza una concessione per i dati protetti. Disponibile solo sul web. Senza una regola salvata, possono farlo solo gli amministratori del dipartimento. Richiede la funzione Costi interni e un componente aggiuntivo Business Ops attivo.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.PublishRecordDefinitions">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di pubblicare e ritirare le definizioni dei record affinché le persone possano usarle. Funziona solo insieme a Gestire definizioni di registro. Senza una regola salvata, possono farlo solo gli amministratori del dipartimento.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ReassignRecordDrafts">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di passare la bozza di record di un'altra persona a un altro membro attivo. Senza una regola salvata, possono farlo gli amministratori del dipartimento e di gruppo, in qualsiasi gruppo che possono vedere.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.RecordsPreventionAdmin">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di gestire i dati di prevenzione: occupazioni, ispezioni, idranti, permessi e riduzione del rischio comunitario. Gli altri membri possono comunque leggerli. Ogni area richiede anche l'attivazione del relativo modulo di prevenzione di Record. Senza una regola salvata, possono farlo solo gli amministratori del dipartimento.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.RemovePersonnel">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di rimuovere membri dal dipartimento. Scegli Amministratori del dipartimento e dei gruppi per consentire agli amministratori di gruppo di rimuovere persone del proprio gruppo; in tal caso anche Aggiungi Personale deve essere impostato allo stesso modo, perché la pagina di rimozione lo verifica. Un amministratore di gruppo non può mai rimuovere un amministratore del dipartimento o il membro responsabile. Senza una regola salvata, possono farlo solo gli amministratori del dipartimento.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ReviewRecords">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di revisionare i record, restituirli per correzione e assegnare attività di revisione. Senza una regola salvata, possono farlo gli amministratori del dipartimento e di gruppo. I ruoli di revisore di una definizione possono restringerlo ulteriormente. La revisione della qualità richiede anche il modulo di revisione della qualità di Record.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ShareRecordsExternally">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Riservato alla condivisione dei record con altri gruppi o enti esterni. Nessuna funzione attuale lo utilizza, quindi non è offerto nella schermata Sicurezza; per impostazione predefinita è limitato agli amministratori del dipartimento e una regola salvata in precedenza viene mantenuta per quando arriverà la condivisione.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.SubmitRecords">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di inviare i record a una destinazione di rendicontazione come NERIS. Chi invia deve poter vedere il record; la lettura della cronologia degli scambi degli invii richiede anche Visualizza record con accesso limitato, e la convalida di un invio richiede un amministratore del dipartimento. Senza una regola salvata, possono farlo solo gli amministratori del dipartimento.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.TransferInventory">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di spostare le scorte tra ubicazioni. Finché non salvi una regola qui, segue Rettifica inventario. Con la casella Solo gruppo selezionata, le persone possono spostare le scorte solo tra ubicazioni del proprio gruppo. Le sostanze controllate richiedono anche Gestisci Sostanze Controllate.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.UseCalendarSync">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente ai membri di ottenere un link personale di sottoscrizione del calendario per il calendario del telefono o del computer. Il feed viene ricontrollato a ogni recupero, quindi restringere questo permesso interrompe i feed esistenti, e un membro rimosso dal dipartimento o disattivato smette di riceverlo. Senza una regola salvata, tutti possono farlo. Anche l'operatore deve avere attivato i feed del calendario.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewAllWorkOrders">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di vedere gli ordini di lavoro oltre a quelli che hai aperto o che ti sono assegnati. Senza una regola salvata, gli amministratori del dipartimento li vedono tutti e gli amministratori di gruppo vedono quelli del proprio gruppo; la casella Solo gruppo mostra questo limite selezionato, quindi lasciala selezionata al momento del salvataggio se gli amministratori di gruppo devono restare limitati al proprio gruppo.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewCertifications">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di visualizzare le certificazioni di altri membri e delle unità, l'elenco delle certificazioni in scadenza e l'idoneità ai ruoli. I membri vedono sempre le proprie; anche gli amministratori di gruppo hanno bisogno di questo permesso per vedere i record dei propri membri. Senza una regola salvata, possono farlo solo gli amministratori del dipartimento. I campi protetti richiedono una concessione per i dati protetti.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewChecklistResults">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di leggere i risultati e la cronologia delle liste di controllo completate. Senza una regola salvata, gli amministratori del dipartimento vedono tutto, gli amministratori di gruppo vedono i risultati del proprio gruppo e ognuno vede le esecuzioni che ha creato o di cui è stato testimone. Deseleziona la casella Solo gruppo per consentire ai revisori di vedere tutti i gruppi.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewGroupRecords">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Limita i gruppi di cui le persone possono vedere i record. La limitazione si applica solo quando la casella Solo gruppo di questa regola è selezionata e le Impostazioni registri impostano la visibilità per gruppo; in tal caso i non amministratori vedono i record del proprio gruppo più quelli che hanno redatto o a cui partecipano. Le scelte di azione e di ruolo in questa riga non modificano la visibilità.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewGroupUnits">
-    <value>Controlla la visibilità degli obiettivi unità e delle stazioni a cui sono assegnate. Gli osservatori senza gruppo e le unità non assegnate non condividono alcun gruppo.</value>
+    <value>Stabilisce quali unità una persona può vedere negli elenchi delle unità, nei selettori, sulla mappa, nelle assegnazioni degli equipaggi, nella ricerca, nel chatbot e nelle app, e di quali può impostare lo stato. Con la casella Solo gruppo selezionata, le persone vedono solo le unità della propria stazione (gli amministratori del dipartimento vedono sempre tutte le unità). Senza una regola salvata, tutti vedono tutte le unità.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewGroupUsers">
-    <value>Controlla la visibilità degli obiettivi personale. Un blocco di gruppo può restringere l'ambito dell'obiettivo; gli amministratori di un gruppo obiettivo o dei suoi gruppi superiori usano la policy di visibilità proprietaria.</value>
+    <value>Stabilisce quali membri una persona può vedere negli elenchi del personale, nei profili, nelle griglie, nei selettori di invio, nei report, nella ricerca, nell'elenco del personale e nei feed di stato delle app. Con la casella Solo gruppo selezionata, gli amministratori di gruppo e i titolari dei ruoli vedono solo il proprio gruppo (gli amministratori del dipartimento vedono sempre tutti). Senza una regola salvata, tutti vedono tutti.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewInternalCosts">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di vedere i costi interni del dipartimento: profili di costo delle risorse, utilizzo, calcoli dei costi sul campo e schede dei margini. Eseguire, congelare o eliminare i calcoli dei costi, modificare i profili di costo e cambiare l'utilizzo di altre persone richiede anche Gestisci retribuzione del personale. Senza una regola salvata, possono farlo solo gli amministratori del dipartimento. Richiede l'attivazione della funzione Costi interni e un componente aggiuntivo Business Ops attivo.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewInvoicing">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di visualizzare fatture, scadenzario, listini e profili di fatturazione dei contatti senza modificarli, inclusi gli elenchi delle fatture negli impieghi e nei contratti. Il pacchetto della fattura (con rapporti ore, ricevute e documenti di conformità) richiede Gestisci Fatturazione. Senza una regola salvata, possono farlo solo gli amministratori del dipartimento. La visualizzazione continua a funzionare se il componente aggiuntivo Business Ops scade.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewLegacyRecords">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Riservato alla visualizzazione della cronologia legacy dei Log dal modulo Record. Nessuna pagina attuale lo utilizza, quindi non è offerto nella schermata Sicurezza; la cronologia legacy segue i permessi dei Log. Una regola salvata in precedenza viene mantenuta.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewPersonalInfo">
-    <value>Controlla il livello di accesso per le informazioni personali. I campi protetti richiedono comunque una propria autorizzazione valida e una concessione di protezione dei dati.</value>
+    <value>Stabilisce chi vede gli indirizzi email, i numeri di telefono e gli indirizzi postali dei membri nelle pagine del personale, nel report Personale (a schermo e quando è pianificato via email), nell'editor del profilo e nelle app. Chi non ha questo permesso vede comunque nomi, gruppi, ruoli e stati, e ognuno vede sempre i propri dati. Senza una regola salvata, tutti possono farlo. I campi protetti richiedono inoltre una concessione per i dati protetti.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewProtectedCallData">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Determina chi può ricevere i dettagli protetti delle chiamate via SMS o chiamata vocale dopo aver inserito il proprio PIN. La visualizzazione a schermo e nelle app non dipende da questo permesso, ma dall'accesso alla chiamata più una concessione valida per i dati protetti. Si applica solo quando il dipartimento è registrato alla Protezione avanzata dei dati e il rilascio tramite PIN è attivato.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewProtectedContactData">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Non è offerto nella schermata Sicurezza perché nessun controllo in fase di esecuzione lo legge: chiunque possa visualizzare i contatti e disponga di una concessione valida per i dati protetti può mostrare i campi protetti dei contatti. Una regola salvata in precedenza viene mantenuta ma non ha alcun effetto.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewProtectedOperationalData">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Non è offerto nella schermata Sicurezza perché nessun controllo in fase di esecuzione lo legge: la visualizzazione di log, documenti, voci di calendario, campi personalizzati e record protetti segue le regole di accesso proprie di ciascun modulo più una concessione valida per i dati protetti. Una regola salvata in precedenza viene mantenuta ma non ha alcun effetto.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewProtectedPersonnelData">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Non è offerto nella schermata Sicurezza perché nessun controllo in fase di esecuzione lo legge: chiunque possa visualizzare un membro e disponga di una concessione valida per i dati protetti può mostrare i campi protetti di quel membro. Una regola salvata in precedenza viene mantenuta ma non ha alcun effetto.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewRestrictedRecords">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di vedere le sezioni riservate dei record, come i dettagli su vittime, esposizioni e indagini. È inoltre necessario per includere contenuti riservati nelle divulgazioni, nelle esportazioni e nelle esecuzioni di esportazione, e per leggere la cronologia degli scambi degli invii. Senza una regola salvata, possono farlo solo gli amministratori del dipartimento.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewUdfFields">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Regola la lettura e il salvataggio dei valori dei campi personalizzati tramite le app e l'API. Non è mostrato in alcuna schermata di configurazione, quindi tutti mantengono l'accesso in visualizzazione e aggiornamento. Ogni valore segue inoltre l'impostazione di visibilità del proprio campo e l'elemento a cui appartiene: un membro legge o compila valori solo su chiamate, unità, persone e contatti che può vedere o modificare. La gestione delle definizioni dei campi personalizzati richiede sempre un amministratore del dipartimento.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewWorkflowRuns">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di visualizzare la cronologia delle esecuzioni, i log, lo stato di salute e le esecuzioni in sospeso dei flussi di lavoro. Ciò che un'esecuzione ha inviato (l'output generato e il risultato) è mostrato solo a chi può modificare i flussi di lavoro. Senza una regola salvata, ogni membro può visualizzare le esecuzioni e solo gli amministratori del dipartimento possono annullarle o cancellarle; salvando Amministratori del dipartimento le esecuzioni vengono nascoste a tutti gli altri, mentre salvando Tutti chiunque può annullarle e cancellarle.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewWorkforceCompensation">
-    <value>Rivedi questo permesso nella schermata Sicurezza. Il valore predefinito quando non è salvata alcuna policy, l'ambito di gruppo, i permessi dipendenti e il comportamento su web, API e dispositivi mobili sono ancora in attesa di una revisione completa lato client. Per questo permesso non è ancora disponibile un'anteprima dell'impatto in tempo reale.</value>
+    <value>Consente di visualizzare l'elenco del personale e i dati retributivi senza modificarli, ed è necessario per compilare l'indagine retributiva Cal OES MARS. Gli importi appaiono oscurati senza una concessione per i dati protetti. Disponibile solo sul web. Senza una regola salvata, possono farlo solo gli amministratori del dipartimento.</value>
   </data>
   <data xml:space="preserve" name="Plan.AddStep">
     <value>Aggiungi fase</value>

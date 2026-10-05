@@ -1068,5 +1068,20 @@
   <data name="BotUsernamePlaceholder" xml:space="preserve">
     <value>Bot de Resgrid</value>
   </data>
+  <data name="StepCredentialNotFound" xml:space="preserve">
+    <value>No se encontraron las credenciales elegidas para este paso.</value>
+  </data>
+  <data name="ExportAttachmentTemplateNotFound" xml:space="preserve">
+    <value>No se encontró la exportación de informe de registros elegida para este paso.</value>
+  </data>
+  <data name="ExportAttachmentRequiresRecordsRights" xml:space="preserve">
+    <value>Adjuntar una exportación de informe de registros a un paso requiere los permisos "Imprimir y exportar registros" y "Administrar informes de registros".</value>
+  </data>
+  <data name="ExportAttachmentRequiresRestrictedRights" xml:space="preserve">
+    <value>Esta exportación de informe de registros incluye secciones restringidas; adjuntarla a un paso también requiere el permiso "Ver secciones restringidas".</value>
+  </data>
+  <data name="CredentialDeliversRecordsExport" xml:space="preserve">
+    <value>Un paso del flujo de trabajo envía una exportación de informe de registros mediante estas credenciales, por lo que modificarlas requiere los permisos "Imprimir y exportar registros" y "Administrar informes de registros" (y "Ver secciones restringidas" cuando la exportación incluye secciones restringidas).</value>
+  </data>
 </root>
 

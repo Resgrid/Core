@@ -37,6 +37,7 @@ namespace Resgrid.Tests.Rms
 		private Mock<IDepartmentGroupsService> _groups;
 		private Mock<ICallsService> _calls;
 		private Mock<IIncidentCommandService> _command;
+		private Mock<ICallSourceDataService> _callSources;
 		private RecordsModuleState _moduleState;
 		private DepartmentDataProtectionPolicy _policy;
 		private List<RmsRecordDefinitionVersion> _published;
@@ -85,9 +86,10 @@ namespace Resgrid.Tests.Rms
 			_groups = new Mock<IDepartmentGroupsService>();
 			_calls = new Mock<ICallsService>();
 			_command = new Mock<IIncidentCommandService>();
+			_callSources = new Mock<ICallSourceDataService>();
 
 			_service = new FieldRecordsService(_cutover.Object, _authorization.Object, _flags.Object, _definitions.Object, _protection.Object, _records.Object,
-				_assignments.Object, _units.Object, _groups.Object, _calls.Object, _command.Object, Mock.Of<IRecordsFieldRolloutService>());
+				_assignments.Object, _units.Object, _groups.Object, _calls.Object, _command.Object, Mock.Of<IRecordsFieldRolloutService>(), _callSources.Object);
 		}
 
 		[TearDown]

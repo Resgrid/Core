@@ -56,7 +56,7 @@ var resgrid;
             const { autocomplete } = window['@algolia/autocomplete-js'];
             const autocompleteHost = document.getElementById('autocomplete');
             if (autocomplete && autocompleteHost) {
-                const searchPageUrl = function (q) { return resgrid.absoluteBaseUrl + '/User/Search?q=' + encodeURIComponent(q); };
+                const searchPageUrl = function (q) { return resgrid.absoluteBaseUrl + '/User/Search' + (q ? '?q=' + encodeURIComponent(q) : ''); };
                 const searchAllLabel = autocompleteHost.getAttribute('data-search-all-label') || 'Search all results';
                 // Always offered while there is text: the full page searches every family, call notes included, with filters and export.
                 const searchAllSource = function (q) {
@@ -76,10 +76,11 @@ var resgrid;
                     container: '#autocomplete',
                     placeholder: autocompleteHost.getAttribute('data-placeholder') || 'Search Resgrid',
                     openOnFocus: true,
-                    // Enter without picking a row opens the full search page for the typed text.
+                    translations: { submitButtonTitle: autocompleteHost.getAttribute('data-search-button-label') || 'Search' },
+                    // The search icon in the box, or Enter without picking a row, opens the full search page: for the typed
+                    // text when there is some, otherwise empty and ready for a query.
                     onSubmit({ state }) {
-                        const q = (state.query || '').trim();
-                        if (q.length > 0) { window.location.assign(searchPageUrl(q)); }
+                        window.location.assign(searchPageUrl((state.query || '').trim()));
                     },
                     getSources({ query }) {
                         const q = (query || '').trim();
@@ -118,6 +119,9 @@ var resgrid;
                             .catch(() => q.length > 0 ? [searchAllSource(q)] : []);
                     },
                 });
+                // The theme draws the icon with a plain cursor; it is a link to the search page.
+                const submitButton = autocompleteHost.querySelector('.aa-SubmitButton');
+                if (submitButton) { submitButton.style.cursor = 'pointer'; }
             }
 
             let lanCookieString = RegExp(".AspNetCore.Culture" + "=[^;]+").exec(document.cookie);

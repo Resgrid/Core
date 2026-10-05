@@ -5,6 +5,8 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Profile.Profile> localizer
 @{
     ViewBag.Title = "Resgrid | " + @localizer["CertificationsHeader"];
+    // Add, edit and delete take your own records or ManageCertifications (ProfileController.CanReachCertificationsForAsync).
+    var canWrite = Model.Self || ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || ClaimsAuthorizationHelper.CanManageCertifications();
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -45,7 +47,7 @@
                             {
                                 <a title="Add a new scheduled report" class="btn btn-success" asp-controller="Profile" asp-action="AddCertification" asp-route-area="User">@localizer["AddCertification"]</a>
                             }
-                            else
+                            else if (canWrite)
                             {
                                 <a title="Add a new scheduled report" class="btn btn-success" asp-controller="Profile" asp-action="AddCertification" asp-route-area="User" asp-route-userId="@Model.UserId">@localizer["AddCertification"]</a>
                             }
@@ -125,8 +127,11 @@
                                         </td>
                                         <td>
                                             <a class="btn btn-xs btn-default" asp-controller="Certifications" asp-action="Record" asp-route-area="User" asp-route-id="@g.PersonnelCertificationId"><i class="fa fa-info-circle"></i></a>
-                                            <a class="btn btn-xs btn-danger" asp-controller="Profile" asp-action="DeleteCertification" asp-route-area="User" asp-route-certId="@g.PersonnelCertificationId" data-confirm="@localizer["CertificationDeleteWarning"]" rel="nofollow">@commonLocalizer["Delete"]</a>
-                                            <a class="btn btn-xs btn-primary" asp-controller="Profile" asp-action="EditCertification" asp-route-area="User" asp-route-certId="@g.PersonnelCertificationId">Edit</a>
+                                            @if (canWrite)
+                                            {
+                                                <form method="post" action="@Url.Action("DeleteCertification", "Profile", new { area = "User", certId = g.PersonnelCertificationId })" style="display: inline;">@Html.AntiForgeryToken()<button type="submit" class="btn btn-xs btn-danger" data-confirm="@localizer["CertificationDeleteWarning"]">@commonLocalizer["Delete"]</button></form>
+                                                <a class="btn btn-xs btn-primary" asp-controller="Profile" asp-action="EditCertification" asp-route-area="User" asp-route-certId="@g.PersonnelCertificationId">Edit</a>
+                                            }
 
                                             @* Presence is judged on Filetype, not Data: a protected row's bytes are
                                                 stripped on the way out, and hiding the button would tell the member their

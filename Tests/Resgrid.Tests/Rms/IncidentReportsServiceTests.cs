@@ -121,6 +121,7 @@ namespace Resgrid.Tests.Rms
 
 			_feeds = new Mock<IIncidentSourceFeedService>();
 			_feeds.Setup(f => f.GetPreplanSnapshotAsync(Dept, It.IsAny<Call>())).ReturnsAsync((int d, Call c) => new IncidentPreplanSnapshot { CallId = c?.CallId ?? 0 });
+			WireCallSources();
 
 			_localIssues = new List<RmsValidationIssue>();
 			_validation = new Mock<INerisValidationService>();
@@ -376,6 +377,19 @@ namespace Resgrid.Tests.Rms
 			_store.Submissions.Should().BeEmpty();
 			_store.Issues.Should().ContainSingle(i => i.RuleKey == "neris.dispatch.call_answered.required" && i.Source == (int)RmsValidationSource.Local);
 			_store.Shared.Discards.Should().BeGreaterThan(0, "the transaction rolls back");
+		}
+
+		[Test]
+		public async Task Finalize_numbers_with_the_department_pattern_from_its_raised_next_number()
+		{
+			var config = new RecordsNumberingConfig { Pattern = "{PREFIX}{YY}-{SEQ}" };
+			config.RaiseFloor("INC26-#", 153, "admin", DateTime.UtcNow);
+			_settings.Setup(s => s.GetRecordsNumberingConfigAsync(Dept, It.IsAny<bool>())).ReturnsAsync(config);
+			var started = await _service.StartFromCallAsync(Dept, "author", CallId);
+
+			var final = await _service.FinalizeAsync(Dept, "author", started.Report.RmsIncidentReportId, started.Report.RowVersion, null, "10.0.0.1", null, null);
+
+			final.Report.RecordNumber.Should().Be("INC26-0153");
 		}
 
 		[Test]

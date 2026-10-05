@@ -20,11 +20,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 	{
 		#region Members and Constructors
 		private readonly IMutualAidService _mutualAidService;
+		private readonly ICommandAccessService _commandAccessService;
 
-		public MutualAidController(IMutualAidService mutualAidService)
+		public MutualAidController(IMutualAidService mutualAidService, ICommandAccessService commandAccessService)
 		{
 			_mutualAidService = mutualAidService;
+			_commandAccessService = commandAccessService;
 		}
+
+		/// <summary>The command-board read gate IncidentCommandController applies (CommandAppLogin); Command_View alone is a plan-level claim.</summary>
+		private Task<bool> CanReadBoardsAsync() => _commandAccessService.CanUseCommandAsync(DepartmentId, UserId);
 		#endregion Members and Constructors
 
 		/// <summary>
@@ -36,6 +41,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.MutualAidResourcesResult>> GetAssignableResources()
 		{
+			if (!await CanReadBoardsAsync())
+				return Unauthorized();
+
 			var result = new ICModels.MutualAidResourcesResult();
 			result.Data = await _mutualAidService.GetAssignableResourcesForIncidentAsync(DepartmentId);
 			result.PageSize = result.Data.Count;

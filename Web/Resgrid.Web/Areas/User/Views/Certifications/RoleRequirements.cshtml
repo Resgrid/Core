@@ -90,6 +90,9 @@
                 </div>
             </div>
         </div>
+        @* Member eligibility is read from each member's records: it needs ViewCertifications, not setup alone. *@
+        @if (Model.CanView)
+        {
         <div class="col-md-5">
             <div class="ibox float-e-margins">
                 <div class="ibox-title"><h5>@localizer["MemberEligibility"]</h5></div>
@@ -121,6 +124,7 @@
                 </div>
             </div>
         </div>
+        }
     </div>
 </div>
 

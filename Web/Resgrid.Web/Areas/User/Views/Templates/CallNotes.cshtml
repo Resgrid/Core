@@ -76,9 +76,12 @@
                                                 <a href="@Url.Action("EditCallNote", "Templates", new { area = "User", id = t.AutofillId })" class='btn btn-xs btn-info'>
                                                     @commonLocalizer["Edit"]
                                                 </a>
-                                                <a href="@Url.Action("DeleteCallNote", "Templates", new { area = "User", id = t.AutofillId })" class='btn btn-xs btn-danger' data-confirm="WARNING: This will permanently delete this call note template. Are you sure you want to delete the template @t.Name ?" rel="nofollow">
-                                                    @commonLocalizer["Delete"]
-                                                </a>
+                                                <form method="post" action="@Url.Action("DeleteCallNote", "Templates", new { area = "User", id = t.AutofillId })" style="display: inline;">
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class='btn btn-xs btn-danger' data-confirm="WARNING: This will permanently delete this call note template. Are you sure you want to delete the template @t.Name ?">
+                                                        @commonLocalizer["Delete"]
+                                                    </button>
+                                                </form>
                                             }
                                         </td>
                                     </tr>

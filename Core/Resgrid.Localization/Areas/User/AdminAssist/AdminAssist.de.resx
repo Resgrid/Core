@@ -2070,6 +2070,24 @@
   <data xml:space="preserve" name="Field.RecordsNumberingConfig.SequenceWidth">
     <value>Konfiguration der Datensatznummerierung / Stellenanzahl der Nummernfolge</value>
   </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingConfig.Floors">
+    <value>Konfiguration der Datensatznummerierung / Untergrenzen</value>
+  </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingConfig.Pattern">
+    <value>Konfiguration der Datensatznummerierung / Muster</value>
+  </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingFloor.NextSequence">
+    <value>Untergrenze der Datensatznummerierung / Nächste Laufnummer</value>
+  </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingFloor.ScopeKey">
+    <value>Untergrenze der Datensatznummerierung / Bereichsschlüssel</value>
+  </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingFloor.SetByUserId">
+    <value>Untergrenze der Datensatznummerierung / Festgelegt von Benutzer-ID</value>
+  </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingFloor.SetOn">
+    <value>Untergrenze der Datensatznummerierung / Festgelegt am</value>
+  </data>
   <data xml:space="preserve" name="Field.RecordsRetentionOverride.AppliesFrom">
     <value>Aufbewahrungsausnahme für Datensätze / Gilt ab</value>
   </data>
@@ -2213,6 +2231,24 @@
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.SequenceWidth">
     <value>Mit Nullen aufgefüllte Stellenanzahl der laufenden Nummer für Definitionen mit Abteilungsstandardwerten. Der Datensatz-Editor prüft die unterstützte Breite.</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.Floors">
+    <value>Erhöhte nächste Nummern, eine je Nummernfolge, für Abteilungen, die vor Resgrid vergebene Nummern fortführen. Eine nächste Nummer steigt nur, und bereits vergebene Nummern haben immer Vorrang, sodass eine erhöhte nächste Nummer nie zu einer doppelten Nummer führt.</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.Pattern">
+    <value>Nummernmuster für die integrierten Datensatztypen und Einsatzberichte aus festem Text und den Platzhaltern PREFIX, YYYY, YY, GROUP und SEQ. Ohne Wert gilt das Muster, das „Jahr einbeziehen“ und „Nummernfolge je Gruppe“ beschreiben. Die Nummernfolge beginnt neu, sobald sich der Text um SEQ ändert.</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingFloor.NextSequence">
+    <value>Die niedrigste Laufnummer, die diese Nummernfolge als Nächstes vergeben darf.</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingFloor.ScopeKey">
+    <value>Die Nummernfolge, für die eine erhöhte nächste Nummer gilt: der Text, den das Muster um die Laufnummer erzeugt, mit # an ihrer Stelle.</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingFloor.SetByUserId">
+    <value>Der Administrator, der die nächste Nummer erhöht hat.</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingFloor.SetOn">
+    <value>Wann die nächste Nummer erhöht wurde (UTC).</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsRetentionOverride.AppliesFrom">
     <value>Zukünftige Grenze für Revisionen, die für die Ausnahmeregelung infrage kommen, ausgewertet durch den Datensatz-Lebenszyklus.</value>
@@ -3358,247 +3394,247 @@
     <value>Personalvergütung anzeigen</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.AddCallData">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Hinzufügen von Notizen, Bildern, Dateien und Video-Feeds zu Einsätzen im Web und in den Apps. Die Person muss den Einsatz außerdem sehen können, und das Anhängen einer Datei im Web erfordert zusätzlich Bearbeitungsrechte für den Einsatz (Abteilungsadministratoren oder das Mitglied, das den Einsatz angelegt hat). Ist das Kontrollkästchen „Nur Gruppe“ aktiviert, dürfen nur Abteilungsadministratoren und Personen, deren Gruppe zu dem Einsatz alarmiert wurde, etwas hinzufügen – auch wenn die Regel „Alle“ lautet. Ohne gespeicherte Regel darf dies jeder, der den Einsatz sehen kann.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.AddPersonnel">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Hinzufügen, Einladen und Reaktivieren von Mitgliedern. Wählen Sie „Abteilungs- und Gruppenadministratoren“, damit Gruppenadministratoren Personen zu ihrer eigenen Gruppe hinzufügen können; Mitglieder, die sie reaktivieren oder aus einem bestehenden Konto hinzufügen, kommen ebenfalls in die eigene Gruppe des Gruppenadministrators. Ohne gespeicherte Regel dürfen dies nur Abteilungsadministratoren. Gruppenadministratoren, die auch Personen entfernen sollen, müssen in dieser Berechtigung eingeschlossen sein, da auch das Entfernen sie prüft.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.AdjustInventory">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Vereinnahmen, Anpassen und Archivieren von Inventar sowie die Verwendung von Beständen aus Berichten und dient als Ausgangsregel für „Inventar übertragen“ und „Inventar ausgeben“, bis diese gespeichert sind. Ohne gespeicherte Regel dürfen dies nur Abteilungsadministratoren, und die Seite „Sicherheit“ zeigt dies auch an.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.AmendRecords">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Eröffnen eines Nachtrags zu einem abgeschlossenen Bericht und dessen Verwerfen. Der Nachtrag wird durch Abschließen fertiggestellt; kombinieren Sie diese Berechtigung daher mit „Berichte abschließen“. Ohne gespeicherte Regel dürfen dies Abteilungs- und Gruppenadministratoren.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ApproveRecords">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Genehmigen von Berichten. Die Genehmigung erfolgt derzeit über die Apps und die API; im Web erweitert die Berechtigung nur die Verantwortlichkeitsansicht. Ohne gespeicherte Regel dürfen dies nur Abteilungsadministratoren. Eine genehmigende Person kann nie ihren eigenen Bericht genehmigen, und die Genehmigerrollen einer Definition können dies weiter einschränken.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ApproveTimeReports">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Genehmigen und Stornieren eingereichter Zeitnachweise von Einsätzen, auch aus der Incident-Command-App. Niemand kann einen Nachweis genehmigen, den er selbst eingereicht hat oder der eigene Stunden enthält; dafür ist eine zweite genehmigende Person nötig, Stornieren bleibt möglich. Sobald ein Nachweis genehmigt ist, können seine Spesen – und die Spesen dieses Tages – nicht mehr geändert werden. Im Web muss die genehmigende Person außerdem den Einsatz sehen können. Ohne gespeicherte Regel dürfen dies nur Abteilungsadministratoren.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.BreakGlassProtectedData">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Eine stillgelegte Kennung, die beibehalten wird, damit ältere gespeicherte Einstellungen weiterhin geladen werden. Sie gewährt nichts, wird auf der Seite „Sicherheit“ nicht angezeigt und kann nicht gespeichert werden; der Zugriff durch Supportmitarbeiter wird über die Einstellung zur Support-Einwilligung auf der Seite „Datenschutz“ gesteuert.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CanSeePersonnelLocations">
-    <value>Steuert die Sichtbarkeit von Standorten je Betrachter und Person. Die Vorschau zählt Zugriffspaare, nicht aktuelle Kartenmarkierungen, Standortfreigaben oder GPS-Verfügbarkeit.</value>
+    <value>Legt fest, wessen Positionen ein Mitglied sehen darf: die Karte, Live-Tracking, Entfernungen und Fahrzeiten der nächstgelegenen Einsatzkräfte, Statuspositionen in der Personal- und Einsatzaktivität, Check-ins und den Ereignisverlauf des Personals. Ist das Kontrollkästchen „Nur Gruppe“ aktiviert, sehen Personen nur Mitglieder ihrer eigenen Gruppe. Ohne gespeicherte Regel dürfen dies alle. Zurückgehalten wird die Position, nicht die Person.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CanSeeUnitLocations">
-    <value>Steuert die Sichtbarkeit von Standorten je Betrachter und Einheit. Eine Gruppensperre bezieht sich auf die Wache der Einheit und die übergeordnete Gruppenhierarchie, nicht auf eine Wache, die der Betrachter sonst sehen kann.</value>
+    <value>Legt fest, wessen Einheitenpositionen ein Mitglied sehen darf: die Karte, Live-Tracking, Entfernungen und Fahrzeiten der nächstgelegenen Einheiten, Ereignisverlauf und Berichte von Einheiten, Check-ins, Routenabweichungen und Einsatzaktivität. Ist das Kontrollkästchen „Nur Gruppe“ aktiviert, sehen Personen nur Einheiten ihrer eigenen Wache. Ohne gespeicherte Regel dürfen dies alle. Zurückgehalten wird die Position, nicht die Einheit.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CloseCall">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Abschließen und Wiedereröffnen von Einsätzen. Ist das Kontrollkästchen „Nur Gruppe“ aktiviert, dürfen nur Abteilungsadministratoren und Personen, deren Gruppe zu dem Einsatz alarmiert wurde, ihn abschließen oder wiedereröffnen – auch wenn die Regel „Alle“ lautet. Im Web, in den Apps und im Chatbot sind zusätzlich die Einsatzrechte aus „Einsätze erstellen“ erforderlich. Ohne gespeicherte Regel darf jeder, der den Einsatz sehen kann, ihn abschließen.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CommandAppLogin">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Legt fest, wer die Incident-Command-App verwenden und Einsatzführungstafeln lesen darf: jede Tafel sowie alle Lesezugriffe auf Kräfteübersicht, Bedarfe, Zeitachse, Karte, Rollen, Sprachfunk und Ressourcen, die Offline-Synchronisierung von Tafeln in den Apps und die Einsatzauskünfte des Chatbots. Ohne gespeicherte Regel dürfen dies alle aktiven Mitglieder. Wenn Sie eine engere Regel speichern, erhalten die zugelassenen Personen außerdem Unterstützungsfunktionen für die Einsatzleitung an jeder Tafel. Das Übernehmen der Einsatzleitung und das Bearbeiten von Tafeln erfordern weiterhin die Einsatzleitungsrechte von Abteilungsadministratoren.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ConfigureProtectedDataEgress">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Legt fest, wer geschützte Workflows und deren Freigabegenehmigungen verwalten darf. Das Aktivieren, Genehmigen oder Verlängern eines geschützten Workflows erfordert zusätzlich eine aktuelle Step-up-Bestätigung, und die Einstellungen für die Übermittlung per PIN über SMS und Sprachanruf erfordern außerdem einen Abteilungsadministrator. Gilt nur, wenn die Abteilung für den erweiterten Datenschutz registriert ist.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ContactDelete">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Löschen von Kontakten, Kategorien, Einsatzplänen, Objektgefahren und Objektdateien. Ohne gespeicherte Regel dürfen dies alle. Ein Kontakt mit offener Abrechnung in Business Ops kann nicht gelöscht werden.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ContactEdit">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Hinzufügen und Bearbeiten von Kontakten, Kategorien, Einsatzplänen, Gefahren und Objektdateien. Ohne gespeicherte Regel dürfen dies alle. Die Bearbeitungsseite zeigt den gesamten Kontakt an, daher kann jeder, der bearbeiten kann, auch lesen; geschützte Felder bleiben ohne Freigabe für geschützte Daten geschwärzt.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ContactView">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Anzeigen von Kontakten sowie ihrer Notizen, Einsätze und Dateien im Web und in den Apps, das Auffinden über die Suche und das Anzeigen von Kontaktdetails bei Einsätzen: Objektinformationen, Kontaktwarnungen, die Kontaktauswahl im Einsatz und der Einsatzexport. Ohne gespeicherte Regel dürfen dies alle, mit Ausnahme des Inventareinkaufs, der Lieferantenkontakte nur Abteilungsadministratoren anzeigt, bis Sie eine Regel speichern. Auch Routen und die Bearbeitungsseite für Kontakte können Kontaktdetails anzeigen.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateCalendarEntry">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Erstellen und Bearbeiten von Kalendereinträgen und Kalendertypen sowie das Bearbeiten von Kalender-Check-ins aus den Apps. Zum Bearbeiten oder Löschen eines Eintrags muss man außerdem dessen Ersteller oder Abteilungsadministrator sein, und einen Teilnehmer darf nur dieser selbst oder jemand entfernen, der die Veranstaltung bearbeiten kann. Alle können den Kalender weiterhin anzeigen. Ohne gespeicherte Regel dürfen dies alle.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateCall">
-    <value>Ermöglicht das Anlegen eines Einsatzes. Die Aktion auf Abteilungsebene verwendet den tatsächlichen Administratorstatus und die Personalrollen jedes Mitglieds; die spätere Dispositionsprüfung bleibt maßgeblich.</value>
+    <value>Ermöglicht das Erstellen von Einsätzen und damit die Einsatzrechte, die auch das Bearbeiten, Abschließen, Wiedereröffnen und Löschen erfordern – im Web, in den Apps, auf der Seite „Protokolle“ und im Chatbot. Personen, die diese Voraussetzung nicht erfüllen, können Einsätze weiterhin anzeigen. Ohne gespeicherte Regel dürfen dies alle.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateDocument">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Hochladen von Dokumenten. Personen können nur die Dokumente bearbeiten oder löschen, die sie selbst hochgeladen haben, es sei denn, sie sind Abteilungsadministratoren. Alle können Dokumente weiterhin anzeigen. Ohne gespeicherte Regel dürfen alle hochladen.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateLog">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Schreiben von Protokolleinträgen. Alle können sie weiterhin anzeigen. Sobald Berichte aktiviert sind, werden alte Protokolle schreibgeschützt, und diese Regel wird auf „Datensatz erstellen“ und „Berichte abschließen“ übertragen. Ohne gespeicherte Regel dürfen dies alle.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateMessage">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Senden von Nachrichten, das Posten und Reagieren im Chat, das Starten von Direktnachrichten und die Nutzung des Chatbots, einschließlich des Sendens einer Nachricht per SMS an den Chatbot. Personen ohne diese Berechtigung können ihre Nachrichten weiterhin lesen und löschen, sie aber nicht als gelesen markieren und keine Chat-Beiträge bearbeiten. Ohne gespeicherte Regel dürfen dies alle.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateNote">
-    <value>Ermöglicht das Anlegen einer Abteilungsnotiz. Die Aktion gewährt keinen Zugriff auf geschützte Notizinhalte oder eine andere Abteilung.</value>
+    <value>Ermöglicht das Erstellen von Notizen aus den Apps. Im Web erfordern das Erstellen, Bearbeiten und Löschen von Notizen immer einen Abteilungsadministrator, unabhängig von dieser Regel. Notizen nur für Administratoren bleiben ausschließlich für Abteilungsadministratoren sichtbar. Ohne gespeicherte Regel dürfen alle in den Apps Notizen erstellen.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateRecord">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Verfassen von Berichten, einschließlich Einsatzberichten, Außendienstberichten, Beweismitteln und Anhängen. Ohne gespeicherte Regel dürfen alle Berichte verfassen. Wird wirksam, sobald Berichte aktiviert sind; bei der Aktivierung wird Ihre Regel für „Protokolleintrag erstellen“ hierher übernommen. Außendienst-Apps benötigen außerdem ihre Funktionsschalter für Berichte im Außendienst.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateShift">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Erstellen, Bearbeiten und Löschen von Schichten und Arbeitsschichten sowie das Verwalten der Eintragungen für alle Gruppen. Gruppenadministratoren verwalten die Eintragungen ihrer eigenen Gruppen immer. Mitglieder, die sich eintragen – im Web, in den Apps oder über den Chatbot –, müssen die Regeln der Schicht einhalten (keine vergangenen Tage, zugewiesene Schichten erfordern eine Zuweisung, Gruppenschichten erfordern die Gruppe des Mitglieds). Alle können Schichten weiterhin anzeigen. Ohne gespeicherte Regel dürfen nur Abteilungsadministratoren Schichten ändern.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateTraining">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Erstellen, Bearbeiten und Löschen von Schulungen sowie das Zurücksetzen des Schulungsfortschritts von Mitgliedern. Alle können Schulungen weiterhin anzeigen und absolvieren. Ohne gespeicherte Regel dürfen dies nur Abteilungsadministratoren.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateWorkflow">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Erstellen, Bearbeiten und Löschen von Workflows, die Vorschau ihrer Bedingungen, das Lesen der Schrittkonfiguration in den Apps und der API sowie das Anzeigen der gerenderten Ausgabe von Workflow-Ausführungen. Ohne gespeicherte Regel können nur Abteilungsadministratoren Workflows ändern, aber jedes Mitglied kann die Seite „Workflows“ öffnen und Definitionen lesen; wird „Abteilungsadministratoren“ gespeichert, werden die Workflows zusätzlich für alle anderen ausgeblendet. Schritte, die einen Berichtsexport senden, erfordern außerdem „Datensätze exportieren“ und „Berichtsauswertungen verwalten“. Kostenlose Abonnements sind in der Anzahl ihrer Workflows begrenzt.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.DeleteCall">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Löschen von Einsätzen. Ist das Kontrollkästchen „Nur Gruppe“ aktiviert, dürfen nur Abteilungsadministratoren und Personen, deren Gruppe zu dem Einsatz alarmiert wurde, ihn löschen – auch wenn die Regel „Alle“ lautet. Zusätzlich sind die Einsatzrechte aus „Einsätze erstellen“ erforderlich. Ohne gespeicherte Regel darf jeder, der den Einsatz sehen kann, ihn löschen.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.DeleteLog">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Löschen von Protokolleinträgen. Diese Berechtigung ist von „Protokolleintrag erstellen“ getrennt. Sobald Berichte aktiviert sind, werden alte Protokolle schreibgeschützt, und diese Regel wird auf „Datensatz löschen“ übertragen. Ohne gespeicherte Regel dürfen dies alle.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.DeleteRecord">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Annullieren von Berichten und das Abbrechen von Entwürfen – ohne diese Berechtigung können Personen nicht einmal ihre eigenen Entwürfe abbrechen. Ein Mitglied darf nur Berichte annullieren oder abbrechen, die es verfasst hat, besitzt, prüft oder genehmigt, es sei denn, es ist Abteilungsadministrator oder Administrator der Gruppe des Berichts. Ohne gespeicherte Regel dürfen dies alle. Wird wirksam, sobald Berichte aktiviert sind; bei der Aktivierung wird Ihre Regel für „Protokolleintrag löschen“ hierher übernommen.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.DispatchAppLogin">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Legt fest, wer als Disponent gilt. Die Dispatch-App prüft dies bei der Anmeldung (der Server selbst blockiert die Anmeldung nicht), und Disponenten können für die Disposition sichtbare Chat-Kanäle lesen und werden dort benachrichtigt, einschließlich Kanälen der Einsatzleitung und von Gruppen. Ohne gespeicherte Regel gilt jedes aktive Mitglied als Disponent. Das Speichern aktualisiert den Chat-Zugriff.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.EditProtectedCallData">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Wird auf der Seite „Sicherheit“ nicht angeboten, weil keine Laufzeitprüfung diese Berechtigung liest: Das Bearbeiten geschützter Einsatzfelder richtet sich nach den normalen Berechtigungen zum Bearbeiten von Einsätzen und einer gültigen Freigabe für geschützte Daten. Eine früher gespeicherte Regel bleibt erhalten, hat aber keine Wirkung.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ExportPayDataReporting">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Einfrieren, Exportieren und Herunterladen kalifornischer Gehaltsdatenmeldungen sowie das Lesen von Meldungsläufen und deren Summen. Momentaufnahmen je Beschäftigtem und das Erstellen der Meldung erfordern „Gehaltsdatenmeldung verwalten“. Erfordert die aktive Erweiterung Business Ops und aktivierten erweiterten Datenschutz. Ohne gespeicherte Regel dürfen dies nur Abteilungsadministratoren.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ExportProtectedData">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Wird auf der Seite „Sicherheit“ nicht angeboten, weil keine Laufzeitprüfung diese Berechtigung liest: Jeder Export richtet sich nach der Exportberechtigung seines eigenen Moduls. Eine früher gespeicherte Regel bleibt erhalten, hat aber keine Wirkung.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ExportRecords">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Drucken und Exportieren von Berichten, Dokumenten, Einsatzauswertungen, CSV-Dateien gespeicherter Auswertungen und Sammelpaketen. Ohne gespeicherte Regel dürfen dies alle. Eingeschränkte Abschnitte erfordern zusätzlich „Eingeschränkte Datensätze anzeigen“; die Verwaltung von Exportvorlagen, das Öffnen der Exportläufe anderer Personen und das Senden eines Pakets per E-Mail an eine externe Adresse erfordern „Berichtsauswertungen verwalten“.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.FinalizeRecords">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Abschließen von Berichten, wodurch sie als offizielle Fassung gesperrt werden. Ein Mitglied darf Berichte abschließen, die es verfasst hat, besitzt, prüft oder genehmigt; zum Abschließen fremder Berichte sind „Berichte prüfen“ (nach der Genehmigung „Berichte genehmigen“, bei einem Nachtrag „Datensätze ändern“) oder ein Abteilungsadministrator erforderlich. Auch Nachträge und Korrekturen werden durch Abschließen fertiggestellt, daher benötigt jeder, der Nachträge erstellt, auch diese Berechtigung. Ohne gespeicherte Regel dürfen dies alle. Bei der Aktivierung wird Ihre Regel für „Protokolleintrag erstellen“ hierher übernommen.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.IssueInventory">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht die Ausgabe von Ausrüstung und Material an Personen und Einheiten, die Rücknahme, die Ausgabe von Sets und das Hinzufügen neuer Inhaber. Bis Sie hier eine Regel speichern, gilt „Inventar anpassen“. Betäubungsmittel erfordern zusätzlich „Betäubungsmittel verwalten“ und, wo vorgeschrieben, einen Zeugen.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageBids">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Erstellen, Bearbeiten und Löschen von Angeboten und Kostenvoranschlägen sowie deren Umwandlung in Einsätze. Das Umwandeln und die Nutzung des Einsatzassistenten erfordern außerdem „Einsätze verwalten“, und Kostenkarten für Angebote erfordern „Interne Kosten anzeigen“. Ohne gespeicherte Regel dürfen dies nur Abteilungsadministratoren. Erfordert die Auftragnehmer-Abrechnung und die aktive Erweiterung Business Ops.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageCertificationSetup">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht die Verwaltung des Zertifizierungskatalogs, der Vorlagen, Rollenanforderungen und Durchsetzungseinstellungen. Für sich allein zeigt diese Berechtigung keine Zertifizierungsnachweise von Mitgliedern an; dafür ist „Zertifizierungen anzeigen“ erforderlich. Ohne gespeicherte Regel dürfen dies nur Abteilungsadministratoren.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageCertifications">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Hinzufügen, Verifizieren, Bearbeiten und Entfernen von Zertifizierungsnachweisen und Fortbildungspunkten anderer Mitglieder und von Einheiten. Das Anzeigen ist enthalten. Mitglieder können ihre eigenen Nachweise immer verwalten, aber niemand kann seine eigenen verifizieren, und das Ändern eines eigenen verifizierten Nachweises hebt dessen Verifizierung auf. Ohne gespeicherte Regel dürfen dies nur Abteilungsadministratoren.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageChecklists">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Verfassen, Veröffentlichen, Stilllegen und Planen von Checklisten sowie das Senden von Checklistenaufgaben an andere Gruppen. Das Lesen von Ergebnissen ist nicht enthalten. Ohne gespeicherte Regel dürfen dies nur Abteilungsadministratoren. Erfordert aktivierte Checklisten; Fehleraktionen, die Arbeitsaufträge eröffnen, erfordern außerdem Arbeitsaufträge und Readiness Pro.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageContracts">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Anzeigen und Verwalten von Dienstleistungsverträgen und Compliance-Dokumenten, einschließlich der Compliance-Checkliste auf der Registerkarte „Abrechnung“ eines Einsatzes. Ohne gespeicherte Regel dürfen dies nur Abteilungsadministratoren. Erfordert die Auftragnehmer-Abrechnung und die aktive Erweiterung Business Ops.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageControlledSubstances">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht den Umgang mit Betäubungsmitteln: Vereinnahmen, Umlagern, Ausgeben, Verbrauchen, Bezeugen, Melden und Aufnehmen in den Katalog. Diese Berechtigung ergänzt die normalen Inventarberechtigungen, statt sie zu ersetzen, und bezeugte Schritte erfordern eine zweite qualifizierte Person. Ohne gespeicherte Regel dürfen dies nur Abteilungsadministratoren.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageDepartmentDataProtection">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Wird auf der Seite „Sicherheit“ nicht angeboten, weil keine Laufzeitprüfung diese Berechtigung liest: Die Datenschutzseiten erfordern einen Abteilungsadministrator, und Registrierung, Deaktivierung, Ausnahmen von der Step-up-Bestätigung sowie die Abrechnung sind dem verwaltenden Mitglied vorbehalten. Eine früher gespeicherte Regel bleibt erhalten, hat aber keine Wirkung.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageDeployments">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Erstellen und Durchführen von Einsätzen und externen Einsatzaufträgen: Besetzung, Ausrüstung, Zeiten, Spesen und Abschluss sowie das Markieren von Spesen als vorab genehmigt. Es gibt keine separate Anzeigeberechtigung; Mitglieder auf der Besetzungsliste eines Einsatzes (direkt oder über die Besatzung ihrer Einheit auf der Liste) sehen ihn weiterhin – das Einnehmen eines Sitzplatzes auf einer eingesetzten Einheit genügt dafür nicht. Ohne gespeicherte Regel dürfen dies nur Abteilungsadministratoren. Das Erstellen aus einem externen Auftrag erfordert außerdem „Datensatz erstellen“ bei aktivierten Berichten.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageInvoicing">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Erstellen, Senden, Bearbeiten und Stornieren von Rechnungen, das Erzeugen von Rechnungen aus Einsätzen, das Herunterladen des Rechnungspakets, das Erfassen von Zahlungen sowie die Verwaltung von Preislisten und Abrechnungsprofilen. Das Anzeigen ist enthalten. Ohne gespeicherte Regel dürfen dies nur Abteilungsadministratoren. Erfordert die aktivierte Kundenrechnungsstellung; Änderungen erfordern die aktive Erweiterung Business Ops.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageMutualAidReimbursement">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Vorbereiten, Übergeben und Abgleichen von Cal OES MARS-Erstattungsvorgängen. Das Erstellen der Gehaltserhebung erfordert außerdem „Personalvergütung anzeigen“, und Stellenklassifizierungen mit weniger als drei Mitgliedern werden ausgelassen. Eingeteilte Mitglieder können ihr eigenes F-42 und ihre Spesen weiterhin ausfüllen, gedruckte Pakete zeigen ihnen jedoch keine Erstattungssätze oder Summen. Ohne gespeicherte Regel dürfen dies nur Abteilungsadministratoren. Erfordert aktiviertes Cal OES MARS und die aktive Erweiterung Business Ops.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManagePayDataReporting">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Erstellen kalifornischer Gehaltsdatenmeldungen im Assistenten und das Einsehen der zugrunde liegenden Momentaufnahmen je Beschäftigtem. Das Einfrieren und Exportieren einer Meldung erfordert „Gehaltsdatenmeldung exportieren“. Jedes Mitglied beantwortet seine eigenen demografischen Fragen weiterhin selbst. Erfordert das Modul Gehaltsdatenmeldung, die aktive Erweiterung Business Ops und aktivierten erweiterten Datenschutz. Ohne gespeicherte Regel dürfen dies nur Abteilungsadministratoren.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageRecordDefinitions">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Erstellen und Bearbeiten von Berichtsdefinitionen im Designer. Das Veröffentlichen erfordert außerdem „Berichtsdefinitionen veröffentlichen“, und die Verwaltung benutzerdefinierter Felder für Berichte erfordert zusätzlich einen Abteilungsadministrator. Ohne gespeicherte Regel dürfen dies nur Abteilungsadministratoren.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageRecordDisclosures">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht die Bearbeitung von Auskunftsersuchen und Offenlegungsanfragen, einschließlich des Lesens der Offenlegungswarteschlange und des Erstellens von Herausgaben. Eingeschränkte Inhalte erfordern zusätzlich „Eingeschränkte Datensätze anzeigen“. Ohne gespeicherte Regel dürfen dies nur Abteilungsadministratoren.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageRecordLegalHold">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Setzen und Aufheben rechtlicher Sperren, die verhindern, dass Berichte endgültig gelöscht werden. Sperren für einen bestimmten Bericht sind auf Berichte beschränkt, die die Person sehen kann. Ohne gespeicherte Regel dürfen dies nur Abteilungsadministratoren.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageRecordReports">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Erstellen, Planen und Ausführen gespeicherter Berichtsauswertungen, die Verwaltung von Exportvorlagen, das Öffnen von Vorlagen- und geplanten Exportläufen sowie das Senden von Sammelpaketen per E-Mail an externe Adressen; außerdem zeigt sie die Verantwortlichkeitsansicht an. Exportvorlagen und CSV-Downloads erfordern außerdem „Datensätze exportieren“, und eingeschränkte Auswertungen und Läufe erfordern „Eingeschränkte Datensätze anzeigen“. Ein Sammelpaket öffnet sich immer nur für das Mitglied, das es erstellt hat. Ohne gespeicherte Regel dürfen dies nur Abteilungsadministratoren.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageRoutes">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Steuert Routen. Diese Berechtigung wird auf keiner Konfigurationsseite angezeigt, daher können Mitglieder Routen anzeigen, Gruppenadministratoren sie zusätzlich erstellen und bearbeiten, und nur Abteilungsadministratoren können sie löschen. Das Starten einer Route und das Einchecken an Stopps erfordern Bearbeitungszugriff. Beim Anzeigen von Routen werden auch die Kontakte der Abteilung angezeigt.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageWorkOrders">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht die abteilungsweite Verwaltung von Arbeitsaufträgen: Genehmigungen, Kosten, Erledigungen, Zurückstellungen, wiederkehrende Wartung, Lieferantenkosten und Aufträge anderer Gruppen. Dies umfasst das Sehen aller Arbeitsaufträge. Ohne gespeicherte Regel dürfen dies nur Abteilungsadministratoren. Erfordert aktivierte Arbeitsaufträge und die Erweiterung Readiness Pro.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageWorkflowCredentials">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Erstellen, Bearbeiten und Löschen der Zugangsdaten, mit denen Workflows externe Dienste erreichen. Geheimnisse werden immer maskiert. Ohne gespeicherte Regel können nur Abteilungsadministratoren sie ändern, aber Mitglieder können Namen und Typen der Zugangsdaten sehen; wird „Abteilungsadministratoren“ gespeichert, werden auch diese ausgeblendet, im Web und in der API. Zum Bearbeiten von Zugangsdaten, die einen Berichtsexport zustellen, sind außerdem „Datensätze exportieren“ und „Berichtsauswertungen verwalten“ erforderlich. Nur zusammen mit „Workflow erstellen“ sinnvoll.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageWorkforceCompensation">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht die Verwaltung von Arbeitgeberprofil, Betriebsstätten, Beschäftigten sowie Beschäftigungs- und Vergütungsdatensätzen und das Ausführen von Kostenläufen. Das Anzeigen ist enthalten. Niemand kann ein Vergütungsprofil genehmigen, das er zuletzt geändert hat, oder seine eigene Vergütung. Lohnbeträge sind geschützt und werden ohne Freigabe für geschützte Daten geschwärzt angezeigt. Nur im Web verfügbar. Ohne gespeicherte Regel dürfen dies nur Abteilungsadministratoren. Erfordert die interne Kostenrechnung und die aktive Erweiterung Business Ops.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.PublishRecordDefinitions">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Veröffentlichen und Stilllegen von Berichtsdefinitionen, damit Personen sie verwenden können. Funktioniert nur zusammen mit „Berichtsdefinitionen verwalten“. Ohne gespeicherte Regel dürfen dies nur Abteilungsadministratoren.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ReassignRecordDrafts">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht es, den Berichtsentwurf einer anderen Person einem anderen aktiven Mitglied zu übergeben. Ohne gespeicherte Regel dürfen dies Abteilungs- und Gruppenadministratoren in jeder Gruppe, die sie sehen können.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.RecordsPreventionAdmin">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht die Verwaltung von Präventionsdaten – Objekte, Inspektionen, Hydranten, Genehmigungen und Risikominderung in der Gemeinde. Andere Mitglieder können sie weiterhin lesen. Jeder Bereich erfordert außerdem, dass sein Präventionsmodul in den Berichten aktiviert ist. Ohne gespeicherte Regel dürfen dies nur Abteilungsadministratoren.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.RemovePersonnel">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Entfernen von Mitgliedern aus der Abteilung. Wählen Sie „Abteilungs- und Gruppenadministratoren“, damit Gruppenadministratoren Personen ihrer eigenen Gruppe entfernen können – dafür muss auch „Personal hinzufügen“ ebenso eingestellt sein, da die Seite zum Entfernen diese Berechtigung prüft. Ein Gruppenadministrator kann niemals einen Abteilungsadministrator oder das verwaltende Mitglied entfernen. Ohne gespeicherte Regel dürfen dies nur Abteilungsadministratoren.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ReviewRecords">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Prüfen von Berichten, deren Rückgabe zur Korrektur und das Zuweisen von Prüfaufgaben. Ohne gespeicherte Regel dürfen dies Abteilungs- und Gruppenadministratoren. Die Prüferrollen einer Definition können dies weiter einschränken. Die Qualitätsprüfung erfordert außerdem das Modul Qualitätsprüfung für Berichte.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ShareRecordsExternally">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Reserviert für das Teilen von Berichten mit anderen Gruppen oder externen Behörden. Derzeit verwendet keine Funktion diese Berechtigung, daher wird sie auf der Seite „Sicherheit“ nicht angeboten; standardmäßig ist sie nur Abteilungsadministratoren vorbehalten, und eine früher gespeicherte Regel bleibt für die spätere Freigabefunktion erhalten.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.SubmitRecords">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Übermitteln von Berichten an ein Meldeziel wie NERIS. Übermittelnde Personen müssen den Bericht sehen können; das Lesen des Austauschverlaufs der Übermittlungen erfordert außerdem „Eingeschränkte Datensätze anzeigen“, und das Validieren einer Übermittlung erfordert einen Abteilungsadministrator. Ohne gespeicherte Regel dürfen dies nur Abteilungsadministratoren.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.TransferInventory">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Umlagern von Beständen zwischen Lagerorten. Bis Sie hier eine Regel speichern, gilt „Inventar anpassen“. Ist das Kontrollkästchen „Nur Gruppe“ aktiviert, können Personen Bestände nur zwischen Lagerorten ihrer eigenen Gruppe umlagern. Betäubungsmittel erfordern zusätzlich „Betäubungsmittel verwalten“.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.UseCalendarSync">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht Mitgliedern, einen persönlichen Kalenderabonnement-Link für den Kalender auf ihrem Telefon oder Computer abzurufen. Der Feed wird bei jedem Abruf erneut geprüft, daher stoppt eine Einschränkung bestehende Feeds, und ein aus der Abteilung entferntes oder dort deaktiviertes Mitglied erhält ihn nicht mehr. Ohne gespeicherte Regel dürfen dies alle. Zusätzlich muss der Betreiber Kalender-Feeds aktiviert haben.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewAllWorkOrders">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Sehen von Arbeitsaufträgen über diejenigen hinaus, die eine Person selbst erstellt hat oder die ihr zugewiesen sind. Ohne gespeicherte Regel sehen Abteilungsadministratoren alle und Gruppenadministratoren die ihrer eigenen Gruppe; das Kontrollkästchen „Nur Gruppe“ zeigt diese Einschränkung als aktiviert an, lassen Sie es daher beim Speichern aktiviert, wenn Gruppenadministratoren auf ihre Gruppe beschränkt bleiben sollen.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewCertifications">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Anzeigen der Zertifizierungen anderer Mitglieder und von Einheiten, der Liste ablaufender Zertifizierungen und der Rolleneignung. Mitglieder sehen ihre eigenen immer; auch Gruppenadministratoren benötigen diese Berechtigung, um die Nachweise ihrer Mitglieder zu sehen. Ohne gespeicherte Regel dürfen dies nur Abteilungsadministratoren. Geschützte Felder erfordern eine Freigabe für geschützte Daten.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewChecklistResults">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Lesen abgeschlossener Checklistenergebnisse und des Verlaufs. Ohne gespeicherte Regel sehen Abteilungsadministratoren alles, Gruppenadministratoren die Ergebnisse ihrer eigenen Gruppe, und alle sehen Durchführungen, die sie erstellt oder bezeugt haben. Deaktivieren Sie das Kontrollkästchen „Nur Gruppe“, damit Prüfer alle Gruppen sehen können.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewGroupRecords">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Begrenzt, die Berichte welcher Gruppen Personen sehen können. Die Einschränkung gilt nur, wenn das Kontrollkästchen „Nur Gruppe“ dieser Regel aktiviert ist und in den Berichtseinstellungen die Gruppensichtbarkeit auf gruppenbezogen gesetzt ist; dann sehen Nicht-Administratoren die Berichte ihrer eigenen Gruppe sowie alle, die sie verfasst haben oder an denen sie beteiligt sind. Die Auswahl von Aktion und Rollen in dieser Zeile ändert die Sichtbarkeit nicht.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewGroupUnits">
-    <value>Steuert die Sichtbarkeit von Einheiten als Ziel sowie deren zugewiesene Wachen. Nicht gruppierte Betrachter und nicht zugewiesene Einheiten teilen sich keine Gruppe.</value>
+    <value>Legt fest, welche Einheiten eine Person in Einheitenlisten, Auswahllisten, auf der Karte, bei Besatzungszuweisungen, in der Suche, im Chatbot und in den Apps sehen kann und für welche sie den Status setzen darf. Ist das Kontrollkästchen „Nur Gruppe“ aktiviert, sehen Personen nur Einheiten ihrer eigenen Wache (Abteilungsadministratoren sehen immer alle Einheiten). Ohne gespeicherte Regel sehen alle jede Einheit.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewGroupUsers">
-    <value>Steuert die Sichtbarkeit von Personal als Ziel. Eine Gruppensperre kann den Zielbereich einschränken; Administratoren einer Zielgruppe oder ihrer übergeordneten Gruppen nutzen die zuständige Sichtbarkeitsrichtlinie.</value>
+    <value>Legt fest, welche Mitglieder eine Person in Personallisten, Profilen, Rastern, Auswahllisten für die Alarmierung, Berichten, der Suche sowie im Personalverzeichnis und in den Status-Feeds der Apps sehen kann. Ist das Kontrollkästchen „Nur Gruppe“ aktiviert, sehen Gruppenadministratoren und Rolleninhaber nur ihre eigene Gruppe (Abteilungsadministratoren sehen immer alle). Ohne gespeicherte Regel sehen alle jeden.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewInternalCosts">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Einsehen der internen Kosten der Abteilung: Ressourcenkostenprofile, Nutzung, Einsatzkostenläufe und Margenkarten. Das Ausführen, Einfrieren oder Löschen von Kostenläufen, das Bearbeiten von Kostenprofilen und das Ändern der Nutzung anderer Personen erfordern außerdem „Personalvergütung verwalten“. Ohne gespeicherte Regel dürfen dies nur Abteilungsadministratoren. Erfordert die aktivierte interne Kostenrechnung und die aktive Erweiterung Business Ops.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewInvoicing">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Anzeigen von Rechnungen, Forderungsanalyse, Preislisten und Abrechnungsprofilen von Kontakten, ohne sie zu ändern, einschließlich der Rechnungslisten bei Einsätzen und Verträgen. Das Rechnungspaket (mit Zeitnachweisen, Belegen und Compliance-Dokumenten) erfordert „Rechnungsstellung verwalten“. Ohne gespeicherte Regel dürfen dies nur Abteilungsadministratoren. Das Anzeigen funktioniert weiter, wenn die Erweiterung Business Ops ausläuft.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewLegacyRecords">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Reserviert für das Anzeigen des alten Protokollverlaufs aus den Berichten heraus. Derzeit verwendet keine Seite diese Berechtigung, daher wird sie auf der Seite „Sicherheit“ nicht angeboten; der alte Verlauf richtet sich nach den Berechtigungen für Protokolle. Eine früher gespeicherte Regel bleibt erhalten.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewPersonalInfo">
-    <value>Steuert die Zugriffssperre für die Berechtigung „Persönliche Informationen“. Geschützte Felder erfordern weiterhin eine eigene gültige Berechtigung und eine Freigabe für den Datenschutz.</value>
+    <value>Legt fest, wer die E-Mail-Adressen, Telefonnummern und Postanschriften von Mitgliedern auf den Personalseiten, im Personalbericht (auf dem Bildschirm und beim geplanten Versand per E-Mail), im Profileditor und in den Apps sieht. Personen ohne diese Berechtigung sehen weiterhin Namen, Gruppen, Rollen und Status, und jeder sieht immer seine eigenen Angaben. Ohne gespeicherte Regel dürfen dies alle. Geschützte Felder erfordern zusätzlich eine Freigabe für geschützte Daten.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewProtectedCallData">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Legt fest, wer geschützte Einsatzdetails nach Eingabe seiner PIN per SMS oder Sprachanruf erhalten darf. Das Sichtbarmachen auf dem Bildschirm und in den Apps wird dadurch nicht gesteuert; dafür gelten der Zugriff auf den Einsatz und eine gültige Freigabe für geschützte Daten. Gilt nur, wenn die Abteilung für den erweiterten Datenschutz registriert und die Übermittlung per PIN aktiviert ist.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewProtectedContactData">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Wird auf der Seite „Sicherheit“ nicht angeboten, weil keine Laufzeitprüfung diese Berechtigung liest: Wer Kontakte anzeigen kann und eine gültige Freigabe für geschützte Daten besitzt, kann geschützte Kontaktfelder sichtbar machen. Eine früher gespeicherte Regel bleibt erhalten, hat aber keine Wirkung.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewProtectedOperationalData">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Wird auf der Seite „Sicherheit“ nicht angeboten, weil keine Laufzeitprüfung diese Berechtigung liest: Das Sichtbarmachen geschützter Protokolle, Dokumente, Kalendereinträge, benutzerdefinierter Felder und Berichte richtet sich nach den eigenen Zugriffsregeln des jeweiligen Moduls und einer gültigen Freigabe für geschützte Daten. Eine früher gespeicherte Regel bleibt erhalten, hat aber keine Wirkung.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewProtectedPersonnelData">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Wird auf der Seite „Sicherheit“ nicht angeboten, weil keine Laufzeitprüfung diese Berechtigung liest: Wer ein Mitglied anzeigen kann und eine gültige Freigabe für geschützte Daten besitzt, kann die geschützten Felder dieses Mitglieds sichtbar machen. Eine früher gespeicherte Regel bleibt erhalten, hat aber keine Wirkung.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewRestrictedRecords">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Einsehen eingeschränkter Berichtsabschnitte wie Angaben zu Verletzten, Expositionen und Ermittlungen. Diese Berechtigung ist außerdem erforderlich, um eingeschränkte Inhalte in Offenlegungen, Exporte und Exportläufe aufzunehmen und den Austauschverlauf der Übermittlungen zu lesen. Ohne gespeicherte Regel dürfen dies nur Abteilungsadministratoren.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewUdfFields">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Steuert das Lesen und Speichern von Werten benutzerdefinierter Felder über die Apps und die API. Diese Berechtigung wird auf keiner Konfigurationsseite angezeigt, daher behalten alle den Lese- und Aktualisierungszugriff. Jeder Wert folgt außerdem der Sichtbarkeitseinstellung seines Felds und dem Eintrag, zu dem er gehört: Ein Mitglied liest oder befüllt Werte nur bei Einsätzen, Einheiten, Personen und Kontakten, die es sehen oder bearbeiten kann. Die Verwaltung der Definitionen benutzerdefinierter Felder erfordert immer einen Abteilungsadministrator.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewWorkflowRuns">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Anzeigen von Ausführungsverlauf, Protokollen, Zustand und ausstehenden Ausführungen von Workflows. Was eine Ausführung gesendet hat (ihre gerenderte Ausgabe und ihr Ergebnis), wird nur Personen angezeigt, die Workflows bearbeiten dürfen. Ohne gespeicherte Regel kann jedes Mitglied Ausführungen anzeigen, und nur Abteilungsadministratoren können sie abbrechen oder bereinigen; wird „Abteilungsadministratoren“ gespeichert, werden Ausführungen für alle anderen ausgeblendet, und wird „Alle“ gespeichert, können alle abbrechen und bereinigen.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewWorkforceCompensation">
-    <value>Prüfen Sie diese Berechtigung auf der Seite „Sicherheit“. Ihr Standardwert bei fehlender gespeicherter Richtlinie, der Gruppenbereich, abhängige Berechtigungen sowie das Verhalten in Web, API und mobilen Apps warten noch auf eine vollständige Überprüfung durch die Nutzer. Für diese Berechtigung ist noch keine Live-Vorschau der Auswirkungen verfügbar.</value>
+    <value>Ermöglicht das Anzeigen der Personalliste und der Vergütungsdatensätze, ohne sie zu ändern, und ist zum Erstellen der Gehaltserhebung für Cal OES MARS erforderlich. Beträge werden ohne Freigabe für geschützte Daten geschwärzt angezeigt. Nur im Web verfügbar. Ohne gespeicherte Regel dürfen dies nur Abteilungsadministratoren.</value>
   </data>
   <data xml:space="preserve" name="Plan.AddStep">
     <value>Schritt hinzufügen</value>

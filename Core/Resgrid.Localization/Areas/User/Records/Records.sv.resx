@@ -112,9 +112,21 @@
   <data name="DefaultLifecyclePreset" xml:space="preserve"><value>Standardlivscykel för avdelningsdefinitioner</value></data>
   <data name="ReviewDueHours" xml:space="preserve"><value>Granskning inom (timmar)</value></data>
   <data name="Numbering" xml:space="preserve"><value>Journalnumrering</value></data>
-  <data name="IncludeYear" xml:space="preserve"><value>Inkludera år i journalnummer</value></data>
   <data name="SequenceWidth" xml:space="preserve"><value>Sekvenssiffror</value></data>
-  <data name="PerGroupSequence" xml:space="preserve"><value>Separat sekvens per station/grupp</value></data>
+  <data name="NumberPattern" xml:space="preserve"><value>Nummermönster</value></data>
+  <data name="NumberPatternExample" xml:space="preserve"><value>Exempel:</value></data>
+  <data name="NumberPatternHelp" xml:space="preserve"><value>Använd {PREFIX} för journaltypen (RUN, TRN, INC och så vidare), {YYYY} eller {YY} för året, {GROUP} för stationen eller gruppen (G följt av dess ID, som måste följas av -, _ eller .) och {SEQ} för sekvensen, som krävs. Bokstäver, siffror, -, _ och . behålls som de skrivs. Sekvensen börjar om när texten runt {SEQ} ändras: med året börjar den om varje år, och utan {PREFIX} delar alla journaltyper en gemensam sekvens.</value></data>
+  <data name="NumberPatternInvalid" xml:space="preserve"><value>Nummermönstret sparades inte. Använd endast bokstäver, siffror, -, _, . och platshållarna {PREFIX}, {YYYY}, {YY}, {GROUP} och {SEQ}; ta med {SEQ} exakt en gång, varje platshållare högst en gång, och följ {GROUP} med -, _ eller . (högst 40 tecken).</value></data>
+  <data name="NextNumbersHeader" xml:space="preserve"><value>Nästa nummer för {0}</value></data>
+  <data name="NextNumbersIntro" xml:space="preserve"><value>Höj en sekvens nästa nummer för att fortsätta från nummer som utfärdats före Resgrid: efter 2026-0001 till 2026-0152 anger du 153. Lämna en ruta tom för att behålla sekvensen som den är. Ett nästa nummer kan bara höjas, aldrig sänkas, så inget nummer utfärdas två gånger.</value></data>
+  <data name="NextNumberSequence" xml:space="preserve"><value>Sekvens</value></data>
+  <data name="NextNumberCurrent" xml:space="preserve"><value>Nästa nummer</value></data>
+  <data name="NextNumberRaiseTo" xml:space="preserve"><value>Höj nästa till</value></data>
+  <data name="NextNumberBelowCurrent" xml:space="preserve"><value>Ett nästa nummer kan bara höjas. Dessa sekvenser lämnades oförändrade eftersom det angivna talet var lägre än det de utfärdar härnäst:</value></data>
+  <data name="NextNumberPatternChanged" xml:space="preserve"><value>Nummermönstret ändrades, så de angivna nästa numren tillämpades inte. Granska sekvenserna för det nya mönstret och spara igen.</value></data>
+  <data name="NextNumberConfirm" xml:space="preserve"><value>Ett höjt nästa nummer kan inte sänkas igen. Spara ändringarna?</value></data>
+  <data name="NumberingAllTypes" xml:space="preserve"><value>Alla journaltyper</value></data>
+  <data name="NumberingNoGroup" xml:space="preserve"><value>Ingen station/grupp</value></data>
   <data name="Retention" xml:space="preserve"><value>Lagring</value></data>
   <data name="RetentionIntro" xml:space="preserve"><value>Standard: 7 år för vanliga journaler; permanent för rättsläkare och andra begränsade klasser. Lagringen är avdelningens ansvar. Ändringar gäller framåt och granskas.</value></data>
   <data name="DepartmentDefaultYears" xml:space="preserve"><value>Avdelningsstandard (år, tomt = systemstandard)</value></data>

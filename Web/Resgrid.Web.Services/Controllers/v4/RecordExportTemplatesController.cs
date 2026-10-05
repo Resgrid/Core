@@ -128,7 +128,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			if (!await FlagOnAsync()) return NotFound();
 			if (!await CanManageAsync()) return Forbid();
-			var result = new RecordExportRunsResult { Data = (await _exports.GetRunsAsync(DepartmentId, id, Math.Clamp(take, 1, 200))).Select(RecordsRms1bApiMapper.ToRun).ToList(), Status = ResponseHelper.Success };
+			var result = new RecordExportRunsResult { Data = (await _exports.GetRunsAsync(DepartmentId, UserId, id, Math.Clamp(take, 1, 200))).Select(RecordsRms1bApiMapper.ToRun).ToList(), Status = ResponseHelper.Success };
 			result.PageSize = result.Data.Count;
 			ResponseHelper.PopulateV4ResponseData(result);
 			return Ok(result);
@@ -144,7 +144,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!await CanManageAsync()) return Forbid();
 			try
 			{
-				var run = await _exports.GetRunAsync(DepartmentId, runId, true);
+				var run = await _exports.GetRunAsync(DepartmentId, UserId, runId, true);
 				if (run?.Data == null) return NotFound();
 				return File(run.Data, string.IsNullOrWhiteSpace(run.ContentType) ? "application/octet-stream" : run.ContentType, run.FileName ?? "export");
 			}

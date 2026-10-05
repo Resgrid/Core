@@ -2,6 +2,7 @@
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Records.IncidentReportEditView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.ReportSources> sourcesLocalizer
 @{
 	ViewBag.Title = "Resgrid | " + localizer["EditIncidentReport"];
 	var reference = string.IsNullOrWhiteSpace(Model.RecordNumber) ? Model.DraftReference : Model.RecordNumber;
@@ -239,17 +240,18 @@
 										// Units[n], so a skipped source row would silently drop every unit after it.
 										var index = unitRow++;
 										var existing = Model.Units.FirstOrDefault(u => u.UnitId == unitId);
-										<tr>
-											<td><input type="hidden" name="Units[@index].UnitId" value="@unitId" /><input type="checkbox" name="Units[@index].Selected" value="true" @(existing != null && existing.Selected ? "checked" : string.Empty) /></td>
+										@* data-rs-* lets the Call data panel fill this row from the unit's statuses or another station's run report. *@
+										<tr data-rs-unit="@unitId">
+											<td><input type="hidden" name="Units[@index].UnitId" value="@unitId" /><input type="checkbox" name="Units[@index].Selected" value="true" data-rs-select @(existing != null && existing.Selected ? "checked" : string.Empty) /></td>
 											<td>@Model.AvailableUnits[i].Text @badge(NerisFactKeys.UnitTime(unitId, "dispatch"))</td>
 											<td><input type="text" class="form-control input-sm" name="Units[@index].UnitNerisId" value="@existing?.UnitNerisId" maxlength="32" /></td>
-											<td><input type="number" min="0" class="form-control input-sm" name="Units[@index].Staffing" value="@existing?.Staffing" style="width:70px" /></td>
-											<td><input type="datetime-local" class="form-control input-sm" name="Units[@index].DispatchedOn" value="@Dt(existing?.DispatchedOn)" /></td>
-											<td><input type="datetime-local" class="form-control input-sm" name="Units[@index].EnrouteOn" value="@Dt(existing?.EnrouteOn)" /></td>
-											<td><input type="datetime-local" class="form-control input-sm" name="Units[@index].OnSceneOn" value="@Dt(existing?.OnSceneOn)" /> @badge(NerisFactKeys.UnitTime(unitId, "on_scene"))</td>
-											<td><input type="datetime-local" class="form-control input-sm" name="Units[@index].StagingOn" value="@Dt(existing?.StagingOn)" /></td>
-											<td><input type="datetime-local" class="form-control input-sm" name="Units[@index].CanceledEnrouteOn" value="@Dt(existing?.CanceledEnrouteOn)" /></td>
-											<td><input type="datetime-local" class="form-control input-sm" name="Units[@index].ClearedOn" value="@Dt(existing?.ClearedOn)" /></td>
+											<td><input type="number" min="0" class="form-control input-sm" name="Units[@index].Staffing" value="@existing?.Staffing" style="width:70px" data-rs-field="staffing" /> @badge(IncidentSourceFactKeys.UnitStaffing(unitId))</td>
+											<td><input type="datetime-local" class="form-control input-sm" name="Units[@index].DispatchedOn" value="@Dt(existing?.DispatchedOn)" data-rs-field="dispatched" /></td>
+											<td><input type="datetime-local" class="form-control input-sm" name="Units[@index].EnrouteOn" value="@Dt(existing?.EnrouteOn)" data-rs-field="enroute" /> @badge(NerisFactKeys.UnitTime(unitId, "enroute_to_scene"))</td>
+											<td><input type="datetime-local" class="form-control input-sm" name="Units[@index].OnSceneOn" value="@Dt(existing?.OnSceneOn)" data-rs-field="onScene" /> @badge(NerisFactKeys.UnitTime(unitId, "on_scene"))</td>
+											<td><input type="datetime-local" class="form-control input-sm" name="Units[@index].StagingOn" value="@Dt(existing?.StagingOn)" data-rs-field="staging" /></td>
+											<td><input type="datetime-local" class="form-control input-sm" name="Units[@index].CanceledEnrouteOn" value="@Dt(existing?.CanceledEnrouteOn)" data-rs-field="cancelled" /></td>
+											<td><input type="datetime-local" class="form-control input-sm" name="Units[@index].ClearedOn" value="@Dt(existing?.ClearedOn)" data-rs-field="cleared" /> @badge(NerisFactKeys.UnitTime(unitId, "unit_clear"))</td>
 											<td>
 												<select class="form-control input-sm" name="Units[@index].ResponseMode">
 													@foreach (var m in Model.ResponseModes)
@@ -333,6 +335,26 @@
 									</select>
 								</div>
 								<div class="col-sm-3"><input type="datetime-local" class="form-control input-sm" name="Tactics[@i].OccurredOn" value="@Dt(row.OccurredOn)" /></div>
+							</div>
+						}
+					</div>
+				</div>
+
+				<div class="ibox float-e-margins">
+					<div class="ibox-title"><h5><i class="fa fa-flag-checkered"></i> @sourcesLocalizer["TacticTimestamps"]</h5></div>
+					<div class="ibox-content">
+						<p class="text-muted">@sourcesLocalizer["TacticTimestampsHint"]</p>
+						<input type="hidden" asp-for="TacticTimestampsModuleId" />
+						@for (var t = 0; t < NerisTacticTimestamps.Fields.Count; t += 2)
+						{
+							<div class="form-group">
+								@for (var f = t; f < Math.Min(t + 2, NerisTacticTimestamps.Fields.Count); f++)
+								{
+									var field = NerisTacticTimestamps.Fields[f];
+									Model.TacticTimestamps.TryGetValue(field, out var tacticValue);
+									<label class="col-sm-3 control-label" for="tactic-@field">@sourcesLocalizer["Tactic_" + field] @badge(NerisTacticTimestamps.FactKey(field))</label>
+									<div class="col-sm-3"><input type="datetime-local" class="form-control input-sm" id="tactic-@field" name="TacticTimestamps[@field]" value="@Dt(tacticValue)" data-rs-tactic="@field" /></div>
+								}
 							</div>
 						}
 					</div>
@@ -603,6 +625,13 @@
 		</div>
 		<div class="col-lg-3">
 			<div class="wrapper wrapper-content">
+				@if (ClaimsAuthorizationHelper.CanViewCalls())
+				{
+					<div class="m-b-sm">
+						<button type="submit" form="incident-refresh-form" class="btn btn-white btn-block" title="@sourcesLocalizer["RefreshFromCallHint"]"><i class="fa fa-refresh"></i> @sourcesLocalizer["RefreshFromCall"]</button>
+					</div>
+					<partial name="_ReportSourcesPanel" model="@(new Resgrid.Web.Areas.User.Models.Records.ReportSourcesPanelView { CallId = Model.CallId, RecordId = Model.ReportId, FormId = "incident-edit-form", Mode = "incident", NarrativeTarget = "#Narrative" })" />
+				}
 				<div class="ibox">
 					<div class="ibox-title"><h5><i class="fa fa-link"></i> @localizer["Provenance"]</h5></div>
 					<div class="ibox-content">
@@ -619,6 +648,12 @@
 {
 	<form id="adp-reveal-form" method="post" action="@Url.Action("EditRevealed", "IncidentReports", new { area = "User", id = Model.ReportId })">@Html.AntiForgeryToken()</form>
 }
+@* Refresh saves nothing typed on this page: it re-reads the sources into the stored draft and comes back here. *@
+<form id="incident-refresh-form" method="post" action="@Url.Action("RefreshFromSources", "IncidentReports", new { area = "User", id = Model.ReportId })" data-confirm-unsaved="@sourcesLocalizer["RefreshUnsavedWarning"]">
+	@Html.AntiForgeryToken()
+	<input type="hidden" name="rowVersion" value="@Model.RowVersion" />
+	<input type="hidden" name="returnTo" value="Edit" />
+</form>
 
 <link rel="stylesheet" href="~/css/neris-guided-form.css" asp-append-version="true" />
 <script src="~/js/neris-guided-form.js" asp-append-version="true" defer></script>

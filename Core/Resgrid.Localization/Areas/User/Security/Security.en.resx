@@ -399,6 +399,9 @@
   <data name="PermOptionDepartmentAndGroupAdmins" xml:space="preserve"><value>Department and Group Admins</value></data>
   <data name="PermOptionDepartmentAdminsAndSelectRoles" xml:space="preserve"><value>Department Admins and Select Roles</value></data>
   <data name="PermOptionDepartmentGroupAdminsAndSelectRoles" xml:space="preserve"><value>Department, Group Admins and Select Roles</value></data>
+  <data name="PermOptionNotSavedCreateWorkflow" xml:space="preserve"><value>Not saved: Department Admins edit, everyone can view</value></data>
+  <data name="PermOptionNotSavedManageWorkflowCredentials" xml:space="preserve"><value>Not saved: Department Admins edit, everyone can see names</value></data>
+  <data name="PermOptionNotSavedViewWorkflowRuns" xml:space="preserve"><value>Not saved: everyone can view, Department Admins cancel</value></data>
 
   <!-- Permissions page header -->
   <data name="BreadcrumbSecurity" xml:space="preserve"><value>Security and Permissions</value></data>
@@ -446,7 +449,7 @@
   <data name="PermViewPersonalInfoNote" xml:space="preserve"><value>This option determines who can view personal information (PII) about personnel in the system. For example: Email Address, Phone Numbers, etc. By default Everyone can view this information.</value></data>
 
   <data name="PermAdjustInventoryLabel" xml:space="preserve"><value>Who can Adjust Inventory</value></data>
-  <data name="PermAdjustInventoryNote" xml:space="preserve"><value>This option determines who can adjust inventory levels in the system. By default Everyone can adjust inventory.</value></data>
+  <data name="PermAdjustInventoryNote" xml:space="preserve"><value>This option determines who can adjust inventory levels in the system. Until a value is saved, only Department Admins can adjust inventory.</value></data>
 
   <data name="PermViewPersonnelLocationLabel" xml:space="preserve"><value>Who can see the Location of Personnel</value></data>
   <data name="PermViewPersonnelLocationNote" xml:space="preserve"><value>This option determines who can see the location of personnel on the maps. To lock the option to just group admins and roles within a group you need to check the Group Only option.</value></data>
@@ -473,13 +476,13 @@
   <data name="PermDeleteContactsNote" xml:space="preserve"><value>By default all users can delete contacts in the system. This option allows you to limit who can delete contacts in the system.</value></data>
 
   <data name="PermCreateWorkflowLabel" xml:space="preserve"><value>Who can Create/Edit Workflows</value></data>
-  <data name="PermCreateWorkflowNote" xml:space="preserve"><value>This option determines who can create, edit, and delete workflows and workflow steps. By default only Department Admins can manage workflows.</value></data>
+  <data name="PermCreateWorkflowNote" xml:space="preserve"><value>This option determines who can create, edit, and delete workflows and workflow steps. Until a value is saved, only Department Admins can manage workflows and every member can view them; saving any value also limits who can view them.</value></data>
 
   <data name="PermManageWorkflowCredentialsLabel" xml:space="preserve"><value>Who can Manage Workflow Credentials</value></data>
-  <data name="PermManageWorkflowCredentialsNote" xml:space="preserve"><value>This option determines who can create, edit, and delete encrypted credentials used by workflow actions (e.g., SMTP passwords, API keys). By default only Department Admins can manage credentials.</value></data>
+  <data name="PermManageWorkflowCredentialsNote" xml:space="preserve"><value>This option determines who can create, edit, and delete encrypted credentials used by workflow actions (e.g., SMTP passwords, API keys). Until a value is saved, only Department Admins can manage credentials and every member can see their names; saving any value also limits who can see them.</value></data>
 
   <data name="PermViewWorkflowRunsLabel" xml:space="preserve"><value>Who can View Workflow Runs</value></data>
-  <data name="PermViewWorkflowRunsNote" xml:space="preserve"><value>This option determines who can view workflow execution history, run logs, and health dashboards. By default only Department Admins can view workflow runs.</value></data>
+  <data name="PermViewWorkflowRunsNote" xml:space="preserve"><value>This option determines who can view workflow execution history, run logs, and health dashboards. Until a value is saved, every member can view workflow runs and only Department Admins can cancel or clear them; saving another value limits who can view them, and saving Everyone lets every member cancel and clear runs too.</value></data>
 
   <!-- SSO / SCIM — Sso.cshtml page -->
   <data name="SsoPageTitle" xml:space="preserve"><value>Single Sign-On (SSO) &amp; SCIM</value></data>
@@ -764,11 +767,11 @@
   <data name="PermCommandAppLoginLabel" xml:space="preserve"><value>Command App Login</value></data>
   <data name="PermCommandAppLoginNote" xml:space="preserve"><value>Controls who can act as a commander: sign in to the IC app, establish incident command on a call, and view command boards. Narrowing this beyond Everyone also lets the people you pick help work any command board (assign and move resources, run timers and accountability) without holding an ICS position on it &#8212; useful for giving dispatchers a hand in the Dispatch app. While set to Everyone, board actions stay limited to the incident commander and assigned ICS roles.</value></data>
   <data name="PermAdpSectionHeader" xml:space="preserve"><value>Advanced Data Protection</value></data>
-  <data name="PermAdpSectionNote" xml:space="preserve"><value>These permissions control who may work with encrypted (protected) data when the Advanced Data Protection addon is active. Every reveal or edit additionally requires a recent two-factor verification; these settings choose who may even attempt it. Unlike most Resgrid permissions, unset values default to the restrictive selection shown.</value></data>
+  <data name="PermAdpSectionNote" xml:space="preserve"><value>When the Advanced Data Protection add-on is active, these two permissions decide who may receive protected call details by SMS or voice after entering their PIN, and who may change how protected content leaves Resgrid. Revealing or editing protected data on screen follows each page's own access rules plus a recent two-factor verification. Unlike most Resgrid permissions, unset values default to the selection shown.</value></data>
   <data name="PermAdpManageLabel" xml:space="preserve"><value>Manage Data Protection Settings</value></data>
   <data name="PermAdpManageNote" xml:space="preserve"><value>Who can change Advanced Data Protection settings such as the verification window and notification content options. Purchasing, enrollment and cancellation always remain restricted to the department managing member.</value></data>
   <data name="PermAdpViewCallLabel" xml:space="preserve"><value>View Protected Call Data</value></data>
-  <data name="PermAdpViewCallNote" xml:space="preserve"><value>Who can reveal protected call fields (nature, address, contact info, notes) after two-factor verification. Defaults to Everyone because responding personnel must be able to read a dispatch.</value></data>
+  <data name="PermAdpViewCallNote" xml:space="preserve"><value>Who may receive protected call details (nature, address, contact info, notes) by SMS or voice after entering their PIN, when PIN release is turned on. On-screen and app reveal follows call access plus two-factor verification. Defaults to Everyone because responding personnel must be able to read a dispatch.</value></data>
   <data name="PermAdpEditCallLabel" xml:space="preserve"><value>Edit Protected Call Data</value></data>
   <data name="PermAdpEditCallNote" xml:space="preserve"><value>Who can edit protected call fields after two-factor verification. Defaults to Everyone to match the normal call workflow.</value></data>
   <data name="PermAdpViewPersonnelLabel" xml:space="preserve"><value>View Protected Personnel Data</value></data>

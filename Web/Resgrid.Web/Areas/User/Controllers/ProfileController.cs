@@ -877,14 +877,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			string userToGet = !String.IsNullOrWhiteSpace(userId) ? userId : UserId;
 
-			if (!await CanReachCertificationsForAsync(userToGet))
+			if (!await CanReachCertificationsForAsync(userToGet, write: false))
 				return Unauthorized();
 
 			if (await _businessOperationsAccess.IsEnabledAsync(DepartmentId))
 				return RedirectToAction("Person", "Certifications", new { area = "User", userId = userToGet });
 
 			var model = new CertificationsView();
-			model.Certifications= await _certificationService.GetCertificationsByUserIdAsync(userToGet);
+			// A member of several departments holds records in each; only this department's are listed (RevealCertifications filters the same way).
+			model.Certifications= (await _certificationService.GetCertificationsByUserIdAsync(userToGet)).Where(c => c.DepartmentId == DepartmentId).ToList();
 			model.Department= await _departmentsService.GetDepartmentByUserIdAsync(userToGet);
 			model.UserId = userToGet;
 
@@ -910,7 +911,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			string userToGet = !String.IsNullOrWhiteSpace(userId) ? userId : UserId;
 
-			if (!await CanReachCertificationsForAsync(userToGet))
+			if (!await CanReachCertificationsForAsync(userToGet, write: true))
 				return Unauthorized();
 
 			var model = new AddCertificationView();
@@ -927,7 +928,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> AddCertification(AddCertificationView model, IFormFile fileToUpload, CancellationToken cancellationToken)
 		{
 			// The subject comes from the form, so it is checked before anything is read or written.
-			if (model == null || !await CanReachCertificationsForAsync(model.UserId))
+			if (model == null || !await CanReachCertificationsForAsync(model.UserId, write: true))
 				return Unauthorized();
 
 			if (fileToUpload != null && fileToUpload.Length > 0)
@@ -983,18 +984,23 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
-		[HttpGet]
+		/// <summary>
+		/// Removes a record the way the Certifications module does (v4 DeleteCertification): a soft delete that keeps the
+		/// audit trail and credits. A POST with the antiforgery token; it changes data, so a link cannot trigger it.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Profile_Update)]
 		public async Task<IActionResult> DeleteCertification(int certId, CancellationToken cancellationToken)
 		{
-			var cert = await GetAuthorizedCertificationAsync(certId);
+			var cert = await GetAuthorizedCertificationAsync(certId, write: true);
 
-			if (cert == null)
+			if (cert == null || cert.IsDeleted)
 				return Unauthorized();
 
 			string userId = cert.UserId;
 
-			await _certificationService.DeleteCertification(cert, cancellationToken);
+			await _certificationService.SoftDeleteCertificationAsync(cert.PersonnelCertificationId, DepartmentId, UserId, cancellationToken);
 
 			if (userId == UserId)
 				return RedirectToAction("Certifications", "Profile", new { area = "User" });
@@ -1007,7 +1013,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Profile_Update)]
 		public async Task<IActionResult> EditCertification(EditCertificationView model, IFormFile fileToUpload, CancellationToken cancellationToken)
 		{
-			var cert = await GetAuthorizedCertificationAsync(model?.CertificationId ?? 0);
+			var cert = await GetAuthorizedCertificationAsync(model?.CertificationId ?? 0, write: true);
 
 			if (cert == null)
 				return Unauthorized();
@@ -1081,7 +1087,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Profile_Update)]
 		public async Task<IActionResult> EditCertification(int certId)
 		{
-			var cert = await GetAuthorizedCertificationAsync(certId);
+			var cert = await GetAuthorizedCertificationAsync(certId, write: true);
 
 			if (cert == null)
 				return Unauthorized();
@@ -1119,7 +1125,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			// This endpoint serves the document itself — a scan carrying the member's name, licence
 			// number and often their signature. It needs the subject check most of all.
-			var cert = await GetAuthorizedCertificationAsync(certId);
+			var cert = await GetAuthorizedCertificationAsync(certId, write: false);
 
 			if (cert == null)
 				return Unauthorized();
@@ -1144,16 +1150,30 @@ namespace Resgrid.Web.Areas.User.Controllers
 		/// <summary>
 		/// Certifications carry licence numbers and scanned documents — protected personnel data
 		/// (plan 5.1, catalog v6). Department scoping alone is not authorization: it only proves the
-		/// row belongs to this tenant, not that the caller may see THIS member's record. Every
-		/// certification action resolves the subject and runs the same rule the rest of the
-		/// department-scoped member data uses — your own record, or an admin over that member.
+		/// row belongs to this tenant, not that the caller may see THIS member's record. These forms
+		/// are also the Certifications module's add/edit path (its person and record pages link here),
+		/// and that module has no gate of its own (Phase D is free), so they apply its rule: your own
+		/// record, or ViewCertifications (reads) / ManageCertifications (writes) over a member of this
+		/// department — department administrators by default. Being a group admin is not a
+		/// certification permission.
 		/// </summary>
-		private async Task<bool> CanReachCertificationsForAsync(string subjectUserId)
+		private async Task<bool> CanReachCertificationsForAsync(string subjectUserId, bool write)
 		{
 			if (string.IsNullOrWhiteSpace(subjectUserId))
 				return false;
 
-			return await _authorizationService.CanUserEditProfileAsync(UserId, DepartmentId, subjectUserId);
+			if (string.Equals(subjectUserId, UserId, StringComparison.OrdinalIgnoreCase))
+				return true;
+
+			var granted = ClaimsAuthorizationHelper.IsUserDepartmentAdmin()
+				|| (write ? ClaimsAuthorizationHelper.CanManageCertifications() : ClaimsAuthorizationHelper.CanViewCertifications());
+			if (!granted)
+				return false;
+
+			// The subject is posted or routed, so it is confirmed as a member of this department before anything is read or written.
+			var member = await _departmentsService.GetDepartmentMemberAsync(subjectUserId, DepartmentId, bypassCache: true);
+			return member != null && member.DepartmentId == DepartmentId && (!write || !member.IsDeleted)
+				&& string.Equals(member.UserId, subjectUserId, StringComparison.OrdinalIgnoreCase);
 		}
 
 		/// <summary>
@@ -1161,14 +1181,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		/// not exist, belongs to another department, or belongs to a member this caller has no
 		/// business reading — all three are indistinguishable to the caller on purpose.
 		/// </summary>
-		private async Task<PersonnelCertification> GetAuthorizedCertificationAsync(int certId)
+		private async Task<PersonnelCertification> GetAuthorizedCertificationAsync(int certId, bool write)
 		{
 			var certification = await _certificationService.GetCertificationByIdAsync(certId);
 
 			if (certification == null || certification.DepartmentId != DepartmentId)
 				return null;
 
-			return await CanReachCertificationsForAsync(certification.UserId) ? certification : null;
+			return await CanReachCertificationsForAsync(certification.UserId, write) ? certification : null;
 		}
 
 		/// <summary>
@@ -1186,7 +1206,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			// The grant proves the CALLER stepped up; it says nothing about whose data they may
 			// step up to. Without this, any member holding Profile_View could post another
 			// member's id and decrypt their licence numbers.
-			if (!await CanReachCertificationsForAsync(userToGet))
+			if (!await CanReachCertificationsForAsync(userToGet, write: false))
 				return Unauthorized();
 
 			var certifications = await _certificationService.GetCertificationsByUserIdAsync(userToGet);

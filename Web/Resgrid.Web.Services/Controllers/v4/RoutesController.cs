@@ -24,13 +24,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IRouteService _routeService;
 		private readonly IContactsService _contactsService;
 		private readonly IProtectedReadService _protectedReadService;
+		private readonly Model.Services.IAuthorizationService _authorizationService;
 
 		public RoutesController(IRouteService routeService, IContactsService contactsService,
-			IProtectedReadService protectedReadService)
+			IProtectedReadService protectedReadService, Model.Services.IAuthorizationService authorizationService)
 		{
 			_routeService = routeService;
 			_contactsService = contactsService;
 			_protectedReadService = protectedReadService;
+			_authorizationService = authorizationService;
 		}
 
 		/// <summary>
@@ -551,18 +553,33 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			var deviations = await _routeService.GetUnacknowledgedDeviationsAsync(DepartmentId);
 
-			var result = new GetRouteDeviationsResult();
-			result.Data = deviations.Select(d => new RouteDeviationResultData
+			// A deviation's position is the unit's: it goes out only under See Unit Locations for the instance's unit (the
+			// rule the map applies), and reads 0,0 otherwise.
+			var locatableByInstance = new Dictionary<string, bool>();
+			foreach (var instanceId in deviations.Select(d => d.RouteInstanceId).Distinct())
 			{
-				RouteDeviationId = d.RouteDeviationId,
-				RouteInstanceId = d.RouteInstanceId,
-				DetectedOn = d.DetectedOn,
-				Latitude = d.Latitude,
-				Longitude = d.Longitude,
-				DeviationDistanceMeters = d.DeviationDistanceMeters,
-				DeviationType = d.DeviationType,
-				IsAcknowledged = d.IsAcknowledged,
-				Notes = d.Notes
+				var instance = string.IsNullOrWhiteSpace(instanceId) ? null : await _routeService.GetInstanceByIdAsync(instanceId);
+				locatableByInstance[instanceId ?? string.Empty] = instance != null && instance.DepartmentId == DepartmentId &&
+					await _authorizationService.CanUserViewUnitLocationViaMatrixAsync(instance.UnitId, UserId, DepartmentId);
+			}
+
+			var result = new GetRouteDeviationsResult();
+			result.Data = deviations.Select(d =>
+			{
+				var canSeeLocation = locatableByInstance.TryGetValue(d.RouteInstanceId ?? string.Empty, out var locatable) && locatable;
+
+				return new RouteDeviationResultData
+				{
+					RouteDeviationId = d.RouteDeviationId,
+					RouteInstanceId = d.RouteInstanceId,
+					DetectedOn = d.DetectedOn,
+					Latitude = canSeeLocation ? d.Latitude : 0,
+					Longitude = canSeeLocation ? d.Longitude : 0,
+					DeviationDistanceMeters = d.DeviationDistanceMeters,
+					DeviationType = d.DeviationType,
+					IsAcknowledged = d.IsAcknowledged,
+					Notes = d.Notes
+				};
 			}).ToList();
 
 			result.PageSize = result.Data.Count;
@@ -578,6 +595,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		public async Task<ActionResult> AcknowledgeDeviation(string id)
 		{
+			// The deviation is looked up by id alone, so it must be one of this department's open deviations.
+			var open = await _routeService.GetUnacknowledgedDeviationsAsync(DepartmentId);
+			if (open == null || !open.Any(d => d.RouteDeviationId == id))
+				return NotFound();
+
 			await _routeService.AcknowledgeDeviationAsync(id, UserId);
 			return Ok();
 		}

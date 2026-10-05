@@ -129,6 +129,7 @@
 				}
 
 				$.post("/User/Orders/FillItem", {
+					__RequestVerificationToken: $('meta[name="request-verification-token"]').attr('content'),
 					Id: window['unitFillId_' + count],
 					Name: $('#contactName_' + count).val(),
 					Number: $('#contactNumber_' + count).val(),

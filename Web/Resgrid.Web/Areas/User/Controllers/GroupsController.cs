@@ -119,6 +119,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (collection.ContainsKey("groupUsers"))
 				groupUsers.AddRange(collection["groupUsers"].ToString().Split(char.Parse(",")));
 
+			groupAdmins = await KeepDepartmentMembersAsync(groupAdmins, null);
+			groupUsers = await KeepDepartmentMembersAsync(groupUsers, null);
+
 			allUsers.AddRange(groupAdmins);
 			allUsers.AddRange(groupUsers);
 
@@ -180,6 +183,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (ModelState.IsValid)
 			{
+				// A new group is always a new row: a posted id would make the save update another row by key.
+				model.NewGroup.DepartmentGroupId = 0;
 				model.NewGroup.DepartmentId = DepartmentId;
 				var users = new List<DepartmentGroupMember>();
 
@@ -306,6 +311,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.GenericGroup_Delete)]
 		public async Task<IActionResult> DeleteGroup(DeleteGroupView model, CancellationToken cancellationToken)
 		{
@@ -467,6 +473,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (collection.ContainsKey("groupUsers"))
 				groupUsers.AddRange(collection["groupUsers"].ToString().Split(char.Parse(",")));
+
+			groupAdmins = await KeepDepartmentMembersAsync(groupAdmins, group.Members);
+			groupUsers = await KeepDepartmentMembersAsync(groupUsers, group.Members);
 
 			allUsers.AddRange(groupAdmins);
 			allUsers.AddRange(groupUsers);
@@ -631,6 +640,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.GenericGroup_Update)]
 		public async Task<IActionResult> SaveGeofence([FromBody]SaveGeofenceModel model, CancellationToken cancellationToken)
 		{
@@ -670,6 +680,31 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Message = "The group boundary has been saved.";
 
 			return Json(model);
+		}
+
+		/// <summary>
+		/// Only people who belong to this department can be put in one of its groups, so a posted id that is not a current member
+		/// (removed, disabled, or another department's user) is dropped. The pickers only ever offer current members; a disabled
+		/// member already in the group being edited keeps their place rather than being dropped by an unrelated edit.
+		/// </summary>
+		private async Task<List<string>> KeepDepartmentMembersAsync(IEnumerable<string> userIds, ICollection<DepartmentGroupMember> currentGroupMembers)
+		{
+			var kept = new List<string>();
+
+			foreach (var userId in userIds.Where(x => !String.IsNullOrWhiteSpace(x)).Distinct())
+			{
+				var member = await _departmentsService.GetDepartmentMemberAsync(userId, DepartmentId);
+
+				if (member == null || member.DepartmentId != DepartmentId || member.IsDeleted)
+					continue;
+
+				if (member.IsDisabled.GetValueOrDefault() && (currentGroupMembers == null || currentGroupMembers.All(x => !String.Equals(x.UserId, userId, StringComparison.OrdinalIgnoreCase))))
+					continue;
+
+				kept.Add(userId);
+			}
+
+			return kept;
 		}
 
 		private static readonly System.Text.RegularExpressions.Regex HexColorPattern =

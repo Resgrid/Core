@@ -24,14 +24,17 @@ namespace Resgrid.Chatbot.Services
 		private readonly IIncidentResourcesService _incidentResourcesService;
 		private readonly IAuthorizationService _authorizationService;
 		private readonly IDispatchScopeService _dispatchScopeService;
+		private readonly ICommandAccessService _commandAccessService;
 
 		public IncidentContextResolver(
 			ICallsService callsService,
 			IIncidentCommandService incidentCommandService,
 			IIncidentResourcesService incidentResourcesService,
 			IAuthorizationService authorizationService,
-			IDispatchScopeService dispatchScopeService)
+			IDispatchScopeService dispatchScopeService,
+			ICommandAccessService commandAccessService)
 		{
+			_commandAccessService = commandAccessService;
 			_dispatchScopeService = dispatchScopeService;
 			_callsService = callsService;
 			_incidentCommandService = incidentCommandService;
@@ -47,6 +50,14 @@ namespace Resgrid.Chatbot.Services
 				return context;
 
 			var departmentId = session.DepartmentId;
+
+			// The board is the command surface, so the assistant reads it only for a member the department lets
+			// work command (CommandAppLogin), the same gate the v4 board reads apply.
+			if (!await _commandAccessService.CanUseCommandAsync(departmentId, session.UserId))
+			{
+				context.IsUnauthorized = true;
+				return context;
+			}
 
 			// 1. An explicit reference in the question always wins ("PAR for 26-1", "status of c1445").
 			//    CallReferenceResolver enforces department scoping, so a foreign call reads as not-found.

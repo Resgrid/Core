@@ -791,9 +791,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
-		[HttpGet]
+		// POST + antiforgery only: as a GET, any link or <img> on another site deleted a contact for a signed-in user.
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Contacts_Delete)]
-		public async Task<IActionResult> Delete(string contactId, CancellationToken cancellationToken)
+		public async Task<IActionResult> Delete([FromForm] string contactId, CancellationToken cancellationToken)
 		{
 			if (String.IsNullOrWhiteSpace(contactId))
 				return BadRequest();
@@ -824,6 +826,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Connect_Create)]
 		public async Task<IActionResult> AddNote(AddContactNoteView model, CancellationToken cancellationToken)
 		{
@@ -992,9 +995,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
-		[HttpGet]
+		// POST + antiforgery only, for the same reason as Delete.
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Contacts_Delete)]
-		public async Task<IActionResult> DeleteCategory(string categoryId)
+		public async Task<IActionResult> DeleteCategory([FromForm] string categoryId)
 		{
 			if (String.IsNullOrWhiteSpace(categoryId))
 				return Unauthorized();
@@ -1324,6 +1329,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Contacts_Update)]
 		public async Task<IActionResult> SaveHazard([FromBody] SaveContactHazardInput input, CancellationToken cancellationToken)
 		{
@@ -1369,9 +1375,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 		}
 
+		// Removing a hazard is a delete: Contact Delete, like the other contact deletes (pre-plan, attachment, category).
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		[Authorize(Policy = ResgridResources.Contacts_Update)]
+		[Authorize(Policy = ResgridResources.Contacts_Delete)]
 		public async Task<IActionResult> DeleteHazard([FromForm] string contactPreplanHazardId, CancellationToken cancellationToken)
 		{
 			try

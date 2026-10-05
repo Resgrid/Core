@@ -238,6 +238,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (unit.DepartmentId != DepartmentId)
 				return Unauthorized();
 
+			// Security > View Units, as on the web Set Status (Units/SetUnitState): a unit the member may not see can't be set.
+			if (!await _authorizationService.CanUserViewUnitAsync(UserId, unitId))
+				return Unauthorized();
+
 			if (this.ModelState.IsValid)
 			{
 				try

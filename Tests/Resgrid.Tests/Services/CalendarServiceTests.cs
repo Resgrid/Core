@@ -839,6 +839,59 @@ namespace Resgrid.Tests.Services
 						var padded = std.PadRight(std.Length + (4 - std.Length % 4) % 4, '=');
 						return System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(padded));
 					});
+
+				_departmentsServiceMock.Setup(x => x.GetDepartmentMemberAsync(TestUserId, TestDeptId, It.IsAny<bool>()))
+					.ReturnsAsync(new DepartmentMember { UserId = TestUserId, DepartmentId = TestDeptId });
+			}
+
+			private async Task<string> IssueTokenAsync()
+			{
+				var profile = new UserProfile { UserId = TestUserId };
+				_userProfileServiceMock.Setup(x => x.GetProfileByUserIdAsync(TestUserId, It.IsAny<bool>()))
+					.ReturnsAsync(profile);
+				_userProfileServiceMock.Setup(x => x.SaveProfileAsync(It.IsAny<int>(), It.IsAny<UserProfile>(), It.IsAny<System.Threading.CancellationToken>()))
+					.ReturnsAsync(profile);
+
+				return await _calendarService.ActivateCalendarSyncAsync(TestDeptId, TestUserId);
+			}
+
+			[TestCase(true, false, TestName = "should_reject_token_for_a_member_removed_from_the_department")]
+			[TestCase(false, true, TestName = "should_reject_token_for_a_member_disabled_in_the_department")]
+			public async Task should_reject_token_once_the_membership_is_no_longer_current(bool deleted, bool disabled)
+			{
+				var token = await IssueTokenAsync();
+				_departmentsServiceMock.Setup(x => x.GetDepartmentMemberAsync(TestUserId, TestDeptId, It.IsAny<bool>()))
+					.ReturnsAsync(new DepartmentMember { UserId = TestUserId, DepartmentId = TestDeptId, IsDeleted = deleted, IsDisabled = disabled });
+
+				var result = await _calendarService.ValidateCalendarFeedTokenAsync(token);
+
+				result.Should().BeNull();
+			}
+
+			[Test]
+			public async Task should_reject_token_when_the_user_has_no_membership_in_the_token_department()
+			{
+				var token = await IssueTokenAsync();
+				_departmentsServiceMock.Setup(x => x.GetDepartmentMemberAsync(TestUserId, TestDeptId, It.IsAny<bool>()))
+					.ReturnsAsync((DepartmentMember)null);
+
+				var result = await _calendarService.ValidateCalendarFeedTokenAsync(token);
+
+				result.Should().BeNull();
+			}
+
+			[Test]
+			public async Task should_accept_token_again_when_a_disabled_member_is_re_enabled()
+			{
+				var token = await IssueTokenAsync();
+				var member = new DepartmentMember { UserId = TestUserId, DepartmentId = TestDeptId, IsDisabled = true };
+				_departmentsServiceMock.Setup(x => x.GetDepartmentMemberAsync(TestUserId, TestDeptId, It.IsAny<bool>()))
+					.ReturnsAsync(member);
+				(await _calendarService.ValidateCalendarFeedTokenAsync(token)).Should().BeNull();
+
+				member.IsDisabled = false;
+
+				(await _calendarService.ValidateCalendarFeedTokenAsync(token)).Should().NotBeNull();
 			}
 
 			[Test]

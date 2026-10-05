@@ -71,10 +71,12 @@ namespace Resgrid.Services.Search
 			Lazy<IDeploymentService> deployments = null, Lazy<ICertificationService> certifications = null,
 			Lazy<ITrainingService> trainings = null, Lazy<ICalendarService> calendar = null, Lazy<IWorkLogsService> logs = null,
 			Lazy<IMappingService> mapping = null, Lazy<IShiftsService> shifts = null,
-			Lazy<Records.RecordsPreventionGate> preventionGate = null, IRmsOccupanciesRepository occupancies = null)
+			Lazy<Records.RecordsPreventionGate> preventionGate = null, IRmsOccupanciesRepository occupancies = null,
+			ICallLocationKeysRepository callLocationKeys = null)
 		{
 			_preventionGate = preventionGate;
 			_occupancies = occupancies;
+			_callLocationKeys = callLocationKeys;
 			_trainings = trainings;
 			_calendar = calendar;
 			_logs = logs;
@@ -249,6 +251,33 @@ namespace Resgrid.Services.Search
 				}
 			}
 
+			// Street address matching beside the index, which matches word by word: "110 Main Street" also finds the call at
+			// "110 Main St" or "110 Main". Address hits lead the list; one the index also found is shown once.
+			AddressMatches addresses = null;
+			if (!request.Prefix && types.Count > 0)
+			{
+				try
+				{
+					addresses = await MatchAddressesAsync(text, types, access, request, window, needed, snippetTerms, cancellationToken);
+				}
+				catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+				{
+					throw;
+				}
+				catch (Exception ex)
+				{
+					// The query text stays out of the log: an address can name a protected location.
+					Logging.LogException(ex, $"Street address matching failed for department {principal.DepartmentId}; returning the index hits only.");
+					addresses = new AddressMatches { Complete = false };
+				}
+
+				if (addresses.Hits.Count > 0)
+				{
+					var shown = new HashSet<(string, string)>(addresses.Hits.Select(h => (h.EntityType, h.EntityId)));
+					authorized = addresses.Hits.Concat(authorized.Where(h => !shown.Contains((h.EntityType, h.EntityId)))).ToList();
+				}
+			}
+
 			// The records federation must reach as deep as the requested page can: the page is cut from index hits followed
 			// by record hits, so a fixed top-N of records would leave every page past N empty for a records-heavy query.
 			var recordHits = new List<UnifiedSearchHit>();
@@ -287,7 +316,7 @@ namespace Resgrid.Services.Search
 			result.Truncated = false;
 
 			// Totals only when they can be proven from authorized results (plan 2026-08-15 correction).
-			if (dropped == 0 && windowCoveredAll && !stoppedEarly && recordsTotal.HasValue)
+			if (dropped == 0 && windowCoveredAll && !stoppedEarly && recordsTotal.HasValue && (addresses == null || addresses.Complete))
 				result.Total = authorized.Count + recordsTotal.Value;
 			else
 				result.Total = null;
@@ -380,7 +409,10 @@ namespace Resgrid.Services.Search
 			// index must too, and AuthorizeAsync keeps the claim-or-admin-or-roster rule per hit (membership was verified in LoadAccessAsync).
 			if (WantsType(requested, SearchEntityTypes.Deployment))
 				allowed.Add(SearchEntityTypes.Deployment);
-			Add(SearchEntityTypes.CertificationType, "Certifications");
+			// Certification types are the setup catalog: readers of records and ManageCertificationSetup holders both open them.
+			if (WantsType(requested, SearchEntityTypes.CertificationType) &&
+				(principal.IsDepartmentAdmin || principal.HasResourceClaim("Certifications", "View") || principal.HasResourceClaim("Certifications", "Setup")))
+				allowed.Add(SearchEntityTypes.CertificationType);
 			// Operations reference families (plan R3 Tier 2): the claim and module switch of each family's own page. POIs have
 			// no claim of their own: the mapping pages admit every member.
 			Add(SearchEntityTypes.Log, "Log", SystemActionModules.Logs);

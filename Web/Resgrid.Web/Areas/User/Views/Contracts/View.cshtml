@@ -110,6 +110,9 @@
                     }
                 </div>
             </div>
+            @* Invoices need Invoicing_View (ContractsController.View); without it the panel is not rendered. *@
+            @if (ViewData["ContractCanViewInvoicing"] as bool? == true)
+            {
             <div class="ibox float-e-margins">
                 <div class="ibox-title"><h5>@localizer["Invoices"]</h5></div>
                 <div class="ibox-content">
@@ -122,6 +125,7 @@
                     }
                 </div>
             </div>
+            }
         </div>
     </div>
 </div>

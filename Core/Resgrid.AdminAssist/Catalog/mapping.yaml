@@ -162,8 +162,7 @@
       "Secret": false,
       "Location": {
         "Controller": "WeatherAlerts",
-        "Action": "Settings",
-        "Field": "WeatherAlertsEnabled"
+        "Action": "Settings"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -195,8 +194,7 @@
       "Secret": false,
       "Location": {
         "Controller": "WeatherAlerts",
-        "Action": "Settings",
-        "Field": "WeatherAlertMinimumSeverity"
+        "Action": "Settings"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -228,8 +226,7 @@
       "Secret": false,
       "Location": {
         "Controller": "WeatherAlerts",
-        "Action": "Settings",
-        "Field": "WeatherAlertAutoMessageSeverity"
+        "Action": "Settings"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -261,8 +258,7 @@
       "Secret": false,
       "Location": {
         "Controller": "WeatherAlerts",
-        "Action": "Settings",
-        "Field": "WeatherAlertCallIntegration"
+        "Action": "Settings"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -294,8 +290,7 @@
       "Secret": false,
       "Location": {
         "Controller": "WeatherAlerts",
-        "Action": "Settings",
-        "Field": "WeatherAlertCacheMinutes"
+        "Action": "Settings"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -327,8 +322,7 @@
       "Secret": false,
       "Location": {
         "Controller": "WeatherAlerts",
-        "Action": "Settings",
-        "Field": "WeatherAlertAutoMessageSchedule"
+        "Action": "Settings"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -360,8 +354,7 @@
       "Secret": false,
       "Location": {
         "Controller": "WeatherAlerts",
-        "Action": "Settings",
-        "Field": "WeatherAlertExcludedEvents"
+        "Action": "Settings"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -567,8 +560,7 @@
       "Secret": false,
       "Location": {
         "Controller": "Department",
-        "Action": "MappingSettings",
-        "Field": "HardwareTrackingStaleAfterSeconds"
+        "Action": "MappingSettings"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -600,8 +592,7 @@
       "Secret": false,
       "Location": {
         "Controller": "Department",
-        "Action": "MappingSettings",
-        "Field": "HardwareTrackingMobileFallbackEnabled"
+        "Action": "MappingSettings"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -633,8 +624,7 @@
       "Secret": false,
       "Location": {
         "Controller": "Department",
-        "Action": "MappingSettings",
-        "Field": "HardwareTrackingLocationRetentionDays"
+        "Action": "MappingSettings"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -666,8 +656,7 @@
       "Secret": false,
       "Location": {
         "Controller": "Department",
-        "Action": "MappingSettings",
-        "Field": "UnitStatusThresholds"
+        "Action": "MappingSettings"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",

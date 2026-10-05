@@ -30,7 +30,7 @@
         <div class="col-sm-8">
             <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
                 <a title="@localizer["EditNoteHeader"]" class="btn btn-primary" asp-controller="Notes" asp-action="Edit" asp-route-area="User" asp-route-noteId="@Model.Note.NoteId">@localizer["EditNoteHeader"]</a>
-                <a title="@localizer["DeleteNote"]" class="btn btn-danger" asp-controller="Notes" asp-action="Delete" asp-route-area="User" asp-route-noteId="@Model.Note.NoteId" data-confirm="@localizer["DeleteNoteWarning"]" rel="nofollow">@localizer["DeleteNote"]</a>
+                <form method="post" asp-controller="Notes" asp-action="Delete" asp-route-area="User" asp-route-noteId="@Model.Note.NoteId" style="display: inline;">@Html.AntiForgeryToken()<button type="submit" title="@localizer["DeleteNote"]" class="btn btn-danger" data-confirm="@localizer["DeleteNoteWarning"]">@localizer["DeleteNote"]</button></form>
             </div>
         </div>
     }

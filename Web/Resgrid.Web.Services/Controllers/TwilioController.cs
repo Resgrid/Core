@@ -546,7 +546,8 @@ namespace Resgrid.Web.Services.Controllers
 									break;
 								case TextCommandTypes.Action:
 									messageEvent.Processed = true;
-									await _actionLogsService.SetUserActionAsync(profile.UserId, department.DepartmentId, (int)payload.GetActionType());
+									using (StatusWriteActor.Begin(profile.UserId, StatusSetOrigins.Sms))
+										await _actionLogsService.SetUserActionAsync(profile.UserId, department.DepartmentId, (int)payload.GetActionType());
 									response.Message(string.Format("Resgrid received your text command. Status changed to: {0}", payload.GetActionType()));
 									//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Status", string.Format("Resgrid recieved your text command. Status changed to: {0}", payload.GetActionType()), department.DepartmentId, textMessage.To, profile);
 									break;
@@ -563,7 +564,8 @@ namespace Resgrid.Web.Services.Controllers
 									break;
 								case TextCommandTypes.CustomAction:
 									messageEvent.Processed = true;
-									await _actionLogsService.SetUserActionAsync(profile.UserId, department.DepartmentId, payload.GetCustomActionType());
+									using (StatusWriteActor.Begin(profile.UserId, StatusSetOrigins.Sms))
+										await _actionLogsService.SetUserActionAsync(profile.UserId, department.DepartmentId, payload.GetCustomActionType());
 
 									if (customActions != null && customActions.IsDeleted == false && customActions.GetActiveDetails() != null && customActions.GetActiveDetails().Any() &&
 										customActions.GetActiveDetails().FirstOrDefault(x => x.CustomStateDetailId == payload.GetCustomActionType()) != null)
@@ -1041,7 +1043,8 @@ namespace Resgrid.Web.Services.Controllers
 					return CreateVoiceContentResult(response);
 				}
 
-				await _actionLogsService.SetUserActionAsync(userId, call.DepartmentId, (int)ActionTypes.RespondingToScene, null, call.CallId, (int)DestinationEntityTypes.Call);
+				using (StatusWriteActor.Begin(userId, StatusSetOrigins.Voice))
+					await _actionLogsService.SetUserActionAsync(userId, call.DepartmentId, (int)ActionTypes.RespondingToScene, null, call.CallId, (int)DestinationEntityTypes.Call);
 				await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.RespondingToScene, call.DepartmentId);
 				response.Hangup();
 				return CreateVoiceContentResult(response);
@@ -1058,7 +1061,8 @@ namespace Resgrid.Web.Services.Controllers
 
 					if (station != null)
 					{
-						await _actionLogsService.SetUserActionAsync(userId, call.DepartmentId, (int)ActionTypes.RespondingToStation, null, station.DepartmentGroupId, (int)DestinationEntityTypes.Station);
+						using (StatusWriteActor.Begin(userId, StatusSetOrigins.Voice))
+							await _actionLogsService.SetUserActionAsync(userId, call.DepartmentId, (int)ActionTypes.RespondingToStation, null, station.DepartmentGroupId, (int)DestinationEntityTypes.Station);
 						await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.RespondingToStation(station.Name), call.DepartmentId);
 						response.Hangup();
 						return CreateVoiceContentResult(response);
@@ -1514,7 +1518,8 @@ namespace Resgrid.Web.Services.Controllers
 					var selectedOption = activeOptions[digit - 1];
 					if (selectedOption != null && selectedOption.CustomStateDetailId > 0 && !selectedOption.IsDeleted)
 					{
-						await _actionLogsService.SetUserActionAsync(userId, department.DepartmentId, selectedOption.CustomStateDetailId);
+						using (StatusWriteActor.Begin(userId, StatusSetOrigins.Voice))
+							await _actionLogsService.SetUserActionAsync(userId, department.DepartmentId, selectedOption.CustomStateDetailId);
 						await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.StatusMarked(selectedOption.ButtonText), department.DepartmentId);
 						response.Hangup();
 					}

@@ -1047,4 +1047,19 @@
   <data name="BotUsernamePlaceholder" xml:space="preserve">
     <value>Bot Resgrid</value>
   </data>
+  <data name="StepCredentialNotFound" xml:space="preserve">
+    <value>Le credenziali scelte per questo passaggio non sono state trovate.</value>
+  </data>
+  <data name="ExportAttachmentTemplateNotFound" xml:space="preserve">
+    <value>L'esportazione report dei record scelta per questo passaggio non è stata trovata.</value>
+  </data>
+  <data name="ExportAttachmentRequiresRecordsRights" xml:space="preserve">
+    <value>Per allegare un'esportazione report dei record a un passaggio servono i permessi "Stampare ed esportare registri" e "Gestire report sui registri".</value>
+  </data>
+  <data name="ExportAttachmentRequiresRestrictedRights" xml:space="preserve">
+    <value>Questa esportazione report dei record include sezioni riservate; per allegarla a un passaggio serve anche il permesso "Visualizzare sezioni riservate".</value>
+  </data>
+  <data name="CredentialDeliversRecordsExport" xml:space="preserve">
+    <value>Un passaggio del flusso di lavoro invia un'esportazione report dei record tramite queste credenziali, quindi per modificarle servono i permessi "Stampare ed esportare registri" e "Gestire report sui registri" (e "Visualizzare sezioni riservate" quando l'esportazione include sezioni riservate).</value>
+  </data>
 </root>

@@ -188,14 +188,21 @@ namespace Resgrid.Services
 			{
 				return true;
 			}
-			else if (permission.Action == (int)PermissionActions.Everyone)
+			else if (permission.Action == (int)PermissionActions.Everyone && (!permission.LockToGroup || isUserDepartmentAdmin))
 			{
 				return true;
 			}
 
 			if (permission.LockToGroup)
 			{
-				if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdminsAndSelectRoles)
+				if (permission.Action == (int)PermissionActions.Everyone)
+				{
+					// Everyone in the source's group. Callers pass a source group the user's group cannot match (-1) when the
+					// user's group is not on the call, and a user in no group shares a group with nobody.
+					if (sourceGroupId.HasValue && sourceGroupId == userGroupId)
+						return true;
+				}
+				else if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdminsAndSelectRoles)
 				{
 					if (sourceGroupId == userGroupId && (isUserGroupAdmin || HasSelectedRole(permission.Data, roles)))
 						return true;

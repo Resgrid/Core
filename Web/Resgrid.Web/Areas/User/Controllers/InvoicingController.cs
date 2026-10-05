@@ -76,7 +76,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			Response.Headers["Cache-Control"] = "no-store";
 
-			if (!await _flags.IsEnabledAsync(FeatureFlagKeys.CustomerInvoicing, DepartmentId) || !SettingsHelper.IsBusinessOperationsEnabled())
+			// Reads apply the department-level gates the v4 API applies too: the Business Operations master flag for this
+			// department and its own module switch (IBusinessOperationsAccessService.IsEnabledAsync), not only the global
+			// setting. The paid add-on window still gates writes only, so a lapsed department keeps reading its records.
+			if (!await _flags.IsEnabledAsync(FeatureFlagKeys.CustomerInvoicing, DepartmentId) || !SettingsHelper.IsBusinessOperationsEnabled() || !await _access.IsEnabledAsync(DepartmentId))
 			{
 				context.Result = NotFound();
 				return;
@@ -327,9 +330,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View("View", model);
 		}
 
-		/// <summary>Contractor billing (C-M2): downloads the invoice-submission packet (zip).</summary>
+		/// <summary>
+		/// Contractor billing (C-M2): downloads the invoice-submission packet (zip). The packet is what SendPacket mails to the
+		/// customer and carries the contract compliance documents, DTRs and receipts, so it takes the same Invoicing_Update as
+		/// sending it; Invoicing_View alone still reads the invoice and its PDF.
+		/// </summary>
 		[HttpGet]
-		[Authorize(Policy = ResgridResources.Invoicing_View)]
+		[Authorize(Policy = ResgridResources.Invoicing_Update)]
 		public async Task<IActionResult> Packet(string id)
 		{
 			if (_contractorBilling == null || !await _access.CanUseContractorBillingAsync(DepartmentId)) return Unauthorized();

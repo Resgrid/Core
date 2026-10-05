@@ -464,6 +464,7 @@
 				url: '/User/Subscription/LogStripeResponse',
 				contentType: 'application/json',
 				type: 'POST',
+				headers: { 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').first().val() },
 				data: JSON.stringify({
 					status: JSON.stringify(status),
 					response: JSON.stringify(response)

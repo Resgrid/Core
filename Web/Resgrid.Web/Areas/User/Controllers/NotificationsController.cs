@@ -38,8 +38,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 		#endregion Private Members and Constructors
 
+		[HttpGet]
+		[Authorize]
 		public async Task<IActionResult> Index()
 		{
+			// Alert rules name who gets notified and on what; only department admins create and delete them, so only they list them.
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return Unauthorized();
+
 			var model = new NotificationIndexView();
 			model.Notifications =  await _notificationService.GetNotificationsByDepartmentAsync(DepartmentId);
 			var unitTypes = await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId);
@@ -125,6 +131,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
+		[Authorize]
 		public async Task<IActionResult> New()
 		{
 			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
@@ -142,12 +149,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[Authorize]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> New(NotificationNewView model, IFormCollection collection, CancellationToken cancellationToken)
 		{
 			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 				return Unauthorized();
 
 			ViewBag.Types = model.Type.ToSelectList();
+			// A new alert rule is always a new row: a posted id would make the save update another row by key.
+			model.Notification.DepartmentNotificationId = 0;
 			model.Notification.DepartmentId = DepartmentId;
 			model.Notification.EventType = (int)model.Type;
 
@@ -243,8 +254,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
-		[HttpGet]
+		[HttpPost]
 		[Authorize]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Delete(int notificationId, CancellationToken cancellationToken)
 		{
 			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())

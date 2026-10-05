@@ -2070,6 +2070,24 @@
   <data xml:space="preserve" name="Field.RecordsNumberingConfig.SequenceWidth">
     <value>Konfiguracja numeracji rekordów / Szerokość sekwencji</value>
   </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingConfig.Floors">
+    <value>Konfiguracja numeracji rekordów / Progi</value>
+  </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingConfig.Pattern">
+    <value>Konfiguracja numeracji rekordów / Wzorzec</value>
+  </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingFloor.NextSequence">
+    <value>Próg numeracji rekordów / Następna sekwencja</value>
+  </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingFloor.ScopeKey">
+    <value>Próg numeracji rekordów / Klucz zakresu</value>
+  </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingFloor.SetByUserId">
+    <value>Próg numeracji rekordów / Identyfikator użytkownika ustawiającego</value>
+  </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingFloor.SetOn">
+    <value>Próg numeracji rekordów / Ustawiono</value>
+  </data>
   <data xml:space="preserve" name="Field.RecordsRetentionOverride.AppliesFrom">
     <value>Nadpisanie retencji rekordów / Obowiązuje od</value>
   </data>
@@ -2213,6 +2231,24 @@
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.SequenceWidth">
     <value>Szerokość sekwencji uzupełnianej zerami dla definicji korzystających z ustawień domyślnych oddziału. Edytor rekordów weryfikuje obsługiwaną szerokość.</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.Floors">
+    <value>Podniesione następne numery, po jednym na sekwencję numeracji, dla jednostek kontynuujących numery nadane przed Resgrid. Następny numer może tylko rosnąć, a już nadane numery zawsze mają pierwszeństwo, więc podniesiony następny numer nigdy nie powoduje duplikatu.</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.Pattern">
+    <value>Wzorzec numeracji dla wbudowanych typów rekordów i raportów ze zdarzeń, złożony ze stałego tekstu i znaczników PREFIX, YYYY, YY, GROUP i SEQ. Bez wartości obowiązuje wzorzec opisany przez „Uwzględnij rok” i „Sekwencja według grupy”. Sekwencja zaczyna się od nowa, gdy zmienia się tekst wokół SEQ.</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingFloor.NextSequence">
+    <value>Najniższy numer, jaki ta sekwencja może nadać jako następny.</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingFloor.ScopeKey">
+    <value>Sekwencja, której dotyczy podniesiony następny numer: tekst, który wzorzec tworzy wokół sekwencji, z # w jej miejscu.</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingFloor.SetByUserId">
+    <value>Administrator, który podniósł następny numer.</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingFloor.SetOn">
+    <value>Kiedy podniesiono następny numer (UTC).</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsRetentionOverride.AppliesFrom">
     <value>Przyszła granica dla wersji kwalifikujących się do nadpisania, oceniana przez cykl życia rekordów.</value>
@@ -3358,247 +3394,247 @@
     <value>Przeglądanie wynagrodzeń pracowników</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.AddCallData">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia dodawanie notatek, obrazów, plików i strumieni wideo do zgłoszeń w wersji internetowej i w aplikacjach. Osoba musi też widzieć zgłoszenie, a dołączenie pliku w wersji internetowej wymaga dodatkowo uprawnień do edycji zgłoszenia (administratorzy działu lub członek, który zarejestrował zgłoszenie). Gdy pole Tylko grupa jest zaznaczone, dane do zgłoszenia mogą dodawać tylko administratorzy działu i osoby, których grupę zadysponowano do tego zgłoszenia — także wtedy, gdy zasada to Wszyscy. Bez zapisanej zasady może to robić każdy, kto widzi zgłoszenie.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.AddPersonnel">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia dodawanie, zapraszanie i ponowne aktywowanie członków. Wybierz opcję Administratorzy działu i grup, aby administratorzy grup mogli dodawać osoby do własnej grupy; członkowie, których ponownie aktywują lub dodają z istniejącego konta, również trafiają do własnej grupy administratora grupy. Bez zapisanej zasady mogą to robić tylko administratorzy działu. Administratorzy grup, którzy mają też usuwać osoby, muszą być objęci tym uprawnieniem, ponieważ usuwanie również je sprawdza.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.AdjustInventory">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia przyjmowanie, korygowanie i archiwizowanie inwentarza oraz wykorzystywanie zapasów z poziomu rekordów, a także stanowi zasadę początkową dla uprawnień Przekazywanie inwentarza i Wydawanie inwentarza, dopóki nie zostaną one zapisane. Bez zapisanej zasady mogą to robić tylko administratorzy działu, co pokazuje też ekran Zabezpieczenia.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.AmendRecords">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia otwarcie poprawki do sfinalizowanego rekordu i porzucenie jej. Poprawkę kończy się finalizacją, więc łącz to uprawnienie z uprawnieniem Finalizowanie raportów. Bez zapisanej zasady mogą to robić administratorzy działu i grup.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ApproveRecords">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia zatwierdzanie rekordów. Zatwierdzanie odbywa się obecnie w aplikacjach i przez API; w wersji internetowej jedynie poszerza widok odpowiedzialności. Bez zapisanej zasady mogą to robić tylko administratorzy działu. Zatwierdzający nigdy nie może zatwierdzić własnego rekordu, a role zatwierdzających w definicji mogą je dodatkowo zawęzić.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ApproveTimeReports">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia zatwierdzanie i unieważnianie przesłanych raportów czasu pracy z dyslokacji, także z aplikacji Incident Command. Nikt nie może zatwierdzić raportu, który sam przesłał lub który zawiera jego własne godziny, więc takie raporty wymagają drugiej osoby zatwierdzającej; unieważnianie nadal jest możliwe. Po zatwierdzeniu raportu jego wydatków — ani wydatków z tego dnia — nie można już zmienić. W wersji internetowej zatwierdzający musi też widzieć dyslokację. Bez zapisanej zasady mogą to robić tylko administratorzy działu.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.BreakGlassProtectedData">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Wycofany identyfikator zachowany po to, aby starsze zapisane ustawienia nadal się wczytywały. Niczego nie przyznaje, nie jest wyświetlany na ekranie Zabezpieczenia i nie można go zapisać; dostęp pracowników pomocy technicznej jest kontrolowany przez ustawienie zgody na dostęp pomocy technicznej na stronie Ochrona danych.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CanSeePersonnelLocations">
-    <value>Kontroluje bramkę widoczności lokalizacji dla każdej pary obserwujący–osoba. Podgląd zlicza pary dostępu, a nie bieżące znaczniki na mapie, zgodę na śledzenie ani dostępność GPS.</value>
+    <value>Określa, czyje pozycje członek może widzieć: mapę, śledzenie na żywo, odległości i czasy dojazdu najbliższych ratowników, pozycje statusów w aktywności personelu i zgłoszeń, meldunki oraz historię zdarzeń personelu. Gdy pole Tylko grupa jest zaznaczone, osoby widzą tylko członków własnej grupy. Bez zapisanej zasady wszyscy mogą to robić. Ukrywana jest pozycja, a nie osoba.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CanSeeUnitLocations">
-    <value>Kontroluje bramkę widoczności lokalizacji dla każdej pary obserwujący–jednostka. Blokada grupowa odnosi się do stacji jednostki i hierarchii grupy nadrzędnej, a nie do jakiejkolwiek stacji, którą obserwujący może widzieć z innego powodu.</value>
+    <value>Określa, pozycje których jednostek członek może widzieć: mapę, śledzenie na żywo, odległości i czasy dojazdu najbliższych jednostek, historię zdarzeń i raporty jednostek, meldunki, odchylenia od trasy oraz aktywność zgłoszeń. Gdy pole Tylko grupa jest zaznaczone, osoby widzą tylko jednostki własnej stacji. Bez zapisanej zasady wszyscy mogą to robić. Ukrywana jest pozycja, a nie jednostka.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CloseCall">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia zamykanie i ponowne otwieranie zgłoszeń. Gdy pole Tylko grupa jest zaznaczone, zgłoszenie mogą zamknąć lub ponownie otworzyć tylko administratorzy działu i osoby, których grupę zadysponowano do tego zgłoszenia — także wtedy, gdy zasada to Wszyscy. W wersji internetowej, w aplikacjach i w chatbocie potrzebne są też uprawnienia do zgłoszeń wynikające z uprawnienia Tworzenie zgłoszeń. Bez zapisanej zasady każdy, kto widzi zgłoszenie, może je zamknąć.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CommandAppLogin">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Określa, kto może korzystać z aplikacji Incident Command i odczytywać tablice dowodzenia: każdą tablicę oraz wszystkie odczyty ewidencji personelu, potrzeb, osi czasu, mapy, ról, łączności głosowej i zasobów, synchronizację tablic offline w aplikacjach i odpowiedzi chatbota dotyczące zdarzeń. Bez zapisanej zasady może to robić każdy aktywny członek. Gdy zapiszesz węższą zasadę, dopuszczone przez nią osoby otrzymują też możliwości wspierania dowodzenia na dowolnej tablicy. Objęcie dowodzenia i edytowanie tablic nadal wymagają uprawnień dowodzenia na poziomie administratora działu.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ConfigureProtectedDataEgress">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Określa, kto może administrować chronionymi przepływami pracy i ich zatwierdzeniami udostępnienia. Włączenie, zatwierdzenie lub odnowienie chronionego przepływu pracy wymaga też nowej wzmocnionej weryfikacji, a ustawienia udostępniania po podaniu PIN-u przez SMS i połączenie głosowe wymagają dodatkowo administratora działu. Ma zastosowanie tylko wtedy, gdy dział jest zarejestrowany w Zaawansowanej ochronie danych.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ContactDelete">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia usuwanie kontaktów, kategorii, planów ratowniczych, zagrożeń obiektu i plików obiektu. Bez zapisanej zasady wszyscy mogą to robić. Kontaktu z otwartymi rozliczeniami w Business Ops nie można usunąć.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ContactEdit">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia dodawanie i edytowanie kontaktów, kategorii, planów ratowniczych, zagrożeń i plików obiektu. Bez zapisanej zasady wszyscy mogą to robić. Strona edycji pokazuje cały kontakt, więc każdy, kto może edytować, może też odczytywać dane; pola chronione pozostają ukryte bez przyznanego dostępu do danych chronionych.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ContactView">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia przeglądanie kontaktów, ich notatek, zgłoszeń i plików w wersji internetowej i w aplikacjach, wyszukiwanie ich oraz wyświetlanie szczegółów kontaktów w zgłoszeniach: informacji o obiekcie, alertów kontaktów, selektorów kontaktów zgłoszenia i eksportu zgłoszenia. Bez zapisanej zasady wszyscy mogą to robić, z wyjątkiem zakupów do inwentarza, które pokazują kontakty dostawców tylko administratorom działu, dopóki nie zapiszesz zasady. Szczegóły kontaktów mogą też pokazywać trasy i strona edycji kontaktu.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateCalendarEntry">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia tworzenie i edytowanie wpisów kalendarza i typów kalendarza oraz edytowanie zameldowań w kalendarzu z poziomu aplikacji. Aby edytować lub usunąć wpis, trzeba też być jego autorem lub administratorem działu, a uczestnika może usunąć tylko on sam lub ktoś, kto może edytować wydarzenie. Wszyscy nadal mogą przeglądać kalendarz. Bez zapisanej zasady wszyscy mogą to robić.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateCall">
-    <value>Umożliwia rozpoczęcie zgłoszenia. Działanie na poziomie oddziału uwzględnia rzeczywisty stan administratora i role personelu każdego członka; późniejsza walidacja dyspozytorska pozostaje rozstrzygająca.</value>
+    <value>Umożliwia tworzenie zgłoszeń, a wraz z tym daje uprawnienia do zgłoszeń, których wymaga także edytowanie, zamykanie, ponowne otwieranie i usuwanie — w wersji internetowej, w aplikacjach, na stronie Dzienniki i w chatbocie. Osoby, które nie spełniają tego warunku, nadal mogą przeglądać zgłoszenia. Bez zapisanej zasady wszyscy mogą to robić.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateDocument">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia przesyłanie dokumentów. Osoby mogą edytować lub usuwać tylko dokumenty, które same przesłały, chyba że są administratorami działu. Wszyscy nadal mogą przeglądać dokumenty. Bez zapisanej zasady wszyscy mogą przesyłać dokumenty.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateLog">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia tworzenie wpisów dziennika. Wszyscy nadal mogą je przeglądać. Po aktywacji modułu Rekordy dotychczasowe dzienniki stają się tylko do odczytu, a ta zasada zostaje skopiowana do uprawnień Tworzenie rekordu i Finalizowanie raportów. Bez zapisanej zasady wszyscy mogą to robić.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateMessage">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia wysyłanie wiadomości, publikowanie i reagowanie na czacie, rozpoczynanie wiadomości bezpośrednich oraz korzystanie z chatbota, w tym wysyłanie do chatbota wiadomości SMS. Osoby bez tego uprawnienia nadal mogą czytać i usuwać swoje wiadomości, ale nie mogą oznaczać ich jako przeczytanych ani edytować wpisów na czacie. Bez zapisanej zasady wszyscy mogą to robić.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateNote">
-    <value>Umożliwia utworzenie notatki oddziału. Działanie to nie zapewnia dostępu do chronionej treści notatek ani do innego oddziału.</value>
+    <value>Umożliwia tworzenie notatek z poziomu aplikacji. W wersji internetowej tworzenie, edytowanie i usuwanie notatek zawsze wymaga administratora działu, niezależnie od tej zasady. Notatki tylko dla administratorów pozostają widoczne wyłącznie dla administratorów działu. Bez zapisanej zasady wszyscy mogą tworzyć notatki w aplikacjach.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateRecord">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia tworzenie rekordów, w tym raportów ze zdarzeń, rekordów terenowych, materiału dowodowego i załączników. Bez zapisanej zasady wszyscy mogą je tworzyć. Zaczyna obowiązywać po aktywacji modułu Rekordy; aktywacja kopiuje tu Twoją zasadę z uprawnienia Tworzenie wpisu dziennika. Aplikacje terenowe wymagają też własnych flag terenowych modułu Rekordy.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateShift">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia tworzenie, edytowanie i usuwanie zmian i zmian roboczych oraz zarządzanie rejestracjami dla każdej grupy. Administratorzy grup zawsze zarządzają rejestracjami we własnych grupach. Członkowie zapisujący się — w wersji internetowej, w aplikacjach lub przez chatbota — muszą przestrzegać zasad zmiany (bez minionych dni, zmiany z przydziałem wymagają przydziału, zmiany grupowe wymagają grupy członka). Wszyscy nadal mogą przeglądać zmiany. Bez zapisanej zasady zmiany mogą modyfikować tylko administratorzy działu.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateTraining">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia tworzenie, edytowanie i usuwanie szkoleń oraz resetowanie postępów członków w szkoleniach. Wszyscy nadal mogą przeglądać i odbywać szkolenia. Bez zapisanej zasady mogą to robić tylko administratorzy działu.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateWorkflow">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia tworzenie, edytowanie i usuwanie przepływów pracy, podgląd ich warunków, odczyt konfiguracji kroków w aplikacjach i API oraz wyświetlanie wygenerowanych wyników przebiegów przepływów pracy. Bez zapisanej zasady przepływy pracy mogą zmieniać tylko administratorzy działu, ale każdy członek może otworzyć stronę Przepływy pracy i czytać definicje; zapisanie opcji Administratorzy działu ukrywa też przepływy pracy przed wszystkimi innymi. Kroki wysyłające eksport z modułu Rekordy wymagają też uprawnień Eksportowanie rekordów i Zarządzanie zestawieniami raportów. Plany bezpłatne mają ograniczoną liczbę przepływów pracy.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.DeleteCall">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia usuwanie zgłoszeń. Gdy pole Tylko grupa jest zaznaczone, zgłoszenie mogą usunąć tylko administratorzy działu i osoby, których grupę zadysponowano do tego zgłoszenia — także wtedy, gdy zasada to Wszyscy. Potrzebne są też uprawnienia do zgłoszeń wynikające z uprawnienia Tworzenie zgłoszeń. Bez zapisanej zasady każdy, kto widzi zgłoszenie, może je usunąć.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.DeleteLog">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia usuwanie wpisów dziennika. Jest niezależne od uprawnienia Tworzenie wpisu dziennika. Po aktywacji modułu Rekordy dotychczasowe dzienniki stają się tylko do odczytu, a ta zasada zostaje skopiowana do uprawnienia Usuwanie rekordu. Bez zapisanej zasady wszyscy mogą to robić.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.DeleteRecord">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia unieważnianie rekordów i anulowanie wersji roboczych — bez niego osoby nie mogą anulować nawet własnych wersji roboczych. Członek może unieważniać lub anulować tylko rekordy, które napisał, których jest właścicielem, które przegląda lub zatwierdza, chyba że jest administratorem działu lub administratorem grupy danego rekordu. Bez zapisanej zasady wszyscy mogą to robić. Zaczyna obowiązywać po aktywacji modułu Rekordy; aktywacja kopiuje tu Twoją zasadę z uprawnienia Usuwanie wpisu dziennika.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.DispatchAppLogin">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Określa, kto jest uznawany za dyspozytora. Aplikacja Dispatch sprawdza to przy logowaniu (sam serwer nie blokuje logowania), a dyspozytorzy mogą czytać kanały czatu widoczne dla dyspozytorni, w tym kanały dowodzenia zdarzeniem i kanały grup, oraz otrzymują z nich powiadomienia. Bez zapisanej zasady za dyspozytora uznawany jest każdy aktywny członek. Zapisanie odświeża dostęp do czatu.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.EditProtectedCallData">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Nie jest dostępne na ekranie Zabezpieczenia, ponieważ żadna kontrola w czasie działania go nie odczytuje: edytowanie chronionych pól zgłoszeń podlega zwykłym uprawnieniom do edycji zgłoszeń i wymaga aktualnego przyznanego dostępu do danych chronionych. Wcześniej zapisana zasada zostaje zachowana, ale nie ma żadnego skutku.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ExportPayDataReporting">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia zamrażanie, eksportowanie i pobieranie raportów danych płacowych dla Kalifornii oraz odczyt przebiegów raportów i ich sum. Migawki poszczególnych pracowników i tworzenie raportu wymagają uprawnienia Zarządzanie raportowaniem danych płacowych. Wymaga aktywnego dodatku Business Ops i włączonej Zaawansowanej ochrony danych. Bez zapisanej zasady mogą to robić tylko administratorzy działu.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ExportProtectedData">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Nie jest dostępne na ekranie Zabezpieczenia, ponieważ żadna kontrola w czasie działania go nie odczytuje: każdy eksport podlega uprawnieniu do eksportu we właściwym module. Wcześniej zapisana zasada zostaje zachowana, ale nie ma żadnego skutku.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ExportRecords">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia drukowanie i eksportowanie rekordów, dokumentów, raportów z dyslokacji, plików CSV zapisanych raportów i pakietów zbiorczych. Bez zapisanej zasady wszyscy mogą to robić. Sekcje zastrzeżone wymagają dodatkowo uprawnienia Przeglądanie rekordów o ograniczonym dostępie; zarządzanie szablonami eksportu, otwieranie przebiegów eksportu innych osób i wysyłanie pakietu e-mailem na adres zewnętrzny wymagają uprawnienia Zarządzanie zestawieniami raportów.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.FinalizeRecords">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia finalizowanie rekordów, co blokuje je jako wersję oficjalną. Członek może finalizować rekordy, które napisał, których jest właścicielem, które przegląda lub zatwierdza; finalizowanie cudzego rekordu wymaga uprawnienia Przeglądanie raportów (po zatwierdzeniu — Zatwierdzanie raportów, w przypadku poprawki — Poprawianie rekordów) lub administratora działu. Poprawki i korekty również kończy się finalizacją, więc każdy, kto wprowadza poprawki, także potrzebuje tego uprawnienia. Bez zapisanej zasady wszyscy mogą to robić. Aktywacja kopiuje tu Twoją zasadę z uprawnienia Tworzenie wpisu dziennika.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.IssueInventory">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia wydawanie sprzętu i materiałów osobom i jednostkom, przyjmowanie zwrotów, wydawanie zestawów i dodawanie nowych posiadaczy. Dopóki nie zapiszesz tu zasady, obowiązuje zasada uprawnienia Dostosuj inwentarz. Substancje kontrolowane wymagają też uprawnienia Zarządzanie substancjami kontrolowanymi oraz, tam gdzie jest to wymagane, świadka.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageBids">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia tworzenie, edytowanie i usuwanie ofert i wycen oraz przekształcanie ich w dyslokacje. Przekształcanie i korzystanie z kreatora dyslokacji wymagają też uprawnienia Zarządzanie dyslokacjami, a karty kosztów ofert — uprawnienia Przeglądanie kosztów wewnętrznych. Bez zapisanej zasady mogą to robić tylko administratorzy działu. Wymaga funkcji Rozliczenia wykonawcy i aktywnego dodatku Business Ops.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageCertificationSetup">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia zarządzanie katalogiem certyfikatów, szablonami, wymaganiami ról i ustawieniami egzekwowania. Samo nie pokazuje wpisów certyfikatów członków; do tego potrzebne jest uprawnienie Przeglądanie certyfikatów. Bez zapisanej zasady mogą to robić tylko administratorzy działu.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageCertifications">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia dodawanie, weryfikowanie, edytowanie i usuwanie wpisów certyfikatów innych członków i jednostek oraz ich punktów kształcenia ustawicznego. Obejmuje przeglądanie. Członkowie zawsze mogą zarządzać własnymi wpisami, ale nikt nie może zweryfikować własnych, a zmiana własnego zweryfikowanego wpisu usuwa jego weryfikację. Bez zapisanej zasady mogą to robić tylko administratorzy działu.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageChecklists">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia tworzenie, publikowanie, wycofywanie i planowanie list kontrolnych oraz przekazywanie zadań list kontrolnych innym grupom. Nie obejmuje odczytu wyników. Bez zapisanej zasady mogą to robić tylko administratorzy działu. Wymaga włączenia modułu Listy kontrolne; akcje przy niepowodzeniu, które otwierają zlecenia serwisowe, wymagają też modułu Zlecenia serwisowe i Readiness Pro.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageContracts">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia przeglądanie umów o świadczenie usług i dokumentów zgodności oraz zarządzanie nimi, w tym listą kontrolną zgodności na karcie rozliczeń dyslokacji. Bez zapisanej zasady mogą to robić tylko administratorzy działu. Wymaga funkcji Rozliczenia wykonawcy i aktywnego dodatku Business Ops.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageControlledSubstances">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia obsługę pozycji z substancjami kontrolowanymi: przyjmowanie, przenoszenie, wydawanie, zużywanie, poświadczanie jako świadek, raportowanie i dodawanie ich do katalogu. Uzupełnia zwykłe uprawnienia do inwentarza, a nie je zastępuje, a kroki wymagające świadka potrzebują drugiej uprawnionej osoby. Bez zapisanej zasady mogą to robić tylko administratorzy działu.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageDepartmentDataProtection">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Nie jest dostępne na ekranie Zabezpieczenia, ponieważ żadna kontrola w czasie działania go nie odczytuje: strony Ochrona danych wymagają administratora działu, a rejestracja, wyrejestrowanie, wyjątki od wzmocnionej weryfikacji i rozliczenia są zastrzeżone dla członka zarządzającego. Wcześniej zapisana zasada zostaje zachowana, ale nie ma żadnego skutku.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageDeployments">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia tworzenie i prowadzenie dyslokacji oraz zewnętrznych zleceń dyslokacji: obsady, sprzętu, czasu, wydatków i zamknięcia, a także oznaczanie wydatków jako wstępnie zatwierdzonych. Nie ma osobnego uprawnienia do przeglądania; członkowie wpisani do obsady dyslokacji (bezpośrednio lub przez załogę swojej jednostki wpisaną do obsady) nadal ją widzą — zajęcie miejsca w jednostce skierowanej do dyslokacji nie wystarcza. Bez zapisanej zasady mogą to robić tylko administratorzy działu. Tworzenie na podstawie zlecenia zewnętrznego wymaga też uprawnienia Tworzenie rekordu przy aktywnym module Rekordy.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageInvoicing">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia tworzenie, wysyłanie, edytowanie i anulowanie faktur, generowanie faktur z dyslokacji, pobieranie pakietu faktury, rejestrowanie płatności oraz zarządzanie cennikami i profilami rozliczeniowymi. Obejmuje przeglądanie. Bez zapisanej zasady mogą to robić tylko administratorzy działu. Wymaga włączenia funkcji Fakturowanie klientów; zmiany wymagają aktywnego dodatku Business Ops.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageMutualAidReimbursement">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia przygotowywanie, przekazywanie i uzgadnianie prac związanych ze zwrotem kosztów Cal OES MARS. Przygotowanie ankiety płacowej wymaga też uprawnienia Przeglądanie wynagrodzeń pracowników, a klasyfikacje stanowisk liczące mniej niż trzech członków są pomijane. Członkowie wpisani do obsady nadal mogą wypełniać własny F-42 i wydatki, ale wydrukowane pakiety nie pokazują im stawek zwrotu ani sum. Bez zapisanej zasady mogą to robić tylko administratorzy działu. Wymaga włączenia Cal OES MARS i aktywnego dodatku Business Ops.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManagePayDataReporting">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia tworzenie w kreatorze raportów danych płacowych dla Kalifornii oraz wgląd w migawki poszczególnych pracowników, na których się opierają. Zamrożenie i eksport raportu wymagają uprawnienia Eksportowanie raportowania danych płacowych. Każdy członek nadal sam odpowiada na własne pytania demograficzne. Wymaga modułu raportowania danych płacowych, aktywnego dodatku Business Ops i włączonej Zaawansowanej ochrony danych. Bez zapisanej zasady mogą to robić tylko administratorzy działu.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageRecordDefinitions">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia tworzenie i edytowanie definicji rekordów w projektancie. Publikowanie wymaga też uprawnienia Publikowanie definicji raportów, a zarządzanie polami niestandardowymi rekordów wymaga dodatkowo administratora działu. Bez zapisanej zasady mogą to robić tylko administratorzy działu.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageRecordDisclosures">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia obsługę wniosków o dostęp do informacji publicznej i wniosków o ujawnienie, w tym odczyt kolejki ujawnień i przygotowywanie udostępnień. Treści zastrzeżone wymagają dodatkowo uprawnienia Przeglądanie rekordów o ograniczonym dostępie. Bez zapisanej zasady mogą to robić tylko administratorzy działu.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageRecordLegalHold">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia nakładanie i zdejmowanie blokad prawnych, które chronią rekordy przed trwałym usunięciem. Blokady konkretnego rekordu są ograniczone do rekordów, które dana osoba może widzieć. Bez zapisanej zasady mogą to robić tylko administratorzy działu.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageRecordReports">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia tworzenie, planowanie i uruchamianie zapisanych raportów rekordów, zarządzanie szablonami eksportu, otwieranie przebiegów eksportu z szablonów i zaplanowanych oraz wysyłanie pakietów zbiorczych e-mailem na adresy zewnętrzne; pokazuje też widok odpowiedzialności. Szablony eksportu i pobieranie plików CSV wymagają też uprawnienia Eksportowanie rekordów, a raporty i przebiegi zastrzeżone — uprawnienia Przeglądanie rekordów o ograniczonym dostępie. Pakiet zbiorczy zawsze otwiera się tylko dla członka, który go utworzył. Bez zapisanej zasady mogą to robić tylko administratorzy działu.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageRoutes">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Reguluje trasy. Nie jest wyświetlane na żadnym ekranie konfiguracji, więc członkowie mogą przeglądać trasy, administratorzy grup mogą je też tworzyć i edytować, a usuwać mogą tylko administratorzy działu. Rozpoczęcie trasy i meldowanie się na przystankach wymaga dostępu do edycji. Przeglądanie tras pokazuje również kontakty działu.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageWorkOrders">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia zarządzanie zleceniami serwisowymi w całym dziale: zatwierdzeniami, kosztami, rozwiązaniami, wstrzymaniami, konserwacją cykliczną, opłatami dostawców i zleceniami innych grup. Obejmuje wgląd we wszystkie zlecenia serwisowe. Bez zapisanej zasady mogą to robić tylko administratorzy działu. Wymaga włączenia modułu Zlecenia serwisowe i dodatku Readiness Pro.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageWorkflowCredentials">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia tworzenie, edytowanie i usuwanie danych uwierzytelniających, których przepływy pracy używają do łączenia się z usługami zewnętrznymi. Sekrety są zawsze maskowane. Bez zapisanej zasady mogą je zmieniać tylko administratorzy działu, ale członkowie widzą nazwy i typy danych uwierzytelniających; zapisanie opcji Administratorzy działu ukrywa również je, w wersji internetowej i w API. Edytowanie danych uwierzytelniających, które dostarczają eksport z modułu Rekordy, wymaga też uprawnień Eksportowanie rekordów i Zarządzanie zestawieniami raportów. Przydatne tylko razem z uprawnieniem Tworzenie przepływu pracy.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageWorkforceCompensation">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia zarządzanie profilem pracodawcy, zakładami, pracownikami oraz wpisami dotyczącymi zatrudnienia i wynagrodzeń, a także uruchamianie zestawień kosztów. Obejmuje przeglądanie. Nikt nie może zatwierdzić profilu wynagrodzenia, który sam ostatnio zmienił, ani własnego wynagrodzenia. Kwoty wynagrodzeń są chronione i bez przyznanego dostępu do danych chronionych są wyświetlane jako ukryte. Dostępne tylko w wersji internetowej. Bez zapisanej zasady mogą to robić tylko administratorzy działu. Wymaga funkcji Koszty wewnętrzne i aktywnego dodatku Business Ops.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.PublishRecordDefinitions">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia publikowanie i wycofywanie definicji rekordów, aby osoby mogły z nich korzystać. Działa tylko razem z uprawnieniem Zarządzanie definicjami raportów. Bez zapisanej zasady mogą to robić tylko administratorzy działu.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ReassignRecordDrafts">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia przekazanie cudzej wersji roboczej rekordu innemu aktywnemu członkowi. Bez zapisanej zasady mogą to robić administratorzy działu i grup w każdej grupie, którą widzą.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.RecordsPreventionAdmin">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia zarządzanie danymi prewencji — obiektami, kontrolami, hydrantami, zezwoleniami i ograniczaniem ryzyka w społeczności. Pozostali członkowie nadal mogą je odczytywać. Każdy obszar wymaga też włączenia odpowiedniego modułu prewencji w Rekordach. Bez zapisanej zasady mogą to robić tylko administratorzy działu.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.RemovePersonnel">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia usuwanie członków z działu. Wybierz opcję Administratorzy działu i grup, aby administratorzy grup mogli usuwać osoby z własnej grupy — uprawnienie Dodawanie personelu musi być wtedy ustawione tak samo, ponieważ strona usuwania je sprawdza. Administrator grupy nigdy nie może usunąć administratora działu ani członka zarządzającego. Bez zapisanej zasady mogą to robić tylko administratorzy działu.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ReviewRecords">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia przeglądanie rekordów i zwracanie ich do poprawy oraz przydzielanie prac związanych z przeglądem. Bez zapisanej zasady mogą to robić administratorzy działu i grup. Role recenzentów w definicji mogą je dodatkowo zawęzić. Przegląd jakości wymaga też modułu przeglądu jakości w Rekordach.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ShareRecordsExternally">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Zarezerwowane na potrzeby udostępniania rekordów innym grupom lub zewnętrznym instytucjom. Żadna obecna funkcja z niego nie korzysta, więc nie jest dostępne na ekranie Zabezpieczenia; domyślnie jest ograniczone do administratorów działu, a wcześniej zapisana zasada zostaje zachowana na czas wprowadzenia udostępniania.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.SubmitRecords">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia przesyłanie rekordów do miejsca docelowego raportowania, takiego jak NERIS. Osoby przesyłające muszą widzieć dany rekord; odczyt historii wymiany danych przesłań wymaga też uprawnienia Przeglądanie rekordów o ograniczonym dostępie, a walidacja przesłania wymaga administratora działu. Bez zapisanej zasady mogą to robić tylko administratorzy działu.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.TransferInventory">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia przenoszenie zapasów między lokalizacjami. Dopóki nie zapiszesz tu zasady, obowiązuje zasada uprawnienia Dostosuj inwentarz. Gdy pole Tylko grupa jest zaznaczone, osoby mogą przenosić zapasy tylko między lokalizacjami własnej grupy. Substancje kontrolowane wymagają też uprawnienia Zarządzanie substancjami kontrolowanymi.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.UseCalendarSync">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia członkom uzyskanie osobistego linku subskrypcji kalendarza dla kalendarza w telefonie lub na komputerze. Kanał jest ponownie sprawdzany przy każdym pobraniu, więc zawężenie tego uprawnienia zatrzymuje istniejące kanały, a członek usunięty z działu lub w nim wyłączony przestaje go otrzymywać. Bez zapisanej zasady wszyscy mogą to robić. Operator musi też mieć włączone kanały kalendarza.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewAllWorkOrders">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia wgląd w zlecenia serwisowe wykraczające poza te, które zostały przez Ciebie zgłoszone lub są do Ciebie przypisane. Bez zapisanej zasady administratorzy działu widzą wszystkie, a administratorzy grup — zlecenia własnej grupy; pole Tylko grupa pokazuje to ograniczenie jako zaznaczone, więc pozostaw je zaznaczone przy zapisywaniu, jeśli administratorzy grup mają pozostać ograniczeni do swojej grupy.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewCertifications">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia przeglądanie certyfikatów innych członków i jednostek, listy wygasających certyfikatów oraz kwalifikowalności do ról. Członkowie zawsze widzą własne; administratorzy grup również potrzebują tego uprawnienia, aby widzieć wpisy swoich członków. Bez zapisanej zasady mogą to robić tylko administratorzy działu. Pola chronione wymagają przyznanego dostępu do danych chronionych.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewChecklistResults">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia odczyt wyników i historii ukończonych list kontrolnych. Bez zapisanej zasady administratorzy działu widzą wszystko, administratorzy grup widzą wyniki własnej grupy, a każdy widzi przebiegi, które utworzył lub poświadczył jako świadek. Odznacz pole Tylko grupa, aby osoby sprawdzające widziały wszystkie grupy.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewGroupRecords">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Ogranicza zakres grup, których rekordy mogą widzieć poszczególne osoby. Zawężenie obowiązuje tylko wtedy, gdy pole Tylko grupa w tej zasadzie jest zaznaczone, a w Ustawieniach rejestrów ustawiono widoczność grupową; wówczas osoby niebędące administratorami widzą rekordy własnej grupy oraz te, których są autorami lub w których uczestniczą. Wybory akcji i ról w tym wierszu nie zmieniają widoczności.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewGroupUnits">
-    <value>Kontroluje widoczność jednostek docelowych i przypisanych do nich stacji. Obserwujący bez grupy oraz jednostki bez przypisania nie mają wspólnej grupy.</value>
+    <value>Określa, które jednostki osoba może widzieć na listach jednostek, w selektorach, na mapie, w przydziałach załóg, w wyszukiwaniu, w chatbocie i w aplikacjach oraz którym może ustawiać status. Gdy pole Tylko grupa jest zaznaczone, osoby widzą tylko jednostki własnej stacji (administratorzy działu zawsze widzą wszystkie jednostki). Bez zapisanej zasady wszyscy widzą każdą jednostkę.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewGroupUsers">
-    <value>Kontroluje widoczność personelu docelowego. Blokada grupowa może zawęzić zakres celów; administratorzy grupy docelowej lub grup nadrzędnych korzystają z właściwej dla niej zasady widoczności.</value>
+    <value>Określa, których członków osoba może widzieć na listach personelu, w profilach, siatkach, selektorach dysponowania, raportach, wyszukiwaniu oraz w wykazie personelu i kanałach statusów aplikacji. Gdy pole Tylko grupa jest zaznaczone, administratorzy grup i osoby pełniące role widzą tylko własną grupę (administratorzy działu zawsze widzą wszystkich). Bez zapisanej zasady wszyscy widzą wszystkich.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewInternalCosts">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia wgląd w koszty wewnętrzne działu: profile kosztów zasobów, wykorzystanie, zestawienia kosztów terenowych i karty marż. Uruchamianie, zamrażanie lub usuwanie zestawień kosztów, edytowanie profili kosztów i zmienianie wykorzystania innych osób wymagają też uprawnienia Zarządzanie wynagrodzeniami personelu. Bez zapisanej zasady mogą to robić tylko administratorzy działu. Wymaga włączenia funkcji Koszty wewnętrzne i aktywnego dodatku Business Ops.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewInvoicing">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia przeglądanie faktur, wiekowania należności, cenników i profili rozliczeniowych kontaktów bez ich zmieniania, w tym list faktur w dyslokacjach i umowach. Pakiet faktury (z raportami czasu pracy, paragonami i dokumentami zgodności) wymaga uprawnienia Zarządzanie fakturowaniem. Bez zapisanej zasady mogą to robić tylko administratorzy działu. Przeglądanie nadal działa, jeśli dodatek Business Ops wygaśnie.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewLegacyRecords">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Zarezerwowane na potrzeby przeglądania dotychczasowej historii Dzienników z poziomu modułu Rekordy. Żadna obecna strona z niego nie korzysta, więc nie jest dostępne na ekranie Zabezpieczenia; dotychczasowa historia podlega uprawnieniom Dzienników. Wcześniej zapisana zasada zostaje zachowana.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewPersonalInfo">
-    <value>Kontroluje bramkę uprawnień dotyczących danych osobowych. Pola chronione nadal wymagają własnej, aktualnej autoryzacji i przyznanej ochrony danych.</value>
+    <value>Określa, kto widzi adresy e-mail, numery telefonów i adresy korespondencyjne członków na stronach personelu, w raporcie Personel (na ekranie i przy wysyłce zaplanowanej e-mailem), w edytorze profilu i w aplikacjach. Osoby bez tego uprawnienia nadal widzą imiona i nazwiska, grupy, role i statusy, a każdy zawsze widzi własne dane. Bez zapisanej zasady wszyscy mogą to robić. Pola chronione wymagają dodatkowo przyznanego dostępu do danych chronionych.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewProtectedCallData">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Określa, kto może otrzymywać chronione szczegóły zgłoszeń przez SMS lub połączenie głosowe po wprowadzeniu swojego PIN-u. Nie reguluje wyświetlania na ekranie ani w aplikacjach; to zależy od dostępu do zgłoszenia oraz aktualnego przyznanego dostępu do danych chronionych. Ma zastosowanie tylko wtedy, gdy dział jest zarejestrowany w Zaawansowanej ochronie danych, a udostępnianie po podaniu PIN-u jest włączone.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewProtectedContactData">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Nie jest dostępne na ekranie Zabezpieczenia, ponieważ żadna kontrola w czasie działania go nie odczytuje: każdy, kto może przeglądać kontakty i ma aktualny przyznany dostęp do danych chronionych, może odsłonić chronione pola kontaktów. Wcześniej zapisana zasada zostaje zachowana, ale nie ma żadnego skutku.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewProtectedOperationalData">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Nie jest dostępne na ekranie Zabezpieczenia, ponieważ żadna kontrola w czasie działania go nie odczytuje: odsłanianie chronionych wpisów dziennika, dokumentów, wpisów kalendarza, pól niestandardowych i rekordów podlega własnym regułom dostępu każdego modułu i wymaga aktualnego przyznanego dostępu do danych chronionych. Wcześniej zapisana zasada zostaje zachowana, ale nie ma żadnego skutku.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewProtectedPersonnelData">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Nie jest dostępne na ekranie Zabezpieczenia, ponieważ żadna kontrola w czasie działania go nie odczytuje: każdy, kto może wyświetlić członka i ma aktualny przyznany dostęp do danych chronionych, może odsłonić chronione pola tego członka. Wcześniej zapisana zasada zostaje zachowana, ale nie ma żadnego skutku.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewRestrictedRecords">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia wgląd w zastrzeżone sekcje rekordów, takie jak szczegóły dotyczące poszkodowanych, narażenia i dochodzeń. Jest też wymagane do uwzględniania treści zastrzeżonych w ujawnieniach, eksportach i przebiegach eksportu oraz do odczytu historii wymiany danych przesłań. Bez zapisanej zasady mogą to robić tylko administratorzy działu.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewUdfFields">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Reguluje odczyt i zapisywanie wartości pól niestandardowych za pośrednictwem aplikacji i API. Nie jest wyświetlane na żadnym ekranie konfiguracji, więc wszyscy zachowują dostęp do wyświetlania i aktualizacji. Każda wartość podlega też ustawieniu widoczności swojego pola i obiektowi, do którego należy: członek odczytuje lub wypełnia wartości tylko w zgłoszeniach, jednostkach, osobach i kontaktach, które może widzieć lub edytować. Zarządzanie definicjami pól niestandardowych zawsze wymaga administratora działu.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewWorkflowRuns">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia przeglądanie historii przebiegów przepływów pracy, logów, stanu oraz oczekujących przebiegów. To, co wysłał przebieg (jego wygenerowany wynik i rezultat), jest pokazywane tylko osobom, które mogą edytować przepływy pracy. Bez zapisanej zasady każdy członek może przeglądać przebiegi, a tylko administratorzy działu mogą je anulować lub czyścić; zapisanie opcji Administratorzy działu ukrywa przebiegi przed wszystkimi innymi, a zapisanie opcji Wszyscy pozwala wszystkim je anulować i czyścić.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewWorkforceCompensation">
-    <value>Sprawdź to uprawnienie na ekranie Zabezpieczenia. Jego wartość domyślna stosowana, gdy nie zapisano żadnej zasady, zakres grupy, zależne uprawnienia oraz zachowanie w aplikacji internetowej, API i mobilnej oczekują na pełny przegląd. Podgląd wpływu na żywo nie jest jeszcze dostępny dla tego uprawnienia.</value>
+    <value>Umożliwia przeglądanie wykazu pracowników i wpisów dotyczących wynagrodzeń bez ich zmieniania i jest potrzebne do przygotowania ankiety płacowej Cal OES MARS. Bez przyznanego dostępu do danych chronionych kwoty są wyświetlane jako ukryte. Dostępne tylko w wersji internetowej. Bez zapisanej zasady mogą to robić tylko administratorzy działu.</value>
   </data>
   <data xml:space="preserve" name="Plan.AddStep">
     <value>Dodaj etap</value>

@@ -264,6 +264,32 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 		{
 			return RunAsync(c => c.ExecuteScalarAsync<TScalar>(new Dapper.CommandDefinition(sql, parameters, UnitOfWork.Transaction, cancellationToken: cancellationToken)), cancellationToken);
 		}
+
+		/// <summary>
+		/// Highest sequence issued as prefix + digits + suffix, over Records and incident reports together: a department
+		/// pattern can leave out {PREFIX}, and then both tables draw on one sequence. Deleted rows count, because the
+		/// number stays theirs. The sequence is read as a number, so a change of digit width never restarts it.
+		/// </summary>
+		protected async Task<int> GetMaxRecordNumberSequenceAcrossRecordsAsync(int departmentId, string numberPrefix, string numberSuffix)
+		{
+			numberPrefix ??= string.Empty;
+			numberSuffix ??= string.Empty;
+			string Matching(string table) => $"SELECT {Col("RecordNumber")} AS n FROM {Tbl(table)} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RecordNumber")} LIKE {P}Pattern ESCAPE '!'";
+			var numbers = Matching("RmsOperationalRecords") + " UNION ALL " + Matching("RmsIncidentReports");
+			// The CASE keeps SUBSTRING from seeing a negative length when the prefix and suffix overlap in a short number.
+			var sql = IsPostgres
+				? $"SELECT MAX(CAST(x.mid AS BIGINT)) FROM (SELECT CASE WHEN CHAR_LENGTH(r.n) > {P}PrefixLength + {P}SuffixLength THEN SUBSTRING(r.n FROM {P}PrefixLength + 1 FOR CHAR_LENGTH(r.n) - {P}PrefixLength - {P}SuffixLength) END AS mid FROM ({numbers}) r) x WHERE x.mid ~ '^[0-9]{{1,18}}$'"
+				: $"SELECT MAX(TRY_CAST(x.mid AS BIGINT)) FROM (SELECT CASE WHEN LEN(r.n) > {P}PrefixLength + {P}SuffixLength THEN SUBSTRING(r.n, {P}PrefixLength + 1, LEN(r.n) - {P}PrefixLength - {P}SuffixLength) END AS mid FROM ({numbers}) r) x WHERE LEN(x.mid) BETWEEN 1 AND 18 AND x.mid NOT LIKE '%[^0-9]%'";
+			var max = await ScalarAsync<long?>(sql, new
+			{
+				DepartmentId = departmentId,
+				Pattern = Queries.Calls.SearchCallsQuery.EscapeLike(numberPrefix) + "%" + Queries.Calls.SearchCallsQuery.EscapeLike(numberSuffix),
+				PrefixLength = numberPrefix.Length,
+				SuffixLength = numberSuffix.Length
+			});
+
+			return (int)Math.Min(Math.Max(max ?? 0, 0), int.MaxValue - 1);
+		}
 	}
 
 	public class RmsOperationalRecordsRepository : RmsRepositoryBase<RmsOperationalRecord>, IRmsOperationalRecordsRepository
@@ -447,17 +473,9 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 				new { DepartmentId = departmentId });
 		}
 
-		public async Task<int> GetMaxRecordNumberSequenceAsync(int departmentId, string numberPrefix)
+		public Task<int> GetMaxRecordNumberSequenceAsync(int departmentId, string numberPrefix, string numberSuffix)
 		{
-			// Sequences are zero-padded, so the lexicographic MAX is the numeric max.
-			var max = await ScalarAsync<string>(
-				$"SELECT MAX({Col("RecordNumber")}) FROM {Tbl("RmsOperationalRecords")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RecordNumber")} LIKE {P}Pattern",
-				new { DepartmentId = departmentId, Pattern = numberPrefix + "%" });
-
-			if (string.IsNullOrWhiteSpace(max) || max.Length <= numberPrefix.Length)
-				return 0;
-
-			return int.TryParse(max.Substring(numberPrefix.Length), out var sequence) ? sequence : 0;
+			return GetMaxRecordNumberSequenceAcrossRecordsAsync(departmentId, numberPrefix, numberSuffix);
 		}
 
 		public async Task<bool> TryBumpRowVersionAsync(int departmentId, string recordId, long expectedRowVersion, CancellationToken cancellationToken = default)

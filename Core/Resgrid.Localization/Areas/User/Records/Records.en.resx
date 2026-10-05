@@ -112,9 +112,21 @@
   <data name="DefaultLifecyclePreset" xml:space="preserve"><value>Default lifecycle preset for department definitions</value></data>
   <data name="ReviewDueHours" xml:space="preserve"><value>Review due (hours)</value></data>
   <data name="Numbering" xml:space="preserve"><value>Record numbering</value></data>
-  <data name="IncludeYear" xml:space="preserve"><value>Include the year in record numbers</value></data>
   <data name="SequenceWidth" xml:space="preserve"><value>Sequence digits</value></data>
-  <data name="PerGroupSequence" xml:space="preserve"><value>Separate sequence per station/group</value></data>
+  <data name="NumberPattern" xml:space="preserve"><value>Number pattern</value></data>
+  <data name="NumberPatternExample" xml:space="preserve"><value>Example:</value></data>
+  <data name="NumberPatternHelp" xml:space="preserve"><value>Use {PREFIX} for the record type (RUN, TRN, INC and so on), {YYYY} or {YY} for the year, {GROUP} for the station or group (G followed by its ID, which must be followed by -, _ or .), and {SEQ} for the sequence, which is required. Letters, digits, -, _ and . are kept as written. The sequence restarts whenever the text around {SEQ} changes: including the year restarts it every year, and leaving out {PREFIX} gives every record type one shared sequence.</value></data>
+  <data name="NumberPatternInvalid" xml:space="preserve"><value>The number pattern was not saved. Use only letters, digits, -, _, . and the tokens {PREFIX}, {YYYY}, {YY}, {GROUP} and {SEQ}; include {SEQ} exactly once, use each token at most once, and follow {GROUP} with -, _ or . (up to 40 characters).</value></data>
+  <data name="NextNumbersHeader" xml:space="preserve"><value>Next numbers for {0}</value></data>
+  <data name="NextNumbersIntro" xml:space="preserve"><value>Raise a sequence's next number to carry on from numbers issued before Resgrid: after 2026-0001 through 2026-0152, enter 153. Leave a box blank to keep the sequence as it is. A next number can only be raised, never lowered, so no number is issued twice.</value></data>
+  <data name="NextNumberSequence" xml:space="preserve"><value>Sequence</value></data>
+  <data name="NextNumberCurrent" xml:space="preserve"><value>Next number</value></data>
+  <data name="NextNumberRaiseTo" xml:space="preserve"><value>Raise next to</value></data>
+  <data name="NextNumberBelowCurrent" xml:space="preserve"><value>A next number can only be raised. These sequences were left unchanged because the number entered was below the one they will issue next:</value></data>
+  <data name="NextNumberPatternChanged" xml:space="preserve"><value>The number pattern changed, so the next numbers entered were not applied. Review the sequences for the new pattern and save again.</value></data>
+  <data name="NextNumberConfirm" xml:space="preserve"><value>A raised next number cannot be lowered again. Save these changes?</value></data>
+  <data name="NumberingAllTypes" xml:space="preserve"><value>All record types</value></data>
+  <data name="NumberingNoGroup" xml:space="preserve"><value>No station/group</value></data>
   <data name="Retention" xml:space="preserve"><value>Retention</value></data>
   <data name="RetentionIntro" xml:space="preserve"><value>Shipped defaults: 7 years for standard records; permanent for Coroner and other restricted classes. Retention configuration is this department's responsibility under its own jurisdiction's rules. Changes apply prospectively and are audited.</value></data>
   <data name="DepartmentDefaultYears" xml:space="preserve"><value>Department default (years, blank = system default)</value></data>

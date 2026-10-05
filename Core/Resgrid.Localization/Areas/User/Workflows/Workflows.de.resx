@@ -1047,4 +1047,19 @@
   <data name="BotUsernamePlaceholder" xml:space="preserve">
     <value>Resgrid-Bot</value>
   </data>
+  <data name="StepCredentialNotFound" xml:space="preserve">
+    <value>Die für diesen Schritt gewählten Zugangsdaten wurden nicht gefunden.</value>
+  </data>
+  <data name="ExportAttachmentTemplateNotFound" xml:space="preserve">
+    <value>Der für diesen Schritt gewählte Berichtsexport (Datensätze) wurde nicht gefunden.</value>
+  </data>
+  <data name="ExportAttachmentRequiresRecordsRights" xml:space="preserve">
+    <value>Zum Anhängen eines Berichtsexports (Datensätze) an einen Schritt sind die Berechtigungen "Berichte drucken und exportieren" und "Berichtsauswertungen verwalten" erforderlich.</value>
+  </data>
+  <data name="ExportAttachmentRequiresRestrictedRights" xml:space="preserve">
+    <value>Dieser Berichtsexport (Datensätze) enthält eingeschränkte Abschnitte; zum Anhängen an einen Schritt ist zusätzlich die Berechtigung "Eingeschränkte Abschnitte anzeigen" erforderlich.</value>
+  </data>
+  <data name="CredentialDeliversRecordsExport" xml:space="preserve">
+    <value>Ein Workflow-Schritt sendet einen Berichtsexport (Datensätze) über diese Zugangsdaten. Zum Ändern sind daher die Berechtigungen "Berichte drucken und exportieren" und "Berichtsauswertungen verwalten" erforderlich (sowie "Eingeschränkte Abschnitte anzeigen", wenn der Export eingeschränkte Abschnitte enthält).</value>
+  </data>
 </root>

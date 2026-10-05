@@ -131,7 +131,7 @@
                             <div class="col-sm-4 col-sm-offset-2">
                                 <a class="btn btn-white" asp-controller="CustomStatuses" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
                                 <button class="btn btn-primary" type="submit">@commonLocalizer["Update"]</button>
-                                <a class="btn btn-danger" asp-controller="CustomStatuses" asp-action="Delete" asp-route-area="User" asp-route-id="@Model.State.CustomStateId">@commonLocalizer["Delete"]</a>
+                                <button type="submit" class="btn btn-danger" formnovalidate formaction="@Url.Action("Delete", "CustomStatuses", new { area = "User", id = Model.State.CustomStateId })" data-confirm="@localizer["DeleteCustomStatusWarning"]">@commonLocalizer["Delete"]</button>
                             </div>
                         </div>
                     </form>

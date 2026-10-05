@@ -207,6 +207,7 @@
   <data name="certifications_record_not_found" xml:space="preserve"><value>Nie znaleziono rekordu certyfikatu.</value></data>
   <data name="certifications_status_invalid" xml:space="preserve"><value>Tego statusu nie można ustawić ręcznie.</value></data>
   <data name="certifications_not_pending" xml:space="preserve"><value>Zweryfikować można tylko rekord oczekujący na weryfikację.</value></data>
+  <data name="certifications_self_verification" xml:space="preserve"><value>Nie możesz zweryfikować ani przywrócić własnego wpisu certyfikatu; musi go zatwierdzić inny kierownik.</value></data>
   <data name="certifications_expiry_required" xml:space="preserve"><value>Ten typ wygasa, więc wymagana jest nowa data ważności.</value></data>
   <data name="certifications_expiry_not_later" xml:space="preserve"><value>Nowa data ważności musi być późniejsza niż obecna.</value></data>
   <data name="certifications_credit_hours_invalid" xml:space="preserve"><value>Godziny punktowe muszą być większe od zera.</value></data>

@@ -609,14 +609,23 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 		}
 
+		// Called by the Update Billing Info page's Stripe card-token callback, so it takes the same rule as that page: a signed-in
+		// department admin. Bounded so a caller cannot write an arbitrarily large provider-event row.
 		[HttpPost]
-
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> LogStripeResponse(StripeResponseInput input, CancellationToken cancellationToken)
 		{
+			if (!await _authorizationService.CanUserManageSubscriptionAsync(UserId, DepartmentId))
+				return Unauthorized();
+
+			const int maxLoggedLength = 2000;
+			string Bounded(string value) => value == null ? null : value.Length > maxLoggedLength ? value.Substring(0, maxLoggedLength) : value;
+
 			var providerEvent = new PaymentProviderEvent();
 			providerEvent.ProviderType = (int)PaymentMethods.Stripe;
 			providerEvent.RecievedOn = DateTime.UtcNow;
-			providerEvent.Data = $"Card Token Result: UserId:{UserId} DepartmentId:{DepartmentId} Status:{input.Status} Response:{input.Response}";
+			providerEvent.Data = $"Card Token Result: UserId:{UserId} DepartmentId:{DepartmentId} Status:{Bounded(input?.Status)} Response:{Bounded(input?.Response)}";
 			providerEvent.Processed = false;
 			providerEvent.CustomerId = "SYSTEM";
 
@@ -888,6 +897,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> ManagePTTAddon(BuyAddonView model)
 		{
@@ -914,6 +924,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> BuyAddon(BuyAddonView model, CancellationToken cancellationToken)
 		{
@@ -963,7 +974,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> CancelAddon(int addonTypeId)
 		{
@@ -1111,6 +1123,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> ManagePaddlePTTAddon(BuyAddonView model)
 		{
@@ -1196,9 +1209,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
-		//[AuthorizeUpdate]
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> PaymentHistory()
 		{
+			// The same rule as opening one of these invoices (CanUserViewPaymentAsync): department admins only.
+			if (!await _authorizationService.CanUserManageSubscriptionAsync(UserId, DepartmentId))
+				return Unauthorized();
+
 			PaymentHistoryView model = new PaymentHistoryView();
 			model.Payments = await _subscriptionsService.GetAllPaymentsForDepartmentAsync(DepartmentId);
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);

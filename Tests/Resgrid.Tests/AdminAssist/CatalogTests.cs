@@ -55,7 +55,7 @@ namespace Resgrid.Tests.AdminAssist
 			foreach (var type in new[] { typeof(DepartmentModuleSettings), typeof(DepartmentOperatingProfile), typeof(PersonnelListStatusOrderSetting),
 				typeof(PersonnelListStatusOrder), typeof(DepartmentSuppressStaffingInfo), typeof(UnitTypeCallStatusOverrideSetting), typeof(UnitTypeCallStatusOverride),
 				typeof(UnitStatusThresholds), typeof(UnitStatusThreshold), typeof(NewCallFieldPolicy), typeof(NewCallFieldRule), typeof(GroupDispatchScopeConfig),
-				typeof(DispatchRecommendationConfig), typeof(RecordsNumberingConfig), typeof(RecordsSearchConfig), typeof(RecordsRetentionPolicy),
+				typeof(DispatchRecommendationConfig), typeof(RecordsNumberingConfig), typeof(RecordsNumberingFloor), typeof(RecordsSearchConfig), typeof(RecordsRetentionPolicy),
 				typeof(RecordsRetentionOverride), typeof(RecordsRetentionPolicyVersion), typeof(RecordsDisclosureConfig) })
 			{
 				var fields = type.GetProperties().Where(p => p.GetCustomAttribute<ProtoBuf.ProtoMemberAttribute>() != null).Select(p => type.Name + "." + p.Name);

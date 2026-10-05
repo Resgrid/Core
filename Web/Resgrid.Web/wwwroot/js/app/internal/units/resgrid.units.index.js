@@ -52,9 +52,23 @@ var resgrid;
                 function postStatus(url) {
                     return $.ajax({ url: url, type: 'POST', headers: { 'RequestVerificationToken': getAntiForgeryToken() } });
                 }
+                // The target is read from the menu markup: only ever post to this site (never another origin or a javascript: address).
+                function sameOriginUrl(address) {
+                    if (!address)
+                        return null;
+                    try {
+                        var url = new URL(address, window.location.origin);
+                        return url.origin === window.location.origin ? url.href : null;
+                    } catch (e) {
+                        return null;
+                    }
+                }
                 $(document).on('click', 'a[data-post-url]', function (e) {
                     e.preventDefault();
-                    var form = $('<form method="post" style="display:none;"></form>').attr('action', $(this).attr('data-post-url'));
+                    var target = sameOriginUrl($(this).attr('data-post-url'));
+                    if (!target)
+                        return;
+                    var form = $('<form method="post" style="display:none;"></form>').attr('action', target);
                     $('<input type="hidden" name="__RequestVerificationToken" />').val(getAntiForgeryToken()).appendTo(form);
                     form.appendTo(document.body);
                     form[0].submit();

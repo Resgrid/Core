@@ -152,6 +152,15 @@ namespace Resgrid.Tests.Security.Audit20261005
 		}
 
 		[Test]
+		public async Task Templates_New_and_Edit_refuse_a_post_without_a_template()
+		{
+			(await Build<TemplatesController>().New(new NewTemplateModel(), CancellationToken.None)).Should().BeOfType<BadRequestResult>();
+			(await Build<TemplatesController>().Edit(new NewTemplateModel(), CancellationToken.None)).Should().BeOfType<BadRequestResult>();
+
+			M<ITemplatesService>().Verify(x => x.SaveCallQuickTemplateAsync(It.IsAny<CallQuickTemplate>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
 		public async Task Templates_Edit_saves_the_departments_own_template()
 		{
 			M<ITemplatesService>().Setup(x => x.GetCallQuickTemplateByIdAsync(501)).ReturnsAsync(new CallQuickTemplate { CallQuickTemplateId = 501, DepartmentId = DepartmentId });

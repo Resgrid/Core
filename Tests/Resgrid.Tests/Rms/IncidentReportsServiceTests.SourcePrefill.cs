@@ -288,6 +288,110 @@ namespace Resgrid.Tests.Rms
 		}
 
 		[Test]
+		public async Task Refresh_keeps_a_time_the_author_cleared()
+		{
+			var started = await _service.StartFromCallAsync(Dept, "author", CallId);
+			started.Units.Single().ClearedOn.Should().Be(LoggedOn.AddMinutes(60));
+
+			// The prefilled clear time is wrong and the author deletes it.
+			var input = DraftFrom(started);
+			input.Units[0].ClearedOn = null;
+			var saved = await _service.SaveDraftAsync(Dept, "author", started.Report.RmsIncidentReportId, started.Report.RowVersion, input, true);
+
+			var result = await _service.RefreshFromSourcesAsync(Dept, "author", saved.Report.RmsIncidentReportId, saved.Report.RowVersion);
+
+			result.Aggregate.Units.Single().ClearedOn.Should().BeNull("a cleared value is the author's correction, not a gap to fill");
+			var fact = result.Aggregate.Facts.Single(f => f.FactKey == NerisFactKeys.UnitTime(5, "unit_clear"));
+			fact.CorrectedOn.Should().NotBeNull();
+			fact.CurrentValue.Should().BeNull();
+			fact.SourceValue.Should().Be(IncidentReportsService.Iso(LoggedOn.AddMinutes(60)), "the source value is kept for the record");
+		}
+
+		[Test]
+		public async Task Refresh_keeps_staffing_the_author_cleared()
+		{
+			_units.Setup(u => u.GetUnitStatesForCallAsync(Dept, CallId)).ReturnsAsync(new List<UnitState>
+			{
+				new UnitState { UnitStateId = 100, UnitId = 5, State = (int)UnitStateTypes.Responding, Timestamp = LoggedOn.AddMinutes(2) }
+			});
+			_crew.Setup(c => c.GetRolesForUnitStatesAsync(It.IsAny<IReadOnlyCollection<int>>())).ReturnsAsync(new List<UnitStateRole>
+			{
+				new UnitStateRole { UnitStateId = 100, UserId = "crew-a", Role = "Officer" },
+				new UnitStateRole { UnitStateId = 100, UserId = "crew-b", Role = "Driver" }
+			});
+			var started = await _service.StartFromCallAsync(Dept, "author", CallId);
+			started.Units.Single().Staffing.Should().Be(2);
+
+			var input = DraftFrom(started);
+			input.Units[0].Staffing = null;
+			var saved = await _service.SaveDraftAsync(Dept, "author", started.Report.RmsIncidentReportId, started.Report.RowVersion, input, true);
+
+			var result = await _service.RefreshFromSourcesAsync(Dept, "author", saved.Report.RmsIncidentReportId, saved.Report.RowVersion);
+
+			result.Aggregate.Units.Single().Staffing.Should().BeNull();
+			result.Aggregate.Facts.Single(f => f.FactKey == IncidentSourceFactKeys.UnitStaffing(5)).CorrectedOn.Should().NotBeNull();
+		}
+
+		[Test]
+		public async Task Refresh_leaves_out_a_unit_the_author_removed()
+		{
+			var started = await _service.StartFromCallAsync(Dept, "author", CallId);
+			started.Units.Should().ContainSingle(u => u.UnitId == 5);
+
+			var input = DraftFrom(started);
+			input.Units.Clear();
+			var saved = await _service.SaveDraftAsync(Dept, "author", started.Report.RmsIncidentReportId, started.Report.RowVersion, input, true);
+			saved.Units.Should().BeEmpty();
+
+			var result = await _service.RefreshFromSourcesAsync(Dept, "author", saved.Report.RmsIncidentReportId, saved.Report.RowVersion);
+
+			result.Aggregate.Units.Should().BeEmpty("the author took the engine off the report");
+			result.AddedCount.Should().Be(0);
+		}
+
+		[Test]
+		public async Task Refresh_leaves_cleared_tactic_timestamps_cleared_and_adds_new_ones()
+		{
+			RunUnderCommand(Completed("o1", "Knockdown", LoggedOn.AddMinutes(22)));
+			var started = await _service.StartFromCallAsync(Dept, "author", CallId);
+			started.Modules.Should().ContainSingle(m => m.ModuleKind == (int)RmsIncidentModuleKind.TacticTimestamps);
+
+			// The author clears every time on the form, which posts no tactic timestamps section at all.
+			var input = DraftFrom(started);
+			input.Modules = new List<IncidentModuleInput>();
+			var saved = await _service.SaveDraftAsync(Dept, "author", started.Report.RmsIncidentReportId, started.Report.RowVersion, input, true);
+			saved.Modules.Should().NotContain(m => m.ModuleKind == (int)RmsIncidentModuleKind.TacticTimestamps);
+			RunUnderCommand(Completed("o1", "Knockdown", LoggedOn.AddMinutes(22)), Completed("o2", "Extrication complete", LoggedOn.AddMinutes(27)));
+
+			var result = await _service.RefreshFromSourcesAsync(Dept, "author", saved.Report.RmsIncidentReportId, saved.Report.RowVersion);
+
+			var body = Body(result.Aggregate.Modules.Single(m => m.ModuleKind == (int)RmsIncidentModuleKind.TacticTimestamps).DetailJson);
+			body.Properties().Select(p => p.Name).Should().BeEquivalentTo(new[] { NerisTacticTimestamps.ExtricationComplete }, "only the time the author never saw arrives");
+			result.Aggregate.Facts.Where(f => f.FactKey.StartsWith("tactic_timestamps.", StringComparison.Ordinal))
+				.GroupBy(f => f.FactKey).Should().OnlyContain(g => g.Count() == 1, "a refresh never stores a second fact for a key");
+		}
+
+		[Test]
+		public async Task Refresh_leaves_out_mutual_aid_the_author_removed()
+		{
+			RunUnderCommand();
+			_resources.Setup(r => r.GetAdHocUnitsForCallAsync(Dept, CallId, true)).ReturnsAsync(new List<IncidentAdHocUnit>
+			{
+				new IncidentAdHocUnit { IncidentAdHocUnitId = "a1", DepartmentId = Dept, CallId = CallId, Name = "Engine 41", ExternalAgencyName = "Lakeside FD", CreatedOn = LoggedOn.AddMinutes(20) }
+			});
+			var started = await _service.StartFromCallAsync(Dept, "author", CallId);
+			started.Aids.Should().ContainSingle();
+
+			var input = DraftFrom(started);
+			input.Aids.Clear();
+			var saved = await _service.SaveDraftAsync(Dept, "author", started.Report.RmsIncidentReportId, started.Report.RowVersion, input, true);
+
+			var result = await _service.RefreshFromSourcesAsync(Dept, "author", saved.Report.RmsIncidentReportId, saved.Report.RowVersion);
+
+			result.Aggregate.Aids.Should().BeEmpty("the author removed the agency");
+		}
+
+		[Test]
 		public async Task Refresh_on_a_finalized_report_is_refused()
 		{
 			_profile.AutoSubmitOnFinalize = false;

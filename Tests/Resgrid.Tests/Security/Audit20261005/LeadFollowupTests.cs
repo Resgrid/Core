@@ -184,6 +184,32 @@ namespace Resgrid.Tests.Security.Audit20261005
 		}
 
 		[Test]
+		public async Task Editing_a_training_never_adds_users_groups_or_roles_of_another_department()
+		{
+			DepartmentUsers("member-1", "member-2", "member-3", "member-4");
+			M<IDepartmentGroupsService>().Setup(x => x.GetGroupByIdAsync(30, It.IsAny<bool>())).ReturnsAsync(new DepartmentGroup { DepartmentGroupId = 30, DepartmentId = 99 });
+			M<IDepartmentGroupsService>().Setup(x => x.GetAllMembersForGroupAsync(30)).ReturnsAsync(new List<DepartmentGroupMember> { new DepartmentGroupMember { UserId = "outsider-group" } });
+			M<IDepartmentGroupsService>().Setup(x => x.GetGroupByIdAsync(31, It.IsAny<bool>())).ReturnsAsync(new DepartmentGroup { DepartmentGroupId = 31, DepartmentId = DepartmentId });
+			M<IDepartmentGroupsService>().Setup(x => x.GetAllMembersForGroupAsync(31)).ReturnsAsync(new List<DepartmentGroupMember> { new DepartmentGroupMember { UserId = "member-3" } });
+			M<IPersonnelRolesService>().Setup(x => x.GetRoleByIdAsync(40)).ReturnsAsync(new PersonnelRole { PersonnelRoleId = 40, DepartmentId = 99 });
+			M<IPersonnelRolesService>().Setup(x => x.GetAllMembersOfRoleAsync(40)).ReturnsAsync(new List<PersonnelRoleUser> { new PersonnelRoleUser { UserId = "outsider-role" } });
+			M<IPersonnelRolesService>().Setup(x => x.GetRoleByIdAsync(41)).ReturnsAsync(new PersonnelRole { PersonnelRoleId = 41, DepartmentId = DepartmentId });
+			M<IPersonnelRolesService>().Setup(x => x.GetAllMembersOfRoleAsync(41)).ReturnsAsync(new List<PersonnelRoleUser> { new PersonnelRoleUser { UserId = "member-4" } });
+			M<ITrainingService>().Setup(x => x.GetTrainingByIdAsync(7)).ReturnsAsync(new Training
+			{
+				TrainingId = 7, DepartmentId = DepartmentId, Name = "Pump ops", Users = new List<TrainingUser> { new TrainingUser { TrainingUserId = 1, UserId = "member-1" } }
+			});
+			Training saved = null;
+			M<ITrainingService>().Setup(x => x.SaveAsync(It.IsAny<Training>(), It.IsAny<CancellationToken>())).Callback<Training, CancellationToken>((t, _) => saved = t).ReturnsAsync((Training t, CancellationToken _) => t);
+
+			var form = Form(new Dictionary<string, string> { ["usersToAdd"] = "member-2,outsider", ["groupsToAdd"] = "30,31", ["rolesToAdd"] = "40,41" });
+			await Build<TrainingsController>(DepartmentAdmin).Edit(7, new EditTrainingModel { Training = new Training { Name = "Pump ops" } }, form, new List<IFormFile>());
+
+			saved.Should().NotBeNull();
+			saved.Users.Select(u => u.UserId).Should().BeEquivalentTo(new[] { "member-1", "member-2", "member-3", "member-4" });
+		}
+
+		[Test]
 		public async Task A_distribution_list_never_takes_members_of_another_department()
 		{
 			DepartmentUsers("member-1", "member-2");

@@ -160,11 +160,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 				var action = await _actionLogsService.GetLastActionLogForUserAsync(user.UserId, DepartmentId);
 				var userState = await _userStateService.GetLastUserStateByUserIdAsync(user.UserId);
 
-				var personnelInfo = await PersonnelController.ConvertPersonnelInfo(user, department, profile, group, roles, action, userState, canViewPII);
-
 				// Security > See Personnel Locations, the rule the map applies: the last status position is withheld otherwise.
-				if (!await _authorizationService.CanUserViewPersonLocationViaMatrixAsync(user.UserId, UserId, DepartmentId))
-					personnelInfo.Location = null;
+				var canViewLocation = await _authorizationService.CanUserViewPersonLocationViaMatrixAsync(user.UserId, UserId, DepartmentId);
+				var personnelInfo = await PersonnelController.ConvertPersonnelInfo(user, department, profile, group, roles, action, userState, canViewPII, canViewLocation);
 
 				result.Personnel.Add(personnelInfo);
 			}

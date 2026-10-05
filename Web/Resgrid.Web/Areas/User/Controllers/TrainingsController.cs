@@ -357,9 +357,13 @@ var extension = System.IO.Path.GetExtension(file.FileName)?.TrimStart('.') ?? st
 			if (form.ContainsKey("usersToAdd"))
 				users.AddRange(form["usersToAdd"].ToString().Split(char.Parse(",")));
 
+			// Same rule as New: only this department's members can be added (and notified); a posted id from another
+			// department is dropped, and group and role ids (global keys) expand only when they are this department's.
+			var allUsers = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId);
+			var departmentUserIds = allUsers.Select(u => u.UserId).ToHashSet(StringComparer.OrdinalIgnoreCase);
+
 			if (model.SendToAll)
 			{
-				var allUsers = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId);
 				foreach (var user in allUsers)
 				{
 					if (existingTraining.Users == null)
@@ -377,7 +381,7 @@ var extension = System.IO.Path.GetExtension(file.FileName)?.TrimStart('.') ?? st
 			{
 				foreach (var user in users)
 				{
-					if (!string.IsNullOrWhiteSpace(user))
+					if (!string.IsNullOrWhiteSpace(user) && departmentUserIds.Contains(user))
 					{
 						if (existingTraining.Users == null)
 							existingTraining.Users = new List<TrainingUser>();
@@ -393,11 +397,12 @@ var extension = System.IO.Path.GetExtension(file.FileName)?.TrimStart('.') ?? st
 
 				foreach (var group in groups)
 				{
-					if (!string.IsNullOrWhiteSpace(group) && int.TryParse(group, out var groupId))
+					if (!string.IsNullOrWhiteSpace(group) && int.TryParse(group, out var groupId)
+						&& (await _departmentGroupsService.GetGroupByIdAsync(groupId))?.DepartmentId == DepartmentId)
 					{
 						var members = await _departmentGroupsService.GetAllMembersForGroupAsync(groupId);
 
-						foreach (var member in members)
+						foreach (var member in members.Where(m => departmentUserIds.Contains(m.UserId)))
 						{
 							if (existingTraining.Users == null)
 								existingTraining.Users = new List<TrainingUser>();
@@ -414,11 +419,12 @@ var extension = System.IO.Path.GetExtension(file.FileName)?.TrimStart('.') ?? st
 
 				foreach (var role in roles)
 				{
-					if (!string.IsNullOrWhiteSpace(role) && int.TryParse(role, out var roleId))
+					if (!string.IsNullOrWhiteSpace(role) && int.TryParse(role, out var roleId)
+						&& (await _personnelRolesService.GetRoleByIdAsync(roleId))?.DepartmentId == DepartmentId)
 					{
 						var roleMembers = await _personnelRolesService.GetAllMembersOfRoleAsync(roleId);
 
-						foreach (var member in roleMembers)
+						foreach (var member in roleMembers.Where(m => departmentUserIds.Contains(m.UserId)))
 						{
 							if (existingTraining.Users == null)
 								existingTraining.Users = new List<TrainingUser>();

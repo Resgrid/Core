@@ -425,12 +425,6 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return Ok(result);
 		}
 
-		public static Task<PersonnelInfoResultData> ConvertPersonnelInfo(IdentityUser user, Department department, UserProfile profile,
-			DepartmentGroup group, List<PersonnelRole> roles, ActionLog action, UserState userState, bool canViewPII)
-		{
-			return ConvertPersonnelInfo(user, department, profile, group, roles, action, userState, canViewPII, true);
-		}
-
 		/// <summary>
 		/// The person's info for a caller. Without Security &gt; See Personnel Locations for this person (canViewLocation,
 		/// from CanUserViewPersonLocationViaMatrixAsync) the last status position is left out.

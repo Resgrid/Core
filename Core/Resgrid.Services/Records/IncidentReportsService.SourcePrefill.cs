@@ -73,6 +73,14 @@ namespace Resgrid.Services.Records
 			return unit.WasDispatched || unit.AssignedByCommand || unit.EnrouteOn.HasValue || unit.OnSceneOn.HasValue || unit.StagingOn.HasValue || unit.CancelledOn.HasValue;
 		}
 
+		/// <summary>True when the report already holds facts for the unit's times or crew, i.e. a row for it was prefilled once.</summary>
+		private static bool WasUnitImported(List<RmsSourceFact> facts, int unitId)
+		{
+			var timePrefix = NerisFactKeys.UnitTime(unitId, string.Empty);
+			var staffingKey = IncidentSourceFactKeys.UnitStaffing(unitId);
+			return facts.Any(f => f.FactKey.StartsWith(timePrefix, StringComparison.Ordinal) || string.Equals(f.FactKey, staffingKey, StringComparison.Ordinal));
+		}
+
 		private static RmsUnitResponse NewUnitResponse(RmsIncidentReport report, Unit unit, int ordinal, DateTime now)
 		{
 			return new RmsUnitResponse
@@ -104,7 +112,6 @@ namespace Resgrid.Services.Records
 			if (times == null || times.Count == 0)
 				return null;
 
-			var descriptor = RmsIncidentModuleCatalog.Get(RmsIncidentModuleKind.TacticTimestamps);
 			var body = new JObject();
 			foreach (var field in NerisTacticTimestamps.Fields.Where(times.ContainsKey))
 			{
@@ -112,6 +119,12 @@ namespace Resgrid.Services.Records
 				facts.Add(TacticFact(report, sources, field, times[field], now));
 			}
 
+			return NewTacticTimestampsModule(report, body, now);
+		}
+
+		private RmsIncidentModule NewTacticTimestampsModule(RmsIncidentReport report, JObject body, DateTime now)
+		{
+			var descriptor = RmsIncidentModuleCatalog.Get(RmsIncidentModuleKind.TacticTimestamps);
 			return new RmsIncidentModule
 			{
 				RmsIncidentModuleId = Guid.NewGuid().ToString(), DepartmentId = report.DepartmentId, ProtectionId = Guid.NewGuid().ToString(),
@@ -150,6 +163,11 @@ namespace Resgrid.Services.Records
 					|| (nerisId != null && string.Equals(a.CounterpartNerisId, nerisId, StringComparison.OrdinalIgnoreCase))))
 					continue;
 
+				// An agency imported before that is no longer on the report was removed by the author; a refresh leaves it out.
+				var key = aid.LinkedDepartmentId.HasValue ? "dept-" + aid.LinkedDepartmentId.Value.ToString(CultureInfo.InvariantCulture) : AgencyKey(aid.AgencyName);
+				if (facts.Any(f => f.FactKey == IncidentSourceFactKeys.MutualAid(key)))
+					continue;
+
 				result.Add(new RmsAid
 				{
 					RmsAidId = Guid.NewGuid().ToString(), DepartmentId = report.DepartmentId, ProtectionId = Guid.NewGuid().ToString(), RecordId = report.RmsIncidentReportId,
@@ -157,10 +175,8 @@ namespace Resgrid.Services.Records
 					Ordinal = ordinal++, CreatedOn = now, ModifiedOn = now, RowVersion = 1
 				});
 
-				var key = aid.LinkedDepartmentId.HasValue ? "dept-" + aid.LinkedDepartmentId.Value.ToString(CultureInfo.InvariantCulture) : AgencyKey(aid.AgencyName);
 				var value = aid.ResourceNames.Count == 0 ? aid.AgencyName : aid.AgencyName + " · " + string.Join(", ", aid.ResourceNames);
-				if (facts.All(f => f.FactKey != IncidentSourceFactKeys.MutualAid(key)))
-					facts.Add(Fact(report, IncidentSourceFactKeys.MutualAid(key), RmsSourceKind.Derived, "IncidentCommand", "MutualAid", sources.Command.IncidentCommandId, value, aid.FirstOn, now));
+				facts.Add(Fact(report, IncidentSourceFactKeys.MutualAid(key), RmsSourceKind.Derived, "IncidentCommand", "MutualAid", sources.Command.IncidentCommandId, value, aid.FirstOn, now));
 			}
 
 			return result;
@@ -263,8 +279,9 @@ namespace Resgrid.Services.Records
 
 		/// <summary>
 		/// The one merge rule for every prefilled value. Returns true when the field should take <paramref name="sourceValue"/>:
-		/// it is blank, or it still holds the value its fact imported (the author never touched it) and the source moved on.
-		/// The fact is created or re-imported to match; a value the author changed is recorded as a correction, not overwritten.
+		/// it is blank and the author never corrected it, or it still holds the value its fact imported (the author never
+		/// touched it) and the source moved on. The fact is created or re-imported to match; a value the author changed,
+		/// including one they cleared, is recorded as a correction, not overwritten.
 		/// </summary>
 		private static bool MergeValue(RmsIncidentReport report, List<RmsSourceFact> facts, string key, string currentValue, string sourceValue, RmsSourceKind kind,
 			string system, string entityType, string entityId, DateTime? sourceTime, DateTime now, SourceMergeCounter counter)
@@ -273,6 +290,10 @@ namespace Resgrid.Services.Records
 				return false;
 
 			var fact = facts.FirstOrDefault(f => string.Equals(f.FactKey, key, StringComparison.Ordinal));
+			// A corrected value is the author's, a cleared one included: a blank field here is a deletion, not a gap to fill.
+			if (fact != null && fact.CorrectedOn.HasValue)
+				return false;
+
 			if (string.IsNullOrWhiteSpace(currentValue))
 			{
 				Import(report, facts, fact, key, kind, system, entityType, entityId, sourceValue, sourceTime, now);
@@ -280,7 +301,7 @@ namespace Resgrid.Services.Records
 				return true;
 			}
 
-			if (fact == null || fact.CorrectedOn.HasValue)
+			if (fact == null)
 				return false;
 
 			if (!string.Equals(currentValue, fact.CurrentValue, StringComparison.Ordinal))
@@ -423,6 +444,10 @@ namespace Resgrid.Services.Records
 					var row = units.FirstOrDefault(u => u.UnitId == source.UnitId);
 					if (row == null)
 					{
+						// A unit whose times or crew were imported before and has no row now was removed by the author.
+						if (WasUnitImported(facts, source.UnitId))
+							continue;
+
 						var unit = await _unitsService.GetUnitByIdAsync(source.UnitId);
 						if (unit == null || unit.DepartmentId != departmentId)
 							continue;
@@ -443,46 +468,43 @@ namespace Resgrid.Services.Records
 				foreach (var row in addedUnits)
 					await _units.InsertAsync(row, cancellationToken, true);
 
-				// Tactic timestamps: fields the command names that the section lacks, or still holds as imported.
+				// Tactic timestamps: fields the command names that the section lacks, or still holds as imported. A missing
+				// section goes through the same rule, so fields the author cleared (which removes the section) stay cleared.
 				var tactics = modules.FirstOrDefault(m => m.ModuleKind == (int)RmsIncidentModuleKind.TacticTimestamps);
 				var commandTimes = sources.Command?.TacticTimestamps ?? new Dictionary<string, DateTime>();
 				if (commandTimes.Count > 0)
 				{
-					if (tactics == null)
+					var body = ParseModule(tactics) ?? new JObject();
+					// A new section counts once as added, not once per field filled.
+					var fieldCounter = tactics == null ? new SourceMergeCounter() : counter;
+					var changed = false;
+					foreach (var field in NerisTacticTimestamps.Fields.Where(commandTimes.ContainsKey))
 					{
-						var created = BuildTacticTimestampsModule(report, sources, facts, now);
-						if (created != null)
+						var fact = TacticFact(report, sources, field, commandTimes[field], now);
+						if (MergeValue(report, facts, fact.FactKey, NormalizeIso(body[field]?.ToString()), fact.SourceValue, RmsSourceKind.Derived, TacticTimestampsSystem,
+							fact.SourceEntityType, fact.SourceEntityId, fact.SourceTime, now, fieldCounter))
 						{
-							created.Ordinal = modules.Count == 0 ? 0 : modules.Max(m => m.Ordinal) + 1;
-							await _protection.ProtectModuleAsync(departmentId, created, null, userId, cancellationToken);
-							await _modules.InsertAsync(created, cancellationToken, true);
-							counter.Added++;
+							body[field] = fact.SourceValue;
+							changed = true;
 						}
 					}
-					else
-					{
-						var body = ParseModule(tactics) ?? new JObject();
-						var changed = false;
-						foreach (var field in NerisTacticTimestamps.Fields.Where(commandTimes.ContainsKey))
-						{
-							var fact = TacticFact(report, sources, field, commandTimes[field], now);
-							if (MergeValue(report, facts, fact.FactKey, NormalizeIso(body[field]?.ToString()), fact.SourceValue, RmsSourceKind.Derived, TacticTimestampsSystem,
-								fact.SourceEntityType, fact.SourceEntityId, fact.SourceTime, now, counter))
-							{
-								body[field] = fact.SourceValue;
-								changed = true;
-							}
-						}
 
-						if (changed)
-						{
-							var previous = Copy(tactics, _ => { }, tactics.RevisionId, tactics.ModifiedOn);
-							tactics.DetailJson = body.ToString(Newtonsoft.Json.Formatting.None);
-							tactics.ModifiedOn = now;
-							tactics.RowVersion += 1;
-							await _protection.ProtectModuleAsync(departmentId, tactics, previous, userId, cancellationToken);
-							await _modules.UpdateAsync(tactics, cancellationToken, true);
-						}
+					if (changed && tactics == null)
+					{
+						var created = NewTacticTimestampsModule(report, body, now);
+						created.Ordinal = modules.Count == 0 ? 0 : modules.Max(m => m.Ordinal) + 1;
+						await _protection.ProtectModuleAsync(departmentId, created, null, userId, cancellationToken);
+						await _modules.InsertAsync(created, cancellationToken, true);
+						counter.Added++;
+					}
+					else if (changed)
+					{
+						var previous = Copy(tactics, _ => { }, tactics.RevisionId, tactics.ModifiedOn);
+						tactics.DetailJson = body.ToString(Newtonsoft.Json.Formatting.None);
+						tactics.ModifiedOn = now;
+						tactics.RowVersion += 1;
+						await _protection.ProtectModuleAsync(departmentId, tactics, previous, userId, cancellationToken);
+						await _modules.UpdateAsync(tactics, cancellationToken, true);
 					}
 				}
 

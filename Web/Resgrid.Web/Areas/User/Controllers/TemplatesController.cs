@@ -86,6 +86,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> New(NewTemplateModel model, CancellationToken cancellationToken)
 		{
+			if (model?.Template == null)
+				return BadRequest();
+
 			// A new template is always a new row: a posted id would make the save update another row by key.
 			model.Template.CallQuickTemplateId = 0;
 
@@ -140,6 +143,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> Edit(NewTemplateModel model, CancellationToken cancellationToken)
 		{
+			if (model?.Template == null)
+				return BadRequest();
+
 			// The posted id names the row to update, so it must be one of this department's templates.
 			var existing = await _templatesService.GetCallQuickTemplateByIdAsync(model.Template.CallQuickTemplateId);
 

@@ -1201,6 +1201,7 @@ namespace Resgrid.Services.Records
 					Correct(facts, NerisFactKeys.UnitTime(unit.UnitId, "staging"), Iso(row.StagingOn), userId, now);
 					Correct(facts, NerisFactKeys.UnitTime(unit.UnitId, "canceled_enroute"), Iso(row.CanceledEnrouteOn), userId, now);
 					Correct(facts, NerisFactKeys.UnitTime(unit.UnitId, "unit_clear"), Iso(row.ClearedOn), userId, now);
+					Correct(facts, IncidentSourceFactKeys.UnitStaffing(unit.UnitId), row.Staffing?.ToString(CultureInfo.InvariantCulture), userId, now);
 					// Provenance survives an edit: the fact keeps its App/Dispatch/Derived origin, the row shows the source that still
 					// applies (Derived while any uncorrected time rests on a status Resgrid linked to the call).
 					var uncorrected = facts.Where(f => f.FactKey.StartsWith($"unit.{unit.UnitId}.", StringComparison.Ordinal) && f.CorrectedOn == null).ToList();

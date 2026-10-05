@@ -45,14 +45,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IProtectedReadService _protectedReadService;
 		private readonly IRecordsHydrantsService _hydrantsService;
 		private readonly IDispatchScopeService _dispatchScopeService;
+		private readonly Model.Services.IAuthorizationService _authorizationService;
 
 		public MappingController(IDepartmentSettingsService departmentSettingsService,
 			IGeoLocationProvider geoLocationProvider, ICallsService callsService,
 			IDepartmentsService departmentsService, IDepartmentGroupsService departmentGroupsService,
 			IActionLogsService actionLogsService, IUnitsService unitsService, IMappingService mappingService,
 			IKmlProvider kmlProvider, IPermissionsService permissionsService, IPersonnelRolesService personnelRolesService,
-			IProtectedReadService protectedReadService, IRecordsHydrantsService hydrantsService, IDispatchScopeService dispatchScopeService)
+			IProtectedReadService protectedReadService, IRecordsHydrantsService hydrantsService, IDispatchScopeService dispatchScopeService,
+			Model.Services.IAuthorizationService authorizationService)
 		{
+			_authorizationService = authorizationService;
 			_dispatchScopeService = dispatchScopeService;
 			_departmentSettingsService = departmentSettingsService;
 			_geoLocationProvider = geoLocationProvider;
@@ -140,8 +143,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
+		// Layers and POIs are department configuration: the Mapping page offers their management to department admins only,
+		// and every action here enforces that rather than relying on the hidden buttons.
+		private static bool CanManageMapData() => ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+
+		// Hydrant managers (RecordsPreventionAdmin) also import POIs, the path the Hydrants page links to.
+		private static bool CanImportPois() => CanManageMapData() || ClaimsAuthorizationHelper.CanAdministerRecordsPrevention();
+
 		public async Task<IActionResult> ViewType(int poiTypeId)
 		{
+			if (!CanManageMapData())
+				return Unauthorized();
+
 			var model = new ViewTypeView();
 
 			var type = await _mappingService.GetTypeByIdAsync(poiTypeId);
@@ -191,6 +204,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		public async Task<IActionResult> Layers()
 		{
+			if (!CanManageMapData())
+				return Unauthorized();
+
 			var model = new LayersView();
 			model.Layers = await _mappingService.GetMapLayersForTypeDepartmentAsync(DepartmentId, MapLayerTypes.TopLevel);
 
@@ -200,6 +216,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		public async Task<IActionResult> NewLayer()
 		{
+			if (!CanManageMapData())
+				return Unauthorized();
+
 			var model = new NewLayerView();
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
@@ -215,6 +234,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> NewLayer(NewLayerView model)
 		{
+			if (!CanManageMapData())
+				return Unauthorized();
+
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
 			if (model.Department == null)
@@ -257,6 +279,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		public async Task<IActionResult> EditLayer(string layerId)
 		{
+			if (!CanManageMapData())
+				return Unauthorized();
+
 			if (String.IsNullOrWhiteSpace(layerId))
 				return RedirectToAction("Layers");
 
@@ -285,6 +310,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> EditLayer(EditLayerView model)
 		{
+			if (!CanManageMapData())
+				return Unauthorized();
+
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			model.CenterCoordinates = await _departmentSettingsService.GetMapCenterCoordinatesAsync(model.Department);
 
@@ -318,9 +346,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> DeleteLayer(string layerId)
 		{
+			if (!CanManageMapData())
+				return Unauthorized();
+
 			if (String.IsNullOrWhiteSpace(layerId))
 				return RedirectToAction("Layers");
 
@@ -343,6 +375,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		public async Task<IActionResult> POIs()
 		{
+			if (!CanManageMapData())
+				return Unauthorized();
+
 			var modal = new POIsView();
 			modal.Types = await _mappingService.GetPOITypesForDepartmentAsync(DepartmentId);
 			modal.Message = TempData["ImportPOIsMessage"] as string;
@@ -354,6 +389,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		public async Task<IActionResult> AddPOIType()
 		{
+			if (!CanManageMapData())
+				return Unauthorized();
+
 			var modal = new AddPOITypeView();
 			modal.Type = new PoiType();
 			modal.Type.Marker = "";
@@ -365,6 +403,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		public async Task<IActionResult> ImportPOIs(int poiTypeId)
 		{
+			if (!CanImportPois())
+				return Unauthorized();
+
 			var model = new ImportPOIsView { HydrantsEnabled = await HydrantsAvailableAsync() };
 			model.TypeId = poiTypeId;
 
@@ -375,6 +416,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> ImportPOIs(ImportPOIsView modal, IFormFile fileToUpload, CancellationToken cancellationToken)
 		{
+			if (!CanImportPois())
+				return Unauthorized();
+
 			if (fileToUpload == null || fileToUpload.Length == 0)
 			{
 				ModelState.AddModelError("fileToUpload", "Please select a file to upload.");
@@ -395,6 +439,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (ModelState.IsValid)
 			{
+				// The posted type must be one of this department's, as on AddPOI.
+				var type = await _mappingService.GetTypeByIdAsync(modal.TypeId);
+
+				if (type == null || type.DepartmentId != DepartmentId)
+					return Unauthorized();
+
 				var coordinates = _kmlProvider.ImportFile(fileToUpload.OpenReadStream(), Path.GetExtension(fileToUpload.FileName).ToLower() == ".kmz");
 
 				int importedCount = 0;
@@ -426,8 +476,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> AddPOIType(AddPOITypeView modal, CancellationToken cancellationToken)
 		{
+			if (!CanManageMapData())
+				return Unauthorized();
+
+			// Always a new type: a posted id would make the save update that row, whichever department owns it.
+			modal.Type.PoiTypeId = 0;
 			modal.Type.DepartmentId = DepartmentId;
 			modal.Type.Marker = modal.MarkerType;
 
@@ -449,9 +505,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(modal);
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> DeletePOIType(int poiTypeId, CancellationToken cancellationToken)
 		{
+			if (!CanManageMapData())
+				return Unauthorized();
+
 			var type = await _mappingService.GetTypeByIdAsync(poiTypeId);
 
 			if (type != null)
@@ -468,6 +528,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		public async Task<IActionResult> AddPOI(int poiTypeId)
 		{
+			if (!CanManageMapData())
+				return Unauthorized();
+
 			var type = await _mappingService.GetTypeByIdAsync(poiTypeId);
 
 			if (type == null)
@@ -484,8 +547,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> AddPOI(AddPOIView modal, CancellationToken cancellationToken)
 		{
+			if (!CanManageMapData())
+				return Unauthorized();
+
 			var type = await _mappingService.GetTypeByIdAsync(modal.TypeId);
 
 			if (type == null)
@@ -501,6 +568,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (ModelState.IsValid)
 			{
+				// Always a new POI: a posted id would make the save update that row, whichever department owns it.
+				modal.Poi.PoiId = 0;
 				modal.Poi.PoiTypeId = modal.TypeId;
 				await _mappingService.SavePOIAsync(modal.Poi, cancellationToken);
 
@@ -513,6 +582,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		public async Task<IActionResult> EditPOI(int poiId)
 		{
+			if (!CanManageMapData())
+				return Unauthorized();
+
 			var poi = await _mappingService.GetPOIByIdAsync(poiId);
 
 			if (poi == null)
@@ -537,6 +609,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> EditPOI(AddPOIView modal, CancellationToken cancellationToken)
 		{
+			if (!CanManageMapData())
+				return Unauthorized();
+
 			if (modal?.Poi == null || modal.Poi.PoiId <= 0)
 			{
 				ModelState.AddModelError("", "Cannot edit POI. Please go back and try again.");
@@ -579,6 +654,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> DeletePOI(int poiId, CancellationToken cancellationToken)
 		{
+			if (!CanManageMapData())
+				return Unauthorized();
+
 			var poi = await _mappingService.GetPOIByIdAsync(poiId);
 
 			if (poi == null)
@@ -734,6 +812,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				foreach (var unit in unitStates)
 				{
+					// Security > View Units and See Unit Locations, the same matrices the units list and the v4 map apply.
+					if (!await _authorizationService.CanUserViewUnitViaMatrixAsync(unit.UnitId, UserId, DepartmentId) ||
+						!await _authorizationService.CanUserViewUnitLocationViaMatrixAsync(unit.UnitId, UserId, DepartmentId))
+						continue;
+
 					if (unit.Latitude.HasValue && unit.Latitude.Value != 0 && unit.Longitude.HasValue &&
 							unit.Longitude.Value != 0)
 					{

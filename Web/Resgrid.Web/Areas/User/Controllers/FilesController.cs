@@ -84,8 +84,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 						callAttachment.Size = Data.Length;
 						callAttachment.Data = Data;
 						callAttachment.Timestamp = DateTime.UtcNow;
+						callAttachment.UserId = UserId;
 
-						if (!await _authorizationService.CanUserEditCallAsync(UserId, callAttachment.CallId))
+						if (!await _authorizationService.CanUserEditCallAsync(UserId, callAttachment.CallId) ||
+							!await _authorizationService.CanUserAddCallDataAsync(UserId, callAttachment.CallId, DepartmentId))
 							return Unauthorized();
 
 						await _callsService.SaveCallAttachmentAsync(callAttachment, cancellationToken);
@@ -101,8 +103,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 						callAttachment2.Size = Data.Length;
 						callAttachment2.Data = Data;
 						callAttachment2.Timestamp = DateTime.UtcNow;
+						callAttachment2.UserId = UserId;
 
-						if (!await _authorizationService.CanUserEditCallAsync(UserId, callAttachment2.CallId))
+						if (!await _authorizationService.CanUserEditCallAsync(UserId, callAttachment2.CallId) ||
+							!await _authorizationService.CanUserAddCallDataAsync(UserId, callAttachment2.CallId, DepartmentId))
 							return Unauthorized();
 
 						await _callsService.SaveCallAttachmentAsync(callAttachment2, cancellationToken);

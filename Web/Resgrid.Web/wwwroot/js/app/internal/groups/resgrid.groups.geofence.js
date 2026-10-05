@@ -107,6 +107,7 @@ var resgrid;
                     async: true,
                     url: resgrid.absoluteBaseUrl + '/User/Groups/SaveGeofence',
                     contentType: 'application/json',
+                    headers: { 'RequestVerificationToken': $('meta[name="request-verification-token"]').attr('content') },
                     cache: false,
                     processData: false,
                     data: JSON.stringify({

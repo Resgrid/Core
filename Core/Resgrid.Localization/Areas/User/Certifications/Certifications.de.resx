@@ -207,6 +207,7 @@
   <data name="certifications_record_not_found" xml:space="preserve"><value>Der Zertifizierungsdatensatz wurde nicht gefunden.</value></data>
   <data name="certifications_status_invalid" xml:space="preserve"><value>Dieser Status kann nicht manuell gesetzt werden.</value></data>
   <data name="certifications_not_pending" xml:space="preserve"><value>Nur ein Datensatz mit ausstehender Bestätigung kann bestätigt werden.</value></data>
+  <data name="certifications_self_verification" xml:space="preserve"><value>Sie können Ihren eigenen Zertifizierungsdatensatz nicht verifizieren oder wieder aktivieren; eine andere verantwortliche Person muss ihn freigeben.</value></data>
   <data name="certifications_expiry_required" xml:space="preserve"><value>Dieser Typ läuft ab, daher ist ein neues Ablaufdatum erforderlich.</value></data>
   <data name="certifications_expiry_not_later" xml:space="preserve"><value>Das neue Ablaufdatum muss nach dem aktuellen liegen.</value></data>
   <data name="certifications_credit_hours_invalid" xml:space="preserve"><value>Fortbildungsstunden müssen größer als null sein.</value></data>

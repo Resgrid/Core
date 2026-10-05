@@ -1226,6 +1226,15 @@
   <data name="PermOptionDepartmentGroupAdminsAndSelectRoles" xml:space="preserve">
     <value>Administratorzy działu i grup oraz wybrane role</value>
   </data>
+  <data name="PermOptionNotSavedCreateWorkflow" xml:space="preserve">
+    <value>Nie zapisano: administratorzy działu edytują, wszyscy mogą wyświetlać</value>
+  </data>
+  <data name="PermOptionNotSavedManageWorkflowCredentials" xml:space="preserve">
+    <value>Nie zapisano: administratorzy działu edytują, wszyscy widzą nazwy</value>
+  </data>
+  <data name="PermOptionNotSavedViewWorkflowRuns" xml:space="preserve">
+    <value>Nie zapisano: wszyscy mogą wyświetlać, administratorzy działu anulują</value>
+  </data>
   <data name="BreadcrumbSecurity" xml:space="preserve">
     <value>Bezpieczeństwo i uprawnienia</value>
   </data>
@@ -1317,7 +1326,7 @@
     <value>Kto może korygować inwentarz</value>
   </data>
   <data name="PermAdjustInventoryNote" xml:space="preserve">
-    <value>Ta opcja określa, kto może korygować stany inwentarza w systemie. Domyślnie inwentarz mogą korygować wszyscy.</value>
+    <value>Ta opcja określa, kto może korygować stany inwentarza w systemie. Dopóki nie zapiszesz wartości, inwentarz mogą korygować tylko administratorzy działu.</value>
   </data>
   <data name="PermViewPersonnelLocationLabel" xml:space="preserve">
     <value>Kto może widzieć lokalizację personelu</value>
@@ -1371,19 +1380,19 @@
     <value>Kto może tworzyć/edytować przepływy pracy</value>
   </data>
   <data name="PermCreateWorkflowNote" xml:space="preserve">
-    <value>Ta opcja określa, kto może tworzyć, edytować i usuwać przepływy pracy oraz ich kroki. Domyślnie przepływami pracy mogą zarządzać tylko administratorzy działu.</value>
+    <value>Ta opcja określa, kto może tworzyć, edytować i usuwać przepływy pracy oraz ich kroki. Dopóki nie zapiszesz wartości, przepływami pracy mogą zarządzać tylko administratorzy działu, a wyświetlać je mogą wszyscy członkowie; zapisanie dowolnej wartości ogranicza też, kto może je wyświetlać.</value>
   </data>
   <data name="PermManageWorkflowCredentialsLabel" xml:space="preserve">
     <value>Kto może zarządzać danymi uwierzytelniającymi przepływów pracy</value>
   </data>
   <data name="PermManageWorkflowCredentialsNote" xml:space="preserve">
-    <value>Ta opcja określa, kto może tworzyć, edytować i usuwać zaszyfrowane dane uwierzytelniające używane przez akcje przepływów pracy (np. hasła SMTP, klucze API). Domyślnie danymi uwierzytelniającymi mogą zarządzać tylko administratorzy działu.</value>
+    <value>Ta opcja określa, kto może tworzyć, edytować i usuwać zaszyfrowane dane uwierzytelniające używane przez akcje przepływów pracy (np. hasła SMTP, klucze API). Dopóki nie zapiszesz wartości, danymi uwierzytelniającymi mogą zarządzać tylko administratorzy działu, a ich nazwy widzą wszyscy członkowie; zapisanie dowolnej wartości ogranicza też, kto może je widzieć.</value>
   </data>
   <data name="PermViewWorkflowRunsLabel" xml:space="preserve">
     <value>Kto może wyświetlać uruchomienia przepływów pracy</value>
   </data>
   <data name="PermViewWorkflowRunsNote" xml:space="preserve">
-    <value>Ta opcja określa, kto może wyświetlać historię wykonywania przepływów pracy, dzienniki uruchomień i pulpity kondycji. Domyślnie uruchomienia przepływów pracy mogą wyświetlać tylko administratorzy działu.</value>
+    <value>Ta opcja określa, kto może wyświetlać historię wykonywania przepływów pracy, dzienniki uruchomień i pulpity kondycji. Dopóki nie zapiszesz wartości, uruchomienia mogą wyświetlać wszyscy członkowie, a anulować lub czyścić je mogą tylko administratorzy działu; zapisanie innej wartości ogranicza, kto może je wyświetlać, a zapisanie opcji Wszyscy pozwala wszystkim także je anulować i czyścić.</value>
   </data>
   <data name="SsoPageTitle" xml:space="preserve">
     <value>Logowanie jednokrotne (SSO) i SCIM</value>
@@ -2106,11 +2115,11 @@
   <data name="PermCommandAppLoginLabel" xml:space="preserve"><value>Logowanie do aplikacji dowodzenia</value></data>
   <data name="PermCommandAppLoginNote" xml:space="preserve"><value>Określa, kto może działać jako dowódca: logować się do aplikacji IC, obejmować dowodzenie zdarzeniem przy zgłoszeniu i wyświetlać tablice dowodzenia. Zawężenie tego ustawienia względem opcji Wszyscy pozwala też wybranym osobom pomagać przy dowolnej tablicy dowodzenia (przydzielać i przesuwać zasoby, obsługiwać liczniki czasu i ewidencję personelu) bez zajmowania na niej stanowiska ICS — przydaje się to, gdy dyspozytorzy mają pomagać w aplikacji Dispatch. Przy ustawieniu Wszyscy działania na tablicy pozostają ograniczone do dowódcy zdarzenia i przypisanych ról ICS.</value></data>
   <data name="PermAdpSectionHeader" xml:space="preserve"><value>Advanced Data Protection</value></data>
-  <data name="PermAdpSectionNote" xml:space="preserve"><value>Te uprawnienia określają, kto może pracować z danymi zaszyfrowanymi (chronionymi), gdy aktywny jest dodatek Advanced Data Protection. Każde wyświetlenie lub edycja wymaga dodatkowo niedawnej weryfikacji dwuskładnikowej; te ustawienia określają, kto w ogóle może podjąć taką próbę. W przeciwieństwie do większości uprawnień Resgrid nieustawione wartości przyjmują domyślnie pokazaną, restrykcyjną opcję.</value></data>
+  <data name="PermAdpSectionNote" xml:space="preserve"><value>Gdy aktywny jest dodatek Advanced Data Protection, te dwa uprawnienia określają, kto może otrzymywać chronione szczegóły zgłoszenia SMS-em lub połączeniem głosowym po wpisaniu swojego kodu PIN oraz kto może zmieniać sposób, w jaki chronione treści opuszczają Resgrid. Wyświetlanie lub edycja chronionych danych na ekranie podlega zasadom dostępu danej strony oraz niedawnej weryfikacji dwuskładnikowej. W przeciwieństwie do większości uprawnień Resgrid nieustawione wartości przyjmują domyślnie pokazaną opcję.</value></data>
   <data name="PermAdpManageLabel" xml:space="preserve"><value>Zarządzanie ustawieniami ochrony danych</value></data>
   <data name="PermAdpManageNote" xml:space="preserve"><value>Kto może zmieniać ustawienia Advanced Data Protection, takie jak okno weryfikacji i opcje treści powiadomień. Zakup, rejestracja i anulowanie zawsze pozostają zastrzeżone dla członka zarządzającego działem.</value></data>
   <data name="PermAdpViewCallLabel" xml:space="preserve"><value>Wyświetlanie chronionych danych zgłoszeń</value></data>
-  <data name="PermAdpViewCallNote" xml:space="preserve"><value>Kto może wyświetlać chronione pola zgłoszeń (charakter zgłoszenia, adres, dane kontaktowe, notatki) po weryfikacji dwuskładnikowej. Domyślnie: Wszyscy, ponieważ personel biorący udział w akcji musi móc przeczytać treść dysponowania.</value></data>
+  <data name="PermAdpViewCallNote" xml:space="preserve"><value>Kto może otrzymywać chronione szczegóły zgłoszeń (charakter zgłoszenia, adres, dane kontaktowe, notatki) SMS-em lub połączeniem głosowym po wpisaniu swojego kodu PIN, gdy udostępnianie z PIN-em jest włączone. Wyświetlanie na ekranie i w aplikacjach podlega dostępowi do zgłoszenia oraz weryfikacji dwuskładnikowej. Domyślnie: Wszyscy, ponieważ personel biorący udział w akcji musi móc przeczytać treść dysponowania.</value></data>
   <data name="PermAdpEditCallLabel" xml:space="preserve"><value>Edytowanie chronionych danych zgłoszeń</value></data>
   <data name="PermAdpEditCallNote" xml:space="preserve"><value>Kto może edytować chronione pola zgłoszeń po weryfikacji dwuskładnikowej. Domyślnie: Wszyscy, zgodnie ze zwykłym przebiegiem obsługi zgłoszeń.</value></data>
   <data name="PermAdpViewPersonnelLabel" xml:space="preserve"><value>Wyświetlanie chronionych danych personelu</value></data>

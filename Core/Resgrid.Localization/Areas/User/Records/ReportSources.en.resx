@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="PanelTitle" xml:space="preserve"><value>Call data</value></data>
+  <data name="PanelIntro" xml:space="preserve"><value>Statuses, dispatches, command entries and other run reports for this call, with who set each one. Click a time field in the report, then Use.</value></data>
+  <data name="Reload" xml:space="preserve"><value>Reload</value></data>
+  <data name="FillFromCall" xml:space="preserve"><value>Fill from call</value></data>
+  <data name="FillFromCallHint" xml:space="preserve"><value>Fills blank start and end times, location, initial report, units and personnel from the call.</value></data>
+  <data name="TabTimeline" xml:space="preserve"><value>Timeline</value></data>
+  <data name="TabUnits" xml:space="preserve"><value>Units</value></data>
+  <data name="TabPersonnel" xml:space="preserve"><value>Personnel</value></data>
+  <data name="TabCommand" xml:space="preserve"><value>Command</value></data>
+  <data name="TabRunReports" xml:space="preserve"><value>Run reports</value></data>
+  <data name="NoTarget" xml:space="preserve"><value>Click a time field in the report first, then Use.</value></data>
+  <data name="UsedTime" xml:space="preserve"><value>Set to {0}.</value></data>
+  <data name="Use" xml:space="preserve"><value>Use</value></data>
+  <data name="UseHint" xml:space="preserve"><value>Put this time in the time field you last clicked</value></data>
+  <data name="UnitNotOnReport" xml:space="preserve"><value>{0} is not on this report's unit list.</value></data>
+  <data name="NothingToFill" xml:space="preserve"><value>Nothing to fill for {0}.</value></data>
+  <data name="FilledUnit" xml:space="preserve"><value>Filled {0} field(s) for {1}.</value></data>
+  <data name="FilledFromCall" xml:space="preserve"><value>Filled {0} field(s) from the call.</value></data>
+  <data name="NothingNew" xml:space="preserve"><value>Nothing new to fill.</value></data>
+  <data name="SetBy" xml:space="preserve"><value>Set by {0}</value></data>
+  <data name="SetByVia" xml:space="preserve"><value>Set by {0} · {1}</value></data>
+  <data name="Via" xml:space="preserve"><value>via {0}</value></data>
+  <data name="FilterAll" xml:space="preserve"><value>All</value></data>
+  <data name="FilterUnits" xml:space="preserve"><value>Units</value></data>
+  <data name="FilterPersonnel" xml:space="preserve"><value>Personnel</value></data>
+  <data name="FilterDispatch" xml:space="preserve"><value>Dispatch</value></data>
+  <data name="FilterCommand" xml:space="preserve"><value>Command</value></data>
+  <data name="NoEntries" xml:space="preserve"><value>Nothing recorded for this call yet.</value></data>
+  <data name="KindCall" xml:space="preserve"><value>Call</value></data>
+  <data name="KindUnitDispatch" xml:space="preserve"><value>Dispatch</value></data>
+  <data name="KindPersonnelDispatch" xml:space="preserve"><value>Dispatch</value></data>
+  <data name="KindUnitStatus" xml:space="preserve"><value>Unit</value></data>
+  <data name="KindPersonnelStatus" xml:space="preserve"><value>Personnel</value></data>
+  <data name="KindCommand" xml:space="preserve"><value>Command</value></data>
+  <data name="KindObjective" xml:space="preserve"><value>Objective</value></data>
+  <data name="KindCheckIn" xml:space="preserve"><value>Check-in</value></data>
+  <data name="LinkInferred" xml:space="preserve"><value>Inferred</value></data>
+  <data name="LinkAuto" xml:space="preserve"><value>Auto-linked</value></data>
+  <data name="LinkHint" xml:space="preserve"><value>Resgrid tied this status to the call; check it before relying on it.</value></data>
+  <data name="FillBlanks" xml:space="preserve"><value>Fill blanks</value></data>
+  <data name="Replace" xml:space="preserve"><value>Replace</value></data>
+  <data name="NoUnits" xml:space="preserve"><value>No units on this call.</value></data>
+  <data name="Dispatched" xml:space="preserve"><value>Dispatched</value></data>
+  <data name="AssignedByCommand" xml:space="preserve"><value>Assigned by command</value></data>
+  <data name="Enroute" xml:space="preserve"><value>En route</value></data>
+  <data name="OnScene" xml:space="preserve"><value>On scene</value></data>
+  <data name="Staging" xml:space="preserve"><value>Staging</value></data>
+  <data name="Cancelled" xml:space="preserve"><value>Cancelled</value></data>
+  <data name="Cleared" xml:space="preserve"><value>Cleared</value></data>
+  <data name="InService" xml:space="preserve"><value>In service</value></data>
+  <data name="CommandAssigned" xml:space="preserve"><value>Assigned (command)</value></data>
+  <data name="CommandReleased" xml:space="preserve"><value>Released (command)</value></data>
+  <data name="CrewList" xml:space="preserve"><value>Crew ({0}): {1}</value></data>
+  <data name="NoPersonnel" xml:space="preserve"><value>No personnel on this call.</value></data>
+  <data name="NotEngaged" xml:space="preserve"><value>Paged, no response</value></data>
+  <data name="Responding" xml:space="preserve"><value>Responding</value></data>
+  <data name="First" xml:space="preserve"><value>First status</value></data>
+  <data name="Last" xml:space="preserve"><value>Last status</value></data>
+  <data name="NoCommand" xml:space="preserve"><value>This call did not run under Incident Command.</value></data>
+  <data name="CommandEstablished" xml:space="preserve"><value>Command established</value></data>
+  <data name="CommandClosed" xml:space="preserve"><value>Command closed</value></data>
+  <data name="Commanders" xml:space="preserve"><value>Incident commanders: {0}</value></data>
+  <data name="TacticTimestamps" xml:space="preserve"><value>Tactic timestamps</value></data>
+  <data name="TacticTimestampsHint" xml:space="preserve"><value>Prefilled from Incident Command objectives when their names say which milestone they mark. Leave a field blank when the milestone was not reached.</value></data>
+  <data name="NoTactics" xml:space="preserve"><value>No command objective names a tactic milestone.</value></data>
+  <data name="FillTactics" xml:space="preserve"><value>Fill blank tactic timestamps</value></data>
+  <data name="FilledCount" xml:space="preserve"><value>Filled {0} field(s).</value></data>
+  <data name="MutualAid" xml:space="preserve"><value>Mutual aid</value></data>
+  <data name="NoMutualAid" xml:space="preserve"><value>No mutual aid was tracked.</value></data>
+  <data name="NoRunReports" xml:space="preserve"><value>No other run reports for this call.</value></data>
+  <data name="Final" xml:space="preserve"><value>Final</value></data>
+  <data name="NotFinal" xml:space="preserve"><value>Draft</value></data>
+  <data name="ByAuthor" xml:space="preserve"><value>By {0}</value></data>
+  <data name="Withheld" xml:space="preserve"><value>Some content is protected and is not shown.</value></data>
+  <data name="Started" xml:space="preserve"><value>Started</value></data>
+  <data name="Ended" xml:space="preserve"><value>Ended</value></data>
+  <data name="CrewCount" xml:space="preserve"><value>{0} crew</value></data>
+  <data name="PersonnelList" xml:space="preserve"><value>Personnel: {0}</value></data>
+  <data name="Location" xml:space="preserve"><value>Location</value></data>
+  <data name="InitialReport" xml:space="preserve"><value>Initial report</value></data>
+  <data name="Cause" xml:space="preserve"><value>Cause</value></data>
+  <data name="OtherAgencies" xml:space="preserve"><value>Other agencies</value></data>
+  <data name="OtherUnits" xml:space="preserve"><value>Other units</value></data>
+  <data name="Narrative" xml:space="preserve"><value>Narrative</value></data>
+  <data name="AddToNarrative" xml:space="preserve"><value>Add to narrative</value></data>
+  <data name="NarrativeAdded" xml:space="preserve"><value>Narrative added to the report.</value></data>
+  <data name="PickCall" xml:space="preserve"><value>Pick a call to see its data.</value></data>
+  <data name="Loading" xml:space="preserve"><value>Loading call data…</value></data>
+  <data name="PartialSources" xml:space="preserve"><value>Some sources could not be read: {0}.</value></data>
+  <data name="LoadFailed" xml:space="preserve"><value>Call data could not be loaded.</value></data>
+  <data name="OriginWeb" xml:space="preserve"><value>website</value></data>
+  <data name="OriginResponderApp" xml:space="preserve"><value>Responder app</value></data>
+  <data name="OriginUnitApp" xml:space="preserve"><value>Unit app</value></data>
+  <data name="OriginDispatchApp" xml:space="preserve"><value>Dispatch app</value></data>
+  <data name="OriginBigBoard" xml:space="preserve"><value>Big Board</value></data>
+  <data name="OriginCommandApp" xml:space="preserve"><value>Command app</value></data>
+  <data name="OriginMcp" xml:space="preserve"><value>AI assistant</value></data>
+  <data name="OriginApi" xml:space="preserve"><value>API client</value></data>
+  <data name="OriginSms" xml:space="preserve"><value>text message</value></data>
+  <data name="OriginVoice" xml:space="preserve"><value>phone call</value></data>
+  <data name="OriginChat" xml:space="preserve"><value>chat</value></data>
+  <data name="OriginDispatchAutomation" xml:space="preserve"><value>automatic on dispatch</value></data>
+  <data name="OriginSchedule" xml:space="preserve"><value>scheduled reset</value></data>
+  <data name="OriginMaintenance" xml:space="preserve"><value>maintenance hold</value></data>
+  <data name="Tactic_command_established" xml:space="preserve"><value>Command established</value></data>
+  <data name="Tactic_completed_sizeup" xml:space="preserve"><value>Size-up completed</value></data>
+  <data name="Tactic_suppression_complete" xml:space="preserve"><value>Suppression complete</value></data>
+  <data name="Tactic_primary_search_begin" xml:space="preserve"><value>Primary search began</value></data>
+  <data name="Tactic_primary_search_complete" xml:space="preserve"><value>Primary search complete</value></data>
+  <data name="Tactic_water_on_fire" xml:space="preserve"><value>Water on fire</value></data>
+  <data name="Tactic_fire_under_control" xml:space="preserve"><value>Fire under control</value></data>
+  <data name="Tactic_fire_knocked_down" xml:space="preserve"><value>Fire knocked down</value></data>
+  <data name="Tactic_extrication_complete" xml:space="preserve"><value>Extrication complete</value></data>
+  <data name="RefreshFromCall" xml:space="preserve"><value>Refresh from call</value></data>
+  <data name="RefreshFromCallHint" xml:space="preserve"><value>Fills blank fields and updates values you have not changed from the call, unit and personnel statuses and Incident Command. Your own entries are kept.</value></data>
+  <data name="RefreshUnsavedWarning" xml:space="preserve"><value>Refreshing reloads the saved draft. Changes on this page that you have not saved will be lost. Continue?</value></data>
+  <data name="RefreshedFromCall" xml:space="preserve"><value>Refreshed from the call: {0} filled, {1} updated, {2} added.</value></data>
+  <data name="RefreshNothingNew" xml:space="preserve"><value>Refreshed from the call: nothing new.</value></data>
+  <data name="StartRunReport" xml:space="preserve"><value>Run report</value></data>
+</root>

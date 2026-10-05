@@ -30,8 +30,7 @@
       "Secret": true,
       "Location": {
         "Controller": "Department",
-        "Action": "CallSettings",
-        "Field": "RssFeedKeyForActiveCalls"
+        "Action": "Api"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -63,8 +62,7 @@
       "Secret": true,
       "Location": {
         "Controller": "Department",
-        "Action": "TextSettings",
-        "Field": "TextToCallNumber"
+        "Action": "TextSettings"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -97,7 +95,7 @@
       "Location": {
         "Controller": "Department",
         "Action": "TextSettings",
-        "Field": "TextToCallImportFormat"
+        "Field": "TextCallType"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -130,7 +128,7 @@
       "Location": {
         "Controller": "Department",
         "Action": "TextSettings",
-        "Field": "TextToCallSourceNumbers"
+        "Field": "DepartmentTextToCallSourceNumbers"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -195,8 +193,7 @@
       "Secret": true,
       "Location": {
         "Controller": "Department",
-        "Action": "CallSettings",
-        "Field": "InternalDispatchEmail"
+        "Action": "CallSettings"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -229,7 +226,7 @@
       "Location": {
         "Controller": "Department",
         "Action": "Settings",
-        "Field": "CallsSortOrder"
+        "Field": "CallsSort"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -332,7 +329,7 @@
       "Location": {
         "Controller": "Department",
         "Action": "DispatchSettings",
-        "Field": "ShiftCallDispatchPersonnelStatusToSet"
+        "Field": "ShiftDispatchStatus"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -365,7 +362,7 @@
       "Location": {
         "Controller": "Department",
         "Action": "DispatchSettings",
-        "Field": "ShiftCallReleasePersonnelStatusToSet"
+        "Field": "ShiftClearStatus"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -497,7 +494,7 @@
       "Location": {
         "Controller": "Department",
         "Action": "DispatchSettings",
-        "Field": "UnitCallDispatchStatusToSet"
+        "Field": "UnitDispatchStatus"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -530,7 +527,7 @@
       "Location": {
         "Controller": "Department",
         "Action": "DispatchSettings",
-        "Field": "UnitCallReleaseStatusToSet"
+        "Field": "UnitClearStatus"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -562,8 +559,7 @@
       "Secret": false,
       "Location": {
         "Controller": "Department",
-        "Action": "DispatchSettings",
-        "Field": "UnitCallStatusOverridesByUnitType"
+        "Action": "DispatchSettings"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -663,8 +659,7 @@
       "Secret": false,
       "Location": {
         "Controller": "Department",
-        "Action": "DispatchSettings",
-        "Field": "DispatchRecommendationConfig"
+        "Action": "DispatchSettings"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -698,8 +693,7 @@
       "Secret": false,
       "Location": {
         "Controller": "Department",
-        "Action": "DispatchSettings",
-        "Field": "NewCallFieldPolicy"
+        "Action": "DispatchSettings"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -1792,7 +1786,7 @@
       "Secret": false,
       "Location": {
         "Controller": "Department",
-        "Action": "TextSettings",
+        "Action": "Settings",
         "Field": "TtsLanguage"
       },
       "Owner": "Resgrid.Core",

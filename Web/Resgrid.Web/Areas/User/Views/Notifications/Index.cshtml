@@ -79,7 +79,7 @@
 										<td>
 											@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 											{
-												<a style="text-decoration: none;" class="btn btn-xs btn-danger" href="@Url.Action("Delete", "Notifications", new { area = "User", notificationId = n.DepartmentNotificationId })" data-confirm="@localizer["DeleteNotificationConfirm"]" rel="nofollow"><i class="icon-trash"></i> @localizer["Delete"]</a>
+												<form method="post" action="@Url.Action("Delete", "Notifications", new { area = "User", notificationId = n.DepartmentNotificationId })" style="display: inline;">@Html.AntiForgeryToken()<button type="submit" style="text-decoration: none;" class="btn btn-xs btn-danger" data-confirm="@localizer["DeleteNotificationConfirm"]"><i class="icon-trash"></i> @localizer["Delete"]</button></form>
 											}
 										</td>
 									</tr>

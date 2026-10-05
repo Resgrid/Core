@@ -475,20 +475,21 @@ namespace Resgrid.Tests.Services
 
 			var draft = await _service.BuildSalarySurveyDraftAsync(survey.CalOesMarsRateProfileId, DeptId, new DateTime(2026, 6, 1), User, null, null);
 			draft.IsReady.Should().BeTrue();
-			draft.LinesWritten.Should().Be(2);
-			draft.EmployeesIncluded.Should().Be(4);
+			// Audit 2026-10-05 item 2.14: a one-person classification's mean is that person's rate, so it is never drafted.
+			draft.LinesWritten.Should().Be(1);
+			draft.EmployeesIncluded.Should().Be(3);
 			draft.UnknownClassifications.Should().Equal("Dog Handler");
 			draft.Classifications.Single(c => c.ClassificationCode == "Captain").StraightRate.Should().Be(61.33m);
 			draft.Classifications.Single(c => c.ClassificationCode == "Captain").OvertimeRate.Should().Be(94m, "1.5 × 61.3333 + the $2 per-overtime-hour adder");
-			draft.Classifications.Single(c => c.ClassificationCode == "Firefighter").SingleEmployee.Should().BeTrue();
+			draft.Classifications.Should().NotContain(c => c.ClassificationCode == "Firefighter", "below the minimum group size");
 
 			var profile = await _service.GetRateProfileAsync(survey.CalOesMarsRateProfileId, DeptId);
 			var captain = profile.Lines.Single(l => l.ClassificationCode == "Captain");
 			captain.StraightRate.Should().Be(61.33m); captain.IncludesWorkersComp.Should().BeTrue("existing line flags survive; only the rates are replaced");
 			captain.SourceInputVersions.Should().Contain("workforce-aggregate").And.Contain("\"Employees\":3");
-			profile.Lines.Single(l => l.ClassificationCode == "Firefighter").OvertimeRate.Should().Be(60m);
+			profile.Lines.Should().NotContain(l => l.ClassificationCode == "Firefighter", "a single employee's rate is never written");
 			profile.Lines.Should().NotContain(l => l.ClassificationCode == "Dog Handler");
-			_audits.Should().Contain(a => a.Type == AuditLogTypes.CalOesMarsRateDraftBuilt && a.After.Contains("\"LinesWritten\":2") && !a.After.Contains("61.33"), "the audit carries counts, never rates");
+			_audits.Should().Contain(a => a.Type == AuditLogTypes.CalOesMarsRateDraftBuilt && a.After.Contains("\"LinesWritten\":1") && a.After.Contains("\"SuppressedClassifications\":1") && !a.After.Contains("61.33"), "the audit carries counts, never rates");
 
 			var admin = await _service.SaveRateProfileAsync(new CalOesMarsRateProfile { DepartmentId = DeptId, SubmissionYear = 2026, SubmissionType = (int)CalOesMarsSubmissionTypes.AdministrativeRate, EffectiveOn = new DateTime(2026, 1, 1) }, User, null, null);
 			(await _service.BuildSalarySurveyDraftAsync(admin.CalOesMarsRateProfileId, DeptId, new DateTime(2026, 6, 1), User, null, null)).Blockers.Should().Equal("profile_type");

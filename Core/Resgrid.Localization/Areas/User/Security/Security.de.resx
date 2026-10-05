@@ -1226,6 +1226,15 @@
   <data name="PermOptionDepartmentGroupAdminsAndSelectRoles" xml:space="preserve">
     <value>Abteilungs- und Gruppenadministratoren sowie ausgewählte Rollen</value>
   </data>
+  <data name="PermOptionNotSavedCreateWorkflow" xml:space="preserve">
+    <value>Nicht gespeichert: Abteilungsadministratoren bearbeiten, alle können ansehen</value>
+  </data>
+  <data name="PermOptionNotSavedManageWorkflowCredentials" xml:space="preserve">
+    <value>Nicht gespeichert: Abteilungsadministratoren bearbeiten, alle sehen die Namen</value>
+  </data>
+  <data name="PermOptionNotSavedViewWorkflowRuns" xml:space="preserve">
+    <value>Nicht gespeichert: alle können ansehen, Abteilungsadministratoren brechen ab</value>
+  </data>
   <data name="BreadcrumbSecurity" xml:space="preserve">
     <value>Sicherheit und Berechtigungen</value>
   </data>
@@ -1317,7 +1326,7 @@
     <value>Wer kann Inventar anpassen</value>
   </data>
   <data name="PermAdjustInventoryNote" xml:space="preserve">
-    <value>Diese Option legt fest, wer Inventarbestände im System anpassen kann. Standardmäßig können alle das Inventar anpassen.</value>
+    <value>Diese Option legt fest, wer Inventarbestände im System anpassen kann. Solange kein Wert gespeichert ist, können nur Abteilungsadministratoren das Inventar anpassen.</value>
   </data>
   <data name="PermViewPersonnelLocationLabel" xml:space="preserve">
     <value>Wer kann den Standort des Personals sehen</value>
@@ -1371,19 +1380,19 @@
     <value>Wer kann Workflows erstellen/bearbeiten</value>
   </data>
   <data name="PermCreateWorkflowNote" xml:space="preserve">
-    <value>Diese Option legt fest, wer Workflows und Workflow-Schritte erstellen, bearbeiten und löschen kann. Standardmäßig können nur Abteilungsadministratoren Workflows verwalten.</value>
+    <value>Diese Option legt fest, wer Workflows und Workflow-Schritte erstellen, bearbeiten und löschen kann. Solange kein Wert gespeichert ist, können nur Abteilungsadministratoren Workflows verwalten und alle Mitglieder sie ansehen; jeder gespeicherte Wert schränkt auch ein, wer sie ansehen kann.</value>
   </data>
   <data name="PermManageWorkflowCredentialsLabel" xml:space="preserve">
     <value>Wer kann Workflow-Zugangsdaten verwalten</value>
   </data>
   <data name="PermManageWorkflowCredentialsNote" xml:space="preserve">
-    <value>Diese Option legt fest, wer verschlüsselte Zugangsdaten, die von Workflow-Aktionen verwendet werden (z. B. SMTP-Passwörter, API-Schlüssel), erstellen, bearbeiten und löschen kann. Standardmäßig können nur Abteilungsadministratoren Zugangsdaten verwalten.</value>
+    <value>Diese Option legt fest, wer verschlüsselte Zugangsdaten, die von Workflow-Aktionen verwendet werden (z. B. SMTP-Passwörter, API-Schlüssel), erstellen, bearbeiten und löschen kann. Solange kein Wert gespeichert ist, können nur Abteilungsadministratoren Zugangsdaten verwalten und alle Mitglieder ihre Namen sehen; jeder gespeicherte Wert schränkt auch ein, wer sie sehen kann.</value>
   </data>
   <data name="PermViewWorkflowRunsLabel" xml:space="preserve">
     <value>Wer kann Workflow-Ausführungen anzeigen</value>
   </data>
   <data name="PermViewWorkflowRunsNote" xml:space="preserve">
-    <value>Diese Option legt fest, wer den Ausführungsverlauf von Workflows, Ausführungsprotokolle und Status-Dashboards anzeigen kann. Standardmäßig können nur Abteilungsadministratoren Workflow-Ausführungen anzeigen.</value>
+    <value>Diese Option legt fest, wer den Ausführungsverlauf von Workflows, Ausführungsprotokolle und Status-Dashboards anzeigen kann. Solange kein Wert gespeichert ist, können alle Mitglieder Workflow-Ausführungen anzeigen und nur Abteilungsadministratoren sie abbrechen oder leeren; ein anderer gespeicherter Wert schränkt ein, wer sie anzeigen kann, und „Alle“ erlaubt allen Mitgliedern auch das Abbrechen und Leeren.</value>
   </data>
   <data name="SsoPageTitle" xml:space="preserve">
     <value>Single Sign-On (SSO) und SCIM</value>
@@ -2106,11 +2115,11 @@
   <data name="PermCommandAppLoginLabel" xml:space="preserve"><value>Anmeldung Command-App</value></data>
   <data name="PermCommandAppLoginNote" xml:space="preserve"><value>Legt fest, wer als Einsatzleiter handeln darf: sich an der IC-App anmelden, bei einem Einsatz die Einsatzleitung übernehmen und Einsatzführungstafeln anzeigen. Wenn Sie diese Berechtigung enger als „Alle“ fassen, können die ausgewählten Personen außerdem an jeder Einsatzführungstafel mitarbeiten (Ressourcen zuweisen und verschieben, Timer und Kräfteübersicht führen), ohne dort eine ICS-Funktion innezuhaben – nützlich, um Disponenten in der Dispatch-App mithelfen zu lassen. Solange „Alle“ eingestellt ist, bleiben Aktionen auf der Tafel dem Einsatzleiter und den zugewiesenen ICS-Rollen vorbehalten.</value></data>
   <data name="PermAdpSectionHeader" xml:space="preserve"><value>Erweiterter Datenschutz</value></data>
-  <data name="PermAdpSectionNote" xml:space="preserve"><value>Diese Berechtigungen legen fest, wer mit verschlüsselten (geschützten) Daten arbeiten darf, wenn das Add-on „Erweiterter Datenschutz“ aktiv ist. Jedes Sichtbarmachen oder Bearbeiten erfordert zusätzlich eine aktuelle Zwei-Faktor-Bestätigung; diese Einstellungen bestimmen, wer es überhaupt versuchen darf. Anders als bei den meisten Resgrid-Berechtigungen gilt für nicht gesetzte Werte standardmäßig die angezeigte restriktive Auswahl.</value></data>
+  <data name="PermAdpSectionNote" xml:space="preserve"><value>Wenn das Add-on „Erweiterter Datenschutz“ aktiv ist, legen diese beiden Berechtigungen fest, wer geschützte Einsatzdetails nach Eingabe seiner PIN per SMS oder Sprachanruf erhalten darf und wer ändern darf, wie geschützte Inhalte Resgrid verlassen. Das Sichtbarmachen oder Bearbeiten geschützter Daten am Bildschirm richtet sich nach den Zugriffsregeln der jeweiligen Seite und einer aktuellen Zwei-Faktor-Bestätigung. Anders als bei den meisten Resgrid-Berechtigungen gilt für nicht gesetzte Werte standardmäßig die angezeigte Auswahl.</value></data>
   <data name="PermAdpManageLabel" xml:space="preserve"><value>Datenschutzeinstellungen verwalten</value></data>
   <data name="PermAdpManageNote" xml:space="preserve"><value>Wer Einstellungen des erweiterten Datenschutzes ändern darf, etwa das Bestätigungszeitfenster und die Optionen für Benachrichtigungsinhalte. Kauf, Anmeldung und Kündigung bleiben immer dem verwaltenden Mitglied der Abteilung vorbehalten.</value></data>
   <data name="PermAdpViewCallLabel" xml:space="preserve"><value>Geschützte Einsatzdaten anzeigen</value></data>
-  <data name="PermAdpViewCallNote" xml:space="preserve"><value>Wer geschützte Einsatzfelder (Einsatzart, Adresse, Kontaktdaten, Notizen) nach einer Zwei-Faktor-Bestätigung sichtbar machen darf. Standardwert ist „Alle“, da Einsatzkräfte eine Alarmierung lesen können müssen.</value></data>
+  <data name="PermAdpViewCallNote" xml:space="preserve"><value>Wer geschützte Einsatzdetails (Einsatzart, Adresse, Kontaktdaten, Notizen) nach Eingabe seiner PIN per SMS oder Sprachanruf erhalten darf, sofern die PIN-Freigabe aktiviert ist. Das Sichtbarmachen am Bildschirm und in den Apps richtet sich nach dem Zugriff auf den Einsatz und einer Zwei-Faktor-Bestätigung. Standardwert ist „Alle“, da Einsatzkräfte eine Alarmierung lesen können müssen.</value></data>
   <data name="PermAdpEditCallLabel" xml:space="preserve"><value>Geschützte Einsatzdaten bearbeiten</value></data>
   <data name="PermAdpEditCallNote" xml:space="preserve"><value>Wer geschützte Einsatzfelder nach einer Zwei-Faktor-Bestätigung bearbeiten darf. Standardwert ist „Alle“, passend zum normalen Einsatzablauf.</value></data>
   <data name="PermAdpViewPersonnelLabel" xml:space="preserve"><value>Geschützte Personaldaten anzeigen</value></data>

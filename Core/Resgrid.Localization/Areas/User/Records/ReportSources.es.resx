@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="PanelTitle" xml:space="preserve"><value>Datos de la llamada</value></data>
+  <data name="PanelIntro" xml:space="preserve"><value>Estados, despachos, entradas del mando y otros informes de servicio de esta llamada, con quién registró cada uno. Haga clic en un campo de hora del informe y luego en Usar.</value></data>
+  <data name="Reload" xml:space="preserve"><value>Recargar</value></data>
+  <data name="FillFromCall" xml:space="preserve"><value>Rellenar desde la llamada</value></data>
+  <data name="FillFromCallHint" xml:space="preserve"><value>Rellena con datos de la llamada las horas de inicio y fin, la ubicación, el informe inicial, las unidades y el personal que estén vacíos.</value></data>
+  <data name="TabTimeline" xml:space="preserve"><value>Cronología</value></data>
+  <data name="TabUnits" xml:space="preserve"><value>Unidades</value></data>
+  <data name="TabPersonnel" xml:space="preserve"><value>Personal</value></data>
+  <data name="TabCommand" xml:space="preserve"><value>Mando</value></data>
+  <data name="TabRunReports" xml:space="preserve"><value>Informes de servicio</value></data>
+  <data name="NoTarget" xml:space="preserve"><value>Primero haga clic en un campo de hora del informe y luego en Usar.</value></data>
+  <data name="UsedTime" xml:space="preserve"><value>Establecido en {0}.</value></data>
+  <data name="Use" xml:space="preserve"><value>Usar</value></data>
+  <data name="UseHint" xml:space="preserve"><value>Poner esta hora en el último campo de hora en el que hizo clic</value></data>
+  <data name="UnitNotOnReport" xml:space="preserve"><value>{0} no está en la lista de unidades de este informe.</value></data>
+  <data name="NothingToFill" xml:space="preserve"><value>Nada que rellenar para {0}.</value></data>
+  <data name="FilledUnit" xml:space="preserve"><value>Se rellenaron {0} campo(s) de {1}.</value></data>
+  <data name="FilledFromCall" xml:space="preserve"><value>Se rellenaron {0} campo(s) desde la llamada.</value></data>
+  <data name="NothingNew" xml:space="preserve"><value>No hay nada nuevo que rellenar.</value></data>
+  <data name="SetBy" xml:space="preserve"><value>Registrado por {0}</value></data>
+  <data name="SetByVia" xml:space="preserve"><value>Registrado por {0} · {1}</value></data>
+  <data name="Via" xml:space="preserve"><value>desde {0}</value></data>
+  <data name="FilterAll" xml:space="preserve"><value>Todo</value></data>
+  <data name="FilterUnits" xml:space="preserve"><value>Unidades</value></data>
+  <data name="FilterPersonnel" xml:space="preserve"><value>Personal</value></data>
+  <data name="FilterDispatch" xml:space="preserve"><value>Despacho</value></data>
+  <data name="FilterCommand" xml:space="preserve"><value>Mando</value></data>
+  <data name="NoEntries" xml:space="preserve"><value>Aún no hay nada registrado para esta llamada.</value></data>
+  <data name="KindCall" xml:space="preserve"><value>Llamada</value></data>
+  <data name="KindUnitDispatch" xml:space="preserve"><value>Despacho</value></data>
+  <data name="KindPersonnelDispatch" xml:space="preserve"><value>Despacho</value></data>
+  <data name="KindUnitStatus" xml:space="preserve"><value>Unidad</value></data>
+  <data name="KindPersonnelStatus" xml:space="preserve"><value>Personal</value></data>
+  <data name="KindCommand" xml:space="preserve"><value>Mando</value></data>
+  <data name="KindObjective" xml:space="preserve"><value>Objetivo</value></data>
+  <data name="KindCheckIn" xml:space="preserve"><value>Registro de presencia</value></data>
+  <data name="LinkInferred" xml:space="preserve"><value>Inferido</value></data>
+  <data name="LinkAuto" xml:space="preserve"><value>Vinculado automáticamente</value></data>
+  <data name="LinkHint" xml:space="preserve"><value>Resgrid vinculó este estado a la llamada; compruébelo antes de usarlo.</value></data>
+  <data name="FillBlanks" xml:space="preserve"><value>Rellenar vacíos</value></data>
+  <data name="Replace" xml:space="preserve"><value>Reemplazar</value></data>
+  <data name="NoUnits" xml:space="preserve"><value>No hay unidades en esta llamada.</value></data>
+  <data name="Dispatched" xml:space="preserve"><value>Despachado</value></data>
+  <data name="AssignedByCommand" xml:space="preserve"><value>Asignado por el mando</value></data>
+  <data name="Enroute" xml:space="preserve"><value>En camino</value></data>
+  <data name="OnScene" xml:space="preserve"><value>En escena</value></data>
+  <data name="Staging" xml:space="preserve"><value>En espera</value></data>
+  <data name="Cancelled" xml:space="preserve"><value>Cancelado</value></data>
+  <data name="Cleared" xml:space="preserve"><value>Liberado</value></data>
+  <data name="InService" xml:space="preserve"><value>En servicio</value></data>
+  <data name="CommandAssigned" xml:space="preserve"><value>Asignado (mando)</value></data>
+  <data name="CommandReleased" xml:space="preserve"><value>Liberado (mando)</value></data>
+  <data name="CrewList" xml:space="preserve"><value>Dotación ({0}): {1}</value></data>
+  <data name="NoPersonnel" xml:space="preserve"><value>No hay personal en esta llamada.</value></data>
+  <data name="NotEngaged" xml:space="preserve"><value>Avisado, sin respuesta</value></data>
+  <data name="Responding" xml:space="preserve"><value>Respondiendo</value></data>
+  <data name="First" xml:space="preserve"><value>Primer estado</value></data>
+  <data name="Last" xml:space="preserve"><value>Último estado</value></data>
+  <data name="NoCommand" xml:space="preserve"><value>Esta llamada no se gestionó bajo un mando de incidente.</value></data>
+  <data name="CommandEstablished" xml:space="preserve"><value>Mando establecido</value></data>
+  <data name="CommandClosed" xml:space="preserve"><value>Mando cerrado</value></data>
+  <data name="Commanders" xml:space="preserve"><value>Jefes de incidente: {0}</value></data>
+  <data name="TacticTimestamps" xml:space="preserve"><value>Marcas de tiempo tácticas</value></data>
+  <data name="TacticTimestampsHint" xml:space="preserve"><value>Se rellena con los objetivos del mando cuando su nombre indica el hito que marcan. Deje el campo vacío si el hito no se alcanzó.</value></data>
+  <data name="NoTactics" xml:space="preserve"><value>Ningún objetivo del mando indica un hito táctico.</value></data>
+  <data name="FillTactics" xml:space="preserve"><value>Rellenar marcas tácticas vacías</value></data>
+  <data name="FilledCount" xml:space="preserve"><value>Se rellenaron {0} campo(s).</value></data>
+  <data name="MutualAid" xml:space="preserve"><value>Ayuda mutua</value></data>
+  <data name="NoMutualAid" xml:space="preserve"><value>No se registró ayuda mutua.</value></data>
+  <data name="NoRunReports" xml:space="preserve"><value>No hay otros informes de servicio para esta llamada.</value></data>
+  <data name="Final" xml:space="preserve"><value>Definitivo</value></data>
+  <data name="NotFinal" xml:space="preserve"><value>Borrador</value></data>
+  <data name="ByAuthor" xml:space="preserve"><value>Por {0}</value></data>
+  <data name="Withheld" xml:space="preserve"><value>Parte del contenido está protegido y no se muestra.</value></data>
+  <data name="Started" xml:space="preserve"><value>Inicio</value></data>
+  <data name="Ended" xml:space="preserve"><value>Fin</value></data>
+  <data name="CrewCount" xml:space="preserve"><value>{0} de dotación</value></data>
+  <data name="PersonnelList" xml:space="preserve"><value>Personal: {0} (lista)</value></data>
+  <data name="Location" xml:space="preserve"><value>Ubicación</value></data>
+  <data name="InitialReport" xml:space="preserve"><value>Informe inicial</value></data>
+  <data name="Cause" xml:space="preserve"><value>Causa</value></data>
+  <data name="OtherAgencies" xml:space="preserve"><value>Otras agencias</value></data>
+  <data name="OtherUnits" xml:space="preserve"><value>Otras unidades</value></data>
+  <data name="Narrative" xml:space="preserve"><value>Narrativa</value></data>
+  <data name="AddToNarrative" xml:space="preserve"><value>Añadir a la narrativa</value></data>
+  <data name="NarrativeAdded" xml:space="preserve"><value>Narrativa añadida al informe.</value></data>
+  <data name="PickCall" xml:space="preserve"><value>Elija una llamada para ver sus datos.</value></data>
+  <data name="Loading" xml:space="preserve"><value>Cargando datos de la llamada…</value></data>
+  <data name="PartialSources" xml:space="preserve"><value>No se pudieron leer algunas fuentes: {0}.</value></data>
+  <data name="LoadFailed" xml:space="preserve"><value>No se pudieron cargar los datos de la llamada.</value></data>
+  <data name="OriginWeb" xml:space="preserve"><value>sitio web</value></data>
+  <data name="OriginResponderApp" xml:space="preserve"><value>app Responder</value></data>
+  <data name="OriginUnitApp" xml:space="preserve"><value>app de unidad</value></data>
+  <data name="OriginDispatchApp" xml:space="preserve"><value>app de despacho</value></data>
+  <data name="OriginBigBoard" xml:space="preserve"><value>pantalla Big Board</value></data>
+  <data name="OriginCommandApp" xml:space="preserve"><value>app de mando</value></data>
+  <data name="OriginMcp" xml:space="preserve"><value>asistente de IA</value></data>
+  <data name="OriginApi" xml:space="preserve"><value>cliente API</value></data>
+  <data name="OriginSms" xml:space="preserve"><value>mensaje de texto</value></data>
+  <data name="OriginVoice" xml:space="preserve"><value>llamada telefónica</value></data>
+  <data name="OriginChat" xml:space="preserve"><value>chat de mensajería</value></data>
+  <data name="OriginDispatchAutomation" xml:space="preserve"><value>automático al despachar</value></data>
+  <data name="OriginSchedule" xml:space="preserve"><value>restablecimiento programado</value></data>
+  <data name="OriginMaintenance" xml:space="preserve"><value>bloqueo por mantenimiento</value></data>
+  <data name="Tactic_command_established" xml:space="preserve"><value>Mando establecido</value></data>
+  <data name="Tactic_completed_sizeup" xml:space="preserve"><value>Evaluación inicial completada</value></data>
+  <data name="Tactic_suppression_complete" xml:space="preserve"><value>Extinción completada</value></data>
+  <data name="Tactic_primary_search_begin" xml:space="preserve"><value>Búsqueda primaria iniciada</value></data>
+  <data name="Tactic_primary_search_complete" xml:space="preserve"><value>Búsqueda primaria completada</value></data>
+  <data name="Tactic_water_on_fire" xml:space="preserve"><value>Agua sobre el fuego</value></data>
+  <data name="Tactic_fire_under_control" xml:space="preserve"><value>Fuego bajo control</value></data>
+  <data name="Tactic_fire_knocked_down" xml:space="preserve"><value>Fuego sofocado</value></data>
+  <data name="Tactic_extrication_complete" xml:space="preserve"><value>Extricación completada</value></data>
+  <data name="RefreshFromCall" xml:space="preserve"><value>Actualizar desde la llamada</value></data>
+  <data name="RefreshFromCallHint" xml:space="preserve"><value>Rellena los campos vacíos y actualiza los valores que no ha cambiado a partir de la llamada, los estados de unidades y personal y el mando. Sus propios datos se conservan.</value></data>
+  <data name="RefreshUnsavedWarning" xml:space="preserve"><value>Al actualizar se recarga el borrador guardado. Se perderán los cambios no guardados de esta página. ¿Continuar?</value></data>
+  <data name="RefreshedFromCall" xml:space="preserve"><value>Actualizado desde la llamada: {0} rellenados, {1} actualizados, {2} añadidos.</value></data>
+  <data name="RefreshNothingNew" xml:space="preserve"><value>Actualizado desde la llamada: nada nuevo.</value></data>
+  <data name="StartRunReport" xml:space="preserve"><value>Informe de servicio</value></data>
+</root>

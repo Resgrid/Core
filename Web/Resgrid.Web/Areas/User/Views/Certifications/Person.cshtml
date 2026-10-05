@@ -5,10 +5,12 @@
     ViewData["Tab"] = "Dashboard";
     ViewData["Title"] = Model.Name;
     ViewData["Subtitle"] = localizer["Certifications"].Value;
+    // The Profile add/edit forms take your own records or ManageCertifications (the record page's rule); others only read here.
+    var canEdit = Model.CanManage || string.Equals(Model.UserId, ClaimsAuthorizationHelper.GetUserId(), StringComparison.OrdinalIgnoreCase);
     Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
         <a class="btn btn-success" asp-controller="Profile" asp-action="AddCertification" asp-route-area="User" asp-route-userId="@Model.UserId"><i class="fa fa-plus"></i> @localizer["AddRecord"]</a>
     </text>;
-    ViewData["HeaderActions"] = headerActions;
+    ViewData["HeaderActions"] = canEdit ? headerActions : null;
 }
 
 @await Html.PartialAsync("_Shell")
@@ -32,7 +34,7 @@
                                 <td>@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(record.Type)</td>
                                 <td>@record.ExpiresOn?.ToString("yyyy-MM-dd")</td>
                                 <td>@await Html.PartialAsync("_StatusBadge", record.Status)</td>
-                                <td><a class="btn btn-xs btn-primary" asp-controller="Profile" asp-action="EditCertification" asp-route-area="User" asp-route-certId="@record.PersonnelCertificationId">@localizer["Edit"]</a></td>
+                                <td>@if (canEdit) { <a class="btn btn-xs btn-primary" asp-controller="Profile" asp-action="EditCertification" asp-route-area="User" asp-route-certId="@record.PersonnelCertificationId">@localizer["Edit"]</a> }</td>
                             </tr>
                         }
                     </tbody>

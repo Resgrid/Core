@@ -61,7 +61,7 @@ namespace Resgrid.Tests.Web.Services
 			ClaimsAuthorizationHelper._httpContextAccessor = new HttpContextAccessor { HttpContext = httpContext };
 
 			_controller = new UserDefinedFieldsController(_udfService.Object, Mock.Of<IUdfRenderingService>(), Mock.Of<IEventAggregator>(),
-				Mock.Of<IProtectedReadService>())
+				Mock.Of<IProtectedReadService>(), Mock.Of<IAuthorizationService>(), Mock.Of<IDepartmentsService>(), Mock.Of<IContactsService>())
 			{
 				ControllerContext = new ControllerContext { HttpContext = httpContext }
 			};

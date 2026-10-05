@@ -111,6 +111,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Log_Create)]
 		public async Task<IActionResult> NewLog(NewLogView model, IFormCollection form, ICollection<IFormFile> files, CancellationToken cancellationToken)
 		{
@@ -159,6 +160,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				// Get all unit blocks in the report
 				List<int> unitsInReport = (from object key in form.Keys where key.ToString().StartsWith("unit_personnel_") select int.Parse(key.ToString().Replace("unit_personnel_", ""))).ToList();
 
+				// Always a new log: a posted id would make the save update that row, whichever department owns it.
+				model.Log.LogId = 0;
 				model.Log.LoggedByUserId = UserId;
 				model.Log.DepartmentId = model.Department.DepartmentId;
 				model.Log.Narrative = System.Net.WebUtility.HtmlDecode(model.Log.Narrative);
@@ -185,6 +188,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 					if (model.CallId == 0)
 					{
+						// A Run log without a call creates one, so it needs what Dispatch/NewCall needs.
+						if (!User.HasClaim(ResgridClaimTypes.Resources.Call, ResgridClaimTypes.Actions.Create) ||
+							!await _authorizationService.CanUserCreateCallAsync(UserId, DepartmentId))
+							return Unauthorized();
+
+						model.Call.CallId = 0;
 						model.Call.DepartmentId = DepartmentId;
 						model.Call.ReportingUserId = UserId;
 						model.Call.Priority = (int)model.CallPriority;
@@ -198,7 +207,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 					else
 					{
+						// The Run log overwrites the linked call's details, so it needs what Dispatch/UpdateCall needs.
 						var call = await _callsService.GetCallByIdAsync(model.CallId);
+
+						if (call == null || call.DepartmentId != DepartmentId ||
+							!User.HasClaim(ResgridClaimTypes.Resources.Call, ResgridClaimTypes.Actions.Update) ||
+							!await _authorizationService.CanUserEditCallAsync(UserId, model.CallId))
+							return Unauthorized();
+
 						call.Priority = (int)model.CallPriority;
 						call.NatureOfCall = model.Call.NatureOfCall;
 						call.Address = model.Call.Address;
@@ -265,6 +281,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (model.LogType == LogTypes.Callback)
 				{
+					// Only a call in this department can be linked.
+					if (model.CallId != 0)
+					{
+						var callbackCall = await _callsService.GetCallByIdAsync(model.CallId);
+
+						if (callbackCall == null || callbackCall.DepartmentId != DepartmentId)
+							return Unauthorized();
+					}
+
 					model.Log.CallId = model.CallId;
 				}
 
@@ -497,7 +522,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return Json(logsJson);
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Log_Delete)]
 		public async Task<IActionResult> DeleteWorkLog(int logId, CancellationToken cancellationToken)
 		{

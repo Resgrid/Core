@@ -17,6 +17,7 @@ using System.Net.Mime;
 using System.Threading;
 using System.Web;
 using System.Text;
+using IAuthorizationService = Resgrid.Model.Services.IAuthorizationService;
 
 namespace Resgrid.Web.Services.Controllers.v4
 {
@@ -33,14 +34,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IProtectedReadService _protectedCallReadService;
 		private readonly IProtectedWriteService _protectedWriteService;
+		private readonly IAuthorizationService _authorizationService;
 
 		public CallFilesController(ICallsService callsService, IDepartmentsService departmentsService,
-			IProtectedReadService protectedCallReadService, IProtectedWriteService protectedWriteService)
+			IProtectedReadService protectedCallReadService, IProtectedWriteService protectedWriteService,
+			IAuthorizationService authorizationService)
 		{
 			_callsService = callsService;
 			_departmentsService = departmentsService;
 			_protectedCallReadService = protectedCallReadService;
 			_protectedWriteService = protectedWriteService;
+			_authorizationService = authorizationService;
 		}
 		#endregion Members and Constructors
 
@@ -251,6 +255,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (call.DepartmentId != effectiveDepartmentId)
 				return Unauthorized();
 
+			// Add Call Data (Security > Permissions) plus group-scoped dispatch. The SMTP relay's system key has no
+			// department member behind it and attaches inbound email files on the department's behalf.
+			if (!IsSystemApiKeyRequest && !await _authorizationService.CanUserAddCallDataAsync(UserId, call.CallId, effectiveDepartmentId))
+				return Unauthorized();
+
 			if (call.State != (int)CallStates.Active)
 				return BadRequest();
 
@@ -266,7 +275,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			else
 				callAttachment.FileName = input.Name;
 
-			callAttachment.UserId = input.UserId;
+			// A member is always the author of what they attach; only the system key names the author it attaches for.
+			callAttachment.UserId = IsSystemApiKeyRequest ? input.UserId : UserId;
 			callAttachment.Timestamp = DateTime.UtcNow;
 
 			try

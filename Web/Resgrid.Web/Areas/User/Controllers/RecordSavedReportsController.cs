@@ -48,6 +48,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			if (!(await _cutover.GetModuleStateAsync(DepartmentId)).FlagEnabled) return NotFound();
 			var model = new RecordSavedReportsIndexView { Department = await _departments.GetDepartmentByIdAsync(DepartmentId, false), Reports = await _reports.GetForDepartmentAsync(DepartmentId), CanManage = await CanManageAsync() };
+			ViewBag.CanExportRecords = await CanExportAsync();
 			if (TempData["RecordsMessage"] is string message) model.Message = message;
 			if (TempData["RecordsError"] is string error) model.ErrorMessage = error;
 			return View(model);
@@ -123,12 +124,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 			try { model.Result = await _reports.RunAsync(DepartmentId, UserId, id, cancellationToken); }
 			catch (UnauthorizedAccessException) { return Forbid(); }
 			catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException) { model.ErrorMessage = ex.Message; }
+			ViewBag.CanExportRecords = await CanExportAsync();
 			return View(model);
 		}
 
+		/// <summary>The CSV is a file that leaves Resgrid, so it needs ExportRecords on top of running the report.</summary>
 		[HttpGet]
+		[Authorize(Policy = ResgridResources.Record_Export)]
 		public async Task<IActionResult> RunCsv(string id, CancellationToken cancellationToken)
 		{
+			if (!await CanExportAsync()) return Forbid();
 			try
 			{
 				var result = await _reports.RunAsync(DepartmentId, UserId, id, cancellationToken);
@@ -151,5 +156,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		private Task<bool> CanManageAsync() => _authorization.HasPermissionAsync(UserId, DepartmentId, PermissionTypes.ManageRecordReports);
+
+		private Task<bool> CanExportAsync() => _authorization.HasPermissionAsync(UserId, DepartmentId, PermissionTypes.ExportRecords);
 	}
 }

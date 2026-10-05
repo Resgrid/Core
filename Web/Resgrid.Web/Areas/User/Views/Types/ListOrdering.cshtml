@@ -63,7 +63,7 @@
                         <td><input type='number' min='0' id='personnelStatus_@count' name='personnelStatus_@count' value='@detail.Weight.ToString()' onkeypress='return resgrid.types.listordering.isNumber(event)'></td>
                         <td>@status.ButtonText<input type='hidden' id='personnelStatusValue_@count' name='personnelStatusValue_@count' value='@status.CustomStateDetailId'></td>
                         <td style='text-align: center;'>
-                          <a class="btn btn-primary btn-xs" href="@Url.Action("DeletePersonnelListStatus", "Types", new {Area = "User", statusId = detail.StatusId})" data-original-title='Delete this option'>Delete</a>
+                          <button type="submit" class="btn btn-primary btn-xs" formnovalidate formaction="@Url.Action("DeletePersonnelListStatus", "Types", new {Area = "User", statusId = detail.StatusId})" data-original-title='Delete this option'>Delete</button>
                         </td>
                       </tr>
 					}

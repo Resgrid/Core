@@ -67,8 +67,11 @@ namespace Resgrid.Model.Repositories
 		/// <summary>Live Records with no RmsRecordGroupScope row: they stay department-wide under group scoping (plan 5.7.1).</summary>
 		Task<int> CountWithoutGroupScopeAsync(int departmentId);
 		Task<IEnumerable<int>> GetYearsAsync(int departmentId);
-		/// <summary>Highest sequence already issued for a number prefix (e.g. "TRN-2026-"), 0 when none.</summary>
-		Task<int> GetMaxRecordNumberSequenceAsync(int departmentId, string numberPrefix);
+		/// <summary>
+		/// Highest sequence already issued between a number prefix and suffix (e.g. "TRN-2026-" and ""), 0 when none.
+		/// Reads Records and incident reports together, so a pattern two tables share never issues one number twice.
+		/// </summary>
+		Task<int> GetMaxRecordNumberSequenceAsync(int departmentId, string numberPrefix, string numberSuffix);
 		/// <summary>
 		/// Optimistic-concurrency guard: bumps RowVersion only if it still equals <paramref name="expectedRowVersion"/>.
 		/// Returns false on a stale ETag. Run inside the caller's unit of work so the row lock serializes writers.

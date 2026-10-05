@@ -128,9 +128,14 @@ namespace Resgrid.Services.Records
 		{
 			if (!await IsActiveMemberAsync(userId, departmentId)) return false;
 			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.AdjustInventory);
+			var isAdmin = await IsDepartmentAdminAsync(userId, departmentId);
+			// No AdjustInventory row means department administrators, as InventoryAuthorizationService resolves it;
+			// IsUserAllowed alone reads a missing row as Everyone.
+			if (permission == null)
+				return isAdmin;
 			var group = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
 			return _permissionsService.IsUserAllowed(permission, departmentId, groupId, group?.DepartmentGroupId,
-				await IsDepartmentAdminAsync(userId, departmentId), group?.IsUserGroupAdmin(userId) == true, await _personnelRolesService.GetRolesForUserAsync(userId, departmentId));
+				isAdmin, group?.IsUserGroupAdmin(userId) == true, await _personnelRolesService.GetRolesForUserAsync(userId, departmentId));
 		}
 
 		public async Task<bool> IsGroupScopedAsync(int departmentId)

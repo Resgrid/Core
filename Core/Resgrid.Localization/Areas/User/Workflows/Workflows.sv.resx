@@ -1047,4 +1047,19 @@
   <data name="BotUsernamePlaceholder" xml:space="preserve">
     <value>Resgrid-bot</value>
   </data>
+  <data name="StepCredentialNotFound" xml:space="preserve">
+    <value>Autentiseringsuppgifterna som valdes för det här steget hittades inte.</value>
+  </data>
+  <data name="ExportAttachmentTemplateNotFound" xml:space="preserve">
+    <value>Rapportexporten (poster) som valdes för det här steget hittades inte.</value>
+  </data>
+  <data name="ExportAttachmentRequiresRecordsRights" xml:space="preserve">
+    <value>För att bifoga en rapportexport (poster) till ett steg krävs behörigheterna "Skriva ut och exportera rapporter" och "Hantera rapportsammanställningar".</value>
+  </data>
+  <data name="ExportAttachmentRequiresRestrictedRights" xml:space="preserve">
+    <value>Den här rapportexporten (poster) innehåller begränsade avsnitt; för att bifoga den till ett steg krävs även behörigheten "Visa begränsade avsnitt".</value>
+  </data>
+  <data name="CredentialDeliversRecordsExport" xml:space="preserve">
+    <value>Ett arbetsflödessteg skickar en rapportexport (poster) via de här autentiseringsuppgifterna, så för att ändra dem krävs behörigheterna "Skriva ut och exportera rapporter" och "Hantera rapportsammanställningar" (och "Visa begränsade avsnitt" när exporten innehåller begränsade avsnitt).</value>
+  </data>
 </root>

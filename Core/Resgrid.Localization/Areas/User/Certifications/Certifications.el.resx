@@ -207,6 +207,7 @@
   <data name="certifications_record_not_found" xml:space="preserve"><value>Η εγγραφή πιστοποίησης δεν βρέθηκε.</value></data>
   <data name="certifications_status_invalid" xml:space="preserve"><value>Αυτή η κατάσταση δεν μπορεί να οριστεί χειροκίνητα.</value></data>
   <data name="certifications_not_pending" xml:space="preserve"><value>Μόνο εγγραφή σε εκκρεμή επαλήθευση μπορεί να επαληθευτεί.</value></data>
+  <data name="certifications_self_verification" xml:space="preserve"><value>Δεν μπορείτε να επαληθεύσετε ή να επαναφέρετε τη δική σας εγγραφή πιστοποίησης· πρέπει να την εγκρίνει άλλος διαχειριστής.</value></data>
   <data name="certifications_expiry_required" xml:space="preserve"><value>Αυτός ο τύπος λήγει, οπότε απαιτείται νέα ημερομηνία λήξης.</value></data>
   <data name="certifications_expiry_not_later" xml:space="preserve"><value>Η νέα λήξη πρέπει να είναι μεταγενέστερη της τρέχουσας.</value></data>
   <data name="certifications_credit_hours_invalid" xml:space="preserve"><value>Οι ώρες μονάδων πρέπει να είναι μεγαλύτερες από μηδέν.</value></data>

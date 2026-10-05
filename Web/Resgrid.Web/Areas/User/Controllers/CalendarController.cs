@@ -129,10 +129,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Schedule_Create)]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 		public async Task<IActionResult> New(NewCalendarEntry model, CancellationToken cancellationToken)
 		{
+			// A new entry is always a new row: a posted id would make the save update another row by key.
+			model.Item.CalendarItemId = 0;
+
 			if (model.Item.Start > model.Item.End)
 			{
 				ModelState.AddModelError("Item_End", "End date and time cannot be before start date and time.");
@@ -276,6 +280,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Schedule_Update)]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 		public async Task<IActionResult> Edit(EditCalendarEntry model, CancellationToken cancellationToken)
@@ -349,6 +354,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Schedule_Create)]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 		public async Task<JsonResult> CreateCalendarItem([FromBody]CalendarItemJson item, CancellationToken cancellationToken)
@@ -431,6 +437,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Schedule_Update)]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 		public async Task<JsonResult> UpdateCalendarItem(CalendarItemJson item, CancellationToken cancellationToken)
@@ -505,7 +512,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return null;
 		}
 
+		// JSON body variant; [Consumes] keeps it apart from the form post below, which shares the name and verb.
 		[HttpPost]
+		[Consumes("application/json")]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Schedule_Delete)]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 		public async Task<IActionResult> DeleteCalendarItem([FromBody]CalendarItemJson item, CancellationToken cancellationToken)
@@ -517,13 +527,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (calandarItem == null || calandarItem.DepartmentId != DepartmentId)
 					return Unauthorized();
 
+				// The same rule as editing the entry: its creator or a department admin.
+				if (!await _authorizationService.CanUserModifyCalendarEntryAsync(UserId, item.CalendarItemId))
+					return Unauthorized();
+
 				await _calendarService.DeleteCalendarItemByIdAsync(item.CalendarItemId, cancellationToken);
 			}
 
 			return null;
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Schedule_Delete)]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 		public async Task<IActionResult> DeleteCalendarItem(int itemId, CancellationToken cancellationToken)
@@ -533,12 +548,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (calandarItem == null || calandarItem.DepartmentId != DepartmentId)
 				return Unauthorized();
 
+			// The same rule as editing the entry: its creator or a department admin.
+			if (!await _authorizationService.CanUserModifyCalendarEntryAsync(UserId, itemId))
+				return Unauthorized();
+
 			await _calendarService.DeleteCalendarItemByIdAsync(itemId, cancellationToken);
 
 			return RedirectToAction("Index");
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Schedule_Delete)]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 		public async Task<IActionResult> DeleteAllCalendarItems(int itemId, CancellationToken cancellationToken)
@@ -678,12 +698,26 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return Json(jsonItems);
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Schedule_View)]
-
 		public async Task<IActionResult> RemoveFromEvent(int id, CancellationToken cancellationToken)
 		{
 			var attendee = await _calendarService.GetCalendarAttendeeByIdAsync(id);
+
+			if (attendee == null)
+				return Unauthorized();
+
+			// The event page offers this to the attendee ("Remove me") and to admins: the attendee row must belong to one of this
+			// department's events, and the caller must be that attendee or someone who can modify the event.
+			var calendarItem = await _calendarService.GetCalendarItemByIdAsync(attendee.CalendarItemId);
+
+			if (calendarItem == null || calendarItem.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			if (!String.Equals(attendee.UserId, UserId, StringComparison.OrdinalIgnoreCase) &&
+				!await _authorizationService.CanUserModifyCalendarEntryAsync(UserId, attendee.CalendarItemId))
+				return Unauthorized();
 
 			await _calendarService.DeleteCalendarAttendeeByIdAsync(id, cancellationToken);
 
@@ -742,8 +776,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[Authorize(Policy = ResgridResources.Schedule_View)]
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Signup(CalendarItemView model, CancellationToken cancellationToken)
 		{
+			// The posted id names the event; only this department's events can be signed up for.
+			var calendarItem = await _calendarService.GetCalendarItemByIdAsync(model.CalendarItem.CalendarItemId);
+
+			if (calendarItem == null || calendarItem.DepartmentId != DepartmentId)
+				return Unauthorized();
+
 			await _calendarService.SignupForEvent(model.CalendarItem.CalendarItemId, UserId, model.Note, (int)CalendarItemAttendeeTypes.RSVP, cancellationToken);
 
 			return RedirectToAction("View", new { calendarItemId = model.CalendarItem.CalendarItemId });
@@ -822,9 +863,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Schedule_Create)]
 		public async Task<IActionResult> NewType(NewTypeView model, CancellationToken cancellationToken)
 		{
+			// A new type is always a new row: a posted id would make the save update another row by key.
+			model.Type.CalendarItemTypeId = 0;
+
 			if ((await _calendarService.GetAllCalendarItemTypesForDepartmentAsync(DepartmentId)).Any(x => x.Name == model.Type.Name))
 				ModelState.AddModelError("", "Type name already exists, please choose another name.");
 
@@ -864,6 +909,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Schedule_Create)]
 		public async Task<IActionResult> EditType(NewTypeView model, CancellationToken cancellationToken)
 		{
@@ -887,7 +933,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Schedule_Create)]
 		public async Task<IActionResult> DeleteType(int typeId, CancellationToken cancellationToken)
 		{

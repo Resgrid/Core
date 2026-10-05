@@ -124,7 +124,7 @@
 											}
 										</td>
 										<td>
-											<a href="@Url.Action("ResetUserTraining", "Trainings", new {Area ="User", trainingId = Model.Training.TrainingId, userId = u.UserId})" class="btn btn-primary btn-xs">@localizer["ResetUserButton"]</a>
+											<form method="post" action="@Url.Action("ResetUserTraining", "Trainings", new {Area ="User", trainingId = Model.Training.TrainingId, userId = u.UserId})" style="display: inline;">@Html.AntiForgeryToken()<button type="submit" class="btn btn-primary btn-xs">@localizer["ResetUserButton"]</button></form>
 										</td>
 									</tr>
 								}

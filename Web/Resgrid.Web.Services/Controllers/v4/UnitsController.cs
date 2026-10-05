@@ -6,6 +6,7 @@ using Resgrid.Providers.Claims;
 using System.Linq;
 using System.Threading.Tasks;
 using Resgrid.Web.Services.Helpers;
+using Resgrid.Web.ServicesCore.Helpers;
 using Resgrid.Web.Services.Models.v4.Units;
 using Resgrid.Web.Services.Models.v4.UserDefinedFields;
 using Resgrid.Model;
@@ -90,6 +91,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 				var unitEntityIds = units.Select(u => u.UnitId.ToString()).ToList();
 				var allUdfValues = await _userDefinedFieldsService.GetFieldValuesForEntitiesAsync(
 					DepartmentId, (int)UdfEntityType.Unit, unitEntityIds);
+
+				// Only the values the caller may see: the Udf view right (ViewUdfFields) and each field's visibility,
+				// the same rule the UserDefinedFields endpoints apply.
+				allUdfValues = await _userDefinedFieldsService.FilterValuesVisibleToUserAsync(DepartmentId, (int)UdfEntityType.Unit, allUdfValues,
+					HttpContext.User.HasClaim(ResgridClaimTypes.Resources.Udf, ResgridClaimTypes.Actions.View),
+					ClaimsAuthorizationHelper.IsUserDepartmentAdmin(),
+					HttpContext.User.Claims.Any(x => x.Type.StartsWith(ResgridClaimTypes.Resources.Group + "/", StringComparison.Ordinal) && x.Value == ResgridClaimTypes.Actions.Update))
+					?? new List<UdfFieldValue>();
 				var udfValuesByEntityId = allUdfValues
 					.GroupBy(v => v.EntityId)
 					.ToDictionary(g => g.Key, g => g.ToList());

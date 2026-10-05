@@ -182,6 +182,9 @@ namespace Resgrid.Web.ServicesCore
 				// reached the response still carrying an envelope, and logs the surface that missed
 				// its resolve call. Defence in depth, not a substitute for resolving.
 				options.Filters.Add<Resgrid.Web.Services.Filters.ProtectedDataEgressFilter>();
+				// Statuses saved by an API request record who set them and from which app (M0260), so reports can tell a
+				// dispatcher's or incident commander's entry from the crew's own.
+				options.Filters.Add<Resgrid.Web.Services.Filters.StatusWriteActorFilter>();
 			}).AddNewtonsoftJson(options =>
 			{
 				options.SerializerSettings.ContractResolver = new DefaultContractResolver();

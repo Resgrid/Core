@@ -30,6 +30,24 @@ namespace Resgrid.Framework
 			}
 			Append(document.DocumentNode, 0); return html.ToString();
 		}
+		/// <summary>The narrative as plain text (paragraphs and list items on their own lines), for copying into another report.</summary>
+		public static string ToPlainText(string value)
+		{
+			if (string.IsNullOrWhiteSpace(value)) return string.Empty;
+			if (!IsHtml(value)) return value.Trim();
+			var document = new HtmlDocument(); document.LoadHtml(Render(value)); var text = new StringBuilder();
+			void Append(HtmlNode node, int depth)
+			{
+				if (depth > 64) return;
+				if (node.NodeType == HtmlNodeType.Text) { text.Append(HtmlEntity.DeEntitize(node.InnerText)); return; }
+				if (node.Name == "br") { text.Append('\n'); return; }
+				if (node.Name == "li") text.Append("- ");
+				foreach (var child in node.ChildNodes) Append(child, depth + 1);
+				if (node.Name is "p" or "li" or "h1" or "h2" or "h3" or "blockquote") text.Append('\n');
+			}
+			Append(document.DocumentNode, 0);
+			return Regex.Replace(text.ToString().Replace('​', ' '), @"\n{3,}", "\n\n", RegexOptions.None, TimeSpan.FromMilliseconds(250)).Trim();
+		}
 		public static bool HasText(string value)
 		{
 			var document = new HtmlDocument(); document.LoadHtml(Render(value));

@@ -691,6 +691,7 @@
   <data name="workforce_naics_invalid" xml:space="preserve"><value>Le NAICS doit comporter six chiffres.</value></data>
   <data name="workforce_no_inputs" xml:space="preserve"><value>Rien à chiffrer : aucune saisie de travail ni relevé d'utilisation.</value></data>
   <data name="workforce_not_found" xml:space="preserve"><value>L'enregistrement est introuvable.</value></data>
+  <data name="workforce_self_approval" xml:space="preserve"><value>Vous ne pouvez pas approuver ce profil de rémunération : il s'agit de votre propre rémunération ou vous en avez fait la dernière modification. Un autre responsable doit l'approuver.</value></data>
   <data name="workforce_pay_basis_invalid" xml:space="preserve"><value>La base de paie n'est pas valide.</value></data>
   <data name="workforce_profile_overlap" xml:space="preserve"><value>La période chevauche un autre profil de même portée.</value></data>
   <data name="workforce_protected_write_refused" xml:space="preserve"><value>L'écriture protégée a été refusée.</value></data>

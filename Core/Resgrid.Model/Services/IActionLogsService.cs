@@ -212,6 +212,12 @@ namespace Resgrid.Model.Services
 		Task<bool> DeleteActionLogsForUserAsync(string userId, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
+		/// Deletes the user's action logs in one department only. A member can belong to several departments, and an
+		/// administrator clearing a member's status history must never reach the logs another department holds.
+		/// </summary>
+		Task<bool> DeleteActionLogsForUserAsync(string userId, int departmentId, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
 		/// Deletes all action logs for department asynchronous.
 		/// </summary>
 		/// <param name="departmentId">The department identifier.</param>

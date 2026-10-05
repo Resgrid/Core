@@ -1008,7 +1008,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					//model.Call.UnitDispatches = new List<CallDispatchUnit>();
 
-					var dispatchesToRemove = call.UnitDispatches.Select(x => x.UnitId).Where(y => !dispatchingUnitIds.Contains(y)).ToList();
+					// A unit hidden from this editor (Security > View Units) is not on the form, so it stays dispatched.
+					var dispatchesToRemove = call.UnitDispatches.Select(x => x.UnitId).Where(y => !dispatchingUnitIds.Contains(y) && model.Units.Any(u => u.UnitId == y)).ToList();
 
 					foreach (var id in dispatchesToRemove)
 					{
@@ -1113,8 +1114,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 				}
 
-				await _callsService.DeleteCallContactsAsync(call.CallId);
-				call.Contacts = contacts;
+				// Without Security > View Contacts the form has no contact pickers, so the call keeps the contacts it has.
+				if (ClaimsAuthorizationHelper.CanViewContacts())
+				{
+					await _callsService.DeleteCallContactsAsync(call.CallId);
+					call.Contacts = contacts;
+				}
 
 				// Handle scheduled dispatch
 			if (model.ScheduleDispatchDate.HasValue)
@@ -1342,6 +1347,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Call_Delete)]
 		public async Task<IActionResult> DeleteCall(DeleteCallView model, CancellationToken cancellationToken)
 		{
@@ -1378,9 +1384,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Protocols = await _protocolsService.GetAllProtocolsForDepartmentAsync(DepartmentId);
 			model.ChildCalls = await _callsService.GetChildCallsForCallAsync(callId);
 
+			// Show the note boxes and the Add File / Add Image buttons only when the POST behind them would be accepted.
+			model.CanAddCallData = await _authorizationService.CanUserAddCallDataAsync(UserId, callId, DepartmentId);
+			model.CanAttachCallFiles = model.CanAddCallData && await _authorizationService.CanUserEditCallAsync(UserId, callId);
+
+			// Re-open is offered only when its POST would be accepted (the close rule, see ReOpenCall).
+			ViewData["CanReOpenCall"] = model.Call.State != (int)CallStates.Active &&
+				User.HasClaim(ResgridClaimTypes.Resources.Call, ResgridClaimTypes.Actions.Update) &&
+				await _authorizationService.CanUserCloseCallAsync(UserId, callId, DepartmentId);
+
 			// Contacts plan Phase A (A6): Site Info panel. Contact identity/notes render REDACTED in a
 			// protected department (no grant server-side); pre-plan and hazard text is not cataloged.
-			model.SiteInfo = await _contactsService.GetCallSiteInfoAsync(callId, DepartmentId);
+			// Security > View Contacts: without it the tab shows no site information.
+			model.SiteInfo = ClaimsAuthorizationHelper.CanViewContacts()
+				? await _contactsService.GetCallSiteInfoAsync(callId, DepartmentId)
+				: null;
 			if (model.SiteInfo != null && model.SiteInfo.Contacts.Any())
 			{
 				await _protectedReadService.ResolveContactsForReadAsync(DepartmentId, model.SiteInfo.Contacts.Select(x => x.Contact).ToList(), null, UserId);
@@ -1476,7 +1494,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			// Catalog v12: the Site Info tab marks each linked contact's pre-plan and hazard values with the
 			// row id as a suffix, so the same step-up reveals the premises knowledge with the call.
-			var siteInfo = await _contactsService.GetCallSiteInfoAsync(callId, DepartmentId);
+			// Security > View Contacts, as on the call page: no site information without it.
+			var siteInfo = ClaimsAuthorizationHelper.CanViewContacts()
+				? await _contactsService.GetCallSiteInfoAsync(callId, DepartmentId)
+				: null;
 			if (siteInfo != null && siteInfo.Contacts.Any())
 			{
 				var sitePreplans = siteInfo.Contacts.Where(x => x.Preplan != null).Select(x => x.Preplan).ToList();
@@ -1767,6 +1788,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.CallPriority = (CallPriority)model.Call.Priority;
 			model = await FillViewCallView(model);
 			model.Call = (await _protectedReadService.ResolveForReadAsync(DepartmentId, model.Call, null, UserId)).Call;
+			model.CanAddCallData = await _authorizationService.CanUserAddCallDataAsync(UserId, callId, DepartmentId);
+			model.CanAttachCallFiles = model.CanAddCallData && await _authorizationService.CanUserEditCallAsync(UserId, callId);
 
 			if (!String.IsNullOrEmpty(model.Call.GeoLocationData) &&
 				model.Call.GeoLocationData != ProtectedDataEnvelope.RedactionValue)
@@ -1810,6 +1833,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Call_Update)]
 		public async Task<IActionResult> CloseCall(CloseCallView model, CancellationToken cancellationToken)
 		{
@@ -2060,6 +2084,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Call_Update)]
 		public async Task<IActionResult> FlagCallFile(FlagCallFileView model, CancellationToken cancellationToken)
 		{
@@ -2107,6 +2132,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Call_View)]
 		public async Task<IActionResult> AddCallNote([FromBody] AddCallNoteInput model, CancellationToken cancellationToken)
 		{
@@ -2124,6 +2150,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 					return new StatusCodeResult((int)HttpStatusCode.NotFound);
 
 				if (!await _authorizationService.CanUserViewCallAsync(UserId, model.CallId))
+					return Unauthorized();
+
+				// Add Call Data (Security > Permissions): viewing a call does not by itself allow writing to it.
+				if (!await _authorizationService.CanUserAddCallDataAsync(UserId, model.CallId, DepartmentId))
 					return Unauthorized();
 
 				var note = new CallNote();
@@ -2367,7 +2397,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.DestinationTypeName = callDestinationInfo.TypeName;
 			model.Names = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
 			model.ChildCalls = await _callsService.GetChildCallsForCallAsync(callId);
-			model.Contacts = await _contactsService.GetAllContactsForDepartmentAsync(DepartmentId);
+			// Contacts View (Security > Permissions) governs the contact block, as on the call page.
+			if (ClaimsAuthorizationHelper.CanViewContacts())
+				model.Contacts = await _contactsService.GetAllContactsForDepartmentAsync(DepartmentId);
+			else
+			{
+				model.Contacts = new List<Contact>();
+				model.Call.Contacts = null;
+			}
 			model.CheckInRecords = await _checkInTimerService.GetCheckInsForCallAsync(callId);
 			model.TimerConfigs = await _checkInTimerService.ResolveAllTimersForCallAsync(model.Call);
 
@@ -2550,11 +2587,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return NotFound();
 		}
 
-		[HttpGet]
-		[Authorize(Policy = ResgridResources.Call_View)]
-		public async Task<IActionResult> ReOpenCall(int callId, CancellationToken cancellationToken)
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Call_Update)]
+		public async Task<IActionResult> ReOpenCall([FromForm] int callId, CancellationToken cancellationToken)
 		{
-			if (!await _authorizationService.CanUserViewCallAsync(UserId, callId))
+			// Re-opening undoes a close (it clears who closed the call, when and why), so it needs what closing needs.
+			if (!await _authorizationService.CanUserCloseCallAsync(UserId, callId, DepartmentId))
 				return Unauthorized();
 
 			var call = await _callsService.ReOpenCallByIdAsync(callId, cancellationToken);
@@ -2658,6 +2697,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Call_View)]
 		public async Task<IActionResult> GetCallById(int callId)
 		{
+			// A call of this department the member may view, as on the call page.
+			if (!await _authorizationService.CanUserViewCallAsync(UserId, callId))
+				return Unauthorized();
+
 			var call = new CallJson();
 			var savedCall = await _callsService.GetCallByIdAsync(callId);
 			savedCall.Department = await _departmentsService.GetDepartmentByIdAsync(savedCall.DepartmentId);
@@ -2678,12 +2721,22 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Call_View)]
 		public async Task<IActionResult> GetPersonnelForCall(int callId)
 		{
+			// A call of this department the member may view, as on the call page.
+			if (!await _authorizationService.CanUserViewCallAsync(UserId, callId))
+				return Unauthorized();
+
 			List<CallPersonnelForJson> personnelJson = new List<CallPersonnelForJson>();
 			var users = await _departmentsService.GetAllUsersForDepartmentUnlimitedMinusDisabledAsync(DepartmentId);
 			var call = await _callsService.GetCallByIdAsync(callId);
 
+			// Security > View Personnel: only the people the member may see, as on the personnel list.
+			var viewableUserIds = await _authorizationService.GetViewablePersonIdsAsync(UserId, users.Select(x => x.UserId), DepartmentId);
+
 			foreach (var user in users)
 			{
+				if (!viewableUserIds.Contains(user.UserId))
+					continue;
+
 				CallPersonnelForJson person = new CallPersonnelForJson();
 				person.UserId = user.UserId;
 
@@ -2713,6 +2766,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Call_View)]
 		public async Task<IActionResult> GetAllDispatchesForCall(int callId)
 		{
+			// A call of this department the member may view, as on the call page.
+			if (!await _authorizationService.CanUserViewCallAsync(UserId, callId))
+				return Unauthorized();
+
 			List<CallDispatchJson> dispatchJson = new List<CallDispatchJson>();
 			var users = await _departmentsService.GetAllUsersForDepartmentUnlimitedMinusDisabledAsync(DepartmentId);
 			var call = await _callsService.GetCallByIdAsync(callId);
@@ -2757,6 +2814,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Call_View)]
 		public async Task<IActionResult> GetMapDataForCall(int callId)
 		{
+			// A call of this department the member may view, as on the call page.
+			if (!await _authorizationService.CanUserViewCallAsync(UserId, callId))
+				return Unauthorized();
+
 			var serializerSettings = new JsonSerializerSettings
 			{
 				ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver(),
@@ -3007,10 +3068,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Call_View)]
 		public async Task<IActionResult> AttachCallFile(FileAttachInput model, IFormFile fileToUpload, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserEditCallAsync(UserId, model.CallId))
+				return Unauthorized();
+
+			if (!await _authorizationService.CanUserAddCallDataAsync(UserId, model.CallId, DepartmentId))
 				return Unauthorized();
 
 			if (fileToUpload == null || fileToUpload.Length <= 0)
@@ -3189,6 +3254,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			List<ContactNoteJson> contactNotesJson = new List<ContactNoteJson>();
 
+			// Security > View Contacts: without it the call forms show no contact alerts (the pickers are empty too).
+			if (!ClaimsAuthorizationHelper.CanViewContacts())
+				return Json(contactNotesJson);
+
 			var contact = await _contactsService.GetContactByIdAsync(contactId);
 
 			if (contact != null && contact.DepartmentId == DepartmentId)
@@ -3301,14 +3370,37 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		#region Private Helpers
+		/// <summary>Security &gt; View Units: the units the member may see, the same filter the units list and v4 dispatch data apply.</summary>
+		private async Task<List<Unit>> GetViewableUnitsAsync(List<Unit> units)
+		{
+			var viewable = new List<Unit>();
+
+			foreach (var unit in units ?? new List<Unit>())
+			{
+				if (await _authorizationService.CanUserViewUnitViaMatrixAsync(unit.UnitId, UserId, DepartmentId))
+					viewable.Add(unit);
+			}
+
+			return viewable;
+		}
+
+		private static List<UnitState> FilterToUnits(List<UnitState> states, List<Unit> units)
+		{
+			if (states == null)
+				return null;
+
+			var unitIds = new HashSet<int>(units.Select(x => x.UnitId));
+			return states.Where(x => unitIds.Contains(x.UnitId)).ToList();
+		}
+
 		private async Task<NewCallView> FillNewCallView(NewCallView model)
 		{
 			model.Department = await _departmentsService.GetDepartmentByUserIdAsync(UserId);
 			model.User = _usersService.GetUserById(UserId);
 			model.CenterCoordinates = await _departmentSettingsService.GetMapCenterCoordinatesAsync(model.Department);
 			model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(model.Department.DepartmentId);
-			model.Units = await _unitsService.GetUnitsForDepartmentAsync(model.Department.DepartmentId);
-			model.UnitStates = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(model.Department.DepartmentId);
+			model.Units = await GetViewableUnitsAsync(await _unitsService.GetUnitsForDepartmentAsync(model.Department.DepartmentId));
+			model.UnitStates = FilterToUnits(await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(model.Department.DepartmentId), model.Units);
 			model.UnitStatuses = await _customStateService.GetAllActiveUnitStatesForDepartmentAsync(model.Department.DepartmentId);
 
 			var priorites = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(model.Department.DepartmentId);
@@ -3352,7 +3444,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			// its modal and the formRender call from the new/archived call views. Form data already
 			// on existing calls is untouched and still renders read-only on the call detail view.
 
-			model.Contacts = await _contactsService.GetAllContactsForDepartmentAsync(DepartmentId);
+			// Security > View Contacts: without it the contact pickers are left empty.
+			model.Contacts = ClaimsAuthorizationHelper.CanViewContacts()
+				? await _contactsService.GetAllContactsForDepartmentAsync(DepartmentId)
+				: new List<Contact>();
 			if (model.Contacts != null && model.Contacts.Any())
 			{
 				SelectListItem selListItem = new SelectListItem() { Value = "", Text = _dispatchLocalizer["SelectContact"].Value };
@@ -3386,8 +3481,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.User = _usersService.GetUserById(UserId);
 			model.CenterCoordinates = await _departmentSettingsService.GetMapCenterCoordinatesAsync(model.Department);
 			model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(model.Department.DepartmentId);
-			model.Units = await _unitsService.GetUnitsForDepartmentAsync(model.Department.DepartmentId);
-			model.UnitStates = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(model.Department.DepartmentId);
+			model.Units = await GetViewableUnitsAsync(await _unitsService.GetUnitsForDepartmentAsync(model.Department.DepartmentId));
+			model.UnitStates = FilterToUnits(await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(model.Department.DepartmentId), model.Units);
 
 			var priorites = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(model.Department.DepartmentId);
 			model.CallPriorities = new SelectList(priorites, "DepartmentCallPriorityId", "Name", priorites.FirstOrDefault(x => x.IsDefault));
@@ -3426,7 +3521,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.UnGroupedUsers.Add(allUsers.Where(x => x.UserId == u.UserId).FirstOrDefault());
 			}
 
-			model.Contacts = await _contactsService.GetAllContactsForDepartmentAsync(DepartmentId);
+			// Security > View Contacts: without it the contact pickers are left empty (and UpdateCall keeps the call's contacts).
+			model.Contacts = ClaimsAuthorizationHelper.CanViewContacts()
+				? await _contactsService.GetAllContactsForDepartmentAsync(DepartmentId)
+				: new List<Contact>();
 			if (model.Contacts != null && model.Contacts.Any())
 			{
 				SelectListItem selListItem = new SelectListItem() { Value = "", Text = _dispatchLocalizer["SelectContact"].Value };
@@ -3530,7 +3628,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			else
 				model.Units = new List<Unit>();
 
-			var contacts = await _contactsService.GetAllContactsForDepartmentAsync(model.Call.DepartmentId);
+			// Security > View Contacts: without it the call's Contacts tab lists none.
+			var contacts = ClaimsAuthorizationHelper.CanViewContacts()
+				? await _contactsService.GetAllContactsForDepartmentAsync(model.Call.DepartmentId)
+				: null;
 
 			if (contacts != null)
 				model.Contacts = contacts;

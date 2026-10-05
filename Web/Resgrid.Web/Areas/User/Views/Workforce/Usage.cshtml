@@ -9,6 +9,11 @@
     ViewData["WorkforceTab"] = "costruns";
     ViewData["WorkforcePage"] = Model;
     var x = Model.Editing;
+    // Others' readings and approval need the cost-data write right (ViewInternalCosts + Workforce_Update); anyone here may
+    // file a new reading and change their own until it is approved (WorkforceController.SaveUsage / DeleteUsage).
+    var canManageCosts = Model.CanViewInternalCosts && Model.CanManage;
+    var me = ClaimsAuthorizationHelper.GetUserId();
+    bool CanTouch(ResourceUsageEntry u) => canManageCosts || (!u.IsApproved && string.Equals(u.AddedByUserId, me, StringComparison.OrdinalIgnoreCase));
 
     Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
         <a asp-action="Usage" asp-route-deploymentId="@Model.DeploymentId" asp-route-callId="@Model.CallId" asp-route-edit="new" class="btn btn-success"><i class="fa fa-plus"></i> @localizer["AddUsage"]</a>
@@ -43,8 +48,11 @@
                                 <td>@localizer["UsageSource" + (UsageSources)u.Source]</td>
                                 <td>@(u.NeedsReview ? localizer["Review_" + u.ReviewReason] : "")</td>
                                 <td class="text-right">
-                                    <a asp-action="Usage" asp-route-deploymentId="@Model.DeploymentId" asp-route-callId="@Model.CallId" asp-route-edit="@u.ResourceUsageEntryId" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i></a>
-                                    <form method="post" asp-action="DeleteUsage" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@u.ResourceUsageEntryId" /><input type="hidden" name="deploymentId" value="@Model.DeploymentId" /><input type="hidden" name="callId" value="@Model.CallId" /><button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@JsEncoder.Encode(localizer["ConfirmDelete"])');"><i class="fa fa-trash"></i></button></form>
+                                    @if (CanTouch(u))
+                                    {
+                                        <a asp-action="Usage" asp-route-deploymentId="@Model.DeploymentId" asp-route-callId="@Model.CallId" asp-route-edit="@u.ResourceUsageEntryId" class="btn btn-xs btn-default"><i class="fa fa-pencil"></i></a>
+                                        <form method="post" asp-action="DeleteUsage" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@u.ResourceUsageEntryId" /><input type="hidden" name="deploymentId" value="@Model.DeploymentId" /><input type="hidden" name="callId" value="@Model.CallId" /><button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@JsEncoder.Encode(localizer["ConfirmDelete"])');"><i class="fa fa-trash"></i></button></form>
+                                    }
                                 </td>
                             </tr>
                         }
@@ -101,7 +109,10 @@
                                 <div class="col-sm-4"><div class="form-group"><label>@localizer["FuelActualCost"]</label><input type="number" step="0.01" name="FuelActualCost" class="form-control" value="@x.FuelActualCost" /></div></div>
                             </div>
                             <input type="hidden" name="StandbyDays" value="@x.StandbyDays" />
-                            <div class="checkbox"><label><input type="checkbox" name="IsApproved" value="true" checked="@x.IsApproved" /> @localizer["Approved"]</label></div>
+                            @if (canManageCosts)
+                            {
+                                <div class="checkbox"><label><input type="checkbox" name="IsApproved" value="true" checked="@x.IsApproved" /> @localizer["Approved"]</label></div>
+                            }
                             <div class="m-t-sm"><button type="submit" class="btn btn-primary">@localizer["Save"]</button> <a asp-action="Usage" asp-route-deploymentId="@Model.DeploymentId" asp-route-callId="@Model.CallId" class="btn btn-default">@localizer["Cancel"]</a></div>
                         </form>
                     </div>

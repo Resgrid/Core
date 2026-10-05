@@ -1,0 +1,29 @@
+/* Report editors' "Call data" panel (report-sources-panel.js). */
+.report-sources { position: sticky; top: 70px; }
+.report-sources .ibox-content { max-height: calc(100vh - 140px); overflow-y: auto; padding: 10px 12px; }
+.report-sources .nav-tabs > li > a { padding: 6px 8px; font-size: 12px; }
+.report-sources .tab-body { padding-top: 8px; }
+.report-sources .rs-filters { margin-bottom: 8px; flex-wrap: wrap; }
+.report-sources .rs-timeline { margin: 0; }
+.report-sources .rs-entry { border-bottom: 1px solid #e7eaec; padding: 6px 0; }
+.report-sources .rs-entry-line { margin-top: 2px; }
+.report-sources .rs-status { padding-left: 4px; }
+.report-sources .rs-detail { white-space: pre-wrap; word-break: break-word; }
+.report-sources .rs-badge { font-size: 10px; }
+.report-sources .rs-time { white-space: nowrap; }
+.report-sources .rs-use { margin-left: 6px; padding: 0 6px; }
+.report-sources .rs-card { border: 1px solid #e7eaec; border-radius: 3px; padding: 6px 8px; margin-bottom: 8px; }
+.report-sources .rs-subcard { border-top: 1px dashed #e7eaec; margin-top: 6px; padding-top: 6px; }
+.report-sources .rs-card-title { margin-bottom: 4px; }
+.report-sources .rs-muted { opacity: .65; }
+.report-sources .rs-times { margin-bottom: 4px; }
+.report-sources .rs-times th { font-weight: normal; color: #676a6c; width: 40%; }
+.report-sources .rs-times th, .report-sources .rs-times td { padding: 2px 4px; border-top: none; }
+.report-sources .rs-actions .btn { margin-right: 4px; }
+.report-sources .rs-narrative-text { white-space: pre-wrap; max-height: 240px; overflow-y: auto; font-size: 12px; }
+input.rs-target { box-shadow: 0 0 0 2px #1ab394; }
+input.rs-filled, select.rs-filled, textarea.rs-filled { background-color: #e7f8f3; transition: background-color .3s; }
+@media (max-width: 1199px) {
+	.report-sources { position: static; }
+	.report-sources .ibox-content { max-height: none; }
+}

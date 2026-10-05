@@ -38,6 +38,12 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 		/// <summary>RMS: false hides the Incident Report control, which would otherwise 404 on Start.</summary>
 		public bool RecordsUsable { get; set; }
 
+		/// <summary>Add Call Data allows this member to add notes to the call; false hides the note boxes (Dispatch/AddCallNote would refuse).</summary>
+		public bool CanAddCallData { get; set; }
+
+		/// <summary>Add Call Data plus call edit rights; false hides Add File and Add Image (AttachCallFile and Files/Upload would refuse).</summary>
+		public bool CanAttachCallFiles { get; set; }
+
 		/// <summary>ADP: true when this call carries protected fields rendered as REDACTED (plan 7.2).</summary>
 		public bool IsProtectedCall { get; set; }
 		public string ProtectedReason { get; set; }

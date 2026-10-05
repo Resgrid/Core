@@ -365,6 +365,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			bool isNew = string.IsNullOrWhiteSpace(request.WorkflowStepId);
 
+			// An update names an existing step by id; the target workflow being ours says nothing about the step,
+			// and saving would rewrite (and move) another department's step.
+			if (!isNew && !await IsStepInDepartmentAsync(await _workflowService.GetStepByIdAsync(request.WorkflowStepId, ct), ct))
+				return NotFound(new { error = "Step not found." });
+
 			// Enforce plan-based step count cap for new steps
 			if (isNew)
 			{
@@ -391,6 +396,26 @@ namespace Resgrid.Web.Areas.User.Controllers
 				step.CreatedByUserId = UserId;
 			else
 				step.UpdatedByUserId = UserId;
+
+			// A step only ever sends with its own department's credential.
+			if (!string.IsNullOrWhiteSpace(request.WorkflowCredentialId))
+			{
+				var credential = await _workflowService.GetCredentialByIdAsync(request.WorkflowCredentialId, ct);
+				if (credential == null || credential.DepartmentId != DepartmentId)
+					return BadRequest(_localizer["StepCredentialNotFound"].Value);
+			}
+
+			// A Records report export attached to the step is rendered on every run with no acting user, so the member
+			// saving the step must hold the rights the Records report export pages require.
+			var exportError = await WorkflowExportAttachmentRule.CheckStepAsync(_recordsExportService, DepartmentId, step.ActionConfig,
+				ClaimsAuthorizationHelper.CanExportRecords(), ClaimsAuthorizationHelper.CanManageRecordReports(), ClaimsAuthorizationHelper.CanViewRestrictedRecords());
+			if (exportError != null)
+				return BadRequest(_localizer[exportError switch
+				{
+					WorkflowExportAttachmentRule.TemplateNotFound         => "ExportAttachmentTemplateNotFound",
+					WorkflowExportAttachmentRule.RestrictedRightsRequired => "ExportAttachmentRequiresRestrictedRights",
+					_                                                     => "ExportAttachmentRequiresRecordsRights"
+				}].Value);
 
 			// Protected Workflows: protected.* never in a condition, URL or header, and only in the output template of a
 			// workflow that has (or is being given) a protected release — otherwise it would silently render empty.
@@ -421,6 +446,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> ValidateCondition([FromBody] ValidateConditionWebRequest request, CancellationToken ct)
 		{
+			// The evaluation renders department data into the result: the designer's own rule applies.
+			if (!await CanUserManageWorkflowsAsync())
+				return Forbid();
+
 			if (request == null || string.IsNullOrWhiteSpace(request.ConditionExpression))
 				return BadRequest(new { isValid = false, parseErrors = new[] { "ConditionExpression is required." } });
 
@@ -466,6 +495,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return NotFound();
 
 			var logs  = await _workflowService.GetLogsForRunAsync(runId, ct);
+
+			// The rendered output and action result carry what was sent (call data, names, recipients): only members who
+			// may see the step configuration see them; everyone else gets status, timings and errors.
+			if (!await CanUserManageWorkflowsAsync())
+			{
+				foreach (var log in logs)
+				{
+					log.RenderedOutput = null;
+					log.ActionResult   = null;
+				}
+			}
+
 			ViewBag.Logs = logs;
 			return View(run);
 		}
@@ -477,6 +518,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			if (!await CanUserManageWorkflowsAsync())
 				return Forbid();
+
+			if (!await IsStepInDepartmentAsync(await _workflowService.GetStepByIdAsync(id, ct), ct))
+				return NotFound(new { error = "Step not found." });
 
 			await _workflowService.DeleteWorkflowStepAsync(id, ct);
 
@@ -504,6 +548,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await CanUserViewWorkflowRunsAsync())
 				return RedirectToAction("Dashboard", "Home");
 
+			var workflow = await _workflowService.GetWorkflowByIdAsync(workflowId, ct);
+			if (workflow == null || workflow.DepartmentId != DepartmentId)
+				return NotFound();
+
 			var runs = await _workflowService.GetRunsByWorkflowIdAsync(workflowId, page, 50, ct);
 			ViewBag.WorkflowId = workflowId;
 			ViewBag.Page       = page;
@@ -518,6 +566,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			if (!await CanUserViewWorkflowRunsAsync())
 				return RedirectToAction("Dashboard", "Home");
+
+			var workflow = await _workflowService.GetWorkflowByIdAsync(workflowId, ct);
+			if (workflow == null || workflow.DepartmentId != DepartmentId)
+				return NotFound();
 
 			var health = await _workflowService.GetWorkflowHealthAsync(workflowId, ct);
 			ViewBag.WorkflowId = workflowId;
@@ -544,6 +596,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			if (!await CanUserViewWorkflowRunsAsync())
 				return RedirectToAction("Dashboard", "Home");
+
+			var run = await _workflowService.GetWorkflowRunByIdAsync(workflowRunId, ct);
+			if (run == null || run.DepartmentId != DepartmentId)
+				return NotFound();
 
 			await _workflowService.CancelWorkflowRunAsync(workflowRunId, ct);
 			return RedirectToAction("Pending");
@@ -741,6 +797,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!ModelState.IsValid)
 				return View(model);
 
+			// The credential may hold the destination of a Records report export a step delivers through it.
+			var exportError = await WorkflowExportAttachmentRule.CheckCredentialAsync(_workflowService, _recordsExportService, DepartmentId,
+				existing.WorkflowCredentialId, ClaimsAuthorizationHelper.CanExportRecords(), ClaimsAuthorizationHelper.CanManageRecordReports(),
+				ClaimsAuthorizationHelper.CanViewRestrictedRecords(), ct);
+			if (exportError != null)
+			{
+				ModelState.AddModelError(string.Empty, _localizer["CredentialDeliversRecordsExport"].Value);
+				return View(model);
+			}
+
 			var plaintextJson = BuildCredentialJson(model);
 			if (plaintextJson is null)
 			{
@@ -829,6 +895,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var state = await _recordsCutoverService.GetModuleStateAsync(DepartmentId);
 			return state != null && state.RecordsUsable;
+		}
+
+		/// <summary>
+		/// Steps carry no DepartmentId; a step is ours only when the workflow it currently belongs to is.
+		/// </summary>
+		private async Task<bool> IsStepInDepartmentAsync(WorkflowStep step, CancellationToken ct)
+		{
+			if (step == null)
+				return false;
+
+			var workflow = await _workflowService.GetWorkflowByIdAsync(step.WorkflowId, ct);
+			return workflow != null && workflow.DepartmentId == DepartmentId;
 		}
 
 		private async Task<bool> CanUserManageWorkflowsAsync()

@@ -109,6 +109,8 @@ namespace Resgrid.Tests.Rms
 		[Test]
 		public async Task Bundle_packet_zips_one_pdf_per_record_with_a_manifest_and_optionally_rides_the_report_email_path()
 		{
+			// Emailing the packet out is external sharing: it also needs ManageRecordReports (audit 2026-10-05 3.21).
+			_authorization.Setup(a => a.HasPermissionAsync(Exporter, Dept, PermissionTypes.ManageRecordReports)).ReturnsAsync(true);
 			var result = await _service.BuildPacketAsync(Dept, Exporter, new RecordsBulkPacketRequest { RecordIds = new List<string> { "r2", "r1" }, Mode = RecordsBulkPacketMode.Bundle, Title = "Insurance", DeliverToEmail = "claims@example.org" });
 
 			result.Run.ContentType.Should().Be("application/zip");

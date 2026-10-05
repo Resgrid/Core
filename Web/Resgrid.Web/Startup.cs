@@ -503,6 +503,9 @@ namespace Resgrid.Web
 				// A submission held while the user verified (2FA step-up, password re-confirmation) is put back as the form when
 				// the resume page posts it; a replay post is restored or refused, never bound bare.
 				options.Filters.Add<Filters.HeldSubmissionReplayFilter>();
+				// Statuses saved by a website request record who set them (M0260), so reports can tell a dispatcher's entry
+				// from the crew's own.
+				options.Filters.Add<Filters.StatusWriteActorFilter>();
 			}).AddJsonOptions(jsonOptions =>
 			{
 				jsonOptions.JsonSerializerOptions.PropertyNamingPolicy = null;

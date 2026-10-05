@@ -50,13 +50,17 @@
                         </div>
                     </div>
                     <ul class="nav nav-tabs">
-                        <li class="@Tab("snapshots")"><a asp-action="PayDataRun" asp-route-id="@run.PayDataReportRunId" asp-route-tab="snapshots">@localizer["Snapshots"] (@Model.Snapshots.Count)</a></li>
+                        @* Per-worker snapshots are the report wizard's (ManagePayDataReporting); the exporter sees the aggregate rows and artifacts. *@
+                        @if (Model.CanManagePayData)
+                        {
+                            <li class="@Tab("snapshots")"><a asp-action="PayDataRun" asp-route-id="@run.PayDataReportRunId" asp-route-tab="snapshots">@localizer["Snapshots"] (@Model.Snapshots.Count)</a></li>
+                        }
                         <li class="@Tab("rows")"><a asp-action="PayDataRun" asp-route-id="@run.PayDataReportRunId" asp-route-tab="rows">@localizer["Rows"] (@Model.Rows.Count)</a></li>
                         <li class="@Tab("validation")"><a asp-action="PayDataRun" asp-route-id="@run.PayDataReportRunId" asp-route-tab="validation">@localizer["Validation"]</a></li>
                         <li class="@Tab("artifacts")"><a asp-action="PayDataRun" asp-route-id="@run.PayDataReportRunId" asp-route-tab="artifacts">@localizer["Artifacts"] (@Model.Artifacts.Count)</a></li>
                     </ul>
                     <div class="tab-content m-t-md">
-                        @if (Model.Tab == "snapshots")
+                        @if (Model.Tab == "snapshots" && Model.CanManagePayData)
                         {
                             <p class="small text-muted"><i class="fa fa-lock"></i> @localizer["SnapshotsHelp"]</p>
                             <table class="table table-striped table-condensed">

@@ -29,7 +29,11 @@
         <a asp-controller="Invoicing" asp-action="Pdf" asp-route-area="User" asp-route-id="@invoice.InvoiceId" class="btn btn-info"><i class="fa fa-file-pdf-o"></i> @localizer["DownloadPdf"]</a>
         @if (Model.ContractorPacket)
         {
-            <a asp-controller="Invoicing" asp-action="Packet" asp-route-area="User" asp-route-id="@invoice.InvoiceId" class="btn btn-info"><i class="fa fa-file-archive-o"></i> @localizer["DownloadPacket"]</a>
+            @* The packet (compliance documents, DTRs, receipts) takes Invoicing_Update, like sending it (InvoicingController.Packet). *@
+            if (Model.CanManage)
+            {
+                <a asp-controller="Invoicing" asp-action="Packet" asp-route-area="User" asp-route-id="@invoice.InvoiceId" class="btn btn-info"><i class="fa fa-file-archive-o"></i> @localizer["DownloadPacket"]</a>
+            }
             <a asp-controller="Deployments" asp-action="View" asp-route-area="User" asp-route-id="@invoice.DeploymentId" asp-route-tab="billing" class="btn btn-default"><i class="fa fa-truck"></i> @localizer["OpenDeployment"]</a>
         }
         @if ((isDraft || isOpen) && write)

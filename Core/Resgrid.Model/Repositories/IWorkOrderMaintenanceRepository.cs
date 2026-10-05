@@ -17,6 +17,7 @@ namespace Resgrid.Model.Repositories
         Task LockUnitAsync(int departmentId, int unitId);
         Task<UnitState> LatestUnitStateAsync(int departmentId, int unitId);
         Task<int> LastAppendedUnitStateIdAsync(int departmentId, int unitId);
-        Task<int> AppendUnitStateAsync(int departmentId, int unitId, int state, DateTime now);
+        /// <summary>Appends a hold's unit state, recorded as set by <paramref name="setByUserId"/> from a maintenance hold (M0260).</summary>
+        Task<int> AppendUnitStateAsync(int departmentId, int unitId, int state, DateTime now, string setByUserId = null);
     }
 }

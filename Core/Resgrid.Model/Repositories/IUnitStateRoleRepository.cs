@@ -16,5 +16,11 @@ namespace Resgrid.Model.Repositories
 		/// <param name="unitId">The unit identifier.</param>
 		/// <returns>Task&lt;IEnumerable&lt;UnitStateRole&gt;&gt;.</returns>
 		Task<IEnumerable<UnitStateRole>> GetCurrentRolesForUnitAsync(int unitId);
+
+		/// <summary>
+		/// The crew seats recorded with the given unit states (who rode the unit, in which role, when it set each status),
+		/// for report prefill. Read in batches; an empty input returns nothing.
+		/// </summary>
+		Task<IEnumerable<UnitStateRole>> GetRolesForUnitStatesAsync(IReadOnlyCollection<int> unitStateIds);
 	}
 }

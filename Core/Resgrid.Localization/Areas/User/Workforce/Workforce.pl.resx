@@ -691,6 +691,7 @@
   <data name="workforce_naics_invalid" xml:space="preserve"><value>NAICS musi mieć sześć cyfr.</value></data>
   <data name="workforce_no_inputs" xml:space="preserve"><value>Nic do wyceny: brak wpisów pracy i odczytów.</value></data>
   <data name="workforce_not_found" xml:space="preserve"><value>Nie znaleziono rekordu.</value></data>
+  <data name="workforce_self_approval" xml:space="preserve"><value>Nie możesz zatwierdzić tego profilu wynagrodzenia: dotyczy Twojego wynagrodzenia lub to Ty wprowadziłeś ostatnią zmianę. Musi go zatwierdzić inny kierownik.</value></data>
   <data name="workforce_pay_basis_invalid" xml:space="preserve"><value>Podstawa płacy jest nieprawidłowa.</value></data>
   <data name="workforce_profile_overlap" xml:space="preserve"><value>Okres nakłada się na inny profil tego samego zakresu.</value></data>
   <data name="workforce_protected_write_refused" xml:space="preserve"><value>Zapis chroniony został odrzucony.</value></data>

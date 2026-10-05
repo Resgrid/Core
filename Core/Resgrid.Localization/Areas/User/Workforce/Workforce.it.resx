@@ -691,6 +691,7 @@
   <data name="workforce_naics_invalid" xml:space="preserve"><value>Il NAICS deve avere sei cifre.</value></data>
   <data name="workforce_no_inputs" xml:space="preserve"><value>Niente da valorizzare: nessuna registrazione di lavoro o lettura di utilizzo.</value></data>
   <data name="workforce_not_found" xml:space="preserve"><value>Il record non è stato trovato.</value></data>
+  <data name="workforce_self_approval" xml:space="preserve"><value>Non puoi approvare questo profilo retributivo: riguarda la tua retribuzione o hai apportato tu l'ultima modifica. Deve approvarlo un altro responsabile.</value></data>
   <data name="workforce_pay_basis_invalid" xml:space="preserve"><value>La base retributiva non è valida.</value></data>
   <data name="workforce_profile_overlap" xml:space="preserve"><value>Il periodo si sovrappone a un altro profilo dello stesso ambito.</value></data>
   <data name="workforce_protected_write_refused" xml:space="preserve"><value>La scrittura protetta è stata rifiutata.</value></data>

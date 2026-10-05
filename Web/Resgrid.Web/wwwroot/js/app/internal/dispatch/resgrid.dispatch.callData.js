@@ -17,7 +17,9 @@ var resgrid;
                         Note: $('#note-box').val()
                     }),
                     contentType: 'application/json',
-                    type: 'POST'
+                    type: 'POST',
+                    // JSON bodies cannot carry the antiforgery field, so the token travels as a header.
+                    headers: { 'RequestVerificationToken': $('#callNoteTokenForm input[name="__RequestVerificationToken"]').val() }
                 }).done(function (data) {
                     $('#note-box').val('');
                     getCallNotes();

@@ -64,7 +64,7 @@
                                             @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
                                             {
                                                 <a href="@Url.Action("EditType", "Calendar", new { area = "User" })?id=@type.CalendarItemTypeId" class="btn btn-xs btn-info">@commonLocalizer["Edit"]</a>
-                                                <a href="@Url.Action("DeleteType", "Calendar", new { area = "User" })?typeId=@type.CalendarItemTypeId" class="btn btn-xs btn-danger" data-confirm="@localizer["CalendarTypesDeleteWarning"] @type.Name?" rel="nofollow">@commonLocalizer["Delete"]</a>
+                                                <form method="post" action="@Url.Action("DeleteType", "Calendar", new { area = "User", typeId = type.CalendarItemTypeId })" style="display: inline;">@Html.AntiForgeryToken()<button type="submit" class="btn btn-xs btn-danger" data-confirm="@localizer["CalendarTypesDeleteWarning"] @type.Name?">@commonLocalizer["Delete"]</button></form>
                                             }
                                         </td>
                                     </tr>

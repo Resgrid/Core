@@ -390,6 +390,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 		#endregion Partials
 
 		#region Edit User Profile
+		/// <summary>
+		/// Whether the profile page shows (and its save takes) the member's email and phone numbers: always on one's own
+		/// profile and for department admins, otherwise only with View Personal Info -- the rule the person's page applies.
+		/// EditUserProfile.cshtml makes the same test, so what is posted always matches what was shown.
+		/// </summary>
+		private static bool CanSeeProfileContactDetails(bool isOwnProfile)
+		{
+			return isOwnProfile || ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || ClaimsAuthorizationHelper.CanViewPII();
+		}
+
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_View)]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
@@ -447,6 +457,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (model.Profile == null)
 				model.Profile = new UserProfile();
+
+			// View Personal Info: a group admin editing a member sees their email and phone numbers only with it, as on
+			// the person's page. The view leaves the fields out; this keeps the values out of the model too.
+			if (!CanSeeProfileContactDetails(model.IsOwnProfile))
+			{
+				model.Email = null;
+				model.Profile.MobileNumber = null;
+				model.Profile.HomeNumber = null;
+			}
 
 			await HydrateMemberIdentificationNumberAsync(model, userId, protectionEnforced);
 
@@ -647,6 +666,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (model.User == null)
 				return NotFound();
 
+			// Email and phone numbers the caller was not shown (View Personal Info, see the GET) are kept as stored,
+			// whatever the form carries: absent fields would otherwise read as an email change and cleared numbers.
+			var contactDetailsHidden = !CanSeeProfileContactDetails(model.IsOwnProfile);
+			if (contactDetailsHidden)
+			{
+				var storedContactProfile = await _userProfileService.GetProfileByUserIdAsync(model.UserId, true);
+
+				model.Email = model.User.Email;
+				model.Profile ??= new UserProfile();
+				model.Profile.MobileNumber = storedContactProfile?.MobileNumber;
+				model.Profile.HomeNumber = storedContactProfile?.HomeNumber;
+			}
+
 			var targetDepartmentMember = await _departmentsService.GetDepartmentMemberAsync(model.UserId, DepartmentId);
 			var targetExternalIdentityState = await _externalIdentityLinkService.GetSsoManagementStateAsync(model.UserId, cancellationToken);
 			var isLegacySsoLinkedOnPost = targetDepartmentMember != null &&
@@ -677,7 +709,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ViewBag.TimeZones = new SelectList(TimeZones.Zones, "Key", "Value");
 			ViewBag.Languages = new SelectList(SupportedLocales.SupportedLanguagesMap, "Key", "Value");
 
-			if (!String.IsNullOrEmpty(model.Profile.MobileNumber))
+			// A stored number the caller cannot see is not theirs to correct, so it is not re-validated either.
+			if (!contactDetailsHidden && !String.IsNullOrEmpty(model.Profile.MobileNumber))
 			{
 				if (model.Carrier == MobileCarriers.None)
 					ModelState.AddModelError("Carrier", "If you entered a mobile phone, you need to select your mobile carrier. If you carrier is not listed select one and contact us to have your carrier added.");
@@ -711,14 +744,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			PhoneNumberResult mobileResult = null;
 			PhoneNumberResult homeResult = null;
 
-			if (!String.IsNullOrWhiteSpace(model.Profile.MobileNumber))
+			if (!contactDetailsHidden && !String.IsNullOrWhiteSpace(model.Profile.MobileNumber))
 			{
 				mobileResult = _phoneNumberProcesser.Process(model.Profile.MobileNumber, phoneRegion);
 				if (mobileResult == null || !mobileResult.IsValid)
 					ModelState.AddModelError("Profile.MobileNumber", "This mobile number doesn't look valid for sending texts. Enter it in full international format, starting with your country code (for example +27 82 446 1783).");
 			}
 
-			if (!String.IsNullOrWhiteSpace(model.Profile.HomeNumber))
+			if (!contactDetailsHidden && !String.IsNullOrWhiteSpace(model.Profile.HomeNumber))
 			{
 				homeResult = _phoneNumberProcesser.Process(model.Profile.HomeNumber, phoneRegion);
 				if (homeResult == null || !homeResult.IsValid)
@@ -911,7 +944,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 						await _departmentGroupsService.DeleteUserFromGroupsAsync(model.UserId, DepartmentId, cancellationToken);
 				}
 
-				if (form.ContainsKey("roles"))
+				// Roles are applied only for a caller the page offers the roles field to (the GET view's own test): a department
+				// admin, or an admin of the member's group, read before any group move above. A member posting "roles" for
+				// their own profile would otherwise hand themselves every role-based permission.
+				var callerCanManageRoles = callerIsDepartmentAdmin ||
+					(targetGroupForPasswordReset != null && ClaimsAuthorizationHelper.IsUserGroupAdmin(targetGroupForPasswordReset.DepartmentGroupId));
+
+				if (callerCanManageRoles && form.ContainsKey("roles"))
 				{
 					var roles = form["roles"].ToString().Split(char.Parse(","));
 
@@ -1107,6 +1146,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 
 		#region User Actions
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_View)]
 		public async Task<IActionResult> SetCustomAction(int actionType, string note)
 		{
@@ -1118,6 +1159,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return new StatusCodeResult((int)HttpStatusCode.NoContent);
 		}
 
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_View)]
 		public async Task<IActionResult> SetCustomUserAction(string userId, int actionType)
 		{
@@ -1134,6 +1177,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return new StatusCodeResult((int)HttpStatusCode.OK);
 		}
 
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_View)]
 		public async Task<IActionResult> SetCustomStaffing(string userId, int staffingLevel)
 		{
@@ -1150,6 +1195,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return new StatusCodeResult((int)HttpStatusCode.NoContent);
 		}
 
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_View)]
 		public async Task<IActionResult> ResetAllToStandingBy()
 		{
@@ -1161,6 +1208,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("Dashboard", "Home", new { area = "User" });
 		}
 
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_View)]
 		public async Task<IActionResult> ResetGroupToStandingBy(int groupId)
 		{
@@ -1178,6 +1227,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_View)]
 		public async Task<IActionResult> SetUserState(DashboardModel model)
 		{
@@ -1195,6 +1245,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("Dashboard");
 		}
 
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_View)]
 		public async Task<IActionResult> UserRespondingToStation(int stationId)
 		{
@@ -1217,6 +1269,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("Dashboard", "Home", new { area = "User" });
 		}
 
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_View)]
 		public async Task<IActionResult> UserRespondingToCall(int callId)
 		{
@@ -1242,14 +1296,33 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("Dashboard", "Home", new { area = "User" });
 		}
 
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_View)]
 		public async Task<IActionResult> SetStateForUser(string userId, UserStateTypes stateType)
 		{
+			// Members of this department only, and someone else's staffing only for the admins the status table offers the
+			// menu to: a department admin, or an admin of that member's group.
+			var member = await _departmentsService.GetDepartmentMemberAsync(userId, DepartmentId);
+
+			if (member == null)
+				return Unauthorized();
+
+			if (userId != UserId && !ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+			{
+				var targetGroup = await _departmentGroupsService.GetGroupForUserAsync(userId, DepartmentId);
+
+				if (targetGroup == null || !ClaimsAuthorizationHelper.IsUserGroupAdmin(targetGroup.DepartmentGroupId))
+					return Unauthorized();
+			}
+
 			await _userStateService.CreateUserState(userId, DepartmentId, (int)stateType);
 
 			return RedirectToAction("Dashboard", "Home", new { area = "User" });
 		}
 
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_View)]
 		public async Task<IActionResult> SetActionForUser(string userId, int actionType)
 		{

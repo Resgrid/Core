@@ -17,7 +17,10 @@
 	</div>
 	<div class="col-sm-4">
 		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-			<a class="btn btn-default" asp-controller="RecordSavedReports" asp-action="RunCsv" asp-route-area="User" asp-route-id="@Model.Report.RmsSavedReportDefinitionId"><i class="fa fa-download"></i> CSV</a>
+			@if (ViewBag.CanExportRecords == true)
+			{
+				<a class="btn btn-default" asp-controller="RecordSavedReports" asp-action="RunCsv" asp-route-area="User" asp-route-id="@Model.Report.RmsSavedReportDefinitionId"><i class="fa fa-download"></i> CSV</a>
+			}
 			<a class="btn btn-default" asp-controller="RecordSavedReports" asp-action="Edit" asp-route-area="User" asp-route-id="@Model.Report.RmsSavedReportDefinitionId"><i class="fa fa-pencil"></i> @localizer["Edit"]</a>
 		</div>
 	</div>

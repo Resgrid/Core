@@ -78,7 +78,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> DeleteUnitType(int unitTypeId, CancellationToken cancellationToken)
 		{
@@ -104,6 +105,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> NewUnitType(EditUnitTypeView model, CancellationToken cancellationToken)
 		{
@@ -161,6 +163,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> EditUnitType(EditUnitTypeView model, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserEditUnitTypeAsync(UserId, model.UnitType.UnitTypeId))
@@ -234,6 +238,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> NewCallType(EditCallTypeView model, CancellationToken cancellationToken)
 		{
@@ -288,6 +293,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> EditCallType(EditCallTypeView model, CancellationToken cancellationToken)
 		{
@@ -327,7 +333,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> DeleteCallType(int callTypeId, CancellationToken cancellationToken)
 		{
@@ -370,12 +377,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> NewCallPriority(NewCallPriorityView model, IFormFile pushfileToUpload, IFormFile iOSPushfileToUpload, IFormFile alertfileToUpload,
 			CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserAddCallPriorityAsync(UserId))
 				return Unauthorized();
+
+			// A new priority is always a new row: a posted id would make the save update another row by key.
+			model.CallPriority.DepartmentCallPriorityId = 0;
 
 			var priotiries = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(DepartmentId, true);
 
@@ -492,7 +503,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> DeleteCallPriority(int priorityId, CancellationToken cancellationToken)
 		{
@@ -542,6 +554,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> EditCallPriority(EditCallPriorityView model, IFormFile pushfileToUpload, IFormFile iOSPushfileToUpload, IFormFile alertfileToUpload,
 			CancellationToken cancellationToken)
@@ -665,7 +678,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		#region Certification Types
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> DeleteCertificationType(int certificationTypeId, CancellationToken cancellationToken)
 		{
@@ -713,6 +727,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> NewCertificationType(NewCertificationTypeView model, CancellationToken cancellationToken)
 		{
@@ -766,6 +781,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> NewDocumentType(NewDocumentCategoryView model, CancellationToken cancellationToken)
 		{
@@ -805,7 +821,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> DeleteDocumentType(string documentTypeId, CancellationToken cancellationToken)
 		{
@@ -850,6 +867,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> NewNoteType(NewNoteCategoryView model, CancellationToken cancellationToken)
 		{
@@ -889,7 +907,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> DeleteNoteType(string noteTypeId, CancellationToken cancellationToken)
 		{
@@ -921,7 +940,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		#region List Ordering
 
+		// Personnel list ordering is a department setting like the types above: department admins only.
 		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> ListOrdering()
 		{
 			var model = new ListOrderingView();
@@ -944,6 +965,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> SavePersonnelStatusListOrdering(IFormCollection form, CancellationToken cancellationToken)
 		{
 			List<int> options = (from object key in form.Keys
@@ -978,7 +1001,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("ListOrdering");
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> DeletePersonnelListStatus(int statusId, CancellationToken cancellationToken)
 		{
 			var personnelStatusOrders = await _departmentSettingsService.GetDepartmentPersonnelListStatusSortOrderAsync(DepartmentId);
@@ -1010,6 +1035,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> NewContactNoteType(NewContactNoteCategoryView model, CancellationToken cancellationToken)
 		{
@@ -1050,7 +1076,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> DeleteContactNoteType(string contactNoteTypeId, CancellationToken cancellationToken)
 		{
@@ -1099,6 +1126,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> EditContactNoteType(NewContactNoteCategoryView model, CancellationToken cancellationToken)
 		{

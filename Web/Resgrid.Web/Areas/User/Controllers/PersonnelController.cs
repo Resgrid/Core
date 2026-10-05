@@ -389,7 +389,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Personnel_View)]
 		public async Task<IActionResult> ViewPerson(string userId)
 		{
-			if (!await _authorizationService.CanUserViewUserAsync(UserId, userId))
+			// Same department, and one of the people the personnel list shows (Security > View Group Users).
+			if (!await _authorizationService.CanUserViewUserAsync(UserId, userId) ||
+			    !await _authorizationService.CanUserViewPersonViaMatrixAsync(userId, UserId, DepartmentId))
 				return Unauthorized();
 
 			ViewPersonView model = new ViewPersonView();
@@ -475,7 +477,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (String.IsNullOrWhiteSpace(userId))
 				return BadRequest();
 
-			if (!await _authorizationService.CanUserViewUserAsync(UserId, userId))
+			if (!await _authorizationService.CanUserViewUserAsync(UserId, userId) ||
+			    !await _authorizationService.CanUserViewPersonViaMatrixAsync(userId, UserId, DepartmentId))
 				return Unauthorized();
 
 			var fields = new Dictionary<string, string>();
@@ -837,6 +840,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			foreach (var user in personGroupRoles)
 			{
+				// The grids and pickers list the people the personnel list shows (Security > View Group Users).
+				if (!await _authorizationService.CanUserViewPersonViaMatrixAsync(user.UserId, UserId, DepartmentId))
+					continue;
+
 				PersonnelForJson person = new PersonnelForJson();
 				person.UserId = user.UserId;
 				//person.Name = UserHelper.GetFullNameForUser(personnelNames, null, user.UserId);
@@ -893,6 +900,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			foreach (var user in users)
 			{
+				if (!await _authorizationService.CanUserViewPersonViaMatrixAsync(user.UserId, UserId, DepartmentId))
+					continue;
+
 				PersonnelForJson person = new PersonnelForJson();
 				person.UserId = user.UserId;
 				person.Name = await UserHelper.GetFullNameForUser(personnelNames, user.UserName, user.UserId);
@@ -941,7 +951,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 					person.StatusColor = "#000";
 				}
 
-				if (String.IsNullOrWhiteSpace(callLat) || String.IsNullOrWhiteSpace(callLong) || currentStatus == null || String.IsNullOrWhiteSpace(currentStatus.GeoLocationData))
+				// The ETA is worked out from the member's last status position, so it needs Security > See Personnel Locations.
+				if (String.IsNullOrWhiteSpace(callLat) || String.IsNullOrWhiteSpace(callLong) || currentStatus == null || String.IsNullOrWhiteSpace(currentStatus.GeoLocationData) ||
+				    !await _authorizationService.CanUserViewPersonLocationViaMatrixAsync(user.UserId, UserId, DepartmentId))
 					person.Eta = "N/A";
 				else
 				{
@@ -1012,6 +1024,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 					if (user.UserId == UserId)
 						continue;
 
+				if (!await _authorizationService.CanUserViewPersonViaMatrixAsync(user.UserId, UserId, DepartmentId))
+					continue;
+
 				PersonnelForJson person = new PersonnelForJson();
 				person.UserId = user.UserId;
 				person.Name = await UserHelper.GetFullNameForUser(personnelNames, user.UserName, user.UserId);
@@ -1052,6 +1067,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			foreach (var user in users)
 			{
+				// The people the personnel list shows (Security > View Group Users).
+				if (!await _authorizationService.CanUserViewPersonViaMatrixAsync(user.UserId, UserId, DepartmentId))
+					continue;
+
 				var member = departmentMembers.FirstOrDefault(x => x.UserId == user.UserId);
 
 				// Skip hidden/disabled users unless current user is dept admin or group admin of their group
@@ -1205,6 +1224,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			foreach (var user in users)
 			{
+				// The people the personnel list shows (Security > View Group Users).
+				if (!await _authorizationService.CanUserViewPersonViaMatrixAsync(user.UserId, UserId, DepartmentId))
+					continue;
+
 				var member = departmentMembers.FirstOrDefault(x => x.UserId == user.UserId);
 
 				// Skip hidden/disabled users unless current user is dept admin or group admin of their group
@@ -1491,7 +1514,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return Content(buttonHtml);
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Personnel_View)]
 		public async Task<IActionResult> SetActionForUser(string userId, int actionType, int destination, int type, string note, CancellationToken cancellationToken)
 		{
@@ -1522,7 +1546,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("Index");
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Personnel_View)]
 		public async Task<IActionResult> SetUserActionForMultiple(string userIds, int actionType, int destination, int type, string note, CancellationToken cancellationToken)
 		{
@@ -1559,7 +1584,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("Index");
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Personnel_View)]
 		public async Task<IActionResult> SetStaffingForUser(string userId, int staffing, string note, CancellationToken cancellationToken)
 		{
@@ -1582,7 +1608,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("Index");
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Personnel_View)]
 		public async Task<IActionResult> SetUserStaffingForMultiple(string userIds, int staffing, string note, CancellationToken cancellationToken)
 		{
@@ -1652,6 +1679,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				foreach (var member in sortedUsers)
 				{
+					if (!await _authorizationService.CanUserViewPersonViaMatrixAsync(member.User.UserId, UserId, DepartmentId))
+						continue;
+
 					PersonnelStatusJson person = new PersonnelStatusJson();
 					person.UserId = member.User.UserId;
 
@@ -1743,6 +1773,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				foreach (var member in sortedUsers)
 				{
+					if (!await _authorizationService.CanUserViewPersonViaMatrixAsync(member.User.UserId, UserId, DepartmentId))
+						continue;
+
 					PersonnelStatusJson person = new PersonnelStatusJson();
 					person.UserId = member.User.UserId;
 					person.Name = member.Name;
@@ -1783,6 +1816,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				foreach (var member in sortedUsers)
 				{
+					if (!await _authorizationService.CanUserViewPersonViaMatrixAsync(member.User.UserId, UserId, DepartmentId))
+						continue;
+
 					PersonnelStatusJson person = new PersonnelStatusJson();
 					person.UserId = member.User.UserId;
 					person.Name = member.Name;
@@ -1863,6 +1899,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await _authorizationService.CanUserAddNewUserAsync(DepartmentId, UserId))
 				return Unauthorized();
 
+			var addScope = await GetAddPersonnelGroupScopeAsync();
+			if (!addScope.Allowed)
+				return Unauthorized();
+
 			var member = await _departmentsService.GetDepartmentMemberAsync(id, DepartmentId);
 			if (member == null || member.DepartmentId != DepartmentId)
 				return NotFound();
@@ -1875,6 +1915,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 					return RedirectToAction("ReactivateUser", "Personnel", new { area = "User", id });
 
 				await _departmentsService.ReactivateUserAsync(DepartmentId, id, UserId, cancellationToken);
+
+				if (addScope.GroupId.HasValue)
+					await _departmentGroupsService.MoveUserIntoGroupAsync(id, addScope.GroupId.Value, false, DepartmentId, cancellationToken);
 
 				_userProfileService.ClearAllUserProfilesFromCache(DepartmentId);
 				_departmentsService.InvalidateDepartmentUsersInCache(DepartmentId);
@@ -1889,6 +1932,26 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		private const string ReactivatedUserTempDataKey = "ReactivatedUserId";
 		private const string AddedExistingUserTempDataKey = "AddedExistingUserId";
+
+		/// <summary>
+		/// Where a person brought in by reactivation or by adding an existing account lands, by the rule AddPerson applies:
+		/// a department admin leaves group membership alone (GroupId null); a group admin (Add Personnel = department and
+		/// group admins) can only bring people into their own group, and is refused if they have none to bring them into.
+		/// </summary>
+		private async Task<(bool Allowed, int? GroupId)> GetAddPersonnelGroupScopeAsync()
+		{
+			// Department admin standing as CanUserAddNewUserAsync reads it, not the sign-in claims.
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			if (department != null && department.IsUserAnAdmin(UserId))
+				return (true, null);
+
+			var group = await _departmentGroupsService.GetGroupForUserAsync(UserId, DepartmentId);
+
+			if (group == null || !group.IsUserGroupAdmin(UserId))
+				return (false, null);
+
+			return (true, group.DepartmentGroupId);
+		}
 
 		/// <summary>
 		/// Confirmation page for adding an account that already exists in another department (AddPerson lands here when
@@ -1935,6 +1998,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await _authorizationService.CanUserAddNewUserAsync(DepartmentId, UserId))
 				return Unauthorized();
 
+			var addScope = await GetAddPersonnelGroupScopeAsync();
+			if (!addScope.Allowed)
+				return Unauthorized();
+
 			if (string.IsNullOrWhiteSpace(id) || _usersService.GetUserById(id) == null)
 				return NotFound();
 
@@ -1950,6 +2017,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 					return RedirectToAction("AddExistingUser", "Personnel", new { area = "User", id });
 
 				var added = await _departmentsService.AddExistingUserAsync(DepartmentId, id, cancellationToken);
+
+				if (added != null && addScope.GroupId.HasValue)
+					await _departmentGroupsService.MoveUserIntoGroupAsync(id, addScope.GroupId.Value, false, DepartmentId, cancellationToken);
 
 				if (added != null)
 				{
@@ -2072,6 +2142,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Role_Create)]
 		public async Task<IActionResult> AddRole(AddRoleModel model, CancellationToken cancellationToken)
 		{
@@ -2105,6 +2176,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Role_Update)]
 		public async Task<IActionResult> EditRole(EditRoleModel model, IFormCollection collection, CancellationToken cancellationToken)
 		{
@@ -2175,7 +2247,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return userIds.Select(id => names.TryGetValue(id, out var name) ? name : id).ToList();
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Role_Delete)]
 		public async Task<IActionResult> DeleteRole(int roleId, CancellationToken cancellationToken)
 		{
@@ -2275,7 +2348,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Personnel_View)]
 		public async Task<IActionResult> ViewEvents(string userId)
 		{
-			if (!await _authorizationService.CanUserViewUserAsync(UserId, userId))
+			if (!await _authorizationService.CanUserViewUserAsync(UserId, userId) ||
+			    !await _authorizationService.CanUserViewPersonViaMatrixAsync(userId, UserId, DepartmentId))
 				return Unauthorized();
 
 			var model = new ViewPersonEventsView();
@@ -2353,14 +2427,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Personnel_Delete)]
 		public async Task<IActionResult> ClearAllPersonnelEvents(ViewPersonEventsView model, CancellationToken cancellationToken)
 		{
-			if (!await _authorizationService.CanUserDeleteUserAsync(DepartmentId, UserId, model.UserId))
+			// The member must be in this department: the delete is by user and would otherwise reach any account.
+			if (!await _authorizationService.CanUserViewUserAsync(UserId, model.UserId) ||
+			    !await _authorizationService.CanUserDeleteUserAsync(DepartmentId, UserId, model.UserId))
 				return Unauthorized();
 
 			if (model.ConfirmClearAll)
-				await _actionLogsService.DeleteActionLogsForUserAsync(model.UserId, cancellationToken);
+				await _actionLogsService.DeleteActionLogsForUserAsync(model.UserId, DepartmentId, cancellationToken);
 
 			return RedirectToAction("ViewEvents", new { userId = model.UserId });
 		}
@@ -2408,11 +2485,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 				.Where(x => x.DestinationId.HasValue && x.GetEffectiveDestinationType() != DestinationEntityTypes.Station && x.GetEffectiveDestinationType() != DestinationEntityTypes.Poi)
 				.Select(x => x.DestinationId.Value));
 
+			var locationVisible = new Dictionary<string, bool>(StringComparer.Ordinal);
+
 			foreach (var actionLog in actionLogs)
 			{
 				var personnelEvent = new PersonnelEventJson();
 				personnelEvent.EventId = actionLog.ActionLogId;
 				personnelEvent.UserId = actionLog.UserId;
+
+				if (!locationVisible.TryGetValue(actionLog.UserId ?? string.Empty, out var canSeeLocation))
+					locationVisible[actionLog.UserId ?? string.Empty] = canSeeLocation =
+						await _authorizationService.CanUserViewPersonLocationViaMatrixAsync(actionLog.UserId, UserId, DepartmentId);
 
 				var profile = await _userProfileService.GetProfileByUserIdAsync(actionLog.UserId);
 				personnelEvent.PersonName = profile != null ? profile.FullName.AsFirstNameLastName : actionLog.UserId;
@@ -2425,7 +2508,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var destination = DestinationResolutionHelper.Resolve(actionLog.DestinationId, actionLog.DestinationType, statusDetail?.DetailType, calls, stations, pois, _localizer);
 				personnelEvent.DestinationName = destination.Name;
 
-				var coordinates = actionLog.GetCoordinates();
+				// Security > See Personnel Locations decides whether the status position is shown.
+				var coordinates = canSeeLocation ? actionLog.GetCoordinates() : null;
 				if (coordinates != null)
 				{
 					if (coordinates.Latitude.HasValue)
@@ -2446,9 +2530,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 		public async Task<IActionResult> GetPersonnelEvents(string userId)
 		{
-			if (!await _authorizationService.CanUserViewUserAsync(UserId, userId))
+			if (!await _authorizationService.CanUserViewUserAsync(UserId, userId) ||
+			    !await _authorizationService.CanUserViewPersonViaMatrixAsync(userId, UserId, DepartmentId))
 				return Unauthorized();
 
+			// Security > See Personnel Locations decides whether the status positions are shown.
+			var canSeeLocation = await _authorizationService.CanUserViewPersonLocationViaMatrixAsync(userId, UserId, DepartmentId);
 			var personnelEvents = new List<PersonnelEventJson>();
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 			var profile = await _userProfileService.GetProfileByUserIdAsync(userId);
@@ -2474,7 +2561,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var destination = DestinationResolutionHelper.Resolve(actionLog.DestinationId, actionLog.DestinationType, statusDetail?.DetailType, activeCalls, stations, pois, _localizer);
 				personnelEvent.DestinationName = destination.Name;
 
-				var coordinates = actionLog.GetCoordinates();
+				var coordinates = canSeeLocation ? actionLog.GetCoordinates() : null;
 				if (coordinates != null)
 				{
 					if (coordinates.Latitude.HasValue)

@@ -16,7 +16,9 @@ namespace Resgrid.Chatbot.Handlers
 	/// <summary>
 	/// Answers "what calls am I on?" (intent <see cref="ChatbotIntentType.MyCalls"/>) and "what calls is
 	/// Rescue 6 on?" (intent <see cref="ChatbotIntentType.UnitCalls"/>): the ACTIVE calls whose dispatch
-	/// lists include the requesting user (direct personnel dispatch) or the named unit.
+	/// lists include the requesting user (direct personnel dispatch) or the named unit. The unit question only
+	/// answers for a unit the user can see (Security &gt; View Units) and lists only the calls they can view
+	/// (group-scoped dispatch), the same checks the unit and call pages apply.
 	/// </summary>
 	public class MyCallsActionHandler : IChatbotActionHandler
 	{
@@ -25,11 +27,13 @@ namespace Resgrid.Chatbot.Handlers
 
 		private readonly ICallsService _callsService;
 		private readonly IUnitsService _unitsService;
+		private readonly IAuthorizationService _authorizationService;
 
-		public MyCallsActionHandler(ICallsService callsService, IUnitsService unitsService)
+		public MyCallsActionHandler(ICallsService callsService, IUnitsService unitsService, IAuthorizationService authorizationService)
 		{
 			_callsService = callsService;
 			_unitsService = unitsService;
+			_authorizationService = authorizationService;
 		}
 
 		public ChatbotIntentType IntentType => ChatbotIntentType.MyCalls;
@@ -81,15 +85,26 @@ namespace Resgrid.Chatbot.Handlers
 			if (string.IsNullOrWhiteSpace(unitName))
 				return new ChatbotResponse { Text = ChatbotResources.Get("UnitCalls_Specify", culture), Processed = false };
 
-			var units = await _unitsService.GetUnitsForDepartmentAsync(session.DepartmentId);
+			var units = await _unitsService.GetUnitsForDepartmentAsync(session.DepartmentId) ?? new List<Unit>();
 			var query = unitName.Trim().ToLowerInvariant();
-			Unit unit = null;
 
+			// Same match order as before (id, exact name, partial name), but a unit the user cannot see is skipped as if it
+			// were not there, so the answer never confirms a hidden unit exists.
+			var candidates = new List<Unit>();
 			if (int.TryParse(query, out var unitId))
-				unit = units?.FirstOrDefault(u => u.UnitId == unitId);
+				candidates.AddRange(units.Where(u => u.UnitId == unitId));
+			candidates.AddRange(units.Where(u => u.Name != null && u.Name.ToLowerInvariant() == query));
+			candidates.AddRange(units.Where(u => u.Name != null && u.Name.ToLowerInvariant().Contains(query)));
 
-			unit ??= units?.FirstOrDefault(u => u.Name != null && u.Name.ToLowerInvariant() == query)
-				?? units?.FirstOrDefault(u => u.Name != null && u.Name.ToLowerInvariant().Contains(query));
+			Unit unit = null;
+			foreach (var candidate in candidates.Distinct())
+			{
+				if (await _authorizationService.CanUserViewUnitAsync(session.UserId, candidate.UnitId))
+				{
+					unit = candidate;
+					break;
+				}
+			}
 
 			if (unit == null)
 				return new ChatbotResponse { Text = ChatbotResources.Get("Unit_NotFound", culture, unitName), Processed = true };
@@ -97,7 +112,8 @@ namespace Resgrid.Chatbot.Handlers
 			var unitCalls = new List<Call>();
 			foreach (var call in await GetActiveCallsWithDispatchesAsync(session.DepartmentId, forUnits: true))
 			{
-				if (call.UnitDispatches != null && call.UnitDispatches.Any(d => d.UnitId == unit.UnitId))
+				if (call.UnitDispatches != null && call.UnitDispatches.Any(d => d.UnitId == unit.UnitId) &&
+					await _authorizationService.CanUserViewCallAsync(session.UserId, call.CallId))
 					unitCalls.Add(call);
 			}
 

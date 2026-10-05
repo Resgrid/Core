@@ -394,6 +394,9 @@
   <data name="PermOptionDepartmentAndGroupAdmins" xml:space="preserve"><value>مدراء القسم والمجموعات</value></data>
   <data name="PermOptionDepartmentAdminsAndSelectRoles" xml:space="preserve"><value>مدراء القسم وأدوار محددة</value></data>
   <data name="PermOptionDepartmentGroupAdminsAndSelectRoles" xml:space="preserve"><value>مدراء القسم والمجموعات وأدوار محددة</value></data>
+  <data name="PermOptionNotSavedCreateWorkflow" xml:space="preserve"><value>غير محفوظ: يعدّل مدراء القسم، ويمكن للجميع العرض</value></data>
+  <data name="PermOptionNotSavedManageWorkflowCredentials" xml:space="preserve"><value>غير محفوظ: يعدّل مدراء القسم، ويرى الجميع الأسماء</value></data>
+  <data name="PermOptionNotSavedViewWorkflowRuns" xml:space="preserve"><value>غير محفوظ: يمكن للجميع العرض، ويلغي مدراء القسم</value></data>
   <data name="BreadcrumbSecurity" xml:space="preserve"><value>الأمان والصلاحيات</value></data>
   <data name="BreadcrumbHome" xml:space="preserve"><value>الرئيسية</value></data>
   <data name="SecurityDescription" xml:space="preserve"><value>يمكنك هنا تعيين الصلاحيات لقسمك، مثل تحديد من يمكنه إنشاء البلاغات أو من هو مخوّل بإنشاء المستخدمين وإزالتهم. ستسري التغييرات على الصلاحيات عند تسجيل الدخول التالي إلى تطبيق Resgrid.</value></data>
@@ -424,7 +427,7 @@
   <data name="PermViewPersonalInfoLabel" xml:space="preserve"><value>من يمكنه عرض المعلومات الشخصية</value></data>
   <data name="PermViewPersonalInfoNote" xml:space="preserve"><value>يحدد هذا الخيار من يمكنه عرض المعلومات الشخصية (البيانات التعريفية) عن الأفراد في النظام، مثل عناوين البريد الإلكتروني وأرقام الهاتف. افتراضياً يمكن للجميع عرض هذه المعلومات.</value></data>
   <data name="PermAdjustInventoryLabel" xml:space="preserve"><value>من يمكنه تعديل المخزون</value></data>
-  <data name="PermAdjustInventoryNote" xml:space="preserve"><value>يحدد هذا الخيار من يمكنه تعديل مستويات المخزون في النظام. افتراضياً يمكن للجميع تعديل المخزون.</value></data>
+  <data name="PermAdjustInventoryNote" xml:space="preserve"><value>يحدد هذا الخيار من يمكنه تعديل مستويات المخزون في النظام. إلى أن تُحفظ قيمة، يستطيع مدراء القسم فقط تعديل المخزون.</value></data>
   <data name="PermViewPersonnelLocationLabel" xml:space="preserve"><value>من يمكنه رؤية موقع الأفراد</value></data>
   <data name="PermViewPersonnelLocationNote" xml:space="preserve"><value>يحدد هذا الخيار من يمكنه رؤية موقع الأفراد على الخرائط. لتقييد الخيار على مدراء المجموعات والأدوار داخل المجموعة يجب تحديد خيار المجموعة فقط.</value></data>
   <data name="PermViewUnitLocationLabel" xml:space="preserve"><value>من يمكنه رؤية موقع الوحدات</value></data>
@@ -442,11 +445,11 @@
   <data name="PermDeleteContactsLabel" xml:space="preserve"><value>من يمكنه حذف جهات الاتصال</value></data>
   <data name="PermDeleteContactsNote" xml:space="preserve"><value>افتراضياً يمكن لجميع المستخدمين حذف جهات الاتصال. يتيح هذا الخيار تقييد من يمكنه حذف جهات الاتصال.</value></data>
   <data name="PermCreateWorkflowLabel" xml:space="preserve"><value>من يمكنه إنشاء/تعديل سير العمل</value></data>
-  <data name="PermCreateWorkflowNote" xml:space="preserve"><value>يحدد هذا الخيار من يمكنه إنشاء سير العمل وتعديلها وحذفها وخطواتها. افتراضياً يستطيع مدراء القسم فقط إدارة سير العمل.</value></data>
+  <data name="PermCreateWorkflowNote" xml:space="preserve"><value>يحدد هذا الخيار من يمكنه إنشاء سير العمل وتعديلها وحذفها وخطواتها. إلى أن تُحفظ قيمة، يستطيع مدراء القسم فقط إدارة سير العمل ويمكن لجميع الأعضاء عرضها؛ وحفظ أي قيمة يحدّ أيضاً من يمكنه عرضها.</value></data>
   <data name="PermManageWorkflowCredentialsLabel" xml:space="preserve"><value>من يمكنه إدارة بيانات اعتماد سير العمل</value></data>
-  <data name="PermManageWorkflowCredentialsNote" xml:space="preserve"><value>يحدد هذا الخيار من يمكنه إنشاء بيانات الاعتماد المشفرة وتعديلها وحذفها المستخدمة في إجراءات سير العمل. افتراضياً يستطيع مدراء القسم فقط إدارة بيانات الاعتماد.</value></data>
+  <data name="PermManageWorkflowCredentialsNote" xml:space="preserve"><value>يحدد هذا الخيار من يمكنه إنشاء بيانات الاعتماد المشفرة وتعديلها وحذفها المستخدمة في إجراءات سير العمل. إلى أن تُحفظ قيمة، يستطيع مدراء القسم فقط إدارة بيانات الاعتماد ويرى جميع الأعضاء أسماءها؛ وحفظ أي قيمة يحدّ أيضاً من يمكنه رؤيتها.</value></data>
   <data name="PermViewWorkflowRunsLabel" xml:space="preserve"><value>من يمكنه عرض تشغيلات سير العمل</value></data>
-  <data name="PermViewWorkflowRunsNote" xml:space="preserve"><value>يحدد هذا الخيار من يمكنه عرض سجل تنفيذ سير العمل وسجلات التشغيل ولوحات صحة النظام. افتراضياً يستطيع مدراء القسم فقط عرض تشغيلات سير العمل.</value></data>
+  <data name="PermViewWorkflowRunsNote" xml:space="preserve"><value>يحدد هذا الخيار من يمكنه عرض سجل تنفيذ سير العمل وسجلات التشغيل ولوحات صحة النظام. إلى أن تُحفظ قيمة، يمكن لجميع الأعضاء عرض التشغيلات ويستطيع مدراء القسم فقط إلغاءها أو مسحها؛ وحفظ قيمة أخرى يحدّ من يمكنه عرضها، وحفظ «الجميع» يتيح للجميع أيضاً إلغاءها ومسحها.</value></data>
   <data name="SsoPageTitle" xml:space="preserve"><value>تسجيل الدخول الموحد (SSO) وSCIM</value></data>
   <data name="SsoPageHeader" xml:space="preserve"><value>تسجيل الدخول الموحد وإدارة الهويات</value></data>
   <data name="SsoBreadcrumb" xml:space="preserve"><value>SSO / SCIM</value></data>
@@ -719,11 +722,11 @@
   <data name="PermCommandAppLoginLabel" xml:space="preserve"><value>Command App Login</value></data>
   <data name="PermCommandAppLoginNote" xml:space="preserve"><value>Controls who can act as a commander: sign in to the IC app, establish incident command on a call, and view command boards. Narrowing this beyond Everyone also lets the people you pick help work any command board (assign and move resources, run timers and accountability) without holding an ICS position on it &#8212; useful for giving dispatchers a hand in the Dispatch app. While set to Everyone, board actions stay limited to the incident commander and assigned ICS roles.</value></data>
   <data name="PermAdpSectionHeader" xml:space="preserve"><value>Advanced Data Protection</value></data>
-  <data name="PermAdpSectionNote" xml:space="preserve"><value>These permissions control who may work with encrypted (protected) data when the Advanced Data Protection addon is active. Every reveal or edit additionally requires a recent two-factor verification; these settings choose who may even attempt it. Unlike most Resgrid permissions, unset values default to the restrictive selection shown.</value></data>
+  <data name="PermAdpSectionNote" xml:space="preserve"><value>عند تفعيل إضافة حماية البيانات المتقدمة، يحدد هذان الإذنان من يمكنه تلقي تفاصيل البلاغ المحمية عبر الرسائل النصية أو المكالمة الصوتية بعد إدخال رمز PIN الخاص به، ومن يمكنه تغيير طريقة خروج المحتوى المحمي من Resgrid. يتبع عرض البيانات المحمية أو تعديلها على الشاشة قواعد الوصول الخاصة بكل صفحة إضافةً إلى تحقق ثنائي حديث. وخلافًا لمعظم أذونات Resgrid، تُطبَّق افتراضيًا على القيم غير المضبوطة الخيارات المعروضة.</value></data>
   <data name="PermAdpManageLabel" xml:space="preserve"><value>Manage Data Protection Settings</value></data>
   <data name="PermAdpManageNote" xml:space="preserve"><value>Who can change Advanced Data Protection settings such as the verification window and notification content options. Purchasing, enrollment and cancellation always remain restricted to the department managing member.</value></data>
   <data name="PermAdpViewCallLabel" xml:space="preserve"><value>View Protected Call Data</value></data>
-  <data name="PermAdpViewCallNote" xml:space="preserve"><value>Who can reveal protected call fields (nature, address, contact info, notes) after two-factor verification. Defaults to Everyone because responding personnel must be able to read a dispatch.</value></data>
+  <data name="PermAdpViewCallNote" xml:space="preserve"><value>من يمكنه تلقي تفاصيل البلاغ المحمية (طبيعة البلاغ، العنوان، بيانات الاتصال، الملاحظات) عبر الرسائل النصية أو المكالمة الصوتية بعد إدخال رمز PIN الخاص به، عند تفعيل الإفصاح برمز PIN. يتبع العرض على الشاشة وفي التطبيقات صلاحية الوصول إلى البلاغ إضافةً إلى التحقق الثنائي. القيمة الافتراضية هي الجميع لأن أفراد الاستجابة يجب أن يتمكنوا من قراءة البلاغ.</value></data>
   <data name="PermAdpEditCallLabel" xml:space="preserve"><value>Edit Protected Call Data</value></data>
   <data name="PermAdpEditCallNote" xml:space="preserve"><value>Who can edit protected call fields after two-factor verification. Defaults to Everyone to match the normal call workflow.</value></data>
   <data name="PermAdpViewPersonnelLabel" xml:space="preserve"><value>View Protected Personnel Data</value></data>

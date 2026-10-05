@@ -509,7 +509,7 @@ namespace Resgrid.Tests.Rms
 
 				_service = new FieldRecordsService(cutover.Object, authorization.Object, flags.Object, definitions.Object, protection.Object,
 					Mock.Of<IRecordsService>(), Mock.Of<IRecordWorkAssignmentsService>(), Mock.Of<IUnitsService>(), Mock.Of<IDepartmentGroupsService>(),
-					Mock.Of<ICallsService>(), Mock.Of<IIncidentCommandService>(), Mock.Of<IRecordsFieldRolloutService>());
+					Mock.Of<ICallsService>(), Mock.Of<IIncidentCommandService>(), Mock.Of<IRecordsFieldRolloutService>(), Mock.Of<ICallSourceDataService>());
 			}
 
 			public void Publish(string key, RecordDefinitionClientSurface surface)

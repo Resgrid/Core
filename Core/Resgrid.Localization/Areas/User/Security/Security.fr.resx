@@ -1226,6 +1226,15 @@
   <data name="PermOptionDepartmentGroupAdminsAndSelectRoles" xml:space="preserve">
     <value>Administrateurs du département et des groupes, et rôles sélectionnés</value>
   </data>
+  <data name="PermOptionNotSavedCreateWorkflow" xml:space="preserve">
+    <value>Non enregistré : les administrateurs du département modifient, tout le monde peut voir</value>
+  </data>
+  <data name="PermOptionNotSavedManageWorkflowCredentials" xml:space="preserve">
+    <value>Non enregistré : les administrateurs du département modifient, tout le monde voit les noms</value>
+  </data>
+  <data name="PermOptionNotSavedViewWorkflowRuns" xml:space="preserve">
+    <value>Non enregistré : tout le monde peut voir, les administrateurs du département annulent</value>
+  </data>
   <data name="BreadcrumbSecurity" xml:space="preserve">
     <value>Sécurité et autorisations</value>
   </data>
@@ -1317,7 +1326,7 @@
     <value>Qui peut ajuster l'inventaire</value>
   </data>
   <data name="PermAdjustInventoryNote" xml:space="preserve">
-    <value>Cette option détermine qui peut ajuster les niveaux de stock de l'inventaire dans le système. Par défaut, tout le monde peut ajuster l'inventaire.</value>
+    <value>Cette option détermine qui peut ajuster les niveaux de stock de l'inventaire dans le système. Tant qu'aucune valeur n'est enregistrée, seuls les administrateurs du département peuvent ajuster l'inventaire.</value>
   </data>
   <data name="PermViewPersonnelLocationLabel" xml:space="preserve">
     <value>Qui peut voir la position du personnel</value>
@@ -1371,19 +1380,19 @@
     <value>Qui peut créer/modifier des flux de travail</value>
   </data>
   <data name="PermCreateWorkflowNote" xml:space="preserve">
-    <value>Cette option détermine qui peut créer, modifier et supprimer des flux de travail et leurs étapes. Par défaut, seuls les administrateurs du département peuvent gérer les flux de travail.</value>
+    <value>Cette option détermine qui peut créer, modifier et supprimer des flux de travail et leurs étapes. Tant qu'aucune valeur n'est enregistrée, seuls les administrateurs du département peuvent gérer les flux de travail et tous les membres peuvent les consulter ; enregistrer une valeur limite aussi qui peut les consulter.</value>
   </data>
   <data name="PermManageWorkflowCredentialsLabel" xml:space="preserve">
     <value>Qui peut gérer les identifiants des flux de travail</value>
   </data>
   <data name="PermManageWorkflowCredentialsNote" xml:space="preserve">
-    <value>Cette option détermine qui peut créer, modifier et supprimer les identifiants chiffrés utilisés par les actions des flux de travail (p. ex. mots de passe SMTP, clés API). Par défaut, seuls les administrateurs du département peuvent gérer les identifiants.</value>
+    <value>Cette option détermine qui peut créer, modifier et supprimer les identifiants chiffrés utilisés par les actions des flux de travail (p. ex. mots de passe SMTP, clés API). Tant qu'aucune valeur n'est enregistrée, seuls les administrateurs du département peuvent gérer les identifiants et tous les membres voient leurs noms ; enregistrer une valeur limite aussi qui peut les voir.</value>
   </data>
   <data name="PermViewWorkflowRunsLabel" xml:space="preserve">
     <value>Qui peut voir les exécutions de flux de travail</value>
   </data>
   <data name="PermViewWorkflowRunsNote" xml:space="preserve">
-    <value>Cette option détermine qui peut voir l'historique d'exécution des flux de travail, les journaux d'exécution et les tableaux de bord d'état. Par défaut, seuls les administrateurs du département peuvent voir les exécutions de flux de travail.</value>
+    <value>Cette option détermine qui peut voir l'historique d'exécution des flux de travail, les journaux d'exécution et les tableaux de bord d'état. Tant qu'aucune valeur n'est enregistrée, tous les membres peuvent voir les exécutions et seuls les administrateurs du département peuvent les annuler ou les effacer ; enregistrer une autre valeur limite qui peut les voir, et enregistrer Tout le monde permet aussi à tous de les annuler et de les effacer.</value>
   </data>
   <data name="SsoPageTitle" xml:space="preserve">
     <value>Authentification unique (SSO) et SCIM</value>
@@ -2106,11 +2115,11 @@
   <data name="PermCommandAppLoginLabel" xml:space="preserve"><value>Connexion à l'application de commandement</value></data>
   <data name="PermCommandAppLoginNote" xml:space="preserve"><value>Détermine qui peut agir en tant que commandant : se connecter à l'application IC, établir le commandement de l'intervention sur un appel et consulter les tableaux de commandement. Choisir une valeur plus restreinte que Tout le monde permet aussi aux personnes sélectionnées d'aider à gérer n'importe quel tableau de commandement (affecter et déplacer des moyens, gérer les minuteries et le suivi du personnel) sans y occuper de poste ICS — pratique pour permettre aux régulateurs de prêter main-forte depuis l'application Dispatch. Tant que la valeur est Tout le monde, les actions sur le tableau restent réservées au commandant de l'intervention et aux rôles ICS attribués.</value></data>
   <data name="PermAdpSectionHeader" xml:space="preserve"><value>Protection avancée des données</value></data>
-  <data name="PermAdpSectionNote" xml:space="preserve"><value>Ces autorisations déterminent qui peut travailler avec les données chiffrées (protégées) lorsque le module complémentaire Protection avancée des données est actif. Chaque affichage ou modification exige en plus une vérification à deux facteurs récente ; ces réglages déterminent qui peut ne serait-ce que la tenter. Contrairement à la plupart des autorisations Resgrid, les valeurs non définies appliquent par défaut la sélection restrictive affichée.</value></data>
+  <data name="PermAdpSectionNote" xml:space="preserve"><value>Lorsque le module complémentaire Protection avancée des données est actif, ces deux autorisations déterminent qui peut recevoir les détails d'appel protégés par SMS ou appel vocal après avoir saisi son code PIN, et qui peut modifier la façon dont le contenu protégé quitte Resgrid. L'affichage ou la modification des données protégées à l'écran suit les règles d'accès de chaque page ainsi qu'une vérification à deux facteurs récente. Contrairement à la plupart des autorisations Resgrid, les valeurs non définies appliquent par défaut la sélection affichée.</value></data>
   <data name="PermAdpManageLabel" xml:space="preserve"><value>Gérer les paramètres de protection des données</value></data>
   <data name="PermAdpManageNote" xml:space="preserve"><value>Qui peut modifier les paramètres de Protection avancée des données, comme la fenêtre de vérification et les options de contenu des notifications. L'achat, l'inscription et la résiliation restent toujours réservés au membre gestionnaire du département.</value></data>
   <data name="PermAdpViewCallLabel" xml:space="preserve"><value>Afficher les données d'appel protégées</value></data>
-  <data name="PermAdpViewCallNote" xml:space="preserve"><value>Qui peut afficher les champs d'appel protégés (nature, adresse, coordonnées, notes) après une vérification à deux facteurs. Tout le monde par défaut, car le personnel qui intervient doit pouvoir lire l'alerte.</value></data>
+  <data name="PermAdpViewCallNote" xml:space="preserve"><value>Qui peut recevoir les détails d'appel protégés (nature, adresse, coordonnées, notes) par SMS ou appel vocal après avoir saisi son code PIN, lorsque la diffusion par PIN est activée. L'affichage à l'écran et dans les applications suit l'accès à l'appel et une vérification à deux facteurs. Tout le monde par défaut, car le personnel qui intervient doit pouvoir lire l'alerte.</value></data>
   <data name="PermAdpEditCallLabel" xml:space="preserve"><value>Modifier les données d'appel protégées</value></data>
   <data name="PermAdpEditCallNote" xml:space="preserve"><value>Qui peut modifier les champs d'appel protégés après une vérification à deux facteurs. Tout le monde par défaut, pour correspondre au déroulement normal des appels.</value></data>
   <data name="PermAdpViewPersonnelLabel" xml:space="preserve"><value>Afficher les données protégées du personnel</value></data>

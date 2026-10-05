@@ -60,6 +60,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Training_Create)]
 		public async Task<IActionResult> New(NewTrainingModel model, IFormCollection form, ICollection<IFormFile> attachments)
 		{
+			// A new training is always a new row with new children: posted ids would make the save update other rows by key.
+			// The form never posts the child collections; they are rebuilt from the question fields and the files below.
+			model.Training.TrainingId = 0;
+			model.Training.Questions = null;
+			model.Training.Attachments = null;
+
 			model.Training.CreatedByUserId = UserId;
 
 			if (attachments != null)
@@ -130,7 +136,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				foreach (var group in groups)
 				{
-					var members = await _departmentGroupsService.GetAllMembersForGroupAsync(int.Parse(group));
+					// Group and role ids are global keys: only this department's groups and roles expand into assignees.
+					if (!int.TryParse(group, out var groupId) || (await _departmentGroupsService.GetGroupByIdAsync(groupId))?.DepartmentId != DepartmentId)
+						continue;
+
+					var members = await _departmentGroupsService.GetAllMembersForGroupAsync(groupId);
 
 					foreach (var member in members)
 					{
@@ -144,7 +154,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				foreach (var role in roles)
 				{
-					var roleMembers = await _personnelRolesService.GetAllMembersOfRoleAsync(int.Parse(role));
+					if (!int.TryParse(role, out var roleId) || (await _personnelRolesService.GetRoleByIdAsync(roleId))?.DepartmentId != DepartmentId)
+						continue;
+
+					var roleMembers = await _personnelRolesService.GetAllMembersOfRoleAsync(roleId);
 
 					foreach (var member in roleMembers)
 					{
@@ -156,6 +169,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 				}
 			}
+
+			// Only this department's members can be assigned (and notified); a posted id from another department is dropped.
+			var departmentUserIds = (await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId))
+				.Select(u => u.UserId).ToHashSet(StringComparer.OrdinalIgnoreCase);
+			model.Training.Users = model.Training.Users.Where(u => !String.IsNullOrWhiteSpace(u.UserId) && departmentUserIds.Contains(u.UserId)).ToList();
 
 			if (!model.Training.Users.Any())
 				ModelState.AddModelError("", "You have not selected any personnel, roles or groups to assign this training to.");
@@ -592,7 +610,8 @@ var extension = System.IO.Path.GetExtension(file.FileName)?.TrimStart('.') ?? st
 			return RedirectToAction("Index");
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Training_Delete)]
 		public async Task<IActionResult> DeleteTraining(int trainingId)
 		{
@@ -610,7 +629,8 @@ var extension = System.IO.Path.GetExtension(file.FileName)?.TrimStart('.') ?? st
 			return RedirectToAction("Index");
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Training_Update)]
 		public async Task<IActionResult> ResetUserTraining(int trainingId, string userId)
 		{

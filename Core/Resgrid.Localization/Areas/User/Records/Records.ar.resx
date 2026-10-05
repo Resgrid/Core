@@ -112,9 +112,21 @@
   <data name="DefaultLifecyclePreset" xml:space="preserve"><value>الإعداد الافتراضي لدورة الحياة لتعريفات الإدارة</value></data>
   <data name="ReviewDueHours" xml:space="preserve"><value>موعد المراجعة (ساعات)</value></data>
   <data name="Numbering" xml:space="preserve"><value>ترقيم السجلات</value></data>
-  <data name="IncludeYear" xml:space="preserve"><value>تضمين السنة في أرقام السجلات</value></data>
   <data name="SequenceWidth" xml:space="preserve"><value>عدد أرقام التسلسل</value></data>
-  <data name="PerGroupSequence" xml:space="preserve"><value>تسلسل منفصل لكل محطة/مجموعة</value></data>
+  <data name="NumberPattern" xml:space="preserve"><value>نمط الترقيم</value></data>
+  <data name="NumberPatternExample" xml:space="preserve"><value>مثال:</value></data>
+  <data name="NumberPatternHelp" xml:space="preserve"><value>استخدم {PREFIX} لنوع السجل (RUN وTRN وINC وغيرها)، و{YYYY} أو {YY} للسنة، و{GROUP} للمحطة أو المجموعة (الحرف G متبوعًا بمعرّفها، ويجب أن يليه - أو _ أو .)، و{SEQ} للتسلسل وهو مطلوب. تبقى الأحرف والأرقام و- و_ و. كما كُتبت. يبدأ التسلسل من جديد كلما تغيّر النص المحيط بـ {SEQ}: تضمين السنة يعيده كل عام، وحذف {PREFIX} يجعل جميع أنواع السجلات تشترك في تسلسل واحد.</value></data>
+  <data name="NumberPatternInvalid" xml:space="preserve"><value>لم يُحفظ نمط الترقيم. استخدم الأحرف والأرقام و- و_ و. والرموز {PREFIX} و{YYYY} و{YY} و{GROUP} و{SEQ} فقط؛ أدرج {SEQ} مرة واحدة بالضبط، وكل رمز مرة واحدة على الأكثر، واتبع {GROUP} بـ - أو _ أو . (حتى 40 حرفًا).</value></data>
+  <data name="NextNumbersHeader" xml:space="preserve"><value>الأرقام التالية لعام {0}</value></data>
+  <data name="NextNumbersIntro" xml:space="preserve"><value>ارفع الرقم التالي لتسلسل ما لمتابعة الأرقام الصادرة قبل Resgrid: بعد 2026-0001 حتى 2026-0152، أدخل 153. اترك الحقل فارغًا لإبقاء التسلسل كما هو. يمكن رفع الرقم التالي فقط ولا يمكن خفضه، حتى لا يصدر أي رقم مرتين.</value></data>
+  <data name="NextNumberSequence" xml:space="preserve"><value>التسلسل</value></data>
+  <data name="NextNumberCurrent" xml:space="preserve"><value>الرقم التالي</value></data>
+  <data name="NextNumberRaiseTo" xml:space="preserve"><value>رفع التالي إلى</value></data>
+  <data name="NextNumberBelowCurrent" xml:space="preserve"><value>لا يمكن إلا رفع الرقم التالي. تُركت هذه التسلسلات دون تغيير لأن الرقم المُدخل أقل من الرقم الذي ستصدره تاليًا:</value></data>
+  <data name="NextNumberPatternChanged" xml:space="preserve"><value>تغيّر نمط الترقيم، لذلك لم تُطبَّق الأرقام التالية المُدخلة. راجع تسلسلات النمط الجديد واحفظ مرة أخرى.</value></data>
+  <data name="NextNumberConfirm" xml:space="preserve"><value>لا يمكن خفض الرقم التالي بعد رفعه. هل تريد حفظ هذه التغييرات؟</value></data>
+  <data name="NumberingAllTypes" xml:space="preserve"><value>جميع أنواع السجلات</value></data>
+  <data name="NumberingNoGroup" xml:space="preserve"><value>بلا محطة/مجموعة</value></data>
   <data name="Retention" xml:space="preserve"><value>الاحتفاظ</value></data>
   <data name="RetentionIntro" xml:space="preserve"><value>الإعدادات الافتراضية: 7 سنوات للسجلات القياسية؛ دائم لسجلات الطب الشرعي والفئات المقيدة الأخرى. إعداد الاحتفاظ مسؤولية هذه الإدارة وفق قواعد اختصاصها. تطبق التغييرات مستقبلاً وتُدقق.</value></data>
   <data name="DepartmentDefaultYears" xml:space="preserve"><value>الافتراضي للإدارة (سنوات، فارغ = افتراضي النظام)</value></data>

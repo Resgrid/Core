@@ -563,20 +563,91 @@ namespace Resgrid.Services.Records
 
 		#region Runs and schedule
 
-		public async Task<RmsExportRun> GetRunAsync(int departmentId, string runId, bool includeData)
+		public async Task<RmsExportRun> GetRunAsync(int departmentId, string userId, string runId, bool includeData)
 		{
+			if (string.IsNullOrWhiteSpace(runId)) return null;
 			var run = includeData ? await _runs.GetWithDataAsync(departmentId, runId) : await _runs.GetByIdForDepartmentAsync(departmentId, runId);
 			if (run == null || run.DeletedOn.HasValue || run.ExpiresOn <= DateTime.UtcNow)
+				return null;
+			if (!await CanUserSeeRunAsync(departmentId, userId, run, new RunAccess()))
 				return null;
 			(await _protection.RevealExportRunsAsync(departmentId, new[] { run }, includeData)).RequireRevealed("export download");
 			return run;
 		}
 
-		public async Task<List<RmsExportRun>> GetRunsAsync(int departmentId, string templateId, int take)
+		public async Task<List<RmsExportRun>> GetRunsAsync(int departmentId, string userId, string templateId, int take)
 		{
 			var rows = (await _runs.GetForTemplateAsync(departmentId, templateId, take))?.Where(r => !r.DeletedOn.HasValue).ToList() ?? new List<RmsExportRun>();
-			await _protection.RevealExportRunsAsync(departmentId, rows, false);
-			return rows;
+			var access = new RunAccess();
+			var visible = new List<RmsExportRun>();
+			foreach (var row in rows)
+				if (await CanUserSeeRunAsync(departmentId, userId, row, access))
+					visible.Add(row);
+			await _protection.RevealExportRunsAsync(departmentId, visible, false);
+			return visible;
+		}
+
+		/// <summary>Per-call memo for <see cref="CanUserSeeRunAsync"/>: one template and permission lookup per list.</summary>
+		private sealed class RunAccess
+		{
+			public readonly Dictionary<string, RmsExportTemplate> Templates = new Dictionary<string, RmsExportTemplate>(StringComparer.Ordinal);
+			public bool? CanManage;
+			public bool? CanSeeRestricted;
+		}
+
+		/// <summary>
+		/// Who may see a stored run. A bulk packet is its builder's own copy, the rule GetPacketAsync applies. A
+		/// template run belongs to whoever rendered it; a scheduled run or a colleague's run is visible to a
+		/// ManageRecordReports holder while its template still exists in the department. A run whose template
+		/// renders restricted columns also needs ViewRestrictedRecords, and so does a run whose template is gone,
+		/// since what it carried can no longer be told.
+		/// </summary>
+		private async Task<bool> CanUserSeeRunAsync(int departmentId, string userId, RmsExportRun run, RunAccess access)
+		{
+			if (run == null || string.IsNullOrWhiteSpace(userId) || run.DepartmentId != departmentId)
+				return false;
+			var own = string.Equals(run.GeneratedByUserId, userId, StringComparison.Ordinal);
+			if (string.Equals(run.TemplateKey, RecordsBulkPacketService.PacketTemplateKey, StringComparison.Ordinal)
+				|| string.Equals(run.TemplateId, RecordsBulkPacketService.PacketTemplateKey, StringComparison.Ordinal))
+				return own;
+
+			var templateId = run.TemplateId ?? string.Empty;
+			if (!access.Templates.TryGetValue(templateId, out var template))
+				access.Templates[templateId] = template = string.IsNullOrWhiteSpace(run.TemplateId) ? null : await _templates.GetByIdForDepartmentAsync(departmentId, run.TemplateId);
+
+			if (!own)
+			{
+				if (template == null) return false;
+				access.CanManage ??= await _authorization.HasPermissionAsync(userId, departmentId, PermissionTypes.ManageRecordReports);
+				if (access.CanManage != true) return false;
+			}
+
+			if (template == null || CarriesRestricted(template, run))
+			{
+				access.CanSeeRestricted ??= await _authorization.HasPermissionAsync(userId, departmentId, PermissionTypes.ViewRestrictedRecords);
+				if (access.CanSeeRestricted != true) return false;
+			}
+			return true;
+		}
+
+		/// <summary>True when the template renders restricted columns and the run did not withhold every one of them.</summary>
+		private static bool CarriesRestricted(RmsExportTemplate template, RmsExportRun run)
+		{
+			if (template == null || !template.IncludeRestricted) return false;
+			var restricted = ParseColumns(template.ColumnsJson).Where(IsRestrictedColumn).ToList();
+			if (restricted.Count == 0) return false;
+			var withheld = new HashSet<string>(StringComparer.Ordinal);
+			if (!string.IsNullOrWhiteSpace(run.RedactedFieldsJson))
+			{
+				try
+				{
+					var parsed = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(run.RedactedFieldsJson);
+					if (parsed != null && parsed.TryGetValue("withheld_columns", out var columns) && columns != null)
+						withheld.UnionWith(columns);
+				}
+				catch (JsonException) { }
+			}
+			return restricted.Any(c => !withheld.Contains(c));
 		}
 
 		public async Task<RecordsExportScheduleSweepResult> RunDueSchedulesAsync(CancellationToken cancellationToken = default)

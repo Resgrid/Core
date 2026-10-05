@@ -293,6 +293,25 @@ namespace Resgrid.Model
 		public List<string> SuggestedParticipantUserIds { get; set; } = new List<string>();
 		public List<int> SuggestedUnitIds { get; set; } = new List<int>();
 		public DateTime CalculatedOn { get; set; }
+
+		/// <summary>
+		/// For a locked call definition (Run, Callback) started from a call: the record's fixed fields as the call's sources
+		/// tell them — start/end from the call, its location and nature, every unit that worked it with its times, and the
+		/// members who turned out with their unit and seat. Null for other definitions or without a readable call.
+		/// </summary>
+		public FieldRecordLockedPrefill Locked { get; set; }
+	}
+
+	/// <summary>Prefill for a locked Run/Callback record from its call (UTC times; the app applies it to blank fields only).</summary>
+	public class FieldRecordLockedPrefill
+	{
+		public DateTime? StartedOn { get; set; }
+		public DateTime? EndedOn { get; set; }
+		/// <summary>Null when the call's text is sealed under Protected Data.</summary>
+		public string Location { get; set; }
+		public string InitialReport { get; set; }
+		public List<RecordUnitResponseInput> Units { get; set; } = new List<RecordUnitResponseInput>();
+		public List<RecordParticipantInput> Participants { get; set; } = new List<RecordParticipantInput>();
 	}
 
 	public class FieldRecordSyncRequest

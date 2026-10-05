@@ -61,6 +61,14 @@ namespace Resgrid.Model
 		[ProtoMember(14)]
 		public int? DestinationSource { get; set; }
 
+		/// <summary>The member who submitted the status (<see cref="StatusWriteActor"/>); null when none was known or before M0260.</summary>
+		[ProtoMember(15)]
+		public string SetByUserId { get; set; }
+
+		/// <summary>Where the status was submitted from (<see cref="StatusSetOrigins"/>); null on rows before M0260.</summary>
+		[ProtoMember(16)]
+		public int? SetByOrigin { get; set; }
+
 		[NotMapped]
 		[ProtoMember(10)]
 		public double Eta { get; set; }

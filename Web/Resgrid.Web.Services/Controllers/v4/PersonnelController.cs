@@ -118,10 +118,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var action = await _actionLogsService.GetLastActionLogForUserAsync(user.UserId, DepartmentId);
 			var userState = await _userStateService.GetLastUserStateByUserIdAsync(user.UserId);
 			var canViewPII = await _authorizationService.CanUserViewPIIAsync(UserId, DepartmentId);
+			var canViewLocation = await _authorizationService.CanUserViewPersonLocationViaMatrixAsync(user.UserId, UserId, DepartmentId);
 
-			result.Data = await ConvertPersonnelInfo(user, department, profile, group, roles, action, userState, canViewPII);
+			result.Data = await ConvertPersonnelInfo(user, department, profile, group, roles, action, userState, canViewPII, canViewLocation);
 
 			var udfValues = await _userDefinedFieldsService.GetFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Personnel, user.UserId);
+			// Only the values the caller may see: the Udf view right (ViewUdfFields) and each field's visibility, the
+			// rule the MVC person page and the UserDefinedFields endpoints apply.
+			if (udfValues != null && udfValues.Any())
+				udfValues = await _userDefinedFieldsService.FilterValuesVisibleToUserAsync(DepartmentId, (int)UdfEntityType.Personnel, udfValues,
+					HttpContext.User.HasClaim(ResgridClaimTypes.Resources.Udf, ResgridClaimTypes.Actions.View),
+					department != null && department.IsUserAnAdmin(UserId),
+					await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId));
 			if (udfValues != null && udfValues.Any())
 			{
 				result.Data.UdfValues = udfValues.Select(v => new UdfFieldValueResultData
@@ -216,7 +224,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 						? sensitive.IdentificationNumber
 						: null;
 
-				var s = await ConvertPersonnelInfo(u, department, profile, group, roles, log, state, canViewPII);
+				var canViewLocation = await _authorizationService.CanUserViewPersonLocationViaMatrixAsync(u.UserId, UserId, DepartmentId);
+				var s = await ConvertPersonnelInfo(u, department, profile, group, roles, log, state, canViewPII, canViewLocation);
 
 				if (log != null)
 				{
@@ -416,8 +425,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return Ok(result);
 		}
 
-		public static async Task<PersonnelInfoResultData> ConvertPersonnelInfo(IdentityUser user, Department department, UserProfile profile,
+		public static Task<PersonnelInfoResultData> ConvertPersonnelInfo(IdentityUser user, Department department, UserProfile profile,
 			DepartmentGroup group, List<PersonnelRole> roles, ActionLog action, UserState userState, bool canViewPII)
+		{
+			return ConvertPersonnelInfo(user, department, profile, group, roles, action, userState, canViewPII, true);
+		}
+
+		/// <summary>
+		/// The person's info for a caller. Without Security &gt; See Personnel Locations for this person (canViewLocation,
+		/// from CanUserViewPersonLocationViaMatrixAsync) the last status position is left out.
+		/// </summary>
+		public static async Task<PersonnelInfoResultData> ConvertPersonnelInfo(IdentityUser user, Department department, UserProfile profile,
+			DepartmentGroup group, List<PersonnelRole> roles, ActionLog action, UserState userState, bool canViewPII, bool canViewLocation)
 		{
 			var personnelData = new PersonnelInfoResultData();
 			if (profile != null)
@@ -508,7 +527,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 				personnelData.StatusId = action.ActionTypeId.ToString();
 				personnelData.StatusTimestamp = action.Timestamp.TimeConverter(department);
-				personnelData.Location = action.GeoLocationData;
+
+				if (canViewLocation)
+					personnelData.Location = action.GeoLocationData;
 
 				if (action.DestinationId.HasValue)
 				{

@@ -27,6 +27,39 @@ var resgrid;
                     };
                 }
 
+                // DeleteUnit is POST + antiforgery: confirm, then submit the page's token form. The buttons render
+                // disabled and are enabled here, before DataTables detaches the rows past the first page.
+                $(document).on('click', '.unit-delete', function (e) {
+                    e.preventDefault();
+
+                    var message = $(this).attr('data-delete-confirm');
+                    if (message && !window.confirm(message))
+                        return;
+
+                    var form = document.getElementById('deleteUnitForm');
+                    form.elements.namedItem('unitId').value = $(this).attr('data-unit-id');
+                    form.submit();
+                });
+                $('.unit-delete').prop('disabled', false);
+
+                // Unit status changes are POST + antiforgery. The status menus carry their target in data-post-url.
+                function getAntiForgeryToken() {
+                    var meta = document.querySelector('meta[name="request-verification-token"]');
+                    if (meta && meta.content)
+                        return meta.content;
+                    return $('input[name="__RequestVerificationToken"]').first().val();
+                }
+                function postStatus(url) {
+                    return $.ajax({ url: url, type: 'POST', headers: { 'RequestVerificationToken': getAntiForgeryToken() } });
+                }
+                $(document).on('click', 'a[data-post-url]', function (e) {
+                    e.preventDefault();
+                    var form = $('<form method="post" style="display:none;"></form>').attr('action', $(this).attr('data-post-url'));
+                    $('<input type="hidden" name="__RequestVerificationToken" />').val(getAntiForgeryToken()).appendTo(form);
+                    form.appendTo(document.body);
+                    form[0].submit();
+                });
+
                 $('.table').DataTable();
                 $('#tree').bstreeview({ data: treeData });
                 $('input[type="checkbox"]').click(evaluate);
@@ -67,7 +100,7 @@ var resgrid;
                         $('#savingUnitStatusButtonLoader').show();
                         $('#savingUnitStatusButton').hide();
                         const selection = parseDestinationSelection($('#UnitStatusDestinationDropdown').val());
-                        $.get(resgrid.absoluteBaseUrl + '/User/Units/SetUnitStateWithDest?unitId=' + $('#setUnitStateUnitId').val() + '&stateType=' + $("#UnitStatusDropdown").val() + '&type=' + selection.type + '&destination=' + selection.destination + '&note=' + encodeURI($('#UnitStatusNote').val()), function (data) {
+                        postStatus(resgrid.absoluteBaseUrl + '/User/Units/SetUnitStateWithDest?unitId=' + $('#setUnitStateUnitId').val() + '&stateType=' + $("#UnitStatusDropdown").val() + '&type=' + selection.type + '&destination=' + selection.destination + '&note=' + encodeURIComponent($('#UnitStatusNote').val())).always(function () {
                             location.reload();
                         });
                     });
@@ -104,7 +137,7 @@ var resgrid;
                         $('#savingSelectedUnitStatusButtonLoader').show();
                         $('#savingSelectedUnitStatusButton').hide();
                         const selection = parseDestinationSelection($('#SelectedUnitStatusDestinationDropdown').val());
-                        $.get(resgrid.absoluteBaseUrl + '/User/Units/SetUnitStateForMultiple?unitIds=' + getSelectedUnits() + '&stateType=' + $("#SelectedUnitStatusDropdown").val() + '&type=' + selection.type + '&destination=' + selection.destination + '&note=' + encodeURI($('#SelectedUnitStatusNote').val()), function (data) {
+                        postStatus(resgrid.absoluteBaseUrl + '/User/Units/SetUnitStateForMultiple?unitIds=' + getSelectedUnits() + '&stateType=' + $("#SelectedUnitStatusDropdown").val() + '&type=' + selection.type + '&destination=' + selection.destination + '&note=' + encodeURIComponent($('#SelectedUnitStatusNote').val())).always(function () {
                             location.reload();
                         });
                     });

@@ -87,7 +87,7 @@
 {
 											<a asp-controller="Mapping" asp-action="AddPOI" asp-route-area="User" asp-route-poiTypeId="@u.PoiTypeId" class="btn btn-xs btn-info">@localizer["Add"]</a>
 											<a asp-controller="Mapping" asp-action="ImportPOIs" asp-route-area="User" asp-route-poiTypeId="@u.PoiTypeId" class="btn btn-xs btn-warning">@localizer["Import"]</a>
-											<a asp-controller="Mapping" asp-action="DeletePOIType" asp-route-area="User" asp-route-poiTypeId="@u.PoiTypeId" class="btn btn-xs btn-danger" data-confirm="@localizer["DeletePOITypeConfirm"] @u.Name @localizer["DeletePOITypeSuffix"]" rel="nofollow">@localizer["Delete"]</a>
+											<form method="post" asp-controller="Mapping" asp-action="DeletePOIType" asp-route-area="User" style="display: inline;">@Html.AntiForgeryToken()<input type="hidden" name="poiTypeId" value="@u.PoiTypeId" /><button type="submit" class="btn btn-xs btn-danger" data-confirm="@localizer["DeletePOITypeConfirm"] @u.Name @localizer["DeletePOITypeSuffix"]">@localizer["Delete"]</button></form>
 }
 										</td>
 									</tr>

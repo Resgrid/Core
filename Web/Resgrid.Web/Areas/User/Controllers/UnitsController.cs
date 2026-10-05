@@ -167,6 +167,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Unit_View)]
 		public async Task<IActionResult> UnitStaffing(UnitStaffingView model, IFormCollection form, CancellationToken cancellationToken)
 		{
@@ -239,8 +240,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 						// only contains this department's unit roles, and the Role_ form keys are caller-supplied,
 						// so a role absent from the map (or belonging to a unit outside this department) is rejected;
 						// otherwise a caller could inject an active-role assignment onto another department's unit.
+						// The member is caller-supplied too: only someone this page offers (a member of this department) is seated.
 						if (roleMap.TryGetValue(unitRole, out var role) && role != null
-							&& model.Units != null && model.Units.Any(u => u.UnitId == role.UnitId))
+							&& model.Units != null && model.Units.Any(u => u.UnitId == role.UnitId)
+							&& model.Users != null && model.Users.Any(u => u.UserId == unitRoleStaffingUserId.ToString()))
 						{
 							UnitActiveRole activeRole = new UnitActiveRole();
 							activeRole.UnitId = role.UnitId;
@@ -363,10 +366,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (ModelState.IsValid)
 			{
+				// Always a new unit: a posted id would make the save update that row, whichever department owns it.
+				model.Unit.UnitId = 0;
 				model.Unit.DepartmentId = DepartmentId;
 
 				if (model.Unit.StationGroupId.HasValue && model.Unit.StationGroupId.Value == 0)
 					model.Unit.StationGroupId = null;
+
+				if (!await IsDepartmentGroupAsync(model.Unit.StationGroupId))
+					return Unauthorized();
 
 				model.Unit = await _unitsService.SaveUnitAsync(model.Unit, cancellationToken);
 
@@ -607,7 +615,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			//if (!model.Unit.StationGroupId.HasValue || model.Unit.StationGroupId.Value == 0)
 			//	ModelState.AddModelError("", "You must select a Station Group to assign this unit to.");
 
+			// The stored row, not the posted one: it must belong to this department before any posted value is applied.
 			var unit = await _unitsService.GetUnitByIdAsync(model.Unit.UnitId);
+
+			if (unit == null || unit.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			if (model.Unit.StationGroupId.HasValue && model.Unit.StationGroupId.Value != 0 && !await IsDepartmentGroupAsync(model.Unit.StationGroupId))
+				return Unauthorized();
 
 			var auditEvent = new AuditEvent();
 			auditEvent.DepartmentId = DepartmentId;
@@ -735,7 +750,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Unit_View)]
 		public async Task<IActionResult> SetUnitState(int unitId, int stateType, CancellationToken cancellationToken)
 		{
@@ -752,7 +768,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("Index");
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Unit_View)]
 		public async Task<IActionResult> SetUnitStateWithDest(int unitId, int stateType, int type, int destination, string note, CancellationToken cancellationToken)
 		{
@@ -795,7 +812,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("Index");
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Unit_View)]
 		public async Task<IActionResult> SetUnitStateForMultiple(string unitIds, int stateType, int type, int destination, string note, CancellationToken cancellationToken)
 		{
@@ -843,7 +861,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("Index");
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Unit_View)]
 		public async Task<IActionResult> SetUnitStateWithDestForMultiple(string unitIds, int stateType, int type, int destination, CancellationToken cancellationToken)
 		{
@@ -883,7 +902,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("Index");
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Unit_Delete)]
 		public async Task<IActionResult> DeleteUnit(int unitId, CancellationToken cancellationToken)
 		{
@@ -950,6 +970,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (ModelState.IsValid)
 			{
+				// Always a new log: a posted id would make the save update that row, whichever unit owns it.
+				model.Log.UnitLogId = 0;
 				model.Log.Narrative = System.Net.WebUtility.HtmlDecode(model.Log.Narrative);
 				await _unitsService.SaveUnitLogAsync(model.Log, cancellationToken);
 
@@ -1109,6 +1131,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				.Where(x => x.DestinationId.HasValue && (!x.DestinationType.HasValue || x.DestinationType == (int)DestinationEntityTypes.Call))
 				.Select(x => x.DestinationId.Value));
 
+			// Security > See Unit Locations, the rule the map applies: coordinates only for units the member may locate.
+			var locatableUnitIds = await GetLocatableUnitIdsAsync(eventRecords.Select(x => x.UnitId));
+
 			foreach (var eventRecord in eventRecords)
 			{
 				var eventJson = new UnitEventJson();
@@ -1125,11 +1150,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (eventRecord.LocalTimestamp.HasValue)
 					eventJson.LocalTimestamp = eventRecord.LocalTimestamp.Value.ToString();
 
-				if (eventRecord.Latitude.HasValue)
-					eventJson.Latitude = eventRecord.Latitude.Value.ToString();
+				if (locatableUnitIds.Contains(eventRecord.UnitId))
+				{
+					if (eventRecord.Latitude.HasValue)
+						eventJson.Latitude = eventRecord.Latitude.Value.ToString();
 
-				if (eventRecord.Longitude.HasValue)
-					eventJson.Longitude = eventRecord.Longitude.Value.ToString();
+					if (eventRecord.Longitude.HasValue)
+						eventJson.Longitude = eventRecord.Longitude.Value.ToString();
+				}
 
 				model.Rows.Add(eventJson);
 			}
@@ -1138,9 +1166,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Unit_Update)]
 		public async Task<IActionResult> ClearAllUnitEvents(ViewLogsView model, CancellationToken cancellationToken)
 		{
+			// The same rule as editing the unit: a unit of this department, and a department admin.
+			if (model?.Unit == null || !await _authorizationService.CanUserModifyUnitAsync(UserId, model.Unit.UnitId))
+				return Unauthorized();
+
 			if (model.ConfirmClearAll)
 				await _unitsService.DeleteStatesForUnitAsync(model.Unit.UnitId, cancellationToken);
 
@@ -1162,6 +1195,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
 			var pois = await _mappingService.GetPOIsForDepartmentAsync(DepartmentId);
 
+			// Security > See Unit Locations, the rule the map applies: the position fields only for a unit the member may locate.
+			var canSeeLocation = await _authorizationService.CanUserViewUnitLocationViaMatrixAsync(unitId, UserId, DepartmentId);
+
 			foreach (var e in events)
 			{
 				var unitEvent = new UnitEventJson();
@@ -1182,26 +1218,29 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (e.LocalTimestamp.HasValue)
 					unitEvent.LocalTimestamp = e.LocalTimestamp.Value.ToString();
 
-				if (e.Latitude.HasValue)
-					unitEvent.Latitude = e.Latitude.Value.ToString();
+				if (canSeeLocation)
+				{
+					if (e.Latitude.HasValue)
+						unitEvent.Latitude = e.Latitude.Value.ToString();
 
-				if (e.Longitude.HasValue)
-					unitEvent.Longitude = e.Longitude.Value.ToString();
+					if (e.Longitude.HasValue)
+						unitEvent.Longitude = e.Longitude.Value.ToString();
 
-				if (e.Accuracy.HasValue)
-					unitEvent.Accuracy = e.Accuracy.Value.ToString();
+					if (e.Accuracy.HasValue)
+						unitEvent.Accuracy = e.Accuracy.Value.ToString();
 
-				if (e.Altitude.HasValue)
-					unitEvent.Altitude = e.Altitude.Value.ToString();
+					if (e.Altitude.HasValue)
+						unitEvent.Altitude = e.Altitude.Value.ToString();
 
-				if (e.AltitudeAccuracy.HasValue)
-					unitEvent.AltitudeAccuracy = e.AltitudeAccuracy.Value.ToString();
+					if (e.AltitudeAccuracy.HasValue)
+						unitEvent.AltitudeAccuracy = e.AltitudeAccuracy.Value.ToString();
 
-				if (e.Speed.HasValue)
-					unitEvent.Speed = e.Speed.Value.ToString();
+					if (e.Speed.HasValue)
+						unitEvent.Speed = e.Speed.Value.ToString();
 
-				if (e.Heading.HasValue)
-					unitEvent.Heading = e.Heading.Value.ToString();
+					if (e.Heading.HasValue)
+						unitEvent.Heading = e.Heading.Value.ToString();
+				}
 
 				unitEvents.Add(unitEvent);
 			}
@@ -1226,6 +1265,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			foreach (var unit in savedUnits)
 			{
+				// Security > View Units, the same filter the units list applies.
+				if (!await _authorizationService.CanUserViewUnitViaMatrixAsync(unit.UnitId, UserId, DepartmentId))
+					continue;
+
 				var unitJson = new UnitJson();
 				unitJson.UnitId = unit.UnitId;
 				unitJson.Name = unit.Name;
@@ -1255,6 +1298,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			foreach (var unit in savedUnits)
 			{
+				// Security > View Units, the same filter the units list applies.
+				if (!await _authorizationService.CanUserViewUnitViaMatrixAsync(unit.UnitId, UserId, DepartmentId))
+					continue;
+
 				var unitJson = new UnitJson();
 				unitJson.UnitId = unit.UnitId;
 				unitJson.Name = unit.Name;
@@ -1284,6 +1331,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			foreach (var unit in savedUnits)
 			{
+				// Security > View Units, the same filter the units list applies.
+				if (!await _authorizationService.CanUserViewUnitViaMatrixAsync(unit.UnitId, UserId, DepartmentId))
+					continue;
+
 				var unitJson = new UnitJson();
 				unitJson.UnitId = unit.UnitId;
 				unitJson.Name = unit.Name;
@@ -1408,6 +1459,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			foreach (var unit in units)
 			{
+				// Security > View Units, the same filter the units list applies.
+				if (!await _authorizationService.CanUserViewUnitViaMatrixAsync(unit.UnitId, UserId, DepartmentId))
+					continue;
+
 				var unitJson = new UnitForListJson();
 				unitJson.Name = unit.Name;
 				unitJson.Type = unit.Type;
@@ -1429,7 +1484,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 					unitJson.Timestamp = state.Timestamp.TimeConverterToString(department);
 
 
-					if (String.IsNullOrWhiteSpace(callLat) || String.IsNullOrWhiteSpace(callLong))
+					// An ETA is a distance from the unit's position, so it needs See Unit Locations like the position itself.
+					if (String.IsNullOrWhiteSpace(callLat) || String.IsNullOrWhiteSpace(callLong) ||
+						!await _authorizationService.CanUserViewUnitLocationViaMatrixAsync(unit.UnitId, UserId, DepartmentId))
 						unitJson.Eta = "N/A";
 					else
 					{
@@ -1588,11 +1645,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				StringBuilder sb = new StringBuilder();
 				sb.Append($"<ul class='dropdown-menu unitStateList_{unitId}'>");
-				sb.Append($"<li><a href='{BuildUnitStateHref("SetUnitState", unitId, null, 0)}'>Available</a></li>");
-				sb.Append($"<li><a href='{BuildUnitStateHref("SetUnitState", unitId, null, 3)}'>Committed</a></li>");
-				sb.Append($"<li><a href='{BuildUnitStateHref("SetUnitState", unitId, null, 1)}'>Delayed</a></li>");
-				sb.Append($"<li><a href='{BuildUnitStateHref("SetUnitState", unitId, null, 4)}'>Out Of Service</a></li>");
-				sb.Append($"<li><a href='{BuildUnitStateHref("SetUnitState", unitId, null, 2)}'>Unavailable</a></li>");
+				sb.Append($"<li><a href='#' data-post-url='{BuildUnitStateHref("SetUnitState", unitId, null, 0)}'>Available</a></li>");
+				sb.Append($"<li><a href='#' data-post-url='{BuildUnitStateHref("SetUnitState", unitId, null, 3)}'>Committed</a></li>");
+				sb.Append($"<li><a href='#' data-post-url='{BuildUnitStateHref("SetUnitState", unitId, null, 1)}'>Delayed</a></li>");
+				sb.Append($"<li><a href='#' data-post-url='{BuildUnitStateHref("SetUnitState", unitId, null, 4)}'>Out Of Service</a></li>");
+				sb.Append($"<li><a href='#' data-post-url='{BuildUnitStateHref("SetUnitState", unitId, null, 2)}'>Unavailable</a></li>");
 				sb.Append("</ul>");
 
 				buttonHtml = sb.ToString();
@@ -1626,11 +1683,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				StringBuilder sb2 = new StringBuilder();
 				sb2.Append($"<ul class='dropdown-menu unitStateList_{stateId}'>");
-				sb2.Append($"<li><a href='{BuildUnitStateHref("SetUnitStateForMultiple", null, targetUnitIds, 0)}'>Available</a></li>");
-				sb2.Append($"<li><a href='{BuildUnitStateHref("SetUnitStateForMultiple", null, targetUnitIds, 3)}'>Committed</a></li>");
-				sb2.Append($"<li><a href='{BuildUnitStateHref("SetUnitStateForMultiple", null, targetUnitIds, 1)}'>Delayed</a></li>");
-				sb2.Append($"<li><a href='{BuildUnitStateHref("SetUnitStateForMultiple", null, targetUnitIds, 4)}'>Out Of Service</a></li>");
-				sb2.Append($"<li><a href='{BuildUnitStateHref("SetUnitStateForMultiple", null, targetUnitIds, 2)}'>Unavailable</a></li>");
+				sb2.Append($"<li><a href='#' data-post-url='{BuildUnitStateHref("SetUnitStateForMultiple", null, targetUnitIds, 0)}'>Available</a></li>");
+				sb2.Append($"<li><a href='#' data-post-url='{BuildUnitStateHref("SetUnitStateForMultiple", null, targetUnitIds, 3)}'>Committed</a></li>");
+				sb2.Append($"<li><a href='#' data-post-url='{BuildUnitStateHref("SetUnitStateForMultiple", null, targetUnitIds, 1)}'>Delayed</a></li>");
+				sb2.Append($"<li><a href='#' data-post-url='{BuildUnitStateHref("SetUnitStateForMultiple", null, targetUnitIds, 4)}'>Out Of Service</a></li>");
+				sb2.Append($"<li><a href='#' data-post-url='{BuildUnitStateHref("SetUnitStateForMultiple", null, targetUnitIds, 2)}'>Unavailable</a></li>");
 				sb2.Append("</ul>");
 
 				buttonHtml = sb2.ToString();
@@ -1759,13 +1816,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (state.DetailType == (int)CustomStateDetailTypes.None)
 				{
-					sb.Append($"<li><a style='color:{buttonColor};' href='{withoutDestinationHref}'>{buttonText}</a></li>");
+					sb.Append($"<li><a style='color:{buttonColor};' href='#' data-post-url='{withoutDestinationHref}'>{buttonText}</a></li>");
 					continue;
 				}
 
 				sb.Append($"<li class='dropdown-submenu'><a style='color:{buttonColor};' tabindex='-1' href='#'>{buttonText}</a>");
 				sb.Append($"<ul class='dropdown-menu unitStateList_{cssKey}'>");
-				sb.Append($"<li><a href='{withoutDestinationHref}'>{buttonText}</a></li>");
+				sb.Append($"<li><a href='#' data-post-url='{withoutDestinationHref}'>{buttonText}</a></li>");
 				sb.Append("<li class='divider'></li>");
 				AppendDestinationMenuEntries(sb, unitId, unitIds, actionWithDestination, activeCalls, stations, destinationPois, state);
 				sb.Append("</ul>");
@@ -1796,6 +1853,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return parsedUnitIds;
 		}
 
+		// The status actions are POST + antiforgery: menu links carry the target in data-post-url and the Units page posts it.
 		private static string BuildUnitStateHref(string actionName, int? unitId, IReadOnlyCollection<int> unitIds, int stateType, int? destinationType = null, int? destinationId = null)
 		{
 			var query = HttpUtility.ParseQueryString(string.Empty);
@@ -1832,7 +1890,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					var callHref = BuildUnitStateHref(actionWithDestination, unitId, unitIds, state.CustomStateDetailId, (int)DestinationEntityTypes.Call, call.CallId);
 					var callText = HttpUtility.HtmlEncode($"{call.GetIdentifier()}:{ProtectedDataEnvelope.SafeDisplay(call.Name)}");
-					sb.Append($"<li><a href='{callHref}'>{callText}</a></li>");
+					sb.Append($"<li><a href='#' data-post-url='{callHref}'>{callText}</a></li>");
 				}
 			}
 
@@ -1843,7 +1901,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					var stationHref = BuildUnitStateHref(actionWithDestination, unitId, unitIds, state.CustomStateDetailId, (int)DestinationEntityTypes.Station, station.DepartmentGroupId);
 					var stationText = HttpUtility.HtmlEncode(station.Name);
-					sb.Append($"<li><a href='{stationHref}'>{stationText}</a></li>");
+					sb.Append($"<li><a href='#' data-post-url='{stationHref}'>{stationText}</a></li>");
 				}
 			}
 
@@ -1857,7 +1915,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					{
 						var poiHref = BuildUnitStateHref(actionWithDestination, unitId, unitIds, state.CustomStateDetailId, (int)DestinationEntityTypes.Poi, poi.PoiId);
 						var poiText = HttpUtility.HtmlEncode(GetPoiDisplayText(poi));
-						sb.Append($"<li><a href='{poiHref}'>{poiText}</a></li>");
+						sb.Append($"<li><a href='#' data-post-url='{poiHref}'>{poiText}</a></li>");
 					}
 				}
 			}
@@ -1866,6 +1924,30 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private static string GetPoiDisplayText(Poi poi)
 		{
 			return PoiDisplayHelper.GetSelectionLabel(poi);
+		}
+
+		/// <summary>No group, or a group of this department. A posted station id is never trusted.</summary>
+		private async Task<bool> IsDepartmentGroupAsync(int? groupId)
+		{
+			if (!groupId.HasValue || groupId.Value == 0)
+				return true;
+
+			var group = await _departmentGroupsService.GetGroupByIdAsync(groupId.Value, false);
+			return group != null && group.DepartmentId == DepartmentId;
+		}
+
+		/// <summary>The units, of those given, whose position the member may see (Security &gt; See Unit Locations).</summary>
+		private async Task<HashSet<int>> GetLocatableUnitIdsAsync(IEnumerable<int> unitIds)
+		{
+			var locatable = new HashSet<int>();
+
+			foreach (var unitId in unitIds.Distinct())
+			{
+				if (await _authorizationService.CanUserViewUnitLocationViaMatrixAsync(unitId, UserId, DepartmentId))
+					locatable.Add(unitId);
+			}
+
+			return locatable;
 		}
 
 		private async Task<bool> IsValidDestinationAsync(int destinationId, int destinationType)

@@ -282,569 +282,569 @@ Default: unset. Source: DepartmentOperatingProfile.ExpectedEmailPollIntervalMinu
 <a id="permission-createcall"></a>
 ## Create calls
 
-Create calls. Allows starting a call. The department-level action uses each member’s actual administrator state and personnel roles; later dispatch validation remains authoritative.
+Create calls. Allows creating calls, and with them the call rights that editing, closing, re-opening and deleting also need, on the web, in the apps, from the Logs page and in the chatbot. People who don't qualify can still view calls. With no saved rule everyone may.
 
 Default: No permission row: everyone; no group lock. Source: PermissionTypes.CreateCall.
 
 <a id="permission-createnote"></a>
 ## Create notes
 
-Create notes. Allows creating a department note. The action does not grant access to protected note contents or another department.
+Create notes. Allows creating notes from the apps. On the web, creating, editing and deleting notes always needs a department administrator, whatever this rule says. Admin-only notes stay visible to department administrators only. With no saved rule everyone may create notes in the apps.
 
-Default: No permission row: everyone; no group lock. Source: PermissionTypes.CreateNote.
+Default: No permission row: everyone may create notes in the apps; on the web creating, editing and deleting notes always needs a department admin. Source: PermissionTypes.CreateNote.
 
 <a id="permission-viewpersonalinfo"></a>
 ## View personal information
 
-View personal information. Controls the personal-information permission gate. Protected fields still require their own current authorization and data protection grant.
+View personal information. Decides who sees members' email addresses, phone numbers and mailing addresses on the personnel pages, the Personnel report (on screen and when scheduled by email), the profile editor and the apps. People without it still see names, groups, roles and statuses, and everyone always sees their own details. With no saved rule everyone may. Protected fields additionally need a Protected Data Grant.
 
 Default: No permission row: everyone; no group lock. Source: PermissionTypes.ViewPersonalInfo.
 
 <a id="permission-viewgroupusers"></a>
 ## View personnel
 
-View personnel. Controls visibility of personnel targets. A group lock can narrow target scope; administrators of a target group or its ancestors use the owning visibility policy.
+View personnel. Decides which members a person can see in personnel lists, profiles, grids, dispatch pickers, reports, search, the apps' roster and status feeds. With the group-only box ticked, group administrators and role holders see only their own group (department administrators always see everyone). With no saved rule everyone sees everyone.
 
 Default: No permission row: everyone; no group lock. Source: PermissionTypes.ViewGroupUsers.
 
 <a id="permission-viewgroupunits"></a>
 ## View units
 
-View units. Controls visibility of unit targets and their assigned stations. Ungrouped viewers and unassigned units do not share a group.
+View units. Decides which units a person can see in unit lists, pickers, the map, crew assignments, search, the chatbot and the apps, and whose status they may set. With the group-only box ticked, people see only units of their own station (department administrators always see every unit). With no saved rule everyone sees every unit.
 
 Default: No permission row: everyone; no group lock. Source: PermissionTypes.ViewGroupUnits.
 
 <a id="permission-canseepersonnellocations"></a>
 ## View personnel locations
 
-View personnel locations. Controls the location visibility gate for each viewer and person. The preview counts access pairs, not current map markers, tracking consent or GPS availability.
+View personnel locations. Decides whose positions a member may see: the map, live tracking, nearest-responder distances and travel times, status positions in personnel and call activity, check-ins and personnel event history. With the group-only box ticked, people see only members of their own group. With no saved rule everyone may. A position is withheld, not the person.
 
 Default: No permission row: everyone; no group lock. Source: PermissionTypes.CanSeePersonnelLocations.
 
 <a id="permission-canseeunitlocations"></a>
 ## View unit locations
 
-View unit locations. Controls the location visibility gate for each viewer and unit. A group lock refers to the unit’s station and the owning group hierarchy, not any station a viewer can otherwise see.
+View unit locations. Decides whose unit positions a member may see: the map, live tracking, nearest-unit distances and travel times, unit event history and reports, check-ins, route deviations and call activity. With the group-only box ticked, people see only units of their own station. With no saved rule everyone may. A position is withheld, not the unit.
 
 Default: No permission row: everyone; no group lock. Source: PermissionTypes.CanSeeUnitLocations.
 
 <a id="permission-addpersonnel"></a>
 ## Add Personnel
 
-Add Personnel. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Add Personnel. Allows adding, inviting and reactivating members. Choose department and group administrators to let group administrators add people to their own group; members they reactivate or add from an existing account also go into the group administrator's own group. With no saved rule only department administrators may. Group administrators who should also remove people need this set to include them, because removal checks it too.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.AddPersonnel.
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.AddPersonnel.
 
 <a id="permission-removepersonnel"></a>
 ## Remove Personnel
 
-Remove Personnel. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Remove Personnel. Allows removing members from the department. Choose department and group administrators to let group administrators remove people in their own group — they also need Add Personnel set the same way, because the removal page checks it. A group administrator can never remove a department administrator or the managing member. With no saved rule only department administrators may.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.RemovePersonnel.
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.RemovePersonnel.
 
 <a id="permission-createtraining"></a>
 ## Create Training
 
-Create Training. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Create Training. Allows creating, editing and deleting trainings and resetting members' training progress. Everyone can still view and complete trainings. With no saved rule only department administrators may.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.CreateTraining.
+Default: No permission row: department admins create, edit and delete trainings; everyone can view. Source: PermissionTypes.CreateTraining.
 
 <a id="permission-createdocument"></a>
 ## Create Document
 
-Create Document. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Create Document. Allows uploading documents. People can edit or delete only the documents they uploaded, unless they are department administrators. Everyone can still view documents. With no saved rule everyone may upload.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.CreateDocument.
+Default: No permission row: everyone may upload documents; no group lock. Source: PermissionTypes.CreateDocument.
 
 <a id="permission-createcalendarentry"></a>
 ## Create Calendar Entry
 
-Create Calendar Entry. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Create Calendar Entry. Allows creating and editing calendar entries and calendar types, and editing calendar check-ins from the apps. Editing or deleting an entry also needs to be its creator or a department administrator, and only the attendee themselves or someone who can edit the event may remove an attendee. Everyone can still view the calendar. With no saved rule everyone may.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.CreateCalendarEntry.
+Default: No permission row: everyone may create, edit and delete calendar entries; no group lock. Source: PermissionTypes.CreateCalendarEntry.
 
 <a id="permission-createlog"></a>
 ## Create Log
 
-Create Log. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Create Log. Allows writing logs. Everyone can still view them. Once Records is activated, legacy logs become read-only and this rule is copied to Create Record and Finalize Records. With no saved rule everyone may.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.CreateLog.
+Default: No permission row: everyone may create logs; no group lock. Source: PermissionTypes.CreateLog.
 
 <a id="permission-createshift"></a>
 ## Create Shift
 
-Create Shift. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Create Shift. Allows creating, editing and deleting shifts and work shifts, and managing sign-ups for every group. Group administrators always manage sign-ups for their own groups. Members signing up — on the web, in the apps or through the chatbot — must follow the shift's rules (no past days, assigned shifts need an assignment, group shifts need the member's group). Everyone can still view shifts. With no saved rule only department administrators may change shifts.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.CreateShift.
+Default: No permission row: department admins create, edit and delete shifts; everyone can view; group admins still manage sign-ups for their own groups. Source: PermissionTypes.CreateShift.
 
 <a id="permission-adjustinventory"></a>
 ## Adjust Inventory
 
-Adjust Inventory. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Adjust Inventory. Allows receiving, adjusting and archiving inventory, using stock from Records, and is the starting rule for Transfer and Issue until those are saved. With no saved rule only department administrators may, and the Security screen shows that.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.AdjustInventory.
+Default: No permission row: department admins only for inventory changes and Records inventory usage; the Security screen preselects Department admins. Source: PermissionTypes.AdjustInventory.
 
 <a id="permission-createmessage"></a>
 ## Create Message
 
-Create Message. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Create Message. Allows sending messages, posting and reacting in chat, starting direct messages and using the chatbot, including sending a message by text to the chatbot. People without it can still read and delete their messages but cannot mark them read or edit chat posts. With no saved rule everyone may.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.CreateMessage.
+Default: No permission row: everyone may send messages and post in chat; no group lock. Source: PermissionTypes.CreateMessage.
 
 <a id="permission-deletecall"></a>
 ## Delete Call
 
-Delete Call. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Delete Call. Allows deleting calls. With the group-only box ticked, only department administrators and people whose group was dispatched on the call may delete it — also when the rule is Everyone. People also need the call rights from Create Call. With no saved rule anyone who can see the call may delete it.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.DeleteCall.
+Default: No permission row: any member who can see the call may delete it; group-only lock off. Source: PermissionTypes.DeleteCall.
 
 <a id="permission-closecall"></a>
 ## Close Call
 
-Close Call. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Close Call. Allows closing and re-opening calls. With the group-only box ticked, only department administrators and people whose group was dispatched on the call may close or re-open it — also when the rule is Everyone. On the web, in the apps and in the chatbot people also need the call rights from Create Call. With no saved rule anyone who can see the call may close it.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.CloseCall.
+Default: No permission row: any member who can see the call may close or re-open it; group-only lock off. Source: PermissionTypes.CloseCall.
 
 <a id="permission-addcalldata"></a>
 ## Add Call Data
 
-Add Call Data. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Add Call Data. Allows adding notes, images, files and video feeds to calls on the web and in the apps. People must also be able to see the call, and attaching a file on the web additionally needs call edit rights (department administrators or the member who logged the call). With the group-only box ticked, only department administrators and people whose group was dispatched on the call may add to it — also when the rule is Everyone. With no saved rule anyone who can see the call may.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.AddCallData.
+Default: No permission row: anyone who can see the call may add notes, images, files and video feeds; group-only lock off. Source: PermissionTypes.AddCallData.
 
 <a id="permission-contactedit"></a>
 ## Contact Edit
 
-Contact Edit. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Contact Edit. Allows adding and editing contacts, categories, pre-plans, hazards and site files. With no saved rule everyone may. The edit page shows the whole contact, so anyone who can edit can also read; protected fields stay redacted without a Protected Data Grant.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ContactEdit.
+Default: No permission row: everyone may add and edit contacts; no group lock. Source: PermissionTypes.ContactEdit.
 
 <a id="permission-contactview"></a>
 ## Contact View
 
-Contact View. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Contact View. Allows viewing contacts, their notes, calls and files on the web and in the apps, finding them in search, and seeing contact details on calls: site information, contact alerts, the call contact pickers and the call export. With no saved rule everyone may, except inventory purchasing, which shows vendor contacts only to department administrators until you save a rule. Routes and the contact edit page can also show contact details.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ContactView.
+Default: No permission row: everyone may view contacts; no group lock. Exception: inventory purchasing and vendor-contact reads treat a missing row as department admins only. Source: PermissionTypes.ContactView.
 
 <a id="permission-contactdelete"></a>
 ## Contact Delete
 
-Contact Delete. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Contact Delete. Allows deleting contacts, categories, pre-plans, premise hazards and site files. With no saved rule everyone may. A contact with open billing in Business Ops cannot be deleted.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ContactDelete.
+Default: No permission row: everyone may delete contacts; no group lock. Source: PermissionTypes.ContactDelete.
 
 <a id="permission-createworkflow"></a>
 ## Create Workflow
 
-Create Workflow. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Create Workflow. Allows creating, editing and deleting workflows, previewing their conditions, reading step configuration in the apps and API, and seeing the rendered output of workflow runs. With no saved rule only department administrators can change workflows, but every member can open the Workflows page and read definitions; saving Department admins also hides workflows from everyone else. Steps that send a Records export also need Export Records and Manage Record Reports. Free plans are limited in how many workflows they can have.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.CreateWorkflow.
+Default: No permission row: department admins create, edit and delete workflows; every member can open and read workflows. The screen shows a disabled "not saved" option, and saving Department admins also hides workflows from non-admins on the web and in the API. Source: PermissionTypes.CreateWorkflow.
 
 <a id="permission-manageworkflowcredentials"></a>
 ## Manage Workflow Credentials
 
-Manage Workflow Credentials. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Manage Workflow Credentials. Allows creating, editing and deleting the credentials workflows use to reach outside services. Secrets are always masked. With no saved rule only department administrators can change them, but members can see credential names and types; saving Department admins hides those too, on the web and in the API. A credential that delivers a Records export also needs Export Records and Manage Record Reports to edit. Only useful alongside Create Workflow.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ManageWorkflowCredentials.
+Default: No permission row: department admins create, edit and delete credentials; every member can list credential names and types (secrets are always masked). The screen shows a disabled "not saved" option, and saving Department admins also hides credentials from non-admins on the web and in the API. Source: PermissionTypes.ManageWorkflowCredentials.
 
 <a id="permission-viewworkflowruns"></a>
 ## View Workflow Runs
 
-View Workflow Runs. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+View Workflow Runs. Allows viewing workflow run history, logs, health and pending runs. What a run sent (its rendered output and result) is shown only to people who may edit workflows. With no saved rule every member can view runs and only department administrators can cancel or clear them; saving Department admins hides runs from everyone else, and saving Everyone lets everyone cancel and clear.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ViewWorkflowRuns.
+Default: No permission row: every member can view workflow runs, logs, health and pending runs; only department admins can cancel or clear them. The screen shows a disabled "not saved" option, and saving Department admins hides runs from non-admins. Rendered output and results show only to people who may edit workflows. Source: PermissionTypes.ViewWorkflowRuns.
 
 <a id="permission-viewudffields"></a>
 ## View custom field Fields
 
-View custom field Fields. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+View custom field Fields. Governs reading and saving custom field values through the apps and API. It is not shown on any configuration screen, so everyone keeps view and update access. Each value also follows its field's visibility setting and the record it belongs to: a member reads or fills in values only on calls, units, people and contacts they can see or edit. Managing custom field definitions always requires a department administrator.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ViewUdfFields.
+Default: Not shown on any configuration screen. No permission row: every member may view and fill in custom field values through the API; department admins always have full access. Source: PermissionTypes.ViewUdfFields.
 
 <a id="permission-manageroutes"></a>
 ## Manage Routes
 
-Manage Routes. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Manage Routes. Governs routes. It is not shown on any configuration screen, so members can view routes, group administrators can also create and edit them, and only department administrators can delete. Starting a route and checking in at stops need edit access. Viewing routes also shows the department's contacts.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ManageRoutes.
+Default: Not shown on any configuration screen. No permission row: every member may view routes and group admins may also create and edit them; department admins always have full access. Source: PermissionTypes.ManageRoutes.
 
 <a id="permission-deletelog"></a>
 ## Delete Log
 
-Delete Log. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Delete Log. Allows deleting logs. It is separate from Create Log. Once Records is activated, legacy logs become read-only and this rule is copied to Delete Record. With no saved rule everyone may.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.DeleteLog.
+Default: No permission row: everyone may delete logs; no group lock. Source: PermissionTypes.DeleteLog.
 
 <a id="permission-usecalendarsync"></a>
 ## Use Calendar Sync
 
-Use Calendar Sync. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Use Calendar Sync. Allows members to get a personal calendar subscription link for their phone or desktop calendar. The feed is re-checked on every fetch, so narrowing this stops existing feeds, and a member removed from or disabled in the department stops receiving it. With no saved rule everyone may. The operator must also have calendar feeds turned on.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.UseCalendarSync.
+Default: No permission row: everyone may turn on calendar sync and the feed is served; no group lock. Source: PermissionTypes.UseCalendarSync.
 
 <a id="permission-dispatchapplogin"></a>
 ## Dispatch App Login
 
-Dispatch App Login. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Dispatch App Login. Decides who counts as a dispatcher. The Dispatch app checks it at sign-in (the server itself does not block sign-in), and dispatchers can read and are notified on dispatch-visible chat channels, including incident command and group channels. With no saved rule every active member counts. Saving it refreshes chat access.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.DispatchAppLogin.
+Default: No permission row: every active member counts as a dispatcher; no group lock. Source: PermissionTypes.DispatchAppLogin.
 
 <a id="permission-commandapplogin"></a>
 ## Command App Login
 
-Command App Login. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Command App Login. Decides who can use the Incident Command app and read command boards: every board, accountability, needs, timeline, map, role, voice and resource read, the apps' offline sync of boards, and the chatbot's incident answers. With no saved rule every active member may. When you save a narrower rule, the people it allows also get command-assist capabilities on any board. Establishing command and editing boards still need department administrator command rights.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.CommandAppLogin.
+Default: No permission row: every active member may use incident command; no group lock. Command assist is only granted when a rule other than Everyone is saved. Source: PermissionTypes.CommandAppLogin.
 
 <a id="permission-managedepartmentdataprotection"></a>
 ## Manage Department Data Protection
 
-Manage Department Data Protection. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Manage Department Data Protection. Not offered on the Security screen, because no runtime check reads it: the Data Protection pages require a department administrator, and enrollment, offboarding, step-up exemptions and billing are limited to the managing member. A rule saved earlier is kept but has no effect.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ManageDepartmentDataProtection.
+Default: Not offered on the Security screen; not read by any runtime check. Source: PermissionTypes.ManageDepartmentDataProtection.
 
 <a id="permission-viewprotectedcalldata"></a>
 ## View Protected Call Data
 
-View Protected Call Data. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+View Protected Call Data. Controls who may receive protected call details by SMS or voice after entering their PIN. On-screen and app reveal is not governed by it; that follows call access plus a current Protected Data Grant. Applies only when Advanced Data Protection is enrolled and PIN release is turned on.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ViewProtectedCallData.
+Default: No permission row: everyone (every active member who can view the call is eligible for SMS and voice PIN release); no group lock. Source: PermissionTypes.ViewProtectedCallData.
 
 <a id="permission-editprotectedcalldata"></a>
 ## Edit Protected Call Data
 
-Edit Protected Call Data. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Edit Protected Call Data. Not offered on the Security screen, because no runtime check reads it: editing protected call fields follows the normal call edit permissions plus a current Protected Data Grant. A rule saved earlier is kept but has no effect.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.EditProtectedCallData.
+Default: Not offered on the Security screen; not read by any runtime check. Source: PermissionTypes.EditProtectedCallData.
 
 <a id="permission-viewprotectedpersonneldata"></a>
 ## View Protected Personnel Data
 
-View Protected Personnel Data. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+View Protected Personnel Data. Not offered on the Security screen, because no runtime check reads it: anyone who can view a member and holds a current Protected Data Grant can reveal that member's protected fields. A rule saved earlier is kept but has no effect.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ViewProtectedPersonnelData.
+Default: Not offered on the Security screen; not read by any runtime check. Source: PermissionTypes.ViewProtectedPersonnelData.
 
 <a id="permission-viewprotectedcontactdata"></a>
 ## View Protected Contact Data
 
-View Protected Contact Data. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+View Protected Contact Data. Not offered on the Security screen, because no runtime check reads it: anyone who can view contacts and holds a current Protected Data Grant can reveal protected contact fields. A rule saved earlier is kept but has no effect.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ViewProtectedContactData.
+Default: Not offered on the Security screen; not read by any runtime check. Source: PermissionTypes.ViewProtectedContactData.
 
 <a id="permission-viewprotectedoperationaldata"></a>
 ## View Protected Operational Data
 
-View Protected Operational Data. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+View Protected Operational Data. Not offered on the Security screen, because no runtime check reads it: revealing protected logs, documents, calendar entries, custom fields and records follows each module's own access rules plus a current Protected Data Grant. A rule saved earlier is kept but has no effect.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ViewProtectedOperationalData.
+Default: Not offered on the Security screen; not read by any runtime check. Source: PermissionTypes.ViewProtectedOperationalData.
 
 <a id="permission-exportprotecteddata"></a>
 ## Export Protected Data
 
-Export Protected Data. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Export Protected Data. Not offered on the Security screen, because no runtime check reads it: each export follows its own module's export permission. A rule saved earlier is kept but has no effect.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ExportProtectedData.
+Default: Not offered on the Security screen; not read by any runtime check. Source: PermissionTypes.ExportProtectedData.
 
 <a id="permission-configureprotecteddataegress"></a>
 ## Configure Protected Data Egress
 
-Configure Protected Data Egress. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Configure Protected Data Egress. Controls who may administer protected workflows and their release approvals. Turning a protected workflow on, approving or renewing it also needs a fresh step-up, and the SMS and voice PIN release settings additionally require a department administrator. Applies only when Advanced Data Protection is enrolled.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ConfigureProtectedDataEgress.
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.ConfigureProtectedDataEgress.
 
 <a id="permission-breakglassprotecteddata"></a>
 ## Break Glass Protected Data
 
-Break Glass Protected Data. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Break Glass Protected Data. A retired identifier kept so older saved settings still load. It grants nothing, is not shown on the Security screen and cannot be saved; staff support access is controlled by the support-consent setting on the Data Protection page.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.BreakGlassProtectedData.
+Default: Not offered on the Security screen; not read by any runtime check. Source: PermissionTypes.BreakGlassProtectedData.
 
 <a id="permission-createrecord"></a>
 ## Create Record
 
-Create Record. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Create Record. Allows authoring Records, including incident reports, field records, evidence and attachments. With no saved rule everyone may author. Takes effect once Records is activated; activation copies your Create Log rule here. Field apps also need their Records field flags.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.CreateRecord.
+Default: No permission row: everyone; no group lock. Source: PermissionTypes.CreateRecord.
 
 <a id="permission-deleterecord"></a>
 ## Delete Record
 
-Delete Record. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Delete Record. Allows voiding Records and cancelling drafts — without it people cannot cancel even their own drafts. A member may void or cancel only Records they wrote, own, review or approve, unless they are a department administrator or the administrator of the Record's group. With no saved rule everyone may. Takes effect once Records is activated; activation copies your Delete Log rule here.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.DeleteRecord.
+Default: No permission row: everyone; no group lock. Source: PermissionTypes.DeleteRecord.
 
 <a id="permission-reviewrecords"></a>
 ## Review Records
 
-Review Records. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Review Records. Allows reviewing Records and returning them for correction, and assigning review work. With no saved rule department and group administrators may. A definition's reviewer roles can narrow it further. Quality review also needs the Records quality review module.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ReviewRecords.
+Default: No permission row: department and group admins; no group lock. Source: PermissionTypes.ReviewRecords.
 
 <a id="permission-approverecords"></a>
 ## Approve Records
 
-Approve Records. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Approve Records. Allows approving Records. Approval is currently done from the apps and API; on the web it only widens the accountability view. With no saved rule only department administrators may. An approver can never approve their own Record, and a definition's approver roles can narrow it further.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ApproveRecords.
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.ApproveRecords.
 
 <a id="permission-finalizerecords"></a>
 ## Finalize Records
 
-Finalize Records. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Finalize Records. Allows finalizing Records, which locks them as the official version. A member may finalize Records they wrote, own, review or approve; finalizing someone else's needs Review Records (Approve Records once approved, Amend Records for an amendment) or a department administrator. Amendments and corrections are also completed by finalizing, so anyone who amends needs this too. With no saved rule everyone may. Activation copies your Create Log rule here.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.FinalizeRecords.
+Default: No permission row: everyone; no group lock. Source: PermissionTypes.FinalizeRecords.
 
 <a id="permission-amendrecords"></a>
 ## Amend Records
 
-Amend Records. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Amend Records. Allows opening an amendment on a finalized Record and abandoning it. The amendment is completed by finalizing, so pair this with Finalize Records. With no saved rule department and group administrators may.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.AmendRecords.
+Default: No permission row: department and group admins; no group lock. Source: PermissionTypes.AmendRecords.
 
 <a id="permission-submitrecords"></a>
 ## Submit Records
 
-Submit Records. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Submit Records. Allows submitting Records to a reporting destination such as NERIS. Submitters must be able to see the Record; reading the submission exchange history also needs View Restricted Records, and validating a submission requires a department administrator. With no saved rule only department administrators may.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.SubmitRecords.
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.SubmitRecords.
 
 <a id="permission-exportrecords"></a>
 ## Export Records
 
-Export Records. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Export Records. Allows printing and exporting Records, documents, deployment reports, saved-report CSVs and bulk packets. With no saved rule everyone may. Restricted sections additionally need View Restricted Records; managing export templates, opening other people's export runs and emailing a packet to an outside address need Manage Record Reports.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ExportRecords.
+Default: No permission row: everyone; no group lock. Source: PermissionTypes.ExportRecords.
 
 <a id="permission-sharerecordsexternally"></a>
 ## Share Records Externally
 
-Share Records Externally. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Share Records Externally. Reserved for sharing Records with other groups or outside agencies. No current feature uses it, so it is not offered on the Security screen; it defaults to department administrators only, and a rule saved earlier is kept for when sharing arrives.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ShareRecordsExternally.
+Default: Not offered on the Security screen; the claim is still issued (department admins only with no saved row) but nothing uses it yet. Source: PermissionTypes.ShareRecordsExternally.
 
 <a id="permission-viewrestrictedrecords"></a>
 ## View Restricted Records
 
-View Restricted Records. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+View Restricted Records. Allows seeing restricted Record sections such as casualty, exposure and investigation detail. It is also required to include restricted content in disclosures, exports and export runs, and to read the submission exchange history. With no saved rule only department administrators may.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ViewRestrictedRecords.
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.ViewRestrictedRecords.
 
 <a id="permission-viewlegacyrecords"></a>
 ## View Legacy Records
 
-View Legacy Records. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+View Legacy Records. Reserved for viewing legacy Logs history from Records. No current page uses it, so it is not offered on the Security screen; legacy history follows the Logs permissions. A rule saved earlier is kept.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ViewLegacyRecords.
+Default: Not offered on the Security screen; the claim is still issued (everyone with no saved row) but nothing uses it yet. Source: PermissionTypes.ViewLegacyRecords.
 
 <a id="permission-viewgrouprecords"></a>
 ## View Group Records
 
-View Group Records. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+View Group Records. Limits which groups' Records people can see. Scoping applies only when this rule's group-only box is ticked and Records Settings sets group visibility to group-scoped; then non-administrators see their own group's Records plus any they authored or take part in. The action and role choices on this row do not change visibility.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ViewGroupRecords.
+Default: No permission row: no group scoping — every active member sees all department Records. Source: PermissionTypes.ViewGroupRecords.
 
 <a id="permission-managerecorddefinitions"></a>
 ## Manage Record Definitions
 
-Manage Record Definitions. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Manage Record Definitions. Allows creating and editing Record definitions in the designer. Publishing also needs Publish Record Definitions, and managing Record custom fields additionally requires a department administrator. With no saved rule only department administrators may.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ManageRecordDefinitions.
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.ManageRecordDefinitions.
 
 <a id="permission-publishrecorddefinitions"></a>
 ## Publish Record Definitions
 
-Publish Record Definitions. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Publish Record Definitions. Allows publishing and retiring Record definitions so people can use them. It only works together with Manage Record Definitions. With no saved rule only department administrators may.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.PublishRecordDefinitions.
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.PublishRecordDefinitions.
 
 <a id="permission-managerecordreports"></a>
 ## Manage Record Reports
 
-Manage Record Reports. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Manage Record Reports. Allows creating, scheduling and running saved Record reports, managing export templates, opening template and scheduled export runs, and emailing bulk packets to outside addresses; it also shows the accountability view. Export templates and CSV downloads also need Export Records, and restricted reports and runs need View Restricted Records. A bulk packet always opens only for the member who built it. With no saved rule only department administrators may.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ManageRecordReports.
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.ManageRecordReports.
 
 <a id="permission-managerecorddisclosures"></a>
 ## Manage Record Disclosures
 
-Manage Record Disclosures. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Manage Record Disclosures. Allows working public-records and disclosure requests, including reading the disclosure queue and producing releases. Restricted content additionally needs View Restricted Records. With no saved rule only department administrators may.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ManageRecordDisclosures.
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.ManageRecordDisclosures.
 
 <a id="permission-managerecordlegalhold"></a>
 ## Manage Record Legal Hold
 
-Manage Record Legal Hold. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Manage Record Legal Hold. Allows placing and releasing legal holds, which stop Records from being purged. Holds on a specific Record are limited to Records the person can see. With no saved rule only department administrators may.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ManageRecordLegalHold.
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.ManageRecordLegalHold.
 
 <a id="permission-reassignrecorddrafts"></a>
 ## Reassign Record Drafts
 
-Reassign Record Drafts. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Reassign Record Drafts. Allows handing someone else's draft Record to another active member. With no saved rule department and group administrators may, in any group they can see.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ReassignRecordDrafts.
+Default: No permission row: department and group admins; no group lock. Source: PermissionTypes.ReassignRecordDrafts.
 
 <a id="permission-recordspreventionadmin"></a>
 ## Records Prevention Admin
 
-Records Prevention Admin. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Records Prevention Admin. Allows managing prevention data — occupancies, inspections, hydrants, permits and community risk reduction. Other members can still read it. Each area also needs its Records prevention module turned on. With no saved rule only department administrators may.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.RecordsPreventionAdmin.
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.RecordsPreventionAdmin.
 
 <a id="permission-managechecklists"></a>
 ## Manage Checklists
 
-Manage Checklists. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Manage Checklists. Allows authoring, publishing, retiring and scheduling checklists and sending checklist work to other groups. It does not include reading results. With no saved rule only department administrators may. Needs Checklists turned on; failure actions that open work orders also need Work Orders and Readiness Pro.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ManageChecklists.
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.ManageChecklists.
 
 <a id="permission-viewchecklistresults"></a>
 ## View Checklist Results
 
-View Checklist Results. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+View Checklist Results. Allows reading completed checklist results and history. With no saved rule department administrators see everything, group administrators see their own group's results, and everyone sees runs they created or witnessed. Untick the group-only box to let reviewers see every group.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ViewChecklistResults.
+Default: No permission row: department and group admins, with group admins limited to their own group; everyone still sees runs they created or witnessed. Source: PermissionTypes.ViewChecklistResults.
 
 <a id="permission-manageworkorders"></a>
 ## Manage Work Orders
 
-Manage Work Orders. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Manage Work Orders. Allows managing work orders across the department: approvals, costs, resolutions, holds, recurring maintenance, vendor charges and other groups' orders. It includes seeing every work order. With no saved rule only department administrators may. Needs Work Orders turned on and the Readiness Pro add-on.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ManageWorkOrders.
+Default: No permission row: department admins only; no group lock. Others can still raise work orders for their own group and work orders assigned to them. Source: PermissionTypes.ManageWorkOrders.
 
 <a id="permission-viewallworkorders"></a>
 ## View All Work Orders
 
-View All Work Orders. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+View All Work Orders. Allows seeing work orders beyond the ones you raised or are assigned. With no saved rule department administrators see all and group administrators see their own group's; the group-only box shows that limit ticked, so leave it ticked when you save if group administrators should stay limited to their group.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ViewAllWorkOrders.
+Default: No permission row: department and group admins, with group admins limited to their own group; everyone else sees work orders they raised or that are assigned to them or their roles. Source: PermissionTypes.ViewAllWorkOrders.
 
 <a id="permission-transferinventory"></a>
 ## Transfer Inventory
 
-Transfer Inventory. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Transfer Inventory. Allows moving stock between locations. Until you save a rule here it follows Adjust Inventory. With the group-only box ticked, people can only move stock between locations in their own group. Controlled substances also need Manage Controlled Substances.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.TransferInventory.
+Default: No permission row: follows the Adjust Inventory rule (action, roles and group lock); with neither saved, department admins only. Source: PermissionTypes.TransferInventory.
 
 <a id="permission-issueinventory"></a>
 ## Issue Inventory
 
-Issue Inventory. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Issue Inventory. Allows issuing equipment and supplies to people and units, taking returns, issuing kits and adding new holders. Until you save a rule here it follows Adjust Inventory. Controlled substances also need Manage Controlled Substances and, where required, a witness.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.IssueInventory.
+Default: No permission row: follows the Adjust Inventory rule (action, roles and group lock); with neither saved, department admins only. Source: PermissionTypes.IssueInventory.
 
 <a id="permission-managecontrolledsubstances"></a>
 ## Manage Controlled Substances
 
-Manage Controlled Substances. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Manage Controlled Substances. Allows handling controlled-substance items: receiving, moving, issuing, using, witnessing, reporting and adding them to the catalog. It adds to the normal inventory permissions rather than replacing them, and witnessed steps need a second qualified person. With no saved rule only department administrators may.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ManageControlledSubstances.
+Default: No permission row: department admins only; no group lock and no fallback rule. Source: PermissionTypes.ManageControlledSubstances.
 
 <a id="permission-manageinvoicing"></a>
 ## Manage Invoicing
 
-Manage Invoicing. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Manage Invoicing. Allows creating, sending, editing and voiding invoices, generating invoices from deployments, downloading the invoice packet, recording payments and managing rate cards and billing profiles. It includes viewing. With no saved rule only department administrators may. Needs Customer Invoicing turned on; changes need an active Business Ops add-on.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ManageInvoicing.
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.ManageInvoicing.
 
 <a id="permission-viewinvoicing"></a>
 ## View Invoicing
 
-View Invoicing. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+View Invoicing. Allows viewing invoices, aging, rate cards and contact billing profiles without changing them, including the invoice lists on deployments and contracts. The invoice packet (with time reports, receipts and compliance documents) needs Manage Invoicing. With no saved rule only department administrators may. Viewing keeps working if the Business Ops add-on lapses.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ViewInvoicing.
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.ViewInvoicing.
 
 <a id="permission-managecertifications"></a>
 ## Manage Certifications
 
-Manage Certifications. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Manage Certifications. Allows adding, verifying, editing and removing other members' and units' certification records and continuing-education credits. It includes viewing. Members can always manage their own records, but nobody can verify their own, and changing your own verified record clears its verification. With no saved rule only department administrators may.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ManageCertifications.
+Default: No permission row: department admins only; no group lock. Every member can still manage their own certification records. Source: PermissionTypes.ManageCertifications.
 
 <a id="permission-viewcertifications"></a>
 ## View Certifications
 
-View Certifications. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+View Certifications. Allows viewing other members' and units' certifications, the expiring-certifications list and role eligibility. Members always see their own; group administrators need this permission too to see their members' records. With no saved rule only department administrators may. Protected fields need a Protected Data Grant.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ViewCertifications.
+Default: No permission row: department admins only; no group lock. Members always see their own records. Source: PermissionTypes.ViewCertifications.
 
 <a id="permission-managecertificationsetup"></a>
 ## Manage Certification Setup
 
-Manage Certification Setup. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Manage Certification Setup. Allows managing the certification catalog, templates, role requirements and enforcement settings. It does not by itself show members' certification records; that needs View Certifications. With no saved rule only department administrators may.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ManageCertificationSetup.
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.ManageCertificationSetup.
 
 <a id="permission-managebids"></a>
 ## Manage Bids
 
-Manage Bids. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Manage Bids. Allows creating, editing and deleting bids and quotes and converting them into deployments. Converting and using the deployment wizard also need Manage Deployments, and bid cost cards need View Internal Costs. With no saved rule only department administrators may. Needs Contractor Billing and an active Business Ops add-on.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ManageBids.
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.ManageBids.
 
 <a id="permission-managecontracts"></a>
 ## Manage Contracts
 
-Manage Contracts. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Manage Contracts. Allows viewing and managing service contracts and compliance documents, including the compliance checklist on a deployment's billing tab. With no saved rule only department administrators may. Needs Contractor Billing and an active Business Ops add-on.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ManageContracts.
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.ManageContracts.
 
 <a id="permission-managedeployments"></a>
 ## Manage Deployments
 
-Manage Deployments. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Manage Deployments. Allows creating and running deployments and external deployment orders: rosters, equipment, time, expenses and closeout, and marking expenses pre-approved. There is no separate view permission; members on a deployment's roster (directly or through their unit's crew on the roster) still see it — taking a seat on a deployed unit does not. With no saved rule only department administrators may. Creating from an external order also needs Create Record with Records activated.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ManageDeployments.
+Default: No permission row: department admins only; no group lock. Members on a deployment's roster (directly or through their unit's crew on the roster) still see it and file their own time and expenses; a live unit seat grants nothing. Source: PermissionTypes.ManageDeployments.
 
 <a id="permission-approvetimereports"></a>
 ## Approve Time Reports
 
-Approve Time Reports. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Approve Time Reports. Allows approving and voiding submitted deployment time reports, including from the Incident Command app. Nobody can approve a report they submitted or that carries their own hours, so those need a second approver; voiding is still allowed. Once a report is approved, its expenses — and expenses for that day — can no longer be changed. On the web the approver also needs to see the deployment. With no saved rule only department administrators may.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ApproveTimeReports.
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.ApproveTimeReports.
 
 <a id="permission-managemutualaidreimbursement"></a>
 ## Manage Mutual Aid Reimbursement
 
-Manage Mutual Aid Reimbursement. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Manage Mutual Aid Reimbursement. Allows preparing, handing off and reconciling Cal OES MARS reimbursement work. Building the salary survey also needs View Workforce Compensation, and classifications with fewer than three members are left out. Rostered members can still fill in their own F-42 and expenses, but printed packets show them no reimbursement rates or totals. With no saved rule only department administrators may. Needs Cal OES MARS turned on and an active Business Ops add-on.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ManageMutualAidReimbursement.
+Default: No permission row: department admins only; no group lock. Rostered members still reach their own F-42 and expense drafts. Source: PermissionTypes.ManageMutualAidReimbursement.
 
 <a id="permission-viewinternalcosts"></a>
 ## View Internal Costs
 
-View Internal Costs. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+View Internal Costs. Allows seeing the department's internal costs: resource cost profiles, usage, field cost runs and margin cards. Running, freezing or deleting cost runs, editing cost profiles and changing other people's usage also need Manage Workforce Compensation. With no saved rule only department administrators may. Needs Internal Costing turned on and an active Business Ops add-on.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ViewInternalCosts.
+Default: No permission row: department admins only; no group lock. Rostered members still file their own resource usage. Source: PermissionTypes.ViewInternalCosts.
 
 <a id="permission-manageworkforcecompensation"></a>
 ## Manage Workforce Compensation
 
-Manage Workforce Compensation. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Manage Workforce Compensation. Allows managing the employer profile, establishments, workers, employment and compensation records, and running cost runs. It includes viewing. Nobody can approve a compensation profile they last changed or their own pay. Pay amounts are protected and show redacted without a Protected Data Grant. Available on the web only. With no saved rule only department administrators may. Needs Internal Costing and an active Business Ops add-on.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ManageWorkforceCompensation.
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.ManageWorkforceCompensation.
 
 <a id="permission-viewworkforcecompensation"></a>
 ## View Workforce Compensation
 
-View Workforce Compensation. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+View Workforce Compensation. Allows viewing the workforce roster and compensation records without changing them, and is needed to build the Cal OES MARS salary survey. Amounts show redacted without a Protected Data Grant. Available on the web only. With no saved rule only department administrators may.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ViewWorkforceCompensation.
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.ViewWorkforceCompensation.
 
 <a id="permission-managepaydatareporting"></a>
 ## Manage Pay Data Reporting
 
-Manage Pay Data Reporting. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Manage Pay Data Reporting. Allows building California pay data reports in the wizard and seeing the per-worker snapshots behind them. Freezing and exporting a report needs Export Pay Data Reporting. Every member still answers their own demographic questions. Needs the pay data reporting module, an active Business Ops add-on and Advanced Data Protection enabled. With no saved rule only department administrators may.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ManagePayDataReporting.
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.ManagePayDataReporting.
 
 <a id="permission-exportpaydatareporting"></a>
 ## Export Pay Data Reporting
 
-Export Pay Data Reporting. Review this permission on the Security screen. Its default when no policy is saved, group scope, dependent permissions and behavior across web, API and mobile are awaiting a complete consumer review. No live impact preview is available for this permission yet.
+Export Pay Data Reporting. Allows freezing, exporting and downloading California pay data reports, and reading report runs and their totals. Per-worker snapshots and building the report need Manage Pay Data Reporting. Needs an active Business Ops add-on and Advanced Data Protection enabled. With no saved rule only department administrators may.
 
-Default: Awaiting consumer review; do not infer access from an absent row. Source: PermissionTypes.ExportPayDataReporting.
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.ExportPayDataReporting.
 
 <a id="table-department-name"></a>
 ## Department / Name
@@ -2624,6 +2624,48 @@ Default: true. Source: RecordsNumberingConfig.IncludeYear.
 Records Numbering Config / Per Group Sequence. Use separate station/group sequences. This changes numbering, not record visibility.
 
 Default: false. Source: RecordsNumberingConfig.PerGroupSequence.
+
+<a id="field-recordsnumberingconfig-floors"></a>
+## Records Numbering Config / Floors
+
+Records Numbering Config / Floors. Raised next numbers, one per record-number sequence, for departments continuing numbers issued before Resgrid. A next number only rises, and numbers already issued always win, so a raised next number never causes a duplicate.
+
+Default: empty. Source: RecordsNumberingConfig.Floors.
+
+<a id="field-recordsnumberingconfig-pattern"></a>
+## Records Numbering Config / Pattern
+
+Records Numbering Config / Pattern. Number pattern for the built-in record types and incident reports, made of literal text and the PREFIX, YYYY, YY, GROUP and SEQ tokens. Unset keeps the pattern Include Year and Per Group Sequence describe. The sequence restarts whenever the text around SEQ changes.
+
+Default: unset. Source: RecordsNumberingConfig.Pattern.
+
+<a id="field-recordsnumberingfloor-nextsequence"></a>
+## Records Numbering Floor / Next Sequence
+
+Records Numbering Floor / Next Sequence. The lowest sequence number that sequence may issue next.
+
+Default: 1. Source: RecordsNumberingFloor.NextSequence.
+
+<a id="field-recordsnumberingfloor-scopekey"></a>
+## Records Numbering Floor / Scope Key
+
+Records Numbering Floor / Scope Key. The sequence a raised next number applies to: the text the pattern renders around the sequence, with # in its place.
+
+Default: unset. Source: RecordsNumberingFloor.ScopeKey.
+
+<a id="field-recordsnumberingfloor-setbyuserid"></a>
+## Records Numbering Floor / Set By User ID
+
+Records Numbering Floor / Set By User ID. The administrator who raised the next number.
+
+Default: unset. Source: RecordsNumberingFloor.SetByUserId.
+
+<a id="field-recordsnumberingfloor-seton"></a>
+## Records Numbering Floor / Set On
+
+Records Numbering Floor / Set On. When the next number was raised (UTC).
+
+Default: unset. Source: RecordsNumberingFloor.SetOn.
 
 <a id="field-recordssearchconfig-indexnarrative"></a>
 ## Records Search Config / Index Narrative

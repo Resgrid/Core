@@ -249,7 +249,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (_costing?.Value != null && (IsAdmin || ClaimsAuthorizationHelper.CanViewInternalCosts()) && await _access.CanUseWorkforceAsync(DepartmentId))
 			{
 				var runs = await _costing.Value.GetRunsForBidAsync(bid.BidId, DepartmentId);
-				view.CostCard = new Resgrid.Web.Areas.User.Models.Workforce.FieldCostCardView { BidId = bid.BidId, Latest = runs.OrderByDescending(r => r.AddedOn).FirstOrDefault(), CanRun = true };
+				// Running an estimate writes a cost run: WorkforceController.RunBidEstimate also needs Workforce_Update.
+				view.CostCard = new Resgrid.Web.Areas.User.Models.Workforce.FieldCostCardView { BidId = bid.BidId, Latest = runs.OrderByDescending(r => r.AddedOn).FirstOrDefault(), CanRun = IsAdmin || ClaimsAuthorizationHelper.CanManageWorkforce() };
 			}
 			return View(view);
 		}

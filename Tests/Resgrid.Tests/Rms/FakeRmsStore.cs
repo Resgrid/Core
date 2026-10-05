@@ -16,6 +16,17 @@ namespace Resgrid.Tests.Rms
 	/// </summary>
 	public sealed class FakeRmsStore
 	{
+		/// <summary>The repository rule in memory: prefix, then only digits, then suffix; the highest such sequence or 0.</summary>
+		public static int MaxRecordNumberSequence(IEnumerable<string> numbers, string prefix, string suffix)
+		{
+			prefix ??= string.Empty;
+			suffix ??= string.Empty;
+			return numbers.Where(n => n != null && n.Length > prefix.Length + suffix.Length && n.StartsWith(prefix, StringComparison.Ordinal) && n.EndsWith(suffix, StringComparison.Ordinal))
+				.Select(n => n.Substring(prefix.Length, n.Length - prefix.Length - suffix.Length))
+				.Where(m => m.Length <= 18 && m.All(char.IsAsciiDigit))
+				.Select(m => (int)Math.Min(long.Parse(m), int.MaxValue - 1)).DefaultIfEmpty(0).Max();
+		}
+
 		public List<RmsOperationalRecord> Records { get; } = new List<RmsOperationalRecord>();
 		public List<RmsOperationalRecordDetail> Details { get; } = new List<RmsOperationalRecordDetail>();
 		public List<RmsRecordParticipant> Participants { get; } = new List<RmsRecordParticipant>();
@@ -87,9 +98,8 @@ namespace Resgrid.Tests.Rms
 					row.RowVersion += 1;
 					return true;
 				});
-			RecordsRepo.Setup(r => r.GetMaxRecordNumberSequenceAsync(It.IsAny<int>(), It.IsAny<string>()))
-				.ReturnsAsync((int d, string prefix) => Records.Where(x => x.DepartmentId == d && x.RecordNumber != null && x.RecordNumber.StartsWith(prefix))
-					.Select(x => int.TryParse(x.RecordNumber.Substring(prefix.Length), out var n) ? n : 0).DefaultIfEmpty(0).Max());
+			RecordsRepo.Setup(r => r.GetMaxRecordNumberSequenceAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
+				.ReturnsAsync((int d, string prefix, string suffix) => MaxRecordNumberSequence(Records.Where(x => x.DepartmentId == d).Select(x => x.RecordNumber), prefix, suffix));
 			RecordsRepo.Setup(r => r.CountCreatedSinceAsync(It.IsAny<int>(), It.IsAny<DateTime>()))
 				.ReturnsAsync((int d, DateTime s) => Records.Count(x => x.DepartmentId == d && x.CreatedOn >= s));
 			RecordsRepo.Setup(r => r.CountFinalizedSinceAsync(It.IsAny<int>(), It.IsAny<DateTime>()))

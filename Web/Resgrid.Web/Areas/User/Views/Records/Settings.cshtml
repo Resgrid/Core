@@ -17,7 +17,7 @@
 	</div>
 </div>
 
-<form class="form-horizontal" method="post" asp-controller="Records" asp-action="Settings" asp-route-area="User">
+<form id="records-settings-form" class="form-horizontal" method="post" asp-controller="Records" asp-action="Settings" asp-route-area="User" data-next-number-confirm="@localizer["NextNumberConfirm"]">
 	@Html.AntiForgeryToken()
 	<div class="row">
 		<div class="col-lg-9">
@@ -72,14 +72,44 @@
 					<div class="ibox-title"><h5>@localizer["Numbering"]</h5></div>
 					<div class="ibox-content">
 						<div class="form-group">
-							<div class="col-sm-offset-3 col-sm-9"><label><input type="checkbox" asp-for="IncludeYear" /> @localizer["IncludeYear"]</label></div>
+							<label class="col-sm-3 control-label">@localizer["NumberPattern"]</label>
+							<div class="col-sm-5"><input type="text" class="form-control" maxlength="@RecordNumberFormat.MaxPatternLength" autocomplete="off" spellcheck="false" asp-for="NumberPattern" /></div>
+							<div class="col-sm-4"><p class="form-control-static">@localizer["NumberPatternExample"] <code id="number-pattern-preview"></code></p></div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-offset-3 col-sm-9"><span class="help-block">@localizer["NumberPatternHelp"]</span></div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label">@localizer["SequenceWidth"]</label>
-							<div class="col-sm-2"><input type="number" min="3" max="8" class="form-control" asp-for="SequenceWidth" /></div>
+							<div class="col-sm-2"><input type="number" min="@RecordNumberFormat.MinWidth" max="@RecordNumberFormat.MaxWidth" class="form-control" asp-for="SequenceWidth" /></div>
 						</div>
-						<div class="form-group">
-							<div class="col-sm-offset-3 col-sm-9"><label><input type="checkbox" asp-for="PerGroupSequence" /> @localizer["PerGroupSequence"]</label></div>
+
+						<h5>@localizer["NextNumbersHeader", Model.NumberingYear]</h5>
+						<p class="text-muted">@localizer["NextNumbersIntro"]</p>
+						<input type="hidden" asp-for="NumberingYear" />
+						<div class="table-responsive">
+							<table class="table table-condensed">
+								<thead>
+									<tr>
+										<th>@localizer["NextNumberSequence"]</th>
+										<th>@localizer["NextNumberCurrent"]</th>
+										<th style="width:25%">@localizer["NextNumberRaiseTo"]</th>
+									</tr>
+								</thead>
+								<tbody>
+									@for (var i = 0; i < Model.NextNumbers.Count; i++)
+									{
+										<tr>
+											<td>
+												@Html.HiddenFor(m => m.NextNumbers[i].ScopeKey)
+												@Model.NextNumbers[i].Label
+											</td>
+											<td><code>@Model.NextNumbers[i].NextNumber</code></td>
+											<td><input type="number" class="form-control input-sm next-number-input" asp-for="NextNumbers[i].NextSequence" min="@Model.NextNumbers[i].CurrentNextSequence" max="@RecordNumberFormat.MaxSequence" placeholder="@Model.NextNumbers[i].CurrentNextSequence" aria-label="@localizer["NextNumberRaiseTo"] @Model.NextNumbers[i].Label" /></td>
+										</tr>
+									}
+								</tbody>
+							</table>
 						</div>
 					</div>
 				</div>
@@ -258,3 +288,28 @@
 		</div>
 	</div>
 </form>
+
+@section Scripts {
+	<script type="text/javascript">
+		(function () {
+			var pattern = $('#NumberPattern'), width = $('#SequenceWidth'), preview = $('#number-pattern-preview');
+			var year = '@Model.NumberingYear';
+			// A sample only: the server validates the pattern and renders the real numbers listed below it.
+			function render() {
+				var digits = Math.max(@RecordNumberFormat.MinWidth, Math.min(@RecordNumberFormat.MaxWidth, parseInt(width.val(), 10) || @RecordNumberFormat.DefaultWidth));
+				preview.text((pattern.val() || '')
+					.replace(/\{PREFIX\}/gi, 'INC').replace(/\{YYYY\}/gi, year).replace(/\{YY\}/gi, year.slice(-2))
+					.replace(/\{GROUP\}/gi, 'G12').replace(/\{SEQ\}/gi, ('00000000' + '153').slice(-digits)));
+			}
+			pattern.on('input', render);
+			width.on('input', render);
+			render();
+
+			$('#records-settings-form').on('submit', function (e) {
+				var raised = $('.next-number-input').filter(function () { return this.value !== ''; }).length;
+				if (raised > 0 && !window.confirm($(this).data('next-number-confirm')))
+					e.preventDefault();
+			});
+		})();
+	</script>
+}

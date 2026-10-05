@@ -397,6 +397,7 @@ namespace Resgrid.Services
 			builder.RegisterType<Records.RecordsProtectionService>().As<IRecordsProtectionService>().As<IRecordsProtectedReadService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RmsRecordValueService>().As<IRmsRecordValueService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RecordsService>().As<IRecordsService>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.RecordsNumberingService>().As<IRecordsNumberingService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RmsInventoryUsageAdapter>().As<IRmsInventoryUsageAdapter>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RecordsAccountabilityService>().As<IRecordsAccountabilityService>().InstancePerLifetimeScope();
 			// RMS-2: NERIS incident reports and the submission worker logic
@@ -441,6 +442,10 @@ namespace Resgrid.Services
 			// RMS-3: command key-time and contact/preplan feeds, the read-only NFIRS crosswalk rendering, and the
 			// RecordOperationalSummaryV1 contract for downstream consumers (plan sections 4.2, 4.3, 5.1, 4.7).
 			builder.RegisterType<Records.IncidentSourceFeedService>().As<IIncidentSourceFeedService>().InstancePerLifetimeScope();
+			// A call's report sources (statuses with who set them, crews, dispatches, check-ins, Incident Command) for report
+			// prefill and the report editors' lookup panel.
+			builder.RegisterType<Records.CallSourceDataService>().As<ICallSourceDataService>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.RecordCallReportsService>().As<IRecordCallReportsService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RecordsNfirsLegacyService>().As<IRecordsNfirsLegacyService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RecordOperationalSummaryService>().As<IRecordOperationalSummaryService>().InstancePerLifetimeScope();
 			// Department report exports via the Workflow system (RMS plan section 5.6, registry M0177, worker 45)

@@ -112,9 +112,21 @@
   <data name="DefaultLifecyclePreset" xml:space="preserve"><value>Ciclo de vida predeterminado para definiciones del departamento</value></data>
   <data name="ReviewDueHours" xml:space="preserve"><value>Plazo de revisión (horas)</value></data>
   <data name="Numbering" xml:space="preserve"><value>Numeración de registros</value></data>
-  <data name="IncludeYear" xml:space="preserve"><value>Incluir el año en los números</value></data>
   <data name="SequenceWidth" xml:space="preserve"><value>Dígitos de secuencia</value></data>
-  <data name="PerGroupSequence" xml:space="preserve"><value>Secuencia separada por estación/grupo</value></data>
+  <data name="NumberPattern" xml:space="preserve"><value>Patrón de numeración</value></data>
+  <data name="NumberPatternExample" xml:space="preserve"><value>Ejemplo:</value></data>
+  <data name="NumberPatternHelp" xml:space="preserve"><value>Use {PREFIX} para el tipo de registro (RUN, TRN, INC, etc.), {YYYY} o {YY} para el año, {GROUP} para la estación o el grupo (G seguida de su ID, que debe ir seguida de -, _ o .) y {SEQ} para la secuencia, que es obligatoria. Las letras, los dígitos, -, _ y . se mantienen tal como se escriben. La secuencia se reinicia cuando cambia el texto alrededor de {SEQ}: si incluye el año, se reinicia cada año, y si omite {PREFIX}, todos los tipos de registro comparten una única secuencia.</value></data>
+  <data name="NumberPatternInvalid" xml:space="preserve"><value>El patrón de numeración no se guardó. Use solo letras, dígitos, -, _, . y los marcadores {PREFIX}, {YYYY}, {YY}, {GROUP} y {SEQ}; incluya {SEQ} exactamente una vez, use cada marcador como máximo una vez y ponga -, _ o . después de {GROUP} (hasta 40 caracteres).</value></data>
+  <data name="NextNumbersHeader" xml:space="preserve"><value>Próximos números para {0}</value></data>
+  <data name="NextNumbersIntro" xml:space="preserve"><value>Aumente el próximo número de una secuencia para continuar desde los números emitidos antes de Resgrid: después de 2026-0001 a 2026-0152, introduzca 153. Deje un campo vacío para mantener la secuencia como está. El próximo número solo se puede aumentar, nunca reducir, para que ningún número se emita dos veces.</value></data>
+  <data name="NextNumberSequence" xml:space="preserve"><value>Secuencia</value></data>
+  <data name="NextNumberCurrent" xml:space="preserve"><value>Próximo número</value></data>
+  <data name="NextNumberRaiseTo" xml:space="preserve"><value>Aumentar el próximo a</value></data>
+  <data name="NextNumberBelowCurrent" xml:space="preserve"><value>El próximo número solo se puede aumentar. Estas secuencias no se modificaron porque el número introducido era menor que el que emitirán a continuación:</value></data>
+  <data name="NextNumberPatternChanged" xml:space="preserve"><value>El patrón de numeración cambió, por lo que no se aplicaron los próximos números introducidos. Revise las secuencias del nuevo patrón y vuelva a guardar.</value></data>
+  <data name="NextNumberConfirm" xml:space="preserve"><value>Un próximo número aumentado no se puede volver a reducir. ¿Guardar estos cambios?</value></data>
+  <data name="NumberingAllTypes" xml:space="preserve"><value>Todos los tipos de registro</value></data>
+  <data name="NumberingNoGroup" xml:space="preserve"><value>Sin estación/grupo</value></data>
   <data name="Retention" xml:space="preserve"><value>Retención</value></data>
   <data name="RetentionIntro" xml:space="preserve"><value>Valores predeterminados: 7 años para registros estándar; permanente para Forense y otras clases restringidas. La retención es responsabilidad de este departamento. Los cambios se aplican en adelante y se auditan.</value></data>
   <data name="DepartmentDefaultYears" xml:space="preserve"><value>Predeterminado del departamento (años, vacío = sistema)</value></data>

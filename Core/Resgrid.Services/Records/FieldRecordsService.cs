@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,11 +32,13 @@ namespace Resgrid.Services.Records
 		private readonly ICallsService _calls;
 		private readonly IIncidentCommandService _command;
 		private readonly IRecordsFieldRolloutService _rollout;
+		private readonly ICallSourceDataService _callSources;
 
 		public FieldRecordsService(IRecordsCutoverService cutover, IRecordsAuthorizationService authorization, IFeatureToggleService flags, IRecordDefinitionsService definitions,
 			IDepartmentDataProtectionService protection, IRecordsService records, IRecordWorkAssignmentsService assignments, IUnitsService units, IDepartmentGroupsService groups,
-			ICallsService calls, IIncidentCommandService command, IRecordsFieldRolloutService rollout)
+			ICallsService calls, IIncidentCommandService command, IRecordsFieldRolloutService rollout, ICallSourceDataService callSources)
 		{
+			_callSources = callSources;
 			_rollout = rollout;
 			_cutover = cutover;
 			_authorization = authorization;
@@ -418,9 +421,15 @@ namespace Resgrid.Services.Records
 			if (unit != null) prefill.SuggestedUnitIds.Add(unit.UnitId);
 			prefill.SuggestedParticipantUserIds.Add(userId);
 
-			// Locked definitions carry no schema here; the app fills their fixed fields from the same context block.
+			// Locked definitions carry no schema here; the app fills their fixed fields from the same context block, and a
+			// Run or Callback started from a call also gets the call's units, times and crews.
 			if (entry.Locked)
+			{
+				if (call != null && (string.Equals(entry.DefinitionKey, RmsDefinitionKeys.Run, StringComparison.Ordinal) || string.Equals(entry.DefinitionKey, RmsDefinitionKeys.Callback, StringComparison.Ordinal))
+					&& await _authorization.CanReadSourceCallAsync(userId, departmentId, call))
+					await AddLockedCallPrefillAsync(prefill, departmentId, call, now);
 				return prefill;
+			}
 
 			var schemaVersion = await _definitions.GetVersionAsync(departmentId, entry.DefinitionKey, entry.Version);
 			var schema = schemaVersion?.Schema;
@@ -461,6 +470,52 @@ namespace Resgrid.Services.Records
 			}
 
 			return prefill;
+		}
+
+		/// <summary>The Run/Callback fixed fields from the call's sources (see <see cref="FieldRecordLockedPrefill"/>). Never fails the prefill.</summary>
+		private async Task AddLockedCallPrefillAsync(FieldRecordPrefill prefill, int departmentId, Call call, DateTime now)
+		{
+			CallSourceData sources;
+			try
+			{
+				sources = await _callSources.GetForCallAsync(departmentId, call);
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, $"Call sources could not be read for the field prefill of call {call.CallId}.");
+				return;
+			}
+			if (sources == null)
+				return;
+
+			var locked = new FieldRecordLockedPrefill
+			{
+				StartedOn = sources.LoggedOn,
+				EndedOn = sources.ClosedOn,
+				Location = sources.Address,
+				InitialReport = sources.Nature
+			};
+			var callId = call.CallId.ToString(CultureInfo.InvariantCulture);
+			prefill.Provenance.Add(new FieldRecordPrefillProvenance { FieldKey = "StartedOn", Source = "call.logged_on", SourceId = callId, CapturedOn = now });
+			if (sources.ClosedOn.HasValue)
+				prefill.Provenance.Add(new FieldRecordPrefillProvenance { FieldKey = "EndedOn", Source = "call.closed_on", SourceId = callId, CapturedOn = now });
+
+			foreach (var unit in sources.Units.Where(u => u.WasDispatched || u.AssignedByCommand || u.EnrouteOn.HasValue || u.OnSceneOn.HasValue))
+			{
+				locked.Units.Add(new RecordUnitResponseInput { UnitId = unit.UnitId, Dispatched = unit.DispatchedOn, Enroute = unit.EnrouteOn, OnScene = unit.OnSceneOn, Released = unit.ClearedOn, InQuarters = unit.InServiceOn });
+				if (!prefill.SuggestedUnitIds.Contains(unit.UnitId))
+					prefill.SuggestedUnitIds.Add(unit.UnitId);
+				prefill.Provenance.Add(new FieldRecordPrefillProvenance { FieldKey = "Units." + unit.UnitId.ToString(CultureInfo.InvariantCulture), Source = "unit_states", SourceId = callId, CapturedOn = now });
+			}
+
+			foreach (var person in sources.Personnel.Where(p => p.Engaged))
+			{
+				locked.Participants.Add(new RecordParticipantInput { UserId = person.UserId, UnitId = person.UnitId, Role = person.Role });
+				if (!prefill.SuggestedParticipantUserIds.Contains(person.UserId, StringComparer.OrdinalIgnoreCase))
+					prefill.SuggestedParticipantUserIds.Add(person.UserId);
+			}
+
+			prefill.Locked = locked;
 		}
 
 		private static void Add(FieldRecordPrefill prefill, string sectionKey, string fieldKey, string value, string source, string sourceId, DateTime now, string referenceType = null, string referenceId = null)

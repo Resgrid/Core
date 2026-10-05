@@ -113,17 +113,20 @@
 								}
 							</tbody>
 						</table>
-						<div class="chat-message well">
-							@using (Html.BeginForm("AttachCallFile", "Dispatch", FormMethod.Post, new { area = "User", @class = "form-horizontal", enctype = "multipart/form-data" }))
-							{
-								<input id="CallId" name="CallId" type="hidden" value="@Model.Call.CallId">
+						@if (Model.CanAttachCallFiles)
+						{
+							<div class="chat-message well">
+								@using (Html.BeginForm("AttachCallFile", "Dispatch", FormMethod.Post, new { area = "User", @class = "form-horizontal", enctype = "multipart/form-data" }))
+								{
+									<input id="CallId" name="CallId" type="hidden" value="@Model.Call.CallId">
 
-								<input placeholder="@localizer["AddFilePlaceholder"]" type="text" class="form-control input-small" id="FriendlyName" name="FriendlyName" required />
-								<input name="fileToUpload" id="fileToUpload" type="file" />
+									<input placeholder="@localizer["AddFilePlaceholder"]" type="text" class="form-control input-small" id="FriendlyName" name="FriendlyName" required />
+									<input name="fileToUpload" id="fileToUpload" type="file" />
 
-								<button class="btn btn-success btn-small" type="submit">@localizer["AddFile"]</button>
-							}
-						</div>
+									<button class="btn btn-success btn-small" type="submit">@localizer["AddFile"]</button>
+								}
+							</div>
+						}
 					</div>
 				</div>
 			</div>
@@ -144,14 +147,19 @@
 							<div id="note-messages-inner" class="chat-messages-inner">
 							</div>
 						</div>
-						<div class="chat-message well">
-							<span class="input-box input-group">
-								<input placeholder="@localizer["AddNotePlaceholder"]" type="text" class="form-control input-small" name="note-box" id="note-box" />
-								<span class="input-group-btn">
-									<button class="btn btn-success btn-small" type="button" id="note-box-submit" disabled>@localizer["AddNote"]</button>
+						@if (Model.CanAddCallData)
+						{
+							@* AddCallNote is POST + antiforgery; the note box sends this token as a header. *@
+							<form id="callNoteTokenForm">@Html.AntiForgeryToken()</form>
+							<div class="chat-message well">
+								<span class="input-box input-group">
+									<input placeholder="@localizer["AddNotePlaceholder"]" type="text" class="form-control input-small" name="note-box" id="note-box" />
+									<span class="input-group-btn">
+										<button class="btn btn-success btn-small" type="button" id="note-box-submit" disabled>@localizer["AddNote"]</button>
+									</span>
 								</span>
-							</span>
-						</div>
+							</div>
+						}
 					</div>
 				</div>
 			</div>

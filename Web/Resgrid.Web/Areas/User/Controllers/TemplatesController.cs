@@ -82,9 +82,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> New(NewTemplateModel model, CancellationToken cancellationToken)
 		{
+			// A new template is always a new row: a posted id would make the save update another row by key.
+			model.Template.CallQuickTemplateId = 0;
+
 			if (String.IsNullOrWhiteSpace(model.Template.CallName) &&
 				String.IsNullOrWhiteSpace(model.Template.CallNature))
 			{
@@ -132,9 +136,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> Edit(NewTemplateModel model, CancellationToken cancellationToken)
 		{
+			// The posted id names the row to update, so it must be one of this department's templates.
+			var existing = await _templatesService.GetCallQuickTemplateByIdAsync(model.Template.CallQuickTemplateId);
+
+			if (existing == null || existing.DepartmentId != DepartmentId)
+				return Unauthorized();
+
 			if (String.IsNullOrWhiteSpace(model.Template.CallName) &&
 				String.IsNullOrWhiteSpace(model.Template.CallNature))
 			{
@@ -167,6 +178,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> NewCallNote(NewCallNoteModel model, CancellationToken cancellationToken)
 		{
@@ -209,6 +221,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> EditCallNote(EditCallNoteModel model, CancellationToken cancellationToken)
 		{
@@ -238,7 +251,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
 		{
@@ -252,7 +266,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("Index");
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> DeleteCallNote(string id, CancellationToken cancellationToken)
 		{

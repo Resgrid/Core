@@ -556,6 +556,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.IncidentNotesResult>> GetNotes(int callId)
 		{
+			if (!await CanReadBoardsAsync())
+				return Unauthorized();
+
 			var notes = await _incidentCommandService.GetNotesForCallAsync(DepartmentId, callId);
 			var result = new ICModels.IncidentNotesResult { Data = notes, PageSize = notes.Count, Status = ResponseHelper.Success };
 			ResponseHelper.PopulateV4ResponseData(result);
@@ -624,6 +627,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.IncidentAttachmentsResult>> GetAttachments(int callId)
 		{
+			if (!await CanReadBoardsAsync())
+				return Unauthorized();
+
 			var attachments = await _incidentCommandService.GetAttachmentsForCallAsync(DepartmentId, callId);
 			var result = new ICModels.IncidentAttachmentsResult { Data = attachments, PageSize = attachments.Count, Status = ResponseHelper.Success };
 			ResponseHelper.PopulateV4ResponseData(result);
@@ -634,6 +640,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<IActionResult> DownloadAttachment(string incidentAttachmentId)
 		{
+			if (!await CanReadBoardsAsync())
+				return Unauthorized();
+
 			var attachment = await _incidentCommandService.GetAttachmentAsync(DepartmentId, incidentAttachmentId);
 			if (attachment?.Data == null)
 				return NotFound();
@@ -682,6 +691,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.IncidentWeatherResult>> GetWeather(int callId, CancellationToken cancellationToken)
 		{
+			if (!await CanReadBoardsAsync())
+				return Unauthorized();
+
 			try
 			{
 				var weather = await _incidentCommandService.GetWeatherForIncidentAsync(DepartmentId, callId, cancellationToken);
@@ -703,6 +715,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.CommandAccountabilityResult>> GetAccountability(int callId)
 		{
+			if (!await CanReadBoardsAsync())
+				return Unauthorized();
+
 			var result = new ICModels.CommandAccountabilityResult();
 			result.Data = await _incidentCommandService.GetAccountabilityForCallAsync(DepartmentId, callId);
 			result.PageSize = result.Data.Count;
@@ -1028,6 +1043,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.IncidentNeedUpdatesResult>> GetNeedUpdates(string incidentNeedId)
 		{
+			if (!await CanReadBoardsAsync())
+				return Unauthorized();
+
 			var updates = await _incidentCommandService.GetNeedUpdatesAsync(DepartmentId, incidentNeedId);
 			var result = new ICModels.IncidentNeedUpdatesResult { Data = updates, PageSize = updates.Count, Status = ResponseHelper.Success };
 			ResponseHelper.PopulateV4ResponseData(result);
@@ -1075,6 +1093,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.IncidentNeedEntitiesResult>> GetNeedEntities(string incidentNeedId)
 		{
+			if (!await CanReadBoardsAsync())
+				return Unauthorized();
+
 			var items = await _incidentCommandService.GetNeedEntitiesAsync(DepartmentId, incidentNeedId);
 			var result = new ICModels.IncidentNeedEntitiesResult { Data = items, PageSize = items.Count, Status = ResponseHelper.Success };
 			ResponseHelper.PopulateV4ResponseData(result);
@@ -1087,6 +1108,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.IncidentNeedsResult>> GetNeeds(int callId)
 		{
+			if (!await CanReadBoardsAsync())
+				return Unauthorized();
+
 			var result = new ICModels.IncidentNeedsResult();
 			result.Data = await _incidentCommandService.GetNeedsForCallAsync(DepartmentId, callId);
 			result.PageSize = result.Data.Count;
@@ -1250,6 +1274,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.IncidentMapsResult>> GetIncidentMaps(int callId)
 		{
+			if (!await CanReadBoardsAsync())
+				return Unauthorized();
+
 			var maps = await _incidentCommandService.GetIncidentMapsForCallAsync(DepartmentId, callId);
 			var result = new ICModels.IncidentMapsResult { Data = maps, PageSize = maps.Count, Status = ResponseHelper.Success };
 			ResponseHelper.PopulateV4ResponseData(result);
@@ -1295,6 +1322,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.CommandTimelineResult>> GetTimeline(int callId)
 		{
+			if (!await CanReadBoardsAsync())
+				return Unauthorized();
+
 			var result = new ICModels.CommandTimelineResult();
 			result.Data = await _incidentCommandService.GetTimelineForCallAsync(DepartmentId, callId);
 			result.PageSize = result.Data.Count;

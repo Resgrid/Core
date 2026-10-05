@@ -502,6 +502,32 @@ namespace Resgrid.Tests.Rms
 		}
 
 		[Test]
+		public async Task Finalize_continues_from_a_raised_next_number_and_a_prefixless_pattern_shares_one_sequence()
+		{
+			var config = new RecordsNumberingConfig { Pattern = "{YYYY}-{SEQ}" };
+			config.RaiseFloor("2026-#", 153, "admin", DateTime.UtcNow);
+			_settings.Setup(s => s.GetRecordsNumberingConfigAsync(Dept, It.IsAny<bool>())).ReturnsAsync(config);
+
+			var training = await _service.CreateDraftAsync(Dept, "author", TrainingInput());
+			(await _service.FinalizeAsync(Dept, "author", training.Record.RmsOperationalRecordId, training.Record.RowVersion, "1", null, null)).Record.RecordNumber.Should().Be("2026-0153");
+
+			var again = await _service.CreateDraftAsync(Dept, "author", TrainingInput());
+			(await _service.FinalizeAsync(Dept, "author", again.Record.RmsOperationalRecordId, again.Record.RowVersion, "1", null, null)).Record.RecordNumber.Should().Be("2026-0154");
+		}
+
+		[Test]
+		public async Task Finalize_renders_text_after_the_sequence()
+		{
+			_settings.Setup(s => s.GetRecordsNumberingConfigAsync(Dept, It.IsAny<bool>())).ReturnsAsync(new RecordsNumberingConfig { Pattern = "{YY}{SEQ}.{PREFIX}", SequenceWidth = 5 });
+
+			var first = await _service.CreateDraftAsync(Dept, "author", TrainingInput());
+			(await _service.FinalizeAsync(Dept, "author", first.Record.RmsOperationalRecordId, first.Record.RowVersion, "1", null, null)).Record.RecordNumber.Should().Be("2600001.TRN");
+
+			var second = await _service.CreateDraftAsync(Dept, "author", TrainingInput());
+			(await _service.FinalizeAsync(Dept, "author", second.Record.RmsOperationalRecordId, second.Record.RowVersion, "1", null, null)).Record.RecordNumber.Should().Be("2600002.TRN");
+		}
+
+		[Test]
 		public async Task Return_for_correction_enqueues_the_author_notification_after_commit()
 		{
 			var created = await _service.CreateDraftAsync(Dept, "author", TrainingInput());
@@ -604,6 +630,8 @@ namespace Resgrid.Tests.Rms
 
 			await _service.Invoking(s => s.VoidAsync(Dept, "chief", id, null, null)).Should().ThrowAsync<ArgumentException>();
 
+			// Voiding another member's Record is for administrators (audit 2026-10-05, 3.16); the chief is one here.
+			_authorization.Setup(a => a.IsDepartmentAdminAsync("chief", Dept)).ReturnsAsync(true);
 			var voided = await _service.VoidAsync(Dept, "chief", id, "duplicate", "Filed twice");
 			voided.Record.State.Should().Be((int)RmsRecordState.Voided);
 			voided.Record.VoidReasonCode.Should().Be("duplicate");

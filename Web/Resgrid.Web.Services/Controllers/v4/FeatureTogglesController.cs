@@ -439,6 +439,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			var targetDepartmentId = ResolveTargetDepartmentId(input.DepartmentId);
 
+			// A department admin can opt their department out of a flag, or into one that is on globally; switching on a flag
+			// the operator has switched off globally stays an operator action. Evaluation ignores such an override anyway.
+			if (!IsSystemAdmin && input.IsEnabled)
+			{
+				var flag = await _featureToggleService.GetFlagByKeyAsync(input.Key, bypassCache: true);
+
+				if (flag != null && (!flag.IsEnabledGlobally || flag.IsArchived))
+					return BadRequest("This feature is not available to enable for your department.");
+			}
+
 			FeatureFlagOverride saved;
 			try
 			{

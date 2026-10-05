@@ -31,7 +31,7 @@
       "Location": {
         "Controller": "Department",
         "Action": "Settings",
-        "Field": "DisabledAutoAvailable"
+        "Field": "DisableAutoAvailable"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -64,7 +64,7 @@
       "Location": {
         "Controller": "Department",
         "Action": "Settings",
-        "Field": "PersonnelSortOrder"
+        "Field": "PersonnelSort"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -96,8 +96,7 @@
       "Secret": false,
       "Location": {
         "Controller": "Department",
-        "Action": "Settings",
-        "Field": "PersonnelListStatusSortOrder"
+        "Action": "Settings"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -130,7 +129,7 @@
       "Location": {
         "Controller": "Department",
         "Action": "Settings",
-        "Field": "StaffingSuppressStaffingLevels"
+        "Field": "EnableStaffingSupress"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",

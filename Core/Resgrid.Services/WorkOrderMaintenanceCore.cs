@@ -164,7 +164,7 @@ namespace Resgrid.Services
                 var inherited = holds.FirstOrDefault(h => h.AppliedStateId == previous?.UnitStateId);
                 hold.PreviousState = inherited?.PreviousState ?? previous?.State;
                 if (previous?.State == (int)UnitStateTypes.OutOfService) hold.AppliedStateId = inherited?.AppliedStateId; // Never take ownership of a manual restriction.
-                else hold.AppliedStateId = await _maintenance.AppendUnitStateAsync(actor.DepartmentId, order.TargetUnitId.Value, (int)UnitStateTypes.OutOfService, Now);
+                else hold.AppliedStateId = await _maintenance.AppendUnitStateAsync(actor.DepartmentId, order.TargetUnitId.Value, (int)UnitStateTypes.OutOfService, Now, actor.UserId);
             }
             else
             {
@@ -197,7 +197,7 @@ namespace Resgrid.Services
                     {
                         var current = await _maintenance.LatestUnitStateAsync(actor.DepartmentId, hold.UnitId.Value);
                         if (current?.UnitStateId == hold.AppliedStateId && current.State == (int)UnitStateTypes.OutOfService && await _maintenance.LastAppendedUnitStateIdAsync(actor.DepartmentId, hold.UnitId.Value) == hold.AppliedStateId)
-                        { await AutomatedTargetAsync(actor, hold.UnitId, order.TargetGroupId, null); await _maintenance.AppendUnitStateAsync(actor.DepartmentId, hold.UnitId.Value, hold.PreviousState.Value, Now); hold.StateRestored = true; }
+                        { await AutomatedTargetAsync(actor, hold.UnitId, order.TargetGroupId, null); await _maintenance.AppendUnitStateAsync(actor.DepartmentId, hold.UnitId.Value, hold.PreviousState.Value, Now, actor.UserId); hold.StateRestored = true; }
                     }
                     else if (hold.AssetId != null && hold.AppliedAssetRevision.HasValue && _inventoryMaintenance != null)
                     {

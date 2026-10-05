@@ -128,6 +128,12 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public const int CasualtyRows = 4;
 		public const int ExposureRows = 3;
 
+		/// <summary>NERIS tactic timestamps (department-local), keyed by <see cref="NerisTacticTimestamps.Fields"/>.</summary>
+		public Dictionary<string, DateTime?> TacticTimestamps { get; set; } = new Dictionary<string, DateTime?>(StringComparer.Ordinal);
+
+		/// <summary>The stored tactic timestamps section this form edits, so its row keeps its identity across saves.</summary>
+		public string TacticTimestampsModuleId { get; set; }
+
 		public string ReportId { get; set; }
 		public long RowVersion { get; set; }
 		public string DraftReference { get; set; }

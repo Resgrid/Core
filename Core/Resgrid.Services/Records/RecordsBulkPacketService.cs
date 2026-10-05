@@ -67,6 +67,11 @@ namespace Resgrid.Services.Records
 				throw new UnauthorizedAccessException("Bulk packets require the ExportRecords permission.");
 			if (!string.IsNullOrWhiteSpace(request.DeliverToEmail) && !IsPlausibleEmail(request.DeliverToEmail))
 				throw new ArgumentException("The delivery address is not a valid email address.", nameof(request));
+			// Mailing the packet to an address the caller types is the same act as a scheduled export leaving the
+			// department, which only a ManageRecordReports holder (or a department admin) can configure.
+			if (!string.IsNullOrWhiteSpace(request.DeliverToEmail) && !await _authorization.HasPermissionAsync(userId, departmentId, PermissionTypes.ManageRecordReports)
+				&& !await _authorization.IsDepartmentAdminAsync(userId, departmentId))
+				throw new UnauthorizedAccessException("Emailing a packet requires the ManageRecordReports permission.");
 
 			var department = await _departments.GetDepartmentByIdAsync(departmentId, false);
 			var rows = (await _recordRows.GetByIdsAsync(departmentId, ids))?.ToDictionary(r => r.RmsOperationalRecordId, StringComparer.Ordinal) ?? new Dictionary<string, RmsOperationalRecord>();

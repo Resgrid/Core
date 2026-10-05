@@ -112,9 +112,21 @@
   <data name="DefaultLifecyclePreset" xml:space="preserve"><value>Ciclo di vita predefinito per le definizioni del dipartimento</value></data>
   <data name="ReviewDueHours" xml:space="preserve"><value>Scadenza revisione (ore)</value></data>
   <data name="Numbering" xml:space="preserve"><value>Numerazione registri</value></data>
-  <data name="IncludeYear" xml:space="preserve"><value>Includi l'anno nei numeri</value></data>
   <data name="SequenceWidth" xml:space="preserve"><value>Cifre della sequenza</value></data>
-  <data name="PerGroupSequence" xml:space="preserve"><value>Sequenza separata per stazione/gruppo</value></data>
+  <data name="NumberPattern" xml:space="preserve"><value>Schema di numerazione</value></data>
+  <data name="NumberPatternExample" xml:space="preserve"><value>Esempio:</value></data>
+  <data name="NumberPatternHelp" xml:space="preserve"><value>Usa {PREFIX} per il tipo di registro (RUN, TRN, INC e così via), {YYYY} o {YY} per l'anno, {GROUP} per la stazione o il gruppo (G seguita dal suo ID, che deve essere seguito da -, _ o .) e {SEQ} per la sequenza, obbligatoria. Lettere, cifre, -, _ e . vengono mantenuti come scritti. La sequenza riparte ogni volta che cambia il testo attorno a {SEQ}: includendo l'anno riparte ogni anno, e omettendo {PREFIX} tutti i tipi di registro condividono un'unica sequenza.</value></data>
+  <data name="NumberPatternInvalid" xml:space="preserve"><value>Lo schema di numerazione non è stato salvato. Usa solo lettere, cifre, -, _, . e i segnaposto {PREFIX}, {YYYY}, {YY}, {GROUP} e {SEQ}; includi {SEQ} esattamente una volta, ogni segnaposto al massimo una volta, e fai seguire {GROUP} da -, _ o . (massimo 40 caratteri).</value></data>
+  <data name="NextNumbersHeader" xml:space="preserve"><value>Prossimi numeri per il {0}</value></data>
+  <data name="NextNumbersIntro" xml:space="preserve"><value>Aumenta il prossimo numero di una sequenza per proseguire dai numeri assegnati prima di Resgrid: dopo 2026-0001 fino a 2026-0152, inserisci 153. Lascia un campo vuoto per mantenere la sequenza com'è. Il prossimo numero può solo essere aumentato, mai ridotto, così nessun numero viene assegnato due volte.</value></data>
+  <data name="NextNumberSequence" xml:space="preserve"><value>Sequenza</value></data>
+  <data name="NextNumberCurrent" xml:space="preserve"><value>Prossimo numero</value></data>
+  <data name="NextNumberRaiseTo" xml:space="preserve"><value>Porta il prossimo a</value></data>
+  <data name="NextNumberBelowCurrent" xml:space="preserve"><value>Il prossimo numero può solo essere aumentato. Queste sequenze non sono state modificate perché il numero inserito era inferiore a quello che assegneranno successivamente:</value></data>
+  <data name="NextNumberPatternChanged" xml:space="preserve"><value>Lo schema di numerazione è cambiato, quindi i prossimi numeri inseriti non sono stati applicati. Controlla le sequenze del nuovo schema e salva di nuovo.</value></data>
+  <data name="NextNumberConfirm" xml:space="preserve"><value>Un prossimo numero aumentato non può essere ridotto di nuovo. Salvare queste modifiche?</value></data>
+  <data name="NumberingAllTypes" xml:space="preserve"><value>Tutti i tipi di registro</value></data>
+  <data name="NumberingNoGroup" xml:space="preserve"><value>Nessuna stazione/gruppo</value></data>
   <data name="Retention" xml:space="preserve"><value>Conservazione</value></data>
   <data name="RetentionIntro" xml:space="preserve"><value>Predefiniti: 7 anni per i registri standard; permanente per Coroner e altre classi riservate. La conservazione è responsabilità del dipartimento. Le modifiche si applicano in avanti e sono verificate.</value></data>
   <data name="DepartmentDefaultYears" xml:space="preserve"><value>Predefinito dipartimento (anni, vuoto = sistema)</value></data>

@@ -13,7 +13,8 @@
     var status = (Resgrid.Model.Invoicing.DeploymentTimeReportStatuses)r.Status;
     var canSubmit = Model.CanEdit && Model.CanActOnReport && status == Resgrid.Model.Invoicing.DeploymentTimeReportStatuses.Draft;
     var headerEditable = Model.CanEdit && Model.CanActOnReport;
-    var canApprove = Model.CanApprove && status == Resgrid.Model.Invoicing.DeploymentTimeReportStatuses.Submitted;
+    var awaitingApproval = Model.CanApprove && status == Resgrid.Model.Invoicing.DeploymentTimeReportStatuses.Submitted;
+    var canApprove = awaitingApproval && !Model.IsOwnReport;
     var canVoid = Model.CanApprove && status != Resgrid.Model.Invoicing.DeploymentTimeReportStatuses.Void && status != Resgrid.Model.Invoicing.DeploymentTimeReportStatuses.Billed;
 
     Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
@@ -165,7 +166,7 @@
             </div>
         </div>
         <div class="col-md-4">
-            @if (canApprove || canVoid || Model.CanActOnReport)
+            @if (awaitingApproval || canVoid || Model.CanActOnReport)
             {
                 <div class="ibox float-e-margins">
                     <div class="ibox-title"><h5>@localizer["Review"]</h5></div>
@@ -173,6 +174,10 @@
                         @if (canApprove)
                         {
                             <form method="post" asp-action="ApproveTimeReport" asp-route-id="@r.DeploymentTimeReportId">@Html.AntiForgeryToken()<button class="btn btn-success btn-block" onclick="return confirm('@JsEncoder.Encode(localizer["ApproveConfirm"])');"><i class="fa fa-thumbs-up"></i> @localizer["Approve"]</button></form>
+                        }
+                        else if (awaitingApproval)
+                        {
+                            <p class="text-muted"><i class="fa fa-info-circle"></i> @localizer["timereports_self_approval"]</p>
                         }
                         @if (canVoid)
                         {

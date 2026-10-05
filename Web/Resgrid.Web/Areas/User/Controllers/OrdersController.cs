@@ -61,6 +61,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		public async Task<IActionResult> Settings()
 		{
+			// The same rule as saving the settings: department admins only.
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return Unauthorized();
+
 			var model = new OrderSetttingsView();
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
@@ -90,6 +94,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Settings(OrderSetttingsView model, IFormCollection form, CancellationToken cancellationToken)
 		{
 			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
@@ -161,8 +166,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> New(NewOrderView model, IFormCollection form, CancellationToken cancellationToken)
 		{
+			// A new order is always a new row with new items: posted ids would make the save update other rows by key.
+			// The form never posts the item collection; it is rebuilt from the itemResource_ fields below.
+			if (model.Order != null)
+			{
+				model.Order.ResourceOrderId = 0;
+				model.Order.Items = null;
+			}
+
 			if (ModelState.IsValid)
 			{
 				var settings = await _resourceOrdersService.GetSettingsByDepartmentIdAsync(DepartmentId);
@@ -264,7 +278,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
+		[HttpPost]
 		[Authorize]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> AcceptFill(int fillId)
 		{
 			var model = new ViewOrderView();
@@ -308,6 +324,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[Authorize]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> FillItem(FillItemInput data, CancellationToken cancellationToken)
 		{
 			var model = new FillItemView();

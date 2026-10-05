@@ -389,6 +389,7 @@ namespace Resgrid.Services
 
 			// No destination is sent on this path: link the state to the call the unit is working, if there is one.
 			await _callStatusAttributionService.AttributeUnitStateAsync(state, previousState, departmentId);
+			StatusWriteActor.Stamp(state);
 
 			var saved = await _unitStatesRepository.SaveOrUpdateAsync(state, cancellationToken);
 
@@ -436,6 +437,8 @@ namespace Resgrid.Services
 			// Every client and server path lands here: a state sent without a destination is linked to the call the unit
 			// is working (previous state's open call, or its one open dispatch), and a sent destination is marked explicit.
 			await _callStatusAttributionService.AttributeUnitStateAsync(state, previousState, departmentId);
+			// Who submitted it and from where (M0260), from the request or job scope; a caller-stamped state keeps its own.
+			StatusWriteActor.Stamp(state);
 
 			var saved = await _unitStatesRepository.SaveOrUpdateAsync(state, cancellationToken);
 

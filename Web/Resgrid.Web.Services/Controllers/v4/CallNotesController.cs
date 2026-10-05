@@ -15,6 +15,7 @@ using static Resgrid.Web.Services.Models.v4.CallNotes.CallNotesResult;
 using System.Net.Mime;
 using System.Threading;
 using Resgrid.Web.Services.Models.v4.Calls;
+using IAuthorizationService = Resgrid.Model.Services.IAuthorizationService;
 
 namespace Resgrid.Web.Services.Controllers.v4
 {
@@ -31,14 +32,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IProtectedReadService _protectedCallReadService;
 		private readonly IProtectedWriteService _protectedWriteService;
+		private readonly IAuthorizationService _authorizationService;
 
 		public CallNotesController(ICallsService callsService, IDepartmentsService departmentsService,
-			IProtectedReadService protectedCallReadService, IProtectedWriteService protectedWriteService)
+			IProtectedReadService protectedCallReadService, IProtectedWriteService protectedWriteService,
+			IAuthorizationService authorizationService)
 		{
 			_callsService = callsService;
 			_departmentsService = departmentsService;
 			_protectedCallReadService = protectedCallReadService;
 			_protectedWriteService = protectedWriteService;
+			_authorizationService = authorizationService;
 		}
 		#endregion Members and Constructors
 
@@ -128,13 +132,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (call.DepartmentId != DepartmentId)
 				return Unauthorized();
 
+			// Add Call Data (Security > Permissions) plus group-scoped dispatch; Call_View alone is not enough to write.
+			if (!await _authorizationService.CanUserAddCallDataAsync(UserId, call.CallId, DepartmentId))
+				return Unauthorized();
+
 			var result = new SaveCallNoteResult();
 
 			var note = new CallNote();
 			note.CallId = int.Parse(input.CallId);
 			note.Timestamp = DateTime.UtcNow;
 			note.Note = input.Note;
-			note.UserId = input.UserId;
+			// The author is the authenticated caller; input.UserId is accepted for compatibility but never trusted.
+			note.UserId = UserId;
 			note.Source = (int)CallNoteSources.Mobile;
 
 			if (!String.IsNullOrWhiteSpace(input.Latitude) && !String.IsNullOrWhiteSpace(input.Longitude))

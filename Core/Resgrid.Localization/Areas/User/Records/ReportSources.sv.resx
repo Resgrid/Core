@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="PanelTitle" xml:space="preserve"><value>Ärendedata</value></data>
+  <data name="PanelIntro" xml:space="preserve"><value>Statusar, utlarmningar, ledningsposter och andra insatsrapporter för ärendet, med vem som satte var och en. Klicka på ett tidsfält i rapporten och sedan Använd.</value></data>
+  <data name="Reload" xml:space="preserve"><value>Läs in igen</value></data>
+  <data name="FillFromCall" xml:space="preserve"><value>Fyll i från ärendet</value></data>
+  <data name="FillFromCallHint" xml:space="preserve"><value>Fyller i tomma start- och sluttider, plats, första rapport, enheter och personal från ärendet.</value></data>
+  <data name="TabTimeline" xml:space="preserve"><value>Tidslinje</value></data>
+  <data name="TabUnits" xml:space="preserve"><value>Enheter</value></data>
+  <data name="TabPersonnel" xml:space="preserve"><value>Personal</value></data>
+  <data name="TabCommand" xml:space="preserve"><value>Ledning</value></data>
+  <data name="TabRunReports" xml:space="preserve"><value>Insatsrapporter</value></data>
+  <data name="NoTarget" xml:space="preserve"><value>Klicka först på ett tidsfält i rapporten och sedan Använd.</value></data>
+  <data name="UsedTime" xml:space="preserve"><value>Satt till {0}.</value></data>
+  <data name="Use" xml:space="preserve"><value>Använd</value></data>
+  <data name="UseHint" xml:space="preserve"><value>Lägg in tiden i det tidsfält du senast klickade på</value></data>
+  <data name="UnitNotOnReport" xml:space="preserve"><value>{0} finns inte i rapportens enhetslista.</value></data>
+  <data name="NothingToFill" xml:space="preserve"><value>Inget att fylla i för {0}.</value></data>
+  <data name="FilledUnit" xml:space="preserve"><value>Fyllde i {0} fält för {1}.</value></data>
+  <data name="FilledFromCall" xml:space="preserve"><value>Fyllde i {0} fält från ärendet.</value></data>
+  <data name="NothingNew" xml:space="preserve"><value>Inget nytt att fylla i.</value></data>
+  <data name="SetBy" xml:space="preserve"><value>Satt av {0}</value></data>
+  <data name="SetByVia" xml:space="preserve"><value>Satt av {0} · {1}</value></data>
+  <data name="Via" xml:space="preserve"><value>via {0} (kanal)</value></data>
+  <data name="FilterAll" xml:space="preserve"><value>Alla</value></data>
+  <data name="FilterUnits" xml:space="preserve"><value>Enheter</value></data>
+  <data name="FilterPersonnel" xml:space="preserve"><value>Personal</value></data>
+  <data name="FilterDispatch" xml:space="preserve"><value>Utlarmning</value></data>
+  <data name="FilterCommand" xml:space="preserve"><value>Ledning</value></data>
+  <data name="NoEntries" xml:space="preserve"><value>Inget har registrerats för ärendet ännu.</value></data>
+  <data name="KindCall" xml:space="preserve"><value>Ärende</value></data>
+  <data name="KindUnitDispatch" xml:space="preserve"><value>Utlarmning</value></data>
+  <data name="KindPersonnelDispatch" xml:space="preserve"><value>Utlarmning</value></data>
+  <data name="KindUnitStatus" xml:space="preserve"><value>Enhet</value></data>
+  <data name="KindPersonnelStatus" xml:space="preserve"><value>Personal</value></data>
+  <data name="KindCommand" xml:space="preserve"><value>Ledning</value></data>
+  <data name="KindObjective" xml:space="preserve"><value>Mål</value></data>
+  <data name="KindCheckIn" xml:space="preserve"><value>Incheckning</value></data>
+  <data name="LinkInferred" xml:space="preserve"><value>Härledd</value></data>
+  <data name="LinkAuto" xml:space="preserve"><value>Automatiskt kopplad</value></data>
+  <data name="LinkHint" xml:space="preserve"><value>Resgrid kopplade statusen till ärendet; kontrollera den innan du använder den.</value></data>
+  <data name="FillBlanks" xml:space="preserve"><value>Fyll tomma</value></data>
+  <data name="Replace" xml:space="preserve"><value>Ersätt</value></data>
+  <data name="NoUnits" xml:space="preserve"><value>Inga enheter i ärendet.</value></data>
+  <data name="Dispatched" xml:space="preserve"><value>Utlarmad</value></data>
+  <data name="AssignedByCommand" xml:space="preserve"><value>Tilldelad av ledningen</value></data>
+  <data name="Enroute" xml:space="preserve"><value>På väg</value></data>
+  <data name="OnScene" xml:space="preserve"><value>På plats</value></data>
+  <data name="Staging" xml:space="preserve"><value>Uppställd</value></data>
+  <data name="Cancelled" xml:space="preserve"><value>Avbruten</value></data>
+  <data name="Cleared" xml:space="preserve"><value>Klar</value></data>
+  <data name="InService" xml:space="preserve"><value>I tjänst</value></data>
+  <data name="CommandAssigned" xml:space="preserve"><value>Tilldelad (ledning)</value></data>
+  <data name="CommandReleased" xml:space="preserve"><value>Frisläppt (ledning)</value></data>
+  <data name="CrewList" xml:space="preserve"><value>Besättning ({0}): {1}</value></data>
+  <data name="NoPersonnel" xml:space="preserve"><value>Ingen personal i ärendet.</value></data>
+  <data name="NotEngaged" xml:space="preserve"><value>Larmad, inget svar</value></data>
+  <data name="Responding" xml:space="preserve"><value>Rycker ut</value></data>
+  <data name="First" xml:space="preserve"><value>Första status</value></data>
+  <data name="Last" xml:space="preserve"><value>Senaste status</value></data>
+  <data name="NoCommand" xml:space="preserve"><value>Ärendet leddes inte via insatsledning.</value></data>
+  <data name="CommandEstablished" xml:space="preserve"><value>Ledning etablerad</value></data>
+  <data name="CommandClosed" xml:space="preserve"><value>Ledning avslutad</value></data>
+  <data name="Commanders" xml:space="preserve"><value>Insatsledare: {0}</value></data>
+  <data name="TacticTimestamps" xml:space="preserve"><value>Taktiska tidpunkter</value></data>
+  <data name="TacticTimestampsHint" xml:space="preserve"><value>Förifylls från ledningens mål när målets namn anger vilken milstolpe det gäller. Lämna fältet tomt om milstolpen inte nåddes.</value></data>
+  <data name="NoTactics" xml:space="preserve"><value>Inget ledningsmål anger en taktisk milstolpe.</value></data>
+  <data name="FillTactics" xml:space="preserve"><value>Fyll tomma taktiska tidpunkter</value></data>
+  <data name="FilledCount" xml:space="preserve"><value>Fyllde i {0} fält.</value></data>
+  <data name="MutualAid" xml:space="preserve"><value>Grannhjälp</value></data>
+  <data name="NoMutualAid" xml:space="preserve"><value>Ingen grannhjälp registrerades.</value></data>
+  <data name="NoRunReports" xml:space="preserve"><value>Inga andra insatsrapporter för ärendet.</value></data>
+  <data name="Final" xml:space="preserve"><value>Slutgiltig</value></data>
+  <data name="NotFinal" xml:space="preserve"><value>Utkast</value></data>
+  <data name="ByAuthor" xml:space="preserve"><value>Av {0}</value></data>
+  <data name="Withheld" xml:space="preserve"><value>En del innehåll är skyddat och visas inte.</value></data>
+  <data name="Started" xml:space="preserve"><value>Start</value></data>
+  <data name="Ended" xml:space="preserve"><value>Slut</value></data>
+  <data name="CrewCount" xml:space="preserve"><value>{0} i besättningen</value></data>
+  <data name="PersonnelList" xml:space="preserve"><value>Personal: {0} (lista)</value></data>
+  <data name="Location" xml:space="preserve"><value>Plats</value></data>
+  <data name="InitialReport" xml:space="preserve"><value>Första rapport</value></data>
+  <data name="Cause" xml:space="preserve"><value>Orsak</value></data>
+  <data name="OtherAgencies" xml:space="preserve"><value>Andra organisationer</value></data>
+  <data name="OtherUnits" xml:space="preserve"><value>Andra enheter</value></data>
+  <data name="Narrative" xml:space="preserve"><value>Berättelse</value></data>
+  <data name="AddToNarrative" xml:space="preserve"><value>Lägg till i berättelsen</value></data>
+  <data name="NarrativeAdded" xml:space="preserve"><value>Berättelsen lades till i rapporten.</value></data>
+  <data name="PickCall" xml:space="preserve"><value>Välj ett ärende för att se dess data.</value></data>
+  <data name="Loading" xml:space="preserve"><value>Läser in ärendedata…</value></data>
+  <data name="PartialSources" xml:space="preserve"><value>Vissa källor kunde inte läsas: {0}.</value></data>
+  <data name="LoadFailed" xml:space="preserve"><value>Ärendedata kunde inte läsas in.</value></data>
+  <data name="OriginWeb" xml:space="preserve"><value>webbplatsen</value></data>
+  <data name="OriginResponderApp" xml:space="preserve"><value>Responder-appen</value></data>
+  <data name="OriginUnitApp" xml:space="preserve"><value>enhetsappen</value></data>
+  <data name="OriginDispatchApp" xml:space="preserve"><value>larmcentralsappen</value></data>
+  <data name="OriginBigBoard" xml:space="preserve"><value>Big Board-skärm</value></data>
+  <data name="OriginCommandApp" xml:space="preserve"><value>ledningsappen</value></data>
+  <data name="OriginMcp" xml:space="preserve"><value>AI-assistent</value></data>
+  <data name="OriginApi" xml:space="preserve"><value>API-klient</value></data>
+  <data name="OriginSms" xml:space="preserve"><value>sms</value></data>
+  <data name="OriginVoice" xml:space="preserve"><value>telefonsamtal</value></data>
+  <data name="OriginChat" xml:space="preserve"><value>chatt</value></data>
+  <data name="OriginDispatchAutomation" xml:space="preserve"><value>automatiskt vid utlarmning</value></data>
+  <data name="OriginSchedule" xml:space="preserve"><value>schemalagd återställning</value></data>
+  <data name="OriginMaintenance" xml:space="preserve"><value>underhållsspärr</value></data>
+  <data name="Tactic_command_established" xml:space="preserve"><value>Ledning etablerad</value></data>
+  <data name="Tactic_completed_sizeup" xml:space="preserve"><value>Lägesbedömning klar</value></data>
+  <data name="Tactic_suppression_complete" xml:space="preserve"><value>Släckning klar</value></data>
+  <data name="Tactic_primary_search_begin" xml:space="preserve"><value>Primär genomsökning påbörjad</value></data>
+  <data name="Tactic_primary_search_complete" xml:space="preserve"><value>Primär genomsökning klar</value></data>
+  <data name="Tactic_water_on_fire" xml:space="preserve"><value>Vatten på branden</value></data>
+  <data name="Tactic_fire_under_control" xml:space="preserve"><value>Branden under kontroll</value></data>
+  <data name="Tactic_fire_knocked_down" xml:space="preserve"><value>Branden nedslagen</value></data>
+  <data name="Tactic_extrication_complete" xml:space="preserve"><value>Losstagning klar</value></data>
+  <data name="RefreshFromCall" xml:space="preserve"><value>Uppdatera från ärendet</value></data>
+  <data name="RefreshFromCallHint" xml:space="preserve"><value>Fyller tomma fält och uppdaterar värden du inte ändrat från ärendet, enheters och personals statusar och insatsledningen. Dina egna uppgifter behålls.</value></data>
+  <data name="RefreshUnsavedWarning" xml:space="preserve"><value>Uppdateringen läser in det sparade utkastet igen. Osparade ändringar på sidan går förlorade. Fortsätta?</value></data>
+  <data name="RefreshedFromCall" xml:space="preserve"><value>Uppdaterad från ärendet: {0} ifyllda, {1} uppdaterade, {2} tillagda.</value></data>
+  <data name="RefreshNothingNew" xml:space="preserve"><value>Uppdaterad från ärendet: inget nytt.</value></data>
+  <data name="StartRunReport" xml:space="preserve"><value>Insatsrapport</value></data>
+</root>

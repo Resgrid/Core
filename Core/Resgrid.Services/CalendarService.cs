@@ -864,6 +864,13 @@ namespace Resgrid.Services
 				if (profile == null || profile.CalendarSyncToken != tokenGuid)
 					return null;
 
+				// The feed is anonymous, so the URL outlives the membership it was issued under: a member removed from
+				// this department (RevokeDepartmentAccessAsync keeps their profile and token for their other departments)
+				// or disabled in it must stop receiving its calendar on the next fetch.
+				var member = await _departmentsService.GetDepartmentMemberAsync(userId, deptId);
+				if (!DepartmentMemberStateHelper.IsCurrentMember(member, deptId))
+					return null;
+
 				return (deptId, userId);
 			}
 			catch

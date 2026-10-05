@@ -142,6 +142,13 @@
     </div>
 </div>
 
+@if (ClaimsAuthorizationHelper.CanDeleteContacts())
+{
+    <form id="deleteContactForm" method="post" asp-controller="Contacts" asp-action="Delete" asp-route-area="User" asp-antiforgery="true" class="hidden">
+        <input type="hidden" name="contactId" value="" />
+    </form>
+}
+
 @{
     void ContactsTableButtonTemplate(Contact c)
     {
@@ -181,7 +188,8 @@
         }
         @if (ClaimsAuthorizationHelper.CanDeleteContacts())
         {
-            @Html.Raw($"<a type='button' href='{@Url.Action("Delete", "Contacts", new { area = "User" })}?contactId={c.ContactId}' class='btn btn-xs btn-danger' data-confirm='{Html.Encode(localizer["DeleteUnitWarning"].Value)} {Html.Encode(c.GetName())}?' rel='nofollow'>{Html.Encode(commonLocalizer["Delete"].Value)}</a>")
+            // Delete is POST + antiforgery: the button posts #deleteContactForm and stays disabled until the page script binds it.
+            @Html.Raw($"<button type='button' class='btn btn-xs btn-danger contact-delete' data-contact-id='{Html.Encode(c.ContactId)}' data-delete-confirm='{Html.Encode(localizer["DeleteUnitWarning"].Value)} {Html.Encode(c.GetName())}?' disabled>{Html.Encode(commonLocalizer["Delete"].Value)}</button>")
             ;
         }
     }
@@ -193,5 +201,5 @@
         var treeData = @Html.Raw(@Model.TreeData);
     </script>
 
-    <script src="~/js/app/internal/contacts/resgrid.contacts.index.js" type="text/javascript"></script>
+    <script src="~/js/app/internal/contacts/resgrid.contacts.index.js" asp-append-version="true" type="text/javascript"></script>
 }

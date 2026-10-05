@@ -399,6 +399,9 @@
   <data name="PermOptionDepartmentAndGroupAdmins" xml:space="preserve"><value>Διαχειριστές Τμήματος και Ομάδων</value></data>
   <data name="PermOptionDepartmentAdminsAndSelectRoles" xml:space="preserve"><value>Διαχειριστές Τμήματος και επιλεγμένοι ρόλοι</value></data>
   <data name="PermOptionDepartmentGroupAdminsAndSelectRoles" xml:space="preserve"><value>Διαχειριστές Τμήματος και Ομάδων, καθώς και επιλεγμένοι ρόλοι</value></data>
+  <data name="PermOptionNotSavedCreateWorkflow" xml:space="preserve"><value>Μη αποθηκευμένο: οι Διαχειριστές Τμήματος επεξεργάζονται, όλοι μπορούν να βλέπουν</value></data>
+  <data name="PermOptionNotSavedManageWorkflowCredentials" xml:space="preserve"><value>Μη αποθηκευμένο: οι Διαχειριστές Τμήματος επεξεργάζονται, όλοι βλέπουν τα ονόματα</value></data>
+  <data name="PermOptionNotSavedViewWorkflowRuns" xml:space="preserve"><value>Μη αποθηκευμένο: όλοι μπορούν να βλέπουν, οι Διαχειριστές Τμήματος ακυρώνουν</value></data>
 
   <!-- Permissions page header -->
   <data name="BreadcrumbSecurity" xml:space="preserve"><value>Ασφάλεια και Δικαιώματα</value></data>
@@ -446,7 +449,7 @@
   <data name="PermViewPersonalInfoNote" xml:space="preserve"><value>Αυτή η επιλογή καθορίζει ποιος μπορεί να βλέπει προσωπικές πληροφορίες (PII) για το προσωπικό στο σύστημα. Για παράδειγμα: Διεύθυνση Email, Αριθμοί Τηλεφώνου κ.λπ. Από προεπιλογή όλοι μπορούν να βλέπουν αυτές τις πληροφορίες.</value></data>
 
   <data name="PermAdjustInventoryLabel" xml:space="preserve"><value>Ποιος μπορεί να Προσαρμόζει το Απόθεμα</value></data>
-  <data name="PermAdjustInventoryNote" xml:space="preserve"><value>Αυτή η επιλογή καθορίζει ποιος μπορεί να προσαρμόζει τα επίπεδα αποθέματος στο σύστημα. Από προεπιλογή όλοι μπορούν να προσαρμόζουν το απόθεμα.</value></data>
+  <data name="PermAdjustInventoryNote" xml:space="preserve"><value>Αυτή η επιλογή καθορίζει ποιος μπορεί να προσαρμόζει τα επίπεδα αποθέματος στο σύστημα. Μέχρι να αποθηκευτεί μια τιμή, μόνο οι Διαχειριστές Τμήματος μπορούν να προσαρμόζουν το απόθεμα.</value></data>
 
   <data name="PermViewPersonnelLocationLabel" xml:space="preserve"><value>Ποιος μπορεί να βλέπει την Τοποθεσία του Προσωπικού</value></data>
   <data name="PermViewPersonnelLocationNote" xml:space="preserve"><value>Αυτή η επιλογή καθορίζει ποιος μπορεί να βλέπει την τοποθεσία του προσωπικού στους χάρτες. Για να περιορίσετε την επιλογή μόνο σε διαχειριστές ομάδων και ρόλους εντός ομάδας, πρέπει να επιλέξετε την επιλογή Μόνο Ομάδα.</value></data>
@@ -473,13 +476,13 @@
   <data name="PermDeleteContactsNote" xml:space="preserve"><value>Από προεπιλογή όλοι οι χρήστες μπορούν να διαγράφουν επαφές στο σύστημα. Αυτή η επιλογή σας επιτρέπει να περιορίσετε ποιος μπορεί να διαγράφει επαφές στο σύστημα.</value></data>
 
   <data name="PermCreateWorkflowLabel" xml:space="preserve"><value>Ποιος μπορεί να Δημιουργεί/Επεξεργάζεται Ροές Εργασίας</value></data>
-  <data name="PermCreateWorkflowNote" xml:space="preserve"><value>Αυτή η επιλογή καθορίζει ποιος μπορεί να δημιουργεί, να επεξεργάζεται και να διαγράφει ροές εργασίας και βήματα ροών εργασίας. Από προεπιλογή μόνο οι Διαχειριστές Τμήματος μπορούν να διαχειρίζονται ροές εργασίας.</value></data>
+  <data name="PermCreateWorkflowNote" xml:space="preserve"><value>Αυτή η επιλογή καθορίζει ποιος μπορεί να δημιουργεί, να επεξεργάζεται και να διαγράφει ροές εργασίας και βήματα ροών εργασίας. Μέχρι να αποθηκευτεί μια τιμή, μόνο οι Διαχειριστές Τμήματος μπορούν να διαχειρίζονται ροές εργασίας και όλα τα μέλη μπορούν να τις βλέπουν· η αποθήκευση οποιασδήποτε τιμής περιορίζει επίσης ποιος μπορεί να τις βλέπει.</value></data>
 
   <data name="PermManageWorkflowCredentialsLabel" xml:space="preserve"><value>Ποιος μπορεί να Διαχειρίζεται Διαπιστευτήρια Ροών Εργασίας</value></data>
-  <data name="PermManageWorkflowCredentialsNote" xml:space="preserve"><value>Αυτή η επιλογή καθορίζει ποιος μπορεί να δημιουργεί, να επεξεργάζεται και να διαγράφει κρυπτογραφημένα διαπιστευτήρια που χρησιμοποιούνται από ενέργειες ροών εργασίας (π.χ. κωδικούς SMTP, κλειδιά API). Από προεπιλογή μόνο οι Διαχειριστές Τμήματος μπορούν να διαχειρίζονται διαπιστευτήρια.</value></data>
+  <data name="PermManageWorkflowCredentialsNote" xml:space="preserve"><value>Αυτή η επιλογή καθορίζει ποιος μπορεί να δημιουργεί, να επεξεργάζεται και να διαγράφει κρυπτογραφημένα διαπιστευτήρια που χρησιμοποιούνται από ενέργειες ροών εργασίας (π.χ. κωδικούς SMTP, κλειδιά API). Μέχρι να αποθηκευτεί μια τιμή, μόνο οι Διαχειριστές Τμήματος μπορούν να διαχειρίζονται διαπιστευτήρια και όλα τα μέλη βλέπουν τα ονόματά τους· η αποθήκευση οποιασδήποτε τιμής περιορίζει επίσης ποιος μπορεί να τα βλέπει.</value></data>
 
   <data name="PermViewWorkflowRunsLabel" xml:space="preserve"><value>Ποιος μπορεί να Βλέπει Εκτελέσεις Ροών Εργασίας</value></data>
-  <data name="PermViewWorkflowRunsNote" xml:space="preserve"><value>Αυτή η επιλογή καθορίζει ποιος μπορεί να βλέπει το ιστορικό εκτέλεσης ροών εργασίας, τα αρχεία εκτελέσεων και τους πίνακες υγείας. Από προεπιλογή μόνο οι Διαχειριστές Τμήματος μπορούν να βλέπουν εκτελέσεις ροών εργασίας.</value></data>
+  <data name="PermViewWorkflowRunsNote" xml:space="preserve"><value>Αυτή η επιλογή καθορίζει ποιος μπορεί να βλέπει το ιστορικό εκτέλεσης ροών εργασίας, τα αρχεία εκτελέσεων και τους πίνακες υγείας. Μέχρι να αποθηκευτεί μια τιμή, όλα τα μέλη μπορούν να βλέπουν τις εκτελέσεις και μόνο οι Διαχειριστές Τμήματος μπορούν να τις ακυρώνουν ή να τις εκκαθαρίζουν· η αποθήκευση άλλης τιμής περιορίζει ποιος μπορεί να τις βλέπει, και η αποθήκευση του «Όλοι» επιτρέπει σε όλους να τις ακυρώνουν και να τις εκκαθαρίζουν.</value></data>
 
   <!-- SSO / SCIM — Sso.cshtml page -->
   <data name="SsoPageTitle" xml:space="preserve"><value>Ενιαία Σύνδεση (SSO) και SCIM</value></data>
@@ -764,11 +767,11 @@
   <data name="PermCommandAppLoginLabel" xml:space="preserve"><value>Σύνδεση στην Εφαρμογή Command</value></data>
   <data name="PermCommandAppLoginNote" xml:space="preserve"><value>Ελέγχει ποιος μπορεί να ενεργεί ως διοικητής: να συνδέεται στην εφαρμογή IC, να εγκαθιστά διοίκηση περιστατικού σε μια κλήση και να βλέπει πίνακες διοίκησης. Ο περιορισμός αυτού πέρα από το «Όλοι» επιτρέπει επίσης στα άτομα που επιλέγετε να βοηθούν στη λειτουργία οποιουδήποτε πίνακα διοίκησης (ανάθεση και μετακίνηση πόρων, εκτέλεση χρονομέτρων και λογοδοσίας) χωρίς να κατέχουν θέση ICS σε αυτόν &amp;#8212; χρήσιμο για να βοηθούν οι διαβιβαστές στην εφαρμογή Dispatch. Όσο είναι ορισμένο σε «Όλοι», οι ενέργειες στον πίνακα παραμένουν περιορισμένες στον διοικητή περιστατικού και στους ανατεθειμένους ρόλους ICS.</value></data>
   <data name="PermAdpSectionHeader" xml:space="preserve"><value>Advanced Data Protection</value></data>
-  <data name="PermAdpSectionNote" xml:space="preserve"><value>These permissions control who may work with encrypted (protected) data when the Advanced Data Protection addon is active. Every reveal or edit additionally requires a recent two-factor verification; these settings choose who may even attempt it. Unlike most Resgrid permissions, unset values default to the restrictive selection shown.</value></data>
+  <data name="PermAdpSectionNote" xml:space="preserve"><value>Όταν το πρόσθετο Προηγμένη προστασία δεδομένων είναι ενεργό, αυτά τα δύο δικαιώματα καθορίζουν ποιος μπορεί να λαμβάνει τα προστατευμένα στοιχεία μιας κλήσης μέσω SMS ή φωνητικής κλήσης αφού εισαγάγει το PIN του, και ποιος μπορεί να αλλάζει τον τρόπο με τον οποίο το προστατευμένο περιεχόμενο εξέρχεται από το Resgrid. Η εμφάνιση ή η επεξεργασία προστατευμένων δεδομένων στην οθόνη ακολουθεί τους κανόνες πρόσβασης κάθε σελίδας και απαιτεί πρόσφατη επαλήθευση δύο παραγόντων. Σε αντίθεση με τα περισσότερα δικαιώματα του Resgrid, οι τιμές που δεν έχουν οριστεί χρησιμοποιούν από προεπιλογή την επιλογή που εμφανίζεται.</value></data>
   <data name="PermAdpManageLabel" xml:space="preserve"><value>Manage Data Protection Settings</value></data>
   <data name="PermAdpManageNote" xml:space="preserve"><value>Who can change Advanced Data Protection settings such as the verification window and notification content options. Purchasing, enrollment and cancellation always remain restricted to the department managing member.</value></data>
   <data name="PermAdpViewCallLabel" xml:space="preserve"><value>View Protected Call Data</value></data>
-  <data name="PermAdpViewCallNote" xml:space="preserve"><value>Who can reveal protected call fields (nature, address, contact info, notes) after two-factor verification. Defaults to Everyone because responding personnel must be able to read a dispatch.</value></data>
+  <data name="PermAdpViewCallNote" xml:space="preserve"><value>Ποιος μπορεί να λαμβάνει τα προστατευμένα στοιχεία κλήσεων (φύση, διεύθυνση, στοιχεία επικοινωνίας, σημειώσεις) μέσω SMS ή φωνητικής κλήσης αφού εισαγάγει το PIN του, όταν είναι ενεργή η αποδέσμευση με PIN. Η εμφάνιση στην οθόνη και στις εφαρμογές ακολουθεί την πρόσβαση στην κλήση και απαιτεί επαλήθευση δύο παραγόντων. Από προεπιλογή ισχύει για όλους, επειδή το προσωπικό που ανταποκρίνεται πρέπει να μπορεί να διαβάσει μια αποστολή.</value></data>
   <data name="PermAdpEditCallLabel" xml:space="preserve"><value>Edit Protected Call Data</value></data>
   <data name="PermAdpEditCallNote" xml:space="preserve"><value>Who can edit protected call fields after two-factor verification. Defaults to Everyone to match the normal call workflow.</value></data>
   <data name="PermAdpViewPersonnelLabel" xml:space="preserve"><value>View Protected Personnel Data</value></data>

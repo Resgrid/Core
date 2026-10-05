@@ -691,6 +691,7 @@
   <data name="workforce_naics_invalid" xml:space="preserve"><value>يجب أن يتكون NAICS من ستة أرقام.</value></data>
   <data name="workforce_no_inputs" xml:space="preserve"><value>لا شيء لحسابه: لا توجد سجلات عمل أو قراءات استخدام.</value></data>
   <data name="workforce_not_found" xml:space="preserve"><value>لم يتم العثور على السجل.</value></data>
+  <data name="workforce_self_approval" xml:space="preserve"><value>لا يمكنك اعتماد ملف التعويض هذا: فهو يخص أجرك أو أنت من أجرى آخر تعديل عليه. يجب أن يعتمده مدير آخر.</value></data>
   <data name="workforce_pay_basis_invalid" xml:space="preserve"><value>أساس الأجر غير صالح.</value></data>
   <data name="workforce_profile_overlap" xml:space="preserve"><value>تتداخل الفترة مع ملف آخر بنفس النطاق.</value></data>
   <data name="workforce_protected_write_refused" xml:space="preserve"><value>تم رفض الكتابة المحمية.</value></data>

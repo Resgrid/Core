@@ -123,13 +123,22 @@ namespace Resgrid.Tests.Chatbot
 
 		// ===================== MessageSendHandler =====================
 
+		/// <summary>No Create Message row (everyone may send); the permission rule is covered in Security/Audit20261005.</summary>
+		private static MessageSendHandler SendHandler(Mock<IMessageService> messages, Mock<IChatbotUserSearchService> search)
+		{
+			var permissions = new Mock<IPermissionsService>();
+			permissions.Setup(x => x.IsUserAllowed(It.IsAny<Permission>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<List<PersonnelRole>>())).Returns(true);
+			return new MessageSendHandler(messages.Object, search.Object, permissions.Object, Mock.Of<IDepartmentsService>(),
+				Mock.Of<IDepartmentGroupsService>(), Mock.Of<IPersonnelRolesService>());
+		}
+
 		[Test]
 		public async Task MessageSend_MissingBody_ReturnsUsage_AndDoesNotSend()
 		{
 			var messages = new Mock<IMessageService>();
 			var search = new Mock<IChatbotUserSearchService>();
 
-			var handler = new MessageSendHandler(messages.Object, search.Object);
+			var handler = SendHandler(messages, search);
 			var response = await handler.HandleAsync(Msg("send message to John"),
 				Intent(ChatbotIntentType.SendMessage, ("recipient", "John")), Session());
 
@@ -144,7 +153,7 @@ namespace Resgrid.Tests.Chatbot
 			var search = new Mock<IChatbotUserSearchService>();
 			search.Setup(s => s.ResolveSingleAsync(1, "John")).ReturnsAsync((ChatbotUserMatch)null);
 
-			var handler = new MessageSendHandler(messages.Object, search.Object);
+			var handler = SendHandler(messages, search);
 			var response = await handler.HandleAsync(Msg("send message to John: hi"),
 				Intent(ChatbotIntentType.SendMessage, ("recipient", "John"), ("body", "hi")), Session());
 
@@ -162,7 +171,7 @@ namespace Resgrid.Tests.Chatbot
 			search.Setup(s => s.ResolveSingleAsync(1, "John Smith"))
 				.ReturnsAsync(new ChatbotUserMatch { UserId = "user-2", FullName = "John Smith" });
 
-			var handler = new MessageSendHandler(messages.Object, search.Object);
+			var handler = SendHandler(messages, search);
 			var response = await handler.HandleAsync(Msg("send message to John Smith: running late"),
 				Intent(ChatbotIntentType.SendMessage, ("recipient", "John Smith"), ("body", "running late")), Session());
 
@@ -249,6 +258,7 @@ namespace Resgrid.Tests.Chatbot
 			calls.Setup(c => c.GetCallByIdAsync(It.IsAny<int>(), It.IsAny<bool>()))
 				.ReturnsAsync(new Call { CallId = 5, Name = "Fire", DepartmentId = 1, State = (int)CallStates.Active });
 			var authz = new Mock<IAuthorizationService>();
+			authz.Setup(a => a.CanUserCreateCallAsync("user-1", 1)).ReturnsAsync(true);
 			authz.Setup(a => a.CanUserCloseCallAsync("user-1", 5, 1)).ReturnsAsync(false);
 
 			var handler = new CloseCallHandler(calls.Object, authz.Object);
@@ -266,6 +276,7 @@ namespace Resgrid.Tests.Chatbot
 			calls.Setup(c => c.GetCallByIdAsync(It.IsAny<int>(), It.IsAny<bool>()))
 				.ReturnsAsync(new Call { CallId = 5, Name = "Structure Fire", DepartmentId = 1, State = (int)CallStates.Active });
 			var authz = new Mock<IAuthorizationService>();
+			authz.Setup(a => a.CanUserCreateCallAsync("user-1", 1)).ReturnsAsync(true);
 			authz.Setup(a => a.CanUserCloseCallAsync("user-1", 5, 1)).ReturnsAsync(true);
 
 			var session = Session(departmentId: 1);
@@ -285,6 +296,7 @@ namespace Resgrid.Tests.Chatbot
 			calls.Setup(c => c.GetCallByIdAsync(It.IsAny<int>(), It.IsAny<bool>()))
 				.ReturnsAsync(new Call { CallId = 5, Name = "Structure Fire", DepartmentId = 1, State = (int)CallStates.Active });
 			var authz = new Mock<IAuthorizationService>();
+			authz.Setup(a => a.CanUserCreateCallAsync("user-1", 1)).ReturnsAsync(true);
 			authz.Setup(a => a.CanUserCloseCallAsync("user-1", 5, 1)).ReturnsAsync(true);
 
 			var handler = new CloseCallHandler(calls.Object, authz.Object);
@@ -293,6 +305,30 @@ namespace Resgrid.Tests.Chatbot
 
 			response.Processed.Should().BeTrue();
 			calls.Verify(c => c.SaveCallAsync(It.Is<Call>(x => x.State == (int)CallStates.Closed && x.ClosedByUserId == "user-1"), It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[TestCase(false)]
+		[TestCase(true)]
+		public async Task CloseCall_WithoutTheCallUpdateRight_IsDenied_EvenWhenTheCloseCallRuleAllows(bool confirmed)
+		{
+			// MVC and v4 put Call_Update (from the Create Call row) in front of CanUserCloseCallAsync; the chatbot must too.
+			var calls = new Mock<ICallsService>();
+			calls.Setup(c => c.GetCallByIdAsync(It.IsAny<int>(), It.IsAny<bool>()))
+				.ReturnsAsync(new Call { CallId = 5, Name = "Fire", DepartmentId = 1, State = (int)CallStates.Active });
+			var authz = new Mock<IAuthorizationService>();
+			authz.Setup(a => a.CanUserCreateCallAsync("user-1", 1)).ReturnsAsync(false);
+			authz.Setup(a => a.CanUserCloseCallAsync("user-1", 5, 1)).ReturnsAsync(true);
+
+			var intent = confirmed
+				? Intent(ChatbotIntentType.CloseCall, ("callId", "5"), ("__confirmed", "true"))
+				: Intent(ChatbotIntentType.CloseCall, ("callId", "5"));
+			var session = Session(departmentId: 1);
+			var response = await new CloseCallHandler(calls.Object, authz.Object).HandleAsync(Msg("close call 5"), intent, session);
+
+			response.Processed.Should().BeFalse();
+			response.Text.Should().Contain("permission");
+			session.State.Should().NotBe(ChatbotDialogState.AwaitingConfirmation);
+			calls.Verify(c => c.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 
 		// ===================== DispatchCallHandler (destructive + confirmation) =====================
@@ -954,20 +990,21 @@ namespace Resgrid.Tests.Chatbot
 		{
 			var shifts = ShiftsWith(5, 3, shiftDeptId: 2);
 
-			var handler = new ShiftSignupHandler(shifts.Object);
+			var handler = new ShiftSignupHandler(shifts.Object, Mock.Of<IDepartmentGroupsService>());
 			var response = await handler.HandleAsync(Msg("sign up shift 5"), Intent(ChatbotIntentType.ShiftSignup, ("shiftId", "5")), Session(departmentId: 1));
 
 			response.Text.Should().Contain("not found");
-			shifts.Verify(s => s.SignupForShiftDayAsync(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+			shifts.Verify(s => s.SignupUserForShiftDayAsync(It.IsAny<int>(), It.IsAny<int?>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 
 		[Test]
 		public async Task ShiftSignup_AlreadySignedUp_DoesNotSignupAgain()
 		{
 			var shifts = ShiftsWith(5, 3, shiftDeptId: 1);
-			shifts.Setup(s => s.IsUserSignedUpForShiftDayAsync(It.IsAny<ShiftDay>(), "user-1", It.IsAny<int?>())).ReturnsAsync(true);
+			shifts.Setup(s => s.SignupUserForShiftDayAsync(5, null, "user-1", It.IsAny<CancellationToken>()))
+				.ReturnsAsync(ShiftActionResult<ShiftSignup>.Fail(ShiftActionErrors.AlreadySignedUp));
 
-			var handler = new ShiftSignupHandler(shifts.Object);
+			var handler = new ShiftSignupHandler(shifts.Object, Mock.Of<IDepartmentGroupsService>());
 			var response = await handler.HandleAsync(Msg("sign up shift 5"), Intent(ChatbotIntentType.ShiftSignup, ("shiftId", "5")), Session(departmentId: 1));
 
 			response.Text.Should().Contain("already signed up");
@@ -978,28 +1015,30 @@ namespace Resgrid.Tests.Chatbot
 		public async Task ShiftSignup_DayFull_DoesNotSignup()
 		{
 			var shifts = ShiftsWith(5, 3, shiftDeptId: 1);
-			shifts.Setup(s => s.IsUserSignedUpForShiftDayAsync(It.IsAny<ShiftDay>(), "user-1", It.IsAny<int?>())).ReturnsAsync(false);
 			shifts.Setup(s => s.IsShiftDayFilledAsync(5)).ReturnsAsync(true);
 
-			var handler = new ShiftSignupHandler(shifts.Object);
+			var handler = new ShiftSignupHandler(shifts.Object, Mock.Of<IDepartmentGroupsService>());
 			var response = await handler.HandleAsync(Msg("sign up shift 5"), Intent(ChatbotIntentType.ShiftSignup, ("shiftId", "5")), Session(departmentId: 1));
 
 			response.Text.Should().Contain("full");
-			shifts.Verify(s => s.SignupForShiftDayAsync(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+			shifts.Verify(s => s.SignupUserForShiftDayAsync(It.IsAny<int>(), It.IsAny<int?>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 
 		[Test]
 		public async Task ShiftSignup_Valid_SignsUp()
 		{
 			var shifts = ShiftsWith(5, 3, shiftDeptId: 1);
-			shifts.Setup(s => s.IsUserSignedUpForShiftDayAsync(It.IsAny<ShiftDay>(), "user-1", It.IsAny<int?>())).ReturnsAsync(false);
 			shifts.Setup(s => s.IsShiftDayFilledAsync(5)).ReturnsAsync(false);
+			shifts.Setup(s => s.SignupUserForShiftDayAsync(5, null, "user-1", It.IsAny<CancellationToken>()))
+				.ReturnsAsync(ShiftActionResult<ShiftSignup>.Ok(new ShiftSignup { ShiftSignupId = 9, UserId = "user-1" }));
 
-			var handler = new ShiftSignupHandler(shifts.Object);
+			var handler = new ShiftSignupHandler(shifts.Object, Mock.Of<IDepartmentGroupsService>());
 			var response = await handler.HandleAsync(Msg("sign up shift 5"), Intent(ChatbotIntentType.ShiftSignup, ("shiftId", "5")), Session(departmentId: 1));
 
 			response.Processed.Should().BeTrue();
-			shifts.Verify(s => s.SignupForShiftDayAsync(3, It.IsAny<DateTime>(), 0, "user-1", It.IsAny<CancellationToken>()), Times.Once);
+			response.Text.Should().Contain("Signed up");
+			shifts.Verify(s => s.SignupUserForShiftDayAsync(5, null, "user-1", It.IsAny<CancellationToken>()), Times.Once);
+			shifts.Verify(s => s.SignupForShiftDayAsync(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 
 		// ===================== ShiftDropHandler =====================

@@ -6,6 +6,21 @@ var resgrid;
         var index;
         (function (index) {
             $(document).ready(function () {
+                // Delete is POST + antiforgery: confirm, then submit the page's token form. The buttons render
+                // disabled and are enabled here, before DataTables detaches the rows past the first page.
+                $(document).on('click', '.contact-delete', function (e) {
+                    e.preventDefault();
+
+                    var message = $(this).attr('data-delete-confirm');
+                    if (message && !window.confirm(message))
+                        return;
+
+                    var form = document.getElementById('deleteContactForm');
+                    form.elements.namedItem('contactId').value = $(this).attr('data-contact-id');
+                    form.submit();
+                });
+                $('.contact-delete').prop('disabled', false);
+
                 resgrid.common.analytics.track('Contacts List');
 
                 $('.table').DataTable();

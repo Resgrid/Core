@@ -855,7 +855,9 @@ namespace Resgrid.Services
 		private async Task AddCommonUserVariablesAsync(ScriptObject obj, int departmentId, string userId)
 		{
 			var u = new ScriptObject();
-			if (!string.IsNullOrWhiteSpace(userId))
+			// The user id comes from the event payload, which ValidateCondition takes from the caller: profile data is
+			// only rendered for a member of the department being rendered, never for another department's user.
+			if (!string.IsNullOrWhiteSpace(userId) && await _departmentsService.GetDepartmentMemberAsync(userId, departmentId) != null)
 			{
 				var profile = await _userProfileService.GetProfileByUserIdAsync(userId);
 
@@ -939,6 +941,15 @@ namespace Resgrid.Services
 			var dispatchUserIds = call.Dispatches != null
 				? call.Dispatches.Where(d => !string.IsNullOrWhiteSpace(d.UserId)).Select(d => d.UserId).Distinct().ToList()
 				: new List<string>();
+
+			// Dispatch user ids come from the event payload, which ValidateCondition takes from the caller: only members
+			// of the department being rendered are enriched, so another department's profile data is never loaded.
+			if (dispatchUserIds.Count > 0)
+			{
+				var members = await _departmentsService.GetAllMembersForDepartmentIncludingDeletedAsync(departmentId) ?? new List<DepartmentMember>();
+				var memberIds = new HashSet<string>(members.Where(m => !string.IsNullOrWhiteSpace(m.UserId)).Select(m => m.UserId), StringComparer.OrdinalIgnoreCase);
+				dispatchUserIds = dispatchUserIds.Where(memberIds.Contains).ToList();
+			}
 
 			Dictionary<string, UserProfile> profileMap = new Dictionary<string, UserProfile>();
 			IReadOnlyDictionary<string, DepartmentMemberSensitiveData> sensitiveByUser =
@@ -1060,10 +1071,15 @@ namespace Resgrid.Services
 					item["dispatch_count"] = d.DispatchCount;
 					item["dispatched_on"] = d.DispatchedOn;
 
-					// Resolve unit name – prefer navigation property, fall back to service lookup
+					// Resolve unit name – prefer navigation property, fall back to service lookup (the id comes from the
+					// payload, so a unit of another department is never rendered)
 					Unit unit = d.Unit;
 					if (unit == null && d.UnitId > 0)
+					{
 						unit = await _unitsService.GetUnitByIdAsync(d.UnitId);
+						if (unit != null && unit.DepartmentId != departmentId)
+							unit = null;
+					}
 
 					item["unit_name"] = unit?.Name ?? string.Empty;
 					item["unit_type"] = unit?.Type ?? string.Empty;
@@ -1087,10 +1103,15 @@ namespace Resgrid.Services
 					item["dispatch_count"] = d.DispatchCount;
 					item["dispatched_on"] = d.DispatchedOn;
 
-					// Resolve group name – prefer navigation property, fall back to service lookup
+					// Resolve group name – prefer navigation property, fall back to service lookup (another
+					// department's group is never rendered)
 					DepartmentGroup group = d.Group;
 					if (group == null && d.DepartmentGroupId > 0)
+					{
 						group = await _departmentGroupsService.GetGroupByIdAsync(d.DepartmentGroupId);
+						if (group != null && group.DepartmentId != departmentId)
+							group = null;
+					}
 
 					item["group_name"] = group?.Name ?? string.Empty;
 					item["group_type"] = group?.Type ?? 0;
@@ -1114,10 +1135,15 @@ namespace Resgrid.Services
 					item["dispatch_count"] = d.DispatchCount;
 					item["dispatched_on"] = d.DispatchedOn;
 
-					// Resolve role name – prefer navigation property, fall back to service lookup
+					// Resolve role name – prefer navigation property, fall back to service lookup (another
+					// department's role is never rendered)
 					PersonnelRole role = d.Role;
 					if (role == null && d.RoleId > 0)
+					{
 						role = await _personnelRolesService.GetRoleByIdAsync(d.RoleId);
+						if (role != null && role.DepartmentId != departmentId)
+							role = null;
+					}
 
 					item["role_name"] = role?.Name ?? string.Empty;
 					item["role_description"] = role?.Description ?? string.Empty;

@@ -88,11 +88,8 @@ namespace Resgrid.Tests.Rms
 				.ReturnsAsync((int d, RmsIncidentReportQuery q) => MatchReports(d, q).Count());
 			ReportsRepo.Setup(r => r.GetYearsAsync(It.IsAny<int>()))
 				.ReturnsAsync((int d) => Reports.Where(x => x.DepartmentId == d).Select(x => (x.CallCreatedOn ?? x.CreatedOn).Year).Distinct().ToList());
-			ReportsRepo.Setup(r => r.GetMaxRecordNumberSequenceAsync(It.IsAny<int>(), It.IsAny<string>()))
-				.ReturnsAsync((int d, string prefix) => Reports
-					.Where(x => x.DepartmentId == d && x.RecordNumber != null && x.RecordNumber.StartsWith(prefix, StringComparison.Ordinal))
-					.Select(x => int.TryParse(x.RecordNumber.Substring(prefix.Length), out var n) ? n : 0)
-					.DefaultIfEmpty(0).Max());
+			ReportsRepo.Setup(r => r.GetMaxRecordNumberSequenceAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
+				.ReturnsAsync((int d, string prefix, string suffix) => FakeRmsStore.MaxRecordNumberSequence(Reports.Where(x => x.DepartmentId == d).Select(x => x.RecordNumber), prefix, suffix));
 			ReportsRepo.Setup(r => r.TryBumpRowVersionAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<long>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync((int d, string id, long expected, CancellationToken c) =>
 				{

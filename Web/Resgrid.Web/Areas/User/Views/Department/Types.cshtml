@@ -70,7 +70,7 @@
                                         </td>
                                         <td>
                                             <a class="btn btn-xs btn-primary" href="@Url.Action("EditCallType", "Types", new { area = "User", callTypeId = c.CallTypeId })">@commonLocalizer["Edit"]</a>
-                                            <a class="btn btn-xs btn-danger" href="@Url.Action("DeleteCallType", "Types", new { area = "User", callTypeId = c.CallTypeId })" data-confirm="@localizer["DeleteCallTypeWarning"] @c.Type ?" rel="nofollow">@commonLocalizer["Delete"]</a>
+                                            <form method="post" action="@Url.Action("DeleteCallType", "Types", new { area = "User", callTypeId = c.CallTypeId })" style="display: inline;">@Html.AntiForgeryToken()<button type="submit" class="btn btn-xs btn-danger" data-confirm="@localizer["DeleteCallTypeWarning"] @c.Type ?">@commonLocalizer["Delete"]</button></form>
                                         </td>
                                     </tr>
                                 }
@@ -145,7 +145,7 @@
 
                                                 if (!c.IsDefault)
                                                 {
-                                                    <a class="btn btn-xs btn-danger" href="@Url.Action("DeleteCallPriority", "Types", new { area = "User", priorityId = c.DepartmentCallPriorityId })" data-confirm="WARNING: This will permanently delete this call priority. Are you sure you want to delete the priority @c.Name ?" rel="nofollow">@commonLocalizer["Delete"]</a>
+                                                    <form method="post" action="@Url.Action("DeleteCallPriority", "Types", new { area = "User", priorityId = c.DepartmentCallPriorityId })" style="display: inline;">@Html.AntiForgeryToken()<button type="submit" class="btn btn-xs btn-danger" data-confirm="WARNING: This will permanently delete this call priority. Are you sure you want to delete the priority @c.Name ?">@commonLocalizer["Delete"]</button></form>
                                                 }
                                             }
                                         </td>
@@ -224,7 +224,7 @@
                                         </td>
                                         <td>
                                             <a class="btn btn-xs btn-primary" href="@Url.Action("EditUnitType", "Types", new { area = "User", unitTypeId = c.UnitTypeId })">@commonLocalizer["Edit"]</a>
-                                            <a class="btn btn-xs btn-danger" href="@Url.Action("DeleteUnitType", "Types", new { area = "User", unitTypeId = c.UnitTypeId })" data-confirm="@localizer["DeleteUnitTypeWarning"] @c.Type ?" rel="nofollow">@commonLocalizer["Delete"]</a>
+                                            <form method="post" action="@Url.Action("DeleteUnitType", "Types", new { area = "User", unitTypeId = c.UnitTypeId })" style="display: inline;">@Html.AntiForgeryToken()<button type="submit" class="btn btn-xs btn-danger" data-confirm="@localizer["DeleteUnitTypeWarning"] @c.Type ?">@commonLocalizer["Delete"]</button></form>
                                         </td>
                                     </tr>
                                 }
@@ -270,7 +270,7 @@
                                         </td>
 
                                         <td>
-                                            <a class="btn btn-xs btn-danger" href="@Url.Action("DeleteCertificationType", "Types", new { area = "User", certificationTypeId = c.DepartmentCertificationTypeId })" data-confirm="@localizer["CertificationTypesDeleteWarning"] @c.Type ?" rel="nofollow">@commonLocalizer["Delete"]</a>
+                                            <form method="post" action="@Url.Action("DeleteCertificationType", "Types", new { area = "User", certificationTypeId = c.DepartmentCertificationTypeId })" style="display: inline;">@Html.AntiForgeryToken()<button type="submit" class="btn btn-xs btn-danger" data-confirm="@localizer["CertificationTypesDeleteWarning"] @c.Type ?">@commonLocalizer["Delete"]</button></form>
                                         </td>
                                     </tr>
                                 }
@@ -314,7 +314,7 @@
                                         </td>
 
                                         <td>
-                                            <a class="btn btn-xs btn-danger" href="@Url.Action("DeleteDocumentType", "Types", new { area = "User", documentTypeId = c.DocumentCategoryId })" data-confirm="@localizer["DeleteDocumentTypesWarning"] @c.Name?" rel="nofollow">@commonLocalizer["Delete"]</a>
+                                            <form method="post" action="@Url.Action("DeleteDocumentType", "Types", new { area = "User", documentTypeId = c.DocumentCategoryId })" style="display: inline;">@Html.AntiForgeryToken()<button type="submit" class="btn btn-xs btn-danger" data-confirm="@localizer["DeleteDocumentTypesWarning"] @c.Name?">@commonLocalizer["Delete"]</button></form>
                                         </td>
                                     </tr>
                                 }
@@ -357,7 +357,7 @@
                                         </td>
 
                                         <td>
-                                            <a class="btn btn-xs btn-danger" href="@Url.Action("DeleteNoteType", "Types", new { area = "User", noteTypeId = c.NoteCategoryId })" data-confirm="@localizer["DeleteNoteTypesWarning"] @c.Name?" rel="nofollow">@commonLocalizer["Delete"]</a>
+                                            <form method="post" action="@Url.Action("DeleteNoteType", "Types", new { area = "User", noteTypeId = c.NoteCategoryId })" style="display: inline;">@Html.AntiForgeryToken()<button type="submit" class="btn btn-xs btn-danger" data-confirm="@localizer["DeleteNoteTypesWarning"] @c.Name?">@commonLocalizer["Delete"]</button></form>
                                         </td>
                                     </tr>
                                 }
@@ -400,7 +400,7 @@
                                 </td>
 
                                 <td>
-                                    <a class="btn btn-xs btn-danger" href="@Url.Action("DeleteContactNoteType", "Types", new { area = "User", contactNoteTypeId = c.ContactNoteTypeId })" data-confirm="@localizer["DeleteContactNoteTypesWarning"] @c.Name?" rel="nofollow">@commonLocalizer["Delete"]</a>
+                                    <form method="post" action="@Url.Action("DeleteContactNoteType", "Types", new { area = "User", contactNoteTypeId = c.ContactNoteTypeId })" style="display: inline;">@Html.AntiForgeryToken()<button type="submit" class="btn btn-xs btn-danger" data-confirm="@localizer["DeleteContactNoteTypesWarning"] @c.Name?">@commonLocalizer["Delete"]</button></form>
                                 </td>
                             </tr>
                             }

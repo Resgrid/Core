@@ -662,7 +662,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <param name="contactPreplanHazardId">Id of the hazard</param>
 		[HttpDelete("DeleteContactHazard")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Contacts_Update)]
+		// A delete: Contact Delete, like the other contact deletes (DeleteContactPreplan).
+		[Authorize(Policy = ResgridResources.Contacts_Delete)]
 		public async Task<ActionResult<DeleteContactHazardResult>> DeleteContactHazard(string contactPreplanHazardId, CancellationToken cancellationToken)
 		{
 			var result = new DeleteContactHazardResult();

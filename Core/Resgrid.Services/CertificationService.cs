@@ -44,6 +44,8 @@ namespace Resgrid.Services
 		private readonly IProtectedGrantContext _grant;
 
 		public const string SystemUserId = "system";
+		/// <summary>Domain error: the holder may not sign off (verify or reinstate) their own record.</summary>
+		public const string SelfVerificationRefused = "certifications_self_verification";
 		private static readonly Regex CodeCleaner = new Regex("[^A-Za-z0-9._-]+", RegexOptions.Compiled);
 
 		public CertificationService(IDepartmentCertificationTypeRepository departmentCertificationTypeRepository,
@@ -195,6 +197,11 @@ namespace Resgrid.Services
 				certification.VerifiedByUserId ??= existing.VerifiedByUserId;
 				certification.VerifiedOn ??= existing.VerifiedOn;
 				certification.IsProtected = existing.IsProtected;
+				// The holder's own change to what was signed off (type, number, issue or expiry date, document) needs a fresh
+				// sign-off from someone else, since VerifyCertificationAsync refuses the holder. A manager editing another
+				// member's record keeps today's behaviour; a workload (no attended user) is never the holder.
+				if (IsHolder(existing, _grant?.UserId) && await ChangesVerifiedFactsAsync(existing, certification))
+					ReturnForVerification(certification, type, _grant.UserId);
 			}
 
 			// ADP write safety net (plan 4.2/19.2). The AAD row key is the identity pk, so a NEW row
@@ -374,6 +381,10 @@ namespace Resgrid.Services
 			var (record, type) = await LoadRecordAsync(certificationId, departmentId);
 			if (status == PersonnelCertificationStatuses.Expired)
 				throw new InvalidOperationException("certifications_status_invalid");
+			// Returning one's own record to Active (verifying a pending one, reinstating a suspended or revoked one) is a
+			// sign-off; like VerifyCertificationAsync it needs someone other than the holder.
+			if (status == PersonnelCertificationStatuses.Active && record.Status != (int)PersonnelCertificationStatuses.Active && IsHolder(record, userId))
+				throw new InvalidOperationException(SelfVerificationRefused);
 			var before = Snapshot(record);
 			var oldStatus = record.Status;
 			record.Status = (int)status;
@@ -397,6 +408,9 @@ namespace Resgrid.Services
 			var (record, type) = await LoadRecordAsync(certificationId, departmentId);
 			if (record.Status != (int)PersonnelCertificationStatuses.PendingVerification)
 				throw new InvalidOperationException("certifications_not_pending");
+			// Separation of duties: nobody signs off their own record (ManageCertifications covers others' records only).
+			if (IsHolder(record, userId))
+				throw new InvalidOperationException(SelfVerificationRefused);
 			var before = Snapshot(record);
 			var oldStatus = record.Status;
 			record.Status = (int)PersonnelCertificationStatuses.Active;
@@ -433,6 +447,10 @@ namespace Resgrid.Services
 				record.StatusChangedByUserId = userId;
 				record.StatusReason = null;
 			}
+			// A holder renewing their own record (expired or not) asks for a new expiry nobody has checked yet: the old
+			// sign-off no longer covers it. TreatPendingVerificationAsValid keeps its meaning while the record waits.
+			if (IsHolder(record, userId))
+				ReturnForVerification(record, type, userId);
 			var write = await _protectedWriteService.Value.PrepareCertificationWriteAsync(departmentId, record, existing, null, null, workloadCaller: true, cancellationToken);
 			if (!write.Success)
 				throw new InvalidOperationException($"Protected write blocked ({write.Reason}); certification {certificationId} was NOT renewed.");
@@ -895,6 +913,60 @@ namespace Resgrid.Services
 		#endregion
 
 		#region Helpers
+
+		private static bool IsHolder(PersonnelCertification record, string userId) =>
+			record != null && !string.IsNullOrWhiteSpace(userId) && string.Equals(record.UserId, userId, StringComparison.OrdinalIgnoreCase);
+
+		/// <summary>
+		/// Clears the verification stamp and, for a type that requires sign-off, returns an Active record to
+		/// PendingVerification (the same state a new record of that type starts in). A type without the requirement stays
+		/// Active, exactly as a new record of it would.
+		/// </summary>
+		private static void ReturnForVerification(PersonnelCertification record, DepartmentCertificationType type, string userId)
+		{
+			record.VerifiedOn = null;
+			record.VerifiedByUserId = null;
+			if (type?.RequiresVerification == true && record.Status == (int)PersonnelCertificationStatuses.Active)
+			{
+				record.Status = (int)PersonnelCertificationStatuses.PendingVerification;
+				record.StatusChangedOn = DateTime.UtcNow;
+				record.StatusChangedByUserId = userId;
+				record.StatusReason = null;
+			}
+		}
+
+		/// <summary>Whether an edit touches what a verifier signed off: the catalog type, number, issue or expiry date, or the document.</summary>
+		private async Task<bool> ChangesVerifiedFactsAsync(PersonnelCertification existing, PersonnelCertification incoming)
+		{
+			if (existing.DepartmentCertificationTypeId != incoming.DepartmentCertificationTypeId) return true;
+			if (existing.RecievedOn?.Date != incoming.RecievedOn?.Date || existing.ExpiresOn?.Date != incoming.ExpiresOn?.Date) return true;
+			if (incoming.Data != null && incoming.Data.Length > 0 && (existing.Data == null || !incoming.Data.AsSpan().SequenceEqual(existing.Data))) return true;
+			return await NumberChangedAsync(existing, incoming.Number);
+		}
+
+		/// <summary>
+		/// The number is protected data: an unrevealed form posts the REDACTED placeholder (restored, so unchanged), and a
+		/// revealed one posts plaintext against a stored envelope, which is compared with the caller's own grant. When the
+		/// stored value cannot be opened the edit counts as a change, so the record is re-verified rather than trusted.
+		/// </summary>
+		private async Task<bool> NumberChangedAsync(PersonnelCertification existing, string incoming)
+		{
+			if (incoming == ProtectedDataEnvelope.RedactionValue) return false;
+			static string Norm(string value) => string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+			if (string.Equals(Norm(existing.Number), Norm(incoming), StringComparison.Ordinal)) return false;
+			if (!ProtectedDataEnvelope.HasEnvelopePrefix(existing.Number) || _protectedRead?.Value == null || string.IsNullOrWhiteSpace(_grant?.GrantToken)) return true;
+			try
+			{
+				var stored = new PersonnelCertification { PersonnelCertificationId = existing.PersonnelCertificationId, DepartmentId = existing.DepartmentId, UserId = existing.UserId, Number = existing.Number, IsProtected = existing.IsProtected };
+				await _protectedRead.Value.ResolveCertificationsForReadAsync(existing.DepartmentId, new List<PersonnelCertification> { stored }, _grant.GrantToken, _grant.UserId);
+				return stored.Number == ProtectedDataEnvelope.RedactionValue || ProtectedDataEnvelope.HasEnvelopePrefix(stored.Number) || !string.Equals(Norm(stored.Number), Norm(incoming), StringComparison.Ordinal);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, "Stored certification number could not be compared; the edit is treated as a change.");
+				return true;
+			}
+		}
 
 		/// <summary>The department's active members (deleted, disabled and hidden excluded), case-insensitive; empty when none resolve.</summary>
 		private async Task<HashSet<string>> ActiveMemberUserIdsAsync(int departmentId)

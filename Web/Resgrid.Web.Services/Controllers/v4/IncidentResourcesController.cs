@@ -23,11 +23,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 	{
 		#region Members and Constructors
 		private readonly IIncidentResourcesService _incidentResourcesService;
+		private readonly ICommandAccessService _commandAccessService;
 
-		public IncidentResourcesController(IIncidentResourcesService incidentResourcesService)
+		public IncidentResourcesController(IIncidentResourcesService incidentResourcesService, ICommandAccessService commandAccessService)
 		{
 			_incidentResourcesService = incidentResourcesService;
+			_commandAccessService = commandAccessService;
 		}
+
+		/// <summary>The command-board read gate IncidentCommandController applies (CommandAppLogin); Command_View alone is a plan-level claim.</summary>
+		private Task<bool> CanReadBoardsAsync() => _commandAccessService.CanUseCommandAsync(DepartmentId, UserId);
 		#endregion Members and Constructors
 
 		#region Ad-hoc units
@@ -68,6 +73,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.AdHocUnitsResult>> GetAdHocUnits(int callId)
 		{
+			if (!await CanReadBoardsAsync())
+				return Unauthorized();
+
 			var result = new ICModels.AdHocUnitsResult();
 			result.Data = await _incidentResourcesService.GetAdHocUnitsForCallAsync(DepartmentId, callId);
 			result.PageSize = result.Data.Count;
@@ -128,6 +136,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.AdHocPersonnelListResult>> GetAdHocPersonnel(int callId)
 		{
+			if (!await CanReadBoardsAsync())
+				return Unauthorized();
+
 			var result = new ICModels.AdHocPersonnelListResult();
 			result.Data = await _incidentResourcesService.GetAdHocPersonnelForCallAsync(DepartmentId, callId);
 			result.PageSize = result.Data.Count;

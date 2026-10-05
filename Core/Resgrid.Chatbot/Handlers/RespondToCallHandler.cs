@@ -76,8 +76,9 @@ namespace Resgrid.Chatbot.Handlers
 				var statusId = status?.CustomStateDetailId
 					?? (isNegative ? (int)ActionTypes.NotResponding : (int)ActionTypes.Responding);
 
-				await _actionLogsService.SetUserActionAsync(session.UserId, session.DepartmentId, statusId,
-					string.Empty, call.CallId, (int)DestinationEntityTypes.Call);
+				using (StatusWriteActor.Begin(session.UserId, StatusSetOrigins.Chat))
+					await _actionLogsService.SetUserActionAsync(session.UserId, session.DepartmentId, statusId,
+						string.Empty, call.CallId, (int)DestinationEntityTypes.Call);
 
 				var responseText = isNegative
 					? ChatbotResources.Get("Status_Updated", culture,

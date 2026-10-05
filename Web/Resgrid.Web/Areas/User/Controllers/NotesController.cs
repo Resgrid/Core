@@ -61,6 +61,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> NewNote(NewNoteView model, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserAddNoteAsync(UserId))
@@ -149,8 +150,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Edit(EditNoteView model, CancellationToken cancellationToken)
 		{
+			// The same rule as the Edit page: a posted NoteId is only a request to edit that note.
+			if (!await _authorizationService.CanUserEditNoteAsync(UserId, model.NoteId))
+				return Unauthorized();
+
 			if (ModelState.IsValid)
 			{
 				var savedNote = await _notesService.GetNoteByIdAsync(model.NoteId);
@@ -200,13 +206,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Delete(int noteId, CancellationToken cancellationToken)
 		{
-			var note = await _notesService.GetNoteByIdAsync(noteId);
-
 			if (!await _authorizationService.CanUserEditNoteAsync(UserId, noteId))
 				return Unauthorized();
+
+			var note = await _notesService.GetNoteByIdAsync(noteId);
 
 			var auditEvent = new AuditEvent();
 			auditEvent.DepartmentId = DepartmentId;

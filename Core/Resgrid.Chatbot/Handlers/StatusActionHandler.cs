@@ -67,7 +67,8 @@ namespace Resgrid.Chatbot.Handlers
 					};
 				}
 
-				await _actionLogsService.SetUserActionAsync(session.UserId, session.DepartmentId, statusId);
+				using (StatusWriteActor.Begin(session.UserId, StatusSetOrigins.Chat))
+					await _actionLogsService.SetUserActionAsync(session.UserId, session.DepartmentId, statusId);
 
 				return new ChatbotResponse
 				{

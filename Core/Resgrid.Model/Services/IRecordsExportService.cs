@@ -31,10 +31,15 @@ namespace Resgrid.Model.Services
 		/// <summary>Convenience for a Workflow step: renders the template for the triggering record (TriggeringRecord scope) or returns the scheduled run named by the event (Window scope).</summary>
 		Task<RmsExportRun> ResolveForWorkflowAsync(int departmentId, string templateId, string recordId, RmsRecordKind? recordKind, string scheduledRunId, string workflowRunId, CancellationToken cancellationToken = default);
 
-		/// <summary>The run with its bytes, department-scoped; null when expired or purged.</summary>
-		Task<RmsExportRun> GetRunAsync(int departmentId, string runId, bool includeData);
+		/// <summary>
+		/// The run with its bytes, department-scoped; null when expired, purged or not the caller's to see: a bulk
+		/// packet only to its builder, a template run to whoever rendered it or to a ManageRecordReports holder while
+		/// the template exists, and a run carrying restricted columns only with ViewRestrictedRecords.
+		/// </summary>
+		Task<RmsExportRun> GetRunAsync(int departmentId, string userId, string runId, bool includeData);
 
-		Task<List<RmsExportRun>> GetRunsAsync(int departmentId, string templateId, int take);
+		/// <summary>The template's runs the caller may see, by the same rule as <see cref="GetRunAsync"/>.</summary>
+		Task<List<RmsExportRun>> GetRunsAsync(int departmentId, string userId, string templateId, int take);
 
 		/// <summary>Worker 45: renders every enabled template whose schedule is due, emits RecordExportScheduled per run, and advances NextRunOn.</summary>
 		Task<RecordsExportScheduleSweepResult> RunDueSchedulesAsync(CancellationToken cancellationToken = default);

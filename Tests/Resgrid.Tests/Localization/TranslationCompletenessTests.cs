@@ -37,6 +37,8 @@ namespace Resgrid.Tests.Localization
 			"Areas/User/Records/Records",
 			// ADP Protected Workflows (release panel, list, disclosure log, department toggle) shipped fully translated.
 			"Areas/User/ProtectedWorkflows/ProtectedWorkflows",
+			// Report editors' call data lookup, refresh from call and run-report prefill (2026-10-04) shipped fully translated.
+			"Areas/User/Records/ReportSources",
 		};
 
 		private static string LocalizationRoot()
@@ -69,6 +71,10 @@ namespace Resgrid.Tests.Localization
 		/// </summary>
 		private static readonly HashSet<string> KnownIdentical = new HashSet<string>(StringComparer.Ordinal)
 		{
+			// Report sources (2026-10-04): "Personnel" is the French word too.
+			"ReportSources|fr|TabPersonnel",
+			"ReportSources|fr|FilterPersonnel",
+			"ReportSources|fr|KindPersonnelStatus",
 			// ADP screens: these five genuinely are the same word in the target language, checked
 			// by reading the pair side by side rather than inferred from length or casing.
 			"DataProtection|de|ContactNameLabel",   // "Name" is the German word too.

@@ -22,6 +22,9 @@
 		BindForms = new List<string> { "#record-edit-form" }
 	};
 	var isUnitActivity = t == RmsOperationalRecordType.UnitActivity;
+	// Run and callback reports get the Call data panel: look up the call's statuses, command entries and the other run
+	// reports on it, and fill blank fields from the call.
+	var showSources = isCallType && ClaimsAuthorizationHelper.CanViewCalls();
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -49,7 +52,7 @@
 	@await Html.PartialAsync("~/Areas/User/Views/Records/_CustomFields.cshtml", Model.CustomFieldForm)
 
 	<div class="row">
-		<div class="col-xs-12">
+		<div class="@(showSources ? "col-lg-9" : "col-xs-12")">
 			<div class="wrapper wrapper-content">
 				<div class="ibox float-e-margins">
 					<div class="ibox-title">
@@ -106,9 +109,9 @@
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label">@localizer["Start"]</label>
-							<div class="col-sm-4"><input type="datetime-local" class="form-control" asp-for="StartedOn" asp-format="{0:yyyy-MM-ddTHH:mm}" /></div>
+							<div class="col-sm-4"><input type="datetime-local" class="form-control" asp-for="StartedOn" asp-format="{0:yyyy-MM-ddTHH:mm}" data-rs-call="started" data-rs-replaceable="@(Model.IsNew ? "true" : "false")" /></div>
 							<label class="col-sm-2 control-label">@localizer["End"]</label>
-							<div class="col-sm-4"><input type="datetime-local" class="form-control" asp-for="EndedOn" asp-format="{0:yyyy-MM-ddTHH:mm}" /></div>
+							<div class="col-sm-4"><input type="datetime-local" class="form-control" asp-for="EndedOn" asp-format="{0:yyyy-MM-ddTHH:mm}" data-rs-call="ended" /></div>
 						</div>
 
 						@if (isCallType)
@@ -123,7 +126,7 @@
 							</div>
 							<div class="form-group">
 								<label class="col-sm-2 control-label">@localizer["InitialReport"]</label>
-								<div class="col-sm-10"><textarea class="form-control" rows="3" asp-for="Details.InitialReport"></textarea></div>
+								<div class="col-sm-10"><textarea class="form-control" rows="3" asp-for="Details.InitialReport" data-rs-call="initialReport"></textarea></div>
 							</div>
 							<div class="form-group">
 								<label class="col-sm-2 control-label">@localizer["Cause"]</label>
@@ -214,7 +217,7 @@
 						{
 							<div class="form-group">
 								<label class="col-sm-2 control-label">@localizer["Location"]</label>
-								<div class="col-sm-10"><input type="text" class="form-control" asp-for="Details.Location" /></div>
+								<div class="col-sm-10"><input type="text" class="form-control" asp-for="Details.Location" data-rs-call="location" /></div>
 							</div>
 						}
 
@@ -228,7 +231,7 @@
 					<div class="ibox float-e-margins">
 						<div class="ibox-title"><h5>@localizer["Participants"]</h5></div>
 						<div class="ibox-content">
-							<table class="table table-condensed"><thead><tr><th>@localizer["Participants"]</th><th>@localizer["Unit"]</th><th>@localizer["Role"]</th><th>@localizer["Actions"]</th></tr></thead><tbody id="record-participant-rows">
+							<table class="table table-condensed"><thead><tr><th>@localizer["Participants"]</th><th>@localizer["Unit"]</th><th>@localizer["Role"]</th><th>@localizer["Actions"]</th></tr></thead><tbody id="record-participant-rows" data-rs-participants>
 							@for (var i = 0; i < Model.ParticipantRows.Count; i++)
 							{
 								var participant = Model.ParticipantRows[i]; var name = Model.Personnel.FirstOrDefault(p => p.Value == participant.UserId)?.Text ?? participant.UserId;
@@ -266,17 +269,17 @@
 								{
 									var unitId = int.Parse(Model.AvailableUnits[i].Value);
 									var existing = Model.Units.FirstOrDefault(u => u.UnitId == unitId);
-									<tr>
+									<tr data-rs-unit="@unitId">
 										<td>
 											<input type="hidden" name="Units.Index" value="@i" />
-											<input type="checkbox" name="Units[@i].UnitId" value="@unitId" @(existing != null ? "checked" : string.Empty) />
+											<input type="checkbox" name="Units[@i].UnitId" value="@unitId" data-rs-select @(existing != null ? "checked" : string.Empty) />
 										</td>
 										<td>@Model.AvailableUnits[i].Text</td>
-										<td><input type="datetime-local" class="form-control input-sm" name="Units[@i].Dispatched" value="@(existing?.Dispatched?.ToString("yyyy-MM-ddTHH:mm"))" /></td>
-										<td><input type="datetime-local" class="form-control input-sm" name="Units[@i].Enroute" value="@(existing?.Enroute?.ToString("yyyy-MM-ddTHH:mm"))" /></td>
-										<td><input type="datetime-local" class="form-control input-sm" name="Units[@i].OnScene" value="@(existing?.OnScene?.ToString("yyyy-MM-ddTHH:mm"))" /></td>
-										<td><input type="datetime-local" class="form-control input-sm" name="Units[@i].Released" value="@(existing?.Released?.ToString("yyyy-MM-ddTHH:mm"))" /></td>
-										<td><input type="datetime-local" class="form-control input-sm" name="Units[@i].InQuarters" value="@(existing?.InQuarters?.ToString("yyyy-MM-ddTHH:mm"))" /></td>
+										<td><input type="datetime-local" class="form-control input-sm" name="Units[@i].Dispatched" value="@(existing?.Dispatched?.ToString("yyyy-MM-ddTHH:mm"))" data-rs-field="dispatched" /></td>
+										<td><input type="datetime-local" class="form-control input-sm" name="Units[@i].Enroute" value="@(existing?.Enroute?.ToString("yyyy-MM-ddTHH:mm"))" data-rs-field="enroute" /></td>
+										<td><input type="datetime-local" class="form-control input-sm" name="Units[@i].OnScene" value="@(existing?.OnScene?.ToString("yyyy-MM-ddTHH:mm"))" data-rs-field="onScene" /></td>
+										<td><input type="datetime-local" class="form-control input-sm" name="Units[@i].Released" value="@(existing?.Released?.ToString("yyyy-MM-ddTHH:mm"))" data-rs-field="cleared" /></td>
+										<td><input type="datetime-local" class="form-control input-sm" name="Units[@i].InQuarters" value="@(existing?.InQuarters?.ToString("yyyy-MM-ddTHH:mm"))" data-rs-field="inService" /></td>
 									</tr>
 								}
 							</tbody>
@@ -324,6 +327,14 @@
 				</div>
 			</div>
 		</div>
+		@if (showSources)
+		{
+			<div class="col-lg-3">
+				<div class="wrapper wrapper-content">
+					<partial name="_ReportSourcesPanel" model="@(new Resgrid.Web.Areas.User.Models.Records.ReportSourcesPanelView { CallId = Model.CallId, RecordId = Model.RecordId, FormId = "record-edit-form", Mode = "run", AutoFill = Model.IsNew && Model.CallId.HasValue })" />
+				</div>
+			</div>
+		}
 	</div>
 </form>
 @if (needsGrant)

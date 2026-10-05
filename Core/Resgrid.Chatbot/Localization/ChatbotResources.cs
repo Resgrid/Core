@@ -497,6 +497,17 @@ namespace Resgrid.Chatbot.Localization
 				"Помилка надсилання повідомлення.",
 				"حدث خطأ أثناء إرسال الرسالة."),
 
+			["Msg_NoSendPermission"] = L(
+				"You don't have permission to send messages.",
+				"No tienes permiso para enviar mensajes.",
+				"Du har inte behörighet att skicka meddelanden.",
+				"Sie haben keine Berechtigung, Nachrichten zu senden.",
+				"Vous n'avez pas la permission d'envoyer des messages.",
+				"Non hai il permesso di inviare messaggi.",
+				"Nie masz uprawnień do wysyłania wiadomości.",
+				"У вас немає дозволу надсилати повідомлення.",
+				"ليس لديك إذن لإرسال الرسائل."),
+
 			// === Call / dispatch handlers (YES/NO reply tokens and command examples stay English) ===
 			["Call_NotFound"] = L(
 				"Call #{0} not found.",
@@ -808,6 +819,50 @@ namespace Resgrid.Chatbot.Localization
 				"Błąd podczas zapisywania na zmianę.",
 				"Помилка запису на зміну.",
 				"حدث خطأ أثناء التسجيل في المناوبة."),
+
+			["Shift_SignupPendingApproval"] = L(
+				"Signup requested for the shift on {0}. It is waiting for a supervisor's approval.",
+				"Inscripción solicitada para el turno del {0}. Está pendiente de la aprobación de un supervisor.",
+				"Anmälan till skiftet den {0} är skickad. Den väntar på godkännande av en arbetsledare.",
+				"Eintragung für die Schicht am {0} angefragt. Sie wartet auf die Freigabe durch einen Vorgesetzten.",
+				"Inscription demandée pour le quart du {0}. Elle attend l'approbation d'un superviseur.",
+				"Iscrizione richiesta per il turno del {0}. È in attesa dell'approvazione di un supervisore.",
+				"Zgłoszono zapis na zmianę w dniu {0}. Czeka na zatwierdzenie przez przełożonego.",
+				"Запит на запис на зміну {0} надіслано. Він очікує схвалення керівника.",
+				"تم طلب التسجيل في مناوبة يوم {0}. وهو بانتظار موافقة المشرف."),
+
+			["Shift_DayInPast"] = L(
+				"That shift day is already over.",
+				"Ese día de turno ya terminó.",
+				"Den skiftdagen är redan över.",
+				"Dieser Schichttag ist bereits vorbei.",
+				"Ce jour de quart est déjà terminé.",
+				"Quel giorno di turno è già terminato.",
+				"Ten dzień zmiany już się zakończył.",
+				"Цей день зміни вже минув.",
+				"انتهى يوم المناوبة هذا بالفعل."),
+
+			["Shift_GroupRequired"] = L(
+				"This shift is staffed by group and your group isn't one of them. Sign up in the Resgrid app or website to choose a group.",
+				"Este turno se cubre por grupos y tu grupo no es uno de ellos. Inscríbete en la aplicación o el sitio web de Resgrid para elegir un grupo.",
+				"Detta skift bemannas per grupp och din grupp är inte en av dem. Anmäl dig i Resgrid-appen eller på webbplatsen för att välja en grupp.",
+				"Diese Schicht wird nach Gruppen besetzt, und Ihre Gruppe gehört nicht dazu. Tragen Sie sich in der Resgrid-App oder auf der Website ein, um eine Gruppe zu wählen.",
+				"Ce quart est pourvu par groupe et votre groupe n'en fait pas partie. Inscrivez-vous dans l'application ou sur le site Resgrid pour choisir un groupe.",
+				"Questo turno è coperto per gruppi e il tuo gruppo non è tra questi. Iscriviti nell'app o sul sito Resgrid per scegliere un gruppo.",
+				"Ta zmiana jest obsadzana według grup, a Twojej grupy wśród nich nie ma. Zapisz się w aplikacji lub na stronie Resgrid, aby wybrać grupę.",
+				"Ця зміна комплектується за групами, і вашої групи серед них немає. Запишіться в застосунку або на сайті Resgrid, щоб вибрати групу.",
+				"تُشغل هذه المناوبة حسب المجموعات ومجموعتك ليست من بينها. سجّل عبر تطبيق Resgrid أو موقعه الإلكتروني لاختيار مجموعة."),
+
+			["Shift_NotOpenForSignup"] = L(
+				"This shift doesn't take signups; its roster is assigned.",
+				"Este turno no admite inscripciones; su personal se asigna.",
+				"Detta skift tar inte emot anmälningar; bemanningen tilldelas.",
+				"Für diese Schicht kann man sich nicht eintragen; die Besetzung wird zugewiesen.",
+				"Ce quart n'accepte pas d'inscriptions ; son effectif est attribué.",
+				"Questo turno non accetta iscrizioni; il personale viene assegnato.",
+				"Na tę zmianę nie można się zapisać; obsada jest przydzielana.",
+				"На цю зміну не можна записатися; склад призначається.",
+				"لا تقبل هذه المناوبة التسجيل؛ يتم تعيين طاقمها."),
 
 			["Shift_SpecifyDrop"] = L(
 				"Please specify the shift day number to drop (e.g., 'drop shift 5').",

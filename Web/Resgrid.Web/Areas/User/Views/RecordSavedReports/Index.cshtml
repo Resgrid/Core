@@ -43,7 +43,10 @@
 							<td>@(r.LastRunOn.HasValue ? r.LastRunOn.Value.TimeConverterToString(Model.Department) : "-")</td>
 							<td class="text-right">
 								<a class="btn btn-xs btn-primary" asp-controller="RecordSavedReports" asp-action="Run" asp-route-area="User" asp-route-id="@r.RmsSavedReportDefinitionId"><i class="fa fa-play"></i> @localizer["ReportRun"]</a>
-								<a class="btn btn-xs btn-default" asp-controller="RecordSavedReports" asp-action="RunCsv" asp-route-area="User" asp-route-id="@r.RmsSavedReportDefinitionId"><i class="fa fa-download"></i> CSV</a>
+								@if (ViewBag.CanExportRecords == true)
+								{
+									<a class="btn btn-xs btn-default" asp-controller="RecordSavedReports" asp-action="RunCsv" asp-route-area="User" asp-route-id="@r.RmsSavedReportDefinitionId"><i class="fa fa-download"></i> CSV</a>
+								}
 								@if (Model.CanManage)
 								{
 									<a class="btn btn-xs btn-default" asp-controller="RecordSavedReports" asp-action="Edit" asp-route-area="User" asp-route-id="@r.RmsSavedReportDefinitionId">@localizer["Edit"]</a>

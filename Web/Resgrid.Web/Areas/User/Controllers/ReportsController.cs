@@ -137,9 +137,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var logs = await _actionLogsService.GetAllActionLogsForDepartmentAsync(DepartmentId);
 
 			var names = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
+			var visibleUsers = new Dictionary<string, bool>(StringComparer.Ordinal);
 
 			foreach (var l in logs)
 			{
+				// The people the personnel list shows (Security > View Group Users), as on the other status reports.
+				if (!visibleUsers.TryGetValue(l.UserId ?? String.Empty, out var visible))
+					visibleUsers[l.UserId ?? String.Empty] = visible = await _authorizationService.CanUserViewPersonViaMatrixAsync(l.UserId, UserId, DepartmentId);
+
+				if (!visible)
+					continue;
+
 				var actionLog = new ActionLogForJson();
 
 				var name = names.FirstOrDefault(x => x.UserId == l.UserId);
@@ -229,7 +237,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Reports_View)]
 		public async Task<IActionResult> PersonnelReport()
 		{
-			return View(await CreatePersonnelReportModel(DepartmentId));
+			// Email, mobile number and mailing address need View Personal Info, as on the person's page.
+			return View(await CreatePersonnelReportModel(DepartmentId, ClaimsAuthorizationHelper.CanViewPII()));
 		}
 
 		[HttpGet]
@@ -323,6 +332,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Reports_View)]
 		public async Task<IActionResult> PersonnelHoursDetailReport(string userId, DateTime start, DateTime end)
 		{
+			// The member must be in this department and one the report picker lists (Security > View Group Users).
+			if (String.IsNullOrWhiteSpace(userId) || !await _authorizationService.CanUserViewUserAsync(UserId, userId) ||
+			    !await _authorizationService.CanUserViewPersonViaMatrixAsync(userId, UserId, DepartmentId))
+				return Unauthorized();
+
 			return View(await PersonnelHoursDetailReportModel(DepartmentId, userId, start, end));
 		}
 
@@ -680,7 +694,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[AllowAnonymous]
-		public async Task<IActionResult> InternalRunReport(int type, int departmentId)
+		public async Task<IActionResult> InternalRunReport(int type, int departmentId, string userId = null)
 		{
 			var expectedKey = Config.SecurityConfig.InternalReportsToken;
 			var key = Request.Headers["X-Internal-Reports-Token"].ToString();
@@ -696,7 +710,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 			else if (((ReportTypes)type) == ReportTypes.Personnel)
 			{
-				return View("PersonnelReport", await CreatePersonnelReportModel(departmentId));
+				// ReportDeliveryLogic passes the subscriber: anyone may schedule this report to themselves, so the emailed copy
+				// carries contact details only for a current member who holds View Personal Info, as the page does.
+				return View("PersonnelReport", await CreatePersonnelReportModel(departmentId,
+					includeContactDetails: await CanSubscriberViewPersonalInfoAsync(userId, departmentId)));
 			}
 			else if (((ReportTypes)type) == ReportTypes.Certifications)
 			{
@@ -715,6 +732,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			return new EmptyResult();
+		}
+
+		private async Task<bool> CanSubscriberViewPersonalInfoAsync(string userId, int departmentId)
+		{
+			if (String.IsNullOrWhiteSpace(userId))
+				return false;
+
+			var member = await _departmentsService.GetDepartmentMemberAsync(userId, departmentId);
+			return DepartmentMemberStateHelper.IsCurrentMember(member, departmentId) && await _authorizationService.CanUserViewPIIAsync(userId, departmentId);
 		}
 
 		private async Task<StaffingReportView> CreateStaffingReportModel(int departmentId)
@@ -851,7 +877,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return model;
 		}
 
-		private async Task<PersonnelReportView> CreatePersonnelReportModel(int departmentId)
+		private async Task<PersonnelReportView> CreatePersonnelReportModel(int departmentId, bool includeContactDetails)
 		{
 			var model = new PersonnelReportView();
 			model.Rows = new List<PersonnelReportRow>();
@@ -888,7 +914,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 					if (group != null)
 						person.Group = group.Name;
 
-					person.Email = user.Email;
+					if (includeContactDetails)
+						person.Email = user.Email;
+
 					person.Username = user.UserName;
 
 					var sb = new StringBuilder();
@@ -909,19 +937,22 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 						person.Name = savedProfile.FullName.AsFirstNameLastName;
 						person.ID = sensitive?.IdentificationNumber;
-						person.MobilePhoneNumber = savedProfile.MobileNumber;
 
-						if (sensitive != null && !string.IsNullOrWhiteSpace(sensitive.MailingAddress1))
+						if (includeContactDetails)
+							person.MobilePhoneNumber = savedProfile.MobileNumber;
+
+						if (includeContactDetails && sensitive != null && !string.IsNullOrWhiteSpace(sensitive.MailingAddress1))
 						{
+							// The view writes this with Html.Raw, so the member-entered parts are encoded here.
 							StringBuilder address = new StringBuilder();
 							address.Append("<address>");
-							address.Append(sensitive.MailingAddress1);
+							address.Append(System.Net.WebUtility.HtmlEncode(sensitive.MailingAddress1));
 							address.Append("&nbsp<br>");
-							address.Append(sensitive.MailingCity);
-							address.Append(sensitive.MailingState);
-							address.Append(sensitive.MailingPostalCode);
+							address.Append(System.Net.WebUtility.HtmlEncode(sensitive.MailingCity));
+							address.Append(System.Net.WebUtility.HtmlEncode(sensitive.MailingState));
+							address.Append(System.Net.WebUtility.HtmlEncode(sensitive.MailingPostalCode));
 							address.Append("&nbsp<br>");
-							address.Append(sensitive.MailingCountry);
+							address.Append(System.Net.WebUtility.HtmlEncode(sensitive.MailingCountry));
 							address.Append("&nbsp<br>");
 							address.Append("</address>");
 
@@ -1971,6 +2002,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				if (profiles.ContainsKey(group.UserId))
 				{
+					// Only the people the report picker lists (Security > View Group Users), whichever way the members were chosen.
+					if (!await _authorizationService.CanUserViewPersonViaMatrixAsync(group.UserId, UserId, DepartmentId))
+						continue;
+
 					var summary = new PersonnelStatusSummary();
 					var profile = profiles[group.UserId];
 

@@ -2070,6 +2070,24 @@
   <data xml:space="preserve" name="Field.RecordsNumberingConfig.SequenceWidth">
     <value>Configuration de numérotation des dossiers / Largeur de la séquence</value>
   </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingConfig.Floors">
+    <value>Configuration de numérotation des dossiers / Planchers</value>
+  </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingConfig.Pattern">
+    <value>Configuration de numérotation des dossiers / Modèle</value>
+  </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingFloor.NextSequence">
+    <value>Plancher de numérotation des dossiers / Séquence suivante</value>
+  </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingFloor.ScopeKey">
+    <value>Plancher de numérotation des dossiers / Clé de portée</value>
+  </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingFloor.SetByUserId">
+    <value>Plancher de numérotation des dossiers / ID de l'utilisateur ayant défini</value>
+  </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingFloor.SetOn">
+    <value>Plancher de numérotation des dossiers / Défini le</value>
+  </data>
   <data xml:space="preserve" name="Field.RecordsRetentionOverride.AppliesFrom">
     <value>Dérogation de conservation des dossiers / S'applique à partir du</value>
   </data>
@@ -2213,6 +2231,24 @@
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.SequenceWidth">
     <value>Largeur de séquence avec zéros de remplissage pour les définitions utilisant les valeurs par défaut du département. L'éditeur de dossiers valide la largeur prise en charge.</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.Floors">
+    <value>Prochains numéros relevés, un par séquence de numérotation, pour les services qui poursuivent des numéros attribués avant Resgrid. Un prochain numéro ne fait que monter et les numéros déjà attribués l'emportent toujours, si bien qu'un prochain numéro relevé ne crée jamais de doublon.</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.Pattern">
+    <value>Modèle de numérotation des types de dossiers intégrés et des rapports d'intervention, composé de texte fixe et des jetons PREFIX, YYYY, YY, GROUP et SEQ. Sans valeur, le modèle décrit par « Inclure l'année » et « Séquence par groupe » est conservé. La séquence redémarre dès que le texte autour de SEQ change.</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingFloor.NextSequence">
+    <value>Le plus petit numéro que cette séquence peut attribuer ensuite.</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingFloor.ScopeKey">
+    <value>La séquence à laquelle s'applique un prochain numéro relevé : le texte que le modèle produit autour de la séquence, avec # à sa place.</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingFloor.SetByUserId">
+    <value>L'administrateur qui a relevé le prochain numéro.</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingFloor.SetOn">
+    <value>Date à laquelle le prochain numéro a été relevé (UTC).</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsRetentionOverride.AppliesFrom">
     <value>Limite prospective pour les révisions éligibles à la dérogation, évaluée par le cycle de vie des dossiers.</value>
@@ -3358,247 +3394,247 @@
     <value>Afficher la rémunération de la main-d’œuvre</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.AddCallData">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet d'ajouter des notes, des images, des fichiers et des flux vidéo aux appels sur le web et dans les applications. La personne doit aussi pouvoir voir l'appel, et joindre un fichier sur le web exige en plus les droits de modification de l'appel (administrateurs du département ou membre qui a créé l'appel). Lorsque la case « Groupe uniquement » est cochée, seuls les administrateurs du département et les personnes dont le groupe a été engagé sur l'appel peuvent y ajouter du contenu, même lorsque la règle est « Tout le monde ». Sans règle enregistrée, toute personne qui peut voir l'appel le peut.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.AddPersonnel">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet d'ajouter, d'inviter et de réactiver des membres. Choisissez « Administrateurs du département et des groupes » pour permettre aux administrateurs de groupe d'ajouter des personnes à leur propre groupe ; les membres qu'ils réactivent ou ajoutent à partir d'un compte existant rejoignent aussi le groupe de l'administrateur de groupe. Sans règle enregistrée, seuls les administrateurs du département le peuvent. Les administrateurs de groupe qui doivent aussi retirer des personnes doivent être inclus dans cette permission, car le retrait la vérifie également.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.AdjustInventory">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de réceptionner, d'ajuster et d'archiver l'inventaire, d'utiliser du stock depuis les Rapports, et sert de règle de départ pour « Transférer l’inventaire » et « Remettre de l'inventaire » tant que celles-ci ne sont pas enregistrées. Sans règle enregistrée, seuls les administrateurs du département le peuvent, et l'écran Sécurité l'indique.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.AmendRecords">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet d'ouvrir un amendement sur un rapport finalisé et de l'abandonner. L'amendement est achevé par la finalisation ; associez donc cette permission à « Finaliser des rapports ». Sans règle enregistrée, les administrateurs du département et des groupes le peuvent.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ApproveRecords">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet d'approuver des rapports. L'approbation se fait actuellement depuis les applications et l'API ; sur le web, cette permission élargit seulement la vue de responsabilité. Sans règle enregistrée, seuls les administrateurs du département le peuvent. Un approbateur ne peut jamais approuver son propre rapport, et les rôles d'approbateur d'une définition peuvent la restreindre davantage.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ApproveTimeReports">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet d'approuver et d'annuler les relevés d'heures de déploiement soumis, y compris depuis l'application Incident Command. Personne ne peut approuver un relevé qu'il a soumis ou qui contient ses propres heures ; il faut alors un second approbateur, l'annulation restant possible. Une fois un relevé approuvé, ses dépenses, ainsi que les dépenses de ce jour-là, ne peuvent plus être modifiées. Sur le web, l'approbateur doit aussi pouvoir voir le déploiement. Sans règle enregistrée, seuls les administrateurs du département le peuvent.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.BreakGlassProtectedData">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Identifiant retiré, conservé pour que les anciens paramètres enregistrés continuent de se charger. Il n'accorde rien, n'apparaît pas sur l'écran Sécurité et ne peut pas être enregistré ; l'accès du personnel d'assistance est contrôlé par le paramètre de consentement à l'assistance de la page Protection des données.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CanSeePersonnelLocations">
-    <value>Contrôle la restriction de visibilité de la localisation pour chaque utilisateur et chaque personne. L’aperçu comptabilise les paires d’accès, et non les repères actuels sur la carte, le consentement au suivi ou la disponibilité du GPS.</value>
+    <value>Détermine de quels membres une personne peut voir la position : la carte, le suivi en direct, les distances et temps de trajet des intervenants les plus proches, les positions associées aux statuts dans l'activité du personnel et des appels, les pointages et l'historique des événements du personnel. Lorsque la case « Groupe uniquement » est cochée, les personnes ne voient que les membres de leur propre groupe. Sans règle enregistrée, tout le monde le peut. C'est la position qui est masquée, pas la personne.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CanSeeUnitLocations">
-    <value>Contrôle la restriction de visibilité de la localisation pour chaque utilisateur et chaque unité. Un verrouillage de groupe se rapporte à la caserne de l’unité et à la hiérarchie du groupe propriétaire, et non à toute caserne que l’utilisateur peut par ailleurs voir.</value>
+    <value>Détermine de quelles unités une personne peut voir la position : la carte, le suivi en direct, les distances et temps de trajet des unités les plus proches, l'historique des événements et les rapports des unités, les pointages, les écarts d'itinéraire et l'activité des appels. Lorsque la case « Groupe uniquement » est cochée, les personnes ne voient que les unités de leur propre caserne. Sans règle enregistrée, tout le monde le peut. C'est la position qui est masquée, pas l'unité.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CloseCall">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de clôturer et de rouvrir des appels. Lorsque la case « Groupe uniquement » est cochée, seuls les administrateurs du département et les personnes dont le groupe a été engagé sur l'appel peuvent le clôturer ou le rouvrir, même lorsque la règle est « Tout le monde ». Sur le web, dans les applications et dans le chatbot, il faut aussi les droits sur les appels accordés par « Créer des appels ». Sans règle enregistrée, toute personne qui peut voir l'appel peut le clôturer.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CommandAppLogin">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Détermine qui peut utiliser l'application Incident Command et consulter les tableaux de commandement : chaque tableau et toutes les lectures du suivi des effectifs, des besoins, de la chronologie, de la carte, des rôles, de la voix et des ressources, la synchronisation hors ligne des tableaux dans les applications et les réponses du chatbot sur les incidents. Sans règle enregistrée, chaque membre actif le peut. Lorsque vous enregistrez une règle plus restreinte, les personnes qu'elle autorise obtiennent aussi des capacités d'assistance au commandement sur n'importe quel tableau. L'établissement du commandement et la modification des tableaux nécessitent toujours les droits de commandement d'administrateur du département.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ConfigureProtectedDataEgress">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Détermine qui peut administrer les flux de travail protégés et leurs approbations de diffusion. L'activation, l'approbation ou le renouvellement d'un flux de travail protégé exige aussi une nouvelle vérification renforcée, et les paramètres de diffusion par code PIN par SMS et appel vocal exigent en outre un administrateur du département. S'applique uniquement lorsque le département est inscrit à la Protection avancée des données.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ContactDelete">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de supprimer des contacts, des catégories, des plans d'intervention, des dangers des locaux et des fichiers du site. Sans règle enregistrée, tout le monde le peut. Un contact ayant une facturation ouverte dans Business Ops ne peut pas être supprimé.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ContactEdit">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet d'ajouter et de modifier des contacts, des catégories, des plans d'intervention, des dangers et des fichiers du site. Sans règle enregistrée, tout le monde le peut. La page de modification affiche le contact entier : toute personne qui peut le modifier peut donc aussi le lire ; les champs protégés restent expurgés sans autorisation de données protégées.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ContactView">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de consulter les contacts, leurs notes, appels et fichiers sur le web et dans les applications, de les retrouver dans la recherche et de voir les coordonnées des contacts sur les appels : informations sur le site, alertes de contact, sélecteurs de contact de l'appel et exportation de l'appel. Sans règle enregistrée, tout le monde le peut, sauf dans les achats d'inventaire, qui n'affichent les contacts fournisseurs qu'aux administrateurs du département tant que vous n'avez pas enregistré de règle. Les itinéraires et la page de modification des contacts peuvent aussi afficher les coordonnées des contacts.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateCalendarEntry">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de créer et de modifier des entrées de calendrier et des types de calendrier, et de modifier les pointages du calendrier depuis les applications. Pour modifier ou supprimer une entrée, il faut aussi en être le créateur ou être administrateur du département, et seul le participant lui-même ou une personne pouvant modifier l'événement peut retirer un participant. Tout le monde peut toujours consulter le calendrier. Sans règle enregistrée, tout le monde le peut.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateCall">
-    <value>Permet de créer un appel. L’action au niveau du département utilise l’état d’administrateur réel et les rôles de personnel de chaque membre ; la validation ultérieure de la régulation reste déterminante.</value>
+    <value>Permet de créer des appels et, avec eux, les droits sur les appels que la modification, la clôture, la réouverture et la suppression nécessitent aussi, sur le web, dans les applications, depuis la page Journaux et dans le chatbot. Les personnes qui ne remplissent pas cette condition peuvent toujours consulter les appels. Sans règle enregistrée, tout le monde le peut.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateDocument">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de téléverser des documents. Chacun ne peut modifier ou supprimer que les documents qu'il a téléversés, sauf s'il est administrateur du département. Tout le monde peut toujours consulter les documents. Sans règle enregistrée, tout le monde peut téléverser.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateLog">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de rédiger des journaux. Tout le monde peut toujours les consulter. Une fois les Rapports activés, les anciens journaux passent en lecture seule et cette règle est copiée vers « Créer un dossier » et « Finaliser des rapports ». Sans règle enregistrée, tout le monde le peut.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateMessage">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet d'envoyer des messages, de publier et de réagir dans le chat, de démarrer des messages directs et d'utiliser le chatbot, y compris d'envoyer un message par SMS au chatbot. Les personnes qui ne disposent pas de cette permission peuvent toujours lire et supprimer leurs messages, mais ne peuvent pas les marquer comme lus ni modifier des publications du chat. Sans règle enregistrée, tout le monde le peut.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateNote">
-    <value>Permet de créer une note de département. Cette action ne donne pas accès au contenu protégé des notes ni à un autre département.</value>
+    <value>Permet de créer des notes depuis les applications. Sur le web, la création, la modification et la suppression de notes exigent toujours un administrateur du département, quelle que soit cette règle. Les notes réservées aux administrateurs restent visibles uniquement par les administrateurs du département. Sans règle enregistrée, tout le monde peut créer des notes dans les applications.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateRecord">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de rédiger des rapports, notamment des rapports d'incident, des rapports de terrain, des preuves et des pièces jointes. Sans règle enregistrée, tout le monde peut rédiger. Prend effet une fois les Rapports activés ; l'activation copie ici votre règle « Créer un journal ». Les applications de terrain nécessitent aussi leurs indicateurs de fonctionnalité des Rapports sur le terrain.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateShift">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de créer, modifier et supprimer des quarts et des quarts de travail, et de gérer les inscriptions de tous les groupes. Les administrateurs de groupe gèrent toujours les inscriptions de leurs propres groupes. Les membres qui s'inscrivent — sur le web, dans les applications ou via le chatbot — doivent respecter les règles du quart (pas de jours passés, les quarts attribués nécessitent une affectation, les quarts de groupe nécessitent le groupe du membre). Tout le monde peut toujours consulter les quarts. Sans règle enregistrée, seuls les administrateurs du département peuvent modifier les quarts.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateTraining">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de créer, modifier et supprimer des formations, et de réinitialiser la progression des membres dans les formations. Tout le monde peut toujours consulter et suivre les formations. Sans règle enregistrée, seuls les administrateurs du département le peuvent.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateWorkflow">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de créer, modifier et supprimer des flux de travail, de prévisualiser leurs conditions, de lire la configuration des étapes dans les applications et l'API, et de voir la sortie générée des exécutions de flux de travail. Sans règle enregistrée, seuls les administrateurs du département peuvent modifier les flux de travail, mais chaque membre peut ouvrir la page Flux de travail et lire les définitions ; enregistrer « Administrateurs du département » masque en outre les flux de travail à tous les autres. Les étapes qui envoient une exportation des Rapports nécessitent aussi « Exporter des dossiers » et « Gérer les états de rapports ». Le nombre de flux de travail est limité dans les abonnements gratuits.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.DeleteCall">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de supprimer des appels. Lorsque la case « Groupe uniquement » est cochée, seuls les administrateurs du département et les personnes dont le groupe a été engagé sur l'appel peuvent le supprimer, même lorsque la règle est « Tout le monde ». Il faut aussi les droits sur les appels accordés par « Créer des appels ». Sans règle enregistrée, toute personne qui peut voir l'appel peut le supprimer.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.DeleteLog">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de supprimer des journaux. Cette permission est distincte de « Créer un journal ». Une fois les Rapports activés, les anciens journaux passent en lecture seule et cette règle est copiée vers « Supprimer un dossier ». Sans règle enregistrée, tout le monde le peut.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.DeleteRecord">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet d'annuler des rapports et d'abandonner des brouillons ; sans cette permission, les personnes ne peuvent même pas abandonner leurs propres brouillons. Un membre ne peut annuler ou abandonner que les rapports qu'il a rédigés, dont il est propriétaire, ou qu'il révise ou approuve, sauf s'il est administrateur du département ou administrateur du groupe du rapport. Sans règle enregistrée, tout le monde le peut. Prend effet une fois les Rapports activés ; l'activation copie ici votre règle « Supprimer un journal ».</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.DispatchAppLogin">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Détermine qui est considéré comme régulateur. L'application Dispatch la vérifie à la connexion (le serveur lui-même ne bloque pas la connexion), et les régulateurs peuvent lire les canaux de discussion visibles par la régulation, y compris les canaux de commandement d'intervention et de groupe, et y reçoivent des notifications. Sans règle enregistrée, chaque membre actif est considéré comme régulateur. L'enregistrer actualise l'accès au chat.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.EditProtectedCallData">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>N'est pas proposée sur l'écran Sécurité, car aucune vérification à l'exécution ne la lit : la modification des champs d'appel protégés suit les permissions habituelles de modification des appels ainsi qu'une autorisation de données protégées valide. Une règle enregistrée auparavant est conservée mais n'a aucun effet.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ExportPayDataReporting">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de geler, d'exporter et de télécharger les déclarations des données de rémunération de Californie, et de lire les exécutions de déclaration et leurs totaux. Les instantanés par travailleur et la constitution de la déclaration nécessitent « Gérer la déclaration des données de rémunération ». Nécessite un module complémentaire Business Ops actif et l'activation de la Protection avancée des données. Sans règle enregistrée, seuls les administrateurs du département le peuvent.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ExportProtectedData">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>N'est pas proposée sur l'écran Sécurité, car aucune vérification à l'exécution ne la lit : chaque exportation suit la permission d'exportation de son propre module. Une règle enregistrée auparavant est conservée mais n'a aucun effet.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ExportRecords">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet d'imprimer et d'exporter des rapports, des documents, des rapports de déploiement, des CSV d'états enregistrés et des paquets groupés. Sans règle enregistrée, tout le monde le peut. Les sections restreintes nécessitent en outre « Afficher les dossiers restreints » ; la gestion des modèles d'exportation, l'ouverture des exécutions d'exportation d'autres personnes et l'envoi d'un paquet par e-mail à une adresse externe nécessitent « Gérer les états de rapports ».</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.FinalizeRecords">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de finaliser des rapports, ce qui les verrouille en tant que version officielle. Un membre peut finaliser les rapports qu'il a rédigés, dont il est propriétaire, ou qu'il révise ou approuve ; finaliser le rapport de quelqu'un d'autre nécessite « Réviser des rapports » (« Approuver des rapports » une fois le rapport approuvé, « Modifier des dossiers » pour un amendement) ou un administrateur du département. Les amendements et les corrections sont aussi achevés par la finalisation ; toute personne qui amende a donc aussi besoin de cette permission. Sans règle enregistrée, tout le monde le peut. L'activation copie ici votre règle « Créer un journal ».</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.IssueInventory">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de remettre des équipements et des fournitures à des personnes et à des unités, de reprendre les retours, de remettre des kits et d'ajouter de nouveaux détenteurs. Tant que vous n'avez pas enregistré de règle ici, elle suit « Ajuster l'inventaire ». Les substances contrôlées nécessitent aussi « Gérer les substances contrôlées » et, lorsque c'est exigé, un témoin.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageBids">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de créer, modifier et supprimer des offres et des devis, et de les convertir en déploiements. La conversion et l'utilisation de l'assistant de déploiement nécessitent aussi « Gérer les déploiements », et les fiches de coûts des offres nécessitent « Afficher les coûts internes ». Sans règle enregistrée, seuls les administrateurs du département le peuvent. Nécessite la Facturation contractant et un module complémentaire Business Ops actif.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageCertificationSetup">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de gérer le catalogue des certifications, les modèles, les exigences de rôle et les paramètres d'application. Elle n'affiche pas à elle seule les fiches de certification des membres ; il faut pour cela « Afficher les certifications ». Sans règle enregistrée, seuls les administrateurs du département le peuvent.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageCertifications">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet d'ajouter, de vérifier, de modifier et de supprimer les fiches de certification et les crédits de formation continue des autres membres et des unités. Inclut la consultation. Les membres peuvent toujours gérer leurs propres fiches, mais personne ne peut vérifier les siennes, et modifier sa propre fiche vérifiée en retire la vérification. Sans règle enregistrée, seuls les administrateurs du département le peuvent.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageChecklists">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de rédiger, publier, retirer et planifier des listes de contrôle, et d'envoyer des tâches de liste de contrôle à d'autres groupes. Cela n'inclut pas la lecture des résultats. Sans règle enregistrée, seuls les administrateurs du département le peuvent. Nécessite l'activation des listes de contrôle ; les actions en cas d'échec qui ouvrent des ordres de travail nécessitent aussi les ordres de travail et Readiness Pro.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageContracts">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de consulter et de gérer les contrats de service et les documents de conformité, y compris la liste de contrôle de conformité de l'onglet de facturation d'un déploiement. Sans règle enregistrée, seuls les administrateurs du département le peuvent. Nécessite la Facturation contractant et un module complémentaire Business Ops actif.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageControlledSubstances">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de manipuler les articles de substances contrôlées : réception, déplacement, remise, utilisation, attestation en tant que témoin, déclaration et ajout au catalogue. Elle s'ajoute aux permissions d'inventaire habituelles au lieu de les remplacer, et les étapes attestées exigent une seconde personne qualifiée. Sans règle enregistrée, seuls les administrateurs du département le peuvent.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageDepartmentDataProtection">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>N'est pas proposée sur l'écran Sécurité, car aucune vérification à l'exécution ne la lit : les pages Protection des données exigent un administrateur du département, et l'inscription, la désactivation, les exemptions de vérification renforcée et la facturation sont réservées au membre gestionnaire. Une règle enregistrée auparavant est conservée mais n'a aucun effet.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageDeployments">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de créer et de conduire des déploiements et des ordres de déploiement externes : effectifs affectés, équipements, temps, dépenses et clôture, ainsi que de marquer des dépenses comme pré-approuvées. Il n'existe pas de permission de consultation distincte ; les membres inscrits à l'effectif d'un déploiement (directement ou via l'équipage de leur unité inscrit à l'effectif) le voient toujours, alors que prendre place dans une unité déployée ne suffit pas. Sans règle enregistrée, seuls les administrateurs du département le peuvent. La création à partir d'un ordre externe nécessite aussi « Créer un dossier » avec les Rapports activés.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageInvoicing">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de créer, envoyer, modifier et annuler des factures, de générer des factures à partir des déploiements, de télécharger le paquet de facture, d'enregistrer des paiements et de gérer les grilles tarifaires et les profils de facturation. Inclut la consultation. Sans règle enregistrée, seuls les administrateurs du département le peuvent. Nécessite l'activation de la Facturation clients ; les modifications nécessitent un module complémentaire Business Ops actif.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageMutualAidReimbursement">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de préparer, de transmettre et de rapprocher les dossiers de remboursement Cal OES MARS. La constitution de l'enquête salariale nécessite aussi « Afficher la rémunération de la main-d’œuvre », et les classifications de moins de trois membres en sont exclues. Les membres affectés peuvent toujours remplir leur propre F-42 et leurs dépenses, mais les paquets imprimés ne leur montrent aucun taux de remboursement ni aucun total. Sans règle enregistrée, seuls les administrateurs du département le peuvent. Nécessite l'activation de Cal OES MARS et un module complémentaire Business Ops actif.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManagePayDataReporting">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de constituer les déclarations des données de rémunération de Californie dans l'assistant et de voir les instantanés par travailleur sur lesquels elles reposent. Le gel et l'exportation d'une déclaration nécessitent « Exporter la déclaration des données de rémunération ». Chaque membre continue de répondre lui-même à ses propres questions démographiques. Nécessite le module de déclaration des données de rémunération, un module complémentaire Business Ops actif et l'activation de la Protection avancée des données. Sans règle enregistrée, seuls les administrateurs du département le peuvent.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageRecordDefinitions">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de créer et de modifier des définitions de rapport dans le concepteur. La publication nécessite aussi « Publier les définitions de rapport », et la gestion des champs personnalisés des rapports exige en outre un administrateur du département. Sans règle enregistrée, seuls les administrateurs du département le peuvent.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageRecordDisclosures">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de traiter les demandes d'accès aux documents publics et de divulgation, y compris la lecture de la file des divulgations et la production des diffusions. Le contenu restreint nécessite en outre « Afficher les dossiers restreints ». Sans règle enregistrée, seuls les administrateurs du département le peuvent.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageRecordLegalHold">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de poser et de lever des conservations légales, qui empêchent la purge des rapports. Les conservations portant sur un rapport précis sont limitées aux rapports que la personne peut voir. Sans règle enregistrée, seuls les administrateurs du département le peuvent.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageRecordReports">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de créer, planifier et exécuter des états de rapports enregistrés, de gérer les modèles d'exportation, d'ouvrir les exécutions d'exportation de modèles et planifiées, et d'envoyer des paquets groupés par e-mail à des adresses externes ; affiche aussi la vue de responsabilité. Les modèles d'exportation et les téléchargements CSV nécessitent aussi « Exporter des dossiers », et les états et exécutions restreints nécessitent « Afficher les dossiers restreints ». Un paquet groupé ne s'ouvre toujours que pour le membre qui l'a constitué. Sans règle enregistrée, seuls les administrateurs du département le peuvent.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageRoutes">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Régit les itinéraires. Cette permission n'apparaît sur aucun écran de configuration : les membres peuvent donc consulter les itinéraires, les administrateurs de groupe peuvent aussi les créer et les modifier, et seuls les administrateurs du département peuvent les supprimer. Démarrer un itinéraire et pointer aux arrêts nécessitent un accès en modification. La consultation des itinéraires affiche aussi les contacts du département.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageWorkOrders">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de gérer les ordres de travail dans tout le département : approbations, coûts, résolutions, mises en attente, maintenance récurrente, frais fournisseurs et ordres des autres groupes. Cela inclut la consultation de tous les ordres de travail. Sans règle enregistrée, seuls les administrateurs du département le peuvent. Nécessite l'activation des ordres de travail et le module complémentaire Readiness Pro.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageWorkflowCredentials">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de créer, modifier et supprimer les identifiants que les flux de travail utilisent pour accéder à des services externes. Les secrets sont toujours masqués. Sans règle enregistrée, seuls les administrateurs du département peuvent les modifier, mais les membres peuvent voir les noms et types d'identifiants ; enregistrer « Administrateurs du département » les masque aussi, sur le web et dans l'API. Modifier un identifiant qui livre une exportation des Rapports nécessite aussi « Exporter des dossiers » et « Gérer les états de rapports ». Utile uniquement avec « Créer un flux de travail ».</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageWorkforceCompensation">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de gérer le profil employeur, les établissements, les travailleurs ainsi que les fiches d'emploi et de rémunération, et de lancer des calculs de coûts. Inclut la consultation. Personne ne peut approuver un profil de rémunération qu'il a modifié en dernier, ni sa propre rémunération. Les montants de rémunération sont protégés et s'affichent expurgés sans autorisation de données protégées. Disponible uniquement sur le web. Sans règle enregistrée, seuls les administrateurs du département le peuvent. Nécessite le calcul des coûts internes et un module complémentaire Business Ops actif.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.PublishRecordDefinitions">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de publier et de retirer des définitions de rapport afin que les personnes puissent les utiliser. Ne fonctionne qu'avec « Gérer les définitions de rapport ». Sans règle enregistrée, seuls les administrateurs du département le peuvent.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ReassignRecordDrafts">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de confier le brouillon de rapport d'une autre personne à un autre membre actif. Sans règle enregistrée, les administrateurs du département et des groupes le peuvent, dans tout groupe qu'ils peuvent voir.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.RecordsPreventionAdmin">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de gérer les données de prévention : occupations, inspections, bornes d'incendie, permis et réduction des risques communautaires. Les autres membres peuvent toujours les lire. Chaque domaine nécessite aussi l'activation de son module de prévention des Rapports. Sans règle enregistrée, seuls les administrateurs du département le peuvent.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.RemovePersonnel">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de retirer des membres du département. Choisissez « Administrateurs du département et des groupes » pour permettre aux administrateurs de groupe de retirer des personnes de leur propre groupe ; la permission « Ajouter du personnel » doit alors être réglée de la même façon, car la page de retrait la vérifie. Un administrateur de groupe ne peut jamais retirer un administrateur du département ni le membre gestionnaire. Sans règle enregistrée, seuls les administrateurs du département le peuvent.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ReviewRecords">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de réviser des rapports, de les renvoyer pour correction et d'attribuer des tâches de révision. Sans règle enregistrée, les administrateurs du département et des groupes le peuvent. Les rôles de réviseur d'une définition peuvent la restreindre davantage. La revue qualité nécessite aussi le module de revue qualité des Rapports.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ShareRecordsExternally">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Réservée au partage de rapports avec d'autres groupes ou des organismes extérieurs. Aucune fonctionnalité actuelle ne l'utilise ; elle n'est donc pas proposée sur l'écran Sécurité. Par défaut, elle est réservée aux administrateurs du département, et une règle enregistrée auparavant est conservée pour l'arrivée du partage.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.SubmitRecords">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de transmettre des rapports à une destination de déclaration telle que NERIS. Les personnes qui transmettent doivent pouvoir voir le rapport ; la lecture de l'historique des échanges de transmission nécessite aussi « Afficher les dossiers restreints », et la validation d'une transmission exige un administrateur du département. Sans règle enregistrée, seuls les administrateurs du département le peuvent.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.TransferInventory">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de déplacer du stock entre emplacements. Tant que vous n'avez pas enregistré de règle ici, elle suit « Ajuster l'inventaire ». Lorsque la case « Groupe uniquement » est cochée, les personnes ne peuvent déplacer du stock qu'entre les emplacements de leur propre groupe. Les substances contrôlées nécessitent aussi « Gérer les substances contrôlées ».</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.UseCalendarSync">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet aux membres d'obtenir un lien personnel d'abonnement au calendrier pour le calendrier de leur téléphone ou de leur ordinateur. Le flux est revérifié à chaque récupération ; restreindre cette permission interrompt donc les flux existants, et un membre retiré du département ou désactivé ne le reçoit plus. Sans règle enregistrée, tout le monde le peut. L'exploitant doit aussi avoir activé les flux de calendrier.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewAllWorkOrders">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de voir les ordres de travail au-delà de ceux que la personne a créés ou qui lui sont attribués. Sans règle enregistrée, les administrateurs du département les voient tous et les administrateurs de groupe voient ceux de leur propre groupe ; la case « Groupe uniquement » affiche cette limite cochée, laissez-la donc cochée lors de l'enregistrement si les administrateurs de groupe doivent rester limités à leur groupe.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewCertifications">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de consulter les certifications des autres membres et des unités, la liste des certifications arrivant à expiration et l'éligibilité aux rôles. Les membres voient toujours les leurs ; les administrateurs de groupe ont aussi besoin de cette permission pour voir les fiches de leurs membres. Sans règle enregistrée, seuls les administrateurs du département le peuvent. Les champs protégés nécessitent une autorisation de données protégées.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewChecklistResults">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de lire les résultats et l'historique des listes de contrôle terminées. Sans règle enregistrée, les administrateurs du département voient tout, les administrateurs de groupe voient les résultats de leur propre groupe, et chacun voit les exécutions qu'il a créées ou dont il a été témoin. Décochez la case « Groupe uniquement » pour permettre aux réviseurs de voir tous les groupes.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewGroupRecords">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Limite les groupes dont les personnes peuvent voir les rapports. Cette restriction ne s'applique que lorsque la case « Groupe uniquement » de cette règle est cochée et que les Paramètres des rapports règlent la visibilité des groupes sur une portée par groupe ; les non-administrateurs voient alors les rapports de leur propre groupe ainsi que ceux qu'ils ont rédigés ou auxquels ils participent. Les choix d'action et de rôles sur cette ligne ne modifient pas la visibilité.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewGroupUnits">
-    <value>Contrôle la visibilité des unités cibles et de leurs casernes assignées. Les utilisateurs sans groupe et les unités non assignées ne partagent aucun groupe.</value>
+    <value>Détermine quelles unités une personne peut voir dans les listes d'unités, les sélecteurs, la carte, les affectations d'équipage, la recherche, le chatbot et les applications, et de quelles unités elle peut définir le statut. Lorsque la case « Groupe uniquement » est cochée, les personnes ne voient que les unités de leur propre caserne (les administrateurs du département voient toujours toutes les unités). Sans règle enregistrée, tout le monde voit toutes les unités.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewGroupUsers">
-    <value>Contrôle la visibilité des personnels cibles. Un verrouillage de groupe peut restreindre la portée cible ; les administrateurs d’un groupe cible ou de ses groupes parents utilisent la politique de visibilité correspondante.</value>
+    <value>Détermine quels membres une personne peut voir dans les listes du personnel, les profils, les grilles, les sélecteurs d'engagement, les rapports, la recherche, ainsi que dans l'effectif et les flux de statuts des applications. Lorsque la case « Groupe uniquement » est cochée, les administrateurs de groupe et les titulaires de rôle ne voient que leur propre groupe (les administrateurs du département voient toujours tout le monde). Sans règle enregistrée, tout le monde voit tout le monde.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewInternalCosts">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de voir les coûts internes du département : profils de coûts des ressources, utilisation, calculs de coûts de terrain et fiches de marge. Lancer, geler ou supprimer des calculs de coûts, modifier les profils de coûts et changer l'utilisation d'autres personnes nécessitent aussi « Gérer la rémunération de la main-d'œuvre ». Sans règle enregistrée, seuls les administrateurs du département le peuvent. Nécessite l'activation du calcul des coûts internes et un module complémentaire Business Ops actif.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewInvoicing">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de consulter les factures, la balance âgée, les grilles tarifaires et les profils de facturation des contacts sans les modifier, y compris les listes de factures des déploiements et des contrats. Le paquet de facture (avec les relevés d'heures, les justificatifs et les documents de conformité) nécessite « Gérer la facturation ». Sans règle enregistrée, seuls les administrateurs du département le peuvent. La consultation reste possible si le module complémentaire Business Ops expire.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewLegacyRecords">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Réservée à la consultation de l'historique des anciens Journaux depuis les Rapports. Aucune page actuelle ne l'utilise ; elle n'est donc pas proposée sur l'écran Sécurité. L'ancien historique suit les permissions des Journaux. Une règle enregistrée auparavant est conservée.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewPersonalInfo">
-    <value>Contrôle la restriction d’accès aux informations personnelles. Les champs protégés nécessitent toujours leur propre autorisation en cours et une autorisation de protection des données.</value>
+    <value>Détermine qui voit les adresses e-mail, les numéros de téléphone et les adresses postales des membres sur les pages du personnel, dans le rapport Personnel (à l'écran et lorsqu'il est programmé par e-mail), dans l'éditeur de profil et dans les applications. Les personnes qui n'ont pas cette permission voient toujours les noms, les groupes, les rôles et les statuts, et chacun voit toujours ses propres informations. Sans règle enregistrée, tout le monde le peut. Les champs protégés nécessitent en outre une autorisation de données protégées.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewProtectedCallData">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Détermine qui peut recevoir les détails d'appel protégés par SMS ou appel vocal après avoir saisi son code PIN. La révélation à l'écran et dans les applications n'en dépend pas : elle suit l'accès à l'appel ainsi qu'une autorisation de données protégées valide. S'applique uniquement lorsque le département est inscrit à la Protection avancée des données et que la diffusion par code PIN est activée.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewProtectedContactData">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>N'est pas proposée sur l'écran Sécurité, car aucune vérification à l'exécution ne la lit : toute personne qui peut consulter les contacts et dispose d'une autorisation de données protégées valide peut révéler les champs de contact protégés. Une règle enregistrée auparavant est conservée mais n'a aucun effet.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewProtectedOperationalData">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>N'est pas proposée sur l'écran Sécurité, car aucune vérification à l'exécution ne la lit : la révélation des journaux, documents, entrées de calendrier, champs personnalisés et rapports protégés suit les règles d'accès propres à chaque module ainsi qu'une autorisation de données protégées valide. Une règle enregistrée auparavant est conservée mais n'a aucun effet.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewProtectedPersonnelData">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>N'est pas proposée sur l'écran Sécurité, car aucune vérification à l'exécution ne la lit : toute personne qui peut consulter un membre et dispose d'une autorisation de données protégées valide peut révéler les champs protégés de ce membre. Une règle enregistrée auparavant est conservée mais n'a aucun effet.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewRestrictedRecords">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de voir les sections restreintes des rapports, comme les détails sur les victimes, les expositions et les enquêtes. Elle est aussi requise pour inclure du contenu restreint dans les divulgations, les exportations et les exécutions d'exportation, et pour lire l'historique des échanges de transmission. Sans règle enregistrée, seuls les administrateurs du département le peuvent.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewUdfFields">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Régit la lecture et l'enregistrement des valeurs de champs personnalisés via les applications et l'API. Cette permission n'apparaît sur aucun écran de configuration, donc tout le monde conserve l'accès en lecture et en mise à jour. Chaque valeur suit aussi le paramètre de visibilité de son champ et l'élément auquel elle appartient : un membre ne lit ou ne renseigne des valeurs que sur les appels, unités, personnes et contacts qu'il peut voir ou modifier. La gestion des définitions de champs personnalisés exige toujours un administrateur du département.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewWorkflowRuns">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de consulter l'historique des exécutions de flux de travail, les journaux d'exécution, l'état de santé et les exécutions en attente. Ce qu'une exécution a envoyé (sa sortie générée et son résultat) n'est affiché qu'aux personnes autorisées à modifier les flux de travail. Sans règle enregistrée, chaque membre peut consulter les exécutions et seuls les administrateurs du département peuvent les annuler ou les effacer ; enregistrer « Administrateurs du département » masque les exécutions à tous les autres, et enregistrer « Tout le monde » permet à chacun d'annuler et d'effacer.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewWorkforceCompensation">
-    <value>Consultez cette permission sur l’écran Sécurité. Sa valeur par défaut en l’absence de politique enregistrée, la portée de groupe, les permissions dépendantes et le comportement sur le web, l’API et le mobile sont en attente d’une revue complète côté client. Aucun aperçu d’impact en direct n’est encore disponible pour cette permission.</value>
+    <value>Permet de consulter l'effectif et les fiches de rémunération sans les modifier ; elle est aussi nécessaire pour constituer l'enquête salariale Cal OES MARS. Les montants s'affichent expurgés sans autorisation de données protégées. Disponible uniquement sur le web. Sans règle enregistrée, seuls les administrateurs du département le peuvent.</value>
   </data>
   <data xml:space="preserve" name="Plan.AddStep">
     <value>Ajouter une étape</value>

@@ -336,6 +336,19 @@ namespace Resgrid.Model.Services
 
 		Task<bool> CanUserViewUnitLocationViaMatrixAsync(int unitToView, string userId, int departmentId);
 
+		/// <summary>
+		/// The unit visibility matrix for <paramref name="permissionType"/> (ViewGroupUnits or CanSeeUnitLocations), computed
+		/// now from the permission rows rather than read from the cache: the answer the cached matrix gives once it is
+		/// rebuilt. For callers that need every viewer list when the cached matrix is missing or stale.
+		/// </summary>
+		Task<VisibilityPayloadUnits> GetLiveUnitVisibilityAsync(int departmentId, PermissionTypes permissionType);
+
+		/// <summary>
+		/// The personnel visibility matrix for <paramref name="permissionType"/> (ViewGroupUsers or CanSeePersonnelLocations),
+		/// computed now from the permission rows. See <see cref="GetLiveUnitVisibilityAsync"/>.
+		/// </summary>
+		Task<VisibilityPayloadUsers> GetLivePersonnelVisibilityAsync(int departmentId, PermissionTypes permissionType);
+
 		Task<bool> CanUserViewAllPeopleAsync(string userId, int departmentId);
 
 		Task<bool> CanUserDeleteContactNoteTypeAsync(string userId, string contactNoteTypeId);

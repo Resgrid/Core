@@ -68,7 +68,8 @@
                     }
                     @if (Model.CanManage)
                     {
-                        if (status == Resgrid.Model.PersonnelCertificationStatuses.PendingVerification)
+                        @* Nobody signs off their own record: verify and reinstate need another manager. *@
+                        if (status == Resgrid.Model.PersonnelCertificationStatuses.PendingVerification && !Model.IsSelf)
                         {
                             <form method="post" asp-controller="Certifications" asp-action="Verify" asp-route-area="User" asp-route-id="@r.PersonnelCertificationId" style="display: inline;">@Html.AntiForgeryToken()<button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-check"></i> @localizer["VerifyRecord"]</button></form>
                         }
@@ -81,7 +82,7 @@
                         {
                             <button type="button" class="btn btn-sm btn-default" data-toggle="modal" data-target="#statusModal" data-status="5">@localizer["MarkTrainee"]</button>
                         }
-                        if (status == Resgrid.Model.PersonnelCertificationStatuses.Suspended || status == Resgrid.Model.PersonnelCertificationStatuses.Revoked || status == Resgrid.Model.PersonnelCertificationStatuses.Trainee)
+                        if (!Model.IsSelf && (status == Resgrid.Model.PersonnelCertificationStatuses.Suspended || status == Resgrid.Model.PersonnelCertificationStatuses.Revoked || status == Resgrid.Model.PersonnelCertificationStatuses.Trainee))
                         {
                             <button type="button" class="btn btn-sm btn-default" data-toggle="modal" data-target="#statusModal" data-status="0">@localizer["Reinstate"]</button>
                         }

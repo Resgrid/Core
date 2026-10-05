@@ -97,35 +97,58 @@ namespace Resgrid.Tests.Allocations
 
 		#region Registry test 4 — no worker command ID registered twice
 
+		// Every host that publishes or schedules onto the shared Quidjibo store. Both use
+		// WorkerConfig.WorkerDbConnectionString, so they draw from ONE command ID space: the legacy
+		// Workers.Events.Console publishes SystemQueueProcessorCommand(50) and QueuesProcessorCommand(51).
+		private static readonly string[] WorkerHostPrograms =
+		{
+			Path.Combine("Workers", "Resgrid.Workers.Console", "Program.cs"),
+			Path.Combine("Workers", "Resgrid.Workers.Events.Console", "Program.cs")
+		};
+
 		[Test]
 		public void Worker_command_ids_are_registered_once()
 		{
-			var programPath = FindRepositoryFile(Path.Combine("Workers", "Resgrid.Workers.Console", "Program.cs"));
-			if (programPath == null)
+			var programPaths = WorkerHostPrograms.ToDictionary(p => p, FindRepositoryFile);
+			if (programPaths.Values.All(p => p == null))
 			{
-				Assert.Inconclusive("Workers.Console Program.cs not found relative to the test assembly; source-scan check skipped.");
+				Assert.Inconclusive("Worker host Program.cs files not found relative to the test assembly; source-scan check skipped.");
 				return;
 			}
 
-			// Commented-out registrations don't collide; scan active lines only.
-			var source = string.Join("\n", System.IO.File.ReadAllLines(programPath)
-				.Where(line => !line.TrimStart().StartsWith("//", StringComparison.Ordinal)));
+			programPaths.Where(kv => kv.Value == null).Select(kv => kv.Key).Should().BeEmpty(
+				"every worker host sharing the Quidjibo store must be scanned; update WorkerHostPrograms if one moved");
 
 			// Worker command IDs are the integer ctor argument of each scheduled/published command:
 			// new Commands.FooCommand(27). One ID may appear for multiple schedule lines of the SAME
-			// command; two DIFFERENT commands on one ID is the defect.
+			// command in the SAME host; two DIFFERENT commands on one ID is the defect. Commands are
+			// keyed by host because both hosts declare their own QueuesProcessorCommand and
+			// SystemQueueProcessorCommand — a matching simple name across hosts is still a collision.
 			var idsToCommands = new Dictionary<int, HashSet<string>>();
-			foreach (Match match in Regex.Matches(source, @"new\s+(?:Commands\.)?(\w+Command)\((\d+)\)"))
+			foreach (var programPath in programPaths.Values)
 			{
-				var id = int.Parse(match.Groups[2].Value);
-				if (!idsToCommands.TryGetValue(id, out var commands))
-					idsToCommands[id] = commands = new HashSet<string>(StringComparer.Ordinal);
-				commands.Add(match.Groups[1].Value);
+				var host = new DirectoryInfo(Path.GetDirectoryName(programPath)).Name;
+
+				// Commented-out registrations don't collide; scan active lines only.
+				var source = string.Join("\n", System.IO.File.ReadAllLines(programPath)
+					.Where(line => !line.TrimStart().StartsWith("//", StringComparison.Ordinal)));
+
+				// Whitespace-tolerant: a wrapped "new Commands\n.FooCommand(24)" is still a registration.
+				var matches = Regex.Matches(source, @"new\s+(?:Commands\s*\.\s*)?(\w+Command)\s*\(\s*(\d+)\s*\)");
+				matches.Count.Should().BePositive($"the scan must actually find command registrations in {host}");
+
+				foreach (Match match in matches)
+				{
+					var id = int.Parse(match.Groups[2].Value);
+					if (!idsToCommands.TryGetValue(id, out var commands))
+						idsToCommands[id] = commands = new HashSet<string>(StringComparer.Ordinal);
+					commands.Add($"{host}:{match.Groups[1].Value}");
+				}
 			}
 
-			idsToCommands.Should().NotBeEmpty("the scan must actually find command registrations");
-			idsToCommands.Where(kv => kv.Value.Count > 1).Should().BeEmpty(
-				"two different worker commands sharing one ID collide in the Quidjibo schedule");
+			idsToCommands.Where(kv => kv.Value.Count > 1)
+				.Select(kv => $"{kv.Key}: {string.Join(", ", kv.Value.OrderBy(c => c, StringComparer.Ordinal))}")
+				.Should().BeEmpty("two different worker commands sharing one ID collide in the shared Quidjibo store");
 		}
 
 		private static string FindRepositoryFile(string relativePath)

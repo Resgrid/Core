@@ -198,6 +198,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> ResendInvite(int? inviteId, CancellationToken cancellationToken)
 		{
@@ -210,6 +212,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("Invites", "Department", new { Area = "User" });
 		}
 
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> DeleteInvite(int? inviteId, CancellationToken cancellationToken)
 		{
@@ -558,8 +562,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (!String.IsNullOrWhiteSpace(model.RefreshTime))
 					await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.RefreshTime, DepartmentSettingTypes.BigBoardPageRefresh, cancellationToken);
 
-				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.MapHideUnavailable.ToString(), DepartmentSettingTypes.BigBoardHideUnavailable,
-					cancellationToken);
+				// The Settings view renders no Big Board fields. Zoom and refresh are skipped above when not posted, but an
+				// unposted bool binds as false, so this one is written only when the form carries it.
+				if (form != null && form.ContainsKey(nameof(model.MapHideUnavailable)))
+					await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.MapHideUnavailable.ToString(), DepartmentSettingTypes.BigBoardHideUnavailable,
+						cancellationToken);
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.DisableAutoAvailable.ToString(), DepartmentSettingTypes.DisabledAutoAvailable,
 					cancellationToken);
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.EnableModernNotifications.ToString(), DepartmentSettingTypes.EnableModernNotifications,
@@ -778,7 +785,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> ProvisionApiKey(CancellationToken cancellationToken)
 		{
@@ -796,7 +804,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("Api", "Department", new { Area = "User" });
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> ProvisionApiKeyAsync(CancellationToken cancellationToken)
 		{
@@ -810,7 +819,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return Content(d.ApiKey);
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> ProvisionActiveCallRssKey(CancellationToken cancellationToken)
 		{
@@ -1116,40 +1126,71 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		#region User States
 
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> SetUserResponding(string userId)
 		{
+			if (!await IsMemberOfThisDepartmentAsync(userId))
+				return Unauthorized();
+
 			await _actionLogsService.SetUserActionAsync(userId, (await _departmentsService.GetDepartmentByUserIdAsync(UserId)).DepartmentId,
 				(int)ActionTypes.Responding);
 
 			return RedirectToAction("Index", "Personnel", new { area = "User" });
 		}
 
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> SetUserNotResponding(string userId)
 		{
+			if (!await IsMemberOfThisDepartmentAsync(userId))
+				return Unauthorized();
+
 			await _actionLogsService.SetUserActionAsync(userId, (await _departmentsService.GetDepartmentByUserIdAsync(UserId)).DepartmentId,
 				(int)ActionTypes.NotResponding);
 
 			return RedirectToAction("Index", "Personnel", new { area = "User" });
 		}
 
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> SetUserStandingBy(string userId)
 		{
+			if (!await IsMemberOfThisDepartmentAsync(userId))
+				return Unauthorized();
+
 			await _actionLogsService.SetUserActionAsync(userId, (await _departmentsService.GetDepartmentByUserIdAsync(UserId)).DepartmentId,
 				(int)ActionTypes.StandingBy);
 
 			return RedirectToAction("Index", "Personnel", new { area = "User" });
 		}
 
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> SetUserOnScene(string userId)
 		{
+			if (!await IsMemberOfThisDepartmentAsync(userId))
+				return Unauthorized();
+
 			await _actionLogsService.SetUserActionAsync(userId, (await _departmentsService.GetDepartmentByUserIdAsync(UserId)).DepartmentId,
 				(int)ActionTypes.OnScene);
 
 			return RedirectToAction("Index", "Personnel", new { area = "User" });
+		}
+
+		/// <summary>An admin sets statuses for their own department's people only, never another department's user by id.</summary>
+		private async Task<bool> IsMemberOfThisDepartmentAsync(string userId)
+		{
+			if (String.IsNullOrWhiteSpace(userId))
+				return false;
+
+			var member = await _departmentsService.GetDepartmentMemberAsync(userId, DepartmentId);
+
+			return member != null && member.DepartmentId == DepartmentId && !member.IsDeleted;
 		}
 
 		#endregion User States
@@ -1261,6 +1302,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> CallSettings(CallSettingsView model, CancellationToken cancellationToken)
 		{
@@ -1507,7 +1549,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return Json(callEmailTypes);
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> ClearDepartmentCache()
 		{
@@ -1520,7 +1563,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return Json("true");
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> DeleteCallEmailSettings(CancellationToken cancellationToken)
 		{
@@ -1652,7 +1696,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return Json(await _numbersService.GetAvailableNumbers(country, areaCode));
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> ProvisionNumber(string msisdn, string country, CancellationToken cancellationToken)
 		{
@@ -1670,7 +1715,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("ProvisionFailed");
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> ProvisionDefaultNumberAsync(string country, string areaCode, CancellationToken cancellationToken)
 		{
@@ -2740,6 +2786,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> DeleteDepartment(DeleteDepartmentView model, CancellationToken cancellationToken)
 		{
@@ -2753,6 +2800,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				var result = await _deleteService.DeleteDepartment(DepartmentId, UserId, IpAddressHelper.GetRequestIP(Request, true),
 					$"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}", cancellationToken);
+
+				// The service decides who may delete the department (the managing member). Billing is only cancelled once it has
+				// accepted the request; a refused request must leave the subscription and add-ons untouched.
+				if (result != DeleteDepartmentResults.NoFailure)
+					return Unauthorized();
 
 				var stripeCustomer = await _departmentSettingsService.GetStripeCustomerIdForDepartmentAsync(DepartmentId);
 				var currentSub = await _subscriptionsService.GetActiveStripeSubscriptionAsync(stripeCustomer);
@@ -2775,7 +2827,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> CancelDepartmentDeleteRequest(CancellationToken cancellationToken)
 		{

@@ -53,7 +53,10 @@ var resgrid;
                             $.each(results, function (index, value) {
                                 var tr = '<tr>';
                                 tr += '<td>' + value.msisdn + '</td>';
-                                tr += '<td><a class="btn btn-xs btn-primary" href="/User/Department/ProvisionNumber?msisdn=' + value.msisdn + '&country=' + $('#country').val() + '&areaCode=' + $('#areaCode').val() + '">Select This Number</a></td>';
+                                // Provisioning is a POST with the antiforgery token, so each choice is a small form rather than a link.
+                                tr += '<td><form method="post" style="display:inline;" action="/User/Department/ProvisionNumber?msisdn=' + encodeURIComponent(value.msisdn) + '&country=' + encodeURIComponent($('#country').val()) + '&areaCode=' + encodeURIComponent($('#areaCode').val()) + '">' +
+                                    '<input type="hidden" name="__RequestVerificationToken" value="' + $('meta[name="request-verification-token"]').attr('content') + '" />' +
+                                    '<button type="submit" class="btn btn-xs btn-primary">Select This Number</button></form></td>';
                                 tr += '</tr>';
                                 tableHtml += tr;
                             });

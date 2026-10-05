@@ -291,6 +291,16 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public bool ConfirmRestricted { get; set; }
 	}
 
+	/// <summary>One sequence on the Records Settings numbering panel; NextSequence is blank unless the administrator raises it.</summary>
+	public class RecordsNextNumberRow
+	{
+		public string ScopeKey { get; set; }
+		public string Label { get; set; }
+		public string NextNumber { get; set; }
+		public int CurrentNextSequence { get; set; }
+		public int? NextSequence { get; set; }
+	}
+
 	/// <summary>Records Settings screen (RMS plan section 4.9, settings 70-77).</summary>
 	public class RecordsSettingsView : RecordsBaseView
 	{
@@ -298,9 +308,12 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public Department Department { get; set; }
 		public RmsLifecyclePreset DefaultLifecyclePreset { get; set; }
 		public int ReviewDueHours { get; set; }
-		public bool IncludeYear { get; set; }
+		/// <summary>Setting 72's pattern (see RecordNumberFormat), e.g. "{PREFIX}-{YYYY}-{SEQ}".</summary>
+		public string NumberPattern { get; set; }
 		public int SequenceWidth { get; set; }
-		public bool PerGroupSequence { get; set; }
+		/// <summary>The year the next numbers below are shown for.</summary>
+		public int NumberingYear { get; set; }
+		public List<RecordsNextNumberRow> NextNumbers { get; set; } = new List<RecordsNextNumberRow>();
 		public int? DepartmentDefaultYears { get; set; }
 		public List<RecordsRetentionOverrideRow> RetentionOverrides { get; set; } = new List<RecordsRetentionOverrideRow>();
 		public RecordsGroupVisibilityMode GroupVisibilityMode { get; set; }

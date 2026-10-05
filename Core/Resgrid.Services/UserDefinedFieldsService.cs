@@ -64,6 +64,21 @@ namespace Resgrid.Services
 			return allFields.Where(f => IsFieldVisibleToRole(f, isDepartmentAdmin, isGroupAdmin)).ToList();
 		}
 
+		public async Task<List<UdfFieldValue>> FilterValuesVisibleToUserAsync(int departmentId, int entityType, IEnumerable<UdfFieldValue> values,
+			bool canViewUdfFields, bool isDepartmentAdmin, bool isGroupAdmin)
+		{
+			var list = values?.Where(v => v != null && !string.IsNullOrEmpty(v.UdfFieldId)).ToList() ?? new List<UdfFieldValue>();
+			if (!canViewUdfFields || list.Count == 0)
+				return new List<UdfFieldValue>();
+
+			var visibleFieldIds = (await GetVisibleFieldsForActiveDefinitionAsync(departmentId, entityType, isDepartmentAdmin, isGroupAdmin))
+				.Where(f => !string.IsNullOrEmpty(f.UdfFieldId))
+				.Select(f => f.UdfFieldId)
+				.ToHashSet(StringComparer.Ordinal);
+
+			return list.Where(v => visibleFieldIds.Contains(v.UdfFieldId)).ToList();
+		}
+
 		private static bool IsFieldVisibleToRole(UdfField field, bool isDepartmentAdmin, bool isGroupAdmin)
 		{
 			var visibility = (UdfFieldVisibility)field.Visibility;

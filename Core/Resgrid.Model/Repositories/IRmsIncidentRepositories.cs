@@ -52,7 +52,8 @@ namespace Resgrid.Model.Repositories
 		Task<IEnumerable<RmsIncidentReport>> QueryAsync(int departmentId, RmsIncidentReportQuery query);
 		Task<int> CountAsync(int departmentId, RmsIncidentReportQuery query);
 		Task<IEnumerable<int>> GetYearsAsync(int departmentId);
-		Task<int> GetMaxRecordNumberSequenceAsync(int departmentId, string numberPrefix);
+		/// <summary>Highest sequence already issued between a number prefix and suffix, across Records and incident reports; 0 when none.</summary>
+		Task<int> GetMaxRecordNumberSequenceAsync(int departmentId, string numberPrefix, string numberSuffix);
 		Task<bool> TryBumpRowVersionAsync(int departmentId, string reportId, long expectedRowVersion, CancellationToken cancellationToken = default);
 		/// <summary>Retention candidates (RMS-3, worker 43): live, closed reports finalized before the cutoff, oldest first.</summary>
 		Task<IEnumerable<RmsIncidentReport>> GetRetentionCandidatesAsync(int departmentId, DateTime cutoffUtc, int take, string afterId = null);

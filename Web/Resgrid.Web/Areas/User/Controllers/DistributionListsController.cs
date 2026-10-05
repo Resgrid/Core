@@ -72,13 +72,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (ModelState.IsValid)
 			{
+				// A new list is always a new row: a posted id would make the save update another row by key.
+				model.List.DistributionListId = 0;
 				model.List.DepartmentId = DepartmentId;
 				model.List.Members = new Collection<DistributionListMember>();
 				model.List.Type = (int)DistributionListTypes.Internal;
 
 				if (collection.ContainsKey("listMembers"))
 				{
-					var userIds = collection["listMembers"].ToString().Split(char.Parse(","));
+					// Only this department's members: a posted user id from another department would be mailed by the list.
+					var departmentUserIds = (await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId)).Select(u => u.UserId).ToHashSet(StringComparer.OrdinalIgnoreCase);
+					var userIds = collection["listMembers"].ToString().Split(char.Parse(",")).Where(departmentUserIds.Contains).ToArray();
 
 					foreach (var userId in userIds)
 					{
@@ -102,6 +106,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var model = new EditListView();
 			model.List = await _distributionListsService.GetDistributionListByIdAsync(distributionListId);
+
+			if (model.List == null || model.List.DepartmentId != DepartmentId)
+				return Unauthorized();
+
 			model.ListTypes = model.Type.ToSelectList();
 
 			if (!model.List.UseSsl.HasValue)
@@ -122,7 +130,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> EditList(EditListView model, IFormCollection collection, CancellationToken cancellationToken)
 		{
+			// The posted id names the list to change, so it must be one of this department's lists.
 			var list = await _distributionListsService.GetDistributionListByIdAsync(model.List.DistributionListId);
+
+			if (list == null || list.DepartmentId != DepartmentId)
+				return Unauthorized();
+
 			model.Users = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId);
 			model.ListTypes = model.Type.ToSelectList();
 
@@ -131,6 +144,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (model.Type == DistributionListTypes.External && !StringHelpers.IsValidDomainName(model.List.Hostname))
 				ModelState.AddModelError("List.Hostname", string.Format("The hostname supplied is not valid, must looks somthing like mail.mydepartment.com."));
+
+			// The same rule as a new list (and the page's own address check): an inbound address belongs to one list only.
+			var addressOwner = await _distributionListsService.GetDistributionListByAddressAsync(model.List.EmailAddress);
+
+			if (addressOwner != null && addressOwner.DistributionListId != list.DistributionListId)
+				ModelState.AddModelError("List.EmailAddress", "Email address already in use, please try another one");
 
 
 			if (ModelState.IsValid)
@@ -151,6 +170,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (collection.ContainsKey("listMembers"))
 				{
+					// Only this department's members can be added; existing rows are kept or removed as posted.
+					var departmentUserIds = (await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId)).Select(u => u.UserId).ToHashSet(StringComparer.OrdinalIgnoreCase);
 					var userIds = collection["listMembers"].ToString().Split(char.Parse(","));
 					var membersToRemove = list.Members.Where(x => !userIds.Contains(x.UserId)).ToList();
 
@@ -159,7 +180,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 						list.Members.Remove(member);
 					}
 
-					foreach (var userId in userIds)
+					foreach (var userId in userIds.Where(departmentUserIds.Contains))
 					{
 						if (list.Members.All(x => x.UserId != userId))
 						{
@@ -183,12 +204,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> DeleteList(int distributionListId, CancellationToken cancellationToken)
 		{
 			var list = await _distributionListsService.GetDistributionListByIdAsync(distributionListId);
 
-			if (list.DepartmentId == DepartmentId)
+			if (list != null && list.DepartmentId == DepartmentId)
 			{
 				await _distributionListsService.DeleteDistributionListsByIdAsync(distributionListId, cancellationToken);
 			}
@@ -196,10 +219,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("Index", "DistributionLists", new { Area = "User" });
 		}
 
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> SetListStatus(int distributionListId, bool disable, CancellationToken cancellationToken)
 		{
 			var list = await _distributionListsService.GetDistributionListByIdAsync(distributionListId);
+
+			if (list == null || list.DepartmentId != DepartmentId)
+				return Unauthorized();
+
 			list.IsDisabled = disable;
 
 			await _distributionListsService.SaveDistributionListOnlyAsync(list, cancellationToken);

@@ -691,6 +691,7 @@
   <data name="workforce_naics_invalid" xml:space="preserve"><value>Το NAICS πρέπει να έχει έξι ψηφία.</value></data>
   <data name="workforce_no_inputs" xml:space="preserve"><value>Τίποτα προς κοστολόγηση: καμία καταχώριση εργασίας ή ένδειξη χρήσης.</value></data>
   <data name="workforce_not_found" xml:space="preserve"><value>Η εγγραφή δεν βρέθηκε.</value></data>
+  <data name="workforce_self_approval" xml:space="preserve"><value>Δεν μπορείτε να εγκρίνετε αυτό το προφίλ αποδοχών: αφορά τις δικές σας αποδοχές ή κάνατε εσείς την τελευταία αλλαγή. Πρέπει να το εγκρίνει άλλος διαχειριστής.</value></data>
   <data name="workforce_pay_basis_invalid" xml:space="preserve"><value>Η βάση αμοιβής δεν είναι έγκυρη.</value></data>
   <data name="workforce_profile_overlap" xml:space="preserve"><value>Η περίοδος επικαλύπτεται με άλλο προφίλ ίδιου εύρους.</value></data>
   <data name="workforce_protected_write_refused" xml:space="preserve"><value>Η προστατευμένη εγγραφή απορρίφθηκε.</value></data>

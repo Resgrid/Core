@@ -36,13 +36,13 @@ namespace Resgrid.Repositories.DataRepository
             if (unit != unitId) return null;
             return await QueryFirstOrDefaultAsync<UnitState>($"SELECT {Cols("UnitStateId", "UnitId", "State", "Timestamp")} FROM {Tbl("UnitStates")} {(IsPostgres ? "" : "WITH (UPDLOCK,HOLDLOCK)")} WHERE {Col("UnitId")}={P}UnitId ORDER BY {Col("Timestamp")} DESC,{Col("UnitStateId")} DESC {Paging()}", new { UnitId = unitId, Skip = 0, Take = 1 }, default);
         }
-        public async Task<int> AppendUnitStateAsync(int departmentId, int unitId, int state, DateTime now)
+        public async Task<int> AppendUnitStateAsync(int departmentId, int unitId, int state, DateTime now, string setByUserId = null)
         {
             await LockUnitAsync(departmentId, unitId);
             var current = await LatestUnitStateAsync(departmentId, unitId);
             if (current != null && current.Timestamp >= now) now = current.Timestamp.AddMilliseconds(1);
             // Routing only: never copy notes, coordinates or another row's protected envelope.
-            return await ScalarAsync<int>($"INSERT INTO {Tbl("UnitStates")} ({Cols("UnitId", "State", "Timestamp", "IsProtected")}) {(IsPostgres ? "" : "OUTPUT INSERTED.[UnitStateId]")} VALUES ({P}UnitId,{P}State,{P}Now,{Bool(false)}) {(IsPostgres ? "RETURNING unitstateid" : "")}", new { UnitId = unitId, State = state, Now = now }, default);
+            return await ScalarAsync<int>($"INSERT INTO {Tbl("UnitStates")} ({Cols("UnitId", "State", "Timestamp", "IsProtected", "SetByUserId", "SetByOrigin")}) {(IsPostgres ? "" : "OUTPUT INSERTED.[UnitStateId]")} VALUES ({P}UnitId,{P}State,{P}Now,{Bool(false)},{P}SetByUserId,{P}SetByOrigin) {(IsPostgres ? "RETURNING unitstateid" : "")}", new { UnitId = unitId, State = state, Now = now, SetByUserId = setByUserId, SetByOrigin = (int)StatusSetOrigins.Maintenance }, default);
         }
         public async Task<int> LastAppendedUnitStateIdAsync(int departmentId, int unitId)
         {

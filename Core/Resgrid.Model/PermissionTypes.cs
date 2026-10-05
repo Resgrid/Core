@@ -88,13 +88,13 @@ namespace Resgrid.Model
 		// documented no-row default below (ClaimsLogic.AddRecordClaims), so every default equals the
 		// current Logs behavior and activation changes nobody's access by accident.
 
-		/// <summary>Author Records (Record_View + Record_Create). No-row default: everyone (matches CreateLog). LockToGroup restricts authoring to the user's own group's subjects.</summary>
+		/// <summary>Author Records (Record_View + Record_Create). No-row default: everyone (matches CreateLog). No group lock is offered or evaluated.</summary>
 		CreateRecord = 50,
 
 		/// <summary>Void a finalized Record or cancel a non-finalized one (Record_Void). No-row default: everyone. That is what AddDeleteLogClaims grants today when no DeleteLog row exists, so parity requires it even though the registry table says "department admins". A configured DeleteLog row is copied verbatim at activation.</summary>
 		DeleteRecord = 51,
 
-		/// <summary>Review a Record submitted for review (Record_Review). No-row default: department and group admins. LockToGroup: reviewers see only their group's queue.</summary>
+		/// <summary>Review a Record submitted for review (Record_Review). No-row default: department and group admins. No group lock is offered or evaluated; ViewGroupRecords scopes what a reviewer can see.</summary>
 		ReviewRecords = 52,
 
 		/// <summary>Approve step of the Approval/Acknowledgement preset (Record_Approve). No-row default: department admins.</summary>
@@ -112,13 +112,13 @@ namespace Resgrid.Model
 		/// <summary>Print/export Records (Record_Export). No-row default: everyone (per-record print/export is Logs parity). Bulk export honors the viewer's group scope regardless.</summary>
 		ExportRecords = 57,
 
-		/// <summary>Share one Record to another group or externally (Record_Share). No-row default: department admins.</summary>
+		/// <summary>Share one Record to another group or externally (Record_Share). No-row default: department admins. Not on the Permissions screen: the claim is issued but no endpoint uses it yet.</summary>
 		ShareRecordsExternally = 58,
 
 		/// <summary>Read restricted sections: Coroner, casualty/exposure, investigation (RecordRestricted_View). No-row default: department admins. Never widened by group scope.</summary>
 		ViewRestrictedRecords = 59,
 
-		/// <summary>Read pre-cutover legacy Log/UnitLog history (RecordLegacy_View). No-row default: everyone (everyone holds Log:View today).</summary>
+		/// <summary>Read pre-cutover legacy Log/UnitLog history (RecordLegacy_View). No-row default: everyone (everyone holds Log:View today). Not on the Permissions screen: the claim is issued but no endpoint uses it yet.</summary>
 		ViewLegacyRecords = 60,
 
 		/// <summary>Cross-group Record visibility control, mirroring ViewGroupUsers/ViewGroupUnits. Issues no claim; evaluated per Record at the service layer (AuthorizationService.CanUserViewRecordAsync). No-row default: everyone, not locked (department-wide, matching Logs today). RMS plan section 5.7.1.</summary>

@@ -258,8 +258,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		public async Task<IActionResult> Index(string scope = "person", int? category = null, int? groupId = null, int? roleId = null)
 		{
+			// The dashboard is every member's record status; certification setup alone (types, requirements, settings)
+			// does not read records, so it lands on the catalog instead.
 			if (!CanView)
-				return Unauthorized();
+				return CanSetup ? RedirectToAction(nameof(Types)) : Unauthorized();
 
 			var view = Page(new CertificationDashboardView
 			{
@@ -493,7 +495,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Role = role,
 				Types = await _certifications.GetActiveCertificationTypesAsync(DepartmentId, CertificationAppliesTo.Person),
 				Requirements = await _certifications.GetRoleRequirementsAsync(roleId),
-				Evaluations = await _certifications.EvaluateRoleRequirementsAsync(DepartmentId, roleId),
+				// Each member's qualification is read from their records, so it needs ViewCertifications; setup alone edits the rules.
+				Evaluations = CanView ? await _certifications.EvaluateRoleRequirementsAsync(DepartmentId, roleId) : new List<RoleCertificationEvaluation>(),
 				MemberNames = await PersonnelNamesAsync(),
 				EnforcementMode = (await _certifications.GetCertificationSettingsAsync(DepartmentId)).EnforcementMode
 			});
@@ -619,11 +622,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> Person(string userId)
 		{
 			var subject = string.IsNullOrWhiteSpace(userId) ? UserId : userId;
-			// Same rule as the record page: the shared Profile forms' subject authorization (self-service, department
-			// and group admins), or the certification-view permission over any member of this department — the
-			// dashboard links every person row here.
+			// Same rule as the record page: your own records, or ViewCertifications (department administrators by
+			// default) over any member of this department — the dashboard links every person row here. Being a group
+			// admin is not a certification permission, so it does not open a member's records by itself.
 			Dictionary<string, string> names = null;
-			var allowed = await _authorization.CanUserEditProfileAsync(UserId, DepartmentId, subject);
+			var allowed = string.Equals(subject, UserId, StringComparison.OrdinalIgnoreCase);
 			if (!allowed && CanView)
 			{
 				names = await PersonnelNamesAsync();

@@ -45,6 +45,8 @@ namespace Resgrid.Services.Search
 			public HashSet<string> RosteredDeploymentIds;
 			/// <summary>Records occupancy module open for this caller (module flag, Records usable, active Records member); null until checked.</summary>
 			public bool? OccupancyOpen;
+			/// <summary>Business Operations capability flags already evaluated for this operation (flag key → enabled).</summary>
+			public Dictionary<string, bool> BusinessFlags = new Dictionary<string, bool>(StringComparer.Ordinal);
 			public string GlobalGeneration => GlobalSearchGeneration.Compute(CatalogVersion, PolicyEpoch);
 			public string RecordsGeneration => RecordsSearchGeneration.Compute(CatalogVersion, PolicyEpoch);
 		}
@@ -102,9 +104,13 @@ namespace Resgrid.Services.Search
 			!member.IsDeleted && member.IsDisabled != true;
 
 		private static bool ProjectionIsCurrent(GlobalSearchHit hit, SearchProjection projection, SearchAccess access) =>
-			hit.DepartmentId == access.Principal.DepartmentId && projection.DepartmentId == access.Principal.DepartmentId &&
+			hit.DepartmentId == access.Principal.DepartmentId &&
 			hit.Generation == access.GlobalGeneration && hit.RowVersion > 0 && hit.RowVersion == projection.RowVersion &&
-			hit.EntityType == projection.EntityType && hit.EntityId == projection.EntityId && !projection.DeletedOn.HasValue &&
+			hit.EntityType == projection.EntityType && hit.EntityId == projection.EntityId && ProjectionIsLive(projection, access);
+
+		/// <summary>The projection itself may be shown to this caller under the current policy, however it was found.</summary>
+		private static bool ProjectionIsLive(SearchProjection projection, SearchAccess access) =>
+			projection != null && projection.DepartmentId == access.Principal.DepartmentId && !projection.DeletedOn.HasValue &&
 			projection.PolicyEpoch == access.PolicyEpoch && projection.ProtectedCatalogVersion == access.CatalogVersion &&
 			(!projection.IsAdminOnly || access.Principal.IsDepartmentAdmin) &&
 			(!projection.IncludesProtectedText || access.ProtectedTextAllowed);
@@ -161,18 +167,22 @@ namespace Resgrid.Services.Search
 					// Workforce & Business Operations families: the row must still exist in the department and the caller must hold the page's view claim.
 					case SearchEntityTypes.Invoice:
 						if (_invoicing?.Value == null || !principal.HasResourceClaim("Invoicing", "View") && !principal.IsDepartmentAdmin) return false;
+						if (!await BusinessFamilyOpenAsync(access, FeatureFlagKeys.CustomerInvoicing)) return false;
 						var invoice = await _invoicing.Value.GetInvoiceByIdAsync(hit.EntityId, departmentId);
 						return invoice != null && invoice.DepartmentId == departmentId && !invoice.IsDeleted;
 					case SearchEntityTypes.RateCard:
 						if (_invoicing?.Value == null || !principal.HasResourceClaim("Invoicing", "View") && !principal.IsDepartmentAdmin) return false;
+						if (!await BusinessFamilyOpenAsync(access, FeatureFlagKeys.CustomerInvoicing)) return false;
 						var rateCard = await _invoicing.Value.GetRateCardByIdAsync(hit.EntityId, departmentId, true);
 						return rateCard != null && rateCard.DepartmentId == departmentId && !rateCard.IsDeleted;
 					case SearchEntityTypes.Bid:
 						if (_bids?.Value == null || !principal.HasResourceClaim("Bids", "View") && !principal.IsDepartmentAdmin) return false;
+						if (!await BusinessFamilyOpenAsync(access, FeatureFlagKeys.ContractorBilling)) return false;
 						var bid = await _bids.Value.GetBidByIdAsync(hit.EntityId, departmentId);
 						return bid != null && bid.DepartmentId == departmentId && !bid.IsDeleted;
 					case SearchEntityTypes.ServiceContract:
 						if (_contracts?.Value == null || !principal.HasResourceClaim("ServiceContracts", "View") && !principal.IsDepartmentAdmin) return false;
+						if (!await BusinessFamilyOpenAsync(access, FeatureFlagKeys.ContractorBilling)) return false;
 						var contract = await _contracts.Value.GetContractByIdAsync(hit.EntityId, departmentId);
 						return contract != null && contract.DepartmentId == departmentId && !contract.IsDeleted;
 					case SearchEntityTypes.Deployment:
@@ -217,7 +227,8 @@ namespace Resgrid.Services.Search
 						var departmentGroup = await _groups.GetGroupByIdAsync(groupId);
 						return departmentGroup != null && departmentGroup.DepartmentId == departmentId;
 					case SearchEntityTypes.CertificationType:
-						if (_certifications?.Value == null || !int.TryParse(hit.EntityId, out var typeId) || !principal.HasResourceClaim("Certifications", "View") && !principal.IsDepartmentAdmin) return false;
+						if (_certifications?.Value == null || !int.TryParse(hit.EntityId, out var typeId) ||
+							!principal.HasResourceClaim("Certifications", "View") && !principal.HasResourceClaim("Certifications", "Setup") && !principal.IsDepartmentAdmin) return false;
 						var certificationType = await _certifications.Value.GetCertificationTypeByIdAsync(typeId);
 						return certificationType != null && certificationType.DepartmentId == departmentId && !certificationType.IsDeleted;
 					default:
@@ -265,6 +276,31 @@ namespace Resgrid.Services.Search
 				access.Deployments = new Dictionary<string, Deployment>(StringComparer.OrdinalIgnoreCase);
 				access.RosteredDeploymentIds = null;
 			}
+		}
+
+		/// <summary>
+		/// The flag gate of a paid Business Operations family's pages beyond the module switch (AllowedTypes applies that): the
+		/// Business.Operations master flag and the family's capability flag for this department, the same flags the system
+		/// action catalog and the pages' entitlement helper evaluate. Evaluated once per flag per operation; fails closed.
+		/// </summary>
+		private async Task<bool> BusinessFamilyOpenAsync(SearchAccess access, string capabilityFlag)
+		{
+			if (access.BusinessFlags.TryGetValue(capabilityFlag, out var cached))
+				return cached;
+			var open = false;
+			try
+			{
+				var departmentId = access.Principal.DepartmentId;
+				open = _featureToggles != null &&
+					await _featureToggles.IsEnabledAsync(FeatureFlagKeys.BusinessOperations, departmentId) &&
+					await _featureToggles.IsEnabledAsync(capabilityFlag, departmentId);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, "Business Operations search entitlement could not be verified.");
+			}
+			access.BusinessFlags[capabilityFlag] = open;
+			return open;
 		}
 
 		/// <summary>The occupancy pages' gate: the module flag on a usable Records module, and an active member with Records access.</summary>

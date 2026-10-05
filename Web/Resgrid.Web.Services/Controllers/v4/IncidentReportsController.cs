@@ -385,6 +385,62 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 		}
 
+		/// <summary>
+		/// Re-reads the call, unit and personnel statuses and Incident Command into an editable draft: blank fields are filled,
+		/// prefilled values the author never changed follow their source, and units, mutual aid and tactic timestamps the
+		/// sources now hold are added. Nothing the author typed or corrected is overwritten. For a report started while the
+		/// incident was still running. 409 with the current report on a stale row version.
+		/// </summary>
+		[HttpPost("RefreshFromSources")]
+		[Consumes(MediaTypeNames.Application.Json)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status409Conflict)]
+		[Authorize(Policy = ResgridResources.Record_Create)]
+		public async Task<ActionResult<IncidentReportResult>> RefreshFromSources(IncidentReportCommandInput input, CancellationToken cancellationToken)
+		{
+			if (!ClaimsAuthorizationHelper.CanViewCalls()) return Forbid();
+			if (input == null || string.IsNullOrWhiteSpace(input.ReportId))
+				return BadRequest();
+			var usable = await UsableAsync();
+			if (usable != null)
+				return usable;
+
+			var rowVersion = RecordsApiHelper.ResolveRowVersion(input.RowVersion, Request);
+			if (!rowVersion.HasValue)
+				return Problem(statusCode: StatusCodes.Status428PreconditionRequired, title: "RowVersion or If-Match is required to refresh a draft.", type: "precondition_required");
+
+			var origin = RecordsApiHelper.ResolveOrigin(input.OriginClient);
+			var gate = await FieldClientGateAsync(origin);
+			if (gate != null)
+				return gate;
+
+			var current = await LoadAuthorizedAsync(input.ReportId);
+			if (current == null)
+				return NotFound();
+			if (!CanEditReport(current.Report))
+				return Forbid();
+
+			try
+			{
+				var refreshed = await _incidentReports.RefreshFromSourcesAsync(DepartmentId, UserId, input.ReportId, rowVersion.Value, origin, cancellationToken);
+				Response.Headers["X-Resgrid-Refresh"] = $"filled={refreshed.FilledCount};updated={refreshed.UpdatedCount};added={refreshed.AddedCount}";
+				return Ok(await WrapAsync(refreshed.Aggregate, refreshed.Changed ? ResponseHelper.Updated : ResponseHelper.Success));
+			}
+			catch (RecordConcurrencyException ex)
+			{
+				return await ConflictAsync(input.ReportId, ex.ExpectedRowVersion);
+			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
+			catch (ArgumentException ex)
+			{
+				return Problem(statusCode: StatusCodes.Status400BadRequest, title: ex.Message, type: "record_validation");
+			}
+			catch (RecordTransitionException ex)
+			{
+				return Problem(statusCode: StatusCodes.Status409Conflict, title: ex.Message, type: "record_transition");
+			}
+		}
+
 		/// <summary>Runs local validation (and the destination's validate endpoint when IncludeDestination and submission is enabled); issues stay on the report.</summary>
 		[HttpPost("Validate")]
 		[Consumes(MediaTypeNames.Application.Json)]
@@ -449,6 +505,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpPost("CorrectAndResubmit")]
 		[Consumes(MediaTypeNames.Application.Json)]
 		[Authorize(Policy = ResgridResources.Record_Submit)]
+		[Authorize(Policy = ResgridResources.Record_Finalize)]
 		public async Task<ActionResult<IncidentReportResult>> CorrectAndResubmit(IncidentReportCommandInput input, CancellationToken cancellationToken)
 		{
 			if (input != null && !input.Attested)
@@ -544,6 +601,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					await _idempotency.RememberAsync(DepartmentId, UserId, key, command, input.ReportId);
 				return Ok(await WrapAsync(aggregate, ResponseHelper.Updated));
 			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
 			catch (RecordConcurrencyException ex)
 			{
 				return await ConflictAsync(input.ReportId, ex.ExpectedRowVersion);

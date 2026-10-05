@@ -30,8 +30,7 @@
       "Secret": true,
       "Location": {
         "Controller": "Subscription",
-        "Action": "Index",
-        "Field": "StripeCustomerId"
+        "Action": "Index"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -63,8 +62,7 @@
       "Secret": true,
       "Location": {
         "Controller": "Subscription",
-        "Action": "Index",
-        "Field": "BrainTreeCustomerId"
+        "Action": "Index"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -96,8 +94,7 @@
       "Secret": true,
       "Location": {
         "Controller": "Subscription",
-        "Action": "Index",
-        "Field": "PaddleCustomerId"
+        "Action": "Index"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",

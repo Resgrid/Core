@@ -1,0 +1,50 @@
+@model Resgrid.Web.Areas.User.Models.Records.ReportSourcesPanelView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.ReportSources> rs
+@{
+	// The panel script reads every label from here, so it never shows an untranslated string.
+	var keys = new[]
+	{
+		"NoTarget", "UsedTime", "Use", "UseHint", "UnitNotOnReport", "NothingToFill", "FilledUnit", "FilledFromCall", "NothingNew",
+		"SetBy", "SetByVia", "Via", "FilterAll", "FilterUnits", "FilterPersonnel", "FilterDispatch", "FilterCommand", "NoEntries",
+		"KindCall", "KindUnitDispatch", "KindPersonnelDispatch", "KindUnitStatus", "KindPersonnelStatus", "KindCommand", "KindObjective", "KindCheckIn",
+		"LinkInferred", "LinkAuto", "LinkHint", "FillBlanks", "Replace", "NoUnits", "Dispatched", "AssignedByCommand", "Enroute", "OnScene",
+		"Staging", "Cancelled", "Cleared", "InService", "CommandAssigned", "CommandReleased", "CrewList", "NoPersonnel", "NotEngaged",
+		"Responding", "First", "Last", "NoCommand", "CommandEstablished", "CommandClosed", "Commanders", "TacticTimestamps", "NoTactics",
+		"FillTactics", "FilledCount", "MutualAid", "NoMutualAid", "NoRunReports", "Final", "NotFinal", "ByAuthor", "Withheld", "Started",
+		"Ended", "CrewCount", "PersonnelList", "Location", "InitialReport", "Cause", "OtherAgencies", "OtherUnits", "Narrative",
+		"AddToNarrative", "NarrativeAdded", "PickCall", "Loading", "PartialSources", "LoadFailed",
+		"OriginWeb", "OriginResponderApp", "OriginUnitApp", "OriginDispatchApp", "OriginBigBoard", "OriginCommandApp", "OriginMcp", "OriginApi",
+		"OriginSms", "OriginVoice", "OriginChat", "OriginDispatchAutomation", "OriginSchedule", "OriginMaintenance"
+	};
+	var strings = keys.ToDictionary(k => k, k => rs[k].Value);
+	foreach (var field in Resgrid.Model.NerisTacticTimestamps.Fields)
+		strings["Tactic_" + field] = rs["Tactic_" + field].Value;
+	var stringsJson = System.Text.Json.JsonSerializer.Serialize(strings);
+	var url = Url.Action("Call", "ReportSources", new { area = "User", recordId = Model.RecordId });
+	var isRun = Model.Mode == "run";
+}
+<link rel="stylesheet" href="~/css/report-sources-panel.css" asp-append-version="true" />
+<div class="ibox report-sources" id="report-sources" data-url="@url" data-call-id="@Model.CallId" data-form="@Model.FormId" data-mode="@Model.Mode"
+	 data-narrative-target="@Model.NarrativeTarget" data-auto-fill="@(Model.AutoFill ? "true" : "false")" data-strings="@stringsJson">
+	<div class="ibox-title">
+		<h5><i class="fa fa-history"></i> @rs["PanelTitle"]</h5>
+		<div class="ibox-tools"><a href="#" data-rs-reload title="@rs["Reload"]" aria-label="@rs["Reload"]"><i class="fa fa-refresh"></i></a></div>
+	</div>
+	<div class="ibox-content">
+		<p class="text-muted small">@rs["PanelIntro"]</p>
+		@if (isRun)
+		{
+			<p><button type="button" class="btn btn-primary btn-sm" data-rs-fill @(Model.CallId.HasValue ? string.Empty : "disabled") title="@rs["FillFromCallHint"]"><i class="fa fa-magic"></i> @rs["FillFromCall"]</button></p>
+		}
+		<p data-rs-status role="status" aria-live="polite" class="small text-muted"></p>
+		<ul class="nav nav-tabs" data-rs-tabs>
+			<li class="active"><a href="#" data-rs-tab="timeline">@rs["TabTimeline"]</a></li>
+			<li><a href="#" data-rs-tab="units">@rs["TabUnits"]</a></li>
+			<li><a href="#" data-rs-tab="personnel">@rs["TabPersonnel"]</a></li>
+			<li><a href="#" data-rs-tab="command">@rs["TabCommand"]</a></li>
+			<li><a href="#" data-rs-tab="runReports">@rs["TabRunReports"] <span class="badge" data-rs-count="runReports"></span></a></li>
+		</ul>
+		<div class="tab-body" data-rs-body></div>
+	</div>
+</div>
+<script src="~/js/report-sources-panel.js" asp-append-version="true" defer></script>

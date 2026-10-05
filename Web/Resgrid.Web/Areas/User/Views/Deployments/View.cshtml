@@ -335,11 +335,20 @@
             }
             else if (Model.Tab == "billing" && Model.ContractorBilling)
             {
-                @* Contractor billing (C-M2): charge calculation, contract compliance checklist, generate invoice, linked invoices. *@
+                @* Contractor billing (C-M2): charge calculation, contract compliance checklist, generate invoice, linked invoices.
+                   Each part follows its own page's permission (DeploymentsController.View): charges and invoices Invoicing_View,
+                   the compliance checklist ServiceContracts_View, generating the invoice Invoicing_Update. *@
+                var billingCanViewInvoicing = ViewData["DepCanViewInvoicing"] as bool? == true;
+                var billingCanManageInvoicing = ViewData["DepCanManageInvoicing"] as bool? == true;
+                var billingCanViewContracts = ViewData["DepCanViewContracts"] as bool? == true;
                 <div class="row">
                     <div class="col-md-8">
                         <h4>@contractorStrings["Billing"]</h4>
-                        @if (Model.Charges == null)
+                        @if (!billingCanViewInvoicing)
+                        {
+                            <p class="text-muted">@localizer["BillingNeedsInvoicingView"]</p>
+                        }
+                        else if (Model.Charges == null)
                         {
                             <p class="text-muted">@contractorStrings["ChargesUnavailable"]</p>
                         }
@@ -369,16 +378,22 @@
                                         <tr class="font-bold"><td colspan="4" class="text-right">@contractorStrings["TotalBeforeTax"]</td><td class="text-right">@Model.Charges.TotalBeforeTax.ToString("N2") @Model.Charges.Currency</td></tr>
                                     </tfoot>
                                 </table>
+                                if (billingCanManageInvoicing)
+                                {
                                 <form method="post" asp-action="GenerateInvoice" asp-route-id="@d.DeploymentId" class="form-inline" onsubmit="return confirm('@JsEncoder.Encode(contractorStrings["ConfirmGenerateInvoice"])');">
                                     @Html.AntiForgeryToken()
                                     <label>@contractorStrings["ThroughDate"]</label> <input type="date" name="throughDate" class="form-control input-sm" />
                                     <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-file-text-o"></i> @contractorStrings["GenerateInvoice"]</button>
                                     <span class="help-block">@contractorStrings["GenerateInvoiceHelp"]</span>
                                 </form>
+                                }
                             }
                         }
                     </div>
                     <div class="col-md-4">
+                        @if (billingCanViewContracts)
+                        {
+                        <div>
                         <h4>@contractorStrings["ComplianceChecklist"]</h4>
                         @if (Model.Compliance == null || Model.Compliance.Items.Count == 0)
                         {
@@ -393,6 +408,11 @@
                                 }
                             </ul>
                         }
+                        </div>
+                        }
+                        @if (billingCanViewInvoicing)
+                        {
+                        <div>
                         <h4>@contractorStrings["Invoices"]</h4>
                         @if (Model.Invoices.Count == 0) { <p class="text-muted">@contractorStrings["NoInvoices"]</p> }
                         else
@@ -400,6 +420,8 @@
                             <ul class="list-unstyled">
                                 @foreach (var invoice in Model.Invoices) { <li><a asp-controller="Invoicing" asp-action="View" asp-route-id="@invoice.InvoiceId">#@invoice.InvoiceNumber</a> · @invoice.Total.ToString("N2") @invoice.Currency</li> }
                             </ul>
+                        }
+                        </div>
                         }
                     </div>
                 </div>

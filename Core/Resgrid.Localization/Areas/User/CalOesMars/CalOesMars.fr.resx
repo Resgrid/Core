@@ -556,9 +556,10 @@
   <data name="calmars_work_item_type_mismatch" xml:space="preserve"><value>L'enregistrement n'est pas du type attendu.</value></data>
   <data name="BuildSalarySurvey" xml:space="preserve"><value>Générer depuis les données de paie</value></data>
   <data name="ConfirmSalarySurveyDraft" xml:space="preserve"><value>Remplacer les taux normal et sup. de chaque ligne de classification correspondante par les moyennes ?</value></data>
-  <data name="SalarySurveyDraftBuilt" xml:space="preserve"><value>{0} ligne(s) de classification générée(s) à partir de {1} employé(s) ; {2} classification(s) non associée(s) ; {3} classification(s) à un seul employé à vérifier.</value></data>
+  <data name="SalarySurveyDraftBuilt" xml:space="preserve"><value>{0} ligne(s) de classification générée(s) à partir de {1} employé(s) ; {2} classification(s) non associée(s). Les classifications de moins de {3} employés sont omises afin que la rémunération de personne ne puisse être déduite de l'enquête ; saisissez leurs taux manuellement.</value></data>
   <data name="SalarySurveyFromWorkforceHelp" xml:space="preserve"><value>Phase E : la moyenne des taux horaires individuels approuvés par classification MARS (plus les composantes payées par heure sup.) remplit les taux normal et sup. Agrégats seulement — jamais un milieu de fourchette ni un individu. Aide à la revue ; le représentant autorisé signe toujours dans MARS.</value></data>
   <data name="SurveyBlocker_no_classifications" xml:space="preserve"><value>Aucun profil de rémunération approuvé ne porte une classification MARS pour ce profil d'autorité.</value></data>
+  <data name="SurveyBlocker_classifications_too_small" xml:space="preserve"><value>Chaque classification MARS des données de rémunération compte trop peu d'employés pour être générée sans révéler la rémunération de quelqu'un. Saisissez les taux manuellement.</value></data>
   <data name="SurveyBlocker_profile_type" xml:space="preserve"><value>Seul un profil Salary Survey ou Attachment A accepte un brouillon issu des données de paie.</value></data>
   <data name="SurveyBlocker_rate_locked" xml:space="preserve"><value>Le profil de taux n'est plus modifiable.</value></data>
   <data name="SurveyBlocker_workforce_unavailable" xml:space="preserve"><value>Les données de paie ne sont pas disponibles pour ce service.</value></data>

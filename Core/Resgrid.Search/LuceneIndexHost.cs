@@ -107,11 +107,25 @@ namespace Resgrid.Search
 			}
 		}
 
+		/// <summary>
+		/// Whether a committed index is present locally. In a reader process with the object store enabled this also
+		/// schedules a manifest poll when one is due: the search services gate every query on IsAvailable, which lands
+		/// here, so without the poll a fresh reader (empty local cache) never pulled and reported the index unavailable
+		/// for as long as it ran.
+		/// </summary>
 		public bool IndexExists
 		{
 			get
 			{
-				try { return DirectoryReader.IndexExists(Store); }
+				try
+				{
+					lock (_sync)
+					{
+						if (!_disposed && _writer == null && StoreEnabled)
+							StartBackgroundPullIfDue();
+					}
+					return DirectoryReader.IndexExists(Store);
+				}
 				catch (Exception ex)
 				{
 					Logging.LogException(ex, $"Search index '{IndexName}' existence check failed.");

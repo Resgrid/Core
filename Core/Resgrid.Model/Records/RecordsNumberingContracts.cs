@@ -1,0 +1,57 @@
+using System.Collections.Generic;
+
+namespace Resgrid.Model
+{
+	/// <summary>One sequence the department pattern produces for a year, as the Records Settings screen lists it.</summary>
+	public class RecordNumberSequenceStatus
+	{
+		/// <summary><see cref="RecordNumberScope.Key"/>; what a raised next number is saved against.</summary>
+		public string ScopeKey { get; set; }
+
+		/// <summary>The record types drawing on this sequence: every type at once when the pattern leaves out {PREFIX}.</summary>
+		public List<string> DefinitionKeys { get; set; } = new List<string>();
+
+		/// <summary>Set when the pattern includes {GROUP}; null is the sequence for records with no group.</summary>
+		public int? GroupId { get; set; }
+
+		public int HighestIssued { get; set; }
+
+		/// <summary>The sequence the next record in this scope receives; a raised next number may not go below it.</summary>
+		public int NextSequence { get; set; }
+
+		/// <summary>The full number the next record receives, e.g. "INC-2026-0153".</summary>
+		public string NextNumber { get; set; }
+	}
+
+	/// <summary>A request to raise one sequence's next number.</summary>
+	public class RecordNextNumberRequest
+	{
+		public string ScopeKey { get; set; }
+
+		public int NextSequence { get; set; }
+	}
+
+	public class RecordsNumberingUpdate
+	{
+		public string Pattern { get; set; }
+
+		public int SequenceWidth { get; set; }
+
+		/// <summary>The year the requested next numbers were shown for.</summary>
+		public int Year { get; set; }
+
+		public List<RecordNextNumberRequest> NextNumbers { get; set; } = new List<RecordNextNumberRequest>();
+	}
+
+	public class RecordsNumberingSaveResult
+	{
+		/// <summary>The pattern did not validate; nothing in the numbering setting was saved.</summary>
+		public bool PatternRejected { get; set; }
+
+		/// <summary>Requested next numbers below what the sequence would already issue; those sequences were left as they were.</summary>
+		public List<RecordNumberSequenceStatus> BelowCurrent { get; set; } = new List<RecordNumberSequenceStatus>();
+
+		/// <summary>Requested next numbers for a sequence the saved pattern no longer produces (the pattern changed in the same save).</summary>
+		public int NotApplied { get; set; }
+	}
+}

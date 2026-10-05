@@ -24,7 +24,8 @@
 	var recordsEnabled = recordsState.FlagEnabled;
 	var recordsUsable = recordsState.RecordsUsable;
 	// Keep legacy modules flat; only new feature areas get collapsible groups.
-	var showCertifications = ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || ClaimsAuthorizationHelper.CanViewCertifications();
+	// Setup-only holders (ManageCertificationSetup) land on the Types page from the dashboard.
+	var showCertifications = ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || ClaimsAuthorizationHelper.CanViewCertifications() || ClaimsAuthorizationHelper.CanManageCertificationSetup();
 	var showInvoicing = ClaimsAuthorizationHelper.CanViewInvoicing() && SettingsHelper.IsBusinessOperationsEnabled() && await featureToggleService.IsEnabledAsync(FeatureFlagKeys.CustomerInvoicing, ClaimsAuthorizationHelper.GetDepartmentId());
 	var showDeployments = await featureToggleService.IsEnabledAsync(FeatureFlagKeys.Deployments, ClaimsAuthorizationHelper.GetDepartmentId());
 	var showContractorBilling = (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || ClaimsAuthorizationHelper.CanViewBids() || ClaimsAuthorizationHelper.CanViewContracts()) && SettingsHelper.IsBusinessOperationsEnabled() && await businessOperationsAccess.CanUseContractorBillingAsync(ClaimsAuthorizationHelper.GetDepartmentId());

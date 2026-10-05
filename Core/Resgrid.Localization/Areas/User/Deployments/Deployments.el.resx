@@ -242,6 +242,7 @@
   <data name="timereports_date_exists" xml:space="preserve"><value>Υπάρχει ήδη αναφορά χρόνου για αυτή την ημερομηνία.</value></data>
   <data name="timereports_not_found" xml:space="preserve"><value>Η αναφορά χρόνου δεν βρέθηκε.</value></data>
   <data name="timereports_locked" xml:space="preserve"><value>Η αναφορά χρόνου είναι εγκεκριμένη, τιμολογημένη ή ακυρωμένη και δεν μπορεί πλέον να επεξεργαστεί.</value></data>
+  <data name="BillingNeedsInvoicingView" xml:space="preserve"><value>Οι χρεώσεις και τα τιμολόγια απαιτούν το δικαίωμα προβολής τιμολόγησης.</value></data>
   <data name="timereports_status_transition_invalid" xml:space="preserve"><value>Αυτή η αλλαγή κατάστασης δεν επιτρέπεται για αυτή την αναφορά χρόνου.</value></data>
   <data name="timereports_time_invalid" xml:space="preserve"><value>Εισαγάγετε ώρες έναρξης και λήξης ως HH:mm.</value></data>
   <data name="timereports_validation" xml:space="preserve"><value>Διορθώστε τα παρακάτω σφάλματα πριν την υποβολή.</value></data>
@@ -252,7 +253,7 @@
   <data name="ManageDeployments" xml:space="preserve"><value>Διαχείριση αποστολών</value></data>
   <data name="ManageDeploymentsNote" xml:space="preserve"><value>Δημιουργία και επεξεργασία αποστολών, συνθέσεων, εξοπλισμού, εξόδων, αρχείων και αλλαγών κατάστασης, και προβολή όλων των αποστολών. Τα μέλη της σύνθεσης βλέπουν πάντα τις δικές τους αποστολές και καταχωρίζουν χρόνο χωρίς αυτό το δικαίωμα.</value></data>
   <data name="ApproveTimeReports" xml:space="preserve"><value>Έγκριση αναφορών χρόνου</value></data>
-  <data name="ApproveTimeReportsNote" xml:space="preserve"><value>Έγκριση και ακύρωση υποβληθεισών ημερήσιων αναφορών χρόνου. Οι εγκεκριμένες αναφορές τροφοδοτούν την τιμολόγηση.</value></data>
+  <data name="ApproveTimeReportsNote" xml:space="preserve"><value>Έγκριση και ακύρωση υποβληθεισών ημερήσιων αναφορών χρόνου. Οι εγκεκριμένες αναφορές τροφοδοτούν την τιμολόγηση. Κανείς δεν μπορεί να εγκρίνει αναφορά που υπέβαλε ο ίδιος ή που περιέχει δικές του ώρες· πρέπει να την εγκρίνει άλλος εγκρίνων.</value></data>
   <data name="DeploymentCreated" xml:space="preserve"><value>Δημιουργήθηκε αποστολή</value></data>
   <data name="DeploymentStatusChanged" xml:space="preserve"><value>Άλλαξε η κατάσταση αποστολής</value></data>
   <data name="DeploymentRosterChanged" xml:space="preserve"><value>Άλλαξε η σύνθεση αποστολής</value></data>
@@ -283,4 +284,5 @@
   <data name="Issuesubject_on_other_report" xml:space="preserve"><value>Αυτό το αντικείμενο έχει ήδη χρόνο σε άλλη αναφορά για την ίδια ημέρα</value></data>
   <data name="timereports_scope_invalid" xml:space="preserve"><value>Αυτό το πλήρωμα ή πρόσωπο δεν είναι ενεργό σε αυτή την ανάπτυξη.</value></data>
   <data name="timereports_subject_covered" xml:space="preserve"><value>Αυτό το πλήρωμα ή πρόσωπο έχει ήδη χρόνο σε άλλη αναφορά για αυτή την ημέρα.</value></data>
+  <data name="timereports_self_approval" xml:space="preserve"><value>Υποβάλατε αυτή την αναφορά χρόνου ή έχετε ώρες σε αυτήν, οπότε πρέπει να την εγκρίνει άλλος εγκρίνων.</value></data>
 </root>

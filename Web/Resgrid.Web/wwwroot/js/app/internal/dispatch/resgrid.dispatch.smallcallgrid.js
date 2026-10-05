@@ -42,7 +42,8 @@ var resgrid;
                 $.ajax({
                     url: resgrid.absoluteBaseUrl + '/User/Home/UserRespondingToCall?callId=' + callId,
                     contentType: 'application/json; charset=utf-8',
-                    type: 'POST'
+                    type: 'POST',
+                    headers: { 'RequestVerificationToken': $('meta[name="request-verification-token"]').attr('content') }
                 }).done(function (results) {
                     var event = { callId: callId };
                     $('.respondToACallWindow').trigger(resgrid.dispatch.smallcallgrid.respondToCallButton, event);

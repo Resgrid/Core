@@ -1765,12 +1765,9 @@ namespace Resgrid.Providers.Claims
 					};
 				case PermissionTypes.ViewCertifications:
 					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.Certifications, ResgridClaimTypes.Actions.View) };
+				// Setup (types, role requirements, settings) does not read members' records: Certifications:View comes from 42/43 only.
 				case PermissionTypes.ManageCertificationSetup:
-					return new[]
-					{
-						new RecordClaimGrant(ResgridClaimTypes.Resources.Certifications, ResgridClaimTypes.Actions.Setup),
-						new RecordClaimGrant(ResgridClaimTypes.Resources.Certifications, ResgridClaimTypes.Actions.View)
-					};
+					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.Certifications, ResgridClaimTypes.Actions.Setup) };
 				case PermissionTypes.ManageDeployments:
 					return new[]
 					{

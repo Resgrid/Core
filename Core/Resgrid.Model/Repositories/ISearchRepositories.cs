@@ -28,6 +28,9 @@ namespace Resgrid.Model.Repositories
 		/// <summary>Live rows by projection id, for post-retrieval loading of hits.</summary>
 		Task<IEnumerable<SearchProjection>> GetByIdsAsync(int departmentId, IEnumerable<string> projectionIds);
 
+		/// <summary>Live rows of one family by entity id, for hits found outside the index (street address matching).</summary>
+		Task<IEnumerable<SearchProjection>> GetByEntityIdsAsync(int departmentId, string entityType, IEnumerable<string> entityIds);
+
 		Task<int> HardDeleteDepartmentAsync(int departmentId, CancellationToken cancellationToken = default);
 	}
 

@@ -85,421 +85,136 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var permissions = await _permissionsService.GetAllPermissionsForDepartmentAsync(DepartmentId);
 
-			int val = (int)PermissionTypes.AddPersonnel;
-			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.AddPersonnel))
-				model.AddUsers = permissions.First(x => x.PermissionType == (int)PermissionTypes.AddPersonnel).Action;
-
-			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.RemovePersonnel))
-				model.RemoveUsers = permissions.First(x => x.PermissionType == (int)PermissionTypes.RemovePersonnel).Action;
-
-			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.CreateCall))
-				model.CreateCall = permissions.First(x => x.PermissionType == (int)PermissionTypes.CreateCall).Action;
-			else
-				model.CreateCall = 3;
-
 			// Option text is localized: the permission notes refer to these options by name in each language.
 			var optionLabels = PermissionOptionLabels.From(_secLocalizer);
 
-			var userAddPermissions = new List<dynamic>();
-			userAddPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
-			userAddPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
-			model.AddUserPermissions = new SelectList(userAddPermissions, "Id", "Name");
+			// Every row renders from PermissionScreenCatalog, the table SetPermission and SetPermissionData validate
+			// against. With no saved row the dropdown and the group-only box show what the runtime applies to a
+			// missing row; where no offered action matches it (the workflow rows) a disabled "not saved" option does.
+			int Value(PermissionTypes type) =>
+				PermissionScreenCatalog.CurrentValue(PermissionScreenCatalog.Get(type), PermissionScreenCatalog.EffectiveRow(permissions, type));
 
-			var userDeletePermissions = new List<dynamic>();
-			userDeletePermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
-			userDeletePermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
-			model.RemoveUserPermissions = new SelectList(userDeletePermissions, "Id", "Name");
+			bool Lock(PermissionTypes type) =>
+				PermissionScreenCatalog.CurrentLock(PermissionScreenCatalog.Get(type), PermissionScreenCatalog.EffectiveRow(permissions, type));
 
-			var createCallPermissions = new List<dynamic>();
-			createCallPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
-			createCallPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
-			createCallPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
-			createCallPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
-			model.CreateCallPermissions = new SelectList(createCallPermissions, "Id", "Name");
-
-
-			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.CreateTraining))
-				model.CreateTraining = permissions.First(x => x.PermissionType == (int)PermissionTypes.CreateTraining).Action;
-
-			var createTrainingPermissions = new List<dynamic>();
-			createTrainingPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
-			createTrainingPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
-			createTrainingPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
-			model.CreateTrainingPermissions = new SelectList(createTrainingPermissions, "Id", "Name");
-
-
-			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.CreateDocument))
-				model.CreateDocument = permissions.First(x => x.PermissionType == (int)PermissionTypes.CreateDocument).Action;
-			else
-				model.CreateDocument = 3;
-
-			var createDocumentPermissions = new List<dynamic>();
-			createDocumentPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
-			createDocumentPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
-			createDocumentPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
-			createDocumentPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
-			model.CreateDocumentPermissions = new SelectList(createDocumentPermissions, "Id", "Name");
-
-
-			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.CreateCalendarEntry))
-				model.CreateCalendarEntry = permissions.First(x => x.PermissionType == (int)PermissionTypes.CreateCalendarEntry).Action;
-			else
-				model.CreateCalendarEntry = 3;
-
-			var createCalendarEntryPermissions = new List<dynamic>();
-			createCalendarEntryPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
-			createCalendarEntryPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
-			createCalendarEntryPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
-			createCalendarEntryPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
-			model.CreateCalendarEntryPermissions = new SelectList(createCalendarEntryPermissions, "Id", "Name");
-
-
-			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.CreateNote))
-				model.CreateNote = permissions.First(x => x.PermissionType == (int)PermissionTypes.CreateNote).Action;
-			else
-				model.CreateNote = 3;
-
-			var createNotePermissions = new List<dynamic>();
-			createNotePermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
-			createNotePermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
-			createNotePermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
-			createNotePermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
-			model.CreateNotePermissions = new SelectList(createNotePermissions, "Id", "Name");
-
-
-			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.CreateLog))
-				model.CreateLog = permissions.First(x => x.PermissionType == (int)PermissionTypes.CreateLog).Action;
-			else
-				model.CreateLog = 3;
-
-			var createLogPermissions = new List<dynamic>();
-			createLogPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
-			createLogPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
-			createLogPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
-			createLogPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
-			model.CreateLogPermissions = new SelectList(createLogPermissions, "Id", "Name");
-
-
-			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.DeleteLog))
-				model.DeleteLog = permissions.First(x => x.PermissionType == (int)PermissionTypes.DeleteLog).Action;
-			else
-				model.DeleteLog = 3;
-
-			var deleteLogPermissions = new List<dynamic>();
-			deleteLogPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
-			deleteLogPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
-			deleteLogPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
-			deleteLogPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
-			model.DeleteLogPermissions = new SelectList(deleteLogPermissions, "Id", "Name");
-
-
-			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.CreateShift))
-				model.CreateShift = permissions.First(x => x.PermissionType == (int)PermissionTypes.CreateShift).Action;
-
-			var createShiftPermissions = new List<dynamic>();
-			createShiftPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
-			createShiftPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
-			createShiftPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
-			model.CreateShiftPermissions = new SelectList(createShiftPermissions, "Id", "Name");
-
-			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.ViewPersonalInfo))
-				model.ViewPersonalInfo = permissions.First(x => x.PermissionType == (int)PermissionTypes.ViewPersonalInfo).Action;
-			else
-				model.ViewPersonalInfo = 3;
-
-			var viewPersonalInfoPermissions = new List<dynamic>();
-			viewPersonalInfoPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
-			viewPersonalInfoPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
-			viewPersonalInfoPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
-			viewPersonalInfoPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
-			model.ViewPersonalInfoPermissions = new SelectList(viewPersonalInfoPermissions, "Id", "Name");
-
-			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.AdjustInventory))
-				model.AdjustInventory = permissions.First(x => x.PermissionType == (int)PermissionTypes.AdjustInventory).Action;
-			else
-				model.AdjustInventory = 3;
-
-			var adjustInventoryPermissions = new List<dynamic>();
-			adjustInventoryPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
-			adjustInventoryPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
-			adjustInventoryPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
-			adjustInventoryPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
-			model.AdjustInventoryPermissions = new SelectList(adjustInventoryPermissions, "Id", "Name");
-
-			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.CanSeePersonnelLocations))
+			List<SelectListItem> Options(PermissionTypes type)
 			{
-				model.ViewPersonnelLocation = permissions.First(x => x.PermissionType == (int)PermissionTypes.CanSeePersonnelLocations).Action;
-				model.LockViewPersonneLocationToGroup = permissions.First(x => x.PermissionType == (int)PermissionTypes.CanSeePersonnelLocations).LockToGroup;
+				var entry = PermissionScreenCatalog.Get(type);
+				var notSavedLabel = entry.NotSavedLabelKey != null ? _secLocalizer[entry.NotSavedLabelKey].Value : null;
+				return PermissionScreenCatalog.Options(entry, PermissionScreenCatalog.EffectiveRow(permissions, type), optionLabels, notSavedLabel);
 			}
-			else
-				model.ViewPersonnelLocation = 3;
 
-			var viewPersonnelLocationPermissions = new List<dynamic>();
-			viewPersonnelLocationPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
-			viewPersonnelLocationPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
-			viewPersonnelLocationPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
-			viewPersonnelLocationPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
-			model.ViewPersonnelLocationPermissions = new SelectList(viewPersonnelLocationPermissions, "Id", "Name");
+			model.AddUsers = Value(PermissionTypes.AddPersonnel);
+			model.AddUserPermissions = Options(PermissionTypes.AddPersonnel);
 
-			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.CanSeeUnitLocations))
-			{
-				model.ViewUnitLocation = permissions.First(x => x.PermissionType == (int)PermissionTypes.CanSeeUnitLocations).Action;
-				model.LockViewUnitLocationToGroup = permissions.First(x => x.PermissionType == (int)PermissionTypes.CanSeeUnitLocations).LockToGroup;
-			}
-			else
-				model.ViewUnitLocation = 3;
+			model.RemoveUsers = Value(PermissionTypes.RemovePersonnel);
+			model.RemoveUserPermissions = Options(PermissionTypes.RemovePersonnel);
 
-			var viewUnitLocationPermissions = new List<dynamic>();
-			viewUnitLocationPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
-			viewUnitLocationPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
-			viewUnitLocationPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
-			viewUnitLocationPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
-			model.ViewUnitLocationPermissions = new SelectList(viewUnitLocationPermissions, "Id", "Name");
+			model.CreateCall = Value(PermissionTypes.CreateCall);
+			model.CreateCallPermissions = Options(PermissionTypes.CreateCall);
 
+			model.CreateTraining = Value(PermissionTypes.CreateTraining);
+			model.CreateTrainingPermissions = Options(PermissionTypes.CreateTraining);
 
-			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.CreateMessage))
-				model.CreateMessage = permissions.First(x => x.PermissionType == (int)PermissionTypes.CreateMessage).Action;
-			else
-				model.CreateMessage = 3;
+			model.CreateDocument = Value(PermissionTypes.CreateDocument);
+			model.CreateDocumentPermissions = Options(PermissionTypes.CreateDocument);
 
-			var createMessagePermissions = new List<dynamic>();
-			createMessagePermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
-			createMessagePermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
-			createMessagePermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
-			createMessagePermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
-			model.CreateMessagePermissions = new SelectList(createMessagePermissions, "Id", "Name");
+			model.CreateCalendarEntry = Value(PermissionTypes.CreateCalendarEntry);
+			model.CreateCalendarEntryPermissions = Options(PermissionTypes.CreateCalendarEntry);
 
+			model.CreateNote = Value(PermissionTypes.CreateNote);
+			model.CreateNotePermissions = Options(PermissionTypes.CreateNote);
 
+			model.CreateLog = Value(PermissionTypes.CreateLog);
+			model.CreateLogPermissions = Options(PermissionTypes.CreateLog);
 
-			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.ViewGroupUsers))
-			{
-				model.ViewGroupsUsers = permissions.First(x => x.PermissionType == (int)PermissionTypes.ViewGroupUsers).Action;
-				model.LockViewGroupsUsersToGroup = permissions.First(x => x.PermissionType == (int)PermissionTypes.ViewGroupUsers).LockToGroup;
-			}
-			else
-				model.ViewGroupsUsers = 3;
+			model.DeleteLog = Value(PermissionTypes.DeleteLog);
+			model.DeleteLogPermissions = Options(PermissionTypes.DeleteLog);
 
-			var viewGroupUsersPermissions = new List<dynamic>();
-			viewGroupUsersPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
-			viewGroupUsersPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
-			viewGroupUsersPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
-			viewGroupUsersPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
-			model.ViewGroupUsersPermissions = new SelectList(viewGroupUsersPermissions, "Id", "Name");
+			model.CreateShift = Value(PermissionTypes.CreateShift);
+			model.CreateShiftPermissions = Options(PermissionTypes.CreateShift);
 
+			model.ViewPersonalInfo = Value(PermissionTypes.ViewPersonalInfo);
+			model.ViewPersonalInfoPermissions = Options(PermissionTypes.ViewPersonalInfo);
 
-			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.DeleteCall))
-				model.DeleteCall = permissions.First(x => x.PermissionType == (int)PermissionTypes.DeleteCall).Action;
-			else
-				model.DeleteCall = 3;
+			model.AdjustInventory = Value(PermissionTypes.AdjustInventory);
+			model.AdjustInventoryPermissions = Options(PermissionTypes.AdjustInventory);
 
-			var deleteCallPermissions = new List<dynamic>();
-			deleteCallPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
-			deleteCallPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
-			deleteCallPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
-			deleteCallPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
-			model.DeleteCallPermissions = new SelectList(deleteCallPermissions, "Id", "Name");
+			model.ViewPersonnelLocation = Value(PermissionTypes.CanSeePersonnelLocations);
+			model.LockViewPersonneLocationToGroup = Lock(PermissionTypes.CanSeePersonnelLocations);
+			model.ViewPersonnelLocationPermissions = Options(PermissionTypes.CanSeePersonnelLocations);
 
+			model.ViewUnitLocation = Value(PermissionTypes.CanSeeUnitLocations);
+			model.LockViewUnitLocationToGroup = Lock(PermissionTypes.CanSeeUnitLocations);
+			model.ViewUnitLocationPermissions = Options(PermissionTypes.CanSeeUnitLocations);
 
-			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.CloseCall))
-				model.CloseCall = permissions.First(x => x.PermissionType == (int)PermissionTypes.CloseCall).Action;
-			else
-				model.CloseCall = 3;
+			model.CreateMessage = Value(PermissionTypes.CreateMessage);
+			model.CreateMessagePermissions = Options(PermissionTypes.CreateMessage);
 
-			var closeCallPermissions = new List<dynamic>();
-			closeCallPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
-			closeCallPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
-			closeCallPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
-			closeCallPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
-			model.CloseCallPermissions = new SelectList(closeCallPermissions, "Id", "Name");
+			model.ViewGroupsUsers = Value(PermissionTypes.ViewGroupUsers);
+			model.LockViewGroupsUsersToGroup = Lock(PermissionTypes.ViewGroupUsers);
+			model.ViewGroupUsersPermissions = Options(PermissionTypes.ViewGroupUsers);
 
-			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.AddCallData))
-				model.AddCallData = permissions.First(x => x.PermissionType == (int)PermissionTypes.AddCallData).Action;
-			else
-				model.AddCallData = 3;
+			model.DeleteCall = Value(PermissionTypes.DeleteCall);
+			model.LockDeleteCallToGroup = Lock(PermissionTypes.DeleteCall);
+			model.DeleteCallPermissions = Options(PermissionTypes.DeleteCall);
 
-			var addCallDataPermissions = new List<dynamic>();
-			addCallDataPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
-			addCallDataPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
-			addCallDataPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
-			addCallDataPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
-			model.AddCallDataPermissions = new SelectList(addCallDataPermissions, "Id", "Name");
+			model.CloseCall = Value(PermissionTypes.CloseCall);
+			model.LockCloseCallToGroup = Lock(PermissionTypes.CloseCall);
+			model.CloseCallPermissions = Options(PermissionTypes.CloseCall);
 
-			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.ViewGroupUnits))
-			{
-				model.ViewGroupsUnits = permissions.First(x => x.PermissionType == (int)PermissionTypes.ViewGroupUnits).Action;
-				model.LockViewGroupsUnitsToGroup = permissions.First(x => x.PermissionType == (int)PermissionTypes.ViewGroupUnits).LockToGroup;
-			}
-			else
-				model.ViewGroupsUnits = 3;
+			model.AddCallData = Value(PermissionTypes.AddCallData);
+			model.LockAddCallDataToGroup = Lock(PermissionTypes.AddCallData);
+			model.AddCallDataPermissions = Options(PermissionTypes.AddCallData);
 
-			var viewGroupUnitsPermissions = new List<dynamic>();
-			viewGroupUnitsPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
-			viewGroupUnitsPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
-			viewGroupUnitsPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
-			viewGroupUnitsPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
-			model.ViewGrouUnitsPermissions = new SelectList(viewGroupUnitsPermissions, "Id", "Name");
+			model.ViewGroupsUnits = Value(PermissionTypes.ViewGroupUnits);
+			model.LockViewGroupsUnitsToGroup = Lock(PermissionTypes.ViewGroupUnits);
+			model.ViewGrouUnitsPermissions = Options(PermissionTypes.ViewGroupUnits);
 
-			var viewContactsPermissions = new List<dynamic>();
-			viewContactsPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
-			viewContactsPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
-			viewContactsPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
-			viewContactsPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
-			model.ViewContactsPermissions = new SelectList(viewContactsPermissions, "Id", "Name");
+			model.ViewContacts = Value(PermissionTypes.ContactView);
+			model.ViewContactsPermissions = Options(PermissionTypes.ContactView);
 
-			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.ContactView))
-				model.ViewContacts = permissions.First(x => x.PermissionType == (int)PermissionTypes.ContactView).Action;
-			else
-				model.ViewContacts = 3;
+			model.EditContacts = Value(PermissionTypes.ContactEdit);
+			model.EditContactsPermissions = Options(PermissionTypes.ContactEdit);
 
-			var editContactsPermissions = new List<dynamic>();
-			editContactsPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
-			editContactsPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
-			editContactsPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
-			editContactsPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
-			model.EditContactsPermissions = new SelectList(editContactsPermissions, "Id", "Name");
+			model.DeleteContacts = Value(PermissionTypes.ContactDelete);
+			model.DeleteContactsPermissions = Options(PermissionTypes.ContactDelete);
 
-			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.ContactEdit))
-				model.EditContacts = permissions.First(x => x.PermissionType == (int)PermissionTypes.ContactEdit).Action;
-			else
-				model.EditContacts = 3;
+			model.CreateWorkflow = Value(PermissionTypes.CreateWorkflow);
+			model.CreateWorkflowPermissions = Options(PermissionTypes.CreateWorkflow);
 
-			var deleteContactsPermissions = new List<dynamic>();
-			deleteContactsPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
-			deleteContactsPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
-			deleteContactsPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
-			deleteContactsPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
-			model.DeleteContactsPermissions = new SelectList(deleteContactsPermissions, "Id", "Name");
+			model.ManageWorkflowCredentials = Value(PermissionTypes.ManageWorkflowCredentials);
+			model.ManageWorkflowCredentialsPermissions = Options(PermissionTypes.ManageWorkflowCredentials);
 
-			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.ContactDelete))
-				model.DeleteContacts = permissions.First(x => x.PermissionType == (int)PermissionTypes.ContactDelete).Action;
-			else
-				model.DeleteContacts = 3;
+			model.ViewWorkflowRuns = Value(PermissionTypes.ViewWorkflowRuns);
+			model.ViewWorkflowRunsPermissions = Options(PermissionTypes.ViewWorkflowRuns);
 
-			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.CreateWorkflow))
-				model.CreateWorkflow = permissions.First(x => x.PermissionType == (int)PermissionTypes.CreateWorkflow).Action;
+			model.UseCalendarSync = Value(PermissionTypes.UseCalendarSync);
+			model.UseCalendarSyncPermissions = Options(PermissionTypes.UseCalendarSync);
 
-			var createWorkflowPermissions = new List<dynamic>();
-			createWorkflowPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
-			createWorkflowPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
-			createWorkflowPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
-			model.CreateWorkflowPermissions = new SelectList(createWorkflowPermissions, "Id", "Name");
+			// Dispatch app login and commander access default to Everyone so departments that never configure them are unaffected.
+			model.DispatchAppLogin = Value(PermissionTypes.DispatchAppLogin);
+			model.DispatchAppLoginPermissions = Options(PermissionTypes.DispatchAppLogin);
 
-			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.ManageWorkflowCredentials))
-				model.ManageWorkflowCredentials = permissions.First(x => x.PermissionType == (int)PermissionTypes.ManageWorkflowCredentials).Action;
-
-			var manageWorkflowCredentialsPermissions = new List<dynamic>();
-			manageWorkflowCredentialsPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
-			manageWorkflowCredentialsPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
-			manageWorkflowCredentialsPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
-			model.ManageWorkflowCredentialsPermissions = new SelectList(manageWorkflowCredentialsPermissions, "Id", "Name");
-
-			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.ViewWorkflowRuns))
-				model.ViewWorkflowRuns = permissions.First(x => x.PermissionType == (int)PermissionTypes.ViewWorkflowRuns).Action;
-
-			var viewWorkflowRunsPermissions = new List<dynamic>();
-			viewWorkflowRunsPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
-			viewWorkflowRunsPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
-			viewWorkflowRunsPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
-			viewWorkflowRunsPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
-			model.ViewWorkflowRunsPermissions = new SelectList(viewWorkflowRunsPermissions, "Id", "Name");
-
-			// 2FA enforcement scope � only managingUser can change this
-			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.UseCalendarSync))
-				model.UseCalendarSync = permissions.First(x => x.PermissionType == (int)PermissionTypes.UseCalendarSync).Action;
-			else
-				model.UseCalendarSync = 3;
-
-			var useCalendarSyncPermissions = new List<dynamic>();
-			useCalendarSyncPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
-			useCalendarSyncPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
-			useCalendarSyncPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
-			useCalendarSyncPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
-			model.UseCalendarSyncPermissions = new SelectList(useCalendarSyncPermissions, "Id", "Name");
-
-			// Dispatch app login: defaults to Everyone so departments that never configure it are unaffected.
-			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.DispatchAppLogin))
-				model.DispatchAppLogin = permissions.First(x => x.PermissionType == (int)PermissionTypes.DispatchAppLogin).Action;
-			else
-				model.DispatchAppLogin = 3;
-
-			var dispatchAppLoginPermissions = new List<dynamic>();
-			dispatchAppLoginPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
-			dispatchAppLoginPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
-			dispatchAppLoginPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
-			dispatchAppLoginPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
-			model.DispatchAppLoginPermissions = new SelectList(dispatchAppLoginPermissions, "Id", "Name");
-
-			// Commander access: defaults to Everyone so departments that never configure it are unaffected.
-			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.CommandAppLogin))
-				model.CommandAppLogin = permissions.First(x => x.PermissionType == (int)PermissionTypes.CommandAppLogin).Action;
-			else
-				model.CommandAppLogin = 3;
-
-			var commandAppLoginPermissions = new List<dynamic>();
-			commandAppLoginPermissions.Add(new { Id = 3, Name = optionLabels.Everyone });
-			commandAppLoginPermissions.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
-			commandAppLoginPermissions.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
-			commandAppLoginPermissions.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
-			model.CommandAppLoginPermissions = new SelectList(commandAppLoginPermissions, "Id", "Name");
+			model.CommandAppLogin = Value(PermissionTypes.CommandAppLogin);
+			model.CommandAppLoginPermissions = Options(PermissionTypes.CommandAppLogin);
 
 			// ── Advanced Data Protection (ADP) permissions ─────────────────────────────
-			// Missing rows resolve through AdpPermissionDefaults, NOT the wide-open no-row
-			// convention — the preselected value here is exactly what enforcement will use.
-			int AdpValue(PermissionTypes type) =>
-				permissions.Any(x => x.PermissionType == (int)type)
-					? permissions.First(x => x.PermissionType == (int)type).Action
-					: (int)AdpPermissionDefaults.For(type);
+			// Missing rows resolve through AdpPermissionDefaults, NOT the wide-open no-row convention — the
+			// preselected value here is exactly what enforcement uses. Only the two values a runtime check reads are
+			// shown (PermissionScreenCatalog); egress never offers "Everyone" because reconfiguring it widens disclosure.
+			model.ViewProtectedCallData = Value(PermissionTypes.ViewProtectedCallData);
+			model.ViewProtectedCallDataPermissions = Options(PermissionTypes.ViewProtectedCallData);
 
-			SelectList AdpOptions(bool includeEveryone)
-			{
-				var options = new List<dynamic>();
-				if (includeEveryone)
-					options.Add(new { Id = 3, Name = optionLabels.Everyone });
-				options.Add(new { Id = 0, Name = optionLabels.DepartmentAdmins });
-				options.Add(new { Id = 1, Name = optionLabels.DepartmentAndGroupAdmins });
-				options.Add(new { Id = 2, Name = optionLabels.DepartmentAdminsAndSelectRoles });
-				return new SelectList(options, "Id", "Name");
-			}
-
-			model.ManageDataProtection = AdpValue(PermissionTypes.ManageDepartmentDataProtection);
-			model.ManageDataProtectionPermissions = AdpOptions(includeEveryone: false);
-
-			model.ViewProtectedCallData = AdpValue(PermissionTypes.ViewProtectedCallData);
-			model.ViewProtectedCallDataPermissions = AdpOptions(includeEveryone: true);
-
-			model.EditProtectedCallData = AdpValue(PermissionTypes.EditProtectedCallData);
-			model.EditProtectedCallDataPermissions = AdpOptions(includeEveryone: true);
-
-			model.ViewProtectedPersonnelData = AdpValue(PermissionTypes.ViewProtectedPersonnelData);
-			model.ViewProtectedPersonnelDataPermissions = AdpOptions(includeEveryone: true);
-
-			model.ViewProtectedContactData = AdpValue(PermissionTypes.ViewProtectedContactData);
-			model.ViewProtectedContactDataPermissions = AdpOptions(includeEveryone: true);
-
-			model.ViewProtectedOperationalData = AdpValue(PermissionTypes.ViewProtectedOperationalData);
-			model.ViewProtectedOperationalDataPermissions = AdpOptions(includeEveryone: true);
-
-			// Export, egress and break-glass never offer "Everyone": exports leave the system,
-			// egress reconfiguration widens disclosure, and break-glass is an audited emergency
-			// path that additionally requires the department policy to enable it at all.
-			model.ExportProtectedData = AdpValue(PermissionTypes.ExportProtectedData);
-			model.ExportProtectedDataPermissions = AdpOptions(includeEveryone: false);
-
-			model.ConfigureProtectedDataEgress = AdpValue(PermissionTypes.ConfigureProtectedDataEgress);
-			model.ConfigureProtectedDataEgressPermissions = AdpOptions(includeEveryone: false);
-
-			model.BreakGlassProtectedData = AdpValue(PermissionTypes.BreakGlassProtectedData);
-			model.BreakGlassProtectedDataPermissions = AdpOptions(includeEveryone: false);
+			model.ConfigureProtectedDataEgress = Value(PermissionTypes.ConfigureProtectedDataEgress);
+			model.ConfigureProtectedDataEgressPermissions = Options(PermissionTypes.ConfigureProtectedDataEgress);
 
 			// ── Records (RMS) permissions, PermissionTypes 50–67 ──────────────────────────────
 			// Rows come from RecordPermissionCatalog so this screen, ClaimsLogic.AddRecordClaims and the
 			// activation-time row migration share one set of no-row defaults. A missing row preselects that
 			// default, which for the Logs-parity types equals today's CreateLog/DeleteLog fall-through.
-			model.RecordsPermissions = new[]
-				{
-					RecordPermissionCatalog.All, ChecklistPermissionCatalog.All, WorkOrderPermissionCatalog.All, InventoryPermissionCatalog.All,
-					InvoicingPermissionCatalog.All, CertificationPermissionCatalog.All, DeploymentPermissionCatalog.All, WorkforcePermissionCatalog.All
-				}.SelectMany(catalog => RecordsPermissionRows.Build(permissions, catalog, optionLabels)).ToList();
+			model.RecordsPermissions = PermissionScreenCatalog.RecordCatalogs
+				.SelectMany(catalog => RecordsPermissionRows.Build(permissions, catalog, optionLabels)).ToList();
 			var recordsState = await _recordsCutoverService.GetModuleStateAsync(DepartmentId);
 			model.RecordsFlagEnabled = recordsState != null && recordsState.FlagEnabled;
 			model.RecordsActivated = recordsState != null && recordsState.RecordsUsable;
@@ -688,125 +403,151 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[RequiresRecentTwoFactor(MethodScope = Resgrid.Model.Security.MfaMethodScope.SecurityChange)]
 		public async Task<IActionResult> SetPermission(int type, int perm, bool? lockToGroup)
 		{
-			if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
-			{
-				var before = await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, (PermissionTypes)type);
-				var result = await _permissionsService.SetPermissionForDepartmentAsync(DepartmentId, UserId, (PermissionTypes)type, (PermissionActions)perm, null, lockToGroup.GetValueOrDefault());
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return new StatusCodeResult((int)HttpStatusCode.NotModified);
 
-				var auditEvent = new AuditEvent();
-				auditEvent.DepartmentId = DepartmentId;
-				auditEvent.UserId = UserId;
-				auditEvent.Type = AuditLogTypes.PermissionsChanged;
-				auditEvent.Before = before.CloneJsonToString();
-				auditEvent.After = result.CloneJsonToString();
-				auditEvent.Successful = true;
-				auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
-				auditEvent.ServerName = Environment.MachineName;
-				auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
-				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+			// Only a type, action and lock the Permissions screen offers can be stored (PermissionScreenCatalog);
+			// anything else, including an unparsable value, would leave a row the claim chain mishandles.
+			var entry = PermissionScreenCatalog.Get(type);
+			if (!ModelState.IsValid || entry == null || lockToGroup == true && !entry.LockToGroupOffered)
+				return new StatusCodeResult((int)HttpStatusCode.BadRequest);
 
-				if (type == (int)PermissionTypes.CanSeePersonnelLocations)
-				{
-					var securityEvent = new SecurityRefreshEvent();
-					securityEvent.DepartmentId = DepartmentId;
-					securityEvent.Type = SecurityCacheTypes.WhoCanViewPersonnelLocations;
-					_eventAggregator.SendMessage<SecurityRefreshEvent>(securityEvent);
-				}
-				else if (type == (int)PermissionTypes.CanSeeUnitLocations)
-				{
-					var securityEvent = new SecurityRefreshEvent();
-					securityEvent.DepartmentId = DepartmentId;
-					securityEvent.Type = SecurityCacheTypes.WhoCanViewUnitLocations;
-					_eventAggregator.SendMessage<SecurityRefreshEvent>(securityEvent);
-				}
-				else if (type == (int)PermissionTypes.ViewGroupUnits)
-				{
-					var securityEvent = new SecurityRefreshEvent();
-					securityEvent.DepartmentId = DepartmentId;
-					securityEvent.Type = SecurityCacheTypes.WhoCanViewUnits;
-					_eventAggregator.SendMessage<SecurityRefreshEvent>(securityEvent);
-				}
-				else if (type == (int)PermissionTypes.ViewGroupUsers)
-				{
-					var securityEvent = new SecurityRefreshEvent();
-					securityEvent.DepartmentId = DepartmentId;
-					securityEvent.Type = SecurityCacheTypes.WhoCanViewPersonnel;
-					_eventAggregator.SendMessage<SecurityRefreshEvent>(securityEvent);
-				}
+			var permissionType = (PermissionTypes)type;
+			var before = await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, permissionType);
+			var effective = await EffectiveRowAsync(permissionType, before);
+			if (!PermissionScreenCatalog.IsListed(entry, perm, effective))
+				return new StatusCodeResult((int)HttpStatusCode.BadRequest);
 
-				return new StatusCodeResult((int)HttpStatusCode.OK);
-			}
+			// The action write keeps the saved roles (they have their own endpoint and stay on screen when the dropdown
+			// changes) and, when the request leaves the lock out, the saved group lock, so neither control clears the other.
+			var result = await _permissionsService.SetPermissionForDepartmentAsync(DepartmentId, UserId, permissionType, (PermissionActions)perm,
+				effective?.Data, ResolveLockToGroup(entry, lockToGroup, effective));
 
-			return new StatusCodeResult((int)HttpStatusCode.NotModified);
+			PublishPermissionChange(permissionType, before, result);
+
+			return new StatusCodeResult((int)HttpStatusCode.OK);
 		}
+
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[RequiresRecentTwoFactor(MethodScope = Resgrid.Model.Security.MfaMethodScope.SecurityChange)]
 		public async Task<IActionResult> SetPermissionData(int type, string data, bool? lockToGroup)
 		{
-			if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
-			{
-				var before = await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, (PermissionTypes)type);
-				var result = await _permissionsService.SetPermissionForDepartmentAsync(DepartmentId, UserId, (PermissionTypes)type, (PermissionActions)before.Action, data, lockToGroup.GetValueOrDefault());
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return new StatusCodeResult((int)HttpStatusCode.NotModified);
 
-				var auditEvent = new AuditEvent();
-				auditEvent.DepartmentId = DepartmentId;
-				auditEvent.UserId = UserId;
-				auditEvent.Type = AuditLogTypes.PermissionsChanged;
-				auditEvent.Before = before.CloneJsonToString();
-				auditEvent.After = result.CloneJsonToString();
-				auditEvent.Successful = true;
-				auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
-				auditEvent.ServerName = Environment.MachineName;
-				auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
-				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+			var entry = PermissionScreenCatalog.Get(type);
+			if (!ModelState.IsValid || entry == null || !entry.RolesOffered || lockToGroup == true && !entry.LockToGroupOffered
+			    || !TryNormalizeRoleIds(data, out var roleIds))
+				return new StatusCodeResult((int)HttpStatusCode.BadRequest);
 
-				if (type == (int)PermissionTypes.CanSeePersonnelLocations)
-				{
-					var securityEvent = new SecurityRefreshEvent();
-					securityEvent.DepartmentId = DepartmentId;
-					securityEvent.Type = SecurityCacheTypes.WhoCanViewPersonnelLocations;
-					_eventAggregator.SendMessage<SecurityRefreshEvent>(securityEvent);
-				}
-				else if (type == (int)PermissionTypes.CanSeeUnitLocations)
-				{
-					var securityEvent = new SecurityRefreshEvent();
-					securityEvent.DepartmentId = DepartmentId;
-					securityEvent.Type = SecurityCacheTypes.WhoCanViewUnitLocations;
-					_eventAggregator.SendMessage<SecurityRefreshEvent>(securityEvent);
-				}
-				else if (type == (int)PermissionTypes.ViewGroupUnits)
-				{
-					var securityEvent = new SecurityRefreshEvent();
-					securityEvent.DepartmentId = DepartmentId;
-					securityEvent.Type = SecurityCacheTypes.WhoCanViewUnits;
-					_eventAggregator.SendMessage<SecurityRefreshEvent>(securityEvent);
-				}
-				else if (type == (int)PermissionTypes.ViewGroupUsers)
-				{
-					var securityEvent = new SecurityRefreshEvent();
-					securityEvent.DepartmentId = DepartmentId;
-					securityEvent.Type = SecurityCacheTypes.WhoCanViewPersonnel;
-					_eventAggregator.SendMessage<SecurityRefreshEvent>(securityEvent);
-				}
+			var permissionType = (PermissionTypes)type;
+			var before = await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, permissionType);
+			var effective = await EffectiveRowAsync(permissionType, before);
 
-				return new StatusCodeResult((int)HttpStatusCode.OK);
-			}
+			// Roles or the group-only box can change before the department has saved this row (a Records row still at
+			// its default, or Transfer/Issue still following Adjust Inventory). Save the row at the action the screen is
+			// showing. The workflow rows show no action until one is chosen, so there is nothing to attach roles to yet.
+			var action = PermissionScreenCatalog.CurrentValue(entry, effective);
+			if (action == PermissionScreenCatalog.NotSavedValue)
+				return new StatusCodeResult((int)HttpStatusCode.BadRequest);
 
-			return new StatusCodeResult((int)HttpStatusCode.NotModified);
+			var result = await _permissionsService.SetPermissionForDepartmentAsync(DepartmentId, UserId, permissionType, (PermissionActions)action,
+				roleIds, ResolveLockToGroup(entry, lockToGroup, effective));
+
+			PublishPermissionChange(permissionType, before, result);
+
+			return new StatusCodeResult((int)HttpStatusCode.OK);
 		}
 
 		[HttpGet]
 		public async Task<IActionResult> GetRolesForPermission(int type)
 		{
-			var before = await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, (PermissionTypes)type);
-			if (before == null && (type == (int)PermissionTypes.TransferInventory || type == (int)PermissionTypes.IssueInventory))
-				before = await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.AdjustInventory);
+			var before = await EffectiveRowAsync((PermissionTypes)type, await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, (PermissionTypes)type));
 
 			if (before != null)
 				return Json(before.Data);
 
 			return Json("");
+		}
+
+		/// <summary>
+		/// The row the screen shows for a type: the department's own row or, for Transfer and Issue Inventory with no row
+		/// of their own, the Adjust Inventory row InventoryAuthorizationService falls back to.
+		/// </summary>
+		private async Task<Permission> EffectiveRowAsync(PermissionTypes type, Permission own)
+		{
+			if (own != null || type is not (PermissionTypes.TransferInventory or PermissionTypes.IssueInventory))
+				return own;
+
+			return await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.AdjustInventory);
+		}
+
+		/// <summary>
+		/// The posted lock when the request carries one; otherwise the lock the screen is showing. Rows without a
+		/// group-only box always save no lock.
+		/// </summary>
+		private static bool ResolveLockToGroup(PermissionScreenEntry entry, bool? posted, Permission effective) =>
+			entry.LockToGroupOffered && (posted ?? PermissionScreenCatalog.CurrentLock(entry, effective));
+
+		/// <summary>
+		/// The roles picker posts department role ids joined with commas. Anything else would make the claim chain's
+		/// int.Parse throw at sign-in, so it is refused; blanks and repeats are dropped.
+		/// </summary>
+		private static bool TryNormalizeRoleIds(string data, out string normalized)
+		{
+			normalized = string.Empty;
+			if (string.IsNullOrWhiteSpace(data))
+				return true;
+
+			var ids = new List<int>();
+			foreach (var part in data.Split(','))
+			{
+				var trimmed = part.Trim();
+				if (trimmed.Length == 0)
+					continue;
+
+				if (!int.TryParse(trimmed, NumberStyles.None, CultureInfo.InvariantCulture, out var id) || id <= 0)
+					return false;
+
+				if (!ids.Contains(id))
+					ids.Add(id);
+			}
+
+			normalized = string.Join(",", ids.Select(id => id.ToString(CultureInfo.InvariantCulture)));
+			return true;
+		}
+
+		private void PublishPermissionChange(PermissionTypes type, Permission before, Permission after)
+		{
+			var auditEvent = new AuditEvent();
+			auditEvent.DepartmentId = DepartmentId;
+			auditEvent.UserId = UserId;
+			auditEvent.Type = AuditLogTypes.PermissionsChanged;
+			auditEvent.Before = before.CloneJsonToString();
+			auditEvent.After = after.CloneJsonToString();
+			auditEvent.Successful = true;
+			auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
+			auditEvent.ServerName = Environment.MachineName;
+			auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
+			_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+
+			SecurityCacheTypes? cache = type switch
+			{
+				PermissionTypes.CanSeePersonnelLocations => SecurityCacheTypes.WhoCanViewPersonnelLocations,
+				PermissionTypes.CanSeeUnitLocations => SecurityCacheTypes.WhoCanViewUnitLocations,
+				PermissionTypes.ViewGroupUnits => SecurityCacheTypes.WhoCanViewUnits,
+				PermissionTypes.ViewGroupUsers => SecurityCacheTypes.WhoCanViewPersonnel,
+				_ => null
+			};
+
+			if (cache.HasValue)
+			{
+				var securityEvent = new SecurityRefreshEvent();
+				securityEvent.DepartmentId = DepartmentId;
+				securityEvent.Type = cache.Value;
+				_eventAggregator.SendMessage<SecurityRefreshEvent>(securityEvent);
+			}
 		}
 		#endregion Async
 

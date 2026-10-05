@@ -14,5 +14,11 @@ namespace Resgrid.Model.Services
 
 		/// <summary>Contacts linked to the Call and its destination place; empty (never null) when nothing is linked.</summary>
 		Task<IncidentPreplanSnapshot> GetPreplanSnapshotAsync(int departmentId, Call call);
+
+		/// <summary>
+		/// The call's units, crews, personnel, status history (with who set each status) and Incident Command summary
+		/// (<see cref="ICallSourceDataService"/>); null when it cannot be read, so the report starts from the Call alone.
+		/// </summary>
+		Task<CallSourceData> GetCallSourceDataAsync(int departmentId, Call call);
 	}
 }

@@ -691,6 +691,7 @@
   <data name="workforce_naics_invalid" xml:space="preserve"><value>NAICS має складатися з шести цифр.</value></data>
   <data name="workforce_no_inputs" xml:space="preserve"><value>Нічого розраховувати: немає записів роботи чи показників використання.</value></data>
   <data name="workforce_not_found" xml:space="preserve"><value>Запис не знайдено.</value></data>
+  <data name="workforce_self_approval" xml:space="preserve"><value>Ви не можете затвердити цей профіль оплати: це ваша власна оплата або останню зміну внесли ви. Його має затвердити інший керівник.</value></data>
   <data name="workforce_pay_basis_invalid" xml:space="preserve"><value>Основа оплати недійсна.</value></data>
   <data name="workforce_profile_overlap" xml:space="preserve"><value>Період перетинається з іншим профілем тієї ж області.</value></data>
   <data name="workforce_protected_write_refused" xml:space="preserve"><value>Захищений запис відхилено.</value></data>

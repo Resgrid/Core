@@ -62,6 +62,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private static bool IsAdmin => ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
 		private static bool CanManage => IsAdmin || ClaimsAuthorizationHelper.CanManageContracts();
 		private static bool CanView => CanManage || ClaimsAuthorizationHelper.CanViewContracts();
+		private static bool CanViewInvoicing => IsAdmin || ClaimsAuthorizationHelper.CanViewInvoicing();
 
 		public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
 		{
@@ -202,8 +203,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			// Contract-scoped queries: filtering a department-wide page after the 500/200 caps would drop this contract's rows once unrelated ones fill the page.
 			view.Bids = await _bids.GetBidsForContractAsync(id, DepartmentId);
 			view.Deployments = await _deployments.GetDeploymentsForContractAsync(id, DepartmentId);
-			try { view.Invoices = await _invoicing.GetInvoicesForDepartmentAsync(DepartmentId, new InvoiceListFilter { ContactId = contract.ContactId, ServiceContractId = id, Take = 200 }); }
-			catch (Exception ex) { Resgrid.Framework.Logging.LogException(ex, "Contract detail: invoices unavailable."); }
+			// Invoices are the invoicing family's data: listed only for Invoicing_View holders, as the invoice pages require.
+			ViewData["ContractCanViewInvoicing"] = CanViewInvoicing;
+			if (CanViewInvoicing)
+			{
+				try { view.Invoices = await _invoicing.GetInvoicesForDepartmentAsync(DepartmentId, new InvoiceListFilter { ContactId = contract.ContactId, ServiceContractId = id, Take = 200 }); }
+				catch (Exception ex) { Resgrid.Framework.Logging.LogException(ex, "Contract detail: invoices unavailable."); }
+			}
 			view.Compliance = await _contracts.GetContractComplianceForContractAsync(id, DepartmentId);
 			foreach (ServiceContractStatuses candidate in Enum.GetValues(typeof(ServiceContractStatuses)))
 				if (Resgrid.Services.Invoicing.ServiceContractService.IsValidTransition((ServiceContractStatuses)contract.Status, candidate)) view.NextStatuses.Add(candidate);

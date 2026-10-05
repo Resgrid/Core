@@ -22,7 +22,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 	/// <summary>
 	/// Daily time reports, entries and expenses (Workforce &amp; Business Operations plan, Phase C5). Mobile crews file from the
 	/// field without any new claim: a member writes their own roster row (individual report) and, for every deployed unit they
-	/// crew (on the deployment roster for that unit, or seated on the apparatus through an active unit role), that unit's Crew
+	/// crew on the deployment roster (a live unit seat is self-service and grants nothing here), that unit's Crew
 	/// Time Report — the unit, its crew and its equipment (M0227). Entries of subjects a caller may not write are kept as stored.
 	/// Approval and void need TimeReports_Approve. Entry times travel as UTC instants plus department-local wall clock
 	/// (StartLocal/EndLocal) so field apps never do zone math. Receipts upload as base64; DTOs carry UpdatedOn for delta-sync.
@@ -283,6 +283,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var (deployment, access) = await AccessAsync(input.DeploymentId);
 			if (deployment == null) return NotFound();
 			if (!access.CanWrite) return Unauthorized();
+			// Pre-approval is an approver's statement (Cal OES MARS treats an un-pre-approved expense as uncertain): only a
+			// manager sets or clears it; a member's save keeps what is stored, and a new member expense starts unapproved.
+			var preApproved = access.CanManage && input.PreApproved;
 			if (!access.CanManage)
 			{
 				if (!string.IsNullOrWhiteSpace(input.Id))
@@ -290,6 +293,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					var existing = await _timeTracking.GetExpenseByIdAsync(input.Id, DepartmentId);
 					if (existing == null) return NotFound();
 					if (!string.Equals(existing.AddedByUserId, UserId, StringComparison.OrdinalIgnoreCase)) return Unauthorized();
+					preApproved = existing.PreApproved;
 				}
 				if (!string.IsNullOrWhiteSpace(input.TimeReportId))
 				{
@@ -312,7 +316,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				var expense = new DeploymentExpense
 				{
 					DeploymentExpenseId = input.Id, DeploymentId = input.DeploymentId, DeploymentTimeReportId = input.TimeReportId, DepartmentId = DepartmentId, ExpenseDate = input.ExpenseDate ?? DateTime.UtcNow.Date,
-					ExpenseType = input.ExpenseType, MealCode = input.MealCode, City = input.City, Description = input.Description, Amount = input.Amount, Currency = input.Currency, PreApproved = input.PreApproved, Billable = input.Billable
+					ExpenseType = input.ExpenseType, MealCode = input.MealCode, City = input.City, Description = input.Description, Amount = input.Amount, Currency = input.Currency, PreApproved = preApproved, Billable = input.Billable
 				};
 				var saved = await _timeTracking.SaveExpenseAsync(expense, receipt, input.ReceiptFileName, input.ReceiptContentType, UserId, Ip, Agent, cancellationToken);
 				var result = new ExpenseResult { Data = MapExpense(saved), PageSize = 1, Status = ResponseHelper.Success };

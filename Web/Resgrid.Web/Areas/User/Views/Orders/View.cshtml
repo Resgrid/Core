@@ -192,7 +192,7 @@
 								  <td>
 									  @if (!fill.Accepted && Model.Department.DepartmentId == Model.Order.DepartmentId)
 									  {
-										  <a asp-controller="Orders" asp-action="AcceptFill" asp-route-area="User" asp-route-fillId="@fill.ResourceOrderFillId" class="btn btn-white btn-xs">@localizer["AcceptButton"]</a>
+										  <form method="post" asp-controller="Orders" asp-action="AcceptFill" asp-route-area="User" asp-route-fillId="@fill.ResourceOrderFillId" style="display: inline;">@Html.AntiForgeryToken()<button type="submit" class="btn btn-white btn-xs">@localizer["AcceptButton"]</button></form>
 									  }
 								  </td>
 

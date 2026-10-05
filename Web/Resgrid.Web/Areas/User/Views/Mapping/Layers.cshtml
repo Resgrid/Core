@@ -67,7 +67,7 @@
                                         </td>
                                         <td>
                                             <a class="btn btn-xs btn-primary" asp-controller="Mapping" asp-action="EditLayer" asp-route-area="User" asp-route-layerId="@layer.Id">@localizer["Edit"]</a>
-                                            <a class="btn btn-xs btn-danger" asp-controller="Mapping" asp-action="DeleteLayer" asp-route-area="User" asp-route-layerId="@layer.Id">@localizer["Delete"]</a>
+                                            <form method="post" asp-controller="Mapping" asp-action="DeleteLayer" asp-route-area="User" style="display: inline;">@Html.AntiForgeryToken()<input type="hidden" name="layerId" value="@layer.Id" /><button type="submit" class="btn btn-xs btn-danger">@localizer["Delete"]</button></form>
                                         </td>
                                     </tr>
                                 }

@@ -58,11 +58,16 @@ namespace Resgrid.Services
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(call.DepartmentId);
 
-			if (resolvedGroupIds.Any())
-				await ApplyPersonnelStatusesAsync(call, department, resolvedGroupIds, isDispatch, cancellationToken);
+			// These are the department's dispatch statuses, applied by Resgrid: the member who dispatched or closed the call
+			// stays the actor, and the origin says nobody pressed the button (M0260).
+			using (StatusWriteActor.BeginAutomation(StatusSetOrigins.DispatchAutomation))
+			{
+				if (resolvedGroupIds.Any())
+					await ApplyPersonnelStatusesAsync(call, department, resolvedGroupIds, isDispatch, cancellationToken);
 
-			if (resolvedUnitIds.Any())
-				await ApplyUnitStatusesAsync(call, department, resolvedUnitIds, isDispatch, cancellationToken);
+				if (resolvedUnitIds.Any())
+					await ApplyUnitStatusesAsync(call, department, resolvedUnitIds, isDispatch, cancellationToken);
+			}
 		}
 
 		private async Task ApplyPersonnelStatusesAsync(Call call, Department department, IReadOnlyCollection<int> groupIds, bool isDispatch, CancellationToken cancellationToken)

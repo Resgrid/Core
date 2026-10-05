@@ -242,6 +242,7 @@
   <data name="timereports_date_exists" xml:space="preserve"><value>Det finns redan en tidrapport för det datumet.</value></data>
   <data name="timereports_not_found" xml:space="preserve"><value>Tidrapporten hittades inte.</value></data>
   <data name="timereports_locked" xml:space="preserve"><value>Tidrapporten är godkänd, fakturerad eller makulerad och kan inte längre redigeras.</value></data>
+  <data name="BillingNeedsInvoicingView" xml:space="preserve"><value>Avgifter och fakturor kräver behörigheten Visa fakturering.</value></data>
   <data name="timereports_status_transition_invalid" xml:space="preserve"><value>Den statusändringen tillåts inte för den här tidrapporten.</value></data>
   <data name="timereports_time_invalid" xml:space="preserve"><value>Ange start- och sluttid som HH:mm.</value></data>
   <data name="timereports_validation" xml:space="preserve"><value>Åtgärda felen nedan innan du skickar in.</value></data>
@@ -252,7 +253,7 @@
   <data name="ManageDeployments" xml:space="preserve"><value>Hantera insatser</value></data>
   <data name="ManageDeploymentsNote" xml:space="preserve"><value>Skapa och redigera insatser, bemanning, utrustning, utlägg, filer och statusändringar samt se alla insatser. Bemannade medlemmar ser alltid sina egna insatser och registrerar tid utan denna behörighet.</value></data>
   <data name="ApproveTimeReports" xml:space="preserve"><value>Godkänn tidrapporter</value></data>
-  <data name="ApproveTimeReportsNote" xml:space="preserve"><value>Godkänn och makulera inskickade dagliga tidrapporter. Godkända rapporter matar faktureringen.</value></data>
+  <data name="ApproveTimeReportsNote" xml:space="preserve"><value>Godkänn och makulera inskickade dagliga tidrapporter. Godkända rapporter matar faktureringen. Ingen kan godkänna en rapport som hen själv skickat in eller som innehåller egna timmar; en annan godkännare måste göra det.</value></data>
   <data name="DeploymentCreated" xml:space="preserve"><value>Insats skapad</value></data>
   <data name="DeploymentStatusChanged" xml:space="preserve"><value>Insatsstatus ändrad</value></data>
   <data name="DeploymentRosterChanged" xml:space="preserve"><value>Insatsbemanning ändrad</value></data>
@@ -283,4 +284,5 @@
   <data name="Issuesubject_on_other_report" xml:space="preserve"><value>Detta objekt har redan tid på en annan rapport för samma dag</value></data>
   <data name="timereports_scope_invalid" xml:space="preserve"><value>Den besättningen eller personen är inte aktiv i denna insats.</value></data>
   <data name="timereports_subject_covered" xml:space="preserve"><value>Den besättningen eller personen har redan tid på en annan rapport för denna dag.</value></data>
+  <data name="timereports_self_approval" xml:space="preserve"><value>Du skickade in den här tidrapporten eller har timmar på den, så en annan godkännare måste godkänna den.</value></data>
 </root>

@@ -5,6 +5,7 @@
 @model Resgrid.Web.Areas.User.Models.Calls.ViewCallView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> localizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.LocationHistory> historyLocalizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.ReportSources> reportSourcesLocalizer
 @{
     ViewBag.Title = $"Resgrid | " + @localizer["ViewCallHeader"] + ": " + @Model.Call.Name;
     Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
@@ -38,9 +39,11 @@
     <div class="col-sm-8">
         <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
             <div class="buttons-actions">
-                @if (ClaimsAuthorizationHelper.CanCreateCall() && Model.Call.State != 0)
+                @if (ViewData["CanReOpenCall"] is bool canReOpenCall && canReOpenCall)
                 {
+                    @* ReOpenCall is POST + antiforgery and needs the close-call rule; resgrid.dispatch.viewcall.js posts this token. *@
                     <button class="btn btn-danger" id="reOpenCallButton" disabled>@localizer["ReopenCall"]</button>
+                    <form id="reOpenCallForm">@Html.AntiForgeryToken()</form>
                 }
                 @if (ClaimsAuthorizationHelper.CanCreateCall())
                 {
@@ -55,6 +58,8 @@
                 @if (Model.RecordsUsable && ClaimsAuthorizationHelper.CanCreateRecord())
                 {
                     <form id="start-incident-report-form" method="post" style="display:inline" asp-controller="IncidentReports" asp-action="Start" asp-route-area="User" asp-route-callId="@Model.Call.CallId">@Html.AntiForgeryToken()<button type="submit" class="btn btn-default"><i class="fa fa-fire"></i> @localizer["IncidentReport"]</button></form>
+                    @* A run report started here opens with the call's times, units and personnel already filled in. *@
+                    <a class="btn btn-default" asp-controller="Records" asp-action="New" asp-route-area="User" asp-route-definitionKey="@Resgrid.Model.RmsDefinitionKeys.Run" asp-route-callId="@Model.Call.CallId"><i class="fa fa-file-text-o"></i> @reportSourcesLocalizer["StartRunReport"]</a>
                 }
             </div>
         </div>
@@ -520,7 +525,10 @@
                                                         <th>@localizer["FileName"]</th>
                                                         <th>@localizer["FileType"]</th>
                                                         <th>@commonLocalizer["Timestamp"]</th>
-                                                        <th><a style="text-decoration:none;" class="btn btn-xs btn-primary" href="@Url.Action("Upload", "Files", new {area = "User", type = 1, resourceId = Model.Call.CallId})">@localizer["AddFile"]</a></th>
+                                                        <th>@if (Model.CanAttachCallFiles)
+                                                            {
+                                                                <a style="text-decoration:none;" class="btn btn-xs btn-primary" href="@Url.Action("Upload", "Files", new {area = "User", type = 1, resourceId = Model.Call.CallId})">@localizer["AddFile"]</a>
+                                                            }</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -583,7 +591,10 @@
                                             </table>
                                         </div>
                                         <div class="tab-pane" id="tab-5">
-                                            <a style="text-decoration:none; float: right;" class="btn btn-xs btn-primary" href="@Url.Action("Upload", "Files", new {area = "User", type = 2, resourceId = Model.Call.CallId})">@localizer["AddImage"]</a>
+                                            @if (Model.CanAttachCallFiles)
+                                            {
+                                                <a style="text-decoration:none; float: right;" class="btn btn-xs btn-primary" href="@Url.Action("Upload", "Files", new {area = "User", type = 2, resourceId = Model.Call.CallId})">@localizer["AddImage"]</a>
+                                            }
                                             <div>
                                                 @foreach (var image in Model.Call.Attachments.Where(x => x.CallAttachmentType == 2 && !x.IsDeleted))
                                                 {
@@ -624,17 +635,20 @@
                                                 <div id="note-messages-inner1" class="feed-activity-list chat-messages">
                                                 </div>
 
-                                                <div class="chat-message well">
-                                                    <span class="input-box input-group">
-                                                        <div id="note-container" style="width:100%; height: 300px;">
+                                                @if (Model.CanAddCallData)
+                                                {
+                                                    <div class="chat-message well">
+                                                        <span class="input-box input-group">
+                                                            <div id="note-container" style="width:100%; height: 300px;">
 
-                                                        </div>
+                                                            </div>
 
-                                                        <span class="input-group-btn">
-                                                            <button class="btn btn-success btn-small" type="button" id="note-box-submit1" disabled>@localizer["AddNote"]</button>
+                                                            <span class="input-group-btn">
+                                                                <button class="btn btn-success btn-small" type="button" id="note-box-submit1" disabled>@localizer["AddNote"]</button>
+                                                            </span>
                                                         </span>
-                                                    </span>
-                                                </div>
+                                                    </div>
+                                                }
                                             </div>
                                         </div>
                                         <div class="tab-pane" id="tab-8">
@@ -986,14 +1000,19 @@
                                 <div id="note-messages-inner" class="feed-activity-list chat-messages" style="overflow-y: scroll;overflow-x: hidden;max-height: 450px;">
                                 </div>
 
-                                <div class="chat-message well">
-                                    <span class="input-box input-group">
-                                        <input placeholder="@localizer["AddNotePlaceholder"]" type="text" class="form-control input-small" name="note-box" id="note-box" />
-                                        <span class="input-group-btn">
-                                            <button class="btn btn-success btn-small" type="button" id="note-box-submit" disabled>@localizer["AddNote"]</button>
+                                @if (Model.CanAddCallData)
+                                {
+                                    @* AddCallNote is POST + antiforgery; both note boxes send this token as a header. *@
+                                    <form id="callNoteTokenForm">@Html.AntiForgeryToken()</form>
+                                    <div class="chat-message well">
+                                        <span class="input-box input-group">
+                                            <input placeholder="@localizer["AddNotePlaceholder"]" type="text" class="form-control input-small" name="note-box" id="note-box" />
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-success btn-small" type="button" id="note-box-submit" disabled>@localizer["AddNote"]</button>
+                                            </span>
                                         </span>
-                                    </span>
-                                </div>
+                                    </div>
+                                }
                             </div>
                         </div>
                     </div>

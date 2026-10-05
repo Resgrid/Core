@@ -1070,5 +1070,20 @@
   <data name="BotUsernamePlaceholder" xml:space="preserve">
     <value>Bot του Resgrid</value>
   </data>
+  <data name="StepCredentialNotFound" xml:space="preserve">
+    <value>Τα διαπιστευτήρια που επιλέχθηκαν για αυτό το βήμα δεν βρέθηκαν.</value>
+  </data>
+  <data name="ExportAttachmentTemplateNotFound" xml:space="preserve">
+    <value>Η εξαγωγή αναφοράς εγγραφών που επιλέχθηκε για αυτό το βήμα δεν βρέθηκε.</value>
+  </data>
+  <data name="ExportAttachmentRequiresRecordsRights" xml:space="preserve">
+    <value>Η επισύναψη εξαγωγής αναφοράς εγγραφών σε βήμα απαιτεί τα δικαιώματα "Εκτύπωση και εξαγωγή αναφορών" και "Διαχείριση συγκεντρωτικών αναφορών".</value>
+  </data>
+  <data name="ExportAttachmentRequiresRestrictedRights" xml:space="preserve">
+    <value>Αυτή η εξαγωγή αναφοράς εγγραφών περιλαμβάνει περιορισμένες ενότητες· η επισύναψή της σε βήμα απαιτεί επίσης το δικαίωμα "Προβολή περιορισμένων ενοτήτων".</value>
+  </data>
+  <data name="CredentialDeliversRecordsExport" xml:space="preserve">
+    <value>Ένα βήμα ροής εργασιών στέλνει εξαγωγή αναφοράς εγγραφών μέσω αυτών των διαπιστευτηρίων, επομένως η αλλαγή τους απαιτεί τα δικαιώματα "Εκτύπωση και εξαγωγή αναφορών" και "Διαχείριση συγκεντρωτικών αναφορών" (και "Προβολή περιορισμένων ενοτήτων" όταν η εξαγωγή περιλαμβάνει περιορισμένες ενότητες).</value>
+  </data>
 </root>
 

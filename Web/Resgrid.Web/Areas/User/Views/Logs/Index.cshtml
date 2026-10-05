@@ -43,13 +43,17 @@
           </div>
         </div>
         <div class="ibox-content">
-          <table id="logsIndexList" class="table table-striped table-bordered" style="width:100%"></table>
+          <table id="logsIndexList" class="table table-striped table-bordered" style="width:100%" data-delete-confirm="@localizer["DeleteLogConfirm"]"></table>
         </div>
       </div>
     </div>
   </div>
 </div>
 
+@* DeleteWorkLog is POST + antiforgery: the list's Delete buttons post this form (resgrid.logs.index.js). *@
+<form id="deleteLogForm" method="post" asp-controller="Logs" asp-action="DeleteWorkLog" asp-route-area="User" asp-antiforgery="true" class="hidden">
+  <input type="hidden" name="logId" />
+</form>
 
 @section Scripts
 {

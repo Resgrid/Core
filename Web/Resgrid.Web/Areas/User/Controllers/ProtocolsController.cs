@@ -65,9 +65,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Protocol_Create)]
 		public async Task<IActionResult> New(NewProtocolModel model, IFormCollection form, ICollection<IFormFile> attachments)
 		{
+			// A new protocol is always a new row with new children: posted ids would make the save update other rows by key.
+			// The form never posts the child collections; they are rebuilt from the trigger/question fields and the files below.
+			model.Protocol.DispatchProtocolId = 0;
+			model.Protocol.Triggers = null;
+			model.Protocol.Questions = null;
+			model.Protocol.Attachments = null;
+
 			if (attachments != null)
 			{
 				model.Protocol.Attachments = new Collection<DispatchProtocolAttachment>();
@@ -193,7 +201,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Protocol_Delete)]
 		public async Task<IActionResult> Delete(int id)
 		{

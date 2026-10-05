@@ -207,6 +207,7 @@
   <data name="certifications_record_not_found" xml:space="preserve"><value>Запис сертифіката не знайдено.</value></data>
   <data name="certifications_status_invalid" xml:space="preserve"><value>Цей стан не можна встановити вручну.</value></data>
   <data name="certifications_not_pending" xml:space="preserve"><value>Підтвердити можна лише запис, що очікує підтвердження.</value></data>
+  <data name="certifications_self_verification" xml:space="preserve"><value>Ви не можете підтвердити або відновити власний запис сертифіката; його має затвердити інший керівник.</value></data>
   <data name="certifications_expiry_required" xml:space="preserve"><value>Цей тип спливає, тому потрібна нова дата закінчення.</value></data>
   <data name="certifications_expiry_not_later" xml:space="preserve"><value>Нова дата закінчення має бути пізнішою за поточну.</value></data>
   <data name="certifications_credit_hours_invalid" xml:space="preserve"><value>Кредитні години мають бути більшими за нуль.</value></data>

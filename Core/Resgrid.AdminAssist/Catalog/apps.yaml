@@ -30,8 +30,7 @@
       "Secret": false,
       "Location": {
         "Controller": "Department",
-        "Action": "Settings",
-        "Field": "BigBoardMapZoomLevel"
+        "Action": "Settings"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -63,8 +62,7 @@
       "Secret": false,
       "Location": {
         "Controller": "Department",
-        "Action": "Settings",
-        "Field": "BigBoardPageRefresh"
+        "Action": "Settings"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -96,8 +94,7 @@
       "Secret": false,
       "Location": {
         "Controller": "Department",
-        "Action": "Settings",
-        "Field": "BigBoardMapCenterAddress"
+        "Action": "Settings"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -129,8 +126,7 @@
       "Secret": false,
       "Location": {
         "Controller": "Department",
-        "Action": "Settings",
-        "Field": "BigBoardHideUnavailable"
+        "Action": "Settings"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -163,7 +159,7 @@
       "Location": {
         "Controller": "Department",
         "Action": "Settings",
-        "Field": "BigBoardMapCenterGpsCoordinates"
+        "Field": "MapCenterGpsCoordinatesLatitude"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",

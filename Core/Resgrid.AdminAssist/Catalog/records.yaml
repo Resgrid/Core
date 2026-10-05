@@ -31,7 +31,7 @@
       "Location": {
         "Controller": "Records",
         "Action": "Settings",
-        "Field": "RecordsDefaultLifecyclePreset"
+        "Field": "DefaultLifecyclePreset"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -64,7 +64,7 @@
       "Location": {
         "Controller": "Records",
         "Action": "Settings",
-        "Field": "RecordsReviewDueHours"
+        "Field": "ReviewDueHours"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -129,8 +129,7 @@
       "Secret": false,
       "Location": {
         "Controller": "Records",
-        "Action": "Settings",
-        "Field": "RecordsSearchConfig"
+        "Action": "Settings"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -162,8 +161,7 @@
       "Secret": false,
       "Location": {
         "Controller": "Records",
-        "Action": "Settings",
-        "Field": "RecordsRetentionPolicy"
+        "Action": "Settings"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -196,7 +194,7 @@
       "Location": {
         "Controller": "Records",
         "Action": "Settings",
-        "Field": "RecordsGroupVisibilityMode"
+        "Field": "GroupVisibilityMode"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -228,8 +226,7 @@
       "Secret": false,
       "Location": {
         "Controller": "Records",
-        "Action": "Settings",
-        "Field": "RecordsGroupScopeConfig"
+        "Action": "Settings"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -261,8 +258,7 @@
       "Secret": false,
       "Location": {
         "Controller": "Records",
-        "Action": "Settings",
-        "Field": "RecordsDisclosureConfig"
+        "Action": "Settings"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -295,7 +291,7 @@
       "Location": {
         "Controller": "Records",
         "Action": "Settings",
-        "Field": "RecordsNerisWorkflowsEnabled"
+        "Field": "NerisWorkflowsEnabled"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-10-03T00:00:00Z",
@@ -573,7 +569,7 @@
       "Location": {
         "Controller": "Records",
         "Action": "Settings",
-        "Field": "IncludeYear"
+        "Field": "NumberPattern"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -608,7 +604,7 @@
       "Location": {
         "Controller": "Records",
         "Action": "Settings",
-        "Field": "PerGroupSequence"
+        "Field": "NumberPattern"
       },
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z",
@@ -630,6 +626,216 @@
       "AllowedValues": "Validated by the owning configuration workflow",
       "EvidenceSource": "RecordsNumberingConfig",
       "Availability": "available"
+    },
+    {
+      "Id": "field.RecordsNumberingConfig.Floors",
+      "AreaId": "records",
+      "LabelKey": "Field.RecordsNumberingConfig.Floors",
+      "HelpKey": "FieldHelp.RecordsNumberingConfig.Floors",
+      "Binding": "RecordsNumberingConfig.Floors",
+      "ValueType": "list",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": "NextNumbers"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.RecordsNumberingConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.RecordsNumberingConfig.Floors",
+      "DefaultValue": "empty",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "RecordsNumberingConfig",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.RecordsNumberingConfig.Pattern",
+      "AreaId": "records",
+      "LabelKey": "Field.RecordsNumberingConfig.Pattern",
+      "HelpKey": "FieldHelp.RecordsNumberingConfig.Pattern",
+      "Binding": "RecordsNumberingConfig.Pattern",
+      "ValueType": "string",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": "NumberPattern"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.RecordsNumberingConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.RecordsNumberingConfig.Pattern",
+      "DefaultValue": "unset",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "RecordsNumberingConfig",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.RecordsNumberingFloor.NextSequence",
+      "AreaId": "records",
+      "LabelKey": "Field.RecordsNumberingFloor.NextSequence",
+      "HelpKey": "FieldHelp.RecordsNumberingFloor.NextSequence",
+      "Binding": "RecordsNumberingFloor.NextSequence",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.RecordsNumberingConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.RecordsNumberingFloor.NextSequence",
+      "DefaultValue": "1",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "RecordsNumberingFloor",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.RecordsNumberingFloor.ScopeKey",
+      "AreaId": "records",
+      "LabelKey": "Field.RecordsNumberingFloor.ScopeKey",
+      "HelpKey": "FieldHelp.RecordsNumberingFloor.ScopeKey",
+      "Binding": "RecordsNumberingFloor.ScopeKey",
+      "ValueType": "reference",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.RecordsNumberingConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.RecordsNumberingFloor.ScopeKey",
+      "DefaultValue": "unset",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "RecordsNumberingFloor",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.RecordsNumberingFloor.SetByUserId",
+      "AreaId": "records",
+      "LabelKey": "Field.RecordsNumberingFloor.SetByUserId",
+      "HelpKey": "FieldHelp.RecordsNumberingFloor.SetByUserId",
+      "Binding": "RecordsNumberingFloor.SetByUserId",
+      "ValueType": "server-metadata",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.RecordsNumberingConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.RecordsNumberingFloor.SetByUserId",
+      "DefaultValue": "unset",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "RecordsNumberingFloor",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.RecordsNumberingFloor.SetOn",
+      "AreaId": "records",
+      "LabelKey": "Field.RecordsNumberingFloor.SetOn",
+      "HelpKey": "FieldHelp.RecordsNumberingFloor.SetOn",
+      "Binding": "RecordsNumberingFloor.SetOn",
+      "ValueType": "server-metadata",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-04T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.RecordsNumberingConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.RecordsNumberingFloor.SetOn",
+      "DefaultValue": "unset",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "RecordsNumberingFloor",
+      "Availability": "reference-only"
     },
     {
       "Id": "field.RecordsSearchConfig.IndexNarrative",
@@ -1379,11 +1585,17 @@
         "field.RecordsDisclosureConfig.DefaultRedactionProfile",
         "field.RecordsDisclosureConfig.ReleaseApproverUserId",
         "field.RecordsDisclosureConfig.StatutoryClockDays",
+        "field.RecordsNumberingConfig.Floors",
         "field.RecordsNumberingConfig.IncludeYear",
         "field.RecordsNumberingConfig.NumberAssignment",
+        "field.RecordsNumberingConfig.Pattern",
         "field.RecordsNumberingConfig.PerGroupSequence",
         "field.RecordsNumberingConfig.ResetYearly",
         "field.RecordsNumberingConfig.SequenceWidth",
+        "field.RecordsNumberingFloor.NextSequence",
+        "field.RecordsNumberingFloor.ScopeKey",
+        "field.RecordsNumberingFloor.SetByUserId",
+        "field.RecordsNumberingFloor.SetOn",
         "field.RecordsRetentionOverride.AppliesFrom",
         "field.RecordsRetentionOverride.DefinitionKey",
         "field.RecordsRetentionOverride.RetentionYears",
@@ -1971,6 +2183,72 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.RecordsNumberingConfig.Floors",
+      "Locale": "en",
+      "TitleKey": "Field.RecordsNumberingConfig.Floors",
+      "Body": "Records Numbering Config / Floors. Raised next numbers, one per record-number sequence, for departments continuing numbers issued before Resgrid. A next number only rises, and numbers already issued always win, so a raised next number never causes a duplicate.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-recordsnumberingconfig-floors",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-04T00:00:00Z"
+    },
+    {
+      "Id": "field.RecordsNumberingConfig.Pattern",
+      "Locale": "en",
+      "TitleKey": "Field.RecordsNumberingConfig.Pattern",
+      "Body": "Records Numbering Config / Pattern. Number pattern for the built-in record types and incident reports, made of literal text and the PREFIX, YYYY, YY, GROUP and SEQ tokens. Unset keeps the pattern Include Year and Per Group Sequence describe. The sequence restarts whenever the text around SEQ changes.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-recordsnumberingconfig-pattern",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-04T00:00:00Z"
+    },
+    {
+      "Id": "field.RecordsNumberingFloor.NextSequence",
+      "Locale": "en",
+      "TitleKey": "Field.RecordsNumberingFloor.NextSequence",
+      "Body": "Records Numbering Floor / Next Sequence. The lowest sequence number that sequence may issue next.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-recordsnumberingfloor-nextsequence",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-04T00:00:00Z"
+    },
+    {
+      "Id": "field.RecordsNumberingFloor.ScopeKey",
+      "Locale": "en",
+      "TitleKey": "Field.RecordsNumberingFloor.ScopeKey",
+      "Body": "Records Numbering Floor / Scope Key. The sequence a raised next number applies to: the text the pattern renders around the sequence, with # in its place.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-recordsnumberingfloor-scopekey",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-04T00:00:00Z"
+    },
+    {
+      "Id": "field.RecordsNumberingFloor.SetByUserId",
+      "Locale": "en",
+      "TitleKey": "Field.RecordsNumberingFloor.SetByUserId",
+      "Body": "Records Numbering Floor / Set By User ID. The administrator who raised the next number.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-recordsnumberingfloor-setbyuserid",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-04T00:00:00Z"
+    },
+    {
+      "Id": "field.RecordsNumberingFloor.SetOn",
+      "Locale": "en",
+      "TitleKey": "Field.RecordsNumberingFloor.SetOn",
+      "Body": "Records Numbering Floor / Set On. When the next number was raised (UTC).",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-recordsnumberingfloor-seton",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-04T00:00:00Z"
     },
     {
       "Id": "field.RecordsSearchConfig.IndexNarrative",

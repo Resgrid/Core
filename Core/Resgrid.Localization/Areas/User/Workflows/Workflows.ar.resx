@@ -1046,4 +1046,19 @@
   <data name="BotUsernamePlaceholder" xml:space="preserve">
     <value>بوت Resgrid</value>
   </data>
+  <data name="StepCredentialNotFound" xml:space="preserve">
+    <value>لم يتم العثور على بيانات الاعتماد المحددة لهذه الخطوة.</value>
+  </data>
+  <data name="ExportAttachmentTemplateNotFound" xml:space="preserve">
+    <value>لم يتم العثور على تصدير تقرير السجلات المحدد لهذه الخطوة.</value>
+  </data>
+  <data name="ExportAttachmentRequiresRecordsRights" xml:space="preserve">
+    <value>يتطلب إرفاق تصدير تقرير السجلات بخطوة صلاحيتي "طباعة السجلات وتصديرها" و"إدارة تقارير السجلات".</value>
+  </data>
+  <data name="ExportAttachmentRequiresRestrictedRights" xml:space="preserve">
+    <value>يتضمن تصدير تقرير السجلات هذا أقسامًا مقيّدة؛ لذا يتطلب إرفاقه بخطوة أيضًا صلاحية "عرض الأقسام المقيّدة".</value>
+  </data>
+  <data name="CredentialDeliversRecordsExport" xml:space="preserve">
+    <value>ترسل إحدى خطوات سير العمل تصدير تقرير السجلات عبر بيانات الاعتماد هذه، لذا يتطلب تغييرها صلاحيتي "طباعة السجلات وتصديرها" و"إدارة تقارير السجلات" (وصلاحية "عرض الأقسام المقيّدة" عندما يتضمن التصدير أقسامًا مقيّدة).</value>
+  </data>
 </root>

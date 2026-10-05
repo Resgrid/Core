@@ -242,6 +242,7 @@
   <data name="timereports_date_exists" xml:space="preserve"><value>Raport czasu dla tej daty już istnieje.</value></data>
   <data name="timereports_not_found" xml:space="preserve"><value>Nie znaleziono raportu czasu.</value></data>
   <data name="timereports_locked" xml:space="preserve"><value>Raport czasu jest zatwierdzony, rozliczony lub unieważniony i nie można go już edytować.</value></data>
+  <data name="BillingNeedsInvoicingView" xml:space="preserve"><value>Opłaty i faktury wymagają uprawnienia Wyświetlanie fakturowania.</value></data>
   <data name="timereports_status_transition_invalid" xml:space="preserve"><value>Ta zmiana statusu nie jest dozwolona dla tego raportu czasu.</value></data>
   <data name="timereports_time_invalid" xml:space="preserve"><value>Wpisz godziny początku i końca w formacie HH:mm.</value></data>
   <data name="timereports_validation" xml:space="preserve"><value>Popraw poniższe błędy przed przesłaniem.</value></data>
@@ -252,7 +253,7 @@
   <data name="ManageDeployments" xml:space="preserve"><value>Zarządzaj dyslokacjami</value></data>
   <data name="ManageDeploymentsNote" xml:space="preserve"><value>Tworzenie i edycja dyslokacji, obsad, sprzętu, wydatków, plików i zmian statusu oraz wgląd we wszystkie dyslokacje. Członkowie w obsadzie zawsze widzą swoje dyslokacje i rejestrują czas bez tego uprawnienia.</value></data>
   <data name="ApproveTimeReports" xml:space="preserve"><value>Zatwierdzaj raporty czasu</value></data>
-  <data name="ApproveTimeReportsNote" xml:space="preserve"><value>Zatwierdzanie i unieważnianie przesłanych dziennych raportów czasu. Zatwierdzone raporty zasilają rozliczenia.</value></data>
+  <data name="ApproveTimeReportsNote" xml:space="preserve"><value>Zatwierdzanie i unieważnianie przesłanych dziennych raportów czasu. Zatwierdzone raporty zasilają rozliczenia. Nikt nie może zatwierdzić raportu, który sam przesłał lub który zawiera jego własne godziny; musi to zrobić inna osoba zatwierdzająca.</value></data>
   <data name="DeploymentCreated" xml:space="preserve"><value>Utworzono dyslokację</value></data>
   <data name="DeploymentStatusChanged" xml:space="preserve"><value>Zmieniono status dyslokacji</value></data>
   <data name="DeploymentRosterChanged" xml:space="preserve"><value>Zmieniono obsadę dyslokacji</value></data>
@@ -283,4 +284,5 @@
   <data name="Issuesubject_on_other_report" xml:space="preserve"><value>Ten podmiot ma już czas w innym raporcie z tego samego dnia</value></data>
   <data name="timereports_scope_invalid" xml:space="preserve"><value>Ta załoga lub osoba nie jest aktywna w tym rozmieszczeniu.</value></data>
   <data name="timereports_subject_covered" xml:space="preserve"><value>Ta załoga lub osoba ma już czas w innym raporcie z tego dnia.</value></data>
+  <data name="timereports_self_approval" xml:space="preserve"><value>Ten raport czasu został przez Ciebie przesłany lub zawiera Twoje godziny, więc musi go zatwierdzić inna osoba zatwierdzająca.</value></data>
 </root>

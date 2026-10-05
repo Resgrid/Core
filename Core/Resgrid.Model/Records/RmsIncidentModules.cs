@@ -63,6 +63,12 @@ namespace Resgrid.Model
 		/// <summary>incident.medical_oxygen_hazard — home medical oxygen involvement.</summary>
 		MedicalOxygenHazard = 15,
 
+		/// <summary>
+		/// incident.tactic_timestamps — command established, size-up, primary search, water on fire, knockdown, under
+		/// control, suppression and extrication times. Prefilled from Incident Command (<see cref="NerisTacticTimestamps"/>).
+		/// </summary>
+		TacticTimestamps = 16,
+
 		/// <summary>incident_analysis.structure_fire_origin — origin, item first ignited, human factors.</summary>
 		StructureFireOrigin = 20,
 
@@ -135,6 +141,7 @@ namespace Resgrid.Model
 			Add(RmsIncidentModuleKind.PowergenHazard, "powergen_hazards", "PowergenHazardPayload", true);
 			Add(RmsIncidentModuleKind.CsstHazard, "csst_hazard", "CsstHazardPayload", false);
 			Add(RmsIncidentModuleKind.MedicalOxygenHazard, "medical_oxygen_hazard", "MedicalOxygenHazardPayload", false);
+			Add(RmsIncidentModuleKind.TacticTimestamps, "tactic_timestamps", "IncidentTacticTimestampsPayload", false);
 
 			Add(RmsIncidentModuleKind.StructureFireOrigin, "structure_fire_origin", "StructureFireOriginPayload", false, true);
 			Add(RmsIncidentModuleKind.OutsideFire, "outside_fire", "OutsideFirePayload", false, true);

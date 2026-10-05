@@ -29,11 +29,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 	{
 		private readonly IRecordSavedReportsService _reports;
 		private readonly IRecordsCutoverService _cutoverService;
+		private readonly IRecordsAuthorizationService _authorization;
 
-		public RecordSavedReportsController(IRecordSavedReportsService reports, IRecordsCutoverService cutoverService)
+		public RecordSavedReportsController(IRecordSavedReportsService reports, IRecordsCutoverService cutoverService, IRecordsAuthorizationService authorization)
 		{
 			_reports = reports;
 			_cutoverService = cutoverService;
+			_authorization = authorization;
 		}
 
 		[HttpGet("List")]
@@ -120,12 +122,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 			catch (Exception ex) { return Fail(ex); }
 		}
 
+		/// <summary>The run as a CSV file. A file leaves Resgrid, so it needs ExportRecords on top of running the report.</summary>
 		[HttpGet("RunCsv")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Record_View)]
+		[Authorize(Policy = ResgridResources.Record_Export)]
 		public async Task<IActionResult> RunCsv(string id, CancellationToken cancellationToken)
 		{
 			if (!await FlagOnAsync()) return NotFound();
+			if (!await _authorization.HasPermissionAsync(UserId, DepartmentId, PermissionTypes.ExportRecords)) return Forbid();
 			try
 			{
 				var run = await _reports.RunAsync(DepartmentId, UserId, id, cancellationToken);

@@ -24,7 +24,7 @@ namespace Resgrid.Tests.Chatbot
 			oldestCall.Name = "Older User Call";
 			oldestCall.Dispatches.Add(new CallDispatch { UserId = "user-1" });
 			var calls = CreateCallsService(activeCalls);
-			var handler = new MyCallsActionHandler(calls.Object, Mock.Of<IUnitsService>());
+			var handler = new MyCallsActionHandler(calls.Object, Mock.Of<IUnitsService>(), AllowAll());
 			var intent = new ChatbotIntent { Type = ChatbotIntentType.MyCalls };
 			var session = new ChatbotSession { UserId = "user-1", DepartmentId = 1 };
 
@@ -52,7 +52,7 @@ namespace Resgrid.Tests.Chatbot
 			{
 				new Unit { UnitId = 7, DepartmentId = 1, Name = "Rescue 7" }
 			});
-			var handler = new MyCallsActionHandler(calls.Object, units.Object);
+			var handler = new MyCallsActionHandler(calls.Object, units.Object, AllowAll());
 			var intent = new ChatbotIntent { Type = ChatbotIntentType.UnitCalls };
 			intent.Parameters["unitName"] = "Rescue 7";
 			var session = new ChatbotSession { UserId = "user-1", DepartmentId = 1 };
@@ -65,6 +65,15 @@ namespace Resgrid.Tests.Chatbot
 			response.Text.Should().Contain("Older Unit Call");
 			calls.Verify(x => x.PopulateCallData(It.IsAny<Call>(), false, false, false, false, true, false, false, false, false, false),
 				Times.Exactly(activeCalls.Count));
+		}
+
+		/// <summary>The user can see every unit and call; the visibility rules are covered in Security/Audit20261005.</summary>
+		private static IAuthorizationService AllowAll()
+		{
+			var authorization = new Mock<IAuthorizationService>();
+			authorization.Setup(x => x.CanUserViewUnitAsync(It.IsAny<string>(), It.IsAny<int>())).ReturnsAsync(true);
+			authorization.Setup(x => x.CanUserViewCallAsync(It.IsAny<string>(), It.IsAny<int>())).ReturnsAsync(true);
+			return authorization.Object;
 		}
 
 		private static List<Call> CreateActiveCalls()

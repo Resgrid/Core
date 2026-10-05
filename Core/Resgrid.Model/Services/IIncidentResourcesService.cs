@@ -13,12 +13,14 @@ namespace Resgrid.Model.Services
 		// Ad-hoc units
 		Task<IncidentAdHocUnit> CreateAdHocUnitAsync(IncidentAdHocUnit unit, string userId, CancellationToken cancellationToken = default(CancellationToken));
 		Task<IncidentAdHocUnit> GetAdHocUnitByIdAsync(string incidentAdHocUnitId);
-		Task<List<IncidentAdHocUnit>> GetAdHocUnitsForCallAsync(int departmentId, int callId);
+		/// <summary>The call's ad-hoc units; released ones only with <paramref name="includeReleased"/> (reports count everyone who worked the incident).</summary>
+		Task<List<IncidentAdHocUnit>> GetAdHocUnitsForCallAsync(int departmentId, int callId, bool includeReleased = false);
 		Task<bool> ReleaseAdHocUnitAsync(int departmentId, string incidentAdHocUnitId, string userId, CancellationToken cancellationToken = default(CancellationToken));
 
 		// Ad-hoc personnel
 		Task<IncidentAdHocPersonnel> CreateAdHocPersonnelAsync(IncidentAdHocPersonnel personnel, string userId, CancellationToken cancellationToken = default(CancellationToken));
-		Task<List<IncidentAdHocPersonnel>> GetAdHocPersonnelForCallAsync(int departmentId, int callId);
+		/// <summary>The call's ad-hoc personnel; released ones only with <paramref name="includeReleased"/>.</summary>
+		Task<List<IncidentAdHocPersonnel>> GetAdHocPersonnelForCallAsync(int departmentId, int callId, bool includeReleased = false);
 		Task<bool> ReleaseAdHocPersonnelAsync(int departmentId, string incidentAdHocPersonnelId, string userId, CancellationToken cancellationToken = default(CancellationToken));
 
 		// Roster building

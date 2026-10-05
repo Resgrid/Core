@@ -1067,5 +1067,20 @@
   <data name="BotUsernamePlaceholder" xml:space="preserve">
     <value>Resgrid Bot</value>
   </data>
+  <data name="StepCredentialNotFound" xml:space="preserve">
+    <value>The credential chosen for this step was not found.</value>
+  </data>
+  <data name="ExportAttachmentTemplateNotFound" xml:space="preserve">
+    <value>The Records report export chosen for this step was not found.</value>
+  </data>
+  <data name="ExportAttachmentRequiresRecordsRights" xml:space="preserve">
+    <value>Attaching a Records report export to a step requires the "Print and Export Records" and "Manage Record Reports" permissions.</value>
+  </data>
+  <data name="ExportAttachmentRequiresRestrictedRights" xml:space="preserve">
+    <value>This Records report export includes restricted sections; attaching it to a step also requires the "View Restricted Sections" permission.</value>
+  </data>
+  <data name="CredentialDeliversRecordsExport" xml:space="preserve">
+    <value>A workflow step sends a Records report export through this credential, so changing it requires the "Print and Export Records" and "Manage Record Reports" permissions (and "View Restricted Sections" when the export includes restricted sections).</value>
+  </data>
 </root>
 

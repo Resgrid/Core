@@ -21,9 +21,12 @@ namespace Resgrid.Services.Records
 		private readonly IIncidentCommandService _commands;
 		private readonly IContactsService _contacts;
 		private readonly IMappingService _mapping;
+		private readonly ICallSourceDataService _sources;
 
-		public IncidentSourceFeedService(IIncidentReportingService reporting, IIncidentCommandService commands, IContactsService contacts, IMappingService mapping)
+		public IncidentSourceFeedService(IIncidentReportingService reporting, IIncidentCommandService commands, IContactsService contacts, IMappingService mapping,
+			ICallSourceDataService sources)
 		{
+			_sources = sources;
 			_reporting = reporting;
 			_commands = commands;
 			_contacts = contacts;
@@ -66,6 +69,22 @@ namespace Resgrid.Services.Records
 			catch (Exception ex)
 			{
 				Logging.LogException(ex, $"Command key times could not be read for call {callId}; the report starts without them.");
+				return null;
+			}
+		}
+
+		public async Task<CallSourceData> GetCallSourceDataAsync(int departmentId, Call call)
+		{
+			if (call == null || call.DepartmentId != departmentId)
+				return null;
+
+			try
+			{
+				return await _sources.GetForCallAsync(departmentId, call);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Report sources could not be read for call {call.CallId}; the report starts from the Call alone.");
 				return null;
 			}
 		}

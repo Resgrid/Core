@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Autofac;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
@@ -39,12 +40,31 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
-		public async Task Unit_location_goes_to_the_department_when_no_matrix_is_cached()
+		public async Task Unit_location_goes_to_the_department_when_no_matrix_is_cached_and_no_rule_restricts_it()
 		{
-			var audience = await _service.GetUnitLocationAudienceAsync(DepartmentId, 12);
+			var service = WithLiveAnswer(new VisibilityPayloadUnits { EveryoneNoGroupLock = true });
+
+			var audience = await service.GetUnitLocationAudienceAsync(DepartmentId, 12);
 
 			audience.IsEntireDepartment.Should().BeTrue();
-			(await _service.CanViewUnitLocationAsync(DepartmentId, 12, StationTwoMember)).Should().BeTrue();
+			(await service.CanViewUnitLocationAsync(DepartmentId, 12, StationTwoMember)).Should().BeTrue();
+		}
+
+		[Test]
+		public async Task Unit_location_without_a_matrix_follows_the_permission_rows_instead_of_going_to_everyone()
+		{
+			var service = WithLiveAnswer(Restricted(new Dictionary<int, List<string>> { [12] = new List<string> { Admin, StationOneMember } }));
+
+			(await service.GetUnitLocationAudienceAsync(DepartmentId, 12)).IsEntireDepartment.Should().BeFalse();
+			(await service.CanViewUnitLocationAsync(DepartmentId, 12, StationOneMember)).Should().BeTrue();
+			(await service.CanViewUnitLocationAsync(DepartmentId, 12, StationTwoMember)).Should().BeFalse();
+		}
+
+		[Test]
+		public async Task Without_a_container_there_is_no_live_answer_and_the_location_goes_to_nobody()
+		{
+			(await _service.GetUnitLocationAudienceAsync(DepartmentId, 12)).IsEntireDepartment.Should().BeFalse();
+			(await _service.CanViewUnitLocationAsync(DepartmentId, 12, StationTwoMember)).Should().BeFalse();
 		}
 
 		[Test]
@@ -89,15 +109,26 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
-		public async Task Unit_missing_from_the_matrix_fails_open_and_requests_one_rebuild()
+		public async Task Unit_missing_from_the_matrix_is_answered_from_the_permission_rows_and_requests_one_rebuild()
 		{
 			SetUnitMatrix(Restricted(new Dictionary<int, List<string>>
 			{
 				[12] = new List<string> { Admin }
 			}));
+			var service = WithLiveAnswer(Restricted(new Dictionary<int, List<string>>
+			{
+				[12] = new List<string> { Admin, StationOneMember, StationTwoMember },
+				[99] = new List<string> { Admin, StationTwoMember }
+			}));
 
-			(await _service.GetUnitLocationAudienceAsync(DepartmentId, 99)).IsEntireDepartment.Should().BeTrue();
-			(await _service.GetUnitLocationAudienceAsync(DepartmentId, 99)).IsEntireDepartment.Should().BeTrue();
+			(await service.GetUnitLocationAudienceAsync(DepartmentId, 99)).IsEntireDepartment.Should().BeFalse();
+			(await service.CanViewUnitLocationAsync(DepartmentId, 99, StationTwoMember)).Should().BeTrue();
+			(await service.CanViewUnitLocationAsync(DepartmentId, 99, StationOneMember)).Should().BeFalse();
+
+			// A unit the matrix does list keeps the matrix answer, as the REST matrix checks do.
+			(await service.CanViewUnitLocationAsync(DepartmentId, 12, StationOneMember)).Should().BeFalse();
+			(await service.GetVisibilitySetKeysForViewerAsync(DepartmentId, StationTwoMember)).Should().Contain(
+				(await service.GetUnitLocationAudienceAsync(DepartmentId, 99)).VisibilitySetKey);
 
 			_eventAggregator.Verify(x => x.SendMessage(It.Is<SecurityRefreshEvent>(e =>
 				e.DepartmentId == DepartmentId && e.Type == SecurityCacheTypes.WhoCanViewUnitLocations)), Times.Once);
@@ -157,13 +188,16 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
-		public async Task Unreadable_matrix_fails_open_like_the_rest_checks()
+		public async Task Unreadable_matrix_is_answered_from_the_permission_rows_like_the_rest_checks()
 		{
 			_cacheProvider
 				.Setup(x => x.GetAsync<VisibilityPayloadUnits>(UnitMatrixKey))
 				.ThrowsAsync(new TimeoutException("redis"));
 
-			(await _service.GetUnitLocationAudienceAsync(DepartmentId, 12)).IsEntireDepartment.Should().BeTrue();
+			(await WithLiveAnswer(new VisibilityPayloadUnits { EveryoneNoGroupLock = true })
+				.GetUnitLocationAudienceAsync(DepartmentId, 12)).IsEntireDepartment.Should().BeTrue();
+			(await WithLiveAnswer(Restricted(new Dictionary<int, List<string>> { [12] = new List<string> { Admin } }))
+				.CanViewUnitLocationAsync(DepartmentId, 12, StationOneMember)).Should().BeFalse();
 		}
 
 		[Test]
@@ -182,21 +216,22 @@ namespace Resgrid.Tests.Services
 				[StationTwoMember] = new List<string> { Admin }
 			}));
 			var authorizationService = CreateAuthorizationService(_cacheProvider.Object);
+			var service = WithLiveAuthorization(authorizationService);
 
 			foreach (var viewer in viewers)
 			{
-				// 99 is not in the matrix: both fail open.
+				// 99 is not in the matrix: both answer it from the permission rows (no rule here, so everyone).
 				foreach (var unitId in new[] { 12, 14, 15, 99 })
 				{
 					var expected = await authorizationService.CanUserViewUnitLocationViaMatrixAsync(unitId, viewer, DepartmentId);
-					(await _service.CanViewUnitLocationAsync(DepartmentId, unitId, viewer))
+					(await service.CanViewUnitLocationAsync(DepartmentId, unitId, viewer))
 						.Should().Be(expected, $"viewer {viewer} and unit {unitId}");
 				}
 
 				foreach (var person in viewers)
 				{
 					var expected = await authorizationService.CanUserViewPersonLocationViaMatrixAsync(person, viewer, DepartmentId);
-					(await _service.CanViewPersonnelLocationAsync(DepartmentId, person, viewer))
+					(await service.CanViewPersonnelLocationAsync(DepartmentId, person, viewer))
 						.Should().Be(expected, $"viewer {viewer} and person {person}");
 				}
 			}
@@ -217,6 +252,25 @@ namespace Resgrid.Tests.Services
 
 		private static VisibilityPayloadUsers Restricted(Dictionary<string, List<string>> users) =>
 			new VisibilityPayloadUsers { EveryoneNoGroupLock = false, Users = users, GeneratedOn = DateTime.UtcNow };
+
+		/// <summary>The service as the container builds it: live answers come from <paramref name="authorization"/> in a child scope.</summary>
+		private LocationVisibilityService WithLiveAuthorization(IAuthorizationService authorization)
+		{
+			var builder = new ContainerBuilder();
+			builder.RegisterInstance(authorization).As<IAuthorizationService>();
+
+			return new LocationVisibilityService(_cacheProvider.Object, _eventAggregator.Object, _clock, builder.Build());
+		}
+
+		private LocationVisibilityService WithLiveAnswer(VisibilityPayloadUnits units, VisibilityPayloadUsers users = null)
+		{
+			var authorization = new Mock<IAuthorizationService>();
+			authorization.Setup(x => x.GetLiveUnitVisibilityAsync(DepartmentId, PermissionTypes.CanSeeUnitLocations)).ReturnsAsync(units);
+			authorization.Setup(x => x.GetLivePersonnelVisibilityAsync(DepartmentId, PermissionTypes.CanSeePersonnelLocations))
+				.ReturnsAsync(users ?? new VisibilityPayloadUsers { EveryoneNoGroupLock = true });
+
+			return WithLiveAuthorization(authorization.Object);
+		}
 
 		private static AuthorizationService CreateAuthorizationService(ICacheProvider cacheProvider)
 		{

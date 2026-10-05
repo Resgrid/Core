@@ -13,8 +13,10 @@ namespace Resgrid.Chatbot.Handlers
 	/// Closes a call (intent <see cref="ChatbotIntentType.CloseCall"/>). Destructive → requires confirmation
 	/// (security addendum §5): the first pass restates the target and parks the session in
 	/// <see cref="ChatbotDialogState.AwaitingConfirmation"/>; the ingress re-dispatches with "__confirmed"
-	/// on YES. Ownership + <see cref="IAuthorizationService.CanUserCloseCallAsync"/> are re-checked on both
-	/// passes (§2/§3). Responses are localized to the user's culture.
+	/// on YES. Ownership, the Call_Update right MVC and v4 require (<see cref="IAuthorizationService.CanUserCreateCallAsync"/>
+	/// evaluates the same Create Call row ClaimsLogic.AddCallClaims derives it from) and
+	/// <see cref="IAuthorizationService.CanUserCloseCallAsync"/> are re-checked on both passes (§2/§3). Responses are
+	/// localized to the user's culture.
 	/// </summary>
 	public class CloseCallHandler : IChatbotActionHandler
 	{
@@ -41,7 +43,8 @@ namespace Resgrid.Chatbot.Handlers
 				if (call == null || call.DepartmentId != session.DepartmentId)
 					return new ChatbotResponse { Text = ChatbotResources.Get("Call_NotFound", culture, callId), Processed = true };
 
-				if (!await _authorizationService.CanUserCloseCallAsync(session.UserId, call.CallId, session.DepartmentId))
+				if (!await _authorizationService.CanUserCreateCallAsync(session.UserId, session.DepartmentId) ||
+					!await _authorizationService.CanUserCloseCallAsync(session.UserId, call.CallId, session.DepartmentId))
 					return new ChatbotResponse { Text = ChatbotResources.Get("Call_NoClosePermission", culture), Processed = false };
 
 				if (call.State == (int)CallStates.Closed)

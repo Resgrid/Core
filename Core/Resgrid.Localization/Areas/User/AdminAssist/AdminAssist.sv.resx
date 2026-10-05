@@ -2070,6 +2070,24 @@
   <data xml:space="preserve" name="Field.RecordsNumberingConfig.SequenceWidth">
     <value>Inställningar för numrering av poster / Sekvensens bredd</value>
   </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingConfig.Floors">
+    <value>Inställningar för numrering av poster / Lägsta nivåer</value>
+  </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingConfig.Pattern">
+    <value>Inställningar för numrering av poster / Mönster</value>
+  </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingFloor.NextSequence">
+    <value>Lägsta nivå för numrering av poster / Nästa sekvens</value>
+  </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingFloor.ScopeKey">
+    <value>Lägsta nivå för numrering av poster / Omfångsnyckel</value>
+  </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingFloor.SetByUserId">
+    <value>Lägsta nivå för numrering av poster / Angiven av användar-ID</value>
+  </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingFloor.SetOn">
+    <value>Lägsta nivå för numrering av poster / Angiven</value>
+  </data>
   <data xml:space="preserve" name="Field.RecordsRetentionOverride.AppliesFrom">
     <value>Undantag för bevarande av poster / Gäller från</value>
   </data>
@@ -2213,6 +2231,24 @@
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.SequenceWidth">
     <value>Nollutfylld sekvensbredd för definitioner som använder avdelningens standardvärden. Postredigeraren validerar den bredd som stöds.</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.Floors">
+    <value>Höjda nästa nummer, ett per nummersekvens, för avdelningar som fortsätter nummer som utfärdats före Resgrid. Ett nästa nummer kan bara höjas, och redan utfärdade nummer går alltid före, så ett höjt nästa nummer orsakar aldrig en dubblett.</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.Pattern">
+    <value>Nummermönster för de inbyggda posttyperna och insatsrapporterna, byggt av fast text och platshållarna PREFIX, YYYY, YY, GROUP och SEQ. Utan värde gäller mönstret som ”Inkludera år” och ”Sekvens per grupp” beskriver. Sekvensen börjar om när texten runt SEQ ändras.</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingFloor.NextSequence">
+    <value>Det lägsta sekvensnummer som sekvensen får utfärda härnäst.</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingFloor.ScopeKey">
+    <value>Sekvensen som ett höjt nästa nummer gäller: texten som mönstret skapar runt sekvensen, med # i dess ställe.</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingFloor.SetByUserId">
+    <value>Administratören som höjde nästa nummer.</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingFloor.SetOn">
+    <value>När nästa nummer höjdes (UTC).</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsRetentionOverride.AppliesFrom">
     <value>Framåtriktad gräns för revideringar som omfattas av undantaget, utvärderad av postens livscykel.</value>
@@ -3358,247 +3394,247 @@
     <value>Visa personalersättning</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.AddCallData">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter att anteckningar, bilder, filer och videoflöden läggs till på larm på webben och i apparna. Personen måste också kunna se larmet, och att bifoga en fil på webben kräver dessutom redigeringsrätt för larmet (avdelningsadministratörer eller medlemmen som registrerade larmet). När rutan Endast grupp är markerad får bara avdelningsadministratörer och personer vars grupp larmades ut på larmet lägga till på det – även när regeln är Alla. Utan sparad regel får alla som kan se larmet göra detta.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.AddPersonnel">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter att medlemmar läggs till, bjuds in och återaktiveras. Välj Avdelnings- och gruppadministratörer för att låta gruppadministratörer lägga till personer i sin egen grupp; medlemmar som de återaktiverar eller lägger till från ett befintligt konto hamnar också i gruppadministratörens egen grupp. Utan sparad regel får endast avdelningsadministratörer göra detta. Gruppadministratörer som också ska kunna ta bort personer måste omfattas av den här inställningen, eftersom borttagning också kontrollerar den.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.AdjustInventory">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter att inventarier tas emot, justeras och arkiveras och att lager används från Poster, och är utgångsregeln för Överför inventarium och Lämna ut inventarier tills dessa har sparats. Utan sparad regel får endast avdelningsadministratörer göra detta, och skärmen Säkerhet visar det.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.AmendRecords">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter att en ändring öppnas på en slutförd post och att den överges. Ändringen slutförs genom slutförande, så kombinera denna med Slutföra rapporter. Utan sparad regel får avdelnings- och gruppadministratörer göra detta.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ApproveRecords">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter godkännande av poster. Godkännande görs för närvarande från apparna och API:t; på webben vidgar det bara ansvarsvyn. Utan sparad regel får endast avdelningsadministratörer göra detta. En godkännare kan aldrig godkänna sin egen post, och en definitions godkännarroller kan begränsa det ytterligare.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ApproveTimeReports">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter att inskickade tidrapporter för insatser godkänns och makuleras, även från Incident Command-appen. Ingen kan godkänna en rapport som hen själv skickat in eller som innehåller egna timmar, så sådana kräver en andra godkännare; makulering är fortfarande tillåten. När en rapport har godkänts kan dess utgifter – och utgifterna för den dagen – inte längre ändras. På webben måste godkännaren också kunna se insatsen. Utan sparad regel får endast avdelningsadministratörer göra detta.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.BreakGlassProtectedData">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>En utfasad identifierare som behålls så att äldre sparade inställningar fortfarande kan läsas in. Den ger ingenting, visas inte på skärmen Säkerhet och kan inte sparas; supportpersonalens åtkomst styrs av inställningen för supportsamtycke på sidan Dataskydd.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CanSeePersonnelLocations">
-    <value>Styr sekretessgränsen för platssynlighet för varje granskare och person. Förhandsgranskningen räknar åtkomstpar, inte aktuella kartmarkörer, spårningssamtycke eller GPS-tillgänglighet.</value>
+    <value>Avgör vems positioner en medlem får se: kartan, livespårning, avstånd och restider för närmaste insatspersonal, statuspositioner i personal- och larmaktivitet, incheckningar och personalens händelsehistorik. När rutan Endast grupp är markerad ser personer bara medlemmar i sin egen grupp. Utan sparad regel får alla göra detta. Det är positionen som döljs, inte personen.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CanSeeUnitLocations">
-    <value>Styr sekretessgränsen för platssynlighet för varje granskare och enhet. En grupplåsning avser enhetens station och den ägande grupphierarkin, inte någon station som granskaren annars kan se.</value>
+    <value>Avgör vilka enheters positioner en medlem får se: kartan, livespårning, avstånd och restider för närmaste enheter, enheters händelsehistorik och rapporter, incheckningar, ruttavvikelser och larmaktivitet. När rutan Endast grupp är markerad ser personer bara enheter på sin egen station. Utan sparad regel får alla göra detta. Det är positionen som döljs, inte enheten.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CloseCall">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter att larm avslutas och återöppnas. När rutan Endast grupp är markerad får bara avdelningsadministratörer och personer vars grupp larmades ut på larmet avsluta eller återöppna det – även när regeln är Alla. På webben, i apparna och i chattboten behöver personer också larmrättigheterna från Skapa larm. Utan sparad regel får alla som kan se larmet avsluta det.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CommandAppLogin">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Avgör vem som kan använda Incident Command-appen och läsa ledningstavlor: varje tavla och all läsning av personalredovisning, behov, tidslinje, karta, roller, röst och resurser, apparnas offlinesynkronisering av tavlor och chattbotens svar om insatser. Utan sparad regel får alla aktiva medlemmar göra detta. När du sparar en snävare regel får de personer den tillåter även funktioner för ledningsstöd på alla tavlor. Att upprätta insatsledning och redigera tavlor kräver fortfarande ledningsrättigheter på avdelningsadministratörsnivå.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ConfigureProtectedDataEgress">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Styr vem som får administrera skyddade arbetsflöden och deras godkännanden av frisläppning. Att slå på, godkänna eller förnya ett skyddat arbetsflöde kräver också en ny förstärkt verifiering, och inställningarna för utlämning med PIN via sms och röstsamtal kräver dessutom en avdelningsadministratör. Gäller endast när avdelningen är registrerad för Avancerat dataskydd.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ContactDelete">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter att kontakter, kategorier, insatsplaner, objektsrisker och platsfiler tas bort. Utan sparad regel får alla göra detta. En kontakt med öppen fakturering i Business Ops kan inte tas bort.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ContactEdit">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter att kontakter, kategorier, insatsplaner, risker och platsfiler läggs till och redigeras. Utan sparad regel får alla göra detta. Redigeringssidan visar hela kontakten, så alla som kan redigera kan också läsa; skyddade fält förblir maskerade utan ett beviljande av skyddad data.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ContactView">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter att kontakter, deras anteckningar, larm och filer visas på webben och i apparna, att de hittas i sökningen och att kontaktuppgifter visas på larm: platsinformation, kontaktvarningar, larmets kontaktväljare och larmexporten. Utan sparad regel får alla göra detta, utom vid inköp av inventarier, där leverantörskontakter endast visas för avdelningsadministratörer tills du sparar en regel. Rutter och sidan för att redigera kontakter kan också visa kontaktuppgifter.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateCalendarEntry">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter att kalenderposter och kalendertyper skapas och redigeras samt att kalenderincheckningar redigeras från apparna. För att redigera eller ta bort en post måste man också vara den som skapade den eller avdelningsadministratör, och endast deltagaren själv eller någon som kan redigera händelsen får ta bort en deltagare. Alla kan fortfarande visa kalendern. Utan sparad regel får alla göra detta.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateCall">
-    <value>Tillåter att ett larm startas. Åtgärden på avdelningsnivå använder varje medlems faktiska administratörsstatus och personalroller. Den senare utlarmningsvalideringen är fortfarande avgörande.</value>
+    <value>Tillåter att larm skapas, och därmed de larmrättigheter som även redigering, avslut, återöppning och borttagning kräver, på webben, i apparna, från sidan Loggar och i chattboten. Personer som inte uppfyller kraven kan fortfarande visa larm. Utan sparad regel får alla göra detta.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateDocument">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter uppladdning av dokument. Personer kan bara redigera eller ta bort dokument som de själva har laddat upp, om de inte är avdelningsadministratörer. Alla kan fortfarande visa dokument. Utan sparad regel får alla ladda upp dokument.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateLog">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter att loggar skrivs. Alla kan fortfarande visa dem. När modulen Poster har aktiverats blir äldre loggar skrivskyddade och den här regeln kopieras till Skapa post och Slutföra rapporter. Utan sparad regel får alla göra detta.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateMessage">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter att meddelanden skickas, att inlägg och reaktioner görs i chatten, att direktmeddelanden startas och att chattboten används, inklusive att skicka ett meddelande via sms till chattboten. Personer utan den kan fortfarande läsa och ta bort sina meddelanden men kan inte markera dem som lästa eller redigera chattinlägg. Utan sparad regel får alla göra detta.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateNote">
-    <value>Tillåter att en avdelningsanteckning skapas. Åtgärden ger inte åtkomst till skyddat anteckningsinnehåll eller en annan avdelning.</value>
+    <value>Tillåter att anteckningar skapas från apparna. På webben kräver skapande, redigering och borttagning av anteckningar alltid en avdelningsadministratör, oavsett vad den här regeln säger. Anteckningar endast för administratörer förblir synliga bara för avdelningsadministratörer. Utan sparad regel får alla skapa anteckningar i apparna.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateRecord">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter att poster skapas, inklusive insatsrapporter, fältposter, underlag och bilagor. Utan sparad regel får alla skapa poster. Börjar gälla när modulen Poster har aktiverats; aktiveringen kopierar hit din regel från Skapa logg. Fältappar behöver också sina fältflaggor för Poster.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateShift">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter att skift och arbetsskift skapas, redigeras och tas bort samt att anmälningar hanteras för alla grupper. Gruppadministratörer hanterar alltid anmälningar för sina egna grupper. Medlemmar som anmäler sig – på webben, i apparna eller via chattboten – måste följa skiftets regler (inga passerade dagar, tilldelade skift kräver en tilldelning, gruppskift kräver medlemmens grupp). Alla kan fortfarande visa skift. Utan sparad regel får endast avdelningsadministratörer ändra skift.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateTraining">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter att utbildningar skapas, redigeras och tas bort samt att medlemmars utbildningsframsteg återställs. Alla kan fortfarande visa och genomföra utbildningar. Utan sparad regel får endast avdelningsadministratörer göra detta.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateWorkflow">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter att arbetsflöden skapas, redigeras och tas bort, att deras villkor förhandsgranskas, att stegkonfigurationen läses i apparna och API:t och att den renderade utdatan från arbetsflödeskörningar visas. Utan sparad regel kan endast avdelningsadministratörer ändra arbetsflöden, men alla medlemmar kan öppna sidan Arbetsflöden och läsa definitioner; om du sparar Avdelningsadministratörer döljs arbetsflödena även för alla andra. Steg som skickar en export från Poster kräver också Exportera poster och Hantera rapportsammanställningar. Gratisplaner är begränsade i hur många arbetsflöden de kan ha.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.DeleteCall">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter att larm tas bort. När rutan Endast grupp är markerad får bara avdelningsadministratörer och personer vars grupp larmades ut på larmet ta bort det – även när regeln är Alla. Personer behöver också larmrättigheterna från Skapa larm. Utan sparad regel får alla som kan se larmet ta bort det.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.DeleteLog">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter att loggar tas bort. Den är skild från Skapa logg. När modulen Poster har aktiverats blir äldre loggar skrivskyddade och den här regeln kopieras till Ta bort post. Utan sparad regel får alla göra detta.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.DeleteRecord">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter att poster ogiltigförklaras och att utkast avbryts – utan den kan personer inte ens avbryta sina egna utkast. En medlem får bara ogiltigförklara eller avbryta poster som hen har skrivit, äger, granskar eller godkänner, såvida hen inte är avdelningsadministratör eller administratör för postens grupp. Utan sparad regel får alla göra detta. Börjar gälla när modulen Poster har aktiverats; aktiveringen kopierar hit din regel från Ta bort logg.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.DispatchAppLogin">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Avgör vem som räknas som larmoperatör. Dispatch-appen kontrollerar detta vid inloggning (servern själv blockerar inte inloggning), och larmoperatörer kan läsa och aviseras i chattkanaler som är synliga för larmcentralen, inklusive kanaler för insatsledning och gruppkanaler. Utan sparad regel räknas alla aktiva medlemmar. Att spara den uppdaterar chattåtkomsten.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.EditProtectedCallData">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Erbjuds inte på skärmen Säkerhet eftersom ingen kontroll vid körning läser den: redigering av skyddade larmfält följer de vanliga behörigheterna för att redigera larm plus ett giltigt beviljande av skyddad data. En tidigare sparad regel behålls men har ingen effekt.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ExportPayDataReporting">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter att Kaliforniens lönedatarapporter fryses, exporteras och laddas ned samt att rapportkörningar och deras summor läses. Ögonblicksbilder per arbetstagare och att bygga rapporten kräver Hantera lönedatarapportering. Kräver ett aktivt Business Ops-tillägg och att Avancerat dataskydd är aktiverat. Utan sparad regel får endast avdelningsadministratörer göra detta.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ExportProtectedData">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Erbjuds inte på skärmen Säkerhet eftersom ingen kontroll vid körning läser den: varje export följer exportbehörigheten i sin egen modul. En tidigare sparad regel behålls men har ingen effekt.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ExportRecords">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter utskrift och export av poster, dokument, insatsrapporter, CSV-filer från sparade rapporter och samlingspaket. Utan sparad regel får alla göra detta. Begränsade avsnitt kräver dessutom Visa begränsade poster; hantering av exportmallar, att öppna andra personers exportkörningar och att skicka ett paket via e-post till en extern adress kräver Hantera rapportsammanställningar.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.FinalizeRecords">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter att poster slutförs, vilket låser dem som den officiella versionen. En medlem får slutföra poster som hen har skrivit, äger, granskar eller godkänner; att slutföra någon annans kräver Granska rapporter (Godkänna rapporter när posten har godkänts, Ändra poster för en ändring) eller en avdelningsadministratör. Ändringar och rättelser slutförs också genom slutförande, så alla som gör ändringar behöver även denna. Utan sparad regel får alla göra detta. Aktiveringen kopierar hit din regel från Skapa logg.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.IssueInventory">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter att utrustning och förnödenheter lämnas ut till personer och enheter, att returer tas emot, att satser lämnas ut och att nya innehavare läggs till. Tills du sparar en regel här följer den Justera lager. Kontrollerade substanser kräver även Hantera kontrollerade substanser och, där det krävs, ett vittne.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageBids">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter att anbud och offerter skapas, redigeras och tas bort samt omvandlas till insatser. Omvandling och användning av insatsguiden kräver även Hantera insatser, och kostnadskort för anbud kräver Visa interna kostnader. Utan sparad regel får endast avdelningsadministratörer göra detta. Kräver funktionen Entreprenörsfakturering och ett aktivt Business Ops-tillägg.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageCertificationSetup">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter hantering av certifieringskatalogen, mallar, rollkrav och inställningar för upprätthållande. Den visar inte i sig medlemmarnas certifieringsposter; det kräver Visa certifieringar. Utan sparad regel får endast avdelningsadministratörer göra detta.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageCertifications">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter att andra medlemmars och enheters certifieringsposter och fortbildningspoäng läggs till, verifieras, redigeras och tas bort. Det omfattar visning. Medlemmar kan alltid hantera sina egna poster, men ingen kan verifiera sina egna, och om man ändrar sin egen verifierade post tas verifieringen bort. Utan sparad regel får endast avdelningsadministratörer göra detta.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageChecklists">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter att checklistor skapas, publiceras, avvecklas och schemaläggs samt att checklistearbete skickas till andra grupper. Det omfattar inte läsning av resultat. Utan sparad regel får endast avdelningsadministratörer göra detta. Kräver att Checklistor är aktiverat; åtgärder vid underkänt som öppnar arbetsordrar kräver även Arbetsordrar och Readiness Pro.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageContracts">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter visning och hantering av serviceavtal och efterlevnadsdokument, inklusive efterlevnadschecklistan på fliken Fakturering för en insats. Utan sparad regel får endast avdelningsadministratörer göra detta. Kräver funktionen Entreprenörsfakturering och ett aktivt Business Ops-tillägg.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageControlledSubstances">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter hantering av artiklar med kontrollerade substanser: ta emot, flytta, lämna ut, använda, bevittna, rapportera och lägga till dem i katalogen. Den kompletterar de vanliga inventariebehörigheterna i stället för att ersätta dem, och bevittnade steg kräver en andra behörig person. Utan sparad regel får endast avdelningsadministratörer göra detta.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageDepartmentDataProtection">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Erbjuds inte på skärmen Säkerhet eftersom ingen kontroll vid körning läser den: sidorna för Dataskydd kräver en avdelningsadministratör, och registrering, avregistrering, undantag från förstärkt verifiering och fakturering är begränsade till den ansvariga medlemmen. En tidigare sparad regel behålls men har ingen effekt.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageDeployments">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter att insatser och externa insatsordrar skapas och drivs: bemanning, utrustning, tid, utgifter och avslut, samt att utgifter markeras som förhandsgodkända. Det finns ingen separat visningsbehörighet; medlemmar i en insats bemanning (direkt eller via sin enhets besättning i bemanningen) ser fortfarande insatsen – att ta en plats på en utsänd enhet räcker inte. Utan sparad regel får endast avdelningsadministratörer göra detta. Att skapa från en extern order kräver även Skapa post med modulen Poster aktiverad.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageInvoicing">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter att fakturor skapas, skickas, redigeras och makuleras, att fakturor genereras från insatser, att fakturapaketet laddas ned, att betalningar registreras och att prislistor och faktureringsprofiler hanteras. Det omfattar visning. Utan sparad regel får endast avdelningsadministratörer göra detta. Kräver att funktionen Kundfakturering är aktiverad; ändringar kräver ett aktivt Business Ops-tillägg.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageMutualAidReimbursement">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter förberedelse, överlämning och avstämning av ersättningsarbete för Cal OES MARS. Att bygga löneundersökningen kräver också Visa personalersättning, och befattningsklasser med färre än tre medlemmar utelämnas. Medlemmar i bemanningen kan fortfarande fylla i sin egen F-42 och sina utgifter, men utskrivna paket visar inga ersättningsnivåer eller summor för dem. Utan sparad regel får endast avdelningsadministratörer göra detta. Kräver att Cal OES MARS är aktiverat och ett aktivt Business Ops-tillägg.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManagePayDataReporting">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter att Kaliforniens lönedatarapporter byggs i guiden och att de underliggande ögonblicksbilderna per arbetstagare visas. Att frysa och exportera en rapport kräver Exportera lönedatarapportering. Varje medlem besvarar fortfarande sina egna demografiska frågor. Kräver modulen för lönedatarapportering, ett aktivt Business Ops-tillägg och att Avancerat dataskydd är aktiverat. Utan sparad regel får endast avdelningsadministratörer göra detta.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageRecordDefinitions">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter att postdefinitioner skapas och redigeras i designern. Publicering kräver även Publicera rapportdefinitioner, och hantering av anpassade fält för poster kräver dessutom en avdelningsadministratör. Utan sparad regel får endast avdelningsadministratörer göra detta.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageRecordDisclosures">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter hantering av begäranden om allmänna handlingar och utlämnande, inklusive läsning av kön för utlämnanden och framtagning av utlämningar. Begränsat innehåll kräver dessutom Visa begränsade poster. Utan sparad regel får endast avdelningsadministratörer göra detta.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageRecordLegalHold">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter att juridiska spärrar läggs och hävs, vilket hindrar att poster rensas bort. Spärrar på en specifik post är begränsade till poster som personen kan se. Utan sparad regel får endast avdelningsadministratörer göra detta.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageRecordReports">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter att sparade postrapporter skapas, schemaläggs och körs, att exportmallar hanteras, att mall- och schemalagda exportkörningar öppnas och att samlingspaket skickas via e-post till externa adresser; den visar också ansvarsvyn. Exportmallar och CSV-nedladdningar kräver även Exportera poster, och begränsade rapporter och körningar kräver Visa begränsade poster. Ett samlingspaket öppnas alltid bara för den medlem som skapade det. Utan sparad regel får endast avdelningsadministratörer göra detta.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageRoutes">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Styr rutter. Den visas inte på någon konfigurationsskärm, så medlemmar kan visa rutter, gruppadministratörer kan även skapa och redigera dem och endast avdelningsadministratörer kan ta bort dem. Att starta en rutt och checka in vid stopp kräver redigeringsåtkomst. Visning av rutter visar också avdelningens kontakter.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageWorkOrders">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter hantering av arbetsordrar i hela avdelningen: godkännanden, kostnader, åtgärder, väntelägen, återkommande underhåll, leverantörsavgifter och andra gruppers ordrar. Det omfattar att se alla arbetsordrar. Utan sparad regel får endast avdelningsadministratörer göra detta. Kräver att Arbetsordrar är aktiverat och tillägget Readiness Pro.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageWorkflowCredentials">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter att de autentiseringsuppgifter som arbetsflöden använder för att nå externa tjänster skapas, redigeras och tas bort. Hemligheter maskeras alltid. Utan sparad regel kan endast avdelningsadministratörer ändra dem, men medlemmar kan se namn och typer på autentiseringsuppgifter; om du sparar Avdelningsadministratörer döljs även dessa, på webben och i API:t. För att redigera en autentiseringsuppgift som levererar en export från Poster krävs också Exportera poster och Hantera rapportsammanställningar. Användbar endast tillsammans med Skapa arbetsflöde.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ManageWorkforceCompensation">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter hantering av arbetsgivarprofilen, arbetsställen, arbetstagare samt anställnings- och ersättningsposter, och att kostnadskörningar startas. Det omfattar visning. Ingen kan godkänna en ersättningsprofil som hen senast ändrade eller sin egen lön. Lönebelopp är skyddade och visas maskerade utan ett beviljande av skyddad data. Endast tillgängligt på webben. Utan sparad regel får endast avdelningsadministratörer göra detta. Kräver funktionen Interna kostnader och ett aktivt Business Ops-tillägg.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.PublishRecordDefinitions">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter att postdefinitioner publiceras och avvecklas så att personer kan använda dem. Den fungerar endast tillsammans med Hantera rapportdefinitioner. Utan sparad regel får endast avdelningsadministratörer göra detta.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ReassignRecordDrafts">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter att någon annans utkast till post lämnas över till en annan aktiv medlem. Utan sparad regel får avdelnings- och gruppadministratörer göra detta, i alla grupper de kan se.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.RecordsPreventionAdmin">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter hantering av förebyggande data – objekt, tillsyner, brandposter, tillstånd och riskminskning i samhället. Andra medlemmar kan fortfarande läsa dem. Varje område kräver också att motsvarande förebyggandemodul i Poster är aktiverad. Utan sparad regel får endast avdelningsadministratörer göra detta.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.RemovePersonnel">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter att medlemmar tas bort från avdelningen. Välj Avdelnings- och gruppadministratörer för att låta gruppadministratörer ta bort personer i sin egen grupp – de behöver då också att Lägg till personal är inställd på samma sätt, eftersom borttagningssidan kontrollerar den. En gruppadministratör kan aldrig ta bort en avdelningsadministratör eller den ansvariga medlemmen. Utan sparad regel får endast avdelningsadministratörer göra detta.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ReviewRecords">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter granskning av poster, återsändning av dem för rättelse och tilldelning av granskningsarbete. Utan sparad regel får avdelnings- och gruppadministratörer göra detta. En definitions granskarroller kan begränsa det ytterligare. Kvalitetsgranskning kräver även kvalitetsgranskningsmodulen i Poster.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ShareRecordsExternally">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Reserverad för delning av poster med andra grupper eller externa myndigheter. Ingen aktuell funktion använder den, så den erbjuds inte på skärmen Säkerhet; som standard är den begränsad till avdelningsadministratörer, och en tidigare sparad regel behålls tills delning finns.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.SubmitRecords">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter att poster skickas in till en rapporteringsmottagare som NERIS. De som skickar in måste kunna se posten; att läsa inlämningarnas utbyteshistorik kräver också Visa begränsade poster, och validering av en inlämning kräver en avdelningsadministratör. Utan sparad regel får endast avdelningsadministratörer göra detta.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.TransferInventory">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter att lager flyttas mellan platser. Tills du sparar en regel här följer den Justera lager. När rutan Endast grupp är markerad kan personer bara flytta lager mellan platser i sin egen grupp. Kontrollerade substanser kräver även Hantera kontrollerade substanser.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.UseCalendarSync">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter medlemmar att få en personlig prenumerationslänk för kalendern i telefonen eller datorn. Flödet kontrolleras på nytt vid varje hämtning, så om du begränsar detta stoppas befintliga flöden, och en medlem som tagits bort från eller inaktiverats i avdelningen slutar få det. Utan sparad regel får alla göra detta. Operatören måste också ha aktiverat kalenderflöden.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewAllWorkOrders">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter att se arbetsordrar utöver dem du har skapat eller är tilldelad. Utan sparad regel ser avdelningsadministratörer alla och gruppadministratörer ser sin egen grupps; rutan Endast grupp visar den begränsningen som markerad, så låt den vara markerad när du sparar om gruppadministratörer ska förbli begränsade till sin grupp.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewCertifications">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter visning av andra medlemmars och enheters certifieringar, listan över certifieringar som snart går ut och rollbehörighet. Medlemmar ser alltid sina egna; gruppadministratörer behöver också den här behörigheten för att se sina medlemmars poster. Utan sparad regel får endast avdelningsadministratörer göra detta. Skyddade fält kräver ett beviljande av skyddad data.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewChecklistResults">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter läsning av resultat och historik för genomförda checklistor. Utan sparad regel ser avdelningsadministratörer allt, gruppadministratörer ser resultaten för sin egen grupp och alla ser genomgångar som de har skapat eller bevittnat. Avmarkera rutan Endast grupp för att låta granskare se alla grupper.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewGroupRecords">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Begränsar vilka gruppers poster personer kan se. Begränsningen gäller endast när rutan Endast grupp för den här regeln är markerad och Journalinställningar anger gruppbegränsad synlighet; då ser personer som inte är administratörer den egna gruppens poster samt de poster de har skapat eller deltar i. Val av åtgärd och roller på den här raden ändrar inte synligheten.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewGroupUnits">
-    <value>Styr synligheten för enhetsmål och deras tilldelade stationer. Grupplösa granskare och otilldelade enheter delar inte grupp.</value>
+    <value>Avgör vilka enheter en person kan se i enhetslistor, väljare, på kartan, i besättningstilldelningar, i sökningen, i chattboten och i apparna, och för vilka hen får ange status. När rutan Endast grupp är markerad ser personer bara enheter på sin egen station (avdelningsadministratörer ser alltid alla enheter). Utan sparad regel ser alla alla enheter.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewGroupUsers">
-    <value>Styr synligheten för personalmål. En grupplåsning kan begränsa målomfånget. Administratörer för en målgrupp eller dess överordnade grupper använder den ägande synlighetspolicyn.</value>
+    <value>Avgör vilka medlemmar en person kan se i personallistor, profiler, rutnät, utlarmningsväljare, rapporter, sökningen samt i apparnas personalförteckning och statusflöden. När rutan Endast grupp är markerad ser gruppadministratörer och rollinnehavare bara sin egen grupp (avdelningsadministratörer ser alltid alla). Utan sparad regel ser alla alla.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewInternalCosts">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter att se avdelningens interna kostnader: kostnadsprofiler för resurser, användning, fältkostnadskörningar och marginalkort. Att köra, frysa eller ta bort kostnadskörningar, redigera kostnadsprofiler och ändra andra personers användning kräver även Hantera personalersättning. Utan sparad regel får endast avdelningsadministratörer göra detta. Kräver att funktionen Interna kostnader är aktiverad och ett aktivt Business Ops-tillägg.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewInvoicing">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter visning av fakturor, åldersanalys, prislistor och kontakters faktureringsprofiler utan att ändra dem, inklusive fakturalistorna på insatser och avtal. Fakturapaketet (med tidrapporter, kvitton och efterlevnadsdokument) kräver Hantera fakturering. Utan sparad regel får endast avdelningsadministratörer göra detta. Visning fortsätter att fungera om Business Ops-tillägget upphör.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewLegacyRecords">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Reserverad för visning av äldre logghistorik från Poster. Ingen aktuell sida använder den, så den erbjuds inte på skärmen Säkerhet; den äldre historiken följer behörigheterna för Loggar. En tidigare sparad regel behålls.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewPersonalInfo">
-    <value>Styr behörighetsgränsen för personlig information. Skyddade fält kräver fortfarande egen aktuell auktorisering och beviljande av dataskydd.</value>
+    <value>Avgör vem som ser medlemmars e-postadresser, telefonnummer och postadresser på personalsidorna, i personalrapporten (på skärmen och när den schemaläggs via e-post), i profilredigeraren och i apparna. Personer utan den ser fortfarande namn, grupper, roller och statusar, och alla ser alltid sina egna uppgifter. Utan sparad regel får alla göra detta. Skyddade fält kräver dessutom ett beviljande av skyddad data.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewProtectedCallData">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Styr vem som får ta emot skyddade larmuppgifter via sms eller röstsamtal efter att ha angett sin PIN. Visning på skärmen och i apparna styrs inte av den; den följer åtkomsten till larmet plus ett giltigt beviljande av skyddad data. Gäller endast när avdelningen är registrerad för Avancerat dataskydd och utlämning med PIN är aktiverad.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewProtectedContactData">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Erbjuds inte på skärmen Säkerhet eftersom ingen kontroll vid körning läser den: alla som kan visa kontakter och har ett giltigt beviljande av skyddad data kan visa skyddade kontaktfält. En tidigare sparad regel behålls men har ingen effekt.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewProtectedOperationalData">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Erbjuds inte på skärmen Säkerhet eftersom ingen kontroll vid körning läser den: visning av skyddade loggar, dokument, kalenderposter, anpassade fält och poster följer varje moduls egna åtkomstregler plus ett giltigt beviljande av skyddad data. En tidigare sparad regel behålls men har ingen effekt.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewProtectedPersonnelData">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Erbjuds inte på skärmen Säkerhet eftersom ingen kontroll vid körning läser den: alla som kan visa en medlem och har ett giltigt beviljande av skyddad data kan visa medlemmens skyddade fält. En tidigare sparad regel behålls men har ingen effekt.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewRestrictedRecords">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter att se begränsade avsnitt i poster, till exempel uppgifter om skadade, exponering och utredningar. Den krävs också för att ta med begränsat innehåll i utlämnanden, exporter och exportkörningar och för att läsa inlämningarnas utbyteshistorik. Utan sparad regel får endast avdelningsadministratörer göra detta.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewUdfFields">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Styr läsning och sparande av värden i anpassade fält via apparna och API:t. Den visas inte på någon konfigurationsskärm, så alla behåller åtkomst för att visa och uppdatera. Varje värde följer också fältets synlighetsinställning och det objekt det hör till: en medlem läser eller fyller bara i värden på larm, enheter, personer och kontakter som hen kan se eller redigera. Hantering av definitioner för anpassade fält kräver alltid en avdelningsadministratör.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewWorkflowRuns">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter visning av körningshistorik, loggar, hälsa och väntande körningar för arbetsflöden. Vad en körning skickade (dess renderade utdata och resultat) visas bara för personer som får redigera arbetsflöden. Utan sparad regel kan alla medlemmar visa körningar och endast avdelningsadministratörer kan avbryta eller rensa dem; om du sparar Avdelningsadministratörer döljs körningar för alla andra, och om du sparar Alla kan alla avbryta och rensa.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ViewWorkforceCompensation">
-    <value>Granska den här behörigheten på skärmen Säkerhet. Standardvärdet när ingen policy är sparad, gruppomfattning, beroende behörigheter och beteende i webb, API och mobil väntar fortfarande på en fullständig konsumentgranskning. Det finns ännu ingen liveförhandsgranskning av effekten för den här behörigheten.</value>
+    <value>Tillåter visning av personalförteckningen och ersättningsposter utan att ändra dem, och krävs för att bygga löneundersökningen för Cal OES MARS. Belopp visas maskerade utan ett beviljande av skyddad data. Endast tillgängligt på webben. Utan sparad regel får endast avdelningsadministratörer göra detta.</value>
   </data>
   <data xml:space="preserve" name="Plan.AddStep">
     <value>Lägg till steg</value>

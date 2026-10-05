@@ -7,7 +7,7 @@ namespace Resgrid.Model
 		public static readonly IReadOnlyList<RecordPermissionDescriptor> All = new[]
 		{
 			new RecordPermissionDescriptor(PermissionTypes.ManageWorkOrders, PermissionActions.DepartmentAdminsOnly, false, "ManageWorkOrdersNote", false),
-			new RecordPermissionDescriptor(PermissionTypes.ViewAllWorkOrders, PermissionActions.DepartmentAndGroupAdmins, true, "ViewAllWorkOrdersNote")
+			new RecordPermissionDescriptor(PermissionTypes.ViewAllWorkOrders, PermissionActions.DepartmentAndGroupAdmins, true, "ViewAllWorkOrdersNote", noRowLockToGroup: true)
 		};
 	}
 }

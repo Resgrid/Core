@@ -236,7 +236,7 @@ namespace Resgrid.Tests.Services
             public Task LockUnitAsync(int d, int unit) => Task.CompletedTask;
             public Task<int> LastAppendedUnitStateIdAsync(int d, int unit) => Task.FromResult(UnitStates.Where(r => r.UnitId == unit).Select(r => r.UnitStateId).DefaultIfEmpty().Max());
             public Task<UnitState> LatestUnitStateAsync(int d, int unit) => Task.FromResult(UnitStates.Where(r => r.UnitId == unit).OrderByDescending(r => r.Timestamp).ThenByDescending(r => r.UnitStateId).FirstOrDefault());
-            public Task<int> AppendUnitStateAsync(int d, int unit, int state, DateTime now) { var id = UnitStates.Select(r => r.UnitStateId).DefaultIfEmpty().Max() + 1; UnitStates.Add(new UnitState { UnitStateId = id, UnitId = unit, State = state, Timestamp = now }); return Task.FromResult(id); }
+            public Task<int> AppendUnitStateAsync(int d, int unit, int state, DateTime now, string setByUserId = null) { var id = UnitStates.Select(r => r.UnitStateId).DefaultIfEmpty().Max() + 1; UnitStates.Add(new UnitState { UnitStateId = id, UnitId = unit, State = state, Timestamp = now }); return Task.FromResult(id); }
         }
     }
 }

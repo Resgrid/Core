@@ -112,9 +112,21 @@
   <data name="DefaultLifecyclePreset" xml:space="preserve"><value>Cycle de vie par défaut des définitions du service</value></data>
   <data name="ReviewDueHours" xml:space="preserve"><value>Délai de revue (heures)</value></data>
   <data name="Numbering" xml:space="preserve"><value>Numérotation des dossiers</value></data>
-  <data name="IncludeYear" xml:space="preserve"><value>Inclure l'année dans les numéros</value></data>
   <data name="SequenceWidth" xml:space="preserve"><value>Chiffres de la séquence</value></data>
-  <data name="PerGroupSequence" xml:space="preserve"><value>Séquence distincte par caserne/groupe</value></data>
+  <data name="NumberPattern" xml:space="preserve"><value>Modèle de numérotation</value></data>
+  <data name="NumberPatternExample" xml:space="preserve"><value>Exemple :</value></data>
+  <data name="NumberPatternHelp" xml:space="preserve"><value>Utilisez {PREFIX} pour le type de dossier (RUN, TRN, INC, etc.), {YYYY} ou {YY} pour l'année, {GROUP} pour la caserne ou le groupe (G suivi de son identifiant, obligatoirement suivi de -, _ ou .) et {SEQ} pour la séquence, qui est obligatoire. Les lettres, les chiffres, -, _ et . sont conservés tels quels. La séquence redémarre dès que le texte autour de {SEQ} change : inclure l'année la fait redémarrer chaque année, et omettre {PREFIX} donne une séquence unique partagée par tous les types de dossiers.</value></data>
+  <data name="NumberPatternInvalid" xml:space="preserve"><value>Le modèle de numérotation n'a pas été enregistré. Utilisez uniquement des lettres, des chiffres, -, _, . et les jetons {PREFIX}, {YYYY}, {YY}, {GROUP} et {SEQ} ; incluez {SEQ} exactement une fois, chaque jeton au plus une fois, et faites suivre {GROUP} de -, _ ou . (40 caractères au maximum).</value></data>
+  <data name="NextNumbersHeader" xml:space="preserve"><value>Prochains numéros pour {0}</value></data>
+  <data name="NextNumbersIntro" xml:space="preserve"><value>Augmentez le prochain numéro d'une séquence pour poursuivre les numéros attribués avant Resgrid : après 2026-0001 à 2026-0152, saisissez 153. Laissez un champ vide pour conserver la séquence telle quelle. Un prochain numéro ne peut qu'être augmenté, jamais diminué, afin qu'aucun numéro ne soit attribué deux fois.</value></data>
+  <data name="NextNumberSequence" xml:space="preserve"><value>Séquence</value></data>
+  <data name="NextNumberCurrent" xml:space="preserve"><value>Prochain numéro</value></data>
+  <data name="NextNumberRaiseTo" xml:space="preserve"><value>Porter le prochain à</value></data>
+  <data name="NextNumberBelowCurrent" xml:space="preserve"><value>Un prochain numéro ne peut qu'être augmenté. Ces séquences n'ont pas été modifiées, car le nombre saisi était inférieur à celui qu'elles attribueront ensuite :</value></data>
+  <data name="NextNumberPatternChanged" xml:space="preserve"><value>Le modèle de numérotation a changé ; les prochains numéros saisis n'ont donc pas été appliqués. Vérifiez les séquences du nouveau modèle et enregistrez à nouveau.</value></data>
+  <data name="NextNumberConfirm" xml:space="preserve"><value>Un prochain numéro augmenté ne peut plus être diminué. Enregistrer ces modifications ?</value></data>
+  <data name="NumberingAllTypes" xml:space="preserve"><value>Tous les types de dossiers</value></data>
+  <data name="NumberingNoGroup" xml:space="preserve"><value>Aucune caserne ni groupe</value></data>
   <data name="Retention" xml:space="preserve"><value>Conservation</value></data>
   <data name="RetentionIntro" xml:space="preserve"><value>Valeurs par défaut : 7 ans pour les dossiers standard ; permanent pour Coroner et les autres classes restreintes. La conservation relève de ce service. Les modifications s'appliquent pour l'avenir et sont auditées.</value></data>
   <data name="DepartmentDefaultYears" xml:space="preserve"><value>Valeur par défaut du service (années, vide = système)</value></data>

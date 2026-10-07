@@ -85,6 +85,9 @@ var resgrid;
                     $('#textColor').minicolors('value', '#FF5733');
                 });
             });
+            function hiddenInput(name, value) {
+                return $('<input type="hidden">').attr({ id: name, name: name }).val(value);
+            }
             function addOption() {
                 var buttonText = $('#buttonText').val();
                 if (!buttonText) {
@@ -95,11 +98,31 @@ var resgrid;
                     $('#newStatusModal').modal('hide');
                     $("#addOptionErrors").hide();
                     resgrid.statuses.newstatus.optionsCount++;
+                    var n = newstatus.optionsCount;
+                    var buttonColor = $('#buttonColor').val();
+                    var textColor = $('#textColor').val();
                     var baseTypeVal = $('#baseType').length ? $('#baseType').val() : '-1';
                     var detailTypeVal = $('#detailType').length ? $('#detailType').val() : '0';
                     var noteTypeVal = $('#noteType').length ? $('#noteType').val() : '0';
                     var requireGpsVal = $('#requireGps').length && $('#requireGps').is(':checked') ? 'on' : 'false';
-                    $('#options tbody').first().append("<tr><td><input type='number' min='0' id='order_" + newstatus.optionsCount + "' name='order_" + newstatus.optionsCount + "' value='0' onkeypress='return resgrid.statuses.newstatus.isNumber(event)'></td><td>" + $('#buttonText').val() + "<input type='hidden' id='buttonText_" + newstatus.optionsCount + "' name='buttonText_" + newstatus.optionsCount + "' value='" + $('#buttonText').val() + "'></input><input type='hidden' id='baseType_" + newstatus.optionsCount + "' name='baseType_" + newstatus.optionsCount + "' value='" + baseTypeVal + "'></input></td><td><a class='btn btn-default' role='button' style='color:" + $('#textColor').val() + ";background:" + $('#buttonColor').val() + ";'>" + $('#buttonText').val() + "</a><input type='hidden' id='buttonColor_" + newstatus.optionsCount + "' name='buttonColor_" + newstatus.optionsCount + "' value='" + $('#buttonColor').val() + "'><input type='hidden' id='textColor_" + newstatus.optionsCount + "' name='textColor_" + newstatus.optionsCount + "' value='" + $('#textColor').val() + "'><input type='hidden' id='detailType_" + newstatus.optionsCount + "' name='detailType_" + newstatus.optionsCount + "' value='" + detailTypeVal + "'></input><input type='hidden' id='noteType_" + newstatus.optionsCount + "' name='noteType_" + newstatus.optionsCount + "' value='" + noteTypeVal + "'></input><input type='hidden' id='requireGps_" + newstatus.optionsCount + "' name='requireGps_" + newstatus.optionsCount + "' value='" + requireGpsVal + "'></input></td><td style='text-align:center;'><a onclick='$(this).parent().parent().remove();' class='btn btn-xs btn-danger' data-original-title='Remove this option'>Remove</a></td></tr>");
+
+                    // Built with jQuery, never by concatenating markup, so a typed or pasted value cannot become HTML or
+                    // break out of an attribute.
+                    var row = $('<tr>');
+                    row.append($('<td>').append($('<input type="number" min="0" value="0">').attr({ id: 'order_' + n, name: 'order_' + n })
+                        .on('keypress', function (e) { return isNumber(e); })));
+                    row.append($('<td>').text(buttonText).append(hiddenInput('buttonText_' + n, buttonText), hiddenInput('baseType_' + n, baseTypeVal)));
+                    row.append($('<td>').append(
+                        $('<a class="btn btn-default" role="button">').css({ color: textColor, background: buttonColor }).text(buttonText),
+                        hiddenInput('buttonColor_' + n, buttonColor),
+                        hiddenInput('textColor_' + n, textColor),
+                        hiddenInput('detailType_' + n, detailTypeVal),
+                        hiddenInput('noteType_' + n, noteTypeVal),
+                        hiddenInput('requireGps_' + n, requireGpsVal)));
+                    row.append($('<td style="text-align:center;">').append(
+                        $('<a class="btn btn-xs btn-danger" data-original-title="Remove this option">').text('Remove')
+                            .on('click', function () { $(this).closest('tr').remove(); })));
+                    $('#options tbody').first().append(row);
                 }
             }
             newstatus.addOption = addOption;

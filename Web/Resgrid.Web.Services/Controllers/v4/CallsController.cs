@@ -285,7 +285,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var result = new ActiveCallsResult();
 
 			// Group-scoped dispatch (off by default) trims this to the caller's area and the calls they are on.
-			var calls = (await _dispatchScopeService.FilterCallsForUserAsync(DepartmentId, UserId, await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId)))
+			var calls = (await ScopeCallsAsync(await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId)))
 				.OrderByDescending(x => x.LoggedOn).ToList();
 			var destinationPois = await _mappingService.GetPOIsForDepartmentAsync(DepartmentId);
 			var destinationPoiLookup = destinationPois.ToDictionary(x => x.PoiId);
@@ -1132,8 +1132,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 			call.UnitDispatches = new List<CallDispatchUnit>();
 
 			// An empty list means "everyone" for an immediate call (older clients send nothing), but for a pending call
-			// it means no proposed recipients yet: the dispatcher who picks it up chooses them.
-			if (!IsSystemApiKeyRequest && (newCallInput.DispatchList == "0" || (!isPending && string.IsNullOrWhiteSpace(newCallInput.DispatchList))))
+			// it means no proposed recipients yet: the dispatcher who picks it up chooses them. The system key never pages
+			// everyone on its own, but a pending call pages nobody until a dispatcher sends it, so "0" is honored there.
+			if ((newCallInput.DispatchList == "0" && (!IsSystemApiKeyRequest || isPending)) ||
+				(!IsSystemApiKeyRequest && !isPending && string.IsNullOrWhiteSpace(newCallInput.DispatchList)))
 			{
 				// Use case, existing clients and non-ionic2 app this will be null dispatch all users. Or we've specified everyone (0).
 				foreach (var u in users)
@@ -2182,7 +2184,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			var result = new ScheduledCallsResult();
 
-			var calls = (await _callsService.GetAllNonDispatchedScheduledCallsByDepartmentIdAsync(DepartmentId)).OrderBy(x => x.DispatchOn).ToList();
+			// Scheduled calls are active calls: group-scoped dispatch trims them as it does GetActiveCalls.
+			var calls = (await ScopeCallsAsync(await _callsService.GetAllNonDispatchedScheduledCallsByDepartmentIdAsync(DepartmentId)))
+				.OrderBy(x => x.DispatchOn).ToList();
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 			var destinationPois = await _mappingService.GetPOIsForDepartmentAsync(DepartmentId);
 			var destinationPoiLookup = destinationPois.ToDictionary(x => x.PoiId);
@@ -2239,8 +2243,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			var result = new PendingCallsResult();
 
-			var calls = (await _dispatchScopeService.FilterCallsForUserAsync(DepartmentId, UserId,
-				await _callsService.GetPendingCallsByDepartmentIdAsync(DepartmentId))).OrderBy(x => x.LoggedOn).ToList();
+			var calls = (await ScopeCallsAsync(await _callsService.GetPendingCallsByDepartmentIdAsync(DepartmentId)))
+				.OrderBy(x => x.LoggedOn).ToList();
 			var destinationPois = await _mappingService.GetPOIsForDepartmentAsync(DepartmentId);
 			var destinationPoiLookup = destinationPois.ToDictionary(x => x.PoiId);
 
@@ -2625,7 +2629,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var result = new ActiveCallsResult();
 
 			// Group-scoped dispatch (off by default) trims this to the caller's area and the calls they are on, as GetCall does.
-			var calls = (await _dispatchScopeService.FilterCallsForUserAsync(DepartmentId, UserId, await _callsService.GetAllCallsByDepartmentDateRangeAsync(DepartmentId, startDate, endDate)))
+			var calls = (await ScopeCallsAsync(await _callsService.GetAllCallsByDepartmentDateRangeAsync(DepartmentId, startDate, endDate)))
 				.OrderByDescending(x => x.LoggedOn).ToList();
 			var destinationPois = await _mappingService.GetPOIsForDepartmentAsync(DepartmentId);
 			var destinationPoiLookup = destinationPois.ToDictionary(x => x.PoiId);
@@ -2886,6 +2890,19 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return builtInStatuses?.FirstOrDefault(x => x.CustomStateDetailId == rawStatus);
 
 			return customStates?.Where(x => x?.Details != null).SelectMany(x => x.Details).FirstOrDefault(x => x != null && x.CustomStateDetailId == rawStatus);
+		}
+
+		/// <summary>
+		/// Group-scoped dispatch for a person's call lists. A department API key acts for its whole department, as
+		/// <see cref="CanViewOrEditCallAsync"/> does: its identity is the managing user, whose membership the key does not
+		/// depend on, so filtering by that user could hide calls from a valid key.
+		/// </summary>
+		private async Task<List<Call>> ScopeCallsAsync(List<Call> calls)
+		{
+			if (IsDepartmentApiKeyRequest)
+				return calls ?? new List<Call>();
+
+			return await _dispatchScopeService.FilterCallsForUserAsync(DepartmentId, UserId, calls);
 		}
 
 		/// <summary>

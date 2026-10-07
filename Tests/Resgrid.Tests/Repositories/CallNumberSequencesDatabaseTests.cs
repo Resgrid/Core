@@ -85,6 +85,10 @@ namespace Resgrid.Tests.Repositories
 					? @"CREATE EXTENSION IF NOT EXISTS citext;
 						CREATE TABLE calls (callid serial PRIMARY KEY, departmentid int NOT NULL, number citext NULL, loggedon timestamp NOT NULL, isdeleted boolean NOT NULL DEFAULT false);"
 					: @"CREATE TABLE Calls (CallId int IDENTITY PRIMARY KEY, DepartmentId int NOT NULL, Number nvarchar(max) NULL, LoggedOn datetime2 NOT NULL, IsDeleted bit NOT NULL DEFAULT 0);");
+
+				// The connection loaded its types before citext existed; without a reload a citext column cannot be read back.
+				if (database is NpgsqlConnection npgsql)
+					await npgsql.ReloadTypesAsync();
 			}
 
 			var source = new Mock<IMigrationSource>();
@@ -171,17 +175,43 @@ namespace Resgrid.Tests.Repositories
 		}
 
 		[Test]
-		public async Task Renumbering_sets_the_counter_and_keeps_the_floor()
+		public async Task Renumbering_reserves_the_counter_and_keeps_the_floor()
 		{
 			var repository = Repository();
 			await repository.RaiseFloorAsync(5, "2026-#", 40, "admin", DateTime.UtcNow);
-			await repository.TakeNextAsync(5, "2026-#", 0);
+			(await repository.TakeNextAsync(5, "2026-#", 0)).Should().Be(40);
 
-			await repository.SetLastSequenceAsync(5, "2026-#", 41);
-			await repository.SetLastSequenceAsync(5, "2025-#", 7);
+			(await repository.RaiseLastSequenceAsync(5, "2026-#", 45)).Should().Be(45);
+			(await repository.RaiseLastSequenceAsync(5, "2026-#", 30)).Should().Be(45, "a reservation never lowers the counter");
+			(await repository.RaiseLastSequenceAsync(5, "2025-#", 7)).Should().Be(7, "a scope with no row is created at the reservation");
 
+			(await repository.TrySetLastSequenceAsync(5, "2026-#", 41, 45)).Should().BeTrue();
 			(await repository.GetSequenceAsync(5, "2026-#")).Should().Match<Resgrid.Model.CallNumberSequence>(r => r.LastSequence == 41 && r.FloorSequence == 40);
 			(await repository.TakeNextAsync(5, "2025-#", 0)).Should().Be(8);
+		}
+
+		[Test]
+		public async Task A_counter_a_new_call_moved_is_not_set_back()
+		{
+			var repository = Repository();
+			var reserved = await repository.RaiseLastSequenceAsync(8, "2026-#", 20);
+			(await repository.TakeNextAsync(8, "2026-#", 0)).Should().Be(21, "a call created while the year is rewritten");
+
+			(await repository.TrySetLastSequenceAsync(8, "2026-#", 12, reserved)).Should().BeFalse();
+			(await repository.TakeNextAsync(8, "2026-#", 0)).Should().Be(22);
+		}
+
+		[Test]
+		public async Task Deleted_call_numbers_are_read_for_the_period_only()
+		{
+			var repository = Repository();
+			var year = new DateTime(2026, 1, 1);
+			await SeedCallAsync(9, "26-3", year.AddDays(3), deleted: true);
+			await SeedCallAsync(9, "26-4", year.AddDays(4));
+			await SeedCallAsync(9, "25-8", year.AddDays(-2), deleted: true);
+			await SeedCallAsync(10, "26-5", year.AddDays(5), deleted: true);
+
+			(await repository.GetDeletedCallNumbersAsync(9, year, year.AddYears(1))).Should().Equal(new[] { "26-3" });
 		}
 
 		[Test]

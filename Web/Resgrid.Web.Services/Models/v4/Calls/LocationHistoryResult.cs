@@ -68,7 +68,7 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		/// <summary>Priority color (hex)</summary>
 		public string PriorityColor { get; set; }
 
-		/// <summary>CallStates value: 0 Active, 1 Closed, 2 Cancelled, 3 Unfounded, 4 Founded, 5 Minor</summary>
+		/// <summary>CallStates value: 0 Active, 1 Closed, 2 Cancelled, 3 Unfounded, 4 Founded, 5 Minor, 6 Transferred, 7 False Alarm, 8 Pending</summary>
 		public int State { get; set; }
 
 		/// <summary>When the call was logged (UTC)</summary>

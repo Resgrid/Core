@@ -80,10 +80,14 @@ namespace Resgrid.Web.Services.Middleware
 
 			if (result == null || !result.Success)
 			{
-				_memoryCache.Set(failureKey, failures + 1,
-					TimeSpan.FromMinutes(Math.Max(1, Config.SecurityConfig.DepartmentApiKeyFailureWindowMinutes)));
+				// Only an unrecognized key is a guess. Revoked, expired, address and department refusals come after the secret
+				// matched, so counting them would let one stale integration lock every key out of a shared address.
+				var status = result?.Status ?? DepartmentApiKeyAuthenticationStatus.Invalid;
+				if (status == DepartmentApiKeyAuthenticationStatus.Invalid)
+					_memoryCache.Set(failureKey, failures + 1,
+						TimeSpan.FromMinutes(Math.Max(1, Config.SecurityConfig.DepartmentApiKeyFailureWindowMinutes)));
 
-				return AuthenticateResult.Fail(DescribeFailure(result?.Status ?? DepartmentApiKeyAuthenticationStatus.Invalid));
+				return AuthenticateResult.Fail(DescribeFailure(status));
 			}
 
 			var principal = new ClaimsPrincipal(BuildIdentity(result));

@@ -118,6 +118,7 @@ namespace Resgrid.Tests.Services
 		private List<Call> _calls;
 		private Department _department;
 		private CallNumberingService _service;
+		private Func<Task> _duringRewrite;
 
 		[SetUp]
 		public void SetUp()
@@ -139,7 +140,15 @@ namespace Resgrid.Tests.Services
 			calls.Setup(c => c.GetAllCallsByDepartmentDateRangeAsync(Dept, It.IsAny<DateTime>(), It.IsAny<DateTime>()))
 				.ReturnsAsync((int d, DateTime start, DateTime end) => _calls.Where(c => !c.IsDeleted && c.LoggedOn >= start && c.LoggedOn <= end).ToList());
 			calls.Setup(c => c.SaveOrUpdateAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
-				.ReturnsAsync((Call c, CancellationToken t, bool f) => c);
+				.Returns(async (Call c, CancellationToken t, bool f) =>
+				{
+					// Something another request does while a renumbering is rewriting the year, once.
+					var during = _duringRewrite;
+					_duringRewrite = null;
+					if (during != null)
+						await during();
+					return c;
+				});
 			_sequences.Calls = _calls;
 
 			_service = new CallNumberingService(settings.Object, departments.Object, _sequences, calls.Object);
@@ -270,6 +279,47 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task Renumbering_skips_numbers_deleted_calls_hold_and_never_shares_one_with_a_call_created_meanwhile()
+		{
+			_saved = new CallNumberingConfig { Pattern = "{YYYY}-{SEQ}", SequenceWidth = 3 };
+			Issued("2026-001", new DateTime(2026, 1, 1));
+			Issued("2026-002", new DateTime(2026, 1, 3), deleted: true);
+			Issued("2026-005", new DateTime(2026, 1, 5)); // an archived call, entered last
+			Issued("2026-003", new DateTime(2026, 1, 10));
+			Issued("2026-004", new DateTime(2026, 2, 1));
+			(await _sequences.TakeNextAsync(Dept, "2026-#", 4)).Should().Be(5);
+
+			string created = null;
+			_duringRewrite = async () =>
+			{
+				created = await _service.AllocateCallNumberAsync(Dept, new DateTime(2026, 10, 6));
+				Issued(created, new DateTime(2026, 10, 6));
+			};
+
+			(await _service.RenumberCallsForYearAsync(Dept, 2026)).Should().BeTrue();
+
+			_calls.Where(c => !c.IsDeleted && c.LoggedOn < new DateTime(2026, 3, 1)).OrderBy(c => c.LoggedOn).Select(c => c.Number)
+				.Should().Equal(new[] { "2026-001", "2026-003", "2026-004", "2026-005" }, "2026-002 still belongs to the deleted call");
+			created.Should().Be("2026-006", "the counter was moved past the renumbered year before any call was rewritten");
+			_calls.Select(c => c.Number).Should().OnlyHaveUniqueItems();
+			(await _service.AllocateCallNumberAsync(Dept, new DateTime(2026, 10, 7))).Should().Be("2026-007", "the counter the new call moved is not set back");
+		}
+
+		[Test]
+		public async Task With_no_call_created_meanwhile_the_counter_comes_back_down_to_the_renumbered_year()
+		{
+			_saved = new CallNumberingConfig { Pattern = "{YYYY}-{SEQ}", SequenceWidth = 3 };
+			Issued("2026-001", new DateTime(2026, 1, 1));
+			Issued("2026-009", new DateTime(2026, 1, 5));
+			(await _sequences.TakeNextAsync(Dept, "2026-#", 9)).Should().Be(10);
+
+			(await _service.RenumberCallsForYearAsync(Dept, 2026)).Should().BeTrue();
+
+			_calls.Select(c => c.Number).Should().Equal(new[] { "2026-001", "2026-002" });
+			(await _service.AllocateCallNumberAsync(Dept, new DateTime(2026, 6, 1))).Should().Be("2026-003");
+		}
+
+		[Test]
 		public async Task A_pattern_without_a_year_is_never_renumbered_by_year()
 		{
 			_saved = new CallNumberingConfig { Pattern = "{SEQ}", SequenceWidth = 6 };
@@ -312,13 +362,24 @@ namespace Resgrid.Tests.Services
 				return Task.CompletedTask;
 			}
 
-			public Task SetLastSequenceAsync(int departmentId, string scopeKey, int lastSequence, CancellationToken cancellationToken = default)
+			public Task<int> RaiseLastSequenceAsync(int departmentId, string scopeKey, int lastSequence, CancellationToken cancellationToken = default)
 			{
 				if (!Rows.TryGetValue(scopeKey, out var row))
 					Rows[scopeKey] = row = new CallNumberSequence { DepartmentId = departmentId, ScopeKey = scopeKey, ModifiedOn = DateTime.UtcNow };
-				row.LastSequence = lastSequence;
-				return Task.CompletedTask;
+				row.LastSequence = Math.Max(row.LastSequence, lastSequence);
+				return Task.FromResult(row.LastSequence);
 			}
+
+			public Task<bool> TrySetLastSequenceAsync(int departmentId, string scopeKey, int lastSequence, int expectedLastSequence, CancellationToken cancellationToken = default)
+			{
+				if (!Rows.TryGetValue(scopeKey, out var row) || row.LastSequence != expectedLastSequence)
+					return Task.FromResult(false);
+				row.LastSequence = lastSequence;
+				return Task.FromResult(true);
+			}
+
+			public Task<List<string>> GetDeletedCallNumbersAsync(int departmentId, DateTime fromUtc, DateTime toUtc) =>
+				Task.FromResult(Calls.Where(c => c.IsDeleted && c.Number != null && c.LoggedOn >= fromUtc && c.LoggedOn < toUtc).Select(c => c.Number).ToList());
 
 			public Task<int> GetHighestIssuedAsync(int departmentId, string numberPrefix, string numberSuffix, DateTime? fromUtc, DateTime? toUtc)
 			{

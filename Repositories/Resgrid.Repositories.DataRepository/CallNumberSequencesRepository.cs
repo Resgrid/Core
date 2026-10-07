@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Model;
@@ -74,7 +76,7 @@ namespace Resgrid.Repositories.DataRepository
 			return ExecuteAsync(sql, new { DepartmentId = departmentId, ScopeKey = scopeKey, Next = Math.Max(1, nextSequence), UserId = userId, Now = DatabaseTimestamp(now) }, cancellationToken);
 		}
 
-		public Task SetLastSequenceAsync(int departmentId, string scopeKey, int lastSequence, CancellationToken cancellationToken = default)
+		public Task<int> RaiseLastSequenceAsync(int departmentId, string scopeKey, int lastSequence, CancellationToken cancellationToken = default)
 		{
 			var table = Tbl("CallNumberSequences");
 			string sql;
@@ -82,17 +84,35 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				sql = $@"INSERT INTO {table} AS t (departmentid, scopekey, lastsequence, floorsequence, modifiedon)
 					VALUES ({P}DepartmentId, {P}ScopeKey, {P}Last, 0, {P}Now)
-					ON CONFLICT (departmentid, scopekey) DO UPDATE SET lastsequence = EXCLUDED.lastsequence, modifiedon = EXCLUDED.modifiedon";
+					ON CONFLICT (departmentid, scopekey) DO UPDATE SET lastsequence = GREATEST(t.lastsequence, EXCLUDED.lastsequence), modifiedon = EXCLUDED.modifiedon
+					RETURNING lastsequence";
 			}
 			else
 			{
 				sql = $@"MERGE {table} WITH (HOLDLOCK) AS t
 					USING (SELECT {P}DepartmentId AS DepartmentId, {P}ScopeKey AS ScopeKey) AS s ON t.[DepartmentId] = s.DepartmentId AND t.[ScopeKey] = s.ScopeKey
-					WHEN MATCHED THEN UPDATE SET [LastSequence] = {P}Last, [ModifiedOn] = {P}Now
-					WHEN NOT MATCHED THEN INSERT ([DepartmentId], [ScopeKey], [LastSequence], [FloorSequence], [ModifiedOn]) VALUES (s.DepartmentId, s.ScopeKey, {P}Last, 0, {P}Now);";
+					WHEN MATCHED THEN UPDATE SET [LastSequence] = CASE WHEN t.[LastSequence] > {P}Last THEN t.[LastSequence] ELSE {P}Last END, [ModifiedOn] = {P}Now
+					WHEN NOT MATCHED THEN INSERT ([DepartmentId], [ScopeKey], [LastSequence], [FloorSequence], [ModifiedOn]) VALUES (s.DepartmentId, s.ScopeKey, {P}Last, 0, {P}Now)
+					OUTPUT inserted.[LastSequence];";
 			}
 
-			return ExecuteAsync(sql, new { DepartmentId = departmentId, ScopeKey = scopeKey, Last = Math.Max(0, lastSequence), Now = DatabaseTimestamp(DateTime.UtcNow) }, cancellationToken);
+			return ScalarAsync<int>(sql, new { DepartmentId = departmentId, ScopeKey = scopeKey, Last = Math.Max(0, lastSequence), Now = DatabaseTimestamp(DateTime.UtcNow) }, cancellationToken);
+		}
+
+		public async Task<bool> TrySetLastSequenceAsync(int departmentId, string scopeKey, int lastSequence, int expectedLastSequence, CancellationToken cancellationToken = default)
+		{
+			var sql = $"UPDATE {Tbl("CallNumberSequences")} SET {Col("LastSequence")} = {P}Last, {Col("ModifiedOn")} = {P}Now " +
+				$"WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("ScopeKey")} = {P}ScopeKey AND {Col("LastSequence")} = {P}Expected";
+
+			return await ExecuteAsync(sql, new { DepartmentId = departmentId, ScopeKey = scopeKey, Last = Math.Max(0, lastSequence), Expected = expectedLastSequence, Now = DatabaseTimestamp(DateTime.UtcNow) }, cancellationToken) == 1;
+		}
+
+		public async Task<List<string>> GetDeletedCallNumbersAsync(int departmentId, DateTime fromUtc, DateTime toUtc)
+		{
+			var sql = $"SELECT c.{Col("Number")} FROM {Tbl("Calls")} c WHERE c.{Col("DepartmentId")} = {P}DepartmentId AND c.{Col("IsDeleted")} = {P}Deleted " +
+				$"AND c.{Col("Number")} IS NOT NULL AND c.{Col("LoggedOn")} >= {P}FromUtc AND c.{Col("LoggedOn")} < {P}ToUtc";
+
+			return (await QueryAsync<string>(sql, new { DepartmentId = departmentId, Deleted = true, FromUtc = DatabaseTimestamp(fromUtc), ToUtc = DatabaseTimestamp(toUtc) })).ToList();
 		}
 
 		public async Task<int> GetHighestIssuedAsync(int departmentId, string numberPrefix, string numberSuffix, DateTime? fromUtc, DateTime? toUtc)

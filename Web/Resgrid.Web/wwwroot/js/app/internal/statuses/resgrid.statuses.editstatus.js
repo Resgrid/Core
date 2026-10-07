@@ -79,16 +79,41 @@ var resgrid;
                     $('#textColor').minicolors('value', '#FF5733');
                 });
             });
+            function hiddenInput(name, value) {
+                return $('<input type="hidden">').attr({ id: name, name: name }).val(value);
+            }
             function addOption() {
                 $('#newStatusModal').modal('hide');
                 resgrid.statuses.editstatus.optionsCount++;
+                var n = editstatus.optionsCount;
+                var buttonText = $('#buttonText').val();
+                var buttonColor = $('#buttonColor').val();
+                var textColor = $('#textColor').val();
                 var baseTypeVal = $('#baseType').length ? $('#baseType').val() : '-1';
                 var detailTypeVal = $('#detailType').length ? $('#detailType').val() : '0';
                 var noteTypeVal = $('#noteType').length ? $('#noteType').val() : '0';
                 var requireGpsVal = $('#requireGps').length && $('#requireGps').is(':checked') ? 'on' : 'false';
+
+                // Built with jQuery, never by concatenating markup, so a typed or pasted value cannot become HTML or
+                // break out of an attribute.
+                var row = $('<tr>');
+                row.append($('<td>').append($('<input type="number" min="0" value="0" class="numberEntry">').attr({ id: 'order_' + n, name: 'order_' + n })));
+                row.append($('<td>').text(buttonText).append(hiddenInput('buttonText_' + n, buttonText), hiddenInput('baseType_' + n, baseTypeVal)));
+                row.append($('<td>').append(
+                    $('<a class="btn btn-default" role="button">').css({ color: textColor, background: buttonColor }).text(buttonText),
+                    hiddenInput('buttonColor_' + n, buttonColor),
+                    hiddenInput('textColor_' + n, textColor),
+                    hiddenInput('detailType_' + n, detailTypeVal),
+                    hiddenInput('noteType_' + n, noteTypeVal),
+                    hiddenInput('requireGps_' + n, requireGpsVal)));
                 // Unit and personnel sets show a Next statuses column; a new option has none until it is saved and edited.
-                var nextStatusesCell = $('#options thead th').length > 4 ? "<td></td>" : "";
-                $('#options tbody').first().append("<tr><td><input type='number' min='0' id='order_" + editstatus.optionsCount + "' name='order_" + editstatus.optionsCount + "' value='0' class='numberEntry'></td><td>" + $('#buttonText').val() + "<input type='hidden' id='buttonText_" + editstatus.optionsCount + "' name='buttonText_" + editstatus.optionsCount + "' value='" + $('#buttonText').val() + "'></input><input type='hidden' id='baseType_" + editstatus.optionsCount + "' name='baseType_" + editstatus.optionsCount + "' value='" + baseTypeVal + "'></input></td><td><a class='btn btn-default' role='button' style='color:" + $('#textColor').val() + ";background:" + $('#buttonColor').val() + ";'>" + $('#buttonText').val() + "</a><input type='hidden' id='buttonColor_" + editstatus.optionsCount + "' name='buttonColor_" + editstatus.optionsCount + "' value='" + $('#buttonColor').val() + "'><input type='hidden' id='textColor_" + editstatus.optionsCount + "' name='textColor_" + editstatus.optionsCount + "' value='" + $('#textColor').val() + "'><input type='hidden' id='detailType_" + editstatus.optionsCount + "' name='detailType_" + editstatus.optionsCount + "' value='" + detailTypeVal + "'></input><input type='hidden' id='noteType_" + editstatus.optionsCount + "' name='noteType_" + editstatus.optionsCount + "' value='" + noteTypeVal + "'></input><input type='hidden' id='requireGps_" + editstatus.optionsCount + "' name='requireGps_" + editstatus.optionsCount + "' value='" + requireGpsVal + "'></input></td>" + nextStatusesCell + "<td style='text-align:center;'><a onclick='$(this).parent().parent().remove();' class='btn btn-xs btn-danger' data-original-title='Remove this option'>Remove</a></td></tr>");
+                if ($('#options thead th').length > 4) {
+                    row.append($('<td>'));
+                }
+                row.append($('<td style="text-align:center;">').append(
+                    $('<a class="btn btn-xs btn-danger" data-original-title="Remove this option">').text('Remove')
+                        .on('click', function () { $(this).closest('tr').remove(); })));
+                $('#options tbody').first().append(row);
             }
             editstatus.addOption = addOption;
             function isNumber(evt) {

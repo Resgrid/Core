@@ -106,5 +106,20 @@ namespace Resgrid.Model.Repositories
 		/// </summary>
 		Task<bool> TryUpdateSubjectIdentifiersAsync(int callId, int departmentId, string expectedValue, string newValue,
 			System.Threading.CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Marks a call dispatched (HasBeenDispatched) only when the stored row is still waiting: pending, or active with a
+		/// scheduled dispatch not yet sent. True for the one caller that changed the row; a concurrent Dispatch Now or the
+		/// scheduled-calls worker gets false and must not broadcast.
+		/// </summary>
+		Task<bool> TryClaimCallForDispatchAsync(int callId, int departmentId, System.Threading.CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Gives back a claim from <see cref="TryClaimCallForDispatchAsync"/> when the dispatch did not go out, restoring the
+		/// waiting state. Only a row that is still claimed and still active or pending is changed, so a call closed in the
+		/// meantime stays closed. True when the row was updated.
+		/// </summary>
+		Task<bool> ReleaseCallDispatchClaimAsync(int callId, int departmentId, int state, DateTime? dispatchOn, bool? hasBeenDispatched,
+			System.Threading.CancellationToken cancellationToken = default);
 	}
 }

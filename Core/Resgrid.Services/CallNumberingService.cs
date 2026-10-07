@@ -102,8 +102,13 @@ namespace Resgrid.Services
 			var calls = (await _calls.GetAllCallsByDepartmentDateRangeAsync(departmentId, start, end) ?? Enumerable.Empty<Call>())
 				.Where(c => c.LoggedOn < end).OrderBy(c => c.LoggedOn).ThenBy(c => c.CallId).ToList();
 
-			// Each sequence starts again at its raised starting point, so a department continuing earlier numbers keeps them.
+			// Deleted calls keep their numbers, so no active call is renumbered onto one of them.
+			var held = new HashSet<string>(await _sequences.GetDeletedCallNumbersAsync(departmentId, start, end) ?? new List<string>(), StringComparer.Ordinal);
+
+			// Every number is worked out before any call changes. Each sequence starts again at its raised starting point, so a
+			// department continuing earlier numbers keeps them.
 			var issued = new Dictionary<string, (CallNumberScope Scope, int Last)>(StringComparer.Ordinal);
+			var renumbered = new List<(Call Call, string Number)>(calls.Count);
 			foreach (var call in calls)
 			{
 				var scope = Resolve(config, call.LoggedOn, timeZone);
@@ -113,17 +118,41 @@ namespace Resgrid.Services
 					entry = (scope, Math.Max(0, floor - 1));
 				}
 
-				entry.Last++;
+				string number;
+				do
+				{
+					entry.Last++;
+					number = scope.Format(entry.Last);
+				} while (held.Contains(number));
+
 				issued[scope.Key] = entry;
-				call.Number = scope.Format(entry.Last);
-				await _calls.SaveOrUpdateAsync(call, cancellationToken);
+				renumbered.Add((call, number));
 			}
 
-			// Deleted calls keep their numbers, so a sequence resumes above whatever its scope still holds.
+			// Move each counter past every number its period holds now or will hold afterwards before rewriting anything: a call
+			// created while the year is rewritten then takes a sequence this renumbering never hands out.
+			var reserved = new Dictionary<string, int>(StringComparer.Ordinal);
 			foreach (var entry in issued.Values)
 			{
 				var highest = await HighestIssuedAsync(departmentId, entry.Scope, timeZone);
-				await _sequences.SetLastSequenceAsync(departmentId, entry.Scope.Key, Math.Max(entry.Last, highest), cancellationToken);
+				reserved[entry.Scope.Key] = await _sequences.RaiseLastSequenceAsync(departmentId, entry.Scope.Key, Math.Max(entry.Last, highest), cancellationToken);
+			}
+
+			foreach (var (call, number) in renumbered)
+			{
+				if (string.Equals(call.Number, number, StringComparison.Ordinal))
+					continue;
+
+				call.Number = number;
+				await _calls.SaveOrUpdateAsync(call, cancellationToken);
+			}
+
+			// The counter comes back down to the highest number the scope now holds (deleted calls included), but only if no call
+			// took a sequence meanwhile; otherwise it stays above that call's number.
+			foreach (var entry in issued.Values)
+			{
+				var highest = await HighestIssuedAsync(departmentId, entry.Scope, timeZone);
+				await _sequences.TrySetLastSequenceAsync(departmentId, entry.Scope.Key, Math.Max(entry.Last, highest), reserved[entry.Scope.Key], cancellationToken);
 			}
 
 			return true;

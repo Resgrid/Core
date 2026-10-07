@@ -779,6 +779,13 @@
             no default button, or a custom detail from another department).
             </summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.ScopeCallsAsync(System.Collections.Generic.List{Resgrid.Model.Call})">
+            <summary>
+            Group-scoped dispatch for a person's call lists. A department API key acts for its whole department, as
+            <see cref="M:Resgrid.Web.Services.Controllers.v4.CallsController.CanViewOrEditCallAsync(System.Int32,System.Boolean)"/> does: its identity is the managing user, whose membership the key does not
+            depend on, so filtering by that user could hide calls from a valid key.
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.CanViewOrEditCallAsync(System.Int32,System.Boolean)">
             <summary>
             The per-user call check, except for a department API key: the key acts for its department, so the call only has
@@ -9796,7 +9803,7 @@
             <summary>Priority color (hex)</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.LocationHistoryCallData.State">
-            <summary>CallStates value: 0 Active, 1 Closed, 2 Cancelled, 3 Unfounded, 4 Founded, 5 Minor</summary>
+            <summary>CallStates value: 0 Active, 1 Closed, 2 Cancelled, 3 Unfounded, 4 Founded, 5 Minor, 6 Transferred, 7 False Alarm, 8 Pending</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.LocationHistoryCallData.LoggedOnUtc">
             <summary>When the call was logged (UTC)</summary>

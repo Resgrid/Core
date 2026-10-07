@@ -53,9 +53,12 @@ var resgrid;
                     } else {
                         var message = result && result.message ? result.message : '';
                         if (typeof toastr !== 'undefined') { toastr.error(message); } else { window.alert(message); }
-                        // Nobody to send it to yet: the edit page is where the dispatcher picks recipients.
-                        window.location.href = resgrid.absoluteBaseUrl + '/User/Dispatch/UpdateCall?callId=' + callId;
-                        return;
+                        // Nobody to send it to yet: the edit page is where the dispatcher picks recipients. Any other
+                        // failure (queue refused, already sent) keeps the list so the dispatcher can retry from it.
+                        if (result && result.noRecipients) {
+                            window.location.href = resgrid.absoluteBaseUrl + '/User/Dispatch/UpdateCall?callId=' + encodeURIComponent(callId);
+                            return;
+                        }
                     }
                     if (onDone) { onDone(); }
                     refresh();

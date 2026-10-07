@@ -225,6 +225,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		/// Calls saved but not yet dispatched (Pending): fed in from another system, or entered for later. A dispatcher
 		/// opens one, chooses who to send it to and dispatches it.
 		/// </summary>
+		[HttpGet]
 		[Authorize(Policy = ResgridResources.Call_View)]
 		public IActionResult PendingCalls()
 		{
@@ -1413,7 +1414,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var dispatched = outcome == DispatchNowOutcome.Dispatched;
 
 			if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-				return Json(new { success = dispatched, message = dispatched ? _dispatchLocalizer["DispatchNowSucceeded"].Value : DescribeDispatchNowOutcome(outcome) });
+				return Json(new
+				{
+					success = dispatched,
+					message = dispatched ? _dispatchLocalizer["DispatchNowSucceeded"].Value : DescribeDispatchNowOutcome(outcome),
+					// Only a call with nobody to send to needs the edit page; any other failure leaves the dispatcher on the list.
+					noRecipients = outcome == DispatchNowOutcome.NoRecipients
+				});
 
 			if (dispatched)
 				TempData["DispatchNowMessage"] = _dispatchLocalizer["DispatchNowSucceeded"].Value;
@@ -3178,7 +3185,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			List<CallListJson> callsJson = new List<CallListJson>();
 
-			var calls = (await _callsService.GetAllNonDispatchedScheduledCallsByDepartmentIdAsync(DepartmentId))
+			// Scheduled calls are active calls, so group-scoped dispatch trims them as it does the active list.
+			var calls = (await _dispatchScopeService.FilterCallsForUserAsync(DepartmentId, UserId,
+				await _callsService.GetAllNonDispatchedScheduledCallsByDepartmentIdAsync(DepartmentId)))
 				.OrderBy(x => x.DispatchOn);
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
@@ -3253,9 +3262,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var pending = await _dispatchScopeService.FilterCallsForUserAsync(DepartmentId, UserId,
 				await _callsService.GetPendingCallsByDepartmentIdAsync(DepartmentId));
-			var scheduled = await _callsService.GetAllNonDispatchedScheduledCallsByDepartmentIdAsync(DepartmentId);
+			var scheduled = await _dispatchScopeService.FilterCallsForUserAsync(DepartmentId, UserId,
+				await _callsService.GetAllNonDispatchedScheduledCallsByDepartmentIdAsync(DepartmentId));
 
-			return Json(new { pending = pending.Count(), scheduled = scheduled.Count });
+			return Json(new { pending = pending.Count(), scheduled = scheduled.Count() });
 		}
 
 		[HttpPost]

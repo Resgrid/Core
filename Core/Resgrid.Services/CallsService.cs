@@ -1092,6 +1092,17 @@ namespace Resgrid.Services
 			return new List<Call>();
 		}
 
+		public Task<bool> TryClaimCallForDispatchAsync(int callId, int departmentId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return _callsRepository.TryClaimCallForDispatchAsync(callId, departmentId, cancellationToken);
+		}
+
+		public Task<bool> ReleaseCallDispatchClaimAsync(int callId, int departmentId, int state, DateTime? dispatchOn, bool? hasBeenDispatched,
+			CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return _callsRepository.ReleaseCallDispatchClaimAsync(callId, departmentId, state, dispatchOn, hasBeenDispatched, cancellationToken);
+		}
+
 		public async Task<List<CallReference>> GetChildCallsForCallAsync(int callId)
 		{
 			var calls = await _callReferencesRepository.GetCallReferencesByTargetCallIdAsync(callId);

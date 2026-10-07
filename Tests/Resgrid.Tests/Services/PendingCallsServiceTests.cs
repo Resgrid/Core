@@ -42,6 +42,10 @@ namespace Resgrid.Tests.Services
 
 			_callsService.Setup(x => x.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync((Call c, CancellationToken _) => c);
+			_callsService.Setup(x => x.TryClaimCallForDispatchAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(true);
+			_callsService.Setup(x => x.ReleaseCallDispatchClaimAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTime?>(), It.IsAny<bool?>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(true);
 			_queueService.Setup(x => x.EnqueueCallBroadcastAsync(It.IsAny<CallQueueItem>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync(true);
 			_userProfileService.Setup(x => x.GetSelectedUserProfilesAsync(It.IsAny<List<string>>()))
@@ -135,6 +139,38 @@ namespace Resgrid.Tests.Services
 			call.DispatchOn.Should().BeNull();
 			_queueService.Verify(x => x.EnqueueCallBroadcastAsync(It.IsAny<CallQueueItem>(), It.IsAny<CancellationToken>()), Times.Never);
 			_callsService.Verify(x => x.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>()), Times.Never);
+			_callsService.Verify(x => x.ReleaseCallDispatchClaimAsync(42, 7, (int)CallStates.Pending, null, null, It.IsAny<CancellationToken>()), Times.Once,
+				"the claim is given back so the call can be dispatched once it has recipients");
+		}
+
+		[Test]
+		public async Task A_call_another_dispatcher_or_the_scheduler_already_claimed_is_not_sent_again()
+		{
+			_callsService.Setup(x => x.TryClaimCallForDispatchAsync(42, 7, It.IsAny<CancellationToken>())).ReturnsAsync(false);
+			var call = PendingCall();
+
+			var outcome = await _service.DispatchNowAsync(call, "dispatcher");
+
+			outcome.Should().Be(DispatchNowOutcome.NotWaiting);
+			call.State.Should().Be((int)CallStates.Pending);
+			_queueService.Verify(x => x.EnqueueCallBroadcastAsync(It.IsAny<CallQueueItem>(), It.IsAny<CancellationToken>()), Times.Never);
+			_callsService.Verify(x => x.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>()), Times.Never);
+			_callsService.Verify(x => x.ReleaseCallDispatchClaimAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTime?>(), It.IsAny<bool?>(), It.IsAny<CancellationToken>()), Times.Never,
+				"the claim belongs to whoever won it");
+		}
+
+		[Test]
+		public async Task A_failure_before_the_broadcast_gives_the_claim_back()
+		{
+			_callsService.Setup(x => x.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>())).ThrowsAsync(new InvalidOperationException("db down"));
+			var call = PendingCall();
+
+			Func<Task> dispatch = () => _service.DispatchNowAsync(call, "dispatcher");
+
+			await dispatch.Should().ThrowAsync<InvalidOperationException>();
+			call.State.Should().Be((int)CallStates.Pending);
+			_callsService.Verify(x => x.ReleaseCallDispatchClaimAsync(42, 7, (int)CallStates.Pending, null, null, It.IsAny<CancellationToken>()), Times.Once);
+			_queueService.Verify(x => x.EnqueueCallBroadcastAsync(It.IsAny<CallQueueItem>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 
 		[Test]
@@ -162,6 +198,9 @@ namespace Resgrid.Tests.Services
 			call.State.Should().Be((int)CallStates.Pending);
 			call.DispatchOn.Should().BeNull();
 			_eventAggregator.Verify(x => x.SendMessage(It.IsAny<CallAddedEvent>()), Times.Never);
+			// Put back with a conditional write, not a second full save of this snapshot: a close that landed meanwhile stays.
+			_callsService.Verify(x => x.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>()), Times.Once);
+			_callsService.Verify(x => x.ReleaseCallDispatchClaimAsync(42, 7, (int)CallStates.Pending, null, null, It.IsAny<CancellationToken>()), Times.Once);
 		}
 
 		[Test]

@@ -154,7 +154,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		private async Task<List<SelectListItem>> RoleItemsAsync() => (await _roles.GetRolesForDepartmentAsync(DepartmentId) ?? new List<PersonnelRole>()).OrderBy(r => r.Name).Select(r => new SelectListItem(r.Name, r.PersonnelRoleId.ToString())).ToList();
 		private async Task<List<SelectListItem>> EstablishmentItemsAsync() => (await _workforce.GetEstablishmentsAsync(DepartmentId)).OrderBy(e => e.Code).Select(e => new SelectListItem($"{e.Code} — {e.Name}", e.WorkforceEstablishmentId)).ToList();
-		private async Task<List<SelectListItem>> UnitItemsAsync() => (await _units.GetUnitsForDepartmentAsync(DepartmentId) ?? new List<Unit>()).OrderBy(u => u.Name).Select(u => new SelectListItem(u.Name, u.UnitId.ToString())).ToList();
+		/// <summary>
+		/// Current units for the pickers, plus any deleted unit an existing row still names: without its option an edited
+		/// entry would post the first unit in the list (or an empty one) and silently move or fail.
+		/// </summary>
+		private async Task<List<SelectListItem>> UnitItemsAsync(IEnumerable<int?> keepUnitIds = null)
+		{
+			var units = await _units.GetUnitsForDepartmentAsync(DepartmentId) ?? new List<Unit>();
+			var keep = (keepUnitIds ?? Enumerable.Empty<int?>()).Where(id => id.HasValue && units.All(u => u.UnitId != id.Value)).Select(id => id.Value).ToHashSet();
+			if (keep.Count > 0)
+				units = units.Concat((await _units.GetUnitsForDepartmentIncludingDeletedAsync(DepartmentId) ?? new List<Unit>()).Where(u => keep.Contains(u.UnitId))).ToList();
+
+			return units.OrderBy(u => u.Name).Select(u => new SelectListItem(u.Name, u.UnitId.ToString())).ToList();
+		}
 
 		private async Task<string> WorkerNameAsync(WorkforceWorker worker)
 		{
@@ -547,7 +559,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> ResourceCosts(string edit = null)
 		{
 			if (!CanViewInternalCosts) return Unauthorized();
-			var view = Page(new WorkforceResourceCostsView { Profiles = await _costing.GetResourceProfilesAsync(DepartmentId), Units = await UnitItemsAsync() });
+			var profiles = await _costing.GetResourceProfilesAsync(DepartmentId);
+			var view = Page(new WorkforceResourceCostsView { Profiles = profiles, Units = await UnitItemsAsync(profiles?.Select(p => p.UnitId)) });
 			if (edit == "new") view.Editing = new ResourceCostProfile { DepartmentId = DepartmentId, EffectiveOn = Resgrid.Web.Helpers.DepartmentTime.From(ViewData).Today };
 			else if (!string.IsNullOrWhiteSpace(edit)) view.Editing = await _costing.GetResourceProfileAsync(edit, DepartmentId);
 			view.ComponentsJson = JsonConvert.SerializeObject((view.Editing?.Components ?? new List<ResourceCostComponent>()).Select(c => new { c.ResourceCostComponentId, c.Category, c.Basis, c.Rate, c.ConsumptionQuantity, c.ConsumptionUnit, c.UnitPrice, c.Source, c.SourceWindowStart, c.SourceWindowEnd, c.SourceMeterStart, c.SourceMeterEnd, c.IsApproved, c.EffectiveOn, c.ExpiresOn }), ScriptJson);
@@ -578,10 +591,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			if (!CanViewInternalCosts) return Unauthorized();
 			if (string.IsNullOrWhiteSpace(deploymentId) && !callId.HasValue) return RedirectToAction("CostRuns");
-			var view = Page(new WorkforceUsageView { DeploymentId = deploymentId, CallId = callId, Units = await UnitItemsAsync() });
-			view.UnitNames = view.Units.ToDictionary(u => int.Parse(u.Value), u => u.Text);
+			var view = Page(new WorkforceUsageView { DeploymentId = deploymentId, CallId = callId });
 			if (!string.IsNullOrWhiteSpace(deploymentId)) { view.ContextLabel = (await _deployments.GetDeploymentByIdAsync(deploymentId, DepartmentId))?.Name ?? deploymentId; view.Entries = await _costing.GetUsageForDeploymentAsync(deploymentId, DepartmentId); }
 			else { view.ContextLabel = (await _calls.GetCallByIdAsync(callId.Value))?.Name ?? $"#{callId}"; view.Entries = await _costing.GetUsageForCallAsync(callId.Value, DepartmentId); }
+			view.Units = await UnitItemsAsync(view.Entries?.Select(e => e.UnitId));
+			view.UnitNames = view.Units.ToDictionary(u => int.Parse(u.Value), u => u.Text);
 			if (edit == "new") view.Editing = new ResourceUsageEntry { DepartmentId = DepartmentId, DeploymentId = deploymentId, CallId = callId, UsageDate = Resgrid.Web.Helpers.DepartmentTime.From(ViewData).Today, Phase = (int)UsagePhases.Incident };
 			else if (!string.IsNullOrWhiteSpace(edit)) view.Editing = view.Entries.FirstOrDefault(e => e.ResourceUsageEntryId == edit);
 			return View(view);

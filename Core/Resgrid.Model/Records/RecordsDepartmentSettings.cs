@@ -19,6 +19,7 @@ namespace Resgrid.Model
 			SequenceWidth = 4;
 			IncludeYear = true;
 			Floors = new List<RecordsNumberingFloor>();
+			Prefixes = new List<RecordsNumberingPrefix>();
 		}
 
 		/// <summary>RmsNumberAssignment value; default OnFinalize so abandoned drafts leave no gaps.</summary>
@@ -54,6 +55,29 @@ namespace Resgrid.Model
 		/// </summary>
 		[ProtoMember(7)]
 		public List<RecordsNumberingFloor> Floors { get; set; }
+
+		/// <summary>
+		/// The department's own {PREFIX} per system record type, e.g. "FIRE" for Run and "NFIRS" for the incident report. A type with
+		/// no entry renders <see cref="RmsDefinitionKeys.DefaultNumberPrefix"/>. Department definitions carry their prefix on the definition.
+		/// </summary>
+		[ProtoMember(8)]
+		public List<RecordsNumberingPrefix> Prefixes { get; set; }
+
+		/// <summary>What {PREFIX} renders for a record type: the department's prefix, or the shipped default when it has none (or a saved one no longer validates).</summary>
+		public string PrefixFor(string definitionKey)
+		{
+			var custom = (Prefixes ?? new List<RecordsNumberingPrefix>()).FirstOrDefault(p => p != null && string.Equals(p.DefinitionKey, definitionKey, StringComparison.Ordinal))?.Prefix;
+			return RecordNumberFormat.IsValidPrefix(custom) ? custom : RmsDefinitionKeys.DefaultNumberPrefix(definitionKey);
+		}
+
+		/// <summary>Sets a type's prefix; null, or the shipped default, removes the department's own so the type follows the default again.</summary>
+		public void SetPrefix(string definitionKey, string prefix)
+		{
+			Prefixes ??= new List<RecordsNumberingPrefix>();
+			Prefixes.RemoveAll(p => p == null || string.Equals(p.DefinitionKey, definitionKey, StringComparison.Ordinal));
+			if (prefix != null && !string.Equals(prefix, RmsDefinitionKeys.DefaultNumberPrefix(definitionKey), StringComparison.Ordinal))
+				Prefixes.Add(new RecordsNumberingPrefix { DefinitionKey = definitionKey, Prefix = prefix });
+		}
 
 		/// <summary>
 		/// The sequence to issue next in a scope: one past the highest already issued, but never below its floor.
@@ -99,6 +123,19 @@ namespace Resgrid.Model
 
 		[ProtoMember(4)]
 		public string SetByUserId { get; set; }
+	}
+
+	/// <summary>One department-set record type prefix inside <see cref="RecordsNumberingConfig"/>.</summary>
+	[ProtoContract]
+	public class RecordsNumberingPrefix
+	{
+		/// <summary>The system definition key, e.g. <see cref="RmsDefinitionKeys.Run"/>.</summary>
+		[ProtoMember(1)]
+		public string DefinitionKey { get; set; }
+
+		/// <summary>2 to 6 upper-case ASCII letters or digits (<see cref="RecordNumberFormat.IsValidPrefix"/>).</summary>
+		[ProtoMember(2)]
+		public string Prefix { get; set; }
 	}
 
 	/// <summary>Department setting 73 (RecordsSearchConfig): index scope and the protected degrade mode notice.</summary>

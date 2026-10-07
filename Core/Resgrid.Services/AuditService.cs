@@ -78,6 +78,10 @@ namespace Resgrid.Services
 					return "Department Configuration Changed";
 				case AuditLogTypes.DepartmentSecurityPolicyChanged:
 					return "Security Policy Changed";
+				case AuditLogTypes.DepartmentApiKeyCreated:
+					return "Department API Key Created";
+				case AuditLogTypes.DepartmentApiKeyRevoked:
+					return "Department API Key Revoked";
 				case AuditLogTypes.AdminAssistReviewChanged:
 					return "Admin Assist Review Changed";
 				case AuditLogTypes.DepartmentSettingsChanged:

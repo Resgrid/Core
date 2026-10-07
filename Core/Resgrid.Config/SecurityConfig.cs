@@ -26,6 +26,27 @@ namespace Resgrid.Config
 		public static string SystemApiKey = "";
 
 		/// <summary>
+		/// Pepper for the keyed hash stored for each department API key (X-Resgrid-ApiKey). Leave blank to derive one
+		/// from <see cref="EncryptionKey"/>. Changing it (or the encryption key when this is blank) invalidates every
+		/// department API key.
+		/// </summary>
+		public static string DepartmentApiKeyPepper = "";
+
+		/// <summary>Longest a department API key can be issued for, in days.</summary>
+		public static int DepartmentApiKeyMaxLifetimeDays = 730;
+
+		/// <summary>Most unrevoked, unexpired department API keys a department can hold at once.</summary>
+		public static int DepartmentApiKeyMaxActivePerDepartment = 25;
+
+		/// <summary>How long a department API key lookup is cached, in seconds (capped at 60). Revoking a key clears it at once.</summary>
+		public static int DepartmentApiKeyCacheSeconds = 60;
+
+		/// <summary>Invalid department API keys accepted from one address in <see cref="DepartmentApiKeyFailureWindowMinutes"/> before it is refused outright.</summary>
+		public static int DepartmentApiKeyMaxFailuresPerAddress = 20;
+
+		public static int DepartmentApiKeyFailureWindowMinutes = 10;
+
+		/// <summary>
 		/// Shared secret required on the internal scheduled-report endpoint (User/Reports/InternalRunReport).
 		/// The report-delivery worker supplies this value as the "key" query parameter; requests without a
 		/// matching key are rejected. Must be set (non-empty) for scheduled report delivery to function.

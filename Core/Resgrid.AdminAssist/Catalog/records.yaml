@@ -100,7 +100,7 @@
         "Field": "RecordsNumberingConfig"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-05T00:00:00Z",
       "Impact": {
         "Risk": "Medium",
         "AudienceKey": "Impact.Audience",
@@ -537,7 +537,7 @@
         "Field": "SequenceWidth"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-05T00:00:00Z",
       "Impact": {
         "Risk": "Medium",
         "AudienceKey": "Impact.Audience",
@@ -677,7 +677,45 @@
         "Field": "NumberPattern"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-10-04T00:00:00Z",
+      "ReviewedOn": "2026-10-05T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.RecordsNumberingConfig"
+      ],
+      "Affects": [
+        "field.RecordsNumberingConfig.IncludeYear",
+        "field.RecordsNumberingConfig.PerGroupSequence"
+      ],
+      "Conflicts": [],
+      "DocumentationId": "field.RecordsNumberingConfig.Pattern",
+      "DefaultValue": "unset",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "RecordsNumberingConfig",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.RecordsNumberingConfig.Prefixes",
+      "AreaId": "records",
+      "LabelKey": "Field.RecordsNumberingConfig.Prefixes",
+      "HelpKey": "FieldHelp.RecordsNumberingConfig.Prefixes",
+      "Binding": "RecordsNumberingConfig.Prefixes",
+      "ValueType": "list",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": "NumberPrefixes"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-05T00:00:00Z",
       "Impact": {
         "Risk": "Medium",
         "AudienceKey": "Impact.Audience",
@@ -691,8 +729,8 @@
       ],
       "Affects": [],
       "Conflicts": [],
-      "DocumentationId": "field.RecordsNumberingConfig.Pattern",
-      "DefaultValue": "unset",
+      "DocumentationId": "field.RecordsNumberingConfig.Prefixes",
+      "DefaultValue": "empty",
       "AllowedValues": "Validated by the owning configuration workflow",
       "EvidenceSource": "RecordsNumberingConfig",
       "Availability": "available"
@@ -835,6 +873,76 @@
       "DefaultValue": "unset",
       "AllowedValues": "Validated by the owning configuration workflow",
       "EvidenceSource": "RecordsNumberingFloor",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.RecordsNumberingPrefix.DefinitionKey",
+      "AreaId": "records",
+      "LabelKey": "Field.RecordsNumberingPrefix.DefinitionKey",
+      "HelpKey": "FieldHelp.RecordsNumberingPrefix.DefinitionKey",
+      "Binding": "RecordsNumberingPrefix.DefinitionKey",
+      "ValueType": "reference",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-05T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.RecordsNumberingConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.RecordsNumberingPrefix.DefinitionKey",
+      "DefaultValue": "unset",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "RecordsNumberingPrefix",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.RecordsNumberingPrefix.Prefix",
+      "AreaId": "records",
+      "LabelKey": "Field.RecordsNumberingPrefix.Prefix",
+      "HelpKey": "FieldHelp.RecordsNumberingPrefix.Prefix",
+      "Binding": "RecordsNumberingPrefix.Prefix",
+      "ValueType": "string",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-05T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.RecordsNumberingConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.RecordsNumberingPrefix.Prefix",
+      "DefaultValue": "unset",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "RecordsNumberingPrefix",
       "Availability": "reference-only"
     },
     {
@@ -1590,12 +1698,15 @@
         "field.RecordsNumberingConfig.NumberAssignment",
         "field.RecordsNumberingConfig.Pattern",
         "field.RecordsNumberingConfig.PerGroupSequence",
+        "field.RecordsNumberingConfig.Prefixes",
         "field.RecordsNumberingConfig.ResetYearly",
         "field.RecordsNumberingConfig.SequenceWidth",
         "field.RecordsNumberingFloor.NextSequence",
         "field.RecordsNumberingFloor.ScopeKey",
         "field.RecordsNumberingFloor.SetByUserId",
         "field.RecordsNumberingFloor.SetOn",
+        "field.RecordsNumberingPrefix.DefinitionKey",
+        "field.RecordsNumberingPrefix.Prefix",
         "field.RecordsRetentionOverride.AppliesFrom",
         "field.RecordsRetentionOverride.DefinitionKey",
         "field.RecordsRetentionOverride.RetentionYears",
@@ -2012,12 +2123,12 @@
       "Id": "setting.RecordsNumberingConfig",
       "Locale": "en",
       "TitleKey": "Setting.RecordsNumberingConfig",
-      "Body": "Records Numbering Config. Number assignment, year reset and sequence formatting for definitions that do not override the department configuration.",
+      "Body": "Records Numbering Config. Department numbering for the built-in record types and incident reports: the number pattern, sequence digits, record type prefixes and raised next numbers. Numbers are assigned when a record is finalized. Department definitions with their own numbering keep it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-recordsnumberingconfig",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
+      "ReviewedOn": "2026-10-05T00:00:00Z"
     },
     {
       "Id": "setting.RecordsSearchConfig",
@@ -2155,12 +2266,12 @@
       "Id": "field.RecordsNumberingConfig.SequenceWidth",
       "Locale": "en",
       "TitleKey": "Field.RecordsNumberingConfig.SequenceWidth",
-      "Body": "Records Numbering Config / Sequence Width. Zero-padded sequence width for definitions using department defaults. The Records editor validates the supported width.",
+      "Body": "Records Numbering Config / Sequence Width. Digits in the SEQ part of the number pattern, zero-padded: 4 writes 0184. 3 to 8 digits; changing it keeps each sequence's next number. Department definitions with their own numbering keep their own width.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordsnumberingconfig-sequencewidth",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
+      "ReviewedOn": "2026-10-05T00:00:00Z"
     },
     {
       "Id": "field.RecordsNumberingConfig.IncludeYear",
@@ -2199,12 +2310,23 @@
       "Id": "field.RecordsNumberingConfig.Pattern",
       "Locale": "en",
       "TitleKey": "Field.RecordsNumberingConfig.Pattern",
-      "Body": "Records Numbering Config / Pattern. Number pattern for the built-in record types and incident reports, made of literal text and the PREFIX, YYYY, YY, GROUP and SEQ tokens. Unset keeps the pattern Include Year and Per Group Sequence describe. The sequence restarts whenever the text around SEQ changes.",
+      "Body": "Records Numbering Config / Pattern. How record numbers are written for the built-in record types and incident reports, for example RUN-0153: fixed text plus the PREFIX, YYYY or YY, GROUP and SEQ tokens. PREFIX writes each record type's prefix: its default or the department's own, from \"Record type prefixes\". Changing the pattern never renumbers records already numbered. Until a pattern is saved, the screen shows the one the department has always used.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordsnumberingconfig-pattern",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-10-04T00:00:00Z"
+      "ReviewedOn": "2026-10-05T00:00:00Z"
+    },
+    {
+      "Id": "field.RecordsNumberingConfig.Prefixes",
+      "Locale": "en",
+      "TitleKey": "Field.RecordsNumberingConfig.Prefixes",
+      "Body": "Records Numbering Config / Prefixes. The department's own prefix for each built-in record type and for incident reports, written by the PREFIX token in place of the default (RUN, TRN, INC and so on). A type with no prefix of its own uses its default. A new prefix starts its own sequence; numbers already issued keep their prefix, and types given the same prefix share one sequence.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-recordsnumberingconfig-prefixes",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-05T00:00:00Z"
     },
     {
       "Id": "field.RecordsNumberingFloor.NextSequence",
@@ -2249,6 +2371,28 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-10-04T00:00:00Z"
+    },
+    {
+      "Id": "field.RecordsNumberingPrefix.DefinitionKey",
+      "Locale": "en",
+      "TitleKey": "Field.RecordsNumberingPrefix.DefinitionKey",
+      "Body": "Records Numbering Prefix / Definition Key. The built-in record type the prefix applies to, such as system.run or system.neris-incident.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-recordsnumberingprefix-definitionkey",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-05T00:00:00Z"
+    },
+    {
+      "Id": "field.RecordsNumberingPrefix.Prefix",
+      "Locale": "en",
+      "TitleKey": "Field.RecordsNumberingPrefix.Prefix",
+      "Body": "Records Numbering Prefix / Prefix. 2 to 6 upper-case letters (A-Z) or digits. A prefix that no longer validates falls back to the type's default.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-recordsnumberingprefix-prefix",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-05T00:00:00Z"
     },
     {
       "Id": "field.RecordsSearchConfig.IndexNarrative",

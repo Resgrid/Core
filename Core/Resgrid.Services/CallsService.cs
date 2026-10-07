@@ -44,6 +44,7 @@ namespace Resgrid.Services
 		private readonly ICallContactsRepository _callContactsRepository;
 		private readonly IIndoorMapService _indoorMapService;
 		private readonly ICallVideoFeedRepository _callVideoFeedRepository;
+		private readonly ICallNumberingService _callNumberingService;
 
 		// Lazy: breaks any construction-time dependency cycle and defers the protected-write graph
 		// (broker client) until a save actually needs it.
@@ -62,7 +63,7 @@ namespace Resgrid.Services
 			IDepartmentCallPriorityRepository departmentCallPriorityRepository, IShortenUrlProvider shortenUrlProvider,
 			ICallProtocolsRepository callProtocolsRepository, IGeoLocationProvider geoLocationProvider, IDepartmentsService departmentsService,
 			ICallReferencesRepository callReferencesRepository, ICallContactsRepository callContactsRepository,
-			IIndoorMapService indoorMapService, ICallVideoFeedRepository callVideoFeedRepository,
+			IIndoorMapService indoorMapService, ICallVideoFeedRepository callVideoFeedRepository, ICallNumberingService callNumberingService,
 			Lazy<IProtectedWriteService> protectedWriteService, Lazy<ISearchProjectionService> searchProjections = null,
 			Lazy<ICallLocationHistoryService> callLocationHistory = null)
 		{
@@ -88,13 +89,14 @@ namespace Resgrid.Services
 			_callContactsRepository = callContactsRepository;
 			_indoorMapService = indoorMapService;
 			_callVideoFeedRepository = callVideoFeedRepository;
+			_callNumberingService = callNumberingService;
 			_searchProjections = searchProjections;
 		}
 
 		public async Task<Call> SaveCallAsync(Call call, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (String.IsNullOrWhiteSpace(call.Number))
-				call.Number = await GetCurrentCallNumberAsync(call.LoggedOn, call.DepartmentId);
+				call.Number = await _callNumberingService.AllocateCallNumberAsync(call.DepartmentId, call.LoggedOn, cancellationToken);
 
 			if (String.IsNullOrWhiteSpace(call.Name))
 				call.Name = "New Call " + DateTime.UtcNow.ToShortDateString();
@@ -251,43 +253,14 @@ namespace Resgrid.Services
 			return savedCall;
 		}
 
-		public async Task<bool> RegenerateCallNumbersAsync(int departmentId, int year, CancellationToken cancellationToken = default(CancellationToken))
+		public Task<bool> RegenerateCallNumbersAsync(int departmentId, int year, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
-			var start = (new DateTime(year, 1, 1, 1, 1, 1, DateTimeKind.Local)).SetToMidnight();
-			var end = (new DateTime(year, 12, 31, 23, 59, 59, DateTimeKind.Local)).SetToEndOfDay();
-
-			//var calls = (await _callsRepository.GetAllByDepartmentIdAsync(departmentId)).OrderBy(x => x.LoggedOn);
-			var calls = await _callsRepository.GetAllCallsByDepartmentDateRangeAsync(departmentId, DateTimeHelpers.ConvertToUtc(start, department.TimeZone), DateTimeHelpers.ConvertToUtc(end, department.TimeZone));
-			calls = calls.OrderBy(x => x.LoggedOn);
-			int count = 1;
-
-			foreach (var call in calls)
-			{
-				call.Number = string.Format("{0}-{1}", year % 100, count);
-				await _callsRepository.SaveOrUpdateAsync(call, cancellationToken);
-				count++;
-			}
-
-			return true;
+			return _callNumberingService.RenumberCallsForYearAsync(departmentId, year, cancellationToken);
 		}
 
 		public async Task<string> GetCurrentCallNumberAsync(DateTime utcDate, int departmentId)
 		{
-			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
-
-			DateTime localTime = DateTimeHelpers.GetLocalDateTime(utcDate, department.TimeZone);
-			int year = localTime.Year;
-
-			var localYearStart = new DateTime(year, 1, 1, 0, 0, 0, DateTimeKind.Unspecified);
-			var localYearEnd = new DateTime(year, 12, 31, 23, 59, 59, DateTimeKind.Unspecified);
-
-			var utcYearStart = DateTimeHelpers.ConvertToUtc(localYearStart, department.TimeZone);
-			var utcYearEnd = DateTimeHelpers.ConvertToUtc(localYearEnd, department.TimeZone);
-
-			var callCount = await _callsRepository.GetCallsCountByDepartmentDateRangeAsync(departmentId, utcYearStart, utcYearEnd);
-
-			return string.Format("{0}-{1}", year % 100, callCount + 1);
+			return (await _callNumberingService.GetNextAsync(departmentId, null, utcDate)).NextNumber;
 		}
 
 		public async Task<List<Call>> GetAllCallsByDepartmentAsync(int departmentId)
@@ -1109,6 +1082,16 @@ namespace Resgrid.Services
 			return new List<Call>();
 		}
 
+		public async Task<List<Call>> GetPendingCallsByDepartmentIdAsync(int departmentId)
+		{
+			var calls = await _callsRepository.GetPendingCallsByDepartmentIdAsync(departmentId);
+
+			if (calls != null && calls.Any())
+				return calls.OrderBy(x => x.LoggedOn).ToList();
+
+			return new List<Call>();
+		}
+
 		public async Task<List<CallReference>> GetChildCallsForCallAsync(int callId)
 		{
 			var calls = await _callReferencesRepository.GetCallReferencesByTargetCallIdAsync(callId);
@@ -1140,6 +1123,12 @@ namespace Resgrid.Services
 					return "Founded";
 				case CallStates.Minor:
 					return "Minor";
+				case CallStates.Transferred:
+					return "Transferred";
+				case CallStates.FalseAlarm:
+					return "False Alarm";
+				case CallStates.Pending:
+					return "Pending";
 				default:
 					return "Unknown";
 			}
@@ -1157,6 +1146,8 @@ namespace Resgrid.Services
 					return "#000000";
 				case CallStates.Unfounded:
 					return "#000000";
+				case CallStates.Pending:
+					return "#f8ac59";
 				default:
 					return "#000000";
 			}

@@ -1,0 +1,207 @@
+@using Resgrid.Model
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Security.ApiKeysView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["ApiKeysPageTitle"];
+    var now = DateTime.UtcNow;
+    var scopeLabels = new Dictionary<string, string>
+    {
+        [DepartmentApiKeyScopes.CallsRead] = localizer["ApiKeyScopeCallsRead"].Value,
+        [DepartmentApiKeyScopes.CallsCreate] = localizer["ApiKeyScopeCallsCreate"].Value,
+        [DepartmentApiKeyScopes.CallsUpdate] = localizer["ApiKeyScopeCallsUpdate"].Value,
+        [DepartmentApiKeyScopes.CallsClose] = localizer["ApiKeyScopeCallsClose"].Value,
+        [DepartmentApiKeyScopes.ReferenceRead] = localizer["ApiKeyScopeReferenceRead"].Value,
+        [DepartmentApiKeyScopes.UnitsRead] = localizer["ApiKeyScopeUnitsRead"].Value
+    };
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-8">
+        <h2><i class="fa fa-key"></i> @localizer["ApiKeysPageTitle"]</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-controller="Security" asp-action="Index" asp-route-area="User">@localizer["BreadcrumbSecurity"]</a></li>
+            <li class="active"><strong>@localizer["ApiKeysPageTitle"]</strong></li>
+        </ol>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content">
+    @if (!string.IsNullOrWhiteSpace(Model.NewKey))
+    {
+        <div class="ibox">
+            <div class="ibox-title"><h5>@localizer["ApiKeyNewHeader"]: @Model.NewKeyName</h5></div>
+            <div class="ibox-content">
+                <div class="alert alert-danger"><strong>@localizer["ApiKeyNewWarning"]</strong></div>
+                <div class="input-group">
+                    <input id="new-api-key" class="form-control" readonly value="@Model.NewKey" autocomplete="off" spellcheck="false" />
+                    <span class="input-group-btn"><button type="button" class="btn btn-default" id="copy-new-api-key">@localizer["ApiKeyCopy"]</button></span>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(Model.SuccessMessage))
+    {
+        <div class="alert alert-success">@Model.SuccessMessage</div>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger">@Model.ErrorMessage</div>
+    }
+
+    <div class="ibox">
+        <div class="ibox-content">
+            <p>@localizer["ApiKeysIntro"]</p>
+            <p>@string.Format(localizer["ApiKeysUsage"].Value, Model.ApiBaseUrl)</p>
+        </div>
+    </div>
+
+    <div class="ibox">
+        <div class="ibox-title"><h5>@localizer["ApiKeysExisting"]</h5></div>
+        <div class="ibox-content">
+            @if (Model.Keys == null || !Model.Keys.Any())
+            {
+                <p class="text-muted">@localizer["ApiKeysNone"]</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>@localizer["ApiKeyName"]</th>
+                                <th>@localizer["ApiKeyPrefix"]</th>
+                                <th>@localizer["ApiKeyScopes"]</th>
+                                <th>@localizer["ApiKeyCreated"]</th>
+                                <th>@localizer["ApiKeyExpires"]</th>
+                                <th>@localizer["ApiKeyLastUsed"]</th>
+                                <th>@localizer["ApiKeyStatus"]</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var key in Model.Keys)
+                            {
+                                <tr>
+                                    <td>@key.Name</td>
+                                    <td><code>rgk_@(key.KeyPrefix)_…</code></td>
+                                    <td>
+                                        @foreach (var scope in key.GetScopes())
+                                        {
+                                            <span class="label label-default" title="@(scopeLabels.TryGetValue(scope, out var label) ? label : scope)">@scope</span>
+                                        }
+                                    </td>
+                                    <td>@key.CreatedOn.TimeConverterToString(Model.Department)</td>
+                                    <td>@key.ExpiresOn.TimeConverterToString(Model.Department)</td>
+                                    <td>@(key.LastUsedOn.HasValue ? key.LastUsedOn.Value.TimeConverterToString(Model.Department) : localizer["ApiKeyNever"].Value)</td>
+                                    <td>
+                                        @if (key.RevokedOn.HasValue)
+                                        {
+                                            <span class="label label-danger">@localizer["ApiKeyStatusRevoked"]</span>
+                                        }
+                                        else if (key.ExpiresOn <= now)
+                                        {
+                                            <span class="label label-warning">@localizer["ApiKeyStatusExpired"]</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="label label-primary">@localizer["ApiKeyStatusActive"]</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (!key.RevokedOn.HasValue)
+                                        {
+                                            <form method="post" asp-action="RevokeApiKey" asp-route-id="@key.DepartmentApiKeyId" onsubmit="return confirm('@JsEncoder.Encode(localizer["ApiKeyRevokeConfirm"])');">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-xs btn-danger">@localizer["ApiKeyRevoke"]</button>
+                                            </form>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="ibox">
+        <div class="ibox-title"><h5>@localizer["ApiKeyCreateHeader"]</h5></div>
+        <div class="ibox-content">
+            <form method="post" asp-action="CreateApiKey" class="form-horizontal" autocomplete="off">
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="Name">@localizer["ApiKeyName"]</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="Name" name="Name" maxlength="100" value="@Model.Name" required />
+                        <span class="help-block m-b-none">@localizer["ApiKeyNameHelp"]</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">@localizer["ApiKeyScopesLabel"]</label>
+                    <div class="col-sm-10">
+                        @foreach (var scope in DepartmentApiKeyScopes.All)
+                        {
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="SelectedScopes" value="@scope" @(Model.SelectedScopes != null && Model.SelectedScopes.Contains(scope) ? "checked" : "") />
+                                    <code>@scope</code> — @scopeLabels[scope]
+                                </label>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="ExpiresInDays">@localizer["ApiKeyExpiresIn"]</label>
+                    <div class="col-sm-4">
+                        <select class="form-control" id="ExpiresInDays" name="ExpiresInDays">
+                            @foreach (var days in Model.ExpiryChoices)
+                            {
+                                if (days == Model.ExpiresInDays)
+                                {
+                                    <option value="@days" selected>@string.Format(localizer["ApiKeyDays"].Value, days)</option>
+                                }
+                                else
+                                {
+                                    <option value="@days">@string.Format(localizer["ApiKeyDays"].Value, days)</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="AllowedIpRanges">@localizer["ApiKeyAllowedIps"]</label>
+                    <div class="col-sm-10">
+                        <textarea class="form-control" id="AllowedIpRanges" name="AllowedIpRanges" rows="3" maxlength="1000">@Model.AllowedIpRanges</textarea>
+                        <span class="help-block m-b-none">@localizer["ApiKeyAllowedIpsHelp"]</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-10 col-sm-offset-2">
+                        <button type="submit" class="btn btn-primary">@localizer["ApiKeyCreateButton"]</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        (function () {
+            var button = document.getElementById('copy-new-api-key');
+            if (!button) return;
+            button.addEventListener('click', function () {
+                var input = document.getElementById('new-api-key');
+                input.select();
+                input.setSelectionRange(0, input.value.length);
+                if (navigator.clipboard) navigator.clipboard.writeText(input.value);
+            });
+        })();
+    </script>
+}

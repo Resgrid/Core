@@ -49,6 +49,9 @@ namespace Resgrid.Services
 		public Task<bool> PushCallUnit(StandardPushCall call, int unitId, DepartmentCallPriority priority = null)
 			=> _inner.PushCallUnit(Sanitize(call), unitId, priority);
 
+		public Task<bool> PushNotificationUnit(StandardPushMessage message, int unitId)
+			=> _inner.PushNotificationUnit(Sanitize(message, "notification-unit"), unitId);
+
 		public Task<bool> PushChatMessage(StandardPushMessage message, string userId, string eventCode,
 			int unreadCount, bool includeIncidentCommandApp, UserProfile profile = null)
 			=> _inner.PushChatMessage(Sanitize(message, "chat-message"), userId, eventCode, unreadCount,

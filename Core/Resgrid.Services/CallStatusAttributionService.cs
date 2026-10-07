@@ -310,7 +310,8 @@ namespace Resgrid.Services
 				result[call.CallId] = new List<UnitState>();
 
 			var dispatchesByCall = await GetUnitDispatchesForCallsAsync(departmentId, departmentCalls);
-			var units = (await _unitsRepository.GetAllUnitsByDepartmentIdAsync(departmentId))?.ToList() ?? new List<Unit>();
+			// Past calls keep the units that worked them, deleted or not.
+			var units = (await _unitsRepository.GetAllUnitsByDepartmentIdIncludingDeletedAsync(departmentId))?.ToList() ?? new List<Unit>();
 
 			// States can trail a call (a status set against it after it closed), hence the extra day on the read window.
 			var windowStart = departmentCalls.Min(x => x.LoggedOn);
@@ -569,7 +570,8 @@ namespace Resgrid.Services
 			if (states.All(x => x.Unit != null))
 				return;
 
-			var units = (await _unitsRepository.GetAllUnitsByDepartmentIdAsync(departmentId))?.ToDictionary(x => x.UnitId) ?? new Dictionary<int, Unit>();
+			// Deleted units included: a state's unit is point-in-time data, and the call views dereference it.
+			var units = (await _unitsRepository.GetAllUnitsByDepartmentIdIncludingDeletedAsync(departmentId))?.ToDictionary(x => x.UnitId) ?? new Dictionary<int, Unit>();
 			foreach (var state in states.Where(x => x.Unit == null))
 			{
 				if (units.TryGetValue(state.UnitId, out var unit))

@@ -22,12 +22,21 @@ namespace Resgrid.Services.Records
 			_groups = groups;
 		}
 
-		/// <summary>Every record type the department pattern numbers, with the prefix {PREFIX} renders for it. Department definitions number themselves.</summary>
-		public static IEnumerable<KeyValuePair<string, string>> NumberedTypes()
+		/// <summary>
+		/// Every record type the department pattern numbers, with the prefix {PREFIX} renders for it under <paramref name="config"/>
+		/// (the shipped defaults when null). Department definitions number themselves.
+		/// </summary>
+		public static IEnumerable<KeyValuePair<string, string>> NumberedTypes(RecordsNumberingConfig config = null)
 		{
+			config ??= new RecordsNumberingConfig();
 			foreach (var key in RmsDefinitionKeys.LockedTypes.Keys)
-				yield return new KeyValuePair<string, string>(key, RmsDefinitionKeys.DefaultNumberPrefix(key));
-			yield return new KeyValuePair<string, string>(RmsDefinitionKeys.NerisIncidentReport, IncidentReportsService.NumberPrefix);
+				yield return new KeyValuePair<string, string>(key, config.PrefixFor(key));
+			yield return new KeyValuePair<string, string>(RmsDefinitionKeys.NerisIncidentReport, config.PrefixFor(RmsDefinitionKeys.NerisIncidentReport));
+		}
+
+		public static bool IsNumberedType(string definitionKey)
+		{
+			return definitionKey != null && NumberedTypes().Any(t => string.Equals(t.Key, definitionKey, StringComparison.Ordinal));
 		}
 
 		public async Task<List<RecordNumberSequenceStatus>> GetSequencesAsync(int departmentId, RecordsNumberingConfig config, int year)
@@ -42,7 +51,7 @@ namespace Resgrid.Services.Records
 			var sequences = new List<RecordNumberSequenceStatus>();
 			foreach (var group in groups)
 			{
-				foreach (var type in NumberedTypes())
+				foreach (var type in NumberedTypes(config))
 				{
 					var scope = RecordNumberFormat.Resolve(pattern, config.SequenceWidth, type.Value, year, group);
 					var shared = sequences.FirstOrDefault(s => s.ScopeKey == scope.Key);
@@ -87,6 +96,19 @@ namespace Resgrid.Services.Records
 			config.IncludeYear = RecordNumberFormat.ResetsYearly(pattern);
 			config.ResetYearly = config.IncludeYear;
 			config.PerGroupSequence = RecordNumberFormat.UsesToken(pattern, RecordNumberFormat.GroupToken);
+
+			// Applied before the next numbers below: a new prefix is a new sequence, so a number typed against the old one does not carry over.
+			foreach (var request in (update.Prefixes ?? new List<RecordNumberPrefixRequest>()).Where(r => r != null && IsNumberedType(r.DefinitionKey)))
+			{
+				var prefix = string.IsNullOrWhiteSpace(request.Prefix) ? null : request.Prefix.Trim().ToUpperInvariant();
+				if (prefix != null && !RecordNumberFormat.IsValidPrefix(prefix))
+				{
+					result.PrefixesRejected.Add(request.DefinitionKey);
+					continue;
+				}
+
+				config.SetPrefix(request.DefinitionKey, prefix);
+			}
 
 			var requests = (update.NextNumbers ?? new List<RecordNextNumberRequest>()).Where(r => r != null && !string.IsNullOrEmpty(r.ScopeKey)).ToList();
 			if (requests.Count > 0)

@@ -22,7 +22,8 @@ namespace Resgrid.Model.Services
 		Task<Call> SaveCallAsync(Call call, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
-		/// Regenerates the call numbers asynchronous.
+		/// Renumbers the department's calls logged in a local year, in logged order, with the department's call number
+		/// pattern. False, and nothing renumbered, when the pattern has no year (its sequence spans years).
 		/// </summary>
 		/// <param name="departmentId">The department identifier.</param>
 		/// <param name="year">The local year to regenerate call numbers for.</param>
@@ -32,7 +33,8 @@ namespace Resgrid.Model.Services
 			CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
-		/// Gets the current call number asynchronous.
+		/// The number the next call logged at <paramref name="utcDate"/> would receive, without taking it. New calls take
+		/// theirs in <see cref="SaveCallAsync"/>.
 		/// </summary>
 		/// <param name="departmentId">The department identifier.</param>
 		/// <returns>Task&lt;System.String&gt;.</returns>
@@ -427,6 +429,13 @@ namespace Resgrid.Model.Services
 
 
 		Task<List<Call>> GetAllNonDispatchedScheduledCallsByDepartmentIdAsync(int departmentId);
+
+		/// <summary>
+		/// Gets the department's pending calls (<see cref="CallStates.Pending"/>), oldest first: saved but not yet
+		/// dispatched, waiting for a dispatcher to pick them up.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		Task<List<Call>> GetPendingCallsByDepartmentIdAsync(int departmentId);
 
 		Task<List<CallReference>> GetChildCallsForCallAsync(int callId);
 

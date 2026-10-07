@@ -1278,7 +1278,7 @@ namespace Resgrid.Services.Records
 		private async Task<string> AllocateRecordNumberAsync(RmsOperationalRecord record, CancellationToken cancellationToken)
 		{
 			var config = await _settings.GetRecordsNumberingConfigAsync(record.DepartmentId);
-			var prefixBase = RmsDefinitionKeys.DefaultNumberPrefix(record.DefinitionKey);
+			var prefixBase = config.PrefixFor(record.DefinitionKey);
 			var year = (record.StartedOn ?? DateTime.UtcNow).Year;
 			// Department definitions carry their own numbering policy (plan 4.1 "Numbering"); the department pattern is the fallback.
 			var numbering = record.RecordType == null ? (await DefinitionVersionForAsync(record))?.Numbering : null;

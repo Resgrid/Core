@@ -1329,4 +1329,79 @@
   <data name="RunCardTriggerRequired" xml:space="preserve">
     <value>أضف مشغّلًا واحدًا على الأقل قبل حفظ بطاقة الإرسال هذه.</value>
   </data>
+  <data name="InQuartersTurnoutLabel" xml:space="preserve">
+    <value>زمن الانطلاق من المحطة (بالثواني)</value>
+  </data>
+  <data name="InQuartersTurnoutHelp" xml:space="preserve">
+    <value>الوقت الذي تحتاجه الوحدة في محطتها قبل أن تبدأ التحرك. ينطبق على الوحدات ذات الحالة «في المحطة» وعلى الوحدات التي ليس لها موقع GPS (يُفترض أنها في محطتها). يُضاف إلى زمن التنقل عند ترتيب أقرب الوحدات. 0 = لا شيء.</value>
+  </data>
+  <data name="MobileTurnoutLabel" xml:space="preserve">
+    <value>زمن الانطلاق أثناء التنقل (بالثواني)</value>
+  </data>
+  <data name="MobileTurnoutHelp" xml:space="preserve">
+    <value>الوقت الذي تحتاجه وحدة موجودة بالفعل خارج المحطة ومتاحة قبل أن تتحرك نحو بلاغ جديد. ينطبق على الوحدات المرتبة حسب موقع GPS. يُضاف إلى زمن التنقل عند ترتيب أقرب الوحدات. 0 = لا شيء.</value>
+  </data>
+  <data name="StatusHoldToConfirmLabel" xml:space="preserve">
+    <value>الضغط المطوّل لتعيين الحالة</value>
+  </data>
+  <data name="StatusHoldToConfirmHelp" xml:space="preserve">
+    <value>في تطبيقي Unit وResponder، يضغط الطاقم مطولاً على زر الحالة لمدة ثانيتين لتعيينها، بدلاً من النقر عليه ثم الضغط على التالي أو إرسال. يمنع النقرات العرضية والتأكيدات المنسية. الحالة التي تتطلب ملاحظة أو اختيار وجهة لا تزال تفتح خطوتها التالية.</value>
+  </data>
+  <data name="CallNumberingHeader" xml:space="preserve">
+    <value>ترقيم البلاغات</value>
+  </data>
+  <data name="CallNumberingIntro" xml:space="preserve">
+    <value>كيفية ترقيم البلاغات الجديدة. لا يؤدي تغيير النمط أبدًا إلى إعادة ترقيم البلاغات التي لها رقم بالفعل.</value>
+  </data>
+  <data name="CallNumberPattern" xml:space="preserve">
+    <value>نمط رقم البلاغ</value>
+  </data>
+  <data name="CallNumberExample" xml:space="preserve">
+    <value>مثال:</value>
+  </data>
+  <data name="CallNumberPatternHelp" xml:space="preserve">
+    <value>نص ثابت (أحرف وأرقام و - _ . /) حول رموز: {YYYY} أو {YY} السنة، و{MM} الشهر، و{DD} اليوم، و{SEQ} الرقم التسلسلي الذي يجب أن يظهر مرة واحدة. يبدأ الرقم التسلسلي من 1 من جديد كلما تغيّر التاريخ في الرقم: كل سنة مع السنة، وكل شهر مع {MM}، وكل يوم مع {DD}، ولا يبدأ من جديد أبدًا دون تاريخ. يتطلب {MM} سنة ويتطلب {DD} وجود {MM}. تستخدم التواريخ المنطقة الزمنية للقسم.</value>
+  </data>
+  <data name="CallNumberSequenceWidth" xml:space="preserve">
+    <value>عدد أرقام التسلسل</value>
+  </data>
+  <data name="CallNumberSequenceWidthHelp" xml:space="preserve">
+    <value>يملأ الرقم التسلسلي بأصفار بادئة، فالقيمة 4 تكتب 0153. القيمة 1 تكتبه دون أصفار، كما فعل Resgrid دائمًا.</value>
+  </data>
+  <data name="CallNumberNext" xml:space="preserve">
+    <value>رقم البلاغ التالي</value>
+  </data>
+  <data name="CallNumberResetsYearly" xml:space="preserve">
+    <value>يبدأ من 1 من جديد كل سنة.</value>
+  </data>
+  <data name="CallNumberResetsMonthly" xml:space="preserve">
+    <value>يبدأ من 1 من جديد كل شهر.</value>
+  </data>
+  <data name="CallNumberResetsDaily" xml:space="preserve">
+    <value>يبدأ من 1 من جديد كل يوم.</value>
+  </data>
+  <data name="CallNumberResetsNever" xml:space="preserve">
+    <value>لا يبدأ من جديد أبدًا.</value>
+  </data>
+  <data name="CallNumberRaiseTo" xml:space="preserve">
+    <value>رفع التسلسل التالي إلى</value>
+  </data>
+  <data name="CallNumberRaiseToHelp" xml:space="preserve">
+    <value>للأقسام التي تواصل أرقامًا صدرت قبل Resgrid: يتلقى البلاغ التالي هذا الرقم التسلسلي. يمكن رفعه فقط ولا يمكن خفضه أبدًا، حتى لا يصدر أي رقم مرتين. اتركه فارغًا للإبقاء على التسلسل الحالي.</value>
+  </data>
+  <data name="CallNumberRaiseConfirm" xml:space="preserve">
+    <value>هل تريد رفع رقم البلاغ التالي؟ يمكن رفعه فقط ولا يمكن خفضه أبدًا.</value>
+  </data>
+  <data name="CallNumberPatternInvalid" xml:space="preserve">
+    <value>لم يُحفظ ترقيم البلاغات. يحتاج النمط إلى {SEQ} مرة واحدة بالضبط، ولا يمكن أن يحتوي إلا على أحرف وأرقام و - _ . / والرموز {YYYY} و{YY} و{MM} و{DD}، ويحتاج إلى سنة مع {MM} وإلى {MM} مع {DD}، ولا يتجاوز 40 حرفًا.</value>
+  </data>
+  <data name="CallNumberNextBelowCurrent" xml:space="preserve">
+    <value>لم يُرفع رقم البلاغ التالي: لا يمكن رفعه إلا فوق الرقم الذي سيتلقاه البلاغ التالي بالفعل ({0}).</value>
+  </data>
+  <data name="CallNumberNextPatternChanged" xml:space="preserve">
+    <value>لم يُرفع رقم البلاغ التالي لأن النمط تغيّر في عملية الحفظ نفسها. ارفعه مرة أخرى للنمط الجديد.</value>
+  </data>
+  <data name="CallSettingsSaved" xml:space="preserve">
+    <value>تم حفظ إعدادات البلاغات.</value>
+  </data>
 </root>

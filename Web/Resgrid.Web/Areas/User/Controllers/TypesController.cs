@@ -692,20 +692,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await _authorizationService.CanUserDeleteCertificationTypeAsync(UserId, certificationTypeId))
 				return Unauthorized();
 
-			var type = await _certificationService.GetCertificationTypeByIdAsync(certificationTypeId);
-
-			var auditEvent = new AuditEvent();
-			auditEvent.DepartmentId = DepartmentId;
-			auditEvent.UserId = UserId;
-			auditEvent.Before = type.CloneJsonToString();
-			auditEvent.Type = AuditLogTypes.CertificationTypeRemoved;
-			auditEvent.Successful = true;
-			auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
-			auditEvent.ServerName = Environment.MachineName;
-			auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
-			_eventAggregator.SendMessage<AuditEvent>(auditEvent);
-
-			await _certificationService.DeleteCertificationTypeByIdAsync(certificationTypeId, cancellationToken);
+			try
+			{
+				// The service audits the delete (as this user), only once it has actually happened.
+				await _certificationService.DeleteCertificationTypeByIdAsync(certificationTypeId, UserId, cancellationToken);
+			}
+			catch (InvalidOperationException ex) when (ex.Message.StartsWith("certifications_", StringComparison.Ordinal))
+			{
+				// A type a role requirement or live record still references is refused (certifications_type_in_use):
+				// the Types page shows the reason instead of a 500.
+				TempData["CertificationTypeRefused"] = ex.Message;
+			}
 
 			return RedirectToAction("Types", "Department", new { Area = "User" });
 		}
@@ -745,18 +742,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (ModelState.IsValid)
 			{
-				var auditEvent = new AuditEvent();
-				auditEvent.DepartmentId = DepartmentId;
-				auditEvent.UserId = UserId;
-				auditEvent.After = model.Type.CloneJsonToString();
-				auditEvent.Type = AuditLogTypes.CertificationTypeAdded;
-				auditEvent.Successful = true;
-				auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
-				auditEvent.ServerName = Environment.MachineName;
-				auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
-				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
-
-				await _certificationService.SaveNewCertificationTypeAsync(model.Type.Type.Trim(), DepartmentId, cancellationToken);
+				// The service audits the add as this user.
+				await _certificationService.SaveNewCertificationTypeAsync(model.Type.Type.Trim(), DepartmentId, UserId, cancellationToken);
 
 				return RedirectToAction("Types", "Department", new { Area = "User" });
 			}

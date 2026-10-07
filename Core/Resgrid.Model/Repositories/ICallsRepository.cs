@@ -75,6 +75,12 @@ namespace Resgrid.Model.Repositories
 		Task<IEnumerable<Call>> GetAllNonDispatchedScheduledCallsByDepartmentIdAsync(int departmentId);
 
 		/// <summary>
+		/// Gets the department's pending calls (<see cref="CallStates.Pending"/>): saved, not deleted and waiting for a dispatcher.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		Task<IEnumerable<Call>> GetPendingCallsByDepartmentIdAsync(int departmentId);
+
+		/// <summary>
 		/// Gets all calls by department and contact asynchronous.
 		/// </summary>
 		/// <param name="contactId">The contact identifier.</param>

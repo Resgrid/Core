@@ -42,6 +42,13 @@ namespace Resgrid.Web.Services.Models.v4.UnitStatus
 		public string State { get; set; }
 
 		/// <summary>
+		/// Id of the current status: the status option's Id from Statuses/GetAllUnitStatuses (a custom
+		/// status's CustomStateDetailId, or the built-in state number). 0 when the unit has no status yet.
+		/// Lets the apps mark the current status and offer the options configured to follow it.
+		/// </summary>
+		public int StateId { get; set; }
+
+		/// <summary>
 		/// CSS for status (for display)
 		/// </summary>
 		public string StateCss { get; set; }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Resgrid.Model.AdminAssist
 {
@@ -66,6 +67,21 @@ namespace Resgrid.Model.AdminAssist
 		IReadOnlyList<OperatingPack> Packs { get; }
 		IReadOnlyList<ConfigurationRuleDefinition> Rules { get; }
 		IReadOnlyList<KnowledgeArticle> Articles { get; }
+	}
+
+	public static class AdminAssistCatalogExtensions
+	{
+		/// <summary>
+		/// The entry whose help belongs under an editor, or null. Several entries can link to one input -- the setting that holds
+		/// the field, or a legacy flag the input now drives -- so the input's own entry is the match no other match requires (its
+		/// container) or affects (driven by it).
+		/// </summary>
+		public static SettingCatalogEntry FieldHelpEntry(this IAdminAssistCatalog catalog, string controller, string action, string field)
+		{
+			var matches = catalog.Settings.Where(s => s.Location.Controller == controller && s.Location.Action == action && s.Location.Field == field).ToList();
+			if (matches.Count < 2) return matches.FirstOrDefault();
+			return matches.FirstOrDefault(s => !matches.Any(o => o.Requires.Contains(s.Id) || o.Affects.Contains(s.Id))) ?? matches[0];
+		}
 	}
 
 	public enum EvidenceComparison { IsTrue, IsFalse, Equal, NotEqual, Greater, GreaterOrEqual, Less, LessOrEqual }

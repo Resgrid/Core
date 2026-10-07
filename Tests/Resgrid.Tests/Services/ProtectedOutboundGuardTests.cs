@@ -180,6 +180,7 @@ namespace Resgrid.Tests.Services
 			public System.Threading.Tasks.Task<bool> UnRegisterUnitWebPush(PushUri pushUri) => Record();
 			public System.Threading.Tasks.Task<bool> PushChat(Resgrid.Model.Messages.StandardPushMessage message, string userId, UserProfile profile = null) => Record();
 			public System.Threading.Tasks.Task<bool> PushCallUnit(Resgrid.Model.Messages.StandardPushCall call, int unitId, DepartmentCallPriority priority = null) => Record();
+			public System.Threading.Tasks.Task<bool> PushNotificationUnit(Resgrid.Model.Messages.StandardPushMessage message, int unitId) => Record();
 			public System.Threading.Tasks.Task<bool> PushChatMessage(Resgrid.Model.Messages.StandardPushMessage message, string userId, string eventCode, int unreadCount, bool includeIncidentCommandApp, UserProfile profile = null) => Record();
 			public System.Threading.Tasks.Task<bool> PushChatMessageUnit(Resgrid.Model.Messages.StandardPushMessage message, int unitId, string eventCode, int unreadCount) => Record();
 		}

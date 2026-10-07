@@ -243,7 +243,7 @@ namespace Resgrid.Services.Search
 							if (hit != null && types.Contains(hit.EntityType) &&
 								projections.TryGetValue(hit.ProjectionId ?? string.Empty, out var projection) &&
 								ProjectionIsCurrent(hit, projection, access) && await AuthorizeAsync(hit, access))
-								authorized.Add(Map(projection, hit.Score, snippetTerms));
+								authorized.Add(await LinkAsync(Map(projection, hit.Score, snippetTerms), access));
 							else
 								dropped++;
 						}

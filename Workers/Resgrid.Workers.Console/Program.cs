@@ -365,7 +365,7 @@ namespace Resgrid.Workers.Console
 
 				_logger.Log(LogLevel.Information, "Scheduling Dispatch Scheduled Calls");
 				await Client.ScheduleAsync("Scheduled Calls",
-					new Commands.StatusScheduleCommand(12),
+					new Commands.DispatchScheduledCallsCommand(12),
 					Cron.MinuteIntervals(5),
 					stoppingToken);
 

@@ -23,7 +23,7 @@ namespace Resgrid.Model
 		/// <summary>The unit's latest GPS fix.</summary>
 		Live = 1,
 
-		/// <summary>The unit's station location; used when the unit has no GPS fix.</summary>
+		/// <summary>The unit's station location: its status says it is in quarters, or it has no GPS fix.</summary>
 		Station = 2
 	}
 
@@ -79,7 +79,7 @@ namespace Resgrid.Model
 		/// <summary>Groups (any type) whose boundary contains the incident, innermost first when nested.</summary>
 		public List<NearestBoundaryGroup> ContainingBoundaries { get; set; } = new List<NearestBoundaryGroup>();
 
-		/// <summary>Every unit in scope: available first, then by ETA, then distance.</summary>
+		/// <summary>Every unit in scope: available first, then by response time (turnout + travel), then distance. A stale position is flagged on the row, not ranked down.</summary>
 		public List<NearestUnitResult> Units { get; set; } = new List<NearestUnitResult>();
 
 		/// <summary>Every responder in scope, ordered the same way.</summary>
@@ -141,9 +141,16 @@ namespace Resgrid.Model
 
 		public double? DistanceMeters { get; set; }
 
+		/// <summary>Travel time only, from the unit's position to the incident.</summary>
 		public double? EtaSeconds { get; set; }
 
 		public EtaSources EtaSource { get; set; }
+
+		/// <summary>The department's turnout for where the unit is (in quarters or already out); 0 when none is configured.</summary>
+		public int TurnoutSeconds { get; set; }
+
+		/// <summary>Turnout plus travel: what the board ranks on. Null when the unit has no position the viewer may be told about.</summary>
+		public double? ResponseSeconds { get; set; }
 
 		public UnitCrewSources CrewSource { get; set; }
 

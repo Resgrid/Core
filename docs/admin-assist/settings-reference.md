@@ -1217,6 +1217,11 @@ Single sign-on and provisioning Let members sign in through your identity provid
 
 Audit history See who changed department settings and when. Identify what changed and who should verify the effect. An administrator sets the department time zone, hides modules the department will not use, requires two-factor sign-in for administrators and adds a second administrator. Know your department address and time zone, and choose at least two people who will administer Resgrid.
 
+<a id="api-keys"></a>
+## API keys
+
+API keys Let another system call the Resgrid API for the department with its own key, scopes, expiry and allowed addresses instead of a member's login. Integrations keep working when people leave, can only do what their key allows and can be revoked at once. An administrator sets the department time zone, hides modules the department will not use, requires two-factor sign-in for administrators and adds a second administrator. Know your department address and time zone, and choose at least two people who will administer Resgrid.
+
 <a id="account-sessions"></a>
 ## Account sessions and recovery
 
@@ -1381,6 +1386,27 @@ Group Dispatch Scope Config. Group-subtree dispatch visibility with explicit rol
 
 Default: disabled, no department-wide role exceptions. Source: DepartmentSettingTypes.GroupDispatchScopeConfig.
 
+<a id="setting-callnumberingconfig"></a>
+## Call Numbering Config
+
+Call Numbering Config. How new call numbers are written: the call number pattern and sequence digits, edited on Call Settings, plus a raised next number for departments continuing numbers issued before Resgrid. Each call takes its number from its sequence once, so two calls logged together never share a number. Changing the pattern never renumbers calls that already have a number.
+
+Default: legacy pattern {YY}-{SEQ}, unpadded. Source: DepartmentSettingTypes.CallNumberingConfig.
+
+<a id="field-callnumberingconfig-pattern"></a>
+## Call Numbering Config / Pattern
+
+Call Numbering Config / Pattern. Fixed text (letters, digits, - _ . /) plus the {YYYY} or {YY}, {MM}, {DD} and {SEQ} tokens, for example FD-{YYYY}-{SEQ}. {SEQ} appears exactly once. The sequence starts again at 1 whenever the date the pattern writes changes: yearly with a year, monthly with {MM}, daily with {DD}, never without a date; {MM} needs a year and {DD} needs {MM}. Dates are the department's local date of the call. A new pattern starts its own sequence, which the department can raise to continue earlier numbers. Until a pattern is saved, calls keep the {YY}-{SEQ} numbers Resgrid has always issued.
+
+Default: unset. Source: CallNumberingConfig.Pattern.
+
+<a id="field-callnumberingconfig-sequencewidth"></a>
+## Call Numbering Config / Sequence Width
+
+Call Numbering Config / Sequence Width. Digits the sequence is padded to with leading zeros, from 1 (no padding, as the legacy numbers are) to 8. The sequence is counted as a number, so changing the width never restarts it.
+
+Default: 1. Source: CallNumberingConfig.SequenceWidth.
+
 <a id="field-unittypecallstatusoverridesetting-overrides"></a>
 ## Unit Type Call Status Override Setting / Overrides
 
@@ -1454,7 +1480,7 @@ Default: empty. Source: GroupDispatchScopeConfig.DepartmentWideRoleIds.
 <a id="field-dispatchrecommendationconfig-maxlocationageseconds"></a>
 ## Dispatch Recommendation Config / Max Location Age Seconds
 
-Dispatch Recommendation Config / Max Location Age Seconds. Exclude older unit positions from closest-unit candidates; zero removes the age limit. IncludeStaleLocations changes this behavior.
+Dispatch Recommendation Config / Max Location Age Seconds. Exclude older unit positions from closest-unit candidates; zero removes the age limit. IncludeStaleLocations changes this behavior. A unit measured from its station (In Quarters status, or no GPS fix) never ages out.
 
 Default: 1800. Source: DispatchRecommendationConfig.MaxLocationAgeSeconds.
 
@@ -1482,7 +1508,7 @@ Default: 1800. Source: DispatchRecommendationConfig.PersonnelMaxLocationAgeSecon
 <a id="field-dispatchrecommendationconfig-useroutedeta"></a>
 ## Dispatch Recommendation Config / Use Routed ETA
 
-Dispatch Recommendation Config / Use Routed ETA. Re-rank shortlisted candidates using provider travel estimates. The operational path can make external provider calls; Admin Assist does not.
+Dispatch Recommendation Config / Use Routed ETA. Re-rank shortlisted candidates using provider travel estimates. The operational path can make external provider calls; Admin Assist does not. The configured turnout times are added to each drive time.
 
 Default: false. Source: DispatchRecommendationConfig.UseRoutedEta.
 
@@ -1492,6 +1518,20 @@ Default: false. Source: DispatchRecommendationConfig.UseRoutedEta.
 Dispatch Recommendation Config / ETA Shortlist Size. Number of straight-line candidates per requirement sent for routed ETA when enabled. The owning validator caps provider work.
 
 Default: 5. Source: DispatchRecommendationConfig.EtaShortlistSize.
+
+<a id="field-dispatchrecommendationconfig-inquartersturnoutseconds"></a>
+## Dispatch Recommendation Config / In-Quarters Turnout Seconds
+
+Dispatch Recommendation Config / In-Quarters Turnout Seconds. Seconds a unit at its station needs before it is moving; applies to In Quarters statuses and units with no GPS position. Added to travel time when ranking closest units; zero means none.
+
+Default: 0. Source: DispatchRecommendationConfig.InQuartersTurnoutSeconds.
+
+<a id="field-dispatchrecommendationconfig-mobileturnoutseconds"></a>
+## Dispatch Recommendation Config / Mobile Turnout Seconds
+
+Dispatch Recommendation Config / Mobile Turnout Seconds. Seconds a unit that is already out and available needs before it is moving; applies to units ranked from GPS. Added to travel time when ranking closest units; zero means none.
+
+Default: 0. Source: DispatchRecommendationConfig.MobileTurnoutSeconds.
 
 <a id="field-dispatchrecommendationconfig-restperiodminutes"></a>
 ## Dispatch Recommendation Config / Rest Period Minutes
@@ -1584,6 +1624,13 @@ Personnel On Unit Set Unit Status. Allow personnel status updates to influence t
 
 Default: false. Source: DepartmentSettingTypes.PersonnelOnUnitSetUnitStatus.
 
+<a id="setting-statusholdtoconfirm"></a>
+## Hold to Set Status
+
+Hold to Set Status. The Unit and Responder apps set a status with a two-second press and hold instead of a tap followed by Next or Submit, so a stray tap never sets a status and a crew cannot forget to confirm one. A status that needs a note, or a destination the app cannot fill from the active call, still opens that step. Off by default.
+
+Default: false. Source: DepartmentSettingTypes.StatusHoldToConfirm.
+
 <a id="setting-enabletextcommand"></a>
 ## Enable Text Command
 
@@ -1606,12 +1653,12 @@ Call types and priorities The call types and priorities used to classify calls. 
 <a id="custom-statuses"></a>
 ## Personnel and unit statuses
 
-Personnel and unit statuses The statuses members and units report, such as Responding or On Scene. Use terminology familiar to the department while preserving automation meaning. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Review the built-in statuses and add your own where your terms differ.
+Personnel and unit statuses The statuses members and units report, such as Responding or On Scene. Use terminology familiar to the department while preserving automation meaning. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Review the built-in statuses and add your own where your terms differ. Give each one a base type; In Quarters tells dispatch recommendations a unit is at its station.
 
 <a id="dispatch-settings"></a>
 ## Dispatch Settings
 
-Dispatch Settings How calls page personnel: by group or by shift, and related automatic status changes. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Choose whether dispatch follows groups or shifts, and review the automatic status options.
+Dispatch Settings How calls page personnel: by group or by shift, and related automatic status changes. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Choose whether dispatch follows groups or shifts, and review the automatic status options. Set closest-unit turnout times if crews need time to leave the station.
 
 <a id="email-intake"></a>
 ## Email and CAD call intake
@@ -1626,7 +1673,7 @@ Run cards and recommendations Recommended resources for each call type or area. 
 <a id="calls"></a>
 ## Calls
 
-Calls Active calls and their dispatch status. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Collect your call types, the statuses members report while responding, and the details of any CAD or paging system that should create calls.
+Calls Active calls and their dispatch status. Closing a call can notify everyone on it, and a call run under an active incident command is closed from the command first. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Collect your call types, the statuses members report while responding, and the details of any CAD or paging system that should create calls.
 
 <a id="new-call"></a>
 ## New Call
@@ -1637,6 +1684,16 @@ New Call Create and dispatch a call. Consistent call types and statuses make dis
 ## Archived Calls
 
 Archived Calls Closed and past calls. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Collect your call types, the statuses members report while responding, and the details of any CAD or paging system that should create calls.
+
+<a id="pending-calls"></a>
+## Pending Calls
+
+Pending Calls Calls saved for a dispatcher to send later, such as follow-ups another system feeds in; nobody is notified until the call is dispatched. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Collect your call types, the statuses members report while responding, and the details of any CAD or paging system that should create calls.
+
+<a id="scheduled-calls"></a>
+## Scheduled Calls
+
+Scheduled Calls Calls that go out by themselves at a future time and can be sent early or rescheduled. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Collect your call types, the statuses members report while responding, and the details of any CAD or paging system that should create calls.
 
 <a id="call-templates"></a>
 ## Call templates
@@ -1656,7 +1713,7 @@ Text call intake and commands Create calls and accept member commands by text me
 <a id="call-settings"></a>
 ## Call Settings
 
-Call Settings The mailbox and format used to import calls from CAD or paging email. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Collect your call types, the statuses members report while responding, and the details of any CAD or paging system that should create calls.
+Call Settings The mailbox and format used to import calls from CAD or paging email, and the call number format and next number. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Collect your call types, the statuses members report while responding, and the details of any CAD or paging system that should create calls.
 
 <a id="setting-unitssortorder"></a>
 ## Units Sort Order
@@ -2516,7 +2573,7 @@ Default: owning records default. Source: DepartmentSettingTypes.RecordsReviewDue
 <a id="setting-recordsnumberingconfig"></a>
 ## Records Numbering Config
 
-Records Numbering Config. Number assignment, year reset and sequence formatting for definitions that do not override the department configuration.
+Records Numbering Config. Department numbering for the built-in record types and incident reports: the number pattern, sequence digits, record type prefixes and raised next numbers. Numbers are assigned when a record is finalized. Department definitions with their own numbering keep it.
 
 Default: RecordsNumberingConfig constructor. Source: DepartmentSettingTypes.RecordsNumberingConfig.
 
@@ -2607,7 +2664,7 @@ Default: true. Source: RecordsNumberingConfig.ResetYearly.
 <a id="field-recordsnumberingconfig-sequencewidth"></a>
 ## Records Numbering Config / Sequence Width
 
-Records Numbering Config / Sequence Width. Zero-padded sequence width for definitions using department defaults. The Records editor validates the supported width.
+Records Numbering Config / Sequence Width. Digits in the SEQ part of the number pattern, zero-padded: 4 writes 0184. 3 to 8 digits; changing it keeps each sequence's next number. Department definitions with their own numbering keep their own width.
 
 Default: 4. Source: RecordsNumberingConfig.SequenceWidth.
 
@@ -2635,9 +2692,16 @@ Default: empty. Source: RecordsNumberingConfig.Floors.
 <a id="field-recordsnumberingconfig-pattern"></a>
 ## Records Numbering Config / Pattern
 
-Records Numbering Config / Pattern. Number pattern for the built-in record types and incident reports, made of literal text and the PREFIX, YYYY, YY, GROUP and SEQ tokens. Unset keeps the pattern Include Year and Per Group Sequence describe. The sequence restarts whenever the text around SEQ changes.
+Records Numbering Config / Pattern. How record numbers are written for the built-in record types and incident reports, for example RUN-0153: fixed text plus the PREFIX, YYYY or YY, GROUP and SEQ tokens. PREFIX writes each record type's prefix: its default or the department's own, from "Record type prefixes". Changing the pattern never renumbers records already numbered. Until a pattern is saved, the screen shows the one the department has always used.
 
 Default: unset. Source: RecordsNumberingConfig.Pattern.
+
+<a id="field-recordsnumberingconfig-prefixes"></a>
+## Records Numbering Config / Prefixes
+
+Records Numbering Config / Prefixes. The department's own prefix for each built-in record type and for incident reports, written by the PREFIX token in place of the default (RUN, TRN, INC and so on). A type with no prefix of its own uses its default. A new prefix starts its own sequence; numbers already issued keep their prefix, and types given the same prefix share one sequence.
+
+Default: empty. Source: RecordsNumberingConfig.Prefixes.
 
 <a id="field-recordsnumberingfloor-nextsequence"></a>
 ## Records Numbering Floor / Next Sequence
@@ -2666,6 +2730,20 @@ Default: unset. Source: RecordsNumberingFloor.SetByUserId.
 Records Numbering Floor / Set On. When the next number was raised (UTC).
 
 Default: unset. Source: RecordsNumberingFloor.SetOn.
+
+<a id="field-recordsnumberingprefix-definitionkey"></a>
+## Records Numbering Prefix / Definition Key
+
+Records Numbering Prefix / Definition Key. The built-in record type the prefix applies to, such as system.run or system.neris-incident.
+
+Default: unset. Source: RecordsNumberingPrefix.DefinitionKey.
+
+<a id="field-recordsnumberingprefix-prefix"></a>
+## Records Numbering Prefix / Prefix
+
+Records Numbering Prefix / Prefix. 2 to 6 upper-case letters (A-Z) or digits. A prefix that no longer validates falls back to the type's default.
+
+Default: unset. Source: RecordsNumberingPrefix.Prefix.
 
 <a id="field-recordssearchconfig-indexnarrative"></a>
 ## Records Search Config / Index Narrative

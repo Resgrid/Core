@@ -34,8 +34,18 @@ namespace Resgrid.Config
 		/// <summary>Maximum departments one maintenance sweep rebuilds before yielding to the next run.</summary>
 		public static int MaxRebuildsPerSweep = 5;
 
-		/// <summary>Closed calls from this many calendar years (including the current one) enter a rebuild; active calls always do.</summary>
-		public static int CallRebuildYears = 3;
+		/// <summary>
+		/// Closed calls from this many calendar years (including the current one) enter a rebuild; active calls always do.
+		/// 0 (the default) rebuilds every year the department has calls in: finding an old call is a common use of search,
+		/// and a rebuild retires every call it does not re-project. A positive value also turns off the call history backfill.
+		/// </summary>
+		public static int CallRebuildYears = 0;
+
+		/// <summary>Calls one department's history backfill reads per batch (M0261); each sweep gives every pending department one batch.</summary>
+		public static int CallBackfillBatchSize = 250;
+
+		/// <summary>Seconds of each maintenance sweep the call history backfill may use, after catch-up; 0 turns the backfill off.</summary>
+		public static int CallBackfillSecondsPerSweep = 20;
 
 		// ---- Object store (RustFS / any S3-compatible endpoint), plan R7. Empty endpoint = disabled. -------------
 

@@ -210,6 +210,16 @@ namespace Resgrid.Model
 		/// </summary>
 		[Description("The assignment, task or delivery is complete; the unit or responder is wrapping up and becoming available.")]
 		[Display(Name = "Completed")]
-		Completed = 22
+		Completed = 22,
+
+		/// <summary>
+		/// The resource is in service and available at its station or quarters. Classified as Available. Dispatch
+		/// recommendations measure a unit in this status from its station's location instead of its live GPS
+		/// position (a tablet left on a desk or a crew phone that went home is not where the vehicle is), and
+		/// apply the department's in-quarters turnout time.
+		/// </summary>
+		[Description("The unit or responder is in service and available at its station or quarters. Dispatch recommendations measure a unit from its station instead of its GPS position and add the in-quarters turnout time.")]
+		[Display(Name = "In Quarters")]
+		InQuarters = 23
 	}
 }

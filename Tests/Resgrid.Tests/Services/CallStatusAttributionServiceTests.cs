@@ -52,7 +52,7 @@ namespace Resgrid.Tests.Services
 			_customStates.Setup(x => x.GetDefaultUnitStatuses()).Returns(new CustomStateService(null, null, null, null).GetDefaultUnitStatuses());
 			_unitDispatches.Setup(x => x.GetOpenCallIdsForUnitAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new List<int>());
 			_dispatches.Setup(x => x.GetOpenCallIdsForUserAsync(It.IsAny<int>(), It.IsAny<string>())).ReturnsAsync(new List<int>());
-			_units.Setup(x => x.GetAllUnitsByDepartmentIdAsync(DepartmentId)).ReturnsAsync(new List<Unit> { new Unit { UnitId = UnitId, DepartmentId = DepartmentId, Name = "Engine 5" } });
+			_units.Setup(x => x.GetAllUnitsByDepartmentIdIncludingDeletedAsync(DepartmentId)).ReturnsAsync(new List<Unit> { new Unit { UnitId = UnitId, DepartmentId = DepartmentId, Name = "Engine 5" } });
 
 			_service = new CallStatusAttributionService(_calls.Object, _unitDispatches.Object, _dispatches.Object, _groupDispatches.Object,
 				_roleDispatches.Object, _groupMembers.Object, _roleUsers.Object, _unitStates.Object, _actionLogs.Object, _units.Object, _customStates.Object);

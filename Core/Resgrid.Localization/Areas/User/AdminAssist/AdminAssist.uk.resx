@@ -1198,7 +1198,7 @@
     <value>Календар підрозділу для зустрічей, подій і навчальних вечорів.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.call-settings">
-    <value>Поштова скринька та формат, що використовуються для імпорту викликів із CAD або пейджингової пошти.</value>
+    <value>Поштова скринька та формат, що використовуються для імпорту викликів із CAD або пейджингової пошти, а також формат і наступний номер викликів.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.call-templates">
     <value>Багаторазові шаблони тексту виклику й нотаток, що прискорюють введення викликів.</value>
@@ -1207,7 +1207,7 @@
     <value>Типи викликів і пріоритети, що використовуються для їх класифікації.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.calls">
-    <value>Активні виклики та їхній статус диспетчеризації.</value>
+    <value>Активні виклики та їхній статус диспетчеризації. Закриття виклику може сповістити всіх, хто на ньому, а виклик під активним командуванням інцидентом спершу закривають у командуванні.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.certification-dashboard">
     <value>Хто які сертифікати має і строк дії яких добігає кінця.</value>
@@ -1654,7 +1654,7 @@
     <value>Додайте свої договори про надання послуг та їхні тарифи.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.custom-statuses">
-    <value>Перегляньте вбудовані статуси та додайте власні там, де ваші терміни відрізняються.</value>
+    <value>Перегляньте вбудовані статуси та додайте власні там, де ваші терміни відрізняються. Призначте кожному базовий тип; На станції повідомляє рекомендаціям диспетчеризації, що підрозділ на своїй станції.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.data-protection">
     <value>Перегляньте контрольний список підключення та сплануйте відновлення ключів перед підключенням.</value>
@@ -1669,7 +1669,7 @@
     <value>Надайте доступ до диспетчеризації людям, які диспетчеризують, а потім попросіть їх увійти.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.dispatch-settings">
-    <value>Виберіть, чи диспетчеризація відбувається за групами, чи за змінами, і перегляньте параметри автоматичного статусу.</value>
+    <value>Виберіть, чи диспетчеризація відбувається за групами, чи за змінами, і перегляньте параметри автоматичного статусу. Задайте час виїзду для найближчого підрозділу, якщо екіпажам потрібен час, щоб залишити станцію.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.distribution-lists">
     <value>Створіть списки для груп, яким ви часто надсилаєте повідомлення, наприклад «Офіцери».</value>
@@ -2076,6 +2076,9 @@
   <data xml:space="preserve" name="Field.RecordsNumberingConfig.Pattern">
     <value>Налаштування нумерації записів / Шаблон</value>
   </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingConfig.Prefixes">
+    <value>Налаштування нумерації записів / Префікси</value>
+  </data>
   <data xml:space="preserve" name="Field.RecordsNumberingFloor.NextSequence">
     <value>Нижня межа нумерації записів / Наступна послідовність</value>
   </data>
@@ -2087,6 +2090,12 @@
   </data>
   <data xml:space="preserve" name="Field.RecordsNumberingFloor.SetOn">
     <value>Нижня межа нумерації записів / Встановлено</value>
+  </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingPrefix.DefinitionKey">
+    <value>Префікс нумерації записів / Ключ визначення</value>
+  </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingPrefix.Prefix">
+    <value>Префікс нумерації записів / Префікс</value>
   </data>
   <data xml:space="preserve" name="Field.RecordsRetentionOverride.AppliesFrom">
     <value>Виняток зі строку зберігання записів / Діє з</value>
@@ -2161,7 +2170,7 @@
     <value>Дозволяє позиції, старші за налаштований ліміт віку, у виборі найближчого підрозділу, позначені як застарілі. Оцініть ризик застарілих позицій.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.MaxLocationAgeSeconds">
-    <value>Виключає старіші позиції підрозділів із кандидатів на найближчий підрозділ; нуль знімає обмеження за віком. IncludeStaleLocations змінює цю поведінку.</value>
+    <value>Виключає старіші позиції підрозділів із кандидатів на найближчий підрозділ; нуль знімає обмеження за віком. IncludeStaleLocations змінює цю поведінку. Підрозділ, який вимірюється від своєї станції (статус На станції або немає GPS-позиції), ніколи не застаріває.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.MaxRadiusMeters">
     <value>Максимальна відстань до кандидата в метрах; нуль знімає обмеження радіуса. Це не гарантія часу реагування чи безпеки маршруту.</value>
@@ -2179,7 +2188,7 @@
     <value>Мінімальний налаштований рівень укомплектованості підрозділу для прийнятності в рекомендаціях; нуль вимикає це обмеження. Підрозділи без визначених місць проходять, а карти виїзду можуть перевизначати це значення.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.UseRoutedEta">
-    <value>Перевпорядковує відібраних кандидатів за оцінками часу в дорозі від постачальника. Операційний шлях може звертатися до зовнішнього постачальника; Admin Assist цього не робить.</value>
+    <value>Перевпорядковує відібраних кандидатів за оцінками часу в дорозі від постачальника. Операційний шлях може звертатися до зовнішнього постачальника; Admin Assist цього не робить. Налаштований час виїзду додається до кожного часу в дорозі.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.GroupDispatchScopeConfig.DepartmentWideRoleIds">
     <value>Наявні ролі, яким дозволено перегляд диспетчеризації в межах усього підрозділу, коли увімкнено обмеження за групою. Це змінює область перегляду, а не ліцензування чи оперативну кваліфікацію.</value>
@@ -2230,13 +2239,16 @@
     <value>Перезапускає послідовності записів щороку за календарем у часовому поясі підрозділу.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.SequenceWidth">
-    <value>Довжина послідовності з доповненням нулями для визначень, що використовують значення підрозділу за замовчуванням. Редактор записів перевіряє підтримувану довжину.</value>
+    <value>Цифри частини SEQ у шаблоні нумерації, доповнені нулями: 4 дає 0184. Від 3 до 8 цифр; зміна зберігає наступний номер кожної послідовності. Визначення підрозділу з власною нумерацією зберігають власну довжину.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.Floors">
     <value>Підвищені наступні номери, по одному на послідовність нумерації, для підрозділів, які продовжують номери, видані до Resgrid. Наступний номер лише зростає, а вже видані номери завжди мають перевагу, тож підвищений наступний номер ніколи не створює дубліката.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.Pattern">
-    <value>Шаблон нумерації для вбудованих типів записів і звітів про інциденти, складений зі сталого тексту та позначок PREFIX, YYYY, YY, GROUP і SEQ. Якщо не задано, діє шаблон, який описують «Включати рік» і «Послідовність за групою». Послідовність починається заново, коли змінюється текст навколо SEQ.</value>
+    <value>Як записуються номери записів для вбудованих типів записів і звітів про інциденти, наприклад RUN-0153: сталий текст і позначки PREFIX, YYYY або YY, GROUP і SEQ. PREFIX записує префікс кожного типу запису: типовий або власний префікс підрозділу з розділу «Префікси типів записів». Зміна шаблону не змінює номерів уже пронумерованих записів. Доки шаблон не збережено, екран показує той, яким підрозділ користувався завжди.</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.Prefixes">
+    <value>Власний префікс підрозділу для кожного вбудованого типу запису та для звітів про інциденти, який позначка PREFIX записує замість типового (RUN, TRN, INC тощо). Тип без власного префікса використовує типовий. Новий префікс починає власну послідовність; уже видані номери зберігають свій префікс, а типи з однаковим префіксом мають одну спільну послідовність.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingFloor.NextSequence">
     <value>Найменший номер, який ця послідовність може видати наступним.</value>
@@ -2249,6 +2261,12 @@
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingFloor.SetOn">
     <value>Коли було підвищено наступний номер (UTC).</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingPrefix.DefinitionKey">
+    <value>Вбудований тип запису, до якого застосовується префікс, наприклад system.run або system.neris-incident.</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingPrefix.Prefix">
+    <value>Від 2 до 6 великих латинських літер (A-Z) або цифр. Префікс, який більше не є дійсним, повертається до типового префікса типу.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsRetentionOverride.AppliesFrom">
     <value>Перспективна межа для версій, придатних для цього винятку, яку оцінює життєвий цикл записів.</value>
@@ -4951,7 +4969,7 @@
     <value>Чи є видимість записів загальною для підрозділу, чи обмеженою групою. Область групи звужує наявний дозвіл і ніколи не надає доступ.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.RecordsNumberingConfig">
-    <value>Присвоєння номерів, скидання за роком і форматування послідовності для визначень, які не перевизначають налаштування підрозділу.</value>
+    <value>Нумерація підрозділу для вбудованих типів записів і звітів про інциденти: шаблон нумерації, кількість цифр послідовності, префікси типів записів і підвищені наступні номери. Номери присвоюються під час завершення запису. Визначення підрозділу з власною нумерацією зберігають її.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.RecordsRetentionPolicy">
     <value>Типовий і специфічний для визначення строк зберігання, зокрема історія попередніх політик. Утримання та правила обмежених категорій можуть унеможливити видалення.</value>
@@ -6704,5 +6722,62 @@
   </data>
   <data xml:space="preserve" name="Ui.worklist">
     <value>Список завдань адміністратора</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.InQuartersTurnoutSeconds">
+    <value>Налаштування рекомендацій диспетчеризації / Час виїзду зі станції в секундах</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.InQuartersTurnoutSeconds">
+    <value>Секунди, потрібні підрозділу на його станції, щоб рушити; застосовується до статусу На станції та підрозділів без GPS-позиції. Додається до часу в дорозі під час ранжування найближчих підрозділів; нуль означає відсутність.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.MobileTurnoutSeconds">
+    <value>Налаштування рекомендацій диспетчеризації / Час виїзду в русі в секундах</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.MobileTurnoutSeconds">
+    <value>Секунди, потрібні підрозділу, який уже поза станцією та доступний, щоб рушити; застосовується до підрозділів, ранжованих за GPS. Додається до часу в дорозі під час ранжування найближчих підрозділів; нуль означає відсутність.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.StatusHoldToConfirm">
+    <value>Утримуйте, щоб встановити статус</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.StatusHoldToConfirm">
+    <value>Застосунки Unit і Responder встановлюють статус утриманням протягом двох секунд замість натискання з подальшим «Далі» чи «Надіслати». Статуси, що потребують примітки чи пункту призначення, як і раніше відкривають цей крок.</value>
+  </data>
+  <data name="Setting.CallNumberingConfig" xml:space="preserve">
+    <value>Конфігурація нумерації викликів</value>
+  </data>
+  <data name="SettingHelp.CallNumberingConfig" xml:space="preserve">
+    <value>Як записуються номери нових викликів: шаблон номера виклику та цифри порядкового номера, а також піднятий наступний номер для підрозділів, що продовжують номери, видані до Resgrid. Зміна ніколи не перенумеровує виклики, які вже мають номер.</value>
+  </data>
+  <data name="Field.CallNumberingConfig.Pattern" xml:space="preserve">
+    <value>Конфігурація нумерації викликів / Шаблон</value>
+  </data>
+  <data name="FieldHelp.CallNumberingConfig.Pattern" xml:space="preserve">
+    <value>Як записуються номери викликів, наприклад FD-2026-0153: сталий текст і мітки YYYY або YY, MM, DD та SEQ. Порядковий номер починається знову, щойно змінюється записана дата. Доки шаблон не збережено, виклики зберігають номери YY-SEQ, які Resgrid видавав завжди.</value>
+  </data>
+  <data name="Field.CallNumberingConfig.SequenceWidth" xml:space="preserve">
+    <value>Конфігурація нумерації викликів / Ширина порядкового номера</value>
+  </data>
+  <data name="FieldHelp.CallNumberingConfig.SequenceWidth" xml:space="preserve">
+    <value>Цифри частини SEQ номера виклику, доповнені нулями: 4 записує 0153. Від 1 до 8 цифр, 1 без доповнення; зміна зберігає наступний номер послідовності.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.pending-calls">
+    <value>Виклики в очікуванні</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.pending-calls">
+    <value>Виклики, збережені, щоб диспетчер надіслав їх пізніше, наприклад подальші звернення з іншої системи; нікого не сповіщають, доки виклик не надіслано.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.scheduled-calls">
+    <value>Заплановані виклики</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.scheduled-calls">
+    <value>Виклики, що надсилаються самі в майбутній час і які можна надіслати раніше або перепланувати.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.api-keys">
+    <value>API-ключі</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.api-keys">
+    <value>Дозвольте іншій системі звертатися до API Resgrid від імені підрозділу з власним ключем, дозволами, терміном дії та дозволеними адресами замість входу учасника.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureValue.api-keys">
+    <value>Інтеграції продовжують працювати, коли люди йдуть, можуть лише те, що дозволяє їхній ключ, і їх можна миттєво відкликати.</value>
   </data>
 </root>

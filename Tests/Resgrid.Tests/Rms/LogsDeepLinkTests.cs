@@ -76,7 +76,7 @@ namespace Resgrid.Tests.Rms
 			_workLogs.Setup(w => w.PopulateLogData(It.IsAny<Log>(), It.IsAny<bool>(), It.IsAny<bool>())).ReturnsAsync((Log l, bool a, bool b) => l);
 			_workLogs.Setup(w => w.GetAllLogsByDepartmentDateRangeAsync(Dept, LogTypes.Training, It.IsAny<DateTime>(), It.IsAny<DateTime>())).ReturnsAsync(new List<Log> { log });
 
-			_units.Setup(u => u.GetUnitsForDepartmentAsync(Dept)).ReturnsAsync(new List<Unit>());
+			_units.Setup(u => u.GetUnitsForDepartmentIncludingDeletedAsync(Dept)).ReturnsAsync(new List<Unit>());
 			_units.Setup(u => u.GetUnitByIdAsync(5)).ReturnsAsync(new Unit { UnitId = 5, DepartmentId = Dept, Name = "Engine 5" });
 			_units.Setup(u => u.GetLogsForUnitAsync(5)).ReturnsAsync(new List<UnitLog> { new UnitLog { UnitLogId = 1, UnitId = 5, Narrative = "Legacy unit log", Timestamp = new DateTime(2025, 3, 1) } });
 

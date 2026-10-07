@@ -18,10 +18,11 @@ namespace Resgrid.Model.Services
 		/// <summary>Every type row of the department, soft-deleted ones included (legacy callers filter by hand).</summary>
 		Task<List<DepartmentCertificationType>> GetAllCertificationTypesByDepartmentAsync(int departmentId);
 		Task<DepartmentCertificationType> GetCertificationTypeByIdAsync(int certificationTypeId);
-		/// <summary>Soft delete (Phase D); refused with certifications_type_in_use while a requirement or a live record references the type.</summary>
-		Task<bool> DeleteCertificationTypeByIdAsync(int certificationTypeId, CancellationToken cancellationToken = default(CancellationToken));
-		/// <summary>Creates a person-scoped type from its display name; Code derives from the name.</summary>
-		Task<DepartmentCertificationType> SaveNewCertificationTypeAsync(string certificationType, int departmentId, CancellationToken cancellationToken = default(CancellationToken));
+		/// <summary>Soft delete (Phase D); refused with certifications_type_in_use while a requirement or a live record references the type.
+		/// The service writes the audit row, attributed to <paramref name="userId"/>.</summary>
+		Task<bool> DeleteCertificationTypeByIdAsync(int certificationTypeId, string userId, CancellationToken cancellationToken = default(CancellationToken));
+		/// <summary>Creates a person-scoped type from its display name; Code derives from the name. Audited as <paramref name="userId"/>.</summary>
+		Task<DepartmentCertificationType> SaveNewCertificationTypeAsync(string certificationType, int departmentId, string userId, CancellationToken cancellationToken = default(CancellationToken));
 		/// <summary>Full legacy read of a member's records (bytes included). Soft-deleted rows are excluded.</summary>
 		Task<List<PersonnelCertification>> GetCertificationsByUserIdAsync(string userId);
 		Task<List<string>> GetDepartmentCertificationTypesAsync(int departmentId);

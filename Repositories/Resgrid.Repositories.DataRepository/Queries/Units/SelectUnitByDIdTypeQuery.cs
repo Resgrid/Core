@@ -17,7 +17,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Units
 		{
 			var query = _sqlConfiguration.SelectUnitByDIdTypeQuery
 				.ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
-					_sqlConfiguration.TrainingUsersTable,
+					_sqlConfiguration.UnitsTable,
 					_sqlConfiguration.ParameterNotation,
 					new string[] { "%DID%", "%TYPE%" },
 					new string[] { "DepartmentId", "Type" });

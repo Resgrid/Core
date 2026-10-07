@@ -680,6 +680,143 @@ namespace Resgrid.Services
 			return true;
 		}
 
+		public async Task<bool> SendCallClosedAsync(Call call, string userId, int departmentId, string departmentNumber, Department department,
+			UserProfile profile = null, bool sendToResponderApp = true, bool sendToICApp = false)
+		{
+			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(departmentId))
+				return false;
+
+			if (!await CanSendToUser(userId, departmentId))
+				return false;
+
+			if (profile == null)
+				profile = await _userProfileService.GetProfileByUserIdAsync(userId, false);
+
+			// ADP egress: the notice names the call only through its notification-safe view, and never carries the
+			// closing notes, which can hold the outcome of a sensitive visit.
+			var safeCall = await _protectedProjectionService.BuildNotificationSafeCallAsync(departmentId, call, ProtectedDataEgressChannel.Push, profile?.Language);
+			var title = StringHelpers.StripHtmlTagsCharArray($"Call Closed - {safeCall.Name}");
+			var message = string.IsNullOrWhiteSpace(safeCall.Number)
+				? $"Closed as {DescribeCloseState(call.State)}."
+				: $"Call {safeCall.Number} closed as {DescribeCloseState(call.State)}.";
+
+			var channels = NotificationChannelSelection.From(profile);
+
+			if (channels.Sms)
+			{
+				try
+				{
+					await _smsService.SendNotificationAsync(userId, departmentId, $"{title} {message}", departmentNumber, profile);
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
+				}
+			}
+
+			if (channels.Email && (profile == null || profile.EmailVerified.IsContactMethodAllowedForSending()))
+			{
+				try
+				{
+					await _emailService.SendNotificationAsync(userId, $"{title} {message}", departmentId, profile);
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
+				}
+			}
+
+			if (channels.Push)
+			{
+				// "NC:{callId}": the apps open the call on a tap, and the leading "N" keeps it an ordinary notification.
+				// A "C" code is sent as a call alert (critical on iOS, max priority on Android), which a closing notice is not.
+				var spm = new StandardPushMessage
+				{
+					Title = title,
+					SubTitle = message,
+					DepartmentCode = department?.Code,
+					DepartmentId = departmentId,
+					Id = CallClosedEventCode(call.CallId)
+				};
+
+				if (sendToResponderApp)
+				{
+					try
+					{
+						await _pushService.PushNotification(spm, userId, profile);
+					}
+					catch (Exception ex)
+					{
+						Logging.LogException(ex);
+					}
+				}
+
+				if (sendToICApp)
+				{
+					try
+					{
+						await _pushService.PushICNotification(spm, userId, profile);
+					}
+					catch (Exception ex)
+					{
+						Logging.LogException(ex);
+					}
+				}
+			}
+
+			await SendChatNotificationAsync(userId, departmentId, title, message, ChatbotOutboundType.Notification, profile);
+
+			return true;
+		}
+
+		public async Task<bool> SendCallClosedUnitAsync(Call call, int unitId, Department department)
+		{
+			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(call.DepartmentId))
+				return false;
+
+			var safeCall = await _protectedProjectionService.BuildNotificationSafeCallAsync(call.DepartmentId, call, ProtectedDataEgressChannel.Push);
+
+			// A notice, not a dispatch: the notification sound and priority, never the call's dispatch tone.
+			var spm = new StandardPushMessage
+			{
+				Title = StringHelpers.StripHtmlTagsCharArray($"Call Closed - {safeCall.Name}"),
+				SubTitle = string.IsNullOrWhiteSpace(safeCall.Number)
+					? $"Closed as {DescribeCloseState(call.State)}."
+					: $"Call {safeCall.Number} closed as {DescribeCloseState(call.State)}.",
+				DepartmentId = call.DepartmentId,
+				DepartmentCode = department?.Code ?? call.Department?.Code,
+				Id = CallClosedEventCode(call.CallId)
+			};
+
+			try
+			{
+				return await _pushService.PushNotificationUnit(spm, unitId);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				return false;
+			}
+		}
+
+		/// <summary>Push event code for a call-closed notice: "NC:{callId}".</summary>
+		public static string CallClosedEventCode(int callId) => $"NC:{callId}";
+
+		private static string DescribeCloseState(int state)
+		{
+			switch ((CallStates)state)
+			{
+				case CallStates.Closed: return "Closed";
+				case CallStates.Cancelled: return "Cancelled";
+				case CallStates.Unfounded: return "Unfounded";
+				case CallStates.Founded: return "Founded";
+				case CallStates.Minor: return "Minor";
+				case CallStates.Transferred: return "Transferred";
+				case CallStates.FalseAlarm: return "False Alarm";
+				default: return "Closed";
+			}
+		}
+
 		public Task<bool> SendNotificationAsync(string userId, int departmentId, string message, string departmentNumber, Department department, string title = "Notification", UserProfile profile = null, bool sendToICApp = false)
 		{
 			return SendNotificationAsync(userId, departmentId, message, departmentNumber, department, title, profile, sendToICApp, null);

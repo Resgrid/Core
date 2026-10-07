@@ -123,10 +123,16 @@
   <data name="NextNumberCurrent" xml:space="preserve"><value>Nästa nummer</value></data>
   <data name="NextNumberRaiseTo" xml:space="preserve"><value>Höj nästa till</value></data>
   <data name="NextNumberBelowCurrent" xml:space="preserve"><value>Ett nästa nummer kan bara höjas. Dessa sekvenser lämnades oförändrade eftersom det angivna talet var lägre än det de utfärdar härnäst:</value></data>
-  <data name="NextNumberPatternChanged" xml:space="preserve"><value>Nummermönstret ändrades, så de angivna nästa numren tillämpades inte. Granska sekvenserna för det nya mönstret och spara igen.</value></data>
+  <data name="NextNumberPatternChanged" xml:space="preserve"><value>Nummermönstret eller en journaltyps prefix ändrades, så de angivna nästa numren tillämpades inte. Granska de nya sekvenserna och spara igen.</value></data>
   <data name="NextNumberConfirm" xml:space="preserve"><value>Ett höjt nästa nummer kan inte sänkas igen. Spara ändringarna?</value></data>
   <data name="NumberingAllTypes" xml:space="preserve"><value>Alla journaltyper</value></data>
   <data name="NumberingNoGroup" xml:space="preserve"><value>Ingen station/grupp</value></data>
+  <data name="NumberPrefixesHeader" xml:space="preserve"><value>Prefix per journaltyp</value></data>
+  <data name="NumberPrefixesIntro" xml:space="preserve"><value>Ange vilket prefix {PREFIX} skriver för varje journaltyp, till exempel FIRE för Run och IR för insatsrapporter. Lämna en ruta tom för att behålla standardvärdet. Ett nytt prefix startar en egen sekvens, och journaler som redan har nummer behåller dem. Typer med samma prefix delar en sekvens. Prefix används bara när mönstret innehåller {PREFIX}.</value></data>
+  <data name="NumberPrefixType" xml:space="preserve"><value>Journaltyp</value></data>
+  <data name="NumberPrefixDefault" xml:space="preserve"><value>Standard</value></data>
+  <data name="NumberPrefixRule" xml:space="preserve"><value>2 till 6 bokstäver eller siffror</value></data>
+  <data name="NumberPrefixInvalid" xml:space="preserve"><value>Ett prefix består av 2 till 6 bokstäver eller siffror. Dessa journaltyper behöll sitt tidigare prefix:</value></data>
   <data name="Retention" xml:space="preserve"><value>Lagring</value></data>
   <data name="RetentionIntro" xml:space="preserve"><value>Standard: 7 år för vanliga journaler; permanent för rättsläkare och andra begränsade klasser. Lagringen är avdelningens ansvar. Ändringar gäller framåt och granskas.</value></data>
   <data name="DepartmentDefaultYears" xml:space="preserve"><value>Avdelningsstandard (år, tomt = systemstandard)</value></data>

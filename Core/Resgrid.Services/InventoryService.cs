@@ -79,7 +79,7 @@ namespace Resgrid.Services
 		{
 			var inventories = await _inventoryRepository.GetAllInventoriesByDepartmentIdAsync(departmentId);
 
-			var units = await _unitsService.GetUnitsForDepartmentAsync(departmentId);
+			var units = await _unitsService.GetUnitsForDepartmentIncludingDeletedAsync(departmentId);
 
 			foreach (var inventory in inventories)
 			{

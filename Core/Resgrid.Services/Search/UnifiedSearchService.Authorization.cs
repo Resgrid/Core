@@ -324,6 +324,38 @@ namespace Resgrid.Services.Search
 			return open;
 		}
 
+		/// <summary>
+		/// Units and groups have no read-only detail page: every viewer gets the page they may open (the unit's events page,
+		/// the group's row on the groups list), and a caller who passes the edit action's own checks gets the edit page. The
+		/// link is built here from the entity id rather than read from the projection, so rows projected when these hits
+		/// opened the list pages need no rebuild.
+		/// </summary>
+		private async Task<UnifiedSearchHit> LinkAsync(UnifiedSearchHit hit, SearchAccess access)
+		{
+			var principal = access.Principal;
+			try
+			{
+				switch (hit.EntityType)
+				{
+					case SearchEntityTypes.Unit when int.TryParse(hit.EntityId, out var unitId):
+						hit.Url = $"/User/Units/ViewEvents?unitId={unitId}";
+						if (principal.HasResourceClaim("Unit", "Update") && await _authorization.CanUserModifyUnitAsync(principal.UserId, unitId))
+							hit.Url = $"/User/Units/EditUnit?unitId={unitId}";
+						break;
+					case SearchEntityTypes.Group when int.TryParse(hit.EntityId, out var groupId):
+						hit.Url = $"/User/Groups#group-{groupId}";
+						if (principal.HasResourceClaim("GenericGroup", "Update") && await _authorization.CanUserEditDepartmentGroupAsync(principal.UserId, groupId))
+							hit.Url = $"/User/Groups/EditGroup?departmentGroupId={groupId}";
+						break;
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, "Search result edit link could not be resolved; the read-only link is kept.");
+			}
+			return hit;
+		}
+
 		private bool CanViewGroup(Permission permission, int? targetGroupId, SearchAccess access)
 		{
 			if (permission == null) return true;

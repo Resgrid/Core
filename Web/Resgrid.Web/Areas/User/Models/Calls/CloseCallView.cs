@@ -13,5 +13,8 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 		public ClosedOnlyCallStates CallState { get; set; }
 		public SelectList CallStates { get; set; }
 		public bool SendNotification { get; set; }
+
+		/// <summary>The call has an active incident command, which has to be closed before the call can be.</summary>
+		public bool IsBlockedByIncidentCommand { get; set; }
 	}
 }

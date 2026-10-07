@@ -64,6 +64,10 @@ namespace Resgrid.Repositories.DataRepository
 								-- Call location index rows cascade with their call, but be explicit; the state row has no FK
 								DELETE FROM [dbo].[CallLocationKeys] WHERE DepartmentId = @DepartmentId OR CallId IN (SELECT CallId FROM [dbo].[Calls] WHERE DepartmentId = @DepartmentId)
 								DELETE FROM [dbo].[CallLocationIndexStates] WHERE DepartmentId = @DepartmentId
+								-- Call number counters have no FK
+								DELETE FROM [dbo].[CallNumberSequences] WHERE DepartmentId = @DepartmentId
+								-- Department API keys have no FK
+								DELETE FROM [dbo].[DepartmentApiKeys] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[CallDispatches] WHERE CallId IN (SELECT CallId FROM [dbo].[Calls] WHERE DepartmentId = @DepartmentId)
 								DELETE FROM [dbo].[CallDispatchGroups] WHERE CallId IN (SELECT CallId FROM [dbo].[Calls] WHERE DepartmentId = @DepartmentId)
 								DELETE FROM [dbo].[CallDispatchRoles] WHERE CallId IN (SELECT CallId FROM [dbo].[Calls] WHERE DepartmentId = @DepartmentId)

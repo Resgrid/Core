@@ -122,7 +122,8 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public DateTime LoggedOn { get; set; }
 
 		/// <summary>
-		/// State of the call (Active	= 0, Closed = 1, Cancelled = 2, Unfounded = 3)
+		/// State of the call (Active = 0, Closed = 1, Cancelled = 2, Unfounded = 3, Founded = 4, Minor = 5, Transferred = 6,
+		/// False Alarm = 7, Pending = 8). Pending calls are saved but not yet dispatched.
 		/// </summary>
 		public int State { get; set; }
 

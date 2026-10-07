@@ -124,6 +124,21 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public DateTime? DispatchOn { get; set; }
 
 		/// <summary>
+		/// Optional. The same as DispatchOn but in UTC (ISO 8601, e.g. "2026-10-07T14:30:00Z"), for integrations that keep
+		/// times in UTC. When both are sent this one is used. Ignored for a pending call.
+		/// </summary>
+		public DateTime? DispatchOnUtc { get; set; }
+
+		/// <summary>
+		/// Save the call as Pending (to be dispatched) instead of dispatching it: nobody is notified and the call stays
+		/// out of the active call lists, maps and field apps until a dispatcher sends it with Calls/DispatchCallNow (or
+		/// from the Pending Calls screens). DispatchOn is ignored. DispatchList is optional and is kept as the proposed
+		/// dispatch; leave it empty for none, or "0" for everyone. The department's dispatch-list requirement does not
+		/// apply to a pending call. Use this to feed calls in from another system for a dispatcher to work.
+		/// </summary>
+		public bool? IsPending { get; set; }
+
+		/// <summary>
 		/// Call Intake form JSON
 		/// </summary>
 		public string CallFormData { get; set; }

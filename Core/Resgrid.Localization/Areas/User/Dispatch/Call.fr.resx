@@ -840,6 +840,9 @@
   <data name="IncidentReport" xml:space="preserve">
     <value>Rapport d'incident</value>
   </data>
+  <data name="ReportsMenu" xml:space="preserve">
+    <value>Rapports</value>
+  </data>
   <data name="StatusLinkAuto" xml:space="preserve">
     <value>lié automatiquement</value>
   </data>
@@ -956,5 +959,80 @@
   </data>
   <data name="SiteFiles" xml:space="preserve">
     <value>Fichiers du site</value>
+  </data>
+  <data name="NearestUnitsIncludesTurnout" xml:space="preserve">
+    <value>dont {0} s de délai de départ</value>
+  </data>
+  <data name="PendingCallsHeader" xml:space="preserve">
+    <value>Appels en attente</value>
+  </data>
+  <data name="PendingCallsDescription" xml:space="preserve">
+    <value>Appels enregistrés mais pas encore envoyés. Personne n'a été notifié. Ouvrez un appel, choisissez les destinataires, puis envoyez-le.</value>
+  </data>
+  <data name="ViewAllPendingCalls" xml:space="preserve">
+    <value>Tout afficher</value>
+  </data>
+  <data name="NoPendingCalls" xml:space="preserve">
+    <value>Aucun appel n'attend d'être envoyé.</value>
+  </data>
+  <data name="SaveAsPending" xml:space="preserve">
+    <value>Enregistrer en attente (ne pas envoyer maintenant)</value>
+  </data>
+  <data name="SaveAsPendingHelp" xml:space="preserve">
+    <value>L'appel va dans Appels en attente sans notifier personne. Un répartiteur le prend en charge, choisit les destinataires et l'envoie.</value>
+  </data>
+  <data name="PendingCallBanner" xml:space="preserve">
+    <value>En attente : cet appel n'a pas été envoyé et personne n'a été notifié.</value>
+  </data>
+  <data name="ScheduledCallBanner" xml:space="preserve">
+    <value>Programmé : cet appel n'a pas encore été envoyé. Il part à l'heure prévue, ou tout de suite avec Envoyer maintenant.</value>
+  </data>
+  <data name="DispatchNow" xml:space="preserve">
+    <value>Envoyer maintenant</value>
+  </data>
+  <data name="SaveAndDispatchNow" xml:space="preserve">
+    <value>Enregistrer et envoyer maintenant</value>
+  </data>
+  <data name="DispatchNowConfirm" xml:space="preserve">
+    <value>Envoyer cet appel maintenant à tous ceux de sa liste d'envoi ?</value>
+  </data>
+  <data name="DispatchNowSucceeded" xml:space="preserve">
+    <value>L'appel a été envoyé.</value>
+  </data>
+  <data name="DispatchNowNoRecipients" xml:space="preserve">
+    <value>Choisissez les destinataires de cet appel (personnel, groupes, rôles ou unités) avant de l'envoyer.</value>
+  </data>
+  <data name="DispatchNowNotWaiting" xml:space="preserve">
+    <value>Cet appel n'attend pas d'être envoyé.</value>
+  </data>
+  <data name="DispatchNowQueueFailed" xml:space="preserve">
+    <value>L'envoi n'a pas pu être mis en file. L'appel est toujours en attente ; réessayez.</value>
+  </data>
+  <data name="Received" xml:space="preserve">
+    <value>Reçu</value>
+  </data>
+  <data name="AddressLabelShort" xml:space="preserve">
+    <value>Adresse</value>
+  </data>
+  <data name="StateFounded" xml:space="preserve">
+    <value>Fondé</value>
+  </data>
+  <data name="StateMinor" xml:space="preserve">
+    <value>Mineur</value>
+  </data>
+  <data name="StateTransferred" xml:space="preserve">
+    <value>Transféré</value>
+  </data>
+  <data name="StateFalseAlarm" xml:space="preserve">
+    <value>Fausse alerte</value>
+  </data>
+  <data name="StatePending" xml:space="preserve">
+    <value>En attente</value>
+  </data>
+  <data name="CloseBlockedByIncidentCommand" xml:space="preserve">
+    <value>Cet appel a un commandement d'incident actif. Fermez d'abord le commandement d'incident, puis fermez l'appel.</value>
+  </data>
+  <data name="SendNotificationHelp" xml:space="preserve">
+    <value>Informe toutes les personnes engagées sur l'appel, ses unités et l'équipe de commandement que l'appel est clôturé. Les notes de clôture ne sont pas incluses.</value>
   </data>
 </root>

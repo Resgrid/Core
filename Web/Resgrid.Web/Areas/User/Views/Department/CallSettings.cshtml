@@ -32,7 +32,7 @@
         <div class="wrapper wrapper-content">
             <div class="ibox float-e-margins">
                 <div class="ibox-content">
-                    <form class="form-horizontal" role="form" asp-controller="Department" asp-action="CallSettings" asp-route-area="User" method="post">
+                    <form id="call-settings-form" class="form-horizontal" role="form" asp-controller="Department" asp-action="CallSettings" asp-route-area="User" method="post" data-next-number-confirm="@localizer["CallNumberRaiseConfirm"]">
 
                         @Html.AntiForgeryToken()
                         @Html.HiddenFor(m => m.EmailSettings.DepartmentCallEmailId)
@@ -43,6 +43,12 @@
                         {
                             <div class="alert alert-success">
                                 @Model.Message
+                            </div>
+                        }
+                        @if (!String.IsNullOrEmpty(Model.ErrorMessage))
+                        {
+                            <div class="alert alert-danger">
+                                @Model.ErrorMessage
                             </div>
                         }
 
@@ -76,6 +82,52 @@
                                 {
                                     <p class="m-t-sm"><a asp-controller="AiDispatch" asp-action="Index" asp-route-area="User">@aiDispatchLocalizer["SettingsTitle"]</a></p>
                                 }
+                            </div>
+                        </div>
+
+                        <div class="hr-line-dashed"></div>
+                        <h3>@localizer["CallNumberingHeader"]</h3>
+                        <p class="text-muted">@localizer["CallNumberingIntro"]</p>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="CallNumberPattern">@localizer["CallNumberPattern"]</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" maxlength="@CallNumberFormat.MaxPatternLength" autocomplete="off" spellcheck="false" asp-for="CallNumberPattern" />
+                            </div>
+                            <div class="col-sm-6">
+                                <p class="form-control-static">@localizer["CallNumberExample"] <code id="call-number-preview"></code></p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <span class="help-block m-b-none">@localizer["CallNumberPatternHelp"]</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="CallNumberSequenceWidth">@localizer["CallNumberSequenceWidth"]</label>
+                            <div class="col-sm-2">
+                                <input type="number" class="form-control" min="@CallNumberFormat.MinWidth" max="@CallNumberFormat.MaxWidth" asp-for="CallNumberSequenceWidth" />
+                            </div>
+                            <div class="col-sm-8">
+                                <span class="help-block m-b-none">@localizer["CallNumberSequenceWidthHelp"]</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["CallNumberNext"]</label>
+                            <div class="col-sm-10">
+                                <p class="form-control-static">
+                                    <code>@Model.CallNumberNextNumber</code>
+                                    <span class="text-muted">@localizer["CallNumberResets" + Model.CallNumberResetPeriod]</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="CallNumberNextSequence">@localizer["CallNumberRaiseTo"]</label>
+                            <div class="col-sm-2">
+                                <input type="hidden" asp-for="CallNumberScopeKey" />
+                                <input type="number" class="form-control" asp-for="CallNumberNextSequence" min="@Model.CallNumberCurrentNextSequence" max="@CallNumberFormat.MaxSequence" placeholder="@Model.CallNumberCurrentNextSequence" />
+                            </div>
+                            <div class="col-sm-8">
+                                <span class="help-block m-b-none">@localizer["CallNumberRaiseToHelp"]</span>
                             </div>
                         </div>
 
@@ -204,6 +256,34 @@
     </script>
 
     <script src="~/js/app/internal/department/resgrid.department.callsettings.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        (function () {
+            var pattern = $('#CallNumberPattern'), width = $('#CallNumberSequenceWidth'), preview = $('#call-number-preview');
+            var year = '@Model.CallNumberPreviewDate.ToString("yyyy", System.Globalization.CultureInfo.InvariantCulture)';
+            var month = '@Model.CallNumberPreviewDate.ToString("MM", System.Globalization.CultureInfo.InvariantCulture)';
+            var day = '@Model.CallNumberPreviewDate.ToString("dd", System.Globalization.CultureInfo.InvariantCulture)';
+            // A sample only: the server validates the pattern and shows the real next number below it.
+            function render() {
+                var digits = Math.max(@CallNumberFormat.MinWidth, Math.min(@CallNumberFormat.MaxWidth, parseInt(width.val(), 10) || @CallNumberFormat.DefaultWidth));
+                var sequence = '153';
+                while (sequence.length < digits)
+                    sequence = '0' + sequence;
+                preview.text((pattern.val() || '')
+                    .replace(/\{YYYY\}/gi, year).replace(/\{YY\}/gi, year.slice(-2))
+                    .replace(/\{MM\}/gi, month).replace(/\{DD\}/gi, day)
+                    .replace(/\{SEQ\}/gi, sequence));
+            }
+            pattern.on('input', render);
+            width.on('input', render);
+            render();
+
+            $('#call-settings-form').on('submit', function (e) {
+                if ($('#CallNumberNextSequence').val() !== '' && !window.confirm($(this).data('next-number-confirm')))
+                    e.preventDefault();
+            });
+        })();
+    </script>
 
     <style scoped>
         .product {

@@ -26,24 +26,18 @@ namespace Resgrid.Services.CallEmailTemplates
 			c.Notes = email.Subject + " " + email.Body;
 			c.Name = email.Subject;
 
+			// "priority, nature, place[, instructions …]", e.g. "3, Persons in water, Southwold, Muster at CRE".
 			string[] data = email.Body.Split(char.Parse(","));
 
-			if (data.Length >= 1)
-			{
-				int tryPriority;
-
-				if (int.TryParse(data[0], out tryPriority))
-					c.Priority = tryPriority;
-			}
-			else
-			{
-				c.Priority = (int)CallPriority.High;
-			}
+			// The page's priority, resolved against the department's priorities (name or identifier, else the built-in
+			// 0-3); anything the department doesn't own falls back to its default rather than a dangling identifier.
+			c.Priority = ResgridEmailTemplate.ParseCallPriority(data[0].Trim(), priority, activePriorities);
 
 			if (data.Length >= 2)
 			{
-				if (data[1].Length > 3)
-					c.NatureOfCall = data[1];
+				var nature = data[1].Trim();
+				if (nature.Length > 3)
+					c.NatureOfCall = nature;
 			}
 			else
 			{
@@ -52,21 +46,12 @@ namespace Resgrid.Services.CallEmailTemplates
 
 			if (data.Length >= 3)
 			{
-				if (data[2].Length > 3)
-				{
-					string address = String.Empty;
-
-					if (!data[2].Contains("United Kingdom"))
-					{
-						address = data[2] + "United Kingdom";
-					}
-
-					c.Address = address;
-				}
+				var place = data[2].Trim();
+				if (place.Length > 3)
+					c.Address = place.IndexOf("United Kingdom", StringComparison.OrdinalIgnoreCase) >= 0 ? place : place + ", United Kingdom";
 			}
 
 			c.LoggedOn = DateTime.UtcNow;
-			c.Priority = priority;
 			c.ReportingUserId = managingUser;
 			c.Dispatches = new Collection<CallDispatch>();
 			c.CallSource = (int)CallSources.EmailImport;

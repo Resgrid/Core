@@ -243,7 +243,7 @@ namespace Resgrid.Tests.Chatbot
 				.ReturnsAsync(new Call { CallId = 5, Name = "Secret", DepartmentId = 2 });
 			var authz = new Mock<IAuthorizationService>();
 
-			var handler = new CloseCallHandler(calls.Object, authz.Object);
+			var handler = new CloseCallHandler(calls.Object, authz.Object, Mock.Of<ICallClosureService>());
 			var response = await handler.HandleAsync(Msg("close call 5"), Intent(ChatbotIntentType.CloseCall, ("callId", "5")), Session(departmentId: 1));
 
 			response.Text.Should().Contain("not found");
@@ -261,7 +261,7 @@ namespace Resgrid.Tests.Chatbot
 			authz.Setup(a => a.CanUserCreateCallAsync("user-1", 1)).ReturnsAsync(true);
 			authz.Setup(a => a.CanUserCloseCallAsync("user-1", 5, 1)).ReturnsAsync(false);
 
-			var handler = new CloseCallHandler(calls.Object, authz.Object);
+			var handler = new CloseCallHandler(calls.Object, authz.Object, Mock.Of<ICallClosureService>());
 			var response = await handler.HandleAsync(Msg("close call 5"), Intent(ChatbotIntentType.CloseCall, ("callId", "5")), Session(departmentId: 1));
 
 			response.Processed.Should().BeFalse();
@@ -280,7 +280,7 @@ namespace Resgrid.Tests.Chatbot
 			authz.Setup(a => a.CanUserCloseCallAsync("user-1", 5, 1)).ReturnsAsync(true);
 
 			var session = Session(departmentId: 1);
-			var handler = new CloseCallHandler(calls.Object, authz.Object);
+			var handler = new CloseCallHandler(calls.Object, authz.Object, Mock.Of<ICallClosureService>());
 			var response = await handler.HandleAsync(Msg("close call 5"), Intent(ChatbotIntentType.CloseCall, ("callId", "5")), session);
 
 			response.Text.Should().Contain("Close Call #5");
@@ -299,7 +299,7 @@ namespace Resgrid.Tests.Chatbot
 			authz.Setup(a => a.CanUserCreateCallAsync("user-1", 1)).ReturnsAsync(true);
 			authz.Setup(a => a.CanUserCloseCallAsync("user-1", 5, 1)).ReturnsAsync(true);
 
-			var handler = new CloseCallHandler(calls.Object, authz.Object);
+			var handler = new CloseCallHandler(calls.Object, authz.Object, Mock.Of<ICallClosureService>());
 			var response = await handler.HandleAsync(Msg("YES"),
 				Intent(ChatbotIntentType.CloseCall, ("callId", "5"), ("__confirmed", "true")), Session(departmentId: 1));
 
@@ -323,10 +323,35 @@ namespace Resgrid.Tests.Chatbot
 				? Intent(ChatbotIntentType.CloseCall, ("callId", "5"), ("__confirmed", "true"))
 				: Intent(ChatbotIntentType.CloseCall, ("callId", "5"));
 			var session = Session(departmentId: 1);
-			var response = await new CloseCallHandler(calls.Object, authz.Object).HandleAsync(Msg("close call 5"), intent, session);
+			var response = await new CloseCallHandler(calls.Object, authz.Object, Mock.Of<ICallClosureService>()).HandleAsync(Msg("close call 5"), intent, session);
 
 			response.Processed.Should().BeFalse();
 			response.Text.Should().Contain("permission");
+			session.State.Should().NotBe(ChatbotDialogState.AwaitingConfirmation);
+			calls.Verify(c => c.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[TestCase(false)]
+		[TestCase(true)]
+		public async Task CloseCall_WithActiveIncidentCommand_IsRefused_OnBothPasses(bool confirmed)
+		{
+			var calls = new Mock<ICallsService>();
+			calls.Setup(c => c.GetCallByIdAsync(It.IsAny<int>(), It.IsAny<bool>()))
+				.ReturnsAsync(new Call { CallId = 5, Name = "Fire", DepartmentId = 1, State = (int)CallStates.Active });
+			var authz = new Mock<IAuthorizationService>();
+			authz.Setup(a => a.CanUserCreateCallAsync("user-1", 1)).ReturnsAsync(true);
+			authz.Setup(a => a.CanUserCloseCallAsync("user-1", 5, 1)).ReturnsAsync(true);
+			var closure = new Mock<ICallClosureService>();
+			closure.Setup(c => c.GetBlockingIncidentCommandAsync(1, 5)).ReturnsAsync(new IncidentCommand { CallId = 5 });
+
+			var intent = confirmed
+				? Intent(ChatbotIntentType.CloseCall, ("callId", "5"), ("__confirmed", "true"))
+				: Intent(ChatbotIntentType.CloseCall, ("callId", "5"));
+			var session = Session(departmentId: 1);
+			var response = await new CloseCallHandler(calls.Object, authz.Object, closure.Object).HandleAsync(Msg("close call 5"), intent, session);
+
+			response.Processed.Should().BeFalse();
+			response.Text.Should().Contain("incident command");
 			session.State.Should().NotBe(ChatbotDialogState.AwaitingConfirmation);
 			calls.Verify(c => c.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>()), Times.Never);
 		}

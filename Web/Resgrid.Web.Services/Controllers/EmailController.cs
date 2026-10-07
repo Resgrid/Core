@@ -511,13 +511,21 @@ namespace Resgrid.Web.Services.Controllers
 								var emailSettings = await _departmentsService.GetDepartmentEmailSettingsAsync(departmentGroup.DepartmentId);
 								var departmentGroupUsers = _departmentGroupsService.GetAllMembersForGroupAndChildGroups(departmentGroup);
 
+								// Built the same way as the department dispatch email above: the formats that read the plain-text body
+								// (Active911, R&R, OttawaCounty, OttawaKingstonToronto) need TextBody, and several need a subject.
 								var callEmail = new CallEmail();
-								callEmail.Subject = message.Subject;
+
+								if (!String.IsNullOrWhiteSpace(message.Subject))
+									callEmail.Subject = message.Subject;
+								else
+									callEmail.Subject = "Dispatch Email";
 
 								if (!String.IsNullOrWhiteSpace(message.HtmlBody))
 									callEmail.Body = HttpUtility.HtmlDecode(message.HtmlBody);
 								else
 									callEmail.Body = message.TextBody;
+
+								callEmail.TextBody = message.TextBody;
 
 								foreach (var attachment in message.Attachments)
 								{
@@ -572,13 +580,21 @@ namespace Resgrid.Web.Services.Controllers
 								{
 									call.DepartmentId = departmentGroup.DepartmentId;
 
+									// As on the department address: an address with no usable coordinates is placed on the map.
+									if (!String.IsNullOrWhiteSpace(call.Address) && (String.IsNullOrWhiteSpace(call.GeoLocationData) || call.GeoLocationData.Length <= 1))
+										call.GeoLocationData = await _geoLocationProvider.GetLatLonFromAddress(call.Address);
+
+									// The incident-number formats hand back an open call for a follow-up page. As on the department address,
+									// that updates the call and only alerts again when its dispatch count changed (2nd alarm and so on).
+									var isUpdate = call.CallId > 0;
 									var savedCall = await _callsService.SaveCallAsync(call, cancellationToken);
 
 									// Group-scoped: the units and members above were narrowed to this
 									// group, so run card enrichment stays out of it.
-									await QueueCallBroadcastAsync(savedCall, cancellationToken, false);
+									if (!isUpdate || call.DidDispatchCountChange())
+										await QueueCallBroadcastAsync(savedCall, cancellationToken, false);
 
-									if (emailSettings.FormatType == (int)CallEmailTypes.AI)
+									if (!isUpdate && emailSettings.FormatType == (int)CallEmailTypes.AI)
 										await QueueAiDispatchEnrichmentAsync(savedCall, 2, message.FromFull?.Email, cancellationToken);
 
 									return CreatedAtAction(nameof(Receive), new { id = savedCall.CallId }, savedCall);

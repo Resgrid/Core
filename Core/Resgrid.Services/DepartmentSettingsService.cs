@@ -23,6 +23,7 @@ namespace Resgrid.Services
 		private static string ModuleSettingsCacheKey = "DSetModuleSettings_{0}";
 		private static string TtsLanguageCacheKey = "DSetTtsLanguage_{0}";
 		private static string PersonnelOnUnitSetUnitStatusCacheKey = "DSetPersonnelOnUnitSetUnitStatus_{0}";
+		private static string StatusHoldToConfirmCacheKey = "DSetStatusHoldToConfirm_{0}";
 		private static string ModernNotificationsCacheKey = "DSetModernNotifications_{0}";
 		private static string RequirePasswordResetViaEmailCacheKey = "DSetRequirePasswordResetViaEmail_{0}";
 		private static string ForceChatbotSecurityPinCacheKey = "DSetForceChatbotSecurityPin_{0}";
@@ -37,6 +38,7 @@ namespace Resgrid.Services
 		private static string UnitStatusThresholdsCacheKey = "DSetUnitStatusThresholds_{0}";
 		private static string MapStyleCacheKey = "DSetMapStyle_{0}";
 		private static string MapStyleNightCacheKey = "DSetMapStyleNight_{0}";
+		private static string CallNumberingConfigCacheKey = "DSetCallNumbering_{0}";
 		private static TimeSpan LongCacheLength = TimeSpan.FromDays(14);
 		// Security-relevant settings ride the standard department-data window instead, so a missed
 		// invalidation cannot keep an old policy in force for two weeks.
@@ -1185,6 +1187,46 @@ namespace Resgrid.Services
 			return normalized;
 		}
 
+		public async Task<CallNumberingConfig> GetCallNumberingConfigAsync(int departmentId, bool bypassCache = false)
+		{
+			async Task<string> getSetting()
+			{
+				var setting = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.CallNumberingConfig);
+				return setting?.Setting ?? string.Empty;
+			}
+
+			string value;
+			if (Config.SystemBehaviorConfig.CacheEnabled && !bypassCache)
+				value = await _cacheProvider.RetrieveAsync<string>(string.Format(CallNumberingConfigCacheKey, departmentId), getSetting, LongCacheLength);
+			else
+				value = await getSetting();
+
+			if (!String.IsNullOrWhiteSpace(value))
+			{
+				try
+				{
+					var config = ObjectSerialization.Deserialize<CallNumberingConfig>(value);
+
+					if (config != null)
+						return config;
+				}
+				catch (Exception)
+				{
+					// A corrupt blob must never stop a department creating calls; the legacy numbers carry on.
+				}
+			}
+
+			return new CallNumberingConfig();
+		}
+
+		public async Task<DepartmentSetting> SetCallNumberingConfigAsync(int departmentId, CallNumberingConfig config,
+			CancellationToken cancellationToken = default(CancellationToken))
+		{
+			// SaveOrUpdateSettingAsync invalidates the cached value (see the CallNumberingConfig case in its cache switch).
+			return await SaveOrUpdateSettingAsync(departmentId, ObjectSerialization.Serialize(config ?? new CallNumberingConfig()),
+				DepartmentSettingTypes.CallNumberingConfig, cancellationToken);
+		}
+
 		public async Task<DispatchRecommendationConfig> GetDispatchRecommendationConfigAsync(int departmentId, bool bypassCache = false)
 		{
 			async Task<string> getSetting()
@@ -1229,6 +1271,8 @@ namespace Resgrid.Services
 			config.PersonnelMaxLocationAgeSeconds = ClampToRange(config.PersonnelMaxLocationAgeSeconds, DispatchRecommendationConfig.MaximumLocationAgeSeconds);
 			config.MaxRadiusMeters = ClampToRange(config.MaxRadiusMeters, DispatchRecommendationConfig.MaximumRadiusMeters);
 			config.RestPeriodMinutes = ClampToRange(config.RestPeriodMinutes, DispatchRecommendationConfig.MaximumRestPeriodMinutes);
+			config.InQuartersTurnoutSeconds = ClampToRange(config.InQuartersTurnoutSeconds, DispatchRecommendationConfig.MaximumTurnoutSeconds);
+			config.MobileTurnoutSeconds = ClampToRange(config.MobileTurnoutSeconds, DispatchRecommendationConfig.MaximumTurnoutSeconds);
 
 			config.EtaShortlistSize = config.EtaShortlistSize > 0
 				? Math.Min(config.EtaShortlistSize, DispatchRecommendationConfig.MaximumEtaShortlistSize)
@@ -1320,6 +1364,22 @@ namespace Resgrid.Services
 			}
 
 			return bool.Parse(await getSetting());
+		}
+
+		public async Task<bool> GetStatusHoldToConfirmAsync(int departmentId, bool bypassCache = false)
+		{
+			async Task<string> getSetting()
+			{
+				var s = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.StatusHoldToConfirm);
+				return s?.Setting ?? "false";
+			}
+
+			var value = Config.SystemBehaviorConfig.CacheEnabled && !bypassCache
+				? await _cacheProvider.RetrieveAsync<string>(string.Format(StatusHoldToConfirmCacheKey, departmentId), getSetting, LongCacheLength)
+				: await getSetting();
+
+			// A blank cached entry (see the Redis blank-entity note) or a hand-edited row must read as the default.
+			return bool.TryParse(value, out var enabled) && enabled;
 		}
 
 		public async Task<DepartmentSetting> SetDepartmentModuleSettingsAsync(int departmentId, DepartmentModuleSettings settings, CancellationToken cancellationToken = default(CancellationToken))
@@ -1531,6 +1591,9 @@ namespace Resgrid.Services
 				case DepartmentSettingTypes.PersonnelOnUnitSetUnitStatus:
 					cacheKey = string.Format(PersonnelOnUnitSetUnitStatusCacheKey, departmentId);
 					break;
+				case DepartmentSettingTypes.StatusHoldToConfirm:
+					cacheKey = string.Format(StatusHoldToConfirmCacheKey, departmentId);
+					break;
 				case DepartmentSettingTypes.EnableModernNotifications:
 					cacheKey = string.Format(ModernNotificationsCacheKey, departmentId);
 					break;
@@ -1572,6 +1635,9 @@ namespace Resgrid.Services
 					break;
 				case DepartmentSettingTypes.MappingMapStyleNight:
 					cacheKey = string.Format(MapStyleNightCacheKey, departmentId);
+					break;
+				case DepartmentSettingTypes.CallNumberingConfig:
+					cacheKey = string.Format(CallNumberingConfigCacheKey, departmentId);
 					break;
 				case DepartmentSettingTypes.RecordsDefaultLifecyclePreset:
 				case DepartmentSettingTypes.RecordsReviewDueHours:

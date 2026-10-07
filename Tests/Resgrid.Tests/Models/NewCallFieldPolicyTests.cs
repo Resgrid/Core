@@ -247,6 +247,18 @@ namespace Resgrid.Tests.Models
 				.Should().ContainSingle().Which.Key.Should().Be(NewCallFieldKeys.Geolocation);
 		}
 
+		[TestCase(",")]
+		[TestCase("0,0")]
+		[TestCase("abc,def")]
+		public void A_placeholder_from_a_client_with_no_position_does_not_satisfy_a_required_geolocation(string geolocation)
+		{
+			// The Dispatch and BigBoard apps sent "," when nothing was picked; it is text, but not a location.
+			var policy = Requiring(NewCallFieldKeys.Geolocation);
+
+			NewCallFieldPolicyValidator.Validate(policy, new NewCallFieldValues { Geolocation = geolocation })
+				.Should().ContainSingle().Which.Key.Should().Be(NewCallFieldKeys.Geolocation);
+		}
+
 		[TestCase("39.2733", "-119.5841", false)]
 		[TestCase(" 39.2733 ", "-119.5841 ", false)]
 		[TestCase(null, null, false)]

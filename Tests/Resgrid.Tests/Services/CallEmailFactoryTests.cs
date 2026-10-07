@@ -805,5 +805,74 @@ namespace Resgrid.Tests.Services
 			}
 		}
 
+		[TestFixture]
+		public class when_importing_a_lowestoft_coast_guard_call : with_the_calls_email_factory
+		{
+			private static List<DepartmentCallPriority> SystemPriorities()
+			{
+				return new List<DepartmentCallPriority>
+				{
+					new DepartmentCallPriority { DepartmentCallPriorityId = 0, Name = "Low" },
+					new DepartmentCallPriority { DepartmentCallPriorityId = 1, Name = "Medium" },
+					new DepartmentCallPriority { DepartmentCallPriorityId = 2, Name = "High", IsDefault = true },
+					new DepartmentCallPriority { DepartmentCallPriorityId = 3, Name = "Emergency" }
+				};
+			}
+
+			private static List<DepartmentCallPriority> CustomPriorities()
+			{
+				return new List<DepartmentCallPriority>
+				{
+					new DepartmentCallPriority { DepartmentCallPriorityId = 500, Name = "Shout" },
+					new DepartmentCallPriority { DepartmentCallPriorityId = 501, Name = "Training" }
+				};
+			}
+
+			private Task<Call> Import(string body, int defaultPriority, List<DepartmentCallPriority> priorities)
+			{
+				// The sample shown for this format on Call Settings.
+				var email = new CallEmail { MessageId = "200", Subject = "Full Team Page", Body = body };
+				return _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.LowestoftCoastGuard, email, Guid.NewGuid().ToString(), _dispatchUsers,
+					null, null, null, defaultPriority, priorities, null, null);
+			}
+
+			[Test]
+			public async Task should_keep_the_priority_the_page_carries()
+			{
+				var call = await Import("3, Persons in water, Southwold, Muster at CRE", (int)CallPriority.High, SystemPriorities());
+
+				call.Should().NotBeNull();
+				call.Priority.Should().Be((int)CallPriority.Emergency, "the page's priority used to be overwritten by the department default");
+				call.NatureOfCall.Should().Be("Persons in water");
+				call.Address.Should().Be("Southwold, United Kingdom");
+				call.Name.Should().Be("Full Team Page");
+				call.Dispatches.Count.Should().Be(_dispatchUsers.Count);
+			}
+
+			[Test]
+			public async Task should_match_a_custom_priority_by_name()
+			{
+				var call = await Import("Shout, Persons in water, Southwold", 501, CustomPriorities());
+
+				call.Priority.Should().Be(500);
+			}
+
+			[Test]
+			public async Task should_use_the_default_for_a_priority_the_department_does_not_own()
+			{
+				var call = await Import("3, Persons in water, Southwold", 501, CustomPriorities());
+
+				call.Priority.Should().Be(501);
+			}
+
+			[Test]
+			public async Task should_keep_an_address_that_already_names_the_country()
+			{
+				var call = await Import("2, Cliff rescue, Lowestoft United Kingdom", (int)CallPriority.High, SystemPriorities());
+
+				call.Address.Should().Be("Lowestoft United Kingdom", "it used to be blanked");
+			}
+		}
+
 	}
 }

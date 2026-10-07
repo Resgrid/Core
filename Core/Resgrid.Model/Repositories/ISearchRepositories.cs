@@ -31,6 +31,12 @@ namespace Resgrid.Model.Repositories
 		/// <summary>Live rows of one family by entity id, for hits found outside the index (street address matching).</summary>
 		Task<IEnumerable<SearchProjection>> GetByEntityIdsAsync(int departmentId, string entityType, IEnumerable<string> entityIds);
 
+		/// <summary>
+		/// One keyset page of the call history backfill (M0261): the department's non-deleted calls with a CallId below
+		/// <paramref name="beforeCallId"/> (every call when null), newest CallId first.
+		/// </summary>
+		Task<IEnumerable<Call>> GetCallsForBackfillAsync(int departmentId, int? beforeCallId, int take);
+
 		Task<int> HardDeleteDepartmentAsync(int departmentId, CancellationToken cancellationToken = default);
 	}
 

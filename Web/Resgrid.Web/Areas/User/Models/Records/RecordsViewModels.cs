@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Resgrid.Web.Helpers;
 using Resgrid.Model;
 
 namespace Resgrid.Web.Areas.User.Models.Records
@@ -164,8 +165,9 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public string AssetId { get; set; }
 		public string RequestId { get; set; } = System.Guid.NewGuid().ToString("D");
 		public List<SelectListItem> Locations { get; set; } = new();
-		public List<SelectListItem> Lots { get; set; } = new();
-		public List<SelectListItem> Assets { get; set; } = new();
+		// Each lot and asset carries its item (WorkspaceChoice.Parent) so the pickers offer only the chosen item's.
+		public List<WorkspaceChoice> Lots { get; set; } = new();
+		public List<WorkspaceChoice> Assets { get; set; } = new();
 		public string RecordId { get; set; }
 		public RmsRecordKind Kind { get; set; }
 		public long RowVersion { get; set; }
@@ -301,6 +303,15 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public int? NextSequence { get; set; }
 	}
 
+	/// <summary>One system record type's {PREFIX} on the Records Settings numbering panel; a blank Prefix keeps the default.</summary>
+	public class RecordsNumberPrefixRow
+	{
+		public string DefinitionKey { get; set; }
+		public string Label { get; set; }
+		public string DefaultPrefix { get; set; }
+		public string Prefix { get; set; }
+	}
+
 	/// <summary>Records Settings screen (RMS plan section 4.9, settings 70-77).</summary>
 	public class RecordsSettingsView : RecordsBaseView
 	{
@@ -311,6 +322,8 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		/// <summary>Setting 72's pattern (see RecordNumberFormat), e.g. "{PREFIX}-{YYYY}-{SEQ}".</summary>
 		public string NumberPattern { get; set; }
 		public int SequenceWidth { get; set; }
+		/// <summary>Setting 72's per-type prefixes, one row per system record type.</summary>
+		public List<RecordsNumberPrefixRow> NumberPrefixes { get; set; } = new List<RecordsNumberPrefixRow>();
 		/// <summary>The year the next numbers below are shown for.</summary>
 		public int NumberingYear { get; set; }
 		public List<RecordsNextNumberRow> NextNumbers { get; set; } = new List<RecordsNextNumberRow>();

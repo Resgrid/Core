@@ -258,6 +258,7 @@ namespace Resgrid.Tests.Security.Audit20261005
 			try
 			{
 				M<IUnitsService>().Setup(x => x.GetUnitsForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<Unit> { new Unit { UnitId = 4, DepartmentId = DepartmentId, Name = "Engine 4" } });
+				M<IUnitsService>().Setup(x => x.GetUnitsForDepartmentIncludingDeletedAsync(DepartmentId)).ReturnsAsync(new List<Unit> { new Unit { UnitId = 4, DepartmentId = DepartmentId, Name = "Engine 4" } });
 				M<IUnitsService>().Setup(x => x.GetAllLatestStatusForUnitsByDepartmentIdAsync(DepartmentId)).ReturnsAsync(new List<UnitState>());
 				M<IAuthorizationService>().Setup(x => x.CanUserViewUnitViaMatrixAsync(4, UserId, DepartmentId)).ReturnsAsync(true);
 				var stored = new List<UdfFieldValue> { new UdfFieldValue { UdfFieldId = "admin-only", EntityId = "4", Value = "secret" } };

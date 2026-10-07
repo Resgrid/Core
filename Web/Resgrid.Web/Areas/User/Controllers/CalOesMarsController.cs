@@ -170,7 +170,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			if (!IsManager) return Unauthorized();
 			var view = Page(new CalOesMarsResourcesView { Resources = await _mars.GetResourceProfilesAsync(DepartmentId), ResourceTypes = CalOesMarsAuthorityProfile.Current.ResourceTypes });
-			view.Units = (await _units.GetUnitsForDepartmentAsync(DepartmentId) ?? new List<Unit>()).OrderBy(u => u.Name).Select(u => new SelectListItem(u.Name, u.UnitId.ToString())).ToList();
+			// Current units, plus any deleted unit an existing profile still names: without its option the edit form would
+			// post an empty unit and fail.
+			var units = await _units.GetUnitsForDepartmentAsync(DepartmentId) ?? new List<Unit>();
+			var keep = (view.Resources ?? new List<CalOesMarsResourceProfile>()).Where(r => r.UnitId.HasValue && units.All(u => u.UnitId != r.UnitId.Value)).Select(r => r.UnitId.Value).ToHashSet();
+			if (keep.Count > 0)
+				units = units.Concat((await _units.GetUnitsForDepartmentIncludingDeletedAsync(DepartmentId) ?? new List<Unit>()).Where(u => keep.Contains(u.UnitId))).ToList();
+			view.Units = units.OrderBy(u => u.Name).Select(u => new SelectListItem(u.Name, u.UnitId.ToString())).ToList();
 			if (!string.IsNullOrWhiteSpace(edit)) view.Editing = await _mars.GetResourceProfileAsync(edit, DepartmentId);
 			return View(view);
 		}

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Localization;
 using Resgrid.Config;
 using Resgrid.Model;
 using Resgrid.Model.Helpers;
@@ -63,6 +64,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IRecordsReportingService _recordsReporting;
 		private readonly IBusinessOperationsAccessService _businessOperationsAccess;
 		private readonly ICallStatusAttributionService _callStatusAttributionService;
+		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Units.Units> _unitsLocalizer;
 
 		public ReportsController(IDepartmentsService departmentsService, IUsersService usersService,
 			IActionLogsService actionLogsService,
@@ -76,8 +78,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IUnitsService unitsService, IUnitStatesService unitStatesService,
 			ICalendarService calendarService, IDepartmentMemberSensitiveDataService memberSensitiveDataService,
 			IProtectedReadService protectedReadService, IRecordsReportingService recordsReporting,
-			IBusinessOperationsAccessService businessOperationsAccess, ICallStatusAttributionService callStatusAttributionService)
+			IBusinessOperationsAccessService businessOperationsAccess, ICallStatusAttributionService callStatusAttributionService,
+			IStringLocalizer<Resgrid.Localization.Areas.User.Units.Units> unitsLocalizer)
 		{
+			_unitsLocalizer = unitsLocalizer;
 			_departmentsService = departmentsService;
 			_usersService = usersService;
 			_actionLogsService = actionLogsService;
@@ -471,7 +475,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var units = new List<Unit>();
 			units.Add(new Unit() { UnitId = 0, Name = "All Units" });
 
-			units.AddRange(await _unitsService.GetUnitsForDepartmentAsync(DepartmentId));
+			// A history report can cover a unit deleted since: current units first, then deleted ones, marked so a
+			// reused name is not ambiguous.
+			var allUnits = await _unitsService.GetUnitsForDepartmentIncludingDeletedAsync(DepartmentId) ?? new List<Unit>();
+			units.AddRange(allUnits.Where(u => !u.IsDeleted).OrderBy(u => u.Name));
+			units.AddRange(allUnits.Where(u => u.IsDeleted).OrderBy(u => u.Name)
+				.Select(u => new Unit { UnitId = u.UnitId, Name = _unitsLocalizer["DeletedUnitName", u.Name].Value }));
 			model.Units = new SelectList(units, "UnitId", "Name", 0);
 
 			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
@@ -1099,6 +1108,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
 			model.RunOn = DateTime.UtcNow.TimeConverter(department);
 
+			// The department shift query pre-fills Groups[].Roles straight from ShiftGroupRoles, so PopulateShiftData
+			// keeps them and ShiftGroupRole.Role is never set. Resolve role names from the department's roles instead.
+			var roleNames = new Dictionary<int, string>();
+			foreach (var personnelRole in await _personnelRolesService.GetRolesForDepartmentAsync(departmentId) ?? new List<PersonnelRole>())
+			{
+				if (personnelRole != null)
+					roleNames[personnelRole.PersonnelRoleId] = personnelRole.Name;
+			}
+
 			foreach (var s1 in shifts)
 			{
 				var shift = await _shiftsService.PopulateShiftData(s1, true, true, true, true, true);
@@ -1109,12 +1127,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 					var shiftRow = new UpcomingShiftReadinessReportRow();
 					var nextShiftDay = (from s in shift.Days
 										where s.Day > DateTime.UtcNow.TimeConverter(department)
-										orderby s.Day.Day descending
+										orderby s.Day
 										select s).FirstOrDefault();
 
 					if (nextShiftDay != null)
 					{
 						var shiftRoleDeltas = await _shiftsService.GetShiftDayNeedsAsync(nextShiftDay.ShiftDayId);
+						var shiftSignupsForDay = await _shiftsService.GetShiftSignpsForShiftDayAsync(nextShiftDay.ShiftDayId);
 
 						shiftRow.ShiftName = shift.Name;
 						shiftRow.ShiftDate = nextShiftDay.Day.ToShortDateString();
@@ -1125,14 +1144,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 							foreach (var group in shift.Groups)
 							{
 								var shiftSubRow = new UpcomingShiftReadinessReportSubRow();
-								shiftSubRow.GroupName = group.DepartmentGroup.Name;
+								shiftSubRow.GroupName = group.DepartmentGroup?.Name;
 
 								if (group.Roles != null && group.Roles.Count > 0)
 								{
 									foreach (var role in group.Roles)
 									{
+										var roleName = roleNames.TryGetValue(role.PersonnelRoleId, out var name) ? name : role.Role?.Name;
+
+										// A requirement whose personnel role no longer exists cannot be staffed or named.
+										if (roleName == null)
+											continue;
+
 										var subRowRoles = new UpcomingShiftReadinessGroupRole();
-										subRowRoles.Name = role.Role.Name;
+										subRowRoles.Name = roleName;
 										subRowRoles.Required = role.Required;
 										subRowRoles.Optional = role.Optional;
 
@@ -1162,24 +1187,23 @@ namespace Resgrid.Web.Areas.User.Controllers
 										var subRowPerson = new UpcomingShiftReadinessPersonnel();
 										subRowPerson.Name = await UserHelper.GetFullNameForUser(person.UserId);
 										subRowPerson.Roles =
-											(await _personnelRolesService.GetRolesForUserAsync(person.UserId, DepartmentId))
+											(await _personnelRolesService.GetRolesForUserAsync(person.UserId, departmentId))
 											.Select(x => x.Name).ToList();
 
 										shiftSubRow.Personnel.Add(subRowPerson);
 									}
 								}
 
-								var shiftSignupsForDay =
-									await _shiftsService.GetShiftSignpsForShiftDayAsync(nextShiftDay.ShiftDayId);
 								if (shiftSignupsForDay != null)
 								{
+									// Signups without a group store a null DepartmentGroupId.
 									foreach (var signup in shiftSignupsForDay.Where(x =>
-												 x.DepartmentGroupId.Value == group.DepartmentGroupId))
+												 x != null && x.DepartmentGroupId == group.DepartmentGroupId))
 									{
 										var subRowPerson = new UpcomingShiftReadinessPersonnel();
 										subRowPerson.Name = await UserHelper.GetFullNameForUser(signup.UserId);
 										subRowPerson.Roles =
-											(await _personnelRolesService.GetRolesForUserAsync(signup.UserId, DepartmentId))
+											(await _personnelRolesService.GetRolesForUserAsync(signup.UserId, departmentId))
 											.Select(x => x.Name).ToList();
 
 										shiftSubRow.Personnel.Add(subRowPerson);
@@ -1880,7 +1904,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var statesByCall = await _callStatusAttributionService.GetUnitStatesForCallsAsync(departmentId, calls);
 			var dispatchesByCall = await _callStatusAttributionService.GetUnitDispatchesForCallsAsync(departmentId, calls);
 			var customBaseTypes = await _unitsService.GetCustomUnitStateBaseTypesAsync(departmentId);
-			var units = (await _unitsService.GetUnitsForDepartmentAsync(departmentId) ?? new List<Unit>()).ToDictionary(x => x.UnitId);
+			// Past calls: the units that worked them, deleted ones included.
+			var units = (await _unitsService.GetUnitsForDepartmentIncludingDeletedAsync(departmentId) ?? new List<Unit>()).ToDictionary(x => x.UnitId);
 			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(departmentId) ?? new List<DepartmentGroup>();
 
 			foreach (var call in calls.OrderBy(x => x.LoggedOn))
@@ -2070,7 +2095,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var profiles = await _userProfileService.GetAllProfilesForDepartmentAsync(departmentId);
 			await ApplyMemberIdentificationNumbersAsync(departmentId, profiles?.Values);
 			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(departmentId);
-			var units = await _unitsService.GetUnitsForDepartmentAsync(departmentId);
+			// A date-range history: units deleted since still have their states in it.
+			var units = await _unitsService.GetUnitsForDepartmentIncludingDeletedAsync(departmentId);
 
 			// The range is picked in department-local time; unit state timestamps are UTC.
 			var startUtc = model.Start.DepartmentLocalToUtc(model.Department);

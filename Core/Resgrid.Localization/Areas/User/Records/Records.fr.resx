@@ -123,10 +123,16 @@
   <data name="NextNumberCurrent" xml:space="preserve"><value>Prochain numéro</value></data>
   <data name="NextNumberRaiseTo" xml:space="preserve"><value>Porter le prochain à</value></data>
   <data name="NextNumberBelowCurrent" xml:space="preserve"><value>Un prochain numéro ne peut qu'être augmenté. Ces séquences n'ont pas été modifiées, car le nombre saisi était inférieur à celui qu'elles attribueront ensuite :</value></data>
-  <data name="NextNumberPatternChanged" xml:space="preserve"><value>Le modèle de numérotation a changé ; les prochains numéros saisis n'ont donc pas été appliqués. Vérifiez les séquences du nouveau modèle et enregistrez à nouveau.</value></data>
+  <data name="NextNumberPatternChanged" xml:space="preserve"><value>Le modèle de numérotation ou le préfixe d'un type de dossier a changé ; les prochains numéros saisis n'ont donc pas été appliqués. Vérifiez les nouvelles séquences et enregistrez à nouveau.</value></data>
   <data name="NextNumberConfirm" xml:space="preserve"><value>Un prochain numéro augmenté ne peut plus être diminué. Enregistrer ces modifications ?</value></data>
   <data name="NumberingAllTypes" xml:space="preserve"><value>Tous les types de dossiers</value></data>
   <data name="NumberingNoGroup" xml:space="preserve"><value>Aucune caserne ni groupe</value></data>
+  <data name="NumberPrefixesHeader" xml:space="preserve"><value>Préfixes par type de dossier</value></data>
+  <data name="NumberPrefixesIntro" xml:space="preserve"><value>Définissez le préfixe que {PREFIX} écrit pour chaque type de dossier, par exemple FIRE pour Run et IR pour les rapports d'incident. Laissez une case vide pour conserver la valeur par défaut. Un nouveau préfixe démarre sa propre séquence, et les dossiers déjà numérotés conservent leur numéro. Les types ayant le même préfixe partagent une séquence. Les préfixes ne sont utilisés que si le modèle contient {PREFIX}.</value></data>
+  <data name="NumberPrefixType" xml:space="preserve"><value>Type de dossier</value></data>
+  <data name="NumberPrefixDefault" xml:space="preserve"><value>Par défaut</value></data>
+  <data name="NumberPrefixRule" xml:space="preserve"><value>2 à 6 lettres ou chiffres</value></data>
+  <data name="NumberPrefixInvalid" xml:space="preserve"><value>Un préfixe comporte 2 à 6 lettres ou chiffres. Ces types de dossiers ont conservé leur préfixe :</value></data>
   <data name="Retention" xml:space="preserve"><value>Conservation</value></data>
   <data name="RetentionIntro" xml:space="preserve"><value>Valeurs par défaut : 7 ans pour les dossiers standard ; permanent pour Coroner et les autres classes restreintes. La conservation relève de ce service. Les modifications s'appliquent pour l'avenir et sont auditées.</value></data>
   <data name="DepartmentDefaultYears" xml:space="preserve"><value>Valeur par défaut du service (années, vide = système)</value></data>

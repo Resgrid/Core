@@ -351,6 +351,10 @@ ChecklistReminderSettingsUpdated,
 		AiDispatchSettingsUpdated,
 		AdminAssistPlanAccess,
 		/// <summary>The department security policy changed, including which second factors it accepts (passkey plan section 10.1). Append-only.</summary>
-		DepartmentSecurityPolicyChanged
+		DepartmentSecurityPolicyChanged,
+		/// <summary>A department API key was issued (pending-calls integration work, 2026-10-06). Append-only.</summary>
+		DepartmentApiKeyCreated,
+		/// <summary>A department API key was revoked. Append-only.</summary>
+		DepartmentApiKeyRevoked
 	}
 }

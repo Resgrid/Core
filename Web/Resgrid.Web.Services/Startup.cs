@@ -244,6 +244,25 @@ namespace Resgrid.Web.ServicesCore
 			services.AddAuthorization(options =>
 			{
 				options.AddPolicy(ResgridResources.SystemAdmin, policy => policy.RequireClaim(System.Security.Claims.ClaimTypes.Role, "Admins"));
+
+				// Department API key scopes: a key principal needs the action's scope; any other principal passes unchanged.
+				// A key that did not authenticate while a bearer token did (both sent) is refused, never silently ignored.
+				foreach (var apiKeyScope in Resgrid.Model.DepartmentApiKeyScopes.All)
+				{
+					var requiredScope = apiKeyScope;
+					options.AddPolicy(Resgrid.Model.DepartmentApiKeyScopes.PolicyName(requiredScope), policy => policy
+						.RequireAuthenticatedUser()
+						.RequireAssertion(context =>
+						{
+							var isKeyPrincipal = DepartmentApiKeyAuthHandler.IsDepartmentApiKeyPrincipal(context.User);
+
+							if (!isKeyPrincipal && context.Resource is Microsoft.AspNetCore.Http.HttpContext http &&
+								http.Request.Headers.ContainsKey(DepartmentApiKeyAuthHandler.HeaderName))
+								return false;
+
+							return !isKeyPrincipal || context.User.HasClaim(Resgrid.Model.DepartmentApiKeyScopes.ScopeClaimType, requiredScope);
+						}));
+				}
 				options.AddPolicy(ResgridResources.Department_View, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Department, ResgridClaimTypes.Actions.View));
 				options.AddPolicy(ResgridResources.Department_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Department, ResgridClaimTypes.Actions.Update));
 				options.AddPolicy(ResgridResources.Department_Create, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Department, ResgridClaimTypes.Actions.Create));
@@ -627,7 +646,10 @@ namespace Resgrid.Web.ServicesCore
 
 
 			services.AddAuthentication(OpenIddict.Validation.AspNetCore.OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)
-				.AddScheme<AuthenticationSchemeOptions, SystemApiKeyAuthHandler>("SystemApiKey", null);
+				.AddScheme<AuthenticationSchemeOptions, SystemApiKeyAuthHandler>("SystemApiKey", null)
+				// Department API keys (X-Resgrid-ApiKey). Never the default scheme: it runs only on actions marked with
+				// [DepartmentApiKeyScope], which is what keeps a key off every other endpoint.
+				.AddScheme<AuthenticationSchemeOptions, DepartmentApiKeyAuthHandler>(DepartmentApiKeyAuthHandler.SchemeName, null);
 
 			//// TODO: Add IServiceCollection.AddOpenTelemetryMetrics extension method
 			//var providerBuilder = Sdk.CreateMeterProviderBuilder()

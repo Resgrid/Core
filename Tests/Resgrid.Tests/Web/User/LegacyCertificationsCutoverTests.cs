@@ -105,6 +105,19 @@ namespace Resgrid.Tests.Web.User
             (await Controller<TypesController>().NewCertificationType()).Should().BeOfType<ViewResult>();
         }
         [Test]
+        public async Task Legacy_delete_of_a_type_in_use_returns_to_the_page_with_the_reason()
+        {
+            // The service refusal used to escape the action as a 500.
+            _access.Setup(x => x.IsEnabledAsync(DepartmentId)).ReturnsAsync(false);
+            _authorization.Setup(x => x.CanUserDeleteCertificationTypeAsync(UserId, 5)).ReturnsAsync(true);
+            var certifications = new Mock<ICertificationService>(MockBehavior.Strict);
+            certifications.Setup(x => x.DeleteCertificationTypeByIdAsync(5, UserId, CancellationToken.None)).ThrowsAsync(new InvalidOperationException("certifications_type_in_use"));
+            var controller = Controller<TypesController>(certifications.Object);
+            var redirect = (await controller.DeleteCertificationType(5, CancellationToken.None)).Should().BeOfType<RedirectToActionResult>().Subject;
+            redirect.ControllerName.Should().Be("Department"); redirect.ActionName.Should().Be("Types");
+            controller.TempData["CertificationTypeRefused"].Should().Be("certifications_type_in_use");
+        }
+        [Test]
         public async Task Legacy_report_is_unavailable_before_reading_data()
         {
             (await Controller<ReportsController>().CertificationsReport()).Should().BeOfType<NotFoundResult>();

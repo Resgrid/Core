@@ -438,8 +438,12 @@ var resgrid;
             newcall.noLocation = noLocation;
             function setMarkerLocation(lat, lng) {
                 // Every way of placing the call (map click, address or What3Words search,
-                // typed coordinates) ends here, so this is where the unit board refreshes.
+                // typed coordinates) ends here, so this is where the unit board and the run
+                // card recommendation refresh. These paths set #Latitude/#Longitude with .val(),
+                // which raises no change event, so the recommendation used to keep the
+                // "no usable location" answer it got when the priority or type was picked.
                 scheduleNearestUnits(lat, lng);
+                scheduleRecommendations();
 
                 if (callMarker) {
                     callMarker.setLatLng(new L.LatLng(lat, lng));
@@ -457,6 +461,7 @@ var resgrid;
 
                         resgrid.dispatch.newcall.geocodeCoordinates(position.lat, position.lng);
                         scheduleNearestUnits(position.lat, position.lng);
+                        scheduleRecommendations();
                     });
                 }
             }
@@ -576,8 +581,19 @@ var resgrid;
             // and leave the dispatcher's own selections alone. The sequence number lets a
             // slow earlier response be discarded instead of overwriting a newer one.
             var recommendationSequence = 0;
+            var recommendationTimer = null;
             var recommendedUnitIds = [];
             var recommendedUserIds = [];
+
+            // Debounced like the unit board: a map click sets the marker before it writes the
+            // coordinate fields, so the request reads them once the burst has settled.
+            function scheduleRecommendations() {
+                if (recommendationTimer) {
+                    clearTimeout(recommendationTimer);
+                }
+                recommendationTimer = setTimeout(checkForRecommendations, 400);
+            }
+            newcall.scheduleRecommendations = scheduleRecommendations;
 
             function clearRecommendationSelections() {
                 recommendedUnitIds.forEach(function (id) {
@@ -648,7 +664,12 @@ var resgrid;
                         html += '<div><b>Units:</b> ' + units.map(function (u) {
                             var text = prop(u, 'unitName') || ('#' + prop(u, 'unitId'));
                             var distance = prop(u, 'distanceMeters');
-                            if (distance) text += ' (' + (distance / 1000).toFixed(1) + ' km)';
+                            var response = prop(u, 'responseSeconds');
+                            if (distance && response !== null && response !== undefined) {
+                                text += ' (' + (distance / 1000).toFixed(1) + ' km, ' + Math.max(1, Math.round(response / 60)) + ' ' + nearestText('minutes') + ')';
+                            } else if (distance) {
+                                text += ' (' + (distance / 1000).toFixed(1) + ' km)';
+                            }
                             return $('<span>').text(text).html();
                         }).join(', ') + '</div>';
                     }
@@ -787,7 +808,13 @@ var resgrid;
 
                     var statusHtml = '<span class="label ' + (prop(unit, 'isAvailable') ? 'label-primary' : 'label-warning') + '">' + escapeHtml(prop(unit, 'statusText')) + '</span>';
 
-                    var eta = formatEta(prop(unit, 'etaSeconds'), prop(unit, 'etaSource'));
+                    // With a turnout configured the row shows the response time it is ranked on (turnout + travel).
+                    var turnout = prop(unit, 'turnoutSeconds') || 0;
+                    var response = prop(unit, 'responseSeconds');
+                    var eta = formatEta(turnout > 0 && response !== null && response !== undefined ? response : prop(unit, 'etaSeconds'), prop(unit, 'etaSource'));
+                    if (turnout > 0 && response !== null && response !== undefined) {
+                        eta += '<br/><small class="text-muted">' + escapeHtml(nearestText('includesTurnout').replace('{0}', turnout)) + '</small>';
+                    }
                     var distance = prop(unit, 'distanceMeters');
                     if (distance !== null && distance !== undefined) {
                         eta += '<br/><small class="text-muted">' + escapeHtml((distance / 1000).toFixed(1) + ' km') + '</small>';

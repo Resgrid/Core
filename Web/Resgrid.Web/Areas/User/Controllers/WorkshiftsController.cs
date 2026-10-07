@@ -165,7 +165,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (model.Shift.DepartmentId != DepartmentId)
 				return Unauthorized();
 
-			model.Units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
+			// The shift's units as they were scheduled, deleted ones included.
+			model.Units = await _unitsService.GetUnitsForDepartmentIncludingDeletedAsync(DepartmentId);
 			model.Personnel = await _usersService.GetUserGroupAndRolesByDepartmentIdInLimitAsync(DepartmentId, false, false, false);
 
 			return View(model);

@@ -148,7 +148,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (type == null || type.DepartmentId != DepartmentId) return NotFound();
 			try
 			{
-				await _certifications.DeleteCertificationTypeByIdAsync(id, cancellationToken);
+				await _certifications.DeleteCertificationTypeByIdAsync(id, UserId, cancellationToken);
 				var result = new CertificationTypeResult { Data = Map(type), PageSize = 1, Status = ResponseHelper.Success };
 				ResponseHelper.PopulateV4ResponseData(result);
 				return result;

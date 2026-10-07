@@ -253,6 +253,11 @@
                     </div>
                 </div>
                 <div class="ibox-content">
+                    @if (TempData["CertificationTypeRefused"] is string certificationTypeRefused)
+                    {
+                        var refusedText = certificationLocalizer[certificationTypeRefused];
+                        <div class="alert alert-danger">@(refusedText.ResourceNotFound ? certificationLocalizer["SaveFailed"].Value : refusedText.Value)</div>
+                    }
                     <div class="table-responsive">
                         <table class="table table-striped">
                             <thead>

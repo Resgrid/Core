@@ -6,7 +6,7 @@
 
 	Usage: @await Html.PartialAsync("_BaseTypeDescription", "baseType")
 	where the model is the DOM id of the <select> element that holds the base type value. The select
-	options may be keyed either by the numeric enum value (-1..22) or by the enum member name
+	options may be keyed either by the numeric enum value (-1..23) or by the enum member name
 	(e.g. "Transporting"); both are supported.
 *@
 @model string
@@ -42,14 +42,15 @@
 				onpatrol: "The unit or responder is actively patrolling an assigned area or beat while remaining available for dispatch.",
 				maintenance: "The unit or responder is out of service for maintenance, refueling, restocking, cleaning or servicing.",
 				onbreak: "The unit or responder is on a rest, meal or crew-rest break and is temporarily unavailable.",
-				completed: "The assignment, task or delivery is complete; the unit or responder is wrapping up and becoming available."
+				completed: "The assignment, task or delivery is complete; the unit or responder is wrapping up and becoming available.",
+				inquarters: "The unit or responder is in service and available at its station or quarters. Dispatch recommendations measure a unit from its station instead of its GPS position and add the in-quarters turnout time."
 			};
 
 			// Add numeric aliases that match the ActionBaseTypes enum values (None = -1, Available = 0, ...).
 			const order = ["none", "available", "notresponding", "responding", "onscene", "madecontact",
 				"investigating", "dispatched", "cleared", "returning", "staging", "unavailable",
 				"enroute", "transporting", "delivering", "atpatient", "athospital", "searching",
-				"loading", "standby", "onpatrol", "maintenance", "onbreak", "completed"];
+				"loading", "standby", "onpatrol", "maintenance", "onbreak", "completed", "inquarters"];
 			for (let i = 0; i < order.length; i++) {
 				d[String(i - 1)] = d[order[i]];
 			}

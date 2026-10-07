@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
+using Resgrid.Model;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Repositories.Connection;
 using Resgrid.Model.Repositories.Queries;
@@ -153,6 +154,25 @@ namespace Resgrid.Repositories.DataRepository
 					parameters));
 			}
 			return rows;
+		}
+
+		public Task<IEnumerable<Call>> GetCallsForBackfillAsync(int departmentId, int? beforeCallId, int take)
+		{
+			var parameters = new DynamicParameters();
+			parameters.Add("DepartmentId", departmentId);
+			parameters.Add("Skip", 0);
+			parameters.Add("Take", take <= 0 ? 250 : Math.Min(take, 1000));
+			var before = string.Empty;
+			if (beforeCallId.HasValue)
+			{
+				before = $" AND {Col("CallId")} < {P}BeforeCallId";
+				parameters.Add("BeforeCallId", beforeCallId.Value);
+			}
+
+			return QueryAsync<Call>(
+				$"SELECT * FROM {Tbl("Calls")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("IsDeleted")} = {(IsPostgres ? "FALSE" : "0")}{before} " +
+				$"ORDER BY {Col("CallId")} DESC {Paging()}",
+				parameters);
 		}
 
 		public Task<int> HardDeleteDepartmentAsync(int departmentId, CancellationToken cancellationToken = default)

@@ -576,6 +576,17 @@ namespace Resgrid.Chatbot.Localization
 				"Закрити виклик #{0} — {1}? Відповідайте YES для підтвердження або NO для скасування.",
 				"إغلاق البلاغ #{0} — {1}؟ أرسل YES للتأكيد أو NO للإلغاء."),
 
+			["Call_CloseBlockedByIncidentCommand"] = L(
+				"Call #{0} has an active incident command. Close the incident command first, then close the call.",
+				"La llamada #{0} tiene un mando de incidente activo. Cierra primero el mando de incidente y luego la llamada.",
+				"Larm #{0} har en aktiv insatsledning. Avsluta insatsledningen först och stäng sedan larmet.",
+				"Für Einsatz #{0} ist eine aktive Einsatzleitung eingerichtet. Beenden Sie zuerst die Einsatzleitung und schließen Sie dann den Einsatz.",
+				"L'appel #{0} a un commandement d'incident actif. Fermez d'abord le commandement d'incident, puis l'appel.",
+				"La chiamata #{0} ha un comando dell'incidente attivo. Chiudi prima il comando dell'incidente, poi la chiamata.",
+				"Zgłoszenie #{0} ma aktywne dowodzenie akcją. Najpierw zakończ dowodzenie, a następnie zamknij zgłoszenie.",
+				"Виклик #{0} має активне командування інцидентом. Спочатку завершіть командування, а потім закрийте виклик.",
+				"البلاغ #{0} له قيادة حادث نشطة. أغلق قيادة الحادث أولاً، ثم أغلق البلاغ."),
+
 			["Call_Closed"] = L(
 				"Call #{0} — {1} has been closed.",
 				"La llamada #{0} — {1} ha sido cerrada.",

@@ -61,7 +61,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			var unit = await _unitsService.GetUnitByIdAsync(int.Parse(locationInput.UnitId));
 
-			if (unit == null)
+			// A deleted unit is no longer tracked (an app may still have it selected).
+			if (unit == null || unit.IsDeleted)
 				return BadRequest();
 
 			if (unit.DepartmentId != DepartmentId)

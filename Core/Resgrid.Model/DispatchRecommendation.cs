@@ -14,7 +14,7 @@ namespace Resgrid.Model
 		/// <summary>Resource pulled from a next-nearest station after the owning station fell short. CascadeDepth says how far out.</summary>
 		CascadeStation = 2,
 
-		/// <summary>Closest-unit mode pick by straight-line distance.</summary>
+		/// <summary>Closest-unit mode pick by straight-line estimate (turnout plus distance at an assumed speed).</summary>
 		ClosestByDistance = 3,
 
 		/// <summary>Closest-unit mode pick re-ranked by routed ETA.</summary>
@@ -83,7 +83,17 @@ namespace Resgrid.Model
 
 		public double? DistanceMeters { get; set; }
 
+		/// <summary>Routed drive time, when routed ETAs are on and the lookup succeeded. Travel only.</summary>
 		public double? EtaSeconds { get; set; }
+
+		/// <summary>Closest-unit mode: where the unit was measured from (its GPS fix, or its station).</summary>
+		public UnitPositionSources PositionSource { get; set; }
+
+		/// <summary>Closest-unit mode: the turnout added for where the unit is; 0 when none is configured.</summary>
+		public int TurnoutSeconds { get; set; }
+
+		/// <summary>Closest-unit mode: turnout plus travel (routed when available, else estimated) that the unit was ranked on.</summary>
+		public double? ResponseSeconds { get; set; }
 
 		public DateTime? LocationTimestamp { get; set; }
 

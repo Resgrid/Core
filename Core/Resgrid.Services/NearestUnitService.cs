@@ -15,10 +15,10 @@ namespace Resgrid.Services
 	public class NearestUnitService : INearestUnitService
 	{
 		/// <summary>Roads run roughly a third longer than the straight line between two points.</summary>
-		public const double EstimatedRoadDistanceFactor = 1.3;
+		public const double EstimatedRoadDistanceFactor = UnitResponseOrigin.EstimatedRoadDistanceFactor;
 
 		/// <summary>A blended urban/suburban response speed (40 km/h) for straight-line ETA estimates.</summary>
-		public const double EstimatedSpeedMetersPerSecond = 40000d / 3600d;
+		public const double EstimatedSpeedMetersPerSecond = UnitResponseOrigin.EstimatedSpeedMetersPerSecond;
 
 		private readonly IDispatchScopeService _dispatchScopeService;
 		private readonly IDepartmentGroupsService _departmentGroupsService;
@@ -122,12 +122,13 @@ namespace Resgrid.Services
 			foreach (var candidate in unitCandidates)
 				await AttachCrewAsync(request, candidate, crewByUnit, people);
 
+			// Fastest response first among the available units. A stale fix is flagged on the row rather than ranked
+			// down: sorting it below every fresh unit put a unit two minutes out in the middle of the list.
 			board.Units = unitCandidates
 				.Select(c => c.ToResult(groups, groupsById, boundaryGroupIds))
 				.OrderBy(u => !u.IsAvailable)
 				.ThenBy(u => u.PositionSource == UnitPositionSources.None)
-				.ThenBy(u => u.PositionIsStale)
-				.ThenBy(u => u.EtaSeconds ?? double.MaxValue)
+				.ThenBy(u => u.ResponseSeconds ?? double.MaxValue)
 				.ThenBy(u => u.DistanceMeters ?? double.MaxValue)
 				.ThenBy(u => u.Name, StringComparer.OrdinalIgnoreCase)
 				.ToList();
@@ -177,6 +178,11 @@ namespace Resgrid.Services
 
 			public UnitPositionSources PositionSource { get; set; }
 
+			public int TurnoutSeconds { get; set; }
+
+			/// <summary>Turnout plus travel; null until the unit has an ETA.</summary>
+			public double? ResponseSeconds => EtaSeconds.HasValue ? TurnoutSeconds + EtaSeconds.Value : (double?)null;
+
 			public UnitCrewSources CrewSource { get; set; }
 
 			public List<string> CrewNames { get; } = new List<string>();
@@ -216,6 +222,8 @@ namespace Resgrid.Services
 					DistanceMeters = DistanceMeters,
 					EtaSeconds = EtaSeconds,
 					EtaSource = EtaSource,
+					TurnoutSeconds = TurnoutSeconds,
+					ResponseSeconds = ResponseSeconds,
 					CrewSource = CrewSource,
 					Crew = CrewNames.OrderBy(n => n, StringComparer.OrdinalIgnoreCase).ToList(),
 					CrewCount = Crew.Count,
@@ -427,27 +435,34 @@ namespace Resgrid.Services
 					IsAvailable = IsUnitAvailable(stateId, isCustom, customDetails)
 				};
 
-				if (locationByUnit.TryGetValue(unit.UnitId, out var location))
+				var inQuarters = UnitResponseOrigin.IsInQuarters(stateId, customDetails);
+				locationByUnit.TryGetValue(unit.UnitId, out var location);
+				var liveFix = location != null ? new GeoMath.GeoPoint((double)location.Latitude, (double)location.Longitude) : (GeoMath.GeoPoint?)null;
+
+				// In quarters, or no GPS on the unit: it is taken to be at its station, which is public knowledge, not a
+				// tracked position. Looked up only then, since a station without stored coordinates is geocoded.
+				GeoMath.GeoPoint? stationPoint = null;
+				if ((inQuarters || liveFix == null) && unit.StationGroupId.HasValue && groupsById.TryGetValue(unit.StationGroupId.Value, out var station))
 				{
-					candidate.Latitude = (double)location.Latitude;
-					candidate.Longitude = (double)location.Longitude;
+					if (!stationPoints.TryGetValue(station.DepartmentGroupId, out stationPoint))
+						stationPoints[station.DepartmentGroupId] = stationPoint = await _geoService.GetStationCoordinatesAsync(station);
+				}
+
+				var origin = UnitResponseOrigin.Resolve(inQuarters, liveFix, stationPoint, config);
+
+				if (origin.Point.HasValue)
+				{
+					candidate.Latitude = origin.Point.Value.Latitude;
+					candidate.Longitude = origin.Point.Value.Longitude;
+					candidate.PositionSource = origin.Source;
+					candidate.TurnoutSeconds = origin.TurnoutSeconds;
+				}
+
+				if (origin.Source == UnitPositionSources.Live)
+				{
 					candidate.PositionTimestamp = location.Timestamp;
-					candidate.PositionSource = UnitPositionSources.Live;
 					candidate.LocationIsStale = config.MaxLocationAgeSeconds > 0 && (now - location.Timestamp).TotalSeconds > config.MaxLocationAgeSeconds;
 					candidate.LocationHidden = !await _authorizationService.CanUserViewUnitLocationViaMatrixAsync(unit.UnitId, request.UserId, departmentId);
-				}
-				else if (unit.StationGroupId.HasValue && groupsById.TryGetValue(unit.StationGroupId.Value, out var station))
-				{
-					// No GPS on the unit: it is taken to be at its station, which is public knowledge, not a tracked position.
-					if (!stationPoints.TryGetValue(station.DepartmentGroupId, out var point))
-						stationPoints[station.DepartmentGroupId] = point = await _geoService.GetStationCoordinatesAsync(station);
-
-					if (point.HasValue)
-					{
-						candidate.Latitude = point.Value.Latitude;
-						candidate.Longitude = point.Value.Longitude;
-						candidate.PositionSource = UnitPositionSources.Station;
-					}
 				}
 
 				candidates.Add(candidate);
@@ -535,9 +550,12 @@ namespace Resgrid.Services
 				: DispatchRecommendationConfig.DefaultEtaShortlistSize;
 
 			// Units are what gets dispatched, so they take the budget first; individual responders get what's left.
+			// Units are shortlisted on their estimated response (turnout included) so the lookups go to the units
+			// most likely to be fastest, not merely the nearest.
 			var shortlist = units
 				.Where(c => c.IsAvailable && c.DistanceMeters.HasValue && !c.LocationIsStale)
-				.OrderBy(c => c.DistanceMeters.Value)
+				.OrderBy(c => c.ResponseSeconds ?? double.MaxValue)
+				.ThenBy(c => c.DistanceMeters.Value)
 				.Cast<Candidate>()
 				.Concat(personnel
 					.Where(c => c.IsAvailable && c.DistanceMeters.HasValue && !c.LocationIsStale)
@@ -566,7 +584,7 @@ namespace Resgrid.Services
 
 		public static double EstimateEtaSeconds(double distanceMeters)
 		{
-			return Math.Round(distanceMeters * EstimatedRoadDistanceFactor / EstimatedSpeedMetersPerSecond);
+			return UnitResponseOrigin.EstimateTravelSeconds(distanceMeters);
 		}
 
 		private static string FormatPoint(double latitude, double longitude)

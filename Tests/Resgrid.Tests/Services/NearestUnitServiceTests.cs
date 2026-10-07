@@ -269,6 +269,77 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task an_in_quarters_unit_is_placed_at_its_station_whatever_its_gps_says()
+		{
+			_customStateService.Setup(x => x.GetAllActiveUnitStatesForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<CustomState>
+			{
+				new CustomState
+				{
+					CustomStateId = 90,
+					DepartmentId = DepartmentId,
+					Type = (int)CustomStateTypes.Unit,
+					Details = new List<CustomStateDetail>
+					{
+						new CustomStateDetail { CustomStateDetailId = 900, CustomStateId = 90, ButtonText = "At Station", BaseType = (int)ActionBaseTypes.InQuarters }
+					}
+				}
+			});
+			_unitsService.Setup(x => x.GetAllLatestStatusForUnitsByDepartmentIdAsync(DepartmentId)).ReturnsAsync(new List<UnitState>
+			{
+				new UnitState { UnitId = TeamUnit, State = 900, Timestamp = DateTime.UtcNow }
+			});
+
+			var team = UnitRow(await GetBoardAsync(), TeamUnit);
+
+			team.StatusText.Should().Be("At Station");
+			team.IsAvailable.Should().BeTrue();
+			team.PositionSource.Should().Be(UnitPositionSources.Station);
+			team.Latitude.Should().Be(34.04, "station A, not the GPS fix at 34.059");
+			team.PositionTimestamp.Should().BeNull();
+			team.PositionIsStale.Should().BeFalse();
+		}
+
+		[Test]
+		public async Task a_stale_fix_is_flagged_on_the_row_not_ranked_below_fresh_units()
+		{
+			_config.MaxLocationAgeSeconds = 600;
+			var now = DateTime.UtcNow;
+			_unitsService.Setup(x => x.GetLatestUnitLocationsAsync(DepartmentId)).ReturnsAsync(new List<UnitsLocation>
+			{
+				new UnitsLocation { UnitId = TeamUnit, Latitude = 34.059m, Longitude = -118.25m, Timestamp = now.AddHours(-2) },
+				new UnitsLocation { UnitId = FarTeamUnit, Latitude = 34.23m, Longitude = -118.25m, Timestamp = now },
+				new UnitsLocation { UnitId = ApparatusUnit, Latitude = 34.051m, Longitude = -118.25m, Timestamp = now }
+			});
+
+			var board = await GetBoardAsync();
+
+			// The team is ~2 minutes out; a stale fix used to sort it below every fresh unit.
+			board.Units.Select(u => u.UnitId).Should().Equal(TeamUnit, IndividualUnit, FarTeamUnit, ApparatusUnit);
+			UnitRow(board, TeamUnit).PositionIsStale.Should().BeTrue();
+		}
+
+		[Test]
+		public async Task the_board_ranks_on_turnout_plus_travel()
+		{
+			// Leaving a station takes 20 minutes here, so the far team that is already out beats the individual sitting
+			// at station D (~11 km) for the first time.
+			_config.InQuartersTurnoutSeconds = 1200;
+			_config.MobileTurnoutSeconds = 30;
+
+			var board = await GetBoardAsync();
+
+			board.Units.Select(u => u.UnitId).Should().Equal(TeamUnit, FarTeamUnit, IndividualUnit, ApparatusUnit);
+
+			var individual = UnitRow(board, IndividualUnit);
+			individual.TurnoutSeconds.Should().Be(1200);
+			individual.ResponseSeconds.Should().Be(individual.EtaSeconds + 1200, "the ETA stays travel only");
+
+			var team = UnitRow(board, TeamUnit);
+			team.TurnoutSeconds.Should().Be(30);
+			team.ResponseSeconds.Should().Be(team.EtaSeconds + 30);
+		}
+
+		[Test]
 		public async Task individual_responders_are_listed_with_the_unit_they_are_on()
 		{
 			var board = await GetBoardAsync();

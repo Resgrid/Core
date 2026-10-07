@@ -34,33 +34,43 @@ namespace Resgrid.Model.Services
 			CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
-		/// Gets the units for department asynchronous.
+		/// Gets the department's current (non-deleted) units, capped at the plan's unit limit.
 		/// </summary>
 		/// <param name="departmentId">The department identifier.</param>
 		/// <returns>Task&lt;List&lt;Unit&gt;&gt;.</returns>
 		Task<List<Unit>> GetUnitsForDepartmentAsync(int departmentId);
 
 		/// <summary>
-		/// Gets the units for department unlimited asynchronous.
+		/// Gets the department's current (non-deleted) units, not capped by the plan.
 		/// </summary>
 		/// <param name="departmentId">The department identifier.</param>
 		/// <returns>Task&lt;List&lt;Unit&gt;&gt;.</returns>
 		Task<List<Unit>> GetUnitsForDepartmentUnlimitedAsync(int departmentId);
 
 		/// <summary>
-		/// Gets the unit by identifier asynchronous.
+		/// Gets every unit the department has had, soft-deleted ones included (<see cref="Unit.IsDeleted"/>). Only for
+		/// resolving point-in-time data (reports, past calls, records, exports); never for a picker or a current list.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <returns>Task&lt;List&lt;Unit&gt;&gt;.</returns>
+		Task<List<Unit>> GetUnitsForDepartmentIncludingDeletedAsync(int departmentId);
+
+		/// <summary>
+		/// Gets the unit by identifier, soft-deleted or not: check <see cref="Unit.IsDeleted"/> before acting on it.
 		/// </summary>
 		/// <param name="unitId">The unit identifier.</param>
 		/// <returns>Task&lt;Unit&gt;.</returns>
 		Task<Unit> GetUnitByIdAsync(int unitId);
 
 		/// <summary>
-		/// Deletes the unit asynchronous.
+		/// Soft deletes the unit: it leaves every current list and its name can be reused, while the row and everything
+		/// that references it (calls, states, logs, records) is kept for point-in-time data.
 		/// </summary>
 		/// <param name="unitId">The unit identifier.</param>
+		/// <param name="deletedByUserId">The user deleting the unit.</param>
 		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 		/// <returns>Task&lt;System.Boolean&gt;.</returns>
-		Task<bool> DeleteUnitAsync(int unitId, CancellationToken cancellationToken = default(CancellationToken));
+		Task<bool> DeleteUnitAsync(int unitId, string deletedByUserId, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Gets the last unit state by unit identifier asynchronous.
@@ -106,7 +116,7 @@ namespace Resgrid.Model.Services
 		Task<List<UnitType>> GetUnitTypesForDepartmentAsync(int departmentId);
 
 		/// <summary>
-		/// Gets the unit by name department identifier asynchronous.
+		/// Gets the department's non-deleted unit with this name (unit names are unique among non-deleted units only).
 		/// </summary>
 		/// <param name="departmentId">The department identifier.</param>
 		/// <param name="name">The name.</param>

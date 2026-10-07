@@ -354,7 +354,7 @@ namespace Resgrid.Services.Records
 			var labels = new Labels();
 			try
 			{
-				if (units) foreach (var u in (await _unitsService.GetUnitsForDepartmentAsync(departmentId)) ?? new List<Unit>()) labels.Units[u.UnitId] = u.Name;
+				if (units) foreach (var u in (await _unitsService.GetUnitsForDepartmentIncludingDeletedAsync(departmentId)) ?? new List<Unit>()) labels.Units[u.UnitId] = u.Name;
 				if (groups) foreach (var g in (await _groupsService.GetAllGroupsForDepartmentAsync(departmentId)) ?? new List<DepartmentGroup>()) labels.Groups[g.DepartmentGroupId] = g.Name;
 				if (people) foreach (var p in (await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(departmentId)) ?? new List<PersonName>()) if (!string.IsNullOrEmpty(p.UserId)) labels.People[p.UserId] = p.Name;
 			}

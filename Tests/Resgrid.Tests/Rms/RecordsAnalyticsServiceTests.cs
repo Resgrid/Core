@@ -67,6 +67,7 @@ namespace Resgrid.Tests.Rms
 			_dueStates.Setup(d => d.GetLastEmittedInRangeAsync(Dept, It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>())).ReturnsAsync(new List<RmsRecordDueState>());
 			_dueStates.Setup(d => d.CountVisibleOverdueAsync(Dept, It.IsAny<List<int>>(), It.IsAny<string>())).ReturnsAsync(4);
 			_unitsService.Setup(u => u.GetUnitsForDepartmentAsync(Dept)).ReturnsAsync(new List<Unit> { new Unit { UnitId = 1, Name = "Engine 1" }, new Unit { UnitId = 2, Name = "Medic 2" } });
+			_unitsService.Setup(u => u.GetUnitsForDepartmentIncludingDeletedAsync(Dept)).ReturnsAsync(new List<Unit> { new Unit { UnitId = 1, Name = "Engine 1" }, new Unit { UnitId = 2, Name = "Medic 2" } });
 			_groupsService.Setup(g => g.GetAllGroupsForDepartmentAsync(Dept)).ReturnsAsync(new List<DepartmentGroup> { new DepartmentGroup { DepartmentGroupId = 10, Name = "Station 10" } });
 			_departmentsService.Setup(d => d.GetAllPersonnelNamesForDepartmentAsync(Dept)).ReturnsAsync(new List<PersonName> { new PersonName { UserId = "u-a", FirstName = "Ann", LastName = "Author" } });
 			_departmentsService.Setup(d => d.GetDepartmentByIdAsync(Dept, It.IsAny<bool>())).ReturnsAsync(new Department { DepartmentId = Dept, TimeZone = "UTC" });

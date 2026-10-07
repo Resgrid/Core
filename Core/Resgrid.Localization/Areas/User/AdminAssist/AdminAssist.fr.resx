@@ -1198,7 +1198,7 @@
     <value>Le calendrier du département pour les réunions, événements et soirées de formation.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.call-settings">
-    <value>La boîte aux lettres et le format utilisés pour importer les appels depuis un CAD ou un e-mail de radiomessagerie.</value>
+    <value>La boîte aux lettres et le format utilisés pour importer les appels depuis un CAD ou un e-mail de radiomessagerie, ainsi que le format et le prochain numéro des numéros d'appel.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.call-templates">
     <value>Modèles de texte d'appel et de notes réutilisables qui accélèrent la saisie des appels.</value>
@@ -1207,7 +1207,7 @@
     <value>Les types d'appel et les priorités utilisés pour classer les appels.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.calls">
-    <value>Les appels actifs et leur statut de régulation.</value>
+    <value>Les appels actifs et leur statut de régulation. La clôture d'un appel peut avertir toutes les personnes engagées, et un appel géré par un commandement d'incident actif se clôture d'abord depuis le commandement.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.certification-dashboard">
     <value>Qui détient quelles certifications et ce qui arrive à expiration.</value>
@@ -1654,7 +1654,7 @@
     <value>Ajoutez vos contrats de service et leurs tarifs.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.custom-statuses">
-    <value>Vérifiez les statuts intégrés et ajoutez les vôtres là où votre terminologie diffère.</value>
+    <value>Vérifiez les statuts intégrés et ajoutez les vôtres là où votre terminologie diffère. Attribuez un type de base à chacun ; En caserne indique aux recommandations de régulation qu'une unité est à sa caserne.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.data-protection">
     <value>Consultez la liste de contrôle d'inscription et planifiez la récupération de clé avant de vous inscrire.</value>
@@ -1669,7 +1669,7 @@
     <value>Accordez l'accès à la régulation aux personnes qui régulent, puis faites-les se connecter.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.dispatch-settings">
-    <value>Choisissez si la régulation suit les groupes ou les quarts, et vérifiez les options de statut automatique.</value>
+    <value>Choisissez si la régulation suit les groupes ou les quarts, et vérifiez les options de statut automatique. Définissez les délais de départ de l'unité la plus proche si les équipes ont besoin de temps pour quitter la caserne.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.distribution-lists">
     <value>Créez des listes pour les groupes que vous contactez souvent, comme les Officiers.</value>
@@ -2076,6 +2076,9 @@
   <data xml:space="preserve" name="Field.RecordsNumberingConfig.Pattern">
     <value>Configuration de numérotation des dossiers / Modèle</value>
   </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingConfig.Prefixes">
+    <value>Configuration de numérotation des dossiers / Préfixes</value>
+  </data>
   <data xml:space="preserve" name="Field.RecordsNumberingFloor.NextSequence">
     <value>Plancher de numérotation des dossiers / Séquence suivante</value>
   </data>
@@ -2087,6 +2090,12 @@
   </data>
   <data xml:space="preserve" name="Field.RecordsNumberingFloor.SetOn">
     <value>Plancher de numérotation des dossiers / Défini le</value>
+  </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingPrefix.DefinitionKey">
+    <value>Préfixe de numérotation des dossiers / Clé de définition</value>
+  </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingPrefix.Prefix">
+    <value>Préfixe de numérotation des dossiers / Préfixe</value>
   </data>
   <data xml:space="preserve" name="Field.RecordsRetentionOverride.AppliesFrom">
     <value>Dérogation de conservation des dossiers / S'applique à partir du</value>
@@ -2161,7 +2170,7 @@
     <value>Autorise les positions dépassant la limite d'ancienneté configurée dans la sélection de l'unité la plus proche, marquées comme obsolètes. Évaluez le risque lié aux positions dépassées.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.MaxLocationAgeSeconds">
-    <value>Exclut les positions d'unité trop anciennes des candidats à l'unité la plus proche ; zéro supprime la limite d'ancienneté. IncludeStaleLocations modifie ce comportement.</value>
+    <value>Exclut les positions d'unité trop anciennes des candidats à l'unité la plus proche ; zéro supprime la limite d'ancienneté. IncludeStaleLocations modifie ce comportement. Une unité mesurée depuis sa caserne (statut En caserne, ou aucune position GPS) n'est jamais périmée.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.MaxRadiusMeters">
     <value>Distance maximale des candidats, en mètres ; zéro supprime le plafond de rayon. Ceci ne constitue pas une garantie de temps de réponse ou de sécurité de l'itinéraire.</value>
@@ -2179,7 +2188,7 @@
     <value>Niveau minimal de dotation en personnel configuré pour l'éligibilité aux recommandations ; zéro désactive ce filtre. Les unités sans places définies passent ce filtre, et les fiches de sortie peuvent le remplacer.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.UseRoutedEta">
-    <value>Reclasse les candidats présélectionnés à l'aide des estimations de trajet du fournisseur. Le chemin opérationnel peut effectuer des appels vers un fournisseur externe ; Admin Assist ne le fait pas.</value>
+    <value>Reclasse les candidats présélectionnés à l'aide des estimations de trajet du fournisseur. Le chemin opérationnel peut effectuer des appels vers un fournisseur externe ; Admin Assist ne le fait pas. Les délais de départ configurés sont ajoutés à chaque temps de trajet.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.GroupDispatchScopeConfig.DepartmentWideRoleIds">
     <value>Rôles existants autorisés à voir la régulation à l'échelle du département lorsque la limitation par groupe est activée. Ceci modifie le périmètre d'affichage, et non les licences ou la qualification opérationnelle.</value>
@@ -2230,13 +2239,16 @@
     <value>Réinitialise les séquences de dossiers chaque année civile, selon le fuseau horaire du département.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.SequenceWidth">
-    <value>Largeur de séquence avec zéros de remplissage pour les définitions utilisant les valeurs par défaut du département. L'éditeur de dossiers valide la largeur prise en charge.</value>
+    <value>Chiffres de la partie SEQ du modèle de numérotation, complétés par des zéros : 4 écrit 0184. De 3 à 8 chiffres ; le modifier conserve le prochain numéro de chaque séquence. Les définitions du département ayant leur propre numérotation conservent leur propre largeur.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.Floors">
     <value>Prochains numéros relevés, un par séquence de numérotation, pour les services qui poursuivent des numéros attribués avant Resgrid. Un prochain numéro ne fait que monter et les numéros déjà attribués l'emportent toujours, si bien qu'un prochain numéro relevé ne crée jamais de doublon.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.Pattern">
-    <value>Modèle de numérotation des types de dossiers intégrés et des rapports d'intervention, composé de texte fixe et des jetons PREFIX, YYYY, YY, GROUP et SEQ. Sans valeur, le modèle décrit par « Inclure l'année » et « Séquence par groupe » est conservé. La séquence redémarre dès que le texte autour de SEQ change.</value>
+    <value>La façon dont les numéros sont écrits pour les types de dossiers intégrés et les rapports d'intervention, par exemple RUN-0153 : du texte fixe et les jetons PREFIX, YYYY ou YY, GROUP et SEQ. PREFIX écrit le préfixe de chaque type de dossier : celui par défaut ou celui propre au département, défini dans « Préfixes par type de dossier ». Modifier le modèle ne renumérote pas les dossiers déjà numérotés. Tant qu'aucun modèle n'est enregistré, l'écran affiche celui que le département a toujours utilisé.</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.Prefixes">
+    <value>Le préfixe propre au département pour chaque type de dossier intégré et pour les rapports d'intervention, écrit par le jeton PREFIX à la place du préfixe par défaut (RUN, TRN, INC, etc.). Un type sans préfixe propre utilise son préfixe par défaut. Un nouveau préfixe démarre sa propre séquence ; les numéros déjà attribués gardent leur préfixe, et les types ayant le même préfixe partagent une séquence.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingFloor.NextSequence">
     <value>Le plus petit numéro que cette séquence peut attribuer ensuite.</value>
@@ -2249,6 +2261,12 @@
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingFloor.SetOn">
     <value>Date à laquelle le prochain numéro a été relevé (UTC).</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingPrefix.DefinitionKey">
+    <value>Le type de dossier intégré auquel s'applique le préfixe, par exemple system.run ou system.neris-incident.</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingPrefix.Prefix">
+    <value>2 à 6 lettres majuscules (A-Z) ou chiffres. Un préfixe qui n'est plus valide revient au préfixe par défaut du type.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsRetentionOverride.AppliesFrom">
     <value>Limite prospective pour les révisions éligibles à la dérogation, évaluée par le cycle de vie des dossiers.</value>
@@ -4951,7 +4969,7 @@
     <value>Indique si la visibilité des dossiers est étendue au département ou limitée au groupe. La portée de groupe restreint les permissions existantes et n’accorde jamais d’accès.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.RecordsNumberingConfig">
-    <value>Attribution des numéros, réinitialisation annuelle et mise en forme de la séquence pour les définitions qui ne remplacent pas la configuration du département.</value>
+    <value>Numérotation du département pour les types de dossiers intégrés et les rapports d'intervention : modèle de numérotation, chiffres de la séquence, préfixes par type de dossier et prochains numéros relevés. Les numéros sont attribués à la finalisation d'un dossier. Les définitions du département dotées de leur propre numérotation la conservent.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.RecordsRetentionPolicy">
     <value>Conservation par défaut et spécifique à la définition, y compris l’historique des politiques antérieures. Les restrictions et les règles de classe restreinte peuvent empêcher l’éligibilité à la purge.</value>
@@ -6704,5 +6722,62 @@
   </data>
   <data xml:space="preserve" name="Ui.worklist">
     <value>Liste des tâches de l’administrateur</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.InQuartersTurnoutSeconds">
+    <value>Configuration des recommandations de régulation / Délai de départ en caserne en secondes</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.InQuartersTurnoutSeconds">
+    <value>Secondes nécessaires à une unité en caserne avant de se mettre en route ; s'applique au statut En caserne et aux unités sans position GPS. Ajouté au temps de trajet pour classer les unités les plus proches ; zéro signifie aucun.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.MobileTurnoutSeconds">
+    <value>Configuration des recommandations de régulation / Délai de départ en mobilité en secondes</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.MobileTurnoutSeconds">
+    <value>Secondes nécessaires à une unité déjà sortie et disponible avant de se mettre en route ; s'applique aux unités classées d'après le GPS. Ajouté au temps de trajet pour classer les unités les plus proches ; zéro signifie aucun.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.StatusHoldToConfirm">
+    <value>Maintenir appuyé pour définir le statut</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.StatusHoldToConfirm">
+    <value>Les applications Unit et Responder définissent un statut par un appui maintenu de deux secondes au lieu d’un toucher suivi de Suivant ou Envoyer. Les statuts qui nécessitent une note ou une destination ouvrent toujours cette étape.</value>
+  </data>
+  <data name="Setting.CallNumberingConfig" xml:space="preserve">
+    <value>Configuration de la numérotation des appels</value>
+  </data>
+  <data name="SettingHelp.CallNumberingConfig" xml:space="preserve">
+    <value>Comment les nouveaux numéros d'appel sont écrits : le modèle de numéro d'appel et les chiffres de la séquence, ainsi qu'un prochain numéro relevé pour les services qui poursuivent des numéros émis avant Resgrid. La modifier ne renumérote jamais les appels qui ont déjà un numéro.</value>
+  </data>
+  <data name="Field.CallNumberingConfig.Pattern" xml:space="preserve">
+    <value>Configuration de la numérotation des appels / Modèle</value>
+  </data>
+  <data name="FieldHelp.CallNumberingConfig.Pattern" xml:space="preserve">
+    <value>Comment les numéros d'appel sont écrits, par exemple FD-2026-0153 : texte fixe plus les jetons YYYY ou YY, MM, DD et SEQ. La séquence recommence chaque fois que la date écrite change. Tant qu'aucun modèle n'est enregistré, les appels gardent les numéros YY-SEQ que Resgrid a toujours émis.</value>
+  </data>
+  <data name="Field.CallNumberingConfig.SequenceWidth" xml:space="preserve">
+    <value>Configuration de la numérotation des appels / Largeur de la séquence</value>
+  </data>
+  <data name="FieldHelp.CallNumberingConfig.SequenceWidth" xml:space="preserve">
+    <value>Chiffres de la partie SEQ du numéro d'appel, complétés par des zéros : 4 écrit 0153. De 1 à 8 chiffres, 1 sans zéros ; la modifier conserve le prochain numéro de la séquence.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.pending-calls">
+    <value>Appels en attente</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.pending-calls">
+    <value>Appels enregistrés pour qu'un régulateur les envoie plus tard, comme les suivis transmis par un autre système ; personne n'est notifié tant que l'appel n'est pas envoyé.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.scheduled-calls">
+    <value>Appels planifiés</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.scheduled-calls">
+    <value>Appels envoyés automatiquement à une heure future, qui peuvent être envoyés plus tôt ou replanifiés.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.api-keys">
+    <value>Clés d'API</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.api-keys">
+    <value>Permettez à un autre système d'appeler l'API Resgrid pour le service avec sa propre clé, ses autorisations, sa date d'expiration et ses adresses autorisées, au lieu de la connexion d'un membre.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureValue.api-keys">
+    <value>Les intégrations continuent de fonctionner quand des personnes partent, ne peuvent faire que ce que leur clé autorise et peuvent être révoquées immédiatement.</value>
   </data>
 </root>

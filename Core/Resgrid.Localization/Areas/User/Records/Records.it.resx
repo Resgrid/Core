@@ -123,10 +123,16 @@
   <data name="NextNumberCurrent" xml:space="preserve"><value>Prossimo numero</value></data>
   <data name="NextNumberRaiseTo" xml:space="preserve"><value>Porta il prossimo a</value></data>
   <data name="NextNumberBelowCurrent" xml:space="preserve"><value>Il prossimo numero può solo essere aumentato. Queste sequenze non sono state modificate perché il numero inserito era inferiore a quello che assegneranno successivamente:</value></data>
-  <data name="NextNumberPatternChanged" xml:space="preserve"><value>Lo schema di numerazione è cambiato, quindi i prossimi numeri inseriti non sono stati applicati. Controlla le sequenze del nuovo schema e salva di nuovo.</value></data>
+  <data name="NextNumberPatternChanged" xml:space="preserve"><value>Lo schema di numerazione o il prefisso di un tipo di registro è cambiato, quindi i prossimi numeri inseriti non sono stati applicati. Controlla le nuove sequenze e salva di nuovo.</value></data>
   <data name="NextNumberConfirm" xml:space="preserve"><value>Un prossimo numero aumentato non può essere ridotto di nuovo. Salvare queste modifiche?</value></data>
   <data name="NumberingAllTypes" xml:space="preserve"><value>Tutti i tipi di registro</value></data>
   <data name="NumberingNoGroup" xml:space="preserve"><value>Nessuna stazione/gruppo</value></data>
+  <data name="NumberPrefixesHeader" xml:space="preserve"><value>Prefissi per tipo di registro</value></data>
+  <data name="NumberPrefixesIntro" xml:space="preserve"><value>Imposta il prefisso che {PREFIX} scrive per ogni tipo di registro, ad esempio FIRE per Run e IR per i rapporti di incidente. Lascia una casella vuota per mantenere il predefinito. Un nuovo prefisso avvia una propria sequenza e i registri già numerati mantengono i loro numeri. I tipi con lo stesso prefisso condividono una sequenza. I prefissi vengono usati solo se lo schema include {PREFIX}.</value></data>
+  <data name="NumberPrefixType" xml:space="preserve"><value>Tipo di registro</value></data>
+  <data name="NumberPrefixDefault" xml:space="preserve"><value>Predefinito</value></data>
+  <data name="NumberPrefixRule" xml:space="preserve"><value>Da 2 a 6 lettere o cifre</value></data>
+  <data name="NumberPrefixInvalid" xml:space="preserve"><value>Un prefisso è composto da 2 a 6 lettere o cifre. Questi tipi di registro hanno mantenuto il prefisso precedente:</value></data>
   <data name="Retention" xml:space="preserve"><value>Conservazione</value></data>
   <data name="RetentionIntro" xml:space="preserve"><value>Predefiniti: 7 anni per i registri standard; permanente per Coroner e altre classi riservate. La conservazione è responsabilità del dipartimento. Le modifiche si applicano in avanti e sono verificate.</value></data>
   <data name="DepartmentDefaultYears" xml:space="preserve"><value>Predefinito dipartimento (anni, vuoto = sistema)</value></data>

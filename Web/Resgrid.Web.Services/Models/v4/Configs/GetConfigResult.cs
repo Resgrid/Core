@@ -112,6 +112,13 @@ namespace Resgrid.Web.Services.Models.v4.Configs
 		public string AppMapboxAccessToken { get; set; }
 
 		/// <summary>
+		/// The department sets statuses in the Unit and Responder apps with a two-second press and hold
+		/// instead of a tap followed by Next/Submit (Dispatch Settings). Only signed-in callers get it;
+		/// false otherwise.
+		/// </summary>
+		public bool StatusHoldToConfirm { get; set; }
+
+		/// <summary>
 		/// Latitude every map in every client should open on for this department. Resolved from the
 		/// department's configured map center, falling back to its address and finally to a system
 		/// default, so this is always populated.

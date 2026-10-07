@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Resgrid.Web.Services.Attributes;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Framework;
@@ -73,6 +74,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpGet("GetAllUnitStatuses")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Unit_View)]
+		[DepartmentApiKeyScope(DepartmentApiKeyScopes.UnitsRead)]
 		public async Task<ActionResult<UnitStautsesResult>> GetAllUnitStatuses()
 		{
 			var result = new UnitStautsesResult();
@@ -229,7 +231,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var unit = await _unitsService.GetUnitByIdAsync(unitId);
 			var setPersonnelStatus = await _departmentSettingsService.GetPersonnelOnUnitSetUnitStatusAsync(DepartmentId);
 
-			if (unit == null)
+			// A deleted unit takes no new statuses (an app may still have it selected).
+			if (unit == null || unit.IsDeleted)
 			{
 				ResponseHelper.PopulateV4ResponseNotFound(result);
 				return Ok(result);
@@ -415,6 +418,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			CustomStateDetail customState, DepartmentGroup group, string timeZone, List<Call> activeCalls, List<DepartmentGroup> groups, List<Poi> pois)
 		{
 			var state = "Unknown";
+			var stateId = 0;
 			var stateCss = "";
 			var stateStyle = "";
 			int? destinationId = 0;
@@ -428,6 +432,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (stateFound != null)
 			{
+				stateId = stateFound.State;
+
 				if (customState != null)
 				{
 					state = customState.ButtonText;
@@ -471,6 +477,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				Name = unit.Name,
 				Type = unit.Type,
 				State = state,
+				StateId = stateId,
 				StateCss = stateCss,
 				StateStyle = stateStyle,
 				TimestampUtc = timestamp,

@@ -2379,4 +2379,133 @@
   <data name="FederatedMfaTestNote" xml:space="preserve">
     <value>Le test vous envoie maintenant vers votre fournisseur d'identité en demandant la MFA. Lorsqu'il renvoie une valeur que la correspondance compte, cette version prend effet.</value>
   </data>
+  <data name="AuditLogTypeDepartmentApiKeyCreated" xml:space="preserve">
+    <value>Clé d'API du service créée</value>
+  </data>
+  <data name="AuditLogTypeDepartmentApiKeyRevoked" xml:space="preserve">
+    <value>Clé d'API du service révoquée</value>
+  </data>
+  <data name="ApiKeysButton" xml:space="preserve">
+    <value>Clés d'API</value>
+  </data>
+  <data name="ApiKeysPageTitle" xml:space="preserve">
+    <value>Clés d'API</value>
+  </data>
+  <data name="ApiKeysIntro" xml:space="preserve">
+    <value>Les clés d'API permettent à un autre système, par exemple de planification, de dossiers ou de répartition, d'appeler Resgrid pour votre service sans se connecter en tant que personne. Une clé ne peut faire que ce que vous autorisez, cesse de fonctionner à sa date d'expiration et peut être révoquée à tout moment.</value>
+  </data>
+  <data name="ApiKeysUsage" xml:space="preserve">
+    <value>Envoyez la clé dans l'en-tête X-Resgrid-ApiKey des requêtes vers {0}. Ne la mettez jamais dans une URL.</value>
+  </data>
+  <data name="ApiKeysExisting" xml:space="preserve">
+    <value>Clés</value>
+  </data>
+  <data name="ApiKeysNone" xml:space="preserve">
+    <value>Aucune clé d'API n'a été créée.</value>
+  </data>
+  <data name="ApiKeyName" xml:space="preserve">
+    <value>Nom</value>
+  </data>
+  <data name="ApiKeyPrefix" xml:space="preserve">
+    <value>Clé</value>
+  </data>
+  <data name="ApiKeyScopes" xml:space="preserve">
+    <value>Autorisé</value>
+  </data>
+  <data name="ApiKeyCreated" xml:space="preserve">
+    <value>Créée</value>
+  </data>
+  <data name="ApiKeyExpires" xml:space="preserve">
+    <value>Expire</value>
+  </data>
+  <data name="ApiKeyLastUsed" xml:space="preserve">
+    <value>Dernière utilisation</value>
+  </data>
+  <data name="ApiKeyStatus" xml:space="preserve">
+    <value>Statut</value>
+  </data>
+  <data name="ApiKeyStatusActive" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="ApiKeyStatusExpired" xml:space="preserve">
+    <value>Expirée</value>
+  </data>
+  <data name="ApiKeyStatusRevoked" xml:space="preserve">
+    <value>Révoquée</value>
+  </data>
+  <data name="ApiKeyNever" xml:space="preserve">
+    <value>Jamais</value>
+  </data>
+  <data name="ApiKeyRevoke" xml:space="preserve">
+    <value>Révoquer</value>
+  </data>
+  <data name="ApiKeyRevokeConfirm" xml:space="preserve">
+    <value>Révoquer cette clé ? Les systèmes qui l’utilisent cessent immédiatement de fonctionner.</value>
+  </data>
+  <data name="ApiKeyRevoked" xml:space="preserve">
+    <value>La clé a été révoquée.</value>
+  </data>
+  <data name="ApiKeyCreateHeader" xml:space="preserve">
+    <value>Créer une clé</value>
+  </data>
+  <data name="ApiKeyNameHelp" xml:space="preserve">
+    <value>À quoi sert la clé, par exemple le système qui l’utilisera.</value>
+  </data>
+  <data name="ApiKeyScopesLabel" xml:space="preserve">
+    <value>Ce que la clé peut faire</value>
+  </data>
+  <data name="ApiKeyExpiresIn" xml:space="preserve">
+    <value>Expire après</value>
+  </data>
+  <data name="ApiKeyDays" xml:space="preserve">
+    <value>{0} jours</value>
+  </data>
+  <data name="ApiKeyAllowedIps" xml:space="preserve">
+    <value>Adresses autorisées (facultatif)</value>
+  </data>
+  <data name="ApiKeyAllowedIpsHelp" xml:space="preserve">
+    <value>Une adresse IP ou une plage CIDR par ligne, par exemple 203.0.113.10 ou 203.0.113.0/24. Laissez vide pour autoriser toute adresse.</value>
+  </data>
+  <data name="ApiKeyCreateButton" xml:space="preserve">
+    <value>Créer la clé</value>
+  </data>
+  <data name="ApiKeyNewHeader" xml:space="preserve">
+    <value>Votre nouvelle clé d'API</value>
+  </data>
+  <data name="ApiKeyNewWarning" xml:space="preserve">
+    <value>Copiez cette clé maintenant. Elle n'est affichée qu'une fois et ne peut pas être récupérée. Si elle est perdue, révoquez-la et créez-en une autre.</value>
+  </data>
+  <data name="ApiKeyCopy" xml:space="preserve">
+    <value>Copier</value>
+  </data>
+  <data name="ApiKeyErrorName" xml:space="preserve">
+    <value>Donnez un nom à la clé.</value>
+  </data>
+  <data name="ApiKeyErrorScopes" xml:space="preserve">
+    <value>Choisissez au moins une action autorisée pour la clé.</value>
+  </data>
+  <data name="ApiKeyErrorIp" xml:space="preserve">
+    <value>« {0} » n’est ni une adresse IP ni une plage CIDR.</value>
+  </data>
+  <data name="ApiKeyErrorCreate" xml:space="preserve">
+    <value>La clé n'a pas pu être créée : {0}</value>
+  </data>
+  <data name="ApiKeyScopeCallsRead" xml:space="preserve">
+    <value>Lire les appels (actifs, en attente et planifiés)</value>
+  </data>
+  <data name="ApiKeyScopeCallsCreate" xml:space="preserve">
+    <value>Créer des appels, y compris en attente et planifiés</value>
+  </data>
+  <data name="ApiKeyScopeCallsUpdate" xml:space="preserve">
+    <value>Modifier les appels, envoyer ceux en attente et changer les heures planifiées</value>
+  </data>
+  <data name="ApiKeyScopeCallsClose" xml:space="preserve">
+    <value>Clôturer les appels</value>
+  </data>
+  <data name="ApiKeyScopeReferenceRead" xml:space="preserve">
+    <value>Lire les types d'appel, priorités, modèles, groupes et rôles</value>
+  </data>
+  <data name="ApiKeyScopeUnitsRead" xml:space="preserve">
+    <value>Lire les unités et leurs statuts</value>
+  </data>
 </root>

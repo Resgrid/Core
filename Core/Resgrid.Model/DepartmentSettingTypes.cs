@@ -136,5 +136,18 @@
 		/// Automatic, which pairs with <see cref="MappingMapStyle"/> (see <see cref="MapStylePresets.ResolveNightStyle"/>).
 		/// </summary>
 		MappingMapStyleNight = 113,
+
+		/// <summary>
+		/// Cached scalar, Dispatch Settings screen: "true" makes the Unit and Responder apps set a status with a
+		/// two-second press and hold instead of a tap followed by Next/Submit. Missing = false (tap).
+		/// </summary>
+		StatusHoldToConfirm = 114,
+
+		/// <summary>
+		/// ProtoBuf-serialized <see cref="CallNumberingConfig"/>: the department's call number pattern and sequence digits,
+		/// edited on the Call Settings screen. Missing = the legacy "26-153" numbers. The sequences themselves are counted
+		/// in CallNumberSequences.
+		/// </summary>
+		CallNumberingConfig = 115,
 	}
 }

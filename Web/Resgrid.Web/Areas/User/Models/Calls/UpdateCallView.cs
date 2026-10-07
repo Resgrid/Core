@@ -44,6 +44,12 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 		[System.ComponentModel.DataAnnotations.DisplayFormat(DataFormatString = "{0:MM/dd/yyyy HH:mm}", ApplyFormatInEditMode = true)]
 		public DateTime? ScheduleDispatchDate { get; set; }
 
+		/// <summary>Set by the "Save and Dispatch Now" button: after saving, a pending or scheduled call is sent at once.</summary>
+		public bool DispatchNow { get; set; }
+
+		/// <summary>The call is still waiting to be dispatched (pending, or scheduled and not yet sent).</summary>
+		public bool IsWaitingForDispatch { get; set; }
+
 		public UpdateCallView()
 		{
 			AdditionalContacts = new List<string>();

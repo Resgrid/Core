@@ -161,6 +161,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 					Resgrid.Framework.Logging.LogException(ex,
 						$"{nameof(BuildConfigResultAsync)}: {nameof(IDepartmentSettingsService.GetModernNotificationsEnabledAsync)} failed for departmentId {departmentId}.");
 				}
+
+				try
+				{
+					result.Data.StatusHoldToConfirm = await _departmentSettingsService.GetStatusHoldToConfirmAsync(departmentId);
+				}
+				catch (System.Exception ex)
+				{
+					Resgrid.Framework.Logging.LogException(ex,
+						$"{nameof(BuildConfigResultAsync)}: {nameof(IDepartmentSettingsService.GetStatusHoldToConfirmAsync)} failed for departmentId {departmentId}.");
+				}
 			}
 
 			bool userModernApplicationSoundsEnabled = false;

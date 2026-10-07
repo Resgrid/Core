@@ -907,6 +907,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Unit_Delete)]
 		public async Task<IActionResult> DeleteUnit(int unitId, CancellationToken cancellationToken)
 		{
+			// Also false for an already-deleted unit.
 			if (!await _authorizationService.CanUserModifyUnitAsync(UserId, unitId))
 				return Unauthorized();
 
@@ -921,12 +922,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
 			auditEvent.ServerName = Environment.MachineName;
 			auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
-			try { await _unitsService.DeleteUnitAsync(unitId, cancellationToken); }
-			catch (Resgrid.Model.Inventories.InventoryException ex) when (ex.Code == "HolderHistoryRetained")
-			{
-				TempData["InventoryHolderRetained"] = true;
-				return RedirectToAction("Index");
-			}
+
+			// Soft delete: the unit leaves every current list but its calls, states and logs keep resolving it.
+			await _unitsService.DeleteUnitAsync(unitId, UserId, cancellationToken);
 			_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
 			return RedirectToAction("Index");

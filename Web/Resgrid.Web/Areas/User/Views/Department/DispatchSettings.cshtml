@@ -176,6 +176,17 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["StatusHoldToConfirmLabel"]</label>
+                            <div class="col-sm-9">
+                                <div class="row">
+                                    <div class="col-sm-10">
+                                        <input type="checkbox" asp-for="StatusHoldToConfirm">
+                                        <span class="help-block m-b-none">@localizer["StatusHoldToConfirmHelp"]</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                         <div class="hr-line-dashed"></div>
                         <h3>@localizer["CheckInTimerSettingsHeader"]</h3>
@@ -269,6 +280,20 @@
                                 <label class="col-sm-3 control-label">@localizer["EtaShortlistSizeLabel"]</label>
                                 <div class="col-sm-9">
                                     <input type="number" min="1" asp-for="RecommendationEtaShortlistSize" class="form-control" style="width: 30%" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">@localizer["InQuartersTurnoutLabel"]</label>
+                                <div class="col-sm-9">
+                                    <input type="number" min="0" max="1800" asp-for="RecommendationInQuartersTurnoutSeconds" class="form-control" style="width: 30%" />
+                                    <span class="help-block m-b-none">@localizer["InQuartersTurnoutHelp"]</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">@localizer["MobileTurnoutLabel"]</label>
+                                <div class="col-sm-9">
+                                    <input type="number" min="0" max="1800" asp-for="RecommendationMobileTurnoutSeconds" class="form-control" style="width: 30%" />
+                                    <span class="help-block m-b-none">@localizer["MobileTurnoutHelp"]</span>
                                 </div>
                             </div>
                         }

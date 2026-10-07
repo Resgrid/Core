@@ -29,6 +29,13 @@ namespace Resgrid.Model.Services
 		Task<bool> PushCallUnit(StandardPushCall call, int unitId, DepartmentCallPriority priority = null);
 
 		/// <summary>
+		/// Pushes an informational notice to a unit's device with the notification sound, never a dispatch tone.
+		/// The event code comes from <see cref="StandardPushMessage.Id"/> and should lead with "N" so the push is sent
+		/// as an ordinary notification rather than a critical call alert.
+		/// </summary>
+		Task<bool> PushNotificationUnit(StandardPushMessage message, int unitId);
+
+		/// <summary>
 		/// Realtime-chat push to a user's Responder app subscriber, and — only when
 		/// <paramref name="includeIncidentCommandApp"/> is set — to their IC app subscriber as well.
 		/// EventCode is the chat deep-link (t:{channelId} / g:{channelId}); unreadCount drives the app badge.

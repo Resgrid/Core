@@ -89,6 +89,25 @@
 									@Html.DropDownListFor(m => m.NoteType, Model.NoteTypes)
 							</div>
 						</div>
+						@if (Model.Siblings.Count > 0)
+						{
+							<div class="form-group">
+								<label class="col-sm-2 control-label">@localizer["NextStatusesLabel"]:</label>
+								<div class="col-sm-8">
+									@foreach (var sibling in Model.Siblings)
+									{
+										var isNext = Model.NextStateDetailIds.Contains(sibling.CustomStateDetailId);
+										<div class="checkbox">
+											<label>
+												<input type="checkbox" name="NextStateDetailIds" value="@sibling.CustomStateDetailId" checked="@isNext" />
+												<span class="label" style="color: @sibling.TextColor; background: @sibling.ButtonClassToColor();">@sibling.ButtonText</span>
+											</label>
+										</div>
+									}
+									<span class="help-block m-b-none">@localizer["NextStatusesHelp"]</span>
+								</div>
+							</div>
+						}
 						<div class="form-group">
 							<label class="col-sm-2 control-label">@commonLocalizer["Preview"]:</label>
 							<div style="text-align: center;">

@@ -338,10 +338,16 @@ namespace Resgrid.Services
 			{
 				string soundType = await GetSoundTypeAsync(message.DepartmentId, profile, PushSoundTypes.Notifiation, PushSoundTypes.ModernNotification);
 
+				// As in PushNotification: a caller's event code (e.g. "C{callId}" so a tap opens the call) wins over
+				// the default "N{id}".
+				var eventCode = !string.IsNullOrWhiteSpace(message.Id)
+					? message.Id
+					: string.Format("N{0}", message.MessageId);
+
 				try
 				{
 					if (!string.IsNullOrWhiteSpace(message.DepartmentCode))
-						await _novuProvider.SendICUserNotification(message.Title, message.SubTitle, userId, message.DepartmentCode, string.Format("N{0}", message.MessageId), soundType);
+						await _novuProvider.SendICUserNotification(message.Title, message.SubTitle, userId, message.DepartmentCode, eventCode, soundType);
 				}
 				catch (Exception ex)
 				{
@@ -510,6 +516,28 @@ namespace Resgrid.Services
 			}
 
 			return true;
+		}
+
+		public async Task<bool> PushNotificationUnit(StandardPushMessage message, int unitId)
+		{
+			if (message == null || string.IsNullOrWhiteSpace(message.DepartmentCode))
+				return false;
+
+			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(message.DepartmentId.GetValueOrDefault()))
+				return false;
+
+			string soundType = await GetSoundTypeAsync(message.DepartmentId, null, PushSoundTypes.Notifiation, PushSoundTypes.ModernNotification);
+			var eventCode = !string.IsNullOrWhiteSpace(message.Id) ? message.Id : string.Format("N{0}", message.MessageId);
+
+			try
+			{
+				return await _novuProvider.SendUnitDispatch(message.Title, message.SubTitle, unitId, message.DepartmentCode, eventCode, soundType, true, 0, "#000000");
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex);
+				return false;
+			}
 		}
 
 		private async Task<string> GetSoundTypeAsync(int? departmentId, UserProfile profile, PushSoundTypes legacyType, PushSoundTypes modernType)

@@ -10,6 +10,8 @@
 	// Chat.System gates the moderation console link; it is only useful to department or group admins.
 	var chatModerationVisible = ClaimsAuthorizationHelper.IsUserDepartmentOrGroupAdmin(0) &&
 		await featureToggleService.IsEnabledAsync(FeatureFlagKeys.ChatSystem, ClaimsAuthorizationHelper.GetDepartmentId());
+	// The search box is hidden below the md breakpoint; phones and small tablets get an icon to the Search page instead.
+	var searchVisible = await featureToggleService.IsEnabledAsync(FeatureFlagKeys.SearchUnified, ClaimsAuthorizationHelper.GetDepartmentId());
 }
 <div class="row border-bottom" style="height: 50px;">
     <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
@@ -22,6 +24,12 @@
             </div>
         </div>
         <ul class="nav navbar-top-links navbar-right">
+            @if (searchVisible)
+            {
+                <li class="hidden-md hidden-lg" id="menu-search">
+                    <a asp-controller="Search" asp-action="Index" asp-route-area="User" title="@searchLocalizer["PageTitle"]" aria-label="@searchLocalizer["PageTitle"]"><i class="fa fa-search" aria-hidden="true"></i></a>
+                </li>
+            }
             <li class="btn dropdown" id="menu-department">
                 <a href="#" data-toggle="dropdown" class="dropdown-toggle"><span class="text">@ClaimsAuthorizationHelper.GetDepartmentName().Truncate(45)</span>&nbsp;<b class="caret"></b></a>
                 <ul class="dropdown-menu">

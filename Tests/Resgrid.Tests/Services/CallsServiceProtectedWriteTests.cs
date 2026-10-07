@@ -57,7 +57,7 @@ namespace Resgrid.Tests.Services
 				Mock.Of<ICallDispatchUnitRepository>(), Mock.Of<ICallDispatchRoleRepository>(), Mock.Of<IDepartmentCallPriorityRepository>(),
 				Mock.Of<IShortenUrlProvider>(), Mock.Of<ICallProtocolsRepository>(), Mock.Of<IGeoLocationProvider>(),
 				Mock.Of<IDepartmentsService>(), Mock.Of<ICallReferencesRepository>(), Mock.Of<ICallContactsRepository>(),
-				Mock.Of<IIndoorMapService>(), Mock.Of<ICallVideoFeedRepository>(),
+				Mock.Of<IIndoorMapService>(), Mock.Of<ICallVideoFeedRepository>(), Mock.Of<ICallNumberingService>(),
 				new Lazy<IProtectedWriteService>(() => _protectedWriteService.Object));
 		}
 

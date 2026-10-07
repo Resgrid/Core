@@ -67,7 +67,8 @@
                             <tbody>
                                 @foreach (var g in Model.Groups)
                                 {
-                                    <tr>
+                                    @* Search results for a group the viewer cannot edit link here: /User/Groups#group-{id}. *@
+                                    <tr id="group-@g.DepartmentGroupId">
                                         <td>
                                             @g.Name
                                         </td>
@@ -120,6 +121,14 @@
         </div>
     </div>
 </div>
+
+@section Styles
+{
+    <style>
+        .table > tbody > tr[id^="group-"] { scroll-margin-top: 80px; }
+        .table > tbody > tr:target > td { background-color: #fef5eb; transition: background-color .3s; }
+    </style>
+}
 
 @section Scripts
     {

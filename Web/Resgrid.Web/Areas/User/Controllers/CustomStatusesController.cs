@@ -231,6 +231,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.DetailTypes = model.DetailType.ToSelectList();
 			model.NoteTypes = model.NoteType.ToSelectList();
 			model.BaseTypes = model.BaseType.ToSelectList();
+			model.Siblings = GetNextStatusCandidates(model.Detail.CustomState, model.Detail.CustomStateDetailId);
+			model.NextStateDetailIds = model.Detail.GetNextStateDetailIds();
 
 			model.DetailType = (CustomStateDetailTypes)model.Detail.DetailType;
 			model.NoteType = (CustomStateNoteTypes)model.Detail.NoteType;
@@ -253,18 +255,27 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await _authorizationService.CanUserModifyCustomStateDetailAsync(UserId, model.Detail.CustomStateDetailId))
 				return Unauthorized();
 
-			model.Detail.CustomState = await _customStateService.GetCustomSateByIdAsync(model.Detail.CustomStateId);
+			// The form posts only the detail id. Reading the owning set from the posted CustomStateId (always 0) found
+			// nothing and redirected without saving, so no option edit was ever stored.
+			var storedDetail = await _customStateService.GetCustomDetailByIdAsync(model.Detail.CustomStateDetailId);
+			if (storedDetail == null)
+				return RedirectToAction("Index");
+
+			model.Detail.CustomStateId = storedDetail.CustomStateId;
+			model.Detail.CustomState = await _customStateService.GetCustomSateByIdAsync(storedDetail.CustomStateId);
 			if (model.Detail.CustomState == null)
 				return RedirectToAction("Index");
 
 			model.DetailTypes = model.DetailType.ToSelectList();
 			model.NoteTypes = model.NoteType.ToSelectList();
 			model.BaseTypes = model.BaseType.ToSelectList();
+			model.Siblings = GetNextStatusCandidates(model.Detail.CustomState, storedDetail.CustomStateDetailId);
+			model.NextStateDetailIds ??= new List<int>();
 
 			if (ModelState.IsValid)
 			{
 				var auditEvent = new AuditEvent();
-				var detail = await _customStateService.GetCustomDetailByIdAsync(model.Detail.CustomStateDetailId);
+				var detail = storedDetail;
 				auditEvent.Before = detail.CloneJsonToString();
 
 				detail.ButtonColor = model.Detail.ButtonColor;
@@ -275,6 +286,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 				detail.GpsRequired = model.Detail.GpsRequired;
 				detail.DetailType = (int)model.DetailType;
 				detail.BaseType = (int)model.BaseType;
+
+				// Staffing levels have no sequence (the editor hides the list); anything else keeps only ids of active
+				// options in this same set, never a posted id from another set or department.
+				if (model.Detail.CustomState.Type != (int)CustomStateTypes.Staffing)
+				{
+					var candidateIds = model.Siblings.Select(x => x.CustomStateDetailId).ToHashSet();
+					detail.SetNextStateDetailIds(model.NextStateDetailIds.Where(candidateIds.Contains));
+				}
 
 				auditEvent.DepartmentId = DepartmentId;
 				auditEvent.UserId = UserId;
@@ -372,6 +391,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			return View(model);
+		}
+
+		private static List<CustomStateDetail> GetNextStatusCandidates(CustomState state, int detailId)
+		{
+			if (state == null || state.Type == (int)CustomStateTypes.Staffing)
+				return new List<CustomStateDetail>();
+
+			return state.GetActiveDetails().Where(x => !x.IsDeleted && x.CustomStateDetailId != detailId).ToList();
 		}
 
 		#region Async Methods

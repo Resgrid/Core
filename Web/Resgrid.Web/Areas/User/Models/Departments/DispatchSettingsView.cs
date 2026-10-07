@@ -34,6 +34,9 @@ namespace Resgrid.Web.Areas.User.Models.Departments
 
 		public bool PersonnelOnUnitSetUnitStatus { get; set; }
 
+		/// <summary>Apps set a status with a two-second press and hold (setting 114).</summary>
+		public bool StatusHoldToConfirm { get; set; }
+
 		// Check-In Timer Settings
 		public bool AutoEnableCheckInTimers { get; set; }
 		public List<CheckInTimerConfig> TimerConfigs { get; set; }
@@ -61,6 +64,8 @@ namespace Resgrid.Web.Areas.User.Models.Departments
 		public int RecommendationUnitMinimumStaffingLevel { get; set; }
 		public SelectList StaffingLevelOptions { get; set; }
 		public bool RecommendationMoveUpEnabled { get; set; }
+		public int RecommendationInQuartersTurnoutSeconds { get; set; }
+		public int RecommendationMobileTurnoutSeconds { get; set; }
 		public List<StationCoverageRequirement> StationCoverageRequirements { get; set; }
 		public List<DepartmentGroup> StationGroups { get; set; }
 		public List<PersonnelRole> PersonnelRoles { get; set; }

@@ -93,7 +93,7 @@
     <value>Виклики</value>
   </data>
   <data name="CallsAndStations" xml:space="preserve">
-    <value>Calls and Stations</value>
+    <value>Виклики та станції</value>
   </data>
   <data name="ChangesWarning" xml:space="preserve">
     <value>Changes to custom statues can take up to 30 minutes to fully propagate though the Resgrid network. Mobile app users are encouraged to manually resync (Settings-&gt;Advanced Settings-&gt;ReSync).</value>
@@ -162,7 +162,7 @@
     <value>New Option</value>
   </data>
   <data name="NoDetail" xml:space="preserve">
-    <value>No Detail</value>
+    <value>Без деталей</value>
   </data>
   <data name="None" xml:space="preserve">
     <value>Немає</value>
@@ -213,7 +213,7 @@
     <value>Staging</value>
   </data>
   <data name="Stations" xml:space="preserve">
-    <value>Stations</value>
+    <value>Станції</value>
   </data>
   <data name="TextColorLabel" xml:space="preserve">
     <value>Text Color</value>
@@ -259,5 +259,29 @@
   </data>
   <data name="Completed" xml:space="preserve">
     <value>Завершено</value>
+  </data>
+  <data name="InQuarters" xml:space="preserve">
+    <value>На станції</value>
+  </data>
+  <data name="Pois" xml:space="preserve">
+    <value>POI</value>
+  </data>
+  <data name="CallsAndPois" xml:space="preserve">
+    <value>Виклики та POI</value>
+  </data>
+  <data name="StationsAndPois" xml:space="preserve">
+    <value>Станції та POI</value>
+  </data>
+  <data name="CallsStationsAndPois" xml:space="preserve">
+    <value>Виклики, станції та POI</value>
+  </data>
+  <data name="NextStatusesLabel" xml:space="preserve">
+    <value>Наступні статуси</value>
+  </data>
+  <data name="NextStatusesHelp" xml:space="preserve">
+    <value>Поки цей статус поточний, застосунки Unit і Responder пропонують лише позначені статуси, а також посилання «Показати всі статуси» для всього, що поза послідовністю. Залиште всі прапорці знятими, щоб пропонувати всі статуси. Диспетчери та вебсайт і надалі можуть встановити будь-який статус.</value>
+  </data>
+  <data name="NextStatusesAny" xml:space="preserve">
+    <value>Будь-який статус</value>
   </data>
 </root>

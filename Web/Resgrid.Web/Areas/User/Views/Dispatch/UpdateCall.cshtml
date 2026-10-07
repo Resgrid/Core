@@ -91,6 +91,15 @@
                                 @Html.HiddenFor(m => m.Call.CallFormData)
                                 <div asp-validation-summary="All" class="text-danger"></div>
 
+                                @if (TempData["DispatchNowError"] is string dispatchNowError && !string.IsNullOrEmpty(dispatchNowError))
+                                {
+                                    <div class="alert alert-danger">@dispatchNowError</div>
+                                }
+                                @if (Model.IsWaitingForDispatch)
+                                {
+                                    <div class="alert alert-warning">@(Model.Call.State == (int)Resgrid.Model.CallStates.Pending ? localizer["PendingCallBanner"] : localizer["ScheduledCallBanner"])</div>
+                                }
+
                                 @if (!String.IsNullOrEmpty(Model.Message))
                                 {
                                     <div class="alert alert-success">
@@ -374,6 +383,10 @@
                             <div class="col-sm-4 col-sm-offset-2">
                                 <a class="btn btn-white" asp-controller="Dispatch" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Cancel"]</a>
                                 <button class="btn btn-primary" type="submit">@commonLocalizer["Update"]</button>
+                                @if (Model.IsWaitingForDispatch)
+                                {
+                                    <button class="btn btn-success" type="submit" name="DispatchNow" value="true">@localizer["SaveAndDispatchNow"]</button>
+                                }
                             </div>
                         </div>
                     </form>

@@ -83,7 +83,8 @@ namespace Resgrid.Services.Records
 				if (Restricted(sourceKind) && !context.CanViewRestricted) throw new UnauthorizedAccessException();
 				if (sourceKind == RmsEvidenceKind.TrackingFix)
 				{
-					foreach (var unit in (await _units.GetUnitsForDepartmentAsync(departmentId)).Where(u => u.DepartmentId == departmentId))
+					// Evidence for a past record: a unit deleted since still has its fixes.
+					foreach (var unit in (await _units.GetUnitsForDepartmentIncludingDeletedAsync(departmentId) ?? new List<Unit>()).Where(u => u.DepartmentId == departmentId))
 						if (await _sourceAuthorization.Value.CanUserViewUnitLocationAsync(userId, unit.UnitId, departmentId))
 							selection.Choices.Add(new RecordEvidenceChoice { Id = unit.UnitId.ToString(CultureInfo.InvariantCulture), Label = unit.Name });
 				}

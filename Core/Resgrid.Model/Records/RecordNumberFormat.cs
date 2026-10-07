@@ -34,7 +34,7 @@ namespace Resgrid.Model
 
 	/// <summary>
 	/// Department record-number patterns (setting 72, <see cref="RecordsNumberingConfig.Pattern"/>). A pattern is literal
-	/// text (letters, digits, '-', '_' and '.') around tokens: {PREFIX} the record type's prefix (RUN, TRN, INC...),
+	/// text (letters, digits, '-', '_' and '.') around tokens: {PREFIX} the record type's prefix (RUN, TRN, INC... or the department's own),
 	/// {YYYY} or {YY} the year, {GROUP} the station/group as "G" plus its id, and {SEQ} the zero-padded sequence,
 	/// which must appear exactly once. A department with no saved pattern keeps the one its checkboxes always produced.
 	/// </summary>
@@ -52,6 +52,10 @@ namespace Resgrid.Model
 		public const int MaxWidth = 8;
 		public const int DefaultWidth = 4;
 		public const int MaxSequence = 99999999;
+
+		/// <summary>A record type prefix never renders longer than the 8 character {PREFIX} it replaces, so <see cref="MaxPatternLength"/> still holds.</summary>
+		public const int MinPrefixLength = 2;
+		public const int MaxPrefixLength = 6;
 
 		private static readonly string[] Tokens = { PrefixToken, YearToken, ShortYearToken, GroupToken, SequenceToken };
 
@@ -74,6 +78,16 @@ namespace Resgrid.Model
 		}
 
 		public static bool IsValid(string pattern) => Parse(pattern) != null;
+
+		/// <summary>
+		/// A department's prefix for a system record type (what {PREFIX} renders): 2 to 6 upper-case ASCII letters or digits. The
+		/// separators stay in the pattern, so one pattern still describes every type's numbers.
+		/// </summary>
+		public static bool IsValidPrefix(string prefix)
+		{
+			return prefix != null && prefix.Length >= MinPrefixLength && prefix.Length <= MaxPrefixLength
+				&& prefix.All(c => (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9'));
+		}
 
 		/// <summary>Tokens are matched case-insensitively; this writes them back in their canonical upper case.</summary>
 		public static string Normalize(string pattern)

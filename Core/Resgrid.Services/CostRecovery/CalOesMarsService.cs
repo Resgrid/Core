@@ -343,7 +343,7 @@ namespace Resgrid.Services.CostRecovery
 			{
 				if (row.UnitId.HasValue)
 				{
-					units ??= (await _unitsService.GetUnitsForDepartmentAsync(departmentId))?.ToDictionary(u => u.UnitId, u => u.Name) ?? new Dictionary<int, string>();
+					units ??= (await _unitsService.GetUnitsForDepartmentIncludingDeletedAsync(departmentId))?.ToDictionary(u => u.UnitId, u => u.Name) ?? new Dictionary<int, string>();
 					row.SubjectName = units.TryGetValue(row.UnitId.Value, out var name) ? name : row.UnitDesignator;
 				}
 				else row.SubjectName = row.ExternalResourceName ?? row.UnitDesignator ?? row.InventoryAssetId;

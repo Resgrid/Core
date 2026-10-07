@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Resgrid.Web.Services.Attributes;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Framework;
@@ -67,6 +68,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IContactsService _contactsService;
 		private readonly IDispatchScopeService _dispatchScopeService;
 		private readonly IProtectedWriteService _protectedWriteService;
+		private readonly IPendingCallsService _pendingCallsService;
+		private readonly ICallClosureService _callClosureService;
 
 		public CallsController(
 			ICallsService callsService,
@@ -97,10 +100,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IProtectedWriteService protectedWriteService,
 			IContactsService contactsService,
 			IDispatchScopeService dispatchScopeService,
-			ICallLocationHistoryService callLocationHistoryService
+			ICallLocationHistoryService callLocationHistoryService,
+			IPendingCallsService pendingCallsService,
+			ICallClosureService callClosureService
 			)
 		{
+			_callClosureService = callClosureService;
 			_callLocationHistoryService = callLocationHistoryService;
+			_pendingCallsService = pendingCallsService;
 			_contactsService = contactsService;
 			_dispatchScopeService = dispatchScopeService;
 			_dataProtectionService = dataProtectionService;
@@ -272,6 +279,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpGet("GetActiveCalls")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Call_View)]
+		[DepartmentApiKeyScope(DepartmentApiKeyScopes.CallsRead)]
 		public async Task<ActionResult<ActiveCallsResult>> GetActiveCalls()
 		{
 			var result = new ActiveCallsResult();
@@ -337,6 +345,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpGet("GetCall")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Call_View)]
+		[DepartmentApiKeyScope(DepartmentApiKeyScopes.CallsRead)]
 		public async Task<ActionResult<GetCallResult>> GetCall(string callId, [FromQuery] string departmentId = null)
 		{
 			if (!int.TryParse(callId, NumberStyles.Integer, CultureInfo.InvariantCulture, out int parsedCallId))
@@ -356,7 +365,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (c.DepartmentId != effectiveDepartmentId)
 				return Unauthorized();
 
-			if (!IsSystemApiKeyRequest && !await _authorizationService.CanUserViewCallAsync(UserId, parsedCallId))
+			if (!IsSystemApiKeyRequest && !await CanViewOrEditCallAsync(parsedCallId, edit: false))
 				return Unauthorized();
 
 			c = await _callsService.PopulateCallData(c, false, true, true, false, false, false, true, true, true);
@@ -654,7 +663,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				result.Data.CallFormData = call.CallFormData;
 
 			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
-			var units = await _unitsService.GetUnitsForDepartmentAsync(call.DepartmentId);
+			// The call's units as dispatched, deleted ones included.
+			var units = await _unitsService.GetUnitsForDepartmentIncludingDeletedAsync(call.DepartmentId);
 			var unitStates = (await _unitsService.GetUnitStatesForCallAsync(call.DepartmentId, callId)).OrderBy(y => y.Timestamp).ThenBy(x => x.UnitId).ToList();
 			var actionLogs = (await _actionLogsService.GetActionLogsForCallAsync(call.DepartmentId, callId)).OrderBy(y => y.Timestamp).ThenBy(x => x.UserId).ToList();
 			var names = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(DepartmentId, true, true, true);
@@ -920,6 +930,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpGet("GetNewCallFieldPolicy")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Call_View)]
+		[DepartmentApiKeyScope(DepartmentApiKeyScopes.CallsRead)]
 		public async Task<ActionResult<NewCallFieldPolicyResult>> GetNewCallFieldPolicy()
 		{
 			var result = new NewCallFieldPolicyResult();
@@ -950,6 +961,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[Authorize(Policy = ResgridResources.Call_Create)]
+		[DepartmentApiKeyScope(DepartmentApiKeyScopes.CallsCreate)]
 		public async Task<ActionResult<SaveCallResult>> SaveCall([FromBody] NewCallInput newCallInput, CancellationToken cancellationToken)
 		{
 			var result = new SaveCallResult();
@@ -980,6 +992,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (newCallInput.DestinationPoiId.HasValue && newCallInput.DestinationPoiId.Value > 0 && destinationPoi == null)
 				return BadRequest();
 
+			// A pending call is saved for a dispatcher to send later: nobody is notified, and any scheduled
+			// time is ignored because the dispatcher decides when it goes out.
+			var isPending = newCallInput.IsPending == true;
+
 			// The department's new-call field policy is enforced here, not only in the clients: an old
 			// build, an offline-queued call or a third-party integration must not be able to put an
 			// incomplete call in front of the crews. Departments with no policy configured are unaffected.
@@ -997,8 +1013,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 				ReferenceId = newCallInput.ReferenceId,
 				DestinationPoiId = newCallInput.DestinationPoiId,
 				IndoorMapZoneId = newCallInput.IndoorMapZoneId,
-				DispatchOn = newCallInput.DispatchOn,
-				HasDispatchList = !string.IsNullOrWhiteSpace(newCallInput.DispatchList)
+				DispatchOn = isPending ? null : (newCallInput.DispatchOnUtc ?? newCallInput.DispatchOn),
+				HasDispatchList = !string.IsNullOrWhiteSpace(newCallInput.DispatchList),
+				IsPending = isPending
 			});
 
 			if (fieldViolations.Count > 0)
@@ -1014,7 +1031,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				ReportingUserId = UserId,
 				Priority = newCallInput.Priority,
 				Name = newCallInput.Name,
-				NatureOfCall = newCallInput.Nature
+				NatureOfCall = newCallInput.Nature,
+				State = isPending ? (int)CallStates.Pending : (int)CallStates.Active
 			};
 
 			if (!string.IsNullOrWhiteSpace(newCallInput.ContactName))
@@ -1054,7 +1072,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!string.IsNullOrWhiteSpace(newCallInput.IndoorMapFloorId))
 				call.IndoorMapFloorId = newCallInput.IndoorMapFloorId;
 
-			if (newCallInput.DispatchOn.HasValue)
+			if (newCallInput.DispatchOnUtc.HasValue && !isPending)
+			{
+				call.DispatchOn = DateTime.SpecifyKind(newCallInput.DispatchOnUtc.Value.Kind == DateTimeKind.Local
+					? newCallInput.DispatchOnUtc.Value.ToUniversalTime() : newCallInput.DispatchOnUtc.Value, DateTimeKind.Utc);
+				call.HasBeenDispatched = false;
+			}
+			else if (newCallInput.DispatchOn.HasValue && !isPending)
 			{
 				call.DispatchOn = DateTimeHelpers.ConvertToUtc(newCallInput.DispatchOn.Value, department.TimeZone);
 				call.HasBeenDispatched = false;
@@ -1063,13 +1087,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!string.IsNullOrWhiteSpace(newCallInput.Note))
 				call.Notes = newCallInput.Note;
 
-			if (!string.IsNullOrWhiteSpace(newCallInput.Geolocation))
+			// Clients with no position send "," (or 0,0). Storing that as the location skipped the address and
+			// What3Words lookups below, so the call was saved unlocated and run cards could not rank anything.
+			if (GeoMath.ParseLatLonString(newCallInput.Geolocation) != null)
 				call.GeoLocationData = newCallInput.Geolocation;
 
-			if (string.IsNullOrWhiteSpace(call.GeoLocationData) && !string.IsNullOrWhiteSpace(call.Address))
+			if (GeoMath.ParseLatLonString(call.GeoLocationData) == null && !string.IsNullOrWhiteSpace(call.Address))
 				call.GeoLocationData = await _geoLocationProvider.GetLatLonFromAddress(call.Address);
 
-			if (string.IsNullOrWhiteSpace(call.GeoLocationData) && !string.IsNullOrWhiteSpace(call.W3W))
+			if (GeoMath.ParseLatLonString(call.GeoLocationData) == null && !string.IsNullOrWhiteSpace(call.W3W))
 			{
 				var coords = await _geoLocationProvider.GetCoordinatesFromW3WAsync(call.W3W);
 
@@ -1105,7 +1131,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			call.RoleDispatches = new List<CallDispatchRole>();
 			call.UnitDispatches = new List<CallDispatchUnit>();
 
-			if (!IsSystemApiKeyRequest && (newCallInput.DispatchList == "0" || string.IsNullOrWhiteSpace(newCallInput.DispatchList)))
+			// An empty list means "everyone" for an immediate call (older clients send nothing), but for a pending call
+			// it means no proposed recipients yet: the dispatcher who picks it up chooses them.
+			if (!IsSystemApiKeyRequest && (newCallInput.DispatchList == "0" || (!isPending && string.IsNullOrWhiteSpace(newCallInput.DispatchList))))
 			{
 				// Use case, existing clients and non-ionic2 app this will be null dispatch all users. Or we've specified everyone (0).
 				foreach (var u in users)
@@ -1191,7 +1219,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				}
 			}
 
-			var shouldDispatchNow = !call.DispatchOn.HasValue || call.DispatchOn.Value <= DateTime.UtcNow;
+			var shouldDispatchNow = !isPending && (!call.DispatchOn.HasValue || call.DispatchOn.Value <= DateTime.UtcNow);
 
 			// Call is in the past or is now, were dispatching now (at the end of this func)
 			if (call.DispatchOn.HasValue && call.DispatchOn.Value <= DateTime.UtcNow)
@@ -1207,7 +1235,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			// ADP write preflight (plan 3.3): refuse BEFORE inserting — attended callers need a
 			// current grant; system-key/workload callers pass (broker encrypt-only lane).
 			var writePreflight = await _protectedWriteService.PreflightWriteAsync(effectiveDepartmentId,
-				ProtectedGrantToken, UserId, IsSystemApiKeyRequest, cancellationToken);
+				ProtectedGrantToken, UserId, IsUnattendedWriter, cancellationToken);
 			if (!writePreflight.Success)
 				return ProtectedWriteProblem(writePreflight);
 
@@ -1232,7 +1260,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			// sweep also envelopes it); downstream broadcast uses the enveloped call, which the
 			// notification safe-projections turn into generic content.
 			var protectedWrite = await _protectedWriteService.PrepareCallWriteAsync(effectiveDepartmentId, savedCall,
-				null, ProtectedGrantToken, UserId, IsSystemApiKeyRequest, cancellationToken);
+				null, ProtectedGrantToken, UserId, IsUnattendedWriter, cancellationToken);
 			if (!protectedWrite.Success)
 			{
 				Logging.LogError($"ADP protected write failed AFTER insert for call {savedCall.CallId} in department {effectiveDepartmentId} ({protectedWrite.Reason}); transient plaintext row pending re-encryption.");
@@ -1243,7 +1271,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			//OutboundEventProvider handler = new OutboundEventProvider.CallAddedTopicHandler();
 			//OutboundEventProvider..Handle(new CallAddedEvent() { DepartmentId = DepartmentId, Call = savedCall });
-			_eventAggregator.SendMessage<CallAddedEvent>(new CallAddedEvent() { DepartmentId = effectiveDepartmentId, Call = savedCall });
+			// A pending call is not live yet: "added" (incident chat channel, Call Added workflows, the field apps'
+			// lists) waits until it is dispatched. The update still refreshes dispatcher screens.
+			if (isPending)
+				_eventAggregator.SendMessage<CallUpdatedEvent>(new CallUpdatedEvent() { DepartmentId = effectiveDepartmentId, Call = savedCall });
+			else
+				_eventAggregator.SendMessage<CallAddedEvent>(new CallAddedEvent() { DepartmentId = effectiveDepartmentId, Call = savedCall });
 
 			if (shouldDispatchNow && ((call.GroupDispatches != null && call.GroupDispatches.Any()) || (call.UnitDispatches != null && call.UnitDispatches.Any())))
 			{
@@ -1292,7 +1325,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (profiles.Any())
 				cqi.Profiles = await _userProfileService.GetSelectedUserProfilesAsync(profiles);
 
-			if (!savedCall.DispatchOn.HasValue || savedCall.DispatchOn.Value <= DateTime.UtcNow)
+			if (shouldDispatchNow)
 				await _queueService.EnqueueCallBroadcastAsync(cqi, cancellationToken);
 
 			// Save UDF field values if supplied
@@ -1331,6 +1364,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[Authorize(Policy = ResgridResources.Call_Update)]
+		[DepartmentApiKeyScope(DepartmentApiKeyScopes.CallsUpdate)]
 		public async Task<ActionResult<EditCallResult>> EditCall([FromBody] EditCallInput editCallInput, CancellationToken cancellationToken)
 		{
 			var result = new EditCallResult();
@@ -1339,7 +1373,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				!int.TryParse(editCallInput.Id, NumberStyles.Integer, CultureInfo.InvariantCulture, out int callId))
 				return BadRequest();
 
-			var canDoOperation = await _authorizationService.CanUserEditCallAsync(UserId, callId);
+			var canDoOperation = await CanViewOrEditCallAsync(callId, edit: true);
 
 			if (!canDoOperation)
 				return Unauthorized();
@@ -1358,7 +1392,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (call.DepartmentId != DepartmentId)
 				return Unauthorized();
 
-			if (call.State != (int)CallStates.Active)
+			// A pending call can be edited before it is dispatched; nobody is notified of those edits.
+			var isPending = call.State == (int)CallStates.Pending;
+
+			if (call.State != (int)CallStates.Active && !isPending)
 				return BadRequest();
 
 			var activeUsers = await _departmentsService.GetAllMembersForDepartmentAsync(DepartmentId);
@@ -1406,6 +1443,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!string.IsNullOrWhiteSpace(editCallInput.ReferenceId))
 				call.ReferenceNumber = editCallInput.ReferenceId;
 
+			var addressChanged = !string.IsNullOrWhiteSpace(editCallInput.Address)
+				&& !string.Equals(editCallInput.Address, call.Address, StringComparison.Ordinal);
+
 			if (!string.IsNullOrWhiteSpace(editCallInput.Address))
 				call.Address = editCallInput.Address;
 
@@ -1419,20 +1459,38 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (editCallInput.DispatchOn.HasValue)
 			{
-				call.DispatchOn = DateTimeHelpers.ConvertToUtc(editCallInput.DispatchOn.Value, department.TimeZone);
-				call.HasBeenDispatched = false;
+				var dispatchOn = DateTimeHelpers.ConvertToUtc(editCallInput.DispatchOn.Value, department.TimeZone);
+
+				if (!isPending)
+				{
+					call.DispatchOn = dispatchOn;
+					call.HasBeenDispatched = false;
+				}
+				else if (dispatchOn > DateTime.UtcNow)
+				{
+					// Giving a pending call a future dispatch time turns it into a scheduled call, which the
+					// scheduled-calls worker sends at that time. A time that has passed leaves it pending.
+					call.State = (int)CallStates.Active;
+					call.DispatchOn = dispatchOn;
+					call.HasBeenDispatched = false;
+					isPending = false;
+				}
 			}
 
 			if (!string.IsNullOrWhiteSpace(editCallInput.Note))
 				call.Notes = editCallInput.Note;
 
-			if (!string.IsNullOrWhiteSpace(editCallInput.Geolocation))
+			// "," (or 0,0) from a client with no position is not a location: it neither replaces the stored point
+			// nor blocks the lookups below. A new address with no posted point drops the old address's point.
+			if (GeoMath.ParseLatLonString(editCallInput.Geolocation) != null)
 				call.GeoLocationData = editCallInput.Geolocation;
+			else if (addressChanged)
+				call.GeoLocationData = null;
 
-			if (string.IsNullOrWhiteSpace(call.GeoLocationData) && !string.IsNullOrWhiteSpace(call.Address))
+			if (GeoMath.ParseLatLonString(call.GeoLocationData) == null && !string.IsNullOrWhiteSpace(call.Address))
 				call.GeoLocationData = await _geoLocationProvider.GetLatLonFromAddress(call.Address);
 
-			if (string.IsNullOrWhiteSpace(call.GeoLocationData) && !string.IsNullOrWhiteSpace(call.W3W))
+			if (GeoMath.ParseLatLonString(call.GeoLocationData) == null && !string.IsNullOrWhiteSpace(call.W3W))
 			{
 				var coords = await _geoLocationProvider.GetCoordinatesFromW3WAsync(call.W3W);
 
@@ -1459,7 +1517,23 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var existingUnitDispatches = new List<CallDispatchUnit>(call.UnitDispatches ?? new List<CallDispatchUnit>());
 			var existingRoleDispatches = new List<CallDispatchRole>(call.RoleDispatches ?? new List<CallDispatchRole>());
 
-			if (string.IsNullOrWhiteSpace(editCallInput.DispatchList) || editCallInput.DispatchList == "0")
+			if (isPending && string.IsNullOrWhiteSpace(editCallInput.DispatchList))
+			{
+				// No list on an edit of a pending call keeps its proposed recipients (an empty list would otherwise mean
+				// "everyone").
+				if (call.Dispatches == null)
+					call.Dispatches = new List<CallDispatch>();
+
+				if (call.GroupDispatches == null)
+					call.GroupDispatches = new List<CallDispatchGroup>();
+
+				if (call.RoleDispatches == null)
+					call.RoleDispatches = new List<CallDispatchRole>();
+
+				if (call.UnitDispatches == null)
+					call.UnitDispatches = new List<CallDispatchUnit>();
+			}
+			else if (string.IsNullOrWhiteSpace(editCallInput.DispatchList) || editCallInput.DispatchList == "0")
 			{
 				if (call.Dispatches == null)
 					call.Dispatches = new List<CallDispatch>();
@@ -1629,7 +1703,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 
 			var protectedWrite = await _protectedWriteService.PrepareCallWriteAsync(DepartmentId, call,
-				storedCatalogedValues, ProtectedGrantToken, UserId, IsSystemApiKeyRequest, cancellationToken);
+				storedCatalogedValues, ProtectedGrantToken, UserId, IsUnattendedWriter, cancellationToken);
 			if (!protectedWrite.Success)
 				return ProtectedWriteProblem(protectedWrite);
 
@@ -1657,7 +1731,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var newUnitIds = currentUnitIds.Where(id => !existingUnitDispatches.Any(d => d.UnitId == id)).ToList();
 			var newRoleIds = currentRoleIds.Where(id => !existingRoleDispatches.Any(d => d.RoleId == id)).ToList();
 
-			var shouldApplyDispatchStatuses = call.HasBeenDispatched.GetValueOrDefault() || !call.DispatchOn.HasValue || call.DispatchOn.Value <= DateTime.UtcNow;
+			// Only a call that has gone out notifies anyone or moves statuses: a pending call, or a scheduled call
+			// before its time, sends the edited list when it is dispatched.
+			var isLive = call.State == (int)CallStates.Active &&
+				(call.HasBeenDispatched.GetValueOrDefault() || !call.DispatchOn.HasValue || call.DispatchOn.Value <= DateTime.UtcNow);
+			var shouldApplyDispatchStatuses = isLive;
 			if (shouldApplyDispatchStatuses && (cancelledGroupIds.Any() || cancelledUnitIds.Any()))
 			{
 				await _callDispatchStatusService.ApplyReleaseStatusesAsync(call, cancelledGroupIds, cancelledUnitIds, cancellationToken);
@@ -1669,7 +1747,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 
 			// Send cancel notifications to removed entities
-			if (editCallInput.NotifyCancelledEntities)
+			if (isLive && editCallInput.NotifyCancelledEntities)
 			{
 				if (cancelledUserIds.Any() || cancelledGroupIds.Any() || cancelledUnitIds.Any() || cancelledRoleIds.Any())
 				{
@@ -1738,7 +1816,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 
 			// Auto-dispatch newly added entities when RebroadcastCall is not checked
-			if (!editCallInput.RebroadcastCall)
+			if (isLive && !editCallInput.RebroadcastCall)
 			{
 				if (newUserIds.Any() || newGroupIds.Any() || newUnitIds.Any() || newRoleIds.Any())
 				{
@@ -1755,7 +1833,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				}
 			}
 
-			if (editCallInput.RebroadcastCall)
+			if (isLive && editCallInput.RebroadcastCall)
 			{
 				var cqi = new CallQueueItem();
 				cqi.Call = call;
@@ -1808,10 +1886,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[Authorize(Policy = ResgridResources.Call_Update)]
+		[DepartmentApiKeyScope(DepartmentApiKeyScopes.CallsUpdate)]
 		public async Task<ActionResult<UpdateScheduledDispatchTimeResult>> UpdateScheduledDispatchTime(UpdateDispatchTimeInput input)
 		{
 			var result = new UpdateScheduledDispatchTimeResult();
-			var canDoOperation = await _authorizationService.CanUserEditCallAsync(UserId, int.Parse(input.Id));
+			if (input == null || !int.TryParse(input.Id, NumberStyles.Integer, CultureInfo.InvariantCulture, out var scheduledCallId))
+				return BadRequest();
+
+			var canDoOperation = await CanViewOrEditCallAsync(scheduledCallId, edit: true);
 
 			if (!canDoOperation)
 				return Unauthorized();
@@ -1819,7 +1901,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!ModelState.IsValid)
 				return BadRequest();
 
-			var call = await _callsService.GetCallByIdAsync(int.Parse(input.Id));
+			var call = await _callsService.GetCallByIdAsync(scheduledCallId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
 			if (call == null)
@@ -2013,6 +2095,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[Authorize(Policy = ResgridResources.Call_Update)]
+		[DepartmentApiKeyScope(DepartmentApiKeyScopes.CallsClose)]
 		public async Task<ActionResult<CloseCallResult>> CloseCall([FromBody] CloseCallInput closeCallInput, CancellationToken cancellationToken)
 		{
 			var result = new CloseCallResult();
@@ -2020,7 +2103,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!ModelState.IsValid)
 				return BadRequest();
 
-			var call = await _callsService.GetCallByIdAsync(int.Parse(closeCallInput.Id));
+			// Only a closing state: 0 (Active) or 8 (Pending) here would re-open a call or put it back in the queue.
+			if (closeCallInput.Type < (int)CallStates.Closed || closeCallInput.Type > (int)CallStates.FalseAlarm)
+				return BadRequest("Type must be a closed call state (1-7).");
+
+			if (!int.TryParse(closeCallInput.Id, NumberStyles.Integer, CultureInfo.InvariantCulture, out var closeCallId))
+				return BadRequest();
+
+			var call = await _callsService.GetCallByIdAsync(closeCallId);
 
 			if (call == null)
 			{
@@ -2028,7 +2118,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return Ok(result);
 			}
 
-			var canDoOperation = await _authorizationService.CanUserCloseCallAsync(UserId, int.Parse(closeCallInput.Id), DepartmentId);
+			var canDoOperation = await _authorizationService.CanUserCloseCallAsync(UserId, closeCallId, DepartmentId);
 
 			if (!canDoOperation)
 				return Unauthorized();
@@ -2036,7 +2126,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (call.DepartmentId != DepartmentId)
 				return Unauthorized();
 
+			// A call run under an active incident command is closed from the command first (IC app: End Command,
+			// which can close the call in the same step).
+			if (await _callClosureService.GetBlockingIncidentCommandAsync(DepartmentId, call.CallId) != null)
+				return BadRequest("This call has an active incident command. Close the incident command first, then close the call.");
+
 			call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true, true);
+
+			// Captured before the state changes: a pending call, or a scheduled call that never went out, had no
+			// dispatch statuses applied, so there are none to release.
+			var wasLive = call.State == (int)CallStates.Active &&
+				(call.HasBeenDispatched.GetValueOrDefault() || !call.DispatchOn.HasValue || call.DispatchOn.Value <= DateTime.UtcNow);
+
 			call.ClosedByUserId = UserId;
 			call.ClosedOn = DateTime.UtcNow;
 			call.CompletedNotes = closeCallInput.Notes;
@@ -2044,7 +2145,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			// ADP protected write (plan 19.2): CompletedNotes is cataloged; encrypt before persisting.
 			var protectedWrite = await _protectedWriteService.PrepareCallWriteAsync(DepartmentId, call,
-				null, ProtectedGrantToken, UserId, IsSystemApiKeyRequest, cancellationToken);
+				null, ProtectedGrantToken, UserId, IsUnattendedWriter, cancellationToken);
 			if (!protectedWrite.Success)
 				return ProtectedWriteProblem(protectedWrite);
 
@@ -2052,11 +2153,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			_eventAggregator.SendMessage<CallClosedEvent>(new CallClosedEvent() { DepartmentId = DepartmentId, Call = savedCall });
 
-			var shouldApplyReleaseStatuses = call.HasBeenDispatched.GetValueOrDefault() || !call.DispatchOn.HasValue || call.DispatchOn.Value <= DateTime.UtcNow;
-			if (shouldApplyReleaseStatuses && ((call.GroupDispatches != null && call.GroupDispatches.Any()) || (call.UnitDispatches != null && call.UnitDispatches.Any())))
+			if (wasLive && ((call.GroupDispatches != null && call.GroupDispatches.Any()) || (call.UnitDispatches != null && call.UnitDispatches.Any())))
 			{
 				await _callDispatchStatusService.ApplyReleaseStatusesAsync(call, cancellationToken: cancellationToken);
 			}
+
+			// Nobody was told about a pending call or a scheduled call that never went out, so there is nobody to tell.
+			if (closeCallInput.SendNotification == true && wasLive)
+				await _callClosureService.NotifyCallClosedAsync(call, UserId, cancellationToken);
 
 			result.Id = savedCall.CallId.ToString();
 			result.PageSize = 0;
@@ -2073,6 +2177,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpGet("GetAllPendingScheduledCalls")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Call_View)]
+		[DepartmentApiKeyScope(DepartmentApiKeyScopes.CallsRead)]
 		public async Task<ActionResult<ScheduledCallsResult>> GetAllPendingScheduledCalls()
 		{
 			var result = new ScheduledCallsResult();
@@ -2118,6 +2223,176 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			ResponseHelper.PopulateV4ResponseData(result);
 			return Ok(result);
+		}
+
+		/// <summary>
+		/// Returns the department's pending calls: saved but not yet dispatched (State 8), oldest first. Pending calls
+		/// come from Calls/SaveCall with IsPending, e.g. follow-ups fed in from another system, and wait here for a
+		/// dispatcher to send them with Calls/DispatchCallNow.
+		/// </summary>
+		/// <returns>Array of CallResult objects for each pending call in the department</returns>
+		[HttpGet("GetPendingCalls")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		[DepartmentApiKeyScope(DepartmentApiKeyScopes.CallsRead)]
+		public async Task<ActionResult<PendingCallsResult>> GetPendingCalls()
+		{
+			var result = new PendingCallsResult();
+
+			var calls = (await _dispatchScopeService.FilterCallsForUserAsync(DepartmentId, UserId,
+				await _callsService.GetPendingCallsByDepartmentIdAsync(DepartmentId))).OrderBy(x => x.LoggedOn).ToList();
+			var destinationPois = await _mappingService.GetPOIsForDepartmentAsync(DepartmentId);
+			var destinationPoiLookup = destinationPois.ToDictionary(x => x.PoiId);
+
+			if (calls.Any())
+			{
+				var protectedReads = await ResolveProtectedReadsAsync(calls);
+
+				foreach (var c in calls)
+				{
+					destinationPoiLookup.TryGetValue(c.DestinationPoiId.GetValueOrDefault(), out var destinationPoi);
+					var callData = ConvertCall(c, null, c.Address, TimeZone, destinationPoi);
+					if (protectedReads.TryGetValue(c.CallId, out var protectedRead))
+						ApplyProtectedReadMetadata(callData, protectedRead);
+					result.Data.Add(callData);
+				}
+
+				await ApplyBigBoardSafeShellAsync(result.Data);
+				result.PageSize = result.Data.Count;
+				result.Status = ResponseHelper.Success;
+			}
+			else
+			{
+				result.PageSize = 0;
+				result.Status = ResponseHelper.NotFound;
+			}
+
+			ResponseHelper.PopulateV4ResponseData(result);
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Dispatches a waiting call right now: a pending call, or a scheduled call that has not gone out yet. The call
+		/// becomes active and everyone on its dispatch list is notified. Pass DispatchList to replace who it goes to.
+		/// </summary>
+		/// <param name="input">The call and, optionally, who to send it to</param>
+		/// <param name="cancellationToken">The cancellation token</param>
+		/// <returns>OK with the call id when it was dispatched; Bad Request when the call is not waiting or has nobody to send it to</returns>
+		[HttpPut("DispatchCallNow")]
+		[Consumes(MediaTypeNames.Application.Json)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[Authorize(Policy = ResgridResources.Call_Update)]
+		[DepartmentApiKeyScope(DepartmentApiKeyScopes.CallsUpdate)]
+		public async Task<ActionResult<DispatchCallNowResult>> DispatchCallNow([FromBody] DispatchCallNowInput input, CancellationToken cancellationToken)
+		{
+			var result = new DispatchCallNowResult();
+
+			if (input == null || !ModelState.IsValid ||
+				!int.TryParse(input.CallId, NumberStyles.Integer, CultureInfo.InvariantCulture, out int callId))
+				return BadRequest();
+
+			if (!await CanViewOrEditCallAsync(callId, edit: true))
+				return Unauthorized();
+
+			var call = await _callsService.GetCallByIdAsync(callId);
+
+			if (call == null)
+			{
+				ResponseHelper.PopulateV4ResponseNotFound(result);
+				return Ok(result);
+			}
+
+			if (call.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			if (!_pendingCallsService.IsWaitingForDispatch(call))
+				return BadRequest("This call is not waiting to be dispatched: it is not pending, or it has already been dispatched or closed.");
+
+			call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true, true);
+
+			if (!string.IsNullOrWhiteSpace(input.DispatchList))
+				await ReplaceDispatchListAsync(call, input.DispatchList);
+
+			var outcome = await _pendingCallsService.DispatchNowAsync(call, UserId, cancellationToken);
+
+			if (outcome == DispatchNowOutcome.NoRecipients)
+				return BadRequest("Choose who to send this call to (personnel, groups, roles or units) before dispatching it.");
+
+			if (outcome == DispatchNowOutcome.QueueFailed)
+				return Problem("The dispatch could not be queued. The call is still waiting; try again.");
+
+			if (outcome != DispatchNowOutcome.Dispatched)
+				return BadRequest();
+
+			result.Id = call.CallId.ToString();
+			result.PageSize = 0;
+			result.Status = ResponseHelper.Updated;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Replaces a loaded call's personnel, group, role and unit dispatches with a "P:|G:|R:|U:" list ("0" = everyone),
+		/// keeping only ids that belong to the department.
+		/// </summary>
+		private async Task ReplaceDispatchListAsync(Call call, string dispatchList)
+		{
+			call.Dispatches ??= new List<CallDispatch>();
+			call.GroupDispatches ??= new List<CallDispatchGroup>();
+			call.RoleDispatches ??= new List<CallDispatchRole>();
+			call.UnitDispatches ??= new List<CallDispatchUnit>();
+
+			var activeUsers = await _departmentsService.GetAllMembersForDepartmentAsync(DepartmentId);
+			List<string> userIds;
+			var groupIds = new List<int>();
+			var roleIds = new List<int>();
+			var unitIds = new List<int>();
+
+			if (dispatchList.Trim() == "0")
+			{
+				userIds = activeUsers.Where(x => !x.IsDeleted && !x.IsDisabled.GetValueOrDefault()).Select(x => x.UserId).Distinct().ToList();
+			}
+			else
+			{
+				var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
+				var roles = await _personnelRolesService.GetAllRolesForDepartmentAsync(DepartmentId);
+				var units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
+				var entries = dispatchList.Split(char.Parse("|"));
+
+				userIds = entries.Where(x => x.StartsWith("P:")).Select(y => y.Substring(2))
+					.Where(id => activeUsers.Any(x => x.UserId == id && !x.IsDeleted && !x.IsDisabled.GetValueOrDefault())).Distinct().ToList();
+				groupIds = DispatchListHelper.ResolveIds(entries, "G:",
+						name => groups.FirstOrDefault(x => string.Equals(x.Name?.Trim(), name, StringComparison.OrdinalIgnoreCase))?.DepartmentGroupId)
+					.Where(id => groups.Any(x => x.DepartmentGroupId == id)).Distinct().ToList();
+				roleIds = DispatchListHelper.ResolveIds(entries, "R:",
+						name => roles.FirstOrDefault(x => string.Equals(x.Name?.Trim(), name, StringComparison.OrdinalIgnoreCase))?.PersonnelRoleId)
+					.Where(id => roles.Any(x => x.PersonnelRoleId == id)).Distinct().ToList();
+				unitIds = DispatchListHelper.ResolveIds(entries, "U:",
+						name => units.FirstOrDefault(x => string.Equals(x.Name?.Trim(), name, StringComparison.OrdinalIgnoreCase))?.UnitId)
+					.Where(id => units.Any(x => x.UnitId == id)).Distinct().ToList();
+			}
+
+			foreach (var item in call.Dispatches.Where(x => !userIds.Contains(x.UserId)).ToList())
+				call.Dispatches.Remove(item);
+			foreach (var id in userIds.Where(id => !call.Dispatches.Any(x => x.UserId == id)))
+				call.Dispatches.Add(new CallDispatch { CallId = call.CallId, UserId = id });
+
+			foreach (var item in call.GroupDispatches.Where(x => !groupIds.Contains(x.DepartmentGroupId)).ToList())
+				call.GroupDispatches.Remove(item);
+			foreach (var id in groupIds.Where(id => !call.GroupDispatches.Any(x => x.DepartmentGroupId == id)))
+				call.GroupDispatches.Add(new CallDispatchGroup { CallId = call.CallId, DepartmentGroupId = id });
+
+			foreach (var item in call.RoleDispatches.Where(x => !roleIds.Contains(x.RoleId)).ToList())
+				call.RoleDispatches.Remove(item);
+			foreach (var id in roleIds.Where(id => !call.RoleDispatches.Any(x => x.RoleId == id)))
+				call.RoleDispatches.Add(new CallDispatchRole { CallId = call.CallId, RoleId = id });
+
+			foreach (var item in call.UnitDispatches.Where(x => !unitIds.Contains(x.UnitId)).ToList())
+				call.UnitDispatches.Remove(item);
+			foreach (var id in unitIds.Where(id => !call.UnitDispatches.Any(x => x.UnitId == id)))
+				call.UnitDispatches.Add(new CallDispatchUnit { CallId = call.CallId, UnitId = id });
 		}
 
 		/// <summary>
@@ -2174,7 +2449,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 
 			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
-			var units = await _unitsService.GetUnitsForDepartmentAsync(call.DepartmentId);
+			// The call's units as dispatched, deleted ones included.
+			var units = await _unitsService.GetUnitsForDepartmentIncludingDeletedAsync(call.DepartmentId);
 			var unitStates = (await _unitsService.GetUnitStatesForCallAsync(call.DepartmentId, callId)).OrderBy(y => y.Timestamp).ThenBy(x => x.UnitId).ToList();
 			var actionLogs = (await _actionLogsService.GetActionLogsForCallAsync(call.DepartmentId, callId)).OrderBy(y => y.Timestamp).ThenBy(x => x.UserId).ToList();
 			var names = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(DepartmentId, true, true, true);
@@ -2334,6 +2610,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[Authorize(Policy = ResgridResources.Call_View)]
+		[DepartmentApiKeyScope(DepartmentApiKeyScopes.CallsRead)]
 		public async Task<ActionResult<ActiveCallsResult>> GetCalls(DateTime startDate, DateTime endDate)
 		{
 			// Missing query params bind to DateTime.MinValue (0001-01-01), which is below the SQL
@@ -2609,6 +2886,24 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return builtInStatuses?.FirstOrDefault(x => x.CustomStateDetailId == rawStatus);
 
 			return customStates?.Where(x => x?.Details != null).SelectMany(x => x.Details).FirstOrDefault(x => x != null && x.CustomStateDetailId == rawStatus);
+		}
+
+		/// <summary>
+		/// The per-user call check, except for a department API key: the key acts for its department, so the call only has
+		/// to belong to it. (The user checks resolve the acting user's active department, which for the managing user need
+		/// not be the key's department; the key's scope already limits what it may do.)
+		/// </summary>
+		private async Task<bool> CanViewOrEditCallAsync(int callId, bool edit)
+		{
+			if (IsDepartmentApiKeyRequest)
+			{
+				var call = await _callsService.GetCallByIdAsync(callId, false);
+				return call != null && call.DepartmentId == DepartmentId;
+			}
+
+			return edit
+				? await _authorizationService.CanUserEditCallAsync(UserId, callId)
+				: await _authorizationService.CanUserViewCallAsync(UserId, callId);
 		}
 
 		private async Task<Poi> GetValidatedDestinationPoiAsync(int? destinationPoiId, int? departmentIdOverride = null)

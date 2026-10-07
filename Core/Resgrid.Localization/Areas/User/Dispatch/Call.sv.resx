@@ -840,6 +840,9 @@
   <data name="IncidentReport" xml:space="preserve">
     <value>Insatsrapport</value>
   </data>
+  <data name="ReportsMenu" xml:space="preserve">
+    <value>Rapporter</value>
+  </data>
   <data name="StatusLinkAuto" xml:space="preserve">
     <value>automatiskt kopplad</value>
   </data>
@@ -956,5 +959,80 @@
   </data>
   <data name="SiteFiles" xml:space="preserve">
     <value>Platsfiler</value>
+  </data>
+  <data name="NearestUnitsIncludesTurnout" xml:space="preserve">
+    <value>inkl. {0} s utryckning</value>
+  </data>
+  <data name="PendingCallsHeader" xml:space="preserve">
+    <value>Väntande ärenden</value>
+  </data>
+  <data name="PendingCallsDescription" xml:space="preserve">
+    <value>Ärenden som sparats men inte larmats ut. Ingen har aviserats. Öppna ett ärende, välj vilka det ska skickas till och larma ut det.</value>
+  </data>
+  <data name="ViewAllPendingCalls" xml:space="preserve">
+    <value>Visa alla</value>
+  </data>
+  <data name="NoPendingCalls" xml:space="preserve">
+    <value>Inga ärenden väntar på utlarmning.</value>
+  </data>
+  <data name="SaveAsPending" xml:space="preserve">
+    <value>Spara som väntande (larma inte ut ännu)</value>
+  </data>
+  <data name="SaveAsPendingHelp" xml:space="preserve">
+    <value>Ärendet hamnar under Väntande ärenden utan att någon aviseras. En operatör tar det, väljer mottagare och larmar ut det.</value>
+  </data>
+  <data name="PendingCallBanner" xml:space="preserve">
+    <value>Väntande: ärendet har inte larmats ut och ingen har aviserats.</value>
+  </data>
+  <data name="ScheduledCallBanner" xml:space="preserve">
+    <value>Schemalagt: ärendet har inte skickats ännu. Det går ut vid den schemalagda tiden, eller nu med Larma ut nu.</value>
+  </data>
+  <data name="DispatchNow" xml:space="preserve">
+    <value>Larma ut nu</value>
+  </data>
+  <data name="SaveAndDispatchNow" xml:space="preserve">
+    <value>Spara och larma ut nu</value>
+  </data>
+  <data name="DispatchNowConfirm" xml:space="preserve">
+    <value>Larma ut ärendet nu till alla på utlarmningslistan?</value>
+  </data>
+  <data name="DispatchNowSucceeded" xml:space="preserve">
+    <value>Ärendet har larmats ut.</value>
+  </data>
+  <data name="DispatchNowNoRecipients" xml:space="preserve">
+    <value>Välj vilka ärendet ska skickas till (personal, grupper, roller eller enheter) innan du larmar ut det.</value>
+  </data>
+  <data name="DispatchNowNotWaiting" xml:space="preserve">
+    <value>Ärendet väntar inte på utlarmning.</value>
+  </data>
+  <data name="DispatchNowQueueFailed" xml:space="preserve">
+    <value>Utlarmningen kunde inte köas. Ärendet väntar fortfarande; försök igen.</value>
+  </data>
+  <data name="Received" xml:space="preserve">
+    <value>Mottaget</value>
+  </data>
+  <data name="AddressLabelShort" xml:space="preserve">
+    <value>Adress</value>
+  </data>
+  <data name="StateFounded" xml:space="preserve">
+    <value>Befogat</value>
+  </data>
+  <data name="StateMinor" xml:space="preserve">
+    <value>Mindre</value>
+  </data>
+  <data name="StateTransferred" xml:space="preserve">
+    <value>Överlämnat</value>
+  </data>
+  <data name="StateFalseAlarm" xml:space="preserve">
+    <value>Falsklarm</value>
+  </data>
+  <data name="StatePending" xml:space="preserve">
+    <value>Väntande</value>
+  </data>
+  <data name="CloseBlockedByIncidentCommand" xml:space="preserve">
+    <value>Det här ärendet har en aktiv insatsledning. Avsluta insatsledningen först och stäng sedan ärendet.</value>
+  </data>
+  <data name="SendNotificationHelp" xml:space="preserve">
+    <value>Meddelar alla som larmats till ärendet, dess enheter och insatsledningen att ärendet är stängt. Stängningsanteckningarna skickas inte med.</value>
   </data>
 </root>

@@ -143,6 +143,11 @@ namespace Resgrid.Tests.Security.Audit20261005
 				new Unit { UnitId = 1, Roles = new List<UnitRole> { new UnitRole { UnitId = 1, Name = "Driver" } } },
 				new Unit { UnitId = 2, Roles = new List<UnitRole> { new UnitRole { UnitId = 2, Name = "Driver" } } }
 			});
+			M<IUnitsService>().Setup(x => x.GetUnitsForDepartmentIncludingDeletedAsync(DepartmentId)).ReturnsAsync(new List<Unit>
+			{
+				new Unit { UnitId = 1, Roles = new List<UnitRole> { new UnitRole { UnitId = 1, Name = "Driver" } } },
+				new Unit { UnitId = 2, Roles = new List<UnitRole> { new UnitRole { UnitId = 2, Name = "Driver" } } }
+			});
 			M<IUnitsService>().Setup(x => x.GetAllActiveRolesForUnitsByDepartmentIdAsync(DepartmentId)).ReturnsAsync(new List<UnitActiveRole>());
 			Authorization.Setup(x => x.CanUserViewUnitViaMatrixAsync(1, UserId, DepartmentId)).ReturnsAsync(true);
 			Authorization.Setup(x => x.CanUserViewUnitViaMatrixAsync(2, UserId, DepartmentId)).ReturnsAsync(false);
@@ -201,6 +206,7 @@ namespace Resgrid.Tests.Security.Audit20261005
 				});
 			M<IDepartmentGroupsService>().Setup(x => x.GetAllGroupsForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<DepartmentGroup>());
 			M<IUnitsService>().Setup(x => x.GetUnitsForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<Unit>());
+			M<IUnitsService>().Setup(x => x.GetUnitsForDepartmentIncludingDeletedAsync(DepartmentId)).ReturnsAsync(new List<Unit>());
 			M<IUnitsService>().Setup(x => x.GetUnitStatesForCallAsync(DepartmentId, CallId)).ReturnsAsync(new List<UnitState>
 			{
 				new UnitState { UnitStateId = 1, UnitId = 1, Unit = new Unit { UnitId = 1, Name = "Seen" }, GeoLocationData = "39.1,-119.1" },

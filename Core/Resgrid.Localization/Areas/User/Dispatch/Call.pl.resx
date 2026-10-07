@@ -840,6 +840,9 @@
   <data name="IncidentReport" xml:space="preserve">
     <value>Raport ze zdarzenia</value>
   </data>
+  <data name="ReportsMenu" xml:space="preserve">
+    <value>Raporty</value>
+  </data>
   <data name="StatusLinkAuto" xml:space="preserve">
     <value>powiązane automatycznie</value>
   </data>
@@ -956,5 +959,80 @@
   </data>
   <data name="SiteFiles" xml:space="preserve">
     <value>Pliki obiektu</value>
+  </data>
+  <data name="NearestUnitsIncludesTurnout" xml:space="preserve">
+    <value>w tym {0} s na wyjazd</value>
+  </data>
+  <data name="PendingCallsHeader" xml:space="preserve">
+    <value>Zgłoszenia oczekujące</value>
+  </data>
+  <data name="PendingCallsDescription" xml:space="preserve">
+    <value>Zgłoszenia zapisane, ale jeszcze nie zadysponowane. Nikt nie został powiadomiony. Otwórz zgłoszenie, wybierz odbiorców i zadysponuj je.</value>
+  </data>
+  <data name="ViewAllPendingCalls" xml:space="preserve">
+    <value>Pokaż wszystkie</value>
+  </data>
+  <data name="NoPendingCalls" xml:space="preserve">
+    <value>Brak zgłoszeń oczekujących na zadysponowanie.</value>
+  </data>
+  <data name="SaveAsPending" xml:space="preserve">
+    <value>Zapisz jako oczekujące (jeszcze nie dysponuj)</value>
+  </data>
+  <data name="SaveAsPendingHelp" xml:space="preserve">
+    <value>Zgłoszenie trafia do Zgłoszeń oczekujących bez powiadamiania kogokolwiek. Dyspozytor je przejmuje, wybiera odbiorców i dysponuje.</value>
+  </data>
+  <data name="PendingCallBanner" xml:space="preserve">
+    <value>Oczekujące: to zgłoszenie nie zostało zadysponowane i nikt nie został powiadomiony.</value>
+  </data>
+  <data name="ScheduledCallBanner" xml:space="preserve">
+    <value>Zaplanowane: to zgłoszenie nie zostało jeszcze wysłane. Zostanie wysłane o zaplanowanej godzinie lub od razu przez „Zadysponuj teraz”.</value>
+  </data>
+  <data name="DispatchNow" xml:space="preserve">
+    <value>Zadysponuj teraz</value>
+  </data>
+  <data name="SaveAndDispatchNow" xml:space="preserve">
+    <value>Zapisz i zadysponuj teraz</value>
+  </data>
+  <data name="DispatchNowConfirm" xml:space="preserve">
+    <value>Zadysponować teraz to zgłoszenie do wszystkich z listy dysponowania?</value>
+  </data>
+  <data name="DispatchNowSucceeded" xml:space="preserve">
+    <value>Zgłoszenie zostało zadysponowane.</value>
+  </data>
+  <data name="DispatchNowNoRecipients" xml:space="preserve">
+    <value>Przed zadysponowaniem wybierz odbiorców (personel, grupy, role lub jednostki).</value>
+  </data>
+  <data name="DispatchNowNotWaiting" xml:space="preserve">
+    <value>To zgłoszenie nie oczekuje na zadysponowanie.</value>
+  </data>
+  <data name="DispatchNowQueueFailed" xml:space="preserve">
+    <value>Nie udało się dodać dysponowania do kolejki. Zgłoszenie nadal oczekuje; spróbuj ponownie.</value>
+  </data>
+  <data name="Received" xml:space="preserve">
+    <value>Przyjęte</value>
+  </data>
+  <data name="AddressLabelShort" xml:space="preserve">
+    <value>Adres</value>
+  </data>
+  <data name="StateFounded" xml:space="preserve">
+    <value>Zasadne</value>
+  </data>
+  <data name="StateMinor" xml:space="preserve">
+    <value>Drobne</value>
+  </data>
+  <data name="StateTransferred" xml:space="preserve">
+    <value>Przekazane</value>
+  </data>
+  <data name="StateFalseAlarm" xml:space="preserve">
+    <value>Fałszywy alarm</value>
+  </data>
+  <data name="StatePending" xml:space="preserve">
+    <value>Oczekujące</value>
+  </data>
+  <data name="CloseBlockedByIncidentCommand" xml:space="preserve">
+    <value>To zgłoszenie ma aktywne dowodzenie akcją. Najpierw zakończ dowodzenie, a następnie zamknij zgłoszenie.</value>
+  </data>
+  <data name="SendNotificationHelp" xml:space="preserve">
+    <value>Powiadamia wszystkie osoby zadysponowane do zgłoszenia, jego jednostki i zespół dowodzenia o zamknięciu zgłoszenia. Notatki zamknięcia nie są dołączane.</value>
   </data>
 </root>

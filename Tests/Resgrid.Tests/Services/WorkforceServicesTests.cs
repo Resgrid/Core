@@ -158,6 +158,7 @@ namespace Resgrid.Tests.Services
 			mars.Setup(m => m.GetWorkItemsForDeploymentAsync(It.IsAny<string>(), DeptId)).ReturnsAsync((string d, int _) => _marsItems.Where(w => w.DeploymentId == d).ToList());
 			var unitsService = new Mock<IUnitsService>();
 			unitsService.Setup(u => u.GetUnitsForDepartmentAsync(DeptId)).ReturnsAsync(new List<Unit> { new Unit { UnitId = 5, DepartmentId = DeptId, Name = "Engine 1" } });
+			unitsService.Setup(u => u.GetUnitsForDepartmentIncludingDeletedAsync(DeptId)).ReturnsAsync(new List<Unit> { new Unit { UnitId = 5, DepartmentId = DeptId, Name = "Engine 1" } });
 			unitsService.Setup(u => u.GetUnitByIdAsync(5)).ReturnsAsync(new Unit { UnitId = 5, DepartmentId = DeptId, Name = "Engine 1" });
 			var userProfiles = new Mock<IUserProfileService>();
 			userProfiles.Setup(p => p.GetSelectedUserProfilesAsync(It.IsAny<List<string>>())).ReturnsAsync((List<string> ids) => ids.Select(id => new UserProfile { UserId = id, FirstName = "Member", LastName = id }).ToList());

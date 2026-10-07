@@ -38,12 +38,20 @@ namespace Resgrid.Workers.Console.Tasks
 				var featureToggleService = scope.Resolve<IFeatureToggleService>();
 				var dispatchRecommendationService = scope.Resolve<IDispatchRecommendationService>();
 
-				var pendingCalls = await callsService.GetAllNonDispatchedScheduledCallsWithinDateRange(DateTime.UtcNow.AddMinutes(-5), DateTime.UtcNow.AddMinutes(5));
+				// Calls whose dispatch time has arrived, never ones still ahead (the old +5 minute edge sent
+				// calls up to one poll early). Looking back three poll intervals lets a broadcast that failed,
+				// or a poll that was missed, retry; HasBeenDispatched keeps each call to a single dispatch.
+				var now = DateTime.UtcNow;
+				var pendingCalls = await callsService.GetAllNonDispatchedScheduledCallsWithinDateRange(now.AddMinutes(-15), now);
 
 				if (pendingCalls != null && pendingCalls.Any())
 				{
 					foreach (var call in pendingCalls)
 					{
+						// A scheduled call closed or cancelled before its time must not page anyone.
+						if (call.State != (int)Resgrid.Model.CallStates.Active)
+							continue;
+
 						// PopulateCallData hydrates and returns the same instance, so this is the
 						// one object carried through enrichment, broadcast and the single save.
 						var populatedCall = await callsService.PopulateCallData(call, true, false, false, true, true, true, true, false, false);

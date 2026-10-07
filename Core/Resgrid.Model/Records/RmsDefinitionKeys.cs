@@ -85,11 +85,15 @@ namespace Resgrid.Model
 			}
 		}
 
-		/// <summary>Record-number prefix used by the default numbering policy for each locked definition.</summary>
+		/// <summary>
+		/// Record-number prefix {PREFIX} renders for each locked definition until the department sets its own
+		/// (<see cref="RecordsNumberingConfig.PrefixFor"/>).
+		/// </summary>
 		public static string DefaultNumberPrefix(string definitionKey)
 		{
 			switch (definitionKey)
 			{
+				case NerisIncidentReport: return "INC";
 				case Run: return "RUN";
 				case Training: return "TRN";
 				case Work: return "WRK";

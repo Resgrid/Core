@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Resgrid.Web.Services.Helpers;
@@ -46,12 +47,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (statuses != null && statuses.Any())
 			{
+				var offeredIds = statuses.Where(x => !x.IsDeleted).Select(x => x.CustomStateDetailId).ToHashSet();
+
 				foreach (var customState in statuses)
 				{
 					if (customState.IsDeleted)
 						continue;
 
-					result.Data.Add(ConvertCustomStatusData((int)CustomStateTypes.Personnel, customState));
+					result.Data.Add(ConvertCustomStatusData((int)CustomStateTypes.Personnel, customState, offeredIds));
 				}
 
 				result.PageSize = result.Data.Count;
@@ -143,12 +146,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 							unitStatusResult.UnitType = type.Type;
 							unitStatusResult.StatusId = customStatuses.CustomStateId.ToString();
 
-							foreach (var state in customStatuses.GetActiveDetails())
-							{
-								if (state.IsDeleted)
-									continue;
+							var activeDetails = customStatuses.GetActiveDetails().Where(x => !x.IsDeleted).ToList();
+							var offeredIds = activeDetails.Select(x => x.CustomStateDetailId).ToHashSet();
 
-								unitStatusResult.Statuses.Add(ConvertCustomStatusData((int)CustomStateTypes.Unit, state));
+							foreach (var state in activeDetails)
+							{
+								unitStatusResult.Statuses.Add(ConvertCustomStatusData((int)CustomStateTypes.Unit, state, offeredIds));
 							}
 
 							result.Data.Add(unitStatusResult);
@@ -170,7 +173,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return result;
 		}
 
-		public static StatusResultData ConvertCustomStatusData(int type, CustomStateDetail stateDetail)
+		/// <param name="offeredIds">The ids of the other statuses in the same list; next-status ids outside it (deleted
+		/// options) are dropped so the apps never wait on a status they cannot show. Null keeps every stored id.</param>
+		public static StatusResultData ConvertCustomStatusData(int type, CustomStateDetail stateDetail, ISet<int> offeredIds = null)
 		{
 			var customStateResult = new StatusResultData();
 			customStateResult.Id = stateDetail.CustomStateDetailId;
@@ -186,6 +191,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			customStateResult.Note = stateDetail.NoteType;
 			customStateResult.Detail = stateDetail.DetailType;
 			customStateResult.BaseType = stateDetail.BaseType;
+			customStateResult.NextIds = stateDetail.GetNextStateDetailIds().Where(id => offeredIds == null || offeredIds.Contains(id)).ToList();
 
 			return customStateResult;
 		}

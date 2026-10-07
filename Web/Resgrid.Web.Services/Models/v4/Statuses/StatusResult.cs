@@ -74,5 +74,12 @@ namespace Resgrid.Web.Services.Models.v4.Statuses
 		/// Is this status deleted (should only be used for display)
 		/// </summary>
 		public bool IsDeleted { get; set; }
+
+		/// <summary>
+		/// Ids of the statuses in this list the apps should offer next while this one is current (e.g.
+		/// "Departed" -> "On Scene"). Empty means no restriction: offer every status. A display hint only;
+		/// the server accepts any status.
+		/// </summary>
+		public List<int> NextIds { get; set; } = new List<int>();
 	}
 }

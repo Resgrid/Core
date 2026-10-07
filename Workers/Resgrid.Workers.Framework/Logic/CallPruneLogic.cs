@@ -21,6 +21,7 @@ namespace Resgrid.Workers.Framework.Logic
 					// Own scope per item: root-scope services would share the process-wide root unit of work.
 					using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
 					var callsService = scope.Resolve<ICallsService>();
+					var callClosureService = scope.Resolve<ICallClosureService>();
 
 					var calls = await callsService.GetActiveCallsByDepartmentAsync(item.PruneSettings.DepartmentId);
 
@@ -38,6 +39,10 @@ namespace Resgrid.Workers.Framework.Logic
 								{
 									if (call.LoggedOn.AddMinutes(item.PruneSettings.EmailImportCallPruneInterval.Value) < DateTime.UtcNow)
 									{
+										// An incident command is still running the call; it closes from the command.
+										if (await callClosureService.GetBlockingIncidentCommandAsync(call.DepartmentId, call.CallId) != null)
+											continue;
+
 										call.State = (int)CallStates.Closed;
 										call.ClosedOn = DateTime.UtcNow;
 										call.CompletedNotes = "Call automatically closed by the system.";
@@ -58,6 +63,9 @@ namespace Resgrid.Workers.Framework.Logic
 								{
 									if (call.LoggedOn.AddMinutes(item.PruneSettings.UserCallPruneInterval.Value) < DateTime.UtcNow)
 									{
+										if (await callClosureService.GetBlockingIncidentCommandAsync(call.DepartmentId, call.CallId) != null)
+											continue;
+
 										call.State = (int)CallStates.Closed;
 										call.ClosedOn = DateTime.UtcNow;
 										call.CompletedNotes = "Call automatically closed by the system.";

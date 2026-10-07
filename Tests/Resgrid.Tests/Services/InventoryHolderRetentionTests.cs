@@ -74,33 +74,46 @@ namespace Resgrid.Tests.Services
 			groups.Verify(g => g.DeleteGroupByIdAsync(101, It.IsAny<CancellationToken>()), Times.Once);
 			work.Verify(u => u.CommitChanges(), Times.Once); work.Verify(u => u.DiscardChanges(), Times.Never);
 		}
-		[TestCase(false)]
-		[TestCase(true)]
-		public async Task Unit_history_blocks_state_deletion_and_respects_transaction_ownership(bool joined)
+		[Test]
+		public async Task Unit_delete_is_soft_and_keeps_states_inventory_and_history()
 		{
-			var store = new Mock<IInventoryStore>(); var work = UnitOfWork(joined);
-			store.Setup(s => s.ListAsync<InventoryLocation>(77, 0)).ReturnsAsync(new List<InventoryLocation>
-				{ new() { DepartmentId = 77, LocationType = (int)InventoryLocationType.Unit, UnitId = 501, IsDeleted = true } });
+			// Units are soft deleted: the inventory holder check and its department lock no longer apply, because the
+			// unit row (and every state, log and inventory location that references it) is kept.
+			var store = new Mock<IInventoryStore>(MockBehavior.Strict); var work = new Mock<IUnitOfWork>(MockBehavior.Strict);
+			var unit = new Unit { UnitId = 501, DepartmentId = 77, Name = "Engine 1" };
+			Unit saved = null;
 			var units = new Mock<IUnitsRepository>(MockBehavior.Strict);
-			units.Setup(u => u.GetByIdAsync(501)).ReturnsAsync(new Unit { UnitId = 501, DepartmentId = 77 });
+			units.Setup(u => u.GetByIdAsync(501)).ReturnsAsync(unit);
+			units.Setup(u => u.SaveOrUpdateAsync(It.IsAny<Unit>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.Callback<Unit, CancellationToken, bool>((u, _, _) => saved = u).ReturnsAsync((Unit u, CancellationToken _, bool _) => u);
 			var states = new Mock<IUnitStatesRepository>(MockBehavior.Strict);
 			var activeRoles = new Mock<IUnitActiveRolesRepository>(MockBehavior.Strict);
+			activeRoles.Setup(r => r.DeleteActiveRolesByUnitIdAsync(501, It.IsAny<CancellationToken>())).ReturnsAsync(true);
 			var limits = new Mock<ILimitsService>(MockBehavior.Strict);
-			var events = new Mock<IEventAggregator>(MockBehavior.Strict);
+			limits.Setup(l => l.InvalidateDepartmentsEntityLimitsCache(77)).ReturnsAsync(true);
+			var events = new Mock<IEventAggregator>();
 			var service = new UnitsService(units.Object, states.Object, Mock.Of<IUnitLogsRepository>(), Mock.Of<IUnitTypesRepository>(),
 				Mock.Of<ISubscriptionsService>(), Mock.Of<IUnitRolesRepository>(), Mock.Of<IUnitStateRoleRepository>(), Mock.Of<IUserStateService>(),
 				events.Object, Mock.Of<ICustomStateService>(), new Lazy<IMongoRepository<UnitsLocation>>(() => Mock.Of<IMongoRepository<UnitsLocation>>()),
 				Mock.Of<IUnitLocationsDocRepository>(), new Lazy<IUnitLocationsMongoRepository>(() => Mock.Of<IUnitLocationsMongoRepository>()),
 				activeRoles.Object, Mock.Of<IDepartmentGroupsService>(), limits.Object, Mock.Of<IPersonnelRolesService>(),
-				new Lazy<IProtectedWriteService>(() => Mock.Of<IProtectedWriteService>()), new Lazy<IRecordsCutoverService>(() => Mock.Of<IRecordsCutoverService>()), Mock.Of<ICallStatusAttributionService>(), store.Object, work.Object);
+				new Lazy<IProtectedWriteService>(() => Mock.Of<IProtectedWriteService>()), new Lazy<IRecordsCutoverService>(() => Mock.Of<IRecordsCutoverService>()), Mock.Of<ICallStatusAttributionService>());
 
-			var error = (await ((Func<Task>)(async () => await service.DeleteUnitAsync(501))).Should().ThrowAsync<InventoryException>()).Which;
-			error.Code.Should().Be("HolderHistoryRetained"); error.StatusCode.Should().Be(409);
-			units.Verify(u => u.GetByIdAsync(501), Times.Once); units.VerifyNoOtherCalls();
-			states.VerifyNoOtherCalls(); activeRoles.VerifyNoOtherCalls(); limits.VerifyNoOtherCalls(); events.VerifyNoOtherCalls();
-			store.Verify(s => s.LockDepartmentAsync(77), Times.Once);
-			work.Verify(u => u.DiscardChanges(), joined ? Times.Never() : Times.Once());
-			work.Verify(u => u.CommitChanges(), Times.Never);
+			(await service.DeleteUnitAsync(501, "admin")).Should().BeTrue();
+
+			saved.Should().BeSameAs(unit);
+			unit.IsDeleted.Should().BeTrue();
+			unit.DeletedByUserId.Should().Be("admin");
+			unit.DeletedOn.Should().NotBeNull().And.BeCloseTo(DateTime.UtcNow, TimeSpan.FromMinutes(1));
+			units.Verify(u => u.DeleteAsync(It.IsAny<Unit>(), It.IsAny<CancellationToken>()), Times.Never);
+			states.VerifyNoOtherCalls();
+			activeRoles.Verify(r => r.DeleteActiveRolesByUnitIdAsync(501, It.IsAny<CancellationToken>()), Times.Once);
+			store.VerifyNoOtherCalls(); work.VerifyNoOtherCalls();
+
+			// Deleting again is a no-op that still reports success.
+			(await service.DeleteUnitAsync(501, "someone-else")).Should().BeTrue();
+			unit.DeletedByUserId.Should().Be("admin");
+			units.Verify(u => u.SaveOrUpdateAsync(It.IsAny<Unit>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Once);
 		}
 		private static DeleteService DeleteService(IAuthorizationService resources, ICallsService calls, IWorkLogsService logs, IUnitsService units,
 			IShiftsService shifts, IInventoryService inventory, IDepartmentGroupsService groups, IInventoryStore store, IUnitOfWork work) => new DeleteService(

@@ -32,6 +32,12 @@ namespace Resgrid.Model.Helpers
 		public bool HasLinkedCall { get; set; }
 		public DateTime? DispatchOn { get; set; }
 		public bool HasDispatchList { get; set; }
+
+		/// <summary>
+		/// The call is being saved as Pending: nobody is sent it yet, so who to send it to and when are decided by the
+		/// dispatcher who picks it up, and the dispatch time and dispatch list requirements do not apply.
+		/// </summary>
+		public bool IsPending { get; set; }
 	}
 
 	/// <summary>
@@ -69,7 +75,8 @@ namespace Resgrid.Model.Helpers
 
 			RequireText(NewCallFieldKeys.Note, values.Note);
 			RequireText(NewCallFieldKeys.Address, values.Address);
-			RequireText(NewCallFieldKeys.Geolocation, values.Geolocation);
+			// A point, not just text: clients with no position send "," (or 0,0), which used to satisfy a required location.
+			Require(NewCallFieldKeys.Geolocation, GeoMath.ParseLatLonString(values.Geolocation) != null);
 			RequireText(NewCallFieldKeys.What3Words, values.What3Words);
 			RequireText(NewCallFieldKeys.PlusCode, values.PlusCode);
 			RequireText(NewCallFieldKeys.ContactName, values.ContactName);
@@ -82,8 +89,11 @@ namespace Resgrid.Model.Helpers
 			Require(NewCallFieldKeys.DestinationPoi, values.DestinationPoiId.HasValue && values.DestinationPoiId.Value > 0);
 			Require(NewCallFieldKeys.Protocols, values.HasProtocols);
 			Require(NewCallFieldKeys.LinkedCall, values.HasLinkedCall);
-			Require(NewCallFieldKeys.DispatchOn, values.DispatchOn.HasValue);
-			Require(NewCallFieldKeys.DispatchList, values.HasDispatchList);
+			if (!values.IsPending)
+			{
+				Require(NewCallFieldKeys.DispatchOn, values.DispatchOn.HasValue);
+				Require(NewCallFieldKeys.DispatchList, values.HasDispatchList);
+			}
 
 			return violations;
 		}

@@ -72,6 +72,8 @@ var resgrid;
             });
             function refreshCalls() {
                 if (activeCallsTable) { activeCallsTable.ajax.reload(); }
+                // Pending and scheduled calls change on the same call events (created, edited, dispatched, closed).
+                if (resgrid.dispatch.waitingcalls) { resgrid.dispatch.waitingcalls.refresh(); }
             }
             home.refreshCalls = refreshCalls;
             function refreshUnits() {

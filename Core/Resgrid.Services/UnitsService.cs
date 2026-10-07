@@ -32,8 +32,6 @@ namespace Resgrid.Services
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly ILimitsService _limitsService;
 		private readonly IPersonnelRolesService _personnelRolesService;
-		private readonly IInventoryStore _inventoryStore;
-		private readonly Resgrid.Model.Repositories.Queries.IUnitOfWork _inventoryUnitOfWork;
 
 		// Lazy: defers the protected-write graph (broker client) until a state save actually needs it.
 		private readonly Lazy<IProtectedWriteService> _protectedWriteService;
@@ -52,13 +50,10 @@ namespace Resgrid.Services
 			IUnitActiveRolesRepository unitActiveRolesRepository,
 			IDepartmentGroupsService departmentGroupsService, ILimitsService limitsService, IPersonnelRolesService personnelRolesService,
 			Lazy<IProtectedWriteService> protectedWriteService, Lazy<IRecordsCutoverService> recordsCutoverService,
-			ICallStatusAttributionService callStatusAttributionService, IInventoryStore inventoryStore = null, Resgrid.Model.Repositories.Queries.IUnitOfWork inventoryUnitOfWork = null, Lazy<ISearchProjectionService> searchProjections = null)
+			ICallStatusAttributionService callStatusAttributionService, Lazy<ISearchProjectionService> searchProjections = null)
 		{
 			_recordsCutoverService = recordsCutoverService;
 			_callStatusAttributionService = callStatusAttributionService;
-			if ((inventoryStore == null) != (inventoryUnitOfWork == null))
-				throw new ArgumentException("Inventory storage and its unit of work must be supplied together.", nameof(inventoryStore));
-			_inventoryStore = inventoryStore; _inventoryUnitOfWork = inventoryUnitOfWork;
 			_unitsRepository = unitsRepository;
 			_unitStatesRepository = unitStatesRepository;
 			_unitLogsRepository = unitLogsRepository;
@@ -194,42 +189,52 @@ namespace Resgrid.Services
 			return units.ToList();
 		}
 
+		public async Task<List<Unit>> GetUnitsForDepartmentIncludingDeletedAsync(int departmentId)
+		{
+			var units = (await _unitsRepository.GetAllUnitsByDepartmentIdIncludingDeletedAsync(departmentId))?.ToList() ?? new List<Unit>();
+
+			if (units.Any(x => x.StationGroupId.HasValue))
+			{
+				var groups = await _departmentGroupsService.GetAllGroupsForDepartmentUnlimitedThinAsync(departmentId);
+
+				foreach (var unit in units.Where(x => x.StationGroupId.HasValue))
+					unit.StationGroup = groups?.FirstOrDefault(x => x.DepartmentGroupId == unit.StationGroupId.Value);
+			}
+
+			return units;
+		}
+
 		public async Task<Unit> GetUnitByIdAsync(int unitId)
 		{
 			return await _unitsRepository.GetByIdAsync(unitId);
 		}
 
-		public async Task<bool> DeleteUnitAsync(int unitId, CancellationToken cancellationToken = default(CancellationToken))
+		public async Task<bool> DeleteUnitAsync(int unitId, string deletedByUserId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var unit = await _unitsRepository.GetByIdAsync(unitId);
 
-			if (unit != null)
-			{
-				return await InventoryHolderRetention.DeleteAsync(_inventoryStore, _inventoryUnitOfWork, unit.DepartmentId, unitId, true, async () =>
-				{
-				var states = await _unitStatesRepository.GetAllStatesByUnitIdAsync(unitId);
+			if (unit == null)
+				return false;
 
-				if (states != null && states.Any())
-				{
-					foreach (var unitState in states)
-					{
-						await _unitStatesRepository.DeleteAsync(unitState, cancellationToken);
-					}
-				}
-
-				await _unitActiveRolesRepository.DeleteActiveRolesByUnitIdAsync(unit.UnitId, cancellationToken);
-				await _unitsRepository.DeleteAsync(unit, cancellationToken);
-				if (_searchProjections != null) await _searchProjections.Value.RemoveAsync(unit.DepartmentId, SearchEntityTypes.Unit, unit.UnitId.ToString(), cancellationToken);
-				await _limitsService.InvalidateDepartmentsEntityLimitsCache(unit.DepartmentId);
-
-				_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = unit.DepartmentId });
-				SendUnitVisibilityRefresh(unit.DepartmentId);
-
+			if (unit.IsDeleted)
 				return true;
-				}, cancellationToken);
-			}
 
-			return false;
+			// Soft delete: calls, unit states, logs, certifications, tracking, inventory and records all reference the
+			// row (a hard delete failed on any unit that had ever been dispatched), and reports must keep resolving it.
+			unit.IsDeleted = true;
+			unit.DeletedOn = DateTime.UtcNow;
+			unit.DeletedByUserId = deletedByUserId;
+			await _unitsRepository.SaveOrUpdateAsync(unit, cancellationToken);
+
+			// Nobody rides a deleted unit: release its current crew. Its seat definitions, states and logs stay.
+			await _unitActiveRolesRepository.DeleteActiveRolesByUnitIdAsync(unit.UnitId, cancellationToken);
+			if (_searchProjections != null) await _searchProjections.Value.RemoveAsync(unit.DepartmentId, SearchEntityTypes.Unit, unit.UnitId.ToString(), cancellationToken);
+			await _limitsService.InvalidateDepartmentsEntityLimitsCache(unit.DepartmentId);
+
+			_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = unit.DepartmentId });
+			SendUnitVisibilityRefresh(unit.DepartmentId);
+
+			return true;
 		}
 
 		public async Task<UnitState> GetLastUnitStateByUnitIdAsync(int unitId)
@@ -400,7 +405,10 @@ namespace Resgrid.Services
 			var protectedWrite = await _protectedWriteService.Value.PrepareUnitStateWriteAsync(departmentId,
 				saved, null, null, workloadCaller: true, cancellationToken);
 			if (!protectedWrite.Success)
+			{
+				AnnounceUnitStateSavedWithoutProtection(departmentId, saved, previousState, false);
 				throw new InvalidOperationException($"Protected write blocked ({protectedWrite.Reason}); unit state {saved.UnitStateId} has transient plaintext pending re-encryption.");
+			}
 			if (protectedWrite.Changed)
 				saved = await _unitStatesRepository.SaveOrUpdateAsync(saved, cancellationToken);
 
@@ -449,13 +457,64 @@ namespace Resgrid.Services
 			var protectedWrite = await _protectedWriteService.Value.PrepareUnitStateWriteAsync(departmentId,
 				saved, null, null, workloadCaller: true, cancellationToken);
 			if (!protectedWrite.Success)
+			{
+				AnnounceUnitStateSavedWithoutProtection(departmentId, saved, previousState, autoGenerated);
 				throw new InvalidOperationException($"Protected write blocked ({protectedWrite.Reason}); unit state {saved.UnitStateId} has transient plaintext pending re-encryption.");
+			}
 			if (protectedWrite.Changed)
 				saved = await _unitStatesRepository.SaveOrUpdateAsync(saved, cancellationToken);
 
 			_eventAggregator.SendMessage<UnitStatusEvent>(new UnitStatusEvent { DepartmentId = departmentId, Status = saved, PreviousStatus = previousState, AutoGenerated = autoGenerated });
 
 			return saved;
+		}
+
+		/// <summary>
+		/// A unit state is an insert, so it is saved before the protected write can run (the AAD row key is its
+		/// identity) and a blocked write leaves the row in place as the unit's latest status. Every reader already
+		/// shows it, so it is still announced: without the event the web dashboard (which reloads) showed the new
+		/// status while BigBoard and the Dispatch app, which refetch only on the push, kept the old one. The
+		/// announcement carries none of the fields the write was meant to seal, so nothing downstream (workflows,
+		/// webhooks) receives the plaintext the broker could not envelope.
+		/// </summary>
+		private void AnnounceUnitStateSavedWithoutProtection(int departmentId, UnitState saved, UnitState previousState, bool autoGenerated)
+		{
+			_eventAggregator.SendMessage<UnitStatusEvent>(new UnitStatusEvent
+			{
+				DepartmentId = departmentId,
+				Status = WithoutProtectedFields(saved),
+				PreviousStatus = WithoutProtectedFields(previousState),
+				AutoGenerated = autoGenerated
+			});
+		}
+
+		/// <summary>The status itself (which unit, which state, when, who, where it was headed) without its note or any position.</summary>
+		private static UnitState WithoutProtectedFields(UnitState state)
+		{
+			if (state == null)
+				return null;
+
+			return new UnitState
+			{
+				UnitStateId = state.UnitStateId,
+				UnitId = state.UnitId,
+				State = state.State,
+				Timestamp = state.Timestamp,
+				LocalTimestamp = state.LocalTimestamp,
+				DestinationId = state.DestinationId,
+				DestinationType = state.DestinationType,
+				DestinationSource = state.DestinationSource,
+				SetByUserId = state.SetByUserId,
+				SetByOrigin = state.SetByOrigin,
+				// Flat copies: a role's UnitState back-reference would carry the unscrubbed row along.
+				Roles = state.Roles?.Select(r => new UnitStateRole
+				{
+					UnitStateRoleId = r.UnitStateRoleId,
+					UnitStateId = r.UnitStateId,
+					Role = r.Role,
+					UserId = r.UserId
+				}).ToList()
+			};
 		}
 
 		public async Task<List<UnitLog>> GetLogsForUnitAsync(int unitId)
@@ -534,7 +593,8 @@ namespace Resgrid.Services
 			if (departmentGroupId <= 0)
 				throw new ArgumentException("DepartmentGroupId cannot be null", "departmentGroupId");
 
-			var units = await _unitsRepository.GetAllUnitsByGroupIdAsync(departmentGroupId);
+			// Deleted units still reference the group, and the group row is about to go.
+			var units = await _unitsRepository.GetAllUnitsByGroupIdIncludingDeletedAsync(departmentGroupId);
 			var touchedDepartmentIds = new HashSet<int>();
 
 			foreach (var unit in units)

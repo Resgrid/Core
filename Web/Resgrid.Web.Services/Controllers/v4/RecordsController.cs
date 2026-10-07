@@ -186,7 +186,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					IncidentCommand = moduleState.RecordsUsable && await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.RecordsFieldIncidentCommand, DepartmentId),
 					Dispatch = moduleState.RecordsUsable && await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.RecordsFieldDispatch, DepartmentId)
 				},
-				Definitions = RecordsApiMapper.ToDefinitions(),
+				Definitions = RecordsApiMapper.ToDefinitions(await _departmentSettingsService.GetRecordsNumberingConfigAsync(DepartmentId)),
 				Search = new RecordsSearchCapabilityData { Available = _recordsSearch.IsAvailable, NarrativeAvailable = await NarrativeSearchAvailableAsync() },
 				NerisWorkflowsEnabled = await _departmentSettingsService.GetRecordsNerisWorkflowsEnabledAsync(DepartmentId),
 				Protection = await ProtectionAsync(),

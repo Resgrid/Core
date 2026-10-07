@@ -1271,4 +1271,79 @@
   <data name="RunCardTriggerRequired" xml:space="preserve">
     <value>Додайте принаймні одну умову активації перед збереженням цієї картки відправлення.</value>
   </data>
+  <data name="InQuartersTurnoutLabel" xml:space="preserve">
+    <value>Час виїзду зі станції (секунди)</value>
+  </data>
+  <data name="InQuartersTurnoutHelp" xml:space="preserve">
+    <value>Час, потрібний підрозділу на станції, щоб рушити. Застосовується до підрозділів зі статусом «На станції» та до підрозділів без GPS-позиції (вважається, що вони на своїй станції). Додається до часу в дорозі під час ранжування найближчих підрозділів. 0 = немає.</value>
+  </data>
+  <data name="MobileTurnoutLabel" xml:space="preserve">
+    <value>Час виїзду в русі (секунди)</value>
+  </data>
+  <data name="MobileTurnoutHelp" xml:space="preserve">
+    <value>Час, потрібний підрозділу, який уже поза станцією та доступний, щоб рушити на новий виклик. Застосовується до підрозділів, ранжованих за GPS-позицією. Додається до часу в дорозі під час ранжування найближчих підрозділів. 0 = немає.</value>
+  </data>
+  <data name="StatusHoldToConfirmLabel" xml:space="preserve">
+    <value>Утримуйте, щоб встановити статус</value>
+  </data>
+  <data name="StatusHoldToConfirmHelp" xml:space="preserve">
+    <value>У застосунках Unit і Responder екіпажі утримують кнопку статусу дві секунди, щоб встановити його, замість натискання й подальшого натискання «Далі» чи «Надіслати». Запобігає випадковим натисканням і забутим підтвердженням. Статус, що потребує примітки чи вибору пункту призначення, як і раніше відкриває наступний крок.</value>
+  </data>
+  <data name="CallNumberingHeader" xml:space="preserve">
+    <value>Нумерація викликів</value>
+  </data>
+  <data name="CallNumberingIntro" xml:space="preserve">
+    <value>Як нумеруються нові виклики. Зміна шаблону ніколи не перенумеровує виклики, які вже мають номер.</value>
+  </data>
+  <data name="CallNumberPattern" xml:space="preserve">
+    <value>Шаблон номера виклику</value>
+  </data>
+  <data name="CallNumberExample" xml:space="preserve">
+    <value>Приклад:</value>
+  </data>
+  <data name="CallNumberPatternHelp" xml:space="preserve">
+    <value>Сталий текст (літери, цифри, - _ . /) навколо міток: {YYYY} або {YY} рік, {MM} місяць, {DD} день і {SEQ} порядковий номер, який має з'явитися один раз. Порядковий номер знову починається з 1 щоразу, коли змінюється дата в номері: щороку з роком, щомісяця з {MM}, щодня з {DD} і ніколи без дати. {MM} потребує року, а {DD} потребує {MM}. Дати використовують часовий пояс підрозділу.</value>
+  </data>
+  <data name="CallNumberSequenceWidth" xml:space="preserve">
+    <value>Цифри порядкового номера</value>
+  </data>
+  <data name="CallNumberSequenceWidthHelp" xml:space="preserve">
+    <value>Доповнює порядковий номер провідними нулями, тож 4 дає 0153. 1 записує його без доповнення, як Resgrid робив завжди.</value>
+  </data>
+  <data name="CallNumberNext" xml:space="preserve">
+    <value>Наступний номер виклику</value>
+  </data>
+  <data name="CallNumberResetsYearly" xml:space="preserve">
+    <value>Знову починається з 1 щороку.</value>
+  </data>
+  <data name="CallNumberResetsMonthly" xml:space="preserve">
+    <value>Знову починається з 1 щомісяця.</value>
+  </data>
+  <data name="CallNumberResetsDaily" xml:space="preserve">
+    <value>Знову починається з 1 щодня.</value>
+  </data>
+  <data name="CallNumberResetsNever" xml:space="preserve">
+    <value>Ніколи не починається знову.</value>
+  </data>
+  <data name="CallNumberRaiseTo" xml:space="preserve">
+    <value>Підняти наступний порядковий номер до</value>
+  </data>
+  <data name="CallNumberRaiseToHelp" xml:space="preserve">
+    <value>Для підрозділів, що продовжують номери, видані до Resgrid: наступний виклик отримає цей порядковий номер. Його можна лише підняти, ніколи не знизити, тож жоден номер не буде видано двічі. Залиште порожнім, щоб зберегти поточний порядковий номер.</value>
+  </data>
+  <data name="CallNumberRaiseConfirm" xml:space="preserve">
+    <value>Підняти наступний номер виклику? Його можна лише підняти, ніколи не знизити.</value>
+  </data>
+  <data name="CallNumberPatternInvalid" xml:space="preserve">
+    <value>Нумерацію викликів не збережено. Шаблон потребує {SEQ} рівно один раз, може містити лише літери, цифри, - _ . / і мітки {YYYY}, {YY}, {MM} та {DD}, потребує року для {MM} і {MM} для {DD} та може мати щонайбільше 40 символів.</value>
+  </data>
+  <data name="CallNumberNextBelowCurrent" xml:space="preserve">
+    <value>Наступний номер виклику не піднято: його можна підняти лише вище номера, який наступний виклик уже отримає ({0}).</value>
+  </data>
+  <data name="CallNumberNextPatternChanged" xml:space="preserve">
+    <value>Наступний номер виклику не піднято, бо шаблон змінився під час того самого збереження. Підніміть його знову для нового шаблону.</value>
+  </data>
+  <data name="CallSettingsSaved" xml:space="preserve">
+    <value>Налаштування викликів збережено.</value>
+  </data>
 </root>

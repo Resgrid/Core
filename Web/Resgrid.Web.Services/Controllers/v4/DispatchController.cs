@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Resgrid.Web.Services.Attributes;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Model.Services;
@@ -613,6 +614,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpGet("GetRolesForCallGrid")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Call_View)]
+		[DepartmentApiKeyScope(DepartmentApiKeyScopes.ReferenceRead)]
 		public async Task<ActionResult<GetRolesForCallGridResult>> GetRolesForCallGrid()
 		{
 			var result = new GetRolesForCallGridResult();
@@ -646,6 +648,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpGet("GetCallTemplates")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Call_View)]
+		[DepartmentApiKeyScope(DepartmentApiKeyScopes.ReferenceRead)]
 		public async Task<ActionResult<GetCallTemplatesResult>> GetCallTemplates()
 		{
 			var result = new GetCallTemplatesResult();

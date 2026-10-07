@@ -1031,6 +1031,135 @@
   <data name="FederatedMfaTestNote" xml:space="preserve">
     <value>The test sends you to your identity provider now, asking for MFA. When it returns a value the mapping counts, this version takes effect.</value>
   </data>
+  <data name="AuditLogTypeDepartmentApiKeyCreated" xml:space="preserve">
+    <value>Department API Key Created</value>
+  </data>
+  <data name="AuditLogTypeDepartmentApiKeyRevoked" xml:space="preserve">
+    <value>Department API Key Revoked</value>
+  </data>
+  <data name="ApiKeysButton" xml:space="preserve">
+    <value>API Keys</value>
+  </data>
+  <data name="ApiKeysPageTitle" xml:space="preserve">
+    <value>API Keys</value>
+  </data>
+  <data name="ApiKeysIntro" xml:space="preserve">
+    <value>API keys let another system, such as a scheduling, records or dispatch system, call Resgrid for your department without signing in as a person. A key can only do what you allow, stops working on its expiry date, and can be revoked at any time.</value>
+  </data>
+  <data name="ApiKeysUsage" xml:space="preserve">
+    <value>Send the key in the X-Resgrid-ApiKey header on requests to {0}. Never put it in a URL.</value>
+  </data>
+  <data name="ApiKeysExisting" xml:space="preserve">
+    <value>Keys</value>
+  </data>
+  <data name="ApiKeysNone" xml:space="preserve">
+    <value>No API keys have been created.</value>
+  </data>
+  <data name="ApiKeyName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="ApiKeyPrefix" xml:space="preserve">
+    <value>Key</value>
+  </data>
+  <data name="ApiKeyScopes" xml:space="preserve">
+    <value>Allowed</value>
+  </data>
+  <data name="ApiKeyCreated" xml:space="preserve">
+    <value>Created</value>
+  </data>
+  <data name="ApiKeyExpires" xml:space="preserve">
+    <value>Expires</value>
+  </data>
+  <data name="ApiKeyLastUsed" xml:space="preserve">
+    <value>Last used</value>
+  </data>
+  <data name="ApiKeyStatus" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="ApiKeyStatusActive" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="ApiKeyStatusExpired" xml:space="preserve">
+    <value>Expired</value>
+  </data>
+  <data name="ApiKeyStatusRevoked" xml:space="preserve">
+    <value>Revoked</value>
+  </data>
+  <data name="ApiKeyNever" xml:space="preserve">
+    <value>Never</value>
+  </data>
+  <data name="ApiKeyRevoke" xml:space="preserve">
+    <value>Revoke</value>
+  </data>
+  <data name="ApiKeyRevokeConfirm" xml:space="preserve">
+    <value>Revoke this key? Systems using it stop working immediately.</value>
+  </data>
+  <data name="ApiKeyRevoked" xml:space="preserve">
+    <value>The key was revoked.</value>
+  </data>
+  <data name="ApiKeyCreateHeader" xml:space="preserve">
+    <value>Create a key</value>
+  </data>
+  <data name="ApiKeyNameHelp" xml:space="preserve">
+    <value>What the key is for, for example the system that will use it.</value>
+  </data>
+  <data name="ApiKeyScopesLabel" xml:space="preserve">
+    <value>What the key may do</value>
+  </data>
+  <data name="ApiKeyExpiresIn" xml:space="preserve">
+    <value>Expires after</value>
+  </data>
+  <data name="ApiKeyDays" xml:space="preserve">
+    <value>{0} days</value>
+  </data>
+  <data name="ApiKeyAllowedIps" xml:space="preserve">
+    <value>Allowed addresses (optional)</value>
+  </data>
+  <data name="ApiKeyAllowedIpsHelp" xml:space="preserve">
+    <value>One IP address or CIDR range per line, for example 203.0.113.10 or 203.0.113.0/24. Leave empty to allow any address.</value>
+  </data>
+  <data name="ApiKeyCreateButton" xml:space="preserve">
+    <value>Create key</value>
+  </data>
+  <data name="ApiKeyNewHeader" xml:space="preserve">
+    <value>Your new API key</value>
+  </data>
+  <data name="ApiKeyNewWarning" xml:space="preserve">
+    <value>Copy this key now. It is shown only once and cannot be recovered. If it is lost, revoke it and create another.</value>
+  </data>
+  <data name="ApiKeyCopy" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="ApiKeyErrorName" xml:space="preserve">
+    <value>Give the key a name.</value>
+  </data>
+  <data name="ApiKeyErrorScopes" xml:space="preserve">
+    <value>Choose at least one thing the key may do.</value>
+  </data>
+  <data name="ApiKeyErrorIp" xml:space="preserve">
+    <value>"{0}" is not an IP address or CIDR range.</value>
+  </data>
+  <data name="ApiKeyErrorCreate" xml:space="preserve">
+    <value>The key could not be created: {0}</value>
+  </data>
+  <data name="ApiKeyScopeCallsRead" xml:space="preserve">
+    <value>Read calls (active, pending and scheduled)</value>
+  </data>
+  <data name="ApiKeyScopeCallsCreate" xml:space="preserve">
+    <value>Create calls, including pending and scheduled calls</value>
+  </data>
+  <data name="ApiKeyScopeCallsUpdate" xml:space="preserve">
+    <value>Edit calls, dispatch pending calls and change scheduled times</value>
+  </data>
+  <data name="ApiKeyScopeCallsClose" xml:space="preserve">
+    <value>Close calls</value>
+  </data>
+  <data name="ApiKeyScopeReferenceRead" xml:space="preserve">
+    <value>Read call types, priorities, templates, groups and roles</value>
+  </data>
+  <data name="ApiKeyScopeUnitsRead" xml:space="preserve">
+    <value>Read units and their statuses</value>
+  </data>
 </root>
 
 

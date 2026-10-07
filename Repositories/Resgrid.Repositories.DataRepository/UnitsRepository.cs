@@ -72,7 +72,11 @@ namespace Resgrid.Repositories.DataRepository
 			}
 		}
 
-		public async Task<IEnumerable<Unit>> GetAllUnitsByGroupIdAsync(int groupId)
+		public Task<IEnumerable<Unit>> GetAllUnitsByGroupIdAsync(int groupId) => GetUnitsByGroupIdAsync(groupId, false);
+
+		public Task<IEnumerable<Unit>> GetAllUnitsByGroupIdIncludingDeletedAsync(int groupId) => GetUnitsByGroupIdAsync(groupId, true);
+
+		private async Task<IEnumerable<Unit>> GetUnitsByGroupIdAsync(int groupId, bool includeDeleted)
 		{
 			try
 			{
@@ -80,6 +84,7 @@ namespace Resgrid.Repositories.DataRepository
 				{
 					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("GroupId", groupId);
+					dynamicParameters.Add("IncludeDeleted", includeDeleted);
 
 					var query = _queryFactory.GetQuery<SelectUnitsByGroupIdQuery>();
 
@@ -115,7 +120,11 @@ namespace Resgrid.Repositories.DataRepository
 			}
 		}
 
-		public async Task<IEnumerable<Unit>> GetAllUnitsByDepartmentIdAsync(int departmentId)
+		public Task<IEnumerable<Unit>> GetAllUnitsByDepartmentIdAsync(int departmentId) => GetUnitsByDepartmentIdAsync(departmentId, false);
+
+		public Task<IEnumerable<Unit>> GetAllUnitsByDepartmentIdIncludingDeletedAsync(int departmentId) => GetUnitsByDepartmentIdAsync(departmentId, true);
+
+		private async Task<IEnumerable<Unit>> GetUnitsByDepartmentIdAsync(int departmentId, bool includeDeleted)
 		{
 			try
 			{
@@ -123,6 +132,7 @@ namespace Resgrid.Repositories.DataRepository
 				{
 					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("DepartmentId", departmentId);
+					dynamicParameters.Add("IncludeDeleted", includeDeleted);
 
 					var query = _queryFactory.GetQuery<SelectUnitsByDIdQuery>();
 

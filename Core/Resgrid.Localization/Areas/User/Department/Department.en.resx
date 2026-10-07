@@ -1329,4 +1329,79 @@
   <data name="RunCardTriggerRequired" xml:space="preserve">
     <value>Add at least one trigger before saving this run card.</value>
   </data>
+  <data name="InQuartersTurnoutLabel" xml:space="preserve">
+    <value>In-quarters turnout (seconds)</value>
+  </data>
+  <data name="InQuartersTurnoutHelp" xml:space="preserve">
+    <value>Time a unit at its station needs before it is moving. Applies to units in an In Quarters status and to units with no GPS position (taken to be at their station). Added to the travel time when ranking closest units. 0 = none.</value>
+  </data>
+  <data name="MobileTurnoutLabel" xml:space="preserve">
+    <value>Mobile turnout (seconds)</value>
+  </data>
+  <data name="MobileTurnoutHelp" xml:space="preserve">
+    <value>Time a unit that is already out and available needs before it is moving to a new call. Applies to units ranked from their GPS position. Added to the travel time when ranking closest units. 0 = none.</value>
+  </data>
+  <data name="StatusHoldToConfirmLabel" xml:space="preserve">
+    <value>Hold to set status</value>
+  </data>
+  <data name="StatusHoldToConfirmHelp" xml:space="preserve">
+    <value>In the Unit and Responder apps, crews press and hold a status button for two seconds to set it, instead of tapping it and then pressing Next or Submit. Prevents accidental taps and forgotten confirmations. A status that needs a note or a destination choice still opens its next step.</value>
+  </data>
+  <data name="CallNumberingHeader" xml:space="preserve">
+    <value>Call Numbering</value>
+  </data>
+  <data name="CallNumberingIntro" xml:space="preserve">
+    <value>How new calls are numbered. Changing the pattern never renumbers calls that already have a number.</value>
+  </data>
+  <data name="CallNumberPattern" xml:space="preserve">
+    <value>Call number pattern</value>
+  </data>
+  <data name="CallNumberExample" xml:space="preserve">
+    <value>Example:</value>
+  </data>
+  <data name="CallNumberPatternHelp" xml:space="preserve">
+    <value>Fixed text (letters, digits, - _ . /) around tokens: {YYYY} or {YY} the year, {MM} the month, {DD} the day and {SEQ} the sequence, which must appear once. The sequence starts again at 1 whenever the date in the number changes: each year with a year, each month with {MM}, each day with {DD}, and never without a date. {MM} needs a year and {DD} needs {MM}. Dates use the department's time zone.</value>
+  </data>
+  <data name="CallNumberSequenceWidth" xml:space="preserve">
+    <value>Sequence digits</value>
+  </data>
+  <data name="CallNumberSequenceWidthHelp" xml:space="preserve">
+    <value>Pads the sequence with leading zeros, so 4 writes 0153. 1 writes it without padding, as Resgrid always has.</value>
+  </data>
+  <data name="CallNumberNext" xml:space="preserve">
+    <value>Next call number</value>
+  </data>
+  <data name="CallNumberResetsYearly" xml:space="preserve">
+    <value>Starts again at 1 each year.</value>
+  </data>
+  <data name="CallNumberResetsMonthly" xml:space="preserve">
+    <value>Starts again at 1 each month.</value>
+  </data>
+  <data name="CallNumberResetsDaily" xml:space="preserve">
+    <value>Starts again at 1 each day.</value>
+  </data>
+  <data name="CallNumberResetsNever" xml:space="preserve">
+    <value>Never starts again.</value>
+  </data>
+  <data name="CallNumberRaiseTo" xml:space="preserve">
+    <value>Raise next sequence to</value>
+  </data>
+  <data name="CallNumberRaiseToHelp" xml:space="preserve">
+    <value>For departments continuing numbers issued before Resgrid: the next call receives this sequence. It can only be raised, never lowered, so a number is never issued twice. Leave it blank to keep the current sequence.</value>
+  </data>
+  <data name="CallNumberRaiseConfirm" xml:space="preserve">
+    <value>Raise the next call number? It can only be raised, never lowered.</value>
+  </data>
+  <data name="CallNumberPatternInvalid" xml:space="preserve">
+    <value>The call numbering was not saved. The pattern needs {SEQ} exactly once, can only contain letters, digits, - _ . / and the {YYYY}, {YY}, {MM} and {DD} tokens, needs a year for {MM} and {MM} for {DD}, and can be at most 40 characters.</value>
+  </data>
+  <data name="CallNumberNextBelowCurrent" xml:space="preserve">
+    <value>The next call number was not raised: it can only be raised above the number the next call already receives ({0}).</value>
+  </data>
+  <data name="CallNumberNextPatternChanged" xml:space="preserve">
+    <value>The next call number was not raised because the pattern changed in the same save. Raise it again for the new pattern.</value>
+  </data>
+  <data name="CallSettingsSaved" xml:space="preserve">
+    <value>Call settings were saved.</value>
+  </data>
 </root>

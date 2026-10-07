@@ -20,7 +20,8 @@ namespace Resgrid.Services.Invoicing
 			var deployment = await GetDeploymentByIdAsync(deploymentId, departmentId);
 			if (deployment == null) throw new InvalidOperationException("deployments_not_found");
 			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
-			var units = await _unitsService.GetUnitsForDepartmentUnlimitedAsync(departmentId) ?? new List<Unit>();
+			// The manifest names what was deployed, deleted units included.
+			var units = await _unitsService.GetUnitsForDepartmentIncludingDeletedAsync(departmentId) ?? new List<Unit>();
 			var seats = new Dictionary<int, string>();
 			foreach (var unitId in deployment.Units.Where(u => u.IsActive).Select(u => u.UnitId).Distinct())
 			{

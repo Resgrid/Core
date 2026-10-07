@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
@@ -42,6 +43,20 @@ namespace Resgrid.Model
 
 		[ProtoMember(9)]
 		public bool? SpecialPermit { get; set; }
+
+		/// <summary>
+		/// Units are never hard deleted: calls, states, logs, reports and records keep pointing at them. A deleted unit
+		/// is left out of every current list (pickers, dispatch, boards, apps, limits, name uniqueness) but still
+		/// resolves by id, and through the "including deleted" lists, for point-in-time data.
+		/// </summary>
+		[ProtoMember(10)]
+		public bool IsDeleted { get; set; }
+
+		[ProtoMember(11)]
+		public DateTime? DeletedOn { get; set; }
+
+		[ProtoMember(12)]
+		public string DeletedByUserId { get; set; }
 
 		public virtual DepartmentGroup StationGroup { get; set; }
 

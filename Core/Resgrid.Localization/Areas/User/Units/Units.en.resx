@@ -507,4 +507,8 @@
   <data name="CertificationDeprecated" xml:space="preserve">
     <value>Deprecated</value>
   </data>
+  <data name="DeletedUnitName" xml:space="preserve">
+    <value>{0} (deleted)</value>
+    <comment>A deleted unit in a report picker; {0} is the unit name.</comment>
+  </data>
 </root>

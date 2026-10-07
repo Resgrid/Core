@@ -68,7 +68,8 @@ namespace Resgrid.Services
 		}
 
 		var unit = await _unitsService.GetUnitByIdAsync(device.UnitId);
-		if (unit == null || unit.DepartmentId != device.DepartmentId)
+		// A device left bound to a deleted unit has nothing current to track.
+		if (unit == null || unit.IsDeleted || unit.DepartmentId != device.DepartmentId)
 		{
 			await TryUpdateDeviceStatusAsync(device, receivedOn, null, "tenant-binding-invalid", cancellationToken);
 			return Invalid(receivedOn, "The tracking binding is invalid.");
@@ -153,7 +154,7 @@ namespace Resgrid.Services
 			var device = source.Device;
 			var unit = await _unitsService.GetUnitByIdAsync(
 				device.UnitId);
-			if (unit == null ||
+			if (unit == null || unit.IsDeleted ||
 			    unit.DepartmentId != device.DepartmentId)
 			{
 				await TryUpdateDeviceStatusAsync(

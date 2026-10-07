@@ -1271,4 +1271,79 @@
   <data name="RunCardTriggerRequired" xml:space="preserve">
     <value>Fügen Sie mindestens einen Auslöser hinzu, bevor Sie diese Ausrückeordnung speichern.</value>
   </data>
+  <data name="InQuartersTurnoutLabel" xml:space="preserve">
+    <value>Ausrückzeit von der Wache (Sekunden)</value>
+  </data>
+  <data name="InQuartersTurnoutHelp" xml:space="preserve">
+    <value>Zeit, die eine Einheit auf der Wache braucht, bis sie fährt. Gilt für Einheiten im Status „In der Wache“ und für Einheiten ohne GPS-Position (diese gelten als auf ihrer Wache). Wird bei der Rangfolge der nächsten Einheiten zur Fahrzeit addiert. 0 = keine.</value>
+  </data>
+  <data name="MobileTurnoutLabel" xml:space="preserve">
+    <value>Ausrückzeit unterwegs (Sekunden)</value>
+  </data>
+  <data name="MobileTurnoutHelp" xml:space="preserve">
+    <value>Zeit, die eine bereits unterwegs verfügbare Einheit braucht, bis sie zu einem neuen Einsatz fährt. Gilt für Einheiten, die nach ihrer GPS-Position eingestuft werden. Wird bei der Rangfolge der nächsten Einheiten zur Fahrzeit addiert. 0 = keine.</value>
+  </data>
+  <data name="StatusHoldToConfirmLabel" xml:space="preserve">
+    <value>Status durch Gedrückthalten setzen</value>
+  </data>
+  <data name="StatusHoldToConfirmHelp" xml:space="preserve">
+    <value>In den Unit- und Responder-Apps halten Besatzungen eine Status-Schaltfläche zwei Sekunden lang gedrückt, um den Status zu setzen, statt sie anzutippen und dann Weiter oder Senden zu drücken. Verhindert versehentliches Antippen und vergessene Bestätigungen. Ein Status, der eine Notiz oder eine Zielauswahl benötigt, öffnet weiterhin seinen nächsten Schritt.</value>
+  </data>
+  <data name="CallNumberingHeader" xml:space="preserve">
+    <value>Einsatznummerierung</value>
+  </data>
+  <data name="CallNumberingIntro" xml:space="preserve">
+    <value>Wie neue Einsätze nummeriert werden. Eine Änderung des Musters nummeriert Einsätze, die bereits eine Nummer haben, nie neu.</value>
+  </data>
+  <data name="CallNumberPattern" xml:space="preserve">
+    <value>Muster der Einsatznummer</value>
+  </data>
+  <data name="CallNumberExample" xml:space="preserve">
+    <value>Beispiel:</value>
+  </data>
+  <data name="CallNumberPatternHelp" xml:space="preserve">
+    <value>Fester Text (Buchstaben, Ziffern, - _ . /) um Platzhalter: {YYYY} oder {YY} das Jahr, {MM} der Monat, {DD} der Tag und {SEQ} die laufende Nummer, die genau einmal vorkommen muss. Die laufende Nummer beginnt wieder bei 1, sobald sich das Datum in der Nummer ändert: jedes Jahr mit einem Jahr, jeden Monat mit {MM}, jeden Tag mit {DD} und nie ohne Datum. {MM} erfordert ein Jahr und {DD} erfordert {MM}. Daten verwenden die Zeitzone der Abteilung.</value>
+  </data>
+  <data name="CallNumberSequenceWidth" xml:space="preserve">
+    <value>Stellen der laufenden Nummer</value>
+  </data>
+  <data name="CallNumberSequenceWidthHelp" xml:space="preserve">
+    <value>Füllt die laufende Nummer mit führenden Nullen auf, 4 ergibt also 0153. 1 schreibt sie ohne Auffüllung, wie Resgrid es immer getan hat.</value>
+  </data>
+  <data name="CallNumberNext" xml:space="preserve">
+    <value>Nächste Einsatznummer</value>
+  </data>
+  <data name="CallNumberResetsYearly" xml:space="preserve">
+    <value>Beginnt jedes Jahr wieder bei 1.</value>
+  </data>
+  <data name="CallNumberResetsMonthly" xml:space="preserve">
+    <value>Beginnt jeden Monat wieder bei 1.</value>
+  </data>
+  <data name="CallNumberResetsDaily" xml:space="preserve">
+    <value>Beginnt jeden Tag wieder bei 1.</value>
+  </data>
+  <data name="CallNumberResetsNever" xml:space="preserve">
+    <value>Beginnt nie wieder von vorn.</value>
+  </data>
+  <data name="CallNumberRaiseTo" xml:space="preserve">
+    <value>Nächste laufende Nummer anheben auf</value>
+  </data>
+  <data name="CallNumberRaiseToHelp" xml:space="preserve">
+    <value>Für Abteilungen, die vor Resgrid vergebene Nummern fortführen: Der nächste Einsatz erhält diese laufende Nummer. Sie kann nur angehoben, nie gesenkt werden, sodass keine Nummer zweimal vergeben wird. Leer lassen, um die aktuelle laufende Nummer beizubehalten.</value>
+  </data>
+  <data name="CallNumberRaiseConfirm" xml:space="preserve">
+    <value>Nächste Einsatznummer anheben? Sie kann nur angehoben, nie gesenkt werden.</value>
+  </data>
+  <data name="CallNumberPatternInvalid" xml:space="preserve">
+    <value>Die Einsatznummerierung wurde nicht gespeichert. Das Muster braucht {SEQ} genau einmal, darf nur Buchstaben, Ziffern, - _ . / und die Platzhalter {YYYY}, {YY}, {MM} und {DD} enthalten, braucht ein Jahr für {MM} und {MM} für {DD} und darf höchstens 40 Zeichen lang sein.</value>
+  </data>
+  <data name="CallNumberNextBelowCurrent" xml:space="preserve">
+    <value>Die nächste Einsatznummer wurde nicht angehoben: Sie kann nur über die Nummer angehoben werden, die der nächste Einsatz bereits erhält ({0}).</value>
+  </data>
+  <data name="CallNumberNextPatternChanged" xml:space="preserve">
+    <value>Die nächste Einsatznummer wurde nicht angehoben, weil sich das Muster beim selben Speichern geändert hat. Heben Sie sie für das neue Muster erneut an.</value>
+  </data>
+  <data name="CallSettingsSaved" xml:space="preserve">
+    <value>Die Einsatzeinstellungen wurden gespeichert.</value>
+  </data>
 </root>

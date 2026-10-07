@@ -137,7 +137,9 @@ namespace Resgrid.Services
 		{
 			var rows = new List<ReportingDailyRollup>();
 
-			var units = await _unitsService.GetUnitsForDepartmentAsync(departmentId);
+			// The units in service that day: a unit deleted after it still counts for it.
+			var units = (await _unitsService.GetUnitsForDepartmentIncludingDeletedAsync(departmentId))?
+				.Where(u => !u.IsDeleted || !u.DeletedOn.HasValue || u.DeletedOn.Value >= dayStart).ToList();
 			if (units == null || units.Count == 0)
 				return rows;
 

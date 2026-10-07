@@ -167,9 +167,10 @@ namespace Resgrid.Services.CallEmailTemplates
 		/// integers (those are their identifiers), departments with Custom Call Priorities
 		/// can send the priority name instead of an internal identifier they can't see.
 		/// Anything that doesn't resolve falls back to the department default, an identifier
-		/// the department doesn't own would leave dispatch without a priority to resolve.
+		/// the department doesn't own would leave dispatch without a priority to resolve. Other templates whose
+		/// email carries a priority value resolve it here too.
 		/// </summary>
-		private static int ParseCallPriority(string data, int priority, List<DepartmentCallPriority> activePriorities)
+		internal static int ParseCallPriority(string data, int priority, List<DepartmentCallPriority> activePriorities)
 		{
 			if (String.IsNullOrWhiteSpace(data))
 				return priority;

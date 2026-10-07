@@ -244,7 +244,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 							d.CreatedOn,
 							(SELECT COUNT (*) FROM DepartmentGroups dg WHERE dg.DepartmentId = d.DepartmentId) AS 'Groups',
 							(SELECT COUNT (*) -1 FROM DepartmentMembers dm WHERE dm.DepartmentId = d.DepartmentId) AS 'Users',
-							(SELECT COUNT (*) FROM Units u WHERE u.DepartmentId = d.DepartmentId) AS 'Units',
+							(SELECT COUNT (*) FROM Units u WHERE u.DepartmentId = d.DepartmentId AND u.IsDeleted = 0) AS 'Units',
 							(SELECT COUNT (*) FROM Calls c WHERE c.DepartmentId = d.DepartmentId) AS 'Calls',
 							(SELECT COUNT (*) FROM PersonnelRoles pr WHERE pr.DepartmentId = d.DepartmentId) AS 'Roles',
 							(SELECT COUNT (*) FROM DepartmentNotifications dn WHERE dn.DepartmentId = d.DepartmentId) AS 'Notifications',
@@ -681,7 +681,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					ORDER BY Timestamp DESC";
 			SelectUnitByDIdNameQuery = @"
 					SELECT * FROM %SCHEMA%.%TABLENAME%
-					WHERE [DepartmentId] = %DID% AND [Name] = %UNITNAME%";
+					WHERE [DepartmentId] = %DID% AND [Name] = %UNITNAME% AND [IsDeleted] = 0";
 			SelectUnitTypeByDIdNameQuery =
 				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% AND [Type] = %TYPENAME%";
 			SelectUnitLogsByUnitIdQuery =
@@ -691,12 +691,12 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					SELECT ur.*
 					FROM %SCHEMA%.%TABLENAME% ur
 					INNER JOIN %SCHEMA%.%UNITSTABLE% u ON u.[UnitId] = ur.[UnitId]
-					WHERE u.[DepartmentId] = %DID%";
+					WHERE u.[DepartmentId] = %DID% AND u.[IsDeleted] = 0";
 			SelectUnitsByGroupIdQuery = @"
 					SELECT u.*, dg.*
 					FROM [dbo].[Units] u
 					INNER JOIN [dbo].[DepartmentGroups] dg ON dg.[DepartmentGroupId] = u.[StationGroupId]
-					WHERE u.[StationGroupId] = %GROUPID%";
+					WHERE u.[StationGroupId] = %GROUPID% AND (u.[IsDeleted] = 0 OR %INCLUDEDELETED% = 1)";
 			SelectCurrentRolesByUnitIdQuery = @"
 					SELECT * FROM %SCHEMA%.%UNITSTATESTABLE% us
 					INNER JOIN %SCHEMA%.%UNITSTATEROLESSTABLE% ON %SCHEMA%.%UNITSTATEROLESSTABLE%.[UnitStateId] = us.[UnitStateId]
@@ -713,7 +713,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 						AND u.[DepartmentId] = %DID%
 						AND (us.[DestinationType] IS NULL OR us.[DestinationType] = 2)";
 			SelectUnitByDIdTypeQuery =
-				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% AND [Type] = %TYPE%";
+				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% AND [Type] = %TYPE% AND [IsDeleted] = 0";
 			SelectLastUnitStatesByDidQuery = @"
 					SELECT  q.*, u.*
 					FROM    (
@@ -721,7 +721,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 							FROM UnitStates
 							) q
 					INNER JOIN Units u ON u.UnitId = q.UnitId
-					WHERE u.DepartmentId = %DID% AND us = 1";
+					WHERE u.DepartmentId = %DID% AND u.IsDeleted = 0 AND us = 1";
 			SelectUnitStateByUnitStateIdQuery = @"
 					SELECT us.*, u.*
 					FROM %SCHEMA%.%UNITSTATESTABLE% us
@@ -734,7 +734,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					SELECT u.*, ur.*
 					FROM [dbo].[Units] u
 					LEFT JOIN [dbo].[UnitRoles] ur ON ur.[UnitId] = u.[UnitId]
-					WHERE u.[DepartmentId] = %DID%";
+					WHERE u.[DepartmentId] = %DID% AND (u.[IsDeleted] = 0 OR %INCLUDEDELETED% = 1)";
 
 			#endregion Units
 
@@ -1173,7 +1173,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			SelectCallsCountByDidDateQuery =
 				"SELECT COUNT(*) FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% AND [LoggedOn] >= %STARTDATE% AND [LoggedOn] <= %ENDDATE%";
 			SelectAllClosedCallsByDidDateQuery =
-				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% AND [IsDeleted] = 0 AND [State] > 0";
+				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% AND [IsDeleted] = 0 AND [State] > 0 AND [State] <> 8";
 			SelectAllCallDispatchesByGroupIdQuery =
 				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentGroupId] = %GROUPID%";
 			SelectCallAttachmentByCallIdTypeQuery =
@@ -1193,7 +1193,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			SelectReportPersonnelCountQuery =
 				"SELECT COUNT(*) FROM %SCHEMA%.%TABLENAME% WHERE (%ALLDEPTS% = 1 OR [DepartmentId] = %DID%) AND [IsDeleted] = 0 AND ([IsDisabled] IS NULL OR [IsDisabled] = 0)";
 			SelectReportUnitsCountQuery =
-				"SELECT COUNT(*) FROM %SCHEMA%.%TABLENAME% WHERE (%ALLDEPTS% = 1 OR [DepartmentId] = %DID%)";
+				"SELECT COUNT(*) FROM %SCHEMA%.%TABLENAME% WHERE (%ALLDEPTS% = 1 OR [DepartmentId] = %DID%) AND [IsDeleted] = 0";
 			SelectReportCallsByDayQuery =
 				"SELECT CAST([LoggedOn] AS date) AS [Bucket], COUNT(*) AS [Total] FROM %SCHEMA%.%TABLENAME% WHERE (%ALLDEPTS% = 1 OR [DepartmentId] = %DID%) AND [IsDeleted] = 0 AND [LoggedOn] >= %STARTDATE% AND [LoggedOn] <= %ENDDATE% GROUP BY CAST([LoggedOn] AS date)";
 			SelectReportCallsByMonthQuery =
@@ -1208,7 +1208,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			SelectReportLatestPersonnelStatesQuery =
 				"SELECT latest.[ActionTypeId] AS [GroupKey], COUNT(*) AS [Total] FROM (SELECT al.[ActionTypeId], ROW_NUMBER() OVER (PARTITION BY al.[UserId] ORDER BY al.[Timestamp] DESC) AS rn FROM %SCHEMA%.%TABLENAME% al WHERE (%ALLDEPTS% = 1 OR al.[DepartmentId] = %DID%)) latest WHERE latest.rn = 1 GROUP BY latest.[ActionTypeId]";
 			SelectReportLatestUnitStatesQuery =
-				"SELECT latest.[State] AS [GroupKey], COUNT(*) AS [Total] FROM (SELECT us.[State], ROW_NUMBER() OVER (PARTITION BY us.[UnitId] ORDER BY us.[Timestamp] DESC) AS rn FROM %SCHEMA%.%TABLENAME% us INNER JOIN %SCHEMA%.%UNITSTABLE% u ON u.[UnitId] = us.[UnitId] WHERE (%ALLDEPTS% = 1 OR u.[DepartmentId] = %DID%)) latest WHERE latest.rn = 1 GROUP BY latest.[State]";
+				"SELECT latest.[State] AS [GroupKey], COUNT(*) AS [Total] FROM (SELECT us.[State], ROW_NUMBER() OVER (PARTITION BY us.[UnitId] ORDER BY us.[Timestamp] DESC) AS rn FROM %SCHEMA%.%TABLENAME% us INNER JOIN %SCHEMA%.%UNITSTABLE% u ON u.[UnitId] = us.[UnitId] WHERE (%ALLDEPTS% = 1 OR u.[DepartmentId] = %DID%) AND u.[IsDeleted] = 0) latest WHERE latest.rn = 1 GROUP BY latest.[State]";
 			ReportingDailyRollupTable = "ReportingDailyRollup";
 			SelectReportRollupsQuery =
 				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [BucketDateUtc] >= %STARTDATE% AND [BucketDateUtc] <= %ENDDATE% AND [Metric] = %METRIC% AND ((%HASDEPT% = 0 AND [DepartmentId] IS NULL) OR (%HASDEPT% = 1 AND [DepartmentId] = %DID%))";
@@ -1320,16 +1320,20 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					ORDER BY 1 DESC";
 			SelectAllClosedCallsByDidYearQuery = @"
 					SELECT * FROM %SCHEMA%.%TABLENAME%
-					WHERE [DepartmentId] = %DID% AND [IsDeleted] = 0 AND [State] > 0 AND year(LoggedOn) = %YEAR%
+					WHERE [DepartmentId] = %DID% AND [IsDeleted] = 0 AND [State] > 0 AND [State] <> 8 AND year(LoggedOn) = %YEAR%
 					ORDER BY LoggedOn DESC";
 			SelectNonDispatchedScheduledCallsByDateQuery = @"
 					SELECT *
 					FROM %SCHEMA%.%TABLENAME%
-					WHERE [HasBeenDispatched] = 0 AND [IsDeleted] = 0 AND [DispatchOn] IS NOT NULL AND [DispatchOn] >= %STARTDATE% AND [DispatchOn] <= %ENDDATE%";
+					WHERE ([HasBeenDispatched] = 0 OR ([HasBeenDispatched] = 1 AND [DispatchClaimedOn] < %STALEBEFORE%)) AND [IsDeleted] = 0 AND [DispatchOn] IS NOT NULL AND [DispatchOn] >= %STARTDATE% AND [DispatchOn] <= %ENDDATE%";
 			SelectNonDispatchedScheduledCallsByDidQuery = @"
 					SELECT *
 					FROM %SCHEMA%.%TABLENAME%
-					WHERE [HasBeenDispatched] = 0 AND [IsDeleted] = 0 AND [DepartmentId] = %DID%";
+					WHERE [HasBeenDispatched] = 0 AND [IsDeleted] = 0 AND [State] = 0 AND [DepartmentId] = %DID%";
+			SelectPendingCallsByDidQuery = @"
+					SELECT *
+					FROM %SCHEMA%.%TABLENAME%
+					WHERE [IsDeleted] = 0 AND [State] = 8 AND [DepartmentId] = %DID%";
 			SelectActiveCallsWithCheckInTimersForUserQuery = @"
 					SELECT DISTINCT c.*
 					FROM %SCHEMA%.%TABLENAME% c
@@ -1427,7 +1431,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					SELECT
 					(SELECT COUNT(*) FROM DepartmentMembers dm WHERE dm.DepartmentId = %DID% AND IsDisabled = 0 AND IsDeleted = 0) AS 'UsersCount',
 					(SELECT COUNT(*) FROM DepartmentGroups dg WHERE dg.DepartmentId = %DID%) AS 'GroupsCount',
-					(SELECT COUNT(*) FROM Units u WHERE u.DepartmentId = %DID%) AS 'UnitsCount'";
+					(SELECT COUNT(*) FROM Units u WHERE u.DepartmentId = %DID% AND u.IsDeleted = 0) AS 'UnitsCount'";
 			SelectPaymentByTransactionIdQuery =
 				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [TransactionId] = %TRANSACTIONID%";
 			SelectPaymentsByDIdQuery = @"

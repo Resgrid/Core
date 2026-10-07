@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Resgrid.Web.Services.Attributes;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Model.Services;
@@ -76,6 +77,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpGet("GetAllUnits")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Unit_View)]
+		[DepartmentApiKeyScope(DepartmentApiKeyScopes.UnitsRead)]
 		public async Task<ActionResult<UnitsResult>> GetAllUnits()
 		{
 			var result = new UnitsResult();

@@ -1,5 +1,5 @@
 /*
- * Shared workspace UX: step wizards, the review step and modal housekeeping.
+ * Shared workspace UX: step wizards, the review step, dependent selects and modal housekeeping.
  *
  * The wizards are plain markup driven. A form only needs:
  *   <form class="inventory-command rgw-wizard">
@@ -218,6 +218,35 @@
     }
 
     document.querySelectorAll('form.rgw-wizard').forEach(wire);
+
+    // Dependent selects: a select carrying data-rgw-filter-by="<field name>" only offers the
+    // options whose data-rgw-parent matches that field's current value (a lot only fits its own
+    // item). Options without a parent, such as the blank entry, are always offered, and a
+    // selection the new parent no longer allows is cleared rather than posted. Options are
+    // disabled as well as hidden because some browsers ignore hidden on an option.
+    function filterDependents(form, changed) {
+        Array.prototype.forEach.call(form.querySelectorAll('select[data-rgw-filter-by]'), function (select) {
+            if (select.form !== form) { return; }
+            if (changed && select.dataset.rgwFilterBy !== changed) { return; }
+            var source = form.elements.namedItem(select.dataset.rgwFilterBy);
+            var parent = source ? source.value : '';
+            Array.prototype.forEach.call(select.options, function (option) {
+                var allowed = !option.hasAttribute('data-rgw-parent') || option.getAttribute('data-rgw-parent') === parent;
+                option.hidden = !allowed;
+                option.disabled = !allowed;
+            });
+            var chosen = select.options[select.selectedIndex];
+            if (chosen && chosen.disabled) { select.value = ''; }
+        });
+    }
+
+    document.querySelectorAll('form').forEach(function (form) {
+        if (!form.querySelector('select[data-rgw-filter-by]')) { return; }
+        form.addEventListener('change', function (event) {
+            if (event.target.name) { filterDependents(form, event.target.name); }
+        });
+        filterDependents(form);
+    });
 
     // Bootstrap 3 modals: start each wizard at step one every time it opens, and
     // clear whatever error the previous attempt left behind.

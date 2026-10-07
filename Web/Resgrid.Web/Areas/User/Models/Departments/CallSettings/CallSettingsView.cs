@@ -21,5 +21,17 @@ namespace Resgrid.Web.Areas.User.Models.Departments.CallSettings
 		public int TextCallType { get; set; }
 		public string DepartmentTextToCallSourceNumbers { get; set; }
 		public string InternalDispatchEmail { get; set; }
+
+		// Call numbering (setting 115). The next-number row is the sequence a call logged now falls in.
+		public string CallNumberPattern { get; set; }
+		public int CallNumberSequenceWidth { get; set; }
+		public string CallNumberScopeKey { get; set; }
+		public string CallNumberNextNumber { get; set; }
+		public int CallNumberCurrentNextSequence { get; set; }
+		public CallNumberResetPeriod CallNumberResetPeriod { get; set; }
+		public int? CallNumberNextSequence { get; set; }
+		/// <summary>Department-local now, for the pattern preview.</summary>
+		public System.DateTime CallNumberPreviewDate { get; set; }
+		public string ErrorMessage { get; set; }
 	}
 }

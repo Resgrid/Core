@@ -359,7 +359,8 @@ namespace Resgrid.Services
 			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
 			var unit = await _unitsService.GetUnitByIdAsync(unitId);
 
-			if (department == null || unit == null)
+			// A deleted unit is kept only for point-in-time data: nothing edits, re-deletes or sets a status on it.
+			if (department == null || unit == null || unit.IsDeleted)
 				return false;
 
 			if (unit.DepartmentId != department.DepartmentId)

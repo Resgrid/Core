@@ -68,6 +68,8 @@ namespace Resgrid.Tests.Rms
 		{
 			_units.Setup(u => u.GetUnitsForDepartmentAsync(9)).ReturnsAsync(new List<Unit> {
 				new() { DepartmentId = 9, UnitId = 1, Name = "Engine 1" }, new() { DepartmentId = 9, UnitId = 2, Name = "Hidden" }, new() { DepartmentId = 10, UnitId = 3, Name = "Foreign" } });
+			_units.Setup(u => u.GetUnitsForDepartmentIncludingDeletedAsync(9)).ReturnsAsync(new List<Unit> {
+				new() { DepartmentId = 9, UnitId = 1, Name = "Engine 1" }, new() { DepartmentId = 9, UnitId = 2, Name = "Hidden" }, new() { DepartmentId = 10, UnitId = 3, Name = "Foreign" } });
 			_sourceAuth.Setup(a => a.CanUserViewUnitLocationAsync("officer", 1, 9)).ReturnsAsync(true);
 			(await Select(RmsEvidenceKind.TrackingFix)).Choices.Should().ContainSingle().Which.Id.Should().Be("1");
 			_sourceAuth.SetupSequence(a => a.CanUserViewUnitLocationAsync("officer", 1, 9)).ReturnsAsync(true).ReturnsAsync(false);

@@ -93,7 +93,7 @@
     <value>Einsätze</value>
   </data>
   <data name="CallsAndStations" xml:space="preserve">
-    <value>Calls and Stations</value>
+    <value>Einsätze und Wachen</value>
   </data>
   <data name="ChangesWarning" xml:space="preserve">
     <value>Changes to custom statues can take up to 30 minutes to fully propagate though the Resgrid network. Mobile app users are encouraged to manually resync (Settings-&gt;Advanced Settings-&gt;ReSync).</value>
@@ -162,7 +162,7 @@
     <value>New Option</value>
   </data>
   <data name="NoDetail" xml:space="preserve">
-    <value>No Detail</value>
+    <value>Kein Detail</value>
   </data>
   <data name="None" xml:space="preserve">
     <value>Keine</value>
@@ -213,7 +213,7 @@
     <value>Staging</value>
   </data>
   <data name="Stations" xml:space="preserve">
-    <value>Stations</value>
+    <value>Wachen</value>
   </data>
   <data name="TextColorLabel" xml:space="preserve">
     <value>Text Color</value>
@@ -259,5 +259,29 @@
   </data>
   <data name="Completed" xml:space="preserve">
     <value>Abgeschlossen</value>
+  </data>
+  <data name="InQuarters" xml:space="preserve">
+    <value>In der Wache</value>
+  </data>
+  <data name="Pois" xml:space="preserve">
+    <value>POIs</value>
+  </data>
+  <data name="CallsAndPois" xml:space="preserve">
+    <value>Einsätze und POIs</value>
+  </data>
+  <data name="StationsAndPois" xml:space="preserve">
+    <value>Wachen und POIs</value>
+  </data>
+  <data name="CallsStationsAndPois" xml:space="preserve">
+    <value>Einsätze, Wachen und POIs</value>
+  </data>
+  <data name="NextStatusesLabel" xml:space="preserve">
+    <value>Nächste Status</value>
+  </data>
+  <data name="NextStatusesHelp" xml:space="preserve">
+    <value>Solange dieser Status aktuell ist, bieten die Unit- und Responder-Apps nur die markierten Status an, dazu einen Link „Alle Status anzeigen“ für alles außerhalb der Reihenfolge. Lassen Sie alle Kästchen leer, um alle Status anzubieten. Disponenten und die Website können weiterhin jeden Status setzen.</value>
+  </data>
+  <data name="NextStatusesAny" xml:space="preserve">
+    <value>Jeder Status</value>
   </data>
 </root>

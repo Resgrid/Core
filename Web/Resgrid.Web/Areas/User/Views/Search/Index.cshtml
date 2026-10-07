@@ -6,6 +6,35 @@
 	ViewBag.Title = "Resgrid | " + localizer["PageTitle"];
 	string FamilyLabel(string type) => localizer["Family." + type].ResourceNotFound ? type : localizer["Family." + type].Value;
 	string BadgeLabel(string type) => localizer["Badge." + type].ResourceNotFound ? type : localizer["Badge." + type].Value;
+	// The snippet often repeats the summary with different separators ("Station 1 · Attack" / "Station 1 Attack").
+	bool SameText(string a, string b) => string.Equals(new string((a ?? "").Where(char.IsLetterOrDigit).ToArray()), new string((b ?? "").Where(char.IsLetterOrDigit).ToArray()), StringComparison.OrdinalIgnoreCase);
+	// Icons follow the side navigation for the family's module; tones are defined in css/search.css.
+	(string Icon, string Tone) FamilyStyle(string type) => type switch
+	{
+		SearchEntityTypes.Call => ("fa-bullhorn", "tone-danger"),
+		SearchEntityTypes.Unit => ("fa-road", "tone-primary"),
+		SearchEntityTypes.Personnel => ("fa-user", "tone-primary"),
+		SearchEntityTypes.Group => ("fa-sitemap", "tone-primary"),
+		SearchEntityTypes.Shift => ("fa-briefcase", "tone-primary"),
+		SearchEntityTypes.Contact => ("fa-address-book", "tone-primary"),
+		SearchEntityTypes.Message => ("fa-envelope", "tone-info"),
+		SearchEntityTypes.Note => ("fa-clipboard", "tone-info"),
+		SearchEntityTypes.Document => ("fa-file-archive-o", "tone-info"),
+		SearchEntityTypes.CalendarEvent => ("fa-calendar", "tone-info"),
+		SearchEntityTypes.Training => ("fa-book", "tone-info"),
+		SearchEntityTypes.Protocol => ("fa-list-alt", "tone-info"),
+		SearchEntityTypes.Record => ("fa-file", "tone-warning"),
+		SearchEntityTypes.Log => ("fa-history", "tone-warning"),
+		SearchEntityTypes.Occupancy => ("fa-building-o", "tone-warning"),
+		SearchEntityTypes.Poi => ("fa-map-marker", "tone-warning"),
+		SearchEntityTypes.Invoice => ("fa-file-text-o", "tone-success"),
+		SearchEntityTypes.Bid => ("fa-handshake-o", "tone-success"),
+		SearchEntityTypes.ServiceContract => ("fa-file-text", "tone-success"),
+		SearchEntityTypes.RateCard => ("fa-money", "tone-success"),
+		SearchEntityTypes.Deployment => ("fa-truck", "tone-success"),
+		SearchEntityTypes.CertificationType => ("fa-certificate", "tone-success"),
+		_ => ("fa-search", "")
+	};
 	var showPager = Model.Searched && (Model.Page > 1 || Model.HasMore);
 	var lastPage = Model.Total.HasValue ? Math.Max(1, (int)Math.Ceiling(Model.Total.Value / (double)Model.PageSize)) : (int?)null;
 }
@@ -36,7 +65,7 @@
 	}
 </div>
 
-<div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content search-page">
 	<div class="row">
 		<div class="col-lg-12">
 			@if (Model.Unavailable)
@@ -48,16 +77,16 @@
 				<div class="ibox float-e-margins">
 					<div class="ibox-title">
 						<form method="get" asp-controller="Search" asp-action="Index" asp-route-area="User" id="search-page-form">
-							<div class="input-group m-b-sm">
+							<div class="input-group search-query">
 								<input type="search" name="q" value="@Model.Query" class="form-control" placeholder="@localizer["Placeholder"]" maxlength="500" autofocus aria-label="@localizer["PageTitle"]" />
 								<span class="input-group-btn">
 									<button type="submit" class="btn btn-primary"><i class="fa fa-search"></i> @localizer["SearchButton"]</button>
 								</span>
 							</div>
-							<div class="form-inline">
-								<div class="form-group m-r-sm">
-									<label class="m-r-xs" for="search-type">@localizer["SearchIn"]</label>
-									<select id="search-type" name="type" class="form-control input-sm">
+							<div class="search-filters">
+								<div class="form-group">
+									<label for="search-type">@localizer["SearchIn"]</label>
+									<select id="search-type" name="type" class="form-control">
 										<option value="" selected="@(Model.Type == null)">@localizer["AllFamilies"]</option>
 										@foreach (var family in Model.Families)
 										{
@@ -65,17 +94,17 @@
 										}
 									</select>
 								</div>
-								<div class="form-group m-r-sm">
-									<label class="m-r-xs" for="search-from">@localizer["FromLabel"]</label>
-									<input id="search-from" type="date" name="from" value="@Model.From" class="form-control input-sm" />
+								<div class="form-group">
+									<label for="search-from">@localizer["FromLabel"]</label>
+									<input id="search-from" type="date" name="from" value="@Model.From" class="form-control" />
 								</div>
-								<div class="form-group m-r-sm">
-									<label class="m-r-xs" for="search-to">@localizer["ToLabel"]</label>
-									<input id="search-to" type="date" name="to" value="@Model.To" class="form-control input-sm" />
+								<div class="form-group">
+									<label for="search-to">@localizer["ToLabel"]</label>
+									<input id="search-to" type="date" name="to" value="@Model.To" class="form-control" />
 								</div>
-								<div class="form-group m-r-sm">
-									<label class="m-r-xs" for="search-sort">@localizer["SortLabel"]</label>
-									<select id="search-sort" name="sort" class="form-control input-sm">
+								<div class="form-group">
+									<label for="search-sort">@localizer["SortLabel"]</label>
+									<select id="search-sort" name="sort" class="form-control">
 										<option value="@SearchSortOrders.Relevance" selected="@(Model.Sort == SearchSortOrders.Relevance)">@localizer["SortRelevance"]</option>
 										<option value="@SearchSortOrders.Newest" selected="@(Model.Sort == SearchSortOrders.Newest)">@localizer["SortNewest"]</option>
 										<option value="@SearchSortOrders.Oldest" selected="@(Model.Sort == SearchSortOrders.Oldest)">@localizer["SortOldest"]</option>
@@ -83,7 +112,7 @@
 								</div>
 							</div>
 						</form>
-						<div class="text-muted small m-t-sm">@localizer["Tips"]</div>
+						<div class="text-muted small search-tips">@localizer["Tips"]</div>
 					</div>
 					<div class="ibox-content">
 						@if (Model.IndexBuilding)
@@ -101,74 +130,89 @@
 
 						@if (!Model.Searched)
 						{
-							<p class="text-muted">@localizer["EnterQuery"]</p>
+							<div class="search-empty">
+								<i class="fa fa-search" aria-hidden="true"></i>
+								<p>@localizer["EnterQuery"]</p>
+							</div>
 						}
 						else if (Model.Results.Count == 0)
 						{
-							<h4>@localizer["NoResults"]</h4>
-							<p class="text-muted">@localizer["NoResultsHint"]</p>
+							<div class="search-empty">
+								<i class="fa fa-search-minus" aria-hidden="true"></i>
+								<h4>@localizer["NoResults"]</h4>
+								<p>@localizer["NoResultsHint"]</p>
+							</div>
 						}
 						else
 						{
-							<p class="text-muted" id="search-result-count">
-								@if (Model.Total.HasValue)
+							<div class="search-summary">
+								<p id="search-result-count">
+									@if (Model.Total.HasValue)
+									{
+										@string.Format(localizer["ResultsOfTotal"].Value, Model.FirstIndex, Model.LastIndex, Model.Total.Value)
+									}
+									else
+									{
+										@string.Format(localizer["ResultsRange"].Value, Model.FirstIndex, Model.LastIndex)
+									}
+								</p>
+								@if (!Model.Total.HasValue && Model.HasMore)
 								{
-									@string.Format(localizer["ResultsOfTotal"].Value, Model.FirstIndex, Model.LastIndex, Model.Total.Value)
-								}
-								else
-								{
-									@string.Format(localizer["ResultsRange"].Value, Model.FirstIndex, Model.LastIndex)
-								}
-							</p>
-							@if (!Model.Total.HasValue && Model.HasMore)
-							{
-								<p class="text-muted small">@localizer["TotalUnknown"]</p>
-							}
-
-							<div class="search-results">
-								@foreach (var row in Model.Results)
-								{
-									<div class="search-result m-b-md">
-										<h3 class="m-b-xs">
-											<span class="label label-default m-r-xs">@BadgeLabel(row.EntityType)</span>
-											@if (!string.IsNullOrWhiteSpace(row.Url))
-											{
-												<a href="@row.Url">@SearchHighlighter.Highlight(row.Title, Model.HighlightTerms)</a>
-											}
-											else
-											{
-												@SearchHighlighter.Highlight(row.Title, Model.HighlightTerms)
-											}
-										</h3>
-										<div class="small text-muted">
-											@if (!string.IsNullOrWhiteSpace(row.Number))
-											{
-												<span class="m-r-sm">#@row.Number</span>
-											}
-											@if (!string.IsNullOrWhiteSpace(row.OccurredOn))
-											{
-												<span class="m-r-sm"><i class="fa fa-clock-o"></i> @row.OccurredOn</span>
-											}
-											@if (!string.IsNullOrWhiteSpace(row.Status))
-											{
-												<span class="m-r-sm">@row.Status</span>
-											}
-											@if (!string.IsNullOrWhiteSpace(row.Category) && row.Category != row.Status)
-											{
-												<span class="m-r-sm">@row.Category</span>
-											}
-										</div>
-										@if (!string.IsNullOrWhiteSpace(row.Summary))
-										{
-											<div>@SearchHighlighter.Highlight(row.Summary, Model.HighlightTerms)</div>
-										}
-										@if (!string.IsNullOrWhiteSpace(row.Snippet) && row.Snippet != row.Summary)
-										{
-											<div class="search-snippet text-muted">@SearchHighlighter.Highlight(row.Snippet, Model.HighlightTerms)</div>
-										}
-									</div>
+									<p class="small">@localizer["TotalUnknown"]</p>
 								}
 							</div>
+
+							<ul class="search-hits">
+								@foreach (var row in Model.Results)
+								{
+									var style = FamilyStyle(row.EntityType);
+									var hasUrl = !string.IsNullOrWhiteSpace(row.Url);
+									<li class="search-hit @style.Tone @(hasUrl ? "is-link" : null)">
+										<span class="search-hit-icon" aria-hidden="true"><i class="fa @style.Icon"></i></span>
+										<div class="search-hit-body">
+											<div class="search-hit-head">
+												<h3 class="search-hit-title">
+													@if (hasUrl)
+													{
+														<a href="@row.Url">@SearchHighlighter.Highlight(row.Title, Model.HighlightTerms)</a>
+													}
+													else
+													{
+														@SearchHighlighter.Highlight(row.Title, Model.HighlightTerms)
+													}
+												</h3>
+												<span class="search-hit-type">@BadgeLabel(row.EntityType)</span>
+											</div>
+											<div class="search-hit-meta">
+												@if (!string.IsNullOrWhiteSpace(row.Number))
+												{
+													<span><i class="fa fa-hashtag" aria-hidden="true"></i>@row.Number</span>
+												}
+												@if (!string.IsNullOrWhiteSpace(row.OccurredOn))
+												{
+													<span><i class="fa fa-clock-o" aria-hidden="true"></i>@row.OccurredOn</span>
+												}
+												@if (!string.IsNullOrWhiteSpace(row.Status))
+												{
+													<span class="search-hit-status">@row.Status</span>
+												}
+												@if (!string.IsNullOrWhiteSpace(row.Category) && row.Category != row.Status)
+												{
+													<span><i class="fa fa-tag" aria-hidden="true"></i>@row.Category</span>
+												}
+											</div>
+											@if (!string.IsNullOrWhiteSpace(row.Summary))
+											{
+												<p class="search-hit-summary">@SearchHighlighter.Highlight(row.Summary, Model.HighlightTerms)</p>
+											}
+											@if (!string.IsNullOrWhiteSpace(row.Snippet) && !SameText(row.Snippet, row.Summary))
+											{
+												<p class="search-hit-snippet">@SearchHighlighter.Highlight(row.Snippet, Model.HighlightTerms)</p>
+											}
+										</div>
+									</li>
+								}
+							</ul>
 
 							@if (showPager)
 							{
@@ -184,7 +228,7 @@
 										}
 										@if (lastPage.HasValue)
 										{
-											<li><span class="text-muted">@Model.Page / @lastPage.Value</span></li>
+											<li class="search-page-position"><span>@Model.Page / @lastPage.Value</span></li>
 										}
 										@if (Model.HasMore)
 										{
@@ -204,6 +248,10 @@
 		</div>
 	</div>
 </div>
+
+@section Styles {
+	<link rel="stylesheet" href="~/css/search.css" asp-append-version="true" />
+}
 
 @section Scripts {
 	<script>

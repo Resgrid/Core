@@ -52,6 +52,33 @@ namespace Resgrid.Tests.Workers
 			(await Build(type, CallPriority(before), CallPriority(after))).Message.Should().Be(expected);
 		}
 
+		[TestCase("system", "System removed Certification Type Paramedic")]
+		[TestCase("removed-member", "Unknown user removed Certification Type Paramedic")]
+		public async Task Message_ActorWithoutProfile_StillBuildsTheRow(string userId, string expected)
+		{
+			// CertificationService audits as "system", which has no profile; profile.FullName threw an NRE
+			// and the row was lost (Sentry: AuditQueueLogic.BuildAuditLogAsync, 4.886).
+			var auditLog = await AuditQueueLogic.BuildAuditLogAsync(
+				new AuditEvent
+				{
+					DepartmentId = 1, UserId = userId, Type = AuditLogTypes.CertificationTypeRemoved,
+					Before = JsonConvert.SerializeObject(new DepartmentCertificationType { Type = "Paramedic" })
+				},
+				Mock.Of<IUserProfileService>(), Mock.Of<IAuditService>());
+
+			auditLog.Message.Should().Be(expected);
+			auditLog.UserId.Should().Be(userId);
+		}
+
+		[Test]
+		public async Task UserAdded_NewUserWithoutProfile_StillBuildsTheRow()
+		{
+			var auditLog = await Build(AuditLogTypes.UserAdded, null, "{\"UserId\":\"new-user\"}");
+
+			auditLog.Message.Should().Be("Matt Casey added a new user");
+			auditLog.Data.Should().Be("New UserId: new-user");
+		}
+
 		[Test]
 		public async Task SettingsChanged_WithoutBefore_BuildsTheRow()
 		{

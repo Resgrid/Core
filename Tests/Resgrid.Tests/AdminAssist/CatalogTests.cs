@@ -55,8 +55,8 @@ namespace Resgrid.Tests.AdminAssist
 			foreach (var type in new[] { typeof(DepartmentModuleSettings), typeof(DepartmentOperatingProfile), typeof(PersonnelListStatusOrderSetting),
 				typeof(PersonnelListStatusOrder), typeof(DepartmentSuppressStaffingInfo), typeof(UnitTypeCallStatusOverrideSetting), typeof(UnitTypeCallStatusOverride),
 				typeof(UnitStatusThresholds), typeof(UnitStatusThreshold), typeof(NewCallFieldPolicy), typeof(NewCallFieldRule), typeof(GroupDispatchScopeConfig),
-				typeof(DispatchRecommendationConfig), typeof(RecordsNumberingConfig), typeof(RecordsNumberingFloor), typeof(RecordsSearchConfig), typeof(RecordsRetentionPolicy),
-				typeof(RecordsRetentionOverride), typeof(RecordsRetentionPolicyVersion), typeof(RecordsDisclosureConfig) })
+				typeof(DispatchRecommendationConfig), typeof(RecordsNumberingConfig), typeof(RecordsNumberingFloor), typeof(RecordsNumberingPrefix), typeof(RecordsSearchConfig), typeof(RecordsRetentionPolicy),
+				typeof(RecordsRetentionOverride), typeof(RecordsRetentionPolicyVersion), typeof(RecordsDisclosureConfig), typeof(CallNumberingConfig) })
 			{
 				var fields = type.GetProperties().Where(p => p.GetCustomAttribute<ProtoBuf.ProtoMemberAttribute>() != null).Select(p => type.Name + "." + p.Name);
 				Assert.That(Catalog.Settings.Where(s => s.Binding.StartsWith(type.Name + ".")).Select(s => s.Binding), Is.EquivalentTo(fields));
@@ -141,6 +141,17 @@ namespace Resgrid.Tests.AdminAssist
 				Assert.That(type, Is.Not.Null, location.Url);
 				Assert.That(type.GetMethods().Any(m => m.Name == location.Action && m.GetCustomAttribute<HttpPostAttribute>() == null && m.GetCustomAttribute<NonActionAttribute>() == null), Is.True, location.Url);
 			}
+		}
+		[Test]
+		public void An_editor_linked_by_several_entries_shows_its_own_field_help()
+		{
+			// Several entries may link to one editor (the setting holding the field, a legacy flag the editor now drives); the help
+			// under it is the editor's own entry, so exactly one match must be neither required nor affected by another.
+			foreach (var shared in Catalog.Settings.Where(s => s.Location.Field != null).GroupBy(s => s.Location).Where(g => g.Count() > 1))
+				Assert.That(shared.Count(s => !shared.Any(o => o.Requires.Contains(s.Id) || o.Affects.Contains(s.Id))), Is.EqualTo(1), shared.Key.Url);
+			Assert.That(Catalog.FieldHelpEntry("Records", "Settings", "NumberPattern").Id, Is.EqualTo("field.RecordsNumberingConfig.Pattern"));
+			Assert.That(Catalog.FieldHelpEntry("Records", "Settings", "SequenceWidth").Id, Is.EqualTo("field.RecordsNumberingConfig.SequenceWidth"));
+			Assert.That(Catalog.FieldHelpEntry("Department", "DispatchSettings", "GroupDispatchScopeEnabled").Id, Is.EqualTo("field.GroupDispatchScopeConfig.Enabled"));
 		}
 		[TestCase("ar")][TestCase("de")][TestCase("el")][TestCase("es")][TestCase("fr")][TestCase("it")][TestCase("pl")][TestCase("sv")][TestCase("uk")]
 		public void Core_navigation_and_guidance_boundary_have_real_locale_resources(string locale)

@@ -82,8 +82,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 					var names = items.ToDictionary(x => x.Id, x => Details<InventoryItemContent>(x).Name ?? x.Id);
 					model.Types = items.Select(x => new SelectListItem { Value = x.Id, Text = names[x.Id] + " (" + Details<InventoryItemContent>(x).UnitOfMeasure + ")" }).ToList();
 					model.Locations = (await ChoicesAsync<InventoryLocation>()).Where(x => !x.IsDeleted).Select(x => new SelectListItem { Value = x.Id, Text = Details<InventoryLabel>(x).Name ?? x.Id }).ToList();
-					model.Lots = (await ChoicesAsync<InventoryLot>()).Where(x => !x.IsDeleted && names.ContainsKey(x.ItemId)).Select(x => new SelectListItem { Value = x.Id, Text = names[x.ItemId] + " · " + (Details<InventoryLotContent>(x).LotNumber ?? x.Id) }).ToList();
-					model.Assets = (await ChoicesAsync<InventoryAsset>()).Where(x => !x.IsDeleted && x.Status == (int)InventoryAssetStatus.InService && names.ContainsKey(x.ItemId)).Select(x => new SelectListItem { Value = x.Id, Text = names[x.ItemId] + " · " + (Details<InventoryAssetContent>(x).SerialNumber ?? x.Id) }).ToList();
+					model.Lots = (await ChoicesAsync<InventoryLot>()).Where(x => !x.IsDeleted && names.ContainsKey(x.ItemId)).Select(x => new WorkspaceChoice { Value = x.Id, Text = names[x.ItemId] + " · " + (Details<InventoryLotContent>(x).LotNumber ?? x.Id), Parent = x.ItemId }).ToList();
+					model.Assets = (await ChoicesAsync<InventoryAsset>()).Where(x => !x.IsDeleted && x.Status == (int)InventoryAssetStatus.InService && names.ContainsKey(x.ItemId)).Select(x => new WorkspaceChoice { Value = x.Id, Text = names[x.ItemId] + " · " + (Details<InventoryAssetContent>(x).SerialNumber ?? x.Id), Parent = x.ItemId }).ToList();
 				}
 				else
 				{

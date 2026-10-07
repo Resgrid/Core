@@ -318,4 +318,28 @@
   <data name="Completed" xml:space="preserve">
     <value>Completed</value>
   </data>
+  <data name="InQuarters" xml:space="preserve">
+    <value>In Quarters</value>
+  </data>
+  <data name="Pois" xml:space="preserve">
+    <value>POIs</value>
+  </data>
+  <data name="CallsAndPois" xml:space="preserve">
+    <value>Calls and POIs</value>
+  </data>
+  <data name="StationsAndPois" xml:space="preserve">
+    <value>Stations and POIs</value>
+  </data>
+  <data name="CallsStationsAndPois" xml:space="preserve">
+    <value>Calls, Stations and POIs</value>
+  </data>
+  <data name="NextStatusesLabel" xml:space="preserve">
+    <value>Next statuses</value>
+  </data>
+  <data name="NextStatusesHelp" xml:space="preserve">
+    <value>While this status is current, the Unit and Responder apps offer only the checked statuses, plus a "Show all statuses" link for anything out of sequence. Leave every box unchecked to offer all statuses. Dispatchers and the website can still set any status.</value>
+  </data>
+  <data name="NextStatusesAny" xml:space="preserve">
+    <value>Any status</value>
+  </data>
 </root>

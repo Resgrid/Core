@@ -404,7 +404,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 			var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
-			var units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
+			// Labels for logged units: deleted ones included.
+			var units = await _unitsService.GetUnitsForDepartmentIncludingDeletedAsync(DepartmentId);
 			var unitLookup = units.ToDictionary(u => u.UnitId, u => u.Name);
 			// After Records activation the list offers View only; DeleteWorkLog refuses anyway (RMS plan section 4.1).
 			var legacyReadOnly = await _recordsCutoverService.AreLegacyWritesBlockedAsync(DepartmentId);
@@ -568,7 +569,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 			model.Attachments = await _workLogsService.GetAttachmentsForLogAsync(logId);
 			model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
-			model.Units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
+			// Labels for logged units: deleted ones included.
+			model.Units = await _unitsService.GetUnitsForDepartmentIncludingDeletedAsync(DepartmentId);
 
 			// The log narrative, initial report, cause, contact details and location are cataloged
 			// (plan 5.2, catalog v3) and this view writes them out with Html.Raw. Without this the
@@ -617,7 +619,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 			model.Attachments = await _workLogsService.GetAttachmentsForLogAsync(logId);
 			model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
-			model.Units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
+			// Labels for logged units: deleted ones included.
+			model.Units = await _unitsService.GetUnitsForDepartmentIncludingDeletedAsync(DepartmentId);
 
 			// Same as the view above: this export renders the cataloged log fields with Html.Raw, so
 			// it must never receive ciphertext (plan 5.2, catalog v3).

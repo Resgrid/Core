@@ -199,6 +199,7 @@
                                 <option value="20">@localizer["Maintenance"]</option>
                                 <option value="21">@localizer["OnBreak"]</option>
                                 <option value="22">@localizer["Completed"]</option>
+                                <option value="23">@localizer["InQuarters"]</option>
                             </select>
                             @await Html.PartialAsync("_BaseTypeDescription", "baseType")
                         </div>
@@ -218,6 +219,10 @@
                                 <option value="1">@localizer["Stations"]</option>
                                 <option value="2">@localizer["Calls"]</option>
                                 <option value="3">@localizer["CallsAndStations"]</option>
+                                <option value="4">@localizer["Pois"]</option>
+                                <option value="5">@localizer["CallsAndPois"]</option>
+                                <option value="6">@localizer["StationsAndPois"]</option>
+                                <option value="7">@localizer["CallsStationsAndPois"]</option>
                             </select>
 
                             <select id="baseType" name="baseType" hidden>
@@ -239,6 +244,10 @@
                                 <option value="1">@localizer["Stations"]</option>
                                 <option value="2">@localizer["Calls"]</option>
                                 <option value="3">@localizer["CallsAndStations"]</option>
+                                <option value="4">@localizer["Pois"]</option>
+                                <option value="5">@localizer["CallsAndPois"]</option>
+                                <option value="6">@localizer["StationsAndPois"]</option>
+                                <option value="7">@localizer["CallsStationsAndPois"]</option>
                             </select>
                         </div>
                     }

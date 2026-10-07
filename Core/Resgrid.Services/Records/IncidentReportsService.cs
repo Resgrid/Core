@@ -29,7 +29,6 @@ namespace Resgrid.Services.Records
 		public const string AttestationStatementVersion = "1";
 		public const string IncidentAggregate = DomainEventProducers.IncidentReportAggregate;
 		public const string DispatchCommentFactPrefix = "dispatch.comment.";
-		public const string NumberPrefix = "INC";
 
 		private readonly IRmsIncidentReportsRepository _reports;
 		private readonly IRmsSourceFactsRepository _facts;
@@ -1601,7 +1600,7 @@ namespace Resgrid.Services.Records
 		{
 			var config = await _settings.GetRecordsNumberingConfigAsync(report.DepartmentId);
 			var year = (report.CallCreatedOn ?? DateTime.UtcNow).Year;
-			var scope = RecordNumberFormat.Resolve(RecordNumberFormat.EffectivePattern(config), config.SequenceWidth, NumberPrefix, year, report.StationGroupId);
+			var scope = RecordNumberFormat.Resolve(RecordNumberFormat.EffectivePattern(config), config.SequenceWidth, config.PrefixFor(RmsDefinitionKeys.NerisIncidentReport), year, report.StationGroupId);
 			var highest = await _reports.GetMaxRecordNumberSequenceAsync(report.DepartmentId, scope.Prefix, scope.Suffix);
 			return scope.Format(config.NextSequence(scope.Key, highest));
 		}

@@ -5437,6 +5437,25 @@
       "DocsPath": "/web-app/security-permissions/#audit-logs"
     },
     {
+      "Id": "api-keys",
+      "AreaId": "security",
+      "LabelKey": "Feature.api-keys",
+      "PurposeKey": "FeaturePurpose.api-keys",
+      "ValueKey": "FeatureValue.api-keys",
+      "ExampleKey": "AreaExample.security",
+      "AdoptionKey": "ModuleAdoption.security",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Security",
+        "Action": "ApiKeys"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/security-permissions/#api-keys"
+    },
+    {
       "Id": "account-sessions",
       "AreaId": "security",
       "LabelKey": "Feature.account-sessions",
@@ -7340,6 +7359,17 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "api-keys",
+      "Locale": "en",
+      "TitleKey": "Feature.api-keys",
+      "Body": "API keys Let another system call the Resgrid API for the department with its own key, scopes, expiry and allowed addresses instead of a member's login. Integrations keep working when people leave, can only do what their key allows and can be revoked at once. An administrator sets the department time zone, hides modules the department will not use, requires two-factor sign-in for administrators and adds a second administrator. Know your department address and time zone, and choose at least two people who will administer Resgrid.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "api-keys",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-06T00:00:00Z"
     },
     {
       "Id": "account-sessions",

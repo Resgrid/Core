@@ -318,4 +318,28 @@
   <data name="BaseType" xml:space="preserve">
     <value>Tipo base</value>
   </data>
+  <data name="InQuarters" xml:space="preserve">
+    <value>En base</value>
+  </data>
+  <data name="Pois" xml:space="preserve">
+    <value>PDI</value>
+  </data>
+  <data name="CallsAndPois" xml:space="preserve">
+    <value>Llamadas y PDI</value>
+  </data>
+  <data name="StationsAndPois" xml:space="preserve">
+    <value>Estaciones y PDI</value>
+  </data>
+  <data name="CallsStationsAndPois" xml:space="preserve">
+    <value>Llamadas, estaciones y PDI</value>
+  </data>
+  <data name="NextStatusesLabel" xml:space="preserve">
+    <value>Estados siguientes</value>
+  </data>
+  <data name="NextStatusesHelp" xml:space="preserve">
+    <value>Mientras este estado sea el actual, las aplicaciones Unit y Responder ofrecen solo los estados marcados, además de un enlace "Mostrar todos los estados" para cualquier cosa fuera de secuencia. Deje todas las casillas sin marcar para ofrecer todos los estados. Los despachadores y el sitio web pueden seguir estableciendo cualquier estado.</value>
+  </data>
+  <data name="NextStatusesAny" xml:space="preserve">
+    <value>Cualquier estado</value>
+  </data>
 </root>

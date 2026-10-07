@@ -519,6 +519,18 @@
                             </div>
                         </div>
 
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["PendingCallsHeader"]</label>
+                            <div class="col-sm-10">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" id="SaveAsPending" name="SaveAsPending" value="true" @(Model.SaveAsPending ? "checked" : "")> @localizer["SaveAsPending"]
+                                    </label>
+                                </div>
+                                <span class="help-block m-b-none">@localizer["SaveAsPendingHelp"]</span>
+                            </div>
+                        </div>
+
                         @if (!string.IsNullOrEmpty(Model.UdfFormHtml))
                         {
                             <div class="hr-line-dashed"></div>
@@ -698,6 +710,7 @@
             ["noBoundary"] = localizer["NearestUnitsNoBoundary"].Value,
             ["estimate"] = localizer["NearestUnitsEstimate"].Value,
             ["minutes"] = localizer["NearestUnitsMinutes"].Value,
+            ["includesTurnout"] = localizer["NearestUnitsIncludesTurnout"].Value,
             ["live"] = localizer["NearestUnitsLive"].Value,
             ["station"] = localizer["NearestUnitsStation"].Value,
             ["stale"] = localizer["NearestUnitsStale"].Value,

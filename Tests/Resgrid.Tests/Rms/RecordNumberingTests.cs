@@ -102,6 +102,91 @@ namespace Resgrid.Tests.Rms
 			RecordNumberFormat.Resolve(pattern, RecordNumberFormat.MaxWidth, "INC", 2026, int.MaxValue).Format(int.MaxValue - 1).Length.Should().BeLessThanOrEqualTo(50);
 		}
 
+		[TestCase("IR")]
+		[TestCase("FIRE")]
+		[TestCase("E12")]
+		[TestCase("ABCDEF")]
+		public void Valid_prefixes_are_accepted(string prefix)
+		{
+			RecordNumberFormat.IsValidPrefix(prefix).Should().BeTrue();
+		}
+
+		[TestCase(null)]
+		[TestCase("")]
+		[TestCase("R", Description = "shorter than 2")]
+		[TestCase("ABCDEFG", Description = "longer than 6")]
+		[TestCase("fire", Description = "lower case is upper-cased before it is saved")]
+		[TestCase("FD-RUN", Description = "separators belong to the pattern")]
+		[TestCase("FD RUN", Description = "space")]
+		[TestCase("RUN#", Description = "the scope key marker")]
+		[TestCase("ÉVAC", Description = "outside ASCII")]
+		[TestCase("{SEQ}", Description = "a token")]
+		public void Invalid_prefixes_are_refused(string prefix)
+		{
+			RecordNumberFormat.IsValidPrefix(prefix).Should().BeFalse();
+		}
+
+		[Test]
+		public void A_department_prefix_replaces_the_default_for_its_type_only()
+		{
+			var config = new RecordsNumberingConfig();
+			config.SetPrefix(RmsDefinitionKeys.Run, "FIRE");
+			config.SetPrefix(RmsDefinitionKeys.NerisIncidentReport, "IR");
+
+			config.PrefixFor(RmsDefinitionKeys.Run).Should().Be("FIRE");
+			config.PrefixFor(RmsDefinitionKeys.NerisIncidentReport).Should().Be("IR");
+			config.PrefixFor(RmsDefinitionKeys.Training).Should().Be("TRN");
+			new RecordsNumberingConfig().PrefixFor(RmsDefinitionKeys.NerisIncidentReport).Should().Be("INC");
+		}
+
+		[Test]
+		public void Setting_a_prefix_back_to_blank_or_the_default_removes_the_department_one()
+		{
+			var config = new RecordsNumberingConfig();
+			config.SetPrefix(RmsDefinitionKeys.Run, "FIRE");
+			config.SetPrefix(RmsDefinitionKeys.Run, "R2");
+			config.Prefixes.Should().ContainSingle().Which.Prefix.Should().Be("R2");
+
+			config.SetPrefix(RmsDefinitionKeys.Run, "RUN");
+			config.Prefixes.Should().BeEmpty("the default is not stored, so a later change to the default still reaches the type");
+
+			config.SetPrefix(RmsDefinitionKeys.Run, "FIRE");
+			config.SetPrefix(RmsDefinitionKeys.Run, null);
+			config.Prefixes.Should().BeEmpty();
+			config.PrefixFor(RmsDefinitionKeys.Run).Should().Be("RUN");
+		}
+
+		[Test]
+		public void A_saved_prefix_that_no_longer_validates_falls_back_to_the_default()
+		{
+			var config = new RecordsNumberingConfig { Prefixes = { new RecordsNumberingPrefix { DefinitionKey = RmsDefinitionKeys.Run, Prefix = "FIRE-1" } } };
+
+			config.PrefixFor(RmsDefinitionKeys.Run).Should().Be("RUN", "a bad stored value never stops numbering");
+		}
+
+		[Test]
+		public void The_longest_prefix_still_fits_the_record_number_column()
+		{
+			var pattern = "ABCDEFGHIJKL.{PREFIX}{YYYY}{GROUP}-{SEQ}";
+
+			RecordNumberFormat.Resolve(pattern, RecordNumberFormat.MaxWidth, "ABCDEF", 2026, int.MaxValue).Format(int.MaxValue - 1).Length.Should().BeLessThanOrEqualTo(50);
+		}
+
+		[Test]
+		public void The_manifest_lists_the_department_prefixes()
+		{
+			var config = new RecordsNumberingConfig();
+			config.SetPrefix(RmsDefinitionKeys.Run, "FIRE");
+			config.SetPrefix(RmsDefinitionKeys.NerisIncidentReport, "IR");
+
+			var definitions = RecordDefinitionCatalog.Describe(config);
+
+			definitions.Single(d => d.Key == RmsDefinitionKeys.Run).NumberPrefix.Should().Be("FIRE");
+			definitions.Single(d => d.Key == RmsDefinitionKeys.NerisIncidentReport).NumberPrefix.Should().Be("IR");
+			definitions.Single(d => d.Key == RmsDefinitionKeys.Meeting).NumberPrefix.Should().Be("MTG");
+			RecordDefinitionCatalog.Describe().Single(d => d.Key == RmsDefinitionKeys.NerisIncidentReport).NumberPrefix.Should().Be("INC");
+		}
+
 		[Test]
 		public void Year_tokens_are_what_restart_the_sequence()
 		{
@@ -146,6 +231,7 @@ namespace Resgrid.Tests.Rms
 		{
 			var config = new RecordsNumberingConfig { Pattern = "{YYYY}-{SEQ}", SequenceWidth = 5 };
 			config.RaiseFloor("2026-#", 153, "admin", new DateTime(2026, 10, 4, 0, 0, 0, DateTimeKind.Utc));
+			config.SetPrefix(RmsDefinitionKeys.Run, "FIRE");
 
 			var copy = ObjectSerialization.Deserialize<RecordsNumberingConfig>(ObjectSerialization.Serialize(config));
 
@@ -154,6 +240,7 @@ namespace Resgrid.Tests.Rms
 			copy.Floors.Should().ContainSingle();
 			copy.FloorFor("2026-#").Should().Be(153);
 			copy.Floors[0].SetByUserId.Should().Be("admin");
+			copy.PrefixFor(RmsDefinitionKeys.Run).Should().Be("FIRE");
 		}
 
 		[Test]
@@ -163,6 +250,8 @@ namespace Resgrid.Tests.Rms
 
 			legacy.Pattern.Should().BeNull();
 			legacy.Floors.Should().BeEmpty();
+			legacy.Prefixes.Should().BeEmpty();
+			legacy.PrefixFor(RmsDefinitionKeys.Run).Should().Be("RUN");
 			RecordNumberFormat.EffectivePattern(legacy).Should().Be("{PREFIX}-{GROUP}-{YYYY}-{SEQ}");
 		}
 
@@ -333,6 +422,132 @@ namespace Resgrid.Tests.Rms
 			result.NotApplied.Should().Be(1);
 			_saved.Pattern.Should().Be("{YYYY}-{SEQ}", "the pattern itself still saves");
 			_saved.Floors.Should().BeEmpty();
+		}
+
+		[Test]
+		public async Task Sequences_use_the_department_prefixes()
+		{
+			_issued.Add("FIRE-2026-0007");
+			var config = new RecordsNumberingConfig();
+			config.SetPrefix(RmsDefinitionKeys.Run, "FIRE");
+			config.SetPrefix(RmsDefinitionKeys.NerisIncidentReport, "IR");
+
+			var sequences = await _service.GetSequencesAsync(Dept, config, 2026);
+
+			sequences.Single(s => s.DefinitionKeys.Contains(RmsDefinitionKeys.Run)).NextNumber.Should().Be("FIRE-2026-0008");
+			sequences.Single(s => s.DefinitionKeys.Contains(RmsDefinitionKeys.NerisIncidentReport)).NextNumber.Should().Be("IR-2026-0001");
+			sequences.Single(s => s.DefinitionKeys.Contains(RmsDefinitionKeys.Training)).NextNumber.Should().Be("TRN-2026-0001");
+		}
+
+		[Test]
+		public async Task Types_given_the_same_prefix_share_one_sequence()
+		{
+			_issued.Add("FD-2026-0011");
+			var config = new RecordsNumberingConfig();
+			config.SetPrefix(RmsDefinitionKeys.Run, "FD");
+			config.SetPrefix(RmsDefinitionKeys.NerisIncidentReport, "FD");
+
+			var sequences = await _service.GetSequencesAsync(Dept, config, 2026);
+
+			sequences.Should().HaveCount(RecordsNumberingService.NumberedTypes().Count() - 1);
+			var shared = sequences.Single(s => s.ScopeKey == "FD-2026-#");
+			shared.DefinitionKeys.Should().BeEquivalentTo(RmsDefinitionKeys.Run, RmsDefinitionKeys.NerisIncidentReport);
+			shared.NextNumber.Should().Be("FD-2026-0012");
+		}
+
+		[Test]
+		public async Task Saving_stores_prefixes_upper_cased_and_a_blank_one_returns_the_type_to_its_default()
+		{
+			_saved.SetPrefix(RmsDefinitionKeys.Training, "DRILL");
+
+			var result = await _service.SaveAsync(Dept, "admin", new RecordsNumberingUpdate
+			{
+				Pattern = "{PREFIX}-{YYYY}-{SEQ}",
+				SequenceWidth = 4,
+				Year = 2026,
+				Prefixes = new List<RecordNumberPrefixRequest>
+				{
+					new RecordNumberPrefixRequest { DefinitionKey = RmsDefinitionKeys.Run, Prefix = " fire " },
+					new RecordNumberPrefixRequest { DefinitionKey = RmsDefinitionKeys.NerisIncidentReport, Prefix = "ir" },
+					new RecordNumberPrefixRequest { DefinitionKey = RmsDefinitionKeys.Training, Prefix = "" }
+				}
+			});
+
+			result.PrefixesRejected.Should().BeEmpty();
+			_saved.PrefixFor(RmsDefinitionKeys.Run).Should().Be("FIRE");
+			_saved.PrefixFor(RmsDefinitionKeys.NerisIncidentReport).Should().Be("IR");
+			_saved.PrefixFor(RmsDefinitionKeys.Training).Should().Be("TRN");
+			_saved.Prefixes.Should().HaveCount(2);
+		}
+
+		[Test]
+		public async Task An_invalid_prefix_keeps_the_one_the_type_had_and_the_rest_still_saves()
+		{
+			_saved.SetPrefix(RmsDefinitionKeys.Run, "FIRE");
+
+			var result = await _service.SaveAsync(Dept, "admin", new RecordsNumberingUpdate
+			{
+				Pattern = "{PREFIX}-{YY}-{SEQ}",
+				SequenceWidth = 4,
+				Year = 2026,
+				Prefixes = new List<RecordNumberPrefixRequest>
+				{
+					new RecordNumberPrefixRequest { DefinitionKey = RmsDefinitionKeys.Run, Prefix = "FD-RUN" },
+					new RecordNumberPrefixRequest { DefinitionKey = RmsDefinitionKeys.Meeting, Prefix = "MEET" }
+				}
+			});
+
+			result.PrefixesRejected.Should().Equal(RmsDefinitionKeys.Run);
+			_saved.Pattern.Should().Be("{PREFIX}-{YY}-{SEQ}");
+			_saved.PrefixFor(RmsDefinitionKeys.Run).Should().Be("FIRE");
+			_saved.PrefixFor(RmsDefinitionKeys.Meeting).Should().Be("MEET");
+		}
+
+		[Test]
+		public async Task Prefixes_are_only_saved_for_the_system_types_the_pattern_numbers()
+		{
+			var result = await _service.SaveAsync(Dept, "admin", new RecordsNumberingUpdate
+			{
+				Pattern = "{PREFIX}-{YYYY}-{SEQ}",
+				SequenceWidth = 4,
+				Year = 2026,
+				Prefixes = new List<RecordNumberPrefixRequest> { new RecordNumberPrefixRequest { DefinitionKey = "dept.ics-214", Prefix = "ICS" } }
+			});
+
+			result.PrefixesRejected.Should().BeEmpty();
+			_saved.Prefixes.Should().BeEmpty("department definitions carry their prefix on the definition");
+		}
+
+		[Test]
+		public async Task Saving_without_prefixes_leaves_the_saved_ones_alone()
+		{
+			_saved.SetPrefix(RmsDefinitionKeys.Run, "FIRE");
+
+			await _service.SaveAsync(Dept, "admin", new RecordsNumberingUpdate { Pattern = "{PREFIX}-{YYYY}-{SEQ}", SequenceWidth = 4, Year = 2026 });
+
+			_saved.PrefixFor(RmsDefinitionKeys.Run).Should().Be("FIRE");
+		}
+
+		[Test]
+		public async Task A_next_number_typed_against_the_old_prefix_is_not_carried_to_the_new_one()
+		{
+			var result = await _service.SaveAsync(Dept, "admin", new RecordsNumberingUpdate
+			{
+				Pattern = "{PREFIX}-{YYYY}-{SEQ}",
+				SequenceWidth = 4,
+				Year = 2026,
+				Prefixes = new List<RecordNumberPrefixRequest> { new RecordNumberPrefixRequest { DefinitionKey = RmsDefinitionKeys.Run, Prefix = "FIRE" } },
+				NextNumbers =
+				{
+					new RecordNextNumberRequest { ScopeKey = "RUN-2026-#", NextSequence = 153 },
+					new RecordNextNumberRequest { ScopeKey = "TRN-2026-#", NextSequence = 40 }
+				}
+			});
+
+			result.NotApplied.Should().Be(1, "RUN-2026 is no longer a sequence once Run numbers as FIRE");
+			_saved.FloorFor("RUN-2026-#").Should().Be(1);
+			_saved.FloorFor("FIRE-2026-#").Should().Be(1);
+			_saved.FloorFor("TRN-2026-#").Should().Be(40, "a type whose prefix did not change keeps its raised number");
 		}
 
 		#endregion

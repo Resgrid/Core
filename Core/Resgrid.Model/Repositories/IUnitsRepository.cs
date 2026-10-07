@@ -11,7 +11,7 @@ namespace Resgrid.Model.Repositories
 	public interface IUnitsRepository: IRepository<Unit>
 	{
 		/// <summary>
-		/// Gets the unit by name department identifier asynchronous.
+		/// Gets the department's non-deleted unit with this name (unit names are unique among non-deleted units only).
 		/// </summary>
 		/// <param name="departmentId">The department identifier.</param>
 		/// <param name="name">The name.</param>
@@ -19,14 +19,21 @@ namespace Resgrid.Model.Repositories
 		Task<Unit> GetUnitByNameDepartmentIdAsync(int departmentId, string name);
 
 		/// <summary>
-		/// Gets all units by group identifier asynchronous.
+		/// Gets the non-deleted units stationed in a group.
 		/// </summary>
 		/// <param name="groupId">The group identifier.</param>
 		/// <returns>Task&lt;IEnumerable&lt;Unit&gt;&gt;.</returns>
 		Task<IEnumerable<Unit>> GetAllUnitsByGroupIdAsync(int groupId);
 
 		/// <summary>
-		/// Gets all units for type asynchronous.
+		/// Gets every unit stationed in a group, soft-deleted ones included (they still reference the group).
+		/// </summary>
+		/// <param name="groupId">The group identifier.</param>
+		/// <returns>Task&lt;IEnumerable&lt;Unit&gt;&gt;.</returns>
+		Task<IEnumerable<Unit>> GetAllUnitsByGroupIdIncludingDeletedAsync(int groupId);
+
+		/// <summary>
+		/// Gets the department's non-deleted units of a type.
 		/// </summary>
 		/// <param name="departmentId">The department identifier.</param>
 		/// <param name="type">The type.</param>
@@ -34,10 +41,17 @@ namespace Resgrid.Model.Repositories
 		Task<IEnumerable<Unit>> GetAllUnitsForTypeAsync(int departmentId, string type);
 
 		/// <summary>
-		/// Gets all units by group identifier asynchronous.
+		/// Gets the department's non-deleted units (with their roles).
 		/// </summary>
 		/// <param name="departmentId">The department identifier.</param>
 		/// <returns>Task&lt;IEnumerable&lt;Unit&gt;&gt;.</returns>
 		Task<IEnumerable<Unit>> GetAllUnitsByDepartmentIdAsync(int departmentId);
+
+		/// <summary>
+		/// Gets every unit the department has had, soft-deleted ones included, for resolving point-in-time data.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <returns>Task&lt;IEnumerable&lt;Unit&gt;&gt;.</returns>
+		Task<IEnumerable<Unit>> GetAllUnitsByDepartmentIdIncludingDeletedAsync(int departmentId);
 	}
 }

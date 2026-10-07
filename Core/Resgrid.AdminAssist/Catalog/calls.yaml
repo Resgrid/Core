@@ -748,6 +748,109 @@
       "Availability": "available"
     },
     {
+      "Id": "setting.CallNumberingConfig",
+      "AreaId": "calls",
+      "LabelKey": "Setting.CallNumberingConfig",
+      "HelpKey": "SettingHelp.CallNumberingConfig",
+      "Binding": "DepartmentSettingTypes.CallNumberingConfig",
+      "ValueType": "protobuf",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "CallSettings",
+        "Field": "CallNumberPattern"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-06T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.CallNumberingConfig",
+      "DefaultValue": "legacy pattern {YY}-{SEQ}, unpadded",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.CallNumberingConfig.Pattern",
+      "AreaId": "calls",
+      "LabelKey": "Field.CallNumberingConfig.Pattern",
+      "HelpKey": "FieldHelp.CallNumberingConfig.Pattern",
+      "Binding": "CallNumberingConfig.Pattern",
+      "ValueType": "string",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "CallSettings",
+        "Field": "CallNumberPattern"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-06T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.CallNumberingConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.CallNumberingConfig.Pattern",
+      "DefaultValue": "unset",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "CallNumberingConfig",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.CallNumberingConfig.SequenceWidth",
+      "AreaId": "calls",
+      "LabelKey": "Field.CallNumberingConfig.SequenceWidth",
+      "HelpKey": "FieldHelp.CallNumberingConfig.SequenceWidth",
+      "Binding": "CallNumberingConfig.SequenceWidth",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "CallSettings",
+        "Field": "CallNumberSequenceWidth"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-06T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.CallNumberingConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.CallNumberingConfig.SequenceWidth",
+      "DefaultValue": "1",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "CallNumberingConfig",
+      "Availability": "available"
+    },
+    {
       "Id": "field.UnitTypeCallStatusOverrideSetting.Overrides",
       "AreaId": "calls",
       "LabelKey": "Field.UnitTypeCallStatusOverrideSetting.Overrides",
@@ -1112,7 +1215,7 @@
         "Field": null
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-06T00:00:00Z",
       "Impact": {
         "Risk": "Critical",
         "AudienceKey": "Impact.Audience",
@@ -1252,7 +1355,7 @@
         "Field": null
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-06T00:00:00Z",
       "Impact": {
         "Risk": "Critical",
         "AudienceKey": "Impact.Audience",
@@ -1303,6 +1406,76 @@
       "Conflicts": [],
       "DocumentationId": "field.DispatchRecommendationConfig.EtaShortlistSize",
       "DefaultValue": "5",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "DispatchRecommendationConfig",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.DispatchRecommendationConfig.InQuartersTurnoutSeconds",
+      "AreaId": "calls",
+      "LabelKey": "Field.DispatchRecommendationConfig.InQuartersTurnoutSeconds",
+      "HelpKey": "FieldHelp.DispatchRecommendationConfig.InQuartersTurnoutSeconds",
+      "Binding": "DispatchRecommendationConfig.InQuartersTurnoutSeconds",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-06T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.DispatchRecommendationConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.DispatchRecommendationConfig.InQuartersTurnoutSeconds",
+      "DefaultValue": "0",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "DispatchRecommendationConfig",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.DispatchRecommendationConfig.MobileTurnoutSeconds",
+      "AreaId": "calls",
+      "LabelKey": "Field.DispatchRecommendationConfig.MobileTurnoutSeconds",
+      "HelpKey": "FieldHelp.DispatchRecommendationConfig.MobileTurnoutSeconds",
+      "Binding": "DispatchRecommendationConfig.MobileTurnoutSeconds",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-06T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.DispatchRecommendationConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.DispatchRecommendationConfig.MobileTurnoutSeconds",
+      "DefaultValue": "0",
       "AllowedValues": "Validated by the owning configuration workflow",
       "EvidenceSource": "DispatchRecommendationConfig",
       "Availability": "reference-only"
@@ -1743,6 +1916,39 @@
       "Availability": "available"
     },
     {
+      "Id": "setting.StatusHoldToConfirm",
+      "AreaId": "calls",
+      "LabelKey": "Setting.StatusHoldToConfirm",
+      "HelpKey": "SettingHelp.StatusHoldToConfirm",
+      "Binding": "DepartmentSettingTypes.StatusHoldToConfirm",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": "StatusHoldToConfirm"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-06T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.StatusHoldToConfirm",
+      "DefaultValue": "false",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
       "Id": "setting.EnableTextCommand",
       "AreaId": "calls",
       "LabelKey": "Setting.EnableTextCommand",
@@ -1871,8 +2077,10 @@
       "SettingIds": [
         "field.DispatchRecommendationConfig.EtaShortlistSize",
         "field.DispatchRecommendationConfig.IncludeStaleLocations",
+        "field.DispatchRecommendationConfig.InQuartersTurnoutSeconds",
         "field.DispatchRecommendationConfig.MaxLocationAgeSeconds",
         "field.DispatchRecommendationConfig.MaxRadiusMeters",
+        "field.DispatchRecommendationConfig.MobileTurnoutSeconds",
         "field.DispatchRecommendationConfig.MoveUpRecommendationsEnabled",
         "field.DispatchRecommendationConfig.PersonnelMaxLocationAgeSeconds",
         "field.DispatchRecommendationConfig.RestPeriodMinutes",
@@ -1899,6 +2107,7 @@
         "setting.PersonnelOnUnitSetUnitStatus",
         "setting.ShiftCallDispatchPersonnelStatusToSet",
         "setting.ShiftCallReleasePersonnelStatusToSet",
+        "setting.StatusHoldToConfirm",
         "setting.UnitCallDispatchStatusToSet",
         "setting.UnitCallReleaseStatusToSet",
         "setting.UnitCallStatusOverridesByUnitType",
@@ -2045,7 +2254,45 @@
       "SettingIds": [],
       "RuleIds": [],
       "Prominence": "Detail",
-      "DocsPath": "/web-app/dispatch-calls/#archived-and-scheduled-calls"
+      "DocsPath": "/web-app/dispatch-calls/#archived-calls"
+    },
+    {
+      "Id": "pending-calls",
+      "AreaId": "calls",
+      "LabelKey": "Feature.pending-calls",
+      "PurposeKey": "FeaturePurpose.pending-calls",
+      "ValueKey": "AreaValue.calls",
+      "ExampleKey": "AreaExample.calls",
+      "AdoptionKey": "ModuleAdoption.calls",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Dispatch",
+        "Action": "PendingCalls"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/dispatch-calls/#pending-and-scheduled-calls"
+    },
+    {
+      "Id": "scheduled-calls",
+      "AreaId": "calls",
+      "LabelKey": "Feature.scheduled-calls",
+      "PurposeKey": "FeaturePurpose.scheduled-calls",
+      "ValueKey": "AreaValue.calls",
+      "ExampleKey": "AreaExample.calls",
+      "AdoptionKey": "ModuleAdoption.calls",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Dispatch",
+        "Action": "ScheduledCalls"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/dispatch-calls/#pending-and-scheduled-calls"
     },
     {
       "Id": "call-templates",
@@ -2083,8 +2330,10 @@
       "SettingIds": [
         "field.DispatchRecommendationConfig.EtaShortlistSize",
         "field.DispatchRecommendationConfig.IncludeStaleLocations",
+        "field.DispatchRecommendationConfig.InQuartersTurnoutSeconds",
         "field.DispatchRecommendationConfig.MaxLocationAgeSeconds",
         "field.DispatchRecommendationConfig.MaxRadiusMeters",
+        "field.DispatchRecommendationConfig.MobileTurnoutSeconds",
         "field.DispatchRecommendationConfig.MoveUpRecommendationsEnabled",
         "field.DispatchRecommendationConfig.PersonnelMaxLocationAgeSeconds",
         "field.DispatchRecommendationConfig.RestPeriodMinutes",
@@ -2177,6 +2426,9 @@
       },
       "Requirements": [],
       "SettingIds": [
+        "field.CallNumberingConfig.Pattern",
+        "field.CallNumberingConfig.SequenceWidth",
+        "setting.CallNumberingConfig",
         "setting.InternalDispatchEmail",
         "setting.RssFeedKeyForActiveCalls",
         "table.DepartmentCallEmail.ErrorMessage",
@@ -2383,6 +2635,39 @@
   ],
   "Packs": [],
   "Articles": [
+    {
+      "Id": "setting.CallNumberingConfig",
+      "Locale": "en",
+      "TitleKey": "Setting.CallNumberingConfig",
+      "Body": "Call Numbering Config. How new call numbers are written: the call number pattern and sequence digits, plus a raised next number for departments continuing numbers issued before Resgrid. Changing it never renumbers calls that already have a number.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-callnumberingconfig",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-06T00:00:00Z"
+    },
+    {
+      "Id": "field.CallNumberingConfig.Pattern",
+      "Locale": "en",
+      "TitleKey": "Field.CallNumberingConfig.Pattern",
+      "Body": "Call Numbering Config / Pattern. Fixed text plus the YYYY or YY, MM, DD and SEQ tokens, for example FD-YYYY-SEQ. The sequence starts again whenever the date it writes changes. Until a pattern is saved, calls keep the YY-SEQ numbers Resgrid has always issued.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-callnumberingconfig-pattern",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-06T00:00:00Z"
+    },
+    {
+      "Id": "field.CallNumberingConfig.SequenceWidth",
+      "Locale": "en",
+      "TitleKey": "Field.CallNumberingConfig.SequenceWidth",
+      "Body": "Call Numbering Config / Sequence Width. Digits the sequence is padded to with leading zeros, from 1 (no padding, the legacy numbers) to 8.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-callnumberingconfig-sequencewidth",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-06T00:00:00Z"
+    },
     {
       "Id": "setting.RssFeedKeyForActiveCalls",
       "Locale": "en",
@@ -2739,12 +3024,12 @@
       "Id": "field.DispatchRecommendationConfig.MaxLocationAgeSeconds",
       "Locale": "en",
       "TitleKey": "Field.DispatchRecommendationConfig.MaxLocationAgeSeconds",
-      "Body": "Dispatch Recommendation Config / Max Location Age Seconds. Exclude older unit positions from closest-unit candidates; zero removes the age limit. IncludeStaleLocations changes this behavior.",
+      "Body": "Dispatch Recommendation Config / Max Location Age Seconds. Exclude older unit positions from closest-unit candidates; zero removes the age limit. IncludeStaleLocations changes this behavior. A unit measured from its station (In Quarters status, or no GPS fix) never ages out.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-dispatchrecommendationconfig-maxlocationageseconds",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
+      "ReviewedOn": "2026-10-06T00:00:00Z"
     },
     {
       "Id": "field.DispatchRecommendationConfig.MaxRadiusMeters",
@@ -2783,12 +3068,12 @@
       "Id": "field.DispatchRecommendationConfig.UseRoutedEta",
       "Locale": "en",
       "TitleKey": "Field.DispatchRecommendationConfig.UseRoutedEta",
-      "Body": "Dispatch Recommendation Config / Use Routed ETA. Re-rank shortlisted candidates using provider travel estimates. The operational path can make external provider calls; Admin Assist does not.",
+      "Body": "Dispatch Recommendation Config / Use Routed ETA. Re-rank shortlisted candidates using provider travel estimates. The operational path can make external provider calls; Admin Assist does not. The configured turnout times are added to each drive time.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-dispatchrecommendationconfig-useroutedeta",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
+      "ReviewedOn": "2026-10-06T00:00:00Z"
     },
     {
       "Id": "field.DispatchRecommendationConfig.EtaShortlistSize",
@@ -2800,6 +3085,28 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.DispatchRecommendationConfig.InQuartersTurnoutSeconds",
+      "Locale": "en",
+      "TitleKey": "Field.DispatchRecommendationConfig.InQuartersTurnoutSeconds",
+      "Body": "Dispatch Recommendation Config / In-Quarters Turnout Seconds. Seconds a unit at its station needs before it is moving; applies to In Quarters statuses and units with no GPS position. Added to travel time when ranking closest units; zero means none.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-dispatchrecommendationconfig-inquartersturnoutseconds",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-06T00:00:00Z"
+    },
+    {
+      "Id": "field.DispatchRecommendationConfig.MobileTurnoutSeconds",
+      "Locale": "en",
+      "TitleKey": "Field.DispatchRecommendationConfig.MobileTurnoutSeconds",
+      "Body": "Dispatch Recommendation Config / Mobile Turnout Seconds. Seconds a unit that is already out and available needs before it is moving; applies to units ranked from GPS. Added to travel time when ranking closest units; zero means none.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-dispatchrecommendationconfig-mobileturnoutseconds",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-06T00:00:00Z"
     },
     {
       "Id": "field.DispatchRecommendationConfig.RestPeriodMinutes",
@@ -2945,6 +3252,17 @@
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
     {
+      "Id": "setting.StatusHoldToConfirm",
+      "Locale": "en",
+      "TitleKey": "Setting.StatusHoldToConfirm",
+      "Body": "Hold to Set Status. The Unit and Responder apps set a status with a two-second press and hold instead of a tap followed by Next or Submit, so a stray tap never sets a status and a crew cannot forget to confirm one. A status that needs a note, or a destination the app cannot fill from the active call, still opens that step. Off by default.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-statusholdtoconfirm",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-06T00:00:00Z"
+    },
+    {
       "Id": "setting.EnableTextCommand",
       "Locale": "en",
       "TitleKey": "Setting.EnableTextCommand",
@@ -2981,23 +3299,23 @@
       "Id": "custom-statuses",
       "Locale": "en",
       "TitleKey": "Feature.custom-statuses",
-      "Body": "Personnel and unit statuses The statuses members and units report, such as Responding or On Scene. Use terminology familiar to the department while preserving automation meaning. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Review the built-in statuses and add your own where your terms differ.",
+      "Body": "Personnel and unit statuses The statuses members and units report, such as Responding or On Scene. Use terminology familiar to the department while preserving automation meaning. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Review the built-in statuses and add your own where your terms differ. Give each one a base type; In Quarters tells dispatch recommendations a unit is at its station.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "custom-statuses",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
+      "ReviewedOn": "2026-10-06T00:00:00Z"
     },
     {
       "Id": "dispatch-settings",
       "Locale": "en",
       "TitleKey": "Feature.dispatch-settings",
-      "Body": "Dispatch Settings How calls page personnel: by group or by shift, and related automatic status changes. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Choose whether dispatch follows groups or shifts, and review the automatic status options.",
+      "Body": "Dispatch Settings How calls page personnel: by group or by shift, and related automatic status changes. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Choose whether dispatch follows groups or shifts, and review the automatic status options. Set closest-unit turnout times if crews need time to leave the station.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "dispatch-settings",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
+      "ReviewedOn": "2026-10-06T00:00:00Z"
     },
     {
       "Id": "email-intake",
@@ -3025,12 +3343,12 @@
       "Id": "calls",
       "Locale": "en",
       "TitleKey": "Feature.calls",
-      "Body": "Calls Active calls and their dispatch status. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Collect your call types, the statuses members report while responding, and the details of any CAD or paging system that should create calls.",
+      "Body": "Calls Active calls and their dispatch status. Closing a call can notify everyone on it, and a call run under an active incident command is closed from the command first. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Collect your call types, the statuses members report while responding, and the details of any CAD or paging system that should create calls.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "calls",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
+      "ReviewedOn": "2026-10-06T00:00:00Z"
     },
     {
       "Id": "new-call",
@@ -3053,6 +3371,28 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "pending-calls",
+      "Locale": "en",
+      "TitleKey": "Feature.pending-calls",
+      "Body": "Pending Calls Calls saved for a dispatcher to send later, such as follow-ups another system feeds in; nobody is notified until the call is dispatched. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Collect your call types, the statuses members report while responding, and the details of any CAD or paging system that should create calls.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "pending-calls",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-06T00:00:00Z"
+    },
+    {
+      "Id": "scheduled-calls",
+      "Locale": "en",
+      "TitleKey": "Feature.scheduled-calls",
+      "Body": "Scheduled Calls Calls that go out by themselves at a future time and can be sent early or rescheduled. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Collect your call types, the statuses members report while responding, and the details of any CAD or paging system that should create calls.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "scheduled-calls",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-06T00:00:00Z"
     },
     {
       "Id": "call-templates",
@@ -3091,7 +3431,7 @@
       "Id": "call-settings",
       "Locale": "en",
       "TitleKey": "Feature.call-settings",
-      "Body": "Call Settings The mailbox and format used to import calls from CAD or paging email. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Collect your call types, the statuses members report while responding, and the details of any CAD or paging system that should create calls.",
+      "Body": "Call Settings The mailbox and format used to import calls from CAD or paging email, and the call number format and next number. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Collect your call types, the statuses members report while responding, and the details of any CAD or paging system that should create calls.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "call-settings",
       "PackVersion": "2026.09.25.2",

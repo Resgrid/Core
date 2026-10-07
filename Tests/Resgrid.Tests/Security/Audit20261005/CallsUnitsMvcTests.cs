@@ -376,6 +376,7 @@ namespace Resgrid.Tests.Security.Audit20261005
 		public async Task UnitStaffing_seats_only_members_of_the_department(string postedUserId, int expectedSaves)
 		{
 			M<IUnitsService>().Setup(x => x.GetUnitsForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<Unit> { new Unit { UnitId = UnitId, DepartmentId = DepartmentId } });
+			M<IUnitsService>().Setup(x => x.GetUnitsForDepartmentIncludingDeletedAsync(DepartmentId)).ReturnsAsync(new List<Unit> { new Unit { UnitId = UnitId, DepartmentId = DepartmentId } });
 			M<IUnitsService>().Setup(x => x.GetAllRolesForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<UnitRole> { new UnitRole { UnitRoleId = 5, UnitId = UnitId, Name = "Driver" } });
 			M<IUsersService>().Setup(x => x.GetUserGroupAndRolesByDepartmentIdInLimitAsync(DepartmentId, false, false, false))
 				.ReturnsAsync(new List<UserGroupRole> { new UserGroupRole { UserId = "member-1", FirstName = "Member", LastName = "One" } });
@@ -434,6 +435,10 @@ namespace Resgrid.Tests.Security.Audit20261005
 		public async Task GetUnits_lists_only_units_the_member_may_view()
 		{
 			M<IUnitsService>().Setup(x => x.GetUnitsForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<Unit>
+			{
+				new Unit { UnitId = 1, Name = "Visible" }, new Unit { UnitId = 2, Name = "Other group" }
+			});
+			M<IUnitsService>().Setup(x => x.GetUnitsForDepartmentIncludingDeletedAsync(DepartmentId)).ReturnsAsync(new List<Unit>
 			{
 				new Unit { UnitId = 1, Name = "Visible" }, new Unit { UnitId = 2, Name = "Other group" }
 			});
@@ -527,6 +532,7 @@ namespace Resgrid.Tests.Security.Audit20261005
 			M<ICallsService>().Setup(x => x.GetActiveCallPrioritiesForDepartmentAsync(DepartmentId, It.IsAny<bool>())).ReturnsAsync(new List<DepartmentCallPriority>());
 			M<IDepartmentsService>().Setup(x => x.GetAllUsersForDepartmentAsync(DepartmentId, It.IsAny<bool>(), It.IsAny<bool>())).ReturnsAsync(new List<IdentityUser>());
 			M<IUnitsService>().Setup(x => x.GetUnitsForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<Unit> { new Unit { UnitId = 1, Name = "Visible" }, new Unit { UnitId = 2, Name = "Other group" } });
+			M<IUnitsService>().Setup(x => x.GetUnitsForDepartmentIncludingDeletedAsync(DepartmentId)).ReturnsAsync(new List<Unit> { new Unit { UnitId = 1, Name = "Visible" }, new Unit { UnitId = 2, Name = "Other group" } });
 			M<IUnitsService>().Setup(x => x.GetAllLatestStatusForUnitsByDepartmentIdAsync(DepartmentId)).ReturnsAsync(new List<UnitState> { new UnitState { UnitId = 1 }, new UnitState { UnitId = 2 } });
 			M<IContactsService>().Setup(x => x.GetAllContactsForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<Contact> { new Contact { ContactId = "c1", CompanyName = "Acme Plant" } });
 			Authorization.Setup(x => x.CanUserViewUnitViaMatrixAsync(1, UserId, DepartmentId)).ReturnsAsync(true);

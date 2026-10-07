@@ -56,6 +56,48 @@ namespace Resgrid.Model
 		[ProtoMember(12)]
 		public int TTL { get; set; }
 
+		/// <summary>
+		/// Comma-separated <see cref="CustomStateDetailId"/>s of the options in the same set that the apps offer
+		/// next while this option is the current status (e.g. "Departed" -> "On Scene"). Null or empty means no
+		/// restriction. A display hint for the apps only; the server accepts any status.
+		/// </summary>
+		[ProtoMember(13)]
+		public string NextStateDetailIds { get; set; }
+
+		/// <summary>The parsed <see cref="NextStateDetailIds"/>, without duplicates, blanks or this option's own id.</summary>
+		public List<int> GetNextStateDetailIds()
+		{
+			var ids = new List<int>();
+
+			if (string.IsNullOrWhiteSpace(NextStateDetailIds))
+				return ids;
+
+			foreach (var part in NextStateDetailIds.Split(','))
+			{
+				if (int.TryParse(part.Trim(), out var id) && id > 0 && id != CustomStateDetailId && !ids.Contains(id))
+					ids.Add(id);
+			}
+
+			return ids;
+		}
+
+		/// <summary>Stores <paramref name="ids"/> as <see cref="NextStateDetailIds"/>; an empty list clears the restriction.</summary>
+		public void SetNextStateDetailIds(IEnumerable<int> ids)
+		{
+			var distinct = new List<int>();
+
+			if (ids != null)
+			{
+				foreach (var id in ids)
+				{
+					if (id > 0 && id != CustomStateDetailId && !distinct.Contains(id))
+						distinct.Add(id);
+				}
+			}
+
+			NextStateDetailIds = distinct.Count > 0 ? string.Join(",", distinct) : null;
+		}
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue

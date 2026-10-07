@@ -80,8 +80,10 @@ namespace Resgrid.Model
 	/// </summary>
 	public static class RecordDefinitionCatalog
 	{
-		public static List<RecordDefinitionDescriptor> Describe()
+		/// <param name="numbering">The department's numbering setting, so each type lists the prefix it actually renders; null lists the shipped defaults.</param>
+		public static List<RecordDefinitionDescriptor> Describe(RecordsNumberingConfig numbering = null)
 		{
+			numbering ??= new RecordsNumberingConfig();
 			var list = new List<RecordDefinitionDescriptor>();
 			foreach (var kv in RmsDefinitionKeys.LockedTypes)
 			{
@@ -98,7 +100,7 @@ namespace Resgrid.Model
 					LifecyclePresetName = RmsDefinitionKeys.LockedDefaultPreset.ToString(),
 					Cardinality = RmsDefinitionKeys.CardinalityFor(kv.Key).ToString(),
 					Restricted = restricted,
-					NumberPrefix = RmsDefinitionKeys.DefaultNumberPrefix(kv.Key),
+					NumberPrefix = numbering.PrefixFor(kv.Key),
 					RequiresCall = false,
 					SupportsParticipants = type != RmsOperationalRecordType.UnitActivity,
 					SupportsUnits = true,
@@ -120,7 +122,7 @@ namespace Resgrid.Model
 				LifecyclePresetName = RmsDefinitionKeys.LockedDefaultPreset.ToString(),
 				Cardinality = RmsDefinitionKeys.CardinalityFor(RmsDefinitionKeys.NerisIncidentReport).ToString(),
 				Restricted = false,
-				NumberPrefix = "INC",
+				NumberPrefix = numbering.PrefixFor(RmsDefinitionKeys.NerisIncidentReport),
 				RequiresCall = true,
 				SupportsParticipants = false,
 				SupportsUnits = true,

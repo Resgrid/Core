@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Resgrid.Web.Services.Attributes;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Model.Services;
@@ -75,6 +76,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpGet("GetAllGroups")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Group_View)]
+		[DepartmentApiKeyScope(DepartmentApiKeyScopes.ReferenceRead)]
 		public async Task<ActionResult<GroupResults>> GetAllGroups()
 		{
 			var result = new GroupResults();

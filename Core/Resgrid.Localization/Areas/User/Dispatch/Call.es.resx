@@ -898,6 +898,9 @@
   <data name="IncidentReport" xml:space="preserve">
     <value>Informe de incidente</value>
   </data>
+  <data name="ReportsMenu" xml:space="preserve">
+    <value>Informes</value>
+  </data>
   <data name="StatusLinkAuto" xml:space="preserve">
     <value>vinculado automáticamente</value>
   </data>
@@ -1014,5 +1017,80 @@
   </data>
   <data name="SiteFiles" xml:space="preserve">
     <value>Archivos del sitio</value>
+  </data>
+  <data name="NearestUnitsIncludesTurnout" xml:space="preserve">
+    <value>incl. {0} s de salida</value>
+  </data>
+  <data name="PendingCallsHeader" xml:space="preserve">
+    <value>Llamadas pendientes</value>
+  </data>
+  <data name="PendingCallsDescription" xml:space="preserve">
+    <value>Llamadas guardadas pero aún no despachadas. No se ha notificado a nadie. Abra una llamada, elija a quién enviarla y despáchela.</value>
+  </data>
+  <data name="ViewAllPendingCalls" xml:space="preserve">
+    <value>Ver todas</value>
+  </data>
+  <data name="NoPendingCalls" xml:space="preserve">
+    <value>No hay llamadas esperando despacho.</value>
+  </data>
+  <data name="SaveAsPending" xml:space="preserve">
+    <value>Guardar como pendiente (no despachar aún)</value>
+  </data>
+  <data name="SaveAsPendingHelp" xml:space="preserve">
+    <value>La llamada pasa a Llamadas pendientes sin notificar a nadie. Un despachador la toma, elige a quién enviarla y la despacha.</value>
+  </data>
+  <data name="PendingCallBanner" xml:space="preserve">
+    <value>Pendiente: esta llamada no se ha despachado y no se ha notificado a nadie.</value>
+  </data>
+  <data name="ScheduledCallBanner" xml:space="preserve">
+    <value>Programada: esta llamada aún no se ha enviado. Saldrá a su hora programada, o ahora con Despachar ahora.</value>
+  </data>
+  <data name="DispatchNow" xml:space="preserve">
+    <value>Despachar ahora</value>
+  </data>
+  <data name="SaveAndDispatchNow" xml:space="preserve">
+    <value>Guardar y despachar ahora</value>
+  </data>
+  <data name="DispatchNowConfirm" xml:space="preserve">
+    <value>¿Despachar esta llamada ahora a todos los de su lista de despacho?</value>
+  </data>
+  <data name="DispatchNowSucceeded" xml:space="preserve">
+    <value>La llamada fue despachada.</value>
+  </data>
+  <data name="DispatchNowNoRecipients" xml:space="preserve">
+    <value>Elija a quién enviar esta llamada (personal, grupos, roles o unidades) antes de despacharla.</value>
+  </data>
+  <data name="DispatchNowNotWaiting" xml:space="preserve">
+    <value>Esta llamada no está esperando despacho.</value>
+  </data>
+  <data name="DispatchNowQueueFailed" xml:space="preserve">
+    <value>No se pudo encolar el despacho. La llamada sigue esperando; inténtelo de nuevo.</value>
+  </data>
+  <data name="Received" xml:space="preserve">
+    <value>Recibida</value>
+  </data>
+  <data name="AddressLabelShort" xml:space="preserve">
+    <value>Dirección</value>
+  </data>
+  <data name="StateFounded" xml:space="preserve">
+    <value>Fundada</value>
+  </data>
+  <data name="StateMinor" xml:space="preserve">
+    <value>Menor</value>
+  </data>
+  <data name="StateTransferred" xml:space="preserve">
+    <value>Transferida</value>
+  </data>
+  <data name="StateFalseAlarm" xml:space="preserve">
+    <value>Falsa alarma</value>
+  </data>
+  <data name="StatePending" xml:space="preserve">
+    <value>Pendiente</value>
+  </data>
+  <data name="CloseBlockedByIncidentCommand" xml:space="preserve">
+    <value>Esta llamada tiene un mando de incidente activo. Cierre primero el mando de incidente y luego cierre la llamada.</value>
+  </data>
+  <data name="SendNotificationHelp" xml:space="preserve">
+    <value>Avisa a todas las personas despachadas, a sus unidades y al equipo de mando del incidente de que la llamada se ha cerrado. Las notas de cierre no se incluyen.</value>
   </data>
 </root>

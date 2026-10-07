@@ -260,7 +260,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!IsSystemApiKeyRequest && !await _authorizationService.CanUserAddCallDataAsync(UserId, call.CallId, effectiveDepartmentId))
 				return Unauthorized();
 
-			if (call.State != (int)CallStates.Active)
+			// A pending call can carry files from intake before it is dispatched.
+			if (call.State != (int)CallStates.Active && call.State != (int)CallStates.Pending)
 				return BadRequest();
 
 			if (String.IsNullOrWhiteSpace(input.Data))

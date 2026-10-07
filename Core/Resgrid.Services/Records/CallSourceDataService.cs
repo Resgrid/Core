@@ -72,7 +72,8 @@ namespace Resgrid.Services.Records
 			input.UnitBaseTypes = await Read(input, "unit status types", () => _units.GetCustomUnitStateBaseTypesAsync(departmentId), null) ?? CallStatusLinkage.BuildUnitBaseTypeMap(customStates);
 			input.PersonnelBaseTypes = CallStatusLinkage.BuildBaseTypeMap(customStates, CustomStateTypes.Personnel);
 
-			var units = (await Read(input, "units", () => _units.GetUnitsForDepartmentAsync(departmentId), null) ?? new List<Unit>()).Where(u => u != null).GroupBy(u => u.UnitId).ToDictionary(g => g.Key, g => g.First());
+			// The units that worked the call, deleted ones included.
+			var units = (await Read(input, "units", () => _units.GetUnitsForDepartmentIncludingDeletedAsync(departmentId), null) ?? new List<Unit>()).Where(u => u != null).GroupBy(u => u.UnitId).ToDictionary(g => g.Key, g => g.First());
 			foreach (var state in input.UnitStates.Where(s => s.Unit != null && !units.ContainsKey(s.UnitId) && s.Unit.DepartmentId == departmentId))
 				units[state.UnitId] = state.Unit;
 			input.Units = units;

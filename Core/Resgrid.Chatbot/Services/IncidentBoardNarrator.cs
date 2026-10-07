@@ -950,7 +950,8 @@ namespace Resgrid.Chatbot.Services
 
 			try
 			{
-				var units = await _unitsService.GetUnitsForDepartmentAsync(session.DepartmentId) ?? new List<Unit>();
+				// Name lookup only: a unit deleted while still assigned keeps its name.
+				var units = await _unitsService.GetUnitsForDepartmentIncludingDeletedAsync(session.DepartmentId) ?? new List<Unit>();
 				foreach (var unit in units)
 				{
 					var id = unit.UnitId.ToString(CultureInfo.InvariantCulture);

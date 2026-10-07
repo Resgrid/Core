@@ -15,18 +15,21 @@ namespace Resgrid.Chatbot.Handlers
 	/// <see cref="ChatbotDialogState.AwaitingConfirmation"/>; the ingress re-dispatches with "__confirmed"
 	/// on YES. Ownership, the Call_Update right MVC and v4 require (<see cref="IAuthorizationService.CanUserCreateCallAsync"/>
 	/// evaluates the same Create Call row ClaimsLogic.AddCallClaims derives it from) and
-	/// <see cref="IAuthorizationService.CanUserCloseCallAsync"/> are re-checked on both passes (§2/§3). Responses are
+	/// <see cref="IAuthorizationService.CanUserCloseCallAsync"/> are re-checked on both passes (§2/§3). A call run under
+	/// an active incident command is refused on both passes too (<see cref="ICallClosureService"/>). Responses are
 	/// localized to the user's culture.
 	/// </summary>
 	public class CloseCallHandler : IChatbotActionHandler
 	{
 		private readonly ICallsService _callsService;
 		private readonly IAuthorizationService _authorizationService;
+		private readonly ICallClosureService _callClosureService;
 
-		public CloseCallHandler(ICallsService callsService, IAuthorizationService authorizationService)
+		public CloseCallHandler(ICallsService callsService, IAuthorizationService authorizationService, ICallClosureService callClosureService)
 		{
 			_callsService = callsService;
 			_authorizationService = authorizationService;
+			_callClosureService = callClosureService;
 		}
 
 		public ChatbotIntentType IntentType => ChatbotIntentType.CloseCall;
@@ -49,6 +52,9 @@ namespace Resgrid.Chatbot.Handlers
 
 				if (call.State == (int)CallStates.Closed)
 					return new ChatbotResponse { Text = ChatbotResources.Get("Call_AlreadyClosed", culture, call.CallId), Processed = true };
+
+				if (await _callClosureService.GetBlockingIncidentCommandAsync(session.DepartmentId, call.CallId) != null)
+					return new ChatbotResponse { Text = ChatbotResources.Get("Call_CloseBlockedByIncidentCommand", culture, call.CallId), Processed = false };
 
 				var confirmed = intent.Parameters.TryGetValue("__confirmed", out var confirmFlag) && confirmFlag == "true";
 				if (!confirmed)

@@ -2379,4 +2379,133 @@
   <data name="FederatedMfaTestNote" xml:space="preserve">
     <value>Test przekieruje Cię teraz do dostawcy tożsamości z prośbą o MFA. Gdy zwróci wartość liczoną przez mapowanie, ta wersja zacznie obowiązywać.</value>
   </data>
+  <data name="AuditLogTypeDepartmentApiKeyCreated" xml:space="preserve">
+    <value>Utworzono klucz API jednostki</value>
+  </data>
+  <data name="AuditLogTypeDepartmentApiKeyRevoked" xml:space="preserve">
+    <value>Unieważniono klucz API jednostki</value>
+  </data>
+  <data name="ApiKeysButton" xml:space="preserve">
+    <value>Klucze API</value>
+  </data>
+  <data name="ApiKeysPageTitle" xml:space="preserve">
+    <value>Klucze API</value>
+  </data>
+  <data name="ApiKeysIntro" xml:space="preserve">
+    <value>Klucze API pozwalają innemu systemowi, np. do planowania, ewidencji lub dysponowania, wywoływać Resgrid w imieniu jednostki bez logowania się jako osoba. Klucz może tylko to, na co zezwolisz, przestaje działać w dniu wygaśnięcia i można go w każdej chwili unieważnić.</value>
+  </data>
+  <data name="ApiKeysUsage" xml:space="preserve">
+    <value>Wysyłaj klucz w nagłówku X-Resgrid-ApiKey w żądaniach do {0}. Nigdy nie umieszczaj go w adresie URL.</value>
+  </data>
+  <data name="ApiKeysExisting" xml:space="preserve">
+    <value>Klucze</value>
+  </data>
+  <data name="ApiKeysNone" xml:space="preserve">
+    <value>Nie utworzono jeszcze żadnych kluczy API.</value>
+  </data>
+  <data name="ApiKeyName" xml:space="preserve">
+    <value>Nazwa</value>
+  </data>
+  <data name="ApiKeyPrefix" xml:space="preserve">
+    <value>Klucz</value>
+  </data>
+  <data name="ApiKeyScopes" xml:space="preserve">
+    <value>Dozwolone</value>
+  </data>
+  <data name="ApiKeyCreated" xml:space="preserve">
+    <value>Utworzono</value>
+  </data>
+  <data name="ApiKeyExpires" xml:space="preserve">
+    <value>Wygasa</value>
+  </data>
+  <data name="ApiKeyLastUsed" xml:space="preserve">
+    <value>Ostatnio użyty</value>
+  </data>
+  <data name="ApiKeyStatus" xml:space="preserve">
+    <value>Stan</value>
+  </data>
+  <data name="ApiKeyStatusActive" xml:space="preserve">
+    <value>Aktywny</value>
+  </data>
+  <data name="ApiKeyStatusExpired" xml:space="preserve">
+    <value>Wygasł</value>
+  </data>
+  <data name="ApiKeyStatusRevoked" xml:space="preserve">
+    <value>Unieważniony</value>
+  </data>
+  <data name="ApiKeyNever" xml:space="preserve">
+    <value>Nigdy</value>
+  </data>
+  <data name="ApiKeyRevoke" xml:space="preserve">
+    <value>Unieważnij</value>
+  </data>
+  <data name="ApiKeyRevokeConfirm" xml:space="preserve">
+    <value>Unieważnić ten klucz? Systemy, które go używają, natychmiast przestaną działać.</value>
+  </data>
+  <data name="ApiKeyRevoked" xml:space="preserve">
+    <value>Klucz został unieważniony.</value>
+  </data>
+  <data name="ApiKeyCreateHeader" xml:space="preserve">
+    <value>Utwórz klucz</value>
+  </data>
+  <data name="ApiKeyNameHelp" xml:space="preserve">
+    <value>Do czego służy klucz, np. system, który będzie go używał.</value>
+  </data>
+  <data name="ApiKeyScopesLabel" xml:space="preserve">
+    <value>Co może klucz</value>
+  </data>
+  <data name="ApiKeyExpiresIn" xml:space="preserve">
+    <value>Wygasa po</value>
+  </data>
+  <data name="ApiKeyDays" xml:space="preserve">
+    <value>{0} dniach</value>
+  </data>
+  <data name="ApiKeyAllowedIps" xml:space="preserve">
+    <value>Dozwolone adresy (opcjonalnie)</value>
+  </data>
+  <data name="ApiKeyAllowedIpsHelp" xml:space="preserve">
+    <value>Jeden adres IP lub zakres CIDR w wierszu, np. 203.0.113.10 lub 203.0.113.0/24. Pozostaw puste, aby zezwolić na dowolny adres.</value>
+  </data>
+  <data name="ApiKeyCreateButton" xml:space="preserve">
+    <value>Utwórz klucz</value>
+  </data>
+  <data name="ApiKeyNewHeader" xml:space="preserve">
+    <value>Twój nowy klucz API</value>
+  </data>
+  <data name="ApiKeyNewWarning" xml:space="preserve">
+    <value>Skopiuj ten klucz teraz. Jest wyświetlany tylko raz i nie można go odzyskać. Jeśli zginie, unieważnij go i utwórz nowy.</value>
+  </data>
+  <data name="ApiKeyCopy" xml:space="preserve">
+    <value>Kopiuj</value>
+  </data>
+  <data name="ApiKeyErrorName" xml:space="preserve">
+    <value>Nadaj kluczowi nazwę.</value>
+  </data>
+  <data name="ApiKeyErrorScopes" xml:space="preserve">
+    <value>Wybierz co najmniej jedno uprawnienie klucza.</value>
+  </data>
+  <data name="ApiKeyErrorIp" xml:space="preserve">
+    <value>"{0}" nie jest adresem IP ani zakresem CIDR.</value>
+  </data>
+  <data name="ApiKeyErrorCreate" xml:space="preserve">
+    <value>Nie udało się utworzyć klucza: {0}</value>
+  </data>
+  <data name="ApiKeyScopeCallsRead" xml:space="preserve">
+    <value>Odczyt zgłoszeń (aktywnych, oczekujących i zaplanowanych)</value>
+  </data>
+  <data name="ApiKeyScopeCallsCreate" xml:space="preserve">
+    <value>Tworzenie zgłoszeń, także oczekujących i zaplanowanych</value>
+  </data>
+  <data name="ApiKeyScopeCallsUpdate" xml:space="preserve">
+    <value>Edycja zgłoszeń, dysponowanie oczekujących i zmiana zaplanowanych godzin</value>
+  </data>
+  <data name="ApiKeyScopeCallsClose" xml:space="preserve">
+    <value>Zamykanie zgłoszeń</value>
+  </data>
+  <data name="ApiKeyScopeReferenceRead" xml:space="preserve">
+    <value>Odczyt typów zgłoszeń, priorytetów, szablonów, grup i ról</value>
+  </data>
+  <data name="ApiKeyScopeUnitsRead" xml:space="preserve">
+    <value>Odczyt jednostek i ich statusów</value>
+  </data>
 </root>

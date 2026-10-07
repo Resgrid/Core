@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -125,14 +126,104 @@ namespace Resgrid.Services.Search
 			try
 			{
 				await SweepCoreAsync(result, cancellationToken);
+				await BackfillCallsAsync(result, cancellationToken);
 			}
 			finally
 			{
 				SweepGate.Release();
 			}
 
-			result.Message = $"Checked {result.DepartmentsChecked} department(s); rebuilt {result.DepartmentsRebuilt} ({result.ProjectionsRebuilt} projections); indexed {result.DocumentsIndexed}; deleted {result.DocumentsDeleted}; errors {result.Errors}.";
+			result.Message = $"Checked {result.DepartmentsChecked} department(s); rebuilt {result.DepartmentsRebuilt} ({result.ProjectionsRebuilt} projections); indexed {result.DocumentsIndexed}; deleted {result.DocumentsDeleted}; backfilled {result.CallsBackfilled} call(s), {result.CallBackfillsCompleted} department(s) finished; errors {result.Errors}.";
 			return result;
+		}
+
+		/// <summary>
+		/// The call history backfill (M0261). Rebuilds once projected only recent years and retired older calls; rather than
+		/// change the index generation, which blanks every department's results until its rebuild, each sweep walks one batch
+		/// of every pending department's calls, newest CallId first, and projects only the calls search does not hold. The
+		/// rows reach the index through the next sweep's catch-up (their ModifiedOn is past the checkpoint). Runs after the
+		/// sweep's commit, in a time budget, least recently touched department first; the cursor is saved per batch, so an
+		/// interrupted walk resumes where it stopped.
+		/// </summary>
+		private async Task BackfillCallsAsync(SearchIndexSweepResult result, CancellationToken cancellationToken)
+		{
+			if (SearchConfig.CallBackfillSecondsPerSweep <= 0 || SearchConfig.CallRebuildYears > 0)
+				return;
+
+			var watch = System.Diagnostics.Stopwatch.StartNew();
+			var budget = TimeSpan.FromSeconds(SearchConfig.CallBackfillSecondsPerSweep);
+			var batch = Math.Max(1, Math.Min(1000, SearchConfig.CallBackfillBatchSize));
+			List<SearchIndexState> pending;
+			try
+			{
+				pending = ((await _states.GetAllForIndexAsync(SearchIndexNames.Global)) ?? Enumerable.Empty<SearchIndexState>())
+					.Where(s => s.State == (int)SearchIndexBuildState.Ready && !s.RebuildRequestedOn.HasValue && !s.CallBackfillCompletedOn.HasValue)
+					.OrderBy(s => s.ModifiedOn).ThenBy(s => s.DepartmentId).ToList();
+			}
+			catch (Exception ex)
+			{
+				result.Errors++;
+				Logging.LogException(ex, "Search call history backfill could not list departments.");
+				return;
+			}
+
+			foreach (var listed in pending)
+			{
+				cancellationToken.ThrowIfCancellationRequested();
+				if (watch.Elapsed >= budget)
+					break;
+
+				try
+				{
+					if (!await FlagOnAsync(listed.DepartmentId))
+						continue;
+
+					// Re-read just before the batch: the whole row is saved back, and an admin rebuild request made since the
+					// list was read must not be overwritten.
+					var state = await _states.GetAsync(SearchIndexNames.Global, listed.DepartmentId);
+					if (state == null || state.State != (int)SearchIndexBuildState.Ready || state.RebuildRequestedOn.HasValue || state.CallBackfillCompletedOn.HasValue)
+						continue;
+
+					var calls = (await _projections.GetCallsForBackfillAsync(state.DepartmentId, state.CallBackfillCursor, batch))?.ToList() ?? new List<Call>();
+					if (calls.Count > 0)
+					{
+						var present = new HashSet<string>(((await _projections.GetByEntityIdsAsync(state.DepartmentId, SearchEntityTypes.Call,
+							calls.Select(c => c.CallId.ToString(CultureInfo.InvariantCulture)))) ?? Enumerable.Empty<SearchProjection>())
+							.Select(p => p.EntityId), StringComparer.Ordinal);
+						foreach (var call in calls)
+						{
+							cancellationToken.ThrowIfCancellationRequested();
+							if (call == null || call.IsDeleted || present.Contains(call.CallId.ToString(CultureInfo.InvariantCulture)))
+								continue;
+							var projection = await _projectionService.BuildCallAsync(call);
+							if (projection == null)
+								continue;
+							await _projectionService.UpsertAsync(projection, cancellationToken);
+							result.CallsBackfilled++;
+						}
+
+						state.CallBackfillCursor = calls.Min(c => c.CallId);
+					}
+
+					var now = DateTime.UtcNow;
+					if (calls.Count < batch)
+					{
+						state.CallBackfillCompletedOn = now;
+						result.CallBackfillsCompleted++;
+					}
+					state.ModifiedOn = now;
+					await _states.SaveOrUpdateAsync(state, cancellationToken, true);
+				}
+				catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+				{
+					throw;
+				}
+				catch (Exception ex)
+				{
+					result.Errors++;
+					Logging.LogException(ex, $"Search call history backfill failed for department {listed.DepartmentId}; it resumes from its cursor on the next sweep.");
+				}
+			}
 		}
 
 		private async Task SweepCoreAsync(SearchIndexSweepResult result, CancellationToken cancellationToken)
@@ -277,7 +368,8 @@ namespace Resgrid.Services.Search
 
 			try
 			{
-				result.ProjectionsRebuilt += await RebuildProjectionsAsync(departmentId, cancellationToken);
+				var (projected, callsComplete) = await RebuildProjectionsAsync(departmentId, cancellationToken);
+				result.ProjectionsRebuilt += projected;
 
 				await _indexer.DeleteDepartmentAsync(departmentId, cancellationToken);
 
@@ -305,6 +397,10 @@ namespace Resgrid.Services.Search
 				state.LastRebuiltOn = DateTime.UtcNow;
 				state.LastIndexedModifiedOn = lastModified.HasValue && lastModified.Value > now ? now : lastModified;
 				state.RebuildRequestedOn = null;
+				// A rebuild that projected every call leaves nothing to backfill; one whose call family failed (or that an
+				// operator capped with CallRebuildYears) restarts the backfill walk from the newest call.
+				state.CallBackfillCursor = null;
+				state.CallBackfillCompletedOn = callsComplete && SearchConfig.CallRebuildYears <= 0 ? DateTime.UtcNow : (DateTime?)null;
 				state.ModifiedOn = DateTime.UtcNow;
 				await _states.SaveOrUpdateAsync(state, cancellationToken, true);
 
@@ -392,31 +488,39 @@ namespace Resgrid.Services.Search
 			}).ToList();
 		}
 
-		/// <summary>Regenerates every projection row of the department from the entity services, then soft-deletes rows no longer present.</summary>
-		private async Task<int> RebuildProjectionsAsync(int departmentId, CancellationToken cancellationToken)
+		/// <summary>
+		/// Regenerates every projection row of the department from the entity services, then soft-deletes rows no longer
+		/// present. CallsComplete reports whether the call family walked every call it was asked to (its failure keeps the
+		/// existing rows, and the call history backfill then covers the gap).
+		/// </summary>
+		private async Task<(int Count, bool CallsComplete)> RebuildProjectionsAsync(int departmentId, CancellationToken cancellationToken)
 		{
 			var started = DateTime.UtcNow;
 			var count = 0;
+			var callsComplete = false;
 
 			count += await Family(departmentId, SearchEntityTypes.Call, async () =>
 			{
-				var calls = new Dictionary<int, Call>();
-				foreach (var c in await _calls.GetActiveCallsByDepartmentAsync(departmentId) ?? new List<Call>())
-					calls[c.CallId] = c;
-				var year = DateTime.UtcNow.Year;
-				for (var i = 0; i < Math.Max(1, SearchConfig.CallRebuildYears); i++)
-				{
-					foreach (var c in await _calls.GetClosedCallsByDepartmentYearAsync(departmentId, (year - i).ToString()) ?? new List<Call>())
-						calls[c.CallId] = c;
-				}
+				// Active calls, then closed calls one year at a time (newest first) so only one year is held in memory. Every
+				// year the department has calls in is walked unless CallRebuildYears caps it: the family's stale-row sweep
+				// retires any call left out, which used to drop older calls from search on every rebuild.
+				var seen = new HashSet<int>();
 				var n = 0;
-				foreach (var call in calls.Values)
+				async Task Project(IEnumerable<Call> calls)
 				{
-					cancellationToken.ThrowIfCancellationRequested();
-					if (call.IsDeleted) continue;
-					var p = await _projectionService.BuildCallAsync(call);
-					if (p != null) { await _projectionService.UpsertAsync(p, cancellationToken); n++; }
+					foreach (var call in calls ?? Enumerable.Empty<Call>())
+					{
+						cancellationToken.ThrowIfCancellationRequested();
+						if (call == null || call.IsDeleted || !seen.Add(call.CallId)) continue;
+						var p = await _projectionService.BuildCallAsync(call);
+						if (p != null) { await _projectionService.UpsertAsync(p, cancellationToken); n++; }
+					}
 				}
+
+				await Project(await _calls.GetActiveCallsByDepartmentAsync(departmentId));
+				foreach (var year in await CallRebuildYearsAsync(departmentId))
+					await Project(await _calls.GetClosedCallsByDepartmentYearAsync(departmentId, year.ToString(CultureInfo.InvariantCulture)));
+				callsComplete = true;
 				return n;
 			}, started, cancellationToken);
 
@@ -710,7 +814,31 @@ namespace Resgrid.Services.Search
 				return n;
 			}, started, cancellationToken);
 
-			return count;
+			return (count, callsComplete);
+		}
+
+		/// <summary>
+		/// The calendar years (of LoggedOn) the department has calls in, newest first, limited to the last
+		/// <see cref="SearchConfig.CallRebuildYears"/> when that is set. The years query returns whatever numeric type the
+		/// dialect's YEAR/extract yields, as text.
+		/// </summary>
+		private async Task<List<int>> CallRebuildYearsAsync(int departmentId)
+		{
+			var years = new HashSet<int>();
+			foreach (var value in await _calls.GetCallYearsByDeptartmentAsync(departmentId) ?? new List<string>())
+			{
+				if (decimal.TryParse(value?.Trim(), NumberStyles.Number, CultureInfo.InvariantCulture, out var year) && year >= 1 && year <= 9999)
+					years.Add((int)year);
+			}
+
+			var ordered = years.OrderByDescending(y => y).ToList();
+			if (SearchConfig.CallRebuildYears > 0)
+			{
+				var oldest = DateTime.UtcNow.Year - SearchConfig.CallRebuildYears + 1;
+				ordered = ordered.Where(y => y >= oldest).ToList();
+			}
+
+			return ordered;
 		}
 
 		private async Task<int> Family(int departmentId, string entityType, Func<Task<int>> rebuild, DateTime started, CancellationToken cancellationToken)

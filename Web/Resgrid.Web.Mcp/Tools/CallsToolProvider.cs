@@ -348,6 +348,12 @@ namespace Resgrid.Web.Mcp.Tools
 							message = "Call closed successfully"
 						};
 					}
+				catch (System.Net.Http.HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.BadRequest)
+				{
+					// The API refuses to close a call that an active incident command is still running (and a malformed id).
+					_logger.LogInformation("API refused to close call");
+					return CreateErrorResponse("The call could not be closed. If it has an active incident command, close the incident command first, then close the call.");
+				}
 				catch (Exception ex) when (ex is not McpToolErrorException)
 				{
 					_logger.LogError(ex, "Error closing call");

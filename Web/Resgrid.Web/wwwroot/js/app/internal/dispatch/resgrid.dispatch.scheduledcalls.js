@@ -52,6 +52,7 @@ var resgrid;
                                 var html = '<a class="btn btn-xs btn-info" href="' + resgrid.absoluteBaseUrl + '/User/Dispatch/ViewCall?callId=' + data + '">' + getText('view', 'View') + '</a> ';
                                 if (row.CanUpdateCall) {
                                     html += '<a class="btn btn-xs btn-primary" href="' + resgrid.absoluteBaseUrl + '/User/Dispatch/UpdateCall?callId=' + data + '">' + getText('update', 'Update') + '</a> ';
+                                    html += '<button type="button" class="btn btn-xs btn-success" data-dispatch-now="' + data + '">' + getText('dispatchNow', 'Dispatch Now') + '</button> ';
                                 }
                                 if (row.CanCloseCall) {
                                     html += '<a class="btn btn-xs btn-warning" href="' + resgrid.absoluteBaseUrl + '/User/Dispatch/CloseCall?callId=' + data + '">' + getText('close', 'Close') + '</a> ';
@@ -64,6 +65,10 @@ var resgrid;
                         }
                     ]
                 });
+
+                if (resgrid.dispatch.waitingcalls) {
+                    resgrid.dispatch.waitingcalls.bindDispatchNow('#scheduledCallsList', function () { scheduledCallsTable.ajax.reload(); });
+                }
             });
         })(scheduledcalls = dispatch.scheduledcalls || (dispatch.scheduledcalls = {}));
     })(dispatch = resgrid.dispatch || (resgrid.dispatch = {}));

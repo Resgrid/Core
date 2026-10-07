@@ -21,10 +21,14 @@ namespace Resgrid.Web.Helpers
 		/// <summary>Renders one labelled field: input, select, textarea or checkbox.</summary>
 		/// <param name="localizer">Inventory string localizer; <paramref name="label"/> and <paramref name="help"/> are resource keys.</param>
 		/// <param name="wide">Span the full width of an <c>.rgw-grid</c> rather than one column.</param>
+		/// <param name="filterBy">
+		/// Name of another field in the same form; the select then only offers the <see cref="WorkspaceChoice"/>
+		/// options whose parent matches that field's value (filtered by resgrid.common.workspace.js).
+		/// </param>
 		public static IHtmlContent Field(IStringLocalizer localizer, string name, string label, object value = null,
 			string type = "text", IEnumerable<SelectListItem> options = null, string help = null,
 			bool required = false, bool readOnly = false, bool wide = false, int maxLength = 16000,
-			string step = null, string min = null, string max = null, string ariaLabel = null)
+			string step = null, string min = null, string max = null, string ariaLabel = null, string filterBy = null)
 		{
 			var identity = "rgw-" + Guid.NewGuid().ToString("N");
 			var caption = localizer[label].Value;
@@ -80,9 +84,13 @@ namespace Resgrid.Web.Helpers
 					item.Attributes["value"] = option.Value ?? string.Empty;
 					if ((option.Value ?? string.Empty) == text)
 						item.Attributes["selected"] = "selected";
+					if (option is WorkspaceChoice { Parent: not null } choice)
+						item.Attributes["data-rgw-parent"] = choice.Parent;
 					item.InnerHtml.Append(option.Text);
 					element.InnerHtml.AppendHtml(item);
 				}
+				if (!string.IsNullOrEmpty(filterBy))
+					element.Attributes["data-rgw-filter-by"] = filterBy;
 			}
 			else if (type == "textarea")
 			{
@@ -139,6 +147,14 @@ namespace Resgrid.Web.Helpers
 			new[] { new SelectListItem { Value = string.Empty, Text = EmptyChoice } }
 				.Concat(choices.Select(x => new SelectListItem { Value = x.Id, Text = x.Name }));
 
+		/// <summary>
+		/// Choice list with a leading blank entry where each choice belongs to a parent value, such as a lot to its
+		/// item; pair it with <c>filterBy</c> on <see cref="Field"/>. The blank entry has no parent and is always offered.
+		/// </summary>
+		public static IEnumerable<SelectListItem> Choices(IEnumerable<(string Id, string Name, string Parent)> choices) =>
+			new[] { new SelectListItem { Value = string.Empty, Text = EmptyChoice } }
+				.Concat(choices.Select(x => new WorkspaceChoice { Value = x.Id, Text = x.Name, Parent = x.Parent }));
+
 		/// <summary>Choice list without a blank entry, for selects that must hold a value.</summary>
 		public static IEnumerable<SelectListItem> Required(IEnumerable<(string Id, string Name)> choices) =>
 			choices.Select(x => new SelectListItem { Value = x.Id, Text = x.Name });
@@ -168,5 +184,11 @@ namespace Resgrid.Web.Helpers
 			block.InnerHtml.Append(resolved.Value);
 			group.InnerHtml.AppendHtml(block);
 		}
+	}
+
+	/// <summary>A select option that belongs to a parent value, rendered as <c>data-rgw-parent</c>.</summary>
+	public sealed class WorkspaceChoice : SelectListItem
+	{
+		public string Parent { get; set; }
 	}
 }

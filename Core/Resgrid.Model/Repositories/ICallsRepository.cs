@@ -75,6 +75,12 @@ namespace Resgrid.Model.Repositories
 		Task<IEnumerable<Call>> GetAllNonDispatchedScheduledCallsByDepartmentIdAsync(int departmentId);
 
 		/// <summary>
+		/// Gets the department's pending calls (<see cref="CallStates.Pending"/>): saved, not deleted and waiting for a dispatcher.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		Task<IEnumerable<Call>> GetPendingCallsByDepartmentIdAsync(int departmentId);
+
+		/// <summary>
 		/// Gets all calls by department and contact asynchronous.
 		/// </summary>
 		/// <param name="contactId">The contact identifier.</param>
@@ -99,6 +105,27 @@ namespace Resgrid.Model.Repositories
 		/// NULL): a concurrent edit is never overwritten by a stale merge. True when the row was updated.
 		/// </summary>
 		Task<bool> TryUpdateSubjectIdentifiersAsync(int callId, int departmentId, string expectedValue, string newValue,
+			System.Threading.CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Marks a call dispatched (HasBeenDispatched) and records the claim time (DispatchClaimedOn) only when the stored row is
+		/// still waiting: pending, active with a scheduled dispatch not yet sent, or marked sent by a claim older than
+		/// <paramref name="staleBefore"/> (abandoned mid-dispatch). True for the one caller that changed the row; a concurrent
+		/// Dispatch Now or the scheduled-calls worker gets false and must not broadcast.
+		/// </summary>
+		Task<bool> TryClaimCallForDispatchAsync(int callId, int departmentId, DateTime claimedOn, DateTime staleBefore,
+			System.Threading.CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Gives back the claim taken at <paramref name="claimedOn"/> when its dispatch did not go out, restoring the waiting
+		/// state. Only that claim is released, and only while the call is still active or pending, so a call claimed again
+		/// or closed in the meantime is left as it is. True when the row was updated.
+		/// </summary>
+		Task<bool> ReleaseCallDispatchClaimAsync(int callId, int departmentId, DateTime claimedOn, int state, DateTime? dispatchOn, bool? hasBeenDispatched,
+			System.Threading.CancellationToken cancellationToken = default);
+
+		/// <summary>Ends the claim taken at <paramref name="claimedOn"/> once its broadcast is queued; the call stays marked sent.</summary>
+		Task<bool> CompleteCallDispatchClaimAsync(int callId, int departmentId, DateTime claimedOn,
 			System.Threading.CancellationToken cancellationToken = default);
 	}
 }

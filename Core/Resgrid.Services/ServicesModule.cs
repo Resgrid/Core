@@ -176,6 +176,7 @@ namespace Resgrid.Services
 			builder.RegisterType<ActionLogsService>().As<IActionLogsService>().InstancePerLifetimeScope();
 			builder.RegisterType<EmailService>().As<IEmailService>().InstancePerLifetimeScope();
 			builder.RegisterType<CallsService>().As<ICallsService>().InstancePerLifetimeScope();
+			builder.RegisterType<CallNumberingService>().As<ICallNumberingService>().InstancePerLifetimeScope();
 			builder.RegisterType<PlatformReportingService>().As<IPlatformReportingService>().InstancePerLifetimeScope();
 			builder.RegisterType<ReportingRollupProcessor>().As<IReportingRollupProcessor>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentGroupsService>().As<IDepartmentGroupsService>().InstancePerLifetimeScope();
@@ -200,6 +201,9 @@ namespace Resgrid.Services
 			builder.RegisterType<FeatureToggleService>().As<IFeatureToggleService>().InstancePerLifetimeScope();
 			builder.RegisterType<ChecklistAccessMutationObserver>().As<IFeatureFlagMutationObserver>().InstancePerLifetimeScope();
 			builder.RegisterType<CallDispatchStatusService>().As<ICallDispatchStatusService>().InstancePerLifetimeScope();
+			builder.RegisterType<PendingCallsService>().As<IPendingCallsService>().InstancePerLifetimeScope();
+			builder.RegisterType<CallClosureService>().As<ICallClosureService>().InstancePerLifetimeScope();
+			builder.RegisterType<DepartmentApiKeysService>().As<IDepartmentApiKeysService>().InstancePerLifetimeScope();
 			builder.RegisterType<CallStatusAttributionService>().As<ICallStatusAttributionService>().InstancePerLifetimeScope();
 			builder.RegisterType<PersonnelRolesService>().As<IPersonnelRolesService>().InstancePerLifetimeScope();
 			builder.RegisterType<ScheduledTasksService>().As<IScheduledTasksService>().InstancePerLifetimeScope();

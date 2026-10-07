@@ -52,6 +52,7 @@ namespace Resgrid.Workers.Framework.Logic
 		public static async Task<AuditLog> BuildAuditLogAsync(AuditEvent auditEvent, IUserProfileService userProfileService, IAuditService auditService)
 		{
 			var profile = await userProfileService.GetProfileByUserIdAsync(auditEvent.UserId);
+			var actorName = GetActorName(auditEvent.UserId, profile);
 
 			var auditLog = new AuditLog();
 			auditLog.DepartmentId = auditEvent.DepartmentId;
@@ -72,12 +73,12 @@ namespace Resgrid.Workers.Framework.Logic
 						? null
 						: await userProfileService.GetProfileByUserIdAsync(auditEvent.TargetUserId);
 					auditLog.Message = passwordResetTarget == null
-						? $"{profile.FullName.AsFirstNameLastName} performed a privileged password reset action"
-						: $"{profile.FullName.AsFirstNameLastName} performed a privileged password reset action on {passwordResetTarget.FullName.AsFirstNameLastName}";
+						? $"{actorName} performed a privileged password reset action"
+						: $"{actorName} performed a privileged password reset action on {passwordResetTarget.FullName.AsFirstNameLastName}";
 					auditLog.Data = String.IsNullOrWhiteSpace(auditEvent.After) ? "No Data" : auditEvent.After;
 					break;
 				case AuditLogTypes.DepartmentSettingsChanged:
-					auditLog.Message = string.Format("{0} updated the department settings", profile.FullName.AsFirstNameLastName);
+					auditLog.Message = string.Format("{0} updated the department settings", actorName);
 					// Several screens share this type and none but the Settings page sends a Department: the
 					// Profile page sends a profile snapshot, Records a settings model or a cutover with no Before.
 					auditLog.Data = GetSettingsChangedAuditData(auditEvent.Before, auditEvent.After);
@@ -87,9 +88,11 @@ namespace Resgrid.Workers.Framework.Logic
 					{
 						var userAddedIdentityUser = JsonConvert.DeserializeObject<IdentityUser>(auditEvent.After);
 						var newProfile = await userProfileService.GetProfileByUserIdAsync(userAddedIdentityUser.UserId);
-						auditLog.Message = string.Format("{0} added new user {1}", profile.FullName.AsFirstNameLastName, newProfile.FullName.AsFirstNameLastName);
+						auditLog.Message = newProfile == null
+							? $"{actorName} added a new user"
+							: string.Format("{0} added new user {1}", actorName, newProfile.FullName.AsFirstNameLastName);
 
-						auditLog.Data = $"New UserId: {newProfile.UserId}";
+						auditLog.Data = $"New UserId: {userAddedIdentityUser.UserId}";
 					}
 
 					break;
@@ -98,7 +101,7 @@ namespace Resgrid.Workers.Framework.Logic
 					if (!String.IsNullOrWhiteSpace(auditEvent.Before))
 					{
 						var userRemovedIdentityUser = JsonConvert.DeserializeObject<UserProfile>(auditEvent.Before);
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed user {userRemovedIdentityUser.FullName.AsFirstNameLastName}";
+						auditLog.Message = $"{actorName} removed user {userRemovedIdentityUser.FullName.AsFirstNameLastName}";
 						auditLog.Data = "No Data";
 					}
 
@@ -108,9 +111,9 @@ namespace Resgrid.Workers.Framework.Logic
 					{
 						var groupAddedGroup = JsonConvert.DeserializeObject<DepartmentGroup>(auditEvent.After);
 						if (groupAddedGroup.Type.HasValue && groupAddedGroup.Type.Value == (int)DepartmentGroupTypes.Station)
-							auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added station group {groupAddedGroup.Name}";
+							auditLog.Message = $"{actorName} added station group {groupAddedGroup.Name}";
 						else
-							auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added organizational group {groupAddedGroup.Name}";
+							auditLog.Message = $"{actorName} added organizational group {groupAddedGroup.Name}";
 
 						auditLog.Data = $"GroupId: {groupAddedGroup.DepartmentGroupId}";
 					}
@@ -120,7 +123,7 @@ namespace Resgrid.Workers.Framework.Logic
 					if (!String.IsNullOrWhiteSpace(auditEvent.Before))
 					{
 						var groupRemovedGroup = JsonConvert.DeserializeObject<DepartmentGroup>(auditEvent.Before);
-						auditLog.Message = string.Format("{0} removed group {1}", profile.FullName.AsFirstNameLastName, groupRemovedGroup.Name);
+						auditLog.Message = string.Format("{0} removed group {1}", actorName, groupRemovedGroup.Name);
 						auditLog.Data = "No Data";
 					}
 
@@ -131,7 +134,7 @@ namespace Resgrid.Workers.Framework.Logic
 						var groupUpdatedBeforeGroup = JsonConvert.DeserializeObject<DepartmentGroup>(auditEvent.Before);
 						var groupUpdatedAfterGroup = JsonConvert.DeserializeObject<DepartmentGroup>(auditEvent.After);
 
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated group {groupUpdatedAfterGroup.Name}";
+						auditLog.Message = $"{actorName} updated group {groupUpdatedAfterGroup.Name}";
 						var compareLogicGroup = new CompareLogic();
 
 						ComparisonResult resultGroup = compareLogicGroup.Compare(groupUpdatedBeforeGroup, groupUpdatedAfterGroup);
@@ -143,7 +146,7 @@ namespace Resgrid.Workers.Framework.Logic
 					if (!String.IsNullOrWhiteSpace(auditEvent.After))
 					{
 						var unitedAddedUnit = JsonConvert.DeserializeObject<Unit>(auditEvent.After);
-						auditLog.Message = string.Format("{0} added unit {1}", profile.FullName.AsFirstNameLastName, unitedAddedUnit.Name);
+						auditLog.Message = string.Format("{0} added unit {1}", actorName, unitedAddedUnit.Name);
 						auditLog.Data = $"UnitId: {unitedAddedUnit.UnitId}";
 					}
 
@@ -152,7 +155,7 @@ namespace Resgrid.Workers.Framework.Logic
 					if (!String.IsNullOrWhiteSpace(auditEvent.Before))
 					{
 						var unitedRemovedUnit = JsonConvert.DeserializeObject<Unit>(auditEvent.Before);
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed unit {unitedRemovedUnit.Name}";
+						auditLog.Message = $"{actorName} removed unit {unitedRemovedUnit.Name}";
 						auditLog.Data = "No Data";
 					}
 
@@ -163,7 +166,7 @@ namespace Resgrid.Workers.Framework.Logic
 						var unitUpdatedBeforeUnit = JsonConvert.DeserializeObject<Unit>(auditEvent.Before);
 						var unitUpdatedAfterUnit = JsonConvert.DeserializeObject<Unit>(auditEvent.After);
 
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated unit {unitUpdatedAfterUnit.Name}";
+						auditLog.Message = $"{actorName} updated unit {unitUpdatedAfterUnit.Name}";
 
 						var compareLogicUnit = new CompareLogic();
 						ComparisonResult resultUnit = compareLogicUnit.Compare(unitUpdatedBeforeUnit, unitUpdatedAfterUnit);
@@ -177,7 +180,7 @@ namespace Resgrid.Workers.Framework.Logic
 						var profileUpdatedBeforeProfile = JsonConvert.DeserializeObject<UserProfile>(auditEvent.Before);
 						var profileUpdatedAfterProfile = JsonConvert.DeserializeObject<UserProfile>(auditEvent.After);
 
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated the profile for {profileUpdatedBeforeProfile.FullName.AsFirstNameLastName}";
+						auditLog.Message = $"{actorName} updated the profile for {profileUpdatedBeforeProfile.FullName.AsFirstNameLastName}";
 
 						var compareLogicProfile = new CompareLogic();
 						ComparisonResult resultProfile = compareLogicProfile.Compare(profileUpdatedBeforeProfile, profileUpdatedAfterProfile);
@@ -191,7 +194,7 @@ namespace Resgrid.Workers.Framework.Logic
 						var updatePermissionBefore = JsonConvert.DeserializeObject<Permission>(auditEvent.Before);
 						var updatePermissionAfter = JsonConvert.DeserializeObject<Permission>(auditEvent.After);
 
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated the department permissions";
+						auditLog.Message = $"{actorName} updated the department permissions";
 
 						var compareLogicProfile = new CompareLogic();
 						ComparisonResult resultProfile = compareLogicProfile.Compare(updatePermissionBefore, updatePermissionAfter);
@@ -201,41 +204,41 @@ namespace Resgrid.Workers.Framework.Logic
 					break;
 				case AuditLogTypes.SubscriptionUpdated:
 					auditLog.Message =
-						$"{profile.FullName.AsFirstNameLastName} changed (upgrade or downgrade) the active subscription of department id {auditEvent.DepartmentId}";
+						$"{actorName} changed (upgrade or downgrade) the active subscription of department id {auditEvent.DepartmentId}";
 					auditLog.Data = "No Data";
 					break;
 				case AuditLogTypes.SubscriptionBillingInfoUpdated:
-					auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated the subscription billing information for department id {auditEvent.DepartmentId}";
+					auditLog.Message = $"{actorName} updated the subscription billing information for department id {auditEvent.DepartmentId}";
 					auditLog.Data = "No Data";
 					break;
 				case AuditLogTypes.SubscriptionCancelled:
-					auditLog.Message = $"{profile.FullName.AsFirstNameLastName} canceled the active subscription of department id {auditEvent.DepartmentId}";
+					auditLog.Message = $"{actorName} canceled the active subscription of department id {auditEvent.DepartmentId}";
 					auditLog.Data = "No Data";
 					break;
 				case AuditLogTypes.SubscriptionCreated:
-					auditLog.Message = $"{profile.FullName.AsFirstNameLastName} created a new active subscription for department id {auditEvent.DepartmentId}";
+					auditLog.Message = $"{actorName} created a new active subscription for department id {auditEvent.DepartmentId}";
 					auditLog.Data = "No Data";
 					break;
 				case AuditLogTypes.UserAccountDeleted:
-					auditLog.Message = $"{profile.FullName.AsFirstNameLastName} has deleted their own account";
+					auditLog.Message = $"{actorName} has deleted their own account";
 
 					auditLog.Data = "No Data";
 					break;
 				case AuditLogTypes.DeleteDepartmentRequested:
-					auditLog.Message = $"{profile.FullName.AsFirstNameLastName} has requested that the Resgrid department be deleted";
+					auditLog.Message = $"{actorName} has requested that the Resgrid department be deleted";
 					auditLog.Data = GetDepartmentDeletionQueueItemAuditData(auditEvent.After, false);
 					break;
 				case AuditLogTypes.DeleteDepartmentRequestedCancelled:
-					auditLog.Message = $"{profile.FullName.AsFirstNameLastName} canceled the pending department deletion request";
+					auditLog.Message = $"{actorName} canceled the pending department deletion request";
 					auditLog.Data = GetDepartmentDeletionQueueItemAuditData(auditEvent.Before, true);
 					break;
 				case AuditLogTypes.CallReactivated:
-					auditLog.Message = $"{profile.FullName.AsFirstNameLastName} reactivated call";
+					auditLog.Message = $"{actorName} reactivated call";
 
 					auditLog.Data = "No Data";
 					break;
 				case AuditLogTypes.AddonSubscriptionModified:
-					auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated the addon subscription for department id {auditEvent.DepartmentId}";
+					auditLog.Message = $"{actorName} updated the addon subscription for department id {auditEvent.DepartmentId}";
 					auditLog.Data = "No Data";
 					break;
 				case AuditLogTypes.DeleteStaticShift:
@@ -243,11 +246,11 @@ namespace Resgrid.Workers.Framework.Logic
 					{
 						var deleteStaticShiftBefore = JsonConvert.DeserializeObject<Workshift>(auditEvent.Before);
 
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} deleted the static shift {deleteStaticShiftBefore.Name}";
+						auditLog.Message = $"{actorName} deleted the static shift {deleteStaticShiftBefore.Name}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} deleted a static shift.";
+						auditLog.Message = $"{actorName} deleted a static shift.";
 					}
 					auditLog.Data = "No Data";
 					break;
@@ -257,7 +260,7 @@ namespace Resgrid.Workers.Framework.Logic
 						var updateStaticShiftBefore = JsonConvert.DeserializeObject<Workshift>(auditEvent.Before);
 						var updateStaticShiftAfter = JsonConvert.DeserializeObject<Workshift>(auditEvent.After);
 
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated the static shift {updateStaticShiftBefore.Name}";
+						auditLog.Message = $"{actorName} updated the static shift {updateStaticShiftBefore.Name}";
 
 						var compareLogicProfile = new CompareLogic();
 						ComparisonResult resultProfile = compareLogicProfile.Compare(updateStaticShiftBefore, updateStaticShiftAfter);
@@ -265,7 +268,7 @@ namespace Resgrid.Workers.Framework.Logic
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated the static shift";
+						auditLog.Message = $"{actorName} updated the static shift";
 					}
 					break;
 				case AuditLogTypes.CustomStatusAdded:
@@ -273,11 +276,11 @@ namespace Resgrid.Workers.Framework.Logic
 					{
 						var customStateAddedAfter = JsonConvert.DeserializeObject<CustomState>(auditEvent.After);
 
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added a new Custom Status {customStateAddedAfter.Name}";
+						auditLog.Message = $"{actorName} added a new Custom Status {customStateAddedAfter.Name}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added a new Custom Status.";
+						auditLog.Message = $"{actorName} added a new Custom Status.";
 					}
 					auditLog.Data = "No Data";
 					break;
@@ -286,11 +289,11 @@ namespace Resgrid.Workers.Framework.Logic
 					{
 						var customStateRemovedBefore = JsonConvert.DeserializeObject<CustomState>(auditEvent.Before);
 
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed a Custom Status {customStateRemovedBefore.Name}";
+						auditLog.Message = $"{actorName} removed a Custom Status {customStateRemovedBefore.Name}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed a Custom Status.";
+						auditLog.Message = $"{actorName} removed a Custom Status.";
 					}
 					auditLog.Data = "No Data";
 					break;
@@ -300,7 +303,7 @@ namespace Resgrid.Workers.Framework.Logic
 						var updateCustomStatusBefore = JsonConvert.DeserializeObject<CustomState>(auditEvent.Before);
 						var updateCustomStatusAfter = JsonConvert.DeserializeObject<CustomState>(auditEvent.After);
 
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated the Custom Status {updateCustomStatusBefore.Name}";
+						auditLog.Message = $"{actorName} updated the Custom Status {updateCustomStatusBefore.Name}";
 
 						var compareLogicProfile = new CompareLogic();
 						ComparisonResult resultProfile = compareLogicProfile.Compare(updateCustomStatusBefore, updateCustomStatusAfter);
@@ -308,22 +311,22 @@ namespace Resgrid.Workers.Framework.Logic
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated a Custom Status.";
+						auditLog.Message = $"{actorName} updated a Custom Status.";
 					}
 					break;
 				case AuditLogTypes.CustomStatusDetailUpdated:
-					auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated a Custom Status Detail.";
+					auditLog.Message = $"{actorName} updated a Custom Status Detail.";
 					break;
 				case AuditLogTypes.CallTypeAdded:
 					if (!String.IsNullOrWhiteSpace(auditEvent.After))
 					{
 						var callTypeAddedAfter = JsonConvert.DeserializeObject<CallType>(auditEvent.After);
 
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added Call Type {callTypeAddedAfter.Type}";
+						auditLog.Message = $"{actorName} added Call Type {callTypeAddedAfter.Type}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added a Call Type.";
+						auditLog.Message = $"{actorName} added a Call Type.";
 					}
 					break;
 				case AuditLogTypes.CallTypeEdited:
@@ -331,11 +334,11 @@ namespace Resgrid.Workers.Framework.Logic
 					{
 						var callTypeAddedBefore = JsonConvert.DeserializeObject<CallType>(auditEvent.Before);
 
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} edited Call Type {callTypeAddedBefore.Type}";
+						auditLog.Message = $"{actorName} edited Call Type {callTypeAddedBefore.Type}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} edited a Call Type.";
+						auditLog.Message = $"{actorName} edited a Call Type.";
 					}
 					break;
 				case AuditLogTypes.CallTypeRemoved:
@@ -343,11 +346,11 @@ namespace Resgrid.Workers.Framework.Logic
 					{
 						var callTypeAddedBefore = JsonConvert.DeserializeObject<CallType>(auditEvent.Before);
 
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed Call Type {callTypeAddedBefore.Type}";
+						auditLog.Message = $"{actorName} removed Call Type {callTypeAddedBefore.Type}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed a Call Type.";
+						auditLog.Message = $"{actorName} removed a Call Type.";
 					}
 					break;
 				case AuditLogTypes.CallPriorityAdded:
@@ -355,11 +358,11 @@ namespace Resgrid.Workers.Framework.Logic
 					{
 						var callPriorityAddedAfter = JsonConvert.DeserializeObject<DepartmentCallPriority>(auditEvent.After);
 
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added Call Priority {callPriorityAddedAfter.Name}";
+						auditLog.Message = $"{actorName} added Call Priority {callPriorityAddedAfter.Name}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added a Call Priority.";
+						auditLog.Message = $"{actorName} added a Call Priority.";
 					}
 					break;
 				case AuditLogTypes.CallPriorityEdited:
@@ -367,11 +370,11 @@ namespace Resgrid.Workers.Framework.Logic
 					{
 						var callPriorityEditedBefore = JsonConvert.DeserializeObject<DepartmentCallPriority>(auditEvent.Before);
 
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} edited Call Priority {callPriorityEditedBefore.Name}";
+						auditLog.Message = $"{actorName} edited Call Priority {callPriorityEditedBefore.Name}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} edited a Call Priority.";
+						auditLog.Message = $"{actorName} edited a Call Priority.";
 					}
 					break;
 				case AuditLogTypes.CallPriorityRemoved:
@@ -379,11 +382,11 @@ namespace Resgrid.Workers.Framework.Logic
 					{
 						var callPriorityDeletedBefore = JsonConvert.DeserializeObject<DepartmentCallPriority>(auditEvent.Before);
 
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed Call Priority {callPriorityDeletedBefore.Name}";
+						auditLog.Message = $"{actorName} removed Call Priority {callPriorityDeletedBefore.Name}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed a Call Priority.";
+						auditLog.Message = $"{actorName} removed a Call Priority.";
 					}
 					break;
 				case AuditLogTypes.UnitTypeAdded:
@@ -391,11 +394,11 @@ namespace Resgrid.Workers.Framework.Logic
 					{
 						var unitTypeAddedAfter = JsonConvert.DeserializeObject<UnitType>(auditEvent.After);
 
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added Unit Type {unitTypeAddedAfter.Type}";
+						auditLog.Message = $"{actorName} added Unit Type {unitTypeAddedAfter.Type}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added a Unit Type.";
+						auditLog.Message = $"{actorName} added a Unit Type.";
 					}
 					break;
 				case AuditLogTypes.UnitTypeEdited:
@@ -403,11 +406,11 @@ namespace Resgrid.Workers.Framework.Logic
 					{
 						var unitTypeEditedBerfore = JsonConvert.DeserializeObject<UnitType>(auditEvent.Before);
 
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} edited Unit Type {unitTypeEditedBerfore.Type}";
+						auditLog.Message = $"{actorName} edited Unit Type {unitTypeEditedBerfore.Type}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} edited a Unit Type.";
+						auditLog.Message = $"{actorName} edited a Unit Type.";
 					}
 					break;
 				case AuditLogTypes.UnitTypeRemoved:
@@ -415,11 +418,11 @@ namespace Resgrid.Workers.Framework.Logic
 					{
 						var unitTypeRemovedBerfore = JsonConvert.DeserializeObject<UnitType>(auditEvent.Before);
 
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed Unit Type {unitTypeRemovedBerfore.Type}";
+						auditLog.Message = $"{actorName} removed Unit Type {unitTypeRemovedBerfore.Type}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed a Unit Type.";
+						auditLog.Message = $"{actorName} removed a Unit Type.";
 					}
 					break;
 				case AuditLogTypes.CertificationTypeAdded:
@@ -427,11 +430,11 @@ namespace Resgrid.Workers.Framework.Logic
 					{
 						var certificationAddedAfter = JsonConvert.DeserializeObject<DepartmentCertificationType>(auditEvent.After);
 
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added Certification Type {certificationAddedAfter.Type}";
+						auditLog.Message = $"{actorName} added Certification Type {certificationAddedAfter.Type}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added a Certification Type.";
+						auditLog.Message = $"{actorName} added a Certification Type.";
 					}
 					break;
 				case AuditLogTypes.CertificationTypeEdited:
@@ -439,11 +442,11 @@ namespace Resgrid.Workers.Framework.Logic
 					{
 						var certificationEditedBefore = JsonConvert.DeserializeObject<DepartmentCertificationType>(auditEvent.Before);
 
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} edited Certification Type {certificationEditedBefore.Type}";
+						auditLog.Message = $"{actorName} edited Certification Type {certificationEditedBefore.Type}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} edited a Certification Type.";
+						auditLog.Message = $"{actorName} edited a Certification Type.";
 					}
 					break;
 				case AuditLogTypes.CertificationTypeRemoved:
@@ -451,11 +454,11 @@ namespace Resgrid.Workers.Framework.Logic
 					{
 						var certificationRemovedBefore = JsonConvert.DeserializeObject<DepartmentCertificationType>(auditEvent.Before);
 
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed Certification Type {certificationRemovedBefore.Type}";
+						auditLog.Message = $"{actorName} removed Certification Type {certificationRemovedBefore.Type}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed a Certification Type.";
+						auditLog.Message = $"{actorName} removed a Certification Type.";
 					}
 					break;
 				case AuditLogTypes.DocumentCategoryAdded:
@@ -463,11 +466,11 @@ namespace Resgrid.Workers.Framework.Logic
 					{
 						var documentCategoryAddedAfter = JsonConvert.DeserializeObject<DocumentCategory>(auditEvent.After);
 
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added Document Category {documentCategoryAddedAfter.Name}";
+						auditLog.Message = $"{actorName} added Document Category {documentCategoryAddedAfter.Name}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added a Document Category.";
+						auditLog.Message = $"{actorName} added a Document Category.";
 					}
 					break;
 				case AuditLogTypes.DocumentCategoryEdited:
@@ -475,11 +478,11 @@ namespace Resgrid.Workers.Framework.Logic
 					{
 						var documentCategoryEditedBefore = JsonConvert.DeserializeObject<DocumentCategory>(auditEvent.Before);
 
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} edited Document Category {documentCategoryEditedBefore.Name}";
+						auditLog.Message = $"{actorName} edited Document Category {documentCategoryEditedBefore.Name}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} edited a Document Category.";
+						auditLog.Message = $"{actorName} edited a Document Category.";
 					}
 					break;
 				case AuditLogTypes.DocumentCategoryRemoved:
@@ -487,11 +490,11 @@ namespace Resgrid.Workers.Framework.Logic
 					{
 						var documentCategoryRemovedBefore = JsonConvert.DeserializeObject<DocumentCategory>(auditEvent.Before);
 
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed Document Category {documentCategoryRemovedBefore.Name}";
+						auditLog.Message = $"{actorName} removed Document Category {documentCategoryRemovedBefore.Name}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed a Document Category.";
+						auditLog.Message = $"{actorName} removed a Document Category.";
 					}
 					break;
 				case AuditLogTypes.DocumentAdded:
@@ -499,31 +502,31 @@ namespace Resgrid.Workers.Framework.Logic
 					{
 						var documentAddedAfter = JsonConvert.DeserializeObject<Document>(auditEvent.After);
 
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added Document {documentAddedAfter.Name}";
+						auditLog.Message = $"{actorName} added Document {documentAddedAfter.Name}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added a Document.";
+						auditLog.Message = $"{actorName} added a Document.";
 					}
 					break;
 				case AuditLogTypes.DocumentEdited:
 					if (!String.IsNullOrWhiteSpace(auditEvent.Before))
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} edited Document {auditEvent.Before}";
+						auditLog.Message = $"{actorName} edited Document {auditEvent.Before}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} edited a Document.";
+						auditLog.Message = $"{actorName} edited a Document.";
 					}
 					break;
 				case AuditLogTypes.DocumentRemoved:
 					if (!String.IsNullOrWhiteSpace(auditEvent.Before))
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed Document {auditEvent.Before}";
+						auditLog.Message = $"{actorName} removed Document {auditEvent.Before}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed a Document.";
+						auditLog.Message = $"{actorName} removed a Document.";
 					}
 					break;
 				case AuditLogTypes.NoteCategoryAdded:
@@ -531,11 +534,11 @@ namespace Resgrid.Workers.Framework.Logic
 					{
 						var noteCategoryAddedAfter = JsonConvert.DeserializeObject<NoteCategory>(auditEvent.After);
 
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added Note Category {noteCategoryAddedAfter.Name}";
+						auditLog.Message = $"{actorName} added Note Category {noteCategoryAddedAfter.Name}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added a Note Category.";
+						auditLog.Message = $"{actorName} added a Note Category.";
 					}
 					break;
 				case AuditLogTypes.NoteCategoryEdited:
@@ -543,11 +546,11 @@ namespace Resgrid.Workers.Framework.Logic
 					{
 						var noteCategoryEditedBefore = JsonConvert.DeserializeObject<NoteCategory>(auditEvent.Before);
 
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} edited Note Category {noteCategoryEditedBefore.Name}";
+						auditLog.Message = $"{actorName} edited Note Category {noteCategoryEditedBefore.Name}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} edited a Note Category.";
+						auditLog.Message = $"{actorName} edited a Note Category.";
 					}
 					break;
 				case AuditLogTypes.NoteCategoryRemoved:
@@ -555,11 +558,11 @@ namespace Resgrid.Workers.Framework.Logic
 					{
 						var noteCategoryRemovedBefore = JsonConvert.DeserializeObject<NoteCategory>(auditEvent.Before);
 
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed Note Category {noteCategoryRemovedBefore.Name}";
+						auditLog.Message = $"{actorName} removed Note Category {noteCategoryRemovedBefore.Name}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed a Note Category.";
+						auditLog.Message = $"{actorName} removed a Note Category.";
 					}
 					break;
 				case AuditLogTypes.NoteAdded:
@@ -567,11 +570,11 @@ namespace Resgrid.Workers.Framework.Logic
 					{
 						var noteAddedBefore = JsonConvert.DeserializeObject<Note>(auditEvent.Before);
 
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added Note {noteAddedBefore.Title}";
+						auditLog.Message = $"{actorName} added Note {noteAddedBefore.Title}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added a Note.";
+						auditLog.Message = $"{actorName} added a Note.";
 					}
 					break;
 				case AuditLogTypes.NoteEdited:
@@ -579,11 +582,11 @@ namespace Resgrid.Workers.Framework.Logic
 					{
 						var noteEditedBefore = JsonConvert.DeserializeObject<Note>(auditEvent.Before);
 
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} edited Note {noteEditedBefore.Title}";
+						auditLog.Message = $"{actorName} edited Note {noteEditedBefore.Title}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} edited a Note.";
+						auditLog.Message = $"{actorName} edited a Note.";
 					}
 					break;
 				case AuditLogTypes.NoteRemoved:
@@ -591,11 +594,11 @@ namespace Resgrid.Workers.Framework.Logic
 					{
 						var noteRemovedBefore = JsonConvert.DeserializeObject<Note>(auditEvent.Before);
 
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed Note {noteRemovedBefore.Title}";
+						auditLog.Message = $"{actorName} removed Note {noteRemovedBefore.Title}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed a Note.";
+						auditLog.Message = $"{actorName} removed a Note.";
 					}
 					break;
 
@@ -603,12 +606,12 @@ namespace Resgrid.Workers.Framework.Logic
 					if (!String.IsNullOrWhiteSpace(auditEvent.After))
 					{
 						var wfAdded = JsonConvert.DeserializeObject<dynamic>(auditEvent.After);
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} created Workflow {wfAdded?.Name}";
+						auditLog.Message = $"{actorName} created Workflow {wfAdded?.Name}";
 						auditLog.Data = $"WorkflowId: {wfAdded?.WorkflowId}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} created a Workflow.";
+						auditLog.Message = $"{actorName} created a Workflow.";
 					}
 					break;
 
@@ -616,12 +619,12 @@ namespace Resgrid.Workers.Framework.Logic
 					if (!String.IsNullOrWhiteSpace(auditEvent.After))
 					{
 						var wfEdited = JsonConvert.DeserializeObject<dynamic>(auditEvent.After);
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated Workflow {wfEdited?.Name}";
+						auditLog.Message = $"{actorName} updated Workflow {wfEdited?.Name}";
 						auditLog.Data = $"WorkflowId: {wfEdited?.WorkflowId}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated a Workflow.";
+						auditLog.Message = $"{actorName} updated a Workflow.";
 					}
 					break;
 
@@ -629,12 +632,12 @@ namespace Resgrid.Workers.Framework.Logic
 					if (!String.IsNullOrWhiteSpace(auditEvent.Before))
 					{
 						var wfDeleted = JsonConvert.DeserializeObject<dynamic>(auditEvent.Before);
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} deleted Workflow {wfDeleted?.Name}";
+						auditLog.Message = $"{actorName} deleted Workflow {wfDeleted?.Name}";
 						auditLog.Data = $"WorkflowId: {wfDeleted?.WorkflowId}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} deleted a Workflow.";
+						auditLog.Message = $"{actorName} deleted a Workflow.";
 					}
 					break;
 
@@ -642,12 +645,12 @@ namespace Resgrid.Workers.Framework.Logic
 					if (!String.IsNullOrWhiteSpace(auditEvent.After))
 					{
 						var stepAdded = JsonConvert.DeserializeObject<dynamic>(auditEvent.After);
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added a step to Workflow {stepAdded?.WorkflowId}";
+						auditLog.Message = $"{actorName} added a step to Workflow {stepAdded?.WorkflowId}";
 						auditLog.Data = $"WorkflowStepId: {stepAdded?.WorkflowStepId}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added a Workflow Step.";
+						auditLog.Message = $"{actorName} added a Workflow Step.";
 					}
 					break;
 
@@ -655,12 +658,12 @@ namespace Resgrid.Workers.Framework.Logic
 					if (!String.IsNullOrWhiteSpace(auditEvent.After))
 					{
 						var stepEdited = JsonConvert.DeserializeObject<dynamic>(auditEvent.After);
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated a step in Workflow {stepEdited?.WorkflowId}";
+						auditLog.Message = $"{actorName} updated a step in Workflow {stepEdited?.WorkflowId}";
 						auditLog.Data = $"WorkflowStepId: {stepEdited?.WorkflowStepId}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated a Workflow Step.";
+						auditLog.Message = $"{actorName} updated a Workflow Step.";
 					}
 					break;
 
@@ -668,12 +671,12 @@ namespace Resgrid.Workers.Framework.Logic
 					if (!String.IsNullOrWhiteSpace(auditEvent.Before))
 					{
 						var stepDeleted = JsonConvert.DeserializeObject<dynamic>(auditEvent.Before);
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} deleted Workflow Step {stepDeleted?.WorkflowStepId}";
+						auditLog.Message = $"{actorName} deleted Workflow Step {stepDeleted?.WorkflowStepId}";
 						auditLog.Data = $"WorkflowStepId: {stepDeleted?.WorkflowStepId}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} deleted a Workflow Step.";
+						auditLog.Message = $"{actorName} deleted a Workflow Step.";
 					}
 					break;
 
@@ -682,12 +685,12 @@ namespace Resgrid.Workers.Framework.Logic
 					if (!String.IsNullOrWhiteSpace(auditEvent.After))
 					{
 						var credAdded = JsonConvert.DeserializeObject<dynamic>(auditEvent.After);
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added Workflow Credential {credAdded?.Name}";
+						auditLog.Message = $"{actorName} added Workflow Credential {credAdded?.Name}";
 						auditLog.Data = $"WorkflowCredentialId: {credAdded?.WorkflowCredentialId}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added a Workflow Credential.";
+						auditLog.Message = $"{actorName} added a Workflow Credential.";
 					}
 					break;
 
@@ -695,12 +698,12 @@ namespace Resgrid.Workers.Framework.Logic
 					if (!String.IsNullOrWhiteSpace(auditEvent.After))
 					{
 						var credEdited = JsonConvert.DeserializeObject<dynamic>(auditEvent.After);
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated Workflow Credential {credEdited?.Name}";
+						auditLog.Message = $"{actorName} updated Workflow Credential {credEdited?.Name}";
 						auditLog.Data = $"WorkflowCredentialId: {credEdited?.WorkflowCredentialId}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated a Workflow Credential.";
+						auditLog.Message = $"{actorName} updated a Workflow Credential.";
 					}
 					break;
 
@@ -708,12 +711,12 @@ namespace Resgrid.Workers.Framework.Logic
 					if (!String.IsNullOrWhiteSpace(auditEvent.Before))
 					{
 						var credDeleted = JsonConvert.DeserializeObject<dynamic>(auditEvent.Before);
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} deleted Workflow Credential {credDeleted?.Name}";
+						auditLog.Message = $"{actorName} deleted Workflow Credential {credDeleted?.Name}";
 						auditLog.Data = $"WorkflowCredentialId: {credDeleted?.WorkflowCredentialId}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} deleted a Workflow Credential.";
+						auditLog.Message = $"{actorName} deleted a Workflow Credential.";
 					}
 					break;
 
@@ -722,12 +725,12 @@ namespace Resgrid.Workers.Framework.Logic
 					if (!String.IsNullOrWhiteSpace(auditEvent.After))
 					{
 						var udfDefCreated = JsonConvert.DeserializeObject<dynamic>(auditEvent.After);
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} created UDF Definition v{udfDefCreated?.Version} for entity type {udfDefCreated?.EntityType}";
+						auditLog.Message = $"{actorName} created UDF Definition v{udfDefCreated?.Version} for entity type {udfDefCreated?.EntityType}";
 						auditLog.Data = $"UdfDefinitionId: {udfDefCreated?.UdfDefinitionId}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} created a UDF Definition.";
+						auditLog.Message = $"{actorName} created a UDF Definition.";
 					}
 					break;
 
@@ -735,12 +738,12 @@ namespace Resgrid.Workers.Framework.Logic
 					if (!String.IsNullOrWhiteSpace(auditEvent.After))
 					{
 						var udfDefUpdated = JsonConvert.DeserializeObject<dynamic>(auditEvent.After);
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated UDF Definition — new version v{udfDefUpdated?.Version} for entity type {udfDefUpdated?.EntityType}";
+						auditLog.Message = $"{actorName} updated UDF Definition — new version v{udfDefUpdated?.Version} for entity type {udfDefUpdated?.EntityType}";
 						auditLog.Data = $"UdfDefinitionId: {udfDefUpdated?.UdfDefinitionId}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated a UDF Definition.";
+						auditLog.Message = $"{actorName} updated a UDF Definition.";
 					}
 					break;
 
@@ -748,12 +751,12 @@ namespace Resgrid.Workers.Framework.Logic
 					if (!String.IsNullOrWhiteSpace(auditEvent.Before))
 					{
 						var udfDefDeleted = JsonConvert.DeserializeObject<dynamic>(auditEvent.Before);
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} deleted UDF Definition v{udfDefDeleted?.Version} for entity type {udfDefDeleted?.EntityType}";
+						auditLog.Message = $"{actorName} deleted UDF Definition v{udfDefDeleted?.Version} for entity type {udfDefDeleted?.EntityType}";
 						auditLog.Data = $"UdfDefinitionId: {udfDefDeleted?.UdfDefinitionId}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} deleted a UDF Definition.";
+						auditLog.Message = $"{actorName} deleted a UDF Definition.";
 					}
 					break;
 
@@ -761,12 +764,12 @@ namespace Resgrid.Workers.Framework.Logic
 					if (!String.IsNullOrWhiteSpace(auditEvent.After))
 					{
 						var udfFieldAdded = JsonConvert.DeserializeObject<dynamic>(auditEvent.After);
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added UDF field '{udfFieldAdded?.Label}' to definition {udfFieldAdded?.UdfDefinitionId}";
+						auditLog.Message = $"{actorName} added UDF field '{udfFieldAdded?.Label}' to definition {udfFieldAdded?.UdfDefinitionId}";
 						auditLog.Data = $"UdfFieldId: {udfFieldAdded?.UdfFieldId}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added a UDF field.";
+						auditLog.Message = $"{actorName} added a UDF field.";
 					}
 					break;
 
@@ -774,12 +777,12 @@ namespace Resgrid.Workers.Framework.Logic
 					if (!String.IsNullOrWhiteSpace(auditEvent.After))
 					{
 						var udfFieldUpdated = JsonConvert.DeserializeObject<dynamic>(auditEvent.After);
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated UDF field '{udfFieldUpdated?.Label}'";
+						auditLog.Message = $"{actorName} updated UDF field '{udfFieldUpdated?.Label}'";
 						auditLog.Data = $"UdfFieldId: {udfFieldUpdated?.UdfFieldId}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated a UDF field.";
+						auditLog.Message = $"{actorName} updated a UDF field.";
 					}
 					break;
 
@@ -787,12 +790,12 @@ namespace Resgrid.Workers.Framework.Logic
 					if (!String.IsNullOrWhiteSpace(auditEvent.Before))
 					{
 						var udfFieldRemoved = JsonConvert.DeserializeObject<dynamic>(auditEvent.Before);
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed UDF field '{udfFieldRemoved?.Label}' from definition {udfFieldRemoved?.UdfDefinitionId}";
+						auditLog.Message = $"{actorName} removed UDF field '{udfFieldRemoved?.Label}' from definition {udfFieldRemoved?.UdfDefinitionId}";
 						auditLog.Data = $"UdfFieldId: {udfFieldRemoved?.UdfFieldId}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed a UDF field.";
+						auditLog.Message = $"{actorName} removed a UDF field.";
 					}
 					break;
 
@@ -800,12 +803,12 @@ namespace Resgrid.Workers.Framework.Logic
 					if (!String.IsNullOrWhiteSpace(auditEvent.After))
 					{
 						var udfValueSaved = JsonConvert.DeserializeObject<dynamic>(auditEvent.After);
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} saved UDF values for {udfValueSaved?.EntityType} entity {udfValueSaved?.EntityId}";
+						auditLog.Message = $"{actorName} saved UDF values for {udfValueSaved?.EntityType} entity {udfValueSaved?.EntityId}";
 						auditLog.Data = $"UdfDefinitionId: {udfValueSaved?.UdfDefinitionId}, EntityId: {udfValueSaved?.EntityId}";
 					}
 					else
 					{
-						auditLog.Message = $"{profile.FullName.AsFirstNameLastName} saved UDF field values.";
+						auditLog.Message = $"{actorName} saved UDF field values.";
 					}
 					break;
 
@@ -829,6 +832,19 @@ namespace Resgrid.Workers.Framework.Logic
 			auditLog.LoggedOn = DateTime.UtcNow;
 
 			return auditLog;
+		}
+
+		/// <summary>
+		/// Who the message names as having acted. Service-raised events carry the "system" user id, which has no
+		/// profile, and a member removed before the queue drained has none either; neither may drop the row.
+		/// </summary>
+		private static string GetActorName(string userId, UserProfile profile)
+		{
+			var name = profile?.FullName?.AsFirstNameLastName;
+			if (!String.IsNullOrWhiteSpace(name))
+				return name;
+
+			return String.Equals(userId, "system", StringComparison.OrdinalIgnoreCase) ? "System" : "Unknown user";
 		}
 
 		private static string GetDepartmentDeletionQueueItemAuditData(string queueItemJson, bool cancelled)

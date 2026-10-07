@@ -64,6 +64,7 @@ namespace Resgrid.Tests.Rms
 			_h.Reports.Setup(r => r.QueryAsync(Dept, It.IsAny<RmsIncidentReportQuery>())).ReturnsAsync(new List<RmsIncidentReport>());
 			_evidence.Setup(e => e.GetHeadersByKindInRangeAsync(Dept, RmsEvidenceKind.ReadinessPacket, It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>())).ReturnsAsync(() => _headers.ToList());
 			_unitsService.Setup(u => u.GetUnitsForDepartmentAsync(Dept)).ReturnsAsync(new List<Unit> { new Unit { UnitId = 1, Name = "Engine 1", StationGroupId = 10 }, new Unit { UnitId = 2, Name = "Medic 2", StationGroupId = 20 }, new Unit { UnitId = 3, Name = "Brush 3" } });
+			_unitsService.Setup(u => u.GetUnitsForDepartmentIncludingDeletedAsync(Dept)).ReturnsAsync(new List<Unit> { new Unit { UnitId = 1, Name = "Engine 1", StationGroupId = 10 }, new Unit { UnitId = 2, Name = "Medic 2", StationGroupId = 20 }, new Unit { UnitId = 3, Name = "Brush 3" } });
 			_unitsService.Setup(u => u.GetAllLatestStatusForUnitsByDepartmentIdAsync(Dept)).ReturnsAsync(new List<UnitState> { new UnitState { UnitId = 1, State = (int)UnitStateTypes.Available, Timestamp = T0 }, new UnitState { UnitId = 2, State = (int)UnitStateTypes.OutOfService, Timestamp = T0.AddDays(1) } });
 			_access.Setup(a => a.CanUseChecklistsAsync(Dept)).ReturnsAsync(true);
 			_inventoryAuth.Setup(a => a.IsEnabledAsync(Dept)).ReturnsAsync(true);

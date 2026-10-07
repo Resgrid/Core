@@ -103,6 +103,35 @@ window.jQuery = function (root) {
     </form>
 </div></div></div>`;
 
+// A lot picker that depends on the item picker, as WorkspaceFormHelper renders it with filterBy:
+// the select names its source field and each lot names its item. One lot is preselected so the
+// initial pass has to clear it, because no item is chosen yet. An asset picker follows the same
+// item, and a container picker reuses the parented asset choices without filtering on them.
+const dependentMarkup = `
+<form id="dependent" method="post">
+    <select id="item" name="Lines[0].ItemId">
+        <option value="">&mdash;</option>
+        <option value="item-a">Gloves</option>
+        <option value="item-b">Saline</option>
+    </select>
+    <select id="lot" name="Lines[0].LotId" data-rgw-filter-by="Lines[0].ItemId">
+        <option value="">&mdash;</option>
+        <option value="lot-a1" data-rgw-parent="item-a" selected>A-1</option>
+        <option value="lot-a2" data-rgw-parent="item-a">A-2</option>
+        <option value="lot-b1" data-rgw-parent="item-b">B-1</option>
+    </select>
+    <select id="asset" name="Lines[0].AssetId" data-rgw-filter-by="Lines[0].ItemId">
+        <option value="">&mdash;</option>
+        <option value="asset-a1" data-rgw-parent="item-a">SN-A1</option>
+        <option value="asset-b1" data-rgw-parent="item-b">SN-B1</option>
+    </select>
+    <select id="container" name="ContainerAssetId">
+        <option value="">&mdash;</option>
+        <option value="asset-a1" data-rgw-parent="item-a">SN-A1</option>
+        <option value="asset-b1" data-rgw-parent="item-b">SN-B1</option>
+    </select>
+</form>`;
+
 (async () => {
     const browser = await chromium.launch(require('./browser-launch.cjs').launchOptions());
     try {
@@ -227,7 +256,52 @@ window.jQuery = function (root) {
         });
 
         assert.equal(modalResult, 'ok');
-        console.log('Workspace wizard step navigation, review, submit guard and modal reopen passed.');
+
+        // A lot picker only offers the chosen item's lots, and never posts a lot of another item
+        // (FK_InventoryAssets_ItemLot keys on DepartmentId, ItemId and LotId).
+        const dependentPage = await browser.newPage();
+        await dependentPage.setContent(dependentMarkup);
+        await dependentPage.addScriptTag({ content: script });
+        const dependentResult = await dependentPage.evaluate(() => {
+            function check(condition, message) { if (!condition) throw new Error(message); }
+            const form = document.getElementById('dependent');
+            const item = document.getElementById('item');
+            const lot = document.getElementById('lot');
+            const asset = document.getElementById('asset');
+            const container = document.getElementById('container');
+            const offeredBy = select => Array.from(select.options).filter(option => !option.disabled && !option.hidden).map(option => option.value).join(',');
+            const offered = () => offeredBy(lot);
+            const choose = (select, value) => { select.value = value; select.dispatchEvent(new Event('change', { bubbles: true })); };
+
+            check(offered() === '' && lot.value === '', 'Without an item the lot picker offered lots or kept a preselected lot: ' + offered() + ' / ' + lot.value);
+
+            choose(item, 'item-a');
+            check(offered() === ',lot-a1,lot-a2', 'The lot picker did not offer exactly the first item\'s lots: ' + offered());
+            choose(lot, 'lot-a2');
+            check(new FormData(form).get('Lines[0].LotId') === 'lot-a2', 'A lot of the chosen item was not posted.');
+
+            choose(item, 'item-b');
+            check(offered() === ',lot-b1', 'Changing the item did not swap the offered lots: ' + offered());
+            check(lot.value === '' && new FormData(form).get('Lines[0].LotId') === '', 'A lot of the previous item stayed selected after the item changed.');
+
+            choose(lot, 'lot-b1');
+            choose(item, 'item-b');
+            check(lot.value === 'lot-b1', 'Re-choosing the same item cleared a valid lot.');
+
+            // Every picker that names the item follows it, not just the first one.
+            check(offeredBy(asset) === ',asset-b1', 'The asset picker did not follow the chosen item: ' + offeredBy(asset));
+            choose(asset, 'asset-b1');
+            choose(item, 'item-a');
+            check(offeredBy(asset) === ',asset-a1' && asset.value === '', 'The asset picker kept another item\'s asset: ' + offeredBy(asset) + ' / ' + asset.value);
+
+            // A picker sharing the parented choices without data-rgw-filter-by (the container
+            // asset picker) is left alone.
+            check(offeredBy(container) === ',asset-a1,asset-b1', 'A picker without data-rgw-filter-by was filtered: ' + offeredBy(container));
+            return 'ok';
+        });
+
+        assert.equal(dependentResult, 'ok');
+        console.log('Workspace wizard step navigation, review, submit guard, modal reopen and dependent selects passed.');
     } finally {
         await browser.close();
     }

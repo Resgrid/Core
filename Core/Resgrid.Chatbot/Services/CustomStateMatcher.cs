@@ -72,6 +72,8 @@ namespace Resgrid.Chatbot.Services
 			{
 				"available" => ActionBaseTypes.Available,
 				"inservice" => ActionBaseTypes.Available,
+				"inquarters" => ActionBaseTypes.InQuarters,
+				"atstation" => ActionBaseTypes.InQuarters,
 				"responding" => ActionBaseTypes.Responding,
 				"enroute" => ActionBaseTypes.Enroute,
 				"onmyway" => ActionBaseTypes.Enroute,

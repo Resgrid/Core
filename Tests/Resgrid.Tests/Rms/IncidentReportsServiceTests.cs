@@ -393,6 +393,19 @@ namespace Resgrid.Tests.Rms
 		}
 
 		[Test]
+		public async Task Finalize_numbers_with_the_department_incident_report_prefix()
+		{
+			var config = new RecordsNumberingConfig { Pattern = "{PREFIX}{YY}-{SEQ}" };
+			config.SetPrefix(RmsDefinitionKeys.NerisIncidentReport, "IR");
+			_settings.Setup(s => s.GetRecordsNumberingConfigAsync(Dept, It.IsAny<bool>())).ReturnsAsync(config);
+			var started = await _service.StartFromCallAsync(Dept, "author", CallId);
+
+			var final = await _service.FinalizeAsync(Dept, "author", started.Report.RmsIncidentReportId, started.Report.RowVersion, null, "10.0.0.1", null, null);
+
+			final.Report.RecordNumber.Should().Be("IR26-0001");
+		}
+
+		[Test]
 		public async Task Finalize_writes_revision_signature_and_queues_the_submission()
 		{
 			var started = await _service.StartFromCallAsync(Dept, "author", CallId);
@@ -401,7 +414,7 @@ namespace Resgrid.Tests.Rms
 			var final = await _service.FinalizeAsync(Dept, "author", reportId, started.Report.RowVersion, null, "10.0.0.1", null, null);
 
 			final.State.Should().Be(RmsRecordState.Submitted, "auto-submit is on and the destination is enabled");
-			final.Report.RecordNumber.Should().StartWith(IncidentReportsService.NumberPrefix + "-");
+			final.Report.RecordNumber.Should().StartWith(RmsDefinitionKeys.DefaultNumberPrefix(RmsDefinitionKeys.NerisIncidentReport) + "-");
 			final.Report.FinalizedOn.Should().NotBeNull();
 			final.Report.RevisionCount.Should().Be(1);
 

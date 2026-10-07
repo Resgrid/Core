@@ -1271,4 +1271,79 @@
   <data name="RunCardTriggerRequired" xml:space="preserve">
     <value>Lägg till minst en utlösare innan du sparar detta utryckningskort.</value>
   </data>
+  <data name="InQuartersTurnoutLabel" xml:space="preserve">
+    <value>Utryckningstid från stationen (sekunder)</value>
+  </data>
+  <data name="InQuartersTurnoutHelp" xml:space="preserve">
+    <value>Tid som en enhet på stationen behöver innan den är i rörelse. Gäller enheter med statusen ”På stationen” och enheter utan GPS-position (de antas vara på sin station). Läggs till restiden när de närmaste enheterna rangordnas. 0 = ingen.</value>
+  </data>
+  <data name="MobileTurnoutLabel" xml:space="preserve">
+    <value>Utryckningstid ute (sekunder)</value>
+  </data>
+  <data name="MobileTurnoutHelp" xml:space="preserve">
+    <value>Tid som en enhet som redan är ute och tillgänglig behöver innan den är på väg till ett nytt larm. Gäller enheter som rangordnas efter sin GPS-position. Läggs till restiden när de närmaste enheterna rangordnas. 0 = ingen.</value>
+  </data>
+  <data name="StatusHoldToConfirmLabel" xml:space="preserve">
+    <value>Håll in för att sätta status</value>
+  </data>
+  <data name="StatusHoldToConfirmHelp" xml:space="preserve">
+    <value>I apparna Unit och Responder håller besättningen in en statusknapp i två sekunder för att sätta statusen, i stället för att trycka på den och sedan på Nästa eller Skicka. Förhindrar oavsiktliga tryck och bortglömda bekräftelser. En status som kräver en anteckning eller ett val av destination öppnar fortfarande sitt nästa steg.</value>
+  </data>
+  <data name="CallNumberingHeader" xml:space="preserve">
+    <value>Numrering av larm</value>
+  </data>
+  <data name="CallNumberingIntro" xml:space="preserve">
+    <value>Hur nya larm numreras. En ändring av mönstret numrerar aldrig om larm som redan har ett nummer.</value>
+  </data>
+  <data name="CallNumberPattern" xml:space="preserve">
+    <value>Mönster för larmnummer</value>
+  </data>
+  <data name="CallNumberExample" xml:space="preserve">
+    <value>Exempel:</value>
+  </data>
+  <data name="CallNumberPatternHelp" xml:space="preserve">
+    <value>Fast text (bokstäver, siffror, - _ . /) runt platshållare: {YYYY} eller {YY} året, {MM} månaden, {DD} dagen och {SEQ} löpnumret, som måste förekomma en gång. Löpnumret börjar om på 1 varje gång datumet i numret ändras: varje år med ett år, varje månad med {MM}, varje dag med {DD} och aldrig utan datum. {MM} kräver ett år och {DD} kräver {MM}. Datum använder avdelningens tidszon.</value>
+  </data>
+  <data name="CallNumberSequenceWidth" xml:space="preserve">
+    <value>Siffror i löpnumret</value>
+  </data>
+  <data name="CallNumberSequenceWidthHelp" xml:space="preserve">
+    <value>Fyller ut löpnumret med inledande nollor, så 4 skriver 0153. 1 skriver det utan utfyllnad, som Resgrid alltid har gjort.</value>
+  </data>
+  <data name="CallNumberNext" xml:space="preserve">
+    <value>Nästa larmnummer</value>
+  </data>
+  <data name="CallNumberResetsYearly" xml:space="preserve">
+    <value>Börjar om på 1 varje år.</value>
+  </data>
+  <data name="CallNumberResetsMonthly" xml:space="preserve">
+    <value>Börjar om på 1 varje månad.</value>
+  </data>
+  <data name="CallNumberResetsDaily" xml:space="preserve">
+    <value>Börjar om på 1 varje dag.</value>
+  </data>
+  <data name="CallNumberResetsNever" xml:space="preserve">
+    <value>Börjar aldrig om.</value>
+  </data>
+  <data name="CallNumberRaiseTo" xml:space="preserve">
+    <value>Höj nästa löpnummer till</value>
+  </data>
+  <data name="CallNumberRaiseToHelp" xml:space="preserve">
+    <value>För avdelningar som fortsätter nummer som utfärdats före Resgrid: nästa larm får detta löpnummer. Det kan bara höjas, aldrig sänkas, så att inget nummer utfärdas två gånger. Lämna tomt för att behålla det aktuella löpnumret.</value>
+  </data>
+  <data name="CallNumberRaiseConfirm" xml:space="preserve">
+    <value>Höja nästa larmnummer? Det kan bara höjas, aldrig sänkas.</value>
+  </data>
+  <data name="CallNumberPatternInvalid" xml:space="preserve">
+    <value>Larmnumreringen sparades inte. Mönstret behöver {SEQ} exakt en gång, får bara innehålla bokstäver, siffror, - _ . / och platshållarna {YYYY}, {YY}, {MM} och {DD}, behöver ett år för {MM} och {MM} för {DD} och får vara högst 40 tecken.</value>
+  </data>
+  <data name="CallNumberNextBelowCurrent" xml:space="preserve">
+    <value>Nästa larmnummer höjdes inte: det kan bara höjas över det nummer som nästa larm redan får ({0}).</value>
+  </data>
+  <data name="CallNumberNextPatternChanged" xml:space="preserve">
+    <value>Nästa larmnummer höjdes inte eftersom mönstret ändrades i samma sparning. Höj det igen för det nya mönstret.</value>
+  </data>
+  <data name="CallSettingsSaved" xml:space="preserve">
+    <value>Larminställningarna sparades.</value>
+  </data>
 </root>

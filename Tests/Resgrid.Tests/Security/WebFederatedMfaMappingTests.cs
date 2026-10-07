@@ -92,7 +92,7 @@ namespace Resgrid.Tests.Security
 
 				Controller = new SecurityController(departments.Object, Mock.Of<IAuditService>(), Mock.Of<IPermissionsService>(),
 					Mock.Of<IEventAggregator>(), Mock.Of<IDepartmentSettingsService>(), Audits.Object, users.Object, strings.Object, Sso.Object,
-					Mock.Of<IEncryptionService>(), Mock.Of<IRecordsCutoverService>(), gates.Object, evidence.Object, policy.Object)
+					Mock.Of<IEncryptionService>(), Mock.Of<IRecordsCutoverService>(), gates.Object, evidence.Object, policy.Object, Mock.Of<IDepartmentApiKeysService>())
 				{
 					ControllerContext = new ControllerContext { HttpContext = http },
 					TempData = new Microsoft.AspNetCore.Mvc.ViewFeatures.TempDataDictionary(http, Mock.Of<Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataProvider>())

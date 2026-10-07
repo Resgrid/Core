@@ -219,7 +219,8 @@ namespace Resgrid.Services.Invoicing
 			{
 				if (deployment.Units.Count > 0)
 				{
-					var units = (await _unitsService.GetUnitsForDepartmentUnlimitedAsync(deployment.DepartmentId))?.ToDictionary(u => u.UnitId, u => u.Name) ?? new Dictionary<int, string>();
+					// A roster keeps naming a unit deleted since it was deployed.
+					var units = (await _unitsService.GetUnitsForDepartmentIncludingDeletedAsync(deployment.DepartmentId))?.ToDictionary(u => u.UnitId, u => u.Name) ?? new Dictionary<int, string>();
 					foreach (var unit in deployment.Units) unit.UnitName = units.TryGetValue(unit.UnitId, out var name) ? name : null;
 				}
 				if (deployment.Personnel.Count > 0)

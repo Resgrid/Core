@@ -330,6 +330,8 @@ namespace Resgrid.Repositories.DataRepository
 					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("StartDate", startDate);
 					dynamicParameters.Add("EndDate", endDate);
+					// Also calls marked sent by a dispatch claim whose process died before the broadcast went out.
+					dynamicParameters.Add("StaleBefore", DateTime.UtcNow - CallDispatchClaims.Lease);
 
 					var query = _queryFactory.GetQuery<SelectNonDispatchedScheduledCallsByDateQuery>();
 
@@ -373,6 +375,47 @@ namespace Resgrid.Repositories.DataRepository
 					dynamicParameters.Add("DepartmentId", departmentId);
 
 					var query = _queryFactory.GetQuery<SelectNonDispatchedScheduledCallsByDidQuery>();
+
+					return await x.QueryAsync<Call>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
+
+		public async Task<IEnumerable<Call>> GetPendingCallsByDepartmentIdAsync(int departmentId)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<Call>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParametersExtension();
+					dynamicParameters.Add("DepartmentId", departmentId);
+
+					var query = _queryFactory.GetQuery<SelectPendingCallsByDidQuery>();
 
 					return await x.QueryAsync<Call>(sql: query,
 						param: dynamicParameters,

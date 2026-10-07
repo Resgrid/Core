@@ -58,6 +58,19 @@ namespace Resgrid.Model.Services
 			string address = null);
 
 		/// <summary>
+		/// Tells a person a call they were on has been closed: SMS and email per their preferences, push to the
+		/// Responder app and/or the Incident Command app (event code "C{callId}"), and chat. The text names the call
+		/// through its notification-safe view and the close state only; the closing notes are never sent.
+		/// </summary>
+		Task<bool> SendCallClosedAsync(Call call, string userId, int departmentId, string departmentNumber, Department department,
+			UserProfile profile = null, bool sendToResponderApp = true, bool sendToICApp = false);
+
+		/// <summary>
+		/// Tells a unit's device that a call it was on has been closed.
+		/// </summary>
+		Task<bool> SendCallClosedUnitAsync(Call call, int unitId, Department department);
+
+		/// <summary>
 		/// Sends the notification asynchronous.
 		/// </summary>
 		/// <param name="userId">The user identifier.</param>

@@ -97,7 +97,8 @@ namespace Resgrid.Tests.Web.User
 				Mock.Of<IRecordsCutoverService>(),
 				Mock.Of<IPasskeyFeatureGates>(),
 				Mock.Of<IMfaEvidenceService>(),
-				Mock.Of<IMfaPolicyService>())
+				Mock.Of<IMfaPolicyService>(),
+				Mock.Of<IDepartmentApiKeysService>())
 			{
 				ControllerContext = new ControllerContext { HttpContext = httpContext }
 			};

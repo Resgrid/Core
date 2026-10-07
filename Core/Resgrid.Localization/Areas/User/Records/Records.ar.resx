@@ -123,10 +123,16 @@
   <data name="NextNumberCurrent" xml:space="preserve"><value>الرقم التالي</value></data>
   <data name="NextNumberRaiseTo" xml:space="preserve"><value>رفع التالي إلى</value></data>
   <data name="NextNumberBelowCurrent" xml:space="preserve"><value>لا يمكن إلا رفع الرقم التالي. تُركت هذه التسلسلات دون تغيير لأن الرقم المُدخل أقل من الرقم الذي ستصدره تاليًا:</value></data>
-  <data name="NextNumberPatternChanged" xml:space="preserve"><value>تغيّر نمط الترقيم، لذلك لم تُطبَّق الأرقام التالية المُدخلة. راجع تسلسلات النمط الجديد واحفظ مرة أخرى.</value></data>
+  <data name="NextNumberPatternChanged" xml:space="preserve"><value>تغيّر نمط الترقيم أو بادئة أحد أنواع السجلات، لذلك لم تُطبَّق الأرقام التالية المُدخلة. راجع التسلسلات الجديدة واحفظ مرة أخرى.</value></data>
   <data name="NextNumberConfirm" xml:space="preserve"><value>لا يمكن خفض الرقم التالي بعد رفعه. هل تريد حفظ هذه التغييرات؟</value></data>
   <data name="NumberingAllTypes" xml:space="preserve"><value>جميع أنواع السجلات</value></data>
   <data name="NumberingNoGroup" xml:space="preserve"><value>بلا محطة/مجموعة</value></data>
+  <data name="NumberPrefixesHeader" xml:space="preserve"><value>بادئات أنواع السجلات</value></data>
+  <data name="NumberPrefixesIntro" xml:space="preserve"><value>حدّد البادئة التي يكتبها {PREFIX} لكل نوع سجل، مثل FIRE لـ Run وIR لتقارير الحوادث. اترك الحقل فارغًا للإبقاء على البادئة الافتراضية. تبدأ البادئة الجديدة تسلسلًا خاصًا بها، وتحتفظ السجلات المرقّمة مسبقًا بأرقامها. تشترك الأنواع ذات البادئة نفسها في تسلسل واحد. لا تُستخدم البادئات إلا عندما يتضمن النمط {PREFIX}.</value></data>
+  <data name="NumberPrefixType" xml:space="preserve"><value>نوع السجل</value></data>
+  <data name="NumberPrefixDefault" xml:space="preserve"><value>الافتراضي</value></data>
+  <data name="NumberPrefixRule" xml:space="preserve"><value>من 2 إلى 6 أحرف أو أرقام</value></data>
+  <data name="NumberPrefixInvalid" xml:space="preserve"><value>تتكون البادئة من 2 إلى 6 أحرف أو أرقام. احتفظت أنواع السجلات هذه بالبادئة التي كانت لها:</value></data>
   <data name="Retention" xml:space="preserve"><value>الاحتفاظ</value></data>
   <data name="RetentionIntro" xml:space="preserve"><value>الإعدادات الافتراضية: 7 سنوات للسجلات القياسية؛ دائم لسجلات الطب الشرعي والفئات المقيدة الأخرى. إعداد الاحتفاظ مسؤولية هذه الإدارة وفق قواعد اختصاصها. تطبق التغييرات مستقبلاً وتُدقق.</value></data>
   <data name="DepartmentDefaultYears" xml:space="preserve"><value>الافتراضي للإدارة (سنوات، فارغ = افتراضي النظام)</value></data>

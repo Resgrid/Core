@@ -114,6 +114,7 @@ namespace Resgrid.Model
 			switch ((ActionBaseTypes)baseType)
 			{
 				case ActionBaseTypes.Available:
+				case ActionBaseTypes.InQuarters:
 					return UnitStateTypes.Available;
 				case ActionBaseTypes.Unavailable:
 				case ActionBaseTypes.NotResponding:
@@ -214,6 +215,7 @@ namespace Resgrid.Model
 			switch ((ActionBaseTypes)baseType)
 			{
 				case ActionBaseTypes.Available:
+				case ActionBaseTypes.InQuarters:
 				case ActionBaseTypes.NotResponding:
 				case ActionBaseTypes.Cleared:
 				case ActionBaseTypes.Returning:

@@ -113,7 +113,7 @@ namespace Resgrid.Services.Search
 			=> Guarded(SearchEntityTypes.Call, call?.DepartmentId ?? 0, call?.CallId.ToString(), call != null && call.IsDeleted, () => BuildCallAsync(call), cancellationToken);
 
 		public Task ProjectUnitAsync(Unit unit, CancellationToken cancellationToken = default)
-			=> Guarded(SearchEntityTypes.Unit, unit?.DepartmentId ?? 0, unit?.UnitId.ToString(), false, () => BuildUnitAsync(unit), cancellationToken);
+			=> Guarded(SearchEntityTypes.Unit, unit?.DepartmentId ?? 0, unit?.UnitId.ToString(), unit != null && unit.IsDeleted, () => BuildUnitAsync(unit), cancellationToken);
 
 		public Task ProjectPersonnelAsync(int departmentId, UserProfile profile, int? groupId, bool? isActive, CancellationToken cancellationToken = default)
 			=> Guarded(SearchEntityTypes.Personnel, departmentId, profile?.UserId, false, async () =>
@@ -433,7 +433,8 @@ namespace Resgrid.Services.Search
 			p.GroupId = unit.StationGroupId;
 			p.IsActive = true;
 			p.OccurredOn = DateTime.UtcNow;
-			p.Url = "/User/Units";
+			// The page every unit viewer may open; UnifiedSearchService.LinkAsync sends callers who may edit the unit to EditUnit.
+			p.Url = $"/User/Units/ViewEvents?unitId={unit.UnitId}";
 			p.MetadataJson = Json(new Dictionary<string, string> { ["Type"] = Safe(unit.Type), ["StationGroupId"] = unit.StationGroupId?.ToString(), ["Station"] = station });
 			return p;
 		}
@@ -898,7 +899,8 @@ namespace Resgrid.Services.Search
 			p.GroupId = group.DepartmentGroupId;
 			p.IsActive = true;
 			p.OccurredOn = DateTime.UtcNow;
-			p.Url = "/User/Groups";
+			// Groups have no read-only page: the group's row on the list; LinkAsync sends callers who may edit it to EditGroup.
+			p.Url = $"/User/Groups#group-{group.DepartmentGroupId}";
 			p.MetadataJson = Json(new Dictionary<string, string> { ["Type"] = isStation ? "Station" : "Group", ["ParentGroupId"] = group.ParentDepartmentGroupId?.ToString() });
 			return p;
 		}

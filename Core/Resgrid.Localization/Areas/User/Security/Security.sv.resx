@@ -2379,4 +2379,133 @@
   <data name="FederatedMfaTestNote" xml:space="preserve">
     <value>Testet skickar dig nu till identitetsleverantören och begär MFA. När den returnerar ett värde som mappningen räknar börjar den här versionen gälla.</value>
   </data>
+  <data name="AuditLogTypeDepartmentApiKeyCreated" xml:space="preserve">
+    <value>API-nyckel för organisationen skapad</value>
+  </data>
+  <data name="AuditLogTypeDepartmentApiKeyRevoked" xml:space="preserve">
+    <value>API-nyckel för organisationen återkallad</value>
+  </data>
+  <data name="ApiKeysButton" xml:space="preserve">
+    <value>API-nycklar</value>
+  </data>
+  <data name="ApiKeysPageTitle" xml:space="preserve">
+    <value>API-nycklar</value>
+  </data>
+  <data name="ApiKeysIntro" xml:space="preserve">
+    <value>Med API-nycklar kan ett annat system, till exempel ett schemaläggnings-, journal- eller larmsystem, anropa Resgrid för er organisation utan att logga in som en person. En nyckel kan bara göra det du tillåter, slutar fungera på sitt utgångsdatum och kan återkallas när som helst.</value>
+  </data>
+  <data name="ApiKeysUsage" xml:space="preserve">
+    <value>Skicka nyckeln i huvudet X-Resgrid-ApiKey i anrop till {0}. Lägg den aldrig i en URL.</value>
+  </data>
+  <data name="ApiKeysExisting" xml:space="preserve">
+    <value>Nycklar</value>
+  </data>
+  <data name="ApiKeysNone" xml:space="preserve">
+    <value>Inga API-nycklar har skapats.</value>
+  </data>
+  <data name="ApiKeyName" xml:space="preserve">
+    <value>Namn</value>
+  </data>
+  <data name="ApiKeyPrefix" xml:space="preserve">
+    <value>Nyckel</value>
+  </data>
+  <data name="ApiKeyScopes" xml:space="preserve">
+    <value>Tillåtet</value>
+  </data>
+  <data name="ApiKeyCreated" xml:space="preserve">
+    <value>Skapad</value>
+  </data>
+  <data name="ApiKeyExpires" xml:space="preserve">
+    <value>Upphör</value>
+  </data>
+  <data name="ApiKeyLastUsed" xml:space="preserve">
+    <value>Senast använd</value>
+  </data>
+  <data name="ApiKeyStatus" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="ApiKeyStatusActive" xml:space="preserve">
+    <value>Aktiv</value>
+  </data>
+  <data name="ApiKeyStatusExpired" xml:space="preserve">
+    <value>Utgången</value>
+  </data>
+  <data name="ApiKeyStatusRevoked" xml:space="preserve">
+    <value>Återkallad</value>
+  </data>
+  <data name="ApiKeyNever" xml:space="preserve">
+    <value>Aldrig</value>
+  </data>
+  <data name="ApiKeyRevoke" xml:space="preserve">
+    <value>Återkalla</value>
+  </data>
+  <data name="ApiKeyRevokeConfirm" xml:space="preserve">
+    <value>Återkalla nyckeln? System som använder den slutar fungera direkt.</value>
+  </data>
+  <data name="ApiKeyRevoked" xml:space="preserve">
+    <value>Nyckeln har återkallats.</value>
+  </data>
+  <data name="ApiKeyCreateHeader" xml:space="preserve">
+    <value>Skapa en nyckel</value>
+  </data>
+  <data name="ApiKeyNameHelp" xml:space="preserve">
+    <value>Vad nyckeln är till för, till exempel systemet som ska använda den.</value>
+  </data>
+  <data name="ApiKeyScopesLabel" xml:space="preserve">
+    <value>Vad nyckeln får göra</value>
+  </data>
+  <data name="ApiKeyExpiresIn" xml:space="preserve">
+    <value>Upphör efter</value>
+  </data>
+  <data name="ApiKeyDays" xml:space="preserve">
+    <value>{0} dagar</value>
+  </data>
+  <data name="ApiKeyAllowedIps" xml:space="preserve">
+    <value>Tillåtna adresser (valfritt)</value>
+  </data>
+  <data name="ApiKeyAllowedIpsHelp" xml:space="preserve">
+    <value>En IP-adress eller ett CIDR-intervall per rad, till exempel 203.0.113.10 eller 203.0.113.0/24. Lämna tomt för att tillåta alla adresser.</value>
+  </data>
+  <data name="ApiKeyCreateButton" xml:space="preserve">
+    <value>Skapa nyckel</value>
+  </data>
+  <data name="ApiKeyNewHeader" xml:space="preserve">
+    <value>Din nya API-nyckel</value>
+  </data>
+  <data name="ApiKeyNewWarning" xml:space="preserve">
+    <value>Kopiera nyckeln nu. Den visas bara en gång och kan inte återställas. Om den försvinner, återkalla den och skapa en ny.</value>
+  </data>
+  <data name="ApiKeyCopy" xml:space="preserve">
+    <value>Kopiera</value>
+  </data>
+  <data name="ApiKeyErrorName" xml:space="preserve">
+    <value>Ge nyckeln ett namn.</value>
+  </data>
+  <data name="ApiKeyErrorScopes" xml:space="preserve">
+    <value>Välj minst en sak som nyckeln får göra.</value>
+  </data>
+  <data name="ApiKeyErrorIp" xml:space="preserve">
+    <value>"{0}" är inte en IP-adress eller ett CIDR-intervall.</value>
+  </data>
+  <data name="ApiKeyErrorCreate" xml:space="preserve">
+    <value>Nyckeln kunde inte skapas: {0}</value>
+  </data>
+  <data name="ApiKeyScopeCallsRead" xml:space="preserve">
+    <value>Läsa ärenden (aktiva, väntande och schemalagda)</value>
+  </data>
+  <data name="ApiKeyScopeCallsCreate" xml:space="preserve">
+    <value>Skapa ärenden, även väntande och schemalagda</value>
+  </data>
+  <data name="ApiKeyScopeCallsUpdate" xml:space="preserve">
+    <value>Redigera ärenden, larma ut väntande och ändra schemalagda tider</value>
+  </data>
+  <data name="ApiKeyScopeCallsClose" xml:space="preserve">
+    <value>Stänga ärenden</value>
+  </data>
+  <data name="ApiKeyScopeReferenceRead" xml:space="preserve">
+    <value>Läsa ärendetyper, prioriteter, mallar, grupper och roller</value>
+  </data>
+  <data name="ApiKeyScopeUnitsRead" xml:space="preserve">
+    <value>Läsa enheter och deras status</value>
+  </data>
 </root>

@@ -554,6 +554,16 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task Asset_with_another_items_lot_is_refused_before_the_asset_row_is_written()
+		{
+			var item = Item(InventoryTrackingMode.Serialized); var other = Item(InventoryTrackingMode.Serialized); var location = Location();
+			var lot = _store.Seed(new InventoryLot { DepartmentId = Department, ItemId = other.Id, Content = "{}" });
+			await Fails(() => _service.CreateAssetAsync(_actor, new InventoryAssetInput { RequestId = Guid.NewGuid().ToString("D"), ItemId = item.Id, LocationId = location.Id,
+				LotId = lot.Id, Details = new InventoryAssetContent { SerialNumber = "synthetic-wrong-lot" } }), "LotMismatch", 400);
+			_store.All<InventoryAsset>().Should().BeEmpty(); _store.All<InventoryTransaction>().Should().BeEmpty();
+		}
+
+		[Test]
 		public async Task Kit_shortage_rolls_back_every_component_and_success_issues_exact_bill_of_materials()
 		{
 			var first = Item(); var second = Item(); var location = Location(); SeedStock(first, location, 5); SeedStock(second, location, 1);
@@ -855,21 +865,29 @@ namespace Resgrid.Tests.Services
 				RequireTransaction(); if (All<T>().Any(r => r.DepartmentId == row.DepartmentId && r.Id == row.Id)) throw new InvalidOperationException("Duplicate inventory identity.");
 				if (row is InventoryOperation op && All<InventoryOperation>().Any(r => r.DepartmentId == op.DepartmentId && r.RequestId == op.RequestId)) throw new InventoryException(409, "RequestConflict");
 				if (row is InventoryTransaction transaction) transaction.EntryId = ++_entrySequence;
-				Seed(row); return Task.CompletedTask;
+				RequireItemLot(row); Seed(row); return Task.CompletedTask;
 			}
 			public Task UpdateAsync<T>(T row, int expectedRevision) where T : InventoryRow
 			{
 				RequireTransaction(); if (row is InventoryTransaction or InventoryTransferItem or RecordInventoryUsage) throw new InvalidOperationException("Ledger identities are immutable.");
 				var stored = All<T>().SingleOrDefault(r => r.DepartmentId == row.DepartmentId && r.Id == row.Id);
 				if (stored == null || stored.Revision != expectedRevision || row.Revision != expectedRevision + 1) throw new InventoryException(409, "RevisionConflict");
-				Seed(row); return Task.CompletedTask;
+				RequireItemLot(row); Seed(row); return Task.CompletedTask;
+			}
+			// Mirrors the composite FK_<table>_ItemLot (DepartmentId, ItemId, LotId) -> InventoryLots from M0198/M0200, which SQL Server enforces on every write.
+			private void RequireItemLot(InventoryRow row)
+			{
+				if (row is not (InventoryStock or InventoryAsset or InventoryTransaction or InventoryTransferItem or InventoryIssuance or RecordInventoryUsage)) return;
+				var type = row.GetType(); var lotId = (string)type.GetProperty("LotId").GetValue(row); var itemId = (string)type.GetProperty("ItemId").GetValue(row);
+				if (lotId != null && !All<InventoryLot>().Any(l => l.DepartmentId == row.DepartmentId && l.ItemId == itemId && l.Id == lotId))
+					throw new InvalidOperationException("FK_" + type.Name + "s_ItemLot");
 			}
 			public Task<InventoryOperation> RequestAsync(int departmentId, string requestId) => Task.FromResult(All<InventoryOperation>().SingleOrDefault(r => r.DepartmentId == departmentId && r.RequestId == requestId));
 			public Task<InventoryStock> ApplyStockDeltaAsync(int departmentId, string itemId, string locationId, string lotId, decimal delta, string userId)
 			{
 				RequireTransaction(); var stock = All<InventoryStock>().SingleOrDefault(r => r.DepartmentId == departmentId && r.ItemId == itemId && r.LocationId == locationId && r.LotId == lotId)
 					?? new InventoryStock { DepartmentId = departmentId, ItemId = itemId, LocationId = locationId, LotId = lotId, CreatedBy = userId };
-				stock.Quantity += delta; stock.Revision++; return Task.FromResult(Seed(stock));
+				stock.Quantity += delta; stock.Revision++; RequireItemLot(stock); return Task.FromResult(Seed(stock));
 			}
 			public Task<InventoryItem> LegacyItemAsync(int departmentId, int typeId) => Task.FromResult(All<InventoryItem>().SingleOrDefault(r => r.DepartmentId == departmentId && r.LegacyInventoryTypeId == typeId));
 			public Task<InventoryTransaction> LegacyTransactionAsync(int departmentId, int inventoryId) => Task.FromResult(All<InventoryTransaction>().SingleOrDefault(r => r.DepartmentId == departmentId && r.LegacyInventoryId == inventoryId));

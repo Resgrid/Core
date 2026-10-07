@@ -16,6 +16,31 @@
 <link rel="stylesheet" href="~/lib/jplayer/dist/skin/blue.monday/css/jplayer.blue.monday.min.css" />
 <link rel="stylesheet" type="text/css" href="~/lib/slick-carousel/slick/slick.css" />
 <link rel="stylesheet" href="~/lib/plyr/dist/plyr.css" />
+<style>
+    /* The theme restates `.dropdown-menu { left: 0 }` after Bootstrap, which undoes `.dropdown-menu-right`. */
+    .top-page-buttons .call-reports-menu { left: auto; right: 0; }
+    /* `.buttons-actions a { color: white !important }` is meant for the heading's coloured buttons; on the
+       white menu it would hide the item text. */
+    .call-reports-menu > li > a { color: inherit !important; white-space: nowrap; }
+    /* Starting an incident report is a POST, so that item is a form; its button takes the menu link's box. */
+    .call-reports-menu > li > form { margin: 0; }
+    .call-reports-menu > li > form > button {
+        display: block;
+        width: calc(100% - 8px);
+        margin: 4px;
+        padding: 3px 20px;
+        border: 0;
+        border-radius: 3px;
+        background: none;
+        font: inherit;
+        line-height: 25px;
+        color: inherit;
+        text-align: left;
+        white-space: nowrap;
+    }
+    .call-reports-menu > li > form > button:hover,
+    .call-reports-menu > li > form > button:focus { background-color: #f5f5f5; outline: 0; }
+</style>
 }
 
 @Html.HiddenFor(m => m.Latitude)
@@ -45,6 +70,15 @@
                     <button class="btn btn-danger" id="reOpenCallButton" disabled>@localizer["ReopenCall"]</button>
                     <form id="reOpenCallForm">@Html.AntiForgeryToken()</form>
                 }
+                @if (ViewData["IsWaitingForDispatch"] is bool isWaitingForDispatch && isWaitingForDispatch && ClaimsAuthorizationHelper.CanCreateCall())
+                {
+                    <form method="post" asp-controller="Dispatch" asp-action="DispatchCallNow" asp-route-area="User" style="display:inline;"
+                          onsubmit="return confirm('@JsEncoder.Encode(localizer["DispatchNowConfirm"])');">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="callId" value="@Model.Call.CallId" />
+                        <button type="submit" class="btn btn-success"><i class="fa fa-paper-plane"></i> @localizer["DispatchNow"]</button>
+                    </form>
+                }
                 @if (ClaimsAuthorizationHelper.CanCreateCall())
                 {
                     if (Model.Call.State == 0 && Model.Call.ActiveRunCardId.HasValue)
@@ -57,9 +91,14 @@
                 }
                 @if (Model.RecordsUsable && ClaimsAuthorizationHelper.CanCreateRecord())
                 {
-                    <form id="start-incident-report-form" method="post" style="display:inline" asp-controller="IncidentReports" asp-action="Start" asp-route-area="User" asp-route-callId="@Model.Call.CallId">@Html.AntiForgeryToken()<button type="submit" class="btn btn-default"><i class="fa fa-fire"></i> @localizer["IncidentReport"]</button></form>
-                    @* A run report started here opens with the call's times, units and personnel already filled in. *@
-                    <a class="btn btn-default" asp-controller="Records" asp-action="New" asp-route-area="User" asp-route-definitionKey="@Resgrid.Model.RmsDefinitionKeys.Run" asp-route-callId="@Model.Call.CallId"><i class="fa fa-file-text-o"></i> @reportSourcesLocalizer["StartRunReport"]</a>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-file-text-o"></i> @localizer["ReportsMenu"] <span class="caret"></span></button>
+                        <ul class="dropdown-menu dropdown-menu-right call-reports-menu">
+                            <li><form id="start-incident-report-form" method="post" asp-controller="IncidentReports" asp-action="Start" asp-route-area="User" asp-route-callId="@Model.Call.CallId">@Html.AntiForgeryToken()<button type="submit"><i class="fa fa-fire"></i> @localizer["IncidentReport"]</button></form></li>
+                            @* A run report started here opens with the call's times, units and personnel already filled in. *@
+                            <li><a asp-controller="Records" asp-action="New" asp-route-area="User" asp-route-definitionKey="@Resgrid.Model.RmsDefinitionKeys.Run" asp-route-callId="@Model.Call.CallId"><i class="fa fa-file-text-o"></i> @reportSourcesLocalizer["StartRunReport"]</a></li>
+                        </ul>
+                    </div>
                 }
             </div>
         </div>
@@ -93,6 +132,19 @@
     </div>
 }
 
+@if (TempData["DispatchNowMessage"] is string dispatchNowMessage && !string.IsNullOrEmpty(dispatchNowMessage))
+{
+    <div class="row"><div class="col-lg-12"><div class="alert alert-success" style="margin:15px 0 0 0;">@dispatchNowMessage</div></div></div>
+}
+@if (TempData["DispatchNowError"] is string dispatchNowError && !string.IsNullOrEmpty(dispatchNowError))
+{
+    <div class="row"><div class="col-lg-12"><div class="alert alert-danger" style="margin:15px 0 0 0;">@dispatchNowError</div></div></div>
+}
+@if (ViewData["IsWaitingForDispatch"] is bool waitingBanner && waitingBanner)
+{
+    <div class="row"><div class="col-lg-12"><div class="alert alert-warning" style="margin:15px 0 0 0;"><i class="fa fa-hourglass-half"></i> @(Model.Call.State == (int)Resgrid.Model.CallStates.Pending ? localizer["PendingCallBanner"] : localizer["ScheduledCallBanner"])</div></div></div>
+}
+
 <div class="row">
     <div class="col-lg-8">
         <div class="wrapper wrapper-content animated fadeInUp">
@@ -123,6 +175,14 @@
                                     else if (Model.Call.State == (int)CallStates.Unfounded)
                                     {
                                         <span style="display: block; color: blue;">@commonLocalizer["Unfounded"]</span>
+                                    }
+                                    else if (Model.Call.State == (int)CallStates.Pending)
+                                    {
+                                        <span style="display: block; color: #f8ac59;">@localizer["StatePending"]</span>
+                                    }
+                                    else
+                                    {
+                                        <span style="display: block; color: black;">@DispatchDisplayHelper.GetLocalizedCallState(Model.Call.State, localizer, commonLocalizer)</span>
                                     }
                                 </dd>
                             </dl>

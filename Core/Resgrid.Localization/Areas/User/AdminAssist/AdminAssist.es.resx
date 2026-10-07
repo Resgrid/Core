@@ -1198,7 +1198,7 @@
     <value>El calendario del departamento para reuniones, eventos y noches de capacitación.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.call-settings">
-    <value>El buzón y el formato usados para importar llamadas desde CAD o correo de aviso.</value>
+    <value>El buzón y el formato usados para importar llamadas desde CAD o correo de aviso, y el formato y el próximo número de los números de llamada.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.call-templates">
     <value>Plantillas reutilizables de texto de llamada y notas que agilizan el registro de llamadas.</value>
@@ -1207,7 +1207,7 @@
     <value>Los tipos de llamada y las prioridades usados para clasificar las llamadas.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.calls">
-    <value>Llamadas activas y su estado de despacho.</value>
+    <value>Llamadas activas y su estado de despacho. Al cerrar una llamada se puede avisar a todos los que están en ella, y una llamada con un mando de incidente activo se cierra primero desde el mando.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.certification-dashboard">
     <value>Quién tiene qué certificaciones y cuáles están por vencer.</value>
@@ -1654,7 +1654,7 @@
     <value>Agregue sus contratos de servicio y sus tarifas.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.custom-statuses">
-    <value>Revise los estados integrados y agregue los suyos donde su terminología sea diferente.</value>
+    <value>Revise los estados integrados y agregue los suyos donde su terminología sea diferente. Asigne a cada uno un tipo base; En base indica a las recomendaciones de despacho que una unidad está en su base.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.data-protection">
     <value>Revise la lista de verificación de inscripción y planifique la recuperación de claves antes de inscribirse.</value>
@@ -1669,7 +1669,7 @@
     <value>Otorgue acceso de despacho a las personas que despachan y luego pídales que inicien sesión.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.dispatch-settings">
-    <value>Elija si el despacho sigue grupos o turnos, y revise las opciones de estado automático.</value>
+    <value>Elija si el despacho sigue grupos o turnos, y revise las opciones de estado automático. Configure los tiempos de salida de la unidad más cercana si las dotaciones necesitan tiempo para salir de la base.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.distribution-lists">
     <value>Cree listas para los grupos a los que envía mensajes con frecuencia, como Oficiales.</value>
@@ -2076,6 +2076,9 @@
   <data xml:space="preserve" name="Field.RecordsNumberingConfig.Pattern">
     <value>Configuración de numeración de registros / Patrón</value>
   </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingConfig.Prefixes">
+    <value>Configuración de numeración de registros / Prefijos</value>
+  </data>
   <data xml:space="preserve" name="Field.RecordsNumberingFloor.NextSequence">
     <value>Mínimo de numeración de registros / Siguiente secuencia</value>
   </data>
@@ -2087,6 +2090,12 @@
   </data>
   <data xml:space="preserve" name="Field.RecordsNumberingFloor.SetOn">
     <value>Mínimo de numeración de registros / Establecido el</value>
+  </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingPrefix.DefinitionKey">
+    <value>Prefijo de numeración de registros / Clave de definición</value>
+  </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingPrefix.Prefix">
+    <value>Prefijo de numeración de registros / Prefijo</value>
   </data>
   <data xml:space="preserve" name="Field.RecordsRetentionOverride.AppliesFrom">
     <value>Anulación de retención de registros / Se aplica desde</value>
@@ -2161,7 +2170,7 @@
     <value>Permite posiciones que superan el límite de antigüedad configurado en la selección de la unidad más cercana, marcadas como desactualizadas. Revise el riesgo de usar posiciones desactualizadas.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.MaxLocationAgeSeconds">
-    <value>Excluye las posiciones de unidad más antiguas de los candidatos a unidad más cercana; cero elimina el límite de antigüedad. IncludeStaleLocations cambia este comportamiento.</value>
+    <value>Excluye las posiciones de unidad más antiguas de los candidatos a unidad más cercana; cero elimina el límite de antigüedad. IncludeStaleLocations cambia este comportamiento. Una unidad medida desde su base (estado En base, o sin posición GPS) nunca caduca.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.MaxRadiusMeters">
     <value>Distancia máxima del candidato en metros; cero elimina el límite de radio. Esto no es una garantía de tiempo de respuesta ni de seguridad de la ruta.</value>
@@ -2179,7 +2188,7 @@
     <value>Nivel mínimo de dotación de unidad configurado para la elegibilidad de recomendación; cero deshabilita el filtro. Las unidades sin puestos definidos lo superan, y las tarjetas de despacho pueden anularlo.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.UseRoutedEta">
-    <value>Reordena a los candidatos preseleccionados usando las estimaciones de viaje del proveedor. La ruta operativa puede hacer llamadas a proveedores externos; Admin Assist no las hace.</value>
+    <value>Reordena a los candidatos preseleccionados usando las estimaciones de viaje del proveedor. La ruta operativa puede hacer llamadas a proveedores externos; Admin Assist no las hace. Los tiempos de salida configurados se suman a cada tiempo de conducción.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.GroupDispatchScopeConfig.DepartmentWideRoleIds">
     <value>Roles existentes con permiso para ver el despacho a nivel de todo el departamento mientras la delimitación por grupo está habilitada. Esto cambia el alcance de la vista, no la licencia ni la calificación operativa.</value>
@@ -2230,13 +2239,16 @@
     <value>Reinicia las secuencias de registros cada año calendario según la zona horaria del departamento.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.SequenceWidth">
-    <value>Longitud de secuencia con ceros a la izquierda para las definiciones que usan los valores predeterminados del departamento. El editor de Registros valida la longitud compatible.</value>
+    <value>Dígitos de la parte SEQ del patrón de numeración, con ceros a la izquierda: 4 escribe 0184. De 3 a 8 dígitos; al cambiarlo, cada secuencia conserva su siguiente número. Las definiciones del departamento con numeración propia conservan su propia longitud.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.Floors">
     <value>Próximos números aumentados, uno por secuencia de numeración, para departamentos que continúan números emitidos antes de Resgrid. Un próximo número solo sube y los números ya emitidos siempre prevalecen, por lo que un próximo número aumentado nunca causa un duplicado.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.Pattern">
-    <value>Patrón de numeración para los tipos de registro integrados y los informes de incidentes, formado por texto fijo y los marcadores PREFIX, YYYY, YY, GROUP y SEQ. Sin valor, se mantiene el patrón que describen «Incluir año» y «Secuencia por grupo». La secuencia se reinicia cuando cambia el texto alrededor de SEQ.</value>
+    <value>Cómo se escriben los números de registro de los tipos de registro integrados y los informes de incidentes, por ejemplo RUN-0153: texto fijo y los marcadores PREFIX, YYYY o YY, GROUP y SEQ. PREFIX escribe el prefijo de cada tipo de registro: el predeterminado o el propio del departamento, de «Prefijos por tipo de registro». Cambiar el patrón no renumera los registros ya numerados. Mientras no se guarde un patrón, la pantalla muestra el que el departamento ha usado siempre.</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.Prefixes">
+    <value>El prefijo propio del departamento para cada tipo de registro integrado y para los informes de incidentes, que el marcador PREFIX escribe en lugar del predeterminado (RUN, TRN, INC, etc.). Un tipo sin prefijo propio usa su predeterminado. Un prefijo nuevo inicia su propia secuencia; los números ya emitidos conservan su prefijo, y los tipos con el mismo prefijo comparten una secuencia.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingFloor.NextSequence">
     <value>El número de secuencia más bajo que esa secuencia puede emitir a continuación.</value>
@@ -2249,6 +2261,12 @@
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingFloor.SetOn">
     <value>Cuándo se aumentó el próximo número (UTC).</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingPrefix.DefinitionKey">
+    <value>El tipo de registro integrado al que se aplica el prefijo, como system.run o system.neris-incident.</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingPrefix.Prefix">
+    <value>De 2 a 6 letras mayúsculas (A-Z) o dígitos. Un prefijo que ya no es válido vuelve al predeterminado del tipo.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsRetentionOverride.AppliesFrom">
     <value>Límite prospectivo para las revisiones elegibles para la anulación, evaluado por el ciclo de vida de Registros.</value>
@@ -4951,7 +4969,7 @@
     <value>Indica si la visibilidad de los registros abarca todo el departamento o está limitada al grupo. El alcance de grupo reduce el permiso existente y nunca otorga acceso.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.RecordsNumberingConfig">
-    <value>Asignación de números, reinicio anual y formato de secuencia para las definiciones que no anulan la configuración del departamento.</value>
+    <value>Numeración del departamento para los tipos de registro integrados y los informes de incidentes: patrón de numeración, dígitos de la secuencia, prefijos por tipo de registro y próximos números aumentados. Los números se asignan al finalizar un registro. Las definiciones del departamento con numeración propia la conservan.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.RecordsRetentionPolicy">
     <value>Retención predeterminada y específica por definición, incluido el historial de políticas anteriores. Las retenciones legales y las reglas de clase restringida pueden impedir la elegibilidad para depuración.</value>
@@ -6704,5 +6722,62 @@
   </data>
   <data xml:space="preserve" name="Ui.worklist">
     <value>Lista de tareas del administrador</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.InQuartersTurnoutSeconds">
+    <value>Configuración de recomendaciones de despacho / Tiempo de salida desde la base en segundos</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.InQuartersTurnoutSeconds">
+    <value>Segundos que necesita una unidad en su base antes de ponerse en marcha; se aplica al estado En base y a las unidades sin posición GPS. Se suma al tiempo de viaje al ordenar las unidades más cercanas; cero significa ninguno.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.MobileTurnoutSeconds">
+    <value>Configuración de recomendaciones de despacho / Tiempo de salida en movimiento en segundos</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.MobileTurnoutSeconds">
+    <value>Segundos que necesita una unidad que ya está fuera y disponible antes de ponerse en marcha; se aplica a las unidades ordenadas por GPS. Se suma al tiempo de viaje al ordenar las unidades más cercanas; cero significa ninguno.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.StatusHoldToConfirm">
+    <value>Mantener pulsado para establecer el estado</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.StatusHoldToConfirm">
+    <value>Las aplicaciones Unit y Responder establecen un estado manteniendo pulsado dos segundos en lugar de un toque seguido de Siguiente o Enviar. Los estados que necesitan una nota o un destino siguen abriendo ese paso.</value>
+  </data>
+  <data name="Setting.CallNumberingConfig" xml:space="preserve">
+    <value>Configuración de numeración de llamadas</value>
+  </data>
+  <data name="SettingHelp.CallNumberingConfig" xml:space="preserve">
+    <value>Cómo se escriben los números de las llamadas nuevas: el patrón del número de llamada y los dígitos de la secuencia, además de un próximo número elevado para departamentos que continúan números emitidos antes de Resgrid. Cambiarla nunca vuelve a numerar las llamadas que ya tienen un número.</value>
+  </data>
+  <data name="Field.CallNumberingConfig.Pattern" xml:space="preserve">
+    <value>Configuración de numeración de llamadas / Patrón</value>
+  </data>
+  <data name="FieldHelp.CallNumberingConfig.Pattern" xml:space="preserve">
+    <value>Cómo se escriben los números de llamada, por ejemplo FD-2026-0153: texto fijo más los marcadores YYYY o YY, MM, DD y SEQ. La secuencia vuelve a empezar cada vez que cambia la fecha que escribe. Mientras no se guarde un patrón, las llamadas mantienen los números YY-SEQ que Resgrid siempre ha emitido.</value>
+  </data>
+  <data name="Field.CallNumberingConfig.SequenceWidth" xml:space="preserve">
+    <value>Configuración de numeración de llamadas / Ancho de la secuencia</value>
+  </data>
+  <data name="FieldHelp.CallNumberingConfig.SequenceWidth" xml:space="preserve">
+    <value>Dígitos de la parte SEQ del número de llamada, rellenados con ceros: 4 escribe 0153. De 1 a 8 dígitos, 1 sin relleno; cambiarlo conserva el próximo número de la secuencia.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.pending-calls">
+    <value>Llamadas pendientes</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.pending-calls">
+    <value>Llamadas guardadas para que un despachador las envíe más tarde, como seguimientos que envía otro sistema; no se notifica a nadie hasta que se despacha la llamada.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.scheduled-calls">
+    <value>Llamadas programadas</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.scheduled-calls">
+    <value>Llamadas que se envían solas a una hora futura y que se pueden enviar antes o reprogramar.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.api-keys">
+    <value>Claves de API</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.api-keys">
+    <value>Permite que otro sistema llame a la API de Resgrid para el departamento con su propia clave, permisos, caducidad y direcciones permitidas, en lugar del inicio de sesión de un miembro.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureValue.api-keys">
+    <value>Las integraciones siguen funcionando cuando alguien se va, solo pueden hacer lo que permite su clave y se pueden revocar al instante.</value>
   </data>
 </root>

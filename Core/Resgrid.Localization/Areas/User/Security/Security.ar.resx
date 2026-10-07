@@ -986,4 +986,133 @@
   <data name="FederatedMfaTestNote" xml:space="preserve">
     <value>يرسلك الاختبار الآن إلى موفر الهوية مع طلب المصادقة متعددة العوامل. عندما يُرجع قيمة يحتسبها الربط، يسري هذا الإصدار.</value>
   </data>
+  <data name="AuditLogTypeDepartmentApiKeyCreated" xml:space="preserve">
+    <value>تم إنشاء مفتاح API للقسم</value>
+  </data>
+  <data name="AuditLogTypeDepartmentApiKeyRevoked" xml:space="preserve">
+    <value>تم إلغاء مفتاح API للقسم</value>
+  </data>
+  <data name="ApiKeysButton" xml:space="preserve">
+    <value>مفاتيح API</value>
+  </data>
+  <data name="ApiKeysPageTitle" xml:space="preserve">
+    <value>مفاتيح API</value>
+  </data>
+  <data name="ApiKeysIntro" xml:space="preserve">
+    <value>تتيح مفاتيح API لنظام آخر، مثل نظام الجدولة أو السجلات أو الإرسال، الاتصال بـ Resgrid نيابةً عن قسمك دون تسجيل الدخول كشخص. لا يمكن للمفتاح فعل إلا ما تسمح به، ويتوقف عن العمل في تاريخ انتهائه، ويمكن إلغاؤه في أي وقت.</value>
+  </data>
+  <data name="ApiKeysUsage" xml:space="preserve">
+    <value>أرسل المفتاح في الترويسة X-Resgrid-ApiKey مع الطلبات إلى {0}. لا تضعه أبداً في عنوان URL.</value>
+  </data>
+  <data name="ApiKeysExisting" xml:space="preserve">
+    <value>المفاتيح</value>
+  </data>
+  <data name="ApiKeysNone" xml:space="preserve">
+    <value>لم يتم إنشاء أي مفاتيح API.</value>
+  </data>
+  <data name="ApiKeyName" xml:space="preserve">
+    <value>الاسم</value>
+  </data>
+  <data name="ApiKeyPrefix" xml:space="preserve">
+    <value>المفتاح</value>
+  </data>
+  <data name="ApiKeyScopes" xml:space="preserve">
+    <value>المسموح</value>
+  </data>
+  <data name="ApiKeyCreated" xml:space="preserve">
+    <value>تاريخ الإنشاء</value>
+  </data>
+  <data name="ApiKeyExpires" xml:space="preserve">
+    <value>ينتهي</value>
+  </data>
+  <data name="ApiKeyLastUsed" xml:space="preserve">
+    <value>آخر استخدام</value>
+  </data>
+  <data name="ApiKeyStatus" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="ApiKeyStatusActive" xml:space="preserve">
+    <value>نشط</value>
+  </data>
+  <data name="ApiKeyStatusExpired" xml:space="preserve">
+    <value>منتهي</value>
+  </data>
+  <data name="ApiKeyStatusRevoked" xml:space="preserve">
+    <value>ملغى</value>
+  </data>
+  <data name="ApiKeyNever" xml:space="preserve">
+    <value>أبداً</value>
+  </data>
+  <data name="ApiKeyRevoke" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="ApiKeyRevokeConfirm" xml:space="preserve">
+    <value>هل تريد إلغاء هذا المفتاح؟ ستتوقف الأنظمة التي تستخدمه عن العمل فوراً.</value>
+  </data>
+  <data name="ApiKeyRevoked" xml:space="preserve">
+    <value>تم إلغاء المفتاح.</value>
+  </data>
+  <data name="ApiKeyCreateHeader" xml:space="preserve">
+    <value>إنشاء مفتاح</value>
+  </data>
+  <data name="ApiKeyNameHelp" xml:space="preserve">
+    <value>الغرض من المفتاح، مثل النظام الذي سيستخدمه.</value>
+  </data>
+  <data name="ApiKeyScopesLabel" xml:space="preserve">
+    <value>ما يُسمح للمفتاح بفعله</value>
+  </data>
+  <data name="ApiKeyExpiresIn" xml:space="preserve">
+    <value>ينتهي بعد</value>
+  </data>
+  <data name="ApiKeyDays" xml:space="preserve">
+    <value>{0} يوماً</value>
+  </data>
+  <data name="ApiKeyAllowedIps" xml:space="preserve">
+    <value>العناوين المسموح بها (اختياري)</value>
+  </data>
+  <data name="ApiKeyAllowedIpsHelp" xml:space="preserve">
+    <value>عنوان IP واحد أو نطاق CIDR في كل سطر، مثل 203.0.113.10 أو 203.0.113.0/24. اتركه فارغاً للسماح بأي عنوان.</value>
+  </data>
+  <data name="ApiKeyCreateButton" xml:space="preserve">
+    <value>إنشاء المفتاح</value>
+  </data>
+  <data name="ApiKeyNewHeader" xml:space="preserve">
+    <value>مفتاح API الجديد</value>
+  </data>
+  <data name="ApiKeyNewWarning" xml:space="preserve">
+    <value>انسخ هذا المفتاح الآن. يُعرض مرة واحدة فقط ولا يمكن استرجاعه. إذا فُقد، ألغِه وأنشئ مفتاحاً آخر.</value>
+  </data>
+  <data name="ApiKeyCopy" xml:space="preserve">
+    <value>نسخ</value>
+  </data>
+  <data name="ApiKeyErrorName" xml:space="preserve">
+    <value>أدخل اسماً للمفتاح.</value>
+  </data>
+  <data name="ApiKeyErrorScopes" xml:space="preserve">
+    <value>اختر إذناً واحداً على الأقل للمفتاح.</value>
+  </data>
+  <data name="ApiKeyErrorIp" xml:space="preserve">
+    <value>"{0}" ليس عنوان IP أو نطاق CIDR.</value>
+  </data>
+  <data name="ApiKeyErrorCreate" xml:space="preserve">
+    <value>تعذّر إنشاء المفتاح: {0}</value>
+  </data>
+  <data name="ApiKeyScopeCallsRead" xml:space="preserve">
+    <value>قراءة المكالمات (النشطة والمعلقة والمجدولة)</value>
+  </data>
+  <data name="ApiKeyScopeCallsCreate" xml:space="preserve">
+    <value>إنشاء مكالمات، بما فيها المعلقة والمجدولة</value>
+  </data>
+  <data name="ApiKeyScopeCallsUpdate" xml:space="preserve">
+    <value>تعديل المكالمات وإرسال المعلقة وتغيير الأوقات المجدولة</value>
+  </data>
+  <data name="ApiKeyScopeCallsClose" xml:space="preserve">
+    <value>إغلاق المكالمات</value>
+  </data>
+  <data name="ApiKeyScopeReferenceRead" xml:space="preserve">
+    <value>قراءة أنواع المكالمات والأولويات والقوالب والمجموعات والأدوار</value>
+  </data>
+  <data name="ApiKeyScopeUnitsRead" xml:space="preserve">
+    <value>قراءة الوحدات وحالاتها</value>
+  </data>
 </root>

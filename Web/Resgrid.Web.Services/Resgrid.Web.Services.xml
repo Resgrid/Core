@@ -4,6 +4,13 @@
         <name>Resgrid.Web.Services</name>
     </assembly>
     <members>
+        <member name="T:Resgrid.Web.Services.Attributes.DepartmentApiKeyScopeAttribute">
+            <summary>
+            Opens a v4 action to department API keys holding <see cref="P:Resgrid.Web.Services.Attributes.DepartmentApiKeyScopeAttribute.Scope"/>. It adds the key scheme to the action's
+            schemes (no other action runs it, so a key is refused everywhere else) and the scope policy, which a key principal
+            passes only with the scope and every other principal passes unchanged. The action's own policy still applies.
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.EmailController.Receive(PostmarkDotNet.PostmarkInboundMessage,System.Threading.CancellationToken)">
             <summary>
             The receiver API method call
@@ -704,6 +711,29 @@
             </summary>
             <returns>Array of CallResult objects for each active call in the department</returns>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.GetPendingCalls">
+            <summary>
+            Returns the department's pending calls: saved but not yet dispatched (State 8), oldest first. Pending calls
+            come from Calls/SaveCall with IsPending, e.g. follow-ups fed in from another system, and wait here for a
+            dispatcher to send them with Calls/DispatchCallNow.
+            </summary>
+            <returns>Array of CallResult objects for each pending call in the department</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.DispatchCallNow(Resgrid.Web.Services.Models.v4.Calls.DispatchCallNowInput,System.Threading.CancellationToken)">
+            <summary>
+            Dispatches a waiting call right now: a pending call, or a scheduled call that has not gone out yet. The call
+            becomes active and everyone on its dispatch list is notified. Pass DispatchList to replace who it goes to.
+            </summary>
+            <param name="input">The call and, optionally, who to send it to</param>
+            <param name="cancellationToken">The cancellation token</param>
+            <returns>OK with the call id when it was dispatched; Bad Request when the call is not waiting or has nobody to send it to</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.ReplaceDispatchListAsync(Resgrid.Model.Call,System.String)">
+            <summary>
+            Replaces a loaded call's personnel, group, role and unit dispatches with a "P:|G:|R:|U:" list ("0" = everyone),
+            keeping only ids that belong to the department.
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.GetCallHistory(System.Int32)">
             <summary>
             Gets all the meta-data around a call, dispatched personnel, units, groups and responses
@@ -747,6 +777,20 @@
             Resolves a raw unit state / personnel action type (built-in value or custom status detail id) to its
             status detail for labelling. Returns null when the status can't be resolved (e.g. a built-in value with
             no default button, or a custom detail from another department).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.ScopeCallsAsync(System.Collections.Generic.List{Resgrid.Model.Call})">
+            <summary>
+            Group-scoped dispatch for a person's call lists. A department API key acts for its whole department, as
+            <see cref="M:Resgrid.Web.Services.Controllers.v4.CallsController.CanViewOrEditCallAsync(System.Int32,System.Boolean)"/> does: its identity is the managing user, whose membership the key does not
+            depend on, so filtering by that user could hide calls from a valid key.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.CanViewOrEditCallAsync(System.Int32,System.Boolean)">
+            <summary>
+            The per-user call check, except for a department API key: the key acts for its department, so the call only has
+            to belong to it. (The user checks resolve the acting user's active department, which for the managing user need
+            not be the key's department; the key's scope already limits what it may do.)
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.CallTypesController">
@@ -4752,6 +4796,10 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.StatusesController.ConvertCustomStatusData(System.Int32,Resgrid.Model.CustomStateDetail,System.Collections.Generic.ISet{System.Int32})">
+            <param name="offeredIds">The ids of the other statuses in the same list; next-status ids outside it (deleted
+            options) are dropped so the apps never wait on a status they cannot show. Null keeps every stored id.</param>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.SyncController">
             <summary>
             Offline-first delta sync. A reconnecting client calls Changes with its last cursor to pull everything that
@@ -5051,6 +5099,18 @@
             <summary>
             Returns true if the current request was authenticated via the SystemApiKey scheme
             or carries a service-account marker claim set by the ConnectController client_credentials flow.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.V4AuthenticatedApiControllerbaseSystemAuth.IsDepartmentApiKeyRequest">
+            <summary>
+            True when the request was authenticated with a department API key (X-Resgrid-ApiKey). Such a request is scoped
+            to the key's department and acts as the department's managing user; it is never a system request.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.V4AuthenticatedApiControllerbaseSystemAuth.IsUnattendedWriter">
+            <summary>
+            Unattended callers (the system key and department API keys) write Advanced Data Protection fields through the
+            broker's encrypt-only workload lane; there is no person to step up for a grant.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.V4AuthenticatedApiControllerbaseSystemAuth.GetEffectiveDepartmentId(System.Nullable{System.Int32})">
@@ -7925,6 +7985,24 @@
             <param name="context">The context.</param>
             <returns>Task.</returns>
         </member>
+        <member name="T:Resgrid.Web.Services.Middleware.DepartmentApiKeyAuthHandler">
+             <summary>
+             Authenticates requests that carry a department API key in the X-Resgrid-ApiKey header. The scheme only runs on
+             v4 actions marked with <see cref="T:Resgrid.Web.Services.Attributes.DepartmentApiKeyScopeAttribute"/>, so a key cannot reach any other
+             endpoint, and the attribute's policy requires the key to hold that action's scope.
+            
+             The principal is department-scoped: PrimaryGroupSid is the key's department, and PrimarySid is the department's
+             managing user, so per-user checks in the existing actions evaluate as the department owner (narrowed by the scope).
+             It is never a service account: the cross-department behaviour of the system key does not apply. It carries only the
+             resource claims its scopes need, one scope claim per scope, and the key id.
+             </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Middleware.DepartmentApiKeyAuthHandler.ResourceClaimsFor(System.String)">
+            <summary>The resource claims the existing policies on a scope's endpoints require.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Middleware.DepartmentApiKeyAuthHandler.IsDepartmentApiKeyPrincipal(System.Security.Claims.ClaimsPrincipal)">
+            <summary>True when the principal (or one of its identities) came from a department API key.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Middleware.SessionConnectionSweepService">
             <summary>
             Closes this host's SignalR connections whose session ended, locked or passed its idle deadline, every
@@ -9204,7 +9282,8 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.State">
             <summary>
-            State of the call (Active	= 0, Closed = 1, Cancelled = 2, Unfounded = 3)
+            State of the call (Active = 0, Closed = 1, Cancelled = 2, Unfounded = 3, Founded = 4, Minor = 5, Transferred = 6,
+            False Alarm = 7, Pending = 8). Pending calls are saved but not yet dispatched.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.Number">
@@ -9451,6 +9530,13 @@
             Type of call closure that is used
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CloseCallInput.SendNotification">
+            <summary>
+            Optional. When true, everyone attached to the call is told it was closed: the personnel, groups and roles it
+            was dispatched to (Responder app, SMS, email per their notification settings), its units (Unit app) and the
+            incident command team (IC app). The closing notes are not included in the notice.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Calls.CloseCallResult">
             <summary>
             The result/return for closing a call
@@ -9459,6 +9545,33 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.CloseCallResult.Id">
             <summary>
             Id of the call closed
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Calls.DispatchCallNowInput">
+            <summary>
+            Dispatches a pending call, or a scheduled call that has not gone out yet, right now
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.DispatchCallNowInput.CallId">
+            <summary>
+            Id of the call to dispatch
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.DispatchCallNowInput.DispatchList">
+            <summary>
+            Optional. Pipe separated personnel ("P:"), groups ("G:"), roles ("R:") and units ("U:") to send the call to,
+            replacing the call's current dispatch list; "0" sends it to everyone. Leave empty to use the dispatch list
+            already on the call.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Calls.DispatchCallNowResult">
+            <summary>
+            Result of dispatching a waiting call
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.DispatchCallNowResult.Id">
+            <summary>
+            Id of the dispatched call
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Calls.EditCallInput">
@@ -9690,7 +9803,7 @@
             <summary>Priority color (hex)</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.LocationHistoryCallData.State">
-            <summary>CallStates value: 0 Active, 1 Closed, 2 Cancelled, 3 Unfounded, 4 Founded, 5 Minor</summary>
+            <summary>CallStates value: 0 Active, 1 Closed, 2 Cancelled, 3 Unfounded, 4 Founded, 5 Minor, 6 Transferred, 7 False Alarm, 8 Pending</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.LocationHistoryCallData.LoggedOnUtc">
             <summary>When the call was logged (UTC)</summary>
@@ -9875,6 +9988,21 @@
             Time in the future, in the departments local time, to dispatch the call. Leave NULL to dispatch now.
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.DispatchOnUtc">
+            <summary>
+            Optional. The same as DispatchOn but in UTC (ISO 8601, e.g. "2026-10-07T14:30:00Z"), for integrations that keep
+            times in UTC. When both are sent this one is used. Ignored for a pending call.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.IsPending">
+            <summary>
+            Save the call as Pending (to be dispatched) instead of dispatching it: nobody is notified and the call stays
+            out of the active call lists, maps and field apps until a dispatcher sends it with Calls/DispatchCallNow (or
+            from the Pending Calls screens). DispatchOn is ignored. DispatchList is optional and is kept as the proposed
+            dispatch; leave it empty for none, or "0" for everyone. The department's dispatch-list requirement does not
+            apply to a pending call. Use this to feed calls in from another system for a dispatcher to work.
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.CallFormData">
             <summary>
             Call Intake form JSON
@@ -9904,6 +10032,21 @@
             <summary>
             Department Id for the call. Only used in System API Key (hosted multi-department) mode.
             When provided, overrides the department derived from the auth token.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Calls.PendingCallsResult">
+            <summary>
+            The department's pending calls: saved but not yet dispatched, oldest first
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.PendingCallsResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Models.v4.Calls.PendingCallsResult.#ctor">
+            <summary>
+            Default constructor
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Calls.ScheduledCallsResult">
@@ -12173,6 +12316,13 @@
             token and a valid style url), otherwise the server's token for the requesting app. An override
             missing either half is ignored and the department's built-in style choice applies. Empty means
             keep the token built into the app. Only signed-in callers get one.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.StatusHoldToConfirm">
+            <summary>
+            The department sets statuses in the Unit and Responder apps with a two-second press and hold
+            instead of a tap followed by Next/Submit (Dispatch Settings). Only signed-in callers get it;
+            false otherwise.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.MapCenterLatitude">
@@ -17175,6 +17325,13 @@
             Is this status deleted (should only be used for display)
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Statuses.StatusResultData.NextIds">
+            <summary>
+            Ids of the statuses in this list the apps should offer next while this one is current (e.g.
+            "Departed" -> "On Scene"). Empty means no restriction: offer every status. A display hint only;
+            the server accepts any status.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Statuses.UnitStatusesResult">
             <summary>
             Unit statuses result
@@ -17807,6 +17964,13 @@
         <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.State">
             <summary>
             Units current Status (State)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.StateId">
+            <summary>
+            Id of the current status: the status option's Id from Statuses/GetAllUnitStatuses (a custom
+            status's CustomStateDetailId, or the built-in state number). 0 when the unit has no status yet.
+            Lets the apps mark the current status and offer the options configured to follow it.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.StateCss">

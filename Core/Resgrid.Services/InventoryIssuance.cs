@@ -35,6 +35,13 @@ namespace Resgrid.Services
 		{
 			Text(details.SerialNumber); Cost(details.AcquisitionCost);
 			if (details.AssetTag?.Length > 250 || details.Barcode?.Length > 250) throw new InventoryException(400, "InvalidAsset");
+			// The asset row is written before the receive posting is validated, and FK_InventoryAssets_ItemLot keys on (DepartmentId, ItemId, LotId), so a lot
+			// belonging to another item must be refused here rather than surface as a constraint violation.
+			if (lotId != null)
+			{
+				var lot = await GetAsync<InventoryLot>(actor, lotId);
+				if (lot.ItemId != item.Id || lot.IsDeleted) throw new InventoryException(400, "LotMismatch");
+			}
 			foreach (var other in await _store.RelatedAsync<InventoryAsset>(actor.DepartmentId, "ItemId", item.Id))
 				if (string.Equals(Decode<InventoryAssetContent>(await RevealAsync(actor, other)).SerialNumber, details.SerialNumber, StringComparison.OrdinalIgnoreCase)) throw new InventoryException(409, "DuplicateSerial");
 			var asset = New<InventoryAsset>(actor); if (id != null) { Id(id); asset.Id = id; }

@@ -105,7 +105,9 @@ namespace Resgrid.Tests.Services
 				MaxRadiusMeters = 99999999,
 				RestPeriodMinutes = 100000,
 				// Each shortlisted candidate is one routed-ETA call to the mapping provider.
-				EtaShortlistSize = 10000
+				EtaShortlistSize = 10000,
+				InQuartersTurnoutSeconds = 99999,
+				MobileTurnoutSeconds = 99999
 			};
 
 			_repository
@@ -126,6 +128,8 @@ namespace Resgrid.Tests.Services
 			config.MaxRadiusMeters.Should().Be(DispatchRecommendationConfig.MaximumRadiusMeters);
 			config.RestPeriodMinutes.Should().Be(DispatchRecommendationConfig.MaximumRestPeriodMinutes);
 			config.EtaShortlistSize.Should().Be(DispatchRecommendationConfig.MaximumEtaShortlistSize);
+			config.InQuartersTurnoutSeconds.Should().Be(DispatchRecommendationConfig.MaximumTurnoutSeconds);
+			config.MobileTurnoutSeconds.Should().Be(DispatchRecommendationConfig.MaximumTurnoutSeconds);
 		}
 
 		[Test]

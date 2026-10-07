@@ -22,7 +22,8 @@ namespace Resgrid.Model.Services
 		Task<Call> SaveCallAsync(Call call, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
-		/// Regenerates the call numbers asynchronous.
+		/// Renumbers the department's calls logged in a local year, in logged order, with the department's call number
+		/// pattern. False, and nothing renumbered, when the pattern has no year (its sequence spans years).
 		/// </summary>
 		/// <param name="departmentId">The department identifier.</param>
 		/// <param name="year">The local year to regenerate call numbers for.</param>
@@ -32,7 +33,8 @@ namespace Resgrid.Model.Services
 			CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
-		/// Gets the current call number asynchronous.
+		/// The number the next call logged at <paramref name="utcDate"/> would receive, without taking it. New calls take
+		/// theirs in <see cref="SaveCallAsync"/>.
 		/// </summary>
 		/// <param name="departmentId">The department identifier.</param>
 		/// <returns>Task&lt;System.String&gt;.</returns>
@@ -427,6 +429,52 @@ namespace Resgrid.Model.Services
 
 
 		Task<List<Call>> GetAllNonDispatchedScheduledCallsByDepartmentIdAsync(int departmentId);
+
+		/// <summary>
+		/// Gets the department's pending calls (<see cref="CallStates.Pending"/>), oldest first: saved but not yet
+		/// dispatched, waiting for a dispatcher to pick them up.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		Task<List<Call>> GetPendingCallsByDepartmentIdAsync(int departmentId);
+
+		/// <summary>
+		/// Claims a waiting call (pending, or scheduled and not yet sent) for dispatch by marking it dispatched in one
+		/// conditional write. Only the caller that gets a claim time back may broadcast it, so two dispatchers, or a dispatcher
+		/// and the scheduled-calls worker, never page the same call twice. The claim is a lease (<see cref="CallDispatchClaims"/>):
+		/// end it with <see cref="CompleteCallDispatchClaimAsync"/> once the broadcast is queued, or give it back with
+		/// <see cref="ReleaseCallDispatchClaimAsync"/>; one abandoned by a process that died mid-dispatch expires and the call can
+		/// be claimed again.
+		/// </summary>
+		/// <param name="callId">The call identifier.</param>
+		/// <param name="departmentId">The call's department.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <returns>The claim time, which identifies this claim, or null when the call is not waiting or someone else has it.</returns>
+		Task<DateTime?> TryClaimCallForDispatchAsync(int callId, int departmentId, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// Puts a claimed call back to waiting when its dispatch did not go out. Only the claim taken at
+		/// <paramref name="claimedOn"/> is given back; a call claimed again, closed or otherwise moved on in the meantime is left
+		/// as it is.
+		/// </summary>
+		/// <param name="callId">The call identifier.</param>
+		/// <param name="departmentId">The call's department.</param>
+		/// <param name="claimedOn">The claim time <see cref="TryClaimCallForDispatchAsync"/> returned.</param>
+		/// <param name="state">The state to restore (Pending, or Active for a scheduled call).</param>
+		/// <param name="dispatchOn">The dispatch time to restore.</param>
+		/// <param name="hasBeenDispatched">The dispatched flag to restore (null for a pending call, false for a scheduled one).</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task<bool> ReleaseCallDispatchClaimAsync(int callId, int departmentId, DateTime claimedOn, int state, DateTime? dispatchOn, bool? hasBeenDispatched,
+			CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// Ends the claim taken at <paramref name="claimedOn"/> once the call's broadcast is queued. The call stays marked
+		/// dispatched; a claim left open would let the call be sent again when its lease ran out.
+		/// </summary>
+		/// <param name="callId">The call identifier.</param>
+		/// <param name="departmentId">The call's department.</param>
+		/// <param name="claimedOn">The claim time <see cref="TryClaimCallForDispatchAsync"/> returned.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task<bool> CompleteCallDispatchClaimAsync(int callId, int departmentId, DateTime claimedOn, CancellationToken cancellationToken = default(CancellationToken));
 
 		Task<List<CallReference>> GetChildCallsForCallAsync(int callId);
 

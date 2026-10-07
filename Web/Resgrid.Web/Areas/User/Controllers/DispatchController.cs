@@ -70,6 +70,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly ICheckInTimerService _checkInTimerService;
 		private readonly IWeatherAlertService _weatherAlertService;
 		private readonly ICallDispatchStatusService _callDispatchStatusService;
+		private readonly IPendingCallsService _pendingCallsService;
+		private readonly ICallClosureService _callClosureService;
 		private readonly IModerationService _moderationService;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> _dispatchLocalizer;
 		private readonly IStringLocalizer<Resgrid.Localization.Common> _commonLocalizer;
@@ -97,7 +99,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IDispatchRecommendationService dispatchRecommendationService, IFeatureToggleService featureToggleService,
 			IProtectedReadService protectedReadService, IRecordsCutoverService recordsCutoverService, IRecordsProtectionService recordsProtection,
 			IDispatchScopeService dispatchScopeService, INearestUnitService nearestUnitService,
-			ICallLocationHistoryService callLocationHistoryService, IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.LocationHistory> locationHistoryLocalizer)
+			ICallLocationHistoryService callLocationHistoryService, IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.LocationHistory> locationHistoryLocalizer,
+			IPendingCallsService pendingCallsService, ICallClosureService callClosureService)
 		{
 			_callLocationHistoryService = callLocationHistoryService;
 			_locationHistoryLocalizer = locationHistoryLocalizer;
@@ -128,6 +131,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_checkInTimerService = checkInTimerService;
 			_weatherAlertService = weatherAlertService;
 			_callDispatchStatusService = callDispatchStatusService;
+			_pendingCallsService = pendingCallsService;
+			_callClosureService = callClosureService;
 			_moderationService = moderationService;
 			_dispatchLocalizer = dispatchLocalizer;
 			_commonLocalizer = commonLocalizer;
@@ -216,6 +221,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View();
 		}
 
+		/// <summary>
+		/// Calls saved but not yet dispatched (Pending): fed in from another system, or entered for later. A dispatcher
+		/// opens one, chooses who to send it to and dispatches it.
+		/// </summary>
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public IActionResult PendingCalls()
+		{
+			return View();
+		}
+
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Call_View)]
 		public async Task<IActionResult> NewCall()
@@ -279,7 +295,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				HasDispatchList = HasKeyStartingWith("dispatchUser_") ||
 								  HasKeyStartingWith("dispatchGroup_") ||
 								  HasKeyStartingWith("dispatchUnit_") ||
-								  HasKeyStartingWith("dispatchRole_")
+								  HasKeyStartingWith("dispatchRole_"),
+				IsPending = model.SaveAsPending
 			};
 
 			foreach (var violation in NewCallFieldPolicyValidator.Validate(policy, values))
@@ -322,7 +339,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Call.LoggedOn = DateTime.UtcNow;
 				model.Call.DepartmentId = DepartmentId;
 				model.Call.Priority = (int)model.CallPriority;
-				model.Call.State = 0;
+				// Saved as pending, the call waits in Pending Calls and nobody is notified until a dispatcher sends it.
+				model.Call.State = model.SaveAsPending ? (int)CallStates.Pending : (int)CallStates.Active;
 
 				// Forms module is disabled. The hidden field is model-bound, so drop anything posted
 				// into it rather than trusting the client not to send form data.
@@ -388,7 +406,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 					else if (key.ToString().StartsWith("dispatchUnit_"))
 					{
 						var unitId = int.Parse(key.ToString().Replace("dispatchUnit_", ""));
-						dispatchingUnitIds.Add(unitId);
+
+						// Only a unit the form offered: a current (non-deleted) unit of this department the editor can see.
+						if (model.Units != null && model.Units.Any(u => u.UnitId == unitId))
+							dispatchingUnitIds.Add(unitId);
 					}
 					else if (key.ToString().StartsWith("dispatchRole_"))
 					{
@@ -523,8 +544,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 				}
 
-			// Handle scheduled dispatch
-			if (model.ScheduleDispatchDate.HasValue)
+			// Handle scheduled dispatch (a pending call has no time: the dispatcher decides when it goes out)
+			if (model.ScheduleDispatchDate.HasValue && !model.SaveAsPending)
 			{
 				var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 				var dispatchUtc = DateTimeHelpers.ConvertToUtc(
@@ -541,7 +562,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Call.HasBeenDispatched = false;
 			}
 
-				var shouldDispatchNow = !model.Call.DispatchOn.HasValue || model.Call.DispatchOn.Value <= DateTime.UtcNow;
+				var shouldDispatchNow = !model.SaveAsPending && (!model.Call.DispatchOn.HasValue || model.Call.DispatchOn.Value <= DateTime.UtcNow);
 
 				model.Call.Contacts = new List<CallContact>();
 				if (!String.IsNullOrWhiteSpace(model.PrimaryContact))
@@ -660,6 +681,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (shouldDispatchNow && (dispatchingUserIds.Any() || dispatchingGroupIds.Any() || dispatchingUnitIds.Any() || dispatchingRoleIds.Any()))
 					await _queueService.EnqueueCallBroadcastAsync(cqi, cancellationToken);
+
+				// A pending call is not live yet: "added" (incident chat channel, Call Added workflows, the field apps'
+				// lists) waits until it is dispatched. The update still refreshes dispatcher screens.
+				if (model.SaveAsPending)
+				{
+					_eventAggregator.SendMessage<CallUpdatedEvent>(new CallUpdatedEvent() { DepartmentId = DepartmentId, Call = call });
+					return RedirectToAction("PendingCalls", "Dispatch", new { Area = "User" });
+				}
 
 				_eventAggregator.SendMessage<CallAddedEvent>(new CallAddedEvent() { DepartmentId = DepartmentId, Call = call });
 
@@ -821,6 +850,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.ScheduleDispatchDate = model.Call.DispatchOn.Value.TimeConverter(model.Department);
 			}
 
+			model.IsWaitingForDispatch = _pendingCallsService.IsWaitingForDispatch(model.Call);
+
 			if (!String.IsNullOrEmpty(model.Call.GeoLocationData) &&
 				model.Call.GeoLocationData != ProtectedDataEnvelope.RedactionValue)
 			{
@@ -928,7 +959,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 					else if (key.ToString().StartsWith("dispatchUnit_"))
 					{
 						var unitId = int.Parse(key.ToString().Replace("dispatchUnit_", ""));
-						dispatchingUnitIds.Add(unitId);
+
+						// Only a unit the form offered: a current (non-deleted) unit of this department the editor can see.
+						if (model.Units != null && model.Units.Any(u => u.UnitId == unitId))
+							dispatchingUnitIds.Add(unitId);
 					}
 					else if (key.ToString().StartsWith("dispatchRole_"))
 					{
@@ -1140,6 +1174,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 					call.DispatchOn = dispatchUtc;
 					call.HasBeenDispatched = false;
+
+					// A pending call given a dispatch time becomes a scheduled call: the scheduled-calls worker sends it then.
+					if (call.State == (int)CallStates.Pending)
+						call.State = (int)CallStates.Active;
 				}
 			}
 			else if (call.DispatchOn.HasValue)
@@ -1207,7 +1245,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var newUnitIds = dispatchingUnitIds.Where(id => !existingUnitDispatches.Any(d => d.UnitId == id)).ToList();
 				var newRoleIds = dispatchingRoleIds.Where(id => !existingRoleDispatches.Any(d => d.RoleId == id)).ToList();
 
-				var shouldApplyDispatchStatuses = call.HasBeenDispatched.GetValueOrDefault() || !call.DispatchOn.HasValue || call.DispatchOn.Value <= DateTime.UtcNow;
+				// Only a call that has gone out notifies anyone or moves statuses: a pending call, or a scheduled call
+				// before its time, sends the edited list when it is dispatched.
+				var shouldApplyDispatchStatuses = call.State == (int)CallStates.Active &&
+					(call.HasBeenDispatched.GetValueOrDefault() || !call.DispatchOn.HasValue || call.DispatchOn.Value <= DateTime.UtcNow);
 				if (shouldApplyDispatchStatuses && (cancelledGroupIds.Any() || cancelledUnitIds.Any()))
 				{
 					await _callDispatchStatusService.ApplyReleaseStatusesAsync(call, cancelledGroupIds, cancelledUnitIds, cancellationToken);
@@ -1221,7 +1262,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				_eventAggregator.SendMessage<CallUpdatedEvent>(new CallUpdatedEvent() { DepartmentId = DepartmentId, Call = call });
 
 				// Send cancel notifications to removed entities
-				if (model.NotifyCancelledEntities)
+				if (shouldApplyDispatchStatuses && model.NotifyCancelledEntities)
 				{
 					if (cancelledUserIds.Any() || cancelledGroupIds.Any() || cancelledUnitIds.Any() || cancelledRoleIds.Any())
 					{
@@ -1328,10 +1369,89 @@ namespace Resgrid.Web.Areas.User.Controllers
 				//	scope.Complete();
 				//}
 
+				// "Save and Dispatch Now" on a pending or scheduled call: the edits above are saved, now send it.
+				if (model.DispatchNow && _pendingCallsService.IsWaitingForDispatch(call))
+				{
+					var outcome = await _pendingCallsService.DispatchNowAsync(call, UserId, cancellationToken);
+
+					if (outcome != DispatchNowOutcome.Dispatched)
+					{
+						TempData["DispatchNowError"] = DescribeDispatchNowOutcome(outcome);
+						return RedirectToAction("UpdateCall", "Dispatch", new { Area = "User", callId = call.CallId });
+					}
+
+					TempData["DispatchNowMessage"] = _dispatchLocalizer["DispatchNowSucceeded"].Value;
+					return RedirectToAction("ViewCall", "Dispatch", new { Area = "User", callId = call.CallId });
+				}
+
+				if (call.State == (int)CallStates.Pending)
+					return RedirectToAction("PendingCalls", "Dispatch", new { Area = "User" });
+
 				return RedirectToAction("Dashboard", "Dispatch", new { Area = "User" });
 			}
 
 			return View(model);
+		}
+
+		/// <summary>
+		/// Sends a waiting call (pending, or scheduled and not yet sent) right now to everyone on its dispatch list.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Call_Update)]
+		public async Task<IActionResult> DispatchCallNow([FromForm] int callId, [FromForm] string returnTo, CancellationToken cancellationToken)
+		{
+			if (!await _authorizationService.CanUserEditCallAsync(UserId, callId))
+				return Unauthorized();
+
+			var call = await _callsService.GetCallByIdAsync(callId);
+
+			if (call == null || call.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true, true);
+			var outcome = await _pendingCallsService.DispatchNowAsync(call, UserId, cancellationToken);
+			var dispatched = outcome == DispatchNowOutcome.Dispatched;
+
+			if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+				return Json(new
+				{
+					success = dispatched,
+					message = dispatched ? _dispatchLocalizer["DispatchNowSucceeded"].Value : DescribeDispatchNowOutcome(outcome),
+					// Only a call with nobody to send to needs the edit page; any other failure leaves the dispatcher on the list.
+					noRecipients = outcome == DispatchNowOutcome.NoRecipients
+				});
+
+			if (dispatched)
+				TempData["DispatchNowMessage"] = _dispatchLocalizer["DispatchNowSucceeded"].Value;
+			else
+				TempData["DispatchNowError"] = DescribeDispatchNowOutcome(outcome);
+
+			// No recipients: the dispatcher has to choose them first, which happens on the edit page.
+			if (outcome == DispatchNowOutcome.NoRecipients)
+				return RedirectToAction("UpdateCall", "Dispatch", new { Area = "User", callId });
+
+			if (returnTo == "pending")
+				return RedirectToAction("PendingCalls", "Dispatch", new { Area = "User" });
+			if (returnTo == "scheduled")
+				return RedirectToAction("ScheduledCalls", "Dispatch", new { Area = "User" });
+
+			return RedirectToAction("ViewCall", "Dispatch", new { Area = "User", callId });
+		}
+
+		private string DescribeDispatchNowOutcome(DispatchNowOutcome outcome)
+		{
+			switch (outcome)
+			{
+				case DispatchNowOutcome.NoRecipients:
+					return _dispatchLocalizer["DispatchNowNoRecipients"].Value;
+				case DispatchNowOutcome.QueueFailed:
+					return _dispatchLocalizer["DispatchNowQueueFailed"].Value;
+				case DispatchNowOutcome.NotWaiting:
+					return _dispatchLocalizer["DispatchNowNotWaiting"].Value;
+				default:
+					return string.Empty;
+			}
 		}
 
 		[HttpGet]
@@ -1389,7 +1509,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.CanAttachCallFiles = model.CanAddCallData && await _authorizationService.CanUserEditCallAsync(UserId, callId);
 
 			// Re-open is offered only when its POST would be accepted (the close rule, see ReOpenCall).
-			ViewData["CanReOpenCall"] = model.Call.State != (int)CallStates.Active &&
+			ViewData["IsWaitingForDispatch"] = _pendingCallsService.IsWaitingForDispatch(model.Call);
+			ViewData["CanReOpenCall"] = model.Call.State != (int)CallStates.Active && model.Call.State != (int)CallStates.Pending &&
 				User.HasClaim(ResgridClaimTypes.Resources.Call, ResgridClaimTypes.Actions.Update) &&
 				await _authorizationService.CanUserCloseCallAsync(UserId, callId, DepartmentId);
 
@@ -1619,7 +1740,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 					else if (key.ToString().StartsWith("dispatchUnit_"))
 					{
 						var unitId = int.Parse(key.ToString().Replace("dispatchUnit_", ""));
-						dispatchingUnitIds.Add(unitId);
+
+						// Only a unit the form offered: a current (non-deleted) unit of this department the editor can see.
+						if (model.Units != null && model.Units.Any(u => u.UnitId == unitId))
+							dispatchingUnitIds.Add(unitId);
 					}
 					else if (key.ToString().StartsWith("dispatchRole_"))
 					{
@@ -1824,10 +1948,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model = await FillCloseCallView(model);
 			var call = await _callsService.GetCallByIdAsync(callId);
 
-			if (call == null)
+			if (call == null || call.DepartmentId != DepartmentId)
 				return Unauthorized();
 
 			model.CallId = call.CallId;
+
+			// A call run under an active incident command is closed from the command first; say so up front.
+			if (await _callClosureService.GetBlockingIncidentCommandAsync(DepartmentId, call.CallId) != null)
+			{
+				model.IsBlockedByIncidentCommand = true;
+				ModelState.AddModelError(string.Empty, _dispatchLocalizer["CloseBlockedByIncidentCommand"].Value);
+			}
 
 			return View(model);
 		}
@@ -1843,9 +1974,24 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model = await FillCloseCallView(model);
 			var call = await _callsService.GetCallByIdAsync(model.CallId);
 
+			if (call == null || call.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			if (await _callClosureService.GetBlockingIncidentCommandAsync(DepartmentId, call.CallId) != null)
+			{
+				model.IsBlockedByIncidentCommand = true;
+				ModelState.AddModelError(string.Empty, _dispatchLocalizer["CloseBlockedByIncidentCommand"].Value);
+			}
+
 			if (ModelState.IsValid)
 			{
 				call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true, true);
+
+				// Captured before the state changes: a pending call, or a scheduled call that never went out, had no
+				// dispatch statuses applied, so there are none to release (and nobody to tell it closed).
+				var shouldApplyReleaseStatuses = call.State == (int)CallStates.Active &&
+					(call.HasBeenDispatched.GetValueOrDefault() || !call.DispatchOn.HasValue || call.DispatchOn.Value <= DateTime.UtcNow);
+
 				call.ClosedByUserId = UserId;
 				call.ClosedOn = DateTime.UtcNow;
 				call.CompletedNotes = System.Net.WebUtility.HtmlDecode(model.ClosedCallNotes);
@@ -1854,11 +2000,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 				await _callsService.SaveCallAsync(call, cancellationToken);
 				_eventAggregator.SendMessage<CallClosedEvent>(new CallClosedEvent() { DepartmentId = DepartmentId, Call = call });
 
-				var shouldApplyReleaseStatuses = call.HasBeenDispatched.GetValueOrDefault() || !call.DispatchOn.HasValue || call.DispatchOn.Value <= DateTime.UtcNow;
 				if (shouldApplyReleaseStatuses && ((call.GroupDispatches != null && call.GroupDispatches.Any()) || (call.UnitDispatches != null && call.UnitDispatches.Any())))
 				{
 					await _callDispatchStatusService.ApplyReleaseStatusesAsync(call, cancellationToken: cancellationToken);
 				}
+
+				// "Send Notification": tell everyone on the call, and the incident command team, that it is closed.
+				if (model.SendNotification && shouldApplyReleaseStatuses)
+					await _callClosureService.NotifyCallClosedAsync(call, UserId, cancellationToken);
 
 				return RedirectToAction("Dashboard", "Dispatch", new { Area = "User" });
 			}
@@ -2309,7 +2458,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
-			var units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
+			var units = await _unitsService.GetUnitsForDepartmentIncludingDeletedAsync(DepartmentId);
 			var records = await _checkInTimerService.GetCheckInsForCallAsync(callId);
 
 			var result = records.Select(r =>
@@ -2387,7 +2536,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.UnitStates = (await _unitsService.GetUnitStatesForCallAsync(model.Call.DepartmentId, callId)).OrderBy(y => y.Timestamp).ThenBy(x => x.UnitId).ToList();
 			model.ActionLogs = (await _actionLogsService.GetActionLogsForCallAsync(model.Call.DepartmentId, callId)).OrderBy(y => y.Timestamp).ThenBy(x => x.UserId).ToList();
 			model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
-			model.Units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
+			// Point-in-time export: the call's units as dispatched, deleted ones included.
+			model.Units = await _unitsService.GetUnitsForDepartmentIncludingDeletedAsync(DepartmentId);
 			model.Call = await _callsService.PopulateCallData(model.Call, true, true, true, true, true, true, true, true, true);
 			model.Call = (await _protectedReadService.ResolveForReadAsync(DepartmentId, model.Call, null, UserId)).Call;
 			var callDestination = await GetValidatedDestinationPoiAsync(model.Call.DestinationPoiId);
@@ -2461,7 +2611,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.UnitStates = (await _unitsService.GetUnitStatesForCallAsync(call.DepartmentId, call.CallId)).OrderBy(y => y.Timestamp).ThenBy(x => x.UnitId).ToList();
 				model.ActionLogs = (await _actionLogsService.GetActionLogsForCallAsync(call.DepartmentId, call.CallId)).OrderBy(y => y.Timestamp).ThenBy(x => x.UserId).ToList();
 				model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(call.DepartmentId);
-				model.Units = await _unitsService.GetUnitsForDepartmentAsync(call.DepartmentId);
+				model.Units = await _unitsService.GetUnitsForDepartmentIncludingDeletedAsync(call.DepartmentId);
 				model.Names = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(call.DepartmentId);
 				model.ChildCalls = await _callsService.GetChildCallsForCallAsync(call.CallId);
 				model.Contacts = await _contactsService.GetAllContactsForDepartmentAsync(DepartmentId);
@@ -2500,7 +2650,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.UnitStates = (await _unitsService.GetUnitStatesForCallAsync(call.DepartmentId, call.CallId)).OrderBy(y => y.Timestamp).ThenBy(x => x.UnitId).ToList();
 				model.ActionLogs = (await _actionLogsService.GetActionLogsForCallAsync(call.DepartmentId, call.CallId)).OrderBy(y => y.Timestamp).ThenBy(x => x.UserId).ToList();
 				model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(call.DepartmentId);
-				model.Units = await _unitsService.GetUnitsForDepartmentAsync(call.DepartmentId);
+				model.Units = await _unitsService.GetUnitsForDepartmentIncludingDeletedAsync(call.DepartmentId);
 				model.Names = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(call.DepartmentId);
 				model.ChildCalls = await _callsService.GetChildCallsForCallAsync(call.CallId);
 				model.Contacts = await _contactsService.GetAllContactsForDepartmentAsync(DepartmentId);
@@ -3035,7 +3185,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			List<CallListJson> callsJson = new List<CallListJson>();
 
-			var calls = (await _callsService.GetAllNonDispatchedScheduledCallsByDepartmentIdAsync(DepartmentId))
+			// Scheduled calls are active calls, so group-scoped dispatch trims them as it does the active list.
+			var calls = (await _dispatchScopeService.FilterCallsForUserAsync(DepartmentId, UserId,
+				await _callsService.GetAllNonDispatchedScheduledCallsByDepartmentIdAsync(DepartmentId)))
 				.OrderBy(x => x.DispatchOn);
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
@@ -3065,6 +3217,55 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			return Json(callsJson);
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<IActionResult> GetPendingCallsList()
+		{
+			List<CallListJson> callsJson = new List<CallListJson>();
+
+			var calls = await _dispatchScopeService.FilterCallsForUserAsync(DepartmentId, UserId,
+				await _callsService.GetPendingCallsByDepartmentIdAsync(DepartmentId));
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+
+			foreach (var call in calls.OrderBy(x => x.LoggedOn))
+			{
+				var callJson = new CallListJson();
+				callJson.CallId = call.CallId;
+				callJson.Number = call.Number;
+				callJson.Name = ProtectedDataEnvelope.SafeDisplay(call.Name);
+				callJson.Address = ProtectedDataEnvelope.SafeDisplay(call.Address);
+				callJson.State = DispatchDisplayHelper.GetLocalizedCallState(call.State, _dispatchLocalizer, _commonLocalizer);
+				callJson.StateColor = _callsService.CallStateToColor((CallStates)call.State);
+				callJson.Timestamp = call.LoggedOn.TimeConverterToString(department);
+				callJson.LoggedOn = new DateTimeOffset(DateTime.SpecifyKind(call.LoggedOn, DateTimeKind.Utc)).ToUnixTimeSeconds();
+				callJson.Priority = await DispatchDisplayHelper.GetLocalizedCallPriorityAsync(DepartmentId, call.Priority, _dispatchLocalizer);
+				callJson.Color = await _callsService.CallPriorityToColorAsync(call.Priority, DepartmentId);
+				callJson.CanDeleteCall = await _authorizationService.CanUserDeleteCallAsync(UserId, call.CallId, DepartmentId);
+				callJson.CanCloseCall = await _authorizationService.CanUserCloseCallAsync(UserId, call.CallId, DepartmentId);
+				callJson.CanUpdateCall = await _authorizationService.CanUserEditCallAsync(UserId, call.CallId);
+
+				callsJson.Add(callJson);
+			}
+
+			return Json(callsJson);
+		}
+
+		/// <summary>
+		/// How many calls are waiting to be dispatched, for the badges on the Calls dashboard.
+		/// </summary>
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<IActionResult> GetWaitingCallCounts()
+		{
+			var pending = await _dispatchScopeService.FilterCallsForUserAsync(DepartmentId, UserId,
+				await _callsService.GetPendingCallsByDepartmentIdAsync(DepartmentId));
+			var scheduled = await _dispatchScopeService.FilterCallsForUserAsync(DepartmentId, UserId,
+				await _callsService.GetAllNonDispatchedScheduledCallsByDepartmentIdAsync(DepartmentId));
+
+			return Json(new { pending = pending.Count(), scheduled = scheduled.Count() });
 		}
 
 		[HttpPost]
@@ -3621,7 +3822,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 
-			var units = await _unitsService.GetUnitsForDepartmentAsync(model.Call.DepartmentId);
+			// The call's units as dispatched, deleted ones included (the view lists only dispatched units).
+			var units = await _unitsService.GetUnitsForDepartmentIncludingDeletedAsync(model.Call.DepartmentId);
 
 			if (units != null)
 				model.Units = units;

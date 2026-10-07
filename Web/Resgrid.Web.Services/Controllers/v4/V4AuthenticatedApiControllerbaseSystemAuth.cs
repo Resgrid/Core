@@ -53,6 +53,19 @@ namespace Resgrid.Web.Services.Controllers.v4
 			HttpContext.User.HasClaim(ResgridClaimTypes.Data.ServiceAccount, "true");
 
 		/// <summary>
+		/// True when the request was authenticated with a department API key (X-Resgrid-ApiKey). Such a request is scoped
+		/// to the key's department and acts as the department's managing user; it is never a system request.
+		/// </summary>
+		protected bool IsDepartmentApiKeyRequest =>
+			Resgrid.Web.Services.Middleware.DepartmentApiKeyAuthHandler.IsDepartmentApiKeyPrincipal(HttpContext.User);
+
+		/// <summary>
+		/// Unattended callers (the system key and department API keys) write Advanced Data Protection fields through the
+		/// broker's encrypt-only workload lane; there is no person to step up for a grant.
+		/// </summary>
+		protected bool IsUnattendedWriter => IsSystemApiKeyRequest || IsDepartmentApiKeyRequest;
+
+		/// <summary>
 		/// Returns the effective department ID for the current request.
 		/// When a request-level department ID is provided (e.g. from NewCallInput.DepartmentId
 		/// or a departmentId query parameter in SystemApiKey mode), that value takes precedence.

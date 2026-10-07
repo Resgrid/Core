@@ -2379,4 +2379,133 @@
   <data name="FederatedMfaTestNote" xml:space="preserve">
     <value>Перевірка зараз перенаправить вас до постачальника ідентичності із запитом MFA. Коли він поверне значення, яке враховує зіставлення, ця версія набуде чинності.</value>
   </data>
+  <data name="AuditLogTypeDepartmentApiKeyCreated" xml:space="preserve">
+    <value>Створено API-ключ підрозділу</value>
+  </data>
+  <data name="AuditLogTypeDepartmentApiKeyRevoked" xml:space="preserve">
+    <value>Відкликано API-ключ підрозділу</value>
+  </data>
+  <data name="ApiKeysButton" xml:space="preserve">
+    <value>API-ключі</value>
+  </data>
+  <data name="ApiKeysPageTitle" xml:space="preserve">
+    <value>API-ключі</value>
+  </data>
+  <data name="ApiKeysIntro" xml:space="preserve">
+    <value>API-ключі дозволяють іншій системі, наприклад системі планування, обліку чи диспетчеризації, звертатися до Resgrid від імені вашого підрозділу без входу як особа. Ключ може робити лише те, що ви дозволите, перестає діяти в дату завершення терміну й може бути відкликаний будь-коли.</value>
+  </data>
+  <data name="ApiKeysUsage" xml:space="preserve">
+    <value>Надсилайте ключ у заголовку X-Resgrid-ApiKey у запитах до {0}. Ніколи не додавайте його до URL-адреси.</value>
+  </data>
+  <data name="ApiKeysExisting" xml:space="preserve">
+    <value>Ключі</value>
+  </data>
+  <data name="ApiKeysNone" xml:space="preserve">
+    <value>Ще не створено жодного API-ключа.</value>
+  </data>
+  <data name="ApiKeyName" xml:space="preserve">
+    <value>Назва</value>
+  </data>
+  <data name="ApiKeyPrefix" xml:space="preserve">
+    <value>Ключ</value>
+  </data>
+  <data name="ApiKeyScopes" xml:space="preserve">
+    <value>Дозволено</value>
+  </data>
+  <data name="ApiKeyCreated" xml:space="preserve">
+    <value>Створено</value>
+  </data>
+  <data name="ApiKeyExpires" xml:space="preserve">
+    <value>Діє до</value>
+  </data>
+  <data name="ApiKeyLastUsed" xml:space="preserve">
+    <value>Востаннє використано</value>
+  </data>
+  <data name="ApiKeyStatus" xml:space="preserve">
+    <value>Стан</value>
+  </data>
+  <data name="ApiKeyStatusActive" xml:space="preserve">
+    <value>Активний</value>
+  </data>
+  <data name="ApiKeyStatusExpired" xml:space="preserve">
+    <value>Термін минув</value>
+  </data>
+  <data name="ApiKeyStatusRevoked" xml:space="preserve">
+    <value>Відкликано</value>
+  </data>
+  <data name="ApiKeyNever" xml:space="preserve">
+    <value>Ніколи</value>
+  </data>
+  <data name="ApiKeyRevoke" xml:space="preserve">
+    <value>Відкликати</value>
+  </data>
+  <data name="ApiKeyRevokeConfirm" xml:space="preserve">
+    <value>Відкликати цей ключ? Системи, що його використовують, одразу перестануть працювати.</value>
+  </data>
+  <data name="ApiKeyRevoked" xml:space="preserve">
+    <value>Ключ відкликано.</value>
+  </data>
+  <data name="ApiKeyCreateHeader" xml:space="preserve">
+    <value>Створити ключ</value>
+  </data>
+  <data name="ApiKeyNameHelp" xml:space="preserve">
+    <value>Для чого ключ, наприклад система, яка його використовуватиме.</value>
+  </data>
+  <data name="ApiKeyScopesLabel" xml:space="preserve">
+    <value>Що дозволено ключу</value>
+  </data>
+  <data name="ApiKeyExpiresIn" xml:space="preserve">
+    <value>Діє протягом</value>
+  </data>
+  <data name="ApiKeyDays" xml:space="preserve">
+    <value>{0} днів</value>
+  </data>
+  <data name="ApiKeyAllowedIps" xml:space="preserve">
+    <value>Дозволені адреси (необов’язково)</value>
+  </data>
+  <data name="ApiKeyAllowedIpsHelp" xml:space="preserve">
+    <value>Одна IP-адреса або діапазон CIDR на рядок, наприклад 203.0.113.10 чи 203.0.113.0/24. Залиште порожнім, щоб дозволити будь-яку адресу.</value>
+  </data>
+  <data name="ApiKeyCreateButton" xml:space="preserve">
+    <value>Створити ключ</value>
+  </data>
+  <data name="ApiKeyNewHeader" xml:space="preserve">
+    <value>Ваш новий API-ключ</value>
+  </data>
+  <data name="ApiKeyNewWarning" xml:space="preserve">
+    <value>Скопіюйте цей ключ зараз. Він показується лише один раз і не може бути відновлений. Якщо його втрачено, відкличте його та створіть інший.</value>
+  </data>
+  <data name="ApiKeyCopy" xml:space="preserve">
+    <value>Копіювати</value>
+  </data>
+  <data name="ApiKeyErrorName" xml:space="preserve">
+    <value>Вкажіть назву ключа.</value>
+  </data>
+  <data name="ApiKeyErrorScopes" xml:space="preserve">
+    <value>Виберіть принаймні одну дію для ключа.</value>
+  </data>
+  <data name="ApiKeyErrorIp" xml:space="preserve">
+    <value>"{0}" не є IP-адресою чи діапазоном CIDR.</value>
+  </data>
+  <data name="ApiKeyErrorCreate" xml:space="preserve">
+    <value>Не вдалося створити ключ: {0}</value>
+  </data>
+  <data name="ApiKeyScopeCallsRead" xml:space="preserve">
+    <value>Читання викликів (активних, в очікуванні та запланованих)</value>
+  </data>
+  <data name="ApiKeyScopeCallsCreate" xml:space="preserve">
+    <value>Створення викликів, зокрема в очікуванні та запланованих</value>
+  </data>
+  <data name="ApiKeyScopeCallsUpdate" xml:space="preserve">
+    <value>Редагування викликів, надсилання очікуваних і зміна запланованого часу</value>
+  </data>
+  <data name="ApiKeyScopeCallsClose" xml:space="preserve">
+    <value>Закриття викликів</value>
+  </data>
+  <data name="ApiKeyScopeReferenceRead" xml:space="preserve">
+    <value>Читання типів викликів, пріоритетів, шаблонів, груп і ролей</value>
+  </data>
+  <data name="ApiKeyScopeUnitsRead" xml:space="preserve">
+    <value>Читання підрозділів та їхніх станів</value>
+  </data>
 </root>

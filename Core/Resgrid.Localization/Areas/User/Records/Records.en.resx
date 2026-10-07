@@ -123,10 +123,16 @@
   <data name="NextNumberCurrent" xml:space="preserve"><value>Next number</value></data>
   <data name="NextNumberRaiseTo" xml:space="preserve"><value>Raise next to</value></data>
   <data name="NextNumberBelowCurrent" xml:space="preserve"><value>A next number can only be raised. These sequences were left unchanged because the number entered was below the one they will issue next:</value></data>
-  <data name="NextNumberPatternChanged" xml:space="preserve"><value>The number pattern changed, so the next numbers entered were not applied. Review the sequences for the new pattern and save again.</value></data>
+  <data name="NextNumberPatternChanged" xml:space="preserve"><value>The number pattern or a record type prefix changed, so the next numbers entered were not applied. Review the new sequences and save again.</value></data>
   <data name="NextNumberConfirm" xml:space="preserve"><value>A raised next number cannot be lowered again. Save these changes?</value></data>
   <data name="NumberingAllTypes" xml:space="preserve"><value>All record types</value></data>
   <data name="NumberingNoGroup" xml:space="preserve"><value>No station/group</value></data>
+  <data name="NumberPrefixesHeader" xml:space="preserve"><value>Record type prefixes</value></data>
+  <data name="NumberPrefixesIntro" xml:space="preserve"><value>Set the prefix {PREFIX} writes for each record type, for example FIRE for Run and IR for incident reports. Leave a box blank to keep the default. A new prefix starts its own sequence, and records already numbered keep their numbers. Types given the same prefix share one sequence. Prefixes are used only when the pattern includes {PREFIX}.</value></data>
+  <data name="NumberPrefixType" xml:space="preserve"><value>Record type</value></data>
+  <data name="NumberPrefixDefault" xml:space="preserve"><value>Default</value></data>
+  <data name="NumberPrefixRule" xml:space="preserve"><value>2 to 6 letters or digits</value></data>
+  <data name="NumberPrefixInvalid" xml:space="preserve"><value>A prefix is 2 to 6 letters or digits. These record types kept the prefix they had:</value></data>
   <data name="Retention" xml:space="preserve"><value>Retention</value></data>
   <data name="RetentionIntro" xml:space="preserve"><value>Shipped defaults: 7 years for standard records; permanent for Coroner and other restricted classes. Retention configuration is this department's responsibility under its own jurisdiction's rules. Changes apply prospectively and are audited.</value></data>
   <data name="DepartmentDefaultYears" xml:space="preserve"><value>Department default (years, blank = system default)</value></data>

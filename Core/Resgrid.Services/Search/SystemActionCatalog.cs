@@ -90,6 +90,8 @@ namespace Resgrid.Services.Search
 			Nav("calls", "Calls", "View calls and dispatches", "/User/Dispatch/Dashboard", new[] { "dispatch", "incidents", "active calls", "cad" }, Call, View),
 			Act("new-call", "New Call", "Create and dispatch a new call", "/User/Dispatch/NewCall", SystemActionCategories.Create, new[] { "dispatch", "incident", "page", "alert", "create call" }, Call, Create),
 			Nav("archived-calls", "Archived Calls", "Closed and historical calls", "/User/Dispatch/ArchivedCalls", new[] { "closed", "history", "old calls" }, Call, View),
+			Nav("pending-calls", "Pending Calls", "Calls waiting for a dispatcher to send them; nobody has been notified", "/User/Dispatch/PendingCalls", new[] { "pending", "to be dispatched", "waiting", "follow-up", "queue" }, Call, View),
+			Nav("scheduled-calls", "Scheduled Calls", "Calls set to go out at a future time", "/User/Dispatch/ScheduledCalls", new[] { "scheduled", "future", "timed", "delayed dispatch" }, Call, View),
 
 			// ---- Personnel
 			Nav("personnel", "Personnel", "People in the department, status and staffing", "/User/Personnel", new[] { "people", "members", "users", "staff", "responders", "roster" }, Personnel, View),
@@ -207,6 +209,7 @@ namespace Resgrid.Services.Search
 			Act("department-settings", "Department Settings", "Department profile, address, API keys and module settings", "/User/Department", SystemActionCategories.Manage, new[] { "settings", "admin", "configuration", "modules", "api key" }, adminOnly: true),
 			Act("call-settings", "Call Settings", "Call types, priorities, email import and dispatch settings", "/User/Department/CallSettings", SystemActionCategories.Manage, new[] { "call types", "priorities", "email import", "dispatch settings" }, adminOnly: true),
 			Act("dispatch-settings", "Dispatch Settings", "Dispatch behaviour and notification settings", "/User/Department/DispatchSettings", SystemActionCategories.Manage, new[] { "dispatch", "notifications", "paging" }, adminOnly: true),
+			Act("api-keys", "API Keys", "Keys that let another system call the Resgrid API for the department", "/User/Security/ApiKeys", SystemActionCategories.Manage, new[] { "api key", "api token", "integration", "x-resgrid-apikey", "external system" }, adminOnly: true),
 			Act("data-protection", "Data Protection", "Advanced Data Protection enrollment and policies", "/User/DataProtection", SystemActionCategories.Manage, new[] { "adp", "encryption", "privacy", "protected data", "kms" }, adminOnly: true)
 		};
 	}

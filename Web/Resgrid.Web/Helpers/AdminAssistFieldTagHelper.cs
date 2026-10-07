@@ -1,6 +1,5 @@
 using System;
 using System.Globalization;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
@@ -26,7 +25,7 @@ namespace Resgrid.Web.Helpers
 			if (For == null || ViewContext == null || output.Attributes["type"]?.Value?.ToString() == "hidden") return;
 			var controller = ViewContext.RouteData.Values["controller"]?.ToString();
 			var action = ViewContext.RouteData.Values["action"]?.ToString();
-			var entry = catalog.Settings.FirstOrDefault(s => s.Location.Controller == controller && s.Location.Action == action && s.Location.Field == For.Name);
+			var entry = catalog.FieldHelpEntry(controller, action, For.Name);
 			if (entry == null) return;
 			var http = ViewContext.HttpContext;
 			const string key = "AdminAssist.FieldHelpAccess";

@@ -334,9 +334,9 @@ namespace Resgrid.Web.Services.Helpers
 			};
 		}
 
-		public static List<RecordDefinitionData> ToDefinitions()
+		public static List<RecordDefinitionData> ToDefinitions(RecordsNumberingConfig numbering)
 		{
-			return RecordDefinitionCatalog.Describe().Select(d => new RecordDefinitionData
+			return RecordDefinitionCatalog.Describe(numbering).Select(d => new RecordDefinitionData
 			{
 				Key = d.Key, Version = d.Version, Name = d.Name, RecordType = d.RecordType, RecordKind = d.RecordKind, LifecyclePreset = d.LifecyclePreset, LifecyclePresetName = d.LifecyclePresetName,
 				Cardinality = d.Cardinality, Restricted = d.Restricted, NumberPrefix = d.NumberPrefix, RequiresCall = d.RequiresCall, SupportsParticipants = d.SupportsParticipants, SupportsUnits = d.SupportsUnits,

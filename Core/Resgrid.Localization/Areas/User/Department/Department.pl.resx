@@ -1271,4 +1271,79 @@
   <data name="RunCardTriggerRequired" xml:space="preserve">
     <value>Dodaj co najmniej jeden wyzwalacz przed zapisaniem tej karty wyjazdowej.</value>
   </data>
+  <data name="InQuartersTurnoutLabel" xml:space="preserve">
+    <value>Czas wyjazdu z bazy (sekundy)</value>
+  </data>
+  <data name="InQuartersTurnoutHelp" xml:space="preserve">
+    <value>Czas, jakiego jednostka w bazie potrzebuje, zanim ruszy. Dotyczy jednostek o statusie „W bazie” oraz jednostek bez pozycji GPS (przyjmuje się, że są w swojej bazie). Doliczany do czasu dojazdu przy ustalaniu kolejności najbliższych jednostek. 0 = brak.</value>
+  </data>
+  <data name="MobileTurnoutLabel" xml:space="preserve">
+    <value>Czas wyjazdu w terenie (sekundy)</value>
+  </data>
+  <data name="MobileTurnoutHelp" xml:space="preserve">
+    <value>Czas, jakiego jednostka będąca już w terenie i dostępna potrzebuje, zanim ruszy do nowego zgłoszenia. Dotyczy jednostek ocenianych według pozycji GPS. Doliczany do czasu dojazdu przy ustalaniu kolejności najbliższych jednostek. 0 = brak.</value>
+  </data>
+  <data name="StatusHoldToConfirmLabel" xml:space="preserve">
+    <value>Przytrzymaj, aby ustawić status</value>
+  </data>
+  <data name="StatusHoldToConfirmHelp" xml:space="preserve">
+    <value>W aplikacjach Unit i Responder załogi przytrzymują przycisk statusu przez dwie sekundy, aby go ustawić, zamiast go stuknąć, a potem nacisnąć Dalej lub Wyślij. Zapobiega przypadkowym stuknięciom i zapomnianym potwierdzeniom. Status wymagający notatki lub wyboru miejsca docelowego nadal otwiera kolejny krok.</value>
+  </data>
+  <data name="CallNumberingHeader" xml:space="preserve">
+    <value>Numeracja zgłoszeń</value>
+  </data>
+  <data name="CallNumberingIntro" xml:space="preserve">
+    <value>Sposób numerowania nowych zgłoszeń. Zmiana wzorca nigdy nie zmienia numerów zgłoszeń, które już mają numer.</value>
+  </data>
+  <data name="CallNumberPattern" xml:space="preserve">
+    <value>Wzorzec numeru zgłoszenia</value>
+  </data>
+  <data name="CallNumberExample" xml:space="preserve">
+    <value>Przykład:</value>
+  </data>
+  <data name="CallNumberPatternHelp" xml:space="preserve">
+    <value>Stały tekst (litery, cyfry, - _ . /) wokół znaczników: {YYYY} lub {YY} rok, {MM} miesiąc, {DD} dzień i {SEQ} numer kolejny, który musi wystąpić dokładnie raz. Numer kolejny zaczyna się ponownie od 1 za każdym razem, gdy zmienia się data w numerze: co roku z rokiem, co miesiąc z {MM}, codziennie z {DD} i nigdy bez daty. {MM} wymaga roku, a {DD} wymaga {MM}. Daty są liczone w strefie czasowej jednostki.</value>
+  </data>
+  <data name="CallNumberSequenceWidth" xml:space="preserve">
+    <value>Cyfry numeru kolejnego</value>
+  </data>
+  <data name="CallNumberSequenceWidthHelp" xml:space="preserve">
+    <value>Uzupełnia numer kolejny zerami wiodącymi, więc 4 daje 0153. 1 zapisuje go bez uzupełniania, tak jak Resgrid robił to zawsze.</value>
+  </data>
+  <data name="CallNumberNext" xml:space="preserve">
+    <value>Następny numer zgłoszenia</value>
+  </data>
+  <data name="CallNumberResetsYearly" xml:space="preserve">
+    <value>Zaczyna się od 1 co roku.</value>
+  </data>
+  <data name="CallNumberResetsMonthly" xml:space="preserve">
+    <value>Zaczyna się od 1 co miesiąc.</value>
+  </data>
+  <data name="CallNumberResetsDaily" xml:space="preserve">
+    <value>Zaczyna się od 1 codziennie.</value>
+  </data>
+  <data name="CallNumberResetsNever" xml:space="preserve">
+    <value>Nigdy nie zaczyna się od nowa.</value>
+  </data>
+  <data name="CallNumberRaiseTo" xml:space="preserve">
+    <value>Podnieś następny numer kolejny do</value>
+  </data>
+  <data name="CallNumberRaiseToHelp" xml:space="preserve">
+    <value>Dla jednostek kontynuujących numery nadane przed Resgrid: następne zgłoszenie otrzyma ten numer kolejny. Można go tylko podnieść, nigdy obniżyć, więc żaden numer nie zostanie nadany dwa razy. Pozostaw puste, aby zachować bieżący numer kolejny.</value>
+  </data>
+  <data name="CallNumberRaiseConfirm" xml:space="preserve">
+    <value>Podnieść następny numer zgłoszenia? Można go tylko podnieść, nigdy obniżyć.</value>
+  </data>
+  <data name="CallNumberPatternInvalid" xml:space="preserve">
+    <value>Numeracja zgłoszeń nie została zapisana. Wzorzec wymaga {SEQ} dokładnie raz, może zawierać tylko litery, cyfry, - _ . / oraz znaczniki {YYYY}, {YY}, {MM} i {DD}, wymaga roku dla {MM} i {MM} dla {DD} i może mieć najwyżej 40 znaków.</value>
+  </data>
+  <data name="CallNumberNextBelowCurrent" xml:space="preserve">
+    <value>Następny numer zgłoszenia nie został podniesiony: można go podnieść tylko powyżej numeru, który następne zgłoszenie już otrzyma ({0}).</value>
+  </data>
+  <data name="CallNumberNextPatternChanged" xml:space="preserve">
+    <value>Następny numer zgłoszenia nie został podniesiony, ponieważ wzorzec zmienił się w tym samym zapisie. Podnieś go ponownie dla nowego wzorca.</value>
+  </data>
+  <data name="CallSettingsSaved" xml:space="preserve">
+    <value>Ustawienia zgłoszeń zostały zapisane.</value>
+  </data>
 </root>

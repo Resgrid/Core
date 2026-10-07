@@ -58,6 +58,7 @@ namespace Resgrid.Model.Reporting
 			{ (int)ActionBaseTypes.Maintenance,   AvailabilityClass.Unavailable },
 			{ (int)ActionBaseTypes.OnBreak,       AvailabilityClass.Delayed },
 			{ (int)ActionBaseTypes.Completed,     AvailabilityClass.Available },
+			{ (int)ActionBaseTypes.InQuarters,    AvailabilityClass.Available },
 		};
 
 		// Built-in personnel status (ActionTypes) -> availability.

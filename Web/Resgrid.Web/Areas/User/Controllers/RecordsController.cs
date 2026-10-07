@@ -1094,7 +1094,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 			else if (pivot == RecordsAccountabilityPivot.Unit)
 			{
-				foreach (var unit in await _unitsService.GetUnitsForDepartmentAsync(DepartmentId) ?? new List<Unit>())
+				// Labels for past activity: deleted units included.
+				foreach (var unit in await _unitsService.GetUnitsForDepartmentIncludingDeletedAsync(DepartmentId) ?? new List<Unit>())
 					model.Names[unit.UnitId.ToString()] = unit.Name;
 			}
 
@@ -1146,7 +1147,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				SequenceWidth = model.SequenceWidth,
 				Year = model.NumberingYear > 0 ? model.NumberingYear : DateTime.UtcNow.Year,
 				NextNumbers = (model.NextNumbers ?? new List<RecordsNextNumberRow>()).Where(r => r?.NextSequence != null)
-					.Select(r => new RecordNextNumberRequest { ScopeKey = r.ScopeKey, NextSequence = r.NextSequence.Value }).ToList()
+					.Select(r => new RecordNextNumberRequest { ScopeKey = r.ScopeKey, NextSequence = r.NextSequence.Value }).ToList(),
+				Prefixes = (model.NumberPrefixes ?? new List<RecordsNumberPrefixRow>()).Where(r => r != null)
+					.Select(r => new RecordNumberPrefixRequest { DefinitionKey = r.DefinitionKey, Prefix = r.Prefix }).ToList()
 			}, cancellationToken);
 			// Turning group scoping on is a deliberate action with a preview (plan 5.7.1): the switch needs the
 			// explicit confirmation; every other change on the form still saves.
@@ -1230,14 +1233,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 				errors.Add(_localizer["NextNumberBelowCurrent"] + " (" + string.Join(", ", numbering.BelowCurrent.Select(s => s.NextNumber)) + ")");
 			if (numbering.NotApplied > 0)
 				errors.Add(_localizer["NextNumberPatternChanged"]);
+			if (numbering.PrefixesRejected.Count > 0)
+				errors.Add(_localizer["NumberPrefixInvalid"] + " (" + string.Join(", ", numbering.PrefixesRejected.Select(NumberedTypeLabel)) + ")");
 			if (errors.Count > 0)
 				after.ErrorMessage = string.Join(" ", errors);
 
 			// Show what was saved, not what was posted: the sequences can change with the pattern, and a raised number
-			// left in its box would be resubmitted against whichever row lands there. A refused pattern stays for correcting.
+			// left in its box would be resubmitted against whichever row lands there. A refused pattern or prefix stays for correcting.
 			foreach (var key in ModelState.Keys.Where(k => k.StartsWith(nameof(RecordsSettingsView.NextNumbers), StringComparison.Ordinal)
+				|| k.StartsWith(nameof(RecordsSettingsView.NumberPrefixes), StringComparison.Ordinal)
 				|| k == nameof(RecordsSettingsView.SequenceWidth) || (k == nameof(RecordsSettingsView.NumberPattern) && !numbering.PatternRejected)).ToList())
 				ModelState.Remove(key);
+			foreach (var row in after.NumberPrefixes.Where(r => numbering.PrefixesRejected.Contains(r.DefinitionKey)))
+				row.Prefix = model.NumberPrefixes?.FirstOrDefault(p => p != null && p.DefinitionKey == row.DefinitionKey)?.Prefix;
 
 			return View(after);
 		}
@@ -1287,6 +1295,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 				});
 			}
 
+			foreach (var type in RecordsNumberingService.NumberedTypes())
+			{
+				var custom = numbering.Prefixes?.FirstOrDefault(p => p != null && p.DefinitionKey == type.Key && RecordNumberFormat.IsValidPrefix(p.Prefix));
+				model.NumberPrefixes.Add(new RecordsNumberPrefixRow { DefinitionKey = type.Key, Label = NumberedTypeLabel(type.Key), DefaultPrefix = type.Value, Prefix = custom?.Prefix });
+			}
+
 			var sequences = await _numbering.GetSequencesAsync(DepartmentId, numbering, model.NumberingYear);
 			var grouped = sequences.Any(s => s.GroupId.HasValue);
 			var groupNames = grouped
@@ -1296,7 +1310,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			foreach (var sequence in sequences)
 			{
 				var label = sequence.DefinitionKeys.Count == numberedTypes ? _localizer["NumberingAllTypes"].Value
-					: string.Join(", ", sequence.DefinitionKeys.Select(k => RmsDefinitionKeys.LockedTypes.TryGetValue(k, out var type) ? type.ToString() : _localizer["IncidentReports"].Value));
+					: string.Join(", ", sequence.DefinitionKeys.Select(NumberedTypeLabel));
 				if (grouped)
 					label += " - " + (sequence.GroupId.HasValue ? (groupNames.TryGetValue(sequence.GroupId.Value, out var groupName) ? groupName : sequence.GroupId.Value.ToString()) : _localizer["NumberingNoGroup"].Value);
 				model.NextNumbers.Add(new RecordsNextNumberRow { ScopeKey = sequence.ScopeKey, Label = label, NextNumber = sequence.NextNumber, CurrentNextSequence = sequence.NextSequence });
@@ -1324,6 +1338,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.HasLogo = (await _branding.GetBrandingAsync(DepartmentId)).HasLogo;
 
 			return model;
+		}
+
+		private string NumberedTypeLabel(string definitionKey)
+		{
+			return RmsDefinitionKeys.LockedTypes.TryGetValue(definitionKey, out var type) ? type.ToString() : _localizer["IncidentReports"].Value;
 		}
 
 		/// <summary>
@@ -1607,6 +1626,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (model.ParticipantRows.All(p => !string.IsNullOrWhiteSpace(p.UserId))) model.ParticipantRows.Add(new RecordParticipantEditRow { Selected = true });
 
 			var units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId) ?? new List<Unit>();
+
+			// A unit deleted since it was put on this record keeps its response row and selection: the rows are built from
+			// AvailableUnits and the save rebuilds the record's units from the posted rows, so its times would otherwise be lost.
+			var referencedUnitIds = (model.Units ?? new List<RecordUnitResponseInput>()).Select(u => u.UnitId)
+				.Append(model.Details?.UnitId ?? 0).Where(id => id > 0 && units.All(u => u.UnitId != id)).ToHashSet();
+			if (referencedUnitIds.Count > 0)
+				units = units.Concat((await _unitsService.GetUnitsForDepartmentIncludingDeletedAsync(DepartmentId) ?? new List<Unit>())
+					.Where(u => referencedUnitIds.Contains(u.UnitId))).ToList();
+
 			model.AvailableUnits = units.OrderBy(u => u.Name).Select(u => new SelectListItem { Value = u.UnitId.ToString(), Text = u.Name }).ToList();
 
 			// The shared call picker resolves the selected call and searches bounded pages on demand.
@@ -1669,8 +1697,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			// Person fields pick active members; a value already on the record keeps its label through PersonnelLabels.
 			form.Personnel = (await SelectablePersonnelNamesAsync()).OrderBy(n => n.Value, StringComparer.CurrentCultureIgnoreCase).Select(n => new SelectListItem { Value = n.Key, Text = n.Value }).ToList();
 			form.PersonnelLabels = await PersonnelNamesAsync();
+			// Unit fields pick current units; a unit already on the record (deleted since) keeps its label through UnitLabels.
 			var units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId) ?? new List<Unit>();
 			form.AvailableUnits = units.OrderBy(u => u.Name).Select(u => new SelectListItem { Value = u.UnitId.ToString(), Text = u.Name }).ToList();
+			foreach (var unit in await _unitsService.GetUnitsForDepartmentIncludingDeletedAsync(DepartmentId) ?? new List<Unit>())
+				form.UnitLabels[unit.UnitId.ToString()] = unit.Name;
 			// Additional typed call-reference fields retain their own lists; the report's primary CallId uses the paged picker.
 			form.Calls = new List<SelectListItem>();
 			if (ClaimsAuthorizationHelper.CanViewCalls() && version.Schema.Sections.Any(s => s.Fields.Any(f => f.Type == RmsFieldType.CallReference)))

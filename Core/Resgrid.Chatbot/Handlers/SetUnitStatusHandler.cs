@@ -63,6 +63,11 @@ namespace Resgrid.Chatbot.Handlers
 					matchedState = Services.CustomStateMatcher.FindByBaseType(allowedStates, baseType.Value);
 					if (matchedState == null && baseType == ActionBaseTypes.Enroute)
 						matchedState = Services.CustomStateMatcher.FindByBaseType(allowedStates, ActionBaseTypes.Responding);
+					// Available and In Quarters are both "in service"; a department may only define one of them.
+					if (matchedState == null && baseType == ActionBaseTypes.Available)
+						matchedState = Services.CustomStateMatcher.FindByBaseType(allowedStates, ActionBaseTypes.InQuarters);
+					if (matchedState == null && baseType == ActionBaseTypes.InQuarters)
+						matchedState = Services.CustomStateMatcher.FindByBaseType(allowedStates, ActionBaseTypes.Available);
 				}
 
 				if (matchedState == null)

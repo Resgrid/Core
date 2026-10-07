@@ -1329,4 +1329,79 @@
   <data name="RunCardTriggerRequired" xml:space="preserve">
     <value>Προσθέστε τουλάχιστον έναν κανόνα ενεργοποίησης πριν αποθηκεύσετε αυτήν την κάρτα αποστολής.</value>
   </data>
+  <data name="InQuartersTurnoutLabel" xml:space="preserve">
+    <value>Χρόνος εξόδου από τον σταθμό (δευτερόλεπτα)</value>
+  </data>
+  <data name="InQuartersTurnoutHelp" xml:space="preserve">
+    <value>Ο χρόνος που χρειάζεται μια μονάδα στον σταθμό μέχρι να ξεκινήσει. Ισχύει για μονάδες με κατάσταση «Στον σταθμό» και για μονάδες χωρίς θέση GPS (θεωρείται ότι βρίσκονται στον σταθμό τους). Προστίθεται στον χρόνο μετάβασης κατά την κατάταξη των πλησιέστερων μονάδων. 0 = κανένας.</value>
+  </data>
+  <data name="MobileTurnoutLabel" xml:space="preserve">
+    <value>Χρόνος εξόδου εν κινήσει (δευτερόλεπτα)</value>
+  </data>
+  <data name="MobileTurnoutHelp" xml:space="preserve">
+    <value>Ο χρόνος που χρειάζεται μια μονάδα που βρίσκεται ήδη εκτός και είναι διαθέσιμη μέχρι να κινηθεί προς νέο συμβάν. Ισχύει για μονάδες που κατατάσσονται με βάση τη θέση GPS. Προστίθεται στον χρόνο μετάβασης κατά την κατάταξη των πλησιέστερων μονάδων. 0 = κανένας.</value>
+  </data>
+  <data name="StatusHoldToConfirmLabel" xml:space="preserve">
+    <value>Παρατεταμένο πάτημα για ορισμό κατάστασης</value>
+  </data>
+  <data name="StatusHoldToConfirmHelp" xml:space="preserve">
+    <value>Στις εφαρμογές Unit και Responder, τα πληρώματα πατούν παρατεταμένα ένα κουμπί κατάστασης για δύο δευτερόλεπτα για να την ορίσουν, αντί να το πατήσουν και μετά να πατήσουν Επόμενο ή Υποβολή. Αποτρέπει τα κατά λάθος πατήματα και τις ξεχασμένες επιβεβαιώσεις. Μια κατάσταση που χρειάζεται σημείωση ή επιλογή προορισμού ανοίγει ακόμη το επόμενο βήμα της.</value>
+  </data>
+  <data name="CallNumberingHeader" xml:space="preserve">
+    <value>Αρίθμηση κλήσεων</value>
+  </data>
+  <data name="CallNumberingIntro" xml:space="preserve">
+    <value>Πώς αριθμούνται οι νέες κλήσεις. Η αλλαγή του μοτίβου δεν επαναριθμεί ποτέ κλήσεις που έχουν ήδη αριθμό.</value>
+  </data>
+  <data name="CallNumberPattern" xml:space="preserve">
+    <value>Μοτίβο αριθμού κλήσης</value>
+  </data>
+  <data name="CallNumberExample" xml:space="preserve">
+    <value>Παράδειγμα:</value>
+  </data>
+  <data name="CallNumberPatternHelp" xml:space="preserve">
+    <value>Σταθερό κείμενο (γράμματα, ψηφία, - _ . /) γύρω από διακριτικά: {YYYY} ή {YY} το έτος, {MM} ο μήνας, {DD} η ημέρα και {SEQ} ο αύξων αριθμός, που πρέπει να εμφανίζεται μία φορά. Ο αύξων αριθμός ξεκινά ξανά από το 1 κάθε φορά που αλλάζει η ημερομηνία στον αριθμό: κάθε έτος με έτος, κάθε μήνα με {MM}, κάθε ημέρα με {DD} και ποτέ χωρίς ημερομηνία. Το {MM} απαιτεί έτος και το {DD} απαιτεί {MM}. Οι ημερομηνίες χρησιμοποιούν τη ζώνη ώρας του τμήματος.</value>
+  </data>
+  <data name="CallNumberSequenceWidth" xml:space="preserve">
+    <value>Ψηφία αύξοντα αριθμού</value>
+  </data>
+  <data name="CallNumberSequenceWidthHelp" xml:space="preserve">
+    <value>Συμπληρώνει τον αύξοντα αριθμό με αρχικά μηδενικά, οπότε το 4 γράφει 0153. Το 1 τον γράφει χωρίς συμπλήρωση, όπως έκανε πάντα το Resgrid.</value>
+  </data>
+  <data name="CallNumberNext" xml:space="preserve">
+    <value>Επόμενος αριθμός κλήσης</value>
+  </data>
+  <data name="CallNumberResetsYearly" xml:space="preserve">
+    <value>Ξεκινά ξανά από το 1 κάθε έτος.</value>
+  </data>
+  <data name="CallNumberResetsMonthly" xml:space="preserve">
+    <value>Ξεκινά ξανά από το 1 κάθε μήνα.</value>
+  </data>
+  <data name="CallNumberResetsDaily" xml:space="preserve">
+    <value>Ξεκινά ξανά από το 1 κάθε ημέρα.</value>
+  </data>
+  <data name="CallNumberResetsNever" xml:space="preserve">
+    <value>Δεν ξεκινά ποτέ ξανά.</value>
+  </data>
+  <data name="CallNumberRaiseTo" xml:space="preserve">
+    <value>Αύξηση του επόμενου αύξοντα αριθμού σε</value>
+  </data>
+  <data name="CallNumberRaiseToHelp" xml:space="preserve">
+    <value>Για τμήματα που συνεχίζουν αριθμούς που εκδόθηκαν πριν από το Resgrid: η επόμενη κλήση λαμβάνει αυτόν τον αύξοντα αριθμό. Μπορεί μόνο να αυξηθεί, ποτέ να μειωθεί, ώστε κανένας αριθμός να μην εκδίδεται δύο φορές. Αφήστε το κενό για να διατηρηθεί ο τρέχων αύξων αριθμός.</value>
+  </data>
+  <data name="CallNumberRaiseConfirm" xml:space="preserve">
+    <value>Αύξηση του επόμενου αριθμού κλήσης; Μπορεί μόνο να αυξηθεί, ποτέ να μειωθεί.</value>
+  </data>
+  <data name="CallNumberPatternInvalid" xml:space="preserve">
+    <value>Η αρίθμηση κλήσεων δεν αποθηκεύτηκε. Το μοτίβο χρειάζεται το {SEQ} ακριβώς μία φορά, μπορεί να περιέχει μόνο γράμματα, ψηφία, - _ . / και τα διακριτικά {YYYY}, {YY}, {MM} και {DD}, χρειάζεται έτος για το {MM} και {MM} για το {DD} και μπορεί να έχει έως 40 χαρακτήρες.</value>
+  </data>
+  <data name="CallNumberNextBelowCurrent" xml:space="preserve">
+    <value>Ο επόμενος αριθμός κλήσης δεν αυξήθηκε: μπορεί να αυξηθεί μόνο πάνω από τον αριθμό που λαμβάνει ήδη η επόμενη κλήση ({0}).</value>
+  </data>
+  <data name="CallNumberNextPatternChanged" xml:space="preserve">
+    <value>Ο επόμενος αριθμός κλήσης δεν αυξήθηκε επειδή το μοτίβο άλλαξε στην ίδια αποθήκευση. Αυξήστε τον ξανά για το νέο μοτίβο.</value>
+  </data>
+  <data name="CallSettingsSaved" xml:space="preserve">
+    <value>Οι ρυθμίσεις κλήσεων αποθηκεύτηκαν.</value>
+  </data>
 </root>

@@ -80,7 +80,7 @@ namespace Resgrid.Tests.Services
 				_callDispatchUnitRepo.Object, _callDispatchRoleRepo.Object, _callPriorityRepo.Object,
 				_shortenUrlProvider.Object, _callProtocolsRepo.Object, _geoLocationProvider.Object,
 				_departmentsService.Object, _callReferencesRepo.Object, _callContactsRepo.Object,
-				_indoorMapService.Object, _callVideoFeedRepo.Object,
+				_indoorMapService.Object, _callVideoFeedRepo.Object, Mock.Of<ICallNumberingService>(),
 				new Lazy<IProtectedWriteService>(() => _protectedWriteService.Object));
 		}
 

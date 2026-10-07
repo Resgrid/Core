@@ -752,6 +752,9 @@
   <data name="IncidentReport" xml:space="preserve">
     <value>Incident report</value>
   </data>
+  <data name="ReportsMenu" xml:space="preserve">
+    <value>Reports</value>
+  </data>
   <data name="SiteInfo" xml:space="preserve">
     <value>Site Info</value>
   </data>
@@ -868,5 +871,80 @@
   </data>
   <data name="NearestUnitsNoPosition" xml:space="preserve">
     <value>No position</value>
+  </data>
+  <data name="NearestUnitsIncludesTurnout" xml:space="preserve">
+    <value>incl. {0} s turnout</value>
+  </data>
+  <data name="PendingCallsHeader" xml:space="preserve">
+    <value>Pending Calls</value>
+  </data>
+  <data name="PendingCallsDescription" xml:space="preserve">
+    <value>Calls saved but not yet dispatched. Nobody has been notified. Open a call to choose who to send it to, then dispatch it.</value>
+  </data>
+  <data name="ViewAllPendingCalls" xml:space="preserve">
+    <value>View all</value>
+  </data>
+  <data name="NoPendingCalls" xml:space="preserve">
+    <value>No calls are waiting to be dispatched.</value>
+  </data>
+  <data name="SaveAsPending" xml:space="preserve">
+    <value>Save as pending (do not dispatch yet)</value>
+  </data>
+  <data name="SaveAsPendingHelp" xml:space="preserve">
+    <value>The call goes to Pending Calls without notifying anyone. A dispatcher picks it up, chooses who to send it to and dispatches it.</value>
+  </data>
+  <data name="PendingCallBanner" xml:space="preserve">
+    <value>Pending: this call has not been dispatched and nobody has been notified.</value>
+  </data>
+  <data name="ScheduledCallBanner" xml:space="preserve">
+    <value>Scheduled: this call has not been sent yet. It goes out at its scheduled dispatch time, or now with Dispatch Now.</value>
+  </data>
+  <data name="DispatchNow" xml:space="preserve">
+    <value>Dispatch Now</value>
+  </data>
+  <data name="SaveAndDispatchNow" xml:space="preserve">
+    <value>Save and Dispatch Now</value>
+  </data>
+  <data name="DispatchNowConfirm" xml:space="preserve">
+    <value>Dispatch this call now to everyone on its dispatch list?</value>
+  </data>
+  <data name="DispatchNowSucceeded" xml:space="preserve">
+    <value>The call was dispatched.</value>
+  </data>
+  <data name="DispatchNowNoRecipients" xml:space="preserve">
+    <value>Choose who to send this call to (personnel, groups, roles or units) before dispatching it.</value>
+  </data>
+  <data name="DispatchNowNotWaiting" xml:space="preserve">
+    <value>This call is not waiting to be dispatched.</value>
+  </data>
+  <data name="DispatchNowQueueFailed" xml:space="preserve">
+    <value>The dispatch could not be queued. The call is still waiting; try again.</value>
+  </data>
+  <data name="Received" xml:space="preserve">
+    <value>Received</value>
+  </data>
+  <data name="AddressLabelShort" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="StateFounded" xml:space="preserve">
+    <value>Founded</value>
+  </data>
+  <data name="StateMinor" xml:space="preserve">
+    <value>Minor</value>
+  </data>
+  <data name="StateTransferred" xml:space="preserve">
+    <value>Transferred</value>
+  </data>
+  <data name="StateFalseAlarm" xml:space="preserve">
+    <value>False Alarm</value>
+  </data>
+  <data name="StatePending" xml:space="preserve">
+    <value>Pending</value>
+  </data>
+  <data name="CloseBlockedByIncidentCommand" xml:space="preserve">
+    <value>This call has an active incident command. Close the incident command first, then close the call.</value>
+  </data>
+  <data name="SendNotificationHelp" xml:space="preserve">
+    <value>Tells everyone dispatched on the call, its units and the incident command team that the call is closed. The closing notes are not included.</value>
   </data>
 </root>

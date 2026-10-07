@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Resgrid.Web.Services.Attributes;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Framework;
@@ -38,6 +39,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpGet("GetAllCallPriorites")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Call_View)]
+		[DepartmentApiKeyScope(DepartmentApiKeyScopes.ReferenceRead)]
 		public async Task<ActionResult<CallPrioritiesResult>> GetAllCallPriorites()
 		{
 			var result = new CallPrioritiesResult();

@@ -130,6 +130,12 @@ namespace Resgrid.Model.Search
 		/// <summary>Set by the admin rebuild endpoint; the next sweep rebuilds the department and clears it.</summary>
 		public DateTime? RebuildRequestedOn { get; set; }
 
+		/// <summary>Call history backfill (M0261): the lowest CallId already walked, newest first; null to start from the newest call.</summary>
+		public int? CallBackfillCursor { get; set; }
+
+		/// <summary>When the call history backfill reached the oldest call, or a full rebuild projected every call; null while pending.</summary>
+		public DateTime? CallBackfillCompletedOn { get; set; }
+
 		public DateTime CreatedOn { get; set; }
 
 		public DateTime ModifiedOn { get; set; }

@@ -364,6 +364,7 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectAllClosedCallsByDidYearQuery { get; set; }
 		public string SelectNonDispatchedScheduledCallsByDateQuery { get; set; }
 		public string SelectNonDispatchedScheduledCallsByDidQuery { get; set; }
+		public string SelectPendingCallsByDidQuery { get; set; }
 		public string SelectCallsByContactQuery { get; set; }
 		public string SelectFlaggedCallNotesByDepartmentIdQuery { get; set; }
 		public string SelectFlaggedCallImagesByDepartmentIdQuery { get; set; }

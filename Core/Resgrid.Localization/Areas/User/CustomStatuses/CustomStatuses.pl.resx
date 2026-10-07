@@ -93,7 +93,7 @@
     <value>Zgłoszenia</value>
   </data>
   <data name="CallsAndStations" xml:space="preserve">
-    <value>Calls and Stations</value>
+    <value>Zgłoszenia i stacje</value>
   </data>
   <data name="ChangesWarning" xml:space="preserve">
     <value>Changes to custom statues can take up to 30 minutes to fully propagate though the Resgrid network. Mobile app users are encouraged to manually resync (Settings-&gt;Advanced Settings-&gt;ReSync).</value>
@@ -162,7 +162,7 @@
     <value>New Option</value>
   </data>
   <data name="NoDetail" xml:space="preserve">
-    <value>No Detail</value>
+    <value>Brak szczegółów</value>
   </data>
   <data name="None" xml:space="preserve">
     <value>Brak</value>
@@ -213,7 +213,7 @@
     <value>Staging</value>
   </data>
   <data name="Stations" xml:space="preserve">
-    <value>Stations</value>
+    <value>Stacje</value>
   </data>
   <data name="TextColorLabel" xml:space="preserve">
     <value>Text Color</value>
@@ -259,5 +259,29 @@
   </data>
   <data name="Completed" xml:space="preserve">
     <value>Zakończono</value>
+  </data>
+  <data name="InQuarters" xml:space="preserve">
+    <value>W bazie</value>
+  </data>
+  <data name="Pois" xml:space="preserve">
+    <value>POI</value>
+  </data>
+  <data name="CallsAndPois" xml:space="preserve">
+    <value>Zgłoszenia i POI</value>
+  </data>
+  <data name="StationsAndPois" xml:space="preserve">
+    <value>Stacje i POI</value>
+  </data>
+  <data name="CallsStationsAndPois" xml:space="preserve">
+    <value>Zgłoszenia, stacje i POI</value>
+  </data>
+  <data name="NextStatusesLabel" xml:space="preserve">
+    <value>Następne statusy</value>
+  </data>
+  <data name="NextStatusesHelp" xml:space="preserve">
+    <value>Gdy ten status jest bieżący, aplikacje Unit i Responder oferują tylko zaznaczone statusy oraz link „Pokaż wszystkie statusy” dla wszystkiego poza kolejnością. Pozostaw wszystkie pola niezaznaczone, aby oferować wszystkie statusy. Dyspozytorzy i strona internetowa nadal mogą ustawić dowolny status.</value>
+  </data>
+  <data name="NextStatusesAny" xml:space="preserve">
+    <value>Dowolny status</value>
   </data>
 </root>

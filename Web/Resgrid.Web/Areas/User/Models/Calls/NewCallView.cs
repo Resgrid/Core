@@ -45,6 +45,9 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 		[System.ComponentModel.DataAnnotations.DisplayFormat(DataFormatString = "{0:MM/dd/yyyy HH:mm}", ApplyFormatInEditMode = true)]
 		public DateTime? ScheduleDispatchDate { get; set; }
 
+		/// <summary>Save the call to Pending Calls without notifying anyone; a dispatcher sends it later.</summary>
+		public bool SaveAsPending { get; set; }
+
 		public NewCallView()
 		{
 			What3Words = new W3W();

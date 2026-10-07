@@ -93,7 +93,7 @@
     <value>Larm</value>
   </data>
   <data name="CallsAndStations" xml:space="preserve">
-    <value>Calls and Stations</value>
+    <value>Larm och stationer</value>
   </data>
   <data name="ChangesWarning" xml:space="preserve">
     <value>Changes to custom statues can take up to 30 minutes to fully propagate though the Resgrid network. Mobile app users are encouraged to manually resync (Settings-&gt;Advanced Settings-&gt;ReSync).</value>
@@ -162,7 +162,7 @@
     <value>New Option</value>
   </data>
   <data name="NoDetail" xml:space="preserve">
-    <value>No Detail</value>
+    <value>Ingen detalj</value>
   </data>
   <data name="None" xml:space="preserve">
     <value>Ingen</value>
@@ -213,7 +213,7 @@
     <value>Staging</value>
   </data>
   <data name="Stations" xml:space="preserve">
-    <value>Stations</value>
+    <value>Stationer</value>
   </data>
   <data name="TextColorLabel" xml:space="preserve">
     <value>Text Color</value>
@@ -259,5 +259,29 @@
   </data>
   <data name="Completed" xml:space="preserve">
     <value>Slutförd</value>
+  </data>
+  <data name="InQuarters" xml:space="preserve">
+    <value>På stationen</value>
+  </data>
+  <data name="Pois" xml:space="preserve">
+    <value>POI</value>
+  </data>
+  <data name="CallsAndPois" xml:space="preserve">
+    <value>Larm och POI</value>
+  </data>
+  <data name="StationsAndPois" xml:space="preserve">
+    <value>Stationer och POI</value>
+  </data>
+  <data name="CallsStationsAndPois" xml:space="preserve">
+    <value>Larm, stationer och POI</value>
+  </data>
+  <data name="NextStatusesLabel" xml:space="preserve">
+    <value>Nästa statusar</value>
+  </data>
+  <data name="NextStatusesHelp" xml:space="preserve">
+    <value>Medan den här statusen är aktuell erbjuder apparna Unit och Responder bara de markerade statusarna, plus en länk ”Visa alla statusar” för allt utanför ordningen. Lämna alla rutor omarkerade för att erbjuda alla statusar. Larmoperatörer och webbplatsen kan fortfarande sätta vilken status som helst.</value>
+  </data>
+  <data name="NextStatusesAny" xml:space="preserve">
+    <value>Valfri status</value>
   </data>
 </root>

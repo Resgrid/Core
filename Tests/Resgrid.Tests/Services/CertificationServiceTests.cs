@@ -195,7 +195,7 @@ namespace Resgrid.Tests.Services
 			_requirements.Add(new PersonnelRoleCertificationRequirement { PersonnelRoleCertificationRequirementId = 1, PersonnelRoleId = 12, DepartmentId = Dept, DepartmentCertificationTypeId = 1, IsMandatory = true });
 			var paramedic = _types.First(t => t.DepartmentCertificationTypeId == 1);
 			(await FluentActions.Awaiting(() => _service.SaveCertificationTypeAsync(new DepartmentCertificationType { DepartmentCertificationTypeId = 1, DepartmentId = Dept, Type = paramedic.Type, Code = "P-NEW" }, "admin")).Should().ThrowAsync<InvalidOperationException>()).Which.Message.Should().Be("certifications_type_code_locked");
-			(await FluentActions.Awaiting(() => _service.DeleteCertificationTypeByIdAsync(1)).Should().ThrowAsync<InvalidOperationException>()).Which.Message.Should().Be("certifications_type_in_use");
+			(await FluentActions.Awaiting(() => _service.DeleteCertificationTypeByIdAsync(1, "admin")).Should().ThrowAsync<InvalidOperationException>()).Which.Message.Should().Be("certifications_type_in_use");
 
 			AddRecord(3, Today.AddYears(1));
 			(await FluentActions.Awaiting(() => _service.SaveCertificationTypeAsync(new DepartmentCertificationType { DepartmentCertificationTypeId = 3, DepartmentId = Dept, Type = "Skills Check", Code = "SKILLS", AppliesTo = 1 }, "admin")).Should().ThrowAsync<InvalidOperationException>()).Which.Message.Should().Be("certifications_type_scope_locked");
@@ -203,8 +203,11 @@ namespace Resgrid.Tests.Services
 			var unit = await _service.SaveCertificationTypeAsync(new DepartmentCertificationType { DepartmentId = Dept, Type = "Pump Test", AppliesTo = 1, RequiresVerification = true, RenewalCreditHoursRequired = 8 }, "admin");
 			unit.RequiresVerification.Should().BeFalse("units are not verified"); unit.RenewalCreditHoursRequired.Should().BeNull("units earn no credits");
 
-			(await _service.DeleteCertificationTypeByIdAsync(4)).Should().BeTrue();
+			(await _service.DeleteCertificationTypeByIdAsync(4, "admin")).Should().BeTrue();
 			_types.Single(t => t.DepartmentCertificationTypeId == 4).IsDeleted.Should().BeTrue("soft delete");
+			// Attributed to the admin: the "system" fallback has no profile and named nobody (Sentry: AuditQueueLogic NRE).
+			Audits.Last().Type.Should().Be(AuditLogTypes.CertificationTypeRemoved);
+			Audits.Last().UserId.Should().Be("admin");
 			(await _service.GetActiveCertificationTypesAsync(Dept, CertificationAppliesTo.Person)).Select(t => t.Code).Should().NotContain("ICS-100");
 			(await _service.DoesCertificationTypeAlreadyExistAsync(Dept, "nremt p")).Should().BeTrue("code match on the derived code");
 		}

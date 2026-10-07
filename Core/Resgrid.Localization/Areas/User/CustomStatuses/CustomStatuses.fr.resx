@@ -93,7 +93,7 @@
     <value>Appels</value>
   </data>
   <data name="CallsAndStations" xml:space="preserve">
-    <value>Calls and Stations</value>
+    <value>Appels et stations</value>
   </data>
   <data name="ChangesWarning" xml:space="preserve">
     <value>Changes to custom statues can take up to 30 minutes to fully propagate though the Resgrid network. Mobile app users are encouraged to manually resync (Settings-&gt;Advanced Settings-&gt;ReSync).</value>
@@ -162,7 +162,7 @@
     <value>New Option</value>
   </data>
   <data name="NoDetail" xml:space="preserve">
-    <value>No Detail</value>
+    <value>Aucun détail</value>
   </data>
   <data name="None" xml:space="preserve">
     <value>Aucun</value>
@@ -259,5 +259,29 @@
   </data>
   <data name="Completed" xml:space="preserve">
     <value>Terminé</value>
+  </data>
+  <data name="InQuarters" xml:space="preserve">
+    <value>En caserne</value>
+  </data>
+  <data name="Pois" xml:space="preserve">
+    <value>POI</value>
+  </data>
+  <data name="CallsAndPois" xml:space="preserve">
+    <value>Appels et POI</value>
+  </data>
+  <data name="StationsAndPois" xml:space="preserve">
+    <value>Stations et POI</value>
+  </data>
+  <data name="CallsStationsAndPois" xml:space="preserve">
+    <value>Appels, stations et POI</value>
+  </data>
+  <data name="NextStatusesLabel" xml:space="preserve">
+    <value>Statuts suivants</value>
+  </data>
+  <data name="NextStatusesHelp" xml:space="preserve">
+    <value>Tant que ce statut est le statut actuel, les applications Unit et Responder ne proposent que les statuts cochés, avec un lien « Afficher tous les statuts » pour tout ce qui sort de la séquence. Laissez toutes les cases décochées pour proposer tous les statuts. Les répartiteurs et le site web peuvent toujours définir n’importe quel statut.</value>
+  </data>
+  <data name="NextStatusesAny" xml:space="preserve">
+    <value>N’importe quel statut</value>
   </data>
 </root>

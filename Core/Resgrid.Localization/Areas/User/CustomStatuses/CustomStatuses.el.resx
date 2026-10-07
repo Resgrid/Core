@@ -318,4 +318,28 @@
   <data name="Completed" xml:space="preserve">
     <value>Ολοκληρώθηκε</value>
   </data>
+  <data name="InQuarters" xml:space="preserve">
+    <value>Στον σταθμό</value>
+  </data>
+  <data name="Pois" xml:space="preserve">
+    <value>Σημεία Ενδιαφέροντος</value>
+  </data>
+  <data name="CallsAndPois" xml:space="preserve">
+    <value>Κλήσεις και Σημεία Ενδιαφέροντος</value>
+  </data>
+  <data name="StationsAndPois" xml:space="preserve">
+    <value>Σταθμοί και Σημεία Ενδιαφέροντος</value>
+  </data>
+  <data name="CallsStationsAndPois" xml:space="preserve">
+    <value>Κλήσεις, Σταθμοί και Σημεία Ενδιαφέροντος</value>
+  </data>
+  <data name="NextStatusesLabel" xml:space="preserve">
+    <value>Επόμενες καταστάσεις</value>
+  </data>
+  <data name="NextStatusesHelp" xml:space="preserve">
+    <value>Όσο αυτή η κατάσταση είναι η τρέχουσα, οι εφαρμογές Unit και Responder προσφέρουν μόνο τις επιλεγμένες καταστάσεις, μαζί με έναν σύνδεσμο «Εμφάνιση όλων των καταστάσεων» για ό,τι είναι εκτός σειράς. Αφήστε όλα τα πλαίσια κενά για να προσφέρονται όλες οι καταστάσεις. Οι διαχειριστές αποστολής και ο ιστότοπος μπορούν ακόμη να ορίσουν οποιαδήποτε κατάσταση.</value>
+  </data>
+  <data name="NextStatusesAny" xml:space="preserve">
+    <value>Οποιαδήποτε κατάσταση</value>
+  </data>
 </root>

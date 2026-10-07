@@ -612,7 +612,7 @@ namespace Resgrid.Tests.Security
 				.ReturnsAsync(true);
 			var controller = new Resgrid.Web.Areas.User.Controllers.SecurityController(departments.Object, Mock.Of<IAuditService>(), Mock.Of<IPermissionsService>(),
 				Mock.Of<IEventAggregator>(), Mock.Of<IDepartmentSettingsService>(), Mock.Of<ISystemAuditsService>(), users.Object, strings.Object, sso.Object,
-				Mock.Of<IEncryptionService>(), Mock.Of<IRecordsCutoverService>(), Deployed(), evidence.Object, policy.Object)
+				Mock.Of<IEncryptionService>(), Mock.Of<IRecordsCutoverService>(), Deployed(), evidence.Object, policy.Object, Mock.Of<IDepartmentApiKeysService>())
 			{
 				ControllerContext = new ControllerContext { HttpContext = http },
 				TempData = new Microsoft.AspNetCore.Mvc.ViewFeatures.TempDataDictionary(http, Mock.Of<Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataProvider>())

@@ -1198,7 +1198,7 @@
     <value>Avdelningens kalender för möten, evenemang och utbildningskvällar.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.call-settings">
-    <value>Brevlådan och formatet som används för att importera larm från CAD eller personsökar-e-post.</value>
+    <value>Brevlådan och formatet som används för att importera larm från CAD eller personsökar-e-post, samt larmnummerformatet och nästa nummer.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.call-templates">
     <value>Återanvändbara text- och anteckningsmallar för larm som snabbar upp registreringen.</value>
@@ -1207,7 +1207,7 @@
     <value>Larmtyperna och prioriteterna som används för att klassificera larm.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.calls">
-    <value>Aktiva larm och deras utlarmningsstatus.</value>
+    <value>Aktiva larm och deras utlarmningsstatus. När ett larm stängs kan alla på larmet aviseras, och ett larm med aktiv insatsledning stängs först från insatsledningen.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.certification-dashboard">
     <value>Vem som har vilka certifieringar och vad som snart går ut.</value>
@@ -1654,7 +1654,7 @@
     <value>Lägg till dina tjänsteavtal och deras taxor.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.custom-statuses">
-    <value>Granska de inbyggda statusarna och lägg till egna där era begrepp skiljer sig.</value>
+    <value>Granska de inbyggda statusarna och lägg till egna där era begrepp skiljer sig. Ge var och en en bastyp; På stationen talar om för larmrekommendationerna att en enhet är på sin station.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.data-protection">
     <value>Granska checklistan för anslutning och planera nyckelåterställning innan ni ansluter er.</value>
@@ -1669,7 +1669,7 @@
     <value>Ge åtkomst till Dispatch-appen för de personer som larmar ut, och låt dem sedan logga in.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.dispatch-settings">
-    <value>Välj om utlarmning ska följa grupper eller skift, och granska alternativen för automatisk status.</value>
+    <value>Välj om utlarmning ska följa grupper eller skift, och granska alternativen för automatisk status. Ange utryckningstider för närmaste enhet om besättningar behöver tid att lämna stationen.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.distribution-lists">
     <value>Skapa listor för grupper ni ofta meddelar, till exempel befäl.</value>
@@ -2076,6 +2076,9 @@
   <data xml:space="preserve" name="Field.RecordsNumberingConfig.Pattern">
     <value>Inställningar för numrering av poster / Mönster</value>
   </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingConfig.Prefixes">
+    <value>Inställningar för numrering av poster / Prefix</value>
+  </data>
   <data xml:space="preserve" name="Field.RecordsNumberingFloor.NextSequence">
     <value>Lägsta nivå för numrering av poster / Nästa sekvens</value>
   </data>
@@ -2087,6 +2090,12 @@
   </data>
   <data xml:space="preserve" name="Field.RecordsNumberingFloor.SetOn">
     <value>Lägsta nivå för numrering av poster / Angiven</value>
+  </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingPrefix.DefinitionKey">
+    <value>Prefix för numrering av poster / Definitionsnyckel</value>
+  </data>
+  <data xml:space="preserve" name="Field.RecordsNumberingPrefix.Prefix">
+    <value>Prefix för numrering av poster / Prefix</value>
   </data>
   <data xml:space="preserve" name="Field.RecordsRetentionOverride.AppliesFrom">
     <value>Undantag för bevarande av poster / Gäller från</value>
@@ -2161,7 +2170,7 @@
     <value>Tillåt positioner utöver den konfigurerade åldersgränsen vid val av närmaste enhet, markerade som inaktuella. Granska risken med inaktuella positioner.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.MaxLocationAgeSeconds">
-    <value>Uteslut äldre enhetspositioner från kandidater för närmaste enhet; noll tar bort åldersgränsen. IncludeStaleLocations ändrar detta beteende.</value>
+    <value>Uteslut äldre enhetspositioner från kandidater för närmaste enhet; noll tar bort åldersgränsen. IncludeStaleLocations ändrar detta beteende. En enhet som mäts från sin station (statusen På stationen, eller ingen GPS-position) blir aldrig för gammal.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.MaxRadiusMeters">
     <value>Maximalt avstånd för kandidater i meter; noll tar bort radiegränsen. Detta är ingen garanti för insatstid eller ruttsäkerhet.</value>
@@ -2179,7 +2188,7 @@
     <value>Minsta konfigurerade bemanningsnivå för att en enhet ska vara berättigad till rekommendation; noll inaktiverar spärren. Enheter utan definierade platser passerar, och insatskort kan åsidosätta detta.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.UseRoutedEta">
-    <value>Omrangordna de utvalda kandidaterna med hjälp av leverantörens restidsuppskattningar. Den operativa vägen kan göra anrop till externa leverantörer; det gör inte Admin Assist.</value>
+    <value>Omrangordna de utvalda kandidaterna med hjälp av leverantörens restidsuppskattningar. Den operativa vägen kan göra anrop till externa leverantörer; det gör inte Admin Assist. De konfigurerade utryckningstiderna läggs till varje körtid.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.GroupDispatchScopeConfig.DepartmentWideRoleIds">
     <value>Befintliga roller som tillåts se utlarmningsvyer för hela avdelningen när gruppavgränsning är aktiverad. Detta ändrar vyns omfattning, inte licensiering eller operativ kvalifikation.</value>
@@ -2230,13 +2239,16 @@
     <value>Starta om postsekvenserna varje kalenderår i avdelningens tidszon.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.SequenceWidth">
-    <value>Nollutfylld sekvensbredd för definitioner som använder avdelningens standardvärden. Postredigeraren validerar den bredd som stöds.</value>
+    <value>Siffror i SEQ-delen av nummermönstret, nollutfyllda: 4 skriver 0184. 3 till 8 siffror; en ändring behåller nästa nummer för varje sekvens. Avdelningsdefinitioner med egen numrering behåller sin egen bredd.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.Floors">
     <value>Höjda nästa nummer, ett per nummersekvens, för avdelningar som fortsätter nummer som utfärdats före Resgrid. Ett nästa nummer kan bara höjas, och redan utfärdade nummer går alltid före, så ett höjt nästa nummer orsakar aldrig en dubblett.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.Pattern">
-    <value>Nummermönster för de inbyggda posttyperna och insatsrapporterna, byggt av fast text och platshållarna PREFIX, YYYY, YY, GROUP och SEQ. Utan värde gäller mönstret som ”Inkludera år” och ”Sekvens per grupp” beskriver. Sekvensen börjar om när texten runt SEQ ändras.</value>
+    <value>Hur postnummer skrivs för de inbyggda posttyperna och insatsrapporterna, till exempel RUN-0153: fast text och platshållarna PREFIX, YYYY eller YY, GROUP och SEQ. PREFIX skriver varje posttyps prefix: standardvärdet eller avdelningens eget från ”Prefix per journaltyp”. Att ändra mönstret numrerar inte om poster som redan har nummer. Tills ett mönster sparas visar sidan det som avdelningen alltid har använt.</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.Prefixes">
+    <value>Avdelningens eget prefix för varje inbyggd posttyp och för insatsrapporter, som platshållaren PREFIX skriver i stället för standardvärdet (RUN, TRN, INC och så vidare). En typ utan eget prefix använder sitt standardvärde. Ett nytt prefix startar en egen sekvens; nummer som redan har utfärdats behåller sitt prefix, och typer med samma prefix delar en sekvens.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingFloor.NextSequence">
     <value>Det lägsta sekvensnummer som sekvensen får utfärda härnäst.</value>
@@ -2249,6 +2261,12 @@
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingFloor.SetOn">
     <value>När nästa nummer höjdes (UTC).</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingPrefix.DefinitionKey">
+    <value>Den inbyggda posttyp som prefixet gäller, till exempel system.run eller system.neris-incident.</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.RecordsNumberingPrefix.Prefix">
+    <value>2 till 6 versaler (A-Z) eller siffror. Ett prefix som inte längre är giltigt faller tillbaka till typens standardvärde.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsRetentionOverride.AppliesFrom">
     <value>Framåtriktad gräns för revideringar som omfattas av undantaget, utvärderad av postens livscykel.</value>
@@ -4951,7 +4969,7 @@
     <value>Om postsynlighet är avdelningsövergripande eller gruppbegränsad. Gruppomfång begränsar befintlig behörighet och ger aldrig åtkomst.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.RecordsNumberingConfig">
-    <value>Numrering, årsåterställning och sekvensformatering för definitioner som inte åsidosätter avdelningens konfiguration.</value>
+    <value>Avdelningens numrering för de inbyggda posttyperna och insatsrapporterna: nummermönster, antal siffror i sekvensen, prefix per posttyp och höjda nästa nummer. Nummer tilldelas när en post slutförs. Avdelningens definitioner med egen numrering behåller den.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.RecordsRetentionPolicy">
     <value>Standard- och definitionsspecifik lagring, inklusive historik för tidigare policyer. Spärrar och regler för begränsade klasser kan förhindra gallringsberättigande.</value>
@@ -6704,5 +6722,62 @@
   </data>
   <data xml:space="preserve" name="Ui.worklist">
     <value>Administratörens uppgiftslista</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.InQuartersTurnoutSeconds">
+    <value>Inställningar för utlarmningsrekommendationer / Utryckningstid från stationen i sekunder</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.InQuartersTurnoutSeconds">
+    <value>Sekunder som en enhet på sin station behöver innan den är i rörelse; gäller statusen På stationen och enheter utan GPS-position. Läggs till restiden när de närmaste enheterna rangordnas; noll betyder ingen.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.MobileTurnoutSeconds">
+    <value>Inställningar för utlarmningsrekommendationer / Utryckningstid ute i sekunder</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.MobileTurnoutSeconds">
+    <value>Sekunder som en enhet som redan är ute och tillgänglig behöver innan den är i rörelse; gäller enheter som rangordnas efter GPS. Läggs till restiden när de närmaste enheterna rangordnas; noll betyder ingen.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.StatusHoldToConfirm">
+    <value>Håll in för att sätta status</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.StatusHoldToConfirm">
+    <value>Apparna Unit och Responder sätter en status med två sekunders intryckning i stället för ett tryck följt av Nästa eller Skicka. Statusar som kräver en anteckning eller destination öppnar fortfarande det steget.</value>
+  </data>
+  <data name="Setting.CallNumberingConfig" xml:space="preserve">
+    <value>Konfiguration för larmnumrering</value>
+  </data>
+  <data name="SettingHelp.CallNumberingConfig" xml:space="preserve">
+    <value>Hur nya larmnummer skrivs: mönstret för larmnummer och siffrorna i löpnumret, samt ett höjt nästa nummer för avdelningar som fortsätter nummer som utfärdats före Resgrid. En ändring numrerar aldrig om larm som redan har ett nummer.</value>
+  </data>
+  <data name="Field.CallNumberingConfig.Pattern" xml:space="preserve">
+    <value>Konfiguration för larmnumrering / Mönster</value>
+  </data>
+  <data name="FieldHelp.CallNumberingConfig.Pattern" xml:space="preserve">
+    <value>Hur larmnummer skrivs, till exempel FD-2026-0153: fast text plus platshållarna YYYY eller YY, MM, DD och SEQ. Löpnumret börjar om när datumet som skrivs ändras. Tills ett mönster sparas behåller larm de YY-SEQ-nummer som Resgrid alltid har utfärdat.</value>
+  </data>
+  <data name="Field.CallNumberingConfig.SequenceWidth" xml:space="preserve">
+    <value>Konfiguration för larmnumrering / Löpnummerbredd</value>
+  </data>
+  <data name="FieldHelp.CallNumberingConfig.SequenceWidth" xml:space="preserve">
+    <value>Siffror i SEQ-delen av larmnumret, utfyllda med nollor: 4 skriver 0153. 1 till 8 siffror, 1 utan utfyllnad; en ändring behåller löpnumrets nästa nummer.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.pending-calls">
+    <value>Väntande larm</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.pending-calls">
+    <value>Larm som sparats för att en operatör ska skicka dem senare, till exempel uppföljningar från ett annat system; ingen aviseras förrän larmet skickas ut.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.scheduled-calls">
+    <value>Schemalagda larm</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.scheduled-calls">
+    <value>Larm som går ut av sig själva vid en senare tidpunkt och kan skickas tidigare eller schemaläggas om.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.api-keys">
+    <value>API-nycklar</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.api-keys">
+    <value>Låt ett annat system anropa Resgrids API för organisationen med en egen nyckel, behörigheter, utgångsdatum och tillåtna adresser i stället för en medlems inloggning.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureValue.api-keys">
+    <value>Integrationer fortsätter att fungera när personer slutar, kan bara göra det nyckeln tillåter och kan återkallas direkt.</value>
   </data>
 </root>

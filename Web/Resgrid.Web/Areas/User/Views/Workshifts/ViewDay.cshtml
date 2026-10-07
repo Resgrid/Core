@@ -87,7 +87,11 @@
                             {
                                 @if (Model.Units != null && Model.Units.Any())
                                 {
-                                    var unit = Model.Units.FirstOrDefault(x => x.UnitId == int.Parse(enitity.BackingId));
+                                    var unit = Model.Units.FirstOrDefault(x => x.UnitId.ToString() == enitity.BackingId);
+                                    if (unit == null)
+                                    {
+                                        continue;
+                                    }
                                     <div class="feed-element">
                                         <div class="media-body">
                                             <strong>@unit.Name</strong><br>

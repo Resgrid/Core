@@ -74,6 +74,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IDepartmentProfileMediaService _departmentProfileMediaService;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> _departmentLocalizer;
 		private readonly IProtectedReadService _protectedReadService;
+		private readonly ICallNumberingService _callNumberingService;
 
 		public DepartmentController(IDepartmentsService departmentsService, IUsersService usersService, IActionLogsService actionLogsService,
 			IEmailService emailService, IDepartmentGroupsService departmentGroupsService, IUserProfileService userProfileService, IDeleteService deleteService,
@@ -84,7 +85,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IDocumentsService documentsService, INotesService notesService, IContactsService contactsService, ICheckInTimerService checkInTimerService,
 			ISecurityPinService securityPinService, IRunCardsService runCardsService, IFeatureToggleService featureToggleService,
 			IDepartmentProfileMediaService departmentProfileMediaService, IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> departmentLocalizer,
-			Resgrid.Model.AiDispatch.IAiDispatchEnrichmentService aiDispatchService, IProtectedReadService protectedReadService)
+			Resgrid.Model.AiDispatch.IAiDispatchEnrichmentService aiDispatchService, IProtectedReadService protectedReadService,
+			ICallNumberingService callNumberingService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -121,6 +123,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_departmentLocalizer = departmentLocalizer;
 			_aiDispatchService = aiDispatchService;
 			_protectedReadService = protectedReadService;
+			_callNumberingService = callNumberingService;
 		}
 
 		#endregion Private Members and Constructors
@@ -1233,7 +1236,30 @@ namespace Resgrid.Web.Areas.User.Controllers
 					model.MinutesTillPrune = callPruning.EmailImportCallPruneInterval.Value;
 			}
 
+			await FillCallNumberingAsync(model);
+
 			return View(model);
+		}
+
+		/// <summary>
+		/// The call numbering section: the saved pattern (the legacy one until a department saves its own) and the sequence a
+		/// call logged now falls in, with the number it would receive.
+		/// </summary>
+		private async Task FillCallNumberingAsync(CallSettingsView model)
+		{
+			var config = await _departmentSettingsService.GetCallNumberingConfigAsync(DepartmentId, true);
+			var now = DateTime.UtcNow;
+			var next = await _callNumberingService.GetNextAsync(DepartmentId, config, now);
+			var department = model.Department ?? await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+
+			model.CallNumberPattern = CallNumberFormat.EffectivePattern(config);
+			model.CallNumberSequenceWidth = CallNumberFormat.EffectiveWidth(config.SequenceWidth);
+			model.CallNumberScopeKey = next.ScopeKey;
+			model.CallNumberNextNumber = next.NextNumber;
+			model.CallNumberCurrentNextSequence = next.NextSequence;
+			model.CallNumberResetPeriod = next.Period;
+			model.CallNumberNextSequence = null;
+			model.CallNumberPreviewDate = string.IsNullOrWhiteSpace(department?.TimeZone) ? now : DateTimeHelpers.GetLocalDateTime(now, department.TimeZone);
 		}
 
 		/// <summary>
@@ -1332,12 +1358,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 					emailSettings = new DepartmentCallEmail();
 
 				emailSettings.DepartmentId = DepartmentId;
-				emailSettings.Hostname = model.EmailSettings.Hostname;
-				emailSettings.Password = model.EmailSettings.Password;
-				emailSettings.Port = model.EmailSettings.Port;
-				emailSettings.Username = model.EmailSettings.Username;
+				// The screen edits the email format (and call numbering) only. A stored POP3 mailbox is not on the form, so it is
+				// kept rather than blanked by a save. (Mailbox polling is not scheduled today; the row is kept so it is not lost.)
+				if (Request.HasFormContentType && Request.Form.ContainsKey("EmailSettings.Hostname"))
+				{
+					emailSettings.Hostname = model.EmailSettings.Hostname;
+					emailSettings.Password = model.EmailSettings.Password;
+					emailSettings.Port = model.EmailSettings.Port;
+					emailSettings.Username = model.EmailSettings.Username;
+					emailSettings.UseSsl = model.EmailSettings.UseSsl;
+				}
 				emailSettings.FormatType = model.EmailSettings.FormatType;
-				emailSettings.UseSsl = model.EmailSettings.UseSsl;
 
 				model.EmailSettings = await _departmentsService.SaveDepartmentEmailSettingsAsync(emailSettings, cancellationToken);
 
@@ -1360,10 +1391,56 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				await _departmentsService.InvalidateAllDepartmentsCache(DepartmentId);
 
-				model.Message = "Email settings were successfully saved.";
+				model.Message = _departmentLocalizer["CallSettingsSaved"];
+
+				await SaveCallNumberingAsync(model, cancellationToken);
+				return View(model);
 			}
 
+			await FillCallNumberingAsync(model);
 			return View(model);
+		}
+
+		/// <summary>
+		/// Saves setting 115 and any raised next number, then shows what was saved rather than what was posted: the sequence can
+		/// change with the pattern, and a raised number left in its box would be resubmitted. A refused pattern stays for correcting.
+		/// </summary>
+		private async Task SaveCallNumberingAsync(CallSettingsView model, CancellationToken cancellationToken)
+		{
+			var before = await _departmentSettingsService.GetCallNumberingConfigAsync(DepartmentId, true);
+			var beforeNext = await _callNumberingService.GetNextAsync(DepartmentId, before, DateTime.UtcNow);
+			var result = await _callNumberingService.SaveAsync(DepartmentId, UserId, new CallNumberingUpdate
+			{
+				Pattern = model.CallNumberPattern,
+				SequenceWidth = model.CallNumberSequenceWidth,
+				ScopeKey = model.CallNumberScopeKey,
+				NextSequence = model.CallNumberNextSequence
+			}, cancellationToken);
+
+			var rejectedPattern = result.PatternRejected ? model.CallNumberPattern : null;
+			await FillCallNumberingAsync(model);
+
+			if (!result.PatternRejected)
+			{
+				var after = await _departmentSettingsService.GetCallNumberingConfigAsync(DepartmentId, true);
+				SendProfileAudit(JsonConvert.SerializeObject(new { CallNumberPattern = CallNumberFormat.EffectivePattern(before), CallNumberSequenceWidth = CallNumberFormat.EffectiveWidth(before.SequenceWidth), beforeNext.NextNumber }),
+					JsonConvert.SerializeObject(new { CallNumberPattern = CallNumberFormat.EffectivePattern(after), CallNumberSequenceWidth = CallNumberFormat.EffectiveWidth(after.SequenceWidth), model.CallNumberNextNumber }));
+			}
+
+			var errors = new List<string>();
+			if (result.PatternRejected)
+				errors.Add(_departmentLocalizer["CallNumberPatternInvalid"]);
+			if (result.BelowCurrent != null)
+				errors.Add(_departmentLocalizer["CallNumberNextBelowCurrent", result.BelowCurrent.NextNumber]);
+			if (result.NextNotApplied)
+				errors.Add(_departmentLocalizer["CallNumberNextPatternChanged"]);
+			if (errors.Count > 0)
+				model.ErrorMessage = string.Join(" ", errors);
+
+			foreach (var key in ModelState.Keys.Where(k => k.StartsWith("CallNumber", StringComparison.Ordinal) && (k != nameof(CallSettingsView.CallNumberPattern) || !result.PatternRejected)).ToList())
+				ModelState.Remove(key);
+			if (rejectedPattern != null)
+				model.CallNumberPattern = rejectedPattern;
 		}
 
 		[HttpGet]
@@ -2043,6 +2120,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.UnitDispatchStatus = await _departmentSettingsService.GetUnitCallDispatchStatusToSetAsync(DepartmentId);
 			model.UnitClearStatus = await _departmentSettingsService.GetUnitCallReleaseStatusToSetAsync(DepartmentId);
 			model.PersonnelOnUnitSetUnitStatus = await _departmentSettingsService.GetPersonnelOnUnitSetUnitStatusAsync(DepartmentId);
+			model.StatusHoldToConfirm = await _departmentSettingsService.GetStatusHoldToConfirmAsync(DepartmentId, true);
 			model.AutoEnableCheckInTimers = await _departmentSettingsService.GetCheckInTimersAutoEnableForNewCallsAsync(DepartmentId);
 			model.NewCallFields = await BuildNewCallFieldRowsAsync();
 
@@ -2102,6 +2180,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.PersonnelOnUnitSetUnitStatus.ToString(),
 					DepartmentSettingTypes.PersonnelOnUnitSetUnitStatus, cancellationToken);
 
+				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.StatusHoldToConfirm.ToString(),
+					DepartmentSettingTypes.StatusHoldToConfirm, cancellationToken);
+
 				// Save check-in timer auto-enable setting
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.AutoEnableCheckInTimers.ToString(),
 					DepartmentSettingTypes.CheckInTimersAutoEnableForNewCalls, cancellationToken);
@@ -2131,7 +2212,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 						EtaShortlistSize = model.RecommendationEtaShortlistSize > 0 ? model.RecommendationEtaShortlistSize : DispatchRecommendationConfig.DefaultEtaShortlistSize,
 						RestPeriodMinutes = Math.Max(0, model.RecommendationRestPeriodMinutes),
 						UnitMinimumStaffingLevel = Math.Max(0, model.RecommendationUnitMinimumStaffingLevel),
-						MoveUpRecommendationsEnabled = model.RecommendationMoveUpEnabled
+						MoveUpRecommendationsEnabled = model.RecommendationMoveUpEnabled,
+						InQuartersTurnoutSeconds = Math.Max(0, model.RecommendationInQuartersTurnoutSeconds),
+						MobileTurnoutSeconds = Math.Max(0, model.RecommendationMobileTurnoutSeconds)
 					}, cancellationToken);
 				}
 
@@ -2177,6 +2260,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.RecommendationRestPeriodMinutes = config.RestPeriodMinutes;
 				model.RecommendationUnitMinimumStaffingLevel = config.UnitMinimumStaffingLevel;
 				model.RecommendationMoveUpEnabled = config.MoveUpRecommendationsEnabled;
+				model.RecommendationInQuartersTurnoutSeconds = config.InQuartersTurnoutSeconds;
+				model.RecommendationMobileTurnoutSeconds = config.MobileTurnoutSeconds;
 			}
 
 			model.DispatchRecommendationModes = new SelectList(new[]

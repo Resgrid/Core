@@ -111,7 +111,8 @@ namespace Resgrid.Services.Workforce
 		private async Task NameSubjectsAsync(IReadOnlyList<ResourceCostProfile> rows, int departmentId)
 		{
 			if (rows.All(r => !r.UnitId.HasValue)) { foreach (var r in rows) r.SubjectName = r.Name ?? r.ExternalResourceKey ?? r.InventoryAssetId; return; }
-			var units = (await _unitsService.GetUnitsForDepartmentAsync(departmentId))?.ToList() ?? new List<Unit>();
+			// Labels for existing profiles: a unit deleted since keeps its name.
+			var units = (await _unitsService.GetUnitsForDepartmentIncludingDeletedAsync(departmentId))?.ToList() ?? new List<Unit>();
 			foreach (var row in rows) row.SubjectName = row.UnitId.HasValue ? units.FirstOrDefault(u => u.UnitId == row.UnitId)?.Name ?? row.Name : row.Name ?? row.ExternalResourceKey ?? row.InventoryAssetId;
 		}
 
@@ -421,7 +422,7 @@ namespace Resgrid.Services.Workforce
 			// Units: DTR unit hours (operating / idle / days) merged with usage entries (distance, engine hours, fuel).
 			var usage = await GetUsageForDeploymentAsync(deployment.DeploymentId, departmentId);
 			var profiles = await ActiveResourceProfilesAsync(departmentId, through);
-			var unitNames = (await _unitsService.GetUnitsForDepartmentAsync(departmentId))?.ToDictionary(u => u.UnitId, u => u.Name) ?? new Dictionary<int, string>();
+			var unitNames = (await _unitsService.GetUnitsForDepartmentIncludingDeletedAsync(departmentId))?.ToDictionary(u => u.UnitId, u => u.Name) ?? new Dictionary<int, string>();
 			foreach (var unit in units)
 			{
 				var unitEntries = entries.Where(e => e.SubjectType == (int)DeploymentTimeSubjectTypes.Unit && e.DeploymentUnitId == unit.DeploymentUnitId).ToList();
@@ -462,7 +463,7 @@ namespace Resgrid.Services.Workforce
 		{
 			if (usage.Count == 0) return;
 			var profiles = await ActiveResourceProfilesAsync(departmentId, asOf);
-			var unitNames = usage.Any(u => u.UnitId.HasValue) ? (await _unitsService.GetUnitsForDepartmentAsync(departmentId))?.ToDictionary(u => u.UnitId, u => u.Name) ?? new Dictionary<int, string>() : new Dictionary<int, string>();
+			var unitNames = usage.Any(u => u.UnitId.HasValue) ? (await _unitsService.GetUnitsForDepartmentIncludingDeletedAsync(departmentId))?.ToDictionary(u => u.UnitId, u => u.Name) ?? new Dictionary<int, string>() : new Dictionary<int, string>();
 			foreach (var group in usage.GroupBy(u => (u.SubjectType, u.UnitId, u.InventoryAssetId, u.ExternalResourceKey)))
 			{
 				var rows = group.ToList();

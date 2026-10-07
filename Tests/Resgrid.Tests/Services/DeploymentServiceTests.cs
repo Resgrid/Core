@@ -87,6 +87,7 @@ namespace Resgrid.Tests.Services
 			_profiles.Setup(p => p.GetProfileByUserIdAsync(It.IsAny<string>(), It.IsAny<bool>())).ReturnsAsync((string id, bool _) => new UserProfile { UserId = id, FirstName = id, LastName = "Smith" });
 			_profiles.Setup(p => p.GetSelectedUserProfilesAsync(It.IsAny<List<string>>())).ReturnsAsync((List<string> ids) => ids.Select(id => new UserProfile { UserId = id, FirstName = id, LastName = "Smith" }).ToList());
 			_unitsService.Setup(u => u.GetUnitsForDepartmentUnlimitedAsync(DeptId)).ReturnsAsync(new List<Unit> { new Unit { UnitId = 1, DepartmentId = DeptId, Name = "Engine 1", Type = "Engine" }, new Unit { UnitId = 2, DepartmentId = DeptId, Name = "Engine 2" } });
+			_unitsService.Setup(u => u.GetUnitsForDepartmentIncludingDeletedAsync(DeptId)).ReturnsAsync(new List<Unit> { new Unit { UnitId = 1, DepartmentId = DeptId, Name = "Engine 1", Type = "Engine" }, new Unit { UnitId = 2, DepartmentId = DeptId, Name = "Engine 2" } });
 			_unitsService.Setup(u => u.GetUnitByIdAsync(1)).ReturnsAsync(new Unit { UnitId = 1, DepartmentId = DeptId, Name = "Engine 1" });
 			_unitsService.Setup(u => u.GetUnitByIdAsync(2)).ReturnsAsync(new Unit { UnitId = 2, DepartmentId = DeptId, Name = "Engine 2" });
 			_unitsService.Setup(u => u.GetRoleByIdAsync(10)).ReturnsAsync(new UnitRole { UnitRoleId = 10, UnitId = 1, Name = "Captain", PersonnelRoleId = 5, PersonnelRoleRequired = true });

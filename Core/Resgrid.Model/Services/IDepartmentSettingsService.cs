@@ -119,6 +119,12 @@ namespace Resgrid.Model.Services
 		Task<NewCallFieldPolicy> SaveNewCallFieldPolicyAsync(int departmentId, NewCallFieldPolicy policy,
 			CancellationToken cancellationToken = default(CancellationToken));
 
+		/// <summary>Setting 115: the department's call number pattern and digits; a new (legacy) config when none is saved or the blob is corrupt.</summary>
+		Task<CallNumberingConfig> GetCallNumberingConfigAsync(int departmentId, bool bypassCache = false);
+
+		Task<DepartmentSetting> SetCallNumberingConfigAsync(int departmentId, CallNumberingConfig config,
+			CancellationToken cancellationToken = default(CancellationToken));
+
 		/// <summary>
 		/// Gets the map center coordinates asynchronous.
 		/// </summary>
@@ -367,6 +373,12 @@ namespace Resgrid.Model.Services
 			List<UnitTypeCallStatusOverride> overrides, CancellationToken cancellationToken = default(CancellationToken));
 
 		Task<bool> GetPersonnelOnUnitSetUnitStatusAsync(int departmentId, bool bypassCache = false);
+
+		/// <summary>
+		/// Whether the Unit and Responder apps set a status with a press and hold instead of tap + Next/Submit
+		/// (<see cref="DepartmentSettingTypes.StatusHoldToConfirm"/>). False when unset. Cached.
+		/// </summary>
+		Task<bool> GetStatusHoldToConfirmAsync(int departmentId, bool bypassCache = false);
 
 		/// <summary>Department-wide dispatch recommendation mode (Off / StationBased / ClosestUnit). Cached.</summary>
 		Task<DispatchRecommendationModes> GetDispatchRecommendationModeAsync(int departmentId, bool bypassCache = false);

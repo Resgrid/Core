@@ -1,0 +1,163 @@
+/* Search page (/User/Search). Uses the INSPINIA palette from scss/_variables.scss; the theme's
+   legacy `.search-result` rules (Google-style blue/green links) are deliberately not used here. */
+
+/* -- Filters --------------------------------------------------------------- */
+.search-page .search-query { margin-bottom: 12px; }
+.search-page .search-query .form-control { height: 38px; font-size: 15px; }
+.search-page .search-query .btn { height: 38px; padding-left: 16px; padding-right: 16px; }
+.search-page .search-filters { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; }
+.search-page .search-filters .form-group { display: flex; align-items: center; gap: 6px; margin: 0; }
+.search-page .search-filters label { margin: 0; font-weight: 600; color: #676a6c; }
+.search-page .search-filters .form-control { width: auto; max-width: 100%; }.search-page .search-tips { margin-top: 10px; }
+
+/* -- Summary line above the list ------------------------------------------- */
+.search-page .search-summary {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 4px 12px;
+    padding-bottom: 10px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid #e7eaec;
+    color: #888888;
+}
+.search-page .search-summary p { margin: 0; }
+
+/* -- Result list ------------------------------------------------------------ */
+.search-hits { list-style: none; margin: 0; padding: 0; }
+.search-hit {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 12px;
+    margin: 0 -12px;
+    border-bottom: 1px solid #f0f2f3;
+    border-radius: 3px;
+    transition: background-color .15s ease-in-out;
+}
+.search-hit:last-child { border-bottom: 0; }
+.search-hit.is-link:hover,
+.search-hit:focus-within { background-color: #f7f9fb; }
+
+.search-hit-icon {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 17px;
+    background: #f1f3f4;
+    color: #5e5e5e;
+}
+.search-hit-body { flex: 1 1 auto; min-width: 0; }
+
+.search-hit-head { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
+.search-hit-title {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.35;
+    color: #2f4050;
+    overflow-wrap: anywhere;
+}
+.search-hit-title a { color: inherit; }
+/* The whole row is the link target; the title keeps the real anchor for keyboard and screen readers. */
+.search-hit-title a::after { content: ""; position: absolute; inset: 0; z-index: 1; }
+.search-hit:hover .search-hit-title a,
+.search-hit-title a:focus { color: #228BCB; text-decoration: none; }
+.search-hit-title a:focus-visible { outline: none; }
+.search-hit:focus-within { box-shadow: inset 0 0 0 2px #228BCB; }
+
+.search-hit-type {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    background: #f1f3f4;
+    color: #5e5e5e;
+}
+
+.search-hit-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 14px;
+    margin-top: 4px;
+    font-size: 12px;
+    color: #888888;
+}
+.search-hit-meta > span { display: inline-flex; align-items: center; gap: 5px; }
+.search-hit-meta .fa { color: #b0b6ba; }
+.search-hit-status {
+    padding: 1px 7px;
+    border: 1px solid #d1dade;
+    border-radius: 3px;
+    color: #5e5e5e;
+    font-weight: 600;
+}
+
+.search-hit-summary { margin: 6px 0 0; color: #676a6c; line-height: 1.5; overflow-wrap: anywhere; }
+.search-hit-snippet {
+    margin: 6px 0 0;
+    padding: 2px 0 2px 10px;
+    border-left: 3px solid #e7eaec;
+    color: #888888;
+    font-size: 12px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+/* No horizontal padding: a prefix match marks part of a word ("Engine" in "Engineer"), and padding would split it. */
+.search-hits mark {
+    padding: 0;
+    border-radius: 2px;
+    background: rgba(248, 172, 89, .3);
+    box-shadow: 0 0 0 1px rgba(248, 172, 89, .3);
+    color: inherit;
+}
+
+/* Family tones: calls take the danger color, people and resources the primary blue, reference
+   material info, records and places warning, business operations success. */
+.search-hit.tone-danger .search-hit-icon,
+.search-hit.tone-danger .search-hit-type { background: #fdeef0; color: #ED5565; }
+.search-hit.tone-primary .search-hit-icon,
+.search-hit.tone-primary .search-hit-type { background: #e9f3fa; color: #1c6fa3; }
+.search-hit.tone-info .search-hit-icon,
+.search-hit.tone-info .search-hit-type { background: #e9f9f9; color: #1a9a9c; }
+.search-hit.tone-warning .search-hit-icon,
+.search-hit.tone-warning .search-hit-type { background: #fef5eb; color: #c97a26; }
+.search-hit.tone-success .search-hit-icon,
+.search-hit.tone-success .search-hit-type { background: #e8f7f4; color: #138a72; }
+
+/* -- Empty states ----------------------------------------------------------- */
+.search-empty { padding: 40px 15px; text-align: center; color: #888888; }
+.search-empty > .fa { display: block; margin-bottom: 12px; font-size: 40px; color: #d1dade; }
+.search-empty h4 { margin: 0 0 6px; font-size: 16px; color: #676a6c; }
+.search-empty p { margin: 0; }
+
+/* -- Pager ------------------------------------------------------------------ */
+.search-page .pager { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; margin: 20px 0 0; }
+.search-page .pager::before,
+.search-page .pager::after { display: none; }
+.search-page .pager > li { display: block; }
+.search-page .pager > li > a { float: none; border-radius: 3px; padding: 6px 14px; }
+.search-page .pager .previous { grid-column: 1; justify-self: start; }
+.search-page .pager .search-page-position { grid-column: 2; }
+.search-page .pager .search-page-position > span { padding: 0 10px; border: 0; background: none; color: #888888; }
+.search-page .pager .next { grid-column: 3; justify-self: end; }
+
+@media (max-width: 767px) {
+    .search-hit { gap: 10px; }
+    .search-hit-icon { width: 32px; height: 32px; font-size: 14px; }
+    .search-page .search-filters .form-group { flex: 1 1 100%; }
+    .search-page .search-filters .form-group label { min-width: 70px; }
+    .search-page .search-filters .form-control { flex: 1 1 auto; }
+}

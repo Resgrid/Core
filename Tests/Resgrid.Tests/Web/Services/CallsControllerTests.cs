@@ -112,7 +112,9 @@ namespace Resgrid.Tests.Web.Services
 				_protectedWriteService.Object,
 				Mock.Of<IContactsService>(),
 				_dispatchScope.Object,
-				Mock.Of<ICallLocationHistoryService>())
+				Mock.Of<ICallLocationHistoryService>(),
+				Mock.Of<IPendingCallsService>(),
+				Mock.Of<ICallClosureService>())
 			{
 				ControllerContext = new ControllerContext { HttpContext = httpContext }
 			};
@@ -169,6 +171,32 @@ namespace Resgrid.Tests.Web.Services
 			result.Should().NotBeNull();
 			result.Data.Should().BeEmpty();
 			_dispatchScope.Verify(x => x.FilterCallsForUserAsync(DepartmentId, UserId, departmentCalls), Times.Once);
+		}
+
+		[Test]
+		public async Task GetPendingCalls_ForADepartmentApiKey_ReturnsTheWholeDepartment()
+		{
+			// The key acts as the managing user, whose membership it does not depend on: per-user scope filtering could hide
+			// every call from a valid key.
+			_controller.ControllerContext.HttpContext.User = new ClaimsPrincipal(new ClaimsIdentity(new[]
+			{
+				new Claim(ClaimTypes.PrimarySid, UserId),
+				new Claim(ClaimTypes.PrimaryGroupSid, DepartmentId.ToString())
+			}, Resgrid.Web.Services.Middleware.DepartmentApiKeyAuthHandler.AuthenticationType));
+			var pending = new List<Call>
+			{
+				new Call { CallId = 3, DepartmentId = DepartmentId, Name = "Follow-up", State = (int)CallStates.Pending, LoggedOn = DateTime.UtcNow }
+			};
+			_callsService.Setup(x => x.GetPendingCallsByDepartmentIdAsync(DepartmentId)).ReturnsAsync(pending);
+			_dispatchScope.Setup(x => x.FilterCallsForUserAsync(DepartmentId, UserId, pending)).ReturnsAsync(new List<Call>());
+			_mappingService.Setup(x => x.GetPOIsForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<Poi>());
+
+			var response = await _controller.GetPendingCalls();
+
+			var result = (response.Result as OkObjectResult)?.Value as PendingCallsResult;
+			result.Should().NotBeNull();
+			result.Data.Select(x => x.CallId).Should().Equal(new[] { "3" });
+			_dispatchScope.Verify(x => x.FilterCallsForUserAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<Call>>()), Times.Never);
 		}
 
 		[Test]

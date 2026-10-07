@@ -271,10 +271,14 @@ namespace Resgrid.Services
 			public string StatusText { get; set; }
 			public int? StaffingLevel { get; set; }
 			public bool InRestPeriod { get; set; }
+			/// <summary>The unit's current status is a custom status with the In Quarters base type.</summary>
+			public bool InQuarters { get; set; }
 			public double? Latitude { get; set; }
 			public double? Longitude { get; set; }
 			public DateTime? LocationTimestamp { get; set; }
 			public bool LocationIsStale { get; set; }
+			public UnitPositionSources PositionSource { get; set; }
+			public int TurnoutSeconds { get; set; }
 		}
 
 		private sealed class PersonnelCandidate
@@ -375,7 +379,8 @@ namespace Resgrid.Services
 					UnitTypeId = unitType.UnitTypeId,
 					UnitTypeName = unitType.Type,
 					StatusText = GetUnitStatusText(stateId, isCustom, customDetails),
-					StaffingLevel = staffingLevel
+					StaffingLevel = staffingLevel,
+					InQuarters = UnitResponseOrigin.IsInQuarters(stateId, customDetails)
 				});
 			}
 		}
@@ -837,6 +842,9 @@ namespace Resgrid.Services
 			{
 				var homeStation = await _departmentGroupsService.GetGroupByIdAsync(context.Card.HomeStationGroupId.Value, false);
 				anchor = await _geoService.GetStationCoordinatesAsync(homeStation);
+
+				if (anchor != null)
+					context.Result.Notes.Add($"Call has no location; measuring from the run card's home station '{homeStation?.Name}'.");
 			}
 
 			if (anchor == null)
@@ -857,6 +865,11 @@ namespace Resgrid.Services
 				await FillRoleRequirementByProximityAsync(context, requirement, anchor.Value);
 		}
 
+		/// <summary>
+		/// Places every unit candidate the way the nearest-unit board does (UnitResponseOrigin): an In Quarters status
+		/// at its station, else its live fix, else its station. Units with no fix used to be dropped here, so parked
+		/// vehicles that report no GPS were never recommended even when they sat in the closest station.
+		/// </summary>
 		private async Task AttachUnitLocationsAsync(RecommendationContext context)
 		{
 			var locations = await _unitsService.GetLatestUnitLocationsAsync(context.Request.DepartmentId) ?? new List<UnitsLocation>();
@@ -866,13 +879,52 @@ namespace Resgrid.Services
 				.GroupBy(l => l.UnitId)
 				.ToDictionary(g => g.Key, g => g.OrderByDescending(l => l.Timestamp).First());
 
+			Dictionary<int, DepartmentGroup> groupsById = null;
+			var stationPoints = new Dictionary<int, GeoMath.GeoPoint?>();
+
 			foreach (var candidate in context.UnitCandidates)
 			{
-				if (!latestByUnit.TryGetValue(candidate.Unit.UnitId, out var location))
+				latestByUnit.TryGetValue(candidate.Unit.UnitId, out var location);
+				var liveFix = location != null ? new GeoMath.GeoPoint((double)location.Latitude, (double)location.Longitude) : (GeoMath.GeoPoint?)null;
+
+				// Station coordinates can fall through to address geocoding, so they are only looked up when the
+				// unit will be placed there, and once per station.
+				GeoMath.GeoPoint? stationPoint = null;
+				if ((candidate.InQuarters || liveFix == null) && candidate.Unit.StationGroupId.HasValue)
+				{
+					var stationGroupId = candidate.Unit.StationGroupId.Value;
+
+					if (!stationPoints.TryGetValue(stationGroupId, out stationPoint))
+					{
+						context.CancellationToken.ThrowIfCancellationRequested();
+
+						if (groupsById == null)
+							groupsById = (await _departmentGroupsService.GetAllGroupsForDepartmentUnlimitedAsync(context.Request.DepartmentId) ?? new List<DepartmentGroup>())
+								.Where(g => g != null)
+								.GroupBy(g => g.DepartmentGroupId)
+								.ToDictionary(g => g.Key, g => g.First());
+
+						stationPoint = groupsById.TryGetValue(stationGroupId, out var station)
+							? await _geoService.GetStationCoordinatesAsync(station)
+							: null;
+						stationPoints[stationGroupId] = stationPoint;
+					}
+				}
+
+				var origin = UnitResponseOrigin.Resolve(candidate.InQuarters, liveFix, stationPoint, context.Config);
+
+				if (!origin.Point.HasValue)
 					continue;
 
-				candidate.Latitude = (double)location.Latitude;
-				candidate.Longitude = (double)location.Longitude;
+				candidate.Latitude = origin.Point.Value.Latitude;
+				candidate.Longitude = origin.Point.Value.Longitude;
+				candidate.PositionSource = origin.Source;
+				candidate.TurnoutSeconds = origin.TurnoutSeconds;
+
+				// A station is where the unit is said to be, not a fix that ages.
+				if (origin.Source != UnitPositionSources.Live)
+					continue;
+
 				candidate.LocationTimestamp = location.Timestamp;
 
 				if (context.Config.MaxLocationAgeSeconds > 0)
@@ -924,14 +976,24 @@ namespace Resgrid.Services
 				located = fresh;
 			}
 
+			// Ranked on response time rather than distance: the turnout for where the unit is plus estimated travel.
+			// With no turnout configured this orders exactly as distance did; with one, a unit already out can beat a
+			// nearer unit that still has to leave its station.
 			var ranked = located
-				.Select(c => new
+				.Select(c =>
 				{
-					Candidate = c,
-					Distance = GeoMath.HaversineMeters(anchor.Latitude, anchor.Longitude, c.Latitude.Value, c.Longitude.Value)
+					var distance = GeoMath.HaversineMeters(anchor.Latitude, anchor.Longitude, c.Latitude.Value, c.Longitude.Value);
+
+					return new
+					{
+						Candidate = c,
+						Distance = distance,
+						EstimatedResponse = c.TurnoutSeconds + UnitResponseOrigin.EstimateTravelSeconds(distance)
+					};
 				})
 				.Where(x => context.Config.MaxRadiusMeters <= 0 || x.Distance <= context.Config.MaxRadiusMeters)
 				.OrderBy(x => IsUnitInRestPeriod(context, x.Candidate.Unit.UnitId) ? 1 : 0)
+				.ThenBy(x => x.EstimatedResponse)
 				.ThenBy(x => x.Distance)
 				.ToList();
 
@@ -959,7 +1021,7 @@ namespace Resgrid.Services
 				{
 					var reranked = shortlist
 						.OrderBy(x => IsUnitInRestPeriod(context, x.Candidate.Unit.UnitId) ? 1 : 0)
-						.ThenBy(x => etaByUnitId.TryGetValue(x.Candidate.Unit.UnitId, out var eta) ? eta : double.MaxValue)
+						.ThenBy(x => etaByUnitId.TryGetValue(x.Candidate.Unit.UnitId, out var eta) ? x.Candidate.TurnoutSeconds + eta : double.MaxValue)
 						.ThenBy(x => x.Distance)
 						.ToList();
 
@@ -990,6 +1052,9 @@ namespace Resgrid.Services
 						: (hasEta ? RecommendationSelectionReasons.ClosestByEta : RecommendationSelectionReasons.ClosestByDistance),
 					DistanceMeters = entry.Distance,
 					EtaSeconds = hasEta ? etaSeconds : (double?)null,
+					PositionSource = entry.Candidate.PositionSource,
+					TurnoutSeconds = entry.Candidate.TurnoutSeconds,
+					ResponseSeconds = hasEta ? entry.Candidate.TurnoutSeconds + etaSeconds : entry.EstimatedResponse,
 					LocationTimestamp = entry.Candidate.LocationTimestamp,
 					LocationIsStale = entry.Candidate.LocationIsStale,
 					CurrentStatusText = entry.Candidate.StatusText,

@@ -47,6 +47,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IPasskeyFeatureGates _passkeyGates;
 		private readonly IMfaEvidenceService _mfaEvidence;
 		private readonly IMfaPolicyService _mfaPolicy;
+		private readonly IDepartmentApiKeysService _departmentApiKeysService;
 
 		public SecurityController(IDepartmentsService departmentsService, IAuditService auditService,
 			IPermissionsService permissionsService, IEventAggregator eventAggregator,
@@ -58,8 +59,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IRecordsCutoverService recordsCutoverService,
 			IPasskeyFeatureGates passkeyGates,
 			IMfaEvidenceService mfaEvidence,
-			IMfaPolicyService mfaPolicy)
+			IMfaPolicyService mfaPolicy,
+			IDepartmentApiKeysService departmentApiKeysService)
 		{
+			_departmentApiKeysService = departmentApiKeysService;
 			_mfaEvidence = mfaEvidence;
 			_mfaPolicy = mfaPolicy;
 			_passkeyGates = passkeyGates;
@@ -996,6 +999,99 @@ namespace Resgrid.Web.Areas.User.Controllers
 			};
 
 			return View("ScimSetup", model);
+		}
+
+		// -- Department API keys ----------------------------------------------
+
+		[HttpGet]
+		public async Task<IActionResult> ApiKeys()
+		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return RedirectToAction("Index");
+
+			var model = await BuildApiKeysViewAsync(new ApiKeysView());
+			model.SuccessMessage = TempData["ApiKeySuccess"] as string;
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[RequiresRecentTwoFactor(RequireForOperation = true, VerificationWindowMinutes = 5, MethodScope = Resgrid.Model.Security.MfaMethodScope.SecurityChange)]
+		public async Task<IActionResult> CreateApiKey(ApiKeysView model, CancellationToken cancellationToken)
+		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return RedirectToAction("Index");
+
+			model ??= new ApiKeysView();
+			var scopes = DepartmentApiKeyScopes.Parse(string.Join(" ", model.SelectedScopes ?? new List<string>()));
+			var maxDays = Math.Max(1, Config.SecurityConfig.DepartmentApiKeyMaxLifetimeDays);
+			var days = Math.Min(Math.Max(1, model.ExpiresInDays), maxDays);
+
+			if (string.IsNullOrWhiteSpace(model.Name))
+				model.ErrorMessage = _secLocalizer["ApiKeyErrorName"].Value;
+			else if (scopes.Count == 0)
+				model.ErrorMessage = _secLocalizer["ApiKeyErrorScopes"].Value;
+			else
+			{
+				var badRange = _departmentApiKeysService.ValidateAllowedIpRanges(model.AllowedIpRanges);
+				if (badRange != null)
+					model.ErrorMessage = string.Format(_secLocalizer["ApiKeyErrorIp"].Value, badRange);
+			}
+
+			if (model.ErrorMessage == null)
+			{
+				var result = await _departmentApiKeysService.CreateKeyAsync(DepartmentId, model.Name, scopes, DateTime.UtcNow.AddDays(days),
+					model.AllowedIpRanges, UserId, IpAddressHelper.GetRequestIP(Request, true), cancellationToken);
+
+				if (result.Success)
+				{
+					// The one response that carries the key: keep it out of every cache.
+					Response.Headers["Cache-Control"] = "no-store, no-cache, must-revalidate";
+					Response.Headers["Pragma"] = "no-cache";
+
+					var created = await BuildApiKeysViewAsync(new ApiKeysView());
+					created.NewKey = result.Key;
+					created.NewKeyName = result.ApiKey.Name;
+					return View("ApiKeys", created);
+				}
+
+				model.ErrorMessage = string.Format(_secLocalizer["ApiKeyErrorCreate"].Value, result.Error);
+			}
+
+			model.ExpiresInDays = days;
+			model.SelectedScopes = scopes;
+			return View("ApiKeys", await BuildApiKeysViewAsync(model));
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[RequiresRecentTwoFactor(RequireForOperation = true, VerificationWindowMinutes = 5, MethodScope = Resgrid.Model.Security.MfaMethodScope.SecurityChange)]
+		public async Task<IActionResult> RevokeApiKey(string id, CancellationToken cancellationToken)
+		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return RedirectToAction("Index");
+
+			if (await _departmentApiKeysService.RevokeKeyAsync(DepartmentId, id, UserId, IpAddressHelper.GetRequestIP(Request, true), cancellationToken))
+				TempData["ApiKeySuccess"] = _secLocalizer["ApiKeyRevoked"].Value;
+
+			return RedirectToAction("ApiKeys");
+		}
+
+		private async Task<ApiKeysView> BuildApiKeysViewAsync(ApiKeysView model)
+		{
+			var maxDays = Math.Max(1, Config.SecurityConfig.DepartmentApiKeyMaxLifetimeDays);
+
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			model.Keys = await _departmentApiKeysService.GetKeysForDepartmentAsync(DepartmentId);
+			model.ApiBaseUrl = Config.SystemBehaviorConfig.ResgridApiBaseUrl;
+			model.ExpiryChoices = new[] { 30, 90, 180, 365, 730 }.Where(x => x <= maxDays).ToList();
+			if (!model.ExpiryChoices.Contains(maxDays) && maxDays < 730)
+				model.ExpiryChoices.Add(maxDays);
+			if (!model.ExpiryChoices.Contains(model.ExpiresInDays))
+				model.ExpiresInDays = model.ExpiryChoices.Contains(90) ? 90 : model.ExpiryChoices.Last();
+
+			return model;
 		}
 
 		// -- Security policy --------------------------------------------------

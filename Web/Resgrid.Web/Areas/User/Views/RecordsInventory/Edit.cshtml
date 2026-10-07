@@ -87,8 +87,12 @@
             <legend>@inventoryLocalizer["RecordUsageNewConsumption"]</legend>
             <div class="form-group"><label asp-for="ItemId">@inventoryLocalizer["Items"]</label><select class="form-control" asp-for="ItemId" asp-items="Model.Types" required><option value="">—</option></select></div>
             <div class="form-group"><label asp-for="LocationId">@inventoryLocalizer["FromLocation"]</label><select class="form-control" asp-for="LocationId" asp-items="Model.Locations" aria-describedby="record-inventory-location-help"><option value="">@inventoryLocalizer["RecordUsageDefaultLocation"]</option></select><p id="record-inventory-location-help" class="help-block">@inventoryLocalizer["RecordUsageLocationHelp"]</p></div>
-            <div class="form-group"><label asp-for="LotId">@inventoryLocalizer["Lots"]</label><select class="form-control" asp-for="LotId" asp-items="Model.Lots"><option value="">—</option></select></div>
-            <div class="form-group"><label asp-for="AssetId">@inventoryLocalizer["Assets"]</label><select class="form-control" asp-for="AssetId" asp-items="Model.Assets"><option value="">—</option></select></div>
+            <div class="form-group"><label asp-for="LotId">@inventoryLocalizer["Lots"]</label><select class="form-control" asp-for="LotId" data-rgw-filter-by="ItemId"><option value="">—</option>
+                @foreach (var lot in Model.Lots) { <option value="@lot.Value" data-rgw-parent="@lot.Parent">@lot.Text</option> }
+            </select></div>
+            <div class="form-group"><label asp-for="AssetId">@inventoryLocalizer["Assets"]</label><select class="form-control" asp-for="AssetId" data-rgw-filter-by="ItemId"><option value="">—</option>
+                @foreach (var asset in Model.Assets) { <option value="@asset.Value" data-rgw-parent="@asset.Parent">@asset.Text</option> }
+            </select></div>
             <div class="form-group"><label asp-for="Quantity">@inventoryLocalizer["Amount"]</label><input class="form-control" asp-for="Quantity" type="number" min="0.000001" max="100000000" step="0.000001" required/></div>
             <div class="form-group"><label asp-for="Note">@inventoryLocalizer["Note"]</label><textarea class="form-control" asp-for="Note" rows="3" maxlength="16000"></textarea></div>
         </fieldset>
@@ -112,6 +116,8 @@
     </div>
 </div></div></div>
 @section Scripts {
+    @* Offers only the chosen item's lots and assets (data-rgw-filter-by); the script's wizard and modal parts find nothing to wire here. *@
+    <script src="~/js/app/common/workspace/resgrid.common.workspace.js" asp-append-version="true"></script>
     <script>
         (function () {
             var transaction = document.getElementById('ExistingTransactionId');

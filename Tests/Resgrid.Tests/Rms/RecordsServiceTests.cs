@@ -528,6 +528,20 @@ namespace Resgrid.Tests.Rms
 		}
 
 		[Test]
+		public async Task Finalize_renders_the_department_prefix_for_the_record_type()
+		{
+			var config = new RecordsNumberingConfig();
+			config.SetPrefix(RmsDefinitionKeys.Training, "DRILL");
+			_settings.Setup(s => s.GetRecordsNumberingConfigAsync(Dept, It.IsAny<bool>())).ReturnsAsync(config);
+
+			var first = await _service.CreateDraftAsync(Dept, "author", TrainingInput());
+			(await _service.FinalizeAsync(Dept, "author", first.Record.RmsOperationalRecordId, first.Record.RowVersion, "1", null, null)).Record.RecordNumber.Should().Be("DRILL-2026-0001");
+
+			var second = await _service.CreateDraftAsync(Dept, "author", TrainingInput());
+			(await _service.FinalizeAsync(Dept, "author", second.Record.RmsOperationalRecordId, second.Record.RowVersion, "1", null, null)).Record.RecordNumber.Should().Be("DRILL-2026-0002");
+		}
+
+		[Test]
 		public async Task Return_for_correction_enqueues_the_author_notification_after_commit()
 		{
 			var created = await _service.CreateDraftAsync(Dept, "author", TrainingInput());

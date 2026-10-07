@@ -5,8 +5,8 @@ namespace Resgrid.Model
 	/// <summary>
 	/// Department tuning for the run card dispatch recommendation engine, stored
 	/// serialized in DepartmentSettingTypes.DispatchRecommendationConfig. Covers
-	/// closest-unit location constraints, ETA re-ranking, rest-period rotation,
-	/// crew-staffing gating and move-up recommendations.
+	/// closest-unit location constraints, ETA re-ranking, turnout times, rest-period
+	/// rotation, crew-staffing gating and move-up recommendations.
 	/// </summary>
 	[ProtoContract]
 	public class DispatchRecommendationConfig
@@ -30,6 +30,9 @@ namespace Resgrid.Model
 		/// <summary>A rest period beyond a day would hold every resource back indefinitely.</summary>
 		public const int MaximumRestPeriodMinutes = 1440;
 
+		/// <summary>No crew needs more than half an hour to get rolling; anything above is a typo.</summary>
+		public const int MaximumTurnoutSeconds = 1800;
+
 		public DispatchRecommendationConfig()
 		{
 			MaxLocationAgeSeconds = DefaultMaxLocationAgeSeconds;
@@ -41,6 +44,8 @@ namespace Resgrid.Model
 			RestPeriodMinutes = 0;
 			UnitMinimumStaffingLevel = 0;
 			MoveUpRecommendationsEnabled = false;
+			InQuartersTurnoutSeconds = 0;
+			MobileTurnoutSeconds = 0;
 		}
 
 		/// <summary>Closest-unit mode: unit location fixes older than this are excluded. 0 = no age limit.</summary>
@@ -85,5 +90,20 @@ namespace Resgrid.Model
 		/// <summary>When true, the engine runs the station coverage move-up pass after selection.</summary>
 		[ProtoMember(9)]
 		public bool MoveUpRecommendationsEnabled { get; set; }
+
+		/// <summary>
+		/// Seconds a unit at its station needs before it is moving (crew to the vehicle, out the door). Applies to a
+		/// unit in an In Quarters status and to a unit with no GPS fix, which is taken to be at its station. Added to
+		/// the travel time when ranking closest units. 0 = no turnout.
+		/// </summary>
+		[ProtoMember(10)]
+		public int InQuartersTurnoutSeconds { get; set; }
+
+		/// <summary>
+		/// Seconds a unit that is already out and available (ranked from its live GPS position) needs before it is
+		/// moving to a new call. Added to the travel time when ranking closest units. 0 = no turnout.
+		/// </summary>
+		[ProtoMember(11)]
+		public int MobileTurnoutSeconds { get; set; }
 	}
 }

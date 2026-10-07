@@ -1271,4 +1271,79 @@
   <data name="RunCardTriggerRequired" xml:space="preserve">
     <value>Ajoutez au moins un déclencheur avant d’enregistrer ce plan de départ.</value>
   </data>
+  <data name="InQuartersTurnoutLabel" xml:space="preserve">
+    <value>Délai de départ en caserne (secondes)</value>
+  </data>
+  <data name="InQuartersTurnoutHelp" xml:space="preserve">
+    <value>Temps nécessaire à une unité en caserne avant de se mettre en route. S'applique aux unités dont le statut est « En caserne » et aux unités sans position GPS (considérées comme à leur caserne). Ajouté au temps de trajet pour classer les unités les plus proches. 0 = aucun.</value>
+  </data>
+  <data name="MobileTurnoutLabel" xml:space="preserve">
+    <value>Délai de départ en mobilité (secondes)</value>
+  </data>
+  <data name="MobileTurnoutHelp" xml:space="preserve">
+    <value>Temps nécessaire à une unité déjà sortie et disponible avant de se mettre en route vers un nouvel appel. S'applique aux unités classées d'après leur position GPS. Ajouté au temps de trajet pour classer les unités les plus proches. 0 = aucun.</value>
+  </data>
+  <data name="StatusHoldToConfirmLabel" xml:space="preserve">
+    <value>Maintenir appuyé pour définir le statut</value>
+  </data>
+  <data name="StatusHoldToConfirmHelp" xml:space="preserve">
+    <value>Dans les applications Unit et Responder, les équipages maintiennent un bouton de statut appuyé pendant deux secondes pour le définir, au lieu de le toucher puis d’appuyer sur Suivant ou Envoyer. Évite les appuis accidentels et les confirmations oubliées. Un statut qui nécessite une note ou le choix d’une destination ouvre toujours son étape suivante.</value>
+  </data>
+  <data name="CallNumberingHeader" xml:space="preserve">
+    <value>Numérotation des appels</value>
+  </data>
+  <data name="CallNumberingIntro" xml:space="preserve">
+    <value>Comment les nouveaux appels sont numérotés. Modifier le modèle ne renumérote jamais les appels qui ont déjà un numéro.</value>
+  </data>
+  <data name="CallNumberPattern" xml:space="preserve">
+    <value>Modèle de numéro d'appel</value>
+  </data>
+  <data name="CallNumberExample" xml:space="preserve">
+    <value>Exemple :</value>
+  </data>
+  <data name="CallNumberPatternHelp" xml:space="preserve">
+    <value>Texte fixe (lettres, chiffres, - _ . /) autour de jetons : {YYYY} ou {YY} l'année, {MM} le mois, {DD} le jour et {SEQ} la séquence, qui doit apparaître une seule fois. La séquence recommence à 1 chaque fois que la date du numéro change : chaque année avec une année, chaque mois avec {MM}, chaque jour avec {DD}, et jamais sans date. {MM} nécessite une année et {DD} nécessite {MM}. Les dates utilisent le fuseau horaire du service.</value>
+  </data>
+  <data name="CallNumberSequenceWidth" xml:space="preserve">
+    <value>Chiffres de la séquence</value>
+  </data>
+  <data name="CallNumberSequenceWidthHelp" xml:space="preserve">
+    <value>Complète la séquence avec des zéros en tête, ainsi 4 donne 0153. 1 l'écrit sans zéros, comme Resgrid l'a toujours fait.</value>
+  </data>
+  <data name="CallNumberNext" xml:space="preserve">
+    <value>Prochain numéro d'appel</value>
+  </data>
+  <data name="CallNumberResetsYearly" xml:space="preserve">
+    <value>Recommence à 1 chaque année.</value>
+  </data>
+  <data name="CallNumberResetsMonthly" xml:space="preserve">
+    <value>Recommence à 1 chaque mois.</value>
+  </data>
+  <data name="CallNumberResetsDaily" xml:space="preserve">
+    <value>Recommence à 1 chaque jour.</value>
+  </data>
+  <data name="CallNumberResetsNever" xml:space="preserve">
+    <value>Ne recommence jamais.</value>
+  </data>
+  <data name="CallNumberRaiseTo" xml:space="preserve">
+    <value>Relever la prochaine séquence à</value>
+  </data>
+  <data name="CallNumberRaiseToHelp" xml:space="preserve">
+    <value>Pour les services qui poursuivent des numéros émis avant Resgrid : le prochain appel reçoit cette séquence. Elle peut seulement être relevée, jamais abaissée, afin qu'aucun numéro ne soit émis deux fois. Laissez vide pour conserver la séquence actuelle.</value>
+  </data>
+  <data name="CallNumberRaiseConfirm" xml:space="preserve">
+    <value>Relever le prochain numéro d'appel ? Il peut seulement être relevé, jamais abaissé.</value>
+  </data>
+  <data name="CallNumberPatternInvalid" xml:space="preserve">
+    <value>La numérotation des appels n'a pas été enregistrée. Le modèle doit contenir {SEQ} exactement une fois, ne peut contenir que des lettres, des chiffres, - _ . / et les jetons {YYYY}, {YY}, {MM} et {DD}, nécessite une année pour {MM} et {MM} pour {DD}, et ne peut pas dépasser 40 caractères.</value>
+  </data>
+  <data name="CallNumberNextBelowCurrent" xml:space="preserve">
+    <value>Le prochain numéro d'appel n'a pas été relevé : il ne peut être relevé qu'au-dessus du numéro que le prochain appel reçoit déjà ({0}).</value>
+  </data>
+  <data name="CallNumberNextPatternChanged" xml:space="preserve">
+    <value>Le prochain numéro d'appel n'a pas été relevé car le modèle a changé lors du même enregistrement. Relevez-le à nouveau pour le nouveau modèle.</value>
+  </data>
+  <data name="CallSettingsSaved" xml:space="preserve">
+    <value>Les paramètres des appels ont été enregistrés.</value>
+  </data>
 </root>

@@ -424,7 +424,7 @@ namespace Resgrid.Tests.Security
 			strings.Setup(l => l[It.IsAny<string>()]).Returns((string key) => new Microsoft.Extensions.Localization.LocalizedString(key, key));
 			var controller = new SecurityController(departments.Object, Mock.Of<IAuditService>(), Mock.Of<IPermissionsService>(), Mock.Of<IEventAggregator>(),
 				Mock.Of<IDepartmentSettingsService>(), Mock.Of<ISystemAuditsService>(), null, strings.Object, sso.Object, Mock.Of<IEncryptionService>(),
-				Mock.Of<IRecordsCutoverService>(), Gates(), Mock.Of<IMfaEvidenceService>(), Mock.Of<IMfaPolicyService>())
+				Mock.Of<IRecordsCutoverService>(), Gates(), Mock.Of<IMfaEvidenceService>(), Mock.Of<IMfaPolicyService>(), Mock.Of<IDepartmentApiKeysService>())
 			{
 				ControllerContext = new ControllerContext { HttpContext = http },
 				TempData = new Microsoft.AspNetCore.Mvc.ViewFeatures.TempDataDictionary(http, Mock.Of<Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataProvider>())
@@ -520,7 +520,7 @@ namespace Resgrid.Tests.Security
 			strings.Setup(l => l[It.IsAny<string>()]).Returns((string key) => new Microsoft.Extensions.Localization.LocalizedString(key, key));
 			var controller = new SecurityController(departments.Object, Mock.Of<IAuditService>(), Mock.Of<IPermissionsService>(), Mock.Of<IEventAggregator>(),
 				Mock.Of<IDepartmentSettingsService>(), Mock.Of<ISystemAuditsService>(), null, strings.Object, sso.Object, Mock.Of<IEncryptionService>(),
-				Mock.Of<IRecordsCutoverService>(), Gates(shared: sharedGate), Mock.Of<IMfaEvidenceService>(), Mock.Of<IMfaPolicyService>())
+				Mock.Of<IRecordsCutoverService>(), Gates(shared: sharedGate), Mock.Of<IMfaEvidenceService>(), Mock.Of<IMfaPolicyService>(), Mock.Of<IDepartmentApiKeysService>())
 			{
 				ControllerContext = new ControllerContext { HttpContext = http },
 				TempData = new Microsoft.AspNetCore.Mvc.ViewFeatures.TempDataDictionary(http, Mock.Of<Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataProvider>())

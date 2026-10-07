@@ -116,6 +116,8 @@ namespace Resgrid.Tests.Services
 				});
 			_departmentGroupsService.Setup(x => x.GetGroupByIdAsync(StationAId, It.IsAny<bool>())).ReturnsAsync(_stationA);
 			_departmentGroupsService.Setup(x => x.GetGroupByIdAsync(StationBId, It.IsAny<bool>())).ReturnsAsync(_stationB);
+			_departmentGroupsService.Setup(x => x.GetAllGroupsForDepartmentUnlimitedAsync(DepartmentId))
+				.ReturnsAsync(new List<DepartmentGroup> { _stationA, _stationB });
 
 			_geoService.Setup(x => x.OrderStationsByDistanceAsync(DepartmentId, It.IsAny<double>(), It.IsAny<double>()))
 				.ReturnsAsync(new List<StationDistanceResult>
@@ -430,6 +432,149 @@ namespace Resgrid.Tests.Services
 
 			withStale.Units.Should().HaveCount(2);
 			withStale.Units.Should().ContainSingle(u => u.UnitId == 1 && u.LocationIsStale);
+		}
+
+		[Test]
+		public async Task closest_unit_places_a_unit_without_gps_at_its_station()
+		{
+			BuildCard(engineCount: 2);
+			_departmentSettingsService.Setup(x => x.GetDispatchRecommendationModeAsync(DepartmentId, It.IsAny<bool>()))
+				.ReturnsAsync(DispatchRecommendationModes.ClosestUnit);
+
+			// Engine 1 reports no GPS and sits at Station A, on top of the call; Engine 2 is out ~5.5 km away.
+			_unitsService.Setup(x => x.GetLatestUnitLocationsAsync(DepartmentId))
+				.ReturnsAsync(new List<UnitsLocation>
+				{
+					new UnitsLocation { UnitId = 2, Latitude = 39.80m, Longitude = -104.95m, Timestamp = DateTime.UtcNow }
+				});
+
+			var result = await _service.GetRecommendationAsync(BuildRequest());
+
+			// It used to be dropped as unlocated, leaving a shortfall with a unit standing in the closest station.
+			result.Units.Select(u => u.UnitId).Should().Equal(1, 2);
+			result.Units[0].PositionSource.Should().Be(UnitPositionSources.Station);
+			result.Units[0].DistanceMeters.Should().BeApproximately(0, 1);
+			result.Units[0].LocationIsStale.Should().BeFalse();
+			result.Units[1].PositionSource.Should().Be(UnitPositionSources.Live);
+			result.Shortfalls.Should().BeEmpty();
+		}
+
+		[Test]
+		public async Task closest_unit_measures_an_in_quarters_unit_from_its_station_not_its_gps()
+		{
+			BuildCard(engineCount: 1);
+			_departmentSettingsService.Setup(x => x.GetDispatchRecommendationModeAsync(DepartmentId, It.IsAny<bool>()))
+				.ReturnsAsync(DispatchRecommendationModes.ClosestUnit);
+
+			_customStateService.Setup(x => x.GetAllActiveUnitStatesForDepartmentAsync(DepartmentId))
+				.ReturnsAsync(new List<CustomState>
+				{
+					new CustomState
+					{
+						CustomStateId = 90,
+						DepartmentId = DepartmentId,
+						Type = (int)CustomStateTypes.Unit,
+						Details = new List<CustomStateDetail>
+						{
+							new CustomStateDetail { CustomStateDetailId = 900, CustomStateId = 90, ButtonText = "In Kazerne", BaseType = (int)ActionBaseTypes.InQuarters }
+						}
+					}
+				});
+			_unitsService.Setup(x => x.GetAllLatestStatusForUnitsByDepartmentIdAsync(DepartmentId))
+				.ReturnsAsync(new List<UnitState>
+				{
+					new UnitState { UnitId = 1, State = 900, Timestamp = DateTime.UtcNow }
+				});
+
+			// Engine 1's tracker reports a position far away (a tablet that went home); Engine 2 is out ~3 km away.
+			var now = DateTime.UtcNow;
+			_unitsService.Setup(x => x.GetLatestUnitLocationsAsync(DepartmentId))
+				.ReturnsAsync(new List<UnitsLocation>
+				{
+					new UnitsLocation { UnitId = 1, Latitude = 40.5m, Longitude = -105.5m, Timestamp = now },
+					new UnitsLocation { UnitId = 2, Latitude = 39.78m, Longitude = -104.95m, Timestamp = now }
+				});
+
+			var result = await _service.GetRecommendationAsync(BuildRequest());
+
+			var engine = result.Units.Should().ContainSingle().Subject;
+			engine.UnitId.Should().Be(1);
+			engine.PositionSource.Should().Be(UnitPositionSources.Station);
+			engine.DistanceMeters.Should().BeApproximately(0, 1);
+			engine.CurrentStatusText.Should().Be("In Kazerne");
+		}
+
+		[Test]
+		public async Task closest_unit_ranks_on_turnout_plus_travel()
+		{
+			BuildCard(engineCount: 1);
+			_departmentSettingsService.Setup(x => x.GetDispatchRecommendationModeAsync(DepartmentId, It.IsAny<bool>()))
+				.ReturnsAsync(DispatchRecommendationModes.ClosestUnit);
+
+			// Engine 1 is in its station on top of the call; Engine 2 is out and available ~500 m away.
+			_unitsService.Setup(x => x.GetLatestUnitLocationsAsync(DepartmentId))
+				.ReturnsAsync(new List<UnitsLocation>
+				{
+					new UnitsLocation { UnitId = 2, Latitude = 39.7545m, Longitude = -104.95m, Timestamp = DateTime.UtcNow }
+				});
+
+			var nearest = await _service.GetRecommendationAsync(BuildRequest());
+			nearest.Units.Should().ContainSingle(u => u.UnitId == 1 && u.TurnoutSeconds == 0 && u.ResponseSeconds == 0);
+
+			// Belgian EMS: 2 minutes to leave the station, 30 seconds when already out.
+			_config.InQuartersTurnoutSeconds = 120;
+			_config.MobileTurnoutSeconds = 30;
+
+			var result = await _service.GetRecommendationAsync(BuildRequest());
+
+			var engine = result.Units.Should().ContainSingle().Subject;
+			engine.UnitId.Should().Be(2);
+			engine.TurnoutSeconds.Should().Be(30);
+			engine.ResponseSeconds.Should().Be(30 + UnitResponseOrigin.EstimateTravelSeconds(engine.DistanceMeters.Value));
+			engine.ResponseSeconds.Should().BeLessThan(120);
+		}
+
+		[Test]
+		public async Task closest_unit_adds_the_turnout_to_routed_etas()
+		{
+			BuildCard(engineCount: 1);
+			_departmentSettingsService.Setup(x => x.GetDispatchRecommendationModeAsync(DepartmentId, It.IsAny<bool>()))
+				.ReturnsAsync(DispatchRecommendationModes.ClosestUnit);
+			_config.UseRoutedEta = true;
+			_config.InQuartersTurnoutSeconds = 120;
+			_config.MobileTurnoutSeconds = 30;
+
+			_unitsService.Setup(x => x.GetLatestUnitLocationsAsync(DepartmentId))
+				.ReturnsAsync(new List<UnitsLocation>
+				{
+					new UnitsLocation { UnitId = 2, Latitude = 39.76m, Longitude = -104.95m, Timestamp = DateTime.UtcNow }
+				});
+
+			// Station A drives in 60 s (+120 turnout = 180); Engine 2 drives in 100 s (+30 = 130).
+			_geoService.Setup(x => x.GetEtaInSecondsAsync("39.75,-104.95", It.IsAny<string>())).ReturnsAsync(60);
+			_geoService.Setup(x => x.GetEtaInSecondsAsync("39.76,-104.95", It.IsAny<string>())).ReturnsAsync(100);
+
+			var result = await _service.GetRecommendationAsync(BuildRequest());
+
+			var engine = result.Units.Should().ContainSingle().Subject;
+			engine.UnitId.Should().Be(2);
+			engine.SelectionReason.Should().Be(RecommendationSelectionReasons.ClosestByEta);
+			engine.EtaSeconds.Should().Be(100);
+			engine.ResponseSeconds.Should().Be(130);
+		}
+
+		[Test]
+		public async Task closest_unit_without_a_call_location_measures_from_the_home_station_and_says_so()
+		{
+			var card = BuildCard(engineCount: 1);
+			card.HomeStationGroupId = StationAId;
+			_departmentSettingsService.Setup(x => x.GetDispatchRecommendationModeAsync(DepartmentId, It.IsAny<bool>()))
+				.ReturnsAsync(DispatchRecommendationModes.ClosestUnit);
+
+			var result = await _service.GetRecommendationAsync(BuildRequest(lat: null, lon: null));
+
+			result.Units.Should().ContainSingle(u => u.UnitId == 1);
+			result.Notes.Should().Contain(n => n.Contains("home station 'Station 1'"));
 		}
 
 		[Test]

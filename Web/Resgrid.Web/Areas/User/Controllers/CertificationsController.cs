@@ -404,7 +404,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return NotFound();
 			try
 			{
-				await _certifications.DeleteCertificationTypeByIdAsync(id, cancellationToken);
+				await _certifications.DeleteCertificationTypeByIdAsync(id, UserId, cancellationToken);
 				return Saved(nameof(Types));
 			}
 			catch (InvalidOperationException ex) when (ex.Message.StartsWith("certifications_", StringComparison.Ordinal))

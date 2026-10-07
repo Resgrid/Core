@@ -8,7 +8,7 @@ namespace Resgrid.Model
 		/// <summary><see cref="RecordNumberScope.Key"/>; what a raised next number is saved against.</summary>
 		public string ScopeKey { get; set; }
 
-		/// <summary>The record types drawing on this sequence: every type at once when the pattern leaves out {PREFIX}.</summary>
+		/// <summary>The record types drawing on this sequence: every type at once when the pattern leaves out {PREFIX}, or several that share a prefix.</summary>
 		public List<string> DefinitionKeys { get; set; } = new List<string>();
 
 		/// <summary>Set when the pattern includes {GROUP}; null is the sequence for records with no group.</summary>
@@ -41,6 +41,17 @@ namespace Resgrid.Model
 		public int Year { get; set; }
 
 		public List<RecordNextNumberRequest> NextNumbers { get; set; } = new List<RecordNextNumberRequest>();
+
+		/// <summary>Record type prefixes to save; null leaves every type's prefix as it is. A blank prefix returns the type to its default.</summary>
+		public List<RecordNumberPrefixRequest> Prefixes { get; set; }
+	}
+
+	/// <summary>A request to set one system record type's {PREFIX}.</summary>
+	public class RecordNumberPrefixRequest
+	{
+		public string DefinitionKey { get; set; }
+
+		public string Prefix { get; set; }
 	}
 
 	public class RecordsNumberingSaveResult
@@ -51,7 +62,10 @@ namespace Resgrid.Model
 		/// <summary>Requested next numbers below what the sequence would already issue; those sequences were left as they were.</summary>
 		public List<RecordNumberSequenceStatus> BelowCurrent { get; set; } = new List<RecordNumberSequenceStatus>();
 
-		/// <summary>Requested next numbers for a sequence the saved pattern no longer produces (the pattern changed in the same save).</summary>
+		/// <summary>Requested next numbers for a sequence the saved pattern no longer produces (the pattern or a prefix changed in the same save).</summary>
 		public int NotApplied { get; set; }
+
+		/// <summary>Definition keys whose requested prefix did not validate; those types kept the prefix they had.</summary>
+		public List<string> PrefixesRejected { get; set; } = new List<string>();
 	}
 }

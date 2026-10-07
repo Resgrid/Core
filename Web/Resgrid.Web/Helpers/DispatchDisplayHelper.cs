@@ -35,6 +35,16 @@ namespace Resgrid.Web.Helpers
 					return commonLocalizer["Closed"].Value;
 				case CallStates.Unfounded:
 					return commonLocalizer["Unfounded"].Value;
+				case CallStates.Founded:
+					return localizer["StateFounded"].Value;
+				case CallStates.Minor:
+					return localizer["StateMinor"].Value;
+				case CallStates.Transferred:
+					return localizer["StateTransferred"].Value;
+				case CallStates.FalseAlarm:
+					return localizer["StateFalseAlarm"].Value;
+				case CallStates.Pending:
+					return localizer["StatePending"].Value;
 				default:
 					return commonLocalizer["Unknown"].Value;
 			}

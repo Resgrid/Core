@@ -1031,6 +1031,135 @@
   <data name="FederatedMfaTestNote" xml:space="preserve">
     <value>Η δοκιμή σας στέλνει τώρα στον πάροχο ταυτότητας ζητώντας MFA. Όταν επιστρέψει τιμή που μετρά η αντιστοίχιση, αυτή η έκδοση τίθεται σε ισχύ.</value>
   </data>
+  <data name="AuditLogTypeDepartmentApiKeyCreated" xml:space="preserve">
+    <value>Δημιουργήθηκε κλειδί API τμήματος</value>
+  </data>
+  <data name="AuditLogTypeDepartmentApiKeyRevoked" xml:space="preserve">
+    <value>Ανακλήθηκε κλειδί API τμήματος</value>
+  </data>
+  <data name="ApiKeysButton" xml:space="preserve">
+    <value>Κλειδιά API</value>
+  </data>
+  <data name="ApiKeysPageTitle" xml:space="preserve">
+    <value>Κλειδιά API</value>
+  </data>
+  <data name="ApiKeysIntro" xml:space="preserve">
+    <value>Τα κλειδιά API επιτρέπουν σε ένα άλλο σύστημα, όπως σύστημα προγραμματισμού, αρχείων ή διαχείρισης κλήσεων, να καλεί το Resgrid για το τμήμα σας χωρίς σύνδεση ως πρόσωπο. Ένα κλειδί κάνει μόνο ό,τι επιτρέπετε, σταματά να λειτουργεί στην ημερομηνία λήξης του και μπορεί να ανακληθεί ανά πάσα στιγμή.</value>
+  </data>
+  <data name="ApiKeysUsage" xml:space="preserve">
+    <value>Στείλτε το κλειδί στην κεφαλίδα X-Resgrid-ApiKey στα αιτήματα προς {0}. Μην το βάζετε ποτέ σε URL.</value>
+  </data>
+  <data name="ApiKeysExisting" xml:space="preserve">
+    <value>Κλειδιά</value>
+  </data>
+  <data name="ApiKeysNone" xml:space="preserve">
+    <value>Δεν έχουν δημιουργηθεί κλειδιά API.</value>
+  </data>
+  <data name="ApiKeyName" xml:space="preserve">
+    <value>Όνομα</value>
+  </data>
+  <data name="ApiKeyPrefix" xml:space="preserve">
+    <value>Κλειδί</value>
+  </data>
+  <data name="ApiKeyScopes" xml:space="preserve">
+    <value>Επιτρέπεται</value>
+  </data>
+  <data name="ApiKeyCreated" xml:space="preserve">
+    <value>Δημιουργήθηκε</value>
+  </data>
+  <data name="ApiKeyExpires" xml:space="preserve">
+    <value>Λήγει</value>
+  </data>
+  <data name="ApiKeyLastUsed" xml:space="preserve">
+    <value>Τελευταία χρήση</value>
+  </data>
+  <data name="ApiKeyStatus" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="ApiKeyStatusActive" xml:space="preserve">
+    <value>Ενεργό</value>
+  </data>
+  <data name="ApiKeyStatusExpired" xml:space="preserve">
+    <value>Έληξε</value>
+  </data>
+  <data name="ApiKeyStatusRevoked" xml:space="preserve">
+    <value>Ανακλήθηκε</value>
+  </data>
+  <data name="ApiKeyNever" xml:space="preserve">
+    <value>Ποτέ</value>
+  </data>
+  <data name="ApiKeyRevoke" xml:space="preserve">
+    <value>Ανάκληση</value>
+  </data>
+  <data name="ApiKeyRevokeConfirm" xml:space="preserve">
+    <value>Ανάκληση αυτού του κλειδιού; Τα συστήματα που το χρησιμοποιούν σταματούν αμέσως να λειτουργούν.</value>
+  </data>
+  <data name="ApiKeyRevoked" xml:space="preserve">
+    <value>Το κλειδί ανακλήθηκε.</value>
+  </data>
+  <data name="ApiKeyCreateHeader" xml:space="preserve">
+    <value>Δημιουργία κλειδιού</value>
+  </data>
+  <data name="ApiKeyNameHelp" xml:space="preserve">
+    <value>Για ποιο σκοπό είναι το κλειδί, για παράδειγμα το σύστημα που θα το χρησιμοποιεί.</value>
+  </data>
+  <data name="ApiKeyScopesLabel" xml:space="preserve">
+    <value>Τι επιτρέπεται στο κλειδί</value>
+  </data>
+  <data name="ApiKeyExpiresIn" xml:space="preserve">
+    <value>Λήγει μετά από</value>
+  </data>
+  <data name="ApiKeyDays" xml:space="preserve">
+    <value>{0} ημέρες</value>
+  </data>
+  <data name="ApiKeyAllowedIps" xml:space="preserve">
+    <value>Επιτρεπόμενες διευθύνσεις (προαιρετικό)</value>
+  </data>
+  <data name="ApiKeyAllowedIpsHelp" xml:space="preserve">
+    <value>Μία διεύθυνση IP ή περιοχή CIDR ανά γραμμή, π.χ. 203.0.113.10 ή 203.0.113.0/24. Αφήστε κενό για να επιτρέπεται κάθε διεύθυνση.</value>
+  </data>
+  <data name="ApiKeyCreateButton" xml:space="preserve">
+    <value>Δημιουργία κλειδιού</value>
+  </data>
+  <data name="ApiKeyNewHeader" xml:space="preserve">
+    <value>Το νέο σας κλειδί API</value>
+  </data>
+  <data name="ApiKeyNewWarning" xml:space="preserve">
+    <value>Αντιγράψτε τώρα αυτό το κλειδί. Εμφανίζεται μόνο μία φορά και δεν μπορεί να ανακτηθεί. Αν χαθεί, ανακαλέστε το και δημιουργήστε άλλο.</value>
+  </data>
+  <data name="ApiKeyCopy" xml:space="preserve">
+    <value>Αντιγραφή</value>
+  </data>
+  <data name="ApiKeyErrorName" xml:space="preserve">
+    <value>Δώστε ένα όνομα στο κλειδί.</value>
+  </data>
+  <data name="ApiKeyErrorScopes" xml:space="preserve">
+    <value>Επιλέξτε τουλάχιστον μία δυνατότητα για το κλειδί.</value>
+  </data>
+  <data name="ApiKeyErrorIp" xml:space="preserve">
+    <value>Το "{0}" δεν είναι διεύθυνση IP ή περιοχή CIDR.</value>
+  </data>
+  <data name="ApiKeyErrorCreate" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η δημιουργία του κλειδιού: {0}</value>
+  </data>
+  <data name="ApiKeyScopeCallsRead" xml:space="preserve">
+    <value>Ανάγνωση κλήσεων (ενεργές, εκκρεμείς και προγραμματισμένες)</value>
+  </data>
+  <data name="ApiKeyScopeCallsCreate" xml:space="preserve">
+    <value>Δημιουργία κλήσεων, και εκκρεμών και προγραμματισμένων</value>
+  </data>
+  <data name="ApiKeyScopeCallsUpdate" xml:space="preserve">
+    <value>Επεξεργασία κλήσεων, αποστολή εκκρεμών και αλλαγή προγραμματισμένων ωρών</value>
+  </data>
+  <data name="ApiKeyScopeCallsClose" xml:space="preserve">
+    <value>Κλείσιμο κλήσεων</value>
+  </data>
+  <data name="ApiKeyScopeReferenceRead" xml:space="preserve">
+    <value>Ανάγνωση τύπων κλήσεων, προτεραιοτήτων, προτύπων, ομάδων και ρόλων</value>
+  </data>
+  <data name="ApiKeyScopeUnitsRead" xml:space="preserve">
+    <value>Ανάγνωση μονάδων και της κατάστασής τους</value>
+  </data>
 </root>
 
 

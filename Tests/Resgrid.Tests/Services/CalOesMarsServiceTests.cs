@@ -140,6 +140,7 @@ namespace Resgrid.Tests.Services
 			entries.Setup(e => e.GetByDeploymentAsync("dep-1")).ReturnsAsync(() => _entries.ToList());
 			var units = new Mock<IUnitsService>();
 			units.Setup(u => u.GetUnitsForDepartmentAsync(DeptId)).ReturnsAsync(new List<Unit> { new Unit { UnitId = 31, DepartmentId = DeptId, Name = "E-31", Type = "Type 3 Engine", PlateNumber = "1ABC234", VIN = "VIN31" } });
+			units.Setup(u => u.GetUnitsForDepartmentIncludingDeletedAsync(DeptId)).ReturnsAsync(new List<Unit> { new Unit { UnitId = 31, DepartmentId = DeptId, Name = "E-31", Type = "Type 3 Engine", PlateNumber = "1ABC234", VIN = "VIN31" } });
 			units.Setup(u => u.GetUnitByIdAsync(31)).ReturnsAsync(new Unit { UnitId = 31, DepartmentId = DeptId, Name = "E-31" });
 			var profiles = new Mock<IUserProfileService>();
 			profiles.Setup(p => p.GetSelectedUserProfilesAsync(It.IsAny<List<string>>())).ReturnsAsync(new List<UserProfile>());

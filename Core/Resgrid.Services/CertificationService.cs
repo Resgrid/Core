@@ -98,7 +98,7 @@ namespace Resgrid.Services
 			return await _departmentCertificationTypeRepository.GetByIdAsync(certificationTypeId);
 		}
 
-		public async Task<bool> DeleteCertificationTypeByIdAsync(int certificationTypeId, CancellationToken cancellationToken = default(CancellationToken))
+		public async Task<bool> DeleteCertificationTypeByIdAsync(int certificationTypeId, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var type = await GetCertificationTypeByIdAsync(certificationTypeId);
 			if (type == null || type.IsDeleted)
@@ -113,13 +113,14 @@ namespace Resgrid.Services
 			type.IsDeleted = true;
 			type.IsActive = false;
 			type.EditedOn = DateTime.UtcNow;
+			type.EditedByUserId = userId;
 			await _departmentCertificationTypeRepository.SaveOrUpdateAsync(type, cancellationToken);
 			if (_searchProjections?.Value != null) await _searchProjections.Value.ProjectCertificationTypeAsync(type, cancellationToken);
-			Audit(type.DepartmentId, null, AuditLogTypes.CertificationTypeRemoved, before, Snapshot(type));
+			Audit(type.DepartmentId, userId, AuditLogTypes.CertificationTypeRemoved, before, Snapshot(type));
 			return true;
 		}
 
-		public async Task<DepartmentCertificationType> SaveNewCertificationTypeAsync(string certificationType, int departmentId, CancellationToken cancellationToken = default(CancellationToken))
+		public async Task<DepartmentCertificationType> SaveNewCertificationTypeAsync(string certificationType, int departmentId, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return await SaveCertificationTypeAsync(new DepartmentCertificationType
 			{
@@ -128,7 +129,7 @@ namespace Resgrid.Services
 				Category = (int)CertificationCategories.Other,
 				AppliesTo = (int)CertificationAppliesTo.Person,
 				IsActive = true
-			}, null, cancellationToken);
+			}, userId, cancellationToken);
 		}
 
 		public async Task<bool> DoesCertificationTypeAlreadyExistAsync(int departmentId, string certificationTypeText)

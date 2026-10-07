@@ -123,10 +123,16 @@
   <data name="NextNumberCurrent" xml:space="preserve"><value>Наступний номер</value></data>
   <data name="NextNumberRaiseTo" xml:space="preserve"><value>Підвищити наступний до</value></data>
   <data name="NextNumberBelowCurrent" xml:space="preserve"><value>Наступний номер можна лише підвищити. Ці послідовності залишено без змін, бо введене число менше за номер, який вони видадуть наступним:</value></data>
-  <data name="NextNumberPatternChanged" xml:space="preserve"><value>Шаблон нумерації змінено, тому введені наступні номери не застосовано. Перегляньте послідовності для нового шаблону та збережіть ще раз.</value></data>
+  <data name="NextNumberPatternChanged" xml:space="preserve"><value>Шаблон нумерації або префікс типу запису змінено, тому введені наступні номери не застосовано. Перегляньте нові послідовності та збережіть ще раз.</value></data>
   <data name="NextNumberConfirm" xml:space="preserve"><value>Підвищений наступний номер не можна знову знизити. Зберегти ці зміни?</value></data>
   <data name="NumberingAllTypes" xml:space="preserve"><value>Усі типи записів</value></data>
   <data name="NumberingNoGroup" xml:space="preserve"><value>Без станції/групи</value></data>
+  <data name="NumberPrefixesHeader" xml:space="preserve"><value>Префікси типів записів</value></data>
+  <data name="NumberPrefixesIntro" xml:space="preserve"><value>Задайте префікс, який {PREFIX} записує для кожного типу запису, наприклад FIRE для Run та IR для звітів про інциденти. Залиште поле порожнім, щоб зберегти типовий. Новий префікс починає власну послідовність, а вже пронумеровані записи зберігають свої номери. Типи з однаковим префіксом мають одну спільну послідовність. Префікси використовуються лише тоді, коли шаблон містить {PREFIX}.</value></data>
+  <data name="NumberPrefixType" xml:space="preserve"><value>Тип запису</value></data>
+  <data name="NumberPrefixDefault" xml:space="preserve"><value>Типовий</value></data>
+  <data name="NumberPrefixRule" xml:space="preserve"><value>Від 2 до 6 літер або цифр</value></data>
+  <data name="NumberPrefixInvalid" xml:space="preserve"><value>Префікс складається з 2–6 літер або цифр. Ці типи записів зберегли попередній префікс:</value></data>
   <data name="Retention" xml:space="preserve"><value>Зберігання</value></data>
   <data name="RetentionIntro" xml:space="preserve"><value>Типово: 7 років для стандартних записів; безстроково для коронера та інших обмежених класів. Зберігання є відповідальністю підрозділу. Зміни діють на майбутнє та аудитуються.</value></data>
   <data name="DepartmentDefaultYears" xml:space="preserve"><value>Типово для підрозділу (роки, порожньо = системне)</value></data>

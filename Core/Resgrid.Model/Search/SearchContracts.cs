@@ -65,7 +65,11 @@ namespace Resgrid.Model.Search
 	/// </summary>
 	public static class GlobalSearchGeneration
 	{
-		/// <summary>Bump when GlobalSearchDocumentBuilder or the projection allowlist changes. 3: call notes in the call full text.</summary>
+		/// <summary>
+		/// Bump when GlobalSearchDocumentBuilder or the projection allowlist changes. 3: call notes in the call full text.
+		/// A bump blanks every department's results until its own rebuild runs (hits must carry the current generation), so
+		/// changes that only add rows go through a backfill instead (the M0261 call history backfill).
+		/// </summary>
 		public const int SchemaVersion = 3;
 
 		public static string Compute(int protectedCatalogVersion, long policyEpoch)
@@ -142,6 +146,10 @@ namespace Resgrid.Model.Search
 		public int ProjectionsRebuilt { get; set; }
 		public int DocumentsIndexed { get; set; }
 		public int DocumentsDeleted { get; set; }
+		/// <summary>Calls the call history backfill projected this sweep (they reach the index on the next sweep's catch-up).</summary>
+		public int CallsBackfilled { get; set; }
+		/// <summary>Departments whose call history backfill reached the oldest call this sweep.</summary>
+		public int CallBackfillsCompleted { get; set; }
 		public int Errors { get; set; }
 		public bool Skipped { get; set; }
 		public string Message { get; set; }

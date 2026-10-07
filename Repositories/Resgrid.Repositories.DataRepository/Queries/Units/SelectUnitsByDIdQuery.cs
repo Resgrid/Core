@@ -20,10 +20,12 @@ namespace Resgrid.Repositories.DataRepository.Queries.Units
 												 string.Empty,
 												 _sqlConfiguration.ParameterNotation,
 												new string[] {
-																"%DID%"
+																"%DID%",
+																"%INCLUDEDELETED%"
 															  },
 												 new string[] {
 																"DepartmentId",
+																"IncludeDeleted",
 															  },
 												 new string[] {
 																"%UNITSTABLE%",

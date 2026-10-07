@@ -318,4 +318,28 @@
   <data name="Completed" xml:space="preserve">
     <value>مكتمل</value>
   </data>
+  <data name="InQuarters" xml:space="preserve">
+    <value>في المحطة</value>
+  </data>
+  <data name="Pois" xml:space="preserve">
+    <value>نقاط الاهتمام</value>
+  </data>
+  <data name="CallsAndPois" xml:space="preserve">
+    <value>البلاغات ونقاط الاهتمام</value>
+  </data>
+  <data name="StationsAndPois" xml:space="preserve">
+    <value>المحطات ونقاط الاهتمام</value>
+  </data>
+  <data name="CallsStationsAndPois" xml:space="preserve">
+    <value>البلاغات والمحطات ونقاط الاهتمام</value>
+  </data>
+  <data name="NextStatusesLabel" xml:space="preserve">
+    <value>الحالات التالية</value>
+  </data>
+  <data name="NextStatusesHelp" xml:space="preserve">
+    <value>عندما تكون هذه الحالة هي الحالية، يعرض تطبيقا Unit وResponder الحالات المحددة فقط، مع رابط "إظهار كل الحالات" لأي حالة خارج التسلسل. اترك كل المربعات دون تحديد لعرض جميع الحالات. لا يزال بإمكان المرسلين والموقع الإلكتروني تعيين أي حالة.</value>
+  </data>
+  <data name="NextStatusesAny" xml:space="preserve">
+    <value>أي حالة</value>
+  </data>
 </root>

@@ -173,6 +173,12 @@ namespace Resgrid.Model
 
 		public bool? HasBeenDispatched { get; set; }
 
+		/// <summary>
+		/// When a dispatch of this waiting call was claimed and has not finished yet (M0266, see <see cref="CallDispatchClaims"/>).
+		/// Written only by the claim statements, never by a call save, so it is in <see cref="IgnoredProperties"/>.
+		/// </summary>
+		public DateTime? DispatchClaimedOn { get; set; }
+
 		public int? LinkedCallId { get; set; }
 
 		public string DeletedReason { get; set; }
@@ -234,7 +240,7 @@ namespace Resgrid.Model
 		public int IdType => 0;
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "ReportingUser", "ClosedByUser", "Department", "Dispatches", "Attachments", "CallNotes", "GroupDispatches", "UnitDispatches", "RoleDispatches", "Protocols", "ShortenedAudioUrl", "ShortenedCallUrl", "CallPriority", "PreviousDispatchCount", "References", "Contacts", "VideoFeeds" };
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "ReportingUser", "ClosedByUser", "Department", "Dispatches", "Attachments", "CallNotes", "GroupDispatches", "UnitDispatches", "RoleDispatches", "Protocols", "ShortenedAudioUrl", "ShortenedCallUrl", "CallPriority", "PreviousDispatchCount", "References", "Contacts", "VideoFeeds", "DispatchClaimedOn" };
 
 		public string GetIdentifier()
 		{

@@ -40,7 +40,8 @@ namespace Resgrid.Workers.Console.Tasks
 
 				// Calls whose dispatch time has arrived, never ones still ahead (the old +5 minute edge sent
 				// calls up to one poll early). Looking back three poll intervals lets a broadcast that failed,
-				// or a poll that was missed, retry; HasBeenDispatched keeps each call to a single dispatch.
+				// or a poll that was missed, retry; HasBeenDispatched keeps each call to a single dispatch. The
+				// list also holds calls whose dispatch claim was abandoned (its process died mid-dispatch).
 				var now = DateTime.UtcNow;
 				var pendingCalls = await callsService.GetAllNonDispatchedScheduledCallsWithinDateRange(now.AddMinutes(-15), now);
 
@@ -54,7 +55,8 @@ namespace Resgrid.Workers.Console.Tasks
 
 						// A dispatcher may press Dispatch Now on this call while the poll runs: only whoever marks the
 						// stored call dispatched first sends it.
-						if (!await callsService.TryClaimCallForDispatchAsync(call.CallId, call.DepartmentId, cancellationToken))
+						var claimedOn = await callsService.TryClaimCallForDispatchAsync(call.CallId, call.DepartmentId, cancellationToken);
+						if (!claimedOn.HasValue)
 							continue;
 
 						var originalDispatchOn = call.DispatchOn;
@@ -98,6 +100,16 @@ namespace Resgrid.Workers.Console.Tasks
 
 							if (sent)
 							{
+								// Ended before anything else can fail, so the claim's lease never sends the call twice.
+								try
+								{
+									await callsService.CompleteCallDispatchClaimAsync(call.CallId, call.DepartmentId, claimedOn.Value);
+								}
+								catch (Exception claimEx)
+								{
+									Resgrid.Framework.Logging.LogException(claimEx, $"Could not complete the dispatch claim on call {call.CallId}.");
+								}
+
 								// One write, covering both the dispatched flag and anything the run
 								// card added. If the broadcast failed the claim is given back below so
 								// the next poll retries it cleanly.
@@ -125,7 +137,7 @@ namespace Resgrid.Workers.Console.Tasks
 						finally
 						{
 							if (!sent)
-								await callsService.ReleaseCallDispatchClaimAsync(call.CallId, call.DepartmentId, (int)Resgrid.Model.CallStates.Active, originalDispatchOn, false);
+								await callsService.ReleaseCallDispatchClaimAsync(call.CallId, call.DepartmentId, claimedOn.Value, (int)Resgrid.Model.CallStates.Active, originalDispatchOn, false);
 						}
 					}
 				}

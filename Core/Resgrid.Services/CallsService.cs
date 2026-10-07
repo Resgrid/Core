@@ -1092,15 +1092,24 @@ namespace Resgrid.Services
 			return new List<Call>();
 		}
 
-		public Task<bool> TryClaimCallForDispatchAsync(int callId, int departmentId, CancellationToken cancellationToken = default(CancellationToken))
+		public async Task<DateTime?> TryClaimCallForDispatchAsync(int callId, int departmentId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return _callsRepository.TryClaimCallForDispatchAsync(callId, departmentId, cancellationToken);
+			var claimedOn = DateTime.UtcNow;
+
+			return await _callsRepository.TryClaimCallForDispatchAsync(callId, departmentId, claimedOn, claimedOn - CallDispatchClaims.Lease, cancellationToken)
+				? claimedOn
+				: (DateTime?)null;
 		}
 
-		public Task<bool> ReleaseCallDispatchClaimAsync(int callId, int departmentId, int state, DateTime? dispatchOn, bool? hasBeenDispatched,
+		public Task<bool> ReleaseCallDispatchClaimAsync(int callId, int departmentId, DateTime claimedOn, int state, DateTime? dispatchOn, bool? hasBeenDispatched,
 			CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return _callsRepository.ReleaseCallDispatchClaimAsync(callId, departmentId, state, dispatchOn, hasBeenDispatched, cancellationToken);
+			return _callsRepository.ReleaseCallDispatchClaimAsync(callId, departmentId, claimedOn, state, dispatchOn, hasBeenDispatched, cancellationToken);
+		}
+
+		public Task<bool> CompleteCallDispatchClaimAsync(int callId, int departmentId, DateTime claimedOn, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return _callsRepository.CompleteCallDispatchClaimAsync(callId, departmentId, claimedOn, cancellationToken);
 		}
 
 		public async Task<List<CallReference>> GetChildCallsForCallAsync(int callId)

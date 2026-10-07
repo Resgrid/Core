@@ -1325,7 +1325,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			SelectNonDispatchedScheduledCallsByDateQuery = @"
 					SELECT *
 					FROM %SCHEMA%.%TABLENAME%
-					WHERE [HasBeenDispatched] = 0 AND [IsDeleted] = 0 AND [DispatchOn] IS NOT NULL AND [DispatchOn] >= %STARTDATE% AND [DispatchOn] <= %ENDDATE%";
+					WHERE ([HasBeenDispatched] = 0 OR ([HasBeenDispatched] = 1 AND [DispatchClaimedOn] < %STALEBEFORE%)) AND [IsDeleted] = 0 AND [DispatchOn] IS NOT NULL AND [DispatchOn] >= %STARTDATE% AND [DispatchOn] <= %ENDDATE%";
 			SelectNonDispatchedScheduledCallsByDidQuery = @"
 					SELECT *
 					FROM %SCHEMA%.%TABLENAME%

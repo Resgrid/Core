@@ -439,26 +439,42 @@ namespace Resgrid.Model.Services
 
 		/// <summary>
 		/// Claims a waiting call (pending, or scheduled and not yet sent) for dispatch by marking it dispatched in one
-		/// conditional write. Only the caller that gets true may broadcast it, so two dispatchers, or a dispatcher and the
-		/// scheduled-calls worker, never page the same call twice.
+		/// conditional write. Only the caller that gets a claim time back may broadcast it, so two dispatchers, or a dispatcher
+		/// and the scheduled-calls worker, never page the same call twice. The claim is a lease (<see cref="CallDispatchClaims"/>):
+		/// end it with <see cref="CompleteCallDispatchClaimAsync"/> once the broadcast is queued, or give it back with
+		/// <see cref="ReleaseCallDispatchClaimAsync"/>; one abandoned by a process that died mid-dispatch expires and the call can
+		/// be claimed again.
 		/// </summary>
 		/// <param name="callId">The call identifier.</param>
 		/// <param name="departmentId">The call's department.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<bool> TryClaimCallForDispatchAsync(int callId, int departmentId, CancellationToken cancellationToken = default(CancellationToken));
+		/// <returns>The claim time, which identifies this claim, or null when the call is not waiting or someone else has it.</returns>
+		Task<DateTime?> TryClaimCallForDispatchAsync(int callId, int departmentId, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
-		/// Puts a claimed call back to waiting when its dispatch did not go out. A call that was closed or otherwise moved on
-		/// in the meantime is left as it is.
+		/// Puts a claimed call back to waiting when its dispatch did not go out. Only the claim taken at
+		/// <paramref name="claimedOn"/> is given back; a call claimed again, closed or otherwise moved on in the meantime is left
+		/// as it is.
 		/// </summary>
 		/// <param name="callId">The call identifier.</param>
 		/// <param name="departmentId">The call's department.</param>
+		/// <param name="claimedOn">The claim time <see cref="TryClaimCallForDispatchAsync"/> returned.</param>
 		/// <param name="state">The state to restore (Pending, or Active for a scheduled call).</param>
 		/// <param name="dispatchOn">The dispatch time to restore.</param>
 		/// <param name="hasBeenDispatched">The dispatched flag to restore (null for a pending call, false for a scheduled one).</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<bool> ReleaseCallDispatchClaimAsync(int callId, int departmentId, int state, DateTime? dispatchOn, bool? hasBeenDispatched,
+		Task<bool> ReleaseCallDispatchClaimAsync(int callId, int departmentId, DateTime claimedOn, int state, DateTime? dispatchOn, bool? hasBeenDispatched,
 			CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// Ends the claim taken at <paramref name="claimedOn"/> once the call's broadcast is queued. The call stays marked
+		/// dispatched; a claim left open would let the call be sent again when its lease ran out.
+		/// </summary>
+		/// <param name="callId">The call identifier.</param>
+		/// <param name="departmentId">The call's department.</param>
+		/// <param name="claimedOn">The claim time <see cref="TryClaimCallForDispatchAsync"/> returned.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task<bool> CompleteCallDispatchClaimAsync(int callId, int departmentId, DateTime claimedOn, CancellationToken cancellationToken = default(CancellationToken));
 
 		Task<List<CallReference>> GetChildCallsForCallAsync(int callId);
 

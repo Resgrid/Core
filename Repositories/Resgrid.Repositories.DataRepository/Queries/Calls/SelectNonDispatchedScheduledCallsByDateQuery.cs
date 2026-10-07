@@ -19,8 +19,8 @@ namespace Resgrid.Repositories.DataRepository.Queries.Calls
 				.ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 					_sqlConfiguration.CallsTable,
 					_sqlConfiguration.ParameterNotation,
-					new string[] { "%STARTDATE%", "%ENDDATE%" },
-					new string[] { "StartDate", "EndDate" });
+					new string[] { "%STARTDATE%", "%ENDDATE%", "%STALEBEFORE%" },
+					new string[] { "StartDate", "EndDate", "StaleBefore" });
 
 			return query;
 		}

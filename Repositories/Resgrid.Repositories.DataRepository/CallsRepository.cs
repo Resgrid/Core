@@ -330,6 +330,8 @@ namespace Resgrid.Repositories.DataRepository
 					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("StartDate", startDate);
 					dynamicParameters.Add("EndDate", endDate);
+					// Also calls marked sent by a dispatch claim whose process died before the broadcast went out.
+					dynamicParameters.Add("StaleBefore", DateTime.UtcNow - CallDispatchClaims.Lease);
 
 					var query = _queryFactory.GetQuery<SelectNonDispatchedScheduledCallsByDateQuery>();
 

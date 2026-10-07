@@ -28,6 +28,7 @@ namespace Resgrid.Tests.Services
 		private Mock<IDispatchRecommendationService> _dispatchRecommendationService;
 		private Mock<IEventAggregator> _eventAggregator;
 		private PendingCallsService _service;
+		private static readonly DateTime ClaimedOn = new DateTime(2026, 10, 7, 9, 30, 0, DateTimeKind.Utc);
 
 		[SetUp]
 		public void SetUp()
@@ -43,8 +44,10 @@ namespace Resgrid.Tests.Services
 			_callsService.Setup(x => x.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync((Call c, CancellationToken _) => c);
 			_callsService.Setup(x => x.TryClaimCallForDispatchAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(ClaimedOn);
+			_callsService.Setup(x => x.ReleaseCallDispatchClaimAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<int>(), It.IsAny<DateTime?>(), It.IsAny<bool?>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync(true);
-			_callsService.Setup(x => x.ReleaseCallDispatchClaimAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTime?>(), It.IsAny<bool?>(), It.IsAny<CancellationToken>()))
+			_callsService.Setup(x => x.CompleteCallDispatchClaimAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync(true);
 			_queueService.Setup(x => x.EnqueueCallBroadcastAsync(It.IsAny<CallQueueItem>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync(true);
@@ -139,14 +142,14 @@ namespace Resgrid.Tests.Services
 			call.DispatchOn.Should().BeNull();
 			_queueService.Verify(x => x.EnqueueCallBroadcastAsync(It.IsAny<CallQueueItem>(), It.IsAny<CancellationToken>()), Times.Never);
 			_callsService.Verify(x => x.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>()), Times.Never);
-			_callsService.Verify(x => x.ReleaseCallDispatchClaimAsync(42, 7, (int)CallStates.Pending, null, null, It.IsAny<CancellationToken>()), Times.Once,
+			_callsService.Verify(x => x.ReleaseCallDispatchClaimAsync(42, 7, ClaimedOn, (int)CallStates.Pending, null, null, It.IsAny<CancellationToken>()), Times.Once,
 				"the claim is given back so the call can be dispatched once it has recipients");
 		}
 
 		[Test]
 		public async Task A_call_another_dispatcher_or_the_scheduler_already_claimed_is_not_sent_again()
 		{
-			_callsService.Setup(x => x.TryClaimCallForDispatchAsync(42, 7, It.IsAny<CancellationToken>())).ReturnsAsync(false);
+			_callsService.Setup(x => x.TryClaimCallForDispatchAsync(42, 7, It.IsAny<CancellationToken>())).ReturnsAsync((DateTime?)null);
 			var call = PendingCall();
 
 			var outcome = await _service.DispatchNowAsync(call, "dispatcher");
@@ -155,7 +158,7 @@ namespace Resgrid.Tests.Services
 			call.State.Should().Be((int)CallStates.Pending);
 			_queueService.Verify(x => x.EnqueueCallBroadcastAsync(It.IsAny<CallQueueItem>(), It.IsAny<CancellationToken>()), Times.Never);
 			_callsService.Verify(x => x.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>()), Times.Never);
-			_callsService.Verify(x => x.ReleaseCallDispatchClaimAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTime?>(), It.IsAny<bool?>(), It.IsAny<CancellationToken>()), Times.Never,
+			_callsService.Verify(x => x.ReleaseCallDispatchClaimAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<int>(), It.IsAny<DateTime?>(), It.IsAny<bool?>(), It.IsAny<CancellationToken>()), Times.Never,
 				"the claim belongs to whoever won it");
 		}
 
@@ -169,7 +172,7 @@ namespace Resgrid.Tests.Services
 
 			await dispatch.Should().ThrowAsync<InvalidOperationException>();
 			call.State.Should().Be((int)CallStates.Pending);
-			_callsService.Verify(x => x.ReleaseCallDispatchClaimAsync(42, 7, (int)CallStates.Pending, null, null, It.IsAny<CancellationToken>()), Times.Once);
+			_callsService.Verify(x => x.ReleaseCallDispatchClaimAsync(42, 7, ClaimedOn, (int)CallStates.Pending, null, null, It.IsAny<CancellationToken>()), Times.Once);
 			_queueService.Verify(x => x.EnqueueCallBroadcastAsync(It.IsAny<CallQueueItem>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 
@@ -200,7 +203,66 @@ namespace Resgrid.Tests.Services
 			_eventAggregator.Verify(x => x.SendMessage(It.IsAny<CallAddedEvent>()), Times.Never);
 			// Put back with a conditional write, not a second full save of this snapshot: a close that landed meanwhile stays.
 			_callsService.Verify(x => x.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>()), Times.Once);
-			_callsService.Verify(x => x.ReleaseCallDispatchClaimAsync(42, 7, (int)CallStates.Pending, null, null, It.IsAny<CancellationToken>()), Times.Once);
+			_callsService.Verify(x => x.ReleaseCallDispatchClaimAsync(42, 7, ClaimedOn, (int)CallStates.Pending, null, null, It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task A_queue_that_throws_is_reported_as_a_queue_failure_and_the_claim_is_given_back()
+		{
+			// QueueService throws when the outbound queue refuses the call; it never returns false.
+			_queueService.Setup(x => x.EnqueueCallBroadcastAsync(It.IsAny<CallQueueItem>(), It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new InvalidOperationException("Failed to enqueue call broadcast for processing."));
+			var call = PendingCall();
+
+			var outcome = await _service.DispatchNowAsync(call, "dispatcher");
+
+			outcome.Should().Be(DispatchNowOutcome.QueueFailed);
+			call.State.Should().Be((int)CallStates.Pending);
+			_callsService.Verify(x => x.ReleaseCallDispatchClaimAsync(42, 7, ClaimedOn, (int)CallStates.Pending, null, null, It.IsAny<CancellationToken>()), Times.Once);
+			_callsService.Verify(x => x.CompleteCallDispatchClaimAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Never);
+			_eventAggregator.Verify(x => x.SendMessage(It.IsAny<CallAddedEvent>()), Times.Never);
+		}
+
+		[Test]
+		public async Task A_sent_call_ends_its_claim_so_the_lease_never_sends_it_again()
+		{
+			var outcome = await _service.DispatchNowAsync(PendingCall(), "dispatcher");
+
+			outcome.Should().Be(DispatchNowOutcome.Dispatched);
+			_callsService.Verify(x => x.CompleteCallDispatchClaimAsync(42, 7, ClaimedOn, It.IsAny<CancellationToken>()), Times.Once);
+			_callsService.Verify(x => x.ReleaseCallDispatchClaimAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<int>(), It.IsAny<DateTime?>(), It.IsAny<bool?>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public void A_call_whose_dispatch_claim_was_abandoned_is_waiting_again_once_the_lease_runs_out()
+		{
+			var stale = DateTime.UtcNow - CallDispatchClaims.Lease - TimeSpan.FromMinutes(1);
+			var abandoned = new Call { State = (int)CallStates.Active, DispatchOn = stale, HasBeenDispatched = true, DispatchClaimedOn = stale };
+			var inFlight = new Call { State = (int)CallStates.Active, DispatchOn = DateTime.UtcNow, HasBeenDispatched = true, DispatchClaimedOn = DateTime.UtcNow };
+			var sent = new Call { State = (int)CallStates.Active, DispatchOn = stale, HasBeenDispatched = true };
+
+			_service.IsWaitingForDispatch(abandoned).Should().BeTrue("nobody was paged, so Dispatch Now must be offered again");
+			_service.IsWaitingForDispatch(inFlight).Should().BeFalse("another dispatch of it is still running");
+			_service.IsWaitingForDispatch(sent).Should().BeFalse();
+		}
+
+		[Test]
+		public async Task Taking_over_an_abandoned_scheduled_claim_and_failing_puts_it_back_as_not_sent()
+		{
+			_queueService.Setup(x => x.EnqueueCallBroadcastAsync(It.IsAny<CallQueueItem>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(false);
+			var stale = DateTime.UtcNow - CallDispatchClaims.Lease - TimeSpan.FromMinutes(1);
+			var call = PendingCall();
+			call.State = (int)CallStates.Active;
+			call.DispatchOn = stale;
+			call.HasBeenDispatched = true;
+			call.DispatchClaimedOn = stale;
+
+			var outcome = await _service.DispatchNowAsync(call, "dispatcher");
+
+			outcome.Should().Be(DispatchNowOutcome.QueueFailed);
+			_callsService.Verify(x => x.ReleaseCallDispatchClaimAsync(42, 7, ClaimedOn, (int)CallStates.Active, stale, false, It.IsAny<CancellationToken>()), Times.Once,
+				"restoring the abandoned 'sent' flag would hide the call from every retry");
 		}
 
 		[Test]

@@ -149,5 +149,13 @@
 		/// in CallNumberSequences.
 		/// </summary>
 		CallNumberingConfig = 115,
+
+		/// <summary>
+		/// Cached scalar, Dispatch Settings screen: "true" closes an active call when the last unit dispatched to it reports
+		/// back in service or out of service (status base type of the Available or Unavailable class). Only units count; a
+		/// call with no unit dispatched, a call under an active incident command, or a unit that has not reported since its
+		/// dispatch keeps the call open. Missing = false (dispatchers close calls).
+		/// </summary>
+		CloseCallWhenUnitsClear = 116,
 	}
 }

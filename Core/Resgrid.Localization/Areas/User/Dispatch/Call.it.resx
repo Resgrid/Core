@@ -443,6 +443,36 @@
   <data name="UnitsDispatchLabel" xml:space="preserve">
     <value>Unità</value>
   </data>
+  <data name="RunCardSuggestionsLabel" xml:space="preserve">
+    <value>Piano di risposta</value>
+  </data>
+  <data name="RunCardSuggestionsHelp" xml:space="preserve">
+    <value>Ciò di cui il piano di risposta della chiamata ha ancora bisogno al livello di allarme attuale, dopo le unità e le persone già sulla chiamata. Non viene aggiunto nulla finché non lo selezioni e salvi.</value>
+  </data>
+  <data name="RunCardChecking" xml:space="preserve">
+    <value>Verifica dei piani di risposta...</value>
+  </data>
+  <data name="RunCardSelectRecommended" xml:space="preserve">
+    <value>Seleziona consigliati</value>
+  </data>
+  <data name="RunCardSelected" xml:space="preserve">
+    <value>Selezionati: salva la chiamata per inviarli</value>
+  </data>
+  <data name="RunCardCovered" xml:space="preserve">
+    <value>Le risorse di questa chiamata coprono già il piano di risposta (allarme {0}).</value>
+  </data>
+  <data name="RunCardShortfalls" xml:space="preserve">
+    <value>Impossibile coprire</value>
+  </data>
+  <data name="RunCardAlarmLevel" xml:space="preserve">
+    <value>Allarme {0}</value>
+  </data>
+  <data name="RunCardLookupFailed" xml:space="preserve">
+    <value>Impossibile verificare i piani di risposta. Puoi comunque selezionare le risorse manualmente.</value>
+  </data>
+  <data name="RunCardRefresh" xml:space="preserve">
+    <value>Aggiorna</value>
+  </data>
   <data name="UpdateCallHeader" xml:space="preserve">
     <value>Update Call</value>
   </data>

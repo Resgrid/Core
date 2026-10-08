@@ -1112,6 +1112,9 @@
   <data name="UnitCallReleaseStatusLabel" xml:space="preserve">
     <value>Enhetsstatus vid frisläppning från larm</value>
   </data>
+  <data name="UnitCallReleaseStatusHelp" xml:space="preserve">
+    <value>Sätts på enheter som fortfarande arbetar med ett larm när det stängs eller när de tas bort från det. En enhet som redan är tillbaka i tjänst, ur tjänst (otillgänglig, på underhåll eller på rast) eller arbetar med ett annat larm behåller sin status. Anpassade statusar tolkas utifrån sin bastyp.</value>
+  </data>
   <data name="UnitDefaultStatusesHelp" xml:space="preserve">
     <value>Dessa standardstatusar för enheter använder endast de inbyggda typerna av enhetsstatus. Använd tabellen med åsidosättningar per enhetstyp nedan när en enhetstyp behöver en egen anpassad status.</value>
   </data>
@@ -1288,6 +1291,12 @@
   </data>
   <data name="StatusHoldToConfirmHelp" xml:space="preserve">
     <value>I apparna Unit och Responder håller besättningen in en statusknapp i två sekunder för att sätta statusen, i stället för att trycka på den och sedan på Nästa eller Skicka. Förhindrar oavsiktliga tryck och bortglömda bekräftelser. En status som kräver en anteckning eller ett val av destination öppnar fortfarande sitt nästa steg.</value>
+  </data>
+  <data name="CloseCallWhenUnitsClearLabel" xml:space="preserve">
+    <value>Stäng larmet när sista enheten är klar</value>
+  </data>
+  <data name="CloseCallWhenUnitsClearHelp" xml:space="preserve">
+    <value>Ett aktivt larm stängs av sig självt när den sista enheten som larmats till det rapporterar att den är tillbaka i tjänst eller ur tjänst (en status med bastypen Tillgänglig, På stationen, Klar, Otillgänglig eller Underhåll). Alla andra larmade enheter måste också ha rapporterat att de är klara sedan de larmades. Bara enheter räknas: ett larm utan larmad enhet, ett larm med aktiv insatsledning eller en enhet som fortfarande återvänder eller transporterar hålls öppet för operatören.</value>
   </data>
   <data name="CallNumberingHeader" xml:space="preserve">
     <value>Numrering av larm</value>

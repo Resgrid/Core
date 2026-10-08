@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Resgrid.Model
 {
@@ -60,6 +61,42 @@ namespace Resgrid.Model
 
 		/// <summary>Forces a mode instead of resolving department default + card override (preview tooling).</summary>
 		public DispatchRecommendationModes? ModeOverride { get; set; }
+		/// <summary>
+		/// Adding resources to a call already out: the units and people already on it fill the level's requirements first (a
+		/// unit of the required type, a person holding the required role, each counted once), so only what is still missing
+		/// is recommended. Off for a new call and for escalation, which fill the level in full.
+		/// </summary>
+		public bool CountDispatchedTowardRequirements { get; set; }
+
+		/// <summary>
+		/// The request for adding resources to a call already out: the call's priority, type and location at its current alarm
+		/// level, with the units and people directly dispatched to it counted toward the level's requirements. A higher
+		/// <paramref name="alarmLevel"/> previews what Strike Next Alarm would add (that level in full, minus what is already on
+		/// the call). The call must be loaded with its unit and personnel dispatches; callers may override the priority, type
+		/// or location afterwards (an edit form that has not been saved yet).
+		/// </summary>
+		public static DispatchRecommendationRequest ForCallInProgress(Call call, int? alarmLevel = null)
+		{
+			if (call == null)
+				throw new ArgumentNullException(nameof(call));
+
+			var currentLevel = Math.Max(1, call.AlarmLevel);
+			var targetLevel = Math.Max(1, alarmLevel ?? currentLevel);
+			var location = GeoMath.ParseLatLonString(call.GeoLocationData);
+
+			return new DispatchRecommendationRequest
+			{
+				DepartmentId = call.DepartmentId,
+				Priority = call.Priority,
+				CallTypeName = call.Type,
+				Latitude = location?.Latitude,
+				Longitude = location?.Longitude,
+				TargetAlarmLevel = targetLevel,
+				AlreadyDispatchedUnitIds = call.UnitDispatches?.Select(d => d.UnitId).Distinct().ToList() ?? new List<int>(),
+				AlreadyDispatchedUserIds = call.Dispatches?.Select(d => d.UserId).Where(id => !string.IsNullOrWhiteSpace(id)).Distinct().ToList() ?? new List<string>(),
+				CountDispatchedTowardRequirements = targetLevel <= currentLevel
+			};
+		}
 	}
 
 	public class UnitRecommendation

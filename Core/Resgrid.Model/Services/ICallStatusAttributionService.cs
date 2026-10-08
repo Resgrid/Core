@@ -53,5 +53,12 @@ namespace Resgrid.Model.Services
 		/// The unit dispatches of the given calls (all logged in one department), keyed by call.
 		/// </summary>
 		Task<Dictionary<int, List<CallDispatchUnit>>> GetUnitDispatchesForCallsAsync(int departmentId, IReadOnlyCollection<Call> calls);
+
+		/// <summary>
+		/// For each unit's latest status, the open call the unit is working: the call a new status sent without a destination
+		/// would be linked to (<see cref="UnitCallInvolvement.ResolveWorkingCallId"/>). Units with none are left out. Two
+		/// queries for the department, plus one per call a status points at that the unit is not dispatched to.
+		/// </summary>
+		Task<Dictionary<int, int>> GetWorkingCallIdsForUnitsAsync(int departmentId, IReadOnlyCollection<UnitState> latestStates);
 	}
 }

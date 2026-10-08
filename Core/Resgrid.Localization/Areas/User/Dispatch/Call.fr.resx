@@ -443,6 +443,36 @@
   <data name="UnitsDispatchLabel" xml:space="preserve">
     <value>Unités</value>
   </data>
+  <data name="RunCardSuggestionsLabel" xml:space="preserve">
+    <value>Plan de réponse</value>
+  </data>
+  <data name="RunCardSuggestionsHelp" xml:space="preserve">
+    <value>Ce dont le plan de réponse de l'appel a encore besoin à son niveau d'alerte actuel, après les unités et les personnes déjà engagées. Rien n'est ajouté tant que vous ne l'avez pas sélectionné et enregistré.</value>
+  </data>
+  <data name="RunCardChecking" xml:space="preserve">
+    <value>Vérification des plans de réponse...</value>
+  </data>
+  <data name="RunCardSelectRecommended" xml:space="preserve">
+    <value>Sélectionner les recommandations</value>
+  </data>
+  <data name="RunCardSelected" xml:space="preserve">
+    <value>Sélectionnés : enregistrez l'appel pour les engager</value>
+  </data>
+  <data name="RunCardCovered" xml:space="preserve">
+    <value>Les ressources de cet appel couvrent déjà le plan de réponse (alerte {0}).</value>
+  </data>
+  <data name="RunCardShortfalls" xml:space="preserve">
+    <value>Impossible à pourvoir</value>
+  </data>
+  <data name="RunCardAlarmLevel" xml:space="preserve">
+    <value>Alerte {0}</value>
+  </data>
+  <data name="RunCardLookupFailed" xml:space="preserve">
+    <value>Impossible de vérifier les plans de réponse. Vous pouvez toujours sélectionner les ressources manuellement.</value>
+  </data>
+  <data name="RunCardRefresh" xml:space="preserve">
+    <value>Actualiser</value>
+  </data>
   <data name="UpdateCallHeader" xml:space="preserve">
     <value>Update Call</value>
   </data>

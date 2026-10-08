@@ -380,6 +380,12 @@ namespace Resgrid.Model.Services
 		/// </summary>
 		Task<bool> GetStatusHoldToConfirmAsync(int departmentId, bool bypassCache = false);
 
+		/// <summary>
+		/// Whether an active call closes itself when its last dispatched unit reports back in service or out of service
+		/// (<see cref="DepartmentSettingTypes.CloseCallWhenUnitsClear"/>). False when unset. Cached.
+		/// </summary>
+		Task<bool> GetCloseCallWhenUnitsClearAsync(int departmentId, bool bypassCache = false);
+
 		/// <summary>Department-wide dispatch recommendation mode (Off / StationBased / ClosestUnit). Cached.</summary>
 		Task<DispatchRecommendationModes> GetDispatchRecommendationModeAsync(int departmentId, bool bypassCache = false);
 

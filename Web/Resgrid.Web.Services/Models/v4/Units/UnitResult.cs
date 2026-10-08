@@ -86,6 +86,12 @@ namespace Resgrid.Web.Services.Models.v4.Units
 		public string CurrentDestinationId { get; set; }
 
 		/// <summary>
+		/// What <see cref="CurrentDestinationId"/> is: 1 station, 2 call, 3 POI (<see cref="Resgrid.Model.DestinationEntityTypes"/>),
+		/// or null for statuses saved before destinations were typed. A station id and a call id can be the same number.
+		/// </summary>
+		public int? CurrentDestinationType { get; set; }
+
+		/// <summary>
 		/// The current status/state of the Unit
 		/// </summary>
 		public string CurrentStatusId { get; set; }

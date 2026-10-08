@@ -1112,6 +1112,9 @@
   <data name="UnitCallReleaseStatusLabel" xml:space="preserve">
     <value>Status jednostki przy zwolnieniu ze zgłoszenia</value>
   </data>
+  <data name="UnitCallReleaseStatusHelp" xml:space="preserve">
+    <value>Ustawiany dla jednostek, które nadal pracują przy zgłoszeniu, gdy zostaje ono zamknięte lub gdy zostaną z niego zdjęte. Jednostka, która już wróciła do służby, jest wyłączona z eksploatacji (niedostępna, w serwisie lub na przerwie) albo pracuje przy innym zgłoszeniu, zachowuje swój status. Statusy niestandardowe są oceniane według ich typu bazowego.</value>
+  </data>
   <data name="UnitDefaultStatusesHelp" xml:space="preserve">
     <value>Te domyślne statusy jednostek korzystają wyłącznie z wbudowanych typów stanów jednostek. Jeśli typ jednostki potrzebuje jednego ze swoich niestandardowych statusów, użyj poniższej tabeli nadpisań dla typów jednostek.</value>
   </data>
@@ -1288,6 +1291,12 @@
   </data>
   <data name="StatusHoldToConfirmHelp" xml:space="preserve">
     <value>W aplikacjach Unit i Responder załogi przytrzymują przycisk statusu przez dwie sekundy, aby go ustawić, zamiast go stuknąć, a potem nacisnąć Dalej lub Wyślij. Zapobiega przypadkowym stuknięciom i zapomnianym potwierdzeniom. Status wymagający notatki lub wyboru miejsca docelowego nadal otwiera kolejny krok.</value>
+  </data>
+  <data name="CloseCallWhenUnitsClearLabel" xml:space="preserve">
+    <value>Zamknij zgłoszenie, gdy ostatnia jednostka się zwolni</value>
+  </data>
+  <data name="CloseCallWhenUnitsClearHelp" xml:space="preserve">
+    <value>Aktywne zgłoszenie zamyka się samo, gdy ostatnia zadysponowana do niego jednostka zgłosi powrót do służby lub wyłączenie z eksploatacji (status o typie bazowym Dostępna, W jednostce, Zwolniona, Niedostępna lub Serwis). Wszystkie pozostałe zadysponowane jednostki również muszą zgłosić zakończenie od chwili zadysponowania. Liczą się tylko jednostki: zgłoszenie bez zadysponowanej jednostki, zgłoszenie z aktywnym dowodzeniem incydentem lub jednostka, która wciąż wraca albo transportuje, pozostaje otwarte dla dyspozytora.</value>
   </data>
   <data name="CallNumberingHeader" xml:space="preserve">
     <value>Numeracja zgłoszeń</value>

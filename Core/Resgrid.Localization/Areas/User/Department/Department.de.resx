@@ -1112,6 +1112,9 @@
   <data name="UnitCallReleaseStatusLabel" xml:space="preserve">
     <value>Einheitenstatus bei Freigabe aus dem Einsatz</value>
   </data>
+  <data name="UnitCallReleaseStatusHelp" xml:space="preserve">
+    <value>Wird für Einheiten gesetzt, die noch an einem Einsatz arbeiten, wenn er geschlossen wird oder sie davon abgezogen werden. Eine Einheit, die bereits wieder einsatzbereit, außer Dienst (nicht verfügbar, in Wartung oder in Pause) oder bei einem anderen Einsatz ist, behält ihren Status. Benutzerdefinierte Status werden über ihren Basistyp ausgewertet.</value>
+  </data>
   <data name="UnitDefaultStatusesHelp" xml:space="preserve">
     <value>Diese Standard-Einheitenstatus verwenden nur die integrierten Statustypen für Einheiten. Verwenden Sie die Tabelle mit den Überschreibungen nach Einheitentyp unten, wenn ein Einheitentyp einen eigenen benutzerdefinierten Status benötigt.</value>
   </data>
@@ -1288,6 +1291,12 @@
   </data>
   <data name="StatusHoldToConfirmHelp" xml:space="preserve">
     <value>In den Unit- und Responder-Apps halten Besatzungen eine Status-Schaltfläche zwei Sekunden lang gedrückt, um den Status zu setzen, statt sie anzutippen und dann Weiter oder Senden zu drücken. Verhindert versehentliches Antippen und vergessene Bestätigungen. Ein Status, der eine Notiz oder eine Zielauswahl benötigt, öffnet weiterhin seinen nächsten Schritt.</value>
+  </data>
+  <data name="CloseCallWhenUnitsClearLabel" xml:space="preserve">
+    <value>Einsatz schließen, wenn die letzte Einheit frei wird</value>
+  </data>
+  <data name="CloseCallWhenUnitsClearHelp" xml:space="preserve">
+    <value>Ein aktiver Einsatz schließt sich selbst, wenn die letzte alarmierte Einheit meldet, dass sie wieder einsatzbereit oder außer Dienst ist (ein Status mit dem Basistyp Verfügbar, Auf der Wache, Freigegeben, Nicht verfügbar oder Wartung). Alle anderen alarmierten Einheiten müssen seit ihrer Alarmierung ebenfalls das Ende gemeldet haben. Es zählen nur Einheiten: Ein Einsatz ohne alarmierte Einheit, ein Einsatz mit aktiver Einsatzleitung oder eine Einheit, die noch zurückfährt oder transportiert, bleibt für den Disponenten offen.</value>
   </data>
   <data name="CallNumberingHeader" xml:space="preserve">
     <value>Einsatznummerierung</value>

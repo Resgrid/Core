@@ -443,6 +443,36 @@
   <data name="UnitsDispatchLabel" xml:space="preserve">
     <value>Jednostki</value>
   </data>
+  <data name="RunCardSuggestionsLabel" xml:space="preserve">
+    <value>Plan zadysponowania</value>
+  </data>
+  <data name="RunCardSuggestionsHelp" xml:space="preserve">
+    <value>Czego plan zadysponowania zgłoszenia nadal wymaga na obecnym poziomie alarmu, po uwzględnieniu jednostek i osób już przy zgłoszeniu. Nic nie zostanie dodane, dopóki tego nie zaznaczysz i nie zapiszesz.</value>
+  </data>
+  <data name="RunCardChecking" xml:space="preserve">
+    <value>Sprawdzanie planów zadysponowania...</value>
+  </data>
+  <data name="RunCardSelectRecommended" xml:space="preserve">
+    <value>Zaznacz zalecane</value>
+  </data>
+  <data name="RunCardSelected" xml:space="preserve">
+    <value>Zaznaczone: zapisz zgłoszenie, aby je zadysponować</value>
+  </data>
+  <data name="RunCardCovered" xml:space="preserve">
+    <value>Zasoby tego zgłoszenia już spełniają plan zadysponowania (alarm {0}).</value>
+  </data>
+  <data name="RunCardShortfalls" xml:space="preserve">
+    <value>Nie udało się obsadzić</value>
+  </data>
+  <data name="RunCardAlarmLevel" xml:space="preserve">
+    <value>Alarm {0}</value>
+  </data>
+  <data name="RunCardLookupFailed" xml:space="preserve">
+    <value>Nie udało się sprawdzić planów zadysponowania. Nadal możesz wybrać zasoby ręcznie.</value>
+  </data>
+  <data name="RunCardRefresh" xml:space="preserve">
+    <value>Odśwież</value>
+  </data>
   <data name="UpdateCallHeader" xml:space="preserve">
     <value>Update Call</value>
   </data>

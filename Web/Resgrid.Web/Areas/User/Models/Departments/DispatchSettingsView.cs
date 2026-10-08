@@ -37,6 +37,9 @@ namespace Resgrid.Web.Areas.User.Models.Departments
 		/// <summary>Apps set a status with a two-second press and hold (setting 114).</summary>
 		public bool StatusHoldToConfirm { get; set; }
 
+		/// <summary>An active call closes when its last dispatched unit reports back in service or out of service (setting 116).</summary>
+		public bool CloseCallWhenUnitsClear { get; set; }
+
 		// Check-In Timer Settings
 		public bool AutoEnableCheckInTimers { get; set; }
 		public List<CheckInTimerConfig> TimerConfigs { get; set; }

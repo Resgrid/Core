@@ -501,6 +501,36 @@
   <data name="UnitsDispatchLabel" xml:space="preserve">
     <value>Units</value>
   </data>
+  <data name="RunCardSuggestionsLabel" xml:space="preserve">
+    <value>Run card</value>
+  </data>
+  <data name="RunCardSuggestionsHelp" xml:space="preserve">
+    <value>What the call's run card still needs at its current alarm level, after the units and people already on the call. Nothing is added until you select it and save.</value>
+  </data>
+  <data name="RunCardChecking" xml:space="preserve">
+    <value>Checking run cards...</value>
+  </data>
+  <data name="RunCardSelectRecommended" xml:space="preserve">
+    <value>Select recommended</value>
+  </data>
+  <data name="RunCardSelected" xml:space="preserve">
+    <value>Selected: save the call to dispatch them</value>
+  </data>
+  <data name="RunCardCovered" xml:space="preserve">
+    <value>The resources on this call already cover the run card (alarm {0}).</value>
+  </data>
+  <data name="RunCardShortfalls" xml:space="preserve">
+    <value>Could not fill</value>
+  </data>
+  <data name="RunCardAlarmLevel" xml:space="preserve">
+    <value>Alarm {0}</value>
+  </data>
+  <data name="RunCardLookupFailed" xml:space="preserve">
+    <value>Couldn't check run cards. You can still select resources by hand.</value>
+  </data>
+  <data name="RunCardRefresh" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
   <data name="UpdateCallHeader" xml:space="preserve">
     <value>Update Call</value>
   </data>

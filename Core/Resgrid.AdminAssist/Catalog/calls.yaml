@@ -1949,6 +1949,39 @@
       "Availability": "available"
     },
     {
+      "Id": "setting.CloseCallWhenUnitsClear",
+      "AreaId": "calls",
+      "LabelKey": "Setting.CloseCallWhenUnitsClear",
+      "HelpKey": "SettingHelp.CloseCallWhenUnitsClear",
+      "Binding": "DepartmentSettingTypes.CloseCallWhenUnitsClear",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": "CloseCallWhenUnitsClear"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-07T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.CloseCallWhenUnitsClear",
+      "DefaultValue": "false",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
       "Id": "setting.EnableTextCommand",
       "AreaId": "calls",
       "LabelKey": "Setting.EnableTextCommand",
@@ -2098,6 +2131,7 @@
         "field.UnitTypeCallStatusOverrideSetting.Overrides",
         "setting.AutoSetStatusForShiftDispatchPersonnel",
         "setting.CheckInTimersAutoEnableForNewCalls",
+        "setting.CloseCallWhenUnitsClear",
         "setting.DispatchRecommendationAutoDispatch",
         "setting.DispatchRecommendationConfig",
         "setting.DispatchRecommendationMode",
@@ -2837,7 +2871,7 @@
       "Id": "setting.UnitCallReleaseStatusToSet",
       "Locale": "en",
       "TitleKey": "Setting.UnitCallReleaseStatusToSet",
-      "Body": "Unit Call Release Status To Set. Unit status applied at call release. Review unit-type overrides before assuming one department-wide effect.",
+      "Body": "Unit Call Release Status To Set. Unit status applied at call release (the call is closed, or the unit is taken off it) to the units still working the call. A unit already back in service, out of service, unavailable or on a break, or working another open call keeps its status; custom statuses are read by their base type. Review unit-type overrides before assuming one department-wide effect.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-unitcallreleasestatustoset",
       "PackVersion": "2026.09.25.2",
@@ -3261,6 +3295,17 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-10-06T00:00:00Z"
+    },
+    {
+      "Id": "setting.CloseCallWhenUnitsClear",
+      "Locale": "en",
+      "TitleKey": "Setting.CloseCallWhenUnitsClear",
+      "Body": "Close Call When Last Unit Clears. An active call closes on its own when the last unit dispatched to it goes from working the call to back in service or out of service: a status whose base type is Available, In Quarters, Cleared, Completed, On Patrol, Unavailable, Not Responding or Maintenance. Every other dispatched unit must also have reported such a status since its dispatch. Only units count. A call with no unit dispatched, a call under an active incident command, a unit still returning, transporting or at the hospital, a unit that never reported after its dispatch, and a custom status with no base type all leave the call open for the dispatcher. The close is recorded with a note naming the last unit, applies the release statuses (which skip units back in service or out of service) and notifies nobody. Off by default.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-closecallwhenunitsclear",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-07T00:00:00Z"
     },
     {
       "Id": "setting.EnableTextCommand",

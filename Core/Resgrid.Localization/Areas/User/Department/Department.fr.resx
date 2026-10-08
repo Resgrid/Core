@@ -1112,6 +1112,9 @@
   <data name="UnitCallReleaseStatusLabel" xml:space="preserve">
     <value>Statut de l'unité à la libération</value>
   </data>
+  <data name="UnitCallReleaseStatusHelp" xml:space="preserve">
+    <value>Appliqué aux unités qui travaillent encore sur un appel lorsqu'il est clôturé ou qu'elles en sont retirées. Une unité déjà de nouveau en service, hors service (indisponible, en maintenance ou en pause) ou engagée sur un autre appel conserve son statut. Les statuts personnalisés sont lus selon leur type de base.</value>
+  </data>
   <data name="UnitDefaultStatusesHelp" xml:space="preserve">
     <value>Ces statuts d'unité par défaut n'utilisent que les types d'état d'unité intégrés. Utilisez le tableau de remplacements par type d'unité ci-dessous lorsqu'un type d'unité a besoin de l'un de ses propres statuts personnalisés.</value>
   </data>
@@ -1288,6 +1291,12 @@
   </data>
   <data name="StatusHoldToConfirmHelp" xml:space="preserve">
     <value>Dans les applications Unit et Responder, les équipages maintiennent un bouton de statut appuyé pendant deux secondes pour le définir, au lieu de le toucher puis d’appuyer sur Suivant ou Envoyer. Évite les appuis accidentels et les confirmations oubliées. Un statut qui nécessite une note ou le choix d’une destination ouvre toujours son étape suivante.</value>
+  </data>
+  <data name="CloseCallWhenUnitsClearLabel" xml:space="preserve">
+    <value>Clôturer l'appel quand la dernière unité se libère</value>
+  </data>
+  <data name="CloseCallWhenUnitsClearHelp" xml:space="preserve">
+    <value>Un appel actif se clôture de lui-même lorsque la dernière unité engagée signale qu'elle est de nouveau en service ou hors service (un statut dont le type de base est Disponible, En caserne, Libéré, Indisponible ou Maintenance). Toutes les autres unités engagées doivent aussi avoir signalé leur fin depuis leur engagement. Seules les unités comptent : un appel sans unité engagée, un appel sous commandement d'incident actif ou une unité encore en retour ou en transport laisse l'appel ouvert pour le dispatcheur.</value>
   </data>
   <data name="CallNumberingHeader" xml:space="preserve">
     <value>Numérotation des appels</value>

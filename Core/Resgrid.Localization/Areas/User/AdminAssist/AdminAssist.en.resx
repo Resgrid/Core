@@ -6741,6 +6741,12 @@
   <data xml:space="preserve" name="SettingHelp.StatusHoldToConfirm">
     <value>Unit and Responder apps set a status with a two-second press and hold instead of a tap followed by Next or Submit. Statuses that need a note or destination still open that step.</value>
   </data>
+  <data xml:space="preserve" name="Setting.CloseCallWhenUnitsClear">
+    <value>Close Call When Last Unit Clears</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.CloseCallWhenUnitsClear">
+    <value>An active call closes on its own when its last dispatched unit reports back in service or out of service. Units still working, a call with no unit dispatched and a call under an active incident command keep it open.</value>
+  </data>
   <data name="Setting.CallNumberingConfig" xml:space="preserve">
     <value>Call Numbering Config</value>
   </data>

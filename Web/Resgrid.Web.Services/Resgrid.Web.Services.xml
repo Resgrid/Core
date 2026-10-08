@@ -4341,6 +4341,16 @@
             this priority/type/location right now? Nothing is dispatched.
             </summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RunCardsController.GetCallRecommendation(System.Int32,System.Nullable{System.Int32})">
+            <summary>
+            Recommendation for adding resources to a call already out: the run card for the call's priority, type and
+            location at its current alarm level, with the units and people already on the call counted toward the level's
+            requirements, so only what is still missing is recommended. A higher alarm level previews what Strike Next Alarm
+            would add (that level in full, nothing already on the call). Nothing is dispatched.
+            </summary>
+            <param name="callId">The active call.</param>
+            <param name="alarmLevel">Alarm level to fill; defaults to the call's current level.</param>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.ScimController">
             <summary>
             SCIM 2.0 provisioning endpoint for automated user lifecycle management
@@ -18150,6 +18160,12 @@
             Id number of the units current destionation (0 means no destination)
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Units.UnitResultData.CurrentDestinationType">
+            <summary>
+            What <see cref="P:Resgrid.Web.Services.Models.v4.Units.UnitResultData.CurrentDestinationId"/> is: 1 station, 2 call, 3 POI (<see cref="T:Resgrid.Model.DestinationEntityTypes"/>),
+            or null for statuses saved before destinations were typed. A station id and a call id can be the same number.
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Units.UnitResultData.CurrentStatusId">
             <summary>
             The current status/state of the Unit
@@ -18288,6 +18304,19 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Units.UnitsInfoResultData.CurrentDestinationId">
             <summary>
             Id number of the units current destination (0 means no destination)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Units.UnitsInfoResultData.CurrentDestinationType">
+            <summary>
+            What <see cref="P:Resgrid.Web.Services.Models.v4.Units.UnitsInfoResultData.CurrentDestinationId"/> is: 1 station, 2 call, 3 POI (<see cref="T:Resgrid.Model.DestinationEntityTypes"/>),
+            or null for statuses saved before destinations were typed. A station id and a call id can be the same number.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Units.UnitsInfoResultData.ActiveCallId">
+            <summary>
+            The open call the unit is working, or null: the call its latest status points at unless that status cleared it,
+            otherwise its one open dispatch. A status sent without a destination is linked to this call by the server, so a
+            dispatcher setting the unit's next status starts on it.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Units.UnitsInfoResultData.CurrentDestinationName">

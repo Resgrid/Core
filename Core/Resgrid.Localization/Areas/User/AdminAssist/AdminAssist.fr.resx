@@ -6741,6 +6741,12 @@
   <data xml:space="preserve" name="SettingHelp.StatusHoldToConfirm">
     <value>Les applications Unit et Responder définissent un statut par un appui maintenu de deux secondes au lieu d’un toucher suivi de Suivant ou Envoyer. Les statuts qui nécessitent une note ou une destination ouvrent toujours cette étape.</value>
   </data>
+  <data xml:space="preserve" name="Setting.CloseCallWhenUnitsClear">
+    <value>Clôturer l'appel quand la dernière unité se libère</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.CloseCallWhenUnitsClear">
+    <value>Un appel actif se clôture de lui-même lorsque sa dernière unité engagée signale qu'elle est de nouveau en service ou hors service. Les unités encore au travail, un appel sans unité engagée et un appel sous commandement d'incident actif le laissent ouvert.</value>
+  </data>
   <data name="Setting.CallNumberingConfig" xml:space="preserve">
     <value>Configuration de la numérotation des appels</value>
   </data>

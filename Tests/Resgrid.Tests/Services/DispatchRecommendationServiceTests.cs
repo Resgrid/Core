@@ -742,5 +742,89 @@ namespace Resgrid.Tests.Services
 			call.Dispatches.Should().NotBeNull();
 			call.Dispatches.Should().ContainSingle(d => d.UserId == "user-1");
 		}
+
+		// Adding resources to a call already out (Belgian EMS, 2026-10-07): the units and people on the call fill the
+		// level first, so the dispatcher is only offered what the run card still needs.
+		[Test]
+		public async Task adding_resources_counts_units_on_the_call_toward_the_level()
+		{
+			BuildCard(engineCount: 2);
+
+			var request = BuildRequest();
+			request.AlreadyDispatchedUnitIds.Add(1);
+			request.CountDispatchedTowardRequirements = true;
+
+			var result = await _service.GetRecommendationAsync(request);
+
+			result.Units.Should().ContainSingle(u => u.UnitId == 2);
+			result.Shortfalls.Should().BeEmpty();
+			result.Notes.Should().Contain("1 of 2 required 'Engine' unit(s) already on the call.");
+		}
+
+		[Test]
+		public async Task adding_resources_recommends_nothing_when_the_call_already_covers_the_level()
+		{
+			BuildCard(engineCount: 1, roleCount: 1);
+
+			var request = BuildRequest();
+			request.AlreadyDispatchedUnitIds.Add(2);
+			request.AlreadyDispatchedUserIds.Add("user-2");
+			request.CountDispatchedTowardRequirements = true;
+
+			var result = await _service.GetRecommendationAsync(request);
+
+			result.MatchedRunCardId.Should().Be(5);
+			result.HasRecommendations.Should().BeFalse();
+			result.Shortfalls.Should().BeEmpty();
+			result.Notes.Should().Contain(n => n.Contains("already cover alarm level 1"));
+		}
+
+		[Test]
+		public async Task adding_resources_counts_people_on_the_call_toward_role_requirements()
+		{
+			BuildCard(roleCount: 2);
+
+			var request = BuildRequest();
+			request.AlreadyDispatchedUserIds.Add("user-1");
+			request.CountDispatchedTowardRequirements = true;
+
+			var result = await _service.GetRecommendationAsync(request);
+
+			result.Personnel.Should().ContainSingle(p => p.UserId == "user-2");
+			result.Shortfalls.Should().BeEmpty();
+		}
+
+		[Test]
+		public async Task a_unit_on_the_call_counts_toward_one_requirement_only()
+		{
+			var card = BuildCard(engineCount: 1);
+			card.AlarmLevels.First().UnitRequirements.Add(new RunCardUnitRequirement
+			{
+				RunCardUnitRequirementId = 1001, RunCardAlarmLevelId = 50, UnitTypeId = EngineTypeId, RequiredCount = 1, SortOrder = 1
+			});
+
+			var request = BuildRequest();
+			request.AlreadyDispatchedUnitIds.Add(1);
+			request.CountDispatchedTowardRequirements = true;
+
+			var result = await _service.GetRecommendationAsync(request);
+
+			result.Units.Should().ContainSingle(u => u.UnitId == 2 && u.SatisfiesRequirementId == 1001);
+			card.AlarmLevels.First().UnitRequirements.Should().OnlyContain(r => r.RequiredCount == 1, "the card itself is never modified");
+		}
+
+		[Test]
+		public async Task escalation_still_fills_the_level_in_full()
+		{
+			BuildCard(engineCount: 2);
+
+			var request = BuildRequest();
+			request.AlreadyDispatchedUnitIds.Add(1);
+
+			var result = await _service.GetRecommendationAsync(request);
+
+			result.Units.Should().ContainSingle(u => u.UnitId == 2);
+			result.Shortfalls.Should().ContainSingle(s => s.RequiredCount == 2 && s.FilledCount == 1);
+		}
 	}
 }

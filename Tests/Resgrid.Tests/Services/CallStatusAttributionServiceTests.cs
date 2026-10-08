@@ -309,5 +309,78 @@ namespace Resgrid.Tests.Services
 
 			inferred.Select(x => x.ActionLogId).Should().Equal(2);
 		}
+
+		// The call a dispatcher setting a unit's status starts on (Belgian EMS, 2026-10-07).
+		[Test]
+		public async Task working_calls_follow_the_status_then_the_one_open_dispatch()
+		{
+			Call(40);
+			Call(41);
+			Call(50);
+			_unitDispatches.Setup(x => x.GetOpenCallUnitDispatchesForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<CallDispatchUnit>
+			{
+				new CallDispatchUnit { CallId = 40, UnitId = 1 },
+				new CallDispatchUnit { CallId = 40, UnitId = 2 },
+				new CallDispatchUnit { CallId = 41, UnitId = 2 },
+				new CallDispatchUnit { CallId = 40, UnitId = 3 },
+				new CallDispatchUnit { CallId = 40, UnitId = 4 },
+				new CallDispatchUnit { CallId = 41, UnitId = 4 }
+			});
+
+			var working = await _service.GetWorkingCallIdsForUnitsAsync(DepartmentId, new List<UnitState>
+			{
+				// On scene at 40.
+				new UnitState { UnitStateId = 10, UnitId = 1, State = (int)UnitStateTypes.OnScene, DestinationId = 40, DestinationType = (int)DestinationEntityTypes.Call },
+				// Responding to 41, also dispatched to 40.
+				new UnitState { UnitStateId = 11, UnitId = 2, State = (int)UnitStateTypes.Responding, DestinationId = 41, DestinationType = (int)DestinationEntityTypes.Call },
+				// Never reported: its one dispatch.
+				new UnitState { UnitId = 3 },
+				// At a hospital (POI) with two open dispatches: no way to tell.
+				new UnitState { UnitStateId = 13, UnitId = 4, State = (int)UnitStateTypes.Committed, DestinationId = 40, DestinationType = (int)DestinationEntityTypes.Poi },
+				// Took call 50 itself, never dispatched.
+				new UnitState { UnitStateId = 14, UnitId = 5, State = (int)UnitStateTypes.OnScene, DestinationId = 50, DestinationType = (int)DestinationEntityTypes.Call },
+				// Cleared from 40 and dispatched nowhere else.
+				new UnitState { UnitStateId = 15, UnitId = 6, State = (int)UnitStateTypes.Available, DestinationId = 40, DestinationType = (int)DestinationEntityTypes.Call }
+			});
+
+			working.Should().BeEquivalentTo(new Dictionary<int, int> { { 1, 40 }, { 2, 41 }, { 3, 40 }, { 5, 50 } });
+		}
+
+		[Test]
+		public async Task a_cleared_unit_works_its_other_dispatch_not_the_call_it_cleared()
+		{
+			Call(40);
+			Call(41);
+			_unitDispatches.Setup(x => x.GetOpenCallUnitDispatchesForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<CallDispatchUnit>
+			{
+				new CallDispatchUnit { CallId = 40, UnitId = 1 },
+				new CallDispatchUnit { CallId = 41, UnitId = 1 }
+			});
+
+			var working = await _service.GetWorkingCallIdsForUnitsAsync(DepartmentId, new List<UnitState>
+			{
+				new UnitState { UnitStateId = 10, UnitId = 1, State = (int)UnitStateTypes.Available, DestinationId = 40, DestinationType = (int)DestinationEntityTypes.Call }
+			});
+
+			working.Should().BeEquivalentTo(new Dictionary<int, int> { { 1, 41 } });
+		}
+
+		[Test]
+		public async Task a_status_pointing_at_a_closed_call_falls_back_to_the_dispatch()
+		{
+			Call(39, CallStates.Closed);
+			Call(40);
+			_unitDispatches.Setup(x => x.GetOpenCallUnitDispatchesForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<CallDispatchUnit>
+			{
+				new CallDispatchUnit { CallId = 40, UnitId = 1 }
+			});
+
+			var working = await _service.GetWorkingCallIdsForUnitsAsync(DepartmentId, new List<UnitState>
+			{
+				new UnitState { UnitStateId = 10, UnitId = 1, State = (int)UnitStateTypes.Returning, DestinationId = 39, DestinationType = (int)DestinationEntityTypes.Call }
+			});
+
+			working.Should().BeEquivalentTo(new Dictionary<int, int> { { 1, 40 } });
+		}
 	}
 }

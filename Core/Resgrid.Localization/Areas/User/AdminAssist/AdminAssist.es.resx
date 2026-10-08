@@ -6741,6 +6741,12 @@
   <data xml:space="preserve" name="SettingHelp.StatusHoldToConfirm">
     <value>Las aplicaciones Unit y Responder establecen un estado manteniendo pulsado dos segundos en lugar de un toque seguido de Siguiente o Enviar. Los estados que necesitan una nota o un destino siguen abriendo ese paso.</value>
   </data>
+  <data xml:space="preserve" name="Setting.CloseCallWhenUnitsClear">
+    <value>Cerrar la llamada cuando se libere la última unidad</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.CloseCallWhenUnitsClear">
+    <value>Una llamada activa se cierra sola cuando su última unidad despachada informa que está de nuevo en servicio o fuera de servicio. Las unidades que siguen trabajando, una llamada sin unidades despachadas y una llamada con un mando de incidente activo la mantienen abierta.</value>
+  </data>
   <data name="Setting.CallNumberingConfig" xml:space="preserve">
     <value>Configuración de numeración de llamadas</value>
   </data>

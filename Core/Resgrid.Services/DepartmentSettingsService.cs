@@ -24,6 +24,7 @@ namespace Resgrid.Services
 		private static string TtsLanguageCacheKey = "DSetTtsLanguage_{0}";
 		private static string PersonnelOnUnitSetUnitStatusCacheKey = "DSetPersonnelOnUnitSetUnitStatus_{0}";
 		private static string StatusHoldToConfirmCacheKey = "DSetStatusHoldToConfirm_{0}";
+		private static string CloseCallWhenUnitsClearCacheKey = "DSetCloseCallWhenUnitsClear_{0}";
 		private static string ModernNotificationsCacheKey = "DSetModernNotifications_{0}";
 		private static string RequirePasswordResetViaEmailCacheKey = "DSetRequirePasswordResetViaEmail_{0}";
 		private static string ForceChatbotSecurityPinCacheKey = "DSetForceChatbotSecurityPin_{0}";
@@ -1382,6 +1383,21 @@ namespace Resgrid.Services
 			return bool.TryParse(value, out var enabled) && enabled;
 		}
 
+		public async Task<bool> GetCloseCallWhenUnitsClearAsync(int departmentId, bool bypassCache = false)
+		{
+			async Task<string> getSetting()
+			{
+				var s = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.CloseCallWhenUnitsClear);
+				return s?.Setting ?? "false";
+			}
+
+			var value = Config.SystemBehaviorConfig.CacheEnabled && !bypassCache
+				? await _cacheProvider.RetrieveAsync<string>(string.Format(CloseCallWhenUnitsClearCacheKey, departmentId), getSetting, LongCacheLength)
+				: await getSetting();
+
+			return bool.TryParse(value, out var enabled) && enabled;
+		}
+
 		public async Task<DepartmentSetting> SetDepartmentModuleSettingsAsync(int departmentId, DepartmentModuleSettings settings, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return await SaveOrUpdateSettingAsync(departmentId, ObjectSerialization.Serialize(settings),
@@ -1593,6 +1609,9 @@ namespace Resgrid.Services
 					break;
 				case DepartmentSettingTypes.StatusHoldToConfirm:
 					cacheKey = string.Format(StatusHoldToConfirmCacheKey, departmentId);
+					break;
+				case DepartmentSettingTypes.CloseCallWhenUnitsClear:
+					cacheKey = string.Format(CloseCallWhenUnitsClearCacheKey, departmentId);
 					break;
 				case DepartmentSettingTypes.EnableModernNotifications:
 					cacheKey = string.Format(ModernNotificationsCacheKey, departmentId);

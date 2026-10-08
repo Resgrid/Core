@@ -137,6 +137,36 @@
   <data name="UnitActivityLabel" xml:space="preserve"><value>نشاط الوحدة</value></data>
   <data name="UnitEvents" xml:space="preserve"><value>أحداث الوحدة</value></data>
   <data name="UnitsDispatchLabel" xml:space="preserve"><value>الوحدات</value></data>
+  <data name="RunCardSuggestionsLabel" xml:space="preserve">
+    <value>خطة الاستجابة</value>
+  </data>
+  <data name="RunCardSuggestionsHelp" xml:space="preserve">
+    <value>ما تحتاجه خطة الاستجابة للبلاغ عند مستوى الإنذار الحالي، بعد احتساب الوحدات والأشخاص الموجودين بالفعل في البلاغ. لا يُضاف شيء حتى تحدده وتحفظ.</value>
+  </data>
+  <data name="RunCardChecking" xml:space="preserve">
+    <value>جارٍ التحقق من خطط الاستجابة...</value>
+  </data>
+  <data name="RunCardSelectRecommended" xml:space="preserve">
+    <value>تحديد الموصى بها</value>
+  </data>
+  <data name="RunCardSelected" xml:space="preserve">
+    <value>تم التحديد: احفظ البلاغ لإرسالها</value>
+  </data>
+  <data name="RunCardCovered" xml:space="preserve">
+    <value>الموارد في هذا البلاغ تغطي بالفعل خطة الاستجابة (إنذار {0}).</value>
+  </data>
+  <data name="RunCardShortfalls" xml:space="preserve">
+    <value>تعذر الاستيفاء</value>
+  </data>
+  <data name="RunCardAlarmLevel" xml:space="preserve">
+    <value>إنذار {0}</value>
+  </data>
+  <data name="RunCardLookupFailed" xml:space="preserve">
+    <value>تعذر التحقق من خطط الاستجابة. لا يزال بإمكانك تحديد الموارد يدوياً.</value>
+  </data>
+  <data name="RunCardRefresh" xml:space="preserve">
+    <value>تحديث</value>
+  </data>
   <data name="UpdateCallHeader" xml:space="preserve"><value>تحديث البلاغ</value></data>
   <data name="ViewCallHeader" xml:space="preserve"><value>عرض البلاغ</value></data>
   <data name="ViewText" xml:space="preserve"><value>عرض النص</value></data>

@@ -198,6 +198,9 @@
   <data name="UnitCallReleaseStatusLabel" xml:space="preserve">
     <value>Unit Call Release Status</value>
   </data>
+  <data name="UnitCallReleaseStatusHelp" xml:space="preserve">
+    <value>Set on the units still working a call when it is closed or they are taken off it. A unit already back in service, out of service (unavailable, maintenance or on a break) or working another call keeps its status. Custom statuses are read by their base type.</value>
+  </data>
   <data name="UnitDefaultStatusesHelp" xml:space="preserve">
     <value>These default unit statuses only use the built-in unit state types. Use the unit type override table below when a unit type needs one of its own custom statuses.</value>
   </data>
@@ -941,6 +944,12 @@
   </data>
   <data name="StatusHoldToConfirmHelp" xml:space="preserve">
     <value>In the Unit and Responder apps, crews press and hold a status button for two seconds to set it, instead of tapping it and then pressing Next or Submit. Prevents accidental taps and forgotten confirmations. A status that needs a note or a destination choice still opens its next step.</value>
+  </data>
+  <data name="CloseCallWhenUnitsClearLabel" xml:space="preserve">
+    <value>Close call when last unit clears</value>
+  </data>
+  <data name="CloseCallWhenUnitsClearHelp" xml:space="preserve">
+    <value>An active call closes on its own when the last unit dispatched to it reports back in service or out of service (a status whose base type is Available, In Quarters, Cleared, Unavailable or Maintenance). Every other dispatched unit must also have reported finished since its dispatch. Only units count: a call with no unit dispatched, a call under an active incident command, or a unit still returning or transporting keeps the call open for the dispatcher.</value>
   </data>
   <data name="CallNumberingHeader" xml:space="preserve">
     <value>Call Numbering</value>

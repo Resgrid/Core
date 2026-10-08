@@ -157,5 +157,12 @@
 		/// dispatch keeps the call open. Missing = false (dispatchers close calls).
 		/// </summary>
 		CloseCallWhenUnitsClear = 116,
+
+		/// <summary>
+		/// ProtoBuf-serialized <see cref="DocumentNumberingConfig"/>: the department's own number patterns for work orders,
+		/// invoices, bids and daily time reports, and the day their numbering year starts (Department -> Document Numbering).
+		/// Missing = the built-in numbers. Custom sequences are counted in DocumentNumberSequences.
+		/// </summary>
+		DocumentNumberingConfig = 117,
 	}
 }

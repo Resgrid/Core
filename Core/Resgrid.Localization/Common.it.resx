@@ -110,6 +110,9 @@
   <data name="CallImportSettings" xml:space="preserve">
     <value>Impostazioni importazione chiamate</value>
   </data>
+  <data name="DocumentNumbering" xml:space="preserve">
+    <value>Numerazione dei documenti</value>
+  </data>
   <data name="CallsModule" xml:space="preserve">
     <value>Chiamate</value>
   </data>

@@ -42,6 +42,7 @@ namespace Resgrid.Services.Invoicing
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IPdfProvider _pdfProvider;
 		private readonly IUnitOfWork _unitOfWork;
+		private readonly IDocumentNumberingService _documentNumbering;
 
 		/// <summary>A span longer than this without any break is flagged (plan C4 "breaks per 5-h rule").</summary>
 		public const int BreakRuleHours = 5;
@@ -53,8 +54,10 @@ namespace Resgrid.Services.Invoicing
 		public TimeTrackingService(IDeploymentRepository deployments, IDeploymentPersonnelRepository personnel, IDeploymentUnitRepository units, IDeploymentEquipmentRepository equipment,
 			IDeploymentTimeReportRepository reports, IDeploymentTimeEntryRepository entries, IDeploymentExpenseRepository expenses, IDeploymentAttachmentRepository attachments,
 			ITimeReportNumberSequenceRepository sequence, IDeploymentService deploymentService, IDepartmentsService departmentsService, IUserProfileService userProfileService,
-			IUnitsService unitsService, IEventAggregator eventAggregator, IPdfProvider pdfProvider, IUnitOfWork unitOfWork)
+			IUnitsService unitsService, IEventAggregator eventAggregator, IPdfProvider pdfProvider, IUnitOfWork unitOfWork,
+			IDocumentNumberingService documentNumbering = null)
 		{
+			_documentNumbering = documentNumbering;
 			_deployments = deployments;
 			_personnel = personnel;
 			_units = units;
@@ -164,6 +167,9 @@ namespace Resgrid.Services.Invoicing
 					RequestNumber = deployment.RequestNumber, CostCode = deployment.CostCode, PointOfHire = deployment.PointOfHire,
 					AddedOn = DateTime.UtcNow, AddedByUserId = userId
 				};
+				// The int stays the unique, ordered report id; the number people see is the department's pattern (setting 117) or that int.
+				report.DisplayNumber = (_documentNumbering == null ? null : await _documentNumbering.TakeCustomNumberAsync(departmentId, DocumentNumberKinds.TimeReport, report.AddedOn, cancellationToken))
+					?? report.ReportNumber.ToString(System.Globalization.CultureInfo.InvariantCulture);
 				var saved = await _reports.SaveOrUpdateAsync(report, cancellationToken);
 
 				// Prefill: one Deployment entry per active subject in the report's scope, copying the most recent earlier span for the same subject when there is one.
@@ -553,7 +559,7 @@ namespace Resgrid.Services.Invoicing
 			return await _deploymentService.SaveAttachmentAsync(new DeploymentAttachment
 			{
 				DeploymentId = report.DeploymentId, DepartmentId = departmentId, AttachmentType = (int)DeploymentAttachmentTypes.TimeReportPdf,
-				Name = $"DTR {report.ReportNumber} {report.ReportDate:yyyy-MM-dd}", FileName = $"dtr-{report.ReportNumber}-{report.ReportDate:yyyyMMdd}.pdf", FileType = "application/pdf", Data = pdf
+				Name = $"DTR {report.NumberText()} {report.ReportDate:yyyy-MM-dd}", FileName = $"dtr-{DocumentNumbering.FileSafe(report.NumberText())}-{report.ReportDate:yyyyMMdd}.pdf", FileType = "application/pdf", Data = pdf
 			}, userId, ipAddress, userAgent, cancellationToken);
 		}
 
@@ -566,7 +572,7 @@ namespace Resgrid.Services.Invoicing
 			sb.Append("<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>Resgrid | Daily Time Report</title><style>body{font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#222;margin:24px}h1{font-size:18px;margin:0 0 4px}h2{font-size:13px;margin:16px 0 6px;border-bottom:1px solid #999;padding-bottom:2px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #bbb;padding:4px 6px;text-align:left;vertical-align:top}th{background:#eee}.meta td{border:none;padding:2px 12px 2px 0}.muted{color:#666}.num{text-align:right}.sig td{border:none;padding-top:28px;border-top:1px solid #444}</style></head><body>");
 			string Named(string id) => id != null && subjectNames != null && subjectNames.TryGetValue(id, out var n) ? n : id;
 			var title = report.Scope switch { DeploymentTimeReportScopes.Crew => "Crew Time Report", DeploymentTimeReportScopes.Individual => "Individual Time Report", _ => "Daily Time Report" };
-			sb.Append("<h1>").Append(E(department?.Name)).Append(" — ").Append(title).Append(" #").Append(report.ReportNumber).Append("</h1>");
+			sb.Append("<h1>").Append(E(department?.Name)).Append(" — ").Append(title).Append(" ").Append(E(report.NumberLabel())).Append("</h1>");
 			sb.Append("<div class=\"muted\">").Append(E(deployment?.Name)).Append(" · ").Append(report.ReportDate.ToString("yyyy-MM-dd")).Append(" · ").Append(E(((DeploymentTimeReportStatuses)report.Status).ToString()));
 			if (report.Scope == DeploymentTimeReportScopes.Crew) sb.Append(" · Crew: ").Append(E(Named(report.DeploymentUnitId)));
 			if (report.Scope == DeploymentTimeReportScopes.Individual) sb.Append(" · Resource: ").Append(E(Named(report.DeploymentPersonnelId)));
@@ -620,7 +626,7 @@ namespace Resgrid.Services.Invoicing
 				var report = reports[entry.DeploymentTimeReportId];
 				sb.AppendLine(string.Join(",", new[]
 				{
-					C(report.ReportNumber), C(report.ReportDate.ToString("yyyy-MM-dd")), C(((DeploymentTimeReportStatuses)report.Status).ToString()), C(report.IncidentNumber), C(report.ResourceOrderNumber), C(report.RequestNumber), C(report.CostCode),
+					C(report.NumberText()), C(report.ReportDate.ToString("yyyy-MM-dd")), C(((DeploymentTimeReportStatuses)report.Status).ToString()), C(report.IncidentNumber), C(report.ResourceOrderNumber), C(report.RequestNumber), C(report.CostCode),
 					C(((DeploymentTimeSubjectTypes)entry.SubjectType).ToString()), C(entry.SubjectId), C(entry.SubjectId != null && names.TryGetValue(entry.SubjectId, out var name) ? name : null), C(((DeploymentTimeEntryTypes)entry.EntryType).ToString()),
 					C(entry.StartTime), C(entry.EndTime), C(entry.PaidBreakMinutes), C(entry.UnpaidBreakMinutes), C(entry.Hours), C(entry.CrewSizeSnapshot), C(entry.CertificationCode), C(entry.MileageKm), C(entry.FuelDeductionLitres),
 					C(entry.AgencySuppliedMeals), C(entry.AgencySuppliedAccommodation), C(entry.Notes), C(report.InvoiceId)

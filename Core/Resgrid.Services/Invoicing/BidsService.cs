@@ -47,13 +47,15 @@ namespace Resgrid.Services.Invoicing
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly Lazy<IProtectedReadService> _protectedRead;
 		private readonly Lazy<ISearchProjectionService> _searchProjections;
+		private readonly IDocumentNumberingService _documentNumbering;
 
 		public BidsService(IBidRepository bids, IBidLineItemRepository lines, IBidNumberSequenceRepository sequence, IServiceContractRepository contracts,
 			ICustomerBillingProfileRepository profiles, IDepartmentBillingIdentityRepository identities, IRateScheduleService rateSchedules, IDeploymentService deployments,
 			IContactsService contactsService, IDepartmentsService departmentsService, ICallsService callsService, ICalendarService calendarService, IEmailService emailService,
 			IPdfProvider pdfProvider, IDomainEventOutboxService outbox, IEventAggregator eventAggregator, IUnitOfWork unitOfWork,
-			Lazy<IProtectedReadService> protectedRead = null, Lazy<ISearchProjectionService> searchProjections = null)
+			Lazy<IProtectedReadService> protectedRead = null, Lazy<ISearchProjectionService> searchProjections = null, IDocumentNumberingService documentNumbering = null)
 		{
+			_documentNumbering = documentNumbering;
 			_bids = bids;
 			_lines = lines;
 			_sequence = sequence;
@@ -152,6 +154,9 @@ namespace Resgrid.Services.Invoicing
 				AddedOn = now,
 				AddedByUserId = userId
 			};
+			// The int stays the unique, ordered bid id; the number people see is the department's pattern (setting 117) or that int.
+			bid.DisplayNumber = (_documentNumbering == null ? null : await _documentNumbering.TakeCustomNumberAsync(departmentId, DocumentNumberKinds.Bid, now, cancellationToken))
+				?? bid.BidNumber.ToString(System.Globalization.CultureInfo.InvariantCulture);
 			var saved = await _bids.SaveOrUpdateAsync(bid, cancellationToken);
 			if (_searchProjections?.Value != null) await _searchProjections.Value.ProjectBidAsync(bid, cancellationToken);
 			Audit(departmentId, userId, AuditLogTypes.BidCreated, ipAddress, userAgent, null, saved);
@@ -344,13 +349,13 @@ namespace Resgrid.Services.Invoicing
 			var pdf = await GetBidPdfCoreAsync(bidId, departmentId, workload: true);
 			if (pdf == null || pdf.Length == 0) throw new InvalidOperationException("bids_pdf_unavailable");
 
-			var label = $"Bid #{bid.BidNumber}";
+			var label = $"Bid {bid.NumberLabel()}";
 			var notification = new EmailNotification
 			{
 				To = recipient,
 				Subject = $"{label} from {await DepartmentDisplayNameAsync(departmentId)}: {bid.Title}",
 				Body = $"{label} — {bid.Title} — estimated {InvoicingService.FormatMoney(bid.EstimatedTotal, await CurrencyAsync(bid))} is attached." + (bid.ValidUntil.HasValue ? $" This bid is valid until {bid.ValidUntil.Value:yyyy-MM-dd}." : string.Empty),
-				AttachmentName = $"bid-{bid.BidNumber}.pdf",
+				AttachmentName = $"bid-{DocumentNumbering.FileSafe(bid.NumberText())}.pdf",
 				AttachmentData = pdf
 			};
 			var sent = await _emailService.SendInvoiceAsync(notification, departmentId, null, null, label);
@@ -471,10 +476,10 @@ namespace Resgrid.Services.Invoicing
 			var bid = model.Bid;
 			var currency = model.Currency ?? "USD";
 			var sb = new StringBuilder();
-			sb.Append("<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>Resgrid | ").Append(E($"Bid #{bid.BidNumber}")).Append("</title>");
+			sb.Append("<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>Resgrid | ").Append(E($"Bid {bid.NumberLabel()}")).Append("</title>");
 			sb.Append("<style>body{font-family:Helvetica,Arial,sans-serif;font-size:12px;color:#222;margin:32px}h1{font-size:22px;margin:0 0 4px}h2{font-size:14px;margin:18px 0 6px}table{border-collapse:collapse;width:100%}th,td{padding:6px 8px;text-align:left;vertical-align:top}th{border-bottom:2px solid #444;font-size:11px;text-transform:uppercase}td.num,th.num{text-align:right;white-space:nowrap}tr.line td{border-bottom:1px solid #ddd}table.totals{width:auto;margin-left:auto;margin-top:12px}table.totals td{padding:4px 8px}table.totals tr.grand td{border-top:2px solid #444;font-weight:bold;font-size:14px}.meta td{padding:2px 8px 2px 0}.muted{color:#666}.status{display:inline-block;padding:2px 8px;border:1px solid #444;border-radius:3px;font-size:11px;text-transform:uppercase}.footer{margin-top:28px;font-size:11px;color:#555;white-space:pre-wrap}</style></head><body>");
 			sb.Append("<h1>").Append(E(model.DepartmentName)).Append("</h1>");
-			sb.Append("<h2>Bid #").Append(bid.BidNumber).Append(" <span class=\"status\">").Append(E(((BidStatuses)bid.Status).ToString())).Append("</span></h2>");
+			sb.Append("<h2>Bid ").Append(E(bid.NumberLabel())).Append(" <span class=\"status\">").Append(E(((BidStatuses)bid.Status).ToString())).Append("</span></h2>");
 			sb.Append("<p><strong>").Append(E(bid.Title)).Append("</strong></p>");
 			if (!string.IsNullOrWhiteSpace(bid.Description)) sb.Append("<p>").Append(E(bid.Description)).Append("</p>");
 			sb.Append("<table class=\"meta\">");
@@ -643,7 +648,7 @@ namespace Resgrid.Services.Invoicing
 						var item = await _calendarService.AddNewCalendarItemAsync(new CalendarItem
 						{
 							DepartmentId = departmentId, Title = deployment.Name, Start = start, End = end <= start ? start.AddHours(1) : end,
-							Description = $"Deployment for bid #{bid.BidNumber}" + (string.IsNullOrWhiteSpace(deployment.IncidentNumber) ? string.Empty : $" — incident {deployment.IncidentNumber}"),
+							Description = $"Deployment for bid {bid.NumberLabel()}" + (string.IsNullOrWhiteSpace(deployment.IncidentNumber) ? string.Empty : $" — incident {deployment.IncidentNumber}"),
 							Location = Trim(request.Address), CreatorUserId = userId, IsAllDay = false, ItemType = 0, Public = false
 						}, timeZone, cancellationToken);
 						if (item != null && item.CalendarItemId > 0)
@@ -714,7 +719,7 @@ namespace Resgrid.Services.Invoicing
 					CorrelationId = bid.BidId,
 					Payload = new
 					{
-						bid.BidId, bid.BidNumber, bid.Title, bid.Status, OldStatus = oldStatus, bid.ContactId,
+						bid.BidId, bid.BidNumber, DisplayNumber = bid.NumberText(), bid.Title, bid.Status, OldStatus = oldStatus, bid.ContactId,
 						ContactName = ProtectedDataEnvelope.SafeDisplay(contactName),
 						bid.ServiceContractId, bid.IncidentNumber, bid.ValidUntil, bid.RequestedStartOn, bid.RequestedEndOn, bid.EstimatedTotal,
 						Currency = await CurrencyAsync(bid), bid.SentOn, bid.AcceptedOn, bid.DeclinedOn, bid.ConvertedDeploymentId, bid.ConvertedCallId

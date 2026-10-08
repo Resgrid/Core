@@ -40,6 +40,7 @@ namespace Resgrid.Services
 		private static string MapStyleCacheKey = "DSetMapStyle_{0}";
 		private static string MapStyleNightCacheKey = "DSetMapStyleNight_{0}";
 		private static string CallNumberingConfigCacheKey = "DSetCallNumbering_{0}";
+		private static string DocumentNumberingConfigCacheKey = "DSetDocumentNumbering_{0}";
 		private static TimeSpan LongCacheLength = TimeSpan.FromDays(14);
 		// Security-relevant settings ride the standard department-data window instead, so a missed
 		// invalidation cannot keep an old policy in force for two weeks.
@@ -1228,6 +1229,46 @@ namespace Resgrid.Services
 				DepartmentSettingTypes.CallNumberingConfig, cancellationToken);
 		}
 
+		public async Task<DocumentNumberingConfig> GetDocumentNumberingConfigAsync(int departmentId, bool bypassCache = false)
+		{
+			async Task<string> getSetting()
+			{
+				var setting = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.DocumentNumberingConfig);
+				return setting?.Setting ?? string.Empty;
+			}
+
+			string value;
+			if (Config.SystemBehaviorConfig.CacheEnabled && !bypassCache)
+				value = await _cacheProvider.RetrieveAsync<string>(string.Format(DocumentNumberingConfigCacheKey, departmentId), getSetting, LongCacheLength);
+			else
+				value = await getSetting();
+
+			if (!String.IsNullOrWhiteSpace(value))
+			{
+				try
+				{
+					var config = ObjectSerialization.Deserialize<DocumentNumberingConfig>(value);
+
+					if (config != null)
+						return config;
+				}
+				catch (Exception)
+				{
+					// A corrupt blob must never stop a department creating work orders or invoices; the built-in numbers carry on.
+				}
+			}
+
+			return new DocumentNumberingConfig();
+		}
+
+		public async Task<DepartmentSetting> SetDocumentNumberingConfigAsync(int departmentId, DocumentNumberingConfig config,
+			CancellationToken cancellationToken = default(CancellationToken))
+		{
+			// SaveOrUpdateSettingAsync invalidates the cached value (see the DocumentNumberingConfig case in its cache switch).
+			return await SaveOrUpdateSettingAsync(departmentId, ObjectSerialization.Serialize(config ?? new DocumentNumberingConfig()),
+				DepartmentSettingTypes.DocumentNumberingConfig, cancellationToken);
+		}
+
 		public async Task<DispatchRecommendationConfig> GetDispatchRecommendationConfigAsync(int departmentId, bool bypassCache = false)
 		{
 			async Task<string> getSetting()
@@ -1657,6 +1698,9 @@ namespace Resgrid.Services
 					break;
 				case DepartmentSettingTypes.CallNumberingConfig:
 					cacheKey = string.Format(CallNumberingConfigCacheKey, departmentId);
+					break;
+				case DepartmentSettingTypes.DocumentNumberingConfig:
+					cacheKey = string.Format(DocumentNumberingConfigCacheKey, departmentId);
 					break;
 				case DepartmentSettingTypes.RecordsDefaultLifecyclePreset:
 				case DepartmentSettingTypes.RecordsReviewDueHours:

@@ -22,6 +22,29 @@ namespace Resgrid.Model
 		/// <summary>Zero-padded width of the sequence part; 0 or 1 writes it unpadded, as the legacy numbers are.</summary>
 		[ProtoMember(2)]
 		public int SequenceWidth { get; set; }
+
+		/// <summary>
+		/// Month (1-12) the numbering year starts, for a department numbering calls by a fiscal year; 0, unset, is January.
+		/// Only a pattern that restarts yearly uses it: {MM} and {DD} always write the calendar date.
+		/// </summary>
+		[ProtoMember(3)]
+		public int YearStartMonth { get; set; }
+
+		/// <summary>Day of <see cref="YearStartMonth"/> the numbering year starts; 0, unset, is the 1st.</summary>
+		[ProtoMember(4)]
+		public int YearStartDay { get; set; }
+
+		/// <summary>
+		/// <see cref="NumberingYearLabel"/> value: which year {YYYY} and {YY} write for a numbering year that does not start on
+		/// January 1. 0 is the year it ends in.
+		/// </summary>
+		[ProtoMember(5)]
+		public int YearLabel { get; set; }
+
+		public NumberingYearStart YearStart()
+		{
+			return new NumberingYearStart(YearStartMonth, YearStartDay, (NumberingYearLabel)YearLabel);
+		}
 	}
 
 	/// <summary>When a call number pattern starts its sequence again: whenever the date text it writes changes.</summary>
@@ -39,7 +62,7 @@ namespace Resgrid.Model
 	/// </summary>
 	public sealed class CallNumberScope
 	{
-		public CallNumberScope(string prefix, string suffix, int width, CallNumberResetPeriod period, DateTime? periodStart, DateTime? periodEnd)
+		public CallNumberScope(string prefix, string suffix, int width, CallNumberResetPeriod period, DateTime? periodStart, DateTime? periodEnd, int? year = null)
 		{
 			Prefix = prefix ?? string.Empty;
 			Suffix = suffix ?? string.Empty;
@@ -47,6 +70,7 @@ namespace Resgrid.Model
 			Period = period;
 			PeriodStart = periodStart;
 			PeriodEnd = periodEnd;
+			Year = year;
 		}
 
 		public string Prefix { get; }
@@ -63,6 +87,9 @@ namespace Resgrid.Model
 		/// <summary>Department-local, exclusive end of the period; null when the pattern never restarts.</summary>
 		public DateTime? PeriodEnd { get; }
 
+		/// <summary>The year {YYYY} and {YY} write for the scope (a fiscal year's name when the numbering year starts later than January 1); null when the pattern has no year.</summary>
+		public int? Year { get; }
+
 		/// <summary>Stable identity of the sequence; the counter row is keyed by it. '#' never appears in a pattern literal.</summary>
 		public string Key => Prefix + "#" + Suffix;
 
@@ -74,6 +101,7 @@ namespace Resgrid.Model
 	/// (letters, digits, '-', '_', '.' and '/') around tokens: {YYYY} or {YY} the year, {MM} the month, {DD} the day of the
 	/// month, and {SEQ} the sequence, which must appear exactly once. Dates are the department's local date of the call.
 	/// {MM} needs a year token and {DD} needs {MM}, so a sequence never runs on across the same month of different years.
+	/// A department numbering by a fiscal year sets the day its numbering year starts (<see cref="CallNumberingConfig.YearStart"/>).
 	/// </summary>
 	public static class CallNumberFormat
 	{
@@ -136,10 +164,18 @@ namespace Resgrid.Model
 			return CallNumberResetPeriod.Never;
 		}
 
-		/// <summary>The sequence scope a call logged at <paramref name="localDate"/> (department time) falls in.</summary>
-		public static CallNumberScope Resolve(string pattern, int width, DateTime localDate)
+		/// <summary>
+		/// The sequence scope a call logged at <paramref name="localDate"/> (department time) falls in. A pattern that restarts
+		/// yearly runs from <paramref name="yearStart"/> (January 1 when null) and writes that numbering year's name; one with
+		/// {MM} or {DD} writes and restarts on the calendar date, so a number such as 20270115-3 always reads as the day it was logged.
+		/// </summary>
+		public static CallNumberScope Resolve(string pattern, int width, DateTime localDate, NumberingYearStart yearStart = null)
 		{
 			var parts = Parse(pattern) ?? throw new ArgumentException("The call number pattern is not valid.", nameof(pattern));
+			var period = ResetPeriod(pattern);
+			yearStart = period == CallNumberResetPeriod.Yearly ? yearStart ?? NumberingYearStart.Calendar : NumberingYearStart.Calendar;
+			var year = yearStart.YearOf(localDate);
+
 			var prefix = new StringBuilder();
 			var suffix = new StringBuilder();
 			var target = prefix;
@@ -151,15 +187,14 @@ namespace Resgrid.Model
 					continue;
 				}
 
-				target.Append(part.Token == null ? part.Literal : Render(part.Token, localDate));
+				target.Append(part.Token == null ? part.Literal : Render(part.Token, localDate, year));
 			}
 
-			var period = ResetPeriod(pattern);
 			DateTime? start = null, end = null;
 			switch (period)
 			{
 				case CallNumberResetPeriod.Yearly:
-					start = new DateTime(localDate.Year, 1, 1, 0, 0, 0, DateTimeKind.Unspecified);
+					start = yearStart.StartOf(localDate);
 					end = start.Value.AddYears(1);
 					break;
 				case CallNumberResetPeriod.Monthly:
@@ -172,15 +207,15 @@ namespace Resgrid.Model
 					break;
 			}
 
-			return new CallNumberScope(prefix.ToString(), suffix.ToString(), EffectiveWidth(width), period, start, end);
+			return new CallNumberScope(prefix.ToString(), suffix.ToString(), EffectiveWidth(width), period, start, end, period == CallNumberResetPeriod.Never ? (int?)null : year);
 		}
 
-		private static string Render(string token, DateTime localDate)
+		private static string Render(string token, DateTime localDate, int year)
 		{
 			switch (token)
 			{
-				case YearToken: return localDate.Year.ToString("D4", CultureInfo.InvariantCulture);
-				case ShortYearToken: return (localDate.Year % 100).ToString("D2", CultureInfo.InvariantCulture);
+				case YearToken: return year.ToString("D4", CultureInfo.InvariantCulture);
+				case ShortYearToken: return (year % 100).ToString("D2", CultureInfo.InvariantCulture);
 				case MonthToken: return localDate.Month.ToString("D2", CultureInfo.InvariantCulture);
 				case DayToken: return localDate.Day.ToString("D2", CultureInfo.InvariantCulture);
 				default: return string.Empty;
@@ -280,12 +315,24 @@ namespace Resgrid.Model
 
 		/// <summary>The sequence to raise the current scope's next number to; null leaves it as it is.</summary>
 		public int? NextSequence { get; set; }
+
+		/// <summary>Month the numbering year starts (1-12); null leaves the saved one as it is.</summary>
+		public int? YearStartMonth { get; set; }
+
+		/// <summary>Day of the month the numbering year starts; null leaves the saved one as it is.</summary>
+		public int? YearStartDay { get; set; }
+
+		/// <summary><see cref="NumberingYearLabel"/> value; null leaves the saved one as it is.</summary>
+		public int? YearLabel { get; set; }
 	}
 
 	public class CallNumberingSaveResult
 	{
 		/// <summary>The pattern did not validate; nothing was saved.</summary>
 		public bool PatternRejected { get; set; }
+
+		/// <summary>The year start is not a month and day every year has (February 29 included); nothing was saved.</summary>
+		public bool YearStartRejected { get; set; }
 
 		/// <summary>Set when the requested next number was below what the sequence already issues next; the sequence was left as it was.</summary>
 		public CallNumberSequenceStatus BelowCurrent { get; set; }

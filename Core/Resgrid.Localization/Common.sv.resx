@@ -110,6 +110,9 @@
   <data name="CallImportSettings" xml:space="preserve">
     <value>Inställningar för larmimport</value>
   </data>
+  <data name="DocumentNumbering" xml:space="preserve">
+    <value>Dokumentnumrering</value>
+  </data>
   <data name="CallsModule" xml:space="preserve">
     <value>Larm</value>
   </data>

@@ -120,9 +120,38 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public string ReferenceId { get; set; }
 
 		/// <summary>
+		/// Optional. Indoor map zone the incident is in. Blank keeps the stored zone; leave it out (null) when the client
+		/// has no indoor location picker, which also leaves the department's indoor location requirement unenforced.
+		/// </summary>
+		public string IndoorMapZoneId { get; set; }
+
+		/// <summary>
+		/// Optional. Floor of <see cref="IndoorMapZoneId"/>.
+		/// </summary>
+		public string IndoorMapFloorId { get; set; }
+
+		/// <summary>
+		/// Optional. Ids of the department's dispatch protocols to add to the call; protocols already on it are kept. Leave
+		/// it out (null) when the client has no protocol picker, which also leaves the protocols requirement unenforced.
+		/// </summary>
+		public List<int> ProtocolIds { get; set; }
+
+		/// <summary>
+		/// Optional. Id of another call in the department to link this call to; existing links are kept. Leave it out
+		/// (null) when the client has no way to pick one, which also leaves the linked-call requirement unenforced.
+		/// </summary>
+		public string LinkedCallId { get; set; }
+
+		/// <summary>
 		/// Time in the future, in the departments local time, to dispatch the call
 		/// </summary>
 		public DateTime? DispatchOn { get; set; }
+
+		/// <summary>
+		/// Optional. The same as DispatchOn but in UTC (ISO 8601, e.g. "2026-10-07T14:30:00Z"), for clients that do not know
+		/// the department's time zone. When both are sent this one is used.
+		/// </summary>
+		public DateTime? DispatchOnUtc { get; set; }
 
 		/// <summary>
 		/// Call Intake form JSON

@@ -3,7 +3,7 @@
 @{
     var b = Model.Bid;
     ViewBag.Title = "Resgrid | " + localizer["EditBid"];
-    ViewData["Title"] = localizer["BidNumber"].Value + " " + b.BidNumber;
+    ViewData["Title"] = localizer["BidNumber"].Value + " " + b.NumberText();
     ViewData["Subtitle"] = localizer["EditBidIntro"].Value;
     ViewData["RootController"] = "Bids";
     ViewData["RootTitle"] = localizer["Bids"].Value;

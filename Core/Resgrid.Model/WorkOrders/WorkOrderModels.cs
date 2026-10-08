@@ -40,6 +40,8 @@ namespace Resgrid.Model.WorkOrders
 		public string RequestId { get; set; }
 		public int NumberYear { get; set; }
 		public int NumberSequence { get; set; }
+		/// <summary>The number as issued: the department's pattern (setting 117) or the built-in WO-{year}-{sequence:D6}; null only on rows written before M0268 by an older server.</summary>
+		public string DisplayNumber { get; set; }
 		public int Type { get; set; }
 		public int Priority { get; set; }
 		public int Status { get; set; }

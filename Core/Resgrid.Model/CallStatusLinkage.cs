@@ -113,8 +113,12 @@ namespace Resgrid.Model
 
 			switch ((ActionBaseTypes)baseType)
 			{
+				// Back in service, as in the availability matrix: a unit that completed its task or went back on patrol has
+				// cleared its call.
 				case ActionBaseTypes.Available:
 				case ActionBaseTypes.InQuarters:
+				case ActionBaseTypes.Completed:
+				case ActionBaseTypes.OnPatrol:
 					return UnitStateTypes.Available;
 				case ActionBaseTypes.Unavailable:
 				case ActionBaseTypes.NotResponding:
@@ -188,8 +192,9 @@ namespace Resgrid.Model
 		}
 
 		/// <summary>
-		/// True when a unit state ends the unit's involvement in whatever it was working: back in service, out of
-		/// service, returning, released or cancelled. Custom statuses resolve through their base type.
+		/// True when a unit state ends the unit's involvement in whatever it was working: back in service (custom base types
+		/// Available, In Quarters, Completed and On Patrol), out of service, returning, released or cancelled. Custom statuses
+		/// resolve through their base type.
 		/// </summary>
 		public static bool IsClearingUnitState(int rawState, IReadOnlyDictionary<int, int> customBaseTypes)
 		{
@@ -201,7 +206,8 @@ namespace Resgrid.Model
 
 		/// <summary>
 		/// True when a personnel status ends the person's involvement: available / standing by, not responding, available
-		/// at a station, or a custom status whose base type means cleared, returning, unavailable or out of service.
+		/// at a station, or a custom status whose base type means back in service (available, in quarters, completed, on
+		/// patrol), cleared, returning, unavailable or out of service.
 		/// Responding to a station is not clearing: volunteers respond to the station to pick up the apparatus.
 		/// </summary>
 		public static bool IsClearingPersonnelStatus(int rawStatus, IReadOnlyDictionary<int, int> customBaseTypes)
@@ -216,6 +222,8 @@ namespace Resgrid.Model
 			{
 				case ActionBaseTypes.Available:
 				case ActionBaseTypes.InQuarters:
+				case ActionBaseTypes.Completed:
+				case ActionBaseTypes.OnPatrol:
 				case ActionBaseTypes.NotResponding:
 				case ActionBaseTypes.Cleared:
 				case ActionBaseTypes.Returning:

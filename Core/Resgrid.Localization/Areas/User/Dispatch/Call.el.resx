@@ -977,4 +977,7 @@
   <data name="SendNotificationHelp" xml:space="preserve">
     <value>Ενημερώνει όσους κλήθηκαν στην κλήση, τις μονάδες της και την ομάδα διοίκησης συμβάντος ότι η κλήση έκλεισε. Οι σημειώσεις κλεισίματος δεν περιλαμβάνονται.</value>
   </data>
+  <data name="NewCallFieldRequired" xml:space="preserve">
+    <value>Το πεδίο {0} είναι υποχρεωτικό σε αυτό το τμήμα.</value>
+  </data>
 </root>

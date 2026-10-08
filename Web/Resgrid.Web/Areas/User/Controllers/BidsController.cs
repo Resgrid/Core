@@ -262,7 +262,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (bid == null) return NotFound();
 			var pdf = await _bids.GetBidPdfAsync(id, DepartmentId);
 			if (pdf == null || pdf.Length == 0) return Refused(500, "bids_pdf_unavailable", "View", new { id });
-			return File(pdf, "application/pdf", $"bid-{bid.BidNumber}.pdf");
+			return File(pdf, "application/pdf", $"bid-{DocumentNumbering.FileSafe(bid.NumberText())}.pdf");
 		}
 
 		[HttpGet]

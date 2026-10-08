@@ -1187,6 +1187,11 @@ Default: unset. Source: DepartmentSsoConfig.EncryptedScimBearerToken.
 
 Department Settings Department address, time zone and core settings. Sets the time zone and address everything else uses, and keeps administrative access limited and recoverable. An administrator sets the department time zone, hides modules the department will not use, requires two-factor sign-in for administrators and adds a second administrator. Confirm the address and time zone; dates, maps and schedules depend on them.
 
+<a id="document-numbering"></a>
+## Document Numbering
+
+Document Numbering How work order, invoice, bid and daily time report numbers are written, and the day their numbering year starts for fiscal-year numbering. Sets the time zone and address everything else uses, and keeps administrative access limited and recoverable. An administrator sets the department time zone, hides modules the department will not use, requires two-factor sign-in for administrators and adds a second administrator. Know your department address and time zone, and choose at least two people who will administer Resgrid.
+
 <a id="module-settings"></a>
 ## Module settings
 
@@ -1389,7 +1394,7 @@ Default: disabled, no department-wide role exceptions. Source: DepartmentSetting
 <a id="setting-callnumberingconfig"></a>
 ## Call Numbering Config
 
-Call Numbering Config. How new call numbers are written: the call number pattern and sequence digits, edited on Call Settings, plus a raised next number for departments continuing numbers issued before Resgrid. Each call takes its number from its sequence once, so two calls logged together never share a number. Changing the pattern never renumbers calls that already have a number.
+Call Numbering Config. How new call numbers are written: the call number pattern, sequence digits and numbering year start (for calls numbered by a fiscal year), edited on Call Settings, plus a raised next number for departments continuing numbers issued before Resgrid. Each call takes its number from its sequence once, so two calls logged together never share a number. Changing the pattern never renumbers calls that already have a number.
 
 Default: legacy pattern {YY}-{SEQ}, unpadded. Source: DepartmentSettingTypes.CallNumberingConfig.
 
@@ -1406,6 +1411,27 @@ Default: unset. Source: CallNumberingConfig.Pattern.
 Call Numbering Config / Sequence Width. Digits the sequence is padded to with leading zeros, from 1 (no padding, as the legacy numbers are) to 8. The sequence is counted as a number, so changing the width never restarts it.
 
 Default: 1. Source: CallNumberingConfig.SequenceWidth.
+
+<a id="field-callnumberingconfig-yearstartmonth"></a>
+## Call Numbering Config / Year Start Month
+
+Call Numbering Config / Year Start Month. Month the numbering year starts (1 to 12), for a department numbering calls by a fiscal year. A yearly pattern starts again at 1 on that month and day, in the department's local time, and {YYYY} and {YY} write the fiscal year's name. Patterns with {MM} or {DD} always write and restart on the calendar date. Unset (0) is January, the calendar year. Saving a new year start does not renumber calls; the sequence for the new year carries on from any number with the same text already issued.
+
+Default: 0 (January). Source: CallNumberingConfig.YearStartMonth.
+
+<a id="field-callnumberingconfig-yearstartday"></a>
+## Call Numbering Config / Year Start Day
+
+Call Numbering Config / Year Start Day. Day of the month the numbering year starts, from 1 to that month's last day; February 29 is refused so the year starts on the same date every year. Unset (0) is the 1st.
+
+Default: 0 (the 1st). Source: CallNumberingConfig.YearStartDay.
+
+<a id="field-callnumberingconfig-yearlabel"></a>
+## Call Numbering Config / Year Label
+
+Call Numbering Config / Year Label. Which year {YYYY} and {YY} write for a numbering year that does not start on January 1: 0, the year it ends in (the usual fiscal-year convention, so a year starting November 1, 2026 is 2027), or 1, the year it starts in. Ignored for a January 1 start.
+
+Default: 0 (the year it ends in). Source: CallNumberingConfig.YearLabel.
 
 <a id="field-unittypecallstatusoverridesetting-overrides"></a>
 ## Unit Type Call Status Override Setting / Overrides
@@ -1720,7 +1746,7 @@ Text call intake and commands Create calls and accept member commands by text me
 <a id="call-settings"></a>
 ## Call Settings
 
-Call Settings The mailbox and format used to import calls from CAD or paging email, and the call number format and next number. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Collect your call types, the statuses members report while responding, and the details of any CAD or paging system that should create calls.
+Call Settings The mailbox and format used to import calls from CAD or paging email, and the call number format, next number and numbering year start. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Collect your call types, the statuses members report while responding, and the details of any CAD or paging system that should create calls.
 
 <a id="setting-unitssortorder"></a>
 ## Units Sort Order
@@ -2580,7 +2606,7 @@ Default: owning records default. Source: DepartmentSettingTypes.RecordsReviewDue
 <a id="setting-recordsnumberingconfig"></a>
 ## Records Numbering Config
 
-Records Numbering Config. Department numbering for the built-in record types and incident reports: the number pattern, sequence digits, record type prefixes and raised next numbers. Numbers are assigned when a record is finalized. Department definitions with their own numbering keep it.
+Records Numbering Config. Department numbering for the built-in record types and incident reports: the number pattern, sequence digits, record type prefixes, numbering year start (for records numbered by a fiscal year) and raised next numbers. Numbers are assigned when a record is finalized. Department definitions with their own numbering keep it.
 
 Default: RecordsNumberingConfig constructor. Source: DepartmentSettingTypes.RecordsNumberingConfig.
 
@@ -2664,7 +2690,7 @@ Default: OnFinalize. Source: RecordsNumberingConfig.NumberAssignment.
 <a id="field-recordsnumberingconfig-resetyearly"></a>
 ## Records Numbering Config / Reset Yearly
 
-Records Numbering Config / Reset Yearly. Restart record sequences each calendar year in the department time zone.
+Records Numbering Config / Reset Yearly. Restart record sequences each numbering year in the department time zone: the calendar year unless the department set a fiscal year start (YearStartMonth and YearStartDay).
 
 Default: true. Source: RecordsNumberingConfig.ResetYearly.
 
@@ -2709,6 +2735,34 @@ Default: unset. Source: RecordsNumberingConfig.Pattern.
 Records Numbering Config / Prefixes. The department's own prefix for each built-in record type and for incident reports, written by the PREFIX token in place of the default (RUN, TRN, INC and so on). A type with no prefix of its own uses its default. A new prefix starts its own sequence; numbers already issued keep their prefix, and types given the same prefix share one sequence.
 
 Default: empty. Source: RecordsNumberingConfig.Prefixes.
+
+<a id="field-recordsnumberingconfig-documentpatterns"></a>
+## Records Numbering Config / Document Patterns
+
+Records Numbering Config / Document Patterns. The department's own patterns for records request (PRR-), occupancy (OCC-), inspection (INSP-), permit (PRM-), investigation (INV-) and evidence (EV-) numbers, edited under Other record numbers on Records Settings. They follow this setting's numbering year start. A kind with no entry keeps its built-in {KIND}-{year}-{sequence:0000} numbers; a custom pattern's sequences are counted in DocumentNumberSequences and carry on after any number already issued in the same text.
+
+Default: empty. Source: RecordsNumberingConfig.DocumentPatterns.
+
+<a id="field-recordsnumberingconfig-yearstartmonth"></a>
+## Records Numbering Config / Year Start Month
+
+Records Numbering Config / Year Start Month. Month the numbering year starts (1 to 12), for a department whose records follow a fiscal year, its own or a county's or state's it reports to. Sequences whose pattern includes {YYYY} or {YY}, and department definitions that reset yearly, start again at 1 on that month and day in the department's local time, and the year tokens write the fiscal year's name. A record's year is the local date it started (an incident report's, its call's). Unset (0) is January, the calendar year. Separate from call numbering's year start. Records request numbers (PRR-year-sequence) and prevention numbers (inspections, permits, occupancies, investigations and evidence, KIND-year-sequence) use the same numbering year.
+
+Default: 0 (January). Source: RecordsNumberingConfig.YearStartMonth.
+
+<a id="field-recordsnumberingconfig-yearstartday"></a>
+## Records Numbering Config / Year Start Day
+
+Records Numbering Config / Year Start Day. Day of the month the numbering year starts, from 1 to that month's last day; February 29 is refused so the year starts on the same date every year. Unset (0) is the 1st.
+
+Default: 0 (the 1st). Source: RecordsNumberingConfig.YearStartDay.
+
+<a id="field-recordsnumberingconfig-yearlabel"></a>
+## Records Numbering Config / Year Label
+
+Records Numbering Config / Year Label. Which year {YYYY} and {YY} write for a numbering year that does not start on January 1: 0, the year it ends in (the usual fiscal-year convention, so a year starting November 1, 2026 is 2027), or 1, the year it starts in. Ignored for a January 1 start.
+
+Default: 0 (the year it ends in). Source: RecordsNumberingConfig.YearLabel.
 
 <a id="field-recordsnumberingfloor-nextsequence"></a>
 ## Records Numbering Floor / Next Sequence
@@ -2895,7 +2949,7 @@ Records Dashboard Records that are due, awaiting review or ready to submit. Keep
 <a id="records-settings"></a>
 ## Records Settings
 
-Records Settings Numbering, retention, search and visibility rules for records. Keep incident and activity records with the calls they came from, ready for review and reporting. After each call, the officer completes an incident report from the call and a supervisor reviews it. Know which reports your department completes and who reviews them. Records may need to be enabled for your department.
+Records Settings Numbering (including records request and prevention numbers and the numbering year start), retention, search and visibility rules for records. Keep incident and activity records with the calls they came from, ready for review and reporting. After each call, the officer completes an incident report from the call and a supervisor reviews it. Know which reports your department completes and who reviews them. Records may need to be enabled for your department.
 
 <a id="record-occupancies"></a>
 ## Occupancies and preplans
@@ -3278,3 +3332,59 @@ Advanced Data Protection The Advanced Data Protection add-on: extra encryption a
 ## Enhanced AI
 
 Enhanced AI AI assistance beyond the free Admin Assist allowance. Help explain approved evidence and prepare drafts for human review when released. Ask for an explanation of a configuration finding when the conversational feature is available. Nothing to set up yet; your free Admin Assist allowance works without it.
+
+<a id="setting-documentnumberingconfig"></a>
+## Document Numbering Config
+
+Document Numbering Config. How work order, invoice, bid and daily time report numbers are written (Department -> Document Numbering): one pattern per document kind and the day their numbering year starts, plus a raised next number per custom sequence. A kind with no pattern keeps its built-in numbers. Changing it never renumbers documents that already have a number.
+
+Default: missing = the built-in numbers. Source: DepartmentSettingTypes.DocumentNumberingConfig.
+
+<a id="field-documentnumberingconfig-yearstartmonth"></a>
+## Document Numbering Config / Year Start Month
+
+Document Numbering Config / Year Start Month. Month the numbering year starts (1 to 12) for work orders, invoices, bids and daily time reports, in the department's local time. Work order numbers (their NumberYear) and patterns with {YYYY} or {YY} start again at 1 on that month and day and write the fiscal year's name; {MM} and {DD} always write the calendar date. Unset (0) is January, the calendar year. Call numbers (setting 115) and Records numbers (setting 72) have their own year start.
+
+Default: 0 (January). Source: DocumentNumberingConfig.YearStartMonth.
+
+<a id="field-documentnumberingconfig-yearstartday"></a>
+## Document Numbering Config / Year Start Day
+
+Document Numbering Config / Year Start Day. Day of the month the numbering year starts, from 1 to that month's last day; February 29 is refused so the year starts on the same date every year. Unset (0) is the 1st.
+
+Default: 0 (the 1st). Source: DocumentNumberingConfig.YearStartDay.
+
+<a id="field-documentnumberingconfig-yearlabel"></a>
+## Document Numbering Config / Year Label
+
+Document Numbering Config / Year Label. Which year {YYYY} and {YY} write for a numbering year that does not start on January 1: 0, the year it ends in (the usual fiscal-year convention, so a year starting November 1, 2026 is 2027), or 1, the year it starts in. Ignored for a January 1 start.
+
+Default: 0 (the year it ends in). Source: DocumentNumberingConfig.YearLabel.
+
+<a id="field-documentnumberingconfig-patterns"></a>
+## Document Numbering Config / Patterns
+
+Document Numbering Config / Patterns. The department's own pattern per document kind (work-order, invoice, bid, time-report), in the call number grammar. A kind with no entry, an entry that no longer validates or one equal to the built-in pattern and width keeps the built-in numbers: WO-{YYYY}-{SEQ} at 6 digits for work orders and the plain number for invoices, bids and time reports. The int numbers stay as the unique, ordered ids; the issued text is stored as DisplayNumber (M0268). A custom pattern's sequences are counted in DocumentNumberSequences and seeded from the numbers already issued in the same text, so changing the pattern never re-issues a number. The number as issued is what members see on the document, its PDF and file name, exports, search and invoice lines, and for daily time reports in the Responder, Unit, IC and Dispatch apps (v4 `DisplayNumber`; the apps fall back to the plain number on servers without it).
+
+Default: empty. Source: DocumentNumberingConfig.Patterns.
+
+<a id="field-documentnumberpattern-kind"></a>
+## Document Number Pattern / Kind
+
+Document Number Pattern / Kind. The DocumentNumberKinds key the entry numbers: work-order, invoice, bid, time-report (setting 117) or records-request, occupancy, inspection, permit, investigation, evidence (setting 72's DocumentPatterns).
+
+Default: unset. Source: DocumentNumberPattern.Kind.
+
+<a id="field-documentnumberpattern-pattern"></a>
+## Document Number Pattern / Pattern
+
+Document Number Pattern / Pattern. Fixed text (letters, digits, - _ . /) around {YYYY} or {YY}, {MM}, {DD} and {SEQ}, {SEQ} exactly once, up to 40 characters. Every number it can write must fit the kind's column: 50 characters, 32 for occupancy, inspection, permit, investigation and evidence numbers.
+
+Default: unset. Source: DocumentNumberPattern.Pattern.
+
+<a id="field-documentnumberpattern-sequencewidth"></a>
+## Document Number Pattern / Sequence Width
+
+Document Number Pattern / Sequence Width. Digits the sequence is padded to with leading zeros, 1 to 8. The sequence is counted as a number, so changing the width never restarts it.
+
+Default: the kind's built-in width. Source: DocumentNumberPattern.SequenceWidth.

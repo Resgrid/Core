@@ -35,8 +35,9 @@ namespace Resgrid.Model
 	/// <summary>
 	/// Department record-number patterns (setting 72, <see cref="RecordsNumberingConfig.Pattern"/>). A pattern is literal
 	/// text (letters, digits, '-', '_' and '.') around tokens: {PREFIX} the record type's prefix (RUN, TRN, INC... or the department's own),
-	/// {YYYY} or {YY} the year, {GROUP} the station/group as "G" plus its id, and {SEQ} the zero-padded sequence,
-	/// which must appear exactly once. A department with no saved pattern keeps the one its checkboxes always produced.
+	/// {YYYY} or {YY} the numbering year (a fiscal year's name when <see cref="RecordsNumberingConfig.YearStart"/> is later than
+	/// January 1), {GROUP} the station/group as "G" plus its id, and {SEQ} the zero-padded sequence, which must appear exactly
+	/// once. A department with no saved pattern keeps the one its checkboxes always produced.
 	/// </summary>
 	public static class RecordNumberFormat
 	{

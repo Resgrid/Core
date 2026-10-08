@@ -1065,4 +1065,7 @@
   <data name="SendNotificationHelp" xml:space="preserve">
     <value>Avvisa tutte le persone inviate alla chiamata, le sue unità e il team di comando dell'incidente che la chiamata è stata chiusa. Le note di chiusura non sono incluse.</value>
   </data>
+  <data name="NewCallFieldRequired" xml:space="preserve">
+    <value>{0} è obbligatorio in questo dipartimento.</value>
+  </data>
 </root>

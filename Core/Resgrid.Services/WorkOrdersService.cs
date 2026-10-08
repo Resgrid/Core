@@ -35,13 +35,27 @@ namespace Resgrid.Services
 		private readonly IChecklistAssetSource _maintenanceAssets;
 		private readonly IUnitsService _maintenanceUnits;
 		private readonly Lazy<IInventoryCatalogService> _inventoryCatalog;
+		private readonly IDocumentNumberingService _documentNumbering;
 		public WorkOrdersService(IWorkOrderRepository store, IWorkOrderAuthorizationService authorization, IReadinessAccessService access, IUnitOfWork uow,
 			IAuditLogsRepository audit, IDomainEventOutboxService outbox, Lazy<IProtectedReadService> read, Lazy<IProtectedWriteService> write, IRecordAttachmentScanner scanner, TimeProvider clock = null,
 			IWorkOrderMaintenanceRepository maintenance = null, Lazy<IInventoryWorkOrderAdapter> inventoryMaintenance = null, IChecklistRepository checklists = null,
-			IChecklistAssetSource maintenanceAssets = null, IUnitsService maintenanceUnits = null, Lazy<IInventoryCatalogService> inventoryCatalog = null)
+			IChecklistAssetSource maintenanceAssets = null, IUnitsService maintenanceUnits = null, Lazy<IInventoryCatalogService> inventoryCatalog = null,
+			IDocumentNumberingService documentNumbering = null)
 		{ _store = store; _authorization = authorization; _access = access; _uow = uow; _audit = audit; _outbox = outbox; _read = read; _write = write; _scanner = scanner; _clock = clock ?? TimeProvider.System;
-			_maintenance = maintenance; _inventoryMaintenance = inventoryMaintenance; _checklists = checklists; _maintenanceAssets = maintenanceAssets; _maintenanceUnits = maintenanceUnits; _inventoryCatalog = inventoryCatalog; }
+			_maintenance = maintenance; _inventoryMaintenance = inventoryMaintenance; _checklists = checklists; _maintenanceAssets = maintenanceAssets; _maintenanceUnits = maintenanceUnits; _inventoryCatalog = inventoryCatalog; _documentNumbering = documentNumbering; }
 		private DateTime Now => _clock.GetUtcNow().UtcDateTime;
+		/// <summary>
+		/// Numbers a new work order: NumberYear/NumberSequence (unique, ordered) in the department's numbering year (setting 117,
+		/// department-local, a fiscal year when one is set), and DisplayNumber in the department's own pattern or the built-in
+		/// WO-{year}-{sequence:D6}. Runs under the department lock NextNumberAsync requires.
+		/// </summary>
+		private async Task NumberAsync(WorkOrder order, int departmentId)
+		{
+			order.NumberYear = _documentNumbering == null ? Now.Year : await _documentNumbering.GetNumberingYearAsync(departmentId, DocumentNumberKinds.WorkOrder, Now);
+			order.NumberSequence = await _store.NextNumberAsync(departmentId, order.NumberYear);
+			order.DisplayNumber = (_documentNumbering == null ? null : await _documentNumbering.TakeCustomNumberAsync(departmentId, DocumentNumberKinds.WorkOrder, Now))
+				?? DocumentNumbering.LegacyWorkOrderNumber(order.NumberYear, order.NumberSequence);
+		}
 		private sealed class StoredContent { public WorkOrderContent Fields { get; set; } public string RequestHash { get; set; } }
 		private static T Decode<T>(string value) => JsonConvert.DeserializeObject<T>(value ?? "{}");
 		private static string Key(WorkOrderRow row) => row.Id;
@@ -160,7 +174,7 @@ namespace Resgrid.Services
 				input.Content.Currency = await DepartmentCurrencyAsync(actor.DepartmentId);
 				if (previewCurrency != null && previewCurrency != input.Content.Currency) throw new WorkOrderException(409, "BulkPreviewChanged");
 				var hash = Fingerprint(input);
-				var row = New<WorkOrder>(actor); row.CurrencyCode = input.Content.Currency; row.RequestId = input.RequestId; row.NumberYear = Now.Year; row.NumberSequence = await _store.NextNumberAsync(actor.DepartmentId, row.NumberYear); Apply(row, input);
+				var row = New<WorkOrder>(actor); row.CurrencyCode = input.Content.Currency; row.RequestId = input.RequestId; await NumberAsync(row, actor.DepartmentId); Apply(row, input);
 				row.OriginalDueOn = row.DueOn; row.Content = JsonConvert.SerializeObject(new StoredContent { Fields = input.Content, RequestHash = hash });
 				if (input.Content.ApprovedCost.HasValue && (await ReadPolicyAsync(actor)).ApprovalsEnabled) throw new WorkOrderException(409, "SpendingApprovalRequired");
 				await PinSlaAsync(row);
@@ -329,7 +343,7 @@ namespace Resgrid.Services
 			choices.Currency = await DepartmentCurrencyAsync(actor.DepartmentId);
 			return choices;
 		}
-		private static WorkOrderSummary Summary(WorkOrder row, WorkOrderContent c) => new WorkOrderSummary { Id = row.Id, Number = $"WO-{row.NumberYear}-{row.NumberSequence:D6}", Title = c.Title, Status = (WorkOrderStatus)row.Status, Priority = (WorkOrderPriority)row.Priority,
+		private static WorkOrderSummary Summary(WorkOrder row, WorkOrderContent c) => new WorkOrderSummary { Id = row.Id, Number = row.NumberText(), Title = c.Title, Status = (WorkOrderStatus)row.Status, Priority = (WorkOrderPriority)row.Priority,
 			Revision = row.Revision, UpdatedOn = row.UpdatedOn, CreatedOn = row.CreatedOn, DueOn = row.DueOn, AssignedToUserId = row.AssignedToUserId, AssignedToRoleId = row.AssignedToRoleId, AssignedToUserIds = row.AssignedToUserIds, AssignedToRoleIds = row.AssignedToRoleIds, UnitId = row.TargetUnitId, GroupId = row.TargetGroupId, AssetId = row.InventoryAssetId };
 		public async Task<WorkOrderPage> ListAsync(ChecklistActor actor, WorkOrderFilter filter)
 		{

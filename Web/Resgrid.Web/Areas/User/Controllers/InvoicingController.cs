@@ -417,7 +417,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (pdf == null || pdf.Length == 0)
 				return Refused(503, "PdfUnavailable", nameof(View), new { id });
 			Response.Headers["X-Content-Type-Options"] = "nosniff";
-			return File(pdf, "application/pdf", $"invoice-{invoice.InvoiceNumber}.pdf");
+			return File(pdf, "application/pdf", $"invoice-{DocumentNumbering.FileSafe(invoice.NumberText())}.pdf");
 		}
 
 		[HttpPost, ValidateAntiForgeryToken]

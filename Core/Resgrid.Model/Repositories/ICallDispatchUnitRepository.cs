@@ -19,12 +19,14 @@ namespace Resgrid.Model.Repositories
 		Task<IEnumerable<CallDispatchUnit>> GetCallUnitDispatchesByCallIdAsync(int callId);
 
 		/// <summary>
-		/// Gets the ids of the department's open (active, not deleted) calls the unit is dispatched to.
+		/// Gets the unit's dispatches to the department's open (active, not deleted) calls. A scheduled call only counts once it
+		/// has gone out or its dispatch time has passed.
 		/// </summary>
-		Task<IEnumerable<int>> GetOpenCallIdsForUnitAsync(int departmentId, int unitId);
+		Task<IEnumerable<CallDispatchUnit>> GetOpenCallUnitDispatchesForUnitAsync(int departmentId, int unitId);
 
 		/// <summary>
-		/// Gets the unit dispatches of every open (active, not deleted) department call.
+		/// Gets the unit dispatches of every open (active, not deleted) department call. A scheduled call only counts once it
+		/// has gone out or its dispatch time has passed.
 		/// </summary>
 		Task<IEnumerable<CallDispatchUnit>> GetOpenCallUnitDispatchesForDepartmentAsync(int departmentId);
 

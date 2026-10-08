@@ -368,7 +368,7 @@ namespace Resgrid.Repositories.DataRepository
 			=> QueryFirstOrDefaultAsync<RmsHydrant>($"SELECT * FROM {Tbl("RmsHydrants")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsHydrantId")} = {P}Id", new { DepartmentId = departmentId, Id = hydrantId });
 
 		public Task<RmsHydrant> GetByNumberAsync(int departmentId, string hydrantNumber)
-			=> QueryFirstOrDefaultAsync<RmsHydrant>($"SELECT * FROM {Tbl("RmsHydrants")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("HydrantNumber")} = {P}Number AND {Col("DeletedOn")} IS NULL", new { DepartmentId = departmentId, Number = hydrantNumber });
+			=> QueryFirstOrDefaultAsync<RmsHydrant>($"SELECT * FROM {Tbl("RmsHydrants")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("HydrantNumber")} = {CaseInsensitive("Number")} AND {Col("DeletedOn")} IS NULL", new { DepartmentId = departmentId, Number = hydrantNumber });
 
 		/// <summary>Numbers per round trip: DepartmentId plus this many stays under SQL Server's 2,100-parameter ceiling.</summary>
 		public const int NumberLookupChunkSize = 1000;
@@ -380,14 +380,15 @@ namespace Resgrid.Repositories.DataRepository
 			foreach (var chunk in requested.Chunk(NumberLookupChunkSize))
 			{
 				// The requested value is joined, not compared in memory: "h.HydrantNumber = r.RequestedNumber" is the same predicate
-				// as GetByNumberAsync's "HydrantNumber = @Number", so the column collation decides the match on both databases.
+				// as GetByNumberAsync's "HydrantNumber = @Number", so the column collation decides the match on both databases (on
+				// PostgreSQL the requested numbers are citext, as a text array would compare case-sensitively).
 				var parameters = new DynamicParameters();
 				parameters.Add("DepartmentId", departmentId);
 				string requestedRows;
 				if (IsPostgres)
 				{
 					parameters.Add("Numbers", chunk);
-					requestedRows = $"unnest({P}Numbers) AS r({Col("RequestedNumber")})";
+					requestedRows = $"unnest({P}Numbers::citext[]) AS r({Col("RequestedNumber")})";
 				}
 				else
 				{

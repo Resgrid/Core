@@ -977,4 +977,7 @@
   <data name="SendNotificationHelp" xml:space="preserve">
     <value>Tells everyone dispatched on the call, its units and the incident command team that the call is closed. The closing notes are not included.</value>
   </data>
+  <data name="NewCallFieldRequired" xml:space="preserve">
+    <value>{0} is required by this department.</value>
+  </data>
 </root>

@@ -116,5 +116,38 @@ namespace Resgrid.Tests.Models
 			CallStatusLinkage.ResolveUnitStateKind(704, baseTypes).Should().Be(UnitStateTypes.Staging, "deleted statuses still resolve for history");
 			CallStatusLinkage.ResolveUnitStateKind(799, baseTypes).Should().BeNull();
 		}
+
+		// Completed and On Patrol are back in service, as in the availability matrix, so they end a unit's or person's part in
+		// a call for status linking like Available does.
+		[Test]
+		public void completed_and_on_patrol_clear_like_available()
+		{
+			var unitBaseTypes = CallStatusLinkage.BuildUnitBaseTypeMap(new[]
+			{
+				UnitCustomState(
+					new CustomStateDetail { CustomStateDetailId = 710, BaseType = (int)ActionBaseTypes.Completed },
+					new CustomStateDetail { CustomStateDetailId = 711, BaseType = (int)ActionBaseTypes.OnPatrol },
+					new CustomStateDetail { CustomStateDetailId = 712, BaseType = (int)ActionBaseTypes.OnBreak },
+					new CustomStateDetail { CustomStateDetailId = 713, BaseType = (int)ActionBaseTypes.Transporting })
+			});
+			var personnelBaseTypes = CallStatusLinkage.BuildBaseTypeMap(new[]
+			{
+				PersonnelCustomState(
+					new CustomStateDetail { CustomStateDetailId = 720, BaseType = (int)ActionBaseTypes.Completed },
+					new CustomStateDetail { CustomStateDetailId = 721, BaseType = (int)ActionBaseTypes.OnPatrol },
+					new CustomStateDetail { CustomStateDetailId = 722, BaseType = (int)ActionBaseTypes.OnBreak })
+			}, CustomStateTypes.Personnel);
+
+			CallStatusLinkage.ResolveUnitStateKind(710, unitBaseTypes).Should().Be(UnitStateTypes.Available);
+			CallStatusLinkage.ResolveUnitStateKind(711, unitBaseTypes).Should().Be(UnitStateTypes.Available);
+			CallStatusLinkage.IsClearingUnitState(710, unitBaseTypes).Should().BeTrue();
+			CallStatusLinkage.IsClearingUnitState(711, unitBaseTypes).Should().BeTrue();
+			CallStatusLinkage.IsClearingUnitState(712, unitBaseTypes).Should().BeFalse("a unit on a break is still dispatchable but has not cleared");
+			CallStatusLinkage.IsClearingUnitState(713, unitBaseTypes).Should().BeFalse();
+
+			CallStatusLinkage.IsClearingPersonnelStatus(720, personnelBaseTypes).Should().BeTrue();
+			CallStatusLinkage.IsClearingPersonnelStatus(721, personnelBaseTypes).Should().BeTrue();
+			CallStatusLinkage.IsClearingPersonnelStatus(722, personnelBaseTypes).Should().BeFalse();
+		}
 	}
 }

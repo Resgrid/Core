@@ -70,19 +70,20 @@ namespace Resgrid.Repositories.DataRepository
 			}
 		}
 
-		public async Task<IEnumerable<int>> GetOpenCallIdsForUnitAsync(int departmentId, int unitId)
+		public async Task<IEnumerable<CallDispatchUnit>> GetOpenCallUnitDispatchesForUnitAsync(int departmentId, int unitId)
 		{
 			try
 			{
-				var selectFunction = new Func<DbConnection, Task<IEnumerable<int>>>(async x =>
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<CallDispatchUnit>>>(async x =>
 				{
 					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("DepartmentId", departmentId);
 					dynamicParameters.Add("UnitId", unitId);
+					dynamicParameters.Add("Now", DateTime.UtcNow);
 
-					var query = _queryFactory.GetQuery<SelectOpenCallIdsForUnitQuery>();
+					var query = _queryFactory.GetQuery<SelectOpenCallUnitDispatchesForUnitQuery>();
 
-					return await x.QueryAsync<int>(sql: query,
+					return await x.QueryAsync<CallDispatchUnit>(sql: query,
 						param: dynamicParameters,
 						transaction: _unitOfWork.Transaction);
 				});
@@ -120,6 +121,7 @@ namespace Resgrid.Repositories.DataRepository
 				{
 					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("DepartmentId", departmentId);
+					dynamicParameters.Add("Now", DateTime.UtcNow);
 
 					var query = _queryFactory.GetQuery<SelectOpenCallUnitDispatchesForDepartmentQuery>();
 

@@ -894,7 +894,7 @@
     <value>Поля форми нового виклику</value>
   </data>
   <data name="NewCallFieldsHelp" xml:space="preserve">
-    <value>Оберіть, які вбудовані поля відображаються у формі та які мають бути заповнені, перш ніж виклик можна створити та надіслати. Назва, характер, пріоритет і тип завжди видимі та обов’язкові.</value>
+    <value>Оберіть, які вбудовані поля відображаються у формі та які мають бути заповнені, перш ніж виклик можна створити та надіслати. Назва, характер, пріоритет і тип завжди видимі та обов’язкові. Ті самі правила діють під час редагування виклику та додавання архівного виклику.</value>
   </data>
   <data name="NewCallFieldsFieldColumn" xml:space="preserve">
     <value>Поле</value>
@@ -927,7 +927,7 @@
     <value>Примітка</value>
   </data>
   <data name="NewCallField_contactName" xml:space="preserve">
-    <value>Основний контакт</value>
+    <value>Ім'я заявника</value>
   </data>
   <data name="NewCallField_contactInfo" xml:space="preserve">
     <value>Контакти заявника</value>
@@ -1350,9 +1350,90 @@
     <value>Наступний номер виклику не піднято: його можна підняти лише вище номера, який наступний виклик уже отримає ({0}).</value>
   </data>
   <data name="CallNumberNextPatternChanged" xml:space="preserve">
-    <value>Наступний номер виклику не піднято, бо шаблон змінився під час того самого збереження. Підніміть його знову для нового шаблону.</value>
+    <value>Наступний номер виклику не піднято, бо шаблон або початок року нумерації змінився під час того самого збереження. Підніміть його знову для нової послідовності.</value>
+  </data>
+  <data name="CallNumberYearStart" xml:space="preserve">
+    <value>Рік нумерації починається</value>
+  </data>
+  <data name="CallNumberYearStartDay" xml:space="preserve">
+    <value>День місяця</value>
+  </data>
+  <data name="CallNumberYearLabelEndYear" xml:space="preserve">
+    <value>Називається за роком, у якому закінчується</value>
+  </data>
+  <data name="CallNumberYearLabelStartYear" xml:space="preserve">
+    <value>Називається за роком, у якому починається</value>
+  </data>
+  <data name="CallNumberYearStartHelp" xml:space="preserve">
+    <value>Для викликів, що нумеруються за фінансовим роком, виберіть день, коли він починається. Річний шаблон знову починається з 1 цього дня, а {YYYY} і {YY} записують назву фінансового року. Більшість фінансових років називають за роком, у якому вони закінчуються, тож рік, що починається 1 листопада 2026, — це 2027. 1 січня — календарний рік. Шаблони з {MM} або {DD} завжди слідують календарю.</value>
+  </data>
+  <data name="CallNumberResetsYearlyOn" xml:space="preserve">
+    <value>Знову починається з 1 щороку {0}.</value>
+  </data>
+  <data name="CallNumberYearStartInvalid" xml:space="preserve">
+    <value>Нумерацію викликів не збережено. Рік нумерації має починатися в день, який є в кожному році, тож 29 лютого використати не можна.</value>
+  </data>
+  <data name="DocumentNumberingHeader" xml:space="preserve">
+    <value>Нумерація документів</value>
+  </data>
+  <data name="DocumentNumberingIntro" xml:space="preserve">
+    <value>Як Resgrid нумерує наряди на роботи, рахунки, пропозиції та щоденні звіти про час. Залиште шаблон порожнім, щоб зберегти вбудовані номери. Зміна шаблону ніколи не перенумеровує документи, які вже мають номер, а новий шаблон продовжує після будь-якого номера, який він повторив би.</value>
+  </data>
+  <data name="DocumentNumberingRecordsLink" xml:space="preserve">
+    <value>Нумерація записів</value>
+  </data>
+  <data name="DocumentNumberingYearStartHelp" xml:space="preserve">
+    <value>Для документів, що нумеруються за фінансовим роком, виберіть день, коли він починається. Номери нарядів на роботи та шаблони з роком знову починаються з 1 цього дня, а {YYYY} і {YY} записують назву фінансового року. Більшість фінансових років називають за роком, у якому вони закінчуються, тож рік, що починається 1 листопада 2026, — це 2027. 1 січня — календарний рік. Номери викликів і записів мають власний початок року.</value>
+  </data>
+  <data name="DocumentNumberType" xml:space="preserve">
+    <value>Документ</value>
+  </data>
+  <data name="DocumentNumberBuiltIn" xml:space="preserve">
+    <value>Вбудований, напр.</value>
+  </data>
+  <data name="DocumentNumberPatternHelp" xml:space="preserve">
+    <value>Фіксований текст (літери, цифри, - _ . /) навколо {YYYY} або {YY}, {MM}, {DD} і {SEQ}, який має бути рівно один раз. Шаблон із роком знову починається з 1 кожного року нумерації; з {MM} або {DD} — кожного місяця чи дня. Номер лише з цифр показується з # попереду, як завжди номери рахунків, пропозицій і звітів про час.</value>
+  </data>
+  <data name="DocumentNumberingSaved" xml:space="preserve">
+    <value>Нумерацію документів збережено.</value>
+  </data>
+  <data name="DocumentNumberingYearStartInvalid" xml:space="preserve">
+    <value>Нумерацію документів не збережено. Рік нумерації має починатися в день, який є в кожному році, тож 29 лютого використати не можна.</value>
+  </data>
+  <data name="DocumentNumberingPatternsRejected" xml:space="preserve">
+    <value>Ці шаблони не збережено, бо вони недійсні або можуть записати номер довший за 50 символів; ці документи зберегли попередню нумерацію:</value>
+  </data>
+  <data name="DocumentNumberingBelowCurrent" xml:space="preserve">
+    <value>Наступний номер можна лише підняти. Ці залишилися без змін, бо введений номер менший за той, який вони видадуть наступним:</value>
+  </data>
+  <data name="DocumentNumberingNotApplied" xml:space="preserve">
+    <value>Шаблон або початок року нумерації змінився під час того самого збереження, тому введені наступні номери не застосовано. Підніміть їх знову для нової послідовності.</value>
+  </data>
+  <data name="DocumentNumberKindWorkOrder" xml:space="preserve">
+    <value>Наряди на роботи</value>
+  </data>
+  <data name="DocumentNumberKindInvoice" xml:space="preserve">
+    <value>Рахунки</value>
+  </data>
+  <data name="DocumentNumberKindBid" xml:space="preserve">
+    <value>Пропозиції</value>
+  </data>
+  <data name="DocumentNumberKindTimeReport" xml:space="preserve">
+    <value>Щоденні звіти про час</value>
+  </data>
+  <data name="DocumentNumberPatternColumn" xml:space="preserve">
+    <value>Шаблон нумерації</value>
+  </data>
+  <data name="DocumentNumberNextColumn" xml:space="preserve">
+    <value>Наступний номер</value>
+  </data>
+  <data name="DocumentNumberRaiseColumn" xml:space="preserve">
+    <value>Підвищити наступний до</value>
   </data>
   <data name="CallSettingsSaved" xml:space="preserve">
     <value>Налаштування викликів збережено.</value>
+  </data>
+  <data name="NewCallFieldCannotBeRequired" xml:space="preserve">
+    <value>Plus Code лише допомагає знайти місце і не зберігається у виклику, тому його не можна зробити обов'язковим. Натомість зробіть обов'язковими GPS-координати.</value>
   </data>
 </root>

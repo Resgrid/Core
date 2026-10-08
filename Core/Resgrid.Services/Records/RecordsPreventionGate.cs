@@ -22,10 +22,12 @@ namespace Resgrid.Services.Records
 		private readonly IRecordsAuthorizationService _authorization;
 		private readonly IRmsPreventionSequencesRepository _sequences;
 		private readonly IRmsAccessAuditsRepository _audits;
+		private readonly IDocumentNumberingService _numbering;
 
 		public RecordsPreventionGate(IRecordsCutoverService cutover, IFeatureToggleService flags, IRecordsAuthorizationService authorization,
-			IRmsPreventionSequencesRepository sequences, IRmsAccessAuditsRepository audits)
+			IRmsPreventionSequencesRepository sequences, IRmsAccessAuditsRepository audits, IDocumentNumberingService numbering)
 		{
+			_numbering = numbering;
 			_cutover = cutover;
 			_flags = flags;
 			_authorization = authorization;
@@ -81,11 +83,22 @@ namespace Resgrid.Services.Records
 		public Task<bool> IsDepartmentAdminAsync(int departmentId, string userId)
 			=> _authorization.IsDepartmentAdminAsync(userId, departmentId);
 
-		/// <summary>{KIND}-{year}-{sequence:0000}, allocated atomically per department/kind/year.</summary>
+		/// <summary>
+		/// The department's own pattern for the kind when it set one (setting 72's DocumentPatterns), otherwise the built-in
+		/// {KIND}-{year}-{sequence:0000}, allocated atomically per department/kind/year. The year is the records numbering year
+		/// (department-local, a fiscal year when setting 72 starts one); the counter is keyed by that name, so a year start change
+		/// whose name matches a year already counted carries on rather than issuing its numbers again.
+		/// </summary>
 		public async Task<string> NextNumberAsync(int departmentId, string kind, DateTime utcNow, CancellationToken cancellationToken = default)
 		{
-			var next = await _sequences.NextAsync(departmentId, kind, utcNow.Year, cancellationToken);
-			return $"{kind}-{utcNow.Year}-{next:0000}";
+			var documentKind = DocumentNumberKinds.ForPreventionKind(kind);
+			var custom = documentKind == null ? null : await _numbering.TakeCustomNumberAsync(departmentId, documentKind, utcNow, cancellationToken);
+			if (custom != null)
+				return custom;
+
+			var year = await _numbering.GetNumberingYearAsync(departmentId, documentKind ?? DocumentNumberKinds.Occupancy, utcNow);
+			var next = await _sequences.NextAsync(departmentId, kind, year, cancellationToken);
+			return $"{kind}-{year}-{next:0000}";
 		}
 
 		/// <summary>

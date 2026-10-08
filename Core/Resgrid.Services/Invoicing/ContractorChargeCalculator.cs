@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Resgrid.Model;
 using Resgrid.Model.Invoicing;
 
 namespace Resgrid.Services.Invoicing
@@ -527,7 +528,7 @@ namespace Resgrid.Services.Invoicing
 
 		private static string Describe(DateTime day, DeploymentTimeReport report, string entryName, string subjectName, string detail)
 		{
-			var parts = new List<string> { day.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture), $"DTR #{report.ReportNumber}" };
+			var parts = new List<string> { day.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture), "DTR " + report.NumberLabel() };
 			if (!string.IsNullOrWhiteSpace(report.IncidentNumber)) parts.Add($"Incident {report.IncidentNumber}");
 			parts.Add(entryName);
 			if (!string.IsNullOrWhiteSpace(subjectName)) parts.Add(subjectName);

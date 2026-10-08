@@ -1198,7 +1198,7 @@
     <value>Kalendarz oddziału na potrzeby spotkań, wydarzeń i wieczorów szkoleniowych.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.call-settings">
-    <value>Skrzynka pocztowa i format używane do importowania zgłoszeń z CAD lub e-maila pagera oraz format i następny numer zgłoszeń.</value>
+    <value>Skrzynka pocztowa i format używane do importowania zgłoszeń z CAD lub e-maila pagera oraz format, następny numer i początek roku numeracji zgłoszeń.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.call-templates">
     <value>Wielokrotnego użytku szablony tekstu zgłoszenia i notatek, które przyspieszają wprowadzanie zgłoszeń.</value>
@@ -1522,7 +1522,7 @@
     <value>Rekordy, które są zaplanowane, oczekują na przegląd lub są gotowe do przesłania.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.records-settings">
-    <value>Reguły numeracji, retencji, wyszukiwania i widoczności rekordów.</value>
+    <value>Reguły numeracji (w tym numery wniosków o udostępnienie, numery prewencji i początek roku numeracji), retencji, wyszukiwania i widoczności rekordów.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.reports">
     <value>Raporty oddziału dotyczące zgłoszeń, personelu i aktywności.</value>
@@ -2236,7 +2236,7 @@
     <value>Używa oddzielnych sekwencji dla poszczególnych stacji/grup. Zmienia to numerację, a nie widoczność rekordów.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.ResetYearly">
-    <value>Resetuje sekwencje rekordów każdego roku kalendarzowego w strefie czasowej oddziału.</value>
+    <value>Resetuje sekwencje rekordów w każdym roku numeracji (roku kalendarzowym, chyba że ustawiono początek roku budżetowego) w strefie czasowej oddziału.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.SequenceWidth">
     <value>Cyfry części SEQ wzorca numeracji, uzupełniane zerami: 4 daje 0184. Od 3 do 8 cyfr; zmiana zachowuje następny numer każdej sekwencji. Definicje oddziału z własną numeracją zachowują własną szerokość.</value>
@@ -6785,5 +6785,101 @@
   </data>
   <data xml:space="preserve" name="FeatureValue.api-keys">
     <value>Integracje działają dalej, gdy ludzie odchodzą, mogą tylko to, na co pozwala ich klucz, i można je natychmiast unieważnić.</value>
+  </data>
+  <data name="Field.CallNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Konfiguracja numeracji zgłoszeń / Miesiąc początku roku</value>
+  </data>
+  <data name="FieldHelp.CallNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Miesiąc, w którym zaczyna się rok numeracji, dla zgłoszeń numerowanych według roku budżetowego. Wzorzec roczny zaczyna się ponownie od 1 w tym miesiącu i dniu, a YYYY i YY wpisują nazwę roku budżetowego; wzorce z MM lub DD podążają za kalendarzem. Brak wartości oznacza styczeń, czyli rok kalendarzowy.</value>
+  </data>
+  <data name="Field.CallNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Konfiguracja numeracji zgłoszeń / Dzień początku roku</value>
+  </data>
+  <data name="FieldHelp.CallNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Dzień miesiąca, w którym zaczyna się rok numeracji, od 1 do ostatniego dnia miesiąca; 29 lutego jest niedozwolony. Brak wartości oznacza 1. dzień.</value>
+  </data>
+  <data name="Field.CallNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Konfiguracja numeracji zgłoszeń / Nazwa roku</value>
+  </data>
+  <data name="FieldHelp.CallNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Który rok nadaje nazwę rokowi numeracji, który nie zaczyna się 1 stycznia: rok, w którym się kończy (zwykła konwencja lat budżetowych, więc rok zaczynający się 1 listopada 2026 to 2027), albo rok, w którym się zaczyna.</value>
+  </data>
+  <data name="Field.RecordsNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Konfiguracja numeracji rekordów / Miesiąc początku roku</value>
+  </data>
+  <data name="FieldHelp.RecordsNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Miesiąc, w którym zaczyna się rok numeracji, dla rekordów numerowanych według roku budżetowego, na przykład hrabstwa lub stanu. Sekwencje zawierające rok zaczynają się ponownie od 1 w tym miesiącu i dniu, a YYYY i YY wpisują nazwę roku budżetowego. Brak wartości oznacza styczeń, czyli rok kalendarzowy. Niezależny od początku roku numeracji zgłoszeń. Numery wniosków o udostępnienie akt oraz numery kontroli, zezwoleń, obiektów, dochodzeń i materiału dowodowego podlegają temu samemu rokowi.</value>
+  </data>
+  <data name="Field.RecordsNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Konfiguracja numeracji rekordów / Dzień początku roku</value>
+  </data>
+  <data name="FieldHelp.RecordsNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Dzień miesiąca, w którym zaczyna się rok numeracji, od 1 do ostatniego dnia miesiąca; 29 lutego jest niedozwolony. Brak wartości oznacza 1. dzień.</value>
+  </data>
+  <data name="Field.RecordsNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Konfiguracja numeracji rekordów / Nazwa roku</value>
+  </data>
+  <data name="FieldHelp.RecordsNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Który rok nadaje nazwę rokowi numeracji, który nie zaczyna się 1 stycznia: rok, w którym się kończy (zwykła konwencja lat budżetowych, więc rok zaczynający się 1 listopada 2026 to 2027), albo rok, w którym się zaczyna.</value>
+  </data>
+  <data name="Setting.DocumentNumberingConfig" xml:space="preserve">
+    <value>Konfiguracja numeracji dokumentów</value>
+  </data>
+  <data name="SettingHelp.DocumentNumberingConfig" xml:space="preserve">
+    <value>Jak zapisywane są numery zleceń pracy, faktur, ofert i dziennych raportów czasu oraz dzień, w którym zaczyna się ich rok numeracji. Rodzaj dokumentu bez wzorca zachowuje wbudowane numery.</value>
+  </data>
+  <data name="Field.DocumentNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Konfiguracja numeracji dokumentów / Miesiąc początku roku</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Miesiąc, w którym zaczyna się rok numeracji zleceń pracy, faktur, ofert i dziennych raportów czasu numerowanych według roku budżetowego. Numery zleceń pracy i wzorce z rokiem zaczynają się ponownie od 1 w tym miesiącu i dniu, a YYYY i YY wpisują nazwę roku budżetowego. Brak wartości oznacza styczeń, czyli rok kalendarzowy.</value>
+  </data>
+  <data name="Field.DocumentNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Konfiguracja numeracji dokumentów / Dzień początku roku</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Dzień miesiąca, w którym zaczyna się rok numeracji, od 1 do ostatniego dnia miesiąca; 29 lutego jest niedozwolony. Brak wartości oznacza 1. dzień.</value>
+  </data>
+  <data name="Field.DocumentNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Konfiguracja numeracji dokumentów / Nazwa roku</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Który rok nadaje nazwę rokowi numeracji, który nie zaczyna się 1 stycznia: rok, w którym się kończy (zwykła konwencja lat budżetowych, więc rok zaczynający się 1 listopada 2026 to 2027), albo rok, w którym się zaczyna.</value>
+  </data>
+  <data name="Field.DocumentNumberingConfig.Patterns" xml:space="preserve">
+    <value>Konfiguracja numeracji dokumentów / Wzorce</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberingConfig.Patterns" xml:space="preserve">
+    <value>Własny wzorzec numeracji jednostki dla zleceń pracy, faktur, ofert i dziennych raportów czasu, z tokenami numerów zgłoszeń (YYYY lub YY, MM, DD, SEQ). Rodzaj dokumentu bez wzorca zachowuje wbudowane numery (WO-2026-000019, #1042). Nowy wzorzec kontynuuje po każdym numerze, który by powtórzył. Członkowie widzą numer w wydanej postaci na dokumentach, w plikach PDF i eksportach, a w przypadku dziennych raportów czasu w aplikacjach Responder, Unit, IC i Dispatch.</value>
+  </data>
+  <data name="Field.DocumentNumberPattern.Kind" xml:space="preserve">
+    <value>Wzorzec numeru dokumentu / Rodzaj</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberPattern.Kind" xml:space="preserve">
+    <value>Dokument numerowany przez wzorzec: work-order, invoice, bid lub time-report, a w rejestrach records-request, occupancy, inspection, permit, investigation lub evidence.</value>
+  </data>
+  <data name="Field.DocumentNumberPattern.Pattern" xml:space="preserve">
+    <value>Wzorzec numeru dokumentu / Wzorzec</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberPattern.Pattern" xml:space="preserve">
+    <value>Stały tekst wokół tokenów YYYY lub YY, MM, DD i SEQ, z SEQ dokładnie raz. Każdy zapisany numer musi zmieścić się w kolumnie numeru dokumentu: 50 znaków lub 32 dla numerów obiektów, kontroli, zezwoleń, dochodzeń i materiału dowodowego.</value>
+  </data>
+  <data name="Field.DocumentNumberPattern.SequenceWidth" xml:space="preserve">
+    <value>Wzorzec numeru dokumentu / Szerokość sekwencji</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberPattern.SequenceWidth" xml:space="preserve">
+    <value>Liczba cyfr, do której sekwencja jest uzupełniana zerami wiodącymi, od 1 do 8; sekwencja jest liczona jako liczba, więc zmiana szerokości nigdy jej nie restartuje.</value>
+  </data>
+  <data name="Field.RecordsNumberingConfig.DocumentPatterns" xml:space="preserve">
+    <value>Konfiguracja numeracji rekordów / Wzorce dokumentów</value>
+  </data>
+  <data name="FieldHelp.RecordsNumberingConfig.DocumentPatterns" xml:space="preserve">
+    <value>Własne wzorce jednostki dla numerów wniosków o udostępnienie akt, obiektów, kontroli, zezwoleń, dochodzeń i materiału dowodowego. Podlegają początkowi roku numeracji tego ustawienia; rodzaj bez wzorca zachowuje wbudowane numery (PRR-2026-0001, INSP-2026-0001 itd.).</value>
+  </data>
+  <data name="Feature.document-numbering" xml:space="preserve">
+    <value>Numeracja dokumentów</value>
+  </data>
+  <data name="FeaturePurpose.document-numbering" xml:space="preserve">
+    <value>Jak zapisywane są numery zleceń pracy, faktur, ofert i dziennych raportów czasu oraz dzień, w którym zaczyna się ich rok numeracji przy numeracji według roku budżetowego.</value>
   </data>
 </root>

@@ -1198,7 +1198,7 @@
     <value>Der Abteilungskalender für Besprechungen, Veranstaltungen und Ausbildungsabende.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.call-settings">
-    <value>Das Postfach und Format zum Importieren von Einsätzen aus CAD- oder Alarmierungs-E-Mails sowie Format und nächste Nummer der Einsatznummern.</value>
+    <value>Das Postfach und Format zum Importieren von Einsätzen aus CAD- oder Alarmierungs-E-Mails sowie Format, nächste Nummer und Beginn des Nummerierungsjahres der Einsatznummern.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.call-templates">
     <value>Wiederverwendbare Textvorlagen für Einsätze und Notizen, die die Einsatzerfassung beschleunigen.</value>
@@ -1522,7 +1522,7 @@
     <value>Datensätze, die fällig sind, auf Prüfung warten oder zur Übermittlung bereit sind.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.records-settings">
-    <value>Nummerierungs-, Aufbewahrungs-, Such- und Sichtbarkeitsregeln für Datensätze.</value>
+    <value>Nummerierungs- (einschließlich Auskunftsersuchen, Brandverhütungsnummern und Beginn des Nummerierungsjahres), Aufbewahrungs-, Such- und Sichtbarkeitsregeln für Datensätze.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.reports">
     <value>Abteilungsberichte zu Einsätzen, Personal und Aktivität.</value>
@@ -2236,7 +2236,7 @@
     <value>Verwendet separate Nummernfolgen je Wache/Gruppe. Dies ändert die Nummerierung, nicht die Sichtbarkeit der Datensätze.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.ResetYearly">
-    <value>Setzt die Datensatzfolgen in jedem Kalenderjahr in der Zeitzone der Abteilung zurück.</value>
+    <value>Setzt die Datensatzfolgen in jedem Nummerierungsjahr (dem Kalenderjahr, sofern kein Haushaltsjahresbeginn gesetzt ist) in der Zeitzone der Abteilung zurück.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.SequenceWidth">
     <value>Stellen des SEQ-Teils im Nummernmuster, mit Nullen aufgefüllt: 4 schreibt 0184. 3 bis 8 Stellen; eine Änderung behält die nächste Nummer jeder Nummernfolge bei. Abteilungsdefinitionen mit eigener Nummerierung behalten ihre eigene Stellenanzahl.</value>
@@ -6785,5 +6785,101 @@
   </data>
   <data xml:space="preserve" name="FeatureValue.api-keys">
     <value>Integrationen funktionieren weiter, wenn Personen ausscheiden, können nur, was ihr Schlüssel erlaubt, und lassen sich sofort widerrufen.</value>
+  </data>
+  <data name="Field.CallNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Konfiguration der Einsatznummerierung / Monat des Jahresbeginns</value>
+  </data>
+  <data name="FieldHelp.CallNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Monat, in dem das Nummerierungsjahr beginnt, für Einsätze, die nach einem Haushaltsjahr nummeriert werden. Ein jährliches Muster beginnt an diesem Monat und Tag wieder bei 1, und YYYY und YY schreiben den Namen des Haushaltsjahres; Muster mit MM oder DD folgen dem Kalender. Nicht gesetzt bedeutet Januar, also das Kalenderjahr.</value>
+  </data>
+  <data name="Field.CallNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Konfiguration der Einsatznummerierung / Tag des Jahresbeginns</value>
+  </data>
+  <data name="FieldHelp.CallNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Tag des Monats, an dem das Nummerierungsjahr beginnt, von 1 bis zum letzten Tag des Monats; der 29. Februar ist nicht erlaubt. Nicht gesetzt bedeutet der 1.</value>
+  </data>
+  <data name="Field.CallNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Konfiguration der Einsatznummerierung / Jahresbezeichnung</value>
+  </data>
+  <data name="FieldHelp.CallNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Welches Jahr ein Nummerierungsjahr benennt, das nicht am 1. Januar beginnt: das Jahr, in dem es endet (die übliche Konvention für Haushaltsjahre, ein am 1. November 2026 beginnendes Jahr ist also 2027), oder das Jahr, in dem es beginnt.</value>
+  </data>
+  <data name="Field.RecordsNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Konfiguration der Datensatznummerierung / Monat des Jahresbeginns</value>
+  </data>
+  <data name="FieldHelp.RecordsNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Monat, in dem das Nummerierungsjahr beginnt, für Datensätze, die nach einem Haushaltsjahr nummeriert werden, etwa dem eines Landkreises oder Landes. Nummernfolgen mit Jahr beginnen an diesem Monat und Tag wieder bei 1, und YYYY und YY schreiben den Namen des Haushaltsjahres. Nicht gesetzt bedeutet Januar, also das Kalenderjahr. Unabhängig vom Jahresbeginn der Einsatznummerierung. Nummern von Auskunftsersuchen sowie von Prüfungen, Genehmigungen, Objekten, Ermittlungen und Nachweisen folgen demselben Jahr.</value>
+  </data>
+  <data name="Field.RecordsNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Konfiguration der Datensatznummerierung / Tag des Jahresbeginns</value>
+  </data>
+  <data name="FieldHelp.RecordsNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Tag des Monats, an dem das Nummerierungsjahr beginnt, von 1 bis zum letzten Tag des Monats; der 29. Februar ist nicht erlaubt. Nicht gesetzt bedeutet der 1.</value>
+  </data>
+  <data name="Field.RecordsNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Konfiguration der Datensatznummerierung / Jahresbezeichnung</value>
+  </data>
+  <data name="FieldHelp.RecordsNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Welches Jahr ein Nummerierungsjahr benennt, das nicht am 1. Januar beginnt: das Jahr, in dem es endet (die übliche Konvention für Haushaltsjahre, ein am 1. November 2026 beginnendes Jahr ist also 2027), oder das Jahr, in dem es beginnt.</value>
+  </data>
+  <data name="Setting.DocumentNumberingConfig" xml:space="preserve">
+    <value>Konfiguration der Dokumentnummerierung</value>
+  </data>
+  <data name="SettingHelp.DocumentNumberingConfig" xml:space="preserve">
+    <value>Wie Nummern von Arbeitsaufträgen, Rechnungen, Angeboten und täglichen Zeitberichten geschrieben werden und an welchem Tag ihr Nummerierungsjahr beginnt. Eine Dokumentart ohne Muster behält ihre integrierten Nummern.</value>
+  </data>
+  <data name="Field.DocumentNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Konfiguration der Dokumentnummerierung / Monat des Jahresbeginns</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Monat, in dem das Nummerierungsjahr für Arbeitsaufträge, Rechnungen, Angebote und tägliche Zeitberichte beginnt, die nach einem Haushaltsjahr nummeriert werden. Arbeitsauftragsnummern und Muster mit Jahr beginnen an diesem Monat und Tag wieder bei 1, und YYYY und YY schreiben den Namen des Haushaltsjahres. Nicht gesetzt bedeutet Januar, also das Kalenderjahr.</value>
+  </data>
+  <data name="Field.DocumentNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Konfiguration der Dokumentnummerierung / Tag des Jahresbeginns</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Tag des Monats, an dem das Nummerierungsjahr beginnt, von 1 bis zum letzten Tag des Monats; der 29. Februar ist nicht erlaubt. Nicht gesetzt bedeutet der 1.</value>
+  </data>
+  <data name="Field.DocumentNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Konfiguration der Dokumentnummerierung / Jahresbezeichnung</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Welches Jahr ein Nummerierungsjahr benennt, das nicht am 1. Januar beginnt: das Jahr, in dem es endet (die übliche Konvention für Haushaltsjahre, ein am 1. November 2026 beginnendes Jahr ist also 2027), oder das Jahr, in dem es beginnt.</value>
+  </data>
+  <data name="Field.DocumentNumberingConfig.Patterns" xml:space="preserve">
+    <value>Konfiguration der Dokumentnummerierung / Muster</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberingConfig.Patterns" xml:space="preserve">
+    <value>Das eigene Nummernmuster der Abteilung für Arbeitsaufträge, Rechnungen, Angebote und tägliche Zeitberichte, mit den Platzhaltern der Einsatznummern (YYYY oder YY, MM, DD, SEQ). Eine Dokumentart ohne Muster behält ihre integrierten Nummern (WO-2026-000019, #1042). Ein neues Muster setzt nach jeder Nummer fort, die es wiederholen würde. Mitglieder sehen die Nummer wie vergeben auf Dokumenten, PDFs und Exporten und bei täglichen Zeitberichten in den Apps Responder, Unit, IC und Dispatch.</value>
+  </data>
+  <data name="Field.DocumentNumberPattern.Kind" xml:space="preserve">
+    <value>Dokumentnummernmuster / Art</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberPattern.Kind" xml:space="preserve">
+    <value>Das Dokument, das das Muster nummeriert: work-order, invoice, bid oder time-report, bei Akten records-request, occupancy, inspection, permit, investigation oder evidence.</value>
+  </data>
+  <data name="Field.DocumentNumberPattern.Pattern" xml:space="preserve">
+    <value>Dokumentnummernmuster / Muster</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberPattern.Pattern" xml:space="preserve">
+    <value>Fester Text um die Platzhalter YYYY oder YY, MM, DD und SEQ, SEQ genau einmal. Jede geschriebene Nummer muss in die Nummernspalte des Dokuments passen: 50 Zeichen, bei Objekt-, Prüfungs-, Genehmigungs-, Ermittlungs- und Nachweisnummern 32.</value>
+  </data>
+  <data name="Field.DocumentNumberPattern.SequenceWidth" xml:space="preserve">
+    <value>Dokumentnummernmuster / Stellenanzahl der Nummernfolge</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberPattern.SequenceWidth" xml:space="preserve">
+    <value>Stellen, auf die die Laufnummer mit führenden Nullen aufgefüllt wird, 1 bis 8; die Laufnummer wird als Zahl gezählt, eine geänderte Breite beginnt sie also nie neu.</value>
+  </data>
+  <data name="Field.RecordsNumberingConfig.DocumentPatterns" xml:space="preserve">
+    <value>Konfiguration der Datensatznummerierung / Dokumentmuster</value>
+  </data>
+  <data name="FieldHelp.RecordsNumberingConfig.DocumentPatterns" xml:space="preserve">
+    <value>Die eigenen Muster der Abteilung für Nummern von Auskunftsersuchen, Objekten, Prüfungen, Genehmigungen, Ermittlungen und Nachweisen. Sie folgen dem Beginn des Nummerierungsjahres dieser Einstellung; eine Art ohne Muster behält ihre integrierten Nummern (PRR-2026-0001, INSP-2026-0001 usw.).</value>
+  </data>
+  <data name="Feature.document-numbering" xml:space="preserve">
+    <value>Dokumentnummerierung</value>
+  </data>
+  <data name="FeaturePurpose.document-numbering" xml:space="preserve">
+    <value>Wie Nummern von Arbeitsaufträgen, Rechnungen, Angeboten und täglichen Zeitberichten geschrieben werden und an welchem Tag ihr Nummerierungsjahr bei einer Nummerierung nach Haushaltsjahr beginnt.</value>
   </data>
 </root>

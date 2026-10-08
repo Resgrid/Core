@@ -69,13 +69,17 @@ var resgrid;
                     newcall.scheduleNearestUnits();
                 });
 
-                let noteQuillDescription = new Quill('#note-container', {
+                // The department's new-call field policy can leave the note, the map and other fields off the
+                // form, so anything bound to one of them has to cope with it not being there.
+                let noteQuillDescription = $('#note-container').length ? new Quill('#note-container', {
                     placeholder: '',
                     theme: 'snow'
-                });
+                }) : null;
 
                 $(document).on('submit', '#newCallForm', function () {
-                    $('#Call_Notes').val(noteQuillDescription.root.innerHTML);
+                    if (noteQuillDescription) {
+                        $('#Call_Notes').val(noteQuillDescription.root.innerHTML);
+                    }
                     $('#Call_NatureOfCall').val(quillNote2.root.innerHTML);
 
                     return true;
@@ -107,31 +111,34 @@ var resgrid;
                     }
                 });
 
-                const tiles1 = L.tileLayer(
-                    osmTileUrl,
-                    {
-                        maxZoom: 19,
-                        attribution: osmTileAttribution
-                    }
-                );
+                // No map when GPS coordinates are hidden by the field policy.
+                if (document.getElementById('callMap')) {
+                    const tiles1 = L.tileLayer(
+                        osmTileUrl,
+                        {
+                            maxZoom: 19,
+                            attribution: osmTileAttribution
+                        }
+                    );
 
-                map = L.map('callMap', {
-                    scrollWheelZoom: false
-                }).setView([centerLat, centerLng], 11).addLayer(tiles1);
+                    map = L.map('callMap', {
+                        scrollWheelZoom: false
+                    }).setView([centerLat, centerLng], 11).addLayer(tiles1);
 
-                map.on('click', function (e) {
-                    resgrid.dispatch.newcall.setMarkerLocation(e.latlng.lat, e.latlng.lng);
+                    map.on('click', function (e) {
+                        resgrid.dispatch.newcall.setMarkerLocation(e.latlng.lat, e.latlng.lng);
 
-                    $("#Latitude").val(e.latlng.lat.toString());
-                    $("#Longitude").val(e.latlng.lng.toString());
-                    //$("#What3Word").val('');
+                        $("#Latitude").val(e.latlng.lat.toString());
+                        $("#Longitude").val(e.latlng.lng.toString());
+                        //$("#What3Word").val('');
 
-                    map.panTo(e.latlng);
+                        map.panTo(e.latlng);
 
-                    resgrid.dispatch.newcall.geocodeCoordinates(e.latlng.lat, e.latlng.lng);
-                });
+                        resgrid.dispatch.newcall.geocodeCoordinates(e.latlng.lat, e.latlng.lng);
+                    });
 
-                navigator.geolocation.getCurrentPosition(foundLocation, noLocation, { timeout: 10000 });
+                    navigator.geolocation.getCurrentPosition(foundLocation, noLocation, { timeout: 10000 });
+                }
                 $("#searchButton").click(function (evt) {
                     var where = jQuery.trim($("#Call_Address").val());
                     if (where.length < 1)
@@ -146,7 +153,9 @@ var resgrid;
                             if (result && result.Data && result.Data.Latitude != null && result.Data.Longitude != null) {
                                 var lat = result.Data.Latitude;
                                 var lng = result.Data.Longitude;
-                                map.setView(new L.LatLng(lat, lng), 16);
+                                if (map) {
+                                    map.setView(new L.LatLng(lat, lng), 16);
+                                }
                                 $("#Latitude").val(lat.toString());
                                 $("#Longitude").val(lng.toString());
                                 resgrid.dispatch.newcall.setMarkerLocation(lat, lng);
@@ -167,7 +176,9 @@ var resgrid;
                         type: 'GET'
                     }).done(function (data) {
                         if (data && data.Latitude != null && data.Longitude != null) {
-                            map.setView(new L.LatLng(data.Latitude, data.Longitude), 16);
+                            if (map) {
+                                map.setView(new L.LatLng(data.Latitude, data.Longitude), 16);
+                            }
 
                             $("#Latitude").val(data.Latitude);
                             $("#Longitude").val(data.Longitude);
@@ -418,20 +429,22 @@ var resgrid;
                 centerMap();
             });
             function centerMap() {
-                if (centerLat && centerLng) {
+                if (map && centerLat && centerLng) {
                     map.panTo(new L.LatLng(centerLat, centerLng));
                 }
             }
             newcall.centerMap = centerMap;
             function foundLocation(position) {
-                map.panTo(new L.LatLng(position.coords.latitude, position.coords.longitude));
+                if (map) {
+                    map.panTo(new L.LatLng(position.coords.latitude, position.coords.longitude));
+                }
             }
             newcall.foundLocation = foundLocation;
             function noLocation() {
                 // Browser geolocation was denied or unavailable. Fall back to the department's
                 // configured map centre -- this used to pan to a hardcoded coordinate in Wollongong,
                 // Australia, which every department outside NSW saw as "the map is in the wrong place".
-                if (centerLat && centerLng) {
+                if (map && centerLat && centerLng) {
                     map.panTo(new L.LatLng(centerLat, centerLng));
                 }
             }
@@ -444,6 +457,10 @@ var resgrid;
                 // "no usable location" answer it got when the priority or type was picked.
                 scheduleNearestUnits(lat, lng);
                 scheduleRecommendations();
+
+                if (!map) {
+                    return;
+                }
 
                 if (callMarker) {
                     callMarker.setLatLng(new L.LatLng(lat, lng));

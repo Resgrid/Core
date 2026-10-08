@@ -12,7 +12,7 @@ namespace Resgrid.Model.Invoicing
 		/// <summary>(template variable, payload property) pairs; drives the variable catalog, context builder and sample data.</summary>
 		public static readonly (string Variable, string Property)[] Variables =
 		{
-			("id", "InvoiceId"), ("number", "InvoiceNumber"), ("status", "Status"), ("contact_id", "ContactId"), ("contact_name", "ContactName"),
+			("id", "InvoiceId"), ("number", "InvoiceNumber"), ("display_number", "DisplayNumber"), ("status", "Status"), ("contact_id", "ContactId"), ("contact_name", "ContactName"),
 			("currency", "Currency"), ("sub_total", "SubTotal"), ("discount_amount", "DiscountAmount"), ("tax_amount", "TaxAmount"),
 			("total", "Total"), ("amount_paid", "AmountPaid"), ("balance", "Balance"), ("issued_on", "IssuedOn"), ("due_on", "DueOn"),
 			("sent_on", "SentOn"), ("paid_on", "PaidOn"), ("payment_amount", "PaymentAmount"), ("payment_method", "PaymentMethod"),

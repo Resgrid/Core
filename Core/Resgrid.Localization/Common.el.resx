@@ -168,6 +168,9 @@
   <data name="CallImportSettings" xml:space="preserve">
     <value>Ρυθμίσεις Εισαγωγής Κλήσεων</value>
   </data>
+  <data name="DocumentNumbering" xml:space="preserve">
+    <value>Αρίθμηση εγγράφων</value>
+  </data>
   <data name="CallsModule" xml:space="preserve">
     <value>Κλήσεις</value>
   </data>

@@ -39,7 +39,7 @@ namespace Resgrid.Tests.Search
 				_flags.Setup(f => f.IsEnabledAsync(RecordsPreventionModules.FlagKey(RecordsPreventionModule.Occupancy), 7, It.IsAny<bool>(), It.IsAny<IDictionary<string, string>>())).ReturnsAsync(true);
 				_recordsAuth.Setup(a => a.IsActiveMemberAsync("u1", 7)).ReturnsAsync(true);
 				gate = new Lazy<RecordsPreventionGate>(() => new RecordsPreventionGate(_cutover.Object, _flags.Object, _recordsAuth.Object,
-					Mock.Of<IRmsPreventionSequencesRepository>(), Mock.Of<IRmsAccessAuditsRepository>()));
+					Mock.Of<IRmsPreventionSequencesRepository>(), Mock.Of<IRmsAccessAuditsRepository>(), Mock.Of<IDocumentNumberingService>()));
 			}
 
 			var permissions = new Resgrid.Services.PermissionsService(_permissions.Object, Mock.Of<IUsersService>(), Mock.Of<IDepartmentGroupsService>());

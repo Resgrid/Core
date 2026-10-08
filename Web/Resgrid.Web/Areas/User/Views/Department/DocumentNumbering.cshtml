@@ -1,0 +1,187 @@
+@model Resgrid.Web.Areas.User.Models.Departments.DocumentNumberingView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> localizer
+@{
+    ViewBag.Title = "Resgrid | " + @localizer["DocumentNumberingHeader"];
+    var yearStart = new NumberingYearStart(Model.YearStartMonth, Model.YearStartDay, (NumberingYearLabel)Model.YearLabel);
+    var months = System.Globalization.CultureInfo.CurrentUICulture.DateTimeFormat.MonthNames.Take(12)
+        .Select((name, i) => new SelectListItem(name, (i + 1).ToString(System.Globalization.CultureInfo.InvariantCulture), i + 1 == yearStart.Month)).ToList();
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>@localizer["DocumentNumberingHeader"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li>
+                <a asp-controller="Department" asp-action="Settings" asp-route-area="User">@localizer["DepartmentSettingsHeader"]</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["DocumentNumberingHeader"]</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <form id="document-numbering-form" class="form-horizontal" role="form" asp-controller="Department" asp-action="DocumentNumbering" asp-route-area="User" method="post" data-next-number-confirm="@localizer["CallNumberRaiseConfirm"]">
+                        @Html.AntiForgeryToken()
+                        @if (!String.IsNullOrEmpty(Model.Message))
+                        {
+                            <div class="alert alert-success">@Model.Message</div>
+                        }
+                        @if (!String.IsNullOrEmpty(Model.ErrorMessage))
+                        {
+                            <div class="alert alert-danger">@Model.ErrorMessage</div>
+                        }
+
+                        <p class="text-muted">@localizer["DocumentNumberingIntro"]</p>
+                        <p>
+                            <a asp-controller="Department" asp-action="CallSettings" asp-route-area="User"><i class="fa fa-phone"></i> @commonLocalizer["CallImportSettings"]</a>
+                            &nbsp;&middot;&nbsp;
+                            <a asp-controller="Records" asp-action="Settings" asp-route-area="User"><i class="fa fa-folder-open"></i> @localizer["DocumentNumberingRecordsLink"]</a>
+                        </p>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="YearStartMonth">@localizer["CallNumberYearStart"]</label>
+                            <div class="col-sm-10">
+                                <div class="numbering-year-start">
+                                    <select class="form-control" asp-for="YearStartMonth" asp-items="months"></select>
+                                    <input type="number" class="form-control numbering-year-day" min="1" max="31" asp-for="YearStartDay" aria-label="@localizer["CallNumberYearStartDay"]" />
+                                    <select class="form-control" asp-for="YearLabel" aria-label="@localizer["CallNumberYearStart"]">
+                                        <option value="@((int)NumberingYearLabel.EndYear)">@localizer["CallNumberYearLabelEndYear"]</option>
+                                        <option value="@((int)NumberingYearLabel.StartYear)">@localizer["CallNumberYearLabelStartYear"]</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <span class="help-block m-b-none">@localizer["DocumentNumberingYearStartHelp"]</span>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th>@localizer["DocumentNumberType"]</th>
+                                        <th style="width:28%">@localizer["DocumentNumberPatternColumn"]</th>
+                                        <th style="width:10%">@localizer["CallNumberSequenceWidth"]</th>
+                                        <th>@localizer["DocumentNumberNextColumn"]</th>
+                                        <th style="width:14%">@localizer["DocumentNumberRaiseColumn"]</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (var i = 0; i < Model.Rows.Count; i++)
+                                    {
+                                        var row = Model.Rows[i];
+                                        <tr class="document-number-row" data-legacy-pattern="@row.LegacyPattern" data-legacy-width="@row.LegacyWidth">
+                                            <td>
+                                                @Html.HiddenFor(m => m.Rows[i].Kind)
+                                                @Html.HiddenFor(m => m.Rows[i].ScopeKey)
+                                                @row.Label
+                                            </td>
+                                            <td>
+                                                <input type="text" class="form-control input-sm document-number-pattern" asp-for="Rows[i].Pattern" maxlength="@CallNumberFormat.MaxPatternLength"
+                                                       placeholder="@row.LegacyPattern" autocomplete="off" spellcheck="false" aria-label="@localizer["DocumentNumberPatternColumn"] @row.Label" />
+                                                <span class="help-block m-b-none small">@localizer["CallNumberExample"] <code class="document-number-preview"></code></span>
+                                            </td>
+                                            <td><input type="number" class="form-control input-sm document-number-width" asp-for="Rows[i].SequenceWidth" min="@CallNumberFormat.MinWidth" max="@CallNumberFormat.MaxWidth" aria-label="@localizer["CallNumberSequenceWidth"] @row.Label" /></td>
+                                            <td>
+                                                @if (row.Custom)
+                                                {
+                                                    <code>@row.NextNumber</code>
+                                                    @if (row.Period == CallNumberResetPeriod.Yearly && !yearStart.IsCalendarYear)
+                                                    {
+                                                        <br /><span class="text-muted small">@localizer["CallNumberResetsYearlyOn", new DateTime(2001, yearStart.Month, yearStart.Day).ToString("M", System.Globalization.CultureInfo.CurrentUICulture)]</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <br /><span class="text-muted small">@localizer["CallNumberResets" + row.Period]</span>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">@localizer["DocumentNumberBuiltIn"]</span> <code>@row.Example</code>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (row.Custom)
+                                                {
+                                                    <input type="number" class="form-control input-sm document-number-raise" asp-for="Rows[i].RaiseTo" min="@row.CurrentNextSequence" max="@CallNumberFormat.MaxSequence" placeholder="@row.CurrentNextSequence" aria-label="@localizer["DocumentNumberRaiseColumn"] @row.Label" />
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <span class="help-block m-b-none">@localizer["DocumentNumberPatternHelp"]</span>
+
+                        <div class="form-group m-t-md">
+                            <div class="col-sm-8">
+                                <a class="btn btn-white" asp-controller="Department" asp-action="Settings" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                                <button class="btn btn-primary" type="submit">@commonLocalizer["Update"]</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script type="text/javascript">
+        (function () {
+            var startMonth = $('#YearStartMonth'), startDay = $('#YearStartDay'), yearLabel = $('#YearLabel');
+            var today = { y: @Model.PreviewDate.Year, m: @Model.PreviewDate.Month, d: @Model.PreviewDate.Day };
+            // Mirrors NumberingYearStart.YearOf: the year naming today's numbering year under the year start being edited.
+            function numberingYear() {
+                var m = parseInt(startMonth.val(), 10) || 1, d = parseInt(startDay.val(), 10) || 1;
+                var startYear = today.m > m || (today.m === m && today.d >= d) ? today.y : today.y - 1;
+                return (m === 1 && d === 1) || yearLabel.val() === '@((int)NumberingYearLabel.StartYear)' ? startYear : startYear + 1;
+            }
+            function pad(value, digits) {
+                value = String(value);
+                while (value.length < digits)
+                    value = '0' + value;
+                return value;
+            }
+            // A sample only: the server validates each pattern and shows the real next number beside it.
+            function render() {
+                $('.document-number-row').each(function () {
+                    var row = $(this), input = row.find('.document-number-pattern');
+                    var pattern = $.trim(input.val()) || row.data('legacy-pattern');
+                    var width = $.trim(input.val()) ? parseInt(row.find('.document-number-width').val(), 10) : parseInt(row.data('legacy-width'), 10);
+                    var digits = Math.max(@CallNumberFormat.MinWidth, Math.min(@CallNumberFormat.MaxWidth, width || @CallNumberFormat.DefaultWidth));
+                    var year = /\{(MM|DD)\}/i.test(pattern) ? String(today.y) : String(numberingYear());
+                    row.find('.document-number-preview').text(String(pattern)
+                        .replace(/\{YYYY\}/gi, year).replace(/\{YY\}/gi, year.slice(-2))
+                        .replace(/\{MM\}/gi, pad(today.m, 2)).replace(/\{DD\}/gi, pad(today.d, 2))
+                        .replace(/\{SEQ\}/gi, pad(153, digits)));
+                });
+                // Which year names a fiscal year only matters when it does not start on January 1.
+                yearLabel.toggle(!(startMonth.val() === '1' && (parseInt(startDay.val(), 10) || 1) === 1));
+            }
+            $('.document-number-pattern, .document-number-width').on('input', render);
+            startMonth.on('change', render);
+            startDay.on('input', render);
+            yearLabel.on('change', render);
+            render();
+
+            $('#document-numbering-form').on('submit', function (e) {
+                var raised = $('.document-number-raise').filter(function () { return this.value !== ''; }).length;
+                if (raised > 0 && !window.confirm($(this).data('next-number-confirm')))
+                    e.preventDefault();
+            });
+        })();
+    </script>
+}

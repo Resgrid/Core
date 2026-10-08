@@ -1123,4 +1123,7 @@
   <data name="SendNotificationHelp" xml:space="preserve">
     <value>Avisa a todas las personas despachadas, a sus unidades y al equipo de mando del incidente de que la llamada se ha cerrado. Las notas de cierre no se incluyen.</value>
   </data>
+  <data name="NewCallFieldRequired" xml:space="preserve">
+    <value>{0} es obligatorio en este departamento.</value>
+  </data>
 </root>

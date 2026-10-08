@@ -123,7 +123,18 @@
   <data name="NextNumberCurrent" xml:space="preserve"><value>Nächste Nummer</value></data>
   <data name="NextNumberRaiseTo" xml:space="preserve"><value>Nächste erhöhen auf</value></data>
   <data name="NextNumberBelowCurrent" xml:space="preserve"><value>Eine nächste Nummer kann nur erhöht werden. Diese Laufnummern blieben unverändert, weil die eingegebene Zahl unter der lag, die sie als Nächstes vergeben:</value></data>
-  <data name="NextNumberPatternChanged" xml:space="preserve"><value>Das Nummernmuster oder ein Präfix eines Aktentyps wurde geändert, daher wurden die eingegebenen nächsten Nummern nicht übernommen. Prüfen Sie die neuen Laufnummern und speichern Sie erneut.</value></data>
+  <data name="NextNumberPatternChanged" xml:space="preserve"><value>Das Nummernmuster, ein Präfix eines Aktentyps oder der Beginn des Nummerierungsjahres wurde geändert, daher wurden die eingegebenen nächsten Nummern nicht übernommen. Prüfen Sie die neuen Laufnummern und speichern Sie erneut.</value></data>
+  <data name="NumberingYearStart" xml:space="preserve"><value>Nummerierungsjahr beginnt am</value></data>
+  <data name="NumberingYearStartDay" xml:space="preserve"><value>Tag des Monats</value></data>
+  <data name="NumberingYearLabelEndYear" xml:space="preserve"><value>Benannt nach dem Jahr, in dem es endet</value></data>
+  <data name="NumberingYearLabelStartYear" xml:space="preserve"><value>Benannt nach dem Jahr, in dem es beginnt</value></data>
+  <data name="NumberingYearStartHelp" xml:space="preserve"><value>Für Akten, die nach einem Haushaltsjahr nummeriert werden – Ihrem eigenen oder dem eines Landkreises oder Landes, an den Sie berichten –, wählen Sie den Tag, an dem es beginnt. Nummern mit Jahr beginnen an diesem Tag wieder bei 1, und {YYYY} und {YY} schreiben den Namen des Haushaltsjahres. Die meisten Haushaltsjahre werden nach dem Jahr benannt, in dem sie enden; eines, das am 1. November 2026 beginnt, ist also 2027. Der 1. Januar ist das Kalenderjahr. Einsatznummern haben ihren eigenen Jahresbeginn auf der Seite Einsatz-Importeinstellungen. Nummern von Auskunftsersuchen sowie von Prüfungen, Genehmigungen, Objekten, Ermittlungen und Nachweisen folgen demselben Jahr.</value></data>
+  <data name="NextNumbersHeaderPeriod" xml:space="preserve"><value>Nächste Nummern für {0} ({1} bis {2})</value></data>
+  <data name="NumberingYearStartInvalid" xml:space="preserve"><value>Die Aktennummerierung wurde nicht gespeichert. Das Nummerierungsjahr muss an einem Tag beginnen, den es in jedem Jahr gibt; der 29. Februar ist daher nicht möglich.</value></data>
+  <data name="OtherNumbersHeader" xml:space="preserve"><value>Weitere Aktennummern</value></data>
+  <data name="OtherNumbersIntro" xml:space="preserve"><value>Nummern von Auskunftsersuchen, Objekten, Prüfungen, Genehmigungen, Ermittlungen und Nachweisen. Lassen Sie ein Muster leer, um die angezeigten integrierten Nummern zu behalten. Muster verwenden {YYYY} oder {YY}, {MM}, {DD} und {SEQ} wie Einsatznummern, folgen dem Beginn des Nummerierungsjahres oben und passen in 32 Zeichen (50 bei Auskunftsersuchen).</value></data>
+  <data name="OtherNumberBuiltIn" xml:space="preserve"><value>Integriert, z. B.</value></data>
+  <data name="OtherNumbersPatternsRejected" xml:space="preserve"><value>Diese Muster wurden nicht gespeichert, weil sie ungültig sind oder eine für die Akte zu lange Nummer schreiben könnten; diese Nummern behielten ihre bisherige Form:</value></data>
   <data name="NextNumberConfirm" xml:space="preserve"><value>Eine erhöhte nächste Nummer kann nicht wieder gesenkt werden. Änderungen speichern?</value></data>
   <data name="NumberingAllTypes" xml:space="preserve"><value>Alle Aktentypen</value></data>
   <data name="NumberingNoGroup" xml:space="preserve"><value>Keine Wache/Gruppe</value></data>

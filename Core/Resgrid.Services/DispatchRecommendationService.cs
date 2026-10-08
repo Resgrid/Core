@@ -30,13 +30,15 @@ namespace Resgrid.Services
 		private readonly IShiftsService _shiftsService;
 		private readonly IRunCardActivationsRepository _runCardActivationsRepository;
 		private readonly IEventAggregator _eventAggregator;
+		private readonly IDepartmentsService _departmentsService;
 
 		public DispatchRecommendationService(IRunCardsService runCardsService, IUnitsService unitsService,
 			IActionLogsService actionLogsService, IUserStateService userStateService, IPersonnelRolesService personnelRolesService,
 			ICustomStateService customStateService, IDepartmentGroupsService departmentGroupsService,
 			IDepartmentSettingsService departmentSettingsService, IGeoService geoService,
 			IPersonnelLocationResolver personnelLocationResolver, IShiftsService shiftsService,
-			IRunCardActivationsRepository runCardActivationsRepository, IEventAggregator eventAggregator)
+			IRunCardActivationsRepository runCardActivationsRepository, IEventAggregator eventAggregator,
+			IDepartmentsService departmentsService)
 		{
 			_runCardsService = runCardsService;
 			_unitsService = unitsService;
@@ -51,6 +53,7 @@ namespace Resgrid.Services
 			_shiftsService = shiftsService;
 			_runCardActivationsRepository = runCardActivationsRepository;
 			_eventAggregator = eventAggregator;
+			_departmentsService = departmentsService;
 		}
 
 		public async Task<DispatchRecommendationResult> GetRecommendationAsync(DispatchRecommendationRequest request, CancellationToken cancellationToken = default(CancellationToken))
@@ -138,6 +141,8 @@ namespace Resgrid.Services
 
 			if (config.MoveUpRecommendationsEnabled)
 				await RunMoveUpPassAsync(context);
+
+			await FillDisplayNamesAsync(context);
 
 			return result;
 		}
@@ -332,6 +337,10 @@ namespace Resgrid.Services
 			public Dictionary<int, UnitType> DispatchedUnitTypes { get; set; } = new Dictionary<int, UnitType>();
 			/// <summary>Roles of each person already on the call (CountDispatchedTowardRequirements).</summary>
 			public Dictionary<string, List<PersonnelRole>> DispatchedUserRoles { get; set; } = new Dictionary<string, List<PersonnelRole>>(StringComparer.OrdinalIgnoreCase);
+			/// <summary>Department unit type names by id, for naming shortfalls and move-ups.</summary>
+			public Dictionary<int, string> UnitTypeNames { get; set; } = new Dictionary<int, string>();
+			/// <summary>Personnel role names by id, for naming recommended people, shortfalls and move-ups.</summary>
+			public Dictionary<int, string> RoleNames { get; set; } = new Dictionary<int, string>();
 		}
 
 		private async Task BuildUnitCandidatesAsync(RecommendationContext context)
@@ -346,6 +355,9 @@ namespace Resgrid.Services
 			var stateByUnit = states.GroupBy(s => s.UnitId).ToDictionary(g => g.Key, g => g.OrderByDescending(s => s.Timestamp).First());
 			var typeByName = BuildUnitTypeLookup(unitTypes);
 			var customDetails = BuildCustomDetailMap(customStates);
+
+			foreach (var unitType in unitTypes.Where(t => t != null))
+				context.UnitTypeNames[unitType.UnitTypeId] = unitType.Type;
 
 			var selections = (context.Card.AvailabilitySelections ?? new List<RunCardAvailabilitySelection>())
 				.Where(s => s.SelectionType == (int)RunCardSelectionTypes.UnitStatus)
@@ -420,6 +432,9 @@ namespace Resgrid.Services
 
 			var personnelDetails = BuildCustomDetailMap(personnelCustomState);
 			var staffingDetails = BuildCustomDetailMap(staffingCustomState);
+
+			foreach (var role in rolesByUser.Values.Where(r => r != null).SelectMany(r => r).Where(r => r != null))
+				context.RoleNames[role.PersonnelRoleId] = role.Name;
 
 			var logByUser = actionLogs.Where(l => !string.IsNullOrWhiteSpace(l.UserId))
 				.GroupBy(l => l.UserId).ToDictionary(g => g.Key, g => g.OrderByDescending(l => l.Timestamp).First());
@@ -1495,6 +1510,74 @@ namespace Resgrid.Services
 				FilledCount = filled,
 				Reason = reason
 			});
+		}
+
+		#endregion
+
+		#region Display names
+
+		/// <summary>
+		/// Names the people, roles and unit types the result refers to by id, so a client can show the recommendation without
+		/// lookups of its own. A shortfall is often for a role nobody holds or a unit type with no available unit, which the
+		/// candidate pools never saw, so those names come from the department's lists.
+		/// </summary>
+		private async Task FillDisplayNamesAsync(RecommendationContext context)
+		{
+			var result = context.Result;
+			var departmentId = context.Request.DepartmentId;
+
+			var unnamedRoleIds = result.Personnel.Select(p => p.RoleId)
+				.Concat(result.Shortfalls.Where(s => !s.IsUnitRequirement).Select(s => s.TypeOrRoleId))
+				.Concat(result.MoveUps.Where(m => m.PersonnelRoleId.HasValue).Select(m => m.PersonnelRoleId.Value))
+				.Where(id => id > 0 && !context.RoleNames.ContainsKey(id));
+
+			if (unnamedRoleIds.Any())
+			{
+				foreach (var role in (await _personnelRolesService.GetRolesForDepartmentUnlimitedAsync(departmentId) ?? new List<PersonnelRole>()).Where(r => r != null))
+				{
+					if (!context.RoleNames.ContainsKey(role.PersonnelRoleId))
+						context.RoleNames[role.PersonnelRoleId] = role.Name;
+				}
+			}
+
+			var personNames = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+			if (result.Personnel.Any() || result.MoveUps.Any(m => !string.IsNullOrWhiteSpace(m.SuggestedUserId)))
+			{
+				foreach (var person in (await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(departmentId) ?? new List<PersonName>()).Where(n => n != null))
+				{
+					if (!string.IsNullOrWhiteSpace(person.UserId) && !string.IsNullOrWhiteSpace(person.Name) && !personNames.ContainsKey(person.UserId))
+						personNames[person.UserId] = person.Name.Trim();
+				}
+			}
+
+			foreach (var person in result.Personnel)
+			{
+				if (string.IsNullOrWhiteSpace(person.Name) && !string.IsNullOrWhiteSpace(person.UserId))
+					person.Name = NameOrNull(personNames, person.UserId);
+
+				if (string.IsNullOrWhiteSpace(person.RoleName))
+					person.RoleName = NameOrNull(context.RoleNames, person.RoleId);
+			}
+
+			foreach (var shortfall in result.Shortfalls.Where(s => string.IsNullOrWhiteSpace(s.TypeOrRoleName)))
+				shortfall.TypeOrRoleName = NameOrNull(shortfall.IsUnitRequirement ? context.UnitTypeNames : context.RoleNames, shortfall.TypeOrRoleId);
+
+			foreach (var moveUp in result.MoveUps)
+			{
+				if (string.IsNullOrWhiteSpace(moveUp.UnitTypeName) && moveUp.UnitTypeId.HasValue)
+					moveUp.UnitTypeName = NameOrNull(context.UnitTypeNames, moveUp.UnitTypeId.Value);
+
+				if (string.IsNullOrWhiteSpace(moveUp.PersonnelRoleName) && moveUp.PersonnelRoleId.HasValue)
+					moveUp.PersonnelRoleName = NameOrNull(context.RoleNames, moveUp.PersonnelRoleId.Value);
+
+				if (string.IsNullOrWhiteSpace(moveUp.SuggestedUserName) && !string.IsNullOrWhiteSpace(moveUp.SuggestedUserId))
+					moveUp.SuggestedUserName = NameOrNull(personNames, moveUp.SuggestedUserId);
+			}
+		}
+
+		private static string NameOrNull<TKey>(Dictionary<TKey, string> names, TKey key)
+		{
+			return names.TryGetValue(key, out var name) && !string.IsNullOrWhiteSpace(name) ? name : null;
 		}
 
 		#endregion

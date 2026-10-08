@@ -75,6 +75,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> _departmentLocalizer;
 		private readonly IProtectedReadService _protectedReadService;
 		private readonly ICallNumberingService _callNumberingService;
+		private readonly IDocumentNumberingService _documentNumberingService;
 
 		public DepartmentController(IDepartmentsService departmentsService, IUsersService usersService, IActionLogsService actionLogsService,
 			IEmailService emailService, IDepartmentGroupsService departmentGroupsService, IUserProfileService userProfileService, IDeleteService deleteService,
@@ -86,7 +87,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ISecurityPinService securityPinService, IRunCardsService runCardsService, IFeatureToggleService featureToggleService,
 			IDepartmentProfileMediaService departmentProfileMediaService, IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> departmentLocalizer,
 			Resgrid.Model.AiDispatch.IAiDispatchEnrichmentService aiDispatchService, IProtectedReadService protectedReadService,
-			ICallNumberingService callNumberingService)
+			ICallNumberingService callNumberingService, IDocumentNumberingService documentNumberingService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -124,6 +125,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_aiDispatchService = aiDispatchService;
 			_protectedReadService = protectedReadService;
 			_callNumberingService = callNumberingService;
+			_documentNumberingService = documentNumberingService;
 		}
 
 		#endregion Private Members and Constructors
@@ -1254,6 +1256,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			model.CallNumberPattern = CallNumberFormat.EffectivePattern(config);
 			model.CallNumberSequenceWidth = CallNumberFormat.EffectiveWidth(config.SequenceWidth);
+			var yearStart = config.YearStart();
+			model.CallNumberYearStartMonth = yearStart.Month;
+			model.CallNumberYearStartDay = yearStart.Day;
+			model.CallNumberYearLabel = (int)yearStart.Label;
 			model.CallNumberScopeKey = next.ScopeKey;
 			model.CallNumberNextNumber = next.NextNumber;
 			model.CallNumberCurrentNextSequence = next.NextSequence;
@@ -1414,22 +1420,29 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Pattern = model.CallNumberPattern,
 				SequenceWidth = model.CallNumberSequenceWidth,
 				ScopeKey = model.CallNumberScopeKey,
-				NextSequence = model.CallNumberNextSequence
+				NextSequence = model.CallNumberNextSequence,
+				YearStartMonth = model.CallNumberYearStartMonth,
+				YearStartDay = model.CallNumberYearStartDay,
+				YearLabel = model.CallNumberYearLabel
 			}, cancellationToken);
 
-			var rejectedPattern = result.PatternRejected ? model.CallNumberPattern : null;
+			var rejected = result.PatternRejected || result.YearStartRejected;
+			var rejectedPattern = rejected ? model.CallNumberPattern : null;
+			var rejectedYearStart = rejected ? new[] { model.CallNumberYearStartMonth, model.CallNumberYearStartDay, model.CallNumberYearLabel } : null;
 			await FillCallNumberingAsync(model);
 
-			if (!result.PatternRejected)
+			if (!rejected)
 			{
 				var after = await _departmentSettingsService.GetCallNumberingConfigAsync(DepartmentId, true);
-				SendProfileAudit(JsonConvert.SerializeObject(new { CallNumberPattern = CallNumberFormat.EffectivePattern(before), CallNumberSequenceWidth = CallNumberFormat.EffectiveWidth(before.SequenceWidth), beforeNext.NextNumber }),
-					JsonConvert.SerializeObject(new { CallNumberPattern = CallNumberFormat.EffectivePattern(after), CallNumberSequenceWidth = CallNumberFormat.EffectiveWidth(after.SequenceWidth), model.CallNumberNextNumber }));
+				SendProfileAudit(JsonConvert.SerializeObject(new { CallNumberPattern = CallNumberFormat.EffectivePattern(before), CallNumberSequenceWidth = CallNumberFormat.EffectiveWidth(before.SequenceWidth), CallNumberYearStart = YearStartAudit(before.YearStart()), beforeNext.NextNumber }),
+					JsonConvert.SerializeObject(new { CallNumberPattern = CallNumberFormat.EffectivePattern(after), CallNumberSequenceWidth = CallNumberFormat.EffectiveWidth(after.SequenceWidth), CallNumberYearStart = YearStartAudit(after.YearStart()), model.CallNumberNextNumber }));
 			}
 
 			var errors = new List<string>();
 			if (result.PatternRejected)
 				errors.Add(_departmentLocalizer["CallNumberPatternInvalid"]);
+			if (result.YearStartRejected)
+				errors.Add(_departmentLocalizer["CallNumberYearStartInvalid"]);
 			if (result.BelowCurrent != null)
 				errors.Add(_departmentLocalizer["CallNumberNextBelowCurrent", result.BelowCurrent.NextNumber]);
 			if (result.NextNotApplied)
@@ -1437,10 +1450,144 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (errors.Count > 0)
 				model.ErrorMessage = string.Join(" ", errors);
 
-			foreach (var key in ModelState.Keys.Where(k => k.StartsWith("CallNumber", StringComparison.Ordinal) && (k != nameof(CallSettingsView.CallNumberPattern) || !result.PatternRejected)).ToList())
+			// A refused save keeps what was typed (pattern and year start) for correcting.
+			foreach (var key in ModelState.Keys.Where(k => k.StartsWith("CallNumber", StringComparison.Ordinal) && (!rejected || !RejectedCallNumberFields.Contains(k))).ToList())
 				ModelState.Remove(key);
 			if (rejectedPattern != null)
 				model.CallNumberPattern = rejectedPattern;
+			if (rejectedYearStart != null)
+			{
+				model.CallNumberYearStartMonth = rejectedYearStart[0];
+				model.CallNumberYearStartDay = rejectedYearStart[1];
+				model.CallNumberYearLabel = rejectedYearStart[2];
+			}
+		}
+
+		private static readonly HashSet<string> RejectedCallNumberFields = new HashSet<string>(StringComparer.Ordinal)
+		{
+			nameof(CallSettingsView.CallNumberPattern), nameof(CallSettingsView.CallNumberYearStartMonth),
+			nameof(CallSettingsView.CallNumberYearStartDay), nameof(CallSettingsView.CallNumberYearLabel)
+		};
+
+		/// <summary>The year start as the audit log records it, e.g. "11-01 EndYear"; "01-01" is the calendar year.</summary>
+		private static string YearStartAudit(NumberingYearStart yearStart)
+		{
+			return yearStart.Month.ToString("D2", CultureInfo.InvariantCulture) + "-" + yearStart.Day.ToString("D2", CultureInfo.InvariantCulture)
+				+ (yearStart.IsCalendarYear ? string.Empty : " " + yearStart.Label);
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> DocumentNumbering()
+		{
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
+			var model = new DocumentNumberingView();
+			await FillDocumentNumberingAsync(model);
+			return View(model);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> DocumentNumbering(DocumentNumberingView model, CancellationToken cancellationToken)
+		{
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
+			var before = await _departmentSettingsService.GetDocumentNumberingConfigAsync(DepartmentId, true);
+			var result = await _documentNumberingService.SaveAsync(DepartmentId, UserId, new DocumentNumberingUpdate
+			{
+				YearStartMonth = model.YearStartMonth,
+				YearStartDay = model.YearStartDay,
+				YearLabel = model.YearLabel,
+				Patterns = (model.Rows ?? new List<DocumentNumberRow>()).Where(r => r != null).Select(r => r.ToUpdate()).ToList()
+			}, cancellationToken);
+
+			var posted = model.Rows ?? new List<DocumentNumberRow>();
+			var postedYearStart = new[] { model.YearStartMonth, model.YearStartDay, model.YearLabel };
+			// Show what was saved, not what was posted: a raised number left in its box would be resubmitted. A refused year start
+			// or pattern stays in its box for correcting.
+			ModelState.Clear();
+			model = new DocumentNumberingView();
+			await FillDocumentNumberingAsync(model);
+
+			if (result.YearStartRejected)
+			{
+				model.YearStartMonth = postedYearStart[0];
+				model.YearStartDay = postedYearStart[1];
+				model.YearLabel = postedYearStart[2];
+			}
+			foreach (var row in model.Rows)
+			{
+				var typed = posted.FirstOrDefault(p => p != null && p.Kind == row.Kind);
+				if (typed != null && (result.YearStartRejected || result.PatternsRejected.Contains(row.Kind)))
+				{
+					row.Pattern = typed.Pattern;
+					row.SequenceWidth = typed.SequenceWidth;
+				}
+			}
+
+			if (!result.YearStartRejected)
+			{
+				var after = await _departmentSettingsService.GetDocumentNumberingConfigAsync(DepartmentId, true);
+				SendProfileAudit(JsonConvert.SerializeObject(DocumentNumberingAudit(before)), JsonConvert.SerializeObject(DocumentNumberingAudit(after)));
+			}
+
+			var errors = new List<string>();
+			if (result.YearStartRejected)
+				errors.Add(_departmentLocalizer["DocumentNumberingYearStartInvalid"]);
+			if (result.PatternsRejected.Count > 0)
+				errors.Add(_departmentLocalizer["DocumentNumberingPatternsRejected"] + " (" + string.Join(", ", result.PatternsRejected.Select(DocumentNumberKindLabel)) + ")");
+			if (result.BelowCurrent.Count > 0)
+				errors.Add(_departmentLocalizer["DocumentNumberingBelowCurrent"] + " (" + string.Join(", ", result.BelowCurrent.Select(s => s.NextNumber)) + ")");
+			if (result.NotApplied > 0)
+				errors.Add(_departmentLocalizer["DocumentNumberingNotApplied"]);
+			if (errors.Count > 0)
+				model.ErrorMessage = string.Join(" ", errors);
+			if (!result.YearStartRejected)
+				model.Message = _departmentLocalizer["DocumentNumberingSaved"];
+
+			return View(model);
+		}
+
+		/// <summary>The year start and each work order, invoice, bid and daily time report row as saved, with what it issues next.</summary>
+		private async Task FillDocumentNumberingAsync(DocumentNumberingView model)
+		{
+			var config = await _departmentSettingsService.GetDocumentNumberingConfigAsync(DepartmentId, true);
+			var yearStart = config.YearStart();
+			var now = DateTime.UtcNow;
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+
+			model.YearStartMonth = yearStart.Month;
+			model.YearStartDay = yearStart.Day;
+			model.YearLabel = (int)yearStart.Label;
+			model.PreviewDate = string.IsNullOrWhiteSpace(department?.TimeZone) ? now : DateTimeHelpers.GetLocalDateTime(now, department.TimeZone);
+			model.Rows = (await _documentNumberingService.GetStatusesAsync(DepartmentId, false, now))
+				.Select(s => DocumentNumberRow.From(s, DocumentNumberKindLabel(s.Kind))).ToList();
+		}
+
+		private string DocumentNumberKindLabel(string kind)
+		{
+			switch (kind)
+			{
+				case DocumentNumberKinds.WorkOrder: return _departmentLocalizer["DocumentNumberKindWorkOrder"];
+				case DocumentNumberKinds.Invoice: return _departmentLocalizer["DocumentNumberKindInvoice"];
+				case DocumentNumberKinds.Bid: return _departmentLocalizer["DocumentNumberKindBid"];
+				case DocumentNumberKinds.TimeReport: return _departmentLocalizer["DocumentNumberKindTimeReport"];
+				default: return kind;
+			}
+		}
+
+		private static object DocumentNumberingAudit(DocumentNumberingConfig config)
+		{
+			return new
+			{
+				DocumentNumberingYearStart = YearStartAudit(config.YearStart()),
+				DocumentNumberPatterns = (config.Patterns ?? new List<DocumentNumberPattern>()).Where(p => p != null)
+					.OrderBy(p => p.Kind, StringComparer.Ordinal).Select(p => p.Kind + " " + p.Pattern + " /" + p.SequenceWidth).ToList()
+			};
 		}
 
 		[HttpGet]

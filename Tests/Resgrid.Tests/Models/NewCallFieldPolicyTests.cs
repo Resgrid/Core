@@ -112,6 +112,43 @@ namespace Resgrid.Tests.Models
 		}
 
 		[Test]
+		public void A_plus_code_can_be_hidden_but_never_required()
+		{
+			// It is only a way of finding the location and is never stored on the call; the web form has no input for it,
+			// so a stored requirement blocked every web call.
+			var policy = PolicyWith(new NewCallFieldRule { Key = NewCallFieldKeys.PlusCode, Visible = true, Required = true });
+
+			NewCallFieldKeys.CanBeRequired(NewCallFieldKeys.PlusCode).Should().BeFalse();
+			policy.IsRequired(NewCallFieldKeys.PlusCode).Should().BeFalse();
+			NewCallFieldPolicyValidator.Validate(policy, new NewCallFieldValues()).Should().BeEmpty();
+		}
+
+		[Test]
+		public void Normalize_drops_a_stored_plus_code_requirement_but_keeps_it_hidden()
+		{
+			var policy = PolicyWith(
+				new NewCallFieldRule { Key = NewCallFieldKeys.PlusCode, Visible = true, Required = true },
+				new NewCallFieldRule { Key = NewCallFieldKeys.What3Words, Visible = true, Required = true }).Normalize();
+
+			policy.Rules.Should().ContainSingle().Which.Key.Should().Be(NewCallFieldKeys.What3Words);
+
+			var hidden = PolicyWith(new NewCallFieldRule { Key = NewCallFieldKeys.PlusCode, Visible = false, Required = true }).Normalize();
+
+			hidden.IsVisible(NewCallFieldKeys.PlusCode).Should().BeFalse();
+			hidden.Rules.Should().ContainSingle().Which.Required.Should().BeFalse();
+		}
+
+		[Test]
+		public void Every_other_field_can_be_required()
+		{
+			foreach (var key in NewCallFieldKeys.All)
+			{
+				if (key != NewCallFieldKeys.PlusCode)
+					NewCallFieldKeys.CanBeRequired(key).Should().BeTrue(key);
+			}
+		}
+
+		[Test]
 		public void A_policy_stored_before_visibility_was_written_still_reads_as_visible()
 		{
 			// Blobs already in the database never carry field 2 for a visible rule; they must keep
@@ -210,6 +247,28 @@ namespace Resgrid.Tests.Models
 			var violations = NewCallFieldPolicyValidator.Validate(policy, new NewCallFieldValues());
 
 			violations.Should().BeEmpty();
+		}
+
+		[Test]
+		public void A_field_the_surface_cannot_collect_is_not_enforced_there()
+		{
+			// The field apps have no protocol or linked-call picker, and an edit cannot schedule a call that already went
+			// out: requiring those there would stop calls being created or edited at all.
+			var policy = Requiring(NewCallFieldKeys.Protocols, NewCallFieldKeys.LinkedCall, NewCallFieldKeys.DispatchOn, NewCallFieldKeys.Address);
+
+			var violations = NewCallFieldPolicyValidator.Validate(policy, new NewCallFieldValues()
+				.Unsupported(NewCallFieldKeys.Protocols, "LINKEDCALL", NewCallFieldKeys.DispatchOn));
+
+			violations.Should().ContainSingle().Which.Key.Should().Be(NewCallFieldKeys.Address);
+		}
+
+		[Test]
+		public void A_supported_field_is_still_enforced()
+		{
+			var policy = Requiring(NewCallFieldKeys.Protocols, NewCallFieldKeys.LinkedCall);
+
+			NewCallFieldPolicyValidator.Validate(policy, new NewCallFieldValues { HasProtocols = true })
+				.Should().ContainSingle().Which.Key.Should().Be(NewCallFieldKeys.LinkedCall);
 		}
 
 		[Test]

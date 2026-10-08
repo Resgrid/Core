@@ -69,6 +69,7 @@ namespace Resgrid.Services.Records
 		private readonly IRecordsEvidenceService _evidenceService;
 		private readonly IIncidentSourceFeedService _feeds;
 		private readonly IRecordsProtectionService _protection;
+		private readonly IDepartmentsService _departments;
 
 		public IncidentReportsService(IRmsIncidentReportsRepository reports, IRmsSourceFactsRepository facts, IRmsUnitResponsesRepository units,
 			IRmsIncidentTypesRepository types, IRmsActionTacticsRepository tactics, IRmsAidsRepository aids, IRmsLocationsRepository locations,
@@ -79,8 +80,9 @@ namespace Resgrid.Services.Records
 			IDepartmentGroupsService groups, IUserProfileService profiles, IPersonnelRolesService roles, IUnitsService unitsService, ICallsService calls,
 			IDepartmentDataProtectionService dataProtection, IUnitOfWork unitOfWork, INerisProfileService neris, INerisMappingService mapping,
 			INerisValidationService validation, IRecordsAuthorizationService authorization, IRmsRecordAttachmentsRepository attachments, IRmsEvidenceArtifactsRepository evidence, IRecordsUdfService udf, IRecordsEvidenceService evidenceService,
-			IIncidentSourceFeedService feeds, IRecordsProtectionService protection)
+			IIncidentSourceFeedService feeds, IRecordsProtectionService protection, IDepartmentsService departments)
 		{
+			_departments = departments;
 			_protection = protection;
 			_feeds = feeds;
 			_reports = reports;
@@ -1599,7 +1601,10 @@ namespace Resgrid.Services.Records
 		private async Task<string> AllocateRecordNumberAsync(RmsIncidentReport report, CancellationToken cancellationToken)
 		{
 			var config = await _settings.GetRecordsNumberingConfigAsync(report.DepartmentId);
-			var year = (report.CallCreatedOn ?? DateTime.UtcNow).Year;
+			// The department-local numbering year of the call, so a call logged on a US evening of December 31 (or of the day before
+			// a fiscal year starts) is not numbered into the next year.
+			var timeZone = (await _departments.GetDepartmentByIdAsync(report.DepartmentId, false))?.TimeZone;
+			var year = RecordsNumberingService.NumberingYear(config, report.CallCreatedOn ?? DateTime.UtcNow, timeZone);
 			var scope = RecordNumberFormat.Resolve(RecordNumberFormat.EffectivePattern(config), config.SequenceWidth, config.PrefixFor(RmsDefinitionKeys.NerisIncidentReport), year, report.StationGroupId);
 			var highest = await _reports.GetMaxRecordNumberSequenceAsync(report.DepartmentId, scope.Prefix, scope.Suffix);
 			return scope.Format(config.NextSequence(scope.Key, highest));

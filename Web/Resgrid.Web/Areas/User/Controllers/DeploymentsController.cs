@@ -757,7 +757,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (report == null) return NotFound();
 			if (await AccessibleAsync(report.DeploymentId) == null) return Unauthorized();
 			var pdf = await _timeTracking.GetTimeReportPdfAsync(id, DepartmentId);
-			return File(pdf, "application/pdf", $"dtr-{report.ReportNumber}-{report.ReportDate:yyyyMMdd}.pdf");
+			return File(pdf, "application/pdf", $"dtr-{DocumentNumbering.FileSafe(report.NumberText())}-{report.ReportDate:yyyyMMdd}.pdf");
 		}
 
 		[HttpPost, ValidateAntiForgeryToken]

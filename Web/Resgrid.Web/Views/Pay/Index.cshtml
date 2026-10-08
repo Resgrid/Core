@@ -2,12 +2,12 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Invoicing.Invoicing> localizer
 @{
     Layout = "_RecoveryLayout";
-    ViewData["Title"] = localizer["PayPageTitle"].Value + (Model.InvoiceNumber > 0 ? " #" + Model.InvoiceNumber : "");
+    ViewData["Title"] = localizer["PayPageTitle"].Value + (Model.InvoiceNumber > 0 ? " " + Model.InvoiceLabel : "");
     var token = (string)ViewData["PayToken"];
 }
 <div class="panel panel-default" style="margin-top: 20px;">
     <div class="panel-body" style="padding: 30px;">
-        <h2 style="margin-top: 0;">@localizer["PayPageTitle"]@(Model.InvoiceNumber > 0 ? " #" + Model.InvoiceNumber : "")</h2>
+        <h2 style="margin-top: 0;">@localizer["PayPageTitle"]@(Model.InvoiceNumber > 0 ? " " + Model.InvoiceLabel : "")</h2>
         @if (!string.IsNullOrWhiteSpace(Model.DepartmentName))
         {
             <p class="lead">@Model.DepartmentName</p>

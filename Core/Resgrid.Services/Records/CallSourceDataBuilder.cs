@@ -562,7 +562,9 @@ namespace Resgrid.Services.Records
 				case ActionBaseTypes.Cleared:
 				case ActionBaseTypes.Returning: return CallSourceMilestone.Cleared;
 				case ActionBaseTypes.Available:
-				case ActionBaseTypes.InQuarters: return CallSourceMilestone.InService;
+				case ActionBaseTypes.InQuarters:
+				case ActionBaseTypes.Completed:
+				case ActionBaseTypes.OnPatrol: return CallSourceMilestone.InService;
 				default: return CallSourceMilestone.None;
 			}
 		}

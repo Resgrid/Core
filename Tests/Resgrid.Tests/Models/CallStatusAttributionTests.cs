@@ -41,6 +41,34 @@ namespace Resgrid.Tests.Models
 		}
 
 		[Test]
+		public void a_clear_cleared_the_call_it_points_at_or_everything_dispatched_before_it()
+		{
+			CallStatusAttribution.ClearedByPrevious(false, CallId, (int)DestinationEntityTypes.Call, T0).Should().Be(((int?)null, (DateTime?)null), "not a clearing status");
+			CallStatusAttribution.ClearedByPrevious(true, CallId, (int)DestinationEntityTypes.Call, T0).Should().Be(((int?)CallId, (DateTime?)null));
+			CallStatusAttribution.ClearedByPrevious(true, 3, (int)DestinationEntityTypes.Station, T0).Should().Be(((int?)null, (DateTime?)T0), "back in quarters");
+			CallStatusAttribution.ClearedByPrevious(true, null, null, T0).Should().Be(((int?)null, (DateTime?)T0));
+			CallStatusAttribution.ClearedByPrevious(true, CallId, null, T0).Should().Be(((int?)CallId, (DateTime?)T0), "an untyped legacy destination may be the call or a station");
+			CallStatusAttribution.ClearedByPrevious(true, null, null, null).Should().Be(((int?)null, (DateTime?)null), "no previous status");
+		}
+
+		[Test]
+		public void the_timed_dispatch_rule_skips_dispatches_before_a_clear_of_everything()
+		{
+			var dispatches = new[]
+			{
+				new CallDispatchWindow { CallId = 7, DispatchedOn = T0.AddMinutes(-30) },
+				new CallDispatchWindow { CallId = 8, DispatchedOn = T0.AddMinutes(-30) },
+				new CallDispatchWindow { CallId = 8, DispatchedOn = T0.AddMinutes(5) }
+			};
+
+			CallStatusAttribution.PickDispatchCall(dispatches, x => x.CallId, x => x.DispatchedOn, null, null).Should().BeNull("ambiguous");
+			CallStatusAttribution.PickDispatchCall(dispatches, x => x.CallId, x => x.DispatchedOn, null, T0).Should().Be(8, "8 was paged again after the clear");
+			CallStatusAttribution.PickDispatchCall(dispatches, x => x.CallId, x => x.DispatchedOn, 8, T0).Should().BeNull("the clear named 8");
+			CallStatusAttribution.PickDispatchCall(dispatches, x => x.CallId, x => x.DispatchedOn, null, T0.AddMinutes(10)).Should().BeNull();
+			CallStatusAttribution.PickDispatchCall((CallDispatchWindow[])null, x => x.CallId, x => x.DispatchedOn, null, null).Should().BeNull();
+		}
+
+		[Test]
 		public void inference_takes_unlinked_statuses_from_dispatch_until_the_first_clearing_status()
 		{
 			var states = new List<UnitState>

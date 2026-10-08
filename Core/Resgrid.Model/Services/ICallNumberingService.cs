@@ -26,11 +26,12 @@ namespace Resgrid.Model.Services
 		Task<CallNumberingSaveResult> SaveAsync(int departmentId, string userId, CallNumberingUpdate update, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
-		/// Renumbers the department's calls logged in a local year in logged order, each sequence starting at its raised starting
-		/// point and skipping numbers deleted calls still hold. Counters are moved past the year's numbers before any call is
-		/// rewritten, so a call created meanwhile never shares a number. False, and nothing renumbered, when the pattern never
-		/// restarts (a year cannot be renumbered on its own).
+		/// Renumbers the department's calls logged in the year containing <paramref name="inYearUtc"/> in logged order: the numbering
+		/// year (a fiscal year when the department set its start) for a yearly pattern, the local calendar year for one with {MM} or
+		/// {DD}. Each sequence starts at its raised starting point and skips numbers deleted calls still hold. Counters are moved past
+		/// the year's numbers before any call is rewritten, so a call created meanwhile never shares a number. False, and nothing
+		/// renumbered, when the pattern never restarts (a year cannot be renumbered on its own).
 		/// </summary>
-		Task<bool> RenumberCallsForYearAsync(int departmentId, int year, CancellationToken cancellationToken = default(CancellationToken));
+		Task<bool> RenumberCallsForYearAsync(int departmentId, DateTime inYearUtc, CancellationToken cancellationToken = default(CancellationToken));
 	}
 }

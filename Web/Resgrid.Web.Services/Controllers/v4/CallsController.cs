@@ -925,7 +925,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// </summary>
 		/// <remarks>
 		/// An empty rule list means the stock form -- every field visible, nothing extra required.
-		/// Clients apply this for usability; the same policy is enforced on SaveCall regardless.
+		/// Clients apply this to their new and edit call forms for usability; the same policy is enforced on SaveCall
+		/// and EditCall regardless.
 		/// </remarks>
 		[HttpGet("GetNewCallFieldPolicy")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
@@ -944,7 +945,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					{
 						Key = rule.Key,
 						Visible = rule.Visible,
-						Required = rule.Visible && rule.Required
+						Required = policy.IsRequired(rule.Key)
 					});
 				}
 			}
@@ -996,11 +997,32 @@ namespace Resgrid.Web.Services.Controllers.v4
 			// time is ignored because the dispatcher decides when it goes out.
 			var isPending = newCallInput.IsPending == true;
 
+			// Resolved before the policy check, so an id from another department cannot satisfy a linked-call requirement.
+			Call linkedCall = null;
+			if (!string.IsNullOrWhiteSpace(newCallInput.LinkedCallId))
+			{
+				if (!int.TryParse(newCallInput.LinkedCallId, NumberStyles.Integer, CultureInfo.InvariantCulture, out int linkedCallId))
+					return BadRequest("LinkedCallId is not a call id.");
+
+				linkedCall = await _callsService.GetCallByIdAsync(linkedCallId);
+
+				if (linkedCall == null || linkedCall.DepartmentId != effectiveDepartmentId)
+					return BadRequest("LinkedCallId is not a call in this department.");
+			}
+
+			// Ids that are not this department's protocols are dropped, like unknown entries on the dispatch list.
+			var protocols = new List<DispatchProtocol>();
+			if (newCallInput.ProtocolIds != null && newCallInput.ProtocolIds.Any())
+			{
+				var departmentProtocols = await _protocolsService.GetAllProtocolsForDepartmentAsync(effectiveDepartmentId) ?? new List<DispatchProtocol>();
+				protocols = departmentProtocols.Where(x => newCallInput.ProtocolIds.Contains(x.DispatchProtocolId)).ToList();
+			}
+
 			// The department's new-call field policy is enforced here, not only in the clients: an old
 			// build, an offline-queued call or a third-party integration must not be able to put an
 			// incomplete call in front of the crews. Departments with no policy configured are unaffected.
 			var fieldPolicy = await _departmentSettingsService.GetNewCallFieldPolicyAsync(effectiveDepartmentId);
-			var fieldViolations = NewCallFieldPolicyValidator.Validate(fieldPolicy, new NewCallFieldValues
+			var fieldValues = new NewCallFieldValues
 			{
 				Note = newCallInput.Note,
 				Address = newCallInput.Address,
@@ -1013,10 +1035,25 @@ namespace Resgrid.Web.Services.Controllers.v4
 				ReferenceId = newCallInput.ReferenceId,
 				DestinationPoiId = newCallInput.DestinationPoiId,
 				IndoorMapZoneId = newCallInput.IndoorMapZoneId,
+				HasProtocols = protocols.Any(),
+				HasLinkedCall = linkedCall != null,
 				DispatchOn = isPending ? null : (newCallInput.DispatchOnUtc ?? newCallInput.DispatchOn),
 				HasDispatchList = !string.IsNullOrWhiteSpace(newCallInput.DispatchList),
 				IsPending = isPending
-			});
+			};
+
+			// A client that never sends these has no picker for them (older builds, the field apps, integrations); a
+			// requirement it cannot meet would stop it creating calls at all.
+			if (newCallInput.IndoorMapZoneId == null)
+				fieldValues.Unsupported(NewCallFieldKeys.IndoorLocation);
+
+			if (newCallInput.ProtocolIds == null)
+				fieldValues.Unsupported(NewCallFieldKeys.Protocols);
+
+			if (newCallInput.LinkedCallId == null)
+				fieldValues.Unsupported(NewCallFieldKeys.LinkedCall);
+
+			var fieldViolations = NewCallFieldPolicyValidator.Validate(fieldPolicy, fieldValues);
 
 			if (fieldViolations.Count > 0)
 				return BadRequest(NewCallFieldPolicyValidator.DescribeViolations(fieldViolations));
@@ -1071,6 +1108,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (!string.IsNullOrWhiteSpace(newCallInput.IndoorMapFloorId))
 				call.IndoorMapFloorId = newCallInput.IndoorMapFloorId;
+
+			if (protocols.Any())
+				call.Protocols = protocols.Select(x => new CallProtocol { DispatchProtocolId = x.DispatchProtocolId, Data = x.Code }).ToList();
+
+			if (linkedCall != null)
+				call.References = new List<CallReference> { new CallReference { TargetCallId = linkedCall.CallId, AddedOn = DateTime.UtcNow, AddedByUserId = UserId } };
 
 			if (newCallInput.DispatchOnUtc.HasValue && !isPending)
 			{
@@ -1400,6 +1443,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (call.State != (int)CallStates.Active && !isPending)
 				return BadRequest();
 
+			// The new-call field policy applies to edits too: a field the department hides is not on the client's edit
+			// form, so a blank value for it keeps what is stored, and the call must still have every required field after
+			// the edit.
+			var fieldPolicy = await _departmentSettingsService.GetNewCallFieldPolicyAsync(DepartmentId) ?? new NewCallFieldPolicy();
+
 			var activeUsers = await _departmentsService.GetAllMembersForDepartmentAsync(DepartmentId);
 			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 			var roles = await _personnelRolesService.GetAllRolesForDepartmentAsync(DepartmentId);
@@ -1451,17 +1499,60 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!string.IsNullOrWhiteSpace(editCallInput.Address))
 				call.Address = editCallInput.Address;
 
-			call.DestinationPoiId = destinationPoi?.PoiId;
+			// No destination posted for a hidden destination means the client never showed it, not that it was cleared.
+			if (destinationPoi != null || fieldPolicy.IsVisible(NewCallFieldKeys.DestinationPoi))
+				call.DestinationPoiId = destinationPoi?.PoiId;
 
 			if (!string.IsNullOrWhiteSpace(editCallInput.What3Words))
 				call.W3W = editCallInput.What3Words;
 
+			if (!string.IsNullOrWhiteSpace(editCallInput.IndoorMapZoneId))
+			{
+				call.IndoorMapZoneId = editCallInput.IndoorMapZoneId;
+				call.IndoorMapFloorId = editCallInput.IndoorMapFloorId;
+			}
+
+			// Added to what the call already has, the same as the web edit form: neither can remove one here.
+			if (editCallInput.ProtocolIds != null && editCallInput.ProtocolIds.Any())
+			{
+				var departmentProtocols = await _protocolsService.GetAllProtocolsForDepartmentAsync(DepartmentId) ?? new List<DispatchProtocol>();
+
+				if (call.Protocols == null)
+					call.Protocols = new List<CallProtocol>();
+
+				foreach (var protocol in departmentProtocols.Where(x => editCallInput.ProtocolIds.Contains(x.DispatchProtocolId)))
+				{
+					if (!call.Protocols.Any(x => x.DispatchProtocolId == protocol.DispatchProtocolId))
+						call.Protocols.Add(new CallProtocol { CallId = call.CallId, DispatchProtocolId = protocol.DispatchProtocolId, Data = protocol.Code });
+				}
+			}
+
+			if (!string.IsNullOrWhiteSpace(editCallInput.LinkedCallId))
+			{
+				if (!int.TryParse(editCallInput.LinkedCallId, NumberStyles.Integer, CultureInfo.InvariantCulture, out int linkedCallId) || linkedCallId == call.CallId)
+					return BadRequest("LinkedCallId is not another call's id.");
+
+				var linkedCall = await _callsService.GetCallByIdAsync(linkedCallId);
+
+				if (linkedCall == null || linkedCall.DepartmentId != DepartmentId)
+					return BadRequest("LinkedCallId is not a call in this department.");
+
+				if (call.References == null)
+					call.References = new List<CallReference>();
+
+				if (!call.References.Any(x => x.TargetCallId == linkedCallId))
+					call.References.Add(new CallReference { SourceCallId = call.CallId, TargetCallId = linkedCallId, AddedOn = DateTime.UtcNow, AddedByUserId = UserId });
+			}
+
 			// Forms module is disabled: ignoring the posted value leaves whatever form data the call
 			// already carries intact, so an edit from an older client can't wipe or replace it.
 
-			if (editCallInput.DispatchOn.HasValue)
+			if (editCallInput.DispatchOnUtc.HasValue || editCallInput.DispatchOn.HasValue)
 			{
-				var dispatchOn = DateTimeHelpers.ConvertToUtc(editCallInput.DispatchOn.Value, department.TimeZone);
+				var dispatchOn = editCallInput.DispatchOnUtc.HasValue
+					? DateTime.SpecifyKind(editCallInput.DispatchOnUtc.Value.Kind == DateTimeKind.Local
+						? editCallInput.DispatchOnUtc.Value.ToUniversalTime() : editCallInput.DispatchOnUtc.Value, DateTimeKind.Utc)
+					: DateTimeHelpers.ConvertToUtc(editCallInput.DispatchOn.Value, department.TimeZone);
 
 				if (!isPending)
 				{
@@ -1519,10 +1610,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var existingUnitDispatches = new List<CallDispatchUnit>(call.UnitDispatches ?? new List<CallDispatchUnit>());
 			var existingRoleDispatches = new List<CallDispatchRole>(call.RoleDispatches ?? new List<CallDispatchRole>());
 
-			if (isPending && string.IsNullOrWhiteSpace(editCallInput.DispatchList))
+			if ((isPending || !fieldPolicy.IsVisible(NewCallFieldKeys.DispatchList)) && string.IsNullOrWhiteSpace(editCallInput.DispatchList))
 			{
 				// No list on an edit of a pending call keeps its proposed recipients (an empty list would otherwise mean
-				// "everyone").
+				// "everyone"). The same when the department hides the dispatch list: the edit form never had one, so
+				// treating the blank as "everyone" would page the whole department on every edit.
 				if (call.Dispatches == null)
 					call.Dispatches = new List<CallDispatch>();
 
@@ -1686,6 +1778,44 @@ namespace Resgrid.Web.Services.Controllers.v4
 					Logging.LogException(ex);
 				}
 			}
+
+			// Checked against the call as the edit leaves it (a blank input keeps the stored value) and before anything
+			// below changes stored data. The dispatch time only means something before a call goes out.
+			var fieldValues = new NewCallFieldValues
+			{
+				Note = call.Notes,
+				Address = call.Address,
+				Geolocation = call.GeoLocationData,
+				What3Words = call.W3W,
+				ContactName = call.ContactName,
+				ContactInfo = call.ContactNumber,
+				ExternalId = call.ExternalIdentifier,
+				IncidentId = call.IncidentNumber,
+				ReferenceId = call.ReferenceNumber,
+				DestinationPoiId = call.DestinationPoiId,
+				IndoorMapZoneId = call.IndoorMapZoneId,
+				HasProtocols = call.Protocols?.Any() ?? false,
+				HasLinkedCall = call.References?.Any() ?? false,
+				HasDispatchList = (call.Dispatches?.Any() ?? false) || (call.GroupDispatches?.Any() ?? false) ||
+								  (call.UnitDispatches?.Any() ?? false) || (call.RoleDispatches?.Any() ?? false),
+				IsPending = isPending
+			}.Unsupported(NewCallFieldKeys.DispatchOn);
+
+			// As on SaveCall: a client that never sends these has no picker for them, and a requirement it cannot meet
+			// would stop it saving any edit.
+			if (editCallInput.IndoorMapZoneId == null)
+				fieldValues.Unsupported(NewCallFieldKeys.IndoorLocation);
+
+			if (editCallInput.ProtocolIds == null)
+				fieldValues.Unsupported(NewCallFieldKeys.Protocols);
+
+			if (editCallInput.LinkedCallId == null)
+				fieldValues.Unsupported(NewCallFieldKeys.LinkedCall);
+
+			var fieldViolations = NewCallFieldPolicyValidator.Validate(fieldPolicy, fieldValues);
+
+			if (fieldViolations.Count > 0)
+				return BadRequest(NewCallFieldPolicyValidator.DescribeViolations(fieldViolations));
 
 			// Call is in the past or is now, were dispatching now (at the end of this func)
 			if (call.DispatchOn.HasValue && call.DispatchOn.Value <= DateTime.UtcNow)

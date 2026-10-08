@@ -985,7 +985,7 @@
     <value>Πεδία φόρμας νέας κλήσης</value>
   </data>
   <data name="NewCallFieldsHelp" xml:space="preserve">
-    <value>Επιλέξτε ποια ενσωματωμένα πεδία εμφανίζονται στη φόρμα και ποια πρέπει να συμπληρωθούν πριν η κλήση δημιουργηθεί και σταλεί. Όνομα, φύση, προτεραιότητα και τύπος εμφανίζονται πάντα και είναι πάντα υποχρεωτικά.</value>
+    <value>Επιλέξτε ποια ενσωματωμένα πεδία εμφανίζονται στη φόρμα και ποια πρέπει να συμπληρωθούν πριν η κλήση δημιουργηθεί και σταλεί. Όνομα, φύση, προτεραιότητα και τύπος εμφανίζονται πάντα και είναι πάντα υποχρεωτικά. Οι ίδιοι κανόνες ισχύουν κατά την επεξεργασία μιας κλήσης ή την προσθήκη αρχειοθετημένης κλήσης.</value>
   </data>
   <data name="NewCallFieldsFieldColumn" xml:space="preserve">
     <value>Πεδίο</value>
@@ -1018,7 +1018,7 @@
     <value>Σημείωση</value>
   </data>
   <data name="NewCallField_contactName" xml:space="preserve">
-    <value>Κύρια επαφή</value>
+    <value>Όνομα αναφέροντος</value>
   </data>
   <data name="NewCallField_contactInfo" xml:space="preserve">
     <value>Στοιχεία επικοινωνίας αναφέροντος</value>
@@ -1408,9 +1408,90 @@
     <value>Ο επόμενος αριθμός κλήσης δεν αυξήθηκε: μπορεί να αυξηθεί μόνο πάνω από τον αριθμό που λαμβάνει ήδη η επόμενη κλήση ({0}).</value>
   </data>
   <data name="CallNumberNextPatternChanged" xml:space="preserve">
-    <value>Ο επόμενος αριθμός κλήσης δεν αυξήθηκε επειδή το μοτίβο άλλαξε στην ίδια αποθήκευση. Αυξήστε τον ξανά για το νέο μοτίβο.</value>
+    <value>Ο επόμενος αριθμός κλήσης δεν αυξήθηκε επειδή το μοτίβο ή η έναρξη του έτους αρίθμησης άλλαξε στην ίδια αποθήκευση. Αυξήστε τον ξανά για τη νέα ακολουθία.</value>
+  </data>
+  <data name="CallNumberYearStart" xml:space="preserve">
+    <value>Το έτος αρίθμησης ξεκινά</value>
+  </data>
+  <data name="CallNumberYearStartDay" xml:space="preserve">
+    <value>Ημέρα του μήνα</value>
+  </data>
+  <data name="CallNumberYearLabelEndYear" xml:space="preserve">
+    <value>Ονομάζεται από το έτος στο οποίο λήγει</value>
+  </data>
+  <data name="CallNumberYearLabelStartYear" xml:space="preserve">
+    <value>Ονομάζεται από το έτος στο οποίο ξεκινά</value>
+  </data>
+  <data name="CallNumberYearStartHelp" xml:space="preserve">
+    <value>Για κλήσεις που αριθμούνται ανά οικονομικό έτος, επιλέξτε την ημέρα που ξεκινά. Ένα ετήσιο μοτίβο ξεκινά ξανά από το 1 εκείνη την ημέρα, και τα {YYYY} και {YY} γράφουν το όνομα του οικονομικού έτους. Τα περισσότερα οικονομικά έτη ονομάζονται από το έτος στο οποίο λήγουν, οπότε ένα που ξεκινά την 1η Νοεμβρίου 2026 είναι το 2027. Η 1η Ιανουαρίου είναι το ημερολογιακό έτος. Τα μοτίβα με {MM} ή {DD} ακολουθούν πάντα το ημερολόγιο.</value>
+  </data>
+  <data name="CallNumberResetsYearlyOn" xml:space="preserve">
+    <value>Ξεκινά ξανά από το 1 κάθε έτος στις {0}.</value>
+  </data>
+  <data name="CallNumberYearStartInvalid" xml:space="preserve">
+    <value>Η αρίθμηση κλήσεων δεν αποθηκεύτηκε. Το έτος αρίθμησης πρέπει να ξεκινά σε ημέρα που υπάρχει κάθε έτος, οπότε η 29η Φεβρουαρίου δεν μπορεί να χρησιμοποιηθεί.</value>
+  </data>
+  <data name="DocumentNumberingHeader" xml:space="preserve">
+    <value>Αρίθμηση εγγράφων</value>
+  </data>
+  <data name="DocumentNumberingIntro" xml:space="preserve">
+    <value>Πώς το Resgrid αριθμεί τις εντολές εργασίας, τα τιμολόγια, τις προσφορές και τις ημερήσιες αναφορές χρόνου. Αφήστε ένα μοτίβο κενό για να διατηρηθούν οι ενσωματωμένοι αριθμοί. Η αλλαγή μοτίβου δεν αναριθμεί ποτέ έγγραφα που έχουν ήδη αριθμό, και ένα νέο μοτίβο συνεχίζει μετά από κάθε αριθμό που θα επαναλάμβανε.</value>
+  </data>
+  <data name="DocumentNumberingRecordsLink" xml:space="preserve">
+    <value>Αρίθμηση αρχείων</value>
+  </data>
+  <data name="DocumentNumberingYearStartHelp" xml:space="preserve">
+    <value>Για έγγραφα που αριθμούνται ανά οικονομικό έτος, επιλέξτε την ημέρα που ξεκινά. Οι αριθμοί εντολών εργασίας και τα μοτίβα με έτος ξεκινούν ξανά από το 1 εκείνη την ημέρα, και τα {YYYY} και {YY} γράφουν το όνομα του οικονομικού έτους. Τα περισσότερα οικονομικά έτη ονομάζονται από το έτος στο οποίο λήγουν, οπότε ένα που ξεκινά την 1η Νοεμβρίου 2026 είναι το 2027. Η 1η Ιανουαρίου είναι το ημερολογιακό έτος. Οι αριθμοί κλήσεων και αρχείων έχουν τη δική τους έναρξη έτους.</value>
+  </data>
+  <data name="DocumentNumberType" xml:space="preserve">
+    <value>Έγγραφο</value>
+  </data>
+  <data name="DocumentNumberBuiltIn" xml:space="preserve">
+    <value>Ενσωματωμένο, π.χ.</value>
+  </data>
+  <data name="DocumentNumberPatternHelp" xml:space="preserve">
+    <value>Σταθερό κείμενο (γράμματα, ψηφία, - _ . /) γύρω από {YYYY} ή {YY}, {MM}, {DD} και {SEQ}, το οποίο πρέπει να εμφανίζεται μία φορά. Ένα μοτίβο με έτος ξεκινά ξανά από το 1 κάθε έτος αρίθμησης· με {MM} ή {DD}, κάθε μήνα ή ημέρα. Ένας αριθμός μόνο με ψηφία εμφανίζεται με # μπροστά, όπως πάντα οι αριθμοί τιμολογίων, προσφορών και αναφορών χρόνου.</value>
+  </data>
+  <data name="DocumentNumberingSaved" xml:space="preserve">
+    <value>Η αρίθμηση εγγράφων αποθηκεύτηκε.</value>
+  </data>
+  <data name="DocumentNumberingYearStartInvalid" xml:space="preserve">
+    <value>Η αρίθμηση εγγράφων δεν αποθηκεύτηκε. Το έτος αρίθμησης πρέπει να ξεκινά σε ημέρα που υπάρχει κάθε έτος, οπότε η 29η Φεβρουαρίου δεν μπορεί να χρησιμοποιηθεί.</value>
+  </data>
+  <data name="DocumentNumberingPatternsRejected" xml:space="preserve">
+    <value>Αυτά τα μοτίβα δεν αποθηκεύτηκαν επειδή δεν είναι έγκυρα ή θα μπορούσαν να γράψουν αριθμό μεγαλύτερο από 50 χαρακτήρες· αυτά τα έγγραφα διατήρησαν την αρίθμηση που είχαν:</value>
+  </data>
+  <data name="DocumentNumberingBelowCurrent" xml:space="preserve">
+    <value>Ένας επόμενος αριθμός μπορεί μόνο να αυξηθεί. Αυτοί έμειναν αμετάβλητοι επειδή ο αριθμός που εισαγάγατε ήταν μικρότερος από αυτόν που θα εκδώσουν στη συνέχεια:</value>
+  </data>
+  <data name="DocumentNumberingNotApplied" xml:space="preserve">
+    <value>Το μοτίβο ή η έναρξη του έτους αρίθμησης άλλαξε στην ίδια αποθήκευση, οπότε οι επόμενοι αριθμοί που εισαγάγατε δεν εφαρμόστηκαν. Αυξήστε τους ξανά για τη νέα ακολουθία.</value>
+  </data>
+  <data name="DocumentNumberKindWorkOrder" xml:space="preserve">
+    <value>Εντολές εργασίας</value>
+  </data>
+  <data name="DocumentNumberKindInvoice" xml:space="preserve">
+    <value>Τιμολόγια</value>
+  </data>
+  <data name="DocumentNumberKindBid" xml:space="preserve">
+    <value>Προσφορές</value>
+  </data>
+  <data name="DocumentNumberKindTimeReport" xml:space="preserve">
+    <value>Ημερήσιες αναφορές χρόνου</value>
+  </data>
+  <data name="DocumentNumberPatternColumn" xml:space="preserve">
+    <value>Μοτίβο αρίθμησης</value>
+  </data>
+  <data name="DocumentNumberNextColumn" xml:space="preserve">
+    <value>Επόμενος αριθμός</value>
+  </data>
+  <data name="DocumentNumberRaiseColumn" xml:space="preserve">
+    <value>Αύξηση επόμενου σε</value>
   </data>
   <data name="CallSettingsSaved" xml:space="preserve">
     <value>Οι ρυθμίσεις κλήσεων αποθηκεύτηκαν.</value>
+  </data>
+  <data name="NewCallFieldCannotBeRequired" xml:space="preserve">
+    <value>Ο κωδικός Plus Code χρησιμεύει μόνο για τον εντοπισμό της τοποθεσίας και δεν αποθηκεύεται στην κλήση, επομένως δεν μπορεί να είναι υποχρεωτικός. Κάντε υποχρεωτικές τις συντεταγμένες GPS.</value>
   </data>
 </root>

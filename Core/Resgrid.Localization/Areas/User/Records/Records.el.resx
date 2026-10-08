@@ -123,7 +123,18 @@
   <data name="NextNumberCurrent" xml:space="preserve"><value>Επόμενος αριθμός</value></data>
   <data name="NextNumberRaiseTo" xml:space="preserve"><value>Αύξηση επόμενου σε</value></data>
   <data name="NextNumberBelowCurrent" xml:space="preserve"><value>Ο επόμενος αριθμός μπορεί μόνο να αυξηθεί. Αυτές οι ακολουθίες δεν άλλαξαν, επειδή ο αριθμός που εισαγάγατε ήταν μικρότερος από αυτόν που θα εκδώσουν στη συνέχεια:</value></data>
-  <data name="NextNumberPatternChanged" xml:space="preserve"><value>Το μοτίβο αρίθμησης ή το πρόθεμα ενός τύπου αρχείου άλλαξε, οπότε οι επόμενοι αριθμοί που εισαγάγατε δεν εφαρμόστηκαν. Ελέγξτε τις νέες ακολουθίες και αποθηκεύστε ξανά.</value></data>
+  <data name="NextNumberPatternChanged" xml:space="preserve"><value>Το μοτίβο αρίθμησης, το πρόθεμα ενός τύπου αρχείου ή η έναρξη του έτους αρίθμησης άλλαξε, οπότε οι επόμενοι αριθμοί που εισαγάγατε δεν εφαρμόστηκαν. Ελέγξτε τις νέες ακολουθίες και αποθηκεύστε ξανά.</value></data>
+  <data name="NumberingYearStart" xml:space="preserve"><value>Το έτος αρίθμησης ξεκινά</value></data>
+  <data name="NumberingYearStartDay" xml:space="preserve"><value>Ημέρα του μήνα</value></data>
+  <data name="NumberingYearLabelEndYear" xml:space="preserve"><value>Ονομάζεται από το έτος στο οποίο λήγει</value></data>
+  <data name="NumberingYearLabelStartYear" xml:space="preserve"><value>Ονομάζεται από το έτος στο οποίο ξεκινά</value></data>
+  <data name="NumberingYearStartHelp" xml:space="preserve"><value>Για αρχεία που αριθμούνται ανά οικονομικό έτος, το δικό σας ή μιας κομητείας ή πολιτείας στην οποία αναφέρετε, επιλέξτε την ημέρα που ξεκινά. Οι αριθμοί που περιέχουν το έτος ξεκινούν ξανά από το 1 εκείνη την ημέρα, και τα {YYYY} και {YY} γράφουν το όνομα του οικονομικού έτους. Τα περισσότερα οικονομικά έτη ονομάζονται από το έτος στο οποίο λήγουν, οπότε ένα που ξεκινά την 1η Νοεμβρίου 2026 είναι το 2027. Η 1η Ιανουαρίου είναι το ημερολογιακό έτος. Οι αριθμοί κλήσεων έχουν τη δική τους έναρξη έτους στη σελίδα Ρυθμίσεις Εισαγωγής Κλήσεων. Οι αριθμοί αιτημάτων πρόσβασης σε αρχεία και οι αριθμοί επιθεωρήσεων, αδειών, κτιρίων, ερευνών και τεκμηρίων ακολουθούν το ίδιο έτος.</value></data>
+  <data name="NextNumbersHeaderPeriod" xml:space="preserve"><value>Επόμενοι αριθμοί για το {0} ({1} έως {2})</value></data>
+  <data name="NumberingYearStartInvalid" xml:space="preserve"><value>Η αρίθμηση αρχείων δεν αποθηκεύτηκε. Το έτος αρίθμησης πρέπει να ξεκινά σε ημέρα που υπάρχει κάθε έτος, οπότε η 29η Φεβρουαρίου δεν μπορεί να χρησιμοποιηθεί.</value></data>
+  <data name="OtherNumbersHeader" xml:space="preserve"><value>Άλλοι αριθμοί αρχείων</value></data>
+  <data name="OtherNumbersIntro" xml:space="preserve"><value>Αριθμοί αιτημάτων πρόσβασης σε αρχεία, κτιρίων, επιθεωρήσεων, αδειών, ερευνών και τεκμηρίων. Αφήστε ένα μοτίβο κενό για να διατηρηθούν οι ενσωματωμένοι αριθμοί που εμφανίζονται. Τα μοτίβα χρησιμοποιούν {YYYY} ή {YY}, {MM}, {DD} και {SEQ} όπως οι αριθμοί κλήσεων, ακολουθούν την έναρξη του έτους αρίθμησης παραπάνω και χωρούν σε 32 χαρακτήρες (50 για αιτήματα πρόσβασης).</value></data>
+  <data name="OtherNumberBuiltIn" xml:space="preserve"><value>Ενσωματωμένο, π.χ.</value></data>
+  <data name="OtherNumbersPatternsRejected" xml:space="preserve"><value>Αυτά τα μοτίβα δεν αποθηκεύτηκαν επειδή δεν είναι έγκυρα ή θα μπορούσαν να γράψουν αριθμό πολύ μεγάλο για το αρχείο· αυτοί οι αριθμοί διατήρησαν ό,τι είχαν:</value></data>
   <data name="NextNumberConfirm" xml:space="preserve"><value>Ένας αυξημένος επόμενος αριθμός δεν μπορεί να μειωθεί ξανά. Αποθήκευση αλλαγών;</value></data>
   <data name="NumberingAllTypes" xml:space="preserve"><value>Όλοι οι τύποι αρχείων</value></data>
   <data name="NumberingNoGroup" xml:space="preserve"><value>Χωρίς σταθμό/ομάδα</value></data>

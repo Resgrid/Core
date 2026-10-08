@@ -88,13 +88,13 @@ namespace Resgrid.Services
 					UnitCallInvolvement.HasFinishedCall(previous.State, baseTypes))
 					return closed;
 
-				var openDispatched = ((await _callDispatchUnitRepository.GetOpenCallIdsForUnitAsync(departmentId, saved.UnitId)) ?? Enumerable.Empty<int>())
-					.Distinct().ToList();
+				var openDispatches = ((await _callDispatchUnitRepository.GetOpenCallUnitDispatchesForUnitAsync(departmentId, saved.UnitId)) ?? Enumerable.Empty<CallDispatchUnit>())
+					.Where(x => x != null).ToList();
 
-				if (openDispatched.Count == 0)
+				if (openDispatches.Count == 0)
 					return closed;
 
-				var callId = await ResolveFinishedCallIdAsync(saved, previous, openDispatched, now);
+				var callId = await ResolveFinishedCallIdAsync(saved, previous, openDispatches, now);
 				if (!callId.HasValue)
 					return closed;
 
@@ -114,8 +114,10 @@ namespace Resgrid.Services
 		/// call of its latest status that pointed at one of its open dispatches (a transport leg in between may have pointed at
 		/// a hospital). An old call the unit was never cleared from is not closed by a status set for a later call.
 		/// </summary>
-		private async Task<int?> ResolveFinishedCallIdAsync(UnitState saved, UnitState previous, List<int> openDispatched, DateTime now)
+		private async Task<int?> ResolveFinishedCallIdAsync(UnitState saved, UnitState previous, List<CallDispatchUnit> openDispatches, DateTime now)
 		{
+			var openDispatched = openDispatches.Select(x => x.CallId).Distinct().ToList();
+
 			// A status pointing at a call the unit is not dispatched to (or one already closed) finished that call, not this one.
 			var savedCallId = TypedCallId(saved);
 			if (savedCallId.HasValue)
@@ -128,17 +130,7 @@ namespace Resgrid.Services
 			if (openDispatched.Count == 1)
 				return openDispatched[0];
 
-			var earliestDispatch = now;
-			foreach (var openCallId in openDispatched)
-			{
-				var dispatch = ((await _callDispatchUnitRepository.GetCallUnitDispatchesByCallIdAsync(openCallId)) ?? Enumerable.Empty<CallDispatchUnit>())
-					.Where(x => x.UnitId == saved.UnitId)
-					.OrderBy(x => x.DispatchedOn)
-					.FirstOrDefault();
-
-				if (dispatch != null && dispatch.DispatchedOn < earliestDispatch)
-					earliestDispatch = dispatch.DispatchedOn;
-			}
+			var earliestDispatch = openDispatches.Select(x => x.DispatchedOn).Append(now).Min();
 
 			var history = (await _unitStatesRepository.GetAllUnitStatesForUnitInDateRangeAsync(saved.UnitId, earliestDispatch, now)) ?? Enumerable.Empty<UnitState>();
 			var lastCallId = history
@@ -190,35 +182,47 @@ namespace Resgrid.Services
 			}
 
 			// Two units clearing at the same moment would both see the call finished; only the first closes it.
-			var claim = await _cacheProvider.IncrementAsync(string.Format(CloseClaimCacheKey, callId), CloseClaimLength);
+			var claimKey = string.Format(CloseClaimCacheKey, callId);
+			var claim = await _cacheProvider.IncrementAsync(claimKey, CloseClaimLength);
 			if (claim > 1)
 				return false;
 
-			call = await _callsService.PopulateCallData(call, true, false, false, true, true, true, false, false, false);
-
-			var closedByUserId = saved.SetByUserId;
-			if (string.IsNullOrWhiteSpace(closedByUserId))
-				closedByUserId = (await _departmentsService.GetDepartmentByIdAsync(departmentId, false))?.ManagingUserId;
-
-			var unit = await _unitsRepository.GetByIdAsync(saved.UnitId);
-
-			call.State = (int)CallStates.Closed;
-			call.ClosedOn = now;
-			call.ClosedByUserId = closedByUserId;
-			call.CompletedNotes = unit != null && !string.IsNullOrWhiteSpace(unit.Name)
-				? $"Call closed automatically: {unit.Name} was the last unit to clear."
-				: "Call closed automatically: the last unit cleared.";
-
-			// ADP protected write: CompletedNotes is cataloged. A blocked write leaves the call open for the dispatcher.
-			var protectedWrite = await _protectedWriteService.Value.PrepareCallWriteAsync(departmentId, call, null, null, closedByUserId,
-				workloadCaller: true, cancellationToken);
-			if (!protectedWrite.Success)
+			Call savedCall;
+			try
 			{
-				Logging.LogError($"Call {callId} not closed automatically: protected write blocked ({protectedWrite.Reason}).");
-				return false;
-			}
+				call = await _callsService.PopulateCallData(call, true, false, false, true, true, true, false, false, false);
 
-			var savedCall = await _callsService.SaveCallAsync(call, cancellationToken);
+				var closedByUserId = saved.SetByUserId;
+				if (string.IsNullOrWhiteSpace(closedByUserId))
+					closedByUserId = (await _departmentsService.GetDepartmentByIdAsync(departmentId, false))?.ManagingUserId;
+
+				var unit = await _unitsRepository.GetByIdAsync(saved.UnitId);
+
+				call.State = (int)CallStates.Closed;
+				call.ClosedOn = now;
+				call.ClosedByUserId = closedByUserId;
+				call.CompletedNotes = unit != null && !string.IsNullOrWhiteSpace(unit.Name)
+					? $"Call closed automatically: {unit.Name} was the last unit to clear."
+					: "Call closed automatically: the last unit cleared.";
+
+				// ADP protected write: CompletedNotes is cataloged. A blocked write leaves the call open for the dispatcher.
+				var protectedWrite = await _protectedWriteService.Value.PrepareCallWriteAsync(departmentId, call, null, null, closedByUserId,
+					workloadCaller: true, cancellationToken);
+				if (!protectedWrite.Success)
+				{
+					Logging.LogError($"Call {callId} not closed automatically: protected write blocked ({protectedWrite.Reason}).");
+					await _cacheProvider.RemoveAsync(claimKey);
+					return false;
+				}
+
+				savedCall = await _callsService.SaveCallAsync(call, cancellationToken);
+			}
+			catch
+			{
+				// The call is still open, so the next unit status may try again instead of waiting out the claim.
+				await _cacheProvider.RemoveAsync(claimKey);
+				throw;
+			}
 
 			_eventAggregator.SendMessage<CallClosedEvent>(new CallClosedEvent { DepartmentId = departmentId, Call = savedCall });
 

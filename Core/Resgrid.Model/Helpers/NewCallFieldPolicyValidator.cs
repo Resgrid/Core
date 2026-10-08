@@ -38,6 +38,22 @@ namespace Resgrid.Model.Helpers
 		/// dispatcher who picks it up, and the dispatch time and dispatch list requirements do not apply.
 		/// </summary>
 		public bool IsPending { get; set; }
+
+		/// <summary>
+		/// Fields this surface has no way to collect: their requirement is not enforced here. A requirement nobody can
+		/// meet does not make the call more complete, it stops calls being created or edited at all -- the protocols and
+		/// linked call on a client that has no picker for them, or the dispatch time on an edit of a call already sent.
+		/// </summary>
+		public ISet<string> UnsupportedKeys { get; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+		/// <summary>Marks fields this surface cannot collect; see <see cref="UnsupportedKeys"/>.</summary>
+		public NewCallFieldValues Unsupported(params string[] keys)
+		{
+			foreach (var key in keys)
+				UnsupportedKeys.Add(key);
+
+			return this;
+		}
 	}
 
 	/// <summary>
@@ -61,15 +77,17 @@ namespace Resgrid.Model.Helpers
 			if (policy == null || policy.IsEmpty || values == null)
 				return violations;
 
+			bool Enforced(string key) => policy.IsRequired(key) && !values.UnsupportedKeys.Contains(key);
+
 			void RequireText(string key, string value)
 			{
-				if (policy.IsRequired(key) && string.IsNullOrWhiteSpace(value))
+				if (Enforced(key) && string.IsNullOrWhiteSpace(value))
 					violations.Add(new NewCallFieldViolation { Key = key });
 			}
 
 			void Require(string key, bool hasValue)
 			{
-				if (policy.IsRequired(key) && !hasValue)
+				if (Enforced(key) && !hasValue)
 					violations.Add(new NewCallFieldViolation { Key = key });
 			}
 

@@ -69,6 +69,35 @@ namespace Resgrid.Tests.Services
 			row = await _service.GetAsync(_actor, id); await _service.AcceptAssignmentAsync(_actor, id, row.Order.Revision); return id;
 		}
 		[Test]
+		public async Task A_work_order_is_numbered_in_the_departments_numbering_year_and_pattern()
+		{
+			var numbering = new Mock<IDocumentNumberingService>();
+			numbering.Setup(n => n.GetNumberingYearAsync(77, DocumentNumberKinds.WorkOrder, It.IsAny<DateTime>())).ReturnsAsync(2027);
+			numbering.Setup(n => n.TakeCustomNumberAsync(77, DocumentNumberKinds.WorkOrder, It.IsAny<DateTime>(), It.IsAny<CancellationToken>())).ReturnsAsync("MNT-27-0001");
+			var audit = new Mock<IAuditLogsRepository>();
+			audit.Setup(a => a.InsertAsync(It.IsAny<AuditLog>(), It.IsAny<CancellationToken>(), It.IsAny<bool>())).ReturnsAsync((AuditLog a, CancellationToken c, bool f) => { a.AuditLogId = 1; return a; });
+			var service = new WorkOrdersService(_store, _auth.Object, _access.Object, _uow.Object, audit.Object, _outbox.Object, new Lazy<IProtectedReadService>(() => _read.Object),
+				new Lazy<IProtectedWriteService>(() => _write.Object), _scanner.Object, documentNumbering: numbering.Object);
+
+			var created = await service.CreateAsync(_actor, Input());
+
+			var row = _store.All<WorkOrder>().Single();
+			row.NumberYear.Should().Be(2027, "the fiscal year names NumberYear, so the built-in sequence restarts with it");
+			row.NumberSequence.Should().Be(1);
+			row.DisplayNumber.Should().Be("MNT-27-0001");
+			created.Order.Number.Should().Be("MNT-27-0001");
+		}
+
+		[Test]
+		public async Task A_work_order_keeps_the_built_in_number_text_without_a_pattern()
+		{
+			var created = await _service.CreateAsync(_actor, Input());
+
+			_store.All<WorkOrder>().Single().DisplayNumber.Should().Be(DocumentNumbering.LegacyWorkOrderNumber(DateTime.UtcNow.Year, 1));
+			created.Order.Number.Should().Be(DocumentNumbering.LegacyWorkOrderNumber(DateTime.UtcNow.Year, 1));
+		}
+
+		[Test]
 		public async Task Request_retry_returns_one_number_and_one_creation_event_but_changed_retry_conflicts()
 		{
 			var input = Input(); var first = await _service.CreateAsync(_actor, input); var retry = await _service.CreateAsync(_actor, input);

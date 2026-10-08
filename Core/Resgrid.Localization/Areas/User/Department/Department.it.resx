@@ -894,7 +894,7 @@
     <value>Campi del modulo di chiamata</value>
   </data>
   <data name="NewCallFieldsHelp" xml:space="preserve">
-    <value>Scegli quali campi predefiniti compaiono nel modulo di nuova chiamata e quali devono essere compilati prima che la chiamata possa essere creata e inviata sul campo. Nome, natura, priorità e tipo sono sempre visibili e sempre obbligatori.</value>
+    <value>Scegli quali campi predefiniti compaiono nel modulo di nuova chiamata e quali devono essere compilati prima che la chiamata possa essere creata e inviata sul campo. Nome, natura, priorità e tipo sono sempre visibili e sempre obbligatori. Le stesse regole valgono quando si modifica una chiamata o si aggiunge una chiamata archiviata.</value>
   </data>
   <data name="NewCallFieldsFieldColumn" xml:space="preserve">
     <value>Campo</value>
@@ -927,7 +927,7 @@
     <value>Nota</value>
   </data>
   <data name="NewCallField_contactName" xml:space="preserve">
-    <value>Contatto principale</value>
+    <value>Nome del segnalante</value>
   </data>
   <data name="NewCallField_contactInfo" xml:space="preserve">
     <value>Contatti del segnalante</value>
@@ -1350,9 +1350,90 @@
     <value>Il prossimo numero di chiamata non è stato alzato: può essere alzato solo sopra il numero che la prossima chiamata riceve già ({0}).</value>
   </data>
   <data name="CallNumberNextPatternChanged" xml:space="preserve">
-    <value>Il prossimo numero di chiamata non è stato alzato perché lo schema è cambiato nello stesso salvataggio. Alzalo di nuovo per il nuovo schema.</value>
+    <value>Il prossimo numero di chiamata non è stato alzato perché lo schema o l'inizio dell'anno di numerazione è cambiato nello stesso salvataggio. Alzalo di nuovo per la nuova sequenza.</value>
+  </data>
+  <data name="CallNumberYearStart" xml:space="preserve">
+    <value>L'anno di numerazione inizia il</value>
+  </data>
+  <data name="CallNumberYearStartDay" xml:space="preserve">
+    <value>Giorno del mese</value>
+  </data>
+  <data name="CallNumberYearLabelEndYear" xml:space="preserve">
+    <value>Prende il nome dall'anno in cui termina</value>
+  </data>
+  <data name="CallNumberYearLabelStartYear" xml:space="preserve">
+    <value>Prende il nome dall'anno in cui inizia</value>
+  </data>
+  <data name="CallNumberYearStartHelp" xml:space="preserve">
+    <value>Per le chiamate numerate per anno fiscale, scegli il giorno in cui inizia. Uno schema annuale riparte da 1 quel giorno, e {YYYY} e {YY} scrivono il nome dell'anno fiscale. La maggior parte degli anni fiscali prende il nome dall'anno in cui termina, quindi uno che inizia il 1° novembre 2026 è il 2027. Il 1° gennaio è l'anno solare. Gli schemi con {MM} o {DD} seguono sempre il calendario.</value>
+  </data>
+  <data name="CallNumberResetsYearlyOn" xml:space="preserve">
+    <value>Riparte da 1 ogni anno il {0}.</value>
+  </data>
+  <data name="CallNumberYearStartInvalid" xml:space="preserve">
+    <value>La numerazione delle chiamate non è stata salvata. L'anno di numerazione deve iniziare in un giorno presente in ogni anno, quindi il 29 febbraio non può essere usato.</value>
+  </data>
+  <data name="DocumentNumberingHeader" xml:space="preserve">
+    <value>Numerazione dei documenti</value>
+  </data>
+  <data name="DocumentNumberingIntro" xml:space="preserve">
+    <value>Come Resgrid numera ordini di lavoro, fatture, offerte e rapporti giornalieri ore. Lascia vuoto uno schema per mantenere i numeri predefiniti. Cambiare uno schema non rinumera mai i documenti che hanno già un numero, e un nuovo schema prosegue dopo qualsiasi numero che ripeterebbe.</value>
+  </data>
+  <data name="DocumentNumberingRecordsLink" xml:space="preserve">
+    <value>Numerazione registri</value>
+  </data>
+  <data name="DocumentNumberingYearStartHelp" xml:space="preserve">
+    <value>Per i documenti numerati per anno fiscale, scegli il giorno in cui inizia. I numeri degli ordini di lavoro, e gli schemi con l'anno, ripartono da 1 quel giorno, e {YYYY} e {YY} scrivono il nome dell'anno fiscale. La maggior parte degli anni fiscali prende il nome dall'anno in cui termina, quindi uno che inizia il 1° novembre 2026 è il 2027. Il 1° gennaio è l'anno solare. I numeri di chiamata e dei registri hanno un proprio inizio d'anno.</value>
+  </data>
+  <data name="DocumentNumberType" xml:space="preserve">
+    <value>Documento</value>
+  </data>
+  <data name="DocumentNumberBuiltIn" xml:space="preserve">
+    <value>Predefinito, es.</value>
+  </data>
+  <data name="DocumentNumberPatternHelp" xml:space="preserve">
+    <value>Testo fisso (lettere, cifre, - _ . /) attorno a {YYYY} o {YY}, {MM}, {DD} e {SEQ}, che deve comparire una volta. Uno schema con l'anno riparte da 1 a ogni anno di numerazione; con {MM} o {DD}, ogni mese o giorno. Un numero di sole cifre è mostrato con # davanti, come da sempre i numeri di fatture, offerte e rapporti ore.</value>
+  </data>
+  <data name="DocumentNumberingSaved" xml:space="preserve">
+    <value>La numerazione dei documenti è stata salvata.</value>
+  </data>
+  <data name="DocumentNumberingYearStartInvalid" xml:space="preserve">
+    <value>La numerazione dei documenti non è stata salvata. L'anno di numerazione deve iniziare in un giorno presente in ogni anno, quindi il 29 febbraio non può essere usato.</value>
+  </data>
+  <data name="DocumentNumberingPatternsRejected" xml:space="preserve">
+    <value>Questi schemi non sono stati salvati perché non sono validi o potrebbero scrivere un numero più lungo di 50 caratteri; quei documenti hanno mantenuto la numerazione che avevano:</value>
+  </data>
+  <data name="DocumentNumberingBelowCurrent" xml:space="preserve">
+    <value>Un prossimo numero può solo essere alzato. Questi sono rimasti invariati perché il numero inserito era inferiore a quello che emetteranno dopo:</value>
+  </data>
+  <data name="DocumentNumberingNotApplied" xml:space="preserve">
+    <value>Lo schema o l'inizio dell'anno di numerazione è cambiato nello stesso salvataggio, quindi i prossimi numeri inseriti non sono stati applicati. Alzali di nuovo per la nuova sequenza.</value>
+  </data>
+  <data name="DocumentNumberKindWorkOrder" xml:space="preserve">
+    <value>Ordini di lavoro</value>
+  </data>
+  <data name="DocumentNumberKindInvoice" xml:space="preserve">
+    <value>Fatture</value>
+  </data>
+  <data name="DocumentNumberKindBid" xml:space="preserve">
+    <value>Offerte</value>
+  </data>
+  <data name="DocumentNumberKindTimeReport" xml:space="preserve">
+    <value>Rapporti giornalieri ore</value>
+  </data>
+  <data name="DocumentNumberPatternColumn" xml:space="preserve">
+    <value>Schema di numerazione</value>
+  </data>
+  <data name="DocumentNumberNextColumn" xml:space="preserve">
+    <value>Prossimo numero</value>
+  </data>
+  <data name="DocumentNumberRaiseColumn" xml:space="preserve">
+    <value>Porta il prossimo a</value>
   </data>
   <data name="CallSettingsSaved" xml:space="preserve">
     <value>Le impostazioni delle chiamate sono state salvate.</value>
+  </data>
+  <data name="NewCallFieldCannotBeRequired" xml:space="preserve">
+    <value>Un Plus Code serve solo a trovare la posizione e non viene salvato nella chiamata, quindi non può essere obbligatorio. Rendi obbligatorie le coordinate GPS.</value>
   </data>
 </root>

@@ -663,7 +663,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var bids = await _bids.GetBidsForDepartmentAsync(DepartmentId, null, 0, 200) ?? new List<Bid>();
 			view.Bids = bids.OrderByDescending(b => b.BidNumber).Select(b => new SelectListItem($"#{b.BidNumber} {b.Title}", b.BidId)).ToList();
 			foreach (var d in deployments) view.ContextLabels["D:" + d.DeploymentId] = d.Name;
-			foreach (var b in bids) view.ContextLabels["B:" + b.BidId] = $"#{b.BidNumber} {b.Title}";
+			foreach (var b in bids) view.ContextLabels["B:" + b.BidId] = $"{b.NumberLabel()} {b.Title}";
 			return View(view);
 		}
 
@@ -675,7 +675,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (run == null) return NotFound();
 			var view = Page(new WorkforceCostRunView { Run = run, Summary = await _costing.GetFieldCostSummaryAsync(id, DepartmentId) });
 			if (!string.IsNullOrWhiteSpace(run.DeploymentId)) { view.ContextLabel = (await _deployments.GetDeploymentByIdAsync(run.DeploymentId, DepartmentId))?.Name; view.Comparison = await _costing.CompareEstimateToActualAsync(run.DeploymentId, DepartmentId); }
-			else if (!string.IsNullOrWhiteSpace(run.BidId)) { var bid = await _bids.GetBidByIdAsync(run.BidId, DepartmentId); view.ContextLabel = bid == null ? run.BidId : $"#{bid.BidNumber} {bid.Title}"; }
+			else if (!string.IsNullOrWhiteSpace(run.BidId)) { var bid = await _bids.GetBidByIdAsync(run.BidId, DepartmentId); view.ContextLabel = bid == null ? run.BidId : $"{bid.NumberLabel()} {bid.Title}"; }
 			else if (run.CallId.HasValue) view.ContextLabel = (await _calls.GetCallByIdAsync(run.CallId.Value))?.Name ?? $"#{run.CallId}";
 			return View(view);
 		}

@@ -22,6 +22,7 @@
   <data name="Call" xml:space="preserve"><value>بلاغ</value></data>
   <data name="CallAddress" xml:space="preserve"><value>عنوان البلاغ</value></data>
   <data name="CallImportSettings" xml:space="preserve"><value>إعدادات استيراد البلاغات</value></data>
+  <data name="DocumentNumbering" xml:space="preserve"><value>ترقيم المستندات</value></data>
   <data name="CallsModule" xml:space="preserve"><value>البلاغات</value></data>
   <data name="CallTimestamp" xml:space="preserve"><value>طابع وقت البلاغ</value></data>
   <data name="Cancel" xml:space="preserve"><value>إلغاء</value></data>

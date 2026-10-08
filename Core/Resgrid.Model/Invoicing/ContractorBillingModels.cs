@@ -415,6 +415,8 @@ namespace Resgrid.Model.Invoicing
 		[Required]
 		public int DepartmentId { get; set; }
 		public int BidNumber { get; set; }
+		/// <summary>The number as issued: the department's pattern (setting 117) or the built-in plain <see cref="BidNumber"/>. Show it through <see cref="DocumentNumbering.Display"/>.</summary>
+		public string DisplayNumber { get; set; }
 		[Required]
 		public string ContactId { get; set; }
 		public string CustomerBillingProfileId { get; set; }
@@ -514,7 +516,7 @@ namespace Resgrid.Model.Invoicing
 
 		public static readonly (string Variable, string Property)[] BidVariables =
 		{
-			("id", "BidId"), ("number", "BidNumber"), ("title", "Title"), ("status", "Status"), ("old_status", "OldStatus"), ("contact_id", "ContactId"), ("contact_name", "ContactName"),
+			("id", "BidId"), ("number", "BidNumber"), ("display_number", "DisplayNumber"), ("title", "Title"), ("status", "Status"), ("old_status", "OldStatus"), ("contact_id", "ContactId"), ("contact_name", "ContactName"),
 			("contract_id", "ServiceContractId"), ("incident_number", "IncidentNumber"), ("valid_until", "ValidUntil"), ("requested_start_on", "RequestedStartOn"), ("requested_end_on", "RequestedEndOn"),
 			("estimated_total", "EstimatedTotal"), ("currency", "Currency"), ("sent_on", "SentOn"), ("accepted_on", "AcceptedOn"), ("declined_on", "DeclinedOn"), ("converted_deployment_id", "ConvertedDeploymentId"), ("converted_call_id", "ConvertedCallId")
 		};

@@ -168,6 +168,9 @@
   <data name="CallImportSettings" xml:space="preserve">
     <value>Call Import Settings</value>
   </data>
+  <data name="DocumentNumbering" xml:space="preserve">
+    <value>Document Numbering</value>
+  </data>
   <data name="CallsModule" xml:space="preserve">
     <value>Calls</value>
   </data>

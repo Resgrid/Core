@@ -12,8 +12,10 @@ namespace Resgrid.Model
 	///   1. a destination the client sent is kept as is;
 	///   2. otherwise the call of the unit's/person's previous status is kept when that call is still open and the
 	///      previous status wasn't a clearing one (the new status may itself be clearing: that records the clear time);
-	///   3. otherwise, for a non-clearing status, the one open call the unit/person is dispatched to (other than a call
-	///      their previous, clearing status already cleared); more than one candidate leaves the status unlinked.
+	///   3. otherwise, for a non-clearing status, the one open call the unit/person is dispatched to, other than what their
+	///      previous, clearing status already cleared (<see cref="ClearedByPrevious"/>): the call it points at, or, when it
+	///      points at no call (back in quarters, available at a station), every call dispatched to them before it; more than
+	///      one candidate leaves the status unlinked.
 	/// Rules 2 and 3 read the unit's/person's state now, so they only run for a status set now (<see cref="IsLiveStatus"/>);
 	/// an offline status replayed later is left for the read-time walk, which places it by its own time.
 	///
@@ -95,6 +97,49 @@ namespace Resgrid.Model
 			var candidates = openDispatchedCallIds.Where(x => x > 0 && (!clearedCallId.HasValue || x != clearedCallId.Value)).Distinct().Take(2).ToList();
 
 			return candidates.Count == 1 ? candidates[0] : (int?)null;
+		}
+
+		/// <summary>
+		/// Rule 3 over the unit's/person's open dispatches with their times: <see cref="PickDispatchCall(IEnumerable{int}, int?)"/>
+		/// after leaving out what the previous status already cleared (<see cref="ClearedByPrevious"/>). A call dispatched to
+		/// them more than once (directly and through a group, say) counts when any of those dispatches is after the clear.
+		/// </summary>
+		/// <param name="openDispatches">The unit's/person's dispatches to open calls.</param>
+		/// <param name="callId">A dispatch's call.</param>
+		/// <param name="dispatchedOn">When the dispatch went out: its latest redispatch when there was one.</param>
+		/// <param name="clearedCallId">The call the previous status cleared, or null.</param>
+		/// <param name="clearedAllAt">When the previous status cleared every call dispatched before it, or null.</param>
+		public static int? PickDispatchCall<T>(IEnumerable<T> openDispatches, Func<T, int> callId, Func<T, DateTime> dispatchedOn,
+			int? clearedCallId, DateTime? clearedAllAt) where T : class
+		{
+			if (openDispatches == null)
+				return null;
+
+			return PickDispatchCall(openDispatches
+				.Where(x => x != null && (!clearedAllAt.HasValue || dispatchedOn(x) > clearedAllAt.Value))
+				.Select(callId), clearedCallId);
+		}
+
+		/// <summary>
+		/// What a unit's/person's previous status already cleared, for rule 3. A clearing status cleared the call it points
+		/// at. One that points at no call (back in quarters, available at a station, no destination, or an untyped legacy
+		/// destination that may be a station) cleared every call they had been dispatched to by then, so only a dispatch or
+		/// redispatch after it is new work. A status that was not clearing, or no previous status, cleared nothing.
+		/// </summary>
+		/// <param name="previousIsClearing">Whether the previous status was a clearing one.</param>
+		/// <param name="destinationId">The previous status's destination id.</param>
+		/// <param name="destinationType">The previous status's destination type (<see cref="DestinationEntityTypes"/>).</param>
+		/// <param name="timestamp">The previous status's time, or null when there was no previous status.</param>
+		public static (int? ClearedCallId, DateTime? ClearedAllAt) ClearedByPrevious(bool previousIsClearing, int? destinationId,
+			int? destinationType, DateTime? timestamp)
+		{
+			if (!previousIsClearing)
+				return (null, null);
+
+			var clearedCallId = CallStatusLinkage.LinkedCallId(destinationId, destinationType);
+			var pointsAtCall = clearedCallId.HasValue && destinationType == (int)DestinationEntityTypes.Call;
+
+			return (clearedCallId, pointsAtCall ? null : timestamp);
 		}
 
 		/// <summary>

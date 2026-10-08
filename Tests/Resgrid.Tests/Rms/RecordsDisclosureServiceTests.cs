@@ -32,6 +32,8 @@ namespace Resgrid.Tests.Rms
         private Mock<IRecordAttachmentScanner> _scanner;
 		private Mock<IRecordsAuthorizationService> _authorization;
 		private Mock<IDepartmentSettingsService> _settings;
+		private Mock<IDepartmentsService> _departments;
+		private Resgrid.Tests.Services.FakeDocumentNumberSequences _documentSequences;
 		private RecordsDisclosureService _service;
 		private RmsOperationalRecord _finalized;
 		private RmsRevision _revision;
@@ -51,6 +53,8 @@ namespace Resgrid.Tests.Rms
 			_authorization.Setup(a => a.IsDepartmentAdminAsync(It.IsAny<string>(), Dept)).ReturnsAsync(() => _udfAdmin);
 
 			_settings = new Mock<IDepartmentSettingsService>();
+			_departments = new Mock<IDepartmentsService>();
+			_documentSequences = new Resgrid.Tests.Services.FakeDocumentNumberSequences { Issued = kind => kind == DocumentNumberKinds.RecordsRequest ? _store.DisclosureRequests.Select(r => r.RequestNumber) : Enumerable.Empty<string>() };
 			_settings.Setup(s => s.GetRecordsDisclosureConfigAsync(Dept, It.IsAny<bool>()))
 				.ReturnsAsync(new RecordsDisclosureConfig { StatutoryClockDays = 5, DefaultRedactionProfile = RmsRedactionProfiles.Standard });
 
@@ -69,7 +73,8 @@ namespace Resgrid.Tests.Rms
 			_service = new RecordsDisclosureService(_store.DisclosureRequestsRepo.Object, _store.DisclosureProductionsRepo.Object,
 				_store.RecordsRepo.Object, _store.RevisionsRepo.Object, _store.AuditsRepo.Object,
 				_authorization.Object, _settings.Object, _store.UnitOfWork.Object, _incidentStore.ReportsRepo.Object, documents, _store.AttachmentsRepo.Object, _pdf.Object, _incidentStore.AnalysesRepo.Object, _scanner.Object, udf,
-				new PassthroughRecordsProtection(), new DomainEventOutboxService(_store.OutboxRepo.Object, Mock.Of<Resgrid.Model.Providers.IEventAggregator>()));
+				new PassthroughRecordsProtection(), new DomainEventOutboxService(_store.OutboxRepo.Object, Mock.Of<Resgrid.Model.Providers.IEventAggregator>()),
+				new Resgrid.Services.DocumentNumberingService(_settings.Object, _departments.Object, _documentSequences));
 		}
 
 		private async Task<RmsDisclosureProduction> ReviewedProduceAsync(int departmentId, string userId, string requestId)
@@ -478,6 +483,35 @@ namespace Resgrid.Tests.Rms
 			request.StatutoryDueOn.Should().Be(new DateTime(2026, 9, 6, 12, 0, 0, DateTimeKind.Utc),
 				"the clock runs from when the department received it, not from when it was logged");
 			request.RedactionProfile.Should().Be(RmsRedactionProfiles.Standard);
+		}
+
+		[Test]
+		public async Task Request_numbers_use_the_departments_own_pattern()
+		{
+			var config = new RecordsNumberingConfig();
+			config.DocumentPatterns.Add(new DocumentNumberPattern { Kind = DocumentNumberKinds.RecordsRequest, Pattern = "ORR/{YY}/{SEQ}", SequenceWidth = 3 });
+			_settings.Setup(s => s.GetRecordsNumberingConfigAsync(Dept, It.IsAny<bool>())).ReturnsAsync(config);
+
+			(await _service.CreateRequestAsync(Dept, "clerk", new RmsDisclosureRequest { RequesterName = "A. Reporter", ReceivedOn = new DateTime(2026, 9, 1, 12, 0, 0, DateTimeKind.Utc) }))
+				.RequestNumber.Should().Be("ORR/26/001");
+			(await _service.CreateRequestAsync(Dept, "clerk", new RmsDisclosureRequest { RequesterName = "B. Reporter", ReceivedOn = new DateTime(2026, 9, 2, 12, 0, 0, DateTimeKind.Utc) }))
+				.RequestNumber.Should().Be("ORR/26/002");
+		}
+
+		[Test]
+		public async Task Request_numbers_follow_the_records_fiscal_year_in_department_time()
+		{
+			// A November fiscal year named by the year it ends in: requests received from 1 November 2026 (Chicago) are FY2027.
+			_settings.Setup(s => s.GetRecordsNumberingConfigAsync(Dept, It.IsAny<bool>())).ReturnsAsync(new RecordsNumberingConfig { YearStartMonth = 11, YearStartDay = 1 });
+			_departments.Setup(d => d.GetDepartmentByIdAsync(Dept, It.IsAny<bool>())).ReturnsAsync(new Department { DepartmentId = Dept, TimeZone = "Central Standard Time" });
+
+			// 04:30 UTC on 1 November is 23:30 on 31 October in Chicago.
+			(await _service.CreateRequestAsync(Dept, "clerk", new RmsDisclosureRequest { RequesterName = "A. Reporter", ReceivedOn = new DateTime(2026, 11, 1, 4, 30, 0, DateTimeKind.Utc) }))
+				.RequestNumber.Should().Be("PRR-2026-0001");
+			(await _service.CreateRequestAsync(Dept, "clerk", new RmsDisclosureRequest { RequesterName = "B. Reporter", ReceivedOn = new DateTime(2026, 11, 1, 6, 0, 0, DateTimeKind.Utc) }))
+				.RequestNumber.Should().Be("PRR-2027-0001");
+			(await _service.CreateRequestAsync(Dept, "clerk", new RmsDisclosureRequest { RequesterName = "C. Reporter", ReceivedOn = new DateTime(2027, 1, 10, 15, 0, 0, DateTimeKind.Utc) }))
+				.RequestNumber.Should().Be("PRR-2027-0002", "January 1 does not restart a fiscal year");
 		}
 
 		[Test]

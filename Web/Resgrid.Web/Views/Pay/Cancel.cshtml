@@ -10,7 +10,7 @@
         <h2 style="margin-top: 0;">@localizer["PayCancelTitle"]</h2>
         @if (!string.IsNullOrWhiteSpace(Model.DepartmentName))
         {
-            <p class="lead">@Model.DepartmentName@(Model.InvoiceNumber > 0 ? " — #" + Model.InvoiceNumber : "")</p>
+            <p class="lead">@Model.DepartmentName@(Model.InvoiceNumber > 0 ? " — " + Model.InvoiceLabel : "")</p>
         }
         <p>@localizer["PayCancelText"]</p>
         <p><a href="@Url.Action("Index", "Pay", new { token })" class="btn btn-primary">@localizer["BackToInvoice"]</a></p>

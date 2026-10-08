@@ -57,6 +57,7 @@ namespace Resgrid.Services.Records
 		private readonly IRecordDefinitionsService _definitions;
 		private readonly IRecordTypedValuesService _typedValues;
 		private readonly IPersonnelRolesService _roles;
+		private readonly IDepartmentsService _departments;
 
 		public RecordsService(IRmsOperationalRecordsRepository records, IRmsRecordValueService details,
 			IRmsRecordParticipantsRepository participants, IRmsRecordUnitResponsesRepository units, IRmsRecordAttachmentsRepository attachments,
@@ -65,8 +66,10 @@ namespace Resgrid.Services.Records
 			IRecordsCutoverService cutover, IDepartmentSettingsService settings, IDepartmentGroupsService groups, IUserProfileService profiles,
 			IUnitsService unitsService, ICallsService calls, IDepartmentDataProtectionService dataProtection, IUnitOfWork unitOfWork,
 			IOutboundQueueProvider outboundQueue, IRecordAttachmentScanner attachmentScanner, IRecordsAuthorizationService authorization, IRecordsUdfService udf,
-			IRecordsProtectionService protection, IRecordDefinitionsService definitions, IRecordTypedValuesService typedValues, IPersonnelRolesService roles)
+			IRecordsProtectionService protection, IRecordDefinitionsService definitions, IRecordTypedValuesService typedValues, IPersonnelRolesService roles,
+			IDepartmentsService departments)
 		{
+			_departments = departments;
 			_protection = protection;
 			_definitions = definitions;
 			_typedValues = typedValues;
@@ -1279,7 +1282,10 @@ namespace Resgrid.Services.Records
 		{
 			var config = await _settings.GetRecordsNumberingConfigAsync(record.DepartmentId);
 			var prefixBase = config.PrefixFor(record.DefinitionKey);
-			var year = (record.StartedOn ?? DateTime.UtcNow).Year;
+			// The department-local numbering year it started in, so a record started on a US evening of December 31 (or of the day
+			// before a fiscal year starts) is not numbered into the next year.
+			var timeZone = (await _departments.GetDepartmentByIdAsync(record.DepartmentId, false))?.TimeZone;
+			var year = RecordsNumberingService.NumberingYear(config, record.StartedOn ?? DateTime.UtcNow, timeZone);
 			// Department definitions carry their own numbering policy (plan 4.1 "Numbering"); the department pattern is the fallback.
 			var numbering = record.RecordType == null ? (await DefinitionVersionForAsync(record))?.Numbering : null;
 			RecordNumberScope scope;

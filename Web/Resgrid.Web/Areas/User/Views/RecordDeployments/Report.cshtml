@@ -42,7 +42,7 @@
     </div></div>
     <div class="ibox"><div class="ibox-title"><h5>@localizer["TimeReports"]</h5></div><div class="ibox-content table-responsive">
         <table class="table table-striped"><thead><tr><th>@localizer["TimeReports"]</th><th>@localizer["ReportDate"]</th><th>@localizer["Status"]</th></tr></thead><tbody>
-        @foreach (var r in Model.TimeReports) { <tr><td><a asp-action="TimeReport" asp-route-id="@r.DeploymentTimeReportId" target="_blank" rel="noopener">@r.ReportNumber</a></td><td>@r.ReportDate.ToString("d")</td><td>@localizer["ReportStatus" + (DeploymentTimeReportStatuses)r.Status]</td></tr> }
+        @foreach (var r in Model.TimeReports) { <tr><td><a asp-action="TimeReport" asp-route-id="@r.DeploymentTimeReportId" target="_blank" rel="noopener">@r.NumberText()</a></td><td>@r.ReportDate.ToString("d")</td><td>@localizer["ReportStatus" + (DeploymentTimeReportStatuses)r.Status]</td></tr> }
         </tbody></table>
     </div></div>
     <div class="ibox"><div class="ibox-title"><h5>@localizer["Expenses"]</h5></div><div class="ibox-content table-responsive">

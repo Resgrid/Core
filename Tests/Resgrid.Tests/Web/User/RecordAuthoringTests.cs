@@ -56,7 +56,7 @@ namespace Resgrid.Tests.Web.User
                 _departments.Object, Mock.Of<IDepartmentGroupsService>(), Mock.Of<IUnitsService>(), Mock.Of<ICallsService>(),
                 Mock.Of<IDepartmentSettingsService>(), null, Mock.Of<IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records>>(),
                 null, null, null, null, null, null, null, null, Mock.Of<IRecordsUdfService>(),
-                Mock.Of<IRecordsProtectionService>(), Mock.Of<IProtectedGrantContext>(), null, definitions.Object, null, null, null, null, null, null)
+                Mock.Of<IRecordsProtectionService>(), Mock.Of<IProtectedGrantContext>(), null, definitions.Object, null, null, null, null, null, null, Mock.Of<IDocumentNumberingService>())
             {
                 ControllerContext = new ControllerContext { HttpContext = http },
                 TempData = new TempDataDictionary(http, Mock.Of<ITempDataProvider>())

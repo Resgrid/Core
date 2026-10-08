@@ -985,7 +985,7 @@
     <value>New Call Form Fields</value>
   </data>
   <data name="NewCallFieldsHelp" xml:space="preserve">
-    <value>Choose which built-in fields appear on the new call form and which must be completed before a call can be created and sent to the field. Name, nature, priority and type are always shown and always required.</value>
+    <value>Choose which built-in fields appear on the new call form and which must be completed before a call can be created and sent to the field. Name, nature, priority and type are always shown and always required. The same rules apply when a call is edited or an archived call is added.</value>
   </data>
   <data name="NewCallFieldsFieldColumn" xml:space="preserve">
     <value>Field</value>
@@ -1018,7 +1018,7 @@
     <value>Note</value>
   </data>
   <data name="NewCallField_contactName" xml:space="preserve">
-    <value>Primary Contact</value>
+    <value>Reporter Name</value>
   </data>
   <data name="NewCallField_contactInfo" xml:space="preserve">
     <value>Reporter Contact Info</value>
@@ -1408,9 +1408,90 @@
     <value>The next call number was not raised: it can only be raised above the number the next call already receives ({0}).</value>
   </data>
   <data name="CallNumberNextPatternChanged" xml:space="preserve">
-    <value>The next call number was not raised because the pattern changed in the same save. Raise it again for the new pattern.</value>
+    <value>The next call number was not raised because the pattern or the numbering year start changed in the same save. Raise it again for the new sequence.</value>
+  </data>
+  <data name="CallNumberYearStart" xml:space="preserve">
+    <value>Numbering year starts</value>
+  </data>
+  <data name="CallNumberYearStartDay" xml:space="preserve">
+    <value>Day of the month</value>
+  </data>
+  <data name="CallNumberYearLabelEndYear" xml:space="preserve">
+    <value>Named by the year it ends in</value>
+  </data>
+  <data name="CallNumberYearLabelStartYear" xml:space="preserve">
+    <value>Named by the year it starts in</value>
+  </data>
+  <data name="CallNumberYearStartHelp" xml:space="preserve">
+    <value>For calls numbered by a fiscal year, pick the day it starts. A yearly pattern starts again at 1 that day, and {YYYY} and {YY} write the fiscal year's name. Most fiscal years are named by the year they end in, so one starting November 1, 2026 is 2027. January 1 is the calendar year. Patterns with {MM} or {DD} always follow the calendar.</value>
+  </data>
+  <data name="CallNumberResetsYearlyOn" xml:space="preserve">
+    <value>Starts again at 1 each year on {0}.</value>
+  </data>
+  <data name="CallNumberYearStartInvalid" xml:space="preserve">
+    <value>The call numbering was not saved. The numbering year has to start on a day every year has, so February 29 cannot be used.</value>
+  </data>
+  <data name="DocumentNumberingHeader" xml:space="preserve">
+    <value>Document Numbering</value>
+  </data>
+  <data name="DocumentNumberingIntro" xml:space="preserve">
+    <value>How Resgrid numbers work orders, invoices, bids and daily time reports. Leave a pattern blank to keep the built-in numbers. Changing a pattern never renumbers documents that already have a number, and a new pattern carries on after any number it would repeat.</value>
+  </data>
+  <data name="DocumentNumberingRecordsLink" xml:space="preserve">
+    <value>Records numbering</value>
+  </data>
+  <data name="DocumentNumberingYearStartHelp" xml:space="preserve">
+    <value>For documents numbered by a fiscal year, pick the day it starts. Work order numbers, and patterns with a year, start again at 1 that day, and {YYYY} and {YY} write the fiscal year's name. Most fiscal years are named by the year they end in, so one starting November 1, 2026 is 2027. January 1 is the calendar year. Call and Records numbers have their own year start.</value>
+  </data>
+  <data name="DocumentNumberType" xml:space="preserve">
+    <value>Document</value>
+  </data>
+  <data name="DocumentNumberBuiltIn" xml:space="preserve">
+    <value>Built-in, e.g.</value>
+  </data>
+  <data name="DocumentNumberPatternHelp" xml:space="preserve">
+    <value>Fixed text (letters, digits, - _ . /) around {YYYY} or {YY}, {MM}, {DD} and {SEQ}, which must appear once. A pattern with a year starts again at 1 each numbering year; with {MM} or {DD}, each month or day. A number of digits alone is shown with # in front, as invoice, bid and time report numbers always have been.</value>
+  </data>
+  <data name="DocumentNumberingSaved" xml:space="preserve">
+    <value>The document numbering was saved.</value>
+  </data>
+  <data name="DocumentNumberingYearStartInvalid" xml:space="preserve">
+    <value>The document numbering was not saved. The numbering year has to start on a day every year has, so February 29 cannot be used.</value>
+  </data>
+  <data name="DocumentNumberingPatternsRejected" xml:space="preserve">
+    <value>These patterns were not saved because they are not valid or could write a number longer than 50 characters; those documents kept the numbering they had:</value>
+  </data>
+  <data name="DocumentNumberingBelowCurrent" xml:space="preserve">
+    <value>A next number can only be raised. These were left unchanged because the number entered was below the one they will issue next:</value>
+  </data>
+  <data name="DocumentNumberingNotApplied" xml:space="preserve">
+    <value>The pattern or the numbering year start changed in the same save, so the next numbers entered were not applied. Raise them again for the new sequence.</value>
+  </data>
+  <data name="DocumentNumberKindWorkOrder" xml:space="preserve">
+    <value>Work orders</value>
+  </data>
+  <data name="DocumentNumberKindInvoice" xml:space="preserve">
+    <value>Invoices</value>
+  </data>
+  <data name="DocumentNumberKindBid" xml:space="preserve">
+    <value>Bids</value>
+  </data>
+  <data name="DocumentNumberKindTimeReport" xml:space="preserve">
+    <value>Daily time reports</value>
+  </data>
+  <data name="DocumentNumberPatternColumn" xml:space="preserve">
+    <value>Number pattern</value>
+  </data>
+  <data name="DocumentNumberNextColumn" xml:space="preserve">
+    <value>Next number</value>
+  </data>
+  <data name="DocumentNumberRaiseColumn" xml:space="preserve">
+    <value>Raise next to</value>
   </data>
   <data name="CallSettingsSaved" xml:space="preserve">
     <value>Call settings were saved.</value>
+  </data>
+  <data name="NewCallFieldCannotBeRequired" xml:space="preserve">
+    <value>A plus code only finds the location and is not saved on the call, so it cannot be required. Require GPS Coordinates instead.</value>
   </data>
 </root>

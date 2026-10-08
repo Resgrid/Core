@@ -93,14 +93,38 @@ namespace Resgrid.Tests.Repositories
 
 			var source = new Mock<IMigrationSource>();
 			source.Setup(s => s.GetMigrations()).Returns(IsPostgres
-				? new IMigration[] { new M0264_AddCallNumberSequencesPg() }
-				: new IMigration[] { new M0264_AddCallNumberSequences() });
+				? new IMigration[] { new M0264_AddCallNumberSequencesPg(), new M0269_ConvertNumberTextToCitextPg() }
+				: new IMigration[] { new M0264_AddCallNumberSequences(), new M0269_ConvertNumberTextToCitext() });
 			_runner = new ServiceCollection().AddFluentMigratorCore().ConfigureRunner(r =>
 			{
 				if (IsPostgres) r.AddPostgres(); else r.AddSqlServer();
 				r.WithGlobalConnectionString(_connection);
 			}).AddSingleton(source.Object).BuildServiceProvider();
-			_runner.GetRequiredService<IMigrationRunner>().MigrateUp();
+			var migrations = _runner.GetRequiredService<IMigrationRunner>();
+			migrations.MigrateUp(264);
+
+			if (IsPostgres)
+			{
+				await using var database = Connect(_connection);
+				// Minimal stand-ins, with their pre-M0269 types, for the other tables M0269 converts; certification types also
+				// carry the columns the code de-duplication reads, and the M0213 live-code unique index.
+				await database.ExecuteAsync(@"CREATE TABLE departmentcertificationtypes (departmentcertificationtypeid serial PRIMARY KEY,
+						departmentid int NOT NULL, code character varying(50) NULL, isdeleted boolean NOT NULL DEFAULT false);
+					CREATE UNIQUE INDEX ux_departmentcertificationtypes_code ON departmentcertificationtypes (departmentid, code) WHERE isdeleted = FALSE;
+					INSERT INTO departmentcertificationtypes (departmentid, code, isdeleted) VALUES
+						(90, 'EMT', false), (90, 'emt', false), (90, 'Emt', true), (91, 'emt', false);");
+				foreach (var (table, column, previousType) in M0269_ConvertNumberTextToCitextPg.Columns)
+					await database.ExecuteAsync($"CREATE TABLE IF NOT EXISTS {table} (); ALTER TABLE {table} ADD COLUMN IF NOT EXISTS {column} {previousType};");
+
+				// One department's scope written under two casings before M0269 folds them.
+				await database.ExecuteAsync(@"INSERT INTO callnumbersequences (departmentid, scopekey, lastsequence, floorsequence, floorseton, floorsetbyuserid, modifiedon) VALUES
+					(90, 'ez26-#', 31, 0, NULL, NULL, '2026-10-01'),
+					(90, 'EZ26-#', 12, 25, '2026-10-02', 'admin', '2026-10-03'),
+					(90, 'Ez26-#', 7, 0, NULL, NULL, '2026-09-30'),
+					(90, 'FD26-#', 4, 0, NULL, NULL, '2026-10-01')");
+			}
+
+			migrations.MigrateUp();
 		}
 
 		[OneTimeTearDown]
@@ -124,6 +148,46 @@ namespace Resgrid.Tests.Repositories
 				? "INSERT INTO calls (departmentid, number, loggedon, isdeleted) VALUES (@DepartmentId, @Number, @LoggedOn, @Deleted)"
 				: "INSERT INTO Calls (DepartmentId, Number, LoggedOn, IsDeleted) VALUES (@DepartmentId, @Number, @LoggedOn, @Deleted)",
 				new { DepartmentId = departmentId, Number = number, LoggedOn = loggedOn, Deleted = deleted });
+		}
+
+		[Test]
+		public async Task Postgres_number_text_columns_are_citext()
+		{
+			if (!IsPostgres) Assert.Ignore("citext is the PostgreSQL convention; SQL Server compares case-insensitively by collation.");
+			await using var database = Connect(_connection);
+			var types = (await database.QueryAsync<(string Table, string Column, string Type)>(
+				"SELECT table_name, column_name, udt_name FROM information_schema.columns WHERE table_schema = 'public'")).ToList();
+
+			var expected = M0269_ConvertNumberTextToCitextPg.Columns.Select(c => (c.Table, c.Column)).ToList();
+			var converted = types.Where(t => expected.Contains((t.Table, t.Column))).ToList();
+			converted.Should().HaveCount(expected.Count);
+			converted.Should().OnlyContain(t => t.Type == "citext", string.Join(", ", converted.Select(t => t.Table + "." + t.Column + "=" + t.Type)));
+		}
+
+		[Test]
+		public async Task Case_variant_scopes_fold_into_one_counter()
+		{
+			if (!IsPostgres) Assert.Ignore("SQL Server's collation never let a scope exist under two casings.");
+			await using var database = Connect(_connection);
+			var rows = (await database.QueryAsync<Resgrid.Model.CallNumberSequence>(
+				"SELECT * FROM callnumbersequences WHERE departmentid = 90 ORDER BY scopekey")).ToList();
+
+			rows.Select(r => r.ScopeKey).Should().Equal("EZ26-#", "FD26-#");
+			rows[0].Should().Match<Resgrid.Model.CallNumberSequence>(r => r.LastSequence == 31 && r.FloorSequence == 25 && r.FloorSetByUserId == "admin");
+			rows[1].LastSequence.Should().Be(4);
+
+			(await Repository().TakeNextAsync(90, "ez26-#", 0)).Should().Be(32, "the folded key is citext, so any casing reaches the one counter");
+		}
+
+		[Test]
+		public async Task Case_variant_live_certification_codes_get_the_id_suffix()
+		{
+			if (!IsPostgres) Assert.Ignore("SQL Server's collation never let a live code exist under two casings.");
+			await using var database = Connect(_connection);
+			var codes = (await database.QueryAsync<(int Id, int DepartmentId, string Code, bool IsDeleted)>(
+				"SELECT departmentcertificationtypeid, departmentid, code::text, isdeleted FROM departmentcertificationtypes ORDER BY departmentcertificationtypeid")).ToList();
+
+			codes.Select(c => c.Code).Should().Equal("EMT", "emt-2", "Emt", "emt");
 		}
 
 		[Test]

@@ -115,6 +115,14 @@ namespace Resgrid.Repositories.DataRepository
 			return (await QueryAsync<string>(sql, new { DepartmentId = departmentId, Deleted = true, FromUtc = DatabaseTimestamp(fromUtc), ToUtc = DatabaseTimestamp(toUtc) })).ToList();
 		}
 
+		public async Task<List<string>> GetCallNumbersAsync(int departmentId, DateTime fromUtc, DateTime toUtc)
+		{
+			var sql = $"SELECT c.{Col("Number")} FROM {Tbl("Calls")} c WHERE c.{Col("DepartmentId")} = {P}DepartmentId " +
+				$"AND c.{Col("Number")} IS NOT NULL AND c.{Col("LoggedOn")} >= {P}FromUtc AND c.{Col("LoggedOn")} < {P}ToUtc";
+
+			return (await QueryAsync<string>(sql, new { DepartmentId = departmentId, FromUtc = DatabaseTimestamp(fromUtc), ToUtc = DatabaseTimestamp(toUtc) })).ToList();
+		}
+
 		public async Task<int> GetHighestIssuedAsync(int departmentId, string numberPrefix, string numberSuffix, DateTime? fromUtc, DateTime? toUtc)
 		{
 			numberPrefix ??= string.Empty;

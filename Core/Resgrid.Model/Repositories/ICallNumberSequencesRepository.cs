@@ -36,6 +36,12 @@ namespace Resgrid.Model.Repositories
 		Task<List<string>> GetDeletedCallNumbersAsync(int departmentId, DateTime fromUtc, DateTime toUtc);
 
 		/// <summary>
+		/// Numbers of every department call logged in [fromUtc, toUtc), deleted calls included. Renumbering a numbering year holds the
+		/// numbers written around it, which can share its text when the department changed its year start.
+		/// </summary>
+		Task<List<string>> GetCallNumbersAsync(int departmentId, DateTime fromUtc, DateTime toUtc);
+
+		/// <summary>
 		/// Highest sequence written as prefix + digits + suffix into the department's call numbers, deleted calls included, limited to
 		/// calls logged in [fromUtc, toUtc) when given. The sequence is read as a number, so a change of digit width never restarts it.
 		/// </summary>

@@ -88,14 +88,14 @@ namespace Resgrid.Services.Invoicing
 			var pdf = useCallerAttachment ? attachment.Data : await GetInvoicePdfCoreAsync(invoiceId, departmentId, workload: true);
 			if (pdf == null || pdf.Length == 0) throw new InvalidOperationException("invoicing_pdf_unavailable");
 
-			var label = $"Invoice #{invoice.InvoiceNumber}";
+			var label = $"Invoice {invoice.NumberLabel()}";
 			var notification = new EmailNotification
 			{
 				To = recipient,
 				Subject = $"{label} from {await DepartmentDisplayNameAsync(departmentId)}",
 				Body = $"{label} for {FormatMoney(invoice.Total, invoice.Currency)} is attached." + (invoice.DueOn.HasValue ? $" Payment is due by {invoice.DueOn.Value:yyyy-MM-dd}." : string.Empty)
 					   + (useCallerAttachment && attachment.Contents?.Count > 0 ? " The packet also contains: " + string.Join("; ", attachment.Contents) + "." : string.Empty),
-				AttachmentName = useCallerAttachment ? attachment.FileName : $"invoice-{invoice.InvoiceNumber}.pdf",
+				AttachmentName = useCallerAttachment ? attachment.FileName : $"invoice-{DocumentNumbering.FileSafe(invoice.NumberText())}.pdf",
 				AttachmentData = pdf
 			};
 
@@ -147,7 +147,7 @@ namespace Resgrid.Services.Invoicing
 			var invoice = model.Invoice;
 			var currency = invoice.Currency ?? "USD";
 			var sb = new StringBuilder();
-			sb.Append("<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>Resgrid | ").Append(E($"Invoice #{invoice.InvoiceNumber}")).Append("</title>");
+			sb.Append("<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>Resgrid | ").Append(E($"Invoice {invoice.NumberLabel()}")).Append("</title>");
 			sb.Append("<style>body{font-family:Helvetica,Arial,sans-serif;font-size:12px;color:#222;margin:32px}h1{font-size:22px;margin:0 0 4px}h2{font-size:14px;margin:18px 0 6px}table{border-collapse:collapse;width:100%}th,td{padding:6px 8px;text-align:left;vertical-align:top}th{border-bottom:2px solid #444;font-size:11px;text-transform:uppercase}td.num,th.num{text-align:right;white-space:nowrap}tr.line td{border-bottom:1px solid #ddd}table.totals{width:auto;margin-left:auto;margin-top:12px}table.totals td{padding:4px 8px}table.totals tr.grand td{border-top:2px solid #444;font-weight:bold;font-size:14px}.meta td{padding:2px 8px 2px 0}.muted{color:#666}.status{display:inline-block;padding:2px 8px;border:1px solid #444;border-radius:3px;font-size:11px;text-transform:uppercase}.footer{margin-top:28px;font-size:11px;color:#555;white-space:pre-wrap}</style></head><body>");
 
 			sb.Append("<table><tr><td style=\"width:55%\">");
@@ -157,7 +157,7 @@ namespace Resgrid.Services.Invoicing
 			if (!string.IsNullOrWhiteSpace(model.SecondaryTaxRegistrationNumber)) sb.Append("<div class=\"muted\">Secondary tax registration: ").Append(E(model.SecondaryTaxRegistrationNumber)).Append("</div>");
 			sb.Append("</td><td style=\"text-align:right\">");
 			sb.Append("<h1>INVOICE</h1><table class=\"meta\" style=\"width:auto;margin-left:auto\">");
-			sb.Append("<tr><td class=\"muted\">Invoice #</td><td class=\"num\"><strong>").Append(invoice.InvoiceNumber).Append("</strong></td></tr>");
+			sb.Append("<tr><td class=\"muted\">Invoice #</td><td class=\"num\"><strong>").Append(E(invoice.NumberText())).Append("</strong></td></tr>");
 			sb.Append("<tr><td class=\"muted\">Status</td><td class=\"num\"><span class=\"status\">").Append(E(StatusLabel(invoice.Status))).Append("</span></td></tr>");
 			if (invoice.IssuedOn.HasValue) sb.Append("<tr><td class=\"muted\">Issued</td><td class=\"num\">").Append(invoice.IssuedOn.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)).Append("</td></tr>");
 			if (invoice.DueOn.HasValue) sb.Append("<tr><td class=\"muted\">Due</td><td class=\"num\">").Append(invoice.DueOn.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)).Append("</td></tr>");

@@ -276,6 +276,8 @@ namespace Resgrid.Model.Invoicing
 		public int DepartmentId { get; set; }
 		public string InvoiceId { get; set; }
 		public int InvoiceNumber { get; set; }
+		/// <summary>The invoice number as issued (the department's pattern or the plain number), for the payer-facing label.</summary>
+		public string InvoiceDisplayNumber { get; set; }
 		public decimal Amount { get; set; }
 		public string Currency { get; set; }
 		public string CustomerEmail { get; set; }
@@ -374,6 +376,8 @@ namespace Resgrid.Model.Invoicing
 		public string InvoiceId { get; set; }
 		public int DepartmentId { get; set; }
 		public int InvoiceNumber { get; set; }
+		/// <summary>How the invoice number reads on the page: "#1042", or the department's pattern as issued.</summary>
+		public string InvoiceLabel { get; set; }
 		public string DepartmentName { get; set; }
 		public decimal AmountDue { get; set; }
 		public string Currency { get; set; }

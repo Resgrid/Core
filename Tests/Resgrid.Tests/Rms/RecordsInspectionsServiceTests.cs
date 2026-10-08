@@ -41,6 +41,36 @@ namespace Resgrid.Tests.Rms
 		}
 
 		[Test]
+		public async Task Prevention_numbers_follow_the_records_fiscal_year_in_department_time()
+		{
+			// Setting 72 starts a July fiscal year named by the year it ends in; Chicago local time decides the day.
+			_h.NumberingConfig = new RecordsNumberingConfig { YearStartMonth = 7, YearStartDay = 1 };
+			_h.Departments.Setup(d => d.GetDepartmentByIdAsync(Dept, It.IsAny<bool>())).ReturnsAsync(new Department { DepartmentId = Dept, TimeZone = "Central Standard Time" });
+
+			// 04:00 UTC on 1 July is 23:00 on 30 June in Chicago, still FY2026; two hours later FY2027 has begun.
+			(await _h.Gate.NextNumberAsync(Dept, RmsPreventionNumberKinds.Inspection, new DateTime(2026, 7, 1, 4, 0, 0, DateTimeKind.Utc))).Should().Be("INSP-2026-0001");
+			(await _h.Gate.NextNumberAsync(Dept, RmsPreventionNumberKinds.Inspection, new DateTime(2026, 7, 1, 6, 0, 0, DateTimeKind.Utc))).Should().Be("INSP-2027-0001");
+			(await _h.Gate.NextNumberAsync(Dept, RmsPreventionNumberKinds.Inspection, new DateTime(2027, 2, 1, 12, 0, 0, DateTimeKind.Utc))).Should().Be("INSP-2027-0002", "January 1 does not restart a fiscal year");
+			(await _h.Gate.NextNumberAsync(Dept, RmsPreventionNumberKinds.Permit, new DateTime(2027, 2, 1, 12, 0, 0, DateTimeKind.Utc))).Should().Be("PRM-2027-0001", "each kind keeps its own sequence");
+		}
+
+		[Test]
+		public async Task Prevention_numbers_use_the_departments_own_pattern_and_carry_on_after_built_in_ones()
+		{
+			_h.NumberingConfig = new RecordsNumberingConfig { YearStartMonth = 7, YearStartDay = 1 };
+			_h.NumberingConfig.DocumentPatterns.Add(new DocumentNumberPattern { Kind = DocumentNumberKinds.Inspection, Pattern = "FI{YY}-{SEQ}", SequenceWidth = 3 });
+			_h.NumberingConfig.DocumentPatterns.Add(new DocumentNumberPattern { Kind = DocumentNumberKinds.Permit, Pattern = "PRM-{YYYY}-{SEQ}", SequenceWidth = 5 });
+			_h.Permits.Rows.Add(new RmsPermit { RmsPermitId = Guid.NewGuid().ToString(), DepartmentId = Dept, PermitNumber = "PRM-2027-0041" });
+
+			(await _h.Gate.NextNumberAsync(Dept, RmsPreventionNumberKinds.Inspection, new DateTime(2026, 8, 1, 12, 0, 0, DateTimeKind.Utc))).Should().Be("FI27-001");
+			(await _h.Gate.NextNumberAsync(Dept, RmsPreventionNumberKinds.Inspection, new DateTime(2026, 8, 2, 12, 0, 0, DateTimeKind.Utc))).Should().Be("FI27-002");
+			(await _h.Gate.NextNumberAsync(Dept, RmsPreventionNumberKinds.Permit, new DateTime(2026, 8, 2, 12, 0, 0, DateTimeKind.Utc))).Should().Be("PRM-2027-00042",
+				"a wider pattern that reads like the built-in permit numbers carries on after them");
+			(await _h.Gate.NextNumberAsync(Dept, RmsPreventionNumberKinds.Occupancy, new DateTime(2026, 8, 2, 12, 0, 0, DateTimeKind.Utc))).Should().Be("OCC-2027-0001",
+				"a kind with no pattern keeps the built-in numbers, in the fiscal year");
+		}
+
+		[Test]
 		public async Task Completing_an_inspection_opens_violations_from_failed_items_and_raises_trigger_161_without_the_notes()
 		{
 			var inspection = await _h.InspectionsService.ScheduleAsync(Dept, Admin, _occupancy.RmsOccupancyId, _program.RmsInspectionProgramId, DateTime.UtcNow, Admin);

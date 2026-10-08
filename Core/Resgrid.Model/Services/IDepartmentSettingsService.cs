@@ -122,6 +122,12 @@ namespace Resgrid.Model.Services
 		/// <summary>Setting 115: the department's call number pattern and digits; a new (legacy) config when none is saved or the blob is corrupt.</summary>
 		Task<CallNumberingConfig> GetCallNumberingConfigAsync(int departmentId, bool bypassCache = false);
 
+		/// <summary>Setting 117: work order, invoice, bid and daily time report number patterns and their numbering year start. Missing = the built-in numbers.</summary>
+		Task<DocumentNumberingConfig> GetDocumentNumberingConfigAsync(int departmentId, bool bypassCache = false);
+
+		Task<DepartmentSetting> SetDocumentNumberingConfigAsync(int departmentId, DocumentNumberingConfig config,
+			CancellationToken cancellationToken = default(CancellationToken));
+
 		Task<DepartmentSetting> SetCallNumberingConfigAsync(int departmentId, CallNumberingConfig config,
 			CancellationToken cancellationToken = default(CancellationToken));
 

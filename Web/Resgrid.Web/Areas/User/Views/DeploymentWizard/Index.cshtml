@@ -4,7 +4,7 @@
     var bid = Model.Context.Bid;
     ViewBag.Title = "Resgrid | " + localizer["ScheduleDeploymentCall"];
     ViewData["Title"] = localizer["ScheduleDeploymentCall"].Value;
-    ViewData["Subtitle"] = string.Format(localizer["WizardIntro"].Value, bid.BidNumber, bid.Title);
+    ViewData["Subtitle"] = string.Format(localizer["WizardIntro"].Value, bid.NumberText(), bid.Title);
     ViewData["RootController"] = "Bids";
     ViewData["RootTitle"] = localizer["Bids"].Value;
     var steps = new[] { "WizardStepCall", "WizardStepUnits", "WizardStepSeats", "WizardStepEquipment", "WizardStepRates", "WizardStepReview" };

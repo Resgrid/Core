@@ -112,7 +112,8 @@ namespace Resgrid.Tests.Rms
 
 			var disclosures = new RecordsDisclosureService(_store.Shared.DisclosureRequestsRepo.Object, _store.Shared.DisclosureProductionsRepo.Object,
 				_store.Shared.RecordsRepo.Object, _store.Shared.RevisionsRepo.Object, _store.Shared.AuditsRepo.Object, _authorization.Object, _settings.Object,
-				_store.UnitOfWork.Object, _store.ReportsRepo.Object, documents, _store.Shared.AttachmentsRepo.Object, pdf.Object, _store.AnalysesRepo.Object, scanner.Object, udf, new PassthroughRecordsProtection(), new DomainEventOutboxService(_store.Shared.OutboxRepo.Object, _aggregator.Object));
+				_store.UnitOfWork.Object, _store.ReportsRepo.Object, documents, _store.Shared.AttachmentsRepo.Object, pdf.Object, _store.AnalysesRepo.Object, scanner.Object, udf, new PassthroughRecordsProtection(), new DomainEventOutboxService(_store.Shared.OutboxRepo.Object, _aggregator.Object),
+				new Resgrid.Services.DocumentNumberingService(_settings.Object, Mock.Of<IDepartmentsService>(), new Resgrid.Tests.Services.FakeDocumentNumberSequences()));
 			var request = await disclosures.CreateRequestAsync(Dept, "custodian", new RmsDisclosureRequest { RequesterName = "Training requester", JurisdictionProfile = "Fixture jurisdiction", ReceivedOn = DateTime.UtcNow });
 			await disclosures.SaveScopeAsync(Dept, "custodian", request.RmsDisclosureRequestId, "Incident and supporting file", new RmsRecordQuery { CallId = CallId, DefinitionKey = RmsDefinitionKeys.NerisIncidentReport }, RmsRedactionProfiles.Standard);
 			var review = await disclosures.GetReviewAsync(Dept, "custodian", request.RmsDisclosureRequestId);

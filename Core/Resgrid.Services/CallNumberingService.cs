@@ -70,8 +70,20 @@ namespace Resgrid.Services
 			}
 
 			var config = await _settings.GetCallNumberingConfigAsync(departmentId, true) ?? new CallNumberingConfig();
+			var saved = config.YearStart();
+			var month = update.YearStartMonth ?? saved.Month;
+			var day = update.YearStartDay ?? saved.Day;
+			if (!NumberingYearStart.IsValid(month, day))
+			{
+				result.YearStartRejected = true;
+				return result;
+			}
+
 			config.Pattern = pattern;
 			config.SequenceWidth = CallNumberFormat.EffectiveWidth(update.SequenceWidth);
+			config.YearStartMonth = month;
+			config.YearStartDay = day;
+			config.YearLabel = (int)new NumberingYearStart(month, day, (NumberingYearLabel)(update.YearLabel ?? (int)saved.Label)).Label;
 			await _settings.SetCallNumberingConfigAsync(departmentId, config, cancellationToken);
 
 			if (update.NextSequence.HasValue)
@@ -89,21 +101,39 @@ namespace Resgrid.Services
 			return result;
 		}
 
-		public async Task<bool> RenumberCallsForYearAsync(int departmentId, int year, CancellationToken cancellationToken = default(CancellationToken))
+		public async Task<bool> RenumberCallsForYearAsync(int departmentId, DateTime inYearUtc, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var config = await _settings.GetCallNumberingConfigAsync(departmentId, true);
 			var pattern = CallNumberFormat.EffectivePattern(config);
-			if (CallNumberFormat.ResetPeriod(pattern) == CallNumberResetPeriod.Never)
+			var period = CallNumberFormat.ResetPeriod(pattern);
+			if (period == CallNumberResetPeriod.Never)
 				return false;
 
+			// The numbering year for a yearly pattern (a fiscal year when the department set one), the calendar year for a pattern
+			// with {MM} or {DD}: either way every scope inside it is renumbered whole.
 			var timeZone = await TimeZoneAsync(departmentId);
-			var start = ToUtc(new DateTime(year, 1, 1, 0, 0, 0, DateTimeKind.Unspecified), timeZone);
-			var end = ToUtc(new DateTime(year + 1, 1, 1, 0, 0, 0, DateTimeKind.Unspecified), timeZone);
+			var yearStart = period == CallNumberResetPeriod.Yearly ? config.YearStart() : NumberingYearStart.Calendar;
+			var localStart = yearStart.StartOf(ToLocal(inYearUtc, timeZone));
+			var start = ToUtc(localStart, timeZone);
+			var end = ToUtc(localStart.AddYears(1), timeZone);
 			var calls = (await _calls.GetAllCallsByDepartmentDateRangeAsync(departmentId, start, end) ?? Enumerable.Empty<Call>())
 				.Where(c => c.LoggedOn < end).OrderBy(c => c.LoggedOn).ThenBy(c => c.CallId).ToList();
 
 			// Deleted calls keep their numbers, so no active call is renumbered onto one of them.
 			var held = new HashSet<string>(await _sequences.GetDeletedCallNumbersAsync(departmentId, start, end) ?? new List<string>(), StringComparer.Ordinal);
+
+			// So do the calls either side of a yearly period inside the window its name can also have been written in (see
+			// HighestIssuedAsync): after a year start change, last year's calendar numbers can read the same as this fiscal year's.
+			if (period == CallNumberResetPeriod.Yearly)
+			{
+				var year = yearStart.YearOf(localStart);
+				var windowStart = ToUtc(new DateTime(year - 1, 1, 1, 0, 0, 0, DateTimeKind.Unspecified), timeZone);
+				var windowEnd = ToUtc(new DateTime(year + 2, 1, 1, 0, 0, 0, DateTimeKind.Unspecified), timeZone);
+				if (windowStart < start)
+					held.UnionWith(await _sequences.GetCallNumbersAsync(departmentId, windowStart, start) ?? new List<string>());
+				if (end < windowEnd)
+					held.UnionWith(await _sequences.GetCallNumbersAsync(departmentId, end, windowEnd) ?? new List<string>());
+			}
 
 			// Every number is worked out before any call changes. Each sequence starts again at its raised starting point, so a
 			// department continuing earlier numbers keeps them.
@@ -160,15 +190,28 @@ namespace Resgrid.Services
 
 		private static CallNumberScope Resolve(CallNumberingConfig config, DateTime utcDate, string timeZone)
 		{
-			var local = string.IsNullOrWhiteSpace(timeZone) ? utcDate : DateTimeHelpers.GetLocalDateTime(utcDate, timeZone);
-			return CallNumberFormat.Resolve(CallNumberFormat.EffectivePattern(config), config?.SequenceWidth ?? 0, local);
+			return CallNumberFormat.Resolve(CallNumberFormat.EffectivePattern(config), config?.SequenceWidth ?? 0, ToLocal(utcDate, timeZone), config?.YearStart());
 		}
 
 		private Task<int> HighestIssuedAsync(int departmentId, CallNumberScope scope, string timeZone)
 		{
-			DateTime? from = scope.PeriodStart.HasValue ? ToUtc(scope.PeriodStart.Value, timeZone) : (DateTime?)null;
-			DateTime? to = scope.PeriodEnd.HasValue ? ToUtc(scope.PeriodEnd.Value, timeZone) : (DateTime?)null;
-			return _sequences.GetHighestIssuedAsync(departmentId, scope.Prefix, scope.Suffix, from, to);
+			DateTime? from = scope.PeriodStart, to = scope.PeriodEnd;
+			// A yearly scope's text can also have been written outside its own period: the same name under the calendar year, or
+			// under a year start or naming the department used before. Every year named Y starts after January 1 of Y-1 and ends
+			// before January 1 of Y+2, so searching that window finds them and a new scope never re-issues one of their numbers.
+			if (scope.Period == CallNumberResetPeriod.Yearly && scope.Year.HasValue && scope.Year.Value > 1 && scope.Year.Value < 9998)
+			{
+				from = new DateTime(scope.Year.Value - 1, 1, 1, 0, 0, 0, DateTimeKind.Unspecified);
+				to = new DateTime(scope.Year.Value + 2, 1, 1, 0, 0, 0, DateTimeKind.Unspecified);
+			}
+
+			return _sequences.GetHighestIssuedAsync(departmentId, scope.Prefix, scope.Suffix,
+				from.HasValue ? ToUtc(from.Value, timeZone) : (DateTime?)null, to.HasValue ? ToUtc(to.Value, timeZone) : (DateTime?)null);
+		}
+
+		private static DateTime ToLocal(DateTime utcDate, string timeZone)
+		{
+			return string.IsNullOrWhiteSpace(timeZone) ? utcDate : DateTimeHelpers.GetLocalDateTime(utcDate, timeZone);
 		}
 
 		private async Task<string> TimeZoneAsync(int departmentId)

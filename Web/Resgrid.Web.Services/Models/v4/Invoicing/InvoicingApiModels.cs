@@ -53,6 +53,9 @@ namespace Resgrid.Web.Services.Models.v4.Invoicing
 	{
 		public string InvoiceId { get; set; }
 		public int InvoiceNumber { get; set; }
+
+		/// <summary>The invoice number as issued: the department's numbering pattern, or InvoiceNumber when it keeps the built-in numbers.</summary>
+		public string DisplayNumber { get; set; }
 		public string ContactId { get; set; }
 		/// <summary>The contact's display name; REDACTED on a protected row.</summary>
 		public string ContactName { get; set; }

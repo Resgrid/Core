@@ -119,6 +119,19 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public string ReferenceId { get; set; }
 
 		/// <summary>
+		/// Optional. Id of an existing call in the department to link this call to (shown as a linked call on both). Leave it
+		/// out (null) when the client has no way to pick one: the department's linked-call requirement is then not enforced;
+		/// sent blank, it is.
+		/// </summary>
+		public string LinkedCallId { get; set; }
+
+		/// <summary>
+		/// Optional. Ids of the department's dispatch protocols to attach to the call. Leave it out (null) when the client
+		/// has no protocol picker: the department's protocols requirement is then not enforced; sent empty, it is.
+		/// </summary>
+		public List<int> ProtocolIds { get; set; }
+
+		/// <summary>
 		/// Time in the future, in the departments local time, to dispatch the call. Leave NULL to dispatch now.
 		/// </summary>
 		public DateTime? DispatchOn { get; set; }

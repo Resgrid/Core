@@ -48,12 +48,23 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 		/// <summary>Save the call to Pending Calls without notifying anyone; a dispatcher sends it later.</summary>
 		public bool SaveAsPending { get; set; }
 
+		/// <summary>
+		/// The department's new-call field policy: which built-in fields the form renders and which it marks required.
+		/// Never null; an empty policy is stock behaviour (everything shown, nothing required).
+		/// </summary>
+		public NewCallFieldPolicy FieldPolicy { get; set; }
+
 		public NewCallView()
 		{
 			What3Words = new W3W();
 			AdditionalContacts = new List<string>();
 			DestinationPois = new List<SelectListItem>();
+			FieldPolicy = new NewCallFieldPolicy();
 		}
+
+		public bool IsFieldVisible(string key) => FieldPolicy == null || FieldPolicy.IsVisible(key);
+
+		public bool IsFieldRequired(string key) => FieldPolicy != null && FieldPolicy.IsRequired(key);
 
 		/// <summary>
 		/// The pin the form posted, in the call's "lat,lon" form; null when none was placed. The form posts the pin as

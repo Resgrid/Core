@@ -952,7 +952,7 @@
     <value>حقول نموذج البلاغ الجديد</value>
   </data>
   <data name="NewCallFieldsHelp" xml:space="preserve">
-    <value>اختر الحقول المدمجة التي تظهر في النموذج وأيها يجب إكماله قبل إنشاء البلاغ وإرساله إلى الميدان. الاسم والطبيعة والأولوية والنوع تظهر دائمًا وهي مطلوبة دائمًا.</value>
+    <value>اختر الحقول المدمجة التي تظهر في النموذج وأيها يجب إكماله قبل إنشاء البلاغ وإرساله إلى الميدان. الاسم والطبيعة والأولوية والنوع تظهر دائمًا وهي مطلوبة دائمًا. تنطبق القواعد نفسها عند تعديل بلاغ أو إضافة بلاغ مؤرشف.</value>
   </data>
   <data name="NewCallFieldsFieldColumn" xml:space="preserve">
     <value>الحقل</value>
@@ -985,7 +985,7 @@
     <value>ملاحظة</value>
   </data>
   <data name="NewCallField_contactName" xml:space="preserve">
-    <value>جهة الاتصال الرئيسية</value>
+    <value>اسم المبلّغ</value>
   </data>
   <data name="NewCallField_contactInfo" xml:space="preserve">
     <value>معلومات الاتصال بالمبلّغ</value>
@@ -1408,9 +1408,90 @@
     <value>لم يُرفع رقم البلاغ التالي: لا يمكن رفعه إلا فوق الرقم الذي سيتلقاه البلاغ التالي بالفعل ({0}).</value>
   </data>
   <data name="CallNumberNextPatternChanged" xml:space="preserve">
-    <value>لم يُرفع رقم البلاغ التالي لأن النمط تغيّر في عملية الحفظ نفسها. ارفعه مرة أخرى للنمط الجديد.</value>
+    <value>لم يُرفع رقم البلاغ التالي لأن النمط أو بداية سنة الترقيم تغيّرا في عملية الحفظ نفسها. ارفعه مرة أخرى للتسلسل الجديد.</value>
+  </data>
+  <data name="CallNumberYearStart" xml:space="preserve">
+    <value>تبدأ سنة الترقيم في</value>
+  </data>
+  <data name="CallNumberYearStartDay" xml:space="preserve">
+    <value>يوم الشهر</value>
+  </data>
+  <data name="CallNumberYearLabelEndYear" xml:space="preserve">
+    <value>تُسمّى بالسنة التي تنتهي فيها</value>
+  </data>
+  <data name="CallNumberYearLabelStartYear" xml:space="preserve">
+    <value>تُسمّى بالسنة التي تبدأ فيها</value>
+  </data>
+  <data name="CallNumberYearStartHelp" xml:space="preserve">
+    <value>للبلاغات المرقّمة حسب سنة مالية، اختر اليوم الذي تبدأ فيه. يبدأ النمط السنوي من 1 من جديد في ذلك اليوم، ويكتب {YYYY} و{YY} اسم السنة المالية. تُسمّى معظم السنوات المالية بالسنة التي تنتهي فيها، لذا فإن السنة التي تبدأ في 1 نوفمبر 2026 هي 2027. يمثّل 1 يناير السنة الميلادية. الأنماط التي تحتوي على {MM} أو {DD} تتبع التقويم دائمًا.</value>
+  </data>
+  <data name="CallNumberResetsYearlyOn" xml:space="preserve">
+    <value>يبدأ من 1 من جديد كل سنة في {0}.</value>
+  </data>
+  <data name="CallNumberYearStartInvalid" xml:space="preserve">
+    <value>لم يُحفظ ترقيم البلاغات. يجب أن تبدأ سنة الترقيم في يوم موجود في كل سنة، لذا لا يمكن استخدام 29 فبراير.</value>
+  </data>
+  <data name="DocumentNumberingHeader" xml:space="preserve">
+    <value>ترقيم المستندات</value>
+  </data>
+  <data name="DocumentNumberingIntro" xml:space="preserve">
+    <value>كيف يرقّم Resgrid أوامر العمل والفواتير والعروض وتقارير الوقت اليومية. اترك النمط فارغًا للإبقاء على الأرقام المضمّنة. لا يؤدي تغيير النمط أبدًا إلى إعادة ترقيم المستندات التي لها رقم بالفعل، ويواصل النمط الجديد بعد أي رقم قد يكرّره.</value>
+  </data>
+  <data name="DocumentNumberingRecordsLink" xml:space="preserve">
+    <value>ترقيم السجلات</value>
+  </data>
+  <data name="DocumentNumberingYearStartHelp" xml:space="preserve">
+    <value>للمستندات المرقّمة حسب سنة مالية، اختر اليوم الذي تبدأ فيه. تبدأ أرقام أوامر العمل والأنماط التي تتضمن السنة من 1 من جديد في ذلك اليوم، ويكتب {YYYY} و{YY} اسم السنة المالية. تُسمّى معظم السنوات المالية بالسنة التي تنتهي فيها، لذا فإن السنة التي تبدأ في 1 نوفمبر 2026 هي 2027. يمثّل 1 يناير السنة الميلادية. لأرقام البلاغات والسجلات بداية سنة خاصة بها.</value>
+  </data>
+  <data name="DocumentNumberType" xml:space="preserve">
+    <value>المستند</value>
+  </data>
+  <data name="DocumentNumberBuiltIn" xml:space="preserve">
+    <value>مضمّن، مثل</value>
+  </data>
+  <data name="DocumentNumberPatternHelp" xml:space="preserve">
+    <value>نص ثابت (حروف وأرقام و- _ . /) حول {YYYY} أو {YY} و{MM} و{DD} و{SEQ}، الذي يجب أن يظهر مرة واحدة. يبدأ النمط الذي يتضمن السنة من 1 من جديد في كل سنة ترقيم؛ ومع {MM} أو {DD}، في كل شهر أو يوم. يُعرض الرقم المكوّن من أرقام فقط مع # في بدايته، كما كانت أرقام الفواتير والعروض وتقارير الوقت دائمًا.</value>
+  </data>
+  <data name="DocumentNumberingSaved" xml:space="preserve">
+    <value>تم حفظ ترقيم المستندات.</value>
+  </data>
+  <data name="DocumentNumberingYearStartInvalid" xml:space="preserve">
+    <value>لم يُحفظ ترقيم المستندات. يجب أن تبدأ سنة الترقيم في يوم موجود في كل سنة، لذا لا يمكن استخدام 29 فبراير.</value>
+  </data>
+  <data name="DocumentNumberingPatternsRejected" xml:space="preserve">
+    <value>لم تُحفظ هذه الأنماط لأنها غير صالحة أو قد تكتب رقمًا أطول من 50 حرفًا؛ واحتفظت تلك المستندات بالترقيم الذي كان لها:</value>
+  </data>
+  <data name="DocumentNumberingBelowCurrent" xml:space="preserve">
+    <value>يمكن رفع الرقم التالي فقط. تُركت هذه دون تغيير لأن الرقم المُدخل أقل من الرقم الذي ستصدره تاليًا:</value>
+  </data>
+  <data name="DocumentNumberingNotApplied" xml:space="preserve">
+    <value>تغيّر النمط أو بداية سنة الترقيم في عملية الحفظ نفسها، لذلك لم تُطبَّق الأرقام التالية المُدخلة. ارفعها مرة أخرى للتسلسل الجديد.</value>
+  </data>
+  <data name="DocumentNumberKindWorkOrder" xml:space="preserve">
+    <value>أوامر العمل</value>
+  </data>
+  <data name="DocumentNumberKindInvoice" xml:space="preserve">
+    <value>الفواتير</value>
+  </data>
+  <data name="DocumentNumberKindBid" xml:space="preserve">
+    <value>العروض</value>
+  </data>
+  <data name="DocumentNumberKindTimeReport" xml:space="preserve">
+    <value>تقارير الوقت اليومية</value>
+  </data>
+  <data name="DocumentNumberPatternColumn" xml:space="preserve">
+    <value>نمط الترقيم</value>
+  </data>
+  <data name="DocumentNumberNextColumn" xml:space="preserve">
+    <value>الرقم التالي</value>
+  </data>
+  <data name="DocumentNumberRaiseColumn" xml:space="preserve">
+    <value>رفع التالي إلى</value>
   </data>
   <data name="CallSettingsSaved" xml:space="preserve">
     <value>تم حفظ إعدادات البلاغات.</value>
+  </data>
+  <data name="NewCallFieldCannotBeRequired" xml:space="preserve">
+    <value>رمز Plus Code يحدد الموقع فقط ولا يُحفظ في البلاغ، لذا لا يمكن جعله مطلوبًا. اجعل إحداثيات GPS مطلوبة بدلًا منه.</value>
   </data>
 </root>

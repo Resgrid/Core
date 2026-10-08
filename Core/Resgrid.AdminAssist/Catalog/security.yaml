@@ -5114,6 +5114,287 @@
       "AllowedValues": "Validated by the owning workflow; row IDs, credentials and configuration changes are never accepted by the reference catalog.",
       "EvidenceSource": "DepartmentSsoConfig",
       "Availability": "reference-only"
+    },
+    {
+      "Id": "setting.DocumentNumberingConfig",
+      "AreaId": "security",
+      "LabelKey": "Setting.DocumentNumberingConfig",
+      "HelpKey": "SettingHelp.DocumentNumberingConfig",
+      "Binding": "DepartmentSettingTypes.DocumentNumberingConfig",
+      "ValueType": "protobuf",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DocumentNumbering",
+        "Field": "DocumentNumberingConfig"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-08T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.security",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.DocumentNumberingConfig",
+      "DefaultValue": "missing = the built-in numbers",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.DocumentNumberingConfig.YearStartMonth",
+      "AreaId": "security",
+      "LabelKey": "Field.DocumentNumberingConfig.YearStartMonth",
+      "HelpKey": "FieldHelp.DocumentNumberingConfig.YearStartMonth",
+      "Binding": "DocumentNumberingConfig.YearStartMonth",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DocumentNumbering",
+        "Field": "YearStartMonth"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-08T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.security",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.DocumentNumberingConfig"
+      ],
+      "Affects": [
+        "field.DocumentNumberingConfig.YearStartDay",
+        "field.DocumentNumberingConfig.YearLabel"
+      ],
+      "Conflicts": [],
+      "DocumentationId": "field.DocumentNumberingConfig.YearStartMonth",
+      "DefaultValue": "0 (January)",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "DocumentNumberingConfig",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.DocumentNumberingConfig.YearStartDay",
+      "AreaId": "security",
+      "LabelKey": "Field.DocumentNumberingConfig.YearStartDay",
+      "HelpKey": "FieldHelp.DocumentNumberingConfig.YearStartDay",
+      "Binding": "DocumentNumberingConfig.YearStartDay",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DocumentNumbering",
+        "Field": "YearStartMonth"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-08T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.security",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.DocumentNumberingConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.DocumentNumberingConfig.YearStartDay",
+      "DefaultValue": "0 (the 1st)",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "DocumentNumberingConfig",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.DocumentNumberingConfig.YearLabel",
+      "AreaId": "security",
+      "LabelKey": "Field.DocumentNumberingConfig.YearLabel",
+      "HelpKey": "FieldHelp.DocumentNumberingConfig.YearLabel",
+      "Binding": "DocumentNumberingConfig.YearLabel",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DocumentNumbering",
+        "Field": "YearStartMonth"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-08T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.security",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.DocumentNumberingConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.DocumentNumberingConfig.YearLabel",
+      "DefaultValue": "0 (the year it ends in)",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "DocumentNumberingConfig",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.DocumentNumberingConfig.Patterns",
+      "AreaId": "security",
+      "LabelKey": "Field.DocumentNumberingConfig.Patterns",
+      "HelpKey": "FieldHelp.DocumentNumberingConfig.Patterns",
+      "Binding": "DocumentNumberingConfig.Patterns",
+      "ValueType": "list",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DocumentNumbering",
+        "Field": "Rows"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-08T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.security",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.DocumentNumberingConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.DocumentNumberingConfig.Patterns",
+      "DefaultValue": "empty",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "DocumentNumberingConfig",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.DocumentNumberPattern.Kind",
+      "AreaId": "security",
+      "LabelKey": "Field.DocumentNumberPattern.Kind",
+      "HelpKey": "FieldHelp.DocumentNumberPattern.Kind",
+      "Binding": "DocumentNumberPattern.Kind",
+      "ValueType": "string",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DocumentNumbering",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-08T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.security",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.DocumentNumberingConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.DocumentNumberPattern.Kind",
+      "DefaultValue": "unset",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "DocumentNumberPattern",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.DocumentNumberPattern.Pattern",
+      "AreaId": "security",
+      "LabelKey": "Field.DocumentNumberPattern.Pattern",
+      "HelpKey": "FieldHelp.DocumentNumberPattern.Pattern",
+      "Binding": "DocumentNumberPattern.Pattern",
+      "ValueType": "string",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DocumentNumbering",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-08T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.security",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.DocumentNumberingConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.DocumentNumberPattern.Pattern",
+      "DefaultValue": "unset",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "DocumentNumberPattern",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.DocumentNumberPattern.SequenceWidth",
+      "AreaId": "security",
+      "LabelKey": "Field.DocumentNumberPattern.SequenceWidth",
+      "HelpKey": "FieldHelp.DocumentNumberPattern.SequenceWidth",
+      "Binding": "DocumentNumberPattern.SequenceWidth",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DocumentNumbering",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-08T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.security",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.DocumentNumberingConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.DocumentNumberPattern.SequenceWidth",
+      "DefaultValue": "the kind's built-in width",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "DocumentNumberPattern",
+      "Availability": "reference-only"
     }
   ],
   "Capabilities": [
@@ -5168,6 +5449,34 @@
       ],
       "Prominence": "Key",
       "DocsPath": "/web-app/department-settings/"
+    },
+    {
+      "Id": "document-numbering",
+      "AreaId": "security",
+      "LabelKey": "Feature.document-numbering",
+      "PurposeKey": "FeaturePurpose.document-numbering",
+      "ValueKey": "AreaValue.security",
+      "ExampleKey": "AreaExample.security",
+      "AdoptionKey": "ModuleAdoption.security",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Department",
+        "Action": "DocumentNumbering"
+      },
+      "Requirements": [],
+      "SettingIds": [
+        "field.DocumentNumberPattern.Kind",
+        "field.DocumentNumberPattern.Pattern",
+        "field.DocumentNumberPattern.SequenceWidth",
+        "field.DocumentNumberingConfig.Patterns",
+        "field.DocumentNumberingConfig.YearLabel",
+        "field.DocumentNumberingConfig.YearStartDay",
+        "field.DocumentNumberingConfig.YearStartMonth",
+        "setting.DocumentNumberingConfig"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/department-settings/#document-numbering"
     },
     {
       "Id": "module-settings",
@@ -7295,6 +7604,17 @@
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
     {
+      "Id": "document-numbering",
+      "Locale": "en",
+      "TitleKey": "Feature.document-numbering",
+      "Body": "Document Numbering How work order, invoice, bid and daily time report numbers are written, and the day their numbering year starts for fiscal-year numbering. Sets the time zone and address everything else uses, and keeps administrative access limited and recoverable. An administrator sets the department time zone, hides modules the department will not use, requires two-factor sign-in for administrators and adds a second administrator. Know your department address and time zone, and choose at least two people who will administer Resgrid.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "document-numbering",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-08T00:00:00Z"
+    },
+    {
       "Id": "module-settings",
       "Locale": "en",
       "TitleKey": "Feature.module-settings",
@@ -7392,6 +7712,94 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "setting.DocumentNumberingConfig",
+      "Locale": "en",
+      "TitleKey": "Setting.DocumentNumberingConfig",
+      "Body": "Document Numbering Config. How work order, invoice, bid and daily time report numbers are written (Department -> Document Numbering): one pattern per document kind and the day their numbering year starts, plus a raised next number per custom sequence. A kind with no pattern keeps its built-in numbers. Changing it never renumbers documents that already have a number.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-documentnumberingconfig",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-08T00:00:00Z"
+    },
+    {
+      "Id": "field.DocumentNumberingConfig.YearStartMonth",
+      "Locale": "en",
+      "TitleKey": "Field.DocumentNumberingConfig.YearStartMonth",
+      "Body": "Document Numbering Config / Year Start Month. Month the numbering year starts for work orders, invoices, bids and daily time reports numbered by a fiscal year. Work order numbers and patterns that include the year start again at 1 on that month and day, and YYYY and YY write the fiscal year's name. Unset is January, the calendar year.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-documentnumberingconfig-yearstartmonth",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-08T00:00:00Z"
+    },
+    {
+      "Id": "field.DocumentNumberingConfig.YearStartDay",
+      "Locale": "en",
+      "TitleKey": "Field.DocumentNumberingConfig.YearStartDay",
+      "Body": "Document Numbering Config / Year Start Day. Day of the month the numbering year starts, 1 to the month's last day; February 29 is not allowed. Unset is the 1st.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-documentnumberingconfig-yearstartday",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-08T00:00:00Z"
+    },
+    {
+      "Id": "field.DocumentNumberingConfig.YearLabel",
+      "Locale": "en",
+      "TitleKey": "Field.DocumentNumberingConfig.YearLabel",
+      "Body": "Document Numbering Config / Year Label. Which year names a numbering year that does not start on January 1: the year it ends in (the usual fiscal-year convention, so a year starting November 1, 2026 is 2027) or the year it starts in.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-documentnumberingconfig-yearlabel",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-08T00:00:00Z"
+    },
+    {
+      "Id": "field.DocumentNumberingConfig.Patterns",
+      "Locale": "en",
+      "TitleKey": "Field.DocumentNumberingConfig.Patterns",
+      "Body": "Document Numbering Config / Patterns. The department's own number pattern for work orders, invoices, bids and daily time reports, in the call number tokens (YYYY or YY, MM, DD, SEQ). A document kind with no pattern keeps its built-in numbers (WO-2026-000019, #1042). A new pattern carries on after any number it would repeat. Members see the number as issued on documents, PDFs and exports, and for daily time reports in the Responder, Unit, IC and Dispatch apps.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-documentnumberingconfig-patterns",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-08T00:00:00Z"
+    },
+    {
+      "Id": "field.DocumentNumberPattern.Kind",
+      "Locale": "en",
+      "TitleKey": "Field.DocumentNumberPattern.Kind",
+      "Body": "Document Number Pattern / Kind. The document the pattern numbers: work-order, invoice, bid or time-report, or for Records records-request, occupancy, inspection, permit, investigation or evidence.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-documentnumberpattern-kind",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-08T00:00:00Z"
+    },
+    {
+      "Id": "field.DocumentNumberPattern.Pattern",
+      "Locale": "en",
+      "TitleKey": "Field.DocumentNumberPattern.Pattern",
+      "Body": "Document Number Pattern / Pattern. Fixed text around the YYYY or YY, MM, DD and SEQ tokens, with SEQ exactly once. Every number it writes must fit the document's number column: 50 characters, or 32 for occupancy, inspection, permit, investigation and evidence numbers.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-documentnumberpattern-pattern",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-08T00:00:00Z"
+    },
+    {
+      "Id": "field.DocumentNumberPattern.SequenceWidth",
+      "Locale": "en",
+      "TitleKey": "Field.DocumentNumberPattern.SequenceWidth",
+      "Body": "Document Number Pattern / Sequence Width. Digits the sequence is padded to with leading zeros, 1 to 8; the sequence is counted as a number, so changing the width never restarts it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-documentnumberpattern-sequencewidth",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-08T00:00:00Z"
     }
   ]
 }

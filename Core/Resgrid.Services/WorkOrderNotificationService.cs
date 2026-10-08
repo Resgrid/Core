@@ -65,7 +65,7 @@ namespace Resgrid.Services
 					try { culture = CultureInfo.GetCultureInfo(profile.Language ?? "en"); if (!SupportedLocales.GetSupportedCultures().Contains(culture.TwoLetterISOLanguageName)) culture = CultureInfo.GetCultureInfo("en"); }
 					catch (CultureNotFoundException) { culture = CultureInfo.GetCultureInfo("en"); }
 					// The public work-order number identifies the item without decrypting protected content.
-					var workOrderNumber = FormattableString.Invariant($"WO-{current.NumberYear}-{current.NumberSequence:D6}");
+					var workOrderNumber = current.NumberText();
 					var handedOff = await _communication.SendNotificationAsync(user, entry.DepartmentId,
 						workOrderNumber + ": " + Strings.GetString("NotificationMessage", culture),
 						number, department, Strings.GetString("NotificationTitle", culture), profile, false, PushEventCode(current.Id));

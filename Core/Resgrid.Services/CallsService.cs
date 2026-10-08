@@ -253,9 +253,9 @@ namespace Resgrid.Services
 			return savedCall;
 		}
 
-		public Task<bool> RegenerateCallNumbersAsync(int departmentId, int year, CancellationToken cancellationToken = default(CancellationToken))
+		public Task<bool> RegenerateCallNumbersAsync(int departmentId, DateTime inYearUtc, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return _callNumberingService.RenumberCallsForYearAsync(departmentId, year, cancellationToken);
+			return _callNumberingService.RenumberCallsForYearAsync(departmentId, inYearUtc, cancellationToken);
 		}
 
 		public async Task<string> GetCurrentCallNumberAsync(DateTime utcDate, int departmentId)

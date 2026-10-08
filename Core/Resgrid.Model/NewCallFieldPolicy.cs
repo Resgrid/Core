@@ -57,6 +57,14 @@ namespace Resgrid.Model
 
 		public static bool IsKnown(string key) =>
 			!string.IsNullOrWhiteSpace(key) && All.Any(x => string.Equals(x, key, StringComparison.OrdinalIgnoreCase));
+
+		/// <summary>
+		/// False for a field that can be shown or hidden but never required. A plus code is only a way of finding the
+		/// location; it is never stored on the call, so requiring it guarantees the crews nothing, and the web form has
+		/// no plus code input at all -- a requirement there blocked every call. Require GPS coordinates instead.
+		/// </summary>
+		public static bool CanBeRequired(string key) =>
+			IsKnown(key) && !string.Equals(key, PlusCode, StringComparison.OrdinalIgnoreCase);
 	}
 
 	/// <summary>Visibility and requiredness for one built-in new-call field.</summary>
@@ -75,7 +83,7 @@ namespace Resgrid.Model
 		[ProtoMember(2)]
 		public bool Visible { get; set; } = true;
 
-		/// <summary>True blocks call creation until the field has a value.</summary>
+		/// <summary>True blocks creating (or saving an edit to) a call until the field has a value.</summary>
 		[ProtoMember(3)]
 		public bool Required { get; set; }
 	}
@@ -111,8 +119,9 @@ namespace Resgrid.Model
 		}
 
 		/// <summary>
-		/// True when the field must have a value. Hidden fields are never required, whatever the stored
-		/// rule says — otherwise a bad configuration would lock the department out of creating calls.
+		/// True when the field must have a value. Hidden fields, and fields that can never be required
+		/// (<see cref="NewCallFieldKeys.CanBeRequired"/>), are not required whatever the stored rule says —
+		/// otherwise a bad configuration would lock the department out of creating calls.
 		/// </summary>
 		public bool IsRequired(string key)
 		{
@@ -121,7 +130,7 @@ namespace Resgrid.Model
 			if (rule == null)
 				return false;
 
-			return rule.Visible && rule.Required;
+			return rule.Visible && rule.Required && NewCallFieldKeys.CanBeRequired(key);
 		}
 
 		/// <summary>True when nothing is configured, i.e. stock behaviour.</summary>
@@ -137,6 +146,14 @@ namespace Resgrid.Model
 				.Where(x => NewCallFieldKeys.IsKnown(x?.Key))
 				.GroupBy(x => x.Key, StringComparer.OrdinalIgnoreCase)
 				.Select(g => g.Last())
+				.Select(x =>
+				{
+					// A policy saved before plus code stopped being requirable keeps its visibility but loses the requirement.
+					if (x.Required && !NewCallFieldKeys.CanBeRequired(x.Key))
+						x.Required = false;
+
+					return x;
+				})
 				.Where(x => !x.Visible || x.Required)
 				.ToList();
 

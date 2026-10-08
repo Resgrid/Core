@@ -10,9 +10,9 @@
 @{
     var departmentTime = DepartmentTime.From(ViewData);
     var invoice = Model.Invoice;
-    ViewBag.Title = "Resgrid | " + localizer["Invoice"] + " #" + invoice.InvoiceNumber;
+    ViewBag.Title = "Resgrid | " + localizer["Invoice"] + " " + invoice.NumberLabel();
     ViewData["Tab"] = "Index";
-    ViewData["Title"] = localizer["Invoice"].Value + " #" + invoice.InvoiceNumber;
+    ViewData["Title"] = localizer["Invoice"].Value + " " + invoice.NumberLabel();
     var status = (InvoiceStatus)invoice.Status;
     var isDraft = status == InvoiceStatus.Draft;
     var isOpen = status == InvoiceStatus.Sent || status == InvoiceStatus.PartiallyPaid || status == InvoiceStatus.Overdue;
@@ -73,7 +73,7 @@
         <div class="@(Model.OnlinePayments == null ? "col-lg-12" : "col-lg-8")">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
-                    <h5>@localizer["Invoice"] #@invoice.InvoiceNumber &mdash; @(Model.ContactName(invoice.ContactId) ?? "—")</h5>
+                    <h5>@localizer["Invoice"] @invoice.NumberLabel() &mdash; @(Model.ContactName(invoice.ContactId) ?? "—")</h5>
                     <div class="ibox-tools">@await Html.PartialAsync("_Status", invoice.Status)</div>
                 </div>
                 <div class="ibox-content">

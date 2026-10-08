@@ -121,7 +121,7 @@ namespace Resgrid.Services
                 if (order == null)
                 {
                     order = New<WorkOrder>(new ChecklistActor { DepartmentId = departmentId, UserId = completion.CreatedBy });
-                    order.RequestId = request; order.NumberYear = Now.Year; order.NumberSequence = await _store.NextNumberAsync(departmentId, order.NumberYear);
+                    order.RequestId = request; await NumberAsync(order, departmentId);
                     order.SourceType = 1; order.SourceChecklistCompletionId = intent.CompletionId; order.SourceChecklistItemId = intent.ItemId; order.SourceOccurrenceId = intent.OccurrenceId;
                     order.Priority = intent.Priority; order.TargetUnitId = target.TargetUnitId; order.TargetGroupId = target.TargetGroupId; order.InventoryAssetId = target.InventoryAssetId;
                     order.CurrencyCode = await DepartmentCurrencyAsync(departmentId);

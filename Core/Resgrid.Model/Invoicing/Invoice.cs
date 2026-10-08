@@ -20,6 +20,9 @@ namespace Resgrid.Model.Invoicing
 		public int DepartmentId { get; set; }
 		public int InvoiceNumber { get; set; }
 
+		/// <summary>The number as issued: the department's pattern (setting 117) or the built-in plain <see cref="InvoiceNumber"/>. Show it through <see cref="DocumentNumbering.Display"/>.</summary>
+		public string DisplayNumber { get; set; }
+
 		[Required]
 		public string CustomerBillingProfileId { get; set; }
 

@@ -123,7 +123,18 @@
   <data name="NextNumberCurrent" xml:space="preserve"><value>Next number</value></data>
   <data name="NextNumberRaiseTo" xml:space="preserve"><value>Raise next to</value></data>
   <data name="NextNumberBelowCurrent" xml:space="preserve"><value>A next number can only be raised. These sequences were left unchanged because the number entered was below the one they will issue next:</value></data>
-  <data name="NextNumberPatternChanged" xml:space="preserve"><value>The number pattern or a record type prefix changed, so the next numbers entered were not applied. Review the new sequences and save again.</value></data>
+  <data name="NextNumberPatternChanged" xml:space="preserve"><value>The number pattern, a record type prefix or the numbering year start changed, so the next numbers entered were not applied. Review the new sequences and save again.</value></data>
+  <data name="NumberingYearStart" xml:space="preserve"><value>Numbering year starts</value></data>
+  <data name="NumberingYearStartDay" xml:space="preserve"><value>Day of the month</value></data>
+  <data name="NumberingYearLabelEndYear" xml:space="preserve"><value>Named by the year it ends in</value></data>
+  <data name="NumberingYearLabelStartYear" xml:space="preserve"><value>Named by the year it starts in</value></data>
+  <data name="NumberingYearStartHelp" xml:space="preserve"><value>For records numbered by a fiscal year, your own or a county's or state's you report to, pick the day it starts. Numbers that include the year start again at 1 that day, and {YYYY} and {YY} write the fiscal year's name. Most fiscal years are named by the year they end in, so one starting November 1, 2026 is 2027. January 1 is the calendar year. Call numbers have their own year start on the Call Import Settings page. Records request numbers and the numbers of inspections, permits, occupancies, investigations and evidence follow the same year.</value></data>
+  <data name="NextNumbersHeaderPeriod" xml:space="preserve"><value>Next numbers for {0} ({1} to {2})</value></data>
+  <data name="NumberingYearStartInvalid" xml:space="preserve"><value>The record numbering was not saved. The numbering year has to start on a day every year has, so February 29 cannot be used.</value></data>
+  <data name="OtherNumbersHeader" xml:space="preserve"><value>Other record numbers</value></data>
+  <data name="OtherNumbersIntro" xml:space="preserve"><value>Records request, occupancy, inspection, permit, investigation and evidence numbers. Leave a pattern blank to keep the built-in numbers shown. Patterns use {YYYY} or {YY}, {MM}, {DD} and {SEQ} as call numbers do, follow the numbering year start above, and fit 32 characters (50 for records requests).</value></data>
+  <data name="OtherNumberBuiltIn" xml:space="preserve"><value>Built-in, e.g.</value></data>
+  <data name="OtherNumbersPatternsRejected" xml:space="preserve"><value>These patterns were not saved because they are not valid or could write a number too long for the record; those numbers kept what they had:</value></data>
   <data name="NextNumberConfirm" xml:space="preserve"><value>A raised next number cannot be lowered again. Save these changes?</value></data>
   <data name="NumberingAllTypes" xml:space="preserve"><value>All record types</value></data>
   <data name="NumberingNoGroup" xml:space="preserve"><value>No station/group</value></data>

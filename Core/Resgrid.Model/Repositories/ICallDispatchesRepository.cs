@@ -27,10 +27,12 @@ namespace Resgrid.Model.Repositories
 		Task<IEnumerable<CallDispatch>> GetCallDispatchesByCallIdAsync(int callId);
 
 		/// <summary>
-		/// Gets the ids of the department's open (active, not deleted) calls the user is dispatched to, directly or through a
-		/// dispatched group they belong to or a dispatched role they hold.
+		/// Gets the user's dispatches to the department's open (active, not deleted) calls: direct, through a dispatched group
+		/// they belong to or a dispatched role they hold (<see cref="CallDispatchWindow.Paged"/>), one row per dispatch, so a call
+		/// can appear more than once. <see cref="CallDispatchWindow.DispatchedOn"/> is the latest redispatch when there was one;
+		/// the call times are not read. A scheduled call only counts once it has gone out or its dispatch time has passed.
 		/// </summary>
-		Task<IEnumerable<int>> GetOpenCallIdsForUserAsync(int departmentId, string userId);
+		Task<IEnumerable<CallDispatchWindow>> GetOpenCallDispatchesForUserAsync(int departmentId, string userId);
 
 		/// <summary>
 		/// Gets the personnel dispatches of every department call logged in the range (UTC, inclusive).

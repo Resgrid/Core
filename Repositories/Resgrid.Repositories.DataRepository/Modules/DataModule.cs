@@ -325,6 +325,7 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<CallLocationKeysRepository>().As<ICallLocationKeysRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<CallNumberSequencesRepository>().As<ICallNumberSequencesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentApiKeysRepository>().As<IDepartmentApiKeysRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<SystemOperationRequestsRepository>().As<ISystemOperationRequestsRepository>().InstancePerLifetimeScope();
 
 			// CheckIn Repositories
 			builder.RegisterType<CheckInTimerConfigRepository>().As<ICheckInTimerConfigRepository>().InstancePerLifetimeScope();

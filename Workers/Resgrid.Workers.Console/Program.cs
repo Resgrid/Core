@@ -387,6 +387,14 @@ namespace Resgrid.Workers.Console
 					Cron.Daily(2, 0),
 					stoppingToken);
 
+				// Every minute: runs the BackOffice -> System Operations requests (matrix rebuilds, cache clears, daily
+				// jobs on demand) and queues a matrix rebuild on its own when Redis comes back without its data.
+				_logger.Log(LogLevel.Information, "Scheduling System Operations");
+				await Client.ScheduleAsync("System Operations",
+					new Commands.SystemOperationsCommand(76),
+					Cron.MinuteIntervals(1),
+					stoppingToken);
+
 				_logger.Log(LogLevel.Information, "Scheduling GDPR Data Export");
 				await Client.ScheduleAsync("GDPR Data Export",
 					new Commands.GdprExportCommand(16),

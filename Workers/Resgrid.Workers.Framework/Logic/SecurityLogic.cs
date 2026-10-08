@@ -1,5 +1,6 @@
 ﻿using Resgrid.Model.Services;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
 using Resgrid.Model;
@@ -647,14 +648,44 @@ namespace Resgrid.Workers.Framework.Logic
 		/// anything failed, so a caller can tell a clean sweep from a partial one; without that the
 		/// sweep looks successful no matter how many matrices were left stale.
 		/// </summary>
-		public async Task<Tuple<bool, string>> UpdatedCachedSecurityForAllDepartments()
+		/// <param name="progress">Optional: called after each department with (departments done, departments total).</param>
+		/// <param name="cancellationToken">Stops the sweep between departments.</param>
+		public async Task<Tuple<bool, string>> UpdatedCachedSecurityForAllDepartments(Func<int, int, Task> progress = null,
+			CancellationToken cancellationToken = default)
 		{
 			List<Department> departments;
 			using (var scope = Bootstrapper.GetKernel().BeginLifetimeScope())
 				departments = await scope.Resolve<IDepartmentsService>().GetAllAsync();
 			var failures = new List<string>();
+			var done = 0;
 
-			async Task rebuild(int departmentId, SecurityCacheTypes type)
+			foreach (var department in departments)
+			{
+				cancellationToken.ThrowIfCancellationRequested();
+
+				await RebuildDepartmentAsync(department.DepartmentId, failures);
+
+				done++;
+				if (progress != null)
+					await progress(done, departments.Count);
+			}
+
+			return Summarize(failures);
+		}
+
+		/// <summary>The four matrices of one department, for an on-demand rebuild (BackOffice -> System Operations).</summary>
+		public async Task<Tuple<bool, string>> UpdateCachedSecurityForDepartment(int departmentId)
+		{
+			var failures = new List<string>();
+
+			await RebuildDepartmentAsync(departmentId, failures);
+
+			return Summarize(failures);
+		}
+
+		private async Task RebuildDepartmentAsync(int departmentId, List<string> failures)
+		{
+			async Task rebuild(SecurityCacheTypes type)
 			{
 				var processed = await Process(new SecurityQueueItem() { DepartmentId = departmentId, Type = type });
 
@@ -662,14 +693,14 @@ namespace Resgrid.Workers.Framework.Logic
 					failures.Add($"{departmentId}/{type}: {processed?.Item2}".Trim());
 			}
 
-			foreach (var department in departments)
-			{
-				await rebuild(department.DepartmentId, SecurityCacheTypes.WhoCanViewUnits);
-				await rebuild(department.DepartmentId, SecurityCacheTypes.WhoCanViewUnitLocations);
-				await rebuild(department.DepartmentId, SecurityCacheTypes.WhoCanViewPersonnel);
-				await rebuild(department.DepartmentId, SecurityCacheTypes.WhoCanViewPersonnelLocations);
-			}
+			await rebuild(SecurityCacheTypes.WhoCanViewUnits);
+			await rebuild(SecurityCacheTypes.WhoCanViewUnitLocations);
+			await rebuild(SecurityCacheTypes.WhoCanViewPersonnel);
+			await rebuild(SecurityCacheTypes.WhoCanViewPersonnelLocations);
+		}
 
+		private static Tuple<bool, string> Summarize(List<string> failures)
+		{
 			if (!failures.Any())
 				return new Tuple<bool, string>(true, String.Empty);
 

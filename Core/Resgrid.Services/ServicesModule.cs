@@ -204,6 +204,7 @@ namespace Resgrid.Services
 			builder.RegisterType<PendingCallsService>().As<IPendingCallsService>().InstancePerLifetimeScope();
 			builder.RegisterType<CallClosureService>().As<ICallClosureService>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentApiKeysService>().As<IDepartmentApiKeysService>().InstancePerLifetimeScope();
+			builder.RegisterType<SystemOperationsService>().As<ISystemOperationsService>().InstancePerLifetimeScope();
 			builder.RegisterType<CallStatusAttributionService>().As<ICallStatusAttributionService>().InstancePerLifetimeScope();
 			builder.RegisterType<PersonnelRolesService>().As<IPersonnelRolesService>().InstancePerLifetimeScope();
 			builder.RegisterType<ScheduledTasksService>().As<IScheduledTasksService>().InstancePerLifetimeScope();

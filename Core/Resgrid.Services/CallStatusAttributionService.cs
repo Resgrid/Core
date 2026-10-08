@@ -150,6 +150,51 @@ namespace Resgrid.Services
 				Logging.LogException(ex, $"Call attribution failed for a status of user {actionLog.UserId}; it is saved without a destination.");
 			}
 		}
+
+		public async Task<Dictionary<int, int>> GetWorkingCallIdsForUnitsAsync(int departmentId, IReadOnlyCollection<UnitState> latestStates)
+		{
+			var working = new Dictionary<int, int>();
+			var states = latestStates?.Where(x => x != null && x.UnitId > 0).GroupBy(x => x.UnitId).Select(g => g.First()).ToList() ?? new List<UnitState>();
+
+			if (states.Count == 0)
+				return working;
+
+			var dispatchedByUnit = ((await _callDispatchUnitRepository.GetOpenCallUnitDispatchesForDepartmentAsync(departmentId)) ?? Enumerable.Empty<CallDispatchUnit>())
+				.Where(x => x != null)
+				.GroupBy(x => x.UnitId)
+				.ToDictionary(g => g.Key, g => g.Select(x => x.CallId).Distinct().ToList());
+
+			var openCallIds = new HashSet<int>(dispatchedByUnit.Values.SelectMany(x => x));
+
+			// A status can point at an open call the unit was never dispatched to (a unit that took the call itself).
+			foreach (var linkedCallId in states
+				.Where(x => x.DestinationType == (int)DestinationEntityTypes.Call && x.DestinationId.HasValue && x.DestinationId.Value > 0)
+				.Select(x => x.DestinationId.Value)
+				.Where(x => !openCallIds.Contains(x))
+				.Distinct())
+			{
+				if (await IsOpenCallAsync(departmentId, linkedCallId))
+					openCallIds.Add(linkedCallId);
+			}
+
+			if (openCallIds.Count == 0)
+				return working;
+
+			var baseTypes = await GetBaseTypesAsync(departmentId, CustomStateTypes.Unit);
+
+			foreach (var state in states)
+			{
+				dispatchedByUnit.TryGetValue(state.UnitId, out var dispatched);
+
+				var callId = UnitCallInvolvement.ResolveWorkingCallId(state, state.UnitStateId > 0 && CallStatusLinkage.IsClearingUnitState(state.State, baseTypes),
+					openCallIds, dispatched);
+
+				if (callId.HasValue)
+					working[state.UnitId] = callId.Value;
+			}
+
+			return working;
+		}
 		#endregion Write-time attribution
 
 		#region Read-time inference

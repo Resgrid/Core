@@ -318,6 +318,9 @@
   <data name="UnitCallReleaseStatusLabel" xml:space="preserve">
     <value>Estado de la unidad al liberar una llamada</value>
   </data>
+  <data name="UnitCallReleaseStatusHelp" xml:space="preserve">
+    <value>Se aplica a las unidades que siguen trabajando en una llamada cuando se cierra o se las retira de ella. Una unidad que ya está de nuevo en servicio, fuera de servicio (no disponible, en mantenimiento o en descanso) o trabajando en otra llamada conserva su estado. Los estados personalizados se interpretan por su tipo base.</value>
+  </data>
   <data name="UnitDefaultStatusesHelp" xml:space="preserve">
     <value>Estos estados de unidad predeterminados solo usan los tipos de estado de unidad integrados. Use la tabla de anulaciones por tipo de unidad que aparece abajo cuando un tipo de unidad necesite uno de sus propios estados personalizados.</value>
   </data>
@@ -1346,6 +1349,12 @@
   </data>
   <data name="StatusHoldToConfirmHelp" xml:space="preserve">
     <value>En las aplicaciones Unit y Responder, las tripulaciones mantienen pulsado un botón de estado durante dos segundos para establecerlo, en lugar de tocarlo y luego pulsar Siguiente o Enviar. Evita toques accidentales y confirmaciones olvidadas. Un estado que necesita una nota o elegir un destino sigue abriendo su siguiente paso.</value>
+  </data>
+  <data name="CloseCallWhenUnitsClearLabel" xml:space="preserve">
+    <value>Cerrar la llamada cuando se libere la última unidad</value>
+  </data>
+  <data name="CloseCallWhenUnitsClearHelp" xml:space="preserve">
+    <value>Una llamada activa se cierra sola cuando la última unidad despachada a ella informa que está de nuevo en servicio o fuera de servicio (un estado cuyo tipo base es Disponible, En cuartel, Liberada, No disponible o Mantenimiento). Todas las demás unidades despachadas también deben haber informado que terminaron desde su despacho. Solo cuentan las unidades: una llamada sin unidades despachadas, una llamada con un mando de incidente activo o una unidad que aún regresa o transporta mantiene la llamada abierta para el despachador.</value>
   </data>
   <data name="CallNumberingHeader" xml:space="preserve">
     <value>Numeración de llamadas</value>

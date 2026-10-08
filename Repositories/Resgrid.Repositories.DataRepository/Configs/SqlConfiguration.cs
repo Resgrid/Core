@@ -352,6 +352,7 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectAllCallGroupDispsByCallIdQuery { get; set; }
 		public string SelectAllCallUnitDispsByCallIdQuery { get; set; }
 		public string SelectOpenCallIdsForUnitQuery { get; set; }
+		public string SelectOpenCallUnitDispatchesForDepartmentQuery { get; set; }
 		public string SelectOpenCallIdsForUserQuery { get; set; }
 		public string SelectCallUnitDispatchesForCallsInRangeQuery { get; set; }
 		public string SelectCallDispatchesForCallsInRangeQuery { get; set; }

@@ -6741,6 +6741,12 @@
   <data xml:space="preserve" name="SettingHelp.StatusHoldToConfirm">
     <value>يعيّن تطبيقا Unit وResponder الحالة بضغطة مطوّلة لمدة ثانيتين بدلاً من نقرة يليها التالي أو إرسال. الحالات التي تتطلب ملاحظة أو وجهة لا تزال تفتح تلك الخطوة.</value>
   </data>
+  <data xml:space="preserve" name="Setting.CloseCallWhenUnitsClear">
+    <value>إغلاق البلاغ عند تحرر آخر وحدة</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.CloseCallWhenUnitsClear">
+    <value>يُغلق البلاغ النشط تلقائياً عندما تُبلغ آخر وحدة أُرسلت إليه أنها عادت إلى الخدمة أو أصبحت خارج الخدمة. تُبقيه مفتوحاً الوحداتُ التي لا تزال تعمل، والبلاغ الذي لم تُرسل إليه أي وحدة، والبلاغ الخاضع لقيادة حادث نشطة.</value>
+  </data>
   <data name="Setting.CallNumberingConfig" xml:space="preserve">
     <value>إعداد ترقيم البلاغات</value>
   </data>

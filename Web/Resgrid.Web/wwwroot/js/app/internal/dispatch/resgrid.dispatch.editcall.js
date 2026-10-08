@@ -80,10 +80,12 @@ var resgrid;
 
                 $("#CallPriority").change(function () {
                     checkForProtocols();
+                    scheduleRecommendation();
                 });
 
                 $("#Call_Type").change(function () {
                     checkForProtocols();
+                    scheduleRecommendation();
                 });
 
                 $("#selectLinkedCall").select2({
@@ -315,6 +317,7 @@ var resgrid;
                 });
                 personnelTable.on('draw', function() {
                     $('#personnelGrid thead th:first').html('<label><input type="checkbox" id="checkAllPersonnel"/></label>');
+                    applyRecommendationSelections();
                     initialDrawCount++;
                     if (initialDrawCount >= totalTables) { resgrid.dispatch.editcall.updateDispatchedEntities(); }
                 });
@@ -347,6 +350,7 @@ var resgrid;
                 });
                 unitsTable.on('draw', function() {
                     $('#unitsGrid thead th:first').html('<label><input type="checkbox" id="checkAllUnits"/></label>');
+                    applyRecommendationSelections();
                     initialDrawCount++;
                     if (initialDrawCount >= totalTables) { resgrid.dispatch.editcall.updateDispatchedEntities(); }
                 });
@@ -377,8 +381,210 @@ var resgrid;
                     else if (targetTab === '#rolesTab') { rolesTable.columns.adjust(); }
                 });
 
+                // A recommended resource the dispatcher unticks stays unticked across grid redraws.
+                $('#unitsGrid, #personnelGrid').on('change', 'tbody :checkbox', function () {
+                    if (this.checked) {
+                        return;
+                    }
+
+                    var name = this.name || '';
+                    if (name.indexOf('dispatchUnit_') === 0) {
+                        appliedUnitIds = appliedUnitIds.filter(function (id) { return id !== name.substring('dispatchUnit_'.length); });
+                    } else if (name.indexOf('dispatchUser_') === 0) {
+                        appliedUserIds = appliedUserIds.filter(function (id) { return id !== name.substring('dispatchUser_'.length); });
+                    }
+                });
+
+                $('#runCardPanel').on('click', '#runCardSelectRecommended', function (evt) {
+                    evt.preventDefault();
+                    selectRecommended();
+                });
+                $('#runCardPanel').on('click', '#runCardRefresh', function (evt) {
+                    evt.preventDefault();
+                    checkForRecommendation();
+                });
+
                 checkForProtocols();
+                scheduleRecommendation();
             });
+
+            // ── Run card recommendation for adding resources ──
+            // What the call's run card still needs at its current alarm level, after the units and people already on it.
+            // Advisory only: nothing is ticked until the dispatcher presses Select, so saving an unrelated edit never
+            // dispatches extra resources. The ids it ticked are kept so a grid redraw re-applies them, and a sequence number
+            // lets a slow earlier response be discarded instead of overwriting a newer one.
+            var recommendationSequence = 0;
+            var recommendationTimer = null;
+            var currentRecommendation = null;
+            var appliedUnitIds = [];
+            var appliedUserIds = [];
+
+            function prop(obj, name) {
+                if (!obj) return undefined;
+                if (obj[name] !== undefined) return obj[name];
+                var pascal = name.charAt(0).toUpperCase() + name.slice(1);
+                return obj[pascal];
+            }
+
+            function escapeText(text) {
+                return $('<span>').text(text === null || text === undefined ? '' : String(text)).html();
+            }
+
+            function recommendedIds(result) {
+                return {
+                    units: (prop(result, 'units') || []).map(function (u) { return String(prop(u, 'unitId')); }),
+                    users: (prop(result, 'personnel') || []).map(function (p) { return String(prop(p, 'userId')); }).filter(function (id) { return id && id !== 'undefined'; })
+                };
+            }
+
+            function applyRecommendationSelections() {
+                appliedUnitIds.forEach(function (id) {
+                    $('input[name="dispatchUnit_' + id + '"]').prop('checked', true);
+                });
+                appliedUserIds.forEach(function (id) {
+                    $('input[name="dispatchUser_' + id + '"]').prop('checked', true);
+                });
+            }
+            editcall.applyRecommendationSelections = applyRecommendationSelections;
+
+            function isRecommendationApplied(result) {
+                var ids = recommendedIds(result);
+                return (ids.units.length + ids.users.length) > 0 &&
+                    ids.units.every(function (id) { return appliedUnitIds.indexOf(id) >= 0; }) &&
+                    ids.users.every(function (id) { return appliedUserIds.indexOf(id) >= 0; });
+            }
+
+            function selectRecommended() {
+                if (!currentRecommendation) {
+                    return;
+                }
+
+                var ids = recommendedIds(currentRecommendation);
+                ids.units.forEach(function (id) { if (appliedUnitIds.indexOf(id) < 0) appliedUnitIds.push(id); });
+                ids.users.forEach(function (id) { if (appliedUserIds.indexOf(id) < 0) appliedUserIds.push(id); });
+
+                applyRecommendationSelections();
+                renderRecommendation(currentRecommendation);
+            }
+            editcall.selectRecommended = selectRecommended;
+
+            function renderRecommendation(result) {
+                var units = prop(result, 'units') || [];
+                var personnel = prop(result, 'personnel') || [];
+                var shortfalls = prop(result, 'shortfalls') || [];
+                var notes = prop(result, 'notes') || [];
+                var level = prop(result, 'alarmLevel') || 1;
+
+                var html = '<strong>' + escapeText(prop(result, 'matchedRunCardName')) + '</strong>';
+                if (level > 1) {
+                    html += ' <span class="label label-warning">' + escapeText(formatText(getText('runCardAlarmLevel', 'Alarm {0}'), level)) + '</span>';
+                }
+
+                if (!units.length && !personnel.length && !shortfalls.length) {
+                    html += '<div>' + escapeText(formatText(getText('runCardCovered', 'The resources on this call already cover the run card (alarm {0}).'), level)) + '</div>';
+                }
+
+                if (units.length) {
+                    html += '<div><b>' + escapeText(getText('units', 'Units')) + ':</b> ' + units.map(function (u) {
+                        var text = prop(u, 'unitName') || ('#' + prop(u, 'unitId'));
+                        var distance = prop(u, 'distanceMeters');
+                        if (distance) {
+                            text += ' (' + (distance / 1000).toFixed(1) + ' km)';
+                        }
+                        return escapeText(text);
+                    }).join(', ') + '</div>';
+                }
+                if (personnel.length) {
+                    html += '<div><b>' + escapeText(getText('personnel', 'Personnel')) + ':</b> ' + personnel.map(function (p) {
+                        return escapeText(prop(p, 'name') || prop(p, 'userId'));
+                    }).join(', ') + '</div>';
+                }
+                if (shortfalls.length) {
+                    html += '<div class="text-danger"><b>' + escapeText(getText('runCardShortfalls', 'Could not fill')) + ':</b> ' + shortfalls.map(function (sf) {
+                        return escapeText((prop(sf, 'typeOrRoleName') || ('#' + prop(sf, 'typeOrRoleId'))) + ': ' + prop(sf, 'filledCount') + '/' + prop(sf, 'requiredCount'));
+                    }).join(', ') + '</div>';
+                }
+                if (notes.length) {
+                    html += '<div class="text-muted" style="font-size: 11px;">' + notes.map(function (n) { return escapeText(n); }).join('<br/>') + '</div>';
+                }
+
+                html += '<div style="margin-top: 6px;">';
+                if (units.length || personnel.length) {
+                    if (isRecommendationApplied(result)) {
+                        html += '<span class="text-success"><i class="fa fa-check"></i> ' + escapeText(getText('runCardSelected', 'Selected: save the call to dispatch them')) + '</span> ';
+                    } else {
+                        html += '<button type="button" class="btn btn-xs btn-primary" id="runCardSelectRecommended">' + escapeText(getText('runCardSelectRecommended', 'Select recommended')) + '</button> ';
+                    }
+                }
+                html += '<a href="#" id="runCardRefresh"><i class="fa fa-refresh"></i> ' + escapeText(getText('runCardRefresh', 'Refresh')) + '</a>';
+                html += '</div>';
+
+                $('#runCardPanel').html(html);
+            }
+
+            // Debounced: a map click sets the marker before it writes the coordinate fields.
+            function scheduleRecommendation() {
+                if (!$('#runCardPanel').length) {
+                    return;
+                }
+
+                if (recommendationTimer) {
+                    clearTimeout(recommendationTimer);
+                }
+                recommendationTimer = setTimeout(checkForRecommendation, 400);
+            }
+            editcall.scheduleRecommendation = scheduleRecommendation;
+
+            function checkForRecommendation() {
+                var panel = $('#runCardPanel');
+                if (!panel.length) {
+                    return;
+                }
+
+                var requestSequence = ++recommendationSequence;
+                if (!currentRecommendation) {
+                    panel.html(escapeText(getText('runCardChecking', 'Checking run cards...')));
+                }
+
+                $.ajax({
+                    url: resgrid.absoluteBaseUrl + '/User/Dispatch/GetCallDispatchRecommendation',
+                    data: {
+                        callId: callId,
+                        priority: $('#CallPriority').val(),
+                        type: $('#Call_Type').val(),
+                        latitude: $('#Latitude').val() || null,
+                        longitude: $('#Longitude').val() || null
+                    },
+                    type: 'GET'
+                }).done(function (response) {
+                    if (requestSequence !== recommendationSequence) {
+                        return;
+                    }
+
+                    var result = prop(response, 'result');
+                    if (!response || !prop(response, 'success') || !result || !prop(result, 'matchedRunCardId')) {
+                        // No run card applies to this call: stay out of the way.
+                        currentRecommendation = null;
+                        $('#runCardPanelRow').hide();
+                        return;
+                    }
+
+                    currentRecommendation = result;
+                    $('#runCardPanelRow').show();
+                    renderRecommendation(result);
+                }).fail(function () {
+                    if (requestSequence !== recommendationSequence) {
+                        return;
+                    }
+
+                    // A failed lookup must not read as "no run card applies"; the manual selection still works.
+                    currentRecommendation = null;
+                    $('#runCardPanelRow').show();
+                    panel.html('<span class="text-warning">' + escapeText(getText('runCardLookupFailed', "Couldn't check run cards. You can still select resources by hand.")) +
+                        '</span> <a href="#" id="runCardRefresh"><i class="fa fa-refresh"></i> ' + escapeText(getText('runCardRefresh', 'Refresh')) + '</a>');
+                });
+            }
+            editcall.checkForRecommendation = checkForRecommendation;
 
             function getAuthToken() {
                 return '';
@@ -415,8 +621,12 @@ var resgrid;
                         $("#Longitude").val(position.lng);
 
                         resgrid.dispatch.editcall.geocodeCoordinates(position.lat, position.lng);
+                        scheduleRecommendation();
                     });
                 }
+
+                // Callers write #Latitude/#Longitude with .val(), which raises no change event.
+                scheduleRecommendation();
             }
             editcall.setMarkerLocation = setMarkerLocation;
             function geocodeCoordinates(lat, lng) {

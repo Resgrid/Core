@@ -443,6 +443,36 @@
   <data name="UnitsDispatchLabel" xml:space="preserve">
     <value>Одиниці</value>
   </data>
+  <data name="RunCardSuggestionsLabel" xml:space="preserve">
+    <value>План реагування</value>
+  </data>
+  <data name="RunCardSuggestionsHelp" xml:space="preserve">
+    <value>Чого план реагування виклику ще потребує на поточному рівні тривоги, з урахуванням одиниць і людей, які вже на виклику. Нічого не додається, доки ви не виберете це й не збережете.</value>
+  </data>
+  <data name="RunCardChecking" xml:space="preserve">
+    <value>Перевірка планів реагування...</value>
+  </data>
+  <data name="RunCardSelectRecommended" xml:space="preserve">
+    <value>Вибрати рекомендовані</value>
+  </data>
+  <data name="RunCardSelected" xml:space="preserve">
+    <value>Вибрано: збережіть виклик, щоб направити їх</value>
+  </data>
+  <data name="RunCardCovered" xml:space="preserve">
+    <value>Ресурси цього виклику вже покривають план реагування (тривога {0}).</value>
+  </data>
+  <data name="RunCardShortfalls" xml:space="preserve">
+    <value>Не вдалося заповнити</value>
+  </data>
+  <data name="RunCardAlarmLevel" xml:space="preserve">
+    <value>Тривога {0}</value>
+  </data>
+  <data name="RunCardLookupFailed" xml:space="preserve">
+    <value>Не вдалося перевірити плани реагування. Ви все ще можете вибрати ресурси вручну.</value>
+  </data>
+  <data name="RunCardRefresh" xml:space="preserve">
+    <value>Оновити</value>
+  </data>
   <data name="UpdateCallHeader" xml:space="preserve">
     <value>Update Call</value>
   </data>

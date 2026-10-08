@@ -501,6 +501,36 @@
   <data name="UnitsDispatchLabel" xml:space="preserve">
     <value>Μονάδες</value>
   </data>
+  <data name="RunCardSuggestionsLabel" xml:space="preserve">
+    <value>Σχέδιο απόκρισης</value>
+  </data>
+  <data name="RunCardSuggestionsHelp" xml:space="preserve">
+    <value>Τι χρειάζεται ακόμη το σχέδιο απόκρισης της κλήσης στο τρέχον επίπεδο συναγερμού, μετά τις μονάδες και τα άτομα που βρίσκονται ήδη στην κλήση. Τίποτα δεν προστίθεται μέχρι να το επιλέξετε και να αποθηκεύσετε.</value>
+  </data>
+  <data name="RunCardChecking" xml:space="preserve">
+    <value>Έλεγχος σχεδίων απόκρισης...</value>
+  </data>
+  <data name="RunCardSelectRecommended" xml:space="preserve">
+    <value>Επιλογή προτεινόμενων</value>
+  </data>
+  <data name="RunCardSelected" xml:space="preserve">
+    <value>Επιλέχθηκαν: αποθηκεύστε την κλήση για να τους διαθέσετε</value>
+  </data>
+  <data name="RunCardCovered" xml:space="preserve">
+    <value>Οι πόροι αυτής της κλήσης καλύπτουν ήδη το σχέδιο απόκρισης (συναγερμός {0}).</value>
+  </data>
+  <data name="RunCardShortfalls" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η κάλυψη</value>
+  </data>
+  <data name="RunCardAlarmLevel" xml:space="preserve">
+    <value>Συναγερμός {0}</value>
+  </data>
+  <data name="RunCardLookupFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατός ο έλεγχος των σχεδίων απόκρισης. Μπορείτε ακόμη να επιλέξετε πόρους χειροκίνητα.</value>
+  </data>
+  <data name="RunCardRefresh" xml:space="preserve">
+    <value>Ανανέωση</value>
+  </data>
   <data name="UpdateCallHeader" xml:space="preserve">
     <value>Ενημέρωση Κλήσης</value>
   </data>

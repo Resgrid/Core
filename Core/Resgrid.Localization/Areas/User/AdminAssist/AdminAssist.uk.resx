@@ -6741,6 +6741,12 @@
   <data xml:space="preserve" name="SettingHelp.StatusHoldToConfirm">
     <value>Застосунки Unit і Responder встановлюють статус утриманням протягом двох секунд замість натискання з подальшим «Далі» чи «Надіслати». Статуси, що потребують примітки чи пункту призначення, як і раніше відкривають цей крок.</value>
   </data>
+  <data xml:space="preserve" name="Setting.CloseCallWhenUnitsClear">
+    <value>Закривати виклик, коли звільняється остання одиниця</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.CloseCallWhenUnitsClear">
+    <value>Активний виклик закривається сам, коли його остання направлена одиниця повідомляє, що повернулася до служби або виведена з експлуатації. Одиниці, що ще працюють, виклик без направленої одиниці та виклик з активним командуванням інцидентом залишають його відкритим.</value>
+  </data>
   <data name="Setting.CallNumberingConfig" xml:space="preserve">
     <value>Конфігурація нумерації викликів</value>
   </data>

@@ -6741,6 +6741,12 @@
   <data xml:space="preserve" name="SettingHelp.StatusHoldToConfirm">
     <value>Οι εφαρμογές Unit και Responder ορίζουν μια κατάσταση με παρατεταμένο πάτημα δύο δευτερολέπτων αντί για πάτημα και μετά Επόμενο ή Υποβολή. Οι καταστάσεις που χρειάζονται σημείωση ή προορισμό ανοίγουν ακόμη αυτό το βήμα.</value>
   </data>
+  <data xml:space="preserve" name="Setting.CloseCallWhenUnitsClear">
+    <value>Κλείσιμο κλήσης όταν ελευθερωθεί η τελευταία μονάδα</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.CloseCallWhenUnitsClear">
+    <value>Μια ενεργή κλήση κλείνει από μόνη της όταν η τελευταία μονάδα που διατέθηκε σε αυτήν αναφέρει ότι είναι ξανά σε υπηρεσία ή εκτός υπηρεσίας. Μονάδες που ακόμη εργάζονται, μια κλήση χωρίς διατεθειμένη μονάδα και μια κλήση με ενεργή διοίκηση συμβάντος την κρατούν ανοιχτή.</value>
+  </data>
   <data name="Setting.CallNumberingConfig" xml:space="preserve">
     <value>Ρύθμιση αρίθμησης κλήσεων</value>
   </data>

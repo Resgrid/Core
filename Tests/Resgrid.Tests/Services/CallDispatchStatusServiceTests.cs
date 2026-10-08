@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 using Resgrid.Services;
 
@@ -20,6 +21,7 @@ namespace Resgrid.Tests.Services
 		private Mock<IActionLogsService> _actionLogsService;
 		private Mock<IUnitsService> _unitsService;
 		private Mock<ICustomStateService> _customStateService;
+		private Mock<ICallsRepository> _callsRepository;
 		private CallDispatchStatusService _service;
 
 		[SetUp]
@@ -31,6 +33,7 @@ namespace Resgrid.Tests.Services
 			_actionLogsService = new Mock<IActionLogsService>();
 			_unitsService = new Mock<IUnitsService>();
 			_customStateService = new Mock<ICustomStateService>();
+			_callsRepository = new Mock<ICallsRepository>();
 
 			_departmentsService
 				.Setup(x => x.GetDepartmentByIdAsync(It.IsAny<int>(), It.IsAny<bool>()))
@@ -48,7 +51,8 @@ namespace Resgrid.Tests.Services
 				_shiftsService.Object,
 				_actionLogsService.Object,
 				_unitsService.Object,
-				_customStateService.Object);
+				_customStateService.Object,
+				_callsRepository.Object);
 		}
 
 		[Test]
@@ -225,6 +229,77 @@ namespace Resgrid.Tests.Services
 				7,
 				It.IsAny<CancellationToken>(),
 				true), Times.Once);
+		}
+
+		// Belgian EMS, 2026-10-07: closing a call put units that had been taken out of service back to Radio Available.
+		[TestCase((int)UnitStateTypes.OutOfService)]
+		[TestCase((int)UnitStateTypes.Unavailable)]
+		[TestCase((int)UnitStateTypes.Delayed)]
+		[TestCase((int)UnitStateTypes.Available)]
+		public async Task ApplyReleaseStatusesAsync_leaves_units_back_in_service_or_out_of_service_alone(int currentState)
+		{
+			_departmentSettingsService.Setup(x => x.GetUnitCallReleaseStatusToSetAsync(7)).ReturnsAsync((int)UnitStateTypes.Available);
+			_unitsService.Setup(x => x.GetLastUnitStateByUnitIdAsync(11))
+				.ReturnsAsync(new UnitState { UnitStateId = 900, UnitId = 11, State = currentState, DestinationId = 40, DestinationType = (int)DestinationEntityTypes.Call });
+
+			await _service.ApplyReleaseStatusesAsync(new Call { CallId = 40, DepartmentId = 7 }, null, new[] { 11 });
+
+			_unitsService.Verify(x => x.SetUnitStateAsync(It.IsAny<UnitState>(), It.IsAny<int>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never);
+		}
+
+		[Test]
+		public async Task ApplyReleaseStatusesAsync_reads_custom_statuses_by_base_type()
+		{
+			// Custom "Out of Service" (base type Maintenance) stays; custom "On Scene" (base type On Scene) is released.
+			_departmentSettingsService.Setup(x => x.GetUnitCallReleaseStatusToSetAsync(7)).ReturnsAsync((int)UnitStateTypes.Available);
+			_customStateService.Setup(x => x.GetAllCustomStatesForDepartmentAsync(7)).ReturnsAsync(new List<CustomState>
+			{
+				new CustomState
+				{
+					CustomStateId = 3, DepartmentId = 7, Type = (int)CustomStateTypes.Unit,
+					Details = new List<CustomStateDetail>
+					{
+						new CustomStateDetail { CustomStateDetailId = 501, CustomStateId = 3, ButtonText = "Out of Service", BaseType = (int)ActionBaseTypes.Maintenance },
+						new CustomStateDetail { CustomStateDetailId = 502, CustomStateId = 3, ButtonText = "On Scene", BaseType = (int)ActionBaseTypes.OnScene }
+					}
+				}
+			});
+			_unitsService.Setup(x => x.GetLastUnitStateByUnitIdAsync(11)).ReturnsAsync(new UnitState { UnitStateId = 1, UnitId = 11, State = 501 });
+			_unitsService.Setup(x => x.GetLastUnitStateByUnitIdAsync(12)).ReturnsAsync(new UnitState { UnitStateId = 2, UnitId = 12, State = 502 });
+
+			await _service.ApplyReleaseStatusesAsync(new Call { CallId = 40, DepartmentId = 7 }, null, new[] { 11, 12 });
+
+			_unitsService.Verify(x => x.SetUnitStateAsync(It.Is<UnitState>(u => u.UnitId == 11), It.IsAny<int>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never);
+			_unitsService.Verify(x => x.SetUnitStateAsync(It.Is<UnitState>(u => u.UnitId == 12 && u.State == (int)UnitStateTypes.Available), 7, It.IsAny<CancellationToken>(), true), Times.Once);
+		}
+
+		[Test]
+		public async Task ApplyReleaseStatusesAsync_leaves_a_unit_working_another_open_call_alone()
+		{
+			_departmentSettingsService.Setup(x => x.GetUnitCallReleaseStatusToSetAsync(7)).ReturnsAsync((int)UnitStateTypes.Available);
+			_unitsService.Setup(x => x.GetLastUnitStateByUnitIdAsync(11))
+				.ReturnsAsync(new UnitState { UnitStateId = 1, UnitId = 11, State = (int)UnitStateTypes.Responding, DestinationId = 41, DestinationType = (int)DestinationEntityTypes.Call });
+			_unitsService.Setup(x => x.GetLastUnitStateByUnitIdAsync(12))
+				.ReturnsAsync(new UnitState { UnitStateId = 2, UnitId = 12, State = (int)UnitStateTypes.Responding, DestinationId = 42, DestinationType = (int)DestinationEntityTypes.Call });
+			_callsRepository.Setup(x => x.GetByIdAsync(41)).ReturnsAsync(new Call { CallId = 41, DepartmentId = 7, State = (int)CallStates.Active });
+			_callsRepository.Setup(x => x.GetByIdAsync(42)).ReturnsAsync(new Call { CallId = 42, DepartmentId = 7, State = (int)CallStates.Closed });
+
+			await _service.ApplyReleaseStatusesAsync(new Call { CallId = 40, DepartmentId = 7 }, null, new[] { 11, 12 });
+
+			// Unit 11 is on open call 41 and keeps its status; unit 12's other call is closed, so it is released from this one.
+			_unitsService.Verify(x => x.SetUnitStateAsync(It.Is<UnitState>(u => u.UnitId == 11), It.IsAny<int>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never);
+			_unitsService.Verify(x => x.SetUnitStateAsync(It.Is<UnitState>(u => u.UnitId == 12 && u.DestinationId == 40), 7, It.IsAny<CancellationToken>(), true), Times.Once);
+		}
+
+		[Test]
+		public async Task ApplyDispatchStatusesAsync_sets_dispatch_statuses_whatever_the_current_status()
+		{
+			_departmentSettingsService.Setup(x => x.GetUnitCallDispatchStatusToSetAsync(7)).ReturnsAsync(-1);
+			_unitsService.Setup(x => x.GetLastUnitStateByUnitIdAsync(11)).ReturnsAsync(new UnitState { UnitStateId = 1, UnitId = 11, State = (int)UnitStateTypes.Available });
+
+			await _service.ApplyDispatchStatusesAsync(new Call { CallId = 40, DepartmentId = 7 }, null, new[] { 11 });
+
+			_unitsService.Verify(x => x.SetUnitStateAsync(It.Is<UnitState>(u => u.UnitId == 11 && u.State == (int)UnitStateTypes.Responding), 7, It.IsAny<CancellationToken>(), true), Times.Once);
 		}
 	}
 }

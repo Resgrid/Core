@@ -112,6 +112,47 @@ namespace Resgrid.Repositories.DataRepository
 			}
 		}
 
+		public async Task<IEnumerable<CallDispatchUnit>> GetOpenCallUnitDispatchesForDepartmentAsync(int departmentId)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<CallDispatchUnit>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParametersExtension();
+					dynamicParameters.Add("DepartmentId", departmentId);
+
+					var query = _queryFactory.GetQuery<SelectOpenCallUnitDispatchesForDepartmentQuery>();
+
+					return await x.QueryAsync<CallDispatchUnit>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
+
 		public async Task<IEnumerable<CallDispatchUnit>> GetCallUnitDispatchesForCallsInRangeAsync(int departmentId, DateTime startDate, DateTime endDate)
 		{
 			try

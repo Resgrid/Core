@@ -1340,7 +1340,7 @@ Default: -1. Source: DepartmentSettingTypes.UnitCallDispatchStatusToSet.
 <a id="setting-unitcallreleasestatustoset"></a>
 ## Unit Call Release Status To Set
 
-Unit Call Release Status To Set. Unit status applied at call release. Review unit-type overrides before assuming one department-wide effect.
+Unit Call Release Status To Set. Unit status applied at call release (the call is closed, or the unit is taken off it) to the units still working the call. A unit already back in service, out of service, unavailable or on a break, or working another open call keeps its status; custom statuses are read by their base type. Review unit-type overrides before assuming one department-wide effect.
 
 Default: -1. Source: DepartmentSettingTypes.UnitCallReleaseStatusToSet.
 
@@ -1630,6 +1630,13 @@ Default: false. Source: DepartmentSettingTypes.PersonnelOnUnitSetUnitStatus.
 Hold to Set Status. The Unit and Responder apps set a status with a two-second press and hold instead of a tap followed by Next or Submit, so a stray tap never sets a status and a crew cannot forget to confirm one. A status that needs a note, or a destination the app cannot fill from the active call, still opens that step. Off by default.
 
 Default: false. Source: DepartmentSettingTypes.StatusHoldToConfirm.
+
+<a id="setting-closecallwhenunitsclear"></a>
+## Close Call When Last Unit Clears
+
+Close Call When Last Unit Clears. An active call closes on its own when the last unit dispatched to it goes from working the call to back in service or out of service: a status whose base type is Available, In Quarters, Cleared, Completed, On Patrol, Unavailable, Not Responding or Maintenance. Every other dispatched unit must also have reported such a status since its dispatch. Only units count. A call with no unit dispatched, a call under an active incident command, a unit still returning, transporting or at the hospital, a unit that never reported after its dispatch, and a custom status with no base type all leave the call open for the dispatcher. The close is recorded with a note naming the last unit, applies the release statuses (which skip units back in service or out of service) and notifies nobody. Off by default.
+
+Default: false. Source: DepartmentSettingTypes.CloseCallWhenUnitsClear.
 
 <a id="setting-enabletextcommand"></a>
 ## Enable Text Command

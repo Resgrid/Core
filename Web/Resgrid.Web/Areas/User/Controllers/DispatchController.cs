@@ -724,6 +724,49 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		/// <summary>
+		/// Run card recommendation for the Update Call page: what the call's run card still needs at its current alarm level,
+		/// after the units and people already dispatched to it. The priority, type and location come from the edit form when
+		/// sent (the dispatcher may have changed them without saving), otherwise from the call. Nothing is dispatched or
+		/// selected here; the page only ticks the recommendation when the dispatcher asks it to.
+		/// </summary>
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Call_Update)]
+		public async Task<IActionResult> GetCallDispatchRecommendation(int callId, int? priority, string type, double? latitude, double? longitude)
+		{
+			if (!await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCards, DepartmentId))
+				return Json(new { success = false });
+
+			var call = await _callsService.GetCallByIdAsync(callId);
+
+			if (call == null || call.DepartmentId != DepartmentId || call.IsDeleted)
+				return Json(new { success = false });
+
+			// Same authority as editing the call: the recommendation is for adding resources to it.
+			if (!await _authorizationService.CanUserEditCallAsync(UserId, callId))
+				return Unauthorized();
+
+			call = await _callsService.PopulateCallData(call, true, false, false, false, true, false, false, false, false);
+
+			var request = DispatchRecommendationRequest.ForCallInProgress(call);
+
+			if (priority.HasValue)
+				request.Priority = priority.Value;
+
+			if (!String.IsNullOrWhiteSpace(type))
+				request.CallTypeName = type;
+
+			if (latitude.HasValue && longitude.HasValue && Math.Abs(latitude.Value) <= 90 && Math.Abs(longitude.Value) <= 180)
+			{
+				request.Latitude = latitude;
+				request.Longitude = longitude;
+			}
+
+			var result = await _dispatchRecommendationService.GetRecommendationAsync(request);
+
+			return Json(new { success = true, result });
+		}
+
+		/// <summary>
 		/// Nearest available unit board for the New Call page: every unit (a team, an apparatus or an
 		/// individual set up as a unit) and responder in the dispatcher's scope with status, live position,
 		/// ETA, crew shift coverage and role mix. Called by JS whenever the call location changes.
@@ -3773,6 +3816,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 					model.UdfFormHtml = _udfRenderingService.GenerateHtmlFormFields(udfDefinition, udfFields, filteredValues);
 				}
 			}
+
+			model.RunCardsEnabled = await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCards, model.Department.DepartmentId);
 
 			return model;
 		}

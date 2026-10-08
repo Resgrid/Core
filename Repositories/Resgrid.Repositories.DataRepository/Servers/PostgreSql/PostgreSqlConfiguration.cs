@@ -1321,6 +1321,11 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					FROM %SCHEMA%.%CALLSTABLE% c
 					WHERE c.DepartmentId = %DID% AND c.State = 0 AND c.IsDeleted = false
 						AND EXISTS (SELECT 1 FROM %SCHEMA%.%CALLDISPATCHUNITSTABLE% cdu WHERE cdu.CallId = c.CallId AND cdu.UnitId = %UNITID%)";
+			SelectOpenCallUnitDispatchesForDepartmentQuery = @"
+					SELECT cdu.*
+					FROM %SCHEMA%.%CALLDISPATCHUNITSTABLE% cdu
+					INNER JOIN %SCHEMA%.%CALLSTABLE% c ON c.CallId = cdu.CallId
+					WHERE c.DepartmentId = %DID% AND c.State = 0 AND c.IsDeleted = false";
 			SelectOpenCallIdsForUserQuery = @"
 					SELECT c.CallId
 					FROM %SCHEMA%.%CALLSTABLE% c

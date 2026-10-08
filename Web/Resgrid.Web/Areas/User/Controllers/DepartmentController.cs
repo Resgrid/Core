@@ -2121,6 +2121,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.UnitClearStatus = await _departmentSettingsService.GetUnitCallReleaseStatusToSetAsync(DepartmentId);
 			model.PersonnelOnUnitSetUnitStatus = await _departmentSettingsService.GetPersonnelOnUnitSetUnitStatusAsync(DepartmentId);
 			model.StatusHoldToConfirm = await _departmentSettingsService.GetStatusHoldToConfirmAsync(DepartmentId, true);
+			model.CloseCallWhenUnitsClear = await _departmentSettingsService.GetCloseCallWhenUnitsClearAsync(DepartmentId, true);
 			model.AutoEnableCheckInTimers = await _departmentSettingsService.GetCheckInTimersAutoEnableForNewCallsAsync(DepartmentId);
 			model.NewCallFields = await BuildNewCallFieldRowsAsync();
 
@@ -2182,6 +2183,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.StatusHoldToConfirm.ToString(),
 					DepartmentSettingTypes.StatusHoldToConfirm, cancellationToken);
+
+				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.CloseCallWhenUnitsClear.ToString(),
+					DepartmentSettingTypes.CloseCallWhenUnitsClear, cancellationToken);
 
 				// Save check-in timer auto-enable setting
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.AutoEnableCheckInTimers.ToString(),

@@ -1112,6 +1112,9 @@
   <data name="UnitCallReleaseStatusLabel" xml:space="preserve">
     <value>Stato dell'unità al rilascio dalla chiamata</value>
   </data>
+  <data name="UnitCallReleaseStatusHelp" xml:space="preserve">
+    <value>Impostato sulle unità che stanno ancora lavorando a una chiamata quando viene chiusa o quando ne vengono rimosse. Un'unità già di nuovo in servizio, fuori servizio (non disponibile, in manutenzione o in pausa) o impegnata su un'altra chiamata mantiene il proprio stato. Gli stati personalizzati vengono letti in base al loro tipo base.</value>
+  </data>
   <data name="UnitDefaultStatusesHelp" xml:space="preserve">
     <value>Questi stati predefiniti delle unità usano solo i tipi di stato integrati. Usa la tabella di sovrascrittura per tipo di unità qui sotto quando un tipo di unità ha bisogno di uno dei propri stati personalizzati.</value>
   </data>
@@ -1288,6 +1291,12 @@
   </data>
   <data name="StatusHoldToConfirmHelp" xml:space="preserve">
     <value>Nelle app Unit e Responder, gli equipaggi tengono premuto un pulsante di stato per due secondi per impostarlo, invece di toccarlo e poi premere Avanti o Invia. Evita tocchi accidentali e conferme dimenticate. Uno stato che richiede una nota o la scelta di una destinazione apre comunque il passaggio successivo.</value>
+  </data>
+  <data name="CloseCallWhenUnitsClearLabel" xml:space="preserve">
+    <value>Chiudi la chiamata quando l'ultima unità si libera</value>
+  </data>
+  <data name="CloseCallWhenUnitsClearHelp" xml:space="preserve">
+    <value>Una chiamata attiva si chiude da sola quando l'ultima unità inviata segnala di essere di nuovo in servizio o fuori servizio (uno stato con tipo base Disponibile, In sede, Liberata, Non disponibile o Manutenzione). Anche tutte le altre unità inviate devono aver segnalato la fine dopo l'invio. Contano solo le unità: una chiamata senza unità inviate, una chiamata con un comando dell'incidente attivo o un'unità ancora in rientro o in trasporto resta aperta per l'operatore.</value>
   </data>
   <data name="CallNumberingHeader" xml:space="preserve">
     <value>Numerazione delle chiamate</value>

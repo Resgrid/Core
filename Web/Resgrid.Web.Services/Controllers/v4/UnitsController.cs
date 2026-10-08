@@ -36,12 +36,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IUserDefinedFieldsService _userDefinedFieldsService;
 		private readonly IProtectedReadService _protectedReadService;
+		private readonly ICallStatusAttributionService _callStatusAttributionService;
 
 		public UnitsController(IUnitsService unitsService, IDepartmentGroupsService departmentGroupsService,
 			ICustomStateService customStateService, Model.Services.IAuthorizationService authorizationService,
 			IDepartmentsService departmentsService, IUserDefinedFieldsService userDefinedFieldsService,
-			IProtectedReadService protectedReadService)
+			IProtectedReadService protectedReadService, ICallStatusAttributionService callStatusAttributionService)
 		{
+			_callStatusAttributionService = callStatusAttributionService;
 			_unitsService = unitsService;
 			_departmentGroupsService = departmentGroupsService;
 			_customStateService = customStateService;
@@ -179,6 +181,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				var unitStatuses = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(DepartmentId);
 
+				// The call each unit is working, so a dispatcher setting its status starts on that call (a unit that has never
+				// reported can still be on one dispatched call).
+				var workingCalls = await _callStatusAttributionService.GetWorkingCallIdsForUnitsAsync(DepartmentId,
+					units.Select(u => unitStatuses.FirstOrDefault(x => x.UnitId == u.UnitId) ?? new UnitState { UnitId = u.UnitId }).ToList());
+
 				foreach (var unit in units)
 				{
 					if (!await _authorizationService.CanUserViewUnitViaMatrixAsync(unit.UnitId, UserId, DepartmentId))
@@ -208,7 +215,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 								if (unit != null && unit.StationGroupId != null && afilter.Replace("G:", "").Trim() == unit.StationGroupId.Value.ToString())
 								{
 									var roles = await _unitsService.GetActiveRolesForUnitAsync(unit.UnitId);
-									result.Data.Add(ConvertUnitsInfoResultData(unit, unitState, customState, type, TimeZone, canViewLocation, roles, personnelNames));
+									result.Data.Add(WithActiveCall(ConvertUnitsInfoResultData(unit, unitState, customState, type, TimeZone, canViewLocation, roles, personnelNames), workingCalls, unit.UnitId));
 									break;
 								}
 							}
@@ -217,7 +224,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					else
 					{
 						var roles = await _unitsService.GetActiveRolesForUnitAsync(unit.UnitId);
-						result.Data.Add(ConvertUnitsInfoResultData(unit, unitState, customState, type, TimeZone, canViewLocation, roles, personnelNames));
+						result.Data.Add(WithActiveCall(ConvertUnitsInfoResultData(unit, unitState, customState, type, TimeZone, canViewLocation, roles, personnelNames), workingCalls, unit.UnitId));
 					}
 				}
 
@@ -233,6 +240,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 			ResponseHelper.PopulateV4ResponseData(result);
 
 			return Ok(result);
+		}
+
+		private static UnitsInfoResultData WithActiveCall(UnitsInfoResultData data, IReadOnlyDictionary<int, int> workingCalls, int unitId)
+		{
+			if (workingCalls != null && workingCalls.TryGetValue(unitId, out var callId))
+				data.ActiveCallId = callId.ToString();
+
+			return data;
 		}
 
 		/// <summary>
@@ -356,6 +371,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				if (state.DestinationId.HasValue)
 					data.CurrentDestinationId = state.DestinationId.Value.ToString();
 
+				data.CurrentDestinationType = state.DestinationType;
+
 				if (state.Latitude.HasValue)
 					data.Latitude = state.Latitude.Value.ToString();
 
@@ -406,6 +423,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 				if (state.DestinationId.HasValue)
 					data.CurrentDestinationId = state.DestinationId.Value.ToString();
+
+				data.CurrentDestinationType = state.DestinationType;
 
 				if (canViewLocation)
 				{

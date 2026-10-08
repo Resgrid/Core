@@ -443,6 +443,36 @@
   <data name="UnitsDispatchLabel" xml:space="preserve">
     <value>Einheiten</value>
   </data>
+  <data name="RunCardSuggestionsLabel" xml:space="preserve">
+    <value>Alarmierungsplan</value>
+  </data>
+  <data name="RunCardSuggestionsHelp" xml:space="preserve">
+    <value>Was der Alarmierungsplan des Einsatzes auf der aktuellen Alarmstufe noch braucht, nach den Einheiten und Personen, die bereits im Einsatz sind. Es wird nichts hinzugefügt, bis Sie es auswählen und speichern.</value>
+  </data>
+  <data name="RunCardChecking" xml:space="preserve">
+    <value>Alarmierungspläne werden geprüft...</value>
+  </data>
+  <data name="RunCardSelectRecommended" xml:space="preserve">
+    <value>Empfohlene auswählen</value>
+  </data>
+  <data name="RunCardSelected" xml:space="preserve">
+    <value>Ausgewählt: Einsatz speichern, um sie zu alarmieren</value>
+  </data>
+  <data name="RunCardCovered" xml:space="preserve">
+    <value>Die Kräfte dieses Einsatzes decken den Alarmierungsplan bereits ab (Alarmstufe {0}).</value>
+  </data>
+  <data name="RunCardShortfalls" xml:space="preserve">
+    <value>Nicht besetzbar</value>
+  </data>
+  <data name="RunCardAlarmLevel" xml:space="preserve">
+    <value>Alarmstufe {0}</value>
+  </data>
+  <data name="RunCardLookupFailed" xml:space="preserve">
+    <value>Alarmierungspläne konnten nicht geprüft werden. Sie können Kräfte weiterhin manuell auswählen.</value>
+  </data>
+  <data name="RunCardRefresh" xml:space="preserve">
+    <value>Aktualisieren</value>
+  </data>
   <data name="UpdateCallHeader" xml:space="preserve">
     <value>Update Call</value>
   </data>

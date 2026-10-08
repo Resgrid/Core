@@ -96,6 +96,19 @@ namespace Resgrid.Web.Services.Models.v4.Units
 		public string CurrentDestinationId { get; set; }
 
 		/// <summary>
+		/// What <see cref="CurrentDestinationId"/> is: 1 station, 2 call, 3 POI (<see cref="Resgrid.Model.DestinationEntityTypes"/>),
+		/// or null for statuses saved before destinations were typed. A station id and a call id can be the same number.
+		/// </summary>
+		public int? CurrentDestinationType { get; set; }
+
+		/// <summary>
+		/// The open call the unit is working, or null: the call its latest status points at unless that status cleared it,
+		/// otherwise its one open dispatch. A status sent without a destination is linked to this call by the server, so a
+		/// dispatcher setting the unit's next status starts on it.
+		/// </summary>
+		public string ActiveCallId { get; set; }
+
+		/// <summary>
 		/// Name of the units current destination (0 means no destination)
 		/// </summary>
 		public string CurrentDestinationName { get; set; }

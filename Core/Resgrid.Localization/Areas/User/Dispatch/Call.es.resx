@@ -501,6 +501,36 @@
   <data name="UnitsDispatchLabel" xml:space="preserve">
     <value>Unidades</value>
   </data>
+  <data name="RunCardSuggestionsLabel" xml:space="preserve">
+    <value>Plan de respuesta</value>
+  </data>
+  <data name="RunCardSuggestionsHelp" xml:space="preserve">
+    <value>Lo que el plan de respuesta de la llamada aún necesita en su nivel de alarma actual, después de las unidades y personas que ya están en la llamada. No se añade nada hasta que lo seleccione y guarde.</value>
+  </data>
+  <data name="RunCardChecking" xml:space="preserve">
+    <value>Comprobando planes de respuesta...</value>
+  </data>
+  <data name="RunCardSelectRecommended" xml:space="preserve">
+    <value>Seleccionar recomendados</value>
+  </data>
+  <data name="RunCardSelected" xml:space="preserve">
+    <value>Seleccionados: guarde la llamada para despacharlos</value>
+  </data>
+  <data name="RunCardCovered" xml:space="preserve">
+    <value>Los recursos de esta llamada ya cubren el plan de respuesta (alarma {0}).</value>
+  </data>
+  <data name="RunCardShortfalls" xml:space="preserve">
+    <value>No se pudo cubrir</value>
+  </data>
+  <data name="RunCardAlarmLevel" xml:space="preserve">
+    <value>Alarma {0}</value>
+  </data>
+  <data name="RunCardLookupFailed" xml:space="preserve">
+    <value>No se pudieron comprobar los planes de respuesta. Aún puede seleccionar recursos manualmente.</value>
+  </data>
+  <data name="RunCardRefresh" xml:space="preserve">
+    <value>Actualizar</value>
+  </data>
   <data name="UpdateCallHeader" xml:space="preserve">
     <value>Actualizar llamada</value>
   </data>

@@ -50,6 +50,9 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 		/// <summary>The call is still waiting to be dispatched (pending, or scheduled and not yet sent).</summary>
 		public bool IsWaitingForDispatch { get; set; }
 
+		/// <summary>The department uses run cards: the page offers the run card's recommendation for what the call still needs.</summary>
+		public bool RunCardsEnabled { get; set; }
+
 		public UpdateCallView()
 		{
 			AdditionalContacts = new List<string>();

@@ -29,10 +29,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IDispatchRecommendationService _dispatchRecommendationService;
 		private readonly IFeatureToggleService _featureToggleService;
 		private readonly IAuthorizationService _authorizationService;
+		private readonly ICallsService _callsService;
 
 		public RunCardsController(IRunCardsService runCardsService, IDispatchRecommendationService dispatchRecommendationService,
-			IFeatureToggleService featureToggleService, IAuthorizationService authorizationService)
+			IFeatureToggleService featureToggleService, IAuthorizationService authorizationService, ICallsService callsService)
 		{
+			_callsService = callsService;
 			_runCardsService = runCardsService;
 			_dispatchRecommendationService = dispatchRecommendationService;
 			_featureToggleService = featureToggleService;
@@ -280,6 +282,46 @@ namespace Resgrid.Web.Services.Controllers.v4
 				PageSize = 1,
 				// No matching card is a valid answer, not a failure: the caller falls back to
 				// the manual dispatch flow.
+				Status = recommendation.MatchedRunCardId.HasValue ? ResponseHelper.Success : ResponseHelper.NotFound
+			};
+
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Recommendation for adding resources to a call already out: the run card for the call's priority, type and
+		/// location at its current alarm level, with the units and people already on the call counted toward the level's
+		/// requirements, so only what is still missing is recommended. A higher alarm level previews what Strike Next Alarm
+		/// would add (that level in full, nothing already on the call). Nothing is dispatched.
+		/// </summary>
+		/// <param name="callId">The active call.</param>
+		/// <param name="alarmLevel">Alarm level to fill; defaults to the call's current level.</param>
+		[HttpGet("GetCallRecommendation")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<ActionResult<RunCardRecommendationResult>> GetCallRecommendation(int callId, int? alarmLevel = null)
+		{
+			if (!await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCards, DepartmentId))
+				return NotFound();
+
+			var call = await _callsService.GetCallByIdAsync(callId);
+
+			if (call == null || call.DepartmentId != DepartmentId || call.IsDeleted)
+				return NotFound();
+
+			if (!await _authorizationService.CanUserViewCallAsync(UserId, callId))
+				return Unauthorized();
+
+			call = await _callsService.PopulateCallData(call, true, false, false, false, true, false, false, false, false);
+
+			var recommendation = await _dispatchRecommendationService.GetRecommendationAsync(DispatchRecommendationRequest.ForCallInProgress(call, alarmLevel));
+
+			var result = new RunCardRecommendationResult
+			{
+				Data = recommendation,
+				PageSize = 1,
 				Status = recommendation.MatchedRunCardId.HasValue ? ResponseHelper.Success : ResponseHelper.NotFound
 			};
 

@@ -6741,6 +6741,12 @@
   <data xml:space="preserve" name="SettingHelp.StatusHoldToConfirm">
     <value>Le app Unit e Responder impostano uno stato con una pressione prolungata di due secondi invece di un tocco seguito da Avanti o Invia. Gli stati che richiedono una nota o una destinazione aprono comunque quel passaggio.</value>
   </data>
+  <data xml:space="preserve" name="Setting.CloseCallWhenUnitsClear">
+    <value>Chiudi la chiamata quando l'ultima unità si libera</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.CloseCallWhenUnitsClear">
+    <value>Una chiamata attiva si chiude da sola quando la sua ultima unità inviata segnala di essere di nuovo in servizio o fuori servizio. Le unità ancora al lavoro, una chiamata senza unità inviate e una chiamata con un comando dell'incidente attivo la mantengono aperta.</value>
+  </data>
   <data name="Setting.CallNumberingConfig" xml:space="preserve">
     <value>Configurazione della numerazione delle chiamate</value>
   </data>

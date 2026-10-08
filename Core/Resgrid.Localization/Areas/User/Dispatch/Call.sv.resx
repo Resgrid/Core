@@ -443,6 +443,36 @@
   <data name="UnitsDispatchLabel" xml:space="preserve">
     <value>Enheter</value>
   </data>
+  <data name="RunCardSuggestionsLabel" xml:space="preserve">
+    <value>Insatsplan</value>
+  </data>
+  <data name="RunCardSuggestionsHelp" xml:space="preserve">
+    <value>Det larmets insatsplan fortfarande behöver på den aktuella larmnivån, efter de enheter och personer som redan finns på larmet. Inget läggs till förrän du markerar det och sparar.</value>
+  </data>
+  <data name="RunCardChecking" xml:space="preserve">
+    <value>Kontrollerar insatsplaner...</value>
+  </data>
+  <data name="RunCardSelectRecommended" xml:space="preserve">
+    <value>Markera rekommenderade</value>
+  </data>
+  <data name="RunCardSelected" xml:space="preserve">
+    <value>Markerade: spara larmet för att larma dem</value>
+  </data>
+  <data name="RunCardCovered" xml:space="preserve">
+    <value>Resurserna på det här larmet täcker redan insatsplanen (larm {0}).</value>
+  </data>
+  <data name="RunCardShortfalls" xml:space="preserve">
+    <value>Kunde inte fyllas</value>
+  </data>
+  <data name="RunCardAlarmLevel" xml:space="preserve">
+    <value>Larm {0}</value>
+  </data>
+  <data name="RunCardLookupFailed" xml:space="preserve">
+    <value>Insatsplanerna kunde inte kontrolleras. Du kan fortfarande välja resurser manuellt.</value>
+  </data>
+  <data name="RunCardRefresh" xml:space="preserve">
+    <value>Uppdatera</value>
+  </data>
   <data name="UpdateCallHeader" xml:space="preserve">
     <value>Update Call</value>
   </data>

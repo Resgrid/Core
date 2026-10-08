@@ -112,6 +112,17 @@ namespace Resgrid.Services
 			await BuildUnitCandidatesAsync(context);
 			await BuildPersonnelCandidatesAsync(context);
 
+			if (request.CountDispatchedTowardRequirements)
+			{
+				context.Level = CountDispatchedTowardLevel(context);
+
+				if (!(context.Level.UnitRequirements?.Any() ?? false) && !(context.Level.RoleRequirements?.Any() ?? false))
+				{
+					result.Notes.Add($"The resources on the call already cover alarm level {level.AlarmLevel} of run card '{card.Name}'.");
+					return result;
+				}
+			}
+
 			if (config.RestPeriodMinutes > 0)
 			{
 				context.UnitLastDispatched = await _runCardsService.GetLastUnitDispatchTimesAsync(request.DepartmentId);
@@ -317,6 +328,10 @@ namespace Resgrid.Services
 			public Dictionary<string, DateTime> UserLastDispatched { get; set; } = new Dictionary<string, DateTime>();
 			public GeoMath.GeoPoint? CallLocation { get; set; }
 			public HashSet<int> UnitTypesWithStaffingExclusions { get; set; } = new HashSet<int>();
+			/// <summary>Unit type of each unit already on the call (CountDispatchedTowardRequirements).</summary>
+			public Dictionary<int, UnitType> DispatchedUnitTypes { get; set; } = new Dictionary<int, UnitType>();
+			/// <summary>Roles of each person already on the call (CountDispatchedTowardRequirements).</summary>
+			public Dictionary<string, List<PersonnelRole>> DispatchedUserRoles { get; set; } = new Dictionary<string, List<PersonnelRole>>(StringComparer.OrdinalIgnoreCase);
 		}
 
 		private async Task BuildUnitCandidatesAsync(RecommendationContext context)
@@ -345,7 +360,13 @@ namespace Resgrid.Services
 			foreach (var unit in units)
 			{
 				if (alreadyDispatched.Contains(unit.UnitId))
+				{
+					if (context.Request.CountDispatchedTowardRequirements && !string.IsNullOrWhiteSpace(unit.Type) &&
+						typeByName.TryGetValue(unit.Type.Trim(), out var dispatchedType))
+						context.DispatchedUnitTypes[unit.UnitId] = dispatchedType;
+
 					continue;
+				}
 
 				if (string.IsNullOrWhiteSpace(unit.Type) || !typeByName.TryGetValue(unit.Type.Trim(), out var unitType))
 					continue;
@@ -415,8 +436,16 @@ namespace Resgrid.Services
 			{
 				var userId = pair.Key;
 
-				if (string.IsNullOrWhiteSpace(userId) || alreadyDispatched.Contains(userId))
+				if (string.IsNullOrWhiteSpace(userId))
 					continue;
+
+				if (alreadyDispatched.Contains(userId))
+				{
+					if (context.Request.CountDispatchedTowardRequirements)
+						context.DispatchedUserRoles[userId] = pair.Value?.Where(r => r != null).ToList() ?? new List<PersonnelRole>();
+
+					continue;
+				}
 
 				logByUser.TryGetValue(userId, out var lastLog);
 				stateByUser.TryGetValue(userId, out var lastState);
@@ -451,6 +480,70 @@ namespace Resgrid.Services
 
 				context.PersonnelCandidates.Add(candidate);
 			}
+		}
+
+		/// <summary>
+		/// The level with what the call already has taken off each requirement, in requirement order, each unit or person
+		/// counted once; requirements already met are dropped. The card's own level is never modified.
+		/// </summary>
+		private static RunCardAlarmLevel CountDispatchedTowardLevel(RecommendationContext context)
+		{
+			var level = context.Level;
+			var unitPool = context.DispatchedUnitTypes.ToList();
+			var userPool = context.DispatchedUserRoles.ToList();
+
+			var unitRequirements = new List<RunCardUnitRequirement>();
+			foreach (var requirement in (level.UnitRequirements ?? new List<RunCardUnitRequirement>()).OrderBy(r => r.SortOrder))
+			{
+				var covering = unitPool.Where(x => x.Value.UnitTypeId == requirement.UnitTypeId).Take(Math.Max(0, requirement.RequiredCount)).ToList();
+				unitPool.RemoveAll(x => covering.Any(c => c.Key == x.Key));
+
+				if (covering.Count > 0)
+					context.Result.Notes.Add($"{covering.Count} of {requirement.RequiredCount} required '{covering[0].Value.Type}' unit(s) already on the call.");
+
+				var remaining = requirement.RequiredCount - covering.Count;
+				if (remaining > 0)
+					unitRequirements.Add(new RunCardUnitRequirement
+					{
+						RunCardUnitRequirementId = requirement.RunCardUnitRequirementId,
+						RunCardAlarmLevelId = requirement.RunCardAlarmLevelId,
+						UnitTypeId = requirement.UnitTypeId,
+						RequiredCount = remaining,
+						SortOrder = requirement.SortOrder
+					});
+			}
+
+			var roleRequirements = new List<RunCardRoleRequirement>();
+			foreach (var requirement in (level.RoleRequirements ?? new List<RunCardRoleRequirement>()).OrderBy(r => r.SortOrder))
+			{
+				var covering = userPool.Where(x => x.Value != null && x.Value.Any(r => r.PersonnelRoleId == requirement.PersonnelRoleId))
+					.Take(Math.Max(0, requirement.RequiredCount)).ToList();
+				userPool.RemoveAll(x => covering.Any(c => string.Equals(c.Key, x.Key, StringComparison.OrdinalIgnoreCase)));
+
+				if (covering.Count > 0)
+					context.Result.Notes.Add($"{covering.Count} of {requirement.RequiredCount} required '{covering[0].Value.First(r => r.PersonnelRoleId == requirement.PersonnelRoleId).Name}' person(s) already on the call.");
+
+				var remaining = requirement.RequiredCount - covering.Count;
+				if (remaining > 0)
+					roleRequirements.Add(new RunCardRoleRequirement
+					{
+						RunCardRoleRequirementId = requirement.RunCardRoleRequirementId,
+						RunCardAlarmLevelId = requirement.RunCardAlarmLevelId,
+						PersonnelRoleId = requirement.PersonnelRoleId,
+						RequiredCount = remaining,
+						SortOrder = requirement.SortOrder
+					});
+			}
+
+			return new RunCardAlarmLevel
+			{
+				RunCardAlarmLevelId = level.RunCardAlarmLevelId,
+				RunCardId = level.RunCardId,
+				AlarmLevel = level.AlarmLevel,
+				Name = level.Name,
+				UnitRequirements = unitRequirements,
+				RoleRequirements = roleRequirements
+			};
 		}
 
 		private static Dictionary<string, UnitType> BuildUnitTypeLookup(List<UnitType> unitTypes)

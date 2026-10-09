@@ -6923,6 +6923,52 @@
             Is the user a group admin
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingInput.Uid">
+            <summary>
+            UserId (GUID/UUID) of the User to set. This field will be ignored if the input is used on a 
+            function that is setting status for the current user.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingInput.Typ">
+            <summary>
+            The state/staffing level of the user to set for the user.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingInput.Not">
+            <summary>
+            Note for the staffing level
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingResult">
+            <summary>
+            The result object for a state/staffing level request.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingResult.Uid">
+            <summary>
+            The UserId GUID/UUID for the user state/staffing level being return
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingResult.Nme">
+            <summary>
+            The full name of the user for the state/staffing level being returned
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingResult.Typ">
+            <summary>
+            The current staffing level (state) type for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingResult.Tms">
+            <summary>
+            The timestamp of the last state/staffing level. This is converted UTC to the departments, or users, TimeZone.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingResult.Not">
+            <summary>
+            Staffing note for the User's staffing
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.StaffingSchedules.StaffingScheduleInput">
             <summary>
             Input data to add a staffing schedule in the Resgrid system
@@ -7026,52 +7072,6 @@
         <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.StaffingSchedules.StaffingScheduleResult.Not">
             <summary>
             Note for this staffing schedule
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingInput.Uid">
-            <summary>
-            UserId (GUID/UUID) of the User to set. This field will be ignored if the input is used on a 
-            function that is setting status for the current user.
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingInput.Typ">
-            <summary>
-            The state/staffing level of the user to set for the user.
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingInput.Not">
-            <summary>
-            Note for the staffing level
-            </summary>
-        </member>
-        <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingResult">
-            <summary>
-            The result object for a state/staffing level request.
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingResult.Uid">
-            <summary>
-            The UserId GUID/UUID for the user state/staffing level being return
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingResult.Nme">
-            <summary>
-            The full name of the user for the state/staffing level being returned
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingResult.Typ">
-            <summary>
-            The current staffing level (state) type for the user
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingResult.Tms">
-            <summary>
-            The timestamp of the last state/staffing level. This is converted UTC to the departments, or users, TimeZone.
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Staffing.StaffingResult.Not">
-            <summary>
-            Staffing note for the User's staffing
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.Version3.Models.Stations.StationResult">
@@ -14465,66 +14465,6 @@
             Identifier of the new message
             </summary>
         </member>
-        <member name="T:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalRequestInput">
-            <summary>
-            Asks the user's Responder to approve (workbook section 7.4). Send only after the user chose "Approve with Responder";
-            never automatically.
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalRequestInput.Purpose">
-            <summary><c>login</c> (with <see cref="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalRequestInput.Transaction"/>) or <c>step_up</c> (the signed-in session, with <see cref="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalRequestInput.Operation"/>).</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalRequestInput.Operation">
-            <summary>For <c>step_up</c>: <c>adp_management</c> or <c>chat_export</c>. Security changes and account factors never accept approval.</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalRequestInput.Transaction">
-            <summary>For <c>login</c>: the login MFA transaction secret.</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalRequestResultData.MatchNumber">
-            <summary>Show this on the requesting screen only; the user types it in Responder. It is never pushed.</summary>
-        </member>
-        <member name="T:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalReferenceInput">
-            <summary>A request the caller made: by its login transaction secret, or by the signed-in session when absent.</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalStatusResultData.State">
-            <summary><c>pending</c>, <c>approved</c>, <c>denied</c>, <c>expired</c>, <c>canceled</c> or <c>consumed</c>. Poll every 2 seconds.</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalPendingResult.Data">
-            <summary>Null when nothing is waiting.</summary>
-        </member>
-        <member name="T:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalPendingResultData">
-            <summary>What Responder shows before Approve and Deny. The number is not here: the user reads it from the requesting screen.</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalPendingResultData.RequestingApp">
-            <summary>web, unit, dispatch or ic.</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalPendingResultData.Purpose">
-            <summary><c>login</c> or <c>step_up</c>.</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalPendingResultData.OriginRegion">
-            <summary>Region and country only.</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalApproveInput.MatchNumber">
-            <summary>The two digits the user read from the requesting screen.</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalApproveInput.RequestId">
-            <summary>The request id from <c>MfaApproval/Options</c>.</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalApproveInput.Credential">
-            <summary>The Responder passkey assertion (PublicKeyCredential.toJSON()), as an object or a JSON string.</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.DisableApprovalInstallationsInput.InstallationId">
-            <summary>The installation to stop, from <c>AccountSecurity/Methods</c>. Leave empty with <see cref="P:Resgrid.Web.Services.Models.v4.MfaApproval.DisableApprovalInstallationsInput.All"/>.</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.DisableApprovalInstallationsInput.All">
-            <summary>Stop every installation and turn approval off on every Responder passkey.</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.DisableApprovalInstallationsResultData.InstallationsStopped">
-            <summary>Zero when nothing was taking requests (already stopped, or not this account's installation).</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalDenyInput.Reason">
-            <summary><c>declined</c>, or <c>not_me</c> ("I didn't request this": ends that sign-in and suspends approval requests).</summary>
-        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Mfa.StepUpOptionsResult">
             <summary>
             The second-factor choice for a named operation (passkey workbook section 7.2). Advisory: <c>VerifyStepUp</c>
@@ -14584,6 +14524,66 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Mfa.VerifyStepUpResultData.ExpiresAt">
             <summary>When this verification stops serving the operation (ISO 8601 UTC).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalRequestInput">
+            <summary>
+            Asks the user's Responder to approve (workbook section 7.4). Send only after the user chose "Approve with Responder";
+            never automatically.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalRequestInput.Purpose">
+            <summary><c>login</c> (with <see cref="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalRequestInput.Transaction"/>) or <c>step_up</c> (the signed-in session, with <see cref="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalRequestInput.Operation"/>).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalRequestInput.Operation">
+            <summary>For <c>step_up</c>: <c>adp_management</c> or <c>chat_export</c>. Security changes and account factors never accept approval.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalRequestInput.Transaction">
+            <summary>For <c>login</c>: the login MFA transaction secret.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalRequestResultData.MatchNumber">
+            <summary>Show this on the requesting screen only; the user types it in Responder. It is never pushed.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalReferenceInput">
+            <summary>A request the caller made: by its login transaction secret, or by the signed-in session when absent.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalStatusResultData.State">
+            <summary><c>pending</c>, <c>approved</c>, <c>denied</c>, <c>expired</c>, <c>canceled</c> or <c>consumed</c>. Poll every 2 seconds.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalPendingResult.Data">
+            <summary>Null when nothing is waiting.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalPendingResultData">
+            <summary>What Responder shows before Approve and Deny. The number is not here: the user reads it from the requesting screen.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalPendingResultData.RequestingApp">
+            <summary>web, unit, dispatch or ic.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalPendingResultData.Purpose">
+            <summary><c>login</c> or <c>step_up</c>.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalPendingResultData.OriginRegion">
+            <summary>Region and country only.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalApproveInput.MatchNumber">
+            <summary>The two digits the user read from the requesting screen.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalApproveInput.RequestId">
+            <summary>The request id from <c>MfaApproval/Options</c>.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalApproveInput.Credential">
+            <summary>The Responder passkey assertion (PublicKeyCredential.toJSON()), as an object or a JSON string.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.DisableApprovalInstallationsInput.InstallationId">
+            <summary>The installation to stop, from <c>AccountSecurity/Methods</c>. Leave empty with <see cref="P:Resgrid.Web.Services.Models.v4.MfaApproval.DisableApprovalInstallationsInput.All"/>.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.DisableApprovalInstallationsInput.All">
+            <summary>Stop every installation and turn approval off on every Responder passkey.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.DisableApprovalInstallationsResultData.InstallationsStopped">
+            <summary>Zero when nothing was taking requests (already stopped, or not this account's installation).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.MfaApproval.MfaApprovalDenyInput.Reason">
+            <summary><c>declined</c>, or <c>not_me</c> ("I didn't request this": ends that sign-in and suspends approval requests).</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Notes.GetAllNotesResult">
             <summary>
@@ -14750,6 +14750,176 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Passkeys.PasskeyChangeResultData.CurrentSessionEnded">
             <summary>True when this session was one of them: the client signs in again.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Personnel.FilterResult">
+            <summary>
+            The result of getting all personnel filters for the system
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.FilterResult.Id">
+            <summary>
+            The Id value of the filter
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.FilterResult.Type">
+            <summary>
+            The type of the filter
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.FilterResult.Name">
+            <summary>
+            The filters name
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Personnel.GetAllPersonnelInfosResult">
+            <summary>
+            Result containing all the data required to populate the New Call form
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.GetAllPersonnelInfosResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Personnel.GetPersonnelFilterOptionsResult">
+            <summary>
+            Result that contains all the options available to filter personnel against compatible Resgrid APIs
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.GetPersonnelFilterOptionsResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResult">
+            <summary>
+            Result containing all the data required to populate the New Call form
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData">
+            <summary>
+            Information about a User
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.UserId">
+            <summary>
+            The UserId GUID/UUID for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.DepartmentId">
+            <summary>
+            DepartmentId of the deparment the user belongs to
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.IdentificationNumber">
+            <summary>
+            Department specificed ID number for this user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.FirstName">
+            <summary>
+            The Users First Name
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.LastName">
+            <summary>
+            The Users Last Name
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.EmailAddress">
+            <summary>
+            The Users Email Address
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.MobilePhone">
+            <summary>
+            The Users Mobile Telephone Number
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.GroupId">
+            <summary>
+            GroupId the user is assigned to (0 for no group)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.GroupName">
+            <summary>
+            Name of the group the user is assigned to
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.Roles">
+            <summary>
+            Enumeration/List of roles the user currently holds
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StatusId">
+            <summary>
+            The current action/status type for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.Status">
+            <summary>
+            The current action/status string for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StatusColor">
+            <summary>
+            The current action/status color hex string for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StatusTimestamp">
+            <summary>
+            The timestamp of the last action. This is converted UTC to the departments, or users, TimeZone.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StatusDestinationId">
+            <summary>
+            The current action/status destination id for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StatusDestinationName">
+            <summary>
+            The current action/status destination name for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StaffingId">
+            <summary>
+            The current staffing level (state) type for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.Staffing">
+            <summary>
+            The current staffing level (state) string for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StaffingColor">
+            <summary>
+            The current staffing level (state) color hex string for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StaffingTimestamp">
+            <summary>
+            The timestamp of the last state/staffing level. This is converted UTC to the departments, or users, TimeZone.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.Location">
+            <summary>
+            Users last known location
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.Weight">
+            <summary>
+            Sorting weight for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.UdfValues">
+            <summary>
+            User Defined Field values for this personnel record
+            </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.PersonnelLocation.PersonnelLocationInput">
             <summary>
@@ -15252,176 +15422,6 @@
         <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonStatusResult.Id">
             <summary>
             Response Data
-            </summary>
-        </member>
-        <member name="T:Resgrid.Web.Services.Models.v4.Personnel.FilterResult">
-            <summary>
-            The result of getting all personnel filters for the system
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.FilterResult.Id">
-            <summary>
-            The Id value of the filter
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.FilterResult.Type">
-            <summary>
-            The type of the filter
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.FilterResult.Name">
-            <summary>
-            The filters name
-            </summary>
-        </member>
-        <member name="T:Resgrid.Web.Services.Models.v4.Personnel.GetAllPersonnelInfosResult">
-            <summary>
-            Result containing all the data required to populate the New Call form
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.GetAllPersonnelInfosResult.Data">
-            <summary>
-            Response Data
-            </summary>
-        </member>
-        <member name="T:Resgrid.Web.Services.Models.v4.Personnel.GetPersonnelFilterOptionsResult">
-            <summary>
-            Result that contains all the options available to filter personnel against compatible Resgrid APIs
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.GetPersonnelFilterOptionsResult.Data">
-            <summary>
-            Response Data
-            </summary>
-        </member>
-        <member name="T:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResult">
-            <summary>
-            Result containing all the data required to populate the New Call form
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResult.Data">
-            <summary>
-            Response Data
-            </summary>
-        </member>
-        <member name="T:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData">
-            <summary>
-            Information about a User
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.UserId">
-            <summary>
-            The UserId GUID/UUID for the user
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.DepartmentId">
-            <summary>
-            DepartmentId of the deparment the user belongs to
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.IdentificationNumber">
-            <summary>
-            Department specificed ID number for this user
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.FirstName">
-            <summary>
-            The Users First Name
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.LastName">
-            <summary>
-            The Users Last Name
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.EmailAddress">
-            <summary>
-            The Users Email Address
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.MobilePhone">
-            <summary>
-            The Users Mobile Telephone Number
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.GroupId">
-            <summary>
-            GroupId the user is assigned to (0 for no group)
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.GroupName">
-            <summary>
-            Name of the group the user is assigned to
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.Roles">
-            <summary>
-            Enumeration/List of roles the user currently holds
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StatusId">
-            <summary>
-            The current action/status type for the user
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.Status">
-            <summary>
-            The current action/status string for the user
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StatusColor">
-            <summary>
-            The current action/status color hex string for the user
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StatusTimestamp">
-            <summary>
-            The timestamp of the last action. This is converted UTC to the departments, or users, TimeZone.
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StatusDestinationId">
-            <summary>
-            The current action/status destination id for the user
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StatusDestinationName">
-            <summary>
-            The current action/status destination name for the user
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StaffingId">
-            <summary>
-            The current staffing level (state) type for the user
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.Staffing">
-            <summary>
-            The current staffing level (state) string for the user
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StaffingColor">
-            <summary>
-            The current staffing level (state) color hex string for the user
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StaffingTimestamp">
-            <summary>
-            The timestamp of the last state/staffing level. This is converted UTC to the departments, or users, TimeZone.
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.Location">
-            <summary>
-            Users last known location
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.Weight">
-            <summary>
-            Sorting weight for the user
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.UdfValues">
-            <summary>
-            User Defined Field values for this personnel record
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Protocols.GetAllProtocolsResult">
@@ -17828,306 +17828,6 @@
             Default constructor
             </summary>
         </member>
-        <member name="T:Resgrid.Web.Services.Models.v4.UnitStatusAlerts.GetUnitStatusAlertAcknowledgementsResult">
-            <summary>
-            The acknowledgements covering each unit's current status episode.
-            </summary>
-        </member>
-        <member name="T:Resgrid.Web.Services.Models.v4.UnitStatusAlerts.SaveUnitStatusAlertAcknowledgementResult">
-            <summary>
-            The outcome of acknowledging or clearing a unit status timer alert.
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatusAlerts.SaveUnitStatusAlertAcknowledgementResult.Error">
-            <summary>
-            Null on success. Otherwise one of: unit_alert_not_found, unit_alert_status_changed (the unit moved to a
-            new status since the board loaded), unit_alert_not_overdue, unit_alert_conflict (another dispatcher
-            acknowledged it first; their acknowledgement is in Data), unit_alert_invalid_mode,
-            unit_alert_invalid_level, unit_alert_note_too_long.
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatusAlerts.UnitStatusAlertAcknowledgementResultData.UnitStateId">
-            <summary>The status record this acknowledgement covers. Compare it with the unit's CurrentUnitStateId.</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatusAlerts.UnitStatusAlertAcknowledgementResultData.Level">
-            <summary>1 = warning, 2 = alert. If the unit goes past this level, the acknowledgement no longer covers it.</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatusAlerts.UnitStatusAlertAcknowledgementResultData.Mode">
-            <summary>0 = acknowledged (still highlighted, marked as seen), 1 = muted.</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatusAlerts.UnitStatusAlertAcknowledgementResultData.MutedUntilUtc">
-            <summary>When a mute runs out. Null on a mute means it lasts until the unit changes status.</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatusAlerts.UnitStatusAlertAcknowledgementResultData.ClearedOnUtc">
-            <summary>Set when the acknowledgement has been withdrawn (only returned by Clear).</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatusAlerts.AcknowledgeUnitStatusAlertInput.UnitStateId">
-            <summary>The unit's CurrentUnitStateId as the board saw it.</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatusAlerts.AcknowledgeUnitStatusAlertInput.Level">
-            <summary>The level the board is showing: 1 = warning, 2 = alert.</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatusAlerts.AcknowledgeUnitStatusAlertInput.Mode">
-            <summary>0 = acknowledge, 1 = mute.</summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatusAlerts.AcknowledgeUnitStatusAlertInput.MuteMinutes">
-            <summary>For a mute, the minutes to mute for. 0 mutes until the unit changes status.</summary>
-        </member>
-        <member name="T:Resgrid.Web.Services.Models.v4.UnitStatus.SaveUnitStatusResult">
-            <summary>
-            Depicts a result after saving a unit status
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.SaveUnitStatusResult.Id">
-            <summary>
-            Response Data
-            </summary>
-        </member>
-        <member name="T:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput">
-            <summary>
-            Object inputs for setting a users Status/Action. If this object is used in an operation that sets
-            a status for the current user the UserId value in this object will be ignored.
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Id">
-            <summary>
-            UnitId of the apparatus that the state is being set for
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Type">
-            <summary>
-            The UnitStateType of the Unit
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.RespondingTo">
-            <summary>
-            The Call/Station the unit is responding to
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.RespondingToType">
-            <summary>
-            Destination type for RespondingTo (Station = 1, Call = 2, POI = 3).
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.TimestampUtc">
-            <summary>
-            The timestamp of the status event in UTC
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Timestamp">
-            <summary>
-            The timestamp of the status event in the local time of the device
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Note">
-            <summary>
-            User provided note for this event
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Latitude">
-            <summary>
-            GPS Latitude of the Unit
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Longitude">
-            <summary>
-            GPS Longitude of the Unit
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Accuracy">
-            <summary>
-            GPS Latitude\Longitude Accuracy of the Unit
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Altitude">
-            <summary>
-            GPS Altitude of the Unit
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.AltitudeAccuracy">
-            <summary>
-            GPS Altitude Accuracy of the Unit
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Speed">
-            <summary>
-            GPS Speed of the Unit
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Heading">
-            <summary>
-            GPS Heading of the Unit
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.EventId">
-            <summary>
-            The event id used for queuing on mobile applications
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Roles">
-            <summary>
-            The accountability roles filed for this event
-            </summary>
-        </member>
-        <member name="T:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusRoleInput">
-            <summary>
-            Role filled by a User on a Unit for an event
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusRoleInput.Id">
-            <summary>
-            Id of the locally stored event
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusRoleInput.EventId">
-            <summary>
-            Local Event Id
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusRoleInput.UserId">
-            <summary>
-            UserId of the user filling the role
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusRoleInput.RoleId">
-            <summary>
-            RoleId of the role being filled
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusRoleInput.Name">
-            <summary>
-             The name of the Role
-            </summary>
-        </member>
-        <member name="T:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResult">
-            <summary>
-            Depicts a unit status in the Resgrid system.
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResult.Data">
-            <summary>
-            Response Data
-            </summary>
-        </member>
-        <member name="T:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData">
-            <summary>
-            Depicts a unit's status
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.UnitId">
-            <summary>
-            Unit Id
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.Name">
-            <summary>
-            Units Name
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.Type">
-            <summary>
-            The Type of the Unit
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.State">
-            <summary>
-            Units current Status (State)
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.StateId">
-            <summary>
-            Id of the current status: the status option's Id from Statuses/GetAllUnitStatuses (a custom
-            status's CustomStateDetailId, or the built-in state number). 0 when the unit has no status yet.
-            Lets the apps mark the current status and offer the options configured to follow it.
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.StateCss">
-            <summary>
-            CSS for status (for display)
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.StateStyle">
-            <summary>
-            CSS Style for status (for display)
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.Timestamp">
-            <summary>
-            Timestamp of this Unit State
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.TimestampUtc">
-            <summary>
-            Timestamp in Utc of this Unit State
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.DestinationId">
-            <summary>
-            Destination Id (Station or Call)
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.DestinationType">
-            <summary>
-            Destination type (Station, Call, or POI).
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.DestinationName">
-            <summary>
-            Name of the Desination (Call or Station)
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.DestinationAddress">
-            <summary>
-            Destination address.
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.DestinationTypeName">
-            <summary>
-            Localized display label for the destination type (e.g. "Station", "Call", "POI"). Not
-            suitable for programmatic branching; use <see cref="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.DestinationType"/> as the
-            machine-readable discriminator instead.
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.Note">
-            <summary>
-            Note for the State
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.Latitude">
-            <summary>
-            Latitude
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.Longitude">
-            <summary>
-            Longitude
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.GroupName">
-            <summary>
-            Name of the Group the Unit is in
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.GroupId">
-            <summary>
-            Id of the Group the Unit is in
-            </summary>
-        </member>
-        <member name="T:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStautsesResult">
-            <summary>
-            Unit statuses (states)
-            </summary>
-        </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStautsesResult.Data">
-            <summary>
-            Response Data
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStautsesResult.#ctor">
-            <summary>
-            Default constructor
-            </summary>
-        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Units.GetUnitsFilterOptionsResult">
             <summary>
             Result that contains all the options available to filter units against compatible Resgrid APIs
@@ -18459,6 +18159,306 @@
             <summary>
             Default constructor
             </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.UnitStatus.SaveUnitStatusResult">
+            <summary>
+            Depicts a result after saving a unit status
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.SaveUnitStatusResult.Id">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput">
+            <summary>
+            Object inputs for setting a users Status/Action. If this object is used in an operation that sets
+            a status for the current user the UserId value in this object will be ignored.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Id">
+            <summary>
+            UnitId of the apparatus that the state is being set for
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Type">
+            <summary>
+            The UnitStateType of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.RespondingTo">
+            <summary>
+            The Call/Station the unit is responding to
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.RespondingToType">
+            <summary>
+            Destination type for RespondingTo (Station = 1, Call = 2, POI = 3).
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.TimestampUtc">
+            <summary>
+            The timestamp of the status event in UTC
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Timestamp">
+            <summary>
+            The timestamp of the status event in the local time of the device
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Note">
+            <summary>
+            User provided note for this event
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Latitude">
+            <summary>
+            GPS Latitude of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Longitude">
+            <summary>
+            GPS Longitude of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Accuracy">
+            <summary>
+            GPS Latitude\Longitude Accuracy of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Altitude">
+            <summary>
+            GPS Altitude of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.AltitudeAccuracy">
+            <summary>
+            GPS Altitude Accuracy of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Speed">
+            <summary>
+            GPS Speed of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Heading">
+            <summary>
+            GPS Heading of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.EventId">
+            <summary>
+            The event id used for queuing on mobile applications
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.Roles">
+            <summary>
+            The accountability roles filed for this event
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusRoleInput">
+            <summary>
+            Role filled by a User on a Unit for an event
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusRoleInput.Id">
+            <summary>
+            Id of the locally stored event
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusRoleInput.EventId">
+            <summary>
+            Local Event Id
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusRoleInput.UserId">
+            <summary>
+            UserId of the user filling the role
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusRoleInput.RoleId">
+            <summary>
+            RoleId of the role being filled
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusRoleInput.Name">
+            <summary>
+             The name of the Role
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResult">
+            <summary>
+            Depicts a unit status in the Resgrid system.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData">
+            <summary>
+            Depicts a unit's status
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.UnitId">
+            <summary>
+            Unit Id
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.Name">
+            <summary>
+            Units Name
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.Type">
+            <summary>
+            The Type of the Unit
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.State">
+            <summary>
+            Units current Status (State)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.StateId">
+            <summary>
+            Id of the current status: the status option's Id from Statuses/GetAllUnitStatuses (a custom
+            status's CustomStateDetailId, or the built-in state number). 0 when the unit has no status yet.
+            Lets the apps mark the current status and offer the options configured to follow it.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.StateCss">
+            <summary>
+            CSS for status (for display)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.StateStyle">
+            <summary>
+            CSS Style for status (for display)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.Timestamp">
+            <summary>
+            Timestamp of this Unit State
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.TimestampUtc">
+            <summary>
+            Timestamp in Utc of this Unit State
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.DestinationId">
+            <summary>
+            Destination Id (Station or Call)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.DestinationType">
+            <summary>
+            Destination type (Station, Call, or POI).
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.DestinationName">
+            <summary>
+            Name of the Desination (Call or Station)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.DestinationAddress">
+            <summary>
+            Destination address.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.DestinationTypeName">
+            <summary>
+            Localized display label for the destination type (e.g. "Station", "Call", "POI"). Not
+            suitable for programmatic branching; use <see cref="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.DestinationType"/> as the
+            machine-readable discriminator instead.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.Note">
+            <summary>
+            Note for the State
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.Latitude">
+            <summary>
+            Latitude
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.Longitude">
+            <summary>
+            Longitude
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.GroupName">
+            <summary>
+            Name of the Group the Unit is in
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.GroupId">
+            <summary>
+            Id of the Group the Unit is in
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStautsesResult">
+            <summary>
+            Unit statuses (states)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStautsesResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStautsesResult.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.UnitStatusAlerts.GetUnitStatusAlertAcknowledgementsResult">
+            <summary>
+            The acknowledgements covering each unit's current status episode.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.UnitStatusAlerts.SaveUnitStatusAlertAcknowledgementResult">
+            <summary>
+            The outcome of acknowledging or clearing a unit status timer alert.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatusAlerts.SaveUnitStatusAlertAcknowledgementResult.Error">
+            <summary>
+            Null on success. Otherwise one of: unit_alert_not_found, unit_alert_status_changed (the unit moved to a
+            new status since the board loaded), unit_alert_not_overdue, unit_alert_conflict (another dispatcher
+            acknowledged it first; their acknowledgement is in Data), unit_alert_invalid_mode,
+            unit_alert_invalid_level, unit_alert_note_too_long.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatusAlerts.UnitStatusAlertAcknowledgementResultData.UnitStateId">
+            <summary>The status record this acknowledgement covers. Compare it with the unit's CurrentUnitStateId.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatusAlerts.UnitStatusAlertAcknowledgementResultData.Level">
+            <summary>1 = warning, 2 = alert. If the unit goes past this level, the acknowledgement no longer covers it.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatusAlerts.UnitStatusAlertAcknowledgementResultData.Mode">
+            <summary>0 = acknowledged (still highlighted, marked as seen), 1 = muted.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatusAlerts.UnitStatusAlertAcknowledgementResultData.MutedUntilUtc">
+            <summary>When a mute runs out. Null on a mute means it lasts until the unit changes status.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatusAlerts.UnitStatusAlertAcknowledgementResultData.ClearedOnUtc">
+            <summary>Set when the acknowledgement has been withdrawn (only returned by Clear).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatusAlerts.AcknowledgeUnitStatusAlertInput.UnitStateId">
+            <summary>The unit's CurrentUnitStateId as the board saw it.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatusAlerts.AcknowledgeUnitStatusAlertInput.Level">
+            <summary>The level the board is showing: 1 = warning, 2 = alert.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatusAlerts.AcknowledgeUnitStatusAlertInput.Mode">
+            <summary>0 = acknowledge, 1 = mute.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatusAlerts.AcknowledgeUnitStatusAlertInput.MuteMinutes">
+            <summary>For a mute, the minutes to mute for. 0 mutes until the unit changes status.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.UserDefinedFields.SaveUdfDefinitionInput">
             <summary>Input for creating or updating a UDF definition (creates a new version).</summary>

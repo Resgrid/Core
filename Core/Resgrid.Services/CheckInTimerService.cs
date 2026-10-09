@@ -752,9 +752,17 @@ namespace Resgrid.Services
 			var now = DateTime.UtcNow;
 			var statuses = new List<PersonnelCallCheckInStatus>();
 
-			foreach (var dispatch in dispatches)
+			// A member can hold more than one CallDispatch row on a call (re-dispatched, dispatched
+			// directly and via a group, etc.). PAR is per person, so emit exactly one row per user —
+			// duplicates would double-count PAR and double-fire Critical PAR alerts.
+			var dispatchedUserIds = dispatches
+				.Where(d => !string.IsNullOrWhiteSpace(d.UserId))
+				.Select(d => d.UserId)
+				.Distinct();
+
+			foreach (var userId in dispatchedUserIds)
 			{
-				latestByUser.TryGetValue(dispatch.UserId, out var lastRecord);
+				latestByUser.TryGetValue(userId, out var lastRecord);
 
 				var baseTime = lastRecord?.Timestamp ?? call.LoggedOn;
 				var elapsed = (now - baseTime).TotalMinutes;
@@ -770,7 +778,7 @@ namespace Resgrid.Services
 
 				statuses.Add(new PersonnelCallCheckInStatus
 				{
-					UserId = dispatch.UserId,
+					UserId = userId,
 					// FullName is intentionally left null here; the controller enriches
 					// it from IUserProfileService to avoid pulling that dependency into
 					// this service.

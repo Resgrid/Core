@@ -113,6 +113,32 @@ namespace Resgrid.Tests.Security
 		}
 
 		[Test]
+		public async Task The_older_second_factor_page_restarts_sign_in_when_the_partial_sign_in_expired()
+		{
+			_signIn.Setup(s => s.GetTwoFactorAuthenticationUserAsync()).ReturnsAsync((IdentityUser)null);
+
+			var expired = Browser();
+			var result = await expired.Controller.LoginWith2fa(new VerifyCodeViewModel { Code = "123456" }, CancellationToken.None);
+
+			result.Should().BeOfType<RedirectToActionResult>().Which.ActionName.Should().Be("LogOn");
+			expired.Controller.TempData["LoginMfaMessage"].Should().Be("LoginMfaExpired");
+			_signIn.Verify(s => s.TwoFactorAuthenticatorSignInAsync(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>()), Times.Never);
+		}
+
+		[Test]
+		public async Task The_older_recovery_code_page_restarts_sign_in_when_the_partial_sign_in_expired()
+		{
+			_signIn.Setup(s => s.GetTwoFactorAuthenticationUserAsync()).ReturnsAsync((IdentityUser)null);
+
+			var expired = Browser();
+			var result = await expired.Controller.LoginWithRecoveryCode(new VerifyCodeViewModel { Code = "ABCD-1234" }, CancellationToken.None);
+
+			result.Should().BeOfType<RedirectToActionResult>().Which.ActionName.Should().Be("LogOn");
+			expired.Controller.TempData["LoginMfaMessage"].Should().Be("LoginMfaExpired");
+			_signIn.Verify(s => s.TwoFactorRecoveryCodeSignInAsync(It.IsAny<string>()), Times.Never);
+		}
+
+		[Test]
 		public async Task The_sign_in_page_names_the_workstation_only_where_shared_mode_is_on_and_says_when_a_shift_ended()
 		{
 			PasskeyConfig.SharedDeviceModeEnabled = true;

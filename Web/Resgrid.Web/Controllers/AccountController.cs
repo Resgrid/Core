@@ -492,9 +492,11 @@ namespace Resgrid.Web.Controllers
 		{
 			if (!ModelState.IsValid) return View(model);
 
-			// Fetch the user before sign-in while the partial 2FA cookie is still present
-			var user = await _signInManager.GetTwoFactorAuthenticationUserAsync()
-						?? await _userManager.FindByNameAsync(model.Provider ?? string.Empty);
+			// Fetch the user before sign-in while the partial 2FA cookie is still present. Without it (the partial sign-in expired
+			// or was never made) there is nothing to verify the code against, so the user starts again from the password screen.
+			var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
+			if (user == null)
+				return RestartSignIn(MfaLoginTransactionOutcome.Expired, returnUrl ?? model.ReturnUrl);
 
 			var code = model.Code.Replace(" ", string.Empty).Replace("-", string.Empty);
 			var result = await _signInManager.TwoFactorAuthenticatorSignInAsync(code, model.RememberMe,
@@ -586,8 +588,11 @@ namespace Resgrid.Web.Controllers
 
 			if (!ModelState.IsValid) return View(model);
 
-			// Fetch the user before sign-in while the partial 2FA cookie is still present
+			// Fetch the user before sign-in while the partial 2FA cookie is still present. Without it (the partial sign-in expired
+			// or was never made) there is nothing to verify the code against, so the user starts again from the password screen.
 			var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
+			if (user == null)
+				return RestartSignIn(MfaLoginTransactionOutcome.Expired, returnUrl ?? model.ReturnUrl);
 
 			var recoveryCode = model.Code.Replace(" ", string.Empty);
 			var result = await _signInManager.TwoFactorRecoveryCodeSignInAsync(recoveryCode);

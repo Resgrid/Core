@@ -1455,6 +1455,9 @@
   <data name="DocumentNumberingSaved" xml:space="preserve">
     <value>Η αρίθμηση εγγράφων αποθηκεύτηκε.</value>
   </data>
+  <data name="DocumentNumberingPartlySaved" xml:space="preserve">
+    <value>Η υπόλοιπη αρίθμηση εγγράφων αποθηκεύτηκε.</value>
+  </data>
   <data name="DocumentNumberingYearStartInvalid" xml:space="preserve">
     <value>Η αρίθμηση εγγράφων δεν αποθηκεύτηκε. Το έτος αρίθμησης πρέπει να ξεκινά σε ημέρα που υπάρχει κάθε έτος, οπότε η 29η Φεβρουαρίου δεν μπορεί να χρησιμοποιηθεί.</value>
   </data>

@@ -1546,8 +1546,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				errors.Add(_departmentLocalizer["DocumentNumberingNotApplied"]);
 			if (errors.Count > 0)
 				model.ErrorMessage = string.Join(" ", errors);
+			// A refused year start saves nothing; otherwise anything listed above was held back from a save that went through.
 			if (!result.YearStartRejected)
-				model.Message = _departmentLocalizer["DocumentNumberingSaved"];
+				model.Message = _departmentLocalizer[errors.Count == 0 ? "DocumentNumberingSaved" : "DocumentNumberingPartlySaved"];
 
 			return View(model);
 		}

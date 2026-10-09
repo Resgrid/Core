@@ -1455,6 +1455,9 @@
   <data name="DocumentNumberingSaved" xml:space="preserve">
     <value>تم حفظ ترقيم المستندات.</value>
   </data>
+  <data name="DocumentNumberingPartlySaved" xml:space="preserve">
+    <value>تم حفظ بقية ترقيم المستندات.</value>
+  </data>
   <data name="DocumentNumberingYearStartInvalid" xml:space="preserve">
     <value>لم يُحفظ ترقيم المستندات. يجب أن تبدأ سنة الترقيم في يوم موجود في كل سنة، لذا لا يمكن استخدام 29 فبراير.</value>
   </data>

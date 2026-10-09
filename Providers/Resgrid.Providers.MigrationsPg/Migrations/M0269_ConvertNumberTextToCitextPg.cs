@@ -11,8 +11,8 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 	/// numbers were citext from the start. Before the unique keys change type, values that differ only by case are made
 	/// distinct the way SQL Server's collation always kept them: call-number scopes (a pattern whose letters were recased)
 	/// fold into one counter keeping the highest sequence and floor, and a live certification code clashing with an older
-	/// one gets the M0213 "-{id}" suffix. varchar and text are binary coercible to citext, so no row is rewritten; indexes
-	/// on the columns are rebuilt. A missing table or column is skipped.
+	/// one gets the M0213 "-{id}" suffix (plus "-{n}" when another live code already has that). varchar and text are binary
+	/// coercible to citext, so no row is rewritten; indexes on the columns are rebuilt. A missing table or column is skipped.
 	/// </summary>
 	[Migration(269)]
 	public class M0269_ConvertNumberTextToCitextPg : Migration
@@ -80,13 +80,34 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					WHERE r.place > 1 AND s.departmentid = r.departmentid AND s.scopekey = r.scopekey;");
 			}
 
-			// ux_departmentcertificationtypes_code covers live rows only; the oldest live spelling keeps its code.
+			// ux_departmentcertificationtypes_code covers live rows only; the oldest live spelling keeps its code. A suffixed code
+			// can itself match another live code in any casing (a typed "CERT-6"), so each one is checked against every live code
+			// in the department and takes a further "-{n}" until it is free, still within the 50-character column.
 			if (Schema.Table("departmentcertificationtypes").Column("code").Exists())
-				Execute.Sql(@"UPDATE departmentcertificationtypes t SET code = LEFT(t.code, 38) || '-' || t.departmentcertificationtypeid::text
-					FROM (SELECT departmentcertificationtypeid, ROW_NUMBER() OVER (PARTITION BY departmentid, lower(code)
-							ORDER BY departmentcertificationtypeid) AS place
-						FROM departmentcertificationtypes WHERE isdeleted = FALSE AND code IS NOT NULL) d
-					WHERE d.place > 1 AND t.departmentcertificationtypeid = d.departmentcertificationtypeid;");
+				Execute.Sql(@"DO $$
+					DECLARE duplicate record; suffix text; candidate text; attempt int;
+					BEGIN
+						FOR duplicate IN SELECT t.departmentcertificationtypeid AS id, t.departmentid, t.code
+							FROM departmentcertificationtypes t
+							JOIN (SELECT departmentcertificationtypeid, ROW_NUMBER() OVER (PARTITION BY departmentid, lower(code)
+									ORDER BY departmentcertificationtypeid) AS place
+								FROM departmentcertificationtypes WHERE isdeleted = FALSE AND code IS NOT NULL) d
+								ON d.departmentcertificationtypeid = t.departmentcertificationtypeid
+							WHERE d.place > 1
+							ORDER BY t.departmentcertificationtypeid
+						LOOP
+							attempt := 0;
+							LOOP
+								suffix := '-' || duplicate.id::text || CASE WHEN attempt = 0 THEN '' ELSE '-' || attempt::text END;
+								candidate := LEFT(duplicate.code, LEAST(38, 50 - length(suffix))) || suffix;
+								EXIT WHEN NOT EXISTS (SELECT 1 FROM departmentcertificationtypes
+									WHERE departmentid = duplicate.departmentid AND isdeleted = FALSE AND lower(code) = lower(candidate)
+										AND departmentcertificationtypeid <> duplicate.id);
+								attempt := attempt + 1;
+							END LOOP;
+							UPDATE departmentcertificationtypes SET code = candidate WHERE departmentcertificationtypeid = duplicate.id;
+						END LOOP;
+					END $$;");
 
 			foreach (var (table, column, _) in Columns)
 				if (Schema.Table(table).Column(column).Exists())

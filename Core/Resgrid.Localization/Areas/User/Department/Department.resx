@@ -1050,6 +1050,9 @@
   <data name="DocumentNumberingSaved" xml:space="preserve">
     <value>The document numbering was saved.</value>
   </data>
+  <data name="DocumentNumberingPartlySaved" xml:space="preserve">
+    <value>The rest of the document numbering was saved.</value>
+  </data>
   <data name="DocumentNumberingYearStartInvalid" xml:space="preserve">
     <value>The document numbering was not saved. The numbering year has to start on a day every year has, so February 29 cannot be used.</value>
   </data>

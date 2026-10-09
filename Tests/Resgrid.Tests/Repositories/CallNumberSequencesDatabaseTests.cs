@@ -107,12 +107,15 @@ namespace Resgrid.Tests.Repositories
 			{
 				await using var database = Connect(_connection);
 				// Minimal stand-ins, with their pre-M0269 types, for the other tables M0269 converts; certification types also
-				// carry the columns the code de-duplication reads, and the M0213 live-code unique index.
+				// carry the columns the code de-duplication reads, and the M0213 live-code unique index. Departments 92 and 93
+				// already hold the "-{id}" code a duplicate would take (92 in another casing, 93 exactly and then once more).
 				await database.ExecuteAsync(@"CREATE TABLE departmentcertificationtypes (departmentcertificationtypeid serial PRIMARY KEY,
 						departmentid int NOT NULL, code character varying(50) NULL, isdeleted boolean NOT NULL DEFAULT false);
 					CREATE UNIQUE INDEX ux_departmentcertificationtypes_code ON departmentcertificationtypes (departmentid, code) WHERE isdeleted = FALSE;
 					INSERT INTO departmentcertificationtypes (departmentid, code, isdeleted) VALUES
-						(90, 'EMT', false), (90, 'emt', false), (90, 'Emt', true), (91, 'emt', false);");
+						(90, 'EMT', false), (90, 'emt', false), (90, 'Emt', true), (91, 'emt', false),
+						(92, 'CERT', false), (92, 'cert', false), (92, 'Cert-6', false),
+						(93, 'ABC', false), (93, 'abc', false), (93, 'abc-9', false), (93, 'ABC-9-1', false);");
 				foreach (var (table, column, previousType) in M0269_ConvertNumberTextToCitextPg.Columns)
 					await database.ExecuteAsync($"CREATE TABLE IF NOT EXISTS {table} (); ALTER TABLE {table} ADD COLUMN IF NOT EXISTS {column} {previousType};");
 
@@ -185,9 +188,21 @@ namespace Resgrid.Tests.Repositories
 			if (!IsPostgres) Assert.Ignore("SQL Server's collation never let a live code exist under two casings.");
 			await using var database = Connect(_connection);
 			var codes = (await database.QueryAsync<(int Id, int DepartmentId, string Code, bool IsDeleted)>(
-				"SELECT departmentcertificationtypeid, departmentid, code::text, isdeleted FROM departmentcertificationtypes ORDER BY departmentcertificationtypeid")).ToList();
+				"SELECT departmentcertificationtypeid, departmentid, code::text, isdeleted FROM departmentcertificationtypes WHERE departmentid IN (90, 91) ORDER BY departmentcertificationtypeid")).ToList();
 
 			codes.Select(c => c.Code).Should().Equal("EMT", "emt-2", "Emt", "emt");
+		}
+
+		[Test]
+		public async Task A_suffixed_certification_code_steps_past_a_live_code_it_would_repeat()
+		{
+			if (!IsPostgres) Assert.Ignore("SQL Server's collation never let a live code exist under two casings.");
+			await using var database = Connect(_connection);
+			var codes = (await database.QueryAsync<string>(
+				"SELECT code::text FROM departmentcertificationtypes WHERE departmentid IN (92, 93) ORDER BY departmentcertificationtypeid")).ToList();
+
+			codes.Should().Equal(new[] { "CERT", "cert-6-1", "Cert-6", "ABC", "abc-9-2", "abc-9", "ABC-9-1" },
+				"cert-6 matches Cert-6 under citext, and abc-9 then abc-9-1 are already live in department 93");
 		}
 
 		[Test]

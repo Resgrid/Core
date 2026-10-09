@@ -1397,6 +1397,9 @@
   <data name="DocumentNumberingSaved" xml:space="preserve">
     <value>Dokumentnumreringen sparades.</value>
   </data>
+  <data name="DocumentNumberingPartlySaved" xml:space="preserve">
+    <value>Resten av dokumentnumreringen sparades.</value>
+  </data>
   <data name="DocumentNumberingYearStartInvalid" xml:space="preserve">
     <value>Dokumentnumreringen sparades inte. Numreringsåret måste börja på en dag som finns varje år, så den 29 februari kan inte användas.</value>
   </data>

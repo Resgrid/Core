@@ -1397,6 +1397,9 @@
   <data name="DocumentNumberingSaved" xml:space="preserve">
     <value>La numérotation des documents a été enregistrée.</value>
   </data>
+  <data name="DocumentNumberingPartlySaved" xml:space="preserve">
+    <value>Le reste de la numérotation des documents a été enregistré.</value>
+  </data>
   <data name="DocumentNumberingYearStartInvalid" xml:space="preserve">
     <value>La numérotation des documents n'a pas été enregistrée. L'année de numérotation doit commencer un jour qui existe chaque année ; le 29 février ne peut donc pas être utilisé.</value>
   </data>

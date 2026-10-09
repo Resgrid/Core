@@ -1065,4 +1065,7 @@
   <data name="SendNotificationHelp" xml:space="preserve">
     <value>Informiert alle alarmierten Personen, die Einheiten und das Einsatzleitungsteam, dass der Einsatz geschlossen wurde. Die Abschlussnotizen werden nicht mitgesendet.</value>
   </data>
+  <data name="NewCallFieldRequired" xml:space="preserve">
+    <value>{0} ist in dieser Abteilung ein Pflichtfeld.</value>
+  </data>
 </root>

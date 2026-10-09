@@ -288,7 +288,7 @@
                             @foreach (var r in Model.TimeReports.OrderByDescending(r => r.ReportDate))
                             {
                                 <tr>
-                                    <td><a asp-action="TimeReport" asp-route-id="@r.DeploymentTimeReportId">@r.ReportNumber</a></td><td>@r.ReportDate.ToString("yyyy-MM-dd")</td>
+                                    <td><a asp-action="TimeReport" asp-route-id="@r.DeploymentTimeReportId">@r.NumberText()</a></td><td>@r.ReportDate.ToString("yyyy-MM-dd")</td>
                                     <td>@(r.Scope switch
                                     {
                                         Resgrid.Model.Invoicing.DeploymentTimeReportScopes.Crew => string.Format(localizer["ScopeCrew"].Value, d.Units.FirstOrDefault(u => u.DeploymentUnitId == r.DeploymentUnitId)?.UnitName ?? r.DeploymentUnitId),
@@ -319,7 +319,7 @@
                                     <td>@e.ExpenseDate.ToString("yyyy-MM-dd")</td><td>@localizer["Expense" + (Resgrid.Model.Invoicing.DeploymentExpenseTypes)e.ExpenseType]</td><td><span>@e.Description</span> @(e.PreApproved ? "· " + localizer["PreApproved"] : "") @(e.Billable ? "" : "· " + localizer["NotBillable"])</td><td>@e.City</td>
                                     <td class="text-right">@e.Amount.ToString("N2") @e.Currency</td>
                                     <td>@if (e.ReceiptAttachmentId.HasValue) { <a asp-action="GetAttachment" asp-route-id="@e.ReceiptAttachmentId" target="_blank"><i class="fa fa-paperclip"></i></a> }</td>
-                                    <td>@if (!string.IsNullOrWhiteSpace(e.DeploymentTimeReportId)) { var r = Model.TimeReports.FirstOrDefault(x => x.DeploymentTimeReportId == e.DeploymentTimeReportId); <a asp-action="TimeReport" asp-route-id="@e.DeploymentTimeReportId">#@(r?.ReportNumber)</a> }</td>
+                                    <td>@if (!string.IsNullOrWhiteSpace(e.DeploymentTimeReportId)) { var r = Model.TimeReports.FirstOrDefault(x => x.DeploymentTimeReportId == e.DeploymentTimeReportId); <a asp-action="TimeReport" asp-route-id="@e.DeploymentTimeReportId">@(r == null ? null : r.NumberLabel())</a> }</td>
                                     <td class="text-right">@if (Model.CanEditTime) { <form method="post" asp-action="DeleteExpense" asp-route-id="@d.DeploymentId" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="deploymentExpenseId" value="@e.DeploymentExpenseId" /><button class="btn btn-xs btn-danger" onclick="return confirm('@JsEncoder.Encode(localizer["RemoveConfirm"])');"><i class="fa fa-trash"></i></button></form> }</td>
                                 </tr>
                             }
@@ -418,7 +418,7 @@
                         else
                         {
                             <ul class="list-unstyled">
-                                @foreach (var invoice in Model.Invoices) { <li><a asp-controller="Invoicing" asp-action="View" asp-route-id="@invoice.InvoiceId">#@invoice.InvoiceNumber</a> · @invoice.Total.ToString("N2") @invoice.Currency</li> }
+                                @foreach (var invoice in Model.Invoices) { <li><a asp-controller="Invoicing" asp-action="View" asp-route-id="@invoice.InvoiceId">@invoice.NumberLabel()</a> · @invoice.Total.ToString("N2") @invoice.Currency</li> }
                             </ul>
                         }
                         </div>

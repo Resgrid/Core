@@ -20,13 +20,14 @@ namespace Resgrid.Model
 			IncludeYear = true;
 			Floors = new List<RecordsNumberingFloor>();
 			Prefixes = new List<RecordsNumberingPrefix>();
+			DocumentPatterns = new List<DocumentNumberPattern>();
 		}
 
 		/// <summary>RmsNumberAssignment value; default OnFinalize so abandoned drafts leave no gaps.</summary>
 		[ProtoMember(1)]
 		public int NumberAssignment { get; set; }
 
-		/// <summary>Restart the sequence each calendar year (department time zone).</summary>
+		/// <summary>Restart the sequence each numbering year (department time zone; see <see cref="YearStartMonth"/>).</summary>
 		[ProtoMember(2)]
 		public bool ResetYearly { get; set; }
 
@@ -62,6 +63,37 @@ namespace Resgrid.Model
 		/// </summary>
 		[ProtoMember(8)]
 		public List<RecordsNumberingPrefix> Prefixes { get; set; }
+
+		/// <summary>
+		/// Month (1-12) the numbering year starts, for a department whose reports follow a fiscal year (its own, or a county's or
+		/// state's it reports to); 0, unset, is January. {YYYY}, {YY} and a definition's yearly reset all follow it.
+		/// </summary>
+		[ProtoMember(9)]
+		public int YearStartMonth { get; set; }
+
+		/// <summary>Day of <see cref="YearStartMonth"/> the numbering year starts; 0, unset, is the 1st.</summary>
+		[ProtoMember(10)]
+		public int YearStartDay { get; set; }
+
+		/// <summary>
+		/// <see cref="NumberingYearLabel"/> value: which year {YYYY} and {YY} write for a numbering year that does not start on
+		/// January 1. 0 is the year it ends in.
+		/// </summary>
+		[ProtoMember(11)]
+		public int YearLabel { get; set; }
+
+		/// <summary>
+		/// The department's own patterns for the other numbers Records issues: records requests and the prevention and
+		/// investigation numbers (see <see cref="DocumentNumberKinds"/>). A kind with no entry keeps its built-in numbers
+		/// (PRR-2026-0001, OCC-2026-0001 ...). They number by this setting's year start.
+		/// </summary>
+		[ProtoMember(12)]
+		public List<DocumentNumberPattern> DocumentPatterns { get; set; }
+
+		public NumberingYearStart YearStart()
+		{
+			return new NumberingYearStart(YearStartMonth, YearStartDay, (NumberingYearLabel)YearLabel);
+		}
 
 		/// <summary>What {PREFIX} renders for a record type: the department's prefix, or the shipped default when it has none (or a saved one no longer validates).</summary>
 		public string PrefixFor(string definitionKey)

@@ -250,7 +250,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			try
 			{
 				var pdf = await _timeTracking.GetTimeReportPdfAsync(id, DepartmentId);
-				return File(pdf, "application/pdf", $"dtr-{report.ReportNumber}-{report.ReportDate:yyyyMMdd}.pdf");
+				return File(pdf, "application/pdf", $"dtr-{DocumentNumbering.FileSafe(report.NumberText())}-{report.ReportDate:yyyyMMdd}.pdf");
 			}
 			catch (InvalidOperationException ex) when (IsDomainError(ex)) { return BadRequest(ex.Message); }
 		}
@@ -388,7 +388,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		internal static TimeReportData Map(DeploymentTimeReport r, Department department = null, DeploymentTimeAccess access = null) => new TimeReportData
 		{
-			Id = r.DeploymentTimeReportId, DeploymentId = r.DeploymentId, ReportNumber = r.ReportNumber, ReportDate = r.ReportDate, Scope = (int)r.Scope, DeploymentUnitId = r.DeploymentUnitId, DeploymentPersonnelId = r.DeploymentPersonnelId,
+			Id = r.DeploymentTimeReportId, DeploymentId = r.DeploymentId, ReportNumber = r.ReportNumber, DisplayNumber = r.NumberText(), ReportDate = r.ReportDate, Scope = (int)r.Scope, DeploymentUnitId = r.DeploymentUnitId, DeploymentPersonnelId = r.DeploymentPersonnelId,
 			CanAct = access?.CanActOn(r) ?? false, Status = r.Status, IncidentNumber = r.IncidentNumber, ResourceOrderNumber = r.ResourceOrderNumber,
 			RequestNumber = r.RequestNumber, CostCode = r.CostCode, PointOfHire = r.PointOfHire, NoClear8 = r.NoClear8, UnsafeConditionsStandDown = r.UnsafeConditionsStandDown, ContractorSignedByUserId = r.ContractorSignedByUserId,
 			ContractorSignedOn = r.ContractorSignedOn, CustomerSignerName = r.CustomerSignerName, CustomerSignedOn = r.CustomerSignedOn, SubmittedByUserId = r.SubmittedByUserId, SubmittedOn = r.SubmittedOn,

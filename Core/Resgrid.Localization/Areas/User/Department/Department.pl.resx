@@ -894,7 +894,7 @@
     <value>Pola formularza nowego zdarzenia</value>
   </data>
   <data name="NewCallFieldsHelp" xml:space="preserve">
-    <value>Wybierz, które wbudowane pola pojawiają się w formularzu i które muszą zostać wypełnione, zanim zdarzenie będzie można utworzyć i wysłać w teren. Nazwa, charakter, priorytet i typ są zawsze widoczne i zawsze wymagane.</value>
+    <value>Wybierz, które wbudowane pola pojawiają się w formularzu i które muszą zostać wypełnione, zanim zdarzenie będzie można utworzyć i wysłać w teren. Nazwa, charakter, priorytet i typ są zawsze widoczne i zawsze wymagane. Te same zasady obowiązują przy edycji zdarzenia i dodawaniu zdarzenia archiwalnego.</value>
   </data>
   <data name="NewCallFieldsFieldColumn" xml:space="preserve">
     <value>Pole</value>
@@ -927,7 +927,7 @@
     <value>Notatka</value>
   </data>
   <data name="NewCallField_contactName" xml:space="preserve">
-    <value>Główny kontakt</value>
+    <value>Imię i nazwisko zgłaszającego</value>
   </data>
   <data name="NewCallField_contactInfo" xml:space="preserve">
     <value>Dane kontaktowe zgłaszającego</value>
@@ -1350,9 +1350,93 @@
     <value>Następny numer zgłoszenia nie został podniesiony: można go podnieść tylko powyżej numeru, który następne zgłoszenie już otrzyma ({0}).</value>
   </data>
   <data name="CallNumberNextPatternChanged" xml:space="preserve">
-    <value>Następny numer zgłoszenia nie został podniesiony, ponieważ wzorzec zmienił się w tym samym zapisie. Podnieś go ponownie dla nowego wzorca.</value>
+    <value>Następny numer zgłoszenia nie został podniesiony, ponieważ wzorzec lub początek roku numeracji zmienił się w tym samym zapisie. Podnieś go ponownie dla nowego numeru kolejnego.</value>
+  </data>
+  <data name="CallNumberYearStart" xml:space="preserve">
+    <value>Rok numeracji zaczyna się</value>
+  </data>
+  <data name="CallNumberYearStartDay" xml:space="preserve">
+    <value>Dzień miesiąca</value>
+  </data>
+  <data name="CallNumberYearLabelEndYear" xml:space="preserve">
+    <value>Nazwany rokiem, w którym się kończy</value>
+  </data>
+  <data name="CallNumberYearLabelStartYear" xml:space="preserve">
+    <value>Nazwany rokiem, w którym się zaczyna</value>
+  </data>
+  <data name="CallNumberYearStartHelp" xml:space="preserve">
+    <value>Dla zgłoszeń numerowanych według roku budżetowego wybierz dzień, w którym się zaczyna. Wzorzec roczny zaczyna się wtedy ponownie od 1, a {YYYY} i {YY} wpisują nazwę roku budżetowego. Większość lat budżetowych nazywa się rokiem, w którym się kończą, więc rok zaczynający się 1 listopada 2026 to 2027. 1 stycznia oznacza rok kalendarzowy. Wzorce z {MM} lub {DD} zawsze podążają za kalendarzem.</value>
+  </data>
+  <data name="CallNumberResetsYearlyOn" xml:space="preserve">
+    <value>Zaczyna się od 1 co roku w dniu {0}.</value>
+  </data>
+  <data name="CallNumberYearStartInvalid" xml:space="preserve">
+    <value>Numeracja zgłoszeń nie została zapisana. Rok numeracji musi zaczynać się w dniu, który występuje w każdym roku, więc nie można użyć 29 lutego.</value>
+  </data>
+  <data name="DocumentNumberingHeader" xml:space="preserve">
+    <value>Numeracja dokumentów</value>
+  </data>
+  <data name="DocumentNumberingIntro" xml:space="preserve">
+    <value>Jak Resgrid numeruje zlecenia pracy, faktury, oferty i dzienne raporty czasu. Pozostaw wzorzec pusty, aby zachować wbudowane numery. Zmiana wzorca nigdy nie zmienia numerów dokumentów, które już mają numer, a nowy wzorzec kontynuuje po każdym numerze, który by powtórzył.</value>
+  </data>
+  <data name="DocumentNumberingRecordsLink" xml:space="preserve">
+    <value>Numeracja rejestrów</value>
+  </data>
+  <data name="DocumentNumberingYearStartHelp" xml:space="preserve">
+    <value>Dla dokumentów numerowanych według roku budżetowego wybierz dzień, w którym się zaczyna. Numery zleceń pracy i wzorce z rokiem zaczynają się wtedy ponownie od 1, a {YYYY} i {YY} wpisują nazwę roku budżetowego. Większość lat budżetowych nazywa się rokiem, w którym się kończą, więc rok zaczynający się 1 listopada 2026 to 2027. 1 stycznia oznacza rok kalendarzowy. Numery zgłoszeń i rejestrów mają własny początek roku.</value>
+  </data>
+  <data name="DocumentNumberType" xml:space="preserve">
+    <value>Dokument</value>
+  </data>
+  <data name="DocumentNumberBuiltIn" xml:space="preserve">
+    <value>Wbudowany, np.</value>
+  </data>
+  <data name="DocumentNumberPatternHelp" xml:space="preserve">
+    <value>Stały tekst (litery, cyfry, - _ . /) wokół {YYYY} lub {YY}, {MM}, {DD} i {SEQ}, który musi wystąpić raz. Wzorzec z rokiem zaczyna się od 1 w każdym roku numeracji; z {MM} lub {DD} — w każdym miesiącu lub dniu. Numer złożony tylko z cyfr jest wyświetlany z # na początku, jak zawsze numery faktur, ofert i raportów czasu.</value>
+  </data>
+  <data name="DocumentNumberingSaved" xml:space="preserve">
+    <value>Numeracja dokumentów została zapisana.</value>
+  </data>
+  <data name="DocumentNumberingPartlySaved" xml:space="preserve">
+    <value>Pozostała część numeracji dokumentów została zapisana.</value>
+  </data>
+  <data name="DocumentNumberingYearStartInvalid" xml:space="preserve">
+    <value>Numeracja dokumentów nie została zapisana. Rok numeracji musi zaczynać się w dniu, który występuje w każdym roku, więc nie można użyć 29 lutego.</value>
+  </data>
+  <data name="DocumentNumberingPatternsRejected" xml:space="preserve">
+    <value>Te wzorce nie zostały zapisane, ponieważ są nieprawidłowe lub mogłyby zapisać numer dłuższy niż 50 znaków; te dokumenty zachowały dotychczasową numerację:</value>
+  </data>
+  <data name="DocumentNumberingBelowCurrent" xml:space="preserve">
+    <value>Następny numer można tylko podnieść. Te pozostały bez zmian, ponieważ wpisany numer był niższy niż ten, który wydadzą jako następny:</value>
+  </data>
+  <data name="DocumentNumberingNotApplied" xml:space="preserve">
+    <value>Wzorzec lub początek roku numeracji zmienił się w tym samym zapisie, więc wpisane następne numery nie zostały zastosowane. Podnieś je ponownie dla nowej sekwencji.</value>
+  </data>
+  <data name="DocumentNumberKindWorkOrder" xml:space="preserve">
+    <value>Zlecenia pracy</value>
+  </data>
+  <data name="DocumentNumberKindInvoice" xml:space="preserve">
+    <value>Faktury</value>
+  </data>
+  <data name="DocumentNumberKindBid" xml:space="preserve">
+    <value>Oferty</value>
+  </data>
+  <data name="DocumentNumberKindTimeReport" xml:space="preserve">
+    <value>Dzienne raporty czasu</value>
+  </data>
+  <data name="DocumentNumberPatternColumn" xml:space="preserve">
+    <value>Wzorzec numeracji</value>
+  </data>
+  <data name="DocumentNumberNextColumn" xml:space="preserve">
+    <value>Następny numer</value>
+  </data>
+  <data name="DocumentNumberRaiseColumn" xml:space="preserve">
+    <value>Podnieś następny do</value>
   </data>
   <data name="CallSettingsSaved" xml:space="preserve">
     <value>Ustawienia zgłoszeń zostały zapisane.</value>
+  </data>
+  <data name="NewCallFieldCannotBeRequired" xml:space="preserve">
+    <value>Plus Code służy tylko do znalezienia lokalizacji i nie jest zapisywany w zdarzeniu, więc nie może być wymagany. Zamiast tego ustaw jako wymagane współrzędne GPS.</value>
   </data>
 </root>

@@ -100,7 +100,7 @@
         "Field": "RecordsNumberingConfig"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-10-05T00:00:00Z",
+      "ReviewedOn": "2026-10-08T00:00:00Z",
       "Impact": {
         "Risk": "Medium",
         "AudienceKey": "Impact.Audience",
@@ -502,7 +502,7 @@
         "Field": null
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-08T00:00:00Z",
       "Impact": {
         "Risk": "Medium",
         "AudienceKey": "Impact.Audience",
@@ -731,6 +731,114 @@
       "Conflicts": [],
       "DocumentationId": "field.RecordsNumberingConfig.Prefixes",
       "DefaultValue": "empty",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "RecordsNumberingConfig",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.RecordsNumberingConfig.YearStartMonth",
+      "AreaId": "records",
+      "LabelKey": "Field.RecordsNumberingConfig.YearStartMonth",
+      "HelpKey": "FieldHelp.RecordsNumberingConfig.YearStartMonth",
+      "Binding": "RecordsNumberingConfig.YearStartMonth",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": "NumberingYearStartMonth"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-08T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.RecordsNumberingConfig"
+      ],
+      "Affects": [
+        "field.RecordsNumberingConfig.YearStartDay",
+        "field.RecordsNumberingConfig.YearLabel"
+      ],
+      "Conflicts": [],
+      "DocumentationId": "field.RecordsNumberingConfig.YearStartMonth",
+      "DefaultValue": "0 (January)",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "RecordsNumberingConfig",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.RecordsNumberingConfig.YearStartDay",
+      "AreaId": "records",
+      "LabelKey": "Field.RecordsNumberingConfig.YearStartDay",
+      "HelpKey": "FieldHelp.RecordsNumberingConfig.YearStartDay",
+      "Binding": "RecordsNumberingConfig.YearStartDay",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": "NumberingYearStartMonth"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-08T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.RecordsNumberingConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.RecordsNumberingConfig.YearStartDay",
+      "DefaultValue": "0 (the 1st)",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "RecordsNumberingConfig",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.RecordsNumberingConfig.YearLabel",
+      "AreaId": "records",
+      "LabelKey": "Field.RecordsNumberingConfig.YearLabel",
+      "HelpKey": "FieldHelp.RecordsNumberingConfig.YearLabel",
+      "Binding": "RecordsNumberingConfig.YearLabel",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": "NumberingYearStartMonth"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-08T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.RecordsNumberingConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.RecordsNumberingConfig.YearLabel",
+      "DefaultValue": "0 (the year it ends in)",
       "AllowedValues": "Validated by the owning configuration workflow",
       "EvidenceSource": "RecordsNumberingConfig",
       "Availability": "available"
@@ -1469,6 +1577,41 @@
       "AllowedValues": "Validated by the owning configuration workflow",
       "EvidenceSource": "RecordsDisclosureConfig",
       "Availability": "available"
+    },
+    {
+      "Id": "field.RecordsNumberingConfig.DocumentPatterns",
+      "AreaId": "records",
+      "LabelKey": "Field.RecordsNumberingConfig.DocumentPatterns",
+      "HelpKey": "FieldHelp.RecordsNumberingConfig.DocumentPatterns",
+      "Binding": "RecordsNumberingConfig.DocumentPatterns",
+      "ValueType": "list",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Records",
+        "Action": "Settings",
+        "Field": "OtherNumbers"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-08T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.records",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.RecordsNumberingConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.RecordsNumberingConfig.DocumentPatterns",
+      "DefaultValue": "empty",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "RecordsNumberingConfig",
+      "Availability": "available"
     }
   ],
   "Capabilities": [
@@ -1701,6 +1844,9 @@
         "field.RecordsNumberingConfig.Prefixes",
         "field.RecordsNumberingConfig.ResetYearly",
         "field.RecordsNumberingConfig.SequenceWidth",
+        "field.RecordsNumberingConfig.YearLabel",
+        "field.RecordsNumberingConfig.YearStartDay",
+        "field.RecordsNumberingConfig.YearStartMonth",
         "field.RecordsNumberingFloor.NextSequence",
         "field.RecordsNumberingFloor.ScopeKey",
         "field.RecordsNumberingFloor.SetByUserId",
@@ -2123,12 +2269,12 @@
       "Id": "setting.RecordsNumberingConfig",
       "Locale": "en",
       "TitleKey": "Setting.RecordsNumberingConfig",
-      "Body": "Records Numbering Config. Department numbering for the built-in record types and incident reports: the number pattern, sequence digits, record type prefixes and raised next numbers. Numbers are assigned when a record is finalized. Department definitions with their own numbering keep it.",
+      "Body": "Records Numbering Config. Department numbering for the built-in record types and incident reports: the number pattern, sequence digits, record type prefixes, the day the numbering year starts (for records numbered by a fiscal year) and raised next numbers. Numbers are assigned when a record is finalized. Department definitions with their own numbering keep it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-recordsnumberingconfig",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-10-05T00:00:00Z"
+      "ReviewedOn": "2026-10-08T00:00:00Z"
     },
     {
       "Id": "setting.RecordsSearchConfig",
@@ -2255,12 +2401,12 @@
       "Id": "field.RecordsNumberingConfig.ResetYearly",
       "Locale": "en",
       "TitleKey": "Field.RecordsNumberingConfig.ResetYearly",
-      "Body": "Records Numbering Config / Reset Yearly. Restart record sequences each calendar year in the department time zone.",
+      "Body": "Records Numbering Config / Reset Yearly. Restart record sequences each numbering year (the calendar year unless a fiscal year start is set) in the department time zone.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-recordsnumberingconfig-resetyearly",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
+      "ReviewedOn": "2026-10-08T00:00:00Z"
     },
     {
       "Id": "field.RecordsNumberingConfig.SequenceWidth",
@@ -2327,6 +2473,39 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-10-05T00:00:00Z"
+    },
+    {
+      "Id": "field.RecordsNumberingConfig.YearStartMonth",
+      "Locale": "en",
+      "TitleKey": "Field.RecordsNumberingConfig.YearStartMonth",
+      "Body": "Records Numbering Config / Year Start Month. Month the numbering year starts, for records numbered by a fiscal year such as a county's or state's. Sequences that include the year start again at 1 on that month and day, and YYYY and YY write the fiscal year's name. Unset is January, the calendar year. Separate from call numbering's year start. Records request numbers and the numbers of inspections, permits, occupancies, investigations and evidence follow the same year.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-recordsnumberingconfig-yearstartmonth",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-08T00:00:00Z"
+    },
+    {
+      "Id": "field.RecordsNumberingConfig.YearStartDay",
+      "Locale": "en",
+      "TitleKey": "Field.RecordsNumberingConfig.YearStartDay",
+      "Body": "Records Numbering Config / Year Start Day. Day of the month the numbering year starts, 1 to the month's last day; February 29 is not allowed. Unset is the 1st.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-recordsnumberingconfig-yearstartday",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-08T00:00:00Z"
+    },
+    {
+      "Id": "field.RecordsNumberingConfig.YearLabel",
+      "Locale": "en",
+      "TitleKey": "Field.RecordsNumberingConfig.YearLabel",
+      "Body": "Records Numbering Config / Year Label. Which year names a numbering year that does not start on January 1: the year it ends in (the usual fiscal-year convention, so a year starting November 1, 2026 is 2027) or the year it starts in.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-recordsnumberingconfig-yearlabel",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-08T00:00:00Z"
     },
     {
       "Id": "field.RecordsNumberingFloor.NextSequence",
@@ -2640,12 +2819,12 @@
       "Id": "records-settings",
       "Locale": "en",
       "TitleKey": "Feature.records-settings",
-      "Body": "Records Settings Numbering, retention, search and visibility rules for records. Keep incident and activity records with the calls they came from, ready for review and reporting. After each call, the officer completes an incident report from the call and a supervisor reviews it. Know which reports your department completes and who reviews them. Records may need to be enabled for your department.",
+      "Body": "Records Settings Numbering (including records request and prevention numbers and the numbering year start), retention, search and visibility rules for records. Keep incident and activity records with the calls they came from, ready for review and reporting. After each call, the officer completes an incident report from the call and a supervisor reviews it. Know which reports your department completes and who reviews them. Records may need to be enabled for your department.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "records-settings",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
+      "ReviewedOn": "2026-10-08T00:00:00Z"
     },
     {
       "Id": "record-occupancies",
@@ -2778,6 +2957,17 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.RecordsNumberingConfig.DocumentPatterns",
+      "Locale": "en",
+      "TitleKey": "Field.RecordsNumberingConfig.DocumentPatterns",
+      "Body": "Records Numbering Config / Document Patterns. The department's own patterns for records request, occupancy, inspection, permit, investigation and evidence numbers. They follow this setting's numbering year start; a kind with no pattern keeps its built-in numbers (PRR-2026-0001, INSP-2026-0001 and so on).",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-recordsnumberingconfig-documentpatterns",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-08T00:00:00Z"
     }
   ]
 }

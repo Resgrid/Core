@@ -1198,7 +1198,7 @@
     <value>Avdelningens kalender för möten, evenemang och utbildningskvällar.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.call-settings">
-    <value>Brevlådan och formatet som används för att importera larm från CAD eller personsökar-e-post, samt larmnummerformatet och nästa nummer.</value>
+    <value>Brevlådan och formatet som används för att importera larm från CAD eller personsökar-e-post, samt larmnummerformatet, nästa nummer och numreringsårets början.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.call-templates">
     <value>Återanvändbara text- och anteckningsmallar för larm som snabbar upp registreringen.</value>
@@ -1522,7 +1522,7 @@
     <value>Poster som ska lämnas, väntar på granskning eller är redo att skickas in.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.records-settings">
-    <value>Regler för numrering, bevarande, sökning och synlighet för poster.</value>
+    <value>Regler för numrering (inklusive nummer för begäran om handlingar, förebyggande nummer och numreringsårets början), bevarande, sökning och synlighet för poster.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.reports">
     <value>Avdelningsrapporter om larm, personal och aktivitet.</value>
@@ -2236,7 +2236,7 @@
     <value>Använd separata sekvenser per station/grupp. Detta ändrar numreringen, inte posternas synlighet.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.ResetYearly">
-    <value>Starta om postsekvenserna varje kalenderår i avdelningens tidszon.</value>
+    <value>Starta om postsekvenserna varje numreringsår (kalenderåret om ingen räkenskapsårsstart har angetts) i avdelningens tidszon.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.SequenceWidth">
     <value>Siffror i SEQ-delen av nummermönstret, nollutfyllda: 4 skriver 0184. 3 till 8 siffror; en ändring behåller nästa nummer för varje sekvens. Avdelningsdefinitioner med egen numrering behåller sin egen bredd.</value>
@@ -6785,5 +6785,101 @@
   </data>
   <data xml:space="preserve" name="FeatureValue.api-keys">
     <value>Integrationer fortsätter att fungera när personer slutar, kan bara göra det nyckeln tillåter och kan återkallas direkt.</value>
+  </data>
+  <data name="Field.CallNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Konfiguration för larmnumrering / Månad då året börjar</value>
+  </data>
+  <data name="FieldHelp.CallNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Månaden då numreringsåret börjar, för larm som numreras efter ett räkenskapsår. Ett årligt mönster börjar om på 1 den månaden och dagen, och YYYY och YY skriver räkenskapsårets namn; mönster med MM eller DD följer kalendern. Inget värde betyder januari, alltså kalenderåret.</value>
+  </data>
+  <data name="Field.CallNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Konfiguration för larmnumrering / Dag då året börjar</value>
+  </data>
+  <data name="FieldHelp.CallNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Dagen i månaden då numreringsåret börjar, från 1 till månadens sista dag; den 29 februari är inte tillåten. Inget värde betyder den 1:a.</value>
+  </data>
+  <data name="Field.CallNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Konfiguration för larmnumrering / Årets namn</value>
+  </data>
+  <data name="FieldHelp.CallNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Vilket år som namnger ett numreringsår som inte börjar den 1 januari: året det slutar (den vanliga konventionen för räkenskapsår, så ett år som börjar den 1 november 2026 är 2027) eller året det börjar.</value>
+  </data>
+  <data name="Field.RecordsNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Inställningar för numrering av poster / Månad då året börjar</value>
+  </data>
+  <data name="FieldHelp.RecordsNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Månaden då numreringsåret börjar, för poster som numreras efter ett räkenskapsår, till exempel ett läns eller en delstats. Sekvenser som innehåller året börjar om på 1 den månaden och dagen, och YYYY och YY skriver räkenskapsårets namn. Inget värde betyder januari, alltså kalenderåret. Oberoende av larmnumreringens årsstart. Nummer för begäran om allmänna handlingar och nummer för tillsyner, tillstånd, objekt, utredningar och underlag följer samma år.</value>
+  </data>
+  <data name="Field.RecordsNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Inställningar för numrering av poster / Dag då året börjar</value>
+  </data>
+  <data name="FieldHelp.RecordsNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Dagen i månaden då numreringsåret börjar, från 1 till månadens sista dag; den 29 februari är inte tillåten. Inget värde betyder den 1:a.</value>
+  </data>
+  <data name="Field.RecordsNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Inställningar för numrering av poster / Årets namn</value>
+  </data>
+  <data name="FieldHelp.RecordsNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Vilket år som namnger ett numreringsår som inte börjar den 1 januari: året det slutar (den vanliga konventionen för räkenskapsår, så ett år som börjar den 1 november 2026 är 2027) eller året det börjar.</value>
+  </data>
+  <data name="Setting.DocumentNumberingConfig" xml:space="preserve">
+    <value>Konfiguration för dokumentnumrering</value>
+  </data>
+  <data name="SettingHelp.DocumentNumberingConfig" xml:space="preserve">
+    <value>Hur nummer för arbetsorder, fakturor, anbud och dagliga tidrapporter skrivs, och dagen deras numreringsår börjar. En dokumenttyp utan mönster behåller sina inbyggda nummer.</value>
+  </data>
+  <data name="Field.DocumentNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Konfiguration för dokumentnumrering / Månad då året börjar</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Månaden då numreringsåret börjar för arbetsorder, fakturor, anbud och dagliga tidrapporter som numreras efter ett räkenskapsår. Arbetsordernummer och mönster med år börjar om på 1 den månaden och dagen, och YYYY och YY skriver räkenskapsårets namn. Inget värde betyder januari, alltså kalenderåret.</value>
+  </data>
+  <data name="Field.DocumentNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Konfiguration för dokumentnumrering / Dag då året börjar</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Dagen i månaden då numreringsåret börjar, från 1 till månadens sista dag; den 29 februari är inte tillåten. Inget värde betyder den 1:a.</value>
+  </data>
+  <data name="Field.DocumentNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Konfiguration för dokumentnumrering / Årets namn</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Vilket år som namnger ett numreringsår som inte börjar den 1 januari: året det slutar (den vanliga konventionen för räkenskapsår, så ett år som börjar den 1 november 2026 är 2027) eller året det börjar.</value>
+  </data>
+  <data name="Field.DocumentNumberingConfig.Patterns" xml:space="preserve">
+    <value>Konfiguration för dokumentnumrering / Mönster</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberingConfig.Patterns" xml:space="preserve">
+    <value>Avdelningens eget nummermönster för arbetsorder, fakturor, anbud och dagliga tidrapporter, med larmnummertecknen (YYYY eller YY, MM, DD, SEQ). En dokumenttyp utan mönster behåller sina inbyggda nummer (WO-2026-000019, #1042). Ett nytt mönster fortsätter efter varje nummer det skulle upprepa. Medlemmar ser numret som det utfärdats på dokument, PDF-filer och exporter, och för dagliga tidrapporter i apparna Responder, Unit, IC och Dispatch.</value>
+  </data>
+  <data name="Field.DocumentNumberPattern.Kind" xml:space="preserve">
+    <value>Mönster för dokumentnummer / Typ</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberPattern.Kind" xml:space="preserve">
+    <value>Dokumentet som mönstret numrerar: work-order, invoice, bid eller time-report, eller för journaler records-request, occupancy, inspection, permit, investigation eller evidence.</value>
+  </data>
+  <data name="Field.DocumentNumberPattern.Pattern" xml:space="preserve">
+    <value>Mönster för dokumentnummer / Mönster</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberPattern.Pattern" xml:space="preserve">
+    <value>Fast text runt tecknen YYYY eller YY, MM, DD och SEQ, med SEQ exakt en gång. Varje nummer det skriver måste rymmas i dokumentets nummerkolumn: 50 tecken, eller 32 för objekt-, tillsyns-, tillstånds-, utrednings- och underlagsnummer.</value>
+  </data>
+  <data name="Field.DocumentNumberPattern.SequenceWidth" xml:space="preserve">
+    <value>Mönster för dokumentnummer / Sekvensens bredd</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberPattern.SequenceWidth" xml:space="preserve">
+    <value>Siffror som sekvensen fylls ut till med inledande nollor, 1 till 8; sekvensen räknas som ett tal, så en ändrad bredd startar aldrig om den.</value>
+  </data>
+  <data name="Field.RecordsNumberingConfig.DocumentPatterns" xml:space="preserve">
+    <value>Inställningar för numrering av poster / Dokumentmönster</value>
+  </data>
+  <data name="FieldHelp.RecordsNumberingConfig.DocumentPatterns" xml:space="preserve">
+    <value>Avdelningens egna mönster för nummer för begäran om allmänna handlingar, objekt, tillsyner, tillstånd, utredningar och underlag. De följer den här inställningens numreringsårsstart; en typ utan mönster behåller sina inbyggda nummer (PRR-2026-0001, INSP-2026-0001 och så vidare).</value>
+  </data>
+  <data name="Feature.document-numbering" xml:space="preserve">
+    <value>Dokumentnumrering</value>
+  </data>
+  <data name="FeaturePurpose.document-numbering" xml:space="preserve">
+    <value>Hur nummer för arbetsorder, fakturor, anbud och dagliga tidrapporter skrivs, och dagen deras numreringsår börjar vid numrering efter räkenskapsår.</value>
   </data>
 </root>

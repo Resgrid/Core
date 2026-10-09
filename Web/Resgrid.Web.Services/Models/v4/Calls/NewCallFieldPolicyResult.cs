@@ -31,10 +31,13 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		/// </summary>
 		public string Key { get; set; }
 
-		/// <summary>False hides the field from the call form entirely.</summary>
+		/// <summary>False hides the field from the new and edit call forms entirely.</summary>
 		public bool Visible { get; set; }
 
-		/// <summary>True blocks call creation until the field has a value.</summary>
+		/// <summary>
+		/// True blocks creating the call, or saving an edit to it, until the field has a value. Never true for a hidden
+		/// field or for pluscode.
+		/// </summary>
 		public bool Required { get; set; }
 	}
 }

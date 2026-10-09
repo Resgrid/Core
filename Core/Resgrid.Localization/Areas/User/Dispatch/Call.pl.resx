@@ -1065,4 +1065,7 @@
   <data name="SendNotificationHelp" xml:space="preserve">
     <value>Powiadamia wszystkie osoby zadysponowane do zgłoszenia, jego jednostki i zespół dowodzenia o zamknięciu zgłoszenia. Notatki zamknięcia nie są dołączane.</value>
   </data>
+  <data name="NewCallFieldRequired" xml:space="preserve">
+    <value>Pole {0} jest wymagane w tym wydziale.</value>
+  </data>
 </root>

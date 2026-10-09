@@ -22,6 +22,7 @@ using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
 using Resgrid.Services.Records;
+using Resgrid.Web.Areas.User.Models.Departments;
 using Resgrid.Web.Areas.User.Models.Records;
 using Resgrid.Web.Helpers;
 
@@ -104,6 +105,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IRecordTypedValuesService _typedValues;
 		private readonly IContactsService _contacts;
 		private readonly IRecordsNumberingService _numbering;
+		private readonly IDocumentNumberingService _documentNumbering;
 
 		public RecordsController(IRecordsService recordsService, IRecordsCutoverService cutoverService, IRecordsAuthorizationService recordsAuthorizationService,
 			IDepartmentsService departmentsService, IDepartmentGroupsService departmentGroupsService, IUnitsService unitsService, ICallsService callsService,
@@ -112,8 +114,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ICompositeViewEngine viewEngine, IPdfProvider pdfProvider, IRecordsSearchService recordsSearch, IDepartmentDataProtectionService dataProtection,
 			IDepartmentProfileMediaService branding, IRecordsPrintLayoutService printLayouts, IRecordsAccountabilityService accountability, IRecordsDashboardService dashboard, IRecordsUdfService udf,
 			IRecordsProtectionService protection, IProtectedGrantContext grantContext, IRecordsRevealService reveal, IRecordDefinitionsService definitions, IRecordTypedValuesService typedValues, IContactsService contacts,
-			IRecordsBulkPacketService bulk, IRecordsFieldRolloutService fieldRollout, IFeatureToggleService featureToggles, IRecordsNumberingService numbering)
+			IRecordsBulkPacketService bulk, IRecordsFieldRolloutService fieldRollout, IFeatureToggleService featureToggles, IRecordsNumberingService numbering,
+			IDocumentNumberingService documentNumbering)
 		{
+			_documentNumbering = documentNumbering;
 			_numbering = numbering;
 			_fieldRollout = fieldRollout;
 			_bulk = bulk;
@@ -1145,12 +1149,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				Pattern = model.NumberPattern,
 				SequenceWidth = model.SequenceWidth,
-				Year = model.NumberingYear > 0 ? model.NumberingYear : DateTime.UtcNow.Year,
+				Year = model.NumberingYear > 0 ? model.NumberingYear : before.NumberingYear,
 				NextNumbers = (model.NextNumbers ?? new List<RecordsNextNumberRow>()).Where(r => r?.NextSequence != null)
 					.Select(r => new RecordNextNumberRequest { ScopeKey = r.ScopeKey, NextSequence = r.NextSequence.Value }).ToList(),
 				Prefixes = (model.NumberPrefixes ?? new List<RecordsNumberPrefixRow>()).Where(r => r != null)
-					.Select(r => new RecordNumberPrefixRequest { DefinitionKey = r.DefinitionKey, Prefix = r.Prefix }).ToList()
+					.Select(r => new RecordNumberPrefixRequest { DefinitionKey = r.DefinitionKey, Prefix = r.Prefix }).ToList(),
+				YearStartMonth = model.NumberingYearStartMonth,
+				YearStartDay = model.NumberingYearStartDay,
+				YearLabel = model.NumberingYearLabel
 			}, cancellationToken);
+			// The other Records numbers (records requests, prevention, investigations) live in setting 72 too and follow its year
+			// start, so they save after it and not at all when it was refused.
+			var otherNumbers = numbering.PatternRejected || numbering.YearStartRejected ? new DocumentNumberingSaveResult()
+				: await _documentNumbering.SaveRecordsPatternsAsync(DepartmentId, UserId, (model.OtherNumbers ?? new List<DocumentNumberRow>()).Where(r => r != null).Select(r => r.ToUpdate()).ToList(), cancellationToken);
 			// Turning group scoping on is a deliberate action with a preview (plan 5.7.1): the switch needs the
 			// explicit confirmation; every other change on the form still saves.
 			var groupScopingBlocked = model.GroupVisibilityMode == RecordsGroupVisibilityMode.GroupScoped
@@ -1229,23 +1240,46 @@ namespace Resgrid.Web.Areas.User.Controllers
 				errors.Add(_localizer["GroupScopeConfirmRequired"]);
 			if (numbering.PatternRejected)
 				errors.Add(_localizer["NumberPatternInvalid"]);
+			if (numbering.YearStartRejected)
+				errors.Add(_localizer["NumberingYearStartInvalid"]);
 			if (numbering.BelowCurrent.Count > 0)
 				errors.Add(_localizer["NextNumberBelowCurrent"] + " (" + string.Join(", ", numbering.BelowCurrent.Select(s => s.NextNumber)) + ")");
 			if (numbering.NotApplied > 0)
 				errors.Add(_localizer["NextNumberPatternChanged"]);
 			if (numbering.PrefixesRejected.Count > 0)
 				errors.Add(_localizer["NumberPrefixInvalid"] + " (" + string.Join(", ", numbering.PrefixesRejected.Select(NumberedTypeLabel)) + ")");
+			if (otherNumbers.PatternsRejected.Count > 0)
+				errors.Add(_localizer["OtherNumbersPatternsRejected"] + " (" + string.Join(", ", otherNumbers.PatternsRejected.Select(OtherNumberLabel)) + ")");
+			if (otherNumbers.BelowCurrent.Count > 0)
+				errors.Add(_localizer["NextNumberBelowCurrent"] + " (" + string.Join(", ", otherNumbers.BelowCurrent.Select(s => s.NextNumber)) + ")");
+			if (otherNumbers.NotApplied > 0)
+				errors.Add(_localizer["NextNumberPatternChanged"]);
 			if (errors.Count > 0)
 				after.ErrorMessage = string.Join(" ", errors);
 
 			// Show what was saved, not what was posted: the sequences can change with the pattern, and a raised number
-			// left in its box would be resubmitted against whichever row lands there. A refused pattern or prefix stays for correcting.
+			// left in its box would be resubmitted against whichever row lands there. A refused pattern, year start or prefix
+			// stays for correcting (either refusal saves nothing in setting 72, so both keep what was typed).
+			var numberingRefused = numbering.PatternRejected || numbering.YearStartRejected;
 			foreach (var key in ModelState.Keys.Where(k => k.StartsWith(nameof(RecordsSettingsView.NextNumbers), StringComparison.Ordinal)
 				|| k.StartsWith(nameof(RecordsSettingsView.NumberPrefixes), StringComparison.Ordinal)
-				|| k == nameof(RecordsSettingsView.SequenceWidth) || (k == nameof(RecordsSettingsView.NumberPattern) && !numbering.PatternRejected)).ToList())
+				|| k.StartsWith(nameof(RecordsSettingsView.OtherNumbers), StringComparison.Ordinal)
+				|| k == nameof(RecordsSettingsView.SequenceWidth) || k == nameof(RecordsSettingsView.NumberingYear)
+				|| (!numberingRefused && (k == nameof(RecordsSettingsView.NumberPattern) || k == nameof(RecordsSettingsView.NumberingYearStartMonth)
+					|| k == nameof(RecordsSettingsView.NumberingYearStartDay) || k == nameof(RecordsSettingsView.NumberingYearLabel)))).ToList())
 				ModelState.Remove(key);
 			foreach (var row in after.NumberPrefixes.Where(r => numbering.PrefixesRejected.Contains(r.DefinitionKey)))
 				row.Prefix = model.NumberPrefixes?.FirstOrDefault(p => p != null && p.DefinitionKey == row.DefinitionKey)?.Prefix;
+			// A refused pattern (or one not saved because setting 72 was refused) stays in its box for correcting.
+			foreach (var row in after.OtherNumbers)
+			{
+				var typed = model.OtherNumbers?.FirstOrDefault(p => p != null && p.Kind == row.Kind);
+				if (typed != null && (numberingRefused || otherNumbers.PatternsRejected.Contains(row.Kind)))
+				{
+					row.Pattern = typed.Pattern;
+					row.SequenceWidth = typed.SequenceWidth;
+				}
+			}
 
 			return View(after);
 		}
@@ -1259,16 +1293,24 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var numbering = await _departmentSettingsService.GetRecordsNumberingConfigAsync(DepartmentId, true);
 			var retention = await _departmentSettingsService.GetRecordsRetentionPolicyAsync(DepartmentId, true);
 			var search = await _departmentSettingsService.GetRecordsSearchConfigAsync(DepartmentId, true);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+			var now = DateTime.UtcNow;
+			var yearStart = numbering.YearStart();
 
 			var model = new RecordsSettingsView
 			{
 				ModuleState = moduleState,
-				Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false),
+				Department = department,
 				DefaultLifecyclePreset = await _departmentSettingsService.GetRecordsDefaultLifecyclePresetAsync(DepartmentId, true),
 				ReviewDueHours = await _departmentSettingsService.GetRecordsReviewDueHoursAsync(DepartmentId, true),
 				NumberPattern = RecordNumberFormat.EffectivePattern(numbering),
 				SequenceWidth = RecordNumberFormat.EffectiveWidth(numbering.SequenceWidth),
-				NumberingYear = DateTime.UtcNow.Year,
+				// The department-local numbering year a record started now falls in, so the sequences listed are the ones in use.
+				NumberingYear = RecordsNumberingService.NumberingYear(numbering, now, department?.TimeZone),
+				NumberingYearStartMonth = yearStart.Month,
+				NumberingYearStartDay = yearStart.Day,
+				NumberingYearLabel = (int)yearStart.Label,
+				NumberingPreviewDate = string.IsNullOrWhiteSpace(department?.TimeZone) ? now : DateTimeHelpers.GetLocalDateTime(now, department.TimeZone),
 				DepartmentDefaultYears = retention.DepartmentDefaultYears,
 				GroupVisibilityMode = await _departmentSettingsService.GetRecordsGroupVisibilityModeAsync(DepartmentId, true),
 				GroupScopePreview = await _recordsAuthorizationService.PreviewGroupScopingAsync(DepartmentId),
@@ -1300,6 +1342,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var custom = numbering.Prefixes?.FirstOrDefault(p => p != null && p.DefinitionKey == type.Key && RecordNumberFormat.IsValidPrefix(p.Prefix));
 				model.NumberPrefixes.Add(new RecordsNumberPrefixRow { DefinitionKey = type.Key, Label = NumberedTypeLabel(type.Key), DefaultPrefix = type.Value, Prefix = custom?.Prefix });
 			}
+
+			model.OtherNumbers = (await _documentNumbering.GetStatusesAsync(DepartmentId, true, now))
+				.Select(s => DocumentNumberRow.From(s, OtherNumberLabel(s.Kind))).ToList();
 
 			var sequences = await _numbering.GetSequencesAsync(DepartmentId, numbering, model.NumberingYear);
 			var grouped = sequences.Any(s => s.GroupId.HasValue);
@@ -1343,6 +1388,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private string NumberedTypeLabel(string definitionKey)
 		{
 			return RmsDefinitionKeys.LockedTypes.TryGetValue(definitionKey, out var type) ? type.ToString() : _localizer["IncidentReports"].Value;
+		}
+
+		/// <summary>The Records kinds numbered outside the record pattern, by the names their own screens use.</summary>
+		private string OtherNumberLabel(string kind)
+		{
+			switch (kind)
+			{
+				case DocumentNumberKinds.RecordsRequest: return _localizer["Disclosures"].Value;
+				case DocumentNumberKinds.Occupancy: return _localizer["Occupancies"].Value;
+				case DocumentNumberKinds.Inspection: return _localizer["Inspections"].Value;
+				case DocumentNumberKinds.Permit: return _localizer["Permits"].Value;
+				case DocumentNumberKinds.Investigation: return _localizer["Investigations"].Value;
+				case DocumentNumberKinds.Evidence: return _localizer["Evidence"].Value;
+				default: return kind;
+			}
 		}
 
 		/// <summary>

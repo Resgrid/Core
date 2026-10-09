@@ -63,10 +63,10 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
 				{
-					// aspnetusers columns are citext (case-insensitive), so match on the same key ASP.NET
-					// Identity authenticated against -- normalizedusername -- so a row whose username and
-					// normalizedusername have drifted apart is still found here.
-					var result = await db.QueryAsync<IdentityUser>($"SELECT * FROM aspnetusers WHERE normalizedusername = @normalizedUserName", new { normalizedUserName = userName?.ToUpperInvariant() });
+					// Match on the same key ASP.NET Identity authenticated against -- normalizedusername -- so a row
+					// whose username and normalizedusername have drifted apart is still found here. The ::citext cast
+					// lets the citext column's index serve the lookup (a text parameter would scan the table).
+					var result = await db.QueryAsync<IdentityUser>($"SELECT * FROM aspnetusers WHERE normalizedusername = @normalizedUserName::citext", new { normalizedUserName = userName?.ToUpperInvariant() });
 
 					return result.FirstOrDefault();
 				}
@@ -90,9 +90,9 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
 				{
-					// email is citext (case-insensitive), so plain equality is already case-insensitive and can
-					// use the index -- no LOWER() needed.
-					return db.Query<IdentityUser>($"SELECT * FROM aspnetusers WHERE email = @email", new { email = email }).FirstOrDefault();
+					// email is citext, but Npgsql binds the string as text and citext = text compares as text: case-sensitive
+					// and unable to use the index. Casting the parameter to citext gives the case-insensitive, indexed match.
+					return db.Query<IdentityUser>($"SELECT * FROM aspnetusers WHERE email = @email::citext", new { email = email }).FirstOrDefault();
 				}
 			}
 			else

@@ -85,7 +85,7 @@ namespace Resgrid.Tests.Web.User
 				Mock.Of<IDocumentsService>(), Mock.Of<INotesService>(), Mock.Of<IContactsService>(), Mock.Of<ICheckInTimerService>(), Mock.Of<ISecurityPinService>(),
 				Mock.Of<IRunCardsService>(), Mock.Of<IFeatureToggleService>(), Mock.Of<IDepartmentProfileMediaService>(),
 				localizer.Object, Mock.Of<Resgrid.Model.AiDispatch.IAiDispatchEnrichmentService>(),
-				Mock.Of<IProtectedReadService>(), _numbering.Object)
+				Mock.Of<IProtectedReadService>(), _numbering.Object, Mock.Of<IDocumentNumberingService>())
 			{
 				ControllerContext = new ControllerContext { HttpContext = _httpContext }
 			};

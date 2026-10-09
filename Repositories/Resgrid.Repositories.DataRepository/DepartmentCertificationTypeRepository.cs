@@ -18,12 +18,12 @@ namespace Resgrid.Repositories.DataRepository
 
 		public Task<DepartmentCertificationType> GetByCodeAsync(int departmentId, string code) =>
 			QueryFirstOrDefaultAsync<DepartmentCertificationType>(
-				$"SELECT * FROM {Tbl("DepartmentCertificationTypes")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("Code")} = {P}Code AND {Col("IsDeleted")} = {False}",
+				$"SELECT * FROM {Tbl("DepartmentCertificationTypes")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("Code")} = {CaseInsensitive("Code")} AND {Col("IsDeleted")} = {False}",
 				new { DepartmentId = departmentId, Code = code ?? string.Empty });
 
 		public Task<IEnumerable<DepartmentCertificationType>> GetByCodesAsync(int departmentId, IEnumerable<string> codes) =>
 			QueryAsync<DepartmentCertificationType>(
-				$"SELECT * FROM {Tbl("DepartmentCertificationTypes")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("IsDeleted")} = {False} AND {InList("Code", "Codes")}",
+				$"SELECT * FROM {Tbl("DepartmentCertificationTypes")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("IsDeleted")} = {False} AND {CaseInsensitiveInList("Code", "Codes")}",
 				new { DepartmentId = departmentId, Codes = InListValue(codes) });
 
 		public Task<IEnumerable<DepartmentCertificationType>> GetActiveForDepartmentAsync(int departmentId, int? appliesTo = null) =>

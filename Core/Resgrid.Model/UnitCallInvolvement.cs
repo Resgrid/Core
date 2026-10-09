@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Resgrid.Model.Reporting;
@@ -53,14 +54,16 @@ namespace Resgrid.Model
 		/// <summary>
 		/// The call a unit is working, which a new status sent without a destination is linked to (the same rules as the
 		/// server's write-time attribution, <see cref="CallStatusAttribution"/>): the open call its latest status points at
-		/// unless that status already cleared it, otherwise the one open call it is dispatched to (ignoring the call it just
-		/// cleared). Null when there is none, or more than one dispatched call to choose from.
+		/// unless that status already cleared it, otherwise the one open call it is dispatched to, ignoring what its latest,
+		/// clearing status already cleared (<see cref="CallStatusAttribution.ClearedByPrevious"/>: the call it points at, or
+		/// every call dispatched before a clear that points at no call). Null when there is none, or more than one dispatched
+		/// call to choose from.
 		/// </summary>
 		/// <param name="latest">The unit's latest status, or null.</param>
 		/// <param name="latestIsClearing">Whether that status ended the unit's involvement (<see cref="CallStatusLinkage.IsClearingUnitState"/>).</param>
 		/// <param name="openCallIds">The department's open (active) call ids.</param>
-		/// <param name="openDispatchedCallIds">The open calls the unit is dispatched to.</param>
-		public static int? ResolveWorkingCallId(UnitState latest, bool latestIsClearing, ICollection<int> openCallIds, IEnumerable<int> openDispatchedCallIds)
+		/// <param name="openDispatches">The unit's dispatches to open calls.</param>
+		public static int? ResolveWorkingCallId(UnitState latest, bool latestIsClearing, ICollection<int> openCallIds, IEnumerable<CallDispatchUnit> openDispatches)
 		{
 			var latestCallId = latest != null ? CallStatusLinkage.LinkedCallId(latest.DestinationId, latest.DestinationType) : null;
 
@@ -71,10 +74,21 @@ namespace Resgrid.Model
 			if (latestCallId.HasValue && !latestIsClearing && openCallIds != null && openCallIds.Contains(latestCallId.Value))
 				return latestCallId.Value;
 
-			var dispatched = (openDispatchedCallIds ?? Enumerable.Empty<int>())
-				.Where(x => openCallIds == null || openCallIds.Contains(x));
+			var (clearedCallId, clearedAllAt) = CallStatusAttribution.ClearedByPrevious(latestIsClearing && latest != null,
+				latest?.DestinationId, latest?.DestinationType, latest?.Timestamp);
 
-			return CallStatusAttribution.PickDispatchCall(dispatched, latestIsClearing ? latestCallId : null);
+			var dispatched = (openDispatches ?? Enumerable.Empty<CallDispatchUnit>())
+				.Where(x => x != null && (openCallIds == null || openCallIds.Contains(x.CallId)));
+
+			return CallStatusAttribution.PickDispatchCall(dispatched, x => x.CallId, LatestDispatchTime, clearedCallId, clearedAllAt);
+		}
+
+		/// <summary>
+		/// When a unit's dispatch to a call last went out: its latest redispatch, else the dispatch itself.
+		/// </summary>
+		public static DateTime LatestDispatchTime(CallDispatchUnit dispatch)
+		{
+			return dispatch.LastDispatchedOn ?? dispatch.DispatchedOn;
 		}
 	}
 }

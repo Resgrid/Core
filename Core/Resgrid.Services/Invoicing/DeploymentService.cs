@@ -825,7 +825,7 @@ namespace Resgrid.Services.Invoicing
 						SubjectName = subject?.Name,
 						SubjectUserId = subjectUserId,
 						RosterAction = subject?.Action,
-						ReportNumber = report?.ReportNumber, ReportDate = report?.ReportDate, TimeReportId = report?.DeploymentTimeReportId, ReportStatus = report?.Status,
+						ReportNumber = report?.ReportNumber, ReportDisplayNumber = report?.NumberText(), ReportDate = report?.ReportDate, TimeReportId = report?.DeploymentTimeReportId, ReportStatus = report?.Status,
 						ExpenseType = expense?.ExpenseType, ExpenseAmount = expense?.Amount, ExpenseCurrency = expense?.Currency ?? deployment.Currency,
 						AttachmentId = attachment?.DeploymentAttachmentId, AttachmentType = attachment?.AttachmentType, AttachmentName = attachment?.Name
 					}

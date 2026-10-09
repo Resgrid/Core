@@ -762,7 +762,7 @@
         "Field": "CallNumberPattern"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-10-06T00:00:00Z",
+      "ReviewedOn": "2026-10-08T00:00:00Z",
       "Impact": {
         "Risk": "Medium",
         "AudienceKey": "Impact.Audience",
@@ -846,6 +846,114 @@
       "Conflicts": [],
       "DocumentationId": "field.CallNumberingConfig.SequenceWidth",
       "DefaultValue": "1",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "CallNumberingConfig",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.CallNumberingConfig.YearStartMonth",
+      "AreaId": "calls",
+      "LabelKey": "Field.CallNumberingConfig.YearStartMonth",
+      "HelpKey": "FieldHelp.CallNumberingConfig.YearStartMonth",
+      "Binding": "CallNumberingConfig.YearStartMonth",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "CallSettings",
+        "Field": "CallNumberYearStartMonth"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-08T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.CallNumberingConfig"
+      ],
+      "Affects": [
+        "field.CallNumberingConfig.YearStartDay",
+        "field.CallNumberingConfig.YearLabel"
+      ],
+      "Conflicts": [],
+      "DocumentationId": "field.CallNumberingConfig.YearStartMonth",
+      "DefaultValue": "0 (January)",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "CallNumberingConfig",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.CallNumberingConfig.YearStartDay",
+      "AreaId": "calls",
+      "LabelKey": "Field.CallNumberingConfig.YearStartDay",
+      "HelpKey": "FieldHelp.CallNumberingConfig.YearStartDay",
+      "Binding": "CallNumberingConfig.YearStartDay",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "CallSettings",
+        "Field": "CallNumberYearStartMonth"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-08T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.CallNumberingConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.CallNumberingConfig.YearStartDay",
+      "DefaultValue": "0 (the 1st)",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "CallNumberingConfig",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.CallNumberingConfig.YearLabel",
+      "AreaId": "calls",
+      "LabelKey": "Field.CallNumberingConfig.YearLabel",
+      "HelpKey": "FieldHelp.CallNumberingConfig.YearLabel",
+      "Binding": "CallNumberingConfig.YearLabel",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "CallSettings",
+        "Field": "CallNumberYearStartMonth"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-08T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.CallNumberingConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.CallNumberingConfig.YearLabel",
+      "DefaultValue": "0 (the year it ends in)",
       "AllowedValues": "Validated by the owning configuration workflow",
       "EvidenceSource": "CallNumberingConfig",
       "Availability": "available"
@@ -2462,6 +2570,9 @@
       "SettingIds": [
         "field.CallNumberingConfig.Pattern",
         "field.CallNumberingConfig.SequenceWidth",
+        "field.CallNumberingConfig.YearLabel",
+        "field.CallNumberingConfig.YearStartDay",
+        "field.CallNumberingConfig.YearStartMonth",
         "setting.CallNumberingConfig",
         "setting.InternalDispatchEmail",
         "setting.RssFeedKeyForActiveCalls",
@@ -2673,12 +2784,12 @@
       "Id": "setting.CallNumberingConfig",
       "Locale": "en",
       "TitleKey": "Setting.CallNumberingConfig",
-      "Body": "Call Numbering Config. How new call numbers are written: the call number pattern and sequence digits, plus a raised next number for departments continuing numbers issued before Resgrid. Changing it never renumbers calls that already have a number.",
+      "Body": "Call Numbering Config. How new call numbers are written: the call number pattern, sequence digits and the day the numbering year starts (for calls numbered by a fiscal year), plus a raised next number for departments continuing numbers issued before Resgrid. Changing it never renumbers calls that already have a number.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-callnumberingconfig",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-10-06T00:00:00Z"
+      "ReviewedOn": "2026-10-08T00:00:00Z"
     },
     {
       "Id": "field.CallNumberingConfig.Pattern",
@@ -2701,6 +2812,39 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-10-06T00:00:00Z"
+    },
+    {
+      "Id": "field.CallNumberingConfig.YearStartMonth",
+      "Locale": "en",
+      "TitleKey": "Field.CallNumberingConfig.YearStartMonth",
+      "Body": "Call Numbering Config / Year Start Month. Month the numbering year starts, for calls numbered by a fiscal year. A yearly pattern starts again at 1 on that month and day, and YYYY and YY write the fiscal year's name; patterns with MM or DD follow the calendar. Unset is January, the calendar year.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-callnumberingconfig-yearstartmonth",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-08T00:00:00Z"
+    },
+    {
+      "Id": "field.CallNumberingConfig.YearStartDay",
+      "Locale": "en",
+      "TitleKey": "Field.CallNumberingConfig.YearStartDay",
+      "Body": "Call Numbering Config / Year Start Day. Day of the month the numbering year starts, 1 to the month's last day; February 29 is not allowed. Unset is the 1st.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-callnumberingconfig-yearstartday",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-08T00:00:00Z"
+    },
+    {
+      "Id": "field.CallNumberingConfig.YearLabel",
+      "Locale": "en",
+      "TitleKey": "Field.CallNumberingConfig.YearLabel",
+      "Body": "Call Numbering Config / Year Label. Which year names a numbering year that does not start on January 1: the year it ends in (the usual fiscal-year convention, so a year starting November 1, 2026 is 2027) or the year it starts in.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-callnumberingconfig-yearlabel",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-08T00:00:00Z"
     },
     {
       "Id": "setting.RssFeedKeyForActiveCalls",
@@ -3476,12 +3620,12 @@
       "Id": "call-settings",
       "Locale": "en",
       "TitleKey": "Feature.call-settings",
-      "Body": "Call Settings The mailbox and format used to import calls from CAD or paging email, and the call number format and next number. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Collect your call types, the statuses members report while responding, and the details of any CAD or paging system that should create calls.",
+      "Body": "Call Settings The mailbox and format used to import calls from CAD or paging email, and the call number format, next number and numbering year start. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Collect your call types, the statuses members report while responding, and the details of any CAD or paging system that should create calls.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "call-settings",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
+      "ReviewedOn": "2026-10-08T00:00:00Z"
     }
   ]
 }

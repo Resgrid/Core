@@ -1198,7 +1198,7 @@
     <value>Le calendrier du département pour les réunions, événements et soirées de formation.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.call-settings">
-    <value>La boîte aux lettres et le format utilisés pour importer les appels depuis un CAD ou un e-mail de radiomessagerie, ainsi que le format et le prochain numéro des numéros d'appel.</value>
+    <value>La boîte aux lettres et le format utilisés pour importer les appels depuis un CAD ou un e-mail de radiomessagerie, ainsi que le format, le prochain numéro et le début de l'année de numérotation des numéros d'appel.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.call-templates">
     <value>Modèles de texte d'appel et de notes réutilisables qui accélèrent la saisie des appels.</value>
@@ -1522,7 +1522,7 @@
     <value>Dossiers à traiter, en attente de vérification ou prêts à être soumis.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.records-settings">
-    <value>Règles de numérotation, de conservation, de recherche et de visibilité des dossiers.</value>
+    <value>Règles de numérotation (y compris les numéros de demandes d'accès et de prévention et le début de l'année de numérotation), de conservation, de recherche et de visibilité des dossiers.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.reports">
     <value>Rapports du département sur les appels, le personnel et l'activité.</value>
@@ -2236,7 +2236,7 @@
     <value>Utilise des séquences distinctes par caserne/groupe. Ceci modifie la numérotation, et non la visibilité des dossiers.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.ResetYearly">
-    <value>Réinitialise les séquences de dossiers chaque année civile, selon le fuseau horaire du département.</value>
+    <value>Réinitialise les séquences de dossiers chaque année de numérotation (l'année civile, sauf si un début d'exercice est défini), selon le fuseau horaire du département.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.SequenceWidth">
     <value>Chiffres de la partie SEQ du modèle de numérotation, complétés par des zéros : 4 écrit 0184. De 3 à 8 chiffres ; le modifier conserve le prochain numéro de chaque séquence. Les définitions du département ayant leur propre numérotation conservent leur propre largeur.</value>
@@ -6785,5 +6785,101 @@
   </data>
   <data xml:space="preserve" name="FeatureValue.api-keys">
     <value>Les intégrations continuent de fonctionner quand des personnes partent, ne peuvent faire que ce que leur clé autorise et peuvent être révoquées immédiatement.</value>
+  </data>
+  <data name="Field.CallNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Configuration de la numérotation des appels / Mois de début de l'année</value>
+  </data>
+  <data name="FieldHelp.CallNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Mois où commence l'année de numérotation, pour les appels numérotés par exercice budgétaire. Un modèle annuel recommence à 1 ce mois et ce jour-là, et YYYY et YY écrivent le nom de l'exercice ; les modèles avec MM ou DD suivent le calendrier. Non défini correspond à janvier, l'année civile.</value>
+  </data>
+  <data name="Field.CallNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Configuration de la numérotation des appels / Jour de début de l'année</value>
+  </data>
+  <data name="FieldHelp.CallNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Jour du mois où commence l'année de numérotation, de 1 au dernier jour du mois ; le 29 février n'est pas autorisé. Non défini correspond au 1er.</value>
+  </data>
+  <data name="Field.CallNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Configuration de la numérotation des appels / Nom de l'année</value>
+  </data>
+  <data name="FieldHelp.CallNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Année qui donne son nom à une année de numérotation ne commençant pas le 1er janvier : l'année où elle se termine (la convention habituelle des exercices, une année commençant le 1er novembre 2026 est donc 2027) ou l'année où elle commence.</value>
+  </data>
+  <data name="Field.RecordsNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Configuration de numérotation des dossiers / Mois de début de l'année</value>
+  </data>
+  <data name="FieldHelp.RecordsNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Mois où commence l'année de numérotation, pour les dossiers numérotés par exercice budgétaire, comme celui d'un comté ou d'un État. Les séquences qui contiennent l'année recommencent à 1 ce mois et ce jour-là, et YYYY et YY écrivent le nom de l'exercice. Non défini correspond à janvier, l'année civile. Indépendant du début d'année de la numérotation des appels. Les numéros des demandes d'accès aux documents et ceux des inspections, permis, occupations, enquêtes et preuves suivent la même année.</value>
+  </data>
+  <data name="Field.RecordsNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Configuration de numérotation des dossiers / Jour de début de l'année</value>
+  </data>
+  <data name="FieldHelp.RecordsNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Jour du mois où commence l'année de numérotation, de 1 au dernier jour du mois ; le 29 février n'est pas autorisé. Non défini correspond au 1er.</value>
+  </data>
+  <data name="Field.RecordsNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Configuration de numérotation des dossiers / Nom de l'année</value>
+  </data>
+  <data name="FieldHelp.RecordsNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Année qui donne son nom à une année de numérotation ne commençant pas le 1er janvier : l'année où elle se termine (la convention habituelle des exercices, une année commençant le 1er novembre 2026 est donc 2027) ou l'année où elle commence.</value>
+  </data>
+  <data name="Setting.DocumentNumberingConfig" xml:space="preserve">
+    <value>Configuration de la numérotation des documents</value>
+  </data>
+  <data name="SettingHelp.DocumentNumberingConfig" xml:space="preserve">
+    <value>Comment s'écrivent les numéros des ordres de travail, factures, offres et rapports de temps quotidiens, et le jour où commence leur année de numérotation. Un type de document sans modèle conserve ses numéros intégrés.</value>
+  </data>
+  <data name="Field.DocumentNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Configuration de la numérotation des documents / Mois de début de l'année</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Mois où commence l'année de numérotation des ordres de travail, factures, offres et rapports de temps quotidiens numérotés par exercice budgétaire. Les numéros d'ordres de travail et les modèles avec une année recommencent à 1 ce mois et ce jour-là, et YYYY et YY écrivent le nom de l'exercice. Non défini correspond à janvier, l'année civile.</value>
+  </data>
+  <data name="Field.DocumentNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Configuration de la numérotation des documents / Jour de début de l'année</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Jour du mois où commence l'année de numérotation, de 1 au dernier jour du mois ; le 29 février n'est pas autorisé. Non défini correspond au 1er.</value>
+  </data>
+  <data name="Field.DocumentNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Configuration de la numérotation des documents / Nom de l'année</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Année qui donne son nom à une année de numérotation ne commençant pas le 1er janvier : l'année où elle se termine (la convention habituelle des exercices, une année commençant le 1er novembre 2026 est donc 2027) ou l'année où elle commence.</value>
+  </data>
+  <data name="Field.DocumentNumberingConfig.Patterns" xml:space="preserve">
+    <value>Configuration de la numérotation des documents / Modèles</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberingConfig.Patterns" xml:space="preserve">
+    <value>Le modèle de numérotation propre au service pour les ordres de travail, factures, offres et rapports de temps quotidiens, avec les jetons des numéros d'appel (YYYY ou YY, MM, DD, SEQ). Un type de document sans modèle conserve ses numéros intégrés (WO-2026-000019, #1042). Un nouveau modèle reprend après tout numéro qu'il répéterait. Les membres voient le numéro tel qu'émis sur les documents, les PDF et les exports, et pour les rapports de temps quotidiens dans les applications Responder, Unit, IC et Dispatch.</value>
+  </data>
+  <data name="Field.DocumentNumberPattern.Kind" xml:space="preserve">
+    <value>Modèle de numéro de document / Type</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberPattern.Kind" xml:space="preserve">
+    <value>Le document que le modèle numérote : work-order, invoice, bid ou time-report, ou pour les dossiers records-request, occupancy, inspection, permit, investigation ou evidence.</value>
+  </data>
+  <data name="Field.DocumentNumberPattern.Pattern" xml:space="preserve">
+    <value>Modèle de numéro de document / Modèle</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberPattern.Pattern" xml:space="preserve">
+    <value>Texte fixe autour des jetons YYYY ou YY, MM, DD et SEQ, avec SEQ exactement une fois. Chaque numéro écrit doit tenir dans la colonne de numéro du document : 50 caractères, ou 32 pour les numéros d'occupation, d'inspection, de permis, d'enquête et de preuve.</value>
+  </data>
+  <data name="Field.DocumentNumberPattern.SequenceWidth" xml:space="preserve">
+    <value>Modèle de numéro de document / Largeur de la séquence</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberPattern.SequenceWidth" xml:space="preserve">
+    <value>Nombre de chiffres auquel la séquence est complétée par des zéros, de 1 à 8 ; la séquence est comptée comme un nombre, changer la largeur ne la redémarre donc jamais.</value>
+  </data>
+  <data name="Field.RecordsNumberingConfig.DocumentPatterns" xml:space="preserve">
+    <value>Configuration de numérotation des dossiers / Modèles de documents</value>
+  </data>
+  <data name="FieldHelp.RecordsNumberingConfig.DocumentPatterns" xml:space="preserve">
+    <value>Les modèles propres au service pour les numéros de demandes d'accès aux documents, d'occupations, d'inspections, de permis, d'enquêtes et de preuves. Ils suivent le début de l'année de numérotation de ce paramètre ; un type sans modèle conserve ses numéros intégrés (PRR-2026-0001, INSP-2026-0001, etc.).</value>
+  </data>
+  <data name="Feature.document-numbering" xml:space="preserve">
+    <value>Numérotation des documents</value>
+  </data>
+  <data name="FeaturePurpose.document-numbering" xml:space="preserve">
+    <value>Comment s'écrivent les numéros des ordres de travail, factures, offres et rapports de temps quotidiens, et le jour où commence leur année de numérotation pour une numérotation par exercice.</value>
   </data>
 </root>

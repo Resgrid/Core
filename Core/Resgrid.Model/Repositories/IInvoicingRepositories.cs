@@ -37,6 +37,8 @@ namespace Resgrid.Model.Repositories
 	{
 		public string InvoiceId { get; set; }
 		public int InvoiceNumber { get; set; }
+		/// <summary>The number as issued (null on rows written before M0268 by an older server).</summary>
+		public string DisplayNumber { get; set; }
 		public string ContactId { get; set; }
 		public int Status { get; set; }
 		public DateTime? DueOn { get; set; }

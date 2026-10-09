@@ -245,6 +245,8 @@ namespace Resgrid.Tests.Services
 			var invoice = await Build().CreateDraftInvoiceAsync(7, "contact-1", "user-1", "127.0.0.1", "test", "cad");
 
 			invoice.InvoiceNumber.Should().Be(1042);
+			invoice.DisplayNumber.Should().Be("1042", "without a pattern the number people see is the plain number");
+			invoice.NumberLabel().Should().Be("#1042");
 			invoice.Status.Should().Be((int)InvoiceStatus.Draft);
 			invoice.DiscountPercent.Should().Be(10m);
 			invoice.Currency.Should().Be("CAD");
@@ -252,6 +254,25 @@ namespace Resgrid.Tests.Services
 			_published.Select(x => x.Trigger).Should().Equal(WorkflowTriggerEventType.InvoiceCreated);
 			_published.Single().AggregateId.Should().Be(invoice.InvoiceId);
 			_audits.Select(a => a.Type).Should().Equal(AuditLogTypes.InvoiceCreated);
+		}
+
+		[Test]
+		public async Task Create_draft_writes_the_departments_invoice_pattern_and_keeps_the_int_number()
+		{
+			_profiles.Setup(p => p.GetByContactIdAsync("contact-1", 7)).ReturnsAsync(Profile(discount: 10m));
+			_sequence.Setup(s => s.GetNextNumberAsync(7, It.IsAny<CancellationToken>())).ReturnsAsync(1043);
+			var numbering = new Mock<IDocumentNumberingService>();
+			numbering.Setup(n => n.TakeCustomNumberAsync(7, DocumentNumberKinds.Invoice, It.IsAny<DateTime>(), It.IsAny<CancellationToken>())).ReturnsAsync("INV-2027-0001");
+			var service = new InvoicingService(_profiles.Object, _rateCards.Object, _rateCardItems.Object, _invoices.Object,
+				_lineItems.Object, _payments.Object, _sequence.Object, _identities.Object, _contacts.Object, _calls.Object, _units.Object, _outbox.Object, _events.Object,
+				_pdf.Object, _email.Object, _departments.Object, _addresses.Object, _unitOfWork, documentNumbering: numbering.Object);
+
+			var invoice = await service.CreateDraftInvoiceAsync(7, "contact-1", "user-1", "127.0.0.1", "test", "cad");
+
+			invoice.InvoiceNumber.Should().Be(1043, "the int stays the unique, ordered invoice id");
+			invoice.DisplayNumber.Should().Be("INV-2027-0001");
+			invoice.NumberLabel().Should().Be("INV-2027-0001");
+			DocumentNumbering.FileSafe(invoice.NumberText()).Should().Be("INV-2027-0001");
 		}
 
 		[Test]

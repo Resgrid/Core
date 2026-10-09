@@ -1198,7 +1198,7 @@
     <value>Το ημερολόγιο του τμήματος για συναντήσεις, εκδηλώσεις και βραδιές εκπαίδευσης.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.call-settings">
-    <value>Το γραμματοκιβώτιο και η μορφή που χρησιμοποιούνται για την εισαγωγή κλήσεων από CAD ή email ειδοποίησης, καθώς και η μορφή και ο επόμενος αριθμός των αριθμών κλήσεων.</value>
+    <value>Το γραμματοκιβώτιο και η μορφή που χρησιμοποιούνται για την εισαγωγή κλήσεων από CAD ή email ειδοποίησης, καθώς και η μορφή, ο επόμενος αριθμός και η έναρξη του έτους αρίθμησης των αριθμών κλήσεων.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.call-templates">
     <value>Επαναχρησιμοποιήσιμα πρότυπα κειμένου κλήσης και σημειώσεων που επιταχύνουν την καταχώριση κλήσεων.</value>
@@ -1522,7 +1522,7 @@
     <value>Εγγραφές που εκκρεμούν, αναμένουν επανεξέταση ή είναι έτοιμες για υποβολή.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.records-settings">
-    <value>Κανόνες αρίθμησης, διατήρησης, αναζήτησης και ορατότητας για τις εγγραφές.</value>
+    <value>Κανόνες αρίθμησης (μαζί με τους αριθμούς αιτημάτων πρόσβασης, πρόληψης και την έναρξη του έτους αρίθμησης), διατήρησης, αναζήτησης και ορατότητας για τις εγγραφές.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.reports">
     <value>Αναφορές τμήματος για κλήσεις, προσωπικό και δραστηριότητα.</value>
@@ -2236,7 +2236,7 @@
     <value>Χρησιμοποιεί ξεχωριστές ακολουθίες ανά σταθμό/ομάδα. Αυτό αλλάζει την αρίθμηση, όχι την ορατότητα των εγγραφών.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.ResetYearly">
-    <value>Επανεκκινεί τις ακολουθίες εγγραφών κάθε ημερολογιακό έτος στη ζώνη ώρας του τμήματος.</value>
+    <value>Επανεκκινεί τις ακολουθίες εγγραφών κάθε έτος αρίθμησης (το ημερολογιακό έτος, εκτός αν έχει οριστεί έναρξη οικονομικού έτους) στη ζώνη ώρας του τμήματος.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.SequenceWidth">
     <value>Ψηφία του τμήματος SEQ στο μοτίβο αρίθμησης, με μηδενικά συμπλήρωσης: το 4 γράφει 0184. Από 3 έως 8 ψηφία· η αλλαγή του διατηρεί τον επόμενο αριθμό κάθε ακολουθίας. Οι ορισμοί του τμήματος με δική τους αρίθμηση διατηρούν το δικό τους πλάτος.</value>
@@ -6785,5 +6785,101 @@
   </data>
   <data xml:space="preserve" name="FeatureValue.api-keys">
     <value>Οι ενοποιήσεις συνεχίζουν να λειτουργούν όταν φεύγουν άτομα, κάνουν μόνο ό,τι επιτρέπει το κλειδί τους και ανακαλούνται αμέσως.</value>
+  </data>
+  <data name="Field.CallNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Ρύθμιση αρίθμησης κλήσεων / Μήνας έναρξης έτους</value>
+  </data>
+  <data name="FieldHelp.CallNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Ο μήνας κατά τον οποίο ξεκινά το έτος αρίθμησης, για κλήσεις που αριθμούνται ανά οικονομικό έτος. Ένα ετήσιο μοτίβο ξεκινά ξανά από το 1 σε αυτόν τον μήνα και την ημέρα, και τα YYYY και YY γράφουν το όνομα του οικονομικού έτους· τα μοτίβα με MM ή DD ακολουθούν το ημερολόγιο. Χωρίς τιμή σημαίνει Ιανουάριος, δηλαδή το ημερολογιακό έτος.</value>
+  </data>
+  <data name="Field.CallNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Ρύθμιση αρίθμησης κλήσεων / Ημέρα έναρξης έτους</value>
+  </data>
+  <data name="FieldHelp.CallNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Η ημέρα του μήνα κατά την οποία ξεκινά το έτος αρίθμησης, από 1 έως την τελευταία ημέρα του μήνα· η 29η Φεβρουαρίου δεν επιτρέπεται. Χωρίς τιμή σημαίνει η 1η.</value>
+  </data>
+  <data name="Field.CallNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Ρύθμιση αρίθμησης κλήσεων / Ονομασία έτους</value>
+  </data>
+  <data name="FieldHelp.CallNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Ποιο έτος ονομάζει ένα έτος αρίθμησης που δεν ξεκινά την 1η Ιανουαρίου: το έτος στο οποίο λήγει (η συνήθης σύμβαση για οικονομικά έτη, οπότε ένα έτος που ξεκινά την 1η Νοεμβρίου 2026 είναι το 2027) ή το έτος στο οποίο ξεκινά.</value>
+  </data>
+  <data name="Field.RecordsNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Διαμόρφωση αρίθμησης εγγραφών / Μήνας έναρξης έτους</value>
+  </data>
+  <data name="FieldHelp.RecordsNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Ο μήνας κατά τον οποίο ξεκινά το έτος αρίθμησης, για εγγραφές που αριθμούνται ανά οικονομικό έτος, όπως μιας κομητείας ή πολιτείας. Οι ακολουθίες που περιέχουν το έτος ξεκινούν ξανά από το 1 σε αυτόν τον μήνα και την ημέρα, και τα YYYY και YY γράφουν το όνομα του οικονομικού έτους. Χωρίς τιμή σημαίνει Ιανουάριος, δηλαδή το ημερολογιακό έτος. Ανεξάρτητο από την έναρξη έτους της αρίθμησης κλήσεων. Οι αριθμοί αιτημάτων πρόσβασης σε αρχεία και οι αριθμοί επιθεωρήσεων, αδειών, κτιρίων, ερευνών και τεκμηρίων ακολουθούν το ίδιο έτος.</value>
+  </data>
+  <data name="Field.RecordsNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Διαμόρφωση αρίθμησης εγγραφών / Ημέρα έναρξης έτους</value>
+  </data>
+  <data name="FieldHelp.RecordsNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Η ημέρα του μήνα κατά την οποία ξεκινά το έτος αρίθμησης, από 1 έως την τελευταία ημέρα του μήνα· η 29η Φεβρουαρίου δεν επιτρέπεται. Χωρίς τιμή σημαίνει η 1η.</value>
+  </data>
+  <data name="Field.RecordsNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Διαμόρφωση αρίθμησης εγγραφών / Ονομασία έτους</value>
+  </data>
+  <data name="FieldHelp.RecordsNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Ποιο έτος ονομάζει ένα έτος αρίθμησης που δεν ξεκινά την 1η Ιανουαρίου: το έτος στο οποίο λήγει (η συνήθης σύμβαση για οικονομικά έτη, οπότε ένα έτος που ξεκινά την 1η Νοεμβρίου 2026 είναι το 2027) ή το έτος στο οποίο ξεκινά.</value>
+  </data>
+  <data name="Setting.DocumentNumberingConfig" xml:space="preserve">
+    <value>Ρύθμιση αρίθμησης εγγράφων</value>
+  </data>
+  <data name="SettingHelp.DocumentNumberingConfig" xml:space="preserve">
+    <value>Πώς γράφονται οι αριθμοί εντολών εργασίας, τιμολογίων, προσφορών και ημερήσιων αναφορών χρόνου, και η ημέρα που ξεκινά το έτος αρίθμησής τους. Ένα είδος εγγράφου χωρίς μοτίβο διατηρεί τους ενσωματωμένους αριθμούς του.</value>
+  </data>
+  <data name="Field.DocumentNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Ρύθμιση αρίθμησης εγγράφων / Μήνας έναρξης έτους</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Ο μήνας κατά τον οποίο ξεκινά το έτος αρίθμησης για εντολές εργασίας, τιμολόγια, προσφορές και ημερήσιες αναφορές χρόνου που αριθμούνται ανά οικονομικό έτος. Οι αριθμοί εντολών εργασίας και τα μοτίβα με έτος ξεκινούν ξανά από το 1 σε αυτόν τον μήνα και την ημέρα, και τα YYYY και YY γράφουν το όνομα του οικονομικού έτους. Χωρίς τιμή σημαίνει Ιανουάριος, δηλαδή το ημερολογιακό έτος.</value>
+  </data>
+  <data name="Field.DocumentNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Ρύθμιση αρίθμησης εγγράφων / Ημέρα έναρξης έτους</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Η ημέρα του μήνα κατά την οποία ξεκινά το έτος αρίθμησης, από 1 έως την τελευταία ημέρα του μήνα· η 29η Φεβρουαρίου δεν επιτρέπεται. Χωρίς τιμή σημαίνει η 1η.</value>
+  </data>
+  <data name="Field.DocumentNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Ρύθμιση αρίθμησης εγγράφων / Ονομασία έτους</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Ποιο έτος ονομάζει ένα έτος αρίθμησης που δεν ξεκινά την 1η Ιανουαρίου: το έτος στο οποίο λήγει (η συνήθης σύμβαση για οικονομικά έτη, οπότε ένα έτος που ξεκινά την 1η Νοεμβρίου 2026 είναι το 2027) ή το έτος στο οποίο ξεκινά.</value>
+  </data>
+  <data name="Field.DocumentNumberingConfig.Patterns" xml:space="preserve">
+    <value>Ρύθμιση αρίθμησης εγγράφων / Μοτίβα</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberingConfig.Patterns" xml:space="preserve">
+    <value>Το δικό μοτίβο αρίθμησης του τμήματος για εντολές εργασίας, τιμολόγια, προσφορές και ημερήσιες αναφορές χρόνου, με τα σύμβολα των αριθμών κλήσεων (YYYY ή YY, MM, DD, SEQ). Ένα είδος εγγράφου χωρίς μοτίβο διατηρεί τους ενσωματωμένους αριθμούς του (WO-2026-000019, #1042). Ένα νέο μοτίβο συνεχίζει μετά από κάθε αριθμό που θα επαναλάμβανε. Τα μέλη βλέπουν τον αριθμό όπως εκδόθηκε σε έγγραφα, PDF και εξαγωγές, και για τις ημερήσιες αναφορές χρόνου στις εφαρμογές Responder, Unit, IC και Dispatch.</value>
+  </data>
+  <data name="Field.DocumentNumberPattern.Kind" xml:space="preserve">
+    <value>Μοτίβο αριθμού εγγράφου / Είδος</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberPattern.Kind" xml:space="preserve">
+    <value>Το έγγραφο που αριθμεί το μοτίβο: work-order, invoice, bid ή time-report, ή στα αρχεία records-request, occupancy, inspection, permit, investigation ή evidence.</value>
+  </data>
+  <data name="Field.DocumentNumberPattern.Pattern" xml:space="preserve">
+    <value>Μοτίβο αριθμού εγγράφου / Μοτίβο</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberPattern.Pattern" xml:space="preserve">
+    <value>Σταθερό κείμενο γύρω από τα σύμβολα YYYY ή YY, MM, DD και SEQ, με το SEQ ακριβώς μία φορά. Κάθε αριθμός που γράφει πρέπει να χωρά στη στήλη αριθμού του εγγράφου: 50 χαρακτήρες, ή 32 για αριθμούς κτιρίων, επιθεωρήσεων, αδειών, ερευνών και τεκμηρίων.</value>
+  </data>
+  <data name="Field.DocumentNumberPattern.SequenceWidth" xml:space="preserve">
+    <value>Μοτίβο αριθμού εγγράφου / Πλάτος ακολουθίας</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberPattern.SequenceWidth" xml:space="preserve">
+    <value>Ψηφία στα οποία συμπληρώνεται η ακολουθία με μηδενικά μπροστά, από 1 έως 8· η ακολουθία μετριέται ως αριθμός, οπότε η αλλαγή πλάτους δεν την ξεκινά ποτέ από την αρχή.</value>
+  </data>
+  <data name="Field.RecordsNumberingConfig.DocumentPatterns" xml:space="preserve">
+    <value>Διαμόρφωση αρίθμησης εγγραφών / Μοτίβα εγγράφων</value>
+  </data>
+  <data name="FieldHelp.RecordsNumberingConfig.DocumentPatterns" xml:space="preserve">
+    <value>Τα δικά μοτίβα του τμήματος για αριθμούς αιτημάτων πρόσβασης σε αρχεία, κτιρίων, επιθεωρήσεων, αδειών, ερευνών και τεκμηρίων. Ακολουθούν την έναρξη του έτους αρίθμησης αυτής της ρύθμισης· ένα είδος χωρίς μοτίβο διατηρεί τους ενσωματωμένους αριθμούς του (PRR-2026-0001, INSP-2026-0001 κ.λπ.).</value>
+  </data>
+  <data name="Feature.document-numbering" xml:space="preserve">
+    <value>Αρίθμηση εγγράφων</value>
+  </data>
+  <data name="FeaturePurpose.document-numbering" xml:space="preserve">
+    <value>Πώς γράφονται οι αριθμοί εντολών εργασίας, τιμολογίων, προσφορών και ημερήσιων αναφορών χρόνου, και η ημέρα που ξεκινά το έτος αρίθμησής τους για αρίθμηση ανά οικονομικό έτος.</value>
   </data>
 </root>

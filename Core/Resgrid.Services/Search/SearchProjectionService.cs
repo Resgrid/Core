@@ -603,9 +603,9 @@ namespace Resgrid.Services.Search
 			var ctx = await ContextAsync(invoice.DepartmentId);
 			var status = Enum.IsDefined(typeof(InvoiceStatus), invoice.Status) ? ((InvoiceStatus)invoice.Status).ToString() : invoice.Status.ToString();
 			var p = New(invoice.DepartmentId, SearchEntityTypes.Invoice, invoice.InvoiceId, ctx);
-			p.Title = Cap("Invoice #" + invoice.InvoiceNumber, TitleMax);
+			p.Title = Cap("Invoice " + invoice.NumberLabel(), TitleMax);
 			p.Summary = Cap(Join(" · ", status, invoice.IssuedOn?.ToString("yyyy-MM-dd"), Safe(invoice.Currency)), SummaryMax);
-			p.Keywords = Cap(Join(" ", invoice.InvoiceNumber.ToString(), Safe(invoice.DeploymentId), Safe(invoice.ServiceContractId)), KeywordsMax);
+			p.Keywords = Cap(Join(" ", invoice.NumberText(), invoice.InvoiceNumber.ToString(), Safe(invoice.DeploymentId), Safe(invoice.ServiceContractId)), KeywordsMax);
 			p.Category = status;
 			p.IsActive = invoice.Status != (int)InvoiceStatus.Void;
 			p.OccurredOn = invoice.IssuedOn ?? (invoice.AddedOn == default ? DateTime.UtcNow : invoice.AddedOn);
@@ -639,9 +639,9 @@ namespace Resgrid.Services.Search
 			var ctx = await ContextAsync(bid.DepartmentId);
 			var status = Enum.IsDefined(typeof(BidStatuses), bid.Status) ? ((BidStatuses)bid.Status).ToString() : bid.Status.ToString();
 			var p = New(bid.DepartmentId, SearchEntityTypes.Bid, bid.BidId, ctx);
-			p.Title = Cap(Join(" ", "Bid #" + bid.BidNumber, Safe(bid.Title)), TitleMax);
+			p.Title = Cap(Join(" ", "Bid " + bid.NumberLabel(), Safe(bid.Title)), TitleMax);
 			p.Summary = Cap(Join(" · ", status, Safe(bid.IncidentNumber), bid.RequestedStartOn?.ToString("yyyy-MM-dd")), SummaryMax);
-			p.Keywords = Cap(Join(" ", bid.BidNumber.ToString(), Safe(bid.IncidentNumber), Safe(bid.ConvertedDeploymentId)), KeywordsMax);
+			p.Keywords = Cap(Join(" ", bid.NumberText(), bid.BidNumber.ToString(), Safe(bid.IncidentNumber), Safe(bid.ConvertedDeploymentId)), KeywordsMax);
 			p.Category = status;
 			p.IsActive = bid.Status != (int)BidStatuses.Declined && bid.Status != (int)BidStatuses.Expired;
 			p.OccurredOn = bid.AddedOn == default ? DateTime.UtcNow : bid.AddedOn;

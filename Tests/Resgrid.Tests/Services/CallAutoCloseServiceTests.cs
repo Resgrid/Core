@@ -65,7 +65,10 @@ namespace Resgrid.Tests.Services
 
 			_settings.Setup(x => x.GetCloseCallWhenUnitsClearAsync(DeptId, It.IsAny<bool>())).ReturnsAsync(true);
 			_customStates.Setup(x => x.GetAllCustomStatesForDepartmentAsync(DeptId)).ReturnsAsync(new List<CustomState>());
-			_unitDispatches.Setup(x => x.GetOpenCallIdsForUnitAsync(DeptId, UnitA)).ReturnsAsync(new List<int> { CallId });
+			_unitDispatches.Setup(x => x.GetOpenCallUnitDispatchesForUnitAsync(DeptId, UnitA)).ReturnsAsync(() => new List<CallDispatchUnit>
+			{
+				new CallDispatchUnit { CallId = CallId, UnitId = UnitA, DispatchedOn = _now.AddMinutes(-40) }
+			});
 			_unitDispatches.Setup(x => x.GetCallUnitDispatchesByCallIdAsync(CallId)).ReturnsAsync(() => new List<CallDispatchUnit>
 			{
 				new CallDispatchUnit { CallId = CallId, UnitId = UnitA, DispatchedOn = _now.AddMinutes(-40) },
@@ -194,7 +197,7 @@ namespace Resgrid.Tests.Services
 			_settings.Setup(x => x.GetCloseCallWhenUnitsClearAsync(DeptId, It.IsAny<bool>())).ReturnsAsync(false);
 
 			(await _service.CloseCallsFinishedByUnitStateAsync(DeptId, Saved((int)UnitStateTypes.Available), Previous((int)UnitStateTypes.OnScene))).Should().BeEmpty();
-			_unitDispatches.Verify(x => x.GetOpenCallIdsForUnitAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
+			_unitDispatches.Verify(x => x.GetOpenCallUnitDispatchesForUnitAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
 			VerifyNotClosed();
 		}
 
@@ -241,6 +244,24 @@ namespace Resgrid.Tests.Services
 
 			(await _service.CloseCallsFinishedByUnitStateAsync(DeptId, Saved((int)UnitStateTypes.Available), Previous((int)UnitStateTypes.OnScene))).Should().BeEmpty();
 			VerifyNotClosed();
+			_cache.Verify(x => x.RemoveAsync("CallAutoClose_40"), Times.Once, "the call is still open, so the next status may try again");
+		}
+
+		[Test]
+		public async Task a_failed_save_releases_the_close_claim()
+		{
+			_calls.Setup(x => x.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>())).ThrowsAsync(new TimeoutException());
+
+			(await _service.CloseCallsFinishedByUnitStateAsync(DeptId, Saved((int)UnitStateTypes.Available), Previous((int)UnitStateTypes.OnScene))).Should().BeEmpty();
+			_events.Verify(x => x.SendMessage(It.IsAny<CallClosedEvent>()), Times.Never);
+			_cache.Verify(x => x.RemoveAsync("CallAutoClose_40"), Times.Once);
+		}
+
+		[Test]
+		public async Task a_closed_call_keeps_its_close_claim()
+		{
+			(await _service.CloseCallsFinishedByUnitStateAsync(DeptId, Saved((int)UnitStateTypes.Available), Previous((int)UnitStateTypes.OnScene))).Should().Equal(CallId);
+			_cache.Verify(x => x.RemoveAsync(It.IsAny<string>()), Times.Never);
 		}
 
 		[Test]
@@ -256,10 +277,13 @@ namespace Resgrid.Tests.Services
 		{
 			// Dispatched to 40 now and to 39 long ago (never closed). On scene at 40, then to the hospital (a POI), then back.
 			const int StaleCallId = 39;
-			_unitDispatches.Setup(x => x.GetOpenCallIdsForUnitAsync(DeptId, UnitA)).ReturnsAsync(new List<int> { StaleCallId, CallId });
-			_unitDispatches.Setup(x => x.GetCallUnitDispatchesByCallIdAsync(StaleCallId))
-				.ReturnsAsync(new List<CallDispatchUnit> { new CallDispatchUnit { CallId = StaleCallId, UnitId = UnitA, DispatchedOn = _now.AddDays(-3) } });
-			_unitStates.Setup(x => x.GetAllUnitStatesForUnitInDateRangeAsync(UnitA, It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+			_unitDispatches.Setup(x => x.GetOpenCallUnitDispatchesForUnitAsync(DeptId, UnitA)).ReturnsAsync(new List<CallDispatchUnit>
+			{
+				new CallDispatchUnit { CallId = StaleCallId, UnitId = UnitA, DispatchedOn = _now.AddDays(-3) },
+				new CallDispatchUnit { CallId = CallId, UnitId = UnitA, DispatchedOn = _now.AddMinutes(-40) }
+			});
+			// The history is read from the earliest open dispatch, the stale one.
+			_unitStates.Setup(x => x.GetAllUnitStatesForUnitInDateRangeAsync(UnitA, _now.AddDays(-3), It.IsAny<DateTime>()))
 				.ReturnsAsync(new List<UnitState>
 				{
 					new UnitState { UnitStateId = 80, UnitId = UnitA, State = (int)UnitStateTypes.OnScene, Timestamp = _now.AddDays(-3), DestinationId = StaleCallId, DestinationType = (int)DestinationEntityTypes.Call },
@@ -278,7 +302,7 @@ namespace Resgrid.Tests.Services
 		[Test]
 		public async Task a_failure_is_logged_and_leaves_the_call_open()
 		{
-			_unitDispatches.Setup(x => x.GetOpenCallIdsForUnitAsync(DeptId, UnitA)).ThrowsAsync(new InvalidOperationException("db down"));
+			_unitDispatches.Setup(x => x.GetOpenCallUnitDispatchesForUnitAsync(DeptId, UnitA)).ThrowsAsync(new InvalidOperationException("db down"));
 
 			(await _service.CloseCallsFinishedByUnitStateAsync(DeptId, Saved((int)UnitStateTypes.Available), Previous((int)UnitStateTypes.OnScene))).Should().BeEmpty();
 			VerifyNotClosed();

@@ -894,7 +894,7 @@
     <value>Champs du formulaire d'intervention</value>
   </data>
   <data name="NewCallFieldsHelp" xml:space="preserve">
-    <value>Choisissez les champs intégrés qui apparaissent sur le formulaire et ceux qui doivent être remplis avant qu'une intervention puisse être créée et envoyée sur le terrain. Nom, nature, priorité et type sont toujours affichés et toujours requis.</value>
+    <value>Choisissez les champs intégrés qui apparaissent sur le formulaire et ceux qui doivent être remplis avant qu'une intervention puisse être créée et envoyée sur le terrain. Nom, nature, priorité et type sont toujours affichés et toujours requis. Les mêmes règles s'appliquent lors de la modification d'une intervention ou de l'ajout d'une intervention archivée.</value>
   </data>
   <data name="NewCallFieldsFieldColumn" xml:space="preserve">
     <value>Champ</value>
@@ -927,7 +927,7 @@
     <value>Note</value>
   </data>
   <data name="NewCallField_contactName" xml:space="preserve">
-    <value>Contact principal</value>
+    <value>Nom du déclarant</value>
   </data>
   <data name="NewCallField_contactInfo" xml:space="preserve">
     <value>Coordonnées du déclarant</value>
@@ -1350,9 +1350,93 @@
     <value>Le prochain numéro d'appel n'a pas été relevé : il ne peut être relevé qu'au-dessus du numéro que le prochain appel reçoit déjà ({0}).</value>
   </data>
   <data name="CallNumberNextPatternChanged" xml:space="preserve">
-    <value>Le prochain numéro d'appel n'a pas été relevé car le modèle a changé lors du même enregistrement. Relevez-le à nouveau pour le nouveau modèle.</value>
+    <value>Le prochain numéro d'appel n'a pas été relevé car le modèle ou le début de l'année de numérotation a changé lors du même enregistrement. Relevez-le à nouveau pour la nouvelle séquence.</value>
+  </data>
+  <data name="CallNumberYearStart" xml:space="preserve">
+    <value>L'année de numérotation commence le</value>
+  </data>
+  <data name="CallNumberYearStartDay" xml:space="preserve">
+    <value>Jour du mois</value>
+  </data>
+  <data name="CallNumberYearLabelEndYear" xml:space="preserve">
+    <value>Nommée d'après l'année où elle se termine</value>
+  </data>
+  <data name="CallNumberYearLabelStartYear" xml:space="preserve">
+    <value>Nommée d'après l'année où elle commence</value>
+  </data>
+  <data name="CallNumberYearStartHelp" xml:space="preserve">
+    <value>Pour les appels numérotés par exercice budgétaire, choisissez le jour où il commence. Un modèle annuel recommence à 1 ce jour-là, et {YYYY} et {YY} écrivent le nom de l'exercice. La plupart des exercices sont nommés d'après l'année où ils se terminent : celui qui commence le 1er novembre 2026 est donc 2027. Le 1er janvier correspond à l'année civile. Les modèles avec {MM} ou {DD} suivent toujours le calendrier.</value>
+  </data>
+  <data name="CallNumberResetsYearlyOn" xml:space="preserve">
+    <value>Recommence à 1 chaque année le {0}.</value>
+  </data>
+  <data name="CallNumberYearStartInvalid" xml:space="preserve">
+    <value>La numérotation des appels n'a pas été enregistrée. L'année de numérotation doit commencer un jour qui existe chaque année ; le 29 février ne peut donc pas être utilisé.</value>
+  </data>
+  <data name="DocumentNumberingHeader" xml:space="preserve">
+    <value>Numérotation des documents</value>
+  </data>
+  <data name="DocumentNumberingIntro" xml:space="preserve">
+    <value>Comment Resgrid numérote les ordres de travail, factures, offres et rapports de temps quotidiens. Laissez un modèle vide pour conserver les numéros intégrés. Changer un modèle ne renumérote jamais les documents qui ont déjà un numéro, et un nouveau modèle reprend après tout numéro qu'il répéterait.</value>
+  </data>
+  <data name="DocumentNumberingRecordsLink" xml:space="preserve">
+    <value>Numérotation des dossiers</value>
+  </data>
+  <data name="DocumentNumberingYearStartHelp" xml:space="preserve">
+    <value>Pour les documents numérotés par exercice budgétaire, choisissez le jour où il commence. Les numéros d'ordres de travail, et les modèles avec une année, recommencent à 1 ce jour-là, et {YYYY} et {YY} écrivent le nom de l'exercice. La plupart des exercices sont nommés d'après l'année où ils se terminent : celui qui commence le 1er novembre 2026 est donc 2027. Le 1er janvier correspond à l'année civile. Les numéros d'appel et de dossiers ont leur propre début d'année.</value>
+  </data>
+  <data name="DocumentNumberType" xml:space="preserve">
+    <value>Document</value>
+  </data>
+  <data name="DocumentNumberBuiltIn" xml:space="preserve">
+    <value>Intégré, p. ex.</value>
+  </data>
+  <data name="DocumentNumberPatternHelp" xml:space="preserve">
+    <value>Texte fixe (lettres, chiffres, - _ . /) autour de {YYYY} ou {YY}, {MM}, {DD} et {SEQ}, qui doit apparaître une fois. Un modèle avec une année recommence à 1 chaque année de numérotation ; avec {MM} ou {DD}, chaque mois ou jour. Un numéro composé uniquement de chiffres est affiché précédé de #, comme l'ont toujours été les numéros de facture, d'offre et de rapport de temps.</value>
+  </data>
+  <data name="DocumentNumberingSaved" xml:space="preserve">
+    <value>La numérotation des documents a été enregistrée.</value>
+  </data>
+  <data name="DocumentNumberingPartlySaved" xml:space="preserve">
+    <value>Le reste de la numérotation des documents a été enregistré.</value>
+  </data>
+  <data name="DocumentNumberingYearStartInvalid" xml:space="preserve">
+    <value>La numérotation des documents n'a pas été enregistrée. L'année de numérotation doit commencer un jour qui existe chaque année ; le 29 février ne peut donc pas être utilisé.</value>
+  </data>
+  <data name="DocumentNumberingPatternsRejected" xml:space="preserve">
+    <value>Ces modèles n'ont pas été enregistrés car ils ne sont pas valides ou pourraient écrire un numéro de plus de 50 caractères ; ces documents ont conservé leur numérotation :</value>
+  </data>
+  <data name="DocumentNumberingBelowCurrent" xml:space="preserve">
+    <value>Un prochain numéro peut seulement être augmenté. Ceux-ci n'ont pas été modifiés car le numéro saisi était inférieur à celui qu'ils émettront ensuite :</value>
+  </data>
+  <data name="DocumentNumberingNotApplied" xml:space="preserve">
+    <value>Le modèle ou le début de l'année de numérotation a changé lors du même enregistrement ; les prochains numéros saisis n'ont donc pas été appliqués. Relevez-les à nouveau pour la nouvelle séquence.</value>
+  </data>
+  <data name="DocumentNumberKindWorkOrder" xml:space="preserve">
+    <value>Ordres de travail</value>
+  </data>
+  <data name="DocumentNumberKindInvoice" xml:space="preserve">
+    <value>Factures</value>
+  </data>
+  <data name="DocumentNumberKindBid" xml:space="preserve">
+    <value>Offres</value>
+  </data>
+  <data name="DocumentNumberKindTimeReport" xml:space="preserve">
+    <value>Rapports de temps quotidiens</value>
+  </data>
+  <data name="DocumentNumberPatternColumn" xml:space="preserve">
+    <value>Modèle de numérotation</value>
+  </data>
+  <data name="DocumentNumberNextColumn" xml:space="preserve">
+    <value>Prochain numéro</value>
+  </data>
+  <data name="DocumentNumberRaiseColumn" xml:space="preserve">
+    <value>Porter le prochain à</value>
   </data>
   <data name="CallSettingsSaved" xml:space="preserve">
     <value>Les paramètres des appels ont été enregistrés.</value>
+  </data>
+  <data name="NewCallFieldCannotBeRequired" xml:space="preserve">
+    <value>Un Plus Code sert uniquement à trouver le lieu et n'est pas enregistré sur l'intervention ; il ne peut donc pas être obligatoire. Rendez plutôt les coordonnées GPS obligatoires.</value>
   </data>
 </root>

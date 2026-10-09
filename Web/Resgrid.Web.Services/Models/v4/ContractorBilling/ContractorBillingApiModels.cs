@@ -348,6 +348,8 @@ namespace Resgrid.Web.Services.Models.v4.ContractorBilling
 	{
 		public string Id { get; set; }
 		public int BidNumber { get; set; }
+		/// <summary>The bid number as issued: the department's numbering pattern, or BidNumber when it keeps the built-in numbers.</summary>
+		public string DisplayNumber { get; set; }
 		public string ContactId { get; set; }
 		public string CustomerBillingProfileId { get; set; }
 		public string ServiceContractId { get; set; }
@@ -583,6 +585,8 @@ namespace Resgrid.Web.Services.Models.v4.ContractorBilling
 	{
 		public string InvoiceId { get; set; }
 		public int InvoiceNumber { get; set; }
+		/// <summary>The invoice number as issued: the department's numbering pattern, or InvoiceNumber when it keeps the built-in numbers.</summary>
+		public string DisplayNumber { get; set; }
 		public decimal Total { get; set; }
 		public string Currency { get; set; }
 		public int LineCount { get; set; }

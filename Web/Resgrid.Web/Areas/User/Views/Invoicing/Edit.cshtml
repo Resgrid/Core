@@ -4,9 +4,9 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Invoicing.Invoicing> localizer
 @{
     var invoice = Model.Invoice;
-    ViewBag.Title = "Resgrid | " + localizer["Invoice"] + " #" + invoice.InvoiceNumber;
+    ViewBag.Title = "Resgrid | " + localizer["Invoice"] + " " + invoice.NumberLabel();
     ViewData["Tab"] = "Index";
-    ViewData["Title"] = localizer["Invoice"].Value + " #" + invoice.InvoiceNumber;
+    ViewData["Title"] = localizer["Invoice"].Value + " " + invoice.NumberLabel();
     ViewData["Subtitle"] = localizer["EditInvoiceIntro"].Value;
     var lines = (invoice.LineItems ?? new List<InvoiceLineItem>()).OrderBy(x => x.SortOrder)
         .Select(x => new { invoiceLineItemId = x.InvoiceLineItemId, callId = x.CallId, rateCardItemId = x.RateCardItemId, description = x.Description, quantity = x.Quantity, unitRate = x.UnitRate, taxable = x.Taxable, timeSource = x.TimeSource }).ToList();
@@ -24,7 +24,7 @@
         <div class="col-lg-8">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
-                    <h5>@localizer["Invoice"] #@invoice.InvoiceNumber &mdash; @(Model.ContactName(invoice.ContactId) ?? "—")</h5>
+                    <h5>@localizer["Invoice"] @invoice.NumberLabel() &mdash; @(Model.ContactName(invoice.ContactId) ?? "—")</h5>
                     <div class="ibox-tools">@await Html.PartialAsync("_Status", invoice.Status)</div>
                 </div>
                 <div class="ibox-content">

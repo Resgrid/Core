@@ -106,7 +106,7 @@ namespace Resgrid.Providers.Payments
 				["invoiceId"] = spec.InvoiceId,
 				["paymentRequestId"] = spec.PaymentRequestId
 			};
-			var label = $"Invoice {spec.InvoiceNumber}";
+			var label = $"Invoice {spec.InvoiceDisplayNumber ?? spec.InvoiceNumber.ToString(CultureInfo.InvariantCulture)}";
 			var options = new SessionCreateOptions
 			{
 				Mode = "payment",

@@ -80,8 +80,11 @@ namespace Resgrid.Services
 				if (CallStatusLinkage.IsClearingUnitState(state.State, baseTypes))
 					return;
 
-				var openCalls = await _callDispatchUnitRepository.GetOpenCallIdsForUnitAsync(departmentId, state.UnitId);
-				var callId = CallStatusAttribution.PickDispatchCall(openCalls, previousIsClearing ? previousCallId : null);
+				var dispatches = await _callDispatchUnitRepository.GetOpenCallUnitDispatchesForUnitAsync(departmentId, state.UnitId);
+				var (clearedCallId, clearedAllAt) = CallStatusAttribution.ClearedByPrevious(previousIsClearing, previous?.DestinationId,
+					previous?.DestinationType, previous?.Timestamp);
+				var callId = CallStatusAttribution.PickDispatchCall(dispatches, x => x.CallId, UnitCallInvolvement.LatestDispatchTime,
+					clearedCallId, clearedAllAt);
 
 				if (callId.HasValue)
 					Link(state, callId.Value, StatusDestinationSources.Dispatch);
@@ -139,8 +142,10 @@ namespace Resgrid.Services
 				if (string.IsNullOrWhiteSpace(actionLog.UserId) || CallStatusLinkage.IsClearingPersonnelStatus(actionLog.ActionTypeId, baseTypes))
 					return;
 
-				var openCalls = await _callDispatchesRepository.GetOpenCallIdsForUserAsync(departmentId, actionLog.UserId);
-				var callId = CallStatusAttribution.PickDispatchCall(openCalls, previousIsClearing ? previousCallId : null);
+				var dispatches = await _callDispatchesRepository.GetOpenCallDispatchesForUserAsync(departmentId, actionLog.UserId);
+				var (clearedCallId, clearedAllAt) = CallStatusAttribution.ClearedByPrevious(previousIsClearing, previous?.DestinationId,
+					previous?.DestinationType, previous?.Timestamp);
+				var callId = CallStatusAttribution.PickDispatchCall(dispatches, x => x.CallId, x => x.DispatchedOn, clearedCallId, clearedAllAt);
 
 				if (callId.HasValue)
 					Link(actionLog, callId.Value, StatusDestinationSources.Dispatch);
@@ -162,9 +167,9 @@ namespace Resgrid.Services
 			var dispatchedByUnit = ((await _callDispatchUnitRepository.GetOpenCallUnitDispatchesForDepartmentAsync(departmentId)) ?? Enumerable.Empty<CallDispatchUnit>())
 				.Where(x => x != null)
 				.GroupBy(x => x.UnitId)
-				.ToDictionary(g => g.Key, g => g.Select(x => x.CallId).Distinct().ToList());
+				.ToDictionary(g => g.Key, g => g.ToList());
 
-			var openCallIds = new HashSet<int>(dispatchedByUnit.Values.SelectMany(x => x));
+			var openCallIds = new HashSet<int>(dispatchedByUnit.Values.SelectMany(x => x).Select(x => x.CallId));
 
 			// A status can point at an open call the unit was never dispatched to (a unit that took the call itself).
 			foreach (var linkedCallId in states

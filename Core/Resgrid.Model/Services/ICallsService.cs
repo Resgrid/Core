@@ -22,14 +22,15 @@ namespace Resgrid.Model.Services
 		Task<Call> SaveCallAsync(Call call, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
-		/// Renumbers the department's calls logged in a local year, in logged order, with the department's call number
-		/// pattern. False, and nothing renumbered, when the pattern has no year (its sequence spans years).
+		/// Renumbers the department's calls logged in the numbering year containing <paramref name="inYearUtc"/> (a fiscal year when
+		/// the department set its start), in logged order, with the department's call number pattern. False, and nothing
+		/// renumbered, when the pattern has no year (its sequence spans years).
 		/// </summary>
 		/// <param name="departmentId">The department identifier.</param>
-		/// <param name="year">The local year to regenerate call numbers for.</param>
+		/// <param name="inYearUtc">A moment in the year to regenerate call numbers for, such as an archived call's logged time.</param>
 		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 		/// <returns>Task&lt;System.Boolean&gt;.</returns>
-		Task<bool> RegenerateCallNumbersAsync(int departmentId, int year,
+		Task<bool> RegenerateCallNumbersAsync(int departmentId, DateTime inYearUtc,
 			CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>

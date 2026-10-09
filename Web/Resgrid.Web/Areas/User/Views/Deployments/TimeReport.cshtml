@@ -4,8 +4,8 @@
     var departmentTime = DepartmentTime.From(ViewData);
     var r = Model.Report;
     var d = Model.Deployment;
-    ViewBag.Title = "Resgrid | " + string.Format(localizer["TimeReportTitle"].Value, r.ReportNumber);
-    ViewData["Title"] = string.Format(localizer["TimeReportTitle"].Value, r.ReportNumber);
+    ViewBag.Title = "Resgrid | " + string.Format(localizer["TimeReportTitle"].Value, r.NumberText());
+    ViewData["Title"] = string.Format(localizer["TimeReportTitle"].Value, r.NumberText());
     ViewData["Subtitle"] = $"{d.Name} · {r.ReportDate:yyyy-MM-dd} · {Model.ScopeName}";
     string LocalStamp(DateTime? utc) => departmentTime.Format(utc) ?? "—";
     string SubjectName(string id) => id != null && Model.SubjectNames.TryGetValue(id, out var n) ? n : id;
@@ -43,7 +43,7 @@
             <div class="col-md-8">
                 <div class="ibox float-e-margins">
                     <div class="ibox-title">
-                        <h5>@localizer["TimeReport"] #@r.ReportNumber @await Html.PartialAsync("_ReportStatusBadge", r.Status) <small>@Model.ScopeName</small></h5>
+                        <h5>@localizer["TimeReport"] @r.NumberLabel() @await Html.PartialAsync("_ReportStatusBadge", r.Status) <small>@Model.ScopeName</small></h5>
 
                     </div>
                     <div class="ibox-content">

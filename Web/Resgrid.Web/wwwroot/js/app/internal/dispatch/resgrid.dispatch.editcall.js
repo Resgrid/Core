@@ -35,13 +35,17 @@ var resgrid;
                     theme: 'snow'
                 });
 
-                let quillNotes = new Quill('#note-container', {
+                // The department's new-call field policy can leave the note, the map and other fields off the
+                // form, so anything bound to one of them has to cope with it not being there.
+                let quillNotes = $('#note-container').length ? new Quill('#note-container', {
                     placeholder: '',
                     theme: 'snow'
-                });
+                }) : null;
 
                 $(document).on('submit', '#updateCallForm', function () {
-                    $('#Call_Notes').val(quillNotes.root.innerHTML);
+                    if (quillNotes) {
+                        $('#Call_Notes').val(quillNotes.root.innerHTML);
+                    }
                     $('#Call_NatureOfCall').val(quillNature.root.innerHTML);
 
                     return true;
@@ -107,7 +111,8 @@ var resgrid;
                     contentType: 'application/json; charset=utf-8',
                     type: 'GET'
                 }).done(function (result) {
-                    if (result) {
+                    // No map when GPS coordinates are hidden by the field policy.
+                    if (result && document.getElementById('callMap')) {
                         var data = result;
                         const tiles1 = L.tileLayer(
                             osmTileUrl,
@@ -149,7 +154,9 @@ var resgrid;
                             if (result && result.Data && result.Data.Latitude != null && result.Data.Longitude != null) {
                                 var lat = result.Data.Latitude;
                                 var lng = result.Data.Longitude;
-                                map.setView(new L.LatLng(lat, lng), 16);
+                                if (map) {
+                                    map.setView(new L.LatLng(lat, lng), 16);
+                                }
                                 $("#Latitude").val(lat.toString());
                                 $("#Longitude").val(lng.toString());
                                 resgrid.dispatch.editcall.setMarkerLocation(lat.toString(), lng.toString());
@@ -171,7 +178,9 @@ var resgrid;
                         type: 'GET'
                     }).done(function (data) {
                         if (data && data.Latitude && data.Longitude) {
-                            map.setView(new L.LatLng(data.Latitude, data.Longitude), 16);
+                            if (map) {
+                                map.setView(new L.LatLng(data.Latitude, data.Longitude), 16);
+                            }
 
                             $("#Latitude").val(data.Latitude);
                             $("#Longitude").val(data.Longitude);
@@ -607,6 +616,11 @@ var resgrid;
             editcall.findLocation = findLocation;
 
             function setMarkerLocation(lat, lng) {
+                if (!map) {
+                    scheduleRecommendation();
+                    return;
+                }
+
                 if (callMarker) {
                     callMarker.setLatLng(new L.LatLng(lat, lng));
                 } else {
@@ -692,8 +706,9 @@ var resgrid;
                             }
 
                             // .val() raises no change event, so re-run the type/priority
-                            // handler for the template's values.
+                            // handlers for the template's values.
                             checkForProtocols();
+                            scheduleRecommendation();
                         }
                     });
                 }

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Resgrid.Model;
 using Resgrid.Model.Invoicing;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
@@ -193,7 +194,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (bid == null) return NotFound();
 			var pdf = await _bids.GetBidPdfAsync(id, DepartmentId);
 			if (pdf == null || pdf.Length == 0) return NoContent();
-			return File(pdf, "application/pdf", $"bid-{bid.BidNumber}.pdf");
+			return File(pdf, "application/pdf", $"bid-{DocumentNumbering.FileSafe(bid.NumberText())}.pdf");
 		}
 
 		[HttpGet("GetBidConversionContext")]
@@ -286,7 +287,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			try
 			{
 				var invoice = await _engine.GenerateInvoiceFromDeploymentAsync(input.DeploymentId, DepartmentId, input.ThroughDate, UserId, Ip, Agent, cancellationToken);
-				var result = new DeploymentInvoiceResult { Data = new DeploymentInvoiceData { InvoiceId = invoice.InvoiceId, InvoiceNumber = invoice.InvoiceNumber, Total = invoice.Total, Currency = invoice.Currency, LineCount = invoice.LineItems?.Count ?? 0 }, PageSize = 1, Status = ResponseHelper.Success };
+				var result = new DeploymentInvoiceResult { Data = new DeploymentInvoiceData { InvoiceId = invoice.InvoiceId, InvoiceNumber = invoice.InvoiceNumber, DisplayNumber = invoice.NumberText(), Total = invoice.Total, Currency = invoice.Currency, LineCount = invoice.LineItems?.Count ?? 0 }, PageSize = 1, Status = ResponseHelper.Success };
 				ResponseHelper.PopulateV4ResponseData(result);
 				return result;
 			}
@@ -308,7 +309,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		internal static BidData Map(Bid b, bool graph) => new BidData
 		{
-			Id = b.BidId, BidNumber = b.BidNumber, ContactId = b.ContactId, CustomerBillingProfileId = b.CustomerBillingProfileId, ServiceContractId = b.ServiceContractId, RateScheduleId = b.RateScheduleId, Title = b.Title,
+			Id = b.BidId, BidNumber = b.BidNumber, DisplayNumber = b.NumberText(), ContactId = b.ContactId, CustomerBillingProfileId = b.CustomerBillingProfileId, ServiceContractId = b.ServiceContractId, RateScheduleId = b.RateScheduleId, Title = b.Title,
 			Description = b.Description, Status = b.Status, ValidUntil = b.ValidUntil, RequestedStartOn = b.RequestedStartOn, RequestedEndOn = b.RequestedEndOn, IncidentNumber = b.IncidentNumber, DeliveryLocation = b.DeliveryLocation,
 			DiscountPercent = b.DiscountPercent, EstimatedSubTotal = b.EstimatedSubTotal, EstimatedDiscountAmount = b.EstimatedDiscountAmount, EstimatedTaxAmount = b.EstimatedTaxAmount, EstimatedTotal = b.EstimatedTotal,
 			Notes = b.Notes, TermsText = b.TermsText, SentOn = b.SentOn, SentToEmail = b.SentToEmail, AcceptedOn = b.AcceptedOn, DeclinedOn = b.DeclinedOn, DeclineReason = b.DeclineReason, ConvertedCallId = b.ConvertedCallId,

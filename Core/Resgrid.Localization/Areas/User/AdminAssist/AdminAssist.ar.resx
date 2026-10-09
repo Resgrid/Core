@@ -1198,7 +1198,7 @@
     <value>تقويم القسم للاجتماعات والفعاليات وليالي التدريب.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.call-settings">
-    <value>صندوق البريد والتنسيق المستخدَمان لاستيراد البلاغات من CAD أو بريد الاستدعاء، إضافةً إلى تنسيق أرقام البلاغات والرقم التالي.</value>
+    <value>صندوق البريد والتنسيق المستخدَمان لاستيراد البلاغات من CAD أو بريد الاستدعاء، إضافةً إلى تنسيق أرقام البلاغات والرقم التالي وبداية سنة الترقيم.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.call-templates">
     <value>قوالب نصوص بلاغات وملاحظات قابلة لإعادة الاستخدام تسرّع إدخال البلاغات.</value>
@@ -1522,7 +1522,7 @@
     <value>السجلات المستحقة، أو التي تنتظر المراجعة، أو الجاهزة للإرسال.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.records-settings">
-    <value>قواعد الترقيم والاحتفاظ والبحث والرؤية الخاصة بالسجلات.</value>
+    <value>قواعد الترقيم (بما فيها أرقام طلبات الاطلاع وأرقام الوقاية وبداية سنة الترقيم) والاحتفاظ والبحث والرؤية الخاصة بالسجلات.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.reports">
     <value>تقارير القسم عن البلاغات والأفراد والنشاط.</value>
@@ -2236,7 +2236,7 @@
     <value>استخدم تسلسلات منفصلة لكل محطة/مجموعة. يغيّر هذا الترقيم، وليس رؤية السجلات.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.ResetYearly">
-    <value>أعد بدء تسلسلات السجلات في كل سنة ميلادية بالمنطقة الزمنية للقسم.</value>
+    <value>أعد بدء تسلسلات السجلات في كل سنة ترقيم (السنة الميلادية ما لم تُعيَّن بداية سنة مالية) بالمنطقة الزمنية للقسم.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.SequenceWidth">
     <value>عدد أرقام جزء SEQ في نمط الترقيم، محشوًّا بأصفار: 4 يكتب 0184. من 3 إلى 8 أرقام؛ وتغييره يحافظ على الرقم التالي لكل تسلسل. تحتفظ تعريفات القسم ذات الترقيم الخاص بعرضها الخاص.</value>
@@ -6785,5 +6785,101 @@
   </data>
   <data xml:space="preserve" name="FeatureValue.api-keys">
     <value>تستمر عمليات التكامل في العمل عند مغادرة الأشخاص، ولا تفعل إلا ما يسمح به مفتاحها، ويمكن إلغاؤها فوراً.</value>
+  </data>
+  <data name="Field.CallNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>إعداد ترقيم البلاغات / شهر بداية السنة</value>
+  </data>
+  <data name="FieldHelp.CallNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>الشهر الذي تبدأ فيه سنة الترقيم، للبلاغات المرقّمة حسب سنة مالية. يبدأ النمط السنوي من 1 من جديد في ذلك الشهر واليوم، ويكتب YYYY وYY اسم السنة المالية؛ أما الأنماط التي تحتوي على MM أو DD فتتبع التقويم. القيمة غير المعيّنة تعني يناير، أي السنة الميلادية.</value>
+  </data>
+  <data name="Field.CallNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>إعداد ترقيم البلاغات / يوم بداية السنة</value>
+  </data>
+  <data name="FieldHelp.CallNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>يوم الشهر الذي تبدأ فيه سنة الترقيم، من 1 إلى آخر يوم في الشهر؛ ولا يُسمح بـ 29 فبراير. القيمة غير المعيّنة تعني اليوم الأول.</value>
+  </data>
+  <data name="Field.CallNumberingConfig.YearLabel" xml:space="preserve">
+    <value>إعداد ترقيم البلاغات / تسمية السنة</value>
+  </data>
+  <data name="FieldHelp.CallNumberingConfig.YearLabel" xml:space="preserve">
+    <value>السنة التي تُسمّى بها سنة ترقيم لا تبدأ في 1 يناير: السنة التي تنتهي فيها (العُرف المعتاد للسنة المالية، فالسنة التي تبدأ في 1 نوفمبر 2026 هي 2027) أو السنة التي تبدأ فيها.</value>
+  </data>
+  <data name="Field.RecordsNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>إعداد ترقيم السجلات / شهر بداية السنة</value>
+  </data>
+  <data name="FieldHelp.RecordsNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>الشهر الذي تبدأ فيه سنة الترقيم، للسجلات المرقّمة حسب سنة مالية مثل سنة المقاطعة أو الولاية. تبدأ التسلسلات التي تتضمن السنة من 1 من جديد في ذلك الشهر واليوم، ويكتب YYYY وYY اسم السنة المالية. القيمة غير المعيّنة تعني يناير، أي السنة الميلادية. وهي منفصلة عن بداية سنة ترقيم البلاغات. تتبع أرقام طلبات الاطلاع على السجلات وأرقام عمليات التفتيش والتصاريح والمباني والتحقيقات والأدلة السنة نفسها.</value>
+  </data>
+  <data name="Field.RecordsNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>إعداد ترقيم السجلات / يوم بداية السنة</value>
+  </data>
+  <data name="FieldHelp.RecordsNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>يوم الشهر الذي تبدأ فيه سنة الترقيم، من 1 إلى آخر يوم في الشهر؛ ولا يُسمح بـ 29 فبراير. القيمة غير المعيّنة تعني اليوم الأول.</value>
+  </data>
+  <data name="Field.RecordsNumberingConfig.YearLabel" xml:space="preserve">
+    <value>إعداد ترقيم السجلات / تسمية السنة</value>
+  </data>
+  <data name="FieldHelp.RecordsNumberingConfig.YearLabel" xml:space="preserve">
+    <value>السنة التي تُسمّى بها سنة ترقيم لا تبدأ في 1 يناير: السنة التي تنتهي فيها (العُرف المعتاد للسنة المالية، فالسنة التي تبدأ في 1 نوفمبر 2026 هي 2027) أو السنة التي تبدأ فيها.</value>
+  </data>
+  <data name="Setting.DocumentNumberingConfig" xml:space="preserve">
+    <value>إعداد ترقيم المستندات</value>
+  </data>
+  <data name="SettingHelp.DocumentNumberingConfig" xml:space="preserve">
+    <value>كيف تُكتب أرقام أوامر العمل والفواتير والعروض وتقارير الوقت اليومية، واليوم الذي تبدأ فيه سنة ترقيمها. يحتفظ نوع المستند الذي ليس له نمط بأرقامه المضمّنة.</value>
+  </data>
+  <data name="Field.DocumentNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>إعداد ترقيم المستندات / شهر بداية السنة</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>الشهر الذي تبدأ فيه سنة الترقيم لأوامر العمل والفواتير والعروض وتقارير الوقت اليومية المرقّمة حسب سنة مالية. تبدأ أرقام أوامر العمل والأنماط التي تتضمن السنة من 1 من جديد في ذلك الشهر واليوم، ويكتب YYYY وYY اسم السنة المالية. القيمة غير المعيّنة تعني يناير، أي السنة الميلادية.</value>
+  </data>
+  <data name="Field.DocumentNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>إعداد ترقيم المستندات / يوم بداية السنة</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>يوم الشهر الذي تبدأ فيه سنة الترقيم، من 1 إلى آخر يوم في الشهر؛ ولا يُسمح بـ 29 فبراير. القيمة غير المعيّنة تعني اليوم الأول.</value>
+  </data>
+  <data name="Field.DocumentNumberingConfig.YearLabel" xml:space="preserve">
+    <value>إعداد ترقيم المستندات / تسمية السنة</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberingConfig.YearLabel" xml:space="preserve">
+    <value>السنة التي تُسمّى بها سنة ترقيم لا تبدأ في 1 يناير: السنة التي تنتهي فيها (العُرف المعتاد للسنة المالية، فالسنة التي تبدأ في 1 نوفمبر 2026 هي 2027) أو السنة التي تبدأ فيها.</value>
+  </data>
+  <data name="Field.DocumentNumberingConfig.Patterns" xml:space="preserve">
+    <value>إعداد ترقيم المستندات / الأنماط</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberingConfig.Patterns" xml:space="preserve">
+    <value>نمط الترقيم الخاص بالقسم لأوامر العمل والفواتير والعروض وتقارير الوقت اليومية، برموز أرقام البلاغات (YYYY أو YY وMM وDD وSEQ). يحتفظ نوع المستند الذي ليس له نمط بأرقامه المضمّنة (WO-2026-000019، #1042). يواصل النمط الجديد بعد أي رقم قد يكرّره. يرى الأعضاء الرقم كما صدر على المستندات وملفات PDF والتصديرات، ولتقارير الوقت اليومية في تطبيقات Responder وUnit وIC وDispatch.</value>
+  </data>
+  <data name="Field.DocumentNumberPattern.Kind" xml:space="preserve">
+    <value>نمط رقم المستند / النوع</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberPattern.Kind" xml:space="preserve">
+    <value>المستند الذي يرقّمه النمط: work-order أو invoice أو bid أو time-report، أو في السجلات records-request أو occupancy أو inspection أو permit أو investigation أو evidence.</value>
+  </data>
+  <data name="Field.DocumentNumberPattern.Pattern" xml:space="preserve">
+    <value>نمط رقم المستند / النمط</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberPattern.Pattern" xml:space="preserve">
+    <value>نص ثابت حول رموز YYYY أو YY وMM وDD وSEQ، مع ظهور SEQ مرة واحدة فقط. يجب أن يتسع كل رقم يكتبه لعمود رقم المستند: 50 حرفًا، أو 32 لأرقام المباني والتفتيش والتصاريح والتحقيقات والأدلة.</value>
+  </data>
+  <data name="Field.DocumentNumberPattern.SequenceWidth" xml:space="preserve">
+    <value>نمط رقم المستند / عرض التسلسل</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberPattern.SequenceWidth" xml:space="preserve">
+    <value>عدد الأرقام التي يُملأ إليها التسلسل بالأصفار البادئة، من 1 إلى 8؛ ويُحتسب التسلسل كرقم، لذا لا يعيد تغيير العرض تشغيله أبدًا.</value>
+  </data>
+  <data name="Field.RecordsNumberingConfig.DocumentPatterns" xml:space="preserve">
+    <value>إعداد ترقيم السجلات / أنماط المستندات</value>
+  </data>
+  <data name="FieldHelp.RecordsNumberingConfig.DocumentPatterns" xml:space="preserve">
+    <value>أنماط القسم الخاصة لأرقام طلبات الاطلاع على السجلات والمباني والتفتيش والتصاريح والتحقيقات والأدلة. تتبع بداية سنة الترقيم في هذا الإعداد؛ ويحتفظ النوع الذي ليس له نمط بأرقامه المضمّنة (PRR-2026-0001 وINSP-2026-0001 وغيرها).</value>
+  </data>
+  <data name="Feature.document-numbering" xml:space="preserve">
+    <value>ترقيم المستندات</value>
+  </data>
+  <data name="FeaturePurpose.document-numbering" xml:space="preserve">
+    <value>كيف تُكتب أرقام أوامر العمل والفواتير والعروض وتقارير الوقت اليومية، واليوم الذي تبدأ فيه سنة ترقيمها عند الترقيم حسب سنة مالية.</value>
   </data>
 </root>

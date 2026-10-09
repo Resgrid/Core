@@ -66,6 +66,8 @@ namespace Resgrid.Repositories.DataRepository
 								DELETE FROM [dbo].[CallLocationIndexStates] WHERE DepartmentId = @DepartmentId
 								-- Call number counters have no FK
 								DELETE FROM [dbo].[CallNumberSequences] WHERE DepartmentId = @DepartmentId
+								-- Document number counters (work orders, invoices, bids, time reports, records requests, prevention) have no FK
+								DELETE FROM [dbo].[DocumentNumberSequences] WHERE DepartmentId = @DepartmentId
 								-- Department API keys have no FK
 								DELETE FROM [dbo].[DepartmentApiKeys] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[CallDispatches] WHERE CallId IN (SELECT CallId FROM [dbo].[Calls] WHERE DepartmentId = @DepartmentId)

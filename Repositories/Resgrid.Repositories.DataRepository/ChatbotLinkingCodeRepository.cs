@@ -39,7 +39,7 @@ namespace Resgrid.Repositories.DataRepository
 
 				var pn = _sqlConfiguration.ParameterNotation;
 				var sql = DataConfig.DatabaseType == DatabaseTypes.Postgres
-					? $"SELECT * FROM {_sqlConfiguration.SchemaName}.chatbotlinkingcodes WHERE code = {pn}Code"
+					? $"SELECT * FROM {_sqlConfiguration.SchemaName}.chatbotlinkingcodes WHERE code = {pn}Code::citext"
 					: $"SELECT * FROM {_sqlConfiguration.SchemaName}.[ChatbotLinkingCodes] WHERE [Code] = {pn}Code";
 
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<ChatbotLinkingCode>>>(async x =>

@@ -84,6 +84,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IProtectedReadService _protectedReadService;
 		private readonly IRecordsCutoverService _recordsCutoverService;
 		private readonly IRecordsProtectionService _recordsProtection;
+		private readonly IIndoorMapService _indoorMapService;
+		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> _departmentLocalizer;
 
 		public DispatchController(IDepartmentsService departmentsService, IUsersService usersService, ICallsService callsService,
 			IDepartmentGroupsService departmentGroupsService, ICommunicationService communicationService, IQueueService queueService,
@@ -100,7 +102,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IProtectedReadService protectedReadService, IRecordsCutoverService recordsCutoverService, IRecordsProtectionService recordsProtection,
 			IDispatchScopeService dispatchScopeService, INearestUnitService nearestUnitService,
 			ICallLocationHistoryService callLocationHistoryService, IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.LocationHistory> locationHistoryLocalizer,
-			IPendingCallsService pendingCallsService, ICallClosureService callClosureService)
+			IPendingCallsService pendingCallsService, ICallClosureService callClosureService, IIndoorMapService indoorMapService,
+			IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> departmentLocalizer)
 		{
 			_callLocationHistoryService = callLocationHistoryService;
 			_locationHistoryLocalizer = locationHistoryLocalizer;
@@ -143,6 +146,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_protectedReadService = protectedReadService;
 			_recordsCutoverService = recordsCutoverService;
 			_recordsProtection = recordsProtection;
+			_indoorMapService = indoorMapService;
+			_departmentLocalizer = departmentLocalizer;
 		}
 		#endregion Private Members and Constructors
 
@@ -252,26 +257,91 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		/// <summary>
-		/// Adds a model error for every field the department's new-call policy requires but the form
-		/// left blank. Keyed to the form fields so the messages land next to the inputs.
+		/// The protocols, linked calls and dispatch lists the call forms post as one form key per selected item. Read
+		/// the same way they are unpacked when saving, so the policy sees what was actually submitted.
 		/// </summary>
-		private async Task ApplyNewCallFieldPolicyAsync(NewCallView model, IFormCollection collection)
+		private sealed class PostedCallSelections
 		{
-			var policy = await _departmentSettingsService.GetNewCallFieldPolicyAsync(DepartmentId);
+			public bool HasProtocols { get; init; }
+			public bool HasLinkedCall { get; init; }
+			public bool HasDispatchList { get; init; }
+
+			public static PostedCallSelections From(IFormCollection collection)
+			{
+				var keys = collection?.Keys?.ToList() ?? new List<string>();
+
+				bool HasKeyStartingWith(string prefix) => keys.Any(x => x.StartsWith(prefix, StringComparison.OrdinalIgnoreCase));
+
+				return new PostedCallSelections
+				{
+					// A pending protocol only counts when it is actually ticked.
+					HasProtocols = HasKeyStartingWith("activeProtocol_") ||
+								   keys.Any(x => x.StartsWith("pendingProtocol_", StringComparison.OrdinalIgnoreCase) && collection[x] == "1"),
+					HasLinkedCall = HasKeyStartingWith("linkedCall_"),
+					// Only the four prefixes the dispatch lists actually post. A bare "dispatch" prefix also
+					// swallows anything else the form happens to name that way.
+					HasDispatchList = HasKeyStartingWith("dispatchUser_") ||
+									  HasKeyStartingWith("dispatchGroup_") ||
+									  HasKeyStartingWith("dispatchUnit_") ||
+									  HasKeyStartingWith("dispatchRole_")
+				};
+			}
+		}
+
+		/// <summary>
+		/// The text of a rich-text note. An untouched editor posts markup such as "&lt;p&gt;&lt;br&gt;&lt;/p&gt;", which is not a
+		/// note and must not satisfy a required one.
+		/// </summary>
+		private static string NoteText(string html) =>
+			string.IsNullOrWhiteSpace(html)
+				? html
+				: System.Net.WebUtility.HtmlDecode(System.Text.RegularExpressions.Regex.Replace(html, "<[^>]*>", " ")).Trim();
+
+		/// <summary>The protocol ids a call form posted: every active one, and each pending one whose questions passed.</summary>
+		private static List<int> PostedProtocolIds(IFormCollection collection)
+		{
+			var ids = new List<int>();
+
+			foreach (var key in collection?.Keys ?? Enumerable.Empty<string>())
+			{
+				if (key.StartsWith("activeProtocol_") && int.TryParse(key.Replace("activeProtocol_", ""), out var activeId))
+					ids.Add(activeId);
+				else if (key.StartsWith("pendingProtocol_") && collection[key] == "1" && int.TryParse(key.Replace("pendingProtocol_", ""), out var pendingId))
+					ids.Add(pendingId);
+			}
+
+			return ids.Distinct().ToList();
+		}
+
+		/// <summary>
+		/// Adds a model error for every field the department's new-call policy requires that the call would be left
+		/// without, named by the label the department sees on its settings screen.
+		/// </summary>
+		private void AddFieldPolicyErrors(NewCallFieldPolicy policy, NewCallFieldValues values)
+		{
+			foreach (var violation in NewCallFieldPolicyValidator.Validate(policy, values))
+			{
+				ModelState.AddModelError($"NewCallField_{violation.Key}",
+					string.Format(_dispatchLocalizer["NewCallFieldRequired"].Value, _departmentLocalizer[$"NewCallField_{violation.Key}"].Value));
+			}
+		}
+
+		/// <summary>
+		/// Adds a model error for every field the department's new-call policy requires but the new (or archived) call
+		/// form left blank. <paramref name="unsupportedKeys"/> are fields that form has no way to collect.
+		/// </summary>
+		private void ApplyNewCallFieldPolicy(NewCallView model, IFormCollection collection, params string[] unsupportedKeys)
+		{
+			var policy = model.FieldPolicy;
 
 			if (policy == null || policy.IsEmpty)
 				return;
 
-			// The dispatch lists, protocols and linked calls are posted as one form key per selected
-			// item, and are only unpacked further down -- read the same keys here so the policy sees
-			// what was actually submitted instead of flagging every one of them as missing.
-			var keys = collection?.Keys?.ToList() ?? new List<string>();
-
-			bool HasKeyStartingWith(string prefix) => keys.Any(x => x.StartsWith(prefix, StringComparison.OrdinalIgnoreCase));
+			var selections = PostedCallSelections.From(collection);
 
 			var values = new NewCallFieldValues
 			{
-				Note = model.Call?.Notes,
+				Note = NoteText(model.Call?.Notes),
 				Address = model.Call?.Address,
 				// A placed pin. An address alone does not count even though it is geocoded on save, matching the v4
 				// SaveCall, which also checks the policy before geocoding.
@@ -284,26 +354,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 				ReferenceId = model.Call?.ReferenceNumber,
 				DestinationPoiId = model.Call?.DestinationPoiId,
 				IndoorMapZoneId = collection?["IndoorMapZoneId"].FirstOrDefault(),
-				// A pending protocol only counts when it is actually ticked, matching how the list is
-				// unpacked below.
-				HasProtocols = HasKeyStartingWith("activeProtocol_") ||
-							   keys.Any(x => x.StartsWith("pendingProtocol_", StringComparison.OrdinalIgnoreCase) && collection[x] == "1"),
-				HasLinkedCall = HasKeyStartingWith("linkedCall_"),
+				HasProtocols = selections.HasProtocols,
+				HasLinkedCall = selections.HasLinkedCall,
 				DispatchOn = model.ScheduleDispatchDate,
-				// Only the four prefixes the dispatch lists actually post. A bare "dispatch" prefix also
-				// swallows anything else the form happens to name that way.
-				HasDispatchList = HasKeyStartingWith("dispatchUser_") ||
-								  HasKeyStartingWith("dispatchGroup_") ||
-								  HasKeyStartingWith("dispatchUnit_") ||
-								  HasKeyStartingWith("dispatchRole_"),
+				HasDispatchList = selections.HasDispatchList,
 				IsPending = model.SaveAsPending
-			};
+			}.Unsupported(unsupportedKeys);
 
-			foreach (var violation in NewCallFieldPolicyValidator.Validate(policy, values))
-			{
-				ModelState.AddModelError($"NewCallField_{violation.Key}",
-					$"{violation.Key} is required by this department before a call can be created.");
-			}
+			AddFieldPolicyErrors(policy, values);
 		}
 
 		[HttpPost]
@@ -331,7 +389,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			// Same policy the apps apply and the v4 API enforces: a call-taker cannot forward an
 			// incident to the field until the information the crews need is on it. Departments with no
 			// policy configured are unaffected.
-			await ApplyNewCallFieldPolicyAsync(model, collection);
+			ApplyNewCallFieldPolicy(model, collection);
 
 			if (ModelState.IsValid)
 			{
@@ -914,6 +972,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await _authorizationService.CanUserEditCallAsync(UserId, model.Call.CallId))
 				return Unauthorized();
 
+			// The zone is posted outside the Call model; carried over so a re-rendered form keeps it.
+			model.Call.IndoorMapZoneId = collection["IndoorMapZoneId"].FirstOrDefault();
+			model.Call.IndoorMapFloorId = collection["IndoorMapFloorId"].FirstOrDefault();
+
 			model = await FillUpdateCallView(model);
 
 			// Populate navigation properties (References, Contacts, etc.) so the view can
@@ -930,31 +992,83 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var call = await _callsService.GetCallByIdAsync(model.Call.CallId);
 				call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true, true);
 
+				// A field the department hides is not on the form, so the call keeps what it has for it rather than
+				// taking the blank the form posts.
+				var policy = model.FieldPolicy ?? new NewCallFieldPolicy();
+				bool Shows(string key) => policy.IsVisible(key);
+
+				var indoorMapZoneId = collection["IndoorMapZoneId"].FirstOrDefault();
+				var indoorMapFloorId = collection["IndoorMapFloorId"].FirstOrDefault();
+				var postedPin = !String.IsNullOrEmpty(model.Latitude) && !String.IsNullOrEmpty(model.Longitude)
+					? string.Format("{0},{1}", model.Latitude, model.Longitude)
+					: null;
+
+				// The call as this edit would leave it must still have every field the department requires, checked
+				// before anything below touches stored data. The dispatch time only means something before a call goes
+				// out, so it is never required of an edit.
+				var selections = PostedCallSelections.From(collection);
+				AddFieldPolicyErrors(policy, new NewCallFieldValues
+				{
+					Note = Shows(NewCallFieldKeys.Note) ? NoteText(model.Call.Notes) : NoteText(call.Notes),
+					Address = Shows(NewCallFieldKeys.Address) ? model.Call.Address : call.Address,
+					Geolocation = postedPin ?? call.GeoLocationData,
+					What3Words = Shows(NewCallFieldKeys.What3Words) ? model.What3Word : call.W3W,
+					ContactName = Shows(NewCallFieldKeys.ContactName) ? model.Call.ContactName : call.ContactName,
+					ContactInfo = Shows(NewCallFieldKeys.ContactInfo) ? model.Call.ContactNumber : call.ContactNumber,
+					ExternalId = Shows(NewCallFieldKeys.ExternalId) ? model.Call.ExternalIdentifier : call.ExternalIdentifier,
+					IncidentId = Shows(NewCallFieldKeys.IncidentId) ? model.Call.IncidentNumber : call.IncidentNumber,
+					ReferenceId = Shows(NewCallFieldKeys.ReferenceId) ? model.Call.ReferenceNumber : call.ReferenceNumber,
+					DestinationPoiId = Shows(NewCallFieldKeys.DestinationPoi) ? destinationPoi?.PoiId : call.DestinationPoiId,
+					IndoorMapZoneId = Shows(NewCallFieldKeys.IndoorLocation) ? indoorMapZoneId : call.IndoorMapZoneId,
+					// Protocols are only ever added on this form, and a list or link left off the post keeps the call's own.
+					HasProtocols = selections.HasProtocols || (call.Protocols?.Any() ?? false),
+					HasLinkedCall = selections.HasLinkedCall || (call.References?.Any() ?? false),
+					HasDispatchList = selections.HasDispatchList || (call.Dispatches?.Any() ?? false) || (call.GroupDispatches?.Any() ?? false) ||
+									  (call.UnitDispatches?.Any() ?? false) || (call.RoleDispatches?.Any() ?? false),
+					IsPending = call.State == (int)CallStates.Pending && !model.DispatchNow && !model.ScheduleDispatchDate.HasValue
+				}.Unsupported(NewCallFieldKeys.DispatchOn));
+
+				if (!ModelState.IsValid)
+					return View("UpdateCall", model);
+
 				call.NatureOfCall = System.Net.WebUtility.HtmlDecode(model.Call.NatureOfCall);
-				call.Notes = System.Net.WebUtility.HtmlDecode(model.Call.Notes);
 				call.Name = model.Call.Name;
 				call.Priority = (int)model.CallPriority;
 				call.IsCritical = model.Call.IsCritical;
 				call.MapPage = model.Call.MapPage;
 				call.CallSource = (int)CallSources.User;
-				call.ContactName = model.Call.ContactName;
-				call.ContactNumber = model.Call.ContactNumber;
 				call.Public = model.Call.Public;
-				call.ExternalIdentifier = model.Call.ExternalIdentifier;
-				call.ReferenceNumber = model.Call.ReferenceNumber;
-				call.IncidentNumber = model.Call.IncidentNumber;
-				call.Address = model.Call.Address;
-				call.W3W = model.What3Word;
-				call.DestinationPoiId = destinationPoi?.PoiId;
 				call.Type = model.Call.Type;
 
-				if (!string.IsNullOrEmpty(model.Call.Address))
-				{
-					call.Address = model.Call.Address;
-				}
+				if (Shows(NewCallFieldKeys.Note))
+					call.Notes = System.Net.WebUtility.HtmlDecode(model.Call.Notes);
 
-				if (!String.IsNullOrEmpty(model.Latitude) && !String.IsNullOrEmpty(model.Longitude))
-					call.GeoLocationData = string.Format("{0},{1}", model.Latitude, model.Longitude);
+				if (Shows(NewCallFieldKeys.ContactName))
+					call.ContactName = model.Call.ContactName;
+
+				if (Shows(NewCallFieldKeys.ContactInfo))
+					call.ContactNumber = model.Call.ContactNumber;
+
+				if (Shows(NewCallFieldKeys.ExternalId))
+					call.ExternalIdentifier = model.Call.ExternalIdentifier;
+
+				if (Shows(NewCallFieldKeys.ReferenceId))
+					call.ReferenceNumber = model.Call.ReferenceNumber;
+
+				if (Shows(NewCallFieldKeys.IncidentId))
+					call.IncidentNumber = model.Call.IncidentNumber;
+
+				if (Shows(NewCallFieldKeys.Address))
+					call.Address = model.Call.Address;
+
+				if (Shows(NewCallFieldKeys.What3Words))
+					call.W3W = model.What3Word;
+
+				if (Shows(NewCallFieldKeys.DestinationPoi))
+					call.DestinationPoiId = destinationPoi?.PoiId;
+
+				if (postedPin != null)
+					call.GeoLocationData = postedPin;
 
 				var checkInTimersValue = collection["Call.CheckInTimersEnabled"].FirstOrDefault();
 				call.CheckInTimersEnabled = !string.IsNullOrEmpty(checkInTimersValue) && checkInTimersValue.Contains("true", StringComparison.OrdinalIgnoreCase);
@@ -962,18 +1076,35 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var part2ConsentValue = collection["Call.Part2ConsentOnFile"].FirstOrDefault();
 				call.Part2ConsentOnFile = !string.IsNullOrEmpty(part2ConsentValue) && part2ConsentValue.Contains("true", StringComparison.OrdinalIgnoreCase);
 
-				// Indoor map zone
-				var indoorMapZoneId = collection["IndoorMapZoneId"].FirstOrDefault();
-				var indoorMapFloorId = collection["IndoorMapFloorId"].FirstOrDefault();
-				if (!String.IsNullOrWhiteSpace(indoorMapZoneId))
+				// Indoor map zone (the form carries the stored zone, so a blank one was cleared on purpose)
+				if (Shows(NewCallFieldKeys.IndoorLocation))
 				{
-					call.IndoorMapZoneId = indoorMapZoneId;
-					call.IndoorMapFloorId = indoorMapFloorId;
+					if (!String.IsNullOrWhiteSpace(indoorMapZoneId))
+					{
+						call.IndoorMapZoneId = indoorMapZoneId;
+						call.IndoorMapFloorId = indoorMapFloorId;
+					}
+					else
+					{
+						call.IndoorMapZoneId = null;
+						call.IndoorMapFloorId = null;
+					}
 				}
-				else
+
+				// Protocols triggered by the call's type and priority are added; ones already on the call stay.
+				if (Shows(NewCallFieldKeys.Protocols))
 				{
-					call.IndoorMapZoneId = null;
-					call.IndoorMapFloorId = null;
+					if (call.Protocols == null)
+						call.Protocols = new List<CallProtocol>();
+
+					foreach (var protocolId in PostedProtocolIds(collection))
+					{
+						if (call.Protocols.Any(x => x.DispatchProtocolId == protocolId))
+							continue;
+
+						var protocolCode = collection.ContainsKey($"protocolCode_{protocolId}") ? collection[$"protocolCode_{protocolId}"].ToString() : null;
+						call.Protocols.Add(new CallProtocol { CallId = call.CallId, DispatchProtocolId = protocolId, Data = protocolCode });
+					}
 				}
 
 				List<CallDispatch> existingDispatches = new List<CallDispatch>(call.Dispatches ?? Enumerable.Empty<CallDispatch>());
@@ -1223,9 +1354,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 						call.State = (int)CallStates.Active;
 				}
 			}
-			else if (call.DispatchOn.HasValue)
+			else if (call.DispatchOn.HasValue && Shows(NewCallFieldKeys.DispatchOn))
 			{
-				// User cleared a previously scheduled dispatch
+				// User cleared a previously scheduled dispatch (a hidden field was never on the form to clear)
 				call.DispatchOn = null;
 				call.HasBeenDispatched = false;
 			}
@@ -1727,22 +1858,35 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			model = await FillNewCallView(model);
 			model.CallStates = model.CallState.ToSelectList();
-			model.Call.LoggedOn = DateTime.UtcNow.TimeConverter(model.Department);
 			model.Call.ReportingUserId = UserId;
+
+			// The timestamp is the point of an archived call: it is entered in the department's time. Only a form that
+			// posted none falls back to now (this used to overwrite every entered time with now).
+			if (model.Call.LoggedOn == default(DateTime))
+				model.Call.LoggedOn = DateTime.UtcNow.TimeConverter(model.Department);
+
 			var destinationPoi = await GetValidatedDestinationPoiAsync(model.Call?.DestinationPoiId);
 
 			if (model.Call?.DestinationPoiId.HasValue == true && model.Call.DestinationPoiId.Value > 0 && destinationPoi == null)
 				ModelState.AddModelError("Call.DestinationPoiId", _dispatchLocalizer["InvalidDestinationPoi"].Value);
 
+			// As on NewCall: the pin is posted only as Latitude/Longitude, so anything bound into GeoLocationData is dropped.
+			model.Call.GeoLocationData = null;
+
+			if (model.HasInvalidPin())
+				ModelState.AddModelError(nameof(model.Latitude), _dispatchLocalizer["InvalidCallCoordinates"].Value);
+
+			// The department's field policy covers archived calls too. One has already happened, so it has no dispatch
+			// time to require.
+			ApplyNewCallFieldPolicy(model, collection, NewCallFieldKeys.DispatchOn);
+
 			if (ModelState.IsValid)
 			{
-				var year = model.Call.LoggedOn.Year;
-
 				model.Call.ReportingUserId = UserId;
 				model.Call.DepartmentId = DepartmentId;
 				model.Call.Priority = (int)model.CallPriority;
 				model.Call.State = 0;
-				model.Call.LoggedOn = model.Call.LoggedOn.ToUniversalTime();
+				model.Call.LoggedOn = DateTimeHelpers.ConvertToUtc(DateTime.SpecifyKind(model.Call.LoggedOn, DateTimeKind.Unspecified), model.Department.TimeZone);
 				model.Call.CallFormData = null;
 				model.Call.NatureOfCall = System.Net.WebUtility.HtmlDecode(model.Call.NatureOfCall);
 				model.Call.Notes = System.Net.WebUtility.HtmlDecode(model.Call.Notes);
@@ -1755,12 +1899,43 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (model.Call.Type == _dispatchLocalizer["NoType"].Value)
 					model.Call.Type = null;
 
-				if (!String.IsNullOrEmpty(model.Latitude) && !String.IsNullOrEmpty(model.Longitude))
-					model.Call.GeoLocationData = string.Format("{0},{1}", model.Latitude, model.Longitude);
+				var pin = model.PostedGeoLocation();
+				if (pin != null)
+					model.Call.GeoLocationData = pin;
 				// Address typed with no pin placed: locate it the same way the v4 SaveCall does, so the call
 				// still gets a map in the web and mobile apps.
 				else if (!string.IsNullOrWhiteSpace(model.Call.Address))
 					model.Call.GeoLocationData = await _geoLocationProvider.GetLatLonFromAddress(model.Call.Address);
+
+				// 42 CFR Part 2 consent is a dispatcher-set flag; subject identifiers come only from integrations.
+				var part2ConsentValue = collection["Call.Part2ConsentOnFile"].FirstOrDefault();
+				model.Call.Part2ConsentOnFile = !string.IsNullOrEmpty(part2ConsentValue) && part2ConsentValue.Contains("true", StringComparison.OrdinalIgnoreCase);
+				model.Call.SubjectIdentifiers = null;
+
+				var indoorMapZoneId = collection["IndoorMapZoneId"].FirstOrDefault();
+				if (!String.IsNullOrWhiteSpace(indoorMapZoneId))
+				{
+					model.Call.IndoorMapZoneId = indoorMapZoneId;
+					model.Call.IndoorMapFloorId = collection["IndoorMapFloorId"].FirstOrDefault();
+				}
+
+				model.Call.Protocols = PostedProtocolIds(collection)
+					.Select(id => new CallProtocol
+					{
+						DispatchProtocolId = id,
+						Data = collection.ContainsKey($"protocolCode_{id}") ? collection[$"protocolCode_{id}"].ToString() : null
+					})
+					.ToList();
+
+				// Only contacts the form offered (this department's, and only with Security > View Contacts).
+				var offeredContacts = model.Contacts ?? new List<Contact>();
+				model.Call.Contacts = new List<CallContact>();
+
+				if (!String.IsNullOrWhiteSpace(model.PrimaryContact) && offeredContacts.Any(x => x.ContactId == model.PrimaryContact))
+					model.Call.Contacts.Add(new CallContact { DepartmentId = DepartmentId, ContactId = model.PrimaryContact, CallContactType = 0 });
+
+				foreach (var additionalContact in (model.AdditionalContacts ?? new List<string>()).Where(x => offeredContacts.Any(c => c.ContactId == x)).Distinct())
+					model.Call.Contacts.Add(new CallContact { DepartmentId = DepartmentId, ContactId = additionalContact, CallContactType = 1 });
 
 				List<string> dispatchingUserIds = new List<string>();
 				List<int> dispatchingGroupIds = new List<int>();
@@ -1935,7 +2110,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (model.ReCalcuateCallNumbers)
 				{
-					await _callsService.RegenerateCallNumbersAsync(DepartmentId, year, cancellationToken);
+					// The numbering year the archived call falls in, which is a fiscal year when the department numbers by one.
+					await _callsService.RegenerateCallNumbersAsync(DepartmentId, call.LoggedOn, cancellationToken);
 				}
 
 				return RedirectToAction("ArchivedCalls", "Dispatch", new { Area = "User" });
@@ -3707,6 +3883,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			model.DestinationPois = await GetDestinationPoiSelectListAsync(model.Call?.DestinationPoiId);
 
+			// The same policy ApplyNewCallFieldPolicyAsync enforces on post: hidden fields are not rendered, required
+			// ones are marked.
+			model.FieldPolicy = await _departmentSettingsService.GetNewCallFieldPolicyAsync(DepartmentId) ?? new NewCallFieldPolicy();
+
 			var udfDefinition = await _userDefinedFieldsService.GetActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Call);
 			if (udfDefinition != null)
 			{
@@ -3801,6 +3981,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			model.DestinationPois = await GetDestinationPoiSelectListAsync(model.Call?.DestinationPoiId);
+			model.FieldPolicy = await _departmentSettingsService.GetNewCallFieldPolicyAsync(DepartmentId) ?? new NewCallFieldPolicy();
+
+			// The edit form used to open with an empty indoor location and post that back, clearing the zone on every save.
+			if (!string.IsNullOrWhiteSpace(model.Call?.IndoorMapZoneId))
+				model.IndoorMapZoneName = (await _indoorMapService.GetZoneByIdAsync(model.Call.IndoorMapZoneId))?.Name;
 
 			if (model.Call != null && model.Call.CallId > 0)
 			{

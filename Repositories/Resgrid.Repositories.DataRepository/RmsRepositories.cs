@@ -152,6 +152,25 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 				: $"{col} IN {P}{parameterName}";
 		}
 
+		/// <summary>
+		/// A string parameter compared with a citext column: "@Param::citext" on PostgreSQL, "@Param" on SQL Server. Npgsql binds a
+		/// C# string as text, and citext = text resolves to text = text, which is case-sensitive and cannot use the column's
+		/// index; the cast gives the case-insensitive, indexed match SQL Server's collation gives.
+		/// </summary>
+		protected string CaseInsensitive(string parameterName)
+		{
+			return IsPostgres ? $"{P}{parameterName}::citext" : $"{P}{parameterName}";
+		}
+
+		/// <summary><see cref="InList"/> against a citext column (see <see cref="CaseInsensitive"/>).</summary>
+		protected string CaseInsensitiveInList(string column, string parameterName, string alias = null)
+		{
+			var col = alias == null ? Col(column) : alias + "." + Col(column);
+			return IsPostgres
+				? $"{col} = ANY({P}{parameterName}::citext[])"
+				: $"{col} IN {P}{parameterName}";
+		}
+
 		/// <summary>Keep the declared parameter type enumerable so Dapper expands SQL Server lists; Npgsql binds the same array to ANY.</summary>
 		protected static int[] InListValue(IEnumerable<int> values) => (values ?? Enumerable.Empty<int>()).ToArray();
 

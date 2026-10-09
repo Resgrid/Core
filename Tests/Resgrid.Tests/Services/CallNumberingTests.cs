@@ -109,6 +109,109 @@ namespace Resgrid.Tests.Services
 			CallNumberFormat.EffectiveWidth(ObjectSerialization.Deserialize<CallNumberingConfig>(ObjectSerialization.Serialize(new CallNumberingConfig())).SequenceWidth).Should().Be(1);
 		}
 
+		[Test]
+		public void The_year_start_round_trips_through_protobuf_and_unset_is_the_calendar_year()
+		{
+			var fiscal = ObjectSerialization.Deserialize<CallNumberingConfig>(ObjectSerialization.Serialize(
+				new CallNumberingConfig { Pattern = "{YY}-{SEQ}", YearStartMonth = 11, YearStartDay = 15, YearLabel = (int)NumberingYearLabel.StartYear })).YearStart();
+			fiscal.Month.Should().Be(11);
+			fiscal.Day.Should().Be(15);
+			fiscal.Label.Should().Be(NumberingYearLabel.StartYear);
+
+			var unset = ObjectSerialization.Deserialize<CallNumberingConfig>(ObjectSerialization.Serialize(new CallNumberingConfig())).YearStart();
+			unset.IsCalendarYear.Should().BeTrue();
+			unset.Label.Should().Be(NumberingYearLabel.EndYear);
+		}
+
+		#endregion
+
+		#region Numbering year
+
+		[TestCase(2026, 10, 31, 2026, "the day before the fiscal year starts is still FY2026")]
+		[TestCase(2026, 11, 1, 2027, "a year starting 1 November 2026 is named by the year it ends in")]
+		[TestCase(2027, 1, 15, 2027, "January is in the same fiscal year as the November before it")]
+		[TestCase(2027, 10, 31, 2027, "the last day of FY2027")]
+		[TestCase(2027, 11, 1, 2028, "the next fiscal year")]
+		public void A_fiscal_year_is_named_by_the_year_it_ends_in(int y, int m, int d, int expected, string because)
+		{
+			new NumberingYearStart(11, 1, NumberingYearLabel.EndYear).YearOf(new DateTime(y, m, d, 9, 0, 0)).Should().Be(expected, because);
+		}
+
+		[TestCase(2026, 10, 31, 2025)]
+		[TestCase(2026, 11, 1, 2026)]
+		[TestCase(2027, 10, 31, 2026)]
+		public void A_fiscal_year_can_be_named_by_the_year_it_starts_in(int y, int m, int d, int expected)
+		{
+			new NumberingYearStart(11, 1, NumberingYearLabel.StartYear).YearOf(new DateTime(y, m, d)).Should().Be(expected);
+		}
+
+		[Test]
+		public void A_January_1_start_is_the_calendar_year_whichever_label_is_saved()
+		{
+			new NumberingYearStart(1, 1, NumberingYearLabel.EndYear).YearOf(new DateTime(2027, 1, 1)).Should().Be(2027);
+			new NumberingYearStart(0, 0, NumberingYearLabel.StartYear).YearOf(new DateTime(2026, 12, 31, 23, 59, 0)).Should().Be(2026);
+			new NumberingYearStart(0, 0, NumberingYearLabel.EndYear).IsCalendarYear.Should().BeTrue("unset month and day read as January 1");
+		}
+
+		[Test]
+		public void A_numbering_year_starts_where_its_name_says()
+		{
+			var fiscal = new NumberingYearStart(7, 1, NumberingYearLabel.EndYear);
+			fiscal.StartOf(new DateTime(2027, 3, 4)).Should().Be(new DateTime(2026, 7, 1));
+			fiscal.StartOfYear(2027).Should().Be(new DateTime(2026, 7, 1), "FY2027 of a July fiscal year starts in July 2026");
+			new NumberingYearStart(7, 1, NumberingYearLabel.StartYear).StartOfYear(2027).Should().Be(new DateTime(2027, 7, 1));
+			NumberingYearStart.Calendar.StartOfYear(2027).Should().Be(new DateTime(2027, 1, 1));
+		}
+
+		[TestCase(2, 29, false)]
+		[TestCase(2, 28, true)]
+		[TestCase(4, 31, false)]
+		[TestCase(13, 1, false)]
+		[TestCase(0, 1, false)]
+		[TestCase(12, 31, true)]
+		public void A_year_start_is_a_day_every_year_has(int month, int day, bool valid)
+		{
+			NumberingYearStart.IsValid(month, day).Should().Be(valid);
+		}
+
+		[Test]
+		public void A_saved_year_start_that_no_longer_validates_numbers_by_the_calendar_year()
+		{
+			new NumberingYearStart(2, 30, NumberingYearLabel.EndYear).IsCalendarYear.Should().BeTrue();
+			new NumberingYearStart(14, 1, NumberingYearLabel.EndYear).IsCalendarYear.Should().BeTrue();
+		}
+
+		[Test]
+		public void A_yearly_pattern_writes_and_restarts_on_the_fiscal_year()
+		{
+			var start = new NumberingYearStart(11, 1, NumberingYearLabel.EndYear);
+
+			var before = CallNumberFormat.Resolve("{YY}-{SEQ}", 4, new DateTime(2026, 10, 31, 23, 59, 0), start);
+			before.Format(1).Should().Be("26-0001");
+			before.PeriodStart.Should().Be(new DateTime(2025, 11, 1));
+			before.PeriodEnd.Should().Be(new DateTime(2026, 11, 1));
+
+			var after = CallNumberFormat.Resolve("{YY}-{SEQ}", 4, new DateTime(2026, 11, 1), start);
+			after.Format(1).Should().Be("27-0001");
+			after.Year.Should().Be(2027);
+			after.PeriodStart.Should().Be(new DateTime(2026, 11, 1));
+			after.PeriodEnd.Should().Be(new DateTime(2027, 11, 1));
+
+			CallNumberFormat.Resolve("{YY}-{SEQ}", 4, new DateTime(2027, 1, 1), start).Key.Should().Be(after.Key, "January 1 does not restart a fiscal year");
+		}
+
+		[Test]
+		public void Month_and_day_patterns_always_follow_the_calendar()
+		{
+			var start = new NumberingYearStart(11, 1, NumberingYearLabel.EndYear);
+
+			var scope = CallNumberFormat.Resolve("{YYYY}{MM}{DD}-{SEQ}", 3, new DateTime(2026, 11, 2, 8, 0, 0), start);
+
+			scope.Format(4).Should().Be("20261102-004", "a date in the number reads as the day it was logged");
+			scope.PeriodStart.Should().Be(new DateTime(2026, 11, 2));
+			scope.PeriodEnd.Should().Be(new DateTime(2026, 11, 3));
+		}
+
 		#endregion
 
 		#region Service
@@ -270,7 +373,7 @@ namespace Resgrid.Tests.Services
 			Issued("z", new DateTime(2025, 12, 30));
 			await _sequences.RaiseFloorAsync(Dept, "2026-#", 40, "admin", DateTime.UtcNow);
 
-			(await _service.RenumberCallsForYearAsync(Dept, 2026)).Should().BeTrue();
+			(await _service.RenumberCallsForYearAsync(Dept, new DateTime(2026, 6, 1))).Should().BeTrue();
 
 			_calls.Single(c => c.CallId == 2).Number.Should().Be("2026-040");
 			_calls.Single(c => c.CallId == 1).Number.Should().Be("2026-041");
@@ -296,7 +399,7 @@ namespace Resgrid.Tests.Services
 				Issued(created, new DateTime(2026, 10, 6));
 			};
 
-			(await _service.RenumberCallsForYearAsync(Dept, 2026)).Should().BeTrue();
+			(await _service.RenumberCallsForYearAsync(Dept, new DateTime(2026, 6, 1))).Should().BeTrue();
 
 			_calls.Where(c => !c.IsDeleted && c.LoggedOn < new DateTime(2026, 3, 1)).OrderBy(c => c.LoggedOn).Select(c => c.Number)
 				.Should().Equal(new[] { "2026-001", "2026-003", "2026-004", "2026-005" }, "2026-002 still belongs to the deleted call");
@@ -313,7 +416,7 @@ namespace Resgrid.Tests.Services
 			Issued("2026-009", new DateTime(2026, 1, 5));
 			(await _sequences.TakeNextAsync(Dept, "2026-#", 9)).Should().Be(10);
 
-			(await _service.RenumberCallsForYearAsync(Dept, 2026)).Should().BeTrue();
+			(await _service.RenumberCallsForYearAsync(Dept, new DateTime(2026, 6, 1))).Should().BeTrue();
 
 			_calls.Select(c => c.Number).Should().Equal(new[] { "2026-001", "2026-002" });
 			(await _service.AllocateCallNumberAsync(Dept, new DateTime(2026, 6, 1))).Should().Be("2026-003");
@@ -325,8 +428,79 @@ namespace Resgrid.Tests.Services
 			_saved = new CallNumberingConfig { Pattern = "{SEQ}", SequenceWidth = 6 };
 			Issued("000005", new DateTime(2026, 3, 1));
 
-			(await _service.RenumberCallsForYearAsync(Dept, 2026)).Should().BeFalse();
+			(await _service.RenumberCallsForYearAsync(Dept, new DateTime(2026, 6, 1))).Should().BeFalse();
 			_calls.Single().Number.Should().Be("000005");
+		}
+
+		[Test]
+		public async Task Calls_follow_the_calendar_year_by_default_while_a_fiscal_year_restarts_on_its_own_day()
+		{
+			_saved = new CallNumberingConfig { Pattern = "{YY}-{SEQ}", SequenceWidth = 4 };
+			(await _service.AllocateCallNumberAsync(Dept, new DateTime(2026, 11, 15))).Should().Be("26-0001");
+			(await _service.AllocateCallNumberAsync(Dept, new DateTime(2027, 1, 1, 0, 5, 0))).Should().Be("27-0001", "dispatch numbering starts fresh on January 1");
+
+			_saved = new CallNumberingConfig { Pattern = "FY{YY}-{SEQ}", SequenceWidth = 4, YearStartMonth = 11, YearStartDay = 1 };
+			(await _service.AllocateCallNumberAsync(Dept, new DateTime(2027, 10, 31, 12, 0, 0))).Should().Be("FY27-0001");
+			(await _service.AllocateCallNumberAsync(Dept, new DateTime(2027, 11, 1, 0, 5, 0))).Should().Be("FY28-0001");
+		}
+
+		[Test]
+		public async Task A_fiscal_year_starts_at_the_departments_local_midnight()
+		{
+			_department.TimeZone = "Central Standard Time";
+			_saved = new CallNumberingConfig { Pattern = "{YY}-{SEQ}", SequenceWidth = 4, YearStartMonth = 11, YearStartDay = 1 };
+
+			// 04:30 UTC on 1 November 2026 is still 31 October (23:30 CDT) in Chicago; 05:30 UTC is past local midnight.
+			(await _service.AllocateCallNumberAsync(Dept, new DateTime(2026, 11, 1, 4, 30, 0, DateTimeKind.Utc))).Should().Be("26-0001");
+			(await _service.AllocateCallNumberAsync(Dept, new DateTime(2026, 11, 1, 5, 30, 0, DateTimeKind.Utc))).Should().Be("27-0001");
+		}
+
+		[Test]
+		public async Task Naming_a_fiscal_year_after_its_start_year_carries_on_from_the_calendar_numbers_with_the_same_name()
+		{
+			// Calendar 2026 issued 26-1 to 26-5 before the department moved to a November year named by its start year, so
+			// FY2026 (November 2026 to October 2027) writes the same "26-" text. It must not issue 26-1 again.
+			for (var i = 1; i <= 5; i++)
+				Issued("26-" + i, new DateTime(2026, 2, i));
+			_saved = new CallNumberingConfig { Pattern = CallNumberFormat.LegacyPattern, YearStartMonth = 11, YearStartDay = 1, YearLabel = (int)NumberingYearLabel.StartYear };
+
+			(await _service.GetNextAsync(Dept, null, new DateTime(2026, 11, 15))).NextNumber.Should().Be("26-6");
+			(await _service.AllocateCallNumberAsync(Dept, new DateTime(2026, 11, 15))).Should().Be("26-6");
+		}
+
+		[Test]
+		public async Task Saving_stores_the_year_start_and_a_day_every_year_has()
+		{
+			var saved = await _service.SaveAsync(Dept, "admin", new CallNumberingUpdate { Pattern = "{YY}-{SEQ}", SequenceWidth = 4, YearStartMonth = 11, YearStartDay = 1, YearLabel = (int)NumberingYearLabel.StartYear });
+			saved.YearStartRejected.Should().BeFalse();
+			_saved.YearStartMonth.Should().Be(11);
+			_saved.YearStartDay.Should().Be(1);
+			_saved.YearLabel.Should().Be((int)NumberingYearLabel.StartYear);
+
+			var leap = await _service.SaveAsync(Dept, "admin", new CallNumberingUpdate { Pattern = "FD{YYYY}-{SEQ}", SequenceWidth = 4, YearStartMonth = 2, YearStartDay = 29 });
+			leap.YearStartRejected.Should().BeTrue();
+			_saved.Pattern.Should().Be("{YY}-{SEQ}", "a refused year start saves nothing");
+			_saved.YearStartMonth.Should().Be(11);
+
+			await _service.SaveAsync(Dept, "admin", new CallNumberingUpdate { Pattern = "{YY}-{SEQ}", SequenceWidth = 4 });
+			_saved.YearStart().Month.Should().Be(11, "a save that does not post a year start keeps the saved one");
+		}
+
+		[Test]
+		public async Task Renumbering_a_fiscal_year_renumbers_that_year_and_skips_numbers_written_around_it()
+		{
+			_saved = new CallNumberingConfig { Pattern = "{YYYY}-{SEQ}", SequenceWidth = 3, YearStartMonth = 11, YearStartDay = 1, YearLabel = (int)NumberingYearLabel.StartYear };
+			Issued("2026-001", new DateTime(2026, 2, 1)); // calendar 2026, before the November year start was set
+			Issued("a", new DateTime(2026, 10, 30));      // FY2025
+			Issued("b", new DateTime(2026, 11, 2));       // FY2026
+			Issued("c", new DateTime(2027, 1, 5));        // FY2026
+
+			(await _service.RenumberCallsForYearAsync(Dept, new DateTime(2026, 12, 1))).Should().BeTrue();
+
+			_calls.Single(c => c.Number == "a").Should().NotBeNull("October is the previous fiscal year");
+			_calls.Single(c => c.CallId == 3).Number.Should().Be("2026-002", "2026-001 already belongs to a calendar-2026 call");
+			_calls.Single(c => c.CallId == 4).Number.Should().Be("2026-003");
+			_calls.Select(c => c.Number).Should().OnlyHaveUniqueItems();
 		}
 
 		#endregion
@@ -380,6 +554,9 @@ namespace Resgrid.Tests.Services
 
 			public Task<List<string>> GetDeletedCallNumbersAsync(int departmentId, DateTime fromUtc, DateTime toUtc) =>
 				Task.FromResult(Calls.Where(c => c.IsDeleted && c.Number != null && c.LoggedOn >= fromUtc && c.LoggedOn < toUtc).Select(c => c.Number).ToList());
+
+			public Task<List<string>> GetCallNumbersAsync(int departmentId, DateTime fromUtc, DateTime toUtc) =>
+				Task.FromResult(Calls.Where(c => c.Number != null && c.LoggedOn >= fromUtc && c.LoggedOn < toUtc).Select(c => c.Number).ToList());
 
 			public Task<int> GetHighestIssuedAsync(int departmentId, string numberPrefix, string numberSuffix, DateTime? fromUtc, DateTime? toUtc)
 			{

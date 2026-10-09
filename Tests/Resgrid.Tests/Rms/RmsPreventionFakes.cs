@@ -9,6 +9,7 @@ using Resgrid.Model.Repositories;
 using Resgrid.Model.Repositories.Queries;
 using Resgrid.Model.Services;
 using Resgrid.Services.Records;
+using Resgrid.Tests.Services;
 
 namespace Resgrid.Tests.Rms
 {
@@ -343,6 +344,11 @@ namespace Resgrid.Tests.Rms
 		public bool RecordsUsable { get; set; } = true;
 
 		public FakeSequences Sequences { get; } = new FakeSequences();
+		/// <summary>Setting 72 as the numbering service reads it; the calendar year until a test sets a fiscal year start.</summary>
+		public RecordsNumberingConfig NumberingConfig { get; set; } = new RecordsNumberingConfig();
+		public Mock<IDepartmentsService> Departments { get; } = new Mock<IDepartmentsService>();
+		/// <summary>Custom-pattern counters, seeded from the numbers the harness's stores hold.</summary>
+		public FakeDocumentNumberSequences DocumentSequences { get; } = new FakeDocumentNumberSequences();
 		public FakeAudits Audits { get; } = new FakeAudits();
 		public FakeOccupancies Occupancies { get; } = new FakeOccupancies();
 		public FakeContactLinks Links { get; } = new FakeContactLinks();
@@ -400,7 +406,19 @@ namespace Resgrid.Tests.Rms
 			// Pois has no DepartmentId column (RESGRID-WEB-1MQ); department POIs are read through their POI types.
 			Pois.Setup(p => p.GetAllByDepartmentIdAsync(It.IsAny<int>())).ThrowsAsync(new InvalidOperationException("Invalid column name 'DepartmentId'."));
 
-			Gate = new RecordsPreventionGate(Cutover.Object, Flags.Object, Authorization.Object, Sequences, Audits);
+			var numberingSettings = new Mock<IDepartmentSettingsService>();
+			numberingSettings.Setup(s => s.GetRecordsNumberingConfigAsync(It.IsAny<int>(), It.IsAny<bool>())).ReturnsAsync(() => NumberingConfig);
+			DocumentSequences.Issued = kind => kind switch
+			{
+				DocumentNumberKinds.Occupancy => Occupancies.Rows.Select(r => r.OccupancyNumber),
+				DocumentNumberKinds.Inspection => Inspections.Rows.Select(r => r.InspectionNumber),
+				DocumentNumberKinds.Permit => Permits.Rows.Select(r => r.PermitNumber),
+				DocumentNumberKinds.Investigation => Cases.Rows.Select(r => r.CaseNumber),
+				DocumentNumberKinds.Evidence => Evidence.Rows.Select(r => r.EvidenceNumber),
+				_ => Enumerable.Empty<string>()
+			};
+			var numbering = new Resgrid.Services.DocumentNumberingService(numberingSettings.Object, Departments.Object, DocumentSequences);
+			Gate = new RecordsPreventionGate(Cutover.Object, Flags.Object, Authorization.Object, Sequences, Audits, numbering);
 			OccupancyService = new RecordsOccupancyService(Gate, Occupancies, Links, Hazards, Crosswalks, Provenance, Ownerships, Violations, Hydrants, ContactPreplans.Object, ContactHazards.Object, Contacts.Object, Addresses.Object, Pois.Object, PoiTypes.Object, ProtectedReads.Object, Grant.Object, Protection, UnitOfWork.Object);
 			InspectionsService = new RecordsInspectionsService(Gate, CodeSets, CodeSections, Programs, Inspections, Violations, Occupancies, Attachments, Protection, Outbox, UnitOfWork.Object);
 			HydrantsService = new RecordsHydrantsService(Gate, Hydrants, FlowTests, Maintenance, Attachments, UnitOfWork.Object);

@@ -1065,4 +1065,7 @@
   <data name="SendNotificationHelp" xml:space="preserve">
     <value>Meddelar alla som larmats till ärendet, dess enheter och insatsledningen att ärendet är stängt. Stängningsanteckningarna skickas inte med.</value>
   </data>
+  <data name="NewCallFieldRequired" xml:space="preserve">
+    <value>{0} är obligatoriskt i den här avdelningen.</value>
+  </data>
 </root>

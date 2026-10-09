@@ -1198,7 +1198,7 @@
     <value>Календар підрозділу для зустрічей, подій і навчальних вечорів.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.call-settings">
-    <value>Поштова скринька та формат, що використовуються для імпорту викликів із CAD або пейджингової пошти, а також формат і наступний номер викликів.</value>
+    <value>Поштова скринька та формат, що використовуються для імпорту викликів із CAD або пейджингової пошти, а також формат, наступний номер і початок року нумерації викликів.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.call-templates">
     <value>Багаторазові шаблони тексту виклику й нотаток, що прискорюють введення викликів.</value>
@@ -1522,7 +1522,7 @@
     <value>Записи, що очікують виконання, перевірки або готові до подання.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.records-settings">
-    <value>Правила нумерації, зберігання, пошуку та видимості для записів.</value>
+    <value>Правила нумерації (зокрема номери запитів на доступ, номери профілактики та початок року нумерації), зберігання, пошуку та видимості для записів.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.reports">
     <value>Звіти підрозділу про виклики, персонал і діяльність.</value>
@@ -2236,7 +2236,7 @@
     <value>Використовує окремі послідовності для станції/групи. Це змінює нумерацію, а не видимість записів.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.ResetYearly">
-    <value>Перезапускає послідовності записів щороку за календарем у часовому поясі підрозділу.</value>
+    <value>Перезапускає послідовності записів щороку нумерації (календарного року, якщо не задано початок фінансового року) у часовому поясі підрозділу.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.SequenceWidth">
     <value>Цифри частини SEQ у шаблоні нумерації, доповнені нулями: 4 дає 0184. Від 3 до 8 цифр; зміна зберігає наступний номер кожної послідовності. Визначення підрозділу з власною нумерацією зберігають власну довжину.</value>
@@ -6785,5 +6785,101 @@
   </data>
   <data xml:space="preserve" name="FeatureValue.api-keys">
     <value>Інтеграції продовжують працювати, коли люди йдуть, можуть лише те, що дозволяє їхній ключ, і їх можна миттєво відкликати.</value>
+  </data>
+  <data name="Field.CallNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Конфігурація нумерації викликів / Місяць початку року</value>
+  </data>
+  <data name="FieldHelp.CallNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Місяць, у якому починається рік нумерації, для викликів, що нумеруються за фінансовим роком. Річний шаблон знову починається з 1 у цей місяць і день, а YYYY і YY записують назву фінансового року; шаблони з MM або DD слідують календарю. Без значення — січень, тобто календарний рік.</value>
+  </data>
+  <data name="Field.CallNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Конфігурація нумерації викликів / День початку року</value>
+  </data>
+  <data name="FieldHelp.CallNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>День місяця, у який починається рік нумерації, від 1 до останнього дня місяця; 29 лютого не дозволено. Без значення — 1-ше число.</value>
+  </data>
+  <data name="Field.CallNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Конфігурація нумерації викликів / Назва року</value>
+  </data>
+  <data name="FieldHelp.CallNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Який рік дає назву року нумерації, що не починається 1 січня: рік, у якому він закінчується (звичайна домовленість для фінансових років, тож рік, що починається 1 листопада 2026, — це 2027), або рік, у якому він починається.</value>
+  </data>
+  <data name="Field.RecordsNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Налаштування нумерації записів / Місяць початку року</value>
+  </data>
+  <data name="FieldHelp.RecordsNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Місяць, у якому починається рік нумерації, для записів, що нумеруються за фінансовим роком, наприклад округу чи штату. Послідовності з роком знову починаються з 1 у цей місяць і день, а YYYY і YY записують назву фінансового року. Без значення — січень, тобто календарний рік. Не залежить від початку року нумерації викликів. Номери запитів на доступ до документів і номери перевірок, дозволів, об’єктів, розслідувань та доказів слідують тому самому року.</value>
+  </data>
+  <data name="Field.RecordsNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Налаштування нумерації записів / День початку року</value>
+  </data>
+  <data name="FieldHelp.RecordsNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>День місяця, у який починається рік нумерації, від 1 до останнього дня місяця; 29 лютого не дозволено. Без значення — 1-ше число.</value>
+  </data>
+  <data name="Field.RecordsNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Налаштування нумерації записів / Назва року</value>
+  </data>
+  <data name="FieldHelp.RecordsNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Який рік дає назву року нумерації, що не починається 1 січня: рік, у якому він закінчується (звичайна домовленість для фінансових років, тож рік, що починається 1 листопада 2026, — це 2027), або рік, у якому він починається.</value>
+  </data>
+  <data name="Setting.DocumentNumberingConfig" xml:space="preserve">
+    <value>Конфігурація нумерації документів</value>
+  </data>
+  <data name="SettingHelp.DocumentNumberingConfig" xml:space="preserve">
+    <value>Як записуються номери нарядів на роботи, рахунків, пропозицій і щоденних звітів про час, і день, коли починається їхній рік нумерації. Вид документа без шаблону зберігає вбудовані номери.</value>
+  </data>
+  <data name="Field.DocumentNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Конфігурація нумерації документів / Місяць початку року</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Місяць, у якому починається рік нумерації нарядів на роботи, рахунків, пропозицій і щоденних звітів про час, що нумеруються за фінансовим роком. Номери нарядів і шаблони з роком знову починаються з 1 у цей місяць і день, а YYYY і YY записують назву фінансового року. Без значення — січень, тобто календарний рік.</value>
+  </data>
+  <data name="Field.DocumentNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Конфігурація нумерації документів / День початку року</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>День місяця, у який починається рік нумерації, від 1 до останнього дня місяця; 29 лютого не дозволено. Без значення — 1-ше число.</value>
+  </data>
+  <data name="Field.DocumentNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Конфігурація нумерації документів / Назва року</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Який рік дає назву року нумерації, що не починається 1 січня: рік, у якому він закінчується (звичайна домовленість для фінансових років, тож рік, що починається 1 листопада 2026, — це 2027), або рік, у якому він починається.</value>
+  </data>
+  <data name="Field.DocumentNumberingConfig.Patterns" xml:space="preserve">
+    <value>Конфігурація нумерації документів / Шаблони</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberingConfig.Patterns" xml:space="preserve">
+    <value>Власний шаблон нумерації підрозділу для нарядів на роботи, рахунків, пропозицій і щоденних звітів про час із токенами номерів викликів (YYYY або YY, MM, DD, SEQ). Вид документа без шаблону зберігає вбудовані номери (WO-2026-000019, #1042). Новий шаблон продовжує після будь-якого номера, який він повторив би. Учасники бачать номер у виданому вигляді в документах, PDF і експортах, а для щоденних звітів про час — у застосунках Responder, Unit, IC і Dispatch.</value>
+  </data>
+  <data name="Field.DocumentNumberPattern.Kind" xml:space="preserve">
+    <value>Шаблон номера документа / Вид</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberPattern.Kind" xml:space="preserve">
+    <value>Документ, який нумерує шаблон: work-order, invoice, bid або time-report, а в записах records-request, occupancy, inspection, permit, investigation або evidence.</value>
+  </data>
+  <data name="Field.DocumentNumberPattern.Pattern" xml:space="preserve">
+    <value>Шаблон номера документа / Шаблон</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberPattern.Pattern" xml:space="preserve">
+    <value>Фіксований текст навколо токенів YYYY або YY, MM, DD і SEQ, де SEQ рівно один раз. Кожен записаний номер має вміщуватися в стовпець номера документа: 50 символів або 32 для номерів об’єктів, перевірок, дозволів, розслідувань і доказів.</value>
+  </data>
+  <data name="Field.DocumentNumberPattern.SequenceWidth" xml:space="preserve">
+    <value>Шаблон номера документа / Довжина послідовності</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberPattern.SequenceWidth" xml:space="preserve">
+    <value>Кількість цифр, до якої послідовність доповнюється нулями попереду, від 1 до 8; послідовність рахується як число, тож зміна довжини ніколи її не перезапускає.</value>
+  </data>
+  <data name="Field.RecordsNumberingConfig.DocumentPatterns" xml:space="preserve">
+    <value>Налаштування нумерації записів / Шаблони документів</value>
+  </data>
+  <data name="FieldHelp.RecordsNumberingConfig.DocumentPatterns" xml:space="preserve">
+    <value>Власні шаблони підрозділу для номерів запитів на доступ до документів, об’єктів, перевірок, дозволів, розслідувань і доказів. Вони слідують початку року нумерації цього налаштування; вид без шаблону зберігає вбудовані номери (PRR-2026-0001, INSP-2026-0001 тощо).</value>
+  </data>
+  <data name="Feature.document-numbering" xml:space="preserve">
+    <value>Нумерація документів</value>
+  </data>
+  <data name="FeaturePurpose.document-numbering" xml:space="preserve">
+    <value>Як записуються номери нарядів на роботи, рахунків, пропозицій і щоденних звітів про час, і день, коли починається їхній рік нумерації при нумерації за фінансовим роком.</value>
   </data>
 </root>

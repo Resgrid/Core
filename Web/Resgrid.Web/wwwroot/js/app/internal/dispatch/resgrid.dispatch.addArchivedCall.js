@@ -33,14 +33,18 @@
                     theme: 'snow'
                 });
 
-                let quillNotes = new Quill('#note-container', {
+                // The department's new-call field policy can leave the note, the map and other fields off the
+                // form, so anything bound to one of them has to cope with it not being there.
+                let quillNotes = $('#note-container').length ? new Quill('#note-container', {
                     placeholder: '',
                     theme: 'snow'
-                });
+                }) : null;
 
                 $(document).on('submit', '#addArchivedCallForm', function () {
                     $('#Call_NatureOfCall').val(quillNature.root.innerHTML);
-                    $('#Call_Notes').val(quillNotes.root.innerHTML);
+                    if (quillNotes) {
+                        $('#Call_Notes').val(quillNotes.root.innerHTML);
+                    }
 
                     return true;
                 });
@@ -86,28 +90,31 @@
                     checkForProtocols();
                 });
 
-                const tiles1 = L.tileLayer(
-                    osmTileUrl,
-                    {
-                        maxZoom: 19,
-                        attribution: osmTileAttribution
-                    }
-                );
+                // No map when GPS coordinates are hidden by the field policy.
+                if (document.getElementById('callMap')) {
+                    const tiles1 = L.tileLayer(
+                        osmTileUrl,
+                        {
+                            maxZoom: 19,
+                            attribution: osmTileAttribution
+                        }
+                    );
 
-                map = L.map('callMap', {
-                    scrollWheelZoom: false
-                }).setView([centerLat, centerLng], 11).addLayer(tiles1);
+                    map = L.map('callMap', {
+                        scrollWheelZoom: false
+                    }).setView([centerLat, centerLng], 11).addLayer(tiles1);
 
-                map.on('click', function (e) {
-                    resgrid.dispatch.addArchivedCall.setMarkerLocation(e.latlng.lat, e.latlng.lng);
+                    map.on('click', function (e) {
+                        resgrid.dispatch.addArchivedCall.setMarkerLocation(e.latlng.lat, e.latlng.lng);
 
-                    $("#Latitude").val(e.latlng.lat.toString());
-                    $("#Longitude").val(e.latlng.lng.toString());
+                        $("#Latitude").val(e.latlng.lat.toString());
+                        $("#Longitude").val(e.latlng.lng.toString());
 
-                    map.panTo(e.latlng);
+                        map.panTo(e.latlng);
 
-                    resgrid.dispatch.addArchivedCall.geocodeCoordinates(e.latlng.lat, e.latlng.lng);
-                });
+                        resgrid.dispatch.addArchivedCall.geocodeCoordinates(e.latlng.lat, e.latlng.lng);
+                    });
+                }
 
                 $("#selectLinkedCall").select2({
                     dropdownParent: $("#selectCallToLinkModal"),
@@ -138,7 +145,9 @@
                             if (result && result.Data && result.Data.Latitude && result.Data.Longitude) {
                                 var lat = result.Data.Latitude;
                                 var lng = result.Data.Longitude;
-                                map.setView(new L.LatLng(lat, lng), 16);
+                                if (map) {
+                                    map.setView(new L.LatLng(lat, lng), 16);
+                                }
                                 $("#Latitude").val(lat.toString());
                                 $("#Longitude").val(lng.toString());
                                 resgrid.dispatch.addArchivedCall.setMarkerLocation(lat, lng);
@@ -172,7 +181,9 @@
                         type: 'GET'
                     }).done(function (data) {
                         if (data && data.Latitude && data.Longitude) {
-                            map.setView(new L.LatLng(data.Latitude, data.Longitude), 16);
+                            if (map) {
+                                map.setView(new L.LatLng(data.Latitude, data.Longitude), 16);
+                            }
 
                             $("#Latitude").val(data.Latitude);
                             $("#Longitude").val(data.Longitude);
@@ -365,14 +376,16 @@
             });
 
             function centerMap() {
-                if (centerLat && centerLng) {
+                if (map && centerLat && centerLng) {
                     map.panTo(new L.LatLng(centerLat, centerLng));
                 }
             }
             addArchivedCall.centerMap = centerMap;
 
             function foundLocation(position) {
-                map.panTo(new L.LatLng(position.coords.latitude, position.coords.longitude));
+                if (map) {
+                    map.panTo(new L.LatLng(position.coords.latitude, position.coords.longitude));
+                }
             }
             addArchivedCall.foundLocation = foundLocation;
 
@@ -380,13 +393,17 @@
                 // Browser geolocation was denied or unavailable. Fall back to the department's
                 // configured map centre -- this used to pan to a hardcoded coordinate in Wollongong,
                 // Australia, which every department outside NSW saw as "the map is in the wrong place".
-                if (centerLat && centerLng) {
+                if (map && centerLat && centerLng) {
                     map.panTo(new L.LatLng(centerLat, centerLng));
                 }
             }
             addArchivedCall.noLocation = noLocation;
 
             function setMarkerLocation(lat, lng) {
+                if (!map) {
+                    return;
+                }
+
                 if (callMarker) {
                     callMarker.setLatLng(new L.LatLng(lat, lng));
                 } else {

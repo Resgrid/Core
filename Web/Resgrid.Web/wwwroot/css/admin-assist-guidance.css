@@ -1,3 +1,9 @@
 .admin-assist-field-help { max-width: 70ch; white-space: normal; }
 .admin-assist-field-highlight { outline: 3px solid #176ca4; outline-offset: 4px; scroll-margin-block: 8rem; }
 @media (prefers-reduced-motion: reduce) { .admin-assist-field-highlight { scroll-behavior: auto; } }
+/* Numbering year start: month, day and year naming on one line; the month's help runs full width beneath them. */
+.numbering-year-start { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.numbering-year-start > select, .numbering-year-start > input { width: auto; }
+.numbering-year-start > .numbering-year-day { width: 5em; }
+.numbering-year-start::after { content: ''; flex-basis: 100%; order: 9; } /* a line break before the help */
+.numbering-year-start > .admin-assist-field-help { order: 10; margin: 0; }

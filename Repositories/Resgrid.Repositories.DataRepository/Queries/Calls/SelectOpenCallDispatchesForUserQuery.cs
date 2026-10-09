@@ -5,35 +5,45 @@ using Resgrid.Repositories.DataRepository.Extensions;
 
 namespace Resgrid.Repositories.DataRepository.Queries.Calls
 {
-	public class SelectOpenCallIdsForUnitQuery : ISelectQuery
+	public class SelectOpenCallDispatchesForUserQuery : ISelectQuery
 	{
 		private readonly SqlConfiguration _sqlConfiguration;
-		public SelectOpenCallIdsForUnitQuery(SqlConfiguration sqlConfiguration)
+		public SelectOpenCallDispatchesForUserQuery(SqlConfiguration sqlConfiguration)
 		{
 			_sqlConfiguration = sqlConfiguration;
 		}
 
 		public string GetQuery()
 		{
-			var query = _sqlConfiguration.SelectOpenCallIdsForUnitQuery
+			var query = _sqlConfiguration.SelectOpenCallDispatchesForUserQuery
 				.ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
 					string.Empty,
 					_sqlConfiguration.ParameterNotation,
 					new string[] {
 						"%DID%",
-						"%UNITID%"
+						"%USERID%",
+						"%NOW%"
 					},
 					new string[] {
 						"DepartmentId",
-						"UnitId"
+						"UserId",
+						"Now"
 					},
 					new string[] {
 						"%CALLSTABLE%",
-						"%CALLDISPATCHUNITSTABLE%"
+						"%CALLDISPATCHESTABLE%",
+						"%CALLDISPATCHGROUPSTABLE%",
+						"%CALLDISPATCHROLESTABLE%",
+						"%DEPARTMENTGROUPMEMBERSTABLE%",
+						"%PERSONNELROLEUSERSTABLE%"
 					},
 					new string[] {
 						_sqlConfiguration.CallsTable,
-						_sqlConfiguration.CallDispatchUnitsTable
+						_sqlConfiguration.CallDispatchesTable,
+						_sqlConfiguration.CallDispatchGroupsTable,
+						_sqlConfiguration.CallDispatchRolesTable,
+						_sqlConfiguration.DepartmentGroupMembersTable,
+						_sqlConfiguration.PersonnelRoleUsersTable
 					}
 				);
 

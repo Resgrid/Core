@@ -4,6 +4,19 @@
     ViewBag.Title = "Resgrid | " + @localizer["NewCallHeader"];
     Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
     var mapConfig = SettingsHelper.GetDepartmentMapConfig(Resgrid.Config.InfoConfig.WebsiteKey);
+
+    // Department > Dispatch Settings > New Call Form Fields. Hidden fields are not rendered; the post enforces the
+    // required ones (ApplyNewCallFieldPolicyAsync), so the marker here is only a hint.
+    var showAddress = Model.IsFieldVisible(NewCallFieldKeys.Address);
+    var showGeolocation = Model.IsFieldVisible(NewCallFieldKeys.Geolocation);
+    var showWhat3Words = Model.IsFieldVisible(NewCallFieldKeys.What3Words);
+    var showLocation = showAddress || showGeolocation || showWhat3Words;
+    var showLinkedCall = Model.IsFieldVisible(NewCallFieldKeys.LinkedCall);
+    var showDispatchList = Model.IsFieldVisible(NewCallFieldKeys.DispatchList);
+
+    Microsoft.AspNetCore.Html.IHtmlContent requiredMark(params string[] keys) => keys.Any(Model.IsFieldRequired)
+        ? new Microsoft.AspNetCore.Html.HtmlString(" <span class=\"text-danger\">*</span>")
+        : Microsoft.AspNetCore.Html.HtmlString.Empty;
 }
 
 @section Styles
@@ -98,18 +111,24 @@
                             <div
                                 class="col-sm-10">@Html.DropDownListFor(m => m.Call.Type, Model.CallTypes, new { @style = "width: 200px;", tabindex = "3" })</div>
                         </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">@localizer["ReportNameLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control"
-                                                          placeholder="@localizer["ReportNamePlaceholder"]"
-                                                          asp-for="Call.ContactName"></div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">@localizer["ReportContactLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control"
-                                                          placeholder="@localizer["ReportContactPlaceholder"]"
-                                                          asp-for="Call.ContactNumber"></div>
-                        </div>
+                        @if (Model.IsFieldVisible(NewCallFieldKeys.ContactName))
+                        {
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">@localizer["ReportNameLabel"]@requiredMark(NewCallFieldKeys.ContactName)</label>
+                                <div class="col-sm-10"><input type="text" class="form-control"
+                                                              placeholder="@localizer["ReportNamePlaceholder"]"
+                                                              asp-for="Call.ContactName"></div>
+                            </div>
+                        }
+                        @if (Model.IsFieldVisible(NewCallFieldKeys.ContactInfo))
+                        {
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">@localizer["ReportContactLabel"]@requiredMark(NewCallFieldKeys.ContactInfo)</label>
+                                <div class="col-sm-10"><input type="text" class="form-control"
+                                                              placeholder="@localizer["ReportContactPlaceholder"]"
+                                                              asp-for="Call.ContactNumber"></div>
+                            </div>
+                        }
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["PrimaryContactLabel"]</label>
                             <div class="col-sm-10">
@@ -132,24 +151,33 @@
                                 </span>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">@localizer["CallIdentifierLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control"
-                                                          placeholder="@localizer["CallIdentifierPlaceholder"]"
-                                                          asp-for="Call.ExternalIdentifier"></div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">@localizer["IncidentIdLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control"
-                                                          placeholder="@localizer["IncidentIdPlaceholder"]"
-                                                          asp-for="Call.IncidentNumber"></div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">@localizer["ReferenceIdLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control"
-                                                          placeholder="@localizer["ReferenceIdPlaceholder"]"
-                                                          asp-for="Call.ReferenceNumber"></div>
-                        </div>
+                        @if (Model.IsFieldVisible(NewCallFieldKeys.ExternalId))
+                        {
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">@localizer["CallIdentifierLabel"]@requiredMark(NewCallFieldKeys.ExternalId)</label>
+                                <div class="col-sm-10"><input type="text" class="form-control"
+                                                              placeholder="@localizer["CallIdentifierPlaceholder"]"
+                                                              asp-for="Call.ExternalIdentifier"></div>
+                            </div>
+                        }
+                        @if (Model.IsFieldVisible(NewCallFieldKeys.IncidentId))
+                        {
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">@localizer["IncidentIdLabel"]@requiredMark(NewCallFieldKeys.IncidentId)</label>
+                                <div class="col-sm-10"><input type="text" class="form-control"
+                                                              placeholder="@localizer["IncidentIdPlaceholder"]"
+                                                              asp-for="Call.IncidentNumber"></div>
+                            </div>
+                        }
+                        @if (Model.IsFieldVisible(NewCallFieldKeys.ReferenceId))
+                        {
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">@localizer["ReferenceIdLabel"]@requiredMark(NewCallFieldKeys.ReferenceId)</label>
+                                <div class="col-sm-10"><input type="text" class="form-control"
+                                                              placeholder="@localizer["ReferenceIdPlaceholder"]"
+                                                              asp-for="Call.ReferenceNumber"></div>
+                            </div>
+                        }
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["CallNatureLabel"]</label>
                             <div class="col-sm-10">
@@ -160,104 +188,139 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">@localizer["NotesLabel"]</label>
-                            <div class="col-sm-10">
-                                <input type="hidden" asp-for="Call.Notes">
+                        @if (Model.IsFieldVisible(NewCallFieldKeys.Note))
+                        {
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">@localizer["NotesLabel"]@requiredMark(NewCallFieldKeys.Note)</label>
+                                <div class="col-sm-10">
+                                    <input type="hidden" asp-for="Call.Notes">
 
-                                <div id="note-container" style="width:100%; height: 300px;">
-                                    @Html.Raw(Model.Call.Notes)
+                                    <div id="note-container" style="width:100%; height: 300px;">
+                                        @Html.Raw(Model.Call.Notes)
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        }
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["MapPageLabel"]</label>
                             <div class="col-sm-10"><input type="text" class="form-control"
                                                           placeholder="@localizer["MapPagePlaceholder"]"
                                                           asp-for="Call.MapPage"></div>
                         </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">@localizer["LocationLabel"]</label>
-                            <div class="col-sm-10">
-                                <div class="row">
-                                    <div class="col-md-5">
-                                        <div class="input-group input-group-sm">
-                                            <input type="text" class="form-control"
-                                                   placeholder="@localizer["LocationPlaceholder"]"
-                                                   asp-for="Call.Address">
-                                            <span class="input-group-btn">
-                                                <a id="searchButton" href="#"
-                                                   class="btn btn-info">@localizer["FindAddress"]</a>
-                                            </span>
+                        @if (showLocation)
+                        {
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">@localizer["LocationLabel"]@requiredMark(NewCallFieldKeys.Address, NewCallFieldKeys.What3Words, NewCallFieldKeys.Geolocation)</label>
+                                <div class="col-sm-10">
+                                    @if (showAddress || showWhat3Words)
+                                    {
+                                        <div class="row">
+                                            @if (showAddress)
+                                            {
+                                                <div class="col-md-5">
+                                                    <div class="input-group input-group-sm">
+                                                        <input type="text" class="form-control"
+                                                               placeholder="@localizer["LocationPlaceholder"]"
+                                                               asp-for="Call.Address">
+                                                        <span class="input-group-btn">
+                                                            <a id="searchButton" href="#"
+                                                               class="btn btn-info">@localizer["FindAddress"]</a>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            }
+                                            @if (showWhat3Words)
+                                            {
+                                                <div class="col-md-6" style="@(showAddress ? "padding-left: 0px;" : "")">
+                                                    <div class="input-group input-group-sm">
+                                                        <input type="text" class="form-control" placeholder="@localizer["WhatThreeWordsPlaceholder"]"
+                                                               asp-for="What3Word" style="width:250px;">
+                                                        <span class="input-group-btn" style="float: left;">
+                                                            <a id="findw3wButton" href="#"
+                                                               class="btn btn-info">@localizer["FindW3wLocation"]</a>
+                                                        </span>
+                                                    </div>
+                                                    <span class="help-inline">@localizer["W3wHelp"] <a
+                                                            href="https://what3words.com/about/"
+                                                            target="_blank">@localizer["LearnMore"]</a></span>
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+                                    @if (showGeolocation)
+                                    {
+                                        <div class="row" style="@(showAddress || showWhat3Words ? "margin-top: 8px;" : "")">
+                                            <div class="col-md-11">
+                                                <div class="input-group input-group-sm">
+                                                    <span class="input-group-addon">@localizer["LatitudeShort"]</span>
+                                                    <input type="text" class="form-control" asp-for="Latitude"
+                                                           placeholder="@localizer["Latitude"]">
+                                                    <span class="input-group-addon">@localizer["LongitudeShort"]</span>
+                                                    <input type="text" class="form-control" asp-for="Longitude"
+                                                           placeholder="@localizer["Longitude"]">
+                                                    <span class="input-group-btn">
+                                                        <a id="setPinButton" href="#" class="btn btn-warning">@localizer["SetPinOnMap"]</a>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="callMap" name="callMap"
+                                             style="position: relative; width: 90%; height: 500px; margin-top: 8px;"></div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                        @if (!showGeolocation)
+                        {
+                            @* No pin entry, but an address or what3words lookup still resolves a point here so the run card
+                               recommendation, nearest units and personnel ETAs keep working, as the address would be geocoded
+                               on save anyway. *@
+                            <input type="hidden" asp-for="Latitude">
+                            <input type="hidden" asp-for="Longitude">
+                        }
+                        @if (Model.IsFieldVisible(NewCallFieldKeys.DestinationPoi))
+                        {
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">@localizer["Destination"]@requiredMark(NewCallFieldKeys.DestinationPoi)</label>
+                                <div class="col-sm-6">
+                                    @Html.DropDownListFor(x => x.Call.DestinationPoiId, Model.DestinationPois, new { @class = "form-control destination-poi-search", @style = "width:100%;" })
+                                    <span class="help-inline">@localizer["DestinationHelp"]</span>
+                                </div>
+                            </div>
+                        }
+                        @if (Model.IsFieldVisible(NewCallFieldKeys.IndoorLocation))
+                        {
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">@localizer["IndoorLocation"]@requiredMark(NewCallFieldKeys.IndoorLocation)</label>
+                                <div class="col-sm-10">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <select id="indoorZoneSearch" class="form-control" style="width:100%;"></select>
                                         </div>
                                     </div>
-                                    <div class="col-md-6" style="padding-left: 0px;">
-                                        <div class="input-group input-group-sm">
-                                            <input type="text" class="form-control" placeholder="@localizer["WhatThreeWordsPlaceholder"]"
-                                                   asp-for="What3Word" style="width:250px;">
-                                            <span class="input-group-btn" style="float: left;">
-                                                <a id="findw3wButton" href="#"
-                                                   class="btn btn-info">@localizer["FindW3wLocation"]</a>
-                                            </span>
-                                        </div>
-                                        <span class="help-inline">@localizer["W3wHelp"] <a
-                                                href="https://what3words.com/about/"
-                                                target="_blank">@localizer["LearnMore"]</a></span>
-                                    </div>
+                                    <input type="hidden" name="IndoorMapZoneId" id="IndoorMapZoneId" value=""/>
+                                    <input type="hidden" name="IndoorMapFloorId" id="IndoorMapFloorId" value=""/>
                                 </div>
-                                <div class="row" style="margin-top: 8px;">
-                                    <div class="col-md-11">
-                                        <div class="input-group input-group-sm">
-                                            <span class="input-group-addon">@localizer["LatitudeShort"]</span>
-                                            <input type="text" class="form-control" asp-for="Latitude"
-                                                   placeholder="@localizer["Latitude"]">
-                                            <span class="input-group-addon">@localizer["LongitudeShort"]</span>
-                                            <input type="text" class="form-control" asp-for="Longitude"
-                                                   placeholder="@localizer["Longitude"]">
-                                            <span class="input-group-btn">
-                                                <a id="setPinButton" href="#" class="btn btn-warning">@localizer["SetPinOnMap"]</a>
-                                            </span>
-                                        </div>
-                                    </div>
+                            </div>
+                        }
+                        @if (Model.IsFieldVisible(NewCallFieldKeys.Protocols))
+                        {
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">@localizer["ProtocolsLabel"]@requiredMark(NewCallFieldKeys.Protocols)</label>
+                                <div class="col-sm-10">
+                                    <table id="protocols" class="table table-striped table-bordered">
+                                        <thead>
+                                        <tr>
+                                            <th style="max-width: 100px;font-size: 14px;">@commonLocalizer["Code"]</th>
+                                            <th style="max-width: 350px;font-size: 14px;">@commonLocalizer["Name"]</th>
+                                            <th style="max-width: 350px;font-size: 14px;">@commonLocalizer["Status"]</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
                                 </div>
-                                <div id="callMap" name="callMap"
-                                     style="position: relative; width: 90%; height: 500px; margin-top: 8px;"></div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">@localizer["Destination"]</label>
-                            <div class="col-sm-6">
-                                @Html.DropDownListFor(x => x.Call.DestinationPoiId, Model.DestinationPois, new { @class = "form-control destination-poi-search", @style = "width:100%;" })
-                                <span class="help-inline">@localizer["DestinationHelp"]</span>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">@localizer["IndoorLocation"]</label>
-                            <div class="col-sm-10">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <select id="indoorZoneSearch" class="form-control" style="width:100%;"></select>
-                                    </div>
-                                </div>
-                                <input type="hidden" name="IndoorMapZoneId" id="IndoorMapZoneId" value=""/>
-                                <input type="hidden" name="IndoorMapFloorId" id="IndoorMapFloorId" value=""/>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">@localizer["ProtocolsLabel"]</label>
-                            <div class="col-sm-10">
-                                <table id="protocols" class="table table-striped table-bordered">
-                                    <thead>
-                                    <tr>
-                                        <th style="max-width: 100px;font-size: 14px;">@commonLocalizer["Code"]</th>
-                                        <th style="max-width: 350px;font-size: 14px;">@commonLocalizer["Name"]</th>
-                                        <th style="max-width: 350px;font-size: 14px;">@commonLocalizer["Status"]</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody></tbody>
-                                </table>
-                            </div>
-                        </div>
+                        }
                         <div class="form-group" id="runCardPanelRow" style="display: none;">
                             <label class="col-sm-2 control-label">Run Card</label>
                             <div class="col-sm-10">
@@ -287,27 +350,32 @@
                                 <div id="nearestUnitsNotes" class="text-muted" style="font-size: 11px;"></div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">@localizer["CallLinksLabel"]</label>
-                            <div class="col-sm-10">
-                                <table id="linkedCalls" class="table table-striped table-bordered">
-                                    <thead>
-                                    <tr>
-                                        <th style="max-width: 350px;font-size: 14px;">@localizer["Name"]</th>
-                                        <th style="max-width: 350px;font-size: 14px;">@localizer["Note"]</th>
-                                        <th style="max-width: 350px;font-size: 14px;"><a href="#"
-                                                                                         class="btn btn-xs btn-info"
-                                                                                         data-target="#selectCallToLinkModal"
-                                                                                         data-toggle="modal">@localizer["AddLinkedCall"]</a>
-                                        </th>
-                                    </tr>
-                                    </thead>
-                                    <tbody></tbody>
-                                </table>
+                        @if (showLinkedCall)
+                        {
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">@localizer["CallLinksLabel"]@requiredMark(NewCallFieldKeys.LinkedCall)</label>
+                                <div class="col-sm-10">
+                                    <table id="linkedCalls" class="table table-striped table-bordered">
+                                        <thead>
+                                        <tr>
+                                            <th style="max-width: 350px;font-size: 14px;">@localizer["Name"]</th>
+                                            <th style="max-width: 350px;font-size: 14px;">@localizer["Note"]</th>
+                                            <th style="max-width: 350px;font-size: 14px;"><a href="#"
+                                                                                             class="btn btn-xs btn-info"
+                                                                                             data-target="#selectCallToLinkModal"
+                                                                                             data-toggle="modal">@localizer["AddLinkedCall"]</a>
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
                             </div>
-                        </div>
+                        }
+                        @if (showDispatchList)
+                        {
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">@localizer["PersonnelDispatchLabel"]</label>
+                            <label class="col-sm-2 control-label">@localizer["PersonnelDispatchLabel"]@requiredMark(NewCallFieldKeys.DispatchList)</label>
                             <div class="col-sm-10">
                                 <div>
                                     <ul class="nav nav-tabs" role="tablist">
@@ -341,7 +409,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">@localizer["UnitsDispatchLabel"]</label>
+                            <label class="col-sm-2 control-label">@localizer["UnitsDispatchLabel"]@requiredMark(NewCallFieldKeys.DispatchList)</label>
                             <div class="col-sm-10">
                                 <div>
                                     <ul class="nav nav-tabs" role="tablist">
@@ -481,6 +549,7 @@
                                 </div>
                             </div>
                         </div>
+                        }
 
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
@@ -506,18 +575,21 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">@localizer["ScheduleDispatchLabel"]</label>
-                            <div class="col-sm-10">
-                                <div class="input-group" style="width: 300px;">
-                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" class="form-control" id="scheduleDispatchDate"
-                                           placeholder="@localizer["ScheduleDispatchPlaceholder"]"
-                                           asp-for="ScheduleDispatchDate" autocomplete="off">
+                        @if (Model.IsFieldVisible(NewCallFieldKeys.DispatchOn))
+                        {
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">@localizer["ScheduleDispatchLabel"]@requiredMark(NewCallFieldKeys.DispatchOn)</label>
+                                <div class="col-sm-10">
+                                    <div class="input-group" style="width: 300px;">
+                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                        <input type="text" class="form-control" id="scheduleDispatchDate"
+                                               placeholder="@localizer["ScheduleDispatchPlaceholder"]"
+                                               asp-for="ScheduleDispatchDate" autocomplete="off">
+                                    </div>
+                                    <span class="help-block m-b-none">@localizer["ScheduleDispatchHelp"]</span>
                                 </div>
-                                <span class="help-block m-b-none">@localizer["ScheduleDispatchHelp"]</span>
                             </div>
-                        </div>
+                        }
 
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["PendingCallsHeader"]</label>

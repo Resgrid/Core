@@ -33,6 +33,7 @@ namespace Resgrid.Services.Invoicing
 		private readonly IDepartmentBillingIdentityRepository _identities;
 		/// <summary>Contractor billing (C-M2): the linked contract's terms override the profile's net days when the invoice issues.</summary>
 		private readonly IServiceContractRepository _serviceContracts;
+		private readonly IDocumentNumberingService _documentNumbering;
 		private readonly Lazy<ISearchProjectionService> _searchProjections;
 		private readonly IContactsService _contactsService;
 		private readonly ICallsService _callsService;
@@ -52,8 +53,10 @@ namespace Resgrid.Services.Invoicing
 			IDomainEventOutboxService outbox, IEventAggregator eventAggregator,
 			IPdfProvider pdfProvider, IEmailService emailService, IDepartmentsService departmentsService, IAddressService addressService, IUnitOfWork unitOfWork,
 			Lazy<IInvoicePaymentsService> paymentsService = null, Lazy<IProtectedReadService> protectedRead = null,
-			IServiceContractRepository serviceContracts = null, Lazy<ISearchProjectionService> searchProjections = null)
+			IServiceContractRepository serviceContracts = null, Lazy<ISearchProjectionService> searchProjections = null,
+			IDocumentNumberingService documentNumbering = null)
 		{
+			_documentNumbering = documentNumbering;
 			_serviceContracts = serviceContracts;
 			_searchProjections = searchProjections;
 			_unitOfWork = unitOfWork;
@@ -367,6 +370,9 @@ namespace Resgrid.Services.Invoicing
 				AddedOn = now,
 				AddedByUserId = userId
 			};
+			// The int stays the unique, ordered invoice id; the number people see is the department's pattern (setting 117) or that int.
+			invoice.DisplayNumber = (_documentNumbering == null ? null : await _documentNumbering.TakeCustomNumberAsync(departmentId, DocumentNumberKinds.Invoice, now, cancellationToken))
+				?? invoice.InvoiceNumber.ToString(System.Globalization.CultureInfo.InvariantCulture);
 
 			var saved = await _invoices.SaveOrUpdateAsync(invoice, cancellationToken);
 			if (_searchProjections?.Value != null) await _searchProjections.Value.ProjectInvoiceAsync(invoice, cancellationToken);
@@ -1030,7 +1036,7 @@ namespace Resgrid.Services.Invoicing
 					CorrelationId = invoice.InvoiceId,
 					Payload = new
 					{
-						invoice.InvoiceId, invoice.InvoiceNumber, invoice.Status, invoice.ContactId,
+						invoice.InvoiceId, invoice.InvoiceNumber, DisplayNumber = invoice.NumberText(), invoice.Status, invoice.ContactId,
 						ContactName = contactName,
 						invoice.Currency, invoice.SubTotal, invoice.DiscountAmount, invoice.TaxAmount, invoice.Total, invoice.AmountPaid, invoice.Balance,
 						invoice.IssuedOn, invoice.DueOn, invoice.SentOn, invoice.PaidOn,

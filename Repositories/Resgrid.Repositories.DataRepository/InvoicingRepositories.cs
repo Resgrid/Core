@@ -229,7 +229,7 @@ namespace Resgrid.Repositories.DataRepository
 			parameters.Add("DepartmentId", departmentId);
 			parameters.Add("Statuses", OpenStatuses);
 			return QueryAsync<InvoiceAgingRow>(
-				$"SELECT {Cols("InvoiceId", "InvoiceNumber", "ContactId", "Status", "DueOn", "Currency", "Total", "AmountPaid")} FROM {Tbl("Invoices")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {InList("Status", "Statuses")} AND {Col("IsDeleted")} = {False} ORDER BY {Col("DueOn")}",
+				$"SELECT {Cols("InvoiceId", "InvoiceNumber", "DisplayNumber", "ContactId", "Status", "DueOn", "Currency", "Total", "AmountPaid")} FROM {Tbl("Invoices")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {InList("Status", "Statuses")} AND {Col("IsDeleted")} = {False} ORDER BY {Col("DueOn")}",
 				parameters);
 		}
 

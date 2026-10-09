@@ -123,7 +123,18 @@
   <data name="NextNumberCurrent" xml:space="preserve"><value>Prossimo numero</value></data>
   <data name="NextNumberRaiseTo" xml:space="preserve"><value>Porta il prossimo a</value></data>
   <data name="NextNumberBelowCurrent" xml:space="preserve"><value>Il prossimo numero può solo essere aumentato. Queste sequenze non sono state modificate perché il numero inserito era inferiore a quello che assegneranno successivamente:</value></data>
-  <data name="NextNumberPatternChanged" xml:space="preserve"><value>Lo schema di numerazione o il prefisso di un tipo di registro è cambiato, quindi i prossimi numeri inseriti non sono stati applicati. Controlla le nuove sequenze e salva di nuovo.</value></data>
+  <data name="NextNumberPatternChanged" xml:space="preserve"><value>Lo schema di numerazione, il prefisso di un tipo di registro o l'inizio dell'anno di numerazione è cambiato, quindi i prossimi numeri inseriti non sono stati applicati. Controlla le nuove sequenze e salva di nuovo.</value></data>
+  <data name="NumberingYearStart" xml:space="preserve"><value>L'anno di numerazione inizia il</value></data>
+  <data name="NumberingYearStartDay" xml:space="preserve"><value>Giorno del mese</value></data>
+  <data name="NumberingYearLabelEndYear" xml:space="preserve"><value>Prende il nome dall'anno in cui termina</value></data>
+  <data name="NumberingYearLabelStartYear" xml:space="preserve"><value>Prende il nome dall'anno in cui inizia</value></data>
+  <data name="NumberingYearStartHelp" xml:space="preserve"><value>Per i registri numerati per anno fiscale, il tuo o quello di una contea o di uno stato a cui riferisci, scegli il giorno in cui inizia. I numeri che includono l'anno ripartono da 1 quel giorno, e {YYYY} e {YY} scrivono il nome dell'anno fiscale. La maggior parte degli anni fiscali prende il nome dall'anno in cui termina, quindi uno che inizia il 1° novembre 2026 è il 2027. Il 1° gennaio è l'anno solare. I numeri di chiamata hanno un proprio inizio d'anno nella pagina Impostazioni importazione chiamate. I numeri delle richieste di accesso agli atti e quelli di ispezioni, permessi, occupazioni, indagini e prove seguono lo stesso anno.</value></data>
+  <data name="NextNumbersHeaderPeriod" xml:space="preserve"><value>Prossimi numeri per il {0} (dal {1} al {2})</value></data>
+  <data name="NumberingYearStartInvalid" xml:space="preserve"><value>La numerazione dei registri non è stata salvata. L'anno di numerazione deve iniziare in un giorno presente in ogni anno, quindi il 29 febbraio non può essere usato.</value></data>
+  <data name="OtherNumbersHeader" xml:space="preserve"><value>Altri numeri dei registri</value></data>
+  <data name="OtherNumbersIntro" xml:space="preserve"><value>Numeri delle richieste di accesso agli atti, occupazioni, ispezioni, permessi, indagini e prove. Lascia vuoto uno schema per mantenere i numeri predefiniti mostrati. Gli schemi usano {YYYY} o {YY}, {MM}, {DD} e {SEQ} come i numeri di chiamata, seguono l'inizio dell'anno di numerazione sopra e stanno in 32 caratteri (50 per le richieste di accesso).</value></data>
+  <data name="OtherNumberBuiltIn" xml:space="preserve"><value>Predefinito, es.</value></data>
+  <data name="OtherNumbersPatternsRejected" xml:space="preserve"><value>Questi schemi non sono stati salvati perché non sono validi o potrebbero scrivere un numero troppo lungo per il registro; quei numeri hanno mantenuto ciò che avevano:</value></data>
   <data name="NextNumberConfirm" xml:space="preserve"><value>Un prossimo numero aumentato non può essere ridotto di nuovo. Salvare queste modifiche?</value></data>
   <data name="NumberingAllTypes" xml:space="preserve"><value>Tutti i tipi di registro</value></data>
   <data name="NumberingNoGroup" xml:space="preserve"><value>Nessuna stazione/gruppo</value></data>

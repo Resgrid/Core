@@ -20,10 +20,12 @@ namespace Resgrid.Repositories.DataRepository.Queries.Calls
 					string.Empty,
 					_sqlConfiguration.ParameterNotation,
 					new string[] {
-						"%DID%"
+						"%DID%",
+						"%NOW%"
 					},
 					new string[] {
-						"DepartmentId"
+						"DepartmentId",
+						"Now"
 					},
 					new string[] {
 						"%CALLSTABLE%",

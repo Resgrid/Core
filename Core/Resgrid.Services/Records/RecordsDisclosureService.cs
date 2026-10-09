@@ -41,13 +41,15 @@ namespace Resgrid.Services.Records
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly IRecordsProtectionService _protection;
 		private readonly IDomainEventOutboxService _outbox;
+		private readonly IDocumentNumberingService _numbering;
 
 		public RecordsDisclosureService(IRmsDisclosureRequestsRepository requests, IRmsDisclosureProductionsRepository productions,
 			IRmsOperationalRecordsRepository records, IRmsRevisionsRepository revisions, IRmsAccessAuditsRepository audits,
 			IRecordsAuthorizationService authorization, IDepartmentSettingsService settings, IUnitOfWork unitOfWork,
 			IRmsIncidentReportsRepository reports, IRecordsDocumentService documents, IRmsRecordAttachmentsRepository attachments, Resgrid.Model.Providers.IPdfProvider pdf, IRmsIncidentAnalysesRepository analyses, IRecordAttachmentScanner scanner, IRecordsUdfService udf,
-			IRecordsProtectionService protection, IDomainEventOutboxService outbox)
+			IRecordsProtectionService protection, IDomainEventOutboxService outbox, IDocumentNumberingService numbering)
 		{
+			_numbering = numbering;
 			_protection = protection;
 			_outbox = outbox;
 			_requests = requests;
@@ -421,9 +423,18 @@ namespace Resgrid.Services.Records
 				throw new InvalidOperationException("The request is closed; log a new one rather than reopening a released answer.");
 		}
 
+		/// <summary>
+		/// The department's own records request pattern when it set one, otherwise PRR-{year}-{sequence:0000}, the year being the
+		/// records numbering year the request was received in (department-local, a fiscal year when setting 72 starts one), so
+		/// request numbers restart with the department's report numbers.
+		/// </summary>
 		private async Task<string> AllocateNumberAsync(int departmentId, DateTime receivedOn)
 		{
-			var prefix = NumberPrefix + receivedOn.Year + "-";
+			var custom = await _numbering.TakeCustomNumberAsync(departmentId, DocumentNumberKinds.RecordsRequest, receivedOn);
+			if (custom != null)
+				return custom;
+
+			var prefix = NumberPrefix + await _numbering.GetNumberingYearAsync(departmentId, DocumentNumberKinds.RecordsRequest, receivedOn) + "-";
 			var sequence = await _requests.GetMaxRequestNumberSequenceAsync(departmentId, prefix) + 1;
 			return prefix + sequence.ToString("D4");
 		}

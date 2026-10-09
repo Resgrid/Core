@@ -46,7 +46,7 @@
                         @foreach (var b in Model.Bids)
                         {
                             <tr>
-                                <td>@b.BidNumber</td>
+                                <td>@b.NumberText()</td>
                                 <td><a asp-action="View" asp-route-id="@b.BidId">@b.Title</a> @if (b.IsConverted) { <span class="label label-success" title="@localizer["Converted"]"><i class="fa fa-truck"></i></span> }</td>
                                 <td>@(Model.ContactNames.TryGetValue(b.ContactId, out var contact) ? contact : b.ContactId)</td>
                                 <td>@await Html.PartialAsync("_BidStatusBadge", b.Status)</td>

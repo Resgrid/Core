@@ -894,7 +894,7 @@
     <value>Felder im Einsatzformular</value>
   </data>
   <data name="NewCallFieldsHelp" xml:space="preserve">
-    <value>Wählen Sie, welche Standardfelder im Formular für neue Einsätze erscheinen und welche ausgefüllt sein müssen, bevor ein Einsatz angelegt und an die Kräfte gesendet werden kann. Name, Art, Priorität und Typ werden immer angezeigt und sind immer erforderlich.</value>
+    <value>Wählen Sie, welche Standardfelder im Formular für neue Einsätze erscheinen und welche ausgefüllt sein müssen, bevor ein Einsatz angelegt und an die Kräfte gesendet werden kann. Name, Art, Priorität und Typ werden immer angezeigt und sind immer erforderlich. Dieselben Regeln gelten beim Bearbeiten eines Einsatzes und beim Hinzufügen eines archivierten Einsatzes.</value>
   </data>
   <data name="NewCallFieldsFieldColumn" xml:space="preserve">
     <value>Feld</value>
@@ -927,7 +927,7 @@
     <value>Notiz</value>
   </data>
   <data name="NewCallField_contactName" xml:space="preserve">
-    <value>Hauptkontakt</value>
+    <value>Name des Melders</value>
   </data>
   <data name="NewCallField_contactInfo" xml:space="preserve">
     <value>Kontaktdaten des Melders</value>
@@ -1350,9 +1350,93 @@
     <value>Die nächste Einsatznummer wurde nicht angehoben: Sie kann nur über die Nummer angehoben werden, die der nächste Einsatz bereits erhält ({0}).</value>
   </data>
   <data name="CallNumberNextPatternChanged" xml:space="preserve">
-    <value>Die nächste Einsatznummer wurde nicht angehoben, weil sich das Muster beim selben Speichern geändert hat. Heben Sie sie für das neue Muster erneut an.</value>
+    <value>Die nächste Einsatznummer wurde nicht angehoben, weil sich das Muster oder der Beginn des Nummerierungsjahres beim selben Speichern geändert hat. Heben Sie sie für die neue laufende Nummer erneut an.</value>
+  </data>
+  <data name="CallNumberYearStart" xml:space="preserve">
+    <value>Nummerierungsjahr beginnt am</value>
+  </data>
+  <data name="CallNumberYearStartDay" xml:space="preserve">
+    <value>Tag des Monats</value>
+  </data>
+  <data name="CallNumberYearLabelEndYear" xml:space="preserve">
+    <value>Benannt nach dem Jahr, in dem es endet</value>
+  </data>
+  <data name="CallNumberYearLabelStartYear" xml:space="preserve">
+    <value>Benannt nach dem Jahr, in dem es beginnt</value>
+  </data>
+  <data name="CallNumberYearStartHelp" xml:space="preserve">
+    <value>Für Einsätze, die nach einem Haushaltsjahr nummeriert werden, wählen Sie den Tag, an dem es beginnt. Ein jährliches Muster beginnt an diesem Tag wieder bei 1, und {YYYY} und {YY} schreiben den Namen des Haushaltsjahres. Die meisten Haushaltsjahre werden nach dem Jahr benannt, in dem sie enden; eines, das am 1. November 2026 beginnt, ist also 2027. Der 1. Januar ist das Kalenderjahr. Muster mit {MM} oder {DD} folgen immer dem Kalender.</value>
+  </data>
+  <data name="CallNumberResetsYearlyOn" xml:space="preserve">
+    <value>Beginnt jedes Jahr am {0} wieder bei 1.</value>
+  </data>
+  <data name="CallNumberYearStartInvalid" xml:space="preserve">
+    <value>Die Einsatznummerierung wurde nicht gespeichert. Das Nummerierungsjahr muss an einem Tag beginnen, den es in jedem Jahr gibt; der 29. Februar ist daher nicht möglich.</value>
+  </data>
+  <data name="DocumentNumberingHeader" xml:space="preserve">
+    <value>Dokumentnummerierung</value>
+  </data>
+  <data name="DocumentNumberingIntro" xml:space="preserve">
+    <value>Wie Resgrid Arbeitsaufträge, Rechnungen, Angebote und tägliche Zeitberichte nummeriert. Lassen Sie ein Muster leer, um die integrierten Nummern zu behalten. Eine Musteränderung nummeriert Dokumente, die bereits eine Nummer haben, nie neu, und ein neues Muster setzt nach jeder Nummer fort, die es wiederholen würde.</value>
+  </data>
+  <data name="DocumentNumberingRecordsLink" xml:space="preserve">
+    <value>Aktennummerierung</value>
+  </data>
+  <data name="DocumentNumberingYearStartHelp" xml:space="preserve">
+    <value>Für Dokumente, die nach einem Haushaltsjahr nummeriert werden, wählen Sie den Tag, an dem es beginnt. Arbeitsauftragsnummern und Muster mit Jahr beginnen an diesem Tag wieder bei 1, und {YYYY} und {YY} schreiben den Namen des Haushaltsjahres. Die meisten Haushaltsjahre werden nach dem Jahr benannt, in dem sie enden; eines, das am 1. November 2026 beginnt, ist also 2027. Der 1. Januar ist das Kalenderjahr. Einsatz- und Aktennummern haben ihren eigenen Jahresbeginn.</value>
+  </data>
+  <data name="DocumentNumberType" xml:space="preserve">
+    <value>Dokument</value>
+  </data>
+  <data name="DocumentNumberBuiltIn" xml:space="preserve">
+    <value>Integriert, z. B.</value>
+  </data>
+  <data name="DocumentNumberPatternHelp" xml:space="preserve">
+    <value>Fester Text (Buchstaben, Ziffern, - _ . /) um {YYYY} oder {YY}, {MM}, {DD} und {SEQ}, das genau einmal vorkommen muss. Ein Muster mit Jahr beginnt in jedem Nummerierungsjahr wieder bei 1, mit {MM} oder {DD} in jedem Monat bzw. an jedem Tag. Eine Nummer nur aus Ziffern wird mit # davor angezeigt, wie Rechnungs-, Angebots- und Zeitberichtsnummern schon immer.</value>
+  </data>
+  <data name="DocumentNumberingSaved" xml:space="preserve">
+    <value>Die Dokumentnummerierung wurde gespeichert.</value>
+  </data>
+  <data name="DocumentNumberingPartlySaved" xml:space="preserve">
+    <value>Die übrige Dokumentnummerierung wurde gespeichert.</value>
+  </data>
+  <data name="DocumentNumberingYearStartInvalid" xml:space="preserve">
+    <value>Die Dokumentnummerierung wurde nicht gespeichert. Das Nummerierungsjahr muss an einem Tag beginnen, den es in jedem Jahr gibt; der 29. Februar ist daher nicht möglich.</value>
+  </data>
+  <data name="DocumentNumberingPatternsRejected" xml:space="preserve">
+    <value>Diese Muster wurden nicht gespeichert, weil sie ungültig sind oder eine Nummer mit mehr als 50 Zeichen schreiben könnten; diese Dokumente behielten ihre bisherige Nummerierung:</value>
+  </data>
+  <data name="DocumentNumberingBelowCurrent" xml:space="preserve">
+    <value>Eine nächste Nummer kann nur angehoben werden. Diese blieben unverändert, weil die eingegebene Nummer unter der lag, die sie als Nächstes vergeben:</value>
+  </data>
+  <data name="DocumentNumberingNotApplied" xml:space="preserve">
+    <value>Das Muster oder der Beginn des Nummerierungsjahres wurde beim selben Speichern geändert, daher wurden die eingegebenen nächsten Nummern nicht übernommen. Heben Sie sie für die neue Laufnummer erneut an.</value>
+  </data>
+  <data name="DocumentNumberKindWorkOrder" xml:space="preserve">
+    <value>Arbeitsaufträge</value>
+  </data>
+  <data name="DocumentNumberKindInvoice" xml:space="preserve">
+    <value>Rechnungen</value>
+  </data>
+  <data name="DocumentNumberKindBid" xml:space="preserve">
+    <value>Angebote</value>
+  </data>
+  <data name="DocumentNumberKindTimeReport" xml:space="preserve">
+    <value>Tägliche Zeitberichte</value>
+  </data>
+  <data name="DocumentNumberPatternColumn" xml:space="preserve">
+    <value>Nummernmuster</value>
+  </data>
+  <data name="DocumentNumberNextColumn" xml:space="preserve">
+    <value>Nächste Nummer</value>
+  </data>
+  <data name="DocumentNumberRaiseColumn" xml:space="preserve">
+    <value>Nächste erhöhen auf</value>
   </data>
   <data name="CallSettingsSaved" xml:space="preserve">
     <value>Die Einsatzeinstellungen wurden gespeichert.</value>
+  </data>
+  <data name="NewCallFieldCannotBeRequired" xml:space="preserve">
+    <value>Ein Plus Code dient nur zum Finden des Ortes und wird nicht im Einsatz gespeichert, daher kann er nicht verpflichtend sein. Machen Sie stattdessen die GPS-Koordinaten verpflichtend.</value>
   </data>
 </root>

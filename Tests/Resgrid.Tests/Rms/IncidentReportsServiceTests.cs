@@ -149,7 +149,7 @@ namespace Resgrid.Tests.Rms
 				_store.Shared.ScopesRepo.Object, _store.Shared.SharesRepo.Object, _store.Shared.ProjectionsRepo.Object, outbox, _settings.Object,
 				_groups.Object, _profiles.Object, _roles.Object, _units.Object, _calls.Object, _adp.Object, _store.UnitOfWork.Object,
 				_neris.Object, new NerisMappingService(), _validation.Object, _authorization.Object, _store.Shared.AttachmentsRepo.Object, _store.Shared.EvidenceRepo.Object, udf ?? Mock.Of<IRecordsUdfService>(), evidence ?? Mock.Of<IRecordsEvidenceService>(),
-				_feeds.Object, Protection);
+				_feeds.Object, Protection, _departments.Object);
 		}
 
 		[Test]
@@ -403,6 +403,34 @@ namespace Resgrid.Tests.Rms
 			var final = await _service.FinalizeAsync(Dept, "author", started.Report.RmsIncidentReportId, started.Report.RowVersion, null, "10.0.0.1", null, null);
 
 			final.Report.RecordNumber.Should().Be("IR26-0001");
+		}
+
+		[Test]
+		public async Task Finalize_numbers_by_the_fiscal_year_of_the_call()
+		{
+			// The call was logged 1 September 2026; a fiscal year starting 1 September and named by the year it ends in is FY2027.
+			var config = new RecordsNumberingConfig { Pattern = "{PREFIX}{YY}-{SEQ}", YearStartMonth = 9, YearStartDay = 1 };
+			config.SetPrefix(RmsDefinitionKeys.NerisIncidentReport, "EZKT");
+			_settings.Setup(s => s.GetRecordsNumberingConfigAsync(Dept, It.IsAny<bool>())).ReturnsAsync(config);
+			var started = await _service.StartFromCallAsync(Dept, "author", CallId);
+
+			var final = await _service.FinalizeAsync(Dept, "author", started.Report.RmsIncidentReportId, started.Report.RowVersion, null, "10.0.0.1", null, null);
+
+			final.Report.RecordNumber.Should().Be("EZKT27-0001");
+		}
+
+		[Test]
+		public async Task Finalize_reads_the_call_date_in_the_department_time_zone()
+		{
+			// 08:00 UTC on 1 September is still 31 August (22:00) in Honolulu, the last day of FY2026.
+			_departments.Setup(d => d.GetDepartmentByIdAsync(Dept, It.IsAny<bool>())).ReturnsAsync(new Department { DepartmentId = Dept, TimeZone = "Hawaiian Standard Time" });
+			var config = new RecordsNumberingConfig { Pattern = "{PREFIX}{YY}-{SEQ}", YearStartMonth = 9, YearStartDay = 1 };
+			_settings.Setup(s => s.GetRecordsNumberingConfigAsync(Dept, It.IsAny<bool>())).ReturnsAsync(config);
+			var started = await _service.StartFromCallAsync(Dept, "author", CallId);
+
+			var final = await _service.FinalizeAsync(Dept, "author", started.Report.RmsIncidentReportId, started.Report.RowVersion, null, "10.0.0.1", null, null);
+
+			final.Report.RecordNumber.Should().Be("INC26-0001");
 		}
 
 		[Test]

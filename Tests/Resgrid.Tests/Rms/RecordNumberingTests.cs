@@ -550,6 +550,77 @@ namespace Resgrid.Tests.Rms
 			_saved.FloorFor("TRN-2026-#").Should().Be(40, "a type whose prefix did not change keeps its raised number");
 		}
 
+		[Test]
+		public async Task Saving_stores_the_year_start_and_refuses_a_day_not_every_year_has()
+		{
+			var saved = await _service.SaveAsync(Dept, "admin", new RecordsNumberingUpdate
+			{
+				Pattern = "{PREFIX}{YY}-{SEQ}", SequenceWidth = 4, Year = 2026, YearStartMonth = 11, YearStartDay = 1, YearLabel = (int)NumberingYearLabel.EndYear
+			});
+			saved.YearStartRejected.Should().BeFalse();
+			_saved.YearStart().Month.Should().Be(11);
+			_saved.YearStart().Day.Should().Be(1);
+			_saved.YearStart().Label.Should().Be(NumberingYearLabel.EndYear);
+
+			var leap = await _service.SaveAsync(Dept, "admin", new RecordsNumberingUpdate { Pattern = "{PREFIX}-{SEQ}", SequenceWidth = 6, Year = 2026, YearStartMonth = 2, YearStartDay = 29 });
+			leap.YearStartRejected.Should().BeTrue();
+			_saved.Pattern.Should().Be("{PREFIX}{YY}-{SEQ}", "a refused year start saves nothing in setting 72");
+
+			await _service.SaveAsync(Dept, "admin", new RecordsNumberingUpdate { Pattern = "{PREFIX}{YY}-{SEQ}", SequenceWidth = 4, Year = 2026 });
+			_saved.YearStart().Month.Should().Be(11, "a save that does not post a year start keeps the saved one");
+		}
+
+		[Test]
+		public async Task A_next_number_typed_before_the_year_start_changed_is_not_applied()
+		{
+			var result = await _service.SaveAsync(Dept, "admin", new RecordsNumberingUpdate
+			{
+				Pattern = "{PREFIX}-{YYYY}-{SEQ}",
+				SequenceWidth = 4,
+				Year = 2026,
+				YearStartMonth = 7,
+				YearStartDay = 1,
+				NextNumbers = { new RecordNextNumberRequest { ScopeKey = "TRN-2026-#", NextSequence = 40 } }
+			});
+
+			result.NotApplied.Should().Be(1, "the next numbers shown were the old year's sequences");
+			_saved.FloorFor("TRN-2026-#").Should().Be(1);
+			_saved.YearStart().Month.Should().Be(7, "the year start itself still saves");
+		}
+
+		[Test]
+		public async Task Sequences_are_listed_for_a_fiscal_year_by_its_name()
+		{
+			_issued.Add("EZKT27-0004");
+			var config = new RecordsNumberingConfig { Pattern = "{PREFIX}{YY}-{SEQ}", YearStartMonth = 11, YearStartDay = 1 };
+			config.SetPrefix(RmsDefinitionKeys.NerisIncidentReport, "EZKT");
+
+			var year = RecordsNumberingService.NumberingYear(config, new DateTime(2026, 11, 3, 15, 0, 0, DateTimeKind.Utc), null);
+			var sequences = await _service.GetSequencesAsync(Dept, config, year);
+
+			year.Should().Be(2027);
+			sequences.Single(s => s.DefinitionKeys.Contains(RmsDefinitionKeys.NerisIncidentReport)).NextNumber.Should().Be("EZKT27-0005");
+		}
+
+		[TestCase(2027, 1, 1, 3, 0, null, 2027, "no time zone reads the date as UTC")]
+		[TestCase(2027, 1, 1, 3, 0, "Central Standard Time", 2026, "9 PM on December 31 in Chicago is still 2026")]
+		[TestCase(2027, 1, 1, 7, 0, "Central Standard Time", 2027, "1 AM on January 1 in Chicago")]
+		public void A_records_numbering_year_is_the_departments_local_year(int y, int m, int d, int h, int min, string timeZone, int expected, string because)
+		{
+			RecordsNumberingService.NumberingYear(new RecordsNumberingConfig(), new DateTime(y, m, d, h, min, 0, DateTimeKind.Utc), timeZone).Should().Be(expected, because);
+		}
+
+		[Test]
+		public void The_records_year_start_round_trips_through_protobuf()
+		{
+			var copy = ObjectSerialization.Deserialize<RecordsNumberingConfig>(ObjectSerialization.Serialize(
+				new RecordsNumberingConfig { YearStartMonth = 10, YearStartDay = 1, YearLabel = (int)NumberingYearLabel.StartYear }));
+
+			copy.YearStart().Month.Should().Be(10);
+			copy.YearStart().Label.Should().Be(NumberingYearLabel.StartYear);
+			ObjectSerialization.Deserialize<RecordsNumberingConfig>(ObjectSerialization.Serialize(new RecordsNumberingConfig())).YearStart().IsCalendarYear.Should().BeTrue();
+		}
+
 		#endregion
 	}
 }

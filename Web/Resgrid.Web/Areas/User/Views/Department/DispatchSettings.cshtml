@@ -335,7 +335,16 @@
                                                     <input type="hidden" asp-for="NewCallFields[i].Key" />
                                                 </td>
                                                 <td><input type="checkbox" asp-for="NewCallFields[i].Visible" /></td>
-                                                <td><input type="checkbox" asp-for="NewCallFields[i].Required" /></td>
+                                                <td>
+                                                    @if (Resgrid.Model.NewCallFieldKeys.CanBeRequired(Model.NewCallFields[i].Key))
+                                                    {
+                                                        <input type="checkbox" asp-for="NewCallFields[i].Required" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" disabled="disabled" title="@localizer["NewCallFieldCannotBeRequired"]" aria-label="@localizer["NewCallFieldCannotBeRequired"]" />
+                                                    }
+                                                </td>
                                             </tr>
                                         }
                                     </tbody>

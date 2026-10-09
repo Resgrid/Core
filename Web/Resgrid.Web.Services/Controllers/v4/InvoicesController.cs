@@ -127,7 +127,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (pdf == null || pdf.Length == 0)
 				return StatusCode((int)HttpStatusCode.ServiceUnavailable);
 
-			return File(pdf, "application/pdf", $"invoice-{invoice.InvoiceNumber}.pdf");
+			return File(pdf, "application/pdf", $"invoice-{DocumentNumbering.FileSafe(invoice.NumberText())}.pdf");
 		}
 
 		/// <summary>Record a manual payment (check, cash, ACH, external card, other). Online payments arrive through the provider path only.</summary>
@@ -311,6 +311,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				InvoiceId = invoice.InvoiceId,
 				InvoiceNumber = invoice.InvoiceNumber,
+				DisplayNumber = invoice.NumberText(),
 				ContactId = invoice.ContactId,
 				ContactName = names.TryGetValue(invoice.ContactId ?? string.Empty, out var name) ? name : null,
 				Status = invoice.Status,

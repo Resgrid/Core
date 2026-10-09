@@ -123,7 +123,18 @@
   <data name="NextNumberCurrent" xml:space="preserve"><value>Nästa nummer</value></data>
   <data name="NextNumberRaiseTo" xml:space="preserve"><value>Höj nästa till</value></data>
   <data name="NextNumberBelowCurrent" xml:space="preserve"><value>Ett nästa nummer kan bara höjas. Dessa sekvenser lämnades oförändrade eftersom det angivna talet var lägre än det de utfärdar härnäst:</value></data>
-  <data name="NextNumberPatternChanged" xml:space="preserve"><value>Nummermönstret eller en journaltyps prefix ändrades, så de angivna nästa numren tillämpades inte. Granska de nya sekvenserna och spara igen.</value></data>
+  <data name="NextNumberPatternChanged" xml:space="preserve"><value>Nummermönstret, en journaltyps prefix eller numreringsårets början ändrades, så de angivna nästa numren tillämpades inte. Granska de nya sekvenserna och spara igen.</value></data>
+  <data name="NumberingYearStart" xml:space="preserve"><value>Numreringsåret börjar</value></data>
+  <data name="NumberingYearStartDay" xml:space="preserve"><value>Dag i månaden</value></data>
+  <data name="NumberingYearLabelEndYear" xml:space="preserve"><value>Namnges efter året det slutar</value></data>
+  <data name="NumberingYearLabelStartYear" xml:space="preserve"><value>Namnges efter året det börjar</value></data>
+  <data name="NumberingYearStartHelp" xml:space="preserve"><value>För journaler som numreras efter ett räkenskapsår, ert eget eller ett läns eller en delstats som ni rapporterar till, väljer du dagen det börjar. Nummer som innehåller året börjar om på 1 den dagen, och {YYYY} och {YY} skriver räkenskapsårets namn. De flesta räkenskapsår namnges efter året de slutar, så ett som börjar den 1 november 2026 är 2027. Den 1 januari är kalenderåret. Larmnummer har en egen årsstart på sidan Inställningar för larmimport. Nummer för begäran om allmänna handlingar och nummer för tillsyner, tillstånd, objekt, utredningar och underlag följer samma år.</value></data>
+  <data name="NextNumbersHeaderPeriod" xml:space="preserve"><value>Nästa nummer för {0} ({1} till {2})</value></data>
+  <data name="NumberingYearStartInvalid" xml:space="preserve"><value>Journalnumreringen sparades inte. Numreringsåret måste börja på en dag som finns varje år, så den 29 februari kan inte användas.</value></data>
+  <data name="OtherNumbersHeader" xml:space="preserve"><value>Andra journalnummer</value></data>
+  <data name="OtherNumbersIntro" xml:space="preserve"><value>Nummer för begäran om allmänna handlingar, objekt, tillsyner, tillstånd, utredningar och underlag. Lämna ett mönster tomt för att behålla de inbyggda numren som visas. Mönster använder {YYYY} eller {YY}, {MM}, {DD} och {SEQ} som larmnummer, följer numreringsårets början ovan och ryms i 32 tecken (50 för begäran om allmänna handlingar).</value></data>
+  <data name="OtherNumberBuiltIn" xml:space="preserve"><value>Inbyggt, t.ex.</value></data>
+  <data name="OtherNumbersPatternsRejected" xml:space="preserve"><value>Dessa mönster sparades inte eftersom de är ogiltiga eller kan skriva ett nummer som är för långt för journalen; numren behöll det de hade:</value></data>
   <data name="NextNumberConfirm" xml:space="preserve"><value>Ett höjt nästa nummer kan inte sänkas igen. Spara ändringarna?</value></data>
   <data name="NumberingAllTypes" xml:space="preserve"><value>Alla journaltyper</value></data>
   <data name="NumberingNoGroup" xml:space="preserve"><value>Ingen station/grupp</value></data>

@@ -35,6 +35,7 @@ namespace Resgrid.Tests.Services
 		private Mock<IShiftsService> _shiftsService;
 		private Mock<Resgrid.Model.Repositories.IRunCardActivationsRepository> _runCardActivationsRepository;
 		private Mock<Resgrid.Model.Providers.IEventAggregator> _eventAggregator;
+		private Mock<IDepartmentsService> _departmentsService;
 		private DispatchRecommendationService _service;
 
 		private DepartmentGroup _stationA;
@@ -57,6 +58,7 @@ namespace Resgrid.Tests.Services
 			_shiftsService = new Mock<IShiftsService>();
 			_runCardActivationsRepository = new Mock<Resgrid.Model.Repositories.IRunCardActivationsRepository>();
 			_eventAggregator = new Mock<Resgrid.Model.Providers.IEventAggregator>();
+			_departmentsService = new Mock<IDepartmentsService>();
 
 			_stationA = new DepartmentGroup { DepartmentGroupId = StationAId, DepartmentId = DepartmentId, Name = "Station 1", Type = (int)DepartmentGroupTypes.Station };
 			_stationB = new DepartmentGroup { DepartmentGroupId = StationBId, DepartmentId = DepartmentId, Name = "Station 2", Type = (int)DepartmentGroupTypes.Station };
@@ -151,7 +153,8 @@ namespace Resgrid.Tests.Services
 				_personnelLocationResolver.Object,
 				_shiftsService.Object,
 				_runCardActivationsRepository.Object,
-				_eventAggregator.Object);
+				_eventAggregator.Object,
+				_departmentsService.Object);
 		}
 
 		private RunCard BuildCard(int engineCount = 0, int roleCount = 0, int alarmLevel = 1)
@@ -825,6 +828,48 @@ namespace Resgrid.Tests.Services
 
 			result.Units.Should().ContainSingle(u => u.UnitId == 2);
 			result.Shortfalls.Should().ContainSingle(s => s.RequiredCount == 2 && s.FilledCount == 1);
+		}
+
+		// The Update Call panel lists recommended people and shortfalls by name (PR #546 review).
+		[Test]
+		public async Task recommended_people_and_their_role_are_named()
+		{
+			BuildCard(roleCount: 2);
+			_departmentsService.Setup(x => x.GetAllPersonnelNamesForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<PersonName>
+			{
+				new PersonName { UserId = "user-1", FirstName = "Matthew", LastName = "Casey" },
+				new PersonName { UserId = "user-2", FirstName = "Kelly", LastName = "Severide" }
+			});
+
+			var result = await _service.GetRecommendationAsync(BuildRequest());
+
+			result.Personnel.Should().HaveCount(2);
+			result.Personnel.Should().ContainSingle(p => p.UserId == "user-1" && p.Name == "Matthew Casey" && p.RoleName == "Firefighter");
+			result.Personnel.Should().ContainSingle(p => p.UserId == "user-2" && p.Name == "Kelly Severide" && p.RoleName == "Firefighter");
+		}
+
+		[Test]
+		public async Task shortfalls_name_a_role_nobody_holds_and_a_unit_type_with_no_available_unit()
+		{
+			var card = BuildCard(engineCount: 1);
+			const int ParamedicRoleId = 201;
+			card.AlarmLevels.First().RoleRequirements.Add(new RunCardRoleRequirement { RunCardRoleRequirementId = 2001, RunCardAlarmLevelId = 50, PersonnelRoleId = ParamedicRoleId, RequiredCount = 1 });
+			card.AlarmLevels.First().UnitRequirements.Add(new RunCardUnitRequirement { RunCardUnitRequirementId = 1001, RunCardAlarmLevelId = 50, UnitTypeId = LadderTypeId, RequiredCount = 1 });
+			_personnelRolesService.Setup(x => x.GetRolesForDepartmentUnlimitedAsync(DepartmentId)).ReturnsAsync(new List<PersonnelRole>
+			{
+				new PersonnelRole { PersonnelRoleId = FirefighterRoleId, DepartmentId = DepartmentId, Name = "Firefighter" },
+				new PersonnelRole { PersonnelRoleId = ParamedicRoleId, DepartmentId = DepartmentId, Name = "Paramedic" }
+			});
+			_unitsService.Setup(x => x.GetAllLatestStatusForUnitsByDepartmentIdAsync(DepartmentId)).ReturnsAsync(new List<UnitState>
+			{
+				new UnitState { UnitId = 3, State = (int)UnitStateTypes.OutOfService, Timestamp = DateTime.UtcNow }
+			});
+
+			var result = await _service.GetRecommendationAsync(BuildRequest());
+
+			result.Shortfalls.Should().ContainSingle(s => !s.IsUnitRequirement && s.TypeOrRoleId == ParamedicRoleId && s.TypeOrRoleName == "Paramedic");
+			result.Shortfalls.Should().ContainSingle(s => s.IsUnitRequirement && s.TypeOrRoleId == LadderTypeId && s.TypeOrRoleName == "Ladder");
+			_departmentsService.Verify(x => x.GetAllPersonnelNamesForDepartmentAsync(It.IsAny<int>()), Times.Never, "nobody was recommended");
 		}
 	}
 }

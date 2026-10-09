@@ -123,7 +123,18 @@
   <data name="NextNumberCurrent" xml:space="preserve"><value>Наступний номер</value></data>
   <data name="NextNumberRaiseTo" xml:space="preserve"><value>Підвищити наступний до</value></data>
   <data name="NextNumberBelowCurrent" xml:space="preserve"><value>Наступний номер можна лише підвищити. Ці послідовності залишено без змін, бо введене число менше за номер, який вони видадуть наступним:</value></data>
-  <data name="NextNumberPatternChanged" xml:space="preserve"><value>Шаблон нумерації або префікс типу запису змінено, тому введені наступні номери не застосовано. Перегляньте нові послідовності та збережіть ще раз.</value></data>
+  <data name="NextNumberPatternChanged" xml:space="preserve"><value>Шаблон нумерації, префікс типу запису або початок року нумерації змінено, тому введені наступні номери не застосовано. Перегляньте нові послідовності та збережіть ще раз.</value></data>
+  <data name="NumberingYearStart" xml:space="preserve"><value>Рік нумерації починається</value></data>
+  <data name="NumberingYearStartDay" xml:space="preserve"><value>День місяця</value></data>
+  <data name="NumberingYearLabelEndYear" xml:space="preserve"><value>Називається за роком, у якому закінчується</value></data>
+  <data name="NumberingYearLabelStartYear" xml:space="preserve"><value>Називається за роком, у якому починається</value></data>
+  <data name="NumberingYearStartHelp" xml:space="preserve"><value>Для записів, що нумеруються за фінансовим роком — вашим власним або округу чи штату, якому ви звітуєте, — виберіть день, коли він починається. Номери з роком знову починаються з 1 цього дня, а {YYYY} і {YY} записують назву фінансового року. Більшість фінансових років називають за роком, у якому вони закінчуються, тож рік, що починається 1 листопада 2026, — це 2027. 1 січня — календарний рік. Номери викликів мають власний початок року на сторінці «Налаштування імпорту викликів». Номери запитів на доступ до документів і номери перевірок, дозволів, об’єктів, розслідувань та доказів слідують тому самому року.</value></data>
+  <data name="NextNumbersHeaderPeriod" xml:space="preserve"><value>Наступні номери на {0} рік (з {1} по {2})</value></data>
+  <data name="NumberingYearStartInvalid" xml:space="preserve"><value>Нумерацію записів не збережено. Рік нумерації має починатися в день, який є в кожному році, тож 29 лютого використати не можна.</value></data>
+  <data name="OtherNumbersHeader" xml:space="preserve"><value>Інші номери записів</value></data>
+  <data name="OtherNumbersIntro" xml:space="preserve"><value>Номери запитів на доступ до документів, об’єктів, перевірок, дозволів, розслідувань і доказів. Залиште шаблон порожнім, щоб зберегти показані вбудовані номери. Шаблони використовують {YYYY} або {YY}, {MM}, {DD} і {SEQ}, як номери викликів, слідують початку року нумерації вище й вміщуються у 32 символи (50 для запитів на доступ).</value></data>
+  <data name="OtherNumberBuiltIn" xml:space="preserve"><value>Вбудований, напр.</value></data>
+  <data name="OtherNumbersPatternsRejected" xml:space="preserve"><value>Ці шаблони не збережено, бо вони недійсні або можуть записати номер, задовгий для запису; ці номери зберегли попередній вигляд:</value></data>
   <data name="NextNumberConfirm" xml:space="preserve"><value>Підвищений наступний номер не можна знову знизити. Зберегти ці зміни?</value></data>
   <data name="NumberingAllTypes" xml:space="preserve"><value>Усі типи записів</value></data>
   <data name="NumberingNoGroup" xml:space="preserve"><value>Без станції/групи</value></data>

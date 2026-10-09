@@ -268,6 +268,8 @@ namespace Resgrid.Web.Services.Models.v4.Deployments
 		public string Id { get; set; }
 		public string DeploymentId { get; set; }
 		public int ReportNumber { get; set; }
+		/// <summary>The report number as issued: the department's numbering pattern, or ReportNumber when it keeps the built-in numbers.</summary>
+		public string DisplayNumber { get; set; }
 		public DateTime ReportDate { get; set; }
 		/// <summary>DeploymentTimeReportScopes value: 0 deployment-wide DTR, 1 crew time report, 2 individual.</summary>
 		public int Scope { get; set; }

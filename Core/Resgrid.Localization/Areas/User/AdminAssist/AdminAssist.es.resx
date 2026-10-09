@@ -1198,7 +1198,7 @@
     <value>El calendario del departamento para reuniones, eventos y noches de capacitación.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.call-settings">
-    <value>El buzón y el formato usados para importar llamadas desde CAD o correo de aviso, y el formato y el próximo número de los números de llamada.</value>
+    <value>El buzón y el formato usados para importar llamadas desde CAD o correo de aviso, y el formato, el próximo número y el inicio del año de numeración de los números de llamada.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.call-templates">
     <value>Plantillas reutilizables de texto de llamada y notas que agilizan el registro de llamadas.</value>
@@ -1522,7 +1522,7 @@
     <value>Registros pendientes, en espera de revisión o listos para enviar.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.records-settings">
-    <value>Reglas de numeración, retención, búsqueda y visibilidad de los registros.</value>
+    <value>Reglas de numeración (incluidos los números de solicitudes de acceso y de prevención y el inicio del año de numeración), retención, búsqueda y visibilidad de los registros.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.reports">
     <value>Informes del departamento sobre llamadas, personal y actividad.</value>
@@ -2236,7 +2236,7 @@
     <value>Use secuencias separadas por estación o grupo. Esto cambia la numeración, no la visibilidad de los registros.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.ResetYearly">
-    <value>Reinicia las secuencias de registros cada año calendario según la zona horaria del departamento.</value>
+    <value>Reinicia las secuencias de registros cada año de numeración (el año calendario salvo que se haya fijado el inicio de un año fiscal) según la zona horaria del departamento.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.SequenceWidth">
     <value>Dígitos de la parte SEQ del patrón de numeración, con ceros a la izquierda: 4 escribe 0184. De 3 a 8 dígitos; al cambiarlo, cada secuencia conserva su siguiente número. Las definiciones del departamento con numeración propia conservan su propia longitud.</value>
@@ -6785,5 +6785,101 @@
   </data>
   <data xml:space="preserve" name="FeatureValue.api-keys">
     <value>Las integraciones siguen funcionando cuando alguien se va, solo pueden hacer lo que permite su clave y se pueden revocar al instante.</value>
+  </data>
+  <data name="Field.CallNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Configuración de numeración de llamadas / Mes de inicio del año</value>
+  </data>
+  <data name="FieldHelp.CallNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Mes en que empieza el año de numeración, para llamadas numeradas por un año fiscal. Un patrón anual vuelve a empezar en 1 en ese mes y día, y YYYY y YY escriben el nombre del año fiscal; los patrones con MM o DD siguen el calendario. Sin valor es enero, el año natural.</value>
+  </data>
+  <data name="Field.CallNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Configuración de numeración de llamadas / Día de inicio del año</value>
+  </data>
+  <data name="FieldHelp.CallNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Día del mes en que empieza el año de numeración, de 1 al último día del mes; no se permite el 29 de febrero. Sin valor es el día 1.</value>
+  </data>
+  <data name="Field.CallNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Configuración de numeración de llamadas / Nombre del año</value>
+  </data>
+  <data name="FieldHelp.CallNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Qué año da nombre a un año de numeración que no empieza el 1 de enero: el año en que termina (la convención habitual de los años fiscales, así que un año que empieza el 1 de noviembre de 2026 es 2027) o el año en que empieza.</value>
+  </data>
+  <data name="Field.RecordsNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Configuración de numeración de registros / Mes de inicio del año</value>
+  </data>
+  <data name="FieldHelp.RecordsNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Mes en que empieza el año de numeración, para registros numerados por un año fiscal, como el de un condado o estado. Las secuencias que incluyen el año vuelven a empezar en 1 en ese mes y día, y YYYY y YY escriben el nombre del año fiscal. Sin valor es enero, el año natural. Es independiente del inicio de año de la numeración de llamadas. Los números de las solicitudes de acceso a registros y de inspecciones, permisos, ocupaciones, investigaciones y evidencias siguen el mismo año.</value>
+  </data>
+  <data name="Field.RecordsNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Configuración de numeración de registros / Día de inicio del año</value>
+  </data>
+  <data name="FieldHelp.RecordsNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Día del mes en que empieza el año de numeración, de 1 al último día del mes; no se permite el 29 de febrero. Sin valor es el día 1.</value>
+  </data>
+  <data name="Field.RecordsNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Configuración de numeración de registros / Nombre del año</value>
+  </data>
+  <data name="FieldHelp.RecordsNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Qué año da nombre a un año de numeración que no empieza el 1 de enero: el año en que termina (la convención habitual de los años fiscales, así que un año que empieza el 1 de noviembre de 2026 es 2027) o el año en que empieza.</value>
+  </data>
+  <data name="Setting.DocumentNumberingConfig" xml:space="preserve">
+    <value>Configuración de numeración de documentos</value>
+  </data>
+  <data name="SettingHelp.DocumentNumberingConfig" xml:space="preserve">
+    <value>Cómo se escriben los números de órdenes de trabajo, facturas, ofertas y partes diarios de horas, y el día en que empieza su año de numeración. Un tipo de documento sin patrón mantiene sus números integrados.</value>
+  </data>
+  <data name="Field.DocumentNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Configuración de numeración de documentos / Mes de inicio del año</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Mes en que empieza el año de numeración de las órdenes de trabajo, facturas, ofertas y partes diarios de horas numerados por un año fiscal. Los números de órdenes de trabajo y los patrones con año vuelven a empezar en 1 en ese mes y día, y YYYY y YY escriben el nombre del año fiscal. Sin valor es enero, el año natural.</value>
+  </data>
+  <data name="Field.DocumentNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Configuración de numeración de documentos / Día de inicio del año</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Día del mes en que empieza el año de numeración, de 1 al último día del mes; no se permite el 29 de febrero. Sin valor es el día 1.</value>
+  </data>
+  <data name="Field.DocumentNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Configuración de numeración de documentos / Nombre del año</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Qué año da nombre a un año de numeración que no empieza el 1 de enero: el año en que termina (la convención habitual de los años fiscales, así que un año que empieza el 1 de noviembre de 2026 es 2027) o el año en que empieza.</value>
+  </data>
+  <data name="Field.DocumentNumberingConfig.Patterns" xml:space="preserve">
+    <value>Configuración de numeración de documentos / Patrones</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberingConfig.Patterns" xml:space="preserve">
+    <value>El patrón de numeración propio del departamento para órdenes de trabajo, facturas, ofertas y partes diarios de horas, con los marcadores de los números de llamada (YYYY o YY, MM, DD, SEQ). Un tipo de documento sin patrón mantiene sus números integrados (WO-2026-000019, #1042). Un patrón nuevo continúa después de cualquier número que repetiría. Los miembros ven el número tal como se emitió en documentos, PDF y exportaciones, y en el caso de los partes diarios de horas en las apps Responder, Unit, IC y Dispatch.</value>
+  </data>
+  <data name="Field.DocumentNumberPattern.Kind" xml:space="preserve">
+    <value>Patrón de número de documento / Tipo</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberPattern.Kind" xml:space="preserve">
+    <value>El documento que numera el patrón: work-order, invoice, bid o time-report, o en Registros records-request, occupancy, inspection, permit, investigation o evidence.</value>
+  </data>
+  <data name="Field.DocumentNumberPattern.Pattern" xml:space="preserve">
+    <value>Patrón de número de documento / Patrón</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberPattern.Pattern" xml:space="preserve">
+    <value>Texto fijo alrededor de los marcadores YYYY o YY, MM, DD y SEQ, con SEQ exactamente una vez. Cada número que escribe debe caber en la columna de número del documento: 50 caracteres, o 32 para los números de ocupaciones, inspecciones, permisos, investigaciones y evidencias.</value>
+  </data>
+  <data name="Field.DocumentNumberPattern.SequenceWidth" xml:space="preserve">
+    <value>Patrón de número de documento / Ancho de la secuencia</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberPattern.SequenceWidth" xml:space="preserve">
+    <value>Dígitos a los que se rellena la secuencia con ceros a la izquierda, de 1 a 8; la secuencia se cuenta como número, así que cambiar el ancho nunca la reinicia.</value>
+  </data>
+  <data name="Field.RecordsNumberingConfig.DocumentPatterns" xml:space="preserve">
+    <value>Configuración de numeración de registros / Patrones de documentos</value>
+  </data>
+  <data name="FieldHelp.RecordsNumberingConfig.DocumentPatterns" xml:space="preserve">
+    <value>Los patrones propios del departamento para los números de solicitudes de acceso a registros, ocupaciones, inspecciones, permisos, investigaciones y evidencias. Siguen el inicio del año de numeración de este ajuste; un tipo sin patrón mantiene sus números integrados (PRR-2026-0001, INSP-2026-0001, etc.).</value>
+  </data>
+  <data name="Feature.document-numbering" xml:space="preserve">
+    <value>Numeración de documentos</value>
+  </data>
+  <data name="FeaturePurpose.document-numbering" xml:space="preserve">
+    <value>Cómo se escriben los números de órdenes de trabajo, facturas, ofertas y partes diarios de horas, y el día en que empieza su año de numeración cuando se numera por año fiscal.</value>
   </data>
 </root>

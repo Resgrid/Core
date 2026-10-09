@@ -151,13 +151,13 @@ namespace Resgrid.Services.Invoicing
 		{
 			var invoice = await _invoicing.GetInvoiceByIdAsync(invoiceId, departmentId);
 			if (invoice == null) throw new InvalidOperationException("invoicing_invoice_not_found");
-			var packet = new ContractorInvoicePacket { FileName = $"invoice-{invoice.InvoiceNumber}-packet.zip" };
+			var packet = new ContractorInvoicePacket { FileName = $"invoice-{DocumentNumbering.FileSafe(invoice.NumberText())}-packet.zip" };
 
 			using var stream = new MemoryStream();
 			using (var zip = new ZipArchive(stream, ZipArchiveMode.Create, leaveOpen: true))
 			{
 				var invoicePdf = await _invoicing.GetInvoicePdfAsync(invoiceId, departmentId);
-				if (invoicePdf != null && invoicePdf.Length > 0) Add(zip, packet, $"invoice-{invoice.InvoiceNumber}.pdf", invoicePdf);
+				if (invoicePdf != null && invoicePdf.Length > 0) Add(zip, packet, $"invoice-{DocumentNumbering.FileSafe(invoice.NumberText())}.pdf", invoicePdf);
 
 				if (!string.IsNullOrWhiteSpace(invoice.DeploymentId))
 				{
@@ -169,7 +169,7 @@ namespace Resgrid.Services.Invoicing
 						{
 							var report = await _timeTracking.GetTimeReportByIdAsync(reportId, departmentId);
 							var pdf = report == null ? null : await _timeTracking.GetTimeReportPdfAsync(reportId, departmentId);
-							if (pdf != null && pdf.Length > 0) Add(zip, packet, $"dtr/dtr-{report.ReportNumber}-{report.ReportDate:yyyy-MM-dd}.pdf", pdf);
+							if (pdf != null && pdf.Length > 0) Add(zip, packet, $"dtr/dtr-{DocumentNumbering.FileSafe(report.NumberText())}-{report.ReportDate:yyyy-MM-dd}.pdf", pdf);
 						}
 						catch (Exception ex) { Logging.LogException(ex, $"Invoice packet: DTR {reportId} PDF skipped."); }
 					}

@@ -95,7 +95,7 @@ namespace Resgrid.Tests.Rms
 			_service = new RecordsService(_store.RecordsRepo.Object, new Resgrid.Services.Records.RmsRecordValueService(_store.DetailsRepo.Object), _store.ParticipantsRepo.Object, _store.UnitsRepo.Object,
 				_store.AttachmentsRepo.Object, _store.RevisionsRepo.Object, _evidence.Object, _store.ScopesRepo.Object, _store.SharesRepo.Object, _store.ProjectionsRepo.Object,
 				_store.AuditsRepo.Object, outbox, _cutover.Object, _settings.Object, _groups.Object, _profiles.Object, _units.Object, _calls.Object, _adp.Object,
-				_store.UnitOfWork.Object, _outboundQueue.Object, new Resgrid.Services.Records.NullRecordAttachmentScanner(), _authorization.Object, Mock.Of<IRecordsUdfService>(), _protection, Mock.Of<IRecordDefinitionsService>(), Mock.Of<IRecordTypedValuesService>(), Mock.Of<IPersonnelRolesService>());
+				_store.UnitOfWork.Object, _outboundQueue.Object, new Resgrid.Services.Records.NullRecordAttachmentScanner(), _authorization.Object, Mock.Of<IRecordsUdfService>(), _protection, Mock.Of<IRecordDefinitionsService>(), Mock.Of<IRecordTypedValuesService>(), Mock.Of<IPersonnelRolesService>(), Mock.Of<IDepartmentsService>());
 		}
 
 		[Test]
@@ -513,6 +513,16 @@ namespace Resgrid.Tests.Rms
 
 			var again = await _service.CreateDraftAsync(Dept, "author", TrainingInput());
 			(await _service.FinalizeAsync(Dept, "author", again.Record.RmsOperationalRecordId, again.Record.RowVersion, "1", null, null)).Record.RecordNumber.Should().Be("2026-0154");
+		}
+
+		[Test]
+		public async Task Finalize_numbers_by_the_department_fiscal_year()
+		{
+			// The training started 1 September 2026; a July fiscal year named by the year it ends in makes that FY2027.
+			_settings.Setup(s => s.GetRecordsNumberingConfigAsync(Dept, It.IsAny<bool>())).ReturnsAsync(new RecordsNumberingConfig { Pattern = "{PREFIX}-{YYYY}-{SEQ}", YearStartMonth = 7, YearStartDay = 1 });
+
+			var first = await _service.CreateDraftAsync(Dept, "author", TrainingInput());
+			(await _service.FinalizeAsync(Dept, "author", first.Record.RmsOperationalRecordId, first.Record.RowVersion, "1", null, null)).Record.RecordNumber.Should().Be("TRN-2027-0001");
 		}
 
 		[Test]

@@ -507,4 +507,7 @@
   <data name="SendNotificationHelp" xml:space="preserve">
     <value>يُبلغ كل من أُرسل إلى المكالمة ووحداتها وفريق قيادة الحادث بأن المكالمة أُغلقت. لا تُرفق ملاحظات الإغلاق.</value>
   </data>
+  <data name="NewCallFieldRequired" xml:space="preserve">
+    <value>الحقل {0} مطلوب في هذه الإدارة.</value>
+  </data>
 </root>

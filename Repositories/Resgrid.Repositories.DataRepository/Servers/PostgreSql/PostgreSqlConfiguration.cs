@@ -168,7 +168,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 						INNER JOIN %SCHEMA%.%DEPARTMENTMEMBERSTABLE% dm ON ds.DepartmentId = dm.DepartmentId
 						WHERE dm.UserId = %USERID% AND ds.SettingType = %SETTINGTYPE%";
 			SelectDepartmentSettingBySettingAndTypeQuery = @"SELECT ds.* FROM %SCHEMA%.%TABLENAME% ds
-						WHERE ds.Setting = %SETTING% AND ds.SettingType = %SETTINGTYPE%";
+						WHERE ds.Setting = %SETTING%::citext AND ds.SettingType = %SETTINGTYPE%";
 			SelectAllDepartmentManagerInfoQuery = @"SELECT d.DepartmentId, d.Name, up.FirstName, up.LastName, u.Email
 						FROM %SCHEMA%.%DEPARTMENTSTABLE% d
 						INNER JOIN %SCHEMA%.%ASPNETUSERSTABLE% u ON u.Id = d.ManagingUserId
@@ -178,7 +178,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 						FROM %SCHEMA%.%DEPARTMENTSTABLE% d
 						INNER JOIN %SCHEMA%.%ASPNETUSERSTABLE% u ON u.Id = d.ManagingUserId
 						LEFT OUTER JOIN %SCHEMA%.%USERPROFILESTABLE% up ON up.UserId = d.ManagingUserId
-						WHERE u.Email = %EMAILADDRESS%";
+						WHERE u.Email = %EMAILADDRESS%::citext";
 
 			#endregion Department Settings
 
@@ -186,7 +186,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 
 			InvitesTable = "Invites";
 			SelectInviteByCodeQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE Code = %CODE%";
-			SelectInviteByEmailQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE EmailAddress = %EMAIL%";
+			SelectInviteByEmailQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE EmailAddress = %EMAIL%::citext";
 
 			#endregion Invites
 
@@ -233,7 +233,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					SELECT %SCHEMA%.%DEPARTMENTSTABLE%.*, %SCHEMA%.%DEPARTMENTMEMBERSTABLE%.*
 						FROM %SCHEMA%.%DEPARTMENTSTABLE%
 						LEFT JOIN %SCHEMA%.%DEPARTMENTMEMBERSTABLE% ON %SCHEMA%.%DEPARTMENTMEMBERSTABLE%.DepartmentId =  %SCHEMA%.%DEPARTMENTSTABLE%.DepartmentId
-					WHERE LinkCode = %CODE%";
+					WHERE LinkCode = %CODE%::citext";
 			SelectDepartmentByIdQuery = @"
 					SELECT d.*, dt.*
 					FROM %SCHEMA%.%DEPARTMENTSTABLE% d
@@ -264,13 +264,13 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					SELECT %SCHEMA%.%DEPARTMENTSTABLE%.*, %SCHEMA%.%DEPARTMENTMEMBERSTABLE%.*
 						FROM %SCHEMA%.%DEPARTMENTSTABLE%
 						LEFT JOIN %SCHEMA%.%DEPARTMENTMEMBERSTABLE% ON %SCHEMA%.%DEPARTMENTMEMBERSTABLE%.DepartmentId =  %SCHEMA%.%DEPARTMENTSTABLE%.DepartmentId
-					WHERE Name = %NAME%";
+					WHERE Name = %NAME%::citext";
 			SelectDepartmentByUsernameQuery = @"SELECT d.*, dm.*
 							FROM %SCHEMA%.%USERSTABLE% u
 							INNER JOIN %SCHEMA%.%DEPARTMENTMEMBERSTABLE% dm1 ON dm1.UserId = u.Id
 							INNER JOIN %SCHEMA%.%DEPARTMENTSTABLE% d ON d.DepartmentId = dm1.DepartmentId
 							INNER JOIN %SCHEMA%.%DEPARTMENTMEMBERSTABLE% dm ON dm.DepartmentId = d.DepartmentId
-							WHERE u.UserName = %USERNAME% AND d.DepartmentId = dm.DepartmentId AND dm.IsDeleted = false AND (dm.IsActive = true OR dm.IsDefault = true)";
+							WHERE u.UserName = %USERNAME%::citext AND d.DepartmentId = dm.DepartmentId AND dm.IsDeleted = false AND (dm.IsActive = true OR dm.IsDefault = true)";
 			SelectDepartmentByUserIdQuery = @"SELECT d.*, dm.*
 							FROM %SCHEMA%.%DEPARTMENTMEMBERSTABLE% dm1
 							INNER JOIN %SCHEMA%.%DEPARTMENTSTABLE% d ON d.DepartmentId = dm1.DepartmentId
@@ -281,7 +281,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 							FROM %SCHEMA%.%USERSTABLE% u
 							INNER JOIN %SCHEMA%.%DEPARTMENTMEMBERSTABLE% dm ON dm.UserId = u.Id
 							INNER JOIN %SCHEMA%.%DEPARTMENTSTABLE% d ON dm.DepartmentId = d.DepartmentId
-							WHERE u.UserName = %USERNAME% AND dm.IsActive = true";
+							WHERE u.UserName = %USERNAME%::citext AND dm.IsActive = true";
 			SelectDepartmentStatsByUserDidQuery = @"
 					SELECT
 					(SELECT COUNT(*) FROM %SCHEMA%.%MESSAGESTABLE% m
@@ -298,7 +298,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			PersonnelRolesTable = "PersonnelRoles";
 			PersonnelRoleUsersTable = "PersonnelRoleUsers";
 			SelectRoleByDidAndNameQuery =
-				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE DepartmentId = %DID% AND Name = %NAME%";
+				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE DepartmentId = %DID% AND Name = %NAME%::citext";
 			SelectRolesByDidAndUserQuery = @"
 					SELECT * FROM %SCHEMA%.%PERSONNELROLESTABLE% pr
 					INNER JOIN %SCHEMA%.%PERSONNELROLEUSERSTABLE% pru ON pr.PersonnelRoleId = pru.PersonnelRoleId
@@ -403,15 +403,15 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			InsertRoleQuery = "INSERT INTO %SCHEMA%.%TABLENAME% %COLUMNS% VALUES(%VALUES%)";
 			DeleteRoleQuery = "DELETE FROM %SCHEMA%.%TABLENAME% WHERE Id = %ID%";
 			UpdateRoleQuery = "UPDATE %SCHEMA%.%TABLENAME% %SETVALUES% WHERE Id = %ID%";
-			SelectRoleByNameQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE Name = %NAME%";
+			SelectRoleByNameQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE Name = %NAME%::citext";
 			SelectRoleByIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE Id = %ID%";
 			InsertUserQuery = "INSERT INTO %SCHEMA%.%TABLENAME% %COLUMNS% VALUES(%VALUES%) RETURNING id;";
 			DeleteUserQuery = "DELETE FROM %SCHEMA%.%TABLENAME% WHERE Id = %ID%";
 			UpdateUserQuery = "UPDATE %SCHEMA%.%TABLENAME% %SETVALUES% WHERE Id = %ID%";
 			SelectUserByUserNameQuery =
-				"SELECT %SCHEMA%.%USERTABLE%.*, %SCHEMA%.%USERROLETABLE%.* FROM %SCHEMA%.%USERTABLE% LEFT JOIN %SCHEMA%.%USERROLETABLE% ON %SCHEMA%.%USERROLETABLE%.UserId =  %SCHEMA%.%USERTABLE%.Id WHERE UserName = %USERNAME%";
+				"SELECT %SCHEMA%.%USERTABLE%.*, %SCHEMA%.%USERROLETABLE%.* FROM %SCHEMA%.%USERTABLE% LEFT JOIN %SCHEMA%.%USERROLETABLE% ON %SCHEMA%.%USERROLETABLE%.UserId =  %SCHEMA%.%USERTABLE%.Id WHERE UserName = %USERNAME%::citext";
 			SelectUserByEmailQuery =
-				"SELECT %SCHEMA%.%USERTABLE%.*, %SCHEMA%.%USERROLETABLE%.* FROM %SCHEMA%.%USERTABLE% LEFT JOIN %SCHEMA%.%USERROLETABLE% ON %SCHEMA%.%USERROLETABLE%.UserId =  %SCHEMA%.%USERTABLE%.Id WHERE Email = %EMAIL%";
+				"SELECT %SCHEMA%.%USERTABLE%.*, %SCHEMA%.%USERROLETABLE%.* FROM %SCHEMA%.%USERTABLE% LEFT JOIN %SCHEMA%.%USERROLETABLE% ON %SCHEMA%.%USERROLETABLE%.UserId =  %SCHEMA%.%USERTABLE%.Id WHERE Email = %EMAIL%::citext";
 			SelectUserByIdQuery =
 				"SELECT %SCHEMA%.%USERTABLE%.*, %SCHEMA%.%USERROLETABLE%.* FROM %SCHEMA%.%USERTABLE% LEFT JOIN %SCHEMA%.%USERROLETABLE% ON %SCHEMA%.%USERROLETABLE%.UserId =  %SCHEMA%.%USERTABLE%.Id WHERE %SCHEMA%.%USERTABLE%.Id = %ID%";
 			InsertUserClaimQuery = "INSERT INTO %SCHEMA%.%TABLENAME% %COLUMNS% VALUES(%VALUES%)";
@@ -427,13 +427,13 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			GetUsersByClaimQuery =
 				"SELECT %USERFILTER% FROM %SCHEMA%.%USERTABLE%, %SCHEMA%.%USERCLAIMTABLE% WHERE ClaimValue = %CLAIMVALUE% AND ClaimType = %CLAIMTYPE%";
 			GetUsersInRoleQuery =
-				"SELECT %USERFILTER% FROM %SCHEMA%.%USERTABLE%, %SCHEMA%.%USERROLETABLE%, %SCHEMA%.%ROLETABLE% WHERE %SCHEMA%.%ROLETABLE%.Name = %ROLENAME% AND %SCHEMA%.%USERROLETABLE%.RoleId = %SCHEMA%.%ROLETABLE%.Id AND %SCHEMA%.%USERROLETABLE%.UserId = %SCHEMA%.%USERTABLE%.Id";
+				"SELECT %USERFILTER% FROM %SCHEMA%.%USERTABLE%, %SCHEMA%.%USERROLETABLE%, %SCHEMA%.%ROLETABLE% WHERE %SCHEMA%.%ROLETABLE%.Name = %ROLENAME%::citext AND %SCHEMA%.%USERROLETABLE%.RoleId = %SCHEMA%.%ROLETABLE%.Id AND %SCHEMA%.%USERROLETABLE%.UserId = %SCHEMA%.%USERTABLE%.Id";
 			IsInRoleQuery =
-				"SELECT 1 FROM %SCHEMA%.%USERTABLE%, %SCHEMA%.%USERROLETABLE%, %SCHEMA%.%ROLETABLE% WHERE %SCHEMA%.%ROLETABLE%.Name = %ROLENAME% AND %SCHEMA%.%USERTABLE%.Id = %USERID% AND %SCHEMA%.%USERROLETABLE%.RoleId = %SCHEMA%.%ROLETABLE%.Id AND %SCHEMA%.%USERROLETABLE%.UserId = %SCHEMA%.%USERTABLE%.Id";
+				"SELECT 1 FROM %SCHEMA%.%USERTABLE%, %SCHEMA%.%USERROLETABLE%, %SCHEMA%.%ROLETABLE% WHERE %SCHEMA%.%ROLETABLE%.Name = %ROLENAME%::citext AND %SCHEMA%.%USERTABLE%.Id = %USERID% AND %SCHEMA%.%USERROLETABLE%.RoleId = %SCHEMA%.%ROLETABLE%.Id AND %SCHEMA%.%USERROLETABLE%.UserId = %SCHEMA%.%USERTABLE%.Id";
 			RemoveClaimsQuery =
 				"DELETE FROM %SCHEMA%.%TABLENAME% WHERE UserId = %ID% AND ClaimType = %CLAIMTYPE% AND ClaimValue = %CLAIMVALUE%";
 			RemoveUserFromRoleQuery =
-				"DELETE FROM %SCHEMA%.%USERROLETABLE% WHERE UserId = %USERID% AND RoleId = (SELECT Id FROM %SCHEMA%.%ROLETABLE% WHERE Name = %ROLENAME%)";
+				"DELETE FROM %SCHEMA%.%USERROLETABLE% WHERE UserId = %USERID% AND RoleId = (SELECT Id FROM %SCHEMA%.%ROLETABLE% WHERE Name = %ROLENAME%::citext)";
 			RemoveLoginForUserQuery =
 				"DELETE FROM %SCHEMA%.%TABLENAME% WHERE UserId = %USERID% AND LoginProvider = %LOGINPROVIDER% AND ProviderKey = %PROVIDERKEY%";
 			UpdateClaimForUserQuery =
@@ -480,7 +480,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 
 			DistributionListsTable = "DistributionLists";
 			DistributionListMembersTable = "DistributionListMembers";
-			SelectDListByEmailQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE EmailAddress = %EMAIL%";
+			SelectDListByEmailQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE EmailAddress = %EMAIL%::citext";
 			SelectAllEnabledDListsQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE IsDisabled = false";
 			SelectDListMembersByListIdQuery =
 				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE DistributionListId = %LISTID%";
@@ -684,9 +684,9 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					ORDER BY Timestamp DESC";
 			SelectUnitByDIdNameQuery = @"
 					SELECT * FROM %SCHEMA%.%TABLENAME%
-					WHERE DepartmentId = %DID% AND Name = %UNITNAME% AND IsDeleted = false";
+					WHERE DepartmentId = %DID% AND Name = %UNITNAME%::citext AND IsDeleted = false";
 			SelectUnitTypeByDIdNameQuery =
-				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE DepartmentId = %DID% AND Type = %TYPENAME%";
+				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE DepartmentId = %DID% AND Type = %TYPENAME%::citext";
 			SelectUnitLogsByUnitIdQuery =
 				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE UnitId = %UNITID% ORDER BY Timestamp DESC";
 			SelectUnitRolesByUnitIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE UnitId = %UNITID%";
@@ -716,7 +716,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 						AND u.DepartmentId = %DID%
 						AND (us.DestinationType IS NULL OR us.DestinationType = 2)";
 			SelectUnitByDIdTypeQuery =
-				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE DepartmentId = %DID% AND Type = %TYPE% AND IsDeleted = false";
+				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE DepartmentId = %DID% AND Type = %TYPE%::citext AND IsDeleted = false";
 			SelectLastUnitStatesByDidQuery = @"
 					SELECT  q.*, u.*
 					FROM    (
@@ -1316,27 +1316,42 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			SelectCallAttachmentByCallIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE CallId = %CALLID%";
 			SelectAllCallGroupDispsByCallIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE CallId = %CALLID%";
 			SelectAllCallUnitDispsByCallIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE CallId = %CALLID%";
-			SelectOpenCallIdsForUnitQuery = @"
-					SELECT c.CallId
-					FROM %SCHEMA%.%CALLSTABLE% c
+			SelectOpenCallUnitDispatchesForUnitQuery = @"
+					SELECT cdu.*
+					FROM %SCHEMA%.%CALLDISPATCHUNITSTABLE% cdu
+					INNER JOIN %SCHEMA%.%CALLSTABLE% c ON c.CallId = cdu.CallId
 					WHERE c.DepartmentId = %DID% AND c.State = 0 AND c.IsDeleted = false
-						AND EXISTS (SELECT 1 FROM %SCHEMA%.%CALLDISPATCHUNITSTABLE% cdu WHERE cdu.CallId = c.CallId AND cdu.UnitId = %UNITID%)";
+						AND (c.HasBeenDispatched = true OR c.DispatchOn IS NULL OR c.DispatchOn <= %NOW%)
+						AND cdu.UnitId = %UNITID%";
 			SelectOpenCallUnitDispatchesForDepartmentQuery = @"
 					SELECT cdu.*
 					FROM %SCHEMA%.%CALLDISPATCHUNITSTABLE% cdu
 					INNER JOIN %SCHEMA%.%CALLSTABLE% c ON c.CallId = cdu.CallId
-					WHERE c.DepartmentId = %DID% AND c.State = 0 AND c.IsDeleted = false";
-			SelectOpenCallIdsForUserQuery = @"
-					SELECT c.CallId
-					FROM %SCHEMA%.%CALLSTABLE% c
 					WHERE c.DepartmentId = %DID% AND c.State = 0 AND c.IsDeleted = false
-						AND (EXISTS (SELECT 1 FROM %SCHEMA%.%CALLDISPATCHESTABLE% cd WHERE cd.CallId = c.CallId AND cd.UserId = %USERID%)
-							OR EXISTS (SELECT 1 FROM %SCHEMA%.%CALLDISPATCHGROUPSTABLE% cg
-								INNER JOIN %SCHEMA%.%DEPARTMENTGROUPMEMBERSTABLE% gm ON gm.DepartmentGroupId = cg.DepartmentGroupId
-								WHERE cg.CallId = c.CallId AND gm.UserId = %USERID%)
-							OR EXISTS (SELECT 1 FROM %SCHEMA%.%CALLDISPATCHROLESTABLE% cr
-								INNER JOIN %SCHEMA%.%PERSONNELROLEUSERSTABLE% ru ON ru.PersonnelRoleId = cr.RoleId
-								WHERE cr.CallId = c.CallId AND ru.UserId = %USERID%))";
+						AND (c.HasBeenDispatched = true OR c.DispatchOn IS NULL OR c.DispatchOn <= %NOW%)";
+			SelectOpenCallDispatchesForUserQuery = @"
+					SELECT cd.CallId, COALESCE(cd.LastDispatchedOn, cd.DispatchedOn) AS DispatchedOn, false AS Paged
+					FROM %SCHEMA%.%CALLDISPATCHESTABLE% cd
+					INNER JOIN %SCHEMA%.%CALLSTABLE% c ON c.CallId = cd.CallId
+					WHERE c.DepartmentId = %DID% AND c.State = 0 AND c.IsDeleted = false
+						AND (c.HasBeenDispatched = true OR c.DispatchOn IS NULL OR c.DispatchOn <= %NOW%)
+						AND cd.UserId = %USERID%
+					UNION ALL
+					SELECT cg.CallId, COALESCE(cg.LastDispatchedOn, cg.DispatchedOn), true
+					FROM %SCHEMA%.%CALLDISPATCHGROUPSTABLE% cg
+					INNER JOIN %SCHEMA%.%CALLSTABLE% c ON c.CallId = cg.CallId
+					INNER JOIN %SCHEMA%.%DEPARTMENTGROUPMEMBERSTABLE% gm ON gm.DepartmentGroupId = cg.DepartmentGroupId
+					WHERE c.DepartmentId = %DID% AND c.State = 0 AND c.IsDeleted = false
+						AND (c.HasBeenDispatched = true OR c.DispatchOn IS NULL OR c.DispatchOn <= %NOW%)
+						AND gm.UserId = %USERID%
+					UNION ALL
+					SELECT cr.CallId, COALESCE(cr.LastDispatchedOn, cr.DispatchedOn), true
+					FROM %SCHEMA%.%CALLDISPATCHROLESTABLE% cr
+					INNER JOIN %SCHEMA%.%CALLSTABLE% c ON c.CallId = cr.CallId
+					INNER JOIN %SCHEMA%.%PERSONNELROLEUSERSTABLE% ru ON ru.PersonnelRoleId = cr.RoleId
+					WHERE c.DepartmentId = %DID% AND c.State = 0 AND c.IsDeleted = false
+						AND (c.HasBeenDispatched = true OR c.DispatchOn IS NULL OR c.DispatchOn <= %NOW%)
+						AND ru.UserId = %USERID%";
 			SelectCallUnitDispatchesForCallsInRangeQuery = @"
 					SELECT cdu.*
 					FROM %SCHEMA%.%CALLDISPATCHUNITSTABLE% cdu
@@ -1477,12 +1492,12 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					SELECT %SCHEMA%.%GROUPSTABLE%.*, %SCHEMA%.%GROUPMEMBERSSTABLE%.*
 					FROM %SCHEMA%.%GROUPSTABLE%
 					LEFT JOIN %SCHEMA%.%GROUPMEMBERSSTABLE% ON %SCHEMA%.%GROUPMEMBERSSTABLE%.DepartmentGroupId =  %SCHEMA%.%GROUPSTABLE%.DepartmentGroupId
-					WHERE DispatchEmail = %CODE%";
+					WHERE DispatchEmail = %CODE%::citext";
 			SelectGroupByMessageCodeQuery = @"
 					SELECT %SCHEMA%.%GROUPSTABLE%.*, %SCHEMA%.%GROUPMEMBERSSTABLE%.*
 					FROM %SCHEMA%.%GROUPSTABLE%
 					LEFT JOIN %SCHEMA%.%GROUPMEMBERSSTABLE% ON %SCHEMA%.%GROUPMEMBERSSTABLE%.DepartmentGroupId =  %SCHEMA%.%GROUPSTABLE%.DepartmentGroupId
-					WHERE MessageEmail = %CODE%";
+					WHERE MessageEmail = %CODE%::citext";
 			SelectGroupByGroupIdQuery = @"
 					SELECT dg.*, dgm.*
 					FROM %SCHEMA%.%GROUPSTABLE% dg
@@ -1994,10 +2009,10 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			SelectActiveCommTestsByScheduleTypeQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE Active = true AND ScheduleType = %SCHEDULETYPE%";
 			SelectCommTestTargetsByTestIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE CommunicationTestId = %COMMTESTID%";
 			SelectCommTestRunsByTestIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE CommunicationTestId = %COMMTESTID% ORDER BY StartedOn DESC";
-			SelectCommTestRunByRunCodeQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE RunCode = %RUNCODE% LIMIT 1";
+			SelectCommTestRunByRunCodeQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE RunCode = %RUNCODE%::citext LIMIT 1";
 			SelectOpenCommTestRunsQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE Status IN (0, 1, 2)";
 			SelectCommTestResultsByRunIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE CommunicationTestRunId = %RUNID%";
-			SelectCommTestResultByResponseTokenQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE ResponseToken = %TOKEN% LIMIT 1";
+			SelectCommTestResultByResponseTokenQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE ResponseToken = %TOKEN%::citext LIMIT 1";
 			#endregion CommunicationTests
 
 			#region Commands

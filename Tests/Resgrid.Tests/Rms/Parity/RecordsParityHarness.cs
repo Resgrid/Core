@@ -85,7 +85,7 @@ namespace Resgrid.Tests.Rms.Parity
 			Records = new RecordsService(Store.RecordsRepo.Object, new RmsRecordValueService(Store.DetailsRepo.Object), Store.ParticipantsRepo.Object, Store.UnitsRepo.Object,
 				Store.AttachmentsRepo.Object, Store.RevisionsRepo.Object, evidence.Object, Store.ScopesRepo.Object, Store.SharesRepo.Object, Store.ProjectionsRepo.Object,
 				Store.AuditsRepo.Object, outbox, cutover.Object, settings.Object, groups.Object, profiles.Object, units.Object, calls.Object, adp.Object,
-				Store.UnitOfWork.Object, queue.Object, new NullRecordAttachmentScanner(), Authorization.Object, udf, new PassthroughRecordsProtection(), Mock.Of<IRecordDefinitionsService>(), Mock.Of<IRecordTypedValuesService>(), Mock.Of<IPersonnelRolesService>());
+				Store.UnitOfWork.Object, queue.Object, new NullRecordAttachmentScanner(), Authorization.Object, udf, new PassthroughRecordsProtection(), Mock.Of<IRecordDefinitionsService>(), Mock.Of<IRecordTypedValuesService>(), Mock.Of<IPersonnelRolesService>(), Mock.Of<IDepartmentsService>());
 
 			var branding = new Mock<IDepartmentProfileMediaService>();
 			branding.Setup(b => b.GetBrandingAsync(Dept)).ReturnsAsync(new DepartmentBranding { DisplayName = "Parity Fire Department", ShortName = "PFD", AddressText = "100 Station Road" });

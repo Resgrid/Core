@@ -123,7 +123,18 @@
   <data name="NextNumberCurrent" xml:space="preserve"><value>Próximo número</value></data>
   <data name="NextNumberRaiseTo" xml:space="preserve"><value>Aumentar el próximo a</value></data>
   <data name="NextNumberBelowCurrent" xml:space="preserve"><value>El próximo número solo se puede aumentar. Estas secuencias no se modificaron porque el número introducido era menor que el que emitirán a continuación:</value></data>
-  <data name="NextNumberPatternChanged" xml:space="preserve"><value>El patrón de numeración o el prefijo de un tipo de registro cambió, por lo que no se aplicaron los próximos números introducidos. Revise las nuevas secuencias y vuelva a guardar.</value></data>
+  <data name="NextNumberPatternChanged" xml:space="preserve"><value>El patrón de numeración, el prefijo de un tipo de registro o el inicio del año de numeración cambió, por lo que no se aplicaron los próximos números introducidos. Revise las nuevas secuencias y vuelva a guardar.</value></data>
+  <data name="NumberingYearStart" xml:space="preserve"><value>El año de numeración empieza el</value></data>
+  <data name="NumberingYearStartDay" xml:space="preserve"><value>Día del mes</value></data>
+  <data name="NumberingYearLabelEndYear" xml:space="preserve"><value>Se nombra por el año en que termina</value></data>
+  <data name="NumberingYearLabelStartYear" xml:space="preserve"><value>Se nombra por el año en que empieza</value></data>
+  <data name="NumberingYearStartHelp" xml:space="preserve"><value>Para registros numerados por un año fiscal, el suyo o el de un condado o estado al que informa, elija el día en que empieza. Los números que incluyen el año vuelven a empezar en 1 ese día, y {YYYY} y {YY} escriben el nombre del año fiscal. La mayoría de los años fiscales se nombran por el año en que terminan, así que uno que empieza el 1 de noviembre de 2026 es 2027. El 1 de enero es el año natural. Los números de llamada tienen su propio inicio de año en la página Configuración de importación de llamadas. Los números de las solicitudes de acceso a registros y de inspecciones, permisos, ocupaciones, investigaciones y evidencias siguen el mismo año.</value></data>
+  <data name="NextNumbersHeaderPeriod" xml:space="preserve"><value>Próximos números para {0} ({1} a {2})</value></data>
+  <data name="NumberingYearStartInvalid" xml:space="preserve"><value>La numeración de registros no se guardó. El año de numeración tiene que empezar en un día que exista todos los años, así que no se puede usar el 29 de febrero.</value></data>
+  <data name="OtherNumbersHeader" xml:space="preserve"><value>Otros números de registros</value></data>
+  <data name="OtherNumbersIntro" xml:space="preserve"><value>Números de solicitudes de acceso a registros, ocupaciones, inspecciones, permisos, investigaciones y evidencias. Deje un patrón en blanco para mantener los números integrados que se muestran. Los patrones usan {YYYY} o {YY}, {MM}, {DD} y {SEQ} como los números de llamada, siguen el inicio del año de numeración de arriba y caben en 32 caracteres (50 para las solicitudes de acceso).</value></data>
+  <data name="OtherNumberBuiltIn" xml:space="preserve"><value>Integrado, p. ej.</value></data>
+  <data name="OtherNumbersPatternsRejected" xml:space="preserve"><value>Estos patrones no se guardaron porque no son válidos o podrían escribir un número demasiado largo para el registro; esos números conservaron lo que tenían:</value></data>
   <data name="NextNumberConfirm" xml:space="preserve"><value>Un próximo número aumentado no se puede volver a reducir. ¿Guardar estos cambios?</value></data>
   <data name="NumberingAllTypes" xml:space="preserve"><value>Todos los tipos de registro</value></data>
   <data name="NumberingNoGroup" xml:space="preserve"><value>Sin estación/grupo</value></data>

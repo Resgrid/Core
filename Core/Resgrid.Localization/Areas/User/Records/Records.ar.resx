@@ -123,7 +123,18 @@
   <data name="NextNumberCurrent" xml:space="preserve"><value>الرقم التالي</value></data>
   <data name="NextNumberRaiseTo" xml:space="preserve"><value>رفع التالي إلى</value></data>
   <data name="NextNumberBelowCurrent" xml:space="preserve"><value>لا يمكن إلا رفع الرقم التالي. تُركت هذه التسلسلات دون تغيير لأن الرقم المُدخل أقل من الرقم الذي ستصدره تاليًا:</value></data>
-  <data name="NextNumberPatternChanged" xml:space="preserve"><value>تغيّر نمط الترقيم أو بادئة أحد أنواع السجلات، لذلك لم تُطبَّق الأرقام التالية المُدخلة. راجع التسلسلات الجديدة واحفظ مرة أخرى.</value></data>
+  <data name="NextNumberPatternChanged" xml:space="preserve"><value>تغيّر نمط الترقيم أو بادئة أحد أنواع السجلات أو بداية سنة الترقيم، لذلك لم تُطبَّق الأرقام التالية المُدخلة. راجع التسلسلات الجديدة واحفظ مرة أخرى.</value></data>
+  <data name="NumberingYearStart" xml:space="preserve"><value>تبدأ سنة الترقيم في</value></data>
+  <data name="NumberingYearStartDay" xml:space="preserve"><value>يوم الشهر</value></data>
+  <data name="NumberingYearLabelEndYear" xml:space="preserve"><value>تُسمّى بالسنة التي تنتهي فيها</value></data>
+  <data name="NumberingYearLabelStartYear" xml:space="preserve"><value>تُسمّى بالسنة التي تبدأ فيها</value></data>
+  <data name="NumberingYearStartHelp" xml:space="preserve"><value>للسجلات المرقّمة حسب سنة مالية، سواء كانت سنتك أو سنة المقاطعة أو الولاية التي ترفع إليها التقارير، اختر اليوم الذي تبدأ فيه. تبدأ الأرقام التي تتضمن السنة من 1 من جديد في ذلك اليوم، ويكتب {YYYY} و{YY} اسم السنة المالية. تُسمّى معظم السنوات المالية بالسنة التي تنتهي فيها، لذا فإن السنة التي تبدأ في 1 نوفمبر 2026 هي 2027. يمثّل 1 يناير السنة الميلادية. لأرقام البلاغات بداية سنة خاصة بها في صفحة إعدادات استيراد البلاغات. تتبع أرقام طلبات الاطلاع على السجلات وأرقام عمليات التفتيش والتصاريح والمباني والتحقيقات والأدلة السنة نفسها.</value></data>
+  <data name="NextNumbersHeaderPeriod" xml:space="preserve"><value>الأرقام التالية لعام {0} (من {1} إلى {2})</value></data>
+  <data name="NumberingYearStartInvalid" xml:space="preserve"><value>لم يُحفظ ترقيم السجلات. يجب أن تبدأ سنة الترقيم في يوم موجود في كل سنة، لذا لا يمكن استخدام 29 فبراير.</value></data>
+  <data name="OtherNumbersHeader" xml:space="preserve"><value>أرقام سجلات أخرى</value></data>
+  <data name="OtherNumbersIntro" xml:space="preserve"><value>أرقام طلبات الاطلاع على السجلات والمباني وعمليات التفتيش والتصاريح والتحقيقات والأدلة. اترك النمط فارغًا للإبقاء على الأرقام المضمّنة المعروضة. تستخدم الأنماط {YYYY} أو {YY} و{MM} و{DD} و{SEQ} كما تفعل أرقام البلاغات، وتتبع بداية سنة الترقيم أعلاه، ولا تتجاوز 32 حرفًا (50 لطلبات الاطلاع).</value></data>
+  <data name="OtherNumberBuiltIn" xml:space="preserve"><value>مضمّن، مثل</value></data>
+  <data name="OtherNumbersPatternsRejected" xml:space="preserve"><value>لم تُحفظ هذه الأنماط لأنها غير صالحة أو قد تكتب رقمًا أطول مما يتسع له السجل؛ واحتفظت تلك الأرقام بما كان لها:</value></data>
   <data name="NextNumberConfirm" xml:space="preserve"><value>لا يمكن خفض الرقم التالي بعد رفعه. هل تريد حفظ هذه التغييرات؟</value></data>
   <data name="NumberingAllTypes" xml:space="preserve"><value>جميع أنواع السجلات</value></data>
   <data name="NumberingNoGroup" xml:space="preserve"><value>بلا محطة/مجموعة</value></data>

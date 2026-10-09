@@ -383,6 +383,7 @@ namespace Resgrid.Services.Invoicing
 					DepartmentId = departmentId,
 					InvoiceId = invoice.InvoiceId,
 					InvoiceNumber = invoice.InvoiceNumber,
+					InvoiceDisplayNumber = invoice.NumberText(),
 					Amount = request.Amount,
 					Currency = request.Currency,
 					CustomerEmail = profile?.BillingEmail,
@@ -475,6 +476,7 @@ namespace Resgrid.Services.Invoicing
 			}
 
 			model.InvoiceNumber = invoice.InvoiceNumber;
+			model.InvoiceLabel = invoice.NumberLabel();
 			model.Currency = invoice.Currency;
 			model.AmountDue = RoundMoney(Math.Max(0, invoice.Balance));
 			model.DueOn = invoice.DueOn;

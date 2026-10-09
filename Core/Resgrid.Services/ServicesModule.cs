@@ -177,6 +177,7 @@ namespace Resgrid.Services
 			builder.RegisterType<EmailService>().As<IEmailService>().InstancePerLifetimeScope();
 			builder.RegisterType<CallsService>().As<ICallsService>().InstancePerLifetimeScope();
 			builder.RegisterType<CallNumberingService>().As<ICallNumberingService>().InstancePerLifetimeScope();
+			builder.RegisterType<DocumentNumberingService>().As<IDocumentNumberingService>().InstancePerLifetimeScope();
 			builder.RegisterType<PlatformReportingService>().As<IPlatformReportingService>().InstancePerLifetimeScope();
 			builder.RegisterType<ReportingRollupProcessor>().As<IReportingRollupProcessor>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentGroupsService>().As<IDepartmentGroupsService>().InstancePerLifetimeScope();

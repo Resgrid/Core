@@ -254,6 +254,8 @@ namespace Resgrid.Model.Invoicing
 		public string DeploymentId { get; set; }
 		public int DepartmentId { get; set; }
 		public int ReportNumber { get; set; }
+		/// <summary>The number as issued: the department's pattern (setting 117) or the built-in plain <see cref="ReportNumber"/>. Show it through <see cref="DocumentNumbering.Display"/>.</summary>
+		public string DisplayNumber { get; set; }
 		public DateTime ReportDate { get; set; }
 		/// <summary>Crew time report scope: the deployed unit whose crew and equipment this report covers (M0227).</summary>
 		public string DeploymentUnitId { get; set; }
@@ -452,7 +454,7 @@ namespace Resgrid.Model.Invoicing
 			("call_id", "CallId"), ("incident_number", "IncidentNumber"), ("resource_order_number", "ResourceOrderNumber"), ("request_number", "RequestNumber"), ("cost_code", "CostCode"),
 			("external_order_id", "RmsExternalOrderId"), ("contact_id", "ContactId"), ("start_on", "StartOn"), ("end_on", "EndOn"),
 			("subject_type", "SubjectType"), ("subject_id", "SubjectId"), ("subject_name", "SubjectName"), ("roster_action", "RosterAction"),
-			("report_number", "ReportNumber"), ("report_date", "ReportDate"), ("report_id", "TimeReportId"), ("report_status", "ReportStatus"),
+			("report_number", "ReportNumber"), ("report_display_number", "ReportDisplayNumber"), ("report_date", "ReportDate"), ("report_id", "TimeReportId"), ("report_status", "ReportStatus"),
 			("expense_type", "ExpenseType"), ("expense_amount", "ExpenseAmount"), ("expense_currency", "ExpenseCurrency"),
 			("attachment_id", "AttachmentId"), ("attachment_type", "AttachmentType"), ("attachment_name", "AttachmentName")
 		};

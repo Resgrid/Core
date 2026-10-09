@@ -1065,4 +1065,7 @@
   <data name="SendNotificationHelp" xml:space="preserve">
     <value>Повідомляє всіх, кого направлено на виклик, його підрозділи та команду командування інцидентом про закриття виклику. Нотатки закриття не додаються.</value>
   </data>
+  <data name="NewCallFieldRequired" xml:space="preserve">
+    <value>Поле {0} є обов'язковим у цьому підрозділі.</value>
+  </data>
 </root>

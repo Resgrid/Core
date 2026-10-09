@@ -324,8 +324,16 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public int SequenceWidth { get; set; }
 		/// <summary>Setting 72's per-type prefixes, one row per system record type.</summary>
 		public List<RecordsNumberPrefixRow> NumberPrefixes { get; set; } = new List<RecordsNumberPrefixRow>();
-		/// <summary>The year the next numbers below are shown for.</summary>
+		/// <summary>The numbering year the next numbers below are shown for (a fiscal year's name when the year starts later than January 1).</summary>
 		public int NumberingYear { get; set; }
+		/// <summary>Setting 72's year start: the day the numbering year starts (January 1 unless records follow a fiscal year) and which year names it.</summary>
+		public int NumberingYearStartMonth { get; set; }
+		public int NumberingYearStartDay { get; set; }
+		public int NumberingYearLabel { get; set; }
+		/// <summary>Department-local today, for the pattern preview.</summary>
+		public DateTime NumberingPreviewDate { get; set; }
+		/// <summary>Records request, occupancy, inspection, permit, investigation and evidence numbers (setting 72's DocumentPatterns).</summary>
+		public List<Resgrid.Web.Areas.User.Models.Departments.DocumentNumberRow> OtherNumbers { get; set; } = new List<Resgrid.Web.Areas.User.Models.Departments.DocumentNumberRow>();
 		public List<RecordsNextNumberRow> NextNumbers { get; set; } = new List<RecordsNextNumberRow>();
 		public int? DepartmentDefaultYears { get; set; }
 		public List<RecordsRetentionOverrideRow> RetentionOverrides { get; set; } = new List<RecordsRetentionOverrideRow>();

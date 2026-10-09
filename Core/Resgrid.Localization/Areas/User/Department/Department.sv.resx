@@ -894,7 +894,7 @@
     <value>Fält i ärendeformuläret</value>
   </data>
   <data name="NewCallFieldsHelp" xml:space="preserve">
-    <value>Välj vilka inbyggda fält som visas i formuläret för nya ärenden och vilka som måste fyllas i innan ett ärende kan skapas och skickas ut. Namn, art, prioritet och typ visas alltid och krävs alltid.</value>
+    <value>Välj vilka inbyggda fält som visas i formuläret för nya ärenden och vilka som måste fyllas i innan ett ärende kan skapas och skickas ut. Namn, art, prioritet och typ visas alltid och krävs alltid. Samma regler gäller när ett ärende redigeras eller ett arkiverat ärende läggs till.</value>
   </data>
   <data name="NewCallFieldsFieldColumn" xml:space="preserve">
     <value>Fält</value>
@@ -927,7 +927,7 @@
     <value>Anteckning</value>
   </data>
   <data name="NewCallField_contactName" xml:space="preserve">
-    <value>Primär kontakt</value>
+    <value>Anmälarens namn</value>
   </data>
   <data name="NewCallField_contactInfo" xml:space="preserve">
     <value>Anmälarens kontaktuppgifter</value>
@@ -1350,9 +1350,93 @@
     <value>Nästa larmnummer höjdes inte: det kan bara höjas över det nummer som nästa larm redan får ({0}).</value>
   </data>
   <data name="CallNumberNextPatternChanged" xml:space="preserve">
-    <value>Nästa larmnummer höjdes inte eftersom mönstret ändrades i samma sparning. Höj det igen för det nya mönstret.</value>
+    <value>Nästa larmnummer höjdes inte eftersom mönstret eller numreringsårets början ändrades i samma sparning. Höj det igen för det nya löpnumret.</value>
+  </data>
+  <data name="CallNumberYearStart" xml:space="preserve">
+    <value>Numreringsåret börjar</value>
+  </data>
+  <data name="CallNumberYearStartDay" xml:space="preserve">
+    <value>Dag i månaden</value>
+  </data>
+  <data name="CallNumberYearLabelEndYear" xml:space="preserve">
+    <value>Namnges efter året det slutar</value>
+  </data>
+  <data name="CallNumberYearLabelStartYear" xml:space="preserve">
+    <value>Namnges efter året det börjar</value>
+  </data>
+  <data name="CallNumberYearStartHelp" xml:space="preserve">
+    <value>För larm som numreras efter ett räkenskapsår väljer du dagen det börjar. Ett årligt mönster börjar om på 1 den dagen, och {YYYY} och {YY} skriver räkenskapsårets namn. De flesta räkenskapsår namnges efter året de slutar, så ett som börjar den 1 november 2026 är 2027. Den 1 januari är kalenderåret. Mönster med {MM} eller {DD} följer alltid kalendern.</value>
+  </data>
+  <data name="CallNumberResetsYearlyOn" xml:space="preserve">
+    <value>Börjar om på 1 varje år den {0}.</value>
+  </data>
+  <data name="CallNumberYearStartInvalid" xml:space="preserve">
+    <value>Larmnumreringen sparades inte. Numreringsåret måste börja på en dag som finns varje år, så den 29 februari kan inte användas.</value>
+  </data>
+  <data name="DocumentNumberingHeader" xml:space="preserve">
+    <value>Dokumentnumrering</value>
+  </data>
+  <data name="DocumentNumberingIntro" xml:space="preserve">
+    <value>Hur Resgrid numrerar arbetsorder, fakturor, anbud och dagliga tidrapporter. Lämna ett mönster tomt för att behålla de inbyggda numren. Att ändra ett mönster numrerar aldrig om dokument som redan har ett nummer, och ett nytt mönster fortsätter efter varje nummer det skulle upprepa.</value>
+  </data>
+  <data name="DocumentNumberingRecordsLink" xml:space="preserve">
+    <value>Journalnumrering</value>
+  </data>
+  <data name="DocumentNumberingYearStartHelp" xml:space="preserve">
+    <value>För dokument som numreras efter ett räkenskapsår väljer du dagen det börjar. Arbetsordernummer, och mönster med år, börjar om på 1 den dagen, och {YYYY} och {YY} skriver räkenskapsårets namn. De flesta räkenskapsår namnges efter året de slutar, så ett som börjar den 1 november 2026 är 2027. Den 1 januari är kalenderåret. Larm- och journalnummer har en egen årsstart.</value>
+  </data>
+  <data name="DocumentNumberType" xml:space="preserve">
+    <value>Dokument</value>
+  </data>
+  <data name="DocumentNumberBuiltIn" xml:space="preserve">
+    <value>Inbyggt, t.ex.</value>
+  </data>
+  <data name="DocumentNumberPatternHelp" xml:space="preserve">
+    <value>Fast text (bokstäver, siffror, - _ . /) runt {YYYY} eller {YY}, {MM}, {DD} och {SEQ}, som måste förekomma en gång. Ett mönster med år börjar om på 1 varje numreringsår; med {MM} eller {DD} varje månad eller dag. Ett nummer med bara siffror visas med # framför, som faktura-, anbuds- och tidrapportnummer alltid har gjort.</value>
+  </data>
+  <data name="DocumentNumberingSaved" xml:space="preserve">
+    <value>Dokumentnumreringen sparades.</value>
+  </data>
+  <data name="DocumentNumberingPartlySaved" xml:space="preserve">
+    <value>Resten av dokumentnumreringen sparades.</value>
+  </data>
+  <data name="DocumentNumberingYearStartInvalid" xml:space="preserve">
+    <value>Dokumentnumreringen sparades inte. Numreringsåret måste börja på en dag som finns varje år, så den 29 februari kan inte användas.</value>
+  </data>
+  <data name="DocumentNumberingPatternsRejected" xml:space="preserve">
+    <value>Dessa mönster sparades inte eftersom de är ogiltiga eller kan skriva ett nummer längre än 50 tecken; dokumenten behöll sin tidigare numrering:</value>
+  </data>
+  <data name="DocumentNumberingBelowCurrent" xml:space="preserve">
+    <value>Ett nästa nummer kan bara höjas. Dessa lämnades oförändrade eftersom det angivna numret var lägre än det de utfärdar härnäst:</value>
+  </data>
+  <data name="DocumentNumberingNotApplied" xml:space="preserve">
+    <value>Mönstret eller numreringsårets början ändrades i samma sparning, så de angivna nästa numren tillämpades inte. Höj dem igen för den nya sekvensen.</value>
+  </data>
+  <data name="DocumentNumberKindWorkOrder" xml:space="preserve">
+    <value>Arbetsorder</value>
+  </data>
+  <data name="DocumentNumberKindInvoice" xml:space="preserve">
+    <value>Fakturor</value>
+  </data>
+  <data name="DocumentNumberKindBid" xml:space="preserve">
+    <value>Anbud</value>
+  </data>
+  <data name="DocumentNumberKindTimeReport" xml:space="preserve">
+    <value>Dagliga tidrapporter</value>
+  </data>
+  <data name="DocumentNumberPatternColumn" xml:space="preserve">
+    <value>Nummermönster</value>
+  </data>
+  <data name="DocumentNumberNextColumn" xml:space="preserve">
+    <value>Nästa nummer</value>
+  </data>
+  <data name="DocumentNumberRaiseColumn" xml:space="preserve">
+    <value>Höj nästa till</value>
   </data>
   <data name="CallSettingsSaved" xml:space="preserve">
     <value>Larminställningarna sparades.</value>
+  </data>
+  <data name="NewCallFieldCannotBeRequired" xml:space="preserve">
+    <value>En pluskod används bara för att hitta platsen och sparas inte på ärendet, så den kan inte vara obligatorisk. Gör GPS-koordinaterna obligatoriska i stället.</value>
   </data>
 </root>

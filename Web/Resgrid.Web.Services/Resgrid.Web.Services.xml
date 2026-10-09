@@ -663,7 +663,8 @@
             </summary>
             <remarks>
             An empty rule list means the stock form -- every field visible, nothing extra required.
-            Clients apply this for usability; the same policy is enforced on SaveCall regardless.
+            Clients apply this to their new and edit call forms for usability; the same policy is enforced on SaveCall
+            and EditCall regardless.
             </remarks>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.EditCall(Resgrid.Web.Services.Models.v4.Calls.EditCallInput,System.Threading.CancellationToken)">
@@ -9694,9 +9695,38 @@
             Reference Id
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.IndoorMapZoneId">
+            <summary>
+            Optional. Indoor map zone the incident is in. Blank keeps the stored zone; leave it out (null) when the client
+            has no indoor location picker, which also leaves the department's indoor location requirement unenforced.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.IndoorMapFloorId">
+            <summary>
+            Optional. Floor of <see cref="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.IndoorMapZoneId"/>.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.ProtocolIds">
+            <summary>
+            Optional. Ids of the department's dispatch protocols to add to the call; protocols already on it are kept. Leave
+            it out (null) when the client has no protocol picker, which also leaves the protocols requirement unenforced.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.LinkedCallId">
+            <summary>
+            Optional. Id of another call in the department to link this call to; existing links are kept. Leave it out
+            (null) when the client has no way to pick one, which also leaves the linked-call requirement unenforced.
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.DispatchOn">
             <summary>
             Time in the future, in the departments local time, to dispatch the call
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.DispatchOnUtc">
+            <summary>
+            Optional. The same as DispatchOn but in UTC (ISO 8601, e.g. "2026-10-07T14:30:00Z"), for clients that do not know
+            the department's time zone. When both are sent this one is used.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.CallFormData">
@@ -9878,10 +9908,13 @@
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallFieldRuleData.Visible">
-            <summary>False hides the field from the call form entirely.</summary>
+            <summary>False hides the field from the new and edit call forms entirely.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallFieldRuleData.Required">
-            <summary>True blocks call creation until the field has a value.</summary>
+            <summary>
+            True blocks creating the call, or saving an edit to it, until the field has a value. Never true for a hidden
+            field or for pluscode.
+            </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Calls.NewCallInput">
             <summary>
@@ -9991,6 +10024,19 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.ReferenceId">
             <summary>
             Reference Id
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.LinkedCallId">
+            <summary>
+            Optional. Id of an existing call in the department to link this call to (shown as a linked call on both). Leave it
+            out (null) when the client has no way to pick one: the department's linked-call requirement is then not enforced;
+            sent blank, it is.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.ProtocolIds">
+            <summary>
+            Optional. Ids of the department's dispatch protocols to attach to the call. Leave it out (null) when the client
+            has no protocol picker: the department's protocols requirement is then not enforced; sent empty, it is.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.DispatchOn">
@@ -12816,6 +12862,9 @@
         <member name="P:Resgrid.Web.Services.Models.v4.ContractorBilling.SaveComplianceDocumentInput.FileBase64">
             <summary>Base64 file bytes; omit to keep the stored file.</summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContractorBilling.BidData.DisplayNumber">
+            <summary>The bid number as issued: the department's numbering pattern, or BidNumber when it keeps the built-in numbers.</summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.ContractorBilling.BidData.Status">
             <summary>BidStatuses value.</summary>
         </member>
@@ -12830,6 +12879,9 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.ContractorBilling.ContractorChargeLineData.Kind">
             <summary>ContractorChargeKinds value.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContractorBilling.DeploymentInvoiceData.DisplayNumber">
+            <summary>The invoice number as issued: the department's numbering pattern, or InvoiceNumber when it keeps the built-in numbers.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.CostRecovery.CalOesMars.CalOesMarsAccessData.Enabled">
             <summary>CostRecovery.CalOesMars entitlement (paid add-on + flag).</summary>
@@ -13126,6 +13178,9 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Deployments.DeploymentAttachmentData.AttachmentType">
             <summary>DeploymentAttachmentTypes value.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Deployments.TimeReportData.DisplayNumber">
+            <summary>The report number as issued: the department's numbering pattern, or ReportNumber when it keeps the built-in numbers.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Deployments.TimeReportData.Scope">
             <summary>DeploymentTimeReportScopes value: 0 deployment-wide DTR, 1 crew time report, 2 individual.</summary>
@@ -13961,6 +14016,9 @@
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Invoicing.InvoiceResultData">
             <summary>An invoice header. Money is decimal; the status is the InvoiceStatus value (Draft 0, Sent 1, PartiallyPaid 2, Paid 3, Overdue 4, Void 5).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Invoicing.InvoiceResultData.DisplayNumber">
+            <summary>The invoice number as issued: the department's numbering pattern, or InvoiceNumber when it keeps the built-in numbers.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Invoicing.InvoiceResultData.ContactName">
             <summary>The contact's display name; REDACTED on a protected row.</summary>
@@ -18316,7 +18374,9 @@
             <summary>
             The open call the unit is working, or null: the call its latest status points at unless that status cleared it,
             otherwise its one open dispatch. A status sent without a destination is linked to this call by the server, so a
-            dispatcher setting the unit's next status starts on it.
+            dispatcher setting the unit's next status starts on it. Null means no single working call can be told, not that the
+            unit is unassigned: it is also null when the unit is dispatched to more than one open call and its latest status
+            points at none of them.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Units.UnitsInfoResultData.CurrentDestinationName">

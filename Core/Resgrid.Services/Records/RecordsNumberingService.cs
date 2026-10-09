@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
@@ -37,6 +38,16 @@ namespace Resgrid.Services.Records
 		public static bool IsNumberedType(string definitionKey)
 		{
 			return definitionKey != null && NumberedTypes().Any(t => string.Equals(t.Key, definitionKey, StringComparison.Ordinal));
+		}
+
+		/// <summary>
+		/// The numbering year a record that happened at <paramref name="utcDate"/> is numbered in: the department-local date, read
+		/// against the department's year start (the calendar year unless it set a fiscal year). No time zone reads the date as UTC.
+		/// </summary>
+		public static int NumberingYear(RecordsNumberingConfig config, DateTime utcDate, string timeZone)
+		{
+			var local = string.IsNullOrWhiteSpace(timeZone) ? utcDate : DateTimeHelpers.GetLocalDateTime(utcDate, timeZone);
+			return (config ?? new RecordsNumberingConfig()).YearStart().YearOf(local);
 		}
 
 		public async Task<List<RecordNumberSequenceStatus>> GetSequencesAsync(int departmentId, RecordsNumberingConfig config, int year)
@@ -89,6 +100,23 @@ namespace Resgrid.Services.Records
 			}
 
 			var config = await _settings.GetRecordsNumberingConfigAsync(departmentId, true) ?? new RecordsNumberingConfig();
+			var savedYearStart = config.YearStart();
+			var month = update.YearStartMonth ?? savedYearStart.Month;
+			var day = update.YearStartDay ?? savedYearStart.Day;
+			if (!NumberingYearStart.IsValid(month, day))
+			{
+				result.YearStartRejected = true;
+				return result;
+			}
+
+			config.YearStartMonth = month;
+			config.YearStartDay = day;
+			config.YearLabel = (int)new NumberingYearStart(month, day, (NumberingYearLabel)(update.YearLabel ?? (int)savedYearStart.Label)).Label;
+			var yearStart = config.YearStart();
+			// The next numbers on the screen were the sequences of the year the old start named; a new start can name another.
+			var yearStartChanged = yearStart.Month != savedYearStart.Month || yearStart.Day != savedYearStart.Day
+				|| (!yearStart.IsCalendarYear && yearStart.Label != savedYearStart.Label);
+
 			config.Pattern = pattern;
 			config.SequenceWidth = RecordNumberFormat.EffectiveWidth(update.SequenceWidth);
 			config.NumberAssignment = (int)RmsNumberAssignment.OnFinalize;
@@ -111,7 +139,11 @@ namespace Resgrid.Services.Records
 			}
 
 			var requests = (update.NextNumbers ?? new List<RecordNextNumberRequest>()).Where(r => r != null && !string.IsNullOrEmpty(r.ScopeKey)).ToList();
-			if (requests.Count > 0)
+			if (requests.Count > 0 && yearStartChanged)
+			{
+				result.NotApplied += requests.Count;
+			}
+			else if (requests.Count > 0)
 			{
 				// Checked against the pattern being saved: a number typed against the old pattern's sequence is not carried to a new one.
 				var sequences = await GetSequencesAsync(departmentId, config, update.Year);

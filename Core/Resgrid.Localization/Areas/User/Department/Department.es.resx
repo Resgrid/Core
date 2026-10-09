@@ -985,7 +985,7 @@
     <value>Campos del formulario de nueva llamada</value>
   </data>
   <data name="NewCallFieldsHelp" xml:space="preserve">
-    <value>Elija qué campos integrados aparecen en el formulario de nueva llamada y cuáles deben completarse antes de crear la llamada y enviarla al terreno. Nombre, naturaleza, prioridad y tipo se muestran siempre y son siempre obligatorios.</value>
+    <value>Elija qué campos integrados aparecen en el formulario de nueva llamada y cuáles deben completarse antes de crear la llamada y enviarla al terreno. Nombre, naturaleza, prioridad y tipo se muestran siempre y son siempre obligatorios. Las mismas reglas se aplican al editar una llamada o al añadir una llamada archivada.</value>
   </data>
   <data name="NewCallFieldsFieldColumn" xml:space="preserve">
     <value>Campo</value>
@@ -1018,7 +1018,7 @@
     <value>Nota</value>
   </data>
   <data name="NewCallField_contactName" xml:space="preserve">
-    <value>Contacto principal</value>
+    <value>Nombre del informante</value>
   </data>
   <data name="NewCallField_contactInfo" xml:space="preserve">
     <value>Datos de contacto del informante</value>
@@ -1408,9 +1408,93 @@
     <value>El próximo número de llamada no se subió: solo se puede subir por encima del número que ya recibe la próxima llamada ({0}).</value>
   </data>
   <data name="CallNumberNextPatternChanged" xml:space="preserve">
-    <value>El próximo número de llamada no se subió porque el patrón cambió en el mismo guardado. Súbalo de nuevo para el nuevo patrón.</value>
+    <value>El próximo número de llamada no se subió porque el patrón o el inicio del año de numeración cambió en el mismo guardado. Súbalo de nuevo para la nueva secuencia.</value>
+  </data>
+  <data name="CallNumberYearStart" xml:space="preserve">
+    <value>El año de numeración empieza el</value>
+  </data>
+  <data name="CallNumberYearStartDay" xml:space="preserve">
+    <value>Día del mes</value>
+  </data>
+  <data name="CallNumberYearLabelEndYear" xml:space="preserve">
+    <value>Se nombra por el año en que termina</value>
+  </data>
+  <data name="CallNumberYearLabelStartYear" xml:space="preserve">
+    <value>Se nombra por el año en que empieza</value>
+  </data>
+  <data name="CallNumberYearStartHelp" xml:space="preserve">
+    <value>Para llamadas numeradas por un año fiscal, elija el día en que empieza. Un patrón anual vuelve a empezar en 1 ese día, y {YYYY} y {YY} escriben el nombre del año fiscal. La mayoría de los años fiscales se nombran por el año en que terminan, así que uno que empieza el 1 de noviembre de 2026 es 2027. El 1 de enero es el año natural. Los patrones con {MM} o {DD} siempre siguen el calendario.</value>
+  </data>
+  <data name="CallNumberResetsYearlyOn" xml:space="preserve">
+    <value>Vuelve a empezar en 1 cada año el {0}.</value>
+  </data>
+  <data name="CallNumberYearStartInvalid" xml:space="preserve">
+    <value>La numeración de llamadas no se guardó. El año de numeración tiene que empezar en un día que exista todos los años, así que no se puede usar el 29 de febrero.</value>
+  </data>
+  <data name="DocumentNumberingHeader" xml:space="preserve">
+    <value>Numeración de documentos</value>
+  </data>
+  <data name="DocumentNumberingIntro" xml:space="preserve">
+    <value>Cómo numera Resgrid las órdenes de trabajo, facturas, ofertas y partes diarios de horas. Deje un patrón en blanco para mantener los números integrados. Cambiar un patrón nunca renumera los documentos que ya tienen número, y un patrón nuevo continúa después de cualquier número que repetiría.</value>
+  </data>
+  <data name="DocumentNumberingRecordsLink" xml:space="preserve">
+    <value>Numeración de registros</value>
+  </data>
+  <data name="DocumentNumberingYearStartHelp" xml:space="preserve">
+    <value>Para documentos numerados por un año fiscal, elija el día en que empieza. Los números de órdenes de trabajo y los patrones con año vuelven a empezar en 1 ese día, y {YYYY} y {YY} escriben el nombre del año fiscal. La mayoría de los años fiscales se nombran por el año en que terminan, así que uno que empieza el 1 de noviembre de 2026 es 2027. El 1 de enero es el año natural. Los números de llamadas y de registros tienen su propio inicio de año.</value>
+  </data>
+  <data name="DocumentNumberType" xml:space="preserve">
+    <value>Documento</value>
+  </data>
+  <data name="DocumentNumberBuiltIn" xml:space="preserve">
+    <value>Integrado, p. ej.</value>
+  </data>
+  <data name="DocumentNumberPatternHelp" xml:space="preserve">
+    <value>Texto fijo (letras, dígitos, - _ . /) alrededor de {YYYY} o {YY}, {MM}, {DD} y {SEQ}, que debe aparecer una vez. Un patrón con año vuelve a empezar en 1 cada año de numeración; con {MM} o {DD}, cada mes o día. Un número formado solo por dígitos se muestra con # delante, como siempre los números de factura, oferta y parte de horas.</value>
+  </data>
+  <data name="DocumentNumberingSaved" xml:space="preserve">
+    <value>Se guardó la numeración de documentos.</value>
+  </data>
+  <data name="DocumentNumberingPartlySaved" xml:space="preserve">
+    <value>Se guardó el resto de la numeración de documentos.</value>
+  </data>
+  <data name="DocumentNumberingYearStartInvalid" xml:space="preserve">
+    <value>La numeración de documentos no se guardó. El año de numeración tiene que empezar en un día que exista todos los años, así que no se puede usar el 29 de febrero.</value>
+  </data>
+  <data name="DocumentNumberingPatternsRejected" xml:space="preserve">
+    <value>Estos patrones no se guardaron porque no son válidos o podrían escribir un número de más de 50 caracteres; esos documentos conservaron su numeración:</value>
+  </data>
+  <data name="DocumentNumberingBelowCurrent" xml:space="preserve">
+    <value>Un próximo número solo se puede subir. Estos no se cambiaron porque el número introducido era inferior al que emitirán a continuación:</value>
+  </data>
+  <data name="DocumentNumberingNotApplied" xml:space="preserve">
+    <value>El patrón o el inicio del año de numeración cambió en el mismo guardado, por lo que no se aplicaron los próximos números introducidos. Súbalos de nuevo para la nueva secuencia.</value>
+  </data>
+  <data name="DocumentNumberKindWorkOrder" xml:space="preserve">
+    <value>Órdenes de trabajo</value>
+  </data>
+  <data name="DocumentNumberKindInvoice" xml:space="preserve">
+    <value>Facturas</value>
+  </data>
+  <data name="DocumentNumberKindBid" xml:space="preserve">
+    <value>Ofertas</value>
+  </data>
+  <data name="DocumentNumberKindTimeReport" xml:space="preserve">
+    <value>Partes diarios de horas</value>
+  </data>
+  <data name="DocumentNumberPatternColumn" xml:space="preserve">
+    <value>Patrón de numeración</value>
+  </data>
+  <data name="DocumentNumberNextColumn" xml:space="preserve">
+    <value>Próximo número</value>
+  </data>
+  <data name="DocumentNumberRaiseColumn" xml:space="preserve">
+    <value>Aumentar el próximo a</value>
   </data>
   <data name="CallSettingsSaved" xml:space="preserve">
     <value>La configuración de llamadas se guardó.</value>
+  </data>
+  <data name="NewCallFieldCannotBeRequired" xml:space="preserve">
+    <value>Un Plus Code solo sirve para encontrar la ubicación y no se guarda en la llamada, por lo que no puede ser obligatorio. Haga obligatorias las coordenadas GPS.</value>
   </data>
 </root>

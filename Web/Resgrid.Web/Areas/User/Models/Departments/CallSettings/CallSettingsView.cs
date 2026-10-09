@@ -32,6 +32,10 @@ namespace Resgrid.Web.Areas.User.Models.Departments.CallSettings
 		public int? CallNumberNextSequence { get; set; }
 		/// <summary>Department-local now, for the pattern preview.</summary>
 		public System.DateTime CallNumberPreviewDate { get; set; }
+		/// <summary>The day the numbering year starts (January 1 unless the department numbers calls by a fiscal year) and which year names it.</summary>
+		public int CallNumberYearStartMonth { get; set; }
+		public int CallNumberYearStartDay { get; set; }
+		public int CallNumberYearLabel { get; set; }
 		public string ErrorMessage { get; set; }
 	}
 }

@@ -3,8 +3,8 @@
 @{
     var departmentTime = DepartmentTime.From(ViewData);
     var b = Model.Bid;
-    ViewBag.Title = "Resgrid | " + localizer["BidNumber"] + " " + b.BidNumber;
-    ViewData["Title"] = localizer["BidNumber"].Value + " " + b.BidNumber + " — " + b.Title;
+    ViewBag.Title = "Resgrid | " + localizer["BidNumber"] + " " + b.NumberText();
+    ViewData["Title"] = localizer["BidNumber"].Value + " " + b.NumberText() + " — " + b.Title;
     ViewData["RootController"] = "Bids";
     ViewData["RootTitle"] = localizer["Bids"].Value;
     var status = (Resgrid.Model.Invoicing.BidStatuses)b.Status;

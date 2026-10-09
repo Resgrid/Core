@@ -111,12 +111,42 @@
                                 <span class="help-block m-b-none">@localizer["CallNumberSequenceWidthHelp"]</span>
                             </div>
                         </div>
+                        @{
+                            var callYearStart = new NumberingYearStart(Model.CallNumberYearStartMonth, Model.CallNumberYearStartDay, (NumberingYearLabel)Model.CallNumberYearLabel);
+                            var callYearMonths = System.Globalization.CultureInfo.CurrentUICulture.DateTimeFormat.MonthNames.Take(12)
+                                .Select((name, i) => new SelectListItem(name, (i + 1).ToString(System.Globalization.CultureInfo.InvariantCulture), i + 1 == callYearStart.Month)).ToList();
+                        }
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="CallNumberYearStartMonth">@localizer["CallNumberYearStart"]</label>
+                            <div class="col-sm-10">
+                                <div class="numbering-year-start">
+                                    <select class="form-control" asp-for="CallNumberYearStartMonth" asp-items="callYearMonths"></select>
+                                    <input type="number" class="form-control numbering-year-day" min="1" max="31" asp-for="CallNumberYearStartDay" aria-label="@localizer["CallNumberYearStartDay"]" />
+                                    <select class="form-control" asp-for="CallNumberYearLabel" aria-label="@localizer["CallNumberYearStart"]">
+                                        <option value="@((int)NumberingYearLabel.EndYear)">@localizer["CallNumberYearLabelEndYear"]</option>
+                                        <option value="@((int)NumberingYearLabel.StartYear)">@localizer["CallNumberYearLabelStartYear"]</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <span class="help-block m-b-none">@localizer["CallNumberYearStartHelp"]</span>
+                            </div>
+                        </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["CallNumberNext"]</label>
                             <div class="col-sm-10">
                                 <p class="form-control-static">
                                     <code>@Model.CallNumberNextNumber</code>
-                                    <span class="text-muted">@localizer["CallNumberResets" + Model.CallNumberResetPeriod]</span>
+                                    @if (Model.CallNumberResetPeriod == CallNumberResetPeriod.Yearly && !callYearStart.IsCalendarYear)
+                                    {
+                                        <span class="text-muted">@localizer["CallNumberResetsYearlyOn", new DateTime(2001, callYearStart.Month, callYearStart.Day).ToString("M", System.Globalization.CultureInfo.CurrentUICulture)]</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">@localizer["CallNumberResets" + Model.CallNumberResetPeriod]</span>
+                                    }
                                 </p>
                             </div>
                         </div>
@@ -260,22 +290,37 @@
     <script type="text/javascript">
         (function () {
             var pattern = $('#CallNumberPattern'), width = $('#CallNumberSequenceWidth'), preview = $('#call-number-preview');
+            var startMonth = $('#CallNumberYearStartMonth'), startDay = $('#CallNumberYearStartDay'), yearLabel = $('#CallNumberYearLabel');
             var year = '@Model.CallNumberPreviewDate.ToString("yyyy", System.Globalization.CultureInfo.InvariantCulture)';
             var month = '@Model.CallNumberPreviewDate.ToString("MM", System.Globalization.CultureInfo.InvariantCulture)';
             var day = '@Model.CallNumberPreviewDate.ToString("dd", System.Globalization.CultureInfo.InvariantCulture)';
+            // Mirrors NumberingYearStart.YearOf: the year naming today's numbering year. Only yearly patterns use it.
+            function numberingYear() {
+                var m = parseInt(startMonth.val(), 10) || 1, d = parseInt(startDay.val(), 10) || 1;
+                var y = parseInt(year, 10), pm = parseInt(month, 10), pd = parseInt(day, 10);
+                var startYear = pm > m || (pm === m && pd >= d) ? y : y - 1;
+                return (m === 1 && d === 1) || yearLabel.val() === '@((int)NumberingYearLabel.StartYear)' ? startYear : startYear + 1;
+            }
             // A sample only: the server validates the pattern and shows the real next number below it.
             function render() {
                 var digits = Math.max(@CallNumberFormat.MinWidth, Math.min(@CallNumberFormat.MaxWidth, parseInt(width.val(), 10) || @CallNumberFormat.DefaultWidth));
                 var sequence = '153';
                 while (sequence.length < digits)
                     sequence = '0' + sequence;
-                preview.text((pattern.val() || '')
-                    .replace(/\{YYYY\}/gi, year).replace(/\{YY\}/gi, year.slice(-2))
+                var text = pattern.val() || '';
+                var shown = /\{(MM|DD)\}/i.test(text) ? year : String(numberingYear());
+                preview.text(text
+                    .replace(/\{YYYY\}/gi, shown).replace(/\{YY\}/gi, shown.slice(-2))
                     .replace(/\{MM\}/gi, month).replace(/\{DD\}/gi, day)
                     .replace(/\{SEQ\}/gi, sequence));
+                // Which year names a fiscal year only matters when it does not start on January 1.
+                yearLabel.toggle(!(startMonth.val() === '1' && (parseInt(startDay.val(), 10) || 1) === 1));
             }
             pattern.on('input', render);
             width.on('input', render);
+            startMonth.on('change', render);
+            startDay.on('input', render);
+            yearLabel.on('change', render);
             render();
 
             $('#call-settings-form').on('submit', function (e) {

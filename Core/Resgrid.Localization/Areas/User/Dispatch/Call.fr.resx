@@ -1065,4 +1065,7 @@
   <data name="SendNotificationHelp" xml:space="preserve">
     <value>Informe toutes les personnes engagées sur l'appel, ses unités et l'équipe de commandement que l'appel est clôturé. Les notes de clôture ne sont pas incluses.</value>
   </data>
+  <data name="NewCallFieldRequired" xml:space="preserve">
+    <value>{0} est obligatoire dans ce service.</value>
+  </data>
 </root>

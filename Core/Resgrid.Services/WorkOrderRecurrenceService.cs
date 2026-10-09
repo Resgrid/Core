@@ -325,7 +325,7 @@ namespace Resgrid.Services
                             var order = await _store.RequestAsync(departmentId, request);
                             if (order == null)
                             {
-                                order = New<WorkOrder>(owner); order.RequestId = request; order.NumberYear = Now.Year; order.NumberSequence = await _store.NextNumberAsync(departmentId, order.NumberYear);
+                                order = New<WorkOrder>(owner); order.RequestId = request; await NumberAsync(order, departmentId);
                                 order.CurrencyCode = await DepartmentCurrencyAsync(departmentId);
                                 order.SourceType = 2; order.Type = (int)WorkOrderType.Preventive; order.Priority = row.Priority; order.TargetUnitId = row.TargetUnitId; order.TargetGroupId = row.TargetGroupId; order.InventoryAssetId = row.InventoryAssetId;
                                 order.WorkOrderRecurrenceId = row.Id; order.RecurrenceVersionId = row.CurrentVersionId; order.RecurrenceCycle = row.Cycle + 1;

@@ -53,10 +53,24 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 		/// <summary>The department uses run cards: the page offers the run card's recommendation for what the call still needs.</summary>
 		public bool RunCardsEnabled { get; set; }
 
+		/// <summary>
+		/// The department's new-call field policy, which edits follow too: hidden fields are not rendered (and keep their
+		/// stored value), required ones are marked. Never null.
+		/// </summary>
+		public NewCallFieldPolicy FieldPolicy { get; set; }
+
+		/// <summary>Name of the call's indoor map zone, so the picker opens showing it.</summary>
+		public string IndoorMapZoneName { get; set; }
+
 		public UpdateCallView()
 		{
 			AdditionalContacts = new List<string>();
 			DestinationPois = new List<SelectListItem>();
+			FieldPolicy = new NewCallFieldPolicy();
 		}
+
+		public bool IsFieldVisible(string key) => FieldPolicy == null || FieldPolicy.IsVisible(key);
+
+		public bool IsFieldRequired(string key) => FieldPolicy != null && FieldPolicy.IsRequired(key);
 	}
 }

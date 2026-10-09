@@ -83,6 +83,27 @@
 							<label class="col-sm-3 control-label">@localizer["SequenceWidth"]</label>
 							<div class="col-sm-2"><input type="number" min="@RecordNumberFormat.MinWidth" max="@RecordNumberFormat.MaxWidth" class="form-control" asp-for="SequenceWidth" /></div>
 						</div>
+						@{
+							var recordYearStart = new NumberingYearStart(Model.NumberingYearStartMonth, Model.NumberingYearStartDay, (Resgrid.Model.NumberingYearLabel)Model.NumberingYearLabel);
+							var recordYearMonths = System.Globalization.CultureInfo.CurrentUICulture.DateTimeFormat.MonthNames.Take(12)
+								.Select((name, i) => new SelectListItem(name, (i + 1).ToString(System.Globalization.CultureInfo.InvariantCulture), i + 1 == recordYearStart.Month)).ToList();
+						}
+						<div class="form-group">
+							<label class="col-sm-3 control-label" for="NumberingYearStartMonth">@localizer["NumberingYearStart"]</label>
+							<div class="col-sm-9">
+								<div class="numbering-year-start">
+									<select class="form-control" asp-for="NumberingYearStartMonth" asp-items="recordYearMonths"></select>
+									<input type="number" class="form-control numbering-year-day" min="1" max="31" asp-for="NumberingYearStartDay" aria-label="@localizer["NumberingYearStartDay"]" />
+									<select class="form-control" asp-for="NumberingYearLabel" aria-label="@localizer["NumberingYearStart"]">
+										<option value="@((int)Resgrid.Model.NumberingYearLabel.EndYear)">@localizer["NumberingYearLabelEndYear"]</option>
+										<option value="@((int)Resgrid.Model.NumberingYearLabel.StartYear)">@localizer["NumberingYearLabelStartYear"]</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-offset-3 col-sm-9"><span class="help-block">@localizer["NumberingYearStartHelp"]</span></div>
+						</div>
 
 						<h5>@localizer["NumberPrefixesHeader"]</h5>
 						<p class="text-muted">@localizer["NumberPrefixesIntro"]</p>
@@ -111,7 +132,15 @@
 							</table>
 						</div>
 
-						<h5>@localizer["NextNumbersHeader", Model.NumberingYear]</h5>
+						@if (recordYearStart.IsCalendarYear)
+						{
+							<h5>@localizer["NextNumbersHeader", Model.NumberingYear]</h5>
+						}
+						else
+						{
+							var periodStart = recordYearStart.StartOfYear(Model.NumberingYear);
+							<h5>@localizer["NextNumbersHeaderPeriod", Model.NumberingYear, periodStart.ToString("d", System.Globalization.CultureInfo.CurrentUICulture), periodStart.AddYears(1).AddDays(-1).ToString("d", System.Globalization.CultureInfo.CurrentUICulture)]</h5>
+						}
 						<p class="text-muted">@localizer["NextNumbersIntro"]</p>
 						<input type="hidden" asp-for="NumberingYear" />
 						<div class="table-responsive">
@@ -133,6 +162,56 @@
 											</td>
 											<td><code>@Model.NextNumbers[i].NextNumber</code></td>
 											<td><input type="number" class="form-control input-sm next-number-input" asp-for="NextNumbers[i].NextSequence" min="@Model.NextNumbers[i].CurrentNextSequence" max="@RecordNumberFormat.MaxSequence" placeholder="@Model.NextNumbers[i].CurrentNextSequence" aria-label="@localizer["NextNumberRaiseTo"] @Model.NextNumbers[i].Label" /></td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+
+						<h5>@localizer["OtherNumbersHeader"]</h5>
+						<p class="text-muted">@localizer["OtherNumbersIntro"]</p>
+						<div class="table-responsive">
+							<table class="table table-condensed">
+								<thead>
+									<tr>
+										<th>@localizer["NumberPrefixType"]</th>
+										<th style="width:28%">@localizer["NumberPattern"]</th>
+										<th style="width:10%">@localizer["SequenceWidth"]</th>
+										<th>@localizer["NextNumberCurrent"]</th>
+										<th style="width:14%">@localizer["NextNumberRaiseTo"]</th>
+									</tr>
+								</thead>
+								<tbody>
+									@for (var i = 0; i < Model.OtherNumbers.Count; i++)
+									{
+										var row = Model.OtherNumbers[i];
+										<tr class="other-number-row" data-legacy-pattern="@row.LegacyPattern" data-legacy-width="@row.LegacyWidth">
+											<td>
+												@Html.HiddenFor(m => m.OtherNumbers[i].Kind)
+												@Html.HiddenFor(m => m.OtherNumbers[i].ScopeKey)
+												@row.Label
+											</td>
+											<td>
+												<input type="text" class="form-control input-sm other-number-pattern" asp-for="OtherNumbers[i].Pattern" maxlength="@CallNumberFormat.MaxPatternLength" placeholder="@row.LegacyPattern" autocomplete="off" spellcheck="false" aria-label="@localizer["NumberPattern"] @row.Label" />
+												<span class="help-block m-b-none small">@localizer["NumberPatternExample"] <code class="other-number-preview"></code></span>
+											</td>
+											<td><input type="number" class="form-control input-sm other-number-width" asp-for="OtherNumbers[i].SequenceWidth" min="@CallNumberFormat.MinWidth" max="@CallNumberFormat.MaxWidth" aria-label="@localizer["SequenceWidth"] @row.Label" /></td>
+											<td>
+												@if (row.Custom)
+												{
+													<code>@row.NextNumber</code>
+												}
+												else
+												{
+													<span class="text-muted">@localizer["OtherNumberBuiltIn"]</span> <code>@row.Example</code>
+												}
+											</td>
+											<td>
+												@if (row.Custom)
+												{
+													<input type="number" class="form-control input-sm next-number-input" asp-for="OtherNumbers[i].RaiseTo" min="@row.CurrentNextSequence" max="@CallNumberFormat.MaxSequence" placeholder="@row.CurrentNextSequence" aria-label="@localizer["NextNumberRaiseTo"] @row.Label" />
+												}
+											</td>
 										</tr>
 									}
 								</tbody>
@@ -321,18 +400,43 @@
 		(function () {
 			var pattern = $('#NumberPattern'), width = $('#SequenceWidth'), preview = $('#number-pattern-preview');
 			var samplePrefix = $('.number-prefix-input[data-preview-prefix="true"]');
-			var year = '@Model.NumberingYear';
+			var startMonth = $('#NumberingYearStartMonth'), startDay = $('#NumberingYearStartDay'), yearLabel = $('#NumberingYearLabel');
+			var today = { y: @Model.NumberingPreviewDate.Year, m: @Model.NumberingPreviewDate.Month, d: @Model.NumberingPreviewDate.Day };
+			// Mirrors NumberingYearStart.YearOf: the year naming today's numbering year under the year start being edited.
+			function numberingYear() {
+				var m = parseInt(startMonth.val(), 10) || 1, d = parseInt(startDay.val(), 10) || 1;
+				var startYear = today.m > m || (today.m === m && today.d >= d) ? today.y : today.y - 1;
+				return (m === 1 && d === 1) || yearLabel.val() === '@((int)Resgrid.Model.NumberingYearLabel.StartYear)' ? startYear : startYear + 1;
+			}
 			// A sample only: the server validates the pattern and renders the real numbers listed below it.
 			function render() {
 				var digits = Math.max(@RecordNumberFormat.MinWidth, Math.min(@RecordNumberFormat.MaxWidth, parseInt(width.val(), 10) || @RecordNumberFormat.DefaultWidth));
 				var prefix = ($.trim(samplePrefix.val() || '') || samplePrefix.attr('placeholder') || 'INC').toUpperCase();
+				var year = String(numberingYear());
 				preview.text((pattern.val() || '')
 					.replace(/\{PREFIX\}/gi, prefix).replace(/\{YYYY\}/gi, year).replace(/\{YY\}/gi, year.slice(-2))
 					.replace(/\{GROUP\}/gi, 'G12').replace(/\{SEQ\}/gi, ('00000000' + '153').slice(-digits)));
+				// Which year names a fiscal year only matters when it does not start on January 1.
+				yearLabel.toggle(!(startMonth.val() === '1' && (parseInt(startDay.val(), 10) || 1) === 1));
+				// The other Records numbers, in their own pattern or the built-in one.
+				$('.other-number-row').each(function () {
+					var row = $(this), input = row.find('.other-number-pattern');
+					var text = $.trim(input.val()) || String(row.data('legacy-pattern'));
+					var otherDigits = Math.max(@CallNumberFormat.MinWidth, Math.min(@CallNumberFormat.MaxWidth, ($.trim(input.val()) ? parseInt(row.find('.other-number-width').val(), 10) : parseInt(row.data('legacy-width'), 10)) || @CallNumberFormat.DefaultWidth));
+					var otherYear = /\{(MM|DD)\}/i.test(text) ? String(today.y) : year;
+					row.find('.other-number-preview').text(text
+						.replace(/\{YYYY\}/gi, otherYear).replace(/\{YY\}/gi, otherYear.slice(-2))
+						.replace(/\{MM\}/gi, ('0' + today.m).slice(-2)).replace(/\{DD\}/gi, ('0' + today.d).slice(-2))
+						.replace(/\{SEQ\}/gi, ('00000000' + '153').slice(-otherDigits)));
+				});
 			}
 			pattern.on('input', render);
 			width.on('input', render);
 			samplePrefix.on('input', render);
+			$('.other-number-pattern, .other-number-width').on('input', render);
+			startMonth.on('change', render);
+			startDay.on('input', render);
+			yearLabel.on('change', render);
 			render();
 
 			$('#records-settings-form').on('submit', function (e) {

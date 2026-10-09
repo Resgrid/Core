@@ -104,7 +104,9 @@ namespace Resgrid.Web.Services.Models.v4.Units
 		/// <summary>
 		/// The open call the unit is working, or null: the call its latest status points at unless that status cleared it,
 		/// otherwise its one open dispatch. A status sent without a destination is linked to this call by the server, so a
-		/// dispatcher setting the unit's next status starts on it.
+		/// dispatcher setting the unit's next status starts on it. Null means no single working call can be told, not that the
+		/// unit is unassigned: it is also null when the unit is dispatched to more than one open call and its latest status
+		/// points at none of them.
 		/// </summary>
 		public string ActiveCallId { get; set; }
 

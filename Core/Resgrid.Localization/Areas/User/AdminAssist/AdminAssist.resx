@@ -1198,7 +1198,7 @@
     <value>The department calendar for meetings, events and training nights.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.call-settings">
-    <value>The mailbox and format used to import calls from CAD or paging email, and the call number format and next number.</value>
+    <value>The mailbox and format used to import calls from CAD or paging email, and the call number format, next number and numbering year start.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.call-templates">
     <value>Reusable call text and note templates that speed up call entry.</value>
@@ -1522,7 +1522,7 @@
     <value>Records that are due, awaiting review or ready to submit.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.records-settings">
-    <value>Numbering, retention, search and visibility rules for records.</value>
+    <value>Numbering (including records request and prevention numbers and the numbering year start), retention, search and visibility rules for records.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.reports">
     <value>Department reports on calls, personnel and activity.</value>
@@ -2209,7 +2209,7 @@
     <value>Use separate station/group sequences. This changes numbering, not record visibility.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.ResetYearly">
-    <value>Restart record sequences each calendar year in the department time zone.</value>
+    <value>Restart record sequences each numbering year (the calendar year unless a fiscal year start is set) in the department time zone.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.RecordsNumberingConfig.SequenceWidth">
     <value>Zero-padded sequence width for definitions using department defaults. The Records editor validates the supported width.</value>
@@ -6731,5 +6731,101 @@
   </data>
   <data xml:space="preserve" name="FeatureValue.api-keys">
     <value>Integrations keep working when people leave, can only do what their key allows and can be revoked at once.</value>
+  </data>
+  <data name="Field.CallNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Call Numbering Config / Year Start Month</value>
+  </data>
+  <data name="FieldHelp.CallNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Month the numbering year starts, for calls numbered by a fiscal year. A yearly pattern starts again at 1 on that month and day, and YYYY and YY write the fiscal year's name; patterns with MM or DD follow the calendar. Unset is January, the calendar year.</value>
+  </data>
+  <data name="Field.CallNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Call Numbering Config / Year Start Day</value>
+  </data>
+  <data name="FieldHelp.CallNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Day of the month the numbering year starts, 1 to the month's last day; February 29 is not allowed. Unset is the 1st.</value>
+  </data>
+  <data name="Field.CallNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Call Numbering Config / Year Label</value>
+  </data>
+  <data name="FieldHelp.CallNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Which year names a numbering year that does not start on January 1: the year it ends in (the usual fiscal-year convention, so a year starting November 1, 2026 is 2027) or the year it starts in.</value>
+  </data>
+  <data name="Field.RecordsNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Records Numbering Config / Year Start Month</value>
+  </data>
+  <data name="FieldHelp.RecordsNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Month the numbering year starts, for records numbered by a fiscal year such as a county's or state's. Sequences that include the year start again at 1 on that month and day, and YYYY and YY write the fiscal year's name. Unset is January, the calendar year. Separate from call numbering's year start. Records request numbers and the numbers of inspections, permits, occupancies, investigations and evidence follow the same year.</value>
+  </data>
+  <data name="Field.RecordsNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Records Numbering Config / Year Start Day</value>
+  </data>
+  <data name="FieldHelp.RecordsNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Day of the month the numbering year starts, 1 to the month's last day; February 29 is not allowed. Unset is the 1st.</value>
+  </data>
+  <data name="Field.RecordsNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Records Numbering Config / Year Label</value>
+  </data>
+  <data name="FieldHelp.RecordsNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Which year names a numbering year that does not start on January 1: the year it ends in (the usual fiscal-year convention, so a year starting November 1, 2026 is 2027) or the year it starts in.</value>
+  </data>
+  <data name="Setting.DocumentNumberingConfig" xml:space="preserve">
+    <value>Document Numbering Config</value>
+  </data>
+  <data name="SettingHelp.DocumentNumberingConfig" xml:space="preserve">
+    <value>How work order, invoice, bid and daily time report numbers are written, and the day their numbering year starts. A document kind with no pattern keeps its built-in numbers.</value>
+  </data>
+  <data name="Field.DocumentNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Document Numbering Config / Year Start Month</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberingConfig.YearStartMonth" xml:space="preserve">
+    <value>Month the numbering year starts for work orders, invoices, bids and daily time reports numbered by a fiscal year. Work order numbers and patterns that include the year start again at 1 on that month and day, and YYYY and YY write the fiscal year's name. Unset is January, the calendar year.</value>
+  </data>
+  <data name="Field.DocumentNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Document Numbering Config / Year Start Day</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberingConfig.YearStartDay" xml:space="preserve">
+    <value>Day of the month the numbering year starts, 1 to the month's last day; February 29 is not allowed. Unset is the 1st.</value>
+  </data>
+  <data name="Field.DocumentNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Document Numbering Config / Year Label</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberingConfig.YearLabel" xml:space="preserve">
+    <value>Which year names a numbering year that does not start on January 1: the year it ends in (the usual fiscal-year convention, so a year starting November 1, 2026 is 2027) or the year it starts in.</value>
+  </data>
+  <data name="Field.DocumentNumberingConfig.Patterns" xml:space="preserve">
+    <value>Document Numbering Config / Patterns</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberingConfig.Patterns" xml:space="preserve">
+    <value>The department's own number pattern for work orders, invoices, bids and daily time reports, in the call number tokens (YYYY or YY, MM, DD, SEQ). A document kind with no pattern keeps its built-in numbers (WO-2026-000019, #1042). A new pattern carries on after any number it would repeat. Members see the number as issued on documents, PDFs and exports, and for daily time reports in the Responder, Unit, IC and Dispatch apps.</value>
+  </data>
+  <data name="Field.DocumentNumberPattern.Kind" xml:space="preserve">
+    <value>Document Number Pattern / Kind</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberPattern.Kind" xml:space="preserve">
+    <value>The document the pattern numbers: work-order, invoice, bid or time-report, or for Records records-request, occupancy, inspection, permit, investigation or evidence.</value>
+  </data>
+  <data name="Field.DocumentNumberPattern.Pattern" xml:space="preserve">
+    <value>Document Number Pattern / Pattern</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberPattern.Pattern" xml:space="preserve">
+    <value>Fixed text around the YYYY or YY, MM, DD and SEQ tokens, with SEQ exactly once. Every number it writes must fit the document's number column: 50 characters, or 32 for occupancy, inspection, permit, investigation and evidence numbers.</value>
+  </data>
+  <data name="Field.DocumentNumberPattern.SequenceWidth" xml:space="preserve">
+    <value>Document Number Pattern / Sequence Width</value>
+  </data>
+  <data name="FieldHelp.DocumentNumberPattern.SequenceWidth" xml:space="preserve">
+    <value>Digits the sequence is padded to with leading zeros, 1 to 8; the sequence is counted as a number, so changing the width never restarts it.</value>
+  </data>
+  <data name="Field.RecordsNumberingConfig.DocumentPatterns" xml:space="preserve">
+    <value>Records Numbering Config / Document Patterns</value>
+  </data>
+  <data name="FieldHelp.RecordsNumberingConfig.DocumentPatterns" xml:space="preserve">
+    <value>The department's own patterns for records request, occupancy, inspection, permit, investigation and evidence numbers. They follow this setting's numbering year start; a kind with no pattern keeps its built-in numbers (PRR-2026-0001, INSP-2026-0001 and so on).</value>
+  </data>
+  <data name="Feature.document-numbering" xml:space="preserve">
+    <value>Document Numbering</value>
+  </data>
+  <data name="FeaturePurpose.document-numbering" xml:space="preserve">
+    <value>How work order, invoice, bid and daily time report numbers are written, and the day their numbering year starts for fiscal-year numbering.</value>
   </data>
 </root>

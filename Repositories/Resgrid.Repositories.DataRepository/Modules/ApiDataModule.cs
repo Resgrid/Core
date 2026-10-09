@@ -304,6 +304,7 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<UnitStatusAlertAcknowledgementsRepository>().As<IUnitStatusAlertAcknowledgementsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<CallLocationKeysRepository>().As<ICallLocationKeysRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<CallNumberSequencesRepository>().As<ICallNumberSequencesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DocumentNumberSequencesRepository>().As<IDocumentNumberSequencesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentApiKeysRepository>().As<IDepartmentApiKeysRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<SystemOperationRequestsRepository>().As<ISystemOperationRequestsRepository>().InstancePerLifetimeScope();
 

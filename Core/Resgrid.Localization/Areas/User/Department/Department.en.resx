@@ -208,7 +208,7 @@
     <value>API Settings</value>
   </data>
   <data name="CallSettingsHeader" xml:space="preserve">
-    <value>Call Import Settings</value>
+    <value>Call Settings</value>
   </data>
   <data name="CallSorting" xml:space="preserve">
     <value>Call Sorting</value>

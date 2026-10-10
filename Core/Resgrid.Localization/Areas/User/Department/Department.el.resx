@@ -208,7 +208,7 @@
     <value>Ρυθμίσεις API</value>
   </data>
   <data name="CallSettingsHeader" xml:space="preserve">
-    <value>Ρυθμίσεις Εισαγωγής Κλήσεων</value>
+    <value>Ρυθμίσεις Κλήσεων</value>
   </data>
   <data name="CallSorting" xml:space="preserve">
     <value>Ταξινόμηση Κλήσεων</value>

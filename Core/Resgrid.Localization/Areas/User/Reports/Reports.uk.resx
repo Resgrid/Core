@@ -356,4 +356,99 @@
   <data name="CallUnitTimesLegend" xml:space="preserve">
     <value>Пов’язано автоматично: статус, надісланий без виклику, який Resgrid пов’язав за попереднім статусом підрозділу або його направленням. Виведено: статус, який підрозділ встановив без пункту призначення, будучи направленим на виклик. Лише направлення: підрозділ було направлено, але він не повідомив жодного статусу на виклику.</value>
   </data>
+
+  <!-- ==================== Call Summary: group filter, pies, period statistics ==================== -->
+  <data name="AllGroups" xml:space="preserve">
+    <value>Усі групи</value>
+  </data>
+  <data name="CallSummaryGroupHelp" xml:space="preserve">
+    <value>Виклики відносяться до групи, геозона якої містить місце виклику. Виклик поза всіма геозонами або без місця відноситься до групи, до якої належить більшість направлених підрозділів і персоналу. Вибір групи також включає підпорядковані їй групи.</value>
+  </data>
+  <data name="NoCallType" xml:space="preserve">
+    <value>Без типу</value>
+  </data>
+  <data name="QuarterLabel" xml:space="preserve">
+    <value>{0} кв. {1}</value>
+  </data>
+  <data name="CallSummaryGroupFilter" xml:space="preserve">
+    <value>Група: {0} (разом із підпорядкованими групами)</value>
+  </data>
+  <data name="CallsByGroup" xml:space="preserve">
+    <value>Виклики за групами</value>
+  </data>
+  <data name="UnassignedGroup" xml:space="preserve">
+    <value>Не віднесено</value>
+  </data>
+  <data name="OtherGroups" xml:space="preserve">
+    <value>Інші групи</value>
+  </data>
+  <data name="CallGroupAssignmentNote" xml:space="preserve">
+    <value>Кожен виклик рахується один раз: у групі, геозона якої містить його місце, інакше в групі, до якої належить більшість направлених підрозділів і персоналу. Не віднесені виклики лежать поза всіма геозонами і не мали підрозділів чи персоналу жодної групи або порівну розподілилися між групами.</value>
+  </data>
+  <data name="GroupMethodGeofence" xml:space="preserve">
+    <value>геозона</value>
+  </data>
+  <data name="GroupMethodDispatch" xml:space="preserve">
+    <value>направлення</value>
+  </data>
+  <data name="GroupMethodResponse" xml:space="preserve">
+    <value>залучені сили</value>
+  </data>
+  <data name="SummaryTotalCalls" xml:space="preserve">
+    <value>Усього викликів</value>
+  </data>
+  <data name="SummaryAvgOnScene" xml:space="preserve">
+    <value>Сер. час прибуття на місце</value>
+  </data>
+  <data name="SummaryAvgCallLength" xml:space="preserve">
+    <value>Сер. тривалість виклику</value>
+  </data>
+  <data name="SummaryUnitResponses" xml:space="preserve">
+    <value>Виїзди підрозділів</value>
+  </data>
+  <data name="SummaryPersonnelResponses" xml:space="preserve">
+    <value>Залучення персоналу</value>
+  </data>
+  <data name="YearlyStatistics" xml:space="preserve">
+    <value>Річна статистика</value>
+  </data>
+  <data name="QuarterlyStatistics" xml:space="preserve">
+    <value>Квартальна статистика</value>
+  </data>
+  <data name="MonthlyStatistics" xml:space="preserve">
+    <value>Місячна статистика</value>
+  </data>
+  <data name="CallsByYear" xml:space="preserve">
+    <value>Виклики за роками</value>
+  </data>
+  <data name="CallsByQuarter" xml:space="preserve">
+    <value>Виклики за кварталами</value>
+  </data>
+  <data name="CallsByMonth" xml:space="preserve">
+    <value>Виклики за місяцями</value>
+  </data>
+  <data name="PeriodHeader" xml:space="preserve">
+    <value>Період</value>
+  </data>
+  <data name="CallsHeader" xml:space="preserve">
+    <value>Виклики</value>
+  </data>
+  <data name="YearToDateHeader" xml:space="preserve">
+    <value>З поч. року</value>
+  </data>
+  <data name="PartialPeriodNote" xml:space="preserve">
+    <value>* Неповний період: діапазон звіту охоплює лише його частину.</value>
+  </data>
+  <data name="CallTypesByPeriod" xml:space="preserve">
+    <value>Типи викликів за періодами</value>
+  </data>
+  <data name="TypesWithNoCalls" xml:space="preserve">
+    <value>Без викликів:</value>
+  </data>
+  <data name="OtherCallTypes" xml:space="preserve">
+    <value>Інші</value>
+  </data>
+  <data name="CallsInPeriod" xml:space="preserve">
+    <value>Викликів: {0}</value>
+  </data>
 </root>

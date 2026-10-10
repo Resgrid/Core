@@ -21,6 +21,22 @@ var resgrid;
                     return typeof args[index] !== 'undefined' ? args[index] : match;
                 });
             }
+            // A unit's status in its own button and text colours, as on the New Call unit list. Older built-in
+            // statuses carry a label class instead of a colour. Colours go through .css() so one never lands in
+            // the markup unchecked; the border keeps a white or very light status visible on white rows.
+            function unitStatusLabel(row) {
+                var label = $('<span class="label label-default">').text(row.State || '');
+                var color = $.trim(row.StateColor || '');
+                if (/^label-[a-z]+$/.test(color)) {
+                    label.addClass(color);
+                } else if (color) {
+                    label.css({ 'background-color': color, 'border': '1px solid rgba(0, 0, 0, 0.2)' });
+                    if (row.TextColor) {
+                        label.css('color', row.TextColor);
+                    }
+                }
+                return label.prop('outerHTML');
+            }
             editcall.protocolCount = 0;
             editcall.protocolData = {};
             $(document).ready(function () {
@@ -354,7 +370,7 @@ var resgrid;
                         { data: 'Name', title: getText('name', 'Name') },
                         { data: 'Eta', title: getText('eta', 'ETA') },
                         { data: 'Type', title: getText('type', 'Type') },
-                        { data: null, title: getText('status', 'Status'), orderable: false, render: function(d,t,row) { return '<span style="color:'+row.StateColor+'">'+row.State+'</span>'; } }
+                        { data: null, title: getText('status', 'Status'), orderable: false, render: function(d,t,row) { return unitStatusLabel(row); } }
                     ]
                 });
                 unitsTable.on('draw', function() {

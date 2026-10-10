@@ -174,6 +174,10 @@ namespace Resgrid.Services
 
 			public string StatusText { get; set; }
 
+			public string StatusColor { get; set; }
+
+			public string StatusTextColor { get; set; }
+
 			public DateTime? PositionTimestamp { get; set; }
 
 			public UnitPositionSources PositionSource { get; set; }
@@ -211,6 +215,8 @@ namespace Resgrid.Services
 					IncidentInGroupBoundary = station != null && boundaryGroupIds.Contains(station.DepartmentGroupId),
 					IncidentInParentBoundary = ancestors.Any(boundaryGroupIds.Contains),
 					StatusText = StatusText,
+					StatusColor = StatusColor,
+					StatusTextColor = StatusTextColor,
 					IsAvailable = IsAvailable,
 					// A position the viewer may not see is withheld, and was never measured (see GetBoardAsync).
 					Latitude = LocationHidden ? null : Latitude,
@@ -408,6 +414,7 @@ namespace Resgrid.Services
 
 			var states = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(departmentId) ?? new List<UnitState>();
 			var customDetails = BuildCustomDetailMap(await _customStateService.GetAllActiveUnitStatesForDepartmentAsync(departmentId));
+			var defaultDetails = UnitStatusColors.BuildDefaultMap(_customStateService.GetDefaultUnitStatuses());
 			var locations = await _unitsService.GetLatestUnitLocationsAsync(departmentId) ?? new List<UnitsLocation>();
 
 			var stateByUnit = states.Where(s => s != null).GroupBy(s => s.UnitId).ToDictionary(g => g.Key, g => g.OrderByDescending(s => s.Timestamp).First());
@@ -427,11 +434,14 @@ namespace Resgrid.Services
 
 				var stateId = stateByUnit.TryGetValue(unit.UnitId, out var state) ? state.State : (int)UnitStateTypes.Available;
 				var isCustom = customDetails.ContainsKey(stateId);
+				var statusColors = UnitStatusColors.Resolve(stateId, customDetails, defaultDetails);
 
 				var candidate = new UnitCandidate
 				{
 					Unit = unit,
 					StatusText = GetUnitStatusText(stateId, isCustom, customDetails),
+					StatusColor = statusColors.Color,
+					StatusTextColor = statusColors.TextColor,
 					IsAvailable = IsUnitAvailable(stateId, isCustom, customDetails)
 				};
 

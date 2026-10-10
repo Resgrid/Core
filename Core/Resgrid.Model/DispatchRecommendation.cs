@@ -138,6 +138,12 @@ namespace Resgrid.Model
 
 		public string CurrentStatusText { get; set; }
 
+		/// <summary>The status's button colour as the department set it up (hex); null when the status has none.</summary>
+		public string CurrentStatusColor { get; set; }
+
+		/// <summary>The status's text colour (hex), drawn on <see cref="CurrentStatusColor"/>; null when the status has none.</summary>
+		public string CurrentStatusTextColor { get; set; }
+
 		/// <summary>UnitStaffingLevel at recommendation time (null when the staffing gate is off).</summary>
 		public int? StaffingLevel { get; set; }
 

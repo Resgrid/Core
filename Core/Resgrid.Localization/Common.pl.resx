@@ -107,8 +107,8 @@
   <data name="CallAddress" xml:space="preserve">
     <value>Adres zgłoszenia</value>
   </data>
-  <data name="CallImportSettings" xml:space="preserve">
-    <value>Ustawienia importu zgłoszeń</value>
+  <data name="CallSettings" xml:space="preserve">
+    <value>Ustawienia zgłoszeń</value>
   </data>
   <data name="DocumentNumbering" xml:space="preserve">
     <value>Numeracja dokumentów</value>

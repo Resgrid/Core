@@ -508,6 +508,56 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task closest_unit_carries_the_status_colours_the_department_set_up()
+		{
+			BuildCard(engineCount: 1);
+			_departmentSettingsService.Setup(x => x.GetDispatchRecommendationModeAsync(DepartmentId, It.IsAny<bool>()))
+				.ReturnsAsync(DispatchRecommendationModes.ClosestUnit);
+
+			_customStateService.Setup(x => x.GetAllActiveUnitStatesForDepartmentAsync(DepartmentId))
+				.ReturnsAsync(new List<CustomState>
+				{
+					new CustomState
+					{
+						CustomStateId = 90,
+						DepartmentId = DepartmentId,
+						Type = (int)CustomStateTypes.Unit,
+						Details = new List<CustomStateDetail>
+						{
+							new CustomStateDetail { CustomStateDetailId = 900, CustomStateId = 90, ButtonText = "Standplaats", ButtonColor = "#FF0000", TextColor = "#000000", BaseType = (int)ActionBaseTypes.InQuarters }
+						}
+					}
+				});
+			_unitsService.Setup(x => x.GetAllLatestStatusForUnitsByDepartmentIdAsync(DepartmentId))
+				.ReturnsAsync(new List<UnitState>
+				{
+					new UnitState { UnitId = 1, State = 900, Timestamp = DateTime.UtcNow }
+				});
+
+			var result = await _service.GetRecommendationAsync(BuildRequest());
+
+			var engine = result.Units.Should().ContainSingle().Subject;
+			engine.CurrentStatusText.Should().Be("Standplaats");
+			engine.CurrentStatusColor.Should().Be("#FF0000");
+			engine.CurrentStatusTextColor.Should().Be("#000000");
+		}
+
+		[Test]
+		public async Task station_based_units_on_a_built_in_status_carry_the_built_in_colours()
+		{
+			BuildCard(engineCount: 2);
+			_customStateService.Setup(x => x.GetDefaultUnitStatuses()).Returns(new List<CustomStateDetail>
+			{
+				new CustomStateDetail { CustomStateDetailId = (int)UnitStateTypes.Available, ButtonText = "Available", ButtonColor = "#d1dade", TextColor = "#5E5E5E" }
+			});
+
+			var result = await _service.GetRecommendationAsync(BuildRequest());
+
+			result.Units.Should().HaveCount(2);
+			result.Units.Should().OnlyContain(u => u.CurrentStatusColor == "#d1dade" && u.CurrentStatusTextColor == "#5E5E5E");
+		}
+
+		[Test]
 		public async Task closest_unit_ranks_on_turnout_plus_travel()
 		{
 			BuildCard(engineCount: 1);

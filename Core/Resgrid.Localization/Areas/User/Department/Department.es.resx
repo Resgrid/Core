@@ -208,7 +208,7 @@
     <value>Configuración de API</value>
   </data>
   <data name="CallSettingsHeader" xml:space="preserve">
-    <value>Configuración de importación de llamadas</value>
+    <value>Configuración de llamadas</value>
   </data>
   <data name="CallSorting" xml:space="preserve">
     <value>Clasificación de llamadas</value>

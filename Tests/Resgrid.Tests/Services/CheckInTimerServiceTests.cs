@@ -531,6 +531,39 @@ namespace Resgrid.Tests.Services
 
 		#endregion ActiveForStates Propagation
 
+		#region Call Personnel Check-In Statuses
+
+		[Test]
+		public async Task GetCallPersonnelCheckInStatusesAsync_ReturnsOneRowPerUser_WhenUserHasMultipleDispatches()
+		{
+			var call = new Call
+			{
+				CallId = 1, DepartmentId = 10, State = (int)CallStates.Active, CheckInTimersEnabled = true,
+				LoggedOn = DateTime.UtcNow.AddMinutes(-5),
+				Dispatches = new List<CallDispatch>
+				{
+					new CallDispatch { UserId = "user1" },
+					new CallDispatch { UserId = "user2" },
+					new CallDispatch { UserId = "user1" }
+				},
+				UnitDispatches = new List<CallDispatchUnit>()
+			};
+			var configs = new List<CheckInTimerConfig>
+			{
+				new CheckInTimerConfig { TimerTargetType = 0, DurationMinutes = 30, WarningThresholdMinutes = 5, IsEnabled = true }
+			};
+			_configRepo.Setup(x => x.GetByDepartmentIdAsync(10)).ReturnsAsync(configs);
+			_overrideRepo.Setup(x => x.GetMatchingOverridesAsync(10, null, 0)).ReturnsAsync(new List<CheckInTimerOverride>());
+			_recordRepo.Setup(x => x.GetByCallIdAsync(1)).ReturnsAsync(new List<CheckInRecord>());
+
+			var result = await _service.GetCallPersonnelCheckInStatusesAsync(call);
+
+			result.Should().HaveCount(2);
+			result.Select(s => s.UserId).Should().BeEquivalentTo(new[] { "user1", "user2" });
+		}
+
+		#endregion Call Personnel Check-In Statuses
+
 		#region State Filtering
 
 		[Test]

@@ -785,4 +785,99 @@
   <data name="CallUnitTimesLegend" xml:space="preserve">
     <value>Αυτόματη σύνδεση: κατάσταση που στάλθηκε χωρίς κλήση και το Resgrid τη συνέδεσε βάσει της προηγούμενης κατάστασης της μονάδας ή της αποστολής της. Συναγόμενο: κατάσταση που όρισε η μονάδα χωρίς προορισμό ενώ είχε σταλεί στην κλήση. Μόνο αποστολή: η μονάδα στάλθηκε αλλά δεν ανέφερε καμία κατάσταση στην κλήση.</value>
   </data>
+
+  <!-- ==================== Call Summary: group filter, pies, period statistics ==================== -->
+  <data name="AllGroups" xml:space="preserve">
+    <value>Όλες οι ομάδες</value>
+  </data>
+  <data name="CallSummaryGroupHelp" xml:space="preserve">
+    <value>Οι κλήσεις αντιστοιχίζονται στην ομάδα της οποίας η γεωπεριοχή περιέχει τη θέση της κλήσης. Μια κλήση εκτός κάθε γεωπεριοχής, ή χωρίς θέση, αντιστοιχίζεται στην ομάδα στην οποία ανήκουν οι περισσότερες μονάδες και το προσωπικό που διατέθηκαν. Η επιλογή μιας ομάδας περιλαμβάνει και τις υποκείμενες ομάδες της.</value>
+  </data>
+  <data name="NoCallType" xml:space="preserve">
+    <value>Χωρίς τύπο</value>
+  </data>
+  <data name="QuarterLabel" xml:space="preserve">
+    <value>Τ{0} {1}</value>
+  </data>
+  <data name="CallSummaryGroupFilter" xml:space="preserve">
+    <value>Ομάδα: {0} (μαζί με τις υποκείμενες ομάδες)</value>
+  </data>
+  <data name="CallsByGroup" xml:space="preserve">
+    <value>Κλήσεις ανά ομάδα</value>
+  </data>
+  <data name="UnassignedGroup" xml:space="preserve">
+    <value>Χωρίς αντιστοίχιση</value>
+  </data>
+  <data name="OtherGroups" xml:space="preserve">
+    <value>Άλλες ομάδες</value>
+  </data>
+  <data name="CallGroupAssignmentNote" xml:space="preserve">
+    <value>Κάθε κλήση μετρά μία φορά: στην ομάδα της οποίας η γεωπεριοχή περιέχει τη θέση της, αλλιώς στην ομάδα στην οποία ανήκουν οι περισσότερες μονάδες και το προσωπικό που διατέθηκαν. Οι κλήσεις χωρίς αντιστοίχιση βρίσκονται εκτός κάθε γεωπεριοχής και δεν είχαν μονάδες ή προσωπικό από κάποια ομάδα, ή μοιράστηκαν εξίσου μεταξύ ομάδων.</value>
+  </data>
+  <data name="GroupMethodGeofence" xml:space="preserve">
+    <value>γεωπεριοχή</value>
+  </data>
+  <data name="GroupMethodDispatch" xml:space="preserve">
+    <value>διάθεση</value>
+  </data>
+  <data name="GroupMethodResponse" xml:space="preserve">
+    <value>ανταποκριθέντες</value>
+  </data>
+  <data name="SummaryTotalCalls" xml:space="preserve">
+    <value>Σύνολο κλήσεων</value>
+  </data>
+  <data name="SummaryAvgOnScene" xml:space="preserve">
+    <value>Μέσος χρόνος άφιξης</value>
+  </data>
+  <data name="SummaryAvgCallLength" xml:space="preserve">
+    <value>Μέση διάρκεια κλήσης</value>
+  </data>
+  <data name="SummaryUnitResponses" xml:space="preserve">
+    <value>Αποκρίσεις μονάδων</value>
+  </data>
+  <data name="SummaryPersonnelResponses" xml:space="preserve">
+    <value>Αποκρίσεις προσωπικού</value>
+  </data>
+  <data name="YearlyStatistics" xml:space="preserve">
+    <value>Ετήσια στατιστικά</value>
+  </data>
+  <data name="QuarterlyStatistics" xml:space="preserve">
+    <value>Τριμηνιαία στατιστικά</value>
+  </data>
+  <data name="MonthlyStatistics" xml:space="preserve">
+    <value>Μηνιαία στατιστικά</value>
+  </data>
+  <data name="CallsByYear" xml:space="preserve">
+    <value>Κλήσεις ανά έτος</value>
+  </data>
+  <data name="CallsByQuarter" xml:space="preserve">
+    <value>Κλήσεις ανά τρίμηνο</value>
+  </data>
+  <data name="CallsByMonth" xml:space="preserve">
+    <value>Κλήσεις ανά μήνα</value>
+  </data>
+  <data name="PeriodHeader" xml:space="preserve">
+    <value>Περίοδος</value>
+  </data>
+  <data name="CallsHeader" xml:space="preserve">
+    <value>Κλήσεις</value>
+  </data>
+  <data name="YearToDateHeader" xml:space="preserve">
+    <value>Από αρχή έτους</value>
+  </data>
+  <data name="PartialPeriodNote" xml:space="preserve">
+    <value>* Μερική περίοδος: το εύρος της αναφοράς καλύπτει μόνο μέρος της.</value>
+  </data>
+  <data name="CallTypesByPeriod" xml:space="preserve">
+    <value>Τύποι κλήσεων ανά περίοδο</value>
+  </data>
+  <data name="TypesWithNoCalls" xml:space="preserve">
+    <value>Χωρίς κλήσεις:</value>
+  </data>
+  <data name="OtherCallTypes" xml:space="preserve">
+    <value>Άλλοι</value>
+  </data>
+  <data name="CallsInPeriod" xml:space="preserve">
+    <value>{0} κλήσεις</value>
+  </data>
 </root>

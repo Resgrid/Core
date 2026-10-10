@@ -1,11 +1,141 @@
 @using Resgrid.Model.Helpers
+@using Resgrid.Model.Reporting
 @using Resgrid.Web
 @using Resgrid.Web.Helpers
+@using Resgrid.Web.Areas.User.Models.Reports.Calls
 @using Microsoft.Extensions.Localization
+@using Newtonsoft.Json
 @model Resgrid.Web.Areas.User.Models.Reports.Calls.CallSummaryView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Reports.Reports> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> callLocalizer
 @{
 	Layout = null;
+
+	// Categorical slots in fixed order: a call type keeps its color in every chart on the page. Types past the eighth fold
+	// into "Other" rather than generating more hues.
+	var palette = new[] { "#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#4a3aa7", "#e34948" };
+	const string otherColor = "#8c8b86";
+	const string unassignedColor = "#c3c2b7";
+	var otherLabel = localizer["OtherCallTypes"].Value;
+	var charted = Model.TypeOrder.Take(palette.Length).ToList();
+
+	string Percent(int count, int total) => total > 0 ? ((count * 100f) / total).ToString("F") + "%" : "";
+
+	string TypeColor(string type)
+	{
+		var index = charted.FindIndex(t => string.Equals(t, type, StringComparison.OrdinalIgnoreCase));
+		return index >= 0 ? palette[index] : otherColor;
+	}
+
+	List<object> TypeSlices(IEnumerable<KeyValuePair<string, int>> counts)
+	{
+		var list = counts.ToList();
+		var slices = charted
+			.Select(t => new { label = t, value = list.Where(c => string.Equals(c.Key, t, StringComparison.OrdinalIgnoreCase)).Sum(c => c.Value), color = TypeColor(t) })
+			.Where(s => s.value > 0)
+			.Cast<object>()
+			.ToList();
+
+		var other = list.Where(c => !charted.Contains(c.Key, StringComparer.OrdinalIgnoreCase)).Sum(c => c.Value);
+		if (other > 0)
+			slices.Add(new { label = otherLabel, value = other, color = otherColor });
+
+		return slices;
+	}
+
+	string GroupMethodText(CallGroupAssignmentMethods method)
+	{
+		switch (method)
+		{
+			case CallGroupAssignmentMethods.Geofence: return localizer["GroupMethodGeofence"].Value;
+			case CallGroupAssignmentMethods.Dispatch: return localizer["GroupMethodDispatch"].Value;
+			case CallGroupAssignmentMethods.Response: return localizer["GroupMethodResponse"].Value;
+			default: return "";
+		}
+	}
+
+	string SectionTitle(ReportPeriodGranularity granularity)
+	{
+		switch (granularity)
+		{
+			case ReportPeriodGranularity.Year: return localizer["YearlyStatistics"].Value;
+			case ReportPeriodGranularity.Quarter: return localizer["QuarterlyStatistics"].Value;
+			default: return localizer["MonthlyStatistics"].Value;
+		}
+	}
+
+	string ChartTitle(ReportPeriodGranularity granularity)
+	{
+		switch (granularity)
+		{
+			case ReportPeriodGranularity.Year: return localizer["CallsByYear"].Value;
+			case ReportPeriodGranularity.Quarter: return localizer["CallsByQuarter"].Value;
+			default: return localizer["CallsByMonth"].Value;
+		}
+	}
+
+	// One stacked/line series per charted call type, plus "Other" when types were folded.
+	List<object> TypeSeries(CallSummaryPeriodSection section)
+	{
+		var series = charted
+			.Select(t => new { label = t, color = TypeColor(t), data = section.Periods.Select(p => p.TypeCounts.TryGetValue(t, out var c) ? c : 0).ToList() })
+			.Cast<object>()
+			.ToList();
+
+		if (Model.TypeOrder.Count > charted.Count)
+			series.Add(new
+			{
+				label = otherLabel,
+				color = otherColor,
+				data = section.Periods.Select(p => p.TypeCounts.Where(c => !charted.Contains(c.Key, StringComparer.OrdinalIgnoreCase)).Sum(c => c.Value)).ToList()
+			});
+
+		return series;
+	}
+
+	string PeriodLabel(CallSummaryPeriod period) => period.Label + (period.Period.IsPartial ? "*" : "");
+
+	string SectionId(ReportPeriodGranularity granularity) => granularity.ToString().ToLowerInvariant();
+
+	// Per-period pies for quarters and years, and the type-by-period table, only when there is more than one period: a
+	// single year would repeat the call types table and pie above. A year chart likewise needs years to compare.
+	bool HasPies(CallSummaryPeriodSection section) => section.Granularity != ReportPeriodGranularity.Month && section.Periods.Count > 1;
+	bool HasTrend(CallSummaryPeriodSection section) => section.Granularity != ReportPeriodGranularity.Year || section.Periods.Count > 1;
+	const int maxMatrixColumns = 12;
+
+	var groupSlices = new List<object>();
+	var namedGroups = Model.CallGroupCount.Where(g => g.Item1 != null).ToList();
+	var groupSlots = namedGroups.Count > palette.Length ? palette.Length - 1 : palette.Length;
+	for (var i = 0; i < namedGroups.Count && i < groupSlots; i++)
+		groupSlices.Add(new { label = namedGroups[i].Item1, value = namedGroups[i].Item2, color = palette[i] });
+	if (namedGroups.Count > groupSlots)
+		groupSlices.Add(new { label = localizer["OtherGroups"].Value, value = namedGroups.Skip(groupSlots).Sum(g => g.Item2), color = otherColor });
+	var unassigned = Model.CallGroupCount.Where(g => g.Item1 == null).Sum(g => g.Item2);
+	if (unassigned > 0)
+		groupSlices.Add(new { label = localizer["UnassignedGroup"].Value, value = unassigned, color = unassignedColor });
+	var showGroups = Model.CallGroupCount.Count > 1;
+
+	var chartData = new
+	{
+		strings = new
+		{
+			calls = localizer["CallsHeader"].Value,
+			total = localizer["TotalHeader"].Value
+		},
+		types = TypeSlices(Model.CallTypeCount.Select(t => new KeyValuePair<string, int>(t.Item1, t.Item2))),
+		states = Model.CallStateCount.Select(s => new { label = DispatchDisplayHelper.GetLocalizedCallState(s.Item1, callLocalizer, commonLocalizer), value = s.Item2 }),
+		groups = showGroups ? groupSlices : new List<object>(),
+		sections = Model.PeriodSections.Select(section => new
+		{
+			id = SectionId(section.Granularity),
+			kind = !HasTrend(section) ? null : section.Granularity == ReportPeriodGranularity.Year ? "line" : "bar",
+			labels = section.Periods.Select(PeriodLabel),
+			totals = section.Periods.Select(p => p.Stats.Calls),
+			series = TypeSeries(section),
+			pies = HasPies(section) ? section.Periods.Select((p, i) => new { index = i, slices = TypeSlices(p.TypeCounts) }).Cast<object>() : Enumerable.Empty<object>()
+		})
+	};
+	var chartJson = JsonConvert.SerializeObject(chartData, new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml });
 }
 
 <!DOCTYPE html>
@@ -31,6 +161,117 @@
 			text-align: left !important;
 			vertical-align: top !important;
 		}
+
+		.table td.num, .table th.num {
+			text-align: right !important;
+		}
+
+		.content {
+			padding-left: 15px;
+			padding-right: 15px;
+		}
+
+		.section-heading {
+			margin-top: 28px;
+			border-bottom: 1px solid #ddd;
+			padding-bottom: 6px;
+		}
+
+		.stat-tiles {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 12px;
+			margin: 12px 0 4px 0;
+		}
+
+		.stat-tile {
+			flex: 1 1 140px;
+			border: 1px solid #e3e2de;
+			border-radius: 4px;
+			padding: 10px 12px;
+		}
+
+		.stat-tile .stat-label {
+			color: #52514e;
+			font-size: 12px;
+		}
+
+		.stat-tile .stat-value {
+			font-size: 22px;
+			font-weight: 600;
+			color: #0b0b0b;
+		}
+
+		.chart-box {
+			position: relative;
+			height: 300px;
+		}
+
+		.chart-box.wide {
+			height: 320px;
+		}
+
+		.period-pies {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 16px;
+		}
+
+		.period-pie {
+			flex: 0 1 210px;
+			border: 1px solid #e3e2de;
+			border-radius: 4px;
+			padding: 8px 10px;
+			page-break-inside: avoid;
+		}
+
+		.period-pie h5 {
+			margin: 0 0 6px 0;
+			font-weight: 600;
+		}
+
+		.period-pie .pie-box {
+			position: relative;
+			height: 180px;
+		}
+
+		.period-pie .no-calls {
+			color: #52514e;
+			font-size: 12px;
+			margin-top: 6px;
+		}
+
+		.legend-chips {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 6px 14px;
+			margin: 6px 0 10px 0;
+			font-size: 12px;
+			color: #52514e;
+		}
+
+		.legend-chips .chip {
+			display: inline-block;
+			width: 10px;
+			height: 10px;
+			border-radius: 2px;
+			margin-right: 5px;
+			vertical-align: -1px;
+		}
+
+		.muted {
+			color: #777;
+		}
+
+		.matrix-wrap {
+			overflow-x: auto;
+		}
+
+		@@media print {
+			.section-heading {
+				page-break-after: avoid;
+			}
+		}
 	</style>
 
 	<!--[if lt IE 9]>
@@ -52,11 +293,29 @@
 			<div class="col-md-6" style="text-align: right;">
 				<h3 style="margin-top: 10px;">@localizer["CallSummaryReportName"]</h3>
 				<span>@Model.Start.FormatForDepartment(Model.Department)</span><span>-</span><span>@Model.End.FormatForDepartment(Model.Department)</span>
+				@if (Model.GroupId.HasValue)
+				{
+					<div><strong>@localizer["CallSummaryGroupFilter", Model.GroupName]</strong></div>
+				}
 			</div>
 		</div>
+
 		<div class="row">
 			<div class="col-md-10 col-md-offset-1">
-				<h4>@localizer["CallTypes"]</h4>
+				<div class="stat-tiles">
+					<div class="stat-tile"><div class="stat-label">@localizer["SummaryTotalCalls"]</div><div class="stat-value">@Model.Overall.Calls</div></div>
+					<div class="stat-tile"><div class="stat-label">@localizer["OpenStatus"]</div><div class="stat-value">@Model.Overall.Open</div></div>
+					<div class="stat-tile"><div class="stat-label">@localizer["SummaryAvgOnScene"]</div><div class="stat-value">@CallSummaryStats.Format(Model.Overall.AverageOnScene)</div></div>
+					<div class="stat-tile"><div class="stat-label">@localizer["SummaryAvgCallLength"]</div><div class="stat-value">@CallSummaryStats.Format(Model.Overall.AverageCallLength)</div></div>
+					<div class="stat-tile"><div class="stat-label">@localizer["SummaryUnitResponses"]</div><div class="stat-value">@Model.Overall.UnitResponses</div></div>
+					<div class="stat-tile"><div class="stat-label">@localizer["SummaryPersonnelResponses"]</div><div class="stat-value">@Model.Overall.PersonnelResponses</div></div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-10 col-md-offset-1">
+				<h4 class="section-heading">@localizer["CallTypes"]</h4>
 			</div>
 		</div>
 		<div class="row">
@@ -65,43 +324,38 @@
 					<thead>
 						<tr>
 							<th>@localizer["TypeHeader"]</th>
-							<th>@localizer["CountHeader"]</th>
-							<th>@localizer["PercentHeader"]</th>
+							<th class="num">@localizer["CountHeader"]</th>
+							<th class="num">@localizer["PercentHeader"]</th>
 						</tr>
 					</thead>
 					<tbody>
-						@foreach (var callType in Model.CallTypeCount.OrderBy(x => x.Item1))
+						@foreach (var callType in Model.CallTypeCount)
 						{
-							if (callType.Item1 != "Total")
-							{
-								<tr>
-									<td style="padding-left: 10px;">@callType.Item1</td>
-									<td>@callType.Item2</td>
-									<td>
-										@{
-								float precent = (callType.Item2 * 100f) / Model.TotalCalls;
-										}
-										@Html.Raw(string.Format("{0}%", precent.ToString("F")))
-									</td>
-								</tr>
-							}
+							<tr>
+								<td style="padding-left: 10px;"><span class="chip" style="display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;background:@TypeColor(callType.Item1);"></span>@callType.Item1</td>
+								<td class="num">@callType.Item2</td>
+								<td class="num">@Percent(callType.Item2, Model.TotalCalls)</td>
+							</tr>
 						}
-
 						<tr>
-							<td style="padding-left: 10px;">@Model.CallTypeCount.Single(x => x.Item1 == "Total").Item1</td>
-							<td>@Model.CallTypeCount.Single(x => x.Item1 == "Total").Item2</td>
+							<td style="padding-left: 10px;"><strong>@localizer["TotalHeader"]</strong></td>
+							<td class="num"><strong>@Model.TotalCalls</strong></td>
 							<td></td>
 						</tr>
 					</tbody>
 				</table>
 			</div>
 			<div class="col-md-5">
-				<canvas id="calls-types" height="240"></canvas>
+				@if (Model.TotalCalls > 0)
+				{
+					<div class="chart-box"><canvas id="calls-types" role="img" aria-label="@localizer["CallTypes"]"></canvas></div>
+				}
 			</div>
 		</div>
+
 		<div class="row">
 			<div class="col-md-10 col-md-offset-1">
-				<h4>@localizer["CallStates"]</h4>
+				<h4 class="section-heading">@localizer["CallStates"]</h4>
 			</div>
 		</div>
 		<div class="row">
@@ -110,43 +364,222 @@
 					<thead>
 						<tr>
 							<th>@localizer["StateHeader"]</th>
-							<th>@localizer["CountHeader"]</th>
-							<th>@localizer["PercentHeader"]</th>
+							<th class="num">@localizer["CountHeader"]</th>
+							<th class="num">@localizer["PercentHeader"]</th>
 						</tr>
 					</thead>
 					<tbody>
-						@foreach (var callState in Model.CallCloseCount.OrderBy(x => x.Item1))
+						@foreach (var callState in Model.CallStateCount)
 						{
-							if (callState.Item1 != "Total")
-							{
-								<tr>
-									<td style="padding-left: 10px;">@callState.Item1</td>
-									<td>@callState.Item2</td>
-									<td>
-										@{
-								float precent = (callState.Item2 * 100f) / Model.TotalCalls;
-										}
-										@Html.Raw(string.Format("{0}%", precent.ToString("F")))
-									</td>
-								</tr>
-							}
+							<tr>
+								<td style="padding-left: 10px;">@DispatchDisplayHelper.GetLocalizedCallState(callState.Item1, callLocalizer, commonLocalizer)</td>
+								<td class="num">@callState.Item2</td>
+								<td class="num">@Percent(callState.Item2, Model.TotalCalls)</td>
+							</tr>
 						}
-
 						<tr>
-							<td style="padding-left: 10px;">@Model.CallCloseCount.Single(x => x.Item1 == "Total").Item1</td>
-							<td>@Model.CallCloseCount.Single(x => x.Item1 == "Total").Item2</td>
+							<td style="padding-left: 10px;"><strong>@localizer["TotalHeader"]</strong></td>
+							<td class="num"><strong>@Model.TotalCalls</strong></td>
 							<td></td>
 						</tr>
 					</tbody>
 				</table>
 			</div>
 			<div class="col-md-5">
-				<canvas id="calls-states" height="240"></canvas>
+				@if (Model.TotalCalls > 0)
+				{
+					<div class="chart-box"><canvas id="calls-states" role="img" aria-label="@localizer["CallStates"]"></canvas></div>
+				}
 			</div>
 		</div>
+
+		@if (showGroups)
+		{
+			<div class="row">
+				<div class="col-md-10 col-md-offset-1">
+					<h4 class="section-heading">@localizer["CallsByGroup"]</h4>
+					<p class="muted">@localizer["CallGroupAssignmentNote"]</p>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-5 col-md-offset-1">
+					<table class="table table-condensed">
+						<thead>
+							<tr>
+								<th>@localizer["GroupHeader"]</th>
+								<th class="num">@localizer["CountHeader"]</th>
+								<th class="num">@localizer["PercentHeader"]</th>
+							</tr>
+						</thead>
+						<tbody>
+							@foreach (var group in Model.CallGroupCount)
+							{
+								<tr>
+									<td style="padding-left: 10px;">@(group.Item1 ?? localizer["UnassignedGroup"].Value)</td>
+									<td class="num">@group.Item2</td>
+									<td class="num">@Percent(group.Item2, Model.TotalCalls)</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+				<div class="col-md-5">
+					<div class="chart-box"><canvas id="calls-groups" role="img" aria-label="@localizer["CallsByGroup"]"></canvas></div>
+				</div>
+			</div>
+		}
+
+		@foreach (var periodSection in Model.PeriodSections)
+		{
+			var sectionId = SectionId(periodSection.Granularity);
+			var showYtd = periodSection.Granularity != ReportPeriodGranularity.Year;
+			var sectionTypes = Model.TypeOrder.Where(t => periodSection.Periods.Any(p => p.TypeCounts.ContainsKey(t))).ToList();
+
+			<div class="row">
+				<div class="col-md-10 col-md-offset-1">
+					<h4 class="section-heading">@SectionTitle(periodSection.Granularity)</h4>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-10 col-md-offset-1">
+					<table class="table table-condensed">
+						<thead>
+							<tr>
+								<th>@localizer["PeriodHeader"]</th>
+								<th class="num">@localizer["CallsHeader"]</th>
+								@if (showYtd)
+								{
+									<th class="num">@localizer["YearToDateHeader"]</th>
+								}
+								<th class="num">@localizer["PercentHeader"]</th>
+								<th class="num">@localizer["SummaryAvgOnScene"]</th>
+								<th class="num">@localizer["SummaryAvgCallLength"]</th>
+								<th class="num">@localizer["UnitsHeader"]</th>
+								<th class="num">@localizer["PersonnelHeader"]</th>
+							</tr>
+						</thead>
+						<tbody>
+							@foreach (var period in periodSection.Periods)
+							{
+								<tr>
+									<td style="padding-left: 10px;">@PeriodLabel(period)</td>
+									<td class="num">@period.Stats.Calls</td>
+									@if (showYtd)
+									{
+										<td class="num">@period.YearToDate</td>
+									}
+									<td class="num">@Percent(period.Stats.Calls, Model.TotalCalls)</td>
+									<td class="num">@CallSummaryStats.Format(period.Stats.AverageOnScene)</td>
+									<td class="num">@CallSummaryStats.Format(period.Stats.AverageCallLength)</td>
+									<td class="num">@period.Stats.UnitResponses</td>
+									<td class="num">@period.Stats.PersonnelResponses</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+					@if (periodSection.Periods.Any(p => p.Period.IsPartial))
+					{
+						<p class="muted">@localizer["PartialPeriodNote"]</p>
+					}
+					@if (periodSection.Periods.Count == 1 && periodSection.Periods[0].TypesWithNoCalls.Any())
+					{
+						<p class="muted"><strong>@localizer["TypesWithNoCalls"]</strong> @string.Join(", ", periodSection.Periods[0].TypesWithNoCalls)</p>
+					}
+				</div>
+			</div>
+
+			@if (HasTrend(periodSection) && Model.TotalCalls > 0)
+			{
+				<div class="row">
+					<div class="col-md-10 col-md-offset-1">
+						<h5>@ChartTitle(periodSection.Granularity)</h5>
+						<div class="chart-box wide"><canvas id="trend-@sectionId" role="img" aria-label="@ChartTitle(periodSection.Granularity)"></canvas></div>
+					</div>
+				</div>
+			}
+
+			@if (sectionTypes.Any() && periodSection.Periods.Count > 1 && periodSection.Periods.Count <= maxMatrixColumns)
+			{
+				<div class="row">
+					<div class="col-md-10 col-md-offset-1 matrix-wrap">
+						<h5>@localizer["CallTypesByPeriod"]</h5>
+						<table class="table table-condensed table-striped">
+							<thead>
+								<tr>
+									<th>@localizer["TypeHeader"]</th>
+									@foreach (var period in periodSection.Periods)
+									{
+										<th class="num">@period.Label</th>
+									}
+									<th class="num">@localizer["TotalHeader"]</th>
+								</tr>
+							</thead>
+							<tbody>
+								@foreach (var type in sectionTypes)
+								{
+									<tr>
+										<td style="padding-left: 10px;">@type</td>
+										@foreach (var period in periodSection.Periods)
+										{
+											<td class="num">@(period.TypeCounts.TryGetValue(type, out var count) ? count : 0)</td>
+										}
+										<td class="num"><strong>@(periodSection.Periods.Sum(p => p.TypeCounts.TryGetValue(type, out var c) ? c : 0))</strong></td>
+									</tr>
+								}
+								<tr>
+									<td style="padding-left: 10px;"><strong>@localizer["TotalHeader"]</strong></td>
+									@foreach (var period in periodSection.Periods)
+									{
+										<td class="num"><strong>@period.Stats.Calls</strong></td>
+									}
+									<td class="num"><strong>@(periodSection.Periods.Sum(p => p.Stats.Calls))</strong></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			}
+
+			@if (HasPies(periodSection))
+			{
+				<div class="row">
+					<div class="col-md-10 col-md-offset-1">
+						<h5>@localizer["CallTypes"]</h5>
+						<div class="legend-chips">
+							@foreach (var type in charted.Where(t => sectionTypes.Contains(t, StringComparer.OrdinalIgnoreCase)))
+							{
+								<span><span class="chip" style="background:@TypeColor(type);"></span>@type</span>
+							}
+							@if (sectionTypes.Any(t => !charted.Contains(t, StringComparer.OrdinalIgnoreCase)))
+							{
+								<span><span class="chip" style="background:@otherColor;"></span>@otherLabel</span>
+							}
+						</div>
+						<div class="period-pies">
+							@for (var i = 0; i < periodSection.Periods.Count; i++)
+							{
+								var period = periodSection.Periods[i];
+								<div class="period-pie">
+									<h5>@PeriodLabel(period) <span class="muted">&middot; @localizer["CallsInPeriod", period.Stats.Calls]</span></h5>
+									@if (period.Stats.Calls > 0)
+									{
+										<div class="pie-box"><canvas id="pie-@sectionId-@i" role="img" aria-label="@period.Label"></canvas></div>
+									}
+									@if (period.TypesWithNoCalls.Any())
+									{
+										<div class="no-calls"><strong>@localizer["TypesWithNoCalls"]</strong> @string.Join(", ", period.TypesWithNoCalls)</div>
+									}
+								</div>
+							}
+						</div>
+					</div>
+				</div>
+			}
+		}
+
 		<div class="row">
 			<div class="col-md-10 col-md-offset-1">
-				<h4>@localizer["Calls"]</h4>
+				<h4 class="section-heading">@localizer["Calls"]</h4>
 			</div>
 		</div>
 		<div class="row">
@@ -157,6 +590,7 @@
 							<th>@localizer["NumberHeader"]</th>
 							<th>@localizer["NameHeader"]</th>
 							<th>@localizer["TypeHeader"]</th>
+							<th>@localizer["GroupHeader"]</th>
 							<th>@localizer["LoggedOnHeader"]</th>
 							<th>@localizer["ClosedOnHeader"]</th>
 							<th>@localizer["CallLengthHeader"]</th>
@@ -172,6 +606,16 @@
 								<td style="padding-left: 10px;">@callState.Number</td>
 								<td>@callState.Name</td>
 								<td>@callState.Type</td>
+								<td>
+									@if (callState.GroupName != null)
+									{
+										<span>@callState.GroupName</span> <span class="muted">(@GroupMethodText(callState.GroupMethod))</span>
+									}
+									else
+									{
+										<span class="muted">@localizer["UnassignedGroup"]</span>
+									}
+								</td>
 								<td>@callState.LoggedOn.TimeConverterToString(Model.Department)</td>
 								@if (callState.ClosedOn.HasValue)
 								{
@@ -198,39 +642,176 @@
 		</div>
 	</div>
 
+	<script id="call-summary-data" type="application/json">@Html.Raw(chartJson)</script>
 	<script src="~/lib/jquery/dist/jquery.min.js"></script>
 	<script src="~/lib/bootstrap/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
 	<script src="~/lib/chart.js/dist/chart.umd.min.js"></script>
 
 	<script>
-		var startDateString = encodeURIComponent("@Model.Start.ToString()");
-		var endDateString = encodeURIComponent("@Model.End.ToString()");
+		(function () {
+			var data = JSON.parse(document.getElementById('call-summary-data').textContent);
+			var ink = '#52514e';
+			var grid = '#e9e8e4';
 
-		$(document).ready(function () {
-			$.getJSON('/User/Dispatch/CallsTypesInRange?startDate=' + startDateString + '&endDate=' + endDateString, function (data) {
-				data.sort(function (a, b) { return a.Type < b.Type ? -1 : 1; });
-				new Chart(document.getElementById('calls-types'), {
+			Chart.defaults.color = ink;
+			Chart.defaults.animation = false;
+			Chart.defaults.maintainAspectRatio = false;
+
+			function textOn(hex) {
+				var r = parseInt(hex.substr(1, 2), 16), g = parseInt(hex.substr(3, 2), 16), b = parseInt(hex.substr(5, 2), 16);
+				return (0.299 * r + 0.587 * g + 0.114 * b) > 150 ? '#0b0b0b' : '#ffffff';
+			}
+
+			// Percent labels inside slices big enough to hold one; the legend and tooltip carry the rest.
+			var sliceLabels = {
+				id: 'sliceLabels',
+				afterDatasetsDraw: function (chart) {
+					var dataset = chart.data.datasets[0];
+					var meta = chart.getDatasetMeta(0);
+					var total = dataset.data.reduce(function (a, b) { return a + b; }, 0);
+					if (!total) {
+						return;
+					}
+
+					var ctx = chart.ctx;
+					ctx.save();
+					ctx.font = '600 11px sans-serif';
+					ctx.textAlign = 'center';
+					ctx.textBaseline = 'middle';
+					meta.data.forEach(function (arc, i) {
+						var share = dataset.data[i] / total;
+						if (share < 0.06) {
+							return;
+						}
+
+						var point = arc.tooltipPosition();
+						ctx.fillStyle = textOn(dataset.backgroundColor[i]);
+						ctx.fillText(Math.round(share * 100) + '%', point.x, point.y);
+					});
+					ctx.restore();
+				}
+			};
+
+			function percentOf(value, values) {
+				var total = values.reduce(function (a, b) { return a + b; }, 0);
+				return total ? Math.round((value * 1000) / total) / 10 : 0;
+			}
+
+			function pie(canvasId, slices, showLegend) {
+				var canvas = document.getElementById(canvasId);
+				if (!canvas || !slices || !slices.length) {
+					return;
+				}
+
+				var values = slices.map(function (s) { return s.value; });
+				new Chart(canvas, {
+					type: 'pie',
+					data: {
+						labels: slices.map(function (s) { return s.label; }),
+						datasets: [{ data: values, backgroundColor: slices.map(function (s) { return s.color; }), borderColor: '#ffffff', borderWidth: 2 }]
+					},
+					options: {
+						plugins: {
+							legend: {
+								display: showLegend,
+								position: 'right',
+								labels: {
+									boxWidth: 10,
+									generateLabels: function (chart) {
+										return Chart.overrides.doughnut.plugins.legend.labels.generateLabels(chart).map(function (item) {
+											item.text = item.text + ' (' + values[item.index] + ', ' + percentOf(values[item.index], values) + '%)';
+											return item;
+										});
+									}
+								}
+							},
+							tooltip: {
+								callbacks: {
+									label: function (context) {
+										return ' ' + context.label + ': ' + context.parsed + ' (' + percentOf(context.parsed, values) + '%)';
+									}
+								}
+							}
+						}
+					},
+					plugins: [sliceLabels]
+				});
+			}
+
+			pie('calls-types', data.types, true);
+			pie('calls-groups', data.groups, true);
+
+			var statesCanvas = document.getElementById('calls-states');
+			if (statesCanvas && data.states.length) {
+				new Chart(statesCanvas, {
 					type: 'bar',
 					data: {
-						labels: data.map(function (d) { return d.Type; }),
-						datasets: [{ label: 'Call Types', data: data.map(function (d) { return d.Count; }), backgroundColor: 'rgba(26,179,148,0.7)' }]
+						labels: data.states.map(function (s) { return s.label; }),
+						datasets: [{ label: data.strings.calls, data: data.states.map(function (s) { return s.value; }), backgroundColor: '#2a78d6', borderRadius: 4, maxBarThickness: 48 }]
 					},
-					options: { responsive: true, plugins: { legend: { display: false }, title: { display: true, text: 'Calls Types' } }, scales: { x: { ticks: { maxRotation: 45 } } } }
+					options: {
+						plugins: { legend: { display: false } },
+						scales: {
+							x: { grid: { display: false } },
+							y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: grid } }
+						}
+					}
 				});
-			});
+			}
 
-			$.getJSON('/User/Dispatch/CallsStatesInRange?startDate=' + startDateString + '&endDate=' + endDateString, function (data) {
-				data.sort(function (a, b) { return a.Type < b.Type ? -1 : 1; });
-				new Chart(document.getElementById('calls-states'), {
-					type: 'bar',
-					data: {
-						labels: data.map(function (d) { return d.Type; }),
-						datasets: [{ label: 'Call States', data: data.map(function (d) { return d.Count; }), backgroundColor: 'rgba(26,179,148,0.7)' }]
-					},
-					options: { responsive: true, plugins: { legend: { display: false }, title: { display: true, text: 'Calls States' } }, scales: { x: { ticks: { maxRotation: 45 } } } }
+			data.sections.forEach(function (section) {
+				var trendCanvas = document.getElementById('trend-' + section.id);
+				if (trendCanvas && section.kind === 'bar') {
+					new Chart(trendCanvas, {
+						type: 'bar',
+						data: {
+							labels: section.labels,
+							datasets: section.series.map(function (s) {
+								return { label: s.label, data: s.data, backgroundColor: s.color, borderColor: '#ffffff', borderWidth: 1, maxBarThickness: 56 };
+							})
+						},
+						options: {
+							interaction: { mode: 'index', intersect: false },
+							plugins: {
+								legend: { position: 'bottom', labels: { boxWidth: 10 } },
+								tooltip: {
+									filter: function (item) { return item.parsed.y > 0; },
+									footer: function (items) {
+										return items.length ? data.strings.total + ': ' + section.totals[items[0].dataIndex] : '';
+									}
+								}
+							},
+							scales: {
+								x: { stacked: true, grid: { display: false } },
+								y: { stacked: true, beginAtZero: true, ticks: { precision: 0 }, grid: { color: grid } }
+							}
+						}
+					});
+				} else if (trendCanvas && section.kind === 'line') {
+					var datasets = [{ label: data.strings.total, data: section.totals, borderColor: '#0b0b0b', backgroundColor: '#0b0b0b', borderWidth: 2, pointRadius: 4, cubicInterpolationMode: 'monotone' }];
+					section.series.forEach(function (s) {
+						datasets.push({ label: s.label, data: s.data, borderColor: s.color, backgroundColor: s.color, borderWidth: 2, pointRadius: 4, cubicInterpolationMode: 'monotone' });
+					});
+
+					new Chart(trendCanvas, {
+						type: 'line',
+						data: { labels: section.labels, datasets: datasets },
+						options: {
+							interaction: { mode: 'index', intersect: false },
+							plugins: { legend: { position: 'bottom', labels: { boxWidth: 10 } } },
+							scales: {
+								x: { grid: { display: false } },
+								y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: grid } }
+							}
+						}
+					});
+				}
+
+				section.pies.forEach(function (p) {
+					pie('pie-' + section.id + '-' + p.index, p.slices, false);
 				});
 			});
-		});
+		})();
 	</script>
 
 </body>

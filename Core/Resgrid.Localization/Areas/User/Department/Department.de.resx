@@ -150,7 +150,7 @@
     <value>API Settings</value>
   </data>
   <data name="CallSettingsHeader" xml:space="preserve">
-    <value>Einsatz-Importeinstellungen</value>
+    <value>Einsatzeinstellungen</value>
   </data>
   <data name="CallSorting" xml:space="preserve">
     <value>Call Sorting</value>

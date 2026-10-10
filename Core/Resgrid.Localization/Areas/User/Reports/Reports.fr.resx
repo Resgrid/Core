@@ -356,4 +356,99 @@
   <data name="CallUnitTimesLegend" xml:space="preserve">
     <value>Lié automatiquement : un statut envoyé sans appel que Resgrid a lié d'après le statut précédent de l'unité ou son envoi. Déduit : un statut défini sans destination par l'unité alors qu'elle était envoyée sur l'appel. Envoi seulement : l'unité a été envoyée mais n'a signalé aucun statut sur l'appel.</value>
   </data>
+
+  <!-- ==================== Call Summary: group filter, pies, period statistics ==================== -->
+  <data name="AllGroups" xml:space="preserve">
+    <value>Tous les groupes</value>
+  </data>
+  <data name="CallSummaryGroupHelp" xml:space="preserve">
+    <value>Les appels sont attribués au groupe dont le géorepérage contient le lieu de l'appel. Un appel situé hors de tout géorepérage, ou sans lieu, est attribué au groupe auquel appartiennent la plupart des unités et du personnel engagés. Choisir un groupe inclut aussi les groupes qui en dépendent.</value>
+  </data>
+  <data name="NoCallType" xml:space="preserve">
+    <value>Sans type</value>
+  </data>
+  <data name="QuarterLabel" xml:space="preserve">
+    <value>T{0} {1}</value>
+  </data>
+  <data name="CallSummaryGroupFilter" xml:space="preserve">
+    <value>Groupe : {0} (y compris les groupes qui en dépendent)</value>
+  </data>
+  <data name="CallsByGroup" xml:space="preserve">
+    <value>Appels par groupe</value>
+  </data>
+  <data name="UnassignedGroup" xml:space="preserve">
+    <value>Non attribué</value>
+  </data>
+  <data name="OtherGroups" xml:space="preserve">
+    <value>Autres groupes</value>
+  </data>
+  <data name="CallGroupAssignmentNote" xml:space="preserve">
+    <value>Chaque appel compte une fois : dans le groupe dont le géorepérage contient son lieu, sinon dans le groupe auquel appartiennent la plupart des unités et du personnel engagés. Les appels non attribués sont hors de tout géorepérage et n'ont eu ni unités ni personnel d'un groupe, ou se sont répartis à égalité entre plusieurs groupes.</value>
+  </data>
+  <data name="GroupMethodGeofence" xml:space="preserve">
+    <value>géorepérage</value>
+  </data>
+  <data name="GroupMethodDispatch" xml:space="preserve">
+    <value>engagement</value>
+  </data>
+  <data name="GroupMethodResponse" xml:space="preserve">
+    <value>intervenants</value>
+  </data>
+  <data name="SummaryTotalCalls" xml:space="preserve">
+    <value>Total des appels</value>
+  </data>
+  <data name="SummaryAvgOnScene" xml:space="preserve">
+    <value>Délai moyen d'arrivée sur les lieux</value>
+  </data>
+  <data name="SummaryAvgCallLength" xml:space="preserve">
+    <value>Durée moyenne des appels</value>
+  </data>
+  <data name="SummaryUnitResponses" xml:space="preserve">
+    <value>Engagements d'unités</value>
+  </data>
+  <data name="SummaryPersonnelResponses" xml:space="preserve">
+    <value>Engagements du personnel</value>
+  </data>
+  <data name="YearlyStatistics" xml:space="preserve">
+    <value>Statistiques annuelles</value>
+  </data>
+  <data name="QuarterlyStatistics" xml:space="preserve">
+    <value>Statistiques trimestrielles</value>
+  </data>
+  <data name="MonthlyStatistics" xml:space="preserve">
+    <value>Statistiques mensuelles</value>
+  </data>
+  <data name="CallsByYear" xml:space="preserve">
+    <value>Appels par année</value>
+  </data>
+  <data name="CallsByQuarter" xml:space="preserve">
+    <value>Appels par trimestre</value>
+  </data>
+  <data name="CallsByMonth" xml:space="preserve">
+    <value>Appels par mois</value>
+  </data>
+  <data name="PeriodHeader" xml:space="preserve">
+    <value>Période</value>
+  </data>
+  <data name="CallsHeader" xml:space="preserve">
+    <value>Appels</value>
+  </data>
+  <data name="YearToDateHeader" xml:space="preserve">
+    <value>Cumul annuel</value>
+  </data>
+  <data name="PartialPeriodNote" xml:space="preserve">
+    <value>* Période partielle : la plage du rapport n'en couvre qu'une partie.</value>
+  </data>
+  <data name="CallTypesByPeriod" xml:space="preserve">
+    <value>Types d'appel par période</value>
+  </data>
+  <data name="TypesWithNoCalls" xml:space="preserve">
+    <value>Aucun appel :</value>
+  </data>
+  <data name="OtherCallTypes" xml:space="preserve">
+    <value>Autres</value>
+  </data>
+  <data name="CallsInPeriod" xml:space="preserve">
+    <value>{0} appels</value>
+  </data>
 </root>

@@ -356,4 +356,99 @@
   <data name="CallUnitTimesLegend" xml:space="preserve">
     <value>Powiązane automatycznie: status wysłany bez zgłoszenia, który Resgrid powiązał na podstawie poprzedniego statusu jednostki lub jej zadysponowania. Wywnioskowane: status ustawiony przez jednostkę bez celu, gdy była zadysponowana do zgłoszenia. Tylko zadysponowanie: jednostka została zadysponowana, ale nie zgłosiła żadnego statusu w zgłoszeniu.</value>
   </data>
+
+  <!-- ==================== Call Summary: group filter, pies, period statistics ==================== -->
+  <data name="AllGroups" xml:space="preserve">
+    <value>Wszystkie grupy</value>
+  </data>
+  <data name="CallSummaryGroupHelp" xml:space="preserve">
+    <value>Zgłoszenia są przypisywane do grupy, której obszar geofence obejmuje miejsce zgłoszenia. Zgłoszenie spoza wszystkich obszarów geofence lub bez lokalizacji jest przypisywane do grupy, do której należy większość zadysponowanych jednostek i personelu. Wybranie grupy obejmuje także grupy jej podrzędne.</value>
+  </data>
+  <data name="NoCallType" xml:space="preserve">
+    <value>Brak typu</value>
+  </data>
+  <data name="QuarterLabel" xml:space="preserve">
+    <value>Kw. {0} {1}</value>
+  </data>
+  <data name="CallSummaryGroupFilter" xml:space="preserve">
+    <value>Grupa: {0} (wraz z grupami podrzędnymi)</value>
+  </data>
+  <data name="CallsByGroup" xml:space="preserve">
+    <value>Zgłoszenia według grup</value>
+  </data>
+  <data name="UnassignedGroup" xml:space="preserve">
+    <value>Nieprzypisane</value>
+  </data>
+  <data name="OtherGroups" xml:space="preserve">
+    <value>Inne grupy</value>
+  </data>
+  <data name="CallGroupAssignmentNote" xml:space="preserve">
+    <value>Każde zgłoszenie liczy się raz: w grupie, której obszar geofence obejmuje jego lokalizację, a w przeciwnym razie w grupie, do której należy większość zadysponowanych jednostek i personelu. Zgłoszenia nieprzypisane leżą poza wszystkimi obszarami geofence i nie miały jednostek ani personelu z żadnej grupy lub rozłożyły się równo między grupy.</value>
+  </data>
+  <data name="GroupMethodGeofence" xml:space="preserve">
+    <value>geofence</value>
+  </data>
+  <data name="GroupMethodDispatch" xml:space="preserve">
+    <value>dysponowanie</value>
+  </data>
+  <data name="GroupMethodResponse" xml:space="preserve">
+    <value>ratownicy</value>
+  </data>
+  <data name="SummaryTotalCalls" xml:space="preserve">
+    <value>Łącznie zgłoszeń</value>
+  </data>
+  <data name="SummaryAvgOnScene" xml:space="preserve">
+    <value>Śr. czas dojazdu na miejsce</value>
+  </data>
+  <data name="SummaryAvgCallLength" xml:space="preserve">
+    <value>Śr. czas trwania zgłoszenia</value>
+  </data>
+  <data name="SummaryUnitResponses" xml:space="preserve">
+    <value>Wyjazdy jednostek</value>
+  </data>
+  <data name="SummaryPersonnelResponses" xml:space="preserve">
+    <value>Udział personelu</value>
+  </data>
+  <data name="YearlyStatistics" xml:space="preserve">
+    <value>Statystyki roczne</value>
+  </data>
+  <data name="QuarterlyStatistics" xml:space="preserve">
+    <value>Statystyki kwartalne</value>
+  </data>
+  <data name="MonthlyStatistics" xml:space="preserve">
+    <value>Statystyki miesięczne</value>
+  </data>
+  <data name="CallsByYear" xml:space="preserve">
+    <value>Zgłoszenia według lat</value>
+  </data>
+  <data name="CallsByQuarter" xml:space="preserve">
+    <value>Zgłoszenia według kwartałów</value>
+  </data>
+  <data name="CallsByMonth" xml:space="preserve">
+    <value>Zgłoszenia według miesięcy</value>
+  </data>
+  <data name="PeriodHeader" xml:space="preserve">
+    <value>Okres</value>
+  </data>
+  <data name="CallsHeader" xml:space="preserve">
+    <value>Zgłoszenia</value>
+  </data>
+  <data name="YearToDateHeader" xml:space="preserve">
+    <value>Od pocz. roku</value>
+  </data>
+  <data name="PartialPeriodNote" xml:space="preserve">
+    <value>* Okres częściowy: zakres raportu obejmuje tylko jego część.</value>
+  </data>
+  <data name="CallTypesByPeriod" xml:space="preserve">
+    <value>Typy zgłoszeń według okresów</value>
+  </data>
+  <data name="TypesWithNoCalls" xml:space="preserve">
+    <value>Brak zgłoszeń:</value>
+  </data>
+  <data name="OtherCallTypes" xml:space="preserve">
+    <value>Inne</value>
+  </data>
+  <data name="CallsInPeriod" xml:space="preserve">
+    <value>Zgłoszenia: {0}</value>
+  </data>
 </root>

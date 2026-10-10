@@ -823,7 +823,19 @@ var resgrid;
                         name += '<br/><small class="text-muted">' + place.map(escapeHtml).join(' &middot; ') + '</small>';
                     }
 
-                    var statusHtml = '<span class="label ' + (prop(unit, 'isAvailable') ? 'label-primary' : 'label-warning') + '">' + escapeHtml(prop(unit, 'statusText')) + '</span>';
+                    // The status's own colours, as everywhere else; the class colour stays as the fallback for a
+                    // status that has none. Set through .css() so a colour never lands in the markup unchecked.
+                    // The border keeps a white or very light status visible on the table's white rows.
+                    var status = $('<span class="label">')
+                        .addClass(prop(unit, 'isAvailable') ? 'label-primary' : 'label-warning')
+                        .text(prop(unit, 'statusText') || '');
+                    if (prop(unit, 'statusColor')) {
+                        status.css({ 'background-color': prop(unit, 'statusColor'), 'border': '1px solid rgba(0, 0, 0, 0.2)' });
+                    }
+                    if (prop(unit, 'statusTextColor')) {
+                        status.css('color', prop(unit, 'statusTextColor'));
+                    }
+                    var statusHtml = status.prop('outerHTML');
 
                     // With a turnout configured the row shows the response time it is ranked on (turnout + travel).
                     var turnout = prop(unit, 'turnoutSeconds') || 0;

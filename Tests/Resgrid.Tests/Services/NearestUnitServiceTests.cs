@@ -300,6 +300,75 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task a_unit_row_carries_its_status_colours_as_the_department_set_them_up()
+		{
+			_customStateService.Setup(x => x.GetAllActiveUnitStatesForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<CustomState>
+			{
+				new CustomState
+				{
+					CustomStateId = 90,
+					DepartmentId = DepartmentId,
+					Type = (int)CustomStateTypes.Unit,
+					Details = new List<CustomStateDetail>
+					{
+						new CustomStateDetail { CustomStateDetailId = 900, CustomStateId = 90, ButtonText = "Standplaats", ButtonColor = "#FF0000", TextColor = "#000000", BaseType = (int)ActionBaseTypes.InQuarters },
+						new CustomStateDetail { CustomStateDetailId = 901, CustomStateId = 90, ButtonText = "Radiofonisch", ButtonColor = " #0000ff ", TextColor = "#000000" },
+						new CustomStateDetail { CustomStateDetailId = 902, CustomStateId = 90, ButtonText = "Legacy", ButtonColor = "label-danger", TextColor = "" },
+						new CustomStateDetail { CustomStateDetailId = 903, CustomStateId = 90, ButtonText = "Odd", ButtonColor = "label-primary", TextColor = "red;display:none" }
+					}
+				}
+			});
+			_unitsService.Setup(x => x.GetAllLatestStatusForUnitsByDepartmentIdAsync(DepartmentId)).ReturnsAsync(new List<UnitState>
+			{
+				new UnitState { UnitId = TeamUnit, State = 900, Timestamp = DateTime.UtcNow },
+				new UnitState { UnitId = FarTeamUnit, State = 901, Timestamp = DateTime.UtcNow },
+				new UnitState { UnitId = ApparatusUnit, State = 902, Timestamp = DateTime.UtcNow },
+				new UnitState { UnitId = IndividualUnit, State = 903, Timestamp = DateTime.UtcNow }
+			});
+
+			var board = await GetBoardAsync();
+
+			UnitRow(board, TeamUnit).StatusColor.Should().Be("#FF0000");
+			UnitRow(board, TeamUnit).StatusTextColor.Should().Be("#000000");
+			UnitRow(board, FarTeamUnit).StatusColor.Should().Be("#0000ff");
+			UnitRow(board, ApparatusUnit).StatusColor.Should().Be("#ff0000", "an older option's label class maps to its colour");
+			UnitRow(board, ApparatusUnit).StatusTextColor.Should().BeNull();
+			UnitRow(board, IndividualUnit).StatusColor.Should().BeNull("a class with no known colour is left to the page");
+			UnitRow(board, IndividualUnit).StatusTextColor.Should().BeNull("only a hex colour is passed on");
+		}
+
+		[Test]
+		public async Task a_unit_on_a_built_in_status_takes_the_built_in_colours()
+		{
+			_customStateService.Setup(x => x.GetDefaultUnitStatuses()).Returns(new List<CustomStateDetail>
+			{
+				new CustomStateDetail { CustomStateDetailId = (int)UnitStateTypes.Available, ButtonText = "Available", ButtonColor = "#d1dade", TextColor = "#5E5E5E" },
+				new CustomStateDetail { CustomStateDetailId = (int)UnitStateTypes.OnScene, ButtonText = "On Scene", ButtonColor = "#69BB7B", TextColor = "#ffffff" }
+			});
+
+			var board = await GetBoardAsync();
+
+			UnitRow(board, TeamUnit).StatusColor.Should().Be("#d1dade");
+			UnitRow(board, TeamUnit).StatusTextColor.Should().Be("#5E5E5E");
+			UnitRow(board, ApparatusUnit).StatusColor.Should().Be("#69BB7B");
+			UnitRow(board, ApparatusUnit).StatusTextColor.Should().Be("#ffffff");
+		}
+
+		[Test]
+		public async Task a_built_in_status_with_no_option_has_no_colours()
+		{
+			_unitsService.Setup(x => x.GetAllLatestStatusForUnitsByDepartmentIdAsync(DepartmentId)).ReturnsAsync(new List<UnitState>
+			{
+				new UnitState { UnitId = TeamUnit, State = (int)UnitStateTypes.Delayed, Timestamp = DateTime.UtcNow }
+			});
+
+			var team = UnitRow(await GetBoardAsync(), TeamUnit);
+
+			team.StatusColor.Should().BeNull();
+			team.StatusTextColor.Should().BeNull();
+		}
+
+		[Test]
 		public async Task a_stale_fix_is_flagged_on_the_row_not_ranked_below_fresh_units()
 		{
 			_config.MaxLocationAgeSeconds = 600;

@@ -165,8 +165,8 @@
   <data name="CallAddress" xml:space="preserve">
     <value>Call Address</value>
   </data>
-  <data name="CallImportSettings" xml:space="preserve">
-    <value>Call Import Settings</value>
+  <data name="CallSettings" xml:space="preserve">
+    <value>Call Settings</value>
   </data>
   <data name="DocumentNumbering" xml:space="preserve">
     <value>Document Numbering</value>

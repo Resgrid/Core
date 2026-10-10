@@ -64,6 +64,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IRecordsReportingService _recordsReporting;
 		private readonly IBusinessOperationsAccessService _businessOperationsAccess;
 		private readonly ICallStatusAttributionService _callStatusAttributionService;
+		private readonly ICallGroupAssignmentService _callGroupAssignmentService;
+		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Reports.Reports> _reportsLocalizer;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Units.Units> _unitsLocalizer;
 
 		public ReportsController(IDepartmentsService departmentsService, IUsersService usersService,
@@ -79,7 +81,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ICalendarService calendarService, IDepartmentMemberSensitiveDataService memberSensitiveDataService,
 			IProtectedReadService protectedReadService, IRecordsReportingService recordsReporting,
 			IBusinessOperationsAccessService businessOperationsAccess, ICallStatusAttributionService callStatusAttributionService,
-			IStringLocalizer<Resgrid.Localization.Areas.User.Units.Units> unitsLocalizer)
+			IStringLocalizer<Resgrid.Localization.Areas.User.Units.Units> unitsLocalizer, ICallGroupAssignmentService callGroupAssignmentService,
+			IStringLocalizer<Resgrid.Localization.Areas.User.Reports.Reports> reportsLocalizer)
 		{
 			_unitsLocalizer = unitsLocalizer;
 			_departmentsService = departmentsService;
@@ -106,6 +109,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_recordsReporting = recordsReporting;
 			_businessOperationsAccess = businessOperationsAccess;
 			_callStatusAttributionService = callStatusAttributionService;
+			_callGroupAssignmentService = callGroupAssignmentService;
+			_reportsLocalizer = reportsLocalizer;
 		}
 
 		#endregion Private Members and Constructors
@@ -355,9 +360,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Reports_View)]
-		public async Task<IActionResult> CallSummaryReport(DateTime start, DateTime end)
+		public async Task<IActionResult> CallSummaryReport(DateTime start, DateTime end, int groupId = 0)
 		{
-			return View(await CallSummaryReportModel(DepartmentId, start, end));
+			var model = await CallSummaryReportModel(DepartmentId, start, end, groupId);
+
+			// A group id that isn't one of the department's.
+			if (model == null)
+				return NotFound();
+
+			return View(model);
 		}
 
 		[HttpGet]
@@ -567,7 +578,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Reports_View)]
 		public async Task<IActionResult> CallSummaryReportParams()
 		{
-			var model = new PersonnelHoursReportParams();
+			var model = new CallSummaryReportParams();
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
@@ -576,13 +587,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.End = TimeConverterHelper.TimeConverter(new DateTime(DateTime.UtcNow.Year, 12, 31, 23, 59, 59),
 				department);
 
+			var groups = new List<DepartmentGroup> { new DepartmentGroup { DepartmentGroupId = 0, Name = _reportsLocalizer["AllGroups"] } };
+			groups.AddRange((await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId) ?? new List<DepartmentGroup>())
+				.OrderBy(g => g.Name));
+			model.Groups = new SelectList(groups, "DepartmentGroupId", "Name", 0);
+
 			return View(model);
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> CallSummaryReportParams(PersonnelHoursReportParams model)
+		[Authorize(Policy = ResgridResources.Reports_View)]
+		public async Task<IActionResult> CallSummaryReportParams(CallSummaryReportParams model)
 		{
-			return RedirectToAction("CallSummaryReport", new { start = model.Start, end = model.End });
+			return RedirectToAction("CallSummaryReport", new { start = model.Start, end = model.End, groupId = model.GroupId });
 		}
 
 		[HttpGet]
@@ -1715,7 +1732,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return model;
 		}
 
-		private async Task<CallSummaryView> CallSummaryReportModel(int departmentId, DateTime? start, DateTime? end)
+		/// <summary>
+		/// The call summary for a department-local range, optionally narrowed to the calls placed in one group or the groups
+		/// beneath it (see <see cref="CallGroupAssigner"/>). Null when <paramref name="groupId"/> is not one of the
+		/// department's groups.
+		/// </summary>
+		private async Task<CallSummaryView> CallSummaryReportModel(int departmentId, DateTime? start, DateTime? end, int groupId = 0)
 		{
 			var model = new CallSummaryView();
 
@@ -1733,61 +1755,99 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.End = new DateTime(DateTime.UtcNow.Year, 12, 31, 23, 59, 59);
 			}
 
+			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(departmentId) ?? new List<DepartmentGroup>();
+			var groupNames = groups.GroupBy(g => g.DepartmentGroupId).ToDictionary(g => g.Key, g => g.First().Name);
+
+			HashSet<int> groupFilter = null;
+			if (groupId > 0)
+			{
+				if (!groupNames.TryGetValue(groupId, out var groupName))
+					return null;
+
+				model.GroupId = groupId;
+				model.GroupName = groupName;
+				groupFilter = DepartmentGroupHierarchy.GetSelfAndDescendantIds(groups, groupId);
+			}
+
 			// The range is picked in department-local time; the call and log timestamps are UTC.
 			var startUtc = model.Start.DepartmentLocalToUtc(model.Department);
 			var endUtc = model.End.DepartmentLocalToUtc(model.Department);
 
-			var calls = await _callsService.GetAllCallsByDepartmentDateRangeAsync(departmentId, startUtc, endUtc);
+			var calls = await _callsService.GetAllCallsByDepartmentDateRangeAsync(departmentId, startUtc, endUtc) ?? new List<Call>();
 			var logs = await _logService.GetAllLogsByDepartmentDateRangeAsync(departmentId, LogTypes.Run, startUtc,
-				endUtc);
-
-			model.TotalCalls = calls.Count;
-			model.CallTypeCount = new List<Tuple<string, int>>();
-			model.CallCloseCount = new List<Tuple<string, int>>();
-			model.CallSummaries = new List<CallSummary>();
-
-			var groupedCalls = calls.GroupBy(x => x.Type);
-			foreach (var grouppedCall in groupedCalls)
-			{
-				string key = "No Type";
-				if (!String.IsNullOrWhiteSpace(grouppedCall.Key))
-					key = grouppedCall.Key;
-
-				model.CallTypeCount.Add(new Tuple<string, int>(key, grouppedCall.ToList().Count));
-			}
-
-			model.CallTypeCount.Add(new Tuple<string, int>("Total", calls.Count));
-
-			var groupedCallStates = calls.GroupBy(x => x.State);
-			foreach (var grouppedCall in groupedCallStates)
-			{
-				model.CallCloseCount.Add(new Tuple<string, int>(((CallStates)grouppedCall.Key).ToString(),
-					grouppedCall.ToList().Count));
-			}
-
-			model.CallCloseCount.Add(new Tuple<string, int>("Total", calls.Count));
+				endUtc) ?? new List<Log>();
+			var logsByCall = logs.Where(l => l.CallId.HasValue).GroupBy(l => l.CallId.Value).ToDictionary(g => g.Key, g => g.ToList());
 
 			// Calls without a run log (most departments never write one, and none can once Records is active) take
 			// their unit/personnel counts and first on-scene time from the status history linked to the call.
-			var callsWithoutLogs = calls.Where(c => !logs.Any(l => l.CallId == c.CallId)).ToList();
+			var callsWithoutLogs = calls.Where(c => !logsByCall.ContainsKey(c.CallId)).ToList();
 			var statusActivity = callsWithoutLogs.Count > 0
 				? await GetCallStatusActivityAsync(departmentId, callsWithoutLogs, startUtc, endUtc)
-				: new Dictionary<int, (int Units, int Personnel, DateTime? FirstOnScene)>();
+				: new Dictionary<int, (HashSet<int> Units, HashSet<string> Personnel, DateTime? FirstOnScene)>();
 
+			// What worked each call: the run log's units and personnel, else the statuses linked to the call. A call nothing
+			// with a group was dispatched to is placed by these.
+			var responders = new Dictionary<int, CallGroupResources>();
 			foreach (var call in calls)
 			{
+				var resources = new CallGroupResources();
+				if (logsByCall.TryGetValue(call.CallId, out var callLogs))
+				{
+					foreach (var callLog in callLogs)
+					{
+						foreach (var unit in callLog.Units ?? Enumerable.Empty<LogUnit>())
+							resources.UnitIds.Add(unit.UnitId);
+
+						foreach (var user in (callLog.Users ?? Enumerable.Empty<LogUser>()).Where(u => !string.IsNullOrWhiteSpace(u.UserId)))
+							resources.UserIds.Add(user.UserId);
+					}
+				}
+				else if (statusActivity.TryGetValue(call.CallId, out var activity))
+				{
+					resources.UnitIds.UnionWith(activity.Units);
+					resources.UserIds.UnionWith(activity.Personnel);
+				}
+
+				responders[call.CallId] = resources;
+			}
+
+			var assignments = await _callGroupAssignmentService.AssignCallsToGroupsAsync(departmentId, calls, responders);
+
+			if (groupFilter != null)
+				calls = calls.Where(c => assignments.TryGetValue(c.CallId, out var a) && a.DepartmentGroupId.HasValue
+					&& groupFilter.Contains(a.DepartmentGroupId.Value)).ToList();
+
+			string TypeName(Call call)
+			{
+				var type = ProtectedDataEnvelope.SafeDisplay(call.Type);
+				return String.IsNullOrWhiteSpace(type) ? _reportsLocalizer["NoCallType"].Value : type.Trim();
+			}
+
+			model.TotalCalls = calls.Count;
+			model.CallSummaries = new List<CallSummary>();
+
+			foreach (var call in calls.OrderBy(c => c.LoggedOn))
+			{
 				var summary = new CallSummary();
+				summary.CallId = call.CallId;
 				summary.Number = call.Number;
 				summary.Name = ProtectedDataEnvelope.SafeDisplay(call.Name);
 				summary.LoggedOn = call.LoggedOn;
+				summary.LoggedOnLocal = call.LoggedOn.TimeConverter(model.Department);
 				summary.ClosedOn = call.ClosedOn;
-				summary.Type = ProtectedDataEnvelope.SafeDisplay(call.Type);
+				summary.Type = TypeName(call);
 
-				DateTime? onSceneTime = null;
-				var callLogs = logs.Where(x => x.CallId == call.CallId);
-
-				if (callLogs != null && callLogs.Any())
+				if (assignments.TryGetValue(call.CallId, out var assignment) && assignment.DepartmentGroupId.HasValue
+					&& groupNames.TryGetValue(assignment.DepartmentGroupId.Value, out var assignedName))
 				{
+					summary.GroupName = assignedName;
+					summary.GroupMethod = assignment.Method;
+				}
+
+				if (logsByCall.TryGetValue(call.CallId, out var callLogs))
+				{
+					DateTime? onSceneTime = null;
+
 					foreach (var callLog in callLogs)
 					{
 						if (callLog.Units != null && callLog.Units.Any())
@@ -1813,28 +1873,111 @@ namespace Resgrid.Web.Areas.User.Controllers
 				else if (statusActivity.TryGetValue(call.CallId, out var activity))
 				{
 					summary.FirstOnSceneTime = activity.FirstOnScene;
-					summary.UnitsCount = activity.Units;
-					summary.PersonnelCount = activity.Personnel;
-				}
-				else
-				{
-					summary.FirstOnSceneTime = null;
-					summary.UnitsCount = 0;
-					summary.PersonnelCount = 0;
+					summary.UnitsCount = activity.Units.Count;
+					summary.PersonnelCount = activity.Personnel.Count;
 				}
 
 				model.CallSummaries.Add(summary);
 			}
 
+			model.Overall = CallSummaryStats.From(model.CallSummaries);
+
+			model.CallTypeCount = model.CallSummaries.GroupBy(c => c.Type, StringComparer.OrdinalIgnoreCase)
+				.Select(g => new Tuple<string, int>(g.First().Type, g.Count()))
+				.OrderByDescending(t => t.Item2).ThenBy(t => t.Item1, StringComparer.CurrentCultureIgnoreCase)
+				.ToList();
+			model.TypeOrder = model.CallTypeCount.Select(t => t.Item1).ToList();
+
+			model.CallStateCount = calls.GroupBy(c => c.State)
+				.Select(g => new Tuple<int, int>(g.Key, g.Count()))
+				.OrderByDescending(t => t.Item2)
+				.ToList();
+
+			// A null name is the unassigned bucket; the view names it.
+			model.CallGroupCount = model.CallSummaries.GroupBy(c => c.GroupName)
+				.Select(g => new Tuple<string, int>(g.Key, g.Count()))
+				.OrderBy(t => t.Item1 == null)
+				.ThenByDescending(t => t.Item2)
+				.ThenBy(t => t.Item1, StringComparer.CurrentCultureIgnoreCase)
+				.ToList();
+
+			var definedTypes = (await _callsService.GetCallTypesForDepartmentAsync(departmentId) ?? new List<CallType>())
+				.Select(t => ProtectedDataEnvelope.SafeDisplay(t.Type))
+				.Where(t => !String.IsNullOrWhiteSpace(t))
+				.Select(t => t.Trim())
+				.Distinct(StringComparer.OrdinalIgnoreCase)
+				.OrderBy(t => t, StringComparer.CurrentCultureIgnoreCase)
+				.ToList();
+
+			if (ReportPeriods.CoversFullYear(model.Start, model.End))
+				model.PeriodSections.Add(BuildCallSummaryPeriodSection(model, ReportPeriodGranularity.Year, definedTypes));
+
+			if (ReportPeriods.CrossesQuarter(model.Start, model.End))
+				model.PeriodSections.Add(BuildCallSummaryPeriodSection(model, ReportPeriodGranularity.Quarter, definedTypes));
+
+			if (ReportPeriods.CrossesMonth(model.Start, model.End))
+				model.PeriodSections.Add(BuildCallSummaryPeriodSection(model, ReportPeriodGranularity.Month, definedTypes));
+
 			return model;
 		}
 
+		private CallSummaryPeriodSection BuildCallSummaryPeriodSection(CallSummaryView model, ReportPeriodGranularity granularity,
+			List<string> definedTypes)
+		{
+			var section = new CallSummaryPeriodSection { Granularity = granularity };
+			var culture = CultureInfo.CurrentUICulture;
+			var yearToDate = 0;
+			int? currentYear = null;
+
+			foreach (var period in ReportPeriods.Split(model.Start, model.End, granularity))
+			{
+				var periodCalls = model.CallSummaries.Where(c => period.Contains(c.LoggedOnLocal)).ToList();
+
+				if (currentYear != period.Year)
+				{
+					currentYear = period.Year;
+					yearToDate = 0;
+				}
+
+				yearToDate += periodCalls.Count;
+
+				var typeCounts = periodCalls.GroupBy(c => c.Type, StringComparer.OrdinalIgnoreCase)
+					.ToDictionary(g => g.First().Type, g => g.Count(), StringComparer.OrdinalIgnoreCase);
+
+				string label;
+				switch (granularity)
+				{
+					case ReportPeriodGranularity.Month:
+						label = culture.TextInfo.ToTitleCase(period.Start.ToString("MMM yyyy", culture));
+						break;
+					case ReportPeriodGranularity.Quarter:
+						label = _reportsLocalizer["QuarterLabel", period.Number, period.Year].Value;
+						break;
+					default:
+						label = period.Year.ToString(CultureInfo.InvariantCulture);
+						break;
+				}
+
+				section.Periods.Add(new CallSummaryPeriod
+				{
+					Period = period,
+					Label = label,
+					Stats = CallSummaryStats.From(periodCalls),
+					YearToDate = yearToDate,
+					TypeCounts = typeCounts,
+					TypesWithNoCalls = definedTypes.Where(t => !typeCounts.ContainsKey(t)).ToList()
+				});
+			}
+
+			return section;
+		}
+
 		/// <summary>
-		/// Per call: distinct units and personnel with a status on the call's record (linked or inferred, see
+		/// Per call: the distinct units and personnel with a status on the call's record (linked or inferred, see
 		/// CallStatusAttribution), and the first unit on-scene time (custom statuses count through their base type). Status
 		/// history is read once for the report window rather than once per call.
 		/// </summary>
-		private async Task<Dictionary<int, (int Units, int Personnel, DateTime? FirstOnScene)>> GetCallStatusActivityAsync(int departmentId,
+		private async Task<Dictionary<int, (HashSet<int> Units, HashSet<string> Personnel, DateTime? FirstOnScene)>> GetCallStatusActivityAsync(int departmentId,
 			List<Call> calls, DateTime startUtc, DateTime endUtc)
 		{
 			var callIds = calls.Select(c => c.CallId).ToHashSet();
@@ -1844,7 +1987,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var statesByCall = await _callStatusAttributionService.GetUnitStatesForCallsAsync(departmentId, calls);
 			var logsByCall = await _callStatusAttributionService.GetActionLogsForCallsAsync(departmentId, calls);
 
-			var result = new Dictionary<int, (int Units, int Personnel, DateTime? FirstOnScene)>();
+			var result = new Dictionary<int, (HashSet<int> Units, HashSet<string> Personnel, DateTime? FirstOnScene)>();
 			foreach (var callId in callIds)
 			{
 				var callUnitStates = statesByCall.TryGetValue(callId, out var callStates) ? callStates : new List<UnitState>();
@@ -1856,8 +1999,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				var callLogs = logsByCall.TryGetValue(callId, out var logs) ? logs : new List<ActionLog>();
 
-				result[callId] = (callUnitStates.Select(s => s.UnitId).Distinct().Count(),
-					callLogs.Select(a => a.UserId).Distinct(StringComparer.OrdinalIgnoreCase).Count(),
+				result[callId] = (callUnitStates.Select(s => s.UnitId).ToHashSet(),
+					new HashSet<string>(callLogs.Select(a => a.UserId).Where(u => !string.IsNullOrWhiteSpace(u)), StringComparer.OrdinalIgnoreCase),
 					firstOnScene);
 			}
 

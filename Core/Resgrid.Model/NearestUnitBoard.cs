@@ -124,6 +124,13 @@ namespace Resgrid.Model
 
 		public string StatusText { get; set; }
 
+		/// <summary>The status's button colour as the department set it up (hex, e.g. "#ff0000"), the same colour the
+		/// status shows everywhere else; null when the status has none.</summary>
+		public string StatusColor { get; set; }
+
+		/// <summary>The status's text colour (hex), drawn on <see cref="StatusColor"/>; null when the status has none.</summary>
+		public string StatusTextColor { get; set; }
+
 		public bool IsAvailable { get; set; }
 
 		public double? Latitude { get; set; }

@@ -150,7 +150,7 @@
     <value>API Settings</value>
   </data>
   <data name="CallSettingsHeader" xml:space="preserve">
-    <value>Ustawienia importu zgłoszeń</value>
+    <value>Ustawienia zgłoszeń</value>
   </data>
   <data name="CallSorting" xml:space="preserve">
     <value>Call Sorting</value>

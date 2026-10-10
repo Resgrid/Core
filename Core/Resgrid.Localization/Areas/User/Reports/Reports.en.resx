@@ -785,4 +785,99 @@
   <data name="CallUnitTimesLegend" xml:space="preserve">
     <value>Auto-linked: a status sent without a call that Resgrid linked from the unit's previous status or its dispatch. Inferred: a status the unit set with no destination while dispatched to the call. Dispatch only: the unit was dispatched but reported no status on the call.</value>
   </data>
+
+  <!-- ==================== Call Summary: group filter, pies, period statistics ==================== -->
+  <data name="AllGroups" xml:space="preserve">
+    <value>All Groups</value>
+  </data>
+  <data name="CallSummaryGroupHelp" xml:space="preserve">
+    <value>Calls are placed in the group whose geofence contains the call's location. A call outside every geofence, or without a location, is placed in the group most of its dispatched units and personnel belong to. Choosing a group also includes the groups beneath it.</value>
+  </data>
+  <data name="NoCallType" xml:space="preserve">
+    <value>No Type</value>
+  </data>
+  <data name="QuarterLabel" xml:space="preserve">
+    <value>Q{0} {1}</value>
+  </data>
+  <data name="CallSummaryGroupFilter" xml:space="preserve">
+    <value>Group: {0} (including the groups beneath it)</value>
+  </data>
+  <data name="CallsByGroup" xml:space="preserve">
+    <value>Calls by Group</value>
+  </data>
+  <data name="UnassignedGroup" xml:space="preserve">
+    <value>Unassigned</value>
+  </data>
+  <data name="OtherGroups" xml:space="preserve">
+    <value>Other groups</value>
+  </data>
+  <data name="CallGroupAssignmentNote" xml:space="preserve">
+    <value>Each call counts once: in the group whose geofence contains its location, otherwise in the group most of its dispatched units and personnel belong to. Unassigned calls are outside every geofence and had no units or personnel from a group, or were split evenly between groups.</value>
+  </data>
+  <data name="GroupMethodGeofence" xml:space="preserve">
+    <value>geofence</value>
+  </data>
+  <data name="GroupMethodDispatch" xml:space="preserve">
+    <value>dispatch</value>
+  </data>
+  <data name="GroupMethodResponse" xml:space="preserve">
+    <value>responders</value>
+  </data>
+  <data name="SummaryTotalCalls" xml:space="preserve">
+    <value>Total Calls</value>
+  </data>
+  <data name="SummaryAvgOnScene" xml:space="preserve">
+    <value>Avg. Time to On Scene</value>
+  </data>
+  <data name="SummaryAvgCallLength" xml:space="preserve">
+    <value>Avg. Call Length</value>
+  </data>
+  <data name="SummaryUnitResponses" xml:space="preserve">
+    <value>Unit Responses</value>
+  </data>
+  <data name="SummaryPersonnelResponses" xml:space="preserve">
+    <value>Personnel Responses</value>
+  </data>
+  <data name="YearlyStatistics" xml:space="preserve">
+    <value>Yearly Statistics</value>
+  </data>
+  <data name="QuarterlyStatistics" xml:space="preserve">
+    <value>Quarterly Statistics</value>
+  </data>
+  <data name="MonthlyStatistics" xml:space="preserve">
+    <value>Monthly Statistics</value>
+  </data>
+  <data name="CallsByYear" xml:space="preserve">
+    <value>Calls by Year</value>
+  </data>
+  <data name="CallsByQuarter" xml:space="preserve">
+    <value>Calls by Quarter</value>
+  </data>
+  <data name="CallsByMonth" xml:space="preserve">
+    <value>Calls by Month</value>
+  </data>
+  <data name="PeriodHeader" xml:space="preserve">
+    <value>Period</value>
+  </data>
+  <data name="CallsHeader" xml:space="preserve">
+    <value>Calls</value>
+  </data>
+  <data name="YearToDateHeader" xml:space="preserve">
+    <value>YTD</value>
+  </data>
+  <data name="PartialPeriodNote" xml:space="preserve">
+    <value>* Partial period: the report range covers only part of it.</value>
+  </data>
+  <data name="CallTypesByPeriod" xml:space="preserve">
+    <value>Call Types by Period</value>
+  </data>
+  <data name="TypesWithNoCalls" xml:space="preserve">
+    <value>No calls:</value>
+  </data>
+  <data name="OtherCallTypes" xml:space="preserve">
+    <value>Other</value>
+  </data>
+  <data name="CallsInPeriod" xml:space="preserve">
+    <value>{0} calls</value>
+  </data>
 </root>

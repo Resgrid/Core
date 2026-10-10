@@ -356,4 +356,99 @@
   <data name="CallUnitTimesLegend" xml:space="preserve">
     <value>Automatiskt kopplad: en status skickad utan larm som Resgrid kopplade utifrån enhetens föregående status eller dess utlarmning. Härledd: en status som enheten satte utan destination medan den var larmad till larmet. Endast larm: enheten larmades men rapporterade ingen status på larmet.</value>
   </data>
+
+  <!-- ==================== Call Summary: group filter, pies, period statistics ==================== -->
+  <data name="AllGroups" xml:space="preserve">
+    <value>Alla grupper</value>
+  </data>
+  <data name="CallSummaryGroupHelp" xml:space="preserve">
+    <value>Larm placeras i den grupp vars geofence innehåller larmets plats. Ett larm utanför alla geofences, eller utan plats, placeras i den grupp som de flesta utlarmade enheter och personal tillhör. Att välja en grupp inkluderar även grupperna under den.</value>
+  </data>
+  <data name="NoCallType" xml:space="preserve">
+    <value>Ingen typ</value>
+  </data>
+  <data name="QuarterLabel" xml:space="preserve">
+    <value>K{0} {1}</value>
+  </data>
+  <data name="CallSummaryGroupFilter" xml:space="preserve">
+    <value>Grupp: {0} (inklusive grupperna under den)</value>
+  </data>
+  <data name="CallsByGroup" xml:space="preserve">
+    <value>Larm per grupp</value>
+  </data>
+  <data name="UnassignedGroup" xml:space="preserve">
+    <value>Ej tilldelade</value>
+  </data>
+  <data name="OtherGroups" xml:space="preserve">
+    <value>Övriga grupper</value>
+  </data>
+  <data name="CallGroupAssignmentNote" xml:space="preserve">
+    <value>Varje larm räknas en gång: i den grupp vars geofence innehåller dess plats, annars i den grupp som de flesta utlarmade enheter och personal tillhör. Ej tilldelade larm ligger utanför alla geofences och hade inga enheter eller personal från någon grupp, eller delades lika mellan grupper.</value>
+  </data>
+  <data name="GroupMethodGeofence" xml:space="preserve">
+    <value>geofence</value>
+  </data>
+  <data name="GroupMethodDispatch" xml:space="preserve">
+    <value>utlarmning</value>
+  </data>
+  <data name="GroupMethodResponse" xml:space="preserve">
+    <value>insatta resurser</value>
+  </data>
+  <data name="SummaryTotalCalls" xml:space="preserve">
+    <value>Larm totalt</value>
+  </data>
+  <data name="SummaryAvgOnScene" xml:space="preserve">
+    <value>Snittid till framme</value>
+  </data>
+  <data name="SummaryAvgCallLength" xml:space="preserve">
+    <value>Snittlängd per larm</value>
+  </data>
+  <data name="SummaryUnitResponses" xml:space="preserve">
+    <value>Enhetsinsatser</value>
+  </data>
+  <data name="SummaryPersonnelResponses" xml:space="preserve">
+    <value>Personalinsatser</value>
+  </data>
+  <data name="YearlyStatistics" xml:space="preserve">
+    <value>Årsstatistik</value>
+  </data>
+  <data name="QuarterlyStatistics" xml:space="preserve">
+    <value>Kvartalsstatistik</value>
+  </data>
+  <data name="MonthlyStatistics" xml:space="preserve">
+    <value>Månadsstatistik</value>
+  </data>
+  <data name="CallsByYear" xml:space="preserve">
+    <value>Larm per år</value>
+  </data>
+  <data name="CallsByQuarter" xml:space="preserve">
+    <value>Larm per kvartal</value>
+  </data>
+  <data name="CallsByMonth" xml:space="preserve">
+    <value>Larm per månad</value>
+  </data>
+  <data name="PeriodHeader" xml:space="preserve">
+    <value>Period</value>
+  </data>
+  <data name="CallsHeader" xml:space="preserve">
+    <value>Larm</value>
+  </data>
+  <data name="YearToDateHeader" xml:space="preserve">
+    <value>Hittills i år</value>
+  </data>
+  <data name="PartialPeriodNote" xml:space="preserve">
+    <value>* Delperiod: rapportens intervall täcker bara en del av den.</value>
+  </data>
+  <data name="CallTypesByPeriod" xml:space="preserve">
+    <value>Larmtyper per period</value>
+  </data>
+  <data name="TypesWithNoCalls" xml:space="preserve">
+    <value>Inga larm:</value>
+  </data>
+  <data name="OtherCallTypes" xml:space="preserve">
+    <value>Övriga</value>
+  </data>
+  <data name="CallsInPeriod" xml:space="preserve">
+    <value>{0} larm</value>
+  </data>
 </root>

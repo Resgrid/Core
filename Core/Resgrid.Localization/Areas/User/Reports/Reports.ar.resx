@@ -356,4 +356,99 @@
   <data name="CallUnitTimesLegend" xml:space="preserve">
     <value>مرتبط تلقائيًا: حالة أُرسلت دون بلاغ وربطها Resgrid استنادًا إلى الحالة السابقة للوحدة أو إرسالها. مستنتج: حالة حدّدتها الوحدة دون وجهة أثناء إرسالها إلى البلاغ. الإرسال فقط: أُرسلت الوحدة لكنها لم تُبلغ عن أي حالة في البلاغ.</value>
   </data>
+
+  <!-- ==================== Call Summary: group filter, pies, period statistics ==================== -->
+  <data name="AllGroups" xml:space="preserve">
+    <value>جميع المجموعات</value>
+  </data>
+  <data name="CallSummaryGroupHelp" xml:space="preserve">
+    <value>تُنسب المكالمات إلى المجموعة التي يحتوي سياجها الجغرافي على موقع المكالمة. تُنسب المكالمة الواقعة خارج كل الأسوار الجغرافية، أو التي ليس لها موقع، إلى المجموعة التي ينتمي إليها معظم الوحدات والأفراد المرسَلين إليها. اختيار مجموعة يشمل أيضًا المجموعات التابعة لها.</value>
+  </data>
+  <data name="NoCallType" xml:space="preserve">
+    <value>بلا نوع</value>
+  </data>
+  <data name="QuarterLabel" xml:space="preserve">
+    <value>الربع {0} {1}</value>
+  </data>
+  <data name="CallSummaryGroupFilter" xml:space="preserve">
+    <value>المجموعة: {0} (بما في ذلك المجموعات التابعة لها)</value>
+  </data>
+  <data name="CallsByGroup" xml:space="preserve">
+    <value>المكالمات حسب المجموعة</value>
+  </data>
+  <data name="UnassignedGroup" xml:space="preserve">
+    <value>غير منسوبة</value>
+  </data>
+  <data name="OtherGroups" xml:space="preserve">
+    <value>مجموعات أخرى</value>
+  </data>
+  <data name="CallGroupAssignmentNote" xml:space="preserve">
+    <value>تُحتسب كل مكالمة مرة واحدة: في المجموعة التي يحتوي سياجها الجغرافي على موقعها، وإلا ففي المجموعة التي ينتمي إليها معظم الوحدات والأفراد المرسَلين إليها. المكالمات غير المنسوبة تقع خارج كل الأسوار الجغرافية ولم يكن لها وحدات أو أفراد من أي مجموعة، أو توزعت بالتساوي بين المجموعات.</value>
+  </data>
+  <data name="GroupMethodGeofence" xml:space="preserve">
+    <value>سياج جغرافي</value>
+  </data>
+  <data name="GroupMethodDispatch" xml:space="preserve">
+    <value>الإرسال</value>
+  </data>
+  <data name="GroupMethodResponse" xml:space="preserve">
+    <value>المستجيبون</value>
+  </data>
+  <data name="SummaryTotalCalls" xml:space="preserve">
+    <value>إجمالي المكالمات</value>
+  </data>
+  <data name="SummaryAvgOnScene" xml:space="preserve">
+    <value>متوسط زمن الوصول إلى الموقع</value>
+  </data>
+  <data name="SummaryAvgCallLength" xml:space="preserve">
+    <value>متوسط مدة المكالمة</value>
+  </data>
+  <data name="SummaryUnitResponses" xml:space="preserve">
+    <value>استجابات الوحدات</value>
+  </data>
+  <data name="SummaryPersonnelResponses" xml:space="preserve">
+    <value>استجابات الأفراد</value>
+  </data>
+  <data name="YearlyStatistics" xml:space="preserve">
+    <value>الإحصاءات السنوية</value>
+  </data>
+  <data name="QuarterlyStatistics" xml:space="preserve">
+    <value>الإحصاءات الربعية</value>
+  </data>
+  <data name="MonthlyStatistics" xml:space="preserve">
+    <value>الإحصاءات الشهرية</value>
+  </data>
+  <data name="CallsByYear" xml:space="preserve">
+    <value>المكالمات حسب السنة</value>
+  </data>
+  <data name="CallsByQuarter" xml:space="preserve">
+    <value>المكالمات حسب الربع</value>
+  </data>
+  <data name="CallsByMonth" xml:space="preserve">
+    <value>المكالمات حسب الشهر</value>
+  </data>
+  <data name="PeriodHeader" xml:space="preserve">
+    <value>الفترة</value>
+  </data>
+  <data name="CallsHeader" xml:space="preserve">
+    <value>المكالمات</value>
+  </data>
+  <data name="YearToDateHeader" xml:space="preserve">
+    <value>منذ بداية السنة</value>
+  </data>
+  <data name="PartialPeriodNote" xml:space="preserve">
+    <value>* فترة جزئية: نطاق التقرير يغطي جزءًا منها فقط.</value>
+  </data>
+  <data name="CallTypesByPeriod" xml:space="preserve">
+    <value>أنواع المكالمات حسب الفترة</value>
+  </data>
+  <data name="TypesWithNoCalls" xml:space="preserve">
+    <value>بلا مكالمات:</value>
+  </data>
+  <data name="OtherCallTypes" xml:space="preserve">
+    <value>أخرى</value>
+  </data>
+  <data name="CallsInPeriod" xml:space="preserve">
+    <value>{0} مكالمة</value>
+  </data>
 </root>

@@ -285,6 +285,8 @@ namespace Resgrid.Services
 			public int UnitTypeId { get; set; }
 			public string UnitTypeName { get; set; }
 			public string StatusText { get; set; }
+			public string StatusColor { get; set; }
+			public string StatusTextColor { get; set; }
 			public int? StaffingLevel { get; set; }
 			public bool InRestPeriod { get; set; }
 			/// <summary>The unit's current status is a custom status with the In Quarters base type.</summary>
@@ -355,6 +357,7 @@ namespace Resgrid.Services
 			var stateByUnit = states.GroupBy(s => s.UnitId).ToDictionary(g => g.Key, g => g.OrderByDescending(s => s.Timestamp).First());
 			var typeByName = BuildUnitTypeLookup(unitTypes);
 			var customDetails = BuildCustomDetailMap(customStates);
+			var defaultDetails = UnitStatusColors.BuildDefaultMap(_customStateService.GetDefaultUnitStatuses());
 
 			foreach (var unitType in unitTypes.Where(t => t != null))
 				context.UnitTypeNames[unitType.UnitTypeId] = unitType.Type;
@@ -406,12 +409,16 @@ namespace Resgrid.Services
 					}
 				}
 
+				var statusColors = UnitStatusColors.Resolve(stateId, customDetails, defaultDetails);
+
 				context.UnitCandidates.Add(new UnitCandidate
 				{
 					Unit = unit,
 					UnitTypeId = unitType.UnitTypeId,
 					UnitTypeName = unitType.Type,
 					StatusText = GetUnitStatusText(stateId, isCustom, customDetails),
+					StatusColor = statusColors.Color,
+					StatusTextColor = statusColors.TextColor,
 					StaffingLevel = staffingLevel,
 					InQuarters = UnitResponseOrigin.IsInQuarters(stateId, customDetails)
 				});
@@ -858,6 +865,8 @@ namespace Resgrid.Services
 							CascadeDepth = depth,
 							DistanceMeters = station.DistanceMeters,
 							CurrentStatusText = candidate.StatusText,
+							CurrentStatusColor = candidate.StatusColor,
+							CurrentStatusTextColor = candidate.StatusTextColor,
 							StaffingLevel = candidate.StaffingLevel,
 							SatisfiesRequirementId = requirement.RunCardUnitRequirementId
 						});
@@ -1166,6 +1175,8 @@ namespace Resgrid.Services
 					LocationTimestamp = entry.Candidate.LocationTimestamp,
 					LocationIsStale = entry.Candidate.LocationIsStale,
 					CurrentStatusText = entry.Candidate.StatusText,
+					CurrentStatusColor = entry.Candidate.StatusColor,
+					CurrentStatusTextColor = entry.Candidate.StatusTextColor,
 					StaffingLevel = entry.Candidate.StaffingLevel,
 					SatisfiesRequirementId = requirement.RunCardUnitRequirementId
 				});

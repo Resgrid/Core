@@ -356,4 +356,99 @@
   <data name="CallUnitTimesLegend" xml:space="preserve">
     <value>Automatisch verknüpft: ein ohne Einsatz gesendeter Status, den Resgrid anhand des vorherigen Status der Einheit oder ihrer Alarmierung verknüpft hat. Abgeleitet: ein Status, den die Einheit ohne Ziel gesetzt hat, während sie zum Einsatz alarmiert war. Nur Alarmierung: die Einheit wurde alarmiert, hat aber keinen Status zum Einsatz gemeldet.</value>
   </data>
+
+  <!-- ==================== Call Summary: group filter, pies, period statistics ==================== -->
+  <data name="AllGroups" xml:space="preserve">
+    <value>Alle Gruppen</value>
+  </data>
+  <data name="CallSummaryGroupHelp" xml:space="preserve">
+    <value>Einsätze werden der Gruppe zugeordnet, deren Geofence den Einsatzort enthält. Ein Einsatz außerhalb aller Geofences oder ohne Ort wird der Gruppe zugeordnet, der die meisten alarmierten Einheiten und Kräfte angehören. Die Auswahl einer Gruppe schließt die ihr untergeordneten Gruppen ein.</value>
+  </data>
+  <data name="NoCallType" xml:space="preserve">
+    <value>Kein Typ</value>
+  </data>
+  <data name="QuarterLabel" xml:space="preserve">
+    <value>Q{0} {1}</value>
+  </data>
+  <data name="CallSummaryGroupFilter" xml:space="preserve">
+    <value>Gruppe: {0} (einschließlich der untergeordneten Gruppen)</value>
+  </data>
+  <data name="CallsByGroup" xml:space="preserve">
+    <value>Einsätze nach Gruppe</value>
+  </data>
+  <data name="UnassignedGroup" xml:space="preserve">
+    <value>Nicht zugeordnet</value>
+  </data>
+  <data name="OtherGroups" xml:space="preserve">
+    <value>Andere Gruppen</value>
+  </data>
+  <data name="CallGroupAssignmentNote" xml:space="preserve">
+    <value>Jeder Einsatz zählt einmal: in der Gruppe, deren Geofence seinen Ort enthält, andernfalls in der Gruppe, der die meisten alarmierten Einheiten und Kräfte angehören. Nicht zugeordnete Einsätze liegen außerhalb aller Geofences und hatten keine Einheiten oder Kräfte aus einer Gruppe, oder sie verteilten sich gleichmäßig auf mehrere Gruppen.</value>
+  </data>
+  <data name="GroupMethodGeofence" xml:space="preserve">
+    <value>Geofence</value>
+  </data>
+  <data name="GroupMethodDispatch" xml:space="preserve">
+    <value>Alarmierung</value>
+  </data>
+  <data name="GroupMethodResponse" xml:space="preserve">
+    <value>Einsatzkräfte</value>
+  </data>
+  <data name="SummaryTotalCalls" xml:space="preserve">
+    <value>Einsätze gesamt</value>
+  </data>
+  <data name="SummaryAvgOnScene" xml:space="preserve">
+    <value>Ø Zeit bis vor Ort</value>
+  </data>
+  <data name="SummaryAvgCallLength" xml:space="preserve">
+    <value>Ø Einsatzdauer</value>
+  </data>
+  <data name="SummaryUnitResponses" xml:space="preserve">
+    <value>Einheiteneinsätze</value>
+  </data>
+  <data name="SummaryPersonnelResponses" xml:space="preserve">
+    <value>Personaleinsätze</value>
+  </data>
+  <data name="YearlyStatistics" xml:space="preserve">
+    <value>Jahresstatistik</value>
+  </data>
+  <data name="QuarterlyStatistics" xml:space="preserve">
+    <value>Quartalsstatistik</value>
+  </data>
+  <data name="MonthlyStatistics" xml:space="preserve">
+    <value>Monatsstatistik</value>
+  </data>
+  <data name="CallsByYear" xml:space="preserve">
+    <value>Einsätze nach Jahr</value>
+  </data>
+  <data name="CallsByQuarter" xml:space="preserve">
+    <value>Einsätze nach Quartal</value>
+  </data>
+  <data name="CallsByMonth" xml:space="preserve">
+    <value>Einsätze nach Monat</value>
+  </data>
+  <data name="PeriodHeader" xml:space="preserve">
+    <value>Zeitraum</value>
+  </data>
+  <data name="CallsHeader" xml:space="preserve">
+    <value>Einsätze</value>
+  </data>
+  <data name="YearToDateHeader" xml:space="preserve">
+    <value>Lfd. Jahr</value>
+  </data>
+  <data name="PartialPeriodNote" xml:space="preserve">
+    <value>* Teilzeitraum: Der Berichtszeitraum deckt ihn nur teilweise ab.</value>
+  </data>
+  <data name="CallTypesByPeriod" xml:space="preserve">
+    <value>Einsatztypen nach Zeitraum</value>
+  </data>
+  <data name="TypesWithNoCalls" xml:space="preserve">
+    <value>Keine Einsätze:</value>
+  </data>
+  <data name="OtherCallTypes" xml:space="preserve">
+    <value>Sonstige</value>
+  </data>
+  <data name="CallsInPeriod" xml:space="preserve">
+    <value>{0} Einsätze</value>
+  </data>
 </root>

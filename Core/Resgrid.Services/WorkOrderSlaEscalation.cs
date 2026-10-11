@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.WorkOrders;
@@ -7,9 +8,9 @@ namespace Resgrid.Services
 {
     public sealed partial class WorkOrdersService
     {
-        private async Task EscalateServiceLevelsAsync(int departmentId, WorkOrderMaintenanceSweep result)
+        private async Task EscalateServiceLevelsAsync(int departmentId, List<WorkOrder> candidates, WorkOrderMaintenanceSweep result)
         {
-            foreach (var candidate in await _maintenance.SlaDueAsync(departmentId, Now))
+            foreach (var candidate in candidates)
             {
                 try
                 {

@@ -102,7 +102,11 @@ CREATE TABLE {Q("RmsRecordLegalHolds")} ({Q("Id")} {text}(36) PRIMARY KEY, {Q("D
 CREATE TABLE {Q("WorkflowRuns")} ({Q("WorkflowRunId")} {text}(36) PRIMARY KEY, {Q("DepartmentId")} int NOT NULL, {Q("TriggerEventType")} int NOT NULL, {Q("InputPayload")} {text}(250));
 CREATE TABLE {Q("WorkflowRunLogs")} ({Q("WorkflowRunLogId")} {text}(36) PRIMARY KEY, {Q("WorkflowRunId")} {text}(36) NOT NULL REFERENCES {Q("WorkflowRuns")}({Q("WorkflowRunId")}), {Q("RenderedOutput")} {text}(250));
 CREATE TABLE {Q("DomainEventOutbox")} ({Q("Id")} {text}(36) PRIMARY KEY, {Q("DepartmentId")} int NOT NULL, {Q("ProducerSubsystem")} {text}(64) NOT NULL, {Q("Payload")} {text}(250));
-CREATE TABLE {Q("AuditLogs")} ({Q("Id")} {text}(36) PRIMARY KEY, {Q("DepartmentId")} int NOT NULL, {Q("LogType")} int NOT NULL, {Q("Content")} {text}(250));");
+CREATE TABLE {Q("AuditLogs")} ({Q("Id")} {text}(36) PRIMARY KEY, {Q("DepartmentId")} int NOT NULL, {Q("LogType")} int NOT NULL, {Q("Content")} {text}(250));
+-- M0268 also numbers invoices, bids and daily time reports: minimal stand-ins so it applies.
+CREATE TABLE {Q("Invoices")} ({Q("Id")} int PRIMARY KEY, {Q("DepartmentId")} int NOT NULL, {Q("InvoiceNumber")} int NOT NULL);
+CREATE TABLE {Q("Bids")} ({Q("Id")} int PRIMARY KEY, {Q("DepartmentId")} int NOT NULL, {Q("BidNumber")} int NOT NULL);
+CREATE TABLE {Q("DeploymentTimeReports")} ({Q("Id")} int PRIMARY KEY, {Q("DepartmentId")} int NOT NULL, {Q("ReportNumber")} int NOT NULL);");
 			}
 			var source = new Mock<IMigrationSource>(); source.Setup(s => s.GetMigrations()).Returns(new IMigration[]
 			{
@@ -118,7 +122,8 @@ CREATE TABLE {Q("AuditLogs")} ({Q("Id")} {text}(36) PRIMARY KEY, {Q("DepartmentI
                 _type == DatabaseTypes.Postgres ? new M0206_AddWorkOrderReportingPg() : new M0206_AddWorkOrderReporting(),
                 _type == DatabaseTypes.Postgres ? new M0207_AddWorkOrderOperationsPg() : new M0207_AddWorkOrderOperations(),
                 _type == DatabaseTypes.Postgres ? new M0225_AddMaintenanceAssigneesPg() : new M0225_AddMaintenanceAssignees(),
-                _type == DatabaseTypes.Postgres ? new M0226_AddWorkOrderCurrencyPg() : new M0226_AddWorkOrderCurrency()
+                _type == DatabaseTypes.Postgres ? new M0226_AddWorkOrderCurrencyPg() : new M0226_AddWorkOrderCurrency(),
+                _type == DatabaseTypes.Postgres ? new M0268_AddDocumentNumberingPg() : new M0268_AddDocumentNumbering()
 			});
 			_runner = new ServiceCollection().AddFluentMigratorCore().ConfigureRunner(r =>
 			{

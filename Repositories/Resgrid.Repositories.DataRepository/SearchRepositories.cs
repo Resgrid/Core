@@ -242,6 +242,22 @@ namespace Resgrid.Repositories.DataRepository
 			state.SearchIndexStateId = id.Value;
 			return true;
 		}
+
+		public async Task<List<int>> GetDeletedDepartmentIdsAsync(CancellationToken cancellationToken = default)
+		{
+			return (await QueryAsync<int>(
+				$"SELECT DISTINCT s.{Col("DepartmentId")} FROM {Tbl("SearchIndexStates")} s WHERE NOT EXISTS (SELECT 1 FROM {Tbl("Departments")} d WHERE d.{Col("DepartmentId")} = s.{Col("DepartmentId")}) ORDER BY s.{Col("DepartmentId")}",
+				null, cancellationToken)).ToList();
+		}
+
+		public async Task<int> DeleteForDeletedDepartmentAsync(int departmentId, CancellationToken cancellationToken = default)
+		{
+			// Projections first: a department deleted before its delete script purged them still has rows, and they must
+			// never outlive the marker that sends the sweep back to erase their documents.
+			var missing = $"NOT EXISTS (SELECT 1 FROM {Tbl("Departments")} d WHERE d.{Col("DepartmentId")} = {P}DepartmentId)";
+			await ExecuteAsync($"DELETE FROM {Tbl("SearchProjections")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {missing}", new { DepartmentId = departmentId }, cancellationToken);
+			return await ExecuteAsync($"DELETE FROM {Tbl("SearchIndexStates")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {missing}", new { DepartmentId = departmentId }, cancellationToken);
+		}
 	}
 
 	/// <summary>The single-writer publish lease (plan R7 writer sequence step 2). One row per index name, compare-and-set.</summary>

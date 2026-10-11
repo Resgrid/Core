@@ -1439,4 +1439,10 @@
   <data name="NewCallFieldCannotBeRequired" xml:space="preserve">
     <value>Plus Code służy tylko do znalezienia lokalizacji i nie jest zapisywany w zdarzeniu, więc nie może być wymagany. Zamiast tego ustaw jako wymagane współrzędne GPS.</value>
   </data>
+  <data name="DeleteDepartmentRecordsWarning" xml:space="preserve">
+    <value>Ten wydział korzysta z Rejestrów. Po wykonaniu usunięcia wszystkie rejestry, raporty ze zdarzeń i załączniki wraz z historią zostaną trwale usunięte; okresy przechowywania tego nie opóźniają. Wcześniej wyeksportuj wszystko, co musisz zachować, lub ustanów blokadę zachowania: aktywna blokada zachowania wstrzymuje usunięcie do czasu jej zwolnienia.</value>
+  </data>
+  <data name="DeleteDepartmentLegalHoldWarning" xml:space="preserve">
+    <value>Aktywne blokady zachowania obejmujące Rejestry tego wydziału: {0}. Usunięcie nie zostanie wykonane, dopóki wszystkie nie zostaną zwolnione.</value>
+  </data>
 </root>

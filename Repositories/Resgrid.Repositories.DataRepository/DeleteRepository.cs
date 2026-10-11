@@ -4,6 +4,7 @@ using System.Data;
 using Microsoft.Data.SqlClient;
 using System.Linq;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
 using Dapper.Contrib.Extensions;
@@ -30,7 +31,14 @@ namespace Resgrid.Repositories.DataRepository
 
 					using (var transaction = db.BeginTransaction())
 					{
+						// A running ADP migration defers the deletion before anything is deleted, as an active legal hold does.
+						await DataProtectionDepartmentCleanup.ThrowIfOperationInProgressAsync(db, transaction, departmentId, DatabaseTypes.SqlServer);
 						await ChecklistDepartmentCleanup.DeleteWithinTransactionAsync(db, transaction, departmentId, DatabaseTypes.SqlServer);
+						// After the checklist cleanup, which takes the checklist fence before the department lock.
+						await RmsDepartmentCleanup.DeleteWithinTransactionAsync(db, transaction, departmentId, DatabaseTypes.SqlServer, false);
+						// The remaining tables without a foreign key to Departments (DepartmentDeletionDatabaseTests guards them); after
+						// the checklist, inventory and RMS cleanups, which remove their own workflow runs and outbox rows first.
+						await UnlinkedDepartmentCleanup.DeleteWithinTransactionAsync(db, transaction, departmentId, DatabaseTypes.SqlServer);
 						var result = await db.ExecuteAsync(@"
 								DECLARE @UserId NVARCHAR(128)
 								DECLARE @UnitId INT
@@ -49,7 +57,6 @@ namespace Resgrid.Repositories.DataRepository
 								WHERE DepartmentId = @DepartmentId
 
 								-- Child rows of data the cursors below delete piecemeal; remove while parents still exist
-								DELETE FROM [dbo].[ScheduledTaskLogs] WHERE ScheduledTaskId IN (SELECT ScheduledTaskId FROM [dbo].[ScheduledTasks] WHERE DepartmentId = @DepartmentId)
 								DELETE FROM [dbo].[LogAttachments] WHERE LogId IN (SELECT LogId FROM [dbo].[Logs] WHERE DepartmentId = @DepartmentId)
 								DELETE FROM [dbo].[LogUnits] WHERE LogId IN (SELECT LogId FROM [dbo].[Logs] WHERE DepartmentId = @DepartmentId)
 								DELETE FROM [dbo].[LogUsers] WHERE LogId IN (SELECT LogId FROM [dbo].[Logs] WHERE DepartmentId = @DepartmentId)
@@ -61,15 +68,9 @@ namespace Resgrid.Repositories.DataRepository
 								-- CallUnits reference UnitStates and CallDispatches reference ActionLogs, both deleted there.
 								DELETE FROM [dbo].[CallAttachments] WHERE CallId IN (SELECT CallId FROM [dbo].[Calls] WHERE DepartmentId = @DepartmentId)
 								DELETE FROM [dbo].[CallNotes] WHERE CallId IN (SELECT CallId FROM [dbo].[Calls] WHERE DepartmentId = @DepartmentId)
-								-- Call location index rows cascade with their call, but be explicit; the state row has no FK
+								-- Call location index rows cascade with their call, but be explicit (the FK-less state row, call and document
+								-- number counters and API keys are cleared by UnlinkedDepartmentCleanup)
 								DELETE FROM [dbo].[CallLocationKeys] WHERE DepartmentId = @DepartmentId OR CallId IN (SELECT CallId FROM [dbo].[Calls] WHERE DepartmentId = @DepartmentId)
-								DELETE FROM [dbo].[CallLocationIndexStates] WHERE DepartmentId = @DepartmentId
-								-- Call number counters have no FK
-								DELETE FROM [dbo].[CallNumberSequences] WHERE DepartmentId = @DepartmentId
-								-- Document number counters (work orders, invoices, bids, time reports, records requests, prevention) have no FK
-								DELETE FROM [dbo].[DocumentNumberSequences] WHERE DepartmentId = @DepartmentId
-								-- Department API keys have no FK
-								DELETE FROM [dbo].[DepartmentApiKeys] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[CallDispatches] WHERE CallId IN (SELECT CallId FROM [dbo].[Calls] WHERE DepartmentId = @DepartmentId)
 								DELETE FROM [dbo].[CallDispatchGroups] WHERE CallId IN (SELECT CallId FROM [dbo].[Calls] WHERE DepartmentId = @DepartmentId)
 								DELETE FROM [dbo].[CallDispatchRoles] WHERE CallId IN (SELECT CallId FROM [dbo].[Calls] WHERE DepartmentId = @DepartmentId)
@@ -207,11 +208,6 @@ namespace Resgrid.Repositories.DataRepository
 								DELETE FROM [dbo].[DepartmentProfileUserFollows] WHERE DepartmentProfileId IN (SELECT DepartmentProfileId FROM [dbo].[DepartmentProfiles] WHERE DepartmentId = @DepartmentId)
 								DELETE FROM [dbo].[DepartmentProfiles] WHERE DepartmentId = @DepartmentId
 
-								-- User-defined fields
-								DELETE FROM [dbo].[UdfFieldValues] WHERE UdfDefinitionId IN (SELECT UdfDefinitionId FROM [dbo].[UdfDefinitions] WHERE DepartmentId = @DepartmentId)
-								DELETE FROM [dbo].[UdfFields] WHERE UdfDefinitionId IN (SELECT UdfDefinitionId FROM [dbo].[UdfDefinitions] WHERE DepartmentId = @DepartmentId)
-								DELETE FROM [dbo].[UdfDefinitions] WHERE DepartmentId = @DepartmentId
-
 								-- Weather alerts
 								DELETE FROM [dbo].[WeatherAlertZones] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[WeatherAlerts] WHERE DepartmentId = @DepartmentId
@@ -223,24 +219,17 @@ namespace Resgrid.Repositories.DataRepository
 								DELETE FROM [dbo].[CommunicationTestTargets] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[CommunicationTests] WHERE DepartmentId = @DepartmentId
 
-								-- Chatbot
-								DELETE FROM [dbo].[ChatbotMessageLog] WHERE DepartmentId = @DepartmentId
-								DELETE FROM [dbo].[ChatbotDepartmentConfigs] WHERE DepartmentId = @DepartmentId
-
-								-- Remaining department-scoped tables
+								-- Remaining department-scoped tables. The ones without a foreign key were cleared by UnlinkedDepartmentCleanup
 								DELETE FROM [dbo].[AuditLogs] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[Automations] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[DepartmentCertificationTypes] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[DepartmentFiles] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[Files] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[DepartmentNotifications] WHERE DepartmentId = @DepartmentId
-								DELETE FROM [dbo].[DepartmentSecurityPolicies] WHERE DepartmentId = @DepartmentId
-								DELETE FROM [dbo].[DepartmentSsoConfigs] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[DocumentCategories] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[NoteCategories] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[FeatureFlagOverrides] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[FeatureFlagUsages] WHERE DepartmentId = @DepartmentId
-								DELETE FROM [dbo].[GdprDataExportRequests] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[NotificationAlerts] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[Permissions] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[DepartmentAudios] WHERE DepartmentId = @DepartmentId
@@ -249,8 +238,6 @@ namespace Resgrid.Repositories.DataRepository
 								DELETE FROM [dbo].[Ranks] WHERE DepartmentId = @DepartmentId
 
 								-- Department-wide sweeps of per-member rows, including members who left before the deletion
-								DELETE FROM [dbo].[ScheduledTasks] WHERE DepartmentId = @DepartmentId
-								DELETE FROM [dbo].[UserStates] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[PersonnelCertifications] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[PersonnelRoleUsers] WHERE DepartmentId = @DepartmentId
 
@@ -376,6 +363,9 @@ namespace Resgrid.Repositories.DataRepository
 						",
 							new { DepartmentId = departmentId }, transaction);
 
+						// ADP keys go last, after every table that holds the department's ciphertext.
+						await DataProtectionDepartmentCleanup.DeleteWithinTransactionAsync(db, transaction, departmentId, DatabaseTypes.SqlServer);
+
 						transaction.Commit();
 					}
 				}
@@ -384,6 +374,38 @@ namespace Resgrid.Repositories.DataRepository
 			}
 
 			return false;
+		}
+
+		public async Task<List<int>> GetDeletedDepartmentIdsWithLeftoversAsync(CancellationToken cancellationToken = default)
+		{
+			// Department deletion runs only on SQL Server (above), so no other provider has deleted departments to sweep.
+			if (Config.DataConfig.DatabaseType != DatabaseTypes.SqlServer)
+				return new List<int>();
+
+			using (var db = new SqlConnection(DataConfig.CoreConnectionString))
+			{
+				await db.OpenAsync(cancellationToken);
+				return await DeletedDepartmentCleanup.GetDeletedDepartmentIdsAsync(db, null, DatabaseTypes.SqlServer, cancellationToken);
+			}
+		}
+
+		public async Task<DeletedDepartmentPurgeOutcome> PurgeDeletedDepartmentLeftoversAsync(int departmentId, CancellationToken cancellationToken = default)
+		{
+			if (Config.DataConfig.DatabaseType != DatabaseTypes.SqlServer)
+				throw new InvalidOperationException("Deleted-department purge is not supported by the configured database provider.");
+
+			Dapper.SqlMapper.Settings.CommandTimeout = 300;
+			using (var db = new SqlConnection(DataConfig.CoreConnectionString))
+			{
+				await db.OpenAsync(cancellationToken);
+				using (var transaction = db.BeginTransaction())
+				{
+					var outcome = await DeletedDepartmentCleanup.PurgeWithinTransactionAsync(db, transaction, departmentId, DatabaseTypes.SqlServer, cancellationToken);
+					if (outcome == DeletedDepartmentPurgeOutcome.Purged)
+						transaction.Commit();
+					return outcome;
+				}
+			}
 		}
 	}
 }

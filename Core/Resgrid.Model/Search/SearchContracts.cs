@@ -150,6 +150,8 @@ namespace Resgrid.Model.Search
 		public int CallsBackfilled { get; set; }
 		/// <summary>Departments whose call history backfill reached the oldest call this sweep.</summary>
 		public int CallBackfillsCompleted { get; set; }
+		/// <summary>Deleted departments whose whole index slice was erased and committed this sweep.</summary>
+		public int DeletedDepartmentsErased { get; set; }
 		public int Errors { get; set; }
 		public bool Skipped { get; set; }
 		public string Message { get; set; }

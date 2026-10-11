@@ -11,12 +11,15 @@ namespace Resgrid.Repositories.DataRepository
 	/// <summary>Called only from an authorized department-deletion transaction, after the shared hold fence.</summary>
 	public static class AdminAssistDepartmentCleanup
 	{
+		/// <summary>Every table this cleanup deletes by DepartmentId.</summary>
+		internal static readonly string[] Tables = { "AdminAssistPlans", "AdminAssistDiagnosticRuns", "AdminAssistDiagnosticLeases", "AiGenerations", "AiUsageLedger", "AdminAssistConversations", "DepartmentAiConfigs", "AdminAssistDispatchTraces", "AdminAssistFindings", "AdminAssistDailySummaries", "AdminAssistPreferences", "AdminAssistLearning", "AdminAssistHistory", "AdminAssistWorkerStates", "AdminAssistWorkspaces", "AdminAssistConfigurationRevisions" };
+
 		public static async Task DeleteWithinTransactionAsync(DbConnection connection, DbTransaction transaction, int departmentId, DatabaseTypes type, CancellationToken ct = default)
 		{
 			if (departmentId <= 0 || transaction?.Connection != connection) throw new InvalidOperationException("A department-deletion transaction is required.");
 			var pg = type == DatabaseTypes.Postgres;
 			string Q(string value) => pg ? value.ToLowerInvariant() : "[" + value + "]";
-			foreach (var table in new[] { "AdminAssistPlans", "AdminAssistDiagnosticRuns", "AdminAssistDiagnosticLeases", "AiGenerations", "AiUsageLedger", "AdminAssistConversations", "DepartmentAiConfigs", "AdminAssistDispatchTraces", "AdminAssistFindings", "AdminAssistDailySummaries", "AdminAssistPreferences", "AdminAssistLearning", "AdminAssistHistory", "AdminAssistWorkerStates", "AdminAssistWorkspaces", "AdminAssistConfigurationRevisions" })
+			foreach (var table in Tables)
 			{
 				var exists = await connection.ExecuteScalarAsync<int>(new CommandDefinition(pg ? "SELECT CASE WHEN to_regclass(@Name) IS NULL THEN 0 ELSE 1 END" : "SELECT CASE WHEN OBJECT_ID(@Name,'U') IS NOT NULL THEN 1 WHEN HAS_PERMS_BY_NAME(DB_NAME(),'DATABASE','VIEW DEFINITION')=1 THEN 0 ELSE -1 END", new { Name = (pg ? "public." + table.ToLowerInvariant() : "dbo." + table) }, transaction, cancellationToken: ct));
 				if (exists < 0) throw new InvalidOperationException("Cannot verify the Admin Assist cleanup schema.");

@@ -208,6 +208,10 @@ namespace Resgrid.Model.Repositories
 	public interface IRmsSearchIndexStatesRepository : IRepository<RmsSearchIndexState>
 	{
 		Task<RmsSearchIndexState> GetAsync(int departmentId, string indexName);
+		/// <summary>Departments with a search state row but no Departments row: their index documents still need erasing.</summary>
+		Task<List<int>> GetDeletedDepartmentIdsAsync(CancellationToken cancellationToken = default);
+		/// <summary>Removes a deleted department's state rows once its documents are erased and committed. No-op while the department exists.</summary>
+		Task<int> DeleteForDeletedDepartmentAsync(int departmentId, CancellationToken cancellationToken = default);
 	}
 
 	public interface IRmsRecordGroupScopesRepository : IRepository<RmsRecordGroupScope>

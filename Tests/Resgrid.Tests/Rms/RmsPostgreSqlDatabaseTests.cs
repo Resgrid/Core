@@ -120,6 +120,91 @@ CREATE TABLE workflowrunlogs (workflowrunlogid citext PRIMARY KEY,workflowrunid 
 			await late.Should().ThrowAsync<InvalidOperationException>();
 		}
 
+		private async Task<(string RecordId, string RunId)> SeedRmsDepartment(int department)
+		{
+			var id = Guid.NewGuid().ToString(); var run = Guid.NewGuid().ToString();
+			await using var db = new NpgsqlConnection(_connection);
+			await db.ExecuteAsync(@"INSERT INTO departments (departmentid) VALUES (@Department);
+INSERT INTO rmsdepartmentcutovers (departmentid,protectionid,activatedon,activatedbyuserid,state,createdon,modifiedon) VALUES (@Department,@Id,now(),'admin',@Active,now(),now());
+INSERT INTO rmsoperationalrecords (rmsoperationalrecordid,departmentid,protectionid,definitionkey,definitionversion,lifecyclepreset,state,authoruserid,owneruserid,createdbyuserid,draftreference,createdon,modifiedon,rowversion,finalizedon)
+VALUES (@Id,@Department,@Id,'system.training',1,0,@Finalized,'officer','officer','officer',LEFT(@Id,20),now(),now(),1,now());
+INSERT INTO rmssearchindexstates (departmentid,indexname,generation,createdon,modifiedon) VALUES (@Department,'records','1.0.0',now(),now());
+INSERT INTO domaineventoutbox (departmentid,eventid,producersubsystem,eventname,aggregatetype,aggregateid,payloadjson,occurredon,createdon) VALUES (@Department,gen_random_uuid()::text,'Records','record.finalized','RmsOperationalRecord',@Id,'{}',now(),now());
+INSERT INTO workflowruns (workflowrunid,workflowid,departmentid,status,aggregateid) VALUES (@Run,@Run,@Department,0,@Id);
+INSERT INTO workflowrunlogs (workflowrunlogid,workflowrunid,renderedoutput) VALUES (gen_random_uuid()::text,@Run,'confidential narrative')",
+				new { Department = department, Id = id, Run = run, Active = (int)RmsDepartmentCutoverState.Active, Finalized = (int)RmsRecordState.Finalized });
+			return (id, run);
+		}
+
+		private async Task<int> CountForDepartment(string table, int department)
+		{
+			await using var db = new NpgsqlConnection(_connection);
+			return await db.ExecuteScalarAsync<int>($"SELECT COUNT(*) FROM {table.ToLowerInvariant()} WHERE departmentid=@Department", new { Department = department });
+		}
+
+		[Test]
+		public async Task Department_deletion_purges_rms_rows_waits_for_a_hold_and_deleted_departments_are_swept()
+		{
+			const int live = 1320, orphan = 1322, heldOrphan = 1323;
+			var (liveRecord, liveRun) = await SeedRmsDepartment(live);
+			await SeedRmsDepartment(orphan);
+			var (heldRecord, _) = await SeedRmsDepartment(heldOrphan);
+			await using (var db = new NpgsqlConnection(_connection))
+			{
+				await db.OpenAsync();
+				var hold = Guid.NewGuid().ToString();
+				await db.ExecuteAsync("INSERT INTO rmsrecordlegalholds (rmsrecordlegalholdid,departmentid,recordid,reason,placedbyuserid,placedon,createdon,modifiedon,rowversion) VALUES (@Hold,@Department,@Id,'Litigation','officer',now(),now(),now(),1),(gen_random_uuid()::text,@Held,@HeldId,'Litigation','officer',now(),now(),now(),1)",
+					new { Hold = hold, Department = live, Id = liveRecord, Held = heldOrphan, HeldId = heldRecord });
+				await using (var transaction = await db.BeginTransactionAsync())
+				{
+					Func<Task> held = () => RmsDepartmentCleanup.DeleteWithinTransactionAsync(db, transaction, live, DatabaseTypes.Postgres, false);
+					await held.Should().ThrowAsync<DepartmentDeletionDeferredException>();
+					await transaction.RollbackAsync();
+				}
+				await db.ExecuteAsync("UPDATE rmsrecordlegalholds SET releasedon=now(), releasedbyuserid='officer' WHERE rmsrecordlegalholdid=@Hold", new { Hold = hold });
+				await using (var transaction = await db.BeginTransactionAsync())
+				{
+					(await RmsDepartmentCleanup.DeleteWithinTransactionAsync(db, transaction, live, DatabaseTypes.Postgres, false)).Should().BeTrue();
+					await transaction.CommitAsync();
+				}
+				var tables = await RmsDepartmentCleanup.DepartmentTablesAsync(db, null, DatabaseTypes.Postgres);
+				tables.Should().Contain(new[] { "rmsoperationalrecords", "rmsrecordlegalholds", "rmsdepartmentcutovers" });
+				foreach (var table in tables.Where(t => !string.Equals(t, RmsDepartmentCleanup.SearchErasureMarkerTable, StringComparison.OrdinalIgnoreCase)))
+					(await CountForDepartment(table, live)).Should().Be(0, table + " must be purged with the department");
+				(await CountForDepartment("rmssearchindexstates", live)).Should().Be(1);
+				(await CountForDepartment("domaineventoutbox", live)).Should().Be(0);
+				(await CountForDepartment("workflowruns", live)).Should().Be(0);
+				(await db.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM workflowrunlogs WHERE workflowrunid=@Run", new { Run = liveRun })).Should().Be(0);
+				await db.ExecuteAsync("DELETE FROM departments WHERE departmentid IN (@Orphan,@Held)", new { Orphan = orphan, Held = heldOrphan });
+			}
+
+			var connections = Connections(); using var unit = new UnitOfWork(connections);
+			var retention = new RmsRetentionRepository(connections, new PostgreSqlConfiguration(), unit, WriteQueries());
+			(await retention.GetOrphanedDepartmentIdsAsync()).Should().Contain(new[] { orphan, heldOrphan }).And.NotContain(live);
+			(await retention.PurgeOrphanedDepartmentAsync(orphan)).Should().BeTrue();
+			(await retention.PurgeOrphanedDepartmentAsync(heldOrphan)).Should().BeFalse();
+			(await CountForDepartment("rmsoperationalrecords", orphan)).Should().Be(0);
+			(await CountForDepartment("rmsoperationalrecords", heldOrphan)).Should().Be(1);
+			var states = new RmsSearchIndexStatesRepository(connections, new PostgreSqlConfiguration(), unit, WriteQueries());
+			(await states.GetDeletedDepartmentIdsAsync()).Should().Contain(new[] { orphan, heldOrphan }).And.NotContain(live);
+			(await states.DeleteForDeletedDepartmentAsync(live)).Should().Be(0);
+			(await states.DeleteForDeletedDepartmentAsync(orphan)).Should().Be(1);
+		}
+
+		[Test]
+		public async Task Active_cutovers_exclude_a_deleted_department()
+		{
+			await using (var db = new NpgsqlConnection(_connection))
+				await db.ExecuteAsync(@"INSERT INTO departments (departmentid) VALUES (1303);
+INSERT INTO rmsdepartmentcutovers (departmentid,protectionid,activatedon,activatedbyuserid,state,createdon,modifiedon) VALUES
+(1303,@Protection,now(),'admin',@Active,now(),now()),
+(1304,@Protection,now(),'admin',@Active,now(),now())", new { Protection = Guid.NewGuid().ToString(), Active = (int)RmsDepartmentCutoverState.Active });
+			var connections = Connections(); using var unit = new UnitOfWork(connections);
+			var active = (await new RmsDepartmentCutoversRepository(connections, new PostgreSqlConfiguration(), unit, WriteQueries()).GetActiveAsync()).Select(c => c.DepartmentId).ToList();
+			active.Should().Contain(1303);
+			active.Should().NotContain(1304, "department deletion leaves RMS rows behind and a sweep cannot take a missing department's lock");
+		}
+
 		[Test]
 		public async Task Concurrent_command_reservations_have_one_owner_and_survive_a_new_connection()
 		{

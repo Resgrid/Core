@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -52,12 +53,83 @@ namespace Resgrid.Tests.Services
 			(item.CompletedOn != null).Should().Be(terminal);
 		}
 
-		private static DeleteService DeleteService(IAuthorizationService authorization, IQueueService queue, IDeleteRepository deletes) => new DeleteService(
+		[Test]
+		public async Task ALegalHoldDefersTheDeletionWithoutSpendingAnAttempt()
+		{
+			var item = new QueueItem
+			{
+				QueueItemId = 21795, SourceId = "13275", QueuedByUserId = "requesting-user",
+				QueuedOn = DateTime.UtcNow.AddDays(-31), ToBeCompletedOn = DateTime.UtcNow.AddDays(-1), AttemptCount = 4
+			};
+			var authorization = new Mock<IAuthorizationService>();
+			authorization.Setup(a => a.CanUserDeleteDepartmentAsync("requesting-user", 13275)).ReturnsAsync(true);
+			var deletes = new Mock<IDeleteRepository>();
+			deletes.Setup(d => d.DeleteDepartmentAndUsersAsync(13275)).ThrowsAsync(new DepartmentDeletionDeferredException("Department deletion is waiting for an active Records legal hold to be released."));
+			var queue = new Mock<IQueueService>();
+			queue.Setup(q => q.UpdateQueueItem(It.IsAny<QueueItem>(), It.IsAny<CancellationToken>())).ReturnsAsync((QueueItem q, CancellationToken _) => q);
+
+			var result = await DeleteService(authorization.Object, queue.Object, deletes.Object).HandlePendingDepartmentDeletionRequestAsync(item);
+
+			result.Should().Be(DeleteDepartmentResults.Failure);
+			item.AttemptCount.Should().Be(4, "a hold is not a failure; the fifth attempt must stay available for real faults");
+			item.CompletedOn.Should().BeNull("the request completes on the first poll after the hold is released");
+			item.Data.Should().StartWith("Department deletion deferred").And.Subject.Length.Should().BeLessThanOrEqualTo(255);
+			queue.Verify(q => q.UpdateQueueItem(item, It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task TheRecordsImpactReportsActivationAndActiveHolds()
+		{
+			var cutovers = new Mock<IRmsDepartmentCutoversRepository>();
+			cutovers.Setup(c => c.GetByDepartmentIdAsync(13275)).ReturnsAsync(new RmsDepartmentCutover { DepartmentId = 13275 });
+			var holds = new Mock<IRmsRecordLegalHoldsRepository>();
+			holds.Setup(h => h.GetActiveForDepartmentAsync(13275)).ReturnsAsync(new[] { new RmsRecordLegalHold(), new RmsRecordLegalHold() });
+
+			var impact = await DeleteService(Mock.Of<IAuthorizationService>(), Mock.Of<IQueueService>(), Mock.Of<IDeleteRepository>(), cutovers.Object, holds.Object)
+				.GetDepartmentDeletionRecordsImpactAsync(13275);
+
+			impact.HasRecords.Should().BeTrue();
+			impact.ActiveLegalHolds.Should().Be(2);
+		}
+
+		[Test]
+		public async Task TheLeftoverSweepPurgesEachDeletedDepartmentOnItsOwnAndCarriesOnPastAFailure()
+		{
+			var deletes = new Mock<IDeleteRepository>();
+			deletes.Setup(d => d.GetDeletedDepartmentIdsWithLeftoversAsync(It.IsAny<CancellationToken>())).ReturnsAsync(new List<int> { 11, 12, 13 });
+			deletes.Setup(d => d.PurgeDeletedDepartmentLeftoversAsync(11, It.IsAny<CancellationToken>())).ReturnsAsync(DeletedDepartmentPurgeOutcome.Purged);
+			deletes.Setup(d => d.PurgeDeletedDepartmentLeftoversAsync(12, It.IsAny<CancellationToken>())).ThrowsAsync(new InvalidOperationException("Transaction was deadlocked"));
+			deletes.Setup(d => d.PurgeDeletedDepartmentLeftoversAsync(13, It.IsAny<CancellationToken>())).ReturnsAsync(DeletedDepartmentPurgeOutcome.LegalHold);
+
+			var result = await DeleteService(Mock.Of<IAuthorizationService>(), Mock.Of<IQueueService>(), deletes.Object).PurgeDeletedDepartmentLeftoversAsync();
+
+			result.DepartmentsFound.Should().Be(3);
+			result.DepartmentsPurged.Should().Be(1);
+			result.DepartmentsHeld.Should().Be(1, "a hold is not a failure");
+			result.Errors.Should().Be(1);
+			deletes.Verify(d => d.PurgeDeletedDepartmentLeftoversAsync(13, It.IsAny<CancellationToken>()), Times.Once, "one department's failure must not stop the others");
+		}
+
+		[Test]
+		public async Task AFailedLeftoverDiscoveryIsReportedRatherThanThrown()
+		{
+			var deletes = new Mock<IDeleteRepository>();
+			deletes.Setup(d => d.GetDeletedDepartmentIdsWithLeftoversAsync(It.IsAny<CancellationToken>())).ThrowsAsync(new TimeoutException("Execution Timeout Expired"));
+
+			var result = await DeleteService(Mock.Of<IAuthorizationService>(), Mock.Of<IQueueService>(), deletes.Object).PurgeDeletedDepartmentLeftoversAsync();
+
+			result.Errors.Should().Be(1);
+			result.Message.Should().NotBeNullOrEmpty();
+			deletes.Verify(d => d.PurgeDeletedDepartmentLeftoversAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		private static DeleteService DeleteService(IAuthorizationService authorization, IQueueService queue, IDeleteRepository deletes,
+			IRmsDepartmentCutoversRepository cutovers = null, IRmsRecordLegalHoldsRepository holds = null) => new DeleteService(
 			authorization, Mock.Of<IDepartmentsService>(), Mock.Of<ICallsService>(), Mock.Of<IActionLogsService>(), Mock.Of<IUsersService>(), Mock.Of<IUserProfileService>(),
 			Mock.Of<IMessageService>(), Mock.Of<IDepartmentGroupsService>(), Mock.Of<IWorkLogsService>(), Mock.Of<IUserStateService>(), Mock.Of<IPersonnelRolesService>(),
 			Mock.Of<IDistributionListsService>(), Mock.Of<IShiftsService>(), Mock.Of<IUnitsService>(), Mock.Of<ICertificationService>(), Mock.Of<ILogService>(),
 			Mock.Of<IInventoryService>(), Mock.Of<IEventAggregator>(), Mock.Of<IAddressService>(), queue, Mock.Of<IEmailService>(), deletes,
 			Mock.Of<IAuditLogsRepository>(), Mock.Of<IScheduledTasksService>(), Mock.Of<IUserSessionService>(),
-			Mock.Of<IDepartmentMemberSensitiveDataService>(), Mock.Of<IDepartmentMemberEmergencyContactService>());
+			Mock.Of<IDepartmentMemberSensitiveDataService>(), Mock.Of<IDepartmentMemberEmergencyContactService>(), rmsCutovers: cutovers, rmsLegalHolds: holds);
 	}
 }

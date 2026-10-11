@@ -1497,4 +1497,10 @@
   <data name="NewCallFieldCannotBeRequired" xml:space="preserve">
     <value>رمز Plus Code يحدد الموقع فقط ولا يُحفظ في البلاغ، لذا لا يمكن جعله مطلوبًا. اجعل إحداثيات GPS مطلوبة بدلًا منه.</value>
   </data>
+  <data name="DeleteDepartmentRecordsWarning" xml:space="preserve">
+    <value>يستخدم هذا القسم السجلات. عند تنفيذ الحذف تُحذف نهائياً جميع السجلات وتقارير الحوادث والمرفقات مع سجل تغييراتها، ولا تؤخّر فترات الاحتفاظ ذلك. صدِّر قبل ذلك كل ما يلزمك الاحتفاظ به، أو ضع حالة حفظ قانونية: أي حالة حفظ نشطة توقف الحذف حتى تُرفع.</value>
+  </data>
+  <data name="DeleteDepartmentLegalHoldWarning" xml:space="preserve">
+    <value>تشمل سجلات هذا القسم {0} من حالات الحفظ القانونية النشطة. لن يُنفَّذ الحذف حتى تُرفع جميعها.</value>
+  </data>
 </root>

@@ -52,6 +52,15 @@ namespace Resgrid.Model.Repositories
 		/// another writer got there first.
 		/// </summary>
 		Task<bool> InsertIfMissingAsync(SearchIndexState state, CancellationToken cancellationToken = default);
+
+		/// <summary>Departments with a search state row but no Departments row: their index documents still need erasing.</summary>
+		Task<List<int>> GetDeletedDepartmentIdsAsync(CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Removes a deleted department's leftover projections and its state rows once its documents are erased and committed.
+		/// No-op while the department exists.
+		/// </summary>
+		Task<int> DeleteForDeletedDepartmentAsync(int departmentId, CancellationToken cancellationToken = default);
 	}
 
 	public interface ISearchIndexLeasesRepository : IRepository<SearchIndexLease>

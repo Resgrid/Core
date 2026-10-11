@@ -1439,4 +1439,10 @@
   <data name="NewCallFieldCannotBeRequired" xml:space="preserve">
     <value>Ein Plus Code dient nur zum Finden des Ortes und wird nicht im Einsatz gespeichert, daher kann er nicht verpflichtend sein. Machen Sie stattdessen die GPS-Koordinaten verpflichtend.</value>
   </data>
+  <data name="DeleteDepartmentRecordsWarning" xml:space="preserve">
+    <value>Diese Abteilung verwendet Akten. Bei der Löschung werden alle Akten, Einsatzberichte und Anhänge samt Verlauf endgültig gelöscht; Aufbewahrungsfristen verzögern dies nicht. Exportieren Sie vorher alles, was Sie aufbewahren müssen, oder richten Sie eine Aufbewahrungssperre ein: Eine aktive Aufbewahrungssperre hält die Löschung an, bis sie aufgehoben wird.</value>
+  </data>
+  <data name="DeleteDepartmentLegalHoldWarning" xml:space="preserve">
+    <value>{0} aktive Aufbewahrungssperre(n) betreffen die Akten dieser Abteilung. Die Löschung wird erst ausgeführt, wenn alle Sperren aufgehoben sind.</value>
+  </data>
 </root>

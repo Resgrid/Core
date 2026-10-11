@@ -8,6 +8,7 @@ public class DeleteDepartmentView
 	public Department Department { get; set; }
 	public QueueItem CurrentDeleteRequest { get; set; }
 	public UserProfile Profile { get; set; }
+	public DepartmentDeletionRecordsImpact RecordsImpact { get; set; }
 
 	[Required]
 	public bool AreYouSure { get; set; }

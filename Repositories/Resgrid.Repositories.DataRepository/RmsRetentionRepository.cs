@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Dapper;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Resgrid.Config;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
@@ -32,8 +33,10 @@ namespace Resgrid.Repositories.DataRepository
 
 		public async Task<List<RmsSearchErasureTarget>> GetPendingSearchErasuresAsync(int take, RmsSearchErasureTarget after = null, CancellationToken cancellationToken = default)
 		{
+			// A deleted department cannot take the department lock the erasure fence needs. Its whole index slice is erased by
+			// the department-level pass instead, and its rows go with the orphaned-department purge.
 			string Pending(string table, string id, RmsRecordKind kind) =>
-				$"SELECT {Col("DepartmentId")}, {(int)kind} AS {Col("RecordKind")}, {Col(id)} AS {Col("RecordId")}, {Col("PurgedOn")} FROM {Tbl(table)} WHERE {Col("PurgedOn")} IS NOT NULL AND {Col("SearchErasedOn")} IS NULL";
+				$"SELECT r.{Col("DepartmentId")}, {(int)kind} AS {Col("RecordKind")}, r.{Col(id)} AS {Col("RecordId")}, r.{Col("PurgedOn")} FROM {Tbl(table)} r WHERE r.{Col("PurgedOn")} IS NOT NULL AND r.{Col("SearchErasedOn")} IS NULL AND EXISTS (SELECT 1 FROM {Tbl("Departments")} d WHERE d.{Col("DepartmentId")} = r.{Col("DepartmentId")})";
 			var cursor = after == null ? "" : $"WHERE ({Col("DepartmentId")}>{P}AfterDepartment OR ({Col("DepartmentId")}={P}AfterDepartment AND ({Col("RecordKind")}>{P}AfterKind OR ({Col("RecordKind")}={P}AfterKind AND {Col("RecordId")}>{P}AfterId))))";
 			var rows = (await QueryAsync<RmsSearchErasureTarget>(
 				$"SELECT * FROM ({Pending("RmsOperationalRecords", "RmsOperationalRecordId", RmsRecordKind.Operational)} UNION ALL {Pending("RmsIncidentReports", "RmsIncidentReportId", RmsRecordKind.IncidentReport)}) pending {cursor} ORDER BY {Col("DepartmentId")}, {Col("RecordKind")}, {Col("RecordId")} {Paging()}",
@@ -60,6 +63,32 @@ namespace Resgrid.Repositories.DataRepository
 			parameters.Add("CompletedOn", DatabaseTimestamp(completedOn), DbType.DateTime2);
 			return await ExecuteAsync($"UPDATE {Tbl(table)} SET {Col("SearchErasedOn")}={P}CompletedOn WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col(id)}={P}RecordId AND {Col("PurgedOn")}={P}PurgedOn AND {Col("SearchErasedOn")} IS NULL",
 				parameters, cancellationToken) == 1;
+		}
+
+		public async Task<List<int>> GetOrphanedDepartmentIdsAsync(CancellationToken cancellationToken = default)
+		{
+			if (UnitOfWork.Transaction != null) throw new InvalidOperationException("Orphaned-department discovery requires its own transaction.");
+			var connection = UnitOfWork.CreateOrGetConnection();
+			try
+			{
+				var departments = await RmsDepartmentCleanup.GetOrphanedDepartmentIdsAsync(connection, UnitOfWork.Transaction, DataConfig.DatabaseType, cancellationToken);
+				UnitOfWork.CommitChanges();
+				return departments;
+			}
+			catch { UnitOfWork.DiscardChanges(); throw; }
+		}
+
+		public async Task<bool> PurgeOrphanedDepartmentAsync(int departmentId, CancellationToken cancellationToken = default)
+		{
+			if (UnitOfWork.Transaction != null) throw new InvalidOperationException("Orphaned-department purge requires its own transaction.");
+			var connection = UnitOfWork.CreateOrGetConnection();
+			try
+			{
+				var purged = await RmsDepartmentCleanup.DeleteWithinTransactionAsync(connection, UnitOfWork.Transaction, departmentId, DataConfig.DatabaseType, true, cancellationToken);
+				UnitOfWork.CommitChanges();
+				return purged;
+			}
+			catch { UnitOfWork.DiscardChanges(); throw; }
 		}
 
 		public async Task<RmsPurgeResult> PurgeAsync(int departmentId, string recordId, RmsRecordKind kind, long expectedVersion, DateTime now, CancellationToken cancellationToken = default)

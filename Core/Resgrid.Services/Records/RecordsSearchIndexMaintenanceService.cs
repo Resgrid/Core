@@ -20,6 +20,13 @@ namespace Resgrid.Services.Records
 	/// </summary>
 	public class RecordsSearchIndexMaintenanceService : IRecordsSearchIndexMaintenanceService
 	{
+		/// <summary>
+		/// One sweep per process at a time, as in the global index sweep. The scheduler starts a sweep every minute and retries a
+		/// failed one whether or not the previous run has finished; overlapping sweeps shared the host's single writer, raced the
+		/// manifest ETag (412), and disposed the writer or deleted segment files under each other. An overlapping sweep now skips.
+		/// </summary>
+		private static readonly SemaphoreSlim SweepGate = new SemaphoreSlim(1, 1);
+
 		private readonly IRmsDepartmentCutoversRepository _cutovers;
 		private readonly IRmsRecordSearchProjectionsRepository _projections;
 		private readonly IRmsSearchIndexStatesRepository _states;
@@ -45,12 +52,28 @@ namespace Resgrid.Services.Records
 
 		public async Task<RecordsSearchIndexSweepResult> SweepAsync(CancellationToken cancellationToken = default)
 		{
+			if (!await SweepGate.WaitAsync(0, cancellationToken))
+				return new RecordsSearchIndexSweepResult { Skipped = true, Message = "The previous records index sweep is still running in this process; skipped." };
+
+			try
+			{
+				return await SweepCoreAsync(cancellationToken);
+			}
+			finally
+			{
+				SweepGate.Release();
+			}
+		}
+
+		private async Task<RecordsSearchIndexSweepResult> SweepCoreAsync(CancellationToken cancellationToken)
+		{
 			var result = new RecordsSearchIndexSweepResult();
 			await ErasePurgedSourcesAsync(result, cancellationToken);
+			await EraseDeletedDepartmentsAsync(result, cancellationToken);
 			if (!SearchConfig.Enabled)
 			{
 				result.Skipped = true;
-				result.Message = $"Search indexing disabled; committed erasure acknowledged for {result.SearchErasuresCompleted} report(s); errors {result.Errors}.";
+				result.Message = $"Search indexing disabled; committed erasure acknowledged for {result.SearchErasuresCompleted} report(s) and {result.DeletedDepartmentsErased} deleted department(s); errors {result.Errors}.";
 				return result;
 			}
 
@@ -96,8 +119,52 @@ namespace Resgrid.Services.Records
 				}
 			}
 
-			result.Message = $"Checked {result.DepartmentsChecked} department(s); rebuilt {result.DepartmentsRebuilt}; indexed {result.DocumentsIndexed}; deleted {result.DocumentsDeleted}; committed erasures {result.SearchErasuresCompleted}; errors {result.Errors}.";
+			result.Message = $"Checked {result.DepartmentsChecked} department(s); rebuilt {result.DepartmentsRebuilt}; indexed {result.DocumentsIndexed}; deleted {result.DocumentsDeleted}; committed erasures {result.SearchErasuresCompleted}; deleted departments erased {result.DeletedDepartmentsErased}; errors {result.Errors}.";
 			return result;
+		}
+
+		/// <summary>
+		/// Department deletion purges RMS rows but cannot reach this process's index, so it leaves the department's
+		/// RmsSearchIndexStates row as the marker. Erase that department's documents, commit and publish, and only then
+		/// drop the marker; a failed commit keeps it for the next sweep.
+		/// </summary>
+		private async Task EraseDeletedDepartmentsAsync(RecordsSearchIndexSweepResult result, CancellationToken cancellationToken)
+		{
+			List<int> deleted;
+			try { deleted = await _states.GetDeletedDepartmentIdsAsync(cancellationToken) ?? new List<int>(); }
+			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { throw; }
+			catch (Exception ex) { result.Errors++; Logging.LogException(ex, "Deleted-department search erasure lookup failed; it will be retried."); return; }
+			if (deleted.Count == 0) return;
+
+			var erased = new List<int>();
+			foreach (var departmentId in deleted)
+			{
+				cancellationToken.ThrowIfCancellationRequested();
+				try
+				{
+					await _indexer.DeleteDepartmentAsync(departmentId, cancellationToken);
+					erased.Add(departmentId);
+				}
+				catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { throw; }
+				catch (Exception ex) { result.Errors++; Logging.LogException(ex, $"Search erasure for deleted department {departmentId} remains pending."); }
+			}
+			if (erased.Count == 0) return;
+
+			try { await _indexer.ExpungeDeletesAsync(cancellationToken); }
+			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { throw; }
+			catch (Exception ex) { result.Errors++; Logging.LogException(ex, "Deleted-department search erasure commit failed; it will be retried."); return; }
+
+			foreach (var departmentId in erased)
+			{
+				try
+				{
+					await _states.DeleteForDeletedDepartmentAsync(departmentId, cancellationToken);
+					result.DeletedDepartmentsErased++;
+					Logging.LogInfo($"Records search documents of deleted department {departmentId} erased.");
+				}
+				catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { throw; }
+				catch (Exception ex) { result.Errors++; Logging.LogException(ex, $"Search erasure marker for deleted department {departmentId} was not removed; erasure repeats next sweep."); }
+			}
 		}
 
 		private async Task ErasePurgedSourcesAsync(RecordsSearchIndexSweepResult result, CancellationToken cancellationToken)
@@ -153,9 +220,18 @@ namespace Resgrid.Services.Records
 				return result;
 			}
 
-			var generation = await ComputeGenerationAsync(departmentId);
-			var state = await _states.GetAsync(departmentId, RmsSearchIndexState.RecordsIndexName);
-			await RebuildAsync(departmentId, generation, state, result, cancellationToken);
+			await SweepGate.WaitAsync(cancellationToken);
+			try
+			{
+				var generation = await ComputeGenerationAsync(departmentId);
+				var state = await _states.GetAsync(departmentId, RmsSearchIndexState.RecordsIndexName);
+				await RebuildAsync(departmentId, generation, state, result, cancellationToken);
+			}
+			finally
+			{
+				SweepGate.Release();
+			}
+
 			result.Message = $"Rebuilt department {departmentId}: {result.DocumentsIndexed} document(s).";
 			return result;
 		}

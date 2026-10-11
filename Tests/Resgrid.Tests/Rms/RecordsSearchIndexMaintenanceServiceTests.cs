@@ -260,6 +260,56 @@ namespace Resgrid.Tests.Rms
 			_retention.Verify(r => r.CompleteSearchErasureAsync(It.IsAny<RmsSearchErasureTarget>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Once);
 		}
 
+		[TestCase(false)]
+		[TestCase(true)]
+		public async Task A_deleted_departments_index_slice_is_erased_before_its_marker_is_dropped(bool failCommit)
+		{
+			SearchConfig.Enabled = false;
+			const int deletedDepartment = 13275;
+			var order = new List<string>();
+			_states.Setup(s => s.GetDeletedDepartmentIdsAsync(It.IsAny<CancellationToken>())).ReturnsAsync(new List<int> { deletedDepartment });
+			_indexer.Setup(i => i.DeleteDepartmentAsync(deletedDepartment, It.IsAny<CancellationToken>())).Callback(() => order.Add("delete")).Returns(Task.CompletedTask);
+			_indexer.Setup(i => i.ExpungeDeletesAsync(It.IsAny<CancellationToken>())).Returns(() =>
+			{
+				if (failCommit) throw new InvalidOperationException("index commit failed");
+				order.Add("expunge"); return Task.CompletedTask;
+			});
+			_states.Setup(s => s.DeleteForDeletedDepartmentAsync(deletedDepartment, It.IsAny<CancellationToken>())).Callback(() => order.Add("marker")).ReturnsAsync(1);
+
+			var result = await _service.SweepAsync();
+
+			result.Skipped.Should().BeTrue("deleted-department erasure runs even while search indexing is disabled");
+			result.DeletedDepartmentsErased.Should().Be(failCommit ? 0 : 1);
+			result.Errors.Should().Be(failCommit ? 1 : 0);
+			order.Should().Equal(failCommit ? new[] { "delete" } : new[] { "delete", "expunge", "marker" }, "the marker must outlive any uncommitted erasure");
+			_indexer.Verify(i => i.IndexAsync(It.IsAny<IEnumerable<RecordsSearchDocumentSource>>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task A_sweep_that_overlaps_a_running_one_skips_instead_of_sharing_the_writer()
+		{
+			var release = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+			var entered = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+			_cutovers.Setup(c => c.GetActiveAsync()).Returns(async () =>
+			{
+				entered.TrySetResult(true);
+				await release.Task;
+				return (IEnumerable<RmsDepartmentCutover>)new List<RmsDepartmentCutover>();
+			});
+
+			var first = _service.SweepAsync();
+			await entered.Task;
+			var second = await _service.SweepAsync();
+			release.SetResult(true);
+			var firstResult = await first;
+
+			second.Skipped.Should().BeTrue();
+			second.Errors.Should().Be(0, "a skipped sweep is not a failed one, so the scheduler does not retry it");
+			_retention.Verify(r => r.GetPendingSearchErasuresAsync(It.IsAny<int>(), It.IsAny<RmsSearchErasureTarget>(), It.IsAny<CancellationToken>()), Times.Once, "the skipped sweep must not touch the writer, erasures included");
+			firstResult.Skipped.Should().BeFalse();
+			(await _service.SweepAsync()).Skipped.Should().BeFalse("the gate is released when the running sweep ends");
+		}
+
 		private static RmsRecordSearchProjection Projection(string id, DateTime modifiedOn)
 		{
 			return new RmsRecordSearchProjection

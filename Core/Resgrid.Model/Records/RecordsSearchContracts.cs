@@ -94,6 +94,8 @@ namespace Resgrid.Model
 		public int DocumentsIndexed { get; set; }
 		public int DocumentsDeleted { get; set; }
 		public int SearchErasuresCompleted { get; set; }
+		/// <summary>Deleted departments whose whole index slice was erased and committed this sweep.</summary>
+		public int DeletedDepartmentsErased { get; set; }
 		public int Errors { get; set; }
 		public bool Skipped { get; set; }
 		public string Message { get; set; }

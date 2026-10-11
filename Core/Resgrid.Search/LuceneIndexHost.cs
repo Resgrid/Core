@@ -34,6 +34,14 @@ namespace Resgrid.Search
 
 		private readonly object _sync = new object();
 		private readonly object _writerSyncGate = new object();
+
+		/// <summary>
+		/// Serializes publishes and conflict resets on this host. Both run outside <c>_sync</c> while they upload or pull, and
+		/// the publish lease admits its own owner, so two callers in one process got in together: they read the same manifest
+		/// ETag and the loser took a 412 from itself, and its reset then disposed the writer, nulled the snapshot policy and
+		/// wiped the segment files the other publish was still uploading (RESGRID-WEBJOBS NRE at the snapshot release).
+		/// </summary>
+		private readonly SemaphoreSlim _publishGate = new SemaphoreSlim(1, 1);
 		private readonly bool _ownsDirectory;
 		private readonly ISearchIndexStore _store;
 		private readonly string _localPathOverride;
@@ -279,22 +287,40 @@ namespace Resgrid.Search
 		/// Publishes the latest commit to the object store (plan R7 writer sequence steps 4–6): immutable files that the
 		/// bucket lacks, then segments_N, then the manifest under a conditional PUT, then prune. No-op without a store.
 		/// Throws <see cref="SearchIndexManifestConflictException"/> when another writer has published meanwhile.
+		/// Publishes on one host run one at a time, so the second sees the first's manifest ETag.
 		/// </summary>
 		public async Task<SearchIndexManifest> PublishAsync(string publishedBy, CancellationToken cancellationToken = default)
 		{
 			if (!StoreEnabled)
 				return null;
 
+			// Taken here and in ResetFromStoreAsync, never by a caller around both: the coordinator resets from inside the
+			// catch of a failed publish, after this has released.
+			await _publishGate.WaitAsync(cancellationToken);
+			try
+			{
+				return await PublishCoreAsync(publishedBy, cancellationToken);
+			}
+			finally
+			{
+				_publishGate.Release();
+			}
+		}
+
+		private async Task<SearchIndexManifest> PublishCoreAsync(string publishedBy, CancellationToken cancellationToken)
+		{
 			EnsureWriterSyncedFromStore();
 			IndexCommit commit;
 			IndexWriter writer;
+			SnapshotDeletionPolicy snapshots;
 			lock (_sync)
 			{
 				ThrowIfDisposed();
 				writer = GetWriter();
 				if (!DirectoryReader.IndexExists(Store))
 					return null;
-				commit = _snapshots.Snapshot();
+				snapshots = _snapshots;
+				commit = snapshots.Snapshot();
 			}
 
 			try
@@ -354,8 +380,15 @@ namespace Resgrid.Search
 			{
 				lock (_sync)
 				{
-					try { _snapshots.Release(commit); } catch (Exception ex) { Logging.LogException(ex); }
-					try { writer.DeleteUnusedFiles(); } catch (Exception ex) { Logging.LogException(ex); }
+					// Release on the policy that took the snapshot, and only touch the writer that is still live: a conflict
+					// reset (ResetFromStoreAsync) in an overlapping publish disposes the writer and nulls or replaces
+					// _snapshots, which threw NullReferenceException, "commit gen=N is not currently snapshotted" and
+					// ObjectDisposedException here.
+					try { snapshots.Release(commit); } catch (Exception ex) { Logging.LogException(ex); }
+					if (!_disposed && ReferenceEquals(_writer, writer))
+					{
+						try { writer.DeleteUnusedFiles(); } catch (Exception ex) { Logging.LogException(ex); }
+					}
 				}
 			}
 		}
@@ -371,8 +404,22 @@ namespace Resgrid.Search
 		/// <summary>
 		/// Writer recovery after a manifest conflict: drop the local writer and directory, pull the published revision and
 		/// let the maintenance sweep re-index from the projection tables (its checkpoint only advances after a publish).
+		/// Waits for an in-flight publish on this host to finish first.
 		/// </summary>
 		public async Task ResetFromStoreAsync(CancellationToken cancellationToken = default)
+		{
+			await _publishGate.WaitAsync(cancellationToken);
+			try
+			{
+				await ResetFromStoreCoreAsync(cancellationToken);
+			}
+			finally
+			{
+				_publishGate.Release();
+			}
+		}
+
+		private async Task ResetFromStoreCoreAsync(CancellationToken cancellationToken)
 		{
 			lock (_sync)
 			{

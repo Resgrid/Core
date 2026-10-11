@@ -1439,4 +1439,10 @@
   <data name="NewCallFieldCannotBeRequired" xml:space="preserve">
     <value>Un Plus Code serve solo a trovare la posizione e non viene salvato nella chiamata, quindi non può essere obbligatorio. Rendi obbligatorie le coordinate GPS.</value>
   </data>
+  <data name="DeleteDepartmentRecordsWarning" xml:space="preserve">
+    <value>Questo dipartimento usa i Registri. Quando viene eseguita l'eliminazione, tutti i registri, i rapporti di intervento e gli allegati, con la loro cronologia, vengono eliminati definitivamente; i periodi di conservazione non la ritardano. Prima di allora esporta tutto ciò che devi conservare oppure imposta un blocco di conservazione: un blocco di conservazione attivo sospende l'eliminazione finché non viene rimosso.</value>
+  </data>
+  <data name="DeleteDepartmentLegalHoldWarning" xml:space="preserve">
+    <value>{0} blocchi di conservazione attivi riguardano i Registri di questo dipartimento. L'eliminazione non verrà eseguita finché non saranno tutti rimossi.</value>
+  </data>
 </root>

@@ -16,6 +16,9 @@ namespace Resgrid.Repositories.DataRepository
 	/// This is not an independent purge API or a substitute for department retention authorization.</summary>
 	public static class ChecklistDepartmentCleanup
 	{
+		/// <summary>Every table the readiness subtree deletes by DepartmentId (inventory and Admin Assist have their own lists).</summary>
+		internal static readonly string[] Tables = { "CalOesMarsReimbursementLines", "CalOesMarsWorkItems", "CalOesMarsAgreementSnapshots", "CalOesMarsAdministrativeRateInputs", "CalOesMarsRateLines", "CalOesMarsRateProfiles", "CalOesMarsResourceProfiles", "CalOesMarsAgencyProfiles", "DeploymentAttachments", "DeploymentExpenses", "DeploymentTimeEntries", "DeploymentTimeReports", "DeploymentEquipment", "DeploymentPersonnel", "DeploymentUnits", "Deployments", "TimeReportNumberSequences", "BidLineItems", "Bids", "BidNumberSequences", "DepartmentComplianceDocuments", "ServiceContracts", "RatePremiums", "RateScheduleEntries", "RateSchedules", "PersonnelCertificationCredits", "UnitCertifications", "PersonnelRoleCertificationRequirements", "DepartmentCertificationSettings", "PaymentConnectEvents", "InvoicePaymentRequests", "DepartmentPaymentConnections", "InvoicePayments", "InvoiceLineItems", "Invoices", "InvoiceNumberSequences", "RateCardItems", "RateCards", "CustomerBillingProfiles", "DepartmentBillingIdentities", "BusinessOperationsBillingAccounts", "WorkOrderPartMovements", "WorkOrderVendorCharges", "WorkOrderOperationReceipts", "WorkOrderPolicies", "WorkOrderReportSnapshots", "WorkOrderFailureIntents", "WorkOrderSafetyHolds", "WorkOrderRecurrenceChanges", "WorkOrderMeterReadings", "ReadinessProBillingAccounts", "WorkOrderNotifications", "WorkOrderFiles", "WorkOrderParts", "WorkOrderLabors", "WorkOrderActivities", "WorkOrderRecurrenceVersions", "WorkOrderRecurrences", "WorkOrders", "ChecklistReminders", "ChecklistCompletionFiles", "ChecklistCompletionItems", "ChecklistCompletions", "ChecklistOccurrences", "ChecklistSchedules", "ChecklistDefinitionVersions", "ChecklistDefinitions", "DepartmentChecklistSettings" };
+
 		public static async Task DeleteWithinTransactionAsync(DbConnection connection, DbTransaction transaction, int departmentId, DatabaseTypes type, CancellationToken ct = default)
 		{
 			if (transaction == null || transaction.Connection != connection || departmentId <= 0) throw new InvalidOperationException("Department cleanup requires a scoped transaction.");
@@ -26,17 +29,27 @@ namespace Resgrid.Repositories.DataRepository
 				var result = await connection.ExecuteScalarAsync<int>(new CommandDefinition(pg ? "SELECT CASE WHEN to_regclass(@Name) IS NULL THEN 0 ELSE 1 END" : "SELECT CASE WHEN OBJECT_ID(@Name,'U') IS NOT NULL THEN 1 WHEN HAS_PERMS_BY_NAME(DB_NAME(),'DATABASE','VIEW DEFINITION')=1 THEN 0 ELSE -1 END", new { Name = (pg ? "public." + table.ToLowerInvariant() : "dbo." + table) }, transaction, cancellationToken: ct));
 				if (result < 0) throw new InvalidOperationException("Cannot verify the department cleanup schema."); return result == 1;
 			}
-			var hasChecklists = await Exists("ChecklistDefinitions");
 			if (await Exists("ChecklistAccessFence")) await connection.ExecuteScalarAsync<int>(new CommandDefinition(pg ? "SELECT id FROM checklistaccessfence WHERE id=1 FOR UPDATE" : "SELECT Id FROM ChecklistAccessFence WITH (UPDLOCK,HOLDLOCK) WHERE Id=1", transaction: transaction, cancellationToken: ct));
 			var lockedDepartment = await connection.ExecuteScalarAsync<int>(new CommandDefinition(pg ? "SELECT departmentid FROM departments WHERE departmentid=@DepartmentId FOR UPDATE" : "SELECT DepartmentId FROM Departments WITH (UPDLOCK,HOLDLOCK) WHERE DepartmentId=@DepartmentId", new { DepartmentId = departmentId }, transaction, cancellationToken: ct));
 			if (lockedDepartment != departmentId) throw new InvalidOperationException("Department cleanup could not lock the requested department.");
 			// RMS uses the same department lock for legal holds. Preserve source readiness evidence
 			// conservatively when any active hold exists, even if its content is encrypted.
 			if (await Exists("RmsRecordLegalHolds") && await connection.ExecuteScalarAsync<int>(new CommandDefinition($"SELECT COUNT(*) FROM {Q("RmsRecordLegalHolds")} WHERE {Q("DepartmentId")}=@DepartmentId AND {Q("ReleasedOn")} IS NULL", new { DepartmentId = departmentId }, transaction, cancellationToken: ct)) > 0)
-				throw new InvalidOperationException("Department readiness evidence is retained under an active legal hold.");
+				throw new DepartmentDeletionDeferredException("Department readiness evidence is retained under an active legal hold.");
+			await DeleteSubtreeWithinTransactionAsync(connection, transaction, departmentId, type, ct);
+		}
+
+		/// <summary>The readiness subtree without the fence, the department lock and the hold check. Only for DeletedDepartmentCleanup:
+		/// a deleted department has no row to lock, and that caller checks legal holds itself.</summary>
+		internal static async Task DeleteSubtreeWithinTransactionAsync(DbConnection connection, DbTransaction transaction, int departmentId, DatabaseTypes type, CancellationToken ct = default)
+		{
+			if (transaction == null || transaction.Connection != connection || departmentId <= 0) throw new InvalidOperationException("Department cleanup requires a scoped transaction.");
+			var pg = type == DatabaseTypes.Postgres;
+			string Q(string value) => DepartmentCleanupCommands.Q(type, value);
+			Task<bool> Exists(string table) => DepartmentCleanupCommands.ExistsAsync(connection, transaction, type, table, ct);
 			await InventoryDepartmentCleanup.DeleteWithinTransactionAsync(connection, transaction, departmentId, type, ct);
 			await AdminAssistDepartmentCleanup.DeleteWithinTransactionAsync(connection, transaction, departmentId, type, ct);
-			if (!hasChecklists) return;
+			if (!await Exists("ChecklistDefinitions")) return;
 			var triggers = ChecklistWorkflowPayload.Triggers.Except(InventoryWorkflowPayload.Triggers).ToArray();
 			var triggerPredicate = Q("TriggerEventType") + (pg ? "=ANY(@Triggers)" : " IN @Triggers");
 			var auditPredicate = Q("LogType") + (pg ? "=ANY(@AuditTypes)" : " IN @AuditTypes");
@@ -55,7 +68,7 @@ namespace Resgrid.Repositories.DataRepository
 			// Work orders, their recurrences and recurrence versions reference each other; break the optional
 			// order -> version edge so versions, then recurrences, then orders can be deleted in turn.
 			if (await Exists("WorkOrderRecurrenceVersions")) await connection.ExecuteAsync(new CommandDefinition($"UPDATE {Q("WorkOrders")} SET {Q("RecurrenceVersionId")}=NULL WHERE {Q("DepartmentId")}=@DepartmentId AND {Q("RecurrenceVersionId")} IS NOT NULL", parameters, transaction, cancellationToken: ct));
-			foreach (var table in new[] { "CalOesMarsReimbursementLines", "CalOesMarsWorkItems", "CalOesMarsAgreementSnapshots", "CalOesMarsAdministrativeRateInputs", "CalOesMarsRateLines", "CalOesMarsRateProfiles", "CalOesMarsResourceProfiles", "CalOesMarsAgencyProfiles", "DeploymentAttachments", "DeploymentExpenses", "DeploymentTimeEntries", "DeploymentTimeReports", "DeploymentEquipment", "DeploymentPersonnel", "DeploymentUnits", "Deployments", "TimeReportNumberSequences", "BidLineItems", "Bids", "BidNumberSequences", "DepartmentComplianceDocuments", "ServiceContracts", "RatePremiums", "RateScheduleEntries", "RateSchedules", "PersonnelCertificationCredits", "UnitCertifications", "PersonnelRoleCertificationRequirements", "DepartmentCertificationSettings", "PaymentConnectEvents", "InvoicePaymentRequests", "DepartmentPaymentConnections", "InvoicePayments", "InvoiceLineItems", "Invoices", "InvoiceNumberSequences", "RateCardItems", "RateCards", "CustomerBillingProfiles", "DepartmentBillingIdentities", "BusinessOperationsBillingAccounts", "WorkOrderPartMovements", "WorkOrderVendorCharges", "WorkOrderOperationReceipts", "WorkOrderPolicies", "WorkOrderReportSnapshots", "WorkOrderFailureIntents", "WorkOrderSafetyHolds", "WorkOrderRecurrenceChanges", "WorkOrderMeterReadings", "ReadinessProBillingAccounts", "WorkOrderNotifications", "WorkOrderFiles", "WorkOrderParts", "WorkOrderLabors", "WorkOrderActivities", "WorkOrderRecurrenceVersions", "WorkOrderRecurrences", "WorkOrders", "ChecklistReminders", "ChecklistCompletionFiles", "ChecklistCompletionItems", "ChecklistCompletions", "ChecklistOccurrences", "ChecklistSchedules", "ChecklistDefinitionVersions", "ChecklistDefinitions", "DepartmentChecklistSettings" })
+			foreach (var table in Tables)
 				if (await Exists(table)) await connection.ExecuteAsync(new CommandDefinition($"DELETE FROM {Q(table)} WHERE {Q("DepartmentId")}=@DepartmentId", parameters, transaction, cancellationToken: ct));
 		}
 	}

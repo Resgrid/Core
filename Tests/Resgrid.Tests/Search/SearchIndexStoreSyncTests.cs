@@ -130,6 +130,71 @@ namespace Resgrid.Tests.Search
 		}
 
 		[Test]
+		public async Task Two_publishes_on_one_host_run_in_turn_instead_of_conflicting_with_each_other()
+		{
+			// The publish lease admits its own owner (machine:pid), so overlapping sweeps in one worker both published. Both
+			// read the same manifest ETag, the second PUT took a 412 from the first, and its reset wiped the index.
+			var store = new InMemorySearchIndexStore();
+			var holding = new HoldNextManifestPutStore(store);
+			var writer = Host(TempDir(), holding);
+			var indexer = new LuceneGlobalSearchIndexer(writer);
+			await indexer.IndexAsync(new[] { GlobalSearchTests.Projection(1, SearchEntityTypes.Call, "1", "Brush fire on Ridge Rd") }, "1.0.0");
+			await indexer.CommitAsync();
+
+			await indexer.IndexAsync(new[] { GlobalSearchTests.Projection(1, SearchEntityTypes.Unit, "2", "Brush 41") }, "1.0.0");
+			writer.Commit();
+			holding.Arm();
+			var first = writer.PublishAsync("first");
+			await holding.Held.Task.WaitAsync(TimeSpan.FromSeconds(10));
+
+			var second = writer.PublishAsync("second");
+			await Task.Delay(100);
+			second.IsCompleted.Should().BeFalse("the second publish waits for the first instead of reading the same ETag");
+
+			holding.Release();
+			(await first).Should().NotBeNull();
+			var published = await second;
+
+			published.Should().NotBeNull();
+			store.Manifests[SearchIndexNames.Global].Revision.Should().Be(published.Revision);
+			writer.LastSyncedRevision.Should().Be(published.Revision);
+		}
+
+		[Test]
+		public async Task A_conflict_reset_waits_for_a_publish_still_in_flight_on_the_same_host()
+		{
+			// RESGRID-WEBJOBS (trace eb1ef3a0): one sweep's reset disposed the writer, nulled the snapshot policy and wiped the
+			// local files while another sweep's publish was mid-flight; that publish then failed with FileNotFoundException,
+			// "commit gen=N is not currently snapshotted", ObjectDisposedException or NullReferenceException at the release.
+			var store = new InMemorySearchIndexStore();
+			var holding = new HoldNextManifestPutStore(store);
+			var writer = Host(TempDir(), holding);
+			var indexer = new LuceneGlobalSearchIndexer(writer);
+			await indexer.IndexAsync(new[] { GlobalSearchTests.Projection(1, SearchEntityTypes.Call, "1", "Brush fire on Ridge Rd") }, "1.0.0");
+			await indexer.CommitAsync();
+
+			await indexer.IndexAsync(new[] { GlobalSearchTests.Projection(1, SearchEntityTypes.Unit, "2", "Brush 41") }, "1.0.0");
+			writer.Commit();
+			holding.Arm();
+			var publish = writer.PublishAsync("in-flight");
+			await holding.Held.Task.WaitAsync(TimeSpan.FromSeconds(10));
+
+			var reset = writer.ResetFromStoreAsync();
+			await Task.Delay(100);
+			reset.IsCompleted.Should().BeFalse("the reset must not dispose the writer or wipe the files under a running publish");
+
+			holding.Release();
+			var published = await publish;
+			await reset;
+
+			published.Should().NotBeNull();
+			store.Manifests[SearchIndexNames.Global].Revision.Should().Be(published.Revision);
+			writer.LastSyncedRevision.Should().Be(published.Revision, "the reset pulls what the in-flight publish put");
+			var search = new LuceneGlobalSearchService(writer);
+			(await search.SearchAsync(1, new GlobalSearchQuery { Text = "brush" })).Hits.Should().HaveCount(2);
+		}
+
+		[Test]
 		public async Task A_fresh_reader_pulls_when_availability_is_checked()
 		{
 			// UnifiedSearchService checks IsAvailable before it ever calls SearchAsync, so a reader whose local cache starts
@@ -296,6 +361,47 @@ namespace Resgrid.Tests.Search
 		public Task DeleteFilesAsync(string indexName, IEnumerable<string> fileNames, CancellationToken cancellationToken = default) => _inner.DeleteFilesAsync(indexName, fileNames, cancellationToken);
 
 		public Task<SearchIndexManifest> PutManifestAsync(string indexName, SearchIndexManifest manifest, string expectedETag, CancellationToken cancellationToken = default) => _inner.PutManifestAsync(indexName, manifest, expectedETag, cancellationToken);
+	}
+
+	/// <summary>After <see cref="Arm"/>, parks the next manifest PUT until <see cref="Release"/>: a publish that has already read its ETag.</summary>
+	public sealed class HoldNextManifestPutStore : ISearchIndexStore
+	{
+		private readonly ISearchIndexStore _inner;
+		private readonly TaskCompletionSource<bool> _release = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+		private int _armed;
+
+		public HoldNextManifestPutStore(ISearchIndexStore inner)
+		{
+			_inner = inner;
+		}
+
+		public TaskCompletionSource<bool> Held { get; } = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+		public void Arm() => Volatile.Write(ref _armed, 1);
+
+		public void Release() => _release.TrySetResult(true);
+
+		public bool Enabled => true;
+
+		public Task<SearchIndexManifest> GetManifestAsync(string indexName, CancellationToken cancellationToken = default) => _inner.GetManifestAsync(indexName, cancellationToken);
+
+		public Task<HashSet<string>> ListFilesAsync(string indexName, CancellationToken cancellationToken = default) => _inner.ListFilesAsync(indexName, cancellationToken);
+
+		public Task UploadFileAsync(string indexName, string fileName, string localPath, CancellationToken cancellationToken = default) => _inner.UploadFileAsync(indexName, fileName, localPath, cancellationToken);
+
+		public Task DownloadFileAsync(string indexName, string fileName, string localPath, CancellationToken cancellationToken = default) => _inner.DownloadFileAsync(indexName, fileName, localPath, cancellationToken);
+
+		public Task DeleteFilesAsync(string indexName, IEnumerable<string> fileNames, CancellationToken cancellationToken = default) => _inner.DeleteFilesAsync(indexName, fileNames, cancellationToken);
+
+		public async Task<SearchIndexManifest> PutManifestAsync(string indexName, SearchIndexManifest manifest, string expectedETag, CancellationToken cancellationToken = default)
+		{
+			if (Interlocked.Exchange(ref _armed, 0) == 1)
+			{
+				Held.TrySetResult(true);
+				await _release.Task;
+			}
+			return await _inner.PutManifestAsync(indexName, manifest, expectedETag, cancellationToken);
+		}
 	}
 
 	/// <summary>S3 semantics in memory: immutable objects, one manifest per index, If-None-Match:* / If-Match on the manifest.</summary>

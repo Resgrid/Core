@@ -201,6 +201,10 @@ namespace Resgrid.Model
 		public int HeldByLegalHold { get; set; }
 		public int AttachmentsRescanned { get; set; }
 		public int AttachmentsRejectedOnRescan { get; set; }
+		/// <summary>Deleted departments whose leftover RMS rows were purged this sweep.</summary>
+		public int OrphanedDepartmentsPurged { get; set; }
+		/// <summary>Deleted departments whose leftover RMS rows stay because an active legal hold still covers them.</summary>
+		public int OrphanedDepartmentsHeld { get; set; }
 		public int Errors { get; set; }
 		public string Message { get; set; }
 	}

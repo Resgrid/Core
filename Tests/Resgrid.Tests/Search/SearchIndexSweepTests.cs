@@ -217,6 +217,19 @@ namespace Resgrid.Tests.Search
 		}
 
 		[Test]
+		public async Task A_failed_deleted_department_lookup_skips_the_sweep_instead_of_maintaining_unfiltered()
+		{
+			_changes[1].Add(Row(1, "10", Checkpoint.AddMinutes(1)));
+			_states.Setup(s => s.GetDeletedDepartmentIdsAsync(It.IsAny<CancellationToken>())).ThrowsAsync(new TimeoutException("Execution Timeout Expired"));
+
+			Func<Task> sweep = () => _service.SweepAsync();
+
+			(await sweep.Should().ThrowAsync<InvalidOperationException>()).WithInnerException<TimeoutException>();
+			_calls.Should().BeEmpty("without the deleted-department list no department may be rebuilt, caught up or saved");
+			(await _service.SweepAsync().ContinueWith(t => t.IsFaulted)).Should().BeTrue("the gate is released, so the next sweep runs (and retries the lookup)");
+		}
+
+		[Test]
 		public async Task A_deleted_departments_marker_waits_for_the_search_host()
 		{
 			SearchConfig.Enabled = false;

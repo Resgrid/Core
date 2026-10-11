@@ -145,14 +145,15 @@ namespace Resgrid.Services.Search
 		/// prune: the index can hold protected text), and only then drop the marker and any projections a department deleted
 		/// before its delete script purged them still has. A failed commit keeps the marker for the next sweep. Runs only on the
 		/// search host, which owns the writer: a marker must not be dropped by a process without the index. Returns every deleted
-		/// department found, erased or not, so the rest of the sweep leaves them alone.
+		/// department found, erased or not, so the rest of the sweep leaves them alone. A failed lookup throws (the worker logs
+		/// it and the next sweep retries): without the list, the rest of the sweep would rebuild or catch up deleted departments.
 		/// </summary>
 		private async Task<HashSet<int>> EraseDeletedDepartmentsAsync(SearchIndexSweepResult result, CancellationToken cancellationToken)
 		{
 			List<int> deleted;
 			try { deleted = await _states.GetDeletedDepartmentIdsAsync(cancellationToken) ?? new List<int>(); }
 			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { throw; }
-			catch (Exception ex) { result.Errors++; Logging.LogException(ex, "Deleted-department search erasure lookup failed; it will be retried."); return new HashSet<int>(); }
+			catch (Exception ex) { throw new InvalidOperationException("Deleted-department search erasure lookup failed; the global index sweep was skipped.", ex); }
 			if (deleted.Count == 0) return new HashSet<int>();
 
 			var erased = new List<int>();

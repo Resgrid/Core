@@ -7,7 +7,7 @@ namespace Resgrid.Providers.Marketing
 	{
 		protected override void Load(ContainerBuilder builder)
 		{
-			builder.RegisterType<MailerliteEmailMarketing>().As<IEmailMarketingProvider>().InstancePerLifetimeScope();
+			builder.RegisterType<LoopsEmailMarketingProvider>().As<IEmailMarketingProvider>().InstancePerLifetimeScope();
 			builder.RegisterType<ShortenUrlProvider>().As<IShortenUrlProvider>().InstancePerLifetimeScope();
 		}
 	}

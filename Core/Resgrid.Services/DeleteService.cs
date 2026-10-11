@@ -53,6 +53,7 @@ namespace Resgrid.Services
 		private readonly IDeploymentPersonnelRepository _deploymentPersonnel;
 		private readonly IWorkforceService _workforceService;
 		private readonly IMfaAccountCleanupService _mfaAccountCleanup;
+		private readonly IEmailMarketingService _emailMarketingService;
 
 		public DeleteService(IAuthorizationService authorizationService, IDepartmentsService departmentsService,
 			ICallsService callsService, IActionLogsService actionLogsService, IUsersService usersService,
@@ -67,9 +68,10 @@ namespace Resgrid.Services
 			IDepartmentMemberEmergencyContactService emergencyContactService,
 			IInventoryStore inventoryStore = null, Resgrid.Model.Repositories.Queries.IUnitOfWork inventoryUnitOfWork = null,
 			IDeploymentService deploymentService = null, IDeploymentPersonnelRepository deploymentPersonnel = null, IWorkforceService workforceService = null,
-			IMfaAccountCleanupService mfaAccountCleanup = null)
+			IMfaAccountCleanupService mfaAccountCleanup = null, IEmailMarketingService emailMarketingService = null)
 		{
 			_mfaAccountCleanup = mfaAccountCleanup;
+			_emailMarketingService = emailMarketingService;
 			_deploymentService = deploymentService;
 			_deploymentPersonnel = deploymentPersonnel;
 			_workforceService = workforceService;
@@ -320,6 +322,11 @@ namespace Resgrid.Services
 
 				await _userProfileService.SaveProfileAsync(departmentId, userProfile, cancellationToken);
 			}
+
+			// The account is opted out of newsletters above; unsubscribe it on the email marketing platform too, while
+			// the login still carries the email address the contact may be keyed by.
+			if (_emailMarketingService != null)
+				await _emailMarketingService.SyncNewsletterPreferenceAsync(userIdToDelete, true, cancellationToken);
 
 			await _userSessionService.RevokeAllAsync(userIdToDelete, userIdToDelete,
 				UserSessionRevocationReason.AccountDeactivated, System.DateTime.UtcNow, cancellationToken);

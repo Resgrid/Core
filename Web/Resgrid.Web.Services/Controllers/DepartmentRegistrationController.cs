@@ -26,11 +26,10 @@ namespace Resgrid.Web.Services.Controllers
 		private readonly ISubscriptionsService _subscriptionsService;
 		private readonly IAffiliateService _affiliateService;
 		private readonly IEventAggregator _eventAggregator;
-		private readonly IEmailMarketingProvider _emailMarketingProvider;
 
 		public DepartmentRegistrationController(IDepartmentsService departmentsService, IUsersService usersService, IEmailService emailService,
 			IInvitesService invitesService, IUserProfileService userProfileService,	ISubscriptionsService subscriptionsService, IAffiliateService affiliateService, 
-			IEventAggregator eventAggregator, IEmailMarketingProvider emailMarketingProvider)
+			IEventAggregator eventAggregator)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -40,7 +39,6 @@ namespace Resgrid.Web.Services.Controllers
 			_subscriptionsService = subscriptionsService;
 			_affiliateService = affiliateService;
 			_eventAggregator = eventAggregator;
-			_emailMarketingProvider = emailMarketingProvider;
 		}
 
 		// TODO: Rate limit

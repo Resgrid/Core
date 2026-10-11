@@ -60,7 +60,6 @@ namespace Resgrid.Web.Controllers
 		private readonly ISubscriptionsService _subscriptionsService;
 		private readonly IAffiliateService _affiliateService;
 		private readonly IEventAggregator _eventAggregator;
-		private readonly IEmailMarketingProvider _emailMarketingProvider;
 		private readonly ISystemAuditsService _systemAuditsService;
 		private readonly IServiceProvider _serviceProvider;
 		private readonly IDepartmentSsoService _departmentSsoService;
@@ -102,7 +101,7 @@ namespace Resgrid.Web.Controllers
 		public AccountController(
 						UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager,
 						IDepartmentsService departmentsService, IUsersService usersService, IEmailService emailService, IInvitesService invitesService, IUserProfileService userProfileService,
-						ISubscriptionsService subscriptionsService, IAffiliateService affiliateService, IEventAggregator eventAggregator, IEmailMarketingProvider emailMarketingProvider,
+						ISubscriptionsService subscriptionsService, IAffiliateService affiliateService, IEventAggregator eventAggregator,
 						ISystemAuditsService systemAuditsService, IServiceProvider serviceProvider,
 						IDepartmentSsoService departmentSsoService,
 						IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> secLocalizer,
@@ -145,7 +144,6 @@ namespace Resgrid.Web.Controllers
 			_subscriptionsService = subscriptionsService;
 			_affiliateService = affiliateService;
 			_eventAggregator = eventAggregator;
-			_emailMarketingProvider = emailMarketingProvider;
 			_systemAuditsService = systemAuditsService;
 			_serviceProvider = serviceProvider;
 			_departmentSsoService = departmentSsoService;
@@ -434,7 +432,6 @@ namespace Resgrid.Web.Controllers
 					await _departmentsService.InvalidateAllDepartmentsCache(department.DepartmentId);
 					_departmentsService.InvalidateDepartmentMembers();
 
-					await _emailMarketingProvider.SubscribeUserToAdminList(model.FirstName, model.LastName, model.Email);
 					await _emailService.SendWelcomeEmail(department.Name, $"{model.FirstName} {model.LastName}", model.Email, model.Username, department.DepartmentId);
 
 					var loginResult = await _signInManager.PasswordSignInAsync(model.Username, model.Password, true, lockoutOnFailure: false);
@@ -1779,7 +1776,6 @@ namespace Resgrid.Web.Controllers
 					var department = await _departmentsService.GetDepartmentByIdAsync(model.Invite.DepartmentId);
 
 					await _invitesService.CompleteInviteAsync(model.Invite.Code, user.UserId, cancellationToken);
-					await _emailMarketingProvider.SubscribeUserToUsersList(model.FirstName, model.LastName, user.Email);
 
 					await _emailService.SendWelcomeEmail(department.Name, $"{model.FirstName} {model.LastName}", model.Email, model.UserName, model.Invite.DepartmentId);
 

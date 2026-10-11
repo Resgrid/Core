@@ -53,7 +53,7 @@ namespace Resgrid.Tests.Services
 			// No UserManager: reaching account creation would throw, which is the point.
 			_controller = new Resgrid.Web.Controllers.AccountController(userManager: null, signInManager: null, departmentsService: departments.Object,
 				usersService: new Mock<IUsersService>().Object, emailService: null, invitesService: invites.Object, userProfileService: null,
-				subscriptionsService: null, affiliateService: null, eventAggregator: null, emailMarketingProvider: null,
+				subscriptionsService: null, affiliateService: null, eventAggregator: null,
 				systemAuditsService: null, serviceProvider: null, departmentSsoService: null, secLocalizer: null,
 				userSessionService: null, externalIdentityLinkService: null, passwordRecoveryService: null, limitsService: _limits.Object,
 				mfaEvidenceService: null, securityNotices: null, mfaActivity: null, loginTransactions: null, passkeys: null, approvals: null,

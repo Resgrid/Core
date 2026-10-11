@@ -84,6 +84,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IDepartmentDataProtectionService _dataProtectionService;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Home.EditProfile> _editProfileLocalizer;
 		private readonly IDispatchScopeService _dispatchScopeService;
+		private readonly IEmailMarketingService _emailMarketingService;
 
 		public HomeController(IDepartmentsService departmentsService, IUsersService usersService, IActionLogsService actionLogsService,
 			IUserStateService userStateService, IDepartmentGroupsService departmentGroupsService, Resgrid.Model.Services.IAuthorizationService authorizationService,
@@ -100,9 +101,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IDepartmentMemberSensitiveDataService memberSensitiveDataService,
 			IDepartmentDataProtectionService dataProtectionService,
 			IStringLocalizer<Resgrid.Localization.Areas.User.Home.EditProfile> editProfileLocalizer,
-			IDispatchScopeService dispatchScopeService)
+			IDispatchScopeService dispatchScopeService, IEmailMarketingService emailMarketingService)
 		{
 			_dispatchScopeService = dispatchScopeService;
+			_emailMarketingService = emailMarketingService;
 			_departmentsService = departmentsService;
 			_usersService = usersService;
 			_actionLogsService = actionLogsService;
@@ -881,6 +883,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				savedProfile.SendNotificationPush = model.Profile.SendNotificationPush;
 				savedProfile.SendNotificationSms = model.Profile.SendNotificationSms;
 				savedProfile.EnableModernApplicationSounds = model.Profile.EnableModernApplicationSounds;
+				var newsletterChoiceChanged = savedProfile.DoNotRecieveNewsletters != model.Profile.DoNotRecieveNewsletters;
 				savedProfile.DoNotRecieveNewsletters = model.Profile.DoNotRecieveNewsletters;
 				savedProfile.HomeNumber = (homeResult != null && homeResult.IsValid && !string.IsNullOrWhiteSpace(homeResult.InternationalNumber))
 					? homeResult.InternationalNumber
@@ -1003,6 +1006,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 					await _departmentsService.SaveDepartmentMemberAsync(depMember, cancellationToken);
 				}
+
+				// After the member save, so an admin promoted in this same post is already treated as one.
+				if (newsletterChoiceChanged)
+					await _emailMarketingService.SyncNewsletterPreferenceAsync(model.UserId, savedProfile.DoNotRecieveNewsletters, cancellationToken);
 
 				// Save UDF field values for personnel.
 				// Detect whether the UDF section was included in this POST via the hidden "_exists" sentinel

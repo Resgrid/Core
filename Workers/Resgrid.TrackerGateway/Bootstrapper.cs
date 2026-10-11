@@ -2,6 +2,7 @@ using Autofac;
 using Resgrid.Providers.Bus;
 using Resgrid.Providers.Bus.Rabbit;
 using Resgrid.Providers.Cache;
+using Resgrid.Providers.Marketing;
 using Resgrid.Providers.Tracking;
 using Resgrid.Repositories.DataRepository;
 using Resgrid.Services;
@@ -15,6 +16,8 @@ namespace Resgrid.TrackerGateway
 			builder.RegisterModule(new DataModule());
 			builder.RegisterModule(new ServicesModule());
 			builder.RegisterModule(new CacheProviderModule());
+			// DepartmentsService syncs admins to email marketing, so the provider must resolve wherever ServicesModule does.
+			builder.RegisterModule(new MarketingModule());
 			builder.RegisterModule(new BusModule());
 			builder.RegisterModule(new RabbitBusModule());
 			builder.RegisterModule(new TrackingProviderModule());

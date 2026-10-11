@@ -201,6 +201,19 @@ namespace Resgrid.Tests.Services
             _store.All<WorkOrderFailureIntent>().Single().Content.Should().BeNull();
         }
         [Test]
+        public async Task Sweeps_with_nothing_due_do_not_call_billing()
+        {
+            Maintenance(); var input = Schedule(); input.AnchorLocal = _maintenanceClock.Utc.AddDays(30);
+            await _service.SaveRecurrenceAsync(_actor, input); await Assigned();
+            _access.Invocations.Clear();
+            (await _service.GenerateMaintenanceAsync(77)).Generated.Should().Be(0);
+            (await _service.EscalateMaintenanceAsync(77)).Escalated.Should().Be(0);
+            _access.Verify(a => a.CanUseMaintenanceAsync(It.IsAny<int>()), Times.Never(), "an active schedule or open order with nothing due must not cost a Billing API call every sweep");
+            _maintenanceClock.Utc = _maintenanceClock.Utc.AddDays(28);
+            (await _service.GenerateMaintenanceAsync(77)).Generated.Should().Be(1);
+            _access.Verify(a => a.CanUseMaintenanceAsync(77), Times.AtLeastOnce());
+        }
+        [Test]
         public async Task Pending_part_witness_blocks_terminal_transitions_and_preserves_open_order()
         {
             Maintenance(); var id = await Assigned(); await Transition(id, WorkOrderStatus.InProgress);

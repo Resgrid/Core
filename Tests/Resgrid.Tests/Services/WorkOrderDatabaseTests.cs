@@ -60,6 +60,14 @@ namespace Resgrid.Tests.Services
             var date = _type == DatabaseTypes.Postgres ? "timestamp" : "datetime2";
             var boolean = _type == DatabaseTypes.Postgres ? "boolean" : "bit";
             await db.ExecuteAsync($"CREATE TABLE {Q("Units")} ({Q("UnitId")} int PRIMARY KEY, {Q("DepartmentId")} int NOT NULL); INSERT INTO {Q("Units")} VALUES(10,77),(20,88); CREATE TABLE {Q("UnitStates")} ({Q("UnitStateId")} {identity} PRIMARY KEY, {Q("UnitId")} int NOT NULL REFERENCES {Q("Units")}({Q("UnitId")}), {Q("State")} int NOT NULL, {Q("Timestamp")} {date} NOT NULL, {Q("IsProtected")} {boolean} NOT NULL, {Q("SetByUserId")} varchar(128) NULL, {Q("SetByOrigin")} int NULL); CREATE INDEX ix_unitstate_current ON {Q("UnitStates")} ({Q("UnitId")},{Q("Timestamp")} DESC,{Q("UnitStateId")} DESC);");
+            // M0268 also numbers invoices, bids and daily time reports: minimal stand-ins so it applies, and citext for its PostgreSQL columns.
+            if (_type == DatabaseTypes.Postgres)
+            {
+                await db.OpenAsync(); await db.ExecuteAsync("CREATE EXTENSION IF NOT EXISTS citext;");
+                // The data source loaded its types before citext existed; without a reload a citext column cannot be read back.
+                await ((NpgsqlConnection)db).ReloadTypesAsync();
+            }
+            await db.ExecuteAsync($"CREATE TABLE {Q("Invoices")} ({Q("Id")} int PRIMARY KEY, {Q("DepartmentId")} int NOT NULL, {Q("InvoiceNumber")} int NOT NULL); CREATE TABLE {Q("Bids")} ({Q("Id")} int PRIMARY KEY, {Q("DepartmentId")} int NOT NULL, {Q("BidNumber")} int NOT NULL); CREATE TABLE {Q("DeploymentTimeReports")} ({Q("Id")} int PRIMARY KEY, {Q("DepartmentId")} int NOT NULL, {Q("ReportNumber")} int NOT NULL);");
             var source = new Mock<IMigrationSource>(); source.Setup(s => s.GetMigrations()).Returns(new IMigration[] {
                 _type == DatabaseTypes.Postgres ? new M0197_AddWorkOrdersPg() : new M0197_AddWorkOrders(),
                 _type == DatabaseTypes.Postgres ? new M0203_AddWorkOrderIntegrationsPg() : new M0203_AddWorkOrderIntegrations(),
@@ -67,7 +75,8 @@ namespace Resgrid.Tests.Services
                 _type == DatabaseTypes.Postgres ? new M0206_AddWorkOrderReportingPg() : new M0206_AddWorkOrderReporting(),
                 _type == DatabaseTypes.Postgres ? new M0207_AddWorkOrderOperationsPg() : new M0207_AddWorkOrderOperations(),
                 _type == DatabaseTypes.Postgres ? new M0225_AddMaintenanceAssigneesPg() : new M0225_AddMaintenanceAssignees(),
-                _type == DatabaseTypes.Postgres ? new M0226_AddWorkOrderCurrencyPg() : new M0226_AddWorkOrderCurrency()
+                _type == DatabaseTypes.Postgres ? new M0226_AddWorkOrderCurrencyPg() : new M0226_AddWorkOrderCurrency(),
+                _type == DatabaseTypes.Postgres ? new M0268_AddDocumentNumberingPg() : new M0268_AddDocumentNumbering()
             });
 			_runner = new ServiceCollection().AddFluentMigratorCore().ConfigureRunner(r =>
 			{

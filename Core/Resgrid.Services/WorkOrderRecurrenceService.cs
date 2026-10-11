@@ -48,6 +48,9 @@ namespace Resgrid.Services
             }
             throw new WorkOrderException(400, "RecurrenceInvalid");
         }
+        /// <summary>The generation sweep's due rule, shared by the unlocked pre-filter and the locked re-read.</summary>
+        private bool RecurrenceDue(WorkOrderRecurrence row) => row?.IsActive == true && row.PendingWorkOrderId == null &&
+            (row.ReadingDue || row.NextDueOn.HasValue && ServiceDue(row, row.NextDueOn.Value).AddDays(-row.LeadDays) <= Now);
         public static DateTime ServiceDue(WorkOrderRecurrence row, DateTime originalUtc)
         {
             var local = TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(originalUtc, DateTimeKind.Utc), MaintenanceZone(row.TimeZoneId));
@@ -292,12 +295,17 @@ namespace Resgrid.Services
         public async Task<WorkOrderMaintenanceSweep> GenerateMaintenanceAsync(int departmentId)
         {
             RequireMaintenanceStore(); var result = new WorkOrderMaintenanceSweep();
-            if (!await _access.CanUseMaintenanceAsync(departmentId)) return result;
+            // The entitlement is a Billing API call: read it once, and only when the department has due work. Each write re-checks it under the lock.
+            Task<bool> entitled = null;
+            Task<bool> Entitled() => entitled ??= _access.CanUseMaintenanceAsync(departmentId);
             for (var skip = 0; ; skip += 500)
             {
                 var intents = await _maintenance.QueryMaintenanceAsync<WorkOrderFailureIntent>(departmentId, skip: skip);
                 foreach (var intent in intents.Where(i => !i.ProcessedOn.HasValue))
+                {
+                    if (!await Entitled()) return result;
                     try { await ProcessFailureAsync(departmentId, intent.Id, result); } catch { result.Errors++; }
+                }
                 if (intents.Count < 500) break;
             }
             for (var skip = 0; ; skip += 500)
@@ -307,10 +315,13 @@ namespace Resgrid.Services
                 {
                     try
                     {
+                        // Unlocked pre-filter: an active schedule that is not yet due must not cost a locked transaction and a billing call.
+                        if (!RecurrenceDue(candidate)) continue;
+                        if (!await Entitled()) return result;
                         await WorkerTransactionAsync(departmentId, async events =>
                         {
                             var row = await _store.GetAsync<WorkOrderRecurrence>(departmentId, candidate.Id);
-                            if (row?.IsActive != true || row.PendingWorkOrderId != null || !row.ReadingDue && (!row.NextDueOn.HasValue || ServiceDue(row, row.NextDueOn.Value).AddDays(-row.LeadDays) > Now)) return;
+                            if (!RecurrenceDue(row)) return;
                             if (row.EndOn.HasValue && TimeZoneInfo.ConvertTimeFromUtc(Now, MaintenanceZone(row.TimeZoneId)).Date > row.EndOn.Value.Date) return;
                             var version = await _store.GetAsync<WorkOrderRecurrenceVersion>(departmentId, row.CurrentVersionId);
                             if (version?.RecurrenceId != row.Id) throw new WorkOrderException(409, "RecurrenceInvalid");
@@ -363,9 +374,12 @@ namespace Resgrid.Services
         public async Task<WorkOrderMaintenanceSweep> EscalateMaintenanceAsync(int departmentId)
         {
             RequireMaintenanceStore(); var result = new WorkOrderMaintenanceSweep();
-            if (!await _access.CanUseMaintenanceAsync(departmentId)) return result;
-            await EscalateServiceLevelsAsync(departmentId, result);
-            foreach (var candidate in await _maintenance.OverdueAsync(departmentId, Now))
+            // Candidates first: the entitlement is a Billing API call, and most sweeps find nothing due.
+            var serviceLevels = await _maintenance.SlaDueAsync(departmentId, Now);
+            var overdue = await _maintenance.OverdueAsync(departmentId, Now);
+            if (serviceLevels.Count == 0 && overdue.Count == 0 || !await _access.CanUseMaintenanceAsync(departmentId)) return result;
+            await EscalateServiceLevelsAsync(departmentId, serviceLevels, result);
+            foreach (var candidate in overdue)
             {
                 try
                 {

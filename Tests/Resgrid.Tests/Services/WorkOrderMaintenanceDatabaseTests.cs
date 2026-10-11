@@ -105,5 +105,14 @@ namespace Resgrid.Tests.Services
             var ready=await Insert(repository); ready.DueOn=DateTime.UtcNow.AddMinutes(-1); await repository.WriteAsync(ready); owner.CommitChanges();
             (await repository.OverdueAsync(77,DateTime.UtcNow)).Should().Contain(o=>o.Id==ready.Id);
         }
+        [Test, Order(10)]
+        public async Task Maintenance_sweep_lists_only_departments_holding_maintenance_work()
+        {
+            using var owner = new UnitOfWork(Connections()); var repository = Orders(owner); await owner.CreateOrGetConnectionAsync();
+            await repository.AllocateAsync(new WorkOrderFailureIntent { DepartmentId = 77, CompletionId = Guid.NewGuid().ToString("D"), ItemId = Guid.NewGuid().ToString("D"), CreatedBy = "actor", CreatedOn = DateTime.UtcNow, UpdatedOn = DateTime.UtcNow });
+            owner.CommitChanges();
+            (await repository.MaintenanceDepartmentsAsync(0)).Should().Contain(77).And.NotContain(88, "a department without schedules, failure intents or open orders must not cost each sweep a billing call");
+            (await repository.MaintenanceDepartmentsAsync(77)).Should().NotContain(77);
+        }
     }
 }

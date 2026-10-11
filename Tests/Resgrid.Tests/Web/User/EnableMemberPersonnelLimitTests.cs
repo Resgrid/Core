@@ -78,7 +78,8 @@ namespace Resgrid.Tests.Web.User
 				secLocalizer: null, gdprDataExportService: null, systemAuditsService: null, phoneNumberProcesser: null,
 				securityPinService: null, encryptionService: null, externalIdentityLinkService: links.Object, userSessionService: null,
 				emergencyContactService: null, protectedReadService: null, memberSensitiveDataService: null, dataProtectionService: null,
-				editProfileLocalizer: strings.Object, dispatchScopeService: Mock.Of<IDispatchScopeService>())
+				editProfileLocalizer: strings.Object, dispatchScopeService: Mock.Of<IDispatchScopeService>(),
+				emailMarketingService: Mock.Of<IEmailMarketingService>())
 			{
 				ControllerContext = new ControllerContext { HttpContext = _http },
 				TempData = new TempDataDictionary(_http, Mock.Of<ITempDataProvider>())

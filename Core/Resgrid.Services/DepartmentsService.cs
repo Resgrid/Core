@@ -47,13 +47,16 @@ namespace Resgrid.Services
 
 
 		private readonly Lazy<ISearchProjectionService> _searchProjections;
+		private readonly IEmailMarketingService _emailMarketingService;
 
 		public DepartmentsService(IDepartmentsRepository departmentRepository, IDepartmentMembersRepository departmentMembersRepository,
 			ISubscriptionsService subscriptionsService, IDepartmentCallEmailsRepository departmentCallEmailsRepository,
 			IDepartmentCallPruningRepository departmentCallPruningRepository, ICacheProvider cacheProvider, IUsersService usersService,
 			IDepartmentSettingsService departmentSettingsService, IUserProfileService userProfileRepository, ILimitsService limitsService,
-			IEventAggregator eventAggregator, IIdentityRepository identityRepository, IDepartmentCallPruningRepository departmentCallPruningDapperRepository, Lazy<ISearchProjectionService> searchProjections = null)
+			IEventAggregator eventAggregator, IIdentityRepository identityRepository, IDepartmentCallPruningRepository departmentCallPruningDapperRepository, Lazy<ISearchProjectionService> searchProjections = null,
+			IEmailMarketingService emailMarketingService = null)
 		{
+			_emailMarketingService = emailMarketingService;
 			_departmentRepository = departmentRepository;
 			_departmentMembersRepository = departmentMembersRepository;
 			_subscriptionsService = subscriptionsService;
@@ -141,6 +144,7 @@ namespace Resgrid.Services
 			department.Name = department.Name.Trim();
 			department.UpdatedOn = DateTime.UtcNow;
 
+			var managingUserChanged = await IsManagingUserChangingAsync(department);
 
 			var dep = await _departmentRepository.SaveOrUpdateAsync(department, cancellationToken);
 			await _cacheProvider.RemoveAsync(string.Format(CacheKey, department.DepartmentId));
@@ -149,6 +153,9 @@ namespace Resgrid.Services
 			{
 				DepartmentId = department.DepartmentId
 			});
+
+			if (managingUserChanged)
+				await _emailMarketingService.SyncDepartmentAdministratorAsync(department, department.ManagingUserId, cancellationToken);
 
 			return dep;
 		}
@@ -503,6 +510,10 @@ namespace Resgrid.Services
 				InvalidateDepartmentUsersInCache(departmentId);
 				SendMembershipVisibilityRefresh(departmentId);
 
+				// Covers sign-up: the founder is added here as an admin of the department they now manage.
+				if (isAdmin)
+					await SyncAdministratorToEmailMarketingAsync(departmentId, userId, cancellationToken);
+
 				return saved;
 			}
 
@@ -775,6 +786,8 @@ namespace Resgrid.Services
 
 		public async Task<DepartmentMember> SaveDepartmentMemberAsync(DepartmentMember departmentMember, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			var becameAdministrator = await IsBecomingActiveAdministratorAsync(departmentMember);
+
 			var saved = await _departmentMembersRepository.SaveOrUpdateAsync(departmentMember, cancellationToken);
 			await ProjectMembershipAsync(saved, cancellationToken);
 
@@ -783,7 +796,78 @@ namespace Resgrid.Services
 			await InvalidateAllDepartmentsCache(departmentMember.DepartmentId);
 			SendMembershipVisibilityRefresh(departmentMember.DepartmentId);
 
+			if (becameAdministrator)
+				await SyncAdministratorToEmailMarketingAsync(departmentMember.DepartmentId, departmentMember.UserId, cancellationToken);
+
 			return saved;
+		}
+
+		/// <summary>
+		/// True when this save turns the member into an active admin: promoted, or an admin re-enabled or un-hidden.
+		/// Reads the stored row, so it only runs when email marketing is on and the member being saved is an active admin.
+		/// </summary>
+		private async Task<bool> IsBecomingActiveAdministratorAsync(DepartmentMember departmentMember)
+		{
+			if (_emailMarketingService == null || !_emailMarketingService.IsEnabled || departmentMember == null)
+				return false;
+
+			if (departmentMember.IsAdmin != true || !DepartmentMemberStateHelper.IsActiveMember(departmentMember, departmentMember.DepartmentId))
+				return false;
+
+			if (departmentMember.DepartmentMemberId <= 0)
+				return true;
+
+			try
+			{
+				var stored = await _departmentMembersRepository.GetByIdAsync(departmentMember.DepartmentMemberId);
+
+				return stored == null || stored.IsAdmin != true || !DepartmentMemberStateHelper.IsActiveMember(stored, stored.DepartmentId);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Could not read member {departmentMember.DepartmentMemberId} to detect an admin change for email marketing");
+				return false;
+			}
+		}
+
+		/// <summary>True when an existing department is being handed to a different managing member.</summary>
+		private async Task<bool> IsManagingUserChangingAsync(Department department)
+		{
+			if (_emailMarketingService == null || !_emailMarketingService.IsEnabled)
+				return false;
+
+			// A new department's founder is synced when AddUserToDepartmentAsync makes them its admin.
+			if (department.DepartmentId <= 0 || string.IsNullOrWhiteSpace(department.ManagingUserId))
+				return false;
+
+			try
+			{
+				var stored = await _departmentRepository.GetByIdAsync(department.DepartmentId);
+
+				return stored != null && !string.Equals(stored.ManagingUserId, department.ManagingUserId, StringComparison.OrdinalIgnoreCase);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Could not read department {department.DepartmentId} to detect a managing member change for email marketing");
+				return false;
+			}
+		}
+
+		private async Task SyncAdministratorToEmailMarketingAsync(int departmentId, string userId, CancellationToken cancellationToken)
+		{
+			if (_emailMarketingService == null || !_emailMarketingService.IsEnabled)
+				return;
+
+			try
+			{
+				var department = await _departmentRepository.GetByIdAsync(departmentId);
+				if (department != null)
+					await _emailMarketingService.SyncDepartmentAdministratorAsync(department, userId, cancellationToken);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Email marketing sync failed for administrator {userId} of department {departmentId}");
+			}
 		}
 
 		/// <summary>

@@ -293,7 +293,7 @@ namespace Resgrid.Tests.Security
 			var twoFactor = new Mock<IStringLocalizer<Resgrid.Localization.Areas.User.TwoFactor.TwoFactor>>();
 			twoFactor.Setup(l => l[It.IsAny<string>()]).Returns((string key) => new LocalizedString(key, key));
 
-			var controller = new WebAccountController(_users.Object, _signIn.Object, departments.Object, usersService.Object, null, null, null, null, null, null, null,
+			var controller = new WebAccountController(_users.Object, _signIn.Object, departments.Object, usersService.Object, null, null, null, null, null, null,
 				_audits.Object, null, _sso.Object, null, _sessions.Object, _links.Object, null, null, _evidenceService ?? _evidence.Object, _notices.Object, _activity.Object,
 				_transactions, _passkeys.Object, _approvals.Object, _policyService, twoFactor.Object, _broker.Object, _returnTargets.Object, _dataProtection,
 				_adpStepUp.Object, _mfaState, _userStore.Object, _recoveries, _passkeyRows, _challenges.Object, _approvalRows.Object, _sharedSessions)

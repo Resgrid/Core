@@ -8,6 +8,9 @@
     <PackageReference Include="RestSharp" Version="112.1.0" />
   </ItemGroup>
   <ItemGroup>
+    <InternalsVisibleTo Include="Resgrid.Tests" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\Core\Resgrid.Config\Resgrid.Config.csproj" />
     <ProjectReference Include="..\..\Core\Resgrid.Framework\Resgrid.Framework.csproj" />
     <ProjectReference Include="..\..\Core\Resgrid.Model\Resgrid.Model.csproj" />

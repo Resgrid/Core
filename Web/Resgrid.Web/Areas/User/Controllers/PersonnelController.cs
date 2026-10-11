@@ -48,7 +48,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly IUserStateService _userStateService;
 		private readonly IEventAggregator _eventAggregator;
-		private readonly IEmailMarketingProvider _emailMarketingProvider;
 		private readonly ICertificationService _certificationService;
 		private readonly ICustomStateService _customStateService;
 		private readonly IGeoService _geoService;
@@ -71,7 +70,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public PersonnelController(IDepartmentsService departmentsService, IUsersService usersService, IActionLogsService actionLogsService,
 			IEmailService emailService, IUserProfileService userProfileService, IDeleteService deleteService, Model.Services.IAuthorizationService authorizationService,
 			ILimitsService limitsService, IPersonnelRolesService personnelRolesService, IDepartmentGroupsService departmentGroupsService, IUserStateService userStateService,
-			IEventAggregator eventAggregator, IEmailMarketingProvider emailMarketingProvider, ICertificationService certificationService, ICustomStateService customStateService,
+			IEventAggregator eventAggregator, ICertificationService certificationService, ICustomStateService customStateService,
 			IGeoService geoService, UserManager<IdentityUser> userManager, IDepartmentSettingsService departmentSettingsService, ICallsService callsService,
 			IGeoLocationProvider geoLocationProvider, IMappingService mappingService, IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService,
 			IStringLocalizer<Resgrid.Localization.Common> localizer, IPhoneNumberProcesserProvider phoneNumberProcesser,
@@ -94,7 +93,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_departmentGroupsService = departmentGroupsService;
 			_userStateService = userStateService;
 			_eventAggregator = eventAggregator;
-			_emailMarketingProvider = emailMarketingProvider;
 			_certificationService = certificationService;
 			_customStateService = customStateService;
 			_geoService = geoService;
@@ -697,8 +695,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 					if (model.SendAccountCreationNotification)
 						await _emailService.SendWelcomeEmail(model.Department.Name, model.FirstName + " " + model.LastName, user.Email, user.UserName, DepartmentId);
-
-					await _emailMarketingProvider.SubscribeUserToUsersList(model.FirstName, model.LastName, user.Email);
 
 					// Save UDF field values for the new personnel
 					var udfValues = form.Keys

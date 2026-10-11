@@ -18,6 +18,7 @@ namespace Resgrid.Model
 		AccountDeactivated = 13,
 		MfaChanged = 14,
 		ShiftEnded = 15,
-		OperatorSwitched = 16
+		OperatorSwitched = 16,
+		DepartmentDeleted = 17
 	}
 }

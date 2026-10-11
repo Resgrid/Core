@@ -42,5 +42,14 @@ namespace Resgrid.Model.Services
 			CancellationToken cancellationToken = default(CancellationToken));
 
 		Task<DeleteDepartmentResults> HandlePendingDepartmentDeletionRequestAsync(QueueItem item, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// Purges the rows departments deleted before 2026-10-11 left in tables without a foreign key to Departments (ADP keys,
+		/// member sensitive data, payroll, chat and the rest), one department per transaction. Daily, with the deletion queue.
+		/// </summary>
+		Task<DeletedDepartmentSweepResult> PurgeDeletedDepartmentLeftoversAsync(CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>What department deletion does to the department's Records (RMS) data, for the deletion request page.</summary>
+		Task<DepartmentDeletionRecordsImpact> GetDepartmentDeletionRecordsImpactAsync(int departmentId);
 	}
 }

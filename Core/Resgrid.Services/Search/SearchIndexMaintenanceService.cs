@@ -21,7 +21,8 @@ namespace Resgrid.Services.Search
 	/// otherwise catch up rows modified since the last sweep. A rebuild regenerates the projection rows from the
 	/// entity services first, then re-indexes them, so the projection table stays the source of truth and the index is
 	/// always rebuildable from it. Departments enter the sweep lazily: the first unified search or an admin request
-	/// creates their state row.
+	/// creates their state row. A deleted department's state row is the erasure marker department deletion leaves; the sweep
+	/// erases its documents first and then drops the row.
 	/// </summary>
 	public class SearchIndexMaintenanceService : ISearchIndexMaintenanceService
 	{
@@ -125,16 +126,67 @@ namespace Resgrid.Services.Search
 
 			try
 			{
-				await SweepCoreAsync(result, cancellationToken);
-				await BackfillCallsAsync(result, cancellationToken);
+				var deleted = await EraseDeletedDepartmentsAsync(result, cancellationToken);
+				await SweepCoreAsync(result, deleted, cancellationToken);
+				await BackfillCallsAsync(result, deleted, cancellationToken);
 			}
 			finally
 			{
 				SweepGate.Release();
 			}
 
-			result.Message = $"Checked {result.DepartmentsChecked} department(s); rebuilt {result.DepartmentsRebuilt} ({result.ProjectionsRebuilt} projections); indexed {result.DocumentsIndexed}; deleted {result.DocumentsDeleted}; backfilled {result.CallsBackfilled} call(s), {result.CallBackfillsCompleted} department(s) finished; errors {result.Errors}.";
+			result.Message = $"Checked {result.DepartmentsChecked} department(s); rebuilt {result.DepartmentsRebuilt} ({result.ProjectionsRebuilt} projections); indexed {result.DocumentsIndexed}; deleted {result.DocumentsDeleted}; backfilled {result.CallsBackfilled} call(s), {result.CallBackfillsCompleted} department(s) finished; deleted departments erased {result.DeletedDepartmentsErased}; errors {result.Errors}.";
 			return result;
+		}
+
+		/// <summary>
+		/// Department deletion purges the department's projections but cannot reach this process's index, so it leaves the
+		/// department's SearchIndexStates row as the marker. Erase that department's documents, expunge them (commit, publish and
+		/// prune: the index can hold protected text), and only then drop the marker and any projections a department deleted
+		/// before its delete script purged them still has. A failed commit keeps the marker for the next sweep. Runs only on the
+		/// search host, which owns the writer: a marker must not be dropped by a process without the index. Returns every deleted
+		/// department found, erased or not, so the rest of the sweep leaves them alone. A failed lookup throws (the worker logs
+		/// it and the next sweep retries): without the list, the rest of the sweep would rebuild or catch up deleted departments.
+		/// </summary>
+		private async Task<HashSet<int>> EraseDeletedDepartmentsAsync(SearchIndexSweepResult result, CancellationToken cancellationToken)
+		{
+			List<int> deleted;
+			try { deleted = await _states.GetDeletedDepartmentIdsAsync(cancellationToken) ?? new List<int>(); }
+			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { throw; }
+			catch (Exception ex) { throw new InvalidOperationException("Deleted-department search erasure lookup failed; the global index sweep was skipped.", ex); }
+			if (deleted.Count == 0) return new HashSet<int>();
+
+			var erased = new List<int>();
+			foreach (var departmentId in deleted)
+			{
+				cancellationToken.ThrowIfCancellationRequested();
+				try
+				{
+					await _indexer.DeleteDepartmentAsync(departmentId, cancellationToken);
+					erased.Add(departmentId);
+				}
+				catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { throw; }
+				catch (Exception ex) { result.Errors++; Logging.LogException(ex, $"Global search erasure for deleted department {departmentId} remains pending."); }
+			}
+			if (erased.Count == 0) return new HashSet<int>(deleted);
+
+			try { await _indexer.ExpungeDeletesAsync(cancellationToken); }
+			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { throw; }
+			catch (Exception ex) { result.Errors++; Logging.LogException(ex, "Deleted-department global search erasure commit failed; it will be retried."); return new HashSet<int>(deleted); }
+
+			foreach (var departmentId in erased)
+			{
+				try
+				{
+					await _states.DeleteForDeletedDepartmentAsync(departmentId, cancellationToken);
+					result.DeletedDepartmentsErased++;
+					Logging.LogInfo($"Global search documents of deleted department {departmentId} erased.");
+				}
+				catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { throw; }
+				catch (Exception ex) { result.Errors++; Logging.LogException(ex, $"Global search erasure marker for deleted department {departmentId} was not removed; erasure repeats next sweep."); }
+			}
+
+			return new HashSet<int>(deleted);
 		}
 
 		/// <summary>
@@ -145,7 +197,7 @@ namespace Resgrid.Services.Search
 		/// sweep's commit, in a time budget, least recently touched department first; the cursor is saved per batch, so an
 		/// interrupted walk resumes where it stopped.
 		/// </summary>
-		private async Task BackfillCallsAsync(SearchIndexSweepResult result, CancellationToken cancellationToken)
+		private async Task BackfillCallsAsync(SearchIndexSweepResult result, HashSet<int> deleted, CancellationToken cancellationToken)
 		{
 			if (SearchConfig.CallBackfillSecondsPerSweep <= 0 || SearchConfig.CallRebuildYears > 0)
 				return;
@@ -157,7 +209,7 @@ namespace Resgrid.Services.Search
 			try
 			{
 				pending = ((await _states.GetAllForIndexAsync(SearchIndexNames.Global)) ?? Enumerable.Empty<SearchIndexState>())
-					.Where(s => s.State == (int)SearchIndexBuildState.Ready && !s.RebuildRequestedOn.HasValue && !s.CallBackfillCompletedOn.HasValue)
+					.Where(s => s.State == (int)SearchIndexBuildState.Ready && !s.RebuildRequestedOn.HasValue && !s.CallBackfillCompletedOn.HasValue && !deleted.Contains(s.DepartmentId))
 					.OrderBy(s => s.ModifiedOn).ThenBy(s => s.DepartmentId).ToList();
 			}
 			catch (Exception ex)
@@ -226,9 +278,12 @@ namespace Resgrid.Services.Search
 			}
 		}
 
-		private async Task SweepCoreAsync(SearchIndexSweepResult result, CancellationToken cancellationToken)
+		private async Task SweepCoreAsync(SearchIndexSweepResult result, HashSet<int> deleted, CancellationToken cancellationToken)
 		{
-			var states = (await _states.GetAllForIndexAsync(SearchIndexNames.Global))?.ToList() ?? new List<SearchIndexState>();
+			// A deleted department's marker is the erasure step's alone: rebuilding or catching it up would re-index nothing
+			// and save the row back.
+			var states = ((await _states.GetAllForIndexAsync(SearchIndexNames.Global)) ?? Enumerable.Empty<SearchIndexState>())
+				.Where(s => !deleted.Contains(s.DepartmentId)).ToList();
 			var rebuilds = 0;
 			// Catch-up checkpoints wait for the sweep's single commit: a checkpoint must never lead the committed segments.
 			var pending = new List<(SearchIndexState State, DateTime? Checkpoint)>();

@@ -175,7 +175,7 @@ namespace Resgrid.Tests.Rms
 				.ReturnsAsync(new RmsPurgeResult { Held = true });
 			var result = await _service.SweepAsync();
 			result.RecordsEvaluated.Should().Be(1001);
-			_purge.Invocations.Select(i => i.Arguments[1]).Distinct().Should().HaveCount(1001);
+			_purge.Invocations.Where(i => i.Method.Name == nameof(IRmsRetentionRepository.PurgeAsync)).Select(i => i.Arguments[1]).Distinct().Should().HaveCount(1001);
 		}
 
 		[Test]
@@ -366,6 +366,22 @@ namespace Resgrid.Tests.Rms
 
 			result.Errors.Should().Be(1);
 			result.RecordsPurged.Should().Be(1, "the retention pass runs regardless of the rescan pass");
+		}
+
+		[Test]
+		public async Task Deleted_departments_leftover_rms_data_is_purged_unless_held_and_one_failure_does_not_stop_the_rest()
+		{
+			_purge.Setup(p => p.GetOrphanedDepartmentIdsAsync(It.IsAny<CancellationToken>())).ReturnsAsync(new List<int> { 13275, 13276, 13277 });
+			_purge.Setup(p => p.PurgeOrphanedDepartmentAsync(13275, It.IsAny<CancellationToken>())).ThrowsAsync(new InvalidOperationException("deadlock"));
+			_purge.Setup(p => p.PurgeOrphanedDepartmentAsync(13276, It.IsAny<CancellationToken>())).ReturnsAsync(false);
+			_purge.Setup(p => p.PurgeOrphanedDepartmentAsync(13277, It.IsAny<CancellationToken>())).ReturnsAsync(true);
+
+			var result = await _service.SweepAsync();
+
+			result.OrphanedDepartmentsPurged.Should().Be(1);
+			result.OrphanedDepartmentsHeld.Should().Be(1, "an active legal hold keeps a deleted department's records");
+			result.Errors.Should().Be(1);
+			result.DepartmentsEvaluated.Should().Be(1, "orphans are not evaluated as active departments");
 		}
 	}
 }

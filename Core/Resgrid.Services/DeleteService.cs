@@ -54,6 +54,8 @@ namespace Resgrid.Services
 		private readonly IWorkforceService _workforceService;
 		private readonly IMfaAccountCleanupService _mfaAccountCleanup;
 		private readonly IEmailMarketingService _emailMarketingService;
+		private readonly IRmsDepartmentCutoversRepository _rmsCutovers;
+		private readonly IRmsRecordLegalHoldsRepository _rmsLegalHolds;
 
 		public DeleteService(IAuthorizationService authorizationService, IDepartmentsService departmentsService,
 			ICallsService callsService, IActionLogsService actionLogsService, IUsersService usersService,
@@ -68,8 +70,11 @@ namespace Resgrid.Services
 			IDepartmentMemberEmergencyContactService emergencyContactService,
 			IInventoryStore inventoryStore = null, Resgrid.Model.Repositories.Queries.IUnitOfWork inventoryUnitOfWork = null,
 			IDeploymentService deploymentService = null, IDeploymentPersonnelRepository deploymentPersonnel = null, IWorkforceService workforceService = null,
-			IMfaAccountCleanupService mfaAccountCleanup = null, IEmailMarketingService emailMarketingService = null)
+			IMfaAccountCleanupService mfaAccountCleanup = null, IEmailMarketingService emailMarketingService = null,
+			IRmsDepartmentCutoversRepository rmsCutovers = null, IRmsRecordLegalHoldsRepository rmsLegalHolds = null)
 		{
+			_rmsCutovers = rmsCutovers;
+			_rmsLegalHolds = rmsLegalHolds;
 			_mfaAccountCleanup = mfaAccountCleanup;
 			_emailMarketingService = emailMarketingService;
 			_deploymentService = deploymentService;
@@ -443,6 +448,24 @@ namespace Resgrid.Services
 					item.Data = "Department deletion executed by the system.";
 					var result2 = await _queueService.UpdateQueueItem(item, cancellationToken);
 				}
+				catch (DepartmentDeletionDeferredException deferred)
+				{
+					// An active legal hold blocks department purge. The transaction rolled back; keep the request pending
+					// without spending an attempt so it completes on the first poll after the hold is released.
+					Logging.LogInfo($"DeleteService::Department deletion for DepartmentId {departmentId} deferred: {deferred.Message}");
+					item.Data = $"Department deletion deferred: {deferred.Message}".Truncate(QueueItemDataMaxLength);
+
+					try
+					{
+						await _queueService.UpdateQueueItem(item, cancellationToken);
+					}
+					catch (Exception updateEx)
+					{
+						Logging.LogException(updateEx, $"DeleteService::Failed to persist deferred state for department deletion QueueItemId {item.QueueItemId}");
+					}
+
+					return DeleteDepartmentResults.Failure;
+				}
 				catch (Exception e)
 				{
 					Logging.LogException(e);
@@ -515,6 +538,70 @@ namespace Resgrid.Services
 		{
 			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
 			await SendDeleteDepartmentEmailToAllAdminsAsync(department, item);
+		}
+
+		public async Task<DeletedDepartmentSweepResult> PurgeDeletedDepartmentLeftoversAsync(CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var result = new DeletedDepartmentSweepResult();
+			List<int> deleted;
+			try
+			{
+				deleted = await _deleteRepository.GetDeletedDepartmentIdsWithLeftoversAsync(cancellationToken) ?? new List<int>();
+			}
+			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+			{
+				throw;
+			}
+			catch (Exception ex)
+			{
+				result.Errors++;
+				result.Message = "Deleted-department leftover discovery failed; it will be retried.";
+				Logging.LogException(ex, "DeleteService::" + result.Message);
+				return result;
+			}
+
+			result.DepartmentsFound = deleted.Count;
+			foreach (var departmentId in deleted)
+			{
+				cancellationToken.ThrowIfCancellationRequested();
+				try
+				{
+					// One transaction per department: a failure or a hold leaves the others to proceed.
+					var outcome = await _deleteRepository.PurgeDeletedDepartmentLeftoversAsync(departmentId, cancellationToken);
+					if (outcome == DeletedDepartmentPurgeOutcome.Purged)
+					{
+						result.DepartmentsPurged++;
+						Logging.LogInfo($"DeleteService::Purged the leftover data of deleted DepartmentId {departmentId}.");
+					}
+					else
+					{
+						result.DepartmentsHeld++;
+						Logging.LogInfo($"DeleteService::Leftover data of deleted DepartmentId {departmentId} kept this pass ({outcome}).");
+					}
+				}
+				catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+				{
+					throw;
+				}
+				catch (Exception ex)
+				{
+					result.Errors++;
+					Logging.LogException(ex, $"DeleteService::Purge of deleted DepartmentId {departmentId}'s leftover data failed; it will be retried.");
+				}
+			}
+
+			result.Message = $"{result.DepartmentsFound} deleted department(s) with leftover data: {result.DepartmentsPurged} purged, {result.DepartmentsHeld} held, {result.Errors} error(s).";
+			return result;
+		}
+
+		public async Task<DepartmentDeletionRecordsImpact> GetDepartmentDeletionRecordsImpactAsync(int departmentId)
+		{
+			var impact = new DepartmentDeletionRecordsImpact();
+			if (_rmsCutovers != null)
+				impact.HasRecords = await _rmsCutovers.GetByDepartmentIdAsync(departmentId) != null;
+			if (_rmsLegalHolds != null)
+				impact.ActiveLegalHolds = (await _rmsLegalHolds.GetActiveForDepartmentAsync(departmentId))?.Count() ?? 0;
+			return impact;
 		}
 
 		private async Task SetTerminalQueueItemStateAsync(QueueItem item, string data, CancellationToken cancellationToken)

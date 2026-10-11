@@ -31,5 +31,9 @@ namespace Resgrid.Model.Repositories
 		Task<List<RmsSearchErasureTarget>> GetPendingSearchErasuresAsync(int take, RmsSearchErasureTarget after = null, CancellationToken cancellationToken = default);
 		/// <summary>Called only after all source keys have been removed, deleted Lucene documents expunged and the index committed.</summary>
 		Task<bool> CompleteSearchErasureAsync(RmsSearchErasureTarget target, DateTime completedOn, CancellationToken cancellationToken = default);
+		/// <summary>Departments whose Departments row is gone but which still own RMS rows (deleted before department deletion purged RMS).</summary>
+		Task<List<int>> GetOrphanedDepartmentIdsAsync(CancellationToken cancellationToken = default);
+		/// <summary>Purges a deleted department's RMS rows in one transaction. False, purging nothing, while an active legal hold exists.</summary>
+		Task<bool> PurgeOrphanedDepartmentAsync(int departmentId, CancellationToken cancellationToken = default);
 	}
 }

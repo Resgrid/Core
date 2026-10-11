@@ -1497,4 +1497,10 @@
   <data name="NewCallFieldCannotBeRequired" xml:space="preserve">
     <value>Un Plus Code solo sirve para encontrar la ubicación y no se guarda en la llamada, por lo que no puede ser obligatorio. Haga obligatorias las coordenadas GPS.</value>
   </data>
+  <data name="DeleteDepartmentRecordsWarning" xml:space="preserve">
+    <value>Este departamento usa Registros. Cuando se ejecute la eliminación, todos los registros, informes de incidentes y archivos adjuntos, con su historial, se eliminarán de forma permanente; los periodos de conservación no la retrasan. Antes de esa fecha, exporte todo lo que deba conservar o establezca una retención legal: una retención legal activa detiene la eliminación hasta que se libere.</value>
+  </data>
+  <data name="DeleteDepartmentLegalHoldWarning" xml:space="preserve">
+    <value>{0} retención(es) legal(es) activa(s) cubren los Registros de este departamento. La eliminación no se ejecutará hasta que se liberen todas.</value>
+  </data>
 </root>

@@ -8,10 +8,15 @@ using FluentAssertions;
 using FluentMigrator.Runner;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using NUnit.Framework;
 using Resgrid.Config;
+using Resgrid.Model.Repositories.Connection;
+using Resgrid.Model.Repositories.Queries;
 using Resgrid.Providers.Migrations.Migrations;
 using Resgrid.Repositories.DataRepository;
+using Resgrid.Repositories.DataRepository.Servers.SqlServer;
+using Resgrid.Repositories.DataRepository.Transactions;
 
 namespace Resgrid.Tests.Services
 {
@@ -43,6 +48,40 @@ namespace Resgrid.Tests.Services
 			["InventoryLocations.ContainerAssetId"] = DBNull.Value,
 			["InventoryIssuances.IssuedToUnitId"] = DBNull.Value,
 			["RecordInventoryUsages.SourceType"] = 0,
+			// An active Records legal hold defers department deletion; the generic hold row must be a released one.
+			["RmsRecordLegalHolds.ReleasedOn"] = new DateTime(2026, 1, 2),
+			// CK_RmsRecordValues_OneColumnGroup: exactly one value column set on an unprotected value.
+			["RmsRecordValues.TextValue"] = "seed",
+			// A live ADP migration lock defers department deletion; the generic lock row must be a released one.
+			["DepartmentOperationLocks.ReleasedUtc"] = new DateTime(2026, 1, 2),
+		};
+
+		// Tables with a DepartmentId column but no foreign-key path to Departments. Nothing forces the delete script to
+		// clear them, so they are orphaned silently (a leftover RMS cutover kept deleted department 13275 in every Records
+		// sweep, 2026-10-11). The 97 gaps recorded when this guard was added (2026-10-10) were all resolved on 2026-10-11:
+		// purged by the delete script, or moved to RetainedTables with a reason. Nothing may be added here without a
+		// tracked follow-up.
+		private static readonly HashSet<string> KnownOrphanedTables = new(StringComparer.OrdinalIgnoreCase);
+
+		// Department rows that must outlive the department, each by design (docs/architecture/department-deletion-orphaned-tables-2026-10-11.md).
+		private static readonly Dictionary<string, string> RetainedTables = new(StringComparer.OrdinalIgnoreCase)
+		{
+			// Erasure markers: no content. The search sweeps erase the deleted department's Lucene documents, then remove them.
+			["RmsSearchIndexStates"] = "records index erasure marker (RecordsSearchIndexMaintenanceService)",
+			["SearchIndexStates"] = "global index erasure marker (SearchIndexMaintenanceService)",
+			// Platform audit trails, retained by decision.
+			["SystemAudits"] = "platform security audit log",
+			["AdpAuditEvents"] = "value-free, hash-chained ADP audit; deleting rows breaks the chain",
+			["ProtectedWorkflowDisclosures"] = "value-free, hash-chained ledger of protected data disclosures",
+			// User security records. The delete revokes live sessions; the CleanOIDC worker purges all of these on retention.
+			["UserSessions"] = "sign-in access record, revoked by the delete and purged on RevokedSessionRetentionDays",
+			["UserSessionMfaEvidence"] = "purged when it expires",
+			["UserMfaActivity"] = "user MFA history, purged on MfaActivityRetentionDays",
+			["MfaLoginTransactions"] = "transient, purged an hour after it expires",
+			["SsoLoginTransactions"] = "transient, purged an hour after it expires",
+			["FactorRecoveryTransactions"] = "transient, purged an hour after it expires",
+			["AuthenticationChallenges"] = "transient, purged an hour after it expires",
+			["MfaApprovalRequests"] = "kept a day for the user's approval rate limit, then purged"
 		};
 
 		private string _master, _connection, _database;
@@ -127,6 +166,229 @@ namespace Resgrid.Tests.Services
 			TestContext.Out.WriteLine($"Verified {deleted.AllRows().Count()} deleted and {kept.AllRows().Count()} retained rows across {deleted.Linked.Count} tables.");
 			remaining.Should().BeEmpty("the deleted department's rows must all be removed");
 			lost.Should().BeEmpty("another department's rows must survive the deletion");
+		}
+
+		[Test]
+		public async Task DeletingADepartmentClearsEveryTableWithADepartmentIdColumnEvenWithoutAForeignKey()
+		{
+			await using var db = new SqlConnection(_connection);
+			await db.OpenAsync();
+			await LoadSchemaAsync(db);
+
+			var unlinked = DepartmentTablesWithoutForeignKey();
+			// Seed them, and the tables hanging off them, as department rows in dependency order. A child must reference its
+			// department's own parent row: one shared parent makes the second insert hit the parent's unique indexes.
+			_scope.UnionWith(WithTablesHangingOff(unlinked));
+
+			var failures = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+			var deleted = await SeedDepartmentAsync(db, failures);
+			var kept = await SeedDepartmentAsync(db, failures);
+
+			var seededTables = unlinked.Where(t => deleted.Rows.ContainsKey(t)).ToList();
+			var keptTables = unlinked.Where(t => kept.Rows.ContainsKey(t)).ToList();
+			var unseeded = unlinked.Where(t => !deleted.Rows.ContainsKey(t) && !UnseedableTables.Contains(t))
+				.Select(t => t + ": " + (failures.TryGetValue(t, out var f) ? f : "no attempt")).ToList();
+			TestContext.Out.WriteLine($"Seeded {seededTables.Count} of {unlinked.Count} department tables without a foreign key to Departments ({keptTables.Count} for both departments).");
+			unseeded.Should().BeEmpty("every DepartmentId table must be seedable, or listed in UnseedableTables with a reason");
+
+			(await new DeleteRepository().DeleteDepartmentAndUsersAsync(deleted.DepartmentId)).Should().BeTrue();
+
+			async Task<int> Count(string table, int departmentId) =>
+				await db.ExecuteScalarAsync<int>($"SELECT COUNT(*) FROM [dbo].[{table}] WHERE [DepartmentId] = @DepartmentId", new { DepartmentId = departmentId });
+			var remaining = new List<string>();
+			var lost = new List<string>();
+			foreach (var table in seededTables)
+				if (await Count(table, deleted.DepartmentId) > 0) remaining.Add(table);
+			foreach (var table in keptTables)
+				if (await Count(table, kept.DepartmentId) == 0) lost.Add(table);
+			TestContext.Out.WriteLine("Left behind by the delete script: " + string.Join(", ", remaining));
+
+			remaining.Except(KnownOrphanedTables, StringComparer.OrdinalIgnoreCase).Except(RetainedTables.Keys, StringComparer.OrdinalIgnoreCase).Should()
+				.BeEmpty("the delete script must clear every DepartmentId table; add it to the purge (or, only with a reason, to RetainedTables)");
+			KnownOrphanedTables.Where(t => seededTables.Contains(t, StringComparer.OrdinalIgnoreCase) && !remaining.Contains(t, StringComparer.OrdinalIgnoreCase)).Should()
+				.BeEmpty("a known gap is now cleared; remove it from KnownOrphanedTables");
+			RetainedTables.Keys.Where(t => seededTables.Contains(t, StringComparer.OrdinalIgnoreCase) && !remaining.Contains(t, StringComparer.OrdinalIgnoreCase)).Should()
+				.BeEmpty("a retained table keeps the deleted department's rows by decision; purging it needs that decision revisited");
+			lost.Should().BeEmpty("another department's rows must survive the deletion");
+		}
+
+		[Test]
+		public async Task ALiveProtectedDataMigrationLockDefersTheDeletionUntilItIsReleased()
+		{
+			await using var db = new SqlConnection(_connection);
+			await db.OpenAsync();
+			await LoadSchemaAsync(db);
+			var department = await SeedBareDepartmentAsync(db);
+			var lockId = (await InsertOrThrowAsync(db, "DepartmentOperationLocks", department, new Dictionary<string, object>
+			{
+				["LockType"] = (int)Resgrid.Model.DepartmentOperationLockType.AdpMigration,
+				["ReleasedUtc"] = DBNull.Value,
+				["ExpiresUtc"] = DateTime.UtcNow.AddHours(1)
+			}))["DepartmentOperationLockId"];
+			await InsertOrThrowAsync(db, "DepartmentDataProtectionKeys", department, null);
+
+			Func<Task> held = () => new DeleteRepository().DeleteDepartmentAndUsersAsync(department.DepartmentId);
+			await held.Should().ThrowAsync<Resgrid.Model.DepartmentDeletionDeferredException>().WithMessage(DataProtectionDepartmentCleanup.MigrationLockMessage);
+			(await db.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM Departments WHERE DepartmentId = @DepartmentId", new { department.DepartmentId })).Should().Be(1, "a deferred deletion rolls back");
+
+			await db.ExecuteAsync("UPDATE DepartmentOperationLocks SET ReleasedUtc = SYSUTCDATETIME() WHERE DepartmentOperationLockId = @lockId", new { lockId });
+			(await new DeleteRepository().DeleteDepartmentAndUsersAsync(department.DepartmentId)).Should().BeTrue();
+			foreach (var table in new[] { "Departments", "DepartmentOperationLocks", "DepartmentDataProtectionKeys" })
+				(await db.ExecuteScalarAsync<int>($"SELECT COUNT(*) FROM [{table}] WHERE DepartmentId = @DepartmentId", new { department.DepartmentId })).Should().Be(0, table);
+		}
+
+		[Test]
+		public async Task DeletingADepartmentRevokesItsLiveSessionsAndLeavesThemToTheRetentionPurge()
+		{
+			await using var db = new SqlConnection(_connection);
+			await db.OpenAsync();
+			await LoadSchemaAsync(db);
+			var deleted = await SeedBareDepartmentAsync(db);
+			var kept = await SeedBareDepartmentAsync(db);
+			var live = new Dictionary<string, object> { ["State"] = (int)Resgrid.Model.UserSessionState.Active, ["RevokedOn"] = DBNull.Value, ["RevocationReason"] = DBNull.Value };
+			var deletedSession = (await InsertOrThrowAsync(db, "UserSessions", deleted, live))["UserSessionId"];
+			var keptSession = (await InsertOrThrowAsync(db, "UserSessions", kept, live))["UserSessionId"];
+
+			(await new DeleteRepository().DeleteDepartmentAndUsersAsync(deleted.DepartmentId)).Should().BeTrue();
+
+			var revoked = await db.QuerySingleAsync<(int State, int? RevocationReason, DateTime? RevokedOn)>(
+				"SELECT [State], RevocationReason, RevokedOn FROM UserSessions WHERE UserSessionId = @Id", new { Id = deletedSession });
+			revoked.State.Should().Be((int)Resgrid.Model.UserSessionState.Revoked);
+			revoked.RevocationReason.Should().Be((int)Resgrid.Model.UserSessionRevocationReason.DepartmentDeleted);
+			revoked.RevokedOn.Should().NotBeNull("the revocation starts the retention clock");
+			(await db.ExecuteScalarAsync<int>("SELECT [State] FROM UserSessions WHERE UserSessionId = @Id", new { Id = keptSession })).Should().Be((int)Resgrid.Model.UserSessionState.Active);
+		}
+
+		[Test]
+		public async Task TheGlobalSearchMarkerOutlivesTheDepartmentAndIsDroppedOnlyOnceItIsDeleted()
+		{
+			await using var db = new SqlConnection(_connection);
+			await db.OpenAsync();
+			await LoadSchemaAsync(db);
+			var deleted = await SeedBareDepartmentAsync(db);
+			var kept = await SeedBareDepartmentAsync(db);
+			var marker = new Dictionary<string, object> { ["IndexName"] = Resgrid.Model.Search.SearchIndexNames.Global };
+			foreach (var department in new[] { deleted, kept })
+			{
+				await InsertOrThrowAsync(db, "SearchIndexStates", department, marker);
+				await InsertOrThrowAsync(db, "SearchProjections", department, null);
+			}
+			Task<int> Count(string table, SeededDepartment department) =>
+				db.ExecuteScalarAsync<int>($"SELECT COUNT(*) FROM [{table}] WHERE DepartmentId = @DepartmentId", new { department.DepartmentId });
+
+			(await new DeleteRepository().DeleteDepartmentAndUsersAsync(deleted.DepartmentId)).Should().BeTrue();
+			(await Count("SearchProjections", deleted)).Should().Be(0);
+			(await Count("SearchIndexStates", deleted)).Should().Be(1, "the global index sweep still needs the marker");
+
+			// A department deleted before its delete script purged projections still has them; they go with the marker.
+			await InsertOrThrowAsync(db, "SearchProjections", deleted, null);
+			var provider = new Mock<IConnectionProvider>();
+			provider.Setup(p => p.Create()).Returns(() => new SqlConnection(_connection));
+			using var unit = new UnitOfWork(provider.Object);
+			var states = new SearchIndexStatesRepository(provider.Object, new SqlServerConfiguration(), unit, Mock.Of<IQueryFactory>());
+
+			(await states.GetDeletedDepartmentIdsAsync()).Should().Contain(deleted.DepartmentId).And.NotContain(kept.DepartmentId);
+			(await states.DeleteForDeletedDepartmentAsync(kept.DepartmentId)).Should().Be(0, "a live department's marker is never dropped");
+			(await states.DeleteForDeletedDepartmentAsync(deleted.DepartmentId)).Should().Be(1);
+			(await Count("SearchProjections", deleted)).Should().Be(0);
+			(await states.GetDeletedDepartmentIdsAsync()).Should().NotContain(deleted.DepartmentId);
+			(await Count("SearchIndexStates", kept)).Should().Be(1);
+			(await Count("SearchProjections", kept)).Should().Be(1);
+		}
+
+		[Test]
+		public async Task TheSweepPurgesWhatAnEarlierDeletionLeftInEveryTableWithoutAForeignKeyUnlessAHoldKeepsIt()
+		{
+			await using var db = new SqlConnection(_connection);
+			await db.OpenAsync();
+			await LoadSchemaAsync(db);
+
+			var unlinked = DepartmentTablesWithoutForeignKey();
+			// RMS keeps its own sweep (worker 43). AuditLogs is cleared by the delete, but DeleteService then writes the
+			// deletion-executed row as the durable trail of the deletion, so a deleted department's AuditLogs are never swept.
+			bool Kept(string table) => table.StartsWith("Rms", StringComparison.OrdinalIgnoreCase) || RetainedTables.ContainsKey(table)
+				|| string.Equals(table, "AuditLogs", StringComparison.OrdinalIgnoreCase);
+			unlinked.Where(t => !Kept(t)).Except(DeletedDepartmentCleanup.Tables, StringComparer.OrdinalIgnoreCase).Should()
+				.BeEmpty("the sweep must cover every table the delete purges without a foreign key");
+			DeletedDepartmentCleanup.Tables.Where(Kept).Should().BeEmpty("a retained, RMS or audit trail table is never swept");
+
+			// Seed only the FK-less tables, and what hangs off them, for two departments. Then delete one the way the script did
+			// before those tables were purged: its Departments row goes and every FK-less row stays.
+			_scope = WithTablesHangingOff(unlinked);
+			_scope.UnionWith(new[] { "Departments", "AspNetUsers" });
+			var failures = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+			var deleted = await SeedDepartmentAsync(db, failures);
+			var kept = await SeedDepartmentAsync(db, failures);
+			unlinked.Where(t => !deleted.Rows.ContainsKey(t) && !UnseedableTables.Contains(t)).Select(t => t + ": " + (failures.TryGetValue(t, out var f) ? f : "no attempt"))
+				.Should().BeEmpty("every DepartmentId table must be seedable");
+			await db.ExecuteAsync("DELETE FROM DepartmentMembers WHERE DepartmentId = @DepartmentId; DELETE FROM Departments WHERE DepartmentId = @DepartmentId", new { deleted.DepartmentId });
+			var executedTrail = (await InsertOrThrowAsync(db, "AuditLogs", deleted, new Dictionary<string, object> { ["LogType"] = (int)Resgrid.Model.AuditLogTypes.DeleteDepartmentRequestExecuted }))["AuditLogId"];
+
+			var repository = new DeleteRepository();
+			Task<int> Count(string table, int departmentId) =>
+				db.ExecuteScalarAsync<int>($"SELECT COUNT(*) FROM [dbo].[{table}] WHERE [DepartmentId] = @DepartmentId", new { DepartmentId = departmentId });
+			(await repository.GetDeletedDepartmentIdsWithLeftoversAsync()).Should().Contain(deleted.DepartmentId).And.NotContain(kept.DepartmentId);
+
+			// An active Records legal hold, or a running ADP migration, keeps everything for a later pass.
+			await db.ExecuteAsync("UPDATE RmsRecordLegalHolds SET ReleasedOn = NULL WHERE DepartmentId = @DepartmentId", new { deleted.DepartmentId });
+			(await repository.PurgeDeletedDepartmentLeftoversAsync(deleted.DepartmentId)).Should().Be(Resgrid.Model.DeletedDepartmentPurgeOutcome.LegalHold);
+			await db.ExecuteAsync("UPDATE RmsRecordLegalHolds SET ReleasedOn = SYSUTCDATETIME() WHERE DepartmentId = @DepartmentId", new { deleted.DepartmentId });
+			await db.ExecuteAsync("UPDATE DepartmentOperationLocks SET ReleasedUtc = NULL, ExpiresUtc = DATEADD(HOUR, 1, SYSUTCDATETIME()) WHERE DepartmentId = @DepartmentId", new { deleted.DepartmentId });
+			(await repository.PurgeDeletedDepartmentLeftoversAsync(deleted.DepartmentId)).Should().Be(Resgrid.Model.DeletedDepartmentPurgeOutcome.ProtectedDataMigration);
+			(await Count("DepartmentDataProtectionKeys", deleted.DepartmentId)).Should().Be(1, "a held pass deletes nothing");
+			await db.ExecuteAsync("UPDATE DepartmentOperationLocks SET ReleasedUtc = SYSUTCDATETIME() WHERE DepartmentId = @DepartmentId", new { deleted.DepartmentId });
+
+			(await repository.PurgeDeletedDepartmentLeftoversAsync(deleted.DepartmentId)).Should().Be(Resgrid.Model.DeletedDepartmentPurgeOutcome.Purged);
+
+			var remaining = new List<string>();
+			foreach (var table in unlinked.Where(t => deleted.Rows.ContainsKey(t)))
+				if (await Count(table, deleted.DepartmentId) > 0) remaining.Add(table);
+			TestContext.Out.WriteLine("Left after the sweep: " + string.Join(", ", remaining.Where(t => !t.StartsWith("Rms", StringComparison.OrdinalIgnoreCase))) + " and the RMS tables");
+			remaining.Where(t => !Kept(t)).Should().BeEmpty("the sweep must clear every FK-less table the delete purges");
+			RetainedTables.Keys.Where(t => deleted.Rows.ContainsKey(t)).Except(remaining, StringComparer.OrdinalIgnoreCase).Should().BeEmpty("retained rows outlive the sweep too");
+			(await Count("RmsRecordLegalHolds", deleted.DepartmentId)).Should().Be(1, "RMS rows are worker 43's to purge");
+			(await db.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM AuditLogs WHERE AuditLogId = @executedTrail", new { executedTrail })).Should().Be(1, "the deletion-executed audit row is the durable trail of the deletion");
+			(await repository.GetDeletedDepartmentIdsWithLeftoversAsync()).Should().NotContain(deleted.DepartmentId);
+
+			var lost = new List<string>();
+			foreach (var table in unlinked.Where(t => kept.Rows.ContainsKey(t)))
+				if (await Count(table, kept.DepartmentId) == 0) lost.Add(table);
+			lost.Should().BeEmpty("another department's rows must survive the sweep");
+			Func<Task> live = () => repository.PurgeDeletedDepartmentLeftoversAsync(kept.DepartmentId);
+			await live.Should().ThrowAsync<InvalidOperationException>("a department that still exists is never swept");
+		}
+
+		/// <summary>Tables with an int DepartmentId column but no foreign-key path to Departments or AspNetUsers.</summary>
+		private List<string> DepartmentTablesWithoutForeignKey() => _columnsByTable
+			.Where(t => !_scope.Contains(t.Key) && t.Value.Any(c => string.Equals(c.Name, "DepartmentId", StringComparison.OrdinalIgnoreCase) && c.Type == "int"))
+			.Select(t => t.Key).OrderBy(t => t, StringComparer.OrdinalIgnoreCase).ToList();
+
+		/// <summary>The tables plus every table outside the foreign-key scope that hangs off them.</summary>
+		private HashSet<string> WithTablesHangingOff(IEnumerable<string> tables)
+		{
+			var extended = new HashSet<string>(tables, StringComparer.OrdinalIgnoreCase);
+			for (var added = true; added;)
+			{
+				added = false;
+				foreach (var fk in _foreignKeysByChild.Values.SelectMany(f => f))
+					if (extended.Contains(fk.Parent) && !_scope.Contains(fk.Child) && extended.Add(fk.Child)) added = true;
+			}
+			return extended;
+		}
+
+		/// <summary>A department with only its managing member: enough for the delete to run end to end.</summary>
+		private async Task<SeededDepartment> SeedBareDepartmentAsync(SqlConnection db)
+		{
+			var seeded = new SeededDepartment
+			{
+				ManagingUserId = "deletion-manager-" + Guid.NewGuid().ToString("N"),
+				MemberUserId = "deletion-member-" + Guid.NewGuid().ToString("N")
+			};
+			seeded.Rows["AspNetUsers"] = await InsertOrThrowAsync(db, "AspNetUsers", seeded, new Dictionary<string, object> { ["Id"] = seeded.ManagingUserId });
+			seeded.Rows["Departments"] = await InsertOrThrowAsync(db, "Departments", seeded, new Dictionary<string, object> { ["ManagingUserId"] = seeded.ManagingUserId });
+			seeded.DepartmentId = Convert.ToInt32(seeded.Rows["Departments"]["DepartmentId"]);
+			await InsertOrThrowAsync(db, "DepartmentMembers", seeded, new Dictionary<string, object> { ["UserId"] = seeded.ManagingUserId });
+			return seeded;
 		}
 
 		private sealed class ColumnInfo
@@ -415,7 +677,7 @@ namespace Resgrid.Tests.Services
 				case "time": return TimeSpan.FromHours(1);
 				case "uniqueidentifier": return Guid.NewGuid();
 				case "nvarchar": case "nchar": case "varchar": case "char": case "ntext": case "text": case "sysname": return Text(column);
-				case "varbinary": case "binary": case "image": return new byte[] { 1 };
+				case "varbinary": case "binary": case "image": return unique ? Bytes(column) : new byte[] { 1 };
 				case "xml": return "<seed/>";
 				default: return null;
 			}
@@ -429,6 +691,15 @@ namespace Resgrid.Tests.Services
 			var length = Math.Min(chars, 64);
 			var text = (++_counter).ToString().PadLeft(length, 'a');
 			return text.Length > length ? text.Substring(text.Length - length) : text;
+		}
+
+		/// <summary>Unique bytes, 32 where the column allows (hash columns carry unique indexes).</summary>
+		private byte[] Bytes(ColumnInfo column)
+		{
+			var bytes = new byte[column.MaxLength > 0 ? Math.Min((int)column.MaxLength, 32) : 32];
+			var counter = BitConverter.GetBytes(++_counter);
+			Array.Copy(counter, bytes, Math.Min(counter.Length, bytes.Length));
+			return bytes;
 		}
 
 		/// <summary>One row per out-of-scope parent table (lookup data, addresses), shared by both departments.</summary>

@@ -97,8 +97,43 @@ namespace Resgrid.Services.Records
 				}
 			}
 
-			result.Message = $"{result.DepartmentsEvaluated} departments, {result.RecordsPurged} database content purges, {result.SearchErasuresPending} awaiting committed search erasure, {result.HeldByLegalHold} held, {result.AttachmentsRescanned} rescanned.";
+			await PurgeOrphanedDepartmentsAsync(result, cancellationToken);
+
+			result.Message = $"{result.DepartmentsEvaluated} departments, {result.RecordsPurged} database content purges, {result.SearchErasuresPending} awaiting committed search erasure, {result.HeldByLegalHold} held, {result.AttachmentsRescanned} rescanned, {result.OrphanedDepartmentsPurged} deleted departments purged ({result.OrphanedDepartmentsHeld} held).";
 			return result;
+		}
+
+		/// <summary>
+		/// Department deletion predating the RMS purge left RMS rows behind. Purge each deleted department's leftovers
+		/// whatever their retention period, as department deletion now does, unless an active legal hold still covers them.
+		/// The records search sweep erases the matching index documents from the marker the purge keeps.
+		/// </summary>
+		private async Task PurgeOrphanedDepartmentsAsync(RecordsRetentionSweepResult result, CancellationToken cancellationToken)
+		{
+			List<int> orphaned;
+			try { orphaned = await _purge.GetOrphanedDepartmentIdsAsync(cancellationToken) ?? new List<int>(); }
+			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { throw; }
+			catch (Exception ex) { result.Errors++; Logging.LogException(ex, "Deleted-department RMS discovery failed; it will be retried."); return; }
+
+			foreach (var departmentId in orphaned)
+			{
+				cancellationToken.ThrowIfCancellationRequested();
+				try
+				{
+					if (await _purge.PurgeOrphanedDepartmentAsync(departmentId, cancellationToken))
+					{
+						result.OrphanedDepartmentsPurged++;
+						Logging.LogInfo($"Purged leftover RMS data of deleted department {departmentId}.");
+					}
+					else
+					{
+						result.OrphanedDepartmentsHeld++;
+						Logging.LogInfo($"Leftover RMS data of deleted department {departmentId} is retained under an active legal hold.");
+					}
+				}
+				catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { throw; }
+				catch (Exception ex) { result.Errors++; Logging.LogException(ex, $"Purge of deleted department {departmentId}'s RMS data failed; it will be retried."); }
+			}
 		}
 
 		public async Task<RecordsRetentionSweepResult> ProcessDepartmentAsync(int departmentId, CancellationToken cancellationToken = default)

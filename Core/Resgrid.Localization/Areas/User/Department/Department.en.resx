@@ -1497,4 +1497,10 @@
   <data name="NewCallFieldCannotBeRequired" xml:space="preserve">
     <value>A plus code only finds the location and is not saved on the call, so it cannot be required. Require GPS Coordinates instead.</value>
   </data>
+  <data name="DeleteDepartmentRecordsWarning" xml:space="preserve">
+    <value>This department uses Records. When the deletion runs, every record, incident report and attachment, with its history, is permanently deleted; retention periods do not delay it. Export anything you are required to keep before then, or place a legal hold: an active legal hold stops the deletion until it is released.</value>
+  </data>
+  <data name="DeleteDepartmentLegalHoldWarning" xml:space="preserve">
+    <value>{0} active legal hold(s) cover this department's Records. The deletion will not run until every hold is released.</value>
+  </data>
 </root>

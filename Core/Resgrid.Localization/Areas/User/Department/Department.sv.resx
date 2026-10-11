@@ -1439,4 +1439,10 @@
   <data name="NewCallFieldCannotBeRequired" xml:space="preserve">
     <value>En pluskod används bara för att hitta platsen och sparas inte på ärendet, så den kan inte vara obligatorisk. Gör GPS-koordinaterna obligatoriska i stället.</value>
   </data>
+  <data name="DeleteDepartmentRecordsWarning" xml:space="preserve">
+    <value>Den här avdelningen använder Journaler. När raderingen körs raderas alla journaler, händelserapporter och bilagor, med sin historik, permanent; lagringstider skjuter inte upp den. Exportera före dess allt du måste behålla, eller lägg en bevarandespärr: en aktiv bevarandespärr stoppar raderingen tills den hävs.</value>
+  </data>
+  <data name="DeleteDepartmentLegalHoldWarning" xml:space="preserve">
+    <value>{0} aktiva bevarandespärrar omfattar den här avdelningens Journaler. Raderingen körs inte förrän alla har hävts.</value>
+  </data>
 </root>

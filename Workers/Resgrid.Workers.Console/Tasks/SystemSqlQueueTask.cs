@@ -47,6 +47,11 @@ namespace Resgrid.Workers.Console.Tasks
 					}
 				}
 
+				// Departments deleted before every table without a foreign key was purged still hold rows there.
+				var leftovers = await deleteService.PurgeDeletedDepartmentLeftoversAsync(cancellationToken);
+				if (leftovers.DepartmentsFound > 0 || leftovers.Errors > 0)
+					_logger.LogInformation("SystemSqlQueue::Deleted department leftovers: " + leftovers.Message);
+
 				progress.Report(100, $"Finishing the {Name} Task");
 			}
 			catch (Exception ex)

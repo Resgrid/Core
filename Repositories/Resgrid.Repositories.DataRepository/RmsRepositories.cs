@@ -862,10 +862,14 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 			catch { if (owns) UnitOfWork.DiscardChanges(); throw; }
 		}
 
+		/// <summary>
+		/// Active cutovers of departments that still exist. Department deletion does not remove RMS rows, and every sweep
+		/// over this list takes the department row lock, which throws for a deleted department on every pass.
+		/// </summary>
 		public Task<IEnumerable<RmsDepartmentCutover>> GetActiveAsync()
 		{
 			return QueryAsync<RmsDepartmentCutover>(
-				$"SELECT * FROM {Tbl("RmsDepartmentCutovers")} WHERE {Col("State")} = {P}State ORDER BY {Col("DepartmentId")}",
+				$"SELECT c.* FROM {Tbl("RmsDepartmentCutovers")} c WHERE c.{Col("State")} = {P}State AND EXISTS (SELECT 1 FROM {Tbl("Departments")} d WHERE d.{Col("DepartmentId")} = c.{Col("DepartmentId")}) ORDER BY c.{Col("DepartmentId")}",
 				new { State = (int)RmsDepartmentCutoverState.Active });
 		}
 
@@ -1163,6 +1167,20 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 			return QueryFirstOrDefaultAsync<RmsSearchIndexState>(
 				$"SELECT * FROM {Tbl("RmsSearchIndexStates")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("IndexName")} = {P}IndexName",
 				new { DepartmentId = departmentId, IndexName = indexName });
+		}
+
+		public async Task<List<int>> GetDeletedDepartmentIdsAsync(CancellationToken cancellationToken = default)
+		{
+			return (await QueryAsync<int>(
+				$"SELECT DISTINCT s.{Col("DepartmentId")} FROM {Tbl("RmsSearchIndexStates")} s WHERE NOT EXISTS (SELECT 1 FROM {Tbl("Departments")} d WHERE d.{Col("DepartmentId")} = s.{Col("DepartmentId")}) ORDER BY s.{Col("DepartmentId")}",
+				null, cancellationToken)).ToList();
+		}
+
+		public Task<int> DeleteForDeletedDepartmentAsync(int departmentId, CancellationToken cancellationToken = default)
+		{
+			return ExecuteAsync(
+				$"DELETE FROM {Tbl("RmsSearchIndexStates")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND NOT EXISTS (SELECT 1 FROM {Tbl("Departments")} d WHERE d.{Col("DepartmentId")} = {P}DepartmentId)",
+				new { DepartmentId = departmentId }, cancellationToken);
 		}
 	}
 

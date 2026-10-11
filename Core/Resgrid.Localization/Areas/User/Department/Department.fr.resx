@@ -1439,4 +1439,10 @@
   <data name="NewCallFieldCannotBeRequired" xml:space="preserve">
     <value>Un Plus Code sert uniquement à trouver le lieu et n'est pas enregistré sur l'intervention ; il ne peut donc pas être obligatoire. Rendez plutôt les coordonnées GPS obligatoires.</value>
   </data>
+  <data name="DeleteDepartmentRecordsWarning" xml:space="preserve">
+    <value>Ce département utilise les Dossiers. Lors de la suppression, tous les dossiers, rapports d'intervention et pièces jointes, avec leur historique, sont définitivement supprimés ; les durées de conservation ne la retardent pas. Exportez avant cette date tout ce que vous devez conserver, ou placez une conservation légale : une conservation légale active suspend la suppression jusqu'à sa levée.</value>
+  </data>
+  <data name="DeleteDepartmentLegalHoldWarning" xml:space="preserve">
+    <value>{0} conservation(s) légale(s) active(s) couvrent les Dossiers de ce département. La suppression ne sera pas exécutée tant qu'elles ne sont pas toutes levées.</value>
+  </data>
 </root>

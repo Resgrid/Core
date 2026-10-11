@@ -190,5 +190,57 @@ namespace Resgrid.Tests.Search
 			firstResult.Skipped.Should().BeFalse();
 			(await _service.SweepAsync()).Skipped.Should().BeFalse("the gate is released when the running sweep ends");
 		}
+
+		[TestCase(false)]
+		[TestCase(true)]
+		public async Task A_deleted_departments_documents_are_expunged_before_its_marker_is_dropped(bool failCommit)
+		{
+			const int deletedDepartment = 13275;
+			_rows.Add(State(deletedDepartment));
+			var order = new List<string>();
+			_states.Setup(s => s.GetDeletedDepartmentIdsAsync(It.IsAny<CancellationToken>())).ReturnsAsync(new List<int> { deletedDepartment });
+			_indexer.Setup(i => i.DeleteDepartmentAsync(deletedDepartment, It.IsAny<CancellationToken>())).Callback(() => order.Add("delete")).Returns(Task.CompletedTask);
+			_indexer.Setup(i => i.ExpungeDeletesAsync(It.IsAny<CancellationToken>())).Returns(() =>
+			{
+				if (failCommit) throw new InvalidOperationException("index commit failed");
+				order.Add("expunge"); return Task.CompletedTask;
+			});
+			_states.Setup(s => s.DeleteForDeletedDepartmentAsync(deletedDepartment, It.IsAny<CancellationToken>())).Callback(() => order.Add("marker")).ReturnsAsync(1);
+
+			var result = await _service.SweepAsync();
+
+			result.DeletedDepartmentsErased.Should().Be(failCommit ? 0 : 1);
+			result.Errors.Should().Be(failCommit ? 1 : 0);
+			order.Should().Equal(failCommit ? new[] { "delete" } : new[] { "delete", "expunge", "marker" }, "the marker must outlive any uncommitted erasure");
+			result.DepartmentsChecked.Should().Be(2, "a deleted department is never rebuilt or caught up, erased or not");
+			_calls.Should().NotContain("save:" + deletedDepartment);
+		}
+
+		[Test]
+		public async Task A_failed_deleted_department_lookup_skips_the_sweep_instead_of_maintaining_unfiltered()
+		{
+			_changes[1].Add(Row(1, "10", Checkpoint.AddMinutes(1)));
+			_states.Setup(s => s.GetDeletedDepartmentIdsAsync(It.IsAny<CancellationToken>())).ThrowsAsync(new TimeoutException("Execution Timeout Expired"));
+
+			Func<Task> sweep = () => _service.SweepAsync();
+
+			(await sweep.Should().ThrowAsync<InvalidOperationException>()).WithInnerException<TimeoutException>();
+			_calls.Should().BeEmpty("without the deleted-department list no department may be rebuilt, caught up or saved");
+			(await _service.SweepAsync().ContinueWith(t => t.IsFaulted)).Should().BeTrue("the gate is released, so the next sweep runs (and retries the lookup)");
+		}
+
+		[Test]
+		public async Task A_deleted_departments_marker_waits_for_the_search_host()
+		{
+			SearchConfig.Enabled = false;
+			_states.Setup(s => s.GetDeletedDepartmentIdsAsync(It.IsAny<CancellationToken>())).ReturnsAsync(new List<int> { 13275 });
+
+			var result = await _service.SweepAsync();
+
+			result.Skipped.Should().BeTrue();
+			_indexer.Verify(i => i.DeleteDepartmentAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);
+			_states.Verify(s => s.DeleteForDeletedDepartmentAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never,
+				"only the process that owns the index writer may erase and drop the marker");
+		}
 	}
 }

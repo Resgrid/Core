@@ -25,6 +25,14 @@
                 <div class="ibox-content">
                     <div class="form-horizontal">
                         <h5>@localizer["DeleteDepartmentHeader"]</h5>
+                        @if (Model.RecordsImpact != null && Model.RecordsImpact.HasRecords)
+                        {
+                            <div class="alert alert-warning">@localizer["DeleteDepartmentRecordsWarning"]</div>
+                        }
+                        @if (Model.RecordsImpact != null && Model.RecordsImpact.ActiveLegalHolds > 0)
+                        {
+                            <div class="alert alert-danger">@localizer["DeleteDepartmentLegalHoldWarning", Model.RecordsImpact.ActiveLegalHolds]</div>
+                        }
                         @if (Model.CurrentDeleteRequest != null)
                         {
                             <p>

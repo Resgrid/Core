@@ -82,7 +82,8 @@ namespace Resgrid.Model
 			new SystemOperationDescriptor(SystemOperationTypes.PendingDepartmentDeletions, SystemOperationCategories.ScheduledJob,
 				"Pending department deletions (System SQL Queue)",
 				"Deletes the departments whose deletion request has passed its waiting period. Departments still inside the waiting " +
-				"period are not touched.",
+				"period are not touched. Then purges the rows earlier deletions left in tables without a foreign key to Departments, " +
+				"unless an active legal hold or a running protected data migration keeps them.",
 				supportsDepartmentScope: false, schedule: "Daily 03:00 UTC", workerCommandId: 14, deletesData: true),
 
 			new SystemOperationDescriptor(SystemOperationTypes.ReportingRollup, SystemOperationCategories.ScheduledJob,

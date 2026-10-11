@@ -3013,6 +3013,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			DeleteDepartmentView model = new DeleteDepartmentView();
 			model.CurrentDeleteRequest = await _queueService.GetPendingDeleteDepartmentQueueItemAsync(DepartmentId);
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			model.RecordsImpact = await _deleteService.GetDepartmentDeletionRecordsImpactAsync(DepartmentId);
 
 			if (model.CurrentDeleteRequest != null)
 			{
@@ -3061,6 +3062,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return RedirectToAction("Settings", "Department", new { area = "User" });
 			}
 
+			model.RecordsImpact = await _deleteService.GetDepartmentDeletionRecordsImpactAsync(DepartmentId);
 			return View(model);
 		}
 

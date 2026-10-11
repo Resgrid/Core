@@ -17,7 +17,8 @@ namespace Resgrid.Model
 		/// <summary>Regenerates the TTS service's static voice prompts (worker 18).</summary>
 		RefreshTtsStaticPrompts = 3,
 
-		/// <summary>System SQL Queue (worker 14): department deletions whose waiting period has passed.</summary>
+		/// <summary>System SQL Queue (worker 14): department deletions whose waiting period has passed, then the leftovers of
+		/// departments deleted before every FK-less table was purged.</summary>
 		PendingDepartmentDeletions = 10,
 
 		/// <summary>Reporting Rollup (worker 21).</summary>

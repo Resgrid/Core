@@ -514,7 +514,7 @@ namespace Resgrid.Tests.Rms
 			_store.Submissions.Should().BeEmpty();
 
 			Func<Task> act = () => _service.QueueSubmissionAsync(Dept, "author", started.Report.RmsIncidentReportId);
-			await act.Should().ThrowAsync<InvalidOperationException>();
+			await act.Should().ThrowAsync<NerisSubmissionDisabledException>("a disabled destination is a message for the user, not a Sentry issue");
 		}
 
 		[Test]
@@ -565,7 +565,7 @@ namespace Resgrid.Tests.Rms
 
 			Func<Task> act = () => _service.QueueSubmissionAsync(Dept, "author", final.Report.RmsIncidentReportId);
 
-			(await act.Should().ThrowAsync<InvalidOperationException>()).WithMessage(NerisWorkflows.OffMessage);
+			(await act.Should().ThrowAsync<NerisWorkflowsOffException>()).WithMessage(NerisWorkflows.OffMessage);
 			_store.Submissions.Should().BeEmpty();
 		}
 

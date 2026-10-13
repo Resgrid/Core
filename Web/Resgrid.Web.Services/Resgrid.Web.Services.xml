@@ -17,7 +17,37 @@
             </summary>
             <param name="message">A Postmark Inbound message http://developer.postmarkapp.com/developer-inbound-parse.html#example-hook</param>
             <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-            <returns><br /></returns>
+            <returns>
+            Postmark retries every answer except a 200 for about 10.5 hours, and a 403 stops it: 200/201 when handled (or handled
+            before), 409 while another delivery of the same email is still being handled, 403 when a retry could not help (no
+            Resgrid address, unknown address, nothing this department's email format can read), 400 on a failure worth retrying.
+            </returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.EmailController.DuplicateDeliveryResult(Resgrid.Model.InboundEmailReceiptClaim)">
+            <summary>
+            The answer to a delivery of an email this API already handled, or is handling right now; null when the delivery should
+            be processed. A completed email is acknowledged with a 200 so Postmark stops; one still in flight gets a 409 so Postmark
+            delivers it again later, when it is either finished or its attempt has died and can be taken over.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.EmailController.NotProcessable">
+            <summary>A 403 is the one answer that stops Postmark retrying; used where a retry would fail the same way.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.EmailController.RecordPartialCallAsync(Resgrid.Model.InboundEmailReceiptClaim,System.Boolean,System.Boolean,Resgrid.Model.Call,Resgrid.Model.InboundEmailPendingSteps)">
+            <summary>
+            The call row is written before its dispatch rows and the broadcast, so a failure after that (including the provider
+            dropping the connection) leaves a new call behind. Recording its id lets the provider's retry finish this call instead of
+            creating another one.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.EmailController.ResumeCallAsync(Resgrid.Model.InboundEmailReceiptClaim,System.Boolean,System.Int32,PostmarkDotNet.PostmarkInboundMessage,System.Threading.CancellationToken)">
+            <summary>
+            Finishes a call an earlier delivery of the same email saved and then failed on: queues the broadcast (and AI enrichment)
+            that never went out, once, instead of creating a second call. A call someone has since closed or deleted is not paged.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.EmailController.ResumeMessageAsync(Resgrid.Model.InboundEmailReceiptClaim,System.Int32,System.Threading.CancellationToken)">
+            <summary>Sends a group message an earlier delivery of the same email saved and then failed to send.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.EmailController.QueueCallBroadcastAsync(Resgrid.Model.Call,System.Threading.CancellationToken,System.Boolean)">
             <param name="allowRunCardEnrichment">
@@ -572,6 +602,15 @@
             Calls, also referred to as Dispatches.
             </summary>
         </member>
+        <member name="F:Resgrid.Web.Services.Controllers.v4.CallsController.IdempotencyKeyHeader">
+            <summary>
+            Optional on SaveCall and SaveCallFile: a client that may send the same request twice (the SMTP relay retries a message
+            whose answer it never got, keyed by its Message-Id) names it, and a repeat returns the first result instead of a second call.
+            </summary>
+        </member>
+        <member name="F:Resgrid.Web.Services.Controllers.v4.CallsController.SaveCallSteps">
+            <summary>Everything SaveCall does after the call row is written; each is cleared from the receipt as it completes.</summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Controllers.v4.CallsController.IsBigBoardSession">
             <summary>
             True when the caller authenticated as the BigBoard client application (numeric
@@ -666,6 +705,9 @@
             Clients apply this to their new and edit call forms for usability; the same policy is enforced on SaveCall
             and EditCall regardless.
             </remarks>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.QueueSavedCallBroadcastAsync(Resgrid.Model.Call,Resgrid.Model.Call,System.Threading.CancellationToken)">
+            <summary>Queues the new call's broadcast to everyone it was dispatched to.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.EditCall(Resgrid.Web.Services.Models.v4.Calls.EditCallInput,System.Threading.CancellationToken)">
             <summary>
@@ -2263,6 +2305,16 @@
             <param name="input">The token and where it was registered</param>
             <returns>Success when the token is no longer on the channel</returns>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DevicesController.UnRegisterNativePush(Resgrid.Web.Services.Models.v4.Device.NativePushUnRegistrationInput)">
+            <summary>
+            Takes an iOS or Android push token off the native push channels it was registered on, so that device
+            stops receiving this user's (or unit's) pushes. Called when someone signs out of the native app. Runs at
+            once, not through the queue. Only this token is removed: if another device has registered since, its
+            token stays.
+            </summary>
+            <param name="input">The token and where it was registered</param>
+            <returns>Success when the token is no longer on the channels</returns>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.DisclosuresController">
             <summary>
             Public-records and access-to-information requests over the v4 Records contract (RMS plan section 4.7, RMS-3).
@@ -2600,11 +2652,38 @@
             For interacting with the Inbox
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.InboxController.DeleteMessage(System.String)">
+        <member name="F:Resgrid.Web.Services.Controllers.v4.InboxController.MessageIdPattern">
             <summary>
-            Deletes a message from the inbox by its ID
+            Novu message ids are MongoDB ObjectIds. Anything else is rejected before it reaches a Novu URL.
             </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.InboxController.GetUnitSubscriberHash(System.Int32)">
+            <summary>
+            Gets the Novu subscriberHash for a unit's inbox, for the Unit app to open that inbox with. The unit must
+            be in the caller's department. The user's own inbox hashes come with the rights
+            (Security/GetCurrentUsersRights).
+            </summary>
+            <param name="unitId">The unit whose inbox to open</param>
             <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.InboxController.DeleteMessage(System.String,System.Nullable{System.Int32})">
+            <summary>
+            Deletes a message from the caller's own inbox by its ID. Without a unit the message must be in the
+            caller's own inbox (Responder/Dispatch, or the IC app's); with one, in that unit's inbox (Unit app), and
+            the unit must be in the caller's department. A message anywhere else is reported as not found.
+            </summary>
+            <param name="messageId">The Novu message (inbox notification) id</param>
+            <param name="unitId">The unit whose inbox holds the message, when deleting from the Unit app</param>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.InboxController.GetUnitForCallerAsync(System.Int32)">
+            <summary>
+            The unit, when it is in the caller's department. That is the Unit app's own rule for which units a user
+            may sign in as (Units/GetAllUnits is not filtered by the unit visibility matrix), so a matrix check here
+            would leave someone signed in as a group-hidden unit with no inbox once Novu enforces HMAC. Null
+            otherwise, which callers answer exactly like a missing unit so a unit id can't be used to probe other
+            departments' units.
+            </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.IncidentAnalysisController">
             <summary>
@@ -4433,7 +4512,7 @@
             Call Priorities, for example Low, Medium, High. Call Priorities can be system provided ones or custom for a department
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.SecurityController.#ctor(Resgrid.Model.Services.IDepartmentsService,Resgrid.Model.Services.IDepartmentGroupsService,Resgrid.Model.Services.IPermissionsService,Resgrid.Model.Services.IPersonnelRolesService,Resgrid.Model.Services.IUserProfileService)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SecurityController.#ctor(Resgrid.Model.Services.IDepartmentsService,Resgrid.Model.Services.IDepartmentGroupsService,Resgrid.Model.Services.IPermissionsService,Resgrid.Model.Services.IPersonnelRolesService,Resgrid.Model.Services.IUserProfileService,Resgrid.Model.Providers.INovuProvider)">
             <summary>
             Operations to perform against the security sub-system
             </summary>
@@ -7615,6 +7694,13 @@
              Redacts AND logs — a silent redaction would hide the missing resolve call, and the log line
              with the member path is what makes the missed surface findable.
              </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Filters.RecordsModuleDisabledExceptionFilter">
+            <summary>
+            A Records module that is not enabled for the department is a message for the caller, not a server fault. The prevention
+            controllers map it themselves (RecordsPreventionApiControllerBase.Fail); any other endpoint that lets
+            <see cref="T:Resgrid.Model.RecordsModuleDisabledException"/> escape answers 404 with the message instead of a 500.
+            </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Filters.RequiresIncidentCapabilityAttribute">
              <summary>
@@ -13230,6 +13316,33 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Deployments.SaveExpenseInput.ReceiptData">
             <summary>Receipt bytes, base64.</summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Device.NativePushUnRegistrationInput">
+            <summary>
+            Takes an iOS or Android push token off the native push channels it was registered on (RegisterDevice or
+            RegisterUnitDevice from the native app). Sent in the body rather than the query string so the token never
+            lands in request logs.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Device.NativePushUnRegistrationInput.Token">
+            <summary>
+            The FCM or APNs token the app registered
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Device.NativePushUnRegistrationInput.Prefix">
+            <summary>
+            The department code the token was registered under; empty means the caller's active department
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Device.NativePushUnRegistrationInput.Source">
+            <summary>
+            Source app of the registration ("IC" for the Incident Command app); null/empty means the user's default subscriber
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Device.NativePushUnRegistrationInput.UnitId">
+            <summary>
+            The unit the token was registered for (Unit app); empty for a user registration
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Device.PushRegistrationInput">
             <summary>
             Object that contains the device specific information needed to register the device for push notifications
@@ -13860,6 +13973,38 @@
             <summary>
             The one-line verdict for uptime monitoring: disabled is healthy; enabled is healthy when configured, the
             endpoint is not known to be missing, nothing is stale, nothing was rejected in the last hour and no request is overdue.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Inbox.UnitSubscriberHashResult">
+            <summary>
+            The Novu subscriberHash for a unit's inbox
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Inbox.UnitSubscriberHashResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Models.v4.Inbox.UnitSubscriberHashResult.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Inbox.UnitSubscriberHashResultData">
+            <summary>
+            A unit's Novu inbox credentials
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Inbox.UnitSubscriberHashResultData.UnitId">
+            <summary>
+            Unit id
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Inbox.UnitSubscriberHashResultData.SubscriberHash">
+            <summary>
+            Novu subscriberHash for the unit's inbox subscriber ({DepartmentCode}_Unit_{unitId}). Pass it with the
+            subscriber id when opening the inbox; required once the Novu environment enforces HMAC. Null when Novu
+            is not configured.
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.EstablishCommandInput">
@@ -16201,6 +16346,19 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Security.DepartmentRightsResultData.DepartmentCode">
             <summary>
             Department code
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Security.DepartmentRightsResultData.NovuSubscriberHash">
+            <summary>
+            Novu subscriberHash for the user's own inbox subscriber ({DepartmentCode}_User_{userId}, Responder and
+            Dispatch apps). Pass it with the subscriber id when opening the inbox; required once the Novu
+            environment enforces HMAC. Null when Novu is not configured.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Security.DepartmentRightsResultData.NovuICSubscriberHash">
+            <summary>
+            Novu subscriberHash for the user's IC app inbox subscriber ({DepartmentCode}_IC_User_{userId}).
+            Null when Novu is not configured.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Security.DepartmentRightsResultData.FullName">

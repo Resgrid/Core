@@ -49,6 +49,7 @@ namespace Resgrid.Web.Broker
 							options.TracesSampleRate = ExternalErrorConfig.SentryPerfSampleRate;
 							options.Environment = ExternalErrorConfig.Environment;
 							options.Release = Assembly.GetEntryAssembly()?.GetName().Version?.ToString();
+							options.AddExceptionFilter(new Resgrid.Framework.UserFacingExceptionSentryFilter());
 						});
 					}
 				});

@@ -955,66 +955,6 @@ namespace Resgrid.Services
 			return true;
 		}
 
-		public async Task<bool> SendChat(string chatId, int departmentId, string sendingUserId, string group, string message, UserProfile sendingUser, List<UserProfile> recipients)
-		{
-			var spm = new StandardPushMessage();
-			spm.DepartmentId = departmentId;
-
-			if (recipients.Count == 1)
-			{
-				spm.Title = $"New Chat Message from {sendingUser.FullName.AsFirstNameLastName}";
-				spm.SubTitle = $"Chat: {sendingUser.LastName}: " + message;
-			}
-			else
-			{
-				spm.Title = $"New Chat Message in Group {group} from {sendingUser.FullName.AsFirstNameLastName}";
-				spm.SubTitle = $"Chat {group}: {sendingUser.LastName}: " + message;
-			}
-
-			try
-			{
-				if (recipients.Count == 1)
-				{
-					var sendingTo = recipients.FirstOrDefault();
-
-					if (sendingTo == null)
-						return false;
-
-					spm.Id = $"T{sendingTo.UserId}";
-
-					if (!await CanSendToUser(sendingTo.UserId, departmentId))
-						return false;
-
-					await _pushService.PushChat(spm, sendingTo.UserId, sendingTo);
-				}
-				else
-				{
-					spm.Id = $"G{chatId}";
-					//await recipients.ParallelForEachAsync(async person =>
-					foreach (var person in recipients)
-					{
-						try
-						{
-							if (await CanSendToUser(person.UserId, departmentId))
-							{
-								await _pushService.PushChat(spm, person.UserId, person);
-							}
-						}
-						catch (Exception ex)
-						{
-							Logging.LogException(ex);
-						}
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				Logging.LogException(ex);
-			}
-
-			return true;
-		}
-
 		public async Task<bool> SendTroubleAlertAsync(TroubleAlertEvent troubleAlertEvent, Unit unit, Call call, string departmentNumber, int departmentId, string callAddress, string unitAddress, List<UserProfile> recipients)
 		{
 			string personnelNames = "No Unit Roles (Accountability) Set";

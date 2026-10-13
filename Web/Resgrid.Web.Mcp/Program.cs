@@ -52,6 +52,7 @@ namespace Resgrid.Web.Mcp
 							options.Environment = ExternalErrorConfig.Environment;
 							options.Release = Assembly.GetEntryAssembly()?.GetName().Version?.ToString();
 							options.ProfilesSampleRate = ExternalErrorConfig.SentryProfilingSampleRate;
+							options.AddExceptionFilter(new Resgrid.Framework.UserFacingExceptionSentryFilter());
 
 							// Add profiling integration
 							options.AddIntegration(new ProfilingIntegration());

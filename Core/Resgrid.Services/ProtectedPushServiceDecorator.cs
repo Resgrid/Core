@@ -43,9 +43,6 @@ namespace Resgrid.Services
 		public Task<bool> PushICNotification(StandardPushMessage message, string userId, UserProfile profile = null)
 			=> _inner.PushICNotification(Sanitize(message, "ic-notification"), userId, profile);
 
-		public Task<bool> PushChat(StandardPushMessage message, string userId, UserProfile profile = null)
-			=> _inner.PushChat(Sanitize(message, "chat"), userId, profile);
-
 		public Task<bool> PushCallUnit(StandardPushCall call, int unitId, DepartmentCallPriority priority = null)
 			=> _inner.PushCallUnit(Sanitize(call), unitId, priority);
 
@@ -62,17 +59,15 @@ namespace Resgrid.Services
 
 		public Task<bool> Register(PushUri pushUri) => _inner.Register(pushUri);
 
-		public Task<bool> UnRegister(PushUri pushUri) => _inner.UnRegister(pushUri);
-
-		public Task UnRegisterNotificationOnly(PushUri pushUri) => _inner.UnRegisterNotificationOnly(pushUri);
-
 		public Task<bool> RegisterUnit(PushUri pushUri) => _inner.RegisterUnit(pushUri);
-
-		public Task<bool> UnRegisterUnit(PushUri pushUri) => _inner.UnRegisterUnit(pushUri);
 
 		public Task<bool> UnRegisterWebPush(PushUri pushUri) => _inner.UnRegisterWebPush(pushUri);
 
 		public Task<bool> UnRegisterUnitWebPush(PushUri pushUri) => _inner.UnRegisterUnitWebPush(pushUri);
+
+		public Task<bool> UnRegisterNativePush(PushUri pushUri) => _inner.UnRegisterNativePush(pushUri);
+
+		public Task<bool> UnRegisterUnitNativePush(PushUri pushUri) => _inner.UnRegisterUnitNativePush(pushUri);
 
 		private static StandardPushMessage Sanitize(StandardPushMessage message, string kind)
 		{

@@ -45,6 +45,10 @@ namespace Resgrid.Services
 		// Lazy: closing a finished call needs the calls and dispatch-status graph, which itself depends on this service.
 		private readonly Lazy<ICallAutoCloseService> _callAutoCloseService;
 
+		// Deleting a unit drops its push subscriber; the department supplies the code the subscriber is keyed by.
+		private readonly INovuProvider _novuProvider;
+		private readonly Lazy<IDepartmentsService> _departmentsService;
+
 		public UnitsService(IUnitsRepository unitsRepository, IUnitStatesRepository unitStatesRepository,
 			IUnitLogsRepository unitLogsRepository, IUnitTypesRepository unitTypesRepository, ISubscriptionsService subscriptionsService,
 			IUnitRolesRepository unitRolesRepository, IUnitStateRoleRepository unitStateRoleRepository, IUserStateService userStateService,
@@ -54,9 +58,12 @@ namespace Resgrid.Services
 			IDepartmentGroupsService departmentGroupsService, ILimitsService limitsService, IPersonnelRolesService personnelRolesService,
 			Lazy<IProtectedWriteService> protectedWriteService, Lazy<IRecordsCutoverService> recordsCutoverService,
 			ICallStatusAttributionService callStatusAttributionService, Lazy<ISearchProjectionService> searchProjections = null,
-			Lazy<ICallAutoCloseService> callAutoCloseService = null)
+			Lazy<ICallAutoCloseService> callAutoCloseService = null, INovuProvider novuProvider = null,
+			Lazy<IDepartmentsService> departmentsService = null)
 		{
 			_callAutoCloseService = callAutoCloseService;
+			_novuProvider = novuProvider;
+			_departmentsService = departmentsService;
 			_recordsCutoverService = recordsCutoverService;
 			_callStatusAttributionService = callStatusAttributionService;
 			_unitsRepository = unitsRepository;
@@ -239,7 +246,34 @@ namespace Resgrid.Services
 			_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = unit.DepartmentId });
 			SendUnitVisibilityRefresh(unit.DepartmentId);
 
+			await RemoveUnitPushSubscriberAsync(unit);
+
 			return true;
+		}
+
+		/// <summary>
+		/// A deleted unit takes no more pushes. Its devices are never told the unit is gone (the Unit app just drops
+		/// the stale selection), so the unit's Novu subscriber is deleted here, taking every rig's native token and
+		/// every browser's web token with it. Best-effort: the unit is already deleted whatever Novu answers.
+		/// </summary>
+		private async Task RemoveUnitPushSubscriberAsync(Unit unit)
+		{
+			if (_novuProvider == null || _departmentsService == null)
+				return;
+
+			try
+			{
+				var department = await _departmentsService.Value.GetDepartmentByIdAsync(unit.DepartmentId, false);
+				if (string.IsNullOrWhiteSpace(department?.Code))
+					return;
+
+				if (!await _novuProvider.DeleteUnitSubscriber(unit.UnitId, department.Code))
+					Logging.LogError($"UnitsService.DeleteUnitAsync: the push subscriber for deleted unit {unit.UnitId} (department {unit.DepartmentId}) could not be removed; its devices may keep receiving its pushes.");
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Removing the push subscriber for deleted unit {unit.UnitId}");
+			}
 		}
 
 		public async Task<UnitState> GetLastUnitStateByUnitIdAsync(int unitId)

@@ -12,22 +12,17 @@ namespace Resgrid.Services
 	public class PushService : IPushService
 	{
 		private readonly IPushLogsService _pushLogsService;
-		private readonly INotificationProvider _notificationProvider;
-		private readonly IUnitNotificationProvider _unitNotificationProvider;
 		private readonly IUserProfileService _userProfileService;
 		private readonly INovuProvider _novuProvider;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IUnitsService _unitsService;
 
-		public PushService(IPushLogsService pushLogsService, INotificationProvider notificationProvider,
-			IUserProfileService userProfileService, IUnitNotificationProvider unitNotificationProvider,
+		public PushService(IPushLogsService pushLogsService, IUserProfileService userProfileService,
 			INovuProvider novuProvider, IDepartmentSettingsService departmentSettingsService,
 			IUnitsService unitsService)
 		{
 			_pushLogsService = pushLogsService;
-			_notificationProvider = notificationProvider;
 			_userProfileService = userProfileService;
-			_unitNotificationProvider = unitNotificationProvider;
 			_novuProvider = novuProvider;
 			_departmentSettingsService = departmentSettingsService;
 			_unitsService = unitsService;
@@ -88,13 +83,6 @@ namespace Resgrid.Services
 			return registered;
 		}
 
-		public async Task<bool> UnRegister(PushUri pushUri)
-		{
-			await _notificationProvider.UnRegisterPushByUserDeviceId(pushUri);
-
-			return true;
-		}
-
 		public async Task<bool> UnRegisterWebPush(PushUri pushUri)
 		{
 			if (pushUri == null || string.IsNullOrWhiteSpace(pushUri.UserId) || string.IsNullOrWhiteSpace(pushUri.DeviceId) || string.IsNullOrWhiteSpace(pushUri.PushLocation))
@@ -110,6 +98,25 @@ namespace Resgrid.Services
 			// which on a shared workstation is the next person's screen.
 			if (!removed)
 				Framework.Logging.LogError($"PushService.UnRegisterWebPush: the web push token could not be removed for user {pushUri.UserId} (prefix '{pushUri.PushLocation}', IC {isICApp}); that browser may keep receiving their pushes.");
+
+			return removed;
+		}
+
+		public async Task<bool> UnRegisterNativePush(PushUri pushUri)
+		{
+			if (pushUri == null || string.IsNullOrWhiteSpace(pushUri.UserId) || string.IsNullOrWhiteSpace(pushUri.DeviceId) || string.IsNullOrWhiteSpace(pushUri.PushLocation))
+				return false;
+
+			var isICApp = string.Equals(pushUri.Source, "IC", StringComparison.OrdinalIgnoreCase);
+
+			var removed = isICApp
+				? await _novuProvider.RemoveICUserSubscriberNativeToken(pushUri.UserId, pushUri.PushLocation, pushUri.DeviceId)
+				: await _novuProvider.RemoveUserSubscriberNativeToken(pushUri.UserId, pushUri.PushLocation, pushUri.DeviceId);
+
+			// A phone that stays on the channel keeps receiving this person's calls after they signed out of it,
+			// which on a shared or handed-over device is the next person's lock screen.
+			if (!removed)
+				Framework.Logging.LogError($"PushService.UnRegisterNativePush: the native push token could not be removed for user {pushUri.UserId} (prefix '{pushUri.PushLocation}', IC {isICApp}); that device may keep receiving their pushes.");
 
 			return removed;
 		}
@@ -209,13 +216,6 @@ namespace Resgrid.Services
 			}
 		}
 
-		public async Task<bool> UnRegisterUnit(PushUri pushUri)
-		{
-			await _unitNotificationProvider.UnRegisterPush(pushUri);
-
-			return true;
-		}
-
 		public async Task<bool> UnRegisterUnitWebPush(PushUri pushUri)
 		{
 			if (pushUri == null || !pushUri.UnitId.HasValue || string.IsNullOrWhiteSpace(pushUri.DeviceId) || string.IsNullOrWhiteSpace(pushUri.PushLocation))
@@ -229,9 +229,17 @@ namespace Resgrid.Services
 			return removed;
 		}
 
-		public Task UnRegisterNotificationOnly(PushUri pushUri)
+		public async Task<bool> UnRegisterUnitNativePush(PushUri pushUri)
 		{
-			return _notificationProvider.UnRegisterPushByUserDeviceId(pushUri);
+			if (pushUri == null || !pushUri.UnitId.HasValue || string.IsNullOrWhiteSpace(pushUri.DeviceId) || string.IsNullOrWhiteSpace(pushUri.PushLocation))
+				return false;
+
+			var removed = await _novuProvider.RemoveUnitSubscriberNativeToken(pushUri.UnitId.Value, pushUri.PushLocation, pushUri.DeviceId);
+
+			if (!removed)
+				Framework.Logging.LogError($"PushService.UnRegisterUnitNativePush: the native push token could not be removed for unit {pushUri.UnitId} (prefix '{pushUri.PushLocation}'); that device may keep receiving the unit's pushes.");
+
+			return removed;
 		}
 
 		public async Task<bool> PushMessage(StandardPushMessage message, string userId, UserProfile profile = null)
@@ -245,15 +253,6 @@ namespace Resgrid.Services
 			if (profile != null && profile.SendMessagePush)
 			{
 				string soundType = await GetSoundTypeAsync(message.DepartmentId, profile, PushSoundTypes.Message, PushSoundTypes.ModernMessage);
-
-				try
-				{
-					await _notificationProvider.SendAllNotifications(message.Title, message.SubTitle, userId, string.Format("M{0}", message.MessageId), soundType, true, 1, "#000000");
-				}
-				catch (Exception ex)
-				{
-					Framework.Logging.LogException(ex);
-				}
 
 				try
 				{
@@ -297,22 +296,9 @@ namespace Resgrid.Services
 
 			try
 			{
-				await _notificationProvider.SendAllNotifications(message.Title, message.SubTitle, userId, eventCode, soundType, true, 1, "#000000");
-				delivered = true;
-			}
-			catch (Exception ex)
-			{
-				Framework.Logging.LogException(ex);
-			}
-
-			try
-			{
+				// Delivered means Novu, the only transport, accepted the message.
 				if (!string.IsNullOrWhiteSpace(message.DepartmentCode))
-				{
-					// Novu is the only transport that reports back whether it accepted the message;
-					// the legacy provider returns void, so "didn't throw" is the best it can offer.
-					delivered |= await _novuProvider.SendUserNotification(message.Title, message.SubTitle, userId, message.DepartmentCode, eventCode, soundType);
-				}
+					delivered = await _novuProvider.SendUserNotification(message.Title, message.SubTitle, userId, message.DepartmentCode, eventCode, soundType);
 			}
 			catch (Exception ex)
 			{
@@ -323,8 +309,8 @@ namespace Resgrid.Services
 		}
 
 		/// <summary>
-		/// Pushes a notification to the user's IC app (distinct Novu subscriber) only — no legacy Azure path,
-		/// so devices running just the Responder app aren't alerted for IC-only events.
+		/// Pushes a notification to the user's IC app (distinct Novu subscriber) only, so devices running just the
+		/// Responder app aren't alerted for IC-only events.
 		/// </summary>
 		public async Task<bool> PushICNotification(StandardPushMessage message, string userId, UserProfile profile = null)
 		{
@@ -357,23 +343,6 @@ namespace Resgrid.Services
 			return true;
 		}
 
-		public async Task<bool> PushChat(StandardPushMessage message, string userId, UserProfile profile = null)
-		{
-			if (message == null)
-				return false;
-
-			if (profile == null)
-				profile = await _userProfileService.GetProfileByUserIdAsync(userId);
-
-			if (profile != null && profile.SendMessagePush)
-			{
-				string soundType = await GetSoundTypeAsync(message.DepartmentId, profile, PushSoundTypes.Message, PushSoundTypes.ModernChat);
-				await _notificationProvider.SendAllNotifications(message.Title, message.SubTitle, userId, message.Id, soundType, true, 1, "#000000");
-			}
-
-			return true;
-		}
-
 		public async Task<bool> PushChatMessage(StandardPushMessage message, string userId, string eventCode, int unreadCount,
 			bool includeIncidentCommandApp, UserProfile profile = null)
 		{
@@ -401,15 +370,6 @@ namespace Resgrid.Services
 
 			if (string.IsNullOrWhiteSpace(message.DepartmentCode))
 				Framework.Logging.LogWarning($"PushChatMessage: department {message.DepartmentId} has no Code, Novu chat push skipped for {userId} ({eventCode}).");
-
-			try
-			{
-				await _notificationProvider.SendAllNotifications(message.Title, message.SubTitle, userId, eventCode, soundType, true, unreadCount, "#000000");
-			}
-			catch (Exception ex)
-			{
-				Framework.Logging.LogException(ex);
-			}
 
 			try
 			{
@@ -468,16 +428,6 @@ namespace Resgrid.Services
 					color = priority.Color;
 
 				string soundType = await GetCallSoundTypeAsync(call, priority, profile);
-
-				// Legacy Push Notifications (Azure)
-				try
-				{
-					await _notificationProvider.SendAllNotifications(call.Title, call.SubTitle, userId, string.Format("C{0}", call.CallId), soundType, true, call.ActiveCallCount, color);
-				}
-				catch (Exception ex)
-				{
-					Framework.Logging.LogException(ex);
-				}
 
 				try
 				{

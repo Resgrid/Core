@@ -11,6 +11,8 @@ using NUnit.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
+using Resgrid.Services;
+using Resgrid.Tests.Mocks;
 using Resgrid.Web.Services.Controllers.v4;
 using Resgrid.Web.Services.Models.v4.CallFiles;
 using Resgrid.Web.Services.Models.v4.CallNotes;
@@ -37,6 +39,8 @@ namespace Resgrid.Tests.Web.Services
 		private Mock<IProtectedWriteService> _protectedWriteService;
 		private CallNote _savedNote;
 		private CallAttachment _savedAttachment;
+		private int _savedAttachments;
+		private MockInboundEmailReceiptsRepository _receipts;
 		private Activity _activity;
 
 		[SetUp]
@@ -48,7 +52,7 @@ namespace Resgrid.Tests.Web.Services
 			_callsService.Setup(x => x.SaveCallNoteAsync(It.IsAny<CallNote>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync((CallNote n, CancellationToken _) => { n.CallNoteId = 5; _savedNote = n; return n; });
 			_callsService.Setup(x => x.SaveCallAttachmentAsync(It.IsAny<CallAttachment>(), It.IsAny<CancellationToken>()))
-				.ReturnsAsync((CallAttachment a, CancellationToken _) => { a.CallAttachmentId = 6; _savedAttachment = a; return a; });
+				.ReturnsAsync((CallAttachment a, CancellationToken _) => { a.CallAttachmentId = 6 + _savedAttachments++; _savedAttachment = a; return a; });
 
 			_authorizationService = new Mock<IAuthorizationService>();
 
@@ -62,6 +66,8 @@ namespace Resgrid.Tests.Web.Services
 
 			_savedNote = null;
 			_savedAttachment = null;
+			_savedAttachments = 0;
+			_receipts = new MockInboundEmailReceiptsRepository();
 			_activity = new Activity(nameof(CallDataWriteAuthorizationTests)).Start();
 		}
 
@@ -88,11 +94,19 @@ namespace Resgrid.Tests.Web.Services
 			ControllerContext = new ControllerContext { HttpContext = Context() }
 		};
 
-		private CallFilesController FilesController(bool systemKey = false) => new CallFilesController(_callsService.Object, Mock.Of<IDepartmentsService>(),
-			Mock.Of<IProtectedReadService>(), _protectedWriteService.Object, _authorizationService.Object)
+		private CallFilesController FilesController(bool systemKey = false, string idempotencyKey = null)
 		{
-			ControllerContext = new ControllerContext { HttpContext = Context(systemKey) }
-		};
+			var context = Context(systemKey);
+			if (idempotencyKey != null)
+				context.Request.Headers[CallsController.IdempotencyKeyHeader] = idempotencyKey;
+
+			return new CallFilesController(_callsService.Object, Mock.Of<IDepartmentsService>(),
+				Mock.Of<IProtectedReadService>(), _protectedWriteService.Object, _authorizationService.Object,
+				new InboundEmailReceiptsService(_receipts, TimeProvider.System))
+			{
+				ControllerContext = new ControllerContext { HttpContext = context }
+			};
+		}
 
 		private static SaveCallNoteInput NoteInput() => new SaveCallNoteInput { CallId = CallId.ToString(), UserId = SpoofedUserId, Note = "Hydrant out of service" };
 
@@ -154,5 +168,31 @@ namespace Resgrid.Tests.Web.Services
 			_savedAttachment.Should().NotBeNull();
 			_savedAttachment.UserId.Should().Be(SpoofedUserId);
 		}
+
+		[Test]
+		public async Task A_keyed_file_sent_again_by_the_relay_returns_the_first_attachment_instead_of_a_second()
+		{
+			var first = await FilesController(systemKey: true, idempotencyKey: "msg-1@cad.example#attachment-0").SaveCallFile(FileInput(), CancellationToken.None);
+			var again = await FilesController(systemKey: true, idempotencyKey: "msg-1@cad.example#attachment-0").SaveCallFile(FileInput(), CancellationToken.None);
+			var other = await FilesController(systemKey: true, idempotencyKey: "msg-1@cad.example#attachment-1").SaveCallFile(FileInput(), CancellationToken.None);
+
+			Id(first).Should().Be("6");
+			Id(again).Should().Be("6");
+			Id(other).Should().Be("7");
+			_savedAttachments.Should().Be(2);
+			_receipts.Receipts.Should().OnlyContain(r => r.Kind == (int)InboundEmailKinds.ApiCallFile && r.State == (int)InboundEmailReceiptStates.Completed);
+		}
+
+		[Test]
+		public async Task Unkeyed_files_are_saved_every_time()
+		{
+			await FilesController(systemKey: true).SaveCallFile(FileInput(), CancellationToken.None);
+			await FilesController(systemKey: true).SaveCallFile(FileInput(), CancellationToken.None);
+
+			_savedAttachments.Should().Be(2);
+			_receipts.Receipts.Should().BeEmpty();
+		}
+
+		private static string Id(ActionResult<SaveCallFileResult> result) => ((result.Result as CreatedAtActionResult)?.Value as SaveCallFileResult)?.Id;
 	}
 }

@@ -56,6 +56,10 @@ namespace Resgrid.Services
 		private readonly IEmailMarketingService _emailMarketingService;
 		private readonly IRmsDepartmentCutoversRepository _rmsCutovers;
 		private readonly IRmsRecordLegalHoldsRepository _rmsLegalHolds;
+		private readonly INovuProvider _novuProvider;
+
+		// How many Novu subscriber deletes run at once when a department is deleted.
+		private const int PushSubscriberDeleteParallelism = 4;
 
 		public DeleteService(IAuthorizationService authorizationService, IDepartmentsService departmentsService,
 			ICallsService callsService, IActionLogsService actionLogsService, IUsersService usersService,
@@ -71,8 +75,10 @@ namespace Resgrid.Services
 			IInventoryStore inventoryStore = null, Resgrid.Model.Repositories.Queries.IUnitOfWork inventoryUnitOfWork = null,
 			IDeploymentService deploymentService = null, IDeploymentPersonnelRepository deploymentPersonnel = null, IWorkforceService workforceService = null,
 			IMfaAccountCleanupService mfaAccountCleanup = null, IEmailMarketingService emailMarketingService = null,
-			IRmsDepartmentCutoversRepository rmsCutovers = null, IRmsRecordLegalHoldsRepository rmsLegalHolds = null)
+			IRmsDepartmentCutoversRepository rmsCutovers = null, IRmsRecordLegalHoldsRepository rmsLegalHolds = null,
+			INovuProvider novuProvider = null)
 		{
+			_novuProvider = novuProvider;
 			_rmsCutovers = rmsCutovers;
 			_rmsLegalHolds = rmsLegalHolds;
 			_mfaAccountCleanup = mfaAccountCleanup;
@@ -162,6 +168,9 @@ namespace Resgrid.Services
 			var member = await _departmentsService.DeleteUserAsync(departmentId, userId, revokingUserId, cancellationToken);
 			if (member != null && member.IsDeleted)
 			{
+				// Ahead of the session revocation, which rethrows: the devices stop receiving pushes either way.
+				await RemoveMemberPushSubscribersAsync(userId, new[] { departmentId });
+
 				try
 				{
 					await _userSessionService.RevokeDepartmentSessionsAsync(userId, departmentId,
@@ -203,6 +212,38 @@ namespace Resgrid.Services
 				var department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
 				var removalDay = department == null ? DateTime.UtcNow.Date : DateTime.UtcNow.TimeConverter(department).Date;
 				await _workforceService.EndEmploymentsForMemberAsync(departmentId, userId, removalDay, actingUserId, cancellationToken);
+			}
+		}
+
+		/// <summary>
+		/// Nothing tells a removed member's phones and browsers that the membership is gone, so their Novu subscribers in
+		/// each department they left (Responder/Dispatch user and IC user) are deleted, taking every device token with
+		/// them. Best-effort and never throws: the membership is already gone. A reactivated member's apps create the
+		/// subscribers again the next time they register.
+		/// </summary>
+		private async Task RemoveMemberPushSubscribersAsync(string userId, IEnumerable<int> departmentIds)
+		{
+			if (_novuProvider == null || string.IsNullOrWhiteSpace(userId))
+				return;
+
+			foreach (var departmentId in departmentIds.Distinct())
+			{
+				try
+				{
+					var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
+					if (string.IsNullOrWhiteSpace(department?.Code))
+						continue;
+
+					var userRemoved = await _novuProvider.DeleteUserSubscriber(userId, department.Code);
+					var icRemoved = await _novuProvider.DeleteICUserSubscriber(userId, department.Code);
+
+					if (!userRemoved || !icRemoved)
+						Logging.LogError($"DeleteService::The push subscribers of removed member {userId} in DepartmentId {departmentId} could not all be removed; their devices may keep receiving the department's pushes.");
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex, $"DeleteService::Removing the push subscribers of removed member {userId} in DepartmentId {departmentId} failed.");
+				}
 			}
 		}
 
@@ -282,6 +323,8 @@ namespace Resgrid.Services
 
 					await _departmentsService.SaveDepartmentMemberAsync(dm, cancellationToken);
 				}
+
+				await RemoveMemberPushSubscribersAsync(userIdToDelete, departments.Select(d => d.DepartmentId));
 			}
 
 			var userProfile = await _userProfileService.GetProfileByUserIdAsync(userIdToDelete, true);
@@ -434,6 +477,9 @@ namespace Resgrid.Services
 				{
 					Logging.LogInfo($"DeleteService::Executing pending department deletion for DepartmentId {item.SourceId}, requested by UserId {item.QueuedByUserId} on {item.QueuedOn:u}, scheduled for {item.ToBeCompletedOn:u}");
 
+					// Read before the purge: once the department's rows are gone nothing names its push subscribers.
+					var pushSubscribers = await GetDepartmentPushSubscribersAsync(departmentId);
+
 					var result = await _deleteRepository.DeleteDepartmentAndUsersAsync(departmentId);
 					if (!result) throw new InvalidOperationException("Department deletion is not supported by the configured database provider.");
 
@@ -447,6 +493,10 @@ namespace Resgrid.Services
 					item.CompletedOn = DateTime.UtcNow;
 					item.Data = "Department deletion executed by the system.";
 					var result2 = await _queueService.UpdateQueueItem(item, cancellationToken);
+
+					// Only once the deletion is recorded as done: a deferred or failed purge leaves the department, and
+					// its people still need their pushes. Never throws, so it cannot turn a completed deletion into a retry.
+					await RemoveDepartmentPushSubscribersAsync(departmentId, pushSubscribers, cancellationToken);
 				}
 				catch (DepartmentDeletionDeferredException deferred)
 				{
@@ -538,6 +588,96 @@ namespace Resgrid.Services
 		{
 			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
 			await SendDeleteDepartmentEmailToAllAdminsAsync(department, item);
+		}
+
+		/// <summary>The Novu subscribers a department's people and units were registered under, keyed by its code.</summary>
+		private sealed class DepartmentPushSubscribers
+		{
+			public string Code { get; init; }
+			public List<string> UserIds { get; init; }
+			public List<int> UnitIds { get; init; }
+		}
+
+		/// <summary>
+		/// Every member (removed members included: their subscriber can still hold a phone) and every unit (deleted
+		/// units included). Null when there is nothing to remove or the read failed; the deletion goes ahead either way.
+		/// </summary>
+		private async Task<DepartmentPushSubscribers> GetDepartmentPushSubscribersAsync(int departmentId)
+		{
+			if (_novuProvider == null)
+				return null;
+
+			try
+			{
+				var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
+				if (string.IsNullOrWhiteSpace(department?.Code))
+					return null;
+
+				var members = await _departmentsService.GetAllMembersForDepartmentIncludingDeletedAsync(departmentId) ?? new List<DepartmentMember>();
+				var units = await _unitsService.GetUnitsForDepartmentIncludingDeletedAsync(departmentId) ?? new List<Unit>();
+
+				return new DepartmentPushSubscribers
+				{
+					Code = department.Code,
+					UserIds = members.Select(m => m.UserId).Where(id => !string.IsNullOrWhiteSpace(id)).Distinct(StringComparer.OrdinalIgnoreCase).ToList(),
+					UnitIds = units.Select(u => u.UnitId).Distinct().ToList()
+				};
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"DeleteService::Could not read the push subscribers of DepartmentId {departmentId}; its Novu subscribers will be left in place.");
+				return null;
+			}
+		}
+
+		/// <summary>
+		/// Deletes the department's Novu subscribers (Responder/Dispatch user, IC user and unit), taking every phone's
+		/// and browser's token with them, so nothing keeps receiving a deleted department's pushes. Best-effort and
+		/// never throws: the department is already gone, and nothing is left to name these subscribers on a retry.
+		/// </summary>
+		private async Task RemoveDepartmentPushSubscribersAsync(int departmentId, DepartmentPushSubscribers subscribers, CancellationToken cancellationToken)
+		{
+			if (subscribers == null)
+				return;
+
+			var deletes = new List<(string Name, Func<Task<bool>> Delete)>();
+			foreach (var userId in subscribers.UserIds)
+			{
+				deletes.Add(($"{subscribers.Code}_User_{userId}", () => _novuProvider.DeleteUserSubscriber(userId, subscribers.Code)));
+				deletes.Add(($"{subscribers.Code}_IC_User_{userId}", () => _novuProvider.DeleteICUserSubscriber(userId, subscribers.Code)));
+			}
+			foreach (var unitId in subscribers.UnitIds)
+				deletes.Add(($"{subscribers.Code}_Unit_{unitId}", () => _novuProvider.DeleteUnitSubscriber(unitId, subscribers.Code)));
+
+			var failed = new System.Collections.Concurrent.ConcurrentBag<string>();
+
+			try
+			{
+				await Parallel.ForEachAsync(deletes, new ParallelOptions { MaxDegreeOfParallelism = PushSubscriberDeleteParallelism, CancellationToken = cancellationToken },
+					async (delete, _) =>
+					{
+						try
+						{
+							if (!await delete.Delete())
+								failed.Add(delete.Name);
+						}
+						catch (Exception ex)
+						{
+							Logging.LogException(ex, $"DeleteService::Deleting Novu subscriber {delete.Name} of deleted DepartmentId {departmentId} failed.");
+							failed.Add(delete.Name);
+						}
+					});
+			}
+			catch (OperationCanceledException)
+			{
+				Logging.LogError($"DeleteService::Removing the Novu subscribers of deleted DepartmentId {departmentId} was cancelled; some of its {deletes.Count} subscribers may remain.");
+				return;
+			}
+
+			if (failed.IsEmpty)
+				Logging.LogInfo($"DeleteService::Removed the {deletes.Count} Novu subscribers of deleted DepartmentId {departmentId}.");
+			else
+				Logging.LogError($"DeleteService::{failed.Count} of the {deletes.Count} Novu subscribers of deleted DepartmentId {departmentId} could not be removed and may keep receiving its pushes: {string.Join(", ", failed.Take(20))}{(failed.Count > 20 ? ", ..." : "")}");
 		}
 
 		public async Task<DeletedDepartmentSweepResult> PurgeDeletedDepartmentLeftoversAsync(CancellationToken cancellationToken = default(CancellationToken))

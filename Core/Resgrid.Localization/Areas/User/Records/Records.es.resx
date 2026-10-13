@@ -107,6 +107,7 @@
   <data name="Activate" xml:space="preserve"><value>Activar</value></data>
   <data name="ActivationBlocked" xml:space="preserve"><value>La activación está bloqueada</value></data>
   <data name="NotActivatedNotice" xml:space="preserve"><value>Registros está habilitado para este departamento pero aún no se ha activado. Un administrador debe activarlo antes de crear registros.</value></data>
+  <data name="RecordsModuleNotEnabled" xml:space="preserve"><value>{0}: este módulo de Registros no está habilitado para el departamento.</value></data>
   <data name="ActivatedOn" xml:space="preserve"><value>Registros activados el</value></data>
   <data name="SettingsHeader" xml:space="preserve"><value>Configuración de registros</value></data>
   <data name="DefaultLifecyclePreset" xml:space="preserve"><value>Ciclo de vida predeterminado para definiciones del departamento</value></data>

@@ -107,6 +107,7 @@
   <data name="Activate" xml:space="preserve"><value>Attiva</value></data>
   <data name="ActivationBlocked" xml:space="preserve"><value>Attivazione bloccata</value></data>
   <data name="NotActivatedNotice" xml:space="preserve"><value>Registri è abilitato per questo dipartimento ma non ancora attivato. Un amministratore deve attivarlo prima di creare registri.</value></data>
+  <data name="RecordsModuleNotEnabled" xml:space="preserve"><value>{0}: questo modulo di Registri non è abilitato per il dipartimento.</value></data>
   <data name="ActivatedOn" xml:space="preserve"><value>Registri attivati il</value></data>
   <data name="SettingsHeader" xml:space="preserve"><value>Impostazioni registri</value></data>
   <data name="DefaultLifecyclePreset" xml:space="preserve"><value>Ciclo di vita predefinito per le definizioni del dipartimento</value></data>

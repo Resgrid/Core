@@ -107,6 +107,7 @@
   <data name="Activate" xml:space="preserve"><value>Aktivieren</value></data>
   <data name="ActivationBlocked" xml:space="preserve"><value>Aktivierung blockiert</value></data>
   <data name="NotActivatedNotice" xml:space="preserve"><value>Akten ist für diese Abteilung freigeschaltet, aber noch nicht aktiviert. Ein Administrator muss es aktivieren, bevor Akten erstellt werden können.</value></data>
+  <data name="RecordsModuleNotEnabled" xml:space="preserve"><value>{0}: Dieses Akten-Modul ist für die Abteilung nicht aktiviert.</value></data>
   <data name="ActivatedOn" xml:space="preserve"><value>Akten aktiviert am</value></data>
   <data name="SettingsHeader" xml:space="preserve"><value>Akten-Einstellungen</value></data>
   <data name="DefaultLifecyclePreset" xml:space="preserve"><value>Standard-Lebenszyklus für Abteilungsdefinitionen</value></data>

@@ -157,7 +157,7 @@ namespace Resgrid.Services.Records
 			// Setting 111: a department with NERIS workflows off makes no destination call and changes no filing; the
 			// ambiguous row is kept exactly as it is until NERIS is turned back on.
 			if (!await _profiles.IsWorkflowEnabledAsync(departmentId))
-				throw new InvalidOperationException(NerisWorkflows.OffMessage);
+				throw new NerisWorkflowsOffException();
 			var submission = await _submissions.GetByIdForDepartmentAsync(departmentId, submissionId);
 			if (submission == null) throw new InvalidOperationException("The submission does not exist.");
 			var analysis = submission.Destination == RmsSubmissionDestinations.NerisIncidentAnalysis
@@ -232,7 +232,7 @@ namespace Resgrid.Services.Records
 			if (string.IsNullOrWhiteSpace(verificationReference) || verificationReference.Length > 500 || string.IsNullOrWhiteSpace(reason) || reason.Length > 2000)
 				throw new ArgumentException("Record the destination verification reference and the reason it confirms no filing was created.");
 			if (!await _profiles.IsWorkflowEnabledAsync(departmentId))
-				throw new InvalidOperationException(NerisWorkflows.OffMessage);
+				throw new NerisWorkflowsOffException();
 			var submission = Copy(await _submissions.GetByIdForDepartmentAsync(departmentId, submissionId));
 			if (submission == null) throw new InvalidOperationException("The submission does not exist.");
 			var isAnalysis = submission.Destination == RmsSubmissionDestinations.NerisIncidentAnalysis;

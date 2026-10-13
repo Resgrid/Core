@@ -114,7 +114,8 @@ namespace Resgrid.Tests.Web.Services
 				_dispatchScope.Object,
 				Mock.Of<ICallLocationHistoryService>(),
 				Mock.Of<IPendingCallsService>(),
-				Mock.Of<ICallClosureService>())
+				Mock.Of<ICallClosureService>(),
+				new Resgrid.Services.InboundEmailReceiptsService(new Resgrid.Tests.Mocks.MockInboundEmailReceiptsRepository(), TimeProvider.System))
 			{
 				ControllerContext = new ControllerContext { HttpContext = httpContext }
 			};

@@ -206,16 +206,17 @@ namespace Resgrid.Providers.Bus
 				var workflowRepository = scope.Resolve<IWorkflowRepository>();
 				var runRepository = scope.Resolve<IWorkflowRunRepository>();
 
-				System.Collections.Generic.List<Workflow> workflows = null;
+				// Workflows before the plan: most departments have none for most event types, and the plan read below
+				// is a Billing API round trip, so an event nothing listens to must stop here without one. Records skip
+				// rows need the list too, so for those events it is the list the limits record against.
+				var workflows = (await workflowRepository.GetAllActiveByDepartmentAndEventTypeAsync(departmentId, (int)eventType))?.ToList();
+				if (workflows == null || workflows.Count == 0)
+					return;
+
 				string payloadJson = null;
 
 				if (envelope != null)
 				{
-					// The skip rows below need the workflow list, so for Records events it is loaded before the limits.
-					workflows = (await workflowRepository.GetAllActiveByDepartmentAndEventTypeAsync(departmentId, (int)eventType))?.ToList();
-					if (workflows == null || workflows.Count == 0)
-						return;
-
 					var protectedProjectionService = scope.Resolve<IProtectedProjectionService>();
 					payloadJson = ChecklistWorkflowPayload.IsReadinessProducer(envelope.ProducerSubsystem)
 						? await ChecklistWorkflowPayload.ProjectAsync(departmentId, eventObj, protectedProjectionService, wrapped: true)
@@ -268,11 +269,6 @@ namespace Resgrid.Providers.Bus
 					}
 				}
 				// ── End rate limiting ────────────────────────────────────────────────
-
-				if (workflows == null)
-					workflows = (await workflowRepository.GetAllActiveByDepartmentAndEventTypeAsync(departmentId, (int)eventType))?.ToList();
-
-				if (workflows == null || workflows.Count == 0) return;
 
 				// ADP safe projection (plan section 8): for protected departments the payload is
 				// redacted HERE, before it reaches WorkflowRun.InputPayload, the queue, retries,

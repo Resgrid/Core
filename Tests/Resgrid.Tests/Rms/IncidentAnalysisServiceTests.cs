@@ -235,6 +235,21 @@ namespace Resgrid.Tests.Rms
 		}
 
 		[Test]
+		public async Task Queueing_while_the_destination_is_disabled_is_refused_with_a_user_facing_message()
+		{
+			_report.NerisIncidentId = "FD24027000|2026-000200|1788436800";
+			_submissionEnabled = false;
+			var saved = await StartAndFillAsync();
+			var finalized = await _service.FinalizeAsync(Dept, "investigator", saved.Analysis.RmsIncidentAnalysisId, saved.Analysis.RowVersion);
+			finalized.State.Should().Be(RmsIncidentAnalysisState.Finalized, "nothing is queued while the destination is off");
+
+			Func<Task> queue = () => _service.QueueSubmissionAsync(Dept, "investigator", saved.Analysis.RmsIncidentAnalysisId);
+
+			await queue.Should().ThrowAsync<NerisSubmissionDisabledException>("a disabled destination is a message for the user, not a Sentry issue");
+			_store.Submissions.Should().BeEmpty();
+		}
+
+		[Test]
 		public async Task The_queued_payload_carries_the_incident_id_and_the_analysis_sections()
 		{
 			_report.NerisIncidentId = "FD24027000|2026-000200|1788436800";
@@ -304,7 +319,7 @@ namespace Resgrid.Tests.Rms
 			_store.Submissions.Should().BeEmpty();
 
 			Func<Task> queue = () => _service.QueueSubmissionAsync(Dept, "investigator", bad.Analysis.RmsIncidentAnalysisId);
-			(await queue.Should().ThrowAsync<InvalidOperationException>()).WithMessage(NerisWorkflows.OffMessage);
+			(await queue.Should().ThrowAsync<NerisWorkflowsOffException>()).WithMessage(NerisWorkflows.OffMessage);
 			(await _service.QueueAwaitingIncidentAsync(Dept)).Should().Be(0);
 		}
 

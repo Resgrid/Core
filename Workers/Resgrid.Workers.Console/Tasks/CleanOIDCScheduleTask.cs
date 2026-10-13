@@ -88,6 +88,18 @@ namespace Resgrid.Workers.Console.Tasks
 					LoggedOn = DateTime.UtcNow
 				}, cancellationToken);
 
+				// Inbound email receipts past their retention (M0271). On its own so a failure here cannot cost the session audit above.
+				try
+				{
+					var receiptsPurged = await scope.Resolve<IInboundEmailReceiptsService>().PurgeExpiredAsync(cancellationToken);
+					if (receiptsPurged > 0)
+						_logger.LogInformation($"{Name}: removed {receiptsPurged} inbound email receipt(s) past retention.");
+				}
+				catch (Exception ex)
+				{
+					Resgrid.Framework.Logging.LogException(ex);
+				}
+
 				progress.Report(100, $"Finishing the {Name} Task");
 			}
 			catch (Exception ex)

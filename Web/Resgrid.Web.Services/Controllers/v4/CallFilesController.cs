@@ -35,16 +35,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IProtectedReadService _protectedCallReadService;
 		private readonly IProtectedWriteService _protectedWriteService;
 		private readonly IAuthorizationService _authorizationService;
+		private readonly IInboundEmailReceiptsService _inboundEmailReceiptsService;
 
 		public CallFilesController(ICallsService callsService, IDepartmentsService departmentsService,
 			IProtectedReadService protectedCallReadService, IProtectedWriteService protectedWriteService,
-			IAuthorizationService authorizationService)
+			IAuthorizationService authorizationService, IInboundEmailReceiptsService inboundEmailReceiptsService)
 		{
 			_callsService = callsService;
 			_departmentsService = departmentsService;
 			_protectedCallReadService = protectedCallReadService;
 			_protectedWriteService = protectedWriteService;
 			_authorizationService = authorizationService;
+			_inboundEmailReceiptsService = inboundEmailReceiptsService;
 		}
 		#endregion Members and Constructors
 
@@ -307,7 +309,35 @@ namespace Resgrid.Web.Services.Controllers.v4
 					title: "Recent multi-factor verification is required to modify protected data.",
 					statusCode: StatusCodes.Status403Forbidden);
 
-			var saved = await _callsService.SaveCallAttachmentAsync(callAttachment, cancellationToken);
+			// The SMTP relay keys each attachment of a message (CallsController.IdempotencyKeyHeader); when it retries a message
+			// whose call already exists, the attachments it already uploaded come back with their ids instead of twice.
+			var receipt = await _inboundEmailReceiptsService.ClaimApiRequestAsync(InboundEmailKinds.ApiCallFile, call.DepartmentId,
+				Request.Headers[CallsController.IdempotencyKeyHeader].ToString(), cancellationToken);
+
+			if (receipt.Outcome == InboundEmailClaimOutcomes.InProgress)
+				return StatusCode(StatusCodes.Status409Conflict);
+
+			if (receipt.EntityId.HasValue &&
+				(receipt.Outcome == InboundEmailClaimOutcomes.AlreadyProcessed || receipt.Outcome == InboundEmailClaimOutcomes.Resume))
+			{
+				await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
+				return SavedFileResult(result, call.DepartmentId, receipt.EntityId.Value);
+			}
+
+			CallAttachment saved;
+			try
+			{
+				saved = await _callsService.SaveCallAttachmentAsync(callAttachment, cancellationToken);
+			}
+			catch
+			{
+				await _inboundEmailReceiptsService.ReleaseAsync(receipt);
+				throw;
+			}
+
+			// Recorded as soon as the row exists: a protected-write failure below still has the row (the sweep encrypts it).
+			await _inboundEmailReceiptsService.MarkSavedAsync(receipt, saved.CallAttachmentId, InboundEmailPendingSteps.None);
+			await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
 
 			// ADP two-phase write (plan 19.2): encrypt names/coordinates AND the rgdpb binary
 			// payload now that the identity pk (an AAD component) exists, then persist the
@@ -324,13 +354,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (protectedWrite.IsProtected)
 				saved = await _callsService.SaveCallAttachmentAsync(saved, cancellationToken);
 
+			return SavedFileResult(result, call.DepartmentId, saved.CallAttachmentId);
+		}
 
-			result.Id = saved.CallAttachmentId.ToString();
+		private ActionResult<SaveCallFileResult> SavedFileResult(SaveCallFileResult result, int departmentId, int callAttachmentId)
+		{
+			result.Id = callAttachmentId.ToString();
 			result.PageSize = 0;
 			result.Status = ResponseHelper.Created;
 			ResponseHelper.PopulateV4ResponseData(result);
 
-			return CreatedAtAction(nameof(GetFile), new { departmentId = call.DepartmentId, id = saved.CallAttachmentId }, result);
+			return CreatedAtAction(nameof(GetFile), new { departmentId, id = callAttachmentId }, result);
 		}
 
 		/// <summary>

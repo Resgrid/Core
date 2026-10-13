@@ -107,6 +107,7 @@
   <data name="Activate" xml:space="preserve"><value>Activate</value></data>
   <data name="ActivationBlocked" xml:space="preserve"><value>Activation is blocked</value></data>
   <data name="NotActivatedNotice" xml:space="preserve"><value>Records is enabled for this department but has not been activated yet. A department administrator must activate it before records can be created.</value></data>
+  <data name="RecordsModuleNotEnabled" xml:space="preserve"><value>{0}: this Records module is not enabled for the department.</value></data>
   <data name="ActivatedOn" xml:space="preserve"><value>Records activated on</value></data>
   <data name="SettingsHeader" xml:space="preserve"><value>Records Settings</value></data>
   <data name="DefaultLifecyclePreset" xml:space="preserve"><value>Default lifecycle preset for department definitions</value></data>

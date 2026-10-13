@@ -23,6 +23,30 @@ namespace Resgrid.Model
 	}
 
 	/// <summary>
+	/// Thrown when a NERIS action is asked for while the department has NERIS workflows turned off (setting 111). User-facing:
+	/// the message is reported to the user and never sent to Sentry.
+	/// </summary>
+	public class NerisWorkflowsOffException : InvalidOperationException, Resgrid.Framework.IUserFacingException
+	{
+		public NerisWorkflowsOffException()
+			: base(NerisWorkflows.OffMessage)
+		{
+		}
+	}
+
+	/// <summary>
+	/// Thrown when a NERIS submission is asked for but the department has no enabled NERIS profile. User-facing: the message is
+	/// reported to the user and never sent to Sentry.
+	/// </summary>
+	public class NerisSubmissionDisabledException : InvalidOperationException, Resgrid.Framework.IUserFacingException
+	{
+		public NerisSubmissionDisabledException()
+			: base("NERIS submission is not enabled for this department.")
+		{
+		}
+	}
+
+	/// <summary>
 	/// A department's NERIS reporting profile (registry M0166): its NERIS entity ID, environment, and integration
 	/// credential (encrypted per department through IEncryptionService). Records is useful without one (plan
 	/// decision 21); the profile only turns on submission.

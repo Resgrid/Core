@@ -171,6 +171,17 @@ namespace Resgrid.Providers.Messaging
 
 		private static string NullIfWhiteSpace(string value) => string.IsNullOrWhiteSpace(value) ? null : value;
 
+		/// <summary>
+		/// Every Novu call goes through the shared retry (see <see cref="NovuRequestRetry"/>), with each retried
+		/// attempt logged as a warning naming what was being sent. <paramref name="send"/> must build a fresh
+		/// request each call.
+		/// </summary>
+		private static Task<NovuRequestResult> SendWithRetryAsync(Func<Task<HttpResponseMessage>> send, string operation)
+		{
+			return NovuRequestRetry.Shared.SendAsync(send,
+				(attempt, failure) => Logging.LogWarning($"Novu {operation} attempt {attempt} failed ({failure}); retrying."));
+		}
+
 		private async Task<bool> CreateSubscriber(string id, int departmentId, string email, string firstName, string lastName, List<AdditionalData> data)
 		{
 			try
@@ -206,21 +217,24 @@ namespace Resgrid.Providers.Messaging
 
 					string jsonContent = JsonConvert.SerializeObject(payload, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
 
-					var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+					var create = await SendWithRetryAsync(
+						() => httpClient.PostAsync(requestUrl, new StringContent(jsonContent, Encoding.UTF8, "application/json")),
+						$"subscriber create for '{id}'");
 
-					var response = await httpClient.PostAsync(requestUrl, content);
+					using var response = create.Response;
 
 					// A rejected create left the subscriber missing entirely, and every later credential
 					// write and trigger against it fails for a reason that looks unrelated. Only the 409 is
 					// expected: re-registering a device re-runs this, and Novu answers an already-present
-					// subscriber with a conflict, which is the steady state rather than a fault.
+					// subscriber with a conflict, which is the steady state rather than a fault. That also
+					// covers a retry after an attempt that created the subscriber but lost its answer.
 					if (!response.IsSuccessStatusCode)
 					{
 						if (response.StatusCode == HttpStatusCode.Conflict)
 							return true;
 
 						var error = await response.Content.ReadAsStringAsync();
-						Logging.LogError($"Novu subscriber create failed ({(int)response.StatusCode} {response.StatusCode}) subscriber '{id}' department {departmentId}: {DescribeErrorBody(error)}");
+						Logging.LogError($"Novu subscriber create failed ({(int)response.StatusCode} {response.StatusCode}) after {create.Attempts} attempt(s) subscriber '{id}' department {departmentId}: {DescribeErrorBody(error)}");
 
 						return false;
 					}
@@ -230,7 +244,7 @@ namespace Resgrid.Providers.Messaging
 			}
 			catch (Exception e)
 			{
-				Logging.LogException(e, "Failed to create novu subscriber");
+				Logging.LogException(e, $"Failed to create novu subscriber '{id}'");
 				return false;
 			}
 		}
@@ -275,6 +289,115 @@ namespace Resgrid.Providers.Messaging
 			return await CreateSubscriber($"{code}_Unit_{unitId}", departmentId, $"{code}_Unit_{unitId}@units.resgrid.net", unitName, "", data);
 		}
 
+		public async Task<bool> DeleteUnitSubscriber(int unitId, string code)
+		{
+			return await DeleteSubscriber($"{code}_Unit_{unitId}");
+		}
+
+		public async Task<bool> DeleteUserSubscriber(string userId, string code)
+		{
+			return await DeleteSubscriber($"{code}_User_{userId}");
+		}
+
+		public async Task<bool> DeleteICUserSubscriber(string userId, string code)
+		{
+			return await DeleteSubscriber($"{code}_IC_User_{userId}");
+		}
+
+		public async Task<List<string>?> ListAllSubscriberIdsAsync(CancellationToken cancellationToken = default)
+		{
+			// Novu's own page size cap.
+			const int limit = 100;
+			var ids = new List<string>();
+
+			try
+			{
+				using (var client = new HttpClient())
+				{
+					client.DefaultRequestHeaders.Add("Accept", "application/json");
+					client.DefaultRequestHeaders.Add("Authorization", $"ApiKey {ChatConfig.NovuSecretKey}");
+
+					for (var page = 0; ; page++)
+					{
+						cancellationToken.ThrowIfCancellationRequested();
+
+						var read = await SendWithRetryAsync(
+							() => client.GetAsync($"{ChatConfig.NovuBackendUrl}/v1/subscribers?page={page}&limit={limit}", cancellationToken),
+							$"subscriber list page {page}");
+
+						using var response = read.Response;
+						var body = await response.Content.ReadAsStringAsync(cancellationToken);
+
+						if (!response.IsSuccessStatusCode)
+						{
+							Logging.LogError($"Novu subscriber list failed ({(int)response.StatusCode} {response.StatusCode}) on page {page}: {DescribeErrorBody(body)}");
+							return null;
+						}
+
+						var (pageIds, hasMore) = NovuSubscriberIds.ReadPage(body, limit);
+						if (pageIds == null)
+						{
+							Logging.LogError($"Novu subscriber list page {page} came back in an unrecognized shape ({body.Length} chars).");
+							return null;
+						}
+
+						ids.AddRange(pageIds);
+
+						if (!hasMore || pageIds.Count == 0)
+							return ids;
+					}
+				}
+			}
+			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+			{
+				throw;
+			}
+			catch (Exception e)
+			{
+				Logging.LogException(e, "Failed to list novu subscribers");
+				return null;
+			}
+		}
+
+		/// <summary>
+		/// Removes the subscriber and, with it, every device token on its native and web channels. One that never
+		/// existed (or is already gone) counts as removed.
+		/// </summary>
+		private async Task<bool> DeleteSubscriber(string subscriberId)
+		{
+			// A deployment without Novu has no subscribers to remove.
+			if (string.IsNullOrWhiteSpace(ChatConfig.NovuSecretKey))
+				return true;
+
+			try
+			{
+				using (var client = new HttpClient())
+				{
+					client.DefaultRequestHeaders.Add("Accept", "application/json");
+					client.DefaultRequestHeaders.Add("Authorization", $"ApiKey {ChatConfig.NovuSecretKey}");
+
+					var delete = await SendWithRetryAsync(
+						() => client.DeleteAsync($"{ChatConfig.NovuBackendUrl}/v1/subscribers/{Uri.EscapeDataString(subscriberId)}"),
+						$"subscriber delete for '{subscriberId}'");
+
+					using var response = delete.Response;
+
+					if (response.StatusCode == HttpStatusCode.NotFound || NovuRequestRetry.IsAccepted(delete))
+						return true;
+
+					var error = await response.Content.ReadAsStringAsync();
+					Logging.LogError($"Novu subscriber delete failed ({(int)response.StatusCode} {response.StatusCode}) after {delete.Attempts} attempt(s) subscriber '{subscriberId}': {DescribeErrorBody(error)}");
+
+					return false;
+				}
+			}
+			catch (Exception e)
+			{
+				Logging.LogException(e, $"Failed to delete novu subscriber '{subscriberId}'");
+				return false;
+			}
+		}
+
 		private async Task<bool> UpdateSubscriberFcm(string id, string token, string fcmId)
 		{
 			try
@@ -282,10 +405,9 @@ namespace Resgrid.Providers.Messaging
 				using (HttpClient client = new HttpClient())
 				{
 					var url = $"{ChatConfig.NovuBackendUrl}/v1/subscribers/{id}/credentials";
-					var request = new HttpRequestMessage(HttpMethod.Put, url);
-					request.Headers.Add("Accept", "application/json");
-					request.Headers.Add("idempotency-key", Guid.NewGuid().ToString());
-					request.Headers.Add("Authorization", $"ApiKey {ChatConfig.NovuSecretKey}");
+					client.DefaultRequestHeaders.Add("Accept", "application/json");
+					client.DefaultRequestHeaders.Add("idempotency-key", Guid.NewGuid().ToString());
+					client.DefaultRequestHeaders.Add("Authorization", $"ApiKey {ChatConfig.NovuSecretKey}");
 
 					var payload = new
 					{
@@ -298,15 +420,18 @@ namespace Resgrid.Providers.Messaging
 					};
 					string jsonContent = JsonConvert.SerializeObject(payload, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
 
-					request.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-					HttpResponseMessage response = await client.SendAsync(request);
+					var write = await SendWithRetryAsync(
+						() => client.PutAsync(url, new StringContent(jsonContent, Encoding.UTF8, "application/json")),
+						$"FCM credential write for subscriber '{id}'");
+
+					using var response = write.Response;
 
 					// An unknown integrationIdentifier, an inactive integration or a malformed token all come
 					// back as a 4xx here. Swallowing that left the subscriber with no push channel and no clue.
-					if (!response.IsSuccessStatusCode)
+					if (!NovuRequestRetry.IsAccepted(write))
 					{
 						var error = await response.Content.ReadAsStringAsync();
-						Logging.LogError($"Novu FCM credential write failed ({(int)response.StatusCode} {response.StatusCode}) subscriber '{id}' integration '{fcmId}': {DescribeErrorBody(error)}");
+						Logging.LogError($"Novu FCM credential write failed ({(int)response.StatusCode} {response.StatusCode}) after {write.Attempts} attempt(s) subscriber '{id}' integration '{fcmId}': {DescribeErrorBody(error)}");
 
 						return false;
 					}
@@ -316,7 +441,7 @@ namespace Resgrid.Providers.Messaging
 			}
 			catch (Exception e)
 			{
-				Logging.LogException(e, "Failed to add fcm token to novu subscriber");
+				Logging.LogException(e, $"Failed to add fcm token to novu subscriber '{id}'");
 				return false;
 			}
 		}
@@ -328,10 +453,9 @@ namespace Resgrid.Providers.Messaging
 				using (HttpClient client = new HttpClient())
 				{
 					var url = $"{ChatConfig.NovuBackendUrl}/v1/subscribers/{id}/credentials";
-					var request = new HttpRequestMessage(HttpMethod.Put, url);
-					request.Headers.Add("Accept", "application/json");
-					request.Headers.Add("idempotency-key", Guid.NewGuid().ToString());
-					request.Headers.Add("Authorization", $"ApiKey {ChatConfig.NovuSecretKey}");
+					client.DefaultRequestHeaders.Add("Accept", "application/json");
+					client.DefaultRequestHeaders.Add("idempotency-key", Guid.NewGuid().ToString());
+					client.DefaultRequestHeaders.Add("Authorization", $"ApiKey {ChatConfig.NovuSecretKey}");
 
 					string jsonContent = string.Empty;
 					if (!string.IsNullOrWhiteSpace(apnsId))
@@ -369,13 +493,16 @@ namespace Resgrid.Providers.Messaging
 						return false;
 					}
 
-					request.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-					HttpResponseMessage response = await client.SendAsync(request);
+					var write = await SendWithRetryAsync(
+						() => client.PutAsync(url, new StringContent(jsonContent, Encoding.UTF8, "application/json")),
+						$"APNS credential write for subscriber '{id}'");
 
-					if (!response.IsSuccessStatusCode)
+					using var response = write.Response;
+
+					if (!NovuRequestRetry.IsAccepted(write))
 					{
 						var error = await response.Content.ReadAsStringAsync();
-						Logging.LogError($"Novu APNS credential write failed ({(int)response.StatusCode} {response.StatusCode}) subscriber '{id}' integration '{apnsId ?? fcmId}': {DescribeErrorBody(error)}");
+						Logging.LogError($"Novu APNS credential write failed ({(int)response.StatusCode} {response.StatusCode}) after {write.Attempts} attempt(s) subscriber '{id}' integration '{apnsId ?? fcmId}': {DescribeErrorBody(error)}");
 
 						return false;
 					}
@@ -385,32 +512,182 @@ namespace Resgrid.Providers.Messaging
 			}
 			catch (Exception e)
 			{
-				Logging.LogException(e, "Failed to add apns token to novu subscriber");
+				Logging.LogException(e, $"Failed to add apns token to novu subscriber '{id}'");
 				return false;
 			}
 		}
 
-		public async Task<bool> DeleteMessage(string messageId)
+		#region Inbox
+
+		public async Task<NovuInboxDeleteResult> DeleteUserInboxMessage(string userId, string code, string messageId)
+		{
+			// The Responder and Dispatch apps share the user subscriber and the IC app has its own. The request
+			// doesn't say which app sent it, so the IC inbox is only tried when the message isn't in the user's.
+			var result = await DeleteInboxMessage($"{code}_User_{userId}", messageId);
+			if (result != NovuInboxDeleteResult.NotFound)
+				return result;
+
+			return await DeleteInboxMessage($"{code}_IC_User_{userId}", messageId);
+		}
+
+		public Task<NovuInboxDeleteResult> DeleteUnitInboxMessage(int unitId, string code, string messageId)
+		{
+			return DeleteInboxMessage($"{code}_Unit_{unitId}", messageId);
+		}
+
+		/// <summary>
+		/// Deletes through Novu's inbox API signed in as the subscriber, never through the environment-wide
+		/// DELETE /v1/messages/{id}: that deletes any message in the environment for whoever knows its id, and
+		/// message ids are ObjectIds, so a user's own ids lead straight to their neighbours'. An inbox session is
+		/// scoped to one subscriber, so Novu itself answers 404 for a message in anyone else's inbox.
+		/// </summary>
+		private async Task<NovuInboxDeleteResult> DeleteInboxMessage(string subscriberId, string messageId)
 		{
 			try
 			{
-				using (var httpClient = new HttpClient())
+				using (var client = new HttpClient())
 				{
-					var requestUrl = $"{ChatConfig.NovuBackendUrl}/v1/messages/{messageId}";
-					httpClient.DefaultRequestHeaders.Add("Authorization", $"ApiKey {ChatConfig.NovuSecretKey}");
-					httpClient.DefaultRequestHeaders.Add("idempotency-key", Guid.NewGuid().ToString());
+					// Opening an inbox session creates the subscriber when it doesn't exist, so check first: a delete
+					// must not leave an IC subscriber behind for a user who never installed the IC app.
+					var lookup = await SendWithRetryAsync(() =>
+						{
+							var request = new HttpRequestMessage(HttpMethod.Get, $"{ChatConfig.NovuBackendUrl}/v1/subscribers/{Uri.EscapeDataString(subscriberId)}");
+							request.Headers.Add("Authorization", $"ApiKey {ChatConfig.NovuSecretKey}");
+							return client.SendAsync(request);
+						},
+						$"subscriber read for '{subscriberId}'");
 
-					var response = await httpClient.DeleteAsync(requestUrl);
+					using (var response = lookup.Response)
+					{
+						if (response.StatusCode == HttpStatusCode.NotFound)
+							return NovuInboxDeleteResult.NotFound;
 
-					return response.IsSuccessStatusCode;
+						if (!response.IsSuccessStatusCode)
+						{
+							var error = await response.Content.ReadAsStringAsync();
+							Logging.LogError($"Novu subscriber read failed ({(int)response.StatusCode} {response.StatusCode}) after {lookup.Attempts} attempt(s) subscriber '{subscriberId}' while deleting inbox message '{messageId}': {DescribeErrorBody(error)}");
+
+							return NovuInboxDeleteResult.Failed;
+						}
+					}
+
+					var token = await OpenInboxSession(client, subscriberId);
+					if (token == null)
+						return NovuInboxDeleteResult.Failed;
+
+					var delete = await SendWithRetryAsync(() =>
+						{
+							var request = new HttpRequestMessage(HttpMethod.Delete, $"{ChatConfig.NovuBackendUrl}/v1/inbox/notifications/{Uri.EscapeDataString(messageId)}/delete");
+							request.Headers.Add("Authorization", $"Bearer {token}");
+							return client.SendAsync(request);
+						},
+						$"inbox message delete for subscriber '{subscriberId}'");
+
+					using (var response = delete.Response)
+					{
+						if (NovuRequestRetry.IsAccepted(delete))
+							return NovuInboxDeleteResult.Deleted;
+
+						// A retry after an attempt that deleted the message but lost its answer also lands here. It is
+						// reported as not found rather than deleted: it can't be told apart from a message in someone
+						// else's inbox, and reading it as deleted would stop the IC inbox from being tried.
+						if (response.StatusCode == HttpStatusCode.NotFound)
+							return NovuInboxDeleteResult.NotFound;
+
+						var error = await response.Content.ReadAsStringAsync();
+						Logging.LogError($"Novu inbox message delete failed ({(int)response.StatusCode} {response.StatusCode}) after {delete.Attempts} attempt(s) subscriber '{subscriberId}' message '{messageId}': {DescribeErrorBody(error)}");
+
+						return NovuInboxDeleteResult.Failed;
+					}
 				}
 			}
 			catch (Exception e)
 			{
-				Logging.LogException(e, "Failed to delete novu message");
-				return false;
+				Logging.LogException(e, $"Failed to delete inbox message '{messageId}' for novu subscriber '{subscriberId}'");
+				return NovuInboxDeleteResult.Failed;
 			}
 		}
+
+		/// <summary>
+		/// Opens an inbox session as the subscriber, the same request the apps' Novu SDK makes, and returns its
+		/// bearer token.
+		/// </summary>
+		private async Task<string?> OpenInboxSession(HttpClient client, string subscriberId)
+		{
+			var payload = new
+			{
+				applicationIdentifier = ChatConfig.NovuApplicationId,
+				subscriberId = subscriberId,
+				// Only checked once HMAC is switched on for the environment; ignored until then.
+				subscriberHash = SubscriberHash(subscriberId)
+			};
+
+			var jsonContent = JsonConvert.SerializeObject(payload);
+
+			var session = await SendWithRetryAsync(
+				() => client.PostAsync($"{ChatConfig.NovuBackendUrl}/v1/inbox/session", new StringContent(jsonContent, Encoding.UTF8, "application/json")),
+				$"inbox session for subscriber '{subscriberId}'");
+
+			using var response = session.Response;
+			var body = await response.Content.ReadAsStringAsync();
+
+			if (!response.IsSuccessStatusCode)
+			{
+				Logging.LogError($"Novu inbox session failed ({(int)response.StatusCode} {response.StatusCode}) after {session.Attempts} attempt(s) subscriber '{subscriberId}': {DescribeErrorBody(body)}");
+				return null;
+			}
+
+			string? token = null;
+			try
+			{
+				var parsed = JToken.Parse(body);
+				token = (parsed.SelectToken("data.token") ?? parsed.SelectToken("token"))?.ToString();
+			}
+			catch (JsonException)
+			{
+			}
+
+			if (string.IsNullOrWhiteSpace(token))
+			{
+				Logging.LogError($"Novu inbox session for subscriber '{subscriberId}' came back without a token ({body.Length} chars).");
+				return null;
+			}
+
+			return token;
+		}
+
+		public string? GetUserSubscriberHash(string userId, string code)
+		{
+			return SubscriberHashIfConfigured($"{code}_User_{userId}");
+		}
+
+		public string? GetICUserSubscriberHash(string userId, string code)
+		{
+			return SubscriberHashIfConfigured($"{code}_IC_User_{userId}");
+		}
+
+		public string? GetUnitSubscriberHash(int unitId, string code)
+		{
+			return SubscriberHashIfConfigured($"{code}_Unit_{unitId}");
+		}
+
+		private static string? SubscriberHashIfConfigured(string subscriberId)
+		{
+			return string.IsNullOrWhiteSpace(ChatConfig.NovuSecretKey) ? null : SubscriberHash(subscriberId);
+		}
+
+		/// <summary>
+		/// What Novu checks a session against when HMAC is enabled: HMAC-SHA256 of the subscriber id, keyed with
+		/// the environment's secret key, as lowercase hex (Novu's createHash). Holding it is what lets a client
+		/// open that subscriber's inbox, so it is only ever handed to the subscriber's owner.
+		/// </summary>
+		private static string SubscriberHash(string subscriberId)
+		{
+			using var hmac = new System.Security.Cryptography.HMACSHA256(Encoding.UTF8.GetBytes(ChatConfig.NovuSecretKey ?? string.Empty));
+			return Convert.ToHexString(hmac.ComputeHash(Encoding.UTF8.GetBytes(subscriberId))).ToLowerInvariant();
+		}
+
+		#endregion Inbox
 
 		public async Task<bool> UpdateUserSubscriberFcm(string userId, string code, string token)
 		{
@@ -446,9 +723,9 @@ namespace Resgrid.Providers.Messaging
 		#region Web Push (browser and desktop)
 
 		/// <summary>Integration identifier → the integration ids Novu answered with, and when.</summary>
-		private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, (HashSet<string> Ids, DateTime FetchedOn)> WebPushIntegrationIds = new();
+		private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, (HashSet<string> Ids, DateTime FetchedOn)> IntegrationIdsByIdentifier = new();
 
-		private static readonly TimeSpan WebPushIntegrationIdLifetime = TimeSpan.FromHours(1);
+		private static readonly TimeSpan IntegrationIdLifetime = TimeSpan.FromHours(1);
 
 		/// <summary>
 		/// One writer per subscriber within this process. The token list is read, changed and written back,
@@ -456,50 +733,104 @@ namespace Resgrid.Providers.Messaging
 		/// each write a list missing the other's token. Across processes the loser is restored the next
 		/// time its client refreshes its registration.
 		/// </summary>
-		private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, SemaphoreSlim> WebPushSubscriberLocks = new();
+		private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, SemaphoreSlim> SubscriberChannelLocks = new();
 
 		public async Task<bool> AddUserSubscriberWebPushToken(string userId, string code, string token)
 		{
-			return await ChangeWebPushTokens($"{code}_User_{userId}", ChatConfig.NovuResponderWebFcmProviderId, token, true);
+			return await ChangeChannelTokens($"{code}_User_{userId}", "fcm", ChatConfig.NovuResponderWebFcmProviderId, token, true, "web push");
 		}
 
 		public async Task<bool> RemoveUserSubscriberWebPushToken(string userId, string code, string token)
 		{
-			return await ChangeWebPushTokens($"{code}_User_{userId}", ChatConfig.NovuResponderWebFcmProviderId, token, false);
+			return await ChangeChannelTokens($"{code}_User_{userId}", "fcm", ChatConfig.NovuResponderWebFcmProviderId, token, false, "web push");
 		}
 
 		public async Task<bool> AddICUserSubscriberWebPushToken(string userId, string code, string token)
 		{
-			return await ChangeWebPushTokens($"{code}_IC_User_{userId}", ChatConfig.NovuICWebFcmProviderId, token, true);
+			return await ChangeChannelTokens($"{code}_IC_User_{userId}", "fcm", ChatConfig.NovuICWebFcmProviderId, token, true, "web push");
 		}
 
 		public async Task<bool> RemoveICUserSubscriberWebPushToken(string userId, string code, string token)
 		{
-			return await ChangeWebPushTokens($"{code}_IC_User_{userId}", ChatConfig.NovuICWebFcmProviderId, token, false);
+			return await ChangeChannelTokens($"{code}_IC_User_{userId}", "fcm", ChatConfig.NovuICWebFcmProviderId, token, false, "web push");
 		}
 
 		public async Task<bool> AddUnitSubscriberWebPushToken(int unitId, string code, string token)
 		{
-			return await ChangeWebPushTokens($"{code}_Unit_{unitId}", ChatConfig.NovuUnitWebFcmProviderId, token, true);
+			return await ChangeChannelTokens($"{code}_Unit_{unitId}", "fcm", ChatConfig.NovuUnitWebFcmProviderId, token, true, "web push");
 		}
 
 		public async Task<bool> RemoveUnitSubscriberWebPushToken(int unitId, string code, string token)
 		{
-			return await ChangeWebPushTokens($"{code}_Unit_{unitId}", ChatConfig.NovuUnitWebFcmProviderId, token, false);
+			return await ChangeChannelTokens($"{code}_Unit_{unitId}", "fcm", ChatConfig.NovuUnitWebFcmProviderId, token, false, "web push");
 		}
 
-		private async Task<bool> ChangeWebPushTokens(string subscriberId, string integrationIdentifier, string token, bool add)
+		#endregion Web Push (browser and desktop)
+
+		#region Native push (iOS and Android)
+
+		public async Task<bool> RemoveUserSubscriberNativeToken(string userId, string code, string token)
+		{
+			return await RemoveNativeToken($"{code}_User_{userId}", token,
+				("fcm", ChatConfig.NovuResponderFcmProviderId), ("apns", ChatConfig.NovuResponderApnsProviderId));
+		}
+
+		public async Task<bool> RemoveICUserSubscriberNativeToken(string userId, string code, string token)
+		{
+			return await RemoveNativeToken($"{code}_IC_User_{userId}", token,
+				("fcm", ChatConfig.NovuICFcmProviderId), ("apns", ChatConfig.NovuICApnsProviderId));
+		}
+
+		public async Task<bool> RemoveUnitSubscriberNativeToken(int unitId, string code, string token)
+		{
+			// Unit iOS tokens are written to the unit FCM integration (see UpdateUnitSubscriberApns); the APNs
+			// integration is cleaned too in case an older registration went there.
+			return await RemoveNativeToken($"{code}_Unit_{unitId}", token,
+				("fcm", ChatConfig.NovuUnitFcmProviderId), ("apns", ChatConfig.NovuUnitApnsProviderId));
+		}
+
+		/// <summary>
+		/// Takes the token off each of the subscriber's native channels. A native registration replaces the
+		/// channel with its own token, so the channel holds whichever device registered last: only this token
+		/// is removed, and a channel now holding another device's token is left alone. The channel is read,
+		/// filtered and written back like the web channel and never deleted by provider, because a provider-wide
+		/// credential delete would also take the web channel, which is FCM too.
+		/// </summary>
+		/// <returns>True when the token is on none of the channels afterwards.</returns>
+		private async Task<bool> RemoveNativeToken(string subscriberId, string token, params (string ProviderId, string Identifier)[] channels)
+		{
+			var removed = true;
+
+			foreach (var (providerId, identifier) in channels)
+			{
+				// An integration that is not configured never had a token written to it.
+				if (string.IsNullOrWhiteSpace(identifier))
+					continue;
+
+				removed &= await ChangeChannelTokens(subscriberId, providerId, identifier, token, false, "native push");
+			}
+
+			return removed;
+		}
+
+		#endregion Native push (iOS and Android)
+
+		/// <summary>
+		/// Adds a token to, or removes it from, the subscriber's channel for one integration. The PUT replaces the
+		/// channel's token list (Novu's only way to drop a token), so the list is rebuilt from what the channel holds.
+		/// </summary>
+		private async Task<bool> ChangeChannelTokens(string subscriberId, string providerId, string integrationIdentifier, string token, bool add, string channel)
 		{
 			if (string.IsNullOrWhiteSpace(token))
 				return false;
 
 			if (string.IsNullOrWhiteSpace(integrationIdentifier))
 			{
-				Logging.LogWarning($"Novu web push token {(add ? "add" : "removal")} skipped for subscriber '{subscriberId}': no web FCM integration is configured.");
+				Logging.LogWarning($"Novu {channel} token {(add ? "add" : "removal")} skipped for subscriber '{subscriberId}': no integration is configured.");
 				return false;
 			}
 
-			var subscriberLock = WebPushSubscriberLocks.GetOrAdd(subscriberId, _ => new SemaphoreSlim(1, 1));
+			var subscriberLock = SubscriberChannelLocks.GetOrAdd(subscriberId, _ => new SemaphoreSlim(1, 1));
 			await subscriberLock.WaitAsync();
 
 			try
@@ -509,13 +840,23 @@ namespace Resgrid.Providers.Messaging
 					client.DefaultRequestHeaders.Add("Accept", "application/json");
 					client.DefaultRequestHeaders.Add("Authorization", $"ApiKey {ChatConfig.NovuSecretKey}");
 
-					var integrationIds = await GetWebPushIntegrationIds(client, integrationIdentifier);
+					var integrationIds = await GetIntegrationIds(client, integrationIdentifier, channel);
 					if (integrationIds == null)
 						return false;
 
+					if (integrationIds.Count == 0)
+					{
+						// Nothing can be on a channel whose integration does not exist.
+						if (!add)
+							return true;
+
+						Logging.LogError($"Novu has no integration with identifier '{integrationIdentifier}'; {channel} cannot be registered until it is created (for web push, an FCM integration on the Firebase project the web apps use).");
+						return false;
+					}
+
 					// A list that could not be read is never written over: the PUT below replaces the channel's
-					// tokens, and guessing would sign every other browser out of push.
-					var existing = await GetSubscriberChannelTokens(client, subscriberId, integrationIds);
+					// tokens, and guessing would sign every other device on it out of push.
+					var existing = await GetSubscriberChannelTokens(client, subscriberId, integrationIds, channel);
 					if (existing == null)
 						return false;
 
@@ -526,12 +867,12 @@ namespace Resgrid.Providers.Messaging
 					if (updated.SequenceEqual(existing))
 						return true;
 
-					using var request = new HttpRequestMessage(HttpMethod.Put, $"{ChatConfig.NovuBackendUrl}/v1/subscribers/{subscriberId}/credentials");
-					request.Headers.Add("idempotency-key", Guid.NewGuid().ToString());
+					var url = $"{ChatConfig.NovuBackendUrl}/v1/subscribers/{subscriberId}/credentials";
+					var idempotencyKey = Guid.NewGuid().ToString();
 
 					var payload = new
 					{
-						providerId = "fcm",
+						providerId = providerId,
 						credentials = new
 						{
 							deviceTokens = updated.ToArray()
@@ -539,13 +880,24 @@ namespace Resgrid.Providers.Messaging
 						integrationIdentifier = integrationIdentifier
 					};
 
-					request.Content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
-					using var response = await client.SendAsync(request);
+					var jsonContent = JsonConvert.SerializeObject(payload);
 
-					if (!response.IsSuccessStatusCode)
+					// The key goes on each request rather than the client: the GETs above share this client.
+					var write = await SendWithRetryAsync(() =>
+						{
+							var request = new HttpRequestMessage(HttpMethod.Put, url);
+							request.Headers.Add("idempotency-key", idempotencyKey);
+							request.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+							return client.SendAsync(request);
+						},
+						$"{channel} credential write for subscriber '{subscriberId}'");
+
+					using var response = write.Response;
+
+					if (!NovuRequestRetry.IsAccepted(write))
 					{
 						var error = await response.Content.ReadAsStringAsync();
-						Logging.LogError($"Novu web push credential write failed ({(int)response.StatusCode} {response.StatusCode}) subscriber '{subscriberId}' integration '{integrationIdentifier}' ({(add ? "add" : "removal")}, {updated.Count} tokens): {DescribeErrorBody(error)}");
+						Logging.LogError($"Novu {channel} credential write failed ({(int)response.StatusCode} {response.StatusCode}) after {write.Attempts} attempt(s) subscriber '{subscriberId}' integration '{integrationIdentifier}' ({(add ? "add" : "removal")}, {updated.Count} tokens): {DescribeErrorBody(error)}");
 
 						return false;
 					}
@@ -555,7 +907,7 @@ namespace Resgrid.Providers.Messaging
 			}
 			catch (Exception e)
 			{
-				Logging.LogException(e, $"Failed to {(add ? "add" : "remove")} a web push token on novu subscriber '{subscriberId}'");
+				Logging.LogException(e, $"Failed to {(add ? "add" : "remove")} a {channel} token on novu subscriber '{subscriberId}'");
 				return false;
 			}
 			finally
@@ -564,41 +916,44 @@ namespace Resgrid.Providers.Messaging
 			}
 		}
 
-		private async Task<HashSet<string>?> GetWebPushIntegrationIds(HttpClient client, string integrationIdentifier)
+		/// <returns>The ids of the integrations carrying the identifier; empty when Novu has none; null when the list could not be read.</returns>
+		private async Task<HashSet<string>?> GetIntegrationIds(HttpClient client, string integrationIdentifier, string channel)
 		{
-			if (WebPushIntegrationIds.TryGetValue(integrationIdentifier, out var cached) && cached.Ids.Count > 0 &&
-				DateTime.UtcNow - cached.FetchedOn < WebPushIntegrationIdLifetime)
+			if (IntegrationIdsByIdentifier.TryGetValue(integrationIdentifier, out var cached) && cached.Ids.Count > 0 &&
+				DateTime.UtcNow - cached.FetchedOn < IntegrationIdLifetime)
 				return cached.Ids;
 
-			var response = await client.GetAsync($"{ChatConfig.NovuBackendUrl}/v1/integrations");
+			var read = await SendWithRetryAsync(() => client.GetAsync($"{ChatConfig.NovuBackendUrl}/v1/integrations"),
+				$"integration list for {channel} integration '{integrationIdentifier}'");
+
+			using var response = read.Response;
 			var body = await response.Content.ReadAsStringAsync();
 
 			if (!response.IsSuccessStatusCode)
 			{
-				Logging.LogError($"Novu integration list failed ({(int)response.StatusCode} {response.StatusCode}) looking up web push integration '{integrationIdentifier}': {DescribeErrorBody(body)}");
+				Logging.LogError($"Novu integration list failed ({(int)response.StatusCode} {response.StatusCode}) looking up {channel} integration '{integrationIdentifier}': {DescribeErrorBody(body)}");
 				return null;
 			}
 
 			var ids = NovuWebPushTokens.FindIntegrationIds(body, integrationIdentifier);
 			if (ids == null)
 			{
-				Logging.LogError($"Novu integration list for web push integration '{integrationIdentifier}' came back in an unrecognized shape ({body.Length} chars).");
+				Logging.LogError($"Novu integration list for {channel} integration '{integrationIdentifier}' came back in an unrecognized shape ({body.Length} chars).");
 				return null;
 			}
 
-			if (ids.Count == 0)
-			{
-				Logging.LogError($"Novu has no integration with identifier '{integrationIdentifier}'; browser and desktop push cannot be registered until it is created (an FCM integration on the Firebase project the web apps use).");
-				return null;
-			}
+			if (ids.Count > 0)
+				IntegrationIdsByIdentifier[integrationIdentifier] = (ids, DateTime.UtcNow);
 
-			WebPushIntegrationIds[integrationIdentifier] = (ids, DateTime.UtcNow);
 			return ids;
 		}
 
-		private async Task<List<string>?> GetSubscriberChannelTokens(HttpClient client, string subscriberId, ISet<string> integrationIds)
+		private async Task<List<string>?> GetSubscriberChannelTokens(HttpClient client, string subscriberId, ISet<string> integrationIds, string channel)
 		{
-			var response = await client.GetAsync($"{ChatConfig.NovuBackendUrl}/v1/subscribers/{subscriberId}");
+			var read = await SendWithRetryAsync(() => client.GetAsync($"{ChatConfig.NovuBackendUrl}/v1/subscribers/{subscriberId}"),
+				$"subscriber read for '{subscriberId}'");
+
+			using var response = read.Response;
 			var body = await response.Content.ReadAsStringAsync();
 
 			// No subscriber means no channel: nothing to remove, and an add creates the channel (or reports
@@ -608,22 +963,22 @@ namespace Resgrid.Providers.Messaging
 
 			if (!response.IsSuccessStatusCode)
 			{
-				Logging.LogError($"Novu subscriber read failed ({(int)response.StatusCode} {response.StatusCode}) subscriber '{subscriberId}' while changing web push tokens: {DescribeErrorBody(body)}");
+				Logging.LogError($"Novu subscriber read failed ({(int)response.StatusCode} {response.StatusCode}) subscriber '{subscriberId}' while changing {channel} tokens: {DescribeErrorBody(body)}");
 				return null;
 			}
 
 			var tokens = NovuWebPushTokens.FindChannelTokens(body, integrationIds);
 			if (tokens == null)
-				Logging.LogError($"Novu subscriber '{subscriberId}' came back in an unrecognized shape ({body.Length} chars); web push tokens left unchanged.");
+				Logging.LogError($"Novu subscriber '{subscriberId}' came back in an unrecognized shape ({body.Length} chars); {channel} tokens left unchanged.");
 
 			return tokens;
 		}
 
-		#endregion Web Push (browser and desktop)
-
 		private async Task<bool> SendNotification(string title, string body, string recipientId, string eventCode,
 			string type, bool enableCustomSounds, int count, string color, string workflowIdentifier, string sound)
 		{
+			var attempts = 0;
+
 			try
 			{
 				using (var httpClient = new HttpClient())
@@ -764,30 +1119,35 @@ namespace Resgrid.Providers.Messaging
 					};
 
 					var payloadString = JsonConvert.SerializeObject(payload);
-					var content = new StringContent(
-						payloadString,
-						Encoding.UTF8,
-						"application/json");
 
-					var result = await httpClient.PostAsync("v1/events/trigger", content);
+					// The idempotency-key header above is fixed for this client, so every retry carries the
+					// same key as the first attempt.
+					var trigger = await SendWithRetryAsync(
+						() =>
+						{
+							attempts++;
+							return httpClient.PostAsync("v1/events/trigger", new StringContent(payloadString, Encoding.UTF8, "application/json"));
+						},
+						$"trigger for workflow '{workflowIdentifier}' subscriber '{recipientId}' event '{eventCode}'");
 
-					// A rejected trigger (unknown workflow identifier, unknown subscriber, bad payload) is a
-					// 4xx with a body explaining why. Returning the bare bool made every one of those silent,
-					// so a workflow that was never created in Novu looked exactly like a delivered push.
-					if (!result.IsSuccessStatusCode)
+					using (var result = trigger.Response)
 					{
+						if (NovuRequestRetry.IsAccepted(trigger))
+							return true;
+
+						// A rejected trigger (unknown workflow identifier, unknown subscriber, bad payload) is a
+						// 4xx with a body explaining why. Returning the bare bool made every one of those silent,
+						// so a workflow that was never created in Novu looked exactly like a delivered push.
 						var error = await result.Content.ReadAsStringAsync();
-						Logging.LogError($"Novu trigger failed ({(int)result.StatusCode} {result.StatusCode}) workflow '{workflowIdentifier}' subscriber '{recipientId}' event '{eventCode}': {DescribeErrorBody(error)}");
+						Logging.LogError($"Novu trigger failed ({(int)result.StatusCode} {result.StatusCode}) after {trigger.Attempts} attempt(s) workflow '{workflowIdentifier}' subscriber '{recipientId}' event '{eventCode}': {DescribeErrorBody(error)}");
 
 						return false;
 					}
-
-					return true;
 				}
 			}
 			catch (Exception e)
 			{
-				Logging.LogException(e, "Failed to send novu notification");
+				Logging.LogException(e, $"Failed to send novu notification after {attempts} attempt(s) workflow '{workflowIdentifier}' subscriber '{recipientId}' event '{eventCode}'");
 				return false;
 			}
 		}

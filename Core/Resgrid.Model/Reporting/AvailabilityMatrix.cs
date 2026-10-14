@@ -92,6 +92,23 @@ namespace Resgrid.Model.Reporting
 			{ (int)UnitStateTypes.Enroute,      AvailabilityClass.Committed },
 		};
 
+		// Canonical staffing base type (StaffingBaseTypes) -> availability. Used for staffing options, built-in and custom.
+		private static readonly IReadOnlyDictionary<int, AvailabilityClass> ByStaffingBaseType = new Dictionary<int, AvailabilityClass>
+		{
+			{ (int)StaffingBaseTypes.None,        AvailabilityClass.Unknown },
+			{ (int)StaffingBaseTypes.Available,   AvailabilityClass.Available },
+			{ (int)StaffingBaseTypes.Delayed,     AvailabilityClass.Delayed },
+			{ (int)StaffingBaseTypes.Unavailable, AvailabilityClass.Unavailable },
+			{ (int)StaffingBaseTypes.Committed,   AvailabilityClass.Committed },
+			{ (int)StaffingBaseTypes.OnShift,     AvailabilityClass.Available },
+			{ (int)StaffingBaseTypes.OffDuty,     AvailabilityClass.Unavailable },
+			{ (int)StaffingBaseTypes.OnCall,      AvailabilityClass.Available },
+		};
+
+		/// <summary>Maps a staffing base type (<see cref="StaffingBaseTypes"/>) to availability.</summary>
+		public static AvailabilityClass ForStaffingBaseType(int staffingBaseType) =>
+			ByStaffingBaseType.TryGetValue(staffingBaseType, out var c) ? c : AvailabilityClass.Unknown;
+
 		/// <summary>Maps a canonical personnel base type (<see cref="ActionBaseTypes"/>) to availability.</summary>
 		public static AvailabilityClass ForPersonnelBaseType(int actionBaseType) =>
 			ByActionBaseType.TryGetValue(actionBaseType, out var c) ? c : AvailabilityClass.Unknown;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using Geocoding;
 using Geocoding.Google;
@@ -16,11 +17,8 @@ namespace Resgrid.Providers.GeoLocationProvider
 {
 	public class GeoLocationProvider : IGeoLocationProvider
 	{
-		private static string ForwardCacheKey = "FGeo_{0}";
-		private static string ReverseCacheKey = "RGeo_{0}";
-		private static string RouteCacheKey = "Route_{0}_{1}";
+		// Geocode, route and reverse what3words keys are built by GeoLocationCacheKeys.
 		private static string W3WCacheKey = "W3W_{0}";
-		private static string ReverseW3WCacheKey = "RW3W_{0}";
 		private static TimeSpan CacheLength = TimeSpan.FromDays(30);
 
 		private readonly ICacheProvider _cacheProvider;
@@ -58,7 +56,7 @@ namespace Resgrid.Providers.GeoLocationProvider
 				{
 					try
 					{
-						var addressGeo = await GetAddressFromLatLonLocationIQ(lat.ToString(), lon.ToString());
+						var addressGeo = await GetAddressFromLatLonLocationIQ(GeoLocationCacheKeys.FormatCoordinate(lat), GeoLocationCacheKeys.FormatCoordinate(lon));
 
 						if (!String.IsNullOrWhiteSpace(addressGeo))
 							address = addressGeo;
@@ -82,11 +80,14 @@ namespace Resgrid.Providers.GeoLocationProvider
 				return address;
 			}
 
-			return await _cacheProvider.RetrieveAsync<string>(string.Format(ReverseCacheKey, string.Format("{0} {1}", lat, lon).GetHashCode()), getAddressFromCords, CacheLength);
+			return await _cacheProvider.RetrieveAsync<string>(GeoLocationCacheKeys.ReverseGeocode(lat, lon), getAddressFromCords, CacheLength);
 		}
 
 		public async Task<string> GetLatLonFromAddress(string address)
 		{
+			if (string.IsNullOrWhiteSpace(address))
+				return null;
+
 			async Task<string> getCordsFromAddress()
 			{
 				string coordinates = null;
@@ -104,7 +105,7 @@ namespace Resgrid.Providers.GeoLocationProvider
 					{
 						var firstAddress = addresses.First();
 
-						coordinates = string.Format("{0},{1}", firstAddress.Coordinates.Latitude, firstAddress.Coordinates.Longitude);
+						coordinates = string.Format(CultureInfo.InvariantCulture, "{0},{1}", firstAddress.Coordinates.Latitude, firstAddress.Coordinates.Longitude);
 					}
 				}
 				catch (Exception ex) { var test = ex; /* Don't report on GeoLocation failures */ }
@@ -116,7 +117,7 @@ namespace Resgrid.Providers.GeoLocationProvider
 						var coords = await GetLatLonFromAddressLocationIQ(address);
 
 						if (coords != null)
-							coordinates = string.Format("{0},{1}", coords.Latitude, coords.Longitude);
+							coordinates = string.Format(CultureInfo.InvariantCulture, "{0},{1}", coords.Latitude, coords.Longitude);
 					}
 					catch { /* Don't report on GeoLocation failures */ }
 				}
@@ -130,7 +131,7 @@ namespace Resgrid.Providers.GeoLocationProvider
 						var addresses = await bingGeoCoder.GeocodeAsync(address);
 
 						if (addresses != null && addresses.Count() > 0)
-							coordinates = string.Format("{0},{1}", addresses.First().Coordinates.Latitude, addresses.First().Coordinates.Longitude);
+							coordinates = string.Format(CultureInfo.InvariantCulture, "{0},{1}", addresses.First().Coordinates.Latitude, addresses.First().Coordinates.Longitude);
 					}
 					catch { /* Don't report on GeoLocation failures */ }
 				}
@@ -138,7 +139,7 @@ namespace Resgrid.Providers.GeoLocationProvider
 				return coordinates;
 			}
 
-			return await _cacheProvider.RetrieveAsync<string>(string.Format(ForwardCacheKey, address.GetHashCode()), getCordsFromAddress, CacheLength);
+			return await _cacheProvider.RetrieveAsync<string>(GeoLocationCacheKeys.ForwardGeocode(address), getCordsFromAddress, CacheLength);
 		}
 
 		public async Task<RouteInformation> GetRoute(double startLat, double startLon, double endLat, double endLon)
@@ -151,8 +152,8 @@ namespace Resgrid.Providers.GeoLocationProvider
 				{
 					DirectionsRequest directionsRequest = new DirectionsRequest()
 					{
-						Origin = string.Format("{0},{1}", startLat, startLon),
-						Destination = string.Format("{0},{1}", endLat, endLon),
+						Origin = string.Format(CultureInfo.InvariantCulture, "{0},{1}", startLat, startLon),
+						Destination = string.Format(CultureInfo.InvariantCulture, "{0},{1}", endLat, endLon),
 						ApiKey = Config.MappingConfig.GoogleMapsApiKey
 					};
 					DirectionsResponse directions = await GoogleMapsApi.GoogleMaps.Directions.QueryAsync(directionsRequest);
@@ -178,7 +179,7 @@ namespace Resgrid.Providers.GeoLocationProvider
 				return info;
 			};
 
-			return await _cacheProvider.RetrieveAsync<RouteInformation>(string.Format(RouteCacheKey, string.Format("{0}{1}", startLat, startLon).GetHashCode(), string.Format("{0}{1}", endLat, endLon).GetHashCode()), getRoute, CacheLength);
+			return await _cacheProvider.RetrieveAsync<RouteInformation>(GeoLocationCacheKeys.Route(startLat, startLon, endLat, endLon), getRoute, CacheLength);
 		}
 
 		public async Task<RouteInformation> GetRoute(string start, string end)
@@ -230,7 +231,7 @@ namespace Resgrid.Providers.GeoLocationProvider
 				return info;
 			};
 
-			return await _cacheProvider.RetrieveAsync<RouteInformation>(string.Format(RouteCacheKey, start.GetHashCode(), end.GetHashCode()), getRoute, CacheLength);
+			return await _cacheProvider.RetrieveAsync<RouteInformation>(GeoLocationCacheKeys.Route(start, end), getRoute, CacheLength);
 		}
 
 		public async Task<Coordinates> GetCoordinatesFromW3W(string words)
@@ -291,12 +292,15 @@ namespace Resgrid.Providers.GeoLocationProvider
 
 		public async Task<string> GetW3WFromCoordinates(Coordinates coordinates)
 		{
+			if (coordinates?.Latitude == null || coordinates.Longitude == null)
+				return null;
+
 			Func<Task<string>> getLocationFromW3W = async () =>
 			{
 				try
 				{
 					var client = new RestClient("https://api.what3words.com");
-					var request = new RestRequest($"/v3/convert-to-3wa?key={Config.MappingConfig.What3WordsApiKey}&coordinates={$"{coordinates.Latitude},{coordinates.Longitude}"}", Method.Get);
+					var request = new RestRequest($"/v3/convert-to-3wa?key={Config.MappingConfig.What3WordsApiKey}&coordinates={GeoLocationCacheKeys.FormatCoordinate(coordinates.Latitude.Value)},{GeoLocationCacheKeys.FormatCoordinate(coordinates.Longitude.Value)}", Method.Get);
 
 					var response = await client.ExecuteAsync<ReverseW3WResponse>(request);
 
@@ -310,7 +314,7 @@ namespace Resgrid.Providers.GeoLocationProvider
 				return null;
 			};
 
-			return await _cacheProvider.RetrieveAsync<string>(string.Format(ReverseW3WCacheKey, $"{coordinates.Latitude},{coordinates.Longitude}"), getLocationFromW3W, CacheLength);
+			return await _cacheProvider.RetrieveAsync<string>(GeoLocationCacheKeys.ReverseW3W(coordinates.Latitude.Value, coordinates.Longitude.Value), getLocationFromW3W, CacheLength);
 		}
 
 		public async Task<Coordinates> GetLatLonFromAddressLocationIQ(string address)

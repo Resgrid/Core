@@ -511,4 +511,31 @@
     <value>{0} (διαγραμμένη)</value>
     <comment>A deleted unit in a report picker; {0} is the unit name.</comment>
   </data>
+  <data name="BrowseRoleTemplates" xml:space="preserve">
+    <value>Περιήγηση στα πρότυπα</value>
+  </data>
+  <data name="RoleTemplatesTitle" xml:space="preserve">
+    <value>Πρότυπα ρόλων μονάδας</value>
+  </data>
+  <data name="RoleTemplatesIntro" xml:space="preserve">
+    <value>Επιλέξτε ένα σημείο εκκίνησης για τους ρόλους αυτής της μονάδας. Οι θέσεις προστίθενται στον πίνακα ρόλων, όπου πριν την αποθήκευση μπορείτε να τις μετονομάσετε, να αλλάξετε ή να αφαιρέσετε τον απαιτούμενο ρόλο προσωπικού και να προσθέσετε ή να αφαιρέσετε θέσεις. Τα προτεινόμενα προσόντα αντιστοιχίζονται με τους ρόλους προσωπικού του φορέα σας βάσει ονόματος.</value>
+  </data>
+  <data name="RoleTemplatesSearchPlaceholder" xml:space="preserve">
+    <value>Αναζήτηση ρόλων, μονάδων ή ειδικοτήτων...</value>
+  </data>
+  <data name="RoleTemplatesAllCategories" xml:space="preserve">
+    <value>Όλες οι κατηγορίες</value>
+  </data>
+  <data name="RoleTemplatesSeats" xml:space="preserve">
+    <value>Θέσεις: {0}</value>
+  </data>
+  <data name="RoleTemplatesUse" xml:space="preserve">
+    <value>Χρήση αυτών των ρόλων</value>
+  </data>
+  <data name="RoleTemplatesNoResults" xml:space="preserve">
+    <value>Κανένα πρότυπο δεν ταιριάζει με την αναζήτηση.</value>
+  </data>
+  <data name="RoleTemplatesRequiredNote" xml:space="preserve">
+    <value>* = προτείνεται ως αυστηρή απαίτηση (αποκλείει μη πιστοποιημένα μέλη) όταν υπάρχει ο αντίστοιχος ρόλος προσωπικού.</value>
+  </data>
 </root>

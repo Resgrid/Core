@@ -70,15 +70,8 @@ namespace Resgrid.Workers.Framework.Logic
 						var units = await _unitsService.GetUnitsForDepartmentAsync(item.EmailSettings.Department.DepartmentId);
 						var callTypes = await _callsService.GetCallTypesForDepartmentAsync(item.EmailSettings.Department.DepartmentId);
 						var priorities = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(item.EmailSettings.Department.DepartmentId);
-						int defaultPriority = (int)CallPriority.High;
-
-						if (priorities != null && priorities.Any())
-						{
-							var defaultPrio = priorities.FirstOrDefault(x => x.IsDefault && x.IsDeleted == false);
-
-							if (defaultPrio != null)
-								defaultPriority = defaultPrio.DepartmentCallPriorityId;
-						}
+						// The default priority, else the department's High priority, else the built-in High (CallPriorityMatch).
+						int defaultPriority = CallPriorityMatch.DefaultForImport(priorities);
 
 						var call = await _callsService.GenerateCallFromEmail(item.EmailSettings.FormatType, email,
 							item.EmailSettings.Department.ManagingUserId, departmentUsers, item.EmailSettings.Department,

@@ -29,9 +29,7 @@ namespace Resgrid.Tests.Services
 			_unitsService = new Mock<IUnitsService>();
 			_pushService = new PushService(
 				Mock.Of<IPushLogsService>(),
-				Mock.Of<INotificationProvider>(),
 				Mock.Of<IUserProfileService>(),
-				Mock.Of<IUnitNotificationProvider>(),
 				_novuProvider.Object,
 				Mock.Of<IDepartmentSettingsService>(),
 				_unitsService.Object);

@@ -104,6 +104,7 @@ namespace Resgrid.Workers.Console
 					options.IsGlobalModeEnabled = true;
 					options.Environment = ExternalErrorConfig.Environment;
 					options.Release = Assembly.GetEntryAssembly().GetName().Version.ToString();
+					options.AddExceptionFilter(new UserFacingExceptionSentryFilter());
 				});
 			}
 

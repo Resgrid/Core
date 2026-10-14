@@ -164,5 +164,11 @@
 		/// Missing = the built-in numbers. Custom sequences are counted in DocumentNumberSequences.
 		/// </summary>
 		DocumentNumberingConfig = 117,
+
+		/// <summary>
+		/// ProtoBuf-serialized <see cref="DepartmentTerminologyConfig"/>: the department's own names for modules and built-in
+		/// record types (Department -> Terminology), e.g. "Incident" for Run. Missing = the shipped names. Labels only.
+		/// </summary>
+		DepartmentTerminology = 118,
 	}
 }

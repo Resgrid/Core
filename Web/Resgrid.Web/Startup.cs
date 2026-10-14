@@ -500,6 +500,8 @@ namespace Resgrid.Web
 				options.Filters.Add<Filters.ProtectedDataEgressFilter>();
 				// RMS protected content (plan 5.9.3): a refused reveal becomes a step-up prompt, never a 500.
 				options.Filters.Add<Filters.RecordProtectedContentExceptionFilter>();
+				// A Records module not enabled for the department is a message for the user, never a 500 (or a Sentry issue).
+				options.Filters.Add<Filters.RecordsModuleDisabledExceptionFilter>();
 				// A submission held while the user verified (2FA step-up, password re-confirmation) is put back as the form when
 				// the resume page posts it; a replay post is restored or refused, never bound bare.
 				options.Filters.Add<Filters.HeldSubmissionReplayFilter>();
@@ -586,6 +588,8 @@ namespace Resgrid.Web
 			builder.RegisterModule(new NoSqlDataModule());
 			builder.RegisterModule(new ServicesModule());
 			builder.RegisterType<Resgrid.Web.Helpers.HttpProtectedGrantContext>().As<IProtectedGrantContext>().InstancePerLifetimeScope();
+			// One per request, so the navigation and the page read the department's terminology once between them.
+			builder.RegisterType<Resgrid.Web.Helpers.DepartmentTerminology>().As<Resgrid.Web.Helpers.IDepartmentTerminology>().InstancePerLifetimeScope();
 			builder.RegisterModule(new Resgrid.Search.SearchModule());
 			builder.RegisterModule(new Resgrid.Providers.Scanning.ScanningProviderModule());
 			builder.RegisterModule(new Resgrid.Providers.Neris.NerisProviderModule());

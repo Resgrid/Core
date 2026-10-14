@@ -453,4 +453,31 @@
     <value>{0} (видалено)</value>
     <comment>A deleted unit in a report picker; {0} is the unit name.</comment>
   </data>
+  <data name="BrowseRoleTemplates" xml:space="preserve">
+    <value>Переглянути шаблони</value>
+  </data>
+  <data name="RoleTemplatesTitle" xml:space="preserve">
+    <value>Шаблони ролей підрозділу</value>
+  </data>
+  <data name="RoleTemplatesIntro" xml:space="preserve">
+    <value>Виберіть відправну точку для ролей цього підрозділу. Місця додаються до таблиці ролей, де перед збереженням їх можна перейменувати, змінити чи прибрати потрібну роль персоналу, а також додати чи вилучити місця. Запропоновані кваліфікації зіставляються з ролями персоналу вашої організації за назвою.</value>
+  </data>
+  <data name="RoleTemplatesSearchPlaceholder" xml:space="preserve">
+    <value>Шукати ролі, підрозділи чи напрями...</value>
+  </data>
+  <data name="RoleTemplatesAllCategories" xml:space="preserve">
+    <value>Усі категорії</value>
+  </data>
+  <data name="RoleTemplatesSeats" xml:space="preserve">
+    <value>Місць: {0}</value>
+  </data>
+  <data name="RoleTemplatesUse" xml:space="preserve">
+    <value>Використати ці ролі</value>
+  </data>
+  <data name="RoleTemplatesNoResults" xml:space="preserve">
+    <value>Жоден шаблон не відповідає пошуку.</value>
+  </data>
+  <data name="RoleTemplatesRequiredNote" xml:space="preserve">
+    <value>* = запропоновано як обов’язкову вимогу (блокує некваліфікованих членів), якщо відповідна роль персоналу існує.</value>
+  </data>
 </root>

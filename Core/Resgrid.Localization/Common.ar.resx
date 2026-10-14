@@ -366,4 +366,7 @@
   <data name="Edit" xml:space="preserve">
     <value>تعديل</value>
   </data>
+  <data name="Terminology" xml:space="preserve">
+    <value>المصطلحات</value>
+  </data>
 </root>

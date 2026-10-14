@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Localization;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.CustomStates;
@@ -29,13 +31,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IUnitsService _unitsService;
 		private readonly IAuthorizationService _authorizationService;
 		private readonly IEventAggregator _eventAggregator;
+		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.CustomStatuses.CustomStatuses> _localizer;
 
-		public CustomStatusesController(ICustomStateService customStateService, IUnitsService unitsService, IAuthorizationService authorizationService, IEventAggregator eventAggregator)
+		public CustomStatusesController(ICustomStateService customStateService, IUnitsService unitsService, IAuthorizationService authorizationService, IEventAggregator eventAggregator,
+			IStringLocalizer<Resgrid.Localization.Areas.User.CustomStatuses.CustomStatuses> localizer)
 		{
 			_customStateService = customStateService;
 			_unitsService = unitsService;
 			_authorizationService = authorizationService;
 			_eventAggregator = eventAggregator;
+			_localizer = localizer;
 		}
 		#endregion Private Members and Constructors
 
@@ -117,6 +122,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				model.State.DepartmentId = DepartmentId;
 				model.State.Type = (int)model.Type;
+				// Shown with Html.Raw on the status pages: keep only safe markup.
+				model.State.Description = StringHelpers.SanitizeHtmlInString(model.State.Description);
 
 				foreach (var i in options)
 				{
@@ -228,15 +235,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (model.Detail.CustomState == null)
 				return RedirectToAction("Index");
 
-			model.DetailTypes = model.DetailType.ToSelectList();
-			model.NoteTypes = model.NoteType.ToSelectList();
-			model.BaseTypes = model.BaseType.ToSelectList();
+			model.DetailTypes = DetailTypeOptions(model.DetailType);
+			model.NoteTypes = NoteTypeOptions(model.NoteType);
+			model.BaseTypes = BaseTypeOptions(model.BaseType);
 			model.Siblings = GetNextStatusCandidates(model.Detail.CustomState, model.Detail.CustomStateDetailId);
 			model.NextStateDetailIds = model.Detail.GetNextStateDetailIds();
 
 			model.DetailType = (CustomStateDetailTypes)model.Detail.DetailType;
 			model.NoteType = (CustomStateNoteTypes)model.Detail.NoteType;
 			model.BaseType = (ActionBaseTypes)model.Detail.BaseType;
+			model.StaffingBaseType = model.Detail.BaseType;
 
 			if (String.IsNullOrWhiteSpace(model.Detail.TextColor))
 				model.Detail.TextColor = "#000000";
@@ -266,9 +274,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (model.Detail.CustomState == null)
 				return RedirectToAction("Index");
 
-			model.DetailTypes = model.DetailType.ToSelectList();
-			model.NoteTypes = model.NoteType.ToSelectList();
-			model.BaseTypes = model.BaseType.ToSelectList();
+			model.DetailTypes = DetailTypeOptions(model.DetailType);
+			model.NoteTypes = NoteTypeOptions(model.NoteType);
+			model.BaseTypes = BaseTypeOptions(model.BaseType);
 			model.Siblings = GetNextStatusCandidates(model.Detail.CustomState, storedDetail.CustomStateDetailId);
 			model.NextStateDetailIds ??= new List<int>();
 
@@ -285,7 +293,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 				detail.Order = model.Detail.Order;
 				detail.GpsRequired = model.Detail.GpsRequired;
 				detail.DetailType = (int)model.DetailType;
-				detail.BaseType = (int)model.BaseType;
+
+				// The status base type is only on the form for personnel and unit statuses. A staffing option never
+				// posts it, and binding the missing field wrote 0 (Available) over the stored value. Staffing posts
+				// its own meaning (StaffingBaseTypes) instead.
+				if (model.Detail.CustomState.Type == (int)CustomStateTypes.Personnel || model.Detail.CustomState.Type == (int)CustomStateTypes.Unit)
+					detail.BaseType = (int)model.BaseType;
+				else if (model.Detail.CustomState.Type == (int)CustomStateTypes.Staffing)
+					detail.BaseType = Enum.IsDefined(typeof(StaffingBaseTypes), model.StaffingBaseType) ? model.StaffingBaseType : (int)StaffingBaseTypes.None;
 
 				// Staffing levels have no sequence (the editor hides the list); anything else keeps only ids of active
 				// options in this same set, never a posted id from another set or department.
@@ -334,7 +349,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				auditEvent.Before = state.CloneJsonToString();
 
 				state.Name = model.State.Name;
-				state.Description = model.State.Description;
+				// Shown with Html.Raw on the status pages: keep only safe markup.
+				state.Description = StringHelpers.SanitizeHtmlInString(model.State.Description);
 
 				foreach (var i in options)
 				{
@@ -404,20 +420,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 		#region Async Methods
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.CustomStates_View)]
-		public async Task<IActionResult> GetPersonnelStatusesForDepartment(bool includeAny)
+		public async Task<IActionResult> GetPersonnelStatusesForDepartment(bool includeAny, bool includeMeanings = false)
 		{
 			List<PersonnelStatusJson> personnelStauses = new List<PersonnelStatusJson>();
 			var customStauses = await _customStateService.GetActivePersonnelStateForDepartmentAsync(DepartmentId);
 
 			if (includeAny)
-				personnelStauses.Add(new PersonnelStatusJson() { Id = -1, Name = "Any" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "-1", Name = "Any" });
 
 			if (customStauses != null)
 			{
 				foreach (var detail in customStauses.GetActiveDetails())
 				{
 					var status = new PersonnelStatusJson();
-					status.Id = detail.CustomStateDetailId;
+					status.Id = detail.CustomStateDetailId.ToString();
 					status.Name = detail.ButtonText;
 
 					personnelStauses.Add(status);
@@ -425,34 +441,37 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 			else
 			{
-				personnelStauses.Add(new PersonnelStatusJson() { Id = 0, Name = "Standing By" });
-				personnelStauses.Add(new PersonnelStatusJson() { Id = 1, Name = "Not Responding" });
-				personnelStauses.Add(new PersonnelStatusJson() { Id = 2, Name = "Responding" });
-				personnelStauses.Add(new PersonnelStatusJson() { Id = 3, Name = "On Scene" });
-				personnelStauses.Add(new PersonnelStatusJson() { Id = 4, Name = "Available Station" });
-				personnelStauses.Add(new PersonnelStatusJson() { Id = 5, Name = "Responding Station" });
-				personnelStauses.Add(new PersonnelStatusJson() { Id = 6, Name = "Responding Scene" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "0", Name = "Standing By" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "1", Name = "Not Responding" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "2", Name = "Responding" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "3", Name = "On Scene" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "4", Name = "Available Station" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "5", Name = "Responding Station" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "6", Name = "Responding Scene" });
 			}
+
+			if (includeMeanings)
+				AddStatusMeanings(personnelStauses, Enum.GetValues(typeof(ActionBaseTypes)).Cast<ActionBaseTypes>().Where(x => x != ActionBaseTypes.None).Select(x => ((int)x, MeaningName(x))));
 
 			return Json(personnelStauses);
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.CustomStates_View)]
-		public async Task<IActionResult> GetPersonnelStaffingLevelsForDepartment(bool includeAny)
+		public async Task<IActionResult> GetPersonnelStaffingLevelsForDepartment(bool includeAny, bool includeMeanings = false)
 		{
 			List<PersonnelStatusJson> personnelStauses = new List<PersonnelStatusJson>();
 			var customStaffingLevels = await _customStateService.GetActiveStaffingLevelsForDepartmentAsync(DepartmentId);
 
 			if (includeAny)
-				personnelStauses.Add(new PersonnelStatusJson() { Id = -1, Name = "Any" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "-1", Name = "Any" });
 
 			if (customStaffingLevels != null)
 			{
 				foreach (var detail in customStaffingLevels.GetActiveDetails())
 				{
 					var status = new PersonnelStatusJson();
-					status.Id = detail.CustomStateDetailId;
+					status.Id = detail.CustomStateDetailId.ToString();
 					status.Name = detail.ButtonText;
 
 					personnelStauses.Add(status);
@@ -460,19 +479,22 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 			else
 			{
-				personnelStauses.Add(new PersonnelStatusJson() { Id = 0, Name = "Available" });
-				personnelStauses.Add(new PersonnelStatusJson() { Id = 1, Name = "Delayed" });
-				personnelStauses.Add(new PersonnelStatusJson() { Id = 2, Name = "Unavailable" });
-				personnelStauses.Add(new PersonnelStatusJson() { Id = 3, Name = "Committed" });
-				personnelStauses.Add(new PersonnelStatusJson() { Id = 4, Name = "On Shift" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "0", Name = "Available" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "1", Name = "Delayed" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "2", Name = "Unavailable" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "3", Name = "Committed" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "4", Name = "On Shift" });
 			}
+
+			if (includeMeanings)
+				AddStatusMeanings(personnelStauses, Enum.GetValues(typeof(StaffingBaseTypes)).Cast<StaffingBaseTypes>().Where(x => x != StaffingBaseTypes.None).Select(x => ((int)x, Text("Staffing" + x, x.GetDisplayString()))));
 
 			return Json(personnelStauses);
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.CustomStates_View)]
-		public async Task<IActionResult> GetUnitStatusesLevelsForDepartment(bool includeAny, int unitTypeId)
+		public async Task<IActionResult> GetUnitStatusesLevelsForDepartment(bool includeAny, int unitTypeId, bool includeMeanings = false)
 		{
 			List<PersonnelStatusJson> personnelStauses = new List<PersonnelStatusJson>();
 			CustomState customState = null;
@@ -483,14 +505,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 				customState = await _customStateService.GetCustomSateByIdAsync(unitType.CustomStatesId.Value);
 
 			if (includeAny)
-				personnelStauses.Add(new PersonnelStatusJson() { Id = -1, Name = "Any" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "-1", Name = "Any" });
 
 			if (customState != null)
 			{
 				foreach (var detail in customState.GetActiveDetails())
 				{
 					var status = new PersonnelStatusJson();
-					status.Id = detail.CustomStateDetailId;
+					status.Id = detail.CustomStateDetailId.ToString();
 					status.Name = detail.ButtonText;
 
 					personnelStauses.Add(status);
@@ -498,33 +520,36 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 			else
 			{
-				personnelStauses.Add(new PersonnelStatusJson() { Id = 0, Name = "Available" });
-				personnelStauses.Add(new PersonnelStatusJson() { Id = 1, Name = "Delayed" });
-				personnelStauses.Add(new PersonnelStatusJson() { Id = 2, Name = "Unavailable" });
-				personnelStauses.Add(new PersonnelStatusJson() { Id = 3, Name = "Committed" });
-				personnelStauses.Add(new PersonnelStatusJson() { Id = 4, Name = "Out Of Service" });
-				personnelStauses.Add(new PersonnelStatusJson() { Id = 5, Name = "Responding" });
-				personnelStauses.Add(new PersonnelStatusJson() { Id = 6, Name = "On Scene" });
-				personnelStauses.Add(new PersonnelStatusJson() { Id = 7, Name = "Staging" });
-				personnelStauses.Add(new PersonnelStatusJson() { Id = 8, Name = "Returning" });
-				personnelStauses.Add(new PersonnelStatusJson() { Id = 9, Name = "Cancelled" });
-				personnelStauses.Add(new PersonnelStatusJson() { Id = 10, Name = "Released" });
-				personnelStauses.Add(new PersonnelStatusJson() { Id = 11, Name = "Manual" });
-				personnelStauses.Add(new PersonnelStatusJson() { Id = 12, Name = "Enroute" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "0", Name = "Available" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "1", Name = "Delayed" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "2", Name = "Unavailable" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "3", Name = "Committed" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "4", Name = "Out Of Service" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "5", Name = "Responding" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "6", Name = "On Scene" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "7", Name = "Staging" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "8", Name = "Returning" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "9", Name = "Cancelled" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "10", Name = "Released" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "11", Name = "Manual" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "12", Name = "Enroute" });
 		}
+
+			if (includeMeanings)
+				AddStatusMeanings(personnelStauses, UnitStatusMeanings());
 
 			return Json(personnelStauses);
 		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.CustomStates_View)]
-		public async Task<IActionResult> GetUnitStatusesLevelsForDepartmentCombined(bool includeAny)
+		public async Task<IActionResult> GetUnitStatusesLevelsForDepartmentCombined(bool includeAny, bool includeMeanings = false)
 		{
 			List<PersonnelStatusJson> personnelStauses = new List<PersonnelStatusJson>();
 			var customStates = await _customStateService.GetAllActiveUnitStatesForDepartmentAsync(DepartmentId);
 
 			if (includeAny)
-				personnelStauses.Add(new PersonnelStatusJson() { Id = -1, Name = "Any" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "-1", Name = "Any" });
 
 			if (customStates != null && customStates.Any())
 			{
@@ -533,7 +558,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					foreach (var detail in customState.GetActiveDetails())
 					{
 						var status = new PersonnelStatusJson();
-						status.Id = detail.CustomStateDetailId;
+						status.Id = detail.CustomStateDetailId.ToString();
 						status.Name = $"{customState.Name}:{detail.ButtonText}";
 
 						personnelStauses.Add(status);
@@ -542,22 +567,88 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 			else
 			{
-				personnelStauses.Add(new PersonnelStatusJson() { Id = 0, Name = "Available" });
-				personnelStauses.Add(new PersonnelStatusJson() { Id = 1, Name = "Delayed" });
-				personnelStauses.Add(new PersonnelStatusJson() { Id = 2, Name = "Unavailable" });
-				personnelStauses.Add(new PersonnelStatusJson() { Id = 3, Name = "Committed" });
-				personnelStauses.Add(new PersonnelStatusJson() { Id = 4, Name = "Out Of Service" });
-				personnelStauses.Add(new PersonnelStatusJson() { Id = 5, Name = "Responding" });
-				personnelStauses.Add(new PersonnelStatusJson() { Id = 6, Name = "On Scene" });
-				personnelStauses.Add(new PersonnelStatusJson() { Id = 7, Name = "Staging" });
-				personnelStauses.Add(new PersonnelStatusJson() { Id = 8, Name = "Returning" });
-				personnelStauses.Add(new PersonnelStatusJson() { Id = 9, Name = "Cancelled" });
-				personnelStauses.Add(new PersonnelStatusJson() { Id = 10, Name = "Released" });
-				personnelStauses.Add(new PersonnelStatusJson() { Id = 11, Name = "Manual" });
-				personnelStauses.Add(new PersonnelStatusJson() { Id = 12, Name = "Enroute" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "0", Name = "Available" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "1", Name = "Delayed" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "2", Name = "Unavailable" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "3", Name = "Committed" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "4", Name = "Out Of Service" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "5", Name = "Responding" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "6", Name = "On Scene" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "7", Name = "Staging" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "8", Name = "Returning" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "9", Name = "Cancelled" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "10", Name = "Released" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "11", Name = "Manual" });
+				personnelStauses.Add(new PersonnelStatusJson() { Id = "12", Name = "Enroute" });
 			}
 
+			// A department mixing unit types on custom sets with unit types on the built-in statuses can target both.
+			if (customStates != null && customStates.Any())
+			{
+				var unitTypes = await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId) ?? new List<UnitType>();
+				if (unitTypes.Any(x => !x.CustomStatesId.HasValue || x.CustomStatesId.Value <= 0))
+				{
+					foreach (UnitStateTypes builtIn in Enum.GetValues(typeof(UnitStateTypes)))
+						personnelStauses.Add(new PersonnelStatusJson() { Id = ((int)builtIn).ToString(), Name = string.Format(Text("BuiltInStatusOption", "Built-in: {0}"), builtIn.GetDisplayString()) });
+				}
+			}
+
+			if (includeMeanings)
+				AddStatusMeanings(personnelStauses, UnitStatusMeanings());
+
 			return Json(personnelStauses);
+		}
+
+		/// <summary>
+		/// Adds a "b{n}" option per status meaning (StatusMatch): a rule set to one matches every status with that base type,
+		/// built-in or the department's own, in any status set.
+		/// </summary>
+		private void AddStatusMeanings(List<PersonnelStatusJson> options, IEnumerable<(int Value, string Name)> meanings)
+		{
+			var format = Text("AnyStatusWithMeaning", "Any \"{0}\" status");
+			foreach (var meaning in meanings)
+				options.Add(new PersonnelStatusJson() { Id = StatusMatch.BaseTypeToken(meaning.Value), Name = string.Format(format, meaning.Name) });
+		}
+
+		private IEnumerable<(int Value, string Name)> UnitStatusMeanings()
+		{
+			return Enum.GetValues(typeof(ActionBaseTypes)).Cast<ActionBaseTypes>()
+				.Where(x => x != ActionBaseTypes.None && x != ActionBaseTypes.NotResponding)
+				.Select(x => ((int)x, MeaningName(x)));
+		}
+
+		/// <summary>The localized name of a status meaning, as the status set pages show it.</summary>
+		private string MeaningName(ActionBaseTypes baseType) => Text(baseType.ToString(), baseType.GetDisplayString());
+
+		/// <summary>A localized string, or the fallback when the key is missing.</summary>
+		private string Text(string key, string fallback)
+		{
+			var text = _localizer?[key];
+			return text == null || text.ResourceNotFound ? fallback : text.Value;
+		}
+
+		/// <summary>Resource keys for <see cref="CustomStateDetailTypes"/> values 0-7, the same strings the add-option dialog shows.</summary>
+		private static readonly string[] DetailTypeKeys = { "NoDetail", "Stations", "Calls", "CallsAndStations", "Pois", "CallsAndPois", "StationsAndPois", "CallsStationsAndPois" };
+
+		/// <summary>Resource keys for <see cref="CustomStateNoteTypes"/> values 0-2.</summary>
+		private static readonly string[] NoteTypeKeys = { "NoNote", "NoteOptional", "NoteRequired" };
+
+		private SelectList DetailTypeOptions(CustomStateDetailTypes selected) =>
+			new SelectList(Enum.GetValues(typeof(CustomStateDetailTypes)).Cast<CustomStateDetailTypes>()
+				.Select(x => new { Id = x, Name = (int)x < DetailTypeKeys.Length ? Text(DetailTypeKeys[(int)x], x.ToString()) : x.ToString() }), "Id", "Name", selected);
+
+		private SelectList NoteTypeOptions(CustomStateNoteTypes selected) =>
+			new SelectList(Enum.GetValues(typeof(CustomStateNoteTypes)).Cast<CustomStateNoteTypes>()
+				.Select(x => new { Id = x, Name = (int)x < NoteTypeKeys.Length ? Text(NoteTypeKeys[(int)x], x.ToString()) : x.ToString() }), "Id", "Name", selected);
+
+		/// <summary>The option meanings for the option editor: None first, then each meaning by its localized name.</summary>
+		private SelectList BaseTypeOptions(ActionBaseTypes selected)
+		{
+			var values = new[] { ActionBaseTypes.None }
+				.Concat(Enum.GetValues(typeof(ActionBaseTypes)).Cast<ActionBaseTypes>().Where(x => x != ActionBaseTypes.None))
+				.Select(x => new { Id = x, Name = x == ActionBaseTypes.None ? Text("None", "None") : MeaningName(x) });
+
+			return new SelectList(values, "Id", "Name", selected);
 		}
 		#endregion Async Methods
 	}

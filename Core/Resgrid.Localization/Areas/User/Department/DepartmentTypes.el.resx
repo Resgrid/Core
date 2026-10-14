@@ -309,4 +309,118 @@
   <data name="NewContactNoteTypeHeader" xml:space="preserve">
     <value>Νέος Τύπος Σημείωσης Επαφής</value>
   </data>
+  <data name="CallTypeClassLabel" xml:space="preserve">
+    <value>Κατηγορία</value>
+  </data>
+  <data name="CallTypeClassHelp" xml:space="preserve">
+    <value>Τι είδους κλήση είναι αυτός ο τύπος. Το Resgrid χρησιμοποιεί την κατηγορία, όχι το όνομα, για αναφορές, προεπιλογές και ενσωματώσεις, ώστε ένα τμήμα να ονομάζει τους τύπους κλήσεων όπως θέλει.</value>
+  </data>
+  <data name="UnitTypeClassLabel" xml:space="preserve">
+    <value>Κατηγορία</value>
+  </data>
+  <data name="UnitTypeClassHelp" xml:space="preserve">
+    <value>Τι είδους μονάδα είναι αυτός ο τύπος. Το Resgrid χρησιμοποιεί την κατηγορία, όχι το όνομα, για αναφορές, προεπιλογές και ενσωματώσεις.</value>
+  </data>
+  <data name="CallPriorityBaseTypeLabel" xml:space="preserve">
+    <value>Σημασία</value>
+  </data>
+  <data name="CallPriorityBaseTypeHelp" xml:space="preserve">
+    <value>Ποια τυπική προτεραιότητα σημαίνει αυτή. Το Resgrid τη χρησιμοποιεί όπου πρέπει να συγκριθούν προτεραιότητες μεταξύ τμημάτων ή εφαρμογών, όπως στις αναφορές και στην ταξινόμηση κατά επείγον.</value>
+  </data>
+  <data name="BaseTypeNone" xml:space="preserve">
+    <value>Καμία</value>
+  </data>
+  <data name="SuggestedFromName" xml:space="preserve">
+    <value>Πρόταση βάσει ονόματος: {0}</value>
+  </data>
+  <data name="CallTypeClass.Fire" xml:space="preserve">
+    <value>Πυρκαγιά</value>
+  </data>
+  <data name="CallTypeClass.Medical" xml:space="preserve">
+    <value>Ιατρικό</value>
+  </data>
+  <data name="CallTypeClass.Rescue" xml:space="preserve">
+    <value>Διάσωση</value>
+  </data>
+  <data name="CallTypeClass.TrafficCollision" xml:space="preserve">
+    <value>Τροχαίο</value>
+  </data>
+  <data name="CallTypeClass.HazardousMaterials" xml:space="preserve">
+    <value>Επικίνδυνα υλικά</value>
+  </data>
+  <data name="CallTypeClass.Alarm" xml:space="preserve">
+    <value>Συναγερμός</value>
+  </data>
+  <data name="CallTypeClass.ServiceCall" xml:space="preserve">
+    <value>Κλήση εξυπηρέτησης</value>
+  </data>
+  <data name="CallTypeClass.LawEnforcement" xml:space="preserve">
+    <value>Αστυνόμευση</value>
+  </data>
+  <data name="CallTypeClass.DisasterWeather" xml:space="preserve">
+    <value>Καταστροφή ή καιρός</value>
+  </data>
+  <data name="CallTypeClass.MutualAid" xml:space="preserve">
+    <value>Αμοιβαία συνδρομή</value>
+  </data>
+  <data name="CallTypeClass.NonEmergencyActivity" xml:space="preserve">
+    <value>Μη επείγουσα δραστηριότητα</value>
+  </data>
+  <data name="CallTypeClass.Other" xml:space="preserve">
+    <value>Άλλο</value>
+  </data>
+  <data name="UnitTypeClass.Engine" xml:space="preserve">
+    <value>Πυροσβεστικό</value>
+  </data>
+  <data name="UnitTypeClass.Aerial" xml:space="preserve">
+    <value>Κλιμακοφόρο</value>
+  </data>
+  <data name="UnitTypeClass.Rescue" xml:space="preserve">
+    <value>Διάσωση</value>
+  </data>
+  <data name="UnitTypeClass.Tanker" xml:space="preserve">
+    <value>Υδροφόρο</value>
+  </data>
+  <data name="UnitTypeClass.Ambulance" xml:space="preserve">
+    <value>Ασθενοφόρο</value>
+  </data>
+  <data name="UnitTypeClass.MedicalResponse" xml:space="preserve">
+    <value>Ιατρική ανταπόκριση</value>
+  </data>
+  <data name="UnitTypeClass.Wildland" xml:space="preserve">
+    <value>Δασικό</value>
+  </data>
+  <data name="UnitTypeClass.HazardousMaterials" xml:space="preserve">
+    <value>Επικίνδυνα υλικά</value>
+  </data>
+  <data name="UnitTypeClass.Command" xml:space="preserve">
+    <value>Διοίκηση</value>
+  </data>
+  <data name="UnitTypeClass.Support" xml:space="preserve">
+    <value>Υποστήριξη</value>
+  </data>
+  <data name="UnitTypeClass.Watercraft" xml:space="preserve">
+    <value>Σκάφος</value>
+  </data>
+  <data name="UnitTypeClass.Aircraft" xml:space="preserve">
+    <value>Αεροσκάφος</value>
+  </data>
+  <data name="UnitTypeClass.Patrol" xml:space="preserve">
+    <value>Περιπολία</value>
+  </data>
+  <data name="UnitTypeClass.Other" xml:space="preserve">
+    <value>Άλλο</value>
+  </data>
+  <data name="CallPriorityMeaning.Low" xml:space="preserve">
+    <value>Χαμηλή</value>
+  </data>
+  <data name="CallPriorityMeaning.Medium" xml:space="preserve">
+    <value>Μεσαία</value>
+  </data>
+  <data name="CallPriorityMeaning.High" xml:space="preserve">
+    <value>Υψηλή</value>
+  </data>
+  <data name="CallPriorityMeaning.Emergency" xml:space="preserve">
+    <value>Έκτακτη</value>
+  </data>
 </root>

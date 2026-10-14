@@ -453,4 +453,31 @@
     <value>{0} (eliminata)</value>
     <comment>A deleted unit in a report picker; {0} is the unit name.</comment>
   </data>
+  <data name="BrowseRoleTemplates" xml:space="preserve">
+    <value>Sfoglia modelli</value>
+  </data>
+  <data name="RoleTemplatesTitle" xml:space="preserve">
+    <value>Modelli di ruoli dell'unità</value>
+  </data>
+  <data name="RoleTemplatesIntro" xml:space="preserve">
+    <value>Scegli un punto di partenza per i ruoli di questa unità. I posti vengono aggiunti alla tabella dei ruoli, dove puoi rinominarli, cambiare o rimuovere il ruolo del personale richiesto e aggiungere o togliere posti prima di salvare. Le qualifiche suggerite sono abbinate per nome ai ruoli del personale del tuo dipartimento.</value>
+  </data>
+  <data name="RoleTemplatesSearchPlaceholder" xml:space="preserve">
+    <value>Cerca ruoli, unità o discipline...</value>
+  </data>
+  <data name="RoleTemplatesAllCategories" xml:space="preserve">
+    <value>Tutte le categorie</value>
+  </data>
+  <data name="RoleTemplatesSeats" xml:space="preserve">
+    <value>{0} posti</value>
+  </data>
+  <data name="RoleTemplatesUse" xml:space="preserve">
+    <value>Usa questi ruoli</value>
+  </data>
+  <data name="RoleTemplatesNoResults" xml:space="preserve">
+    <value>Nessun modello corrisponde alla ricerca.</value>
+  </data>
+  <data name="RoleTemplatesRequiredNote" xml:space="preserve">
+    <value>* = suggerito come requisito vincolante (blocca i membri non qualificati) quando esiste il ruolo del personale corrispondente.</value>
+  </data>
 </root>

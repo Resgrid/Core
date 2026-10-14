@@ -97,7 +97,8 @@ namespace Resgrid.Tests.Rms
 			var groups = new Mock<IDepartmentGroupsService>();
 			groups.Setup(g => g.GetAllGroupsForDepartmentAsync(Dept)).ReturnsAsync(new List<DepartmentGroup>());
 			_logs = new LogsController(_departments.Object, Mock.Of<IUsersService>(), Mock.Of<ICallsService>(), groups.Object, Mock.Of<ICommunicationService>(), Mock.Of<IQueueService>(),
-				_authorization.Object, _workLogs.Object, Mock.Of<IEventAggregator>(), _units.Object, _protectedRead.Object, _cutover.Object)
+				_authorization.Object, _workLogs.Object, Mock.Of<IEventAggregator>(), _units.Object, _protectedRead.Object, _cutover.Object,
+				Resgrid.Tests.Web.DepartmentTerminologyFactory.Create())
 			{ ControllerContext = new ControllerContext { HttpContext = _http } };
 
 			_unitsController = new UnitsController(_departments.Object, Mock.Of<IUsersService>(), _units.Object, _authorization.Object, Mock.Of<ILimitsService>(), groups.Object, Mock.Of<ICallsService>(),

@@ -33,11 +33,14 @@ namespace Resgrid.Services.Records
 		private readonly IIncidentCommandService _command;
 		private readonly IRecordsFieldRolloutService _rollout;
 		private readonly ICallSourceDataService _callSources;
+		private readonly IDepartmentSettingsService _settings;
 
 		public FieldRecordsService(IRecordsCutoverService cutover, IRecordsAuthorizationService authorization, IFeatureToggleService flags, IRecordDefinitionsService definitions,
 			IDepartmentDataProtectionService protection, IRecordsService records, IRecordWorkAssignmentsService assignments, IUnitsService units, IDepartmentGroupsService groups,
-			ICallsService calls, IIncidentCommandService command, IRecordsFieldRolloutService rollout, ICallSourceDataService callSources)
+			ICallsService calls, IIncidentCommandService command, IRecordsFieldRolloutService rollout, ICallSourceDataService callSources,
+			IDepartmentSettingsService settings)
 		{
+			_settings = settings;
 			_callSources = callSources;
 			_rollout = rollout;
 			_cutover = cutover;
@@ -205,7 +208,7 @@ namespace Resgrid.Services.Records
 			var enforced = string.Equals(preflight.ProtectionState, DepartmentDataProtectionState.Enabled.ToString(), StringComparison.Ordinal)
 				|| string.Equals(preflight.ProtectionState, DepartmentDataProtectionState.Rotating.ToString(), StringComparison.Ordinal);
 
-			AddLockedStarters(catalog, request.Origin, context, capability);
+			AddLockedStarters(catalog, request.Origin, context, capability, await TerminologyAsync(departmentId));
 			// A transient listing failure and a department with nothing published look identical to the app, and the
 			// app caches what it is told, so say the catalog is unusable rather than handing back the starters alone.
 			// It says so under its own reason: a database that hiccuped is a retry, not grounds for every device in
@@ -240,8 +243,22 @@ namespace Resgrid.Services.Records
 			return catalog;
 		}
 
-		/// <summary>The locked starter allowlist for the app: system definitions a field client may always start.</summary>
-		private static void AddLockedStarters(FieldRecordCatalog catalog, RmsOriginClient origin, FieldRecordContext context, string capability)
+		/// <summary>The department's own type names (setting 118); labels only, so a failed read lists the shipped names.</summary>
+		private async Task<DepartmentTerminologyConfig> TerminologyAsync(int departmentId)
+		{
+			try
+			{
+				return await _settings.GetDepartmentTerminologyAsync(departmentId) ?? new DepartmentTerminologyConfig();
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, "Department terminology could not be read for the Field Records catalog.");
+				return new DepartmentTerminologyConfig();
+			}
+		}
+
+		/// <summary>The locked starter allowlist for the app: system definitions a field client may always start, by the department's names.</summary>
+		private static void AddLockedStarters(FieldRecordCatalog catalog, RmsOriginClient origin, FieldRecordContext context, string capability, DepartmentTerminologyConfig terminology)
 		{
 			foreach (var key in FieldRecordCatalogV1.LockedStarterAllowlist(origin))
 			{
@@ -261,7 +278,7 @@ namespace Resgrid.Services.Records
 				{
 					DefinitionKey = key,
 					Version = RmsDefinitionKeys.LockedDefinitionVersion,
-					Name = type?.ToString() ?? key,
+					Name = type.HasValue ? terminology.RecordTypeName((int)type.Value) : terminology.DefinitionName(key),
 					Category = "System",
 					Locked = true,
 					RecordType = type.HasValue ? (int)type.Value : (int?)null,

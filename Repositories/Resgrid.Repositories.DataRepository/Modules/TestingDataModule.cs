@@ -328,6 +328,7 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<DocumentNumberSequencesRepository>().As<IDocumentNumberSequencesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentApiKeysRepository>().As<IDepartmentApiKeysRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<SystemOperationRequestsRepository>().As<ISystemOperationRequestsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<InboundEmailReceiptsRepository>().As<IInboundEmailReceiptsRepository>().InstancePerLifetimeScope();
 
 			// CheckIn Repositories
 			builder.RegisterType<CheckInTimerConfigRepository>().As<ICheckInTimerConfigRepository>().InstancePerLifetimeScope();

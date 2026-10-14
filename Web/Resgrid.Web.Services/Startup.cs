@@ -185,6 +185,8 @@ namespace Resgrid.Web.ServicesCore
 				// Statuses saved by an API request record who set them and from which app (M0260), so reports can tell a
 				// dispatcher's or incident commander's entry from the crew's own.
 				options.Filters.Add<Resgrid.Web.Services.Filters.StatusWriteActorFilter>();
+				// A Records module not enabled for the department is a message for the caller, never a 500 (or a Sentry issue).
+				options.Filters.Add<Resgrid.Web.Services.Filters.RecordsModuleDisabledExceptionFilter>();
 			}).AddNewtonsoftJson(options =>
 			{
 				options.SerializerSettings.ContractResolver = new DefaultContractResolver();

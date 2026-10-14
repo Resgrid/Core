@@ -1113,16 +1113,16 @@
     <value>Statut de l'unité à la libération</value>
   </data>
   <data name="UnitCallReleaseStatusHelp" xml:space="preserve">
-    <value>Appliqué aux unités qui travaillent encore sur un appel lorsqu'il est clôturé ou qu'elles en sont retirées. Une unité déjà de nouveau en service, hors service (indisponible, en maintenance ou en pause) ou engagée sur un autre appel conserve son statut. Les statuts personnalisés sont lus selon leur type de base.</value>
+    <value>Appliqué de la même façon, selon la signification, aux unités qui travaillent encore sur un appel lorsqu'il est clôturé ou qu'elles en sont retirées. Une unité déjà de nouveau en service, hors service (indisponible, en maintenance ou en pause) ou engagée sur un autre appel conserve son statut ; les statuts personnalisés sont lus selon leur type de base. Par défaut : le statut de retour en service (Terminée, Disponible ou À la caserne) pour les statuts personnalisés et Libérée pour les statuts intégrés.</value>
   </data>
   <data name="UnitDefaultStatusesHelp" xml:space="preserve">
-    <value>Ces statuts d'unité par défaut n'utilisent que les types d'état d'unité intégrés. Utilisez le tableau de remplacements par type d'unité ci-dessous lorsqu'un type d'unité a besoin de l'un de ses propres statuts personnalisés.</value>
+    <value>Appliqué aux unités engagées sur un appel. Choisissez ce que signifie le statut : chaque unité reçoit le statut de son propre jeu de statuts ayant cette signification (le premier dans l'ordre), de sorte qu'un seul réglage fonctionne pour des types d'unité aux statuts personnalisés différents. Par défaut : Engagée (ou En intervention, ou En route) pour les statuts personnalisés et En intervention pour les statuts intégrés.</value>
   </data>
   <data name="UnitTypeStatusOverridesHeader" xml:space="preserve">
     <value>Remplacements de statut par type d'unité</value>
   </data>
   <data name="UnitTypeStatusOverridesHelp" xml:space="preserve">
-    <value>Seuls les types d'unité disposant de statuts d'unité personnalisés apparaissent ici. Laissez une valeur sur « Par défaut » pour utiliser le statut intégré défini ci-dessus pour tout le département.</value>
+    <value>Seuls les types d'unité ayant des statuts d'unité personnalisés apparaissent ici. Choisissez l'un des statuts propres à un type d'unité lorsqu'il en a besoin d'un précis ; Par défaut utilise le réglage du service ci-dessus, appliqué aux statuts du type d'unité.</value>
   </data>
   <data name="CheckInTimerActiveStatesLabel" xml:space="preserve">
     <value>États concernés</value>
@@ -1444,5 +1444,80 @@
   </data>
   <data name="DeleteDepartmentLegalHoldWarning" xml:space="preserve">
     <value>{0} conservation(s) légale(s) active(s) couvrent les Dossiers de ce département. La suppression ne sera pas exécutée tant qu'elles ne sont pas toutes levées.</value>
+  </data>
+  <data name="TerminologyHeader" xml:space="preserve">
+    <value>Terminologie</value>
+  </data>
+  <data name="TerminologyIntro" xml:space="preserve">
+    <value>Utilisez les termes propres à votre service. Un nom défini ici remplace le nom Resgrid de ce module ou de ce type de dossier dans la navigation, dans les titres de page, partout où les types de dossier sont listés et dans les applications Responder, Unit, IC et Dispatch, pour tous les membres et dans toutes les langues. Seul le libellé change : les autorisations, les liens et les intégrations ne sont pas affectés. Laissez un champ vide pour conserver le nom Resgrid.</value>
+  </data>
+  <data name="TerminologyModules" xml:space="preserve">
+    <value>Modules</value>
+  </data>
+  <data name="TerminologyModulesHelp" xml:space="preserve">
+    <value>Affiché dans la navigation, comme titre de la page principale du module et dans les menus des applications. Les phrases ailleurs qui mentionnent un module gardent la formulation de Resgrid.</value>
+  </data>
+  <data name="TerminologyRecordTypes" xml:space="preserve">
+    <value>Types de dossier</value>
+  </data>
+  <data name="TerminologyRecordTypesHelp" xml:space="preserve">
+    <value>Les types intégrés des Dossiers et des Journaux, partout où un type est choisi, listé, imprimé ou exporté. Pour ajouter votre propre type, comme Éducation du public, créez une définition de dossier.</value>
+  </data>
+  <data name="TerminologyDefaultColumn" xml:space="preserve">
+    <value>Nom Resgrid</value>
+  </data>
+  <data name="TerminologyNameColumn" xml:space="preserve">
+    <value>Nom de votre service</value>
+  </data>
+  <data name="TerminologySaved" xml:space="preserve">
+    <value>Terminologie enregistrée.</value>
+  </data>
+  <data name="TerminologyPartlySaved" xml:space="preserve">
+    <value>Vos autres noms ont été enregistrés.</value>
+  </data>
+  <data name="TerminologyTooLong" xml:space="preserve">
+    <value>Les noms peuvent comporter au plus {0} caractères ; les noms plus longs n'ont pas été enregistrés et sont affichés pour correction.</value>
+  </data>
+  <data name="TerminologyRecordDefinitionsLink" xml:space="preserve">
+    <value>Définitions de dossier</value>
+  </data>
+  <data name="TerminologyRenameLink" xml:space="preserve">
+    <value>Renommer les modules et les types de dossier</value>
+  </data>
+  <data name="UnitStatusTargetMeaningGroup" xml:space="preserve">
+    <value>Signification du statut</value>
+  </data>
+  <data name="UnitStatusTargetDefaultDispatch" xml:space="preserve">
+    <value>Par défaut (Engagée, En intervention ou En route)</value>
+  </data>
+  <data name="UnitStatusTargetDefaultRelease" xml:space="preserve">
+    <value>Par défaut (retour en service)</value>
+  </data>
+  <data name="UnitStatusTargetLeaveUnchanged" xml:space="preserve">
+    <value>Ne pas modifier le statut de l'unité</value>
+  </data>
+  <data name="UnitStatusTargetLegacy" xml:space="preserve">
+    <value>Statut intégré : {0} (enregistré avant les significations de statut)</value>
+  </data>
+  <data name="UnitStatusTargetWarningsHeader" xml:space="preserve">
+    <value>Vérifiez ces types d'unité</value>
+  </data>
+  <data name="UnitStatusTargetNoMatch" xml:space="preserve">
+    <value>{0} : son jeu de statuts "{1}" n'a aucun statut signifiant {2}, ses unités conservent donc leur statut lors de {3}. Définissez un type de base sur l'un de ses statuts ou choisissez-en un dans les remplacements ci-dessous.</value>
+  </data>
+  <data name="UnitStatusTargetSeveral" xml:space="preserve">
+    <value>{0} : son jeu de statuts "{1}" a {2} statuts signifiant {3} ({4}) ; {5}, le premier dans l'ordre, est utilisé lors de {6}.</value>
+  </data>
+  <data name="UnitStatusTargetNoBuiltIn" xml:space="preserve">
+    <value>{0} : aucun statut d'unité intégré ne signifie {1}, ses unités conservent donc leur statut lors de {2}.</value>
+  </data>
+  <data name="UnitStatusTargetActionDispatch" xml:space="preserve">
+    <value>l'engagement</value>
+  </data>
+  <data name="UnitStatusTargetActionRelease" xml:space="preserve">
+    <value>la libération</value>
+  </data>
+  <data name="StatusMeaningOption" xml:space="preserve">
+    <value>Tout statut "{0}"</value>
   </data>
 </root>

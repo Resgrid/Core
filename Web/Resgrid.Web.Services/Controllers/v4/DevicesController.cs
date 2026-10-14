@@ -108,26 +108,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpDelete("UnRegisterUnitDevice")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public async Task<ActionResult<PushRegistrationResult>> UnRegisterUnitDevice(string deviceUuid)
+		public ActionResult<PushRegistrationResult> UnRegisterUnitDevice(string deviceUuid)
 		{
 			if (String.IsNullOrWhiteSpace(deviceUuid))
 				return BadRequest();
 
+			// Nothing left to remove: this cleared the device from the legacy Azure unit hub, which is gone. Kept so
+			// older Unit app builds that still call it get a success rather than a 404.
 			var result = new PushRegistrationResult();
-
-			try
-			{
-				var deviceId = HttpUtility.UrlDecode(deviceUuid);
-
-				await _pushService.UnRegisterUnit(new PushUri() { UserId = UserId, DeviceId = deviceId });
-				result.Status = ResponseHelper.Success;
-			}
-			catch (Exception ex)
-			{
-				Framework.Logging.LogException(ex);
-				result.Status = ResponseHelper.Failure;
-			}
-
+			result.Status = ResponseHelper.Success;
 			result.Id = "";
 			result.PageSize = 0;
 			ResponseHelper.PopulateV4ResponseData(result);
@@ -201,27 +190,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpDelete("UnRegisterDevice")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public async Task<ActionResult<PushRegistrationResult>> UnRegisterDevice(string deviceUuid)
+		public ActionResult<PushRegistrationResult> UnRegisterDevice(string deviceUuid)
 		{
 			if (String.IsNullOrWhiteSpace(deviceUuid))
 				return BadRequest();
 
+			// Nothing left to remove: this cleared the device from the legacy Azure user hub, which is gone. Kept so
+			// older app builds that still call it get a success rather than a 404.
 			var result = new PushRegistrationResult();
-
-			try
-			{
-				var deviceId = HttpUtility.UrlDecode(deviceUuid);
-
-				//await _pushService.UnRegister(new PushUri() { UserId = UserId, DeviceId = deviceId, PushUriId = input.Pid });
-				await _pushService.UnRegister(new PushUri() { UserId = UserId, DeviceId = deviceId });
-				result.Status = ResponseHelper.Success;
-			}
-			catch (Exception ex)
-			{
-				Framework.Logging.LogException(ex);
-				result.Status = ResponseHelper.Failure;
-			}
-
+			result.Status = ResponseHelper.Success;
 			result.Id = "";
 			result.PageSize = 0;
 			ResponseHelper.PopulateV4ResponseData(result);
@@ -243,13 +220,45 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<ActionResult<PushRegistrationResult>> UnRegisterWebPush([FromBody] WebPushUnRegistrationInput input)
 		{
-			if (input == null || String.IsNullOrWhiteSpace(input.Token))
+			if (input == null)
+				return BadRequest();
+
+			return await UnRegisterPushToken(input.Token, input.Prefix, input.Source, input.UnitId, (int)Platforms.Web,
+				_pushService.UnRegisterWebPush, _pushService.UnRegisterUnitWebPush);
+		}
+
+		/// <summary>
+		/// Takes an iOS or Android push token off the native push channels it was registered on, so that device
+		/// stops receiving this user's (or unit's) pushes. Called when someone signs out of the native app. Runs at
+		/// once, not through the queue. Only this token is removed: if another device has registered since, its
+		/// token stays.
+		/// </summary>
+		/// <param name="input">The token and where it was registered</param>
+		/// <returns>Success when the token is no longer on the channels</returns>
+		[HttpPost("UnRegisterNativePush")]
+		// Part of signing out: a department operation lock must not leave a signed-out device receiving pushes.
+		[AllowDuringDepartmentLock]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		public async Task<ActionResult<PushRegistrationResult>> UnRegisterNativePush([FromBody] NativePushUnRegistrationInput input)
+		{
+			if (input == null)
+				return BadRequest();
+
+			return await UnRegisterPushToken(input.Token, input.Prefix, input.Source, input.UnitId, null,
+				_pushService.UnRegisterNativePush, _pushService.UnRegisterUnitNativePush);
+		}
+
+		private async Task<ActionResult<PushRegistrationResult>> UnRegisterPushToken(string token, string prefix, string source, string unitIdText,
+			int? platform, Func<PushUri, Task<bool>> unRegisterUser, Func<PushUri, Task<bool>> unRegisterUnit)
+		{
+			if (String.IsNullOrWhiteSpace(token))
 				return BadRequest();
 
 			int? unitId = null;
-			if (!String.IsNullOrWhiteSpace(input.UnitId) && input.UnitId != "0")
+			if (!String.IsNullOrWhiteSpace(unitIdText) && unitIdText != "0")
 			{
-				if (!int.TryParse(input.UnitId, out var parsedUnitId))
+				if (!int.TryParse(unitIdText, out var parsedUnitId))
 					return BadRequest();
 
 				unitId = parsedUnitId;
@@ -259,7 +268,6 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			try
 			{
-				var prefix = input.Prefix;
 				if (String.IsNullOrWhiteSpace(prefix))
 				{
 					var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
@@ -270,11 +278,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 				{
 					UserId = UserId,
 					DepartmentId = DepartmentId,
-					PlatformType = (int)Platforms.Web,
 					PushLocation = prefix,
-					DeviceId = input.Token,
-					Source = input.Source
+					DeviceId = token,
+					Source = source
 				};
+
+				if (platform.HasValue)
+					push.PlatformType = platform.Value;
 
 				bool removed;
 				if (unitId.HasValue)
@@ -286,11 +296,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 						return BadRequest();
 
 					push.UnitId = unitId;
-					removed = await _pushService.UnRegisterUnitWebPush(push);
+					removed = await unRegisterUnit(push);
 				}
 				else
 				{
-					removed = await _pushService.UnRegisterWebPush(push);
+					removed = await unRegisterUser(push);
 				}
 
 				result.Status = removed ? ResponseHelper.Success : ResponseHelper.Failure;

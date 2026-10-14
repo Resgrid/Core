@@ -1,4 +1,4 @@
-﻿namespace Resgrid.Web.Services.Models.v4.CallPriorities
+namespace Resgrid.Web.Services.Models.v4.CallPriorities
 {
 	/// <summary>
 	/// Call Priority Definition
@@ -59,6 +59,12 @@
 		/// Id for the Tone Sound to be used
 		/// </summary>
 		public int Tone { get; set; }
+
+		/// <summary>
+		/// The standard priority this one means (0 Low, 1 Medium, 2 High, 3 Emergency), for comparing priorities across
+		/// departments, such as sorting by urgency; -1 when the department has not set one. A built-in priority is its own.
+		/// </summary>
+		public int BaseType { get; set; }
 
 		/// <summary>
 		/// Is this a default system priority

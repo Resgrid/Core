@@ -38,6 +38,7 @@ namespace Resgrid.Framework
 												o.Dsn = dsn;
 												o.Environment = ExternalErrorConfig.Environment;
 												o.Release = Assembly.GetEntryAssembly().GetName().Version.ToString();
+												o.AddExceptionFilter(new UserFacingExceptionSentryFilter());
 											}).CreateLogger();
 				}
 				else

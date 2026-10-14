@@ -251,4 +251,118 @@
   <data name="NewContactNoteTypeHeader" xml:space="preserve">
     <value>New Contact Note Type</value>
   </data>
+  <data name="CallTypeClassLabel" xml:space="preserve">
+    <value>Klass</value>
+  </data>
+  <data name="CallTypeClassHelp" xml:space="preserve">
+    <value>Vilken sorts ärende typen är. Resgrid använder klassen, inte namnet, för rapporter, standardvärden och integrationer, så en avdelning kan namnge sina ärendetyper som den vill.</value>
+  </data>
+  <data name="UnitTypeClassLabel" xml:space="preserve">
+    <value>Klass</value>
+  </data>
+  <data name="UnitTypeClassHelp" xml:space="preserve">
+    <value>Vilken sorts enhet typen är. Resgrid använder klassen, inte namnet, för rapporter, standardvärden och integrationer.</value>
+  </data>
+  <data name="CallPriorityBaseTypeLabel" xml:space="preserve">
+    <value>Betydelse</value>
+  </data>
+  <data name="CallPriorityBaseTypeHelp" xml:space="preserve">
+    <value>Vilken standardprioritet den här betyder. Resgrid använder den där prioriteter måste jämföras mellan avdelningar eller appar, till exempel i rapporter och vid sortering efter brådska.</value>
+  </data>
+  <data name="BaseTypeNone" xml:space="preserve">
+    <value>Ingen</value>
+  </data>
+  <data name="SuggestedFromName" xml:space="preserve">
+    <value>Föreslaget utifrån namnet: {0}</value>
+  </data>
+  <data name="CallTypeClass.Fire" xml:space="preserve">
+    <value>Brand</value>
+  </data>
+  <data name="CallTypeClass.Medical" xml:space="preserve">
+    <value>Sjukvård</value>
+  </data>
+  <data name="CallTypeClass.Rescue" xml:space="preserve">
+    <value>Räddning</value>
+  </data>
+  <data name="CallTypeClass.TrafficCollision" xml:space="preserve">
+    <value>Trafikolycka</value>
+  </data>
+  <data name="CallTypeClass.HazardousMaterials" xml:space="preserve">
+    <value>Farliga ämnen</value>
+  </data>
+  <data name="CallTypeClass.Alarm" xml:space="preserve">
+    <value>Larm</value>
+  </data>
+  <data name="CallTypeClass.ServiceCall" xml:space="preserve">
+    <value>Servicelarm</value>
+  </data>
+  <data name="CallTypeClass.LawEnforcement" xml:space="preserve">
+    <value>Polis</value>
+  </data>
+  <data name="CallTypeClass.DisasterWeather" xml:space="preserve">
+    <value>Katastrof eller väder</value>
+  </data>
+  <data name="CallTypeClass.MutualAid" xml:space="preserve">
+    <value>Ömsesidigt bistånd</value>
+  </data>
+  <data name="CallTypeClass.NonEmergencyActivity" xml:space="preserve">
+    <value>Ej brådskande aktivitet</value>
+  </data>
+  <data name="CallTypeClass.Other" xml:space="preserve">
+    <value>Övrigt</value>
+  </data>
+  <data name="UnitTypeClass.Engine" xml:space="preserve">
+    <value>Släckbil</value>
+  </data>
+  <data name="UnitTypeClass.Aerial" xml:space="preserve">
+    <value>Höjdfordon</value>
+  </data>
+  <data name="UnitTypeClass.Rescue" xml:space="preserve">
+    <value>Räddningsenhet</value>
+  </data>
+  <data name="UnitTypeClass.Tanker" xml:space="preserve">
+    <value>Tankbil</value>
+  </data>
+  <data name="UnitTypeClass.Ambulance" xml:space="preserve">
+    <value>Ambulans</value>
+  </data>
+  <data name="UnitTypeClass.MedicalResponse" xml:space="preserve">
+    <value>Sjukvårdsinsats</value>
+  </data>
+  <data name="UnitTypeClass.Wildland" xml:space="preserve">
+    <value>Skogsbrand</value>
+  </data>
+  <data name="UnitTypeClass.HazardousMaterials" xml:space="preserve">
+    <value>Farliga ämnen</value>
+  </data>
+  <data name="UnitTypeClass.Command" xml:space="preserve">
+    <value>Ledning</value>
+  </data>
+  <data name="UnitTypeClass.Support" xml:space="preserve">
+    <value>Stöd</value>
+  </data>
+  <data name="UnitTypeClass.Watercraft" xml:space="preserve">
+    <value>Båt</value>
+  </data>
+  <data name="UnitTypeClass.Aircraft" xml:space="preserve">
+    <value>Luftfartyg</value>
+  </data>
+  <data name="UnitTypeClass.Patrol" xml:space="preserve">
+    <value>Patrull</value>
+  </data>
+  <data name="UnitTypeClass.Other" xml:space="preserve">
+    <value>Övrigt</value>
+  </data>
+  <data name="CallPriorityMeaning.Low" xml:space="preserve">
+    <value>Låg</value>
+  </data>
+  <data name="CallPriorityMeaning.Medium" xml:space="preserve">
+    <value>Medel</value>
+  </data>
+  <data name="CallPriorityMeaning.High" xml:space="preserve">
+    <value>Hög</value>
+  </data>
+  <data name="CallPriorityMeaning.Emergency" xml:space="preserve">
+    <value>Akut</value>
+  </data>
 </root>

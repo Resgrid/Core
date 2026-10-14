@@ -46,7 +46,7 @@
 	}
 	<partial name="_PrintHeader" model="Model.Provenance" />
 
-	<h1>@Model.RecordType.ToString() &mdash; @(s.RecordNumber ?? s.DraftReference) &mdash; @localizer["Revision"] @Model.Revision.RevisionNumber <span class="state">@(((RmsRevisionTransition)Model.Revision.Transition).ToString())</span></h1>
+	<h1>@(Model.Snapshot?.RecordType != null ? await departmentTerms.RecordTypeAsync(Model.Snapshot.RecordType.Value) : await departmentTerms.DefinitionAsync(Model.Snapshot?.DefinitionKey, Model.DefinitionName)) &mdash; @(s.RecordNumber ?? s.DraftReference) &mdash; @localizer["Revision"] @Model.Revision.RevisionNumber <span class="state">@(((RmsRevisionTransition)Model.Revision.Transition).ToString())</span></h1>
 
 	<div class="section">
 		<table class="fields">

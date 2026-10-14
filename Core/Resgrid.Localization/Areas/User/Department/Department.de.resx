@@ -1113,16 +1113,16 @@
     <value>Einheitenstatus bei Freigabe aus dem Einsatz</value>
   </data>
   <data name="UnitCallReleaseStatusHelp" xml:space="preserve">
-    <value>Wird für Einheiten gesetzt, die noch an einem Einsatz arbeiten, wenn er geschlossen wird oder sie davon abgezogen werden. Eine Einheit, die bereits wieder einsatzbereit, außer Dienst (nicht verfügbar, in Wartung oder in Pause) oder bei einem anderen Einsatz ist, behält ihren Status. Benutzerdefinierte Status werden über ihren Basistyp ausgewertet.</value>
+    <value>Wird ebenso nach Bedeutung für Einheiten gesetzt, die noch an einem Einsatz arbeiten, wenn er geschlossen wird oder sie davon abgezogen werden. Eine Einheit, die bereits wieder einsatzbereit, außer Dienst (nicht verfügbar, in Wartung oder in Pause) oder bei einem anderen Einsatz ist, behält ihren Status; benutzerdefinierte Status werden über ihren Basistyp ausgewertet. Standard setzt bei benutzerdefinierten Status den Status für wieder einsatzbereit (Abgeschlossen, Verfügbar oder Auf Wache) und bei den integrierten Status Freigegeben.</value>
   </data>
   <data name="UnitDefaultStatusesHelp" xml:space="preserve">
-    <value>Diese Standard-Einheitenstatus verwenden nur die integrierten Statustypen für Einheiten. Verwenden Sie die Tabelle mit den Überschreibungen nach Einheitentyp unten, wenn ein Einheitentyp einen eigenen benutzerdefinierten Status benötigt.</value>
+    <value>Wird für die zu einem Einsatz alarmierten Einheiten gesetzt. Wählen Sie, was der Status bedeutet: Jede Einheit erhält den Status ihres eigenen Statussatzes mit dieser Bedeutung (den ersten nach Reihenfolge), sodass eine Einstellung für Einheitentypen mit unterschiedlichen benutzerdefinierten Status funktioniert. Standard setzt bei benutzerdefinierten Status Alarmiert (oder Ausgerückt oder Unterwegs) und bei den integrierten Status Ausgerückt.</value>
   </data>
   <data name="UnitTypeStatusOverridesHeader" xml:space="preserve">
     <value>Statusüberschreibungen nach Einheitentyp</value>
   </data>
   <data name="UnitTypeStatusOverridesHelp" xml:space="preserve">
-    <value>Hier erscheinen nur Einheitentypen mit benutzerdefinierten Einheitenstatus. Belassen Sie einen Wert auf „Standard“, um den oben festgelegten, abteilungsweit integrierten Status zu verwenden.</value>
+    <value>Hier erscheinen nur Einheitentypen mit benutzerdefinierten Einheitenstatus. Wählen Sie einen eigenen Status eines Einheitentyps, wenn er einen bestimmten benötigt; Standard verwendet die abteilungsweite Einstellung oben, abgeglichen mit den Status des Einheitentyps.</value>
   </data>
   <data name="CheckInTimerActiveStatesLabel" xml:space="preserve">
     <value>Aktive Status</value>
@@ -1444,5 +1444,80 @@
   </data>
   <data name="DeleteDepartmentLegalHoldWarning" xml:space="preserve">
     <value>{0} aktive Aufbewahrungssperre(n) betreffen die Akten dieser Abteilung. Die Löschung wird erst ausgeführt, wenn alle Sperren aufgehoben sind.</value>
+  </data>
+  <data name="TerminologyHeader" xml:space="preserve">
+    <value>Terminologie</value>
+  </data>
+  <data name="TerminologyIntro" xml:space="preserve">
+    <value>Verwenden Sie die Begriffe Ihrer Organisation. Ein hier festgelegter Name ersetzt den Resgrid-Namen dieses Moduls oder Aktentyps in der Navigation, in Seitentiteln, überall, wo Aktentypen aufgeführt werden, und in den Apps Responder, Unit, IC und Dispatch – für alle Mitglieder und in jeder Sprache. Nur die Bezeichnung ändert sich: Berechtigungen, Links und Integrationen bleiben unberührt. Lassen Sie ein Feld leer, um den Resgrid-Namen beizubehalten.</value>
+  </data>
+  <data name="TerminologyModules" xml:space="preserve">
+    <value>Module</value>
+  </data>
+  <data name="TerminologyModulesHelp" xml:space="preserve">
+    <value>Wird in der Navigation, als Titel der Hauptseite des Moduls und in den Menüs der Apps angezeigt. Sätze an anderer Stelle, die ein Modul erwähnen, behalten die Resgrid-Formulierung.</value>
+  </data>
+  <data name="TerminologyRecordTypes" xml:space="preserve">
+    <value>Aktentypen</value>
+  </data>
+  <data name="TerminologyRecordTypesHelp" xml:space="preserve">
+    <value>Die integrierten Akten- und Protokolltypen, überall dort, wo ein Typ ausgewählt, aufgelistet, gedruckt oder exportiert wird. Um einen eigenen Typ wie Öffentlichkeitsarbeit hinzuzufügen, erstellen Sie eine Aktendefinition.</value>
+  </data>
+  <data name="TerminologyDefaultColumn" xml:space="preserve">
+    <value>Resgrid-Name</value>
+  </data>
+  <data name="TerminologyNameColumn" xml:space="preserve">
+    <value>Name Ihrer Organisation</value>
+  </data>
+  <data name="TerminologySaved" xml:space="preserve">
+    <value>Terminologie gespeichert.</value>
+  </data>
+  <data name="TerminologyPartlySaved" xml:space="preserve">
+    <value>Ihre übrigen Namen wurden gespeichert.</value>
+  </data>
+  <data name="TerminologyTooLong" xml:space="preserve">
+    <value>Namen dürfen höchstens {0} Zeichen lang sein; längere Namen wurden nicht gespeichert und werden zur Korrektur angezeigt.</value>
+  </data>
+  <data name="TerminologyRecordDefinitionsLink" xml:space="preserve">
+    <value>Aktendefinitionen</value>
+  </data>
+  <data name="TerminologyRenameLink" xml:space="preserve">
+    <value>Module und Aktentypen umbenennen</value>
+  </data>
+  <data name="UnitStatusTargetMeaningGroup" xml:space="preserve">
+    <value>Bedeutung des Status</value>
+  </data>
+  <data name="UnitStatusTargetDefaultDispatch" xml:space="preserve">
+    <value>Standard (Alarmiert, Ausgerückt oder Unterwegs)</value>
+  </data>
+  <data name="UnitStatusTargetDefaultRelease" xml:space="preserve">
+    <value>Standard (wieder einsatzbereit)</value>
+  </data>
+  <data name="UnitStatusTargetLeaveUnchanged" xml:space="preserve">
+    <value>Status der Einheit nicht ändern</value>
+  </data>
+  <data name="UnitStatusTargetLegacy" xml:space="preserve">
+    <value>Integrierter Status: {0} (vor den Statusbedeutungen gespeichert)</value>
+  </data>
+  <data name="UnitStatusTargetWarningsHeader" xml:space="preserve">
+    <value>Prüfen Sie diese Einheitentypen</value>
+  </data>
+  <data name="UnitStatusTargetNoMatch" xml:space="preserve">
+    <value>{0}: Sein Statussatz "{1}" hat keinen Status mit der Bedeutung {2}, daher behalten seine Einheiten bei {3} ihren Status. Legen Sie für einen seiner Status einen Basistyp fest oder wählen Sie unten eine Überschreibung.</value>
+  </data>
+  <data name="UnitStatusTargetSeveral" xml:space="preserve">
+    <value>{0}: Sein Statussatz "{1}" hat {2} Status mit der Bedeutung {3} ({4}); {5}, der erste nach Reihenfolge, wird bei {6} verwendet.</value>
+  </data>
+  <data name="UnitStatusTargetNoBuiltIn" xml:space="preserve">
+    <value>{0}: Die integrierten Einheitenstatus haben keinen mit der Bedeutung {1}, daher behalten seine Einheiten bei {2} ihren Status.</value>
+  </data>
+  <data name="UnitStatusTargetActionDispatch" xml:space="preserve">
+    <value>Alarmierung</value>
+  </data>
+  <data name="UnitStatusTargetActionRelease" xml:space="preserve">
+    <value>Freigabe</value>
+  </data>
+  <data name="StatusMeaningOption" xml:space="preserve">
+    <value>Jeder Status "{0}"</value>
   </data>
 </root>

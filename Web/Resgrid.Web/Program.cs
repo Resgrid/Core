@@ -59,6 +59,9 @@ namespace Resgrid.Web
 							options.ProfilesSampleRate = ExternalErrorConfig.SentryProfilingSampleRate;
 							options.SetBeforeSendTransaction(SentryTransactionFilter.Filter);
 
+							// Messages for the user (a Records module not enabled for the department, ...) are not backend errors.
+							options.AddExceptionFilter(new UserFacingExceptionSentryFilter());
+
 							// Requires NuGet package: Sentry.Profiling
 							// Note: By default, the profiler is initialized asynchronously. This can be tuned by passing a desired initialization timeout to the constructor.
 							options.AddIntegration(new ProfilingIntegration(

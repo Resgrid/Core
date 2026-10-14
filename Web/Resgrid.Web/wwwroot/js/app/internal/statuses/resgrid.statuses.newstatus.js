@@ -119,6 +119,8 @@ var resgrid;
                         hiddenInput('detailType_' + n, detailTypeVal),
                         hiddenInput('noteType_' + n, noteTypeVal),
                         hiddenInput('requireGps_' + n, requireGpsVal)));
+                    // What the new option means (its base type), as picked in the dialog.
+                    row.append($('<td style="font-size: 13px;">').text($('#baseType').length ? $('#baseType option:selected').text() : ''));
                     row.append($('<td style="text-align:center;">').append(
                         $('<a class="btn btn-xs btn-danger" data-original-title="Remove this option">').text('Remove')
                             .on('click', function () { $(this).closest('tr').remove(); })));

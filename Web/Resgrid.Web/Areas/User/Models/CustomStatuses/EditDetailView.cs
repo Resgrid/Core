@@ -14,6 +14,9 @@ namespace Resgrid.Web.Areas.User.Models.CustomStatuses
 		public ActionBaseTypes BaseType { get; set; }
 		public SelectList BaseTypes { get; set; }
 
+		/// <summary>The meaning of a staffing option (<see cref="StaffingBaseTypes"/>); -1 for none.</summary>
+		public int StaffingBaseType { get; set; } = (int)StaffingBaseTypes.None;
+
 		/// <summary>The other active options in the same set, offered as next statuses.</summary>
 		public List<CustomStateDetail> Siblings { get; set; } = new List<CustomStateDetail>();
 

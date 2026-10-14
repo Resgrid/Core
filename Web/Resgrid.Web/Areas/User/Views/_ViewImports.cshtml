@@ -13,6 +13,8 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @addTagHelper *, Resgrid.Web
 @inject IStringLocalizer<Resgrid.Localization.Common> commonLocalizer
+@* The department's own names for modules and record types (Department -> Terminology); labels only. *@
+@inject Resgrid.Web.Helpers.IDepartmentTerminology departmentTerms
 @* Text placed inside a JavaScript string, whether in a script block or an inline on*="..." handler,
    goes through JsEncoder.Encode rather than Razor's HTML encoding. The browser decodes &#x27; back to
    an apostrophe before an inline handler runs, so an HTML-encoded "l'élément" ends the JS string early,

@@ -33,6 +33,7 @@
                         <div class="form-horizontal">
                             @Html.AntiForgeryToken()
                             <div asp-validation-summary="All" class="text-danger"></div>
+                            <p><a asp-controller="Department" asp-action="Terminology" asp-route-area="User"><i class="fa fa-pencil"></i> @localizer["TerminologyRenameLink"]</a></p>
 
                             @if (Model.SaveSuccess)
 				            {

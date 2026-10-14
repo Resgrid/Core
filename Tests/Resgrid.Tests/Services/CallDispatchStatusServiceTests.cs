@@ -70,7 +70,7 @@ namespace Resgrid.Tests.Services
 			_departmentSettingsService.Setup(x => x.GetDispatchShiftInsteadOfGroupAsync(7)).ReturnsAsync(true);
 			_departmentSettingsService.Setup(x => x.GetAutoSetStatusForShiftDispatchPersonnelAsync(7)).ReturnsAsync(true);
 			_departmentSettingsService.Setup(x => x.GetShiftCallDispatchPersonnelStatusToSetAsync(7)).ReturnsAsync(-1);
-			_departmentSettingsService.Setup(x => x.GetUnitCallDispatchStatusToSetAsync(7)).ReturnsAsync(-1);
+			_departmentSettingsService.Setup(x => x.GetUnitCallDispatchStatusTargetAsync(7)).ReturnsAsync(StatusTarget.FromStoredValue(-1));
 			// On duty at dispatch time (the call's logged time), from the resolved shift roster.
 			_shiftsService
 				.Setup(x => x.GetOnDutyUserIdsForGroupsAsync(7, It.Is<IEnumerable<int>>(g => g.Contains(5)), new DateTime(2026, 1, 12, 15, 0, 0, DateTimeKind.Utc)))
@@ -104,7 +104,7 @@ namespace Resgrid.Tests.Services
 			_departmentSettingsService.Setup(x => x.GetDispatchShiftInsteadOfGroupAsync(7)).ReturnsAsync(true);
 			_departmentSettingsService.Setup(x => x.GetAutoSetStatusForShiftDispatchPersonnelAsync(7)).ReturnsAsync(true);
 			_departmentSettingsService.Setup(x => x.GetShiftCallReleasePersonnelStatusToSetAsync(7)).ReturnsAsync((int)ActionTypes.AvailableStation);
-			_departmentSettingsService.Setup(x => x.GetUnitCallReleaseStatusToSetAsync(7)).ReturnsAsync((int)UnitStateTypes.Returning);
+			_departmentSettingsService.Setup(x => x.GetUnitCallReleaseStatusTargetAsync(7)).ReturnsAsync(StatusTarget.FromStoredValue((int)UnitStateTypes.Returning));
 			_shiftsService
 				.Setup(x => x.GetOnDutyUserIdsForGroupsAsync(7, It.Is<IEnumerable<int>>(g => g.Contains(5)), new DateTime(2026, 2, 4, 9, 30, 0, DateTimeKind.Utc)))
 				.ReturnsAsync(new Dictionary<int, List<string>> { { 5, new List<string> { "user1" } } });
@@ -135,7 +135,7 @@ namespace Resgrid.Tests.Services
 
 			_departmentSettingsService.Setup(x => x.GetDispatchShiftInsteadOfGroupAsync(7)).ReturnsAsync(true);
 			_departmentSettingsService.Setup(x => x.GetAutoSetStatusForShiftDispatchPersonnelAsync(7)).ReturnsAsync(false);
-			_departmentSettingsService.Setup(x => x.GetUnitCallDispatchStatusToSetAsync(7)).ReturnsAsync((int)UnitStateTypes.Committed);
+			_departmentSettingsService.Setup(x => x.GetUnitCallDispatchStatusTargetAsync(7)).ReturnsAsync(StatusTarget.FromStoredValue((int)UnitStateTypes.Committed));
 
 			await _service.ApplyDispatchStatusesAsync(call, new[] { 5 }, new[] { 11 });
 
@@ -163,7 +163,7 @@ namespace Resgrid.Tests.Services
 			};
 
 			_departmentSettingsService.Setup(x => x.GetDispatchShiftInsteadOfGroupAsync(7)).ReturnsAsync(false);
-			_departmentSettingsService.Setup(x => x.GetUnitCallDispatchStatusToSetAsync(7)).ReturnsAsync((int)UnitStateTypes.Responding);
+			_departmentSettingsService.Setup(x => x.GetUnitCallDispatchStatusTargetAsync(7)).ReturnsAsync(StatusTarget.FromStoredValue((int)UnitStateTypes.Responding));
 			_departmentSettingsService.Setup(x => x.GetUnitCallStatusOverridesByUnitTypeAsync(7)).ReturnsAsync(new List<UnitTypeCallStatusOverride>
 			{
 				new UnitTypeCallStatusOverride { UnitTypeId = 2, DispatchStatus = 44, ReleaseStatus = -1 }
@@ -206,7 +206,7 @@ namespace Resgrid.Tests.Services
 			};
 
 			_departmentSettingsService.Setup(x => x.GetDispatchShiftInsteadOfGroupAsync(7)).ReturnsAsync(false);
-			_departmentSettingsService.Setup(x => x.GetUnitCallReleaseStatusToSetAsync(7)).ReturnsAsync((int)UnitStateTypes.Released);
+			_departmentSettingsService.Setup(x => x.GetUnitCallReleaseStatusTargetAsync(7)).ReturnsAsync(StatusTarget.FromStoredValue((int)UnitStateTypes.Released));
 			_departmentSettingsService.Setup(x => x.GetUnitCallStatusOverridesByUnitTypeAsync(7)).ReturnsAsync(new List<UnitTypeCallStatusOverride>
 			{
 				new UnitTypeCallStatusOverride { UnitTypeId = 2, DispatchStatus = -1, ReleaseStatus = 77 }
@@ -238,7 +238,7 @@ namespace Resgrid.Tests.Services
 		[TestCase((int)UnitStateTypes.Available)]
 		public async Task ApplyReleaseStatusesAsync_leaves_units_back_in_service_or_out_of_service_alone(int currentState)
 		{
-			_departmentSettingsService.Setup(x => x.GetUnitCallReleaseStatusToSetAsync(7)).ReturnsAsync((int)UnitStateTypes.Available);
+			_departmentSettingsService.Setup(x => x.GetUnitCallReleaseStatusTargetAsync(7)).ReturnsAsync(StatusTarget.FromStoredValue((int)UnitStateTypes.Available));
 			_unitsService.Setup(x => x.GetLastUnitStateByUnitIdAsync(11))
 				.ReturnsAsync(new UnitState { UnitStateId = 900, UnitId = 11, State = currentState, DestinationId = 40, DestinationType = (int)DestinationEntityTypes.Call });
 
@@ -251,7 +251,7 @@ namespace Resgrid.Tests.Services
 		public async Task ApplyReleaseStatusesAsync_reads_custom_statuses_by_base_type()
 		{
 			// Custom "Out of Service" (base type Maintenance) stays; custom "On Scene" (base type On Scene) is released.
-			_departmentSettingsService.Setup(x => x.GetUnitCallReleaseStatusToSetAsync(7)).ReturnsAsync((int)UnitStateTypes.Available);
+			_departmentSettingsService.Setup(x => x.GetUnitCallReleaseStatusTargetAsync(7)).ReturnsAsync(StatusTarget.FromStoredValue((int)UnitStateTypes.Available));
 			_customStateService.Setup(x => x.GetAllCustomStatesForDepartmentAsync(7)).ReturnsAsync(new List<CustomState>
 			{
 				new CustomState
@@ -276,7 +276,7 @@ namespace Resgrid.Tests.Services
 		[Test]
 		public async Task ApplyReleaseStatusesAsync_leaves_a_unit_working_another_open_call_alone()
 		{
-			_departmentSettingsService.Setup(x => x.GetUnitCallReleaseStatusToSetAsync(7)).ReturnsAsync((int)UnitStateTypes.Available);
+			_departmentSettingsService.Setup(x => x.GetUnitCallReleaseStatusTargetAsync(7)).ReturnsAsync(StatusTarget.FromStoredValue((int)UnitStateTypes.Available));
 			_unitsService.Setup(x => x.GetLastUnitStateByUnitIdAsync(11))
 				.ReturnsAsync(new UnitState { UnitStateId = 1, UnitId = 11, State = (int)UnitStateTypes.Responding, DestinationId = 41, DestinationType = (int)DestinationEntityTypes.Call });
 			_unitsService.Setup(x => x.GetLastUnitStateByUnitIdAsync(12))
@@ -294,12 +294,106 @@ namespace Resgrid.Tests.Services
 		[Test]
 		public async Task ApplyDispatchStatusesAsync_sets_dispatch_statuses_whatever_the_current_status()
 		{
-			_departmentSettingsService.Setup(x => x.GetUnitCallDispatchStatusToSetAsync(7)).ReturnsAsync(-1);
+			_departmentSettingsService.Setup(x => x.GetUnitCallDispatchStatusTargetAsync(7)).ReturnsAsync(StatusTarget.FromStoredValue(-1));
 			_unitsService.Setup(x => x.GetLastUnitStateByUnitIdAsync(11)).ReturnsAsync(new UnitState { UnitStateId = 1, UnitId = 11, State = (int)UnitStateTypes.Available });
 
 			await _service.ApplyDispatchStatusesAsync(new Call { CallId = 40, DepartmentId = 7 }, null, new[] { 11 });
 
 			_unitsService.Verify(x => x.SetUnitStateAsync(It.Is<UnitState>(u => u.UnitId == 11 && u.State == (int)UnitStateTypes.Responding), 7, It.IsAny<CancellationToken>(), true), Times.Once);
+		}
+
+		// Brockville, 2026-10-13: every unit type uses its own status set, and the department-wide setting wrote built-in
+		// statuses (Available on dispatch, Returning on close) outside it.
+		private void CustomSetUnit(int unitId, params CustomStateDetail[] options)
+		{
+			_unitsService.Setup(x => x.GetUnitByIdAsync(unitId)).ReturnsAsync(new Unit { UnitId = unitId, Type = "Pumper" });
+			_unitsService.Setup(x => x.GetUnitTypeByNameAsync(7, "Pumper")).ReturnsAsync(new UnitType { UnitTypeId = 4334, Type = "Pumper", CustomStatesId = 2041 });
+			_customStateService.Setup(x => x.GetCustomSateByIdAsync(2041)).ReturnsAsync(new CustomState
+			{
+				CustomStateId = 2041, Type = (int)CustomStateTypes.Unit, Details = options.ToList()
+			});
+		}
+
+		private static CustomStateDetail Option(int id, string text, int order, ActionBaseTypes baseType, bool deleted = false) =>
+			new CustomStateDetail { CustomStateDetailId = id, CustomStateId = 2041, ButtonText = text, Order = order, BaseType = (int)baseType, IsDeleted = deleted };
+
+		[Test]
+		public async Task Default_dispatch_status_on_a_custom_set_is_its_dispatched_option()
+		{
+			CustomSetUnit(11, Option(12707, "IN QUARTERS", 7, ActionBaseTypes.InQuarters), Option(12702, "EN ROUTE", 2, ActionBaseTypes.Enroute),
+				Option(12701, "DISPATCHED", 1, ActionBaseTypes.Dispatched));
+
+			await _service.ApplyDispatchStatusesAsync(new Call { CallId = 40, DepartmentId = 7 }, null, new[] { 11 });
+
+			_unitsService.Verify(x => x.SetUnitStateAsync(It.Is<UnitState>(u => u.UnitId == 11 && u.State == 12701), 7, It.IsAny<CancellationToken>(), true), Times.Once);
+		}
+
+		[Test]
+		public async Task A_base_type_target_uses_the_first_matching_option_by_order()
+		{
+			_departmentSettingsService.Setup(x => x.GetUnitCallDispatchStatusTargetAsync(7)).ReturnsAsync(StatusTarget.ForBaseType(ActionBaseTypes.Responding));
+			CustomSetUnit(11, Option(3, "Code 3", 2, ActionBaseTypes.Responding), Option(2, "Rolling", 1, ActionBaseTypes.Responding),
+				Option(1, "Old Rolling", 0, ActionBaseTypes.Responding, deleted: true));
+
+			await _service.ApplyDispatchStatusesAsync(new Call { CallId = 40, DepartmentId = 7 }, null, new[] { 11 });
+
+			_unitsService.Verify(x => x.SetUnitStateAsync(It.Is<UnitState>(u => u.UnitId == 11 && u.State == 2), 7, It.IsAny<CancellationToken>(), true), Times.Once);
+		}
+
+		[Test]
+		public async Task A_custom_set_without_a_matching_option_leaves_the_unit_alone()
+		{
+			_departmentSettingsService.Setup(x => x.GetUnitCallReleaseStatusTargetAsync(7)).ReturnsAsync(StatusTarget.ForBaseType(ActionBaseTypes.Cleared));
+			CustomSetUnit(11, Option(12701, "DISPATCHED", 1, ActionBaseTypes.Dispatched));
+			_unitsService.Setup(x => x.GetLastUnitStateByUnitIdAsync(11)).ReturnsAsync(new UnitState { UnitStateId = 1, UnitId = 11, State = 12701 });
+
+			await _service.ApplyReleaseStatusesAsync(new Call { CallId = 40, DepartmentId = 7 }, null, new[] { 11 });
+
+			_unitsService.Verify(x => x.SetUnitStateAsync(It.IsAny<UnitState>(), It.IsAny<int>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never);
+		}
+
+		[Test]
+		public async Task Leave_unchanged_sets_nothing()
+		{
+			_departmentSettingsService.Setup(x => x.GetUnitCallDispatchStatusTargetAsync(7)).ReturnsAsync(StatusTarget.LeaveUnchanged);
+
+			await _service.ApplyDispatchStatusesAsync(new Call { CallId = 40, DepartmentId = 7 }, null, new[] { 11 });
+
+			_unitsService.Verify(x => x.SetUnitStateAsync(It.IsAny<UnitState>(), It.IsAny<int>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never);
+		}
+
+		[Test]
+		public async Task A_saved_built_in_status_on_a_custom_set_becomes_its_option_with_the_same_meaning()
+		{
+			// Setting 51 = 8 (built-in Returning): the custom set's RETURNING, not the built-in value.
+			_departmentSettingsService.Setup(x => x.GetUnitCallReleaseStatusTargetAsync(7)).ReturnsAsync(StatusTarget.FromStoredValue((int)UnitStateTypes.Returning));
+			CustomSetUnit(11, Option(12706, "RETURNING", 6, ActionBaseTypes.Returning), Option(12703, "ON LOCATION", 3, ActionBaseTypes.OnScene));
+			_unitsService.Setup(x => x.GetLastUnitStateByUnitIdAsync(11)).ReturnsAsync(new UnitState { UnitStateId = 1, UnitId = 11, State = 12703 });
+			_customStateService.Setup(x => x.GetAllCustomStatesForDepartmentAsync(7)).ReturnsAsync(new List<CustomState>
+			{
+				new CustomState { CustomStateId = 2041, Type = (int)CustomStateTypes.Unit, Details = new List<CustomStateDetail> { Option(12703, "ON LOCATION", 3, ActionBaseTypes.OnScene) } }
+			});
+
+			await _service.ApplyReleaseStatusesAsync(new Call { CallId = 40, DepartmentId = 7 }, null, new[] { 11 });
+
+			_unitsService.Verify(x => x.SetUnitStateAsync(It.Is<UnitState>(u => u.UnitId == 11 && u.State == 12706), 7, It.IsAny<CancellationToken>(), true), Times.Once);
+		}
+
+		[Test]
+		public async Task A_unit_in_quarters_under_its_own_set_is_not_released()
+		{
+			// The Brockville complaint: IN QUARTERS with base type In Quarters keeps its status when the call closes.
+			_departmentSettingsService.Setup(x => x.GetUnitCallReleaseStatusTargetAsync(7)).ReturnsAsync(StatusTarget.FromStoredValue((int)UnitStateTypes.Returning));
+			CustomSetUnit(11, Option(12706, "RETURNING", 6, ActionBaseTypes.Returning), Option(12707, "IN QUARTERS", 7, ActionBaseTypes.InQuarters));
+			_unitsService.Setup(x => x.GetLastUnitStateByUnitIdAsync(11)).ReturnsAsync(new UnitState { UnitStateId = 1, UnitId = 11, State = 12707 });
+			_customStateService.Setup(x => x.GetAllCustomStatesForDepartmentAsync(7)).ReturnsAsync(new List<CustomState>
+			{
+				new CustomState { CustomStateId = 2041, Type = (int)CustomStateTypes.Unit, Details = new List<CustomStateDetail> { Option(12707, "IN QUARTERS", 7, ActionBaseTypes.InQuarters) } }
+			});
+
+			await _service.ApplyReleaseStatusesAsync(new Call { CallId = 40, DepartmentId = 7 }, null, new[] { 11 });
+
+			_unitsService.Verify(x => x.SetUnitStateAsync(It.IsAny<UnitState>(), It.IsAny<int>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never);
 		}
 	}
 }

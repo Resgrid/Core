@@ -86,6 +86,13 @@ namespace Resgrid.Web.Services.Models.v4.Personnel
 		public string StatusColor { get; set; }
 
 		/// <summary>
+		/// What the current status means (an ActionBaseTypes value: 0 Available, 2 Responding, 3 On Scene, 23 In Quarters,
+		/// ...), for built-in and department statuses alike; -1 when the status has no system meaning. Clients decide
+		/// availability from this, not from the status text.
+		/// </summary>
+		public int StatusBaseType { get; set; }
+
+		/// <summary>
 		/// The timestamp of the last action. This is converted UTC to the departments, or users, TimeZone.
 		/// </summary>
 		public DateTime StatusTimestamp { get; set; }
@@ -101,6 +108,11 @@ namespace Resgrid.Web.Services.Models.v4.Personnel
 		public string StatusDestinationName { get; set; }
 
 		/// <summary>
+		/// What StatusDestinationId names (DestinationEntityTypes: 1 station, 2 call, 3 POI), when the status recorded it.
+		/// </summary>
+		public int? StatusDestinationType { get; set; }
+
+		/// <summary>
 		/// The current staffing level (state) type for the user
 		/// </summary>
 		public string StaffingId { get; set; }
@@ -114,6 +126,13 @@ namespace Resgrid.Web.Services.Models.v4.Personnel
 		/// The current staffing level (state) color hex string for the user
 		/// </summary>
 		public string StaffingColor { get; set; }
+
+		/// <summary>
+		/// What the current staffing level means (a StaffingBaseTypes value: 0 Available, 1 Delayed, 2 Unavailable,
+		/// 3 Committed, 4 On Shift, 5 Off Duty, 6 On Call), for built-in and department staffing levels alike; -1 when the
+		/// level has no system meaning.
+		/// </summary>
+		public int StaffingBaseType { get; set; }
 
 		/// <summary>
 		/// The timestamp of the last state/staffing level. This is converted UTC to the departments, or users, TimeZone.

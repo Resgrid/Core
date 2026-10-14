@@ -35,11 +35,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly INotesService _notesService;
 		private readonly IContactsService _contactsService;
 		private readonly IBusinessOperationsAccessService _businessOperationsAccess;
+		private readonly IProtocolsService _protocolsService;
+		private readonly ITemplatesService _templatesService;
 
 		public TypesController(IUnitsService unitsService, ICustomStateService customStateService, ICallsService callsService, IDepartmentSettingsService departmentSettingsService,
 			IAuthorizationService authorizationService, IEventAggregator eventAggregator, ICertificationService certificationService, IDocumentsService documentsService,
 			INotesService notesService,
-			IContactsService contactsService, IBusinessOperationsAccessService businessOperationsAccess)
+			IContactsService contactsService, IBusinessOperationsAccessService businessOperationsAccess,
+			IProtocolsService protocolsService, ITemplatesService templatesService)
 		{
 			_unitsService = unitsService;
 			_customStateService = customStateService;
@@ -52,6 +55,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_notesService = notesService;
 			_contactsService = contactsService;
 			_businessOperationsAccess = businessOperationsAccess;
+			_protocolsService = protocolsService;
+			_templatesService = templatesService;
+		}
+
+		/// <summary>A posted class (base type) kept only when it is a value of its enum; anything else is -1 (none).</summary>
+		private static int ValidClass<TEnum>(int value) where TEnum : struct, Enum
+		{
+			return Enum.IsDefined(typeof(TEnum), value) ? value : -1;
 		}
 
 		#region Edit Unit Type
@@ -128,10 +139,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 				auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
 				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
+				UnitType added;
 				if (model.UnitType.CustomStatesId.HasValue && model.UnitType.CustomStatesId.Value > 0)
-					await _unitsService.AddUnitTypeAsync(DepartmentId, model.UnitType.Type, model.UnitType.CustomStatesId.Value, model.UnitType.MapIconType, cancellationToken);
+					added = await _unitsService.AddUnitTypeAsync(DepartmentId, model.UnitType.Type, model.UnitType.CustomStatesId.Value, model.UnitType.MapIconType, cancellationToken);
 				else
-					await _unitsService.AddUnitTypeAsync(DepartmentId, model.UnitType.Type, model.UnitType.MapIconType, cancellationToken);
+					added = await _unitsService.AddUnitTypeAsync(DepartmentId, model.UnitType.Type, model.UnitType.MapIconType, cancellationToken);
+
+				var unitClass = ValidClass<UnitTypeClasses>(model.UnitType.BaseType);
+				if (added != null && unitClass != (int)UnitTypeClasses.None)
+				{
+					added.BaseType = unitClass;
+					await _unitsService.SaveUnitTypeAsync(added, cancellationToken);
+				}
 			}
 
 			return RedirectToAction("Types", "Department", new { Area = "User" });
@@ -190,6 +209,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				auditEvent.Before = unitType.CloneJsonToString();
 
 				unitType.Type = model.UnitType.Type;
+				unitType.BaseType = ValidClass<UnitTypeClasses>(model.UnitType.BaseType);
 
 				if (model.UnitCustomStatesId != 0)
 					unitType.CustomStatesId = model.UnitCustomStatesId;
@@ -253,6 +273,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				CallType newCallType = new CallType();
 				newCallType.DepartmentId = DepartmentId;
 				newCallType.Type = model.CallType.Type;
+				newCallType.BaseType = ValidClass<CallTypeClasses>(model.CallType.BaseType);
 
 				if (model.CallTypeIcon >= 0)
 					newCallType.MapIconType = model.CallTypeIcon;
@@ -306,7 +327,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 					return Unauthorized();
 
 				auditEvent.Before = callType.CloneJsonToString();
+				var previousName = callType.Type;
 				callType.Type = model.CallType.Type;
+				callType.BaseType = ValidClass<CallTypeClasses>(model.CallType.BaseType);
 
 				if (model.CallTypeIcon >= 0)
 					callType.MapIconType = model.CallTypeIcon;
@@ -326,6 +349,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 
 				await _callsService.SaveCallTypeAsync(callType, cancellationToken);
+
+				// Protocol triggers and quick templates store the type's name: follow the rename so they keep matching.
+				await _protocolsService.RenameCallTypeInTriggersAsync(DepartmentId, previousName, callType.Type, cancellationToken);
+				await _templatesService.RenameCallTypeInTemplatesAsync(DepartmentId, previousName, callType.Type, cancellationToken);
 
 				return RedirectToAction("Types", "Department", new { Area = "User" });
 			}
@@ -482,6 +509,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				//}
 
 				model.CallPriority.DepartmentId = DepartmentId;
+				model.CallPriority.BaseType = ValidClass<CallPriority>(model.CallPriority.BaseType);
 
 				var auditEvent = new AuditEvent();
 				auditEvent.DepartmentId = DepartmentId;
@@ -631,6 +659,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				priority.DispatchUnits = model.CallPriority.DispatchUnits;
 				priority.ForceNotifyAllPersonnel = model.CallPriority.ForceNotifyAllPersonnel;
 				priority.Tone = model.CallPriority.Tone;
+				priority.BaseType = ValidClass<CallPriority>(model.CallPriority.BaseType);
 
 				//if (alertfileToUpload != null && alertfileToUpload.Length > 0)
 				//{

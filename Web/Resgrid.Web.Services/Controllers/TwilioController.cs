@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -467,12 +467,15 @@ namespace Resgrid.Web.Services.Controllers
 
 						if (profile != null)
 						{
-							var payload = _textCommandService.DetermineType(textMessage.Text);
+							var customActions = customStates.FirstOrDefault(x => x.Type == (int)CustomStateTypes.Personnel);
+							var customStaffing = customStates.FirstOrDefault(x => x.Type == (int)CustomStateTypes.Staffing);
+
+							// The department's own status and staffing sets, so the commands the HELP reply lists for
+							// them (names and positions) are the ones that work.
+							var payload = _textCommandService.DetermineType(textMessage.Text, customActions, customStaffing);
 
 							// Diagnostic: which command the inbound text resolved to (None still replies with a hint).
 							Framework.Logging.LogInfo($"[Twilio SMS] DepartmentId={departmentId.Value} UserId={profile.UserId} resolved text command={payload.Type}");
-							var customActions = customStates.FirstOrDefault(x => x.Type == (int)CustomStateTypes.Personnel);
-							var customStaffing = customStates.FirstOrDefault(x => x.Type == (int)CustomStateTypes.Staffing);
 
 							switch (payload.Type)
 							{
@@ -512,7 +515,7 @@ namespace Resgrid.Web.Services.Controllers
 										help.Append("responding or 1: Responding" + Environment.NewLine);
 										help.Append("notresponding or 2: Not Responding" + Environment.NewLine);
 										help.Append("onscene or 3: On Scene" + Environment.NewLine);
-										help.Append("available or 4: Available" + Environment.NewLine);
+										help.Append("standingby or 4: Available" + Environment.NewLine);
 									}
 
 									help.Append("---------------------" + Environment.NewLine);
@@ -533,7 +536,7 @@ namespace Resgrid.Web.Services.Controllers
 										help.Append("delayed or s2: Delayed Staffing" + Environment.NewLine);
 										help.Append("unavailable or s3: Unavailable Staffing" + Environment.NewLine);
 										help.Append("committed or s4: Committed Staffing" + Environment.NewLine);
-										help.Append("onshift or s4: On Shift Staffing" + Environment.NewLine);
+										help.Append("onshift or s5: On Shift Staffing" + Environment.NewLine);
 									}
 
 									response.Message(help.ToString());
@@ -1043,8 +1046,12 @@ namespace Resgrid.Web.Services.Controllers
 					return CreateVoiceContentResult(response);
 				}
 
+				// The department's own Responding status when it has one (StatusTargetResolver), else the built-in one.
+				var respondingToCall = await _customStateService.ResolvePersonnelStatusAsync(call.DepartmentId, ActionBaseTypes.Responding, DestinationEntityTypes.Call)
+					?? (int)ActionTypes.RespondingToScene;
+
 				using (StatusWriteActor.Begin(userId, StatusSetOrigins.Voice))
-					await _actionLogsService.SetUserActionAsync(userId, call.DepartmentId, (int)ActionTypes.RespondingToScene, null, call.CallId, (int)DestinationEntityTypes.Call);
+					await _actionLogsService.SetUserActionAsync(userId, call.DepartmentId, respondingToCall, null, call.CallId, (int)DestinationEntityTypes.Call);
 				await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.RespondingToScene, call.DepartmentId);
 				response.Hangup();
 				return CreateVoiceContentResult(response);
@@ -1061,8 +1068,11 @@ namespace Resgrid.Web.Services.Controllers
 
 					if (station != null)
 					{
+						var respondingToStation = await _customStateService.ResolvePersonnelStatusAsync(call.DepartmentId, ActionBaseTypes.Responding, DestinationEntityTypes.Station)
+							?? (int)ActionTypes.RespondingToStation;
+
 						using (StatusWriteActor.Begin(userId, StatusSetOrigins.Voice))
-							await _actionLogsService.SetUserActionAsync(userId, call.DepartmentId, (int)ActionTypes.RespondingToStation, null, station.DepartmentGroupId, (int)DestinationEntityTypes.Station);
+							await _actionLogsService.SetUserActionAsync(userId, call.DepartmentId, respondingToStation, null, station.DepartmentGroupId, (int)DestinationEntityTypes.Station);
 						await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.RespondingToStation(station.Name), call.DepartmentId);
 						response.Hangup();
 						return CreateVoiceContentResult(response);
@@ -1381,11 +1391,8 @@ namespace Resgrid.Web.Services.Controllers
 
 				prompts.Add(TwilioVoicePromptCatalog.StatusSelectionIntro);
 
-				foreach (var option in options)
+				foreach (var option in VoiceSelectableOptions(options))
 				{
-					if (option.CustomStateDetailId == 0 || option.IsDeleted)
-						continue;
-
 					prompts.Add(TwilioVoicePromptCatalog.StatusOption(index, option.ButtonText));
 					index++;
 				}
@@ -1402,11 +1409,8 @@ namespace Resgrid.Web.Services.Controllers
 
 				prompts.Add(TwilioVoicePromptCatalog.StaffingSelectionIntro);
 
-				foreach (var option in options)
+				foreach (var option in VoiceSelectableOptions(options))
 				{
-					if (option.CustomStateDetailId == 0 || option.IsDeleted)
-						continue;
-
 					prompts.Add(TwilioVoicePromptCatalog.StaffingOption(index, option.ButtonText));
 					index++;
 				}
@@ -1505,7 +1509,7 @@ namespace Resgrid.Web.Services.Controllers
 			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
 			var profile = await _userProfileService.GetProfileByUserIdAsync(userId);
 			var options = await _customStateService.GetCustomPersonnelStatusesOrDefaultsAsync(department.DepartmentId);
-			var activeOptions = options.Where(o => o.CustomStateDetailId > 0 && !o.IsDeleted).ToList();
+			var activeOptions = VoiceSelectableOptions(options);
 
 			if (!String.IsNullOrWhiteSpace(twilioRequest.Digits))
 			{
@@ -1516,7 +1520,7 @@ namespace Resgrid.Web.Services.Controllers
 				else if (int.TryParse(twilioRequest.Digits, out int digit) && digit > 0 && digit <= activeOptions.Count)
 				{
 					var selectedOption = activeOptions[digit - 1];
-					if (selectedOption != null && selectedOption.CustomStateDetailId > 0 && !selectedOption.IsDeleted)
+					if (selectedOption != null)
 					{
 						using (StatusWriteActor.Begin(userId, StatusSetOrigins.Voice))
 							await _actionLogsService.SetUserActionAsync(userId, department.DepartmentId, selectedOption.CustomStateDetailId);
@@ -1548,7 +1552,7 @@ namespace Resgrid.Web.Services.Controllers
 			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
 			var profile = await _userProfileService.GetProfileByUserIdAsync(userId);
 			var options = await _customStateService.GetCustomPersonnelStaffingsOrDefaultsAsync(department.DepartmentId);
-			var activeOptions = options.Where(o => o.CustomStateDetailId > 0 && !o.IsDeleted).ToList();
+			var activeOptions = VoiceSelectableOptions(options);
 			if (!String.IsNullOrWhiteSpace(twilioRequest.Digits))
 			{
 				if (twilioRequest.Digits == "0")
@@ -1575,6 +1579,16 @@ namespace Resgrid.Web.Services.Controllers
 			}
 
 			return CreateVoiceContentResult(response);
+		}
+
+		/// <summary>
+		/// The status or staffing options the phone menu reads out, in order; the digit a caller presses is a position in this
+		/// list, so the menu and the handler must build it the same way. Built-in options keep id 0 (Standing By, Available):
+		/// skipping id 0 left a department on the built-in statuses with no way to go available by phone.
+		/// </summary>
+		private static List<CustomStateDetail> VoiceSelectableOptions(IEnumerable<CustomStateDetail> options)
+		{
+			return (options ?? Enumerable.Empty<CustomStateDetail>()).Where(o => o != null && !o.IsDeleted).ToList();
 		}
 
 		private async System.Threading.Tasks.Task AppendVoicePromptAsync(VoiceResponse response, string text, int? departmentId = null)
@@ -1779,15 +1793,8 @@ namespace Resgrid.Web.Services.Controllers
 			// which for a department running Custom Call Priorities is either the wrong
 			// priority or one the department doesn't own at all, and dispatch then has no
 			// priority to resolve for tones, colors and the notify-all flags.
-			int defaultPriority = (int)CallPriority.High;
-
-			if (priorities != null && priorities.Any())
-			{
-				var defaultPrio = priorities.FirstOrDefault(x => x.IsDefault && x.IsDeleted == false);
-
-				if (defaultPrio != null)
-					defaultPriority = defaultPrio.DepartmentCallPriorityId;
-			}
+			// The default priority, else the department's High priority, else the built-in High (CallPriorityMatch).
+			int defaultPriority = CallPriorityMatch.DefaultForImport(priorities);
 
 			Call call = null;
 			var formatType = await _departmentSettingsService.GetTextToCallImportFormatForDepartmentAsync(department.DepartmentId);

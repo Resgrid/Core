@@ -1624,7 +1624,7 @@
     <value>Fügen Sie wiederkehrende Besprechungen und Ausbildungsabende hinzu.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.call-types-priorities">
-    <value>Fügen Sie die Einsatztypen hinzu, die Ihre Disponenten verwenden, und legen Sie deren Prioritäten fest.</value>
+    <value>Fügen Sie die Einsatztypen hinzu, die Ihre Disponenten verwenden, und legen Sie deren Prioritäten fest. Geben Sie jedem Einsatztyp eine Klasse und jeder Priorität eine Bedeutung, damit Berichte und die Apps sie gruppieren und sortieren können.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.certification-dashboard">
     <value>Erfassen Sie die aktuellen Zertifizierungen der Mitglieder und prüfen Sie anschließend, was bald abläuft.</value>
@@ -1654,7 +1654,7 @@
     <value>Fügen Sie Ihre Dienstleistungsverträge und deren Tarife hinzu.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.custom-statuses">
-    <value>Prüfen Sie die integrierten Status und fügen Sie eigene hinzu, wo Ihre Begriffe abweichen. Geben Sie jedem einen Basistyp; „In der Wache“ teilt den Dispositionsempfehlungen mit, dass eine Einheit auf ihrer Wache ist.</value>
+    <value>Prüfen Sie die integrierten Status und fügen Sie eigene hinzu, wo Ihre Begriffe abweichen. Geben Sie jeder Option eine Bedeutung (Basistyp): Disposition, Verfügbarkeit, Benachrichtigungen und die Apps lesen die Bedeutung, nicht den Schaltflächentext. „In der Wache“ teilt den Dispositionsempfehlungen mit, dass eine Einheit auf ihrer Wache ist.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.data-protection">
     <value>Prüfen Sie die Checkliste zur Registrierung und planen Sie die Schlüsselwiederherstellung, bevor Sie sich registrieren.</value>
@@ -1669,7 +1669,7 @@
     <value>Gewähren Sie den Personen, die disponieren, Zugriff auf Dispatch, und lassen Sie sie sich anmelden.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.dispatch-settings">
-    <value>Legen Sie fest, ob sich die Disposition nach Gruppen oder Schichten richtet, und prüfen Sie die Optionen für automatische Status. Legen Sie Ausrückzeiten für die nächstgelegene Einheit fest, wenn Besatzungen Zeit brauchen, um die Wache zu verlassen.</value>
+    <value>Legen Sie fest, ob sich die Disposition nach Gruppen oder Schichten richtet, und prüfen Sie die Optionen für automatische Status: Der Einheitenstatus bei Disposition und Freigabe wird nach Bedeutung aus dem eigenen Statussatz jedes Einheitentyps gewählt. Legen Sie Ausrückzeiten für die nächstgelegene Einheit fest, wenn Besatzungen Zeit brauchen, um die Wache zu verlassen.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.distribution-lists">
     <value>Erstellen Sie Listen für Gruppen, die Sie häufig kontaktieren, etwa Führungskräfte.</value>
@@ -1771,7 +1771,7 @@
     <value>Installieren Sie die Unit-App auf jedem Fahrzeug-Tablet und wählen Sie dessen Einheit aus.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.unit-types">
-    <value>Erstellen Sie Einheitentypen, bevor Sie Einheiten hinzufügen, damit jede Einheit klassifiziert werden kann.</value>
+    <value>Erstellen Sie Einheitentypen, bevor Sie Einheiten hinzufügen, damit jede Einheit klassifiziert werden kann. Geben Sie jedem Typ eine Klasse, etwa Löschfahrzeug oder Rettungswagen, und wählen Sie seinen Statussatz.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.units">
     <value>Fügen Sie jede Einheit mit ihrem Typ und ihrer Heimatwachengruppe hinzu.</value>
@@ -2317,10 +2317,10 @@
     <value>Schwellenwerte für die Hervorhebung auf der Tafel, gruppiert nach grundlegender Statusbedeutung. Eine leere Liste deaktiviert die Hervorhebung.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.UnitTypeCallStatusOverride.DispatchStatus">
-    <value>Status, der bei der Disposition auf diesen Einheitentyp angewendet wird; minus eins belässt ihn unverändert.</value>
+    <value>Option aus dem eigenen Statussatz dieses Einheitentyps, die bei der Disposition vor dem Dispositionsstatus der Organisation angewendet wird; minus eins verwendet den Dispositionsstatus der Organisation.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.UnitTypeCallStatusOverride.ReleaseStatus">
-    <value>Status, der bei der Freigabe auf diesen Einheitentyp angewendet wird; minus eins belässt ihn unverändert.</value>
+    <value>Option aus dem eigenen Statussatz dieses Einheitentyps, die bei der Freigabe vor dem Freigabestatus der Organisation angewendet wird; minus eins verwendet den Freigabestatus der Organisation.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.UnitTypeCallStatusOverride.UnitTypeId">
     <value>Vorhandener Einheitentyp, der diese Ausnahmeregelung erhält. Ein Einheitentypname ist keine Qualifikations- oder Besetzungsfreigabe.</value>
@@ -5020,10 +5020,10 @@
     <value>Sprache der Sprachausgabe für unterstützte Sprachbenachrichtigungen. Bestätigen Sie unterstützte Stimmen und Aussprache mit einem manuell durchgeführten Test.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.UnitCallDispatchStatusToSet">
-    <value>Einheitenstatus, der während der Einsatzdisposition angewendet wird. Minus eins oder ein ungültiger integrierter Einheitenstatus belässt den Status unverändert.</value>
+    <value>Einheitenstatus bei der Alarmierung, nach Bedeutung: Jede Einheit erhält den Status ihres eigenen Statussatzes mit diesem Basistyp. -1 ist der Standard, -2 lässt den Status unverändert, 1000 plus ein Basistyp ist eine Statusbedeutung, und 0 bis 12 ist ein integrierter Status, der vor den Statusbedeutungen gespeichert wurde.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.UnitCallReleaseStatusToSet">
-    <value>Einheitenstatus, der bei Einsatzfreigabe angewendet wird. Prüfen Sie Überschreibungen nach Einheitentyp, bevor Sie eine abteilungsweite Wirkung annehmen.</value>
+    <value>Einheitenstatus bei der Freigabe, ebenso nach Bedeutung wie der Alarmierungsstatus. Prüfen Sie die Überschreibungen nach Einheitentyp, bevor Sie von einer abteilungsweiten Wirkung ausgehen.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.UnitCallStatusOverridesByUnitType">
     <value>Statusüberschreibungen für Einsätze je Einheitentyp. Vorhandene typenspezifische Werte haben Vorrang vor den Abteilungsstandards.</value>
@@ -6881,5 +6881,53 @@
   </data>
   <data name="FeaturePurpose.document-numbering" xml:space="preserve">
     <value>Wie Nummern von Arbeitsaufträgen, Rechnungen, Angeboten und täglichen Zeitberichten geschrieben werden und an welchem Tag ihr Nummerierungsjahr bei einer Nummerierung nach Haushaltsjahr beginnt.</value>
+  </data>
+  <data name="Setting.DepartmentTerminology" xml:space="preserve">
+    <value>Terminologie der Organisation</value>
+  </data>
+  <data name="SettingHelp.DepartmentTerminology" xml:space="preserve">
+    <value>Die eigenen Namen der Organisation für Module und integrierte Aktentypen, angezeigt in der Navigation, in Titeln der Modulseiten, überall, wo Aktentypen aufgeführt werden, und in den Apps Responder, Unit, IC und Dispatch, in jeder Sprache. Nur Bezeichnungen: Berechtigungen, Links und API-Werte ändern sich nicht. Ein Begriff ohne Namen verwendet den Resgrid-Namen.</value>
+  </data>
+  <data name="Field.DepartmentTerminologyConfig.Terms" xml:space="preserve">
+    <value>Terminologie der Organisation / Begriffe</value>
+  </data>
+  <data name="FieldHelp.DepartmentTerminologyConfig.Terms" xml:space="preserve">
+    <value>Ein Eintrag je umbenanntem Modul oder Aktentyp, zum Beispiel Einsatz für Run oder Schichtdienst für Work. Ein nicht aufgeführter Begriff zeigt den Resgrid-Namen in der Sprache des Mitglieds. Namen haben höchstens 50 Zeichen.</value>
+  </data>
+  <data name="Field.DepartmentTermOverride.Key" xml:space="preserve">
+    <value>Begriff der Organisation / Schlüssel</value>
+  </data>
+  <data name="FieldHelp.DepartmentTermOverride.Key" xml:space="preserve">
+    <value>Der umbenannte Begriff: ein Modul (module.calls, module.records ...) oder ein integrierter Aktentyp (record-type.run, record-type.work ...). Schlüssel ändern sich nie.</value>
+  </data>
+  <data name="Field.DepartmentTermOverride.Text" xml:space="preserve">
+    <value>Begriff der Organisation / Name</value>
+  </data>
+  <data name="FieldHelp.DepartmentTermOverride.Text" xml:space="preserve">
+    <value>Das Wort der Organisation für den Begriff, höchstens 50 Zeichen. Dasselbe Wort wird allen Mitgliedern in jeder Sprache angezeigt; leer verwendet den Resgrid-Namen.</value>
+  </data>
+  <data name="Feature.terminology" xml:space="preserve">
+    <value>Terminologie</value>
+  </data>
+  <data name="FeaturePurpose.terminology" xml:space="preserve">
+    <value>Module und integrierte Aktentypen nach den Begriffen Ihrer Organisation umbenennen, etwa Einsatz statt Run.</value>
+  </data>
+  <data name="Rule.status-meanings" xml:space="preserve">
+    <value>Statusoptionen haben keine Bedeutung</value>
+  </data>
+  <data name="RuleWhy.status-meanings" xml:space="preserve">
+    <value>Disposition, Verfügbarkeit, Benachrichtigungen und die Apps lesen einen Status über seine Bedeutung; eine Option ohne Bedeutung gilt als unbekannt.</value>
+  </data>
+  <data name="RuleNext.status-meanings" xml:space="preserve">
+    <value>Öffnen Sie jeden aufgeführten Statussatz und geben Sie seinen Optionen eine Bedeutung; die vorgeschlagenen Bedeutungen sind ein Ausgangspunkt.</value>
+  </data>
+  <data name="Rule.unit-status-targets" xml:space="preserve">
+    <value>Einheitentypen können den Dispositions- oder Freigabestatus nicht erhalten</value>
+  </data>
+  <data name="RuleWhy.unit-status-targets" xml:space="preserve">
+    <value>Ihr Statussatz hat keine Option mit der Bedeutung, die die Dispositionseinstellungen anwenden, daher behalten ihre Einheiten bei Disposition oder Freigabe ihren Status.</value>
+  </data>
+  <data name="RuleNext.unit-status-targets" xml:space="preserve">
+    <value>Geben Sie den Optionen des Satzes Bedeutungen oder wählen Sie in den Dispositionseinstellungen eine andere Bedeutung oder eine Überschreibung nach Einheitentyp.</value>
   </data>
 </root>

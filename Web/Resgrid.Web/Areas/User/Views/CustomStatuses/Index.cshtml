@@ -4,6 +4,9 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.CustomStatuses.CustomStatuses> localizer
 @{
   ViewBag.Title = "Resgrid | " + @localizer["CustomStatusesHeader"];
+
+  // Options with no meaning (base type) are unknown to dispatch, availability and reports; flag the sets that have them.
+  Func<CustomState, int> withoutMeaning = state => state?.Details == null ? 0 : state.GetActiveDetails().Count(x => x.BaseType < 0);
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -61,6 +64,10 @@
                     @if (g.Details != null)
                     {
                       @Html.Raw(g.GetActiveDetails().Count)
+                      if (withoutMeaning(g) > 0)
+                      {
+                        <span class="label label-warning m-l-xs">@string.Format(localizer["OptionsWithoutMeaning"].Value, withoutMeaning(g))</span>
+                      }
                     }
                     else
                     {
@@ -68,7 +75,7 @@
                     }
                   </td>
                   <td>
-                    @Html.Raw(g.Description)
+                    @Html.Raw(Resgrid.Framework.StringHelpers.SanitizeHtmlInString(System.Net.WebUtility.HtmlDecode(g.Description ?? String.Empty)))
                   </td>
                   <td>
                     @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
@@ -109,6 +116,10 @@
                       else
                       {
                         <strong>@Model.PersonnelStatuses.Name</strong>
+                        @if (withoutMeaning(Model.PersonnelStatuses) > 0)
+                        {
+                          <span class="label label-warning m-l-xs">@string.Format(localizer["OptionsWithoutMeaning"].Value, withoutMeaning(Model.PersonnelStatuses))</span>
+                        }
                       }
                     </ul>
                   </div>
@@ -149,6 +160,10 @@
                       else
                       {
                         <strong>@Model.PersonellStaffing.Name</strong>
+                        @if (withoutMeaning(Model.PersonellStaffing) > 0)
+                        {
+                          <span class="label label-warning m-l-xs">@string.Format(localizer["OptionsWithoutMeaning"].Value, withoutMeaning(Model.PersonellStaffing))</span>
+                        }
                       }
                     </ul>
                   </div>

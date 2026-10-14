@@ -4,7 +4,8 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Dashboard> localizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> callLocalizer
 @{
-  ViewBag.Title = "Resgrid | " + @commonLocalizer["CallsModule"];
+  var moduleTitle = await departmentTerms.NameAsync(DepartmentTerms.Calls, commonLocalizer["CallsModule"]);
+  ViewBag.Title = "Resgrid | " + moduleTitle;
   Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
   ViewBag.LoadAngular = true;
   var mapConfig = SettingsHelper.GetDepartmentMapConfig(Resgrid.Config.InfoConfig.WebsiteKey);
@@ -30,13 +31,13 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
   <div class="col-sm-4">
-    <h2>@commonLocalizer["CallsModule"]</h2>
+    <h2>@moduleTitle</h2>
     <ol class="breadcrumb">
       <li>
         <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
       </li>
       <li class="active">
-        <strong>@commonLocalizer["CallsModule"]</strong>
+        <strong>@moduleTitle</strong>
       </li>
     </ol>
   </div>

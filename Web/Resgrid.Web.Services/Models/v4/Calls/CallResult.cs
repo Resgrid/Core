@@ -1,4 +1,4 @@
-﻿using Resgrid.Web.Services.Models.v4.CallProtocols;
+using Resgrid.Web.Services.Models.v4.CallProtocols;
 using Resgrid.Web.Services.Models.v4.UserDefinedFields;
 using System;
 using System.Collections.Generic;
@@ -200,6 +200,12 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		/// Call Type
 		/// </summary>
 		public string Type { get; set; }
+
+		/// <summary>
+		/// The id of the department's call type the call was logged with (matches CallTypes/GetAllCallTypes), which survives
+		/// a rename of the type; null when the call's type matches none of the department's types.
+		/// </summary>
+		public string TypeId { get; set; }
 
 		/// <summary>
 		/// Current alarm level (1-based). Only moves above 1 when the call has been escalated through

@@ -107,6 +107,7 @@
   <data name="Activate" xml:space="preserve"><value>Ενεργοποίηση</value></data>
   <data name="ActivationBlocked" xml:space="preserve"><value>Η ενεργοποίηση αποκλείεται</value></data>
   <data name="NotActivatedNotice" xml:space="preserve"><value>Τα Αρχεία είναι διαθέσιμα αλλά δεν έχουν ενεργοποιηθεί. Ένας διαχειριστής πρέπει να τα ενεργοποιήσει πριν δημιουργηθούν αρχεία.</value></data>
+  <data name="RecordsModuleNotEnabled" xml:space="preserve"><value>{0}: αυτή η ενότητα των Αρχείων δεν είναι ενεργή για το τμήμα.</value></data>
   <data name="ActivatedOn" xml:space="preserve"><value>Ενεργοποίηση αρχείων στις</value></data>
   <data name="SettingsHeader" xml:space="preserve"><value>Ρυθμίσεις αρχείων</value></data>
   <data name="DefaultLifecyclePreset" xml:space="preserve"><value>Προεπιλεγμένος κύκλος ζωής για ορισμούς τμήματος</value></data>

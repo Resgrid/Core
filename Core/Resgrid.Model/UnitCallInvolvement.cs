@@ -19,11 +19,8 @@ namespace Resgrid.Model
 		/// </summary>
 		public static AvailabilityClass Classify(int rawState, IReadOnlyDictionary<int, int> customBaseTypes)
 		{
-			if (rawState <= CallStatusLinkage.MaxBuiltInStatusId)
-				return AvailabilityMatrix.ForUnitStateType(rawState);
-
 			if (customBaseTypes == null || !customBaseTypes.TryGetValue(rawState, out var baseType))
-				return AvailabilityClass.Unknown;
+				return AvailabilityMatrix.ForUnitStateType(rawState);
 
 			return AvailabilityMatrix.ForCustomBaseType(baseType);
 		}

@@ -205,6 +205,14 @@ namespace Resgrid.Model
 		[ProtoMember(36)]
 		public int? ActiveRunCardId { get; set; }
 
+		/// <summary>
+		/// The call type the call was logged with (<see cref="Type"/> keeps its name). Null when the type name matches none
+		/// of the department's call types, or for a call from before the column existed whose name matched none. Survives a
+		/// type rename, which the name does not.
+		/// </summary>
+		[ProtoMember(37)]
+		public int? CallTypeId { get; set; }
+
 		public bool CheckInTimersEnabled { get; set; }
 
 		/// <summary>
@@ -350,6 +358,34 @@ namespace Resgrid.Model
 			}
 
 			return "Unknown";
+		}
+
+		/// <summary>
+		/// The short priority tag used in notification subjects: "P0".."P3" for the built-in priorities (the long-standing
+		/// format), the priority's name for a department's own priority. A department priority id means nothing to a
+		/// reader ("P57"), so it is only the fallback when the priority could not be resolved.
+		/// </summary>
+		public string GetPriorityTag()
+		{
+			// A department's own priority (a custom id, or one of the oldest departments' own ids 0 to 3) by name.
+			if (CallPriority != null && (Priority > 3 || CallPriority.DepartmentId > 0) && !String.IsNullOrWhiteSpace(CallPriority.Name))
+				return CallPriority.Name;
+
+			return $"P{Priority}";
+		}
+
+		/// <summary>
+		/// The priority's display name, falling back to the stored id only when neither the department's priority nor a
+		/// built-in priority matches it.
+		/// </summary>
+		public string GetPriorityDisplayText()
+		{
+			if (CallPriority == null && Priority < 0)
+				return Priority.ToString();
+
+			var text = GetPriorityText();
+
+			return text == "Unknown" ? Priority.ToString() : text;
 		}
 
 		public string GetStateText()

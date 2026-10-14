@@ -24,7 +24,6 @@ namespace Resgrid.Tests.Services
 		private const string UserId = "event-code-user";
 		private const string DepartmentCode = "DEPT";
 
-		private Mock<INotificationProvider> _notificationProvider;
 		private Mock<INovuProvider> _novuProvider;
 		private Mock<IDepartmentSettingsService> _departmentSettingsService;
 		private PushService _pushService;
@@ -36,14 +35,8 @@ namespace Resgrid.Tests.Services
 			_departmentWasAlreadyBypassed = SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(DepartmentId);
 			SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Add(DepartmentId);
 
-			_notificationProvider = new Mock<INotificationProvider>();
 			_novuProvider = new Mock<INovuProvider>();
 			_departmentSettingsService = new Mock<IDepartmentSettingsService>();
-
-			_notificationProvider
-				.Setup(x => x.SendAllNotifications(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
-					It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<string>()))
-				.Returns(Task.CompletedTask);
 
 			_novuProvider
 				.Setup(x => x.SendUserNotification(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
@@ -56,9 +49,7 @@ namespace Resgrid.Tests.Services
 
 			_pushService = new PushService(
 				new Mock<IPushLogsService>().Object,
-				_notificationProvider.Object,
 				new Mock<IUserProfileService>().Object,
-				new Mock<IUnitNotificationProvider>().Object,
 				_novuProvider.Object,
 				_departmentSettingsService.Object,
 				new Mock<IUnitsService>().Object);
@@ -76,12 +67,12 @@ namespace Resgrid.Tests.Services
 			return new UserProfile { UserId = UserId, SendNotificationPush = true };
 		}
 
-		private static StandardPushMessage Message(string id = null)
+		private static StandardPushMessage Message(string id = null, string departmentCode = DepartmentCode)
 		{
 			return new StandardPushMessage
 			{
 				DepartmentId = DepartmentId,
-				DepartmentCode = DepartmentCode,
+				DepartmentCode = departmentCode,
 				MessageId = 42,
 				Title = "Communication Test",
 				SubTitle = "Body",
@@ -90,12 +81,9 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
-		public async Task should_send_a_supplied_event_code_through_to_both_providers()
+		public async Task should_send_a_supplied_event_code_through_to_novu()
 		{
 			await _pushService.PushNotification(Message("CT:9f2c4a1b"), UserId, PushEnabledProfile());
-
-			_notificationProvider.Verify(x => x.SendAllNotifications(It.IsAny<string>(), It.IsAny<string>(), UserId, "CT:9f2c4a1b",
-				It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<string>()), Times.Once);
 
 			_novuProvider.Verify(x => x.SendUserNotification(It.IsAny<string>(), It.IsAny<string>(), UserId, DepartmentCode,
 				"CT:9f2c4a1b", It.IsAny<string>()), Times.Once);
@@ -107,8 +95,8 @@ namespace Resgrid.Tests.Services
 			await _pushService.PushNotification(Message(), UserId, PushEnabledProfile());
 
 			// Existing notification callers set no Id and must keep their "N{MessageId}" codes.
-			_notificationProvider.Verify(x => x.SendAllNotifications(It.IsAny<string>(), It.IsAny<string>(), UserId, "N42",
-				It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<string>()), Times.Once);
+			_novuProvider.Verify(x => x.SendUserNotification(It.IsAny<string>(), It.IsAny<string>(), UserId, DepartmentCode,
+				"N42", It.IsAny<string>()), Times.Once);
 		}
 
 		[Test]
@@ -118,18 +106,13 @@ namespace Resgrid.Tests.Services
 				new UserProfile { UserId = UserId, SendNotificationPush = false });
 
 			result.Should().BeFalse();
-			_notificationProvider.Verify(x => x.SendAllNotifications(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
-				It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<string>()), Times.Never);
+			_novuProvider.Verify(x => x.SendUserNotification(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+				It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
 		}
 
 		[Test]
-		public async Task should_report_failure_when_every_provider_fails()
+		public async Task should_report_failure_when_novu_rejects_the_message()
 		{
-			_notificationProvider
-				.Setup(x => x.SendAllNotifications(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
-					It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<string>()))
-				.ThrowsAsync(new System.Exception("hub down"));
-
 			_novuProvider
 				.Setup(x => x.SendUserNotification(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
 					It.IsAny<string>(), It.IsAny<string>()))
@@ -143,13 +126,30 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
-		public async Task should_report_success_when_novu_accepts_even_if_the_legacy_provider_throws()
+		public async Task should_report_failure_when_novu_throws()
 		{
-			_notificationProvider
-				.Setup(x => x.SendAllNotifications(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
-					It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<string>()))
-				.ThrowsAsync(new System.Exception("hub down"));
+			_novuProvider
+				.Setup(x => x.SendUserNotification(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+					It.IsAny<string>(), It.IsAny<string>()))
+				.ThrowsAsync(new System.Exception("novu down"));
 
+			var result = await _pushService.PushNotification(Message("CT:token"), UserId, PushEnabledProfile());
+
+			result.Should().BeFalse();
+		}
+
+		[Test]
+		public async Task should_report_failure_when_the_department_has_no_code()
+		{
+			// Novu subscribers are keyed by department code; without one there is no transport to send on.
+			var result = await _pushService.PushNotification(Message("CT:token", departmentCode: null), UserId, PushEnabledProfile());
+
+			result.Should().BeFalse();
+		}
+
+		[Test]
+		public async Task should_report_success_when_novu_accepts()
+		{
 			var result = await _pushService.PushNotification(Message("CT:token"), UserId, PushEnabledProfile());
 
 			result.Should().BeTrue();

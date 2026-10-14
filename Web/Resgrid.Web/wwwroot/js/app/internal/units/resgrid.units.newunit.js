@@ -24,6 +24,9 @@ var resgrid;
             }
             newunit.buildPersonnelRoleOptions = buildPersonnelRoleOptions;
             function addRole() {
+                // Localized by the page (data attributes on the Add Role button), HTML-escaped for the markup below.
+                var removeText = $('<div>').text($('#addRoleButton').data('removeText') || 'Remove').html();
+                var removeTitle = $('<div>').text($('#addRoleButton').data('removeTitle') || 'Remove this role').html().replace(/'/g, '&#39;');
                 var count = resgrid.units.roleCounter.next();
                 var options = buildPersonnelRoleOptions(null);
                 $('#unitRoles tbody').append(
@@ -31,7 +34,7 @@ var resgrid;
                     "<td><input id='unitRole_" + count + "' name='unitRole_" + count + "' style='width:100%;'></td>" +
                     "<td><select id='unitRolePersonnelRole_" + count + "' name='unitRolePersonnelRole_" + count + "' style='width:100%;'>" + options + "</select></td>" +
                     "<td style='text-align:center;'><input type='checkbox' id='unitRoleRequired_" + count + "' name='unitRoleRequired_" + count + "'></td>" +
-                    "<td style='text-align:center;'><a onclick='$(this).closest(\"tr\").remove();' class='btn btn-xs btn-danger' data-original-title='Remove this role'>Remove</a></td>" +
+                    "<td style='text-align:center;'><a onclick='$(this).closest(\"tr\").remove();' class='btn btn-xs btn-danger' data-original-title='" + removeTitle + "'>" + removeText + "</a></td>" +
                     "</tr>");
             }
             newunit.addRole = addRole;

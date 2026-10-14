@@ -1,4 +1,4 @@
-﻿using Resgrid.Framework;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.AdminAssist;
 using Resgrid.Model.Events;
@@ -28,11 +28,13 @@ namespace Resgrid.Services
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IProtectedProjectionService _protectedProjectionService;
 		private readonly Lazy<IAdpReleaseService> _adpRelease;
+		private readonly ICustomStateService _customStateService;
 
 		public CommunicationService(ISmsService smsService, IEmailService emailService, IPushService pushService, IGeoLocationProvider geoLocationProvider,
 			IOutboundVoiceProvider outboundVoiceProvider, IUserProfileService userProfileService, IDepartmentSettingsService departmentSettingsService,
 			ISubscriptionsService subscriptionsService, IUserStateService userStateService, IChatbotOutboundService chatbotOutboundService,
-			IDepartmentsService departmentsService, IProtectedProjectionService protectedProjectionService, Lazy<IAdpReleaseService> adpRelease)
+			IDepartmentsService departmentsService, IProtectedProjectionService protectedProjectionService, Lazy<IAdpReleaseService> adpRelease,
+			ICustomStateService customStateService = null)
 		{
 			_protectedProjectionService = protectedProjectionService;
 			_adpRelease = adpRelease;
@@ -47,6 +49,7 @@ namespace Resgrid.Services
 			_userStateService = userStateService;
 			_departmentsService = departmentsService;
 			_chatbotOutboundService = chatbotOutboundService;
+			_customStateService = customStateService;
 		}
 
 		public async Task<bool> SendMessageAsync(Message message, string sendersName, string departmentNumber, int departmentId, UserProfile profile = null, Department department = null)
@@ -955,66 +958,6 @@ namespace Resgrid.Services
 			return true;
 		}
 
-		public async Task<bool> SendChat(string chatId, int departmentId, string sendingUserId, string group, string message, UserProfile sendingUser, List<UserProfile> recipients)
-		{
-			var spm = new StandardPushMessage();
-			spm.DepartmentId = departmentId;
-
-			if (recipients.Count == 1)
-			{
-				spm.Title = $"New Chat Message from {sendingUser.FullName.AsFirstNameLastName}";
-				spm.SubTitle = $"Chat: {sendingUser.LastName}: " + message;
-			}
-			else
-			{
-				spm.Title = $"New Chat Message in Group {group} from {sendingUser.FullName.AsFirstNameLastName}";
-				spm.SubTitle = $"Chat {group}: {sendingUser.LastName}: " + message;
-			}
-
-			try
-			{
-				if (recipients.Count == 1)
-				{
-					var sendingTo = recipients.FirstOrDefault();
-
-					if (sendingTo == null)
-						return false;
-
-					spm.Id = $"T{sendingTo.UserId}";
-
-					if (!await CanSendToUser(sendingTo.UserId, departmentId))
-						return false;
-
-					await _pushService.PushChat(spm, sendingTo.UserId, sendingTo);
-				}
-				else
-				{
-					spm.Id = $"G{chatId}";
-					//await recipients.ParallelForEachAsync(async person =>
-					foreach (var person in recipients)
-					{
-						try
-						{
-							if (await CanSendToUser(person.UserId, departmentId))
-							{
-								await _pushService.PushChat(spm, person.UserId, person);
-							}
-						}
-						catch (Exception ex)
-						{
-							Logging.LogException(ex);
-						}
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				Logging.LogException(ex);
-			}
-
-			return true;
-		}
-
 		public async Task<bool> SendTroubleAlertAsync(TroubleAlertEvent troubleAlertEvent, Unit unit, Call call, string departmentNumber, int departmentId, string callAddress, string unitAddress, List<UserProfile> recipients)
 		{
 			string personnelNames = "No Unit Roles (Accountability) Set";
@@ -1217,6 +1160,18 @@ namespace Resgrid.Services
 				{
 					if (supressStaffingInfo.StaffingLevelsToSupress.Contains(lastUserStaffing.State))
 						return false;
+
+					// A meaning entry (StatusMatch.MeaningListValue) mutes every level with that staffing base type, built-in or the
+					// department's own; the department's levels are only read when such an entry exists.
+					if (supressStaffingInfo.StaffingLevelsToSupress.Any(x => StatusMatch.MeaningFromListValue(x).HasValue))
+					{
+						var staffingBaseTypes = StatusMatch.StaffingBaseTypes(_customStateService != null
+							? await _customStateService.GetAllCustomStatesForDepartmentAsync(departmentId)
+							: null);
+
+						if (supressStaffingInfo.StaffingLevelsToSupress.Contains(StatusMatch.MeaningListValue(staffingBaseTypes(lastUserStaffing.State))))
+							return false;
+					}
 				}
 			}
 

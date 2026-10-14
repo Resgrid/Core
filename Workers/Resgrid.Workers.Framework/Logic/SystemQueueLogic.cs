@@ -82,17 +82,6 @@ namespace Resgrid.Workers.Framework.Logic
 
 								var pushService = scope.Resolve<IPushService>();
 
-								// Clearing the legacy Azure registration is best-effort. When it threw here, the
-								// catch below skipped RegisterUnit, the Novu path that actually delivers unit pushes.
-								try
-								{
-									await pushService.UnRegisterUnit(pushUri);
-								}
-								catch (Exception ex)
-								{
-									Logging.LogException(ex, $"UnitPushRegistration: legacy unregister failed for unit {unitData.UnitId}, continuing with registration.");
-								}
-
 								var unitResult = await pushService.RegisterUnit(pushUri);
 
 								if (!unitResult)
@@ -140,48 +129,9 @@ namespace Resgrid.Workers.Framework.Logic
 						}
 						break;
 					case CqrsEventTypes.NewChatMessage:
-						NewChatNotificationEvent newChatEvent = null;
-
-						if (qi != null && !String.IsNullOrWhiteSpace(qi.Data))
-						{
-							try
-							{
-								newChatEvent = ObjectSerialization.Deserialize<NewChatNotificationEvent>(qi.Data);
-							}
-							catch (Exception ex)
-							{
-
-							}
-
-							if (newChatEvent != null)
-							{
-								var userProfileService = scope.Resolve<IUserProfileService>();
-								var communicationService = scope.Resolve<ICommunicationService>();
-								var usersService = scope.Resolve<IUsersService>();
-
-
-								if (newChatEvent != null && newChatEvent.RecipientUserIds != null && newChatEvent.RecipientUserIds.Count > 0)
-								{
-									List<UserProfile> profiles = new List<UserProfile>();
-									if (newChatEvent.RecipientUserIds.Count == 1)
-									{
-										profiles.Add(await userProfileService.GetProfileByUserIdAsync(newChatEvent.RecipientUserIds.First()));
-									}
-									else
-									{
-										profiles.AddRange(await userProfileService.GetSelectedUserProfilesAsync(newChatEvent.RecipientUserIds));
-									}
-
-									var sendingUserProfile = await userProfileService.GetProfileByUserIdAsync(newChatEvent.SendingUserId);
-
-									var chatResult = await communicationService.SendChat(newChatEvent.Id, newChatEvent.DepartmentId, newChatEvent.SendingUserId, newChatEvent.GroupName, newChatEvent.Message, sendingUserProfile, profiles);
-								}
-
-								userProfileService = null;
-								communicationService = null;
-								usersService = null;
-							}
-						}
+						// Legacy chat notifications went out only through the removed Azure notification hub, and nothing
+						// produces these any more (the v3 chat API is gone). One still on the queue is dropped rather than
+						// failing the job in the default case.
 						break;
 					case CqrsEventTypes.TroubleAlert:
 						TroubleAlertEvent troubleAlertEvent = null;

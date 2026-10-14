@@ -107,6 +107,7 @@
   <data name="Activate" xml:space="preserve"><value>Активувати</value></data>
   <data name="ActivationBlocked" xml:space="preserve"><value>Активацію заблоковано</value></data>
   <data name="NotActivatedNotice" xml:space="preserve"><value>Записи увімкнено для цього підрозділу, але ще не активовано. Адміністратор має активувати їх перед створенням записів.</value></data>
+  <data name="RecordsModuleNotEnabled" xml:space="preserve"><value>{0}: цей модуль Записів не ввімкнено для підрозділу.</value></data>
   <data name="ActivatedOn" xml:space="preserve"><value>Записи активовано</value></data>
   <data name="SettingsHeader" xml:space="preserve"><value>Налаштування записів</value></data>
   <data name="DefaultLifecyclePreset" xml:space="preserve"><value>Типовий життєвий цикл для визначень підрозділу</value></data>

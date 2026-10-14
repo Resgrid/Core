@@ -453,4 +453,31 @@
     <value>{0} (borttagen)</value>
     <comment>A deleted unit in a report picker; {0} is the unit name.</comment>
   </data>
+  <data name="BrowseRoleTemplates" xml:space="preserve">
+    <value>Bläddra bland mallar</value>
+  </data>
+  <data name="RoleTemplatesTitle" xml:space="preserve">
+    <value>Mallar för enhetsroller</value>
+  </data>
+  <data name="RoleTemplatesIntro" xml:space="preserve">
+    <value>Välj en utgångspunkt för den här enhetens roller. Platserna läggs till i rolltabellen där du kan byta namn på dem, ändra eller ta bort den krävda personalrollen och lägga till eller ta bort platser innan du sparar. Föreslagna behörigheter matchas mot organisationens personalroller efter namn.</value>
+  </data>
+  <data name="RoleTemplatesSearchPlaceholder" xml:space="preserve">
+    <value>Sök roller, enheter eller discipliner...</value>
+  </data>
+  <data name="RoleTemplatesAllCategories" xml:space="preserve">
+    <value>Alla kategorier</value>
+  </data>
+  <data name="RoleTemplatesSeats" xml:space="preserve">
+    <value>{0} platser</value>
+  </data>
+  <data name="RoleTemplatesUse" xml:space="preserve">
+    <value>Använd de här rollerna</value>
+  </data>
+  <data name="RoleTemplatesNoResults" xml:space="preserve">
+    <value>Inga mallar matchar sökningen.</value>
+  </data>
+  <data name="RoleTemplatesRequiredNote" xml:space="preserve">
+    <value>* = föreslaget som ett hårt krav (spärrar obehöriga medlemmar) när motsvarande personalroll finns.</value>
+  </data>
 </root>

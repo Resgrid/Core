@@ -16,7 +16,7 @@
                 <a asp-controller="Department" asp-action="Types" asp-route-area="User">@commonLocalizer["DepartmentTypes"]</a>
             </li>
             <li class="active">
-                <strong>@commonLocalizer["NewCallTypeButton"]</strong>
+                <strong>@localizer["NewCallTypeButton"]</strong>
             </li>
         </ol>
     </div>
@@ -45,6 +45,19 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["CallTypeNameLabel"]</label>
                             <div class="col-sm-4"><input type="text" class="form-control" placeholder="@localizer["CallTypeNamePlaceholder"]" asp-for="CallType.Type"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["CallTypeClassLabel"]</label>
+                            <div class="col-sm-4">
+                                <select class="form-control" asp-for="CallType.BaseType">
+                                    <option value="-1">@localizer["BaseTypeNone"]</option>
+                                    @foreach (var typeClass in Enum.GetValues(typeof(Resgrid.Model.CallTypeClasses)).Cast<Resgrid.Model.CallTypeClasses>().Where(x => (int)x >= 0))
+                                    {
+                                        <option value="@((int)typeClass)">@localizer["CallTypeClass." + typeClass]</option>
+                                    }
+                                </select>
+                                <span class="help-block m-b-none">@localizer["CallTypeClassHelp"]</span>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["CallTypeMapIconLabel"]</label>

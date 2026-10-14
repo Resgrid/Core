@@ -163,8 +163,8 @@ namespace Resgrid.Services
                 var previous = await _maintenance.LatestUnitStateAsync(actor.DepartmentId, order.TargetUnitId.Value);
                 var inherited = holds.FirstOrDefault(h => h.AppliedStateId == previous?.UnitStateId);
                 hold.PreviousState = inherited?.PreviousState ?? previous?.State;
-                if (previous?.State == (int)UnitStateTypes.OutOfService) hold.AppliedStateId = inherited?.AppliedStateId; // Never take ownership of a manual restriction.
-                else hold.AppliedStateId = await _maintenance.AppendUnitStateAsync(actor.DepartmentId, order.TargetUnitId.Value, (int)UnitStateTypes.OutOfService, Now, actor.UserId);
+                if (previous != null && await IsOutOfServiceStateAsync(actor.DepartmentId, previous.State)) hold.AppliedStateId = inherited?.AppliedStateId; // Never take ownership of a manual restriction.
+                else hold.AppliedStateId = await _maintenance.AppendUnitStateAsync(actor.DepartmentId, order.TargetUnitId.Value, await HoldStateAsync(actor.DepartmentId, order.TargetUnitId.Value), Now, actor.UserId);
             }
             else
             {
@@ -178,6 +178,29 @@ namespace Resgrid.Services
             if (unattended) await _store.AllocateAsync(hold);
             else { hold.Content = JsonConvert.SerializeObject(new WorkOrderHoldContent { Reason = reason }); await SaveAsync(actor, hold, true); }
             await MaintenanceEventAsync(order, WorkflowTriggerEventType.WorkOrderSafetyHoldApplied, events, holdId: hold.Id);
+        }
+        /// <summary>
+        /// A unit already out of service, unavailable or in maintenance: the built-in statuses, or a custom status whose
+        /// base type means that. Only the built-in Out of Service counted before, so a hold overwrote a department's own
+        /// "In Shop" status and later restored over it.
+        /// </summary>
+        /// <summary>
+        /// The status a safety hold puts the unit in: its own status set's Maintenance option, else its Unavailable one
+        /// (first by order), else the built-in Out of Service. A unit on a custom set no longer gets a built-in value
+        /// outside it.
+        /// </summary>
+        private async Task<int> HoldStateAsync(int departmentId, int unitId)
+        {
+            var resolved = _maintenanceUnits != null
+                ? await _maintenanceUnits.ResolveUnitStatusAsync(departmentId, unitId, new[] { ActionBaseTypes.Maintenance, ActionBaseTypes.Unavailable })
+                : null;
+            return resolved ?? (int)UnitStateTypes.OutOfService;
+        }
+        private async Task<bool> IsOutOfServiceStateAsync(int departmentId, int state)
+        {
+            if (state == (int)UnitStateTypes.OutOfService) return true;
+            var baseTypes = _maintenanceUnits != null ? await _maintenanceUnits.GetCustomUnitStateBaseTypesAsync(departmentId) : null;
+            return UnitCallInvolvement.Classify(state, baseTypes) == Resgrid.Model.Reporting.AvailabilityClass.Unavailable;
         }
         public async Task ReleaseHoldAsync(ChecklistActor actor, string holdId, WorkOrderReleaseInput input)
         {
@@ -196,7 +219,8 @@ namespace Resgrid.Services
                     if (hold.UnitId.HasValue && hold.AppliedStateId.HasValue)
                     {
                         var current = await _maintenance.LatestUnitStateAsync(actor.DepartmentId, hold.UnitId.Value);
-                        if (current?.UnitStateId == hold.AppliedStateId && current.State == (int)UnitStateTypes.OutOfService && await _maintenance.LastAppendedUnitStateIdAsync(actor.DepartmentId, hold.UnitId.Value) == hold.AppliedStateId)
+                        // Still the hold's own row (whichever out-of-service status it wrote) and nothing appended since.
+                        if (current?.UnitStateId == hold.AppliedStateId && await _maintenance.LastAppendedUnitStateIdAsync(actor.DepartmentId, hold.UnitId.Value) == hold.AppliedStateId)
                         { await AutomatedTargetAsync(actor, hold.UnitId, order.TargetGroupId, null); await _maintenance.AppendUnitStateAsync(actor.DepartmentId, hold.UnitId.Value, hold.PreviousState.Value, Now, actor.UserId); hold.StateRestored = true; }
                     }
                     else if (hold.AssetId != null && hold.AppliedAssetRevision.HasValue && _inventoryMaintenance != null)

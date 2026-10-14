@@ -1,6 +1,7 @@
 @using Resgrid.Model.UnitRoles
 @using System.Linq
 @model List<Resgrid.Model.PersonnelRole>
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Units.Units> localizer
 @{
     var templates = UnitRoleTemplateCatalog.All;
     var categories = templates.Select(t => t.Category).Distinct().ToList();
@@ -16,26 +17,22 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">Unit Role Templates</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="@commonLocalizer["Close"]"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">@localizer["RoleTemplatesTitle"]</h4>
             </div>
             <div class="modal-body">
-                <p>
-                    Pick a starting point for this unit's accountability roles. The seats are added to the roles table
-                    where you can rename them, change or clear the required personnel role, and add or remove seats
-                    before saving. Suggested qualifications are matched to your department's personnel roles by name.
-                </p>
+                <p>@localizer["RoleTemplatesIntro"]</p>
 
                 <div class="row" style="margin-bottom: 16px;">
                     <div class="col-sm-8">
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-search"></i></span>
-                            <input type="text" id="unitRoleTemplateSearch" class="form-control" placeholder="Search roles, units or disciplines..." autocomplete="off" oninput="resgrid.units.roletemplates.filter();" />
+                            <input type="text" id="unitRoleTemplateSearch" class="form-control" placeholder="@localizer["RoleTemplatesSearchPlaceholder"]" autocomplete="off" oninput="resgrid.units.roletemplates.filter();" />
                         </div>
                     </div>
                     <div class="col-sm-4">
                         <select id="unitRoleTemplateCategory" class="form-control" onchange="resgrid.units.roletemplates.filter();">
-                            <option value="">All categories</option>
+                            <option value="">@localizer["RoleTemplatesAllCategories"]</option>
                             @foreach (var category in categories)
                             {
                                 <option value="@category.ToLowerInvariant()">@category</option>
@@ -62,19 +59,19 @@
                                         }
                                     </div>
                                     <div class="clearfix">
-                                        <small class="text-muted pull-left" style="line-height: 26px;">@t.RoleCount seats</small>
-                                        <button type="button" class="btn btn-primary btn-sm pull-right" onclick="resgrid.units.roletemplates.apply('@t.Id');">Use these roles</button>
+                                        <small class="text-muted pull-left" style="line-height: 26px;">@string.Format(localizer["RoleTemplatesSeats"].Value, t.RoleCount)</small>
+                                        <button type="button" class="btn btn-primary btn-sm pull-right" onclick="resgrid.units.roletemplates.apply('@t.Id');">@localizer["RoleTemplatesUse"]</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     }
                 </div>
-                <div id="noUnitRoleTemplateResults" class="alert alert-warning" style="display:none;">No templates match your search.</div>
-                <small class="text-muted">* = suggested as a hard requirement (blocks unqualified members) when the matching personnel role exists.</small>
+                <div id="noUnitRoleTemplateResults" class="alert alert-warning" style="display:none;">@localizer["RoleTemplatesNoResults"]</div>
+                <small class="text-muted">@localizer["RoleTemplatesRequiredNote"]</small>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">@commonLocalizer["Close"]</button>
             </div>
         </div>
     </div>
@@ -137,12 +134,14 @@
             var options = buildOptions(personnelRoleId);
             var safeName = $('<div>').text(name || '').html();
             var checked = required ? " checked" : "";
+            var removeText = $('<div>').text($('#addRoleButton').data('removeText') || 'Remove').html();
+            var removeTitle = $('<div>').text($('#addRoleButton').data('removeTitle') || 'Remove this role').html().replace(/'/g, '&#39;');
             $('#unitRoles tbody').append(
                 `<tr>
                     <td><input id='unitRole_${c}' name='unitRole_${c}' style='width:100%;' value="${safeName}"></td>
                     <td><select id='unitRolePersonnelRole_${c}' name='unitRolePersonnelRole_${c}' style='width:100%;'>${options}</select></td>
                     <td style='text-align:center;'><input type='checkbox' id='unitRoleRequired_${c}' name='unitRoleRequired_${c}'${checked}></td>
-                    <td style='text-align:center;'><a onclick='$(this).closest("tr").remove();' class='btn btn-xs btn-danger' data-original-title='Remove this role'>Remove</a></td>
+                    <td style='text-align:center;'><a onclick='$(this).closest("tr").remove();' class='btn btn-xs btn-danger' data-original-title='${removeTitle}'>${removeText}</a></td>
                 </tr>`);
         }
 

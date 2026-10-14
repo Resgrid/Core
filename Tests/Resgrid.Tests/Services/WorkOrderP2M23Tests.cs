@@ -23,6 +23,7 @@ namespace Resgrid.Tests.Services
         private MaintenanceClock _maintenanceClock;
         private Mock<IChecklistRepository> _maintenanceChecklists;
         private HashSet<string> _inactiveMaintenanceMembers;
+        private Mock<IUnitsService> _maintenanceUnitsMock;
         private void Maintenance()
         {
             _maintenanceClock = new(); _maintenanceChecklists = new();
@@ -33,7 +34,7 @@ namespace Resgrid.Tests.Services
             _uow.Setup(u => u.DiscardChanges()).Callback(() => { _store.Rollback(); transaction = null; });
             var audit = new Mock<IAuditLogsRepository>();
             audit.Setup(a => a.InsertAsync(It.IsAny<AuditLog>(), It.IsAny<CancellationToken>(), It.IsAny<bool>())).ReturnsAsync((AuditLog a, CancellationToken c, bool b) => { a.AuditLogId = 1; return a; });
-            var units = new Mock<IUnitsService>(); units.Setup(u => u.GetUnitByIdAsync(10)).ReturnsAsync(new Unit { UnitId = 10, DepartmentId = 77 });
+            var units = new Mock<IUnitsService>(); units.Setup(u => u.GetUnitByIdAsync(10)).ReturnsAsync(new Unit { UnitId = 10, DepartmentId = 77 }); _maintenanceUnitsMock = units;
             // Everyone a schedule names is an active member unless a test says otherwise.
             _inactiveMaintenanceMembers = new HashSet<string>();
             _auth.Setup(a => a.ActiveMemberIdsAsync(77)).ReturnsAsync(() => new HashSet<string>(_store.All<WorkOrderRecurrence>().SelectMany(r => r.AssignedToUserIds).Where(u => !_inactiveMaintenanceMembers.Contains(u))));
@@ -163,6 +164,17 @@ namespace Resgrid.Tests.Services
             (await _service.GenerateMaintenanceAsync(77)).Generated.Should().Be(0);
             (await _service.RecurrencesAsync(_actor)).Should().HaveCount(1);
             await FluentActions.Awaiting(() => _service.SaveRecurrenceAsync(_actor, Schedule())).Should().ThrowAsync<WorkOrderException>();
+        }
+        [Test]
+        public async Task A_unit_already_in_a_custom_out_of_service_status_is_not_taken_over_by_a_hold()
+        {
+            Maintenance();
+            _maintenanceUnitsMock.Setup(u => u.GetCustomUnitStateBaseTypesAsync(77)).ReturnsAsync(new Dictionary<int, int> { [9001] = (int)ActionBaseTypes.Maintenance });
+            _store.UnitStates.Add(new UnitState { UnitStateId = 1, UnitId = 10, State = 9001, Timestamp = _maintenanceClock.Utc.AddDays(-1) });
+            var input = Input(true); input.TargetUnitId = 10; var order = await _service.CreateAsync(_actor, input);
+            await _service.AddHoldAsync(_actor, order.Order.Id, new() { Revision = 1, Unit = true, Reason = "Defect" });
+            _store.UnitStates.Should().ContainSingle("the department's own In Shop status is a manual restriction the hold must not overwrite");
+            _store.All<WorkOrderSafetyHold>().Single().AppliedStateId.Should().BeNull();
         }
         [TestCase(false, false), TestCase(true, false), TestCase(true, true)]
         public async Task Multiple_unit_holds_require_independent_release_and_preserve_intervening_dispatch(bool intervening, bool backdated)

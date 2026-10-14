@@ -32,6 +32,7 @@ public sealed class ApplicationHostedService : IHostedService, IDisposable
     private ICommandService _migrateDocsDbCommand;
     private ICommandService _cleanUtf8Command;
     private ICommandService _normalizePhoneNumbersCommand;
+    private ICommandService _cleanNovuSubscribersCommand;
     private ICommandService _oidcUpdateCommand;
     private ICommandService _securityRefreshCommand;
     private ICommandService _featureFlagsCommand;
@@ -61,6 +62,7 @@ public sealed class ApplicationHostedService : IHostedService, IDisposable
         [FromKeyedServices("MigrateDocsDbCommand")] ICommandService migrateDocsDbCommand,
         [FromKeyedServices("CleanUtf8Command")] ICommandService cleanUtf8Command,
         [FromKeyedServices("NormalizePhoneNumbersCommand")] ICommandService normalizePhoneNumbersCommand,
+        [FromKeyedServices("CleanNovuSubscribersCommand")] ICommandService cleanNovuSubscribersCommand,
         [FromKeyedServices("OidcUpdateCommand")] ICommandService oidcUpdateCommand,
         [FromKeyedServices("SecurityRefreshCommand")] ICommandService securityRefreshCommand,
         [FromKeyedServices("FeatureFlagsCommand")] ICommandService featureFlagsCommand,
@@ -77,6 +79,7 @@ public sealed class ApplicationHostedService : IHostedService, IDisposable
         _migrateDocsDbCommand = migrateDocsDbCommand;
         _cleanUtf8Command = cleanUtf8Command;
         _normalizePhoneNumbersCommand = normalizePhoneNumbersCommand;
+        _cleanNovuSubscribersCommand = cleanNovuSubscribersCommand;
         _oidcUpdateCommand = oidcUpdateCommand;
         _securityRefreshCommand = securityRefreshCommand;
         _featureFlagsCommand = featureFlagsCommand;
@@ -208,6 +211,8 @@ public sealed class ApplicationHostedService : IHostedService, IDisposable
 		        return await _cleanUtf8Command.ExecuteMainAsync(args, cancellationToken).ConfigureAwait(false);
 	        else if (args.Contains("--NormalizePhoneNumbers"))
 		        return await _normalizePhoneNumbersCommand.ExecuteMainAsync(args, cancellationToken).ConfigureAwait(false);
+	        else if (args.Contains("--CleanNovuSubscribers"))
+		        return await _cleanNovuSubscribersCommand.ExecuteMainAsync(args, cancellationToken).ConfigureAwait(false);
 	        else if (args.Contains("--OidcUpdate"))
 		        return await _oidcUpdateCommand.ExecuteMainAsync(args, cancellationToken).ConfigureAwait(false);
 	        else if (args.Contains("--SecurityRefresh"))

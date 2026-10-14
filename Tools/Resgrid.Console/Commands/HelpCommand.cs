@@ -23,6 +23,7 @@ namespace Resgrid.Console.Commands
 			logger.LogInformation("--AddHosts :: Adds a host to the Resgrid Console");
 			logger.LogInformation("--AuthenticatorSeeds --Encrypt|--Decrypt [--BatchSize=500] :: Encrypts every stored TOTP seed (gate on) or writes them back as plaintext before a rollback (gate off)");
 			logger.LogInformation("--ClearCache -- --DepartmentId=1 :: Clears the cache for a department");
+			logger.LogInformation("--CleanNovuSubscribers [--Apply] [--Force] :: Deletes the Novu push subscribers of deleted departments, removed members and deleted units. Dry run unless --Apply is passed");
 			logger.LogInformation("--DbUpdate || --UpdateDb :: Updates the Resgrid Database");
 			logger.LogInformation("--FeatureFlags :: Reads and sets feature toggles. Sub commands:");
 			logger.LogInformation("    --FeatureFlags --List [--DepartmentId=1] [--IncludeArchived] [--Filter=text] :: Lists every flag in the database, and what a department resolves it to");

@@ -31,6 +31,13 @@ namespace Resgrid.Model.Services
 		/// <param name="departmentId">The department identifier.</param>
 		/// <returns>Task&lt;CustomState&gt;.</returns>
 		Task<CustomState> GetActivePersonnelStateForDepartmentAsync(int departmentId);
+
+		/// <summary>
+		/// The personnel status Resgrid sets for a meaning: the first active option of the department's personnel statuses
+		/// with that base type (by order), or the built-in status with that meaning for a department on the built-in
+		/// statuses. Null when the department's statuses have no option with that meaning.
+		/// </summary>
+		Task<int?> ResolvePersonnelStatusAsync(int departmentId, ActionBaseTypes baseType, DestinationEntityTypes destination = DestinationEntityTypes.None);
 		/// <summary>
 		/// Gets the custom personnel statuses or defaults asynchronous.
 		/// </summary>

@@ -125,6 +125,22 @@ namespace Resgrid.Chatbot.Services
 			return context;
 		}
 
+		/// <summary>The class of the call's type, by its id (so a renamed type still counts) or its name; None when unknown.</summary>
+		private async Task<Resgrid.Model.CallTypeClasses> GetCallTypeClassAsync(Resgrid.Model.Call call)
+		{
+			try
+			{
+				var callType = Resgrid.Model.CallTypeLink.Find(call, await _callsService.GetCallTypesForDepartmentAsync(call.DepartmentId));
+				return callType != null && Enum.IsDefined(typeof(Resgrid.Model.CallTypeClasses), callType.BaseType) ? (Resgrid.Model.CallTypeClasses)callType.BaseType : Resgrid.Model.CallTypeClasses.None;
+			}
+			catch (Exception ex)
+			{
+				// Only a playbook hint: a failed read leaves the keyword match alone.
+				Logging.LogException(ex, $"Chatbot incident context: call type read failed for call {call.CallId}.");
+				return Resgrid.Model.CallTypeClasses.None;
+			}
+		}
+
 		private async Task<IncidentContext> LoadAsync(IncidentContext context, Resgrid.Model.Call call, ChatbotSession session, bool includeAdHocResources)
 		{
 			if (!await _authorizationService.CanUserViewCallAsync(session.UserId, call.CallId))
@@ -134,6 +150,7 @@ namespace Resgrid.Chatbot.Services
 			}
 
 			context.Call = call;
+			context.CallTypeClass = await GetCallTypeClassAsync(call);
 
 			try
 			{

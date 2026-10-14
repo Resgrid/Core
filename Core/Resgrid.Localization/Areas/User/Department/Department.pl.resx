@@ -1113,16 +1113,16 @@
     <value>Status jednostki przy zwolnieniu ze zgłoszenia</value>
   </data>
   <data name="UnitCallReleaseStatusHelp" xml:space="preserve">
-    <value>Ustawiany dla jednostek, które nadal pracują przy zgłoszeniu, gdy zostaje ono zamknięte lub gdy zostaną z niego zdjęte. Jednostka, która już wróciła do służby, jest wyłączona z eksploatacji (niedostępna, w serwisie lub na przerwie) albo pracuje przy innym zgłoszeniu, zachowuje swój status. Statusy niestandardowe są oceniane według ich typu bazowego.</value>
+    <value>Ustawiany w ten sam sposób, według znaczenia, dla jednostek, które nadal pracują przy zgłoszeniu, gdy zostaje ono zamknięte lub gdy zostaną z niego zdjęte. Jednostka, która już wróciła do służby, jest wyłączona z eksploatacji (niedostępna, w serwisie lub na przerwie) albo pracuje przy innym zgłoszeniu, zachowuje swój status; statusy niestandardowe są oceniane według ich typu bazowego. Domyślnie ustawiany jest status powrotu do służby (Zakończona, Dostępna lub W jednostce) dla statusów niestandardowych i Zwolniona dla statusów wbudowanych.</value>
   </data>
   <data name="UnitDefaultStatusesHelp" xml:space="preserve">
-    <value>Te domyślne statusy jednostek korzystają wyłącznie z wbudowanych typów stanów jednostek. Jeśli typ jednostki potrzebuje jednego ze swoich niestandardowych statusów, użyj poniższej tabeli nadpisań dla typów jednostek.</value>
+    <value>Ustawiany dla jednostek zadysponowanych do zgłoszenia. Wybierz, co oznacza status: każda jednostka otrzymuje status ze swojego zestawu statusów o tym znaczeniu (pierwszy według kolejności), dzięki czemu jedno ustawienie działa dla typów jednostek z różnymi statusami niestandardowymi. Domyślnie ustawiany jest status Zadysponowana (lub W drodze do zdarzenia, lub W drodze) dla statusów niestandardowych i W drodze do zdarzenia dla statusów wbudowanych.</value>
   </data>
   <data name="UnitTypeStatusOverridesHeader" xml:space="preserve">
     <value>Nadpisania statusów dla typów jednostek</value>
   </data>
   <data name="UnitTypeStatusOverridesHelp" xml:space="preserve">
-    <value>Widoczne są tu tylko typy jednostek z niestandardowymi statusami jednostek. Pozostaw wartość „Domyślny”, aby użyć ustawionego powyżej wbudowanego statusu obowiązującego w całym dziale.</value>
+    <value>Wyświetlane są tu tylko typy jednostek z niestandardowymi statusami. Wybierz jeden z własnych statusów typu jednostki, gdy potrzebuje on konkretnego; Domyślne używa ustawienia działu powyżej, dopasowanego do statusów typu jednostki.</value>
   </data>
   <data name="CheckInTimerActiveStatesLabel" xml:space="preserve">
     <value>Aktywne stany</value>
@@ -1444,5 +1444,80 @@
   </data>
   <data name="DeleteDepartmentLegalHoldWarning" xml:space="preserve">
     <value>Aktywne blokady zachowania obejmujące Rejestry tego wydziału: {0}. Usunięcie nie zostanie wykonane, dopóki wszystkie nie zostaną zwolnione.</value>
+  </data>
+  <data name="TerminologyHeader" xml:space="preserve">
+    <value>Terminologia</value>
+  </data>
+  <data name="TerminologyIntro" xml:space="preserve">
+    <value>Używaj słownictwa swojej jednostki. Nazwa ustawiona tutaj zastępuje nazwę Resgrid danego modułu lub typu rejestru w nawigacji, w tytułach stron, wszędzie tam, gdzie wymieniane są typy rejestrów, oraz w aplikacjach Responder, Unit, IC i Dispatch, dla wszystkich członków i we wszystkich językach. Zmienia się tylko etykieta: uprawnienia, łącza i integracje pozostają bez zmian. Pozostaw pole puste, aby zachować nazwę Resgrid.</value>
+  </data>
+  <data name="TerminologyModules" xml:space="preserve">
+    <value>Moduły</value>
+  </data>
+  <data name="TerminologyModulesHelp" xml:space="preserve">
+    <value>Wyświetlana w nawigacji, jako tytuł strony głównej modułu i w menu aplikacji. Zdania w innych miejscach, które wspominają moduł, zachowują brzmienie Resgrid.</value>
+  </data>
+  <data name="TerminologyRecordTypes" xml:space="preserve">
+    <value>Typy rejestrów</value>
+  </data>
+  <data name="TerminologyRecordTypesHelp" xml:space="preserve">
+    <value>Wbudowane typy Rejestrów i Dzienników, wszędzie tam, gdzie typ jest wybierany, wymieniany, drukowany lub eksportowany. Aby dodać własny typ, np. Edukacja publiczna, utwórz definicję rejestru.</value>
+  </data>
+  <data name="TerminologyDefaultColumn" xml:space="preserve">
+    <value>Nazwa Resgrid</value>
+  </data>
+  <data name="TerminologyNameColumn" xml:space="preserve">
+    <value>Nazwa w Twojej jednostce</value>
+  </data>
+  <data name="TerminologySaved" xml:space="preserve">
+    <value>Terminologia zapisana.</value>
+  </data>
+  <data name="TerminologyPartlySaved" xml:space="preserve">
+    <value>Pozostałe nazwy zostały zapisane.</value>
+  </data>
+  <data name="TerminologyTooLong" xml:space="preserve">
+    <value>Nazwy mogą mieć najwyżej {0} znaków; dłuższe nazwy nie zostały zapisane i są pokazane do poprawienia.</value>
+  </data>
+  <data name="TerminologyRecordDefinitionsLink" xml:space="preserve">
+    <value>Definicje rejestrów</value>
+  </data>
+  <data name="TerminologyRenameLink" xml:space="preserve">
+    <value>Zmień nazwy modułów i typów rejestrów</value>
+  </data>
+  <data name="UnitStatusTargetMeaningGroup" xml:space="preserve">
+    <value>Znaczenie statusu</value>
+  </data>
+  <data name="UnitStatusTargetDefaultDispatch" xml:space="preserve">
+    <value>Domyślne (Zadysponowana, W drodze do zdarzenia lub W drodze)</value>
+  </data>
+  <data name="UnitStatusTargetDefaultRelease" xml:space="preserve">
+    <value>Domyślne (powrót do służby)</value>
+  </data>
+  <data name="UnitStatusTargetLeaveUnchanged" xml:space="preserve">
+    <value>Nie zmieniaj statusu jednostki</value>
+  </data>
+  <data name="UnitStatusTargetLegacy" xml:space="preserve">
+    <value>Status wbudowany: {0} (zapisany przed znaczeniami statusów)</value>
+  </data>
+  <data name="UnitStatusTargetWarningsHeader" xml:space="preserve">
+    <value>Sprawdź te typy jednostek</value>
+  </data>
+  <data name="UnitStatusTargetNoMatch" xml:space="preserve">
+    <value>{0}: jego zestaw statusów "{1}" nie ma statusu oznaczającego {2}, więc jego jednostki zachowują swój status przy {3}. Ustaw typ bazowy dla jednego z jego statusów lub wybierz jeden w nadpisaniach poniżej.</value>
+  </data>
+  <data name="UnitStatusTargetSeveral" xml:space="preserve">
+    <value>{0}: jego zestaw statusów "{1}" ma {2} statusy oznaczające {3} ({4}); przy {6} używany jest {5}, pierwszy według kolejności.</value>
+  </data>
+  <data name="UnitStatusTargetNoBuiltIn" xml:space="preserve">
+    <value>{0}: żaden wbudowany status jednostki nie oznacza {1}, więc jego jednostki zachowują swój status przy {2}.</value>
+  </data>
+  <data name="UnitStatusTargetActionDispatch" xml:space="preserve">
+    <value>zadysponowaniu</value>
+  </data>
+  <data name="UnitStatusTargetActionRelease" xml:space="preserve">
+    <value>zwolnieniu</value>
+  </data>
+  <data name="StatusMeaningOption" xml:space="preserve">
+    <value>Dowolny status "{0}"</value>
   </data>
 </root>

@@ -329,6 +329,7 @@ namespace Resgrid.Tests.Services
 			builder.Services.AddAuthentication(scheme).AddScheme<AuthenticationSchemeOptions, TestAuthentication>(scheme, _ => { });
 			builder.Services.AddAuthorization(options => options.AddPolicy(Resgrid.Providers.Claims.ResgridResources.Inventory_Delete, policy => policy.RequireClaim("inventory-delete", "true")));
 			var views = new PurchasingBodyFilter();
+			builder.Services.AddDepartmentTerminologyStub();
 			builder.Services.AddControllersWithViews(options => options.Filters.Add(views)).AddApplicationPart(typeof(MvcInventoryController).Assembly)
 				.AddNewtonsoftJson(options => options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver());
 			builder.Services.AddSingleton(_catalog.Object); builder.Services.AddSingleton(_stock.Object); builder.Services.AddSingleton(_transfers.Object);

@@ -1174,7 +1174,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					callJson.LoggedOn = call.LoggedOn.FormatForDepartment(department);
 					callJson.Priority = call.Priority;
 
-					var priority = await _callsService.GetCallPrioritiesByIdAsync(call.Priority, DepartmentId);
+					var priority = await _callsService.GetCallPrioritiesByIdAsync(DepartmentId, call.Priority);
 
 					if (priority != null)
 					{

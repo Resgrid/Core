@@ -113,31 +113,18 @@ namespace Resgrid.Chatbot.Handlers
 			}
 		}
 
-		// Staffing availability: UserState.State holds a built-in UserStateTypes value (<= 25 by the same
-		// convention CustomStateService uses) or a CustomStateDetailId whose BaseType classifies it.
+		// Staffing availability: UserState.State holds one of the department's custom staffing option ids, whose
+		// BaseType classifies it, or a built-in UserStateTypes value (StatusOptionIds).
 		private async Task<AvailabilityClass> ClassifyStaffingAsync(int departmentId, UserState state)
 		{
 			if (state == null)
 				return AvailabilityClass.Unknown;
 
-			if (state.State <= 25)
-			{
-				return (UserStateTypes)state.State switch
-				{
-					UserStateTypes.Available => AvailabilityClass.Available,
-					UserStateTypes.Delayed => AvailabilityClass.Delayed,
-					UserStateTypes.Unavailable => AvailabilityClass.Unavailable,
-					UserStateTypes.Committed => AvailabilityClass.Committed,
-					UserStateTypes.OnShift => AvailabilityClass.Available,
-					_ => AvailabilityClass.Unknown
-				};
-			}
-
-			var detail = await _customStateService.GetCustomDetailForDepartmentAsync(departmentId, state.State);
+			var detail = StatusOptionIds.FindCustom(await _customStateService.GetAllCustomStatesForDepartmentAsync(departmentId), CustomStateTypes.Staffing, state.State);
 			if (detail == null)
-				return AvailabilityClass.Unknown;
+				return AvailabilityMatrix.ForStaffingBaseType((int)BuiltInStatusBaseTypes.ForStaffing(state.State));
 
-			var baseClassification = AvailabilityMatrix.ForCustomBaseType(detail.BaseType);
+			var baseClassification = AvailabilityMatrix.ForStaffingBaseType(detail.BaseType);
 			if (baseClassification != AvailabilityClass.Unknown)
 				return baseClassification;
 

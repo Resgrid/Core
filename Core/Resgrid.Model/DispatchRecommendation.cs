@@ -46,6 +46,12 @@ namespace Resgrid.Model
 
 		public string CallTypeName { get; set; }
 
+		/// <summary>
+		/// The call's linked call type (Call.CallTypeId), used when <see cref="CallTypeName"/> matches no type because the type
+		/// was renamed after the call was logged. The name wins when it matches, so an edit form's unsaved type still applies.
+		/// </summary>
+		public int? CallTypeId { get; set; }
+
 		public double? Latitude { get; set; }
 
 		public double? Longitude { get; set; }
@@ -89,6 +95,7 @@ namespace Resgrid.Model
 				DepartmentId = call.DepartmentId,
 				Priority = call.Priority,
 				CallTypeName = call.Type,
+				CallTypeId = call.CallTypeId,
 				Latitude = location?.Latitude,
 				Longitude = location?.Longitude,
 				TargetAlarmLevel = targetLevel,

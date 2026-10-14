@@ -49,6 +49,7 @@ namespace Resgrid.Web.Services.Controllers
 		private readonly IDispatchRecommendationService _dispatchRecommendationService;
 		private readonly IFeatureToggleService _featureToggleService;
 		private readonly Resgrid.Model.AiDispatch.IAiDispatchAdminService _aiDispatchAdminService;
+		private readonly IInboundEmailReceiptsService _inboundEmailReceiptsService;
 
 		public EmailController(IDepartmentSettingsService departmentSettingsService, INumbersService numbersService,
 			ILimitsService limitsService, ICallsService callsService, IQueueService queueService, IDepartmentsService departmentsService,
@@ -57,7 +58,7 @@ namespace Resgrid.Web.Services.Controllers
 			IUsersService usersService, IEmailService emailService, IDepartmentGroupsService departmentGroupsService, IMessageService messageService,
 			IFileService fileService, IUnitsService unitsService, IGeoLocationProvider geoLocationProvider, ICallDispatchStatusService callDispatchStatusService,
 			IDispatchRecommendationService dispatchRecommendationService, IFeatureToggleService featureToggleService,
-			Resgrid.Model.AiDispatch.IAiDispatchAdminService aiDispatchAdminService)
+			Resgrid.Model.AiDispatch.IAiDispatchAdminService aiDispatchAdminService, IInboundEmailReceiptsService inboundEmailReceiptsService)
 		{
 			_departmentSettingsService = departmentSettingsService;
 			_numbersService = numbersService;
@@ -82,6 +83,7 @@ namespace Resgrid.Web.Services.Controllers
 			_dispatchRecommendationService = dispatchRecommendationService;
 			_featureToggleService = featureToggleService;
 			_aiDispatchAdminService = aiDispatchAdminService;
+			_inboundEmailReceiptsService = inboundEmailReceiptsService;
 		}
 		#endregion Private Readonly Properties and Constructors
 
@@ -97,10 +99,17 @@ namespace Resgrid.Web.Services.Controllers
 		/// </summary>
 		/// <param name="message">A Postmark Inbound message http://developer.postmarkapp.com/developer-inbound-parse.html#example-hook</param>
 		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-		/// <returns><br /></returns>
+		/// <returns>
+		/// Postmark retries every answer except a 200 for about 10.5 hours, and a 403 stops it: 200 when handled (or handled
+		/// before; never 201, which Postmark's inbound contract does not name as delivered), 409 while another delivery of the
+		/// same email is still being handled, 403 when a retry could not help (no Resgrid address, unknown address, nothing this
+		/// department's email format can read), 400 on a failure worth retrying.
+		/// </returns>
 		[HttpPost("Receive")]
 		[Consumes(MediaTypeNames.Application.Json)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status403Forbidden)]
+		[ProducesResponseType(StatusCodes.Status409Conflict)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		public async Task<ActionResult> Receive(PostmarkInboundMessage message, CancellationToken cancellationToken)
@@ -112,7 +121,7 @@ namespace Resgrid.Web.Services.Controllers
 					var mailMessage = new MimeMessage();
 
 					if (message.FromFull != null && !String.IsNullOrWhiteSpace(message.FromFull.Email) && message.FromFull.Email.Trim() == "support@postmarkapp.com")
-						return CreatedAtAction(nameof(Receive), new { id = message.MessageID }, message);
+						return Ok(message);
 
 					if (message.FromFull != null && !String.IsNullOrWhiteSpace(message.FromFull.Email) && !String.IsNullOrWhiteSpace(message.FromFull.Name))
 						mailMessage.From.Add(new MailboxAddress(message.FromFull.Name.Trim(), message.FromFull.Email.Trim()));
@@ -302,8 +311,21 @@ namespace Resgrid.Web.Services.Controllers
 
 						if (departmentId.HasValue)
 						{
+							var receipt = await _inboundEmailReceiptsService.ClaimAsync(message.MessageID, InboundEmailKinds.Dispatch, cancellationToken);
+							var duplicate = DuplicateDeliveryResult(receipt);
+							if (duplicate != null)
+								return duplicate;
+
+							Call call = null;
+							var isNewCall = false;
+							var saveRecorded = false;
+							var pendingSteps = InboundEmailPendingSteps.None;
+
 							try
 							{
+								if (receipt.Outcome == InboundEmailClaimOutcomes.Resume)
+									return await ResumeCallAsync(receipt, true, 1, message, cancellationToken);
+
 								var emailSettings = await _departmentsService.GetDepartmentEmailSettingsAsync(departmentId.Value);
 								List<IdentityUser> departmentUsers = await _departmentsService.GetAllUsersForDepartmentAsync(departmentId.Value, true);
 
@@ -357,17 +379,10 @@ namespace Resgrid.Web.Services.Controllers
 								var priorities = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(emailSettings.Department.DepartmentId);
 								var callTypes = await _callsService.GetCallTypesForDepartmentAsync(emailSettings.Department.DepartmentId);
 
-								int defaultPriority = (int)CallPriority.High;
+								// The default priority, else the department's High priority, else the built-in High (CallPriorityMatch).
+								int defaultPriority = CallPriorityMatch.DefaultForImport(priorities);
 
-								if (priorities != null && priorities.Any())
-								{
-									var defaultPrio = priorities.FirstOrDefault(x => x.IsDefault && x.IsDeleted == false);
-
-									if (defaultPrio != null)
-										defaultPriority = defaultPrio.DepartmentCallPriorityId;
-								}
-
-								var call = await _callsService.GenerateCallFromEmail(emailSettings.FormatType, callEmail,
+								call = await _callsService.GenerateCallFromEmail(emailSettings.FormatType, callEmail,
 																				 emailSettings.Department.ManagingUserId,
 																				 departmentUsers, emailSettings.Department, activeCalls, units,
 																				 defaultPriority, priorities, callTypes);
@@ -375,7 +390,12 @@ namespace Resgrid.Web.Services.Controllers
 								if (call != null && call.CallId <= 0)
 								{
 									// New Call Dispatch as normal
+									isNewCall = true;
 									call.DepartmentId = departmentId.Value;
+									pendingSteps = InboundEmailPendingSteps.CallBroadcast;
+
+									if (emailSettings.FormatType == (int)CallEmailTypes.AI)
+										pendingSteps |= InboundEmailPendingSteps.AiEnrichment;
 
 									if (!String.IsNullOrWhiteSpace(call.Address) && (String.IsNullOrWhiteSpace(call.GeoLocationData) || call.GeoLocationData.Length <= 1))
 									{
@@ -383,13 +403,16 @@ namespace Resgrid.Web.Services.Controllers
 									}
 
 									var savedCall = await _callsService.SaveCallAsync(call, cancellationToken);
+									await _inboundEmailReceiptsService.MarkSavedAsync(receipt, savedCall.CallId, pendingSteps);
+									saveRecorded = true;
 
 									await QueueCallBroadcastAsync(savedCall, cancellationToken);
 
 									if (emailSettings.FormatType == (int)CallEmailTypes.AI)
 										await QueueAiDispatchEnrichmentAsync(savedCall, 1, message.FromFull?.Email, cancellationToken);
 
-									return CreatedAtAction(nameof(Receive), new { id = savedCall.CallId }, savedCall);
+									await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
+									return Ok(savedCall);
 								}
 								else if (call != null && call.CallId > 0)
 								{
@@ -404,15 +427,23 @@ namespace Resgrid.Web.Services.Controllers
 									// If our Dispatch Count changed, i.e. 2nd Alarm to 3rd Alarm, redispatch
 									if (call.DidDispatchCountChange())
 									{
+										await _inboundEmailReceiptsService.MarkSavedAsync(receipt, savedCall.CallId, InboundEmailPendingSteps.CallBroadcast);
 										await QueueCallBroadcastAsync(savedCall, cancellationToken);
 									}
 
-									return CreatedAtAction(nameof(Receive), new { id = savedCall.CallId }, savedCall);
+									await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
+									return Ok(savedCall);
 								}
+
+								// The department's email format found no call in this email, and would read it the same way again.
+								await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
+								return NotProcessable();
 							}
 							catch (Exception ex)
 							{
 								Logging.LogException(ex);
+								await RecordPartialCallAsync(receipt, isNewCall, saveRecorded, call, pendingSteps);
+								await _inboundEmailReceiptsService.ReleaseAsync(receipt);
 								return BadRequest(message);
 							}
 						}
@@ -427,6 +458,13 @@ namespace Resgrid.Web.Services.Controllers
 						{
 							if (String.IsNullOrWhiteSpace(bounceEmail))
 							{
+								var receipt = await _inboundEmailReceiptsService.ClaimAsync(message.MessageID, InboundEmailKinds.DistributionList, cancellationToken);
+								var duplicate = DuplicateDeliveryResult(receipt);
+								if (duplicate != null)
+									return duplicate;
+
+								// Nothing is saved for a list email before its broadcast is queued (attachments aside), so a failed
+								// attempt is simply processed again and there is nothing to resume.
 								try
 								{
 									List<Model.File> files = new List<Model.File>();
@@ -482,20 +520,22 @@ namespace Resgrid.Web.Services.Controllers
 									dlqi.Message.MessageID = message.MessageID;
 
 									await _queueService.EnqueueDistributionListBroadcastAsync(dlqi, cancellationToken);
+									await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
 								}
 								catch (Exception ex)
 								{
 									Logging.LogException(ex);
+									await _inboundEmailReceiptsService.ReleaseAsync(receipt);
 									return BadRequest(message);
 								}
 							}
 							else
 							{
-								return CreatedAtAction(nameof(Receive), new { id = message.MessageID }, message);
+								return Ok(message);
 							}
 						}
 
-						return CreatedAtAction(nameof(Receive), new { id = message.MessageID }, message);
+						return Ok(message);
 						#endregion Distribution Email
 					}
 					if (type == 3)  // Group Dispatch
@@ -505,8 +545,21 @@ namespace Resgrid.Web.Services.Controllers
 
 						if (departmentGroup != null)
 						{
+							var receipt = await _inboundEmailReceiptsService.ClaimAsync(message.MessageID, InboundEmailKinds.GroupDispatch, cancellationToken);
+							var duplicate = DuplicateDeliveryResult(receipt);
+							if (duplicate != null)
+								return duplicate;
+
+							Call call = null;
+							var isNewCall = false;
+							var saveRecorded = false;
+							var pendingSteps = InboundEmailPendingSteps.None;
+
 							try
 							{
+								if (receipt.Outcome == InboundEmailClaimOutcomes.Resume)
+									return await ResumeCallAsync(receipt, false, 2, message, cancellationToken);
+
 								var users = await _departmentsService.GetAllUsersForDepartmentAsync(departmentGroup.DepartmentId);
 								var emailSettings = await _departmentsService.GetDepartmentEmailSettingsAsync(departmentGroup.DepartmentId);
 								var departmentGroupUsers = _departmentGroupsService.GetAllMembersForGroupAndChildGroups(departmentGroup);
@@ -561,17 +614,10 @@ namespace Resgrid.Web.Services.Controllers
 								var units = await _unitsService.GetAllUnitsForGroupAsync(departmentGroup.DepartmentGroupId);
 								var callTypes = await _callsService.GetCallTypesForDepartmentAsync(emailSettings.Department.DepartmentId);
 								var priorities = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(emailSettings.Department.DepartmentId);
-								int defaultPriority = (int)CallPriority.High;
+								// The default priority, else the department's High priority, else the built-in High (CallPriorityMatch).
+								int defaultPriority = CallPriorityMatch.DefaultForImport(priorities);
 
-								if (priorities != null && priorities.Any())
-								{
-									var defaultPrio = priorities.FirstOrDefault(x => x.IsDefault && x.IsDeleted == false);
-
-									if (defaultPrio != null)
-										defaultPriority = defaultPrio.DepartmentCallPriorityId;
-								}
-
-								var call = await _callsService.GenerateCallFromEmail(emailSettings.FormatType, callEmail,
+								call = await _callsService.GenerateCallFromEmail(emailSettings.FormatType, callEmail,
 																				 emailSettings.Department.ManagingUserId,
 																				 users.Where(x => departmentGroupUsers.Select(y => y.UserId).Contains(x.Id)).ToList(),
 																				 emailSettings.Department, activeCalls, units, defaultPriority, priorities, callTypes);
@@ -587,22 +633,41 @@ namespace Resgrid.Web.Services.Controllers
 									// The incident-number formats hand back an open call for a follow-up page. As on the department address,
 									// that updates the call and only alerts again when its dispatch count changed (2nd alarm and so on).
 									var isUpdate = call.CallId > 0;
+									isNewCall = !isUpdate;
+
+									if (!isUpdate || call.DidDispatchCountChange())
+										pendingSteps = InboundEmailPendingSteps.CallBroadcast;
+
+									if (!isUpdate && emailSettings.FormatType == (int)CallEmailTypes.AI)
+										pendingSteps |= InboundEmailPendingSteps.AiEnrichment;
+
 									var savedCall = await _callsService.SaveCallAsync(call, cancellationToken);
+
+									if (pendingSteps != InboundEmailPendingSteps.None)
+										await _inboundEmailReceiptsService.MarkSavedAsync(receipt, savedCall.CallId, pendingSteps);
+									saveRecorded = true;
 
 									// Group-scoped: the units and members above were narrowed to this
 									// group, so run card enrichment stays out of it.
-									if (!isUpdate || call.DidDispatchCountChange())
+									if (pendingSteps.HasFlag(InboundEmailPendingSteps.CallBroadcast))
 										await QueueCallBroadcastAsync(savedCall, cancellationToken, false);
 
-									if (!isUpdate && emailSettings.FormatType == (int)CallEmailTypes.AI)
+									if (pendingSteps.HasFlag(InboundEmailPendingSteps.AiEnrichment))
 										await QueueAiDispatchEnrichmentAsync(savedCall, 2, message.FromFull?.Email, cancellationToken);
 
-									return CreatedAtAction(nameof(Receive), new { id = savedCall.CallId }, savedCall);
+									await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
+									return Ok(savedCall);
 								}
+
+								// The department's email format found no call in this email, and would read it the same way again.
+								await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
+								return NotProcessable();
 							}
 							catch (Exception ex)
 							{
 								Logging.LogException(ex);
+								await RecordPartialCallAsync(receipt, isNewCall, saveRecorded, call, pendingSteps);
+								await _inboundEmailReceiptsService.ReleaseAsync(receipt);
 								return BadRequest();
 							}
 						}
@@ -616,11 +681,23 @@ namespace Resgrid.Web.Services.Controllers
 						if (departmentGroup != null)
 						{
 							var department = await _departmentsService.GetDepartmentByIdAsync(departmentGroup.DepartmentId);
+
+							var receipt = await _inboundEmailReceiptsService.ClaimAsync(message.MessageID, InboundEmailKinds.GroupMessage, cancellationToken);
+							var duplicate = DuplicateDeliveryResult(receipt);
+							if (duplicate != null)
+								return duplicate;
+
+							Message newMessage = null;
+							var saveRecorded = false;
+
 							try
 							{
+								if (receipt.Outcome == InboundEmailClaimOutcomes.Resume)
+									return await ResumeMessageAsync(receipt, departmentGroup.DepartmentId, cancellationToken);
+
 								var departmentGroupUsers = _departmentGroupsService.GetAllMembersForGroupAndChildGroups(departmentGroup);
 
-								var newMessage = new Message();
+								newMessage = new Message();
 								newMessage.SentOn = DateTime.UtcNow;
 								newMessage.SendingUserId = department.ManagingUserId;
 								newMessage.IsBroadcast = true;
@@ -639,13 +716,23 @@ namespace Resgrid.Web.Services.Controllers
 								}
 
 								var savedMessage = await _messageService.SaveMessageAsync(newMessage, cancellationToken);
+								await _inboundEmailReceiptsService.MarkSavedAsync(receipt, savedMessage.MessageId, InboundEmailPendingSteps.MessageSend);
+								saveRecorded = true;
+
 								await _messageService.SendMessageAsync(savedMessage, "", departmentGroup.DepartmentId, false, cancellationToken);
 
-								return CreatedAtAction(nameof(Receive), new { id = savedMessage.MessageId }, savedMessage);
+								await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
+								return Ok(savedMessage);
 							}
 							catch (Exception ex)
 							{
 								Logging.LogException(ex);
+
+								// As for calls: the message row is written before its recipients, so keep an id a failure left behind.
+								if (!saveRecorded && newMessage != null && newMessage.MessageId > 0)
+									await _inboundEmailReceiptsService.MarkSavedAsync(receipt, newMessage.MessageId, InboundEmailPendingSteps.MessageSend);
+
+								await _inboundEmailReceiptsService.ReleaseAsync(receipt);
 								return BadRequest();
 							}
 						}
@@ -653,7 +740,8 @@ namespace Resgrid.Web.Services.Controllers
 						#endregion Group Message
 					}
 
-					return BadRequest();
+					// No Resgrid address, or one no department or group owns: a retry would land here again.
+					return NotProcessable();
 				}
 				catch (Exception ex)
 				{
@@ -666,6 +754,84 @@ namespace Resgrid.Web.Services.Controllers
 				// If our message was null, we throw an exception
 				return BadRequest("Error parsing Inbound Message, message is null.");
 			}
+		}
+
+		/// <summary>
+		/// The answer to a delivery of an email this API already handled, or is handling right now; null when the delivery should
+		/// be processed. A completed email is acknowledged with a 200 so Postmark stops; one still in flight gets a 409 so Postmark
+		/// delivers it again later, when it is either finished or its attempt has died and can be taken over.
+		/// </summary>
+		private ActionResult DuplicateDeliveryResult(InboundEmailReceiptClaim receipt)
+		{
+			switch (receipt.Outcome)
+			{
+				case InboundEmailClaimOutcomes.AlreadyProcessed:
+					return Ok();
+				case InboundEmailClaimOutcomes.InProgress:
+					return StatusCode(StatusCodes.Status409Conflict);
+				default:
+					return null;
+			}
+		}
+
+		/// <summary>A 403 is the one answer that stops Postmark retrying; used where a retry would fail the same way.</summary>
+		private ActionResult NotProcessable()
+		{
+			return StatusCode(StatusCodes.Status403Forbidden);
+		}
+
+		/// <summary>
+		/// The call row is written before its dispatch rows and the broadcast, so a failure after that (including the provider
+		/// dropping the connection) leaves a new call behind. Recording its id lets the provider's retry finish this call instead of
+		/// creating another one.
+		/// </summary>
+		private async Task RecordPartialCallAsync(InboundEmailReceiptClaim receipt, bool isNewCall, bool saveRecorded, Call call, InboundEmailPendingSteps pendingSteps)
+		{
+			if (isNewCall && !saveRecorded && call != null && call.CallId > 0)
+				await _inboundEmailReceiptsService.MarkSavedAsync(receipt, call.CallId, pendingSteps);
+		}
+
+		/// <summary>
+		/// Finishes a call an earlier delivery of the same email saved and then failed on: queues the broadcast (and AI enrichment)
+		/// that never went out, once, instead of creating a second call. A call someone has since closed or deleted is not paged.
+		/// </summary>
+		private async Task<ActionResult> ResumeCallAsync(InboundEmailReceiptClaim receipt, bool allowRunCardEnrichment, int aiChannel,
+			PostmarkInboundMessage message, CancellationToken cancellationToken)
+		{
+			var call = receipt.EntityId.HasValue ? await _callsService.GetCallByIdAsync(receipt.EntityId.Value) : null;
+
+			if (call == null || call.IsDeleted || call.State != (int)CallStates.Active)
+			{
+				await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
+				return Ok();
+			}
+
+			if (receipt.Has(InboundEmailPendingSteps.CallBroadcast))
+				await QueueCallBroadcastAsync(call, cancellationToken, allowRunCardEnrichment);
+
+			if (receipt.Has(InboundEmailPendingSteps.AiEnrichment))
+				await QueueAiDispatchEnrichmentAsync(call, aiChannel, message.FromFull?.Email, cancellationToken);
+
+			await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
+			return Ok(call);
+		}
+
+		/// <summary>Sends a group message an earlier delivery of the same email saved and then failed to send.</summary>
+		private async Task<ActionResult> ResumeMessageAsync(InboundEmailReceiptClaim receipt, int departmentId, CancellationToken cancellationToken)
+		{
+			var savedMessage = receipt.EntityId.HasValue ? await _messageService.GetMessageByIdAsync(receipt.EntityId.Value) : null;
+
+			if (savedMessage == null)
+			{
+				await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
+				return Ok();
+			}
+
+			if (receipt.Has(InboundEmailPendingSteps.MessageSend))
+				await _messageService.SendMessageAsync(savedMessage, "", departmentId, false, cancellationToken);
+
+			await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
+			return Ok(savedMessage);
 		}
 
 		/// <param name="allowRunCardEnrichment">

@@ -107,6 +107,7 @@
   <data name="Activate" xml:space="preserve"><value>Activer</value></data>
   <data name="ActivationBlocked" xml:space="preserve"><value>L'activation est bloquée</value></data>
   <data name="NotActivatedNotice" xml:space="preserve"><value>Les dossiers sont disponibles pour ce service mais pas encore activés. Un administrateur doit les activer avant de créer des dossiers.</value></data>
+  <data name="RecordsModuleNotEnabled" xml:space="preserve"><value>{0} : ce module des dossiers n'est pas activé pour le service.</value></data>
   <data name="ActivatedOn" xml:space="preserve"><value>Dossiers activés le</value></data>
   <data name="SettingsHeader" xml:space="preserve"><value>Paramètres des dossiers</value></data>
   <data name="DefaultLifecyclePreset" xml:space="preserve"><value>Cycle de vie par défaut des définitions du service</value></data>

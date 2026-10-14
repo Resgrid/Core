@@ -309,4 +309,118 @@
   <data name="NewContactNoteTypeHeader" xml:space="preserve">
     <value>نوع ملاحظة جهة اتصال جديد</value>
   </data>
+  <data name="CallTypeClassLabel" xml:space="preserve">
+    <value>الفئة</value>
+  </data>
+  <data name="CallTypeClassHelp" xml:space="preserve">
+    <value>نوع البلاغ الذي يمثله هذا النوع. يستخدم Resgrid الفئة لا الاسم في التقارير والقيم الافتراضية والتكاملات، لذا يمكن للقسم تسمية أنواع البلاغات كما يشاء.</value>
+  </data>
+  <data name="UnitTypeClassLabel" xml:space="preserve">
+    <value>الفئة</value>
+  </data>
+  <data name="UnitTypeClassHelp" xml:space="preserve">
+    <value>نوع الوحدة الذي يمثله هذا النوع. يستخدم Resgrid الفئة لا الاسم في التقارير والقيم الافتراضية والتكاملات.</value>
+  </data>
+  <data name="CallPriorityBaseTypeLabel" xml:space="preserve">
+    <value>المعنى</value>
+  </data>
+  <data name="CallPriorityBaseTypeHelp" xml:space="preserve">
+    <value>الأولوية القياسية التي تعنيها هذه الأولوية. يستخدمها Resgrid حيثما يلزم مقارنة الأولويات بين الأقسام أو التطبيقات، مثل التقارير والترتيب حسب الاستعجال.</value>
+  </data>
+  <data name="BaseTypeNone" xml:space="preserve">
+    <value>لا شيء</value>
+  </data>
+  <data name="SuggestedFromName" xml:space="preserve">
+    <value>مقترح من الاسم: {0}</value>
+  </data>
+  <data name="CallTypeClass.Fire" xml:space="preserve">
+    <value>حريق</value>
+  </data>
+  <data name="CallTypeClass.Medical" xml:space="preserve">
+    <value>طبي</value>
+  </data>
+  <data name="CallTypeClass.Rescue" xml:space="preserve">
+    <value>إنقاذ</value>
+  </data>
+  <data name="CallTypeClass.TrafficCollision" xml:space="preserve">
+    <value>حادث مروري</value>
+  </data>
+  <data name="CallTypeClass.HazardousMaterials" xml:space="preserve">
+    <value>مواد خطرة</value>
+  </data>
+  <data name="CallTypeClass.Alarm" xml:space="preserve">
+    <value>إنذار</value>
+  </data>
+  <data name="CallTypeClass.ServiceCall" xml:space="preserve">
+    <value>طلب خدمة</value>
+  </data>
+  <data name="CallTypeClass.LawEnforcement" xml:space="preserve">
+    <value>إنفاذ القانون</value>
+  </data>
+  <data name="CallTypeClass.DisasterWeather" xml:space="preserve">
+    <value>كارثة أو طقس</value>
+  </data>
+  <data name="CallTypeClass.MutualAid" xml:space="preserve">
+    <value>مساعدة متبادلة</value>
+  </data>
+  <data name="CallTypeClass.NonEmergencyActivity" xml:space="preserve">
+    <value>نشاط غير طارئ</value>
+  </data>
+  <data name="CallTypeClass.Other" xml:space="preserve">
+    <value>أخرى</value>
+  </data>
+  <data name="UnitTypeClass.Engine" xml:space="preserve">
+    <value>سيارة إطفاء</value>
+  </data>
+  <data name="UnitTypeClass.Aerial" xml:space="preserve">
+    <value>سلم هوائي</value>
+  </data>
+  <data name="UnitTypeClass.Rescue" xml:space="preserve">
+    <value>إنقاذ</value>
+  </data>
+  <data name="UnitTypeClass.Tanker" xml:space="preserve">
+    <value>صهريج</value>
+  </data>
+  <data name="UnitTypeClass.Ambulance" xml:space="preserve">
+    <value>إسعاف</value>
+  </data>
+  <data name="UnitTypeClass.MedicalResponse" xml:space="preserve">
+    <value>استجابة طبية</value>
+  </data>
+  <data name="UnitTypeClass.Wildland" xml:space="preserve">
+    <value>حرائق الغابات</value>
+  </data>
+  <data name="UnitTypeClass.HazardousMaterials" xml:space="preserve">
+    <value>مواد خطرة</value>
+  </data>
+  <data name="UnitTypeClass.Command" xml:space="preserve">
+    <value>قيادة</value>
+  </data>
+  <data name="UnitTypeClass.Support" xml:space="preserve">
+    <value>دعم</value>
+  </data>
+  <data name="UnitTypeClass.Watercraft" xml:space="preserve">
+    <value>قارب</value>
+  </data>
+  <data name="UnitTypeClass.Aircraft" xml:space="preserve">
+    <value>طائرة</value>
+  </data>
+  <data name="UnitTypeClass.Patrol" xml:space="preserve">
+    <value>دورية</value>
+  </data>
+  <data name="UnitTypeClass.Other" xml:space="preserve">
+    <value>أخرى</value>
+  </data>
+  <data name="CallPriorityMeaning.Low" xml:space="preserve">
+    <value>منخفضة</value>
+  </data>
+  <data name="CallPriorityMeaning.Medium" xml:space="preserve">
+    <value>متوسطة</value>
+  </data>
+  <data name="CallPriorityMeaning.High" xml:space="preserve">
+    <value>عالية</value>
+  </data>
+  <data name="CallPriorityMeaning.Emergency" xml:space="preserve">
+    <value>طارئة</value>
+  </data>
 </root>

@@ -667,6 +667,42 @@ namespace Resgrid.Tests.Services
 			result.Should().BeEmpty();
 		}
 
+		[Test]
+		public async Task GetActiveTimerStatusesForCallAsync_MatchesAStatusMeaning_OnACustomUnitStatus()
+		{
+			// "b3" = any On Scene status: the unit's custom "ON LOCATION" (base type On Scene) matches.
+			var customStates = new Mock<ICustomStateService>();
+			customStates.Setup(x => x.GetAllCustomStatesForDepartmentAsync(10)).ReturnsAsync(new List<CustomState>
+			{
+				new CustomState { CustomStateId = 2041, Type = (int)CustomStateTypes.Unit, Details = new List<CustomStateDetail>
+				{
+					new CustomStateDetail { CustomStateDetailId = 12703, ButtonText = "ON LOCATION", BaseType = (int)ActionBaseTypes.OnScene }
+				} }
+			});
+			var service = new CheckInTimerService(_configRepo.Object, _overrideRepo.Object, _recordRepo.Object,
+				_actionLogsService.Object, _unitsService.Object, _callsService.Object, _coreEventService.Object, customStates.Object);
+
+			var call = new Call
+			{
+				CallId = 1, DepartmentId = 10, State = (int)CallStates.Active, CheckInTimersEnabled = true,
+				LoggedOn = DateTime.UtcNow.AddMinutes(-5),
+				Dispatches = new List<CallDispatch>(),
+				UnitDispatches = new List<CallDispatchUnit> { new CallDispatchUnit { UnitId = 5 } }
+			};
+			_configRepo.Setup(x => x.GetByDepartmentIdAsync(10)).ReturnsAsync(new List<CheckInTimerConfig>
+			{
+				new CheckInTimerConfig { TimerTargetType = (int)CheckInTimerTargetType.UnitType, DurationMinutes = 30, WarningThresholdMinutes = 5, IsEnabled = true, ActiveForStates = StatusMatch.BaseTypeToken((int)ActionBaseTypes.OnScene) }
+			});
+			_overrideRepo.Setup(x => x.GetMatchingOverridesAsync(10, null, 0)).ReturnsAsync(new List<CheckInTimerOverride>());
+			_recordRepo.Setup(x => x.GetByCallIdAsync(1)).ReturnsAsync(new List<CheckInRecord>());
+			_unitsService.Setup(x => x.GetAllLatestStatusForUnitsByDepartmentIdAsync(10))
+				.ReturnsAsync(new List<UnitState> { new UnitState { UnitId = 5, State = 12703 } });
+
+			var result = await service.GetActiveTimerStatusesForCallAsync(call);
+
+			result.Should().HaveCount(1);
+		}
+
 		#endregion State Filtering
 	}
 }

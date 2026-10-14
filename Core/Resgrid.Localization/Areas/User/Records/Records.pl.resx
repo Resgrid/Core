@@ -107,6 +107,7 @@
   <data name="Activate" xml:space="preserve"><value>Aktywuj</value></data>
   <data name="ActivationBlocked" xml:space="preserve"><value>Aktywacja zablokowana</value></data>
   <data name="NotActivatedNotice" xml:space="preserve"><value>Rejestry są włączone dla tego wydziału, ale jeszcze nie aktywowane. Administrator musi je aktywować przed tworzeniem rejestrów.</value></data>
+  <data name="RecordsModuleNotEnabled" xml:space="preserve"><value>{0}: ten moduł Rejestrów nie jest włączony dla jednostki.</value></data>
   <data name="ActivatedOn" xml:space="preserve"><value>Rejestry aktywowano</value></data>
   <data name="SettingsHeader" xml:space="preserve"><value>Ustawienia rejestrów</value></data>
   <data name="DefaultLifecyclePreset" xml:space="preserve"><value>Domyślny cykl życia dla definicji wydziału</value></data>

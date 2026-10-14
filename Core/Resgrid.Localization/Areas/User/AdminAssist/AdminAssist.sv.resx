@@ -1624,7 +1624,7 @@
     <value>Lägg till återkommande möten och utbildningskvällar.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.call-types-priorities">
-    <value>Lägg till larmtyperna dina larmoperatörer använder och ange deras prioriteter.</value>
+    <value>Lägg till de ärendetyper era operatörer använder och ange deras prioriteter. Ge varje ärendetyp en klass och varje prioritet en betydelse så att rapporter och appar kan gruppera och sortera dem.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.certification-dashboard">
     <value>Registrera medlemmarnas aktuella certifieringar och granska sedan vad som snart går ut.</value>
@@ -1654,7 +1654,7 @@
     <value>Lägg till dina tjänsteavtal och deras taxor.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.custom-statuses">
-    <value>Granska de inbyggda statusarna och lägg till egna där era begrepp skiljer sig. Ge var och en en bastyp; På stationen talar om för larmrekommendationerna att en enhet är på sin station.</value>
+    <value>Granska de inbyggda statusarna och lägg till egna där era begrepp skiljer sig. Ge varje alternativ en betydelse (bastyp): larmning, tillgänglighet, aviseringar och apparna läser betydelsen, inte knapptexten. På stationen talar om för larmrekommendationerna att en enhet är på sin station.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.data-protection">
     <value>Granska checklistan för anslutning och planera nyckelåterställning innan ni ansluter er.</value>
@@ -1669,7 +1669,7 @@
     <value>Ge åtkomst till Dispatch-appen för de personer som larmar ut, och låt dem sedan logga in.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.dispatch-settings">
-    <value>Välj om utlarmning ska följa grupper eller skift, och granska alternativen för automatisk status. Ange utryckningstider för närmaste enhet om besättningar behöver tid att lämna stationen.</value>
+    <value>Välj om larmningen följer grupper eller skift och granska alternativen för automatisk status: enhetens status vid larmning och frisläppning väljs efter betydelse ur varje enhetstyps egen statusuppsättning. Ange utryckningstider för närmaste enhet om besättningar behöver tid för att lämna stationen.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.distribution-lists">
     <value>Skapa listor för grupper ni ofta meddelar, till exempel befäl.</value>
@@ -1771,7 +1771,7 @@
     <value>Installera Unit-appen på varje fordons surfplatta och välj dess enhet.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.unit-types">
-    <value>Skapa enhetstyper innan ni lägger till enheter, så att varje enhet kan klassificeras.</value>
+    <value>Skapa enhetstyper innan ni lägger till enheter så att varje enhet kan klassificeras. Ge varje typ en klass, till exempel Släckbil eller Ambulans, och välj dess statusuppsättning.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.units">
     <value>Lägg till varje enhet med dess typ och hemstationsgrupp.</value>
@@ -2317,10 +2317,10 @@
     <value>Tröskelvärden för tavelmarkering grupperade efter grundstatusens innebörd. En tom lista inaktiverar markering.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.UnitTypeCallStatusOverride.DispatchStatus">
-    <value>Status som tillämpas på denna enhetstyp vid utlarmning; minus ett lämnar den oförändrad.</value>
+    <value>Alternativ i den här enhetstypens egen statusuppsättning som används vid larmning, före organisationens larmstatus; minus ett använder organisationens larmstatus.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.UnitTypeCallStatusOverride.ReleaseStatus">
-    <value>Status som tillämpas på denna enhetstyp vid frisläppning; minus ett lämnar den oförändrad.</value>
+    <value>Alternativ i den här enhetstypens egen statusuppsättning som används vid frisläppning, före organisationens frisläppningsstatus; minus ett använder organisationens frisläppningsstatus.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.UnitTypeCallStatusOverride.UnitTypeId">
     <value>Befintlig enhetstyp som får detta undantag. Ett enhetstypnamn är inte ett godkännande av kvalifikation eller bemanning.</value>
@@ -5020,10 +5020,10 @@
     <value>Språk för text-till-tal för röstaviseringar som stöds. Bekräfta röster som stöds och uttal med ett mänskligt utfört test.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.UnitCallDispatchStatusToSet">
-    <value>Enhetsstatus som tillämpas vid larmutlarmning. Minus ett eller en ogiltig inbyggd enhetsstatus lämnar statusen oförändrad.</value>
+    <value>Enhetsstatus som sätts vid utlarmning, efter betydelse: varje enhet får statusen i sin egen statusuppsättning med den bastypen. -1 är standard, -2 lämnar statusen oförändrad, 1000 plus en bastyp är en statusbetydelse, och 0 till 12 är en inbyggd status sparad före statusbetydelser.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.UnitCallReleaseStatusToSet">
-    <value>Enhetsstatus som tillämpas vid larmfrisläppande. Granska åsidosättningar per enhetstyp innan du antar en avdelningsövergripande effekt.</value>
+    <value>Enhetsstatus som sätts vid frisläppning, efter betydelse på samma sätt som utlarmningsstatusen. Kontrollera åsidosättningarna per enhetstyp innan du antar en enda effekt för hela avdelningen.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.UnitCallStatusOverridesByUnitType">
     <value>Åsidosättningar av larmstatus per enhetstyp. Befintliga typspecifika värden har företräde framför avdelningens standardvärden.</value>
@@ -6881,5 +6881,53 @@
   </data>
   <data name="FeaturePurpose.document-numbering" xml:space="preserve">
     <value>Hur nummer för arbetsorder, fakturor, anbud och dagliga tidrapporter skrivs, och dagen deras numreringsår börjar vid numrering efter räkenskapsår.</value>
+  </data>
+  <data name="Setting.DepartmentTerminology" xml:space="preserve">
+    <value>Organisationens terminologi</value>
+  </data>
+  <data name="SettingHelp.DepartmentTerminology" xml:space="preserve">
+    <value>Organisationens egna namn på moduler och inbyggda journaltyper, som visas i navigeringen, i rubriker på modulsidor, överallt där journaltyper listas och i apparna Responder, Unit, IC och Dispatch, på alla språk. Endast etiketter: behörigheter, länkar och API-värden ändras inte. En term utan namn använder Resgrids namn.</value>
+  </data>
+  <data name="Field.DepartmentTerminologyConfig.Terms" xml:space="preserve">
+    <value>Organisationens terminologi / Termer</value>
+  </data>
+  <data name="FieldHelp.DepartmentTerminologyConfig.Terms" xml:space="preserve">
+    <value>En post per omdöpt modul eller journaltyp, till exempel Insats i stället för Run eller Passtjänst i stället för Work. En term som inte listas visar Resgrids namn på medlemmens språk. Namn är högst 50 tecken.</value>
+  </data>
+  <data name="Field.DepartmentTermOverride.Key" xml:space="preserve">
+    <value>Organisationens term / Nyckel</value>
+  </data>
+  <data name="FieldHelp.DepartmentTermOverride.Key" xml:space="preserve">
+    <value>Termen som döps om: en modul (module.calls, module.records ...) eller en inbyggd journaltyp (record-type.run, record-type.work ...). Nycklar ändras aldrig.</value>
+  </data>
+  <data name="Field.DepartmentTermOverride.Text" xml:space="preserve">
+    <value>Organisationens term / Namn</value>
+  </data>
+  <data name="FieldHelp.DepartmentTermOverride.Text" xml:space="preserve">
+    <value>Organisationens ord för termen, högst 50 tecken. Samma ord visas för alla medlemmar på alla språk; tomt använder Resgrids namn.</value>
+  </data>
+  <data name="Feature.terminology" xml:space="preserve">
+    <value>Terminologi</value>
+  </data>
+  <data name="FeaturePurpose.terminology" xml:space="preserve">
+    <value>Byt namn på moduler och inbyggda journaltyper till de ord er organisation använder, till exempel Insats i stället för Run.</value>
+  </data>
+  <data name="Rule.status-meanings" xml:space="preserve">
+    <value>Statusalternativ saknar betydelse</value>
+  </data>
+  <data name="RuleWhy.status-meanings" xml:space="preserve">
+    <value>Larmning, tillgänglighet, aviseringar och apparna läser en status efter dess betydelse; ett alternativ utan betydelse behandlas som okänt.</value>
+  </data>
+  <data name="RuleNext.status-meanings" xml:space="preserve">
+    <value>Öppna varje listad statusuppsättning och ge dess alternativ en betydelse; de föreslagna betydelserna är en utgångspunkt.</value>
+  </data>
+  <data name="Rule.unit-status-targets" xml:space="preserve">
+    <value>Enhetstyper kan inte få larm- eller frisläppningsstatus</value>
+  </data>
+  <data name="RuleWhy.unit-status-targets" xml:space="preserve">
+    <value>Deras statusuppsättning har inget alternativ med den betydelse som larminställningarna använder, så deras enheter behåller sin status vid larmning eller frisläppning.</value>
+  </data>
+  <data name="RuleNext.unit-status-targets" xml:space="preserve">
+    <value>Ge uppsättningens alternativ betydelser, eller välj en annan betydelse eller ett undantag per enhetstyp i larminställningarna.</value>
   </data>
 </root>

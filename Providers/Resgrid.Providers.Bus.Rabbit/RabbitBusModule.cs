@@ -15,7 +15,6 @@ namespace Resgrid.Providers.Bus.Rabbit
 				AutomaticRecoveryEnabled = false
 			})).As<Resgrid.Model.AdminAssist.IAdminAssistTraceQueue>().SingleInstance();
 
-			//builder.RegisterType<UnitNotificationProvider>().As<IUnitNotificationProvider>().InstancePerLifetimeScope();
 			//builder.RegisterType<OutboundQueueProvider>().As<IOutboundQueueProvider>().InstancePerLifetimeScope();
 			//builder.RegisterType<CqrsProvider>().As<ICqrsProvider>().InstancePerLifetimeScope();
 			//builder.RegisterType<InboundEventProvider>().As<IInboundEventProvider>().InstancePerLifetimeScope();

@@ -166,10 +166,13 @@ namespace Resgrid.Services.Records
 			var department = await _departments.GetDepartmentByIdAsync(departmentId, false);
 			var departmentNumber = await _departmentSettings.GetTextToCallNumberForDepartmentAsync(departmentId);
 			var profile = await _profiles.GetProfileByUserIdAsync(recipient, false);
+			var typeName = record.RecordType.HasValue
+				? ((await _departmentSettings.GetDepartmentTerminologyAsync(departmentId)) ?? new DepartmentTerminologyConfig()).RecordTypeName(record.RecordType.Value)
+				: null;
 
 			try
 			{
-				var sent = await _communication.SendNotificationAsync(recipient, departmentId, BuildReminderMessage(record, DateTime.UtcNow), departmentNumber, department, ReminderTitle, profile);
+				var sent = await _communication.SendNotificationAsync(recipient, departmentId, BuildReminderMessage(record, DateTime.UtcNow, typeName), departmentNumber, department, ReminderTitle, profile);
 				await _recordsService.RecordAccessAsync(departmentId, senderUserId, recordId, null, RmsAccessAuditAction.Admin, ReminderPurposePrefix + recipient, null);
 				return new RecordsReminderResult { RecordId = recordId, RecipientUserId = recipient, Sent = sent, Reason = sent ? RecordsReminderResult.ReasonSent : RecordsReminderResult.ReasonFailed };
 			}
@@ -204,10 +207,11 @@ namespace Resgrid.Services.Records
 		}
 
 		/// <summary>Header-only wording plus a link: no narrative or restricted content ever rides in a reminder.</summary>
-		public static string BuildReminderMessage(RmsOperationalRecord record, DateTime utcNow)
+		/// <param name="typeName">The record type in the department's own terms (setting 118); null uses the shipped name.</param>
+		public static string BuildReminderMessage(RmsOperationalRecord record, DateTime utcNow, string typeName = null)
 		{
 			var reference = string.IsNullOrWhiteSpace(record.RecordNumber) ? record.DraftReference : record.RecordNumber;
-			var type = record.RecordType.HasValue ? ((RmsOperationalRecordType)record.RecordType.Value).ToString() : "Record";
+			var type = typeName ?? (record.RecordType.HasValue ? DepartmentTerms.DefaultRecordTypeName(record.RecordType.Value) : "Record");
 			var state = (RmsRecordState)record.State;
 			var age = Math.Max(0, (int)(utcNow - record.CreatedOn).TotalDays);
 

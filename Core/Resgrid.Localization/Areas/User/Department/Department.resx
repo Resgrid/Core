@@ -199,16 +199,16 @@
     <value>Unit Call Release Status</value>
   </data>
   <data name="UnitCallReleaseStatusHelp" xml:space="preserve">
-    <value>Set on the units still working a call when it is closed or they are taken off it. A unit already back in service, out of service (unavailable, maintenance or on a break) or working another call keeps its status. Custom statuses are read by their base type.</value>
+    <value>Set, by meaning in the same way, on the units still working a call when it is closed or they are taken off it. A unit already back in service, out of service (unavailable, maintenance or on a break) or working another call keeps its status; custom statuses are read by their base type. Default sets the unit's back-in-service status (Cleared, Available or In Quarters) on custom statuses and Released on the built-in statuses.</value>
   </data>
   <data name="UnitDefaultStatusesHelp" xml:space="preserve">
-    <value>These default unit statuses only use the built-in unit state types. Use the unit type override table below when a unit type needs one of its own custom statuses.</value>
+    <value>Set on the units dispatched to a call. Pick what the status means: each unit gets the status of its own status set with that meaning (the first by order), so one setting works for unit types with different custom statuses. Default sets Dispatched (or Responding, or En Route) on units with custom statuses and Responding on units with the built-in statuses.</value>
   </data>
   <data name="UnitTypeStatusOverridesHeader" xml:space="preserve">
     <value>Unit Type Status Overrides</value>
   </data>
   <data name="UnitTypeStatusOverridesHelp" xml:space="preserve">
-    <value>Only unit types with custom unit statuses appear here. Leave a value on Default to use the department-wide built-in status above.</value>
+    <value>Only unit types with custom unit statuses appear here. Pick one of a unit type's own statuses when it needs a specific one; Default uses the department-wide setting above, matched against the unit type's statuses.</value>
   </data>
   <data name="CallDispatchSettingsHeader" xml:space="preserve">
     <value />
@@ -1097,5 +1097,80 @@
   </data>
   <data name="DeleteDepartmentLegalHoldWarning" xml:space="preserve">
     <value>{0} active legal hold(s) cover this department's Records. The deletion will not run until every hold is released.</value>
+  </data>
+  <data name="TerminologyHeader" xml:space="preserve">
+    <value>Terminology</value>
+  </data>
+  <data name="TerminologyIntro" xml:space="preserve">
+    <value>Use your department's own words. A name set here replaces Resgrid's name for that module or record type in the navigation, on page titles, wherever record types are listed and in the Responder, Unit, IC and Dispatch apps, for every member and in every language. Only the label changes: permissions, links and integrations are not affected. Leave a box empty to keep Resgrid's name.</value>
+  </data>
+  <data name="TerminologyModules" xml:space="preserve">
+    <value>Modules</value>
+  </data>
+  <data name="TerminologyModulesHelp" xml:space="preserve">
+    <value>Shown in the navigation, as the title of the module's main page and in the apps' menus. Sentences elsewhere that mention a module keep Resgrid's wording.</value>
+  </data>
+  <data name="TerminologyRecordTypes" xml:space="preserve">
+    <value>Record types</value>
+  </data>
+  <data name="TerminologyRecordTypesHelp" xml:space="preserve">
+    <value>The built-in Records and Logs types, wherever a type is chosen, listed, printed or exported. To add a type of your own, such as Public Education, create a record definition.</value>
+  </data>
+  <data name="TerminologyDefaultColumn" xml:space="preserve">
+    <value>Resgrid name</value>
+  </data>
+  <data name="TerminologyNameColumn" xml:space="preserve">
+    <value>Your department's name</value>
+  </data>
+  <data name="TerminologySaved" xml:space="preserve">
+    <value>Terminology saved.</value>
+  </data>
+  <data name="TerminologyPartlySaved" xml:space="preserve">
+    <value>Your other names were saved.</value>
+  </data>
+  <data name="TerminologyTooLong" xml:space="preserve">
+    <value>Names can be at most {0} characters; longer names were not saved and are shown for correcting.</value>
+  </data>
+  <data name="TerminologyRecordDefinitionsLink" xml:space="preserve">
+    <value>Record definitions</value>
+  </data>
+  <data name="TerminologyRenameLink" xml:space="preserve">
+    <value>Rename modules and record types</value>
+  </data>
+  <data name="UnitStatusTargetMeaningGroup" xml:space="preserve">
+    <value>Status meaning</value>
+  </data>
+  <data name="UnitStatusTargetDefaultDispatch" xml:space="preserve">
+    <value>Default (Dispatched, Responding or En Route)</value>
+  </data>
+  <data name="UnitStatusTargetDefaultRelease" xml:space="preserve">
+    <value>Default (back in service)</value>
+  </data>
+  <data name="UnitStatusTargetLeaveUnchanged" xml:space="preserve">
+    <value>Leave the unit's status unchanged</value>
+  </data>
+  <data name="UnitStatusTargetLegacy" xml:space="preserve">
+    <value>Built-in status: {0} (saved before status meanings)</value>
+  </data>
+  <data name="UnitStatusTargetWarningsHeader" xml:space="preserve">
+    <value>Check these unit types</value>
+  </data>
+  <data name="UnitStatusTargetNoMatch" xml:space="preserve">
+    <value>{0}: its status set "{1}" has no status meaning {2}, so its units keep their status on {3}. Set a base type on one of its statuses, or pick one in the overrides below.</value>
+  </data>
+  <data name="UnitStatusTargetSeveral" xml:space="preserve">
+    <value>{0}: its status set "{1}" has {2} statuses meaning {3} ({4}); {5}, the first by order, is used on {6}.</value>
+  </data>
+  <data name="UnitStatusTargetNoBuiltIn" xml:space="preserve">
+    <value>{0}: the built-in unit statuses have none meaning {1}, so its units keep their status on {2}.</value>
+  </data>
+  <data name="UnitStatusTargetActionDispatch" xml:space="preserve">
+    <value>dispatch</value>
+  </data>
+  <data name="UnitStatusTargetActionRelease" xml:space="preserve">
+    <value>release</value>
+  </data>
+  <data name="StatusMeaningOption" xml:space="preserve">
+    <value>Any "{0}" status</value>
   </data>
 </root>

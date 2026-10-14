@@ -5,8 +5,12 @@
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Notifications.NotificationIndexView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Notifications.Notifications> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.CustomStatuses.CustomStatuses> statusLocalizer
 @{
 	ViewBag.Title = "Resgrid | " + localizer["PageTitle"];
+
+	// Status rule labels (Any, Any "Responding" status, meaning names) in the viewer's language.
+	Func<string, string, string> statusLabel = (key, fallback) => { var text = statusLocalizer[key]; return text.ResourceNotFound ? fallback : text.Value; };
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -68,10 +72,10 @@
 											}
 										</td>
 										<td>
-											<span>@(n.TranslateBefore(Model.CustomStates))</span>
+											<span>@(n.TranslateBefore(Model.CustomStates, statusLabel))</span>
 										</td>
 										<td>
-											<span>@(n.TranslateCurrent(Model.CustomStates))</span>
+											<span>@(n.TranslateCurrent(Model.CustomStates, statusLabel))</span>
 										</td>
 										<td>
 											<span>@Model.NotifyUsers[n.DepartmentNotificationId]</span>

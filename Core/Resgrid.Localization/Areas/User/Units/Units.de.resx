@@ -453,4 +453,31 @@
     <value>{0} (gelöscht)</value>
     <comment>A deleted unit in a report picker; {0} is the unit name.</comment>
   </data>
+  <data name="BrowseRoleTemplates" xml:space="preserve">
+    <value>Vorlagen durchsuchen</value>
+  </data>
+  <data name="RoleTemplatesTitle" xml:space="preserve">
+    <value>Vorlagen für Einheitsrollen</value>
+  </data>
+  <data name="RoleTemplatesIntro" xml:space="preserve">
+    <value>Wählen Sie einen Ausgangspunkt für die Funktionen dieser Einheit. Die Plätze werden in die Rollentabelle übernommen, wo Sie sie umbenennen, die erforderliche Personalrolle ändern oder entfernen und Plätze hinzufügen oder löschen können, bevor Sie speichern. Vorgeschlagene Qualifikationen werden über den Namen den Personalrollen Ihrer Organisation zugeordnet.</value>
+  </data>
+  <data name="RoleTemplatesSearchPlaceholder" xml:space="preserve">
+    <value>Rollen, Einheiten oder Fachbereiche suchen...</value>
+  </data>
+  <data name="RoleTemplatesAllCategories" xml:space="preserve">
+    <value>Alle Kategorien</value>
+  </data>
+  <data name="RoleTemplatesSeats" xml:space="preserve">
+    <value>{0} Plätze</value>
+  </data>
+  <data name="RoleTemplatesUse" xml:space="preserve">
+    <value>Diese Rollen verwenden</value>
+  </data>
+  <data name="RoleTemplatesNoResults" xml:space="preserve">
+    <value>Keine Vorlage passt zu Ihrer Suche.</value>
+  </data>
+  <data name="RoleTemplatesRequiredNote" xml:space="preserve">
+    <value>* = als zwingende Voraussetzung vorgeschlagen (sperrt nicht qualifizierte Mitglieder), wenn die passende Personalrolle existiert.</value>
+  </data>
 </root>

@@ -61,7 +61,10 @@ namespace Resgrid.Services.Records
 			var reviewer = string.IsNullOrWhiteSpace(record.ReviewerUserId) ? null : await _profiles.GetProfileByUserIdAsync(record.ReviewerUserId, false);
 			var reviewerName = reviewer == null ? null : $"{reviewer.FirstName} {reviewer.LastName}".Trim();
 
-			var message = BuildReturnedForCorrectionMessage(record, reviewerName);
+			var typeName = record.RecordType.HasValue
+				? ((await _departmentSettings.GetDepartmentTerminologyAsync(departmentId)) ?? new DepartmentTerminologyConfig()).RecordTypeName(record.RecordType.Value)
+				: null;
+			var message = BuildReturnedForCorrectionMessage(record, reviewerName, typeName);
 
 			try
 			{
@@ -225,13 +228,14 @@ namespace Resgrid.Services.Records
 			return builder.ToString();
 		}
 
-		public static string BuildReturnedForCorrectionMessage(RmsOperationalRecord record, string reviewerName)
+		/// <param name="typeName">The record type in the department's own terms (setting 118); null uses the shipped name.</param>
+		public static string BuildReturnedForCorrectionMessage(RmsOperationalRecord record, string reviewerName, string typeName = null)
 		{
 			if (record == null)
 				throw new ArgumentNullException(nameof(record));
 
 			var reference = string.IsNullOrWhiteSpace(record.RecordNumber) ? record.DraftReference : record.RecordNumber;
-			var type = record.RecordType.HasValue ? ((RmsOperationalRecordType)record.RecordType.Value).ToString() : "Record";
+			var type = typeName ?? (record.RecordType.HasValue ? DepartmentTerms.DefaultRecordTypeName(record.RecordType.Value) : "Record");
 
 			var builder = new StringBuilder();
 			builder.Append(type).Append(" record ").Append(reference).Append(" was returned for correction");

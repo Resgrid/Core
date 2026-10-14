@@ -189,6 +189,38 @@ namespace Resgrid.Tests.Chatbot
 			IcsPlaybooks.Infer(null).Type.Should().Be(IncidentPlaybookType.General);
 		}
 
+		[TestCase(CallTypeClasses.Fire, IncidentPlaybookType.StructureFire)]
+		[TestCase(CallTypeClasses.Medical, IncidentPlaybookType.Ems)]
+		[TestCase(CallTypeClasses.Rescue, IncidentPlaybookType.TechnicalRescue)]
+		[TestCase(CallTypeClasses.TrafficCollision, IncidentPlaybookType.VehicleAccident)]
+		[TestCase(CallTypeClasses.HazardousMaterials, IncidentPlaybookType.HazMat)]
+		[TestCase(CallTypeClasses.DisasterWeather, IncidentPlaybookType.NaturalDisaster)]
+		[TestCase(CallTypeClasses.Alarm, IncidentPlaybookType.General)]
+		[TestCase(CallTypeClasses.LawEnforcement, IncidentPlaybookType.General)]
+		[TestCase(CallTypeClasses.None, IncidentPlaybookType.General)]
+		public void Infer_FallsBackToTheCallTypeClass_WhenNoKeywordMatches(CallTypeClasses callTypeClass, IncidentPlaybookType expected)
+		{
+			// A department's own type name ("Code 3 Assignment", "Incendie") says nothing to the keywords; its class does.
+			IcsPlaybooks.Infer(new Call { Type = "Code 3 Assignment", Name = "Assignment" }, null, callTypeClass)
+				.Type.Should().Be(expected);
+		}
+
+		[Test]
+		public void Infer_KeepsTheKeywordMatch_OverTheCallTypeClass()
+		{
+			// The class is coarse: a brush fire on a "Fire" class type is still wildland, and a keyword always wins.
+			IcsPlaybooks.Infer(new Call { Type = "Brush Fire", Name = "Brush Fire" }, null, CallTypeClasses.Fire)
+				.Type.Should().Be(IncidentPlaybookType.Wildland);
+			IcsPlaybooks.Infer(new Call { Type = "MCI", Name = "MCI" }, null, CallTypeClasses.Medical)
+				.Type.Should().Be(IncidentPlaybookType.MassCasualty);
+		}
+
+		[Test]
+		public void Infer_UsesTheCallTypeClass_WhenThereIsNoCallText()
+		{
+			IcsPlaybooks.Infer(null, null, CallTypeClasses.Medical).Type.Should().Be(IncidentPlaybookType.Ems);
+		}
+
 		[Test]
 		public void Infer_PrefersTheLongerKeyword()
 		{

@@ -511,4 +511,31 @@
     <value>{0} (محذوفة)</value>
     <comment>A deleted unit in a report picker; {0} is the unit name.</comment>
   </data>
+  <data name="BrowseRoleTemplates" xml:space="preserve">
+    <value>استعراض القوالب</value>
+  </data>
+  <data name="RoleTemplatesTitle" xml:space="preserve">
+    <value>قوالب أدوار الوحدة</value>
+  </data>
+  <data name="RoleTemplatesIntro" xml:space="preserve">
+    <value>اختر نقطة بداية لأدوار هذه الوحدة. تُضاف المقاعد إلى جدول الأدوار حيث يمكنك إعادة تسميتها، وتغيير دور الأفراد المطلوب أو إزالته، وإضافة مقاعد أو حذفها قبل الحفظ. تُطابَق المؤهلات المقترحة مع أدوار الأفراد في إدارتك حسب الاسم.</value>
+  </data>
+  <data name="RoleTemplatesSearchPlaceholder" xml:space="preserve">
+    <value>ابحث في الأدوار أو الوحدات أو التخصصات...</value>
+  </data>
+  <data name="RoleTemplatesAllCategories" xml:space="preserve">
+    <value>كل الفئات</value>
+  </data>
+  <data name="RoleTemplatesSeats" xml:space="preserve">
+    <value>عدد المقاعد: {0}</value>
+  </data>
+  <data name="RoleTemplatesUse" xml:space="preserve">
+    <value>استخدم هذه الأدوار</value>
+  </data>
+  <data name="RoleTemplatesNoResults" xml:space="preserve">
+    <value>لا توجد قوالب مطابقة لبحثك.</value>
+  </data>
+  <data name="RoleTemplatesRequiredNote" xml:space="preserve">
+    <value>* = مقترح كشرط إلزامي (يمنع الأعضاء غير المؤهلين) عند وجود دور الأفراد المطابق.</value>
+  </data>
 </root>

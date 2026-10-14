@@ -26,6 +26,8 @@ namespace Resgrid.Services
 			builder.RegisterType<AdminAssist.OrganizationFindingSubjects>().As<Resgrid.Model.AdminAssist.IAdminAssistFindingSubjectSource>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.AdminIdentityEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.DispatchEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.StatusConfigurationEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.StatusConfigurationFindingSubjects>().As<Resgrid.Model.AdminAssist.IAdminAssistFindingSubjectSource>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.ImportEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.CommunicationEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.CapacityEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
@@ -208,6 +210,7 @@ namespace Resgrid.Services
 			builder.RegisterType<CallAutoCloseService>().As<ICallAutoCloseService>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentApiKeysService>().As<IDepartmentApiKeysService>().InstancePerLifetimeScope();
 			builder.RegisterType<SystemOperationsService>().As<ISystemOperationsService>().InstancePerLifetimeScope();
+			builder.RegisterType<InboundEmailReceiptsService>().As<IInboundEmailReceiptsService>().InstancePerLifetimeScope();
 			builder.RegisterType<CallStatusAttributionService>().As<ICallStatusAttributionService>().InstancePerLifetimeScope();
 			builder.RegisterType<CallGroupAssignmentService>().As<ICallGroupAssignmentService>().InstancePerLifetimeScope();
 			builder.RegisterType<PersonnelRolesService>().As<IPersonnelRolesService>().InstancePerLifetimeScope();

@@ -663,9 +663,9 @@ namespace Resgrid.Services.Records
 			if (report.AmendsRevisionId != null)
 				throw new RecordTransitionException(reportId, state, RmsRecordState.Submitted, "close the open amendment before submitting");
 			if (!await _neris.IsWorkflowEnabledAsync(departmentId))
-				throw new InvalidOperationException(NerisWorkflows.OffMessage);
+				throw new NerisWorkflowsOffException();
 			if (!await _neris.IsSubmissionEnabledAsync(departmentId))
-				throw new InvalidOperationException("NERIS submission is not enabled for this department.");
+				throw new NerisSubmissionDisabledException();
 
 			var profile = await _neris.GetProfileAsync(departmentId);
 			var now = DateTime.UtcNow;

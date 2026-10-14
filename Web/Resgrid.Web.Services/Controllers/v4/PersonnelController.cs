@@ -477,6 +477,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				personnelData.Staffing = "Available";
 				personnelData.StaffingColor = "#000";
+				personnelData.StaffingBaseType = (int)StaffingBaseTypes.Available;
 				personnelData.StaffingTimestamp = DateTime.UtcNow.TimeConverter(department);
 			}
 			else
@@ -490,11 +491,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 				{
 					personnelData.Staffing = staffing.ButtonText;
 					personnelData.StaffingColor = staffing.ButtonClassToColor();
+					personnelData.StaffingBaseType = staffing.BaseType;
 				}
 				else
 				{
 					personnelData.Staffing = "Available";
 					personnelData.StaffingColor = "#000";
+					personnelData.StaffingBaseType = (int)StaffingBaseTypes.None;
 				}
 			}
 
@@ -503,6 +506,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				personnelData.StatusTimestamp = DateTime.UtcNow.TimeConverter(department);
 				personnelData.Status = "Standing By";
 				personnelData.StatusColor = "#000";
+				personnelData.StatusBaseType = (int)ActionBaseTypes.Available;
 			}
 			else
 			{
@@ -512,11 +516,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 				{
 					personnelData.Status = status.ButtonText;
 					personnelData.StatusColor = status.ButtonClassToColor();
+					personnelData.StatusBaseType = status.BaseType;
 				}
 				else
 				{
 					personnelData.Status = "Standing By";
 					personnelData.StatusColor = "#000";
+					personnelData.StatusBaseType = (int)ActionBaseTypes.None;
 				}
 
 				personnelData.StatusId = action.ActionTypeId.ToString();
@@ -525,9 +531,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 				if (canViewLocation)
 					personnelData.Location = action.GeoLocationData;
 
+				// A typed destination belongs to any status, the department's own included; untyped legacy rows only
+				// carried one for the built-in responding / available-at-station statuses.
 				if (action.DestinationId.HasValue)
 				{
-					if (action.ActionTypeId == (int)ActionTypes.RespondingToScene)
+					personnelData.StatusDestinationType = action.DestinationType;
+
+					if (action.DestinationType.HasValue)
+						personnelData.StatusDestinationId = action.DestinationId.Value.ToString();
+					else if (action.ActionTypeId == (int)ActionTypes.RespondingToScene)
 						personnelData.StatusDestinationId = action.DestinationId.Value.ToString();
 					else if (action.ActionTypeId == (int)ActionTypes.RespondingToStation)
 						personnelData.StatusDestinationId = action.DestinationId.Value.ToString();

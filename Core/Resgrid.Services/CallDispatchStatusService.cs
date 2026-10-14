@@ -90,8 +90,13 @@ namespace Resgrid.Services
 				? await _departmentSettingsService.GetShiftCallDispatchPersonnelStatusToSetAsync(call.DepartmentId)
 				: await _departmentSettingsService.GetShiftCallReleasePersonnelStatusToSetAsync(call.DepartmentId);
 
+			// Default: the department's own Responding / Available status when it has a personnel status set (a built-in
+			// value would sit outside it), else the built-in one.
 			if (statusToSet < 0)
-				statusToSet = isDispatch ? (int)ActionTypes.RespondingToScene : (int)ActionTypes.StandingBy;
+				statusToSet = (isDispatch
+					? await _customStateService.ResolvePersonnelStatusAsync(call.DepartmentId, ActionBaseTypes.Responding, DestinationEntityTypes.Call)
+					: await _customStateService.ResolvePersonnelStatusAsync(call.DepartmentId, ActionBaseTypes.Available))
+					?? (isDispatch ? (int)ActionTypes.RespondingToScene : (int)ActionTypes.StandingBy);
 
 			foreach (var userId in shiftUserIds)
 			{
@@ -101,12 +106,11 @@ namespace Resgrid.Services
 
 		private async Task ApplyUnitStatusesAsync(Call call, Department department, IReadOnlyCollection<int> unitIds, bool isDispatch, CancellationToken cancellationToken)
 		{
-			var defaultStatusToSet = isDispatch
-				? await _departmentSettingsService.GetUnitCallDispatchStatusToSetAsync(call.DepartmentId)
-				: await _departmentSettingsService.GetUnitCallReleaseStatusToSetAsync(call.DepartmentId);
-
-			if (defaultStatusToSet < 0)
-				defaultStatusToSet = isDispatch ? (int)UnitStateTypes.Responding : (int)UnitStateTypes.Released;
+			// What the department asked for, resolved per unit against the unit's own status set (StatusTargetResolver):
+			// a unit whose type uses a custom set gets that set's option, never a built-in value outside it.
+			var target = isDispatch
+				? await _departmentSettingsService.GetUnitCallDispatchStatusTargetAsync(call.DepartmentId)
+				: await _departmentSettingsService.GetUnitCallReleaseStatusTargetAsync(call.DepartmentId);
 
 			if (!isDispatch)
 			{
@@ -116,19 +120,23 @@ namespace Resgrid.Services
 					return;
 			}
 
-			var resolvedStatuses = await ResolveUnitStatusesAsync(call.DepartmentId, unitIds, defaultStatusToSet, isDispatch);
+			var resolvedStatuses = await ResolveUnitStatusesAsync(call.DepartmentId, unitIds, target, isDispatch);
 
 			var timestamp = DateTime.UtcNow;
 			var localTimestamp = department != null ? DateTimeHelpers.GetLocalDateTime(timestamp, department.TimeZone) : timestamp;
 
 			foreach (var unitId in unitIds)
 			{
-				var statusToSet = resolvedStatuses.TryGetValue(unitId, out var resolvedStatus) ? resolvedStatus : defaultStatusToSet;
+				if (!resolvedStatuses.TryGetValue(unitId, out var statusToSet) || !statusToSet.HasValue)
+				{
+					Logging.LogDebug($"Call {call.CallId} {(isDispatch ? "dispatch" : "release")}: unit {unitId} keeps its status (left unchanged, or its status set has no matching option).");
+					continue;
+				}
 
 				var state = new UnitState
 				{
 					UnitId = unitId,
-					State = statusToSet,
+					State = statusToSet.Value,
 					Timestamp = timestamp,
 					LocalTimestamp = localTimestamp,
 					DestinationId = call.CallId,
@@ -185,33 +193,30 @@ namespace Resgrid.Services
 			return call != null && call.DepartmentId == departmentId && !call.IsDeleted && call.State == (int)CallStates.Active;
 		}
 
-		private async Task<Dictionary<int, int>> ResolveUnitStatusesAsync(int departmentId, IReadOnlyCollection<int> unitIds,
-			int defaultStatusToSet, bool isDispatch)
+		/// <summary>
+		/// The status each unit gets, or null to leave it as it is. A unit type's override (a specific option of its own
+		/// set) wins; otherwise the department-wide target is resolved against the unit's status set: the unit type's custom
+		/// set, or the built-in statuses for a type without one (and for a unit whose type can't be found).
+		/// </summary>
+		private async Task<Dictionary<int, int?>> ResolveUnitStatusesAsync(int departmentId, IReadOnlyCollection<int> unitIds,
+			StatusTarget target, bool isDispatch)
 		{
-			var resolvedStatuses = unitIds.ToDictionary(x => x, _ => defaultStatusToSet);
-			var unitTypeOverrides = await _departmentSettingsService.GetUnitCallStatusOverridesByUnitTypeAsync(departmentId);
+			var defaultChain = isDispatch ? StatusTargetResolver.DispatchDefaultChain : StatusTargetResolver.ReleaseDefaultChain;
+			var builtInDefault = isDispatch ? (int)UnitStateTypes.Responding : (int)UnitStateTypes.Released;
 
-			if (unitTypeOverrides == null || !unitTypeOverrides.Any())
-				return resolvedStatuses;
-
+			var unitTypeOverrides = await _departmentSettingsService.GetUnitCallStatusOverridesByUnitTypeAsync(departmentId) ?? new List<UnitTypeCallStatusOverride>();
 			var unitTypeOverrideLookup = unitTypeOverrides
 				.Where(x => x != null && x.UnitTypeId > 0)
 				.GroupBy(x => x.UnitTypeId)
 				.ToDictionary(x => x.Key, x => x.Last());
 
-			if (!unitTypeOverrideLookup.Any())
-				return resolvedStatuses;
-
 			var units = (await Task.WhenAll(unitIds.Select(x => _unitsService.GetUnitByIdAsync(x))))
 				.Where(x => x != null)
-				.ToList();
-
-			if (!units.Any())
-				return resolvedStatuses;
+				.ToDictionary(x => x.UnitId);
 
 			var unitTypesByName = new Dictionary<string, UnitType>(StringComparer.OrdinalIgnoreCase);
 
-			foreach (var unitTypeName in units
+			foreach (var unitTypeName in units.Values
 				.Select(x => x.Type)
 				.Where(x => !String.IsNullOrWhiteSpace(x))
 				.Distinct(StringComparer.OrdinalIgnoreCase))
@@ -222,40 +227,40 @@ namespace Resgrid.Services
 					unitTypesByName[unitTypeName] = unitType;
 			}
 
-			var customStateDetailIdsByStateId = new Dictionary<int, HashSet<int>>();
-			var customStateIds = unitTypesByName.Values
-				.Where(x => x.CustomStatesId.HasValue && x.CustomStatesId.Value > 0 && unitTypeOverrideLookup.ContainsKey(x.UnitTypeId))
+			var setsById = new Dictionary<int, CustomState>();
+			foreach (var customStateId in unitTypesByName.Values
+				.Where(x => x.CustomStatesId.HasValue && x.CustomStatesId.Value > 0)
 				.Select(x => x.CustomStatesId.Value)
-				.Distinct()
-				.ToList();
-
-			foreach (var customStateId in customStateIds)
+				.Distinct())
 			{
 				var customState = await _customStateService.GetCustomSateByIdAsync(customStateId);
-				customStateDetailIdsByStateId[customStateId] = customState != null && !customState.IsDeleted
-					? new HashSet<int>(customState.GetActiveDetails().Select(x => x.CustomStateDetailId))
-					: new HashSet<int>();
+				setsById[customStateId] = customState != null && !customState.IsDeleted ? customState : null;
 			}
 
-			foreach (var unit in units)
+			var resolvedStatuses = new Dictionary<int, int?>();
+
+			foreach (var unitId in unitIds)
 			{
-				if (String.IsNullOrWhiteSpace(unit.Type))
-					continue;
+				UnitType unitType = null;
+				if (units.TryGetValue(unitId, out var unit) && !String.IsNullOrWhiteSpace(unit.Type))
+					unitTypesByName.TryGetValue(unit.Type, out unitType);
 
-				if (!unitTypesByName.TryGetValue(unit.Type, out var unitType))
-					continue;
+				CustomState set = null;
+				if (unitType?.CustomStatesId != null && unitType.CustomStatesId.Value > 0)
+					setsById.TryGetValue(unitType.CustomStatesId.Value, out set);
 
-				if (!unitTypeOverrideLookup.TryGetValue(unitType.UnitTypeId, out var unitTypeOverride))
-					continue;
+				if (set != null && unitTypeOverrideLookup.TryGetValue(unitType.UnitTypeId, out var unitTypeOverride))
+				{
+					var candidateStatus = isDispatch ? unitTypeOverride.DispatchStatus : unitTypeOverride.ReleaseStatus;
 
-				var candidateStatus = isDispatch ? unitTypeOverride.DispatchStatus : unitTypeOverride.ReleaseStatus;
+					if (candidateStatus >= 0 && set.GetActiveDetails().Any(x => x.CustomStateDetailId == candidateStatus))
+					{
+						resolvedStatuses[unitId] = candidateStatus;
+						continue;
+					}
+				}
 
-				if (candidateStatus < 0 || !unitType.CustomStatesId.HasValue || unitType.CustomStatesId.Value <= 0)
-					continue;
-
-				if (customStateDetailIdsByStateId.TryGetValue(unitType.CustomStatesId.Value, out var validStateIds) &&
-					validStateIds.Contains(candidateStatus))
-					resolvedStatuses[unit.UnitId] = candidateStatus;
+				resolvedStatuses[unitId] = StatusTargetResolver.ResolveUnit(target, set, defaultChain, builtInDefault).Value;
 			}
 
 			return resolvedStatuses;

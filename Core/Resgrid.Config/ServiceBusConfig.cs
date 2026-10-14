@@ -45,14 +45,6 @@
 		public static string AiDispatchTriageQueueName = "aidispatchtriage";
 #endif
 
-		#region Azure Service Bus Values
-		public static string AzureNotificationHub_FullConnectionString = "";
-		public static string AzureNotificationHub_PushUrl = "rgpush";
-
-		public static string AzureUnitNotificationHub_FullConnectionString = "";
-		public static string AzureUnitNotificationHub_PushUrl = "unit";
-		#endregion Azure Service Bus Values
-
 		#region RabbitMQ Bus Values
 		public static string RabbitHostname = "rgdevinfaserver";
 		public static string RabbitHostname2 = ""; // For 3 host cluster, node 2

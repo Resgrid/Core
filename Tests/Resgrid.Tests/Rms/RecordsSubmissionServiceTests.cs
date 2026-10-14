@@ -559,8 +559,8 @@ namespace Resgrid.Tests.Rms
 			Func<Task> reconcile = () => _service.ReconcileAsync(Dept, "officer", row.RmsSubmissionId, row.RowVersion, "known-id", "Verified matching number in NERIS.");
 			Func<Task> absent = () => _service.ConfirmNotCreatedAsync(Dept, "officer", row.RmsSubmissionId, row.RowVersion, "ticket-1", "Checked with NERIS support.");
 
-			(await reconcile.Should().ThrowAsync<InvalidOperationException>()).WithMessage(NerisWorkflows.OffMessage);
-			(await absent.Should().ThrowAsync<InvalidOperationException>()).WithMessage(NerisWorkflows.OffMessage);
+			(await reconcile.Should().ThrowAsync<NerisWorkflowsOffException>()).WithMessage(NerisWorkflows.OffMessage);
+			(await absent.Should().ThrowAsync<NerisWorkflowsOffException>()).WithMessage(NerisWorkflows.OffMessage);
 			_delivery.Invocations.Should().BeEmpty();
 			_store.Submissions.Single().RequiresReconciliation.Should().BeTrue("the ambiguous row waits, untouched, for NERIS to be turned back on");
 			_store.Exchanges.Should().BeEmpty();

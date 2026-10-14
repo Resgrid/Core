@@ -66,7 +66,7 @@
     <value>Verfügbar</value>
   </data>
   <data name="BaseType" xml:space="preserve">
-    <value>Base Type</value>
+    <value>Bedeutung</value>
   </data>
   <data name="ButtonBackgroundColorLabel" xml:space="preserve">
     <value>Button Background Color</value>
@@ -283,5 +283,158 @@
   </data>
   <data name="NextStatusesAny" xml:space="preserve">
     <value>Jeder Status</value>
+  </data>
+  <data name="StaffingAvailable" xml:space="preserve">
+    <value>Verfügbar</value>
+  </data>
+  <data name="StaffingDelayed" xml:space="preserve">
+    <value>Verzögert</value>
+  </data>
+  <data name="StaffingUnavailable" xml:space="preserve">
+    <value>Nicht verfügbar</value>
+  </data>
+  <data name="StaffingCommitted" xml:space="preserve">
+    <value>Gebunden</value>
+  </data>
+  <data name="StaffingOnShift" xml:space="preserve">
+    <value>Im Dienst</value>
+  </data>
+  <data name="StaffingOffDuty" xml:space="preserve">
+    <value>Dienstfrei</value>
+  </data>
+  <data name="StaffingOnCall" xml:space="preserve">
+    <value>In Bereitschaft</value>
+  </data>
+  <data name="StaffingBaseTypeHelp" xml:space="preserve">
+    <value>Was diese Verfügbarkeitsstufe für Resgrid bedeutet. Einsatzempfehlungen, Verfügbarkeitszählungen und die Stummschaltung von Benachrichtigungen verwenden die Bedeutung, unabhängig vom Namen der Schaltfläche.</value>
+  </data>
+  <data name="MeaningColumn" xml:space="preserve">
+    <value>Bedeutung</value>
+  </data>
+  <data name="MissingMeaningsHeader" xml:space="preserve">
+    <value>{0} Option(en) haben keine Bedeutung.</value>
+  </data>
+  <data name="MissingMeaningsHelp" xml:space="preserve">
+    <value>Resgrid verwendet die Bedeutung einer Option, um Verfügbarkeit, den Status bei Alarmierung und Freigabe, Benachrichtigungen und Berichte zu bestimmen. Optionen ohne Bedeutung gelten als unbekannt. Wenn der Name einen klaren Hinweis gibt, wird ein Vorschlag angezeigt; prüfen Sie ihn und speichern Sie dann.</value>
+  </data>
+  <data name="UseSuggestedMeanings" xml:space="preserve">
+    <value>Vorgeschlagene Bedeutungen verwenden</value>
+  </data>
+  <data name="SuggestedMeaningsApplied" xml:space="preserve">
+    <value>Vorschläge übernommen. Prüfen Sie sie und speichern Sie dann.</value>
+  </data>
+  <data name="SuggestedMeaning" xml:space="preserve">
+    <value>Vorschlag: {0}</value>
+  </data>
+  <data name="OptionsWithoutMeaning" xml:space="preserve">
+    <value>{0} ohne Bedeutung</value>
+  </data>
+  <data name="AnyStatusWithMeaning" xml:space="preserve">
+    <value>Jeder Status „{0}“</value>
+  </data>
+  <data name="BuiltInStatusOption" xml:space="preserve">
+    <value>Integriert: {0}</value>
+  </data>
+  <data name="NoteOptional" xml:space="preserve">
+    <value>Optional</value>
+  </data>
+  <data name="NoteRequired" xml:space="preserve">
+    <value>Erforderlich</value>
+  </data>
+  <data name="SetTypeLabel" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="TemplatePrefilledNote" xml:space="preserve">
+    <value>Diese Optionen wurden aus einer Vorlage übernommen. Ändern Sie Text oder Farben, entfernen Sie nicht benötigte oder fügen Sie eigene hinzu; gespeichert wird erst, wenn Sie auf Hinzufügen klicken.</value>
+  </data>
+  <data name="BackgroundColorShort" xml:space="preserve">
+    <value>Hintergrund</value>
+  </data>
+  <data name="TextColorShort" xml:space="preserve">
+    <value>Text</value>
+  </data>
+  <data name="StatusRuleAny" xml:space="preserve">
+    <value>Beliebig</value>
+  </data>
+  <data name="StatusRuleUnknown" xml:space="preserve">
+    <value>Unbekannt</value>
+  </data>
+  <data name="StatusRuleNone" xml:space="preserve">
+    <value>Keine</value>
+  </data>
+  <data name="BaseTypeDescription.none" xml:space="preserve">
+    <value>Keine Systembedeutung. Der Status dient nur der Information und wirkt sich nicht auf Verfügbarkeit, Berichte oder Automatisierungen aus.</value>
+  </data>
+  <data name="BaseTypeDescription.available" xml:space="preserve">
+    <value>Die Einheit oder Einsatzkraft ist im Dienst und kann einem Einsatz oder einer Aufgabe zugewiesen oder alarmiert werden.</value>
+  </data>
+  <data name="BaseTypeDescription.notresponding" xml:space="preserve">
+    <value>Die Einsatzkraft hat die Alarmierung bestätigt, lehnt die aktuelle Zuweisung aber ab oder kann nicht ausrücken.</value>
+  </data>
+  <data name="BaseTypeDescription.responding" xml:space="preserve">
+    <value>Die Einheit oder Einsatzkraft rückt aktiv zu einem zugewiesenen Einsatz aus (auf Anfahrt).</value>
+  </data>
+  <data name="BaseTypeDescription.onscene" xml:space="preserve">
+    <value>Die Einheit oder Einsatzkraft ist eingetroffen und an der Einsatzstelle tätig.</value>
+  </data>
+  <data name="BaseTypeDescription.madecontact" xml:space="preserve">
+    <value>Die Einheit oder Einsatzkraft hat Kontakt mit der Person, dem Patienten, der Partei oder dem Ziel aufgenommen.</value>
+  </data>
+  <data name="BaseTypeDescription.investigating" xml:space="preserve">
+    <value>Die Einheit oder Einsatzkraft erkundet, bewertet oder beurteilt die Lage.</value>
+  </data>
+  <data name="BaseTypeDescription.dispatched" xml:space="preserve">
+    <value>Die Einheit oder Einsatzkraft wurde alarmiert oder zugewiesen, ist aber noch nicht ausgerückt.</value>
+  </data>
+  <data name="BaseTypeDescription.cleared" xml:space="preserve">
+    <value>Die Einheit oder Einsatzkraft hat den Einsatz beendet und wird wieder verfügbar.</value>
+  </data>
+  <data name="BaseTypeDescription.returning" xml:space="preserve">
+    <value>Die Einheit oder Einsatzkraft kehrt zur Wache, zum Standort oder zur Basis zurück.</value>
+  </data>
+  <data name="BaseTypeDescription.staging" xml:space="preserve">
+    <value>Die Einheit oder Einsatzkraft steht an einem sicheren Bereitstellungsraum und wartet auf Zuweisung oder Befehle.</value>
+  </data>
+  <data name="BaseTypeDescription.unavailable" xml:space="preserve">
+    <value>Die Einheit oder Einsatzkraft ist außer Dienst und nicht für Zuweisungen verfügbar.</value>
+  </data>
+  <data name="BaseTypeDescription.enroute" xml:space="preserve">
+    <value>Die Einheit oder Einsatzkraft fährt ohne Sonderrechte zu einer Zuweisung, einem Ziel oder Ort.</value>
+  </data>
+  <data name="BaseTypeDescription.transporting" xml:space="preserve">
+    <value>Die Einheit oder Einsatzkraft transportiert einen Patienten, eine Person, einen Gefangenen oder Fracht zu einem Ziel.</value>
+  </data>
+  <data name="BaseTypeDescription.delivering" xml:space="preserve">
+    <value>Die Einheit oder Einsatzkraft liefert Waren, Material, Ausrüstung oder Güter an einen Empfänger oder Abgabeort.</value>
+  </data>
+  <data name="BaseTypeDescription.atpatient" xml:space="preserve">
+    <value>Die Einheit oder Einsatzkraft ist beim Patienten oder der gesuchten Person und versorgt sie oder steht in Kontakt.</value>
+  </data>
+  <data name="BaseTypeDescription.athospital" xml:space="preserve">
+    <value>Die Einheit oder Einsatzkraft ist an einem Krankenhaus oder einer Aufnahmeeinrichtung zur Patientenübergabe eingetroffen.</value>
+  </data>
+  <data name="BaseTypeDescription.searching" xml:space="preserve">
+    <value>Die Einheit oder Einsatzkraft sucht aktiv ein zugewiesenes Gebiet, einen Sektor oder ein Raster ab.</value>
+  </data>
+  <data name="BaseTypeDescription.loading" xml:space="preserve">
+    <value>Die Einheit oder Einsatzkraft lädt oder holt Fracht, Material, Ausrüstung oder eine Person vor dem Transport ab.</value>
+  </data>
+  <data name="BaseTypeDescription.standby" xml:space="preserve">
+    <value>Die Einheit oder Einsatzkraft wird in Reserve, in Bereitschaft oder auf Abruf gehalten und kann zugewiesen werden.</value>
+  </data>
+  <data name="BaseTypeDescription.onpatrol" xml:space="preserve">
+    <value>Die Einheit oder Einsatzkraft bestreift aktiv ein zugewiesenes Gebiet und bleibt für Alarmierungen verfügbar.</value>
+  </data>
+  <data name="BaseTypeDescription.maintenance" xml:space="preserve">
+    <value>Die Einheit oder Einsatzkraft ist wegen Wartung, Betankung, Nachfüllen, Reinigung oder Instandsetzung außer Dienst.</value>
+  </data>
+  <data name="BaseTypeDescription.onbreak" xml:space="preserve">
+    <value>Die Einheit oder Einsatzkraft ist in einer Ruhe-, Essens- oder Erholungspause und vorübergehend nicht verfügbar.</value>
+  </data>
+  <data name="BaseTypeDescription.completed" xml:space="preserve">
+    <value>Die Zuweisung, Aufgabe oder Lieferung ist abgeschlossen; die Einheit oder Einsatzkraft schließt ab und wird verfügbar.</value>
+  </data>
+  <data name="BaseTypeDescription.inquarters" xml:space="preserve">
+    <value>Die Einheit oder Einsatzkraft ist im Dienst und auf ihrer Wache verfügbar. Einsatzempfehlungen messen die Einheit ab ihrer Wache statt ab ihrer GPS-Position und rechnen die Ausrückzeit von der Wache hinzu.</value>
   </data>
 </root>

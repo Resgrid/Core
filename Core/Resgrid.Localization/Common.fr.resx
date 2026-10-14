@@ -792,4 +792,7 @@
   <data name="Edit" xml:space="preserve">
     <value>Modifier</value>
   </data>
+  <data name="Terminology" xml:space="preserve">
+    <value>Terminologie</value>
+  </data>
 </root>

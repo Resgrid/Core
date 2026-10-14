@@ -107,6 +107,7 @@
   <data name="Activate" xml:space="preserve"><value>تفعيل</value></data>
   <data name="ActivationBlocked" xml:space="preserve"><value>التفعيل محظور</value></data>
   <data name="NotActivatedNotice" xml:space="preserve"><value>السجلات مفعّلة لهذه الإدارة لكن لم يتم تنشيطها بعد. يجب على مدير الإدارة تنشيطها قبل إنشاء السجلات.</value></data>
+  <data name="RecordsModuleNotEnabled" xml:space="preserve"><value>{0}: وحدة السجلات هذه غير مفعّلة للإدارة.</value></data>
   <data name="ActivatedOn" xml:space="preserve"><value>تم تفعيل السجلات في</value></data>
   <data name="SettingsHeader" xml:space="preserve"><value>إعدادات السجلات</value></data>
   <data name="DefaultLifecyclePreset" xml:space="preserve"><value>الإعداد الافتراضي لدورة الحياة لتعريفات الإدارة</value></data>

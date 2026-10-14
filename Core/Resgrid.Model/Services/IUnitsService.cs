@@ -319,6 +319,13 @@ namespace Resgrid.Model.Services
 		Task<Dictionary<int, int>> GetCustomUnitStateBaseTypesAsync(int departmentId);
 
 		/// <summary>
+		/// The status Resgrid sets on a unit for a meaning, looking for each base type in turn: the first active option (by
+		/// order) of the unit type's custom status set with that base type, or the built-in status with that meaning for a
+		/// unit on the built-in statuses. Null when the unit's status set has no option with any of the meanings.
+		/// </summary>
+		Task<int?> ResolveUnitStatusAsync(int departmentId, int unitId, IReadOnlyList<ActionBaseTypes> baseTypes);
+
+		/// <summary>
 		/// Adds the unit location asynchronous.
 		/// </summary>
 		/// <param name="location">The location.</param>

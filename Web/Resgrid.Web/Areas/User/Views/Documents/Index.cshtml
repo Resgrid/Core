@@ -2,18 +2,19 @@
 @model Resgrid.Web.Areas.User.Models.Documents.IndexView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Documents.Documents> localizer
 @{
-    ViewBag.Title = "Resgrid | " + @commonLocalizer["DocumentsModule"];
+    var moduleTitle = await departmentTerms.NameAsync(DepartmentTerms.Documents, commonLocalizer["DocumentsModule"]);
+    ViewBag.Title = "Resgrid | " + moduleTitle;
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-4">
-        <h2>@commonLocalizer["DocumentsModule"]</h2>
+        <h2>@moduleTitle</h2>
         <ol class="breadcrumb">
             <li>
                 <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
             </li>
             <li class="active">
-                <strong>@commonLocalizer["DocumentsModule"]</strong>
+                <strong>@moduleTitle</strong>
             </li>
         </ol>
     </div>

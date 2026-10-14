@@ -850,4 +850,7 @@
   <data name="Edit" xml:space="preserve">
     <value>Editar</value>
   </data>
+  <data name="Terminology" xml:space="preserve">
+    <value>Terminología</value>
+  </data>
 </root>

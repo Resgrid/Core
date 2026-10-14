@@ -112,6 +112,7 @@ namespace Resgrid.Console
 					services.AddKeyedTransient<ICommandService, MigrateDocsDbCommand>("MigrateDocsDbCommand");
 					services.AddKeyedTransient<ICommandService, CleanUtf8Command>("CleanUtf8Command");
 					services.AddKeyedTransient<ICommandService, NormalizePhoneNumbersCommand>("NormalizePhoneNumbersCommand");
+					services.AddKeyedTransient<ICommandService, CleanNovuSubscribersCommand>("CleanNovuSubscribersCommand");
 					services.AddKeyedTransient<ICommandService, OidcUpdateCommand>("OidcUpdateCommand");
 					services.AddKeyedTransient<ICommandService, SecurityRefreshCommand>("SecurityRefreshCommand");
 					services.AddKeyedTransient<ICommandService, FeatureFlagsCommand>("FeatureFlagsCommand");

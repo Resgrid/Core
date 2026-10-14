@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Resgrid.Model.Providers;
@@ -122,6 +124,39 @@ public interface INovuProvider
 	Task<bool> RemoveUnitSubscriberWebPushToken(int unitId, string code, string token);
 
 	/// <summary>
+	/// Removes an iOS or Android token from a user subscriber's native FCM and APNs channels (native app sign-out).
+	/// Only this token is taken off: a channel holding another device's token is left alone.
+	/// </summary>
+	/// <returns>True when the token is on neither channel afterwards; otherwise, false.</returns>
+	Task<bool> RemoveUserSubscriberNativeToken(string userId, string code, string token);
+
+	/// <summary>Removes an iOS or Android token from an IC app user subscriber's ({code}_IC_User_{userId}) native channels.</summary>
+	Task<bool> RemoveICUserSubscriberNativeToken(string userId, string code, string token);
+
+	/// <summary>Removes an iOS or Android token from a unit subscriber's ({code}_Unit_{unitId}) native channels.</summary>
+	Task<bool> RemoveUnitSubscriberNativeToken(int unitId, string code, string token);
+
+	/// <summary>
+	/// Deletes a unit's subscriber ({code}_Unit_{unitId}) and with it every device token on its native and web
+	/// channels (the unit was deleted). A subscriber that does not exist counts as deleted.
+	/// </summary>
+	/// <returns>True when the subscriber is gone afterwards; otherwise, false.</returns>
+	Task<bool> DeleteUnitSubscriber(int unitId, string code);
+
+	/// <summary>Deletes a user's subscriber ({code}_User_{userId}) and every device token on it (the department was deleted).</summary>
+	Task<bool> DeleteUserSubscriber(string userId, string code);
+
+	/// <summary>Deletes a user's IC app subscriber ({code}_IC_User_{userId}) and every device token on it (the department was deleted).</summary>
+	Task<bool> DeleteICUserSubscriber(string userId, string code);
+
+	/// <summary>
+	/// Every subscriber id in the Novu environment, read page by page before anything is changed (deleting while
+	/// paging would shift the pages and skip ids).
+	/// </summary>
+	/// <returns>The ids; null when any page could not be read, so a partial list is never acted on.</returns>
+	Task<List<string>> ListAllSubscriberIdsAsync(CancellationToken cancellationToken = default);
+
+	/// <summary>
 	/// Sends a dispatch notification to a unit.
 	/// </summary>
 	/// <param name="title">The notification title.</param>
@@ -138,11 +173,40 @@ public interface INovuProvider
 		bool enableCustomSounds, int count, string color);
 
 	/// <summary>
-	/// Deletes a notification message by its identifier.
+	/// Deletes a message from the user's own inbox: the subscriber the Responder and Dispatch apps share,
+	/// then the IC app's. A message in anyone else's inbox is reported as not found and left alone.
 	/// </summary>
-	/// <param name="messageId">The unique identifier of the message to delete.</param>
-	/// <returns>True if the message was deleted successfully; otherwise, false.</returns>
-	Task<bool> DeleteMessage(string messageId);
+	/// <param name="userId">The user whose inbox the message must be in.</param>
+	/// <param name="code">The user's department code.</param>
+	/// <param name="messageId">The Novu message (inbox notification) id.</param>
+	Task<NovuInboxDeleteResult> DeleteUserInboxMessage(string userId, string code, string messageId);
+
+	/// <summary>
+	/// Deletes a message from a unit's inbox (the Unit app's subscriber). The caller is responsible for
+	/// checking the unit belongs to the requesting user's department.
+	/// </summary>
+	/// <param name="unitId">The unit whose inbox the message must be in.</param>
+	/// <param name="code">The unit's department code.</param>
+	/// <param name="messageId">The Novu message (inbox notification) id.</param>
+	Task<NovuInboxDeleteResult> DeleteUnitInboxMessage(int unitId, string code, string messageId);
+
+	/// <summary>
+	/// The HMAC a client passes as <c>subscriberHash</c> when it opens an inbox session as the user's
+	/// subscriber (Responder and Dispatch apps). Once HMAC is enabled on the Novu environment a session without
+	/// it is refused, so only hand it to that user. Null when Novu is not configured.
+	/// </summary>
+	string GetUserSubscriberHash(string userId, string code);
+
+	/// <summary>
+	/// As <see cref="GetUserSubscriberHash"/>, for the user's IC app subscriber.
+	/// </summary>
+	string GetICUserSubscriberHash(string userId, string code);
+
+	/// <summary>
+	/// As <see cref="GetUserSubscriberHash"/>, for a unit's subscriber (Unit app). The caller is responsible
+	/// for checking the unit belongs to the requesting user's department.
+	/// </summary>
+	string GetUnitSubscriberHash(int unitId, string code);
 
 	Task<bool> SendUserDispatch(string title, string body, string userId, string depCode, string eventCode, string type, bool enableCustomSounds, int count, string color);
 

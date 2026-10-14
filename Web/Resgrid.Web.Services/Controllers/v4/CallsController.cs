@@ -1,4 +1,4 @@
-﻿using Resgrid.Web.Services.Attributes;
+using Resgrid.Web.Services.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -70,6 +70,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IProtectedWriteService _protectedWriteService;
 		private readonly IPendingCallsService _pendingCallsService;
 		private readonly ICallClosureService _callClosureService;
+		private readonly IInboundEmailReceiptsService _inboundEmailReceiptsService;
+
+		/// <summary>
+		/// Optional on SaveCall and SaveCallFile: a client that may send the same request twice (the SMTP relay retries a message
+		/// whose answer it never got, keyed by its Message-Id) names it, and a repeat returns the first result instead of a second call.
+		/// </summary>
+		public const string IdempotencyKeyHeader = "Idempotency-Key";
+
+		/// <summary>Everything SaveCall does after the call row is written; each is cleared from the receipt as it completes.</summary>
+		private const InboundEmailPendingSteps SaveCallSteps = InboundEmailPendingSteps.RunCardActivation | InboundEmailPendingSteps.WeatherAlerts |
+			InboundEmailPendingSteps.CallAddedEvent | InboundEmailPendingSteps.DispatchStatuses | InboundEmailPendingSteps.CallBroadcast |
+			InboundEmailPendingSteps.CustomFieldValues;
 
 		public CallsController(
 			ICallsService callsService,
@@ -102,9 +114,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IDispatchScopeService dispatchScopeService,
 			ICallLocationHistoryService callLocationHistoryService,
 			IPendingCallsService pendingCallsService,
-			ICallClosureService callClosureService
+			ICallClosureService callClosureService,
+			IInboundEmailReceiptsService inboundEmailReceiptsService
 			)
 		{
+			_inboundEmailReceiptsService = inboundEmailReceiptsService;
 			_callClosureService = callClosureService;
 			_callLocationHistoryService = callLocationHistoryService;
 			_pendingCallsService = pendingCallsService;
@@ -712,7 +726,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				eventResult.Note = actionLog.Note;
 				eventResult.DestinationSource = actionLog.DestinationSource;
 
-				var personnelStatus = ResolveStatusDetail(actionLog.ActionTypeId, defaultUserStatuses, customStates);
+				var personnelStatus = ResolveStatusDetail(actionLog.ActionTypeId, defaultUserStatuses, customStates, CustomStateTypes.Personnel);
 				if (personnelStatus != null)
 				{
 					eventResult.StatusText = personnelStatus.ButtonText;
@@ -752,7 +766,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				eventResult.Note = unitLog.Note;
 				eventResult.DestinationSource = unitLog.DestinationSource;
 
-				var unitStatus = ResolveStatusDetail(unitLog.State, defaultUnitStatuses, customStates);
+				var unitStatus = ResolveStatusDetail(unitLog.State, defaultUnitStatuses, customStates, CustomStateTypes.Unit);
 				if (unitStatus != null)
 				{
 					eventResult.StatusText = unitStatus.ButtonText;
@@ -961,6 +975,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Consumes(MediaTypeNames.Application.Json)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status409Conflict)]
 		[Authorize(Policy = ResgridResources.Call_Create)]
 		[DepartmentApiKeyScope(DepartmentApiKeyScopes.CallsCreate)]
 		public async Task<ActionResult<SaveCallResult>> SaveCall([FromBody] NewCallInput newCallInput, CancellationToken cancellationToken)
@@ -1291,46 +1306,159 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (contactLinks.Any())
 				call.Contacts = contactLinks;
 
-			var savedCall = await _callsService.SaveCallAsync(call, cancellationToken);
+			// Claimed only now, once the request is known to be valid, so a rejected request leaves nothing for its retry to trip on.
+			var receipt = await _inboundEmailReceiptsService.ClaimApiRequestAsync(InboundEmailKinds.ApiCall, effectiveDepartmentId,
+				Request.Headers[IdempotencyKeyHeader].ToString(), cancellationToken);
 
-			if (recommendationResult != null && recommendationResult.MatchedRunCardId.HasValue && recommendationResult.AutoDispatch)
-				await _dispatchRecommendationService.RecordActivationAsync(savedCall, recommendationResult, UserId, cancellationToken);
+			if (receipt.Outcome == InboundEmailClaimOutcomes.InProgress)
+				return StatusCode(StatusCodes.Status409Conflict);
 
-			// Attach weather alerts as call notes if enabled
-			await _weatherAlertService.AttachWeatherAlertsToCallAsync(savedCall, cancellationToken);
+			if (receipt.Outcome == InboundEmailClaimOutcomes.AlreadyProcessed)
+				return receipt.EntityId.HasValue ? SavedCallResult(result, receipt.EntityId.Value) : StatusCode(StatusCodes.Status409Conflict);
 
-			// ADP two-phase write (plan 19.2): the identity pk is an AAD component, so encryption
-			// runs after the insert assigned it, then the enveloped row is persisted. A failure here
-			// leaves a LOGGED transient-plaintext row and fails the request (the next migration
-			// sweep also envelopes it); downstream broadcast uses the enveloped call, which the
-			// notification safe-projections turn into generic content.
-			var protectedWrite = await _protectedWriteService.PrepareCallWriteAsync(effectiveDepartmentId, savedCall,
-				null, ProtectedGrantToken, UserId, IsUnattendedWriter, cancellationToken);
-			if (!protectedWrite.Success)
+			// A retry of a request whose call was saved before a later step failed finishes that call: only the steps the
+			// receipt still lists run again, so nobody gets a second Call Added event or page.
+			var resuming = receipt.Outcome == InboundEmailClaimOutcomes.Resume;
+			bool Pending(InboundEmailPendingSteps step) => !resuming || receipt.Has(step);
+
+			Call savedCall;
+			if (resuming)
 			{
-				Logging.LogError($"ADP protected write failed AFTER insert for call {savedCall.CallId} in department {effectiveDepartmentId} ({protectedWrite.Reason}); transient plaintext row pending re-encryption.");
-				return ProtectedWriteProblem(protectedWrite);
-			}
-			if (protectedWrite.IsProtected)
-				savedCall = await _callsService.SaveCallAsync(savedCall, cancellationToken);
+				savedCall = await _callsService.GetCallByIdAsync(receipt.EntityId.Value);
 
-			//OutboundEventProvider handler = new OutboundEventProvider.CallAddedTopicHandler();
-			//OutboundEventProvider..Handle(new CallAddedEvent() { DepartmentId = DepartmentId, Call = savedCall });
-			// A pending call is not live yet: "added" (incident chat channel, Call Added workflows, the field apps'
-			// lists) waits until it is dispatched. The update still refreshes dispatcher screens.
-			if (isPending)
-				_eventAggregator.SendMessage<CallUpdatedEvent>(new CallUpdatedEvent() { DepartmentId = effectiveDepartmentId, Call = savedCall });
+				// Gone, or closed by a dispatcher who found the half-finished call: there is nothing left to announce.
+				if (savedCall == null || savedCall.DepartmentId != effectiveDepartmentId || savedCall.IsDeleted ||
+					(savedCall.State != (int)CallStates.Active && savedCall.State != (int)CallStates.Pending))
+				{
+					await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
+					return SavedCallResult(result, receipt.EntityId.Value);
+				}
+
+				savedCall = await _callsService.PopulateCallData(savedCall, true, false, false, true, true, true, false, false, false);
+			}
 			else
-				_eventAggregator.SendMessage<CallAddedEvent>(new CallAddedEvent() { DepartmentId = effectiveDepartmentId, Call = savedCall });
-
-			if (shouldDispatchNow && ((call.GroupDispatches != null && call.GroupDispatches.Any()) || (call.UnitDispatches != null && call.UnitDispatches.Any())))
 			{
-				await _callDispatchStatusService.ApplyDispatchStatusesAsync(savedCall,
-					call.GroupDispatches?.Select(x => x.DepartmentGroupId),
-					call.UnitDispatches?.Select(x => x.UnitId),
-					cancellationToken);
+				try
+				{
+					savedCall = await _callsService.SaveCallAsync(call, cancellationToken);
+				}
+				catch
+				{
+					// The call row commits before its dispatch rows: keep an id a failure left behind so the retry finishes it.
+					if (call.CallId > 0)
+						await _inboundEmailReceiptsService.MarkSavedAsync(receipt, call.CallId, SaveCallSteps);
+
+					await _inboundEmailReceiptsService.ReleaseAsync(receipt);
+					throw;
+				}
+
+				await _inboundEmailReceiptsService.MarkSavedAsync(receipt, savedCall.CallId, SaveCallSteps);
 			}
 
+			try
+			{
+				if (Pending(InboundEmailPendingSteps.RunCardActivation) &&
+					recommendationResult != null && recommendationResult.MatchedRunCardId.HasValue && recommendationResult.AutoDispatch)
+				{
+					await _dispatchRecommendationService.RecordActivationAsync(savedCall, recommendationResult, UserId, cancellationToken);
+					await _inboundEmailReceiptsService.CompleteStepAsync(receipt, InboundEmailPendingSteps.RunCardActivation);
+				}
+
+				if (Pending(InboundEmailPendingSteps.WeatherAlerts))
+				{
+					// Attach weather alerts as call notes if enabled
+					await _weatherAlertService.AttachWeatherAlertsToCallAsync(savedCall, cancellationToken);
+					await _inboundEmailReceiptsService.CompleteStepAsync(receipt, InboundEmailPendingSteps.WeatherAlerts);
+				}
+
+				// ADP two-phase write (plan 19.2): the identity pk is an AAD component, so encryption
+				// runs after the insert assigned it, then the enveloped row is persisted. A failure here
+				// leaves a LOGGED transient-plaintext row and fails the request (the next migration
+				// sweep also envelopes it); downstream broadcast uses the enveloped call, which the
+				// notification safe-projections turn into generic content. Already-enveloped fields are
+				// skipped, so a retry finishing the call runs it again safely.
+				var protectedWrite = await _protectedWriteService.PrepareCallWriteAsync(effectiveDepartmentId, savedCall,
+					null, ProtectedGrantToken, UserId, IsUnattendedWriter, cancellationToken);
+				if (!protectedWrite.Success)
+				{
+					Logging.LogError($"ADP protected write failed AFTER insert for call {savedCall.CallId} in department {effectiveDepartmentId} ({protectedWrite.Reason}); transient plaintext row pending re-encryption.");
+					await _inboundEmailReceiptsService.ReleaseAsync(receipt);
+					return ProtectedWriteProblem(protectedWrite);
+				}
+				if (protectedWrite.IsProtected)
+					savedCall = await _callsService.SaveCallAsync(savedCall, cancellationToken);
+
+				//OutboundEventProvider handler = new OutboundEventProvider.CallAddedTopicHandler();
+				//OutboundEventProvider..Handle(new CallAddedEvent() { DepartmentId = DepartmentId, Call = savedCall });
+				// A pending call is not live yet: "added" (incident chat channel, Call Added workflows, the field apps'
+				// lists) waits until it is dispatched. The update still refreshes dispatcher screens.
+				if (Pending(InboundEmailPendingSteps.CallAddedEvent))
+				{
+					if (isPending)
+						_eventAggregator.SendMessage<CallUpdatedEvent>(new CallUpdatedEvent() { DepartmentId = effectiveDepartmentId, Call = savedCall });
+					else
+						_eventAggregator.SendMessage<CallAddedEvent>(new CallAddedEvent() { DepartmentId = effectiveDepartmentId, Call = savedCall });
+
+					await _inboundEmailReceiptsService.CompleteStepAsync(receipt, InboundEmailPendingSteps.CallAddedEvent);
+				}
+
+				if (Pending(InboundEmailPendingSteps.DispatchStatuses) &&
+					shouldDispatchNow && ((call.GroupDispatches != null && call.GroupDispatches.Any()) || (call.UnitDispatches != null && call.UnitDispatches.Any())))
+				{
+					await _callDispatchStatusService.ApplyDispatchStatusesAsync(savedCall,
+						call.GroupDispatches?.Select(x => x.DepartmentGroupId),
+						call.UnitDispatches?.Select(x => x.UnitId),
+						cancellationToken);
+					await _inboundEmailReceiptsService.CompleteStepAsync(receipt, InboundEmailPendingSteps.DispatchStatuses);
+				}
+
+				if (Pending(InboundEmailPendingSteps.CallBroadcast) && shouldDispatchNow)
+				{
+					await QueueSavedCallBroadcastAsync(call, savedCall, cancellationToken);
+					await _inboundEmailReceiptsService.CompleteStepAsync(receipt, InboundEmailPendingSteps.CallBroadcast);
+				}
+
+				// Save UDF field values if supplied
+				if (Pending(InboundEmailPendingSteps.CustomFieldValues) && newCallInput.UdfValues != null && newCallInput.UdfValues.Any())
+				{
+					bool isDeptAdmin = IsSystemApiKeyRequest || ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+					bool isGroupAdmin = HttpContext.User.Claims
+						.Any(c => c.Type.StartsWith(ResgridClaimTypes.Resources.Group + "/", StringComparison.Ordinal)
+							&& c.Value == ResgridClaimTypes.Actions.Update);
+
+					var udfValues = newCallInput.UdfValues.Select(v => new UdfFieldValue
+					{
+						UdfFieldId = v.UdfFieldId,
+						Value = v.Value
+					}).ToList();
+					await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(effectiveDepartmentId, (int)UdfEntityType.Call, savedCall.CallId.ToString(), udfValues, UserId, isDeptAdmin, isGroupAdmin, cancellationToken);
+				}
+
+				await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
+			}
+			catch
+			{
+				await _inboundEmailReceiptsService.ReleaseAsync(receipt);
+				throw;
+			}
+
+			return SavedCallResult(result, savedCall.CallId);
+		}
+
+		private ActionResult<SaveCallResult> SavedCallResult(SaveCallResult result, int callId)
+		{
+			result.Id = callId.ToString();
+			result.PageSize = 0;
+			result.Status = ResponseHelper.Created;
+
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return CreatedAtAction("GetCall", new { callId = result.Id }, result);
+		}
+
+		/// <summary>Queues the new call's broadcast to everyone it was dispatched to.</summary>
+		private async Task QueueSavedCallBroadcastAsync(Call call, Call savedCall, CancellationToken cancellationToken)
+		{
 			var profiles = new List<string>();
 
 			if (call.Dispatches != null && call.Dispatches.Any())
@@ -1370,32 +1498,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (profiles.Any())
 				cqi.Profiles = await _userProfileService.GetSelectedUserProfilesAsync(profiles);
 
-			if (shouldDispatchNow)
-				await _queueService.EnqueueCallBroadcastAsync(cqi, cancellationToken);
-
-			// Save UDF field values if supplied
-			if (newCallInput.UdfValues != null && newCallInput.UdfValues.Any())
-			{
-				bool isDeptAdmin = IsSystemApiKeyRequest || ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
-				bool isGroupAdmin = HttpContext.User.Claims
-					.Any(c => c.Type.StartsWith(ResgridClaimTypes.Resources.Group + "/", StringComparison.Ordinal)
-						&& c.Value == ResgridClaimTypes.Actions.Update);
-
-				var udfValues = newCallInput.UdfValues.Select(v => new UdfFieldValue
-				{
-					UdfFieldId = v.UdfFieldId,
-					Value = v.Value
-				}).ToList();
-				await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(effectiveDepartmentId, (int)UdfEntityType.Call, savedCall.CallId.ToString(), udfValues, UserId, isDeptAdmin, isGroupAdmin, cancellationToken);
-			}
-
-			result.Id = savedCall.CallId.ToString();
-			result.PageSize = 0;
-			result.Status = ResponseHelper.Created;
-
-			ResponseHelper.PopulateV4ResponseData(result);
-
-			return CreatedAtAction("GetCall", new { callId = result.Id }, result);
+			await _queueService.EnqueueCallBroadcastAsync(cqi, cancellationToken);
 		}
 
 		/// <summary>
@@ -2602,7 +2705,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			foreach (var actionLog in actionLogs)
 			{
 				var nameInfo = names.FirstOrDefault(x => x.UserId == actionLog.UserId);
-				var state = ResolveStatusDetail(actionLog.ActionTypeId, defaultUserStatuses, customStates);
+				var state = ResolveStatusDetail(actionLog.ActionTypeId, defaultUserStatuses, customStates, CustomStateTypes.Personnel);
 				var statusText = state?.ButtonText ?? (actionLog.ActionTypeId <= CallStatusLinkage.MaxBuiltInStatusId ? actionLog.GetActionText() : "Unknown");
 
 				if (nameInfo != null)
@@ -2621,7 +2724,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			foreach (var unitLog in unitStates)
 			{
-				var state = ResolveStatusDetail(unitLog.State, defaultUnitStatuses, customStates);
+				var state = ResolveStatusDetail(unitLog.State, defaultUnitStatuses, customStates, CustomStateTypes.Unit);
 				var statusText = state?.ButtonText ?? (unitLog.State <= CallStatusLinkage.MaxBuiltInStatusId ? unitLog.GetStatusText() : "Unknown");
 				var unitName = unitLog.Unit?.Name ?? units?.FirstOrDefault(x => x.UnitId == unitLog.UnitId)?.Name ?? "Unknown Unit";
 
@@ -2898,6 +3001,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			callResult.Part2ConsentOnFile = call.Part2ConsentOnFile;
 			callResult.IncidentId = call.IncidentNumber;
 			callResult.Type = call.Type;
+			callResult.TypeId = call.CallTypeId?.ToString();
 
 			callResult.CheckInTimersEnabled = call.CheckInTimersEnabled;
 
@@ -3014,12 +3118,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// status detail for labelling. Returns null when the status can't be resolved (e.g. a built-in value with
 		/// no default button, or a custom detail from another department).
 		/// </summary>
-		private static CustomStateDetail ResolveStatusDetail(int rawStatus, List<CustomStateDetail> builtInStatuses, List<CustomState> customStates)
+		private static CustomStateDetail ResolveStatusDetail(int rawStatus, List<CustomStateDetail> builtInStatuses, List<CustomState> customStates, CustomStateTypes type)
 		{
-			if (rawStatus <= CallStatusLinkage.MaxBuiltInStatusId)
-				return builtInStatuses?.FirstOrDefault(x => x.CustomStateDetailId == rawStatus);
-
-			return customStates?.Where(x => x?.Details != null).SelectMany(x => x.Details).FirstOrDefault(x => x != null && x.CustomStateDetailId == rawStatus);
+			// The department's own option of that kind first (deleted ones included), then the built-in value (StatusOptionIds).
+			return StatusOptionIds.FindCustom(customStates, type, rawStatus)
+				?? builtInStatuses?.FirstOrDefault(x => x.CustomStateDetailId == rawStatus);
 		}
 
 		/// <summary>

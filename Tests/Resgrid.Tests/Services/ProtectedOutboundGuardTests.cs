@@ -170,15 +170,13 @@ namespace Resgrid.Tests.Services
 			public System.Threading.Tasks.Task<bool> PushMessage(Resgrid.Model.Messages.StandardPushMessage message, string userId, UserProfile profile = null) => Record();
 			public System.Threading.Tasks.Task<bool> PushCall(Resgrid.Model.Messages.StandardPushCall call, string userId, UserProfile profile = null, DepartmentCallPriority priority = null) => Record();
 			public System.Threading.Tasks.Task<bool> Register(PushUri pushUri) => Record();
-			public System.Threading.Tasks.Task<bool> UnRegister(PushUri pushUri) => Record();
-			public System.Threading.Tasks.Task UnRegisterNotificationOnly(PushUri pushUri) => System.Threading.Tasks.Task.CompletedTask;
 			public System.Threading.Tasks.Task<bool> PushNotification(Resgrid.Model.Messages.StandardPushMessage message, string userId, UserProfile profile = null) => Record();
 			public System.Threading.Tasks.Task<bool> PushICNotification(Resgrid.Model.Messages.StandardPushMessage message, string userId, UserProfile profile = null) => Record();
 			public System.Threading.Tasks.Task<bool> RegisterUnit(PushUri pushUri) => Record();
-			public System.Threading.Tasks.Task<bool> UnRegisterUnit(PushUri pushUri) => Record();
 			public System.Threading.Tasks.Task<bool> UnRegisterWebPush(PushUri pushUri) => Record();
 			public System.Threading.Tasks.Task<bool> UnRegisterUnitWebPush(PushUri pushUri) => Record();
-			public System.Threading.Tasks.Task<bool> PushChat(Resgrid.Model.Messages.StandardPushMessage message, string userId, UserProfile profile = null) => Record();
+			public System.Threading.Tasks.Task<bool> UnRegisterNativePush(PushUri pushUri) => Record();
+			public System.Threading.Tasks.Task<bool> UnRegisterUnitNativePush(PushUri pushUri) => Record();
 			public System.Threading.Tasks.Task<bool> PushCallUnit(Resgrid.Model.Messages.StandardPushCall call, int unitId, DepartmentCallPriority priority = null) => Record();
 			public System.Threading.Tasks.Task<bool> PushNotificationUnit(Resgrid.Model.Messages.StandardPushMessage message, int unitId) => Record();
 			public System.Threading.Tasks.Task<bool> PushChatMessage(Resgrid.Model.Messages.StandardPushMessage message, string userId, string eventCode, int unreadCount, bool includeIncidentCommandApp, UserProfile profile = null) => Record();

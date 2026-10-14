@@ -571,9 +571,9 @@ namespace Resgrid.Services
 		private string FormatCallSubject(Call call)
 		{
 			if (call.IsCritical)
-				return string.Format("New CRITICAL Call: P{0} {1}", call.Priority, call.Name);
+				return string.Format("New CRITICAL Call: {0} {1}", call.GetPriorityTag(), call.Name);
 
-			return string.Format("New Call: P{0} {1}", call.Priority, call.Name);
+			return string.Format("New Call: {0} {1}", call.GetPriorityTag(), call.Name);
 		}
 
 		// A2P/TCPA opt-out disclosure. Per CTIA/10DLC guidance this only needs to appear on the first

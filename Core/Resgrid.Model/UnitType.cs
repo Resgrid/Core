@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -27,6 +27,9 @@ namespace Resgrid.Model
 		public int? CustomStatesId { get; set; }
 
 		public int? MapIconType { get; set; }
+
+		/// <summary>What kind of unit the type is, a <see cref="UnitTypeClasses"/> value; -1 (None) until the department sets it.</summary>
+		public int BaseType { get; set; } = (int)UnitTypeClasses.None;
 
 		[NotMapped]
 		[JsonIgnore]

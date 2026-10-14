@@ -93,18 +93,6 @@ namespace Resgrid.Model.Services
 			string title, UserProfile profile, bool sendToICApp, string eventCode);
 
 		/// <summary>
-		/// Sends the chat.
-		/// </summary>
-		/// <param name="chatId">The chat identifier.</param>
-		/// <param name="sendingUserId">The sending user identifier.</param>
-		/// <param name="group">The group.</param>
-		/// <param name="message">The message.</param>
-		/// <param name="sendingUser">The sending user.</param>
-		/// <param name="recipients">The recipients.</param>
-		/// <returns>Task&lt;System.Boolean&gt;.</returns>
-		Task<bool> SendChat(string chatId, int departmentId, string sendingUserId, string group, string message, UserProfile sendingUser, List<UserProfile> recipients);
-
-		/// <summary>
 		/// Sends the trouble alert asynchronous.
 		/// </summary>
 		/// <param name="troubleAlertEvent">The trouble alert event.</param>

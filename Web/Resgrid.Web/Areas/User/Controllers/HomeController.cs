@@ -1210,7 +1210,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 				return Unauthorized();
 
-			await _actionLogsService.SetActionForEntireDepartmentAsync((await _departmentsService.GetDepartmentByUserIdAsync(UserId)).DepartmentId, (int)ActionTypes.StandingBy, String.Empty);
+			var departmentId = (await _departmentsService.GetDepartmentByUserIdAsync(UserId)).DepartmentId;
+			// The department's own Available status when it has one (StatusTargetResolver), else the built-in Standing By.
+			await _actionLogsService.SetActionForEntireDepartmentAsync(departmentId,
+				await _customStateService.ResolvePersonnelStatusAsync(departmentId, ActionBaseTypes.Available) ?? (int)ActionTypes.StandingBy, String.Empty);
 
 			return RedirectToAction("Dashboard", "Home", new { area = "User" });
 		}
@@ -1228,7 +1231,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (group == null || group.DepartmentId != DepartmentId)
 				return Unauthorized();
 
-			await _actionLogsService.SetActionForDepartmentGroupAsync(groupId, (int)ActionTypes.StandingBy, String.Empty);
+			await _actionLogsService.SetActionForDepartmentGroupAsync(groupId,
+				await _customStateService.ResolvePersonnelStatusAsync(DepartmentId, ActionBaseTypes.Available) ?? (int)ActionTypes.StandingBy, String.Empty);
 
 			return RedirectToAction("Dashboard", "Home", new { area = "User" });
 		}
@@ -1267,11 +1271,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (station == null || station.DepartmentId != DepartmentId || station.Type != (int)DepartmentGroupTypes.Station)
 					return Unauthorized();
 
-				await _actionLogsService.SetUserActionAsync(UserId, DepartmentId, (int)ActionTypes.RespondingToStation, null,
+				await _actionLogsService.SetUserActionAsync(UserId, DepartmentId,
+					await _customStateService.ResolvePersonnelStatusAsync(DepartmentId, ActionBaseTypes.Responding, DestinationEntityTypes.Station) ?? (int)ActionTypes.RespondingToStation, null,
 											 station.DepartmentGroupId, (int)DestinationEntityTypes.Station);
 			}
 			else
-				await _actionLogsService.SetUserActionAsync(UserId, DepartmentId, (int)ActionTypes.RespondingToStation, null);
+				await _actionLogsService.SetUserActionAsync(UserId, DepartmentId,
+					await _customStateService.ResolvePersonnelStatusAsync(DepartmentId, ActionBaseTypes.Responding, DestinationEntityTypes.Station) ?? (int)ActionTypes.RespondingToStation, null);
 
 			return RedirectToAction("Dashboard", "Home", new { area = "User" });
 		}
@@ -1294,11 +1300,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (!await _dispatchScopeService.CanUserAccessCallAsync(DepartmentId, UserId, call))
 					return Unauthorized();
 
-				await _actionLogsService.SetUserActionAsync(UserId, DepartmentId, (int)ActionTypes.RespondingToScene, null,
+				await _actionLogsService.SetUserActionAsync(UserId, DepartmentId,
+					await _customStateService.ResolvePersonnelStatusAsync(DepartmentId, ActionBaseTypes.Responding, DestinationEntityTypes.Call) ?? (int)ActionTypes.RespondingToScene, null,
 											 call.CallId, (int)DestinationEntityTypes.Call);
 			}
 			else
-				await _actionLogsService.SetUserActionAsync(UserId, DepartmentId, (int)ActionTypes.RespondingToScene, null);
+				await _actionLogsService.SetUserActionAsync(UserId, DepartmentId,
+					await _customStateService.ResolvePersonnelStatusAsync(DepartmentId, ActionBaseTypes.Responding, DestinationEntityTypes.Call) ?? (int)ActionTypes.RespondingToScene, null);
 
 			return RedirectToAction("Dashboard", "Home", new { area = "User" });
 		}

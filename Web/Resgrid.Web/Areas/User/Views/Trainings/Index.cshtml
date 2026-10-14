@@ -3,7 +3,8 @@
 @model Resgrid.Web.Areas.User.Models.Training.TrainingIndexModel
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
 @{
-  ViewBag.Title = "Resgrid | " + localizer["TrainingsHeader"];
+  var moduleTitle = await departmentTerms.NameAsync(DepartmentTerms.Trainings, localizer["TrainingsHeader"]);
+  ViewBag.Title = "Resgrid | " + moduleTitle;
 
   // Mirror the controller policies (Training_Create / Training_Update / Training_Delete): group admins and roles
   // granted training permissions hold these claims too, not only department admins.
@@ -15,13 +16,13 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
   <div class="col-sm-4">
-    <h2>@localizer["TrainingsHeader"]</h2>
+    <h2>@moduleTitle</h2>
     <ol class="breadcrumb">
       <li>
         <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@localizer["HomeLink"]</a>
       </li>
       <li class="active">
-        <strong>@localizer["TrainingsHeader"]</strong>
+        <strong>@moduleTitle</strong>
       </li>
     </ol>
   </div>

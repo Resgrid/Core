@@ -19,6 +19,7 @@ namespace Resgrid.Services
 		private readonly IUnitsService _unitsService;
 		private readonly ICallsService _callsService;
 		private readonly ICoreEventService _coreEventService;
+		private readonly ICustomStateService _customStateService;
 
 		public CheckInTimerService(
 			ICheckInTimerConfigRepository configRepository,
@@ -27,7 +28,8 @@ namespace Resgrid.Services
 			IActionLogsService actionLogsService,
 			IUnitsService unitsService,
 			ICallsService callsService,
-			ICoreEventService coreEventService)
+			ICoreEventService coreEventService,
+			ICustomStateService customStateService = null)
 		{
 			_configRepository = configRepository;
 			_overrideRepository = overrideRepository;
@@ -36,6 +38,7 @@ namespace Resgrid.Services
 			_unitsService = unitsService;
 			_callsService = callsService;
 			_coreEventService = coreEventService;
+			_customStateService = customStateService;
 		}
 		#region Configuration CRUD
 
@@ -238,8 +241,9 @@ namespace Resgrid.Services
 			// Resolve the call's type to a CallTypeId for override matching. Call.Type stores
 			// the type NAME (see call creation in CallsController), so a numeric parse only
 			// covers legacy data — otherwise look the id up from the department's call types.
-			int? callTypeId = null;
-			if (!string.IsNullOrWhiteSpace(call.Type))
+			// A linked call (Call.CallTypeId) keeps its type through a rename.
+			int? callTypeId = call.CallTypeId;
+			if (!callTypeId.HasValue && !string.IsNullOrWhiteSpace(call.Type))
 			{
 				if (int.TryParse(call.Type, out int parsedType))
 				{
@@ -248,7 +252,7 @@ namespace Resgrid.Services
 				else
 				{
 					var callTypes = await _callsService.GetCallTypesForDepartmentAsync(call.DepartmentId);
-					callTypeId = callTypes?.FirstOrDefault(t => string.Equals(t.Type, call.Type, StringComparison.OrdinalIgnoreCase))?.CallTypeId;
+					callTypeId = CallTypeLink.FindByName(callTypes, call.Type)?.CallTypeId;
 				}
 			}
 
@@ -510,6 +514,22 @@ namespace Resgrid.Services
 				}
 			}
 
+			// A "b{n}" entry is every status meaning n, built-in or the department's own (StatusMatch); the base types are only
+			// loaded when a timer uses one.
+			Func<int, int> unitBaseTypes = null;
+			Func<int, int> personnelBaseTypes = null;
+			if (_customStateService != null && timersWithStateFilter.Any(t => StatusMatch.Tokens(t.ActiveForStates).Any(x => StatusMatch.BaseTypeOf(x).HasValue)))
+			{
+				var customStates = await _customStateService.GetAllCustomStatesForDepartmentAsync(call.DepartmentId);
+				unitBaseTypes = StatusMatch.UnitBaseTypes(customStates);
+				personnelBaseTypes = StatusMatch.PersonnelBaseTypes(customStates);
+			}
+			else
+			{
+				unitBaseTypes = raw => (int)BuiltInStatusBaseTypes.ForUnitState(raw);
+				personnelBaseTypes = raw => (int)BuiltInStatusBaseTypes.ForPersonnelStatus(raw);
+			}
+
 			var result = new List<ResolvedCheckInTimer>();
 			foreach (var timer in timers)
 			{
@@ -518,8 +538,6 @@ namespace Resgrid.Services
 					result.Add(timer); // No filter = always active
 					continue;
 				}
-
-				var allowedStates = ParseActiveForStates(timer.ActiveForStates);
 
 				bool anyEntityMatches = false;
 
@@ -535,7 +553,7 @@ namespace Resgrid.Services
 							 dispatchedUnitTypeId != timer.UnitTypeId))
 							continue;
 
-						if (allowedStates.Contains(kvp.Value))
+						if (StatusMatch.MatchesAny(timer.ActiveForStates, kvp.Value, unitBaseTypes))
 						{
 							anyEntityMatches = true;
 							break;
@@ -547,7 +565,7 @@ namespace Resgrid.Services
 					// Personnel-based timers (Personnel, IC, PAR, Hazmat, SectorRotation, Rehab)
 					foreach (var kvp in personnelStates)
 					{
-						if (allowedStates.Contains(kvp.Value))
+						if (StatusMatch.MatchesAny(timer.ActiveForStates, kvp.Value, personnelBaseTypes))
 						{
 							anyEntityMatches = true;
 							break;
@@ -607,20 +625,6 @@ namespace Resgrid.Services
 				throw new InvalidOperationException("Check-in timer warning threshold must be less than the duration.");
 		}
 
-		private static HashSet<int> ParseActiveForStates(string activeForStates)
-		{
-			var states = new HashSet<int>();
-			if (string.IsNullOrWhiteSpace(activeForStates))
-				return states;
-
-			foreach (var part in activeForStates.Split(',', StringSplitOptions.RemoveEmptyEntries))
-			{
-				if (int.TryParse(part.Trim(), out int stateId))
-					states.Add(stateId);
-			}
-
-			return states;
-		}
 
 		#endregion State Filtering
 

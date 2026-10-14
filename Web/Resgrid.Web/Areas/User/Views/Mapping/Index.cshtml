@@ -4,7 +4,8 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.Mapping> localizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> hydrantStrings
 @{
-	ViewBag.Title = "Resgrid | " + localizer["MappingHeader"];
+	var moduleTitle = await departmentTerms.NameAsync(DepartmentTerms.Mapping, localizer["MappingHeader"]);
+	ViewBag.Title = "Resgrid | " + moduleTitle;
 	ViewBag.LoadAngular = true;
 	var mapConfig = SettingsHelper.GetDepartmentMapConfig(Resgrid.Config.InfoConfig.WebsiteKey);
 }
@@ -29,13 +30,13 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-4">
-		<h2>@localizer["MappingHeader"]</h2>
+		<h2>@moduleTitle</h2>
 		<ol class="breadcrumb">
 			<li>
 				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
 			</li>
 			<li class="active">
-				<strong>@localizer["MappingHeader"]</strong>
+				<strong>@moduleTitle</strong>
 			</li>
 		</ol>
 	</div>

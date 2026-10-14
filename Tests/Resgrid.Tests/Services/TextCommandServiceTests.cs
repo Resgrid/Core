@@ -271,5 +271,80 @@ namespace Resgrid.Tests.Services
 				valid.Data.Should().BeNull();
 			}
 		}
+
+		[TestFixture]
+		public class when_determining_a_type_for_a_department_with_custom_sets : with_the_text_command_service
+		{
+			private static CustomState Set(int type, params (int Id, string Text, int Order, bool Deleted)[] options)
+			{
+				var state = new CustomState { CustomStateId = 900 + type, Type = type, Details = new System.Collections.Generic.List<CustomStateDetail>() };
+				foreach (var option in options)
+					state.Details.Add(new CustomStateDetail { CustomStateDetailId = option.Id, ButtonText = option.Text, Order = option.Order, IsDeleted = option.Deleted });
+
+				return state;
+			}
+
+			private readonly CustomState _statuses = Set((int)CustomStateTypes.Personnel,
+				(5001, "Responding", 0, false), (5002, "In Quarters", 2, false), (5003, "Old Status", 1, true), (5004, "On-Scene: Fire", 3, false));
+
+			private readonly CustomState _staffing = Set((int)CustomStateTypes.Staffing,
+				(6001, "On Duty", 0, false), (6002, "Off Duty", 1, false));
+
+			[TestCase("1", 5001)]
+			[TestCase("2", 5002)] // positions skip deleted options and follow Order, as the HELP list does
+			[TestCase("3", 5004)]
+			[TestCase("inquarters", 5002)]
+			[TestCase("In Quarters", 5002)]
+			[TestCase("onscenefire", 5004)]
+			public void custom_statuses_match_by_help_position_or_name(string text, int expectedId)
+			{
+				var payload = _textCommandService.DetermineType(text, _statuses, _staffing);
+
+				payload.Type.Should().Be(TextCommandTypes.CustomAction);
+				payload.Data.Should().Be(expectedId.ToString());
+			}
+
+			[TestCase("s1", 6001)]
+			[TestCase("S2", 6002)]
+			[TestCase("offduty", 6002)]
+			public void custom_staffing_matches_by_s_position_or_name(string text, int expectedId)
+			{
+				var payload = _textCommandService.DetermineType(text, _statuses, _staffing);
+
+				payload.Type.Should().Be(TextCommandTypes.CustomStaffing);
+				payload.Data.Should().Be(expectedId.ToString());
+			}
+
+			[TestCase("4")]
+			[TestCase("s3")]
+			[TestCase("oldstatus")]
+			[TestCase("standingby")]
+			public void unknown_positions_deleted_options_and_built_in_names_do_not_match(string text)
+			{
+				var payload = _textCommandService.DetermineType(text, _statuses, _staffing);
+
+				payload.Type.Should().Be(TextCommandTypes.None);
+			}
+
+			[TestCase("help", TextCommandTypes.Help)]
+			[TestCase("stop", TextCommandTypes.Stop)]
+			[TestCase("calls", TextCommandTypes.Calls)]
+			[TestCase("c1445", TextCommandTypes.CallDetail)]
+			public void core_commands_still_work(string text, TextCommandTypes expected)
+			{
+				var payload = _textCommandService.DetermineType(text, _statuses, _staffing);
+
+				payload.Type.Should().Be(expected);
+			}
+
+			[Test]
+			public void built_in_staffing_still_applies_when_only_statuses_are_custom()
+			{
+				var payload = _textCommandService.DetermineType("s1", _statuses, null);
+
+				payload.Type.Should().Be(TextCommandTypes.Staffing);
+				payload.Data.Should().Be(((int)UserStateTypes.Available).ToString());
+			}
+		}
 	}
 }

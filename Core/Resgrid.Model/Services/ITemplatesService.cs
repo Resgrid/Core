@@ -21,6 +21,9 @@ namespace Resgrid.Model.Services
 		/// <returns>Task&lt;CallQuickTemplate&gt;.</returns>
 		Task<CallQuickTemplate> SaveCallQuickTemplateAsync(CallQuickTemplate template, CancellationToken cancellationToken = default(CancellationToken));
 
+		/// <summary>Follows a call type rename in the quick templates that name the old type. Returns how many changed.</summary>
+		Task<int> RenameCallTypeInTemplatesAsync(int departmentId, string oldName, string newName, CancellationToken cancellationToken = default(CancellationToken));
+
 		/// <summary>
 		/// Gets the call quick template by identifier asynchronous.
 		/// </summary>

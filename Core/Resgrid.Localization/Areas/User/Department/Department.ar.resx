@@ -1171,16 +1171,16 @@
     <value>حالة الوحدة عند إغلاق البلاغ</value>
   </data>
   <data name="UnitCallReleaseStatusHelp" xml:space="preserve">
-    <value>تُعيَّن للوحدات التي لا تزال تعمل على البلاغ عند إغلاقه أو عند إزالتها منه. الوحدة التي عادت بالفعل إلى الخدمة، أو أصبحت خارج الخدمة (غير متاحة أو في الصيانة أو في استراحة)، أو تعمل على بلاغ آخر تحتفظ بحالتها. تُقرأ الحالات المخصصة وفق نوعها الأساسي.</value>
+    <value>تُعيَّن بالطريقة نفسها، حسب المعنى، للوحدات التي لا تزال تعمل على البلاغ عند إغلاقه أو عند إزالتها منه. الوحدة التي عادت بالفعل إلى الخدمة، أو أصبحت خارج الخدمة (غير متاحة أو في الصيانة أو في استراحة)، أو تعمل على بلاغ آخر تحتفظ بحالتها؛ وتُقرأ الحالات المخصصة وفق نوعها الأساسي. يعيّن الافتراضي حالة العودة إلى الخدمة (منتهية أو متاحة أو في المقر) للحالات المخصصة وحالة محرَّرة للحالات المدمجة.</value>
   </data>
   <data name="UnitDefaultStatusesHelp" xml:space="preserve">
-    <value>تستخدم حالات الوحدات الافتراضية هذه أنواع حالات الوحدات المدمجة فقط. استخدم جدول تجاوزات أنواع الوحدات أدناه عندما يحتاج نوع وحدة إلى إحدى حالاته المخصصة.</value>
+    <value>تُعيَّن للوحدات الموزَّعة على بلاغ. اختر ما تعنيه الحالة: تحصل كل وحدة على حالة من مجموعة حالاتها الخاصة بهذا المعنى (الأولى حسب الترتيب)، لذا يعمل إعداد واحد لأنواع وحدات ذات حالات مخصصة مختلفة. يعيّن الافتراضي حالة تم التوزيع (أو مستجيبة، أو في الطريق) للحالات المخصصة وحالة مستجيبة للحالات المدمجة.</value>
   </data>
   <data name="UnitTypeStatusOverridesHeader" xml:space="preserve">
     <value>تجاوزات حالات أنواع الوحدات</value>
   </data>
   <data name="UnitTypeStatusOverridesHelp" xml:space="preserve">
-    <value>تظهر هنا فقط أنواع الوحدات التي لها حالات وحدات مخصصة. اترك القيمة على "افتراضي" لاستخدام الحالة المدمجة المطبّقة على مستوى القسم أعلاه.</value>
+    <value>تظهر هنا فقط أنواع الوحدات التي لها حالات مخصصة. اختر إحدى الحالات الخاصة بنوع الوحدة عندما يحتاج إلى حالة محددة؛ يستخدم الافتراضي إعداد القسم أعلاه مطابَقًا مع حالات نوع الوحدة.</value>
   </data>
   <data name="CheckInTimerActiveStatesLabel" xml:space="preserve">
     <value>الحالات النشطة</value>
@@ -1502,5 +1502,80 @@
   </data>
   <data name="DeleteDepartmentLegalHoldWarning" xml:space="preserve">
     <value>تشمل سجلات هذا القسم {0} من حالات الحفظ القانونية النشطة. لن يُنفَّذ الحذف حتى تُرفع جميعها.</value>
+  </data>
+  <data name="TerminologyHeader" xml:space="preserve">
+    <value>المصطلحات</value>
+  </data>
+  <data name="TerminologyIntro" xml:space="preserve">
+    <value>استخدم مصطلحات إدارتك الخاصة. يحل الاسم المحدد هنا محل اسم Resgrid لتلك الوحدة أو نوع السجل في التنقل وفي عناوين الصفحات وفي كل مكان تُدرج فيه أنواع السجلات وفي تطبيقات Responder وUnit وIC وDispatch، لجميع الأعضاء وبجميع اللغات. تتغير التسمية فقط: لا تتأثر الأذونات والروابط والتكاملات. اترك الحقل فارغًا للإبقاء على اسم Resgrid.</value>
+  </data>
+  <data name="TerminologyModules" xml:space="preserve">
+    <value>الوحدات</value>
+  </data>
+  <data name="TerminologyModulesHelp" xml:space="preserve">
+    <value>يظهر في التنقل وكعنوان للصفحة الرئيسية للوحدة وفي قوائم التطبيقات. تحتفظ الجمل الأخرى التي تذكر الوحدة بصياغة Resgrid.</value>
+  </data>
+  <data name="TerminologyRecordTypes" xml:space="preserve">
+    <value>أنواع السجلات</value>
+  </data>
+  <data name="TerminologyRecordTypesHelp" xml:space="preserve">
+    <value>أنواع السجلات والسجلات القديمة المضمنة، في كل مكان يُختار فيه نوع أو يُدرج أو يُطبع أو يُصدَّر. لإضافة نوع خاص بك، مثل التثقيف العام، أنشئ تعريف سجل.</value>
+  </data>
+  <data name="TerminologyDefaultColumn" xml:space="preserve">
+    <value>اسم Resgrid</value>
+  </data>
+  <data name="TerminologyNameColumn" xml:space="preserve">
+    <value>اسم إدارتك</value>
+  </data>
+  <data name="TerminologySaved" xml:space="preserve">
+    <value>تم حفظ المصطلحات.</value>
+  </data>
+  <data name="TerminologyPartlySaved" xml:space="preserve">
+    <value>تم حفظ أسمائك الأخرى.</value>
+  </data>
+  <data name="TerminologyTooLong" xml:space="preserve">
+    <value>يمكن أن يتكون الاسم من {0} حرفًا كحد أقصى؛ لم تُحفظ الأسماء الأطول وهي معروضة لتصحيحها.</value>
+  </data>
+  <data name="TerminologyRecordDefinitionsLink" xml:space="preserve">
+    <value>تعريفات السجلات</value>
+  </data>
+  <data name="TerminologyRenameLink" xml:space="preserve">
+    <value>إعادة تسمية الوحدات وأنواع السجلات</value>
+  </data>
+  <data name="UnitStatusTargetMeaningGroup" xml:space="preserve">
+    <value>معنى الحالة</value>
+  </data>
+  <data name="UnitStatusTargetDefaultDispatch" xml:space="preserve">
+    <value>الافتراضي (تم التوزيع أو مستجيبة أو في الطريق)</value>
+  </data>
+  <data name="UnitStatusTargetDefaultRelease" xml:space="preserve">
+    <value>الافتراضي (العودة إلى الخدمة)</value>
+  </data>
+  <data name="UnitStatusTargetLeaveUnchanged" xml:space="preserve">
+    <value>عدم تغيير حالة الوحدة</value>
+  </data>
+  <data name="UnitStatusTargetLegacy" xml:space="preserve">
+    <value>حالة مدمجة: {0} (محفوظة قبل معاني الحالات)</value>
+  </data>
+  <data name="UnitStatusTargetWarningsHeader" xml:space="preserve">
+    <value>تحقق من أنواع الوحدات هذه</value>
+  </data>
+  <data name="UnitStatusTargetNoMatch" xml:space="preserve">
+    <value>{0}: لا تحتوي مجموعة حالاته "{1}" على حالة تعني {2}، لذا تحتفظ وحداته بحالتها عند {3}. عيّن نوعًا أساسيًا لإحدى حالاته أو اختر حالة في التجاوزات أدناه.</value>
+  </data>
+  <data name="UnitStatusTargetSeveral" xml:space="preserve">
+    <value>{0}: تحتوي مجموعة حالاته "{1}" على {2} حالات تعني {3} ({4})؛ تُستخدم {5}، الأولى حسب الترتيب، عند {6}.</value>
+  </data>
+  <data name="UnitStatusTargetNoBuiltIn" xml:space="preserve">
+    <value>{0}: لا توجد حالة وحدة مدمجة تعني {1}، لذا تحتفظ وحداته بحالتها عند {2}.</value>
+  </data>
+  <data name="UnitStatusTargetActionDispatch" xml:space="preserve">
+    <value>التوزيع</value>
+  </data>
+  <data name="UnitStatusTargetActionRelease" xml:space="preserve">
+    <value>التحرير</value>
+  </data>
+  <data name="StatusMeaningOption" xml:space="preserve">
+    <value>أي حالة "{0}"</value>
   </data>
 </root>

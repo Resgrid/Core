@@ -4,20 +4,21 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Contacts.Contacts> localizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.LocationHistory> historyLocalizer
 @{
-    ViewBag.Title = "Resgrid | " + @commonLocalizer["ContactsModule"];
+    var moduleTitle = await departmentTerms.NameAsync(DepartmentTerms.Contacts, commonLocalizer["ContactsModule"]);
+    ViewBag.Title = "Resgrid | " + moduleTitle;
     // Linked calls per contact; null (the user's dispatch scope is not department-wide) leaves the column off.
     var callsHeader = Model.CallCounts != null ? $"<th>{Html.Encode(historyLocalizer["CallsColumn"].Value)}</th>" : "";
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-4">
-        <h2>@commonLocalizer["ContactsModule"]</h2>
+        <h2>@moduleTitle</h2>
         <ol class="breadcrumb">
             <li>
                 <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
             </li>
             <li class="active">
-                <strong>@commonLocalizer["ContactsModule"]</strong>
+                <strong>@moduleTitle</strong>
             </li>
         </ol>
     </div>

@@ -124,7 +124,7 @@
     <value>Διαθέσιμος</value>
   </data>
   <data name="BaseType" xml:space="preserve">
-    <value>Βασικός Τύπος</value>
+    <value>Σημασία</value>
   </data>
   <data name="ButtonBackgroundColorLabel" xml:space="preserve">
     <value>Χρώμα Φόντου Κουμπιού</value>
@@ -341,5 +341,158 @@
   </data>
   <data name="NextStatusesAny" xml:space="preserve">
     <value>Οποιαδήποτε κατάσταση</value>
+  </data>
+  <data name="StaffingAvailable" xml:space="preserve">
+    <value>Διαθέσιμος</value>
+  </data>
+  <data name="StaffingDelayed" xml:space="preserve">
+    <value>Σε καθυστέρηση</value>
+  </data>
+  <data name="StaffingUnavailable" xml:space="preserve">
+    <value>Μη διαθέσιμος</value>
+  </data>
+  <data name="StaffingCommitted" xml:space="preserve">
+    <value>Δεσμευμένος</value>
+  </data>
+  <data name="StaffingOnShift" xml:space="preserve">
+    <value>Σε βάρδια</value>
+  </data>
+  <data name="StaffingOffDuty" xml:space="preserve">
+    <value>Εκτός υπηρεσίας</value>
+  </data>
+  <data name="StaffingOnCall" xml:space="preserve">
+    <value>Σε επιφυλακή</value>
+  </data>
+  <data name="StaffingBaseTypeHelp" xml:space="preserve">
+    <value>Τι σημαίνει αυτό το επίπεδο στελέχωσης για το Resgrid. Οι συστάσεις αποστολής, οι μετρήσεις διαθεσιμότητας και η σίγαση ειδοποιήσεων χρησιμοποιούν τη σημασία, ανεξάρτητα από το όνομα του κουμπιού.</value>
+  </data>
+  <data name="MeaningColumn" xml:space="preserve">
+    <value>Σημασία</value>
+  </data>
+  <data name="MissingMeaningsHeader" xml:space="preserve">
+    <value>Επιλογές χωρίς σημασία: {0}.</value>
+  </data>
+  <data name="MissingMeaningsHelp" xml:space="preserve">
+    <value>Το Resgrid χρησιμοποιεί τη σημασία μιας επιλογής για να καθορίσει τη διαθεσιμότητα, τι ορίζεται κατά την αποστολή και την αποδέσμευση, τις ειδοποιήσεις και τις αναφορές. Οι επιλογές χωρίς σημασία θεωρούνται άγνωστες. Όταν το όνομα δίνει σαφή ένδειξη εμφανίζεται πρόταση· ελέγξτε την και μετά αποθηκεύστε.</value>
+  </data>
+  <data name="UseSuggestedMeanings" xml:space="preserve">
+    <value>Χρήση προτεινόμενων σημασιών</value>
+  </data>
+  <data name="SuggestedMeaningsApplied" xml:space="preserve">
+    <value>Οι προτάσεις εφαρμόστηκαν. Ελέγξτε τις και μετά αποθηκεύστε.</value>
+  </data>
+  <data name="SuggestedMeaning" xml:space="preserve">
+    <value>προτείνεται: {0}</value>
+  </data>
+  <data name="OptionsWithoutMeaning" xml:space="preserve">
+    <value>Χωρίς σημασία: {0}</value>
+  </data>
+  <data name="AnyStatusWithMeaning" xml:space="preserve">
+    <value>Οποιαδήποτε κατάσταση «{0}»</value>
+  </data>
+  <data name="BuiltInStatusOption" xml:space="preserve">
+    <value>Ενσωματωμένη: {0}</value>
+  </data>
+  <data name="NoteOptional" xml:space="preserve">
+    <value>Προαιρετική</value>
+  </data>
+  <data name="NoteRequired" xml:space="preserve">
+    <value>Υποχρεωτική</value>
+  </data>
+  <data name="SetTypeLabel" xml:space="preserve">
+    <value>Τύπος</value>
+  </data>
+  <data name="TemplatePrefilledNote" xml:space="preserve">
+    <value>Αυτές οι επιλογές συμπληρώθηκαν από πρότυπο. Αλλάξτε το κείμενο ή τα χρώματα, αφαιρέστε όσες δεν χρειάζεστε ή προσθέστε δικές σας· τίποτα δεν αποθηκεύεται μέχρι να πατήσετε Προσθήκη.</value>
+  </data>
+  <data name="BackgroundColorShort" xml:space="preserve">
+    <value>Φόντο</value>
+  </data>
+  <data name="TextColorShort" xml:space="preserve">
+    <value>Κείμενο</value>
+  </data>
+  <data name="StatusRuleAny" xml:space="preserve">
+    <value>Οποιαδήποτε</value>
+  </data>
+  <data name="StatusRuleUnknown" xml:space="preserve">
+    <value>Άγνωστη</value>
+  </data>
+  <data name="StatusRuleNone" xml:space="preserve">
+    <value>Καμία</value>
+  </data>
+  <data name="BaseTypeDescription.none" xml:space="preserve">
+    <value>Χωρίς σημασία για το σύστημα. Η κατάσταση είναι μόνο ενημερωτική και δεν επηρεάζει διαθεσιμότητα, αναφορές ή αυτοματισμούς.</value>
+  </data>
+  <data name="BaseTypeDescription.available" xml:space="preserve">
+    <value>Η μονάδα ή το μέλος είναι σε υπηρεσία και διαθέσιμο για ανάθεση ή αποστολή σε κλήση ή εργασία.</value>
+  </data>
+  <data name="BaseTypeDescription.notresponding" xml:space="preserve">
+    <value>Το μέλος επιβεβαίωσε αλλά αρνείται ή δεν μπορεί να ανταποκριθεί στην τρέχουσα ανάθεση.</value>
+  </data>
+  <data name="BaseTypeDescription.responding" xml:space="preserve">
+    <value>Η μονάδα ή το μέλος κινείται ενεργά (καθ' οδόν) προς ανατεθειμένη κλήση ή συμβάν.</value>
+  </data>
+  <data name="BaseTypeDescription.onscene" xml:space="preserve">
+    <value>Η μονάδα ή το μέλος έφτασε και επιχειρεί στον τόπο της κλήσης ή του συμβάντος.</value>
+  </data>
+  <data name="BaseTypeDescription.madecontact" xml:space="preserve">
+    <value>Η μονάδα ή το μέλος ήρθε σε επαφή με το πρόσωπο, τον ασθενή, το μέρος ή το σημείο ενδιαφέροντος.</value>
+  </data>
+  <data name="BaseTypeDescription.investigating" xml:space="preserve">
+    <value>Η μονάδα ή το μέλος διερευνά, αξιολογεί ή εκτιμά την κατάσταση.</value>
+  </data>
+  <data name="BaseTypeDescription.dispatched" xml:space="preserve">
+    <value>Η μονάδα ή το μέλος στάλθηκε ή ανατέθηκε αλλά δεν έχει ξεκινήσει ακόμη.</value>
+  </data>
+  <data name="BaseTypeDescription.cleared" xml:space="preserve">
+    <value>Η μονάδα ή το μέλος ολοκλήρωσε την κλήση ή το συμβάν και επιστρέφει σε διαθεσιμότητα.</value>
+  </data>
+  <data name="BaseTypeDescription.returning" xml:space="preserve">
+    <value>Η μονάδα ή το μέλος επιστρέφει στον σταθμό, το κλιμάκιο ή τη βάση.</value>
+  </data>
+  <data name="BaseTypeDescription.staging" xml:space="preserve">
+    <value>Η μονάδα ή το μέλος αναμένει σε ασφαλές σημείο συγκέντρωσης για ανάθεση ή εντολές.</value>
+  </data>
+  <data name="BaseTypeDescription.unavailable" xml:space="preserve">
+    <value>Η μονάδα ή το μέλος είναι εκτός υπηρεσίας και μη διαθέσιμο για ανάθεση.</value>
+  </data>
+  <data name="BaseTypeDescription.enroute" xml:space="preserve">
+    <value>Η μονάδα ή το μέλος μετακινείται προς ανάθεση, προορισμό ή τοποθεσία χωρίς επείγον.</value>
+  </data>
+  <data name="BaseTypeDescription.transporting" xml:space="preserve">
+    <value>Η μονάδα ή το μέλος μεταφέρει ασθενή, πρόσωπο, κρατούμενο ή φορτίο σε προορισμό.</value>
+  </data>
+  <data name="BaseTypeDescription.delivering" xml:space="preserve">
+    <value>Η μονάδα ή το μέλος παραδίδει αγαθά, εφόδια, εξοπλισμό ή εμπορεύματα σε παραλήπτη ή σημείο παράδοσης.</value>
+  </data>
+  <data name="BaseTypeDescription.atpatient" xml:space="preserve">
+    <value>Η μονάδα ή το μέλος έφτασε σε ασθενή ή αναζητούμενο πρόσωπο και παρέχει φροντίδα ή είναι σε επαφή μαζί του.</value>
+  </data>
+  <data name="BaseTypeDescription.athospital" xml:space="preserve">
+    <value>Η μονάδα ή το μέλος έφτασε σε νοσοκομείο ή μονάδα υποδοχής για την παράδοση του ασθενούς.</value>
+  </data>
+  <data name="BaseTypeDescription.searching" xml:space="preserve">
+    <value>Η μονάδα ή το μέλος διεξάγει ενεργή έρευνα σε ανατεθειμένη περιοχή, τομέα ή κάνναβο.</value>
+  </data>
+  <data name="BaseTypeDescription.loading" xml:space="preserve">
+    <value>Η μονάδα ή το μέλος φορτώνει ή παραλαμβάνει φορτίο, εφόδια, εξοπλισμό ή πρόσωπο πριν τη μεταφορά.</value>
+  </data>
+  <data name="BaseTypeDescription.standby" xml:space="preserve">
+    <value>Η μονάδα ή το μέλος βρίσκεται σε εφεδρεία, αναμονή ή επιφυλακή και είναι έτοιμο για ανάθεση.</value>
+  </data>
+  <data name="BaseTypeDescription.onpatrol" xml:space="preserve">
+    <value>Η μονάδα ή το μέλος περιπολεί σε ανατεθειμένη περιοχή παραμένοντας διαθέσιμο για αποστολή.</value>
+  </data>
+  <data name="BaseTypeDescription.maintenance" xml:space="preserve">
+    <value>Η μονάδα ή το μέλος είναι εκτός υπηρεσίας για συντήρηση, ανεφοδιασμό, αναπλήρωση, καθαρισμό ή σέρβις.</value>
+  </data>
+  <data name="BaseTypeDescription.onbreak" xml:space="preserve">
+    <value>Η μονάδα ή το μέλος είναι σε διάλειμμα ξεκούρασης ή φαγητού και προσωρινά μη διαθέσιμο.</value>
+  </data>
+  <data name="BaseTypeDescription.completed" xml:space="preserve">
+    <value>Η ανάθεση, εργασία ή παράδοση ολοκληρώθηκε· η μονάδα ή το μέλος ολοκληρώνει και γίνεται διαθέσιμο.</value>
+  </data>
+  <data name="BaseTypeDescription.inquarters" xml:space="preserve">
+    <value>Η μονάδα ή το μέλος είναι σε υπηρεσία και διαθέσιμο στον σταθμό του. Οι συστάσεις αποστολής μετρούν τη μονάδα από τον σταθμό αντί για τη θέση GPS και προσθέτουν τον χρόνο εξόδου από τον σταθμό.</value>
   </data>
 </root>

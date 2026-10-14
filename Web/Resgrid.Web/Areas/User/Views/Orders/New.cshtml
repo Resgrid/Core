@@ -193,6 +193,9 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-xs-12">
+                                        <div class="text-right m-b-xs">
+                                            <a id="addItemButton" class="btn btn-success btn-xs" onclick="resgrid.orders.newOrder.addItem();" data-original-title="@localizer["AddButton"]">@localizer["AddButton"]</a>
+                                        </div>
                                         <table id="orders" class="table table-striped table-bordered">
                                             <thead>
                                                 <tr>
@@ -202,7 +205,7 @@
                                                     <th>@localizer["FinancialCodeColumn"]</th>
                                                     <th>@localizer["SpecialNeedsColumn"]</th>
                                                     <th>@localizer["RequirementsColumn"]</th>
-                                                    <th style="width: 60px;font-size: 16px;"><a id="addItemButton" class="btn btn-success btn-xs" onclick="resgrid.orders.newOrder.addItem();" data-original-title="@localizer["AddButton"]">@localizer["AddButton"]</a></th>
+                                                    <th style="width: 1%;"></th>
                                                 </tr>
                                             </thead>
                                             <tbody></tbody>

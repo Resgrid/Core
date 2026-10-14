@@ -78,7 +78,28 @@ var resgrid;
                     $('#buttonColor').minicolors('value', '#000000');
                     $('#textColor').minicolors('value', '#FF5733');
                 });
+
+                $('#applySuggestedMeanings').on('click', applySuggestedMeanings);
             });
+            // Fills in the meanings suggested from the option names. Nothing is saved until the form is submitted (Update).
+            function applySuggestedMeanings() {
+                $('#options td[data-suggested]').each(function () {
+                    var cell = $(this);
+                    $('#baseType_' + cell.data('row')).val(cell.data('suggested'));
+                    cell.empty().append($('<span class="text-success">').text(cell.data('suggestedName')));
+                });
+                $('#applySuggestedMeanings').prop('disabled', true);
+                $('#suggestedMeaningsApplied').show();
+
+                // Recount: options the names gave no hint for still have no meaning.
+                var remaining = $('#options input[id^="baseType_"]').filter(function () { return parseInt($(this).val(), 10) < 0; }).length;
+                var header = $('#missingMeaningsHeader');
+                if (remaining > 0)
+                    header.text(String(header.data('format')).replace('{0}', remaining));
+                else
+                    header.hide();
+            }
+            editstatus.applySuggestedMeanings = applySuggestedMeanings;
             function hiddenInput(name, value) {
                 return $('<input type="hidden">').attr({ id: name, name: name }).val(value);
             }
@@ -106,8 +127,10 @@ var resgrid;
                     hiddenInput('detailType_' + n, detailTypeVal),
                     hiddenInput('noteType_' + n, noteTypeVal),
                     hiddenInput('requireGps_' + n, requireGpsVal)));
+                // What the new option means (its base type), as picked in the dialog.
+                row.append($('<td style="font-size: 13px;">').text($('#baseType').length ? $('#baseType option:selected').text() : ''));
                 // Unit and personnel sets show a Next statuses column; a new option has none until it is saved and edited.
-                if ($('#options thead th').length > 4) {
+                if (String($('#options').data('hasNext')) === 'true') {
                     row.append($('<td>'));
                 }
                 row.append($('<td style="text-align:center;">').append(

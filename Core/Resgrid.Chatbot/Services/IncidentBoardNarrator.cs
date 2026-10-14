@@ -294,7 +294,7 @@ namespace Resgrid.Chatbot.Services
 				.OrderBy(o => o.SortOrder)
 				.ToList();
 
-			var playbook = IcsPlaybooks.Infer(context.Call, context.Command?.Name);
+			var playbook = IcsPlaybooks.Infer(context.Call, context.Command?.Name, context.CallTypeClass);
 			var sb = new StringBuilder();
 
 			if (objectives.Count == 0)
@@ -452,7 +452,7 @@ namespace Resgrid.Chatbot.Services
 					: ChatbotResources.Get("Incident_RoleFilled", culture, IncidentRoleVocabulary.DisplayName(role.Value), string.Join(", ", holders));
 			}
 
-			var playbook = IcsPlaybooks.Infer(context.Call, context.Command?.Name);
+			var playbook = IcsPlaybooks.Infer(context.Call, context.Command?.Name, context.CallTypeClass);
 			var sb = new StringBuilder();
 			sb.AppendLine(ChatbotResources.Get("Incident_RolesHeader", culture, IncidentLabel(context), active.Count));
 
@@ -565,7 +565,7 @@ namespace Resgrid.Chatbot.Services
 			var names = await GetPersonNamesAsync(session);
 			var department = await _departmentsService.GetDepartmentByIdAsync(session.DepartmentId);
 			var resourceNames = await BuildResourceNameLookupAsync(context, session, names);
-			var playbook = IcsPlaybooks.Infer(context.Call, command.Name);
+			var playbook = IcsPlaybooks.Infer(context.Call, command.Name, context.CallTypeClass);
 
 			var sb = new StringBuilder();
 			sb.AppendLine(ChatbotResources.Get("Incident_BriefingHeader", culture, IncidentLabel(context)));
@@ -657,7 +657,7 @@ namespace Resgrid.Chatbot.Services
 		public async Task<string> DescribeChecklistAsync(IncidentContext context, ChatbotSession session, string incidentTypeText)
 		{
 			var culture = session?.Culture;
-			var playbook = IcsPlaybooks.Resolve(incidentTypeText) ?? IcsPlaybooks.Infer(context.Call, context.Command?.Name);
+			var playbook = IcsPlaybooks.Resolve(incidentTypeText) ?? IcsPlaybooks.Infer(context.Call, context.Command?.Name, context.CallTypeClass);
 			var board = context.Board;
 			var names = await GetPersonNamesAsync(session);
 
@@ -777,7 +777,7 @@ namespace Resgrid.Chatbot.Services
 			var command = board.Command;
 			var names = await GetPersonNamesAsync(session);
 			var resourceNames = await BuildResourceNameLookupAsync(context, session, names);
-			var playbook = IcsPlaybooks.Infer(context.Call, command.Name);
+			var playbook = IcsPlaybooks.Infer(context.Call, command.Name, context.CallTypeClass);
 			var liveNodes = LiveNodes(board);
 			var liveAssignments = LiveAssignments(board);
 			var par = ParBuckets(board);

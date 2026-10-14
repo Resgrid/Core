@@ -40,7 +40,7 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 				return json;
 
 			var priorities = ((await callsService.GetCallPrioritiesForDepartmentAsync(department.DepartmentId)) ?? new List<DepartmentCallPriority>())
-				.Where(p => p.DepartmentCallPriorityId > 3)
+				.Where(p => p.DepartmentCallPriorityId > 3 || p.DepartmentId == department.DepartmentId) // and its own ids 0 to 3 (the oldest departments)
 				.Concat(callsService.GetDefaultCallPriorities() ?? new List<DepartmentCallPriority>())
 				.GroupBy(p => p.DepartmentCallPriorityId).ToDictionary(g => g.Key, g => g.First());
 

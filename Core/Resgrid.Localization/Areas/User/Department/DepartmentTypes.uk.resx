@@ -251,4 +251,118 @@
   <data name="NewContactNoteTypeHeader" xml:space="preserve">
     <value>New Contact Note Type</value>
   </data>
+  <data name="CallTypeClassLabel" xml:space="preserve">
+    <value>Клас</value>
+  </data>
+  <data name="CallTypeClassHelp" xml:space="preserve">
+    <value>Який це вид виклику. Resgrid використовує клас, а не назву, для звітів, налаштувань за замовчуванням та інтеграцій, тож підрозділ може називати типи викликів як завгодно.</value>
+  </data>
+  <data name="UnitTypeClassLabel" xml:space="preserve">
+    <value>Клас</value>
+  </data>
+  <data name="UnitTypeClassHelp" xml:space="preserve">
+    <value>Який це вид одиниці. Resgrid використовує клас, а не назву, для звітів, налаштувань за замовчуванням та інтеграцій.</value>
+  </data>
+  <data name="CallPriorityBaseTypeLabel" xml:space="preserve">
+    <value>Значення</value>
+  </data>
+  <data name="CallPriorityBaseTypeHelp" xml:space="preserve">
+    <value>Якому стандартному пріоритету відповідає цей. Resgrid використовує його там, де пріоритети потрібно порівнювати між підрозділами чи застосунками, наприклад у звітах і під час сортування за терміновістю.</value>
+  </data>
+  <data name="BaseTypeNone" xml:space="preserve">
+    <value>Немає</value>
+  </data>
+  <data name="SuggestedFromName" xml:space="preserve">
+    <value>Пропозиція за назвою: {0}</value>
+  </data>
+  <data name="CallTypeClass.Fire" xml:space="preserve">
+    <value>Пожежа</value>
+  </data>
+  <data name="CallTypeClass.Medical" xml:space="preserve">
+    <value>Медичний</value>
+  </data>
+  <data name="CallTypeClass.Rescue" xml:space="preserve">
+    <value>Рятування</value>
+  </data>
+  <data name="CallTypeClass.TrafficCollision" xml:space="preserve">
+    <value>ДТП</value>
+  </data>
+  <data name="CallTypeClass.HazardousMaterials" xml:space="preserve">
+    <value>Небезпечні речовини</value>
+  </data>
+  <data name="CallTypeClass.Alarm" xml:space="preserve">
+    <value>Сигналізація</value>
+  </data>
+  <data name="CallTypeClass.ServiceCall" xml:space="preserve">
+    <value>Службовий виклик</value>
+  </data>
+  <data name="CallTypeClass.LawEnforcement" xml:space="preserve">
+    <value>Правоохоронний</value>
+  </data>
+  <data name="CallTypeClass.DisasterWeather" xml:space="preserve">
+    <value>Катастрофа або негода</value>
+  </data>
+  <data name="CallTypeClass.MutualAid" xml:space="preserve">
+    <value>Взаємодопомога</value>
+  </data>
+  <data name="CallTypeClass.NonEmergencyActivity" xml:space="preserve">
+    <value>Нетермінова діяльність</value>
+  </data>
+  <data name="CallTypeClass.Other" xml:space="preserve">
+    <value>Інше</value>
+  </data>
+  <data name="UnitTypeClass.Engine" xml:space="preserve">
+    <value>Пожежна автоцистерна</value>
+  </data>
+  <data name="UnitTypeClass.Aerial" xml:space="preserve">
+    <value>Автодрабина</value>
+  </data>
+  <data name="UnitTypeClass.Rescue" xml:space="preserve">
+    <value>Рятувальний</value>
+  </data>
+  <data name="UnitTypeClass.Tanker" xml:space="preserve">
+    <value>Автоцистерна</value>
+  </data>
+  <data name="UnitTypeClass.Ambulance" xml:space="preserve">
+    <value>Швидка</value>
+  </data>
+  <data name="UnitTypeClass.MedicalResponse" xml:space="preserve">
+    <value>Медичне реагування</value>
+  </data>
+  <data name="UnitTypeClass.Wildland" xml:space="preserve">
+    <value>Лісова пожежа</value>
+  </data>
+  <data name="UnitTypeClass.HazardousMaterials" xml:space="preserve">
+    <value>Небезпечні речовини</value>
+  </data>
+  <data name="UnitTypeClass.Command" xml:space="preserve">
+    <value>Командування</value>
+  </data>
+  <data name="UnitTypeClass.Support" xml:space="preserve">
+    <value>Забезпечення</value>
+  </data>
+  <data name="UnitTypeClass.Watercraft" xml:space="preserve">
+    <value>Плавзасіб</value>
+  </data>
+  <data name="UnitTypeClass.Aircraft" xml:space="preserve">
+    <value>Повітряне судно</value>
+  </data>
+  <data name="UnitTypeClass.Patrol" xml:space="preserve">
+    <value>Патруль</value>
+  </data>
+  <data name="UnitTypeClass.Other" xml:space="preserve">
+    <value>Інше</value>
+  </data>
+  <data name="CallPriorityMeaning.Low" xml:space="preserve">
+    <value>Низький</value>
+  </data>
+  <data name="CallPriorityMeaning.Medium" xml:space="preserve">
+    <value>Середній</value>
+  </data>
+  <data name="CallPriorityMeaning.High" xml:space="preserve">
+    <value>Високий</value>
+  </data>
+  <data name="CallPriorityMeaning.Emergency" xml:space="preserve">
+    <value>Екстрений</value>
+  </data>
 </root>

@@ -406,8 +406,8 @@ namespace Resgrid.Model.CustomStates
 		{
 			// Personnel "staffing" is an INDIVIDUAL person's availability/staffing status (e.g. "I'm
 			// available for calls" or "I'm away") -- NOT the group/crew staffing of a unit (that is computed
-			// from unit roles, see UnitRoleStaffingResult). These are personal availability sets, so they do
-			// not carry an operational base type, GPS or call/station detail association.
+			// from unit roles, see UnitRoleStaffingResult). These are personal availability sets, so they carry a
+			// staffing meaning (StaffingBaseTypes) but no GPS or call/station detail association.
 			return new List<CustomStateTemplate>
 			{
 				new CustomStateTemplate
@@ -420,9 +420,9 @@ namespace Resgrid.Model.CustomStates
 					Keywords = new[] { "general", "standard", "available", "availability", "basic" },
 					Details = new List<CustomStateTemplateDetail>
 					{
-						D(0, "Available", ActionBaseTypes.None, Green),
-						D(1, "Delayed", ActionBaseTypes.None, Yellow, Black),
-						D(2, "Unavailable", ActionBaseTypes.None, Gray)
+						S(0, "Available", StaffingBaseTypes.Available, Green),
+						S(1, "Delayed", StaffingBaseTypes.Delayed, Yellow, Black),
+						S(2, "Unavailable", StaffingBaseTypes.Unavailable, Gray)
 					}
 				},
 				new CustomStateTemplate
@@ -435,11 +435,11 @@ namespace Resgrid.Model.CustomStates
 					Keywords = new[] { "detailed", "available", "committed", "delayed", "away", "availability" },
 					Details = new List<CustomStateTemplateDetail>
 					{
-						D(0, "Available", ActionBaseTypes.None, Green),
-						D(1, "Delayed", ActionBaseTypes.None, Yellow, Black),
-						D(2, "Committed", ActionBaseTypes.None, Orange, Black),
-						D(3, "Away", ActionBaseTypes.None, LightGray, Black),
-						D(4, "Unavailable", ActionBaseTypes.None, Gray)
+						S(0, "Available", StaffingBaseTypes.Available, Green),
+						S(1, "Delayed", StaffingBaseTypes.Delayed, Yellow, Black),
+						S(2, "Committed", StaffingBaseTypes.Committed, Orange, Black),
+						S(3, "Away", StaffingBaseTypes.Unavailable, LightGray, Black),
+						S(4, "Unavailable", StaffingBaseTypes.Unavailable, Gray)
 					}
 				},
 				new CustomStateTemplate
@@ -452,10 +452,10 @@ namespace Resgrid.Model.CustomStates
 					Keywords = new[] { "duty", "shift", "on call", "off duty", "break", "security", "industrial" },
 					Details = new List<CustomStateTemplateDetail>
 					{
-						D(0, "On Duty", ActionBaseTypes.None, Green),
-						D(1, "On Call", ActionBaseTypes.None, Blue),
-						D(2, "On Break", ActionBaseTypes.None, LightGray, Black),
-						D(3, "Off Duty", ActionBaseTypes.None, Gray)
+						S(0, "On Duty", StaffingBaseTypes.OnShift, Green),
+						S(1, "On Call", StaffingBaseTypes.OnCall, Blue),
+						S(2, "On Break", StaffingBaseTypes.Delayed, LightGray, Black),
+						S(3, "Off Duty", StaffingBaseTypes.OffDuty, Gray)
 					}
 				},
 				new CustomStateTemplate
@@ -468,10 +468,10 @@ namespace Resgrid.Model.CustomStates
 					Keywords = new[] { "volunteer", "available", "committed", "not available", "availability" },
 					Details = new List<CustomStateTemplateDetail>
 					{
-						D(0, "Available", ActionBaseTypes.None, Green),
-						D(1, "Delayed", ActionBaseTypes.None, Yellow, Black),
-						D(2, "Committed", ActionBaseTypes.None, Orange, Black),
-						D(3, "Not Available", ActionBaseTypes.None, Gray)
+						S(0, "Available", StaffingBaseTypes.Available, Green),
+						S(1, "Delayed", StaffingBaseTypes.Delayed, Yellow, Black),
+						S(2, "Committed", StaffingBaseTypes.Committed, Orange, Black),
+						S(3, "Not Available", StaffingBaseTypes.Unavailable, Gray)
 					}
 				}
 			};
@@ -493,6 +493,14 @@ namespace Resgrid.Model.CustomStates
 				NoteType = note,
 				DetailType = detail
 			};
+		}
+
+		/// <summary>Compact factory for a staffing template button.</summary>
+		private static CustomStateTemplateDetail S(int order, string text, StaffingBaseTypes baseType, string bg, string fg = White)
+		{
+			var detail = D(order, text, ActionBaseTypes.None, bg, fg);
+			detail.StaffingBaseType = baseType;
+			return detail;
 		}
 
 		#endregion Builders

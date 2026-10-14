@@ -32,6 +32,22 @@ namespace Resgrid.Services
 			return await _callQuickTemplateRepository.SaveOrUpdateAsync(template, cancellationToken);
 		}
 
+		public async Task<int> RenameCallTypeInTemplatesAsync(int departmentId, string oldName, string newName, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			if (string.IsNullOrWhiteSpace(oldName) || string.IsNullOrWhiteSpace(newName) || CallTypeLink.SameName(oldName, newName))
+				return 0;
+
+			var renamed = 0;
+			foreach (var template in (await GetAllCallQuickTemplatesForDepartmentAsync(departmentId)).Where(x => CallTypeLink.SameName(x.CallType, oldName)))
+			{
+				template.CallType = newName;
+				await _callQuickTemplateRepository.SaveOrUpdateAsync(template, cancellationToken);
+				renamed++;
+			}
+
+			return renamed;
+		}
+
 		public async Task<CallQuickTemplate> GetCallQuickTemplateByIdAsync(int id)
 		{
 			return await _callQuickTemplateRepository.GetByIdAsync(id);

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Text;
 using Resgrid.Model;
 using Resgrid.Web.Areas.User.Models.Home;
@@ -117,7 +117,8 @@ namespace Resgrid.Web.Areas.User.Models
 				
 				if (userState != null)
 				{
-					if (userState.State <= 25)
+					var customStaffing = await CustomStatesHelper.FindCustomState(department.DepartmentId, CustomStateTypes.Staffing, userState.State);
+					if (customStaffing == null && userState.State <= 25)
 					{
 						if (userState.State == 0)
 						{
@@ -147,7 +148,7 @@ namespace Resgrid.Web.Areas.User.Models
 					}
 					else
 					{
-						var customState = await CustomStatesHelper.GetCustomState(department.DepartmentId, userState.State);
+						var customState = customStaffing;
 
 						if (customState != null)
 						{
@@ -182,7 +183,8 @@ namespace Resgrid.Web.Areas.User.Models
 
 					statusValue = actionLog.ActionTypeId;
 
-					if (actionLog.ActionTypeId <= 25)
+					var customStatus = await CustomStatesHelper.FindCustomState(department.DepartmentId, CustomStateTypes.Personnel, actionLog.ActionTypeId);
+					if (customStatus == null && actionLog.ActionTypeId <= 25)
 					{
 						if (actionLog.ActionTypeId == 1)
 						{
@@ -280,7 +282,6 @@ namespace Resgrid.Web.Areas.User.Models
 					}
 					else
 					{
-						var customStatus = await CustomStatesHelper.GetCustomState(department.DepartmentId, actionLog.ActionTypeId);
 
 						if (customStatus != null)
 						{

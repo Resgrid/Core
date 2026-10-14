@@ -1,7 +1,5 @@
 @inject Resgrid.Model.Services.IFeatureToggleService featureToggleService
 @inject Resgrid.Model.Services.IReadinessAccessService readinessAccess
-@inject IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> workOrderLocalizer
-@inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> checklistLocalizer
 @inject Resgrid.Model.Services.IRecordsAuthorizationService recordsAuthorization
 @inject Resgrid.Model.Services.IRecordsCutoverService recordsCutover
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> recordsLocalizer
@@ -86,30 +84,30 @@
 				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User"><i class="fa fa-home"></i> <span class="nav-label" data-i18n="nav.home">@commonLocalizer["HomeModule"]</span></a>
 			</li>
 			<li class="@Html.IsSelected(controller: "Dispatch")">
-				<a asp-controller="Dispatch" asp-action="Dashboard" asp-route-area="User"><i class="fa fa-bullhorn"></i> <span class="nav-label" data-i18n="nav.calls">@commonLocalizer["CallsModule"]</span></a>
+				<a asp-controller="Dispatch" asp-action="Dashboard" asp-route-area="User"><i class="fa fa-bullhorn"></i> <span class="nav-label" data-i18n="nav.calls">@(await departmentTerms.NameAsync(DepartmentTerms.Calls))</span></a>
 			</li>
 			<li class="@Html.IsSelected(controller: "Personnel")">
-				<a asp-controller="Personnel" asp-action="Index" asp-route-area="User"><i class="fa fa-user"></i> <span class="nav-label" data-i18n="nav.personnel">@commonLocalizer["PersonnelModule"]</span></a>
+				<a asp-controller="Personnel" asp-action="Index" asp-route-area="User"><i class="fa fa-user"></i> <span class="nav-label" data-i18n="nav.personnel">@(await departmentTerms.NameAsync(DepartmentTerms.Personnel))</span></a>
 			</li>
 			<li class="@Html.IsSelected(controller: "Units")">
-				<a asp-controller="Units" asp-action="Index" asp-route-area="User"><i class="fa fa-road"></i> <span class="nav-label" data-i18n="nav.units">@commonLocalizer["UnitsModule"]</span></a>
+				<a asp-controller="Units" asp-action="Index" asp-route-area="User"><i class="fa fa-road"></i> <span class="nav-label" data-i18n="nav.units">@(await departmentTerms.NameAsync(DepartmentTerms.Units))</span></a>
 			</li>
 			@if (ClaimsAuthorizationHelper.CanViewContacts())
 			{
 				<li class="@Html.IsSelected(controller: "Contacts")">
-					<a asp-controller="Contacts" asp-action="Index" asp-route-area="User"><i class="fa fa-address-book"></i> <span class="nav-label" data-i18n="nav.contacts">@commonLocalizer["ContactsModule"]</span></a>
+					<a asp-controller="Contacts" asp-action="Index" asp-route-area="User"><i class="fa fa-address-book"></i> <span class="nav-label" data-i18n="nav.contacts">@(await departmentTerms.NameAsync(DepartmentTerms.Contacts))</span></a>
 				</li>
 			}
 			@if (SettingsHelper.IsMappingEnabled())
 			{
 				<li class="@Html.IsSelected(controller: "Mapping")">
-					<a asp-controller="Mapping" asp-action="Index" asp-route-area="User"><i class="fa fa-map-marker"></i> <span class="nav-label" data-i18n="nav.mapping">@commonLocalizer["MappingModule"]</span></a>
+					<a asp-controller="Mapping" asp-action="Index" asp-route-area="User"><i class="fa fa-map-marker"></i> <span class="nav-label" data-i18n="nav.mapping">@(await departmentTerms.NameAsync(DepartmentTerms.Mapping))</span></a>
 				</li>
 			}
 			@if (SettingsHelper.IsShiftsEnabled())
 			{
 				<li class="@Html.IsSelected(controller: "Shifts")">
-					<a asp-controller="Shifts" asp-action="Index" asp-route-area="User"><i class="fa fa-briefcase"></i> <span class="nav-label" data-i18n="nav.mapping">@commonLocalizer["ShiftsModule"]</span></a>
+					<a asp-controller="Shifts" asp-action="Index" asp-route-area="User"><i class="fa fa-briefcase"></i> <span class="nav-label" data-i18n="nav.mapping">@(await departmentTerms.NameAsync(DepartmentTerms.Shifts))</span></a>
 				</li>
 			}
 			@if (SettingsHelper.IsLogsEnabled() && recordsEnabled)
@@ -141,9 +139,9 @@
 				var onRecordsQueue = Html.IsController("Records") && !onRecordsDashboard;
 
 				<li class="sidebar-module-group @(onRecordsPage ? "active mm-active" : null)">
-					<a href="#" aria-label="@commonLocalizer["RecordsModule"]" aria-controls="records-menu" aria-expanded="@(onRecordsPage ? "true" : "false")">
+					<a href="#" aria-label="@(await departmentTerms.NameAsync(DepartmentTerms.Records))" aria-controls="records-menu" aria-expanded="@(onRecordsPage ? "true" : "false")">
 						<i class="fa fa-file"></i>
-						<span class="nav-label" data-i18n="nav.records">@commonLocalizer["RecordsModule"]</span>
+						<span class="nav-label" data-i18n="nav.records">@(await departmentTerms.NameAsync(DepartmentTerms.Records))</span>
 						<span class="fa arrow"></span>
 					</a>
 					<ul class="nav nav-second-level" id="records-menu">
@@ -201,62 +199,62 @@
 			@if (SettingsHelper.IsLogsEnabled() && !recordsUsable)
 			{
 				<li class="@Html.IsSelected(controller: "Logs")">
-					<a asp-controller="Logs" asp-action="Index" asp-route-area="User"><i class="fa fa-file"></i> <span class="nav-label" data-i18n="nav.logs">@commonLocalizer["LogsModule"]</span></a>
+					<a asp-controller="Logs" asp-action="Index" asp-route-area="User"><i class="fa fa-file"></i> <span class="nav-label" data-i18n="nav.logs">@(await departmentTerms.NameAsync(DepartmentTerms.Logs))</span></a>
 				</li>
 			}
 			@if (SettingsHelper.IsReportsEnabled())
 			{
 				<li class="@Html.IsSelected(controller: "Reports")">
-					<a asp-controller="Reports" asp-action="Index" asp-route-area="User"><i class="fa fa-files-o"></i> <span class="nav-label" data-i18n="nav.reports">@commonLocalizer["ReportsModule"]</span></a>
+					<a asp-controller="Reports" asp-action="Index" asp-route-area="User"><i class="fa fa-files-o"></i> <span class="nav-label" data-i18n="nav.reports">@(await departmentTerms.NameAsync(DepartmentTerms.Reports))</span></a>
 				</li>
 			}
 			@if (SettingsHelper.IsDocumentsEnabled())
 			{
 				<li class="@Html.IsSelected(controller: "Documents")">
-					<a asp-controller="Documents" asp-action="Index" asp-route-area="User"><i class="fa fa-file-archive-o"></i> <span class="nav-label" data-i18n="nav.documents">@commonLocalizer["DocumentsModule"]</span></a>
+					<a asp-controller="Documents" asp-action="Index" asp-route-area="User"><i class="fa fa-file-archive-o"></i> <span class="nav-label" data-i18n="nav.documents">@(await departmentTerms.NameAsync(DepartmentTerms.Documents))</span></a>
 				</li>
 			}
 			@if (SettingsHelper.IsCalendarEnabled())
 			{
 				<li class="@Html.IsSelected(controller: "Calendar")">
-					<a asp-controller="Calendar" asp-action="Index" asp-route-area="User"><i class="fa fa-calendar"></i> <span class="nav-label" data-i18n="nav.calendar">@commonLocalizer["CalendarModule"]</span></a>
+					<a asp-controller="Calendar" asp-action="Index" asp-route-area="User"><i class="fa fa-calendar"></i> <span class="nav-label" data-i18n="nav.calendar">@(await departmentTerms.NameAsync(DepartmentTerms.Calendar))</span></a>
 				</li>
 			}
 			@if (SettingsHelper.IsNotesEnabled())
 			{
 				<li class="@Html.IsSelected(controller: "Notes")">
-					<a asp-controller="Notes" asp-action="Index" asp-route-area="User"><i class="fa fa-clipboard"></i> <span class="nav-label" data-i18n="nav.notes">@commonLocalizer["NotesModule"]</span></a>
+					<a asp-controller="Notes" asp-action="Index" asp-route-area="User"><i class="fa fa-clipboard"></i> <span class="nav-label" data-i18n="nav.notes">@(await departmentTerms.NameAsync(DepartmentTerms.Notes))</span></a>
 				</li>
 			}
 			@if (SettingsHelper.IsTrainingEnabled())
 			{
 				<li class="@Html.IsSelected(controller: "Trainings")">
-					<a asp-controller="Trainings" asp-action="Index" asp-route-area="User"><i class="fa fa-book"></i> <span class="nav-label" data-i18n="nav.trainings">@commonLocalizer["TrainingsModule"]</span></a>
+					<a asp-controller="Trainings" asp-action="Index" asp-route-area="User"><i class="fa fa-book"></i> <span class="nav-label" data-i18n="nav.trainings">@(await departmentTerms.NameAsync(DepartmentTerms.Trainings))</span></a>
 				</li>
 			}
 			@if (SettingsHelper.IsInventoryEnabled())
 			{
 				<li class="@Html.IsSelected(controller: "Inventory")">
-					<a asp-controller="Inventory" asp-action="Index" asp-route-area="User"><i class="fa fa-barcode"></i> <span class="nav-label" data-i18n="nav.inventory">@commonLocalizer["InventoryModule"]</span></a>
+					<a asp-controller="Inventory" asp-action="Index" asp-route-area="User"><i class="fa fa-barcode"></i> <span class="nav-label" data-i18n="nav.inventory">@(await departmentTerms.NameAsync(DepartmentTerms.Inventory))</span></a>
 				</li>
 			}
 			@if (showWorkOrders || showChecklists)
 			{
 				<li class="sidebar-module-group @(onReadinessPage ? "active mm-active" : null)">
-					<a href="#" aria-label="@commonLocalizer["NavigationReadiness"]" aria-controls="readiness-menu" aria-expanded="@(onReadinessPage ? "true" : "false")">
+					<a href="#" aria-label="@(await departmentTerms.NameAsync(DepartmentTerms.Readiness))" aria-controls="readiness-menu" aria-expanded="@(onReadinessPage ? "true" : "false")">
 						<i class="fa fa-check-square-o" aria-hidden="true"></i>
-						<span class="nav-label">@commonLocalizer["NavigationReadiness"]</span>
+						<span class="nav-label">@(await departmentTerms.NameAsync(DepartmentTerms.Readiness))</span>
 						<span class="fa arrow" aria-hidden="true"></span>
 					</a>
 					<ul class="nav nav-second-level" id="readiness-menu">
 						@if (showWorkOrders)
 						{
-							<li class="@(Html.IsController("WorkOrders", "WorkOrderMaintenance", "WorkOrderOperations", "WorkOrderReporting") ? "active" : null)"><a asp-controller="WorkOrders" asp-action="Index" asp-route-area="User"><i class="fa fa-wrench"></i> <span class="nav-label">@workOrderLocalizer["WorkOrders"]</span></a></li>
+							<li class="@(Html.IsController("WorkOrders", "WorkOrderMaintenance", "WorkOrderOperations", "WorkOrderReporting") ? "active" : null)"><a asp-controller="WorkOrders" asp-action="Index" asp-route-area="User"><i class="fa fa-wrench"></i> <span class="nav-label">@(await departmentTerms.NameAsync(DepartmentTerms.WorkOrders))</span></a></li>
 						}
 						@if (showChecklists)
 						{
 							<li class="@(Html.IsController("Checklists", "ChecklistsScheduling", "ChecklistReports", "ChecklistReporting", "ChecklistReminders") ? "active" : null)">
-								<a asp-controller="Checklists" asp-action="Index" asp-route-area="User"><i class="fa fa-check-square-o"></i> <span class="nav-label">@checklistLocalizer["Checklists"]</span></a>
+								<a asp-controller="Checklists" asp-action="Index" asp-route-area="User"><i class="fa fa-check-square-o"></i> <span class="nav-label">@(await departmentTerms.NameAsync(DepartmentTerms.Checklists))</span></a>
 							</li>
 						}
 					</ul>
@@ -265,9 +263,9 @@
 			@if (showCertifications || showWorkforce || showMyDemographics || showInvoicing || showDeployments || showContractorBilling || showCostRecovery)
 			{
 				<li class="sidebar-module-group @(onWorkforceBusinessPage ? "active mm-active" : null)">
-					<a href="#" aria-label="@commonLocalizer["NavigationWorkforceBusiness"]" aria-controls="workforce-business-menu" aria-expanded="@(onWorkforceBusinessPage ? "true" : "false")">
+					<a href="#" aria-label="@(await departmentTerms.NameAsync(DepartmentTerms.WorkforceBusiness))" aria-controls="workforce-business-menu" aria-expanded="@(onWorkforceBusinessPage ? "true" : "false")">
 						<i class="fa fa-briefcase" aria-hidden="true"></i>
-						<span class="nav-label">@commonLocalizer["NavigationWorkforceBusiness"]</span>
+						<span class="nav-label">@(await departmentTerms.NameAsync(DepartmentTerms.WorkforceBusiness))</span>
 						<span class="fa arrow" aria-hidden="true"></span>
 					</a>
 					<ul class="nav nav-second-level" id="workforce-business-menu">

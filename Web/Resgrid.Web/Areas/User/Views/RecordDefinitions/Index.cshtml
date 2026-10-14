@@ -47,7 +47,7 @@
 					@foreach (var d in Model.Definitions)
 					{
 						<tr class="@(d.Retired ? "text-muted" : "")">
-							<td>@d.Name @if (d.Retired) { <span class="label label-default">@localizer["DefinitionRetiredLabel"]</span> } @if (d.ArtifactStatus == RmsArtifactStatus.Compatible.ToString()) { <span class="label label-info" title="@d.TemplateKey">@d.JurisdictionProfileKey</span> }</td>
+							<td>@(d.Locked ? await departmentTerms.DefinitionAsync(d.Key, d.Name) : d.Name) @if (d.Retired) { <span class="label label-default">@localizer["DefinitionRetiredLabel"]</span> } @if (d.ArtifactStatus == RmsArtifactStatus.Compatible.ToString()) { <span class="label label-info" title="@d.TemplateKey">@d.JurisdictionProfileKey</span> }</td>
 							<td><code>@d.Key</code></td>
 							<td>@d.Category</td>
 							<td>@(d.Locked ? localizer["DefinitionLocked"].Value : d.Owner)</td>

@@ -34,6 +34,19 @@ namespace Resgrid.Web.Services.Models.v4.Security
 		public string DepartmentCode { get; set; }
 
 		/// <summary>
+		/// Novu subscriberHash for the user's own inbox subscriber ({DepartmentCode}_User_{userId}, Responder and
+		/// Dispatch apps). Pass it with the subscriber id when opening the inbox; required once the Novu
+		/// environment enforces HMAC. Null when Novu is not configured.
+		/// </summary>
+		public string NovuSubscriberHash { get; set; }
+
+		/// <summary>
+		/// Novu subscriberHash for the user's IC app inbox subscriber ({DepartmentCode}_IC_User_{userId}).
+		/// Null when Novu is not configured.
+		/// </summary>
+		public string NovuICSubscriberHash { get; set; }
+
+		/// <summary>
 		/// Users full name
 		/// </summary>
 		public string FullName { get; set; }

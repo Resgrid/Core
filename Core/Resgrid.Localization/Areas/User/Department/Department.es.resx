@@ -319,16 +319,16 @@
     <value>Estado de la unidad al liberar una llamada</value>
   </data>
   <data name="UnitCallReleaseStatusHelp" xml:space="preserve">
-    <value>Se aplica a las unidades que siguen trabajando en una llamada cuando se cierra o se las retira de ella. Una unidad que ya está de nuevo en servicio, fuera de servicio (no disponible, en mantenimiento o en descanso) o trabajando en otra llamada conserva su estado. Los estados personalizados se interpretan por su tipo base.</value>
+    <value>Se aplica del mismo modo, por significado, a las unidades que siguen trabajando en una llamada cuando se cierra o se las retira de ella. Una unidad que ya está de nuevo en servicio, fuera de servicio (no disponible, en mantenimiento o en descanso) o trabajando en otra llamada conserva su estado; los estados personalizados se interpretan por su tipo base. Predeterminado aplica el estado de vuelta al servicio (Liberada, Disponible o En la estación) en los estados personalizados y Liberada en los estados integrados.</value>
   </data>
   <data name="UnitDefaultStatusesHelp" xml:space="preserve">
-    <value>Estos estados de unidad predeterminados solo usan los tipos de estado de unidad integrados. Use la tabla de anulaciones por tipo de unidad que aparece abajo cuando un tipo de unidad necesite uno de sus propios estados personalizados.</value>
+    <value>Se aplica a las unidades despachadas a una llamada. Elija qué significa el estado: cada unidad recibe el estado de su propio conjunto de estados con ese significado (el primero por orden), de modo que un solo ajuste sirve para tipos de unidad con estados personalizados distintos. Predeterminado aplica Despachada (o En respuesta, o En camino) en los estados personalizados y En respuesta en los estados integrados.</value>
   </data>
   <data name="UnitTypeStatusOverridesHeader" xml:space="preserve">
     <value>Anulaciones de estado por tipo de unidad</value>
   </data>
   <data name="UnitTypeStatusOverridesHelp" xml:space="preserve">
-    <value>Aquí solo aparecen los tipos de unidad con estados de unidad personalizados. Deje la opción predeterminada («Default») para usar el estado integrado de todo el departamento indicado arriba.</value>
+    <value>Aquí solo aparecen los tipos de unidad con estados de unidad personalizados. Elija uno de los estados propios de un tipo de unidad cuando necesite uno concreto; Predeterminado usa el ajuste del departamento de arriba, aplicado a los estados del tipo de unidad.</value>
   </data>
   <data name="PersonnelSorting" xml:space="preserve">
     <value>Clasificación de personal</value>
@@ -1502,5 +1502,80 @@
   </data>
   <data name="DeleteDepartmentLegalHoldWarning" xml:space="preserve">
     <value>{0} retención(es) legal(es) activa(s) cubren los Registros de este departamento. La eliminación no se ejecutará hasta que se liberen todas.</value>
+  </data>
+  <data name="TerminologyHeader" xml:space="preserve">
+    <value>Terminología</value>
+  </data>
+  <data name="TerminologyIntro" xml:space="preserve">
+    <value>Use las palabras propias de su departamento. Un nombre definido aquí reemplaza el nombre de Resgrid para ese módulo o tipo de registro en la navegación, en los títulos de página, dondequiera que se listen los tipos de registro y en las apps Responder, Unit, IC y Dispatch, para todos los miembros y en todos los idiomas. Solo cambia la etiqueta: los permisos, enlaces e integraciones no se ven afectados. Deje un campo vacío para mantener el nombre de Resgrid.</value>
+  </data>
+  <data name="TerminologyModules" xml:space="preserve">
+    <value>Módulos</value>
+  </data>
+  <data name="TerminologyModulesHelp" xml:space="preserve">
+    <value>Se muestra en la navegación, como título de la página principal del módulo y en los menús de las apps. Las frases en otros lugares que mencionan un módulo conservan la redacción de Resgrid.</value>
+  </data>
+  <data name="TerminologyRecordTypes" xml:space="preserve">
+    <value>Tipos de registro</value>
+  </data>
+  <data name="TerminologyRecordTypesHelp" xml:space="preserve">
+    <value>Los tipos integrados de Registros y Bitácoras, dondequiera que se elija, liste, imprima o exporte un tipo. Para agregar un tipo propio, como Educación Pública, cree una definición de registro.</value>
+  </data>
+  <data name="TerminologyDefaultColumn" xml:space="preserve">
+    <value>Nombre de Resgrid</value>
+  </data>
+  <data name="TerminologyNameColumn" xml:space="preserve">
+    <value>Nombre de su departamento</value>
+  </data>
+  <data name="TerminologySaved" xml:space="preserve">
+    <value>Terminología guardada.</value>
+  </data>
+  <data name="TerminologyPartlySaved" xml:space="preserve">
+    <value>Sus demás nombres se guardaron.</value>
+  </data>
+  <data name="TerminologyTooLong" xml:space="preserve">
+    <value>Los nombres pueden tener como máximo {0} caracteres; los nombres más largos no se guardaron y se muestran para corregirlos.</value>
+  </data>
+  <data name="TerminologyRecordDefinitionsLink" xml:space="preserve">
+    <value>Definiciones de registro</value>
+  </data>
+  <data name="TerminologyRenameLink" xml:space="preserve">
+    <value>Renombrar módulos y tipos de registro</value>
+  </data>
+  <data name="UnitStatusTargetMeaningGroup" xml:space="preserve">
+    <value>Significado del estado</value>
+  </data>
+  <data name="UnitStatusTargetDefaultDispatch" xml:space="preserve">
+    <value>Predeterminado (Despachada, En respuesta o En camino)</value>
+  </data>
+  <data name="UnitStatusTargetDefaultRelease" xml:space="preserve">
+    <value>Predeterminado (de vuelta al servicio)</value>
+  </data>
+  <data name="UnitStatusTargetLeaveUnchanged" xml:space="preserve">
+    <value>No cambiar el estado de la unidad</value>
+  </data>
+  <data name="UnitStatusTargetLegacy" xml:space="preserve">
+    <value>Estado integrado: {0} (guardado antes de los significados de estado)</value>
+  </data>
+  <data name="UnitStatusTargetWarningsHeader" xml:space="preserve">
+    <value>Revise estos tipos de unidad</value>
+  </data>
+  <data name="UnitStatusTargetNoMatch" xml:space="preserve">
+    <value>{0}: su conjunto de estados "{1}" no tiene ningún estado que signifique {2}, así que sus unidades conservan su estado al {3}. Asigne un tipo base a uno de sus estados o elija uno en las anulaciones de abajo.</value>
+  </data>
+  <data name="UnitStatusTargetSeveral" xml:space="preserve">
+    <value>{0}: su conjunto de estados "{1}" tiene {2} estados que significan {3} ({4}); al {6} se usa {5}, el primero por orden.</value>
+  </data>
+  <data name="UnitStatusTargetNoBuiltIn" xml:space="preserve">
+    <value>{0}: ningún estado de unidad integrado significa {1}, así que sus unidades conservan su estado al {2}.</value>
+  </data>
+  <data name="UnitStatusTargetActionDispatch" xml:space="preserve">
+    <value>despachar</value>
+  </data>
+  <data name="UnitStatusTargetActionRelease" xml:space="preserve">
+    <value>liberar</value>
+  </data>
+  <data name="StatusMeaningOption" xml:space="preserve">
+    <value>Cualquier estado "{0}"</value>
   </data>
 </root>

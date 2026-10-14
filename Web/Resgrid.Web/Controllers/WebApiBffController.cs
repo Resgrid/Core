@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Sockets;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -137,14 +138,9 @@ namespace Resgrid.Web.Controllers
 					Response.StatusCode = StatusCodes.Status404NotFound;
 					return;
 				}
-				using var outbound = new HttpRequestMessage(new HttpMethod(Request.Method), target);
-				outbound.Headers.Authorization = new AuthenticationHeaderValue("Bearer", bearer);
-				outbound.Headers.TryAddWithoutValidation("Accept", Request.Headers.Accept.ToArray());
-				outbound.Headers.TryAddWithoutValidation("Accept-Language", Request.Headers.AcceptLanguage.ToArray());
-				outbound.Headers.TryAddWithoutValidation("X-Resgrid-Client", "web");
-
 				// Admin Assist protection remains attended: forward the caller's grant only to the
 				// validated first-party API, never the inference transport or token-exchange endpoint.
+				string forwardedGrant = null;
 				var adminAssist = canonicalPath.StartsWith("api/v4/AdminAssist/", StringComparison.OrdinalIgnoreCase);
 				if (adminAssist && Request.Headers.TryGetValue("X-Resgrid-Protected-Grant", out var protectedGrant))
 				{
@@ -154,24 +150,39 @@ namespace Resgrid.Web.Controllers
 						return;
 					}
 					if (!string.IsNullOrWhiteSpace(protectedGrant[0]))
-						outbound.Headers.TryAddWithoutValidation("X-Resgrid-Protected-Grant", protectedGrant[0]);
+						forwardedGrant = protectedGrant[0];
 				}
-
 
 				// Without this every proxied call reaches the API as the web pod's address, so audit rows
 				// and any per-IP policy upstream record the proxy rather than the person who acted.
 				var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
-				if (!string.IsNullOrWhiteSpace(clientIp))
-					outbound.Headers.TryAddWithoutValidation("X-Forwarded-For", clientIp);
 
-				if (Request.ContentLength.GetValueOrDefault() > 0 || HttpMethods.IsPost(Request.Method) ||
-					HttpMethods.IsPut(Request.Method) || HttpMethods.IsPatch(Request.Method))
+				var hasBody = Request.ContentLength.GetValueOrDefault() > 0 || HttpMethods.IsPost(Request.Method) ||
+					HttpMethods.IsPut(Request.Method) || HttpMethods.IsPatch(Request.Method);
+
+				HttpRequestMessage CreateOutbound()
 				{
-					outbound.Content = new StreamContent(Request.Body);
-					if (MediaTypeHeaderValue.TryParse(Request.ContentType, out var contentType))
-						outbound.Content.Headers.ContentType = contentType;
+					var message = new HttpRequestMessage(new HttpMethod(Request.Method), target);
+					message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", bearer);
+					message.Headers.TryAddWithoutValidation("Accept", Request.Headers.Accept.ToArray());
+					message.Headers.TryAddWithoutValidation("Accept-Language", Request.Headers.AcceptLanguage.ToArray());
+					message.Headers.TryAddWithoutValidation("X-Resgrid-Client", "web");
+					if (forwardedGrant != null)
+						message.Headers.TryAddWithoutValidation("X-Resgrid-Protected-Grant", forwardedGrant);
+					if (!string.IsNullOrWhiteSpace(clientIp))
+						message.Headers.TryAddWithoutValidation("X-Forwarded-For", clientIp);
+
+					if (hasBody)
+					{
+						message.Content = new StreamContent(Request.Body);
+						if (MediaTypeHeaderValue.TryParse(Request.ContentType, out var contentType))
+							message.Content.Headers.ContentType = contentType;
+					}
+
+					return message;
 				}
 
+				using var outbound = CreateOutbound();
 				using var proxyClient = _httpClientFactory.CreateClient("ResgridWebBff");
 				// These handlers own a 90-second deadline plus bounded settlement. Other BFF routes
 				// retain their 30-second timeout; disconnect cancellation still flows to the API.
@@ -180,7 +191,11 @@ namespace Resgrid.Web.Controllers
 					"api/v4/AdminAssist/Diagnose", "api/v4/AdminAssist/Diagnostic", "api/v4/AdminAssist/DiagnosticSupportPreview", "api/v4/AdminAssist/DiagnosticSupportExport" }
 					.Any(route => canonicalPath.TrimEnd('/').Equals(route, StringComparison.OrdinalIgnoreCase)))
 					proxyClient.Timeout = TimeSpan.FromSeconds(100);
-				using var upstream = await proxyClient.SendAsync(outbound, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+
+				// Only a bodiless GET is safe to repeat; anything carrying a body has already consumed it.
+				using var upstream = await SendWithReplayAsync(proxyClient, outbound,
+					!hasBody && HttpMethods.IsGet(Request.Method) ? CreateOutbound : null,
+					HttpCompletionOption.ResponseHeadersRead, cancellationToken);
 				Response.StatusCode = (int)upstream.StatusCode;
 				if (upstream.Content.Headers.ContentType != null)
 					Response.ContentType = upstream.Content.Headers.ContentType.ToString();
@@ -249,23 +264,31 @@ namespace Resgrid.Web.Controllers
 
 			var tokenUri = new Uri(new Uri(SystemBehaviorConfig.ResgridApiBaseUrl.TrimEnd('/') + "/"),
 				"api/v4/connect/token");
-			using var request = new HttpRequestMessage(HttpMethod.Post, tokenUri);
-			request.Headers.TryAddWithoutValidation("X-Resgrid-Internal-Key", ApiConfig.BackendInternalApikey);
-			request.Content = new FormUrlEncodedContent(new Dictionary<string, string>
-			{
-				["grant_type"] = "web_session",
-				["user_id"] = userId,
-				["session_id"] = sessionId,
-				["auth_ver"] = generation,
-				["department_id"] = departmentId,
-				["token_use"] = eventingOnly ? "eventing" : "api",
-				["credential_issued_on"] = credentialIssuedOn.HasValue
-					? credentialIssuedOn.Value.ToUnixTimeSeconds().ToString(CultureInfo.InvariantCulture)
-					: string.Empty
-			});
 
-			using var response = await _httpClientFactory.CreateClient("ResgridWebBff")
-				.SendAsync(request, cancellationToken);
+			HttpRequestMessage CreateExchange()
+			{
+				var message = new HttpRequestMessage(HttpMethod.Post, tokenUri);
+				message.Headers.TryAddWithoutValidation("X-Resgrid-Internal-Key", ApiConfig.BackendInternalApikey);
+				message.Content = new FormUrlEncodedContent(new Dictionary<string, string>
+				{
+					["grant_type"] = "web_session",
+					["user_id"] = userId,
+					["session_id"] = sessionId,
+					["auth_ver"] = generation,
+					["department_id"] = departmentId,
+					["token_use"] = eventingOnly ? "eventing" : "api",
+					["credential_issued_on"] = credentialIssuedOn.HasValue
+						? credentialIssuedOn.Value.ToUnixTimeSeconds().ToString(CultureInfo.InvariantCulture)
+						: string.Empty
+				});
+				return message;
+			}
+
+			// The web_session grant only validates the session and mints a short-lived access token (its one
+			// write, the shared-session idle lock, is a compare-and-swap that lands once), so it is safe to repeat.
+			using var request = CreateExchange();
+			using var response = await SendWithReplayAsync(_httpClientFactory.CreateClient("ResgridWebBff"), request,
+				CreateExchange, HttpCompletionOption.ResponseContentRead, cancellationToken);
 			if (!response.IsSuccessStatusCode)
 				return null;
 
@@ -294,6 +317,34 @@ namespace Resgrid.Web.Controllers
 				_memoryCache.Set(cacheKey, cached, cacheFor);
 
 			return cached;
+		}
+
+		/// <summary>
+		/// A pooled keep-alive connection the far end reset or closed as the request went out (idle-close race,
+		/// ingress reload, API pod roll) fails the send, and the handler will not replay once bytes are on the
+		/// wire. When the caller supplies <paramref name="rebuildForReplay"/> the request is rebuilt and sent
+		/// once more on a fresh connection; null means the request is not safe to repeat.
+		/// </summary>
+		private static async Task<HttpResponseMessage> SendWithReplayAsync(HttpClient client, HttpRequestMessage request,
+			Func<HttpRequestMessage> rebuildForReplay, HttpCompletionOption completionOption, CancellationToken cancellationToken)
+		{
+			try
+			{
+				return await client.SendAsync(request, completionOption, cancellationToken);
+			}
+			catch (HttpRequestException ex) when (rebuildForReplay != null && IsDroppedConnection(ex))
+			{
+				using var replay = rebuildForReplay();
+				return await client.SendAsync(replay, completionOption, cancellationToken);
+			}
+		}
+
+		private static bool IsDroppedConnection(HttpRequestException ex)
+		{
+			for (var inner = ex.InnerException; inner != null; inner = inner.InnerException)
+				if (inner is IOException or SocketException)
+					return true;
+			return false;
 		}
 
 		private static bool IsAllowed(string path)

@@ -312,6 +312,7 @@ namespace Resgrid.Tests.Services
 				options.AddPolicy(ResgridResources.Reports_View, policy => policy.RequireAssertion(context => context.User.HasClaim("reports-view", "true") && (reportsAllowed?.Invoke() ?? true)));
 			});
 			var views = new PurchasingBodyFilter();
+			builder.Services.AddDepartmentTerminologyStub();
 			if (mvc) builder.Services.AddControllersWithViews(options => options.Filters.Add(views)).AddApplicationPart(typeof(MvcInventoryController).Assembly)
 				.AddNewtonsoftJson(options => options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver());
 			else builder.Services.AddControllers().AddApplicationPart(typeof(ApiInventoryController).Assembly)

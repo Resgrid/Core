@@ -58,6 +58,7 @@ namespace Resgrid.Web.Eventing
 							options.Release = Assembly.GetEntryAssembly().GetName().Version.ToString();
 							options.ProfilesSampleRate = ExternalErrorConfig.SentryProfilingSampleRate;
 							options.SetBeforeSendTransaction(SentryTransactionFilter.Filter);
+							options.AddExceptionFilter(new UserFacingExceptionSentryFilter());
 
 							// Requires NuGet package: Sentry.Profiling
 							// Note: By default, the profiler is initialized asynchronously. This can be tuned by passing a desired initialization timeout to the constructor.

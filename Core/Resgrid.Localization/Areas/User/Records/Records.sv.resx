@@ -107,6 +107,7 @@
   <data name="Activate" xml:space="preserve"><value>Aktivera</value></data>
   <data name="ActivationBlocked" xml:space="preserve"><value>Aktivering blockerad</value></data>
   <data name="NotActivatedNotice" xml:space="preserve"><value>Journaler är aktiverat för avdelningen men inte startat ännu. En administratör måste aktivera det innan journaler kan skapas.</value></data>
+  <data name="RecordsModuleNotEnabled" xml:space="preserve"><value>{0}: den här modulen i Journaler är inte aktiverad för avdelningen.</value></data>
   <data name="ActivatedOn" xml:space="preserve"><value>Journaler aktiverade</value></data>
   <data name="SettingsHeader" xml:space="preserve"><value>Journalinställningar</value></data>
   <data name="DefaultLifecyclePreset" xml:space="preserve"><value>Standardlivscykel för avdelningsdefinitioner</value></data>

@@ -253,11 +253,11 @@ namespace Resgrid.Services.Records
 			if (string.IsNullOrWhiteSpace(analysis.CurrentRevisionId))
 				throw new InvalidOperationException("The analysis has not been finalized.");
 			if (!await _neris.IsWorkflowEnabledAsync(departmentId))
-				throw new InvalidOperationException(NerisWorkflows.OffMessage);
+				throw new NerisWorkflowsOffException();
 			if (report == null || string.IsNullOrWhiteSpace(report.NerisIncidentId))
 				throw new InvalidOperationException("The incident must be filed with NERIS before its analysis can be.");
 			if (!await _neris.IsSubmissionEnabledAsync(departmentId))
-				throw new InvalidOperationException("NERIS submission is not enabled for this department.");
+				throw new NerisSubmissionDisabledException();
 
 			var now = DateTime.UtcNow;
 			var outboxIds = new List<long>();

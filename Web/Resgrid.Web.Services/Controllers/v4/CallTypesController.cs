@@ -1,4 +1,4 @@
-﻿using Resgrid.Web.Services.Attributes;
+using Resgrid.Web.Services.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -85,7 +85,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (callTypes != null && callTypes.Any())
 			{
-				result.Data.Add(new CallTypeResultData() { Id = "0", Name = "No Type" });
+				result.Data.Add(new CallTypeResultData() { Id = "0", Name = "No Type", BaseType = (int)CallTypeClasses.None });
 
 				foreach (var callType in callTypes)
 				{
@@ -97,7 +97,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 			else
 			{
-				result.Data.Add(new CallTypeResultData() { Id = "0", Name = "No Type" });
+				result.Data.Add(new CallTypeResultData() { Id = "0", Name = "No Type", BaseType = (int)CallTypeClasses.None });
 				result.PageSize = 1;
 				result.Status = ResponseHelper.NotFound;
 			}
@@ -112,6 +112,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var type = new CallTypeResultData();
 			type.Id = callType.CallTypeId.ToString();
 			type.Name = callType.Type;
+			type.BaseType = callType.BaseType;
 
 			return type;
 		}

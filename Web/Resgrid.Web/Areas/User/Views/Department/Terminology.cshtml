@@ -1,0 +1,100 @@
+@model Resgrid.Web.Areas.User.Models.Departments.TerminologyView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["TerminologyHeader"];
+    var termSections = new[]
+    {
+        new { Category = DepartmentTermCategories.Module, Title = localizer["TerminologyModules"].Value, Help = localizer["TerminologyModulesHelp"].Value },
+        new { Category = DepartmentTermCategories.RecordType, Title = localizer["TerminologyRecordTypes"].Value, Help = localizer["TerminologyRecordTypesHelp"].Value }
+    };
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>@localizer["TerminologyHeader"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li>
+                <a asp-controller="Department" asp-action="Settings" asp-route-area="User">@localizer["DepartmentSettingsHeader"]</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["TerminologyHeader"]</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <form id="terminology-form" class="form-horizontal" role="form" asp-controller="Department" asp-action="Terminology" asp-route-area="User" method="post">
+                        @Html.AntiForgeryToken()
+                        @if (!String.IsNullOrEmpty(Model.Message))
+                        {
+                            <div class="alert alert-success">@Model.Message</div>
+                        }
+                        @if (!String.IsNullOrEmpty(Model.ErrorMessage))
+                        {
+                            <div class="alert alert-danger">@Model.ErrorMessage</div>
+                        }
+
+                        <p class="text-muted">@localizer["TerminologyIntro"]</p>
+                        <p>
+                            <a asp-controller="Department" asp-action="ModuleSettings" asp-route-area="User"><i class="fa fa-th-large"></i> @localizer["DispatchSettingsModuleHeader"]</a>
+                            &nbsp;&middot;&nbsp;
+                            <a asp-controller="RecordDefinitions" asp-action="Index" asp-route-area="User"><i class="fa fa-folder-open"></i> @localizer["TerminologyRecordDefinitionsLink"]</a>
+                        </p>
+
+                        @foreach (var termSection in termSections)
+                        {
+                            <h3 class="m-t-lg">@termSection.Title</h3>
+                            <p class="help-block">@termSection.Help</p>
+                            <div class="table-responsive">
+                                <table class="table table-condensed terminology-table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:35%">@localizer["TerminologyDefaultColumn"]</th>
+                                            <th>@localizer["TerminologyNameColumn"]</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (var i = 0; i < Model.Terms.Count; i++)
+                                        {
+                                            if (Model.Terms[i].Category != termSection.Category)
+                                            {
+                                                continue;
+                                            }
+                                            var defaultName = departmentTerms.DefaultName(Model.Terms[i].Key);
+                                            var inputId = "term-" + i;
+                                            <tr>
+                                                <td>
+                                                    <label class="control-label" for="@inputId" style="font-weight:normal;">@defaultName</label>
+                                                    <input type="hidden" name="Terms[@i].Key" value="@Model.Terms[i].Key" />
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="form-control" id="@inputId" name="Terms[@i].Text" value="@Model.Terms[i].Text"
+                                                           maxlength="@DepartmentTerms.MaxLength" placeholder="@defaultName" autocomplete="off" />
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <a class="btn btn-white" asp-controller="Department" asp-action="Settings" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                                <button class="btn btn-primary" type="submit">@commonLocalizer["Save"]</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

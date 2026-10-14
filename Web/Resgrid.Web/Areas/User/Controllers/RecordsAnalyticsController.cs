@@ -105,8 +105,26 @@ namespace Resgrid.Web.Areas.User.Controllers
 				.Concat(((await _groups.GetAllGroupsForDepartmentAsync(DepartmentId)) ?? new List<DepartmentGroup>()).OrderBy(g => g.Name).Select(g => new SelectListItem { Value = g.DepartmentGroupId.ToString(), Text = g.Name, Selected = g.DepartmentGroupId == model.StationGroupId }))
 				.ToList();
 			if (!model.ShowDefinitionFilter) return;
+
+			// Type names in the department's own terms (setting 118): the filter, and the per-definition breakdowns, which the
+			// service labels with shipped names (and department definitions with their keys).
+			var terminology = await _settings.GetDepartmentTerminologyAsync(DepartmentId) ?? new DepartmentTerminologyConfig();
+			var definitions = (await _definitions.ListAsync(DepartmentId, true)) ?? new List<RecordDefinitionSummary>();
+			var names = definitions.Where(d => !string.IsNullOrWhiteSpace(d.Key)).GroupBy(d => d.Key, StringComparer.OrdinalIgnoreCase)
+				.ToDictionary(g => g.Key, g => terminology.DefinitionName(g.Key, g.First().Name), StringComparer.OrdinalIgnoreCase);
+			void Relabel(List<RecordsAnalyticsCount> rows)
+			{
+				foreach (var row in rows ?? new List<RecordsAnalyticsCount>())
+					if (row?.Key != null && names.TryGetValue(row.Key, out var name))
+						row.Label = name;
+			}
+			if (model is RecordsExecutiveView executive)
+				Relabel(executive.Summary?.ByDefinition);
+			if (model is RecordsWorkloadView workload)
+				Relabel(workload.Workload?.ByDefinition);
+
 			model.Definitions = new[] { new SelectListItem { Value = "", Text = Localizer["AllDefinitions"].Value } }
-				.Concat(((await _definitions.ListAsync(DepartmentId)) ?? new List<RecordDefinitionSummary>()).Select(d => new SelectListItem { Value = d.Key, Text = d.Name, Selected = string.Equals(d.Key, model.DefinitionKey, StringComparison.OrdinalIgnoreCase) }))
+				.Concat(definitions.Where(d => !d.Retired).Select(d => new SelectListItem { Value = d.Key, Text = names.TryGetValue(d.Key ?? string.Empty, out var name) ? name : d.Name, Selected = string.Equals(d.Key, model.DefinitionKey, StringComparison.OrdinalIgnoreCase) }))
 				.ToList();
 		}
 	}

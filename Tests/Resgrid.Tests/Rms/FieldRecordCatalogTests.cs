@@ -38,6 +38,7 @@ namespace Resgrid.Tests.Rms
 		private Mock<ICallsService> _calls;
 		private Mock<IIncidentCommandService> _command;
 		private Mock<ICallSourceDataService> _callSources;
+		private Mock<IDepartmentSettingsService> _settings;
 		private RecordsModuleState _moduleState;
 		private DepartmentDataProtectionPolicy _policy;
 		private List<RmsRecordDefinitionVersion> _published;
@@ -87,9 +88,11 @@ namespace Resgrid.Tests.Rms
 			_calls = new Mock<ICallsService>();
 			_command = new Mock<IIncidentCommandService>();
 			_callSources = new Mock<ICallSourceDataService>();
+			_settings = new Mock<IDepartmentSettingsService>();
 
 			_service = new FieldRecordsService(_cutover.Object, _authorization.Object, _flags.Object, _definitions.Object, _protection.Object, _records.Object,
-				_assignments.Object, _units.Object, _groups.Object, _calls.Object, _command.Object, Mock.Of<IRecordsFieldRolloutService>(), _callSources.Object);
+				_assignments.Object, _units.Object, _groups.Object, _calls.Object, _command.Object, Mock.Of<IRecordsFieldRolloutService>(), _callSources.Object,
+				_settings.Object);
 		}
 
 		[TearDown]
@@ -144,6 +147,20 @@ namespace Resgrid.Tests.Rms
 			(await _service.PreflightAsync(Dept, Me, RmsOriginClient.Responder, "5.2.9", null)).Reasons.Should().Contain(FieldRecordCatalogV1.ExclusionReasons.AppVersionTooOld);
 			(await _service.PreflightAsync(Dept, Me, RmsOriginClient.Responder, "5.10.0", null)).Ok.Should().BeTrue("versions compare numerically, not as strings");
 			(await _service.PreflightAsync(Dept, Me, RmsOriginClient.Responder, null, null)).Reasons.Should().Contain(FieldRecordCatalogV1.ExclusionReasons.AppVersionTooOld, "an unreported version never satisfies a minimum");
+		}
+
+		[Test]
+		public async Task Locked_starters_carry_the_departments_own_type_names()
+		{
+			var terminology = new DepartmentTerminologyConfig();
+			terminology.Set(DepartmentTerms.RecordTypeKey(RmsDefinitionKeys.Run), "Incident");
+			_settings.Setup(s => s.GetDepartmentTerminologyAsync(Dept, It.IsAny<bool>())).ReturnsAsync(terminology);
+			_calls.Setup(c => c.GetCallByIdAsync(501, It.IsAny<bool>())).ReturnsAsync(new Call { CallId = 501, DepartmentId = Dept, Number = "2026-0501" });
+
+			var onCall = await _service.GetCatalogAsync(Dept, "dispatcher", Request(RmsOriginClient.Dispatch, context: new FieldRecordContext { CallId = 501 }));
+
+			onCall.Definitions.Single(d => d.DefinitionKey == RmsDefinitionKeys.Run).Name.Should().Be("Incident");
+			onCall.Definitions.Single(d => d.DefinitionKey == RmsDefinitionKeys.Callback).Name.Should().Be("Callback", "an unrenamed type keeps the shipped name");
 		}
 
 		[Test]

@@ -48,7 +48,7 @@
 	}
 	<partial name="_PrintHeader" model="Model.Provenance" />
 
-	<h1>@t.ToString() &mdash; @(record.RecordNumber ?? record.DraftReference) <span class="state">@Model.State</span></h1>
+	<h1>@(Model.IsDefinitionRecord ? Model.DefinitionName : await departmentTerms.RecordTypeAsync((int)t)) &mdash; @(record.RecordNumber ?? record.DraftReference) <span class="state">@Model.State</span></h1>
 	<h2>@Model.Aggregate.Record.DisplaySummary</h2>
 
 	<div class="section">

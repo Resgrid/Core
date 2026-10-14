@@ -66,7 +66,7 @@
     <value>Tillgänglig</value>
   </data>
   <data name="BaseType" xml:space="preserve">
-    <value>Base Type</value>
+    <value>Betydelse</value>
   </data>
   <data name="ButtonBackgroundColorLabel" xml:space="preserve">
     <value>Button Background Color</value>
@@ -283,5 +283,158 @@
   </data>
   <data name="NextStatusesAny" xml:space="preserve">
     <value>Valfri status</value>
+  </data>
+  <data name="StaffingAvailable" xml:space="preserve">
+    <value>Tillgänglig</value>
+  </data>
+  <data name="StaffingDelayed" xml:space="preserve">
+    <value>Försenad</value>
+  </data>
+  <data name="StaffingUnavailable" xml:space="preserve">
+    <value>Ej tillgänglig</value>
+  </data>
+  <data name="StaffingCommitted" xml:space="preserve">
+    <value>Upptagen</value>
+  </data>
+  <data name="StaffingOnShift" xml:space="preserve">
+    <value>I tjänst</value>
+  </data>
+  <data name="StaffingOffDuty" xml:space="preserve">
+    <value>Ledig</value>
+  </data>
+  <data name="StaffingOnCall" xml:space="preserve">
+    <value>I beredskap</value>
+  </data>
+  <data name="StaffingBaseTypeHelp" xml:space="preserve">
+    <value>Vad denna bemanningsnivå betyder för Resgrid. Larmrekommendationer, tillgänglighetsräkningar och tystade aviseringar använder betydelsen, oavsett vad knappen heter.</value>
+  </data>
+  <data name="MeaningColumn" xml:space="preserve">
+    <value>Betydelse</value>
+  </data>
+  <data name="MissingMeaningsHeader" xml:space="preserve">
+    <value>{0} alternativ saknar betydelse.</value>
+  </data>
+  <data name="MissingMeaningsHelp" xml:space="preserve">
+    <value>Resgrid använder ett alternativs betydelse för att avgöra tillgänglighet, vad som sätts vid larmning och frisläppning, aviseringar och rapporter. Alternativ utan betydelse behandlas som okända. När namnet ger en tydlig ledtråd visas ett förslag; granska det och spara sedan.</value>
+  </data>
+  <data name="UseSuggestedMeanings" xml:space="preserve">
+    <value>Använd föreslagna betydelser</value>
+  </data>
+  <data name="SuggestedMeaningsApplied" xml:space="preserve">
+    <value>Förslag tillämpade. Granska dem och spara sedan.</value>
+  </data>
+  <data name="SuggestedMeaning" xml:space="preserve">
+    <value>förslag: {0}</value>
+  </data>
+  <data name="OptionsWithoutMeaning" xml:space="preserve">
+    <value>{0} utan betydelse</value>
+  </data>
+  <data name="AnyStatusWithMeaning" xml:space="preserve">
+    <value>Alla "{0}"-statusar</value>
+  </data>
+  <data name="BuiltInStatusOption" xml:space="preserve">
+    <value>Inbyggd: {0}</value>
+  </data>
+  <data name="NoteOptional" xml:space="preserve">
+    <value>Valfri</value>
+  </data>
+  <data name="NoteRequired" xml:space="preserve">
+    <value>Obligatorisk</value>
+  </data>
+  <data name="SetTypeLabel" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="TemplatePrefilledNote" xml:space="preserve">
+    <value>De här alternativen fylldes i från en mall. Byt text eller färger, ta bort de du inte behöver eller lägg till egna; inget sparas förrän du klickar på Lägg till.</value>
+  </data>
+  <data name="BackgroundColorShort" xml:space="preserve">
+    <value>Bakgrund</value>
+  </data>
+  <data name="TextColorShort" xml:space="preserve">
+    <value>Text</value>
+  </data>
+  <data name="StatusRuleAny" xml:space="preserve">
+    <value>Alla</value>
+  </data>
+  <data name="StatusRuleUnknown" xml:space="preserve">
+    <value>Okänd</value>
+  </data>
+  <data name="StatusRuleNone" xml:space="preserve">
+    <value>Ingen</value>
+  </data>
+  <data name="BaseTypeDescription.none" xml:space="preserve">
+    <value>Ingen systembetydelse. Statusen är bara informativ och påverkar inte tillgänglighet, rapporter eller automatiseringar.</value>
+  </data>
+  <data name="BaseTypeDescription.available" xml:space="preserve">
+    <value>Enheten eller insatspersonen är i tjänst och tillgänglig att tilldelas eller larmas till ett ärende eller en uppgift.</value>
+  </data>
+  <data name="BaseTypeDescription.notresponding" xml:space="preserve">
+    <value>Insatspersonen har kvitterat men avböjer eller kan inte svara på den aktuella tilldelningen.</value>
+  </data>
+  <data name="BaseTypeDescription.responding" xml:space="preserve">
+    <value>Enheten eller insatspersonen är på väg (under framkörning) till ett tilldelat ärende eller en händelse.</value>
+  </data>
+  <data name="BaseTypeDescription.onscene" xml:space="preserve">
+    <value>Enheten eller insatspersonen har anlänt och arbetar på platsen för ärendet eller händelsen.</value>
+  </data>
+  <data name="BaseTypeDescription.madecontact" xml:space="preserve">
+    <value>Enheten eller insatspersonen har fått kontakt med personen, patienten, parten eller platsen.</value>
+  </data>
+  <data name="BaseTypeDescription.investigating" xml:space="preserve">
+    <value>Enheten eller insatspersonen utreder, bedömer eller skapar sig en lägesbild.</value>
+  </data>
+  <data name="BaseTypeDescription.dispatched" xml:space="preserve">
+    <value>Enheten eller insatspersonen har larmats eller tilldelats men har ännu inte påbörjat framkörning.</value>
+  </data>
+  <data name="BaseTypeDescription.cleared" xml:space="preserve">
+    <value>Enheten eller insatspersonen har avslutat ärendet eller händelsen och blir tillgänglig igen.</value>
+  </data>
+  <data name="BaseTypeDescription.returning" xml:space="preserve">
+    <value>Enheten eller insatspersonen återvänder till station, bas eller förläggning.</value>
+  </data>
+  <data name="BaseTypeDescription.staging" xml:space="preserve">
+    <value>Enheten eller insatspersonen står vid en säker uppställningsplats och väntar på tilldelning eller order.</value>
+  </data>
+  <data name="BaseTypeDescription.unavailable" xml:space="preserve">
+    <value>Enheten eller insatspersonen är ur tjänst och inte tillgänglig för tilldelning.</value>
+  </data>
+  <data name="BaseTypeDescription.enroute" xml:space="preserve">
+    <value>Enheten eller insatspersonen färdas till en tilldelning, destination eller plats utan brådska.</value>
+  </data>
+  <data name="BaseTypeDescription.transporting" xml:space="preserve">
+    <value>Enheten eller insatspersonen transporterar en patient, person, intagen eller last till en destination.</value>
+  </data>
+  <data name="BaseTypeDescription.delivering" xml:space="preserve">
+    <value>Enheten eller insatspersonen levererar varor, förnödenheter, utrustning eller gods till en mottagare eller avlämningsplats.</value>
+  </data>
+  <data name="BaseTypeDescription.atpatient" xml:space="preserve">
+    <value>Enheten eller insatspersonen har nått en patient eller eftersökt person och vårdar eller har kontakt med denne.</value>
+  </data>
+  <data name="BaseTypeDescription.athospital" xml:space="preserve">
+    <value>Enheten eller insatspersonen har anlänt till ett sjukhus eller en mottagande enhet för att lämna över patienten.</value>
+  </data>
+  <data name="BaseTypeDescription.searching" xml:space="preserve">
+    <value>Enheten eller insatspersonen genomför ett aktivt sök i ett tilldelat område, en sektor eller ett rutnät.</value>
+  </data>
+  <data name="BaseTypeDescription.loading" xml:space="preserve">
+    <value>Enheten eller insatspersonen lastar eller hämtar last, förnödenheter, utrustning eller en person före transport.</value>
+  </data>
+  <data name="BaseTypeDescription.standby" xml:space="preserve">
+    <value>Enheten eller insatspersonen hålls i reserv, i beredskap eller på jour och är redo att tilldelas.</value>
+  </data>
+  <data name="BaseTypeDescription.onpatrol" xml:space="preserve">
+    <value>Enheten eller insatspersonen patrullerar ett tilldelat område och är samtidigt tillgänglig för larm.</value>
+  </data>
+  <data name="BaseTypeDescription.maintenance" xml:space="preserve">
+    <value>Enheten eller insatspersonen är ur tjänst för underhåll, tankning, påfyllning, rengöring eller service.</value>
+  </data>
+  <data name="BaseTypeDescription.onbreak" xml:space="preserve">
+    <value>Enheten eller insatspersonen har vilo- eller måltidsrast och är tillfälligt otillgänglig.</value>
+  </data>
+  <data name="BaseTypeDescription.completed" xml:space="preserve">
+    <value>Tilldelningen, uppgiften eller leveransen är klar; enheten eller insatspersonen avslutar och blir tillgänglig.</value>
+  </data>
+  <data name="BaseTypeDescription.inquarters" xml:space="preserve">
+    <value>Enheten eller insatspersonen är i tjänst och tillgänglig på sin station. Larmrekommendationer mäter enheten från stationen i stället för GPS-positionen och lägger till utryckningstiden från stationen.</value>
   </data>
 </root>

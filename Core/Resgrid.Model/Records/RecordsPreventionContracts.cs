@@ -46,8 +46,11 @@ namespace Resgrid.Model
 		};
 	}
 
-	/// <summary>Thrown when a prevention module is not enabled for the department; surfaces as 404 on the API and Web.</summary>
-	public class RecordsModuleDisabledException : InvalidOperationException
+	/// <summary>
+	/// Thrown when a prevention module is not enabled for the department; surfaces as 404 on the API and Web. User-facing:
+	/// the message is reported to the user and never sent to Sentry.
+	/// </summary>
+	public class RecordsModuleDisabledException : InvalidOperationException, Resgrid.Framework.IUserFacingException
 	{
 		public RecordsModuleDisabledException(RecordsPreventionModule module)
 			: base($"The Records {module} module is not enabled for this department.")

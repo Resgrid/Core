@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Globalization;
@@ -73,6 +73,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly Resgrid.Model.AiDispatch.IAiDispatchEnrichmentService _aiDispatchService;
 		private readonly IDepartmentProfileMediaService _departmentProfileMediaService;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> _departmentLocalizer;
+		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.CustomStatuses.CustomStatuses> _statusLocalizer;
 		private readonly IProtectedReadService _protectedReadService;
 		private readonly ICallNumberingService _callNumberingService;
 		private readonly IDocumentNumberingService _documentNumberingService;
@@ -87,7 +88,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ISecurityPinService securityPinService, IRunCardsService runCardsService, IFeatureToggleService featureToggleService,
 			IDepartmentProfileMediaService departmentProfileMediaService, IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> departmentLocalizer,
 			Resgrid.Model.AiDispatch.IAiDispatchEnrichmentService aiDispatchService, IProtectedReadService protectedReadService,
-			ICallNumberingService callNumberingService, IDocumentNumberingService documentNumberingService)
+			ICallNumberingService callNumberingService, IDocumentNumberingService documentNumberingService,
+			IStringLocalizer<Resgrid.Localization.Areas.User.CustomStatuses.CustomStatuses> statusLocalizer = null)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -122,6 +124,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_featureToggleService = featureToggleService;
 			_departmentProfileMediaService = departmentProfileMediaService;
 			_departmentLocalizer = departmentLocalizer;
+			_statusLocalizer = statusLocalizer;
 			_aiDispatchService = aiDispatchService;
 			_protectedReadService = protectedReadService;
 			_callNumberingService = callNumberingService;
@@ -1139,8 +1142,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await IsMemberOfThisDepartmentAsync(userId))
 				return Unauthorized();
 
-			await _actionLogsService.SetUserActionAsync(userId, (await _departmentsService.GetDepartmentByUserIdAsync(UserId)).DepartmentId,
-				(int)ActionTypes.Responding);
+			var departmentId = (await _departmentsService.GetDepartmentByUserIdAsync(UserId)).DepartmentId;
+			await _actionLogsService.SetUserActionAsync(userId, departmentId,
+				await _customStateService.ResolvePersonnelStatusAsync(departmentId, ActionBaseTypes.Responding) ?? (int)ActionTypes.Responding);
 
 			return RedirectToAction("Index", "Personnel", new { area = "User" });
 		}
@@ -1153,8 +1157,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await IsMemberOfThisDepartmentAsync(userId))
 				return Unauthorized();
 
-			await _actionLogsService.SetUserActionAsync(userId, (await _departmentsService.GetDepartmentByUserIdAsync(UserId)).DepartmentId,
-				(int)ActionTypes.NotResponding);
+			var departmentId = (await _departmentsService.GetDepartmentByUserIdAsync(UserId)).DepartmentId;
+			await _actionLogsService.SetUserActionAsync(userId, departmentId,
+				await _customStateService.ResolvePersonnelStatusAsync(departmentId, ActionBaseTypes.NotResponding) ?? (int)ActionTypes.NotResponding);
 
 			return RedirectToAction("Index", "Personnel", new { area = "User" });
 		}
@@ -1167,8 +1172,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await IsMemberOfThisDepartmentAsync(userId))
 				return Unauthorized();
 
-			await _actionLogsService.SetUserActionAsync(userId, (await _departmentsService.GetDepartmentByUserIdAsync(UserId)).DepartmentId,
-				(int)ActionTypes.StandingBy);
+			var departmentId = (await _departmentsService.GetDepartmentByUserIdAsync(UserId)).DepartmentId;
+			await _actionLogsService.SetUserActionAsync(userId, departmentId,
+				await _customStateService.ResolvePersonnelStatusAsync(departmentId, ActionBaseTypes.Available) ?? (int)ActionTypes.StandingBy);
 
 			return RedirectToAction("Index", "Personnel", new { area = "User" });
 		}
@@ -1181,8 +1187,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await IsMemberOfThisDepartmentAsync(userId))
 				return Unauthorized();
 
-			await _actionLogsService.SetUserActionAsync(userId, (await _departmentsService.GetDepartmentByUserIdAsync(UserId)).DepartmentId,
-				(int)ActionTypes.OnScene);
+			var departmentId = (await _departmentsService.GetDepartmentByUserIdAsync(UserId)).DepartmentId;
+			await _actionLogsService.SetUserActionAsync(userId, departmentId,
+				await _customStateService.ResolvePersonnelStatusAsync(departmentId, ActionBaseTypes.OnScene) ?? (int)ActionTypes.OnScene);
 
 			return RedirectToAction("Index", "Personnel", new { area = "User" });
 		}
@@ -2265,8 +2272,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.ShiftClearStatus = await _departmentSettingsService.GetShiftCallReleasePersonnelStatusToSetAsync(DepartmentId);
 			model.UnitDispatchAlsoDispatchToAssignedPersonnel = await _departmentSettingsService.GetUnitDispatchAlsoDispatchToAssignedPersonnelAsync(DepartmentId);
 			model.UnitDispatchAlsoDispatchToGroup = await _departmentSettingsService.GetUnitDispatchAlsoDispatchToGroupAsync(DepartmentId);
-			model.UnitDispatchStatus = await _departmentSettingsService.GetUnitCallDispatchStatusToSetAsync(DepartmentId);
-			model.UnitClearStatus = await _departmentSettingsService.GetUnitCallReleaseStatusToSetAsync(DepartmentId);
+			model.UnitDispatchStatus = (await _departmentSettingsService.GetUnitCallDispatchStatusTargetAsync(DepartmentId)).ToStoredValue();
+			model.UnitClearStatus = (await _departmentSettingsService.GetUnitCallReleaseStatusTargetAsync(DepartmentId)).ToStoredValue();
 			model.PersonnelOnUnitSetUnitStatus = await _departmentSettingsService.GetPersonnelOnUnitSetUnitStatusAsync(DepartmentId);
 			model.StatusHoldToConfirm = await _departmentSettingsService.GetStatusHoldToConfirmAsync(DepartmentId, true);
 			model.CloseCallWhenUnitsClear = await _departmentSettingsService.GetCloseCallWhenUnitsClearAsync(DepartmentId, true);
@@ -2276,6 +2283,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			await PopulateDispatchSettingsSupportingDataAsync(model);
 			await PopulateDispatchSettingsUnitTypeOverridesAsync(model,
 				await _departmentSettingsService.GetUnitCallStatusOverridesByUnitTypeAsync(DepartmentId));
+			await PopulateUnitStatusTargetsAsync(model);
 
 			await PopulateRunCardRecommendationSettingsAsync(model);
 
@@ -2373,12 +2381,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 				ModelState.Clear();
 				model.UnitTypeStatusOverrides = new List<UnitTypeDispatchStatusOverrideView>();
 				await PopulateDispatchSettingsUnitTypeOverridesAsync(model, unitTypeStatusOverrides);
+				await PopulateUnitStatusTargetsAsync(model);
 				await PopulateRunCardRecommendationSettingsAsync(model, false);
 				model.SaveSuccess = true;
 				return View(model);
 			}
 
 			await PopulateDispatchSettingsUnitTypeOverridesAsync(model);
+			await PopulateUnitStatusTargetsAsync(model);
 			await PopulateRunCardRecommendationSettingsAsync(model, false);
 
 			// A rejected post redisplays the operator's own ticks -- they round-trip through model
@@ -2584,6 +2594,22 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 				}
 			}
+
+			foreach (var baseType in Enum.GetValues(typeof(ActionBaseTypes)).Cast<ActionBaseTypes>().Where(x => x != ActionBaseTypes.None))
+				model.StateNames.TryAdd(StatusMatch.BaseTypeToken((int)baseType), StatusMeaningLabel(MeaningName(baseType)));
+		}
+
+		/// <summary>The label of a "b{n}" status-meaning entry: every status, built-in or custom, with that base type.</summary>
+		/// <summary>The localized name of a status meaning (the Custom Statuses strings), or its display name without one.</summary>
+		private string MeaningName(ActionBaseTypes baseType)
+		{
+			var name = _statusLocalizer?[baseType.ToString()];
+			return name == null || name.ResourceNotFound ? baseType.DisplayName() : name.Value;
+		}
+
+		private string StatusMeaningLabel(string meaning)
+		{
+			return string.Format(_departmentLocalizer["StatusMeaningOption"], meaning);
 		}
 
 		private async Task PopulateDispatchSettingsUnitTypeOverridesAsync(DispatchSettingsView model,
@@ -2686,9 +2712,132 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return overrides;
 		}
 
+		/// <summary>
+		/// Keeps a posted unit dispatch / release choice only when it is one the page offers: default, leave unchanged, a
+		/// status meaning (base type), or a built-in status saved before status meanings existed.
+		/// </summary>
 		private static int NormalizeUnitDispatchStatus(int status)
 		{
-			return status >= 0 && Enum.IsDefined(typeof(UnitStateTypes), status) ? status : -1;
+			var target = StatusTarget.FromStoredValue(status);
+
+			if (target.Kind == StatusTargetKind.BuiltIn && !Enum.IsDefined(typeof(UnitStateTypes), target.Value))
+				return StatusTarget.DefaultValue;
+
+			return target.ToStoredValue();
+		}
+
+		/// <summary>The status meanings a unit dispatch / release setting offers (every base type with a system meaning).</summary>
+		private static IEnumerable<ActionBaseTypes> UnitStatusTargetBaseTypes()
+		{
+			return Enum.GetValues(typeof(ActionBaseTypes)).Cast<ActionBaseTypes>()
+				.Where(x => x != ActionBaseTypes.None && x != ActionBaseTypes.NotResponding);
+		}
+
+		private List<SelectListItem> BuildUnitStatusTargetOptions(int storedValue, bool isDispatch)
+		{
+			var current = StatusTarget.FromStoredValue(storedValue);
+			var meaningGroup = new SelectListGroup { Name = _departmentLocalizer["UnitStatusTargetMeaningGroup"] };
+
+			var options = new List<SelectListItem>
+			{
+				new SelectListItem
+				{
+					Value = StatusTarget.DefaultValue.ToString(),
+					Text = _departmentLocalizer[isDispatch ? "UnitStatusTargetDefaultDispatch" : "UnitStatusTargetDefaultRelease"]
+				},
+				new SelectListItem { Value = StatusTarget.LeaveUnchangedValue.ToString(), Text = _departmentLocalizer["UnitStatusTargetLeaveUnchanged"] }
+			};
+
+			foreach (var baseType in UnitStatusTargetBaseTypes())
+			{
+				options.Add(new SelectListItem
+				{
+					Value = StatusTarget.ForBaseType(baseType).ToStoredValue().ToString(),
+					Text = MeaningName(baseType),
+					Group = meaningGroup
+				});
+			}
+
+			// A built-in status saved before status meanings existed stays selectable, so saving the page doesn't change it.
+			if (current.Kind == StatusTargetKind.BuiltIn && Enum.IsDefined(typeof(UnitStateTypes), current.Value))
+			{
+				options.Add(new SelectListItem
+				{
+					Value = current.Value.ToString(),
+					Text = string.Format(_departmentLocalizer["UnitStatusTargetLegacy"], ((UnitStateTypes)current.Value).DisplayName())
+				});
+			}
+
+			foreach (var option in options)
+				option.Selected = option.Value == current.ToStoredValue().ToString();
+
+			return options;
+		}
+
+		/// <summary>
+		/// The dispatch and release choices, plus a warning for each unit type whose status set can't carry them out: no
+		/// option with the meaning (its units keep their status), or several (the first by order is used). A unit type with
+		/// its own override for the action is left out: the override is what it gets.
+		/// </summary>
+		private async Task PopulateUnitStatusTargetsAsync(DispatchSettingsView model)
+		{
+			model.UnitDispatchStatusTargets = BuildUnitStatusTargetOptions(model.UnitDispatchStatus, true);
+			model.UnitReleaseStatusTargets = BuildUnitStatusTargetOptions(model.UnitClearStatus, false);
+			model.UnitStatusTargetWarnings = new List<string>();
+
+			var dispatchTarget = StatusTarget.FromStoredValue(model.UnitDispatchStatus);
+			var releaseTarget = StatusTarget.FromStoredValue(model.UnitClearStatus);
+			var overrides = (model.UnitTypeStatusOverrides ?? new List<UnitTypeDispatchStatusOverrideView>()).ToDictionary(x => x.UnitTypeId);
+
+			foreach (var unitType in (model.UnitTypes ?? new List<UnitType>()).Where(x => x != null).OrderBy(x => x.Type))
+			{
+				CustomState set = null;
+				if (unitType.CustomStatesId.HasValue && unitType.CustomStatesId.Value > 0)
+				{
+					set = await _customStateService.GetCustomSateByIdAsync(unitType.CustomStatesId.Value);
+					if (set != null && set.IsDeleted)
+						set = null;
+				}
+
+				overrides.TryGetValue(unitType.UnitTypeId, out var row);
+
+				if (row == null || row.DispatchStatus < 0)
+					AddUnitStatusTargetWarning(model, unitType, set, StatusTargetResolver.ResolveUnit(dispatchTarget, set,
+						StatusTargetResolver.DispatchDefaultChain, (int)UnitStateTypes.Responding), true,
+						dispatchTarget.Kind == StatusTargetKind.Default ? StatusTargetResolver.DispatchDefaultChain : null);
+
+				if (row == null || row.ReleaseStatus < 0)
+					AddUnitStatusTargetWarning(model, unitType, set, StatusTargetResolver.ResolveUnit(releaseTarget, set,
+						StatusTargetResolver.ReleaseDefaultChain, (int)UnitStateTypes.Released), false,
+						releaseTarget.Kind == StatusTargetKind.Default ? StatusTargetResolver.ReleaseDefaultChain : null);
+			}
+		}
+
+		private void AddUnitStatusTargetWarning(DispatchSettingsView model, UnitType unitType, CustomState set, StatusTargetResolution resolution, bool isDispatch,
+			IReadOnlyList<ActionBaseTypes> defaultChain)
+		{
+			if (resolution.Issue == StatusTargetIssue.None)
+				return;
+
+			var action = _departmentLocalizer[isDispatch ? "UnitStatusTargetActionDispatch" : "UnitStatusTargetActionRelease"];
+			// The default looks for several meanings in turn; name them all when none matched.
+			var meaning = resolution.Issue == StatusTargetIssue.NoMatchingOption && defaultChain != null
+				? string.Join(" / ", defaultChain.Select(MeaningName))
+				: resolution.BaseType.HasValue ? MeaningName(resolution.BaseType.Value) : string.Empty;
+
+			if (resolution.Issue == StatusTargetIssue.SeveralMatchingOptions)
+			{
+				model.UnitStatusTargetWarnings.Add(string.Format(_departmentLocalizer["UnitStatusTargetSeveral"], unitType.Type, set?.Name,
+					resolution.Matches.Count, meaning, string.Join(", ", resolution.Matches.Select(x => x.ButtonText)), resolution.Matches[0].ButtonText, action));
+			}
+			else if (set != null)
+			{
+				model.UnitStatusTargetWarnings.Add(string.Format(_departmentLocalizer["UnitStatusTargetNoMatch"], unitType.Type, set.Name, meaning, action));
+			}
+			else
+			{
+				model.UnitStatusTargetWarnings.Add(string.Format(_departmentLocalizer["UnitStatusTargetNoBuiltIn"], unitType.Type, meaning, action));
+			}
 		}
 
 		#endregion Dispatch Settings
@@ -2854,6 +3003,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					states.Add(new { id = s.CustomStateDetailId.ToString(), text = s.ButtonText });
 				}
+			}
+
+			// Every status with a meaning, built-in or the department's own, in any status set (StatusMatch).
+			foreach (var baseType in Enum.GetValues(typeof(ActionBaseTypes)).Cast<ActionBaseTypes>()
+				.Where(x => x != ActionBaseTypes.None && (timerTargetType != (int)CheckInTimerTargetType.UnitType || x != ActionBaseTypes.NotResponding)))
+			{
+				states.Add(new { id = StatusMatch.BaseTypeToken((int)baseType), text = StatusMeaningLabel(MeaningName(baseType)) });
 			}
 
 			return Json(states);
@@ -3111,6 +3267,74 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		#endregion Delete Department
+
+		#region Terminology
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> Terminology()
+		{
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
+			return View(TerminologyView.From(await _departmentSettingsService.GetDepartmentTerminologyAsync(DepartmentId, true)));
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> Terminology(TerminologyView model, CancellationToken cancellationToken)
+		{
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
+			var before = await _departmentSettingsService.GetDepartmentTerminologyAsync(DepartmentId, true);
+			var posted = (model?.Terms ?? new List<TerminologyRow>()).Where(r => r != null && DepartmentTerms.IsKnown(r.Key))
+				.GroupBy(r => r.Key, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.Last().Text, StringComparer.Ordinal);
+
+			// Start from what is saved so a term missing from the post keeps its name; a name over the limit keeps the saved one.
+			var config = new DepartmentTerminologyConfig();
+			var tooLong = new List<string>();
+			foreach (var term in DepartmentTerms.All)
+			{
+				if (!posted.TryGetValue(term.Key, out var text))
+				{
+					config.Set(term.Key, before.TextFor(term.Key));
+					continue;
+				}
+
+				var normalized = DepartmentTerms.Normalize(text);
+				if (!DepartmentTerms.IsValidText(normalized))
+				{
+					tooLong.Add(term.Key);
+					config.Set(term.Key, before.TextFor(term.Key));
+					continue;
+				}
+
+				config.Set(term.Key, normalized);
+			}
+
+			await _departmentSettingsService.SetDepartmentTerminologyAsync(DepartmentId, config, cancellationToken);
+			SendProfileAudit(JsonConvert.SerializeObject(TerminologyAudit(before)), JsonConvert.SerializeObject(TerminologyAudit(config)));
+
+			// Show what was saved; a refused name stays in its box for correcting.
+			ModelState.Clear();
+			var view = TerminologyView.From(config);
+			foreach (var row in view.Terms.Where(r => tooLong.Contains(r.Key)))
+				row.Text = posted[row.Key];
+
+			if (tooLong.Count > 0)
+				view.ErrorMessage = string.Format(_departmentLocalizer["TerminologyTooLong"].Value, DepartmentTerms.MaxLength);
+			view.Message = _departmentLocalizer[tooLong.Count == 0 ? "TerminologySaved" : "TerminologyPartlySaved"];
+
+			return View(view);
+		}
+
+		private static Dictionary<string, string> TerminologyAudit(DepartmentTerminologyConfig config)
+		{
+			return DepartmentTerms.All.Select(t => new { t.Key, Text = config?.TextFor(t.Key) }).Where(t => t.Text != null)
+				.ToDictionary(t => t.Key, t => t.Text, StringComparer.Ordinal);
+		}
+		#endregion Terminology
 
 		#region Module Settings
 		[HttpGet]

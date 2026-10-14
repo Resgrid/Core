@@ -65,6 +65,7 @@ namespace Resgrid.Tests.Web.User
 			builder.Services.AddSingleton<IAdminAssistCatalog>(new Resgrid.AdminAssist.ConfigurationCatalog());
 			builder.Services.AddSingleton(access.Object);
 			builder.Services.AddDataProtection().UseEphemeralDataProtectionProvider();
+			builder.Services.AddDepartmentTerminologyStub();
 			builder.Services.AddControllersWithViews()
 				.AddApplicationPart(typeof(Resgrid.Web.Areas.User.Controllers.DepartmentController).Assembly)
 				.AddApplicationPart(typeof(OperatingProfileRenderingController).Assembly);

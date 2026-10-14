@@ -251,4 +251,118 @@
   <data name="NewContactNoteTypeHeader" xml:space="preserve">
     <value>New Contact Note Type</value>
   </data>
+  <data name="CallTypeClassLabel" xml:space="preserve">
+    <value>Klasse</value>
+  </data>
+  <data name="CallTypeClassHelp" xml:space="preserve">
+    <value>Welche Art von Einsatz dieser Typ ist. Resgrid verwendet die Klasse, nicht den Namen, für Berichte, Vorgaben und Integrationen, sodass eine Abteilung ihre Einsatztypen beliebig benennen kann.</value>
+  </data>
+  <data name="UnitTypeClassLabel" xml:space="preserve">
+    <value>Klasse</value>
+  </data>
+  <data name="UnitTypeClassHelp" xml:space="preserve">
+    <value>Welche Art von Einheit dieser Typ ist. Resgrid verwendet die Klasse, nicht den Namen, für Berichte, Vorgaben und Integrationen.</value>
+  </data>
+  <data name="CallPriorityBaseTypeLabel" xml:space="preserve">
+    <value>Bedeutung</value>
+  </data>
+  <data name="CallPriorityBaseTypeHelp" xml:space="preserve">
+    <value>Welche Standardpriorität diese bedeutet. Resgrid verwendet sie überall dort, wo Prioritäten abteilungs- oder app-übergreifend verglichen werden müssen, etwa in Berichten und bei der Sortierung nach Dringlichkeit.</value>
+  </data>
+  <data name="BaseTypeNone" xml:space="preserve">
+    <value>Keine</value>
+  </data>
+  <data name="SuggestedFromName" xml:space="preserve">
+    <value>Vorschlag anhand des Namens: {0}</value>
+  </data>
+  <data name="CallTypeClass.Fire" xml:space="preserve">
+    <value>Brand</value>
+  </data>
+  <data name="CallTypeClass.Medical" xml:space="preserve">
+    <value>Medizinisch</value>
+  </data>
+  <data name="CallTypeClass.Rescue" xml:space="preserve">
+    <value>Rettung</value>
+  </data>
+  <data name="CallTypeClass.TrafficCollision" xml:space="preserve">
+    <value>Verkehrsunfall</value>
+  </data>
+  <data name="CallTypeClass.HazardousMaterials" xml:space="preserve">
+    <value>Gefahrstoffe</value>
+  </data>
+  <data name="CallTypeClass.Alarm" xml:space="preserve">
+    <value>Alarm</value>
+  </data>
+  <data name="CallTypeClass.ServiceCall" xml:space="preserve">
+    <value>Hilfeleistung</value>
+  </data>
+  <data name="CallTypeClass.LawEnforcement" xml:space="preserve">
+    <value>Polizei</value>
+  </data>
+  <data name="CallTypeClass.DisasterWeather" xml:space="preserve">
+    <value>Katastrophe oder Unwetter</value>
+  </data>
+  <data name="CallTypeClass.MutualAid" xml:space="preserve">
+    <value>Nachbarschaftshilfe</value>
+  </data>
+  <data name="CallTypeClass.NonEmergencyActivity" xml:space="preserve">
+    <value>Nicht dringende Tätigkeit</value>
+  </data>
+  <data name="CallTypeClass.Other" xml:space="preserve">
+    <value>Sonstige</value>
+  </data>
+  <data name="UnitTypeClass.Engine" xml:space="preserve">
+    <value>Löschfahrzeug</value>
+  </data>
+  <data name="UnitTypeClass.Aerial" xml:space="preserve">
+    <value>Hubrettungsfahrzeug</value>
+  </data>
+  <data name="UnitTypeClass.Rescue" xml:space="preserve">
+    <value>Rüstwagen</value>
+  </data>
+  <data name="UnitTypeClass.Tanker" xml:space="preserve">
+    <value>Tanklöschfahrzeug</value>
+  </data>
+  <data name="UnitTypeClass.Ambulance" xml:space="preserve">
+    <value>Rettungswagen</value>
+  </data>
+  <data name="UnitTypeClass.MedicalResponse" xml:space="preserve">
+    <value>Medizinische Erstversorgung</value>
+  </data>
+  <data name="UnitTypeClass.Wildland" xml:space="preserve">
+    <value>Waldbrand</value>
+  </data>
+  <data name="UnitTypeClass.HazardousMaterials" xml:space="preserve">
+    <value>Gefahrstoffe</value>
+  </data>
+  <data name="UnitTypeClass.Command" xml:space="preserve">
+    <value>Führung</value>
+  </data>
+  <data name="UnitTypeClass.Support" xml:space="preserve">
+    <value>Unterstützung</value>
+  </data>
+  <data name="UnitTypeClass.Watercraft" xml:space="preserve">
+    <value>Boot</value>
+  </data>
+  <data name="UnitTypeClass.Aircraft" xml:space="preserve">
+    <value>Luftfahrzeug</value>
+  </data>
+  <data name="UnitTypeClass.Patrol" xml:space="preserve">
+    <value>Streife</value>
+  </data>
+  <data name="UnitTypeClass.Other" xml:space="preserve">
+    <value>Sonstige</value>
+  </data>
+  <data name="CallPriorityMeaning.Low" xml:space="preserve">
+    <value>Niedrig</value>
+  </data>
+  <data name="CallPriorityMeaning.Medium" xml:space="preserve">
+    <value>Mittel</value>
+  </data>
+  <data name="CallPriorityMeaning.High" xml:space="preserve">
+    <value>Hoch</value>
+  </data>
+  <data name="CallPriorityMeaning.Emergency" xml:space="preserve">
+    <value>Notfall</value>
+  </data>
 </root>

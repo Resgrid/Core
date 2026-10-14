@@ -6,6 +6,7 @@
 @{
     ViewBag.Title = "Resgrid | " + localizer["ViewLogHeader"];
     var logType = Model.WorkLog.LogType.HasValue ? (LogTypes)Model.WorkLog.LogType.Value : LogTypes.Run;
+    var logTypeName = await departmentTerms.RecordTypeAsync((int)logType);
     var logTypeLabelClass = logType == LogTypes.Run ? "danger"
         : logType == LogTypes.Training ? "primary"
         : logType == LogTypes.Work ? "warning"
@@ -57,7 +58,7 @@
                                     @localizer["PrintExportView"]
                                 </a>
                                 <span class="pull-right m-r-sm">
-                                    <span class="label label-@logTypeLabelClass">@logType.ToString()</span>
+                                    <span class="label label-@logTypeLabelClass">@logTypeName</span>
                                 </span>
                                 <h2>@localizer["LogId"] #@Model.WorkLog.LogId</h2>
                             </div>
@@ -67,7 +68,7 @@
                         <div class="col-md-6">
                             <dl class="dl-horizontal">
                                 <dt>@localizer["LogType"]:</dt>
-                                <dd><strong>@logType.ToString()</strong></dd>
+                                <dd><strong>@logTypeName</strong></dd>
 
                                 <dt>@localizer["LoggedOn"]:</dt>
                                 <dd>@Model.WorkLog.LoggedOn.TimeConverterToString(Model.Department)</dd>
@@ -594,7 +595,7 @@
                         <li class="list-group-item">
                             <b>@localizer["LogType"]</b>
                             <span class="pull-right">
-                                <span class="label label-@logTypeLabelClass">@logType.ToString()</span>
+                                <span class="label label-@logTypeLabelClass">@logTypeName</span>
                             </span>
                         </li>
                         <li class="list-group-item">

@@ -80,7 +80,7 @@
 			}
 
 			<div class="ibox">
-				<div class="ibox-title"><h5><i class="fa fa-info-circle"></i> @(Model.IsDefinitionRecord ? Model.DefinitionName + " v" + Model.Aggregate.Record.DefinitionVersion : t.ToString()) <span class="label label-primary">@Model.State</span></h5></div>
+				<div class="ibox-title"><h5><i class="fa fa-info-circle"></i> @(Model.IsDefinitionRecord ? Model.DefinitionName + " v" + Model.Aggregate.Record.DefinitionVersion : await departmentTerms.RecordTypeAsync((int)t)) <span class="label label-primary">@Model.State</span></h5></div>
 				<div class="ibox-content">
 					<div class="row">
 						<div class="col-md-6">

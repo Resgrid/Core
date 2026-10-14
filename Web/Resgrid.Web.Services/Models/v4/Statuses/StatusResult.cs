@@ -44,9 +44,10 @@ namespace Resgrid.Web.Services.Models.v4.Statuses
 		public string BColor { get; set; }
 
 		/// <summary>
-		/// The canonical meaning of this status (see <see cref="Resgrid.Model.ActionBaseTypes"/>).
-		/// Departments name and colour their statuses freely, so this is the only field a client can use
-		/// to answer "does this status mean available / responding / on scene".
+		/// The canonical meaning of this status: an <see cref="Resgrid.Model.ActionBaseTypes"/> value for personnel and
+		/// unit statuses, a <see cref="Resgrid.Model.StaffingBaseTypes"/> value for staffing levels (Type 3). Built-in
+		/// options carry theirs too. Departments name and colour their statuses freely, so this is the only field a
+		/// client can use to answer "does this status mean available / responding / on scene".
 		/// </summary>
 		public int BaseType { get; set; }
 

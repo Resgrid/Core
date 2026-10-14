@@ -48,6 +48,23 @@ namespace Resgrid.Tests.Framework
 			result[0].Height.Should().Be(270);
 		}
 
+		[TestCase(-1)]
+		[TestCase(0)] // Low: the value an initializer of -1 would lose without [DefaultValue(-1)]
+		[TestCase(3)]
+		public void CallPriorityBaseType_RoundTripsThroughTheCacheSerializer(int baseType)
+		{
+			var result = RoundTrip(new List<DepartmentCallPriority> { new DepartmentCallPriority { DepartmentCallPriorityId = 57, Name = "Structure Fire", BaseType = baseType } });
+
+			result.Single().BaseType.Should().Be(baseType);
+		}
+
+		[Test]
+		public void CallTypeId_RoundTripsThroughTheCacheSerializer()
+		{
+			RoundTrip(new Call { CallId = 1, Type = "Structure Fire", CallTypeId = 77 }).CallTypeId.Should().Be(77);
+			RoundTrip(new Call { CallId = 2, Type = "Unknown" }).CallTypeId.Should().BeNull();
+		}
+
 		[Test]
 		public void RunCardList_RoundTripsThroughTheCacheSerializer()
 		{

@@ -690,12 +690,13 @@ namespace Resgrid.Chatbot.Services
 		/// <summary>
 		/// Infers the incident family from the call's type, name and nature. Scores every playbook by how
 		/// many of its keywords appear (longer keywords score higher so "vehicle fire" beats a bare
-		/// "fire"), and falls back to the general playbook when nothing scores.
+		/// "fire"). When nothing scores, the call type's class picks the playbook (a department's own
+		/// type names, in any language); the general playbook is the last resort.
 		/// </summary>
-		public static IncidentPlaybook Infer(Call call, string incidentName = null)
+		public static IncidentPlaybook Infer(Call call, string incidentName = null, CallTypeClasses callTypeClass = CallTypeClasses.None)
 		{
 			if (call == null && string.IsNullOrWhiteSpace(incidentName))
-				return GeneralPlaybook;
+				return ForCallTypeClass(callTypeClass) ?? GeneralPlaybook;
 
 			var haystack = string.Join(" ", new[]
 			{
@@ -706,7 +707,7 @@ namespace Resgrid.Chatbot.Services
 			}.Where(s => !string.IsNullOrWhiteSpace(s))).ToLowerInvariant();
 
 			if (haystack.Length == 0)
-				return GeneralPlaybook;
+				return ForCallTypeClass(callTypeClass) ?? GeneralPlaybook;
 
 			IncidentPlaybook best = null;
 			var bestScore = 0;
@@ -726,7 +727,28 @@ namespace Resgrid.Chatbot.Services
 				}
 			}
 
-			return best ?? GeneralPlaybook;
+			return best ?? ForCallTypeClass(callTypeClass) ?? GeneralPlaybook;
+		}
+
+		/// <summary>
+		/// The playbook for a call type class, or null when the class has no specific one (alarms, service calls,
+		/// law enforcement, mutual aid ...). Classes are coarse, so they never override a keyword match: "Fire"
+		/// cannot tell a structure fire from a brush or vehicle fire, and maps to the structure fire playbook.
+		/// </summary>
+		public static IncidentPlaybook ForCallTypeClass(CallTypeClasses callTypeClass)
+		{
+			var type = callTypeClass switch
+			{
+				CallTypeClasses.Fire => IncidentPlaybookType.StructureFire,
+				CallTypeClasses.Medical => IncidentPlaybookType.Ems,
+				CallTypeClasses.Rescue => IncidentPlaybookType.TechnicalRescue,
+				CallTypeClasses.TrafficCollision => IncidentPlaybookType.VehicleAccident,
+				CallTypeClasses.HazardousMaterials => IncidentPlaybookType.HazMat,
+				CallTypeClasses.DisasterWeather => IncidentPlaybookType.NaturalDisaster,
+				_ => IncidentPlaybookType.General
+			};
+
+			return type == IncidentPlaybookType.General ? null : Playbooks.FirstOrDefault(p => p.Type == type);
 		}
 
 		/// <summary>

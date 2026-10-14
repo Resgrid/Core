@@ -1366,7 +1366,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			CustomState customStates = null;
 			List<CustomStateDetail> activeDetails = null;
 
-			if (customStateId > 25)
+			if (customStateId > 0)
 			{
 				customStates = await _customStateService.GetCustomSateByIdAsync(customStateId);
 
@@ -1401,7 +1401,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			CustomState customStates = null;
 			List<CustomStateDetail> activeDetails = null;
 
-			if (customStateId > 25)
+			if (customStateId > 0)
 			{
 				customStates = await _customStateService.GetCustomSateByIdAsync(customStateId);
 
@@ -1436,7 +1436,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			CustomState customStates = null;
 			List<CustomStateDetail> activeDetails = null;
 
-			if (customStateId > 25)
+			if (customStateId > 0)
 			{
 				customStates = await _customStateService.GetCustomSateByIdAsync(customStateId);
 

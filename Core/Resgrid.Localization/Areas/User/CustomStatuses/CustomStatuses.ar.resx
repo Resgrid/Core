@@ -124,7 +124,7 @@
     <value>متاح</value>
   </data>
   <data name="BaseType" xml:space="preserve">
-    <value>النوع الأساسي</value>
+    <value>المعنى</value>
   </data>
   <data name="ButtonBackgroundColorLabel" xml:space="preserve">
     <value>لون خلفية الزر</value>
@@ -341,5 +341,158 @@
   </data>
   <data name="NextStatusesAny" xml:space="preserve">
     <value>أي حالة</value>
+  </data>
+  <data name="StaffingAvailable" xml:space="preserve">
+    <value>متاح</value>
+  </data>
+  <data name="StaffingDelayed" xml:space="preserve">
+    <value>متأخر</value>
+  </data>
+  <data name="StaffingUnavailable" xml:space="preserve">
+    <value>غير متاح</value>
+  </data>
+  <data name="StaffingCommitted" xml:space="preserve">
+    <value>ملتزم</value>
+  </data>
+  <data name="StaffingOnShift" xml:space="preserve">
+    <value>في المناوبة</value>
+  </data>
+  <data name="StaffingOffDuty" xml:space="preserve">
+    <value>خارج الخدمة</value>
+  </data>
+  <data name="StaffingOnCall" xml:space="preserve">
+    <value>تحت الطلب</value>
+  </data>
+  <data name="StaffingBaseTypeHelp" xml:space="preserve">
+    <value>ما يعنيه مستوى التوفر هذا لـ Resgrid. تستخدم توصيات الإرسال وأعداد التوفر وكتم الإشعارات المعنى، بغض النظر عن اسم الزر.</value>
+  </data>
+  <data name="MeaningColumn" xml:space="preserve">
+    <value>المعنى</value>
+  </data>
+  <data name="MissingMeaningsHeader" xml:space="preserve">
+    <value>خيارات بدون معنى: {0}.</value>
+  </data>
+  <data name="MissingMeaningsHelp" xml:space="preserve">
+    <value>يستخدم Resgrid معنى الخيار لتحديد التوفر، وما يتم تعيينه عند الإرسال والإخلاء، والإشعارات والتقارير. تُعامل الخيارات التي لا معنى لها على أنها غير معروفة. عندما يعطي الاسم تلميحًا واضحًا يظهر اقتراح؛ راجعه ثم احفظ.</value>
+  </data>
+  <data name="UseSuggestedMeanings" xml:space="preserve">
+    <value>استخدام المعاني المقترحة</value>
+  </data>
+  <data name="SuggestedMeaningsApplied" xml:space="preserve">
+    <value>تم تطبيق الاقتراحات. راجعها ثم احفظ.</value>
+  </data>
+  <data name="SuggestedMeaning" xml:space="preserve">
+    <value>مقترح: {0}</value>
+  </data>
+  <data name="OptionsWithoutMeaning" xml:space="preserve">
+    <value>بدون معنى: {0}</value>
+  </data>
+  <data name="AnyStatusWithMeaning" xml:space="preserve">
+    <value>أي حالة «{0}»</value>
+  </data>
+  <data name="BuiltInStatusOption" xml:space="preserve">
+    <value>مدمجة: {0}</value>
+  </data>
+  <data name="NoteOptional" xml:space="preserve">
+    <value>اختيارية</value>
+  </data>
+  <data name="NoteRequired" xml:space="preserve">
+    <value>مطلوبة</value>
+  </data>
+  <data name="SetTypeLabel" xml:space="preserve">
+    <value>النوع</value>
+  </data>
+  <data name="TemplatePrefilledNote" xml:space="preserve">
+    <value>عُبئت هذه الخيارات من قالب. غيّر النص أو الألوان، أو احذف ما لا تحتاجه، أو أضف خياراتك؛ لا يُحفظ شيء حتى تنقر إضافة.</value>
+  </data>
+  <data name="BackgroundColorShort" xml:space="preserve">
+    <value>الخلفية</value>
+  </data>
+  <data name="TextColorShort" xml:space="preserve">
+    <value>النص</value>
+  </data>
+  <data name="StatusRuleAny" xml:space="preserve">
+    <value>أي</value>
+  </data>
+  <data name="StatusRuleUnknown" xml:space="preserve">
+    <value>غير معروف</value>
+  </data>
+  <data name="StatusRuleNone" xml:space="preserve">
+    <value>لا شيء</value>
+  </data>
+  <data name="BaseTypeDescription.none" xml:space="preserve">
+    <value>لا معنى لها في النظام. الحالة للمعلومات فقط ولا تؤثر في التوفر أو التقارير أو الأتمتة.</value>
+  </data>
+  <data name="BaseTypeDescription.available" xml:space="preserve">
+    <value>الوحدة أو المستجيب في الخدمة ومتاح للتكليف أو الإرسال إلى بلاغ أو مهمة.</value>
+  </data>
+  <data name="BaseTypeDescription.notresponding" xml:space="preserve">
+    <value>أقرّ المستجيب بالاستلام لكنه يرفض التكليف الحالي أو لا يستطيع الاستجابة له.</value>
+  </data>
+  <data name="BaseTypeDescription.responding" xml:space="preserve">
+    <value>الوحدة أو المستجيب في طريقه بنشاط إلى بلاغ أو حادث مُكلَّف به.</value>
+  </data>
+  <data name="BaseTypeDescription.onscene" xml:space="preserve">
+    <value>وصلت الوحدة أو المستجيب وتعمل في موقع البلاغ أو الحادث.</value>
+  </data>
+  <data name="BaseTypeDescription.madecontact" xml:space="preserve">
+    <value>تواصلت الوحدة أو المستجيب مع الشخص أو المريض أو الطرف أو نقطة الاهتمام.</value>
+  </data>
+  <data name="BaseTypeDescription.investigating" xml:space="preserve">
+    <value>الوحدة أو المستجيب يحقق في الوضع أو يقيّمه.</value>
+  </data>
+  <data name="BaseTypeDescription.dispatched" xml:space="preserve">
+    <value>أُرسلت الوحدة أو المستجيب أو كُلّفت لكنها لم تبدأ التحرك بعد.</value>
+  </data>
+  <data name="BaseTypeDescription.cleared" xml:space="preserve">
+    <value>أنهت الوحدة أو المستجيب البلاغ أو الحادث وتعود إلى حالة التوفر.</value>
+  </data>
+  <data name="BaseTypeDescription.returning" xml:space="preserve">
+    <value>الوحدة أو المستجيب عائد إلى المقر أو المركز أو القاعدة.</value>
+  </data>
+  <data name="BaseTypeDescription.staging" xml:space="preserve">
+    <value>الوحدة أو المستجيب في موقع انتظار آمن بانتظار التكليف أو الأوامر.</value>
+  </data>
+  <data name="BaseTypeDescription.unavailable" xml:space="preserve">
+    <value>الوحدة أو المستجيب خارج الخدمة وغير متاح للتكليف.</value>
+  </data>
+  <data name="BaseTypeDescription.enroute" xml:space="preserve">
+    <value>الوحدة أو المستجيب يتجه إلى تكليف أو وجهة أو موقع بشكل اعتيادي (غير طارئ).</value>
+  </data>
+  <data name="BaseTypeDescription.transporting" xml:space="preserve">
+    <value>الوحدة أو المستجيب ينقل مريضًا أو شخصًا أو محتجزًا أو حمولة إلى وجهة.</value>
+  </data>
+  <data name="BaseTypeDescription.delivering" xml:space="preserve">
+    <value>الوحدة أو المستجيب يسلّم بضائع أو إمدادات أو معدات أو سلعًا إلى مستلم أو نقطة تسليم.</value>
+  </data>
+  <data name="BaseTypeDescription.atpatient" xml:space="preserve">
+    <value>وصلت الوحدة أو المستجيب إلى مريض أو شخص مفقود وتقدم له الرعاية أو على تواصل معه.</value>
+  </data>
+  <data name="BaseTypeDescription.athospital" xml:space="preserve">
+    <value>وصلت الوحدة أو المستجيب إلى مستشفى أو منشأة استقبال لتسليم رعاية المريض.</value>
+  </data>
+  <data name="BaseTypeDescription.searching" xml:space="preserve">
+    <value>الوحدة أو المستجيب يجري بحثًا فعليًا في منطقة أو قطاع أو شبكة مُكلَّف بها.</value>
+  </data>
+  <data name="BaseTypeDescription.loading" xml:space="preserve">
+    <value>الوحدة أو المستجيب يحمّل أو يستلم حمولة أو إمدادات أو معدات أو شخصًا قبل النقل.</value>
+  </data>
+  <data name="BaseTypeDescription.standby" xml:space="preserve">
+    <value>الوحدة أو المستجيب في الاحتياط أو الانتظار أو تحت الطلب وجاهز للتكليف.</value>
+  </data>
+  <data name="BaseTypeDescription.onpatrol" xml:space="preserve">
+    <value>الوحدة أو المستجيب يسيّر دورية في منطقة مُكلَّف بها مع بقائه متاحًا للإرسال.</value>
+  </data>
+  <data name="BaseTypeDescription.maintenance" xml:space="preserve">
+    <value>الوحدة أو المستجيب خارج الخدمة للصيانة أو التزود بالوقود أو إعادة التموين أو التنظيف أو الخدمة.</value>
+  </data>
+  <data name="BaseTypeDescription.onbreak" xml:space="preserve">
+    <value>الوحدة أو المستجيب في استراحة أو وجبة وغير متاح مؤقتًا.</value>
+  </data>
+  <data name="BaseTypeDescription.completed" xml:space="preserve">
+    <value>اكتمل التكليف أو المهمة أو التسليم؛ الوحدة أو المستجيب ينهي العمل ويصبح متاحًا.</value>
+  </data>
+  <data name="BaseTypeDescription.inquarters" xml:space="preserve">
+    <value>الوحدة أو المستجيب في الخدمة ومتاح في مركزه. تقيس توصيات الإرسال المسافة من المركز بدل موقع GPS وتضيف زمن الخروج من المركز.</value>
   </data>
 </root>

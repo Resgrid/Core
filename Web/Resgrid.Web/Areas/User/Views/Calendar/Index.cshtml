@@ -5,7 +5,8 @@
 @model Resgrid.Web.Areas.User.Models.Calendar.IndexView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Calendar.Calendar> localizer
 @{
-    ViewBag.Title = "Resgrid | " + @localizer["CalendarHeader"];
+    var moduleTitle = await departmentTerms.NameAsync(DepartmentTerms.Calendar, localizer["CalendarHeader"]);
+    ViewBag.Title = "Resgrid | " + moduleTitle;
     Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
 }
 
@@ -23,13 +24,13 @@
 
     <div class="row wrapper border-bottom white-bg page-heading">
         <div class="col-sm-4">
-            <h2>@localizer["CalendarHeader"]</h2>
+            <h2>@moduleTitle</h2>
             <ol class="breadcrumb">
                 <li>
                     <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
                 </li>
                 <li class="active">
-                    <strong>@localizer["CalendarHeader"]</strong>
+                    <strong>@moduleTitle</strong>
                 </li>
             </ol>
         </div>

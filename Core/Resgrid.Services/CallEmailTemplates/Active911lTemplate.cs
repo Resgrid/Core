@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Identity;
@@ -53,14 +54,22 @@ namespace Resgrid.Services.CallEmailTemplates
 				{
 					if (trimmedLine.ToLower().StartsWith("call:"))
 					{
-						c.Name = trimmedLine.Replace("CALL:", "").Trim();
+						c.Name = ValueAfter(trimmedLine, "call:");
 						sb.Append(trimmedLine + "</br>");
 
 						if (department != null && department.DepartmentId == 7966)
 						{
-							string[] typePrioline = c.Name.Split(new[] { " " }, StringSplitOptions.None);
-							c.Type = typePrioline[0].Trim();
-							c.Priority = ParseCallPriority(typePrioline[0].Trim(), priority, activePriorities);
+							// "Medical Chest Pain", "Fire Structure Residential": the first word is the call type. Keep the
+							// department's own spelling, and its id, when it has that type.
+							var typeWord = c.Name.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
+							var callType = CallTypeLink.FindByName(callTypes, typeWord);
+							c.Type = callType?.Type ?? typeWord;
+							if (callType != null)
+								c.CallTypeId = callType.CallTypeId;
+
+							// Its priorities are named after incident kinds ("Medical", "Structure Fire", "Brush / Woods Fire"):
+							// the type word exactly, else a priority whose words all appear in the line, else the default.
+							c.Priority = CallPriorityMatch.Find(activePriorities, c.Name, typeWord)?.DepartmentCallPriorityId ?? priority;
 						}
 					}
 					else if (trimmedLine.ToLower().StartsWith("addr:"))
@@ -70,12 +79,12 @@ namespace Resgrid.Services.CallEmailTemplates
 					}
 					else if (trimmedLine.ToLower().StartsWith("addr1:"))
 					{
-						c.Address = trimmedLine.Replace("ADDR1:", "").Trim();
+						c.Address = ValueAfter(trimmedLine, "addr1:");
 						sb.Append(trimmedLine + "</br>");
 					}
 					else if (trimmedLine.ToLower().StartsWith("id:"))
 					{
-						c.IncidentNumber = trimmedLine.Replace("ID:", "").Trim();
+						c.IncidentNumber = ValueAfter(trimmedLine, "id:");
 						c.ExternalIdentifier = c.IncidentNumber;
 
 						if (department != null && department.DepartmentId == 7966)
@@ -85,11 +94,7 @@ namespace Resgrid.Services.CallEmailTemplates
 					}
 					else if (trimmedLine.ToLower().StartsWith("map:"))
 					{
-						c.GeoLocationData = trimmedLine.Replace("MAP:", "").Replace("http://www.google.com/maps/place/", "").Trim();
-					}
-					else if (trimmedLine.ToLower().StartsWith("date/time:"))
-					{
-						sb.Append(trimmedLine + "</br>");
+						c.GeoLocationData = ValueAfter(trimmedLine, "map:").Replace("http://www.google.com/maps/place/", "").Trim();
 					}
 					else if (trimmedLine.ToLower().StartsWith("date/time:"))
 					{
@@ -97,7 +102,7 @@ namespace Resgrid.Services.CallEmailTemplates
 					}
 					else if (trimmedLine.ToLower().StartsWith("narr:"))
 					{
-						sb.Append(trimmedLine.Replace("NARR:", "").Trim() + "</br>");
+						sb.Append(ValueAfter(trimmedLine, "narr:") + "</br>");
 					}
 				}
 			}
@@ -112,8 +117,9 @@ namespace Resgrid.Services.CallEmailTemplates
 				c.Dispatches.Add(cd);
 			}
 
-			// Search for an active call
-			if (activeCalls != null && activeCalls.Any())
+			// Search for an active call. Only by an incident number: a message without one must not attach to whichever open
+			// call also has none.
+			if (activeCalls != null && activeCalls.Any() && !String.IsNullOrWhiteSpace(c.IncidentNumber))
 			{
 				var activeCall = activeCalls.FirstOrDefault(x => x.IncidentNumber == c.IncidentNumber);
 
@@ -133,18 +139,10 @@ namespace Resgrid.Services.CallEmailTemplates
 			return c;
 		}
 
-		// For 7966
-		private int ParseCallPriority(string data, int priority, List<DepartmentCallPriority> activePriorities)
+		/// <summary>The text after a field prefix such as "CALL:", whatever its case (the field was found case-insensitively).</summary>
+		private static string ValueAfter(string line, string prefix)
 		{
-			if (activePriorities != null && activePriorities.Any())
-			{
-				var customPriority = activePriorities.FirstOrDefault(x => x.Name.ToLower() == data.ToLower());
-
-				if (customPriority != null)
-					return customPriority.DepartmentCallPriorityId;
-			}
-
-			return priority;
+			return line.Length > prefix.Length ? line.Substring(prefix.Length).Trim() : String.Empty;
 		}
 
 		// For 7966
@@ -152,6 +150,12 @@ namespace Resgrid.Services.CallEmailTemplates
 		{
 			try
 			{
+				// The current feed sends "ID: 00117-2026-00000474": the reference is the sequence after the agency and
+				// year, as the older "...00117" numbers below gave.
+				var current = Regex.Match(data, @"\b00117-\d{4}-0*(\d+)\b");
+				if (current.Success)
+					return current.Groups[1].Value;
+
 				var fixedData = data.Replace("Incident Numbers:", "").Replace("[", "").Replace("]", "").Trim();
 				var lines = fixedData.Split(new[] { ",", }, StringSplitOptions.None);
 

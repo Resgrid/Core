@@ -668,17 +668,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (task.ScheduleType == (int)ScheduleTypes.Weekly)
 					st.DaysOfWeek = days.ToString();
 
+				// The department's own staffing level first (StatusOptionIds), then the built-in one.
 				var state = int.Parse(task.Data);
-				if (state <= 25)
-				{
-					st.Data = ((UserStateTypes)int.Parse(task.Data)).ToString();
-				}
-				else
-				{
-					var stateDetail= await _customStateService.GetCustomDetailForDepartmentAsync(DepartmentId, state);
+				var stateDetail = StatusOptionIds.FindCustom(await _customStateService.GetAllCustomStatesForDepartmentAsync(DepartmentId), CustomStateTypes.Staffing, state);
 
+				if (stateDetail != null)
 					st.Data = stateDetail.ButtonText;
-				}
+				else if (state <= CallStatusLinkage.MaxBuiltInStatusId)
+					st.Data = ((UserStateTypes)state).ToString();
+				else
+					st.Data = "Unknown";
 
 				scheduleJson.Add(st);
 			}

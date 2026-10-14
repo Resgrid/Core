@@ -26,10 +26,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IRecordCallReportsService _runReports;
 		private readonly IRecordsAuthorizationService _authorization;
 		private readonly IRecordsCutoverService _cutover;
+		private readonly IDepartmentTerminology _terms;
 
 		public ReportSourcesController(ICallsService calls, ICallSourceDataService sources, IRecordCallReportsService runReports,
-			IRecordsAuthorizationService authorization, IRecordsCutoverService cutover)
+			IRecordsAuthorizationService authorization, IRecordsCutoverService cutover, IDepartmentTerminology terms)
 		{
+			_terms = terms;
 			_calls = calls;
 			_sources = sources;
 			_runReports = runReports;
@@ -54,6 +56,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (data == null) return NotFound();
 			var runReports = await _runReports.GetForCallAsync(DepartmentId, UserId, callId, recordId,
 				string.IsNullOrWhiteSpace(recordId) ? "Looked up while writing a report for the call" : "Looked up while writing report " + recordId);
+			foreach (var report in runReports ?? new List<CallRunReport>())
+				report.TypeName = await _terms.DefinitionAsync(report.DefinitionKey, report.TypeName);
 
 			var time = DepartmentTime.From(ViewData);
 			return Json(ReportSourcesJson.Build(data, runReports, time, Url));

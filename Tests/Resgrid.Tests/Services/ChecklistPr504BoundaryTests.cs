@@ -97,6 +97,7 @@ namespace Resgrid.Tests.Services
 			builder.Services.AddHttpContextAccessor(); builder.Services.AddLocalization();
 			builder.Services.AddAuthentication("checklist-test").AddScheme<Microsoft.AspNetCore.Authentication.AuthenticationSchemeOptions, ChecklistTestAuthentication>("checklist-test", _ => { });
 			builder.Services.AddAuthorization(o => o.AddPolicy(ResgridResources.Checklist_Update, p => p.RequireRole("manager")));
+			builder.Services.AddDepartmentTerminologyStub();
 			builder.Services.AddControllersWithViews(o => o.Filters.Add(new PageBodyFilter())).AddApplicationPart(typeof(ChecklistsController).Assembly);
 			builder.Services.AddSingleton(checklists.Object); builder.Services.AddSingleton(_access.Object);
 			builder.Services.AddSingleton(Mock.Of<IChecklistTemplateService>()); builder.Services.AddSingleton(Mock.Of<IProtectedGrantContext>()); builder.Services.AddSingleton(Mock.Of<IDepartmentDataProtectionService>());

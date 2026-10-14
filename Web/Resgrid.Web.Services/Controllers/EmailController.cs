@@ -100,9 +100,10 @@ namespace Resgrid.Web.Services.Controllers
 		/// <param name="message">A Postmark Inbound message http://developer.postmarkapp.com/developer-inbound-parse.html#example-hook</param>
 		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 		/// <returns>
-		/// Postmark retries every answer except a 200 for about 10.5 hours, and a 403 stops it: 200/201 when handled (or handled
-		/// before), 409 while another delivery of the same email is still being handled, 403 when a retry could not help (no
-		/// Resgrid address, unknown address, nothing this department's email format can read), 400 on a failure worth retrying.
+		/// Postmark retries every answer except a 200 for about 10.5 hours, and a 403 stops it: 200 when handled (or handled
+		/// before; never 201, which Postmark's inbound contract does not name as delivered), 409 while another delivery of the
+		/// same email is still being handled, 403 when a retry could not help (no Resgrid address, unknown address, nothing this
+		/// department's email format can read), 400 on a failure worth retrying.
 		/// </returns>
 		[HttpPost("Receive")]
 		[Consumes(MediaTypeNames.Application.Json)]
@@ -120,7 +121,7 @@ namespace Resgrid.Web.Services.Controllers
 					var mailMessage = new MimeMessage();
 
 					if (message.FromFull != null && !String.IsNullOrWhiteSpace(message.FromFull.Email) && message.FromFull.Email.Trim() == "support@postmarkapp.com")
-						return CreatedAtAction(nameof(Receive), new { id = message.MessageID }, message);
+						return Ok(message);
 
 					if (message.FromFull != null && !String.IsNullOrWhiteSpace(message.FromFull.Email) && !String.IsNullOrWhiteSpace(message.FromFull.Name))
 						mailMessage.From.Add(new MailboxAddress(message.FromFull.Name.Trim(), message.FromFull.Email.Trim()));
@@ -378,15 +379,8 @@ namespace Resgrid.Web.Services.Controllers
 								var priorities = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(emailSettings.Department.DepartmentId);
 								var callTypes = await _callsService.GetCallTypesForDepartmentAsync(emailSettings.Department.DepartmentId);
 
-								int defaultPriority = (int)CallPriority.High;
-
-								if (priorities != null && priorities.Any())
-								{
-									var defaultPrio = priorities.FirstOrDefault(x => x.IsDefault && x.IsDeleted == false);
-
-									if (defaultPrio != null)
-										defaultPriority = defaultPrio.DepartmentCallPriorityId;
-								}
+								// The default priority, else the department's High priority, else the built-in High (CallPriorityMatch).
+								int defaultPriority = CallPriorityMatch.DefaultForImport(priorities);
 
 								call = await _callsService.GenerateCallFromEmail(emailSettings.FormatType, callEmail,
 																				 emailSettings.Department.ManagingUserId,
@@ -418,7 +412,7 @@ namespace Resgrid.Web.Services.Controllers
 										await QueueAiDispatchEnrichmentAsync(savedCall, 1, message.FromFull?.Email, cancellationToken);
 
 									await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
-									return CreatedAtAction(nameof(Receive), new { id = savedCall.CallId }, savedCall);
+									return Ok(savedCall);
 								}
 								else if (call != null && call.CallId > 0)
 								{
@@ -438,7 +432,7 @@ namespace Resgrid.Web.Services.Controllers
 									}
 
 									await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
-									return CreatedAtAction(nameof(Receive), new { id = savedCall.CallId }, savedCall);
+									return Ok(savedCall);
 								}
 
 								// The department's email format found no call in this email, and would read it the same way again.
@@ -537,11 +531,11 @@ namespace Resgrid.Web.Services.Controllers
 							}
 							else
 							{
-								return CreatedAtAction(nameof(Receive), new { id = message.MessageID }, message);
+								return Ok(message);
 							}
 						}
 
-						return CreatedAtAction(nameof(Receive), new { id = message.MessageID }, message);
+						return Ok(message);
 						#endregion Distribution Email
 					}
 					if (type == 3)  // Group Dispatch
@@ -620,15 +614,8 @@ namespace Resgrid.Web.Services.Controllers
 								var units = await _unitsService.GetAllUnitsForGroupAsync(departmentGroup.DepartmentGroupId);
 								var callTypes = await _callsService.GetCallTypesForDepartmentAsync(emailSettings.Department.DepartmentId);
 								var priorities = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(emailSettings.Department.DepartmentId);
-								int defaultPriority = (int)CallPriority.High;
-
-								if (priorities != null && priorities.Any())
-								{
-									var defaultPrio = priorities.FirstOrDefault(x => x.IsDefault && x.IsDeleted == false);
-
-									if (defaultPrio != null)
-										defaultPriority = defaultPrio.DepartmentCallPriorityId;
-								}
+								// The default priority, else the department's High priority, else the built-in High (CallPriorityMatch).
+								int defaultPriority = CallPriorityMatch.DefaultForImport(priorities);
 
 								call = await _callsService.GenerateCallFromEmail(emailSettings.FormatType, callEmail,
 																				 emailSettings.Department.ManagingUserId,
@@ -669,7 +656,7 @@ namespace Resgrid.Web.Services.Controllers
 										await QueueAiDispatchEnrichmentAsync(savedCall, 2, message.FromFull?.Email, cancellationToken);
 
 									await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
-									return CreatedAtAction(nameof(Receive), new { id = savedCall.CallId }, savedCall);
+									return Ok(savedCall);
 								}
 
 								// The department's email format found no call in this email, and would read it the same way again.
@@ -735,7 +722,7 @@ namespace Resgrid.Web.Services.Controllers
 								await _messageService.SendMessageAsync(savedMessage, "", departmentGroup.DepartmentId, false, cancellationToken);
 
 								await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
-								return CreatedAtAction(nameof(Receive), new { id = savedMessage.MessageId }, savedMessage);
+								return Ok(savedMessage);
 							}
 							catch (Exception ex)
 							{
@@ -826,7 +813,7 @@ namespace Resgrid.Web.Services.Controllers
 				await QueueAiDispatchEnrichmentAsync(call, aiChannel, message.FromFull?.Email, cancellationToken);
 
 			await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
-			return CreatedAtAction(nameof(Receive), new { id = call.CallId }, call);
+			return Ok(call);
 		}
 
 		/// <summary>Sends a group message an earlier delivery of the same email saved and then failed to send.</summary>
@@ -844,7 +831,7 @@ namespace Resgrid.Web.Services.Controllers
 				await _messageService.SendMessageAsync(savedMessage, "", departmentId, false, cancellationToken);
 
 			await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
-			return CreatedAtAction(nameof(Receive), new { id = savedMessage.MessageId }, savedMessage);
+			return Ok(savedMessage);
 		}
 
 		/// <param name="allowRunCardEnrichment">

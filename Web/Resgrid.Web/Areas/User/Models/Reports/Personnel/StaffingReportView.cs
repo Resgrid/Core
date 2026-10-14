@@ -62,40 +62,27 @@ namespace Resgrid.Web.Areas.User.Models.Reports.Personnel
 
 		public string GetStaffingName(int staffingId)
 		{
-			if (staffingId <= 25)
-			{
-				switch (((UserStateTypes) staffingId))
-				{
-					case UserStateTypes.Available:
-						return "Available";
-					case UserStateTypes.Delayed:
-						return "Delayed";
-					case UserStateTypes.Unavailable:
-						return "Unavailable";
-					case UserStateTypes.Committed:
-						return "Committed";
-					case UserStateTypes.OnShift:
-						return "OnShift";
-					default:
-						throw new ArgumentOutOfRangeException(nameof(staffingId), staffingId, null);
-				}
-			}
-			else
-			{
-				if (CustomStaffing != null)
-				{
-					var staffing = CustomStaffing.GetActiveDetails().FirstOrDefault(x => x.CustomStateDetailId == staffingId);
+			// The department's own staffing level first, deleted ones included so older rows keep their name
+			// (StatusOptionIds), then the built-in level.
+			var staffing = CustomStaffing?.Details?.FirstOrDefault(x => x != null && x.CustomStateDetailId == staffingId);
+			if (staffing != null)
+				return staffing.ButtonText;
 
-					if (staffing != null)
-						return staffing.ButtonText;
-				}
-				else
-				{
+			switch (((UserStateTypes) staffingId))
+			{
+				case UserStateTypes.Available:
+					return "Available";
+				case UserStateTypes.Delayed:
+					return "Delayed";
+				case UserStateTypes.Unavailable:
+					return "Unavailable";
+				case UserStateTypes.Committed:
+					return "Committed";
+				case UserStateTypes.OnShift:
+					return "OnShift";
+				default:
 					return "Unknown";
-				}
 			}
-
-			return String.Empty;
 		}
 	}
 

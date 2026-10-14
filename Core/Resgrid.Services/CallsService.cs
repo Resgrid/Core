@@ -105,6 +105,8 @@ namespace Resgrid.Services
 			if (!String.IsNullOrWhiteSpace(call.GeoLocationData) && call.GeoLocationData.Length == 1)
 				call.GeoLocationData = "";
 
+			call.CallTypeId = CallTypeLink.Resolve(call.Type, call.CallTypeId, await GetCallTypesForDepartmentAsync(call.DepartmentId));
+
 			// Enrich call with indoor zone data if an indoor zone is selected
 			if (!String.IsNullOrWhiteSpace(call.IndoorMapZoneId))
 			{
@@ -632,10 +634,15 @@ namespace Resgrid.Services
 
 		public async Task<DepartmentCallPriority> GetCallPrioritiesByIdAsync(int departmentId, int priorityId, bool bypassCache = false)
 		{
-			if (priorityId > 3)
-				return (await GetCallPrioritiesForDepartmentAsync(departmentId, bypassCache)).FirstOrDefault(x => x.DepartmentCallPriorityId == priorityId);
-			else
-				return GetDefaultCallPriorities().FirstOrDefault(x => x.DepartmentCallPriorityId == priorityId);
+			// The department's own priority first: the oldest departments own priority ids 0 to 3, which are also the
+			// built-in priority values, and treating every id up to 3 as built-in made their priorities uneditable.
+			var departmentPriority = (await GetCallPrioritiesForDepartmentAsync(departmentId, bypassCache))?
+				.FirstOrDefault(x => x.DepartmentId == departmentId && x.DepartmentCallPriorityId == priorityId);
+
+			if (departmentPriority != null)
+				return departmentPriority;
+
+			return priorityId <= 3 ? GetDefaultCallPriorities().FirstOrDefault(x => x.DepartmentCallPriorityId == priorityId) : null;
 		}
 
 		public async Task<List<DepartmentCallPriority>> GetCallPrioritiesForDepartmentAsync(int departmentId, bool bypassCache = false)
@@ -884,6 +891,10 @@ namespace Resgrid.Services
 					ForceNotifyAllPersonnel = false,
 					IsSystemPriority = true
 				});
+
+				// A built-in priority is its own base type (DepartmentCallPriority.BaseType).
+				foreach (var priority in _callPriorities)
+					priority.BaseType = priority.DepartmentCallPriorityId;
 			}
 
 			return _callPriorities;

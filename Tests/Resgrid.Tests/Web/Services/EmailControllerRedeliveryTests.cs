@@ -190,7 +190,7 @@ NARR: SMOKE SHOWING";
 		{
 			var id = Guid.NewGuid().ToString();
 
-			(await ReceiveAsync(Email(id))).Should().Be(201);
+			(await ReceiveAsync(Email(id))).Should().Be(200, "Postmark counts only a 200 as delivered");
 			(await ReceiveAsync(Email(id))).Should().Be(200, "the email was already handled");
 
 			_saved.Should().ContainSingle();
@@ -212,7 +212,7 @@ NARR: SMOKE SHOWING";
 			_receipts.Find(id).State.Should().Be((int)InboundEmailReceiptStates.Saved);
 			_receipts.Find(id).ClaimedOn.Should().BeNull("a failed attempt gives its claim back for the next delivery");
 
-			(await ReceiveAsync(Email(id))).Should().Be(201);
+			(await ReceiveAsync(Email(id))).Should().Be(200);
 
 			_saved.Should().ContainSingle("the retry finished the first call");
 			_broadcastAttempts.Should().Be(2);
@@ -232,7 +232,7 @@ NARR: SMOKE SHOWING";
 			_receipts.Find(id).EntityId.Should().Be(900, "the call row was written before the failure");
 			_broadcastAttempts.Should().Be(0);
 
-			(await ReceiveAsync(Email(id))).Should().Be(201);
+			(await ReceiveAsync(Email(id))).Should().Be(200);
 
 			_saved.Should().ContainSingle();
 			_broadcastAttempts.Should().Be(1);
@@ -297,8 +297,8 @@ NARR: SMOKE SHOWING";
 		[Test]
 		public async Task Without_a_provider_message_id_every_delivery_is_processed_as_before()
 		{
-			(await ReceiveAsync(Email(null))).Should().Be(201);
-			(await ReceiveAsync(Email(null))).Should().Be(201);
+			(await ReceiveAsync(Email(null))).Should().Be(200);
+			(await ReceiveAsync(Email(null))).Should().Be(200);
 
 			_saved.Should().HaveCount(2);
 			_receipts.Receipts.Should().BeEmpty();
@@ -312,7 +312,7 @@ NARR: SMOKE SHOWING";
 			_sendFailures = 1;
 
 			(await ReceiveAsync(Email(id, to))).Should().Be(400);
-			(await ReceiveAsync(Email(id, to))).Should().Be(201);
+			(await ReceiveAsync(Email(id, to))).Should().Be(200);
 			(await ReceiveAsync(Email(id, to))).Should().Be(200);
 
 			_messages.Should().ContainSingle();

@@ -5395,6 +5395,144 @@
       "AllowedValues": "Validated by the owning configuration workflow",
       "EvidenceSource": "DocumentNumberPattern",
       "Availability": "reference-only"
+    },
+    {
+      "Id": "setting.DepartmentTerminology",
+      "AreaId": "security",
+      "LabelKey": "Setting.DepartmentTerminology",
+      "HelpKey": "SettingHelp.DepartmentTerminology",
+      "Binding": "DepartmentSettingTypes.DepartmentTerminology",
+      "ValueType": "protobuf",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "Terminology",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-13T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.security",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.DepartmentTerminology",
+      "DefaultValue": "missing = the shipped names",
+      "AllowedValues": "Validated by the owning editor; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.DepartmentTerminologyConfig.Terms",
+      "AreaId": "security",
+      "LabelKey": "Field.DepartmentTerminologyConfig.Terms",
+      "HelpKey": "FieldHelp.DepartmentTerminologyConfig.Terms",
+      "Binding": "DepartmentTerminologyConfig.Terms",
+      "ValueType": "list",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "Terminology",
+        "Field": "Terms"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-13T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.security",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.DepartmentTerminology"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.DepartmentTerminologyConfig.Terms",
+      "DefaultValue": "empty",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "DepartmentTerminologyConfig",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.DepartmentTermOverride.Key",
+      "AreaId": "security",
+      "LabelKey": "Field.DepartmentTermOverride.Key",
+      "HelpKey": "FieldHelp.DepartmentTermOverride.Key",
+      "Binding": "DepartmentTermOverride.Key",
+      "ValueType": "string",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "Terminology",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-13T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.security",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.DepartmentTerminology"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.DepartmentTermOverride.Key",
+      "DefaultValue": "unset",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "DepartmentTermOverride",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.DepartmentTermOverride.Text",
+      "AreaId": "security",
+      "LabelKey": "Field.DepartmentTermOverride.Text",
+      "HelpKey": "FieldHelp.DepartmentTermOverride.Text",
+      "Binding": "DepartmentTermOverride.Text",
+      "ValueType": "string",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "Terminology",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-13T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.security",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.DepartmentTerminology"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.DepartmentTermOverride.Text",
+      "DefaultValue": "unset (Resgrid's name)",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "DepartmentTermOverride",
+      "Availability": "reference-only"
     }
   ],
   "Capabilities": [
@@ -5477,6 +5615,30 @@
       "RuleIds": [],
       "Prominence": "Detail",
       "DocsPath": "/web-app/department-settings/#document-numbering"
+    },
+    {
+      "Id": "terminology",
+      "AreaId": "security",
+      "LabelKey": "Feature.terminology",
+      "PurposeKey": "FeaturePurpose.terminology",
+      "ValueKey": "AreaValue.security",
+      "ExampleKey": "AreaExample.security",
+      "AdoptionKey": "ModuleAdoption.security",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Department",
+        "Action": "Terminology"
+      },
+      "Requirements": [],
+      "SettingIds": [
+        "field.DepartmentTermOverride.Key",
+        "field.DepartmentTermOverride.Text",
+        "field.DepartmentTerminologyConfig.Terms",
+        "setting.DepartmentTerminology"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/department-settings/#terminology"
     },
     {
       "Id": "module-settings",
@@ -7615,6 +7777,17 @@
       "ReviewedOn": "2026-10-08T00:00:00Z"
     },
     {
+      "Id": "terminology",
+      "Locale": "en",
+      "TitleKey": "Feature.terminology",
+      "Body": "Terminology Rename modules and built-in record types to the words your department uses, such as Incident instead of Run. Sets the time zone and address everything else uses, and keeps administrative access limited and recoverable. An administrator sets the department time zone, hides modules the department will not use, requires two-factor sign-in for administrators and adds a second administrator. Know your department address and time zone, and choose at least two people who will administer Resgrid.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "terminology",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-13T00:00:00Z"
+    },
+    {
       "Id": "module-settings",
       "Locale": "en",
       "TitleKey": "Feature.module-settings",
@@ -7800,6 +7973,50 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-10-08T00:00:00Z"
+    },
+    {
+      "Id": "setting.DepartmentTerminology",
+      "Locale": "en",
+      "TitleKey": "Setting.DepartmentTerminology",
+      "Body": "Department Terminology. The department's own names for modules and built-in record types, shown in the navigation, on module page titles, wherever record types are listed and in the Responder, Unit, IC and Dispatch apps, in every language. Labels only: permissions, links and API values do not change. A term with no name uses Resgrid's.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-departmentterminology",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-13T00:00:00Z"
+    },
+    {
+      "Id": "field.DepartmentTerminologyConfig.Terms",
+      "Locale": "en",
+      "TitleKey": "Field.DepartmentTerminologyConfig.Terms",
+      "Body": "Department Terminology / Terms. One entry per renamed module or record type, for example Incident for Run or Shift On Duty for Work. A term not listed shows Resgrid's name in the member's language. Names are at most 50 characters.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-departmentterminologyconfig-terms",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-13T00:00:00Z"
+    },
+    {
+      "Id": "field.DepartmentTermOverride.Key",
+      "Locale": "en",
+      "TitleKey": "Field.DepartmentTermOverride.Key",
+      "Body": "Department Term / Key. The term being renamed: a module (module.calls, module.records ...) or a built-in record type (record-type.run, record-type.work ...). Keys never change.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-departmenttermoverride-key",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-13T00:00:00Z"
+    },
+    {
+      "Id": "field.DepartmentTermOverride.Text",
+      "Locale": "en",
+      "TitleKey": "Field.DepartmentTermOverride.Text",
+      "Body": "Department Term / Name. The department's word for the term, at most 50 characters. The same word shows for every member in every language; empty uses Resgrid's name.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-departmenttermoverride-text",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-13T00:00:00Z"
     }
   ]
 }

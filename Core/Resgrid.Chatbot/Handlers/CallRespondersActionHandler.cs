@@ -219,38 +219,15 @@ namespace Resgrid.Chatbot.Handlers
 			if (log == null)
 				return ResponderBucket.None;
 
-			if (log.ActionTypeId <= 25)
-			{
-				return (ActionTypes)log.ActionTypeId switch
-				{
-					ActionTypes.Responding => ResponderBucket.EnRoute,
-					ActionTypes.RespondingToScene => ResponderBucket.EnRoute,
-					ActionTypes.RespondingToStation => ResponderBucket.EnRoute,
-					ActionTypes.OnScene => ResponderBucket.OnScene,
-					_ => ResponderBucket.None
-				};
-			}
-
-			var detail = await _customStateService.GetCustomDetailForDepartmentAsync(departmentId, log.ActionTypeId);
-			return BucketForBaseType(detail?.BaseType);
+			// The department's own option by its base type, else the built-in status's base type (StatusOptionIds).
+			var custom = StatusOptionIds.FindCustom(await _customStateService.GetAllCustomStatesForDepartmentAsync(departmentId), CustomStateTypes.Personnel, log.ActionTypeId);
+			return BucketForBaseType(custom?.BaseType ?? (int)BuiltInStatusBaseTypes.ForPersonnelStatus(log.ActionTypeId));
 		}
 
 		private async Task<ResponderBucket> ClassifyUnitAsync(int departmentId, int state)
 		{
-			if (state <= 25)
-			{
-				return (UnitStateTypes)state switch
-				{
-					UnitStateTypes.Responding => ResponderBucket.EnRoute,
-					UnitStateTypes.Enroute => ResponderBucket.EnRoute,
-					UnitStateTypes.OnScene => ResponderBucket.OnScene,
-					UnitStateTypes.Staging => ResponderBucket.OnScene,
-					_ => ResponderBucket.None
-				};
-			}
-
-			var detail = await _customStateService.GetCustomDetailForDepartmentAsync(departmentId, state);
-			return BucketForBaseType(detail?.BaseType);
+			var custom = StatusOptionIds.FindCustom(await _customStateService.GetAllCustomStatesForDepartmentAsync(departmentId), CustomStateTypes.Unit, state);
+			return BucketForBaseType(custom?.BaseType ?? (int)BuiltInStatusBaseTypes.ForUnitState(state));
 		}
 
 		private static ResponderBucket BucketForBaseType(int? baseType)

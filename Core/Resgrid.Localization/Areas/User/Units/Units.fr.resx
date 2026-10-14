@@ -453,4 +453,31 @@
     <value>{0} (supprimée)</value>
     <comment>A deleted unit in a report picker; {0} is the unit name.</comment>
   </data>
+  <data name="BrowseRoleTemplates" xml:space="preserve">
+    <value>Parcourir les modèles</value>
+  </data>
+  <data name="RoleTemplatesTitle" xml:space="preserve">
+    <value>Modèles de rôles d'unité</value>
+  </data>
+  <data name="RoleTemplatesIntro" xml:space="preserve">
+    <value>Choisissez un point de départ pour les rôles de suivi de cette unité. Les postes sont ajoutés au tableau des rôles, où vous pouvez les renommer, modifier ou retirer le rôle de personnel requis, et ajouter ou supprimer des postes avant d'enregistrer. Les qualifications suggérées sont associées par nom aux rôles de personnel de votre service.</value>
+  </data>
+  <data name="RoleTemplatesSearchPlaceholder" xml:space="preserve">
+    <value>Rechercher des rôles, unités ou disciplines...</value>
+  </data>
+  <data name="RoleTemplatesAllCategories" xml:space="preserve">
+    <value>Toutes les catégories</value>
+  </data>
+  <data name="RoleTemplatesSeats" xml:space="preserve">
+    <value>{0} postes</value>
+  </data>
+  <data name="RoleTemplatesUse" xml:space="preserve">
+    <value>Utiliser ces rôles</value>
+  </data>
+  <data name="RoleTemplatesNoResults" xml:space="preserve">
+    <value>Aucun modèle ne correspond à votre recherche.</value>
+  </data>
+  <data name="RoleTemplatesRequiredNote" xml:space="preserve">
+    <value>* = suggéré comme exigence stricte (bloque les membres non qualifiés) lorsque le rôle de personnel correspondant existe.</value>
+  </data>
 </root>

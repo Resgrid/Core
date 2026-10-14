@@ -511,4 +511,31 @@
     <value>{0} (deleted)</value>
     <comment>A deleted unit in a report picker; {0} is the unit name.</comment>
   </data>
+  <data name="BrowseRoleTemplates" xml:space="preserve">
+    <value>Browse Templates</value>
+  </data>
+  <data name="RoleTemplatesTitle" xml:space="preserve">
+    <value>Unit Role Templates</value>
+  </data>
+  <data name="RoleTemplatesIntro" xml:space="preserve">
+    <value>Pick a starting point for this unit's accountability roles. The seats are added to the roles table where you can rename them, change or clear the required personnel role, and add or remove seats before saving. Suggested qualifications are matched to your department's personnel roles by name.</value>
+  </data>
+  <data name="RoleTemplatesSearchPlaceholder" xml:space="preserve">
+    <value>Search roles, units or disciplines...</value>
+  </data>
+  <data name="RoleTemplatesAllCategories" xml:space="preserve">
+    <value>All categories</value>
+  </data>
+  <data name="RoleTemplatesSeats" xml:space="preserve">
+    <value>{0} seats</value>
+  </data>
+  <data name="RoleTemplatesUse" xml:space="preserve">
+    <value>Use these roles</value>
+  </data>
+  <data name="RoleTemplatesNoResults" xml:space="preserve">
+    <value>No templates match your search.</value>
+  </data>
+  <data name="RoleTemplatesRequiredNote" xml:space="preserve">
+    <value>* = suggested as a hard requirement (blocks unqualified members) when the matching personnel role exists.</value>
+  </data>
 </root>

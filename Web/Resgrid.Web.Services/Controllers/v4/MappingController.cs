@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Framework;
@@ -319,7 +319,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					{
 						if (callTypes != null && callTypes.Count > 0 && !String.IsNullOrWhiteSpace(call.Type))
 						{
-							var type = callTypes.FirstOrDefault(x => x.Type == call.Type);
+							var type = CallTypeLink.Find(call, callTypes);
 
 						if (type != null && type.MapIconType.HasValue)
 							info.ImagePath = MapIcons.ConvertTypeToName((MapIconTypes)type.MapIconType.Value);

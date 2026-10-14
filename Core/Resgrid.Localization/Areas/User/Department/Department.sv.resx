@@ -1113,16 +1113,16 @@
     <value>Enhetsstatus vid frisläppning från larm</value>
   </data>
   <data name="UnitCallReleaseStatusHelp" xml:space="preserve">
-    <value>Sätts på enheter som fortfarande arbetar med ett larm när det stängs eller när de tas bort från det. En enhet som redan är tillbaka i tjänst, ur tjänst (otillgänglig, på underhåll eller på rast) eller arbetar med ett annat larm behåller sin status. Anpassade statusar tolkas utifrån sin bastyp.</value>
+    <value>Sätts på samma sätt, efter betydelse, på enheter som fortfarande arbetar med ett larm när det stängs eller när de tas bort från det. En enhet som redan är tillbaka i tjänst, ur tjänst (otillgänglig, på underhåll eller på rast) eller arbetar med ett annat larm behåller sin status; anpassade statusar tolkas utifrån sin bastyp. Standard sätter enhetens status för tillbaka i tjänst (Klar, Tillgänglig eller På stationen) för anpassade statusar och Frisläppt för de inbyggda statusarna.</value>
   </data>
   <data name="UnitDefaultStatusesHelp" xml:space="preserve">
-    <value>Dessa standardstatusar för enheter använder endast de inbyggda typerna av enhetsstatus. Använd tabellen med åsidosättningar per enhetstyp nedan när en enhetstyp behöver en egen anpassad status.</value>
+    <value>Sätts på enheter som larmas till ett ärende. Välj vad statusen betyder: varje enhet får statusen i sin egen statusuppsättning med den betydelsen (den första i ordning), så att en inställning fungerar för enhetstyper med olika anpassade statusar. Standard sätter Larmad (eller På väg till händelse, eller På väg) för anpassade statusar och På väg till händelse för de inbyggda statusarna.</value>
   </data>
   <data name="UnitTypeStatusOverridesHeader" xml:space="preserve">
     <value>Statusåsidosättningar per enhetstyp</value>
   </data>
   <data name="UnitTypeStatusOverridesHelp" xml:space="preserve">
-    <value>Endast enhetstyper med anpassade enhetsstatusar visas här. Låt värdet stå på Standard för att använda den inbyggda status för hela avdelningen som anges ovan.</value>
+    <value>Här visas bara enhetstyper med anpassade enhetsstatusar. Välj en av enhetstypens egna statusar när den behöver en viss; Standard använder avdelningens inställning ovan, matchad mot enhetstypens statusar.</value>
   </data>
   <data name="CheckInTimerActiveStatesLabel" xml:space="preserve">
     <value>Aktiva statusar</value>
@@ -1444,5 +1444,80 @@
   </data>
   <data name="DeleteDepartmentLegalHoldWarning" xml:space="preserve">
     <value>{0} aktiva bevarandespärrar omfattar den här avdelningens Journaler. Raderingen körs inte förrän alla har hävts.</value>
+  </data>
+  <data name="TerminologyHeader" xml:space="preserve">
+    <value>Terminologi</value>
+  </data>
+  <data name="TerminologyIntro" xml:space="preserve">
+    <value>Använd er organisations egna ord. Ett namn som anges här ersätter Resgrids namn på modulen eller journaltypen i navigeringen, i sidrubriker, överallt där journaltyper listas och i apparna Responder, Unit, IC och Dispatch, för alla medlemmar och på alla språk. Bara etiketten ändras: behörigheter, länkar och integrationer påverkas inte. Lämna en ruta tom för att behålla Resgrids namn.</value>
+  </data>
+  <data name="TerminologyModules" xml:space="preserve">
+    <value>Moduler</value>
+  </data>
+  <data name="TerminologyModulesHelp" xml:space="preserve">
+    <value>Visas i navigeringen, som rubrik på modulens huvudsida och i apparnas menyer. Meningar på andra ställen som nämner en modul behåller Resgrids formulering.</value>
+  </data>
+  <data name="TerminologyRecordTypes" xml:space="preserve">
+    <value>Journaltyper</value>
+  </data>
+  <data name="TerminologyRecordTypesHelp" xml:space="preserve">
+    <value>De inbyggda typerna i Journaler och Loggar, överallt där en typ väljs, listas, skrivs ut eller exporteras. För att lägga till en egen typ, till exempel Allmän information, skapa en journaldefinition.</value>
+  </data>
+  <data name="TerminologyDefaultColumn" xml:space="preserve">
+    <value>Resgrid-namn</value>
+  </data>
+  <data name="TerminologyNameColumn" xml:space="preserve">
+    <value>Ert namn</value>
+  </data>
+  <data name="TerminologySaved" xml:space="preserve">
+    <value>Terminologin har sparats.</value>
+  </data>
+  <data name="TerminologyPartlySaved" xml:space="preserve">
+    <value>Era övriga namn har sparats.</value>
+  </data>
+  <data name="TerminologyTooLong" xml:space="preserve">
+    <value>Namn får vara högst {0} tecken; längre namn sparades inte och visas för rättning.</value>
+  </data>
+  <data name="TerminologyRecordDefinitionsLink" xml:space="preserve">
+    <value>Journaldefinitioner</value>
+  </data>
+  <data name="TerminologyRenameLink" xml:space="preserve">
+    <value>Byt namn på moduler och journaltyper</value>
+  </data>
+  <data name="UnitStatusTargetMeaningGroup" xml:space="preserve">
+    <value>Statusens betydelse</value>
+  </data>
+  <data name="UnitStatusTargetDefaultDispatch" xml:space="preserve">
+    <value>Standard (Larmad, På väg till händelse eller På väg)</value>
+  </data>
+  <data name="UnitStatusTargetDefaultRelease" xml:space="preserve">
+    <value>Standard (tillbaka i tjänst)</value>
+  </data>
+  <data name="UnitStatusTargetLeaveUnchanged" xml:space="preserve">
+    <value>Ändra inte enhetens status</value>
+  </data>
+  <data name="UnitStatusTargetLegacy" xml:space="preserve">
+    <value>Inbyggd status: {0} (sparad före statusbetydelser)</value>
+  </data>
+  <data name="UnitStatusTargetWarningsHeader" xml:space="preserve">
+    <value>Kontrollera dessa enhetstyper</value>
+  </data>
+  <data name="UnitStatusTargetNoMatch" xml:space="preserve">
+    <value>{0}: dess statusuppsättning "{1}" har ingen status som betyder {2}, så dess enheter behåller sin status vid {3}. Ange en bastyp på en av dess statusar eller välj en bland åsidosättningarna nedan.</value>
+  </data>
+  <data name="UnitStatusTargetSeveral" xml:space="preserve">
+    <value>{0}: dess statusuppsättning "{1}" har {2} statusar som betyder {3} ({4}); vid {6} används {5}, den första i ordning.</value>
+  </data>
+  <data name="UnitStatusTargetNoBuiltIn" xml:space="preserve">
+    <value>{0}: ingen inbyggd enhetsstatus betyder {1}, så dess enheter behåller sin status vid {2}.</value>
+  </data>
+  <data name="UnitStatusTargetActionDispatch" xml:space="preserve">
+    <value>utlarmning</value>
+  </data>
+  <data name="UnitStatusTargetActionRelease" xml:space="preserve">
+    <value>frisläppning</value>
+  </data>
+  <data name="StatusMeaningOption" xml:space="preserve">
+    <value>Alla statusar "{0}"</value>
   </data>
 </root>

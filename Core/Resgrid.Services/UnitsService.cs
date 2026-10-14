@@ -776,6 +776,39 @@ namespace Resgrid.Services
 			return CallStatusLinkage.BuildUnitBaseTypeMap(customStates);
 		}
 
+		public async Task<int?> ResolveUnitStatusAsync(int departmentId, int unitId, IReadOnlyList<ActionBaseTypes> baseTypes)
+		{
+			if (baseTypes == null || baseTypes.Count == 0)
+				return null;
+
+			CustomState set = null;
+			var unit = await GetUnitByIdAsync(unitId);
+
+			if (unit != null && unit.DepartmentId == departmentId && !String.IsNullOrWhiteSpace(unit.Type))
+			{
+				var unitType = await GetUnitTypeByNameAsync(departmentId, unit.Type);
+
+				if (unitType?.CustomStatesId != null && unitType.CustomStatesId.Value > 0)
+				{
+					set = await _customStateService.GetCustomSateByIdAsync(unitType.CustomStatesId.Value);
+					if (set != null && set.IsDeleted)
+						set = null;
+				}
+			}
+
+			if (set != null)
+				return StatusTargetResolver.ResolveUnit(StatusTarget.Default, set, baseTypes, 0).Value;
+
+			foreach (var baseType in baseTypes)
+			{
+				var builtIn = StatusTargetResolver.BuiltInUnitStatusFor(baseType);
+				if (builtIn.HasValue)
+					return builtIn;
+			}
+
+			return null;
+		}
+
 		public async Task<UnitLocationWriteResult> AddUnitLocationAsync(UnitsLocation location, int departmentId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (location == null)

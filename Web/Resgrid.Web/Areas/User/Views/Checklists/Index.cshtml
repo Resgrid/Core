@@ -1,9 +1,10 @@
 @model Resgrid.Web.Areas.User.Models.Checklists.ChecklistIndexView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> localizer
 @{
-    ViewBag.Title = "Resgrid | " + localizer["Checklists"];
+    var moduleTitle = await departmentTerms.NameAsync(DepartmentTerms.Checklists, localizer["Checklists"]);
+    ViewBag.Title = "Resgrid | " + moduleTitle;
     ViewData["Tab"] = "Index";
-    ViewData["Title"] = localizer["Checklists"].Value;
+    ViewData["Title"] = moduleTitle;
     ViewData["Subtitle"] = localizer["ChecklistsIntro"].Value;
 
     Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>

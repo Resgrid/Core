@@ -56,7 +56,7 @@
 			<div class="wrapper wrapper-content">
 				<div class="ibox float-e-margins">
 					<div class="ibox-title">
-						<h5>@t.ToString() @(string.IsNullOrWhiteSpace(Model.RecordNumber) ? Model.DraftReference : Model.RecordNumber)</h5>
+						<h5>@(await departmentTerms.RecordTypeAsync((int)t)) @(string.IsNullOrWhiteSpace(Model.RecordNumber) ? Model.DraftReference : Model.RecordNumber)</h5>
 					</div>
 					<div class="ibox-content">
 						@if (!string.IsNullOrEmpty(Model.ErrorMessage))

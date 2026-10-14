@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 using Resgrid.Model;
 using Resgrid.Model.Services;
 using System.Linq;
@@ -33,13 +35,18 @@ namespace Resgrid.Services
 				return payload;
 			}
 
-			if (customActions != null && customActions.IsDeleted == false && customActions.GetActiveDetails() != null && customActions.GetActiveDetails().Any())
+			var customActionOptions = GetActiveOptions(customActions);
+			var customStaffingOptions = GetActiveOptions(customStates);
+
+			if (customActionOptions.Any())
 			{
-				int actionId = 0;
-				if (int.TryParse(message.Trim(), out actionId))
+				// The department's own statuses, by the commands the HELP reply lists: the option's name without
+				// spaces, dashes or colons, or its 1-based position in the list.
+				var option = MatchCustomOption(trimmedMessage, customActionOptions, null);
+				if (option != null)
 				{
 					payload.Type = TextCommandTypes.CustomAction;
-					payload.Data = actionId.ToString();
+					payload.Data = option.CustomStateDetailId.ToString();
 				}
 			}
 			else
@@ -69,12 +76,18 @@ namespace Resgrid.Services
 				}
 			}
 
-			if (customStates != null && customStates.IsDeleted == false && customStates.GetActiveDetails() != null && customStates.GetActiveDetails().Any())
+			if (customStaffingOptions.Any())
 			{
-				if (message.Trim().ToLower()[0] == char.Parse("s"))
+				// Staffing positions carry an "S" prefix (S1, S2, ...). A name shared with a status option stays
+				// the status: statuses are matched first and change far more often.
+				if (payload.Type == TextCommandTypes.None)
 				{
-					payload.Type = TextCommandTypes.CustomStaffing;
-					payload.Data = message.Trim().ToLower().Replace("c", "");
+					var option = MatchCustomOption(trimmedMessage, customStaffingOptions, "s");
+					if (option != null)
+					{
+						payload.Type = TextCommandTypes.CustomStaffing;
+						payload.Data = option.CustomStateDetailId.ToString();
+					}
 				}
 			}
 			else
@@ -138,6 +151,45 @@ namespace Resgrid.Services
 			}
 
 			return payload;
+		}
+
+		/// <summary>
+		/// The text command for a custom status or staffing option, as the HELP reply prints it: the option's name
+		/// lower-cased without spaces, dashes or colons.
+		/// </summary>
+		public static string CompactCommandName(string buttonText)
+		{
+			if (String.IsNullOrWhiteSpace(buttonText))
+				return String.Empty;
+
+			return buttonText.Trim().Replace(" ", "").Replace("-", "").Replace(":", "").ToLowerInvariant();
+		}
+
+		private static List<CustomStateDetail> GetActiveOptions(CustomState state)
+		{
+			if (state == null || state.IsDeleted)
+				return new List<CustomStateDetail>();
+
+			return state.GetActiveDetails() ?? new List<CustomStateDetail>();
+		}
+
+		private static CustomStateDetail MatchCustomOption(string message, List<CustomStateDetail> options, string positionPrefix)
+		{
+			var text = message.Trim().ToLowerInvariant();
+			var positionText = text;
+
+			if (positionPrefix != null)
+				positionText = text.StartsWith(positionPrefix, StringComparison.Ordinal) ? text.Substring(positionPrefix.Length) : null;
+
+			if (positionText != null && int.TryParse(positionText, NumberStyles.None, CultureInfo.InvariantCulture, out var position) &&
+				position >= 1 && position <= options.Count)
+				return options[position - 1];
+
+			var compact = CompactCommandName(text);
+			if (compact.Length == 0)
+				return null;
+
+			return options.FirstOrDefault(x => CompactCommandName(x.ButtonText) == compact);
 		}
 	}
 }

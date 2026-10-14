@@ -100,6 +100,8 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public List<SelectListItem> Years { get; set; } = new List<SelectListItem>();
 		public string DefinitionKey { get; set; }
 		public List<SelectListItem> Definitions { get; set; } = new List<SelectListItem>();
+		/// <summary>Department definition key -> name, retired ones included, so a queue row never shows a raw key.</summary>
+		public Dictionary<string, string> DefinitionNames { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 		public string StateFilter { get; set; }
 		public List<SelectListItem> States { get; set; } = new List<SelectListItem>();
 		public Dictionary<string, string> PersonnelNames { get; set; } = new Dictionary<string, string>();
@@ -271,6 +273,8 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public bool CanViewRestricted { get; set; }
 		public RecordPrintProvenance Provenance { get; set; }
 		public RmsOperationalRecordType RecordType => (RmsOperationalRecordType)(Snapshot?.RecordType ?? 0);
+		/// <summary>The department definition's name when the snapshot is of a department-definition Record.</summary>
+		public string DefinitionName { get; set; }
 	}
 
 	/// <summary>On-demand field-level diff between two revisions.</summary>

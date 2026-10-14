@@ -1624,7 +1624,7 @@
     <value>Ajoutez les réunions récurrentes et les soirées de formation.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.call-types-priorities">
-    <value>Ajoutez les types d'appel utilisés par vos régulateurs et définissez leurs priorités.</value>
+    <value>Ajoutez les types d'appel utilisés par vos répartiteurs et définissez leurs priorités. Donnez à chaque type d'appel une classe et à chaque priorité une signification pour que les rapports et les applications puissent les regrouper et les trier.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.certification-dashboard">
     <value>Enregistrez les certifications actuelles des membres, puis vérifiez ce qui expire prochainement.</value>
@@ -1654,7 +1654,7 @@
     <value>Ajoutez vos contrats de service et leurs tarifs.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.custom-statuses">
-    <value>Vérifiez les statuts intégrés et ajoutez les vôtres là où votre terminologie diffère. Attribuez un type de base à chacun ; En caserne indique aux recommandations de régulation qu'une unité est à sa caserne.</value>
+    <value>Vérifiez les statuts intégrés et ajoutez les vôtres là où vos termes diffèrent. Donnez à chaque option une signification (type de base) : l'envoi, la disponibilité, les notifications et les applications lisent la signification, pas le texte du bouton. « À la caserne » indique aux recommandations d'envoi qu'une unité est à sa caserne.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.data-protection">
     <value>Consultez la liste de contrôle d'inscription et planifiez la récupération de clé avant de vous inscrire.</value>
@@ -1669,7 +1669,7 @@
     <value>Accordez l'accès à la régulation aux personnes qui régulent, puis faites-les se connecter.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.dispatch-settings">
-    <value>Choisissez si la régulation suit les groupes ou les quarts, et vérifiez les options de statut automatique. Définissez les délais de départ de l'unité la plus proche si les équipes ont besoin de temps pour quitter la caserne.</value>
+    <value>Choisissez si l'envoi suit les groupes ou les gardes, et vérifiez les options de statut automatique : le statut de l'unité à l'envoi et à la libération est choisi par signification dans le propre jeu de statuts de chaque type d'unité. Définissez des délais de départ pour l'unité la plus proche si les équipes ont besoin de temps pour quitter la caserne.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.distribution-lists">
     <value>Créez des listes pour les groupes que vous contactez souvent, comme les Officiers.</value>
@@ -1771,7 +1771,7 @@
     <value>Installez l'application Unit sur la tablette de chaque engin et sélectionnez son unité.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.unit-types">
-    <value>Créez les types d'unité avant d'ajouter des unités afin que chacune puisse être classée.</value>
+    <value>Créez les types d'unité avant d'ajouter des unités afin que chaque unité puisse être classée. Donnez à chaque type une classe, comme Fourgon ou Ambulance, et choisissez son jeu de statuts.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.units">
     <value>Ajoutez chaque unité avec son type et son groupe de caserne d'attache.</value>
@@ -2317,10 +2317,10 @@
     <value>Seuils de mise en évidence du tableau, regroupés par signification de statut de base. Une liste vide désactive la mise en évidence.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.UnitTypeCallStatusOverride.DispatchStatus">
-    <value>Statut appliqué à ce type d'unité lors de la régulation ; moins un le laisse inchangé.</value>
+    <value>Option du propre jeu de statuts de ce type d'unité appliquée à l'envoi, avant le statut d'envoi du service ; moins un utilise le statut d'envoi du service.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.UnitTypeCallStatusOverride.ReleaseStatus">
-    <value>Statut appliqué à ce type d'unité lors de la libération ; moins un le laisse inchangé.</value>
+    <value>Option du propre jeu de statuts de ce type d'unité appliquée à la libération, avant le statut de libération du service ; moins un utilise le statut de libération du service.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.UnitTypeCallStatusOverride.UnitTypeId">
     <value>Type d'unité existant recevant cette dérogation. Un nom de type d'unité ne constitue pas une habilitation de qualification ou de dotation en personnel.</value>
@@ -5020,10 +5020,10 @@
     <value>Langue de synthèse vocale pour les notifications vocales prises en charge. Confirmez les voix prises en charge et la prononciation avec un test effectué par une personne.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.UnitCallDispatchStatusToSet">
-    <value>Statut d’unité appliqué lors de la régulation de l’appel. La valeur moins un ou un statut d’unité intégré non valide laisse le statut inchangé.</value>
+    <value>Statut d'unité appliqué à l'engagement, selon la signification : chaque unité reçoit le statut de son propre jeu de statuts ayant ce type de base. -1 est la valeur par défaut, -2 laisse le statut inchangé, 1000 plus un type de base est une signification de statut, et 0 à 12 est un statut intégré enregistré avant les significations de statut.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.UnitCallReleaseStatusToSet">
-    <value>Statut d’unité appliqué à la clôture de l’appel. Examinez les substitutions par type d’unité avant de supposer un effet uniforme à l’échelle du département.</value>
+    <value>Statut d'unité appliqué à la libération, selon la signification comme le statut d'engagement. Vérifiez les remplacements par type d'unité avant de supposer un effet unique pour tout le service.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.UnitCallStatusOverridesByUnitType">
     <value>Substitutions du statut d’appel par type d’unité. Les valeurs existantes propres à un type ont priorité sur les valeurs par défaut du département.</value>
@@ -6881,5 +6881,53 @@
   </data>
   <data name="FeaturePurpose.document-numbering" xml:space="preserve">
     <value>Comment s'écrivent les numéros des ordres de travail, factures, offres et rapports de temps quotidiens, et le jour où commence leur année de numérotation pour une numérotation par exercice.</value>
+  </data>
+  <data name="Setting.DepartmentTerminology" xml:space="preserve">
+    <value>Terminologie du service</value>
+  </data>
+  <data name="SettingHelp.DepartmentTerminology" xml:space="preserve">
+    <value>Les noms propres au service pour les modules et les types de dossier intégrés, affichés dans la navigation, dans les titres des pages de module, partout où les types de dossier sont listés et dans les applications Responder, Unit, IC et Dispatch, dans toutes les langues. Libellés uniquement : les autorisations, les liens et les valeurs de l'API ne changent pas. Un terme sans nom utilise celui de Resgrid.</value>
+  </data>
+  <data name="Field.DepartmentTerminologyConfig.Terms" xml:space="preserve">
+    <value>Terminologie du service / Termes</value>
+  </data>
+  <data name="FieldHelp.DepartmentTerminologyConfig.Terms" xml:space="preserve">
+    <value>Une entrée par module ou type de dossier renommé, par exemple Intervention au lieu de Run ou Garde au lieu de Work. Un terme absent affiche le nom Resgrid dans la langue du membre. Les noms comptent au plus 50 caractères.</value>
+  </data>
+  <data name="Field.DepartmentTermOverride.Key" xml:space="preserve">
+    <value>Terme du service / Clé</value>
+  </data>
+  <data name="FieldHelp.DepartmentTermOverride.Key" xml:space="preserve">
+    <value>Le terme renommé : un module (module.calls, module.records ...) ou un type de dossier intégré (record-type.run, record-type.work ...). Les clés ne changent jamais.</value>
+  </data>
+  <data name="Field.DepartmentTermOverride.Text" xml:space="preserve">
+    <value>Terme du service / Nom</value>
+  </data>
+  <data name="FieldHelp.DepartmentTermOverride.Text" xml:space="preserve">
+    <value>Le mot du service pour ce terme, au plus 50 caractères. Le même mot s'affiche pour tous les membres dans toutes les langues ; vide utilise le nom Resgrid.</value>
+  </data>
+  <data name="Feature.terminology" xml:space="preserve">
+    <value>Terminologie</value>
+  </data>
+  <data name="FeaturePurpose.terminology" xml:space="preserve">
+    <value>Renommez les modules et les types de dossier intégrés avec les mots de votre service, comme Intervention au lieu de Run.</value>
+  </data>
+  <data name="Rule.status-meanings" xml:space="preserve">
+    <value>Des options de statut n'ont pas de signification</value>
+  </data>
+  <data name="RuleWhy.status-meanings" xml:space="preserve">
+    <value>L'envoi, la disponibilité, les notifications et les applications lisent un statut par sa signification ; une option sans signification est traitée comme inconnue.</value>
+  </data>
+  <data name="RuleNext.status-meanings" xml:space="preserve">
+    <value>Ouvrez chaque jeu de statuts listé et donnez une signification à ses options ; les significations suggérées sont un point de départ.</value>
+  </data>
+  <data name="Rule.unit-status-targets" xml:space="preserve">
+    <value>Des types d'unité ne peuvent pas recevoir le statut d'envoi ou de libération</value>
+  </data>
+  <data name="RuleWhy.unit-status-targets" xml:space="preserve">
+    <value>Leur jeu de statuts n'a aucune option avec la signification appliquée par les paramètres d'envoi, donc leurs unités gardent leur statut lors de l'envoi ou de la libération.</value>
+  </data>
+  <data name="RuleNext.unit-status-targets" xml:space="preserve">
+    <value>Donnez des significations aux options du jeu, ou choisissez une autre signification ou une exception par type d'unité dans les paramètres d'envoi.</value>
   </data>
 </root>

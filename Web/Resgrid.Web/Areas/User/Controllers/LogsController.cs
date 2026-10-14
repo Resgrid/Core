@@ -41,12 +41,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IUnitsService _unitsService;
 		private readonly IProtectedReadService _protectedReadService;
 		private readonly IRecordsCutoverService _recordsCutoverService;
+		private readonly IDepartmentTerminology _terms;
 
 		public LogsController(IDepartmentsService departmentsService, IUsersService usersService, ICallsService callsService,
 			IDepartmentGroupsService departmentGroupsService, ICommunicationService communicationService, IQueueService queueService,
 			Model.Services.IAuthorizationService authorizationService, IWorkLogsService workLogsService, IEventAggregator eventAggregator,
-			IUnitsService unitsService, IProtectedReadService protectedReadService, IRecordsCutoverService recordsCutoverService)
+			IUnitsService unitsService, IProtectedReadService protectedReadService, IRecordsCutoverService recordsCutoverService,
+			IDepartmentTerminology terms)
 		{
+			_terms = terms;
 			_recordsCutoverService = recordsCutoverService;
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -425,7 +428,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				var logJson = new LogForListJson();
 				logJson.LogId = log.LogId;
-				logJson.Type = ((LogTypes)log.LogType).ToString();
+				logJson.Type = await _terms.RecordTypeAsync(log.LogType ?? 0);
 
 				if (log.StationGroup != null)
 					logJson.Group = log.StationGroup.Name;
@@ -748,7 +751,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			model.Department = await _departmentsService.GetDepartmentByUserIdAsync(UserId);
 			model.User = _usersService.GetUserById(UserId);
-			model.Types = model.LogType.ToSelectList();
+			// Values stay the enum names the form binds; the text is the department's own name for each type (setting 118).
+			var logTypes = new List<SelectListItem>();
+			foreach (LogTypes type in Enum.GetValues(typeof(LogTypes)))
+				logTypes.Add(new SelectListItem { Value = type.ToString(), Text = await _terms.RecordTypeAsync((int)type) });
+			model.Types = new SelectList(logTypes, "Value", "Text", model.LogType.ToString());
 			model.CallPriorities = model.CallPriority.ToSelectList();
 			model.Users.Add(String.Empty, "Not Applicable");
 			await model.SetUsers(await _departmentsService.GetAllUsersForDepartment(DepartmentId));

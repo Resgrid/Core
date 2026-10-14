@@ -92,7 +92,9 @@ namespace Resgrid.Services
 				report.Breakdowns.Add(BuildStringBreakdown("callsByType", byType, topN));
 
 				var byPriority = await _reportingRepository.GetCallsBreakdownByPriorityAsync(departmentId, startUtc, endUtc, cancellationToken);
-				report.Breakdowns.Add(BuildIntBreakdown("callsByPriority", byPriority, topN));
+				var priorityBreakdown = BuildIntBreakdown("callsByPriority", byPriority, topN);
+				await LabelPrioritiesAsync(priorityBreakdown, departmentId);
+				report.Breakdowns.Add(priorityBreakdown);
 
 				var byState = await _reportingRepository.GetCallsBreakdownByStateAsync(departmentId, startUtc, endUtc, cancellationToken);
 				report.Breakdowns.Add(BuildIntBreakdown("callsByStatus", byState, topN));
@@ -306,6 +308,28 @@ namespace Resgrid.Services
 			return breakdown;
 		}
 
+		/// <summary>
+		/// Names the priority rows: a call's priority is a built-in value (0 Low .. 3 Emergency) or the id of one of its
+		/// department's own priorities, so a bare number meant nothing ("57"). A department report names its own priorities;
+		/// the system-wide report names the built-in ones and leaves department ids as they are.
+		/// </summary>
+		private async Task LabelPrioritiesAsync(Breakdown breakdown, int? departmentId)
+		{
+			var departmentPriorities = departmentId.HasValue
+				? (await _callsService.GetCallPrioritiesForDepartmentAsync(departmentId.Value) ?? new List<DepartmentCallPriority>())
+				: new List<DepartmentCallPriority>();
+
+			foreach (var item in breakdown.Items.Where(x => x.Id.HasValue))
+			{
+				var priority = departmentPriorities.FirstOrDefault(x => x.DepartmentCallPriorityId == item.Id.Value);
+
+				if (priority != null && !String.IsNullOrWhiteSpace(priority.Name))
+					item.Label = priority.Name;
+				else if (item.Id.Value >= 0 && item.Id.Value <= (int)CallPriority.Emergency)
+					item.Label = ((CallPriority)item.Id.Value).ToString();
+			}
+		}
+
 		private static Breakdown BuildIntBreakdown(string key, IEnumerable<CountByKeyResult> rows, int topN)
 		{
 			var ordered = rows.OrderByDescending(r => r.Total).ToList();
@@ -441,18 +465,19 @@ namespace Resgrid.Services
 			return await build();
 		}
 
-		// Loads the active CustomStateDetail map (CustomStateDetailId -> detail) for a department, filtered
-		// to a custom-state type (Personnel or Unit). Used to resolve custom statuses to their base type.
+		// Loads the CustomStateDetail map (CustomStateDetailId -> detail) for a department, filtered to a custom-state
+		// type (Personnel or Unit). Deleted options and sets are included: a stored value that names one is still the
+		// department's option (StatusOptionIds), and history recorded under it keeps its meaning.
 		private async Task<Dictionary<int, CustomStateDetail>> GetCustomDetailMapAsync(int departmentId, CustomStateTypes type)
 		{
 			var map = new Dictionary<int, CustomStateDetail>();
-			var states = await _customStateService.GetAllActiveCustomStatesForDepartmentAsync(departmentId);
+			var states = await _customStateService.GetAllCustomStatesForDepartmentAsync(departmentId);
 			if (states == null)
 				return map;
 
-			foreach (var state in states.Where(s => s.Type == (int)type))
+			foreach (var state in states.Where(s => s != null && s.Type == (int)type && s.Details != null))
 			{
-				foreach (var detail in state.GetActiveDetails())
+				foreach (var detail in state.Details.Where(d => d != null && d.CustomStateDetailId > 0))
 					map[detail.CustomStateDetailId] = detail;
 			}
 

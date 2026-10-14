@@ -40,7 +40,10 @@ namespace Resgrid.Tests.Web.User
 			CultureInfo.CurrentUICulture = _previousUiCulture;
 		}
 
-		private ExceptionContext Context(Exception exception, string path = "/User/RecordHydrants", bool script = false, string controller = "RecordHydrants", string action = "Index")
+		// What a browser sends when the user follows a link or submits a form.
+		private const string BrowserNavigationAccept = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
+
+		private ExceptionContext Context(Exception exception, string path = "/User/RecordHydrants", bool script = false, string controller = "RecordHydrants", string action = "Index", string accept = BrowserNavigationAccept)
 		{
 			var http = new DefaultHttpContext();
 			_tempData = new TempDataDictionary(http, Mock.Of<ITempDataProvider>());
@@ -51,6 +54,8 @@ namespace Resgrid.Tests.Web.User
 			http.Request.Path = path;
 			if (script)
 				http.Request.Headers["X-Requested-With"] = "XMLHttpRequest";
+			if (accept != null)
+				http.Request.Headers["Accept"] = accept;
 
 			var routeData = new RouteData();
 			routeData.Values["area"] = "User";
@@ -85,6 +90,23 @@ namespace Resgrid.Tests.Web.User
 			var json = context.Result.Should().BeOfType<JsonResult>().Subject;
 			json.StatusCode.Should().Be(404);
 			json.Value.Should().BeEquivalentTo(new { success = false, error = "records_module_disabled", message = "Permits: this Records module is not enabled for the department." });
+		}
+
+		[TestCase("application/pdf")]
+		[TestCase("text/csv")]
+		[TestCase("*/*")]
+		[TestCase(null)]
+		public void FileOrNonPageRequest_Gets404WithTheMessage_NotTheQueuePage(string accept)
+		{
+			var context = Context(new RecordsModuleDisabledException(RecordsPreventionModule.Inspections), "/User/RecordInspections/ExportPdf", accept: accept);
+
+			new WebFilter().OnException(context);
+
+			context.ExceptionHandled.Should().BeTrue();
+			var json = context.Result.Should().BeOfType<JsonResult>().Subject;
+			json.StatusCode.Should().Be(404);
+			json.Value.Should().BeEquivalentTo(new { success = false, error = "records_module_disabled", message = "Inspections: this Records module is not enabled for the department." });
+			_tempData.ContainsKey("RecordsError").Should().BeFalse("nothing is redirected to show it");
 		}
 
 		[Test]

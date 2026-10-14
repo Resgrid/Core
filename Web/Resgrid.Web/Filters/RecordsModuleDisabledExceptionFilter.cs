@@ -24,11 +24,17 @@ namespace Resgrid.Web.Filters
 
 			var message = Message(context, exception);
 			var request = context.HttpContext.Request;
+			var accept = request.Headers["Accept"].ToString();
 			var wantsJson = string.Equals(request.Headers["X-Requested-With"], "XMLHttpRequest", StringComparison.OrdinalIgnoreCase)
-				|| request.Headers["Accept"].ToString().Contains("application/json", StringComparison.OrdinalIgnoreCase)
+				|| accept.Contains("application/json", StringComparison.OrdinalIgnoreCase)
 				|| request.Path.StartsWithSegments("/api");
 
-			if (wantsJson)
+			// Only a page navigation (a browser always asks for text/html) is redirected. A PDF/CSV export fetched by script or a
+			// tool (Accept: application/pdf, text/csv, */*) would otherwise follow the redirect and get the queue page back as
+			// the file, so it gets the 404 and the message like a script request.
+			var isPageNavigation = accept.Contains("text/html", StringComparison.OrdinalIgnoreCase);
+
+			if (wantsJson || !isPageNavigation)
 			{
 				context.Result = new JsonResult(new { success = false, error = "records_module_disabled", message }) { StatusCode = 404 };
 				context.ExceptionHandled = true;

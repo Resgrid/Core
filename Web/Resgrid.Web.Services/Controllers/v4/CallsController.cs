@@ -1,4 +1,4 @@
-﻿using Resgrid.Web.Services.Attributes;
+using Resgrid.Web.Services.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -726,7 +726,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				eventResult.Note = actionLog.Note;
 				eventResult.DestinationSource = actionLog.DestinationSource;
 
-				var personnelStatus = ResolveStatusDetail(actionLog.ActionTypeId, defaultUserStatuses, customStates);
+				var personnelStatus = ResolveStatusDetail(actionLog.ActionTypeId, defaultUserStatuses, customStates, CustomStateTypes.Personnel);
 				if (personnelStatus != null)
 				{
 					eventResult.StatusText = personnelStatus.ButtonText;
@@ -766,7 +766,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				eventResult.Note = unitLog.Note;
 				eventResult.DestinationSource = unitLog.DestinationSource;
 
-				var unitStatus = ResolveStatusDetail(unitLog.State, defaultUnitStatuses, customStates);
+				var unitStatus = ResolveStatusDetail(unitLog.State, defaultUnitStatuses, customStates, CustomStateTypes.Unit);
 				if (unitStatus != null)
 				{
 					eventResult.StatusText = unitStatus.ButtonText;
@@ -2705,7 +2705,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			foreach (var actionLog in actionLogs)
 			{
 				var nameInfo = names.FirstOrDefault(x => x.UserId == actionLog.UserId);
-				var state = ResolveStatusDetail(actionLog.ActionTypeId, defaultUserStatuses, customStates);
+				var state = ResolveStatusDetail(actionLog.ActionTypeId, defaultUserStatuses, customStates, CustomStateTypes.Personnel);
 				var statusText = state?.ButtonText ?? (actionLog.ActionTypeId <= CallStatusLinkage.MaxBuiltInStatusId ? actionLog.GetActionText() : "Unknown");
 
 				if (nameInfo != null)
@@ -2724,7 +2724,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			foreach (var unitLog in unitStates)
 			{
-				var state = ResolveStatusDetail(unitLog.State, defaultUnitStatuses, customStates);
+				var state = ResolveStatusDetail(unitLog.State, defaultUnitStatuses, customStates, CustomStateTypes.Unit);
 				var statusText = state?.ButtonText ?? (unitLog.State <= CallStatusLinkage.MaxBuiltInStatusId ? unitLog.GetStatusText() : "Unknown");
 				var unitName = unitLog.Unit?.Name ?? units?.FirstOrDefault(x => x.UnitId == unitLog.UnitId)?.Name ?? "Unknown Unit";
 
@@ -3001,6 +3001,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			callResult.Part2ConsentOnFile = call.Part2ConsentOnFile;
 			callResult.IncidentId = call.IncidentNumber;
 			callResult.Type = call.Type;
+			callResult.TypeId = call.CallTypeId?.ToString();
 
 			callResult.CheckInTimersEnabled = call.CheckInTimersEnabled;
 
@@ -3117,12 +3118,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// status detail for labelling. Returns null when the status can't be resolved (e.g. a built-in value with
 		/// no default button, or a custom detail from another department).
 		/// </summary>
-		private static CustomStateDetail ResolveStatusDetail(int rawStatus, List<CustomStateDetail> builtInStatuses, List<CustomState> customStates)
+		private static CustomStateDetail ResolveStatusDetail(int rawStatus, List<CustomStateDetail> builtInStatuses, List<CustomState> customStates, CustomStateTypes type)
 		{
-			if (rawStatus <= CallStatusLinkage.MaxBuiltInStatusId)
-				return builtInStatuses?.FirstOrDefault(x => x.CustomStateDetailId == rawStatus);
-
-			return customStates?.Where(x => x?.Details != null).SelectMany(x => x.Details).FirstOrDefault(x => x != null && x.CustomStateDetailId == rawStatus);
+			// The department's own option of that kind first (deleted ones included), then the built-in value (StatusOptionIds).
+			return StatusOptionIds.FindCustom(customStates, type, rawStatus)
+				?? builtInStatuses?.FirstOrDefault(x => x.CustomStateDetailId == rawStatus);
 		}
 
 		/// <summary>

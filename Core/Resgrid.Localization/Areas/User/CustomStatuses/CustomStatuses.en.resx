@@ -124,7 +124,7 @@
     <value>Available</value>
   </data>
   <data name="BaseType" xml:space="preserve">
-    <value>Base Type</value>
+    <value>Meaning</value>
   </data>
   <data name="ButtonBackgroundColorLabel" xml:space="preserve">
     <value>Button Background Color</value>
@@ -341,5 +341,158 @@
   </data>
   <data name="NextStatusesAny" xml:space="preserve">
     <value>Any status</value>
+  </data>
+  <data name="StaffingAvailable" xml:space="preserve">
+    <value>Available</value>
+  </data>
+  <data name="StaffingDelayed" xml:space="preserve">
+    <value>Delayed</value>
+  </data>
+  <data name="StaffingUnavailable" xml:space="preserve">
+    <value>Unavailable</value>
+  </data>
+  <data name="StaffingCommitted" xml:space="preserve">
+    <value>Committed</value>
+  </data>
+  <data name="StaffingOnShift" xml:space="preserve">
+    <value>On Shift</value>
+  </data>
+  <data name="StaffingOffDuty" xml:space="preserve">
+    <value>Off Duty</value>
+  </data>
+  <data name="StaffingOnCall" xml:space="preserve">
+    <value>On Call</value>
+  </data>
+  <data name="StaffingBaseTypeHelp" xml:space="preserve">
+    <value>What this staffing level means to Resgrid. Dispatch recommendations, availability counts and notification muting use the meaning, whatever the button is called.</value>
+  </data>
+  <data name="MeaningColumn" xml:space="preserve">
+    <value>Meaning</value>
+  </data>
+  <data name="MissingMeaningsHeader" xml:space="preserve">
+    <value>{0} option(s) have no meaning set.</value>
+  </data>
+  <data name="MissingMeaningsHelp" xml:space="preserve">
+    <value>Resgrid uses an option's meaning to decide availability, what to set on dispatch and release, notifications and reports. Options without one are treated as unknown. Where the name gives a clear hint a suggestion is shown; review it, then save.</value>
+  </data>
+  <data name="UseSuggestedMeanings" xml:space="preserve">
+    <value>Use suggested meanings</value>
+  </data>
+  <data name="SuggestedMeaningsApplied" xml:space="preserve">
+    <value>Suggestions applied. Review them, then save.</value>
+  </data>
+  <data name="SuggestedMeaning" xml:space="preserve">
+    <value>suggested: {0}</value>
+  </data>
+  <data name="OptionsWithoutMeaning" xml:space="preserve">
+    <value>{0} without a meaning</value>
+  </data>
+  <data name="AnyStatusWithMeaning" xml:space="preserve">
+    <value>Any "{0}" status</value>
+  </data>
+  <data name="BuiltInStatusOption" xml:space="preserve">
+    <value>Built-in: {0}</value>
+  </data>
+  <data name="NoteOptional" xml:space="preserve">
+    <value>Optional</value>
+  </data>
+  <data name="NoteRequired" xml:space="preserve">
+    <value>Required</value>
+  </data>
+  <data name="SetTypeLabel" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="TemplatePrefilledNote" xml:space="preserve">
+    <value>These options were pre-filled from a template. Rename the text, change colors, remove any you don't need, or add your own; nothing is saved until you click Add.</value>
+  </data>
+  <data name="BackgroundColorShort" xml:space="preserve">
+    <value>Background</value>
+  </data>
+  <data name="TextColorShort" xml:space="preserve">
+    <value>Text</value>
+  </data>
+  <data name="StatusRuleAny" xml:space="preserve">
+    <value>Any</value>
+  </data>
+  <data name="StatusRuleUnknown" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="StatusRuleNone" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="BaseTypeDescription.none" xml:space="preserve">
+    <value>No system meaning. The status is informational only and does not affect availability, reporting or automations.</value>
+  </data>
+  <data name="BaseTypeDescription.available" xml:space="preserve">
+    <value>The unit or responder is in service and available to be assigned or dispatched to a call or task.</value>
+  </data>
+  <data name="BaseTypeDescription.notresponding" xml:space="preserve">
+    <value>The responder has acknowledged but is declining or is unable to respond to the current assignment.</value>
+  </data>
+  <data name="BaseTypeDescription.responding" xml:space="preserve">
+    <value>The unit or responder is actively responding (en route) to an assigned call or incident.</value>
+  </data>
+  <data name="BaseTypeDescription.onscene" xml:space="preserve">
+    <value>The unit or responder has arrived and is operating at the scene of a call or incident.</value>
+  </data>
+  <data name="BaseTypeDescription.madecontact" xml:space="preserve">
+    <value>The unit or responder has made contact with the subject, patient, party or point of interest.</value>
+  </data>
+  <data name="BaseTypeDescription.investigating" xml:space="preserve">
+    <value>The unit or responder is investigating, assessing or sizing up the situation.</value>
+  </data>
+  <data name="BaseTypeDescription.dispatched" xml:space="preserve">
+    <value>The unit or responder has been dispatched or assigned but has not yet begun responding.</value>
+  </data>
+  <data name="BaseTypeDescription.cleared" xml:space="preserve">
+    <value>The unit or responder has cleared the call or incident and is returning to an available state.</value>
+  </data>
+  <data name="BaseTypeDescription.returning" xml:space="preserve">
+    <value>The unit or responder is returning to quarters, station or base.</value>
+  </data>
+  <data name="BaseTypeDescription.staging" xml:space="preserve">
+    <value>The unit or responder is staged at a safe location awaiting assignment or orders.</value>
+  </data>
+  <data name="BaseTypeDescription.unavailable" xml:space="preserve">
+    <value>The unit or responder is out of service and unavailable for assignment.</value>
+  </data>
+  <data name="BaseTypeDescription.enroute" xml:space="preserve">
+    <value>The unit or responder is traveling to an assignment, destination or location on a routine (non-emergency) basis.</value>
+  </data>
+  <data name="BaseTypeDescription.transporting" xml:space="preserve">
+    <value>The unit or responder is actively transporting a patient, subject, prisoner or cargo to a destination.</value>
+  </data>
+  <data name="BaseTypeDescription.delivering" xml:space="preserve">
+    <value>The unit or responder is actively delivering goods, supplies, equipment or commodities to a recipient or drop-off point.</value>
+  </data>
+  <data name="BaseTypeDescription.atpatient" xml:space="preserve">
+    <value>The unit or responder has reached and is providing care to, or is in contact with, a patient or search subject.</value>
+  </data>
+  <data name="BaseTypeDescription.athospital" xml:space="preserve">
+    <value>The unit or responder has arrived at a hospital or receiving facility to transfer patient care.</value>
+  </data>
+  <data name="BaseTypeDescription.searching" xml:space="preserve">
+    <value>The unit or responder is conducting an active search of an assigned area, sector or grid.</value>
+  </data>
+  <data name="BaseTypeDescription.loading" xml:space="preserve">
+    <value>The unit or responder is loading or picking up cargo, supplies, equipment or a subject prior to transport.</value>
+  </data>
+  <data name="BaseTypeDescription.standby" xml:space="preserve">
+    <value>The unit or responder is held in reserve, on standby or on-call and ready to be assigned.</value>
+  </data>
+  <data name="BaseTypeDescription.onpatrol" xml:space="preserve">
+    <value>The unit or responder is actively patrolling an assigned area or beat while remaining available for dispatch.</value>
+  </data>
+  <data name="BaseTypeDescription.maintenance" xml:space="preserve">
+    <value>The unit or responder is out of service for maintenance, refueling, restocking, cleaning or servicing.</value>
+  </data>
+  <data name="BaseTypeDescription.onbreak" xml:space="preserve">
+    <value>The unit or responder is on a rest, meal or crew-rest break and is temporarily unavailable.</value>
+  </data>
+  <data name="BaseTypeDescription.completed" xml:space="preserve">
+    <value>The assignment, task or delivery is complete; the unit or responder is wrapping up and becoming available.</value>
+  </data>
+  <data name="BaseTypeDescription.inquarters" xml:space="preserve">
+    <value>The unit or responder is in service and available at its station or quarters. Dispatch recommendations measure a unit from its station instead of its GPS position and add the in-quarters turnout time.</value>
   </data>
 </root>

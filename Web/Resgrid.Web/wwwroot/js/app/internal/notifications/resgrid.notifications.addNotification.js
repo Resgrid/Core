@@ -123,27 +123,27 @@ var resgrid;
 
             function getUnitStates(value) {
                 if (value) {
-                    initCurrentStatesSelect2(resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetUnitStatusesLevelsForDepartment?includeAny=False&unitTypeId=' + value, 'Select available unit states...');
+                    initCurrentStatesSelect2(resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetUnitStatusesLevelsForDepartment?includeAny=False&includeMeanings=True&unitTypeId=' + value, 'Select available unit states...');
                 }
             }
             function setUnitStateDataDropdowns() {
                 $('#beforeStateControl').empty().append('<select id="Notification_BeforeData" name="Notification.BeforeData" style="width:100%"></select>');
                 $('#currentStateControl').empty().append('<select id="Notification_CurrentData" name="Notification.CurrentData" style="width:100%"></select>');
-                var url = resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetUnitStatusesLevelsForDepartmentCombined?includeAny=False';
+                var url = resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetUnitStatusesLevelsForDepartmentCombined?includeAny=False&includeMeanings=True';
                 initDropDown('#Notification_BeforeData', url);
                 initDropDown('#Notification_CurrentData', url);
             }
             function setPersonnelStaffingDataDropdowns() {
                 $('#beforeStateControl').empty().append('<select id="Notification_BeforeData" name="Notification.BeforeData" style="width:100%"></select>');
                 $('#currentStateControl').empty().append('<select id="Notification_CurrentData" name="Notification.CurrentData" style="width:100%"></select>');
-                var url = resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetPersonnelStaffingLevelsForDepartment?includeAny=False';
+                var url = resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetPersonnelStaffingLevelsForDepartment?includeAny=False&includeMeanings=True';
                 initDropDown('#Notification_BeforeData', url);
                 initDropDown('#Notification_CurrentData', url);
             }
             function setPersonnelStatusDataDropdowns() {
                 $('#beforeStateControl').empty().append('<select id="Notification_BeforeData" name="Notification.BeforeData" style="width:100%"></select>');
                 $('#currentStateControl').empty().append('<select id="Notification_CurrentData" name="Notification.CurrentData" style="width:100%"></select>');
-                var url = resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetPersonnelStatusesForDepartment?includeAny=False';
+                var url = resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetPersonnelStatusesForDepartment?includeAny=False&includeMeanings=True';
                 initDropDown('#Notification_BeforeData', url);
                 initDropDown('#Notification_CurrentData', url);
             }
@@ -173,20 +173,20 @@ var resgrid;
                     $('#lockToGroupSection, #lowerLimitGroup, #roleToMonitor, #currentStateMulti').show();
                     $('#unitTypesToMonitor').hide();
                     $('#currentStateMultiLabel').empty().append("Available Staffing Levels");
-                    initCurrentStatesSelect2(resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetPersonnelStaffingLevelsForDepartment?includeAny=False', 'Select available staffing levels...');
+                    initCurrentStatesSelect2(resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetPersonnelStaffingLevelsForDepartment?includeAny=False&includeMeanings=True', 'Select available staffing levels...');
                     initLowerLimit();
                 } else if (value === "12") {
                     $('#beforeState, #currentState').hide();
                     $('#lockToGroupSection, #lowerLimitGroup, #unitTypesToMonitor, #currentStateMulti').show();
                     $('#roleToMonitor').hide();
                     $('#currentStateMultiLabel').empty().append("Available Unit States");
-                    initCurrentStatesSelect2(resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetUnitStatusesLevelsForDepartment?includeAny=False&unitTypeId=' + $('#SelectedUnitType').val(), 'Select available unit states...');
+                    initCurrentStatesSelect2(resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetUnitStatusesLevelsForDepartment?includeAny=False&includeMeanings=True&unitTypeId=' + $('#SelectedUnitType').val(), 'Select available unit states...');
                     initLowerLimit();
                 } else if (value === "13") {
                     $('#beforeState, #currentState').hide();
                     $('#lowerLimitGroup, #roleToMonitor, #currentStateMulti').show();
                     $('#lockToGroupSection, #unitTypesToMonitor').hide();
-                    initCurrentStatesSelect2(resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetPersonnelStaffingLevelsForDepartment?includeAny=False', 'Select available states...');
+                    initCurrentStatesSelect2(resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetPersonnelStaffingLevelsForDepartment?includeAny=False&includeMeanings=True', 'Select available states...');
                     initLowerLimit();
                     $('#currentStateMultiLabel').empty().append("Available Staffing Levels");
                 } else if (value === "14") {
@@ -194,7 +194,7 @@ var resgrid;
                     $('#lowerLimitGroup, #unitTypesToMonitor, #currentStateMulti').show();
                     $('#lockToGroupSection, #roleToMonitor').hide();
                     $('#currentStateMultiLabel').empty().append("Available Unit States");
-                    initCurrentStatesSelect2(resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetUnitStatusesLevelsForDepartment?includeAny=False&unitTypeId=' + $('#SelectedUnitType').val(), 'Select available unit states...');
+                    initCurrentStatesSelect2(resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetUnitStatusesLevelsForDepartment?includeAny=False&includeMeanings=True&unitTypeId=' + $('#SelectedUnitType').val(), 'Select available unit states...');
                     initLowerLimit();
                 } else if (value === "15" || value === "5" || value === "16") {
                     $('#beforeState, #currentState, #unitTypesToMonitor, #lowerLimitGroup, #roleToMonitor, #currentStateMulti, #usersToNotify').hide();

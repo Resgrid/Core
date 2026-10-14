@@ -25,8 +25,9 @@ namespace Resgrid.Chatbot.Services
 		{
 			foreach (var baseType in baseTypes ?? new ActionBaseTypes[0])
 			{
+				// Built-in options carry their own base types now (BuiltInStatusBaseTypes), so a department on the built-in
+				// statuses matches by base type too; no id cut-off (custom ids start at 1 on a fresh install).
 				var match = details?.FirstOrDefault(detail => detail != null && !detail.IsDeleted
-					&& detail.CustomStateDetailId > 25
 					&& detail.BaseType == (int)baseType);
 				if (match != null)
 					return match;

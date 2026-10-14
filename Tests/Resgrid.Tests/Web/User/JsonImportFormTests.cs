@@ -68,6 +68,7 @@ namespace Resgrid.Tests.Web.User
 			builder.Services.AddDataProtection().UseEphemeralDataProtectionProvider();
 			builder.Services.AddAuthentication("json-test").AddScheme<AuthenticationSchemeOptions, TestAuthentication>("json-test", _ => { });
 			builder.Services.AddAuthorization();
+			builder.Services.AddDepartmentTerminologyStub();
 			builder.Services.AddControllersWithViews(o => o.Filters.Add(new PageBodyFilter())).AddApplicationPart(typeof(RateSchedulesController).Assembly);
 			var rates = new Mock<IRateScheduleService>();
 			var saves = 0;

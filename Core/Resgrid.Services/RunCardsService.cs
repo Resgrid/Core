@@ -555,14 +555,20 @@ namespace Resgrid.Services
 			return true;
 		}
 
-		public async Task<RunCard> GetMatchingRunCardAsync(int departmentId, int priority, string callTypeName)
+		public Task<RunCard> GetMatchingRunCardAsync(int departmentId, int priority, string callTypeName)
+		{
+			return GetMatchingRunCardAsync(departmentId, priority, callTypeName, null);
+		}
+
+		public async Task<RunCard> GetMatchingRunCardAsync(int departmentId, int priority, string callTypeName, int? linkedCallTypeId)
 		{
 			var cards = await GetAllRunCardsForDepartmentAsync(departmentId);
 
 			if (cards == null || !cards.Any())
 				return null;
 
-			var callTypeId = await ResolveCallTypeIdAsync(departmentId, callTypeName);
+			// The name wins when it matches a type; the call's link covers a type renamed after the call was logged.
+			var callTypeId = await ResolveCallTypeIdAsync(departmentId, callTypeName) ?? linkedCallTypeId;
 			var now = DateTime.UtcNow;
 
 			RunCard bestCard = null;
@@ -742,9 +748,7 @@ namespace Resgrid.Services
 
 			var types = await _callTypesRepository.GetAllByDepartmentIdAsync(departmentId);
 
-			var match = types?.FirstOrDefault(t => string.Equals(t.Type?.Trim(), callTypeName.Trim(), StringComparison.OrdinalIgnoreCase));
-
-			return match?.CallTypeId;
+			return CallTypeLink.FindByName(types, callTypeName)?.CallTypeId;
 		}
 
 		private async Task InvalidateRunCardsInCacheAsync(int departmentId)

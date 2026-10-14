@@ -1624,7 +1624,7 @@
     <value>أضف اجتماعات وليالي تدريب متكررة.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.call-types-priorities">
-    <value>أضف أنواع البلاغات التي يستخدمها موظفو الإرسال لديك واضبط أولوياتها.</value>
+    <value>أضف أنواع البلاغات التي يستخدمها المرسلون لديك وحدد أولوياتها. امنح كل نوع بلاغ فئة وكل أولوية معنى حتى تتمكن التقارير والتطبيقات من تجميعها وترتيبها.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.certification-dashboard">
     <value>سجّل الشهادات الحالية للأعضاء، ثم راجع ما سينتهي قريبًا.</value>
@@ -1654,7 +1654,7 @@
     <value>أضف عقود الخدمة الخاصة بك وأسعارها.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.custom-statuses">
-    <value>راجع الحالات المدمجة وأضف حالاتك الخاصة حيث تختلف مصطلحاتك. امنح كل حالة نوعًا أساسيًا؛ تُعلم حالة في المحطة توصيات الإرسال بأن الوحدة في محطتها.</value>
+    <value>راجع الحالات المدمجة وأضف حالاتك حيث تختلف مصطلحاتك. امنح كل خيار معنى (نوعًا أساسيًا): يقرأ الإرسال والتوفر والإشعارات والتطبيقات المعنى، لا نص الزر. تخبر حالة «في المركز» توصيات الإرسال بأن الوحدة في مركزها.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.data-protection">
     <value>راجع قائمة تحقق التسجيل وخطّط لاسترداد المفاتيح قبل التسجيل.</value>
@@ -1669,7 +1669,7 @@
     <value>امنح صلاحية الوصول إلى Dispatch للأشخاص الذين يقومون بالإرسال، ثم اطلب منهم تسجيل الدخول.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.dispatch-settings">
-    <value>اختر ما إذا كان الإرسال يتبع المجموعات أو الورديات، وراجع خيارات الحالة التلقائية. حدّد أزمنة الانطلاق لأقرب وحدة إذا كانت الطواقم تحتاج إلى وقت لمغادرة المحطة.</value>
+    <value>اختر ما إذا كان الإرسال يتبع المجموعات أو المناوبات، وراجع خيارات الحالة التلقائية: تُختار حالة الوحدة عند الإرسال والإخلاء حسب المعنى من مجموعة حالات كل نوع وحدة. حدد أوقات الخروج لأقرب وحدة إذا احتاجت الطواقم وقتًا لمغادرة المركز.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.distribution-lists">
     <value>أنشئ قوائم للمجموعات التي تراسلها كثيرًا، مثل الضباط.</value>
@@ -1771,7 +1771,7 @@
     <value>ثبّت تطبيق Unit على كل جهاز لوحي في الآلية واختر وحدته.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.unit-types">
-    <value>أنشئ أنواع الوحدات قبل إضافة الوحدات بحيث يمكن تصنيف كل وحدة.</value>
+    <value>أنشئ أنواع الوحدات قبل إضافة الوحدات حتى يمكن تصنيف كل وحدة. امنح كل نوع فئة، مثل سيارة إطفاء أو إسعاف، واختر مجموعة حالاته.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.units">
     <value>أضف كل وحدة بنوعها ومجموعة محطتها الأساسية.</value>
@@ -2317,10 +2317,10 @@
     <value>حدود تمييز اللوحة مجمَّعة حسب المعنى الأساسي للحالة. القائمة الفارغة تعطِّل التمييز.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.UnitTypeCallStatusOverride.DispatchStatus">
-    <value>الحالة المطبَّقة على هذا النوع من الوحدات عند الإرسال؛ القيمة سالب واحد تُبقيها دون تغيير.</value>
+    <value>خيار من مجموعة حالات نوع الوحدة هذا يُطبَّق عند الإرسال قبل حالة الإرسال الخاصة بالإدارة؛ سالب واحد يستخدم حالة الإرسال الخاصة بالإدارة.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.UnitTypeCallStatusOverride.ReleaseStatus">
-    <value>الحالة المطبَّقة على هذا النوع من الوحدات عند التحرير؛ القيمة سالب واحد تُبقيها دون تغيير.</value>
+    <value>خيار من مجموعة حالات نوع الوحدة هذا يُطبَّق عند الإخلاء قبل حالة الإخلاء الخاصة بالإدارة؛ سالب واحد يستخدم حالة الإخلاء الخاصة بالإدارة.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.UnitTypeCallStatusOverride.UnitTypeId">
     <value>نوع الوحدة الحالي الذي يتلقى هذا التجاوز. اسم نوع الوحدة ليس تأهيلًا أو تصريح تأمين.</value>
@@ -5020,10 +5020,10 @@
     <value>لغة تحويل النص إلى كلام للإشعارات الصوتية المدعومة. تأكد من الأصوات المدعومة والنطق باختبار يجريه إنسان.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.UnitCallDispatchStatusToSet">
-    <value>حالة الوحدة المطبَّقة أثناء إرسال البلاغ. القيمة سالب واحد أو حالة وحدة مدمجة غير صالحة تُبقي الحالة دون تغيير.</value>
+    <value>حالة الوحدة عند التوزيع، حسب المعنى: تحصل كل وحدة على حالة من مجموعة حالاتها الخاصة بهذا النوع الأساسي. ‎-1 هي القيمة الافتراضية، و‎-2 تُبقي الحالة دون تغيير، و1000 زائد نوع أساسي هو معنى حالة، ومن 0 إلى 12 حالة مدمجة محفوظة قبل معاني الحالات.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.UnitCallReleaseStatusToSet">
-    <value>حالة الوحدة المطبَّقة عند تحرير البلاغ. راجع تجاوزات نوع الوحدة قبل افتراض تأثير واحد على مستوى القسم.</value>
+    <value>حالة الوحدة عند التحرير، حسب المعنى بالطريقة نفسها لحالة التوزيع. راجع تجاوزات أنواع الوحدات قبل افتراض أثر واحد على مستوى القسم.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.UnitCallStatusOverridesByUnitType">
     <value>تجاوزات حالة البلاغ لكل نوع وحدة. تكون للقيم الموجودة الخاصة بالنوع الأولوية على افتراضيات القسم.</value>
@@ -6881,5 +6881,53 @@
   </data>
   <data name="FeaturePurpose.document-numbering" xml:space="preserve">
     <value>كيف تُكتب أرقام أوامر العمل والفواتير والعروض وتقارير الوقت اليومية، واليوم الذي تبدأ فيه سنة ترقيمها عند الترقيم حسب سنة مالية.</value>
+  </data>
+  <data name="Setting.DepartmentTerminology" xml:space="preserve">
+    <value>مصطلحات الإدارة</value>
+  </data>
+  <data name="SettingHelp.DepartmentTerminology" xml:space="preserve">
+    <value>أسماء الإدارة الخاصة للوحدات وأنواع السجلات المضمنة، المعروضة في التنقل وفي عناوين صفحات الوحدات وفي كل مكان تُدرج فيه أنواع السجلات وفي تطبيقات Responder وUnit وIC وDispatch، بجميع اللغات. تسميات فقط: لا تتغير الأذونات والروابط وقيم واجهة البرمجة. يستخدم المصطلح الذي لا اسم له اسم Resgrid.</value>
+  </data>
+  <data name="Field.DepartmentTerminologyConfig.Terms" xml:space="preserve">
+    <value>مصطلحات الإدارة / المصطلحات</value>
+  </data>
+  <data name="FieldHelp.DepartmentTerminologyConfig.Terms" xml:space="preserve">
+    <value>إدخال واحد لكل وحدة أو نوع سجل أُعيدت تسميته، مثل حادث بدلًا من Run أو مناوبة بدلًا من Work. يعرض المصطلح غير المدرج اسم Resgrid بلغة العضو. يتكون الاسم من 50 حرفًا كحد أقصى.</value>
+  </data>
+  <data name="Field.DepartmentTermOverride.Key" xml:space="preserve">
+    <value>مصطلح الإدارة / المفتاح</value>
+  </data>
+  <data name="FieldHelp.DepartmentTermOverride.Key" xml:space="preserve">
+    <value>المصطلح الذي تُعاد تسميته: وحدة (module.calls، module.records ...) أو نوع سجل مضمن (record-type.run، record-type.work ...). لا تتغير المفاتيح أبدًا.</value>
+  </data>
+  <data name="Field.DepartmentTermOverride.Text" xml:space="preserve">
+    <value>مصطلح الإدارة / الاسم</value>
+  </data>
+  <data name="FieldHelp.DepartmentTermOverride.Text" xml:space="preserve">
+    <value>كلمة الإدارة للمصطلح، 50 حرفًا كحد أقصى. تظهر الكلمة نفسها لجميع الأعضاء بجميع اللغات؛ القيمة الفارغة تستخدم اسم Resgrid.</value>
+  </data>
+  <data name="Feature.terminology" xml:space="preserve">
+    <value>المصطلحات</value>
+  </data>
+  <data name="FeaturePurpose.terminology" xml:space="preserve">
+    <value>أعد تسمية الوحدات وأنواع السجلات المضمنة بالكلمات التي تستخدمها إدارتك، مثل حادث بدلًا من Run.</value>
+  </data>
+  <data name="Rule.status-meanings" xml:space="preserve">
+    <value>خيارات حالة بلا معنى</value>
+  </data>
+  <data name="RuleWhy.status-meanings" xml:space="preserve">
+    <value>يقرأ الإرسال والتوفر والإشعارات والتطبيقات الحالة من معناها؛ ويُعامل الخيار الذي لا معنى له على أنه غير معروف.</value>
+  </data>
+  <data name="RuleNext.status-meanings" xml:space="preserve">
+    <value>افتح كل مجموعة حالات مدرجة وامنح خياراتها معنى؛ المعاني المقترحة نقطة بداية.</value>
+  </data>
+  <data name="Rule.unit-status-targets" xml:space="preserve">
+    <value>أنواع وحدات لا يمكنها أخذ حالة الإرسال أو الإخلاء</value>
+  </data>
+  <data name="RuleWhy.unit-status-targets" xml:space="preserve">
+    <value>لا تحتوي مجموعة حالاتها على خيار بالمعنى الذي تطبقه إعدادات الإرسال، لذا تحتفظ وحداتها بحالتها عند الإرسال أو الإخلاء.</value>
+  </data>
+  <data name="RuleNext.unit-status-targets" xml:space="preserve">
+    <value>امنح خيارات المجموعة معاني، أو اختر معنى آخر أو استثناءً لنوع الوحدة في إعدادات الإرسال.</value>
   </data>
 </root>

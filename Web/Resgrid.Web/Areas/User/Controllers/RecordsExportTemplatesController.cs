@@ -30,10 +30,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IRecordsProtectionService _protection;
 		private readonly IDepartmentsService _departments;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> _localizer;
+		private readonly Resgrid.Web.Helpers.IDepartmentTerminology _terms;
 
 		public RecordsExportTemplatesController(IRecordsExportService exports, IRecordsCutoverService cutover, IRecordsAuthorizationService authorization,
-			IRecordsProtectionService protection, IDepartmentsService departments, IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer)
+			IRecordsProtectionService protection, IDepartmentsService departments, IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer,
+			Resgrid.Web.Helpers.IDepartmentTerminology terms)
 		{
+			_terms = terms;
 			_exports = exports;
 			_cutover = cutover;
 			_authorization = authorization;
@@ -192,8 +195,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Department = await _departments.GetDepartmentByIdAsync(DepartmentId, false);
 			model.CanIncludeRestricted = await _authorization.HasPermissionAsync(UserId, DepartmentId, PermissionTypes.ViewRestrictedRecords);
 			model.ProtectionEnforced = await _protection.IsEnforcedAsync(DepartmentId);
-			model.Definitions = RmsDefinitionKeys.LockedTypes.Select(t => new KeyValuePair<string, string>(t.Key, t.Value.ToString()))
-				.Append(new KeyValuePair<string, string>(RmsDefinitionKeys.NerisIncidentReport, "NERIS incident report")).ToList();
+			model.Definitions = new List<KeyValuePair<string, string>>();
+			foreach (var key in RmsDefinitionKeys.LockedTypes.Keys.Append(RmsDefinitionKeys.NerisIncidentReport))
+				model.Definitions.Add(new KeyValuePair<string, string>(key, await _terms.DefinitionAsync(key)));
 			if (!string.IsNullOrWhiteSpace(model.RmsExportTemplateId))
 			{
 				var validation = await _exports.ValidateAsync(DepartmentId, UserId, model.ToTemplate());

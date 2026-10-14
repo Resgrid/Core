@@ -409,10 +409,11 @@ namespace Resgrid.Tests.Chatbot
 		{
 			var actionLogs = new Mock<IActionLogsService>();
 			var customStates = new Mock<ICustomStateService>();
+			// Built-in options carry their own base types (CustomStateService.GetDefaultPersonStatuses).
 			customStates.Setup(x => x.GetCustomPersonnelStatusesOrDefaultsAsync(1)).ReturnsAsync(new List<CustomStateDetail>
 			{
-				new CustomStateDetail { CustomStateDetailId = (int)ActionTypes.Responding, ButtonText = "Responding" },
-				new CustomStateDetail { CustomStateDetailId = (int)ActionTypes.AvailableStation, ButtonText = "Available Station" }
+				new CustomStateDetail { CustomStateDetailId = (int)ActionTypes.Responding, ButtonText = "Responding", BaseType = (int)BuiltInStatusBaseTypes.ForPersonnelStatus((int)ActionTypes.Responding) },
+				new CustomStateDetail { CustomStateDetailId = (int)ActionTypes.AvailableStation, ButtonText = "Available Station", BaseType = (int)BuiltInStatusBaseTypes.ForPersonnelStatus((int)ActionTypes.AvailableStation) }
 			});
 
 			var handler = new StatusActionHandler(actionLogs.Object, customStates.Object);

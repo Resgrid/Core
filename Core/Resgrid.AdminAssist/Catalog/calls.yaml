@@ -497,7 +497,7 @@
         "Field": "UnitDispatchStatus"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-13T00:00:00Z",
       "Impact": {
         "Risk": "Critical",
         "AudienceKey": "Impact.Audience",
@@ -530,7 +530,7 @@
         "Field": "UnitClearStatus"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-13T00:00:00Z",
       "Impact": {
         "Risk": "Critical",
         "AudienceKey": "Impact.Audience",
@@ -1043,7 +1043,7 @@
         "Field": null
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-13T00:00:00Z",
       "Impact": {
         "Risk": "Critical",
         "AudienceKey": "Impact.Audience",
@@ -1078,7 +1078,7 @@
         "Field": null
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-13T00:00:00Z",
       "Impact": {
         "Risk": "Critical",
         "AudienceKey": "Impact.Audience",
@@ -2197,7 +2197,9 @@
       },
       "Requirements": [],
       "SettingIds": [],
-      "RuleIds": [],
+      "RuleIds": [
+        "status-meanings"
+      ],
       "Prominence": "Key",
       "DocsPath": "/web-app/custom-statuses/"
     },
@@ -2259,7 +2261,8 @@
       "RuleIds": [
         "checkin-timers",
         "shift-auto-without-dispatch",
-        "shift-coverage"
+        "shift-coverage",
+        "unit-status-targets"
       ],
       "Prominence": "Key",
       "DocsPath": "/web-app/department-settings/#call--dispatch-settings"
@@ -2726,6 +2729,46 @@
       ]
     },
     {
+      "Id": "unit-status-targets",
+      "AreaId": "calls",
+      "Severity": "Warning",
+      "TitleKey": "Rule.unit-status-targets",
+      "ExplanationKey": "RuleWhy.unit-status-targets",
+      "NextActionKey": "RuleNext.unit-status-targets",
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings"
+      },
+      "AppliesWhen": [],
+      "FailsWhen": [
+        {
+          "EvidenceId": "unitTypesWithoutStatusTarget",
+          "Comparison": "Greater",
+          "Number": 0
+        }
+      ]
+    },
+    {
+      "Id": "status-meanings",
+      "AreaId": "calls",
+      "Severity": "Warning",
+      "TitleKey": "Rule.status-meanings",
+      "ExplanationKey": "RuleWhy.status-meanings",
+      "NextActionKey": "RuleNext.status-meanings",
+      "Location": {
+        "Controller": "CustomStatuses",
+        "Action": "Index"
+      },
+      "AppliesWhen": [],
+      "FailsWhen": [
+        {
+          "EvidenceId": "statusOptionsWithoutMeaning",
+          "Comparison": "Greater",
+          "Number": 0
+        }
+      ]
+    },
+    {
       "Id": "import-heartbeat",
       "AreaId": "calls",
       "Severity": "Warning",
@@ -3004,23 +3047,23 @@
       "Id": "setting.UnitCallDispatchStatusToSet",
       "Locale": "en",
       "TitleKey": "Setting.UnitCallDispatchStatusToSet",
-      "Body": "Unit Call Dispatch Status To Set. Unit status applied during call dispatch. Minus one or an invalid built-in unit status leaves the status unchanged.",
+      "Body": "Unit Call Dispatch Status To Set. Unit status applied during call dispatch, by meaning: each unit gets the status of its own status set with that base type. -1 is the default, -2 leaves the status unchanged, 1000 plus a base type is a status meaning, and 0 to 12 is a built-in status saved before status meanings.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-unitcalldispatchstatustoset",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
+      "ReviewedOn": "2026-10-13T00:00:00Z"
     },
     {
       "Id": "setting.UnitCallReleaseStatusToSet",
       "Locale": "en",
       "TitleKey": "Setting.UnitCallReleaseStatusToSet",
-      "Body": "Unit Call Release Status To Set. Unit status applied at call release (the call is closed, or the unit is taken off it) to the units still working the call. A unit already back in service, out of service, unavailable or on a break, or working another open call keeps its status; custom statuses are read by their base type. Review unit-type overrides before assuming one department-wide effect.",
+      "Body": "Unit Call Release Status To Set. Unit status applied at call release, by meaning in the same way as the dispatch status. Review unit-type overrides before assuming one department-wide effect.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-unitcallreleasestatustoset",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
+      "ReviewedOn": "2026-10-13T00:00:00Z"
     },
     {
       "Id": "setting.UnitCallStatusOverridesByUnitType",
@@ -3114,23 +3157,23 @@
       "Id": "field.UnitTypeCallStatusOverride.DispatchStatus",
       "Locale": "en",
       "TitleKey": "Field.UnitTypeCallStatusOverride.DispatchStatus",
-      "Body": "Unit Type Call Status Override / Dispatch Status. Status applied to this unit type on dispatch; minus one leaves it unchanged.",
+      "Body": "Unit Type Call Status Override / Dispatch Status. Option of this unit type's own status set applied on dispatch, ahead of the department's dispatch status; minus one uses the department's dispatch status.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-unittypecallstatusoverride-dispatchstatus",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
+      "ReviewedOn": "2026-10-13T00:00:00Z"
     },
     {
       "Id": "field.UnitTypeCallStatusOverride.ReleaseStatus",
       "Locale": "en",
       "TitleKey": "Field.UnitTypeCallStatusOverride.ReleaseStatus",
-      "Body": "Unit Type Call Status Override / Release Status. Status applied to this unit type on release; minus one leaves it unchanged.",
+      "Body": "Unit Type Call Status Override / Release Status. Option of this unit type's own status set applied on release, ahead of the department's release status; minus one uses the department's release status.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-unittypecallstatusoverride-releasestatus",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
+      "ReviewedOn": "2026-10-13T00:00:00Z"
     },
     {
       "Id": "field.NewCallFieldPolicy.Rules",
@@ -3477,34 +3520,34 @@
       "Id": "call-types-priorities",
       "Locale": "en",
       "TitleKey": "Feature.call-types-priorities",
-      "Body": "Call types and priorities The call types and priorities used to classify calls. Use consistent reporting and run-card matching terms. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Add the call types your dispatchers use and set their priorities.",
+      "Body": "Call types and priorities The call types and priorities used to classify calls. Use consistent reporting and run-card matching terms. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Add the call types your dispatchers use and set their priorities. Give each call type a class and each priority a meaning so reports and the apps can group and sort them.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "call-types-priorities",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
+      "ReviewedOn": "2026-10-13T00:00:00Z"
     },
     {
       "Id": "custom-statuses",
       "Locale": "en",
       "TitleKey": "Feature.custom-statuses",
-      "Body": "Personnel and unit statuses The statuses members and units report, such as Responding or On Scene. Use terminology familiar to the department while preserving automation meaning. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Review the built-in statuses and add your own where your terms differ. Give each one a base type; In Quarters tells dispatch recommendations a unit is at its station.",
+      "Body": "Personnel and unit statuses The statuses members and units report, such as Responding or On Scene. Use terminology familiar to the department while preserving automation meaning. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Review the built-in statuses and add your own where your terms differ. Give every option a meaning (base type): dispatch, availability, notifications and the apps read the meaning, not the button text. In Quarters tells dispatch recommendations a unit is at its station.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "custom-statuses",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-10-06T00:00:00Z"
+      "ReviewedOn": "2026-10-13T00:00:00Z"
     },
     {
       "Id": "dispatch-settings",
       "Locale": "en",
       "TitleKey": "Feature.dispatch-settings",
-      "Body": "Dispatch Settings How calls page personnel: by group or by shift, and related automatic status changes. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Choose whether dispatch follows groups or shifts, and review the automatic status options. Set closest-unit turnout times if crews need time to leave the station.",
+      "Body": "Dispatch Settings How calls page personnel: by group or by shift, and related automatic status changes. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Choose whether dispatch follows groups or shifts, and review the automatic status options: the unit status on dispatch and release is chosen by meaning from each unit type's own status set. Set closest-unit turnout times if crews need time to leave the station.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "dispatch-settings",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-10-06T00:00:00Z"
+      "ReviewedOn": "2026-10-13T00:00:00Z"
     },
     {
       "Id": "email-intake",

@@ -350,6 +350,15 @@ namespace Resgrid.Services
 			var stateByUser = userStates.Where(s => !string.IsNullOrWhiteSpace(s?.UserId))
 				.GroupBy(s => s.UserId, StringComparer.OrdinalIgnoreCase)
 				.ToDictionary(g => g.Key, g => g.OrderByDescending(s => s.Timestamp).First(), StringComparer.OrdinalIgnoreCase);
+			// Crew put On Unit by their unit's status are as available as that unit (PersonnelOnUnit).
+			Dictionary<int, AvailabilityClass> latestUnitAvailability = null;
+			if (logByUser.Values.Any(l => PersonnelOnUnit.IsLinkedOnUnit(l, personnelDetails.ContainsKey(l.ActionTypeId))))
+			{
+				latestUnitAvailability = PersonnelOnUnit.LatestUnitAvailability(
+					await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(departmentId),
+					CallStatusLinkage.BuildUnitBaseTypeMap(await _customStateService.GetAllCustomStatesForDepartmentAsync(departmentId)));
+			}
+
 			var unitNames = units.ToDictionary(u => u.UnitId, u => u.Name);
 			var unitByUser = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
 			foreach (var crew in crewByUnit)
@@ -375,7 +384,7 @@ namespace Resgrid.Services
 					Roles = rolesByUser.TryGetValue(row.UserId, out var roles) ? roles.Where(r => r != null).ToList() : new List<PersonnelRole>(),
 					StatusText = GetPersonnelStatusText(lastLog, personnelDetails),
 					StaffingText = GetStaffingText(lastState, staffingDetails),
-					IsAvailable = IsPersonnelStatusAvailable(lastLog, personnelDetails) && IsPersonnelStaffingAvailable(lastState, staffingDetails),
+					IsAvailable = IsPersonnelStatusAvailable(lastLog, personnelDetails, latestUnitAvailability) && IsPersonnelStaffingAvailable(lastState, staffingDetails),
 					Location = location != null && IsUsableCoordinate(location.Latitude, location.Longitude) ? location : null
 				};
 
@@ -624,7 +633,8 @@ namespace Resgrid.Services
 				if (state == null)
 					continue;
 
-				foreach (var detail in state.GetActiveDetails() ?? new List<CustomStateDetail>())
+				// Deleted options too: a unit or person still on one is on the department's option (StatusOptionIds).
+				foreach (var detail in (state.Details ?? new List<CustomStateDetail>()).Where(x => x != null && x.CustomStateDetailId > 0))
 					map[detail.CustomStateDetailId] = detail;
 			}
 
@@ -648,7 +658,8 @@ namespace Resgrid.Services
 				: AvailabilityMatrix.ForUnitStateType(stateId));
 		}
 
-		private static bool IsPersonnelStatusAvailable(ActionLog lastLog, Dictionary<int, CustomStateDetail> customDetails)
+		private static bool IsPersonnelStatusAvailable(ActionLog lastLog, Dictionary<int, CustomStateDetail> customDetails,
+			IReadOnlyDictionary<int, AvailabilityClass> latestUnitAvailability = null)
 		{
 			// No status on file: the member never set one and is treated as standing by.
 			if (lastLog == null)
@@ -656,7 +667,7 @@ namespace Resgrid.Services
 
 			return IsAvailableClass(customDetails.TryGetValue(lastLog.ActionTypeId, out var detail)
 				? AvailabilityMatrix.ForCustomBaseType((int)detail.BaseType)
-				: AvailabilityMatrix.ForBuiltInPersonnelActionType(lastLog.ActionTypeId));
+				: PersonnelOnUnit.FollowUnit(lastLog, false, latestUnitAvailability) ?? AvailabilityMatrix.ForBuiltInPersonnelActionType(lastLog.ActionTypeId));
 		}
 
 		private static bool IsPersonnelStaffingAvailable(UserState lastState, Dictionary<int, CustomStateDetail> customDetails)
@@ -666,7 +677,7 @@ namespace Resgrid.Services
 				return true;
 
 			if (customDetails.TryGetValue(lastState.State, out var detail))
-				return IsAvailableClass(AvailabilityMatrix.ForCustomBaseType((int)detail.BaseType));
+				return IsAvailableClass(AvailabilityMatrix.ForStaffingBaseType(detail.BaseType));
 
 			return lastState.State == (int)UserStateTypes.Available
 				|| lastState.State == (int)UserStateTypes.OnShift

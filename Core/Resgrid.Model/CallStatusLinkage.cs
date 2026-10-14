@@ -16,16 +16,18 @@ namespace Resgrid.Model
 	public static class CallStatusLinkage
 	{
 		/// <summary>
-		/// Raw status values at or below this are built-in <see cref="UnitStateTypes"/> / <see cref="ActionTypes"/>;
-		/// anything above is a <see cref="CustomStateDetail.CustomStateDetailId"/>. Matches the cut-off
-		/// <c>CustomStateService</c> uses when resolving status labels.
+		/// The old cut-off between built-in values and custom status detail ids. It is no longer how the two are told
+		/// apart: a raw value is custom when it is one of the department's custom status detail ids (deleted ones
+		/// included), otherwise built-in (<see cref="StatusOptionIds"/>). On a fresh install custom ids start at 1, so a
+		/// numeric cut-off read a department's first custom options as built-in statuses.
 		/// </summary>
 		public const int MaxBuiltInStatusId = 25;
 
 		/// <summary>
 		/// Builds a raw-status to status-detail lookup for one department: the built-in statuses (keyed by their
 		/// enum value) plus every custom status detail of the given custom state type, deleted ones included so
-		/// historical rows still resolve.
+		/// historical rows still resolve. A custom detail whose id equals a built-in value replaces it: the stored value
+		/// is the department's option.
 		/// </summary>
 		public static Dictionary<int, CustomStateDetail> BuildStatusLookup(IEnumerable<CustomStateDetail> builtInStatuses,
 			IEnumerable<CustomState> customStates, CustomStateTypes customStateType)
@@ -42,7 +44,7 @@ namespace Resgrid.Model
 			{
 				foreach (var state in customStates.Where(x => x != null && x.Type == (int)customStateType && x.Details != null))
 				{
-					foreach (var detail in state.Details.Where(x => x != null && x.CustomStateDetailId > MaxBuiltInStatusId))
+					foreach (var detail in state.Details.Where(x => x != null && x.CustomStateDetailId > 0))
 						lookup[detail.CustomStateDetailId] = detail;
 				}
 			}
@@ -100,16 +102,13 @@ namespace Resgrid.Model
 		/// </summary>
 		public static UnitStateTypes? ResolveUnitStateKind(int rawState, IReadOnlyDictionary<int, int> customBaseTypes)
 		{
-			if (rawState <= MaxBuiltInStatusId)
+			if (customBaseTypes == null || !customBaseTypes.TryGetValue(rawState, out var baseType))
 			{
 				if (System.Enum.IsDefined(typeof(UnitStateTypes), rawState))
 					return (UnitStateTypes)rawState;
 
 				return null;
 			}
-
-			if (customBaseTypes == null || !customBaseTypes.TryGetValue(rawState, out var baseType))
-				return null;
 
 			switch ((ActionBaseTypes)baseType)
 			{
@@ -170,7 +169,7 @@ namespace Resgrid.Model
 
 			foreach (var state in customStates.Where(x => x != null && x.Type == (int)customStateType && x.Details != null))
 			{
-				foreach (var detail in state.Details.Where(x => x != null && x.CustomStateDetailId > MaxBuiltInStatusId))
+				foreach (var detail in state.Details.Where(x => x != null && x.CustomStateDetailId > 0))
 					map[detail.CustomStateDetailId] = detail.BaseType;
 			}
 
@@ -212,11 +211,8 @@ namespace Resgrid.Model
 		/// </summary>
 		public static bool IsClearingPersonnelStatus(int rawStatus, IReadOnlyDictionary<int, int> customBaseTypes)
 		{
-			if (rawStatus <= MaxBuiltInStatusId)
-				return rawStatus == (int)ActionTypes.StandingBy || rawStatus == (int)ActionTypes.NotResponding || rawStatus == (int)ActionTypes.AvailableStation;
-
 			if (customBaseTypes == null || !customBaseTypes.TryGetValue(rawStatus, out var baseType))
-				return false;
+				return rawStatus == (int)ActionTypes.StandingBy || rawStatus == (int)ActionTypes.NotResponding || rawStatus == (int)ActionTypes.AvailableStation;
 
 			switch ((ActionBaseTypes)baseType)
 			{

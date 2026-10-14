@@ -267,12 +267,17 @@ namespace Resgrid.Services
 		/// </summary>
 		private async Task<int?> ResolveCallTypeIdAsync(Call call)
 		{
-			if (string.IsNullOrWhiteSpace(call?.Type))
+			if (call == null)
 				return null;
 
-			var types = await _callsService.GetCallTypesForDepartmentAsync(call.DepartmentId);
-			var match = types?.FirstOrDefault(x => string.Equals(x.Type, call.Type, StringComparison.OrdinalIgnoreCase));
-			return match?.CallTypeId;
+			// A linked call (Call.CallTypeId) keeps its type through a rename.
+			if (call.CallTypeId.HasValue)
+				return call.CallTypeId;
+
+			if (string.IsNullOrWhiteSpace(call.Type))
+				return null;
+
+			return CallTypeLink.FindByName(await _callsService.GetCallTypesForDepartmentAsync(call.DepartmentId), call.Type)?.CallTypeId;
 		}
 
 		public async Task<IncidentCommand> GetActiveCommandForCallAsync(int departmentId, int callId)

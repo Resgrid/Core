@@ -13,13 +13,13 @@
 				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
 			</li>
 			<li>
-				<a asp-controller="CustomStatuses" asp-action="Index" asp-route-area="User">@commonLocalizer["CustomStatusesHeader"]</a>
+				<a asp-controller="CustomStatuses" asp-action="Index" asp-route-area="User">@localizer["CustomStatusesHeader"]</a>
 			</li>
 			<li>
 				<a asp-controller="CustomStatuses" asp-action="Edit" asp-route-area="User" asp-route-id="@Model.Detail.CustomStateId.ToString()">@commonLocalizer["Edit"] @Model.Detail.CustomState.Name</a>
 			</li>
 			<li class="active">
-				<strong>@commonLocalizer["Edit"] @Model.Detail.ButtonText Button</strong>
+				<strong>@commonLocalizer["Edit"] @Model.Detail.ButtonText</strong>
 			</li>
 		</ol>
 	</div>
@@ -64,6 +64,22 @@
 								<div class="col-sm-10">
 									@Html.DropDownListFor(m => m.BaseType, Model.BaseTypes)
 									@await Html.PartialAsync("_BaseTypeDescription", "BaseType")
+								</div>
+							</div>
+						}
+						else if (Model.Detail.CustomState.Type == (int)CustomStateTypes.Staffing)
+						{
+							<div class="form-group">
+								<label class="col-sm-2 control-label">@localizer["BaseType"]</label>
+								<div class="col-sm-10">
+									<select asp-for="StaffingBaseType">
+										<option value="-1">@localizer["None"]</option>
+										@foreach (var staffingMeaning in Enum.GetValues(typeof(StaffingBaseTypes)).Cast<StaffingBaseTypes>().Where(x => x != StaffingBaseTypes.None))
+										{
+											<option value="@((int)staffingMeaning)">@localizer["Staffing" + staffingMeaning.ToString()]</option>
+										}
+									</select>
+									<span class="help-block m-b-none">@localizer["StaffingBaseTypeHelp"]</span>
 								</div>
 							</div>
 						}

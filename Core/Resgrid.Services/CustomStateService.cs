@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -53,6 +53,13 @@ namespace Resgrid.Services
 				return states.Where(x => x.DepartmentId == departmentId && x.IsDeleted == false && x.Type == (int)CustomStateTypes.Unit).ToList();
 
 			return null;
+		}
+
+		public async Task<int?> ResolvePersonnelStatusAsync(int departmentId, ActionBaseTypes baseType, DestinationEntityTypes destination = DestinationEntityTypes.None)
+		{
+			var personnelSet = await GetActivePersonnelStateForDepartmentAsync(departmentId);
+
+			return StatusTargetResolver.ResolvePersonnel(StatusTarget.ForBaseType(baseType), personnelSet, null, (int)ActionTypes.StandingBy, destination).Value;
 		}
 
 		public async Task<CustomState> GetActivePersonnelStateForDepartmentAsync(int departmentId)
@@ -263,29 +270,36 @@ namespace Resgrid.Services
 			return null;
 		}
 
+		// A stored value is the department's own option when it is one of its custom option ids of that kind (deleted ones
+		// included, so history still resolves); otherwise it is a built-in value. On a fresh install custom ids start at 1,
+		// so the old "<= 25 is built-in" cut-off read a department's first custom options as built-in statuses.
+		private async Task<CustomStateDetail> FindDepartmentOptionAsync(int departmentId, CustomStateTypes type, int rawValue)
+		{
+			return StatusOptionIds.FindCustom(await GetAllCustomStatesForDepartmentAsync(departmentId), type, rawValue);
+		}
+
 		public async Task<CustomStateDetail> GetCustomPersonnelStaffingAsync(int departmentId, UserState state)
 		{
 			if (state == null)
 				return null;
 
-			if (state.State <= 25)
-			{
-				var detail = new CustomStateDetail();
+			var custom = await FindDepartmentOptionAsync(departmentId, CustomStateTypes.Staffing, state.State);
+			if (custom != null)
+				return custom;
 
-				detail.ButtonText = state.GetStaffingText();
-				detail.ButtonColor = state.GetStaffingCss();
+			if (state.State > CallStatusLinkage.MaxBuiltInStatusId)
+				return null;
 
-				if (string.IsNullOrWhiteSpace(detail.ButtonColor))
-					detail.ButtonColor = "label-default";
+			var detail = new CustomStateDetail();
 
-				return detail;
-			}
-			else
-			{
-				var stateDetail = await GetCustomDetailForDepartmentAsync(departmentId, state.State);
+			detail.ButtonText = state.GetStaffingText();
+			detail.ButtonColor = state.GetStaffingCss();
+			detail.BaseType = (int)BuiltInStatusBaseTypes.ForStaffing(state.State);
 
-				return stateDetail;
-			}
+			if (string.IsNullOrWhiteSpace(detail.ButtonColor))
+				detail.ButtonColor = "label-default";
+
+			return detail;
 		}
 
 		public async Task<CustomStateDetail> GetCustomPersonnelStatusAsync(int departmentId, ActionLog state)
@@ -293,24 +307,23 @@ namespace Resgrid.Services
 			if (state == null)
 				return null;
 
-			if (state.ActionTypeId <= 25)
-			{
-				var detail = new CustomStateDetail();
+			var custom = await FindDepartmentOptionAsync(departmentId, CustomStateTypes.Personnel, state.ActionTypeId);
+			if (custom != null)
+				return custom;
 
-				detail.ButtonText = state.GetActionText();
-				detail.ButtonColor = state.GetActionCss();
+			if (state.ActionTypeId > CallStatusLinkage.MaxBuiltInStatusId)
+				return null;
 
-				if (string.IsNullOrWhiteSpace(detail.ButtonColor))
-					detail.ButtonColor = "label-default";
+			var detail = new CustomStateDetail();
 
-				return detail;
-			}
-			else
-			{
-				var stateDetail = await GetCustomDetailForDepartmentAsync(departmentId, state.ActionTypeId);
+			detail.ButtonText = state.GetActionText();
+			detail.ButtonColor = state.GetActionCss();
+			detail.BaseType = (int)BuiltInStatusBaseTypes.ForPersonnelStatus(state.ActionTypeId);
 
-				return stateDetail;
-			}
+			if (string.IsNullOrWhiteSpace(detail.ButtonColor))
+				detail.ButtonColor = "label-default";
+
+			return detail;
 		}
 
 		public async Task<CustomStateDetail> GetCustomUnitStateAsync(UnitState state)
@@ -318,24 +331,27 @@ namespace Resgrid.Services
 			if (state == null)
 				return null;
 
-			if (state.State <= 25)
+			// Callers load the unit with the state; without it only a built-in value can be resolved.
+			if (state.Unit != null)
 			{
-				var detail = new CustomStateDetail();
-
-				detail.ButtonText = state.GetStatusText();
-				detail.ButtonColor = state.GetStatusCss();
-
-				if (string.IsNullOrWhiteSpace(detail.ButtonColor))
-					detail.ButtonColor = "label-default";
-
-				return detail;
+				var custom = await FindDepartmentOptionAsync(state.Unit.DepartmentId, CustomStateTypes.Unit, state.State);
+				if (custom != null)
+					return custom;
 			}
-			else
-			{
-				var stateDetail = await GetCustomDetailForDepartmentAsync(state.Unit.DepartmentId, state.State);
 
-				return stateDetail;
-			}
+			if (state.State > CallStatusLinkage.MaxBuiltInStatusId)
+				return null;
+
+			var detail = new CustomStateDetail();
+
+			detail.ButtonText = state.GetStatusText();
+			detail.ButtonColor = state.GetStatusCss();
+			detail.BaseType = (int)BuiltInStatusBaseTypes.ForUnitState(state.State);
+
+			if (string.IsNullOrWhiteSpace(detail.ButtonColor))
+				detail.ButtonColor = "label-default";
+
+			return detail;
 		}
 
 		public List<CustomStateDetail> GetDefaultUnitStatuses()
@@ -355,6 +371,9 @@ namespace Resgrid.Services
 			//details.Add(new CustomStateDetail() { CustomStateDetailId = (int)UnitStateTypes.Manual, ButtonText = "Manual", ButtonColor = "" });
 			//details.Add(new CustomStateDetail() { CustomStateDetailId = (int)UnitStateTypes.Enroute, ButtonText = "Enroute", ButtonColor = "" });
 
+			foreach (var detail in details)
+				detail.BaseType = (int)BuiltInStatusBaseTypes.ForUnitState(detail.CustomStateDetailId);
+
 			return details;
 
 		}
@@ -371,6 +390,9 @@ namespace Resgrid.Services
 			details.Add(new CustomStateDetail() { CustomStateDetailId = (int)ActionTypes.RespondingToScene, ButtonText = "Responding to Scene", ButtonColor = "#449d44", TextColor = "#ffffff", NoteType = (int)CustomStateNoteTypes.Optional, DetailType = (int)CustomStateDetailTypes.Calls });
 			details.Add(new CustomStateDetail() { CustomStateDetailId = (int)ActionTypes.OnUnit, ButtonText = "On Unit", ButtonColor = "#449d44", TextColor = "#ffffff", NoteType = (int)CustomStateNoteTypes.Optional, DetailType = (int)CustomStateDetailTypes.CallsAndStations });
 
+			foreach (var detail in details)
+				detail.BaseType = (int)BuiltInStatusBaseTypes.ForPersonnelStatus(detail.CustomStateDetailId);
+
 			return details;
 		}
 
@@ -383,6 +405,8 @@ namespace Resgrid.Services
 			details.Add(new CustomStateDetail() { CustomStateDetailId = (int)UserStateTypes.Committed, ButtonText = "Committed", ButtonColor = "#23c6c8", TextColor = "#ffffff", NoteType = (int)CustomStateNoteTypes.Optional });
 			details.Add(new CustomStateDetail() { CustomStateDetailId = (int)UserStateTypes.OnShift, ButtonText = "On Shift", ButtonColor = "#228bcb", TextColor = "#ffffff", NoteType = (int)CustomStateNoteTypes.Optional });
 
+			foreach (var detail in details)
+				detail.BaseType = (int)BuiltInStatusBaseTypes.ForStaffing(detail.CustomStateDetailId);
 
 			return details;
 		}

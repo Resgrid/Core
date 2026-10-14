@@ -531,7 +531,8 @@ namespace Resgrid.Services.Records
 
 		public static CallSourceMilestone PersonnelMilestone(int rawStatus, IReadOnlyDictionary<int, int> baseTypes)
 		{
-			if (rawStatus <= CallStatusLinkage.MaxBuiltInStatusId)
+			// The department's own option by its base type; anything else is a built-in status (StatusOptionIds).
+			if (baseTypes == null || !baseTypes.TryGetValue(rawStatus, out var baseType))
 			{
 				switch ((ActionTypes)rawStatus)
 				{
@@ -544,9 +545,6 @@ namespace Resgrid.Services.Records
 					default: return CallSourceMilestone.None;
 				}
 			}
-
-			if (baseTypes == null || !baseTypes.TryGetValue(rawStatus, out var baseType))
-				return CallSourceMilestone.None;
 
 			switch ((ActionBaseTypes)baseType)
 			{
@@ -591,14 +589,14 @@ namespace Resgrid.Services.Records
 
 		private static string BuiltInUnitText(int rawState)
 		{
-			return rawState <= CallStatusLinkage.MaxBuiltInStatusId && Enum.IsDefined(typeof(UnitStateTypes), rawState)
+			return Enum.IsDefined(typeof(UnitStateTypes), rawState)
 				? new UnitState { State = rawState }.GetStatusText()
 				: "Status " + rawState.ToString(CultureInfo.InvariantCulture);
 		}
 
 		private static string BuiltInPersonnelText(ActionLog log)
 		{
-			return log.ActionTypeId <= CallStatusLinkage.MaxBuiltInStatusId && Enum.IsDefined(typeof(ActionTypes), log.ActionTypeId)
+			return Enum.IsDefined(typeof(ActionTypes), log.ActionTypeId)
 				? log.GetActionText()
 				: "Status " + log.ActionTypeId.ToString(CultureInfo.InvariantCulture);
 		}

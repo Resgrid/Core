@@ -14,6 +14,13 @@ namespace Resgrid.Web.Areas.User.Models.Departments
 
 		public SelectList StatusLevels { get; set; }
 		public SelectList UnitStatusLevels { get; set; }
+
+		/// <summary>The department-wide unit dispatch / release choices: default, leave unchanged, a status meaning (base type).</summary>
+		public List<SelectListItem> UnitDispatchStatusTargets { get; set; } = new List<SelectListItem>();
+		public List<SelectListItem> UnitReleaseStatusTargets { get; set; } = new List<SelectListItem>();
+
+		/// <summary>Unit types whose status set has no option, or several, for what the dispatch / release setting asks for.</summary>
+		public List<string> UnitStatusTargetWarnings { get; set; } = new List<string>();
 		public int ShiftDispatchStatus { get; set; }
 		public int ShiftClearStatus { get; set; }
 		public int UnitDispatchStatus { get; set; }

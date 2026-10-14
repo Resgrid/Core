@@ -588,6 +588,8 @@ namespace Resgrid.Web
 			builder.RegisterModule(new NoSqlDataModule());
 			builder.RegisterModule(new ServicesModule());
 			builder.RegisterType<Resgrid.Web.Helpers.HttpProtectedGrantContext>().As<IProtectedGrantContext>().InstancePerLifetimeScope();
+			// One per request, so the navigation and the page read the department's terminology once between them.
+			builder.RegisterType<Resgrid.Web.Helpers.DepartmentTerminology>().As<Resgrid.Web.Helpers.IDepartmentTerminology>().InstancePerLifetimeScope();
 			builder.RegisterModule(new Resgrid.Search.SearchModule());
 			builder.RegisterModule(new Resgrid.Providers.Scanning.ScanningProviderModule());
 			builder.RegisterModule(new Resgrid.Providers.Neris.NerisProviderModule());

@@ -21,9 +21,10 @@
 }
 @{
     var departmentTime = DepartmentTime.From(ViewData);
-    ViewBag.Title = "Resgrid | " + localizer["WorkOrders"];
+    var moduleTitle = await departmentTerms.NameAsync(DepartmentTerms.WorkOrders, localizer["WorkOrders"]);
+    ViewBag.Title = "Resgrid | " + moduleTitle;
     ViewData["Tab"] = "Index";
-    ViewData["Title"] = localizer["WorkOrders"].Value;
+    ViewData["Title"] = moduleTitle;
     ViewData["Subtitle"] = localizer["WorkOrdersIntro"].Value;
     ViewData["CanWrite"] = Model.Orders.CanWrite;
 

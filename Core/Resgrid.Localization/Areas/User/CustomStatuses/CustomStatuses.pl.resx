@@ -66,7 +66,7 @@
     <value>Dostępny</value>
   </data>
   <data name="BaseType" xml:space="preserve">
-    <value>Base Type</value>
+    <value>Znaczenie</value>
   </data>
   <data name="ButtonBackgroundColorLabel" xml:space="preserve">
     <value>Button Background Color</value>
@@ -283,5 +283,158 @@
   </data>
   <data name="NextStatusesAny" xml:space="preserve">
     <value>Dowolny status</value>
+  </data>
+  <data name="StaffingAvailable" xml:space="preserve">
+    <value>Dostępny</value>
+  </data>
+  <data name="StaffingDelayed" xml:space="preserve">
+    <value>Opóźniony</value>
+  </data>
+  <data name="StaffingUnavailable" xml:space="preserve">
+    <value>Niedostępny</value>
+  </data>
+  <data name="StaffingCommitted" xml:space="preserve">
+    <value>Zaangażowany</value>
+  </data>
+  <data name="StaffingOnShift" xml:space="preserve">
+    <value>Na zmianie</value>
+  </data>
+  <data name="StaffingOffDuty" xml:space="preserve">
+    <value>Poza służbą</value>
+  </data>
+  <data name="StaffingOnCall" xml:space="preserve">
+    <value>Pod telefonem</value>
+  </data>
+  <data name="StaffingBaseTypeHelp" xml:space="preserve">
+    <value>Co ten poziom obsady oznacza dla Resgrid. Rekomendacje dysponowania, liczniki dostępności i wyciszanie powiadomień korzystają ze znaczenia, niezależnie od nazwy przycisku.</value>
+  </data>
+  <data name="MeaningColumn" xml:space="preserve">
+    <value>Znaczenie</value>
+  </data>
+  <data name="MissingMeaningsHeader" xml:space="preserve">
+    <value>Opcje bez znaczenia: {0}.</value>
+  </data>
+  <data name="MissingMeaningsHelp" xml:space="preserve">
+    <value>Resgrid używa znaczenia opcji do określania dostępności, statusu ustawianego przy zadysponowaniu i zwolnieniu, powiadomień i raportów. Opcje bez znaczenia są traktowane jako nieznane. Gdy nazwa daje jasną wskazówkę, wyświetlana jest sugestia; sprawdź ją, a następnie zapisz.</value>
+  </data>
+  <data name="UseSuggestedMeanings" xml:space="preserve">
+    <value>Użyj sugerowanych znaczeń</value>
+  </data>
+  <data name="SuggestedMeaningsApplied" xml:space="preserve">
+    <value>Sugestie zastosowane. Sprawdź je, a następnie zapisz.</value>
+  </data>
+  <data name="SuggestedMeaning" xml:space="preserve">
+    <value>sugerowane: {0}</value>
+  </data>
+  <data name="OptionsWithoutMeaning" xml:space="preserve">
+    <value>Bez znaczenia: {0}</value>
+  </data>
+  <data name="AnyStatusWithMeaning" xml:space="preserve">
+    <value>Dowolny status „{0}”</value>
+  </data>
+  <data name="BuiltInStatusOption" xml:space="preserve">
+    <value>Wbudowany: {0}</value>
+  </data>
+  <data name="NoteOptional" xml:space="preserve">
+    <value>Opcjonalna</value>
+  </data>
+  <data name="NoteRequired" xml:space="preserve">
+    <value>Wymagana</value>
+  </data>
+  <data name="SetTypeLabel" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="TemplatePrefilledNote" xml:space="preserve">
+    <value>Te opcje wypełniono na podstawie szablonu. Zmień tekst lub kolory, usuń niepotrzebne albo dodaj własne; nic nie zostanie zapisane, dopóki nie klikniesz Dodaj.</value>
+  </data>
+  <data name="BackgroundColorShort" xml:space="preserve">
+    <value>Tło</value>
+  </data>
+  <data name="TextColorShort" xml:space="preserve">
+    <value>Tekst</value>
+  </data>
+  <data name="StatusRuleAny" xml:space="preserve">
+    <value>Dowolny</value>
+  </data>
+  <data name="StatusRuleUnknown" xml:space="preserve">
+    <value>Nieznany</value>
+  </data>
+  <data name="StatusRuleNone" xml:space="preserve">
+    <value>Brak</value>
+  </data>
+  <data name="BaseTypeDescription.none" xml:space="preserve">
+    <value>Brak znaczenia systemowego. Status ma charakter informacyjny i nie wpływa na dostępność, raporty ani automatyzacje.</value>
+  </data>
+  <data name="BaseTypeDescription.available" xml:space="preserve">
+    <value>Jednostka lub ratownik jest w służbie i może zostać przydzielony lub zadysponowany do zgłoszenia lub zadania.</value>
+  </data>
+  <data name="BaseTypeDescription.notresponding" xml:space="preserve">
+    <value>Ratownik potwierdził, ale odmawia lub nie może zareagować na bieżący przydział.</value>
+  </data>
+  <data name="BaseTypeDescription.responding" xml:space="preserve">
+    <value>Jednostka lub ratownik aktywnie jedzie (w drodze) do przydzielonego zgłoszenia lub zdarzenia.</value>
+  </data>
+  <data name="BaseTypeDescription.onscene" xml:space="preserve">
+    <value>Jednostka lub ratownik dotarł i działa na miejscu zgłoszenia lub zdarzenia.</value>
+  </data>
+  <data name="BaseTypeDescription.madecontact" xml:space="preserve">
+    <value>Jednostka lub ratownik nawiązał kontakt z osobą, pacjentem, stroną lub punktem zainteresowania.</value>
+  </data>
+  <data name="BaseTypeDescription.investigating" xml:space="preserve">
+    <value>Jednostka lub ratownik rozpoznaje, ocenia lub szacuje sytuację.</value>
+  </data>
+  <data name="BaseTypeDescription.dispatched" xml:space="preserve">
+    <value>Jednostka lub ratownik został zadysponowany lub przydzielony, ale jeszcze nie wyruszył.</value>
+  </data>
+  <data name="BaseTypeDescription.cleared" xml:space="preserve">
+    <value>Jednostka lub ratownik zakończył zgłoszenie lub zdarzenie i wraca do dostępności.</value>
+  </data>
+  <data name="BaseTypeDescription.returning" xml:space="preserve">
+    <value>Jednostka lub ratownik wraca do remizy, stacji lub bazy.</value>
+  </data>
+  <data name="BaseTypeDescription.staging" xml:space="preserve">
+    <value>Jednostka lub ratownik oczekuje w bezpiecznym miejscu na przydział lub rozkazy.</value>
+  </data>
+  <data name="BaseTypeDescription.unavailable" xml:space="preserve">
+    <value>Jednostka lub ratownik jest poza służbą i niedostępny do przydziału.</value>
+  </data>
+  <data name="BaseTypeDescription.enroute" xml:space="preserve">
+    <value>Jednostka lub ratownik jedzie do przydziału, celu lub miejsca w trybie zwykłym (bez sygnałów).</value>
+  </data>
+  <data name="BaseTypeDescription.transporting" xml:space="preserve">
+    <value>Jednostka lub ratownik transportuje pacjenta, osobę, zatrzymanego lub ładunek do celu.</value>
+  </data>
+  <data name="BaseTypeDescription.delivering" xml:space="preserve">
+    <value>Jednostka lub ratownik dostarcza towary, zaopatrzenie, sprzęt lub materiały do odbiorcy lub punktu dostawy.</value>
+  </data>
+  <data name="BaseTypeDescription.atpatient" xml:space="preserve">
+    <value>Jednostka lub ratownik dotarł do pacjenta lub poszukiwanej osoby i udziela pomocy lub jest z nią w kontakcie.</value>
+  </data>
+  <data name="BaseTypeDescription.athospital" xml:space="preserve">
+    <value>Jednostka lub ratownik dotarł do szpitala lub placówki przyjmującej, aby przekazać pacjenta.</value>
+  </data>
+  <data name="BaseTypeDescription.searching" xml:space="preserve">
+    <value>Jednostka lub ratownik prowadzi aktywne poszukiwania w przydzielonym obszarze, sektorze lub siatce.</value>
+  </data>
+  <data name="BaseTypeDescription.loading" xml:space="preserve">
+    <value>Jednostka lub ratownik ładuje lub odbiera ładunek, zaopatrzenie, sprzęt lub osobę przed transportem.</value>
+  </data>
+  <data name="BaseTypeDescription.standby" xml:space="preserve">
+    <value>Jednostka lub ratownik pozostaje w rezerwie, w gotowości lub pod telefonem i może zostać przydzielony.</value>
+  </data>
+  <data name="BaseTypeDescription.onpatrol" xml:space="preserve">
+    <value>Jednostka lub ratownik patroluje przydzielony obszar, pozostając dostępnym do zadysponowania.</value>
+  </data>
+  <data name="BaseTypeDescription.maintenance" xml:space="preserve">
+    <value>Jednostka lub ratownik jest poza służbą z powodu konserwacji, tankowania, uzupełniania, czyszczenia lub serwisu.</value>
+  </data>
+  <data name="BaseTypeDescription.onbreak" xml:space="preserve">
+    <value>Jednostka lub ratownik ma przerwę na odpoczynek lub posiłek i jest tymczasowo niedostępny.</value>
+  </data>
+  <data name="BaseTypeDescription.completed" xml:space="preserve">
+    <value>Przydział, zadanie lub dostawa zakończone; jednostka lub ratownik kończy działania i staje się dostępny.</value>
+  </data>
+  <data name="BaseTypeDescription.inquarters" xml:space="preserve">
+    <value>Jednostka lub ratownik jest w służbie i dostępny w swojej remizie. Rekomendacje dysponowania liczą odległość od remizy zamiast od pozycji GPS i doliczają czas wyjazdu z remizy.</value>
   </data>
 </root>

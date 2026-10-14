@@ -7,7 +7,7 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-4">
-        <h2>ViewBag.Title = "Resgrid | " + @localizer["EditCallPriorityHeader"];</h2>
+        <h2>@localizer["EditCallPriorityHeader"]</h2>
         <ol class="breadcrumb">
             <li>
                 <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
@@ -16,7 +16,7 @@
                 <a asp-controller="Department" asp-action="Types" asp-route-area="User">@commonLocalizer["DepartmentTypes"]</a>
             </li>
             <li class="active">
-                <strong>ViewBag.Title = "Resgrid | " + @localizer["EditCallPriorityHeader"];</strong>
+                <strong>@localizer["EditCallPriorityHeader"]</strong>
             </li>
         </ol>
     </div>
@@ -46,6 +46,28 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["PriorityNameLabel"]</label>
                             <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["PriorityNameText"]" asp-for="CallPriority.Name"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["CallPriorityBaseTypeLabel"]</label>
+                            <div class="col-sm-4">
+                                <select class="form-control" asp-for="CallPriority.BaseType">
+                                    <option value="-1">@localizer["BaseTypeNone"]</option>
+                                    @foreach (var priority in Enum.GetValues(typeof(Resgrid.Model.CallPriority)).Cast<Resgrid.Model.CallPriority>())
+                                    {
+                                        <option value="@((int)priority)">@localizer["CallPriorityMeaning." + priority]</option>
+                                    }
+                                </select>
+                                <span class="help-block m-b-none">@localizer["CallPriorityBaseTypeHelp"]</span>
+                                @{
+                                    // A hint only: the class is never set for the user, so nothing changes until they pick it and save.
+                                    var suggestedClass = Model.CallPriority.BaseType < 0 ? BaseTypeSuggestions.SuggestPriority(Model.CallPriority.Name) : null;
+                                    var suggestedClassName = suggestedClass.HasValue ? localizer["CallPriorityMeaning." + (Resgrid.Model.CallPriority)suggestedClass.Value].Value : null;
+                                }
+                                @if (suggestedClassName != null)
+                                {
+                                    <span class="help-block m-b-none text-warning">@string.Format(localizer["SuggestedFromName"].Value, suggestedClassName)</span>
+                                }
+                            </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["PriorityColorLabel"]</label>

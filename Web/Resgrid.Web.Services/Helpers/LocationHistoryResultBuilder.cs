@@ -41,7 +41,7 @@ namespace Resgrid.Web.Helpers
 					.Where(n => n.UserId != null).GroupBy(n => n.UserId, StringComparer.OrdinalIgnoreCase).ToDictionary(g => g.Key, g => g.First().Name, StringComparer.OrdinalIgnoreCase)
 				: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 			var priorities = ((await callsService.GetCallPrioritiesForDepartmentAsync(departmentId)) ?? new List<DepartmentCallPriority>())
-				.Where(p => p.DepartmentCallPriorityId > 3)
+				.Where(p => p.DepartmentCallPriorityId > 3 || p.DepartmentId == departmentId) // and its own ids 0 to 3 (the oldest departments)
 				.Concat(callsService.GetDefaultCallPriorities() ?? new List<DepartmentCallPriority>())
 				.GroupBy(p => p.DepartmentCallPriorityId).ToDictionary(g => g.Key, g => g.First());
 

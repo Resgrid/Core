@@ -319,16 +319,16 @@
     <value>Κατάσταση Αποδέσμευσης Μονάδας από Κλήση</value>
   </data>
   <data name="UnitCallReleaseStatusHelp" xml:space="preserve">
-    <value>Ορίζεται στις μονάδες που εργάζονται ακόμη σε μια κλήση όταν αυτή κλείνει ή όταν αφαιρούνται από αυτήν. Μια μονάδα που είναι ήδη ξανά σε υπηρεσία, εκτός υπηρεσίας (μη διαθέσιμη, σε συντήρηση ή σε διάλειμμα) ή εργάζεται σε άλλη κλήση διατηρεί την κατάστασή της. Οι προσαρμοσμένες καταστάσεις αξιολογούνται βάσει του βασικού τους τύπου.</value>
+    <value>Ορίζεται με τον ίδιο τρόπο, βάσει σημασίας, στις μονάδες που εργάζονται ακόμη σε μια κλήση όταν αυτή κλείνει ή όταν αφαιρούνται από αυτήν. Μια μονάδα που είναι ήδη ξανά σε υπηρεσία, εκτός υπηρεσίας (μη διαθέσιμη, σε συντήρηση ή σε διάλειμμα) ή εργάζεται σε άλλη κλήση διατηρεί την κατάστασή της· οι προσαρμοσμένες καταστάσεις αξιολογούνται βάσει του βασικού τους τύπου. Η προεπιλογή ορίζει την κατάσταση επιστροφής σε υπηρεσία (Ολοκληρώθηκε, Διαθέσιμη ή Στον σταθμό) στις προσαρμοσμένες καταστάσεις και Αποδεσμεύτηκε στις ενσωματωμένες.</value>
   </data>
   <data name="UnitDefaultStatusesHelp" xml:space="preserve">
-    <value>Αυτές οι προεπιλεγμένες καταστάσεις μονάδων χρησιμοποιούν μόνο τους ενσωματωμένους τύπους κατάστασης μονάδας. Χρησιμοποιήστε τον παρακάτω πίνακα παρακάμψεων τύπου μονάδας όταν ένας τύπος μονάδας χρειάζεται δικές του προσαρμοσμένες καταστάσεις.</value>
+    <value>Ορίζεται στις μονάδες που αποστέλλονται σε μια κλήση. Επιλέξτε τι σημαίνει η κατάσταση: κάθε μονάδα παίρνει την κατάσταση του δικού της συνόλου καταστάσεων με αυτή τη σημασία (την πρώτη κατά σειρά), ώστε μία ρύθμιση να λειτουργεί για τύπους μονάδων με διαφορετικές προσαρμοσμένες καταστάσεις. Η προεπιλογή ορίζει Απεστάλη (ή Ανταποκρίνεται, ή Καθ' οδόν) στις προσαρμοσμένες καταστάσεις και Ανταποκρίνεται στις ενσωματωμένες.</value>
   </data>
   <data name="UnitTypeStatusOverridesHeader" xml:space="preserve">
     <value>Παρακάμψεις Κατάστασης ανά Τύπο Μονάδας</value>
   </data>
   <data name="UnitTypeStatusOverridesHelp" xml:space="preserve">
-    <value>Εδώ εμφανίζονται μόνο οι τύποι μονάδων με προσαρμοσμένες καταστάσεις. Αφήστε μια τιμή στην Προεπιλογή για να χρησιμοποιηθεί η παραπάνω ενσωματωμένη κατάσταση σε επίπεδο τμήματος.</value>
+    <value>Εδώ εμφανίζονται μόνο τύποι μονάδων με προσαρμοσμένες καταστάσεις. Επιλέξτε μία από τις δικές του καταστάσεις όταν ένας τύπος μονάδας χρειάζεται συγκεκριμένη· η Προεπιλογή χρησιμοποιεί την παραπάνω ρύθμιση του τμήματος, αντιστοιχισμένη στις καταστάσεις του τύπου μονάδας.</value>
   </data>
   <data name="PersonnelSorting" xml:space="preserve">
     <value>Ταξινόμηση Προσωπικού</value>
@@ -1502,5 +1502,80 @@
   </data>
   <data name="DeleteDepartmentLegalHoldWarning" xml:space="preserve">
     <value>{0} ενεργές δεσμεύσεις διατήρησης καλύπτουν τα Αρχεία αυτού του τμήματος. Η διαγραφή δεν θα εκτελεστεί μέχρι να αρθούν όλες.</value>
+  </data>
+  <data name="TerminologyHeader" xml:space="preserve">
+    <value>Ορολογία</value>
+  </data>
+  <data name="TerminologyIntro" xml:space="preserve">
+    <value>Χρησιμοποιήστε τους όρους του τμήματός σας. Ένα όνομα που ορίζεται εδώ αντικαθιστά το όνομα του Resgrid για αυτή την ενότητα ή τον τύπο αρχείου στην πλοήγηση, στους τίτλους σελίδων, όπου αναφέρονται τύποι αρχείων και στις εφαρμογές Responder, Unit, IC και Dispatch, για όλα τα μέλη και σε όλες τις γλώσσες. Αλλάζει μόνο η ετικέτα: τα δικαιώματα, οι σύνδεσμοι και οι ενσωματώσεις δεν επηρεάζονται. Αφήστε ένα πεδίο κενό για να διατηρήσετε το όνομα του Resgrid.</value>
+  </data>
+  <data name="TerminologyModules" xml:space="preserve">
+    <value>Ενότητες</value>
+  </data>
+  <data name="TerminologyModulesHelp" xml:space="preserve">
+    <value>Εμφανίζεται στην πλοήγηση, ως τίτλος της κύριας σελίδας της ενότητας και στα μενού των εφαρμογών. Οι προτάσεις αλλού που αναφέρουν μια ενότητα διατηρούν τη διατύπωση του Resgrid.</value>
+  </data>
+  <data name="TerminologyRecordTypes" xml:space="preserve">
+    <value>Τύποι αρχείων</value>
+  </data>
+  <data name="TerminologyRecordTypesHelp" xml:space="preserve">
+    <value>Οι ενσωματωμένοι τύποι Αρχείων και Ημερολογίων, όπου ένας τύπος επιλέγεται, αναφέρεται, εκτυπώνεται ή εξάγεται. Για να προσθέσετε δικό σας τύπο, όπως Δημόσια Εκπαίδευση, δημιουργήστε έναν ορισμό αρχείου.</value>
+  </data>
+  <data name="TerminologyDefaultColumn" xml:space="preserve">
+    <value>Όνομα Resgrid</value>
+  </data>
+  <data name="TerminologyNameColumn" xml:space="preserve">
+    <value>Όνομα του τμήματός σας</value>
+  </data>
+  <data name="TerminologySaved" xml:space="preserve">
+    <value>Η ορολογία αποθηκεύτηκε.</value>
+  </data>
+  <data name="TerminologyPartlySaved" xml:space="preserve">
+    <value>Τα υπόλοιπα ονόματα αποθηκεύτηκαν.</value>
+  </data>
+  <data name="TerminologyTooLong" xml:space="preserve">
+    <value>Τα ονόματα μπορούν να έχουν έως {0} χαρακτήρες· τα μεγαλύτερα ονόματα δεν αποθηκεύτηκαν και εμφανίζονται για διόρθωση.</value>
+  </data>
+  <data name="TerminologyRecordDefinitionsLink" xml:space="preserve">
+    <value>Ορισμοί αρχείων</value>
+  </data>
+  <data name="TerminologyRenameLink" xml:space="preserve">
+    <value>Μετονομασία ενοτήτων και τύπων αρχείων</value>
+  </data>
+  <data name="UnitStatusTargetMeaningGroup" xml:space="preserve">
+    <value>Σημασία κατάστασης</value>
+  </data>
+  <data name="UnitStatusTargetDefaultDispatch" xml:space="preserve">
+    <value>Προεπιλογή (Απεστάλη, Ανταποκρίνεται ή Καθ' οδόν)</value>
+  </data>
+  <data name="UnitStatusTargetDefaultRelease" xml:space="preserve">
+    <value>Προεπιλογή (ξανά σε υπηρεσία)</value>
+  </data>
+  <data name="UnitStatusTargetLeaveUnchanged" xml:space="preserve">
+    <value>Να μην αλλάζει η κατάσταση της μονάδας</value>
+  </data>
+  <data name="UnitStatusTargetLegacy" xml:space="preserve">
+    <value>Ενσωματωμένη κατάσταση: {0} (αποθηκεύτηκε πριν από τις σημασίες καταστάσεων)</value>
+  </data>
+  <data name="UnitStatusTargetWarningsHeader" xml:space="preserve">
+    <value>Ελέγξτε αυτούς τους τύπους μονάδων</value>
+  </data>
+  <data name="UnitStatusTargetNoMatch" xml:space="preserve">
+    <value>{0}: το σύνολο καταστάσεών του "{1}" δεν έχει κατάσταση που να σημαίνει {2}, οπότε οι μονάδες του διατηρούν την κατάστασή τους κατά την {3}. Ορίστε βασικό τύπο σε μία από τις καταστάσεις του ή επιλέξτε μία στις παρακάμψεις παρακάτω.</value>
+  </data>
+  <data name="UnitStatusTargetSeveral" xml:space="preserve">
+    <value>{0}: το σύνολο καταστάσεών του "{1}" έχει {2} καταστάσεις που σημαίνουν {3} ({4})· κατά την {6} χρησιμοποιείται η {5}, η πρώτη κατά σειρά.</value>
+  </data>
+  <data name="UnitStatusTargetNoBuiltIn" xml:space="preserve">
+    <value>{0}: καμία ενσωματωμένη κατάσταση μονάδας δεν σημαίνει {1}, οπότε οι μονάδες του διατηρούν την κατάστασή τους κατά την {2}.</value>
+  </data>
+  <data name="UnitStatusTargetActionDispatch" xml:space="preserve">
+    <value>αποστολή</value>
+  </data>
+  <data name="UnitStatusTargetActionRelease" xml:space="preserve">
+    <value>αποδέσμευση</value>
+  </data>
+  <data name="StatusMeaningOption" xml:space="preserve">
+    <value>Οποιαδήποτε κατάσταση "{0}"</value>
   </data>
 </root>

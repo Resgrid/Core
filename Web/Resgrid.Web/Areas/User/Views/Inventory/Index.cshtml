@@ -3,7 +3,8 @@
 @model Resgrid.Web.Areas.User.Models.Units.UnitsIndexView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Inventory.Inventory> localizer
 @{
-    ViewBag.Title = "Resgrid | " + commonLocalizer["InventoryModule"];
+    var moduleTitle = await departmentTerms.NameAsync(DepartmentTerms.Inventory, commonLocalizer["InventoryModule"]);
+    ViewBag.Title = "Resgrid | " + moduleTitle;
 }
 
 <style>
@@ -14,13 +15,13 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-4">
-        <h2>@commonLocalizer["InventoryModule"]</h2>
+        <h2>@moduleTitle</h2>
         <ol class="breadcrumb">
             <li>
                 <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
             </li>
             <li class="active">
-                <strong>@commonLocalizer["InventoryModule"]</strong>
+                <strong>@moduleTitle</strong>
             </li>
         </ol>
     </div>

@@ -183,20 +183,10 @@ namespace Resgrid.Services
 			return availability == AvailabilityClass.Committed;
 		}
 
+		// Deleted options and sets included: history recorded under them keeps its meaning (StatusOptionIds).
 		private async Task<Dictionary<int, int>> GetUnitCustomBaseMapAsync(int departmentId)
 		{
-			var map = new Dictionary<int, int>();
-			var states = await _customStateService.GetAllActiveCustomStatesForDepartmentAsync(departmentId);
-			if (states == null)
-				return map;
-
-			foreach (var state in states.Where(s => s.Type == (int)CustomStateTypes.Unit))
-			{
-				foreach (var detail in state.GetActiveDetails())
-					map[detail.CustomStateDetailId] = detail.BaseType;
-			}
-
-			return map;
+			return CallStatusLinkage.BuildUnitBaseTypeMap(await _customStateService.GetAllCustomStatesForDepartmentAsync(departmentId));
 		}
 
 		private static ReportingDailyRollup ToRow(string metric, ReportingMath.SampleSummary summary, string dimension = null)

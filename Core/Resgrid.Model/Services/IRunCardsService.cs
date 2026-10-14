@@ -43,6 +43,12 @@ namespace Resgrid.Model.Services
 		/// </summary>
 		Task<RunCard> GetMatchingRunCardAsync(int departmentId, int priority, string callTypeName);
 
+		/// <summary>
+		/// As above, with the call's linked call type (Call.CallTypeId) used when the name matches no type (the type was
+		/// renamed after the call was logged).
+		/// </summary>
+		Task<RunCard> GetMatchingRunCardAsync(int departmentId, int priority, string callTypeName, int? linkedCallTypeId);
+
 		Task<List<StationCoverageRequirement>> GetStationCoverageRequirementsForDepartmentAsync(int departmentId);
 
 		Task<StationCoverageRequirement> SaveStationCoverageRequirementAsync(StationCoverageRequirement requirement, CancellationToken cancellationToken = default(CancellationToken));

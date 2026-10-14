@@ -67,6 +67,7 @@ namespace Resgrid.Tests.Web.User
             builder.Services.AddDataProtection().UseEphemeralDataProtectionProvider();
             builder.Services.AddAuthentication("meal-test").AddScheme<AuthenticationSchemeOptions, TestAuthentication>("meal-test", _ => { });
             builder.Services.AddAuthorization();
+            builder.Services.AddDepartmentTerminologyStub();
             builder.Services.AddControllersWithViews(o => o.Filters.Add(new PageBodyFilter())).AddApplicationPart(typeof(RateSchedulesController).Assembly);
             var rates = new Mock<IRateScheduleService>();
             RateSchedule saved = null;

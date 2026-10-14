@@ -81,9 +81,11 @@ namespace Resgrid.Model
 	public static class RecordDefinitionCatalog
 	{
 		/// <param name="numbering">The department's numbering setting, so each type lists the prefix it actually renders; null lists the shipped defaults.</param>
-		public static List<RecordDefinitionDescriptor> Describe(RecordsNumberingConfig numbering = null)
+		/// <param name="terminology">The department's own type names (setting 118); null lists the shipped English names.</param>
+		public static List<RecordDefinitionDescriptor> Describe(RecordsNumberingConfig numbering = null, DepartmentTerminologyConfig terminology = null)
 		{
 			numbering ??= new RecordsNumberingConfig();
+			terminology ??= new DepartmentTerminologyConfig();
 			var list = new List<RecordDefinitionDescriptor>();
 			foreach (var kv in RmsDefinitionKeys.LockedTypes)
 			{
@@ -93,7 +95,7 @@ namespace Resgrid.Model
 				{
 					Key = kv.Key,
 					Version = RmsDefinitionKeys.LockedDefinitionVersion,
-					Name = type.ToString(),
+					Name = terminology.RecordTypeName((int)type),
 					RecordType = (int)type,
 					RecordKind = RmsRecordKind.Operational.ToString(),
 					LifecyclePreset = (int)RmsDefinitionKeys.LockedDefaultPreset,
@@ -115,7 +117,7 @@ namespace Resgrid.Model
 			{
 				Key = RmsDefinitionKeys.NerisIncidentReport,
 				Version = RmsDefinitionKeys.LockedDefinitionVersion,
-				Name = "NERIS incident report",
+				Name = terminology.DefinitionName(RmsDefinitionKeys.NerisIncidentReport),
 				RecordType = null,
 				RecordKind = RmsRecordKind.IncidentReport.ToString(),
 				LifecyclePreset = (int)RmsDefinitionKeys.LockedDefaultPreset,

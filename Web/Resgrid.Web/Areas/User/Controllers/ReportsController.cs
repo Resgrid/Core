@@ -147,6 +147,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var names = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
 			var visibleUsers = new Dictionary<string, bool>(StringComparer.Ordinal);
+			List<CustomState> departmentCustomStates = null;
 
 			foreach (var l in logs)
 			{
@@ -168,7 +169,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 				actionLog.Timestamp = TimeConverterHelper.TimeConverterToString(l.Timestamp, dep);
 				actionLog.ActionType = l.ActionTypeId;
 
-				if (l.ActionTypeId <= 25)
+				// The department's own status first (StatusOptionIds), then the built-in one.
+				departmentCustomStates ??= await _customStateService.GetAllCustomStatesForDepartmentAsync(DepartmentId);
+				var customStatus = StatusOptionIds.FindCustom(departmentCustomStates, CustomStateTypes.Personnel, l.ActionTypeId);
+
+				if (customStatus != null)
+				{
+					actionLog.Action = customStatus.ButtonText;
+				}
+				else if (l.ActionTypeId <= 25)
 				{
 					if (l.ActionTypeId == 1)
 					{
@@ -220,16 +229,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 				else
 				{
-					var customStatus = await CustomStatesHelper.GetCustomState(DepartmentId, l.ActionTypeId);
-
-					if (customStatus != null)
-					{
-						actionLog.Action = customStatus.ButtonText;
-					}
-					else
-					{
-						actionLog.Action = "Unknown";
-					}
+					actionLog.Action = "Unknown";
 				}
 
 				actionLogs.Add(actionLog);

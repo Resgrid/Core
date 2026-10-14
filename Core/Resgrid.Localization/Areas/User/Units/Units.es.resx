@@ -511,4 +511,31 @@
     <value>{0} (eliminada)</value>
     <comment>A deleted unit in a report picker; {0} is the unit name.</comment>
   </data>
+  <data name="BrowseRoleTemplates" xml:space="preserve">
+    <value>Ver plantillas</value>
+  </data>
+  <data name="RoleTemplatesTitle" xml:space="preserve">
+    <value>Plantillas de roles de unidad</value>
+  </data>
+  <data name="RoleTemplatesIntro" xml:space="preserve">
+    <value>Elija un punto de partida para los roles de control de esta unidad. Los puestos se añaden a la tabla de roles, donde puede renombrarlos, cambiar o quitar el rol de personal requerido y añadir o quitar puestos antes de guardar. Las cualificaciones sugeridas se emparejan por nombre con los roles de personal de su departamento.</value>
+  </data>
+  <data name="RoleTemplatesSearchPlaceholder" xml:space="preserve">
+    <value>Buscar roles, unidades o disciplinas...</value>
+  </data>
+  <data name="RoleTemplatesAllCategories" xml:space="preserve">
+    <value>Todas las categorías</value>
+  </data>
+  <data name="RoleTemplatesSeats" xml:space="preserve">
+    <value>{0} puestos</value>
+  </data>
+  <data name="RoleTemplatesUse" xml:space="preserve">
+    <value>Usar estos roles</value>
+  </data>
+  <data name="RoleTemplatesNoResults" xml:space="preserve">
+    <value>Ninguna plantilla coincide con su búsqueda.</value>
+  </data>
+  <data name="RoleTemplatesRequiredNote" xml:space="preserve">
+    <value>* = sugerido como requisito obligatorio (bloquea a los miembros no cualificados) cuando existe el rol de personal correspondiente.</value>
+  </data>
 </root>

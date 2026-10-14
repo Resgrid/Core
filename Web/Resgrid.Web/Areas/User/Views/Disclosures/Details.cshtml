@@ -87,7 +87,7 @@
 									<option value="">@localizer["AllDefinitions"]</option>
 									@foreach (var key in Model.DefinitionKeys)
 									{
-										<option value="@key.Value" selected="@(key.Value == Model.Scope.DefinitionKey)">@key.Text</option>
+										<option value="@key.Value" selected="@(key.Value == Model.Scope.DefinitionKey)">@(await departmentTerms.DefinitionAsync(key.Value, key.Text))</option>
 									}
 								</select>
 							</div>

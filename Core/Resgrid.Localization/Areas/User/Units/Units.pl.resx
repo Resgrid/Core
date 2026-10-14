@@ -453,4 +453,31 @@
     <value>{0} (usunięta)</value>
     <comment>A deleted unit in a report picker; {0} is the unit name.</comment>
   </data>
+  <data name="BrowseRoleTemplates" xml:space="preserve">
+    <value>Przeglądaj szablony</value>
+  </data>
+  <data name="RoleTemplatesTitle" xml:space="preserve">
+    <value>Szablony ról jednostki</value>
+  </data>
+  <data name="RoleTemplatesIntro" xml:space="preserve">
+    <value>Wybierz punkt wyjścia dla ról tej jednostki. Stanowiska trafiają do tabeli ról, gdzie przed zapisaniem możesz zmienić ich nazwy, zmienić lub usunąć wymaganą rolę personelu oraz dodać lub usunąć stanowiska. Sugerowane kwalifikacje są dopasowywane po nazwie do ról personelu Twojej jednostki organizacyjnej.</value>
+  </data>
+  <data name="RoleTemplatesSearchPlaceholder" xml:space="preserve">
+    <value>Szukaj ról, jednostek lub specjalności...</value>
+  </data>
+  <data name="RoleTemplatesAllCategories" xml:space="preserve">
+    <value>Wszystkie kategorie</value>
+  </data>
+  <data name="RoleTemplatesSeats" xml:space="preserve">
+    <value>Stanowiska: {0}</value>
+  </data>
+  <data name="RoleTemplatesUse" xml:space="preserve">
+    <value>Użyj tych ról</value>
+  </data>
+  <data name="RoleTemplatesNoResults" xml:space="preserve">
+    <value>Żaden szablon nie pasuje do wyszukiwania.</value>
+  </data>
+  <data name="RoleTemplatesRequiredNote" xml:space="preserve">
+    <value>* = sugerowane jako wymóg bezwzględny (blokuje niewykwalifikowanych członków), gdy istnieje odpowiadająca rola personelu.</value>
+  </data>
 </root>

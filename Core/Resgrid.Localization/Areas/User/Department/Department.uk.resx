@@ -1113,16 +1113,16 @@
     <value>Статус одиниці після звільнення з виклику</value>
   </data>
   <data name="UnitCallReleaseStatusHelp" xml:space="preserve">
-    <value>Встановлюється для одиниць, які ще працюють на виклику, коли його закривають або знімають їх із нього. Одиниця, яка вже повернулася до служби, виведена з експлуатації (недоступна, на обслуговуванні чи на перерві) або працює на іншому виклику, зберігає свій статус. Власні статуси оцінюються за їхнім базовим типом.</value>
+    <value>Встановлюється так само, за значенням, для одиниць, які ще працюють на виклику, коли його закривають або знімають їх із нього. Одиниця, яка вже повернулася до служби, виведена з експлуатації (недоступна, на обслуговуванні чи на перерві) або працює на іншому виклику, зберігає свій статус; власні статуси оцінюються за їхнім базовим типом. За замовчуванням встановлюється статус повернення до служби (Завершено, Доступна або На станції) для власних статусів і Звільнено для вбудованих.</value>
   </data>
   <data name="UnitDefaultStatusesHelp" xml:space="preserve">
-    <value>Ці стандартні статуси одиниць використовують лише вбудовані типи станів одиниць. Якщо типу одиниці потрібен один із його власних статусів, скористайтеся таблицею перевизначень за типом одиниці нижче.</value>
+    <value>Встановлюється для одиниць, направлених на виклик. Оберіть, що означає статус: кожна одиниця отримує статус зі свого набору статусів із цим значенням (перший за порядком), тож одне налаштування працює для типів одиниць із різними власними статусами. За замовчуванням встановлюється Направлено (або Прямує на виклик, або В дорозі) для власних статусів і Прямує на виклик для вбудованих.</value>
   </data>
   <data name="UnitTypeStatusOverridesHeader" xml:space="preserve">
     <value>Перевизначення статусів за типом одиниці</value>
   </data>
   <data name="UnitTypeStatusOverridesHelp" xml:space="preserve">
-    <value>Тут відображаються лише типи одиниць із власними статусами одиниць. Залиште значення «За замовчуванням», щоб використовувати вбудований статус для всього підрозділу, указаний вище.</value>
+    <value>Тут показано лише типи одиниць із власними статусами. Оберіть один із власних статусів типу одиниці, якщо йому потрібен конкретний; За замовчуванням використовує налаштування підрозділу вище, зіставлене зі статусами типу одиниці.</value>
   </data>
   <data name="CheckInTimerActiveStatesLabel" xml:space="preserve">
     <value>Активні стани</value>
@@ -1444,5 +1444,80 @@
   </data>
   <data name="DeleteDepartmentLegalHoldWarning" xml:space="preserve">
     <value>Активних утримань для збереження, що охоплюють Записи цього підрозділу: {0}. Видалення не буде виконано, доки їх усі не знято.</value>
+  </data>
+  <data name="TerminologyHeader" xml:space="preserve">
+    <value>Термінологія</value>
+  </data>
+  <data name="TerminologyIntro" xml:space="preserve">
+    <value>Використовуйте слова вашого підрозділу. Назва, задана тут, замінює назву Resgrid для цього модуля або типу запису в навігації, у заголовках сторінок, усюди, де перелічено типи записів, і в застосунках Responder, Unit, IC та Dispatch, для всіх учасників і всіма мовами. Змінюється лише підпис: дозволи, посилання та інтеграції не зачіпаються. Залиште поле порожнім, щоб зберегти назву Resgrid.</value>
+  </data>
+  <data name="TerminologyModules" xml:space="preserve">
+    <value>Модулі</value>
+  </data>
+  <data name="TerminologyModulesHelp" xml:space="preserve">
+    <value>Відображається в навігації, як заголовок головної сторінки модуля та в меню застосунків. Речення в інших місцях, що згадують модуль, зберігають формулювання Resgrid.</value>
+  </data>
+  <data name="TerminologyRecordTypes" xml:space="preserve">
+    <value>Типи записів</value>
+  </data>
+  <data name="TerminologyRecordTypesHelp" xml:space="preserve">
+    <value>Вбудовані типи Записів і Журналів — усюди, де тип вибирається, перелічується, друкується чи експортується. Щоб додати власний тип, наприклад «Громадська просвіта», створіть визначення запису.</value>
+  </data>
+  <data name="TerminologyDefaultColumn" xml:space="preserve">
+    <value>Назва Resgrid</value>
+  </data>
+  <data name="TerminologyNameColumn" xml:space="preserve">
+    <value>Назва вашого підрозділу</value>
+  </data>
+  <data name="TerminologySaved" xml:space="preserve">
+    <value>Термінологію збережено.</value>
+  </data>
+  <data name="TerminologyPartlySaved" xml:space="preserve">
+    <value>Інші назви збережено.</value>
+  </data>
+  <data name="TerminologyTooLong" xml:space="preserve">
+    <value>Назва може мати щонайбільше {0} символів; довші назви не збережено, їх показано для виправлення.</value>
+  </data>
+  <data name="TerminologyRecordDefinitionsLink" xml:space="preserve">
+    <value>Визначення записів</value>
+  </data>
+  <data name="TerminologyRenameLink" xml:space="preserve">
+    <value>Перейменувати модулі та типи записів</value>
+  </data>
+  <data name="UnitStatusTargetMeaningGroup" xml:space="preserve">
+    <value>Значення статусу</value>
+  </data>
+  <data name="UnitStatusTargetDefaultDispatch" xml:space="preserve">
+    <value>За замовчуванням (Направлено, Прямує на виклик або В дорозі)</value>
+  </data>
+  <data name="UnitStatusTargetDefaultRelease" xml:space="preserve">
+    <value>За замовчуванням (повернення до служби)</value>
+  </data>
+  <data name="UnitStatusTargetLeaveUnchanged" xml:space="preserve">
+    <value>Не змінювати статус одиниці</value>
+  </data>
+  <data name="UnitStatusTargetLegacy" xml:space="preserve">
+    <value>Вбудований статус: {0} (збережено до значень статусів)</value>
+  </data>
+  <data name="UnitStatusTargetWarningsHeader" xml:space="preserve">
+    <value>Перевірте ці типи одиниць</value>
+  </data>
+  <data name="UnitStatusTargetNoMatch" xml:space="preserve">
+    <value>{0}: його набір статусів "{1}" не має статусу зі значенням {2}, тому його одиниці зберігають свій статус під час {3}. Задайте базовий тип одному з його статусів або оберіть статус у перевизначеннях нижче.</value>
+  </data>
+  <data name="UnitStatusTargetSeveral" xml:space="preserve">
+    <value>{0}: його набір статусів "{1}" має {2} статуси зі значенням {3} ({4}); під час {6} використовується {5}, перший за порядком.</value>
+  </data>
+  <data name="UnitStatusTargetNoBuiltIn" xml:space="preserve">
+    <value>{0}: жоден вбудований статус одиниці не має значення {1}, тому його одиниці зберігають свій статус під час {2}.</value>
+  </data>
+  <data name="UnitStatusTargetActionDispatch" xml:space="preserve">
+    <value>направлення</value>
+  </data>
+  <data name="UnitStatusTargetActionRelease" xml:space="preserve">
+    <value>звільнення</value>
+  </data>
+  <data name="StatusMeaningOption" xml:space="preserve">
+    <value>Будь-який статус "{0}"</value>
   </data>
 </root>

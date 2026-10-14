@@ -106,6 +106,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IContactsService _contacts;
 		private readonly IRecordsNumberingService _numbering;
 		private readonly IDocumentNumberingService _documentNumbering;
+		private readonly IDepartmentTerminology _terms;
 
 		public RecordsController(IRecordsService recordsService, IRecordsCutoverService cutoverService, IRecordsAuthorizationService recordsAuthorizationService,
 			IDepartmentsService departmentsService, IDepartmentGroupsService departmentGroupsService, IUnitsService unitsService, ICallsService callsService,
@@ -115,9 +116,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IDepartmentProfileMediaService branding, IRecordsPrintLayoutService printLayouts, IRecordsAccountabilityService accountability, IRecordsDashboardService dashboard, IRecordsUdfService udf,
 			IRecordsProtectionService protection, IProtectedGrantContext grantContext, IRecordsRevealService reveal, IRecordDefinitionsService definitions, IRecordTypedValuesService typedValues, IContactsService contacts,
 			IRecordsBulkPacketService bulk, IRecordsFieldRolloutService fieldRollout, IFeatureToggleService featureToggles, IRecordsNumberingService numbering,
-			IDocumentNumberingService documentNumbering)
+			IDocumentNumberingService documentNumbering, IDepartmentTerminology terms)
 		{
 			_documentNumbering = documentNumbering;
+			_terms = terms;
 			_numbering = numbering;
 			_fieldRollout = fieldRollout;
 			_bulk = bulk;
@@ -280,6 +282,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			model.Years = (await _recordsService.GetYearsAsync(DepartmentId)).Select(y => new SelectListItem { Value = y.ToString(), Text = y.ToString() }).ToList();
 			await PopulateBulkAsync(model);
+			try
+			{
+				foreach (var definition in (await _definitions.ListAsync(DepartmentId, true)).Where(d => !d.Locked && !string.IsNullOrWhiteSpace(d.Key)))
+					model.DefinitionNames[definition.Key] = definition.Name;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, "Department definitions could not be listed for the Records queue type column.");
+			}
 
 			var visibleGroups = await _recordsAuthorizationService.GetVisibleGroupIdsAsync(UserId, DepartmentId);
 			var states = int.TryParse(state, out var stateValue) ? new List<int> { stateValue } : null;
@@ -983,8 +994,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId) ?? new List<DepartmentGroup>();
+			var terminology = await _terms.GetAsync();
+			var definitionNames = (await _definitions.ListAsync(DepartmentId, true)).Where(d => !d.Locked && !string.IsNullOrWhiteSpace(d.Key))
+				.GroupBy(d => d.Key, StringComparer.OrdinalIgnoreCase).ToDictionary(g => g.Key, g => g.First().Name, StringComparer.OrdinalIgnoreCase);
 			var rows = RecordsListExport.BuildRows(projections, await PersonnelNamesAsync(), groups.ToDictionary(g => g.DepartmentGroupId, g => g.Name),
-				await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false));
+				await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false),
+				p => p.RecordType.HasValue ? terminology.RecordTypeName(p.RecordType.Value)
+					: terminology.DefinitionName(p.DefinitionKey, p.DefinitionKey != null && definitionNames.TryGetValue(p.DefinitionKey, out var name) ? name : null) ?? string.Empty);
 
 			var asJson = string.Equals(format, "json", StringComparison.OrdinalIgnoreCase);
 			var purpose = text == null ? $"List export {(asJson ? "JSON" : "CSV")} ({rows.Count} rows)" : $"Search export {(asJson ? "JSON" : "CSV")} ({rows.Count} rows, query length {text.Length})";
@@ -1247,7 +1263,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (numbering.NotApplied > 0)
 				errors.Add(_localizer["NextNumberPatternChanged"]);
 			if (numbering.PrefixesRejected.Count > 0)
-				errors.Add(_localizer["NumberPrefixInvalid"] + " (" + string.Join(", ", numbering.PrefixesRejected.Select(NumberedTypeLabel)) + ")");
+			{
+				var typeLabels = await NumberedTypeLabelsAsync();
+				errors.Add(_localizer["NumberPrefixInvalid"] + " (" + string.Join(", ", numbering.PrefixesRejected.Select(k => typeLabels.TryGetValue(k, out var typeLabel) ? typeLabel : k)) + ")");
+			}
 			if (otherNumbers.PatternsRejected.Count > 0)
 				errors.Add(_localizer["OtherNumbersPatternsRejected"] + " (" + string.Join(", ", otherNumbers.PatternsRejected.Select(OtherNumberLabel)) + ")");
 			if (otherNumbers.BelowCurrent.Count > 0)
@@ -1331,16 +1350,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.RetentionOverrides.Add(new RecordsRetentionOverrideRow
 				{
 					DefinitionKey = kv.Key,
-					Label = kv.Value.ToString(),
+					Label = await _terms.RecordTypeAsync((int)kv.Value),
 					Restricted = RmsDefinitionKeys.RestrictedClass.Contains(kv.Key),
 					RetentionYears = existing?.RetentionYears
 				});
 			}
 
+			var typeLabels = await NumberedTypeLabelsAsync();
 			foreach (var type in RecordsNumberingService.NumberedTypes())
 			{
 				var custom = numbering.Prefixes?.FirstOrDefault(p => p != null && p.DefinitionKey == type.Key && RecordNumberFormat.IsValidPrefix(p.Prefix));
-				model.NumberPrefixes.Add(new RecordsNumberPrefixRow { DefinitionKey = type.Key, Label = NumberedTypeLabel(type.Key), DefaultPrefix = type.Value, Prefix = custom?.Prefix });
+				model.NumberPrefixes.Add(new RecordsNumberPrefixRow { DefinitionKey = type.Key, Label = typeLabels[type.Key], DefaultPrefix = type.Value, Prefix = custom?.Prefix });
 			}
 
 			model.OtherNumbers = (await _documentNumbering.GetStatusesAsync(DepartmentId, true, now))
@@ -1355,7 +1375,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			foreach (var sequence in sequences)
 			{
 				var label = sequence.DefinitionKeys.Count == numberedTypes ? _localizer["NumberingAllTypes"].Value
-					: string.Join(", ", sequence.DefinitionKeys.Select(NumberedTypeLabel));
+					: string.Join(", ", sequence.DefinitionKeys.Select(k => typeLabels.TryGetValue(k, out var typeLabel) ? typeLabel : k));
 				if (grouped)
 					label += " - " + (sequence.GroupId.HasValue ? (groupNames.TryGetValue(sequence.GroupId.Value, out var groupName) ? groupName : sequence.GroupId.Value.ToString()) : _localizer["NumberingNoGroup"].Value);
 				model.NextNumbers.Add(new RecordsNextNumberRow { ScopeKey = sequence.ScopeKey, Label = label, NextNumber = sequence.NextNumber, CurrentNextSequence = sequence.NextSequence });
@@ -1385,9 +1405,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return model;
 		}
 
-		private string NumberedTypeLabel(string definitionKey)
+		/// <summary>Numbered type key -> label, in the department's own terms; the incident report keeps its "Incident reports" heading unless renamed.</summary>
+		private async Task<Dictionary<string, string>> NumberedTypeLabelsAsync()
 		{
-			return RmsDefinitionKeys.LockedTypes.TryGetValue(definitionKey, out var type) ? type.ToString() : _localizer["IncidentReports"].Value;
+			var labels = new Dictionary<string, string>(StringComparer.Ordinal);
+			foreach (var type in RecordsNumberingService.NumberedTypes())
+				labels[type.Key] = RmsDefinitionKeys.LockedTypes.TryGetValue(type.Key, out var locked)
+					? await _terms.RecordTypeAsync((int)locked)
+					: await _terms.NameAsync(DepartmentTerms.RecordTypeKey(type.Key), _localizer["IncidentReports"].Value);
+			return labels;
 		}
 
 		/// <summary>The Records kinds numbered outside the record pattern, by the names their own screens use.</summary>
@@ -1704,7 +1730,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		/// <summary>Locked Logs-parity definitions plus the department's published definitions (RMS-1B).</summary>
 		private async Task<List<SelectListItem>> DefinitionListAsync()
 		{
-			var list = RmsDefinitionKeys.LockedTypes.Select(kv => new SelectListItem { Value = kv.Key, Text = kv.Value.ToString() }).ToList();
+			var list = new List<SelectListItem>();
+			foreach (var kv in RmsDefinitionKeys.LockedTypes)
+				list.Add(new SelectListItem { Value = kv.Key, Text = await _terms.RecordTypeAsync((int)kv.Value) });
 			try
 			{
 				foreach (var definition in (await _definitions.ListAsync(DepartmentId)).Where(d => !d.Locked && d.PublishedVersion.HasValue && !d.Retired).OrderBy(d => d.Name, StringComparer.OrdinalIgnoreCase))
@@ -1927,7 +1955,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Snapshot = await _recordsService.GetRevisionSnapshotAsync(DepartmentId, revisionId),
 				Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false),
 				PersonnelNames = await PersonnelNamesAsync(),
-				CanViewRestricted = await CanViewRestrictedAsync()
+				CanViewRestricted = await CanViewRestrictedAsync(),
+				DefinitionName = await DefinitionNameAsync(aggregate.Record)
 			};
 
 			if (model.Snapshot != null) model.Snapshot.CustomFields = await _udf.ProjectAsync(DepartmentId, UserId, model.Snapshot.CustomFields);

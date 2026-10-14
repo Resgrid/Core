@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -29,6 +29,27 @@ namespace Resgrid.Services
 			_dispatchProtocolQuestionsRepository = dispatchProtocolQuestionsRepository;
 			_dispatchProtocolTriggersRepository = dispatchProtocolTriggersRepository;
 			_dispatchProtocolQuestionAnswersRepository = dispatchProtocolQuestionAnswersRepository;
+		}
+
+		public async Task<int> RenameCallTypeInTriggersAsync(int departmentId, string oldName, string newName, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			if (string.IsNullOrWhiteSpace(oldName) || string.IsNullOrWhiteSpace(newName) || CallTypeLink.SameName(oldName, newName))
+				return 0;
+
+			var renamed = 0;
+			foreach (var protocol in await _dispatchProtocolRepository.GetAllByDepartmentIdAsync(departmentId) ?? Enumerable.Empty<DispatchProtocol>())
+			{
+				var triggers = await _dispatchProtocolTriggersRepository.GetDispatchProtocolTriggersByProtocolIdAsync(protocol.DispatchProtocolId) ?? Enumerable.Empty<DispatchProtocolTrigger>();
+
+				foreach (var trigger in triggers.Where(x => CallTypeLink.SameName(x.CallType, oldName)))
+				{
+					trigger.CallType = newName;
+					await _dispatchProtocolTriggersRepository.SaveOrUpdateAsync(trigger, cancellationToken);
+					renamed++;
+				}
+			}
+
+			return renamed;
 		}
 
 		public async Task<List<DispatchProtocol>> GetAllProtocolsForDepartmentAsync(int departmentId)
@@ -188,12 +209,12 @@ namespace Resgrid.Services
 			if (priorityTriggers != null && priorityTriggers.Any())
 				triggers.AddRange(priorityTriggers);
 
-			var typeTriggers = validTriggers.Where(x => x.Type == (int)ProtocolTriggerTypes.CallType && x.CallType == call.Type);
+			var typeTriggers = validTriggers.Where(x => x.Type == (int)ProtocolTriggerTypes.CallType && CallTypeLink.SameName(x.CallType, call.Type));
 
 			if (typeTriggers != null && typeTriggers.Any())
 				triggers.AddRange(typeTriggers);
 
-			var typeAndPrioityTriggers = validTriggers.Where(x => x.Type == (int)ProtocolTriggerTypes.CallPriortyAndType && x.Priority == call.Priority && x.CallType == call.Type);
+			var typeAndPrioityTriggers = validTriggers.Where(x => x.Type == (int)ProtocolTriggerTypes.CallPriortyAndType && x.Priority == call.Priority && CallTypeLink.SameName(x.CallType, call.Type));
 
 			if (typeAndPrioityTriggers != null && typeAndPrioityTriggers.Any())
 				triggers.AddRange(typeAndPrioityTriggers);

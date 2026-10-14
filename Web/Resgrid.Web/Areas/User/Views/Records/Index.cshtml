@@ -5,7 +5,8 @@
 @model Resgrid.Web.Areas.User.Models.Records.RecordsIndexView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
 @{
-	ViewBag.Title = "Resgrid | " + localizer["RecordsHeader"];
+	var moduleTitle = await departmentTerms.NameAsync(DepartmentTerms.Records, localizer["RecordsHeader"]);
+	ViewBag.Title = "Resgrid | " + moduleTitle;
 	string StateClass(int state)
 	{
 		switch ((RmsRecordState)state)
@@ -24,10 +25,10 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-4">
-		<h2>@localizer["RecordsHeader"]</h2>
+		<h2>@moduleTitle</h2>
 		<ol class="breadcrumb">
 			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
-			<li class="active"><strong>@localizer["RecordsHeader"]</strong></li>
+			<li class="active"><strong>@moduleTitle</strong></li>
 		</ol>
 	</div>
 	<div class="col-sm-8">
@@ -238,6 +239,13 @@
 								<tbody>
 									@foreach (var r in Model.Records)
 									{
+										var typeLabel = r.RecordType.HasValue
+											? await departmentTerms.RecordTypeAsync(r.RecordType.Value)
+											: await departmentTerms.DefinitionAsync(r.DefinitionKey, Model.DefinitionNames.TryGetValue(r.DefinitionKey ?? string.Empty, out var definitionName) ? definitionName : null);
+										// A summary that is only the type (no call, topic or unit to describe) was stored as the bare enum name or
+										// definition key; show the department's word for it instead, so renaming a type renames older rows too.
+										var bareSummary = string.IsNullOrWhiteSpace(r.DisplaySummary) || string.Equals(r.DisplaySummary, r.DefinitionKey, StringComparison.Ordinal)
+											|| (r.RecordType.HasValue && string.Equals(r.DisplaySummary, ((RmsOperationalRecordType)r.RecordType.Value).ToString(), StringComparison.Ordinal));
 										<tr>
 											@* Bulk assign and packets operate on operational Records only; Incident Reports have their own workflow. *@
 											@if (bulk) { <td>@if (r.RecordKind == (int)RmsRecordKind.Operational) { <input type="checkbox" name="ids" value="@r.RmsRecordSearchProjectionId" class="records-bulk-row" /> }</td> }
@@ -251,9 +259,9 @@
 													<span class="text-muted">@r.DraftReference</span>
 												}
 											</td>
-											<td>@(r.RecordType.HasValue ? ((RmsOperationalRecordType)r.RecordType.Value).ToString() : r.DefinitionKey)</td>
+											<td>@typeLabel</td>
 											<td><span class="label label-@StateClass(r.State)">@(((RmsRecordState)r.State).ToString())</span></td>
-											<td>@r.DisplaySummary</td>
+											<td>@(bareSummary ? typeLabel : r.DisplaySummary)</td>
 											<td>@((r.OccurredOn ?? r.RecordCreatedOn).TimeConverterToString(Model.Department))</td>
 											<td>@(Model.PersonnelNames.TryGetValue(r.AuthorUserId ?? string.Empty, out var name) ? name : r.AuthorUserId)</td>
 											<td class="text-right">

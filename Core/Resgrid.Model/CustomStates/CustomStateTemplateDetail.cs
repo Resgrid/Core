@@ -26,6 +26,12 @@ namespace Resgrid.Model.CustomStates
 		/// </summary>
 		public ActionBaseTypes BaseType { get; set; } = ActionBaseTypes.None;
 
+		/// <summary>
+		/// The meaning of a staffing option (<see cref="StaffingBaseTypes"/>). Staffing sets use this instead of
+		/// <see cref="BaseType"/>, since the two enums share the same stored column.
+		/// </summary>
+		public StaffingBaseTypes? StaffingBaseType { get; set; }
+
 		/// <summary>Whether pressing the button prompts for / captures a note.</summary>
 		public CustomStateNoteTypes NoteType { get; set; } = CustomStateNoteTypes.None;
 
@@ -49,7 +55,7 @@ namespace Resgrid.Model.CustomStates
 				ButtonText = ButtonText,
 				ButtonColor = ButtonColor,
 				TextColor = TextColor,
-				BaseType = (int)BaseType,
+				BaseType = StaffingBaseType.HasValue ? (int)StaffingBaseType.Value : (int)BaseType,
 				NoteType = (int)NoteType,
 				DetailType = (int)DetailType,
 				GpsRequired = GpsRequired,

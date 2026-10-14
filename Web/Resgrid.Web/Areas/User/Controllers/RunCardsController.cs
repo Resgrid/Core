@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
@@ -340,6 +341,27 @@ namespace Resgrid.Web.Areas.User.Controllers
 					Text = s.ToString()
 				}).ToList();
 			}
+
+			// A status meaning counts every status with that base type, built-in or the department's own
+			// (RunCardSelectionMeaning), so one selection keeps working when a unit type's status set changes.
+			var statusMeanings = Enum.GetValues(typeof(ActionBaseTypes)).Cast<ActionBaseTypes>().Where(x => x != ActionBaseTypes.None).ToList();
+
+			foreach (var options in model.UnitStatusOptions.Values)
+				options.AddRange(StatusMeaningOptions(statusMeanings.Where(x => x != ActionBaseTypes.NotResponding).Select(x => ((int)x, x.GetDisplayString()))));
+
+			model.PersonnelStatusOptions.AddRange(StatusMeaningOptions(statusMeanings.Select(x => ((int)x, x.GetDisplayString()))));
+			model.StaffingOptions.AddRange(StatusMeaningOptions(Enum.GetValues(typeof(StaffingBaseTypes)).Cast<StaffingBaseTypes>()
+				.Where(x => x != StaffingBaseTypes.None).Select(x => ((int)x, x.GetDisplayString()))));
+		}
+
+		private static IEnumerable<StatusOptionModel> StatusMeaningOptions(IEnumerable<(int Value, string Name)> meanings)
+		{
+			return meanings.Select(x => new StatusOptionModel
+			{
+				StateId = RunCardSelectionMeaning.StateIdFor(x.Value),
+				IsCustomState = false,
+				Text = $"Any \"{x.Name}\" status"
+			});
 		}
 	}
 }

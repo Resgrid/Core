@@ -18,9 +18,10 @@
             <param name="message">A Postmark Inbound message http://developer.postmarkapp.com/developer-inbound-parse.html#example-hook</param>
             <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
             <returns>
-            Postmark retries every answer except a 200 for about 10.5 hours, and a 403 stops it: 200/201 when handled (or handled
-            before), 409 while another delivery of the same email is still being handled, 403 when a retry could not help (no
-            Resgrid address, unknown address, nothing this department's email format can read), 400 on a failure worth retrying.
+            Postmark retries every answer except a 200 for about 10.5 hours, and a 403 stops it: 200 when handled (or handled
+            before; never 201, which Postmark's inbound contract does not name as delivered), 409 while another delivery of the
+            same email is still being handled, 403 when a retry could not help (no Resgrid address, unknown address, nothing this
+            department's email format can read), 400 on a failure worth retrying.
             </returns>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.EmailController.DuplicateDeliveryResult(Resgrid.Model.InboundEmailReceiptClaim)">
@@ -100,6 +101,13 @@
             generation continues in TwilioVoiceResponseService's URL cache, so a
             redirect re-entry gets an instant hit. TTS hard failures return true — the
             normal append path already degrades those to &lt;Say&gt; or a skip.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.TwilioController.VoiceSelectableOptions(System.Collections.Generic.IEnumerable{Resgrid.Model.CustomStateDetail})">
+            <summary>
+            The status or staffing options the phone menu reads out, in order; the digit a caller presses is a position in this
+            list, so the menu and the handler must build it the same way. Built-in options keep id 0 (Standing By, Available):
+            skipping id 0 left a department on the built-in statuses with no way to go available by phone.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.TwilioController.BuildTextToCallAsync(Resgrid.Model.Department,Resgrid.Model.TextMessage,System.Collections.Generic.List{Resgrid.Model.Identity.IdentityUser})">
@@ -815,7 +823,7 @@
             Marks history text for statuses that reached the call without the sender naming it.
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.ResolveStatusDetail(System.Int32,System.Collections.Generic.List{Resgrid.Model.CustomStateDetail},System.Collections.Generic.List{Resgrid.Model.CustomState})">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.ResolveStatusDetail(System.Int32,System.Collections.Generic.List{Resgrid.Model.CustomStateDetail},System.Collections.Generic.List{Resgrid.Model.CustomState},Resgrid.Model.CustomStateTypes)">
             <summary>
             Resolves a raw unit state / personnel action type (built-in value or custom status detail id) to its
             status detail for labelling. Returns null when the status can't be resolved (e.g. a built-in value with
@@ -1713,6 +1721,12 @@
             </summary>
             <returns></returns>
             <param name="key">The key to get config data for</param>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ConfigController.GetTerminology">
+            <summary>
+            Gets the department's own names for modules and built-in record types (Department -> Terminology). Every term is
+            listed; Name is null for a term the department has not renamed. Labels only: keys, routes and API values never change.
+            </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ConfigController.PopulateUnitStatusThresholdsAsync(Resgrid.Web.Services.Models.v4.Configs.GetConfigResult,System.Int32)">
             <summary>
@@ -9457,6 +9471,12 @@
             Call Type
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.TypeId">
+            <summary>
+            The id of the department's call type the call was logged with (matches CallTypes/GetAllCallTypes), which survives
+            a rename of the type; null when the call's type matches none of the department's types.
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.AlarmLevel">
             <summary>
             Current alarm level (1-based). Only moves above 1 when the call has been escalated through
@@ -10296,6 +10316,12 @@
             Id for the Tone Sound to be used
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallPriorities.CallPriorityResultData.BaseType">
+            <summary>
+            The standard priority this one means (0 Low, 1 Medium, 2 High, 3 Emergency), for comparing priorities across
+            departments, such as sorting by urgency; -1 when the department has not set one. A built-in priority is its own.
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.CallPriorities.CallPriorityResultData.IsSystemPriority">
             <summary>
             Is this a default system priority
@@ -10404,6 +10430,13 @@
         <member name="P:Resgrid.Web.Services.Models.v4.CallTypes.CallTypeResultData.Name">
             <summary>
             Name of the call type
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallTypes.CallTypeResultData.BaseType">
+            <summary>
+            What kind of call the type is (CallTypeClasses: 1 Fire, 2 Medical, 3 Rescue, 4 Traffic Collision, 5 Hazardous
+            Materials, 6 Alarm, 7 Service Call, 8 Law Enforcement, 9 Disaster or Weather, 10 Mutual Aid, 11 Non-Emergency
+            Activity, 12 Other); -1 when the department has not set one.
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.CallTypes.CallTypesResult">
@@ -12633,6 +12666,30 @@
             <summary>
             Resgrid Datacenter Locations
             </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Configs.GetTerminologyResult">
+            <summary>
+            The department's own names for modules and built-in record types (Department -> Terminology). Apps show
+            <see cref="P:Resgrid.Web.Services.Models.v4.Configs.DepartmentTermData.Name"/> when it is set, else their own (localized) name for the term.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetTerminologyResult.Data">
+            <summary>One entry per term the department can rename, renamed or not.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Configs.DepartmentTermData">
+            <summary>A term a department can rename.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.DepartmentTermData.Key">
+            <summary>Stable term key, e.g. "module.records" or "record-type.run". Never changes.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.DepartmentTermData.Category">
+            <summary>"Module" or "RecordType".</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.DepartmentTermData.DefaultName">
+            <summary>Resgrid's English name for the term.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.DepartmentTermData.Name">
+            <summary>The department's name for the term; null when it uses Resgrid's.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.ContactFiles.ContactFilesResult">
             <summary>
@@ -15519,6 +15576,13 @@
             The current action/status color hex string for the user
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StatusBaseType">
+            <summary>
+            What the current status means (an ActionBaseTypes value: 0 Available, 2 Responding, 3 On Scene, 23 In Quarters,
+            ...), for built-in and department statuses alike; -1 when the status has no system meaning. Clients decide
+            availability from this, not from the status text.
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StatusTimestamp">
             <summary>
             The timestamp of the last action. This is converted UTC to the departments, or users, TimeZone.
@@ -15534,6 +15598,11 @@
             The current action/status destination name for the user
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StatusDestinationType">
+            <summary>
+            What StatusDestinationId names (DestinationEntityTypes: 1 station, 2 call, 3 POI), when the status recorded it.
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StaffingId">
             <summary>
             The current staffing level (state) type for the user
@@ -15547,6 +15616,13 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StaffingColor">
             <summary>
             The current staffing level (state) color hex string for the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StaffingBaseType">
+            <summary>
+            What the current staffing level means (a StaffingBaseTypes value: 0 Available, 1 Delayed, 2 Unavailable,
+            3 Committed, 4 On Shift, 5 Off Duty, 6 On Call), for built-in and department staffing levels alike; -1 when the
+            level has no system meaning.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StaffingTimestamp">
@@ -17521,9 +17597,10 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Statuses.StatusResultData.BaseType">
             <summary>
-            The canonical meaning of this status (see <see cref="T:Resgrid.Model.ActionBaseTypes"/>).
-            Departments name and colour their statuses freely, so this is the only field a client can use
-            to answer "does this status mean available / responding / on scene".
+            The canonical meaning of this status: an <see cref="T:Resgrid.Model.ActionBaseTypes"/> value for personnel and
+            unit statuses, a <see cref="T:Resgrid.Model.StaffingBaseTypes"/> value for staffing levels (Type 3). Built-in
+            options carry theirs too. Departments name and colour their statuses freely, so this is the only field a
+            client can use to answer "does this status mean available / responding / on scene".
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Statuses.StatusResultData.Color">
@@ -18840,6 +18917,12 @@
             <summary>
             The v4 OpenAPI document settings. Shared with SwaggerDocumentTests, which generates the whole document,
             so a conflicting method/path pair fails the test suite instead of /swagger/v4/swagger.json in production.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Helpers.CustomStatesHelper.FindCustomState(System.Int32,Resgrid.Model.CustomStateTypes,System.Int32)">
+            <summary>
+            The department's own option of one kind for a stored value (deleted ones included), or null when the value is a
+            built-in status or staffing level (StatusOptionIds).
             </summary>
         </member>
         <member name="T:Resgrid.Web.Helpers.DispatchListHelper">

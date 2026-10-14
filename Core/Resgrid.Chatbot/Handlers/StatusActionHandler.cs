@@ -118,8 +118,9 @@ namespace Resgrid.Chatbot.Handlers
 				return match;
 
 			var fallback = FallbackStatusForName(name);
+			// The built-in list (no custom set): its options belong to no CustomState.
 			return fallback != null && (statuses == null || statuses.Count == 0
-				|| statuses.All(x => x.CustomStateDetailId <= 25))
+				|| statuses.All(x => x.CustomStateId <= 0))
 				? fallback
 				: null;
 		}

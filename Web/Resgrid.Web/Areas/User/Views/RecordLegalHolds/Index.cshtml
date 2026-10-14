@@ -66,7 +66,7 @@
                                     </td>
                                     <td>
                                         @(hold.RecordId ?? localizer["HoldAllMatching"].Value)
-                                        <small class="text-muted rgw-sub">@(hold.DefinitionKey ?? localizer["AllDefinitions"].Value)</small>
+                                        <small class="text-muted rgw-sub">@(hold.DefinitionKey == null ? localizer["AllDefinitions"].Value : await departmentTerms.DefinitionAsync(hold.DefinitionKey))</small>
                                     </td>
                                     <td>
                                         @(departmentTime.Format(hold.PeriodStart) ?? localizer["HoldAnyStart"].Value)
@@ -132,7 +132,7 @@
                                             <option value="">@localizer["AllDefinitions"]</option>
                                             @foreach (var key in RmsDefinitionKeys.LockedTypes.Keys)
                                             {
-                                                <option value="@key">@key</option>
+                                                <option value="@key">@(await departmentTerms.DefinitionAsync(key))</option>
                                             }
                                             <option value="@RmsDefinitionKeys.NerisIncidentReport">@localizer["HoldNerisScope"]</option>
                                         </select>

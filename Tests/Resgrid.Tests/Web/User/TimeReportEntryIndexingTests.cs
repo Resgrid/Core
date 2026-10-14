@@ -147,6 +147,7 @@ namespace Resgrid.Tests.Web.User
 			builder.Services.AddHttpContextAccessor(); builder.Services.AddLocalization(); builder.Services.AddDataProtection().UseEphemeralDataProtectionProvider();
 			builder.Services.AddAuthentication("test").AddScheme<AuthenticationSchemeOptions, MemberAuthentication>("test", _ => { });
 			builder.Services.AddAuthorization();
+			builder.Services.AddDepartmentTerminologyStub();
 			builder.Services.AddControllersWithViews(o => o.Filters.Add(new BodyOnly())).AddApplicationPart(typeof(DeploymentsController).Assembly);
 			builder.Services.AddSingleton(operations.Object); builder.Services.AddSingleton(time.Object);
 			var departments = new Mock<IDepartmentsService>();

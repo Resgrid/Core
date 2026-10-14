@@ -66,7 +66,7 @@
     <value>Доступний</value>
   </data>
   <data name="BaseType" xml:space="preserve">
-    <value>Base Type</value>
+    <value>Значення</value>
   </data>
   <data name="ButtonBackgroundColorLabel" xml:space="preserve">
     <value>Button Background Color</value>
@@ -283,5 +283,158 @@
   </data>
   <data name="NextStatusesAny" xml:space="preserve">
     <value>Будь-який статус</value>
+  </data>
+  <data name="StaffingAvailable" xml:space="preserve">
+    <value>Доступний</value>
+  </data>
+  <data name="StaffingDelayed" xml:space="preserve">
+    <value>Затримується</value>
+  </data>
+  <data name="StaffingUnavailable" xml:space="preserve">
+    <value>Недоступний</value>
+  </data>
+  <data name="StaffingCommitted" xml:space="preserve">
+    <value>Зайнятий</value>
+  </data>
+  <data name="StaffingOnShift" xml:space="preserve">
+    <value>На зміні</value>
+  </data>
+  <data name="StaffingOffDuty" xml:space="preserve">
+    <value>Поза службою</value>
+  </data>
+  <data name="StaffingOnCall" xml:space="preserve">
+    <value>На виклику</value>
+  </data>
+  <data name="StaffingBaseTypeHelp" xml:space="preserve">
+    <value>Що цей рівень укомплектування означає для Resgrid. Рекомендації диспетчеризації, підрахунки доступності та вимкнення сповіщень використовують значення, незалежно від назви кнопки.</value>
+  </data>
+  <data name="MeaningColumn" xml:space="preserve">
+    <value>Значення</value>
+  </data>
+  <data name="MissingMeaningsHeader" xml:space="preserve">
+    <value>Параметрів без значення: {0}.</value>
+  </data>
+  <data name="MissingMeaningsHelp" xml:space="preserve">
+    <value>Resgrid використовує значення параметра, щоб визначати доступність, статус під час відправлення та звільнення, сповіщення та звіти. Параметри без значення вважаються невідомими. Якщо назва дає чітку підказку, показується пропозиція; перевірте її, а потім збережіть.</value>
+  </data>
+  <data name="UseSuggestedMeanings" xml:space="preserve">
+    <value>Використати запропоновані значення</value>
+  </data>
+  <data name="SuggestedMeaningsApplied" xml:space="preserve">
+    <value>Пропозиції застосовано. Перевірте їх, а потім збережіть.</value>
+  </data>
+  <data name="SuggestedMeaning" xml:space="preserve">
+    <value>пропозиція: {0}</value>
+  </data>
+  <data name="OptionsWithoutMeaning" xml:space="preserve">
+    <value>Без значення: {0}</value>
+  </data>
+  <data name="AnyStatusWithMeaning" xml:space="preserve">
+    <value>Будь-який статус «{0}»</value>
+  </data>
+  <data name="BuiltInStatusOption" xml:space="preserve">
+    <value>Вбудований: {0}</value>
+  </data>
+  <data name="NoteOptional" xml:space="preserve">
+    <value>Необов’язкова</value>
+  </data>
+  <data name="NoteRequired" xml:space="preserve">
+    <value>Обов’язкова</value>
+  </data>
+  <data name="SetTypeLabel" xml:space="preserve">
+    <value>Тип</value>
+  </data>
+  <data name="TemplatePrefilledNote" xml:space="preserve">
+    <value>Ці параметри заповнено з шаблону. Змініть текст або кольори, вилучіть непотрібні чи додайте власні; нічого не зберігається, доки ви не натиснете Додати.</value>
+  </data>
+  <data name="BackgroundColorShort" xml:space="preserve">
+    <value>Фон</value>
+  </data>
+  <data name="TextColorShort" xml:space="preserve">
+    <value>Текст</value>
+  </data>
+  <data name="StatusRuleAny" xml:space="preserve">
+    <value>Будь-який</value>
+  </data>
+  <data name="StatusRuleUnknown" xml:space="preserve">
+    <value>Невідомо</value>
+  </data>
+  <data name="StatusRuleNone" xml:space="preserve">
+    <value>Немає</value>
+  </data>
+  <data name="BaseTypeDescription.none" xml:space="preserve">
+    <value>Немає системного значення. Статус лише інформаційний і не впливає на доступність, звіти чи автоматизації.</value>
+  </data>
+  <data name="BaseTypeDescription.available" xml:space="preserve">
+    <value>Підрозділ або рятувальник на службі й доступний для призначення чи відправлення на виклик або завдання.</value>
+  </data>
+  <data name="BaseTypeDescription.notresponding" xml:space="preserve">
+    <value>Рятувальник підтвердив отримання, але відмовляється або не може виконати поточне призначення.</value>
+  </data>
+  <data name="BaseTypeDescription.responding" xml:space="preserve">
+    <value>Підрозділ або рятувальник активно прямує (в дорозі) на призначений виклик чи подію.</value>
+  </data>
+  <data name="BaseTypeDescription.onscene" xml:space="preserve">
+    <value>Підрозділ або рятувальник прибув і працює на місці виклику чи події.</value>
+  </data>
+  <data name="BaseTypeDescription.madecontact" xml:space="preserve">
+    <value>Підрозділ або рятувальник встановив контакт з особою, пацієнтом, стороною чи об’єктом.</value>
+  </data>
+  <data name="BaseTypeDescription.investigating" xml:space="preserve">
+    <value>Підрозділ або рятувальник з’ясовує, оцінює чи аналізує ситуацію.</value>
+  </data>
+  <data name="BaseTypeDescription.dispatched" xml:space="preserve">
+    <value>Підрозділ або рятувальника відправлено чи призначено, але він ще не почав рух.</value>
+  </data>
+  <data name="BaseTypeDescription.cleared" xml:space="preserve">
+    <value>Підрозділ або рятувальник завершив виклик чи подію і знову стає доступним.</value>
+  </data>
+  <data name="BaseTypeDescription.returning" xml:space="preserve">
+    <value>Підрозділ або рятувальник повертається до частини, станції чи бази.</value>
+  </data>
+  <data name="BaseTypeDescription.staging" xml:space="preserve">
+    <value>Підрозділ або рятувальник очікує в безпечному місці на призначення чи накази.</value>
+  </data>
+  <data name="BaseTypeDescription.unavailable" xml:space="preserve">
+    <value>Підрозділ або рятувальник поза службою і недоступний для призначення.</value>
+  </data>
+  <data name="BaseTypeDescription.enroute" xml:space="preserve">
+    <value>Підрозділ або рятувальник прямує до призначення, місця чи пункту у звичайному (нетерміновому) режимі.</value>
+  </data>
+  <data name="BaseTypeDescription.transporting" xml:space="preserve">
+    <value>Підрозділ або рятувальник перевозить пацієнта, особу, затриманого чи вантаж до місця призначення.</value>
+  </data>
+  <data name="BaseTypeDescription.delivering" xml:space="preserve">
+    <value>Підрозділ або рятувальник доставляє товари, запаси, обладнання чи вантажі отримувачу або до пункту доставки.</value>
+  </data>
+  <data name="BaseTypeDescription.atpatient" xml:space="preserve">
+    <value>Підрозділ або рятувальник дістався пацієнта чи шуканої особи і надає допомогу або перебуває з нею в контакті.</value>
+  </data>
+  <data name="BaseTypeDescription.athospital" xml:space="preserve">
+    <value>Підрозділ або рятувальник прибув до лікарні чи приймального закладу для передачі пацієнта.</value>
+  </data>
+  <data name="BaseTypeDescription.searching" xml:space="preserve">
+    <value>Підрозділ або рятувальник веде активний пошук у призначеній зоні, секторі чи квадраті.</value>
+  </data>
+  <data name="BaseTypeDescription.loading" xml:space="preserve">
+    <value>Підрозділ або рятувальник завантажує чи забирає вантаж, запаси, обладнання або особу перед перевезенням.</value>
+  </data>
+  <data name="BaseTypeDescription.standby" xml:space="preserve">
+    <value>Підрозділ або рятувальник перебуває в резерві, у готовності чи на виклику і готовий до призначення.</value>
+  </data>
+  <data name="BaseTypeDescription.onpatrol" xml:space="preserve">
+    <value>Підрозділ або рятувальник патрулює призначену зону, залишаючись доступним для відправлення.</value>
+  </data>
+  <data name="BaseTypeDescription.maintenance" xml:space="preserve">
+    <value>Підрозділ або рятувальник поза службою через обслуговування, заправку, поповнення, прибирання чи ремонт.</value>
+  </data>
+  <data name="BaseTypeDescription.onbreak" xml:space="preserve">
+    <value>Підрозділ або рятувальник на перерві для відпочинку чи їжі й тимчасово недоступний.</value>
+  </data>
+  <data name="BaseTypeDescription.completed" xml:space="preserve">
+    <value>Призначення, завдання чи доставку завершено; підрозділ або рятувальник завершує роботу і стає доступним.</value>
+  </data>
+  <data name="BaseTypeDescription.inquarters" xml:space="preserve">
+    <value>Підрозділ або рятувальник на службі й доступний у своїй частині. Рекомендації відправлення рахують відстань від частини замість GPS-позиції та додають час виїзду з частини.</value>
   </data>
 </root>

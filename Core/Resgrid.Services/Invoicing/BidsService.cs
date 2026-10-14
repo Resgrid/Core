@@ -558,6 +558,12 @@ namespace Resgrid.Services.Invoicing
 			var contract = string.IsNullOrWhiteSpace(bid.ServiceContractId) ? null : await _contracts.GetByIdForDepartmentAsync(bid.ServiceContractId, departmentId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
 
+			// Calls store the call type's name (Call.Type) and link its id (Call.CallTypeId); the id alone as the name matched
+			// nothing that keys on the type. A type from another department is ignored.
+			var callType = request.CallTypeId.HasValue
+				? (await _callsService.GetCallTypesForDepartmentAsync(departmentId))?.FirstOrDefault(x => x.CallTypeId == request.CallTypeId.Value)
+				: null;
+
 			return await TransactionAsync(async () =>
 			{
 				var call = new Call
@@ -568,7 +574,8 @@ namespace Resgrid.Services.Invoicing
 					NatureOfCall = string.IsNullOrWhiteSpace(request.CallNature) ? bid.Title : request.CallNature.Trim(),
 					IncidentNumber = Trim(request.IncidentNumber) ?? bid.IncidentNumber,
 					Priority = request.CallPriority,
-					Type = request.CallTypeId?.ToString(),
+					Type = callType?.Type,
+					CallTypeId = callType?.CallTypeId,
 					Address = Trim(request.Address),
 					GeoLocationData = Trim(request.GeoLocation),
 					LoggedOn = DateTime.UtcNow,

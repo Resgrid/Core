@@ -45,8 +45,10 @@ namespace Resgrid.Web.Areas.User.Models.Records
 			"Author", "Station", "CallNumber", "CreatedOn", "FinalizedOn", "RecordId"
 		};
 
+		/// <param name="typeName">The Type column for a row, in the department's own terms; null writes the type's enum name.</param>
 		public static List<RecordsListExportRow> BuildRows(IEnumerable<RmsRecordSearchProjection> projections,
-			IDictionary<string, string> personnelNames, IDictionary<int, string> groupNames, Department department)
+			IDictionary<string, string> personnelNames, IDictionary<int, string> groupNames, Department department,
+			Func<RmsRecordSearchProjection, string> typeName = null)
 		{
 			string Name(string userId) => string.IsNullOrWhiteSpace(userId) ? string.Empty
 				: personnelNames != null && personnelNames.TryGetValue(userId, out var n) ? n : userId;
@@ -57,7 +59,7 @@ namespace Resgrid.Web.Areas.User.Models.Records
 			{
 				RecordNumber = p.RecordNumber ?? string.Empty,
 				DraftReference = p.DraftReference ?? string.Empty,
-				Type = p.RecordType.HasValue ? ((RmsOperationalRecordType)p.RecordType.Value).ToString() : string.Empty,
+				Type = typeName?.Invoke(p) ?? (p.RecordType.HasValue ? ((RmsOperationalRecordType)p.RecordType.Value).ToString() : string.Empty),
 				DefinitionKey = p.DefinitionKey ?? string.Empty,
 				State = ((RmsRecordState)p.State).ToString(),
 				Summary = p.DisplaySummary ?? string.Empty,

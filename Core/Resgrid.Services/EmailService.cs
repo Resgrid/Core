@@ -242,15 +242,16 @@ namespace Resgrid.Services
 			string priority = string.Empty;
 			string address = "No Address Supplied";
 
+			// The department's own priority by name: casting its id to the built-in enum printed the raw id.
 			if (call.IsCritical)
 			{
-				subject = string.Format("Resgrid CRITICAL Call: P{0} {1}", call.Priority, call.Name);
-				priority = string.Format("{0} CRITICAL", ((CallPriority)call.Priority).ToString());
+				subject = string.Format("Resgrid CRITICAL Call: {0} {1}", call.GetPriorityTag(), call.Name);
+				priority = string.Format("{0} CRITICAL", call.GetPriorityDisplayText());
 			}
 			else
 			{
-				subject = string.Format("Resgrid Call: P{0} {1}", call.Priority, call.Name);
-				priority = string.Format("{0}", ((CallPriority)call.Priority).ToString());
+				subject = string.Format("Resgrid Call: {0} {1}", call.GetPriorityTag(), call.Name);
+				priority = call.GetPriorityDisplayText();
 			}
 
 			string coordinates = "No Coordinates Supplied";
@@ -327,8 +328,8 @@ namespace Resgrid.Services
 					emailAddress = user.Email;
 			}
 
-			string subject = string.Format("Resgrid CANCELLED Dispatch: P{0} {1}", call.Priority, call.Name);
-			string priority = string.Format("{0}", ((CallPriority)call.Priority).ToString());
+			string subject = string.Format("Resgrid CANCELLED Dispatch: {0} {1}", call.GetPriorityTag(), call.Name);
+			string priority = call.GetPriorityDisplayText();
 			string address = "No Address Supplied";
 
 			string coordinates = "No Coordinates Supplied";

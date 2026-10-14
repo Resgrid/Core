@@ -86,7 +86,7 @@
                     {
                         <td>
                             <strong><small>@localizer["TypeLabel"]</small></strong>
-                            <span style="display: block;">@(((LogTypes)Model.Log.LogType.Value).ToString())</span>
+                            <span style="display: block;">@(await departmentTerms.RecordTypeAsync(Model.Log.LogType.Value))</span>
                         </td>
                     }
                     else
@@ -236,7 +236,7 @@
                     {
                         <td>
                             <strong><small>@localizer["TypeLabel"]</small></strong>
-                            <span style="display: block;">@(((LogTypes)Model.Log.LogType.Value).ToString())</span>
+                            <span style="display: block;">@(await departmentTerms.RecordTypeAsync(Model.Log.LogType.Value))</span>
                         </td>
                     }
                     else
@@ -523,7 +523,7 @@
                     {
                         <td>
                             <strong><small>@localizer["TypeLabel"]</small></strong>
-                            <span style="display: block;">@(((LogTypes)Model.Log.LogType.Value).ToString())</span>
+                            <span style="display: block;">@(await departmentTerms.RecordTypeAsync(Model.Log.LogType.Value))</span>
                         </td>
                     }
                     else
@@ -750,7 +750,7 @@
                     {
                         <td>
                             <strong><small>@localizer["LogTypeLabel"]</small></strong>
-                            <span style="display: block;">@(((LogTypes)Model.Log.LogType.Value).ToString())</span>
+                            <span style="display: block;">@(await departmentTerms.RecordTypeAsync(Model.Log.LogType.Value))</span>
                         </td>
                     }
                     else
@@ -914,7 +914,7 @@
                     {
                         <td>
                             <strong><small>@localizer["LogTypeLabel"]</small></strong>
-                            <span style="display: block;">@(((LogTypes)Model.Log.LogType.Value).ToString())</span>
+                            <span style="display: block;">@(await departmentTerms.RecordTypeAsync(Model.Log.LogType.Value))</span>
                         </td>
                     }
                     else
@@ -1179,7 +1179,7 @@
                     {
                         <td>
                             <strong><small>@localizer["TypeLabel"]</small></strong>
-                            <span style="display: block;">@(((LogTypes)Model.Log.LogType.Value).ToString())</span>
+                            <span style="display: block;">@(await departmentTerms.RecordTypeAsync(Model.Log.LogType.Value))</span>
                         </td>
                     }
                     else

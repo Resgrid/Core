@@ -850,4 +850,7 @@
   <data name="Edit" xml:space="preserve">
     <value>Επεξεργασία</value>
   </data>
+  <data name="Terminology" xml:space="preserve">
+    <value>Ορολογία</value>
+  </data>
 </root>

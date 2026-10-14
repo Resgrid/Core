@@ -63,7 +63,9 @@ namespace Resgrid.Services
 
 			var result = new DispatchRecommendationResult { AlarmLevel = request.TargetAlarmLevel };
 
-			var card = await _runCardsService.GetMatchingRunCardAsync(request.DepartmentId, request.Priority, request.CallTypeName);
+			var card = request.CallTypeId.HasValue
+				? await _runCardsService.GetMatchingRunCardAsync(request.DepartmentId, request.Priority, request.CallTypeName, request.CallTypeId)
+				: await _runCardsService.GetMatchingRunCardAsync(request.DepartmentId, request.Priority, request.CallTypeName);
 
 			if (card == null)
 			{
@@ -159,6 +161,7 @@ namespace Resgrid.Services
 				DepartmentId = call.DepartmentId,
 				Priority = call.Priority,
 				CallTypeName = call.Type,
+				CallTypeId = call.CallTypeId,
 				Latitude = location?.Latitude,
 				Longitude = location?.Longitude,
 				TargetAlarmLevel = targetAlarmLevel,
@@ -448,6 +451,15 @@ namespace Resgrid.Services
 			var stateByUser = userStates.Where(s => !string.IsNullOrWhiteSpace(s.UserId))
 				.GroupBy(s => s.UserId).ToDictionary(g => g.Key, g => g.OrderByDescending(s => s.Timestamp).First());
 
+			// Crew put On Unit by their unit's status are as available as that unit (PersonnelOnUnit).
+			Dictionary<int, AvailabilityClass> latestUnitAvailability = null;
+			if (logByUser.Values.Any(l => PersonnelOnUnit.IsLinkedOnUnit(l, personnelDetails.ContainsKey(l.ActionTypeId))))
+			{
+				latestUnitAvailability = PersonnelOnUnit.LatestUnitAvailability(
+					await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(departmentId),
+					CallStatusLinkage.BuildUnitBaseTypeMap(await _customStateService.GetAllCustomStatesForDepartmentAsync(departmentId)));
+			}
+
 			var allSelections = context.Card.AvailabilitySelections ?? new List<RunCardAvailabilitySelection>();
 			var statusSelections = allSelections.Where(s => s.SelectionType == (int)RunCardSelectionTypes.PersonnelStatus).ToList();
 			var staffingSelections = allSelections.Where(s => s.SelectionType == (int)RunCardSelectionTypes.PersonnelStaffing).ToList();
@@ -472,7 +484,7 @@ namespace Resgrid.Services
 				logByUser.TryGetValue(userId, out var lastLog);
 				stateByUser.TryGetValue(userId, out var lastState);
 
-				if (!IsPersonnelStatusDispatchable(lastLog, statusSelections, personnelDetails))
+				if (!IsPersonnelStatusDispatchable(lastLog, statusSelections, personnelDetails, latestUnitAvailability))
 					continue;
 
 				if (!IsPersonnelStaffingDispatchable(lastState, staffingSelections, staffingDetails))
@@ -605,7 +617,9 @@ namespace Resgrid.Services
 			if (state == null)
 				return;
 
-			foreach (var detail in state.GetActiveDetails() ?? new List<CustomStateDetail>())
+			// Deleted options too: a unit or person still on a since-deleted option is on the department's option, not a
+			// built-in status (StatusOptionIds), and its base type still says what it means.
+			foreach (var detail in (state.Details ?? new List<CustomStateDetail>()).Where(x => x != null && x.CustomStateDetailId > 0))
 				map[detail.CustomStateDetailId] = detail;
 		}
 
@@ -619,7 +633,8 @@ namespace Resgrid.Services
 				applicable = selections.Where(s => !s.UnitTypeId.HasValue).ToList();
 
 			if (applicable.Any())
-				return applicable.Any(s => s.StateId == stateId && s.IsCustomState == isCustom);
+				return applicable.Any(s => RunCardSelectionMeaning.Matches(s, stateId, isCustom,
+					isCustom ? customDetails[stateId].BaseType : (int)BuiltInStatusBaseTypes.ForUnitState(stateId)));
 
 			// No selections: fall back to the availability matrix; Delayed still counts as
 			// dispatchable (mirrors platform reporting's unit availability policy).
@@ -631,22 +646,24 @@ namespace Resgrid.Services
 		}
 
 		private static bool IsPersonnelStatusDispatchable(ActionLog lastLog,
-			List<RunCardAvailabilitySelection> selections, Dictionary<int, CustomStateDetail> customDetails)
+			List<RunCardAvailabilitySelection> selections, Dictionary<int, CustomStateDetail> customDetails,
+			IReadOnlyDictionary<int, AvailabilityClass> latestUnitAvailability = null)
 		{
 			// No status on file means the member never set one — the manual dispatch grids
 			// show them, so the engine treats them as standing by.
 			if (lastLog == null)
-				return !selections.Any() || selections.Any(s => !s.IsCustomState && s.StateId == (int)ActionTypes.StandingBy);
+				return !selections.Any() || selections.Any(s => RunCardSelectionMeaning.Matches(s, (int)ActionTypes.StandingBy, false, (int)ActionBaseTypes.Available));
 
 			var stateId = lastLog.ActionTypeId;
 			var isCustom = customDetails.ContainsKey(stateId);
 
 			if (selections.Any())
-				return selections.Any(s => s.StateId == stateId && s.IsCustomState == isCustom);
+				return selections.Any(s => RunCardSelectionMeaning.Matches(s, stateId, isCustom,
+					isCustom ? customDetails[stateId].BaseType : (int)BuiltInStatusBaseTypes.ForPersonnelStatus(stateId)));
 
 			var availability = isCustom
 				? AvailabilityMatrix.ForCustomBaseType((int)(customDetails[stateId].BaseType))
-				: AvailabilityMatrix.ForBuiltInPersonnelActionType(stateId);
+				: PersonnelOnUnit.FollowUnit(lastLog, false, latestUnitAvailability) ?? AvailabilityMatrix.ForBuiltInPersonnelActionType(stateId);
 
 			return availability == AvailabilityClass.Available || availability == AvailabilityClass.Delayed;
 		}
@@ -656,17 +673,18 @@ namespace Resgrid.Services
 		{
 			// No staffing row defaults to Available (matches UserStateService semantics).
 			if (lastState == null)
-				return !selections.Any() || selections.Any(s => !s.IsCustomState && s.StateId == (int)UserStateTypes.Available);
+				return !selections.Any() || selections.Any(s => RunCardSelectionMeaning.Matches(s, (int)UserStateTypes.Available, false, (int)StaffingBaseTypes.Available));
 
 			var stateId = lastState.State;
 			var isCustom = customDetails.ContainsKey(stateId);
 
 			if (selections.Any())
-				return selections.Any(s => s.StateId == stateId && s.IsCustomState == isCustom);
+				return selections.Any(s => RunCardSelectionMeaning.Matches(s, stateId, isCustom,
+					isCustom ? customDetails[stateId].BaseType : (int)BuiltInStatusBaseTypes.ForStaffing(stateId)));
 
 			if (isCustom)
 			{
-				var availability = AvailabilityMatrix.ForCustomBaseType((int)(customDetails[stateId].BaseType));
+				var availability = AvailabilityMatrix.ForStaffingBaseType(customDetails[stateId].BaseType);
 				return availability == AvailabilityClass.Available || availability == AvailabilityClass.Delayed;
 			}
 

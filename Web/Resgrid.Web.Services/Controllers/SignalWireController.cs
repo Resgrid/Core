@@ -411,15 +411,8 @@ namespace Resgrid.Web.Services.Controllers
 			// which for a department running Custom Call Priorities is either the wrong
 			// priority or one the department doesn't own at all, and dispatch then has no
 			// priority to resolve for tones, colors and the notify-all flags.
-			int defaultPriority = (int)CallPriority.High;
-
-			if (priorities != null && priorities.Any())
-			{
-				var defaultPrio = priorities.FirstOrDefault(x => x.IsDefault && x.IsDeleted == false);
-
-				if (defaultPrio != null)
-					defaultPriority = defaultPrio.DepartmentCallPriorityId;
-			}
+			// The default priority, else the department's High priority, else the built-in High (CallPriorityMatch).
+			int defaultPriority = CallPriorityMatch.DefaultForImport(priorities);
 
 			Call call = null;
 			var formatType = await _departmentSettingsService.GetTextToCallImportFormatForDepartmentAsync(department.DepartmentId);

@@ -128,6 +128,12 @@ namespace Resgrid.Model.Services
 		Task<DepartmentSetting> SetDocumentNumberingConfigAsync(int departmentId, DocumentNumberingConfig config,
 			CancellationToken cancellationToken = default(CancellationToken));
 
+		/// <summary>Setting 118: the department's own names for modules and built-in record types. Missing or corrupt = an empty config (shipped names).</summary>
+		Task<DepartmentTerminologyConfig> GetDepartmentTerminologyAsync(int departmentId, bool bypassCache = false);
+
+		Task<DepartmentSetting> SetDepartmentTerminologyAsync(int departmentId, DepartmentTerminologyConfig config,
+			CancellationToken cancellationToken = default(CancellationToken));
+
 		Task<DepartmentSetting> SetCallNumberingConfigAsync(int departmentId, CallNumberingConfig config,
 			CancellationToken cancellationToken = default(CancellationToken));
 
@@ -372,6 +378,15 @@ namespace Resgrid.Model.Services
 		Task<int> GetUnitCallDispatchStatusToSetAsync(int departmentId);
 
 		Task<int> GetUnitCallReleaseStatusToSetAsync(int departmentId);
+
+		/// <summary>
+		/// The department-wide unit status to set on dispatch (setting 50) as a target that works for built-in and custom
+		/// status sets: default, leave unchanged, a base type, or a built-in value saved before base types existed.
+		/// </summary>
+		Task<StatusTarget> GetUnitCallDispatchStatusTargetAsync(int departmentId);
+
+		/// <summary>The department-wide unit status to set on release (setting 51); see <see cref="GetUnitCallDispatchStatusTargetAsync"/>.</summary>
+		Task<StatusTarget> GetUnitCallReleaseStatusTargetAsync(int departmentId);
 
 		Task<List<UnitTypeCallStatusOverride>> GetUnitCallStatusOverridesByUnitTypeAsync(int departmentId);
 

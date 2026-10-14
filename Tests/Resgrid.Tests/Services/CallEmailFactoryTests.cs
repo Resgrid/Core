@@ -474,6 +474,109 @@ namespace Resgrid.Tests.Services
 				call.Priority.Should().Be(501);
 			}
 
+			// Bagley Fire and Rescue (dept 7966), 2026-10-13: priorities are named after incident kinds and the CALL line is
+			// "<type word> <description>"; only "Medical" calls ever matched a priority before.
+			private static List<DepartmentCallPriority> BagleyPriorities() => new List<DepartmentCallPriority>
+			{
+				new DepartmentCallPriority { DepartmentCallPriorityId = 291, Name = "Structure Fire" },
+				new DepartmentCallPriority { DepartmentCallPriorityId = 294, Name = "MVA" },
+				new DepartmentCallPriority { DepartmentCallPriorityId = 293, Name = "Medical", Sort = 1 },
+				new DepartmentCallPriority { DepartmentCallPriorityId = 295, Name = "Brush / Woods Fire", Sort = 2 }
+			};
+
+			private static CallEmail BagleyEmail(string callLine, string idLine = "ID: 00117-2026-00000474") => new CallEmail
+			{
+				MessageId = "200",
+				Subject = "ACTIVE 9-1-1",
+				TextBody = "CALL: " + callLine + "\n" + "ADDR1: 12 Elm St\n" + (idLine == null ? "" : idLine + "\n") + "NARR: Caller reports"
+			};
+
+			private async Task<Call> ImportForBagley(CallEmail email, List<Call> activeCalls = null, List<CallType> callTypes = null)
+			{
+				return await _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.Active911, email, Guid.NewGuid().ToString(), _dispatchUsers,
+					new Department { DepartmentId = 7966 }, activeCalls, null, (int)CallPriority.High, BagleyPriorities(), callTypes, null);
+			}
+
+			[TestCase("Medical Chest Pain", 293)]
+			[TestCase("Fire Structure Residential", 291)]
+			[TestCase("Fire Brush / Woods", 295)]
+			[TestCase("Fire Tree Down", (int)CallPriority.High)]
+			public async Task should_find_department_7966_priorities_named_in_the_call_line(string callLine, int expectedPriority)
+			{
+				var call = await ImportForBagley(BagleyEmail(callLine));
+
+				call.Priority.Should().Be(expectedPriority);
+				call.Name.Should().Be(callLine);
+			}
+
+			[Test]
+			public async Task should_link_department_7966_calls_to_the_call_type_named_first()
+			{
+				var callTypes = new List<CallType> { new CallType { CallTypeId = 3831, Type = "Medical" } };
+
+				var call = await ImportForBagley(BagleyEmail("MEDICAL Lift Assist"), callTypes: callTypes);
+
+				call.Type.Should().Be("Medical", "the department's own spelling");
+				call.CallTypeId.Should().Be(3831);
+
+				call = await ImportForBagley(BagleyEmail("Fire Tree Down"), callTypes: callTypes);
+				call.Type.Should().Be("Fire");
+				call.CallTypeId.Should().BeNull();
+			}
+
+			[Test]
+			public async Task should_read_the_department_7966_reference_from_the_current_incident_number()
+			{
+				var call = await ImportForBagley(BagleyEmail("Medical Fall"));
+
+				call.IncidentNumber.Should().Be("00117-2026-00000474");
+				call.ReferenceNumber.Should().Be("474");
+			}
+
+			[Test]
+			public async Task should_read_fields_whatever_their_case()
+			{
+				var email = new CallEmail
+				{
+					MessageId = "300",
+					Subject = "Active911 alert",
+					TextBody = "Call: Medical Fall\nAddr1: 12 Elm St\nId: 2026-55\nNarr: Elderly fall"
+				};
+
+				var call = await _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.Active911, email, Guid.NewGuid().ToString(), _dispatchUsers,
+					null, null, null, (int)CallPriority.High, null, null, null);
+
+				call.Name.Should().Be("Medical Fall");
+				call.Address.Should().Be("12 Elm St");
+				call.IncidentNumber.Should().Be("2026-55");
+				call.NatureOfCall.Should().Contain("Elderly fall").And.NotContain("Narr:");
+			}
+
+			[Test]
+			public async Task should_not_attach_a_message_without_an_incident_number_to_an_open_call()
+			{
+				// An open call entered by hand has no incident number; a page without an ID line used to update it instead of
+				// creating a call.
+				var openCall = new Call { CallId = 77, Name = "Manual call", IncidentNumber = null };
+
+				var call = await ImportForBagley(BagleyEmail("Medical Fall", idLine: null), new List<Call> { openCall });
+
+				call.Should().NotBeSameAs(openCall);
+				call.CallId.Should().Be(0);
+				call.Name.Should().Be("Medical Fall");
+			}
+
+			[Test]
+			public async Task should_update_the_open_call_with_the_same_incident_number()
+			{
+				var openCall = new Call { CallId = 78, Name = "Medical Fall", IncidentNumber = "00117-2026-00000474" };
+
+				var call = await ImportForBagley(BagleyEmail("Medical Fall"), new List<Call> { openCall });
+
+				call.Should().BeSameAs(openCall);
+				call.LastDispatchedOn.Should().NotBeNull();
+			}
+
 			[Test]
 			public async Task should_work_for_ottawa_template()
 			{

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -547,6 +547,13 @@ namespace Resgrid.Services
 			return string.Empty;
 		}
 
+		/// <summary>True when a rule's stored status tokens mean "any status" (nothing, or -1).</summary>
+		private static bool MatchesAnyStatus(string storedTokens)
+		{
+			var tokens = StatusMatch.Tokens(storedTokens);
+			return tokens.Count == 0 || tokens.Any(StatusMatch.IsAny);
+		}
+
 		public async Task<bool> ValidateNotificationForProcessingAsync(ProcessedNotification notification, DepartmentNotification setting)
 		{
 			//dynamic dynamicData = JsonConvert.DeserializeObject(notification.Data);
@@ -556,17 +563,11 @@ namespace Resgrid.Services
 			{
 				case EventTypes.UnitStatusChanged:
 					{
-						// Empty Before/Current data means "Any": the post-Telerik UI posts "" for the
-						// default Any option, so settings saved that way must still match every change.
-						var beforeData = String.IsNullOrWhiteSpace(setting.BeforeData) ? "-1" : setting.BeforeData;
-						var currentData = String.IsNullOrWhiteSpace(setting.CurrentData) ? "-1" : setting.CurrentData;
-
-						if (!int.TryParse(beforeData, NumberStyles.Integer, CultureInfo.InvariantCulture, out int beforeStateValue) ||
-							!int.TryParse(currentData, NumberStyles.Integer, CultureInfo.InvariantCulture, out int currentStateValue))
-							return false;
-
-						bool beforeAny = beforeStateValue == -1;
-						bool currentAny = currentStateValue == -1;
+						// Empty Before/Current data means "Any": the post-Telerik UI posts "" for the default Any option, so
+						// settings saved that way must still match every change. A "b{n}" token matches any status meaning n
+						// (StatusMatch), built-in or custom, in any unit type's status set.
+						var beforeAny = MatchesAnyStatus(setting.BeforeData);
+						var currentAny = MatchesAnyStatus(setting.CurrentData);
 
 						if (beforeAny && currentAny)
 							return true;
@@ -576,65 +577,61 @@ namespace Resgrid.Services
 
 						if (currentState != null)
 						{
+							var baseTypes = StatusMatch.UnitBaseTypes(await _customStateService.GetAllCustomStatesForDepartmentAsync(setting.DepartmentId));
+
 							if (!beforeAny)
 								beforeState = await _unitsService.GetLastUnitStateBeforeIdAsync(currentState.UnitId, currentState.UnitStateId);
 
-							if ((currentAny || currentState.State == currentStateValue) &&
-								(beforeAny || (beforeState != null && beforeState.State == beforeStateValue)))
+							if ((currentAny || StatusMatch.MatchesAny(setting.CurrentData, currentState.State, baseTypes)) &&
+								(beforeAny || (beforeState != null && StatusMatch.MatchesAny(setting.BeforeData, beforeState.State, baseTypes))))
 								return true;
 						}
 					}
 					break;
 				case EventTypes.PersonnelStaffingChanged:
 					{
-						// Empty Before/Current data means "Any": the post-Telerik UI posts "" for the
-						// default Any option, so settings saved that way must still match every change.
-						var beforeData = String.IsNullOrWhiteSpace(setting.BeforeData) ? "-1" : setting.BeforeData;
-						var currentData = String.IsNullOrWhiteSpace(setting.CurrentData) ? "-1" : setting.CurrentData;
+						var beforeAny = MatchesAnyStatus(setting.BeforeData);
+						var currentAny = MatchesAnyStatus(setting.CurrentData);
 
-						if (beforeData.Contains("-1") && currentData.Contains("-1"))
+						if (beforeAny && currentAny)
 							return true;
-
-						bool beforeAny = beforeData.Contains("-1");
-						bool currentAny = currentData.Contains("-1");
 
 						UserState beforeState = null;
 						UserState currentState = await _userStateService.GetUserStateByIdAsync((int)dynamicData.StateId);
 
 						if (currentState != null)
 						{
+							var baseTypes = StatusMatch.StaffingBaseTypes(await _customStateService.GetAllCustomStatesForDepartmentAsync(setting.DepartmentId));
+
 							if (!beforeAny)
 								beforeState = await _userStateService.GetPreviousUserStateAsync(currentState.UserId, currentState.UserStateId);
 
-							if ((currentAny || currentState.State == int.Parse(currentData)) &&
-								(beforeAny || (beforeState != null && beforeState.State == int.Parse(beforeData))))
+							if ((currentAny || StatusMatch.MatchesAny(setting.CurrentData, currentState.State, baseTypes)) &&
+								(beforeAny || (beforeState != null && StatusMatch.MatchesAny(setting.BeforeData, beforeState.State, baseTypes))))
 								return true;
 						}
 					}
 					break;
 				case EventTypes.PersonnelStatusChanged:
 					{
-						// Empty Before/Current data means "Any": the post-Telerik UI posts "" for the
-						// default Any option, so settings saved that way must still match every change.
-						var beforeData = String.IsNullOrWhiteSpace(setting.BeforeData) ? "-1" : setting.BeforeData;
-						var currentData = String.IsNullOrWhiteSpace(setting.CurrentData) ? "-1" : setting.CurrentData;
+						var beforeAny = MatchesAnyStatus(setting.BeforeData);
+						var currentAny = MatchesAnyStatus(setting.CurrentData);
 
-						if (beforeData.Contains("-1") && currentData.Contains("-1"))
+						if (beforeAny && currentAny)
 							return true;
-
-						bool beforeAny = beforeData.Contains("-1");
-						bool currentAny = currentData.Contains("-1");
 
 						ActionLog beforeState = null;
 						ActionLog currentState = await _actionLogsService.GetActionLogByIdAsync((int)dynamicData.StateId);
 
 						if (currentState != null)
 						{
+							var baseTypes = StatusMatch.PersonnelBaseTypes(await _customStateService.GetAllCustomStatesForDepartmentAsync(setting.DepartmentId));
+
 							if (!beforeAny)
 								beforeState = await _actionLogsService.GetPreviousActionLogAsync(currentState.UserId, currentState.ActionLogId);
 
-							if ((currentAny || currentState.ActionTypeId == int.Parse(currentData)) &&
-								(beforeAny || (beforeState != null && beforeState.ActionTypeId == int.Parse(beforeData))))
+							if ((currentAny || StatusMatch.MatchesAny(setting.CurrentData, currentState.ActionTypeId, baseTypes)) &&
+								(beforeAny || (beforeState != null && StatusMatch.MatchesAny(setting.BeforeData, beforeState.ActionTypeId, baseTypes))))
 								return true;
 						}
 					}
@@ -656,6 +653,7 @@ namespace Resgrid.Services
 							return false;
 
 						var staffingLevels = await _userStateService.GetLatestStatesForDepartmentAsync(setting.DepartmentId);
+						var staffingBaseTypes = StatusMatch.StaffingBaseTypes(await _customStateService.GetAllCustomStatesForDepartmentAsync(setting.DepartmentId));
 
 						if (staffingLevels != null && staffingLevels.Any())
 						{
@@ -663,7 +661,7 @@ namespace Resgrid.Services
 							{
 								var currentState = staffingLevels.FirstOrDefault(x => x.UserId == user.UserId);
 
-								if (currentState != null && acceptableStaffingLevels.Any(x => x == currentState.State.ToString()) &&
+								if (currentState != null && StatusMatch.MatchesAny(setting.CurrentData, currentState.State, staffingBaseTypes) &&
 										group.Members.Any(x => x.UserId == user.UserId))
 									count++;
 							}
@@ -695,6 +693,7 @@ namespace Resgrid.Services
 							return false;
 
 						var staffingLevels = await _userStateService.GetLatestStatesForDepartmentAsync(setting.DepartmentId);
+						var staffingBaseTypes = StatusMatch.StaffingBaseTypes(await _customStateService.GetAllCustomStatesForDepartmentAsync(setting.DepartmentId));
 
 						if (staffingLevels != null && staffingLevels.Any())
 						{
@@ -702,7 +701,7 @@ namespace Resgrid.Services
 							{
 								var currentState = staffingLevels.FirstOrDefault(x => x.UserId == user.UserId);
 
-								if (currentState != null && acceptableStaffingLevels.Any(x => x == currentState.State.ToString()))
+								if (currentState != null && StatusMatch.MatchesAny(setting.CurrentData, currentState.State, staffingBaseTypes))
 									count++;
 							}
 
@@ -740,12 +739,13 @@ namespace Resgrid.Services
 							return false;
 
 						var staffingLevels = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(setting.DepartmentId);
+						var unitBaseTypes = StatusMatch.UnitBaseTypes(await _customStateService.GetAllCustomStatesForDepartmentAsync(setting.DepartmentId));
 
 						foreach (var unit in unitsForType)
 						{
 							var currentState = staffingLevels.FirstOrDefault(x => x.UnitId == unit.UnitId);
 
-							if (currentState != null && acceptableUnitStates.Any(x => x == currentState.State.ToString()) && unitsInGroup.Any(x => x.UnitId == unit.UnitId))
+							if (currentState != null && StatusMatch.MatchesAny(setting.CurrentData, currentState.State, unitBaseTypes) && unitsInGroup.Any(x => x.UnitId == unit.UnitId))
 								count++;
 						}
 
@@ -771,12 +771,13 @@ namespace Resgrid.Services
 							return false;
 
 						var staffingLevels = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(setting.DepartmentId);
+						var unitBaseTypes = StatusMatch.UnitBaseTypes(await _customStateService.GetAllCustomStatesForDepartmentAsync(setting.DepartmentId));
 
 						foreach (var unit in unitsForType)
 						{
 							var currentState = staffingLevels.FirstOrDefault(x => x.UnitId == unit.UnitId);
 
-							if (currentState != null && acceptableUnitStates.Any(x => x == currentState.State.ToString()))
+							if (currentState != null && StatusMatch.MatchesAny(setting.CurrentData, currentState.State, unitBaseTypes))
 								count++;
 						}
 

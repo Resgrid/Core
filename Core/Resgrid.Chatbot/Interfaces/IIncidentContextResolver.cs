@@ -14,6 +14,9 @@ namespace Resgrid.Chatbot.Interfaces
 		/// <summary>The call the command runs on. Null when nothing could be resolved.</summary>
 		public Call Call { get; set; }
 
+		/// <summary>The class of the call's type (its base type); picks a playbook when the call text names none.</summary>
+		public CallTypeClasses CallTypeClass { get; set; } = CallTypeClasses.None;
+
 		/// <summary>Full board snapshot (structure, assignments, objectives, needs, PAR, roles, ...).</summary>
 		public IncidentCommandBoard Board { get; set; }
 

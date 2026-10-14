@@ -83,217 +83,66 @@ namespace Resgrid.Model
 				GroupsToNotify = groupId.ToString();
 		}
 
-		public string TranslateBefore(List<CustomState> customStates = null)
+		/// <summary>
+		/// The label of a status, staffing or unit status value a notification rule matches on: "Any" for no value, the
+		/// department's own option when the value is one of its custom option ids of that kind, else the built-in value.
+		/// <paramref name="label"/> localizes the fixed words and meaning names: (resource key, English fallback) to text.
+		/// </summary>
+		private static string TranslateStatusValue(string data, List<CustomState> customStates, CustomStateTypes type, Func<string, string, string> label)
 		{
-			switch ((EventTypes)EventType)
-			{
-				case EventTypes.UnitStatusChanged:
-					if (string.IsNullOrWhiteSpace(BeforeData))
-						return "Any";
-					if (BeforeData == "-1")
-						return "Any";
-					else
-					{
-						int id = int.Parse(BeforeData);
-						if (id <= 25)
-							return ((UnitStateTypes) id).GetDisplayString();
-						else
-						{
-							if (customStates != null)
-							{
-								var data = customStates.SelectMany(x => x.Details);
-								var result = data.FirstOrDefault(x => x.CustomStateDetailId == id);
+			var tokens = StatusMatch.Tokens(data);
+			if (tokens.Count == 0 || tokens.Any(StatusMatch.IsAny))
+				return Label(label, "StatusRuleAny", "Any");
 
-								if (result != null)
-									return result.ButtonText;
-								else
-									return "Unknown";
-							}
-							else
-							{
-								return "Unknown";
-							}
-						}
-					}
-					break;
-				case EventTypes.PersonnelStaffingChanged:
-					if (string.IsNullOrWhiteSpace(BeforeData))
-						return "Any";
-					if (BeforeData == "-1")
-						return "Any";
-					else
-					{
-						int id = int.Parse(BeforeData);
-						if (id <= 25)
-							return ((UserStateTypes) id).GetDisplayString();
-						else
-						{
-							if (customStates != null)
-							{
-								var data = customStates.SelectMany(x => x.Details);
-								var result = data.FirstOrDefault(x => x.CustomStateDetailId == id);
-
-								if (result != null)
-									return result.ButtonText;
-								else
-									return "Unknown";
-							}
-							else
-							{
-								return "Unknown";
-							}
-						}
-					}
-					break;
-				case EventTypes.PersonnelStatusChanged:
-					if (string.IsNullOrWhiteSpace(BeforeData))
-						return "Any";
-					if (BeforeData == "-1")
-						return "Any";
-					else
-					{
-						int id = int.Parse(BeforeData);
-						if (id <= 25)
-							return ((ActionTypes) int.Parse(BeforeData)).GetDisplayString();
-						else
-						{
-							if (customStates != null)
-							{
-								var data = customStates.SelectMany(x => x.Details);
-								var result = data.FirstOrDefault(x => x.CustomStateDetailId == id);
-
-								if (result != null)
-									return result.ButtonText;
-								else
-									return "Unknown";
-							}
-							else
-							{
-								return "Unknown";
-							}
-						}
-					}
-					break;
-				case EventTypes.UserCreated:
-					break;
-				case EventTypes.UserAssignedToGroup:
-					break;
-				case EventTypes.CalendarEventUpcoming:
-					break;
-				case EventTypes.DocumentAdded:
-					break;
-				case EventTypes.NoteAdded:
-					break;
-				case EventTypes.UnitAdded:
-					break;
-				case EventTypes.LogAdded:
-					break;
-				case EventTypes.DepartmentSettingsChanged:
-					break;
-				case EventTypes.RolesInGroupAvailabilityAlert:
-					break;
-				case EventTypes.UnitTypesInGroupAvailabilityAlert:
-					break;
-				case EventTypes.RolesInDepartmentAvailabilityAlert:
-					break;
-				case EventTypes.UnitTypesInDepartmentAvailabilityAlert:
-					break;
-			}
-
-			return "None";
+			return string.Join(", ", tokens.Select(token => TranslateStatusToken(token, customStates, type, label)));
 		}
 
-		public string TranslateCurrent(List<CustomState> customStates = null)
+		private static string Label(Func<string, string, string> label, string key, string fallback) =>
+			label == null ? fallback : label(key, fallback) ?? fallback;
+
+		private static string TranslateStatusToken(string token, List<CustomState> customStates, CustomStateTypes type, Func<string, string, string> label)
+		{
+			var baseType = StatusMatch.BaseTypeOf(token);
+			if (baseType.HasValue)
+			{
+				var meaning = type == CustomStateTypes.Staffing
+					? Label(label, "Staffing" + (StaffingBaseTypes)baseType.Value, ((StaffingBaseTypes)baseType.Value).GetDisplayString())
+					: Label(label, ((ActionBaseTypes)baseType.Value).ToString(), ((ActionBaseTypes)baseType.Value).GetDisplayString());
+
+				return string.Format(Label(label, "AnyStatusWithMeaning", "Any \"{0}\" status"), meaning);
+			}
+
+			if (!int.TryParse(token, out var id))
+				return Label(label, "StatusRuleUnknown", "Unknown");
+
+			var custom = StatusOptionIds.FindCustom(customStates, type, id);
+			if (custom != null)
+				return custom.ButtonText;
+
+			if (id > CallStatusLinkage.MaxBuiltInStatusId)
+				return Label(label, "StatusRuleUnknown", "Unknown");
+
+			switch (type)
+			{
+				case CustomStateTypes.Unit:
+					return ((UnitStateTypes)id).GetDisplayString();
+				case CustomStateTypes.Staffing:
+					return ((UserStateTypes)id).GetDisplayString();
+				default:
+					return ((ActionTypes)id).GetDisplayString();
+			}
+		}
+
+		public string TranslateBefore(List<CustomState> customStates = null, Func<string, string, string> label = null)
 		{
 			switch ((EventTypes)EventType)
 			{
 				case EventTypes.UnitStatusChanged:
-					if (string.IsNullOrWhiteSpace(CurrentData))
-						return "Any";
-					if (CurrentData == "-1")
-						return "Any";
-					else
-					{
-						int id = int.Parse(CurrentData);
-						if (id <= 25)
-							return ((UnitStateTypes) id).GetDisplayString();
-						else
-						{
-							if (customStates != null)
-							{
-								var data = customStates.SelectMany(x => x.Details);
-								var result = data.FirstOrDefault(x => x.CustomStateDetailId == id);
-
-								if (result != null)
-									return result.ButtonText;
-								else
-									return "Unknown";
-							}
-							else
-							{
-								return "Unknown";
-							}
-						}
-					}
-					break;
+					return TranslateStatusValue(BeforeData, customStates, CustomStateTypes.Unit, label);
 				case EventTypes.PersonnelStaffingChanged:
-					if (string.IsNullOrWhiteSpace(CurrentData))
-						return "Any";
-					if (CurrentData == "-1")
-						return "Any";
-					else
-					{
-						int id = int.Parse(CurrentData);
-						if (id <= 25)
-							return ((UserStateTypes) int.Parse(CurrentData)).GetDisplayString();
-						else
-						{
-							if (customStates != null)
-							{
-								var data = customStates.SelectMany(x => x.Details);
-								var result = data.FirstOrDefault(x => x.CustomStateDetailId == id);
-
-								if (result != null)
-									return result.ButtonText;
-								else
-									return "Unknown";
-							}
-							else
-							{
-								return "Unknown";
-							}
-						}
-					}
-					break;
+					return TranslateStatusValue(BeforeData, customStates, CustomStateTypes.Staffing, label);
 				case EventTypes.PersonnelStatusChanged:
-					if (string.IsNullOrWhiteSpace(CurrentData))
-						return "Any";
-					if (CurrentData == "-1")
-						return "Any";
-					else
-					{
-						int id = int.Parse(CurrentData);
-						if (id <= 25)
-							return ((ActionTypes) int.Parse(CurrentData)).GetDisplayString();
-						else
-						{
-							if (customStates != null)
-							{
-								var data = customStates.SelectMany(x => x.Details);
-								var result = data.FirstOrDefault(x => x.CustomStateDetailId == id);
-
-								if (result != null)
-									return result.ButtonText;
-								else
-									return "Unknown";
-							}
-							else
-							{
-								return "Unknown";
-							}
-						}
-					}
-					break;
+					return TranslateStatusValue(BeforeData, customStates, CustomStateTypes.Personnel, label);
 				case EventTypes.UserCreated:
 					break;
 				case EventTypes.UserAssignedToGroup:
@@ -320,7 +169,46 @@ namespace Resgrid.Model
 					break;
 			}
 
-			return "None";
+			return Label(label, "StatusRuleNone", "None");
+		}
+
+		public string TranslateCurrent(List<CustomState> customStates = null, Func<string, string, string> label = null)
+		{
+			switch ((EventTypes)EventType)
+			{
+				case EventTypes.UnitStatusChanged:
+					return TranslateStatusValue(CurrentData, customStates, CustomStateTypes.Unit, label);
+				case EventTypes.PersonnelStaffingChanged:
+					return TranslateStatusValue(CurrentData, customStates, CustomStateTypes.Staffing, label);
+				case EventTypes.PersonnelStatusChanged:
+					return TranslateStatusValue(CurrentData, customStates, CustomStateTypes.Personnel, label);
+				case EventTypes.UserCreated:
+					break;
+				case EventTypes.UserAssignedToGroup:
+					break;
+				case EventTypes.CalendarEventUpcoming:
+					break;
+				case EventTypes.DocumentAdded:
+					break;
+				case EventTypes.NoteAdded:
+					break;
+				case EventTypes.UnitAdded:
+					break;
+				case EventTypes.LogAdded:
+					break;
+				case EventTypes.DepartmentSettingsChanged:
+					break;
+				case EventTypes.RolesInGroupAvailabilityAlert:
+					break;
+				case EventTypes.UnitTypesInGroupAvailabilityAlert:
+					break;
+				case EventTypes.RolesInDepartmentAvailabilityAlert:
+					break;
+				case EventTypes.UnitTypesInDepartmentAvailabilityAlert:
+					break;
+			}
+
+			return Label(label, "StatusRuleNone", "None");
 		}
 	}
 }

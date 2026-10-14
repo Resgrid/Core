@@ -73,6 +73,28 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return await BuildConfigResultAsync(key, ClaimsAuthorizationHelper.GetDepartmentId());
 		}
 
+		/// <summary>
+		/// Gets the department's own names for modules and built-in record types (Department -> Terminology). Every term is
+		/// listed; Name is null for a term the department has not renamed. Labels only: keys, routes and API values never change.
+		/// </summary>
+		[HttpGet("GetTerminology")]
+		[Authorize(AuthenticationSchemes = OpenIddict.Validation.AspNetCore.OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		public async Task<ActionResult<GetTerminologyResult>> GetTerminology()
+		{
+			var config = await _departmentSettingsService.GetDepartmentTerminologyAsync(ClaimsAuthorizationHelper.GetDepartmentId()) ?? new DepartmentTerminologyConfig();
+			var result = new GetTerminologyResult();
+
+			foreach (var term in DepartmentTerms.All)
+				result.Data.Add(new DepartmentTermData { Key = term.Key, Category = term.Category.ToString(), DefaultName = term.DefaultName, Name = config.TextFor(term.Key) });
+
+			result.PageSize = result.Data.Count;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return result;
+		}
+
 		private async Task<GetConfigResult> BuildConfigResultAsync(string key, int departmentId)
 		{
 			var result = new GetConfigResult();

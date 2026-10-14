@@ -41,6 +41,7 @@ namespace Resgrid.Services
 		private static string MapStyleNightCacheKey = "DSetMapStyleNight_{0}";
 		private static string CallNumberingConfigCacheKey = "DSetCallNumbering_{0}";
 		private static string DocumentNumberingConfigCacheKey = "DSetDocumentNumbering_{0}";
+		private static string DepartmentTerminologyCacheKey = "DSetTerminology_{0}";
 		private static TimeSpan LongCacheLength = TimeSpan.FromDays(14);
 		// Security-relevant settings ride the standard department-data window instead, so a missed
 		// invalidation cannot keep an old policy in force for two weeks.
@@ -1011,6 +1012,20 @@ namespace Resgrid.Services
 			return -1;
 		}
 
+		public async Task<StatusTarget> GetUnitCallDispatchStatusTargetAsync(int departmentId)
+		{
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.UnitCallDispatchStatusToSet);
+
+			return StatusTarget.FromStoredValue(settingValue?.Setting);
+		}
+
+		public async Task<StatusTarget> GetUnitCallReleaseStatusTargetAsync(int departmentId)
+		{
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.UnitCallReleaseStatusToSet);
+
+			return StatusTarget.FromStoredValue(settingValue?.Setting);
+		}
+
 		public async Task<List<UnitTypeCallStatusOverride>> GetUnitCallStatusOverridesByUnitTypeAsync(int departmentId)
 		{
 			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.UnitCallStatusOverridesByUnitType);
@@ -1267,6 +1282,46 @@ namespace Resgrid.Services
 			// SaveOrUpdateSettingAsync invalidates the cached value (see the DocumentNumberingConfig case in its cache switch).
 			return await SaveOrUpdateSettingAsync(departmentId, ObjectSerialization.Serialize(config ?? new DocumentNumberingConfig()),
 				DepartmentSettingTypes.DocumentNumberingConfig, cancellationToken);
+		}
+
+		public async Task<DepartmentTerminologyConfig> GetDepartmentTerminologyAsync(int departmentId, bool bypassCache = false)
+		{
+			async Task<string> getSetting()
+			{
+				var setting = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.DepartmentTerminology);
+				return setting?.Setting ?? string.Empty;
+			}
+
+			string value;
+			if (Config.SystemBehaviorConfig.CacheEnabled && !bypassCache)
+				value = await _cacheProvider.RetrieveAsync<string>(string.Format(DepartmentTerminologyCacheKey, departmentId), getSetting, LongCacheLength);
+			else
+				value = await getSetting();
+
+			if (!String.IsNullOrWhiteSpace(value))
+			{
+				try
+				{
+					var config = ObjectSerialization.Deserialize<DepartmentTerminologyConfig>(value);
+
+					if (config != null)
+						return config;
+				}
+				catch (Exception)
+				{
+					// Every page header and the navigation read this; a corrupt blob falls back to the shipped names.
+				}
+			}
+
+			return new DepartmentTerminologyConfig();
+		}
+
+		public async Task<DepartmentSetting> SetDepartmentTerminologyAsync(int departmentId, DepartmentTerminologyConfig config,
+			CancellationToken cancellationToken = default(CancellationToken))
+		{
+			// SaveOrUpdateSettingAsync invalidates the cached value (see the DepartmentTerminology case in its cache switch).
+			return await SaveOrUpdateSettingAsync(departmentId, ObjectSerialization.Serialize(config ?? new DepartmentTerminologyConfig()),
+				DepartmentSettingTypes.DepartmentTerminology, cancellationToken);
 		}
 
 		public async Task<DispatchRecommendationConfig> GetDispatchRecommendationConfigAsync(int departmentId, bool bypassCache = false)
@@ -1701,6 +1756,9 @@ namespace Resgrid.Services
 					break;
 				case DepartmentSettingTypes.DocumentNumberingConfig:
 					cacheKey = string.Format(DocumentNumberingConfigCacheKey, departmentId);
+					break;
+				case DepartmentSettingTypes.DepartmentTerminology:
+					cacheKey = string.Format(DepartmentTerminologyCacheKey, departmentId);
 					break;
 				case DepartmentSettingTypes.RecordsDefaultLifecyclePreset:
 				case DepartmentSettingTypes.RecordsReviewDueHours:

@@ -1192,6 +1192,11 @@ Department Settings Department address, time zone and core settings. Sets the ti
 
 Document Numbering How work order, invoice, bid and daily time report numbers are written, and the day their numbering year starts for fiscal-year numbering. Sets the time zone and address everything else uses, and keeps administrative access limited and recoverable. An administrator sets the department time zone, hides modules the department will not use, requires two-factor sign-in for administrators and adds a second administrator. Know your department address and time zone, and choose at least two people who will administer Resgrid.
 
+<a id="terminology"></a>
+## Terminology
+
+Terminology Rename modules and built-in record types to the words your department uses, such as Incident instead of Run. Sets the time zone and address everything else uses, and keeps administrative access limited and recoverable. An administrator sets the department time zone, hides modules the department will not use, requires two-factor sign-in for administrators and adds a second administrator. Know your department address and time zone, and choose at least two people who will administer Resgrid.
+
 <a id="module-settings"></a>
 ## Module settings
 
@@ -1338,14 +1343,14 @@ Default: false. Source: DepartmentSettingTypes.CheckInTimersAutoEnableForNewCall
 <a id="setting-unitcalldispatchstatustoset"></a>
 ## Unit Call Dispatch Status To Set
 
-Unit Call Dispatch Status To Set. Unit status applied during call dispatch. Minus one or an invalid built-in unit status leaves the status unchanged.
+Unit Call Dispatch Status To Set. Unit status applied during call dispatch, by meaning: each unit gets the first active status of its own status set (its unit type's custom set, or the built-in statuses) with that base type. Values: -1 default (Dispatched, Responding or En Route on a custom set, built-in Responding otherwise); -2 leave the status unchanged; 1000 + an ActionBaseTypes value for a status meaning; 0 to 12 a built-in unit status saved before status meanings, which a unit on a custom set reads by its base type. A unit whose set has no matching status keeps its status, and Dispatch Settings lists those unit types. Unit-type overrides take precedence.
 
 Default: -1. Source: DepartmentSettingTypes.UnitCallDispatchStatusToSet.
 
 <a id="setting-unitcallreleasestatustoset"></a>
 ## Unit Call Release Status To Set
 
-Unit Call Release Status To Set. Unit status applied at call release (the call is closed, or the unit is taken off it) to the units still working the call. A unit already back in service, out of service, unavailable or on a break, or working another open call keeps its status; custom statuses are read by their base type. Review unit-type overrides before assuming one department-wide effect.
+Unit Call Release Status To Set. Unit status applied at call release (the call is closed, or the unit is taken off it) to the units still working the call, by meaning in the same way as the dispatch status (same values; the default is the set's Cleared, Available or In Quarters status, built-in Released otherwise). A unit already back in service, out of service, unavailable or on a break, or working another open call keeps its status; custom statuses are read by their base type. Review unit-type overrides before assuming one department-wide effect.
 
 Default: -1. Source: DepartmentSettingTypes.UnitCallReleaseStatusToSet.
 
@@ -1450,14 +1455,14 @@ Default: unset. Source: UnitTypeCallStatusOverride.UnitTypeId.
 <a id="field-unittypecallstatusoverride-dispatchstatus"></a>
 ## Unit Type Call Status Override / Dispatch Status
 
-Unit Type Call Status Override / Dispatch Status. Status applied to this unit type on dispatch; minus one leaves it unchanged.
+Unit Type Call Status Override / Dispatch Status. Option of this unit type's own status set applied on dispatch, ahead of the department's dispatch status; minus one uses the department's dispatch status.
 
 Default: -1. Source: UnitTypeCallStatusOverride.DispatchStatus.
 
 <a id="field-unittypecallstatusoverride-releasestatus"></a>
 ## Unit Type Call Status Override / Release Status
 
-Unit Type Call Status Override / Release Status. Status applied to this unit type on release; minus one leaves it unchanged.
+Unit Type Call Status Override / Release Status. Option of this unit type's own status set applied on release, ahead of the department's release status; minus one uses the department's release status.
 
 Default: -1. Source: UnitTypeCallStatusOverride.ReleaseStatus.
 
@@ -1681,17 +1686,17 @@ Default: owning voice default. Source: DepartmentSettingTypes.TtsLanguage.
 <a id="call-types-priorities"></a>
 ## Call types and priorities
 
-Call types and priorities The call types and priorities used to classify calls. Use consistent reporting and run-card matching terms. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Add the call types your dispatchers use and set their priorities.
+Call types and priorities The call types and priorities used to classify calls. Use consistent reporting and run-card matching terms. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Add the call types your dispatchers use and set their priorities. Give each call type a class and each priority a meaning so reports and the apps can group and sort them.
 
 <a id="custom-statuses"></a>
 ## Personnel and unit statuses
 
-Personnel and unit statuses The statuses members and units report, such as Responding or On Scene. Use terminology familiar to the department while preserving automation meaning. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Review the built-in statuses and add your own where your terms differ. Give each one a base type; In Quarters tells dispatch recommendations a unit is at its station.
+Personnel and unit statuses The statuses members and units report, such as Responding or On Scene. Use terminology familiar to the department while preserving automation meaning. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Review the built-in statuses and add your own where your terms differ. Give every option a meaning (base type): dispatch, availability, notifications and the apps read the meaning, not the button text. In Quarters tells dispatch recommendations a unit is at its station.
 
 <a id="dispatch-settings"></a>
 ## Dispatch Settings
 
-Dispatch Settings How calls page personnel: by group or by shift, and related automatic status changes. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Choose whether dispatch follows groups or shifts, and review the automatic status options. Set closest-unit turnout times if crews need time to leave the station.
+Dispatch Settings How calls page personnel: by group or by shift, and related automatic status changes. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Choose whether dispatch follows groups or shifts, and review the automatic status options: the unit status on dispatch and release is chosen by meaning from each unit type's own status set. Set closest-unit turnout times if crews need time to leave the station.
 
 <a id="email-intake"></a>
 ## Email and CAD call intake
@@ -1763,7 +1768,7 @@ Units Your apparatus, vehicles and response teams. Units let dispatchers send th
 <a id="unit-types"></a>
 ## Unit types
 
-Unit types Categories such as Engine, Ladder or Ambulance. Group comparable resources without assuming staffing or qualification. Engine 1 and Rescue 1 are added with their unit types and assigned to Station 1. Create unit types before adding units so each unit can be classified.
+Unit types Categories such as Engine, Ladder or Ambulance. Group comparable resources without assuming staffing or qualification. Engine 1 and Rescue 1 are added with their unit types and assigned to Station 1. Create unit types before adding units so each unit can be classified. Give each type a class, such as Engine or Ambulance, and choose its status set.
 
 <a id="hardware-tracking"></a>
 ## Hardware location tracking
@@ -3388,3 +3393,31 @@ Default: unset. Source: DocumentNumberPattern.Pattern.
 Document Number Pattern / Sequence Width. Digits the sequence is padded to with leading zeros, 1 to 8. The sequence is counted as a number, so changing the width never restarts it.
 
 Default: the kind's built-in width. Source: DocumentNumberPattern.SequenceWidth.
+
+<a id="setting-departmentterminology"></a>
+## Department Terminology
+
+Department Terminology. The department's own names for modules and built-in record types, shown in the navigation, on module page titles, wherever record types are listed and in the Responder, Unit, IC and Dispatch apps, in every language. Labels only: permissions, links and API values do not change. A term with no name uses Resgrid's.
+
+Default: missing = the shipped names. Source: DepartmentSettingTypes.DepartmentTerminology.
+
+<a id="field-departmentterminologyconfig-terms"></a>
+## Department Terminology / Terms
+
+Department Terminology / Terms. One entry per renamed module or record type, for example Incident for Run or Shift On Duty for Work. A term not listed shows Resgrid's name in the member's language. Names are at most 50 characters.
+
+Default: empty. Source: DepartmentTerminologyConfig.Terms.
+
+<a id="field-departmenttermoverride-key"></a>
+## Department Term / Key
+
+Department Term / Key. The term being renamed: a module (module.calls, module.records ...) or a built-in record type (record-type.run, record-type.work ...). Keys never change.
+
+Default: unset. Source: DepartmentTermOverride.Key.
+
+<a id="field-departmenttermoverride-text"></a>
+## Department Term / Name
+
+Department Term / Name. The department's word for the term, at most 50 characters. The same word shows for every member in every language; empty uses Resgrid's name.
+
+Default: unset (Resgrid's name). Source: DepartmentTermOverride.Text.

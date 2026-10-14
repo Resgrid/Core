@@ -12,6 +12,12 @@ namespace Resgrid.Model.Services
 		/// <param name="departmentId">The department identifier.</param>
 		/// <returns>Task&lt;List&lt;DispatchProtocol&gt;&gt;.</returns>
 		Task<List<DispatchProtocol>> GetAllProtocolsForDepartmentAsync(int departmentId);
+
+		/// <summary>
+		/// Follows a call type rename: protocol triggers store the call type's name, so a trigger on the old name is moved to
+		/// the new one instead of silently never matching again. Returns how many triggers changed.
+		/// </summary>
+		Task<int> RenameCallTypeInTriggersAsync(int departmentId, string oldName, string newName, CancellationToken cancellationToken = default(CancellationToken));
 		/// <summary>
 		/// Saves the protocol asynchronous.
 		/// </summary>

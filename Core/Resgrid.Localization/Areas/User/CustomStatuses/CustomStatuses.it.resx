@@ -66,7 +66,7 @@
     <value>Disponibile</value>
   </data>
   <data name="BaseType" xml:space="preserve">
-    <value>Base Type</value>
+    <value>Significato</value>
   </data>
   <data name="ButtonBackgroundColorLabel" xml:space="preserve">
     <value>Button Background Color</value>
@@ -283,5 +283,158 @@
   </data>
   <data name="NextStatusesAny" xml:space="preserve">
     <value>Qualsiasi stato</value>
+  </data>
+  <data name="StaffingAvailable" xml:space="preserve">
+    <value>Disponibile</value>
+  </data>
+  <data name="StaffingDelayed" xml:space="preserve">
+    <value>In ritardo</value>
+  </data>
+  <data name="StaffingUnavailable" xml:space="preserve">
+    <value>Non disponibile</value>
+  </data>
+  <data name="StaffingCommitted" xml:space="preserve">
+    <value>Impegnato</value>
+  </data>
+  <data name="StaffingOnShift" xml:space="preserve">
+    <value>In turno</value>
+  </data>
+  <data name="StaffingOffDuty" xml:space="preserve">
+    <value>Fuori servizio</value>
+  </data>
+  <data name="StaffingOnCall" xml:space="preserve">
+    <value>Reperibile</value>
+  </data>
+  <data name="StaffingBaseTypeHelp" xml:space="preserve">
+    <value>Cosa significa questo livello di disponibilità per Resgrid. Le raccomandazioni di invio, i conteggi di disponibilità e la disattivazione delle notifiche usano il significato, qualunque sia il nome del pulsante.</value>
+  </data>
+  <data name="MeaningColumn" xml:space="preserve">
+    <value>Significato</value>
+  </data>
+  <data name="MissingMeaningsHeader" xml:space="preserve">
+    <value>{0} opzione/i senza significato.</value>
+  </data>
+  <data name="MissingMeaningsHelp" xml:space="preserve">
+    <value>Resgrid usa il significato di un'opzione per determinare la disponibilità, cosa impostare all'invio e al rilascio, le notifiche e i report. Le opzioni senza significato sono trattate come sconosciute. Quando il nome dà un indizio chiaro viene mostrato un suggerimento; verificalo, poi salva.</value>
+  </data>
+  <data name="UseSuggestedMeanings" xml:space="preserve">
+    <value>Usa i significati suggeriti</value>
+  </data>
+  <data name="SuggestedMeaningsApplied" xml:space="preserve">
+    <value>Suggerimenti applicati. Verificali, poi salva.</value>
+  </data>
+  <data name="SuggestedMeaning" xml:space="preserve">
+    <value>suggerito: {0}</value>
+  </data>
+  <data name="OptionsWithoutMeaning" xml:space="preserve">
+    <value>{0} senza significato</value>
+  </data>
+  <data name="AnyStatusWithMeaning" xml:space="preserve">
+    <value>Qualsiasi stato "{0}"</value>
+  </data>
+  <data name="BuiltInStatusOption" xml:space="preserve">
+    <value>Predefinito: {0}</value>
+  </data>
+  <data name="NoteOptional" xml:space="preserve">
+    <value>Facoltativa</value>
+  </data>
+  <data name="NoteRequired" xml:space="preserve">
+    <value>Obbligatoria</value>
+  </data>
+  <data name="SetTypeLabel" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
+  <data name="TemplatePrefilledNote" xml:space="preserve">
+    <value>Queste opzioni sono state compilate da un modello. Rinomina il testo, cambia i colori, rimuovi quelle che non servono o aggiungine di tue; nulla viene salvato finché non fai clic su Aggiungi.</value>
+  </data>
+  <data name="BackgroundColorShort" xml:space="preserve">
+    <value>Sfondo</value>
+  </data>
+  <data name="TextColorShort" xml:space="preserve">
+    <value>Testo</value>
+  </data>
+  <data name="StatusRuleAny" xml:space="preserve">
+    <value>Qualsiasi</value>
+  </data>
+  <data name="StatusRuleUnknown" xml:space="preserve">
+    <value>Sconosciuto</value>
+  </data>
+  <data name="StatusRuleNone" xml:space="preserve">
+    <value>Nessuno</value>
+  </data>
+  <data name="BaseTypeDescription.none" xml:space="preserve">
+    <value>Nessun significato di sistema. Lo stato è solo informativo e non influisce su disponibilità, report o automazioni.</value>
+  </data>
+  <data name="BaseTypeDescription.available" xml:space="preserve">
+    <value>L'unità o il soccorritore è in servizio e disponibile per essere assegnato o inviato a una chiamata o attività.</value>
+  </data>
+  <data name="BaseTypeDescription.notresponding" xml:space="preserve">
+    <value>Il soccorritore ha confermato ma rifiuta o non può rispondere all'assegnazione corrente.</value>
+  </data>
+  <data name="BaseTypeDescription.responding" xml:space="preserve">
+    <value>L'unità o il soccorritore sta rispondendo (in viaggio) a una chiamata o un intervento assegnato.</value>
+  </data>
+  <data name="BaseTypeDescription.onscene" xml:space="preserve">
+    <value>L'unità o il soccorritore è arrivato e sta operando sul luogo della chiamata o dell'intervento.</value>
+  </data>
+  <data name="BaseTypeDescription.madecontact" xml:space="preserve">
+    <value>L'unità o il soccorritore ha preso contatto con la persona, il paziente, la parte o il punto di interesse.</value>
+  </data>
+  <data name="BaseTypeDescription.investigating" xml:space="preserve">
+    <value>L'unità o il soccorritore sta indagando, valutando o esaminando la situazione.</value>
+  </data>
+  <data name="BaseTypeDescription.dispatched" xml:space="preserve">
+    <value>L'unità o il soccorritore è stato inviato o assegnato ma non ha ancora iniziato a muoversi.</value>
+  </data>
+  <data name="BaseTypeDescription.cleared" xml:space="preserve">
+    <value>L'unità o il soccorritore ha concluso la chiamata o l'intervento e torna disponibile.</value>
+  </data>
+  <data name="BaseTypeDescription.returning" xml:space="preserve">
+    <value>L'unità o il soccorritore sta rientrando in sede, alla stazione o alla base.</value>
+  </data>
+  <data name="BaseTypeDescription.staging" xml:space="preserve">
+    <value>L'unità o il soccorritore è in attesa in un luogo sicuro in attesa di assegnazione o ordini.</value>
+  </data>
+  <data name="BaseTypeDescription.unavailable" xml:space="preserve">
+    <value>L'unità o il soccorritore è fuori servizio e non disponibile per assegnazioni.</value>
+  </data>
+  <data name="BaseTypeDescription.enroute" xml:space="preserve">
+    <value>L'unità o il soccorritore si sta spostando verso un'assegnazione, una destinazione o un luogo senza urgenza.</value>
+  </data>
+  <data name="BaseTypeDescription.transporting" xml:space="preserve">
+    <value>L'unità o il soccorritore sta trasportando un paziente, una persona, un detenuto o un carico verso una destinazione.</value>
+  </data>
+  <data name="BaseTypeDescription.delivering" xml:space="preserve">
+    <value>L'unità o il soccorritore sta consegnando beni, forniture, attrezzature o merci a un destinatario o punto di consegna.</value>
+  </data>
+  <data name="BaseTypeDescription.atpatient" xml:space="preserve">
+    <value>L'unità o il soccorritore ha raggiunto un paziente o una persona cercata e lo sta assistendo o è in contatto con lui.</value>
+  </data>
+  <data name="BaseTypeDescription.athospital" xml:space="preserve">
+    <value>L'unità o il soccorritore è arrivato in ospedale o in una struttura ricevente per trasferire il paziente.</value>
+  </data>
+  <data name="BaseTypeDescription.searching" xml:space="preserve">
+    <value>L'unità o il soccorritore sta effettuando una ricerca attiva in un'area, settore o griglia assegnati.</value>
+  </data>
+  <data name="BaseTypeDescription.loading" xml:space="preserve">
+    <value>L'unità o il soccorritore sta caricando o ritirando carico, forniture, attrezzature o una persona prima del trasporto.</value>
+  </data>
+  <data name="BaseTypeDescription.standby" xml:space="preserve">
+    <value>L'unità o il soccorritore è tenuto in riserva, in attesa o reperibile e pronto per essere assegnato.</value>
+  </data>
+  <data name="BaseTypeDescription.onpatrol" xml:space="preserve">
+    <value>L'unità o il soccorritore sta pattugliando un'area assegnata restando disponibile per l'invio.</value>
+  </data>
+  <data name="BaseTypeDescription.maintenance" xml:space="preserve">
+    <value>L'unità o il soccorritore è fuori servizio per manutenzione, rifornimento, ripristino scorte, pulizia o revisione.</value>
+  </data>
+  <data name="BaseTypeDescription.onbreak" xml:space="preserve">
+    <value>L'unità o il soccorritore è in pausa di riposo o pasto ed è temporaneamente non disponibile.</value>
+  </data>
+  <data name="BaseTypeDescription.completed" xml:space="preserve">
+    <value>L'assegnazione, l'attività o la consegna è completata; l'unità o il soccorritore sta concludendo e torna disponibile.</value>
+  </data>
+  <data name="BaseTypeDescription.inquarters" xml:space="preserve">
+    <value>L'unità o il soccorritore è in servizio e disponibile nella propria sede. Le raccomandazioni di invio misurano l'unità dalla sede invece che dalla posizione GPS e aggiungono il tempo di uscita dalla sede.</value>
   </data>
 </root>

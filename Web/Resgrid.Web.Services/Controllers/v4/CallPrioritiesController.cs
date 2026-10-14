@@ -1,4 +1,4 @@
-﻿using Resgrid.Web.Services.Attributes;
+using Resgrid.Web.Services.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -79,6 +79,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			priority.IsDeleted = p.IsDeleted;
 			priority.IsDefault = p.IsDefault;
 			priority.Tone = p.Tone;
+			priority.BaseType = p.BaseType;
 
 			return priority;
 		}

@@ -617,6 +617,123 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task closest_unit_ranks_a_unit_whose_routed_eta_failed_on_its_estimate()
+		{
+			BuildCard(engineCount: 1);
+			_departmentSettingsService.Setup(x => x.GetDispatchRecommendationModeAsync(DepartmentId, It.IsAny<bool>()))
+				.ReturnsAsync(DispatchRecommendationModes.ClosestUnit);
+			_config.UseRoutedEta = true;
+			_config.InQuartersTurnoutSeconds = 120;
+			_config.MobileTurnoutSeconds = 30;
+
+			_unitsService.Setup(x => x.GetLatestUnitLocationsAsync(DepartmentId))
+				.ReturnsAsync(new List<UnitsLocation>
+				{
+					new UnitsLocation { UnitId = 2, Latitude = 39.76m, Longitude = -104.95m, Timestamp = DateTime.UtcNow }
+				});
+
+			// Station A is on top of the call but its route lookup fails: estimate 120 + 0 = 120.
+			// Engine 2 routes in 300 s (+30 = 330). The failure used to sort Engine 1 last and pick Engine 2.
+			_geoService.Setup(x => x.GetEtaInSecondsAsync("39.75,-104.95", It.IsAny<string>())).ReturnsAsync(-1);
+			_geoService.Setup(x => x.GetEtaInSecondsAsync("39.76,-104.95", It.IsAny<string>())).ReturnsAsync(300);
+
+			var result = await _service.GetRecommendationAsync(BuildRequest());
+
+			var engine = result.Units.Should().ContainSingle().Subject;
+			engine.UnitId.Should().Be(1);
+			engine.SelectionReason.Should().Be(RecommendationSelectionReasons.ClosestByDistance);
+			engine.EtaSeconds.Should().BeNull();
+			engine.ResponseSeconds.Should().Be(120);
+		}
+
+		[Test]
+		public async Task closest_unit_keeps_a_unit_whose_routed_eta_failed_behind_a_faster_routed_unit()
+		{
+			BuildCard(engineCount: 2);
+			_departmentSettingsService.Setup(x => x.GetDispatchRecommendationModeAsync(DepartmentId, It.IsAny<bool>()))
+				.ReturnsAsync(DispatchRecommendationModes.ClosestUnit);
+			_config.UseRoutedEta = true;
+			_config.InQuartersTurnoutSeconds = 120;
+			_config.MobileTurnoutSeconds = 30;
+
+			_unitsService.Setup(x => x.GetLatestUnitLocationsAsync(DepartmentId))
+				.ReturnsAsync(new List<UnitsLocation>
+				{
+					new UnitsLocation { UnitId = 2, Latitude = 39.77m, Longitude = -104.95m, Timestamp = DateTime.UtcNow }
+				});
+
+			// Station A routes in 60 s (+120 = 180); Engine 2's lookup fails and its estimate is 30 + ~2.2 km of travel.
+			_geoService.Setup(x => x.GetEtaInSecondsAsync("39.75,-104.95", It.IsAny<string>())).ReturnsAsync(60);
+			_geoService.Setup(x => x.GetEtaInSecondsAsync("39.77,-104.95", It.IsAny<string>())).ReturnsAsync(-1);
+
+			var result = await _service.GetRecommendationAsync(BuildRequest());
+
+			result.Units.Select(u => u.UnitId).Should().Equal(1, 2);
+			result.Units[0].SelectionReason.Should().Be(RecommendationSelectionReasons.ClosestByEta);
+			result.Units[0].ResponseSeconds.Should().Be(180);
+			result.Units[1].SelectionReason.Should().Be(RecommendationSelectionReasons.ClosestByDistance);
+			result.Units[1].EtaSeconds.Should().BeNull();
+			result.Units[1].ResponseSeconds.Should().Be(30 + UnitResponseOrigin.EstimateTravelSeconds(result.Units[1].DistanceMeters.Value));
+			result.Units[1].ResponseSeconds.Should().BeGreaterThan(180);
+		}
+
+		[Test]
+		public async Task closest_unit_keeps_the_estimate_order_when_every_routed_eta_fails()
+		{
+			BuildCard(engineCount: 2);
+			_departmentSettingsService.Setup(x => x.GetDispatchRecommendationModeAsync(DepartmentId, It.IsAny<bool>()))
+				.ReturnsAsync(DispatchRecommendationModes.ClosestUnit);
+			_config.UseRoutedEta = true;
+			_config.InQuartersTurnoutSeconds = 120;
+			_config.MobileTurnoutSeconds = 30;
+
+			// Engine 1 is in its station on top of the call (120 s); Engine 2 is out ~500 m away (30 s + travel),
+			// so the estimate order differs from distance order.
+			_unitsService.Setup(x => x.GetLatestUnitLocationsAsync(DepartmentId))
+				.ReturnsAsync(new List<UnitsLocation>
+				{
+					new UnitsLocation { UnitId = 2, Latitude = 39.7545m, Longitude = -104.95m, Timestamp = DateTime.UtcNow }
+				});
+
+			_geoService.Setup(x => x.GetEtaInSecondsAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(-1);
+
+			var result = await _service.GetRecommendationAsync(BuildRequest());
+
+			result.Units.Select(u => u.UnitId).Should().Equal(2, 1);
+			result.Units.Should().OnlyContain(u => u.SelectionReason == RecommendationSelectionReasons.ClosestByDistance && u.EtaSeconds == null);
+			result.Units[0].ResponseSeconds.Should().Be(30 + UnitResponseOrigin.EstimateTravelSeconds(result.Units[0].DistanceMeters.Value));
+			result.Units[1].ResponseSeconds.Should().Be(120);
+		}
+
+		[Test]
+		public async Task closest_unit_ranks_a_responder_whose_routed_eta_failed_on_the_estimate()
+		{
+			BuildCard(roleCount: 1);
+			_departmentSettingsService.Setup(x => x.GetDispatchRecommendationModeAsync(DepartmentId, It.IsAny<bool>()))
+				.ReturnsAsync(DispatchRecommendationModes.ClosestUnit);
+			_config.UseRoutedEta = true;
+
+			var now = DateTime.UtcNow;
+			_personnelLocationResolver.Setup(x => x.GetLatestLocationsAsync(DepartmentId, It.IsAny<int>(), It.IsAny<DateTime?>()))
+				.ReturnsAsync(new Dictionary<string, ResolvedPersonnelLocation>
+				{
+					{ "user-1", new ResolvedPersonnelLocation { UserId = "user-1", Latitude = 39.7501, Longitude = -104.9501, Timestamp = now } },
+					{ "user-2", new ResolvedPersonnelLocation { UserId = "user-2", Latitude = 39.76, Longitude = -104.95, Timestamp = now } }
+				});
+
+			// user-1 is a few metres from the call but the route lookup fails; user-2 routes in 300 s.
+			_geoService.Setup(x => x.GetEtaInSecondsAsync("39.7501,-104.9501", It.IsAny<string>())).ReturnsAsync(-1);
+			_geoService.Setup(x => x.GetEtaInSecondsAsync("39.76,-104.95", It.IsAny<string>())).ReturnsAsync(300);
+
+			var result = await _service.GetRecommendationAsync(BuildRequest());
+
+			var person = result.Personnel.Should().ContainSingle().Subject;
+			person.UserId.Should().Be("user-1");
+			person.SelectionReason.Should().Be(RecommendationSelectionReasons.ClosestByDistance);
+			person.EtaSeconds.Should().BeNull();
+		}
+
+		[Test]
 		public async Task closest_unit_without_a_call_location_measures_from_the_home_station_and_says_so()
 		{
 			var card = BuildCard(engineCount: 1);

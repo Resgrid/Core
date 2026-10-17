@@ -6930,4 +6930,10 @@
   <data name="RuleNext.unit-status-targets" xml:space="preserve">
     <value>Dé significados a las opciones del conjunto, o elija otro significado o una excepción por tipo de unidad en la configuración de despacho.</value>
   </data>
+  <data xml:space="preserve" name="Field.UnitStatusThresholds.AcknowledgementNoteRequirement">
+    <value>Umbrales de estado de unidad / Requisito de nota de confirmación</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.UnitStatusThresholds.AcknowledgementNoteRequirement">
+    <value>Indica si confirmar o silenciar una alerta de temporizador de estado requiere un motivo: opcional, obligatorio para alertas u obligatorio para avisos y alertas. No cambia los temporizadores ni el estado de la unidad.</value>
+  </data>
 </root>

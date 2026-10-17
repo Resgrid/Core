@@ -1520,4 +1520,19 @@
   <data name="StatusMeaningOption" xml:space="preserve">
     <value>Будь-який статус "{0}"</value>
   </data>
+  <data name="UnitStatusAlertNoteRequirementLabel" xml:space="preserve">
+    <value>Причина під час підтвердження</value>
+  </data>
+  <data name="UnitStatusAlertNoteRequirementHelp" xml:space="preserve">
+    <value>Чи має диспетчер вказати причину, коли підтверджує або вимикає звук тривоги таймера статусу на Big Board. Причина зберігається разом із тривогою для аналізу повторюваних затримок.</value>
+  </data>
+  <data name="UnitStatusAlertNoteRequirement_Optional" xml:space="preserve">
+    <value>Необов'язково</value>
+  </data>
+  <data name="UnitStatusAlertNoteRequirement_AtAlert" xml:space="preserve">
+    <value>Обов'язково для тривог</value>
+  </data>
+  <data name="UnitStatusAlertNoteRequirement_Always" xml:space="preserve">
+    <value>Обов'язково для попереджень і тривог</value>
+  </data>
 </root>

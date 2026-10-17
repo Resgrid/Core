@@ -19,6 +19,9 @@ namespace Resgrid.Tests.Services
 		private Mock<ICommunicationService> _communicationService;
 		private Mock<IDepartmentGroupsService> _departmentGroupsService;
 		private Mock<IPersonnelRolesService> _personnelRolesService;
+		private Mock<IDepartmentSettingsService> _departmentSettingsService;
+		private Mock<IShiftsService> _shiftsService;
+		private Mock<IUnitsService> _unitsService;
 		private CallClosureService _service;
 
 		private readonly List<(string UserId, bool Responder, bool IC)> _userNotices = new List<(string, bool, bool)>();
@@ -34,6 +37,9 @@ namespace Resgrid.Tests.Services
 			_communicationService = new Mock<ICommunicationService>();
 			_departmentGroupsService = new Mock<IDepartmentGroupsService>();
 			_personnelRolesService = new Mock<IPersonnelRolesService>();
+			_departmentSettingsService = new Mock<IDepartmentSettingsService>();
+			_shiftsService = new Mock<IShiftsService>();
+			_unitsService = new Mock<IUnitsService>();
 
 			_communicationService.Setup(x => x.SendCallClosedAsync(It.IsAny<Call>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>(),
 					It.IsAny<Department>(), It.IsAny<UserProfile>(), It.IsAny<bool>(), It.IsAny<bool>()))
@@ -48,7 +54,8 @@ namespace Resgrid.Tests.Services
 				.ReturnsAsync(new Department { DepartmentId = 1, Code = "ABCD" });
 
 			_service = new CallClosureService(_incidentCommandService.Object, _communicationService.Object, _departmentGroupsService.Object,
-				_personnelRolesService.Object, departments.Object, Mock.Of<IDepartmentSettingsService>(), Mock.Of<IUserProfileService>());
+				_personnelRolesService.Object, departments.Object, _departmentSettingsService.Object, Mock.Of<IUserProfileService>(),
+				_shiftsService.Object, _unitsService.Object);
 		}
 
 		private static Call DispatchedCall() => new Call
@@ -115,6 +122,75 @@ namespace Resgrid.Tests.Services
 			await _service.NotifyCallClosedAsync(DispatchedCall(), "closer");
 
 			_userNotices.Select(x => x.UserId).Should().Equal("person-1");
+			_unitNotices.Should().Equal(100);
+		}
+
+		[Test]
+		public async Task Notify_WithShiftDispatch_ReachesOnlyTheGroupsOnDutyRosterAtDispatchTime()
+		{
+			// Customer report 2026-10-16: the closing notice reached the whole group although the dispatch only alerted
+			// the people on duty.
+			var dispatchedOn = new DateTime(2026, 10, 15, 22, 30, 0, DateTimeKind.Utc);
+			var call = DispatchedCall();
+			call.LoggedOn = dispatchedOn.AddMinutes(-2);
+			call.LastDispatchedOn = dispatchedOn;
+			call.RoleDispatches = new List<CallDispatchRole>();
+			call.UnitDispatches = new List<CallDispatchUnit>();
+
+			_departmentSettingsService.Setup(x => x.GetDispatchShiftInsteadOfGroupAsync(1)).ReturnsAsync(true);
+			_shiftsService.Setup(x => x.GetOnDutyUserIdsForGroupsAsync(1, It.Is<IEnumerable<int>>(g => g.Single() == 5), dispatchedOn))
+				.ReturnsAsync(new Dictionary<int, List<string>> { { 5, new List<string> { "on-duty-1" } } });
+			_departmentGroupsService.Setup(x => x.GetAllMembersForGroupAsync(5))
+				.ReturnsAsync(new List<DepartmentGroupMember> { new DepartmentGroupMember { UserId = "on-duty-1" }, new DepartmentGroupMember { UserId = "off-duty-1" } });
+
+			await _service.NotifyCallClosedAsync(call, "closer");
+
+			_userNotices.Select(x => x.UserId).Should().BeEquivalentTo(new[] { "person-1", "on-duty-1" });
+		}
+
+		[Test]
+		public async Task Notify_WithShiftDispatch_AndNobodyOnDuty_ReachesTheWholeGroup_AsTheDispatchDid()
+		{
+			var call = DispatchedCall();
+			call.RoleDispatches = new List<CallDispatchRole>();
+			call.UnitDispatches = new List<CallDispatchUnit>();
+
+			_departmentSettingsService.Setup(x => x.GetDispatchShiftInsteadOfGroupAsync(1)).ReturnsAsync(true);
+			_shiftsService.Setup(x => x.GetOnDutyUserIdsForGroupsAsync(1, It.IsAny<IEnumerable<int>>(), It.IsAny<DateTime>()))
+				.ReturnsAsync(new Dictionary<int, List<string>> { { 5, new List<string>() } });
+			_departmentGroupsService.Setup(x => x.GetAllMembersForGroupAsync(5))
+				.ReturnsAsync(new List<DepartmentGroupMember> { new DepartmentGroupMember { UserId = "group-1" }, new DepartmentGroupMember { UserId = "group-2" } });
+
+			await _service.NotifyCallClosedAsync(call, "closer");
+
+			_userNotices.Select(x => x.UserId).Should().BeEquivalentTo(new[] { "person-1", "group-1", "group-2" });
+		}
+
+		[Test]
+		public async Task Notify_ReachesUnitCrewsAndStationGroups_OnlyWhenTheDepartmentAlertsThemOnDispatch()
+		{
+			var call = DispatchedCall();
+			call.GroupDispatches = new List<CallDispatchGroup>();
+			call.RoleDispatches = new List<CallDispatchRole>();
+
+			_unitsService.Setup(x => x.GetCurrentRolesForUnitAsync(100)).ReturnsAsync(new List<UnitStateRole> { new UnitStateRole { UserId = "crew-1" } });
+			_unitsService.Setup(x => x.GetUnitByIdAsync(100)).ReturnsAsync(new Unit { UnitId = 100, StationGroupId = 9 });
+			_departmentGroupsService.Setup(x => x.GetAllMembersForGroupAsync(9))
+				.ReturnsAsync(new List<DepartmentGroupMember> { new DepartmentGroupMember { UserId = "station-1" } });
+
+			await _service.NotifyCallClosedAsync(call, "closer");
+
+			_userNotices.Select(x => x.UserId).Should().Equal("person-1");
+			_unitNotices.Should().Equal(100);
+
+			_userNotices.Clear();
+			_unitNotices.Clear();
+			_departmentSettingsService.Setup(x => x.GetUnitDispatchAlsoDispatchToAssignedPersonnelAsync(1)).ReturnsAsync(true);
+			_departmentSettingsService.Setup(x => x.GetUnitDispatchAlsoDispatchToGroupAsync(1)).ReturnsAsync(true);
+
+			await _service.NotifyCallClosedAsync(call, "closer");
+
+			_userNotices.Select(x => x.UserId).Should().BeEquivalentTo(new[] { "person-1", "crew-1", "station-1" });
 			_unitNotices.Should().Equal(100);
 		}
 

@@ -6930,4 +6930,10 @@
   <data name="RuleNext.unit-status-targets" xml:space="preserve">
     <value>Δώστε σημασίες στις επιλογές του συνόλου ή επιλέξτε άλλη σημασία ή εξαίρεση ανά τύπο μονάδας στις ρυθμίσεις αποστολής.</value>
   </data>
+  <data xml:space="preserve" name="Field.UnitStatusThresholds.AcknowledgementNoteRequirement">
+    <value>Όρια κατάστασης μονάδας / Απαίτηση σημείωσης επιβεβαίωσης</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.UnitStatusThresholds.AcknowledgementNoteRequirement">
+    <value>Αν η επιβεβαίωση ή η σίγαση ενός συναγερμού χρονομέτρου κατάστασης απαιτεί αιτιολογία: προαιρετική, απαιτείται για συναγερμούς ή απαιτείται για προειδοποιήσεις και συναγερμούς. Δεν αλλάζει τα χρονόμετρα ούτε την κατάσταση της μονάδας.</value>
+  </data>
 </root>

@@ -6930,4 +6930,10 @@
   <data name="RuleNext.unit-status-targets" xml:space="preserve">
     <value>Ge uppsättningens alternativ betydelser, eller välj en annan betydelse eller ett undantag per enhetstyp i larminställningarna.</value>
   </data>
+  <data xml:space="preserve" name="Field.UnitStatusThresholds.AcknowledgementNoteRequirement">
+    <value>Tröskelvärden för enhetsstatus / Krav på kvitteringsanteckning</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.UnitStatusThresholds.AcknowledgementNoteRequirement">
+    <value>Om kvittering eller tystning av ett statustimerlarm kräver en orsak: valfri, krävs för larm eller krävs för varningar och larm. Ändrar inte timrarna eller enhetens status.</value>
+  </data>
 </root>

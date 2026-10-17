@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.AdminAssist;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Services
@@ -18,10 +19,13 @@ namespace Resgrid.Services
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IUserProfileService _userProfileService;
+		private readonly IShiftsService _shiftsService;
+		private readonly IUnitsService _unitsService;
 
 		public CallClosureService(IIncidentCommandService incidentCommandService, ICommunicationService communicationService,
 			IDepartmentGroupsService departmentGroupsService, IPersonnelRolesService personnelRolesService, IDepartmentsService departmentsService,
-			IDepartmentSettingsService departmentSettingsService, IUserProfileService userProfileService)
+			IDepartmentSettingsService departmentSettingsService, IUserProfileService userProfileService, IShiftsService shiftsService,
+			IUnitsService unitsService)
 		{
 			_incidentCommandService = incidentCommandService;
 			_communicationService = communicationService;
@@ -30,6 +34,8 @@ namespace Resgrid.Services
 			_departmentsService = departmentsService;
 			_departmentSettingsService = departmentSettingsService;
 			_userProfileService = userProfileService;
+			_shiftsService = shiftsService;
+			_unitsService = unitsService;
 		}
 
 		public async Task<IncidentCommand> GetBlockingIncidentCommandAsync(int departmentId, int callId)
@@ -52,22 +58,11 @@ namespace Resgrid.Services
 			var commandUsers = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 			var unitIds = new HashSet<int>();
 
-			foreach (var dispatch in call.Dispatches ?? Enumerable.Empty<CallDispatch>())
-				AddUser(responderUsers, dispatch.UserId);
-
-			foreach (var groupDispatch in call.GroupDispatches ?? Enumerable.Empty<CallDispatchGroup>())
-			{
-				var members = await _departmentGroupsService.GetAllMembersForGroupAsync(groupDispatch.DepartmentGroupId);
-				foreach (var member in members ?? new List<DepartmentGroupMember>())
-					AddUser(responderUsers, member.UserId);
-			}
-
-			foreach (var roleDispatch in call.RoleDispatches ?? Enumerable.Empty<CallDispatchRole>())
-			{
-				var members = await _personnelRolesService.GetAllMembersOfRoleAsync(roleDispatch.RoleId);
-				foreach (var member in members ?? new List<PersonnelRoleUser>())
-					AddUser(responderUsers, member.UserId);
-			}
+			// The closing notice goes to the people the dispatch alerted, routed the way CallBroadcast routed it, not to
+			// every member of every dispatched group: with "dispatch shift instead of group" on, a group dispatch only
+			// alerted that group's on-duty roster at dispatch time.
+			foreach (var userId in DispatchRecipientResolver.Resolve(GetDispatchedOnUtc(call), await BuildDispatchRoutesAsync(call)).SelectedUserIds)
+				AddUser(responderUsers, userId);
 
 			foreach (var unitDispatch in call.UnitDispatches ?? Enumerable.Empty<CallDispatchUnit>())
 				unitIds.Add(unitDispatch.UnitId);
@@ -149,6 +144,88 @@ namespace Resgrid.Services
 			}
 
 			return notified;
+		}
+
+		/// <summary>
+		/// The call's dispatch routes as CallBroadcast expands them: direct, groups (the on-duty roster when the department
+		/// dispatches shifts instead of groups, every member when that roster is empty), the crews and station groups of
+		/// dispatched units when the department alerts them, then roles. Unit crews are the current crews.
+		/// </summary>
+		private async Task<List<DispatchRoute>> BuildDispatchRoutesAsync(Call call)
+		{
+			var departmentId = call.DepartmentId;
+			var routes = new List<DispatchRoute>();
+
+			foreach (var dispatch in call.Dispatches ?? Enumerable.Empty<CallDispatch>())
+			{
+				if (!string.IsNullOrWhiteSpace(dispatch.UserId))
+					routes.Add(new DispatchRoute(DispatchRouteKind.Direct, "direct", new[] { dispatch.UserId }));
+			}
+
+			var groupIds = (call.GroupDispatches ?? Enumerable.Empty<CallDispatchGroup>()).Select(x => x.DepartmentGroupId).Distinct().ToList();
+
+			if (groupIds.Any())
+			{
+				var useShift = await _departmentSettingsService.GetDispatchShiftInsteadOfGroupAsync(departmentId);
+				var onDuty = useShift
+					? await _shiftsService.GetOnDutyUserIdsForGroupsAsync(departmentId, groupIds, GetDispatchedOnUtc(call))
+					: null;
+				onDuty ??= new Dictionary<int, List<string>>();
+
+				foreach (var groupId in groupIds)
+				{
+					onDuty.TryGetValue(groupId, out var roster);
+					roster ??= new List<string>();
+
+					var members = useShift && roster.Count > 0 ? Array.Empty<string>() :
+						(await _departmentGroupsService.GetAllMembersForGroupAsync(groupId) ?? new List<DepartmentGroupMember>()).Select(x => x.UserId).ToArray();
+					routes.Add(new DispatchRoute(DispatchRouteKind.Group, groupId.ToString(), members, useShift, roster));
+				}
+			}
+
+			var unitDispatches = (call.UnitDispatches ?? Enumerable.Empty<CallDispatchUnit>()).ToList();
+
+			if (unitDispatches.Any())
+			{
+				var crew = await _departmentSettingsService.GetUnitDispatchAlsoDispatchToAssignedPersonnelAsync(departmentId);
+				var group = await _departmentSettingsService.GetUnitDispatchAlsoDispatchToGroupAsync(departmentId);
+
+				foreach (var unitDispatch in unitDispatches)
+				{
+					if (crew)
+					{
+						var members = await _unitsService.GetCurrentRolesForUnitAsync(unitDispatch.UnitId);
+						if (members != null)
+							routes.Add(new DispatchRoute(DispatchRouteKind.UnitCrew, unitDispatch.UnitId.ToString(), members.Select(x => x.UserId).ToArray()));
+					}
+
+					if (group)
+					{
+						var unit = await _unitsService.GetUnitByIdAsync(unitDispatch.UnitId);
+						if (unit?.StationGroupId != null)
+						{
+							var members = await _departmentGroupsService.GetAllMembersForGroupAsync(unit.StationGroupId.Value) ?? new List<DepartmentGroupMember>();
+							routes.Add(new DispatchRoute(DispatchRouteKind.UnitGroup, unit.StationGroupId.Value.ToString(), members.Select(x => x.UserId).ToArray()));
+						}
+					}
+				}
+			}
+
+			foreach (var roleDispatch in call.RoleDispatches ?? Enumerable.Empty<CallDispatchRole>())
+			{
+				var members = await _personnelRolesService.GetAllMembersOfRoleAsync(roleDispatch.RoleId) ?? new List<PersonnelRoleUser>();
+				routes.Add(new DispatchRoute(DispatchRouteKind.Role, roleDispatch.RoleId.ToString(), members.Select(x => x.UserId).ToArray()));
+			}
+
+			return routes;
+		}
+
+		/// <summary>When the call last went out, the instant whose shift roster the broadcast used (CallDispatchStatusService uses the same).</summary>
+		private static DateTime GetDispatchedOnUtc(Call call)
+		{
+			var dispatchedOn = call.LastDispatchedOn ?? call.DispatchOn ?? (call.LoggedOn != default(DateTime) ? call.LoggedOn : DateTime.UtcNow);
+
+			return DateTime.SpecifyKind(dispatchedOn, DateTimeKind.Utc);
 		}
 
 		private static void AddUser(HashSet<string> users, string userId)

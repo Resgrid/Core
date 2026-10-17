@@ -6930,4 +6930,10 @@
   <data name="RuleNext.unit-status-targets" xml:space="preserve">
     <value>امنح خيارات المجموعة معاني، أو اختر معنى آخر أو استثناءً لنوع الوحدة في إعدادات الإرسال.</value>
   </data>
+  <data xml:space="preserve" name="Field.UnitStatusThresholds.AcknowledgementNoteRequirement">
+    <value>حدود حالة الوحدة / اشتراط ملاحظة الإقرار</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.UnitStatusThresholds.AcknowledgementNoteRequirement">
+    <value>ما إذا كان الإقرار بإنذار مؤقت الحالة أو كتمه يتطلب سببًا: اختياري، أو مطلوب للإنذارات، أو مطلوب للتحذيرات والإنذارات. لا يغير المؤقتات ولا حالة الوحدة.</value>
+  </data>
 </root>

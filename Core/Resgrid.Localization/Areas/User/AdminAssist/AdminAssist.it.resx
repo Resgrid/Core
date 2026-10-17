@@ -6930,4 +6930,10 @@
   <data name="RuleNext.unit-status-targets" xml:space="preserve">
     <value>Dai un significato alle opzioni del set, oppure scegli un altro significato o un'eccezione per tipo di unità nelle impostazioni di invio.</value>
   </data>
+  <data xml:space="preserve" name="Field.UnitStatusThresholds.AcknowledgementNoteRequirement">
+    <value>Soglie di stato unità / Obbligo di nota alla presa visione</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.UnitStatusThresholds.AcknowledgementNoteRequirement">
+    <value>Indica se la presa visione o il silenziamento di un allarme del timer di stato richiede un motivo: facoltativo, obbligatorio per gli allarmi oppure obbligatorio per avvisi e allarmi. Non modifica i timer né lo stato dell'unità.</value>
+  </data>
 </root>

@@ -142,6 +142,12 @@ namespace Resgrid.Web.Services.Models.v4.Configs
 		public List<UnitStatusThresholdData> UnitStatusThresholds { get; set; } = new List<UnitStatusThresholdData>();
 
 		/// <summary>
+		/// When acknowledging or muting a status timer alert needs a reason: 0 optional, 1 required at the alert level,
+		/// 2 required for warnings and alerts. The acknowledge endpoint refuses a blank note with unit_alert_note_required.
+		/// </summary>
+		public int UnitStatusAlertNoteRequirement { get; set; }
+
+		/// <summary>
 		/// How many seconds to prevent a duplicate gps location from being logged for personnel
 		/// </summary>
 		public int PersonnelLocationStaleSeconds { get; set; }

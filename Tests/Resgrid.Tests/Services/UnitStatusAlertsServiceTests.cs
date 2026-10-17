@@ -133,6 +133,74 @@ namespace Resgrid.Tests.Services
 			_inserted.Should().BeEmpty();
 		}
 
+		private void GivenNoteRequirement(UnitStatusAlertNoteRequirements requirement) =>
+			_settingsService.Setup(x => x.GetUnitStatusThresholdsAsync(DepartmentId, It.IsAny<bool>())).ReturnsAsync(new UnitStatusThresholds
+			{
+				Thresholds = new List<UnitStatusThreshold> { new UnitStatusThreshold { BaseType = (int)ActionBaseTypes.Dispatched, WarnSeconds = 240, AlertSeconds = 600 } },
+				AcknowledgementNoteRequirement = requirement
+			});
+
+		[TestCase(UnitStatusAlertAcknowledgementModes.Acknowledged)]
+		[TestCase(UnitStatusAlertAcknowledgementModes.Muted)]
+		public async Task A_department_that_requires_a_reason_refuses_a_blank_note(UnitStatusAlertAcknowledgementModes mode)
+		{
+			GivenNoteRequirement(UnitStatusAlertNoteRequirements.Always);
+
+			var result = await Acknowledge(mode: mode, note: "   ");
+
+			result.Success.Should().BeFalse();
+			result.Error.Should().Be(UnitStatusAlertAcknowledgementResult.NoteRequired);
+			_inserted.Should().BeEmpty();
+			_eventAggregator.Verify(x => x.SendMessageAsync(It.IsAny<UnitStatusAlertUpdatedEvent>()), Times.Never);
+		}
+
+		[Test]
+		public async Task A_department_that_requires_a_reason_accepts_one()
+		{
+			GivenNoteRequirement(UnitStatusAlertNoteRequirements.Always);
+
+			var result = await Acknowledge(note: "Crew still at hospital handover");
+
+			result.Success.Should().BeTrue();
+			_inserted.Single().Note.Should().Be("Crew still at hospital handover");
+		}
+
+		[Test]
+		public async Task A_reason_required_only_for_alerts_is_not_asked_for_a_warning()
+		{
+			GivenNoteRequirement(UnitStatusAlertNoteRequirements.AtAlert);
+
+			var result = await Acknowledge(level: UnitStatusAlertLevels.Warn);
+
+			result.Success.Should().BeTrue();
+		}
+
+		[Test]
+		public async Task A_reason_required_only_for_alerts_is_asked_for_an_alert()
+		{
+			GivenNoteRequirement(UnitStatusAlertNoteRequirements.AtAlert);
+			GivenCurrentState(UnitStateId, DateTime.UtcNow.AddMinutes(-11));
+
+			var result = await Acknowledge(level: UnitStatusAlertLevels.Alert);
+
+			result.Error.Should().Be(UnitStatusAlertAcknowledgementResult.NoteRequired);
+			_inserted.Should().BeEmpty();
+		}
+
+		[Test]
+		public async Task A_board_that_still_shows_the_warning_is_judged_at_the_warning()
+		{
+			// The alert fired as the dispatcher acted on the warning. The warning is recorded without a reason, and the alert
+			// comes straight back, where the reason is asked for.
+			GivenNoteRequirement(UnitStatusAlertNoteRequirements.AtAlert);
+			GivenCurrentState(UnitStateId, DateTime.UtcNow.AddMinutes(-11));
+
+			var result = await Acknowledge(level: UnitStatusAlertLevels.Warn);
+
+			result.Success.Should().BeTrue();
+			_inserted.Single().Level.Should().Be((int)UnitStatusAlertLevels.Warn);
+		}
+
 		[Test]
 		public async Task A_unit_in_another_department_is_not_found()
 		{

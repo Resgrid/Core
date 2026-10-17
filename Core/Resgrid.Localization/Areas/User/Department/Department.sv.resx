@@ -1520,4 +1520,19 @@
   <data name="StatusMeaningOption" xml:space="preserve">
     <value>Alla statusar "{0}"</value>
   </data>
+  <data name="UnitStatusAlertNoteRequirementLabel" xml:space="preserve">
+    <value>Orsak vid kvittering</value>
+  </data>
+  <data name="UnitStatusAlertNoteRequirementHelp" xml:space="preserve">
+    <value>Om en utalarmerare måste ange en orsak när ett statustimerlarm kvitteras eller tystas på Big Board. Orsaken sparas med larmet för uppföljning av återkommande förseningar.</value>
+  </data>
+  <data name="UnitStatusAlertNoteRequirement_Optional" xml:space="preserve">
+    <value>Valfri</value>
+  </data>
+  <data name="UnitStatusAlertNoteRequirement_AtAlert" xml:space="preserve">
+    <value>Krävs för larm</value>
+  </data>
+  <data name="UnitStatusAlertNoteRequirement_Always" xml:space="preserve">
+    <value>Krävs för varningar och larm</value>
+  </data>
 </root>

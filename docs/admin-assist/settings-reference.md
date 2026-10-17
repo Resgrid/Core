@@ -2304,6 +2304,13 @@ Unit Status Thresholds / Thresholds. Board highlighting thresholds grouped by ba
 
 Default: empty. Source: UnitStatusThresholds.Thresholds.
 
+<a id="field-unitstatusthresholds-acknowledgementnoterequirement"></a>
+## Unit Status Thresholds / Acknowledgement Note Requirement
+
+Unit Status Thresholds / Acknowledgement Note Requirement. Whether acknowledging or muting a status timer alert needs a reason: optional, required for alerts, or required for warnings and alerts. It does not change the timers or the unit status.
+
+Default: Optional. Source: UnitStatusThresholds.AcknowledgementNoteRequirement.
+
 <a id="field-unitstatusthreshold-basetype"></a>
 ## Unit Status Threshold / Base Type
 

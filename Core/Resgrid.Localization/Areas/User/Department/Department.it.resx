@@ -1520,4 +1520,19 @@
   <data name="StatusMeaningOption" xml:space="preserve">
     <value>Qualsiasi stato "{0}"</value>
   </data>
+  <data name="UnitStatusAlertNoteRequirementLabel" xml:space="preserve">
+    <value>Motivo alla presa visione</value>
+  </data>
+  <data name="UnitStatusAlertNoteRequirementHelp" xml:space="preserve">
+    <value>Indica se un operatore deve inserire un motivo quando prende visione o silenzia un allarme del timer di stato sul Big Board. Il motivo resta associato all'allarme per seguire i ritardi ricorrenti.</value>
+  </data>
+  <data name="UnitStatusAlertNoteRequirement_Optional" xml:space="preserve">
+    <value>Facoltativo</value>
+  </data>
+  <data name="UnitStatusAlertNoteRequirement_AtAlert" xml:space="preserve">
+    <value>Obbligatorio per gli allarmi</value>
+  </data>
+  <data name="UnitStatusAlertNoteRequirement_Always" xml:space="preserve">
+    <value>Obbligatorio per avvisi e allarmi</value>
+  </data>
 </root>

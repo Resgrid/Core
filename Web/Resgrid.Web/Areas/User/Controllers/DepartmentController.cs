@@ -3035,6 +3035,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.MapStyle = await _departmentSettingsService.GetMappingMapStyleAsync(DepartmentId, true);
 			model.MapStyleNight = await _departmentSettingsService.GetMappingMapStyleNightAsync(DepartmentId, true);
 			model.UnitStatusThresholds = await BuildUnitStatusThresholdRowsAsync();
+			model.UnitStatusAlertNoteRequirement = (await _departmentSettingsService.GetUnitStatusThresholdsAsync(DepartmentId)).AcknowledgementNoteRequirement;
 			await PopulateMapStyleContextAsync(model);
 
 			return View(model);
@@ -3111,7 +3112,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 							WarnSeconds = Math.Min(Math.Max(0, x.WarnMinutes), int.MaxValue / 60) * 60,
 							AlertSeconds = Math.Min(Math.Max(0, x.AlertMinutes), int.MaxValue / 60) * 60
 						})
-						.ToList()
+						.ToList(),
+					AcknowledgementNoteRequirement = model.UnitStatusAlertNoteRequirement
 				}, cancellationToken);
 
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.PersonnelLocationTTL.ToString(),

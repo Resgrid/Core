@@ -1520,4 +1520,19 @@
   <data name="StatusMeaningOption" xml:space="preserve">
     <value>Tout statut "{0}"</value>
   </data>
+  <data name="UnitStatusAlertNoteRequirementLabel" xml:space="preserve">
+    <value>Motif lors de l'acquittement</value>
+  </data>
+  <data name="UnitStatusAlertNoteRequirementHelp" xml:space="preserve">
+    <value>Indique si un répartiteur doit saisir un motif lorsqu'il acquitte ou met en sourdine une alerte de minuterie de statut sur le Big Board. Le motif reste associé à l'alerte pour le suivi des retards récurrents.</value>
+  </data>
+  <data name="UnitStatusAlertNoteRequirement_Optional" xml:space="preserve">
+    <value>Facultatif</value>
+  </data>
+  <data name="UnitStatusAlertNoteRequirement_AtAlert" xml:space="preserve">
+    <value>Obligatoire pour les alertes</value>
+  </data>
+  <data name="UnitStatusAlertNoteRequirement_Always" xml:space="preserve">
+    <value>Obligatoire pour les avertissements et les alertes</value>
+  </data>
 </root>

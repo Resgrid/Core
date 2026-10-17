@@ -6930,4 +6930,10 @@
   <data name="RuleNext.unit-status-targets" xml:space="preserve">
     <value>Geben Sie den Optionen des Satzes Bedeutungen oder wählen Sie in den Dispositionseinstellungen eine andere Bedeutung oder eine Überschreibung nach Einheitentyp.</value>
   </data>
+  <data xml:space="preserve" name="Field.UnitStatusThresholds.AcknowledgementNoteRequirement">
+    <value>Einheitenstatus-Schwellenwerte / Pflicht zur Bestätigungsnotiz</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.UnitStatusThresholds.AcknowledgementNoteRequirement">
+    <value>Ob das Bestätigen oder Stummschalten eines Statustimer-Alarms eine Begründung erfordert: optional, erforderlich bei Alarmen oder erforderlich bei Warnungen und Alarmen. Timer und Einheitenstatus bleiben unverändert.</value>
+  </data>
 </root>

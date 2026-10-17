@@ -108,23 +108,48 @@ namespace Resgrid.Providers.Migrations.Migrations
 					return;
 
 				foreach (var (id, content) in batch)
+					SplitRow(connection, transaction, table, paths, id, content);
+				after = batch[batch.Count - 1].Id;
+			}
+		}
+
+		private const int RowAttempts = 5;
+
+		/// <summary>
+		/// Splits one row. The UPDATE matches only the Content that was split, so a row an app instance rewrote in between is
+		/// never overwritten with a split of the stale value: it is read again and its current Content split. Version 274
+		/// runs once, so a row skipped here would stay unsplit for good; one that keeps changing fails the migration, which
+		/// then resumes on the next run.
+		/// </summary>
+		public static void SplitRow(IDbConnection connection, IDbTransaction transaction, string table, string[] paths, string id, string content)
+		{
+			for (var attempt = 1; content != null; attempt++)
+			{
+				var (metadata, hidden) = SplitJson(content, paths);
+				if (hidden == null)
+					return;
+				using (var update = connection.CreateCommand())
 				{
-					var (metadata, hidden) = SplitJson(content, paths);
-					if (hidden == null)
-						continue;
-					using var update = connection.CreateCommand();
 					update.Transaction = transaction;
 					update.CommandTimeout = 300;
-					// Only the Content this batch read: a row an app instance rewrote since the SELECT is left for the next run
-					// instead of being overwritten with a split of the stale value. Binary collation so the match is exact.
+					// Binary collation so the match is exact.
 					update.CommandText = $"UPDATE [{table}] SET [Content] = @content, [ProtectedContent] = @hidden WHERE [Id] = @id AND [ProtectedContent] IS NULL AND [Content] COLLATE Latin1_General_BIN2 = @original";
 					AddParameter(update, "@content", metadata);
 					AddParameter(update, "@hidden", hidden);
 					AddParameter(update, "@id", id);
 					AddParameter(update, "@original", content);
-					update.ExecuteNonQuery();
+					if (update.ExecuteNonQuery() > 0)
+						return;
 				}
-				after = batch[batch.Count - 1].Id;
+				if (attempt >= RowAttempts)
+					throw new InvalidOperationException($"{table} row {id} kept changing while it was being split; run the migration again.");
+				// Gone, already split by the application, sealed or emptied: nothing is left to split.
+				using var reread = connection.CreateCommand();
+				reread.Transaction = transaction;
+				reread.CommandTimeout = 300;
+				reread.CommandText = $"SELECT [Content] FROM [{table}] WHERE [Id] = @id AND [ProtectedContent] IS NULL AND [Content] NOT LIKE 'rgdp%'";
+				AddParameter(reread, "@id", id);
+				content = reread.ExecuteScalar() as string;
 			}
 		}
 

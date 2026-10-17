@@ -25,6 +25,7 @@ namespace Resgrid.Services
 		private readonly ICallNotesRepository _callNotesRepository;
 		private readonly ICacheProvider _cacheProvider;
 		private readonly IEventAggregator _eventAggregator;
+		private readonly Resgrid.Model.Repositories.Queries.IUnitOfWork _unitOfWork;
 
 		public WeatherAlertService(
 			IWeatherAlertRepository weatherAlertRepository,
@@ -36,7 +37,8 @@ namespace Resgrid.Services
 			ICommunicationService communicationService,
 			ICallNotesRepository callNotesRepository,
 			ICacheProvider cacheProvider,
-			IEventAggregator eventAggregator)
+			IEventAggregator eventAggregator,
+			Resgrid.Model.Repositories.Queries.IUnitOfWork unitOfWork)
 		{
 			_weatherAlertRepository = weatherAlertRepository;
 			_weatherAlertSourceRepository = weatherAlertSourceRepository;
@@ -48,6 +50,7 @@ namespace Resgrid.Services
 			_callNotesRepository = callNotesRepository;
 			_cacheProvider = cacheProvider;
 			_eventAggregator = eventAggregator;
+			_unitOfWork = unitOfWork;
 		}
 
 		#region Source CRUD
@@ -80,10 +83,27 @@ namespace Resgrid.Services
 				return false;
 
 			// WeatherAlerts.WeatherAlertSourceId is a non-nullable FK with no cascade, so the
-			// source's alerts have to go first or the source delete fails with a 547.
-			await _weatherAlertRepository.DeleteAlertsBySourceIdAsync(source.WeatherAlertSourceId, ct);
+			// source's alerts have to go first or the source delete fails with a 547. Both deletes
+			// share one transaction: if the source delete fails (e.g. the poller added an alert in
+			// between), the alerts come back instead of being lost while the source remains.
+			var owns = _unitOfWork.Transaction == null;
+			await _unitOfWork.CreateOrGetConnectionAsync(ct);
+			try
+			{
+				await _weatherAlertRepository.DeleteAlertsBySourceIdAsync(source.WeatherAlertSourceId, ct);
+				var deleted = await _weatherAlertSourceRepository.DeleteAsync(source, ct);
 
-			return await _weatherAlertSourceRepository.DeleteAsync(source, ct);
+				if (owns)
+					_unitOfWork.CommitChanges();
+
+				return deleted;
+			}
+			catch
+			{
+				if (owns)
+					_unitOfWork.DiscardChanges();
+				throw;
+			}
 		}
 
 		#endregion

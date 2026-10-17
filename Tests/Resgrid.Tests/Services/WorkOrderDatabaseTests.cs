@@ -245,6 +245,34 @@ namespace Resgrid.Tests.Services
             await db.ExecuteAsync($"DELETE FROM {Q("WorkOrderLabors")} WHERE {Q("Id")}=@Id", new { Id = id });
             _runner.GetRequiredService<IVersionLoader>().LoadVersionInfo(); runner.MigrateUp();
         }
+        /// <summary>
+        /// M0274 runs once: a row an application instance rewrote between the batch read and the split UPDATE must be read
+        /// again and its current Content split, neither overwritten with the stale split nor left unsplit for good.
+        /// </summary>
+        [Test, Order(21)]
+        public async Task Split_migration_resplits_a_row_rewritten_after_the_batch_read()
+        {
+            string id;
+            using (var uow = new UnitOfWork(Connections()))
+            {
+                var store = Orders(uow); await uow.CreateOrGetConnectionAsync(); await store.LockDepartmentAsync(77); var row = await Insert(store);
+                var labor = new WorkOrderLabor { DepartmentId = 77, WorkOrderId = row.Id, UserId = "author", CreatedBy = "author", CreatedOn = DateTime.UtcNow, UpdatedOn = DateTime.UtcNow, WorkDate = DateTime.UtcNow };
+                await store.AllocateAsync(labor); id = labor.Id; uow.CommitChanges();
+            }
+            const string stale = "{\"Currency\":\"USD\",\"Hours\":1,\"Note\":\"Stale synthetic note\"}";
+            const string current = "{\"Currency\":\"USD\",\"Hours\":2,\"Note\":\"Current synthetic note\"}";
+            await using var db = Connect(_connection); await db.OpenAsync();
+            await db.ExecuteAsync($"UPDATE {Q("WorkOrderLabors")} SET {Q("Content")}=@Current, {Q("ProtectedContent")}=NULL WHERE {Q("Id")}=@Id", new { Current = current, Id = id });
+
+            if (_type == DatabaseTypes.Postgres) M0274_SplitModuleProtectedContentPg.SplitRow(db, null, "workorderlabors", M0274_SplitModuleProtectedContentPg.Rules["WorkOrderLabors"], id, stale);
+            else M0274_SplitModuleProtectedContent.SplitRow(db, null, "WorkOrderLabors", M0274_SplitModuleProtectedContent.Rules["WorkOrderLabors"], id, stale);
+
+            var content = await db.QuerySingleAsync<string>($"SELECT {Q("Content")} FROM {Q("WorkOrderLabors")} WHERE {Q("Id")}=@Id", new { Id = id });
+            var hidden = await db.QuerySingleAsync<string>($"SELECT {Q("ProtectedContent")} FROM {Q("WorkOrderLabors")} WHERE {Q("Id")}=@Id", new { Id = id });
+            JToken.DeepEquals(JObject.Parse(content), JObject.Parse("{\"Currency\":\"USD\",\"Hours\":2}")).Should().BeTrue(content);
+            JToken.DeepEquals(JObject.Parse(hidden), JObject.Parse("{\"Note\":\"Current synthetic note\"}")).Should().BeTrue(hidden);
+            await db.ExecuteAsync($"DELETE FROM {Q("WorkOrderLabors")} WHERE {Q("Id")}=@Id", new { Id = id });
+        }
         [Test, Order(1000)]
         public void Populated_migration_refuses_destructive_rollback()
         {

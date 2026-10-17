@@ -31,6 +31,7 @@ namespace Resgrid.Tests.Services
 			protected readonly Mock<ICallNotesRepository> _callNotesRepoMock;
 			protected readonly Mock<ICacheProvider> _cacheProviderMock;
 			protected readonly Mock<IEventAggregator> _eventAggregatorMock;
+			protected readonly Mock<Resgrid.Model.Repositories.Queries.IUnitOfWork> _unitOfWorkMock;
 
 			protected const int TestDepartmentId = 500;
 			protected readonly Guid TestSourceId = Guid.NewGuid();
@@ -48,6 +49,7 @@ namespace Resgrid.Tests.Services
 				_callNotesRepoMock = new Mock<ICallNotesRepository>();
 				_cacheProviderMock = new Mock<ICacheProvider>();
 				_eventAggregatorMock = new Mock<IEventAggregator>();
+				_unitOfWorkMock = new Mock<Resgrid.Model.Repositories.Queries.IUnitOfWork>();
 
 				_weatherAlertService = new WeatherAlertService(
 					_weatherAlertRepoMock.Object,
@@ -59,7 +61,8 @@ namespace Resgrid.Tests.Services
 					_communicationServiceMock.Object,
 					_callNotesRepoMock.Object,
 					_cacheProviderMock.Object,
-					_eventAggregatorMock.Object);
+					_eventAggregatorMock.Object,
+					_unitOfWorkMock.Object);
 			}
 		}
 
@@ -198,6 +201,10 @@ namespace Resgrid.Tests.Services
 		[TestFixture]
 		public class when_deleting_a_source : with_the_weather_alert_service
 		{
+			// The mocks live for the whole fixture: start each test with a fresh unit of work (no caller transaction).
+			[SetUp]
+			public void ResetUnitOfWork() => _unitOfWorkMock.Reset();
+
 			[Test]
 			public async Task should_return_true_when_source_exists()
 			{
@@ -248,6 +255,41 @@ namespace Resgrid.Tests.Services
 
 				result.Should().BeTrue();
 				calls.Should().Equal("alerts", "source");
+				_unitOfWorkMock.Verify(x => x.CommitChanges(), Times.Once);
+			}
+
+			[Test]
+			public async Task should_roll_back_the_alert_delete_when_the_source_delete_fails()
+			{
+				// The poller can add an alert between the two deletes; the source delete then fails on the FK.
+				var source = new WeatherAlertSource { WeatherAlertSourceId = TestSourceId, DepartmentId = TestDepartmentId };
+				_weatherAlertSourceRepoMock.Setup(x => x.GetByIdAsync(TestSourceId.ToString())).ReturnsAsync(source);
+				_weatherAlertRepoMock.Setup(x => x.DeleteAlertsBySourceIdAsync(TestSourceId, It.IsAny<CancellationToken>())).ReturnsAsync(3);
+				_weatherAlertSourceRepoMock
+					.Setup(x => x.DeleteAsync(It.IsAny<WeatherAlertSource>(), It.IsAny<CancellationToken>()))
+					.ThrowsAsync(new InvalidOperationException("synthetic FK_WeatherAlerts_WeatherAlertSources violation"));
+
+				Func<Task> delete = () => _weatherAlertService.DeleteSourceAsync(TestSourceId);
+
+				await delete.Should().ThrowAsync<InvalidOperationException>();
+				_unitOfWorkMock.Verify(x => x.CreateOrGetConnectionAsync(It.IsAny<CancellationToken>()), Times.Once);
+				_unitOfWorkMock.Verify(x => x.DiscardChanges(), Times.Once);
+				_unitOfWorkMock.Verify(x => x.CommitChanges(), Times.Never);
+			}
+
+			[Test]
+			public async Task should_join_a_caller_owned_transaction_without_completing_it()
+			{
+				var source = new WeatherAlertSource { WeatherAlertSourceId = TestSourceId, DepartmentId = TestDepartmentId };
+				_weatherAlertSourceRepoMock.Setup(x => x.GetByIdAsync(TestSourceId.ToString())).ReturnsAsync(source);
+				_weatherAlertSourceRepoMock.Setup(x => x.DeleteAsync(It.IsAny<WeatherAlertSource>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
+				_unitOfWorkMock.SetupGet(x => x.Transaction).Returns(new Mock<System.Data.Common.DbTransaction>().Object);
+
+				var result = await _weatherAlertService.DeleteSourceAsync(TestSourceId);
+
+				result.Should().BeTrue();
+				_unitOfWorkMock.Verify(x => x.CommitChanges(), Times.Never);
+				_unitOfWorkMock.Verify(x => x.DiscardChanges(), Times.Never);
 			}
 
 			[Test]

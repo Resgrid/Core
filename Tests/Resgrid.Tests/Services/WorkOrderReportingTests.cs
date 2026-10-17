@@ -102,6 +102,22 @@ namespace Resgrid.Tests.Services
             var html = ChecklistReportDocuments.Packet(manifest); html.Should().Contain(input.Content.Title).And.NotContain("Future title");
         }
         [Test]
+        public async Task P2M4_call_packet_shows_generated_order_titles_to_a_reader_without_a_grant()
+        {
+            var at = DateTime.UtcNow.AddDays(-1);
+            var version = new WorkOrderRecurrenceVersion { DepartmentId = 77, RecurrenceId = Guid.NewGuid().ToString("D"), CreatedBy = "manager", CreatedOn = at.AddDays(-2), UpdatedOn = at.AddDays(-2) };
+            await _store.AllocateAsync(version);
+            version.Content = JsonConvert.SerializeObject(new WorkOrderRecurrenceInput { Template = new WorkOrderInput { Content = new WorkOrderContent { Title = "Synthetic recurring inspection" } } });
+            await _store.WriteAsync(version);
+            // A generated order is allocated without Content; its title comes from the immutable recurrence version.
+            var row = new WorkOrder { DepartmentId = 77, CreatedBy = "manager", RequestId = Guid.NewGuid().ToString("D"), NumberYear = at.Year, CreatedOn = at.AddDays(-1), UpdatedOn = at.AddDays(-1),
+                TargetUnitId = 10, SourceType = 2, RecurrenceVersionId = version.Id };
+            await _store.AllocateAsync(row);
+            _read.SetReturnsDefault(Task.FromResult(new ProtectedReadResult { IsProtected = true, RedactedFields = { "workorderrecurrenceversions.protectedcontent" } }));
+            var section = await _service.ReadinessEvidenceAsync(_actor, at.AddDays(-30), at, new[] { 10 }, Array.Empty<string>());
+            section.Items.Should().ContainSingle(); section.Items[0].Title.Should().Be("Synthetic recurring inspection"); section.HistoryUnavailable.Should().BeFalse();
+        }
+        [Test]
         public async Task P2M4_legacy_mutations_report_unavailable_instead_of_inventing_past_state()
         {
             var at = DateTime.UtcNow.AddDays(-2); var row = await ReportSeed(at.AddDays(-1));

@@ -77,7 +77,7 @@ namespace Resgrid.Services
                 foreach (var row in fresh)
                 {
                     if (checkRevision && group.Single(x => x.Id == row.Id).Revision != row.Revision) throw new WorkOrderException(409, "Conflict");
-                    await PopulateOrderContentAsync(actor, row); // Generated orders additionally require access to their immutable protected template.
+                    await PopulateOrderContentAsync(actor, row, display); // Generated orders additionally require access to their immutable protected template.
                 }
             }
         }

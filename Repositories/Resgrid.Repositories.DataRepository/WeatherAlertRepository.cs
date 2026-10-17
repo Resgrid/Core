@@ -9,6 +9,7 @@ using Resgrid.Repositories.DataRepository.Queries.WeatherAlerts;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Resgrid.Repositories.DataRepository
@@ -289,6 +290,43 @@ namespace Resgrid.Repositories.DataRepository
 				{
 					conn = _unitOfWork.CreateOrGetConnection();
 					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				throw;
+			}
+		}
+
+		public async Task<int> DeleteAlertsBySourceIdAsync(Guid sourceId, CancellationToken cancellationToken = default)
+		{
+			try
+			{
+				var deleteFunction = new Func<DbConnection, Task<int>>(async x =>
+				{
+					var dynamicParameters = new DynamicParametersExtension();
+					// Passed as a string: the Postgres column is citext, and SQL Server converts it to uniqueidentifier.
+					dynamicParameters.Add("SourceId", sourceId.ToString());
+
+					var query = _queryFactory.GetDeleteQuery<DeleteWeatherAlertsBySourceIdQuery>();
+
+					return await x.ExecuteAsync(query, dynamicParameters, _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync(cancellationToken);
+						return await deleteFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await deleteFunction(conn);
 				}
 			}
 			catch (Exception ex)

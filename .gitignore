@@ -287,3 +287,4 @@ opencode.json
 /docs/*
 !/docs/admin-assist/
 .claude/settings.local.json
+*.stackdump

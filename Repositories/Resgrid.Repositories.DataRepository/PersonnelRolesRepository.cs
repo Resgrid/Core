@@ -224,7 +224,8 @@ namespace Resgrid.Repositories.DataRepository
 				foreach (var reference in new[] { ("PersonnelRoleUsers", "PersonnelRoleId"), ("CallDispatchRoles", "RoleId"),
 					("ShiftGroupRoles", "PersonnelRoleId"), ("CommandDefinitionRolePersonnelRoles", "PersonnelRoleId"),
 					("RunCardRoleRequirements", "PersonnelRoleId"), ("StationCoverageRequirements", "PersonnelRoleId"),
-					("ChatChannelAccessRules", "PersonnelRoleId"), ("UnitRoles", "PersonnelRoleId") })
+					("ChatChannelAccessRules", "PersonnelRoleId"), ("UnitRoles", "PersonnelRoleId"),
+					("PersonnelRoleCertificationRequirements", "PersonnelRoleId"), ("ResourceOrderSettings", "RoleAllowedToFulfilOrdersRoleId") })
 					counts[reference.Item1] = await ScalarAsync<int>($"SELECT COUNT(*) FROM {Tbl(reference.Item1)} WHERE {Col(reference.Item2)}={P}Id", new { Id = personnelRoleId }, cancellationToken);
 				var value = Newtonsoft.Json.JsonConvert.SerializeObject(counts);
 				return new(Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(value))), value);
@@ -243,10 +244,12 @@ namespace Resgrid.Repositories.DataRepository
 				var notation = _sqlConfiguration.ParameterNotation;
 				var schema = _sqlConfiguration.SchemaName;
 
-				// Every table below points at PersonnelRoles. CallDispatchRoles is the one with a
-				// non-cascading FK, so leaving any of these behind blocks the role delete outright.
+				// Every table below points at PersonnelRoles. CallDispatchRoles,
+				// PersonnelRoleCertificationRequirements and ResourceOrderSettings have non-cascading FKs,
+				// so leaving any of these behind blocks the role delete outright.
 				// UnitRoles only names the role as an optional qualification for a seat, so the
-				// requirement is cleared rather than the seat being deleted.
+				// requirement is cleared rather than the seat being deleted. ResourceOrderSettings names it
+				// as the optional role allowed to fill orders; it is cleared the same way (null = no role named).
 				var sql = DataConfig.DatabaseType == DatabaseTypes.Postgres
 					? $@"DELETE FROM {schema}.personnelroleusers WHERE personnelroleid = {notation}RoleId;
 						 DELETE FROM {schema}.calldispatchroles WHERE roleid = {notation}RoleId;
@@ -255,7 +258,9 @@ namespace Resgrid.Repositories.DataRepository
 						 DELETE FROM {schema}.runcardrolerequirements WHERE personnelroleid = {notation}RoleId;
 						 DELETE FROM {schema}.stationcoveragerequirements WHERE personnelroleid = {notation}RoleId;
 						 DELETE FROM {schema}.chatchannelaccessrules WHERE personnelroleid = {notation}RoleId;
-						 UPDATE {schema}.unitroles SET personnelroleid = NULL, personnelrolerequired = false WHERE personnelroleid = {notation}RoleId;"
+						 DELETE FROM {schema}.personnelrolecertificationrequirements WHERE personnelroleid = {notation}RoleId;
+						 UPDATE {schema}.unitroles SET personnelroleid = NULL, personnelrolerequired = false WHERE personnelroleid = {notation}RoleId;
+						 UPDATE {schema}.resourceordersettings SET roleallowedtofulfilordersroleid = NULL WHERE roleallowedtofulfilordersroleid = {notation}RoleId;"
 					: $@"DELETE FROM {schema}.[PersonnelRoleUsers] WHERE [PersonnelRoleId] = {notation}RoleId;
 						 DELETE FROM {schema}.[CallDispatchRoles] WHERE [RoleId] = {notation}RoleId;
 						 DELETE FROM {schema}.[ShiftGroupRoles] WHERE [PersonnelRoleId] = {notation}RoleId;
@@ -263,7 +268,9 @@ namespace Resgrid.Repositories.DataRepository
 						 DELETE FROM {schema}.[RunCardRoleRequirements] WHERE [PersonnelRoleId] = {notation}RoleId;
 						 DELETE FROM {schema}.[StationCoverageRequirements] WHERE [PersonnelRoleId] = {notation}RoleId;
 						 DELETE FROM {schema}.[ChatChannelAccessRules] WHERE [PersonnelRoleId] = {notation}RoleId;
-						 UPDATE {schema}.[UnitRoles] SET [PersonnelRoleId] = NULL, [PersonnelRoleRequired] = 0 WHERE [PersonnelRoleId] = {notation}RoleId;";
+						 DELETE FROM {schema}.[PersonnelRoleCertificationRequirements] WHERE [PersonnelRoleId] = {notation}RoleId;
+						 UPDATE {schema}.[UnitRoles] SET [PersonnelRoleId] = NULL, [PersonnelRoleRequired] = 0 WHERE [PersonnelRoleId] = {notation}RoleId;
+						 UPDATE {schema}.[ResourceOrderSettings] SET [RoleAllowedToFulfilOrdersRoleId] = NULL WHERE [RoleAllowedToFulfilOrdersRoleId] = {notation}RoleId;";
 
 				var executeFunction = new Func<DbConnection, Task<bool>>(async x =>
 				{

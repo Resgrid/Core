@@ -206,12 +206,12 @@ namespace Resgrid.Tests.Services
         [Test, Order(20)]
         public async Task Split_migration_moves_existing_private_members_merges_them_back_and_refuses_a_sealed_rollback()
         {
-            string id;
+            string id, orderId;
             using (var uow = new UnitOfWork(Connections()))
             {
                 var store = Orders(uow); await uow.CreateOrGetConnectionAsync(); await store.LockDepartmentAsync(77); var row = await Insert(store);
                 var labor = new WorkOrderLabor { DepartmentId = 77, WorkOrderId = row.Id, UserId = "author", CreatedBy = "author", CreatedOn = DateTime.UtcNow, UpdatedOn = DateTime.UtcNow, WorkDate = DateTime.UtcNow };
-                await store.AllocateAsync(labor); id = labor.Id; uow.CommitChanges();
+                await store.AllocateAsync(labor); id = labor.Id; orderId = row.Id; uow.CommitChanges();
             }
             const string whole = "{\"Currency\":\"USD\",\"Hours\":2.5,\"RatePerHour\":40.00,\"Note\":\"Paramedic Reyes on overtime\"}";
             await using var db = Connect(_connection);
@@ -232,10 +232,16 @@ namespace Resgrid.Tests.Services
             runner.MigrateUp();
             (await Read()).Content.Should().NotContain("Reyes", "re-applying splits the row again");
 
+            // WorkOrders comes before WorkOrderLabors in the rules: a sealed labor row must stop the rollback before the order is merged.
+            const string orderHidden = "{\"Fields\":{\"Description\":\"Synthetic private description\"}}";
+            await db.ExecuteAsync($"UPDATE {Q("WorkOrders")} SET {Q("ProtectedContent")}=@Hidden WHERE {Q("Id")}=@Id", new { Hidden = orderHidden, Id = orderId });
             await db.ExecuteAsync($"UPDATE {Q("WorkOrderLabors")} SET {Q("ProtectedContent")}='rgdp:1:1:c2VhbGVk' WHERE {Q("Id")}=@Id", new { Id = id });
             Action sealedRollback = () => runner.MigrateDown(273);
             sealedRollback.Should().Throw<Exception>().WithMessage("*sealed*");
             (await Read()).Hidden.Should().Be("rgdp:1:1:c2VhbGVk");
+            (await db.QuerySingleAsync<string>($"SELECT {Q("ProtectedContent")} FROM {Q("WorkOrders")} WHERE {Q("Id")}=@Id", new { Id = orderId })).Should().Be(orderHidden, "no table is merged while any table holds a sealed part");
+            (await db.QuerySingleAsync<string>($"SELECT {Q("Content")} FROM {Q("WorkOrders")} WHERE {Q("Id")}=@Id", new { Id = orderId })).Should().NotContain("Synthetic private description");
+            await db.ExecuteAsync($"UPDATE {Q("WorkOrders")} SET {Q("ProtectedContent")}=NULL WHERE {Q("Id")}=@Id", new { Id = orderId });
             await db.ExecuteAsync($"DELETE FROM {Q("WorkOrderLabors")} WHERE {Q("Id")}=@Id", new { Id = id });
             _runner.GetRequiredService<IVersionLoader>().LoadVersionInfo(); runner.MigrateUp();
         }

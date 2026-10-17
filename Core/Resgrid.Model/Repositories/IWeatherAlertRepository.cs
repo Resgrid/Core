@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Resgrid.Model.Repositories
@@ -13,5 +14,6 @@ namespace Resgrid.Model.Repositories
 		Task<IEnumerable<WeatherAlert>> GetExpiredUnprocessedAlertsAsync();
 		Task<IEnumerable<WeatherAlert>> GetUnnotifiedAlertsAsync();
 		Task<IEnumerable<WeatherAlert>> GetAlertHistoryByDepartmentAsync(int departmentId, DateTime startDate, DateTime endDate);
+		Task<int> DeleteAlertsBySourceIdAsync(Guid sourceId, CancellationToken cancellationToken = default);
 	}
 }

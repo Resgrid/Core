@@ -42,6 +42,10 @@ namespace Resgrid.Providers.Migrations.Migrations
 		{
 			Execute.WithConnection((connection, transaction) =>
 			{
+				// Every table is checked before any is merged: batches autocommit, so a refusal on a later table would
+				// otherwise leave the earlier ones merged into plaintext Content with ProtectedContent still in place.
+				foreach (var table in Rules.Keys)
+					EnsureNoSealed(connection, transaction, table);
 				foreach (var table in Rules.Keys)
 					MergeBack(connection, transaction, table);
 			});
@@ -111,29 +115,35 @@ namespace Resgrid.Providers.Migrations.Migrations
 					using var update = connection.CreateCommand();
 					update.Transaction = transaction;
 					update.CommandTimeout = 300;
-					update.CommandText = $"UPDATE [{table}] SET [Content] = @content, [ProtectedContent] = @hidden WHERE [Id] = @id AND [ProtectedContent] IS NULL";
+					// Only the Content this batch read: a row an app instance rewrote since the SELECT is left for the next run
+					// instead of being overwritten with a split of the stale value. Binary collation so the match is exact.
+					update.CommandText = $"UPDATE [{table}] SET [Content] = @content, [ProtectedContent] = @hidden WHERE [Id] = @id AND [ProtectedContent] IS NULL AND [Content] COLLATE Latin1_General_BIN2 = @original";
 					AddParameter(update, "@content", metadata);
 					AddParameter(update, "@hidden", hidden);
 					AddParameter(update, "@id", id);
+					AddParameter(update, "@original", content);
 					update.ExecuteNonQuery();
 				}
 				after = batch[batch.Count - 1].Id;
 			}
 		}
 
+		private static void EnsureNoSealed(IDbConnection connection, IDbTransaction transaction, string table)
+		{
+			if (!HasColumn(connection, transaction, table))
+				return;
+			using var sealedRows = connection.CreateCommand();
+			sealedRows.Transaction = transaction;
+			sealedRows.CommandTimeout = 300;
+			sealedRows.CommandText = $"SELECT COUNT(*) FROM [{table}] WHERE [ProtectedContent] LIKE 'rgdp%'";
+			if (Convert.ToInt64(sealedRows.ExecuteScalar()) > 0)
+				throw new InvalidOperationException($"{table} holds sealed ProtectedContent; it cannot be merged back into Content.");
+		}
+
 		private static void MergeBack(IDbConnection connection, IDbTransaction transaction, string table)
 		{
 			if (!HasColumn(connection, transaction, table))
 				return;
-			using (var sealedRows = connection.CreateCommand())
-			{
-				sealedRows.Transaction = transaction;
-				sealedRows.CommandTimeout = 300;
-				sealedRows.CommandText = $"SELECT COUNT(*) FROM [{table}] WHERE [ProtectedContent] LIKE 'rgdp%'";
-				if (Convert.ToInt64(sealedRows.ExecuteScalar()) > 0)
-					throw new InvalidOperationException($"{table} holds sealed ProtectedContent; it cannot be merged back into Content.");
-			}
-
 			var after = "";
 			while (true)
 			{

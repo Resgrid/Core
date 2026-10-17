@@ -147,12 +147,15 @@ namespace Resgrid.Tests.Services
 		}
 
 		[TestCase(InventoryReportKind.Usage)]
-		public async Task M5_reports_fail_closed_on_protected_data_without_partial_output_or_writes(InventoryReportKind kind)
+		public async Task M5_reports_redact_ledger_notes_without_a_grant_and_never_write(InventoryReportKind kind)
 		{
+			// ADP review section 8: a report shows ledger metadata to every reader; the note is the private member and reads REDACTED.
 			var item = Item(); var location = Location(); SeedStock(item, location, 2); M5Ledger(item, location, null, 1, InventoryTransactionType.Consume);
-			_read.SetReturnsDefault(Task.FromResult(new ProtectedReadResult { IsProtected = true, RedactedFields = new() { "inventorytransactions.content" } }));
-			await Fails(() => _service.BuildReportAsync(_actor, new InventoryReportInput { Kind = kind }), "ProtectedDataRequired", 403);
-			_transaction.Should().BeNull(); Stock(item, location).Should().Be(2); _events.Should().BeEmpty(); _audits.Should().BeEmpty(); _uow.Verify(x => x.CommitChanges(), Times.Never);
+			_read.SetReturnsDefault(Task.FromResult(new ProtectedReadResult { IsProtected = true, RedactedFields = new() { "inventorytransactions.protectedcontent" } }));
+			var report = await _service.BuildReportAsync(_actor, new InventoryReportInput { Kind = kind });
+			report.Rows.Should().ContainSingle(); report.Rows[0]["Name"].Should().Be("Frozen item"); report.Rows[0]["Amount"].Should().Be(1m);
+			report.Rows[0]["Note"].Should().Be(ProtectedDataEnvelope.RedactionValue); JsonConvert.SerializeObject(report).Should().NotContain("ledger-note");
+			_transaction.Should().BeNull(); Stock(item, location).Should().Be(2); _events.Should().BeEmpty(); _audits.Should().BeEmpty(); _uow.Verify(x => x.CommitChanges(), Times.Once);
 		}
 
 		[TestCase(InventoryReportKind.OnHand)]

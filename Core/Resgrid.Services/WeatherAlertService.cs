@@ -79,6 +79,10 @@ namespace Resgrid.Services
 			if (source == null)
 				return false;
 
+			// WeatherAlerts.WeatherAlertSourceId is a non-nullable FK with no cascade, so the
+			// source's alerts have to go first or the source delete fails with a 547.
+			await _weatherAlertRepository.DeleteAlertsBySourceIdAsync(source.WeatherAlertSourceId, ct);
+
 			return await _weatherAlertSourceRepository.DeleteAsync(source, ct);
 		}
 

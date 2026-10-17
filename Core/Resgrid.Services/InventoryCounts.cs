@@ -23,6 +23,7 @@ namespace Resgrid.Services
 		// a unit's count. Fingerprints without the marker (department-wide counts, and counts started before the scoped fence)
 		// keep the department fence.
 		private const string ScopedCountFingerprint = "L1:";
+		private const int SnapshotFingerprintLength = 64;
 		private async Task<string> ScopedCountFingerprintAsync(int departmentId, ICollection<string> locations, IEnumerable<InventoryCountItem> lines)
 		{
 			var listed = lines.ToList();
@@ -44,13 +45,15 @@ namespace Resgrid.Services
 			var assets = allAssets.Values.Where(x => x.CurrentLocationId != null && locations.Contains(x.CurrentLocationId) || fencedAssets.Contains(x.Id)).OrderBy(x => x.Id).ToList();
 			var items = listed.Select(l => l.ItemId).Concat(stocks.Select(s => s.ItemId)).Concat(assets.Select(a => a.ItemId)).ToHashSet();
 			var lots = listed.Select(l => l.LotId).Concat(stocks.Select(s => s.LotId)).Concat(assets.Select(a => a.LotId)).Where(x => x != null).ToHashSet();
+			// SnapshotFingerprint is exactly 64 characters (CK_InventoryCounts_Fingerprint), so the marker displaces the tail of the
+			// hash: 61 hex digits (244 bits) remain, still far beyond any accidental collision.
 			return ScopedCountFingerprint + Fingerprint(new {
 				Items = (await AllAsync<InventoryItem>(departmentId)).Where(x => items.Contains(x.Id)).OrderBy(x => x.Id).Select(x => new { x.Id, x.Revision }),
 				Stocks = stocks.Select(x => new { x.Id, x.Revision, x.Quantity }),
 				Assets = assets.Select(x => new { x.Id, x.Revision }),
 				Lots = (await AllAsync<InventoryLot>(departmentId)).Where(x => lots.Contains(x.Id)).OrderBy(x => x.Id).Select(x => new { x.Id, x.Revision }),
 				Locations = allLocations.Values.Where(x => fencedLocations.Contains(x.Id)).OrderBy(x => x.Id).Select(x => new { x.Id, x.Revision })
-			});
+			})[..(SnapshotFingerprintLength - ScopedCountFingerprint.Length)];
 		}
 		/// <summary>The root location plus, when asked, every compartment (child location) and kit container inside it, recursively.</summary>
 		private async Task<HashSet<string>> CountLocationsAsync(int departmentId, string rootId, bool includeChildren)

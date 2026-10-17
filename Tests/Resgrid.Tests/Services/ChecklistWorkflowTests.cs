@@ -88,8 +88,9 @@ namespace Resgrid.Tests.Services
 			var noted = await Start(); var input = Answers(noted.Form, "fail"); input.Note = "Engineer reported chest pain";
 			await _service.SaveRunAsync(_actor, noted.Run, input, true);
 			_read.SetReturnsDefault(Task.FromResult(new ProtectedReadResult { IsProtected = true }));
-			Func<Task> history = () => _service.HistoryAsync(_actor, noted.Definition);
-			(await history.Should().ThrowAsync<ChecklistException>("a completion note still in plaintext fails closed")).Which.StatusCode.Should().Be(403);
+			// History is a display read: a completion note still in plaintext is redacted, never handed to the reader.
+			var history = await _service.HistoryAsync(_actor, noted.Definition);
+			history.Should().ContainSingle(); JsonConvert.SerializeObject(history).Should().NotContain("chest pain", "a plaintext private note never reaches a reader without a grant");
 		}
 		[Test]
 		public async Task Published_version_is_pinned_and_draft_edits_do_not_change_a_started_run()

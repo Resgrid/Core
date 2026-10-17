@@ -220,15 +220,48 @@ namespace Resgrid.Tests.Services
 			}
 
 			[Test]
+			public async Task should_delete_the_sources_alerts_before_the_source()
+			{
+				// WeatherAlerts.WeatherAlertSourceId is a non-cascading FK; deleting the source
+				// first fails with FK_WeatherAlerts_WeatherAlertSources.
+				var source = new WeatherAlertSource
+				{
+					WeatherAlertSourceId = TestSourceId,
+					DepartmentId = TestDepartmentId
+				};
+
+				var calls = new List<string>();
+
+				_weatherAlertSourceRepoMock
+					.Setup(x => x.GetByIdAsync(TestSourceId.ToString()))
+					.ReturnsAsync(source);
+				_weatherAlertRepoMock
+					.Setup(x => x.DeleteAlertsBySourceIdAsync(TestSourceId, It.IsAny<CancellationToken>()))
+					.Callback(() => calls.Add("alerts"))
+					.ReturnsAsync(3);
+				_weatherAlertSourceRepoMock
+					.Setup(x => x.DeleteAsync(It.IsAny<WeatherAlertSource>(), It.IsAny<CancellationToken>()))
+					.Callback(() => calls.Add("source"))
+					.ReturnsAsync(true);
+
+				var result = await _weatherAlertService.DeleteSourceAsync(TestSourceId);
+
+				result.Should().BeTrue();
+				calls.Should().Equal("alerts", "source");
+			}
+
+			[Test]
 			public async Task should_return_false_when_source_not_found()
 			{
 				_weatherAlertSourceRepoMock
 					.Setup(x => x.GetByIdAsync(It.IsAny<string>()))
 					.ReturnsAsync((WeatherAlertSource)null);
 
-				var result = await _weatherAlertService.DeleteSourceAsync(Guid.NewGuid());
+				var missingSourceId = Guid.NewGuid();
+				var result = await _weatherAlertService.DeleteSourceAsync(missingSourceId);
 
 				result.Should().BeFalse();
+				_weatherAlertRepoMock.Verify(x => x.DeleteAlertsBySourceIdAsync(missingSourceId, It.IsAny<CancellationToken>()), Times.Never);
 			}
 		}
 

@@ -41,15 +41,18 @@ namespace Resgrid.Tests.Services
 			JsonConvert.SerializeObject(_events).Should().NotContain("SYNTHETIC-SENSITIVE");
 		}
 		[Test]
-		public async Task Calendar_uses_stable_virtual_ids_tenant_scope_and_redacted_titles_without_copying_notes()
+		public async Task Calendar_uses_stable_virtual_ids_tenant_scope_and_schedule_names_without_copying_notes()
 		{
 			var setup = await Scheduled(); await _service.SweepSchedulesAsync(setup.Clock.Now.UtcDateTime);
 			var from = setup.Clock.Now.UtcDateTime; var entries = await _service.CalendarAsync(_actor, from, from.AddDays(8));
 			entries.Should().HaveCount(7).And.OnlyContain(e => e.Id == "checklist:" + e.OccurrenceId && !e.IsRedacted);
 			JsonConvert.SerializeObject(entries).Should().NotContain("SYNTHETIC-SENSITIVE-NOTES");
 			(await _service.CalendarAsync(new ChecklistActor { DepartmentId = 88, UserId = "foreign" }, from, from.AddDays(8))).Should().BeEmpty();
-			_read.SetReturnsDefault(Task.FromResult(new ProtectedReadResult { RedactedFields = { "checklistschedules.content" } }));
-			(await _service.CalendarAsync(_actor, from, from.AddDays(8))).Should().OnlyContain(e => e.IsRedacted && e.Title == "REDACTED");
+			// A schedule name is metadata (ADP review section 8): a reader without a grant still sees it; only the notes are private.
+			_read.SetReturnsDefault(Task.FromResult(new ProtectedReadResult { IsProtected = true, RedactedFields = { "checklistschedules.protectedcontent" } }));
+			var withoutGrant = await _service.CalendarAsync(_actor, from, from.AddDays(8));
+			withoutGrant.Should().HaveCount(7).And.OnlyContain(e => !e.IsRedacted); withoutGrant.Select(e => e.Title).Should().Equal(entries.Select(e => e.Title));
+			JsonConvert.SerializeObject(withoutGrant).Should().NotContain("SYNTHETIC-SENSITIVE-NOTES");
 			_authorization.Setup(a => a.TargetAsync(_actor, It.IsAny<ChecklistTargetType>(), It.IsAny<string>())).ThrowsAsync(new ChecklistException(404, "Target is unavailable."));
 			(await _service.CalendarAsync(_actor, from, from.AddDays(8))).Should().BeEmpty();
 			Func<Task> excessive = () => _service.CalendarAsync(_actor, from, from.AddDays(94)); (await excessive.Should().ThrowAsync<ChecklistException>()).Which.StatusCode.Should().Be(400);

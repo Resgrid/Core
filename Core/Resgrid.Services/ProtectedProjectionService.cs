@@ -136,10 +136,12 @@ namespace Resgrid.Services
 			if (await ChannelAllowsProtectedContentAsync(departmentId, channel) && !HasAnyEnvelopedCallField(call))
 				return call;
 
-			// Sanitized clone: only the allowlisted system-generated call number, priority/color,
-			// and routing/structural fields survive (plan section 9.1). Every cataloged user-authored
-			// field is absent, so any downstream template, provider DTO, or TTS prompt built from
-			// this clone is value-free by construction.
+			// Sanitized clone (plan section 9.1): the call's operational data survives — number, name, type, priority,
+			// state, address, location, What3Words and identifiers are not private (2026-10-17) — while every cataloged
+			// field (nature, notes, caller identity, form data, subject identifiers) is absent, so any downstream
+			// template, provider DTO, or TTS prompt built from this clone carries no protected value by construction.
+			string Plain(string value) => ProtectedDataEnvelope.HasEnvelopePrefix(value) ? null : value;
+			var name = Plain(call.Name);
 			return new Call
 			{
 				CallId = call.CallId,
@@ -151,9 +153,17 @@ namespace Resgrid.Services
 				State = call.State,
 				IsCritical = call.IsCritical,
 				LoggedOn = call.LoggedOn,
-				Name = string.IsNullOrWhiteSpace(call.Number)
+				Name = !string.IsNullOrWhiteSpace(name) ? name : string.IsNullOrWhiteSpace(call.Number)
 					? SystemMessagesResources.Get("AdpProtectedDispatchName", culture)
 					: call.Number,
+				Type = Plain(call.Type),
+				CallTypeId = call.CallTypeId,
+				Address = Plain(call.Address),
+				GeoLocationData = Plain(call.GeoLocationData),
+				W3W = Plain(call.W3W),
+				IncidentNumber = Plain(call.IncidentNumber),
+				ReferenceNumber = Plain(call.ReferenceNumber),
+				ExternalIdentifier = Plain(call.ExternalIdentifier),
 				NatureOfCall = SystemMessagesResources.Get("AdpProtectedDispatchNotice", culture)
 			};
 		}

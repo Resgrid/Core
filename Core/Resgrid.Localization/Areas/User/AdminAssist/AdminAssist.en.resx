@@ -6936,4 +6936,13 @@
   <data xml:space="preserve" name="FieldHelp.UnitStatusThresholds.AcknowledgementNoteRequirement">
     <value>Whether acknowledging or muting a status timer alert needs a reason: optional, required for alerts, or required for warnings and alerts. It does not change the timers or the unit status.</value>
   </data>
+  <data name="Rule.unit-status-timers" xml:space="preserve">
+    <value>Dispatched units that can't be timed</value>
+  </data>
+  <data name="RuleWhy.unit-status-timers" xml:space="preserve">
+    <value>Unit status timers are set, but some unit types go on dispatch to a status with no meaning, or to a meaning with no timer. The Big Board never flags those units, however long they wait.</value>
+  </data>
+  <data name="RuleNext.unit-status-timers" xml:space="preserve">
+    <value>Give the dispatch status a meaning in Custom Statuses, or set a timer for its meaning in Mapping Settings.</value>
+  </data>
 </root>

@@ -1593,4 +1593,25 @@
   <data name="UnitStatusAlertNoteRequirement_Always" xml:space="preserve">
     <value>مطلوب للتحذيرات والإنذارات</value>
   </data>
+  <data name="UnitStatusTimerWarningsHeader" xml:space="preserve">
+    <value>لا يمكن توقيت بعض الوحدات</value>
+  </data>
+  <data name="UnitStatusTimerDispatchNoMeaning" xml:space="preserve">
+    <value>عند التوزيع، تنتقل {0} إلى "{1}" التي ليس لها معنى، لذا لا يتم توقيت الوحدات الموزعة أبدًا. امنح "{1}" معنى (مثل: تم التوزيع) في الحالات المخصصة.</value>
+  </data>
+  <data name="UnitStatusTimerDispatchNoTimer" xml:space="preserve">
+    <value>عند التوزيع، تنتقل {0} إلى "{1}" ({2})، لكن لا يوجد مؤقت لـ {2}.</value>
+  </data>
+  <data name="UnitStatusTimerSetNoMeaning" xml:space="preserve">
+    <value>تحتوي مجموعة الحالات "{0}" (المستخدمة من قبل {1}) على حالات بلا معنى لا يمكن تطبيق أي مؤقت عليها: {2}.</value>
+  </data>
+  <data name="UnitStatusTimerWarningsCustomStatuses" xml:space="preserve">
+    <value>تعديل الحالات المخصصة</value>
+  </data>
+  <data name="UnitStatusTimerWarningsDispatchSettings" xml:space="preserve">
+    <value>تعديل إعدادات التوزيع</value>
+  </data>
+  <data name="UnitStatusOverrideNoMeaning" xml:space="preserve">
+    <value>{0}: يعيّن التجاوز "{1}" عند {2}، لكن هذه الحالة ليس لها معنى، لذا لا يمكن لمؤقتات الحالة وقواعد التحرير وبطاقات التشغيل التعرف عليها. امنحها معنى في الحالات المخصصة.</value>
+  </data>
 </root>

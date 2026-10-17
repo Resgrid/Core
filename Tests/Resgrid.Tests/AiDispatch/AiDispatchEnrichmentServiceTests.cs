@@ -48,6 +48,7 @@ namespace Resgrid.Tests.AiDispatch
 		private Mock<IAiBackgroundAdmission> _admission;
 		private Mock<IAiUsageMeter> _usage;
 		private Mock<ILlmClient> _llm;
+		private Mock<IDecisionClient> _decider;
 		private Mock<IEventAggregator> _events;
 		private Call _call;
 		private Call _related;
@@ -57,10 +58,18 @@ namespace Resgrid.Tests.AiDispatch
 		private AiDispatchEnrichmentService _service;
 		private (bool, string, bool, string, string, string, string, string, int) _savedConfig;
 		private (bool, double, int) _savedDispatch;
+		private (bool, int, double, string, string, string, string, string, bool, string) _savedDecision;
+		private string _savedProvider;
 
 		[SetUp]
 		public void SetUp()
 		{
+			_savedDecision = (AiDispatchConfig.DecisionsEnabled, AiDispatchConfig.DecisionTimeoutMilliseconds, AiDispatchConfig.SkipGenerationNotDispatchProbability, AiConfig.DecisionEndpoint,
+				AiConfig.DecisionApiKey, AiConfig.DecisionModel, AiConfig.DecisionModelRevision, AiConfig.DecisionRuntimeDigest, AiConfig.SendCacheSalt, AiConfig.CacheSaltKey);
+			_savedProvider = AiConfig.DecisionProvider;
+			AiDispatchConfig.DecisionsEnabled = false;
+			AiConfig.SendCacheSalt = true;
+			AiConfig.CacheSaltKey = "";
 			_savedConfig = (AiDispatchConfig.EnrichEnabled, AiConfig.Endpoint, AiConfig.AllowPrivateEndpoint, AiConfig.ApiKey, AiConfig.Model, AiConfig.ModelRevision,
 				AiConfig.RuntimeDigest, AiConfig.SelfHostedDepartmentIds, AiConfig.MonthlyTokenLimit);
 			_savedDispatch = (AiDispatchConfig.EnrichEnabled, AiDispatchConfig.MinimumConfidence, AiDispatchConfig.AdmissionWaitSeconds);
@@ -116,14 +125,19 @@ namespace Resgrid.Tests.AiDispatch
 			_llm = new Mock<ILlmClient>();
 			Reply(new { isDispatch = true, confidence = 0.92, title = "Structure fire, 123 Main St", callTypeId = 11, priorityId = 21, address = "123 Main St.",
 				contactName = "Jane Q Public", contactNumber = "555-123-4567", incidentNumber = "F26-00417", possibleDuplicateOfCallId = (int?)null, summary = "Structure fire reported at 123 Main St." });
+			_decider = new Mock<IDecisionClient>(MockBehavior.Strict);
 			_events = new Mock<IEventAggregator>();
 			_service = new AiDispatchEnrichmentService(_access.Object, Mock.Of<IFeatureToggleService>(), _departments.Object, _calls.Object, _geo.Object,
-				_protection.Object, _audits.Object, _settings.Object, _admission.Object, _usage.Object, new Lazy<ILlmClient>(() => _llm.Object), _events.Object, new FixedClock());
+				_protection.Object, _audits.Object, _settings.Object, _admission.Object, _usage.Object, new Lazy<ILlmClient>(() => _llm.Object),
+				new Lazy<IDecisionClient>(() => _decider.Object), _events.Object, new FixedClock());
 		}
 
 		[TearDown]
 		public void TearDown()
 		{
+			(AiDispatchConfig.DecisionsEnabled, AiDispatchConfig.DecisionTimeoutMilliseconds, AiDispatchConfig.SkipGenerationNotDispatchProbability, AiConfig.DecisionEndpoint,
+				AiConfig.DecisionApiKey, AiConfig.DecisionModel, AiConfig.DecisionModelRevision, AiConfig.DecisionRuntimeDigest, AiConfig.SendCacheSalt, AiConfig.CacheSaltKey) = _savedDecision;
+			AiConfig.DecisionProvider = _savedProvider;
 			(AiDispatchConfig.EnrichEnabled, AiConfig.Endpoint, AiConfig.AllowPrivateEndpoint, AiConfig.ApiKey, AiConfig.Model, AiConfig.ModelRevision,
 				AiConfig.RuntimeDigest, AiConfig.SelfHostedDepartmentIds, AiConfig.MonthlyTokenLimit) = _savedConfig;
 			(AiDispatchConfig.EnrichEnabled, AiDispatchConfig.MinimumConfidence, AiDispatchConfig.AdmissionWaitSeconds) = _savedDispatch;
@@ -401,6 +415,203 @@ namespace Resgrid.Tests.AiDispatch
 			await Enrich();
 
 			_audits.Verify(a => a.PruneAsync(DepartmentId, new DateTime(2026, 6, 27, 12, 0, 0, DateTimeKind.Utc), It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		// Decision model (Clef / Clef-Flash): per-field probabilities over the department's own lists replace the generative model's
+		// classification and self-reported confidence; each model degrades to the other.
+
+		private DecisionRequest _decisionRequest;
+
+		private static void EnableDecisions()
+		{
+			AiDispatchConfig.DecisionsEnabled = true;
+			AiDispatchConfig.DecisionTimeoutMilliseconds = 5000;
+			AiDispatchConfig.SkipGenerationNotDispatchProbability = 0.9;
+			AiConfig.DecisionProvider = DecisionProviders.SelfHosted;
+			AiConfig.DecisionEndpoint = "https://decide.example.invalid/v1/systemone";
+			AiConfig.DecisionApiKey = "unit-test-only";
+			AiConfig.DecisionModel = "Cloudflare/clef-flash";
+			AiConfig.DecisionModelRevision = new string('c', 40);
+			AiConfig.DecisionRuntimeDigest = "sha256:" + new string('d', 64);
+		}
+
+		private void Decide(double dispatch, string callType, double callTypeProbability, string priority, double priorityProbability, string duplicate, double duplicateProbability)
+		{
+			static DecisionAnswer Choice(string choice, double probability) => new(choice, probability, new Dictionary<string, double> { [choice] = probability });
+			_decider.Setup(d => d.DecideAsync(It.IsAny<DecisionRequest>(), It.IsAny<CancellationToken>()))
+				.Callback((DecisionRequest r, CancellationToken _) => _decisionRequest = r)
+				.ReturnsAsync(new DecisionResult(new Dictionary<string, DecisionAnswer>
+				{
+					[AiDispatchDecisions.IsDispatchQuestion] = new(dispatch >= 0.5 ? "true" : "false", Math.Max(dispatch, 1 - dispatch), new Dictionary<string, double> { ["true"] = dispatch, ["false"] = 1 - dispatch }),
+					[AiDispatchDecisions.CallTypeQuestion] = Choice(callType, callTypeProbability),
+					[AiDispatchDecisions.PriorityQuestion] = Choice(priority, priorityProbability),
+					[AiDispatchDecisions.DuplicateQuestion] = Choice(duplicate, duplicateProbability)
+				}, 400));
+		}
+
+		[Test]
+		public async Task The_decision_model_classifies_the_generative_model_extracts_and_both_are_audited()
+		{
+			EnableDecisions();
+			Reply(new { isDispatch = true, confidence = 0.92, title = "Structure fire, 123 Main St", callTypeId = (int?)null, priorityId = 22, address = "123 Main St.",
+				contactName = "Jane Q Public", contactNumber = "555-123-4567", incidentNumber = "F26-00417", possibleDuplicateOfCallId = (int?)null, summary = "Structure fire reported at 123 Main St." });
+			Decide(0.97, "t11", 0.9, "p21", 0.8, AiDispatchDecisions.None, 0.95);
+
+			(await Enrich()).Should().Be(AiDispatchOutcomes.Applied);
+
+			var saved = _saved.Single();
+			saved.Type.Should().Be("Structure Fire", "the call type comes from the decision model even though the generative model left it empty");
+			saved.Address.Should().Be("123 Main St.");
+			_notes.Single().Note.Should().Contain("Suggested priority: High.", "the decision model's priority replaces the generative model's");
+			_decisionRequest.State.Should().Contain("STRUCTURE FIRE");
+			_decisionRequest.Questions.Single(q => q.Id == AiDispatchDecisions.DuplicateQuestion).Options.Select(o => o.Id).Should().Equal(AiDispatchDecisions.None, "c301");
+			_llm.Verify(l => l.CompleteAsync(It.Is<LlmRequest>(r => r.CacheSalt != null), It.IsAny<CancellationToken>()), Times.Once);
+			_completed.Confidence.Should().Be(0.97m);
+			_completed.ModelName.Should().Be("Qwen/Qwen3-14B-AWQ");
+			_completed.DecisionModelName.Should().Be("Cloudflare/clef-flash");
+			_completed.DecisionPromptVersion.Should().Be(AiDispatchDecisions.Version);
+			_completed.DecisionModelRevision.Should().Be(new string('c', 40));
+			_completed.DecisionInputTokens.Should().Be(400);
+			_usage.Verify(u => u.CompleteAsync(It.Is<AiUsageReservation>(r => r.Id == "r1"), 1400, "Answered", It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task A_message_the_decision_model_is_sure_is_not_a_dispatch_never_reaches_the_generative_model()
+		{
+			EnableDecisions();
+			Decide(0.04, "t11", 0.9, AiDispatchDecisions.None, 0.9, AiDispatchDecisions.None, 0.9);
+
+			(await Enrich()).Should().Be(AiDispatchOutcomes.Applied);
+
+			_saved.Should().BeEmpty();
+			_notes.Single().Note.Should().Contain("may not be a dispatch");
+			_llm.Verify(l => l.CompleteAsync(It.IsAny<LlmRequest>(), It.IsAny<CancellationToken>()), Times.Never);
+			_completed.ModelName.Should().BeNull("the audit names only models that were asked");
+			_completed.DecisionModelName.Should().Be("Cloudflare/clef-flash");
+			_usage.Verify(u => u.CompleteAsync(It.IsAny<AiUsageReservation>(), 400, "Answered", It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task With_the_generative_model_down_the_decision_model_still_fills_the_call_type_only()
+		{
+			EnableDecisions();
+			_llm.Setup(l => l.CompleteAsync(It.IsAny<LlmRequest>(), It.IsAny<CancellationToken>())).ThrowsAsync(new LlmUnavailableException());
+			Decide(0.95, "t11", 0.85, "p21", 0.4, AiDispatchDecisions.None, 0.9);
+
+			(await Enrich()).Should().Be(AiDispatchOutcomes.Applied);
+
+			var saved = _saved.Single();
+			saved.Type.Should().Be("Structure Fire");
+			saved.Address.Should().BeNull("extraction needs the generative model");
+			saved.Name.Should().Be("Dispatch Email");
+			_notes.Should().BeEmpty("a priority below the confidence floor is not suggested and there is no summary");
+			_usage.Verify(u => u.CompleteAsync(It.IsAny<AiUsageReservation>(), 400, "Answered", It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task With_the_decision_model_down_the_generative_classification_stands()
+		{
+			EnableDecisions();
+			_decider.Setup(d => d.DecideAsync(It.IsAny<DecisionRequest>(), It.IsAny<CancellationToken>())).ThrowsAsync(new LlmUnavailableException());
+
+			(await Enrich()).Should().Be(AiDispatchOutcomes.Applied);
+
+			_saved.Single().Type.Should().Be("Structure Fire");
+			_notes.Single().Note.Should().Contain("Suggested priority: High.");
+			_completed.DecisionModelName.Should().BeNull();
+			_completed.Confidence.Should().Be(0.92m);
+			_usage.Verify(u => u.CompleteAsync(It.IsAny<AiUsageReservation>(), 1000, "Answered", It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task A_call_type_below_the_floor_stays_empty_while_verbatim_fields_still_fill()
+		{
+			EnableDecisions();
+			Decide(0.95, "t11", 0.45, "p21", 0.9, AiDispatchDecisions.None, 0.9);
+
+			(await Enrich()).Should().Be(AiDispatchOutcomes.Applied);
+
+			var saved = _saved.Single();
+			saved.Type.Should().BeNull("the decision model was unsure and its answer outranks the generative model's");
+			saved.Address.Should().Be("123 Main St.");
+		}
+
+		[Test]
+		public async Task An_answer_outside_the_department_lists_discards_the_decision()
+		{
+			EnableDecisions();
+			Decide(0.95, "t999", 0.99, "p21", 0.9, AiDispatchDecisions.None, 0.9);
+
+			(await Enrich()).Should().Be(AiDispatchOutcomes.Applied);
+
+			_saved.Single().Type.Should().Be("Structure Fire", "the generative model's allowlisted call type stands");
+			_completed.DecisionModelName.Should().BeNull();
+		}
+
+		[Test]
+		public async Task Only_the_decision_model_configured_classifies_without_any_generation()
+		{
+			EnableDecisions();
+			AiConfig.Endpoint = "";
+			Decide(0.95, "t11", 0.9, AiDispatchDecisions.None, 0.9, AiDispatchDecisions.None, 0.9);
+
+			(await Enrich()).Should().Be(AiDispatchOutcomes.Applied);
+
+			_saved.Single().Type.Should().Be("Structure Fire");
+			_llm.Verify(l => l.CompleteAsync(It.IsAny<LlmRequest>(), It.IsAny<CancellationToken>()), Times.Never);
+
+			_decider.Setup(d => d.DecideAsync(It.IsAny<DecisionRequest>(), It.IsAny<CancellationToken>())).ThrowsAsync(new LlmUnavailableException());
+			_audits.Setup(a => a.TryClaimAsync(It.IsAny<AiDispatchAuditRow>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
+			_call.Type = null;
+			_saved.Clear();
+			(await Enrich()).Should().Be(AiDispatchOutcomes.Unavailable);
+			_saved.Should().BeEmpty();
+		}
+
+		[Test]
+		public async Task Decisions_stay_off_until_the_host_enables_them_and_pins_the_model()
+		{
+			EnableDecisions();
+			AiConfig.DecisionRuntimeDigest = "latest";
+
+			(await Enrich()).Should().Be(AiDispatchOutcomes.Applied);
+
+			_decider.Verify(d => d.DecideAsync(It.IsAny<DecisionRequest>(), It.IsAny<CancellationToken>()), Times.Never);
+			AiDispatchEnrichmentService.DecisionConfigured().Should().BeFalse();
+		}
+
+		private const string WorkersAiEndpoint = "https://api.cloudflare.com/client/v4/accounts/0123456789abcdef0123456789abcdef/ai/run/@cf/cloudflare/clef-flash";
+
+		private static void EnableWorkersAi()
+		{
+			EnableDecisions();
+			AiConfig.DecisionProvider = DecisionProviders.WorkersAi;
+			AiConfig.DecisionEndpoint = WorkersAiEndpoint;
+			AiConfig.DecisionModelRevision = "";
+			AiConfig.DecisionRuntimeDigest = "";
+		}
+
+		[Test]
+		public async Task Call_content_never_goes_to_Workers_AI_and_the_local_model_classifies_instead()
+		{
+			EnableWorkersAi();
+			AiDecisionSettings.Resolve(AiConfig.DecisionProvider, AiConfig.DecisionEndpoint, false, AiConfig.DecisionApiKey, AiConfig.DecisionModel, "", "")
+				.Should().NotBeNull("the Workers AI settings themselves are valid");
+
+			(await Enrich()).Should().Be(AiDispatchOutcomes.Applied);
+
+			AiDispatchEnrichmentService.DecisionConfigured().Should().BeFalse("call messages carry PII and PHI");
+			_decider.Verify(d => d.DecideAsync(It.IsAny<DecisionRequest>(), It.IsAny<CancellationToken>()), Times.Never);
+			_saved.Single().Type.Should().Be("Structure Fire", "the self-hosted generative model's classification stands");
+			_completed.DecisionModelName.Should().BeNull();
+		}
+
+		[Test]
+		public void Every_dispatch_decision_request_is_department_content()
+		{
+			var context = new AiDispatchContext(Body, new[] { new AiDispatchChoice(11, "Structure Fire") }, Array.Empty<AiDispatchChoice>(), Array.Empty<AiDispatchCandidateCall>());
+
+			AiDispatchDecisions.Request("Cloudflare/clef-flash", context).DataClass.Should().Be(DecisionDataClass.DepartmentContent);
 		}
 	}
 }

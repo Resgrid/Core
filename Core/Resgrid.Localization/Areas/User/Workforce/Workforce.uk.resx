@@ -24,7 +24,7 @@
   <data name="AddUsage" xml:space="preserve"><value>Додати показник</value></data>
   <data name="AddWorkEntry" xml:space="preserve"><value>Додати запис</value></data>
   <data name="AddWorker" xml:space="preserve"><value>Додати працівника</value></data>
-  <data name="AddWorkerExternalHelp" xml:space="preserve"><value>Або додайте зовнішнього працівника за ключем зарплати та назвою (обидва захищені).</value></data>
+  <data name="AddWorkerExternalHelp" xml:space="preserve"><value>Або додайте зовнішнього працівника за ключем зарплати та назвою.</value></data>
   <data name="AddWorkerMemberHelp" xml:space="preserve"><value>Виберіть члена, щоб створити запис працівника.</value></data>
   <data name="Address" xml:space="preserve"><value>Адреса</value></data>
   <data name="Affiliate" xml:space="preserve"><value>Афілійована організація</value></data>
@@ -253,7 +253,7 @@
   <data name="Headquarters" xml:space="preserve"><value>Головний офіс</value></data>
   <data name="HeadquartersAddress" xml:space="preserve"><value>Адреса головного офісу</value></data>
   <data name="HelpCompensation" xml:space="preserve"><value>Кожна сума й множник — захищене поле. Оцінки використовують профіль працівника, потім ролі, потім підрозділу; затверджена вартість із системи зарплати завжди має пріоритет.</value></data>
-  <data name="HelpEmployer" xml:space="preserve"><value>Охоплення декларуєте ви; Resgrid ніколи його не визначає. Ідентифікатори та адреси — захищені поля; незмінене значення REDACTED зберігає збережене.</value></data>
+  <data name="HelpEmployer" xml:space="preserve"><value>Охоплення декларуєте ви; Resgrid ніколи його не визначає. Номери FEIN, SEIN і SOS, контакт для подання та адреси афілійованих організацій — захищені поля; незмінене значення REDACTED зберігає збережене.</value></data>
   <data name="HispanicLatino" xml:space="preserve"><value>Іспаномовний або латиноамериканець</value></data>
   <data name="HourlyRate" xml:space="preserve"><value>Погодинна ставка</value></data>
   <data name="Hours" xml:space="preserve"><value>Години</value></data>

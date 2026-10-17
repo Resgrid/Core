@@ -12,13 +12,15 @@ namespace Resgrid.Services
     public sealed partial class WorkOrdersService
     {
         private const int ReportLimit = 50000;
-        private async Task RevealReportBatchAsync<T>(ChecklistActor actor, IReadOnlyCollection<T> rows) where T : WorkOrderRow
+        private async Task RevealReportBatchAsync<T>(ChecklistActor actor, IReadOnlyCollection<T> rows, bool display = false) where T : WorkOrderRow
         {
-            if (rows.Count == 0) return;
+            if (rows.Count == 0 || !WorkOrderTables.IsProtected(typeof(T))) return;
             if (rows.Any(r => r == null || r.DepartmentId != actor.DepartmentId)) throw new WorkOrderException(404, "Unavailable");
-            var hadPlaintext = rows.Any(r => !string.IsNullOrEmpty(r.Content) && !ProtectedDataEnvelope.HasEnvelopePrefix(r.Content));
+            var unsealed = rows.Where(Unsealed).ToHashSet();
             var result = await _read.Value.ResolveRecordsEntitiesForReadAsync(actor.DepartmentId, rows.Select(r => (r, Key(r))).ToList(), WorkOrderTables.Fields<T>(), actor.GrantToken, actor.UserId);
-            if (result == null || result.RedactedFields.Count > 0 || result.IsProtected && hadPlaintext) throw new WorkOrderException(403, "ProtectedDataRequired");
+            if (display && rows.All(r => r is ISplitContentRow) && DisplayCopies(rows.ToList(), result, unsealed)) return;
+            if (result == null || result.RedactedFields.Count > 0 || result.IsProtected && unsealed.Count > 0) throw new WorkOrderException(403, "ProtectedDataRequired");
+            foreach (var row in rows) SplitContent.MergeStored(row as ISplitContentRow);
         }
         private async Task<WorkOrderEvidencePage<V>> EvidencePageAsync<T, V>(ChecklistActor actor, string id, string afterId, Func<T, V> project) where T : WorkOrderRow
         {
@@ -63,7 +65,7 @@ namespace Resgrid.Services
                 after = rows.Last().Id;
             }
         }
-        private async Task VerifyReportAccessAsync(ChecklistActor actor, IReadOnlyCollection<WorkOrder> captured, bool checkRevision = true)
+        private async Task VerifyReportAccessAsync(ChecklistActor actor, IReadOnlyCollection<WorkOrder> captured, bool checkRevision = true, bool display = false)
         {
             await _authorization.RequireMemberAsync(actor);
             var scope = await _authorization.ScopeAsync(actor);
@@ -71,7 +73,7 @@ namespace Resgrid.Services
             {
                 var fresh = await _store.ReportOrdersAsync(actor.DepartmentId, scope, new WorkOrderReportQuery(), 500, group.Select(x => x.Id).ToArray());
                 if (fresh.Count != group.Length) throw new WorkOrderException(403, "PermissionRequired");
-                await RevealReportBatchAsync(actor, fresh);
+                await RevealReportBatchAsync(actor, fresh, display);
                 foreach (var row in fresh)
                 {
                     if (checkRevision && group.Single(x => x.Id == row.Id).Revision != row.Revision) throw new WorkOrderException(409, "Conflict");
@@ -209,19 +211,20 @@ namespace Resgrid.Services
                     var lastChange = snapshot?.RecordedOn ?? row.UpdatedOn;
                     if (status >= 5 && (completed ?? row.CreatedOn) < fromUtc && lastChange < fromUtc) continue;
                     WorkOrderContent fields;
-                    if (snapshot == null) { await RevealOrderAsync(actor, row); fields = Decode<StoredContent>(row.Content).Fields; }
+                    // The readiness packet shows titles only: a reader without a grant still gets them (review §8).
+                    if (snapshot == null) { await RevealOrderAsync(actor, row, display: true); fields = Decode<StoredContent>(row.Content).Fields; }
                     else if (snapshot.SourceActivityId != null)
                     {
-                        var activity = await RevealAsync(actor, await _store.GetAsync<WorkOrderActivity>(actor.DepartmentId, snapshot.SourceActivityId));
+                        var activity = await RevealAsync(actor, await _store.GetAsync<WorkOrderActivity>(actor.DepartmentId, snapshot.SourceActivityId), display: true);
                         if (activity.WorkOrderId != row.Id) throw new WorkOrderException(409, "Unavailable");
                         fields = JObject.Parse(activity.Content ?? "{}")["Snapshot"]?.ToObject<WorkOrderContent>();
                     }
                     else if (snapshot.SourceType == 2 && snapshot.RecurrenceVersionId != null)
                     {
-                        var version = await RevealAsync(actor, await _store.GetAsync<WorkOrderRecurrenceVersion>(actor.DepartmentId, snapshot.RecurrenceVersionId));
+                        var version = await RevealAsync(actor, await _store.GetAsync<WorkOrderRecurrenceVersion>(actor.DepartmentId, snapshot.RecurrenceVersionId), display: true);
                         fields = Decode<WorkOrderRecurrenceInput>(version.Content)?.Template?.Content;
                     }
-                    else if (snapshot.SourceType == 1) { await RevealAsync(actor, await _store.GetAsync<WorkOrder>(actor.DepartmentId, row.Id)); fields = new WorkOrderContent { Title = MaintenanceText("GeneratedFailureTitle") }; }
+                    else if (snapshot.SourceType == 1) { await RevealAsync(actor, await _store.GetAsync<WorkOrder>(actor.DepartmentId, row.Id), display: true); fields = new WorkOrderContent { Title = MaintenanceText("GeneratedFailureTitle") }; }
                     else fields = null;
                     if (fields == null) { section.HistoryUnavailable = true; continue; }
                     var evidence = new ReadinessWorkOrderEvidence { WorkOrderId = row.Id, Revision = snapshot?.Revision ?? row.Revision, SnapshotId = snapshot?.Id, SourceActivityId = snapshot?.SourceActivityId,
@@ -238,7 +241,7 @@ namespace Resgrid.Services
                 }
                 if (rows.Count < 500) break; afterId = rows.Last().Id;
             }
-            await VerifyReportAccessAsync(actor, captured, false); return section;
+            await VerifyReportAccessAsync(actor, captured, false, display: true); return section;
         }
     }
 }

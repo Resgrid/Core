@@ -156,16 +156,28 @@ namespace Resgrid.Tests.Services
 			InventoryExportPages(store, vendor); InventoryExportPages(store, order); InventoryExportPages(store, line); UseInventoryExport(store, enforced, policyFailure);
 			var files = await RunExportAsync(); var json = files["inventory.json"]; var data = JObject.Parse(json);
 			var masked = enforced || encrypted || policyFailure;
-			foreach (var property in new[] { "Locations", "Issuances", "Assets", "Transactions", "Operations" })
+			foreach (var property in new[] { "Issuances", "Transactions", "Operations" })
 				data[property][0]["Content"].Value<string>().Should().Be(masked ? ProtectedDataEnvelope.RedactionValue : content);
-			foreach (var entry in new[] { (Property: "Vendors", Content: vendorContent), (Property: "PurchaseOrders", Content: orderContent), (Property: "PurchaseOrderItems", Content: lineContent) })
-				data[entry.Property][0]["Content"].Value<string>().Should().Be(masked ? ProtectedDataEnvelope.RedactionValue : entry.Content);
+			// Locations and assets describe things, not people, and left the ADP catalog on 2026-10-17: their plaintext exports
+			// as stored even while protection is on; only an envelope is still masked.
+			foreach (var property in new[] { "Locations", "Assets" })
+				data[property][0]["Content"].Value<string>().Should().Be(encrypted ? ProtectedDataEnvelope.RedactionValue : content);
+			data["Vendors"][0]["Content"].Value<string>().Should().Be(masked ? ProtectedDataEnvelope.RedactionValue : vendorContent, "a vendor's account number and note stay wholly private");
+			// A purchase order's number and supplier, and a line's cost, are metadata (review §8): only the notes are withheld.
+			foreach (var entry in new[] { (Property: "PurchaseOrders", Content: orderContent, Metadata: "{\"Number\":\"ORDER-NUMBER-CANARY\",\"SupplierName\":\"SUPPLIER-CANARY\"}"), (Property: "PurchaseOrderItems", Content: lineContent, Metadata: "{\"UnitCost\":12345.678901}") })
+			{
+				data[entry.Property][0]["Content"].Value<string>().Should().Be(encrypted ? ProtectedDataEnvelope.RedactionValue : masked ? entry.Metadata : entry.Content);
+				if (masked && !encrypted) data[entry.Property][0]["ProtectedContent"].Value<string>().Should().Be(ProtectedDataEnvelope.RedactionValue);
+			}
 			if (masked)
 			{
-				json.Should().NotContain("CANARY").And.NotContain("rgdp:").And.NotContain("12345.678901");
+				json.Should().NotContain("rgdp:").And.NotContain("VENDOR-").And.NotContain("ORDER-NOTE").And.NotContain("LINE-NOTE");
+				if (encrypted) json.Should().NotContain("CANARY");
 				var withheld = JObject.Parse(files["withheld.json"])["entries"]["inventory.json"];
-				withheld["valuesWithheld"].Value<int>().Should().Be(8);
-				withheld["fields"].Values<string>().Should().Contain(new[] { "Vendors[].Content", "PurchaseOrders[].Content", "PurchaseOrderItems[].Content" });
+				withheld["valuesWithheld"].Value<int>().Should().Be(encrypted ? 8 : 6, "plaintext location and asset content is not withheld");
+				withheld["fields"].Values<string>().Should().Contain(encrypted
+					? new[] { "Vendors[].Content", "PurchaseOrders[].Content", "PurchaseOrderItems[].Content" }
+					: new[] { "Vendors[].Content", "PurchaseOrders[].ProtectedContent", "PurchaseOrderItems[].ProtectedContent" });
 			}
 			else files.Should().NotContainKey("withheld.json");
 			new InventoryRow[] { location, issuance, asset, transaction, operation }.Should().OnlyContain(x => x.Content == content);

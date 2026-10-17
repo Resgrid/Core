@@ -58,6 +58,13 @@ namespace Resgrid.Model.AiDispatch
 		public int LatencyMs { get; set; }
 		public DateTime CreatedOnUtc { get; set; }
 		public DateTime? CompletedOnUtc { get; set; }
+		/// <summary>Decision model (Clef / Clef-Flash) provenance when it classified the call (M0273); null when it was not used.</summary>
+		public string DecisionPromptVersion { get; set; }
+		public string DecisionModelName { get; set; }
+		public string DecisionModelRevision { get; set; }
+		public string DecisionRuntimeDigest { get; set; }
+		public int DecisionInputTokens { get; set; }
+		public int DecisionLatencyMs { get; set; }
 
 		[NotMapped, JsonIgnore] public object IdValue { get => AiDispatchAuditId; set => AiDispatchAuditId = (string)value; }
 		[NotMapped] public string TableName => "AiDispatchAudits";

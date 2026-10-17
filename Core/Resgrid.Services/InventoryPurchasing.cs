@@ -27,13 +27,9 @@ namespace Resgrid.Services
 			if (_contacts == null || string.IsNullOrWhiteSpace(contactId) || contactId.Length > 128) throw new InventoryException(404, "VendorContactUnavailable");
 			var contact = await _contacts.GetContactByIdAsync(contactId);
 			if (contact?.DepartmentId != actor.DepartmentId || contact.IsDeleted || contact.ContactType != 1) throw new InventoryException(404, "VendorContactUnavailable");
-			if (reveal)
-			{
-				contact = JsonConvert.DeserializeObject<Contact>(JsonConvert.SerializeObject(contact));
-				var wasPlain = !string.IsNullOrEmpty(contact.CompanyName) && !ProtectedDataEnvelope.HasEnvelopePrefix(contact.CompanyName);
-				var result = await _read.ResolveContactsForReadAsync(actor.DepartmentId, new[] { contact }, actor.GrantToken, actor.UserId);
-				if (result == null || result.RedactedFields.Count > 0 || result.IsProtected && wasPlain || ProtectedDataEnvelope.HasEnvelopePrefix(contact.CompanyName)) throw new InventoryException(403, "ProtectedDataRequired");
-			}
+			// A vendor is a business: its CompanyName is operational and plaintext (2026-10-17), so no grant or broker read is
+			// needed to name it. The contact's person fields stay protected and are never used here.
+			if (reveal && ProtectedDataEnvelope.HasEnvelopePrefix(contact.CompanyName)) throw new InventoryException(403, "ProtectedDataRequired");
 			return contact;
 		}
 		public async Task<List<InventoryVendorChoice>> GetVendorContactsAsync(InventoryActor actor)
@@ -44,11 +40,8 @@ namespace Resgrid.Services
 				.Select(c => JsonConvert.DeserializeObject<Contact>(JsonConvert.SerializeObject(c))).ToList();
 			if (contacts.Count > 5000) throw new InventoryException(409, "InventoryTooLarge");
 			if (contacts.Count == 0) return new List<InventoryVendorChoice>();
-			var wasPlain = contacts.Any(c => !string.IsNullOrEmpty(c.CompanyName) && !ProtectedDataEnvelope.HasEnvelopePrefix(c.CompanyName));
-			var result = await _read.ResolveContactsForReadAsync(actor.DepartmentId, contacts, actor.GrantToken, actor.UserId);
-			if (result == null || result.RedactedFields.Count > 0 || result.IsProtected && wasPlain || contacts.Any(c => ProtectedDataEnvelope.HasEnvelopePrefix(c.CompanyName)))
-				throw new InventoryException(403, "ProtectedDataRequired");
-			return contacts.Select(c => new InventoryVendorChoice { Id = c.ContactId, Name = c.CompanyName }).ToList();
+			// Only the business name is listed, and it is plaintext (2026-10-17): no grant is needed to pick a vendor.
+			return contacts.Select(c => new InventoryVendorChoice { Id = c.ContactId, Name = ProtectedDataEnvelope.HasEnvelopePrefix(c.CompanyName) ? null : c.CompanyName }).ToList();
 		}
 		public Task<InventoryVendor> SaveVendorAsync(InventoryActor actor, InventoryVendorInput input) => TransactionAsync(actor, async events =>
 		{

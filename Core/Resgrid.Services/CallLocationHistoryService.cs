@@ -24,18 +24,16 @@ namespace Resgrid.Services
 
 		private readonly ICallLocationKeysRepository _keys;
 		private readonly ICallContactsRepository _callContacts;
-		private readonly IDepartmentDataProtectionService _dataProtection;
 		private readonly IDispatchScopeService _dispatchScope;
 		private readonly IDepartmentsService _departments;
 		// Lazy: the occupancy service graph (Records protection, grants) is only needed by contact and occupancy reads.
 		private readonly Lazy<IOccupancyLocationLookup> _occupancies;
 
-		public CallLocationHistoryService(ICallLocationKeysRepository keys, ICallContactsRepository callContacts, IDepartmentDataProtectionService dataProtection,
+		public CallLocationHistoryService(ICallLocationKeysRepository keys, ICallContactsRepository callContacts,
 			IDispatchScopeService dispatchScope, IDepartmentsService departments, Lazy<IOccupancyLocationLookup> occupancies)
 		{
 			_keys = keys;
 			_callContacts = callContacts;
-			_dataProtection = dataProtection;
 			_dispatchScope = dispatchScope;
 			_departments = departments;
 			_occupancies = occupancies;
@@ -50,21 +48,13 @@ namespace Resgrid.Services
 
 			try
 			{
-				// Keys are derived from protected call fields: none are written while protection is not Disabled, and
-				// worker 73 purges any that exist when a department enrolls.
-				if (!await IsAddressMatchingAvailableAsync(call.DepartmentId, bypassCache: true))
-					return;
-
+				// A call's address and position are operational, not ADP-protected (2026-10-17), so every department is indexed.
 				var key = BuildKey(call.CallId, call.DepartmentId, call.Address, call.GeoLocationData, call.LoggedOn, DateTime.UtcNow);
 				if (key == null)
 					await _keys.DeleteForCallAsync(call.CallId, cancellationToken);
 				else
 				{
 					await _keys.UpsertAsync(new[] { key }, cancellationToken);
-					// Enrollment can purge the index while this write is in flight.
-					if (!await IsAddressMatchingAvailableAsync(call.DepartmentId, bypassCache: true) ||
-						(await _keys.GetStateAsync(call.DepartmentId))?.IsSuppressed == true)
-						await _keys.DeleteForCallAsync(call.CallId, cancellationToken);
 				}
 			}
 			catch (Exception ex)
@@ -103,21 +93,7 @@ namespace Resgrid.Services
 			var clock = Stopwatch.StartNew();
 			bool InBudget() => clock.Elapsed < budget && !cancellationToken.IsCancellationRequested;
 
-			foreach (var departmentId in await _keys.GetDepartmentsToSuppressAsync(100))
-			{
-				if (!InBudget()) return result;
-				try
-				{
-					await SuppressAsync(departmentId, await _keys.GetStateAsync(departmentId), cancellationToken);
-					result.DepartmentsSuppressed++;
-				}
-				catch (Exception ex)
-				{
-					result.Errors++;
-					Logging.LogException(ex, $"Purging the call location index for protected department {departmentId} failed.");
-				}
-			}
-
+			// Nothing is suppressed any more: an index once purged for an enrolling department is rebuilt.
 			foreach (var departmentId in await _keys.GetDepartmentsToResumeAsync(100))
 			{
 				if (!InBudget()) return result;
@@ -170,13 +146,6 @@ namespace Resgrid.Services
 				state.IsSuppressed = false;
 			}
 
-			if (!await IsAddressMatchingAvailableAsync(departmentId, bypassCache: true))
-			{
-				await SuppressAsync(departmentId, state, cancellationToken);
-				result.DepartmentsSuppressed++;
-				return;
-			}
-
 			while (inBudget())
 			{
 				var sources = await _keys.GetSourcesAsync(departmentId, state.NextCallId, BackfillBatchSize);
@@ -184,13 +153,6 @@ namespace Resgrid.Services
 				var keys = sources.Select(s => BuildKey(s.CallId, s.DepartmentId, s.Address, s.GeoLocationData, s.LoggedOn, now)).Where(k => k != null).ToList();
 				await _keys.UpsertAsync(keys, cancellationToken);
 				result.CallsIndexed += keys.Count;
-
-				if (!await IsAddressMatchingAvailableAsync(departmentId, bypassCache: true))
-				{
-					await SuppressAsync(departmentId, state, cancellationToken);
-					result.DepartmentsSuppressed++;
-					return;
-				}
 
 				if (sources.Count > 0)
 					state.NextCallId = sources[^1].CallId;
@@ -206,18 +168,6 @@ namespace Resgrid.Services
 
 				await _keys.SaveStateAsync(state, cancellationToken);
 			}
-		}
-
-		private async Task SuppressAsync(int departmentId, CallLocationIndexState state, CancellationToken cancellationToken)
-		{
-			await _keys.DeleteForDepartmentAsync(departmentId, cancellationToken);
-			state ??= new CallLocationIndexState { DepartmentId = departmentId };
-			state.KeyVersion = ParsedStreetAddress.Version;
-			state.NextCallId = null;
-			state.CompletedOn = null;
-			state.IsSuppressed = true;
-			state.ModifiedOn = DateTime.UtcNow;
-			await _keys.SaveStateAsync(state, cancellationToken);
 		}
 
 		#endregion
@@ -304,7 +254,7 @@ namespace Resgrid.Services
 
 			try
 			{
-				var addressMatching = await IsAddressMatchingAvailableAsync(departmentId);
+				const bool addressMatching = true;
 				foreach (var pair in await _occupancies.Value.GetOccupancyLocationsAsync(departmentId, ids))
 				{
 					// Probe one past the cap so a bounded candidate window is never presented as an exact total.
@@ -333,7 +283,7 @@ namespace Resgrid.Services
 				return result;
 
 			limit = Math.Clamp(limit, 1, CallLocationQuery.MaxLimit);
-			result.AddressMatchingAvailable = await IsAddressMatchingAvailableAsync(departmentId);
+			result.AddressMatchingAvailable = true;
 			if (result.AddressMatchingAvailable)
 			{
 				var state = await _keys.GetStateAsync(departmentId);
@@ -495,12 +445,6 @@ namespace Resgrid.Services
 		#endregion
 
 		#region Helpers
-
-		private async Task<bool> IsAddressMatchingAvailableAsync(int departmentId, bool bypassCache = false)
-		{
-			var policy = await _dataProtection.GetPolicyByDepartmentIdAsync(departmentId, bypassCache);
-			return policy == null || policy.State == (int)DepartmentDataProtectionState.Disabled;
-		}
 
 		private async Task<bool> CanReadAsync(int departmentId, string userId)
 			=> departmentId > 0 && !string.IsNullOrWhiteSpace(userId) && await _departments.IsMemberOfDepartmentAsync(departmentId, userId);

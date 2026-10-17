@@ -64,6 +64,8 @@ namespace Resgrid.Tests.Services
 			(await queue.ForRecipientAsync(77, retry[0].RecipientUserId, 0)).Single(r => r.Id == retry[0].Id).Status.Should().Be(1);
 			Action rollback = () => runner.MigrateDown(194); rollback.Should().Throw<Exception>().WithMessage("*preserved*");
 			await using var db = Connect(_connection); (await db.ExecuteScalarAsync<int>($"SELECT COUNT(*) FROM {Q("ChecklistReminders")} WHERE {Q("DepartmentId")}=77")).Should().Be(3);
+			// Newer migrations above 196 (M0274) rolled back before the refusal: bring the fixture back to the latest schema.
+			_runner.GetRequiredService<IVersionLoader>().LoadVersionInfo(); runner.MigrateUp();
 		}
 	}
 }

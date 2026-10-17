@@ -6,7 +6,7 @@ namespace Resgrid.Model.Inventories
 	public enum InventoryPurchaseOrderStatus { Draft = 0, Ordered = 1, PartiallyReceived = 2, Received = 3, Cancelled = 4 }
 	public sealed class InventoryVendor : InventoryMutableRow { public string ContactId { get; set; } }
 	public sealed class InventoryVendorContent { public string AccountNumber { get; set; } public string Note { get; set; } }
-	public sealed class InventoryPurchaseOrder : InventoryMutableRow
+	public sealed class InventoryPurchaseOrder : InventoryMutableSplitRow
 	{
 		public string VendorId { get; set; }
 		public int Status { get; set; }
@@ -15,7 +15,7 @@ namespace Resgrid.Model.Inventories
 		public DateTime? ReceivedOn { get; set; }
 	}
 	public sealed class InventoryPurchaseOrderContent { public string Number { get; set; } public string Note { get; set; } public string SupplierName { get; set; } }
-	public sealed class InventoryPurchaseOrderItem : InventoryMutableRow
+	public sealed class InventoryPurchaseOrderItem : InventoryMutableSplitRow
 	{
 		public string PurchaseOrderId { get; set; }
 		public string ItemId { get; set; }

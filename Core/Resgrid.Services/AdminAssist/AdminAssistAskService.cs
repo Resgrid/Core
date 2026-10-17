@@ -45,7 +45,8 @@ namespace Resgrid.Services.AdminAssist
 			try {
 				// Match locally against reviewed catalog titles. Only the resulting public IDs reach inference.
 				metered = new MeteredLlmClient(client.Value);
-				result = await new GroundedAskRunner(metered, queries, async guard => { if (!(await aiAccess.CanUseAdminAssistAsync(actor, guard, false)).Available) throw new UnauthorizedAccessException(); }).RunAsync(actor, AiConfig.Model, request.Topic, seeds, reserved.Tokens, token);
+				result = await new GroundedAskRunner(metered, queries, async guard => { if (!(await aiAccess.CanUseAdminAssistAsync(actor, guard, false)).Available) throw new UnauthorizedAccessException(); },
+					AiCacheIsolation.SaltFor(actor.DepartmentId, AiConfig.SendCacheSalt, AiConfig.CacheSaltKey, AiConfig.AuditHmacKey)).RunAsync(actor, AiConfig.Model, request.Topic, seeds, reserved.Tokens, token);
 				outcome = result.Outcome;
 				await RequireAsync(actor, token);
 				// Entitlement/kill switch are rechecked even after an in-flight reservation.

@@ -76,7 +76,8 @@ namespace Resgrid.Tests.Services
                 _type == DatabaseTypes.Postgres ? new M0207_AddWorkOrderOperationsPg() : new M0207_AddWorkOrderOperations(),
                 _type == DatabaseTypes.Postgres ? new M0225_AddMaintenanceAssigneesPg() : new M0225_AddMaintenanceAssignees(),
                 _type == DatabaseTypes.Postgres ? new M0226_AddWorkOrderCurrencyPg() : new M0226_AddWorkOrderCurrency(),
-                _type == DatabaseTypes.Postgres ? new M0268_AddDocumentNumberingPg() : new M0268_AddDocumentNumbering()
+                _type == DatabaseTypes.Postgres ? new M0268_AddDocumentNumberingPg() : new M0268_AddDocumentNumbering(),
+                _type == DatabaseTypes.Postgres ? new M0274_SplitModuleProtectedContentPg() : new M0274_SplitModuleProtectedContent()
             });
 			_runner = new ServiceCollection().AddFluentMigratorCore().ConfigureRunner(r =>
 			{
@@ -197,6 +198,46 @@ namespace Resgrid.Tests.Services
             payment.PaymentAddonId = originalId; payment.PlanAddonId = Guid.NewGuid().ToString(); await uow.CreateOrGetConnectionAsync();
             await FluentActions.Awaiting(() => store.SavePaymentAsync(payment, false)).Should().ThrowAsync<InvalidOperationException>(); uow.DiscardChanges();
             (await store.PaymentsAsync(77, account.PlanAddonId)).Single().IsCancelled.Should().BeFalse();
+        }
+        /// <summary>
+        /// M0274 (ADP catalog review §8, option a): a row written before the split carries its private members inside Content.
+        /// The migration moves them to ProtectedContent, its rollback merges them back, and a sealed private part refuses rollback.
+        /// </summary>
+        [Test, Order(20)]
+        public async Task Split_migration_moves_existing_private_members_merges_them_back_and_refuses_a_sealed_rollback()
+        {
+            string id;
+            using (var uow = new UnitOfWork(Connections()))
+            {
+                var store = Orders(uow); await uow.CreateOrGetConnectionAsync(); await store.LockDepartmentAsync(77); var row = await Insert(store);
+                var labor = new WorkOrderLabor { DepartmentId = 77, WorkOrderId = row.Id, UserId = "author", CreatedBy = "author", CreatedOn = DateTime.UtcNow, UpdatedOn = DateTime.UtcNow, WorkDate = DateTime.UtcNow };
+                await store.AllocateAsync(labor); id = labor.Id; uow.CommitChanges();
+            }
+            const string whole = "{\"Currency\":\"USD\",\"Hours\":2.5,\"RatePerHour\":40.00,\"Note\":\"Paramedic Reyes on overtime\"}";
+            await using var db = Connect(_connection);
+            var runner = _runner.GetRequiredService<IMigrationRunner>();
+            runner.MigrateDown(273);
+            await db.ExecuteAsync($"UPDATE {Q("WorkOrderLabors")} SET {Q("Content")}=@Whole WHERE {Q("Id")}=@Id", new { Whole = whole, Id = id });
+            runner.MigrateUp();
+
+            async Task<(string Content, string Hidden)> Read() => (await db.QuerySingleAsync<string>($"SELECT {Q("Content")} FROM {Q("WorkOrderLabors")} WHERE {Q("Id")}=@Id", new { Id = id }),
+                await db.QuerySingleAsync<string>($"SELECT {Q("ProtectedContent")} FROM {Q("WorkOrderLabors")} WHERE {Q("Id")}=@Id", new { Id = id }));
+            var split = await Read();
+            JToken.DeepEquals(JObject.Parse(split.Content), JObject.Parse("{\"Currency\":\"USD\",\"Hours\":2.5}")).Should().BeTrue(split.Content);
+            JToken.DeepEquals(JObject.Parse(split.Hidden), JObject.Parse("{\"RatePerHour\":40.00,\"Note\":\"Paramedic Reyes on overtime\"}")).Should().BeTrue(split.Hidden);
+
+            runner.MigrateDown(273);
+            JToken.DeepEquals(JObject.Parse(await db.QuerySingleAsync<string>($"SELECT {Q("Content")} FROM {Q("WorkOrderLabors")} WHERE {Q("Id")}=@Id", new { Id = id })), JObject.Parse(whole))
+                .Should().BeTrue("the rollback merges the private members back");
+            runner.MigrateUp();
+            (await Read()).Content.Should().NotContain("Reyes", "re-applying splits the row again");
+
+            await db.ExecuteAsync($"UPDATE {Q("WorkOrderLabors")} SET {Q("ProtectedContent")}='rgdp:1:1:c2VhbGVk' WHERE {Q("Id")}=@Id", new { Id = id });
+            Action sealedRollback = () => runner.MigrateDown(273);
+            sealedRollback.Should().Throw<Exception>().WithMessage("*sealed*");
+            (await Read()).Hidden.Should().Be("rgdp:1:1:c2VhbGVk");
+            await db.ExecuteAsync($"DELETE FROM {Q("WorkOrderLabors")} WHERE {Q("Id")}=@Id", new { Id = id });
+            _runner.GetRequiredService<IVersionLoader>().LoadVersionInfo(); runner.MigrateUp();
         }
         [Test, Order(1000)]
         public void Populated_migration_refuses_destructive_rollback()

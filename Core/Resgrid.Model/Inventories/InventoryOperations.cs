@@ -6,7 +6,7 @@ namespace Resgrid.Model.Inventories
 	public enum InventoryCountStatus { Draft = 0, AwaitingWitness = 1, Completed = 2, Cancelled = 3 }
 	/// <summary>DepartedHolder: stock or assets still at a personnel location whose member was removed, disabled or hidden (a recovery task).</summary>
 	public enum InventoryAlertType { LowStock = 0, ExpiringSoon = 1, Expired = 2, OverdueReturn = 3, DepartedHolder = 4 }
-	public sealed class InventoryCount : InventoryMutableRow
+	public sealed class InventoryCount : InventoryMutableSplitRow
 	{
 		public string LocationId { get; set; }
 		public int Status { get; set; }

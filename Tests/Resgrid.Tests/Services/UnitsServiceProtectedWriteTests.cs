@@ -132,11 +132,12 @@ namespace Resgrid.Tests.Services
 			sent.Status.UnitId.Should().Be(7);
 			sent.Status.State.Should().Be(2);
 			sent.Status.DestinationId.Should().Be(900);
-			sent.Status.Note.Should().BeNull();
-			sent.Status.GeoLocationData.Should().BeNull();
-			sent.Status.Latitude.Should().BeNull();
-			sent.Status.Longitude.Should().BeNull();
-			sent.Status.Speed.Should().BeNull();
+			sent.Status.Note.Should().BeNull("the note is the one protected unit-state field");
+			// A unit's position is operational (2026-10-17) and is announced with the status.
+			sent.Status.GeoLocationData.Should().Be("50.85,4.35");
+			sent.Status.Latitude.Should().Be(50.85m);
+			sent.Status.Longitude.Should().Be(4.35m);
+			sent.Status.Speed.Should().Be(12m);
 			sent.Status.Roles.Should().ContainSingle(r => r.Role == "Driver" && r.UserId == "u1" && r.UnitState == null);
 		}
 

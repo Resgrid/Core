@@ -1593,4 +1593,25 @@
   <data name="UnitStatusAlertNoteRequirement_Always" xml:space="preserve">
     <value>Required for warnings and alerts</value>
   </data>
+  <data name="UnitStatusTimerWarningsHeader" xml:space="preserve">
+    <value>Some units can't be timed</value>
+  </data>
+  <data name="UnitStatusTimerDispatchNoMeaning" xml:space="preserve">
+    <value>On dispatch, {0} go to "{1}", which has no meaning, so dispatched units are never timed. Give "{1}" a meaning (for example Dispatched) in Custom Statuses.</value>
+  </data>
+  <data name="UnitStatusTimerDispatchNoTimer" xml:space="preserve">
+    <value>On dispatch, {0} go to "{1}" ({2}), but no timer is set for {2}.</value>
+  </data>
+  <data name="UnitStatusTimerSetNoMeaning" xml:space="preserve">
+    <value>Status set "{0}" (used by {1}) has statuses with no meaning, which no timer can apply to: {2}.</value>
+  </data>
+  <data name="UnitStatusTimerWarningsCustomStatuses" xml:space="preserve">
+    <value>Edit custom statuses</value>
+  </data>
+  <data name="UnitStatusTimerWarningsDispatchSettings" xml:space="preserve">
+    <value>Edit dispatch settings</value>
+  </data>
+  <data name="UnitStatusOverrideNoMeaning" xml:space="preserve">
+    <value>{0}: the override sets "{1}" on {2}, but that status has no meaning, so status timers, release rules and run cards can't recognise it. Give it a meaning in Custom Statuses.</value>
+  </data>
 </root>

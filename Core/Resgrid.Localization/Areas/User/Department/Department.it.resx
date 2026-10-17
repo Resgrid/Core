@@ -1535,4 +1535,25 @@
   <data name="UnitStatusAlertNoteRequirement_Always" xml:space="preserve">
     <value>Obbligatorio per avvisi e allarmi</value>
   </data>
+  <data name="UnitStatusTimerWarningsHeader" xml:space="preserve">
+    <value>Alcune unità non possono essere cronometrate</value>
+  </data>
+  <data name="UnitStatusTimerDispatchNoMeaning" xml:space="preserve">
+    <value>All'invio, {0} passano a "{1}", che non ha alcun significato, quindi le unità inviate non vengono mai cronometrate. Assegna un significato a "{1}" (per esempio Inviata) in Stati personalizzati.</value>
+  </data>
+  <data name="UnitStatusTimerDispatchNoTimer" xml:space="preserve">
+    <value>All'invio, {0} passano a "{1}" ({2}), ma non è impostato alcun timer per {2}.</value>
+  </data>
+  <data name="UnitStatusTimerSetNoMeaning" xml:space="preserve">
+    <value>Il set di stati "{0}" (usato da {1}) contiene stati senza significato, a cui nessun timer può applicarsi: {2}.</value>
+  </data>
+  <data name="UnitStatusTimerWarningsCustomStatuses" xml:space="preserve">
+    <value>Modifica stati personalizzati</value>
+  </data>
+  <data name="UnitStatusTimerWarningsDispatchSettings" xml:space="preserve">
+    <value>Modifica impostazioni di invio</value>
+  </data>
+  <data name="UnitStatusOverrideNoMeaning" xml:space="preserve">
+    <value>{0}: la sovrascrittura imposta "{1}" all'{2}, ma quello stato non ha significato, quindi i timer di stato, le regole di rilascio e le schede di intervento non possono riconoscerlo. Assegnagli un significato in Stati personalizzati.</value>
+  </data>
 </root>

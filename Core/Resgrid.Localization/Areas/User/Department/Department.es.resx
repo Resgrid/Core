@@ -1593,4 +1593,25 @@
   <data name="UnitStatusAlertNoteRequirement_Always" xml:space="preserve">
     <value>Obligatorio para avisos y alertas</value>
   </data>
+  <data name="UnitStatusTimerWarningsHeader" xml:space="preserve">
+    <value>Algunas unidades no se pueden cronometrar</value>
+  </data>
+  <data name="UnitStatusTimerDispatchNoMeaning" xml:space="preserve">
+    <value>Al despachar, {0} pasan a "{1}", que no tiene significado, así que las unidades despachadas nunca se cronometran. Asigne un significado a "{1}" (por ejemplo Despachada) en Estados personalizados.</value>
+  </data>
+  <data name="UnitStatusTimerDispatchNoTimer" xml:space="preserve">
+    <value>Al despachar, {0} pasan a "{1}" ({2}), pero no hay ningún temporizador para {2}.</value>
+  </data>
+  <data name="UnitStatusTimerSetNoMeaning" xml:space="preserve">
+    <value>El conjunto de estados "{0}" (usado por {1}) tiene estados sin significado, a los que no se puede aplicar ningún temporizador: {2}.</value>
+  </data>
+  <data name="UnitStatusTimerWarningsCustomStatuses" xml:space="preserve">
+    <value>Editar estados personalizados</value>
+  </data>
+  <data name="UnitStatusTimerWarningsDispatchSettings" xml:space="preserve">
+    <value>Editar configuración de despacho</value>
+  </data>
+  <data name="UnitStatusOverrideNoMeaning" xml:space="preserve">
+    <value>{0}: la anulación establece "{1}" al {2}, pero ese estado no tiene significado, así que los temporizadores de estado, las reglas de liberación y las tarjetas de intervención no pueden reconocerlo. Asígnele un significado en Estados personalizados.</value>
+  </data>
 </root>

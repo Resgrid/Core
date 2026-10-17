@@ -189,7 +189,7 @@ namespace Resgrid.Tests.Security
 
 			foreach (var change in new Action<ProtectedFieldOperationItem>[]
 			{
-				i => i.FieldId = "calls.address",
+				i => i.FieldId = "calls.notes",
 				i => i.RowKey = "170",
 				i => i.Value = "rgdp:1:1:abd",
 				i => i.IsBinary = true,

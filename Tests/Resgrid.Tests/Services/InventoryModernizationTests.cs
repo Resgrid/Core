@@ -728,10 +728,12 @@ namespace Resgrid.Tests.Services
 				var locations = _store.All<InventoryLocation>().ToList(); var item = _store.All<InventoryItem>().Single(); item.LegacyInventoryTypeId.Should().Be(1);
 				Stock(item, locations.Single(l => l.GroupId == 10)).Should().Be(3.125000m); Stock(item, locations.Single(l => l.UnitId == 101)).Should().Be(3.000000m);
 				Stock(item, locations.Single(l => l.IsDefault)).Should().Be(-1.25m); locations.Single(l => l.UnitId == 101).GroupId.Should().BeNull();
-				_store.All<InventoryTransaction>().Should().OnlyContain(t => t.IsProtected && t.Content.StartsWith("rgdp:") && !t.Content.Contains(Canary));
+				// The legacy note is the private member (ProtectedContent); the rest of the source copy is plaintext metadata.
+				_store.All<InventoryTransaction>().Should().OnlyContain(t => t.IsProtected && t.ProtectedContent.StartsWith("rgdp:") && !t.Content.Contains(Canary));
 				var consumption = _store.All<InventoryTransaction>().Single(t => t.LegacyInventoryId == 2); consumption.Quantity.Should().Be(2.000001m); consumption.ToLocationId.Should().BeNull();
-				var decrypted = JObject.Parse(crypto.DecryptText(key, consumption.Content, Department, "inventorytransactions.content", consumption.Id));
-				decrypted["LegacySource"].Value<double>("Amount").Should().Be(-2.000001); decrypted["LegacySource"].Value<string>("Note").Should().Be(Canary);
+				JObject.Parse(consumption.Content)["LegacySource"].Value<double>("Amount").Should().Be(-2.000001);
+				var decrypted = JObject.Parse(crypto.DecryptText(key, consumption.ProtectedContent, Department, "inventorytransactions.protectedcontent", consumption.Id));
+				decrypted["LegacySource"].Value<string>("Note").Should().Be(Canary);
 				JsonConvert.SerializeObject(sources).Should().Be(original); _events.Should().BeEmpty();
 				(await _service.MigrateLegacyAsync(_actor)).AlreadyMigrated.Should().BeTrue(); _store.All<InventoryTransaction>().Should().HaveCount(5);
 				_store.All<InventoryOperation>().Single().RequestId.Should().Be("00000000-0000-0000-0000-000000000001");
@@ -765,7 +767,9 @@ namespace Resgrid.Tests.Services
 				.ReturnsAsync((int d, T row, T previous, string id, IReadOnlyDictionary<string, (Func<T, string> Get, Action<T, string> Set)> fields, Action mark, string grant, string user, bool workload, CancellationToken ct) =>
 				{
 					grant.Should().Be(_actor.GrantToken); user.Should().Be(_actor.UserId); workload.Should().BeFalse();
-					foreach (var field in fields) field.Value.Set(row, crypto.EncryptText(key, 1, field.Value.Get(row), d, field.Key, id));
+					// Like the broker: nothing to seal for an empty slot (a mixed row with no private member) or an envelope.
+					foreach (var field in fields.Where(f => !string.IsNullOrEmpty(f.Value.Get(row)) && !ProtectedDataEnvelope.HasEnvelopePrefix(f.Value.Get(row))))
+						field.Value.Set(row, crypto.EncryptText(key, 1, field.Value.Get(row), d, field.Key, id));
 					mark?.Invoke(); return ProtectedWriteResult.Allowed(true, true);
 				});
 		}

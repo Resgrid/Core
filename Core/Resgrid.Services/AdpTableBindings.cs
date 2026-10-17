@@ -57,9 +57,8 @@ namespace Resgrid.Services
 				new AdpColumnSpec(column, $"{table.ToLowerInvariant()}.{column.ToLowerInvariant()}", ProtectedFieldStorageKind.Binary);
 			AdpColumnSpec Packed(string table, string column) =>
 				new AdpColumnSpec(column, $"{table.ToLowerInvariant()}.{column.ToLowerInvariant()}", ProtectedFieldStorageKind.PackedJson);
-			AdpColumnSpec Companion(string table, string column, bool boolean = false) =>
-				new AdpColumnSpec(column, $"{table.ToLowerInvariant()}.{column.ToLowerInvariant()}",
-					ProtectedFieldStorageKind.CompanionColumn, $"Protected{column}Envelope", boolean);
+			// No companion (typed column + envelope) bindings remain: every coordinate and outcome they protected is
+			// operational data (2026-10-17). AdpColumnSpec still supports them for a future private typed value.
 
 			var bindings = new List<AdpTableBinding>
 			{
@@ -71,27 +70,23 @@ namespace Resgrid.Services
 					with { Discriminator = new AdpRowDiscriminator("TriggerEventType", Resgrid.Model.Checklists.ChecklistWorkflowPayload.Triggers) },
 				AdpTableBinding.ViaParent("WorkflowRunLogs", "WorkflowRunLogId", false, "WorkflowRunId", "WorkflowRuns", "WorkflowRunId", new[] { Text("WorkflowRunLogs", "RenderedOutput"), Text("WorkflowRunLogs", "ActionResult"), Text("WorkflowRunLogs", "ErrorMessage") })
 					with { Discriminator = new AdpRowDiscriminator("TriggerEventType", Resgrid.Model.Checklists.ChecklistWorkflowPayload.Triggers, OnParent: true) },
+				// Name, type, address, location, What3Words and identifiers are operational and stay plaintext (2026-10-17).
 				AdpTableBinding.Direct("Calls", "CallId", pkIsNumeric: true, "DepartmentId", new[]
 				{
-					Text("Calls", "Name"), Text("Calls", "Type"), Text("Calls", "NatureOfCall"),
-					Text("Calls", "Notes"), Text("Calls", "CompletedNotes"), Text("Calls", "Address"),
-					Text("Calls", "GeoLocationData"), Text("Calls", "W3W"), Text("Calls", "ContactName"),
-					Text("Calls", "ContactNumber"), Text("Calls", "SourceIdentifier"), Text("Calls", "IncidentNumber"),
-					Text("Calls", "ExternalIdentifier"), Text("Calls", "ReferenceNumber"), Text("Calls", "CallFormData"),
+					Text("Calls", "NatureOfCall"), Text("Calls", "Notes"), Text("Calls", "CompletedNotes"),
+					Text("Calls", "ContactName"), Text("Calls", "ContactNumber"), Text("Calls", "CallFormData"),
 					Text("Calls", "DeletedReason"), Text("Calls", "SubjectIdentifiers")
 				}),
 
 				AdpTableBinding.ViaParent("CallNotes", "CallNoteId", pkIsNumeric: true, "CallId", "Calls", "CallId", new[]
 				{
-					Text("CallNotes", "Note"), Text("CallNotes", "FlaggedReason"),
-					Companion("CallNotes", "Latitude"), Companion("CallNotes", "Longitude")
+					Text("CallNotes", "Note"), Text("CallNotes", "FlaggedReason")
 				}) with { ProtectedMarkerColumn = "IsProtected" },
 
 				AdpTableBinding.ViaParent("CallAttachments", "CallAttachmentId", pkIsNumeric: true, "CallId", "Calls", "CallId", new[]
 				{
 					Text("CallAttachments", "Name"), Text("CallAttachments", "FileName"),
-					Text("CallAttachments", "FlaggedReason"), Binary("CallAttachments", "Data"),
-					Companion("CallAttachments", "Latitude"), Companion("CallAttachments", "Longitude")
+					Text("CallAttachments", "FlaggedReason"), Binary("CallAttachments", "Data")
 				}) with { ProtectedMarkerColumn = "IsProtected" },
 
 				AdpTableBinding.Direct("CallLogs", "CallLogId", pkIsNumeric: true, "DepartmentId", new[]
@@ -107,7 +102,7 @@ namespace Resgrid.Services
 				// Workforce & Business Operations plan, Phase D (ADP catalog 26): unit certification records and credit entries.
 				AdpTableBinding.Direct("UnitCertifications", "UnitCertificationId", pkIsNumeric: true, "DepartmentId", new[]
 				{
-					Text("UnitCertifications", "Number"), Text("UnitCertifications", "IssuedBy"), Text("UnitCertifications", "Notes"), Text("UnitCertifications", "FileName"), Binary("UnitCertifications", "Data"),
+					Text("UnitCertifications", "Notes"), Text("UnitCertifications", "FileName"), Binary("UnitCertifications", "Data"),
 					Text("UnitCertifications", "StatusReason")
 				}) with { ProtectedMarkerColumn = "IsProtected" },
 				AdpTableBinding.Direct("PersonnelCertificationCredits", "PersonnelCertificationCreditId", pkIsNumeric: true, "DepartmentId", new[]
@@ -124,27 +119,19 @@ namespace Resgrid.Services
 				// Workforce & Business Operations plan, Phase E (ADP catalog 28): WorkforceEmployerProfiles.
 				AdpTableBinding.Direct("WorkforceEmployerProfiles", "WorkforceEmployerProfileId", pkIsNumeric: false, "DepartmentId", new[]
 				{
-					Text("WorkforceEmployerProfiles", "Fein"), Text("WorkforceEmployerProfiles", "Sein"), Text("WorkforceEmployerProfiles", "SosNumber"), Text("WorkforceEmployerProfiles", "EddAddress"), Text("WorkforceEmployerProfiles", "HeadquartersAddress"), Text("WorkforceEmployerProfiles", "FilingContactName"), Text("WorkforceEmployerProfiles", "FilingContactEmail"), Text("WorkforceEmployerProfiles", "FilingContactPhone")
+					Text("WorkforceEmployerProfiles", "Fein"), Text("WorkforceEmployerProfiles", "Sein"), Text("WorkforceEmployerProfiles", "SosNumber"), Text("WorkforceEmployerProfiles", "FilingContactName"), Text("WorkforceEmployerProfiles", "FilingContactEmail"), Text("WorkforceEmployerProfiles", "FilingContactPhone")
 				}) with { ProtectedMarkerColumn = "IsProtected" },
 				// Workforce & Business Operations plan, Phase E (ADP catalog 28): WorkforceAffiliatedEntities.
 				AdpTableBinding.Direct("WorkforceAffiliatedEntities", "WorkforceAffiliatedEntityId", pkIsNumeric: false, "DepartmentId", new[]
 				{
 					Text("WorkforceAffiliatedEntities", "Fein"), Text("WorkforceAffiliatedEntities", "Sein"), Text("WorkforceAffiliatedEntities", "SosNumber"), Text("WorkforceAffiliatedEntities", "HeadquartersAddress")
 				}) with { ProtectedMarkerColumn = "IsProtected" },
-				// Workforce & Business Operations plan, Phase E (ADP catalog 28): WorkforceEstablishments.
-				AdpTableBinding.Direct("WorkforceEstablishments", "WorkforceEstablishmentId", pkIsNumeric: false, "DepartmentId", new[]
-				{
-					Text("WorkforceEstablishments", "PhysicalAddress")
-				}) with { ProtectedMarkerColumn = "IsProtected" },
+				// WorkforceEstablishments and WorkforceWorkers are not bound: a business address and a worker's payroll key and
+				// display label are operational (2026-10-17). Affiliated entities and every FEIN/SEIN/SOS number stay protected.
 				// Workforce & Business Operations plan, Phase E (ADP catalog 28): WorkforceLaborContractors.
 				AdpTableBinding.Direct("WorkforceLaborContractors", "WorkforceLaborContractorId", pkIsNumeric: false, "DepartmentId", new[]
 				{
 					Text("WorkforceLaborContractors", "Fein"), Text("WorkforceLaborContractors", "ContactDetails")
-				}) with { ProtectedMarkerColumn = "IsProtected" },
-				// Workforce & Business Operations plan, Phase E (ADP catalog 28): WorkforceWorkers.
-				AdpTableBinding.Direct("WorkforceWorkers", "WorkforceWorkerId", pkIsNumeric: false, "DepartmentId", new[]
-				{
-					Text("WorkforceWorkers", "ExternalWorkerKey"), Text("WorkforceWorkers", "DisplayLabel")
 				}) with { ProtectedMarkerColumn = "IsProtected" },
 				// Workforce & Business Operations plan, Phase E (ADP catalog 28): EmployeeCompensationProfiles.
 				AdpTableBinding.Direct("EmployeeCompensationProfiles", "EmployeeCompensationProfileId", pkIsNumeric: false, "DepartmentId", new[]
@@ -211,7 +198,7 @@ namespace Resgrid.Services
 				AdpTableBinding.Direct("Contacts", "ContactId", pkIsNumeric: false, "DepartmentId", new[]
 				{
 					Text("Contacts", "FirstName"), Text("Contacts", "MiddleName"), Text("Contacts", "LastName"),
-					Text("Contacts", "OtherName"), Text("Contacts", "CompanyName"), Text("Contacts", "Email"),
+					Text("Contacts", "OtherName"), Text("Contacts", "Email"),
 					Text("Contacts", "CountryIssuedIdNumber"), Text("Contacts", "CountryIdName"),
 					Text("Contacts", "StateIdNumber"), Text("Contacts", "StateIdName"), Text("Contacts", "StateIdCountryName"),
 					Text("Contacts", "HomePhoneNumber"), Text("Contacts", "CellPhoneNumber"), Text("Contacts", "FaxPhoneNumber"),
@@ -238,8 +225,6 @@ namespace Resgrid.Services
 					Text("Logs", "Cause"),
 					Text("Logs", "ContactName"),
 					Text("Logs", "ContactNumber"),
-					Text("Logs", "OtherPersonnel"),
-					Text("Logs", "Location"),
 					Text("Logs", "BodyLocation"),
 					Text("Logs", "PronouncedDeceasedBy")
 				}),
@@ -251,10 +236,7 @@ namespace Resgrid.Services
 
 				AdpTableBinding.ViaParent("UnitStates", "UnitStateId", pkIsNumeric: true, "UnitId", "Units", "UnitId", new[]
 				{
-					Text("UnitStates", "Note"),
-					Text("UnitStates", "GeoLocationData"),
-					Companion("UnitStates", "Latitude"),
-					Companion("UnitStates", "Longitude")
+					Text("UnitStates", "Note")
 				}) with { ProtectedMarkerColumn = "IsProtected" },
 
 				// Catalog v4: a member's department-scoped emergency contacts (several per member).
@@ -286,11 +268,7 @@ namespace Resgrid.Services
 
 				AdpTableBinding.Direct("PersonnelCertifications", "PersonnelCertificationId", pkIsNumeric: true, "DepartmentId", new[]
 				{
-					Text("PersonnelCertifications", "Name"),
 					Text("PersonnelCertifications", "Number"),
-					Text("PersonnelCertifications", "Type"),
-					Text("PersonnelCertifications", "Area"),
-					Text("PersonnelCertifications", "IssuedBy"),
 					Text("PersonnelCertifications", "Filename"),
 					Binary("PersonnelCertifications", "Data"),
 					// Completion pass (ADP catalog 27): the status reason behind a suspension / revocation.
@@ -316,9 +294,7 @@ namespace Resgrid.Services
 				AdpTableBinding.Direct("MessageRecipients", "MessageRecipientId", pkIsNumeric: true, "DepartmentId", new[]
 				{
 					Text("MessageRecipients", "Response"),
-					Text("MessageRecipients", "Note"),
-					Companion("MessageRecipients", "Latitude"),
-					Companion("MessageRecipients", "Longitude")
+					Text("MessageRecipients", "Note")
 				}) with { ProtectedMarkerColumn = "IsProtected" },
 
 				// Catalog v8: moderation (section 5.3). All six tables carry their own DepartmentId
@@ -383,14 +359,11 @@ namespace Resgrid.Services
 
 				AdpTableBinding.Direct("CalendarItems", "CalendarItemId", pkIsNumeric: true, "DepartmentId", new[]
 				{
-					Text("CalendarItems", "Title"),
-					Text("CalendarItems", "Description"),
-					Text("CalendarItems", "Location")
+					Text("CalendarItems", "Description")
 				}) with { ProtectedMarkerColumn = "IsProtected" },
 
 				AdpTableBinding.Direct("Documents", "DocumentId", pkIsNumeric: true, "DepartmentId", new[]
 				{
-					Text("Documents", "Name"),
 					Text("Documents", "Description"),
 					Text("Documents", "Filename"),
 					Binary("Documents", "Data")
@@ -408,7 +381,7 @@ namespace Resgrid.Services
 
 				AdpTableBinding.Direct("RmsOperationalRecordDetails", "RmsOperationalRecordDetailId", pkIsNumeric: false, "DepartmentId", new[]
 				{
-					Text("RmsOperationalRecordDetails", "Narrative"), Text("RmsOperationalRecordDetails", "InitialReport"), Text("RmsOperationalRecordDetails", "Cause"), Text("RmsOperationalRecordDetails", "ContactName"), Text("RmsOperationalRecordDetails", "ContactNumber"), Text("RmsOperationalRecordDetails", "OtherPersonnel"), Text("RmsOperationalRecordDetails", "Location"), Text("RmsOperationalRecordDetails", "BodyLocation"), Text("RmsOperationalRecordDetails", "PronouncedDeceasedBy"), Text("RmsOperationalRecordDetails", "CaseNumber"), Text("RmsOperationalRecordDetails", "Destination"), Text("RmsOperationalRecordDetails", "CallName"), Text("RmsOperationalRecordDetails", "CallAddress"), Text("RmsOperationalRecordDetails", "CallNature")
+					Text("RmsOperationalRecordDetails", "Narrative"), Text("RmsOperationalRecordDetails", "InitialReport"), Text("RmsOperationalRecordDetails", "Cause"), Text("RmsOperationalRecordDetails", "ContactName"), Text("RmsOperationalRecordDetails", "ContactNumber"), Text("RmsOperationalRecordDetails", "BodyLocation"), Text("RmsOperationalRecordDetails", "PronouncedDeceasedBy"), Text("RmsOperationalRecordDetails", "Destination"), Text("RmsOperationalRecordDetails", "CallNature")
 				}) with { ProtectedMarkerColumn = "IsProtected" },
 
 				AdpTableBinding.Direct("RmsNarratives", "RmsNarrativeId", pkIsNumeric: false, "DepartmentId", new[]
@@ -416,10 +389,7 @@ namespace Resgrid.Services
 					Text("RmsNarratives", "Narrative"), Text("RmsNarratives", "ImpedimentNarrative"), Text("RmsNarratives", "OutcomeNarrative"), Text("RmsNarratives", "SupplementalJson")
 				}) with { ProtectedMarkerColumn = "IsProtected" },
 
-				AdpTableBinding.Direct("RmsLocations", "RmsLocationId", pkIsNumeric: false, "DepartmentId", new[]
-				{
-					Text("RmsLocations", "AddressText"), Text("RmsLocations", "Number"), Text("RmsLocations", "NumberPrefix"), Text("RmsLocations", "NumberSuffix"), Text("RmsLocations", "Street"), Text("RmsLocations", "UnitValue"), Text("RmsLocations", "CrossStreet1"), Text("RmsLocations", "CrossStreet2"), Companion("RmsLocations", "Latitude"), Companion("RmsLocations", "Longitude")
-				}) with { ProtectedMarkerColumn = "IsProtected" },
+				// RmsLocations is not bound: an incident's address and position are operational (2026-10-17).
 
 				AdpTableBinding.Direct("RmsSourceFacts", "RmsSourceFactId", pkIsNumeric: false, "DepartmentId", new[]
 				{
@@ -433,7 +403,7 @@ namespace Resgrid.Services
 
 				AdpTableBinding.Direct("RmsExposures", "RmsExposureId", pkIsNumeric: false, "DepartmentId", new[]
 				{
-					Text("RmsExposures", "AddressText"), Text("RmsExposures", "Street"), Text("RmsExposures", "DetailJson"), Companion("RmsExposures", "Latitude"), Companion("RmsExposures", "Longitude")
+					Text("RmsExposures", "DetailJson")
 				}) with { ProtectedMarkerColumn = "IsProtected" },
 
 				AdpTableBinding.Direct("RmsIncidentModules", "RmsIncidentModuleId", pkIsNumeric: false, "DepartmentId", new[]
@@ -611,18 +581,16 @@ namespace Resgrid.Services
 					Text("RmsPreventionAttachments", "FileName"), Text("RmsPreventionAttachments", "Description"), Binary("RmsPreventionAttachments", "Data")
 				}) with { ProtectedMarkerColumn = "IsProtected" }
 			};
-			bindings.AddRange(Resgrid.Model.WorkOrders.WorkOrderTables.All.Values.Select(table =>
-				AdpTableBinding.Direct(table, "Id", false, "DepartmentId", table == "WorkOrderFiles" ? new[] { Text(table, "Content"), Binary(table, "Data") } : new[] { Text(table, "Content") }) with { ProtectedMarkerColumn = "IsProtected" }));
+			bindings.AddRange(Resgrid.Model.WorkOrders.WorkOrderTables.All.Values.Where(Resgrid.Model.WorkOrders.WorkOrderTables.ProtectedContent.Contains).Select(table =>
+				AdpTableBinding.Direct(table, "Id", false, "DepartmentId", table == "WorkOrderFiles" ? new[] { Text(table, "Content"), Binary(table, "Data") } : new[] { Text(table, Resgrid.Model.WorkOrders.WorkOrderTables.SealedColumn(table)) }) with { ProtectedMarkerColumn = "IsProtected" }));
 			// Inventory transactions use their stable GUID public Id for field AAD, independently of the bigint EntryId ledger key.
-			bindings.AddRange(Resgrid.Model.Inventories.InventoryTables.All.Values.Select(table =>
-				AdpTableBinding.Direct(table, "Id", false, "DepartmentId", new[] { Text(table, "Content") }) with { ProtectedMarkerColumn = "IsProtected" }));
-			return bindings.Concat(Resgrid.Model.Checklists.ChecklistTables.All.Values.Select(table =>
+			bindings.AddRange(Resgrid.Model.Inventories.InventoryTables.All.Values.Where(Resgrid.Model.Inventories.InventoryTables.ProtectedContent.Contains).Select(table =>
+				AdpTableBinding.Direct(table, "Id", false, "DepartmentId", new[] { Text(table, Resgrid.Model.Inventories.InventoryTables.SealedColumn(table)) }) with { ProtectedMarkerColumn = "IsProtected" }));
+			return bindings.Concat(Resgrid.Model.Checklists.ChecklistTables.All.Values.Where(Resgrid.Model.Checklists.ChecklistTables.ProtectedContent.Contains).Select(table =>
 				AdpTableBinding.Direct(table, "Id", false, "DepartmentId", table switch
 				{
 					"ChecklistCompletionFiles" => new[] { Text(table, "Content"), Binary(table, "Data") },
-					"ChecklistCompletions" => new[] { Text(table, "Content"), Companion(table, "Score"), Companion(table, "Passed", true) },
-					"ChecklistCompletionItems" => new[] { Text(table, "Content"), Companion(table, "IsFailure", true) },
-					_ => new[] { Text(table, "Content") }
+					_ => new[] { Text(table, Resgrid.Model.Checklists.ChecklistTables.SealedColumn(table)) }
 				}) with { ProtectedMarkerColumn = "IsProtected" })).ToList();
 		}
 	}

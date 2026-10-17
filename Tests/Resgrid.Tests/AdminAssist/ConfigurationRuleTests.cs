@@ -53,6 +53,7 @@ namespace Resgrid.Tests.AdminAssist
 		[TestCase("checkin-timers", "checkInTimerCount", 0, 1)]
 		[TestCase("status-meanings", "statusOptionsWithoutMeaning", 1, 0)]
 		[TestCase("unit-status-targets", "unitTypesWithoutStatusTarget", 1, 0)]
+		[TestCase("unit-status-timers", "unitTypesWithUntimedDispatchStatus", 1, 0)]
 		[TestCase("weather-zones", "weatherZoneCount", 0, 1)]
 		[TestCase("communication-tests", "communicationTestAgeDays", 31, 30)]
 		[TestCase("qualified-coverage", "uncoveredQualificationCount", 1, 0)]

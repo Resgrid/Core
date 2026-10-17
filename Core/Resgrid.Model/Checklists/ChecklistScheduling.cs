@@ -5,7 +5,7 @@ namespace Resgrid.Model.Checklists
 {
 	// Values 0-2 retain the original on-demand occurrence/run state mapping.
 	public enum ChecklistOccurrenceState { InProgress = 0, AwaitingWitness = 1, Submitted = 2, Scheduled = 3, Missed = 4, Skipped = 5, Cancelled = 6 }
-	public sealed class ChecklistSchedule : ChecklistRow
+	public sealed class ChecklistSchedule : ChecklistSplitRow
 	{
 		public int AssignmentType { get; set; }
 		public string AssignmentId { get; set; }

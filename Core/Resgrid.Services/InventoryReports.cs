@@ -12,6 +12,12 @@ namespace Resgrid.Services
 {
 	public sealed partial class InventoryModernizationService
 	{
+		/// <summary>A usage record is wholly private: its note reads REDACTED in a report for a reader without a grant.</summary>
+		private async Task<string> UsageNoteAsync(InventoryActor actor, RecordInventoryUsage usage)
+		{
+			try { return Decode<InventoryLabel>(await RevealAsync(actor, usage)).Note; }
+			catch (InventoryException ex) when (ex.StatusCode == 403) { return ProtectedDataEnvelope.RedactionValue; }
+		}
 		public async Task<InventoryReport> BuildReportAsync(InventoryActor actor, InventoryReportInput input)
 		{
 			await _auth.RequireAsync(actor);
@@ -189,7 +195,7 @@ namespace Resgrid.Services
 						LocationType = (int)(stored.IssuedToUnitId.HasValue ? InventoryLocationType.Unit : InventoryLocationType.Personnel) };
 					if (!await _auth.CanLocationAsync(actor, recipient)) continue;
 					authorizedRecipients.Add(recipient);
-					var issuance = await RevealAsync(actor, stored); var item = Decode<InventoryItemContent>(await Item(issuance.ItemId));
+					var issuance = await RevealAsync(actor, stored, display: true); var item = Decode<InventoryItemContent>(await Item(issuance.ItemId));
 					Add(("M5IssuanceId", issuance.Id), ("Name", item.Name), ("UnitOfMeasure", item.UnitOfMeasure), ("M5PersonId", issuance.IssuedToUserId), ("M5UnitId", issuance.IssuedToUnitId),
 						("Location", await LocationName(issuance.LocationId, true)), ("M5IssuedOn", issuance.IssuedOn), ("Amount", issuance.Quantity), ("M5ReturnedQuantity", issuance.ReturnedQuantity),
 						("M5OutstandingQuantity", issuance.Status is 0 or 2 ? issuance.Quantity - issuance.ReturnedQuantity : 0), ("ExpectedReturn", issuance.ExpectedReturnOn),
@@ -222,7 +228,8 @@ namespace Resgrid.Services
 					if (!await Authorized(stored) || !await VisibleLocation(stored.FromLocationId, true) && !await VisibleLocation(stored.ToLocationId, true)) continue;
 					var item = await Item(stored.ItemId);
 					if (input.Kind == InventoryReportKind.ControlledSubstanceLog && !item.IsControlledSubstance) continue;
-					var transaction = await RevealAsync(actor, stored); var details = JObject.Parse(transaction.Content ?? "{}"); var itemDetails = Decode<InventoryItemContent>(item);
+					// Reports show ledger metadata to every reader; notes and attestations need a grant and otherwise read REDACTED (review §8).
+					var transaction = await RevealAsync(actor, stored, display: true); var details = JObject.Parse(transaction.Content ?? "{}"); var itemDetails = Decode<InventoryItemContent>(item);
 					var quantity = input.Kind == InventoryReportKind.Usage && transaction.FromLocationId == null ? -transaction.Quantity : transaction.Quantity;
 					var cells = new List<(string Key, object Value)> { ("RecordUsageRecordedUtc", transaction.OccurredOn), ("RecordUsageLedgerEntry", transaction.Id),
 						("Name", details.Value<string>("ItemName") ?? itemDetails.Name), ("UnitOfMeasure", details.Value<string>("UnitOfMeasure") ?? itemDetails.UnitOfMeasure),
@@ -232,7 +239,7 @@ namespace Resgrid.Services
 					{
 						// The ledger is the only quantity source. Optional source metadata never adds another movement.
 						var source = usage == null ? transaction.ReferenceType == (int)InventoryReferenceType.Legacy ? InventoryReferenceType.Legacy : InventoryReferenceType.None : InventoryReferenceType.RmsRecord;
-						var note = usage == null ? transaction.ReferenceType == (int)InventoryReferenceType.RmsRecord ? null : details.Value<string>("Note") : Decode<InventoryLabel>(await RevealAsync(actor, usage)).Note;
+						var note = usage == null ? transaction.ReferenceType == (int)InventoryReferenceType.RmsRecord ? null : details.Value<string>("Note") : await UsageNoteAsync(actor, usage);
 						cells.AddRange(new (string, object)[] { ("RecordUsageType", usage == null ? null : (object)(InventoryUsageType)usage.UsageType), ("M5UsageSource", source),
 							("M5SourceId", usage?.SourceId), ("M5CallId", usage?.CallId), ("M5RevisionId", usage?.RmsRevisionId), ("Note", note) });
 					}

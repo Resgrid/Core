@@ -248,10 +248,7 @@ namespace Resgrid.Services.Records
 				report.UdfDefinitionId = await _udf.SaveInTransactionAsync(departmentId, userId, reportId, report.DefinitionKey, report.DefinitionVersion, null, null, cancellationToken);
 				await _reports.UpdateAsync(report, cancellationToken, true);
 				if (location != null)
-				{
-					await _protection.ProtectLocationAsync(departmentId, location, null, userId, cancellationToken);
 					await _locations.InsertAsync(location, cancellationToken, true);
-				}
 				foreach (var unit in units)
 					await _units.InsertAsync(unit, cancellationToken, true);
 				foreach (var module in modules)
@@ -1137,7 +1134,6 @@ namespace Resgrid.Services.Records
 			};
 			Correct(facts, NerisFactKeys.Location, location.AddressText, userId, now);
 			Correct(facts, NerisFactKeys.Point, location.Latitude.HasValue ? $"{location.Latitude},{location.Longitude}" : null, userId, now);
-			await _protection.ProtectLocationAsync(report.DepartmentId, location, existing, userId, cancellationToken);
 			await _locations.InsertAsync(location, cancellationToken, true);
 			return location;
 		}
@@ -1498,7 +1494,7 @@ namespace Resgrid.Services.Records
 			await _facts.DeleteDraftForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, cancellationToken);
 
 			var dept = report.DepartmentId;
-			if (source.Location != null) { var row = Copy(source.Location, l => l.RmsLocationId = Guid.NewGuid().ToString(), null, now); await _protection.ProtectLocationAsync(dept, row, null, null, cancellationToken); await _locations.InsertAsync(row, cancellationToken, true); }
+			if (source.Location != null) { var row = Copy(source.Location, l => l.RmsLocationId = Guid.NewGuid().ToString(), null, now); await _locations.InsertAsync(row, cancellationToken, true); }
 			foreach (var t in source.Types) await _types.InsertAsync(Copy(t, x => x.RmsIncidentTypeId = Guid.NewGuid().ToString(), null, now), cancellationToken, true);
 			foreach (var u in source.Units) await _units.InsertAsync(Copy(u, x => x.RmsUnitResponseId = Guid.NewGuid().ToString(), null, now), cancellationToken, true);
 			foreach (var a in source.Aids) await _aids.InsertAsync(Copy(a, x => x.RmsAidId = Guid.NewGuid().ToString(), null, now), cancellationToken, true);
@@ -1549,7 +1545,7 @@ namespace Resgrid.Services.Records
 			// new row, so its cataloged columns are sealed again under the copy's own key.
 			var id = revision.RmsRevisionId;
 			var dept = report.DepartmentId;
-			if (draft.Location != null) { var row = Copy(draft.Location, l => l.RmsLocationId = Guid.NewGuid().ToString(), id, now); await _protection.ProtectLocationAsync(dept, row, null, userId, cancellationToken); await _locations.InsertAsync(row, cancellationToken, true); }
+			if (draft.Location != null) { var row = Copy(draft.Location, l => l.RmsLocationId = Guid.NewGuid().ToString(), id, now); await _locations.InsertAsync(row, cancellationToken, true); }
 			foreach (var t in draft.Types) await _types.InsertAsync(Copy(t, x => x.RmsIncidentTypeId = Guid.NewGuid().ToString(), id, now), cancellationToken, true);
 			foreach (var u in draft.Units) await _units.InsertAsync(Copy(u, x => x.RmsUnitResponseId = Guid.NewGuid().ToString(), id, now), cancellationToken, true);
 			foreach (var a in draft.Aids) await _aids.InsertAsync(Copy(a, x => x.RmsAidId = Guid.NewGuid().ToString(), id, now), cancellationToken, true);

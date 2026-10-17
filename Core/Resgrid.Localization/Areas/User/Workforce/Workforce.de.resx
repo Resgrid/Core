@@ -24,7 +24,7 @@
   <data name="AddUsage" xml:space="preserve"><value>Ablesung hinzufügen</value></data>
   <data name="AddWorkEntry" xml:space="preserve"><value>Arbeitseintrag hinzufügen</value></data>
   <data name="AddWorker" xml:space="preserve"><value>Beschäftigten hinzufügen</value></data>
-  <data name="AddWorkerExternalHelp" xml:space="preserve"><value>Oder legen Sie eine externe Person über Lohnschlüssel und Anzeigename an (beide geschützt).</value></data>
+  <data name="AddWorkerExternalHelp" xml:space="preserve"><value>Oder legen Sie eine externe Person über Lohnschlüssel und Anzeigename an.</value></data>
   <data name="AddWorkerMemberHelp" xml:space="preserve"><value>Wählen Sie ein Mitglied, um dessen Beschäftigtendatensatz anzulegen.</value></data>
   <data name="Address" xml:space="preserve"><value>Adresse</value></data>
   <data name="Affiliate" xml:space="preserve"><value>Verbundenes Unternehmen</value></data>
@@ -253,7 +253,7 @@
   <data name="Headquarters" xml:space="preserve"><value>Hauptsitz</value></data>
   <data name="HeadquartersAddress" xml:space="preserve"><value>Adresse des Hauptsitzes</value></data>
   <data name="HelpCompensation" xml:space="preserve"><value>Jeder Betrag und Multiplikator ist ein geschütztes Feld. Schätzungen nutzen das Beschäftigtenprofil, dann den Rollen-, dann den Organisationsstandard; die vom Lohnsystem freigegebenen Kosten haben stets Vorrang.</value></data>
-  <data name="HelpEmployer" xml:space="preserve"><value>Die Meldepflicht erklären Sie selbst; Resgrid bestimmt sie nie. Kennungen und Adressen sind geschützte Felder; ein unverändert belassener REDACTED-Wert behält den gespeicherten Wert.</value></data>
+  <data name="HelpEmployer" xml:space="preserve"><value>Die Meldepflicht erklären Sie selbst; Resgrid bestimmt sie nie. FEIN-, SEIN- und SOS-Nummern, der Meldekontakt und die Adressen verbundener Unternehmen sind geschützte Felder; ein unverändert belassener REDACTED-Wert behält den gespeicherten Wert.</value></data>
   <data name="HispanicLatino" xml:space="preserve"><value>Hispanisch oder Latino</value></data>
   <data name="HourlyRate" xml:space="preserve"><value>Stundensatz</value></data>
   <data name="Hours" xml:space="preserve"><value>Stunden</value></data>

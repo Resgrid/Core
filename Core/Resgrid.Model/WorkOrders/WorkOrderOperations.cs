@@ -60,7 +60,7 @@ namespace Resgrid.Model.WorkOrders
     public sealed class WorkOrderBulkInput { public string RequestId { get; set; } public string PreviewHash { get; set; } public List<WorkOrderBulkRow> Rows { get; set; } = new(); }
     public sealed class WorkOrderBulkRowResult { public int RowNumber { get; set; } public string WorkOrderId { get; set; } public string Title { get; set; } public string ErrorCode { get; set; } public bool Applied { get; set; } }
     public sealed class WorkOrderBulkResult { public string PreviewHash { get; set; } public List<WorkOrderBulkRowResult> Rows { get; set; } = new(); }
-    public sealed class WorkOrderVendorCharge : WorkOrderRow { public string RequestId { get; set; } public DateTime? VoidedOn { get; set; } }
+    public sealed class WorkOrderVendorCharge : WorkOrderSplitRow { public string RequestId { get; set; } public DateTime? VoidedOn { get; set; } }
     public sealed class WorkOrderVendorChargeContent
     {
         public string VendorId { get; set; }
@@ -74,7 +74,7 @@ namespace Resgrid.Model.WorkOrders
     }
     public sealed class WorkOrderVendorChargeInput { public int Revision { get; set; } public string RequestId { get; set; } public WorkOrderVendorChargeContent Content { get; set; } = new(); }
     public sealed class WorkOrderVendorChargeView { public string Id { get; set; } public DateTime? VoidedOn { get; set; } public WorkOrderVendorChargeContent Content { get; set; } }
-    public sealed class WorkOrderPartMovement : WorkOrderRow
+    public sealed class WorkOrderPartMovement : WorkOrderSplitRow
     {
         public string PartId { get; set; }
         public string RequestId { get; set; }

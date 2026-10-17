@@ -6936,4 +6936,13 @@
   <data xml:space="preserve" name="FieldHelp.UnitStatusThresholds.AcknowledgementNoteRequirement">
     <value>Indica si confirmar o silenciar una alerta de temporizador de estado requiere un motivo: opcional, obligatorio para alertas u obligatorio para avisos y alertas. No cambia los temporizadores ni el estado de la unidad.</value>
   </data>
+  <data name="Rule.unit-status-timers" xml:space="preserve">
+    <value>Unidades despachadas que no se pueden cronometrar</value>
+  </data>
+  <data name="RuleWhy.unit-status-timers" xml:space="preserve">
+    <value>Hay temporizadores de estado de unidad configurados, pero algunos tipos de unidad pasan al despacharse a un estado sin significado o a un significado sin temporizador. El Big Board nunca marca esas unidades, por mucho que esperen.</value>
+  </data>
+  <data name="RuleNext.unit-status-timers" xml:space="preserve">
+    <value>Asigne un significado al estado de despacho en Estados personalizados, o configure un temporizador para su significado en Configuración de mapas.</value>
+  </data>
 </root>

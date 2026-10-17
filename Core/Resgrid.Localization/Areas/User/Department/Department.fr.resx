@@ -1535,4 +1535,25 @@
   <data name="UnitStatusAlertNoteRequirement_Always" xml:space="preserve">
     <value>Obligatoire pour les avertissements et les alertes</value>
   </data>
+  <data name="UnitStatusTimerWarningsHeader" xml:space="preserve">
+    <value>Certaines unités ne peuvent pas être chronométrées</value>
+  </data>
+  <data name="UnitStatusTimerDispatchNoMeaning" xml:space="preserve">
+    <value>Lors de l'engagement, {0} passent au statut "{1}", qui n'a aucune signification : les unités engagées ne sont donc jamais chronométrées. Donnez une signification à "{1}" (par exemple Engagé) dans Statuts personnalisés.</value>
+  </data>
+  <data name="UnitStatusTimerDispatchNoTimer" xml:space="preserve">
+    <value>Lors de l'engagement, {0} passent au statut "{1}" ({2}), mais aucune minuterie n'est définie pour {2}.</value>
+  </data>
+  <data name="UnitStatusTimerSetNoMeaning" xml:space="preserve">
+    <value>Le jeu de statuts "{0}" (utilisé par {1}) contient des statuts sans signification, auxquels aucune minuterie ne peut s'appliquer : {2}.</value>
+  </data>
+  <data name="UnitStatusTimerWarningsCustomStatuses" xml:space="preserve">
+    <value>Modifier les statuts personnalisés</value>
+  </data>
+  <data name="UnitStatusTimerWarningsDispatchSettings" xml:space="preserve">
+    <value>Modifier les paramètres d'engagement</value>
+  </data>
+  <data name="UnitStatusOverrideNoMeaning" xml:space="preserve">
+    <value>{0} : le remplacement applique "{1}" lors de {2}, mais ce statut n'a aucune signification ; les minuteries de statut, les règles de libération et les cartes d'intervention ne peuvent donc pas le reconnaître. Donnez-lui une signification dans Statuts personnalisés.</value>
+  </data>
 </root>

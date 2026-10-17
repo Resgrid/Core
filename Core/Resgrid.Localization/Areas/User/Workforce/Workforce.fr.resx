@@ -24,7 +24,7 @@
   <data name="AddUsage" xml:space="preserve"><value>Ajouter un relevé</value></data>
   <data name="AddWorkEntry" xml:space="preserve"><value>Ajouter une saisie</value></data>
   <data name="AddWorker" xml:space="preserve"><value>Ajouter un travailleur</value></data>
-  <data name="AddWorkerExternalHelp" xml:space="preserve"><value>Ou ajoutez un travailleur externe par clé de paie et libellé (tous deux protégés).</value></data>
+  <data name="AddWorkerExternalHelp" xml:space="preserve"><value>Ou ajoutez un travailleur externe par clé de paie et libellé.</value></data>
   <data name="AddWorkerMemberHelp" xml:space="preserve"><value>Choisissez un membre pour créer sa fiche travailleur.</value></data>
   <data name="Address" xml:space="preserve"><value>Adresse</value></data>
   <data name="Affiliate" xml:space="preserve"><value>Entité affiliée</value></data>
@@ -253,7 +253,7 @@
   <data name="Headquarters" xml:space="preserve"><value>Siège</value></data>
   <data name="HeadquartersAddress" xml:space="preserve"><value>Adresse du siège</value></data>
   <data name="HelpCompensation" xml:space="preserve"><value>Chaque montant et multiplicateur est un champ protégé. Les estimations utilisent le profil de l'employé, puis le défaut du rôle, puis celui du service ; le coût approuvé par la paie l'emporte toujours.</value></data>
-  <data name="HelpEmployer" xml:space="preserve"><value>La couverture est déclarée par vous, jamais déterminée par Resgrid. Les identifiants et adresses sont des champs protégés ; une valeur REDACTED laissée telle quelle conserve ce qui est stocké.</value></data>
+  <data name="HelpEmployer" xml:space="preserve"><value>La couverture est déclarée par vous, jamais déterminée par Resgrid. Les numéros FEIN, SEIN et SOS, le contact déclarant et les adresses des entités affiliées sont des champs protégés ; une valeur REDACTED laissée telle quelle conserve ce qui est stocké.</value></data>
   <data name="HispanicLatino" xml:space="preserve"><value>Hispanique ou latino</value></data>
   <data name="HourlyRate" xml:space="preserve"><value>Taux horaire</value></data>
   <data name="Hours" xml:space="preserve"><value>Heures</value></data>

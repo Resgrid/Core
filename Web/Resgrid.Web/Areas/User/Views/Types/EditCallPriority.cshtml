@@ -67,6 +67,12 @@
                                 {
                                     <span class="help-block m-b-none text-warning">@string.Format(localizer["SuggestedFromName"].Value, suggestedClassName)</span>
                                 }
+                                else if (Model.CallPriority.BaseType < 0)
+                                {
+                                    // Enhanced AI: fetched after the page renders, shown only for entitled departments, and a hint like the one above.
+                                    <span class="help-block m-b-none text-info" style="display: none;" data-ai-base-type-url="@Url.Action("GetCallPriorityAiSuggestion", "Types", new { area = "User", priorityId = Model.CallPriority.DepartmentCallPriorityId })"
+                                          data-ai-base-type-select="#CallPriority_BaseType" data-ai-base-type-format="@localizer["AiSuggestedFromName"].Value"></span>
+                                }
                             </div>
                         </div>
                         <div class="form-group">
@@ -132,6 +138,7 @@
 
 @section Scripts
 {
+    <script src="~/js/app/internal/types/resgrid.types.aibasetype.js"></script>
     <script>
 
         function switchInputs(v) {

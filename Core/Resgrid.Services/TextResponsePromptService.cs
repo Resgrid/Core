@@ -59,9 +59,8 @@ namespace Resgrid.Services
 			// The prompt belongs to the department that owns the calendar item (M0137); it is created
 			// here rather than through SendMessageAsync, so the owner is stamped here too.
 			message.DepartmentId = calendarItem.DepartmentId;
-			// The title is cataloged (v9) and this runs without a grant, so an enveloped title becomes
-			// a generic phrase rather than ciphertext quoted into a message the write net would then
-			// encrypt as-is.
+			// The title is operational plaintext (2026-10-17). This runs without a grant, so a title still
+			// enveloped from before then becomes a generic phrase rather than quoted ciphertext.
 			var promptTitle = ProtectedDataEnvelope.HasEnvelopePrefix(calendarItem.Title)
 				|| calendarItem.Title == ProtectedDataEnvelope.RedactionValue
 					? SystemMessagesResources.Get("AdpProtectedCalendarTitle", null)

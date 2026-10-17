@@ -75,29 +75,66 @@ namespace Resgrid.Services
 			if (row == null || row.IsDeleted || !(await _authorization.ScopeAsync(actor)).Allows(row)) throw new WorkOrderException(404, "Unavailable");
 			return await RevealOrderAsync(actor, row);
 		}
-		private async Task<T> RevealAsync<T>(ChecklistActor actor, T row) where T : WorkOrderRow
+		private async Task<T> RevealAsync<T>(ChecklistActor actor, T row, bool display = false) where T : WorkOrderRow
 		{
-			await RevealAllAsync(actor, new[] { row });
+			await RevealAllAsync(actor, new[] { row }, display);
 			return row;
 		}
 		// One broker round trip per batch; the outcome is all-or-nothing exactly like the single-row path.
-		private async Task<IReadOnlyList<T>> RevealAllAsync<T>(ChecklistActor actor, IReadOnlyList<T> rows) where T : WorkOrderRow
+		/// <summary>
+		/// <paramref name="display"/> is for list and readiness pages: a mixed row then shows its metadata without a grant and
+		/// its private members as redacted (a read-only copy) instead of failing. Never pass it for a row that is edited,
+		/// written or totalled (labour cost uses the private rate).
+		/// </summary>
+		private async Task<IReadOnlyList<T>> RevealAllAsync<T>(ChecklistActor actor, IReadOnlyList<T> rows, bool display = false) where T : WorkOrderRow
 		{
 			if (rows.Any(row => row == null || row.DepartmentId != actor.DepartmentId)) throw new WorkOrderException(404, "Unavailable");
-			if (rows.Count == 0) return rows;
-			var plain = rows.Any(row => !string.IsNullOrEmpty(row.Content) && !ProtectedDataEnvelope.HasEnvelopePrefix(row.Content));
+			if (rows.Count == 0 || !WorkOrderTables.IsProtected(typeof(T))) return rows; // Configuration content is never sealed.
+			var unsealed = rows.Where(Unsealed).ToHashSet();
 			var result = await _read.Value.ResolveRecordsEntitiesForReadAsync(actor.DepartmentId, rows.Select(row => (row, Key(row))).ToList(), WorkOrderTables.Fields<T>(), actor.GrantToken, actor.UserId);
-			if (result == null || result.RedactedFields.Count > 0 || result.IsProtected && plain) throw new WorkOrderException(403, "ProtectedDataRequired");
+			if (display && rows.All(row => row is ISplitContentRow) && DisplayCopies(rows, result, unsealed)) return rows;
+			if (result == null || result.RedactedFields.Count > 0 || result.IsProtected && unsealed.Count > 0) throw new WorkOrderException(403, "ProtectedDataRequired");
+			// A mixed table's private members come back from ProtectedContent into the one Content document.
+			foreach (var row in rows) SplitContent.MergeStored(row as ISplitContentRow);
 			return rows;
 		}
 		private async Task SaveAsync<T>(ChecklistActor actor, T row, bool insert = false) where T : WorkOrderRow
 		{
 			row.UpdatedOn = Now;
 			if (insert) { var content = row.Content; row.Content = null; await _store.AllocateAsync(row); row.Content = content; }
-			var result = await _write.Value.PrepareRecordsEntityWriteAsync(actor.DepartmentId, row, (T)null, Key(row), WorkOrderTables.Fields<T>(), () => row.IsProtected = true, actor.GrantToken, actor.UserId, false);
-			if (result?.Success != true || result.IsProtected && !ProtectedDataEnvelope.HasEnvelopePrefix(row.Content)) throw new WorkOrderException(403, "ProtectedDataRequired");
-			await _store.WriteAsync(row);
+			// A mixed table stores its private members apart (ProtectedContent, the ADP slot) and its metadata in Content.
+			var split = row is ISplitContentRow parts ? SplitContent.PrepareWrite(parts) : (SplitContentWrite?)null;
+			if (split?.Allowed == false) throw new WorkOrderException(403, "ProtectedDataRequired");
+			try
+			{
+				if (WorkOrderTables.IsProtected(typeof(T)))
+				{
+					var result = await _write.Value.PrepareRecordsEntityWriteAsync(actor.DepartmentId, row, (T)null, Key(row), WorkOrderTables.Fields<T>(), () => row.IsProtected = true, actor.GrantToken, actor.UserId, false);
+					if (result?.Success != true || result.IsProtected && (split == null ? !ProtectedDataEnvelope.HasEnvelopePrefix(row.Content) : Unsealed(row))) throw new WorkOrderException(403, "ProtectedDataRequired");
+				}
+				await _store.WriteAsync(row);
+			}
+			catch
+			{
+				split?.Undo(row as ISplitContentRow);
+				throw;
+			}
+			split?.Done(row as ISplitContentRow);
 		}
+		/// <summary>Display reveal of mixed rows: each row is merged when it was opened, and redacted to a read-only copy otherwise.</summary>
+		private static bool DisplayCopies<T>(IReadOnlyList<T> rows, ProtectedReadResult result, HashSet<T> unsealed) where T : WorkOrderRow
+		{
+			foreach (var row in rows)
+			{
+				var split = (ISplitContentRow)row;
+				if (result == null || result.IsProtected && unsealed.Contains(row) || SplitContent.IsSealed(split.ProtectedContent)) SplitContent.RedactForDisplay(split);
+				else SplitContent.MergeStored(split);
+			}
+			return true;
+		}
+		/// <summary>True when the row holds protected text outside an envelope (a mixed table: any private member in plaintext).</summary>
+		private static bool Unsealed<T>(T row) where T : WorkOrderRow => row is ISplitContentRow split ? SplitContent.CarriesUnsealedPrivate(split)
+			: WorkOrderTables.Fields<T>().Values.Select(field => field.Get(row)).Any(value => !string.IsNullOrEmpty(value) && !ProtectedDataEnvelope.HasEnvelopePrefix(value));
 		private T New<T>(ChecklistActor actor, string orderId = null) where T : WorkOrderRow, new() => new T { DepartmentId = actor.DepartmentId, WorkOrderId = orderId, CreatedBy = actor.UserId, CreatedOn = Now, UpdatedOn = Now };
 		private async Task<T> TransactionAsync<T>(ChecklistActor actor, Func<List<long>, Task<T>> command, bool safetyRelease = false)
 		{
@@ -352,7 +389,7 @@ namespace Resgrid.Services
 			var page = new WorkOrderPage { HasMore = rows.Count > 50, CanWrite = await _access.CanUseMaintenanceAsync(actor.DepartmentId) };
 			foreach (var row in rows.Take(50))
             {
-                await RevealOrderAsync(actor, row); var item = Summary(row, Decode<StoredContent>(row.Content).Fields);
+                await RevealOrderAsync(actor, row, display: true); var item = Summary(row, Decode<StoredContent>(row.Content).Fields);
                 if (page.CanWrite && row.Status == 0 && await _authorization.CanManageAsync(actor, row.TargetGroupId)) item.QuickStatus = WorkOrderStatus.Accepted;
                 if (page.CanWrite && row.Status == 2 && row.AssignmentAcceptedOn.HasValue && await _authorization.CanContributeAsync(actor, row)) item.QuickStatus = WorkOrderStatus.InProgress;
                 page.Items.Add(item);

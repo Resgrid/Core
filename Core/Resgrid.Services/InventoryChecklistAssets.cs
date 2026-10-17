@@ -131,7 +131,7 @@ namespace Resgrid.Services
 				try
 				{
 					// Use the asset's own immutable label snapshot, even when its holder provenance belongs to a moving bag.
-					var source = await RevealAsync(inventoryActor, ChecklistReadCopy(state.AssetSource));
+					var source = await RevealAsync(inventoryActor, ChecklistReadCopy(state.AssetSource), display: true);
 					var content = string.IsNullOrEmpty(source.Content) ? new JObject() : JObject.Parse(source.Content);
 					name = ChecklistAssetLabel(content["ItemName"]?.Type == JTokenType.String ? content["ItemName"].Value<string>() : null,
 						content["SerialNumber"]?.Type == JTokenType.String ? content["SerialNumber"].Value<string>() : null);

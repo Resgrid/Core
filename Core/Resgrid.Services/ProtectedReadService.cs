@@ -24,24 +24,16 @@ namespace Resgrid.Services
 	public class ProtectedReadService : IProtectedReadService, IProtectedWriteService
 	{
 		/// <summary>Catalog field id -> (getter, setter) for every cataloged Calls text column.
-		/// Public so the parity test can pin it against AdpTableBindings.V1.</summary>
+		/// Public so the parity test can pin it against AdpTableBindings.V1. Name, type, address, location, What3Words
+		/// and identifiers are operational and not cataloged (2026-10-17).</summary>
 		public static readonly IReadOnlyDictionary<string, (Func<Call, string> Get, Action<Call, string> Set)> CallFieldAccessors =
 			new Dictionary<string, (Func<Call, string>, Action<Call, string>)>
 			{
-				["calls.name"] = (c => c.Name, (c, v) => c.Name = v),
-				["calls.type"] = (c => c.Type, (c, v) => c.Type = v),
 				["calls.natureofcall"] = (c => c.NatureOfCall, (c, v) => c.NatureOfCall = v),
 				["calls.notes"] = (c => c.Notes, (c, v) => c.Notes = v),
 				["calls.completednotes"] = (c => c.CompletedNotes, (c, v) => c.CompletedNotes = v),
-				["calls.address"] = (c => c.Address, (c, v) => c.Address = v),
-				["calls.geolocationdata"] = (c => c.GeoLocationData, (c, v) => c.GeoLocationData = v),
-				["calls.w3w"] = (c => c.W3W, (c, v) => c.W3W = v),
 				["calls.contactname"] = (c => c.ContactName, (c, v) => c.ContactName = v),
 				["calls.contactnumber"] = (c => c.ContactNumber, (c, v) => c.ContactNumber = v),
-				["calls.sourceidentifier"] = (c => c.SourceIdentifier, (c, v) => c.SourceIdentifier = v),
-				["calls.incidentnumber"] = (c => c.IncidentNumber, (c, v) => c.IncidentNumber = v),
-				["calls.externalidentifier"] = (c => c.ExternalIdentifier, (c, v) => c.ExternalIdentifier = v),
-				["calls.referencenumber"] = (c => c.ReferenceNumber, (c, v) => c.ReferenceNumber = v),
 				["calls.callformdata"] = (c => c.CallFormData, (c, v) => c.CallFormData = v),
 				["calls.deletedreason"] = (c => c.DeletedReason, (c, v) => c.DeletedReason = v),
 				["calls.subjectidentifiers"] = (c => c.SubjectIdentifiers, (c, v) => c.SubjectIdentifiers = v)
@@ -55,14 +47,6 @@ namespace Resgrid.Services
 				["callnotes.flaggedreason"] = (n => n.FlaggedReason, (n, v) => n.FlaggedReason = v)
 			};
 
-		/// <summary>CallNotes companion columns: envelope property + typed setter (parity-pinned).</summary>
-		public static readonly IReadOnlyDictionary<string, (Func<CallNote, string> GetEnvelope, Action<CallNote, decimal?> SetTyped)> NoteCompanionAccessors =
-			new Dictionary<string, (Func<CallNote, string>, Action<CallNote, decimal?>)>
-			{
-				["callnotes.latitude"] = (n => n.ProtectedLatitudeEnvelope, (n, v) => n.Latitude = v),
-				["callnotes.longitude"] = (n => n.ProtectedLongitudeEnvelope, (n, v) => n.Longitude = v)
-			};
-
 		/// <summary>CallAttachments text columns (parity-pinned; Data is the separate binary field).</summary>
 		public static readonly IReadOnlyDictionary<string, (Func<CallAttachment, string> Get, Action<CallAttachment, string> Set)> AttachmentFieldAccessors =
 			new Dictionary<string, (Func<CallAttachment, string>, Action<CallAttachment, string>)>
@@ -70,14 +54,6 @@ namespace Resgrid.Services
 				["callattachments.name"] = (a => a.Name, (a, v) => a.Name = v),
 				["callattachments.filename"] = (a => a.FileName, (a, v) => a.FileName = v),
 				["callattachments.flaggedreason"] = (a => a.FlaggedReason, (a, v) => a.FlaggedReason = v)
-			};
-
-		/// <summary>CallAttachments companion columns (parity-pinned).</summary>
-		public static readonly IReadOnlyDictionary<string, (Func<CallAttachment, string> GetEnvelope, Action<CallAttachment, decimal?> SetTyped)> AttachmentCompanionAccessors =
-			new Dictionary<string, (Func<CallAttachment, string>, Action<CallAttachment, decimal?>)>
-			{
-				["callattachments.latitude"] = (a => a.ProtectedLatitudeEnvelope, (a, v) => a.Latitude = v),
-				["callattachments.longitude"] = (a => a.ProtectedLongitudeEnvelope, (a, v) => a.Longitude = v)
 			};
 
 		/// <summary>The rgdpb binary attachment payload field id.</summary>
@@ -105,11 +81,7 @@ namespace Resgrid.Services
 		public static readonly IReadOnlyDictionary<string, (Func<PersonnelCertification, string> Get, Action<PersonnelCertification, string> Set)> CertificationFieldAccessors =
 			new Dictionary<string, (Func<PersonnelCertification, string>, Action<PersonnelCertification, string>)>
 			{
-				["personnelcertifications.name"] = (c => c.Name, (c, v) => c.Name = v),
 				["personnelcertifications.number"] = (c => c.Number, (c, v) => c.Number = v),
-				["personnelcertifications.type"] = (c => c.Type, (c, v) => c.Type = v),
-				["personnelcertifications.area"] = (c => c.Area, (c, v) => c.Area = v),
-				["personnelcertifications.issuedby"] = (c => c.IssuedBy, (c, v) => c.IssuedBy = v),
 				["personnelcertifications.filename"] = (c => c.Filename, (c, v) => c.Filename = v),
 				// Catalog 27 (Workforce & Business Operations completion pass): the free-text reason behind a suspension / revocation.
 				["personnelcertifications.statusreason"] = (c => c.StatusReason, (c, v) => c.StatusReason = v)
@@ -126,7 +98,6 @@ namespace Resgrid.Services
 				["contacts.middlename"] = (c => c.MiddleName, (c, v) => c.MiddleName = v),
 				["contacts.lastname"] = (c => c.LastName, (c, v) => c.LastName = v),
 				["contacts.othername"] = (c => c.OtherName, (c, v) => c.OtherName = v),
-				["contacts.companyname"] = (c => c.CompanyName, (c, v) => c.CompanyName = v),
 				["contacts.email"] = (c => c.Email, (c, v) => c.Email = v),
 				["contacts.countryissuedidnumber"] = (c => c.CountryIssuedIdNumber, (c, v) => c.CountryIssuedIdNumber = v),
 				["contacts.countryidname"] = (c => c.CountryIdName, (c, v) => c.CountryIdName = v),
@@ -207,16 +178,7 @@ namespace Resgrid.Services
 		public static readonly IReadOnlyDictionary<string, (Func<UnitState, string> Get, Action<UnitState, string> Set)> UnitStateFieldAccessors =
 			new Dictionary<string, (Func<UnitState, string>, Action<UnitState, string>)>
 			{
-				["unitstates.note"] = (s => s.Note, (s, v) => s.Note = v),
-				["unitstates.geolocationdata"] = (s => s.GeoLocationData, (s, v) => s.GeoLocationData = v)
-			};
-
-		/// <summary>UnitStates companion columns (parity-pinned).</summary>
-		public static readonly IReadOnlyDictionary<string, (Func<UnitState, string> GetEnvelope, Action<UnitState, decimal?> SetTyped)> UnitStateCompanionAccessors =
-			new Dictionary<string, (Func<UnitState, string>, Action<UnitState, decimal?>)>
-			{
-				["unitstates.latitude"] = (s => s.ProtectedLatitudeEnvelope, (s, v) => s.Latitude = v),
-				["unitstates.longitude"] = (s => s.ProtectedLongitudeEnvelope, (s, v) => s.Longitude = v)
+				["unitstates.note"] = (s => s.Note, (s, v) => s.Note = v)
 			};
 
 		/// <summary>DepartmentMemberSensitiveData text columns (catalog v1 personnel family; parity-pinned).</summary>
@@ -258,8 +220,6 @@ namespace Resgrid.Services
 				["logs.cause"] = (l => l.Cause, (l, v) => l.Cause = v),
 				["logs.contactname"] = (l => l.ContactName, (l, v) => l.ContactName = v),
 				["logs.contactnumber"] = (l => l.ContactNumber, (l, v) => l.ContactNumber = v),
-				["logs.otherpersonnel"] = (l => l.OtherPersonnel, (l, v) => l.OtherPersonnel = v),
-				["logs.location"] = (l => l.Location, (l, v) => l.Location = v),
 				["logs.bodylocation"] = (l => l.BodyLocation, (l, v) => l.BodyLocation = v),
 				["logs.pronounceddeceasedby"] = (l => l.PronouncedDeceasedBy, (l, v) => l.PronouncedDeceasedBy = v)
 			};
@@ -288,14 +248,6 @@ namespace Resgrid.Services
 			{
 				["messagerecipients.response"] = (r => r.Response, (r, v) => r.Response = v),
 				["messagerecipients.note"] = (r => r.Note, (r, v) => r.Note = v)
-			};
-
-		/// <summary>MessageRecipients companion columns: the position a reply was filed from.</summary>
-		public static readonly IReadOnlyDictionary<string, (Func<MessageRecipient, string> GetEnvelope, Action<MessageRecipient, decimal?> SetTyped)> MessageRecipientCompanionAccessors =
-			new Dictionary<string, (Func<MessageRecipient, string>, Action<MessageRecipient, decimal?>)>
-			{
-				["messagerecipients.latitude"] = (r => r.ProtectedLatitudeEnvelope, (r, v) => r.Latitude = v),
-				["messagerecipients.longitude"] = (r => r.ProtectedLongitudeEnvelope, (r, v) => r.Longitude = v)
 			};
 
 		/// <summary>ModerationRequests text columns (catalog v8; parity-pinned).</summary>
@@ -385,16 +337,13 @@ namespace Resgrid.Services
 		public static readonly IReadOnlyDictionary<string, (Func<CalendarItem, string> Get, Action<CalendarItem, string> Set)> CalendarItemFieldAccessors =
 			new Dictionary<string, (Func<CalendarItem, string>, Action<CalendarItem, string>)>
 			{
-				["calendaritems.title"] = (c => c.Title, (c, v) => c.Title = v),
-				["calendaritems.description"] = (c => c.Description, (c, v) => c.Description = v),
-				["calendaritems.location"] = (c => c.Location, (c, v) => c.Location = v)
+				["calendaritems.description"] = (c => c.Description, (c, v) => c.Description = v)
 			};
 
 		/// <summary>Documents text columns (catalog v9; parity-pinned).</summary>
 		public static readonly IReadOnlyDictionary<string, (Func<Document, string> Get, Action<Document, string> Set)> DocumentFieldAccessors =
 			new Dictionary<string, (Func<Document, string>, Action<Document, string>)>
 			{
-				["documents.name"] = (d => d.Name, (d, v) => d.Name = v),
 				["documents.description"] = (d => d.Description, (d, v) => d.Description = v),
 				["documents.filename"] = (d => d.Filename, (d, v) => d.Filename = v)
 			};
@@ -1178,25 +1127,6 @@ namespace Resgrid.Services
 				slots.Add(new WriteSlot { FieldId = accessor.Key, RowKey = rowKey, WireValue = value, Apply = envelope => set(recipient, envelope) });
 			}
 
-			// Companion columns: the typed coordinate moves into its envelope column and the typed
-			// column is nulled - the migration engine's exact write shape (plan 22.3).
-			if (recipient.Latitude.HasValue)
-				slots.Add(new WriteSlot
-				{
-					FieldId = "messagerecipients.latitude",
-					RowKey = rowKey,
-					WireValue = recipient.Latitude.Value.ToString(CultureInfo.InvariantCulture),
-					Apply = envelope => { recipient.ProtectedLatitudeEnvelope = envelope; recipient.Latitude = null; }
-				});
-			if (recipient.Longitude.HasValue)
-				slots.Add(new WriteSlot
-				{
-					FieldId = "messagerecipients.longitude",
-					RowKey = rowKey,
-					WireValue = recipient.Longitude.Value.ToString(CultureInfo.InvariantCulture),
-					Apply = envelope => { recipient.ProtectedLongitudeEnvelope = envelope; recipient.Longitude = null; }
-				});
-
 			var result = await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots,
 				() => recipient.IsProtected = true, cancellationToken);
 
@@ -1826,25 +1756,6 @@ namespace Resgrid.Services
 				slots.Add(new WriteSlot { FieldId = accessor.Key, RowKey = rowKey, WireValue = value, Apply = envelope => set(note, envelope) });
 			}
 
-			// Companion columns: the typed coordinate moves into its envelope column and the typed
-			// column is nulled — the migration engine's exact write shape (plan 22.3).
-			if (note.Latitude.HasValue)
-				slots.Add(new WriteSlot
-				{
-					FieldId = "callnotes.latitude",
-					RowKey = rowKey,
-					WireValue = note.Latitude.Value.ToString(CultureInfo.InvariantCulture),
-					Apply = envelope => { note.ProtectedLatitudeEnvelope = envelope; note.Latitude = null; }
-				});
-			if (note.Longitude.HasValue)
-				slots.Add(new WriteSlot
-				{
-					FieldId = "callnotes.longitude",
-					RowKey = rowKey,
-					WireValue = note.Longitude.Value.ToString(CultureInfo.InvariantCulture),
-					Apply = envelope => { note.ProtectedLongitudeEnvelope = envelope; note.Longitude = null; }
-				});
-
 			var result = await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots,
 				() => note.IsProtected = true, cancellationToken);
 
@@ -1879,23 +1790,6 @@ namespace Resgrid.Services
 				var set = accessor.Value.Set;
 				slots.Add(new WriteSlot { FieldId = accessor.Key, RowKey = rowKey, WireValue = value, Apply = envelope => set(attachment, envelope) });
 			}
-
-			if (attachment.Latitude.HasValue)
-				slots.Add(new WriteSlot
-				{
-					FieldId = "callattachments.latitude",
-					RowKey = rowKey,
-					WireValue = attachment.Latitude.Value.ToString(CultureInfo.InvariantCulture),
-					Apply = envelope => { attachment.ProtectedLatitudeEnvelope = envelope; attachment.Latitude = null; }
-				});
-			if (attachment.Longitude.HasValue)
-				slots.Add(new WriteSlot
-				{
-					FieldId = "callattachments.longitude",
-					RowKey = rowKey,
-					WireValue = attachment.Longitude.Value.ToString(CultureInfo.InvariantCulture),
-					Apply = envelope => { attachment.ProtectedLongitudeEnvelope = envelope; attachment.Longitude = null; }
-				});
 
 			if (attachment.Data != null && attachment.Data.Length > 0 && !IsBinaryEnveloped(attachment.Data))
 				slots.Add(new WriteSlot
@@ -2195,25 +2089,6 @@ namespace Resgrid.Services
 				slots.Add(new WriteSlot { FieldId = accessor.Key, RowKey = rowKey, WireValue = value, Apply = envelope => set(state, envelope) });
 			}
 
-			// Companion columns: the typed coordinate moves into its envelope column and the typed
-			// column is nulled — the migration engine's exact write shape (plan 22.3).
-			if (state.Latitude.HasValue)
-				slots.Add(new WriteSlot
-				{
-					FieldId = "unitstates.latitude",
-					RowKey = rowKey,
-					WireValue = state.Latitude.Value.ToString(CultureInfo.InvariantCulture),
-					Apply = envelope => { state.ProtectedLatitudeEnvelope = envelope; state.Latitude = null; }
-				});
-			if (state.Longitude.HasValue)
-				slots.Add(new WriteSlot
-				{
-					FieldId = "unitstates.longitude",
-					RowKey = rowKey,
-					WireValue = state.Longitude.Value.ToString(CultureInfo.InvariantCulture),
-					Apply = envelope => { state.ProtectedLongitudeEnvelope = envelope; state.Longitude = null; }
-				});
-
 			var result = await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots,
 				() => state.IsProtected = true, cancellationToken);
 
@@ -2456,25 +2331,6 @@ namespace Resgrid.Services
 					Redact = () => set(state, ProtectedDataEnvelope.RedactionValue)
 				});
 			}
-
-			foreach (var accessor in UnitStateCompanionAccessors)
-			{
-				var envelope = accessor.Value.GetEnvelope(state);
-				if (!ProtectedDataEnvelope.HasEnvelopePrefix(envelope))
-					continue;
-
-				var setTyped = accessor.Value.SetTyped;
-				slots.Add(new Slot
-				{
-					FieldId = accessor.Key,
-					RowKey = rowKey,
-					WireValue = envelope,
-					Owner = owner,
-					Reveal = plaintext => setTyped(state,
-						decimal.TryParse(plaintext, NumberStyles.Number, CultureInfo.InvariantCulture, out var parsed) ? parsed : null),
-					Redact = () => setTyped(state, null)
-				});
-			}
 		}
 
 		private static void CollectUdfFieldValueSlots(ProtectedReadResult owner, UdfFieldValue value, List<Slot> slots)
@@ -2602,27 +2458,6 @@ namespace Resgrid.Services
 					Redact = () => set(recipient, ProtectedDataEnvelope.RedactionValue)
 				});
 			}
-
-			foreach (var accessor in MessageRecipientCompanionAccessors)
-			{
-				var envelope = accessor.Value.GetEnvelope(recipient);
-				if (!ProtectedDataEnvelope.HasEnvelopePrefix(envelope))
-					continue;
-
-				var setTyped = accessor.Value.SetTyped;
-				slots.Add(new Slot
-				{
-					FieldId = accessor.Key,
-					RowKey = rowKey,
-					WireValue = envelope,
-					Owner = owner,
-					// Companion reveal: the envelope held the invariant string of the typed value;
-					// an unparseable payload stays concealed (typed column remains null).
-					Reveal = plaintext => setTyped(recipient,
-						decimal.TryParse(plaintext, NumberStyles.Number, CultureInfo.InvariantCulture, out var parsed) ? parsed : null),
-					Redact = () => setTyped(recipient, null)
-				});
-			}
 		}
 
 		private static void CollectNoteSlots(ProtectedReadResult owner, CallNote note, List<Slot> slots)
@@ -2643,27 +2478,6 @@ namespace Resgrid.Services
 					Owner = owner,
 					Reveal = plaintext => set(note, plaintext),
 					Redact = () => set(note, ProtectedDataEnvelope.RedactionValue)
-				});
-			}
-
-			foreach (var accessor in NoteCompanionAccessors)
-			{
-				var envelope = accessor.Value.GetEnvelope(note);
-				if (!ProtectedDataEnvelope.HasEnvelopePrefix(envelope))
-					continue;
-
-				var setTyped = accessor.Value.SetTyped;
-				slots.Add(new Slot
-				{
-					FieldId = accessor.Key,
-					RowKey = rowKey,
-					WireValue = envelope,
-					Owner = owner,
-					// Companion reveal: the envelope held the invariant string of the typed value;
-					// an unparseable payload stays concealed (typed column remains null).
-					Reveal = plaintext => setTyped(note,
-						decimal.TryParse(plaintext, NumberStyles.Number, CultureInfo.InvariantCulture, out var parsed) ? parsed : null),
-					Redact = () => setTyped(note, null)
 				});
 			}
 		}
@@ -2687,25 +2501,6 @@ namespace Resgrid.Services
 					Owner = owner,
 					Reveal = plaintext => set(attachment, plaintext),
 					Redact = () => set(attachment, ProtectedDataEnvelope.RedactionValue)
-				});
-			}
-
-			foreach (var accessor in AttachmentCompanionAccessors)
-			{
-				var envelope = accessor.Value.GetEnvelope(attachment);
-				if (!ProtectedDataEnvelope.HasEnvelopePrefix(envelope))
-					continue;
-
-				var setTyped = accessor.Value.SetTyped;
-				slots.Add(new Slot
-				{
-					FieldId = accessor.Key,
-					RowKey = rowKey,
-					WireValue = envelope,
-					Owner = owner,
-					Reveal = plaintext => setTyped(attachment,
-						decimal.TryParse(plaintext, NumberStyles.Number, CultureInfo.InvariantCulture, out var parsed) ? parsed : null),
-					Redact = () => setTyped(attachment, null)
 				});
 			}
 

@@ -51,8 +51,8 @@
                         <form method="post" asp-action="AddWorker">
                             @Html.AntiForgeryToken()
                             <div class="form-group"><label>@localizer["Member"]</label><select name="userId" class="form-control"><option value="">—</option>@foreach (var item in Model.Members) { <option value="@item.Value">@item.Text</option> }</select><span class="help-block">@localizer["AddWorkerMemberHelp"]</span></div>
-                            <div class="form-group"><label>@localizer["ExternalWorkerKey"] <i class="fa fa-lock text-muted"></i></label><input type="text" name="externalWorkerKey" class="form-control" maxlength="100" /></div>
-                            <div class="form-group"><label>@localizer["DisplayLabel"] <i class="fa fa-lock text-muted"></i></label><input type="text" name="displayLabel" class="form-control" maxlength="100" /><span class="help-block">@localizer["AddWorkerExternalHelp"]</span></div>
+                            <div class="form-group"><label>@localizer["ExternalWorkerKey"]</label><input type="text" name="externalWorkerKey" class="form-control" maxlength="100" /></div>
+                            <div class="form-group"><label>@localizer["DisplayLabel"]</label><input type="text" name="displayLabel" class="form-control" maxlength="100" /><span class="help-block">@localizer["AddWorkerExternalHelp"]</span></div>
                             <button type="submit" class="btn btn-primary">@localizer["AddWorker"]</button>
                         </form>
                     </div>

@@ -18,6 +18,9 @@ namespace Resgrid.Web.Areas.User.Models.Departments
 		/// <summary>When acknowledging or muting a status timer alert on the Big Board needs a reason.</summary>
 		public UnitStatusAlertNoteRequirements UnitStatusAlertNoteRequirement { get; set; }
 
+		/// <summary>Why some timers can never fire (statuses without a meaning, untimed dispatch statuses). Built server-side on every render.</summary>
+		public List<string> UnitStatusTimerWarnings { get; set; } = new List<string>();
+
 		public int PersonnelLocationTTL { get; set; }
 		public int UnitLocationTTL { get; set; }
 

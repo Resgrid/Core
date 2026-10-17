@@ -24,7 +24,7 @@
   <data name="AddUsage" xml:space="preserve"><value>Add reading</value></data>
   <data name="AddWorkEntry" xml:space="preserve"><value>Add work entry</value></data>
   <data name="AddWorker" xml:space="preserve"><value>Add worker</value></data>
-  <data name="AddWorkerExternalHelp" xml:space="preserve"><value>Or add an external worker by payroll key and label (both protected).</value></data>
+  <data name="AddWorkerExternalHelp" xml:space="preserve"><value>Or add an external worker by payroll key and label.</value></data>
   <data name="AddWorkerMemberHelp" xml:space="preserve"><value>Pick a department member to create their worker row.</value></data>
   <data name="Address" xml:space="preserve"><value>Address</value></data>
   <data name="Affiliate" xml:space="preserve"><value>Affiliate</value></data>
@@ -253,7 +253,7 @@
   <data name="Headquarters" xml:space="preserve"><value>Headquarters</value></data>
   <data name="HeadquartersAddress" xml:space="preserve"><value>Headquarters address</value></data>
   <data name="HelpCompensation" xml:space="preserve"><value>Every amount and multiplier is a protected field. Estimates use the employee profile, then the role default, then the department default; the payroll system's approved cost always wins.</value></data>
-  <data name="HelpEmployer" xml:space="preserve"><value>Coverage is declared by you, never determined by Resgrid. Identifiers and addresses are protected fields; a REDACTED value left unchanged keeps what is stored.</value></data>
+  <data name="HelpEmployer" xml:space="preserve"><value>Coverage is declared by you, never determined by Resgrid. FEIN, SEIN and SOS numbers, the filing contact and affiliate addresses are protected fields; a REDACTED value left unchanged keeps what is stored.</value></data>
   <data name="HispanicLatino" xml:space="preserve"><value>Hispanic or Latino</value></data>
   <data name="HourlyRate" xml:space="preserve"><value>Hourly rate</value></data>
   <data name="Hours" xml:space="preserve"><value>Hours</value></data>

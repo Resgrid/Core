@@ -29,8 +29,8 @@ namespace Resgrid.Tests.Services
             schema.Setup(s => s.TableExists(It.IsAny<string>(), It.IsAny<string>())).Returns(true);
             context.SetupGet(c => c.QuerySchema).Returns(schema.Object);
             IMigration[] migrations = postgres
-                ? new IMigration[] { new M0197_AddWorkOrdersPg(), new M0203_AddWorkOrderIntegrationsPg(), new M0204_AddWorkOrderRecurrencesPg(), new M0206_AddWorkOrderReportingPg(), new M0207_AddWorkOrderOperationsPg() }
-                : new IMigration[] { new M0197_AddWorkOrders(), new M0203_AddWorkOrderIntegrations(), new M0204_AddWorkOrderRecurrences(), new M0206_AddWorkOrderReporting(), new M0207_AddWorkOrderOperations() };
+                ? new IMigration[] { new M0197_AddWorkOrdersPg(), new M0203_AddWorkOrderIntegrationsPg(), new M0204_AddWorkOrderRecurrencesPg(), new M0206_AddWorkOrderReportingPg(), new M0207_AddWorkOrderOperationsPg(), new M0274_SplitModuleProtectedContentPg() }
+                : new IMigration[] { new M0197_AddWorkOrders(), new M0203_AddWorkOrderIntegrations(), new M0204_AddWorkOrderRecurrences(), new M0206_AddWorkOrderReporting(), new M0207_AddWorkOrderOperations(), new M0274_SplitModuleProtectedContent() };
             foreach (var migration in migrations) migration.GetUpExpressions(context.Object);
             var tables = expressions.OfType<CreateTableExpression>().ToDictionary(t => t.TableName, t => t.Columns.ToDictionary(c => c.Name, StringComparer.OrdinalIgnoreCase), StringComparer.OrdinalIgnoreCase);
             foreach (var expression in expressions.OfType<CreateColumnExpression>())

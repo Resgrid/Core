@@ -1,10 +1,11 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Globalization;
 
 namespace Resgrid.Model.Checklists
 {
-	/// <summary>All content is a cataloged ADP slot. IDs and lifecycle metadata remain queryable.</summary>
+	/// <summary>Free text about people lives in a cataloged slot: ProtectedContent on a mixed table, Content on a wholly private one. IDs and lifecycle metadata remain queryable.</summary>
 	public abstract class ChecklistRow : IEntity
 	{
 		[System.ComponentModel.DataAnnotations.Schema.NotMapped, Newtonsoft.Json.JsonIgnore]
@@ -35,7 +36,19 @@ namespace Resgrid.Model.Checklists
 		public DateTime? DeletedOn { get; set; }
 	}
 	public sealed class ChecklistDefinitionVersion : ChecklistRow { public int Version { get; set; } }
-	public sealed class ChecklistOccurrence : ChecklistRow
+	/// <summary>
+	/// A mixed table (ADP catalog review §8, option a): <c>Content</c> keeps plaintext metadata and <c>ProtectedContent</c>,
+	/// the row's ADP slot, keeps the private members listed in <see cref="ChecklistTables.PrivateMembers"/>.
+	/// </summary>
+	public abstract class ChecklistSplitRow : ChecklistRow, ISplitContentRow
+	{
+		public string ProtectedContent { get; set; }
+		[System.ComponentModel.DataAnnotations.Schema.NotMapped, Newtonsoft.Json.JsonIgnore]
+		public IReadOnlyCollection<string> PrivateMemberPaths => ChecklistTables.PrivatePaths(TableName, Content);
+		[System.ComponentModel.DataAnnotations.Schema.NotMapped, Newtonsoft.Json.JsonIgnore]
+		public IReadOnlyCollection<string> PrivateTextMemberPaths => ChecklistTables.PrivatePaths(TableName, Content);
+	}
+	public sealed class ChecklistOccurrence : ChecklistSplitRow
 	{
 		public string ScheduleId { get; set; }
 		public int? ScheduleRevision { get; set; }
@@ -48,7 +61,7 @@ namespace Resgrid.Model.Checklists
 		public string TargetId { get; set; }
 		public int State { get; set; }
 	}
-	public sealed class ChecklistCompletion : ChecklistRow
+	public sealed class ChecklistCompletion : ChecklistSplitRow
 	{
 		public string VersionId { get; set; }
 		public string OccurrenceId { get; set; }
@@ -65,7 +78,7 @@ namespace Resgrid.Model.Checklists
 		public string ProtectedPassedEnvelope { get; set; }
 		public string SubmissionHash { get; set; }
 	}
-	public sealed class ChecklistCompletionItem : ChecklistRow
+	public sealed class ChecklistCompletionItem : ChecklistSplitRow
 	{
 		public string ItemId { get; set; }
 		public bool? IsFailure { get; set; }
@@ -103,26 +116,82 @@ namespace Resgrid.Model.Checklists
 			[typeof(DepartmentChecklistSettings)] = "DepartmentChecklistSettings",
 			[typeof(ChecklistSchedule)] = "ChecklistSchedules"
 		};
+		/// <summary>
+		/// Tables whose Content can hold free text about people (skip reasons, completion notes, witness attestations,
+		/// free-text answers, signatures, photo file names) and stays ADP-protected. Definitions and their versions are
+		/// configuration, and department settings never use Content; they are not protected (2026-10-17).
+		/// </summary>
+		public static readonly IReadOnlyCollection<string> ProtectedContent = new HashSet<string>(StringComparer.Ordinal)
+		{
+			"ChecklistOccurrences", "ChecklistCompletions", "ChecklistCompletionItems", "ChecklistCompletionFiles", "ChecklistSchedules"
+		};
+		public static bool IsProtected(Type type) => ProtectedContent.Contains(All[type]);
+		/// <summary>
+		/// The private members of each mixed table's Content (ADP catalog review §8, option a, 2026-10-17): skip reasons,
+		/// completion notes, witness attestations, item notes and not-applicable reasons, and the value of a free-text,
+		/// photo or signature answer. They are stored, and sealed, in ProtectedContent; the rest of Content (target
+		/// snapshot, location description and coordinates, item status, typed answers, schedule names) is plaintext
+		/// metadata. Completion files stay wholly protected in Content. M0274 split the existing rows with a frozen copy
+		/// of this map: change it only together with a migration.
+		/// </summary>
+		public static readonly IReadOnlyDictionary<string, string[]> PrivateMembers = new Dictionary<string, string[]>(StringComparer.Ordinal)
+		{
+			["ChecklistOccurrences"] = new[] { "Reason" },
+			["ChecklistCompletions"] = new[] { "Note", "WitnessAttestation" },
+			["ChecklistCompletionItems"] = new[] { "Value", "Note", "NotApplicableReason" },
+			["ChecklistSchedules"] = new[] { "Notes" }
+		};
+		/// <summary>Completion item member naming the answered item's type; written with the answer so the split can tell typed values from free text.</summary>
+		public const string AnswerValueTypeMember = "ValueType";
+		private static readonly HashSet<int> TypedAnswers = new HashSet<int>
+		{
+			(int)ChecklistItemType.PassFail, (int)ChecklistItemType.YesNo, (int)ChecklistItemType.Checkbox, (int)ChecklistItemType.NumericReading,
+			(int)ChecklistItemType.Quantity, (int)ChecklistItemType.SelectList, (int)ChecklistItemType.DateValue
+		};
+		private static readonly string[] TypedAnswerPaths = { "Note", "NotApplicableReason" };
+		/// <summary>
+		/// A completion item's Value is private unless the answer records a typed item (pass/fail, yes/no, checkbox,
+		/// reading, quantity, list choice or date), whose value the validator constrains. A free-text, photo or signature
+		/// answer, and one stored before the type was recorded, keeps its Value private.
+		/// </summary>
+		public static IReadOnlyCollection<string> PrivatePaths(string table, string content = null)
+		{
+			if (table == null || !PrivateMembers.TryGetValue(table, out var paths))
+				return Array.Empty<string>();
+			return table == "ChecklistCompletionItems" && IsTypedAnswer(content) ? TypedAnswerPaths : paths;
+		}
+		/// <summary>The stored form of an answer: the answer itself plus the item type it was given for.</summary>
+		public static string StoredAnswer(ChecklistAnswer answer, ChecklistItemType? type) => Newtonsoft.Json.JsonConvert.SerializeObject(new
+		{
+			answer.ItemId, answer.Status, answer.Value, answer.Note, answer.NotApplicableReason, ValueType = (int?)type
+		});
+		private static bool IsTypedAnswer(string content)
+		{
+			if (string.IsNullOrEmpty(content) || content[0] != '{' || content.IndexOf(AnswerValueTypeMember, StringComparison.Ordinal) < 0)
+				return false;
+			try
+			{
+				var type = Newtonsoft.Json.Linq.JObject.Parse(content)[AnswerValueTypeMember];
+				return type != null && type.Type == Newtonsoft.Json.Linq.JTokenType.Integer && TypedAnswers.Contains((int)type);
+			}
+			catch (Newtonsoft.Json.JsonReaderException)
+			{
+				return false;
+			}
+		}
+		/// <summary>The column a protected table seals: ProtectedContent for a mixed table, Content for a wholly private one.</summary>
+		public static string SealedColumn(string table) => PrivateMembers.ContainsKey(table) ? "ProtectedContent" : "Content";
 		public static IReadOnlyDictionary<string, (Func<T, string> Get, Action<T, string> Set)> Fields<T>() where T : ChecklistRow
 		{
-			var fields = new Dictionary<string, (Func<T, string>, Action<T, string>)>
-			{ [All[typeof(T)].ToLowerInvariant() + ".content"] = (x => x.Content, (x, v) => x.Content = v) };
-			// Use the same grant/AAD boundary as Content. Revealing clears the in-memory envelope,
-			// so a subsequent save seals the current value and clears its queryable column again.
-			if (typeof(T) == typeof(ChecklistCompletion))
-			{
-				fields["checklistcompletions.score"] = (x => ((ChecklistCompletion)(ChecklistRow)x).ProtectedScoreEnvelope ?? ((ChecklistCompletion)(ChecklistRow)x).Score?.ToString(CultureInfo.InvariantCulture),
-					(x, v) => { var row = (ChecklistCompletion)(ChecklistRow)x; row.ProtectedScoreEnvelope = Envelope(v); row.Score = decimal.TryParse(v, NumberStyles.Number, CultureInfo.InvariantCulture, out var score) ? score : null; });
-				fields["checklistcompletions.passed"] = (x => ((ChecklistCompletion)(ChecklistRow)x).ProtectedPassedEnvelope ?? ((ChecklistCompletion)(ChecklistRow)x).Passed?.ToString(),
-					(x, v) => { var row = (ChecklistCompletion)(ChecklistRow)x; row.ProtectedPassedEnvelope = Envelope(v); row.Passed = Boolean(v); });
-			}
-			if (typeof(T) == typeof(ChecklistCompletionItem))
-				fields["checklistcompletionitems.isfailure"] = (x => ((ChecklistCompletionItem)(ChecklistRow)x).ProtectedIsFailureEnvelope ?? ((ChecklistCompletionItem)(ChecklistRow)x).IsFailure?.ToString(),
-					(x, v) => { var row = (ChecklistCompletionItem)(ChecklistRow)x; row.ProtectedIsFailureEnvelope = Envelope(v); row.IsFailure = Boolean(v); });
+			var fields = new Dictionary<string, (Func<T, string>, Action<T, string>)>();
+			var table = All[typeof(T)];
+			if (IsProtected(typeof(T)) && PrivateMembers.ContainsKey(table))
+				fields[table.ToLowerInvariant() + ".protectedcontent"] = (x => ((ISplitContentRow)x).ProtectedContent, (x, v) => ((ISplitContentRow)x).ProtectedContent = v);
+			else if (IsProtected(typeof(T)))
+				fields[table.ToLowerInvariant() + ".content"] = (x => x.Content, (x, v) => x.Content = v);
+			// Completion Score / Passed and item IsFailure are outcome state, not private, and stay in their queryable
+			// columns (catalog 15 retired 2026-10-17); only the private members (and file Content and Data) are sealed.
 			return fields;
 		}
-		private static string Envelope(string value) => ProtectedDataEnvelope.HasEnvelopePrefix(value) ? value : null;
-		// Migration readers may represent a database boolean as either text or 0/1.
-		private static bool? Boolean(string value) => bool.TryParse(value, out var parsed) ? parsed : value == "1" ? true : value == "0" ? false : null;
 	}
 }

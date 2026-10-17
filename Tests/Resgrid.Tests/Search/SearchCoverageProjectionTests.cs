@@ -219,15 +219,18 @@ namespace Resgrid.Tests.Search
 		}
 
 		[Test]
-		public async Task A_calendar_event_is_indexed_once_per_series_and_never_under_enforced_protection()
+		public async Task A_calendar_event_is_indexed_once_per_series_and_keeps_its_title_under_enforced_protection()
 		{
-			var parent = new CalendarItem { CalendarItemId = 3, DepartmentId = Dept, Title = "Monthly business meeting", Location = "Station 4", Start = new DateTime(2026, 6, 1), End = new DateTime(2026, 6, 1, 2, 0, 0), RecurrenceType = 2 };
+			var parent = new CalendarItem { CalendarItemId = 3, DepartmentId = Dept, Title = "Monthly business meeting", Location = "Station 4", Description = "Budget vote for the chief's contract", Start = new DateTime(2026, 6, 1), End = new DateTime(2026, 6, 1, 2, 0, 0), RecurrenceType = 2 };
 			var occurrence = new CalendarItem { CalendarItemId = 4, DepartmentId = Dept, Title = "Monthly business meeting", RecurrenceId = "3", Start = new DateTime(2026, 7, 1), End = new DateTime(2026, 7, 1, 2, 0, 0) };
 
 			(await _service.BuildCalendarItemAsync(parent)).Title.Should().Be("Monthly business meeting");
 			(await _service.BuildCalendarItemAsync(occurrence)).Should().BeNull("occurrences repeat the parent's text");
 			_enforced = true;
-			(await _service.BuildCalendarItemAsync(parent)).Should().BeNull("calendar titles, descriptions and locations are cataloged");
+			// Title and location are operational (2026-10-17); only the description stays cataloged.
+			var enforced = await _service.BuildCalendarItemAsync(parent);
+			enforced.Title.Should().Be("Monthly business meeting");
+			enforced.SearchText.Should().Contain("Station 4").And.NotContain("Budget vote", "the description is cataloged");
 		}
 
 		[Test]

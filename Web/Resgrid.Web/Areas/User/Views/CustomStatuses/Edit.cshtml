@@ -17,6 +17,8 @@
     var activeOptions = Model.State.GetActiveDetails();
     var withoutMeaning = activeOptions.Where(x => x.BaseType < 0).ToList();
     var suggestions = withoutMeaning.ToDictionary(x => x.CustomStateDetailId, x => BaseTypeSuggestions.SuggestStatus(x.ButtonText, (CustomStateTypes)Model.State.Type));
+    // Options the names give no keyword hint for are asked of Enhanced AI after the page renders (entitled departments only).
+    var askAi = suggestions.Values.Any(x => !x.HasValue);
 }
 
 
@@ -103,9 +105,10 @@
                                             <div class="alert alert-warning">
                                                 <strong id="missingMeaningsHeader" data-format="@localizer["MissingMeaningsHeader"].Value">@string.Format(localizer["MissingMeaningsHeader"].Value, withoutMeaning.Count)</strong>
                                                 <p>@localizer["MissingMeaningsHelp"]</p>
-                                                @if (suggestions.Values.Any(x => x.HasValue))
+                                                @if (suggestions.Values.Any(x => x.HasValue) || askAi)
                                                 {
-                                                    <button type="button" id="applySuggestedMeanings" class="btn btn-warning btn-xs">@localizer["UseSuggestedMeanings"]</button>
+                                                    // Hidden until there is something to apply: with only Enhanced AI candidates, it shows when suggestions arrive.
+                                                    <button type="button" id="applySuggestedMeanings" class="btn btn-warning btn-xs" style="@(suggestions.Values.Any(x => x.HasValue) ? "" : "display: none;")">@localizer["UseSuggestedMeanings"]</button>
                                                     <span id="suggestedMeaningsApplied" class="text-success m-l-sm" style="display: none;">@localizer["SuggestedMeaningsApplied"]</span>
                                                 }
                                             </div>
@@ -117,7 +120,9 @@
                                         <div class="text-right m-b-xs">
                                             <a id="addButton" class="btn btn-success btn-xs" data-original-title="@localizer["AddOption"]" data-toggle="modal" data-target="#newStatusModal">@localizer["AddOption"]</a>
                                         </div>
-                                        <table id="options" class="table table-striped table-bordered" data-has-next="@(isStaffingSet ? "false" : "true")">
+                                        <table id="options" class="table table-striped table-bordered" data-has-next="@(isStaffingSet ? "false" : "true")"
+                                               data-ai-url="@(askAi ? Url.Action("GetAiMeaningSuggestions", "CustomStatuses", new { area = "User", id = Model.State.CustomStateId }) : null)"
+                                               data-ai-format="@(askAi ? localizer["AiSuggestedMeaning"].Value : null)">
                                             <thead>
                                                 <tr>
                                                     <th style="max-width: 20px; font-size: 14px;">@commonLocalizer["Order"]</th>
@@ -166,7 +171,7 @@
                                                         }
                                                         else
                                                         {
-                                                            <td style="font-size: 13px;" class="@(detail.BaseType < 0 ? "text-danger" : "")">@meaningName(detail.BaseType)</td>
+                                                            <td style="font-size: 13px;" class="@(detail.BaseType < 0 ? "text-danger" : "")" data-meaning-row="@(detail.BaseType < 0 ? count : (int?)null)">@meaningName(detail.BaseType)</td>
                                                         }
                                                         @if (Model.State.Type != (int)CustomStateTypes.Staffing)
                                                         {

@@ -226,7 +226,7 @@ namespace Resgrid.Services
                 if (existing != null)
                 {
                     await RevealAsync(actor, existing);
-                    if (existing.RecurrenceId != id || existing.CreatedBy != actor.UserId || existing.Content != JsonConvert.SerializeObject(input)) throw new WorkOrderException(409, "Conflict");
+                    if (existing.RecurrenceId != id || existing.CreatedBy != actor.UserId || JsonConvert.SerializeObject(Decode<WorkOrderReadingInput>(existing.Content)) != JsonConvert.SerializeObject(input)) throw new WorkOrderException(409, "Conflict");
                     return true;
                 }
                 Revision(row, input.Revision);

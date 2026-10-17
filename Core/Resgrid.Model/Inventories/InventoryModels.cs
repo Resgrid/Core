@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
@@ -30,6 +31,23 @@ namespace Resgrid.Model.Inventories
 		[NotMapped, JsonIgnore] public IEnumerable<string> IgnoredProperties => new[] { "IdValue", "TableName", "IdName", "IdType", "IgnoredProperties" };
 	}
 	public abstract class InventoryMutableRow : InventoryRow, IChangeTracked { public bool IsDeleted { get; set; } }
+	/// <summary>
+	/// A mixed table (ADP catalog review §8, option a): <c>Content</c> keeps plaintext metadata and <c>ProtectedContent</c>,
+	/// the row's ADP slot, keeps the private members listed in <see cref="InventoryTables.PrivateMembers"/>.
+	/// </summary>
+	public abstract class InventorySplitRow : InventoryRow, ISplitContentRow
+	{
+		public string ProtectedContent { get; set; }
+		[NotMapped, JsonIgnore] public IReadOnlyCollection<string> PrivateMemberPaths => InventoryTables.PrivatePaths(TableName);
+		[NotMapped, JsonIgnore] public IReadOnlyCollection<string> PrivateTextMemberPaths => InventoryTables.PrivatePaths(TableName);
+	}
+	/// <inheritdoc cref="InventorySplitRow"/>
+	public abstract class InventoryMutableSplitRow : InventoryMutableRow, ISplitContentRow
+	{
+		public string ProtectedContent { get; set; }
+		[NotMapped, JsonIgnore] public IReadOnlyCollection<string> PrivateMemberPaths => InventoryTables.PrivatePaths(TableName);
+		[NotMapped, JsonIgnore] public IReadOnlyCollection<string> PrivateTextMemberPaths => InventoryTables.PrivatePaths(TableName);
+	}
 	public sealed class InventoryCategory : InventoryMutableRow { public string ParentCategoryId { get; set; } }
 	public sealed class InventoryItem : InventoryMutableRow
 	{
@@ -70,7 +88,7 @@ namespace Resgrid.Model.Inventories
 		public DateTime? AcquiredOn { get; set; }
 	}
 	/// <summary>EntryId is the bigint database primary key; Id is the stable GUID exposed to integration consumers. Append-only.</summary>
-	public sealed class InventoryTransaction : InventoryRow
+	public sealed class InventoryTransaction : InventorySplitRow
 	{
 		public string WorkOrderPartMovementId { get; set; }
 		public long EntryId { get; set; }
@@ -99,10 +117,10 @@ namespace Resgrid.Model.Inventories
 		public int? LegacyInventoryId { get; set; }
 		public DateTime OccurredOn { get; set; }
 	}
-	public sealed class InventoryOperation : InventoryRow { public int State { get; set; } public string RequestId { get; set; } public string WitnessUserId { get; set; } }
+	public sealed class InventoryOperation : InventorySplitRow { public int State { get; set; } public string RequestId { get; set; } public string WitnessUserId { get; set; } }
 	public sealed class InventoryTransfer : InventoryMutableRow { public string FromLocationId { get; set; } public string ToLocationId { get; set; } public int Status { get; set; } public string OperationId { get; set; } }
 	public sealed class InventoryTransferItem : InventoryRow { public string TransferId { get; set; } public string TransactionId { get; set; } public string ItemId { get; set; } public string AssetId { get; set; } public string LotId { get; set; } public decimal Quantity { get; set; } }
-	public sealed class InventoryIssuance : InventoryMutableRow
+	public sealed class InventoryIssuance : InventoryMutableSplitRow
 	{
 		public string ItemId { get; set; }
 		public string AssetId { get; set; }
@@ -160,7 +178,44 @@ namespace Resgrid.Model.Inventories
 			[typeof(InventoryCount)] = "InventoryCounts", [typeof(InventoryCountItem)] = "InventoryCountItems",
 			[typeof(InventoryAlert)] = "InventoryAlerts", [typeof(InventoryAlertDelivery)] = "InventoryAlertDeliveries"
 		};
-		public static IReadOnlyDictionary<string, (Func<T, string> Get, Action<T, string> Set)> Fields<T>() where T : InventoryRow =>
-			new Dictionary<string, (Func<T, string>, Action<T, string>)> { [All[typeof(T)].ToLowerInvariant() + ".content"] = (x => x.Content, (x, v) => x.Content = v) };
+		/// <summary>
+		/// Tables whose Content can hold free text about people (notes, attestations, account numbers) and stays ADP-protected.
+		/// Every other table's Content is metadata — names of things, codes, levels, costs, serials, tags, lots — or is never
+		/// written, and is not protected (2026-10-17: operational data is never in the ADP catalog).
+		/// </summary>
+		public static readonly IReadOnlyCollection<string> ProtectedContent = new HashSet<string>(StringComparer.Ordinal)
+		{
+			"InventoryTransactions", "InventoryOperations", "InventoryIssuances", "RecordInventoryUsages",
+			"InventoryVendors", "InventoryPurchaseOrders", "InventoryPurchaseOrderItems", "InventoryCounts"
+		};
+		public static bool IsProtected(Type type) => ProtectedContent.Contains(All[type]);
+		/// <summary>
+		/// The private members of each mixed table's Content (ADP catalog review §8, option a, 2026-10-17): notes and
+		/// attestations. They are stored, and sealed, in ProtectedContent; the rest of Content (item names, units, serials,
+		/// costs, performer and witness ids, PO numbers, supplier names, count names and totals, pending commands and
+		/// results) is plaintext metadata. Record usages and vendors stay wholly protected in Content. M0274 split the
+		/// existing rows with a frozen copy of this map: change it only together with a migration.
+		/// </summary>
+		public static readonly IReadOnlyDictionary<string, string[]> PrivateMembers = new Dictionary<string, string[]>(StringComparer.Ordinal)
+		{
+			["InventoryTransactions"] = new[] { "Note", "Attestation", "LegacySource.Note" },
+			["InventoryOperations"] = new[] { "Attestation", "PendingCommand.Lines[].Note", "PendingIssues[].Note", "PendingReturn.Note" },
+			["InventoryIssuances"] = new[] { "Note" },
+			["InventoryPurchaseOrders"] = new[] { "Note" },
+			["InventoryPurchaseOrderItems"] = new[] { "Note" },
+			["InventoryCounts"] = new[] { "Note" }
+		};
+		public static IReadOnlyCollection<string> PrivatePaths(string table) => table != null && PrivateMembers.TryGetValue(table, out var paths) ? paths : Array.Empty<string>();
+		/// <summary>The column a protected table seals: ProtectedContent for a mixed table, Content for a wholly private one.</summary>
+		public static string SealedColumn(string table) => PrivateMembers.ContainsKey(table) ? "ProtectedContent" : "Content";
+		public static IReadOnlyDictionary<string, (Func<T, string> Get, Action<T, string> Set)> Fields<T>() where T : InventoryRow
+		{
+			if (!IsProtected(typeof(T)))
+				return new Dictionary<string, (Func<T, string>, Action<T, string>)>();
+			var table = All[typeof(T)];
+			return PrivateMembers.ContainsKey(table)
+				? new Dictionary<string, (Func<T, string>, Action<T, string>)> { [table.ToLowerInvariant() + ".protectedcontent"] = (x => ((ISplitContentRow)x).ProtectedContent, (x, v) => ((ISplitContentRow)x).ProtectedContent = v) }
+				: new Dictionary<string, (Func<T, string>, Action<T, string>)> { [table.ToLowerInvariant() + ".content"] = (x => x.Content, (x, v) => x.Content = v) };
+		}
 	}
 }

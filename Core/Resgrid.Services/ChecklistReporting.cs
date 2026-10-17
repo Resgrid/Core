@@ -71,10 +71,10 @@ namespace Resgrid.Services
 						if (occurrence.UpdatedOn > asOf) { AddUnavailable(unavailable, "LifecycleHistoryUnavailable"); continue; }
 						if (occurrence.State == (int)ChecklistOccurrenceState.Cancelled) continue;
 					}
-					await RevealAsync(actor, occurrence);
+					await RevealAsync(actor, occurrence, display: true);
 					if (!versions.TryGetValue(occurrence.VersionId, out var version))
 						versions[occurrence.VersionId] = version = await RevealAsync(actor, await _store.GetAsync<ChecklistDefinitionVersion>(actor.DepartmentId, occurrence.VersionId));
-					if (completion != null) await RevealAsync(actor, completion);
+					if (completion != null) await RevealAsync(actor, completion, display: true);
 					var completed = completion?.State == (int)ChecklistRunState.Submitted && completion.SubmittedOn.HasValue
 						&& completion.SubmittedOn <= asOf && (!completion.WitnessedOn.HasValue || completion.WitnessedOn <= asOf);
 					var finalOn = completed ? (completion.WitnessedOn ?? completion.SubmittedOn) : null;

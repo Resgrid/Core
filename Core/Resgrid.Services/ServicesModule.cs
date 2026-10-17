@@ -49,6 +49,13 @@ namespace Resgrid.Services
 				var endpoint = Resgrid.Llm.OperatorEndpointPolicy.ValidateUri(AiConfig.Endpoint, AiConfig.AllowPrivateEndpoint);
 				return new Resgrid.Llm.OpenAiToolClient(Resgrid.Llm.OperatorEndpointPolicy.CreateClient(endpoint, AiConfig.AllowPrivateEndpoint), endpoint, AiConfig.ApiKey);
 			}).As<Resgrid.Llm.ILlmClient>().InstancePerLifetimeScope();
+			builder.Register(_ => {
+				var target = Resgrid.Ai.AiDecisionSettings.Resolve(AiConfig.DecisionProvider, AiConfig.DecisionEndpoint, AiConfig.AllowPrivateEndpoint, AiConfig.DecisionApiKey,
+					AiConfig.DecisionModel, AiConfig.DecisionModelRevision, AiConfig.DecisionRuntimeDigest) ?? throw new Resgrid.Llm.LlmUnavailableException();
+				// A remote (Workers AI) endpoint never gets private-network access, whatever the self-hosted setting says.
+				var allowPrivate = AiConfig.AllowPrivateEndpoint && !target.Remote;
+				return new Resgrid.Llm.SystemOneDecisionClient(Resgrid.Llm.OperatorEndpointPolicy.CreateClient(target.Endpoint, allowPrivate), target.Endpoint, AiConfig.DecisionApiKey, target.Remote);
+			}).As<Resgrid.Llm.IDecisionClient>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.AdminAssistService>().As<Resgrid.Model.AdminAssist.IAdminAssistService>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.ConfigurationImpactService>().As<Resgrid.Model.AdminAssist.IConfigurationImpactService>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.SecurityImpactService>().As<Resgrid.Model.AdminAssist.ISecurityImpactService>().InstancePerLifetimeScope();
@@ -100,6 +107,8 @@ namespace Resgrid.Services
 					return (Func<RestClient>)(() => scope.ResolveNamed<RestClient>("ai-billing-client"));
 				}).InstancePerLifetimeScope();
 			builder.RegisterType<EnhancedAiAccessService>().As<IEnhancedAiAccessService>().InstancePerLifetimeScope();
+			// Enhanced AI base-type suggestions for department list names (decision model, DepartmentConfiguration requests only).
+			builder.RegisterType<BaseTypeAiSuggestionService>().As<IBaseTypeAiSuggestionService>().InstancePerLifetimeScope();
 			// AI dispatch, Enrich mode (enhanced-ai-addon-plan.md §4): worker-side enrichment of calls created from AI-format dispatch email.
 			builder.RegisterType<AiDispatch.AiDispatchEnrichmentService>().As<Resgrid.Model.AiDispatch.IAiDispatchEnrichmentService>().InstancePerLifetimeScope();
 			builder.RegisterType<AiDispatch.AiDispatchAdminService>().As<Resgrid.Model.AiDispatch.IAiDispatchAdminService>().InstancePerLifetimeScope();

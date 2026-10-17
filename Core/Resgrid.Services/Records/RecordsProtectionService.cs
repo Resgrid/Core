@@ -117,12 +117,6 @@ namespace Resgrid.Services.Records
 		public Task ProtectRevisionAsync(int departmentId, RmsRevision row, string userId = null, CancellationToken cancellationToken = default)
 			=> ApplyAsync(departmentId, row, null, row?.RmsRevisionId, RmsProtectedFields.Revisions, (r, v) => { r.IsProtected = true; r.ProtectedCatalogVersion = v; }, userId, "revision", cancellationToken);
 
-		public async Task ProtectLocationAsync(int departmentId, RmsLocation row, RmsLocation existing, string userId = null, CancellationToken cancellationToken = default)
-		{
-			await ApplyAsync(departmentId, row, existing, row?.RmsLocationId, RmsProtectedFields.Locations, (r, v) => { r.IsProtected = true; r.ProtectedCatalogVersion = v; }, userId, "location", cancellationToken);
-			await ApplyCompanionsAsync(departmentId, row, row?.RmsLocationId, RmsProtectedFields.LocationCompanions, (r, v) => { r.IsProtected = true; r.ProtectedCatalogVersion = v; }, userId, "location", cancellationToken);
-		}
-
 		public Task ProtectNarrativeAsync(int departmentId, RmsNarrative row, RmsNarrative existing, string userId = null, CancellationToken cancellationToken = default)
 			=> ApplyAsync(departmentId, row, existing, row?.RmsNarrativeId, RmsProtectedFields.Narratives, (r, v) => { r.IsProtected = true; r.ProtectedCatalogVersion = v; }, userId, "narrative", cancellationToken);
 
@@ -132,11 +126,8 @@ namespace Resgrid.Services.Records
 		public Task ProtectCasualtyAsync(int departmentId, RmsCasualtyRescue row, RmsCasualtyRescue existing, string userId = null, CancellationToken cancellationToken = default)
 			=> ApplyAsync(departmentId, row, existing, row?.RmsCasualtyRescueId, RmsProtectedFields.Casualties, (r, v) => { r.IsProtected = true; r.ProtectedCatalogVersion = v; }, userId, "casualty", cancellationToken);
 
-		public async Task ProtectExposureAsync(int departmentId, RmsExposure row, RmsExposure existing, string userId = null, CancellationToken cancellationToken = default)
-		{
-			await ApplyAsync(departmentId, row, existing, row?.RmsExposureId, RmsProtectedFields.Exposures, (r, v) => { r.IsProtected = true; r.ProtectedCatalogVersion = v; }, userId, "exposure", cancellationToken);
-			await ApplyCompanionsAsync(departmentId, row, row?.RmsExposureId, RmsProtectedFields.ExposureCompanions, (r, v) => { r.IsProtected = true; r.ProtectedCatalogVersion = v; }, userId, "exposure", cancellationToken);
-		}
+		public Task ProtectExposureAsync(int departmentId, RmsExposure row, RmsExposure existing, string userId = null, CancellationToken cancellationToken = default)
+			=> ApplyAsync(departmentId, row, existing, row?.RmsExposureId, RmsProtectedFields.Exposures, (r, v) => { r.IsProtected = true; r.ProtectedCatalogVersion = v; }, userId, "exposure", cancellationToken);
 
 		public Task ProtectModuleAsync(int departmentId, RmsIncidentModule row, RmsIncidentModule existing, string userId = null, CancellationToken cancellationToken = default)
 			=> ApplyAsync(departmentId, row, existing, row?.RmsIncidentModuleId, RmsProtectedFields.Modules, (r, v) => { r.IsProtected = true; r.ProtectedCatalogVersion = v; }, userId, "incident module", cancellationToken);
@@ -404,17 +395,11 @@ namespace Resgrid.Services.Records
 			if (aggregate == null)
 				return result;
 
-			if (aggregate.Location != null)
-			{
-				result.Merge(await _reads.ResolveRecordsEntitiesForReadAsync(departmentId, Rows(new[] { aggregate.Location }, r => r.RmsLocationId), RmsProtectedFields.Locations, grantToken, userId, cancellationToken));
-				result.Merge(await _reads.ResolveRecordsCompanionsForReadAsync(departmentId, Rows(new[] { aggregate.Location }, r => r.RmsLocationId), RmsProtectedFields.LocationCompanions, grantToken, userId, cancellationToken));
-			}
 			if (aggregate.Narrative != null)
 				result.Merge(await _reads.ResolveRecordsEntitiesForReadAsync(departmentId, Rows(new[] { aggregate.Narrative }, r => r.RmsNarrativeId), RmsProtectedFields.Narratives, grantToken, userId, cancellationToken));
 			result.Merge(await _reads.ResolveRecordsEntitiesForReadAsync(departmentId, Rows(aggregate.Facts, r => r.RmsSourceFactId), RmsProtectedFields.SourceFacts, grantToken, userId, cancellationToken));
 			result.Merge(await _reads.ResolveRecordsEntitiesForReadAsync(departmentId, Rows(aggregate.Casualties, r => r.RmsCasualtyRescueId), RmsProtectedFields.Casualties, grantToken, userId, cancellationToken));
 			result.Merge(await _reads.ResolveRecordsEntitiesForReadAsync(departmentId, Rows(aggregate.Exposures, r => r.RmsExposureId), RmsProtectedFields.Exposures, grantToken, userId, cancellationToken));
-			result.Merge(await _reads.ResolveRecordsCompanionsForReadAsync(departmentId, Rows(aggregate.Exposures, r => r.RmsExposureId), RmsProtectedFields.ExposureCompanions, grantToken, userId, cancellationToken));
 			result.Merge(await _reads.ResolveRecordsEntitiesForReadAsync(departmentId, Rows(aggregate.Modules, r => r.RmsIncidentModuleId), RmsProtectedFields.Modules, grantToken, userId, cancellationToken));
 			result.Merge(await _reads.ResolveRecordsEntitiesForReadAsync(departmentId, Rows(aggregate.Resources, r => r.RmsIncidentResourceId), RmsProtectedFields.Resources, grantToken, userId, cancellationToken));
 			result.Merge(await ResolveAttachmentsAsync(departmentId, aggregate.Attachments, grantToken, userId, false, cancellationToken));
@@ -501,8 +486,6 @@ namespace Resgrid.Services.Records
 			var result = new ProtectedReadResult();
 			if (aggregate == null)
 				return result;
-			if (aggregate.Location != null)
-				result.Merge(await _reads.ResolveRecordsEntitiesForWorkloadAsync(departmentId, purpose, Rows(new[] { aggregate.Location }, r => r.RmsLocationId), RmsProtectedFields.Locations, cancellationToken));
 			if (aggregate.Narrative != null)
 				result.Merge(await _reads.ResolveRecordsEntitiesForWorkloadAsync(departmentId, purpose, Rows(new[] { aggregate.Narrative }, r => r.RmsNarrativeId), RmsProtectedFields.Narratives, cancellationToken));
 			result.Merge(await _reads.ResolveRecordsEntitiesForWorkloadAsync(departmentId, purpose, Rows(aggregate.Casualties, r => r.RmsCasualtyRescueId), RmsProtectedFields.Casualties, cancellationToken));

@@ -13,6 +13,12 @@ namespace Resgrid.Services
 	/// incremented. Section 5.2/5.3 operational, moderation, and section 22.1 audit families land in
 	/// later versions before the freeze. Linked Address rows are deliberately absent until the
 	/// shared-Address ownership migration exists (section 5.1).
+	///
+	/// Only private content belongs here: what describes a patient, a caller or a person outside the department,
+	/// free-text narratives, credentials and money. Operational data the system runs on — types, ids, metadata,
+	/// configuration, statuses, states, locations of calls, units and personnel, and call, personnel and unit names —
+	/// is never catalogued, in any module (Shawn, 2026-10-17). It must be readable without a grant, and it is what
+	/// Enhanced AI decision models may use.
 	/// </summary>
 	public class ProtectedFieldCatalog : IProtectedFieldCatalog
 	{
@@ -25,7 +31,7 @@ namespace Resgrid.Services
 		private const string DocumentsFamily = "Documents";
 		private const string CredentialsFamily = "Credentials";
 		private const int ChecklistContentCatalogVersion = 14;
-		private const int ChecklistOutcomeCatalogVersion = 15;
+		// Version 15 (checklist outcomes) is retired; see RetiredCatalogVersions.
 		// Readiness history is version 16, owned by ReadinessHistoryFields.CatalogVersion.
 		private const int ChecklistScheduleCatalogVersion = 17;
 
@@ -112,6 +118,16 @@ namespace Resgrid.Services
 		/// </summary>
 		public const int AdminAssistPlansCatalogVersion = 33;
 
+		/// <summary>
+		/// Versions whose every entry was deleted, so they are intentionally empty. Operational data — types, ids,
+		/// metadata, configuration, statuses, states, call/unit/personnel locations and call/personnel/unit names — is
+		/// not private and left the catalog on 2026-10-17 (adp-catalog-review-2026-10-17.md, Path A: no department in
+		/// any environment had ever enrolled, so no envelope existed). Version 15 held only checklist outcome
+		/// Score/Passed/IsFailure. The numbers above it keep their meaning rather than being renumbered, because
+		/// documents, constants and stored ProtectedCatalogVersion values cite them. Never reuse a retired number.
+		/// </summary>
+		public static IReadOnlyCollection<int> RetiredCatalogVersions { get; } = new[] { 15 };
+
 		private static readonly IReadOnlyList<ProtectedFieldDefinition> Entries = BuildV1();
 		private static readonly Dictionary<string, ProtectedFieldDefinition> ById =
 			Entries.ToDictionary(e => e.FieldId, StringComparer.OrdinalIgnoreCase);
@@ -182,26 +198,20 @@ namespace Resgrid.Services
 		{
 			var list = new List<ProtectedFieldDefinition>();
 
-			// ---- Calls (section 5.1). User-authored "number/type/name" values are protected even
-			// though their labels look structural; the system-generated Calls.Number stays plaintext.
+			// ---- Calls (section 5.1). Only what is about the patient or the caller is protected: the
+			// call's name, type, address, location, What3Words and identifiers are operational data the
+			// system runs on (dispatch, run cards, closest unit, maps, search) and stay plaintext for every
+			// department (Shawn, 2026-10-17; adp-catalog-review-2026-10-17.md §2, deleted before any
+			// department enrolled).
 			void Call(string column, ProtectedFieldClassification classification, ProtectedFieldStorageKind kind = ProtectedFieldStorageKind.Text) =>
 				list.Add(new ProtectedFieldDefinition($"calls.{column.ToLowerInvariant()}", CallsFamily, "Calls", column,
 					kind, classification, PermissionTypes.ViewProtectedCallData, PermissionTypes.EditProtectedCallData));
 
-			Call("Name", ProtectedFieldClassification.Sensitive);
-			Call("Type", ProtectedFieldClassification.Sensitive);
 			Call("NatureOfCall", ProtectedFieldClassification.Phi);
 			Call("Notes", ProtectedFieldClassification.Phi);
 			Call("CompletedNotes", ProtectedFieldClassification.Phi);
-			Call("Address", ProtectedFieldClassification.Pii);
-			Call("GeoLocationData", ProtectedFieldClassification.Pii);
-			Call("W3W", ProtectedFieldClassification.Pii);
 			Call("ContactName", ProtectedFieldClassification.Pii);
 			Call("ContactNumber", ProtectedFieldClassification.Pii);
-			Call("SourceIdentifier", ProtectedFieldClassification.Sensitive);
-			Call("IncidentNumber", ProtectedFieldClassification.Sensitive);
-			Call("ExternalIdentifier", ProtectedFieldClassification.Sensitive);
-			Call("ReferenceNumber", ProtectedFieldClassification.Sensitive);
 			Call("CallFormData", ProtectedFieldClassification.Phi);
 			Call("DeletedReason", ProtectedFieldClassification.Sensitive);
 
@@ -211,18 +221,16 @@ namespace Resgrid.Services
 				list.Add(new ProtectedFieldDefinition($"{table.ToLowerInvariant()}.{column.ToLowerInvariant()}", CallsFamily, table, column,
 					kind, classification, PermissionTypes.ViewProtectedCallData, PermissionTypes.EditProtectedCallData));
 
+			// Where a note or photo was made is the member's position, operational like unit and personnel
+			// locations, so the coordinates stay plaintext (2026-10-17).
 			CallChild("CallNotes", "Note", ProtectedFieldClassification.Phi);
 			CallChild("CallNotes", "FlaggedReason", ProtectedFieldClassification.Sensitive);
-			CallChild("CallNotes", "Latitude", ProtectedFieldClassification.Pii, ProtectedFieldStorageKind.CompanionColumn);
-			CallChild("CallNotes", "Longitude", ProtectedFieldClassification.Pii, ProtectedFieldStorageKind.CompanionColumn);
 			CallChild("CallLogs", "Narrative", ProtectedFieldClassification.Phi);
 			CallChild("CallReferences", "Note", ProtectedFieldClassification.Phi);
 			CallChild("CallAttachments", "Name", ProtectedFieldClassification.Sensitive);
 			CallChild("CallAttachments", "FileName", ProtectedFieldClassification.Sensitive);
 			CallChild("CallAttachments", "FlaggedReason", ProtectedFieldClassification.Sensitive);
 			CallChild("CallAttachments", "Data", ProtectedFieldClassification.Phi, ProtectedFieldStorageKind.Binary);
-			CallChild("CallAttachments", "Latitude", ProtectedFieldClassification.Pii, ProtectedFieldStorageKind.CompanionColumn);
-			CallChild("CallAttachments", "Longitude", ProtectedFieldClassification.Pii, ProtectedFieldStorageKind.CompanionColumn);
 
 			// ---- Personnel: department-scoped sensitive attributes live on DepartmentMemberSensitiveData
 			// (never the global UserProfile row — a user can belong to several departments).
@@ -245,7 +253,6 @@ namespace Resgrid.Services
 			Contact("MiddleName", ProtectedFieldClassification.Pii);
 			Contact("LastName", ProtectedFieldClassification.Pii);
 			Contact("OtherName", ProtectedFieldClassification.Pii);
-			Contact("CompanyName", ProtectedFieldClassification.Pii);
 			Contact("Email", ProtectedFieldClassification.Pii);
 			Contact("CountryIssuedIdNumber", ProtectedFieldClassification.Pii);
 			Contact("CountryIdName", ProtectedFieldClassification.Pii);
@@ -277,8 +284,10 @@ namespace Resgrid.Services
 
 			// ---- Personnel certifications (section 5.1: "license/certification numbers and
 			// documents"), catalog v6. The document itself is the binary field — a certificate scan
-			// carries the member's name, licence number and often their signature, so protecting the
-			// metadata while serving the file in the clear would protect nothing.
+			// carries the member's name, licence number and often their signature. The certification's
+			// name, type, area and issuer are qualification metadata (qualification-based dispatch reads
+			// them) and stay plaintext (2026-10-17); the licence number, file name, document and status
+			// reason stay protected.
 			void Certification(string column, ProtectedFieldClassification classification,
 				ProtectedFieldStorageKind kind = ProtectedFieldStorageKind.Text) =>
 				list.Add(new ProtectedFieldDefinition($"personnelcertifications.{column.ToLowerInvariant()}",
@@ -286,11 +295,7 @@ namespace Resgrid.Services
 					PermissionTypes.ViewProtectedPersonnelData, PermissionTypes.ViewProtectedPersonnelData,
 					CertificationCatalogVersion));
 
-			Certification("Name", ProtectedFieldClassification.Pii);
 			Certification("Number", ProtectedFieldClassification.Pii);
-			Certification("Type", ProtectedFieldClassification.Sensitive);
-			Certification("Area", ProtectedFieldClassification.Sensitive);
-			Certification("IssuedBy", ProtectedFieldClassification.Sensitive);
 			Certification("Filename", ProtectedFieldClassification.Sensitive);
 			Certification("Data", ProtectedFieldClassification.Pii, ProtectedFieldStorageKind.Binary);
 
@@ -347,16 +352,13 @@ namespace Resgrid.Services
 			LogField("Cause", ProtectedFieldClassification.Sensitive);
 			LogField("ContactName", ProtectedFieldClassification.Sensitive);
 			LogField("ContactNumber", ProtectedFieldClassification.Sensitive);
-			LogField("OtherPersonnel", ProtectedFieldClassification.Sensitive);
-			LogField("Location", ProtectedFieldClassification.Sensitive);
 			LogField("BodyLocation", ProtectedFieldClassification.Phi);
 			LogField("PronouncedDeceasedBy", ProtectedFieldClassification.Phi);
 
+			// The incident location and the names of the other personnel on scene are operational and stay
+			// plaintext (2026-10-17), as is the position a unit filed its status from.
 			Operational("UdfFieldValues", "Value", ProtectedFieldClassification.Sensitive);
 			Operational("UnitStates", "Note", ProtectedFieldClassification.Sensitive);
-			Operational("UnitStates", "GeoLocationData", ProtectedFieldClassification.Sensitive);
-			Operational("UnitStates", "Latitude", ProtectedFieldClassification.Sensitive, ProtectedFieldStorageKind.CompanionColumn);
-			Operational("UnitStates", "Longitude", ProtectedFieldClassification.Sensitive, ProtectedFieldStorageKind.CompanionColumn);
 
 			list.Add(new ProtectedFieldDefinition("contactnotes.note", ContactsFamily, "ContactNotes", "Note",
 				ProtectedFieldStorageKind.Text, ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedContactData));
@@ -392,10 +394,7 @@ namespace Resgrid.Services
 			MessageField("Messages", "Body", ProtectedFieldClassification.Sensitive);
 			MessageField("MessageRecipients", "Response", ProtectedFieldClassification.Sensitive);
 			MessageField("MessageRecipients", "Note", ProtectedFieldClassification.Sensitive);
-			MessageField("MessageRecipients", "Latitude", ProtectedFieldClassification.Sensitive,
-				ProtectedFieldStorageKind.CompanionColumn);
-			MessageField("MessageRecipients", "Longitude", ProtectedFieldClassification.Sensitive,
-				ProtectedFieldStorageKind.CompanionColumn);
+			// The position a reply was sent from is the member's location: operational, plaintext (2026-10-17).
 
 			// ---- Moderation (section 5.3), catalog v8 ------------------------------------------
 			// A moderation record is a VERBATIM COPY of the worst content the department holds: the
@@ -467,18 +466,12 @@ namespace Resgrid.Services
 			// Calendar entries name people and places: "Meet family re: incident 4471", a home
 			// address as the location. Structural scheduling columns (start/end, timezone,
 			// recurrence rule) stay plaintext - a protected department's calendar must still lay out.
-			Remaining(OperationalFamily, "CalendarItems", "Title", ProtectedFieldClassification.Sensitive,
-				PermissionTypes.ViewProtectedOperationalData);
 			Remaining(OperationalFamily, "CalendarItems", "Description", ProtectedFieldClassification.Sensitive,
-				PermissionTypes.ViewProtectedOperationalData);
-			Remaining(OperationalFamily, "CalendarItems", "Location", ProtectedFieldClassification.Sensitive,
 				PermissionTypes.ViewProtectedOperationalData);
 
 			// A department document is whatever they uploaded - protocols, but also incident
 			// paperwork and personnel letters. The FILE is the point, so it is cataloged with its
 			// name: protecting the metadata while serving the bytes in the clear protects nothing.
-			Remaining(DocumentsFamily, "Documents", "Name", ProtectedFieldClassification.Sensitive,
-				PermissionTypes.ViewProtectedOperationalData);
 			Remaining(DocumentsFamily, "Documents", "Description", ProtectedFieldClassification.Sensitive,
 				PermissionTypes.ViewProtectedOperationalData);
 			Remaining(DocumentsFamily, "Documents", "Filename", ProtectedFieldClassification.Sensitive,
@@ -513,15 +506,12 @@ namespace Resgrid.Services
 			Records("RmsOperationalRecordDetails", "InitialReport", ProtectedFieldClassification.Phi);
 			Records("RmsOperationalRecordDetails", "Cause", ProtectedFieldClassification.Sensitive);
 			Records("RmsOperationalRecordDetails", "ContactName", ProtectedFieldClassification.Pii);
+			// The record's copies of the call name and address, its incident location, case number and the
+			// names of the other personnel are operational and stay plaintext (2026-10-17), like the call itself.
 			Records("RmsOperationalRecordDetails", "ContactNumber", ProtectedFieldClassification.Pii);
-			Records("RmsOperationalRecordDetails", "OtherPersonnel", ProtectedFieldClassification.Sensitive);
-			Records("RmsOperationalRecordDetails", "Location", ProtectedFieldClassification.Sensitive);
 			Records("RmsOperationalRecordDetails", "BodyLocation", ProtectedFieldClassification.Phi);
 			Records("RmsOperationalRecordDetails", "PronouncedDeceasedBy", ProtectedFieldClassification.Phi);
-			Records("RmsOperationalRecordDetails", "CaseNumber", ProtectedFieldClassification.Sensitive);
 			Records("RmsOperationalRecordDetails", "Destination", ProtectedFieldClassification.Sensitive);
-			Records("RmsOperationalRecordDetails", "CallName", ProtectedFieldClassification.Sensitive);
-			Records("RmsOperationalRecordDetails", "CallAddress", ProtectedFieldClassification.Pii);
 			Records("RmsOperationalRecordDetails", "CallNature", ProtectedFieldClassification.Phi);
 
 			Records("RmsNarratives", "Narrative", ProtectedFieldClassification.Phi);
@@ -529,28 +519,14 @@ namespace Resgrid.Services
 			Records("RmsNarratives", "OutcomeNarrative", ProtectedFieldClassification.Phi);
 			Records("RmsNarratives", "SupplementalJson", ProtectedFieldClassification.Sensitive);
 
-			Records("RmsLocations", "AddressText", ProtectedFieldClassification.Pii);
-			Records("RmsLocations", "Number", ProtectedFieldClassification.Pii);
-			Records("RmsLocations", "NumberPrefix", ProtectedFieldClassification.Pii);
-			Records("RmsLocations", "NumberSuffix", ProtectedFieldClassification.Pii);
-			Records("RmsLocations", "Street", ProtectedFieldClassification.Pii);
-			Records("RmsLocations", "UnitValue", ProtectedFieldClassification.Pii);
-			Records("RmsLocations", "CrossStreet1", ProtectedFieldClassification.Pii);
-			Records("RmsLocations", "CrossStreet2", ProtectedFieldClassification.Pii);
-			Records("RmsLocations", "Latitude", ProtectedFieldClassification.Pii, ProtectedFieldStorageKind.CompanionColumn);
-			Records("RmsLocations", "Longitude", ProtectedFieldClassification.Pii, ProtectedFieldStorageKind.CompanionColumn);
-
 			Records("RmsSourceFacts", "SourceValue", ProtectedFieldClassification.Sensitive);
 			Records("RmsSourceFacts", "CurrentValue", ProtectedFieldClassification.Sensitive);
 
 			foreach (var column in new[] { "PersonnelUserId", "Rank", "JobClassification", "BirthMonthYear", "Gender", "Race", "CasualtyCause", "CasualtyAction", "CasualtyTimeline", "InjuryDetailJson", "DetailJson" })
 				Records("RmsCasualtyRescues", column, ProtectedFieldClassification.Phi);
 
-			Records("RmsExposures", "AddressText", ProtectedFieldClassification.Pii);
-			Records("RmsExposures", "Street", ProtectedFieldClassification.Pii);
+			// An exposure's address and position are incident locations: plaintext (2026-10-17).
 			Records("RmsExposures", "DetailJson", ProtectedFieldClassification.Sensitive);
-			Records("RmsExposures", "Latitude", ProtectedFieldClassification.Pii, ProtectedFieldStorageKind.CompanionColumn);
-			Records("RmsExposures", "Longitude", ProtectedFieldClassification.Pii, ProtectedFieldStorageKind.CompanionColumn);
 
 			Records("RmsIncidentModules", "DetailJson", ProtectedFieldClassification.Sensitive);
 			Records("RmsIncidentProperties", "DetailJson", ProtectedFieldClassification.Sensitive);
@@ -716,21 +692,22 @@ namespace Resgrid.Services
 			foreach (var history in new[] { ("AuditLogs", "Data"), ("DomainEventOutbox", "PayloadJson"), ("DomainEventOutbox", "LastError"), ("WorkflowRuns", "InputPayload"), ("WorkflowRuns", "ErrorMessage"), ("WorkflowRunLogs", "RenderedOutput"), ("WorkflowRunLogs", "ActionResult"), ("WorkflowRunLogs", "ErrorMessage") })
 				list.Add(new ProtectedFieldDefinition(history.Item1.ToLowerInvariant() + "." + history.Item2.ToLowerInvariant(), OperationalFamily, history.Item1, history.Item2, ProtectedFieldStorageKind.Text,
 					ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, Resgrid.Model.Checklists.ReadinessHistoryFields.CatalogVersion));
-			foreach (var outcome in new[] { (Table: "ChecklistCompletions", Column: "Score"), (Table: "ChecklistCompletions", Column: "Passed"), (Table: "ChecklistCompletionItems", Column: "IsFailure") })
-				list.Add(new ProtectedFieldDefinition(outcome.Table.ToLowerInvariant() + "." + outcome.Column.ToLowerInvariant(), OperationalFamily, outcome.Table, outcome.Column, ProtectedFieldStorageKind.CompanionColumn,
-					ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, ChecklistOutcomeCatalogVersion));
-			foreach (var table in Resgrid.Model.Checklists.ChecklistTables.All.Values)
-				list.Add(new ProtectedFieldDefinition(table.ToLowerInvariant() + ".content", OperationalFamily, table, "Content", ProtectedFieldStorageKind.Text,
+			// Catalog 15 (checklist outcome Score / Passed / IsFailure) is retired: outcomes are state, not private
+			// (2026-10-17). See RetiredCatalogVersions.
+			// A mixed table's sealed slot is ProtectedContent (its private members); its Content is plaintext metadata. The slot
+			// replaced Content at the same catalog version on 2026-10-17, before any department had enrolled (review §8, option a).
+			foreach (var table in Resgrid.Model.Checklists.ChecklistTables.All.Values.Where(Resgrid.Model.Checklists.ChecklistTables.ProtectedContent.Contains))
+				list.Add(new ProtectedFieldDefinition(table.ToLowerInvariant() + "." + Resgrid.Model.Checklists.ChecklistTables.SealedColumn(table).ToLowerInvariant(), OperationalFamily, table, Resgrid.Model.Checklists.ChecklistTables.SealedColumn(table), ProtectedFieldStorageKind.Text,
 					ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, table == Resgrid.Model.Checklists.ChecklistTables.All[typeof(Resgrid.Model.Checklists.ChecklistSchedule)] ? ChecklistScheduleCatalogVersion : ChecklistContentCatalogVersion));
 			list.Add(new ProtectedFieldDefinition("checklistcompletionfiles.data", OperationalFamily, "ChecklistCompletionFiles", "Data", ProtectedFieldStorageKind.Binary,
 				ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, ChecklistContentCatalogVersion));
-			foreach (var table in Resgrid.Model.WorkOrders.WorkOrderTables.All.Values)
-				list.Add(new ProtectedFieldDefinition(table.ToLowerInvariant() + ".content", OperationalFamily, table, "Content", ProtectedFieldStorageKind.Text,
+			foreach (var table in Resgrid.Model.WorkOrders.WorkOrderTables.All.Values.Where(Resgrid.Model.WorkOrders.WorkOrderTables.ProtectedContent.Contains))
+				list.Add(new ProtectedFieldDefinition(table.ToLowerInvariant() + "." + Resgrid.Model.WorkOrders.WorkOrderTables.SealedColumn(table).ToLowerInvariant(), OperationalFamily, table, Resgrid.Model.WorkOrders.WorkOrderTables.SealedColumn(table), ProtectedFieldStorageKind.Text,
 					ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, Resgrid.Model.WorkOrders.WorkOrderTables.VersionFor(table)));
 			list.Add(new ProtectedFieldDefinition("workorderfiles.data", OperationalFamily, "WorkOrderFiles", "Data", ProtectedFieldStorageKind.Binary,
 				ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, Resgrid.Model.WorkOrders.WorkOrderTables.CatalogVersion));
-			foreach (var table in Resgrid.Model.Inventories.InventoryTables.All.Values)
-				list.Add(new ProtectedFieldDefinition(table.ToLowerInvariant() + ".content", OperationalFamily, table, "Content", ProtectedFieldStorageKind.Text,
+			foreach (var table in Resgrid.Model.Inventories.InventoryTables.All.Values.Where(Resgrid.Model.Inventories.InventoryTables.ProtectedContent.Contains))
+				list.Add(new ProtectedFieldDefinition(table.ToLowerInvariant() + "." + Resgrid.Model.Inventories.InventoryTables.SealedColumn(table).ToLowerInvariant(), OperationalFamily, table, Resgrid.Model.Inventories.InventoryTables.SealedColumn(table), ProtectedFieldStorageKind.Text,
 					ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, table switch {
 						"RecordInventoryUsages" => Resgrid.Model.Inventories.InventoryTables.UsageCatalogVersion,
 						"InventoryCounts" or "InventoryCountItems" or "InventoryAlerts" or "InventoryAlertDeliveries" => Resgrid.Model.Inventories.InventoryTables.OperationsCatalogVersion,

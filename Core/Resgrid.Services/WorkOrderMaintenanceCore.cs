@@ -22,18 +22,18 @@ namespace Resgrid.Services
         private void RequireMaintenanceStore() { if (_maintenance == null) throw new WorkOrderException(503, "MaintenanceUnavailable"); }
         private static InventoryActor InventoryActor(ChecklistActor actor) => new() { DepartmentId = actor.DepartmentId, UserId = actor.UserId, GrantToken = actor.GrantToken };
         private static string MaintenanceIdentity(string source) => new Guid(SHA256.HashData(Encoding.UTF8.GetBytes(source)).Take(16).ToArray()).ToString("D");
-        private async Task<WorkOrder> RevealOrderAsync(ChecklistActor actor, WorkOrder row)
+        private async Task<WorkOrder> RevealOrderAsync(ChecklistActor actor, WorkOrder row, bool display = false)
         {
-            await RevealAsync(actor, row);
-            return await PopulateOrderContentAsync(actor, row);
+            await RevealAsync(actor, row, display);
+            return await PopulateOrderContentAsync(actor, row, display);
         }
-        private async Task<WorkOrder> PopulateOrderContentAsync(ChecklistActor actor, WorkOrder row)
+        private async Task<WorkOrder> PopulateOrderContentAsync(ChecklistActor actor, WorkOrder row, bool display = false)
         {
             if (!string.IsNullOrEmpty(row.Content)) return row;
             WorkOrderContent fields;
             if (row.SourceType == 2 && row.RecurrenceVersionId != null)
             {
-                var version = await RevealAsync(actor, await _store.GetAsync<WorkOrderRecurrenceVersion>(actor.DepartmentId, row.RecurrenceVersionId));
+                var version = await RevealAsync(actor, await _store.GetAsync<WorkOrderRecurrenceVersion>(actor.DepartmentId, row.RecurrenceVersionId), display);
                 var settings = Decode<WorkOrderRecurrenceInput>(version.Content);
                 fields = settings?.Template?.Content ?? throw new WorkOrderException(409, "MaintenanceUnavailable");
             }

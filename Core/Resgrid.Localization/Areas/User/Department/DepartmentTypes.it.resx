@@ -275,6 +275,9 @@
   <data name="SuggestedFromName" xml:space="preserve">
     <value>Suggerito dal nome: {0}</value>
   </data>
+  <data name="AiSuggestedFromName" xml:space="preserve">
+    <value>Suggerimento di Enhanced AI: {0}</value>
+  </data>
   <data name="CallTypeClass.Fire" xml:space="preserve">
     <value>Incendio</value>
   </data>

@@ -24,7 +24,7 @@
   <data name="AddUsage" xml:space="preserve"><value>Προσθήκη ένδειξης</value></data>
   <data name="AddWorkEntry" xml:space="preserve"><value>Προσθήκη καταχώρισης</value></data>
   <data name="AddWorker" xml:space="preserve"><value>Προσθήκη εργαζομένου</value></data>
-  <data name="AddWorkerExternalHelp" xml:space="preserve"><value>Ή προσθέστε εξωτερικό εργαζόμενο με κλειδί μισθοδοσίας και ετικέτα (και τα δύο προστατευμένα).</value></data>
+  <data name="AddWorkerExternalHelp" xml:space="preserve"><value>Ή προσθέστε εξωτερικό εργαζόμενο με κλειδί μισθοδοσίας και ετικέτα.</value></data>
   <data name="AddWorkerMemberHelp" xml:space="preserve"><value>Επιλέξτε μέλος για να δημιουργήσετε την εγγραφή εργαζομένου.</value></data>
   <data name="Address" xml:space="preserve"><value>Διεύθυνση</value></data>
   <data name="Affiliate" xml:space="preserve"><value>Συνδεδεμένη οντότητα</value></data>
@@ -253,7 +253,7 @@
   <data name="Headquarters" xml:space="preserve"><value>Έδρα</value></data>
   <data name="HeadquartersAddress" xml:space="preserve"><value>Διεύθυνση έδρας</value></data>
   <data name="HelpCompensation" xml:space="preserve"><value>Κάθε ποσό και πολλαπλασιαστής είναι προστατευμένο πεδίο. Οι εκτιμήσεις χρησιμοποιούν το προφίλ εργαζομένου, μετά την προεπιλογή ρόλου, μετά του τμήματος· το εγκεκριμένο κόστος μισθοδοσίας υπερισχύει πάντα.</value></data>
-  <data name="HelpEmployer" xml:space="preserve"><value>Η κάλυψη δηλώνεται από εσάς, ποτέ από το Resgrid. Αναγνωριστικά και διευθύνσεις είναι προστατευμένα πεδία· μια τιμή REDACTED που μένει αμετάβλητη διατηρεί ό,τι είναι αποθηκευμένο.</value></data>
+  <data name="HelpEmployer" xml:space="preserve"><value>Η κάλυψη δηλώνεται από εσάς, ποτέ από το Resgrid. Οι αριθμοί FEIN, SEIN και SOS, η επαφή υποβολής και οι διευθύνσεις συνδεδεμένων οντοτήτων είναι προστατευμένα πεδία· μια τιμή REDACTED που μένει αμετάβλητη διατηρεί ό,τι είναι αποθηκευμένο.</value></data>
   <data name="HispanicLatino" xml:space="preserve"><value>Ισπανόφωνος ή Λατίνος</value></data>
   <data name="HourlyRate" xml:space="preserve"><value>Ωριαία αμοιβή</value></data>
   <data name="Hours" xml:space="preserve"><value>Ώρες</value></data>

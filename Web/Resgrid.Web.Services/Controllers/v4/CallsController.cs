@@ -164,10 +164,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		/// <summary>
 		/// ADP plan section 7.3: BigBoard is an unattended display and is structurally stepped down.
-		/// For a protection-enforced department it receives only a safe shell — system-generated call
-		/// number, priority/status/state and safe timestamps survive; user-authored nature/name,
-		/// notes, identity, exact address/location and reference identifiers do not. Egress policy
-		/// can never relax this.
+		/// For a protection-enforced department it receives a safe shell: the call's operational data — name, type,
+		/// number, priority/status/state, address, location, What3Words, destination, identifiers and timestamps — is
+		/// not private and survives (2026-10-17); the nature, notes, caller identity, subject identifiers, contacts and
+		/// dispatch audio do not. Egress policy can never relax this.
 		/// </summary>
 		private async Task<bool> ApplyBigBoardSafeShellAsync(IEnumerable<CallResultData> calls)
 		{
@@ -182,29 +182,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 				if (call == null)
 					continue;
 
-				call.Name = "Protected incident — open Resgrid to view details.";
 				call.Nature = null;
 				call.Note = null;
-				call.Address = null;
-				call.DestinationName = null;
-				call.DestinationAddress = null;
-				call.DestinationTypeName = null;
-				call.DestinationPoiId = null;
-				call.DestinationPoiTypeId = null;
-				call.DestinationLatitude = null;
-				call.DestinationLongitude = null;
-				call.Geolocation = null;
-				call.What3Words = null;
 				call.ContactName = null;
 				call.ContactInfo = null;
-				call.ReferenceId = null;
-				call.ExternalId = null;
 				call.SubjectIdentifiers = null;
-				call.IncidentId = null;
 				call.AudioFileId = null;
-				call.Type = null;
-				call.Latitude = null;
-				call.Longitude = null;
 				call.Contacts = new List<CallContactResultData>();
 			}
 

@@ -40,7 +40,8 @@ namespace Resgrid.Services.AiDispatch
 				(await _flags.EvaluateFreshAsync(FeatureFlagKeys.AiDispatchTemplate, departmentId))?.IsEnabled == true;
 			var entitled = selfHosted || await _enhancedAi.GetActiveAddonStateAsync(departmentId) == true;
 			var format = (await _departments.GetDepartmentEmailSettingsAsync(departmentId))?.FormatType == (int)CallEmailTypes.AI;
-			return new AiDispatchStatus(AiDispatchConfig.EnrichEnabled, rolledOut, entitled, format, AiDispatchEnrichmentService.OperatorConfigured());
+			return new AiDispatchStatus(AiDispatchConfig.EnrichEnabled, rolledOut, entitled, format,
+				AiDispatchEnrichmentService.OperatorConfigured() || AiDispatchEnrichmentService.DecisionConfigured());
 		}
 
 		public async Task<DepartmentAiDispatchConfig> GetSettingsAsync(int departmentId, CancellationToken cancellationToken) =>

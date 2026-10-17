@@ -291,8 +291,10 @@ namespace Resgrid.Tests.Repositories
 
 			await repository.SaveStateAsync(new CallLocationIndexState { DepartmentId = protectedDepartment, KeyVersion = ParsedStreetAddress.Version, IsSuppressed = true, ModifiedOn = Now });
 			(await repository.GetDepartmentsToSuppressAsync(10)).Should().BeEmpty();
-			(await repository.GetDepartmentsToResumeAsync(10)).Should().BeEmpty("protection is still on");
-			(await repository.GetDepartmentsNeedingIndexAsync(ParsedStreetAddress.Version, 50)).Should().NotContain(protectedDepartment);
+			// A call's address and position are operational, not ADP-protected (2026-10-17): an index suppressed under the
+			// old policy is resumed whatever the department's protection state.
+			(await repository.GetDepartmentsToResumeAsync(10)).Should().Equal(new[] { protectedDepartment }, "protection no longer holds the index back");
+			(await repository.GetDepartmentsNeedingIndexAsync(ParsedStreetAddress.Version, 50)).Should().NotContain(protectedDepartment, "it is resumed first, then indexed");
 
 			await using (var database = Connect(_connection))
 				await database.ExecuteAsync(IsPostgres ? "UPDATE departmentdataprotectionpolicies SET state = 0 WHERE departmentid = @D"

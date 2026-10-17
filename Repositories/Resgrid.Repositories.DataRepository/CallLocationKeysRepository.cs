@@ -237,8 +237,7 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			var sql = $@"SELECT {Top}s.{Col("DepartmentId")}
 				FROM {Tbl("CallLocationIndexStates")} s
-				LEFT JOIN {Tbl("DepartmentDataProtectionPolicies")} p ON p.{Col("DepartmentId")} = s.{Col("DepartmentId")}
-				WHERE s.{Col("IsSuppressed")} = {True} AND (p.{Col("DepartmentId")} IS NULL OR p.{Col("State")} = 0)
+				WHERE s.{Col("IsSuppressed")} = {True}
 				ORDER BY s.{Col("DepartmentId")}{Limit}";
 
 			return (await QueryAsync<int>(sql, new { Take = take })).ToList();

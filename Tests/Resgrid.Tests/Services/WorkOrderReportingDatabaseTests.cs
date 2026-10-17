@@ -55,7 +55,8 @@ namespace Resgrid.Tests.Services
             await using var db = Connect(_connection);
             var duration = _type == DatabaseTypes.Postgres ? "EXTRACT(EPOCH FROM (completedon-startedon))/3600.0" : "DATEDIFF_BIG(second,StartedOn,CompletedOn)/3600.0";
             var mttr = await db.ExecuteScalarAsync<decimal>($"SELECT AVG({duration}) FROM {Q("WorkOrders")} WHERE {Q("DepartmentId")}=77 AND {Q("InventoryAssetId")}=@Asset", new { Asset = asset });
-            string Value(string name) => _type == DatabaseTypes.Postgres ? $"CAST(l.content::jsonb->>'{name}' AS numeric)" : $"CAST(JSON_VALUE(l.Content,'$.{name}') AS decimal(18,2))";
+            // A labour rate is a private member (review §8): it is stored in ProtectedContent, the hours in Content.
+            string Value(string name) => _type == DatabaseTypes.Postgres ? $"CAST(COALESCE(l.content::jsonb->>'{name}', l.protectedcontent::jsonb->>'{name}') AS numeric)" : $"CAST(COALESCE(JSON_VALUE(l.Content,'$.{name}'), JSON_VALUE(l.ProtectedContent,'$.{name}')) AS decimal(18,2))";
             async Task<decimal> Cost(string table, string quantity, string price) => await db.ExecuteScalarAsync<decimal>($"SELECT SUM({Value(quantity)}*{Value(price)}) FROM {Q(table)} l JOIN {Q("WorkOrders")} o ON o.{Q("DepartmentId")}=l.{Q("DepartmentId")} AND o.{Q("Id")}=l.{Q("WorkOrderId")} WHERE o.{Q("DepartmentId")}=77 AND o.{Q("InventoryAssetId")}=@Asset", new { Asset = asset });
             stats.Total.Should().Be(12); stats.Open.Should().Be(6); stats.MeanTimeToRepairHours.Should().Be(mttr).And.Be(6.5m);
             stats.Costs.Single(c => c.Currency == "USD").Labor.Should().Be(await Cost("WorkOrderLabors", "Hours", "RatePerHour")).And.Be(240);

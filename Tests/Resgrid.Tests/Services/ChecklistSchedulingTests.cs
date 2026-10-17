@@ -159,8 +159,8 @@ namespace Resgrid.Tests.Services
         public async Task Protected_schedule_requires_catalog_17_and_denies_a_redacted_edit()
         {
             var setup = await Scheduled();
-            new ProtectedFieldCatalog().GetAddedBetween(16, 17).Should().ContainSingle(f => f.FieldId == "checklistschedules.content");
-            _read.SetReturnsDefault(Task.FromResult(new ProtectedReadResult { RedactedFields = { "checklistschedules.content" } }));
+            new ProtectedFieldCatalog().GetAddedBetween(16, 17).Should().ContainSingle(f => f.FieldId == "checklistschedules.protectedcontent", "a schedule seals only its notes; its name is metadata");
+            _read.SetReturnsDefault(Task.FromResult(new ProtectedReadResult { RedactedFields = { "checklistschedules.protectedcontent" } }));
             Func<Task> save = () => _service.SaveScheduleAsync(_actor, setup.Input);
             (await save.Should().ThrowAsync<ChecklistException>()).Which.StatusCode.Should().Be(403);
             (await _store.GetAsync<ChecklistSchedule>(77, setup.Input.Id)).Revision.Should().Be(1);

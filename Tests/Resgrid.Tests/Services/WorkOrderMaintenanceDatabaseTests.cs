@@ -60,8 +60,10 @@ namespace Resgrid.Tests.Services
             }
             var catalog = new ProtectedFieldCatalog();
             catalog.GetForTable("WorkOrderSafetyHolds").Single().AddedInCatalogVersion.Should().Be(23);
-            foreach (var table in new[] { "WorkOrderRecurrences", "WorkOrderRecurrenceVersions", "WorkOrderMeterReadings", "WorkOrderRecurrenceChanges" })
-                catalog.GetForTable(table).Single().AddedInCatalogVersion.Should().Be(24);
+            // A recurrence's name is configuration (2026-10-17); the other three seal only their private members (review §8).
+            catalog.GetForTable("WorkOrderRecurrences").Should().BeEmpty();
+            foreach (var table in new[] { "WorkOrderRecurrenceVersions", "WorkOrderMeterReadings", "WorkOrderRecurrenceChanges" })
+                catalog.GetForTable(table).Single().Should().Match<Resgrid.Model.ProtectedFieldDefinition>(f => f.AddedInCatalogVersion == 24 && f.ColumnName == "ProtectedContent");
             catalog.GetForTable("WorkOrders").Should().OnlyContain(f => f.AddedInCatalogVersion == 18);
         }
         [Test, Order(10)]

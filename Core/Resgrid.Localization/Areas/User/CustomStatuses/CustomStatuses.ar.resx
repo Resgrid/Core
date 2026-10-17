@@ -384,6 +384,9 @@
   <data name="SuggestedMeaning" xml:space="preserve">
     <value>مقترح: {0}</value>
   </data>
+  <data name="AiSuggestedMeaning" xml:space="preserve">
+    <value>اقتراح Enhanced AI: {0}</value>
+  </data>
   <data name="OptionsWithoutMeaning" xml:space="preserve">
     <value>بدون معنى: {0}</value>
   </data>

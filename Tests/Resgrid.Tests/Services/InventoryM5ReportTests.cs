@@ -146,15 +146,26 @@ namespace Resgrid.Tests.Services
 			_auth.Verify(x => x.RequireAsync(It.IsAny<InventoryActor>(), false, PermissionTypes.ManageControlledSubstances, null), Times.AtLeast(2));
 		}
 
-		[TestCase(InventoryReportKind.OnHand)]
 		[TestCase(InventoryReportKind.Usage)]
-		[TestCase(InventoryReportKind.Valuation)]
 		public async Task M5_reports_fail_closed_on_protected_data_without_partial_output_or_writes(InventoryReportKind kind)
 		{
 			var item = Item(); var location = Location(); SeedStock(item, location, 2); M5Ledger(item, location, null, 1, InventoryTransactionType.Consume);
-			_read.SetReturnsDefault(Task.FromResult(new ProtectedReadResult { IsProtected = true, RedactedFields = new() { "inventoryitems.content" } }));
+			_read.SetReturnsDefault(Task.FromResult(new ProtectedReadResult { IsProtected = true, RedactedFields = new() { "inventorytransactions.content" } }));
 			await Fails(() => _service.BuildReportAsync(_actor, new InventoryReportInput { Kind = kind }), "ProtectedDataRequired", 403);
 			_transaction.Should().BeNull(); Stock(item, location).Should().Be(2); _events.Should().BeEmpty(); _audits.Should().BeEmpty(); _uow.Verify(x => x.CommitChanges(), Times.Never);
+		}
+
+		[TestCase(InventoryReportKind.OnHand)]
+		[TestCase(InventoryReportKind.Valuation)]
+		public async Task M5_stock_reports_need_no_grant_because_item_and_location_content_is_metadata(InventoryReportKind kind)
+		{
+			// Item and location content (names, codes, units, costs) left the ADP catalog on 2026-10-17, so a stock report
+			// never resolves protected content and cannot be blocked by a missing grant.
+			var item = Item(); var location = Location(); SeedStock(item, location, 2); M5Ledger(item, location, null, 1, InventoryTransactionType.Consume);
+			_read.SetReturnsDefault(Task.FromResult(new ProtectedReadResult { IsProtected = true, RedactedFields = new() { "inventorytransactions.content" } }));
+			var report = await _service.BuildReportAsync(_actor, new InventoryReportInput { Kind = kind });
+			report.Rows.Should().NotBeEmpty();
+			Stock(item, location).Should().Be(2, "a report never writes");
 		}
 
 		[Test]

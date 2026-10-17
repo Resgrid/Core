@@ -202,7 +202,7 @@ namespace Resgrid.Services
 			var item = await GetAsync<InventoryItem>(actor, asset?.ItemId ?? stock.ItemId); var result = new InventoryEquipment { Asset = asset == null ? null : await RevealAsync(actor, asset), Stock = stock, ItemName = Decode<InventoryItemContent>(item).Name, UnitId = holder.UnitId, GroupId = holder.GroupId, UserId = holder.UserId };
 			if (holder.UnitId.HasValue) result.GroupId = (await _units.GetUnitByIdAsync(holder.UnitId.Value))?.StationGroupId;
 			foreach (var issuance in await _store.RelatedAsync<InventoryIssuance>(actor.DepartmentId, asset != null ? "AssetId" : "ItemId", asset?.Id ?? stock.ItemId))
-				if (issuance.Status is 0 or 2 && (asset != null || issuance.LocationId == stock.LocationId && issuance.LotId == stock.LotId)) result.Issuances.Add(await RevealAsync(actor, issuance));
+				if (issuance.Status is 0 or 2 && (asset != null || issuance.LocationId == stock.LocationId && issuance.LotId == stock.LotId)) result.Issuances.Add(await RevealAsync(actor, issuance, display: true));
 			return result;
 		}
 		public async Task<List<InventoryEquipment>> GetUnitEquipmentAsync(InventoryActor actor, int unitId)

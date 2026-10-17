@@ -76,13 +76,20 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
-		public async Task History_cannot_read_unmigrated_protected_outcomes_and_audits_do_not_copy_them()
+		public async Task History_reads_metadata_but_not_unmigrated_private_text_and_audits_do_not_copy_outcomes()
 		{
 			var run = await Start(); await _service.SaveRunAsync(_actor, run.Run, Answers(run.Form, "fail"), true);
 			_audits.Verify(s => s.InsertAsync(It.Is<AuditLog>(l => l.Data.Contains("Score") || l.Data.Contains("Passed") || l.Data.Contains("FailedItemIds")), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never);
 			_read.SetReturnsDefault(Task.FromResult(new ProtectedReadResult { IsProtected = true }));
-			Func<Task> history = () => _service.HistoryAsync(_actor, run.Definition);
-			(await history.Should().ThrowAsync<ChecklistException>()).Which.StatusCode.Should().Be(403);
+			// The target snapshot and outcomes are metadata (review §8): history needs no grant while nothing private is in plaintext.
+			(await _service.HistoryAsync(_actor, run.Definition)).Should().ContainSingle();
+
+			_read.SetReturnsDefault(Task.FromResult(new ProtectedReadResult { IsProtected = false }));
+			var noted = await Start(); var input = Answers(noted.Form, "fail"); input.Note = "Engineer reported chest pain";
+			await _service.SaveRunAsync(_actor, noted.Run, input, true);
+			_read.SetReturnsDefault(Task.FromResult(new ProtectedReadResult { IsProtected = true }));
+			Func<Task> history = () => _service.HistoryAsync(_actor, noted.Definition);
+			(await history.Should().ThrowAsync<ChecklistException>("a completion note still in plaintext fails closed")).Which.StatusCode.Should().Be(403);
 		}
 		[Test]
 		public async Task Published_version_is_pinned_and_draft_edits_do_not_change_a_started_run()

@@ -37,14 +37,15 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
-		public async Task Vendor_choices_resolve_one_protected_batch_without_refetching_contacts()
+		public async Task Vendor_choices_list_plaintext_company_names_without_a_broker_read_or_refetch()
 		{
 			_companyContacts["first"] = new Contact { ContactId = "first", DepartmentId = Department, ContactType = 1, CompanyName = "First" };
 			_companyContacts["second"] = new Contact { ContactId = "second", DepartmentId = Department, ContactType = 1, CompanyName = "Second" };
 			var choices = await _service.GetVendorContactsAsync(_actor);
 			choices.Select(c => c.Name).Should().BeEquivalentTo("First", "Second");
 			_contacts.Verify(c => c.GetContactByIdAsync(It.IsAny<string>()), Times.Never);
-			_read.Verify(r => r.ResolveContactsForReadAsync(Department, It.Is<IReadOnlyList<Contact>>(c => c.Count == 2), _actor.GrantToken, _actor.UserId, It.IsAny<CancellationToken>()), Times.Once);
+			// A vendor's CompanyName is operational plaintext (2026-10-17): picking a vendor needs no grant or broker read.
+			_read.Verify(r => r.ResolveContactsForReadAsync(It.IsAny<int>(), It.IsAny<IReadOnlyList<Contact>>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 
 		[Test]

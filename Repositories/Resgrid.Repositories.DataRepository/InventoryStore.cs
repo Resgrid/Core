@@ -152,13 +152,14 @@ ORDER BY a.{Col("OpenedOn")},a.{Col("Id")} {Paging()}", new { DepartmentId = dep
 			if (row == null || row.DepartmentId <= 0 || !Guid.TryParse(row.Id, out var id) || id == Guid.Empty) throw new ArgumentException("A tenant and stable inventory identity are required.", nameof(row));
 			var columns = Columns<T>().Where(c => c != nameof(InventoryTransaction.EntryId)).ToArray();
 			var values = string.Join(",", columns.Select(c => P + c));
-			if (row is InventoryTransaction transaction)
+			if (row is InventoryTransaction transaction && transaction.EntryId != 0) throw new InvalidOperationException("Inventory ledger identities are allocated by the database.");
+			await WriteStoredShapeAsync(new object[] { row }, async () =>
 			{
-				if (transaction.EntryId != 0) throw new InvalidOperationException("Inventory ledger identities are allocated by the database.");
-				transaction.EntryId = await ScalarAsync<long>($"INSERT INTO {Tbl(Table<T>())} ({Cols(columns)}) {(IsPostgres ? "" : "OUTPUT INSERTED.[EntryId]")} VALUES ({values}) {(IsPostgres ? "RETURNING entryid" : "")}", Parameters(row));
-			}
-			else if (await ExecuteAsync($"INSERT INTO {Tbl(Table<T>())} ({Cols(columns)}) VALUES ({values})", Parameters(row)) != 1)
-				throw new InvalidOperationException("The inventory row could not be inserted.");
+				if (row is InventoryTransaction ledger)
+					ledger.EntryId = await ScalarAsync<long>($"INSERT INTO {Tbl(Table<T>())} ({Cols(columns)}) {(IsPostgres ? "" : "OUTPUT INSERTED.[EntryId]")} VALUES ({values}) {(IsPostgres ? "RETURNING entryid" : "")}", Parameters(row));
+				else if (await ExecuteAsync($"INSERT INTO {Tbl(Table<T>())} ({Cols(columns)}) VALUES ({values})", Parameters(row)) != 1)
+					throw new InvalidOperationException("The inventory row could not be inserted.");
+			});
 		}
 
 		public async Task UpdateAsync<T>(T row, int expectedRevision) where T : InventoryRow
@@ -168,9 +169,12 @@ ORDER BY a.{Col("OpenedOn")},a.{Col("Id")} {Paging()}", new { DepartmentId = dep
 			if (row is InventoryTransaction or InventoryTransferItem or RecordInventoryUsage) throw new InvalidOperationException("Inventory ledger and usage evidence are immutable.");
 			if (expectedRevision < 1 || expectedRevision == int.MaxValue || row.Revision != expectedRevision + 1) throw new ArgumentException("Inventory updates must advance the expected revision once.", nameof(expectedRevision));
 			var columns = Columns<T>().Where(c => c is not "Id" and not "DepartmentId" and not "CreatedOn" and not "CreatedBy").ToArray();
-			var parameters = Parameters(row); parameters.Add("ExpectedRevision", expectedRevision);
-			if (await ExecuteAsync($"UPDATE {Tbl(Table<T>())} SET {string.Join(",", columns.Select(c => Col(c) + "=" + P + c))} WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("Id")}={P}Id AND {Col("Revision")}={P}ExpectedRevision", parameters) != 1)
-				throw new InvalidOperationException("The inventory row changed or is unavailable.");
+			await WriteStoredShapeAsync(new object[] { row }, async () =>
+			{
+				var parameters = Parameters(row); parameters.Add("ExpectedRevision", expectedRevision);
+				if (await ExecuteAsync($"UPDATE {Tbl(Table<T>())} SET {string.Join(",", columns.Select(c => Col(c) + "=" + P + c))} WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("Id")}={P}Id AND {Col("Revision")}={P}ExpectedRevision", parameters) != 1)
+					throw new InvalidOperationException("The inventory row changed or is unavailable.");
+			});
 		}
 
 		public Task<InventoryOperation> RequestAsync(int departmentId, string requestId) => QueryFirstOrDefaultAsync<InventoryOperation>(

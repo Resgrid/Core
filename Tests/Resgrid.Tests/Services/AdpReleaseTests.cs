@@ -100,22 +100,23 @@ namespace Resgrid.Tests.Services
         [TestCase(true)]
         public async Task Encrypted_release_uses_bound_receipt_and_rechecks_authorization_after_broker(bool revoked)
         {
+            // The call's name and address are operational plaintext (2026-10-17); its nature is the protected field.
             _calls.Setup(c => c.GetCallByIdAsync(42, true)).ReturnsAsync(new Call { CallId = 42, DepartmentId = 7,
-                Name = "rgdp:1:1:encrypted", Address = "Address", NatureOfCall = "Nature" });
+                Name = "Structure fire", Address = "Address", NatureOfCall = "rgdp:1:1:encrypted" });
             var id = await Challenge();
             _broker.Setup(b => b.DecryptAsync(7, It.IsAny<string>(), It.IsAny<string>(),
                 It.IsAny<IReadOnlyList<ProtectedFieldOperationItem>>(), It.IsAny<CancellationToken>()))
                 .Returns(async (int dept, string token, string requestId, IReadOnlyList<ProtectedFieldOperationItem> fields, CancellationToken ct) =>
                 {
-                    fields.Should().ContainSingle(f => f.FieldId == "calls.name" && f.RowKey == "42" && f.Value == "rgdp:1:1:encrypted");
+                    fields.Should().ContainSingle(f => f.FieldId == "calls.natureofcall" && f.RowKey == "42" && f.Value == "rgdp:1:1:encrypted");
                     (await _receipts.ConsumeAsync(token, dept, 3, fields, ct)).Should().Be("member");
                     if (revoked) _authorization.Setup(a => a.CanUserViewCallAsync("member", 42)).ReturnsAsync(false);
                     return new ProtectedDataBrokerResult { Success = true, Items = new List<ProtectedFieldOperationResult>
-                        { new() { FieldId = "calls.name", RowKey = "42", Value = "Protected dispatch" } } };
+                        { new() { FieldId = "calls.natureofcall", RowKey = "42", Value = "Protected nature" } } };
                 });
             var text = await _service.ReleaseAsync(id, Phone, Pin, ProtectedDataEgressChannel.Sms);
             if (revoked) text.Should().BeNull();
-            else text.Should().Be("Protected dispatch. Address. Nature");
+            else text.Should().Be("Structure fire. Address. Protected nature");
             _broker.Verify(b => b.DecryptAsync(7, It.IsAny<string>(), It.IsAny<string>(),
                 It.IsAny<IReadOnlyList<ProtectedFieldOperationItem>>(), It.IsAny<CancellationToken>()), Times.Once);
         }
@@ -175,7 +176,7 @@ namespace Resgrid.Tests.Services
         [Test]
         public async Task Receipt_is_bound_to_tenant_epoch_exact_fields_and_is_atomic()
         {
-            var fields = new[] { new ProtectedFieldOperationItem { FieldId = "calls.name", RowKey = "42", Value = "envelope" } };
+            var fields = new[] { new ProtectedFieldOperationItem { FieldId = "calls.natureofcall", RowKey = "42", Value = "envelope" } };
             var token = await _receipts.IssueAsync(7, 3, "member", "sms-pin", fields);
             (await _receipts.ConsumeAsync(token, 8, 3, fields)).Should().BeNull();
             (await _receipts.ConsumeAsync(token, 7, 4, fields)).Should().BeNull();
@@ -189,7 +190,7 @@ namespace Resgrid.Tests.Services
         [Test]
         public async Task Staff_receipt_requires_consent_and_revoke_reenable_does_not_restore_it()
         {
-            var fields = new[] { new ProtectedFieldOperationItem { FieldId = "calls.name", RowKey = "42", Value = "envelope" } };
+            var fields = new[] { new ProtectedFieldOperationItem { FieldId = "calls.natureofcall", RowKey = "42", Value = "envelope" } };
             Func<Task> issue = () => _receipts.IssueAsync(7, 3, "staff", "staff-support", fields);
             await issue.Should().ThrowAsync<UnauthorizedAccessException>();
             await _store.SaveAsync(AdpSupportConsent.Key(7), JsonConvert.SerializeObject(new AdpSupportConsent { Enabled = true }), 0);

@@ -88,6 +88,8 @@ namespace Resgrid.Services.Workforce
 			target.CaliforniaEmployeeCount = profile.CaliforniaEmployeeCount;
 			target.EffectiveOn = profile.EffectiveOn;
 			target.ExpiresOn = profile.ExpiresOn;
+			// The EDD and headquarters addresses are operational plaintext (2026-10-17), so they no longer ride the accessor map.
+			target.EddAddress = Trim(profile.EddAddress); target.HeadquartersAddress = Trim(profile.HeadquartersAddress);
 			target.IsActive = true;
 			foreach (var accessor in WorkforceProtectedFields.Employer) Keep(existing, target, profile, accessor.Value);
 			if (existing != null) { target.RowVersion = existing.RowVersion + 1; target.EditedOn = now; target.EditedByUserId = userId; }
@@ -156,7 +158,7 @@ namespace Resgrid.Services.Workforce
 			var target = existing ?? new WorkforceEstablishment { DepartmentId = establishment.DepartmentId, AddedOn = now, AddedByUserId = userId };
 			target.WorkforceAffiliatedEntityId = Trim(establishment.WorkforceAffiliatedEntityId);
 			target.Code = establishment.Code.Trim(); target.Name = establishment.Name.Trim();
-			target.City = Trim(establishment.City); target.StateCode = Trim(establishment.StateCode)?.ToUpperInvariant(); target.PostalCode = Trim(establishment.PostalCode);
+			target.PhysicalAddress = Trim(establishment.PhysicalAddress); target.City = Trim(establishment.City); target.StateCode = Trim(establishment.StateCode)?.ToUpperInvariant(); target.PostalCode = Trim(establishment.PostalCode);
 			target.Naics = Trim(establishment.Naics); target.MajorActivity = Trim(establishment.MajorActivity);
 			target.IsHeadquarters = establishment.IsHeadquarters; target.WasFiledPriorYear = establishment.WasFiledPriorYear;
 			target.ActiveFrom = establishment.ActiveFrom; target.ActiveTo = establishment.ActiveTo; target.TimeZoneId = Trim(establishment.TimeZoneId);
@@ -258,6 +260,7 @@ namespace Resgrid.Services.Workforce
 			var target = existing ?? new WorkforceWorker { DepartmentId = worker.DepartmentId, AddedOn = now, AddedByUserId = userId };
 			target.UserId = Trim(worker.UserId) ?? target.UserId;
 			target.IsActive = worker.IsActive;
+			target.ExternalWorkerKey = Trim(worker.ExternalWorkerKey); target.DisplayLabel = Trim(worker.DisplayLabel);
 			foreach (var accessor in WorkforceProtectedFields.Worker) Keep(existing, target, worker, accessor.Value);
 			if (existing != null) { target.RowVersion = existing.RowVersion + 1; target.EditedOn = now; target.EditedByUserId = userId; }
 			var saved = await _seam.SaveAsync(_workers, target, existing, worker.DepartmentId, WorkforceProtectedFields.Worker, cancellationToken);

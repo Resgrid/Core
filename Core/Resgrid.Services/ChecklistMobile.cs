@@ -60,7 +60,7 @@ namespace Resgrid.Services
 				ChecklistTarget target;
 				try { target = await _authorization.TargetAsync(actor, (ChecklistTargetType)row.TargetType, row.TargetId); }
 				catch (ChecklistException ex) when (ex.StatusCode == 403 || ex.StatusCode == 404) { return false; }
-				await RevealAsync(actor, schedule); row.Content = null;
+				await RevealAsync(actor, schedule, display: true); row.Content = null;
 				occurrences[row.Id] = new ChecklistOccurrenceView { Occurrence = row, Target = target, Name = Decode<ChecklistScheduleContent>(schedule.Content).Name,
 					CanStart = row.PeriodStartUtc <= now && row.State != 1, CanSkip = false };
 				return true;
@@ -110,8 +110,8 @@ namespace Resgrid.Services
 			var result = new List<ChecklistHistoryEntry>();
 			foreach (var row in rows)
 			{
-				await RevealAsync(actor, row);
-				var occurrence = await RevealAsync(actor, await _store.GetAsync<ChecklistOccurrence>(actor.DepartmentId, row.OccurrenceId));
+				await RevealAsync(actor, row, display: true);
+				var occurrence = await RevealAsync(actor, await _store.GetAsync<ChecklistOccurrence>(actor.DepartmentId, row.OccurrenceId), display: true);
 				result.Add(new ChecklistHistoryEntry { Completion = row, TargetName = Decode<ChecklistTarget>(occurrence.Content)?.Name ?? row.TargetId });
 			}
 			return result;

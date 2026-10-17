@@ -6936,4 +6936,13 @@
   <data xml:space="preserve" name="FieldHelp.UnitStatusThresholds.AcknowledgementNoteRequirement">
     <value>Чи потребує підтвердження або вимкнення звуку тривоги таймера статусу причини: необов'язково, обов'язково для тривог або обов'язково для попереджень і тривог. Не змінює таймери чи статус підрозділу.</value>
   </data>
+  <data name="Rule.unit-status-timers" xml:space="preserve">
+    <value>Направлені підрозділи без відстеження часу</value>
+  </data>
+  <data name="RuleWhy.unit-status-timers" xml:space="preserve">
+    <value>Таймери статусу підрозділів встановлено, але деякі типи підрозділів під час направлення отримують статус без значення або значення без таймера. Big Board ніколи не позначає ці підрозділи, скільки б вони не чекали.</value>
+  </data>
+  <data name="RuleNext.unit-status-timers" xml:space="preserve">
+    <value>Надайте статусу направлення значення у Власних статусах або встановіть таймер для його значення в Налаштуваннях мап.</value>
+  </data>
 </root>

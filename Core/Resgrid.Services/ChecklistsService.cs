@@ -63,23 +63,55 @@ namespace Resgrid.Services
 		private static T Decode<T>(string content) => JsonConvert.DeserializeObject<T>(content ?? "{}");
 		private static T New<T>(ChecklistActor actor, string parentId = null) where T : ChecklistRow, new() => new T
 		{ DepartmentId = actor.DepartmentId, ParentId = parentId, CreatedBy = actor.UserId, CreatedOn = DateTime.UtcNow, UpdatedOn = DateTime.UtcNow };
-		private async Task<T> RevealAsync<T>(ChecklistActor actor, T row) where T : ChecklistRow
+		/// <summary>
+		/// Reveals a row for use. <paramref name="display"/> is for list, history, calendar and report pages: a mixed row then
+		/// shows its metadata without a grant and its private members as redacted (a read-only copy) instead of failing.
+		/// Never pass it for a row that is edited or written.
+		/// </summary>
+		private async Task<T> RevealAsync<T>(ChecklistActor actor, T row, bool display = false) where T : ChecklistRow
 		{
 			if (row == null) throw new ChecklistException(404, "Checklist item is unavailable.");
 			var hadPlaintext = HasPlaintextFields(row);
 			var result = await _read.Value.ResolveRecordsEntitiesForReadAsync(actor.DepartmentId, new[] { (row, row.Id) }, ChecklistTables.Fields<T>(), actor.GrantToken, actor.UserId);
+			if (display && row is ISplitContentRow split && (result == null || result.RedactedFields.Count > 0 || result.IsProtected && hadPlaintext || SplitContent.IsSealed(split.ProtectedContent)))
+			{
+				SplitContent.RedactForDisplay(split);
+				return row;
+			}
 			if (result == null || result.RedactedFields.Count > 0 || result.IsProtected && hadPlaintext) throw new ChecklistException(403, "Unlock protected data to use this checklist.");
+			// A mixed table's private members come back from ProtectedContent into the one Content document.
+			SplitContent.MergeStored(row as ISplitContentRow);
 			return row;
 		}
-		private static bool HasPlaintextFields<T>(T row) where T : ChecklistRow => ChecklistTables.Fields<T>().Values
+		private static bool HasPlaintextFields<T>(T row) where T : ChecklistRow => row is ISplitContentRow split ? SplitContent.CarriesUnsealedPrivate(split) : ChecklistTables.Fields<T>().Values
 			.Select(f => f.Get(row)).Any(v => !string.IsNullOrEmpty(v) && !ProtectedDataEnvelope.HasEnvelopePrefix(v) && v != ProtectedDataEnvelope.RedactionValue);
-		private async Task SealAsync<T>(ChecklistActor actor, T row) where T : ChecklistRow
+		/// <summary>Seals the row for its write; the split (if any) is finished with Done or Undo once the row is written.</summary>
+		private async Task<SplitContentWrite?> SealAsync<T>(ChecklistActor actor, T row) where T : ChecklistRow
 		{
-			var result = await _write.Value.PrepareRecordsEntityWriteAsync(actor.DepartmentId, row, (T)null, row.Id, ChecklistTables.Fields<T>(), () => row.IsProtected = true, actor.GrantToken, actor.UserId, false);
-			if (result?.Success != true || result.IsProtected && HasPlaintextFields(row)) throw new ChecklistException(403, "Protected data could not be saved. Unlock it and retry.");
+			// A mixed table stores its private members apart (ProtectedContent, the ADP slot) and its metadata in Content.
+			var split = row is ISplitContentRow parts ? SplitContent.PrepareWrite(parts) : (SplitContentWrite?)null;
+			if (split?.Allowed == false) throw new ChecklistException(403, "Unlock protected data to use this checklist.");
+			try
+			{
+				var result = await _write.Value.PrepareRecordsEntityWriteAsync(actor.DepartmentId, row, (T)null, row.Id, ChecklistTables.Fields<T>(), () => row.IsProtected = true, actor.GrantToken, actor.UserId, false);
+				if (result?.Success != true || result.IsProtected && HasPlaintextFields(row)) throw new ChecklistException(403, "Protected data could not be saved. Unlock it and retry.");
+			}
+			catch when (split != null)
+			{
+				split.Value.Undo(row as ISplitContentRow);
+				throw;
+			}
+			return split;
 		}
 		private async Task PersistAsync<T>(ChecklistActor actor, T row, bool insert) where T : ChecklistRow
-		{ row.UpdatedOn = DateTime.UtcNow; await SealAsync(actor, row); await _store.WriteAsync(row, insert); _refreshRow = row; }
+		{
+			row.UpdatedOn = DateTime.UtcNow;
+			var split = await SealAsync(actor, row);
+			try { await _store.WriteAsync(row, insert); }
+			catch when (split != null) { split.Value.Undo(row as ISplitContentRow); throw; }
+			split?.Done(row as ISplitContentRow);
+			_refreshRow = row;
+		}
 		private async Task AuditAsync(ChecklistActor actor, ChecklistRow row, AuditLogTypes type, object detail = null)
 		{
 			var data = JsonConvert.SerializeObject(new { row.Id, row.Revision, Detail = detail });
@@ -275,8 +307,8 @@ namespace Resgrid.Services
 			foreach (var row in await ReadPageAsync<ChecklistCompletion>(actor.DepartmentId, definitionId, page, includeNext,
 				visible))
 			{
-				await RevealAsync(actor, row);
-				var occurrence = await RevealAsync(actor, await _store.GetAsync<ChecklistOccurrence>(actor.DepartmentId, row.OccurrenceId));
+				await RevealAsync(actor, row, display: true);
+				var occurrence = await RevealAsync(actor, await _store.GetAsync<ChecklistOccurrence>(actor.DepartmentId, row.OccurrenceId), display: true);
 				row.Content = null; result.Add(new ChecklistHistoryEntry { Completion = row, TargetName = Decode<ChecklistTarget>(occurrence.Content)?.Name ?? row.TargetId });
 			}
 			return result;
@@ -330,9 +362,13 @@ namespace Resgrid.Services
 				}
 				Revision(row, input.Revision);
 				var items = new List<ChecklistCompletionItem>();
+				// The item type travels with the answer so a typed value (pass/fail, reading, choice...) stays plaintext metadata.
+				var types = view.Form.Sections.SelectMany(s => s.Items).Where(i => Guid.TryParse(i.Id, out _)).GroupBy(i => Guid.Parse(i.Id).ToString("D"))
+					.ToDictionary(g => g.Key, g => g.First().Type, StringComparer.OrdinalIgnoreCase);
 				foreach (var answer in input.Answers)
 				{
-					var item = New<ChecklistCompletionItem>(actor, row.Id); item.ItemId = answer.ItemId; item.Content = JsonConvert.SerializeObject(answer);
+					var item = New<ChecklistCompletionItem>(actor, row.Id); item.ItemId = answer.ItemId;
+					item.Content = ChecklistTables.StoredAnswer(answer, types.TryGetValue(answer.ItemId, out var type) ? type : (ChecklistItemType?)null);
 					item.IsFailure = evaluation.FailedItemIds.Contains(answer.ItemId); await SealAsync(actor, item); items.Add(item);
 				}
 				await _store.ReplaceAnswersAsync(actor.DepartmentId, row.Id, items);

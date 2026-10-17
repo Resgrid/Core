@@ -384,6 +384,9 @@
   <data name="SuggestedMeaning" xml:space="preserve">
     <value>suggested: {0}</value>
   </data>
+  <data name="AiSuggestedMeaning" xml:space="preserve">
+    <value>Enhanced AI suggestion: {0}</value>
+  </data>
   <data name="OptionsWithoutMeaning" xml:space="preserve">
     <value>{0} without a meaning</value>
   </data>

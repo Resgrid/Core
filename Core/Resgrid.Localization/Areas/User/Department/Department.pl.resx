@@ -1535,4 +1535,25 @@
   <data name="UnitStatusAlertNoteRequirement_Always" xml:space="preserve">
     <value>Wymagany dla ostrzeżeń i alarmów</value>
   </data>
+  <data name="UnitStatusTimerWarningsHeader" xml:space="preserve">
+    <value>Niektórych jednostek nie można mierzyć czasowo</value>
+  </data>
+  <data name="UnitStatusTimerDispatchNoMeaning" xml:space="preserve">
+    <value>Przy zadysponowaniu {0} otrzymują status "{1}", który nie ma znaczenia, więc zadysponowane jednostki nigdy nie są mierzone czasowo. Nadaj statusowi "{1}" znaczenie (na przykład Zadysponowana) w Statusach niestandardowych.</value>
+  </data>
+  <data name="UnitStatusTimerDispatchNoTimer" xml:space="preserve">
+    <value>Przy zadysponowaniu {0} otrzymują status "{1}" ({2}), ale dla {2} nie ustawiono licznika.</value>
+  </data>
+  <data name="UnitStatusTimerSetNoMeaning" xml:space="preserve">
+    <value>Zestaw statusów "{0}" (używany przez {1}) zawiera statusy bez znaczenia, do których nie może mieć zastosowania żaden licznik: {2}.</value>
+  </data>
+  <data name="UnitStatusTimerWarningsCustomStatuses" xml:space="preserve">
+    <value>Edytuj statusy niestandardowe</value>
+  </data>
+  <data name="UnitStatusTimerWarningsDispatchSettings" xml:space="preserve">
+    <value>Edytuj ustawienia dysponowania</value>
+  </data>
+  <data name="UnitStatusOverrideNoMeaning" xml:space="preserve">
+    <value>{0}: nadpisanie ustawia "{1}" przy {2}, ale ten status nie ma znaczenia, więc liczniki statusu, reguły zwalniania i karty interwencji nie mogą go rozpoznać. Nadaj mu znaczenie w Statusach niestandardowych.</value>
+  </data>
 </root>

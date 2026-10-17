@@ -37,12 +37,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IBusinessOperationsAccessService _businessOperationsAccess;
 		private readonly IProtocolsService _protocolsService;
 		private readonly ITemplatesService _templatesService;
+		private readonly IBaseTypeAiSuggestionService _baseTypeAiSuggestions;
 
 		public TypesController(IUnitsService unitsService, ICustomStateService customStateService, ICallsService callsService, IDepartmentSettingsService departmentSettingsService,
 			IAuthorizationService authorizationService, IEventAggregator eventAggregator, ICertificationService certificationService, IDocumentsService documentsService,
 			INotesService notesService,
 			IContactsService contactsService, IBusinessOperationsAccessService businessOperationsAccess,
-			IProtocolsService protocolsService, ITemplatesService templatesService)
+			IProtocolsService protocolsService, ITemplatesService templatesService, IBaseTypeAiSuggestionService baseTypeAiSuggestions)
 		{
 			_unitsService = unitsService;
 			_customStateService = customStateService;
@@ -57,6 +58,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_businessOperationsAccess = businessOperationsAccess;
 			_protocolsService = protocolsService;
 			_templatesService = templatesService;
+			_baseTypeAiSuggestions = baseTypeAiSuggestions;
 		}
 
 		/// <summary>A posted class (base type) kept only when it is a value of its enum; anything else is -1 (none).</summary>
@@ -1184,5 +1186,58 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		#endregion Contact Note Types
+
+		#region Enhanced AI Base Type Suggestions
+
+		// Fetched by the edit pages after they render, so a page never waits on the decision model. A suggestion is only shown:
+		// the class is set when the administrator picks it and saves. No suggestion (null) when the department is not entitled to
+		// Enhanced AI, the keyword suggester already has one, or the model is unavailable or unsure.
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> GetCallTypeAiSuggestion(int callTypeId, CancellationToken cancellationToken)
+		{
+			if (!await _authorizationService.CanUserModifyCallTypeAsync(UserId, callTypeId))
+				return Unauthorized();
+
+			var callType = await _callsService.GetCallTypeByIdAsync(callTypeId);
+			if (callType == null || callType.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			var suggestions = await _baseTypeAiSuggestions.SuggestCallTypeClassesAsync(DepartmentId, new[] { callType }, cancellationToken);
+			return Json(new { baseType = suggestions.TryGetValue(callTypeId, out var baseType) ? baseType : (int?)null });
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> GetUnitTypeAiSuggestion(int unitTypeId, CancellationToken cancellationToken)
+		{
+			if (!await _authorizationService.CanUserEditUnitTypeAsync(UserId, unitTypeId))
+				return Unauthorized();
+
+			var unitType = await _unitsService.GetUnitTypeByIdAsync(unitTypeId);
+			if (unitType == null || unitType.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			var suggestions = await _baseTypeAiSuggestions.SuggestUnitTypeClassesAsync(DepartmentId, new[] { unitType }, cancellationToken);
+			return Json(new { baseType = suggestions.TryGetValue(unitTypeId, out var baseType) ? baseType : (int?)null });
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> GetCallPriorityAiSuggestion(int priorityId, CancellationToken cancellationToken)
+		{
+			if (!await _authorizationService.CanUserEditCallPriorityAsync(UserId, priorityId))
+				return Unauthorized();
+
+			var priority = await _callsService.GetCallPrioritiesByIdAsync(DepartmentId, priorityId, true);
+			if (priority == null || priority.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			var suggestions = await _baseTypeAiSuggestions.SuggestCallPrioritiesAsync(DepartmentId, new[] { priority }, cancellationToken);
+			return Json(new { baseType = suggestions.TryGetValue(priorityId, out var baseType) ? baseType : (int?)null });
+		}
+
+		#endregion Enhanced AI Base Type Suggestions
 	}
 }

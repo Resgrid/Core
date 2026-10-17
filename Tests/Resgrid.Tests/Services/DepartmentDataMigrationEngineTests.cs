@@ -59,11 +59,13 @@ namespace Resgrid.Tests.Services
 
 			_engine = new DepartmentDataMigrationEngine(_bulk, _migrations, _keyService.Object, _keyProvider, _crypto, new ProtectedFieldCatalog());
 
-			// Three call rows: one rich, one sparse, one with empty strings only.
+			// Three call rows: one rich, one sparse, one with empty strings only. Name and Address are
+			// operational (2026-10-17) and must come through every sweep untouched; ContactName,
+			// NatureOfCall and Notes are the protected columns.
 			_bulk.Seed("Calls", "CallId",
-				Row(("CallId", 1), ("Name", "Structure Fire"), ("NatureOfCall", "Smoke showing"), ("Notes", "Occupant on O2")),
-				Row(("CallId", 2), ("Name", "MVA"), ("NatureOfCall", null), ("Notes", null)),
-				Row(("CallId", 3), ("Name", ""), ("NatureOfCall", null), ("Notes", null)));
+				Row(("CallId", 1), ("Name", "Structure Fire"), ("Address", "1 Main St"), ("ContactName", "Pat Caller"), ("NatureOfCall", "Smoke showing"), ("Notes", "Occupant on O2")),
+				Row(("CallId", 2), ("Name", "MVA"), ("Address", "I-80 MM 12"), ("ContactName", "Lee Driver"), ("NatureOfCall", null), ("Notes", null)),
+				Row(("CallId", 3), ("Name", ""), ("Address", ""), ("ContactName", ""), ("NatureOfCall", null), ("Notes", null)));
 		}
 
 		[TearDown]
@@ -94,12 +96,16 @@ namespace Resgrid.Tests.Services
 			result.Outcome.Should().Be(AdpMigrationNightOutcome.CompletedAllTables);
 
 			var calls = _bulk.Table("Calls");
-			((string)calls[0]["Name"]).Should().StartWith("rgdp:1:1:");
+			((string)calls[0]["ContactName"]).Should().StartWith("rgdp:1:1:");
 			((string)calls[0]["NatureOfCall"]).Should().StartWith("rgdp:1:1:");
 			((string)calls[0]["Notes"]).Should().StartWith("rgdp:1:1:");
-			((string)calls[1]["Name"]).Should().StartWith("rgdp:1:1:");
+			((string)calls[1]["ContactName"]).Should().StartWith("rgdp:1:1:");
 			calls[1]["NatureOfCall"].Should().BeNull();
-			((string)calls[2]["Name"]).Should().Be("", "empty strings are skipped, not encrypted");
+			((string)calls[2]["ContactName"]).Should().Be("", "empty strings are skipped, not encrypted");
+
+			// Operational columns are not bound, so enrollment never touches them.
+			calls[0]["Name"].Should().Be("Structure Fire"); calls[0]["Address"].Should().Be("1 Main St");
+			calls[1]["Name"].Should().Be("MVA"); calls[1]["Address"].Should().Be("I-80 MM 12");
 
 			var migrationRow = _migrations.Rows.Values.Single(r => r.TargetTable == "Calls");
 			migrationRow.Cursor.Should().Be("3");
@@ -110,25 +116,30 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
-		public async Task Checklist_catalog_upgrade_and_offboarding_preserve_boolean_and_decimal_outcomes()
+		public async Task Checklist_upgrade_over_retired_catalog_fifteen_and_offboarding_leave_typed_outcomes_alone()
 		{
 			var id = Guid.NewGuid().ToString(); var itemId = Guid.NewGuid().ToString();
-			// Snapshot from catalog 14: Content is already sealed; typed outcomes have no companions yet.
+			// Snapshot from catalog 14: the private part (ProtectedContent since review §8) is already sealed. Catalog 15 (outcome companions) is retired
+			// (2026-10-17): Score / Passed / IsFailure are state and stay in their typed columns throughout.
 			_bulk.Seed("Calls", "CallId");
-			_bulk.Seed("ChecklistCompletions", "Id", Row(("Id", id), ("Score", 87.25m), ("Passed", false), ("Content", _crypto.EncryptText(_dek, 1, "SYNTHETIC-PHI-CANARY", DeptId, "checklistcompletions.content", id))));
-			_bulk.Seed("ChecklistCompletionItems", "Id", Row(("Id", itemId), ("IsFailure", true), ("Content", _crypto.EncryptText(_dek, 1, "SYNTHETIC-ANSWER", DeptId, "checklistcompletionitems.content", itemId))));
+			_bulk.Seed("ChecklistCompletions", "Id", Row(("Id", id), ("Score", 87.25m), ("Passed", false), ("Content", "{}"), ("ProtectedContent", _crypto.EncryptText(_dek, 1, "SYNTHETIC-PHI-CANARY", DeptId, "checklistcompletions.protectedcontent", id))));
+			_bulk.Seed("ChecklistCompletionItems", "Id", Row(("Id", itemId), ("IsFailure", true), ("Content", "{}"), ("ProtectedContent", _crypto.EncryptText(_dek, 1, "SYNTHETIC-ANSWER", DeptId, "checklistcompletionitems.protectedcontent", itemId))));
 			var completion = _bulk.Table("ChecklistCompletions").Single(); var item = _bulk.Table("ChecklistCompletionItems").Single();
 			completion["Score"].Should().Be(87.25m); completion["Passed"].Should().Be(false);
-			var contentEnvelope = (string)completion["Content"];
+			var contentEnvelope = (string)completion["ProtectedContent"];
+			AdpTableBindings.ForVersionRange(new ProtectedFieldCatalog(), 14, 15).Should().BeEmpty("the retired version owns no field to sweep");
 			var upgrade = Context(DepartmentDataProtectionMigrationKind.CatalogUpgrade); upgrade.FromCatalogVersion = 14; upgrade.CatalogVersion = 15;
 			(await _engine.RunEncryptionNightAsync(upgrade, CancellationToken.None)).Outcome.Should().Be(AdpMigrationNightOutcome.CompletedAllTables);
-			completion["Content"].Should().Be(contentEnvelope, "an outcome-only catalog upgrade must preserve the existing content envelope");
-			completion["Score"].Should().BeNull(); completion["Passed"].Should().BeNull(); item["IsFailure"].Should().BeNull();
-			((string)completion["ProtectedPassedEnvelope"]).Should().StartWith("rgdp:");
+			completion["ProtectedContent"].Should().Be(contentEnvelope, "an upgrade across the retired version must preserve the existing content envelope");
+			completion["Score"].Should().Be(87.25m); completion["Passed"].Should().Be(false); item["IsFailure"].Should().Be(true);
+			completion.Should().NotContainKey("ProtectedScoreEnvelope").And.NotContainKey("ProtectedPassedEnvelope");
+			item.Should().NotContainKey("ProtectedIsFailureEnvelope");
 			var offboarding = Context(DepartmentDataProtectionMigrationKind.Offboarding); offboarding.CatalogVersion = 15;
 			(await _engine.RunDecryptionNightAsync(offboarding, CancellationToken.None)).Outcome.Should().Be(AdpMigrationNightOutcome.CompletedAllTables);
 			completion["Score"].Should().Be(87.25m); completion["Passed"].Should().Be(false); item["IsFailure"].Should().Be(true);
-			completion["Content"].Should().Be("SYNTHETIC-PHI-CANARY"); completion["ProtectedPassedEnvelope"].Should().BeNull();
+			completion["ProtectedContent"].Should().Be("SYNTHETIC-PHI-CANARY"); item["ProtectedContent"].Should().Be("SYNTHETIC-ANSWER");
+			completion["Content"].Should().Be("{}", "the metadata in Content is never swept");
+			completion.Should().NotContainKey("ProtectedPassedEnvelope");
 		}
 
 		[Test]
@@ -168,15 +179,16 @@ namespace Resgrid.Tests.Services
 		public async Task Checklist_schedule_catalog_upgrade_preserves_routing_and_restores_content_on_offboarding()
 		{
 			_bulk.Seed("Calls", "CallId"); var id = Guid.NewGuid().ToString();
-			_bulk.Seed("ChecklistSchedules", "Id", Row(("Id", id), ("Content", "SYNTHETIC-PRIVATE-SCHEDULE"), ("AssignmentId", "member-route"), ("ClockMinutes", "480")));
+			// The schedule name is metadata in Content; only the notes (ProtectedContent) are swept (review §8).
+			_bulk.Seed("ChecklistSchedules", "Id", Row(("Id", id), ("Content", "{\"Name\":\"Morning check\"}"), ("ProtectedContent", "{\"Notes\":\"SYNTHETIC-PRIVATE-SCHEDULE\"}"), ("AssignmentId", "member-route"), ("ClockMinutes", "480")));
 			var upgrade = Context(DepartmentDataProtectionMigrationKind.CatalogUpgrade); upgrade.FromCatalogVersion = 16; upgrade.CatalogVersion = 17;
 			(await _engine.RunEncryptionNightAsync(upgrade, CancellationToken.None)).Outcome.Should().Be(AdpMigrationNightOutcome.CompletedAllTables);
-			var row = _bulk.Table("ChecklistSchedules").Single(); var envelope = (string)row["Content"]; envelope.Should().StartWith("rgdp:");
-			row["AssignmentId"].Should().Be("member-route"); row["ClockMinutes"].Should().Be("480");
-			(await _engine.RunEncryptionNightAsync(upgrade, CancellationToken.None)).Outcome.Should().Be(AdpMigrationNightOutcome.CompletedAllTables); row["Content"].Should().Be(envelope);
+			var row = _bulk.Table("ChecklistSchedules").Single(); var envelope = (string)row["ProtectedContent"]; envelope.Should().StartWith("rgdp:");
+			row["Content"].Should().Be("{\"Name\":\"Morning check\"}"); row["AssignmentId"].Should().Be("member-route"); row["ClockMinutes"].Should().Be("480");
+			(await _engine.RunEncryptionNightAsync(upgrade, CancellationToken.None)).Outcome.Should().Be(AdpMigrationNightOutcome.CompletedAllTables); row["ProtectedContent"].Should().Be(envelope);
 			var offboarding = Context(DepartmentDataProtectionMigrationKind.Offboarding); offboarding.CatalogVersion = 17;
 			(await _engine.RunDecryptionNightAsync(offboarding, CancellationToken.None)).Outcome.Should().Be(AdpMigrationNightOutcome.CompletedAllTables);
-			row["Content"].Should().Be("SYNTHETIC-PRIVATE-SCHEDULE"); row["AssignmentId"].Should().Be("member-route");
+			row["ProtectedContent"].Should().Be("{\"Notes\":\"SYNTHETIC-PRIVATE-SCHEDULE\"}"); row["AssignmentId"].Should().Be("member-route");
 		}
 
 		[Test]
@@ -257,7 +269,7 @@ namespace Resgrid.Tests.Services
 		public async Task Rotation_re_encrypts_every_envelope_under_the_new_key_and_preserves_the_values()
 		{
 			await _engine.RunEncryptionNightAsync(Context(DepartmentDataProtectionMigrationKind.Enrollment), CancellationToken.None);
-			var beforeRotation = (string)_bulk.Table("Calls")[0]["Name"];
+			var beforeRotation = (string)_bulk.Table("Calls")[0]["ContactName"];
 
 			var v2 = await ProvisionVersionTwoAsync();
 
@@ -267,12 +279,13 @@ namespace Resgrid.Tests.Services
 
 			result.Outcome.Should().Be(AdpMigrationNightOutcome.CompletedAllTables);
 
-			var rotated = (string)_bulk.Table("Calls")[0]["Name"];
+			var rotated = (string)_bulk.Table("Calls")[0]["ContactName"];
 			rotated.Should().NotBe(beforeRotation, "the envelope was rewritten");
 			rotated.Should().StartWith("rgdp:1:2:", "and rewritten under the new key version");
 
 			// The whole point: same plaintext, different key.
-			_crypto.DecryptText(v2, rotated, DeptId, "calls.name", "1").Should().Be("Structure Fire");
+			_crypto.DecryptText(v2, rotated, DeptId, "calls.contactname", "1").Should().Be("Pat Caller");
+			_bulk.Table("Calls")[0]["Name"].Should().Be("Structure Fire", "rotation never touches an operational column");
 		}
 
 		[Test]
@@ -324,7 +337,7 @@ namespace Resgrid.Tests.Services
 			await _engine.RunEncryptionNightAsync(Context(DepartmentDataProtectionMigrationKind.Enrollment), CancellationToken.None);
 			await ProvisionVersionTwoAsync();
 
-			_bulk.Table("Calls")[0]["Name"] = "rgdp:1:1:" + Convert.ToBase64String(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 });
+			_bulk.Table("Calls")[0]["ContactName"] = "rgdp:1:1:" + Convert.ToBase64String(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 });
 
 			var context = Context(DepartmentDataProtectionMigrationKind.Rotation);
 			context.TargetKeyVersion = 2;
@@ -353,13 +366,13 @@ namespace Resgrid.Tests.Services
 		[Test]
 		public async Task Envelope_referencing_an_unknown_key_version_halts_the_run()
 		{
-			_bulk.Table("Calls")[0]["Name"] = "rgdp:1:9:AAAA";
+			_bulk.Table("Calls")[0]["ContactName"] = "rgdp:1:9:AAAA";
 
 			var result = await _engine.RunEncryptionNightAsync(Context(DepartmentDataProtectionMigrationKind.Enrollment), CancellationToken.None);
 
 			result.Outcome.Should().Be(AdpMigrationNightOutcome.Failed);
 			result.ErrorCode.Should().Be("foreign_envelope");
-			_bulk.Table("Calls")[0]["Name"].Should().Be("rgdp:1:9:AAAA", "an unresolvable envelope is halted on, never re-encrypted");
+			_bulk.Table("Calls")[0]["ContactName"].Should().Be("rgdp:1:9:AAAA", "an unresolvable envelope is halted on, never re-encrypted");
 		}
 
 		[Test]
@@ -372,6 +385,7 @@ namespace Resgrid.Tests.Services
 
 			var calls = _bulk.Table("Calls");
 			calls[0]["Name"].Should().Be("Structure Fire");
+			calls[0]["ContactName"].Should().Be("Pat Caller");
 			calls[0]["NatureOfCall"].Should().Be("Smoke showing");
 			calls[0]["Notes"].Should().Be("Occupant on O2");
 
@@ -394,14 +408,14 @@ namespace Resgrid.Tests.Services
 		public async Task Foreign_envelope_halts_the_run_and_is_never_re_encrypted()
 		{
 			// An envelope bound to another department's AAD, planted in this department's data.
-			var foreign = _crypto.EncryptText(_dek, 1, "someone else's data", 43, "calls.name", "1");
-			_bulk.Table("Calls")[0]["Name"] = foreign;
+			var foreign = _crypto.EncryptText(_dek, 1, "someone else's data", 43, "calls.contactname", "1");
+			_bulk.Table("Calls")[0]["ContactName"] = foreign;
 
 			var result = await _engine.RunEncryptionNightAsync(Context(DepartmentDataProtectionMigrationKind.Enrollment), CancellationToken.None);
 
 			result.Outcome.Should().Be(AdpMigrationNightOutcome.Failed);
 			result.ErrorCode.Should().Be("foreign_envelope");
-			_bulk.Table("Calls")[0]["Name"].Should().Be(foreign, "a foreign envelope is halted on, never re-encrypted");
+			_bulk.Table("Calls")[0]["ContactName"].Should().Be(foreign, "a foreign envelope is halted on, never re-encrypted");
 
 			_migrations.Rows.Values.Single(r => r.TargetTable == "Calls").LastErrorCode.Should().Be("foreign_envelope");
 		}

@@ -36,21 +36,20 @@ namespace Resgrid.Model
 			return instance.TableName;
 		}
 
-		/// <summary>Locked Logs-parity typed detail (RmsOperationalRecordDetails): the Log catalog v3 set carried forward, plus the Call snapshot columns that mirror the Calls catalog.</summary>
+		/// <summary>
+		/// Locked Logs-parity typed detail (RmsOperationalRecordDetails): the Log catalog v3 set carried forward, plus the call nature snapshot.
+		/// The call name and address snapshots, incident location, case number and other-personnel names are operational and left the
+		/// catalog on 2026-10-17, like the call fields they mirror.
+		/// </summary>
 		public static readonly IReadOnlyDictionary<string, (Func<RmsOperationalRecordDetail, string> Get, Action<RmsOperationalRecordDetail, string> Set)> Details = Map<RmsOperationalRecordDetail>(
 			("Narrative", d => d.Narrative, (d, v) => d.Narrative = v),
 			("InitialReport", d => d.InitialReport, (d, v) => d.InitialReport = v),
 			("Cause", d => d.Cause, (d, v) => d.Cause = v),
 			("ContactName", d => d.ContactName, (d, v) => d.ContactName = v),
 			("ContactNumber", d => d.ContactNumber, (d, v) => d.ContactNumber = v),
-			("OtherPersonnel", d => d.OtherPersonnel, (d, v) => d.OtherPersonnel = v),
-			("Location", d => d.Location, (d, v) => d.Location = v),
 			("BodyLocation", d => d.BodyLocation, (d, v) => d.BodyLocation = v),
 			("PronouncedDeceasedBy", d => d.PronouncedDeceasedBy, (d, v) => d.PronouncedDeceasedBy = v),
-			("CaseNumber", d => d.CaseNumber, (d, v) => d.CaseNumber = v),
 			("Destination", d => d.Destination, (d, v) => d.Destination = v),
-			("CallName", d => d.CallName, (d, v) => d.CallName = v),
-			("CallAddress", d => d.CallAddress, (d, v) => d.CallAddress = v),
 			("CallNature", d => d.CallNature, (d, v) => d.CallNature = v));
 
 		/// <summary>NERIS narrative sections.</summary>
@@ -60,23 +59,8 @@ namespace Resgrid.Model
 			("OutcomeNarrative", n => n.OutcomeNarrative, (n, v) => n.OutcomeNarrative = v),
 			("SupplementalJson", n => n.SupplementalJson, (n, v) => n.SupplementalJson = v));
 
-		/// <summary>NERIS location text columns; coordinates ride the companion envelopes (see <see cref="LocationCompanions"/>).</summary>
-		public static readonly IReadOnlyDictionary<string, (Func<RmsLocation, string> Get, Action<RmsLocation, string> Set)> Locations = Map<RmsLocation>(
-			("AddressText", l => l.AddressText, (l, v) => l.AddressText = v),
-			("Number", l => l.Number, (l, v) => l.Number = v),
-			("NumberPrefix", l => l.NumberPrefix, (l, v) => l.NumberPrefix = v),
-			("NumberSuffix", l => l.NumberSuffix, (l, v) => l.NumberSuffix = v),
-			("Street", l => l.Street, (l, v) => l.Street = v),
-			("UnitValue", l => l.UnitValue, (l, v) => l.UnitValue = v),
-			("CrossStreet1", l => l.CrossStreet1, (l, v) => l.CrossStreet1 = v),
-			("CrossStreet2", l => l.CrossStreet2, (l, v) => l.CrossStreet2 = v));
-
-		public static readonly IReadOnlyDictionary<string, (Func<RmsLocation, decimal?> Get, Action<RmsLocation, decimal?> Set, Func<RmsLocation, string> GetEnvelope, Action<RmsLocation, string> SetEnvelope)> LocationCompanions =
-			new Dictionary<string, (Func<RmsLocation, decimal?>, Action<RmsLocation, decimal?>, Func<RmsLocation, string>, Action<RmsLocation, string>)>(StringComparer.Ordinal)
-			{
-				[FieldId("RmsLocations", "Latitude")] = (l => l.Latitude, (l, v) => l.Latitude = v, l => l.ProtectedLatitudeEnvelope, (l, v) => l.ProtectedLatitudeEnvelope = v),
-				[FieldId("RmsLocations", "Longitude")] = (l => l.Longitude, (l, v) => l.Longitude = v, l => l.ProtectedLongitudeEnvelope, (l, v) => l.ProtectedLongitudeEnvelope = v)
-			};
+		// NERIS locations (RmsLocations) carry no protected column: an incident's address and position are operational
+		// (2026-10-17), so there is no Locations map or coordinate companion.
 
 		/// <summary>Source facts: dispatch comments and every prefilled value are user/dispatcher-authored text.</summary>
 		public static readonly IReadOnlyDictionary<string, (Func<RmsSourceFact, string> Get, Action<RmsSourceFact, string> Set)> SourceFacts = Map<RmsSourceFact>(
@@ -97,18 +81,9 @@ namespace Resgrid.Model
 			("InjuryDetailJson", c => c.InjuryDetailJson, (c, v) => c.InjuryDetailJson = v),
 			("DetailJson", c => c.DetailJson, (c, v) => c.DetailJson = v));
 
-		/// <summary>Exposures: address and free detail; coordinates ride companions.</summary>
+		/// <summary>Exposures: the free detail. The exposure's address and position are operational (2026-10-17) and stay plaintext.</summary>
 		public static readonly IReadOnlyDictionary<string, (Func<RmsExposure, string> Get, Action<RmsExposure, string> Set)> Exposures = Map<RmsExposure>(
-			("AddressText", e => e.AddressText, (e, v) => e.AddressText = v),
-			("Street", e => e.Street, (e, v) => e.Street = v),
 			("DetailJson", e => e.DetailJson, (e, v) => e.DetailJson = v));
-
-		public static readonly IReadOnlyDictionary<string, (Func<RmsExposure, decimal?> Get, Action<RmsExposure, decimal?> Set, Func<RmsExposure, string> GetEnvelope, Action<RmsExposure, string> SetEnvelope)> ExposureCompanions =
-			new Dictionary<string, (Func<RmsExposure, decimal?>, Action<RmsExposure, decimal?>, Func<RmsExposure, string>, Action<RmsExposure, string>)>(StringComparer.Ordinal)
-			{
-				[FieldId("RmsExposures", "Latitude")] = (e => e.Latitude, (e, v) => e.Latitude = v, e => e.ProtectedLatitudeEnvelope, (e, v) => e.ProtectedLatitudeEnvelope = v),
-				[FieldId("RmsExposures", "Longitude")] = (e => e.Longitude, (e, v) => e.Longitude = v, e => e.ProtectedLongitudeEnvelope, (e, v) => e.ProtectedLongitudeEnvelope = v)
-			};
 
 		/// <summary>Conditional incident sections carry contract-shaped free detail.</summary>
 		public static readonly IReadOnlyDictionary<string, (Func<RmsIncidentModule, string> Get, Action<RmsIncidentModule, string> Set)> Modules = Map<RmsIncidentModule>(
@@ -272,8 +247,6 @@ namespace Resgrid.Model
 		{
 			foreach (var k in Details.Keys) yield return k;
 			foreach (var k in Narratives.Keys) yield return k;
-			foreach (var k in Locations.Keys) yield return k;
-			foreach (var k in LocationCompanions.Keys) yield return k;
 			foreach (var k in Occupancies.Keys) yield return k;
 			foreach (var k in OccupancyHazards.Keys) yield return k;
 			foreach (var k in Inspections.Keys) yield return k;
@@ -291,7 +264,6 @@ namespace Resgrid.Model
 			foreach (var k in SourceFacts.Keys) yield return k;
 			foreach (var k in Casualties.Keys) yield return k;
 			foreach (var k in Exposures.Keys) yield return k;
-			foreach (var k in ExposureCompanions.Keys) yield return k;
 			foreach (var k in Modules.Keys) yield return k;
 			foreach (var k in Properties.Keys) yield return k;
 			foreach (var k in Vehicles.Keys) yield return k;

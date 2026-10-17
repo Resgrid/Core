@@ -6936,4 +6936,13 @@
   <data xml:space="preserve" name="FieldHelp.UnitStatusThresholds.AcknowledgementNoteRequirement">
     <value>Αν η επιβεβαίωση ή η σίγαση ενός συναγερμού χρονομέτρου κατάστασης απαιτεί αιτιολογία: προαιρετική, απαιτείται για συναγερμούς ή απαιτείται για προειδοποιήσεις και συναγερμούς. Δεν αλλάζει τα χρονόμετρα ούτε την κατάσταση της μονάδας.</value>
   </data>
+  <data name="Rule.unit-status-timers" xml:space="preserve">
+    <value>Μονάδες σε αποστολή που δεν μπορούν να χρονομετρηθούν</value>
+  </data>
+  <data name="RuleWhy.unit-status-timers" xml:space="preserve">
+    <value>Έχουν οριστεί χρονόμετρα κατάστασης μονάδων, αλλά ορισμένοι τύποι μονάδων μεταβαίνουν κατά την αποστολή σε κατάσταση χωρίς σημασία ή σε σημασία χωρίς χρονόμετρο. Το Big Board δεν επισημαίνει ποτέ αυτές τις μονάδες, όσο κι αν περιμένουν.</value>
+  </data>
+  <data name="RuleNext.unit-status-timers" xml:space="preserve">
+    <value>Δώστε σημασία στην κατάσταση αποστολής στις Προσαρμοσμένες καταστάσεις ή ορίστε χρονόμετρο για τη σημασία της στις Ρυθμίσεις χαρτών.</value>
+  </data>
 </root>

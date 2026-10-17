@@ -60,11 +60,11 @@ namespace Resgrid.Providers.NumberProvider
 
 		private static bool HasEnvelopedField(Call call)
 		{
-			return ProtectedDataEnvelope.HasEnvelopePrefix(call.Name) ||
-				   ProtectedDataEnvelope.HasEnvelopePrefix(call.NatureOfCall) ||
-				   ProtectedDataEnvelope.HasEnvelopePrefix(call.Address) ||
-				   ProtectedDataEnvelope.HasEnvelopePrefix(call.Type) ||
-				   ProtectedDataEnvelope.HasEnvelopePrefix(call.Notes);
+			// Name, address and type are operational plaintext (2026-10-17); these are the spoken fields that can be sealed.
+			return ProtectedDataEnvelope.HasEnvelopePrefix(call.NatureOfCall) ||
+				   ProtectedDataEnvelope.HasEnvelopePrefix(call.Notes) ||
+				   ProtectedDataEnvelope.HasEnvelopePrefix(call.ContactName) ||
+				   ProtectedDataEnvelope.HasEnvelopePrefix(call.ContactNumber);
 		}
 
 		private static Call BuildMinimalShell(Call call)

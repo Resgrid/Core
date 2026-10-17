@@ -94,10 +94,20 @@ namespace Resgrid.Tests.Services
 		public void Every_persisted_content_slot_and_binary_has_a_catalog_and_upgrade_binding()
 		{
 			var catalog = new ProtectedFieldCatalog(); var bindings = AdpTableBindings.ForVersionRange(catalog, 13, catalog.Version);
+			// Only the tables that carry what members recorded (occurrences, completions, answers, files, schedules) are
+			// private; definitions, versions and department settings are configuration (2026-10-17).
+			ChecklistTables.ProtectedContent.Should().BeEquivalentTo(new[] { "ChecklistOccurrences", "ChecklistCompletions", "ChecklistCompletionItems", "ChecklistCompletionFiles", "ChecklistSchedules" });
 			foreach (var table in ChecklistTables.All.Values)
 			{
+				if (!ChecklistTables.ProtectedContent.Contains(table))
+				{
+					bindings.Should().NotContain(b => b.TableName == table, $"{table} is configuration, not private content");
+					catalog.GetForTable(table).Should().BeEmpty(table);
+					continue;
+				}
 				bindings.Should().ContainSingle(b => b.TableName == table && b.DepartmentColumn == "DepartmentId" && b.ProtectedMarkerColumn == "IsProtected");
-				bindings.Single(b => b.TableName == table).Columns.Should().Contain(c => c.FieldId == table.ToLowerInvariant() + ".content");
+				// A mixed table seals only its private members (ProtectedContent); completion files stay wholly sealed in Content.
+				bindings.Single(b => b.TableName == table).Columns.Should().Contain(c => c.FieldId == table.ToLowerInvariant() + "." + ChecklistTables.SealedColumn(table).ToLowerInvariant());
 			}
 			bindings.Single(b => b.TableName == "ChecklistCompletionFiles").Columns.Should().Contain(c => c.FieldId == "checklistcompletionfiles.data");
 		}

@@ -32,15 +32,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IAuthorizationService _authorizationService;
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.CustomStatuses.CustomStatuses> _localizer;
+		private readonly IBaseTypeAiSuggestionService _baseTypeAiSuggestions;
 
 		public CustomStatusesController(ICustomStateService customStateService, IUnitsService unitsService, IAuthorizationService authorizationService, IEventAggregator eventAggregator,
-			IStringLocalizer<Resgrid.Localization.Areas.User.CustomStatuses.CustomStatuses> localizer)
+			IStringLocalizer<Resgrid.Localization.Areas.User.CustomStatuses.CustomStatuses> localizer, IBaseTypeAiSuggestionService baseTypeAiSuggestions)
 		{
 			_customStateService = customStateService;
 			_unitsService = unitsService;
 			_authorizationService = authorizationService;
 			_eventAggregator = eventAggregator;
 			_localizer = localizer;
+			_baseTypeAiSuggestions = baseTypeAiSuggestions;
 		}
 		#endregion Private Members and Constructors
 
@@ -418,6 +420,32 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		#region Async Methods
+		/// <summary>
+		/// Enhanced AI meanings for the set's options that have none and no keyword suggestion, fetched by the edit page after it
+		/// renders so it never waits on the decision model. Only shown: a meaning is set when the administrator applies it and saves.
+		/// Empty when the department is not entitled to Enhanced AI or the model is unavailable or unsure.
+		/// </summary>
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.CustomStates_Update)]
+		public async Task<IActionResult> GetAiMeaningSuggestions(int id, CancellationToken cancellationToken)
+		{
+			if (!await _authorizationService.CanUserModifyCustomStatusAsync(UserId, id))
+				return Unauthorized();
+
+			var state = await _customStateService.GetCustomSateByIdAsync(id);
+			if (state == null || state.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			var suggestions = await _baseTypeAiSuggestions.SuggestStatusesAsync(DepartmentId, state, cancellationToken);
+			var staffing = state.Type == (int)CustomStateTypes.Staffing;
+			return Json(suggestions.Select(x => new
+			{
+				detailId = x.Key,
+				baseType = x.Value,
+				name = staffing ? _localizer["Staffing" + ((StaffingBaseTypes)x.Value).ToString()].Value : _localizer[((ActionBaseTypes)x.Value).ToString()].Value
+			}).ToList());
+		}
+
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.CustomStates_View)]
 		public async Task<IActionResult> GetPersonnelStatusesForDepartment(bool includeAny, bool includeMeanings = false)

@@ -350,13 +350,14 @@ namespace Resgrid.Services.Search
 
 			var ctx = await ContextAsync(call.DepartmentId);
 			var number = Safe(call.Number);
-			var name = ctx.ProtectedTextAllowed ? Safe(call.Name) : null;
+			// Name, type, address and identifiers are operational, not ADP-protected (2026-10-17): projected for every department.
+			var name = Safe(call.Name);
 			var nature = ctx.ProtectedTextAllowed ? Safe(call.NatureOfCall) : null;
-			var type = ctx.ProtectedTextAllowed ? Safe(call.Type) : null;
-			var address = ctx.ProtectedTextAllowed ? Safe(call.Address) : null;
-			var incident = ctx.ProtectedTextAllowed ? Safe(call.IncidentNumber) : null;
-			var reference = ctx.ProtectedTextAllowed ? Safe(call.ReferenceNumber) : null;
-			var external = ctx.ProtectedTextAllowed ? Safe(call.ExternalIdentifier) : null;
+			var type = Safe(call.Type);
+			var address = Safe(call.Address);
+			var incident = Safe(call.IncidentNumber);
+			var reference = Safe(call.ReferenceNumber);
+			var external = Safe(call.ExternalIdentifier);
 			// Calls.Notes, Calls.CompletedNotes and CallNotes.Note are PHI in the catalog: projected under the same rule as the
 			// nature and address. They are what lets a department find every call whose notes mention a given alarm point.
 			var notes = ctx.ProtectedTextAllowed ? Strip(Safe(call.Notes)) : null;
@@ -549,7 +550,8 @@ namespace Resgrid.Services.Search
 				return null;
 
 			var ctx = await ContextAsync(document.DepartmentId);
-			var name = ctx.ProtectedTextAllowed ? Safe(document.Name) : null;
+			// A document's name is operational (2026-10-17); its description and original file name stay protected text.
+			var name = Safe(document.Name);
 			var description = ctx.ProtectedTextAllowed ? Safe(document.Description) : null;
 			var filename = ctx.ProtectedTextAllowed ? Safe(document.Filename) : null;
 
@@ -779,10 +781,9 @@ namespace Resgrid.Services.Search
 			if (!string.IsNullOrWhiteSpace(item.RecurrenceId))
 				return null;
 
-			// CalendarItems.Title / Description / Location are cataloged (catalog 9): projected under the call-text rule.
+			// An event's title and location are operational (2026-10-17) and projected for every department; only the
+			// description (catalog 9) stays under the call-text rule.
 			var ctx = await ContextAsync(item.DepartmentId);
-			if (!ctx.ProtectedTextAllowed)
-				return null;
 			var title = Safe(item.Title);
 			if (title == null)
 				return null;
@@ -791,7 +792,7 @@ namespace Resgrid.Services.Search
 			var p = New(item.DepartmentId, SearchEntityTypes.CalendarEvent, item.CalendarItemId.ToString(), ctx);
 			p.Title = Cap(title, TitleMax);
 			p.Summary = Cap(Join(" · ", location, item.IsAllDay ? item.Start.ToString("yyyy-MM-dd") : null), SummaryMax);
-			p.SearchText = Cap(Join(" ", location, Strip(Safe(item.Description))), SearchTextMax);
+			p.SearchText = Cap(Join(" ", location, ctx.ProtectedTextAllowed ? Strip(Safe(item.Description)) : null), SearchTextMax);
 			p.Category = item.RecurrenceType > 0 ? "Recurring" : null;
 			p.IsActive = item.End >= DateTime.UtcNow || item.RecurrenceType > 0 && (!item.RecurrenceEnd.HasValue || item.RecurrenceEnd.Value >= DateTime.UtcNow);
 			p.OccurredOn = item.Start == default ? DateTime.UtcNow : item.Start;

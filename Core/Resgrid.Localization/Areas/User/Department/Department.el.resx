@@ -1593,4 +1593,25 @@
   <data name="UnitStatusAlertNoteRequirement_Always" xml:space="preserve">
     <value>Απαιτείται για προειδοποιήσεις και συναγερμούς</value>
   </data>
+  <data name="UnitStatusTimerWarningsHeader" xml:space="preserve">
+    <value>Ορισμένες μονάδες δεν μπορούν να χρονομετρηθούν</value>
+  </data>
+  <data name="UnitStatusTimerDispatchNoMeaning" xml:space="preserve">
+    <value>Κατά την αποστολή, οι {0} μεταβαίνουν στην κατάσταση "{1}", η οποία δεν έχει σημασία, οπότε οι μονάδες σε αποστολή δεν χρονομετρούνται ποτέ. Δώστε σημασία στην "{1}" (για παράδειγμα Σε αποστολή) στις Προσαρμοσμένες καταστάσεις.</value>
+  </data>
+  <data name="UnitStatusTimerDispatchNoTimer" xml:space="preserve">
+    <value>Κατά την αποστολή, οι {0} μεταβαίνουν στην κατάσταση "{1}" ({2}), αλλά δεν έχει οριστεί χρονόμετρο για {2}.</value>
+  </data>
+  <data name="UnitStatusTimerSetNoMeaning" xml:space="preserve">
+    <value>Το σύνολο καταστάσεων "{0}" (χρησιμοποιείται από {1}) έχει καταστάσεις χωρίς σημασία, στις οποίες δεν μπορεί να εφαρμοστεί χρονόμετρο: {2}.</value>
+  </data>
+  <data name="UnitStatusTimerWarningsCustomStatuses" xml:space="preserve">
+    <value>Επεξεργασία προσαρμοσμένων καταστάσεων</value>
+  </data>
+  <data name="UnitStatusTimerWarningsDispatchSettings" xml:space="preserve">
+    <value>Επεξεργασία ρυθμίσεων αποστολής</value>
+  </data>
+  <data name="UnitStatusOverrideNoMeaning" xml:space="preserve">
+    <value>{0}: η παράκαμψη ορίζει την κατάσταση "{1}" κατά την {2}, αλλά η κατάσταση αυτή δεν έχει σημασία, οπότε τα χρονόμετρα κατάστασης, οι κανόνες αποδέσμευσης και οι κάρτες επέμβασης δεν μπορούν να την αναγνωρίσουν. Δώστε της σημασία στις Προσαρμοσμένες καταστάσεις.</value>
+  </data>
 </root>

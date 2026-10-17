@@ -97,7 +97,9 @@ namespace Resgrid.Tests.Services
             await FluentActions.Awaiting(() => _service.RecordReadingAsync(_actor, id, reading)).Should().ThrowAsync<WorkOrderException>();
             reading.Note = "Replacement documented"; await _service.RecordReadingAsync(_actor, id, reading);
             var row = _store.All<WorkOrderRecurrence>().Single(); row.MeterEpoch.Should().Be(1); row.MeterBaseline.Should().Be(0); row.LastMeterValue.Should().Be(0);
-            _store.All<WorkOrderMeterReading>().Single().Content.Should().Contain("Replacement documented");
+            // The reset note is a private member: stored apart from the reading's metadata (review §8).
+            var stored = _store.All<WorkOrderMeterReading>().Single();
+            stored.Content.Should().NotContain("Replacement documented"); stored.ProtectedContent.Should().Contain("Replacement documented");
             input.Id = id; input.Revision = row.Revision; input.Reason = "rename"; input.MeterBaseline = row.MeterBaseline;
             await _service.SaveRecurrenceAsync(_actor, input);
             _store.All<WorkOrderRecurrence>().Single().MeterBaseline.Should().Be(0);

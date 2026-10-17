@@ -24,7 +24,7 @@
   <data name="AddUsage" xml:space="preserve"><value>Lägg till avläsning</value></data>
   <data name="AddWorkEntry" xml:space="preserve"><value>Lägg till post</value></data>
   <data name="AddWorker" xml:space="preserve"><value>Lägg till arbetstagare</value></data>
-  <data name="AddWorkerExternalHelp" xml:space="preserve"><value>Eller lägg till en extern arbetstagare via lönenyckel och etikett (båda skyddade).</value></data>
+  <data name="AddWorkerExternalHelp" xml:space="preserve"><value>Eller lägg till en extern arbetstagare via lönenyckel och etikett.</value></data>
   <data name="AddWorkerMemberHelp" xml:space="preserve"><value>Välj en medlem för att skapa dennes arbetstagarpost.</value></data>
   <data name="Address" xml:space="preserve"><value>Adress</value></data>
   <data name="Affiliate" xml:space="preserve"><value>Anknuten enhet</value></data>
@@ -253,7 +253,7 @@
   <data name="Headquarters" xml:space="preserve"><value>Huvudkontor</value></data>
   <data name="HeadquartersAddress" xml:space="preserve"><value>Huvudkontorsadress</value></data>
   <data name="HelpCompensation" xml:space="preserve"><value>Varje belopp och multiplikator är ett skyddat fält. Uppskattningar använder den anställdes profil, sedan rollens standard, sedan avdelningens; lönesystemets godkända kostnad vinner alltid.</value></data>
-  <data name="HelpEmployer" xml:space="preserve"><value>Omfattningen deklareras av dig, aldrig av Resgrid. Identifierare och adresser är skyddade fält; ett oförändrat REDACTED-värde behåller det lagrade.</value></data>
+  <data name="HelpEmployer" xml:space="preserve"><value>Omfattningen deklareras av dig, aldrig av Resgrid. FEIN-, SEIN- och SOS-nummer, rapporteringskontakten och närstående enheters adresser är skyddade fält; ett oförändrat REDACTED-värde behåller det lagrade.</value></data>
   <data name="HispanicLatino" xml:space="preserve"><value>Hispanisk eller latino</value></data>
   <data name="HourlyRate" xml:space="preserve"><value>Timlön</value></data>
   <data name="Hours" xml:space="preserve"><value>Timmar</value></data>

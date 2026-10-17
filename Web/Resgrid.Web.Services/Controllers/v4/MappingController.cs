@@ -109,7 +109,6 @@ namespace Resgrid.Web.Services.Controllers.v4
 				StringComparison.Ordinal);
 
 		/// <summary>The generic label a protected call carries on a map that cannot reveal it.</summary>
-		private const string ProtectedMapLabel = "Protected incident — open Resgrid to view details.";
 		#endregion Members and Constructors
 
 		/// <summary>
@@ -282,12 +281,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (calls != null && calls.Any())
 			{
-				// ADP (plan sections 7.1, 7.3): map markers are built from cataloged call fields, so
-				// they run through the protected-read pipeline first. With a valid grant the labels
-				// are plaintext; without one every cataloged value is the REDACTED placeholder and
-				// the marker degrades to a generic label with NO location — a map payload must never
-				// carry ciphertext, a protected label, or an exact protected position. BigBoard is
-				// stepped down unconditionally: it cannot hold a grant.
+				// ADP (plan sections 7.1, 7.3): a marker's name, type and position are operational and always shown
+				// (2026-10-17). Only the nature in the info window is protected: it runs through the protected-read
+				// pipeline and is left out when it comes back redacted. BigBoard never holds a grant.
 				var mapCallsAreProtected = await _dataProtectionService.IsProtectionEnforcedAsync(DepartmentId);
 				if (mapCallsAreProtected)
 				{
@@ -300,20 +296,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 				foreach (var call in calls)
 				{
-					var callIsRedacted = mapCallsAreProtected &&
-						(call.Name == ProtectedDataEnvelope.RedactionValue ||
-						 ProtectedDataEnvelope.HasEnvelopePrefix(call.Name));
+					var natureIsRedacted = call.NatureOfCall == ProtectedDataEnvelope.RedactionValue || ProtectedDataEnvelope.HasEnvelopePrefix(call.NatureOfCall);
 
 					MapMakerInfoData info = new MapMakerInfoData();
 					info.ImagePath = "Call";
 					info.Id = $"c{call.CallId}";
-					info.Title = callIsRedacted ? ProtectedMapLabel : ProtectedDataEnvelope.SafeDisplay(call.Name);
-					info.InfoWindowContent = callIsRedacted ? null : ProtectedDataEnvelope.SafeDisplay(call.NatureOfCall);
+					info.Title = ProtectedDataEnvelope.SafeDisplay(call.Name);
+					info.InfoWindowContent = natureIsRedacted ? null : call.NatureOfCall;
 					info.Type = 0;
-
-					// A redacted call contributes no marker at all: its position is itself protected.
-					if (callIsRedacted)
-						continue;
 
 					try
 					{

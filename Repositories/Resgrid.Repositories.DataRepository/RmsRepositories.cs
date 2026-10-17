@@ -264,14 +264,41 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 			}
 		}
 
-		protected Task<IEnumerable<TRow>> QueryAsync<TRow>(string sql, object parameters, CancellationToken cancellationToken = default)
+		protected async Task<IEnumerable<TRow>> QueryAsync<TRow>(string sql, object parameters, CancellationToken cancellationToken = default)
 		{
-			return RunAsync(c => c.QueryAsync<TRow>(new Dapper.CommandDefinition(sql, parameters, UnitOfWork.Transaction, cancellationToken: cancellationToken)), cancellationToken);
+			var rows = await RunAsync(c => c.QueryAsync<TRow>(new Dapper.CommandDefinition(sql, parameters, UnitOfWork.Transaction, cancellationToken: cancellationToken)), cancellationToken);
+			// A split-content row comes back whole: a plaintext private part is merged into Content here, and a sealed one
+			// waits for the module's reveal (adp-catalog-review-2026-10-17 §8).
+			if (typeof(ISplitContentRow).IsAssignableFrom(typeof(TRow)))
+				foreach (var row in rows)
+					SplitContent.MergeStored(row as ISplitContentRow);
+			return rows;
 		}
 
 		protected async Task<TRow> QueryFirstOrDefaultAsync<TRow>(string sql, object parameters, CancellationToken cancellationToken = default)
 		{
 			return (await QueryAsync<TRow>(sql, parameters, cancellationToken)).FirstOrDefault();
+		}
+
+		/// <summary>
+		/// Runs a write with every split-content row in its stored shape (metadata in Content, private members in
+		/// ProtectedContent), whichever path built the row, and puts the merged document back on the row afterwards.
+		/// </summary>
+		protected static async Task WriteStoredShapeAsync(IEnumerable<object> rows, Func<Task> write)
+		{
+			var restore = new List<(ISplitContentRow Row, string Content)>();
+			foreach (var row in rows)
+				if (row is ISplitContentRow split)
+					restore.Add((split, SplitContent.EnsureSplitForStore(split)));
+			try
+			{
+				await write();
+			}
+			finally
+			{
+				foreach (var (row, content) in restore)
+					row.Content = content;
+			}
 		}
 
 		protected Task<int> ExecuteAsync(string sql, object parameters, CancellationToken cancellationToken = default)

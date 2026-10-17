@@ -1,17 +1,41 @@
 using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Sockets;
+using System.Text.RegularExpressions;
 
 namespace Resgrid.Llm;
 
 /// <summary>Private endpoints require an operator-owned exact URI; department overrides retain public HTTPS only.</summary>
 public static class OperatorEndpointPolicy
 {
-    public static Uri ValidateUri(string endpoint, bool operatorPrivateEndpoint)
+    public const string ChatCompletionsPath = "/v1/chat/completions";
+    /// <summary>The decision-model route (SGLang serving Clef / Clef-Flash).</summary>
+    public const string DecisionPath = "/v1/systemone";
+
+    public static Uri ValidateUri(string endpoint, bool operatorPrivateEndpoint) => ValidateUri(endpoint, operatorPrivateEndpoint, ChatCompletionsPath);
+
+    public static Uri ValidateUri(string endpoint, bool operatorPrivateEndpoint, string requiredPath)
     {
         if (!Uri.TryCreate(endpoint, UriKind.Absolute, out var uri) || uri.UserInfo.Length != 0 || uri.Fragment.Length != 0 || uri.Query.Length != 0 ||
-            uri.AbsolutePath != "/v1/chat/completions" || !(uri.Scheme == "https" || operatorPrivateEndpoint && uri.Scheme == "http"))
+            requiredPath is not (ChatCompletionsPath or DecisionPath) || uri.AbsolutePath != requiredPath || !(uri.Scheme == "https" || operatorPrivateEndpoint && uri.Scheme == "http"))
             throw new LlmUnavailableException();
+        return uri;
+    }
+
+    private static readonly Regex WorkersAiDecisionPath = new("\\A/client/v4/accounts/[0-9a-f]{32}/ai/run/@cf/cloudflare/(clef|clef-flash)\\z", RegexOptions.CultureInvariant);
+
+    /// <summary>
+    /// The Cloudflare Workers AI REST route for a Clef model, called directly on api.cloudflare.com over HTTPS (never through AI
+    /// Gateway, whose request logging would keep department messages). <paramref name="model"/> is the Workers AI selector.
+    /// </summary>
+    public static Uri ValidateWorkersAiDecisionUri(string endpoint, out string model)
+    {
+        if (!Uri.TryCreate(endpoint, UriKind.Absolute, out var uri) || uri.Scheme != "https" || !uri.IsDefaultPort || uri.UserInfo.Length != 0 || uri.Fragment.Length != 0 ||
+            uri.Query.Length != 0 || !string.Equals(uri.Host, "api.cloudflare.com", StringComparison.Ordinal))
+            throw new LlmUnavailableException();
+        var match = WorkersAiDecisionPath.Match(uri.AbsolutePath);
+        if (!match.Success) throw new LlmUnavailableException();
+        model = match.Groups[1].Value;
         return uri;
     }
 

@@ -126,6 +126,25 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task Notify_StillReachesDirectRolesAndTheCommandTeam_WhenShiftAndUnitLookupsFail()
+		{
+			_departmentSettingsService.Setup(x => x.GetDispatchShiftInsteadOfGroupAsync(1)).ReturnsAsync(true);
+			_shiftsService.Setup(x => x.GetOnDutyUserIdsForGroupsAsync(It.IsAny<int>(), It.IsAny<IEnumerable<int>>(), It.IsAny<DateTime>()))
+				.ThrowsAsync(new InvalidOperationException("shift boom"));
+			_departmentSettingsService.Setup(x => x.GetUnitDispatchAlsoDispatchToAssignedPersonnelAsync(1)).ReturnsAsync(true);
+			_unitsService.Setup(x => x.GetCurrentRolesForUnitAsync(It.IsAny<int>())).ThrowsAsync(new InvalidOperationException("unit boom"));
+			_personnelRolesService.Setup(x => x.GetAllMembersOfRoleAsync(7))
+				.ReturnsAsync(new List<PersonnelRoleUser> { new PersonnelRoleUser { UserId = "role-1" } });
+			_incidentCommandService.Setup(x => x.GetCommandForCallAsync(1, 10))
+				.ReturnsAsync(new IncidentCommand { CallId = 10, CurrentCommanderUserId = "commander" });
+
+			await _service.NotifyCallClosedAsync(DispatchedCall(), "closer");
+
+			_userNotices.Select(x => x.UserId).Should().BeEquivalentTo(new[] { "person-1", "role-1", "commander" });
+			_unitNotices.Should().Equal(100);
+		}
+
+		[Test]
 		public async Task Notify_WithShiftDispatch_ReachesOnlyTheGroupsOnDutyRosterAtDispatchTime()
 		{
 			// Customer report 2026-10-16: the closing notice reached the whole group although the dispatch only alerted

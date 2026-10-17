@@ -6936,4 +6936,13 @@
   <data xml:space="preserve" name="FieldHelp.UnitStatusThresholds.AcknowledgementNoteRequirement">
     <value>Indique si l'acquittement ou la mise en sourdine d'une alerte de minuterie de statut exige un motif : facultatif, obligatoire pour les alertes ou obligatoire pour les avertissements et les alertes. Ne modifie ni les minuteries ni le statut de l'unité.</value>
   </data>
+  <data name="Rule.unit-status-timers" xml:space="preserve">
+    <value>Unités engagées non chronométrables</value>
+  </data>
+  <data name="RuleWhy.unit-status-timers" xml:space="preserve">
+    <value>Des minuteries de statut d'unité sont définies, mais certains types d'unité passent, lors de l'engagement, à un statut sans signification ou à une signification sans minuterie. Le Big Board ne signale jamais ces unités, quel que soit le temps d'attente.</value>
+  </data>
+  <data name="RuleNext.unit-status-timers" xml:space="preserve">
+    <value>Donnez une signification au statut d'engagement dans Statuts personnalisés, ou définissez une minuterie pour sa signification dans Paramètres de cartographie.</value>
+  </data>
 </root>

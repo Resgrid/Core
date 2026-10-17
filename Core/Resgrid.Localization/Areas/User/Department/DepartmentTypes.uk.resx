@@ -275,6 +275,9 @@
   <data name="SuggestedFromName" xml:space="preserve">
     <value>Пропозиція за назвою: {0}</value>
   </data>
+  <data name="AiSuggestedFromName" xml:space="preserve">
+    <value>Пропозиція Enhanced AI: {0}</value>
+  </data>
   <data name="CallTypeClass.Fire" xml:space="preserve">
     <value>Пожежа</value>
   </data>

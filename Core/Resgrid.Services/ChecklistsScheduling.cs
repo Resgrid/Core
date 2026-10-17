@@ -21,7 +21,7 @@ namespace Resgrid.Services
 			var views = new List<ChecklistScheduleView>();
 			foreach (var row in await _store.ListAsync<ChecklistSchedule>(actor.DepartmentId, definitionId, page * 50, includeNext ? 51 : 50))
 			{
-				await RevealAsync(actor, row); views.Add(new ChecklistScheduleView { Schedule = row, Content = Decode<ChecklistScheduleContent>(row.Content) });
+				await RevealAsync(actor, row, display: true); views.Add(new ChecklistScheduleView { Schedule = row, Content = Decode<ChecklistScheduleContent>(row.Content) });
 			}
 			return views;
 		}
@@ -88,7 +88,7 @@ namespace Resgrid.Services
 					if (remaining > 0) { remaining--; continue; }
 					var assigned = await CanPerformScheduleAsync(actor, schedule);
 					// The response omits stored Content/envelopes. Names come through the attended read boundary.
-					await RevealAsync(actor, schedule);
+					await RevealAsync(actor, schedule, display: true);
 					var metadata = JsonConvert.DeserializeObject<ChecklistOccurrence>(JsonConvert.SerializeObject(occurrence)); metadata.Content = null;
 					views.Add(new ChecklistOccurrenceView { Occurrence = metadata, Name = Decode<ChecklistScheduleContent>(schedule.Content).Name, Target = target,
 						CanStart = enabled && assigned && schedule.IsActive && !schedule.IsSuspended && occurrence.PeriodStartUtc <= _clock.GetUtcNow().UtcDateTime, CanSkip = enabled && manage && (occurrence.State == 3 || occurrence.State == 4) && await _store.GetAsync<ChecklistCompletion>(actor.DepartmentId, occurrence.CompletionId) == null });
@@ -163,9 +163,21 @@ namespace Resgrid.Services
 		}
 		private async Task WorkerWriteAsync<T>(T row, bool insert, CancellationToken ct) where T : ChecklistRow
 		{
-			var result = await _write.Value.PrepareRecordsEntityWriteAsync(row.DepartmentId, row, (T)null, row.Id, ChecklistTables.Fields<T>(), () => row.IsProtected = true, null, null, true, ct);
-			if (result?.Success != true || result.IsProtected && HasPlaintextFields(row)) throw new InvalidOperationException("Checklist scheduling requires an available ADP catalog and write broker.");
-			await _store.WriteAsync(row, insert, ct);
+			// The sweep never adds private members; a row it never revealed keeps its sealed ProtectedContent as is.
+			var split = row is ISplitContentRow parts ? SplitContent.PrepareWrite(parts) : (SplitContentWrite?)null;
+			if (split?.Allowed == false) throw new InvalidOperationException("Checklist scheduling cannot write private content beside a sealed slot.");
+			try
+			{
+				var result = await _write.Value.PrepareRecordsEntityWriteAsync(row.DepartmentId, row, (T)null, row.Id, ChecklistTables.Fields<T>(), () => row.IsProtected = true, null, null, true, ct);
+				if (result?.Success != true || result.IsProtected && HasPlaintextFields(row)) throw new InvalidOperationException("Checklist scheduling requires an available ADP catalog and write broker.");
+				await _store.WriteAsync(row, insert, ct);
+			}
+			catch when (split != null)
+			{
+				split.Value.Undo(row as ISplitContentRow);
+				throw;
+			}
+			split?.Done(row as ISplitContentRow);
 			if (row is ChecklistOccurrence) _refreshRow = row;
 		}
 		private async Task WorkerAuditAsync(ChecklistRow row, AuditLogTypes type, DateTime now, CancellationToken ct)

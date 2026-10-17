@@ -80,7 +80,46 @@ var resgrid;
                 });
 
                 $('#applySuggestedMeanings').on('click', applySuggestedMeanings);
+                loadAiSuggestions();
             });
+            // Enhanced AI meanings for options the names gave no keyword hint for. Fetched after the page renders so it never
+            // waits on the model; the server returns none unless the department is entitled and the model is confident. They are
+            // shown beside the keyword suggestions and applied the same way: only by the button, and saved only by Update.
+            function loadAiSuggestions() {
+                var table = $('#options');
+                if (!table.attr('data-ai-url'))
+                    return;
+                $.ajax({ url: table.attr('data-ai-url'), type: 'GET', dataType: 'json', cache: false })
+                    .done(function (suggestions) {
+                        var format = String(table.attr('data-ai-format'));
+                        var shown = 0;
+                        $.each(suggestions || [], function (i, suggestion) {
+                            var idInput = $('#options input[id^="customStateDetailId_"]').filter(function () {
+                                return String($(this).val()) === String(suggestion.detailId);
+                            }).first();
+                            if (!idInput.length)
+                                return;
+                            var row = idInput.attr('id').substring('customStateDetailId_'.length);
+                            var cell = $('#options td[data-meaning-row="' + row + '"]');
+                            // Still without a meaning: the administrator may have applied one since the page loaded.
+                            if (!cell.length || cell.is('[data-suggested]') || parseInt($('#baseType_' + row).val(), 10) >= 0)
+                                return;
+                            var current = cell.text();
+                            cell.removeClass('text-danger')
+                                .attr({ 'data-row': row, 'data-suggested': suggestion.baseType, 'data-suggested-name': suggestion.name })
+                                .empty()
+                                .append($('<span class="text-danger">').text(current), ' ',
+                                    $('<span class="text-info">').text('(' + format.replace('{0}', suggestion.name) + ')'));
+                            shown++;
+                        });
+                        // Applying again is harmless for the keyword suggestions already applied: they set the same values.
+                        if (shown > 0) {
+                            $('#applySuggestedMeanings').prop('disabled', false).show();
+                            $('#suggestedMeaningsApplied').hide();
+                        }
+                    });
+            }
+            editstatus.loadAiSuggestions = loadAiSuggestions;
             // Fills in the meanings suggested from the option names. Nothing is saved until the form is submitted (Update).
             function applySuggestedMeanings() {
                 $('#options td[data-suggested]').each(function () {

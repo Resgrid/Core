@@ -94,14 +94,16 @@ namespace Resgrid.Tests.Security
 			Scopes = new[] { ProtectedDataGrantScopes.Read, ProtectedDataGrantScopes.Write }
 		}).Token;
 
+		// The call's name and address are operational plaintext (2026-10-17); the caller and the nature are private.
 		private static Call EnvelopedCall() => new()
 		{
 			CallId = 17,
 			DepartmentId = DeptId,
 			Number = "C-100",
-			Name = "rgdp:1:1:name==",
+			Name = "Structure Fire",
+			ContactName = "rgdp:1:1:contactname==",
 			NatureOfCall = "rgdp:1:1:nature==",
-			Address = "rgdp:1:1:address=="
+			Address = "1 Main St"
 		};
 
 		[Test]
@@ -110,7 +112,8 @@ namespace Resgrid.Tests.Security
 			var result = await Reader(Session()).ResolveForReadAsync(DeptId, EnvelopedCall(), VersionTwoGrant(), UserId);
 
 			result.ProtectedReason.Should().BeNull();
-			result.Call.Name.Should().Be("plain");
+			result.Call.ContactName.Should().Be("plain");
+			result.Call.Name.Should().Be("Structure Fire");
 		}
 
 		private static readonly (string Name, ProtectedGrantSessionContext Session, string Code)[] OtherCallers =
@@ -127,7 +130,8 @@ namespace Resgrid.Tests.Security
 			var result = await Reader(caller.Session).ResolveForReadAsync(DeptId, EnvelopedCall(), VersionTwoGrant(), UserId);
 
 			result.ProtectedReason.Should().Be(caller.Code, caller.Name);
-			result.Call.Name.Should().Be(ProtectedDataEnvelope.RedactionValue);
+			result.Call.ContactName.Should().Be(ProtectedDataEnvelope.RedactionValue);
+			result.Call.NatureOfCall.Should().Be(ProtectedDataEnvelope.RedactionValue);
 			_broker.Verify(x => x.DecryptAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(),
 				It.IsAny<IReadOnlyList<ProtectedFieldOperationItem>>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
@@ -180,13 +184,13 @@ namespace Resgrid.Tests.Security
 			ProtectedReadService Reader(IMfaCredentialStateService credentialStates) => new(_protection.Object, _grants, _broker.Object, new ProtectedFieldCatalog(),
 				new FixedProtectedGrantContext("unused", isWorkloadCaller: false, UserId, Session()), credentialStates);
 
-			(await Reader(states.Object).ResolveForReadAsync(DeptId, EnvelopedCall(), PasskeyGrant(), UserId)).Call.Name.Should().Be("plain");
+			(await Reader(states.Object).ResolveForReadAsync(DeptId, EnvelopedCall(), PasskeyGrant(), UserId)).Call.ContactName.Should().Be("plain");
 			(await Reader(states.Object).PreflightWriteAsync(DeptId, PasskeyGrant(), UserId, workloadCaller: false)).Success.Should().BeTrue();
 
 			current = false;
 			var revoked = await Reader(states.Object).ResolveForReadAsync(DeptId, EnvelopedCall(), PasskeyGrant(), UserId);
 			revoked.ProtectedReason.Should().Be("grant_revoked");
-			revoked.Call.Name.Should().Be(ProtectedDataEnvelope.RedactionValue);
+			revoked.Call.ContactName.Should().Be(ProtectedDataEnvelope.RedactionValue);
 			(await Reader(states.Object).PreflightWriteAsync(DeptId, PasskeyGrant(), UserId, workloadCaller: false)).Reason.Should().Be("grant_revoked");
 
 			(await Reader(null).ResolveForReadAsync(DeptId, EnvelopedCall(), PasskeyGrant(), UserId)).ProtectedReason.Should().Be("grant_revoked",
@@ -250,7 +254,7 @@ namespace Resgrid.Tests.Security
 
 		private static readonly ProtectedFieldOperationItem[] Items =
 		{
-			new() { FieldId = "calls.name", RowKey = "17", Value = "rgdp:1:1:name==", CatalogVersion = 1 }
+			new() { FieldId = "calls.contactname", RowKey = "17", Value = "rgdp:1:1:contactname==", CatalogVersion = 1 }
 		};
 
 		private (ProtectedDataBrokerClient Client, CapturingHandler Handler, BrokerSessionAssertionService Assertions) Client(

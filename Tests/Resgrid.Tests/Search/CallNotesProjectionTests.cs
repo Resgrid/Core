@@ -83,8 +83,10 @@ namespace Resgrid.Tests.Search
 
 			var p = await _service.BuildCallAsync(Call());
 
-			p.SearchText.Should().BeNull();
-			_callNotes.Verify(r => r.GetCallNotesByCallIdAsync(It.IsAny<int>()), Times.Never, "the note rows are not even read when nothing can be projected");
+			// Only the operational address and type remain (2026-10-17); no note, completion note or caller text.
+			p.SearchText.Should().Be("1 Industrial Way Alarm");
+			p.SearchText.Should().NotContain("ACME").And.NotContain("Reset by keyholder").And.NotContain("trouble").And.NotContain("Alarm activation");
+			_callNotes.Verify(r => r.GetCallNotesByCallIdAsync(It.IsAny<int>()), Times.Never, "the note rows are not even read when they cannot be projected");
 		}
 
 		[Test]

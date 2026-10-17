@@ -1535,4 +1535,25 @@
   <data name="UnitStatusAlertNoteRequirement_Always" xml:space="preserve">
     <value>Erforderlich bei Warnungen und Alarmen</value>
   </data>
+  <data name="UnitStatusTimerWarningsHeader" xml:space="preserve">
+    <value>Einige Einheiten können nicht zeitlich überwacht werden</value>
+  </data>
+  <data name="UnitStatusTimerDispatchNoMeaning" xml:space="preserve">
+    <value>Bei der Alarmierung erhalten {0} den Status "{1}", der keine Bedeutung hat, daher werden alarmierte Einheiten nie zeitlich überwacht. Geben Sie "{1}" unter Benutzerdefinierte Status eine Bedeutung (zum Beispiel Alarmiert).</value>
+  </data>
+  <data name="UnitStatusTimerDispatchNoTimer" xml:space="preserve">
+    <value>Bei der Alarmierung erhalten {0} den Status "{1}" ({2}), für {2} ist jedoch kein Timer festgelegt.</value>
+  </data>
+  <data name="UnitStatusTimerSetNoMeaning" xml:space="preserve">
+    <value>Der Statussatz "{0}" (verwendet von {1}) enthält Status ohne Bedeutung, für die kein Timer gelten kann: {2}.</value>
+  </data>
+  <data name="UnitStatusTimerWarningsCustomStatuses" xml:space="preserve">
+    <value>Benutzerdefinierte Status bearbeiten</value>
+  </data>
+  <data name="UnitStatusTimerWarningsDispatchSettings" xml:space="preserve">
+    <value>Alarmierungseinstellungen bearbeiten</value>
+  </data>
+  <data name="UnitStatusOverrideNoMeaning" xml:space="preserve">
+    <value>{0}: Die Überschreibung setzt bei {2} den Status "{1}", der keine Bedeutung hat, daher können Status-Timer, Freigaberegeln und Einsatzpläne ihn nicht erkennen. Geben Sie ihm unter Benutzerdefinierte Status eine Bedeutung.</value>
+  </data>
 </root>

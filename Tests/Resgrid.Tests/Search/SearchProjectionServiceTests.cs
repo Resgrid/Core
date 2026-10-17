@@ -60,15 +60,17 @@ namespace Resgrid.Tests.Search
 		}
 
 		[Test]
-		public async Task Enforced_department_projects_only_system_fields()
+		public async Task Enforced_department_projects_operational_fields_and_never_the_nature()
 		{
+			// A call's name, type, address and identifiers are operational, not ADP-protected (2026-10-17): they are
+			// projected for every department. The nature (and every other catalogued field) stays out under enforcement.
 			_enforced = true;
 			var p = await _service.BuildCallAsync(Call());
 
-			p.Title.Should().Be("Call 2026-000042");
-			p.SearchText.Should().BeNull();
-			p.Summary.Should().BeNull();
-			p.Keywords.Should().Be("2026-000042");
+			p.Title.Should().Be("House Fire");
+			p.SearchText.Should().Contain("123 Main St").And.Contain("Fire").And.NotContain("Smoke showing");
+			p.Summary.Should().Be("Fire");
+			p.Keywords.Should().Be("2026-000042 INC-9");
 			p.IncludesProtectedText.Should().BeFalse();
 		}
 

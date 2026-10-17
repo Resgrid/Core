@@ -21,12 +21,10 @@ namespace Resgrid.Tests.Services
 
 		private Mock<ICallLocationKeysRepository> _keys;
 		private Mock<ICallContactsRepository> _callContacts;
-		private Mock<IDepartmentDataProtectionService> _dataProtection;
 		private Mock<IDispatchScopeService> _dispatchScope;
 		private Mock<IDepartmentsService> _departments;
 		private Mock<IOccupancyLocationLookup> _occupancies;
 		private CallLocationHistoryService _service;
-		private DepartmentDataProtectionPolicy _policy;
 		private Dictionary<int, Call> _calls;
 		private List<CallLocationKey> _upserted;
 		private Dictionary<string, List<CallLocationCandidate>> _addressCandidates;
@@ -36,16 +34,13 @@ namespace Resgrid.Tests.Services
 		{
 			_keys = new Mock<ICallLocationKeysRepository>();
 			_callContacts = new Mock<ICallContactsRepository>();
-			_dataProtection = new Mock<IDepartmentDataProtectionService>();
 			_dispatchScope = new Mock<IDispatchScopeService>();
 			_departments = new Mock<IDepartmentsService>();
 			_occupancies = new Mock<IOccupancyLocationLookup>();
-			_policy = null;
 			_calls = new Dictionary<int, Call>();
 			_upserted = new List<CallLocationKey>();
 			_addressCandidates = new Dictionary<string, List<CallLocationCandidate>>();
 
-			_dataProtection.Setup(x => x.GetPolicyByDepartmentIdAsync(DepartmentId, It.IsAny<bool>())).ReturnsAsync(() => _policy);
 			_departments.Setup(x => x.IsMemberOfDepartmentAsync(DepartmentId, UserId)).ReturnsAsync(true);
 			_dispatchScope.Setup(x => x.CanUserAccessCallAsync(DepartmentId, UserId, It.IsAny<Call>())).ReturnsAsync(true);
 			_dispatchScope.Setup(x => x.FilterCallsForUserAsync(DepartmentId, UserId, It.IsAny<List<Call>>())).ReturnsAsync((int _, string __, List<Call> calls) => calls);
@@ -61,7 +56,7 @@ namespace Resgrid.Tests.Services
 			_keys.Setup(x => x.UpsertAsync(It.IsAny<IEnumerable<CallLocationKey>>(), It.IsAny<CancellationToken>()))
 				.Callback((IEnumerable<CallLocationKey> keys, CancellationToken _) => _upserted.AddRange(keys)).Returns(Task.CompletedTask);
 
-			_service = new CallLocationHistoryService(_keys.Object, _callContacts.Object, _dataProtection.Object, _dispatchScope.Object, _departments.Object,
+			_service = new CallLocationHistoryService(_keys.Object, _callContacts.Object, _dispatchScope.Object, _departments.Object,
 				new Lazy<IOccupancyLocationLookup>(() => _occupancies.Object));
 		}
 
@@ -94,13 +89,16 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
-		public async Task Nothing_is_indexed_while_data_protection_is_on()
+		public async Task Indexing_never_depends_on_data_protection_because_a_call_location_is_operational()
 		{
-			_policy = new DepartmentDataProtectionPolicy { DepartmentId = DepartmentId, State = (int)DepartmentDataProtectionState.Enabled };
+			// A call's address and position left the ADP catalog on 2026-10-17: every department is indexed,
+			// enrolled or not, so the service has no data protection dependency at all.
+			typeof(CallLocationHistoryService).GetConstructors().SelectMany(c => c.GetParameters())
+				.Should().NotContain(p => p.ParameterType == typeof(IDepartmentDataProtectionService));
 
 			await _service.IndexCallAsync(new Call { CallId = 5, DepartmentId = DepartmentId, Address = "110 S Main St", LoggedOn = DateTime.UtcNow });
 
-			_keys.Verify(x => x.UpsertAsync(It.IsAny<IEnumerable<CallLocationKey>>(), It.IsAny<CancellationToken>()), Times.Never);
+			_upserted.Should().ContainSingle(k => k.CallId == 5 && k.AddressKey == "110|MAIN");
 			_keys.Verify(x => x.DeleteForCallAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 
@@ -220,21 +218,24 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
-		public async Task With_data_protection_on_only_contact_links_are_searched()
+		public async Task Address_and_contact_matching_both_run_for_every_department()
 		{
-			_policy = new DepartmentDataProtectionPolicy { DepartmentId = DepartmentId, State = (int)DepartmentDataProtectionState.Encrypting };
-			AddCall(1, "rgenc1:abc", daysAgo: 0);
-			var linked = AddCall(2, "rgenc1:def");
+			// There is no protected-department mode any more: address, nearby and contact matching all run.
+			AddCall(1, "110 S Main St", "39.7817,-89.6501", daysAgo: 0);
+			var sameAddress = AddCall(2, "110 South Main", "39.7818,-89.6502");
+			var linked = AddCall(3, "500 Elm St", daysAgo: 5);
+			IndexByAddress("110|MAIN", sameAddress);
 			_callContacts.Setup(x => x.GetCallContactsByCallIdAsync(1)).ReturnsAsync(new List<CallContact> { new CallContact { CallId = 1, DepartmentId = DepartmentId, ContactId = "k1" } });
 			_keys.Setup(x => x.GetContactCallCandidatesAsync(DepartmentId, It.IsAny<IEnumerable<string>>(), It.IsAny<int>()))
-				.ReturnsAsync(new List<CallLocationCandidate> { new CallLocationCandidate { CallId = 2, LoggedOn = linked.LoggedOn } });
+				.ReturnsAsync(new[] { linked }.Select(Candidate).ToList());
 
 			var history = await _service.GetHistoryForCallAsync(DepartmentId, UserId, 1);
 
-			history.AddressMatchingAvailable.Should().BeFalse();
-			history.Entries.Should().ContainSingle(e => e.Call.CallId == 2 && e.Match == CallLocationMatch.SameContact);
-			_keys.Verify(x => x.GetByAddressKeysAsync(It.IsAny<int>(), It.IsAny<IEnumerable<string>>(), It.IsAny<int>()), Times.Never);
-			_keys.Verify(x => x.GetWithinBoundsAsync(It.IsAny<int>(), It.IsAny<decimal>(), It.IsAny<decimal>(), It.IsAny<decimal>(), It.IsAny<decimal>(), It.IsAny<int>()), Times.Never);
+			history.AddressMatchingAvailable.Should().BeTrue();
+			history.Entries.Single(e => e.Call.CallId == 2).Match.Should().HaveFlag(CallLocationMatch.SameAddress);
+			history.Entries.Single(e => e.Call.CallId == 3).Match.Should().Be(CallLocationMatch.SameContact);
+			_keys.Verify(x => x.GetByAddressKeysAsync(DepartmentId, It.IsAny<IEnumerable<string>>(), It.IsAny<int>()), Times.AtLeastOnce());
+			_keys.Verify(x => x.GetWithinBoundsAsync(DepartmentId, It.IsAny<decimal>(), It.IsAny<decimal>(), It.IsAny<decimal>(), It.IsAny<decimal>(), It.IsAny<int>()), Times.AtLeastOnce());
 		}
 
 		[Test]
@@ -279,7 +280,6 @@ namespace Resgrid.Tests.Services
 			_keys.SetupSequence(x => x.GetDepartmentsNeedingIndexAsync(ParsedStreetAddress.Version, It.IsAny<int>()))
 				.ReturnsAsync(new List<int> { DepartmentId })
 				.ReturnsAsync(new List<int>());
-			_keys.Setup(x => x.GetDepartmentsToSuppressAsync(It.IsAny<int>())).ReturnsAsync(new List<int>());
 			_keys.Setup(x => x.GetDepartmentsToResumeAsync(It.IsAny<int>())).ReturnsAsync(new List<int>());
 			_keys.Setup(x => x.GetSourcesAsync(DepartmentId, null, CallLocationHistoryService.BackfillBatchSize)).ReturnsAsync(new List<CallLocationSource>
 			{
@@ -301,42 +301,46 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
-		public async Task The_sweep_purges_departments_that_turned_on_data_protection()
+		public async Task The_sweep_never_purges_and_rebuilds_an_index_suppressed_under_the_old_policy()
 		{
-			_keys.Setup(x => x.GetDepartmentsToSuppressAsync(It.IsAny<int>())).ReturnsAsync(new List<int> { DepartmentId });
-			_keys.Setup(x => x.GetDepartmentsToResumeAsync(It.IsAny<int>())).ReturnsAsync(new List<int>());
-			_keys.Setup(x => x.GetDepartmentsNeedingIndexAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new List<int>());
-			CallLocationIndexState saved = null;
-			_keys.Setup(x => x.SaveStateAsync(It.IsAny<CallLocationIndexState>(), It.IsAny<CancellationToken>())).Callback((CallLocationIndexState s, CancellationToken _) => saved = s).Returns(Task.CompletedTask);
+			// Before 2026-10-17 an enrolling department's index was purged and suppressed. Nothing is suppressed any
+			// more: such a department is resumed and backfilled from the start, and no department is ever purged.
+			_keys.Setup(x => x.GetDepartmentsToResumeAsync(It.IsAny<int>())).ReturnsAsync(new List<int> { DepartmentId });
+			_keys.SetupSequence(x => x.GetDepartmentsNeedingIndexAsync(ParsedStreetAddress.Version, It.IsAny<int>()))
+				.ReturnsAsync(new List<int> { DepartmentId }).ReturnsAsync(new List<int>());
+			_keys.Setup(x => x.GetStateAsync(DepartmentId)).ReturnsAsync(new CallLocationIndexState { DepartmentId = DepartmentId, KeyVersion = ParsedStreetAddress.Version, IsSuppressed = true, NextCallId = 3 });
+			_keys.Setup(x => x.GetSourcesAsync(DepartmentId, null, CallLocationHistoryService.BackfillBatchSize)).ReturnsAsync(new List<CallLocationSource>
+			{
+				new CallLocationSource { CallId = 5, DepartmentId = DepartmentId, Address = "110 Main St", LoggedOn = DateTime.UtcNow }
+			});
+			var saved = new List<(bool Suppressed, DateTime? CompletedOn)>();
+			_keys.Setup(x => x.SaveStateAsync(It.IsAny<CallLocationIndexState>(), It.IsAny<CancellationToken>()))
+				.Callback((CallLocationIndexState s, CancellationToken _) => saved.Add((s.IsSuppressed, s.CompletedOn))).Returns(Task.CompletedTask);
 
 			var result = await _service.RunIndexSweepAsync(TimeSpan.FromSeconds(30));
 
-			_keys.Verify(x => x.DeleteForDepartmentAsync(DepartmentId, It.IsAny<CancellationToken>()), Times.Once);
-			saved.IsSuppressed.Should().BeTrue();
-			result.DepartmentsSuppressed.Should().Be(1);
+			result.DepartmentsReset.Should().Be(1);
+			result.DepartmentsCompleted.Should().Be(1);
+			_upserted.Select(k => k.CallId).Should().Equal(5);
+			saved.Should().NotBeEmpty().And.OnlyContain(s => !s.Suppressed);
+			saved.Last().CompletedOn.Should().NotBeNull();
+			_keys.Verify(x => x.DeleteForDepartmentAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 
-		[TestCase(true)]
-		[TestCase(false)]
-		public async Task A_call_write_that_races_with_suppression_is_removed(bool policyChanged)
+		[Test]
+		public async Task A_call_write_is_kept_even_while_an_old_suppressed_state_is_still_on_record()
 		{
-			_keys.Setup(x => x.UpsertAsync(It.IsAny<IEnumerable<CallLocationKey>>(), It.IsAny<CancellationToken>()))
-				.Callback(() =>
-				{
-					if (policyChanged) _policy = new DepartmentDataProtectionPolicy { State = (int)DepartmentDataProtectionState.Enabled };
-					else _keys.Setup(x => x.GetStateAsync(DepartmentId)).ReturnsAsync(new CallLocationIndexState { IsSuppressed = true });
-				}).Returns(Task.CompletedTask);
+			_keys.Setup(x => x.GetStateAsync(DepartmentId)).ReturnsAsync(new CallLocationIndexState { DepartmentId = DepartmentId, IsSuppressed = true });
 
 			await _service.IndexCallAsync(AddCall(5, "110 S Main St"));
 
-			_keys.Verify(x => x.DeleteForCallAsync(5, It.IsAny<CancellationToken>()), Times.Once);
-			_dataProtection.Verify(x => x.GetPolicyByDepartmentIdAsync(DepartmentId, true), Times.Exactly(2));
+			_upserted.Should().ContainSingle(k => k.CallId == 5);
+			_keys.Verify(x => x.DeleteForCallAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 
 		[Test]
 		public async Task A_resume_failure_does_not_block_other_resumes_or_backfill()
 		{
-			_keys.Setup(x => x.GetDepartmentsToSuppressAsync(It.IsAny<int>())).ReturnsAsync(new List<int>());
 			_keys.Setup(x => x.GetDepartmentsToResumeAsync(It.IsAny<int>())).ReturnsAsync(new List<int> { 13, 14 });
 			_keys.Setup(x => x.SaveStateAsync(It.Is<CallLocationIndexState>(s => s.DepartmentId == 13), It.IsAny<CancellationToken>()))
 				.ThrowsAsync(new InvalidOperationException("resume failed"));
@@ -435,28 +439,6 @@ namespace Resgrid.Tests.Services
 
 			result.Entries.Should().HaveCount(3).And.OnlyContain(e => e.Match == CallLocationMatch.SameAddress);
 			_keys.Verify(x => x.GetByAddressKeysAsync(DepartmentId, It.Is<IEnumerable<string>>(keys => keys.Count() == 2), It.IsAny<int>()), Times.Once);
-		}
-
-		[Test]
-		public async Task Enrollment_during_backfill_purges_the_batch_and_keeps_the_state_suppressed()
-		{
-			_keys.Setup(x => x.GetDepartmentsToSuppressAsync(It.IsAny<int>())).ReturnsAsync(new List<int>());
-			_keys.Setup(x => x.GetDepartmentsToResumeAsync(It.IsAny<int>())).ReturnsAsync(new List<int>());
-			_keys.SetupSequence(x => x.GetDepartmentsNeedingIndexAsync(ParsedStreetAddress.Version, It.IsAny<int>()))
-				.ReturnsAsync(new List<int> { DepartmentId }).ReturnsAsync(new List<int>());
-			_keys.Setup(x => x.GetSourcesAsync(DepartmentId, null, CallLocationHistoryService.BackfillBatchSize)).ReturnsAsync(new List<CallLocationSource>
-			{
-				new CallLocationSource { CallId = 5, DepartmentId = DepartmentId, Address = "110 Main St", LoggedOn = DateTime.UtcNow }
-			});
-			_keys.Setup(x => x.UpsertAsync(It.IsAny<IEnumerable<CallLocationKey>>(), It.IsAny<CancellationToken>()))
-				.Callback(() => _policy = new DepartmentDataProtectionPolicy { State = (int)DepartmentDataProtectionState.Encrypting }).Returns(Task.CompletedTask);
-
-			var result = await _service.RunIndexSweepAsync(TimeSpan.FromSeconds(30));
-
-			result.DepartmentsCompleted.Should().Be(0);
-			result.DepartmentsSuppressed.Should().Be(1);
-			_keys.Verify(x => x.DeleteForDepartmentAsync(DepartmentId, It.IsAny<CancellationToken>()), Times.Once);
-			_keys.Verify(x => x.SaveStateAsync(It.Is<CallLocationIndexState>(s => s.IsSuppressed && s.CompletedOn == null), It.IsAny<CancellationToken>()), Times.Once);
 		}
 	}
 }

@@ -149,7 +149,9 @@ namespace Resgrid.Services
 		/// <summary>
 		/// The call's dispatch routes as CallBroadcast expands them: direct, groups (the on-duty roster when the department
 		/// dispatches shifts instead of groups, every member when that roster is empty), the crews and station groups of
-		/// dispatched units when the department alerts them, then roles. Unit crews are the current crews.
+		/// dispatched units when the department alerts them, then roles. Unit crews are the current crews. A lookup that
+		/// fails drops only its own section's routes (logged), so the direct dispatches and the other sections still get
+		/// the closing notice.
 		/// </summary>
 		private async Task<List<DispatchRoute>> BuildDispatchRoutesAsync(Call call)
 		{
@@ -166,20 +168,27 @@ namespace Resgrid.Services
 
 			if (groupIds.Any())
 			{
-				var useShift = await _departmentSettingsService.GetDispatchShiftInsteadOfGroupAsync(departmentId);
-				var onDuty = useShift
-					? await _shiftsService.GetOnDutyUserIdsForGroupsAsync(departmentId, groupIds, GetDispatchedOnUtc(call))
-					: null;
-				onDuty ??= new Dictionary<int, List<string>>();
-
-				foreach (var groupId in groupIds)
+				try
 				{
-					onDuty.TryGetValue(groupId, out var roster);
-					roster ??= new List<string>();
+					var useShift = await _departmentSettingsService.GetDispatchShiftInsteadOfGroupAsync(departmentId);
+					var onDuty = useShift
+						? await _shiftsService.GetOnDutyUserIdsForGroupsAsync(departmentId, groupIds, GetDispatchedOnUtc(call))
+						: null;
+					onDuty ??= new Dictionary<int, List<string>>();
 
-					var members = useShift && roster.Count > 0 ? Array.Empty<string>() :
-						(await _departmentGroupsService.GetAllMembersForGroupAsync(groupId) ?? new List<DepartmentGroupMember>()).Select(x => x.UserId).ToArray();
-					routes.Add(new DispatchRoute(DispatchRouteKind.Group, groupId.ToString(), members, useShift, roster));
+					foreach (var groupId in groupIds)
+					{
+						onDuty.TryGetValue(groupId, out var roster);
+						roster ??= new List<string>();
+
+						var members = useShift && roster.Count > 0 ? Array.Empty<string>() :
+							(await _departmentGroupsService.GetAllMembersForGroupAsync(groupId) ?? new List<DepartmentGroupMember>()).Select(x => x.UserId).ToArray();
+						routes.Add(new DispatchRoute(DispatchRouteKind.Group, groupId.ToString(), members, useShift, roster));
+					}
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
 				}
 			}
 
@@ -187,34 +196,48 @@ namespace Resgrid.Services
 
 			if (unitDispatches.Any())
 			{
-				var crew = await _departmentSettingsService.GetUnitDispatchAlsoDispatchToAssignedPersonnelAsync(departmentId);
-				var group = await _departmentSettingsService.GetUnitDispatchAlsoDispatchToGroupAsync(departmentId);
-
-				foreach (var unitDispatch in unitDispatches)
+				try
 				{
-					if (crew)
-					{
-						var members = await _unitsService.GetCurrentRolesForUnitAsync(unitDispatch.UnitId);
-						if (members != null)
-							routes.Add(new DispatchRoute(DispatchRouteKind.UnitCrew, unitDispatch.UnitId.ToString(), members.Select(x => x.UserId).ToArray()));
-					}
+					var crew = await _departmentSettingsService.GetUnitDispatchAlsoDispatchToAssignedPersonnelAsync(departmentId);
+					var group = await _departmentSettingsService.GetUnitDispatchAlsoDispatchToGroupAsync(departmentId);
 
-					if (group)
+					foreach (var unitDispatch in unitDispatches)
 					{
-						var unit = await _unitsService.GetUnitByIdAsync(unitDispatch.UnitId);
-						if (unit?.StationGroupId != null)
+						if (crew)
 						{
-							var members = await _departmentGroupsService.GetAllMembersForGroupAsync(unit.StationGroupId.Value) ?? new List<DepartmentGroupMember>();
-							routes.Add(new DispatchRoute(DispatchRouteKind.UnitGroup, unit.StationGroupId.Value.ToString(), members.Select(x => x.UserId).ToArray()));
+							var members = await _unitsService.GetCurrentRolesForUnitAsync(unitDispatch.UnitId);
+							if (members != null)
+								routes.Add(new DispatchRoute(DispatchRouteKind.UnitCrew, unitDispatch.UnitId.ToString(), members.Select(x => x.UserId).ToArray()));
+						}
+
+						if (group)
+						{
+							var unit = await _unitsService.GetUnitByIdAsync(unitDispatch.UnitId);
+							if (unit?.StationGroupId != null)
+							{
+								var members = await _departmentGroupsService.GetAllMembersForGroupAsync(unit.StationGroupId.Value) ?? new List<DepartmentGroupMember>();
+								routes.Add(new DispatchRoute(DispatchRouteKind.UnitGroup, unit.StationGroupId.Value.ToString(), members.Select(x => x.UserId).ToArray()));
+							}
 						}
 					}
 				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
+				}
 			}
 
-			foreach (var roleDispatch in call.RoleDispatches ?? Enumerable.Empty<CallDispatchRole>())
+			try
 			{
-				var members = await _personnelRolesService.GetAllMembersOfRoleAsync(roleDispatch.RoleId) ?? new List<PersonnelRoleUser>();
-				routes.Add(new DispatchRoute(DispatchRouteKind.Role, roleDispatch.RoleId.ToString(), members.Select(x => x.UserId).ToArray()));
+				foreach (var roleDispatch in call.RoleDispatches ?? Enumerable.Empty<CallDispatchRole>())
+				{
+					var members = await _personnelRolesService.GetAllMembersOfRoleAsync(roleDispatch.RoleId) ?? new List<PersonnelRoleUser>();
+					routes.Add(new DispatchRoute(DispatchRouteKind.Role, roleDispatch.RoleId.ToString(), members.Select(x => x.UserId).ToArray()));
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
 			}
 
 			return routes;

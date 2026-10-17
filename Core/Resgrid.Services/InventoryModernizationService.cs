@@ -51,21 +51,52 @@ namespace Resgrid.Services
 		private static string Fingerprint(object input) => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(input))));
 		private static T Decode<T>(InventoryRow row) where T : new() => string.IsNullOrEmpty(row.Content) ? new T() : JsonConvert.DeserializeObject<T>(row.Content) ?? new T();
 		private T New<T>(InventoryActor actor) where T : InventoryRow, new() => new() { DepartmentId = actor.DepartmentId, CreatedBy = actor.UserId, CreatedOn = Now, ModifiedOn = Now };
-		private async Task<T> RevealAsync<T>(InventoryActor actor, T row) where T : InventoryRow
+		/// <summary>True when the row holds protected text outside an envelope (a mixed table: any private member in plaintext).</summary>
+		private static bool Unsealed<T>(T row) where T : InventoryRow => row is ISplitContentRow split ? SplitContent.CarriesUnsealedPrivate(split)
+			: InventoryTables.Fields<T>().Values.Select(field => field.Get(row)).Any(value => !string.IsNullOrEmpty(value) && !ProtectedDataEnvelope.HasEnvelopePrefix(value));
+		/// <summary>
+		/// Reveals a row for use. <paramref name="display"/> is for list, report and equipment views: a mixed row then shows its
+		/// metadata without a grant and its notes as redacted (a read-only copy) instead of failing. Never pass it for a row
+		/// that is edited or written.
+		/// </summary>
+		private async Task<T> RevealAsync<T>(InventoryActor actor, T row, bool display = false) where T : InventoryRow
 		{
 			if (row?.DepartmentId != actor.DepartmentId) throw new InventoryException(404, "Unavailable");
-			var plain = !string.IsNullOrEmpty(row.Content) && !ProtectedDataEnvelope.HasEnvelopePrefix(row.Content);
+			if (!InventoryTables.IsProtected(typeof(T))) return row; // Metadata-only content: never sealed, no grant needed.
+			var plain = Unsealed(row);
 			var result = await _read.ResolveRecordsEntitiesForReadAsync(actor.DepartmentId, new[] { (row, row.Id) }, InventoryTables.Fields<T>(), actor.GrantToken, actor.UserId);
-			if (result == null || result.RedactedFields.Count > 0 || result.IsProtected && plain || ProtectedDataEnvelope.HasEnvelopePrefix(row.Content)) throw new InventoryException(403, "ProtectedDataRequired");
+			if (display && row is ISplitContentRow split && (result == null || result.RedactedFields.Count > 0 || result.IsProtected && plain || SplitContent.IsSealed(split.ProtectedContent)))
+			{
+				SplitContent.RedactForDisplay(split);
+				return row;
+			}
+			if (result == null || result.RedactedFields.Count > 0 || result.IsProtected && plain || InventoryTables.Fields<T>().Values.Any(f => ProtectedDataEnvelope.HasEnvelopePrefix(f.Get(row)))) throw new InventoryException(403, "ProtectedDataRequired");
+			// A mixed table's private members come back from ProtectedContent into the one Content document.
+			SplitContent.MergeStored(row as ISplitContentRow);
 			return row;
 		}
 		private async Task SaveAsync<T>(InventoryActor actor, T row, bool insert = true) where T : InventoryRow
 		{
 			row.ModifiedOn = Now;
-			var result = await _write.PrepareRecordsEntityWriteAsync(actor.DepartmentId, row, (T)null, row.Id, InventoryTables.Fields<T>(), () => row.IsProtected = true, actor.GrantToken, actor.UserId, false);
-			if (result?.Success != true || result.IsProtected && !string.IsNullOrEmpty(row.Content) && !ProtectedDataEnvelope.HasEnvelopePrefix(row.Content)) throw new InventoryException(403, "ProtectedDataRequired");
-			if (insert) await _store.InsertAsync(row);
-			else { var revision = row.Revision++; await _store.UpdateAsync(row, revision); }
+			// A mixed table stores its private members apart (ProtectedContent, the ADP slot) and its metadata in Content.
+			var split = row is ISplitContentRow parts ? SplitContent.PrepareWrite(parts) : (SplitContentWrite?)null;
+			if (split?.Allowed == false) throw new InventoryException(403, "ProtectedDataRequired");
+			try
+			{
+				if (InventoryTables.IsProtected(typeof(T)))
+				{
+					var result = await _write.PrepareRecordsEntityWriteAsync(actor.DepartmentId, row, (T)null, row.Id, InventoryTables.Fields<T>(), () => row.IsProtected = true, actor.GrantToken, actor.UserId, false);
+					if (result?.Success != true || result.IsProtected && Unsealed(row)) throw new InventoryException(403, "ProtectedDataRequired");
+				}
+				if (insert) await _store.InsertAsync(row);
+				else { var revision = row.Revision++; await _store.UpdateAsync(row, revision); }
+			}
+			catch when (split != null)
+			{
+				split.Value.Undo(row as ISplitContentRow);
+				throw;
+			}
+			split?.Done(row as ISplitContentRow);
 		}
 		private async Task<T> TransactionAsync<T>(InventoryActor actor, Func<List<long>, Task<T>> work, bool allowMigration = false)
 		{
@@ -175,7 +206,7 @@ namespace Resgrid.Services
 			{
 				if (row is InventoryMutableRow mutable && mutable.IsDeleted) continue;
 				try { await AuthorizeRowAsync(actor, row); } catch (InventoryException ex) when (ex.StatusCode is 403 or 404 || ex.Code == "LocationUnavailable") { continue; }
-				result.Items.Add(await RevealAsync(actor, row));
+				result.Items.Add(await RevealAsync(actor, row, display: true));
 			}
 			return result;
 		}

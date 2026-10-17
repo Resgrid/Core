@@ -24,7 +24,7 @@
   <data name="AddUsage" xml:space="preserve"><value>إضافة قراءة</value></data>
   <data name="AddWorkEntry" xml:space="preserve"><value>إضافة سجل</value></data>
   <data name="AddWorker" xml:space="preserve"><value>إضافة عامل</value></data>
-  <data name="AddWorkerExternalHelp" xml:space="preserve"><value>أو أضف عاملًا خارجيًا بمفتاح الرواتب والتسمية (كلاهما محمي).</value></data>
+  <data name="AddWorkerExternalHelp" xml:space="preserve"><value>أو أضف عاملًا خارجيًا بمفتاح الرواتب والتسمية.</value></data>
   <data name="AddWorkerMemberHelp" xml:space="preserve"><value>اختر عضوًا لإنشاء سجل العامل الخاص به.</value></data>
   <data name="Address" xml:space="preserve"><value>العنوان</value></data>
   <data name="Affiliate" xml:space="preserve"><value>كيان تابع</value></data>
@@ -253,7 +253,7 @@
   <data name="Headquarters" xml:space="preserve"><value>المقر الرئيسي</value></data>
   <data name="HeadquartersAddress" xml:space="preserve"><value>عنوان المقر الرئيسي</value></data>
   <data name="HelpCompensation" xml:space="preserve"><value>كل مبلغ ومضاعف حقل محمي. تستخدم التقديرات ملف الموظف ثم افتراضي الدور ثم افتراضي القسم؛ والتكلفة المعتمدة من نظام الرواتب تسود دائمًا.</value></data>
-  <data name="HelpEmployer" xml:space="preserve"><value>تُعلن التغطية من قبلك ولا تحددها Resgrid أبدًا. المعرّفات والعناوين حقول محمية؛ قيمة REDACTED غير المعدّلة تحتفظ بما هو مخزّن.</value></data>
+  <data name="HelpEmployer" xml:space="preserve"><value>تُعلن التغطية من قبلك ولا تحددها Resgrid أبدًا. أرقام FEIN وSEIN وSOS وجهة اتصال الإيداع وعناوين الكيانات التابعة حقول محمية؛ قيمة REDACTED غير المعدّلة تحتفظ بما هو مخزّن.</value></data>
   <data name="HispanicLatino" xml:space="preserve"><value>من أصل إسباني أو لاتيني</value></data>
   <data name="HourlyRate" xml:space="preserve"><value>المعدل الساعي</value></data>
   <data name="Hours" xml:space="preserve"><value>الساعات</value></data>

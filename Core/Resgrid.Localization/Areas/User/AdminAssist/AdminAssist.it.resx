@@ -6936,4 +6936,13 @@
   <data xml:space="preserve" name="FieldHelp.UnitStatusThresholds.AcknowledgementNoteRequirement">
     <value>Indica se la presa visione o il silenziamento di un allarme del timer di stato richiede un motivo: facoltativo, obbligatorio per gli allarmi oppure obbligatorio per avvisi e allarmi. Non modifica i timer né lo stato dell'unità.</value>
   </data>
+  <data name="Rule.unit-status-timers" xml:space="preserve">
+    <value>Unità inviate non cronometrabili</value>
+  </data>
+  <data name="RuleWhy.unit-status-timers" xml:space="preserve">
+    <value>I timer di stato delle unità sono impostati, ma alcuni tipi di unità all'invio passano a uno stato senza significato o a un significato senza timer. Il Big Board non segnala mai queste unità, per quanto attendano.</value>
+  </data>
+  <data name="RuleNext.unit-status-timers" xml:space="preserve">
+    <value>Assegna un significato allo stato di invio in Stati personalizzati oppure imposta un timer per il suo significato in Impostazioni mappa.</value>
+  </data>
 </root>

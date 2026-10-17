@@ -553,7 +553,10 @@ namespace Resgrid.Services
 			});
 		}
 
-		/// <summary>The status itself (which unit, which state, when, who, where it was headed) without its note or any position.</summary>
+		/// <summary>
+		/// The status itself (which unit, which state, when, who, where it was headed, and where it was: positions are
+		/// operational, 2026-10-17) without its note, the one protected unit-state field.
+		/// </summary>
 		private static UnitState WithoutProtectedFields(UnitState state)
 		{
 			if (state == null)
@@ -571,6 +574,14 @@ namespace Resgrid.Services
 				DestinationSource = state.DestinationSource,
 				SetByUserId = state.SetByUserId,
 				SetByOrigin = state.SetByOrigin,
+				GeoLocationData = state.GeoLocationData,
+				Latitude = state.Latitude,
+				Longitude = state.Longitude,
+				Accuracy = state.Accuracy,
+				Altitude = state.Altitude,
+				AltitudeAccuracy = state.AltitudeAccuracy,
+				Speed = state.Speed,
+				Heading = state.Heading,
 				// Flat copies: a role's UnitState back-reference would carry the unscrubbed row along.
 				Roles = state.Roles?.Select(r => new UnitStateRole
 				{

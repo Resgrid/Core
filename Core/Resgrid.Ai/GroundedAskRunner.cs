@@ -7,7 +7,8 @@ namespace Resgrid.Ai;
 public sealed record GroundedAskResult(string Outcome, IReadOnlyList<AskEvidence> Evidence, IReadOnlyList<AskToolInput> Reads, int InputTokens, int OutputTokens);
 
 /// <summary>A bounded evidence selector. No raw question/history, user grant, source writer or arbitrary network tool enters this runner.</summary>
-public sealed class GroundedAskRunner(ILlmClient client, IAdminAssistAskQueries queries, Func<CancellationToken, Task>? authorize = null)
+/// <param name="cacheSalt">The department's prefix-cache partition (<see cref="AiCacheIsolation"/>); null sends none.</param>
+public sealed class GroundedAskRunner(ILlmClient client, IAdminAssistAskQueries queries, Func<CancellationToken, Task>? authorize = null, string? cacheSalt = null)
 {
     public static readonly IReadOnlyDictionary<string, string[]> Modes = new Dictionary<string, string[]> {
         ["plans"] = ["draft_plan", "verify_step"],
@@ -38,7 +39,7 @@ public sealed class GroundedAskRunner(ILlmClient client, IAdminAssistAskQueries 
         // Four tool rounds, then one final selection with no tools. Each request has its own 6,144/2,048 cap.
         for (var round = 0; round <= 4; round++) {
             ct.ThrowIfCancellationRequested();
-            var request = new LlmRequest(model, messages, round == 4 ? [] : offered, 512);
+            var request = new LlmRequest(model, messages, round == 4 ? [] : offered, 512, cacheSalt);
             var upper = AdminAssistPrompt.InputBudget(request);
             if (upper > 6144 || inputTokens + outputTokens + upper + request.MaxOutputTokens > budget)
                 return new("Abstained", [], reads, inputTokens, outputTokens);

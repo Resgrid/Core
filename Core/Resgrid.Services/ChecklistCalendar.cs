@@ -26,7 +26,7 @@ namespace Resgrid.Services
 			var occurrence = await _store.GetAsync<ChecklistOccurrence>(actor.DepartmentId, id);
 			if (occurrence?.ScheduleId == null) throw new ChecklistException(404, "OccurrenceUnavailable");
 			var target = await _authorization.TargetAsync(actor, (ChecklistTargetType)occurrence.TargetType, occurrence.TargetId);
-			var schedule = await RevealAsync(actor, await _store.GetAsync<ChecklistSchedule>(actor.DepartmentId, occurrence.ScheduleId));
+			var schedule = await RevealAsync(actor, await _store.GetAsync<ChecklistSchedule>(actor.DepartmentId, occurrence.ScheduleId), display: true);
 			var enabled = await _access.CanUseChecklistsAsync(actor.DepartmentId); occurrence.Content = null;
 			return new ChecklistOccurrenceView { Occurrence = occurrence, Name = Decode<ChecklistScheduleContent>(schedule.Content).Name, Target = target,
 				CanStart = enabled && schedule.IsActive && !schedule.IsSuspended && await CanPerformScheduleAsync(actor, schedule) && new[] { 0, 1, 3, 4 }.Contains(occurrence.State) && occurrence.PeriodStartUtc <= _clock.GetUtcNow().UtcDateTime,
@@ -58,7 +58,7 @@ namespace Resgrid.Services
 					{
 						var schedule = await _store.GetAsync<ChecklistSchedule>(actor.DepartmentId, row.ScheduleId);
 						if (schedule == null) continue;
-						try { name = (Decode<ChecklistScheduleContent>((await RevealAsync(actor, schedule)).Content).Name, false); }
+						try { name = (Decode<ChecklistScheduleContent>((await RevealAsync(actor, schedule, display: true)).Content).Name, false); }
 						catch (ChecklistException ex) when (ex.StatusCode == 403) { name = (ProtectedDataEnvelope.RedactionValue, true); }
 						names[row.ScheduleId] = name;
 					}

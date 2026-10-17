@@ -38,6 +38,8 @@ namespace Resgrid.Tests.Services
 			foreach (var key in new[] { "fixed:20260908", "fixed:20260908", "fixed:20260909" }) await queue.EnqueueAsync(new ChecklistReminder { DepartmentId = 77, OccurrenceId = occurrence.Id, RecipientUserId = "timed-recipient", Kind = 4, PeriodKey = key, CreatedOnUtc = now, NextAttemptUtc = now });
 			uow.CommitChanges(); (await queue.ForRecipientAsync(77, "timed-recipient", 0)).Should().HaveCount(2);
 			Action down = () => runner.MigrateDown(195); down.Should().Throw<Exception>().WithMessage("*preserved*");
+			// Newer migrations above 196 (M0274) rolled back before the refusal: bring the fixture back to the latest schema.
+			_runner.GetRequiredService<IVersionLoader>().LoadVersionInfo(); runner.MigrateUp();
 		}
 		[Test, Order(121)]
 		public async Task Shift_digest_query_enforces_department_unit_ownership_deleted_shifts_and_trigger_bounds()

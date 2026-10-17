@@ -6,7 +6,8 @@ namespace Resgrid.Model.Certifications
 	/// <summary>
 	/// ADP catalog 26 (Workforce &amp; Business Operations plan, Phase D2; registered with M0213/M0214): the free-text and
 	/// document columns of unit certification records (Operational family, like UnitLogs) and certification credit entries (Personnel family).
-	/// PersonnelCertifications itself stays catalog 6. Accessor maps drive the generic RMS write/read seams.
+	/// PersonnelCertifications itself stays catalog 6. Accessor maps drive the generic RMS write/read seams. A unit certificate's
+	/// number and issuer are equipment metadata and left the catalog on 2026-10-17 (operational data is never protected).
 	/// </summary>
 	public static class CertificationProtectedFields
 	{
@@ -21,8 +22,6 @@ namespace Resgrid.Model.Certifications
 		public static readonly IReadOnlyDictionary<string, (Func<UnitCertification, string> Get, Action<UnitCertification, string> Set)> Unit =
 			new Dictionary<string, (Func<UnitCertification, string>, Action<UnitCertification, string>)>(StringComparer.OrdinalIgnoreCase)
 			{
-				["unitcertifications.number"] = (u => u.Number, (u, v) => u.Number = v),
-				["unitcertifications.issuedby"] = (u => u.IssuedBy, (u, v) => u.IssuedBy = v),
 				["unitcertifications.notes"] = (u => u.Notes, (u, v) => u.Notes = v),
 				["unitcertifications.filename"] = (u => u.FileName, (u, v) => u.FileName = v),
 				["unitcertifications.statusreason"] = (u => u.StatusReason, (u, v) => u.StatusReason = v)
@@ -38,8 +37,6 @@ namespace Resgrid.Model.Certifications
 		/// <summary>(table, column, family, binary) for the catalog registration.</summary>
 		public static IEnumerable<(string Table, string Column, string Family, bool Binary)> All()
 		{
-			yield return ("UnitCertifications", "Number", UnitFamily, false);
-			yield return ("UnitCertifications", "IssuedBy", UnitFamily, false);
 			yield return ("UnitCertifications", "Notes", UnitFamily, false);
 			yield return ("UnitCertifications", "FileName", UnitFamily, false);
 			yield return ("UnitCertifications", "Data", UnitFamily, true);

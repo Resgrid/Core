@@ -1969,6 +1969,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			SelectWeatherAlertHistoryByDepartmentQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DEPARTMENTID% AND [FirstSeenUtc] >= %STARTDATE% AND [FirstSeenUtc] <= %ENDDATE% ORDER BY [FirstSeenUtc] DESC";
 			SelectWeatherAlertZonesByDepartmentIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DEPARTMENTID%";
 			SelectActiveWeatherAlertZonesByDepartmentIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DEPARTMENTID% AND [IsActive] = 1";
+			DeleteWeatherAlertsBySourceIdQuery = "DELETE FROM %SCHEMA%.%TABLENAME% WHERE [WeatherAlertSourceId] = %SOURCEID%";
 			#endregion WeatherAlerts
 
 			#region User Defined Fields

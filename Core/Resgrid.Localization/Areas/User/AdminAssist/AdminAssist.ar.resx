@@ -6936,4 +6936,13 @@
   <data xml:space="preserve" name="FieldHelp.UnitStatusThresholds.AcknowledgementNoteRequirement">
     <value>ما إذا كان الإقرار بإنذار مؤقت الحالة أو كتمه يتطلب سببًا: اختياري، أو مطلوب للإنذارات، أو مطلوب للتحذيرات والإنذارات. لا يغير المؤقتات ولا حالة الوحدة.</value>
   </data>
+  <data name="Rule.unit-status-timers" xml:space="preserve">
+    <value>وحدات موزعة لا يمكن توقيتها</value>
+  </data>
+  <data name="RuleWhy.unit-status-timers" xml:space="preserve">
+    <value>تم تعيين مؤقتات حالة الوحدات، لكن بعض أنواع الوحدات تنتقل عند التوزيع إلى حالة بلا معنى أو إلى معنى بلا مؤقت. لا تُبرز اللوحة الكبيرة هذه الوحدات أبدًا مهما طال انتظارها.</value>
+  </data>
+  <data name="RuleNext.unit-status-timers" xml:space="preserve">
+    <value>امنح حالة التوزيع معنى في الحالات المخصصة، أو عيّن مؤقتًا لمعناها في إعدادات الخرائط.</value>
+  </data>
 </root>

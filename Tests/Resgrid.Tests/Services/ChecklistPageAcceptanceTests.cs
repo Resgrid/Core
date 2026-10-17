@@ -93,7 +93,8 @@ namespace Resgrid.Tests.Services
 				{ response = await client.GetAsync(page); response.StatusCode.Should().Be(HttpStatusCode.OK, await response.Content.ReadAsStringAsync()); }
 				_read.SetReturnsDefault(Task.FromResult(new ProtectedReadResult { RedactedFields = { "checklistschedules.content" } }));
 				response = await client.GetAsync(path); html = await response.Content.ReadAsStringAsync(); response.StatusCode.Should().Be(HttpStatusCode.OK, html); html.Should().NotContain("HTTP schedule edit");
-				response = await client.GetAsync("/User/Checklists/Occurrence?id=" + occurrence.Id); html = await response.Content.ReadAsStringAsync(); html.Should().Contain("value=\"Occurrence\"").And.NotContain("HTTP schedule edit");
+				// The edit page above needs the whole schedule; the occurrence page is a display read and shows the name (metadata).
+				response = await client.GetAsync("/User/Checklists/Occurrence?id=" + occurrence.Id); html = await response.Content.ReadAsStringAsync(); response.StatusCode.Should().Be(HttpStatusCode.OK, html); html.Should().Contain("HTTP schedule edit");
 				_read.SetReturnsDefault(Task.FromResult(new ProtectedReadResult()));
 				response = await client.PostAsync("/User/Checklists/Reopen", new FormUrlEncodedContent(new Dictionary<string, string> { ["page"] = "Occurrence", ["id"] = occurrence.Id, ["__RequestVerificationToken"] = token }));
 				response.StatusCode.Should().Be(HttpStatusCode.OK, await response.Content.ReadAsStringAsync());

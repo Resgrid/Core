@@ -202,7 +202,8 @@ namespace Resgrid.Services.Search
 					case SearchEntityTypes.CalendarEvent:
 						if (_calendar?.Value == null || !int.TryParse(hit.EntityId, out var calendarItemId)) return false;
 						var calendarItem = await _calendar.Value.GetCalendarItemByIdAsync(calendarItemId);
-						return calendarItem != null && calendarItem.DepartmentId == departmentId && access.ProtectedTextAllowed;
+						// Title and location are operational (2026-10-17); a description-bearing projection is still gated by ProjectionIsLive.
+						return calendarItem != null && calendarItem.DepartmentId == departmentId;
 					case SearchEntityTypes.Log:
 						if (_logs?.Value == null || !int.TryParse(hit.EntityId, out var logId)) return false;
 						var log = await _logs.Value.GetWorkLogByIdAsync(logId);

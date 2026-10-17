@@ -361,7 +361,8 @@ namespace Resgrid.Tests.Services
 		public async Task Late_protected_order_write_failure_rolls_back_stock_average_lines_ledger_audit_and_outbox()
 		{
 			var item = M4Item(); var location = Location(); var order = await M4Ordered((item, 2m, 8m));
-			var beforeItem = JsonConvert.SerializeObject(_store.All<InventoryItem>().Single()); var beforeOrder = JsonConvert.SerializeObject(order.Order);
+			// The stored row, not the revealed detail: the store holds the split shape (metadata in Content, the note apart).
+			var beforeItem = JsonConvert.SerializeObject(_store.All<InventoryItem>().Single()); var beforeOrder = JsonConvert.SerializeObject(_store.All<InventoryPurchaseOrder>().Single());
 			var operations = _store.All<InventoryOperation>().Count(); var audits = _audits.Count; var dispatches = _dispatches.Count;
 			_write.Setup(x => x.PrepareRecordsEntityWriteAsync(Department, It.Is<InventoryPurchaseOrder>(p => p.Status == 2 || p.Status == 3), It.IsAny<InventoryPurchaseOrder>(), It.IsAny<string>(),
 				It.IsAny<IReadOnlyDictionary<string, (Func<InventoryPurchaseOrder, string> Get, Action<InventoryPurchaseOrder, string> Set)>>(), It.IsAny<Action>(),

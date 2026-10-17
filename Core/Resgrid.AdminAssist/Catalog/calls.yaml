@@ -2262,7 +2262,8 @@
         "checkin-timers",
         "shift-auto-without-dispatch",
         "shift-coverage",
-        "unit-status-targets"
+        "unit-status-targets",
+        "unit-status-timers"
       ],
       "Prominence": "Key",
       "DocsPath": "/web-app/department-settings/#call--dispatch-settings"
@@ -2743,6 +2744,26 @@
       "FailsWhen": [
         {
           "EvidenceId": "unitTypesWithoutStatusTarget",
+          "Comparison": "Greater",
+          "Number": 0
+        }
+      ]
+    },
+    {
+      "Id": "unit-status-timers",
+      "AreaId": "calls",
+      "Severity": "Warning",
+      "TitleKey": "Rule.unit-status-timers",
+      "ExplanationKey": "RuleWhy.unit-status-timers",
+      "NextActionKey": "RuleNext.unit-status-timers",
+      "Location": {
+        "Controller": "Department",
+        "Action": "MappingSettings"
+      },
+      "AppliesWhen": [],
+      "FailsWhen": [
+        {
+          "EvidenceId": "unitTypesWithUntimedDispatchStatus",
           "Comparison": "Greater",
           "Number": 0
         }

@@ -384,6 +384,9 @@
   <data name="SuggestedMeaning" xml:space="preserve">
     <value>προτείνεται: {0}</value>
   </data>
+  <data name="AiSuggestedMeaning" xml:space="preserve">
+    <value>Πρόταση Enhanced AI: {0}</value>
+  </data>
   <data name="OptionsWithoutMeaning" xml:space="preserve">
     <value>Χωρίς σημασία: {0}</value>
   </data>

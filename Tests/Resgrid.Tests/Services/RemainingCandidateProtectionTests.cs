@@ -48,15 +48,13 @@ namespace Resgrid.Tests.Services
 				"catalog v12 is exactly the pre-plan, hazard and site-attachment seam");
 			_catalog.GetAddedBetween(11, 12).Should().OnlyContain(e => e.Family == "Contacts" && e.ViewPermission == PermissionTypes.ViewProtectedContactData);
 
+			// Calendar title/location and the document name left the wave on 2026-10-17 (operational data).
 			_catalog.GetAddedBetween(8, 9).Select(e => e.FieldId)
 				.Should().BeEquivalentTo(new[]
 				{
 					"unitlogs.narrative",
 					"userstates.note",
-					"calendaritems.title",
 					"calendaritems.description",
-					"calendaritems.location",
-					"documents.name",
 					"documents.description",
 					"documents.filename",
 					"documents.data",

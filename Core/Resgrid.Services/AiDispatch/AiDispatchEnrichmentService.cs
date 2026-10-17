@@ -21,7 +21,9 @@ namespace Resgrid.Services.AiDispatch
 	/// AI dispatch, Enrich mode (ai-dispatch-template-plan.md §3.2; enhanced-ai-addon-plan.md §4). The call was created by
 	/// GenericTemplate and dispatched before this runs. Enrichment only fills fields that are still empty, with values that appear
 	/// verbatim in the message, and adds a clearly labelled AI note; priority and duplicates are suggestions in that note. It never
-	/// dispatches, re-pages, merges, closes or deletes. Every failure leaves the call exactly as dispatched.
+	/// dispatches, re-pages, merges, closes or deletes. Every failure leaves the call exactly as dispatched. With a decision model
+	/// configured (Clef / Clef-Flash, AiDispatchDecisions) it classifies dispatch-or-not, call type, priority and duplicate with
+	/// per-field probabilities, and the generative model keeps extraction, title and summary; each side degrades to the other.
 	/// </summary>
 	public sealed class AiDispatchEnrichmentService : IAiDispatchEnrichmentService
 	{
@@ -41,12 +43,13 @@ namespace Resgrid.Services.AiDispatch
 		private readonly IAiBackgroundAdmission _admission;
 		private readonly IAiUsageMeter _usage;
 		private readonly Lazy<ILlmClient> _client;
+		private readonly Lazy<IDecisionClient> _decisions;
 		private readonly IEventAggregator _events;
 		private readonly TimeProvider _clock;
 
 		public AiDispatchEnrichmentService(IEnhancedAiAccessService enhancedAi, IFeatureToggleService flags, IDepartmentsService departments, ICallsService calls,
 			IGeoLocationProvider geo, IDepartmentDataProtectionService protection, IAiDispatchAuditRepository audits, IAiDispatchConfigRepository settings,
-			IAiBackgroundAdmission admission, IAiUsageMeter usage, Lazy<ILlmClient> client, IEventAggregator events, TimeProvider clock)
+			IAiBackgroundAdmission admission, IAiUsageMeter usage, Lazy<ILlmClient> client, Lazy<IDecisionClient> decisions, IEventAggregator events, TimeProvider clock)
 		{
 			_enhancedAi = enhancedAi;
 			_flags = flags;
@@ -59,6 +62,7 @@ namespace Resgrid.Services.AiDispatch
 			_admission = admission;
 			_usage = usage;
 			_client = client;
+			_decisions = decisions;
 			_events = events;
 			_clock = clock;
 		}
@@ -71,7 +75,7 @@ namespace Resgrid.Services.AiDispatch
 			var selfHosted = AiOperatorSettings.IsListedDepartment(AiConfig.SelfHostedDepartmentIds, departmentId);
 			if (!await IsAvailableAsync(departmentId) || !await UsesAiFormatAsync(departmentId))
 				return "NotEntitled";
-			if (!OperatorConfigured())
+			if (!OperatorConfigured() && !DecisionConfigured())
 				return "Unconfigured";
 
 			// The claim row is written before any work so an at-least-once redelivery can never enrich a call twice.
@@ -167,6 +171,20 @@ namespace Resgrid.Services.AiDispatch
 				AiOperatorSettings.IsPinned(AiConfig.ModelRevision, AiConfig.RuntimeDigest);
 		}
 
+		/// <summary>The host opted AI dispatch into the decision model and it is a valid, reviewed, pinned self-hosted endpoint.</summary>
+		public static bool DecisionConfigured() => DecisionTarget() != null;
+
+		// Call messages and active calls carry PII and often PHI, so they are scored only by the operator's own model: a third-party
+		// host (Workers AI) is never a target here, and the transport refuses department content for it as well.
+		private static AiDecisionEndpoint DecisionTarget()
+		{
+			if (!AiDispatchConfig.DecisionsEnabled)
+				return null;
+			var target = AiDecisionSettings.Resolve(AiConfig.DecisionProvider, AiConfig.DecisionEndpoint, AiConfig.AllowPrivateEndpoint, AiConfig.DecisionApiKey,
+				AiConfig.DecisionModel, AiConfig.DecisionModelRevision, AiConfig.DecisionRuntimeDigest);
+			return target is { Remote: false } ? target : null;
+		}
+
 		private async Task<string> RunAsync(AiDispatchQueueItem item, AiDispatchAuditRow audit, DepartmentAiDispatchConfig settings, bool selfHosted, CancellationToken cancellationToken)
 		{
 			var departmentId = item.DepartmentId;
@@ -189,40 +207,70 @@ namespace Resgrid.Services.AiDispatch
 			var ledgerOutcome = "Unavailable";
 			try
 			{
-				var stopwatch = Stopwatch.StartNew();
-				LlmResult result;
-				using (var deadline = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken))
-				{
-					deadline.CancelAfter(TimeSpan.FromSeconds(Math.Clamp(AiDispatchConfig.RequestTimeoutSeconds, 5, 300)));
-					try
-					{
-						result = await _client.Value.CompleteAsync(new LlmRequest(AiConfig.Model, AiDispatchPrompt.Messages(context), new[] { AiDispatchPrompt.Tool(context) }, 512), deadline.Token);
-					}
-					catch (Exception ex) when (ex is LlmUnavailableException || ex is OperationCanceledException && !cancellationToken.IsCancellationRequested)
-					{
-						return AiDispatchOutcomes.Unavailable;
-					}
-				}
-				audit.LatencyMs = (int)Math.Min(int.MaxValue, stopwatch.ElapsedMilliseconds);
-				audit.InputTokens = result.InputTokens;
-				audit.OutputTokens = result.OutputTokens;
-				usedTokens = Math.Min(reservation.Reservation.Tokens, result.InputTokens + result.OutputTokens);
+				var minimum = AiDispatchSettingsPolicy.EffectiveMinimumConfidence(settings, AiDispatchConfig.MinimumConfidence);
+				var decision = await DecideAsync(context, audit, cancellationToken);
+				if (decision != null)
+					usedTokens = Math.Min(reservation.Reservation.Tokens, decision.InputTokens);
 
-				AiDispatchEnrichment enrichment;
-				try
+				// A message the decision model is sure is not a dispatch would have nothing filled, so the generative model is not called.
+				var generate = OperatorConfigured() && (decision == null ||
+					1 - decision.DispatchProbability < Math.Clamp(AiDispatchConfig.SkipGenerationNotDispatchProbability, 0.5, 1.0));
+				AiDispatchEnrichment generated = null;
+				if (generate)
 				{
-					enrichment = AiDispatchPrompt.Validate(AiDispatchPrompt.Parse(result), context);
+					var stopwatch = Stopwatch.StartNew();
+					LlmResult result = null;
+					using (var deadline = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken))
+					{
+						deadline.CancelAfter(TimeSpan.FromSeconds(Math.Clamp(AiDispatchConfig.RequestTimeoutSeconds, 5, 300)));
+						try
+						{
+							result = await _client.Value.CompleteAsync(new LlmRequest(AiConfig.Model, AiDispatchPrompt.Messages(context), new[] { AiDispatchPrompt.Tool(context) }, 512,
+								AiCacheIsolation.SaltFor(departmentId, AiConfig.SendCacheSalt, AiConfig.CacheSaltKey, AiConfig.AuditHmacKey)), deadline.Token);
+						}
+						catch (Exception ex) when (ex is LlmUnavailableException || ex is OperationCanceledException && !cancellationToken.IsCancellationRequested)
+						{
+							// With the decision model's answers the classification still stands; without them nothing does.
+							if (decision == null)
+								return AiDispatchOutcomes.Unavailable;
+						}
+					}
+					if (result != null)
+					{
+						audit.LatencyMs = (int)Math.Min(int.MaxValue, stopwatch.ElapsedMilliseconds);
+						audit.InputTokens = result.InputTokens;
+						audit.OutputTokens = result.OutputTokens;
+						usedTokens = Math.Min(reservation.Reservation.Tokens, usedTokens + result.InputTokens + result.OutputTokens);
+
+						try
+						{
+							generated = AiDispatchPrompt.Validate(AiDispatchPrompt.Parse(result), context);
+						}
+						catch (Exception ex) when (ex is ArgumentException || ex is System.Text.Json.JsonException)
+						{
+							if (decision == null)
+							{
+								ledgerOutcome = "InvalidOutput";
+								return AiDispatchOutcomes.InvalidOutput;
+							}
+						}
+					}
 				}
-				catch (Exception ex) when (ex is ArgumentException || ex is System.Text.Json.JsonException)
+				else
 				{
-					ledgerOutcome = "InvalidOutput";
-					return AiDispatchOutcomes.InvalidOutput;
+					// The audit names only models that were actually asked.
+					audit.ModelName = audit.ModelRevision = audit.RuntimeDigest = null;
 				}
 
+				// Only the decision model is configured and it did not answer.
+				if (decision == null && generated == null)
+					return AiDispatchOutcomes.Unavailable;
+
+				var enrichment = decision != null ? AiDispatchDecisions.Merge(generated, decision, minimum) : generated;
 				ledgerOutcome = "Answered";
 				audit.Confidence = (decimal)Math.Round(enrichment.Confidence, 4);
 				audit.RejectedCount = enrichment.RejectedCount;
-				if (enrichment.Confidence < AiDispatchSettingsPolicy.EffectiveMinimumConfidence(settings, AiDispatchConfig.MinimumConfidence))
+				if (enrichment.Confidence < minimum)
 					return AiDispatchOutcomes.LowConfidence;
 
 				return await ApplyAsync(call, enrichment, audit, settings, cancellationToken);
@@ -232,6 +280,42 @@ namespace Resgrid.Services.AiDispatch
 				// Failed inference is not charged: the GPU and its outages are the operator's, not the department's.
 				try { await _usage.CompleteAsync(reservation.Reservation, usedTokens, ledgerOutcome, CancellationToken.None); }
 				catch (Exception ex) { Framework.Logging.LogException(ex); }
+			}
+		}
+
+		/// <summary>
+		/// The decision model's classification, or null when it is not configured, unavailable, too slow or answered out of bounds;
+		/// the generative model's own classification then stands. Its provenance is audited only when it answered.
+		/// </summary>
+		private async Task<AiDispatchDecision> DecideAsync(AiDispatchContext context, AiDispatchAuditRow audit, CancellationToken cancellationToken)
+		{
+			var target = DecisionTarget();
+			if (target == null)
+				return null;
+			var stopwatch = Stopwatch.StartNew();
+			using var deadline = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+			deadline.CancelAfter(TimeSpan.FromMilliseconds(Math.Clamp(AiDispatchConfig.DecisionTimeoutMilliseconds, 250, 60000)));
+			try
+			{
+				var result = await _decisions.Value.DecideAsync(AiDispatchDecisions.Request(target.WireModel, context), deadline.Token);
+				var decision = AiDispatchDecisions.Read(result, context);
+				audit.DecisionPromptVersion = AiDispatchDecisions.Version;
+				audit.DecisionModelName = target.AuditModel;
+				audit.DecisionModelRevision = target.Revision;
+				audit.DecisionRuntimeDigest = target.Digest;
+				audit.DecisionInputTokens = decision.InputTokens;
+				audit.DecisionLatencyMs = (int)Math.Min(int.MaxValue, stopwatch.ElapsedMilliseconds);
+				return decision;
+			}
+			catch (Exception ex) when (ex is LlmUnavailableException || ex is ArgumentException || ex is OperationCanceledException && !cancellationToken.IsCancellationRequested)
+			{
+				return null;
+			}
+			catch (Exception ex) when (ex is not OperationCanceledException)
+			{
+				// A resolution or wiring fault must not take the generative path down with it.
+				Framework.Logging.LogException(ex, "AI dispatch decision model failed; using the generative model's classification.");
+				return null;
 			}
 		}
 

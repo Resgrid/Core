@@ -117,7 +117,7 @@ namespace Resgrid.Tests.Services
 
 			var detail = await _service.StartCountAsync(_actor, new InventoryCountInput { Id = Guid.NewGuid().ToString("D"), LocationId = engine.Id, Name = "Engine 1 check", IncludeCatalogItems = false, IncludeChildLocations = true });
 			detail.Lines.Select(l => (l.ItemId, l.LocationId)).Should().BeEquivalentTo(new[] { (hose.Id, engine.Id), (gloves.Id, compartment.Id) }, "the compartment is counted and the catalog is not padded in");
-			detail.Count.SnapshotFingerprint.Should().StartWith("L1:");
+			detail.Count.SnapshotFingerprint.Should().StartWith("L1:").And.HaveLength(64, "CK_InventoryCounts_Fingerprint pins the column at exactly 64 characters");
 
 			// Work at the station while the crew counts does not void the apparatus count.
 			SeedStock(unrelated, station, 3); unrelated.Revision++; _store.Seed(unrelated); SeedStock(Item(), Location(), 2);
@@ -240,7 +240,7 @@ namespace Resgrid.Tests.Services
 			var containedAsset = await CreateAsset(hiddenEquipment, container, "contained-equipment");
 			await _service.ChangeAssetStatusAsync(_actor, Status(bagItem, bag, location, InventoryAssetStatus.Retired));
 			var detail = await _service.StartCountAsync(_actor, new InventoryCountInput { Id = Guid.NewGuid().ToString("D"), Name = "Synthetic department count" });
-			detail.Count.LocationId.Should().BeNull(); detail.Lines.Should().ContainSingle().Which.ItemId.Should().Be(available.Id);
+			detail.Count.LocationId.Should().BeNull(); detail.Count.SnapshotFingerprint.Should().HaveLength(64); detail.Lines.Should().ContainSingle().Which.ItemId.Should().Be(available.Id);
 			detail.Lines.Single().ExpectedQuantity.Should().Be(3);
 			Stock(hiddenSupplies, container).Should().Be(2, "terminal-holder evidence remains stored");
 			_store.All<InventoryAsset>().Single(a => a.Id == containedAsset.Id).Status.Should().Be((int)InventoryAssetStatus.InService);

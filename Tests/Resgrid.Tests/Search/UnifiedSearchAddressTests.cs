@@ -142,19 +142,21 @@ namespace Resgrid.Tests.Search
 		}
 
 		[Test]
-		public async Task Address_matching_needs_the_call_family_and_text_in_the_clear()
+		public async Task Address_matching_needs_the_call_family_but_not_text_in_the_clear()
 		{
 			var service = ServiceWithAddressMatching();
 			Answer();
 			CallsAt((10, "110 Main St"));
 
 			(await service.SearchAsync(new UnifiedSearchRequest { Text = "110 Main Street" }, Principal())).Hits.Should().BeEmpty();
+			_callKeys.Verify(k => k.GetByAddressKeysAsync(It.IsAny<int>(), It.IsAny<IEnumerable<string>>(), It.IsAny<int>()), Times.Never,
+				"without the call family the index is never consulted");
 
+			// A call's address is operational, not ADP-protected (2026-10-17): a department with protection on still matches it.
 			_protection.Setup(p => p.GetPolicyByDepartmentIdAsync(7, It.IsAny<bool>()))
 				.ReturnsAsync(new DepartmentDataProtectionPolicy { DepartmentId = 7, State = (int)DepartmentDataProtectionState.Encrypting });
-			(await service.SearchAsync(new UnifiedSearchRequest { Text = "110 Main Street" }, Principal("Call:View"))).Hits.Should().BeEmpty();
-
-			_callKeys.Verify(k => k.GetByAddressKeysAsync(It.IsAny<int>(), It.IsAny<IEnumerable<string>>(), It.IsAny<int>()), Times.Never);
+			(await service.SearchAsync(new UnifiedSearchRequest { Text = "110 Main Street" }, Principal("Call:View"))).Hits
+				.Should().ContainSingle(h => h.EntityId == "10");
 		}
 
 		[Test]

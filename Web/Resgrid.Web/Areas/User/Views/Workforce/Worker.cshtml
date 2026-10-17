@@ -29,8 +29,8 @@
                         <input type="hidden" name="UserId" value="@w.UserId" />
                         <p>@localizer["Member"]: <strong>@(string.IsNullOrWhiteSpace(w.UserId) ? localizer["No"].Value : w.DisplayName)</strong></p>
                         <fieldset disabled="@(!Model.CanManage)">
-                            <div class="form-group"><label>@localizer["ExternalWorkerKey"] <i class="fa fa-lock text-muted"></i></label><input type="text" name="ExternalWorkerKey" class="form-control" maxlength="100" value="@ProtectedDataEnvelope.SafeDisplay(w.ExternalWorkerKey)" /></div>
-                            <div class="form-group"><label>@localizer["DisplayLabel"] <i class="fa fa-lock text-muted"></i></label><input type="text" name="DisplayLabel" class="form-control" maxlength="100" value="@ProtectedDataEnvelope.SafeDisplay(w.DisplayLabel)" /></div>
+                            <div class="form-group"><label>@localizer["ExternalWorkerKey"]</label><input type="text" name="ExternalWorkerKey" class="form-control" maxlength="100" value="@ProtectedDataEnvelope.SafeDisplay(w.ExternalWorkerKey)" /></div>
+                            <div class="form-group"><label>@localizer["DisplayLabel"]</label><input type="text" name="DisplayLabel" class="form-control" maxlength="100" value="@ProtectedDataEnvelope.SafeDisplay(w.DisplayLabel)" /></div>
                             <div class="checkbox"><label><input type="checkbox" name="IsActive" value="true" checked="@w.IsActive" /> @localizer["Active"]</label></div>
                             @if (Model.CanManage)
                             {

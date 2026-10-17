@@ -74,8 +74,10 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
-		public async Task Checklist_outcomes_encrypt_with_content_and_reseal_after_an_authorized_read()
+		public async Task Checklist_content_encrypts_and_reseals_after_an_authorized_read_while_outcomes_stay_typed()
 		{
+			// Score / Passed / IsFailure are outcome state, not private (catalog 15 retired 2026-10-17): they stay in
+			// their queryable typed columns through every write and read; only the private members (ProtectedContent) are sealed.
 			SetupWriteEnforced();
 			_dataProtectionService.Setup(x => x.GetPolicyByDepartmentIdAsync(DeptId, It.IsAny<bool>())).ReturnsAsync(new DepartmentDataProtectionPolicy { DepartmentId = DeptId, PolicyEpoch = Epoch, CatalogVersion = 15 });
 			var crypto = new ProtectedFieldCryptoService(); var key = RandomNumberGenerator.GetBytes(32);
@@ -85,47 +87,56 @@ namespace Resgrid.Tests.Services
 			_brokerClient.Setup(x => x.DecryptAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IReadOnlyList<ProtectedFieldOperationItem>>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync((int d, string g, string r, IReadOnlyList<ProtectedFieldOperationItem> items, CancellationToken ct) => new ProtectedDataBrokerResult
 				{ Success = true, Items = items.Select(i => new ProtectedFieldOperationResult { FieldId = i.FieldId, RowKey = i.RowKey, Value = crypto.DecryptText(key, i.Value, d, i.FieldId, i.RowKey) }).ToList() });
-			var row = new ChecklistCompletion { DepartmentId = DeptId, Content = "SYNTHETIC-PHI-CANARY", Score = 87.25m, Passed = false };
+			var row = new ChecklistCompletion { DepartmentId = DeptId, Content = "{\"LocationDescription\":\"Bay 2\"}", ProtectedContent = "SYNTHETIC-PHI-CANARY", Score = 87.25m, Passed = false };
 			var grant = IssueGrant();
 			var write = await _service.PrepareRecordsEntityWriteAsync(DeptId, row, null, row.Id, ChecklistTables.Fields<ChecklistCompletion>(), () => row.IsProtected = true, grant, UserId, false);
-			write.Success.Should().BeTrue(); row.Score.Should().BeNull(); row.Passed.Should().BeNull();
-			row.Content.Should().NotContain("SYNTHETIC-PHI-CANARY"); row.ProtectedScoreEnvelope.Should().StartWith("rgdp:"); row.ProtectedPassedEnvelope.Should().StartWith("rgdp:");
+			write.Success.Should().BeTrue(); row.Score.Should().Be(87.25m); row.Passed.Should().BeFalse();
+			row.ProtectedContent.Should().StartWith("rgdp:").And.NotContain("SYNTHETIC-PHI-CANARY"); row.Content.Should().Be("{\"LocationDescription\":\"Bay 2\"}");
+			row.ProtectedScoreEnvelope.Should().BeNull(); row.ProtectedPassedEnvelope.Should().BeNull();
 			var stored = Newtonsoft.Json.JsonConvert.DeserializeObject<ChecklistCompletion>(Newtonsoft.Json.JsonConvert.SerializeObject(row));
 			var read = await _service.ResolveRecordsEntitiesForReadAsync(DeptId, new[] { (row, row.Id) }, ChecklistTables.Fields<ChecklistCompletion>(), grant, UserId);
-			read.RedactedFields.Should().BeEmpty(); row.Score.Should().Be(87.25m); row.Passed.Should().BeFalse(); row.ProtectedScoreEnvelope.Should().BeNull();
+			read.RedactedFields.Should().BeEmpty(); row.ProtectedContent.Should().Be("SYNTHETIC-PHI-CANARY"); row.Score.Should().Be(87.25m); row.Passed.Should().BeFalse();
 			row.Passed = true;
 			(await _service.PrepareRecordsEntityWriteAsync(DeptId, row, null, row.Id, ChecklistTables.Fields<ChecklistCompletion>(), () => row.IsProtected = true, grant, UserId, false)).Success.Should().BeTrue();
-			row.Score.Should().BeNull(); row.Passed.Should().BeNull();
-			crypto.DecryptText(key, row.ProtectedPassedEnvelope, DeptId, "checklistcompletions.passed", row.Id).Should().Be("True");
+			row.Score.Should().Be(87.25m); row.Passed.Should().BeTrue(); row.ProtectedPassedEnvelope.Should().BeNull();
+			crypto.DecryptText(key, row.ProtectedContent, DeptId, "checklistcompletions.protectedcontent", row.Id).Should().Be("SYNTHETIC-PHI-CANARY", "the revealed content is resealed on the next save");
 			var denied = await _service.ResolveRecordsEntitiesForReadAsync(DeptId, new[] { (stored, stored.Id) }, ChecklistTables.Fields<ChecklistCompletion>(), null, UserId);
-			denied.RedactedFields.Should().HaveCount(3); stored.Score.Should().BeNull(); stored.Passed.Should().BeNull();
-			var item = new ChecklistCompletionItem { DepartmentId = DeptId, Content = "SYNTHETIC-ANSWER", IsFailure = true };
+			denied.RedactedFields.Should().BeEquivalentTo(new[] { "checklistcompletions.protectedcontent" });
+			stored.ProtectedContent.Should().Be(ProtectedDataEnvelope.RedactionValue); stored.Content.Should().Be("{\"LocationDescription\":\"Bay 2\"}"); stored.Score.Should().Be(87.25m); stored.Passed.Should().BeFalse();
+			var item = new ChecklistCompletionItem { DepartmentId = DeptId, Content = "{}", ProtectedContent = "SYNTHETIC-ANSWER", IsFailure = true };
 			(await _service.PrepareRecordsEntityWriteAsync(DeptId, item, null, item.Id, ChecklistTables.Fields<ChecklistCompletionItem>(), () => item.IsProtected = true, grant, UserId, false)).Success.Should().BeTrue();
-			item.IsFailure.Should().BeNull(); item.Content.Should().NotContain("SYNTHETIC-ANSWER");
+			item.IsFailure.Should().BeTrue(); item.ProtectedIsFailureEnvelope.Should().BeNull(); item.ProtectedContent.Should().NotContain("SYNTHETIC-ANSWER");
 			(await _service.ResolveRecordsEntitiesForReadAsync(DeptId, new[] { (item, item.Id) }, ChecklistTables.Fields<ChecklistCompletionItem>(), grant, UserId)).RedactedFields.Should().BeEmpty();
-			item.IsFailure.Should().BeTrue();
+			item.ProtectedContent.Should().Be("SYNTHETIC-ANSWER"); item.IsFailure.Should().BeTrue();
 			CryptographicOperations.ZeroMemory(key);
 		}
 
 		[TestCase("missing"), TestCase("other-user"), TestCase("revoked")]
-		public async Task Checklist_sensitive_outcomes_cannot_be_revealed_with_invalid_grants(string reason)
+		public async Task Checklist_content_cannot_be_revealed_with_invalid_grants_and_outcomes_stay_readable(string reason)
 		{
-			var row = new ChecklistCompletion { DepartmentId = DeptId, Content = "rgdp:1:1:content==", ProtectedScoreEnvelope = "rgdp:1:1:score==", ProtectedPassedEnvelope = "rgdp:1:1:passed==", Score = null, Passed = null };
+			// The private members (ProtectedContent) are sealed; the metadata in Content needs no grant (review §8).
+			var row = new ChecklistCompletion { DepartmentId = DeptId, Content = "{\"LocationDescription\":\"Bay 2\"}", ProtectedContent = "rgdp:1:1:content==", Score = 87.25m, Passed = false };
 			var grant = reason == "missing" ? null : IssueGrant(reason == "other-user" ? "different-user" : UserId, reason == "revoked" ? Epoch - 1 : Epoch);
 			var result = await _service.ResolveRecordsEntitiesForReadAsync(DeptId, new[] { (row, row.Id) }, ChecklistTables.Fields<ChecklistCompletion>(), grant, UserId);
-			result.RedactedFields.Should().HaveCount(3); row.Score.Should().BeNull(); row.Passed.Should().BeNull(); row.Content.Should().Be(ProtectedDataEnvelope.RedactionValue);
+			result.RedactedFields.Should().BeEquivalentTo(new[] { "checklistcompletions.protectedcontent" }); row.ProtectedContent.Should().Be(ProtectedDataEnvelope.RedactionValue);
+			row.Content.Should().Be("{\"LocationDescription\":\"Bay 2\"}", "metadata is readable without a grant");
+			row.Score.Should().Be(87.25m, "an outcome is state, readable without a grant"); row.Passed.Should().BeFalse();
 			_brokerClient.Verify(x => x.DecryptAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IReadOnlyList<ProtectedFieldOperationItem>>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 
+		// The call's name and address are operational and stay plaintext (2026-10-17); the enveloped
+		// fields are the private ones about the caller and the patient.
 		private static Call EnvelopedCall(int callId = 17) => new Call
 		{
 			CallId = callId,
 			DepartmentId = DeptId,
 			Number = "C-100",
-			Name = "rgdp:1:1:name==",
+			Name = "Structure Fire",
+			Address = "1 Main St",
+			ContactName = "rgdp:1:1:contactname==",
 			NatureOfCall = "rgdp:1:1:nature==",
-			Address = "rgdp:1:1:address==",
-			Notes = null
+			Notes = "rgdp:1:1:notes==",
+			ContactNumber = null
 		};
 
 		[Test]
@@ -153,11 +164,13 @@ namespace Resgrid.Tests.Services
 
 			result.IsProtected.Should().BeTrue();
 			result.ProtectedReason.Should().Be("step_up_required");
-			result.RedactedFields.Should().BeEquivalentTo("calls.name", "calls.natureofcall", "calls.address");
-			result.Call.Name.Should().Be(ProtectedDataEnvelope.RedactionValue);
+			result.RedactedFields.Should().BeEquivalentTo("calls.contactname", "calls.natureofcall", "calls.notes");
+			result.Call.ContactName.Should().Be(ProtectedDataEnvelope.RedactionValue);
 			result.Call.NatureOfCall.Should().Be(ProtectedDataEnvelope.RedactionValue);
-			result.Call.Address.Should().Be(ProtectedDataEnvelope.RedactionValue);
+			result.Call.Notes.Should().Be(ProtectedDataEnvelope.RedactionValue);
 			result.Call.Number.Should().Be("C-100", "non-cataloged fields are untouched");
+			result.Call.Name.Should().Be("Structure Fire", "the call name is operational and readable without a grant");
+			result.Call.Address.Should().Be("1 Main St", "the call address is operational and readable without a grant");
 			_brokerClient.Verify(x => x.DecryptAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(),
 				It.IsAny<IReadOnlyList<ProtectedFieldOperationItem>>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
@@ -170,7 +183,7 @@ namespace Resgrid.Tests.Services
 			var result = await _service.ResolveForReadAsync(DeptId, EnvelopedCall(), staleGrant, UserId);
 
 			result.ProtectedReason.Should().Be("grant_revoked");
-			result.Call.Name.Should().Be(ProtectedDataEnvelope.RedactionValue);
+			result.Call.ContactName.Should().Be(ProtectedDataEnvelope.RedactionValue);
 		}
 
 		[Test]
@@ -181,7 +194,7 @@ namespace Resgrid.Tests.Services
 			var result = await _service.ResolveForReadAsync(DeptId, EnvelopedCall(), foreignGrant, UserId);
 
 			result.ProtectedReason.Should().Be("protected_access_denied");
-			result.Call.Name.Should().Be(ProtectedDataEnvelope.RedactionValue);
+			result.Call.ContactName.Should().Be(ProtectedDataEnvelope.RedactionValue);
 		}
 
 		[Test]
@@ -209,8 +222,9 @@ namespace Resgrid.Tests.Services
 
 			sentItems.Should().HaveCount(6, "three enveloped fields per call, one batch");
 			results.Should().OnlyContain(r => r.ProtectedReason == null && r.RedactedFields.Count == 0 && r.IsProtected);
-			results[0].Call.Name.Should().Be("plain:17:calls.name");
+			results[0].Call.ContactName.Should().Be("plain:17:calls.contactname");
 			results[1].Call.NatureOfCall.Should().Be("plain:18:calls.natureofcall");
+			sentItems.Select(i => i.FieldId).Should().NotContain(new[] { "calls.name", "calls.address" }, "operational fields never reach the broker");
 			_brokerClient.Verify(x => x.DecryptAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(),
 				It.IsAny<IReadOnlyList<ProtectedFieldOperationItem>>(), It.IsAny<CancellationToken>()), Times.Once);
 		}
@@ -225,8 +239,9 @@ namespace Resgrid.Tests.Services
 			var result = await _service.ResolveForReadAsync(DeptId, EnvelopedCall(), IssueGrant(), UserId);
 
 			result.ProtectedReason.Should().Be("broker_unavailable");
-			result.Call.Name.Should().Be(ProtectedDataEnvelope.RedactionValue);
+			result.Call.ContactName.Should().Be(ProtectedDataEnvelope.RedactionValue);
 			result.Call.NatureOfCall.Should().NotStartWith("rgdp:");
+			result.Call.Notes.Should().NotStartWith("rgdp:");
 		}
 
 		[Test]
@@ -238,16 +253,16 @@ namespace Resgrid.Tests.Services
 					new ProtectedDataBrokerResult
 					{
 						Success = true,
-						Items = items.Select(i => i.FieldId == "calls.address"
+						Items = items.Select(i => i.FieldId == "calls.notes"
 							? new ProtectedFieldOperationResult { FieldId = i.FieldId, RowKey = i.RowKey, ErrorCode = "decrypt_failed" }
 							: new ProtectedFieldOperationResult { FieldId = i.FieldId, RowKey = i.RowKey, Value = "plain" }).ToList()
 					});
 
 			var result = await _service.ResolveForReadAsync(DeptId, EnvelopedCall(), IssueGrant(), UserId);
 
-			result.Call.Name.Should().Be("plain");
-			result.Call.Address.Should().Be(ProtectedDataEnvelope.RedactionValue);
-			result.RedactedFields.Should().BeEquivalentTo("calls.address");
+			result.Call.ContactName.Should().Be("plain");
+			result.Call.Notes.Should().Be(ProtectedDataEnvelope.RedactionValue);
+			result.RedactedFields.Should().BeEquivalentTo("calls.notes");
 			result.ProtectedReason.Should().Be("broker_unavailable");
 		}
 
@@ -265,13 +280,10 @@ namespace Resgrid.Tests.Services
 		public void Child_accessor_maps_cover_every_catalog_v1_child_column()
 		{
 			var notesBinding = AdpTableBindings.V1.Single(b => b.TableName == "CallNotes");
-			var noteAccessorIds = ProtectedReadService.NoteFieldAccessors.Keys
-				.Concat(ProtectedReadService.NoteCompanionAccessors.Keys);
-			noteAccessorIds.Should().BeEquivalentTo(notesBinding.Columns.Select(c => c.FieldId));
+			ProtectedReadService.NoteFieldAccessors.Keys.Should().BeEquivalentTo(notesBinding.Columns.Select(c => c.FieldId));
 
 			var attachmentsBinding = AdpTableBindings.V1.Single(b => b.TableName == "CallAttachments");
 			var attachmentAccessorIds = ProtectedReadService.AttachmentFieldAccessors.Keys
-				.Concat(ProtectedReadService.AttachmentCompanionAccessors.Keys)
 				.Concat(new[] { ProtectedReadService.AttachmentDataFieldId });
 			attachmentAccessorIds.Should().BeEquivalentTo(attachmentsBinding.Columns.Select(c => c.FieldId));
 
@@ -300,7 +312,6 @@ namespace Resgrid.Tests.Services
 
 			var unitStatesBinding = AdpTableBindings.V1.Single(b => b.TableName == "UnitStates");
 			ProtectedReadService.UnitStateFieldAccessors.Keys
-				.Concat(ProtectedReadService.UnitStateCompanionAccessors.Keys)
 				.Should().BeEquivalentTo(unitStatesBinding.Columns.Select(c => c.FieldId));
 
 			var udfBinding = AdpTableBindings.V1.Single(b => b.TableName == "UdfFieldValues");
@@ -343,7 +354,8 @@ namespace Resgrid.Tests.Services
 				"ChatMessageFlags", "ChatModerationActions", "ChatExports",
 				"UnitLogs", "UserStates", "CalendarItems", "Documents", "DistributionLists",
 				// Records (RMS) family, catalog v10: read through the generic Records resolvers behind IRecordsProtectionService.
-				"RmsOperationalRecordDetails", "RmsNarratives", "RmsLocations", "RmsSourceFacts", "RmsCasualtyRescues", "RmsExposures",
+				// RmsLocations is deliberately absent: an incident's address and position are operational (2026-10-17).
+				"RmsOperationalRecordDetails", "RmsNarratives", "RmsSourceFacts", "RmsCasualtyRescues", "RmsExposures",
 				"RmsIncidentModules", "RmsIncidentProperties", "RmsIncidentVehicles", "RmsIncidentResources", "RmsRevisions",
 				"RmsSubmissions", "RmsSignatures", "RmsEvidenceArtifacts", "RmsDisclosureRequests", "RmsDisclosureProductions",
 				"RmsRecordLegalHolds", "RmsRecordAttachments", "RmsExportRuns",
@@ -361,26 +373,30 @@ namespace Resgrid.Tests.Services
 				// Workforce pay data, field costing and California pay data reporting, catalog v28 (Phase E): read with
 				// WorkforceProtectedFields accessors through WorkforceProtectionSeam (grant reads and the workforce-costing /
 				// pay-data-reporting workload purposes); export bytes use the binary resolver.
-				"WorkforceEmployerProfiles", "WorkforceAffiliatedEntities", "WorkforceEstablishments", "WorkforceLaborContractors", "WorkforceWorkers",
+				// WorkforceEstablishments and WorkforceWorkers are deliberately absent: addresses, payroll keys and labels are operational (2026-10-17).
+				"WorkforceEmployerProfiles", "WorkforceAffiliatedEntities", "WorkforceLaborContractors",
 				"EmployeeCompensationProfiles", "EmployeePayComponents", "EmployeeCostComponents", "WorkforceWorkEntries", "WorkforceAnnualPayFacts",
 				"FieldCostLines", "PayDataReportingDemographics", "PayDataReportRuns", "PayDataReportEmployeeSnapshots", "PayDataReportRows", "PayDataExportArtifacts",
 				// RMS-5 prevention and investigations plus the RMS-4 quality review, catalog v13: read through the generic Records resolvers.
 				"RmsOccupancies", "RmsOccupancyHazards", "RmsInspections", "RmsViolations", "RmsPermits", "RmsPlanReviews",
 				"RmsInvestigationCases", "RmsInvestigationNotes", "RmsInvestigationEvidence", "RmsInvestigationCustody", "RmsInvestigationReferrals",
 				"RmsQualityReviews", "RmsPreventionAttachments",
-				// Checklist content and outcome companions use ChecklistTables.Fields<T>() and the generic resolver.
-				"ChecklistDefinitions", "ChecklistDefinitionVersions", "ChecklistOccurrences", "ChecklistCompletions",
-				"ChecklistCompletionItems", "ChecklistCompletionFiles", "DepartmentChecklistSettings", "ChecklistSchedules",
-				// Work-order content uses WorkOrderTables.Fields<T>(); file downloads use the binary resolver.
+				// Checklist content uses ChecklistTables.Fields<T>() and the generic resolver (outcomes are plaintext state).
+				// Definitions, definition versions and department checklist settings are configuration and unbound (2026-10-17).
+				"ChecklistOccurrences", "ChecklistCompletions",
+				"ChecklistCompletionItems", "ChecklistCompletionFiles", "ChecklistSchedules",
+				// Work-order content uses WorkOrderTables.Fields<T>(); file downloads use the binary resolver. Policies, operation
+				// receipts, recurrences and failure intents are configuration and unbound (2026-10-17).
                 "WorkOrders", "WorkOrderActivities", "WorkOrderLabors", "WorkOrderParts", "WorkOrderFiles",
-                "WorkOrderPolicies", "WorkOrderOperationReceipts", "WorkOrderVendorCharges", "WorkOrderPartMovements",
-                "WorkOrderFailureIntents", "WorkOrderSafetyHolds", "WorkOrderRecurrences", "WorkOrderRecurrenceVersions", "WorkOrderMeterReadings", "WorkOrderRecurrenceChanges",
-				// Inventory content uses InventoryTables.Fields<T>() through the generic protected resolver.
-				"InventoryCategories", "InventoryItems", "InventoryLocations", "InventoryLots", "InventoryStocks",
-				"InventoryAssets", "InventoryTransactions", "InventoryOperations", "InventoryTransfers", "InventoryTransferItems",
-				"InventoryIssuances", "InventoryKits", "InventoryKitItems", "RecordInventoryUsages",
+                "WorkOrderVendorCharges", "WorkOrderPartMovements",
+                "WorkOrderSafetyHolds", "WorkOrderRecurrenceVersions", "WorkOrderMeterReadings", "WorkOrderRecurrenceChanges",
+				// Inventory content uses InventoryTables.Fields<T>() through the generic protected resolver. Only the tables that
+				// can hold free text about people are bound; catalog items, locations, lots, stock, assets, transfers, kits,
+				// count lines and alerts are metadata (2026-10-17).
+				"InventoryTransactions", "InventoryOperations",
+				"InventoryIssuances", "RecordInventoryUsages",
 				"InventoryVendors", "InventoryPurchaseOrders", "InventoryPurchaseOrderItems",
-				"InventoryCounts", "InventoryCountItems", "InventoryAlerts", "InventoryAlertDeliveries",
+				"InventoryCounts",
 				// ReadinessHistoryFields supplies masked audit/run/log views; outbox consumers use the safe routing copy.
 				"AuditLogs", "DomainEventOutbox", "WorkflowRuns", "WorkflowRunLogs",
 				// Admin Assist content (registry §4G, §4I), each read through the generic Records resolver: findings (catalog v30) by
@@ -462,7 +478,8 @@ namespace Resgrid.Tests.Services
 						MessageRecipientId = 21,
 						DepartmentId = DeptId,
 						Response = "rgdp:1:1:response==",
-						ProtectedLatitudeEnvelope = "rgdp:1:1:lat=="
+						Latitude = 39.7392m,
+						Longitude = -104.9903m
 					}
 				}
 			};
@@ -474,8 +491,10 @@ namespace Resgrid.Tests.Services
 			message.Subject.Should().Be(ProtectedDataEnvelope.RedactionValue);
 			message.Body.Should().Be(ProtectedDataEnvelope.RedactionValue);
 			message.MessageRecipients.First().Response.Should().Be(ProtectedDataEnvelope.RedactionValue);
-			message.MessageRecipients.First().Latitude.Should().BeNull("a concealed coordinate stays null, never a placeholder in a decimal");
+			message.MessageRecipients.First().Latitude.Should().Be(39.7392m, "the reply position is operational and readable without a grant");
+			message.MessageRecipients.First().Longitude.Should().Be(-104.9903m);
 			result.RedactedFields.Should().Contain("messages.subject").And.Contain("messagerecipients.response");
+			result.RedactedFields.Should().NotContain(new[] { "messagerecipients.latitude", "messagerecipients.longitude" });
 		}
 
 		[Test]
@@ -540,7 +559,7 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
-		public async Task A_recipient_write_moves_the_coordinates_into_their_companion_columns()
+		public async Task A_recipient_write_seals_the_text_and_leaves_the_coordinates_typed()
 		{
 			SetupWriteEnforced();
 			SetupEncryptEcho();
@@ -561,8 +580,10 @@ namespace Resgrid.Tests.Services
 
 			result.Success.Should().BeTrue();
 			recipient.Response.Should().Be("rgdp:1:1:messagerecipients.response==");
-			recipient.ProtectedLatitudeEnvelope.Should().Be("rgdp:1:1:messagerecipients.latitude==");
-			recipient.Latitude.Should().BeNull("the typed column is emptied once the value lives in its companion");
+			recipient.Latitude.Should().Be(39.7392m, "the reply position is operational and stays in its typed column (2026-10-17)");
+			recipient.Longitude.Should().Be(-104.9903m);
+			recipient.ProtectedLatitudeEnvelope.Should().BeNull("no companion envelope is written for an operational coordinate");
+			recipient.ProtectedLongitudeEnvelope.Should().BeNull();
 			recipient.IsProtected.Should().BeTrue();
 			recipient.Note.Should().Be("rgdp:1:1:messagerecipients.note==", "the note is cataloged with the rest of the message family");
 			recipient.PromptMetadata.Should().Be("calendar-rsvp:5",
@@ -610,13 +631,14 @@ namespace Resgrid.Tests.Services
 		public async Task Attended_write_without_a_grant_is_blocked_before_any_broker_call()
 		{
 			SetupWriteEnforced();
-			var call = new Call { CallId = 17, DepartmentId = DeptId, Name = "Structure Fire" };
+			var call = new Call { CallId = 17, DepartmentId = DeptId, Name = "Structure Fire", NatureOfCall = "Smoke showing" };
 
 			var result = await _service.PrepareCallWriteAsync(DeptId, call, null, null, UserId, workloadCaller: false);
 
 			result.Success.Should().BeFalse();
 			result.Reason.Should().Be("step_up_required");
-			call.Name.Should().Be("Structure Fire", "a blocked write must not half-mutate the entity");
+			call.NatureOfCall.Should().Be("Smoke showing", "a blocked write must not half-mutate the entity");
+			call.Name.Should().Be("Structure Fire");
 			_brokerClient.Verify(x => x.EncryptAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(),
 				It.IsAny<IReadOnlyList<ProtectedFieldOperationItem>>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
@@ -626,15 +648,18 @@ namespace Resgrid.Tests.Services
 		{
 			SetupWriteEnforced();
 			SetupEncryptEcho();
-			var call = new Call { CallId = 17, DepartmentId = DeptId, Number = "C-100", Name = "Structure Fire", NatureOfCall = "Smoke showing" };
+			var call = new Call { CallId = 17, DepartmentId = DeptId, Number = "C-100", Name = "Structure Fire", Type = "FIRE", Address = "1 Main St", ContactName = "Pat Caller", NatureOfCall = "Smoke showing" };
 
 			var result = await _service.PrepareCallWriteAsync(DeptId, call, null, IssueGrant(), UserId, workloadCaller: false);
 
 			result.Success.Should().BeTrue();
 			result.IsProtected.Should().BeTrue();
-			call.Name.Should().Be("rgdp:1:1:calls.name==");
+			call.ContactName.Should().Be("rgdp:1:1:calls.contactname==");
 			call.NatureOfCall.Should().Be("rgdp:1:1:calls.natureofcall==");
 			call.Number.Should().Be("C-100", "non-cataloged fields are untouched");
+			call.Name.Should().Be("Structure Fire", "the call name is operational and stays plaintext");
+			call.Type.Should().Be("FIRE", "the call type is operational and stays plaintext");
+			call.Address.Should().Be("1 Main St", "the call address is operational and stays plaintext");
 			_brokerClient.Verify(x => x.EncryptAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(),
 				It.IsAny<IReadOnlyList<ProtectedFieldOperationItem>>(), It.IsAny<CancellationToken>()), Times.Once);
 		}
@@ -654,13 +679,14 @@ namespace Resgrid.Tests.Services
 						Success = true,
 						Items = items.Select(i => new ProtectedFieldOperationResult { FieldId = i.FieldId, RowKey = i.RowKey, Value = "rgdp:1:1:x==" }).ToList()
 					});
-			var call = new Call { CallId = 17, DepartmentId = DeptId, Name = "Text-to-call import" };
+			var call = new Call { CallId = 17, DepartmentId = DeptId, Name = "Text-to-call import", NatureOfCall = "Caller reports smoke" };
 
 			var result = await _service.PrepareCallWriteAsync(DeptId, call, null, null, UserId, workloadCaller: true);
 
 			result.Success.Should().BeTrue();
 			sentGrant.Should().BeNull("the workload lane sends no grant");
-			call.Name.Should().StartWith("rgdp:");
+			call.NatureOfCall.Should().StartWith("rgdp:");
+			call.Name.Should().Be("Text-to-call import");
 		}
 
 		[Test]
@@ -668,19 +694,19 @@ namespace Resgrid.Tests.Services
 		{
 			SetupWriteEnforced();
 			SetupEncryptEcho();
-			var stored = new Call { CallId = 17, Name = "rgdp:1:1:storedname==", NatureOfCall = "rgdp:1:1:storednature==" };
+			var stored = new Call { CallId = 17, ContactName = "rgdp:1:1:storedcontact==", NatureOfCall = "rgdp:1:1:storednature==" };
 			var edited = new Call
 			{
 				CallId = 17,
 				DepartmentId = DeptId,
-				Name = ProtectedDataEnvelope.RedactionValue,
+				ContactName = ProtectedDataEnvelope.RedactionValue,
 				NatureOfCall = "Updated nature"
 			};
 
 			var result = await _service.PrepareCallWriteAsync(DeptId, edited, stored, IssueGrant(), UserId, workloadCaller: false);
 
 			result.Success.Should().BeTrue();
-			edited.Name.Should().Be("rgdp:1:1:storedname==", "REDACTED means unchanged — the stored envelope survives");
+			edited.ContactName.Should().Be("rgdp:1:1:storedcontact==", "REDACTED means unchanged — the stored envelope survives");
 			edited.NatureOfCall.Should().Be("rgdp:1:1:calls.natureofcall==", "genuinely changed fields encrypt");
 		}
 
@@ -703,7 +729,7 @@ namespace Resgrid.Tests.Services
 			{
 				CallId = 17,
 				DepartmentId = DeptId,
-				Name = ProtectedDataEnvelope.RedactionValue,
+				ContactName = ProtectedDataEnvelope.RedactionValue,
 				NatureOfCall = "Smoke showing"
 			};
 
@@ -717,7 +743,7 @@ namespace Resgrid.Tests.Services
 			// saved, so leaving "REDACTED" in the field means it is what sits in the database, and a
 			// later save encrypts it and makes the loss permanent. With no stored row there is
 			// nothing to restore, so the honest outcome is an empty field.
-			call.Name.Should().BeNull("with nothing to restore, the placeholder is cleared rather than stored");
+			call.ContactName.Should().BeNull("with nothing to restore, the placeholder is cleared rather than stored");
 		}
 
 		[Test]
@@ -741,13 +767,13 @@ namespace Resgrid.Tests.Services
 			_dataProtectionService.Setup(x => x.GetPolicyByDepartmentIdAsync(DeptId, It.IsAny<bool>()))
 				.ReturnsAsync(new DepartmentDataProtectionPolicy { DepartmentId = DeptId, PolicyEpoch = Epoch, CatalogVersion = 0 });
 
-			var call = new Call { CallId = 17, DepartmentId = DeptId, Name = "Structure Fire" };
+			var call = new Call { CallId = 17, DepartmentId = DeptId, NatureOfCall = "Smoke showing" };
 
 			var result = await _service.PrepareCallWriteAsync(DeptId, call, null, null, UserId, workloadCaller: true);
 
 			result.Success.Should().BeTrue("an unowned field is skipped, not a blocked write");
 			result.Changed.Should().BeFalse();
-			call.Name.Should().Be("Structure Fire", "the value stays plaintext for the upgrade sweep to pick up");
+			call.NatureOfCall.Should().Be("Smoke showing", "the value stays plaintext for the upgrade sweep to pick up");
 			sentItems.Should().BeNull("nothing reaches the broker");
 		}
 
@@ -759,13 +785,13 @@ namespace Resgrid.Tests.Services
 			_dataProtectionService.Setup(x => x.GetPolicyByDepartmentIdAsync(DeptId, It.IsAny<bool>()))
 				.ReturnsAsync(new DepartmentDataProtectionPolicy { DepartmentId = DeptId, PolicyEpoch = Epoch, CatalogVersion = 1 });
 
-			var call = new Call { CallId = 17, DepartmentId = DeptId, Name = "Structure Fire" };
+			var call = new Call { CallId = 17, DepartmentId = DeptId, NatureOfCall = "Smoke showing" };
 
 			var result = await _service.PrepareCallWriteAsync(DeptId, call, null, null, UserId, workloadCaller: true);
 
 			result.Success.Should().BeTrue();
 			result.Changed.Should().BeTrue();
-			call.Name.Should().Be("rgdp:1:1:calls.name==");
+			call.NatureOfCall.Should().Be("rgdp:1:1:calls.natureofcall==");
 		}
 
 		/// <summary>
@@ -780,7 +806,7 @@ namespace Resgrid.Tests.Services
 			{
 				PersonnelCertificationId = 9,
 				DepartmentId = DeptId,
-				Name = "rgdp:1:1:name==",
+				Name = "EMT-B",
 				Number = "rgdp:1:1:number==",
 				Filetype = "application/pdf",
 				Data = System.Text.Encoding.ASCII.GetBytes("rgdpb:1:1:").Concat(new byte[] { 1, 2 }).ToArray()
@@ -790,8 +816,9 @@ namespace Resgrid.Tests.Services
 
 			result.IsProtected.Should().BeTrue();
 			result.ProtectedReason.Should().Be("step_up_required");
-			certification.Name.Should().Be(ProtectedDataEnvelope.RedactionValue);
 			certification.Number.Should().Be(ProtectedDataEnvelope.RedactionValue);
+			certification.Name.Should().Be("EMT-B", "the qualification name is operational (qualification-based dispatch reads it)");
+			result.RedactedFields.Should().NotContain("personnelcertifications.name");
 			certification.Data.Should().BeNull("enveloped document bytes must never ride out through a serializer");
 
 			// Filetype is not cataloged, and the list view uses it to decide whether a document
@@ -820,19 +847,19 @@ namespace Resgrid.Tests.Services
 			{
 				PersonnelCertificationId = 9,
 				DepartmentId = DeptId,
-				Name = "rgdp:1:1:name==",
+				Number = "rgdp:1:1:number==",
 				Data = System.Text.Encoding.ASCII.GetBytes("rgdpb:1:1:").Concat(new byte[] { 1, 2 }).ToArray()
 			};
 
 			await _service.ResolveCertificationsForReadAsync(DeptId, new[] { certification }, IssueGrant(), UserId,
 				includeData: true);
 
-			certification.Name.Should().Be("plain");
+			certification.Number.Should().Be("plain");
 			certification.Data.Should().Equal(new byte[] { 7, 7 });
 		}
 
 		[Test]
-		public async Task Certification_write_envelopes_the_text_fields_and_the_document()
+		public async Task Certification_write_envelopes_the_private_text_and_the_document_and_leaves_the_metadata_plaintext()
 		{
 			SetupWriteEnforced();
 			SetupEncryptEcho();
@@ -843,8 +870,11 @@ namespace Resgrid.Tests.Services
 				PersonnelCertificationId = 12,
 				DepartmentId = DeptId,
 				Name = "EMT-B",
+				Type = "Medical",
+				Area = "State",
 				Number = "A-4471",
 				IssuedBy = "State Board",
+				Filename = "card.pdf",
 				Data = new byte[] { 9, 9, 9 }
 			};
 
@@ -853,9 +883,13 @@ namespace Resgrid.Tests.Services
 
 			result.Success.Should().BeTrue();
 			result.Changed.Should().BeTrue();
-			certification.Name.Should().StartWith("rgdp:");
 			certification.Number.Should().StartWith("rgdp:");
-			certification.IssuedBy.Should().StartWith("rgdp:");
+			certification.Filename.Should().StartWith("rgdp:");
+			// Name, type, area and issuer are qualification metadata (2026-10-17).
+			certification.Name.Should().Be("EMT-B");
+			certification.Type.Should().Be("Medical");
+			certification.Area.Should().Be("State");
+			certification.IssuedBy.Should().Be("State Board");
 			System.Text.Encoding.ASCII.GetString(certification.Data).Should().StartWith("rgdpb:");
 			certification.IsProtected.Should().BeTrue();
 		}
@@ -883,6 +917,7 @@ namespace Resgrid.Tests.Services
 				DepartmentId = DeptId,
 				Name = "EMT-P",
 				Number = ProtectedDataEnvelope.RedactionValue,
+				Filename = "renewed-card.pdf",
 				Data = null
 			};
 
@@ -891,7 +926,8 @@ namespace Resgrid.Tests.Services
 
 			result.Success.Should().BeTrue();
 			edited.Number.Should().Be("rgdp:1:1:stored-number==", "the sentinel restores the stored envelope");
-			edited.Name.Should().StartWith("rgdp:", "a genuinely edited field is still encrypted");
+			edited.Filename.Should().StartWith("rgdp:", "a genuinely edited field is still encrypted");
+			edited.Name.Should().Be("EMT-P", "the qualification name is operational and stays plaintext");
 
 			// No new upload means keep the stored document, not delete it.
 			edited.Data.Should().Equal(stored.Data);
@@ -916,14 +952,14 @@ namespace Resgrid.Tests.Services
 			{
 				PersonnelCertificationId = 12,
 				DepartmentId = DeptId,
-				Name = "EMT-B"
+				Number = "A-4471"
 			};
 
 			var result = await _service.PrepareCertificationWriteAsync(DeptId, certification, null, IssueGrant(), UserId,
 				workloadCaller: false);
 
 			result.Success.Should().BeTrue();
-			certification.Name.Should().Be("EMT-B", "a field the department does not own yet stays plaintext");
+			certification.Number.Should().Be("A-4471", "a field the department does not own yet stays plaintext");
 
 			// The row marker still goes on, and that is correct: it means "this row has protected
 			// values", not "this row is fully swept". The bulk sweep selects by department and pk
@@ -990,7 +1026,7 @@ namespace Resgrid.Tests.Services
 			{
 				PersonnelCertificationId = 21,
 				DepartmentId = DeptId,
-				Name = "rgdp:1:1:stored-name==",
+				Filename = "rgdp:1:1:stored-filename==",
 				Number = "rgdp:1:1:stored-number=="
 			};
 
@@ -999,7 +1035,7 @@ namespace Resgrid.Tests.Services
 			{
 				PersonnelCertificationId = 21,
 				DepartmentId = DeptId,
-				Name = ProtectedDataEnvelope.RedactionValue,
+				Filename = ProtectedDataEnvelope.RedactionValue,
 				Number = ProtectedDataEnvelope.RedactionValue
 			};
 
@@ -1008,7 +1044,7 @@ namespace Resgrid.Tests.Services
 
 			result.Success.Should().BeTrue();
 			result.Changed.Should().BeTrue("a restore with no encryption still has to be persisted");
-			edited.Name.Should().Be("rgdp:1:1:stored-name==");
+			edited.Filename.Should().Be("rgdp:1:1:stored-filename==");
 			edited.Number.Should().Be("rgdp:1:1:stored-number==");
 		}
 
@@ -1078,7 +1114,7 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
-		public async Task Unit_state_write_moves_coordinates_into_companion_envelopes_and_marks_the_row()
+		public async Task Unit_state_write_seals_the_note_and_leaves_the_position_plaintext()
 		{
 			SetupWriteEnforced();
 			SetupEncryptEcho();
@@ -1098,23 +1134,27 @@ namespace Resgrid.Tests.Services
 			result.Success.Should().BeTrue();
 			state.IsProtected.Should().BeTrue();
 			state.Note.Should().Be("rgdp:1:1:unitstates.note==");
-			state.GeoLocationData.Should().Be("rgdp:1:1:unitstates.geolocationdata==");
-			state.Latitude.Should().BeNull("the typed column nulls; the envelope companion carries the value");
-			state.ProtectedLatitudeEnvelope.Should().Be("rgdp:1:1:unitstates.latitude==");
-			state.Longitude.Should().BeNull();
-			state.ProtectedLongitudeEnvelope.Should().Be("rgdp:1:1:unitstates.longitude==");
+			// Where a unit filed its status from is operational (closest unit, maps) and stays plaintext (2026-10-17).
+			state.GeoLocationData.Should().Be("39.19,-119.76");
+			state.Latitude.Should().Be(39.19m, "the typed coordinate survives a protected write unchanged");
+			state.Longitude.Should().Be(-119.76m);
+			state.ProtectedLatitudeEnvelope.Should().BeNull("no companion envelope is written for an operational coordinate");
+			state.ProtectedLongitudeEnvelope.Should().BeNull();
 		}
 
 		[Test]
-		public async Task Unit_state_read_reveals_text_and_restores_typed_coordinates()
+		public async Task Unit_state_read_reveals_the_note_and_passes_the_typed_coordinates_through()
 		{
 			var state = new UnitState
 			{
 				UnitStateId = 55,
 				UnitId = 7,
 				Note = "rgdp:1:1:note==",
-				ProtectedLatitudeEnvelope = "rgdp:1:1:lat=="
+				GeoLocationData = "39.19,-119.76",
+				Latitude = 39.19m,
+				Longitude = -119.76m
 			};
+			IReadOnlyList<ProtectedFieldOperationItem> sentItems = null;
 			_brokerClient.Setup(x => x.DecryptAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(),
 					It.IsAny<IReadOnlyList<ProtectedFieldOperationItem>>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync((int d, string g, string r, IReadOnlyList<ProtectedFieldOperationItem> items, CancellationToken ct) =>
@@ -1125,34 +1165,42 @@ namespace Resgrid.Tests.Services
 						{
 							FieldId = i.FieldId,
 							RowKey = i.RowKey,
-							Value = i.FieldId == "unitstates.latitude" ? "39.19" : "Crew of 3, air packs on"
+							Value = "Crew of 3, air packs on"
 						}).ToList()
-					});
+					})
+				.Callback<int, string, string, IReadOnlyList<ProtectedFieldOperationItem>, CancellationToken>((d, g, r, items, ct) => sentItems = items);
 
 			var result = await _service.ResolveUnitStatesForReadAsync(DeptId, new[] { state }, IssueGrant(), UserId);
 
 			result.IsProtected.Should().BeTrue();
 			state.Note.Should().Be("Crew of 3, air packs on");
-			state.Latitude.Should().Be(39.19m, "the companion envelope restores the typed column on reveal");
+			sentItems.Select(i => i.FieldId).Should().BeEquivalentTo(new[] { "unitstates.note" }, "only the note is private");
+			state.GeoLocationData.Should().Be("39.19,-119.76");
+			state.Latitude.Should().Be(39.19m, "the coordinate is stored plaintext and never round-trips the broker");
+			state.Longitude.Should().Be(-119.76m);
 		}
 
 		[Test]
-		public async Task Unit_state_read_without_a_grant_redacts_and_leaves_coordinates_concealed()
+		public async Task Unit_state_read_without_a_grant_redacts_the_note_and_keeps_the_position_readable()
 		{
 			var state = new UnitState
 			{
 				UnitStateId = 55,
 				UnitId = 7,
 				Note = "rgdp:1:1:note==",
-				ProtectedLatitudeEnvelope = "rgdp:1:1:lat=="
+				GeoLocationData = "39.19,-119.76",
+				Latitude = 39.19m,
+				Longitude = -119.76m
 			};
 
 			var result = await _service.ResolveUnitStatesForReadAsync(DeptId, new[] { state }, null, UserId);
 
 			result.ProtectedReason.Should().Be("step_up_required");
 			state.Note.Should().Be(ProtectedDataEnvelope.RedactionValue);
-			state.Latitude.Should().BeNull();
-			result.RedactedFields.Should().Contain("unitstates.note");
+			state.GeoLocationData.Should().Be("39.19,-119.76", "the position is operational and readable without a grant");
+			state.Latitude.Should().Be(39.19m);
+			state.Longitude.Should().Be(-119.76m);
+			result.RedactedFields.Should().BeEquivalentTo(new[] { "unitstates.note" });
 		}
 
 		[Test]
@@ -1262,17 +1310,18 @@ namespace Resgrid.Tests.Services
 			_brokerClient.Setup(x => x.EncryptAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(),
 					It.IsAny<IReadOnlyList<ProtectedFieldOperationItem>>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync(new ProtectedDataBrokerResult { Success = false, ErrorCode = "broker_unavailable" });
-			var call = new Call { CallId = 17, DepartmentId = DeptId, Name = "Structure Fire" };
+			var call = new Call { CallId = 17, DepartmentId = DeptId, Name = "Structure Fire", NatureOfCall = "Smoke showing", ContactName = "Pat Caller" };
 
 			var result = await _service.PrepareCallWriteAsync(DeptId, call, null, IssueGrant(), UserId, workloadCaller: false);
 
 			result.Success.Should().BeFalse();
 			result.Reason.Should().Be("broker_unavailable");
-			call.Name.Should().Be("Structure Fire", "all-or-nothing: nothing applies on failure");
+			call.NatureOfCall.Should().Be("Smoke showing", "all-or-nothing: nothing applies on failure");
+			call.ContactName.Should().Be("Pat Caller");
 		}
 
 		[Test]
-		public async Task Note_write_moves_coordinates_into_companion_envelopes_and_marks_the_row()
+		public async Task Note_write_seals_the_text_and_leaves_the_coordinates_typed()
 		{
 			SetupWriteEnforced();
 			SetupEncryptEcho();
@@ -1283,10 +1332,11 @@ namespace Resgrid.Tests.Services
 			result.Success.Should().BeTrue();
 			note.IsProtected.Should().BeTrue();
 			note.Note.Should().Be("rgdp:1:1:callnotes.note==");
-			note.Latitude.Should().BeNull("the typed column nulls; the envelope companion carries the value");
-			note.ProtectedLatitudeEnvelope.Should().Be("rgdp:1:1:callnotes.latitude==");
-			note.Longitude.Should().BeNull();
-			note.ProtectedLongitudeEnvelope.Should().Be("rgdp:1:1:callnotes.longitude==");
+			// Where a note was made is the member's position: operational, plaintext (2026-10-17).
+			note.Latitude.Should().Be(39.19m, "the typed coordinate survives a protected write unchanged");
+			note.Longitude.Should().Be(-119.76m);
+			note.ProtectedLatitudeEnvelope.Should().BeNull("no companion envelope is written for an operational coordinate");
+			note.ProtectedLongitudeEnvelope.Should().BeNull();
 		}
 
 		[Test]
@@ -1396,18 +1446,19 @@ namespace Resgrid.Tests.Services
 			note.Note.Should().Be(ProtectedDataEnvelope.RedactionValue);
 		}
 
+		// The note text is private; the coordinates are the member's position and stay plaintext (2026-10-17).
 		private static CallNote EnvelopedNote(int noteId = 7) => new CallNote
 		{
 			CallNoteId = noteId,
 			CallId = 17,
 			Note = "rgdp:1:1:note==",
 			IsProtected = true,
-			ProtectedLatitudeEnvelope = "rgdp:1:1:lat==",
-			ProtectedLongitudeEnvelope = "rgdp:1:1:lon=="
+			Latitude = 39.1911420m,
+			Longitude = -119.7674100m
 		};
 
 		[Test]
-		public async Task Notes_redact_text_and_leave_companion_coordinates_null_without_a_grant()
+		public async Task Notes_redact_text_and_keep_the_typed_coordinates_without_a_grant()
 		{
 			var note = EnvelopedNote();
 
@@ -1415,16 +1466,17 @@ namespace Resgrid.Tests.Services
 
 			result.IsProtected.Should().BeTrue();
 			result.ProtectedReason.Should().Be("step_up_required");
-			result.RedactedFields.Should().BeEquivalentTo("callnotes.note", "callnotes.latitude", "callnotes.longitude");
+			result.RedactedFields.Should().BeEquivalentTo("callnotes.note");
 			note.Note.Should().Be(ProtectedDataEnvelope.RedactionValue);
-			note.Latitude.Should().BeNull();
-			note.Longitude.Should().BeNull();
+			note.Latitude.Should().Be(39.1911420m, "the position is operational and readable without a grant");
+			note.Longitude.Should().Be(-119.7674100m);
 		}
 
 		[Test]
-		public async Task Notes_reveal_text_and_parse_companion_coordinates_with_a_valid_grant()
+		public async Task Notes_reveal_text_with_a_valid_grant_and_never_send_the_coordinates_to_the_broker()
 		{
 			var note = EnvelopedNote();
+			IReadOnlyList<ProtectedFieldOperationItem> sentItems = null;
 			_brokerClient.Setup(x => x.DecryptAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(),
 					It.IsAny<IReadOnlyList<ProtectedFieldOperationItem>>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync((int d, string g, string r, IReadOnlyList<ProtectedFieldOperationItem> items, CancellationToken ct) =>
@@ -1435,19 +1487,16 @@ namespace Resgrid.Tests.Services
 						{
 							FieldId = i.FieldId,
 							RowKey = i.RowKey,
-							Value = i.FieldId switch
-							{
-								"callnotes.note" => "Occupant on O2",
-								"callnotes.latitude" => "39.1911420",
-								_ => "-119.7674100"
-							}
+							Value = "Occupant on O2"
 						}).ToList()
-					});
+					})
+				.Callback<int, string, string, IReadOnlyList<ProtectedFieldOperationItem>, CancellationToken>((d, g, r, items, ct) => sentItems = items);
 
 			var result = await _service.ResolveNotesForReadAsync(DeptId, new[] { note }, IssueGrant(), UserId);
 
 			result.ProtectedReason.Should().BeNull();
 			note.Note.Should().Be("Occupant on O2");
+			sentItems.Select(i => i.FieldId).Should().BeEquivalentTo(new[] { "callnotes.note" });
 			note.Latitude.Should().Be(39.1911420m);
 			note.Longitude.Should().Be(-119.7674100m);
 		}
@@ -1520,7 +1569,9 @@ namespace Resgrid.Tests.Services
 			await _service.ResolveForReadAsync(DeptId, call, IssueGrant(), UserId);
 
 			sentItems.Should().NotBeNull();
-			sentItems.Select(i => i.FieldId).Should().Contain(new[] { "calls.name", "callnotes.note", "callnotes.latitude" });
+			sentItems.Select(i => i.FieldId).Should().Contain(new[] { "calls.contactname", "callnotes.note" });
+			sentItems.Select(i => i.FieldId).Should().NotContain(new[] { "calls.name", "calls.address", "callnotes.latitude", "callnotes.longitude" },
+				"operational fields never reach the broker");
 			_brokerClient.Verify(x => x.DecryptAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(),
 				It.IsAny<IReadOnlyList<ProtectedFieldOperationItem>>(), It.IsAny<CancellationToken>()), Times.Once);
 		}

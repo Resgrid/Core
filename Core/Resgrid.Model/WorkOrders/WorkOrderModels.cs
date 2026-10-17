@@ -9,7 +9,7 @@ namespace Resgrid.Model.WorkOrders
 	public enum WorkOrderPriority { Low = 0, Normal = 1, High = 2, Emergency = 3 }
 	public enum WorkOrderType { Corrective = 0, Preventive = 1, Inspection = 2, Facility = 3, Other = 4 }
 	public enum WorkOrderActivityType { Created = 0, Updated = 1, StatusChanged = 2, Assigned = 3, AssignmentAccepted = 4, Comment = 5, LaborAdded = 6, PartAdded = 7, PartVoided = 8, FileAdded = 9, FileWithdrawn = 10, SafetyHold = 11, SafetyReleased = 12, Deferred = 13, Escalated = 14 }
-	/// <summary>Free text, monetary details and file names live only in cataloged Content. GUID identities are allocated with empty content before sealing.</summary>
+	/// <summary>Free text about people lives in a cataloged slot: ProtectedContent on a mixed table, Content on a wholly private one. GUID identities are allocated with empty content before sealing.</summary>
 	public abstract class WorkOrderRow : IEntity
 	{
 		[NotMapped, Newtonsoft.Json.JsonIgnore] public object IdValue { get => Id; set => Id = (string)value; }
@@ -27,7 +27,17 @@ namespace Resgrid.Model.WorkOrders
 		public string CreatedBy { get; set; }
 		public bool IsProtected { get; set; }
 	}
-	public sealed class WorkOrder : WorkOrderRow
+	/// <summary>
+	/// A mixed table (ADP catalog review §8, option a): <c>Content</c> keeps plaintext metadata and <c>ProtectedContent</c>,
+	/// the row's ADP slot, keeps the private members listed in <see cref="WorkOrderTables.PrivateMembers"/>.
+	/// </summary>
+	public abstract class WorkOrderSplitRow : WorkOrderRow, ISplitContentRow
+	{
+		public string ProtectedContent { get; set; }
+		[NotMapped, Newtonsoft.Json.JsonIgnore] public IReadOnlyCollection<string> PrivateMemberPaths => WorkOrderTables.PrivatePaths(TableName);
+		[NotMapped, Newtonsoft.Json.JsonIgnore] public IReadOnlyCollection<string> PrivateTextMemberPaths => WorkOrderTables.PrivatePaths(TableName).Where(path => path != "RatePerHour").ToArray();
+	}
+	public sealed class WorkOrder : WorkOrderSplitRow
 	{
 		// Pins department currency at creation, including worker-generated orders with deferred content.
 		public string CurrencyCode { get; set; }
@@ -81,14 +91,14 @@ namespace Resgrid.Model.WorkOrders
 		public int? EscalationRoleId { get; set; }
 		public bool IsDeleted { get; set; }
 	}
-	public sealed class WorkOrderActivity : WorkOrderRow
+	public sealed class WorkOrderActivity : WorkOrderSplitRow
 	{
 		public int ActivityType { get; set; }
 		public int? OldStatus { get; set; }
 		public int? NewStatus { get; set; }
 	}
-	public sealed class WorkOrderLabor : WorkOrderRow { public string UserId { get; set; } public DateTime WorkDate { get; set; } }
-	public sealed class WorkOrderPart : WorkOrderRow
+	public sealed class WorkOrderLabor : WorkOrderSplitRow { public string UserId { get; set; } public DateTime WorkDate { get; set; } }
+	public sealed class WorkOrderPart : WorkOrderSplitRow
 	{
 		public bool Staged { get; set; }
 		public string ReservedLocationId { get; set; }
@@ -159,7 +169,48 @@ namespace Resgrid.Model.WorkOrders
 			[typeof(WorkOrderRecurrence)] = "WorkOrderRecurrences", [typeof(WorkOrderRecurrenceVersion)] = "WorkOrderRecurrenceVersions",
 			[typeof(WorkOrderMeterReading)] = "WorkOrderMeterReadings", [typeof(WorkOrderRecurrenceChange)] = "WorkOrderRecurrenceChanges"
 		};
-		public static IReadOnlyDictionary<string, (Func<T, string> Get, Action<T, string> Set)> Fields<T>() where T : WorkOrderRow =>
-			new Dictionary<string, (Func<T, string>, Action<T, string>)> { [All[typeof(T)].ToLowerInvariant() + ".content"] = (x => x.Content, (x, v) => x.Content = v) };
+		/// <summary>
+		/// Tables whose Content can hold free text about people (descriptions, causes, notes, reasons, evidence, a person's
+		/// labour rate) and stays ADP-protected. Policies, operation receipts and recurrence names are configuration, and
+		/// failure intents are never written; their Content is not protected (2026-10-17).
+		/// </summary>
+		public static readonly IReadOnlyCollection<string> ProtectedContent = new HashSet<string>(StringComparer.Ordinal)
+		{
+			"WorkOrders", "WorkOrderActivities", "WorkOrderLabors", "WorkOrderParts", "WorkOrderFiles", "WorkOrderVendorCharges",
+			"WorkOrderPartMovements", "WorkOrderSafetyHolds", "WorkOrderRecurrenceVersions", "WorkOrderMeterReadings", "WorkOrderRecurrenceChanges"
+		};
+		public static bool IsProtected(Type type) => ProtectedContent.Contains(All[type]);
+		private static string[] OrderText(string prefix) => new[] { "Description", "Resolution", "Cause", "VerificationEvidence", "QualifiedPersonnel", "VendorDetails", "Approval.Reason" }.Select(name => prefix + name).ToArray();
+		/// <summary>
+		/// The private members of each mixed table's Content (ADP catalog review §8, option a, 2026-10-17): free text that can
+		/// describe or name a person, and a person's labour rate. They are stored, and sealed, in ProtectedContent; the rest of
+		/// Content (titles, locations, costs, references, steps, approval state, part descriptions, vendor names, meter values,
+		/// dates and ids) is plaintext metadata. Files and safety holds stay wholly protected in Content. M0274 split the
+		/// existing rows with a frozen copy of this map: change it only together with a migration.
+		/// </summary>
+		public static readonly IReadOnlyDictionary<string, string[]> PrivateMembers = new Dictionary<string, string[]>(StringComparer.Ordinal)
+		{
+			["WorkOrders"] = OrderText("Fields."),
+			["WorkOrderActivities"] = new[] { "Note" }.Concat(OrderText("Snapshot.")).ToArray(),
+			["WorkOrderLabors"] = new[] { "RatePerHour", "Note" },
+			["WorkOrderParts"] = new[] { "VoidReason" },
+			["WorkOrderVendorCharges"] = new[] { "Description" },
+			["WorkOrderPartMovements"] = new[] { "Reason" },
+			["WorkOrderRecurrenceVersions"] = new[] { "Reason" }.Concat(OrderText("Template.Content.")).ToArray(),
+			["WorkOrderMeterReadings"] = new[] { "Note" },
+			["WorkOrderRecurrenceChanges"] = new[] { "Note" }
+		};
+		public static IReadOnlyCollection<string> PrivatePaths(string table) => table != null && PrivateMembers.TryGetValue(table, out var paths) ? paths : Array.Empty<string>();
+		/// <summary>The column a protected table seals: ProtectedContent for a mixed table, Content for a wholly private one.</summary>
+		public static string SealedColumn(string table) => PrivateMembers.ContainsKey(table) ? "ProtectedContent" : "Content";
+		public static IReadOnlyDictionary<string, (Func<T, string> Get, Action<T, string> Set)> Fields<T>() where T : WorkOrderRow
+		{
+			if (!IsProtected(typeof(T)))
+				return new Dictionary<string, (Func<T, string>, Action<T, string>)>();
+			var table = All[typeof(T)];
+			return PrivateMembers.ContainsKey(table)
+				? new Dictionary<string, (Func<T, string>, Action<T, string>)> { [table.ToLowerInvariant() + ".protectedcontent"] = (x => ((ISplitContentRow)x).ProtectedContent, (x, v) => ((ISplitContentRow)x).ProtectedContent = v) }
+				: new Dictionary<string, (Func<T, string>, Action<T, string>)> { [table.ToLowerInvariant() + ".content"] = (x => x.Content, (x, v) => x.Content = v) };
+		}
 	}
 }

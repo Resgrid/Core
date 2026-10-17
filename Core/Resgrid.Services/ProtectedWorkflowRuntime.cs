@@ -510,7 +510,6 @@ namespace Resgrid.Services
 			ProtectedWorkflowFieldCatalog.FormDataFieldId => "{\"outcome\":\"Referred to follow-up care\",\"follow_up_required\":\"yes\",\"sample\":true}",
 			"calls.completednotes" => "SAMPLE: client stabilized on scene, referred to county follow-up (synthetic test data)",
 			"calls.contactnumber" => "555-0100",
-			"calls.geolocationdata" => "0,0",
 			_ => $"SAMPLE {field.TemplateName} (synthetic test data)"
 		};
 

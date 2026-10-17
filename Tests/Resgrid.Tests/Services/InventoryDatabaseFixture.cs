@@ -123,7 +123,8 @@ CREATE TABLE {Q("DeploymentTimeReports")} ({Q("Id")} int PRIMARY KEY, {Q("Depart
                 _type == DatabaseTypes.Postgres ? new M0207_AddWorkOrderOperationsPg() : new M0207_AddWorkOrderOperations(),
                 _type == DatabaseTypes.Postgres ? new M0225_AddMaintenanceAssigneesPg() : new M0225_AddMaintenanceAssignees(),
                 _type == DatabaseTypes.Postgres ? new M0226_AddWorkOrderCurrencyPg() : new M0226_AddWorkOrderCurrency(),
-                _type == DatabaseTypes.Postgres ? new M0268_AddDocumentNumberingPg() : new M0268_AddDocumentNumbering()
+                _type == DatabaseTypes.Postgres ? new M0268_AddDocumentNumberingPg() : new M0268_AddDocumentNumbering(),
+                _type == DatabaseTypes.Postgres ? new M0274_SplitModuleProtectedContentPg() : new M0274_SplitModuleProtectedContent()
 			});
 			_runner = new ServiceCollection().AddFluentMigratorCore().ConfigureRunner(r =>
 			{

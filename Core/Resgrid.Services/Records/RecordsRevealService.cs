@@ -71,11 +71,6 @@ namespace Resgrid.Services.Records
 						fields[$"{accessor.Key}:{key(row)}"] = accessor.Value.Get(row);
 			}
 			if (aggregate.Narrative != null) Add(new[] { aggregate.Narrative }, n => n.RmsNarrativeId, RmsProtectedFields.Narratives);
-			if (aggregate.Location != null)
-			{
-				Add(new[] { aggregate.Location }, l => l.RmsLocationId, RmsProtectedFields.Locations);
-				fields[$"rmslocations.coordinates:{aggregate.Location.RmsLocationId}"] = aggregate.Location.Latitude.HasValue ? aggregate.Location.Latitude + ", " + aggregate.Location.Longitude : "-";
-			}
 			Add(aggregate.Facts, f => f.RmsSourceFactId, RmsProtectedFields.SourceFacts);
 			Add(aggregate.Exposures, e => e.RmsExposureId, RmsProtectedFields.Exposures);
 			Add(aggregate.Resources, r => r.RmsIncidentResourceId, RmsProtectedFields.Resources);

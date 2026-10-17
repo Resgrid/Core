@@ -88,15 +88,15 @@ namespace Resgrid.Model.WorkOrders
         public int? EscalationRoleId { get; set; }
     }
     /// <summary>Immutable protected instructions/configuration; generated orders retain this identity.</summary>
-    public sealed class WorkOrderRecurrenceVersion : WorkOrderRow { public string RecurrenceId { get; set; } }
-    public sealed class WorkOrderMeterReading : WorkOrderRow
+    public sealed class WorkOrderRecurrenceVersion : WorkOrderSplitRow { public string RecurrenceId { get; set; } }
+    public sealed class WorkOrderMeterReading : WorkOrderSplitRow
     {
         public string RecurrenceId { get; set; }
         public string RequestId { get; set; }
         public int MeterEpoch { get; set; }
         public DateTime ObservedOn { get; set; }
     }
-    public sealed class WorkOrderRecurrenceChange : WorkOrderRow { public string RecurrenceId { get; set; } public int ChangeType { get; set; } public DateTime? OriginalDueOn { get; set; } public DateTime? RevisedDueOn { get; set; } }
+    public sealed class WorkOrderRecurrenceChange : WorkOrderSplitRow { public string RecurrenceId { get; set; } public int ChangeType { get; set; } public DateTime? OriginalDueOn { get; set; } public DateTime? RevisedDueOn { get; set; } }
     public sealed class WorkOrderRecurrenceInput
     {
         public string Id { get; set; }

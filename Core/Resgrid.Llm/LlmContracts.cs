@@ -5,7 +5,8 @@ namespace Resgrid.Llm;
 public sealed record LlmTool(string Name, string Description, JsonElement Parameters);
 public sealed record LlmToolCall(string Id, string Name, string Arguments);
 public sealed record LlmMessage(string Role, string? Content, IReadOnlyList<LlmToolCall>? ToolCalls = null, string? ToolCallId = null);
-public sealed record LlmRequest(string Model, IReadOnlyList<LlmMessage> Messages, IReadOnlyList<LlmTool> Tools, int MaxOutputTokens = 512);
+/// <param name="CacheSalt">Opaque per-department prefix-cache partition (vLLM <c>cache_salt</c>); null sends none.</param>
+public sealed record LlmRequest(string Model, IReadOnlyList<LlmMessage> Messages, IReadOnlyList<LlmTool> Tools, int MaxOutputTokens = 512, string? CacheSalt = null);
 public sealed record LlmResult(string? Content, IReadOnlyList<LlmToolCall> ToolCalls, int InputTokens, int OutputTokens, string FinishReason);
 public interface ILlmClient
 {

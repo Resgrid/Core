@@ -6936,4 +6936,13 @@
   <data xml:space="preserve" name="FieldHelp.UnitStatusThresholds.AcknowledgementNoteRequirement">
     <value>Ob das Bestätigen oder Stummschalten eines Statustimer-Alarms eine Begründung erfordert: optional, erforderlich bei Alarmen oder erforderlich bei Warnungen und Alarmen. Timer und Einheitenstatus bleiben unverändert.</value>
   </data>
+  <data name="Rule.unit-status-timers" xml:space="preserve">
+    <value>Alarmierte Einheiten ohne Zeitüberwachung</value>
+  </data>
+  <data name="RuleWhy.unit-status-timers" xml:space="preserve">
+    <value>Einheitenstatus-Timer sind festgelegt, aber einige Einheitentypen erhalten bei der Alarmierung einen Status ohne Bedeutung oder eine Bedeutung ohne Timer. Das Big Board markiert diese Einheiten nie, egal wie lange sie warten.</value>
+  </data>
+  <data name="RuleNext.unit-status-timers" xml:space="preserve">
+    <value>Geben Sie dem Alarmierungsstatus unter Benutzerdefinierte Status eine Bedeutung oder legen Sie in den Karteneinstellungen einen Timer für seine Bedeutung fest.</value>
+  </data>
 </root>

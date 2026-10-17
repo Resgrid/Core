@@ -52,8 +52,15 @@ namespace Resgrid.Tests.Services
 			var catalog = new ProtectedFieldCatalog();
 			var originalTables = InventoryTables.All.Values.Except(new[] { "RecordInventoryUsages", "InventoryVendors", "InventoryPurchaseOrders", "InventoryPurchaseOrderItems", "InventoryCounts", "InventoryCountItems", "InventoryAlerts", "InventoryAlertDeliveries" }).ToArray();
 			originalTables.Should().HaveCount(13);
+			// Only the original tables that can hold notes about people are catalogued (2026-10-17), and of those only the
+			// private members (ProtectedContent) are sealed (review §8); the others are metadata.
 			foreach (var table in originalTables)
-				catalog.GetForTable(table).Should().ContainSingle().Which.AddedInCatalogVersion.Should().Be(19);
+			{
+				if (!InventoryTables.ProtectedContent.Contains(table)) { catalog.GetForTable(table).Should().BeEmpty(table); continue; }
+				catalog.GetForTable(table).Should().ContainSingle().Which.FieldId.Should().Be(table.ToLowerInvariant() + ".protectedcontent");
+				catalog.GetForTable(table).Single().AddedInCatalogVersion.Should().Be(19);
+			}
+			originalTables.Where(InventoryTables.ProtectedContent.Contains).Should().BeEquivalentTo(new[] { "InventoryTransactions", "InventoryOperations", "InventoryIssuances" });
 			catalog.GetForTable("RecordInventoryUsages").Should().ContainSingle().Which.AddedInCatalogVersion.Should().Be(20);
 			catalog.GetForTableAndVersion("RecordInventoryUsages", 19).Should().BeEmpty();
 			var binding = AdpTableBindings.ForVersionRange(catalog, 19, 20).Should().ContainSingle().Which;
@@ -75,7 +82,8 @@ namespace Resgrid.Tests.Services
 				catalog.GetForTableAndVersion(binding.TableName, 20).Should().BeEmpty();
 				binding.PkColumn.Should().Be("Id"); binding.PkIsNumeric.Should().BeFalse();
 				binding.DepartmentColumn.Should().Be("DepartmentId"); binding.ProtectedMarkerColumn.Should().Be("IsProtected");
-				binding.Columns.Select(c => c.FieldId).Should().Equal(binding.TableName.ToLowerInvariant() + ".content");
+				// Vendors stay wholly sealed; an order's and a line's notes are their only private members (review §8).
+				binding.Columns.Select(c => c.FieldId).Should().Equal(binding.TableName.ToLowerInvariant() + "." + InventoryTables.SealedColumn(binding.TableName).ToLowerInvariant());
 			}
 			catalog.GetForTable("RecordInventoryUsages").Should().ContainSingle().Which.AddedInCatalogVersion.Should().Be(20);
 		}

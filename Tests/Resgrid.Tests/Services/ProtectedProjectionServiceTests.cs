@@ -152,14 +152,22 @@ namespace Resgrid.Tests.Services
 			safe.Should().NotBeSameAs(call);
 			safe.CallId.Should().Be(1001);
 			safe.Number.Should().Be("2026-134", "the system-generated call number is allowlisted");
-			safe.Name.Should().Be("2026-134");
+			// The call's name, address and location are operational (2026-10-17) and survive the sanitized clone.
+			safe.Name.Should().Be("Cardiac Arrest - Smith Residence");
+			safe.Address.Should().Be("123 Main St");
+			safe.GeoLocationData.Should().Be("39.1,-84.5");
+			// Every catalogued field is withheld.
 			safe.NatureOfCall.Should().Be(ProtectedProjectionService.GenericDispatchText);
-			safe.Address.Should().BeNull();
-			safe.GeoLocationData.Should().BeNull();
 			safe.ContactName.Should().BeNull();
 			safe.ContactNumber.Should().BeNull();
 			safe.Notes.Should().BeNull();
 			safe.Priority.Should().Be(3, "priority/color routing survives");
+
+			// An envelope-shaped operational value is never passed on; the name falls back to the call number.
+			var enveloped = ProtectedCall(); enveloped.Name = "rgdp:1:1:name=="; enveloped.Address = "rgdp:1:1:address==";
+			var fallback = await _service.BuildNotificationSafeCallAsync(DeptId, enveloped, Resgrid.Model.ProtectedDataEgressChannel.Sms);
+			fallback.Name.Should().Be("2026-134");
+			fallback.Address.Should().BeNull();
 		}
 
 		[Test]

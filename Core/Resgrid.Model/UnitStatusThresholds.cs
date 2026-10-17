@@ -58,6 +58,23 @@ namespace Resgrid.Model
 		[ProtoMember(2)]
 		public UnitStatusAlertNoteRequirements AcknowledgementNoteRequirement { get; set; }
 
+		/// <summary>
+		/// The meanings a timer can be set for: statuses where "how long has it been like this?" is an operationally useful
+		/// question. There is no value in warning that a unit has been "available" too long.
+		/// </summary>
+		public static readonly IReadOnlyList<ActionBaseTypes> TimeableBaseTypes = new[]
+		{
+			ActionBaseTypes.Dispatched,
+			ActionBaseTypes.Responding,
+			ActionBaseTypes.Enroute,
+			ActionBaseTypes.OnScene,
+			ActionBaseTypes.Staging,
+			ActionBaseTypes.AtPatient,
+			ActionBaseTypes.Transporting,
+			ActionBaseTypes.AtHospital,
+			ActionBaseTypes.Returning
+		};
+
 		public bool IsEmpty => Thresholds == null || Thresholds.Count == 0;
 
 		public UnitStatusThreshold Find(int baseType) => Thresholds?.FirstOrDefault(x => x.BaseType == baseType);

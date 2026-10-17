@@ -301,10 +301,13 @@ namespace Resgrid.Tests.Web.Services
 
 			var result = response.Result.Should().BeOfType<OkObjectResult>().Subject.Value
 				.Should().BeOfType<CallResult>().Subject;
-			result.Data.Name.Should().Be("Protected incident — open Resgrid to view details.");
+			// The call's name and address are operational (2026-10-17) and survive the shell; the private fields do not.
+			result.Data.Name.Should().Be("Cardiac Arrest - Smith Residence");
+			result.Data.Address.Should().Be("123 Main St");
 			result.Data.Nature.Should().BeNull();
-			result.Data.Address.Should().BeNull();
+			result.Data.Note.Should().BeNull();
 			result.Data.ContactName.Should().BeNull();
+			result.Data.ContactInfo.Should().BeNull();
 			result.Data.Number.Should().Be("2026-134", "the system-generated call number is allowlisted");
 			result.Data.UdfValues.Should().BeNullOrEmpty("submitted UDF free text is suppressed for the shell");
 		}

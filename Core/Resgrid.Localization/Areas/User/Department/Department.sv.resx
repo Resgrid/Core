@@ -1535,4 +1535,25 @@
   <data name="UnitStatusAlertNoteRequirement_Always" xml:space="preserve">
     <value>Krävs för varningar och larm</value>
   </data>
+  <data name="UnitStatusTimerWarningsHeader" xml:space="preserve">
+    <value>Vissa enheter kan inte tidsövervakas</value>
+  </data>
+  <data name="UnitStatusTimerDispatchNoMeaning" xml:space="preserve">
+    <value>Vid utlarmning får {0} statusen "{1}", som saknar betydelse, så utlarmade enheter tidsövervakas aldrig. Ge "{1}" en betydelse (till exempel Utlarmad) under Anpassade statusar.</value>
+  </data>
+  <data name="UnitStatusTimerDispatchNoTimer" xml:space="preserve">
+    <value>Vid utlarmning får {0} statusen "{1}" ({2}), men ingen timer är inställd för {2}.</value>
+  </data>
+  <data name="UnitStatusTimerSetNoMeaning" xml:space="preserve">
+    <value>Statusuppsättningen "{0}" (används av {1}) har statusar utan betydelse, som ingen timer kan gälla för: {2}.</value>
+  </data>
+  <data name="UnitStatusTimerWarningsCustomStatuses" xml:space="preserve">
+    <value>Redigera anpassade statusar</value>
+  </data>
+  <data name="UnitStatusTimerWarningsDispatchSettings" xml:space="preserve">
+    <value>Redigera utlarmningsinställningar</value>
+  </data>
+  <data name="UnitStatusOverrideNoMeaning" xml:space="preserve">
+    <value>{0}: åsidosättningen sätter "{1}" vid {2}, men den statusen saknar betydelse, så statustimrar, frisläppningsregler och insatskort kan inte känna igen den. Ge den en betydelse under Anpassade statusar.</value>
+  </data>
 </root>

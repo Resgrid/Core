@@ -5,9 +5,11 @@ namespace Resgrid.Model.Workforce
 {
 	/// <summary>
 	/// ADP catalog 28 (Workforce &amp; Business Operations plan, Phase E; registered with M0220–M0224): every value that
-	/// identifies or prices a person — employer / affiliate / contractor identifiers and addresses, external worker keys,
-	/// compensation amounts, pay and cost components, approved payroll cost, annual earnings, demographic responses,
-	/// report snapshots, aggregate rows, remarks and export files. Personnel family (ViewProtectedPersonnelData).
+	/// identifies or prices a person — employer / affiliate / contractor FEIN, SEIN and SOS numbers, affiliate addresses,
+	/// the filing contact, contractor contact details, compensation amounts, pay and cost components, approved payroll cost,
+	/// annual earnings, demographic responses, report snapshots, aggregate rows, remarks and export files. Personnel family
+	/// (ViewProtectedPersonnelData). The employer's EDD and headquarters addresses, establishment addresses and a worker's
+	/// payroll key and display label are operational and left the catalog on 2026-10-17 (Shawn).
 	/// Hours, dates, codes, counts and run totals are routing metadata. Accessor maps drive the generic RMS seams;
 	/// costing and reporting workloads decrypt through the <c>workforce-costing</c> / <c>pay-data-reporting</c> purposes.
 	/// </summary>
@@ -28,8 +30,6 @@ namespace Resgrid.Model.Workforce
 			("workforceemployerprofiles.fein", e => e.Fein, (e, v) => e.Fein = v),
 			("workforceemployerprofiles.sein", e => e.Sein, (e, v) => e.Sein = v),
 			("workforceemployerprofiles.sosnumber", e => e.SosNumber, (e, v) => e.SosNumber = v),
-			("workforceemployerprofiles.eddaddress", e => e.EddAddress, (e, v) => e.EddAddress = v),
-			("workforceemployerprofiles.headquartersaddress", e => e.HeadquartersAddress, (e, v) => e.HeadquartersAddress = v),
 			("workforceemployerprofiles.filingcontactname", e => e.FilingContactName, (e, v) => e.FilingContactName = v),
 			("workforceemployerprofiles.filingcontactemail", e => e.FilingContactEmail, (e, v) => e.FilingContactEmail = v),
 			("workforceemployerprofiles.filingcontactphone", e => e.FilingContactPhone, (e, v) => e.FilingContactPhone = v));
@@ -40,16 +40,13 @@ namespace Resgrid.Model.Workforce
 			("workforceaffiliatedentities.sosnumber", e => e.SosNumber, (e, v) => e.SosNumber = v),
 			("workforceaffiliatedentities.headquartersaddress", e => e.HeadquartersAddress, (e, v) => e.HeadquartersAddress = v));
 
-		public static readonly IReadOnlyDictionary<string, (Func<WorkforceEstablishment, string> Get, Action<WorkforceEstablishment, string> Set)> Establishment = Map<WorkforceEstablishment>(
-			("workforceestablishments.physicaladdress", e => e.PhysicalAddress, (e, v) => e.PhysicalAddress = v));
+		public static readonly IReadOnlyDictionary<string, (Func<WorkforceEstablishment, string> Get, Action<WorkforceEstablishment, string> Set)> Establishment = Map<WorkforceEstablishment>();
 
 		public static readonly IReadOnlyDictionary<string, (Func<WorkforceLaborContractor, string> Get, Action<WorkforceLaborContractor, string> Set)> Contractor = Map<WorkforceLaborContractor>(
 			("workforcelaborcontractors.fein", e => e.Fein, (e, v) => e.Fein = v),
 			("workforcelaborcontractors.contactdetails", e => e.ContactDetails, (e, v) => e.ContactDetails = v));
 
-		public static readonly IReadOnlyDictionary<string, (Func<WorkforceWorker, string> Get, Action<WorkforceWorker, string> Set)> Worker = Map<WorkforceWorker>(
-			("workforceworkers.externalworkerkey", e => e.ExternalWorkerKey, (e, v) => e.ExternalWorkerKey = v),
-			("workforceworkers.displaylabel", e => e.DisplayLabel, (e, v) => e.DisplayLabel = v));
+		public static readonly IReadOnlyDictionary<string, (Func<WorkforceWorker, string> Get, Action<WorkforceWorker, string> Set)> Worker = Map<WorkforceWorker>();
 
 		public static readonly IReadOnlyDictionary<string, (Func<EmployeeCompensationProfile, string> Get, Action<EmployeeCompensationProfile, string> Set)> Compensation = Map<EmployeeCompensationProfile>(
 			("employeecompensationprofiles.baseamount", e => e.BaseAmount, (e, v) => e.BaseAmount = v),
@@ -103,8 +100,6 @@ namespace Resgrid.Model.Workforce
 			yield return ("WorkforceEmployerProfiles", "Fein", false);
 			yield return ("WorkforceEmployerProfiles", "Sein", false);
 			yield return ("WorkforceEmployerProfiles", "SosNumber", false);
-			yield return ("WorkforceEmployerProfiles", "EddAddress", false);
-			yield return ("WorkforceEmployerProfiles", "HeadquartersAddress", false);
 			yield return ("WorkforceEmployerProfiles", "FilingContactName", false);
 			yield return ("WorkforceEmployerProfiles", "FilingContactEmail", false);
 			yield return ("WorkforceEmployerProfiles", "FilingContactPhone", false);
@@ -112,11 +107,8 @@ namespace Resgrid.Model.Workforce
 			yield return ("WorkforceAffiliatedEntities", "Sein", false);
 			yield return ("WorkforceAffiliatedEntities", "SosNumber", false);
 			yield return ("WorkforceAffiliatedEntities", "HeadquartersAddress", false);
-			yield return ("WorkforceEstablishments", "PhysicalAddress", false);
 			yield return ("WorkforceLaborContractors", "Fein", false);
 			yield return ("WorkforceLaborContractors", "ContactDetails", false);
-			yield return ("WorkforceWorkers", "ExternalWorkerKey", false);
-			yield return ("WorkforceWorkers", "DisplayLabel", false);
 			yield return ("EmployeeCompensationProfiles", "BaseAmount", false);
 			yield return ("EmployeeCompensationProfiles", "RegularHourlyEquivalent", false);
 			yield return ("EmployeeCompensationProfiles", "RateMultipliersJson", false);
@@ -144,11 +136,11 @@ namespace Resgrid.Model.Workforce
 			yield return ("PayDataExportArtifacts", "Data", true);
 		}
 
-		/// <summary>Tables bound directly on DepartmentId with the IsProtected marker (every Phase E table carries one).</summary>
+		/// <summary>Tables bound directly on DepartmentId with the IsProtected marker. WorkforceEstablishments and WorkforceWorkers keep the column but are no longer bound (2026-10-17).</summary>
 		public static readonly IReadOnlyList<(string Table, string PkColumn)> Tables = new[]
 		{
-			("WorkforceEmployerProfiles", "WorkforceEmployerProfileId"), ("WorkforceAffiliatedEntities", "WorkforceAffiliatedEntityId"), ("WorkforceEstablishments", "WorkforceEstablishmentId"),
-			("WorkforceLaborContractors", "WorkforceLaborContractorId"), ("WorkforceWorkers", "WorkforceWorkerId"),
+			("WorkforceEmployerProfiles", "WorkforceEmployerProfileId"), ("WorkforceAffiliatedEntities", "WorkforceAffiliatedEntityId"),
+			("WorkforceLaborContractors", "WorkforceLaborContractorId"),
 			("EmployeeCompensationProfiles", "EmployeeCompensationProfileId"), ("EmployeePayComponents", "EmployeePayComponentId"), ("EmployeeCostComponents", "EmployeeCostComponentId"),
 			("WorkforceWorkEntries", "WorkforceWorkEntryId"), ("WorkforceAnnualPayFacts", "WorkforceAnnualPayFactId"), ("FieldCostLines", "FieldCostLineId"),
 			("PayDataReportingDemographics", "PayDataReportingDemographicId"), ("PayDataReportRuns", "PayDataReportRunId"), ("PayDataReportEmployeeSnapshots", "PayDataReportEmployeeSnapshotId"),

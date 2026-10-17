@@ -6936,4 +6936,13 @@
   <data xml:space="preserve" name="FieldHelp.UnitStatusThresholds.AcknowledgementNoteRequirement">
     <value>Om kvittering eller tystning av ett statustimerlarm kräver en orsak: valfri, krävs för larm eller krävs för varningar och larm. Ändrar inte timrarna eller enhetens status.</value>
   </data>
+  <data name="Rule.unit-status-timers" xml:space="preserve">
+    <value>Utlarmade enheter som inte kan tidsövervakas</value>
+  </data>
+  <data name="RuleWhy.unit-status-timers" xml:space="preserve">
+    <value>Statustimrar för enheter är inställda, men vissa enhetstyper får vid utlarmning en status utan betydelse eller en betydelse utan timer. Big Board flaggar aldrig de enheterna, hur länge de än väntar.</value>
+  </data>
+  <data name="RuleNext.unit-status-timers" xml:space="preserve">
+    <value>Ge utlarmningsstatusen en betydelse under Anpassade statusar, eller ställ in en timer för dess betydelse under Kartinställningar.</value>
+  </data>
 </root>

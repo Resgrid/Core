@@ -20,13 +20,15 @@ namespace Resgrid.Tests.Services
 		{
 			var catalog = new ProtectedFieldCatalog();
 			var bindings = AdpTableBindings.ForVersionRange(catalog, 21, 22).ToArray();
-			bindings.Select(b => b.TableName).Should().BeEquivalentTo(new[] { "InventoryCounts", "InventoryCountItems", "InventoryAlerts", "InventoryAlertDeliveries" });
+			// Count lines (item names, units, costs) and alert lifecycle rows are metadata (2026-10-17): only a count's note is sealed.
+			bindings.Select(b => b.TableName).Should().BeEquivalentTo(new[] { "InventoryCounts" });
+			foreach (var table in new[] { "InventoryCountItems", "InventoryAlerts", "InventoryAlertDeliveries" }) catalog.GetForTable(table).Should().BeEmpty(table);
 			foreach (var binding in bindings)
 			{
 				catalog.GetForTable(binding.TableName).Should().ContainSingle().Which.AddedInCatalogVersion.Should().Be(22);
 				catalog.GetForTableAndVersion(binding.TableName, 21).Should().BeEmpty();
 				binding.DepartmentColumn.Should().Be("DepartmentId"); binding.PkColumn.Should().Be("Id");
-				binding.Columns.Select(c => c.FieldId).Should().Equal(binding.TableName.ToLowerInvariant() + ".content");
+				binding.Columns.Select(c => c.FieldId).Should().Equal(binding.TableName.ToLowerInvariant() + ".protectedcontent");
 			}
 		}
 

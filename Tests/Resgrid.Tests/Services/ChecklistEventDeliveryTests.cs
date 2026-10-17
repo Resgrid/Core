@@ -61,8 +61,10 @@ namespace Resgrid.Tests.Services
 			_bus.AddAsyncListener<DomainEventDispatchedEvent>(e => { delivered = e; return Task.CompletedTask; });
 			(await _outbox.DispatchAfterCommitAsync(new[] { entry.DomainEventOutboxId })).Should().Be(1);
 			var payload = JObject.Parse(delivered.PayloadJson);
-			payload["Score"].Value<string>().Should().Be("REDACTED"); payload["Passed"].Value<string>().Should().Be("REDACTED"); payload["TargetId"].Value<string>().Should().Be("REDACTED");
-			payload["is_redacted"].Value<bool>().Should().BeTrue(); payload["catalog_version"].Value<int>().Should().Be(new ProtectedFieldCatalog().Version);
+			// Score / Passed are outcome state (catalog 15 retired 2026-10-17) and route typed; the person target stays withheld.
+			payload["Score"].Value<decimal>().Should().Be(87.25m); payload["Passed"].Value<bool>().Should().BeFalse(); payload["TargetId"].Value<string>().Should().Be("REDACTED");
+			payload["is_redacted"].Value<bool>().Should().BeTrue(); payload["redacted_fields"].Values<string>().Should().BeEquivalentTo(new[] { "TargetId" });
+			payload["catalog_version"].Value<int>().Should().Be(new ProtectedFieldCatalog().Version);
 			entry.PayloadJson.Should().StartWith("rgdp:").And.NotContain("87.25").And.NotContain("person-42");
 			_history.Decrypt(42, "domaineventoutbox.payloadjson", entry.DomainEventOutboxId.ToString(), entry.PayloadJson).Should().Contain("87.25").And.NotContain("person-42");
 		}
@@ -100,7 +102,8 @@ namespace Resgrid.Tests.Services
 			string delivered = null;
 			_bus.AddAsyncListener<DomainEventDispatchedEvent>(e => { delivered = e.PayloadJson; return Task.CompletedTask; });
 			(await _outbox.DispatchAfterCommitAsync(new[] { entry.DomainEventOutboxId })).Should().Be(1);
-			delivered.Should().NotContain("CANARY").And.NotContain("87.25").And.NotContain("person-42").And.NotContain("rgdp:");
+			delivered.Should().NotContain("CANARY").And.NotContain("person-42").And.NotContain("rgdp:");
+			JObject.Parse(delivered)["Score"].Value<decimal>().Should().Be(87.25m, "the routing copy carries the typed outcome without decrypting history");
 			entry.PayloadJson.Should().Be(encrypted);
 			_history.Decrypt(42, "domaineventoutbox.payloadjson", entry.DomainEventOutboxId.ToString(), entry.PayloadJson).Should().Contain("SYNTHETIC-PHI-CANARY");
 			_history.Broker.Invocations.Should().OnlyContain(i => i.Method.Name == "EncryptAsync");
@@ -125,7 +128,7 @@ namespace Resgrid.Tests.Services
 			_policy.Setup(s => s.IsProtectionEnforcedAsync(42)).ReturnsAsync(true);
 			(await _outbox.DispatchAfterCommitAsync(new[] { entry.DomainEventOutboxId })).Should().Be(1);
 			attempts.Should().HaveCount(2); attempts[1].WorkflowRunId.Should().Be(attempts[0].WorkflowRunId);
-			attempts[1].EventPayloadJson.Should().NotContain("87.25").And.NotContain("CANARY");
+			attempts[1].EventPayloadJson.Should().NotContain("CANARY").And.NotContain("person-42");
 			runs.Verify(s => s.InsertAsync(It.IsAny<WorkflowRun>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Once);
 		}
 		[TestCase(69), TestCase(164), TestCase(165)]
@@ -156,11 +159,19 @@ namespace Resgrid.Tests.Services
 			var safe = await ChecklistWorkflowPayload.ProjectAsync(42, queued, _projection, wrapped: true);
 			_policy.Setup(s => s.IsProtectionEnforcedAsync(42)).ReturnsAsync(false);
 			safe = await ChecklistWorkflowPayload.ProjectAsync(42, JObject.Parse(safe), _projection, wrapped: true);
-			safe.Should().NotContain("CANARY").And.NotContain("87.25");
+			safe.Should().NotContain("CANARY").And.NotContain("person-42", "a target withheld once is not restored by a later policy change");
 			var builder = new WorkflowTemplateContextBuilder(Mock.Of<IDepartmentsService>(), Mock.Of<IDepartmentSettingsService>(), Mock.Of<IUserProfileService>(), Mock.Of<IDepartmentGroupsService>(), Mock.Of<IPersonnelRolesService>(), Mock.Of<IUnitsService>(), Mock.Of<IDepartmentMemberSensitiveDataService>(), Mock.Of<IDepartmentProfileMediaService>());
 			var context = (ScriptObject)await builder.BuildContextAsync(42, WorkflowTriggerEventType.ChecklistCompleted, safe, CancellationToken.None);
-			var text = Template.Parse("{{ checklist.score }}|{{ checklist.passed }}|{{ protection.is_redacted }}").Render(context);
-			text.Should().Be("REDACTED|REDACTED|true");
+			var text = Template.Parse("{{ checklist.score }}|{{ checklist.passed }}|{{ checklist.target_id }}|{{ protection.is_redacted }}").Render(context);
+			text.Should().Be("87.25|false|REDACTED|true", "outcomes are state and render typed; the withheld target stays withheld");
+
+			// A legacy queued payload whose outcome was already withheld keeps the placeholder after protection is turned off.
+			_policy.Setup(s => s.IsProtectionEnforcedAsync(42)).ReturnsAsync(false);
+			var legacy = JObject.Parse(safe); legacy["Payload"]["Score"] = "REDACTED"; legacy["Payload"]["Passed"] = "REDACTED";
+			var replayed = JObject.Parse(await ChecklistWorkflowPayload.ProjectAsync(42, legacy, _projection, wrapped: true));
+			replayed["Payload"]["Score"].Value<string>().Should().Be("REDACTED");
+			replayed["Payload"]["Passed"].Value<string>().Should().Be("REDACTED");
+			replayed["Payload"]["is_redacted"].Value<bool>().Should().BeTrue();
 		}
 		[Test]
 		public async Task Execution_rechecks_a_legacy_queue_payload_and_does_not_repeat_a_completed_run()
@@ -176,7 +187,7 @@ namespace Resgrid.Tests.Services
 			var service = new WorkflowService(workflows.Object, Mock.Of<IWorkflowStepRepository>(), Mock.Of<IWorkflowCredentialRepository>(), runs.Object, Mock.Of<IWorkflowRunLogRepository>(), Mock.Of<IWorkflowDailyUsageRepository>(), Mock.Of<IEncryptionService>(), Mock.Of<IWorkflowActionExecutorFactory>(), context.Object, Mock.Of<ISubscriptionsService>(), Mock.Of<IRecordsExportService>(), new Lazy<IProtectedProjectionService>(() => _projection), _history.Lazy);
 			(await service.ExecuteWorkflowAsync(workflow.WorkflowId, JsonConvert.SerializeObject(new { Payload = Event().Payload }), 42, "", existingRunId: run.WorkflowRunId)).Should().BeSameAs(run);
 			claimedPayload.Should().StartWith("rgdp:");
-            _history.Decrypt(42, "workflowruns.inputpayload", run.WorkflowRunId, claimedPayload).Should().NotContain("CANARY").And.NotContain("87.25").And.Contain("REDACTED");
+            _history.Decrypt(42, "workflowruns.inputpayload", run.WorkflowRunId, claimedPayload).Should().NotContain("CANARY").And.NotContain("person-42").And.Contain("REDACTED");
 			context.Verify(s => s.BuildContextAsync(It.IsAny<int>(), It.IsAny<WorkflowTriggerEventType>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 

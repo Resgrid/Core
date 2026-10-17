@@ -1,12 +1,14 @@
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace Resgrid.Llm;
 
 /// <summary>Typed compatible transport with no retries, redirects, payload logs, provider fallback or network tools.</summary>
 public sealed class OpenAiToolClient(HttpClient client, Uri endpoint, string apiKey) : ILlmClient, IDisposable
 {
+    private static readonly Regex CacheSaltPattern = new("\\A[A-Za-z0-9_-]{16,128}\\z", RegexOptions.CultureInvariant);
     public void Dispose() => client.Dispose();
 
     public async Task<LlmResult> CompleteAsync(LlmRequest request, CancellationToken ct)
@@ -18,23 +20,20 @@ public sealed class OpenAiToolClient(HttpClient client, Uri endpoint, string api
             if (m.ToolCalls?.Count > 0) value["tool_calls"] = m.ToolCalls.Select(t => new { id = t.Id, type = "function", function = new { name = t.Name, arguments = t.Arguments } }).ToArray();
             return value;
         }).ToArray();
-        var body = JsonSerializer.Serialize(new { model = request.Model, messages, max_tokens = request.MaxOutputTokens, temperature = 0,
-            tools = request.Tools.Select(t => new { type = "function", function = new { name = t.Name, description = t.Description, parameters = t.Parameters } }).ToArray(),
-            tool_choice = request.Tools.Count > 0 ? "auto" : "none", parallel_tool_calls = false, stream = false, chat_template_kwargs = new { enable_thinking = false } });
+        if (request.CacheSalt != null && !CacheSaltPattern.IsMatch(request.CacheSalt)) throw new LlmUnavailableException();
+        var payload = new Dictionary<string, object?> { ["model"] = request.Model, ["messages"] = messages, ["max_tokens"] = request.MaxOutputTokens, ["temperature"] = 0,
+            ["tools"] = request.Tools.Select(t => new { type = "function", function = new { name = t.Name, description = t.Description, parameters = t.Parameters } }).ToArray(),
+            ["tool_choice"] = request.Tools.Count > 0 ? "auto" : "none", ["parallel_tool_calls"] = false, ["stream"] = false, ["chat_template_kwargs"] = new { enable_thinking = false } };
+        // vLLM mixes the salt into the first prefix-cache block hash, so cached prompt blocks are shared only within one department.
+        if (request.CacheSalt != null) payload["cache_salt"] = request.CacheSalt;
+        var body = JsonSerializer.Serialize(payload);
         if (Encoding.UTF8.GetByteCount(body) > 65536) throw new LlmUnavailableException();
         using var outgoing = new HttpRequestMessage(HttpMethod.Post, endpoint) { Content = new StringContent(body, Encoding.UTF8, "application/json") };
         outgoing.Headers.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
         try
         {
             using var response = await client.SendAsync(outgoing, HttpCompletionOption.ResponseHeadersRead, ct);
-            if (!response.IsSuccessStatusCode || response.Content.Headers.ContentLength > 65536) throw new LlmUnavailableException();
-            using var source = await response.Content.ReadAsStreamAsync(ct);
-            using var bounded = new MemoryStream(); var buffer = new byte[4096]; int read;
-            while ((read = await source.ReadAsync(buffer, ct)) > 0) {
-                if (bounded.Length + read > 65536) throw new LlmUnavailableException();
-                bounded.Write(buffer, 0, read);
-            }
-            using var document = JsonDocument.Parse(bounded.ToArray(), new JsonDocumentOptions { MaxDepth = 32 });
+            using var document = JsonDocument.Parse(await BoundedResponse.ReadAsync(response, 65536, ct), new JsonDocumentOptions { MaxDepth = 32 });
             var root = document.RootElement;
             var choices = root.GetProperty("choices"); if (choices.GetArrayLength() != 1) throw new LlmUnavailableException();
             var choice = choices[0]; var message = choice.GetProperty("message");

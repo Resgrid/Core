@@ -634,6 +634,7 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectWeatherAlertHistoryByDepartmentQuery { get; set; }
 		public string SelectWeatherAlertZonesByDepartmentIdQuery { get; set; }
 		public string SelectActiveWeatherAlertZonesByDepartmentIdQuery { get; set; }
+		public string DeleteWeatherAlertsBySourceIdQuery { get; set; }
 		#endregion WeatherAlerts
 
 		// Identity

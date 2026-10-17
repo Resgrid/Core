@@ -140,32 +140,33 @@ namespace Resgrid.Tests.Rms
 		{
 			_enrolled = false;
 			var service = Build(FixedProtectedGrantContext.Workload);
-			var location = new RmsLocation { RmsLocationId = "l1", DepartmentId = Dept, AddressText = "1 Main St", Latitude = 39.5m, Longitude = -104.9m };
+			var exposure = new RmsExposure { RmsExposureId = "e0", DepartmentId = Dept, AddressText = "1 Main St", Latitude = 39.5m, Longitude = -104.9m, DetailJson = "{\"note\":\"two occupants\"}" };
 
-			await service.ProtectLocationAsync(Dept, location, null, null);
-			var result = await service.RevealAsync(Dept, new IncidentReportAggregate { Location = location });
+			await service.ProtectExposureAsync(Dept, exposure, null, null);
+			var result = await service.RevealAsync(Dept, new IncidentReportAggregate { Exposures = new List<RmsExposure> { exposure } });
 
-			location.AddressText.Should().Be("1 Main St");
-			location.Latitude.Should().Be(39.5m);
-			location.ProtectedLatitudeEnvelope.Should().BeNull();
+			exposure.DetailJson.Should().Be("{\"note\":\"two occupants\"}");
+			exposure.IsProtected.Should().BeFalse();
 			result.IsProtected.Should().BeFalse();
 		}
 
 		[Test]
-		public async Task Coordinates_ride_companion_envelopes_and_come_back_as_numbers()
+		public async Task Exposure_location_stays_plaintext_while_its_detail_is_sealed()
 		{
+			// The exposure's address and position are operational (2026-10-17); only the free detail is private.
 			var service = Build();
-			var exposure = new RmsExposure { RmsExposureId = "e1", DepartmentId = Dept, AddressText = "2 Side St", Latitude = 39.25m, Longitude = -104.75m };
+			var exposure = new RmsExposure { RmsExposureId = "e1", DepartmentId = Dept, AddressText = "2 Side St", Latitude = 39.25m, Longitude = -104.75m, DetailJson = "{\"note\":\"occupant on oxygen\"}" };
 
 			await service.ProtectExposureAsync(Dept, exposure, null, "officer");
-			exposure.Latitude.Should().BeNull();
-			exposure.ProtectedLatitudeEnvelope.Should().StartWith("rgdp:");
+			exposure.AddressText.Should().Be("2 Side St");
+			exposure.Latitude.Should().Be(39.25m);
+			exposure.ProtectedLatitudeEnvelope.Should().BeNull();
+			exposure.DetailJson.Should().StartWith("rgdp:");
 			exposure.IsProtected.Should().BeTrue();
 
 			await service.RevealAsync(Dept, new IncidentReportAggregate { Exposures = new List<RmsExposure> { exposure } });
-			exposure.Latitude.Should().Be(39.25m);
+			exposure.DetailJson.Should().Be("{\"note\":\"occupant on oxygen\"}");
 			exposure.Longitude.Should().Be(-104.75m);
-			exposure.AddressText.Should().Be("2 Side St");
 		}
 
 		[Test]

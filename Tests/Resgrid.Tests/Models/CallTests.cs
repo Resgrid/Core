@@ -89,7 +89,8 @@ namespace Resgrid.Tests.Models
 		public void GetDisplayName_FallsBackToTheNumber_WhenTheNameIsStillEnveloped()
 		{
 			// Every caller of this helper names a chat channel, and that name is persisted and shown
-			// to the whole department. Calls.Name is cataloged; Calls.Number deliberately is not.
+			// to the whole department. Calls.Name left the ADP catalog on 2026-10-17 (operational), but an
+			// envelope-shaped value must still never become a durable label; Calls.Number is never cataloged.
 			var call = new Call { Number = "26-45", Name = "rgdp:1:2:c3RydWN0dXJlLWZpcmU=" };
 
 			call.GetDisplayName().Should().Be("26-45");

@@ -32,7 +32,6 @@ namespace Resgrid.Tests.Web.User
 		private Mock<ICallsService> _calls;
 		private Mock<IRecordsAuthorizationService> _authorization;
 		private Mock<IRecordsCutoverService> _cutover;
-		private Mock<IRecordsProtectionService> _protection;
 		private RecordCallsController _controller;
 		private static Call Call(int id) => new Call { CallId = id, DepartmentId = 77, Number = "26-" + id, Name = "Warehouse fire", Address = "Main Street", LoggedOn = new DateTime(2026, 9, 22), State = 1 };
 
@@ -52,8 +51,7 @@ namespace Resgrid.Tests.Web.User
 			_authorization.Setup(a => a.CanReadSourceCallAsync("author", 77, It.IsAny<Call>())).ReturnsAsync(true);
 			_cutover = new Mock<IRecordsCutoverService>();
 			_cutover.Setup(c => c.GetModuleStateAsync(77, false)).ReturnsAsync(new RecordsModuleState { FlagEnabled = true });
-			_protection = new Mock<IRecordsProtectionService>();
-			_controller = new RecordCallsController(_calls.Object, _authorization.Object, _cutover.Object, _protection.Object) {
+			_controller = new RecordCallsController(_calls.Object, _authorization.Object, _cutover.Object) {
 				ControllerContext = new ControllerContext { HttpContext = _http }
 			};
 			_controller.ViewData[nameof(DepartmentTime)] = new DepartmentTime(new Department { TimeZone = "America/Los_Angeles" });
@@ -88,13 +86,17 @@ namespace Resgrid.Tests.Web.User
 		}
 
 		[TestCase(false)] [TestCase(true)]
-		public async Task Protected_search_and_selected_label_never_expose_names_or_addresses(bool selected)
+		public async Task Search_and_selected_label_show_call_names_and_addresses_for_every_department(bool selected)
 		{
-			_protection.Setup(p => p.IsEnforcedAsync(77)).ReturnsAsync(true);
+			// A call's name and address are operational, not ADP-protected (2026-10-17): the picker searches and shows
+			// them whether or not the department has data protection on, so the controller has no protection dependency.
+			typeof(RecordCallsController).GetConstructors().SelectMany(c => c.GetParameters())
+				.Should().NotContain(p => p.ParameterType == typeof(IRecordsProtectionService));
 			_calls.Setup(c => c.GetCallByIdAsync(9, true)).ReturnsAsync(Call(9));
-			_calls.Setup(c => c.SearchCallCandidatesAsync(77, It.Is<CallSearchQuery>(q => !q.IncludeText))).ReturnsAsync(new List<Call> { Call(9) });
+			_calls.Setup(c => c.SearchCallCandidatesAsync(77, It.Is<CallSearchQuery>(q => q.IncludeText))).ReturnsAsync(new List<Call> { Call(9) });
 			var result = Json(await _controller.Search(selectedId: selected ? 9 : (int?)null));
-			result.ToString().Should().Contain("26-9").And.NotContain("Warehouse").And.NotContain("Main Street");
+			result.ToString().Should().Contain("26-9").And.Contain("Warehouse fire").And.Contain("Main Street");
+			if (!selected) result.Value<bool>("metadataOnly").Should().BeFalse();
 		}
 
 		[Test]

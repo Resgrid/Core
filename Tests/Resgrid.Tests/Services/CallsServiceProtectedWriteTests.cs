@@ -133,18 +133,19 @@ namespace Resgrid.Tests.Services
 		public async Task SaveCallAsync_RedactedSentinel_FetchesStoredRowAndPersistsTheRestore()
 		{
 			var call = BuildCall();
-			call.Name = ProtectedDataEnvelope.RedactionValue;
-			var stored = new Call { CallId = 42, DepartmentId = 10, Name = "rgdp:1:1:storedname==" };
+			call.ContactName = ProtectedDataEnvelope.RedactionValue;
+			var stored = new Call { CallId = 42, DepartmentId = 10, Name = "Structure Fire", ContactName = "rgdp:1:1:storedcontact==" };
 			_callsRepo.Setup(x => x.GetByIdAsync(42)).ReturnsAsync(stored);
 
 			// The service passes the stored row through to Prepare; emulate its sentinel restore.
 			_protectedWriteService.Setup(x => x.PrepareCallWriteAsync(10, It.IsAny<Call>(), stored, null, null, true, It.IsAny<CancellationToken>()))
-				.Callback<int, Call, Call, string, string, bool, CancellationToken>((d, c, e, g, u, w, ct) => c.Name = e.Name)
+				.Callback<int, Call, Call, string, string, bool, CancellationToken>((d, c, e, g, u, w, ct) => c.ContactName = e.ContactName)
 				.ReturnsAsync(ProtectedWriteResult.Allowed(isProtected: true, changed: false));
 
 			var result = await _service.SaveCallAsync(call);
 
-			result.Name.Should().Be("rgdp:1:1:storedname==");
+			result.ContactName.Should().Be("rgdp:1:1:storedcontact==");
+			result.Name.Should().Be("Structure Fire");
 			_protectedWriteService.Verify(x => x.PrepareCallWriteAsync(10, It.IsAny<Call>(), stored, null, null, true, It.IsAny<CancellationToken>()), Times.Once);
 			// Initial save + the restore re-persist (Changed=false but the placeholder row must be fixed).
 			_callsRepo.Verify(x => x.SaveOrUpdateAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Exactly(2));

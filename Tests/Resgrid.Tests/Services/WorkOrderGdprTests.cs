@@ -79,9 +79,13 @@ namespace Resgrid.Tests.Services
                 _messageService.Object, _certificationService.Object, _trainingService.Object, _shiftsService.Object, _emailService.Object, new ChecklistWorkflowTests.MemoryStore(),
                 new Lazy<IReadinessHistoryProtectionService>(()=>new ReadinessHistoryProtectionService(Mock.Of<IProtectedWriteService>(),policy.Object)),reminders.Object,store.Object,EmptyInventory(), maintenance.Object);
             var files = await RunExportAsync();
-            files["workorders.json"].Should().Contain("REDACTED").And.NotContain("CANARY").And.NotContain("AQID");
+            files["workorders.json"].Should().Contain("REDACTED").And.NotContain("SYNTHETIC-PHI-CANARY").And.NotContain("VENDOR-CANARY")
+                .And.NotContain("MOVEMENT-CANARY").And.NotContain("PII-FILENAME-CANARY").And.NotContain("AQID");
+            // Operation receipts and recurrence templates are configuration, not private content (2026-10-17): they export as stored.
+            files["workorders.json"].Should().Contain("BULK-CANARY");
             files["workorders.json"].Should().Contain("ReportSnapshots").And.Contain("Revision");
-            files["maintenance.json"].Should().Contain("REDACTED").And.NotContain("CANARY").And.NotContain("UNRELATED-HOLD");
+            files["maintenance.json"].Should().Contain("REDACTED").And.NotContain("HOLD-CANARY").And.NotContain("READING-CANARY").And.NotContain("UNRELATED-HOLD");
+            files["maintenance.json"].Should().Contain("TEMPLATE-CANARY");
             var exported = Newtonsoft.Json.Linq.JObject.Parse(files["maintenance.json"]);
             exported["SafetyHolds"].Count().Should().Be(1); exported["Readings"].Count().Should().Be(1); exported["Recurrences"].Count().Should().Be(1);
         }

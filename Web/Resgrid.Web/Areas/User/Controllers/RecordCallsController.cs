@@ -17,15 +17,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly ICallsService _calls;
 		private readonly IRecordsAuthorizationService _authorization;
 		private readonly IRecordsCutoverService _cutover;
-		private readonly IRecordsProtectionService _protection;
 
 		public RecordCallsController(ICallsService calls, IRecordsAuthorizationService authorization,
-			IRecordsCutoverService cutover, IRecordsProtectionService protection)
+			IRecordsCutoverService cutover)
 		{
 			_calls = calls;
 			_authorization = authorization;
 			_cutover = cutover;
-			_protection = protection;
 		}
 
 		[HttpGet]
@@ -49,8 +47,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				last = last?.AddDays(1);
 			}
 			catch (ArgumentException) { return BadRequest(); }
-			// Picker metadata remains usable under protection, without searching or exposing protected text.
-			var includeText = !await _protection.IsEnforcedAsync(DepartmentId);
+			// A call's name and address are operational, not ADP-protected (2026-10-17): searched and shown for every department.
+			const bool includeText = true;
 			object Item(Call call) => new {
 				id = call.CallId,
 				text = string.Join(" · ", new[] { ProtectedDataEnvelope.SafeDisplay(call.Number) ?? call.CallId.ToString(),

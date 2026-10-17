@@ -28,5 +28,19 @@ namespace Resgrid.Config
 
 		/// <summary>Tokens reserved per enrichment against the department's monthly Enhanced AI budget.</summary>
 		public static int ReservedTokens = 8192;
+
+		/// <summary>
+		/// Classify with the operator's decision model (AiConfig.Decision*) when it is a SelfHosted endpoint: whether the message is a
+		/// dispatch, call type, priority and possible duplicate become per-field probabilities, and the generative model keeps
+		/// extraction, title and summary. Never Workers AI: call messages carry PII and PHI. Off, a Workers AI provider or the decision
+		/// model unavailable leaves classification on the generative model.
+		/// </summary>
+		public static bool DecisionsEnabled = false;
+
+		/// <summary>One decision request. Past this the generative model's own classification stands.</summary>
+		public static int DecisionTimeoutMilliseconds = 5000;
+
+		/// <summary>When the decision model is at least this sure the message is not a dispatch, the generative model is not called (nothing would be filled).</summary>
+		public static double SkipGenerationNotDispatchProbability = 0.9;
 	}
 }

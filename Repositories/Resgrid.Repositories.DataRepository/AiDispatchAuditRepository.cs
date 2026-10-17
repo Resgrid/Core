@@ -11,7 +11,7 @@ using Resgrid.Repositories.DataRepository.Configs;
 
 namespace Resgrid.Repositories.DataRepository
 {
-	/// <summary>Metadata-only AI dispatch audit (M0240). The unique (DepartmentId, CallId) index is the at-least-once idempotency claim.</summary>
+	/// <summary>Metadata-only AI dispatch audit (M0240; decision-model columns M0273). The unique (DepartmentId, CallId) index is the at-least-once idempotency claim.</summary>
 	public sealed class AiDispatchAuditRepository : RmsRepositoryBase<AiDispatchAuditRow>, IAiDispatchAuditRepository
 	{
 		private static readonly string[] Columns = typeof(AiDispatchAuditRow).GetProperties()
@@ -93,6 +93,12 @@ namespace Resgrid.Repositories.DataRepository
 			public int LatencyMs { get; set; }
 			public DateTime CreatedOnUtc { get; set; }
 			public DateTime? CompletedOnUtc { get; set; }
+			public string DecisionPromptVersion { get; set; }
+			public string DecisionModelName { get; set; }
+			public string DecisionModelRevision { get; set; }
+			public string DecisionRuntimeDigest { get; set; }
+			public int DecisionInputTokens { get; set; }
+			public int DecisionLatencyMs { get; set; }
 			public string CallNumber { get; set; }
 			public string RelatedCallNumber { get; set; }
 
@@ -102,7 +108,9 @@ namespace Resgrid.Repositories.DataRepository
 				AppliedFields = r.AppliedFields, RejectedCount = r.RejectedCount, RelatedCallId = r.RelatedCallId, PromptVersion = r.PromptVersion, ModelName = r.ModelName,
 				ModelRevision = r.ModelRevision, RuntimeDigest = r.RuntimeDigest, InputTokens = r.InputTokens, OutputTokens = r.OutputTokens, LatencyMs = r.LatencyMs,
 				CreatedOnUtc = DateTime.SpecifyKind(r.CreatedOnUtc, DateTimeKind.Utc),
-				CompletedOnUtc = r.CompletedOnUtc.HasValue ? DateTime.SpecifyKind(r.CompletedOnUtc.Value, DateTimeKind.Utc) : null
+				CompletedOnUtc = r.CompletedOnUtc.HasValue ? DateTime.SpecifyKind(r.CompletedOnUtc.Value, DateTimeKind.Utc) : null,
+				DecisionPromptVersion = r.DecisionPromptVersion, DecisionModelName = r.DecisionModelName, DecisionModelRevision = r.DecisionModelRevision,
+				DecisionRuntimeDigest = r.DecisionRuntimeDigest, DecisionInputTokens = r.DecisionInputTokens, DecisionLatencyMs = r.DecisionLatencyMs
 			};
 		}
 
@@ -112,7 +120,8 @@ namespace Resgrid.Repositories.DataRepository
 			row.AiDispatchAuditId, row.DepartmentId, row.CallId, row.Mode, row.Outcome, row.Confidence, row.AppliedFields, row.RejectedCount,
 			row.RelatedCallId, row.PromptVersion, row.ModelName, row.ModelRevision, row.RuntimeDigest, row.InputTokens, row.OutputTokens, row.LatencyMs,
 			CreatedOnUtc = DatabaseTimestamp(row.CreatedOnUtc),
-			CompletedOnUtc = row.CompletedOnUtc.HasValue ? DatabaseTimestamp(row.CompletedOnUtc.Value) : (DateTime?)null
+			CompletedOnUtc = row.CompletedOnUtc.HasValue ? DatabaseTimestamp(row.CompletedOnUtc.Value) : (DateTime?)null,
+			row.DecisionPromptVersion, row.DecisionModelName, row.DecisionModelRevision, row.DecisionRuntimeDigest, row.DecisionInputTokens, row.DecisionLatencyMs
 		};
 	}
 }

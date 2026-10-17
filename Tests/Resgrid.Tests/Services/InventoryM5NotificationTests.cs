@@ -248,21 +248,28 @@ namespace Resgrid.Tests.Services
 			_notices.Single().Message.Should().Be(label + ": Trauma dressing (MED-014); Location: Station 2. Inventory needs attention. Sign in to review current alerts.");
 		}
 
-		[TestCase("department")]
-		[TestCase("row")]
 		[TestCase("envelope")]
 		[TestCase("redacted")]
 		[TestCase("malformed")]
 		public async Task Alerts_fall_back_to_item_and_location_ids_when_content_cannot_be_disclosed(string reason)
 		{
 			Enqueue();
-			if (reason == "department") _protection.Setup(x => x.IsProtectionEnforcedAsync(DepartmentId)).ReturnsAsync(true);
-			if (reason == "row") { _item.IsProtected = true; _location.IsProtected = true; }
-			if (reason is "envelope" or "redacted" or "malformed")
-				_item.Content = _location.Content = reason == "envelope" ? "rgdp:1:1:" + Canary : reason == "redacted" ? "REDACTED" : "invalid-json-" + Canary;
+			_item.Content = _location.Content = reason == "envelope" ? "rgdp:1:1:" + Canary : reason == "redacted" ? "REDACTED" : "invalid-json-" + Canary;
 			await _service.ProcessDepartmentAsync(DepartmentId, CancellationToken.None);
 			_notices.Single().Message.Should().Contain(_item.Id).And.Contain(_location.Id)
 				.And.NotContain("Trauma dressing").And.NotContain("MED-014").And.NotContain("Station 2").And.NotContain(Canary).And.NotContain("rgdp:");
+		}
+
+		[TestCase("department")]
+		[TestCase("row")]
+		public async Task Alerts_name_the_item_and_location_even_when_the_department_or_row_is_protected(string reason)
+		{
+			// Item and location names are metadata, not ADP-protected (2026-10-17): they are shown in every department.
+			Enqueue();
+			if (reason == "department") _protection.Setup(x => x.IsProtectionEnforcedAsync(DepartmentId)).ReturnsAsync(true);
+			if (reason == "row") { _item.IsProtected = true; _location.IsProtected = true; }
+			await _service.ProcessDepartmentAsync(DepartmentId, CancellationToken.None);
+			_notices.Single().Message.Should().Be("Low stock: Trauma dressing (MED-014); Location: Station 2. Inventory needs attention. Sign in to review current alerts.");
 		}
 
 		[TestCase("Trauma dressing https://example.test/details", "MED-014", "Trauma dressing (MED-014)")]

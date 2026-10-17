@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
 using FluentAssertions;
@@ -13,8 +15,11 @@ using NUnit.Framework;
 using Resgrid.Config;
 using Resgrid.Model.Repositories.Connection;
 using Resgrid.Model.Repositories.Queries;
+using Resgrid.Model.Repositories.Queries.Contracts;
 using Resgrid.Providers.Migrations.Migrations;
 using Resgrid.Repositories.DataRepository;
+using Resgrid.Repositories.DataRepository.Queries;
+using Resgrid.Repositories.DataRepository.Queries.Common;
 using Resgrid.Repositories.DataRepository.Servers.SqlServer;
 using Resgrid.Repositories.DataRepository.Transactions;
 
@@ -356,6 +361,72 @@ namespace Resgrid.Tests.Services
 			lost.Should().BeEmpty("another department's rows must survive the sweep");
 			Func<Task> live = () => repository.PurgeDeletedDepartmentLeftoversAsync(kept.DepartmentId);
 			await live.Should().ThrowAsync<InvalidOperationException>("a department that still exists is never swept");
+		}
+
+		/// <summary>
+		/// Every foreign key to PersonnelRoles has to be cleared before the role row goes, or the delete fails outright
+		/// (FK_PersonnelRoleCertificationRequirements_Role on POST User/Personnel/DeleteRole, 2026-10-17). The references are
+		/// discovered from the schema, so a new table pointing at roles fails here until the purge covers it.
+		/// </summary>
+		[Test]
+		public async Task DeletingAPersonnelRoleClearsEveryForeignKeyedReferenceAndLeavesOtherRolesIntact()
+		{
+			await using var db = new SqlConnection(_connection);
+			await db.OpenAsync();
+			await LoadSchemaAsync(db);
+
+			var references = _foreignKeysByChild.Values.SelectMany(f => f)
+				.Where(fk => string.Equals(fk.Parent, "PersonnelRoles", StringComparison.OrdinalIgnoreCase) && !fk.IsTrivialSelfReference).ToList();
+			references.Should().NotBeEmpty();
+
+			var failures = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+			var deleted = await SeedDepartmentAsync(db, failures);
+			var kept = await SeedDepartmentAsync(db, failures);
+			deleted.Rows.Should().ContainKey("PersonnelRoles");
+			int RoleOf(SeededDepartment department) => Convert.ToInt32(department.Rows["PersonnelRoles"]["PersonnelRoleId"]);
+			Task<int> Count(ForeignKeyInfo fk, int roleId) =>
+				db.ExecuteScalarAsync<int>($"SELECT COUNT(*) FROM [dbo].[{fk.Child}] WHERE [{fk.Columns.Single().Child}] = @roleId", new { roleId });
+
+			var unseeded = new List<string>();
+			foreach (var fk in references)
+				if (await Count(fk, RoleOf(deleted)) == 0 || await Count(fk, RoleOf(kept)) == 0)
+					unseeded.Add(fk.Name + ": " + (failures.TryGetValue(fk.Child, out var f) ? f : "seeded without the role key"));
+			unseeded.Should().BeEmpty("every foreign key to PersonnelRoles must be seeded against both departments' roles");
+
+			var provider = new Mock<IConnectionProvider>();
+			provider.Setup(p => p.Create()).Returns(() => new SqlConnection(_connection));
+			var configuration = new SqlServerConfiguration();
+			var queries = new ConcurrentDictionary<Type, IQuery>();
+			queries[typeof(DeleteQuery)] = new DeleteQuery(configuration);
+			var list = new Mock<IQueryList>();
+			list.Setup(l => l.RetrieveQueryList()).Returns(queries);
+			using var unit = new UnitOfWork(provider.Object);
+			var roles = new PersonnelRolesRepository(provider.Object, configuration, unit, new QueryFactory(list.Object));
+
+			// The same shape as PersonnelRolesService.DeleteRoleByIdAsync: dependencies and role in one transaction.
+			unit.CreateOrGetConnection();
+			try
+			{
+				await roles.DeleteRoleDependenciesAsync(RoleOf(deleted));
+				(await roles.DeleteAsync(new Resgrid.Model.PersonnelRole { PersonnelRoleId = RoleOf(deleted) }, CancellationToken.None)).Should().BeTrue();
+				unit.CommitChanges();
+			}
+			catch
+			{
+				unit.DiscardChanges();
+				throw;
+			}
+
+			(await db.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM PersonnelRoles WHERE PersonnelRoleId = @Id", new { Id = RoleOf(deleted) })).Should().Be(0);
+			(await db.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM PersonnelRoles WHERE PersonnelRoleId = @Id", new { Id = RoleOf(kept) })).Should().Be(1);
+			foreach (var fk in references)
+			{
+				(await Count(fk, RoleOf(deleted))).Should().Be(0, fk.Name + " must not reference the deleted role");
+				(await Count(fk, RoleOf(kept))).Should().BeGreaterThan(0, fk.Name + " belongs to another department's role");
+				// An optional reference is cleared, not deleted: the settings row that named the role outlives it.
+				if (!IsRequired(fk))
+					(await RowExistsAsync(db, fk.Child, deleted.Rows[fk.Child])).Should().BeTrue(fk.Child + " only named the role optionally");
+			}
 		}
 
 		/// <summary>Tables with an int DepartmentId column but no foreign-key path to Departments or AspNetUsers.</summary>

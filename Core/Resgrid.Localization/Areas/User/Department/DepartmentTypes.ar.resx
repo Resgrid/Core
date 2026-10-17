@@ -333,6 +333,9 @@
   <data name="SuggestedFromName" xml:space="preserve">
     <value>مقترح من الاسم: {0}</value>
   </data>
+  <data name="AiSuggestedFromName" xml:space="preserve">
+    <value>اقتراح Enhanced AI: {0}</value>
+  </data>
   <data name="CallTypeClass.Fire" xml:space="preserve">
     <value>حريق</value>
   </data>

@@ -21,7 +21,9 @@ namespace Resgrid.Tests.Services
 {
     public partial class DepartmentDataMigrationEngineTests
     {
-        [TestCase(17,18,5,6),TestCase(22,23,2,2),TestCase(23,24,4,4),TestCase(24,25,4,4)]
+        // Policies, operation receipts, recurrence names and failure intents are configuration (2026-10-17), so v23-v25 bind only
+        // the tables that can hold free text about people.
+        [TestCase(17,18,5,6),TestCase(22,23,1,1),TestCase(23,24,3,3),TestCase(24,25,2,2)]
         public async Task Work_order_catalog_upgrade_is_retry_safe_and_offboards_all_text_and_binary_fields(int from, int to, int tables, int columns)
         {
             _bulk.Seed("Calls","CallId");
@@ -40,17 +42,19 @@ namespace Resgrid.Tests.Services
             var envelopes=new Dictionary<string,string>();
             foreach(var b in bindings)
             {
-                var row=_bulk.Table(b.TableName).Single(); var content=(string)row["Content"];
+                // A mixed table's slot is ProtectedContent; files and safety holds keep theirs in Content (review §8).
+                var text=b.Columns.First(c=>c.StorageKind==ProtectedFieldStorageKind.Text);
+                var row=_bulk.Table(b.TableName).Single(); var content=(string)row[text.ColumnName];
                 content.Should().StartWith("rgdp:").And.NotContain("CANARY"); envelopes[b.TableName]=content;
-                _crypto.DecryptText(_dek,content,DeptId,b.Columns.First(c=>c.ColumnName=="Content").FieldId,"00000000-0000-0000-0000-000000000019").Should().Be("SYNTHETIC-PHI-CANARY");
+                _crypto.DecryptText(_dek,content,DeptId,text.FieldId,"00000000-0000-0000-0000-000000000019").Should().Be("SYNTHETIC-PHI-CANARY");
                 row["AssignedToUserId"].Should().Be("routing-member");
                 if(b.TableName=="WorkOrderFiles") ProtectedReadService.IsBinaryEnveloped((byte[])row["Data"]).Should().BeTrue();
             }
             (await _engine.RunEncryptionNightAsync(upgrade,CancellationToken.None)).Outcome.Should().Be(AdpMigrationNightOutcome.CompletedAllTables);
-            foreach(var b in bindings) _bulk.Table(b.TableName).Single()["Content"].Should().Be(envelopes[b.TableName]);
+            foreach(var b in bindings) _bulk.Table(b.TableName).Single()[b.Columns.First(c=>c.StorageKind==ProtectedFieldStorageKind.Text).ColumnName].Should().Be(envelopes[b.TableName]);
             var offboarding=Context(DepartmentDataProtectionMigrationKind.Offboarding);offboarding.CatalogVersion=to;
             (await _engine.RunDecryptionNightAsync(offboarding,CancellationToken.None)).Outcome.Should().Be(AdpMigrationNightOutcome.CompletedAllTables);
-            foreach(var b in bindings) _bulk.Table(b.TableName).Single()["Content"].Should().Be("SYNTHETIC-PHI-CANARY");
+            foreach(var b in bindings) _bulk.Table(b.TableName).Single()[b.Columns.First(c=>c.StorageKind==ProtectedFieldStorageKind.Text).ColumnName].Should().Be("SYNTHETIC-PHI-CANARY");
             if(to==18) ((byte[])_bulk.Table("WorkOrderFiles").Single()["Data"]).Should().Equal(bytes);
         }
     }

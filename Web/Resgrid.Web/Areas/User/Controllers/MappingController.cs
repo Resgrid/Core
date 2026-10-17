@@ -766,20 +766,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				foreach (var call in calls)
 				{
-					// ADP (plan sections 7.1, 7.3): this map payload is built server-side with no
-					// grant in play, so a protected call contributes NO marker — neither its
-					// user-authored label nor its exact position may leave here, and ciphertext
-					// must never reach a map client.
-					if (ProtectedDataEnvelope.HasEnvelopePrefix(call.Name) ||
-						ProtectedDataEnvelope.HasEnvelopePrefix(call.NatureOfCall) ||
-						ProtectedDataEnvelope.HasEnvelopePrefix(call.GeoLocationData) ||
-						ProtectedDataEnvelope.HasEnvelopePrefix(call.Address))
+					// ADP (plan sections 7.1, 7.3): the call's name and position are operational and always mapped
+					// (2026-10-17). This payload is built with no grant, so an enveloped nature is simply left out —
+					// ciphertext must never reach a map client. A stale enveloped position cannot be placed.
+					if (ProtectedDataEnvelope.HasEnvelopePrefix(call.GeoLocationData) || ProtectedDataEnvelope.HasEnvelopePrefix(call.Address))
 						continue;
 
 					MapMakerInfo info = new MapMakerInfo();
 					info.ImagePath = "Call";
-					info.Title = call.Name;
-					info.InfoWindowContent = call.NatureOfCall;
+					info.Title = ProtectedDataEnvelope.SafeDisplay(call.Name);
+					info.InfoWindowContent = ProtectedDataEnvelope.HasEnvelopePrefix(call.NatureOfCall) ? null : call.NatureOfCall;
 
 					if (!String.IsNullOrEmpty(call.GeoLocationData) && call.GeoLocationData.Length > 1)
 					{

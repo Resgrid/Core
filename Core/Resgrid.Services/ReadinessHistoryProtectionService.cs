@@ -40,6 +40,9 @@ namespace Resgrid.Services
 			}
 			foreach (var field in fields.Values)
 				if (!string.IsNullOrEmpty(field.Get(copy)) && (enforced || ProtectedDataEnvelope.HasEnvelopePrefix(field.Get(copy)))) field.Set(copy, ProtectedDataEnvelope.RedactionValue);
+			// A split row's private members were merged into Content on read: they leave it too whenever the row is masked.
+			if (copy is ISplitContentRow split && (enforced || split.ProtectedContent == ProtectedDataEnvelope.RedactionValue || ProtectedDataEnvelope.HasEnvelopePrefix(split.Content)))
+				SplitContent.Redact(split);
 			return copy;
 		}
 	}

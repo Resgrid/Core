@@ -1284,7 +1284,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var stored = await _departmentSettingsService.GetUnitStatusThresholdsAsync(DepartmentId);
 			var rows = new List<UnitStatusThresholdRow>();
 
-			foreach (var baseType in TimeableUnitBaseTypes)
+			foreach (var baseType in UnitStatusThresholds.TimeableBaseTypes)
 			{
 				var threshold = stored.Find((int)baseType);
 
@@ -1298,24 +1298,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			return rows;
 		}
-
-		/// <summary>
-		/// Statuses where "how long has it been like this?" is an operationally useful question. The
-		/// customer case that drove this: a unit dispatched for more than four minutes that has not
-		/// reported responding.
-		/// </summary>
-		private static readonly ActionBaseTypes[] TimeableUnitBaseTypes = new[]
-		{
-			ActionBaseTypes.Dispatched,
-			ActionBaseTypes.Responding,
-			ActionBaseTypes.Enroute,
-			ActionBaseTypes.OnScene,
-			ActionBaseTypes.Staging,
-			ActionBaseTypes.AtPatient,
-			ActionBaseTypes.Transporting,
-			ActionBaseTypes.AtHospital,
-			ActionBaseTypes.Returning
-		};
 
 		/// <summary>
 		/// Builds the new-call field policy grid for the settings screen: every configurable built-in
@@ -2801,6 +2783,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				overrides.TryGetValue(unitType.UnitTypeId, out var row);
 
+				if (row != null && set != null)
+				{
+					AddUnitStatusOverrideMeaningWarning(model, unitType, set, row.DispatchStatus, true);
+					AddUnitStatusOverrideMeaningWarning(model, unitType, set, row.ReleaseStatus, false);
+				}
+
 				if (row == null || row.DispatchStatus < 0)
 					AddUnitStatusTargetWarning(model, unitType, set, StatusTargetResolver.ResolveUnit(dispatchTarget, set,
 						StatusTargetResolver.DispatchDefaultChain, (int)UnitStateTypes.Responding), true,
@@ -2811,6 +2799,24 @@ namespace Resgrid.Web.Areas.User.Controllers
 						StatusTargetResolver.ReleaseDefaultChain, (int)UnitStateTypes.Released), false,
 						releaseTarget.Kind == StatusTargetKind.Default ? StatusTargetResolver.ReleaseDefaultChain : null);
 			}
+		}
+
+		/// <summary>
+		/// An override that sets a status with no meaning. Status timers, release rules and run cards read statuses by meaning,
+		/// so units put there are invisible to them (customer report, 2026-10-17: dispatched units were never timed).
+		/// </summary>
+		private void AddUnitStatusOverrideMeaningWarning(DispatchSettingsView model, UnitType unitType, CustomState set, int overrideStatus, bool isDispatch)
+		{
+			if (overrideStatus < 0)
+				return;
+
+			var option = set.GetActiveDetails().FirstOrDefault(x => x.CustomStateDetailId == overrideStatus);
+
+			if (option == null || option.BaseType >= 0)
+				return;
+
+			model.UnitStatusTargetWarnings.Add(string.Format(_departmentLocalizer["UnitStatusOverrideNoMeaning"], unitType.Type, option.ButtonText,
+				_departmentLocalizer[isDispatch ? "UnitStatusTargetActionDispatch" : "UnitStatusTargetActionRelease"]));
 		}
 
 		private void AddUnitStatusTargetWarning(DispatchSettingsView model, UnitType unitType, CustomState set, StatusTargetResolution resolution, bool isDispatch,
@@ -3035,10 +3041,52 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.MapStyle = await _departmentSettingsService.GetMappingMapStyleAsync(DepartmentId, true);
 			model.MapStyleNight = await _departmentSettingsService.GetMappingMapStyleNightAsync(DepartmentId, true);
 			model.UnitStatusThresholds = await BuildUnitStatusThresholdRowsAsync();
-			model.UnitStatusAlertNoteRequirement = (await _departmentSettingsService.GetUnitStatusThresholdsAsync(DepartmentId)).AcknowledgementNoteRequirement;
+			var thresholds = await _departmentSettingsService.GetUnitStatusThresholdsAsync(DepartmentId);
+			model.UnitStatusAlertNoteRequirement = thresholds.AcknowledgementNoteRequirement;
+			await PopulateUnitStatusTimerWarningsAsync(model, thresholds);
 			await PopulateMapStyleContextAsync(model);
 
 			return View(model);
+		}
+
+		/// <summary>
+		/// Warnings under the timers grid for timers that can never fire: unit statuses with no meaning, and statuses units get
+		/// on dispatch that have no meaning or whose meaning has no timer. None while no timer is set.
+		/// </summary>
+		private async Task PopulateUnitStatusTimerWarningsAsync(MappingSettingsView model, UnitStatusThresholds thresholds)
+		{
+			model.UnitStatusTimerWarnings = new List<string>();
+
+			if (thresholds == null || thresholds.IsEmpty)
+				return;
+
+			try
+			{
+				var report = UnitStatusTimerCoverage.Check(thresholds,
+					await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId),
+					await _customStateService.GetAllActiveCustomStatesForDepartmentAsync(DepartmentId),
+					await _departmentSettingsService.GetUnitCallDispatchStatusTargetAsync(DepartmentId),
+					await _departmentSettingsService.GetUnitCallStatusOverridesByUnitTypeAsync(DepartmentId));
+
+				foreach (var untimed in report.UntimedDispatchStatuses)
+				{
+					var unitTypes = string.Join(", ", untimed.UnitTypes.Select(x => x.Type));
+					var status = untimed.Option?.ButtonText ?? ((UnitStateTypes)untimed.BuiltInStatus.GetValueOrDefault()).DisplayName();
+
+					model.UnitStatusTimerWarnings.Add(untimed.HasMeaning
+						? string.Format(_departmentLocalizer["UnitStatusTimerDispatchNoTimer"], unitTypes, status, MeaningName((ActionBaseTypes)untimed.BaseType))
+						: string.Format(_departmentLocalizer["UnitStatusTimerDispatchNoMeaning"], unitTypes, status));
+				}
+
+				foreach (var set in report.SetsWithoutMeanings)
+					model.UnitStatusTimerWarnings.Add(string.Format(_departmentLocalizer["UnitStatusTimerSetNoMeaning"], set.Set.Name,
+						string.Join(", ", set.UnitTypes.Select(x => x.Type)), string.Join(", ", set.Options.Select(x => x.ButtonText))));
+			}
+			catch (Exception ex)
+			{
+				// The warnings are advice; the settings page still has to open without them.
+				Logging.LogException(ex, $"{nameof(PopulateUnitStatusTimerWarningsAsync)}: timer coverage check failed for departmentId {DepartmentId}.");
+			}
 		}
 
 		/// <summary>
@@ -3099,7 +3147,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (ModelState.IsValid)
 			{
-				await _departmentSettingsService.SaveUnitStatusThresholdsAsync(DepartmentId, new UnitStatusThresholds
+				var savedThresholds = await _departmentSettingsService.SaveUnitStatusThresholdsAsync(DepartmentId, new UnitStatusThresholds
 				{
 					Thresholds = (model.UnitStatusThresholds ?? new List<UnitStatusThresholdRow>())
 						.Select(x => new UnitStatusThreshold
@@ -3143,6 +3191,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				model.MapStyle = MapStylePresets.Normalize(model.MapStyle);
 				model.MapStyleNight = MapStylePresets.Normalize(model.MapStyleNight);
+				await PopulateUnitStatusTimerWarningsAsync(model, savedThresholds);
 				await PopulateMapStyleContextAsync(model);
 
 				model.SaveSuccess = true;
@@ -3154,6 +3203,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (model.UnitStatusThresholds == null || model.UnitStatusThresholds.Count == 0)
 				model.UnitStatusThresholds = await BuildUnitStatusThresholdRowsAsync();
 
+			await PopulateUnitStatusTimerWarningsAsync(model, await _departmentSettingsService.GetUnitStatusThresholdsAsync(DepartmentId));
 			await PopulateMapStyleContextAsync(model);
 
 			model.SaveSuccess = false;

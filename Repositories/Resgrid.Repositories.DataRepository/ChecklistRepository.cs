@@ -73,7 +73,10 @@ namespace Resgrid.Repositories.DataRepository
 				: $"UPDATE {Tbl(Table<T>())} SET {string.Join(",", columns.Where(c => c != "Id" && c != "DepartmentId").Select(c => Col(c) + "=" + P + c))} WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("Id")}={P}Id";
 			try
 			{
-				if (await ExecuteAsync(sql, row, ct) != 1) throw new InvalidOperationException("Checklist row could not be saved.");
+				await WriteStoredShapeAsync(new object[] { row }, async () =>
+				{
+					if (await ExecuteAsync(sql, row, ct) != 1) throw new InvalidOperationException("Checklist row could not be saved.");
+				});
 			}
 			catch (Microsoft.Data.SqlClient.SqlException ex) when (insert && typeof(T) == typeof(ChecklistCompletion) && ex.Number is 2601 or 2627)
 			{ throw new ChecklistException(409, "Run identifier is already in use."); }
@@ -89,6 +92,10 @@ namespace Resgrid.Repositories.DataRepository
 			await ExecuteAsync($"DELETE FROM {Tbl("ChecklistCompletionItems")} WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("ParentId")}={P}Id", new { DepartmentId = departmentId, Id = completionId }, ct);
 			// Stay below SQL Server's parameter limit; each VALUES batch is a single round trip.
 			var properties = ColumnCache<ChecklistCompletionItem>.Properties;
+			await WriteStoredShapeAsync(answers, () => InsertAnswersAsync(answers, properties, ct));
+		}
+		private async Task InsertAnswersAsync(List<ChecklistCompletionItem> answers, System.Reflection.PropertyInfo[] properties, CancellationToken ct)
+		{
 			foreach (var batch in answers.Chunk(Math.Min(100, 2000 / properties.Length)))
 			{
 				var parameters = new DynamicParameters();

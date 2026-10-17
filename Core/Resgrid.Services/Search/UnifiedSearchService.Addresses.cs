@@ -28,15 +28,16 @@ namespace Resgrid.Services.Search
 		/// <summary>
 		/// Text that reads as a street address ("110 Main Street") is also compared the way occupancies compare addresses
 		/// (<see cref="StreetAddressMatcher"/>), so it finds the call logged at "110 Main St" or "110 Main" and the occupancy at
-		/// "110 Main St", which the word-by-word index match misses. Calls come from the call location index (its keys exist only
-		/// while the department's protected text is in the clear); occupancies are narrowed by house number in the database.
+		/// "110 Main St", which the word-by-word index match misses. Calls come from the call location index (kept for every
+		/// department: call addresses are operational); occupancies are narrowed by house number in the database.
 		/// Every candidate still needs a live projection and passes its family's own authorization rule.
 		/// </summary>
 		private async Task<AddressMatches> MatchAddressesAsync(string text, IReadOnlyCollection<string> types, SearchAccess access, UnifiedSearchRequest request,
 			int window, int needed, IReadOnlyList<string> snippetTerms, CancellationToken cancellationToken)
 		{
 			var matches = new AddressMatches();
-			var calls = _callLocationKeys != null && access.ProtectedTextAllowed && types.Contains(SearchEntityTypes.Call);
+			// Call addresses are operational (2026-10-17), so the location index covers every department.
+			var calls = _callLocationKeys != null && types.Contains(SearchEntityTypes.Call);
 			// WithoutClosedModulesAsync has already removed Occupancy when the module is closed for the caller.
 			var occupancies = _occupancies != null && types.Contains(SearchEntityTypes.Occupancy);
 			if (!calls && !occupancies)

@@ -33,10 +33,8 @@ namespace Resgrid.Tests.Services
 					"messages.subject",
 					"messages.body",
 					"messagerecipients.response",
-					"messagerecipients.note",
-					"messagerecipients.latitude",
-					"messagerecipients.longitude"
-				});
+					"messagerecipients.note"
+				}, "the reply position is the member's location: operational, so it left the catalog on 2026-10-17");
 		}
 
 		/// <summary>
@@ -87,15 +85,16 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
-		public void Recipient_coordinates_are_bound_as_companion_columns()
+		public void Recipient_coordinates_are_neither_catalogued_nor_bound()
 		{
-			var columns = AdpTableBindings.V1.Single(b => b.TableName == "MessageRecipients").Columns
-				.Where(c => c.StorageKind == ProtectedFieldStorageKind.CompanionColumn)
-				.ToList();
+			// Where a reply was sent from is the member's position, operational like unit and personnel
+			// locations (2026-10-17): the typed columns stay plaintext and no companion envelope is bound.
+			var binding = AdpTableBindings.V1.Single(b => b.TableName == "MessageRecipients");
 
-			columns.Select(c => c.CompanionColumn)
-				.Should().BeEquivalentTo(new[] { "ProtectedLatitudeEnvelope", "ProtectedLongitudeEnvelope" },
-					"a decimal column cannot hold an rgdp envelope, so the value moves to its companion");
+			binding.Columns.Should().NotContain(c => c.StorageKind == ProtectedFieldStorageKind.CompanionColumn);
+			binding.Columns.Select(c => c.FieldId).Should().BeEquivalentTo(new[] { "messagerecipients.response", "messagerecipients.note" });
+			_catalog.IsProtectedField("MessageRecipients", "Latitude").Should().BeFalse();
+			_catalog.IsProtectedField("MessageRecipients", "Longitude").Should().BeFalse();
 		}
 
 		[Test]

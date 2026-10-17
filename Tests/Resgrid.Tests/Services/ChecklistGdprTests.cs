@@ -49,7 +49,11 @@ namespace Resgrid.Tests.Services
             var files = await RunExportAsync(); var json = files["checklists.json"];
             json.Should().NotContain("CANARY").And.NotContain("rgdp:").And.Contain("REDACTED");
             var exported = JObject.Parse(json);
-			exported["Completions"].Select(c => c["Completion"]["Score"].Value<decimal?>()).Should().OnlyContain(score => score == null);
+			// Score / Passed are outcome state, not protected content (catalog 15 retired 2026-10-17): they export as stored
+			// while the content beside them is still masked.
+			exported["Completions"][0]["Completion"]["Score"].Value<decimal?>().Should().Be(23.5m);
+			exported["Completions"][0]["Completion"]["Passed"].Value<bool?>().Should().BeFalse();
+			exported["Completions"].Skip(1).Select(c => c["Completion"]["Score"].Value<decimal?>()).Should().OnlyContain(score => score == null, "the other completions recorded no score");
             exported["Completions"].Should().HaveCount(26);
             store.ChildQueries.Should().Be(9, "children are paged across all selected parents, not queried per completion");
             json.Should().NotContain("AQID", "evidence blobs are excluded from JSON exports");

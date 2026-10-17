@@ -114,7 +114,9 @@ namespace Resgrid.Services
 		private static T NotificationContent<T>(InventoryRow row, bool protectedContent) where T : class
 		{
 			// Never obtain a grant or decrypt content in this unattended sender, including during protection transitions.
-			if (protectedContent || row == null || row.IsProtected || string.IsNullOrWhiteSpace(row.Content)
+			// Item and location names are metadata, never protected (2026-10-17), so they are shown in every department.
+			if (row != null && !InventoryTables.IsProtected(row.GetType())) protectedContent = false;
+			if (protectedContent || row == null || string.IsNullOrWhiteSpace(row.Content)
 				|| ProtectedDataEnvelope.HasEnvelopePrefix(row.Content) || row.Content == ProtectedDataEnvelope.RedactionValue) return null;
 			try { return JsonConvert.DeserializeObject<T>(row.Content); }
 			catch (JsonException) { return null; }

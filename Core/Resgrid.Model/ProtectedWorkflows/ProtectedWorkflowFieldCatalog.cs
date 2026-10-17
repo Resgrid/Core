@@ -60,22 +60,15 @@ namespace Resgrid.Model
 		private static readonly System.Text.RegularExpressions.Regex UdfName =
 			new System.Text.RegularExpressions.Regex("^[a-z_][a-z0-9_]{0,99}$", System.Text.RegularExpressions.RegexOptions.CultureInvariant);
 
+		// Only the call's protected fields; its name, type, address, location, What3Words and identifiers are plaintext
+		// (2026-10-17) and reach every workflow as ordinary call variables.
 		private static readonly IReadOnlyList<ProtectedWorkflowField> CallFields = new List<ProtectedWorkflowField>
 		{
-			new ProtectedWorkflowField("calls.name", "name", c => c.Name),
-			new ProtectedWorkflowField("calls.type", "type", c => c.Type),
 			new ProtectedWorkflowField("calls.natureofcall", "nature", c => c.NatureOfCall),
 			new ProtectedWorkflowField("calls.notes", "notes", c => c.Notes),
 			new ProtectedWorkflowField("calls.completednotes", "completed_notes", c => c.CompletedNotes),
-			new ProtectedWorkflowField("calls.address", "address", c => c.Address),
-			new ProtectedWorkflowField("calls.geolocationdata", "geo_location", c => c.GeoLocationData),
-			new ProtectedWorkflowField("calls.w3w", "w3w", c => c.W3W),
 			new ProtectedWorkflowField("calls.contactname", "contact_name", c => c.ContactName),
 			new ProtectedWorkflowField("calls.contactnumber", "contact_number", c => c.ContactNumber),
-			new ProtectedWorkflowField("calls.sourceidentifier", "source_identifier", c => c.SourceIdentifier),
-			new ProtectedWorkflowField("calls.incidentnumber", "incident_number", c => c.IncidentNumber),
-			new ProtectedWorkflowField("calls.externalidentifier", "external_id", c => c.ExternalIdentifier),
-			new ProtectedWorkflowField("calls.referencenumber", "reference_number", c => c.ReferenceNumber),
 			new ProtectedWorkflowField(FormDataFieldId, "form_data", c => c.CallFormData),
 			new ProtectedWorkflowField("calls.deletedreason", "deleted_reason", c => c.DeletedReason),
 			new ProtectedWorkflowField(SubjectIdentifiersFieldId, SubjectIdentifiersTemplateName, c => c.SubjectIdentifiers)

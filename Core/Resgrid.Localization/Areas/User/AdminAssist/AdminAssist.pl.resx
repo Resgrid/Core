@@ -6936,4 +6936,13 @@
   <data xml:space="preserve" name="FieldHelp.UnitStatusThresholds.AcknowledgementNoteRequirement">
     <value>Czy potwierdzenie lub wyciszenie alarmu licznika statusu wymaga powodu: opcjonalnie, wymagany dla alarmów albo wymagany dla ostrzeżeń i alarmów. Nie zmienia liczników ani statusu jednostki.</value>
   </data>
+  <data name="Rule.unit-status-timers" xml:space="preserve">
+    <value>Zadysponowane jednostki bez pomiaru czasu</value>
+  </data>
+  <data name="RuleWhy.unit-status-timers" xml:space="preserve">
+    <value>Liczniki statusu jednostek są ustawione, ale niektóre typy jednostek przy zadysponowaniu otrzymują status bez znaczenia lub znaczenie bez licznika. Big Board nigdy nie oznacza tych jednostek, bez względu na czas oczekiwania.</value>
+  </data>
+  <data name="RuleNext.unit-status-timers" xml:space="preserve">
+    <value>Nadaj statusowi zadysponowania znaczenie w Statusach niestandardowych lub ustaw licznik dla jego znaczenia w Ustawieniach map.</value>
+  </data>
 </root>

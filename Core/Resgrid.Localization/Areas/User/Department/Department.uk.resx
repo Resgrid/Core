@@ -1535,4 +1535,25 @@
   <data name="UnitStatusAlertNoteRequirement_Always" xml:space="preserve">
     <value>Обов'язково для попереджень і тривог</value>
   </data>
+  <data name="UnitStatusTimerWarningsHeader" xml:space="preserve">
+    <value>Деякі підрозділи не можна відстежувати за часом</value>
+  </data>
+  <data name="UnitStatusTimerDispatchNoMeaning" xml:space="preserve">
+    <value>Під час направлення {0} отримують статус "{1}", який не має значення, тому направлені підрозділи ніколи не відстежуються за часом. Надайте "{1}" значення (наприклад, Направлено) у Власних статусах.</value>
+  </data>
+  <data name="UnitStatusTimerDispatchNoTimer" xml:space="preserve">
+    <value>Під час направлення {0} отримують статус "{1}" ({2}), але для {2} не встановлено таймер.</value>
+  </data>
+  <data name="UnitStatusTimerSetNoMeaning" xml:space="preserve">
+    <value>Набір статусів "{0}" (використовується {1}) містить статуси без значення, до яких не може застосовуватися жоден таймер: {2}.</value>
+  </data>
+  <data name="UnitStatusTimerWarningsCustomStatuses" xml:space="preserve">
+    <value>Редагувати власні статуси</value>
+  </data>
+  <data name="UnitStatusTimerWarningsDispatchSettings" xml:space="preserve">
+    <value>Редагувати налаштування направлення</value>
+  </data>
+  <data name="UnitStatusOverrideNoMeaning" xml:space="preserve">
+    <value>{0}: перевизначення встановлює "{1}" під час {2}, але цей статус не має значення, тому таймери статусу, правила звільнення та картки реагування не можуть його розпізнати. Надайте йому значення у Власних статусах.</value>
+  </data>
 </root>

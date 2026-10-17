@@ -628,10 +628,10 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.ApplyBigBoardSafeShellAsync(System.Collections.Generic.IEnumerable{Resgrid.Web.Services.Models.v4.Calls.CallResultData})">
             <summary>
             ADP plan section 7.3: BigBoard is an unattended display and is structurally stepped down.
-            For a protection-enforced department it receives only a safe shell — system-generated call
-            number, priority/status/state and safe timestamps survive; user-authored nature/name,
-            notes, identity, exact address/location and reference identifiers do not. Egress policy
-            can never relax this.
+            For a protection-enforced department it receives a safe shell: the call's operational data — name, type,
+            number, priority/status/state, address, location, What3Words, destination, identifiers and timestamps — is
+            not private and survives (2026-10-17); the nature, notes, caller identity, subject identifiers, contacts and
+            dispatch audio do not. Egress policy can never relax this.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Controllers.v4.CallsController.ProtectedGrantToken">
@@ -3154,9 +3154,6 @@
             unattended display: it can never hold a grant, so it is stepped down structurally
             (plan section 7.3) and egress policy can never relax that.
             </summary>
-        </member>
-        <member name="F:Resgrid.Web.Services.Controllers.v4.MappingController.ProtectedMapLabel">
-            <summary>The generic label a protected call carries on a map that cannot reveal it.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetMapDataAndMarkers">
             <summary>

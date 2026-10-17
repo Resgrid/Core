@@ -7,6 +7,7 @@ using Dapper;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Repositories.Connection;
 using Resgrid.Model.Repositories.Queries;
+using Resgrid.Model;
 using Resgrid.Model.WorkOrders;
 using Resgrid.Repositories.DataRepository.Configs;
 
@@ -75,7 +76,7 @@ namespace Resgrid.Repositories.DataRepository
 		public async Task AllocateAsync<T>(T row) where T : WorkOrderRow
 		{
 			Transaction();
-			if (row.Id != null || row.Content != null || row is WorkOrderFile file && file.Data != null) throw new InvalidOperationException("Allocate identities without sensitive content.");
+			if (row.Id != null || row.Content != null || row is ISplitContentRow { ProtectedContent: not null } || row is WorkOrderFile file && file.Data != null) throw new InvalidOperationException("Allocate identities without sensitive content.");
 			row.Id = Guid.NewGuid().ToString("D");
 			var columns = Columns<T>();
 			var sql = $"INSERT INTO {Tbl(Table<T>())} ({Cols(columns)}) VALUES ({string.Join(",", columns.Select(c => P + c))})";
@@ -85,8 +86,11 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			Transaction();
 			var columns = Columns<T>().Where(c => c != "Id" && c != "DepartmentId");
-			var immutable = typeof(T) == typeof(WorkOrderActivity) || typeof(T) == typeof(WorkOrderLabor) || typeof(T) == typeof(WorkOrderRecurrenceVersion) || typeof(T) == typeof(WorkOrderMeterReading) || typeof(T) == typeof(WorkOrderRecurrenceChange) ? $" AND {Col("Content")} IS NULL" : "";
-			if (await ExecuteAsync($"UPDATE {Tbl(Table<T>())} SET {string.Join(",", columns.Select(c => Col(c) + "=" + P + c))} WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("Id")}={P}Id{immutable}", row, default) != 1) throw new InvalidOperationException("Work-order evidence could not be saved.");
+			var immutable = typeof(T) == typeof(WorkOrderActivity) || typeof(T) == typeof(WorkOrderLabor) || typeof(T) == typeof(WorkOrderRecurrenceVersion) || typeof(T) == typeof(WorkOrderMeterReading) || typeof(T) == typeof(WorkOrderRecurrenceChange) ? $" AND {Col("Content")} IS NULL AND {Col("ProtectedContent")} IS NULL" : "";
+			await WriteStoredShapeAsync(new object[] { row }, async () =>
+			{
+				if (await ExecuteAsync($"UPDATE {Tbl(Table<T>())} SET {string.Join(",", columns.Select(c => Col(c) + "=" + P + c))} WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("Id")}={P}Id{immutable}", row, default) != 1) throw new InvalidOperationException("Work-order evidence could not be saved.");
+			});
 		}
 	}
 }

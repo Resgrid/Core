@@ -137,6 +137,32 @@ namespace Resgrid.Tests.AdminAssist
 		}
 
 		[Test]
+		public async Task With_timers_set_a_unit_type_dispatched_to_a_status_without_meaning_is_named()
+		{
+			// Customer report, 2026-10-17: every unit type's override dispatched to "Telefonisch", which had no meaning.
+			_sets.Add(Set(41, CustomStateTypes.Unit, "Statussen", (4101, "Telefonisch", -1), (4102, "Uitgerukt", (int)ActionBaseTypes.Responding),
+				(4104, "Radiofonisch", (int)ActionBaseTypes.Available)));
+			_unitTypes.Add(new UnitType { UnitTypeId = 1, DepartmentId = DepartmentId, Type = "PIT", CustomStatesId = 41 });
+			_unitTypes.Add(new UnitType { UnitTypeId = 2, DepartmentId = DepartmentId, Type = "MUG", CustomStatesId = 41 });
+			_overrides.Add(new UnitTypeCallStatusOverride { UnitTypeId = 1, DispatchStatus = 4101, ReleaseStatus = 4104 });
+			_overrides.Add(new UnitTypeCallStatusOverride { UnitTypeId = 2, DispatchStatus = 4101, ReleaseStatus = 4104 });
+
+			Assert.That((await Evidence())["unitTypesWithUntimedDispatchStatus"].Number, Is.EqualTo(0m), "No timers set: nothing is timed on purpose.");
+
+			_settings.Setup(s => s.GetUnitStatusThresholdsAsync(DepartmentId, It.IsAny<bool>())).ReturnsAsync(new UnitStatusThresholds
+			{
+				Thresholds = new List<UnitStatusThreshold> { new UnitStatusThreshold { BaseType = (int)ActionBaseTypes.Dispatched, WarnSeconds = 240 } }
+			});
+
+			Assert.That((await Evidence())["unitTypesWithUntimedDispatchStatus"].Number, Is.EqualTo(2m));
+			Assert.That((await Subjects("unit-status-timers")).Select(s => (s.Id, s.Name)), Is.EqualTo(new[] { ("2", "MUG → Telefonisch"), ("1", "PIT → Telefonisch") }));
+
+			_sets[0].Details.First().BaseType = (int)ActionBaseTypes.Dispatched;
+
+			Assert.That((await Evidence())["unitTypesWithUntimedDispatchStatus"].Number, Is.EqualTo(0m));
+		}
+
+		[Test]
 		public async Task Other_rules_and_other_departments_get_no_subjects()
 		{
 			_sets.Add(Set(2041, CustomStateTypes.Unit, "Dispatch Status", (1, "DISPATCHED", -1)));

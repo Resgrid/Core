@@ -24,7 +24,7 @@
   <data name="AddUsage" xml:space="preserve"><value>Dodaj odczyt</value></data>
   <data name="AddWorkEntry" xml:space="preserve"><value>Dodaj wpis</value></data>
   <data name="AddWorker" xml:space="preserve"><value>Dodaj pracownika</value></data>
-  <data name="AddWorkerExternalHelp" xml:space="preserve"><value>Lub dodaj pracownika zewnętrznego po kluczu płacowym i etykiecie (oba chronione).</value></data>
+  <data name="AddWorkerExternalHelp" xml:space="preserve"><value>Lub dodaj pracownika zewnętrznego po kluczu płacowym i etykiecie.</value></data>
   <data name="AddWorkerMemberHelp" xml:space="preserve"><value>Wybierz członka, aby utworzyć jego rekord pracownika.</value></data>
   <data name="Address" xml:space="preserve"><value>Adres</value></data>
   <data name="Affiliate" xml:space="preserve"><value>Podmiot powiązany</value></data>
@@ -253,7 +253,7 @@
   <data name="Headquarters" xml:space="preserve"><value>Siedziba główna</value></data>
   <data name="HeadquartersAddress" xml:space="preserve"><value>Adres siedziby głównej</value></data>
   <data name="HelpCompensation" xml:space="preserve"><value>Każda kwota i mnożnik to pole chronione. Szacunki korzystają z profilu pracownika, potem domyślnego roli, potem jednostki; zatwierdzony koszt z systemu płac zawsze ma pierwszeństwo.</value></data>
-  <data name="HelpEmployer" xml:space="preserve"><value>Objęcie obowiązkiem deklarujesz samodzielnie; Resgrid nigdy go nie ustala. Identyfikatory i adresy to pola chronione; niezmieniona wartość REDACTED zachowuje zapisane dane.</value></data>
+  <data name="HelpEmployer" xml:space="preserve"><value>Objęcie obowiązkiem deklarujesz samodzielnie; Resgrid nigdy go nie ustala. Numery FEIN, SEIN i SOS, kontakt do zgłoszeń oraz adresy podmiotów powiązanych to pola chronione; niezmieniona wartość REDACTED zachowuje zapisane dane.</value></data>
   <data name="HispanicLatino" xml:space="preserve"><value>Latynoskie pochodzenie</value></data>
   <data name="HourlyRate" xml:space="preserve"><value>Stawka godzinowa</value></data>
   <data name="Hours" xml:space="preserve"><value>Godziny</value></data>

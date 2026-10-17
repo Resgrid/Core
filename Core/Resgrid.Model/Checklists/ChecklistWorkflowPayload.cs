@@ -45,8 +45,11 @@ namespace Resgrid.Model.Checklists
 				var target = source["TargetId"].Value<string>(); var type = safe["TargetType"]?.Value<int>() ?? -1;
 				safe["TargetId"] = IsStructuralTarget(type, target) ? target : ProtectedDataEnvelope.RedactionValue;
 			}
-			safe["Score"] = ProtectedDataEnvelope.RedactionValue; safe["Passed"] = ProtectedDataEnvelope.RedactionValue;
-			safe["is_redacted"] = true; safe["redacted_fields"] = new JArray(new[] { "Score", "Passed", "TargetId" }.Where(n => safe[n]?.Value<string>() == ProtectedDataEnvelope.RedactionValue)); safe["catalog_version"] = ReadinessHistoryFields.CatalogVersion;
+			// Score and Passed are outcome state, not private (2026-10-17): typed values route as they are.
+			if (source["Score"]?.Type is JTokenType.Integer or JTokenType.Float) safe["Score"] = source["Score"].DeepClone();
+			if (source["Passed"]?.Type == JTokenType.Boolean) safe["Passed"] = source["Passed"].DeepClone();
+			safe["is_redacted"] = safe["TargetId"]?.Type == JTokenType.String && safe["TargetId"].Value<string>() == ProtectedDataEnvelope.RedactionValue;
+			safe["redacted_fields"] = new JArray(new[] { "TargetId" }.Where(n => safe[n]?.Type == JTokenType.String && safe[n].Value<string>() == ProtectedDataEnvelope.RedactionValue)); safe["catalog_version"] = ReadinessHistoryFields.CatalogVersion;
 			return safe.ToString(Newtonsoft.Json.Formatting.None);
 		}
 		public static bool IsChecklist(int trigger) => Triggers.Contains(trigger);

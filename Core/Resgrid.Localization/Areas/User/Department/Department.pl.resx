@@ -1520,4 +1520,19 @@
   <data name="StatusMeaningOption" xml:space="preserve">
     <value>Dowolny status "{0}"</value>
   </data>
+  <data name="UnitStatusAlertNoteRequirementLabel" xml:space="preserve">
+    <value>Powód przy potwierdzaniu</value>
+  </data>
+  <data name="UnitStatusAlertNoteRequirementHelp" xml:space="preserve">
+    <value>Czy dyspozytor musi podać powód przy potwierdzaniu lub wyciszaniu alarmu licznika statusu na Big Board. Powód zostaje przy alarmie, aby można było analizować powtarzające się opóźnienia.</value>
+  </data>
+  <data name="UnitStatusAlertNoteRequirement_Optional" xml:space="preserve">
+    <value>Opcjonalny</value>
+  </data>
+  <data name="UnitStatusAlertNoteRequirement_AtAlert" xml:space="preserve">
+    <value>Wymagany dla alarmów</value>
+  </data>
+  <data name="UnitStatusAlertNoteRequirement_Always" xml:space="preserve">
+    <value>Wymagany dla ostrzeżeń i alarmów</value>
+  </data>
 </root>

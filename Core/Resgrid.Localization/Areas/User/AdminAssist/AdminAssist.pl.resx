@@ -6930,4 +6930,10 @@
   <data name="RuleNext.unit-status-targets" xml:space="preserve">
     <value>Nadaj znaczenia opcjom zestawu albo wybierz inne znaczenie lub wyjątek dla typu jednostki w ustawieniach dysponowania.</value>
   </data>
+  <data xml:space="preserve" name="Field.UnitStatusThresholds.AcknowledgementNoteRequirement">
+    <value>Progi statusu jednostki / Wymóg notatki potwierdzenia</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.UnitStatusThresholds.AcknowledgementNoteRequirement">
+    <value>Czy potwierdzenie lub wyciszenie alarmu licznika statusu wymaga powodu: opcjonalnie, wymagany dla alarmów albo wymagany dla ostrzeżeń i alarmów. Nie zmienia liczników ani statusu jednostki.</value>
+  </data>
 </root>

@@ -51,9 +51,33 @@ namespace Resgrid.Model
 		[ProtoMember(1)]
 		public List<UnitStatusThreshold> Thresholds { get; set; } = new List<UnitStatusThreshold>();
 
+		/// <summary>
+		/// When acknowledging or muting an alert needs a reason. Optional (0) by default, so departments that never
+		/// set it keep today's behaviour.
+		/// </summary>
+		[ProtoMember(2)]
+		public UnitStatusAlertNoteRequirements AcknowledgementNoteRequirement { get; set; }
+
 		public bool IsEmpty => Thresholds == null || Thresholds.Count == 0;
 
 		public UnitStatusThreshold Find(int baseType) => Thresholds?.FirstOrDefault(x => x.BaseType == baseType);
+
+		/// <summary>
+		/// Whether acknowledging or muting an alert at <paramref name="level"/> needs a note. The Big Board runs the
+		/// same rule in <c>requiresAcknowledgementNote</c> (<c>src/lib/unit-status-thresholds.ts</c>); keep them in step.
+		/// </summary>
+		public bool RequiresAcknowledgementNote(UnitStatusAlertLevels level)
+		{
+			switch (AcknowledgementNoteRequirement)
+			{
+				case UnitStatusAlertNoteRequirements.Always:
+					return level == UnitStatusAlertLevels.Warn || level == UnitStatusAlertLevels.Alert;
+				case UnitStatusAlertNoteRequirements.AtAlert:
+					return level == UnitStatusAlertLevels.Alert;
+				default:
+					return false;
+			}
+		}
 
 		/// <summary>
 		/// Drops rows that would never fire, collapses duplicates, and clamps an alert that is not
@@ -83,6 +107,9 @@ namespace Resgrid.Model
 				.Where(x => !x.IsEmpty)
 				.OrderBy(x => x.BaseType)
 				.ToList();
+
+			if (!Enum.IsDefined(typeof(UnitStatusAlertNoteRequirements), AcknowledgementNoteRequirement))
+				AcknowledgementNoteRequirement = UnitStatusAlertNoteRequirements.Optional;
 
 			return this;
 		}

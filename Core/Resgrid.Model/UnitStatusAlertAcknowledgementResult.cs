@@ -21,6 +21,9 @@ namespace Resgrid.Model
 
 		public const string NoteTooLong = "unit_alert_note_too_long";
 
+		/// <summary>The department requires a reason for this alert level and none was given.</summary>
+		public const string NoteRequired = "unit_alert_note_required";
+
 		public bool Success { get; set; }
 
 		public string Error { get; set; }

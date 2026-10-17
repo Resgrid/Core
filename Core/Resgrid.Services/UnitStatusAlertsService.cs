@@ -90,6 +90,11 @@ namespace Resgrid.Services
 			// the alert comes straight back. It may never run a level ahead, or an alert could be silenced before it fires.
 			var acknowledgedLevel = (UnitStatusAlertLevels)Math.Min((int)level, (int)measured);
 
+			// Judged at the recorded level: a warning acknowledged without a reason still comes back as an alert, and
+			// that one needs a reason before it can be acknowledged.
+			if (note == null && thresholds.RequiresAcknowledgementNote(acknowledgedLevel))
+				return UnitStatusAlertAcknowledgementResult.Fail(UnitStatusAlertAcknowledgementResult.NoteRequired);
+
 			DateTime? mutedUntil = null;
 			if (mode == UnitStatusAlertAcknowledgementModes.Muted && muteMinutes > 0)
 				mutedUntil = now.AddMinutes(Math.Min(muteMinutes, UnitStatusAlertAcknowledgement.MaxMuteMinutes));

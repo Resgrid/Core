@@ -12523,6 +12523,12 @@
             base type. Empty means the department has configured no thresholds and nothing is highlighted.
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.UnitStatusAlertNoteRequirement">
+            <summary>
+            When acknowledging or muting a status timer alert needs a reason: 0 optional, 1 required at the alert level,
+            2 required for warnings and alerts. The acknowledge endpoint refuses a blank note with unit_alert_note_required.
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.PersonnelLocationStaleSeconds">
             <summary>
             How many seconds to prevent a duplicate gps location from being logged for personnel

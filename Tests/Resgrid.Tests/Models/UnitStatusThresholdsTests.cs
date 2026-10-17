@@ -96,5 +96,48 @@ namespace Resgrid.Tests.Models
 
 			thresholds.IsEmpty.Should().BeTrue();
 		}
+
+		[TestCase(UnitStatusAlertNoteRequirements.Optional, UnitStatusAlertLevels.Warn, false)]
+		[TestCase(UnitStatusAlertNoteRequirements.Optional, UnitStatusAlertLevels.Alert, false)]
+		[TestCase(UnitStatusAlertNoteRequirements.AtAlert, UnitStatusAlertLevels.Warn, false)]
+		[TestCase(UnitStatusAlertNoteRequirements.AtAlert, UnitStatusAlertLevels.Alert, true)]
+		[TestCase(UnitStatusAlertNoteRequirements.Always, UnitStatusAlertLevels.Warn, true)]
+		[TestCase(UnitStatusAlertNoteRequirements.Always, UnitStatusAlertLevels.Alert, true)]
+		[TestCase(UnitStatusAlertNoteRequirements.Always, UnitStatusAlertLevels.None, false)]
+		public void A_reason_is_required_only_at_the_levels_the_department_chose(UnitStatusAlertNoteRequirements requirement, UnitStatusAlertLevels level, bool required)
+		{
+			new UnitStatusThresholds { AcknowledgementNoteRequirement = requirement }.RequiresAcknowledgementNote(level).Should().Be(required);
+		}
+
+		[Test]
+		public void An_unconfigured_department_never_requires_a_reason()
+		{
+			new UnitStatusThresholds().AcknowledgementNoteRequirement.Should().Be(UnitStatusAlertNoteRequirements.Optional);
+		}
+
+		[Test]
+		public void Normalize_turns_an_unknown_reason_requirement_into_optional()
+		{
+			var thresholds = With(new UnitStatusThreshold { BaseType = (int)ActionBaseTypes.Dispatched, WarnSeconds = 240 });
+			thresholds.AcknowledgementNoteRequirement = (UnitStatusAlertNoteRequirements)9;
+
+			thresholds.Normalize();
+
+			thresholds.AcknowledgementNoteRequirement.Should().Be(UnitStatusAlertNoteRequirements.Optional);
+		}
+
+		[TestCase(UnitStatusAlertNoteRequirements.Optional)]
+		[TestCase(UnitStatusAlertNoteRequirements.AtAlert)]
+		[TestCase(UnitStatusAlertNoteRequirements.Always)]
+		public void The_reason_requirement_survives_storage(UnitStatusAlertNoteRequirements requirement)
+		{
+			var thresholds = With(new UnitStatusThreshold { BaseType = (int)ActionBaseTypes.Dispatched, WarnSeconds = 240 });
+			thresholds.AcknowledgementNoteRequirement = requirement;
+
+			var stored = Resgrid.Framework.ObjectSerialization.Deserialize<UnitStatusThresholds>(Resgrid.Framework.ObjectSerialization.Serialize(thresholds));
+
+			stored.AcknowledgementNoteRequirement.Should().Be(requirement);
+			stored.Thresholds.Should().ContainSingle().Which.WarnSeconds.Should().Be(240);
+		}
 	}
 }

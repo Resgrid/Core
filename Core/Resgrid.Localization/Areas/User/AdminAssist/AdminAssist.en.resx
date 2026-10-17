@@ -6930,4 +6930,10 @@
   <data name="RuleNext.unit-status-targets" xml:space="preserve">
     <value>Give the set's options meanings, or choose another meaning or a unit-type override in Dispatch Settings.</value>
   </data>
+  <data xml:space="preserve" name="Field.UnitStatusThresholds.AcknowledgementNoteRequirement">
+    <value>Unit Status Thresholds / Acknowledgement Note Requirement</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.UnitStatusThresholds.AcknowledgementNoteRequirement">
+    <value>Whether acknowledging or muting a status timer alert needs a reason: optional, required for alerts, or required for warnings and alerts. It does not change the timers or the unit status.</value>
+  </data>
 </root>

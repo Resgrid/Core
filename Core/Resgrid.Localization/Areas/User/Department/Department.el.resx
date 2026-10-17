@@ -1578,4 +1578,19 @@
   <data name="StatusMeaningOption" xml:space="preserve">
     <value>Οποιαδήποτε κατάσταση "{0}"</value>
   </data>
+  <data name="UnitStatusAlertNoteRequirementLabel" xml:space="preserve">
+    <value>Αιτιολογία κατά την επιβεβαίωση</value>
+  </data>
+  <data name="UnitStatusAlertNoteRequirementHelp" xml:space="preserve">
+    <value>Αν ο συντονιστής πρέπει να εισαγάγει αιτιολογία όταν επιβεβαιώνει ή σιγάζει έναν συναγερμό χρονομέτρου κατάστασης στο Big Board. Η αιτιολογία παραμένει με τον συναγερμό για την παρακολούθηση επαναλαμβανόμενων καθυστερήσεων.</value>
+  </data>
+  <data name="UnitStatusAlertNoteRequirement_Optional" xml:space="preserve">
+    <value>Προαιρετική</value>
+  </data>
+  <data name="UnitStatusAlertNoteRequirement_AtAlert" xml:space="preserve">
+    <value>Απαιτείται για συναγερμούς</value>
+  </data>
+  <data name="UnitStatusAlertNoteRequirement_Always" xml:space="preserve">
+    <value>Απαιτείται για προειδοποιήσεις και συναγερμούς</value>
+  </data>
 </root>

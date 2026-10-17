@@ -6930,4 +6930,10 @@
   <data name="RuleNext.unit-status-targets" xml:space="preserve">
     <value>Надайте параметрам набору значення або виберіть інше значення чи виняток для типу підрозділу в налаштуваннях відправлення.</value>
   </data>
+  <data xml:space="preserve" name="Field.UnitStatusThresholds.AcknowledgementNoteRequirement">
+    <value>Порогові значення статусу підрозділу / Вимога примітки до підтвердження</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.UnitStatusThresholds.AcknowledgementNoteRequirement">
+    <value>Чи потребує підтвердження або вимкнення звуку тривоги таймера статусу причини: необов'язково, обов'язково для тривог або обов'язково для попереджень і тривог. Не змінює таймери чи статус підрозділу.</value>
+  </data>
 </root>

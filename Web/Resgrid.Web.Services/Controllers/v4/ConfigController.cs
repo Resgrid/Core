@@ -248,6 +248,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				var thresholds = await _departmentSettingsService.GetUnitStatusThresholdsAsync(departmentId);
 
+				result.Data.UnitStatusAlertNoteRequirement = (int)(thresholds?.AcknowledgementNoteRequirement ?? UnitStatusAlertNoteRequirements.Optional);
+
 				foreach (var threshold in thresholds?.Thresholds ?? new System.Collections.Generic.List<Resgrid.Model.UnitStatusThreshold>())
 				{
 					result.Data.UnitStatusThresholds.Add(new UnitStatusThresholdData

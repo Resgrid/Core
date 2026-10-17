@@ -1578,4 +1578,19 @@
   <data name="StatusMeaningOption" xml:space="preserve">
     <value>Cualquier estado "{0}"</value>
   </data>
+  <data name="UnitStatusAlertNoteRequirementLabel" xml:space="preserve">
+    <value>Motivo al confirmar</value>
+  </data>
+  <data name="UnitStatusAlertNoteRequirementHelp" xml:space="preserve">
+    <value>Indica si un despachador debe introducir un motivo al confirmar o silenciar una alerta de temporizador de estado en el Big Board. El motivo se guarda con la alerta para el seguimiento de retrasos recurrentes.</value>
+  </data>
+  <data name="UnitStatusAlertNoteRequirement_Optional" xml:space="preserve">
+    <value>Opcional</value>
+  </data>
+  <data name="UnitStatusAlertNoteRequirement_AtAlert" xml:space="preserve">
+    <value>Obligatorio para alertas</value>
+  </data>
+  <data name="UnitStatusAlertNoteRequirement_Always" xml:space="preserve">
+    <value>Obligatorio para avisos y alertas</value>
+  </data>
 </root>

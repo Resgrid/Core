@@ -15,6 +15,9 @@ namespace Resgrid.Web.Areas.User.Models.Departments
 		/// </summary>
 		public List<UnitStatusThresholdRow> UnitStatusThresholds { get; set; } = new List<UnitStatusThresholdRow>();
 
+		/// <summary>When acknowledging or muting a status timer alert on the Big Board needs a reason.</summary>
+		public UnitStatusAlertNoteRequirements UnitStatusAlertNoteRequirement { get; set; }
+
 		public int PersonnelLocationTTL { get; set; }
 		public int UnitLocationTTL { get; set; }
 

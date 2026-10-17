@@ -1578,4 +1578,19 @@
   <data name="StatusMeaningOption" xml:space="preserve">
     <value>أي حالة "{0}"</value>
   </data>
+  <data name="UnitStatusAlertNoteRequirementLabel" xml:space="preserve">
+    <value>السبب عند الإقرار</value>
+  </data>
+  <data name="UnitStatusAlertNoteRequirementHelp" xml:space="preserve">
+    <value>ما إذا كان على المرسل إدخال سبب عند الإقرار بإنذار مؤقت الحالة أو كتمه على اللوحة الكبيرة. يبقى السبب مع الإنذار لمتابعة حالات التأخير المتكررة.</value>
+  </data>
+  <data name="UnitStatusAlertNoteRequirement_Optional" xml:space="preserve">
+    <value>اختياري</value>
+  </data>
+  <data name="UnitStatusAlertNoteRequirement_AtAlert" xml:space="preserve">
+    <value>مطلوب للإنذارات</value>
+  </data>
+  <data name="UnitStatusAlertNoteRequirement_Always" xml:space="preserve">
+    <value>مطلوب للتحذيرات والإنذارات</value>
+  </data>
 </root>

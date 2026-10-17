@@ -6930,4 +6930,10 @@
   <data name="RuleNext.unit-status-targets" xml:space="preserve">
     <value>Donnez des significations aux options du jeu, ou choisissez une autre signification ou une exception par type d'unité dans les paramètres d'envoi.</value>
   </data>
+  <data xml:space="preserve" name="Field.UnitStatusThresholds.AcknowledgementNoteRequirement">
+    <value>Seuils de statut d'unité / Exigence de note d'acquittement</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.UnitStatusThresholds.AcknowledgementNoteRequirement">
+    <value>Indique si l'acquittement ou la mise en sourdine d'une alerte de minuterie de statut exige un motif : facultatif, obligatoire pour les alertes ou obligatoire pour les avertissements et les alertes. Ne modifie ni les minuteries ni le statut de l'unité.</value>
+  </data>
 </root>

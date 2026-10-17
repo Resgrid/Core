@@ -1154,9 +1154,11 @@ namespace Resgrid.Services
 
 				if (etaByUnitId.Any())
 				{
+					// A unit whose lookup failed keeps its estimate (the ResponseSeconds it reports) rather than
+					// dropping to the end of the shortlist, where it would lose to slower units with a route.
 					var reranked = shortlist
 						.OrderBy(x => IsUnitInRestPeriod(context, x.Candidate.Unit.UnitId) ? 1 : 0)
-						.ThenBy(x => etaByUnitId.TryGetValue(x.Candidate.Unit.UnitId, out var eta) ? x.Candidate.TurnoutSeconds + eta : double.MaxValue)
+						.ThenBy(x => etaByUnitId.TryGetValue(x.Candidate.Unit.UnitId, out var eta) ? x.Candidate.TurnoutSeconds + eta : x.EstimatedResponse)
 						.ThenBy(x => x.Distance)
 						.ToList();
 
@@ -1268,9 +1270,10 @@ namespace Resgrid.Services
 
 				if (etaByUserId.Any())
 				{
+					// Same as units: a failed lookup ranks on the straight-line estimate, in seconds like the routed ETAs.
 					var reranked = shortlist
 						.OrderBy(x => IsUserInRestPeriod(context, x.Candidate.UserId) ? 1 : 0)
-						.ThenBy(x => etaByUserId.TryGetValue(x.Candidate.UserId, out var eta) ? eta : double.MaxValue)
+						.ThenBy(x => etaByUserId.TryGetValue(x.Candidate.UserId, out var eta) ? eta : UnitResponseOrigin.EstimateTravelSeconds(x.Distance))
 						.ThenBy(x => x.Distance)
 						.ToList();
 

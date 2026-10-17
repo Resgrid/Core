@@ -1520,4 +1520,19 @@
   <data name="StatusMeaningOption" xml:space="preserve">
     <value>Jeder Status "{0}"</value>
   </data>
+  <data name="UnitStatusAlertNoteRequirementLabel" xml:space="preserve">
+    <value>Begründung bei Bestätigung</value>
+  </data>
+  <data name="UnitStatusAlertNoteRequirementHelp" xml:space="preserve">
+    <value>Legt fest, ob ein Disponent eine Begründung eingeben muss, wenn er einen Statustimer-Alarm auf dem Big Board bestätigt oder stummschaltet. Die Begründung bleibt beim Alarm, um wiederkehrende Verzögerungen nachzuverfolgen.</value>
+  </data>
+  <data name="UnitStatusAlertNoteRequirement_Optional" xml:space="preserve">
+    <value>Optional</value>
+  </data>
+  <data name="UnitStatusAlertNoteRequirement_AtAlert" xml:space="preserve">
+    <value>Erforderlich bei Alarmen</value>
+  </data>
+  <data name="UnitStatusAlertNoteRequirement_Always" xml:space="preserve">
+    <value>Erforderlich bei Warnungen und Alarmen</value>
+  </data>
 </root>

@@ -783,6 +783,41 @@
       "Availability": "reference-only"
     },
     {
+      "Id": "field.UnitStatusThresholds.AcknowledgementNoteRequirement",
+      "AreaId": "mapping",
+      "LabelKey": "Field.UnitStatusThresholds.AcknowledgementNoteRequirement",
+      "HelpKey": "FieldHelp.UnitStatusThresholds.AcknowledgementNoteRequirement",
+      "Binding": "UnitStatusThresholds.AcknowledgementNoteRequirement",
+      "ValueType": "enum",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "MappingSettings",
+        "Field": "UnitStatusAlertNoteRequirement"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-16T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.mapping",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.UnitStatusThresholds"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.UnitStatusThresholds.AcknowledgementNoteRequirement",
+      "DefaultValue": "Optional",
+      "AllowedValues": "Optional, AtAlert, Always",
+      "EvidenceSource": "UnitStatusThresholds",
+      "Availability": "reference-only"
+    },
+    {
       "Id": "field.UnitStatusThreshold.BaseType",
       "AreaId": "mapping",
       "LabelKey": "Field.UnitStatusThreshold.BaseType",
@@ -1704,6 +1739,17 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "field.UnitStatusThresholds.AcknowledgementNoteRequirement",
+      "Locale": "en",
+      "TitleKey": "Field.UnitStatusThresholds.AcknowledgementNoteRequirement",
+      "Body": "Unit Status Thresholds / Acknowledgement Note Requirement. Whether acknowledging or muting a status timer alert needs a reason: optional, required for alerts, or required for warnings and alerts. It does not change the timers or the unit status.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-unitstatusthresholds-acknowledgementnoterequirement",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-16T00:00:00Z"
     },
     {
       "Id": "field.UnitStatusThreshold.BaseType",

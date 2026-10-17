@@ -1173,4 +1173,19 @@
   <data name="StatusMeaningOption" xml:space="preserve">
     <value>Any "{0}" status</value>
   </data>
+  <data name="UnitStatusAlertNoteRequirementLabel" xml:space="preserve">
+    <value>Reason when acknowledging</value>
+  </data>
+  <data name="UnitStatusAlertNoteRequirementHelp" xml:space="preserve">
+    <value>Whether a dispatcher must enter a reason when acknowledging or muting a status timer alert on the Big Board. The reason stays with the alert for follow-up on recurring delays.</value>
+  </data>
+  <data name="UnitStatusAlertNoteRequirement_Optional" xml:space="preserve">
+    <value>Optional</value>
+  </data>
+  <data name="UnitStatusAlertNoteRequirement_AtAlert" xml:space="preserve">
+    <value>Required for alerts</value>
+  </data>
+  <data name="UnitStatusAlertNoteRequirement_Always" xml:space="preserve">
+    <value>Required for warnings and alerts</value>
+  </data>
 </root>

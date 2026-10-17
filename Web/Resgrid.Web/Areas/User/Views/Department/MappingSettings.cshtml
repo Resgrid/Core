@@ -209,6 +209,17 @@
 									</table>
 								</div>
 							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label" asp-for="UnitStatusAlertNoteRequirement">@localizer["UnitStatusAlertNoteRequirementLabel"]</label>
+								<div class="col-sm-6">
+									<select class="form-control" asp-for="UnitStatusAlertNoteRequirement">
+										<option value="@UnitStatusAlertNoteRequirements.Optional">@localizer["UnitStatusAlertNoteRequirement_Optional"]</option>
+										<option value="@UnitStatusAlertNoteRequirements.AtAlert">@localizer["UnitStatusAlertNoteRequirement_AtAlert"]</option>
+										<option value="@UnitStatusAlertNoteRequirements.Always">@localizer["UnitStatusAlertNoteRequirement_Always"]</option>
+									</select>
+									<span class="help-block m-b-none">@localizer["UnitStatusAlertNoteRequirementHelp"]</span>
+								</div>
+							</div>
 
                             <div class="form-group">
                                 <div class="col-sm-4 col-sm-offset-2">

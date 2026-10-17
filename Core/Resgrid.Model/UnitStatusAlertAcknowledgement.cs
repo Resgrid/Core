@@ -16,6 +16,22 @@ namespace Resgrid.Model
 		Alert = 2
 	}
 
+	/// <summary>
+	/// When acknowledging or muting a status timer alert needs a reason (the note). Set with the department's
+	/// <see cref="UnitStatusThresholds"/>, so follow-up can see why units were late.
+	/// </summary>
+	public enum UnitStatusAlertNoteRequirements
+	{
+		/// <summary>The note is optional.</summary>
+		Optional = 0,
+
+		/// <summary>Required once the unit is past its alert threshold; optional for a warning.</summary>
+		AtAlert = 1,
+
+		/// <summary>Required for warnings and alerts.</summary>
+		Always = 2
+	}
+
 	/// <summary>What the dispatcher chose to do with the alert.</summary>
 	public enum UnitStatusAlertAcknowledgementModes
 	{

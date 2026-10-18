@@ -37,6 +37,7 @@ namespace Resgrid.Workers.Framework
 				builder.RegisterModule(new ServicesModule());
 				builder.RegisterModule(new Resgrid.Search.SearchModule());
 				builder.RegisterModule(new Resgrid.Providers.Scanning.ScanningProviderModule());
+				builder.RegisterModule(new Resgrid.Providers.Import.ImportProviderModule());
 				builder.RegisterModule(new Resgrid.Providers.Neris.NerisProviderModule());
 				builder.RegisterModule(new ProviderModule());
 				builder.RegisterModule(new EmailProviderModule());
@@ -64,6 +65,9 @@ namespace Resgrid.Workers.Framework
 				builder.RegisterModule(new Resgrid.Chatbot.ChatbotModule());
 				builder.RegisterModule(new Resgrid.Chatbot.NLU.NLUModule());
 				builder.RegisterModule(new Resgrid.Providers.Chatbot.ChatbotProviderModule());
+
+				// UserManager for member provisioning (Department Import creates dormant accounts in worker 47).
+				builder.RegisterModule(new WorkerIdentityModule());
 
 				_container = builder.Build();
 

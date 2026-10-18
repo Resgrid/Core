@@ -1,0 +1,60 @@
+{
+  "Key": "d4h",
+  "Version": "2026.11.1",
+  "ProductName": "D4H Team Manager",
+  "Kind": "api-extraction",
+  "Grade": "A",
+  "Phase": "2B",
+  "Published": false,
+  "SourceUrl": "https://api.team-manager.us.d4h.com/v3/docs/swagger.json",
+  "VerifiedOn": "2026-10-12",
+  "Glossary": [
+    {
+      "Term": "Members",
+      "Language": "en",
+      "Target": "entity:personnel",
+      "Names": "module.personnel"
+    },
+    {
+      "Term": "Emergency contacts",
+      "Language": "en",
+      "Target": "entity:emergency-contacts"
+    },
+    {
+      "Term": "Qualifications",
+      "Language": "en",
+      "Target": "entity:certification-types"
+    },
+    {
+      "Term": "Awards",
+      "Language": "en",
+      "Target": "entity:personnel-certifications"
+    },
+    {
+      "Term": "Roles",
+      "Language": "en",
+      "Target": "entity:roles"
+    },
+    {
+      "Term": "Groups",
+      "Language": "en",
+      "Target": "entity:groups"
+    },
+    {
+      "Term": "Location bookmarks",
+      "Language": "en",
+      "Target": "entity:pois"
+    },
+    {
+      "Term": "Equipment",
+      "Language": "en",
+      "Target": "term:module.inventory"
+    },
+    {
+      "Term": "Incidents",
+      "Language": "en",
+      "Target": "term:module.calls",
+      "Names": "module.calls"
+    }
+  ]
+}

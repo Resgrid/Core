@@ -1,0 +1,184 @@
+{
+  "Key": "unit-certifications",
+  "Version": "2026.11.1",
+  "LabelKey": "Entity.unit-certifications",
+  "DescriptionKey": "EntityDesc.unit-certifications",
+  "Icon": "fa-certificate",
+  "Area": "units",
+  "Wave": "2",
+  "Order": 85,
+  "DependsOn": [
+    "units",
+    "certification-types"
+  ],
+  "Gate": {
+    "Flags": [
+      "Onboarding.MigrationWizard"
+    ],
+    "Permissions": []
+  },
+  "IdentityFields": [
+    "source_id"
+  ],
+  "NaturalKey": [
+    "unit",
+    "certification_type",
+    "number"
+  ],
+  "SupportsCustomFields": false,
+  "MatchPolicy": "none",
+  "MaxRows": 0,
+  "Fields": [
+    {
+      "Key": "source_id",
+      "LabelKey": "Field.unit-certifications.source_id",
+      "DescriptionKey": "FieldDesc.unit-certifications.source_id",
+      "Type": "text",
+      "MaxLength": 256,
+      "Unique": "in-file",
+      "Sensitivity": "Internal",
+      "WriterPath": "ImportExternalId.SourceId",
+      "Aliases": [
+        "id",
+        "source id",
+        "external id",
+        "record id",
+        "key"
+      ],
+      "Example": "1042"
+    },
+    {
+      "Key": "unit",
+      "LabelKey": "Field.unit-certifications.unit",
+      "DescriptionKey": "FieldDesc.unit-certifications.unit",
+      "Type": "reference",
+      "Required": true,
+      "References": "units",
+      "ReferenceMatch": "name",
+      "Unique": "none",
+      "Sensitivity": "Internal",
+      "WriterPath": "UnitCertification.UnitId",
+      "Aliases": [
+        "unit",
+        "apparatus",
+        "vehicle",
+        "unit name"
+      ],
+      "Example": "Engine 1"
+    },
+    {
+      "Key": "certification_type",
+      "LabelKey": "Field.unit-certifications.certification_type",
+      "DescriptionKey": "FieldDesc.unit-certifications.certification_type",
+      "Type": "reference",
+      "Required": true,
+      "References": "certification-types",
+      "ReferenceMatch": "name",
+      "Unique": "none",
+      "Sensitivity": "Internal",
+      "WriterPath": "UnitCertification.DepartmentCertificationTypeId",
+      "Aliases": [
+        "certification",
+        "certification type",
+        "inspection",
+        "registration",
+        "type"
+      ],
+      "Example": "Annual pump test"
+    },
+    {
+      "Key": "number",
+      "LabelKey": "Field.unit-certifications.number",
+      "DescriptionKey": "FieldDesc.unit-certifications.number",
+      "Type": "text",
+      "MaxLength": 200,
+      "Unique": "none",
+      "Sensitivity": "Restricted",
+      "WriterPath": "UnitCertification.Number",
+      "Aliases": [
+        "number",
+        "certificate number",
+        "registration number",
+        "inspection number"
+      ],
+      "Example": "PT-2026-117"
+    },
+    {
+      "Key": "issued_by",
+      "LabelKey": "Field.unit-certifications.issued_by",
+      "DescriptionKey": "FieldDesc.unit-certifications.issued_by",
+      "Type": "text",
+      "MaxLength": 200,
+      "Unique": "none",
+      "Sensitivity": "Restricted",
+      "WriterPath": "UnitCertification.IssuedBy",
+      "Aliases": [
+        "issued by",
+        "issuer",
+        "inspector",
+        "authority"
+      ],
+      "Example": "County Fleet Services"
+    },
+    {
+      "Key": "issued_on",
+      "LabelKey": "Field.unit-certifications.issued_on",
+      "DescriptionKey": "FieldDesc.unit-certifications.issued_on",
+      "Type": "date",
+      "Unique": "none",
+      "Sensitivity": "Internal",
+      "WriterPath": "UnitCertification.IssuedOn",
+      "Aliases": [
+        "issued",
+        "issued on",
+        "issue date",
+        "inspected on",
+        "date"
+      ],
+      "Example": "2026-03-02"
+    },
+    {
+      "Key": "expires_on",
+      "LabelKey": "Field.unit-certifications.expires_on",
+      "DescriptionKey": "FieldDesc.unit-certifications.expires_on",
+      "Type": "date",
+      "Unique": "none",
+      "Sensitivity": "Internal",
+      "WriterPath": "UnitCertification.ExpiresOn",
+      "Aliases": [
+        "expires",
+        "expires on",
+        "expiration",
+        "expiration date",
+        "expiry",
+        "valid until",
+        "due"
+      ],
+      "Example": "2027-03-02"
+    },
+    {
+      "Key": "notes",
+      "LabelKey": "Field.unit-certifications.notes",
+      "DescriptionKey": "FieldDesc.unit-certifications.notes",
+      "Type": "text",
+      "MaxLength": 4000,
+      "Unique": "none",
+      "Sensitivity": "Restricted",
+      "WriterPath": "UnitCertification.Notes",
+      "Aliases": [
+        "notes",
+        "comments",
+        "remarks"
+      ],
+      "Example": "Passed with minor findings"
+    }
+  ],
+  "RowRules": [
+    {
+      "Kind": "after-or-equal",
+      "Field": "expires_on",
+      "Other": "issued_on",
+      "Code": "IMP-ROW-EXPIRES-BEFORE-ISSUED"
+    }
+  ]
+}

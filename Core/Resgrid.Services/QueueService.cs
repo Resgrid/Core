@@ -84,6 +84,22 @@ namespace Resgrid.Services
 			return await _outboundQueueProvider.EnqueueAiDispatchTriage(item);
 		}
 
+		public async Task<bool> EnqueueDepartmentImportAsync(DepartmentImportQueueItem item, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			if (item == null || item.DepartmentId <= 0 || string.IsNullOrWhiteSpace(item.RunId))
+				return false;
+
+			try
+			{
+				return await _outboundQueueProvider.EnqueueDepartmentImport(item);
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, $"Department import nudge for run {item.RunId} was not published; worker 47 will sweep it");
+				return false;
+			}
+		}
+
 		public async Task<QueueItem> GetPendingDeleteDepartmentQueueItemAsync(int departmentId)
 		{
 			var allItems = await _queueItemsRepository.GetAllAsync();

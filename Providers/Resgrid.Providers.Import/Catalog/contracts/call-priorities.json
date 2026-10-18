@@ -1,0 +1,208 @@
+{
+  "Key": "call-priorities",
+  "Version": "2026.11.1",
+  "LabelKey": "Entity.call-priorities",
+  "DescriptionKey": "EntityDesc.call-priorities",
+  "Icon": "fa-exclamation-triangle",
+  "Area": "dispatch",
+  "Wave": "2",
+  "Order": 91,
+  "DependsOn": [],
+  "Gate": {
+    "Flags": [
+      "Onboarding.MigrationWizard"
+    ],
+    "Permissions": []
+  },
+  "IdentityFields": [
+    "source_id"
+  ],
+  "NaturalKey": [
+    "name"
+  ],
+  "SupportsCustomFields": false,
+  "MatchPolicy": "name",
+  "MaxRows": 0,
+  "Fields": [
+    {
+      "Key": "source_id",
+      "LabelKey": "Field.call-priorities.source_id",
+      "DescriptionKey": "FieldDesc.call-priorities.source_id",
+      "Type": "text",
+      "MaxLength": 256,
+      "Unique": "in-file",
+      "WriterPath": "ImportExternalId.SourceId",
+      "Aliases": [
+        "id",
+        "source id",
+        "external id",
+        "record id",
+        "key"
+      ],
+      "Example": "1042",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "name",
+      "LabelKey": "Field.call-priorities.name",
+      "DescriptionKey": "FieldDesc.call-priorities.name",
+      "Type": "text",
+      "Required": true,
+      "MaxLength": 100,
+      "Unique": "in-file",
+      "WriterPath": "DepartmentCallPriority.Name",
+      "Aliases": [
+        "name",
+        "priority",
+        "priority name",
+        "level"
+      ],
+      "Example": "Emergency",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "color",
+      "LabelKey": "Field.call-priorities.color",
+      "DescriptionKey": "FieldDesc.call-priorities.color",
+      "Type": "colour",
+      "WriterPath": "DepartmentCallPriority.Color",
+      "Aliases": [
+        "color",
+        "colour"
+      ],
+      "Example": "#e34948",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "sort",
+      "LabelKey": "Field.call-priorities.sort",
+      "DescriptionKey": "FieldDesc.call-priorities.sort",
+      "Type": "integer",
+      "Min": 0,
+      "Max": 1000,
+      "WriterPath": "DepartmentCallPriority.Sort",
+      "Aliases": [
+        "order",
+        "sort",
+        "rank",
+        "position"
+      ],
+      "Example": "0",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "is_default",
+      "LabelKey": "Field.call-priorities.is_default",
+      "DescriptionKey": "FieldDesc.call-priorities.is_default",
+      "Type": "boolean",
+      "WriterPath": "DepartmentCallPriority.IsDefault",
+      "Aliases": [
+        "default",
+        "is default"
+      ],
+      "Example": "no",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "dispatch_personnel",
+      "LabelKey": "Field.call-priorities.dispatch_personnel",
+      "DescriptionKey": "FieldDesc.call-priorities.dispatch_personnel",
+      "Type": "boolean",
+      "WriterPath": "DepartmentCallPriority.DispatchPersonnel",
+      "Aliases": [
+        "dispatch personnel",
+        "page people",
+        "notify personnel"
+      ],
+      "Example": "yes",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "dispatch_units",
+      "LabelKey": "Field.call-priorities.dispatch_units",
+      "DescriptionKey": "FieldDesc.call-priorities.dispatch_units",
+      "Type": "boolean",
+      "WriterPath": "DepartmentCallPriority.DispatchUnits",
+      "Aliases": [
+        "dispatch units",
+        "page units",
+        "notify units"
+      ],
+      "Example": "yes",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "notify_everyone",
+      "LabelKey": "Field.call-priorities.notify_everyone",
+      "DescriptionKey": "FieldDesc.call-priorities.notify_everyone",
+      "Type": "boolean",
+      "WriterPath": "DepartmentCallPriority.ForceNotifyAllPersonnel",
+      "Aliases": [
+        "notify all",
+        "force notify",
+        "notify everyone"
+      ],
+      "Example": "no",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "base_type",
+      "LabelKey": "Field.call-priorities.base_type",
+      "DescriptionKey": "FieldDesc.call-priorities.base_type",
+      "Type": "choice",
+      "Choices": [
+        {
+          "Code": "low",
+          "LabelKey": "Choice.low",
+          "Aliases": [
+            "routine",
+            "non urgent",
+            "non-urgent"
+          ]
+        },
+        {
+          "Code": "medium",
+          "LabelKey": "Choice.medium",
+          "Aliases": [
+            "normal",
+            "moderate"
+          ]
+        },
+        {
+          "Code": "high",
+          "LabelKey": "Choice.high",
+          "Aliases": [
+            "urgent",
+            "priority"
+          ]
+        },
+        {
+          "Code": "emergency",
+          "LabelKey": "Choice.emergency",
+          "Aliases": [
+            "critical",
+            "code 3",
+            "immediate",
+            "lights and sirens"
+          ]
+        }
+      ],
+      "WriterPath": "DepartmentCallPriority.BaseType",
+      "Aliases": [
+        "base priority",
+        "base type",
+        "severity",
+        "priority class"
+      ],
+      "Example": "high",
+      "Sensitivity": "Internal"
+    }
+  ],
+  "RowRules": []
+}

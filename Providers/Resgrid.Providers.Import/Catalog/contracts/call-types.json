@@ -1,0 +1,194 @@
+{
+  "Key": "call-types",
+  "Version": "2026.11.1",
+  "LabelKey": "Entity.call-types",
+  "DescriptionKey": "EntityDesc.call-types",
+  "Icon": "fa-tags",
+  "Area": "dispatch",
+  "Wave": "2",
+  "Order": 90,
+  "DependsOn": [],
+  "Gate": {
+    "Flags": [
+      "Onboarding.MigrationWizard"
+    ],
+    "Permissions": []
+  },
+  "IdentityFields": [
+    "source_id"
+  ],
+  "NaturalKey": [
+    "name"
+  ],
+  "SupportsCustomFields": false,
+  "MatchPolicy": "name",
+  "MaxRows": 0,
+  "Fields": [
+    {
+      "Key": "source_id",
+      "LabelKey": "Field.call-types.source_id",
+      "DescriptionKey": "FieldDesc.call-types.source_id",
+      "Type": "text",
+      "MaxLength": 256,
+      "Unique": "in-file",
+      "WriterPath": "ImportExternalId.SourceId",
+      "Aliases": [
+        "id",
+        "source id",
+        "external id",
+        "record id",
+        "key"
+      ],
+      "Example": "1042",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "name",
+      "LabelKey": "Field.call-types.name",
+      "DescriptionKey": "FieldDesc.call-types.name",
+      "Type": "text",
+      "Required": true,
+      "MaxLength": 100,
+      "Unique": "in-file",
+      "WriterPath": "CallType.Type",
+      "Aliases": [
+        "name",
+        "type",
+        "call type",
+        "nature",
+        "incident type"
+      ],
+      "Example": "Structure fire",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "base_type",
+      "LabelKey": "Field.call-types.base_type",
+      "DescriptionKey": "FieldDesc.call-types.base_type",
+      "Type": "choice",
+      "Choices": [
+        {
+          "Code": "fire",
+          "LabelKey": "Choice.fire",
+          "Aliases": [
+            "fires",
+            "fire call"
+          ]
+        },
+        {
+          "Code": "medical",
+          "LabelKey": "Choice.medical",
+          "Aliases": [
+            "ems",
+            "medical aid",
+            "patient"
+          ]
+        },
+        {
+          "Code": "rescue",
+          "LabelKey": "Choice.rescue",
+          "Aliases": [
+            "technical rescue",
+            "search"
+          ]
+        },
+        {
+          "Code": "traffic-collision",
+          "LabelKey": "Choice.traffic-collision",
+          "Aliases": [
+            "traffic",
+            "mva",
+            "mvc",
+            "vehicle accident",
+            "collision",
+            "rtc"
+          ]
+        },
+        {
+          "Code": "hazardous-materials",
+          "LabelKey": "Choice.hazardous-materials",
+          "Aliases": [
+            "hazmat",
+            "haz mat",
+            "gas leak"
+          ]
+        },
+        {
+          "Code": "alarm",
+          "LabelKey": "Choice.alarm",
+          "Aliases": [
+            "fire alarm",
+            "alarm activation",
+            "false alarm"
+          ]
+        },
+        {
+          "Code": "service-call",
+          "LabelKey": "Choice.service-call",
+          "Aliases": [
+            "service",
+            "public assist",
+            "public assistance"
+          ]
+        },
+        {
+          "Code": "law-enforcement",
+          "LabelKey": "Choice.law-enforcement",
+          "Aliases": [
+            "police",
+            "security",
+            "public order"
+          ]
+        },
+        {
+          "Code": "disaster-weather",
+          "LabelKey": "Choice.disaster-weather",
+          "Aliases": [
+            "disaster",
+            "weather",
+            "storm",
+            "flood"
+          ]
+        },
+        {
+          "Code": "mutual-aid",
+          "LabelKey": "Choice.mutual-aid",
+          "Aliases": [
+            "mutual aid given",
+            "assist other agency"
+          ]
+        },
+        {
+          "Code": "non-emergency",
+          "LabelKey": "Choice.non-emergency",
+          "Aliases": [
+            "training",
+            "drill",
+            "standby",
+            "non emergency",
+            "event"
+          ]
+        },
+        {
+          "Code": "other",
+          "LabelKey": "Choice.other",
+          "Aliases": [
+            "misc",
+            "miscellaneous"
+          ]
+        }
+      ],
+      "WriterPath": "CallType.BaseType",
+      "Aliases": [
+        "base type",
+        "call class",
+        "class",
+        "classification",
+        "incident class"
+      ],
+      "Example": "medical",
+      "Sensitivity": "Internal"
+    }
+  ],
+  "RowRules": []
+}

@@ -26,7 +26,7 @@ namespace Resgrid.Tests.Rms
 			"CanSubmitRecords", "CanAmendRecords", "CanVoidRecords", "CanExportRecords", "CanShareRecords",
 			"CanReassignRecordDrafts", "CanViewLegacyRecords", "CanViewRestrictedRecords", "CanManageRecordDefinitions",
 			"CanPublishRecordDefinitions", "CanManageRecordReports", "CanManageRecordDisclosures", "CanManageRecordLegalHold",
-			"CanAdministerRecordsPrevention"
+			"CanAdministerRecordsPrevention", "CanManageRecordImports"
 		};
 
 		[Test]
@@ -66,7 +66,7 @@ namespace Resgrid.Tests.Rms
 				.Where(f => f.Name.StartsWith("Record", StringComparison.Ordinal))
 				.Select(f => f.Name)
 				.ToList();
-			recordPolicies.Should().HaveCount(19, "18 RMS-1 policies plus Record_PreventionAdmin (RMS-5)");
+			recordPolicies.Should().HaveCount(20, "18 RMS-1 policies, Record_PreventionAdmin (RMS-5) and RecordImports_Update (Import & Migration permission 73)");
 
 			var webPolicies = RecordPolicies(webStartup);
 			var servicesPolicies = RecordPolicies(servicesStartup);

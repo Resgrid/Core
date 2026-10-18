@@ -68,6 +68,7 @@ namespace Resgrid.Web.Controllers
 		private readonly IExternalIdentityLinkService _externalIdentityLinkService;
 		private readonly IPasswordRecoveryService _passwordRecoveryService;
 		private readonly ILimitsService _limitsService;
+		private readonly IImportActivationService _importActivation;
 		private readonly IMfaEvidenceService _mfaEvidenceService;
 		private readonly IMfaActivityService _mfaActivity;
 		private readonly IMfaLoginTransactionService _loginTransactions;
@@ -114,8 +115,10 @@ namespace Resgrid.Web.Controllers
 						Microsoft.AspNetCore.DataProtection.IDataProtectionProvider dataProtection, IAdpStepUpService adpStepUp,
 						Resgrid.Model.Repositories.IUserMfaStateRepository mfaState, IUserStore<IdentityUser> userStore, IFactorRecoveryService recoveries,
 						Resgrid.Model.Repositories.IUserPasskeyRepository passkeyRows, IAuthenticationChallengeService challenges,
-						Resgrid.Model.Repositories.IMfaApprovalRequestRepository approvalRows, ISharedSessionService sharedSessions)
+						Resgrid.Model.Repositories.IMfaApprovalRequestRepository approvalRows, ISharedSessionService sharedSessions,
+						IImportActivationService importActivation)
 		{
+			_importActivation = importActivation;
 			_sharedSessions = sharedSessions;
 			_mfaState = mfaState;
 			_userStore = userStore;
@@ -891,7 +894,7 @@ namespace Resgrid.Web.Controllers
 					: null;
 				authentication = membership == null ? authentication : await SsoAuthenticationMethodAsync(done.DepartmentId.Value, done.DepartmentSsoConfigId,
 					cancellationToken);
-				if (membership == null || membership.IsDeleted || membership.IsDisabled == true || authentication == UserSessionAuthenticationMethod.LocalPassword)
+				if (membership == null || membership.IsDeleted || membership.IsDisabled == true || membership.IsImportDormant || authentication == UserSessionAuthenticationMethod.LocalPassword)
 					return new LoginFinish(null, MfaLoginTransactionOutcome.SessionRevoked, null);
 
 				// The provider signed the user in to this department, so it becomes the active one, as switching to it would.
@@ -1383,7 +1386,8 @@ namespace Resgrid.Web.Controllers
 					var requestedOn = DateTime.UtcNow;
 					var ipAddress = IpAddressHelper.GetRequestIP(Request, true);
 					var user = await _userManager.FindByEmailAsync(model.Email);
-					if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
+					// A dormant imported account (Department Import, not yet invited) gets the same answer as an unknown one.
+					if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)) || await _usersService.IsImportDormantOnlyAsync(user.Id))
 					{
 						// Count unknown-account requests too. The response is deliberately indistinguishable.
 						await _passwordRecoveryService.IssueAsync(null, model.Email, ipAddress, 0, null, cancellationToken);
@@ -1707,6 +1711,19 @@ namespace Resgrid.Web.Controllers
 			model.DepartmentName = department.Name;
 			model.Email = model.Invite.EmailAddress;
 			model.Code = inviteCode.ToString();
+
+			if (model.Invite.IsImport)
+			{
+				// Department Import (wizard plan section 15.4): the account already exists (dormant), or an existing account joins.
+				if (model.Invite.SendState == (int)InviteSendStates.Revoked)
+					return RedirectToAction("MissingInvite");
+				model.ImportKind = model.Invite.Kind;
+				model.SignedIn = User?.Identity?.IsAuthenticated == true;
+				if (model.Invite.Kind == (int)InviteKinds.ImportAccount)
+					model.UserName = (await _userManager.FindByIdAsync(model.Invite.TargetUserId))?.UserName;
+				return View(model);
+			}
+
 			model.DepartmentFull = !await _limitsService.CanDepartmentAddNewUserAsync(department.DepartmentId, true);
 
 			return View(model);
@@ -1730,6 +1747,9 @@ namespace Resgrid.Web.Controllers
 
 			model.DepartmentName = (await _departmentsService.GetDepartmentByIdAsync(model.Invite.DepartmentId, true))?.Name;
 			model.Email = model.Invite.EmailAddress;
+
+			if (model.Invite.IsImport)
+				return await CompleteImportInviteAsync(model, code, cancellationToken);
 
 			if (!StringHelpers.ValidateEmail(model.Email))
 			{
@@ -1794,6 +1814,54 @@ namespace Resgrid.Web.Controllers
 			}
 
 			return View(model);
+		}
+
+		/// <summary>
+		/// Accepts a Department Import invitation: an imported person sets the first password of the dormant account the
+		/// import created (which activates it); an existing account, signed in, joins the department.
+		/// </summary>
+		private async Task<IActionResult> CompleteImportInviteAsync(CompleteInviteModel model, Guid code, CancellationToken cancellationToken)
+		{
+			model.ImportKind = model.Invite.Kind;
+			model.SignedIn = User?.Identity?.IsAuthenticated == true;
+
+			if (model.Invite.Kind == (int)InviteKinds.ImportJoin)
+			{
+				if (!model.SignedIn)
+					return RedirectToAction("LogOn", new { returnUrl = Url.Action("CompleteInvite", new { inviteCode = model.Code }) });
+
+				var joined = await _importActivation.AcceptJoinInvitationAsync(code, _userManager.GetUserId(User), cancellationToken);
+				if (!joined.Succeeded)
+				{
+					model.ImportError = joined.ErrorCode;
+					return View(model);
+				}
+
+				return RedirectToAction("Dashboard", "Home", new { area = "User" });
+			}
+
+			model.UserName = (await _userManager.FindByIdAsync(model.Invite.TargetUserId))?.UserName;
+			// The account and its profile exist: only the password is chosen here.
+			foreach (var key in new[] { nameof(CompleteInviteModel.FirstName), nameof(CompleteInviteModel.LastName), nameof(CompleteInviteModel.UserName), nameof(CompleteInviteModel.Email) })
+				ModelState.Remove(key);
+			if (!ModelState.IsValid)
+				return View(model);
+
+			var accepted = await _importActivation.AcceptAccountInvitationAsync(code, model.Password, cancellationToken);
+			if (!accepted.Succeeded)
+			{
+				model.ImportError = accepted.ErrorCode;
+				foreach (var error in accepted.PasswordErrors)
+					ModelState.AddModelError(nameof(CompleteInviteModel.Password), error);
+				return View(model);
+			}
+
+			var user = await _userManager.FindByIdAsync(accepted.UserId);
+			if (user == null || !await SignInTrackedWebSessionAsync(user, UserSessionAuthenticationMethod.LocalPassword, TimeSpan.FromHours(8), cancellationToken,
+				new VerifiedFactor(MfaEvidenceKind.FirstFactor, MfaEvidenceMethod.Password, DateTime.UtcNow)))
+				return RedirectToAction("LogOn");
+
+			return RedirectToAction("Dashboard", "Home", new { area = "User" });
 		}
 
 		[AllowAnonymous]

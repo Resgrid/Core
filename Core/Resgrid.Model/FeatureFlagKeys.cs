@@ -144,5 +144,32 @@ namespace Resgrid.Model
 
 		/// <summary>Workforce &amp; Business Operations plan Phase E: the California CRD pay data report wizard and demographic self-identification. Child of Business.Operations; also requires the department's Advanced Data Protection state to be Enabled. Seeded off by M0224.</summary>
 		public const string CaliforniaPayDataReporting = "Compliance.CaliforniaPayDataReporting";
+		/// <summary>Department Import &amp; Migration workspace master switch (wizard plan section 4.3). Seeded off by M0279.</summary>
+		public const string OnboardingMigrationWizard = "Onboarding.MigrationWizard";
+
+		/// <summary>Import wave 2B: operations configuration, geography, contacts and Records prevention data. Child of Onboarding.MigrationWizard. Seeded off by M0279.</summary>
+		public const string OnboardingOperationsData = "Onboarding.OperationsData";
+
+		/// <summary>Import wave 2C: inventory, checklists, maintenance plans, open work orders and Business Ops profiles. Child of Onboarding.MigrationWizard. Seeded off by M0279.</summary>
+		public const string OnboardingReadinessData = "Onboarding.ReadinessData";
+
+		/// <summary>Import Phase 3: closed calls and training/certification history. Child of Onboarding.MigrationWizard. Seeded off by M0279.</summary>
+		public const string OnboardingOperationalHistory = "Onboarding.OperationalHistory";
+
+		/// <summary>Import Phase 3R: third-party incident history into Records. Child of Onboarding.MigrationWizard and Records.System. Seeded off by M0279.</summary>
+		public const string OnboardingHistoricalRecords = "Onboarding.HistoricalRecords";
+
+		/// <summary>Import Phase 3B: sample-validated vendor packs. Child of Onboarding.MigrationWizard. Seeded off by M0279.</summary>
+		public const string OnboardingVendorPacks = "Onboarding.VendorPacks";
+
+		/// <summary>Import Phase 4: the Resgrid department package and cluster moves. Child of Onboarding.MigrationWizard. Seeded off by M0279.</summary>
+		public const string OnboardingDepartmentPackage = "Onboarding.DepartmentPackage";
+
+		/// <summary>
+		/// Operator-only, never globally on: set per department by BackOffice when a managed-migration engagement is agreed.
+		/// Gates the Operate support grant level and the "request managed migration" support-request category (wizard
+		/// plan section 17.2). Child of Onboarding.MigrationWizard. Seeded off and permanent by M0277.
+		/// </summary>
+		public const string OnboardingManagedMigration = "Onboarding.ManagedMigration";
 	}
 }

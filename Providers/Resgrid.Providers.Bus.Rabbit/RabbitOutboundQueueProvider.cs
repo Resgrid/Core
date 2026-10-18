@@ -80,6 +80,13 @@ namespace Resgrid.Providers.Bus.Rabbit
 			return await SendMessage(ServiceBusConfig.AiDispatchTriageQueueName, serializedObject);
 		}
 
+		public async Task<bool> EnqueueDepartmentImport(DepartmentImportQueueItem departmentImportQueue)
+		{
+			string serializedObject = ObjectSerialization.Serialize(departmentImportQueue);
+
+			return await SendMessage(ServiceBusConfig.DepartmentImportQueueName, serializedObject);
+		}
+
 		public async Task<bool> EnqueueMessage(MessageQueueItem messageQueue)
 		{
 			string serializedObject = ObjectSerialization.Serialize(messageQueue);

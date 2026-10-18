@@ -107,7 +107,18 @@ namespace Resgrid.Services
 
 			var memberships = await _departmentMembersRepository.GetAllByUserIdAsync(user.UserId);
 
-			return memberships.Any(x => x.IsDeleted == false && (x.IsDisabled == null || x.IsDisabled == false));
+			// A dormant imported membership (Department Import plan section 14.3) is not active until the person is invited
+			// and accepts: an account whose only memberships are dormant cannot sign in.
+			return memberships.Any(x => x.IsDeleted == false && (x.IsDisabled == null || x.IsDisabled == false) && !x.IsImportDormant);
+		}
+
+		public async Task<bool> IsImportDormantOnlyAsync(string userId)
+		{
+			if (string.IsNullOrWhiteSpace(userId))
+				return false;
+
+			var live = (await _departmentMembersRepository.GetAllByUserIdAsync(userId))?.Where(x => !x.IsDeleted).ToList();
+			return live != null && live.Count > 0 && live.All(x => x.IsImportDormant);
 		}
 
 		public IdentityUser GetUserById(string userId, bool bypassCache = true)
@@ -209,6 +220,11 @@ namespace Resgrid.Services
 		public void InitUserExtInfo(string userId)
 		{
 			_identityRepository.InitUserExtInfo(userId);
+		}
+
+		public Task<bool> HasUserExtInfoAsync(string userId)
+		{
+			return _identityRepository.HasUserExtInfoAsync(userId);
 		}
 
 		public IdentityUser SaveUser(IdentityUser user)

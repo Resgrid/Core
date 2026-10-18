@@ -1,0 +1,4702 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ModuleName" xml:space="preserve">
+    <value>الاستيراد والترحيل</value>
+  </data>
+  <data name="ModuleSubtitle" xml:space="preserve">
+    <value>انقل أفرادك ومحطاتك وآلياتك وإعداداتك من جداول البيانات أو من النظام الذي تتركه، وتحقق من كل شيء قبل حفظه، وادعُ الأفراد عندما تكون جاهزًا.</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>الإعدادات</value>
+  </data>
+  <data name="Workspaces" xml:space="preserve">
+    <value>مساحات عمل الاستيراد</value>
+  </data>
+  <data name="WorkspaceName" xml:space="preserve">
+    <value>الاسم</value>
+  </data>
+  <data name="WorkspaceNamePlaceholder" xml:space="preserve">
+    <value>مثال: الانتقال من نظامنا القديم</value>
+  </data>
+  <data name="InternalReference" xml:space="preserve">
+    <value>المرجع الداخلي</value>
+  </data>
+  <data name="TargetActivationDate" xml:space="preserve">
+    <value>التاريخ المستهدف لبدء التشغيل الفعلي</value>
+  </data>
+  <data name="Mode" xml:space="preserve">
+    <value>ما الذي تريد القيام به؟</value>
+  </data>
+  <data name="ModeHelp" xml:space="preserve">
+    <value>القسم الجديد يستورد كل شيء ثم يبدأ التشغيل الفعلي في النهاية. أما القسم القائم فيضيف السجلات أو يحدّثها بينما يواصل الأفراد عملهم.</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="LastActivity" xml:space="preserve">
+    <value>آخر نشاط</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>فتح</value>
+  </data>
+  <data name="Resume" xml:space="preserve">
+    <value>استئناف</value>
+  </data>
+  <data name="CancelWorkspace" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="CancelWorkspaceConfirm" xml:space="preserve">
+    <value>هل تريد إلغاء مساحة العمل هذه؟ ستُحذف الملفات المرفوعة والبيانات المفحوصة بعد انتهاء فترة الاحتفاظ. أما السجلات التي استُوردت بالفعل فتبقى.</value>
+  </data>
+  <data name="NoWorkspacesTitle" xml:space="preserve">
+    <value>لا توجد عمليات استيراد بعد</value>
+  </data>
+  <data name="NoWorkspacesHelp" xml:space="preserve">
+    <value>ابدأ مساحة عمل لنقل بياناتك إلى Resgrid. يمكنك المغادرة والعودة في أي وقت.</value>
+  </data>
+  <data name="StartImport" xml:space="preserve">
+    <value>بدء عملية استيراد</value>
+  </data>
+  <data name="DocsLink" xml:space="preserve">
+    <value>كيف تعمل ميزة الاستيراد والترحيل</value>
+  </data>
+  <data name="StoreNotConfigured" xml:space="preserve">
+    <value>لم يُهيَّأ تخزين الملفات الخاص بالاستيراد على هذا النظام بعد، لذا لا يمكن رفع الملفات. يُرجى مراجعة مسؤول Resgrid لديك.</value>
+  </data>
+  <data name="RunInProgressWarning" xml:space="preserve">
+    <value>تجري الآن عملية استيراد لقسمك. يمكنك إعداد مساحة عمل أخرى، لكن لا تكتب البيانات إلا عملية استيراد واحدة في كل مرة.</value>
+  </data>
+  <data name="TabOverview" xml:space="preserve">
+    <value>نظرة عامة</value>
+  </data>
+  <data name="TabDatasets" xml:space="preserve">
+    <value>الملفات ومجموعات البيانات</value>
+  </data>
+  <data name="TabIssues" xml:space="preserve">
+    <value>المشكلات</value>
+  </data>
+  <data name="TabReview" xml:space="preserve">
+    <value>المراجعة والاستيراد</value>
+  </data>
+  <data name="TabVerify" xml:space="preserve">
+    <value>التحقق والتفعيل</value>
+  </data>
+  <data name="TabHistory" xml:space="preserve">
+    <value>سجل العمليات</value>
+  </data>
+  <data name="TabSupport" xml:space="preserve">
+    <value>الدعم</value>
+  </data>
+  <data name="TargetDate" xml:space="preserve">
+    <value>بدء التشغيل الفعلي: {0}</value>
+  </data>
+  <data name="DatasetsReady" xml:space="preserve">
+    <value>مجموعات البيانات الجاهزة: {0} من {1}</value>
+  </data>
+  <data name="OpenRequestsCount" xml:space="preserve">
+    <value>طلبات الدعم المفتوحة: {0}</value>
+  </data>
+  <data name="UnreadMessages" xml:space="preserve">
+    <value>غير مقروءة: {0}</value>
+  </data>
+  <data name="LastSaved" xml:space="preserve">
+    <value>حُفظ {0}</value>
+  </data>
+  <data name="ManagedByResgrid" xml:space="preserve">
+    <value>تُدار بواسطة Resgrid ({0}) حتى {1}. يمكن لفريق Resgrid تنفيذ عملية الاستيراد هذه نيابةً عنك، ويُسجَّل كل إجراء.</value>
+  </data>
+  <data name="RevokeAccess" xml:space="preserve">
+    <value>إلغاء الوصول</value>
+  </data>
+  <data name="NextBestAction" xml:space="preserve">
+    <value>الخطوة التالية</value>
+  </data>
+  <data name="Continue" xml:space="preserve">
+    <value>متابعة</value>
+  </data>
+  <data name="BackgroundWork" xml:space="preserve">
+    <value>يجري العمل في الخلفية. يمكنك إغلاق هذه الصفحة، وسنُعلمك عند الانتهاء.</value>
+  </data>
+  <data name="RowsAnalysed" xml:space="preserve">
+    <value>الصفوف المفحوصة</value>
+  </data>
+  <data name="RowsReady" xml:space="preserve">
+    <value>جاهزة للاستيراد</value>
+  </data>
+  <data name="RowsNeedingAttention" xml:space="preserve">
+    <value>تحتاج إلى انتباه</value>
+  </data>
+  <data name="RowsImported" xml:space="preserve">
+    <value>المستوردة</value>
+  </data>
+  <data name="PeopleToInvite" xml:space="preserve">
+    <value>الأشخاص المطلوب دعوتهم</value>
+  </data>
+  <data name="Journey" xml:space="preserve">
+    <value>تقدّمك</value>
+  </data>
+  <data name="Datasets" xml:space="preserve">
+    <value>مجموعات البيانات</value>
+  </data>
+  <data name="Dataset" xml:space="preserve">
+    <value>مجموعة البيانات</value>
+  </data>
+  <data name="UploadFile" xml:space="preserve">
+    <value>رفع ملف</value>
+  </data>
+  <data name="NoDatasetsTitle" xml:space="preserve">
+    <value>لا توجد ملفات بعد</value>
+  </data>
+  <data name="NoDatasetsHelp" xml:space="preserve">
+    <value>ارفع جدول بيانات أو ملفًا مُصدَّرًا من نظامك الحالي. تصبح كل ورقة مجموعة بيانات يمكنك فحصها واستيرادها.</value>
+  </data>
+  <data name="GetYourFiles" xml:space="preserve">
+    <value>إحضار ملفاتك</value>
+  </data>
+  <data name="DestinationUnknown" xml:space="preserve">
+    <value>لم يُحدَّد بعد</value>
+  </data>
+  <data name="DatasetCounts" xml:space="preserve">
+    <value>الصفوف: {0} · الجاهزة: {1} · التحذيرات: {2} · المحظورة: {3}</value>
+  </data>
+  <data name="TopIssues" xml:space="preserve">
+    <value>المشكلات المطلوب إصلاحها</value>
+  </data>
+  <data name="SeeAll" xml:space="preserve">
+    <value>عرض الكل</value>
+  </data>
+  <data name="SupportPanel" xml:space="preserve">
+    <value>مساعدة من Resgrid</value>
+  </data>
+  <data name="SupportPanelHelp" xml:space="preserve">
+    <value>هل تواجه صعوبة؟ اسأل دعم Resgrid. لا نرى إلا ما تختار مشاركته، ولا شيء أكثر.</value>
+  </data>
+  <data name="GetHelp" xml:space="preserve">
+    <value>الحصول على مساعدة من دعم Resgrid</value>
+  </data>
+  <data name="SupportRequests" xml:space="preserve">
+    <value>طلبات الدعم</value>
+  </data>
+  <data name="SuggestionsWaiting" xml:space="preserve">
+    <value>توجد {0} من اقتراحات دعم Resgrid بانتظار مراجعتك.</value>
+  </data>
+  <data name="Review" xml:space="preserve">
+    <value>مراجعة</value>
+  </data>
+  <data name="Timeline" xml:space="preserve">
+    <value>المخطط الزمني</value>
+  </data>
+  <data name="TimelineEmpty" xml:space="preserve">
+    <value>لم يحدث شيء بعد.</value>
+  </data>
+  <data name="ResgridStaff" xml:space="preserve">
+    <value>فريق Resgrid</value>
+  </data>
+  <data name="UploadHelp" xml:space="preserve">
+    <value>ارفع ملفات CSV أو Excel (.xlsx) أو JSON. تُرسَل الملفات الكبيرة على أجزاء ويُستأنف الرفع إذا انقطع اتصالك.</value>
+  </data>
+  <data name="ChooseFile" xml:space="preserve">
+    <value>الملف</value>
+  </data>
+  <data name="SupportedFormats" xml:space="preserve">
+    <value>CSV وTSV والملفات النصية وExcel (.xlsx) وJSON وJSON Lines وGeoJSON.</value>
+  </data>
+  <data name="Upload" xml:space="preserve">
+    <value>رفع</value>
+  </data>
+  <data name="UploadHashing" xml:space="preserve">
+    <value>جارٍ تجهيز الملف…</value>
+  </data>
+  <data name="UploadProgress" xml:space="preserve">
+    <value>جارٍ الرفع… {0}%</value>
+  </data>
+  <data name="UploadFinishing" xml:space="preserve">
+    <value>جارٍ إنهاء الرفع…</value>
+  </data>
+  <data name="UploadDone" xml:space="preserve">
+    <value>تم الرفع. نحن نفحص الملف الآن، ويمكنك إغلاق هذه الصفحة.</value>
+  </data>
+  <data name="Destination" xml:space="preserve">
+    <value>الوجهة</value>
+  </data>
+  <data name="Rows" xml:space="preserve">
+    <value>الصفوف</value>
+  </data>
+  <data name="Ready" xml:space="preserve">
+    <value>جاهزة</value>
+  </data>
+  <data name="Blocked" xml:space="preserve">
+    <value>محظورة</value>
+  </data>
+  <data name="Confidence" xml:space="preserve">
+    <value>متأكدون بنسبة {0}%</value>
+  </data>
+  <data name="Include" xml:space="preserve">
+    <value>تضمين</value>
+  </data>
+  <data name="Exclude" xml:space="preserve">
+    <value>استبعاد</value>
+  </data>
+  <data name="Files" xml:space="preserve">
+    <value>الملفات المرفوعة</value>
+  </data>
+  <data name="NoFiles" xml:space="preserve">
+    <value>لم تُرفع أي ملفات بعد.</value>
+  </data>
+  <data name="FileName" xml:space="preserve">
+    <value>الملف</value>
+  </data>
+  <data name="Size" xml:space="preserve">
+    <value>الحجم</value>
+  </data>
+  <data name="Uploaded" xml:space="preserve">
+    <value>تاريخ الرفع</value>
+  </data>
+  <data name="FilePurged" xml:space="preserve">
+    <value>حُذف بعد فترة الاحتفاظ</value>
+  </data>
+  <data name="FileReceived" xml:space="preserve">
+    <value>تم الاستلام</value>
+  </data>
+  <data name="FileUploading" xml:space="preserve">
+    <value>جارٍ الرفع</value>
+  </data>
+  <data name="StarterWorkbook" xml:space="preserve">
+    <value>مصنّف Resgrid المبدئي</value>
+  </data>
+  <data name="StarterWorkbookHelp" xml:space="preserve">
+    <value>مصنّف يحتوي على ورقة لكل نوع من البيانات، وصف نموذجي، وقوائم منسدلة بما لدى قسمك بالفعل. املأه وارفعه، ولن تحتاج إلى مطابقة الأعمدة.</value>
+  </data>
+  <data name="DownloadWorkbook" xml:space="preserve">
+    <value>تنزيل المصنّف</value>
+  </data>
+  <data name="CsvTemplatesHelp" xml:space="preserve">
+    <value>هل تفضّل CSV؟ نزّل قالبًا واحدًا لكل نوع من البيانات:</value>
+  </data>
+  <data name="CurrentDataHelp" xml:space="preserve">
+    <value>نزّل ما لدى قسمك بالفعل، بالتنسيق نفسه، لتعديله ورفعه مرة أخرى.</value>
+  </data>
+  <data name="DownloadCurrentData" xml:space="preserve">
+    <value>تنزيل البيانات الحالية</value>
+  </data>
+  <data name="MatchColumns" xml:space="preserve">
+    <value>مطابقة الأعمدة</value>
+  </data>
+  <data name="MatchColumnsHelp" xml:space="preserve">
+    <value>لكل عمود في ملفك، اختر حقل Resgrid الذي يملؤه. يمكن ترك الأعمدة التي لا تحتاج إليها دون استيراد.</value>
+  </data>
+  <data name="ChooseDestinationFirst" xml:space="preserve">
+    <value>اختر أولًا ما يحتويه هذا الملف.</value>
+  </data>
+  <data name="SourceColumn" xml:space="preserve">
+    <value>العمود في ملفك</value>
+  </data>
+  <data name="WhatWeFound" xml:space="preserve">
+    <value>ما وجدناه</value>
+  </data>
+  <data name="ResgridField" xml:space="preserve">
+    <value>حقل Resgrid</value>
+  </data>
+  <data name="Transforms" xml:space="preserve">
+    <value>التنظيف</value>
+  </data>
+  <data name="FillRate" xml:space="preserve">
+    <value>نسبة الامتلاء {0}%</value>
+  </data>
+  <data name="ColumnExcluded" xml:space="preserve">
+    <value>لا يُستورد أبدًا (بيانات حساسة)</value>
+  </data>
+  <data name="ValuesHidden" xml:space="preserve">
+    <value>القيم مخفية</value>
+  </data>
+  <data name="DoNotImport" xml:space="preserve">
+    <value>عدم الاستيراد</value>
+  </data>
+  <data name="KeepAsCustomField" xml:space="preserve">
+    <value>الاحتفاظ به كحقل مخصص</value>
+  </data>
+  <data name="SaveMapping" xml:space="preserve">
+    <value>حفظ المطابقات</value>
+  </data>
+  <data name="MappingSaved" xml:space="preserve">
+    <value>تم الحفظ. نعيد فحص الملف الآن.</value>
+  </data>
+  <data name="MatchValues" xml:space="preserve">
+    <value>مطابقة القيم</value>
+  </data>
+  <data name="MatchValuesHelp" xml:space="preserve">
+    <value>تحتوي بعض الحقول على رموز أو أسماء يجب أن تطابق خيارًا أو سجلًا في Resgrid. تحقق منها هنا.</value>
+  </data>
+  <data name="WhatIsInThisFile" xml:space="preserve">
+    <value>ما الذي يحتويه هذا الملف؟</value>
+  </data>
+  <data name="ChangeDestination" xml:space="preserve">
+    <value>تغيير</value>
+  </data>
+  <data name="ConfirmDestination" xml:space="preserve">
+    <value>تأكيد</value>
+  </data>
+  <data name="SavedMappings" xml:space="preserve">
+    <value>المطابقات المحفوظة</value>
+  </data>
+  <data name="UseSavedMapping" xml:space="preserve">
+    <value>استخدام المطابقات المحفوظة</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>تطبيق</value>
+  </data>
+  <data name="SaveMappingAs" xml:space="preserve">
+    <value>حفظ هذه المطابقات باسم</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="MapSaved" xml:space="preserve">
+    <value>حُفظت المطابقات لاستخدامها لاحقًا.</value>
+  </data>
+  <data name="FixIssues" xml:space="preserve">
+    <value>إصلاح المشكلات</value>
+  </data>
+  <data name="MatchChoicesHelp" xml:space="preserve">
+    <value>طابِق كل قيمة في ملفك مع خيار في Resgrid. تُحفظ اختياراتك مع مجموعة البيانات هذه.</value>
+  </data>
+  <data name="MatchReferencesHelp" xml:space="preserve">
+    <value>طابِق كل قيمة مع سجل في Resgrid، أو أنشئ سجلًا جديدًا، أو احتفظ بالنص كتسمية.</value>
+  </data>
+  <data name="BulkApply" xml:space="preserve">
+    <value>لجميع الصفوف:</value>
+  </data>
+  <data name="AcceptSuggestions" xml:space="preserve">
+    <value>قبول الاقتراحات</value>
+  </data>
+  <data name="CreateNewForAll" xml:space="preserve">
+    <value>إنشاء جديد للجميع</value>
+  </data>
+  <data name="LeaveEmptyForAll" xml:space="preserve">
+    <value>ترك الجميع فارغًا</value>
+  </data>
+  <data name="NoValuesToMatch" xml:space="preserve">
+    <value>لا يوجد ما تجب مطابقته في هذا العمود.</value>
+  </data>
+  <data name="ValueInFile" xml:space="preserve">
+    <value>القيمة في ملفك</value>
+  </data>
+  <data name="Suggestion" xml:space="preserve">
+    <value>الاقتراح</value>
+  </data>
+  <data name="Decision" xml:space="preserve">
+    <value>اختيارك</value>
+  </data>
+  <data name="Undecided" xml:space="preserve">
+    <value>لم يُحسم</value>
+  </data>
+  <data name="CreateNew" xml:space="preserve">
+    <value>إنشاء جديد</value>
+  </data>
+  <data name="KeepAsLabel" xml:space="preserve">
+    <value>الاحتفاظ كنص</value>
+  </data>
+  <data name="LeaveEmpty" xml:space="preserve">
+    <value>ترك فارغ</value>
+  </data>
+  <data name="SaveValues" xml:space="preserve">
+    <value>حفظ الاختيارات</value>
+  </data>
+  <data name="ValuesSaved" xml:space="preserve">
+    <value>تم الحفظ. نعيد فحص الملف الآن.</value>
+  </data>
+  <data name="AllDatasets" xml:space="preserve">
+    <value>جميع مجموعات البيانات</value>
+  </data>
+  <data name="ShowResolved" xml:space="preserve">
+    <value>إظهار المشكلات المحلولة</value>
+  </data>
+  <data name="Filter" xml:space="preserve">
+    <value>تصفية</value>
+  </data>
+  <data name="NoIssuesTitle" xml:space="preserve">
+    <value>لا توجد مشكلات</value>
+  </data>
+  <data name="NoIssuesHelp" xml:space="preserve">
+    <value>كل ما فحصناه جاهز للاستيراد.</value>
+  </data>
+  <data name="RowsLabel" xml:space="preserve">
+    <value>الصفوف {0}</value>
+  </data>
+  <data name="AcceptWarning" xml:space="preserve">
+    <value>قبول</value>
+  </data>
+  <data name="ExcludeRows" xml:space="preserve">
+    <value>استبعاد هذه الصفوف ({0})</value>
+  </data>
+  <data name="SetValue" xml:space="preserve">
+    <value>استخدام هذه القيمة</value>
+  </data>
+  <data name="SetValuePlaceholder" xml:space="preserve">
+    <value>قيمة هذه الصفوف</value>
+  </data>
+  <data name="AskSupport" xml:space="preserve">
+    <value>اسأل الدعم عن هذا</value>
+  </data>
+  <data name="Reopen" xml:space="preserve">
+    <value>إعادة فتح</value>
+  </data>
+  <data name="ConfirmExcludeRows" xml:space="preserve">
+    <value>هل تريد استبعاد هذه الصفوف من الاستيراد؟ يمكنك تضمينها مرة أخرى لاحقًا.</value>
+  </data>
+  <data name="AwaitingChecker" xml:space="preserve">
+    <value>تنتظر عملية الاستيراد هذه موافقة مسؤول ثانٍ.</value>
+  </data>
+  <data name="ApproveAsSecond" xml:space="preserve">
+    <value>الموافقة بصفتك المسؤول الثاني</value>
+  </data>
+  <data name="WhatWillHappen" xml:space="preserve">
+    <value>ما الذي سيحدث</value>
+  </data>
+  <data name="Approve" xml:space="preserve">
+    <value>موافقة</value>
+  </data>
+  <data name="CapacityUnknown" xml:space="preserve">
+    <value>تعذّر علينا التحقق من حدود خطتك الآن. لا يمكن إضافة الأفراد والوحدات إلى أن ينجح التحقق.</value>
+  </data>
+  <data name="CapacityStatement" xml:space="preserve">
+    <value>يضيف هذا {0} من الأفراد (المتاح: {1}) و{2} من الوحدات (المتاح: {3}).</value>
+  </data>
+  <data name="DatasetsInThisWave" xml:space="preserve">
+    <value>مجموعات البيانات في عملية الاستيراد هذه</value>
+  </data>
+  <data name="Statements" xml:space="preserve">
+    <value>يُرجى التأكيد</value>
+  </data>
+  <data name="StatementPeople" xml:space="preserve">
+    <value>ستتم إضافة {0} من الأشخاص. لن يتلقى أيٌّ منهم إشعارًا ولن يتمكن من تسجيل الدخول إلى أن تدعوهم.</value>
+  </data>
+  <data name="WriteMode" xml:space="preserve">
+    <value>كيفية التعامل مع السجلات الموجودة بالفعل</value>
+  </data>
+  <data name="WriteModeHelp" xml:space="preserve">
+    <value>خيار «الإضافة فقط» لا يغيّر أبدًا ما هو موجود في Resgrid. أما «مراجعة التحديثات» فيغيّر الحقول التي وافقت عليها فقط، ويتخطى كل ما عدّله أحد منذ المعاينة.</value>
+  </data>
+  <data name="SecondApproverRequired" xml:space="preserve">
+    <value>يجب أن يوافق مسؤول ثانٍ قبل بدء الاستيراد.</value>
+  </data>
+  <data name="StepUpNote" xml:space="preserve">
+    <value>سيُطلب منك التأكيد باستخدام عامل المصادقة الثاني.</value>
+  </data>
+  <data name="ApproveAndImport" xml:space="preserve">
+    <value>الموافقة والاستيراد</value>
+  </data>
+  <data name="Runs" xml:space="preserve">
+    <value>عمليات التشغيل</value>
+  </data>
+  <data name="NoRuns" xml:space="preserve">
+    <value>لم يُشغَّل أي شيء بعد.</value>
+  </data>
+  <data name="RunKind" xml:space="preserve">
+    <value>التشغيل</value>
+  </data>
+  <data name="Requested" xml:space="preserve">
+    <value>تاريخ الطلب</value>
+  </data>
+  <data name="Progress" xml:space="preserve">
+    <value>التقدّم</value>
+  </data>
+  <data name="RetryingAutomatically" xml:space="preserve">
+    <value>تجري إعادة المحاولة تلقائيًا.</value>
+  </data>
+  <data name="RunEntityCounts" xml:space="preserve">
+    <value>أُضيف: {0}، حُدّث أو رُبط: {1}، دون تغيير: {2}، تُخطّي: {3}، فشل: {4}</value>
+  </data>
+  <data name="ChecksMatched" xml:space="preserve">
+    <value>عمليات التحقق المتطابقة: {0}</value>
+  </data>
+  <data name="ChecksUnexplained" xml:space="preserve">
+    <value>عمليات التحقق المختلفة: {0}</value>
+  </data>
+  <data name="Pause" xml:space="preserve">
+    <value>إيقاف مؤقت</value>
+  </data>
+  <data name="CancelRun" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="CancelRunConfirm" xml:space="preserve">
+    <value>هل تريد إيقاف عملية التشغيل هذه عند أقرب نقطة آمنة؟ يبقى ما استُورد بالفعل ويمكن التراجع عنه.</value>
+  </data>
+  <data name="Rollback" xml:space="preserve">
+    <value>تراجع</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>إغلاق</value>
+  </data>
+  <data name="RollbackTitle" xml:space="preserve">
+    <value>التراجع عن عملية الاستيراد هذه</value>
+  </data>
+  <data name="RollbackHelp" xml:space="preserve">
+    <value>تُزال السجلات التي أنشأتها عملية الاستيراد هذه، وتستعيد السجلات المعدّلة قيمها السابقة، وما استُخدم منذ ذلك الحين يبقى لتتحقق منه يدويًا.</value>
+  </data>
+  <data name="RollbackWindow" xml:space="preserve">
+    <value>يمكن التراجع حتى {0}.</value>
+  </data>
+  <data name="RollbackConfirm" xml:space="preserve">
+    <value>تراجع</value>
+  </data>
+  <data name="PeopleCreated" xml:space="preserve">
+    <value>الأشخاص المستوردون</value>
+  </data>
+  <data name="PeopleDormant" xml:space="preserve">
+    <value>لم تُرسل إليهم دعوة بعد</value>
+  </data>
+  <data name="PeopleInvited" xml:space="preserve">
+    <value>تمت دعوتهم</value>
+  </data>
+  <data name="PeopleActivated" xml:space="preserve">
+    <value>سجّلوا الدخول</value>
+  </data>
+  <data name="UnexplainedChecks" xml:space="preserve">
+    <value>عمليات التحقق المختلفة</value>
+  </data>
+  <data name="ActivationChecklist" xml:space="preserve">
+    <value>قائمة التحقق للتفعيل</value>
+  </data>
+  <data name="OpenOwningScreen" xml:space="preserve">
+    <value>فتح الشاشة</value>
+  </data>
+  <data name="SignedOffOn" xml:space="preserve">
+    <value>اعتُمد نهائيًا في {0}.</value>
+  </data>
+  <data name="SignOff" xml:space="preserve">
+    <value>الاعتماد النهائي وبدء التشغيل الفعلي</value>
+  </data>
+  <data name="SignOffHelp" xml:space="preserve">
+    <value>يسجّل اعتمادك النهائي. يمكن إنجاز كل بند على حدة؛ ولا يُفعَّل شيء دفعة واحدة.</value>
+  </data>
+  <data name="SignedOffMessage" xml:space="preserve">
+    <value>تم الاعتماد النهائي. أصبح قسمك قيد التشغيل الفعلي.</value>
+  </data>
+  <data name="WillBecomeAdministrators" xml:space="preserve">
+    <value>الأشخاص الذين سيصبحون مسؤولين</value>
+  </data>
+  <data name="WillBecomeAdministratorsHelp" xml:space="preserve">
+    <value>حدّد ملفك هؤلاء الأشخاص كمسؤولين. أكّد كل واحد منهم؛ وإلى ذلك الحين يبقون أعضاء عاديين.</value>
+  </data>
+  <data name="MakeAdministrators" xml:space="preserve">
+    <value>تعيينهم مسؤولين</value>
+  </data>
+  <data name="InvitePeople" xml:space="preserve">
+    <value>دعوة الأشخاص</value>
+  </data>
+  <data name="InvitePeopleHelp" xml:space="preserve">
+    <value>لا يمكن للأشخاص المستوردين تسجيل الدخول أو تلقي أي شيء إلى أن تدعوهم. تُرسل الدعوات على دفعات صغيرة، خارج ساعات الليل حسب المنطقة الزمنية لقسمك.</value>
+  </data>
+  <data name="NobodyToInvite" xml:space="preserve">
+    <value>تمت دعوة الجميع.</value>
+  </data>
+  <data name="InviteAllDormant" xml:space="preserve">
+    <value>دعوة جميع الأشخاص ({0})</value>
+  </data>
+  <data name="InviteExistingAccounts" xml:space="preserve">
+    <value>دعوة {0} من الأشخاص الذين لديهم حساب Resgrid بالفعل للانضمام</value>
+  </data>
+  <data name="SendAfter" xml:space="preserve">
+    <value>عدم الإرسال قبل</value>
+  </data>
+  <data name="SendAfterHelp" xml:space="preserve">
+    <value>اتركه فارغًا للإرسال في أقرب وقت ممكن.</value>
+  </data>
+  <data name="ScheduleInvitations" xml:space="preserve">
+    <value>جدولة الدعوات</value>
+  </data>
+  <data name="InvitationsCreated" xml:space="preserve">
+    <value>جُدولت {0} من الدعوات.</value>
+  </data>
+  <data name="Invitations" xml:space="preserve">
+    <value>الدعوات</value>
+  </data>
+  <data name="NoInvitations" xml:space="preserve">
+    <value>لا توجد دعوات بعد.</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>البريد الإلكتروني</value>
+  </data>
+  <data name="InvitationKind" xml:space="preserve">
+    <value>النوع</value>
+  </data>
+  <data name="Resend" xml:space="preserve">
+    <value>إعادة الإرسال</value>
+  </data>
+  <data name="Revoke" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="GetHelpText" xml:space="preserve">
+    <value>صف ما تحتاج إليه. نُرفق مساحة العمل والعنصر الذي جئت منه؛ وتبقى بياناتك خاصة ما لم تمنح حق الوصول أدناه.</value>
+  </data>
+  <data name="AttachedContext" xml:space="preserve">
+    <value>بخصوص</value>
+  </data>
+  <data name="RequestCategory" xml:space="preserve">
+    <value>ما الذي تحتاج إليه؟</value>
+  </data>
+  <data name="Subject" xml:space="preserve">
+    <value>الموضوع</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>التفاصيل</value>
+  </data>
+  <data name="NoValuesInRequests" xml:space="preserve">
+    <value>يُرجى عدم لصق معلومات شخصية هنا؛ وبدلًا من ذلك امنح حق الوصول إذا احتاج الدعم إلى رؤية بياناتك.</value>
+  </data>
+  <data name="SendRequest" xml:space="preserve">
+    <value>إرسال الطلب</value>
+  </data>
+  <data name="RequestOpened" xml:space="preserve">
+    <value>أُرسل الطلب. سنرد هنا وعبر البريد الإلكتروني.</value>
+  </data>
+  <data name="NoRequests" xml:space="preserve">
+    <value>لا توجد طلبات بعد.</value>
+  </data>
+  <data name="RequestNumber" xml:space="preserve">
+    <value>الطلب</value>
+  </data>
+  <data name="Opened" xml:space="preserve">
+    <value>تاريخ الفتح</value>
+  </data>
+  <data name="ConfirmResolved" xml:space="preserve">
+    <value>تأكيد الحل</value>
+  </data>
+  <data name="Messages" xml:space="preserve">
+    <value>الرسائل</value>
+  </data>
+  <data name="NoMessages" xml:space="preserve">
+    <value>لا توجد رسائل بعد.</value>
+  </data>
+  <data name="ResgridSupport" xml:space="preserve">
+    <value>دعم Resgrid</value>
+  </data>
+  <data name="YourDepartment" xml:space="preserve">
+    <value>قسمك</value>
+  </data>
+  <data name="Message" xml:space="preserve">
+    <value>الرسالة</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>إرسال</value>
+  </data>
+  <data name="SupportAccess" xml:space="preserve">
+    <value>وصول الدعم</value>
+  </data>
+  <data name="SupportAccessHelp" xml:space="preserve">
+    <value>اختر مقدار ما يمكن لدعم Resgrid رؤيته أو فعله في مساحة العمل هذه، ولأي مدة. يمكنك إلغاء ذلك في أي وقت.</value>
+  </data>
+  <data name="SupportAccessActive" xml:space="preserve">
+    <value>وصول بمستوى {0} حتى {1}.</value>
+  </data>
+  <data name="AccessLevel" xml:space="preserve">
+    <value>مستوى الوصول</value>
+  </data>
+  <data name="AccessDays" xml:space="preserve">
+    <value>المدة (بالأيام)</value>
+  </data>
+  <data name="RequireMySignOff" xml:space="preserve">
+    <value>اسألني قبل استيراد أي شيء</value>
+  </data>
+  <data name="MessageToSupport" xml:space="preserve">
+    <value>ملاحظة للدعم</value>
+  </data>
+  <data name="GrantAccess" xml:space="preserve">
+    <value>منح الوصول</value>
+  </data>
+  <data name="Suggestions" xml:space="preserve">
+    <value>الاقتراحات</value>
+  </data>
+  <data name="SuggestedByResgrid" xml:space="preserve">
+    <value>اقتراح من دعم Resgrid</value>
+  </data>
+  <data name="Accept" xml:space="preserve">
+    <value>قبول</value>
+  </data>
+  <data name="Reject" xml:space="preserve">
+    <value>رفض</value>
+  </data>
+  <data name="AccessLog" xml:space="preserve">
+    <value>سجل الوصول</value>
+  </data>
+  <data name="NoGrants" xml:space="preserve">
+    <value>لم يحصل الدعم قط على حق الوصول إلى مساحة العمل هذه.</value>
+  </data>
+  <data name="Revoked" xml:space="preserve">
+    <value>أُلغي</value>
+  </data>
+  <data name="Expired" xml:space="preserve">
+    <value>انتهت صلاحيته</value>
+  </data>
+  <data name="ImportSettings" xml:space="preserve">
+    <value>إعدادات الاستيراد والترحيل</value>
+  </data>
+  <data name="ImportSettingsHelp" xml:space="preserve">
+    <value>مدة الاحتفاظ بالملفات المستوردة والبيانات المفحوصة، وكيفية الموافقة على عمليات الاستيراد.</value>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>تم حفظ الإعدادات.</value>
+  </data>
+  <data name="ArtifactRetentionDaysAfterSuccess" xml:space="preserve">
+    <value>الاحتفاظ بالملفات المرفوعة بعد نجاح الاستيراد (بالأيام)</value>
+  </data>
+  <data name="ArtifactRetentionDaysAfterSuccessHelp" xml:space="preserve">
+    <value>القيمة 0 تعني استخدام الافتراضي: 7 أيام (72 ساعة مع حماية البيانات المتقدمة).</value>
+  </data>
+  <data name="ArtifactRetentionDaysAfterFailure" xml:space="preserve">
+    <value>الاحتفاظ بالملفات التي فشلت (بالأيام)</value>
+  </data>
+  <data name="ArtifactRetentionDaysAfterFailureHelp" xml:space="preserve">
+    <value>القيمة 0 تعني استخدام الافتراضي: 30 يومًا.</value>
+  </data>
+  <data name="StagingRetentionDaysAfterActivation" xml:space="preserve">
+    <value>الاحتفاظ بالبيانات المفحوصة بعد بدء التشغيل الفعلي (بالأيام)</value>
+  </data>
+  <data name="StagingRetentionDaysAfterActivationHelp" xml:space="preserve">
+    <value>القيمة 0 تعني استخدام الافتراضي: 30 يومًا. يحتاج التراجع إلى هذه البيانات.</value>
+  </data>
+  <data name="DefaultWriteMode" xml:space="preserve">
+    <value>الإعداد الافتراضي للسجلات الموجودة بالفعل</value>
+  </data>
+  <data name="SupportGrantDefaultDays" xml:space="preserve">
+    <value>مدة وصول الدعم الافتراضية (بالأيام)</value>
+  </data>
+  <data name="SupportGrantDefaultDaysHelp" xml:space="preserve">
+    <value>القيمة 0 تعني استخدام الافتراضي: 7 أيام.</value>
+  </data>
+  <data name="RequireSecondApprover" xml:space="preserve">
+    <value>اشتراط موافقة مسؤول ثانٍ على كل عملية استيراد</value>
+  </data>
+  <data name="RequireSecondApproverHelp" xml:space="preserve">
+    <value>شخصان، لا شخص واحد مرتين: يجب أن يكون الموافق الثاني مسؤولًا مختلفًا.</value>
+  </data>
+  <data name="AreYouSure" xml:space="preserve">
+    <value>هل أنت متأكد؟</value>
+  </data>
+  <data name="ReturnToImport" xml:space="preserve">
+    <value>العودة إلى الاستيراد والترحيل</value>
+  </data>
+  <data name="Error.Generic" xml:space="preserve">
+    <value>لم ينجح ذلك. يُرجى المحاولة مرة أخرى، أو اسأل دعم Resgrid.</value>
+  </data>
+  <data name="Mode.NewDepartment" xml:space="preserve">
+    <value>إعداد قسم جديد</value>
+  </data>
+  <data name="Mode.ExistingAdd" xml:space="preserve">
+    <value>الإضافة إلى قسم قيد التشغيل</value>
+  </data>
+  <data name="Mode.ExistingReviewedUpdate" xml:space="preserve">
+    <value>تحديث قسم قيد التشغيل (مع المراجعة)</value>
+  </data>
+  <data name="Mode.ConfigurationPresetOnly" xml:space="preserve">
+    <value>الإعدادات فقط</value>
+  </data>
+  <data name="Mode.IncrementalContinuation" xml:space="preserve">
+    <value>متابعة عملية استيراد سابقة</value>
+  </data>
+  <data name="Mode.HistoricalArchive" xml:space="preserve">
+    <value>أرشيف تاريخي</value>
+  </data>
+  <data name="Mode.DepartmentPackage" xml:space="preserve">
+    <value>حزمة القسم</value>
+  </data>
+  <data name="SupportAccess.None" xml:space="preserve">
+    <value>متوقف</value>
+  </data>
+  <data name="SupportAccess.Observe" xml:space="preserve">
+    <value>مراقبة</value>
+  </data>
+  <data name="SupportAccess.Inspect" xml:space="preserve">
+    <value>فحص</value>
+  </data>
+  <data name="SupportAccess.Prepare" xml:space="preserve">
+    <value>تحضير</value>
+  </data>
+  <data name="SupportAccess.Operate" xml:space="preserve">
+    <value>تشغيل</value>
+  </data>
+  <data name="SupportAccessHelp.Observe" xml:space="preserve">
+    <value>التقدّم والأعداد ورموز المشكلات، دون أي قيم</value>
+  </data>
+  <data name="SupportAccessHelp.Inspect" xml:space="preserve">
+    <value>بالإضافة إلى عينات من القيم لتشخيص مشكلة</value>
+  </data>
+  <data name="SupportAccessHelp.Prepare" xml:space="preserve">
+    <value>بالإضافة إلى إصلاح المطابقات والقيم كمسودات توافق عليها</value>
+  </data>
+  <data name="SupportAccessHelp.Operate" xml:space="preserve">
+    <value>تنفيذ الاستيراد نيابةً عنك، مع رقابة شخصين</value>
+  </data>
+  <data name="WorkspaceStatus.Draft" xml:space="preserve">
+    <value>مسودة</value>
+  </data>
+  <data name="WorkspaceStatus.Collecting" xml:space="preserve">
+    <value>جارٍ جمع الملفات</value>
+  </data>
+  <data name="WorkspaceStatus.Reviewing" xml:space="preserve">
+    <value>قيد المراجعة</value>
+  </data>
+  <data name="WorkspaceStatus.Importing" xml:space="preserve">
+    <value>جارٍ الاستيراد</value>
+  </data>
+  <data name="WorkspaceStatus.Verifying" xml:space="preserve">
+    <value>جارٍ التحقق</value>
+  </data>
+  <data name="WorkspaceStatus.ReadyToActivate" xml:space="preserve">
+    <value>جاهزة لبدء التشغيل الفعلي</value>
+  </data>
+  <data name="WorkspaceStatus.Active" xml:space="preserve">
+    <value>قيد التشغيل الفعلي</value>
+  </data>
+  <data name="WorkspaceStatus.Closed" xml:space="preserve">
+    <value>مغلقة</value>
+  </data>
+  <data name="WorkspaceStatus.Abandoned" xml:space="preserve">
+    <value>متروكة</value>
+  </data>
+  <data name="WorkspaceStatus.Cancelled" xml:space="preserve">
+    <value>ملغاة</value>
+  </data>
+  <data name="DatasetStatus.Uploading" xml:space="preserve">
+    <value>جارٍ الرفع</value>
+  </data>
+  <data name="DatasetStatus.Scanning" xml:space="preserve">
+    <value>جارٍ الفحص الأمني</value>
+  </data>
+  <data name="DatasetStatus.Analyzing" xml:space="preserve">
+    <value>جارٍ الفحص</value>
+  </data>
+  <data name="DatasetStatus.NeedsMapping" xml:space="preserve">
+    <value>تحتاج إلى مطابقة</value>
+  </data>
+  <data name="DatasetStatus.NeedsAttention" xml:space="preserve">
+    <value>تحتاج إلى انتباه</value>
+  </data>
+  <data name="DatasetStatus.Ready" xml:space="preserve">
+    <value>جاهزة</value>
+  </data>
+  <data name="DatasetStatus.Approved" xml:space="preserve">
+    <value>تمت الموافقة</value>
+  </data>
+  <data name="DatasetStatus.Importing" xml:space="preserve">
+    <value>جارٍ الاستيراد</value>
+  </data>
+  <data name="DatasetStatus.Imported" xml:space="preserve">
+    <value>مستوردة</value>
+  </data>
+  <data name="DatasetStatus.Verified" xml:space="preserve">
+    <value>تم التحقق</value>
+  </data>
+  <data name="DatasetStatus.Excluded" xml:space="preserve">
+    <value>مستبعدة</value>
+  </data>
+  <data name="DatasetStatus.Superseded" xml:space="preserve">
+    <value>مستبدلة</value>
+  </data>
+  <data name="DatasetStatus.Failed" xml:space="preserve">
+    <value>فشلت</value>
+  </data>
+  <data name="RunStatus.Queued" xml:space="preserve">
+    <value>في الانتظار</value>
+  </data>
+  <data name="RunStatus.Running" xml:space="preserve">
+    <value>قيد التشغيل</value>
+  </data>
+  <data name="RunStatus.Paused" xml:space="preserve">
+    <value>متوقفة مؤقتًا</value>
+  </data>
+  <data name="RunStatus.Reconciling" xml:space="preserve">
+    <value>جارٍ التحقق</value>
+  </data>
+  <data name="RunStatus.Completed" xml:space="preserve">
+    <value>اكتملت</value>
+  </data>
+  <data name="RunStatus.Failed" xml:space="preserve">
+    <value>جارٍ إعادة المحاولة</value>
+  </data>
+  <data name="RunStatus.Cancelled" xml:space="preserve">
+    <value>ملغاة</value>
+  </data>
+  <data name="RunStatus.AwaitingChecker" xml:space="preserve">
+    <value>بانتظار الموافقة الثانية</value>
+  </data>
+  <data name="Status.Unknown" xml:space="preserve">
+    <value>غير معروفة</value>
+  </data>
+  <data name="Severity.Blocking" xml:space="preserve">
+    <value>مانعة</value>
+  </data>
+  <data name="Severity.Warning" xml:space="preserve">
+    <value>تحذير</value>
+  </data>
+  <data name="Severity.Info" xml:space="preserve">
+    <value>ملاحظة</value>
+  </data>
+  <data name="RunKind.Analysis" xml:space="preserve">
+    <value>فحص الملف</value>
+  </data>
+  <data name="RunKind.Commit" xml:space="preserve">
+    <value>استيراد</value>
+  </data>
+  <data name="RunKind.Rollback" xml:space="preserve">
+    <value>تراجع</value>
+  </data>
+  <data name="RunKind.Reconcile" xml:space="preserve">
+    <value>تحقق</value>
+  </data>
+  <data name="RunKind.Extract" xml:space="preserve">
+    <value>استخراج</value>
+  </data>
+  <data name="RunKind.Activation" xml:space="preserve">
+    <value>تفعيل</value>
+  </data>
+  <data name="Step.Start" xml:space="preserve">
+    <value>البدء</value>
+  </data>
+  <data name="Step.Files" xml:space="preserve">
+    <value>إحضار ملفاتك</value>
+  </data>
+  <data name="Step.Match" xml:space="preserve">
+    <value>مطابقة الأعمدة والقيم</value>
+  </data>
+  <data name="Step.Fix" xml:space="preserve">
+    <value>إصلاح المشكلات</value>
+  </data>
+  <data name="Step.Review" xml:space="preserve">
+    <value>المراجعة والموافقة</value>
+  </data>
+  <data name="Step.Import" xml:space="preserve">
+    <value>الاستيراد</value>
+  </data>
+  <data name="Step.Verify" xml:space="preserve">
+    <value>التحقق</value>
+  </data>
+  <data name="Step.Activate" xml:space="preserve">
+    <value>التفعيل والدعوة</value>
+  </data>
+  <data name="Chip.Done" xml:space="preserve">
+    <value>مكتمل</value>
+  </data>
+  <data name="Chip.NeedsAttention" xml:space="preserve">
+    <value>يحتاج إلى انتباه</value>
+  </data>
+  <data name="Chip.ToDo" xml:space="preserve">
+    <value>مطلوب إنجازه</value>
+  </data>
+  <data name="Chip.Required" xml:space="preserve">
+    <value>إلزامي</value>
+  </data>
+  <data name="Chip.Advisory" xml:space="preserve">
+    <value>موصى به</value>
+  </data>
+  <data name="Next.UploadFirst" xml:space="preserve">
+    <value>ارفع ملفك الأول، أو نزّل المصنّف المبدئي.</value>
+  </data>
+  <data name="Next.WaitForChecks" xml:space="preserve">
+    <value>نحن نفحص ملفاتك. يستغرق ذلك عادةً بضع دقائق.</value>
+  </data>
+  <data name="Next.MatchColumns" xml:space="preserve">
+    <value>طابِق أعمدة «{0}».</value>
+  </data>
+  <data name="Next.FixIssues" xml:space="preserve">
+    <value>أصلح {0} من الصفوف في «{1}».</value>
+  </data>
+  <data name="Next.ReviewAndImport" xml:space="preserve">
+    <value>«{0}» جاهزة: راجعها واستوردها.</value>
+  </data>
+  <data name="Next.RunPaused" xml:space="preserve">
+    <value>توجد عملية استيراد متوقفة مؤقتًا بانتظارك.</value>
+  </data>
+  <data name="Next.Verify" xml:space="preserve">
+    <value>تحقق من نتائج الاستيراد.</value>
+  </data>
+  <data name="Next.Activate" xml:space="preserve">
+    <value>تم التحقق من كل شيء: ادعُ أفرادك وابدأ التشغيل الفعلي.</value>
+  </data>
+  <data name="Action.MatchColumns" xml:space="preserve">
+    <value>مطابقة الأعمدة</value>
+  </data>
+  <data name="Action.FixIssues" xml:space="preserve">
+    <value>إصلاح المشكلات</value>
+  </data>
+  <data name="Action.ReviewAndImport" xml:space="preserve">
+    <value>المراجعة والاستيراد</value>
+  </data>
+  <data name="Action.Verify" xml:space="preserve">
+    <value>التحقق</value>
+  </data>
+  <data name="Action.Open" xml:space="preserve">
+    <value>فتح</value>
+  </data>
+  <data name="Decision.Create" xml:space="preserve">
+    <value>إضافة</value>
+  </data>
+  <data name="Decision.UpdateOrLink" xml:space="preserve">
+    <value>تحديث أو ربط</value>
+  </data>
+  <data name="Decision.Unchanged" xml:space="preserve">
+    <value>دون تغيير</value>
+  </data>
+  <data name="Decision.Skip" xml:space="preserve">
+    <value>تخطي</value>
+  </data>
+  <data name="Decision.InviteToJoin" xml:space="preserve">
+    <value>دعوة للانضمام</value>
+  </data>
+  <data name="WriteMode.CreateOnly" xml:space="preserve">
+    <value>الإضافة فقط</value>
+  </data>
+  <data name="WriteMode.ReviewedUpdate" xml:space="preserve">
+    <value>مراجعة التحديثات</value>
+  </data>
+  <data name="PreviewBlockerRunOpen" xml:space="preserve">
+    <value>توجد بالفعل عملية استيراد قيد الانتظار أو التشغيل لمساحة العمل هذه.</value>
+  </data>
+  <data name="PreviewBlockerNothingReady" xml:space="preserve">
+    <value>لا توجد مجموعة بيانات جاهزة بعد: أصلح المشكلات المفتوحة أولًا.</value>
+  </data>
+  <data name="PreviewBlockerCapacityUnknown" xml:space="preserve">
+    <value>تعذّر علينا التحقق من حدود خطتك. حاول مرة أخرى بعد بضع دقائق.</value>
+  </data>
+  <data name="PreviewBlockerCapacity" xml:space="preserve">
+    <value>لا تتسع خطتك لجميع من في عملية الاستيراد هذه.</value>
+  </data>
+  <data name="Consequence.certifications.already-expired" xml:space="preserve">
+    <value>انتهت صلاحية {0} من الشهادات بالفعل. سيضع Resgrid عليها علامة «منتهية» ولن يرسل بريدًا إلكترونيًا إلى حامليها.</value>
+  </data>
+  <data name="Consequence.certifications.expiring-soon" xml:space="preserve">
+    <value>تنتهي صلاحية {0} من الشهادات قريبًا. تنتظر التذكيرات إلى أن تُرسل الدعوة إلى حاملها.</value>
+  </data>
+  <data name="Consequence.custom-statuses.replaces-active-set" xml:space="preserve">
+    <value>ستصبح {0} من مجموعات الحالات الجديدة هي الأزرار التي يراها أفرادك ووحداتك.</value>
+  </data>
+  <data name="Journal.Create" xml:space="preserve">
+    <value>{0} للإزالة</value>
+  </data>
+  <data name="Journal.Update" xml:space="preserve">
+    <value>{0} للاستعادة</value>
+  </data>
+  <data name="Journal.Link" xml:space="preserve">
+    <value>{0} من الروابط (لا شيء للتراجع عنه)</value>
+  </data>
+  <data name="Journal.Setting" xml:space="preserve">
+    <value>{0} من الإعدادات للاستعادة</value>
+  </data>
+  <data name="Checklist.reconcile" xml:space="preserve">
+    <value>مراجعة نتائج الاستيراد</value>
+  </data>
+  <data name="Checklist.practice" xml:space="preserve">
+    <value>تدريب: إجراء اختبار اتصال</value>
+  </data>
+  <data name="Checklist.administrators" xml:space="preserve">
+    <value>تأكيد المسؤولين</value>
+  </data>
+  <data name="Checklist.invitations" xml:space="preserve">
+    <value>دعوة أفرادك</value>
+  </data>
+  <data name="Checklist.sign-off" xml:space="preserve">
+    <value>الاعتماد النهائي</value>
+  </data>
+  <data name="Invite.Accepted" xml:space="preserve">
+    <value>مقبولة</value>
+  </data>
+  <data name="Invite.Pending" xml:space="preserve">
+    <value>مجدولة</value>
+  </data>
+  <data name="Invite.Failed" xml:space="preserve">
+    <value>فشلت</value>
+  </data>
+  <data name="Invite.Revoked" xml:space="preserve">
+    <value>ملغاة</value>
+  </data>
+  <data name="Invite.Sent" xml:space="preserve">
+    <value>مُرسلة</value>
+  </data>
+  <data name="InvitationKind.Account" xml:space="preserve">
+    <value>حساب</value>
+  </data>
+  <data name="InvitationKind.Join" xml:space="preserve">
+    <value>الانضمام بحساب موجود</value>
+  </data>
+  <data name="RequestCategory.Error" xml:space="preserve">
+    <value>حدث خطأ ما</value>
+  </data>
+  <data name="RequestCategory.DataProblem" xml:space="preserve">
+    <value>مشكلة في بياناتي</value>
+  </data>
+  <data name="RequestCategory.Question" xml:space="preserve">
+    <value>سؤال</value>
+  </data>
+  <data name="RequestCategory.RequestManagedMigration" xml:space="preserve">
+    <value>يُرجى تنفيذ الترحيل نيابةً عنا</value>
+  </data>
+  <data name="RequestStatus.Open" xml:space="preserve">
+    <value>مفتوح</value>
+  </data>
+  <data name="RequestStatus.Acknowledged" xml:space="preserve">
+    <value>تم الاستلام</value>
+  </data>
+  <data name="RequestStatus.WaitingOnDepartment" xml:space="preserve">
+    <value>بانتظارك</value>
+  </data>
+  <data name="RequestStatus.Resolved" xml:space="preserve">
+    <value>تم الحل</value>
+  </data>
+  <data name="RequestStatus.Closed" xml:space="preserve">
+    <value>مغلق</value>
+  </data>
+  <data name="SuggestionKind.1" xml:space="preserve">
+    <value>مطابقات أعمدة مقترحة</value>
+  </data>
+  <data name="SuggestionKind.2" xml:space="preserve">
+    <value>مطابقات قيم مقترحة</value>
+  </data>
+  <data name="SuggestionKind.3" xml:space="preserve">
+    <value>إصلاح مقترح لمشكلة</value>
+  </data>
+  <data name="SuggestionKind.4" xml:space="preserve">
+    <value>ملاحظة</value>
+  </data>
+  <data name="Type.text" xml:space="preserve">
+    <value>نص</value>
+  </data>
+  <data name="Type.integer" xml:space="preserve">
+    <value>عدد صحيح</value>
+  </data>
+  <data name="Type.decimal" xml:space="preserve">
+    <value>رقم</value>
+  </data>
+  <data name="Type.boolean" xml:space="preserve">
+    <value>نعم/لا</value>
+  </data>
+  <data name="Type.date" xml:space="preserve">
+    <value>تاريخ</value>
+  </data>
+  <data name="Type.datetime" xml:space="preserve">
+    <value>التاريخ والوقت</value>
+  </data>
+  <data name="Type.time" xml:space="preserve">
+    <value>الوقت</value>
+  </data>
+  <data name="Type.email" xml:space="preserve">
+    <value>البريد الإلكتروني</value>
+  </data>
+  <data name="Type.phone" xml:space="preserve">
+    <value>الهاتف</value>
+  </data>
+  <data name="Type.url" xml:space="preserve">
+    <value>عنوان ويب</value>
+  </data>
+  <data name="Type.choice" xml:space="preserve">
+    <value>اختيار من قائمة</value>
+  </data>
+  <data name="Type.reference" xml:space="preserve">
+    <value>مرجع</value>
+  </data>
+  <data name="Type.latitude" xml:space="preserve">
+    <value>خط العرض</value>
+  </data>
+  <data name="Type.longitude" xml:space="preserve">
+    <value>خط الطول</value>
+  </data>
+  <data name="Type.colour" xml:space="preserve">
+    <value>اللون</value>
+  </data>
+  <data name="Type.multi" xml:space="preserve">
+    <value>قائمة</value>
+  </data>
+  <data name="Type.timezone" xml:space="preserve">
+    <value>المنطقة الزمنية</value>
+  </data>
+  <data name="Type.language" xml:space="preserve">
+    <value>اللغة</value>
+  </data>
+  <data name="Transform.trim" xml:space="preserve">
+    <value>إزالة المسافات من الطرفين</value>
+  </data>
+  <data name="Transform.collapse-whitespace" xml:space="preserve">
+    <value>دمج المسافات المتتالية</value>
+  </data>
+  <data name="Transform.upper" xml:space="preserve">
+    <value>أحرف كبيرة</value>
+  </data>
+  <data name="Transform.lower" xml:space="preserve">
+    <value>أحرف صغيرة</value>
+  </data>
+  <data name="Transform.title" xml:space="preserve">
+    <value>حرف أول كبير لكل كلمة</value>
+  </data>
+  <data name="Transform.digits-only" xml:space="preserve">
+    <value>الأرقام فقط</value>
+  </data>
+  <data name="Transform.name-first" xml:space="preserve">
+    <value>الاسم الأول من الاسم الكامل</value>
+  </data>
+  <data name="Transform.name-last" xml:space="preserve">
+    <value>اسم العائلة من الاسم الكامل</value>
+  </data>
+  <data name="Transform.first-word" xml:space="preserve">
+    <value>الكلمة الأولى</value>
+  </data>
+  <data name="Transform.last-word" xml:space="preserve">
+    <value>الكلمة الأخيرة</value>
+  </data>
+  <data name="Event.AdministratorsApplied" xml:space="preserve">
+    <value>تم تأكيد المسؤولين</value>
+  </data>
+  <data name="Event.ApprovalAwaitingChecker" xml:space="preserve">
+    <value>تمت الموافقة، بانتظار مسؤول ثانٍ</value>
+  </data>
+  <data name="Event.ApprovalChecked" xml:space="preserve">
+    <value>مُنحت الموافقة الثانية</value>
+  </data>
+  <data name="Event.Approved" xml:space="preserve">
+    <value>تمت الموافقة على الاستيراد</value>
+  </data>
+  <data name="Event.ArtifactAccepted" xml:space="preserve">
+    <value>تم قبول الملف</value>
+  </data>
+  <data name="Event.ArtifactAnalyzed" xml:space="preserve">
+    <value>تم فحص الملف</value>
+  </data>
+  <data name="Event.ArtifactSplit" xml:space="preserve">
+    <value>قُسّم الملف إلى مجموعات بيانات</value>
+  </data>
+  <data name="Event.ColumnMapSaved" xml:space="preserve">
+    <value>حُفظت مطابقات الأعمدة</value>
+  </data>
+  <data name="Event.CommitReconciled" xml:space="preserve">
+    <value>تم التحقق من الاستيراد</value>
+  </data>
+  <data name="Event.CommitStarted" xml:space="preserve">
+    <value>بدأ الاستيراد</value>
+  </data>
+  <data name="Event.CommitWritten" xml:space="preserve">
+    <value>كُتبت السجلات</value>
+  </data>
+  <data name="Event.DatasetExcluded" xml:space="preserve">
+    <value>استُبعدت مجموعة البيانات</value>
+  </data>
+  <data name="Event.DatasetIncluded" xml:space="preserve">
+    <value>ضُمّنت مجموعة البيانات</value>
+  </data>
+  <data name="Event.DestinationSet" xml:space="preserve">
+    <value>اختيرت الوجهة</value>
+  </data>
+  <data name="Event.DomainPlanSaved" xml:space="preserve">
+    <value>حُفظت الخطة</value>
+  </data>
+  <data name="Event.InvitationResent" xml:space="preserve">
+    <value>أُعيد إرسال الدعوة</value>
+  </data>
+  <data name="Event.InvitationRevoked" xml:space="preserve">
+    <value>أُلغيت الدعوة</value>
+  </data>
+  <data name="Event.InvitationsCreated" xml:space="preserve">
+    <value>جُدولت الدعوات</value>
+  </data>
+  <data name="Event.MapSaved" xml:space="preserve">
+    <value>حُفظت المطابقات لإعادة الاستخدام</value>
+  </data>
+  <data name="Event.PersonActivated" xml:space="preserve">
+    <value>قبل شخص دعوته</value>
+  </data>
+  <data name="Event.PersonJoined" xml:space="preserve">
+    <value>انضم شخص بحساب موجود</value>
+  </data>
+  <data name="Event.RollbackCompleted" xml:space="preserve">
+    <value>اكتمل التراجع</value>
+  </data>
+  <data name="Event.RollbackRequested" xml:space="preserve">
+    <value>طُلب التراجع</value>
+  </data>
+  <data name="Event.RunCancelled" xml:space="preserve">
+    <value>أُلغيت عملية التشغيل</value>
+  </data>
+  <data name="Event.RunCompleted" xml:space="preserve">
+    <value>اكتملت عملية التشغيل</value>
+  </data>
+  <data name="Event.RunFailed" xml:space="preserve">
+    <value>فشلت عملية التشغيل</value>
+  </data>
+  <data name="Event.RunPauseRequested" xml:space="preserve">
+    <value>طُلب الإيقاف المؤقت</value>
+  </data>
+  <data name="Event.RunCancelRequested" xml:space="preserve">
+    <value>طُلب الإلغاء</value>
+  </data>
+  <data name="Event.RunPaused" xml:space="preserve">
+    <value>أُوقفت عملية التشغيل مؤقتًا</value>
+  </data>
+  <data name="Event.RunResumed" xml:space="preserve">
+    <value>استُؤنفت عملية التشغيل</value>
+  </data>
+  <data name="Event.RunRetrying" xml:space="preserve">
+    <value>تجري إعادة المحاولة تلقائيًا</value>
+  </data>
+  <data name="Event.RunStalled" xml:space="preserve">
+    <value>أُعيد تشغيل العملية بعد توقفها</value>
+  </data>
+  <data name="Event.SignedOff" xml:space="preserve">
+    <value>تم الاعتماد النهائي</value>
+  </data>
+  <data name="Event.SourceAdded" xml:space="preserve">
+    <value>أُضيف مصدر</value>
+  </data>
+  <data name="Event.StagingPurged" xml:space="preserve">
+    <value>حُذفت البيانات المفحوصة بعد فترة الاحتفاظ</value>
+  </data>
+  <data name="Event.SuggestionAccepted" xml:space="preserve">
+    <value>قُبل الاقتراح</value>
+  </data>
+  <data name="Event.SuggestionRejected" xml:space="preserve">
+    <value>رُفض الاقتراح</value>
+  </data>
+  <data name="Event.SupportAccessExpired" xml:space="preserve">
+    <value>انتهت صلاحية وصول الدعم</value>
+  </data>
+  <data name="Event.SupportAccessGranted" xml:space="preserve">
+    <value>مُنح الدعم حق الوصول</value>
+  </data>
+  <data name="Event.SupportAccessRevoked" xml:space="preserve">
+    <value>أُلغي وصول الدعم</value>
+  </data>
+  <data name="Event.SupportRequestClosed" xml:space="preserve">
+    <value>أُغلق طلب الدعم</value>
+  </data>
+  <data name="Event.SupportRequestOpened" xml:space="preserve">
+    <value>فُتح طلب دعم</value>
+  </data>
+  <data name="Event.SupportRequestReopened" xml:space="preserve">
+    <value>أُعيد فتح طلب الدعم</value>
+  </data>
+  <data name="Event.UploadCompleted" xml:space="preserve">
+    <value>اكتمل الرفع</value>
+  </data>
+  <data name="Event.UploadStarted" xml:space="preserve">
+    <value>بدأ الرفع</value>
+  </data>
+  <data name="Event.ValueEdited" xml:space="preserve">
+    <value>عُدّلت قيمة</value>
+  </data>
+  <data name="Event.ValueMapsSaved" xml:space="preserve">
+    <value>حُفظت مطابقات القيم</value>
+  </data>
+  <data name="Event.ValuesSet" xml:space="preserve">
+    <value>عُيّنت قيم للصفوف</value>
+  </data>
+  <data name="Event.WorkspaceAbandoned" xml:space="preserve">
+    <value>أُغلقت مساحة العمل بعد عدم النشاط</value>
+  </data>
+  <data name="Event.WorkspaceCancelled" xml:space="preserve">
+    <value>أُلغيت مساحة العمل</value>
+  </data>
+  <data name="Event.WorkspaceCreated" xml:space="preserve">
+    <value>أُنشئت مساحة العمل</value>
+  </data>
+  <data name="Event.WorkspaceUpdated" xml:space="preserve">
+    <value>حُدّثت مساحة العمل</value>
+  </data>
+  <data name="TemplateTitle" xml:space="preserve">
+    <value>مصنّف Resgrid المبدئي</value>
+  </data>
+  <data name="TemplateInstructions1" xml:space="preserve">
+    <value>املأ ورقة واحدة لكل نوع من البيانات. احذف الأوراق التي لا تحتاج إليها.</value>
+  </data>
+  <data name="TemplateInstructions2" xml:space="preserve">
+    <value>أبقِ عناوين الأعمدة كما هي تمامًا: الرمز الموجود بين [قوسين معقوفين] يخبر Resgrid بالحقل الذي يملؤه كل عمود.</value>
+  </data>
+  <data name="TemplateInstructions3" xml:space="preserve">
+    <value>الصف الأول في كل ورقة مثال ولا يُستورد أبدًا. أضف صفوفك أسفله.</value>
+  </data>
+  <data name="TemplateInstructions4" xml:space="preserve">
+    <value>الأعمدة التي تحتوي على قائمة منسدلة تقبل القيم المدرجة فيها؛ أما النصوص الأخرى فتُطابَق عند الرفع.</value>
+  </data>
+  <data name="TemplateInstructions5" xml:space="preserve">
+    <value>احفظ الملف بصيغة .xlsx وارفعه في الاستيراد والترحيل. لا يُحفظ أي شيء إلى أن تراجعه وتوافق عليه.</value>
+  </data>
+  <data name="Issue.IMP-FILE-TOO-LARGE.Title" xml:space="preserve">
+    <value>حجم الملف أكبر مما تسمح به خطتك</value>
+  </data>
+  <data name="Issue.IMP-FILE-TOO-LARGE.Help" xml:space="preserve">
+    <value>قسّم الملف إلى ملفات أصغر، أو احذف الأوراق والأعمدة التي لا تحتاج إليها.</value>
+  </data>
+  <data name="Issue.IMP-FILE-SIGNATURE.Title" xml:space="preserve">
+    <value>محتوى الملف لا يطابق نوعه</value>
+  </data>
+  <data name="Issue.IMP-FILE-SIGNATURE.Help" xml:space="preserve">
+    <value>صدّره مرة أخرى من نظامك بصيغة CSV أو Excel (.xlsx).</value>
+  </data>
+  <data name="Issue.IMP-FILE-MACRO.Title" xml:space="preserve">
+    <value>لا يمكن استيراد الملفات التي تحتوي على وحدات ماكرو</value>
+  </data>
+  <data name="Issue.IMP-FILE-MACRO.Help" xml:space="preserve">
+    <value>احفظ المصنّف كمصنّف Excel عادي (.xlsx) دون وحدات ماكرو، ثم ارفعه مرة أخرى.</value>
+  </data>
+  <data name="Issue.IMP-FILE-ENCRYPTED.Title" xml:space="preserve">
+    <value>الملف محمي بكلمة مرور</value>
+  </data>
+  <data name="Issue.IMP-FILE-ENCRYPTED.Help" xml:space="preserve">
+    <value>أزل كلمة المرور في البرنامج الذي أنشأه، واحفظه مرة أخرى، ثم ارفع النسخة الجديدة.</value>
+  </data>
+  <data name="Issue.IMP-FILE-EMBEDDED-OBJECTS.Title" xml:space="preserve">
+    <value>يحتوي المصنّف على كائنات مضمّنة</value>
+  </data>
+  <data name="Issue.IMP-FILE-EMBEDDED-OBJECTS.Help" xml:space="preserve">
+    <value>لا تُقرأ الملفات والكائنات المضمّنة. أزلها أو انسخ البيانات إلى مصنّف جديد.</value>
+  </data>
+  <data name="Issue.IMP-FILE-EXTERNAL-LINKS.Title" xml:space="preserve">
+    <value>يرتبط المصنّف بملفات أخرى</value>
+  </data>
+  <data name="Issue.IMP-FILE-EXTERNAL-LINKS.Help" xml:space="preserve">
+    <value>لا يمكن هنا تحديث الصيغ التي تقرأ من ملفات أخرى. الصق القيم مكانها ثم احفظ مرة أخرى.</value>
+  </data>
+  <data name="Issue.IMP-FILE-EMPTY.Title" xml:space="preserve">
+    <value>لا يحتوي الملف على بيانات</value>
+  </data>
+  <data name="Issue.IMP-FILE-EMPTY.Help" xml:space="preserve">
+    <value>تأكد من أنك صدّرت التقرير الصحيح وأن الصف الأول يحتوي على أسماء الأعمدة.</value>
+  </data>
+  <data name="Issue.IMP-FILE-ENCODING.Title" xml:space="preserve">
+    <value>اضطررنا إلى تخمين ترميز النص</value>
+  </data>
+  <data name="Issue.IMP-FILE-ENCODING.Help" xml:space="preserve">
+    <value>إذا ظهرت الأسماء التي تحتوي على أحرف مشكّلة أو خاصة بشكل خاطئ، فصدّر الملف مرة أخرى بصيغة CSV بترميز UTF-8.</value>
+  </data>
+  <data name="Issue.IMP-FILE-FIELD-TOO-LONG.Title" xml:space="preserve">
+    <value>خلية أطول من أن تُقرأ</value>
+  </data>
+  <data name="Issue.IMP-FILE-FIELD-TOO-LONG.Help" xml:space="preserve">
+    <value>تحتوي إحدى الخلايا على نص أطول مما يقبله Resgrid. اختصره أو احذف العمود.</value>
+  </data>
+  <data name="Issue.IMP-FILE-HASH-MISMATCH.Title" xml:space="preserve">
+    <value>تلف الملف المرفوع أثناء النقل</value>
+  </data>
+  <data name="Issue.IMP-FILE-HASH-MISMATCH.Help" xml:space="preserve">
+    <value>الملف الذي استلمناه يختلف عن الملف الذي اخترته. ارفعه مرة أخرى.</value>
+  </data>
+  <data name="Issue.IMP-FILE-INFECTED.Title" xml:space="preserve">
+    <value>لم يجتز الملف فحص الفيروسات</value>
+  </data>
+  <data name="Issue.IMP-FILE-INFECTED.Help" xml:space="preserve">
+    <value>لم يفتح Resgrid هذا الملف. افحص جهاز الكمبيوتر لديك، وصدّر البيانات مرة أخرى، ثم ارفع الملف الجديد.</value>
+  </data>
+  <data name="Issue.IMP-FILE-SCAN.Title" xml:space="preserve">
+    <value>تعذّر فحص الملف</value>
+  </data>
+  <data name="Issue.IMP-FILE-SCAN.Help" xml:space="preserve">
+    <value>حاول مرة أخرى لاحقًا. إذا تكرر ذلك، فاسأل دعم Resgrid.</value>
+  </data>
+  <data name="Issue.IMP-FILE-SCAN-PENDING.Title" xml:space="preserve">
+    <value>بانتظار فحص الفيروسات</value>
+  </data>
+  <data name="Issue.IMP-FILE-SCAN-PENDING.Help" xml:space="preserve">
+    <value>أداة الفحص مشغولة؛ ويواصل Resgrid المحاولة تلقائيًا.</value>
+  </data>
+  <data name="Issue.IMP-FILE-SCAN-UNAVAILABLE.Title" xml:space="preserve">
+    <value>فحص الفيروسات غير متاح</value>
+  </data>
+  <data name="Issue.IMP-FILE-SCAN-UNAVAILABLE.Help" xml:space="preserve">
+    <value>يواصل Resgrid المحاولة لبعض الوقت. إذا لم تتم الاستعادة، فارفع ملف CSV بدلًا من ذلك.</value>
+  </data>
+  <data name="Issue.IMP-FILE-SCANNING-REQUIRED.Title" xml:space="preserve">
+    <value>يحتاج هذا النوع من الملفات إلى فحص الفيروسات</value>
+  </data>
+  <data name="Issue.IMP-FILE-SCANNING-REQUIRED.Help" xml:space="preserve">
+    <value>الفحص غير متاح هنا، لذا لا تُقبل إلا ملفات CSV والملفات النصية وJSON. صدّر البيانات بصيغة CSV.</value>
+  </data>
+  <data name="Issue.IMP-FILE-TOO-MANY-ROWS.Title" xml:space="preserve">
+    <value>يحتوي الملف على صفوف أكثر مما تسمح به خطتك</value>
+  </data>
+  <data name="Issue.IMP-FILE-TOO-MANY-ROWS.Help" xml:space="preserve">
+    <value>فُحصت الصفوف الأولى فقط. قسّم الملف إلى ملفات أصغر.</value>
+  </data>
+  <data name="Issue.IMP-FILE-TOO-WIDE.Title" xml:space="preserve">
+    <value>يحتوي الملف على عدد كبير جدًا من الأعمدة</value>
+  </data>
+  <data name="Issue.IMP-FILE-TOO-WIDE.Help" xml:space="preserve">
+    <value>احذف الأعمدة التي لا تحتاج إليها، أو قسّم الملف.</value>
+  </data>
+  <data name="Issue.IMP-FILE-UNSUPPORTED.Title" xml:space="preserve">
+    <value>هذا النوع من الملفات غير مدعوم بعد</value>
+  </data>
+  <data name="Issue.IMP-FILE-UNSUPPORTED.Help" xml:space="preserve">
+    <value>ارفع ملف CSV أو Excel (.xlsx) أو JSON.</value>
+  </data>
+  <data name="Issue.IMP-FILE-CONTROL-CHAR.Title" xml:space="preserve">
+    <value>{0} من الخلايا تحتوي على أحرف تحكم مخفية</value>
+  </data>
+  <data name="Issue.IMP-FILE-CONTROL-CHAR.Help" xml:space="preserve">
+    <value>عُثر على أحرف غير مرئية لا يستطيع Resgrid تخزينها. أزلها في جدول البيانات، أو استبعد الصفوف.</value>
+  </data>
+  <data name="Issue.IMP-ZIP-ENTRIES.Title" xml:space="preserve">
+    <value>يحتوي الأرشيف على عدد كبير جدًا من الملفات</value>
+  </data>
+  <data name="Issue.IMP-ZIP-ENTRIES.Help" xml:space="preserve">
+    <value>فك ضغطه وارفع الملفات التي تحتاج إليها واحدًا تلو الآخر.</value>
+  </data>
+  <data name="Issue.IMP-ZIP-NESTED.Title" xml:space="preserve">
+    <value>يحتوي الأرشيف على أرشيف آخر</value>
+  </data>
+  <data name="Issue.IMP-ZIP-NESTED.Help" xml:space="preserve">
+    <value>فك ضغط الأرشيفين وارفع الملفات التي تحتاج إليها واحدًا تلو الآخر.</value>
+  </data>
+  <data name="Issue.IMP-ZIP-PATH.Title" xml:space="preserve">
+    <value>يحتوي الأرشيف على مسار ملف غير آمن</value>
+  </data>
+  <data name="Issue.IMP-ZIP-PATH.Help" xml:space="preserve">
+    <value>فك ضغطه وارفع الملفات التي تحتاج إليها واحدًا تلو الآخر.</value>
+  </data>
+  <data name="Issue.IMP-ZIP-RATIO.Title" xml:space="preserve">
+    <value>يتوسع الأرشيف عند فك ضغطه إلى حجم كبير على نحو غير معتاد</value>
+  </data>
+  <data name="Issue.IMP-ZIP-RATIO.Help" xml:space="preserve">
+    <value>فك ضغطه وارفع الملفات التي تحتاج إليها واحدًا تلو الآخر.</value>
+  </data>
+  <data name="Issue.IMP-ZIP-TOO-LARGE.Title" xml:space="preserve">
+    <value>الأرشيف كبير جدًا</value>
+  </data>
+  <data name="Issue.IMP-ZIP-TOO-LARGE.Help" xml:space="preserve">
+    <value>فك ضغطه وارفع الملفات التي تحتاج إليها واحدًا تلو الآخر.</value>
+  </data>
+  <data name="Issue.IMP-ARTIFACT-CORRUPT.Title" xml:space="preserve">
+    <value>الملف المخزّن تالف</value>
+  </data>
+  <data name="Issue.IMP-ARTIFACT-CORRUPT.Help" xml:space="preserve">
+    <value>ارفع الملف مرة أخرى.</value>
+  </data>
+  <data name="Issue.IMP-ARTIFACT-KEY-INVALID.Title" xml:space="preserve">
+    <value>تتعذر قراءة الملف المخزّن</value>
+  </data>
+  <data name="Issue.IMP-ARTIFACT-KEY-INVALID.Help" xml:space="preserve">
+    <value>ارفع الملف مرة أخرى. إذا تكرر ذلك، فاسأل دعم Resgrid.</value>
+  </data>
+  <data name="Issue.IMP-ARTIFACT-KEY-MISSING.Title" xml:space="preserve">
+    <value>تتعذر قراءة الملف المخزّن</value>
+  </data>
+  <data name="Issue.IMP-ARTIFACT-KEY-MISSING.Help" xml:space="preserve">
+    <value>ارفع الملف مرة أخرى. إذا تكرر ذلك، فاسأل دعم Resgrid.</value>
+  </data>
+  <data name="Issue.IMP-ARTIFACT-MISSING.Title" xml:space="preserve">
+    <value>لم يعد الملف متاحًا</value>
+  </data>
+  <data name="Issue.IMP-ARTIFACT-MISSING.Help" xml:space="preserve">
+    <value>ربما تجاوز تاريخ انتهاء فترة الاحتفاظ. ارفعه مرة أخرى.</value>
+  </data>
+  <data name="Issue.IMP-ARTIFACT-PURGED.Title" xml:space="preserve">
+    <value>حُذف الملف بعد انتهاء فترة الاحتفاظ به</value>
+  </data>
+  <data name="Issue.IMP-ARTIFACT-PURGED.Help" xml:space="preserve">
+    <value>ارفعه مرة أخرى للمتابعة.</value>
+  </data>
+  <data name="Issue.IMP-ARTIFACT-TAMPERED.Title" xml:space="preserve">
+    <value>لم يجتز الملف المخزّن فحص السلامة</value>
+  </data>
+  <data name="Issue.IMP-ARTIFACT-TAMPERED.Help" xml:space="preserve">
+    <value>لم يستخدمه Resgrid. ارفع الملف مرة أخرى وأبلغ دعم Resgrid.</value>
+  </data>
+  <data name="Issue.IMP-ARTIFACT-TRUNCATED.Title" xml:space="preserve">
+    <value>الملف المخزّن غير مكتمل</value>
+  </data>
+  <data name="Issue.IMP-ARTIFACT-TRUNCATED.Help" xml:space="preserve">
+    <value>ارفع الملف مرة أخرى.</value>
+  </data>
+  <data name="Issue.IMP-STORE-UNAVAILABLE.Title" xml:space="preserve">
+    <value>تخزين الملفات غير متاح</value>
+  </data>
+  <data name="Issue.IMP-STORE-UNAVAILABLE.Help" xml:space="preserve">
+    <value>يعيد Resgrid المحاولة تلقائيًا. يمكنك إغلاق هذه الصفحة.</value>
+  </data>
+  <data name="Issue.IMP-PARSE-COLUMNS.Title" xml:space="preserve">
+    <value>{0} من الصفوف تحتوي على قيم أكثر من عدد الأعمدة</value>
+  </data>
+  <data name="Issue.IMP-PARSE-COLUMNS.Help" xml:space="preserve">
+    <value>عادةً ما تؤدي فاصلة أو علامة جدولة زائدة إلى إزاحة الصف. أصلح الصفوف في ملفك، أو استبعدها.</value>
+  </data>
+  <data name="Issue.IMP-PARSE-CSV.Title" xml:space="preserve">
+    <value>تعذّرت قراءة ملف CSV</value>
+  </data>
+  <data name="Issue.IMP-PARSE-CSV.Help" xml:space="preserve">
+    <value>تأكد من أن علامات الاقتباس متوازنة. عادةً ما يُصلح حفظه مرة أخرى من Excel المشكلة.</value>
+  </data>
+  <data name="Issue.IMP-PARSE-HEADER-DUP.Title" xml:space="preserve">
+    <value>عمودان يحملان الاسم نفسه</value>
+  </data>
+  <data name="Issue.IMP-PARSE-HEADER-DUP.Help" xml:space="preserve">
+    <value>لا يمكن مطابقة إلا أحدهما. أعد تسمية أحدهما في الملف إذا كان كلاهما يحتوي على بيانات تحتاج إليها.</value>
+  </data>
+  <data name="Issue.IMP-PARSE-JSON.Title" xml:space="preserve">
+    <value>تعذّرت قراءة ملف JSON</value>
+  </data>
+  <data name="Issue.IMP-PARSE-JSON.Help" xml:space="preserve">
+    <value>تأكد من أن الملف بصيغة JSON صالحة.</value>
+  </data>
+  <data name="Issue.IMP-PARSE-JSON-SHAPE.Title" xml:space="preserve">
+    <value>ملف JSON ليس قائمة سجلات</value>
+  </data>
+  <data name="Issue.IMP-PARSE-JSON-SHAPE.Help" xml:space="preserve">
+    <value>ارفع قائمة كائنات، كائن واحد لكل سجل.</value>
+  </data>
+  <data name="Issue.IMP-PARSE-TIMEOUT.Title" xml:space="preserve">
+    <value>استغرقت قراءة الملف وقتًا طويلًا جدًا</value>
+  </data>
+  <data name="Issue.IMP-PARSE-TIMEOUT.Help" xml:space="preserve">
+    <value>قسّم الملف إلى ملفات أصغر.</value>
+  </data>
+  <data name="Issue.IMP-PARSE-XLSX.Title" xml:space="preserve">
+    <value>تعذّرت قراءة مصنّف Excel</value>
+  </data>
+  <data name="Issue.IMP-PARSE-XLSX.Help" xml:space="preserve">
+    <value>افتحه في Excel واحفظه مرة أخرى بصيغة .xlsx.</value>
+  </data>
+  <data name="Issue.IMP-DETECT-LOW-CONFIDENCE.Title" xml:space="preserve">
+    <value>لسنا متأكدين مما يحتويه هذا الملف</value>
+  </data>
+  <data name="Issue.IMP-DETECT-LOW-CONFIDENCE.Help" xml:space="preserve">
+    <value>اختر ما يحتويه الملف ضمن «الوجهة»، ثم تحقق من مطابقات الأعمدة.</value>
+  </data>
+  <data name="Issue.IMP-MAP-REQUIRED-UNMAPPED.Title" xml:space="preserve">
+    <value>حقل مطلوب ليس له عمود</value>
+  </data>
+  <data name="Issue.IMP-MAP-REQUIRED-UNMAPPED.Help" xml:space="preserve">
+    <value>طابِق عمودًا معه، أو عيّن القيمة نفسها لجميع الصفوف.</value>
+  </data>
+  <data name="Issue.IMP-MAP-FIELD-TWICE.Title" xml:space="preserve">
+    <value>عمودان مطابَقان مع الحقل نفسه</value>
+  </data>
+  <data name="Issue.IMP-MAP-FIELD-TWICE.Help" xml:space="preserve">
+    <value>طابِق عمودًا واحدًا فقط مع كل حقل من حقول Resgrid.</value>
+  </data>
+  <data name="Issue.IMP-TYPE-BOOLEAN.Title" xml:space="preserve">
+    <value>{0} من القيم ليست نعم أو لا</value>
+  </data>
+  <data name="Issue.IMP-TYPE-BOOLEAN.Help" xml:space="preserve">
+    <value>استخدم نعم/لا، أو true/false، أو 1/0، أو x مع ترك الخلية فارغة.</value>
+  </data>
+  <data name="Issue.IMP-TYPE-COLOUR.Title" xml:space="preserve">
+    <value>تعذّرت قراءة {0} من الألوان</value>
+  </data>
+  <data name="Issue.IMP-TYPE-COLOUR.Help" xml:space="preserve">
+    <value>استخدم لونًا بالترميز الست عشري مثل #D32F2F.</value>
+  </data>
+  <data name="Issue.IMP-TYPE-COORDINATE.Title" xml:space="preserve">
+    <value>{0} من الإحداثيات خارج النطاق</value>
+  </data>
+  <data name="Issue.IMP-TYPE-COORDINATE.Help" xml:space="preserve">
+    <value>يقع خط العرض بين -90 و90 وخط الطول بين -180 و180، بالدرجات العشرية.</value>
+  </data>
+  <data name="Issue.IMP-TYPE-DATE.Title" xml:space="preserve">
+    <value>تعذّرت قراءة {0} من التواريخ</value>
+  </data>
+  <data name="Issue.IMP-TYPE-DATE.Help" xml:space="preserve">
+    <value>استخدم تاريخًا كاملًا مثل 2026-03-04.</value>
+  </data>
+  <data name="Issue.IMP-TYPE-DATE-AMBIGUOUS.Title" xml:space="preserve">
+    <value>{0} من التواريخ يمكن قراءتها بطريقتين</value>
+  </data>
+  <data name="Issue.IMP-TYPE-DATE-AMBIGUOUS.Help" xml:space="preserve">
+    <value>أخبرنا إن كان العمود بتنسيق يوم/شهر أو شهر/يوم؛ نسأل مرة واحدة لكل عمود.</value>
+  </data>
+  <data name="Issue.IMP-TYPE-DATETIME.Title" xml:space="preserve">
+    <value>تعذّرت قراءة {0} من قيم التاريخ والوقت</value>
+  </data>
+  <data name="Issue.IMP-TYPE-DATETIME.Help" xml:space="preserve">
+    <value>استخدم تاريخًا ووقتًا كاملين مثل 2026-03-04 14:30.</value>
+  </data>
+  <data name="Issue.IMP-TYPE-DATETIME-DST.Title" xml:space="preserve">
+    <value>{0} من الأوقات تقع في فجوة التوقيت الصيفي</value>
+  </data>
+  <data name="Issue.IMP-TYPE-DATETIME-DST.Help" xml:space="preserve">
+    <value>هذه الأوقات المحلية غير موجودة في ذلك التاريخ. تحقق منها في نظامك.</value>
+  </data>
+  <data name="Issue.IMP-TYPE-DECIMAL.Title" xml:space="preserve">
+    <value>{0} من القيم ليست أرقامًا</value>
+  </data>
+  <data name="Issue.IMP-TYPE-DECIMAL.Help" xml:space="preserve">
+    <value>استخدم أرقامًا مع نقطة أو فاصلة للكسور العشرية.</value>
+  </data>
+  <data name="Issue.IMP-TYPE-INTEGER.Title" xml:space="preserve">
+    <value>{0} من القيم ليست أعدادًا صحيحة</value>
+  </data>
+  <data name="Issue.IMP-TYPE-INTEGER.Help" xml:space="preserve">
+    <value>استخدم أعدادًا صحيحة دون وحدات قياس.</value>
+  </data>
+  <data name="Issue.IMP-TYPE-LANGUAGE.Title" xml:space="preserve">
+    <value>تعذّر التعرف على {0} من اللغات</value>
+  </data>
+  <data name="Issue.IMP-TYPE-LANGUAGE.Help" xml:space="preserve">
+    <value>استخدم رمز لغة مثل en أو es أو fr.</value>
+  </data>
+  <data name="Issue.IMP-TYPE-RANGE.Title" xml:space="preserve">
+    <value>{0} من القيم خارج النطاق</value>
+  </data>
+  <data name="Issue.IMP-TYPE-RANGE.Help" xml:space="preserve">
+    <value>تحقق من النطاق المسموح به المعروض مع الحقل.</value>
+  </data>
+  <data name="Issue.IMP-TYPE-TIME.Title" xml:space="preserve">
+    <value>تعذّرت قراءة {0} من الأوقات</value>
+  </data>
+  <data name="Issue.IMP-TYPE-TIME.Help" xml:space="preserve">
+    <value>استخدم أوقاتًا بنظام 24 ساعة مثل 14:30.</value>
+  </data>
+  <data name="Issue.IMP-TYPE-TIMEZONE.Title" xml:space="preserve">
+    <value>تعذّر التعرف على {0} من المناطق الزمنية</value>
+  </data>
+  <data name="Issue.IMP-TYPE-TIMEZONE.Help" xml:space="preserve">
+    <value>استخدم اسم منطقة زمنية مثل America/Chicago، أو اتركه فارغًا لاستخدام المنطقة الزمنية لقسمك.</value>
+  </data>
+  <data name="Issue.IMP-TYPE-TOO-LONG.Title" xml:space="preserve">
+    <value>{0} من القيم طويلة جدًا</value>
+  </data>
+  <data name="Issue.IMP-TYPE-TOO-LONG.Help" xml:space="preserve">
+    <value>تُختصر إذا قبلت التحذير، أو يمكنك تعديلها في ملفك.</value>
+  </data>
+  <data name="Issue.IMP-TYPE-UNKNOWN.Title" xml:space="preserve">
+    <value>تعذّرت قراءة {0} من القيم</value>
+  </data>
+  <data name="Issue.IMP-TYPE-UNKNOWN.Help" xml:space="preserve">
+    <value>تحقق من القيم في ملفك.</value>
+  </data>
+  <data name="Issue.IMP-TYPE-URL.Title" xml:space="preserve">
+    <value>تعذّرت قراءة {0} من عناوين الويب</value>
+  </data>
+  <data name="Issue.IMP-TYPE-URL.Help" xml:space="preserve">
+    <value>استخدم عنوانًا كاملًا يبدأ بـ https://.</value>
+  </data>
+  <data name="Issue.IMP-EMAIL-INVALID.Title" xml:space="preserve">
+    <value>{0} من عناوين البريد الإلكتروني تبدو غير صحيحة</value>
+  </data>
+  <data name="Issue.IMP-EMAIL-INVALID.Help" xml:space="preserve">
+    <value>يحتاج كل شخص إلى عنوان بريد إلكتروني صالح لتمكن دعوته.</value>
+  </data>
+  <data name="Issue.IMP-PHONE-UNPARSEABLE.Title" xml:space="preserve">
+    <value>تعذّرت قراءة {0} من أرقام الهاتف</value>
+  </data>
+  <data name="Issue.IMP-PHONE-UNPARSEABLE.Help" xml:space="preserve">
+    <value>تحتاج أرقام الهاتف إلى رمز الدولة، مثل +1 555 123 4567. افترضنا دولة قسمك؛ يُرجى التحقق من هذه الأرقام.</value>
+  </data>
+  <data name="Issue.IMP-CHOICE-UNMAPPED.Title" xml:space="preserve">
+    <value>{0} من القيم لا تطابق أي خيار في Resgrid</value>
+  </data>
+  <data name="Issue.IMP-CHOICE-UNMAPPED.Help" xml:space="preserve">
+    <value>طابِق كل قيمة مع خيار في Resgrid ضمن «مطابقة القيم».</value>
+  </data>
+  <data name="Issue.IMP-REQUIRED-MISSING.Title" xml:space="preserve">
+    <value>{0} من الصفوف تنقصها قيمة مطلوبة</value>
+  </data>
+  <data name="Issue.IMP-REQUIRED-MISSING.Help" xml:space="preserve">
+    <value>املأ القيمة في ملفك، أو عيّن قيمة لهذه الصفوف، أو استبعدها.</value>
+  </data>
+  <data name="Issue.IMP-ROW-EXPIRES-BEFORE-ISSUED.Title" xml:space="preserve">
+    <value>{0} من الشهادات تنتهي صلاحيتها قبل تاريخ إصدارها</value>
+  </data>
+  <data name="Issue.IMP-ROW-EXPIRES-BEFORE-ISSUED.Help" xml:space="preserve">
+    <value>تحقق من التواريخ؛ فأحدها خاطئ على الأرجح.</value>
+  </data>
+  <data name="Issue.IMP-ROW-COORDINATES-PAIR.Title" xml:space="preserve">
+    <value>{0} من الصفوف تحتوي على خط العرض فقط أو خط الطول فقط</value>
+  </data>
+  <data name="Issue.IMP-ROW-COORDINATES-PAIR.Help" xml:space="preserve">
+    <value>أدخل القيمتين معًا أو اترك كلتيهما.</value>
+  </data>
+  <data name="Issue.IMP-EXCLUDED-SENSITIVE.Title" xml:space="preserve">
+    <value>استُبعد عمود عن قصد</value>
+  </data>
+  <data name="Issue.IMP-EXCLUDED-SENSITIVE.Help" xml:space="preserve">
+    <value>لا يستورد Resgrid أبدًا كلمات المرور أو أرقام الهوية الوطنية أو أرقام البطاقات أو أي بيانات مشابهة. لا يلزمك أي إجراء.</value>
+  </data>
+  <data name="Issue.IMP-DUP-IN-FILE.Title" xml:space="preserve">
+    <value>{0} من الصفوف مكررة داخل الملف</value>
+  </data>
+  <data name="Issue.IMP-DUP-IN-FILE.Help" xml:space="preserve">
+    <value>لا يجوز أن تظهر كل قيمة إلا مرة واحدة. احذف الصفوف الزائدة أو استبعدها.</value>
+  </data>
+  <data name="Issue.IMP-DUP-SOURCE-ID.Title" xml:space="preserve">
+    <value>{0} من الصفوف تشترك في معرّف السجل نفسه</value>
+  </data>
+  <data name="Issue.IMP-DUP-SOURCE-ID.Help" xml:space="preserve">
+    <value>يجب أن يكون كل معرّف سجل فريدًا. أصلح المعرّفات أو استبعد الصفوف الزائدة.</value>
+  </data>
+  <data name="Issue.IMP-HIERARCHY-CYCLE.Title" xml:space="preserve">
+    <value>{0} من المجموعات تشكّل حلقة من المجموعات الأصل</value>
+  </data>
+  <data name="Issue.IMP-HIERARCHY-CYCLE.Help" xml:space="preserve">
+    <value>لا يمكن أن تكون المجموعة أصلًا لأصلها. غيّر إحدى المجموعات الأصل لكسر الحلقة.</value>
+  </data>
+  <data name="Issue.IMP-REF-UNRESOLVED.Title" xml:space="preserve">
+    <value>{0} من المراجع لا تطابق أي شيء</value>
+  </data>
+  <data name="Issue.IMP-REF-UNRESOLVED.Help" xml:space="preserve">
+    <value>تشير القيمة إلى سجل لم نعثر عليه في ملفاتك أو في Resgrid. طابِقها ضمن «مطابقة القيم»، أو أضف السجل.</value>
+  </data>
+  <data name="Issue.IMP-REF-AMBIGUOUS.Title" xml:space="preserve">
+    <value>{0} من المراجع تطابق أكثر من سجل واحد</value>
+  </data>
+  <data name="Issue.IMP-REF-AMBIGUOUS.Help" xml:space="preserve">
+    <value>اجعل الأسماء فريدة، أو طابِق القيمة ضمن «مطابقة القيم».</value>
+  </data>
+  <data name="Issue.IMP-MATCH-EXISTING.Title" xml:space="preserve">
+    <value>{0} من الصفوف تطابق سجلات موجودة بالفعل</value>
+  </data>
+  <data name="Issue.IMP-MATCH-EXISTING.Help" xml:space="preserve">
+    <value>تُربط بالسجلات الموجودة، ولا تُضاف مرة أخرى.</value>
+  </data>
+  <data name="Issue.IMP-MATCH-AMBIGUOUS.Title" xml:space="preserve">
+    <value>{0} من الصفوف تطابق أكثر من سجل موجود</value>
+  </data>
+  <data name="Issue.IMP-MATCH-AMBIGUOUS.Help" xml:space="preserve">
+    <value>لدى قسمك سجلان بهذا الاسم. أعد تسمية أحدهما في Resgrid، أو استبعد هذه الصفوف.</value>
+  </data>
+  <data name="Issue.IMP-PERSON-EXISTING-ACCOUNT.Title" xml:space="preserve">
+    <value>{0} من الأشخاص لديهم حساب Resgrid بالفعل</value>
+  </data>
+  <data name="Issue.IMP-PERSON-EXISTING-ACCOUNT.Help" xml:space="preserve">
+    <value>تُرسل إليهم دعوة للانضمام إلى قسمك عند التفعيل بدلًا من إضافتهم.</value>
+  </data>
+  <data name="Issue.IMP-PERSON-DELETED-MEMBER.Title" xml:space="preserve">
+    <value>{0} من الأشخاص أُزيلوا من قسمك سابقًا</value>
+  </data>
+  <data name="Issue.IMP-PERSON-DELETED-MEMBER.Help" xml:space="preserve">
+    <value>سيعودون عندما تؤكد ذلك في المراجعة والاستيراد، ولن يتمكنوا من تسجيل الدخول أو تلقي أي شيء إلى أن تدعوهم. استبعد صفوفهم لتركهم خارج الاستيراد.</value>
+  </data>
+  <data name="Issue.IMP-PERSON-INACTIVE.Title" xml:space="preserve">
+    <value>{0} من الأشخاص محدَّدون كغير نشطين</value>
+  </data>
+  <data name="Issue.IMP-PERSON-INACTIVE.Help" xml:space="preserve">
+    <value>يُستوردون معطَّلين ومخفيين.</value>
+  </data>
+  <data name="Issue.IMP-PERSON-WILL-BE-ADMIN.Title" xml:space="preserve">
+    <value>{0} من الأشخاص سيصبحون مسؤولين</value>
+  </data>
+  <data name="Issue.IMP-PERSON-WILL-BE-ADMIN.Help" xml:space="preserve">
+    <value>تؤكد كل واحد منهم قبل بدء التشغيل الفعلي؛ وإلى ذلك الحين يبقون أعضاء عاديين.</value>
+  </data>
+  <data name="Issue.IMP-PERSON-ACCOUNT-FAILED.Title" xml:space="preserve">
+    <value>تعذّر إنشاء {0} من الحسابات</value>
+  </data>
+  <data name="Issue.IMP-PERSON-ACCOUNT-FAILED.Help" xml:space="preserve">
+    <value>استمر باقي الاستيراد. اسأل دعم Resgrid عن هؤلاء الأشخاص.</value>
+  </data>
+  <data name="Issue.IMP-PLAN-CAPACITY.Title" xml:space="preserve">
+    <value>لا تتسع خطتك للجميع</value>
+  </data>
+  <data name="Issue.IMP-PLAN-CAPACITY.Help" xml:space="preserve">
+    <value>رقِّ خطتك، أو استورد عددًا أقل من الأفراد أو الوحدات.</value>
+  </data>
+  <data name="Issue.IMP-PLAN-CAPACITY-UNKNOWN.Title" xml:space="preserve">
+    <value>تعذّر علينا التحقق من حدود خطتك</value>
+  </data>
+  <data name="Issue.IMP-PLAN-CAPACITY-UNKNOWN.Help" xml:space="preserve">
+    <value>حاول مرة أخرى بعد قليل. لا يُستورد أي شيء يحتاج إلى مقعد إلى أن ينجح التحقق.</value>
+  </data>
+  <data name="Issue.IMP-ENTITLEMENT-MISSING.Title" xml:space="preserve">
+    <value>تحتاج هذه البيانات إلى ميزة لم يفعّلها قسمك</value>
+  </data>
+  <data name="Issue.IMP-ENTITLEMENT-MISSING.Help" xml:space="preserve">
+    <value>فعّل هذه الميزة، أو اسأل دعم Resgrid.</value>
+  </data>
+  <data name="Issue.IMP-CUSTOM-FIELDS-MISSING.Title" xml:space="preserve">
+    <value>أضف هذه الحقول المخصصة أولًا: {0}</value>
+  </data>
+  <data name="Issue.IMP-CUSTOM-FIELDS-MISSING.Help" xml:space="preserve">
+    <value>لدى قسمك حقول مخصصة بالفعل. أضف حقولًا بهذه الأسماء في شاشة الحقول المخصصة، ثم أعد فحص الملف.</value>
+  </data>
+  <data name="Issue.IMP-CERT-TYPE-SCOPE.Title" xml:space="preserve">
+    <value>{0} من الشهادات تستخدم نوعًا مخصصًا للوحدات</value>
+  </data>
+  <data name="Issue.IMP-CERT-TYPE-SCOPE.Help" xml:space="preserve">
+    <value>اختر نوع شهادة يحمله الأشخاص.</value>
+  </data>
+  <data name="Issue.IMP-CONSEQUENCE-UNDECIDED.Title" xml:space="preserve">
+    <value>نتيجة مترتبة تحتاج إلى قرارك</value>
+  </data>
+  <data name="Issue.IMP-CONSEQUENCE-UNDECIDED.Help" xml:space="preserve">
+    <value>اقرأ البيان ضمن «المراجعة والاستيراد» وضع علامة عليه للمتابعة.</value>
+  </data>
+  <data name="Issue.IMP-APPROVAL-STALE.Title" xml:space="preserve">
+    <value>تغيّرت البيانات بعد الموافقة عليها</value>
+  </data>
+  <data name="Issue.IMP-APPROVAL-STALE.Help" xml:space="preserve">
+    <value>راجعها ووافق عليها مرة أخرى.</value>
+  </data>
+  <data name="Issue.IMP-APPROVER-NOT-AUTHORIZED.Title" xml:space="preserve">
+    <value>لم يعد بإمكان الموافق الموافقة على عمليات الاستيراد</value>
+  </data>
+  <data name="Issue.IMP-APPROVER-NOT-AUTHORIZED.Help" xml:space="preserve">
+    <value>يجب أن يوافق مسؤول آخر على عملية الاستيراد مرة أخرى.</value>
+  </data>
+  <data name="Issue.IMP-CHANGED-SINCE-PREVIEW.Title" xml:space="preserve">
+    <value>تغيّر {0} من السجلات بعد المعاينة</value>
+  </data>
+  <data name="Issue.IMP-CHANGED-SINCE-PREVIEW.Help" xml:space="preserve">
+    <value>عدّلها أحدهم في Resgrid. راجع تلك الصفوف مرة أخرى.</value>
+  </data>
+  <data name="Issue.IMP-DEPARTMENT-LOCKED.Title" xml:space="preserve">
+    <value>تجري عملية أخرى لقسمك</value>
+  </data>
+  <data name="Issue.IMP-DEPARTMENT-LOCKED.Help" xml:space="preserve">
+    <value>يعيد Resgrid المحاولة تلقائيًا عند انتهائها.</value>
+  </data>
+  <data name="Issue.IMP-RUN-ERROR.Title" xml:space="preserve">
+    <value>قاطعت مشكلةٌ مؤقتة العمل</value>
+  </data>
+  <data name="Issue.IMP-RUN-ERROR.Help" xml:space="preserve">
+    <value>يعيد Resgrid المحاولة تلقائيًا.</value>
+  </data>
+  <data name="Issue.IMP-RUN-TRANSIENT.Title" xml:space="preserve">
+    <value>قاطعت مشكلةٌ مؤقتة العمل</value>
+  </data>
+  <data name="Issue.IMP-RUN-TRANSIENT.Help" xml:space="preserve">
+    <value>يعيد Resgrid المحاولة تلقائيًا.</value>
+  </data>
+  <data name="Issue.IMP-RUN-NO-HANDLER.Title" xml:space="preserve">
+    <value>هذا النوع من عمليات التشغيل غير متاح</value>
+  </data>
+  <data name="Issue.IMP-RUN-NO-HANDLER.Help" xml:space="preserve">
+    <value>اسأل دعم Resgrid.</value>
+  </data>
+  <data name="Issue.IMP-RUN-NOTHING-APPROVED.Title" xml:space="preserve">
+    <value>لم تتم الموافقة على أي شيء لعملية التشغيل هذه</value>
+  </data>
+  <data name="Issue.IMP-RUN-NOTHING-APPROVED.Help" xml:space="preserve">
+    <value>وافق على مجموعات البيانات ضمن «المراجعة والاستيراد».</value>
+  </data>
+  <data name="Issue.IMP-RUN-STALLED.Title" xml:space="preserve">
+    <value>توقف العمل عن التقدّم</value>
+  </data>
+  <data name="Issue.IMP-RUN-STALLED.Help" xml:space="preserve">
+    <value>يعيد Resgrid تشغيله تلقائيًا من آخر نقطة حفظ.</value>
+  </data>
+  <data name="Issue.IMP-ROW-WRITE-FAILED.Title" xml:space="preserve">
+    <value>تعذّر استيراد {0} من الصفوف</value>
+  </data>
+  <data name="Issue.IMP-ROW-WRITE-FAILED.Help" xml:space="preserve">
+    <value>استمر باقي الاستيراد. اسأل دعم Resgrid عن هذه الصفوف.</value>
+  </data>
+  <data name="Issue.IMP-TARGET-MISSING.Title" xml:space="preserve">
+    <value>{0} من السجلات المطابَقة لم تعد موجودة</value>
+  </data>
+  <data name="Issue.IMP-TARGET-MISSING.Help" xml:space="preserve">
+    <value>حُذفت بعد المعاينة.</value>
+  </data>
+  <data name="Issue.IMP-DEFERRED-FAILED.Title" xml:space="preserve">
+    <value>لم تكتمل بعض خطوات الإنهاء</value>
+  </data>
+  <data name="Issue.IMP-DEFERRED-FAILED.Help" xml:space="preserve">
+    <value>قد تحتاج المجموعات الأصل أو الحالات التالية أو الأدوار إلى تحقق يدوي.</value>
+  </data>
+  <data name="Issue.IMP-RECONCILE-MISMATCH.Title" xml:space="preserve">
+    <value>وجد التحقق بعد الاستيراد اختلافًا</value>
+  </data>
+  <data name="Issue.IMP-RECONCILE-MISMATCH.Help" xml:space="preserve">
+    <value>قارن الأعداد ضمن «سجل العمليات»، واسأل دعم Resgrid إذا لم تتطابق.</value>
+  </data>
+  <data name="Issue.IMP-WORKSPACE-CLOSED.Title" xml:space="preserve">
+    <value>مساحة العمل مغلقة</value>
+  </data>
+  <data name="Issue.IMP-WORKSPACE-CLOSED.Help" xml:space="preserve">
+    <value>ابدأ مساحة عمل جديدة.</value>
+  </data>
+  <data name="Issue.IMP-WORKSPACE-FULL.Title" xml:space="preserve">
+    <value>تحتوي مساحة العمل على أقصى قدر من البيانات تسمح به خطتك</value>
+  </data>
+  <data name="Issue.IMP-WORKSPACE-FULL.Help" xml:space="preserve">
+    <value>احذف الملفات التي لا تحتاج إليها، أو ابدأ مساحة عمل جديدة.</value>
+  </data>
+  <data name="Issue.IMP-ROLLBACK-ACCOUNT.Title" xml:space="preserve">
+    <value>تعذّر إغلاق حساب</value>
+  </data>
+  <data name="Issue.IMP-ROLLBACK-ACCOUNT.Help" xml:space="preserve">
+    <value>أزل الشخص من شاشة الأفراد.</value>
+  </data>
+  <data name="Issue.IMP-ROLLBACK-CHANGED-SINCE.Title" xml:space="preserve">
+    <value>تغيّر سجل بعد الاستيراد</value>
+  </data>
+  <data name="Issue.IMP-ROLLBACK-CHANGED-SINCE.Help" xml:space="preserve">
+    <value>تُرك كما هو؛ تحقق منه يدويًا.</value>
+  </data>
+  <data name="Issue.IMP-ROLLBACK-FAILED.Title" xml:space="preserve">
+    <value>تعذّر التراجع عن سجل</value>
+  </data>
+  <data name="Issue.IMP-ROLLBACK-FAILED.Help" xml:space="preserve">
+    <value>تحقق منه يدويًا.</value>
+  </data>
+  <data name="Issue.IMP-ROLLBACK-HAS-ACTIVITY.Title" xml:space="preserve">
+    <value>سجل قيد الاستخدام</value>
+  </data>
+  <data name="Issue.IMP-ROLLBACK-HAS-ACTIVITY.Help" xml:space="preserve">
+    <value>استُخدم بعد الاستيراد (مثلًا في بلاغ، أو سجّل الشخص الدخول)، لذا احتُفظ به.</value>
+  </data>
+  <data name="Issue.IMP-ROLLBACK-MANUAL.Title" xml:space="preserve">
+    <value>سجل يحتاج إلى تحقق يدوي</value>
+  </data>
+  <data name="Issue.IMP-ROLLBACK-MANUAL.Help" xml:space="preserve">
+    <value>قارنه بمصدرك وأصلحه في Resgrid إذا لزم الأمر.</value>
+  </data>
+  <data name="Issue.IMP-ROLLBACK-MEMBER-UPDATE.Title" xml:space="preserve">
+    <value>التغييرات على عضو موجود تحتاج إلى تحقق يدوي</value>
+  </data>
+  <data name="Issue.IMP-ROLLBACK-MEMBER-UPDATE.Help" xml:space="preserve">
+    <value>تغيّر لاحقًا شيء أضافه الاستيراد إلى هذا الشخص، لذا تُرك كما هو. راجع مجموعته وأدواره وبياناته في شاشة الأفراد.</value>
+  </data>
+  <data name="Issue.IMP-ROLLBACK-NO-COMMIT.Title" xml:space="preserve">
+    <value>لم يُعثر على عملية الاستيراد المطلوب التراجع عنها</value>
+  </data>
+  <data name="Issue.IMP-ROLLBACK-NO-COMMIT.Help" xml:space="preserve">
+    <value>اسأل دعم Resgrid.</value>
+  </data>
+  <data name="Issue.IMP-ROLLBACK-NO-WRITER.Title" xml:space="preserve">
+    <value>لا يمكن التراجع عن هذا النوع من السجلات تلقائيًا</value>
+  </data>
+  <data name="Issue.IMP-ROLLBACK-NO-WRITER.Help" xml:space="preserve">
+    <value>تحقق منه يدويًا.</value>
+  </data>
+  <data name="Issue.IMP-UPLOAD-CHUNK-CONFLICT.Title" xml:space="preserve">
+    <value>تداخلت عمليتا رفع للملف نفسه</value>
+  </data>
+  <data name="Issue.IMP-UPLOAD-CHUNK-CONFLICT.Help" xml:space="preserve">
+    <value>انتظر لحظة ثم حاول مرة أخرى.</value>
+  </data>
+  <data name="Issue.IMP-UPLOAD-CHUNK-EMPTY.Title" xml:space="preserve">
+    <value>كان جزء من الملف المرفوع فارغًا</value>
+  </data>
+  <data name="Issue.IMP-UPLOAD-CHUNK-EMPTY.Help" xml:space="preserve">
+    <value>ارفع الملف مرة أخرى.</value>
+  </data>
+  <data name="Issue.IMP-UPLOAD-CHUNK-HASH.Title" xml:space="preserve">
+    <value>تلف جزء من الملف المرفوع</value>
+  </data>
+  <data name="Issue.IMP-UPLOAD-CHUNK-HASH.Help" xml:space="preserve">
+    <value>ارفع الملف مرة أخرى.</value>
+  </data>
+  <data name="Issue.IMP-UPLOAD-CHUNK-ORDER.Title" xml:space="preserve">
+    <value>وصلت أجزاء الملف المرفوع بترتيب خاطئ</value>
+  </data>
+  <data name="Issue.IMP-UPLOAD-CHUNK-ORDER.Help" xml:space="preserve">
+    <value>ارفع الملف مرة أخرى.</value>
+  </data>
+  <data name="Issue.IMP-UPLOAD-CHUNK-SIZE.Title" xml:space="preserve">
+    <value>كان حجم جزء من الملف المرفوع خاطئًا</value>
+  </data>
+  <data name="Issue.IMP-UPLOAD-CHUNK-SIZE.Help" xml:space="preserve">
+    <value>ارفع الملف مرة أخرى.</value>
+  </data>
+  <data name="Issue.IMP-UPLOAD-EXPIRED.Title" xml:space="preserve">
+    <value>استغرق الرفع وقتًا طويلًا جدًا</value>
+  </data>
+  <data name="Issue.IMP-UPLOAD-EXPIRED.Help" xml:space="preserve">
+    <value>ابدأ الرفع من جديد.</value>
+  </data>
+  <data name="Issue.IMP-UPLOAD-INCOMPLETE.Title" xml:space="preserve">
+    <value>لم يكتمل الرفع</value>
+  </data>
+  <data name="Issue.IMP-UPLOAD-INCOMPLETE.Help" xml:space="preserve">
+    <value>ارفع الملف مرة أخرى.</value>
+  </data>
+  <data name="Issue.IMP-UPLOAD-TOO-MUCH.Title" xml:space="preserve">
+    <value>وصلت بيانات أكثر من حجم الملف</value>
+  </data>
+  <data name="Issue.IMP-UPLOAD-TOO-MUCH.Help" xml:space="preserve">
+    <value>ارفع الملف مرة أخرى.</value>
+  </data>
+  <data name="Error.import_artifact_not_found" xml:space="preserve">
+    <value>لم يُعثر على ذلك الملف.</value>
+  </data>
+  <data name="Error.import_blocking_issues" xml:space="preserve">
+    <value>لا تزال بعض المشكلات تمنع الاستيراد. أصلحها أو استبعدها أولًا.</value>
+  </data>
+  <data name="Error.import_changed_elsewhere" xml:space="preserve">
+    <value>غيّر شخص آخر هذا في الأثناء. أعد تحميل الصفحة وحاول مرة أخرى.</value>
+  </data>
+  <data name="Error.import_checker_must_differ" xml:space="preserve">
+    <value>يجب أن تأتي الموافقة الثانية من مسؤول مختلف.</value>
+  </data>
+  <data name="Error.import_custom_fields_unsupported" xml:space="preserve">
+    <value>لا يمكن لهذا النوع من البيانات الاحتفاظ بالأعمدة الإضافية كحقول مخصصة.</value>
+  </data>
+  <data name="Error.import_dataset_changed" xml:space="preserve">
+    <value>تغيّرت مجموعة البيانات أثناء عملك. أعد تحميل الصفحة وحاول مرة أخرى.</value>
+  </data>
+  <data name="Error.import_dataset_locked" xml:space="preserve">
+    <value>يجري استيراد مجموعة البيانات هذه ولا يمكن تغييرها الآن.</value>
+  </data>
+  <data name="Error.import_dataset_not_found" xml:space="preserve">
+    <value>لم يُعثر على مجموعة البيانات تلك.</value>
+  </data>
+  <data name="Error.import_dataset_not_ready" xml:space="preserve">
+    <value>إحدى مجموعات البيانات المختارة ليست جاهزة للاستيراد.</value>
+  </data>
+  <data name="Error.import_department_missing" xml:space="preserve">
+    <value>لم يُعثر على القسم.</value>
+  </data>
+  <data name="Error.import_dependency_not_in_wave" xml:space="preserve">
+    <value>يجب استيراد مجموعة بيانات أخرى أولًا، أو ضمن عملية الاستيراد نفسها (مثلًا المحطات قبل الأفراد).</value>
+  </data>
+  <data name="Error.import_destination_required" xml:space="preserve">
+    <value>اختر أولًا ما يحتويه الملف.</value>
+  </data>
+  <data name="Error.import_domain_owner_required" xml:space="preserve">
+    <value>اختر النظام الذي يملك كل نوع من البيانات.</value>
+  </data>
+  <data name="Error.import_field_not_mappable" xml:space="preserve">
+    <value>لا يمكن مطابقة ذلك الحقل مع عمود.</value>
+  </data>
+  <data name="Error.import_grant_level_invalid" xml:space="preserve">
+    <value>مستوى الوصول هذا غير متاح.</value>
+  </data>
+  <data name="Error.import_map_missing" xml:space="preserve">
+    <value>طابِق الأعمدة أولًا.</value>
+  </data>
+  <data name="Error.import_message_empty" xml:space="preserve">
+    <value>اكتب رسالة أولًا.</value>
+  </data>
+  <data name="Error.import_mode_unavailable" xml:space="preserve">
+    <value>هذا النوع من الاستيراد غير متاح بعد.</value>
+  </data>
+  <data name="Error.import_not_allowed" xml:space="preserve">
+    <value>لا يمكن استخدام الاستيراد والترحيل إلا لمسؤولي القسم، ويجب تفعيله لقسمك.</value>
+  </data>
+  <data name="Error.import_nothing_ready" xml:space="preserve">
+    <value>لا توجد مجموعة بيانات جاهزة للاستيراد بعد.</value>
+  </data>
+  <data name="Error.import_request_category_invalid" xml:space="preserve">
+    <value>اختر ما تحتاج إلى المساعدة فيه.</value>
+  </data>
+  <data name="Error.import_request_not_found" xml:space="preserve">
+    <value>لم يُعثر على طلب الدعم ذلك.</value>
+  </data>
+  <data name="Error.import_request_number_unavailable" xml:space="preserve">
+    <value>تعذّر ترقيم الطلب. يُرجى المحاولة مرة أخرى.</value>
+  </data>
+  <data name="Error.import_request_subject_required" xml:space="preserve">
+    <value>أضف موضوعًا إلى طلبك.</value>
+  </data>
+  <data name="Error.import_rollback_commit_not_completed" xml:space="preserve">
+    <value>لا يمكن التراجع إلا عن عملية استيراد مكتملة.</value>
+  </data>
+  <data name="Error.import_rollback_exists" xml:space="preserve">
+    <value>تم التراجع عن عملية الاستيراد هذه بالفعل.</value>
+  </data>
+  <data name="Error.import_rollback_window_closed" xml:space="preserve">
+    <value>انتهت فترة التراجع عن عملية الاستيراد هذه.</value>
+  </data>
+  <data name="Error.import_row_not_found" xml:space="preserve">
+    <value>لم يُعثر على ذلك الصف.</value>
+  </data>
+  <data name="Error.import_run_finished" xml:space="preserve">
+    <value>انتهت عملية التشغيل تلك بالفعل.</value>
+  </data>
+  <data name="Error.import_run_in_progress" xml:space="preserve">
+    <value>توجد عملية تشغيل أخرى قيد التنفيذ. انتظر حتى تنتهي.</value>
+  </data>
+  <data name="Error.import_run_not_awaiting_checker" xml:space="preserve">
+    <value>عملية الاستيراد تلك لا تنتظر موافقة ثانية.</value>
+  </data>
+  <data name="Error.import_run_not_found" xml:space="preserve">
+    <value>لم يُعثر على عملية التشغيل تلك.</value>
+  </data>
+  <data name="Error.import_run_not_paused" xml:space="preserve">
+    <value>عملية التشغيل تلك ليست متوقفة مؤقتًا.</value>
+  </data>
+  <data name="Error.import_run_open" xml:space="preserve">
+    <value>توجد بالفعل عملية استيراد أو تراجع قيد الانتظار أو التشغيل لقسمك.</value>
+  </data>
+  <data name="Error.import_signoff_not_ready" xml:space="preserve">
+    <value>يتطلب الاعتماد النهائي عملية استيراد تم التحقق منها دون أي اختلافات، وألا يكون هناك عمل لا يزال قيد التشغيل.</value>
+  </data>
+  <data name="Error.import_suggestion_decided" xml:space="preserve">
+    <value>سبق اتخاذ قرار بشأن ذلك الاقتراح.</value>
+  </data>
+  <data name="Error.import_suggestion_not_found" xml:space="preserve">
+    <value>لم يُعثر على ذلك الاقتراح.</value>
+  </data>
+  <data name="Error.import_unknown_column" xml:space="preserve">
+    <value>ذلك العمود غير موجود في الملف.</value>
+  </data>
+  <data name="Error.import_unknown_destination" xml:space="preserve">
+    <value>هذا النوع من البيانات غير متاح.</value>
+  </data>
+  <data name="Error.import_unknown_field" xml:space="preserve">
+    <value>ذلك الحقل غير موجود.</value>
+  </data>
+  <data name="Error.import_upload_complete" xml:space="preserve">
+    <value>اكتملت عملية الرفع تلك بالفعل.</value>
+  </data>
+  <data name="Error.import_value_action_invalid" xml:space="preserve">
+    <value>ذلك الاختيار غير صالح.</value>
+  </data>
+  <data name="Error.import_value_code_invalid" xml:space="preserve">
+    <value>ذلك الخيار غير موجود.</value>
+  </data>
+  <data name="Error.import_workspace_changed" xml:space="preserve">
+    <value>تغيّرت مساحة العمل في الأثناء. أعد تحميل الصفحة وحاول مرة أخرى.</value>
+  </data>
+  <data name="Error.import_workspace_closed" xml:space="preserve">
+    <value>مساحة العمل هذه مغلقة.</value>
+  </data>
+  <data name="Error.import_workspace_not_found" xml:space="preserve">
+    <value>لم يُعثر على مساحة العمل تلك.</value>
+  </data>
+  <data name="Error.import_write_mode_unavailable" xml:space="preserve">
+    <value>طريقة تحديث السجلات الموجودة هذه غير متاحة.</value>
+  </data>
+  <data name="Error.IMP-FILE-TOO-LARGE" xml:space="preserve">
+    <value>حجم الملف أكبر مما تسمح به خطتك</value>
+  </data>
+  <data name="Error.IMP-FILE-SIGNATURE" xml:space="preserve">
+    <value>محتوى الملف لا يطابق نوعه</value>
+  </data>
+  <data name="Error.IMP-FILE-MACRO" xml:space="preserve">
+    <value>لا يمكن استيراد الملفات التي تحتوي على وحدات ماكرو</value>
+  </data>
+  <data name="Error.IMP-FILE-ENCRYPTED" xml:space="preserve">
+    <value>الملف محمي بكلمة مرور</value>
+  </data>
+  <data name="Error.IMP-FILE-EMBEDDED-OBJECTS" xml:space="preserve">
+    <value>يحتوي المصنّف على كائنات مضمّنة</value>
+  </data>
+  <data name="Error.IMP-FILE-EXTERNAL-LINKS" xml:space="preserve">
+    <value>يرتبط المصنّف بملفات أخرى</value>
+  </data>
+  <data name="Error.IMP-FILE-EMPTY" xml:space="preserve">
+    <value>لا يحتوي الملف على بيانات</value>
+  </data>
+  <data name="Error.IMP-FILE-ENCODING" xml:space="preserve">
+    <value>اضطررنا إلى تخمين ترميز النص</value>
+  </data>
+  <data name="Error.IMP-FILE-FIELD-TOO-LONG" xml:space="preserve">
+    <value>خلية أطول من أن تُقرأ</value>
+  </data>
+  <data name="Error.IMP-FILE-HASH-MISMATCH" xml:space="preserve">
+    <value>تلف الملف المرفوع أثناء النقل</value>
+  </data>
+  <data name="Error.IMP-FILE-INFECTED" xml:space="preserve">
+    <value>لم يجتز الملف فحص الفيروسات</value>
+  </data>
+  <data name="Error.IMP-FILE-SCAN" xml:space="preserve">
+    <value>تعذّر فحص الملف</value>
+  </data>
+  <data name="Error.IMP-FILE-SCAN-PENDING" xml:space="preserve">
+    <value>بانتظار فحص الفيروسات</value>
+  </data>
+  <data name="Error.IMP-FILE-SCAN-UNAVAILABLE" xml:space="preserve">
+    <value>فحص الفيروسات غير متاح</value>
+  </data>
+  <data name="Error.IMP-FILE-SCANNING-REQUIRED" xml:space="preserve">
+    <value>يحتاج هذا النوع من الملفات إلى فحص الفيروسات</value>
+  </data>
+  <data name="Error.IMP-FILE-TOO-MANY-ROWS" xml:space="preserve">
+    <value>يحتوي الملف على صفوف أكثر مما تسمح به خطتك</value>
+  </data>
+  <data name="Error.IMP-FILE-TOO-WIDE" xml:space="preserve">
+    <value>يحتوي الملف على عدد كبير جدًا من الأعمدة</value>
+  </data>
+  <data name="Error.IMP-FILE-UNSUPPORTED" xml:space="preserve">
+    <value>هذا النوع من الملفات غير مدعوم بعد</value>
+  </data>
+  <data name="Error.IMP-FILE-CONTROL-CHAR" xml:space="preserve">
+    <value>تحتوي بعض الخلايا على أحرف تحكم مخفية</value>
+  </data>
+  <data name="Error.IMP-ZIP-ENTRIES" xml:space="preserve">
+    <value>يحتوي الأرشيف على عدد كبير جدًا من الملفات</value>
+  </data>
+  <data name="Error.IMP-ZIP-NESTED" xml:space="preserve">
+    <value>يحتوي الأرشيف على أرشيف آخر</value>
+  </data>
+  <data name="Error.IMP-ZIP-PATH" xml:space="preserve">
+    <value>يحتوي الأرشيف على مسار ملف غير آمن</value>
+  </data>
+  <data name="Error.IMP-ZIP-RATIO" xml:space="preserve">
+    <value>يتوسع الأرشيف عند فك ضغطه إلى حجم كبير على نحو غير معتاد</value>
+  </data>
+  <data name="Error.IMP-ZIP-TOO-LARGE" xml:space="preserve">
+    <value>الأرشيف كبير جدًا</value>
+  </data>
+  <data name="Error.IMP-ARTIFACT-CORRUPT" xml:space="preserve">
+    <value>الملف المخزّن تالف</value>
+  </data>
+  <data name="Error.IMP-ARTIFACT-KEY-INVALID" xml:space="preserve">
+    <value>تتعذر قراءة الملف المخزّن</value>
+  </data>
+  <data name="Error.IMP-ARTIFACT-KEY-MISSING" xml:space="preserve">
+    <value>تتعذر قراءة الملف المخزّن</value>
+  </data>
+  <data name="Error.IMP-ARTIFACT-MISSING" xml:space="preserve">
+    <value>لم يعد الملف متاحًا</value>
+  </data>
+  <data name="Error.IMP-ARTIFACT-PURGED" xml:space="preserve">
+    <value>حُذف الملف بعد انتهاء فترة الاحتفاظ به</value>
+  </data>
+  <data name="Error.IMP-ARTIFACT-TAMPERED" xml:space="preserve">
+    <value>لم يجتز الملف المخزّن فحص السلامة</value>
+  </data>
+  <data name="Error.IMP-ARTIFACT-TRUNCATED" xml:space="preserve">
+    <value>الملف المخزّن غير مكتمل</value>
+  </data>
+  <data name="Error.IMP-STORE-UNAVAILABLE" xml:space="preserve">
+    <value>تخزين الملفات غير متاح</value>
+  </data>
+  <data name="Error.IMP-PARSE-COLUMNS" xml:space="preserve">
+    <value>تحتوي بعض الصفوف على قيم أكثر من عدد الأعمدة</value>
+  </data>
+  <data name="Error.IMP-PARSE-CSV" xml:space="preserve">
+    <value>تعذّرت قراءة ملف CSV</value>
+  </data>
+  <data name="Error.IMP-PARSE-HEADER-DUP" xml:space="preserve">
+    <value>عمودان يحملان الاسم نفسه</value>
+  </data>
+  <data name="Error.IMP-PARSE-JSON" xml:space="preserve">
+    <value>تعذّرت قراءة ملف JSON</value>
+  </data>
+  <data name="Error.IMP-PARSE-JSON-SHAPE" xml:space="preserve">
+    <value>ملف JSON ليس قائمة سجلات</value>
+  </data>
+  <data name="Error.IMP-PARSE-TIMEOUT" xml:space="preserve">
+    <value>استغرقت قراءة الملف وقتًا طويلًا جدًا</value>
+  </data>
+  <data name="Error.IMP-PARSE-XLSX" xml:space="preserve">
+    <value>تعذّرت قراءة مصنّف Excel</value>
+  </data>
+  <data name="Error.IMP-DETECT-LOW-CONFIDENCE" xml:space="preserve">
+    <value>لسنا متأكدين مما يحتويه هذا الملف</value>
+  </data>
+  <data name="Error.IMP-MAP-REQUIRED-UNMAPPED" xml:space="preserve">
+    <value>حقل مطلوب ليس له عمود</value>
+  </data>
+  <data name="Error.IMP-MAP-FIELD-TWICE" xml:space="preserve">
+    <value>عمودان مطابَقان مع الحقل نفسه</value>
+  </data>
+  <data name="Error.IMP-TYPE-BOOLEAN" xml:space="preserve">
+    <value>بعض القيم ليست نعم أو لا</value>
+  </data>
+  <data name="Error.IMP-TYPE-COLOUR" xml:space="preserve">
+    <value>تعذّرت قراءة بعض الألوان</value>
+  </data>
+  <data name="Error.IMP-TYPE-COORDINATE" xml:space="preserve">
+    <value>بعض الإحداثيات خارج النطاق</value>
+  </data>
+  <data name="Error.IMP-TYPE-DATE" xml:space="preserve">
+    <value>تعذّرت قراءة بعض التواريخ</value>
+  </data>
+  <data name="Error.IMP-TYPE-DATE-AMBIGUOUS" xml:space="preserve">
+    <value>يمكن قراءة بعض التواريخ بطريقتين</value>
+  </data>
+  <data name="Error.IMP-TYPE-DATETIME" xml:space="preserve">
+    <value>تعذّرت قراءة بعض قيم التاريخ والوقت</value>
+  </data>
+  <data name="Error.IMP-TYPE-DATETIME-DST" xml:space="preserve">
+    <value>تقع بعض الأوقات في فجوة التوقيت الصيفي</value>
+  </data>
+  <data name="Error.IMP-TYPE-DECIMAL" xml:space="preserve">
+    <value>بعض القيم ليست أرقامًا</value>
+  </data>
+  <data name="Error.IMP-TYPE-INTEGER" xml:space="preserve">
+    <value>بعض القيم ليست أعدادًا صحيحة</value>
+  </data>
+  <data name="Error.IMP-TYPE-LANGUAGE" xml:space="preserve">
+    <value>تعذّر التعرف على بعض اللغات</value>
+  </data>
+  <data name="Error.IMP-TYPE-RANGE" xml:space="preserve">
+    <value>بعض القيم خارج النطاق</value>
+  </data>
+  <data name="Error.IMP-TYPE-TIME" xml:space="preserve">
+    <value>تعذّرت قراءة بعض الأوقات</value>
+  </data>
+  <data name="Error.IMP-TYPE-TIMEZONE" xml:space="preserve">
+    <value>تعذّر التعرف على بعض المناطق الزمنية</value>
+  </data>
+  <data name="Error.IMP-TYPE-TOO-LONG" xml:space="preserve">
+    <value>بعض القيم طويلة جدًا</value>
+  </data>
+  <data name="Error.IMP-TYPE-UNKNOWN" xml:space="preserve">
+    <value>تعذّرت قراءة بعض القيم</value>
+  </data>
+  <data name="Error.IMP-TYPE-URL" xml:space="preserve">
+    <value>تعذّرت قراءة بعض عناوين الويب</value>
+  </data>
+  <data name="Error.IMP-EMAIL-INVALID" xml:space="preserve">
+    <value>بعض عناوين البريد الإلكتروني تبدو غير صحيحة</value>
+  </data>
+  <data name="Error.IMP-PHONE-UNPARSEABLE" xml:space="preserve">
+    <value>تعذّرت قراءة بعض أرقام الهاتف</value>
+  </data>
+  <data name="Error.IMP-CHOICE-UNMAPPED" xml:space="preserve">
+    <value>بعض القيم لا تطابق أي خيار في Resgrid</value>
+  </data>
+  <data name="Error.IMP-REQUIRED-MISSING" xml:space="preserve">
+    <value>تنقص بعض الصفوف قيمة مطلوبة</value>
+  </data>
+  <data name="Error.IMP-ROW-EXPIRES-BEFORE-ISSUED" xml:space="preserve">
+    <value>تنتهي صلاحية بعض الشهادات قبل تاريخ إصدارها</value>
+  </data>
+  <data name="Error.IMP-ROW-COORDINATES-PAIR" xml:space="preserve">
+    <value>تحتوي بعض الصفوف على خط العرض فقط أو خط الطول فقط</value>
+  </data>
+  <data name="Error.IMP-EXCLUDED-SENSITIVE" xml:space="preserve">
+    <value>استُبعد عمود عن قصد</value>
+  </data>
+  <data name="Error.IMP-DUP-IN-FILE" xml:space="preserve">
+    <value>بعض الصفوف مكررة داخل الملف</value>
+  </data>
+  <data name="Error.IMP-DUP-SOURCE-ID" xml:space="preserve">
+    <value>تشترك بعض الصفوف في معرّف السجل نفسه</value>
+  </data>
+  <data name="Error.IMP-HIERARCHY-CYCLE" xml:space="preserve">
+    <value>تشكّل بعض المجموعات حلقة من المجموعات الأصل</value>
+  </data>
+  <data name="Error.IMP-REF-UNRESOLVED" xml:space="preserve">
+    <value>بعض المراجع لا تطابق أي شيء</value>
+  </data>
+  <data name="Error.IMP-REF-AMBIGUOUS" xml:space="preserve">
+    <value>تطابق بعض المراجع أكثر من سجل واحد</value>
+  </data>
+  <data name="Error.IMP-MATCH-EXISTING" xml:space="preserve">
+    <value>تطابق بعض الصفوف سجلات موجودة بالفعل</value>
+  </data>
+  <data name="Error.IMP-MATCH-AMBIGUOUS" xml:space="preserve">
+    <value>تطابق بعض الصفوف أكثر من سجل موجود</value>
+  </data>
+  <data name="Error.IMP-PERSON-EXISTING-ACCOUNT" xml:space="preserve">
+    <value>لدى بعض الأشخاص حساب Resgrid بالفعل</value>
+  </data>
+  <data name="Error.IMP-PERSON-DELETED-MEMBER" xml:space="preserve">
+    <value>أُزيل بعض الأشخاص من قسمك سابقًا</value>
+  </data>
+  <data name="Error.IMP-PERSON-INACTIVE" xml:space="preserve">
+    <value>بعض الأشخاص محدَّدون كغير نشطين</value>
+  </data>
+  <data name="Error.IMP-PERSON-WILL-BE-ADMIN" xml:space="preserve">
+    <value>سيصبح بعض الأشخاص مسؤولين</value>
+  </data>
+  <data name="Error.IMP-PERSON-ACCOUNT-FAILED" xml:space="preserve">
+    <value>تعذّر إنشاء بعض الحسابات</value>
+  </data>
+  <data name="Error.IMP-PLAN-CAPACITY" xml:space="preserve">
+    <value>لا تتسع خطتك للجميع</value>
+  </data>
+  <data name="Error.IMP-PLAN-CAPACITY-UNKNOWN" xml:space="preserve">
+    <value>تعذّر علينا التحقق من حدود خطتك</value>
+  </data>
+  <data name="Error.IMP-ENTITLEMENT-MISSING" xml:space="preserve">
+    <value>تحتاج هذه البيانات إلى ميزة لم يفعّلها قسمك</value>
+  </data>
+  <data name="Error.IMP-CUSTOM-FIELDS-MISSING" xml:space="preserve">
+    <value>أضف هذه الحقول المخصصة أولًا: {0}</value>
+  </data>
+  <data name="Error.IMP-CERT-TYPE-SCOPE" xml:space="preserve">
+    <value>تستخدم بعض الشهادات نوعًا مخصصًا للوحدات</value>
+  </data>
+  <data name="Error.IMP-CONSEQUENCE-UNDECIDED" xml:space="preserve">
+    <value>نتيجة مترتبة تحتاج إلى قرارك</value>
+  </data>
+  <data name="Error.IMP-APPROVAL-STALE" xml:space="preserve">
+    <value>تغيّرت البيانات بعد الموافقة عليها</value>
+  </data>
+  <data name="Error.IMP-APPROVER-NOT-AUTHORIZED" xml:space="preserve">
+    <value>لم يعد بإمكان الموافق الموافقة على عمليات الاستيراد</value>
+  </data>
+  <data name="Error.IMP-CHANGED-SINCE-PREVIEW" xml:space="preserve">
+    <value>تغيّرت بعض السجلات بعد المعاينة</value>
+  </data>
+  <data name="Error.IMP-DEPARTMENT-LOCKED" xml:space="preserve">
+    <value>تجري عملية أخرى لقسمك</value>
+  </data>
+  <data name="Error.IMP-RUN-ERROR" xml:space="preserve">
+    <value>قاطعت مشكلةٌ مؤقتة العمل</value>
+  </data>
+  <data name="Error.IMP-RUN-TRANSIENT" xml:space="preserve">
+    <value>قاطعت مشكلةٌ مؤقتة العمل</value>
+  </data>
+  <data name="Error.IMP-RUN-NO-HANDLER" xml:space="preserve">
+    <value>هذا النوع من عمليات التشغيل غير متاح</value>
+  </data>
+  <data name="Error.IMP-RUN-NOTHING-APPROVED" xml:space="preserve">
+    <value>لم تتم الموافقة على أي شيء لعملية التشغيل هذه</value>
+  </data>
+  <data name="Error.IMP-RUN-STALLED" xml:space="preserve">
+    <value>توقف العمل عن التقدّم</value>
+  </data>
+  <data name="Error.IMP-ROW-WRITE-FAILED" xml:space="preserve">
+    <value>تعذّر استيراد بعض الصفوف</value>
+  </data>
+  <data name="Error.IMP-TARGET-MISSING" xml:space="preserve">
+    <value>بعض السجلات المطابَقة لم تعد موجودة</value>
+  </data>
+  <data name="Error.IMP-DEFERRED-FAILED" xml:space="preserve">
+    <value>لم تكتمل بعض خطوات الإنهاء</value>
+  </data>
+  <data name="Error.IMP-RECONCILE-MISMATCH" xml:space="preserve">
+    <value>وجد التحقق بعد الاستيراد اختلافًا</value>
+  </data>
+  <data name="Error.IMP-WORKSPACE-CLOSED" xml:space="preserve">
+    <value>مساحة العمل مغلقة</value>
+  </data>
+  <data name="Error.IMP-WORKSPACE-FULL" xml:space="preserve">
+    <value>تحتوي مساحة العمل على أقصى قدر من البيانات تسمح به خطتك</value>
+  </data>
+  <data name="Error.IMP-ROLLBACK-ACCOUNT" xml:space="preserve">
+    <value>تعذّر إغلاق حساب</value>
+  </data>
+  <data name="Error.IMP-ROLLBACK-CHANGED-SINCE" xml:space="preserve">
+    <value>تغيّر سجل بعد الاستيراد</value>
+  </data>
+  <data name="Error.IMP-ROLLBACK-FAILED" xml:space="preserve">
+    <value>تعذّر التراجع عن سجل</value>
+  </data>
+  <data name="Error.IMP-ROLLBACK-HAS-ACTIVITY" xml:space="preserve">
+    <value>سجل قيد الاستخدام</value>
+  </data>
+  <data name="Error.IMP-ROLLBACK-MANUAL" xml:space="preserve">
+    <value>سجل يحتاج إلى تحقق يدوي</value>
+  </data>
+  <data name="Error.IMP-ROLLBACK-MEMBER-UPDATE" xml:space="preserve">
+    <value>التغييرات على عضو موجود تحتاج إلى تحقق يدوي</value>
+  </data>
+  <data name="Error.IMP-ROLLBACK-NO-COMMIT" xml:space="preserve">
+    <value>لم يُعثر على عملية الاستيراد المطلوب التراجع عنها</value>
+  </data>
+  <data name="Error.IMP-ROLLBACK-NO-WRITER" xml:space="preserve">
+    <value>لا يمكن التراجع عن هذا النوع من السجلات تلقائيًا</value>
+  </data>
+  <data name="Error.IMP-UPLOAD-CHUNK-CONFLICT" xml:space="preserve">
+    <value>تداخلت عمليتا رفع للملف نفسه</value>
+  </data>
+  <data name="Error.IMP-UPLOAD-CHUNK-EMPTY" xml:space="preserve">
+    <value>كان جزء من الملف المرفوع فارغًا</value>
+  </data>
+  <data name="Error.IMP-UPLOAD-CHUNK-HASH" xml:space="preserve">
+    <value>تلف جزء من الملف المرفوع</value>
+  </data>
+  <data name="Error.IMP-UPLOAD-CHUNK-ORDER" xml:space="preserve">
+    <value>وصلت أجزاء الملف المرفوع بترتيب خاطئ</value>
+  </data>
+  <data name="Error.IMP-UPLOAD-CHUNK-SIZE" xml:space="preserve">
+    <value>كان حجم جزء من الملف المرفوع خاطئًا</value>
+  </data>
+  <data name="Error.IMP-UPLOAD-EXPIRED" xml:space="preserve">
+    <value>استغرق الرفع وقتًا طويلًا جدًا</value>
+  </data>
+  <data name="Error.IMP-UPLOAD-INCOMPLETE" xml:space="preserve">
+    <value>لم يكتمل الرفع</value>
+  </data>
+  <data name="Error.IMP-UPLOAD-TOO-MUCH" xml:space="preserve">
+    <value>وصلت بيانات أكثر من حجم الملف</value>
+  </data>
+  <data name="Entity.certification-types" xml:space="preserve">
+    <value>أنواع الشهادات</value>
+  </data>
+  <data name="EntityDesc.certification-types" xml:space="preserve">
+    <value>أنواع الشهادات التي يحملها أفرادك (رجل إطفاء 1، فني طب الطوارئ، الإنعاش القلبي الرئوي…).</value>
+  </data>
+  <data name="Field.certification-types.source_id" xml:space="preserve">
+    <value>معرّف المصدر</value>
+  </data>
+  <data name="FieldDesc.certification-types.source_id" xml:space="preserve">
+    <value>معرّف نوع الشهادة في النظام الذي تتركه. يتيح للملفات اللاحقة الإشارة إلى هذا الصف، ويجعل إعادة الاستيراد تحدّثه بدلًا من إضافته مرتين.</value>
+  </data>
+  <data name="Field.certification-types.name" xml:space="preserve">
+    <value>الاسم</value>
+  </data>
+  <data name="FieldDesc.certification-types.name" xml:space="preserve">
+    <value>اسم الشهادة كما يعرفه أفرادك.</value>
+  </data>
+  <data name="Field.certification-types.code" xml:space="preserve">
+    <value>الرمز</value>
+  </data>
+  <data name="FieldDesc.certification-types.code" xml:space="preserve">
+    <value>رمز قصير للشهادة. إذا تُرك فارغًا، ينشئ Resgrid رمزًا من الاسم.</value>
+  </data>
+  <data name="Field.certification-types.category" xml:space="preserve">
+    <value>الفئة</value>
+  </data>
+  <data name="FieldDesc.certification-types.category" xml:space="preserve">
+    <value>المجموعة التي تنتمي إليها الشهادة.</value>
+  </data>
+  <data name="Choice.fire" xml:space="preserve">
+    <value>الإطفاء</value>
+  </data>
+  <data name="Choice.ems" xml:space="preserve">
+    <value>الإسعاف</value>
+  </data>
+  <data name="Choice.sar" xml:space="preserve">
+    <value>البحث والإنقاذ</value>
+  </data>
+  <data name="Choice.wildland" xml:space="preserve">
+    <value>حرائق الغابات</value>
+  </data>
+  <data name="Choice.emergency-management" xml:space="preserve">
+    <value>إدارة الطوارئ</value>
+  </data>
+  <data name="Choice.industrial" xml:space="preserve">
+    <value>صناعي</value>
+  </data>
+  <data name="Choice.security" xml:space="preserve">
+    <value>الأمن</value>
+  </data>
+  <data name="Choice.medical" xml:space="preserve">
+    <value>طبي</value>
+  </data>
+  <data name="Choice.driver" xml:space="preserve">
+    <value>السائق</value>
+  </data>
+  <data name="Choice.vehicle" xml:space="preserve">
+    <value>المركبة</value>
+  </data>
+  <data name="Choice.other" xml:space="preserve">
+    <value>أخرى</value>
+  </data>
+  <data name="Field.certification-types.applies_to" xml:space="preserve">
+    <value>حاملها</value>
+  </data>
+  <data name="FieldDesc.certification-types.applies_to" xml:space="preserve">
+    <value>ما إذا كان الأشخاص أو الوحدات هم من يحملون هذه الشهادة.</value>
+  </data>
+  <data name="Choice.person" xml:space="preserve">
+    <value>الأشخاص</value>
+  </data>
+  <data name="Choice.unit" xml:space="preserve">
+    <value>الوحدات</value>
+  </data>
+  <data name="Field.certification-types.issuing_authority" xml:space="preserve">
+    <value>الجهة المصدرة</value>
+  </data>
+  <data name="FieldDesc.certification-types.issuing_authority" xml:space="preserve">
+    <value>الجهة التي تُصدر الشهادة.</value>
+  </data>
+  <data name="Field.certification-types.validity_months" xml:space="preserve">
+    <value>الصلاحية (بالأشهر)</value>
+  </data>
+  <data name="FieldDesc.certification-types.validity_months" xml:space="preserve">
+    <value>عدد الأشهر التي تبقى فيها الشهادة الجديدة صالحة. اتركه فارغًا إذا كانت لا تنتهي أبدًا.</value>
+  </data>
+  <data name="Field.certification-types.never_expires" xml:space="preserve">
+    <value>لا تنتهي أبدًا</value>
+  </data>
+  <data name="FieldDesc.certification-types.never_expires" xml:space="preserve">
+    <value>نعم إذا كانت هذه الشهادة لا تنتهي صلاحيتها.</value>
+  </data>
+  <data name="Field.certification-types.requires_verification" xml:space="preserve">
+    <value>تتطلب التحقق</value>
+  </data>
+  <data name="FieldDesc.certification-types.requires_verification" xml:space="preserve">
+    <value>نعم إذا كان يجب على مسؤول التحقق من الشهادة الجديدة قبل احتسابها.</value>
+  </data>
+  <data name="Field.certification-types.description" xml:space="preserve">
+    <value>الوصف</value>
+  </data>
+  <data name="FieldDesc.certification-types.description" xml:space="preserve">
+    <value>أي شيء ينبغي أن يعرفه الأفراد عن الشهادة.</value>
+  </data>
+  <data name="Entity.groups" xml:space="preserve">
+    <value>المحطات والمجموعات</value>
+  </data>
+  <data name="EntityDesc.groups" xml:space="preserve">
+    <value>محطاتك والمجموعات التي ينتمي إليها الأفراد، مع عناوينها وموقعها في هيكل مؤسستك.</value>
+  </data>
+  <data name="Field.groups.source_id" xml:space="preserve">
+    <value>معرّف المصدر</value>
+  </data>
+  <data name="FieldDesc.groups.source_id" xml:space="preserve">
+    <value>معرّف المحطة أو المجموعة في النظام الذي تتركه. يتيح للملفات اللاحقة الإشارة إلى هذا الصف، ويجعل إعادة الاستيراد تحدّثه بدلًا من إضافته مرتين.</value>
+  </data>
+  <data name="Field.groups.name" xml:space="preserve">
+    <value>الاسم</value>
+  </data>
+  <data name="FieldDesc.groups.name" xml:space="preserve">
+    <value>اسم المحطة أو المجموعة.</value>
+  </data>
+  <data name="Field.groups.type" xml:space="preserve">
+    <value>النوع</value>
+  </data>
+  <data name="FieldDesc.groups.type" xml:space="preserve">
+    <value>«محطة» للمكان الذي تستجيب منه الوحدات؛ و«تنظيمي» لأي مجموعة أخرى من الأفراد.</value>
+  </data>
+  <data name="Choice.station" xml:space="preserve">
+    <value>محطة</value>
+  </data>
+  <data name="Choice.organizational" xml:space="preserve">
+    <value>تنظيمي</value>
+  </data>
+  <data name="Field.groups.parent" xml:space="preserve">
+    <value>المجموعة الأصل</value>
+  </data>
+  <data name="FieldDesc.groups.parent" xml:space="preserve">
+    <value>المحطة أو المجموعة التي تندرج تحتها هذه المجموعة، بمعرّف المصدر الخاص بها أو باسمها.</value>
+  </data>
+  <data name="Field.groups.street" xml:space="preserve">
+    <value>عنوان الشارع</value>
+  </data>
+  <data name="FieldDesc.groups.street" xml:space="preserve">
+    <value>اسم الشارع ورقم المبنى للمحطة.</value>
+  </data>
+  <data name="Field.groups.city" xml:space="preserve">
+    <value>المدينة</value>
+  </data>
+  <data name="FieldDesc.groups.city" xml:space="preserve">
+    <value>مدينة المحطة.</value>
+  </data>
+  <data name="Field.groups.state" xml:space="preserve">
+    <value>الولاية أو المنطقة</value>
+  </data>
+  <data name="FieldDesc.groups.state" xml:space="preserve">
+    <value>الولاية أو المقاطعة أو المنطقة التي تقع فيها المحطة.</value>
+  </data>
+  <data name="Field.groups.postal_code" xml:space="preserve">
+    <value>الرمز البريدي</value>
+  </data>
+  <data name="FieldDesc.groups.postal_code" xml:space="preserve">
+    <value>الرمز البريدي (أو رمز ZIP) للمحطة.</value>
+  </data>
+  <data name="Field.groups.country" xml:space="preserve">
+    <value>الدولة</value>
+  </data>
+  <data name="FieldDesc.groups.country" xml:space="preserve">
+    <value>دولة المحطة.</value>
+  </data>
+  <data name="Field.groups.latitude" xml:space="preserve">
+    <value>خط العرض</value>
+  </data>
+  <data name="FieldDesc.groups.latitude" xml:space="preserve">
+    <value>موقع المحطة بالدرجات العشرية شمالًا (قيمة سالبة للجنوب).</value>
+  </data>
+  <data name="Field.groups.longitude" xml:space="preserve">
+    <value>خط الطول</value>
+  </data>
+  <data name="FieldDesc.groups.longitude" xml:space="preserve">
+    <value>موقع المحطة بالدرجات العشرية شرقًا (قيمة سالبة للغرب).</value>
+  </data>
+  <data name="Entity.roles" xml:space="preserve">
+    <value>الأدوار</value>
+  </data>
+  <data name="EntityDesc.roles" xml:space="preserve">
+    <value>الأدوار التي يشغلها الأفراد (مشغّل آلية، مسعف، ضابط…).</value>
+  </data>
+  <data name="Field.roles.source_id" xml:space="preserve">
+    <value>معرّف المصدر</value>
+  </data>
+  <data name="FieldDesc.roles.source_id" xml:space="preserve">
+    <value>معرّف الدور في النظام الذي تتركه. يتيح للملفات اللاحقة الإشارة إلى هذا الصف، ويجعل إعادة الاستيراد تحدّثه بدلًا من إضافته مرتين.</value>
+  </data>
+  <data name="Field.roles.name" xml:space="preserve">
+    <value>الاسم</value>
+  </data>
+  <data name="FieldDesc.roles.name" xml:space="preserve">
+    <value>اسم الدور.</value>
+  </data>
+  <data name="Field.roles.description" xml:space="preserve">
+    <value>الوصف</value>
+  </data>
+  <data name="FieldDesc.roles.description" xml:space="preserve">
+    <value>ما يقوم به الدور.</value>
+  </data>
+  <data name="Entity.personnel" xml:space="preserve">
+    <value>الأفراد</value>
+  </data>
+  <data name="EntityDesc.personnel" xml:space="preserve">
+    <value>أعضاؤك: الأسماء وبيانات الاتصال والمحطة أو المجموعة والأدوار والتفاصيل الخاصة بالقسم. لا يمكن للأشخاص المستوردين تسجيل الدخول ولا يتلقون أي شيء إلى أن تدعوهم.</value>
+  </data>
+  <data name="Field.personnel.source_id" xml:space="preserve">
+    <value>معرّف المصدر</value>
+  </data>
+  <data name="FieldDesc.personnel.source_id" xml:space="preserve">
+    <value>معرّف الشخص في النظام الذي تتركه. يتيح للملفات اللاحقة الإشارة إلى هذا الصف، ويجعل إعادة الاستيراد تحدّثه بدلًا من إضافته مرتين.</value>
+  </data>
+  <data name="Field.personnel.first_name" xml:space="preserve">
+    <value>الاسم الأول</value>
+  </data>
+  <data name="FieldDesc.personnel.first_name" xml:space="preserve">
+    <value>الاسم الأول للشخص.</value>
+  </data>
+  <data name="Field.personnel.last_name" xml:space="preserve">
+    <value>اسم العائلة</value>
+  </data>
+  <data name="FieldDesc.personnel.last_name" xml:space="preserve">
+    <value>اسم عائلة الشخص.</value>
+  </data>
+  <data name="Field.personnel.email" xml:space="preserve">
+    <value>البريد الإلكتروني</value>
+  </data>
+  <data name="FieldDesc.personnel.email" xml:space="preserve">
+    <value>عنوان البريد الإلكتروني للشخص. يحتاج كل عضو في Resgrid إلى عنوان، فهو وسيلة دعوته وتسجيل دخوله.</value>
+  </data>
+  <data name="Field.personnel.mobile_phone" xml:space="preserve">
+    <value>الهاتف الجوال</value>
+  </data>
+  <data name="FieldDesc.personnel.mobile_phone" xml:space="preserve">
+    <value>الرقم الذي يرسل إليه Resgrid الرسائل النصية ويتصل به عند الإرسال. أدرج رمز الدولة، مثل +1 555 123 4567.</value>
+  </data>
+  <data name="Field.personnel.home_phone" xml:space="preserve">
+    <value>هاتف المنزل</value>
+  </data>
+  <data name="FieldDesc.personnel.home_phone" xml:space="preserve">
+    <value>رقم ثانٍ يمكن لـ Resgrid الاتصال به.</value>
+  </data>
+  <data name="Field.personnel.group" xml:space="preserve">
+    <value>المحطة أو المجموعة</value>
+  </data>
+  <data name="FieldDesc.personnel.group" xml:space="preserve">
+    <value>المحطة أو المجموعة التي ينتمي إليها الشخص، بمعرّف المصدر الخاص بها أو باسمها. ينتمي الشخص إلى مجموعة واحدة.</value>
+  </data>
+  <data name="Field.personnel.group_admin" xml:space="preserve">
+    <value>مسؤول المجموعة</value>
+  </data>
+  <data name="FieldDesc.personnel.group_admin" xml:space="preserve">
+    <value>نعم إذا كان الشخص يدير محطته أو مجموعته.</value>
+  </data>
+  <data name="Field.personnel.roles" xml:space="preserve">
+    <value>الأدوار</value>
+  </data>
+  <data name="FieldDesc.personnel.roles" xml:space="preserve">
+    <value>أدوار الشخص، مفصولة بفواصل منقوطة، بالاسم أو بمعرّف المصدر.</value>
+  </data>
+  <data name="Field.personnel.will_be_admin" xml:space="preserve">
+    <value>مسؤول القسم</value>
+  </data>
+  <data name="FieldDesc.personnel.will_be_admin" xml:space="preserve">
+    <value>نعم إذا كان ينبغي أن يصبح الشخص مسؤولًا للقسم. لا يُطبَّق ذلك إلا عند تفعيله، بعد أن تؤكده.</value>
+  </data>
+  <data name="Field.personnel.identification_number" xml:space="preserve">
+    <value>رقم التعريف</value>
+  </data>
+  <data name="FieldDesc.personnel.identification_number" xml:space="preserve">
+    <value>رقم العضوية أو الشارة الصادر عن القسم.</value>
+  </data>
+  <data name="Field.personnel.time_zone" xml:space="preserve">
+    <value>المنطقة الزمنية</value>
+  </data>
+  <data name="FieldDesc.personnel.time_zone" xml:space="preserve">
+    <value>المنطقة الزمنية للشخص. إذا تُركت فارغة، تُستخدم المنطقة الزمنية للقسم.</value>
+  </data>
+  <data name="Field.personnel.language" xml:space="preserve">
+    <value>اللغة</value>
+  </data>
+  <data name="FieldDesc.personnel.language" xml:space="preserve">
+    <value>اللغة التي يستخدمها Resgrid مع الشخص، مثل en أو es أو fr. إذا تُركت فارغة، تُستخدم لغة القسم.</value>
+  </data>
+  <data name="Field.personnel.notes" xml:space="preserve">
+    <value>الملاحظات</value>
+  </data>
+  <data name="FieldDesc.personnel.notes" xml:space="preserve">
+    <value>ملاحظات عن الشخص خاصة بالقسم.</value>
+  </data>
+  <data name="Field.personnel.home_street" xml:space="preserve">
+    <value>عنوان شارع المنزل</value>
+  </data>
+  <data name="FieldDesc.personnel.home_street" xml:space="preserve">
+    <value>اسم شارع منزل الشخص ورقمه، ويُحفظ كبيانات خاصة بالقسم.</value>
+  </data>
+  <data name="Field.personnel.home_city" xml:space="preserve">
+    <value>مدينة المنزل</value>
+  </data>
+  <data name="FieldDesc.personnel.home_city" xml:space="preserve">
+    <value>المدينة التي يقع فيها منزل الشخص.</value>
+  </data>
+  <data name="Field.personnel.home_state" xml:space="preserve">
+    <value>ولاية أو منطقة المنزل</value>
+  </data>
+  <data name="FieldDesc.personnel.home_state" xml:space="preserve">
+    <value>الولاية أو المقاطعة أو المنطقة التي يقع فيها منزل الشخص.</value>
+  </data>
+  <data name="Field.personnel.home_postal_code" xml:space="preserve">
+    <value>الرمز البريدي للمنزل</value>
+  </data>
+  <data name="FieldDesc.personnel.home_postal_code" xml:space="preserve">
+    <value>الرمز البريدي (أو رمز ZIP) لمنزل الشخص.</value>
+  </data>
+  <data name="Field.personnel.home_country" xml:space="preserve">
+    <value>دولة المنزل</value>
+  </data>
+  <data name="FieldDesc.personnel.home_country" xml:space="preserve">
+    <value>الدولة التي يقع فيها منزل الشخص.</value>
+  </data>
+  <data name="Field.personnel.active" xml:space="preserve">
+    <value>نشط</value>
+  </data>
+  <data name="FieldDesc.personnel.active" xml:space="preserve">
+    <value>لا للأعضاء السابقين أو غير النشطين: يُستوردون معطَّلين ومخفيين، ولا تُرسل إليهم دعوة أبدًا.</value>
+  </data>
+  <data name="Entity.personnel-certifications" xml:space="preserve">
+    <value>شهادات الأفراد</value>
+  </data>
+  <data name="EntityDesc.personnel-certifications" xml:space="preserve">
+    <value>الشهادات التي يحملها كل شخص، مع أرقامها وتواريخها. تُستورد الشهادات المنتهية بالفعل على أنها منتهية دون إرسال بريد إلكتروني إلى أحد.</value>
+  </data>
+  <data name="Field.personnel-certifications.person" xml:space="preserve">
+    <value>الشخص</value>
+  </data>
+  <data name="FieldDesc.personnel-certifications.person" xml:space="preserve">
+    <value>حامل الشهادة، بمعرّف المصدر الخاص بالشخص أو ببريده الإلكتروني.</value>
+  </data>
+  <data name="Field.personnel-certifications.certification_type" xml:space="preserve">
+    <value>الشهادة</value>
+  </data>
+  <data name="FieldDesc.personnel-certifications.certification_type" xml:space="preserve">
+    <value>الشهادة المعنية، باسمها أو رمزها أو معرّف المصدر الخاص بها.</value>
+  </data>
+  <data name="Field.personnel-certifications.number" xml:space="preserve">
+    <value>رقم الشهادة</value>
+  </data>
+  <data name="FieldDesc.personnel-certifications.number" xml:space="preserve">
+    <value>الرقم المدوَّن على الشهادة.</value>
+  </data>
+  <data name="Field.personnel-certifications.area" xml:space="preserve">
+    <value>المنطقة</value>
+  </data>
+  <data name="FieldDesc.personnel-certifications.area" xml:space="preserve">
+    <value>المكان الذي تكون فيه الشهادة صالحة (ولاية أو منطقة)، عندما يكون ذلك مهمًا.</value>
+  </data>
+  <data name="Field.personnel-certifications.issued_by" xml:space="preserve">
+    <value>صادرة عن</value>
+  </data>
+  <data name="FieldDesc.personnel-certifications.issued_by" xml:space="preserve">
+    <value>الجهة التي أصدرت الشهادة.</value>
+  </data>
+  <data name="Field.personnel-certifications.issued_on" xml:space="preserve">
+    <value>تاريخ الإصدار</value>
+  </data>
+  <data name="FieldDesc.personnel-certifications.issued_on" xml:space="preserve">
+    <value>تاريخ إصدار الشهادة.</value>
+  </data>
+  <data name="Field.personnel-certifications.expires_on" xml:space="preserve">
+    <value>تاريخ الانتهاء</value>
+  </data>
+  <data name="FieldDesc.personnel-certifications.expires_on" xml:space="preserve">
+    <value>تاريخ انتهاء صلاحية الشهادة. اتركه فارغًا إذا كانت لا تنتهي.</value>
+  </data>
+  <data name="Entity.unit-types" xml:space="preserve">
+    <value>أنواع الوحدات</value>
+  </data>
+  <data name="EntityDesc.unit-types" xml:space="preserve">
+    <value>أنواع الآليات التي تشغّلها (مضخة، سلّم، إسعاف…).</value>
+  </data>
+  <data name="Field.unit-types.source_id" xml:space="preserve">
+    <value>معرّف المصدر</value>
+  </data>
+  <data name="FieldDesc.unit-types.source_id" xml:space="preserve">
+    <value>معرّف نوع الوحدة في النظام الذي تتركه. يتيح للملفات اللاحقة الإشارة إلى هذا الصف، ويجعل إعادة الاستيراد تحدّثه بدلًا من إضافته مرتين.</value>
+  </data>
+  <data name="Field.unit-types.name" xml:space="preserve">
+    <value>الاسم</value>
+  </data>
+  <data name="FieldDesc.unit-types.name" xml:space="preserve">
+    <value>اسم نوع الوحدة. تشير الوحدات إلى نوعها بهذا الاسم.</value>
+  </data>
+  <data name="Field.unit-types.status_set" xml:space="preserve">
+    <value>مجموعة الحالات</value>
+  </data>
+  <data name="FieldDesc.unit-types.status_set" xml:space="preserve">
+    <value>مجموعة حالات الوحدات التي يستخدمها هذا النوع، بالاسم. إذا تُركت فارغة، تُستخدم حالات الوحدات الافتراضية.</value>
+  </data>
+  <data name="Entity.units" xml:space="preserve">
+    <value>الوحدات</value>
+  </data>
+  <data name="EntityDesc.units" xml:space="preserve">
+    <value>آلياتك ووحداتك الأخرى، مع نوعها ومحطتها وتفاصيل المركبة.</value>
+  </data>
+  <data name="Field.units.source_id" xml:space="preserve">
+    <value>معرّف المصدر</value>
+  </data>
+  <data name="FieldDesc.units.source_id" xml:space="preserve">
+    <value>معرّف الوحدة في النظام الذي تتركه. يتيح للملفات اللاحقة الإشارة إلى هذا الصف، ويجعل إعادة الاستيراد تحدّثه بدلًا من إضافته مرتين.</value>
+  </data>
+  <data name="Field.units.name" xml:space="preserve">
+    <value>الاسم</value>
+  </data>
+  <data name="FieldDesc.units.name" xml:space="preserve">
+    <value>اسم الوحدة أو رمز النداء الخاص بها.</value>
+  </data>
+  <data name="Field.units.type" xml:space="preserve">
+    <value>النوع</value>
+  </data>
+  <data name="FieldDesc.units.type" xml:space="preserve">
+    <value>نوع الوحدة، بالاسم.</value>
+  </data>
+  <data name="Field.units.station" xml:space="preserve">
+    <value>المحطة</value>
+  </data>
+  <data name="FieldDesc.units.station" xml:space="preserve">
+    <value>المحطة التي تعمل منها الوحدة، بمعرّف المصدر أو بالاسم.</value>
+  </data>
+  <data name="Field.units.vin" xml:space="preserve">
+    <value>رقم الهيكل</value>
+  </data>
+  <data name="FieldDesc.units.vin" xml:space="preserve">
+    <value>رقم تعريف المركبة (VIN).</value>
+  </data>
+  <data name="Field.units.plate_number" xml:space="preserve">
+    <value>رقم اللوحة</value>
+  </data>
+  <data name="FieldDesc.units.plate_number" xml:space="preserve">
+    <value>لوحة الترخيص.</value>
+  </data>
+  <data name="Field.units.four_wheel_drive" xml:space="preserve">
+    <value>دفع رباعي</value>
+  </data>
+  <data name="FieldDesc.units.four_wheel_drive" xml:space="preserve">
+    <value>نعم إذا كانت الوحدة ذات دفع رباعي.</value>
+  </data>
+  <data name="Field.units.special_permit" xml:space="preserve">
+    <value>تصريح خاص</value>
+  </data>
+  <data name="FieldDesc.units.special_permit" xml:space="preserve">
+    <value>نعم إذا كانت قيادة الوحدة تتطلب تصريحًا خاصًا.</value>
+  </data>
+  <data name="Field.units.seats" xml:space="preserve">
+    <value>المقاعد</value>
+  </data>
+  <data name="FieldDesc.units.seats" xml:space="preserve">
+    <value>مواقع الركوب في الوحدة، مفصولة بفواصل منقوطة.</value>
+  </data>
+  <data name="Entity.custom-statuses" xml:space="preserve">
+    <value>الحالات</value>
+  </data>
+  <data name="EntityDesc.custom-statuses" xml:space="preserve">
+    <value>أزرار الحالة للأفراد والوحدات ومستويات التأمين. كل صف زر واحد؛ والصفوف التي تحمل اسم المجموعة نفسه تشكّل مجموعة واحدة.</value>
+  </data>
+  <data name="Field.custom-statuses.set_name" xml:space="preserve">
+    <value>اسم المجموعة</value>
+  </data>
+  <data name="FieldDesc.custom-statuses.set_name" xml:space="preserve">
+    <value>مجموعة الحالات التي ينتمي إليها الزر.</value>
+  </data>
+  <data name="Field.custom-statuses.set_type" xml:space="preserve">
+    <value>نوع المجموعة</value>
+  </data>
+  <data name="FieldDesc.custom-statuses.set_type" xml:space="preserve">
+    <value>لمن الحالات: الأفراد (الاستجابة) أو الوحدات أو مستويات التأمين.</value>
+  </data>
+  <data name="Choice.personnel" xml:space="preserve">
+    <value>الأفراد</value>
+  </data>
+  <data name="Choice.staffing" xml:space="preserve">
+    <value>التأمين</value>
+  </data>
+  <data name="Field.custom-statuses.button_text" xml:space="preserve">
+    <value>نص الزر</value>
+  </data>
+  <data name="FieldDesc.custom-statuses.button_text" xml:space="preserve">
+    <value>الكلمات الظاهرة على زر الحالة.</value>
+  </data>
+  <data name="Field.custom-statuses.button_color" xml:space="preserve">
+    <value>لون الزر</value>
+  </data>
+  <data name="FieldDesc.custom-statuses.button_color" xml:space="preserve">
+    <value>لون الزر، كرمز ست عشري مثل #2a78d6.</value>
+  </data>
+  <data name="Field.custom-statuses.text_color" xml:space="preserve">
+    <value>لون النص</value>
+  </data>
+  <data name="FieldDesc.custom-statuses.text_color" xml:space="preserve">
+    <value>لون كلمات الزر. إذا تُرك فارغًا، يكون أبيض.</value>
+  </data>
+  <data name="Field.custom-statuses.gps_required" xml:space="preserve">
+    <value>الموقع مطلوب</value>
+  </data>
+  <data name="FieldDesc.custom-statuses.gps_required" xml:space="preserve">
+    <value>نعم إذا كان اختيار هذه الحالة يجب أن يرسل موقع الجهاز.</value>
+  </data>
+  <data name="Field.custom-statuses.note" xml:space="preserve">
+    <value>الملاحظة</value>
+  </data>
+  <data name="FieldDesc.custom-statuses.note" xml:space="preserve">
+    <value>ما إذا كان يمكن أو يجب إضافة ملاحظة عند اختيار هذه الحالة.</value>
+  </data>
+  <data name="Choice.none" xml:space="preserve">
+    <value>لا شيء</value>
+  </data>
+  <data name="Choice.optional" xml:space="preserve">
+    <value>اختياري</value>
+  </data>
+  <data name="Choice.required" xml:space="preserve">
+    <value>مطلوب</value>
+  </data>
+  <data name="Field.custom-statuses.destination" xml:space="preserve">
+    <value>الوجهة</value>
+  </data>
+  <data name="FieldDesc.custom-statuses.destination" xml:space="preserve">
+    <value>ما يمكن للشخص أو الوحدة اختياره كوجهة مع هذه الحالة.</value>
+  </data>
+  <data name="Choice.stations" xml:space="preserve">
+    <value>المحطات</value>
+  </data>
+  <data name="Choice.calls" xml:space="preserve">
+    <value>البلاغات</value>
+  </data>
+  <data name="Choice.calls-and-stations" xml:space="preserve">
+    <value>البلاغات والمحطات</value>
+  </data>
+  <data name="Choice.pois" xml:space="preserve">
+    <value>نقاط الاهتمام</value>
+  </data>
+  <data name="Choice.calls-and-pois" xml:space="preserve">
+    <value>البلاغات ونقاط الاهتمام</value>
+  </data>
+  <data name="Choice.stations-and-pois" xml:space="preserve">
+    <value>المحطات ونقاط الاهتمام</value>
+  </data>
+  <data name="Choice.calls-stations-and-pois" xml:space="preserve">
+    <value>البلاغات والمحطات ونقاط الاهتمام</value>
+  </data>
+  <data name="Field.custom-statuses.order" xml:space="preserve">
+    <value>الترتيب</value>
+  </data>
+  <data name="FieldDesc.custom-statuses.order" xml:space="preserve">
+    <value>موضع الزر في مجموعته.</value>
+  </data>
+  <data name="Field.custom-statuses.next_statuses" xml:space="preserve">
+    <value>الحالات التالية</value>
+  </data>
+  <data name="FieldDesc.custom-statuses.next_statuses" xml:space="preserve">
+    <value>الأزرار المعروضة بعد هذا الزر، بنص الزر الخاص بكل منها، مفصولة بفواصل منقوطة.</value>
+  </data>
+  <data name="Entity.call-types" xml:space="preserve">
+    <value>أنواع البلاغات</value>
+  </data>
+  <data name="EntityDesc.call-types" xml:space="preserve">
+    <value>أنواع البلاغات التي تُرسَلون إليها (حريق مبنى، حالة طبية…).</value>
+  </data>
+  <data name="Field.call-types.source_id" xml:space="preserve">
+    <value>معرّف المصدر</value>
+  </data>
+  <data name="FieldDesc.call-types.source_id" xml:space="preserve">
+    <value>معرّف نوع البلاغ في النظام الذي تتركه. يتيح للملفات اللاحقة الإشارة إلى هذا الصف، ويجعل إعادة الاستيراد تحدّثه بدلًا من إضافته مرتين.</value>
+  </data>
+  <data name="Field.call-types.name" xml:space="preserve">
+    <value>الاسم</value>
+  </data>
+  <data name="FieldDesc.call-types.name" xml:space="preserve">
+    <value>اسم نوع البلاغ. تشير البلاغات إلى نوعها بهذا الاسم.</value>
+  </data>
+  <data name="Entity.call-priorities" xml:space="preserve">
+    <value>أولويات البلاغات</value>
+  </data>
+  <data name="EntityDesc.call-priorities" xml:space="preserve">
+    <value>أولويات البلاغات لديك مع ألوانها وسلوك الإرسال الخاص بها. يؤدي استيراد الأولويات إلى استبدال الأولويات الأربع المدمجة.</value>
+  </data>
+  <data name="Field.call-priorities.source_id" xml:space="preserve">
+    <value>معرّف المصدر</value>
+  </data>
+  <data name="FieldDesc.call-priorities.source_id" xml:space="preserve">
+    <value>معرّف أولوية البلاغ في النظام الذي تتركه. يتيح للملفات اللاحقة الإشارة إلى هذا الصف، ويجعل إعادة الاستيراد تحدّثه بدلًا من إضافته مرتين.</value>
+  </data>
+  <data name="Field.call-priorities.name" xml:space="preserve">
+    <value>الاسم</value>
+  </data>
+  <data name="FieldDesc.call-priorities.name" xml:space="preserve">
+    <value>اسم الأولوية.</value>
+  </data>
+  <data name="Field.call-priorities.color" xml:space="preserve">
+    <value>اللون</value>
+  </data>
+  <data name="FieldDesc.call-priorities.color" xml:space="preserve">
+    <value>لون الأولوية، كرمز ست عشري مثل #e34948.</value>
+  </data>
+  <data name="Field.call-priorities.sort" xml:space="preserve">
+    <value>الترتيب</value>
+  </data>
+  <data name="FieldDesc.call-priorities.sort" xml:space="preserve">
+    <value>موضع الأولوية في القوائم؛ القيمة الأدنى تأتي أولًا.</value>
+  </data>
+  <data name="Field.call-priorities.is_default" xml:space="preserve">
+    <value>افتراضية</value>
+  </data>
+  <data name="FieldDesc.call-priorities.is_default" xml:space="preserve">
+    <value>نعم للأولوية الوحيدة التي تبدأ بها البلاغات الجديدة.</value>
+  </data>
+  <data name="Field.call-priorities.dispatch_personnel" xml:space="preserve">
+    <value>استدعاء الأفراد</value>
+  </data>
+  <data name="FieldDesc.call-priorities.dispatch_personnel" xml:space="preserve">
+    <value>نعم إذا كان البلاغ بهذه الأولوية يستدعي الأفراد المُرسَلين إليه.</value>
+  </data>
+  <data name="Field.call-priorities.dispatch_units" xml:space="preserve">
+    <value>استدعاء الوحدات</value>
+  </data>
+  <data name="FieldDesc.call-priorities.dispatch_units" xml:space="preserve">
+    <value>نعم إذا كان البلاغ بهذه الأولوية يستدعي الوحدات المُرسَلة إليه.</value>
+  </data>
+  <data name="Field.call-priorities.notify_everyone" xml:space="preserve">
+    <value>إشعار الجميع</value>
+  </data>
+  <data name="FieldDesc.call-priorities.notify_everyone" xml:space="preserve">
+    <value>نعم إذا كان البلاغ بهذه الأولوية يُشعر جميع الأعضاء، بغض النظر عن إعدادات الإشعارات لديهم.</value>
+  </data>
+  <data name="Entity.poi-types" xml:space="preserve">
+    <value>أنواع نقاط الاهتمام</value>
+  </data>
+  <data name="EntityDesc.poi-types" xml:space="preserve">
+    <value>أنواع الأماكن على خريطتك (صنابير الإطفاء، المستشفيات، المدارس…).</value>
+  </data>
+  <data name="Field.poi-types.source_id" xml:space="preserve">
+    <value>معرّف المصدر</value>
+  </data>
+  <data name="FieldDesc.poi-types.source_id" xml:space="preserve">
+    <value>معرّف نوع نقطة الاهتمام في النظام الذي تتركه. يتيح للملفات اللاحقة الإشارة إلى هذا الصف، ويجعل إعادة الاستيراد تحدّثه بدلًا من إضافته مرتين.</value>
+  </data>
+  <data name="Field.poi-types.name" xml:space="preserve">
+    <value>الاسم</value>
+  </data>
+  <data name="FieldDesc.poi-types.name" xml:space="preserve">
+    <value>اسم النوع.</value>
+  </data>
+  <data name="Field.poi-types.color" xml:space="preserve">
+    <value>اللون</value>
+  </data>
+  <data name="FieldDesc.poi-types.color" xml:space="preserve">
+    <value>لون علامة الخريطة، كرمز ست عشري.</value>
+  </data>
+  <data name="Field.poi-types.is_destination" xml:space="preserve">
+    <value>وجهة</value>
+  </data>
+  <data name="FieldDesc.poi-types.is_destination" xml:space="preserve">
+    <value>نعم إذا كان بإمكان الأفراد والوحدات اختيار هذه الأماكن كوجهة مع حالة ما.</value>
+  </data>
+  <data name="Entity.pois" xml:space="preserve">
+    <value>نقاط الاهتمام</value>
+  </data>
+  <data name="EntityDesc.pois" xml:space="preserve">
+    <value>أماكن على خريطتك، لكل منها نوعها وموقعها.</value>
+  </data>
+  <data name="Field.pois.source_id" xml:space="preserve">
+    <value>معرّف المصدر</value>
+  </data>
+  <data name="FieldDesc.pois.source_id" xml:space="preserve">
+    <value>معرّف نقطة الاهتمام في النظام الذي تتركه. يتيح للملفات اللاحقة الإشارة إلى هذا الصف، ويجعل إعادة الاستيراد تحدّثه بدلًا من إضافته مرتين.</value>
+  </data>
+  <data name="Field.pois.type" xml:space="preserve">
+    <value>النوع</value>
+  </data>
+  <data name="FieldDesc.pois.type" xml:space="preserve">
+    <value>نوع المكان، بالاسم.</value>
+  </data>
+  <data name="Field.pois.name" xml:space="preserve">
+    <value>الاسم</value>
+  </data>
+  <data name="FieldDesc.pois.name" xml:space="preserve">
+    <value>اسم المكان.</value>
+  </data>
+  <data name="Field.pois.latitude" xml:space="preserve">
+    <value>خط العرض</value>
+  </data>
+  <data name="FieldDesc.pois.latitude" xml:space="preserve">
+    <value>موقع المكان بالدرجات العشرية شمالًا (قيمة سالبة للجنوب).</value>
+  </data>
+  <data name="Field.pois.longitude" xml:space="preserve">
+    <value>خط الطول</value>
+  </data>
+  <data name="FieldDesc.pois.longitude" xml:space="preserve">
+    <value>موقع المكان بالدرجات العشرية شرقًا (قيمة سالبة للغرب).</value>
+  </data>
+  <data name="Field.pois.address" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="FieldDesc.pois.address" xml:space="preserve">
+    <value>عنوان المكان، ويُعرض معه على الخريطة.</value>
+  </data>
+  <data name="Field.pois.note" xml:space="preserve">
+    <value>ملاحظة</value>
+  </data>
+  <data name="FieldDesc.pois.note" xml:space="preserve">
+    <value>أي شيء ينبغي أن يعرفه المستجيبون عن المكان.</value>
+  </data>
+  <data name="Event.SupportRequestStatusChanged" xml:space="preserve">
+    <value>تغيّرت حالة طلب الدعم</value>
+  </data>
+  <data name="Event.RunRetried" xml:space="preserve">
+    <value>بدأت محاولة جديدة</value>
+  </data>
+  <data name="Event.LeaseReleased" xml:space="preserve">
+    <value>حُرّرت عملية تشغيل متوقفة</value>
+  </data>
+  <data name="Event.AnalysisRequeued" xml:space="preserve">
+    <value>أُعيد تشغيل الفحوصات</value>
+  </data>
+  <data name="Event.Escalated" xml:space="preserve">
+    <value>صُعّد إلى الفريق التقني</value>
+  </data>
+  <data name="Event.RetentionExtended" xml:space="preserve">
+    <value>مُدّدت مدة الاحتفاظ بالملفات</value>
+  </data>
+  <data name="Event.ArtifactsPurged" xml:space="preserve">
+    <value>حُذفت الملفات المرفوعة</value>
+  </data>
+  <data name="Event.FixSuggested" xml:space="preserve">
+    <value>اقتُرح إصلاح</value>
+  </data>
+  <data name="Event.DraftPrepared" xml:space="preserve">
+    <value>رُفع ملف نيابةً عنكم</value>
+  </data>
+  <data name="Event.ManagedWorkspaceCreated" xml:space="preserve">
+    <value>أُنشئت مساحة عمل للترحيل المُدار</value>
+  </data>
+  <data name="Event.ContractAuthorizationRequested" xml:space="preserve">
+    <value>طُلب تفويض تعاقدي</value>
+  </data>
+  <data name="Event.ContractAuthorizationApproved" xml:space="preserve">
+    <value>وُوفق على التفويض التعاقدي</value>
+  </data>
+  <data name="Event.ContractAuthorizationRejected" xml:space="preserve">
+    <value>رُفض التفويض التعاقدي</value>
+  </data>
+  <data name="Event.ManagedApprovalRequested" xml:space="preserve">
+    <value>طُلبت الموافقة على الاستيراد</value>
+  </data>
+  <data name="Event.ManagedApprovalGranted" xml:space="preserve">
+    <value>وافق موظف ثانٍ على الاستيراد</value>
+  </data>
+  <data name="Event.ManagedApprovalRejected" xml:space="preserve">
+    <value>رُفضت الموافقة على الاستيراد</value>
+  </data>
+  <data name="Event.ManagedApprovalWithdrawn" xml:space="preserve">
+    <value>سُحب طلب الموافقة على الاستيراد</value>
+  </data>
+  <data name="AwaitingStaffChecker" xml:space="preserve">
+    <value>طلب فريق Resgrid ذلك نيابةً عن قسمكم. وهو بانتظار موافقة موظف ثانٍ من فريق Resgrid.</value>
+  </data>
+  <data name="AwaitingYourSignOff" xml:space="preserve">
+    <value>وافق موظفان من فريق Resgrid على ذلك. سيبدأ عندما يوافق عليه أحد مسؤولي قسمكم.</value>
+  </data>
+  <data name="ApproveManagedRun" xml:space="preserve">
+    <value>الموافقة والبدء</value>
+  </data>
+  <data name="Event.IssuesAccepted" xml:space="preserve">
+    <value>قُبلت التحذيرات</value>
+  </data>
+  <data name="Event.RowsExcluded" xml:space="preserve">
+    <value>استُبعدت الصفوف</value>
+  </data>
+  <data name="Event.IssuesReopened" xml:space="preserve">
+    <value>أُعيد فتح المشكلات</value>
+  </data>
+  <data name="Event.StaffValuesViewed" xml:space="preserve">
+    <value>عُرضت قيم صف لإصلاح مشكلة</value>
+  </data>
+  <data name="ManagedRunTitle" xml:space="preserve">
+    <value>خطط فريق Resgrid لخطوة نيابةً عن قسمكم.</value>
+  </data>
+  <data name="ManagedRunInvitations" xml:space="preserve">
+    <value>عدد الأشخاص المطلوب دعوتهم: {0}.</value>
+  </data>
+  <data name="ManagedRunAdministrators" xml:space="preserve">
+    <value>عدد المسؤولين المطلوب تأكيدهم: {0}.</value>
+  </data>
+  <data name="ManagedRunSignOff" xml:space="preserve">
+    <value>الاعتماد النهائي وبدء التشغيل الفعلي.</value>
+  </data>
+  <data name="ManagedRunRequestedBy" xml:space="preserve">
+    <value>طلبها {0} في {1}.</value>
+  </data>
+  <data name="ManagedRunWaitsForStaff" xml:space="preserve">
+    <value>تنتظر موافقة موظف ثانٍ من فريق Resgrid. يمكنكم إلغاؤها في أي وقت قبل أن تبدأ.</value>
+  </data>
+  <data name="ManagedRunScheduled" xml:space="preserve">
+    <value>وافق عليها موظفان من فريق Resgrid. وهي مجدولة في {0}؛ يمكنكم بدؤها الآن أو إلغاؤها.</value>
+  </data>
+  <data name="ManagedRunStarting" xml:space="preserve">
+    <value>تمت الموافقة. ستبدأ خلال دقائق.</value>
+  </data>
+  <data name="ManagedRunStartNow" xml:space="preserve">
+    <value>البدء الآن</value>
+  </data>
+  <data name="ManagedRunCancel" xml:space="preserve">
+    <value>إلغاؤها</value>
+  </data>
+  <data name="ManagedRunApprovedMessage" xml:space="preserve">
+    <value>تمت الموافقة. ستبدأ خلال دقائق.</value>
+  </data>
+  <data name="ManagedRunCancelledMessage" xml:space="preserve">
+    <value>أُلغيت. لم يُرسل أو يتغير أي شيء.</value>
+  </data>
+  <data name="Event.ManagedActivationRequested" xml:space="preserve">
+    <value>طُلبت خطوة تفعيل</value>
+  </data>
+  <data name="Event.ManagedActivationApproved" xml:space="preserve">
+    <value>تمت الموافقة على خطوة تفعيل</value>
+  </data>
+  <data name="Event.ManagedActivationCancelled" xml:space="preserve">
+    <value>أُلغيت خطوة تفعيل</value>
+  </data>
+  <data name="Event.StaffSampleViewed" xml:space="preserve">
+    <value>عُرضت صفوف نموذجية لتشخيص مشكلة</value>
+  </data>
+  <data name="Event.StaffArtifactDownloaded" xml:space="preserve">
+    <value>نُزّل الملف المرفوع للعمل عليه</value>
+  </data>
+  <data name="DatesWrittenAs" xml:space="preserve">
+    <value>كيف تُكتب التواريخ</value>
+  </data>
+  <data name="DateFormatDetect" xml:space="preserve">
+    <value>استنتاجه من القيم</value>
+  </data>
+  <data name="DateFormatDayFirst" xml:space="preserve">
+    <value>اليوم أولًا: {0} تعني {1}</value>
+  </data>
+  <data name="DateFormatMonthFirst" xml:space="preserve">
+    <value>الشهر أولًا: {0} تعني {1}</value>
+  </data>
+  <data name="DateFormatYearFirst" xml:space="preserve">
+    <value>السنة أولًا: 2026-04-03</value>
+  </data>
+  <data name="AlsoUseColumn" xml:space="preserve">
+    <value>استخدامه لحقل آخر أيضًا</value>
+  </data>
+  <data name="SameColumnAnotherField" xml:space="preserve">
+    <value>العمود نفسه، حقل آخر</value>
+  </data>
+  <data name="RemoveThisUse" xml:space="preserve">
+    <value>إزالة</value>
+  </data>
+  <data name="SameValueForEveryRow" xml:space="preserve">
+    <value>القيمة نفسها لجميع الصفوف</value>
+  </data>
+  <data name="SameValueHelp" xml:space="preserve">
+    <value>املأ حقلًا لا يحتوي ملفك على عمود له بقيمة واحدة لجميع الصفوف، مثل المحطة نفسها للجميع. تملأ القيمة أيضًا الصفوف التي يكون فيها عمود الحقل فارغًا. لا يمكن أن يشترك معرّف المصدر والحقول التي يجب أن تكون فريدة في قيمة واحدة.</value>
+  </data>
+  <data name="SameValueYes" xml:space="preserve">
+    <value>نعم</value>
+  </data>
+  <data name="SameValueNo" xml:space="preserve">
+    <value>لا</value>
+  </data>
+  <data name="DateQuestion" xml:space="preserve">
+    <value>هل تعني {0} {1} أم {2}؟</value>
+  </data>
+  <data name="DateDayFirst" xml:space="preserve">
+    <value>اليوم أولًا ({0})</value>
+  </data>
+  <data name="DateMonthFirst" xml:space="preserve">
+    <value>الشهر أولًا ({0})</value>
+  </data>
+  <data name="DateFormatSaved" xml:space="preserve">
+    <value>تم الحفظ. نعيد قراءة التواريخ الآن.</value>
+  </data>
+  <data name="SameValueForField" xml:space="preserve">
+    <value>القيمة نفسها لـ {0} في جميع الصفوف</value>
+  </data>
+  <data name="UseForEveryRow" xml:space="preserve">
+    <value>استخدامها لجميع الصفوف</value>
+  </data>
+  <data name="MatchAColumn" xml:space="preserve">
+    <value>مطابقة عمود بدلًا من ذلك</value>
+  </data>
+  <data name="SameValueSaved" xml:space="preserve">
+    <value>تم الحفظ. نعيد فحص الملف الآن.</value>
+  </data>
+  <data name="WriteModeRecalculateHelp" xml:space="preserve">
+    <value>يؤدي تغييره إلى إعادة حساب المعاينة قبل أن تتمكن من الموافقة.</value>
+  </data>
+  <data name="RecalculatePreview" xml:space="preserve">
+    <value>إعادة حساب المعاينة</value>
+  </data>
+  <data name="WriteModeChangedMessage" xml:space="preserve">
+    <value>تم الحفظ. نعيد حساب المعاينة الآن، وستظهر هنا عندما تصبح جاهزة.</value>
+  </data>
+  <data name="PreviewBlockerRecalculating" xml:space="preserve">
+    <value>يُعاد حساب المعاينة الآن. حدّث هذه الصفحة بعد قليل.</value>
+  </data>
+  <data name="ContinueEarlierImport" xml:space="preserve">
+    <value>متابعة استيراد سابق</value>
+  </data>
+  <data name="ContinueEarlierImportHelp" xml:space="preserve">
+    <value>هل ترفع تصديرًا أحدث من النظام نفسه؟ اختر الاستيراد الذي يتابعه: يُتعرَّف على الصفوف التي أحضر ذلك الاستيراد معرّف مصدرها من قبل بدلًا من إضافتها مرة أخرى، ويمكن للملفات الأخرى الإشارة إلى سجلاته بمعرّفات مصدرها.</value>
+  </data>
+  <data name="ContinuingFrom" xml:space="preserve">
+    <value>يتابع «{0}».</value>
+  </data>
+  <data name="ContinuationLocked" xml:space="preserve">
+    <value>أحضر هذا الاستيراد صفوفًا بالفعل، لذا لم يعد بإمكانه متابعة استيراد آخر.</value>
+  </data>
+  <data name="NoEarlierImports" xml:space="preserve">
+    <value>لا يوجد بعد استيراد سابق لمتابعته.</value>
+  </data>
+  <data name="ContinueFrom" xml:space="preserve">
+    <value>يتابع هذا الاستيراد</value>
+  </data>
+  <data name="ContinueNothing" xml:space="preserve">
+    <value>لا يوجد استيراد سابق</value>
+  </data>
+  <data name="ContinuationCandidateDetail" xml:space="preserve">
+    <value>مجموعات بيانات مستوردة: {0}، آخرها في {1}</value>
+  </data>
+  <data name="ContinuationSetMessage" xml:space="preserve">
+    <value>تم الحفظ. يتابع هذا الاستيراد «{0}»، ونعيد فحص الملفات الآن.</value>
+  </data>
+  <data name="ContinuationClearedMessage" xml:space="preserve">
+    <value>تم الحفظ. لم يعد هذا الاستيراد يتابع استيرادًا سابقًا، ونعيد فحص الملفات الآن.</value>
+  </data>
+  <data name="Event.ContinuationSet" xml:space="preserve">
+    <value>عُيّن كمتابعة لاستيراد سابق</value>
+  </data>
+  <data name="Event.ContinuationCleared" xml:space="preserve">
+    <value>توقفت متابعة استيراد سابق</value>
+  </data>
+  <data name="Event.WriteModeChanged" xml:space="preserve">
+    <value>تغيّرت طريقة التعامل مع السجلات الموجودة</value>
+  </data>
+  <data name="Error.import_continuation_locked" xml:space="preserve">
+    <value>أحضر هذا الاستيراد صفوفًا بالفعل، لذا لا يمكنه الآن متابعة استيراد آخر.</value>
+  </data>
+  <data name="Error.import_continuation_unknown" xml:space="preserve">
+    <value>لا يمكن متابعة ذلك الاستيراد: لم يُحضر أي شيء بعد.</value>
+  </data>
+  <data name="Error.import_write_mode_stale" xml:space="preserve">
+    <value>حُسبت المعاينة لخيار آخر في التعامل مع السجلات الموجودة. أعد حسابها ثم وافق.</value>
+  </data>
+  <data name="Error.import_constant_invalid" xml:space="preserve">
+    <value>هذه القيمة لا تناسب هذا الحقل. راجع المثال المجاور له.</value>
+  </data>
+  <data name="Error.import_constant_not_allowed" xml:space="preserve">
+    <value>لا يمكن أن يكون لمعرّف المصدر والحقول التي يجب أن تكون فريدة القيمة نفسها في جميع الصفوف.</value>
+  </data>
+  <data name="Error.import_date_format_unknown" xml:space="preserve">
+    <value>لا يمكننا قراءة تنسيق التاريخ هذا.</value>
+  </data>
+  <data name="Notify.Run.Commit.Completed" xml:space="preserve">
+    <value>عملية الاستيراد في «{0}» اكتملت{1}. افتح الاستيراد والترحيل: {2}</value>
+  </data>
+  <data name="Notify.Run.Commit.Paused" xml:space="preserve">
+    <value>عملية الاستيراد في «{0}» متوقفة مؤقتًا وتحتاج إلى انتباهك{1}. افتح الاستيراد والترحيل: {2}</value>
+  </data>
+  <data name="Notify.Run.Commit.Failed" xml:space="preserve">
+    <value>عملية الاستيراد في «{0}» تعذّر إكمالها{1}. افتح الاستيراد والترحيل: {2}</value>
+  </data>
+  <data name="Notify.Run.Commit.Cancelled" xml:space="preserve">
+    <value>عملية الاستيراد في «{0}» أُلغيت{1}. افتح الاستيراد والترحيل: {2}</value>
+  </data>
+  <data name="Notify.Run.Commit.Other" xml:space="preserve">
+    <value>عملية الاستيراد في «{0}» لديها تحديث{1}. افتح الاستيراد والترحيل: {2}</value>
+  </data>
+  <data name="Notify.Run.Rollback.Completed" xml:space="preserve">
+    <value>عملية التراجع في «{0}» اكتملت{1}. افتح الاستيراد والترحيل: {2}</value>
+  </data>
+  <data name="Notify.Run.Rollback.Paused" xml:space="preserve">
+    <value>عملية التراجع في «{0}» متوقفة مؤقتًا وتحتاج إلى انتباهك{1}. افتح الاستيراد والترحيل: {2}</value>
+  </data>
+  <data name="Notify.Run.Rollback.Failed" xml:space="preserve">
+    <value>عملية التراجع في «{0}» تعذّر إكمالها{1}. افتح الاستيراد والترحيل: {2}</value>
+  </data>
+  <data name="Notify.Run.Rollback.Cancelled" xml:space="preserve">
+    <value>عملية التراجع في «{0}» أُلغيت{1}. افتح الاستيراد والترحيل: {2}</value>
+  </data>
+  <data name="Notify.Run.Rollback.Other" xml:space="preserve">
+    <value>عملية التراجع في «{0}» لديها تحديث{1}. افتح الاستيراد والترحيل: {2}</value>
+  </data>
+  <data name="Notify.Run.Reconcile.Completed" xml:space="preserve">
+    <value>عملية التحقق في «{0}» اكتملت{1}. افتح الاستيراد والترحيل: {2}</value>
+  </data>
+  <data name="Notify.Run.Reconcile.Paused" xml:space="preserve">
+    <value>عملية التحقق في «{0}» متوقفة مؤقتًا وتحتاج إلى انتباهك{1}. افتح الاستيراد والترحيل: {2}</value>
+  </data>
+  <data name="Notify.Run.Reconcile.Failed" xml:space="preserve">
+    <value>عملية التحقق في «{0}» تعذّر إكمالها{1}. افتح الاستيراد والترحيل: {2}</value>
+  </data>
+  <data name="Notify.Run.Reconcile.Cancelled" xml:space="preserve">
+    <value>عملية التحقق في «{0}» أُلغيت{1}. افتح الاستيراد والترحيل: {2}</value>
+  </data>
+  <data name="Notify.Run.Reconcile.Other" xml:space="preserve">
+    <value>عملية التحقق في «{0}» لديها تحديث{1}. افتح الاستيراد والترحيل: {2}</value>
+  </data>
+  <data name="Notify.Run.Extract.Completed" xml:space="preserve">
+    <value>عملية استخراج البيانات في «{0}» اكتملت{1}. افتح الاستيراد والترحيل: {2}</value>
+  </data>
+  <data name="Notify.Run.Extract.Paused" xml:space="preserve">
+    <value>عملية استخراج البيانات في «{0}» متوقفة مؤقتًا وتحتاج إلى انتباهك{1}. افتح الاستيراد والترحيل: {2}</value>
+  </data>
+  <data name="Notify.Run.Extract.Failed" xml:space="preserve">
+    <value>عملية استخراج البيانات في «{0}» تعذّر إكمالها{1}. افتح الاستيراد والترحيل: {2}</value>
+  </data>
+  <data name="Notify.Run.Extract.Cancelled" xml:space="preserve">
+    <value>عملية استخراج البيانات في «{0}» أُلغيت{1}. افتح الاستيراد والترحيل: {2}</value>
+  </data>
+  <data name="Notify.Run.Extract.Other" xml:space="preserve">
+    <value>عملية استخراج البيانات في «{0}» لديها تحديث{1}. افتح الاستيراد والترحيل: {2}</value>
+  </data>
+  <data name="Notify.Run.Activation.Completed" xml:space="preserve">
+    <value>عملية التفعيل في «{0}» اكتملت{1}. افتح الاستيراد والترحيل: {2}</value>
+  </data>
+  <data name="Notify.Run.Activation.Paused" xml:space="preserve">
+    <value>عملية التفعيل في «{0}» متوقفة مؤقتًا وتحتاج إلى انتباهك{1}. افتح الاستيراد والترحيل: {2}</value>
+  </data>
+  <data name="Notify.Run.Activation.Failed" xml:space="preserve">
+    <value>عملية التفعيل في «{0}» تعذّر إكمالها{1}. افتح الاستيراد والترحيل: {2}</value>
+  </data>
+  <data name="Notify.Run.Activation.Cancelled" xml:space="preserve">
+    <value>عملية التفعيل في «{0}» أُلغيت{1}. افتح الاستيراد والترحيل: {2}</value>
+  </data>
+  <data name="Notify.Run.Activation.Other" xml:space="preserve">
+    <value>عملية التفعيل في «{0}» لديها تحديث{1}. افتح الاستيراد والترحيل: {2}</value>
+  </data>
+  <data name="Notify.Run.Analysis.Completed" xml:space="preserve">
+    <value>عملية فحص الملف في «{0}» اكتملت{1}. افتح الاستيراد والترحيل: {2}</value>
+  </data>
+  <data name="Notify.Run.Analysis.Paused" xml:space="preserve">
+    <value>عملية فحص الملف في «{0}» متوقفة مؤقتًا وتحتاج إلى انتباهك{1}. افتح الاستيراد والترحيل: {2}</value>
+  </data>
+  <data name="Notify.Run.Analysis.Failed" xml:space="preserve">
+    <value>عملية فحص الملف في «{0}» تعذّر إكمالها{1}. افتح الاستيراد والترحيل: {2}</value>
+  </data>
+  <data name="Notify.Run.Analysis.Cancelled" xml:space="preserve">
+    <value>عملية فحص الملف في «{0}» أُلغيت{1}. افتح الاستيراد والترحيل: {2}</value>
+  </data>
+  <data name="Notify.Run.Analysis.Other" xml:space="preserve">
+    <value>عملية فحص الملف في «{0}» لديها تحديث{1}. افتح الاستيراد والترحيل: {2}</value>
+  </data>
+  <data name="Notify.Run.Code" xml:space="preserve">
+    <value> (الرمز {0})</value>
+  </data>
+  <data name="Notify.SupportTitle" xml:space="preserve">
+    <value>دعم الاستيراد والترحيل</value>
+  </data>
+  <data name="Notify.Reminder" xml:space="preserve">
+    <value>لم يشهد الاستيراد «{0}» أي نشاط منذ مدة. تابع من حيث توقفت أو ألغِه: {1}</value>
+  </data>
+  <data name="Notify.Managed.On" xml:space="preserve">
+    <value> في {0} بالتوقيت العالمي</value>
+  </data>
+  <data name="Notify.Managed.OnceApproved" xml:space="preserve">
+    <value> بمجرد أن يوافق عليه عضو ثانٍ في فريق Resgrid</value>
+  </data>
+  <data name="Notify.Managed.Invitations" xml:space="preserve">
+    <value>سيدعو Resgrid عدد {3} من الأشخاص من «{0}»{1}. يمكن لأي مسؤول الموافقة على ذلك في وقت أبكر أو إلغاؤه في التحقق والتفعيل: {2}</value>
+  </data>
+  <data name="Notify.Managed.Activation" xml:space="preserve">
+    <value>سيُكمل Resgrid تفعيل «{0}»{1}. يمكن لأي مسؤول الموافقة على ذلك في وقت أبكر أو إلغاؤه في التحقق والتفعيل: {2}</value>
+  </data>
+  <data name="Notify.StaffViews" xml:space="preserve">
+    <value>فتح دعم Resgrid عدد {2} من صفوف «{0}» لإصلاح مشكلات الاستيراد منذ آخر ملخص (عدد أعضاء الفريق: {3}). كل اطلاع وسببه موجود في المخطط الزمني: {1}</value>
+  </data>
+  <data name="Notify.ContractAuthorization" xml:space="preserve">
+    <value>خُوّل Resgrid بموجب عقد لإجراء الترحيل لـ «{0}». كل إجراء يتخذه الفريق موجود في المخطط الزمني، ويمكن لأي مسؤول إلغاء هذا الوصول: {1}</value>
+  </data>
+  <data name="Notify.ArtifactDownloaded" xml:space="preserve">
+    <value>نزّل دعم Resgrid ملفًا رفعته إلى «{0}» للعمل عليه. السبب موجود في المخطط الزمني: {1}</value>
+  </data>
+  <data name="Notify.SampleViewed" xml:space="preserve">
+    <value>اطّلع دعم Resgrid على صفوف نموذجية لمشكلة في «{0}» لتشخيصها. السبب موجود في المخطط الزمني: {1}</value>
+  </data>
+  <data name="Notify.SignoffNeeded" xml:space="preserve">
+    <value>وافق عضوان من فريق Resgrid على خطوة لـ «{0}». وهي بانتظار موافقة أحد المسؤولين: {1}</value>
+  </data>
+  <data name="Notify.ManagedRun" xml:space="preserve">
+    <value>وافق عضوان من فريق Resgrid على خطوة لـ «{0}»، وستُنفّذ حسب الجدول. كل خطوة موجودة في المخطط الزمني: {1}</value>
+  </data>
+  <data name="Notify.Suggestion" xml:space="preserve">
+    <value>اقترح دعم Resgrid إصلاحًا لـ «{0}»: {1}</value>
+  </data>
+  <data name="Notify.Status" xml:space="preserve">
+    <value>حدّث دعم Resgrid طلب الدعم الخاص بك لـ «{0}»: {1}</value>
+  </data>
+  <data name="Notify.Grant" xml:space="preserve">
+    <value>تغيّر وصول دعم Resgrid إلى «{0}»: {1}</value>
+  </data>
+  <data name="Notify.Message" xml:space="preserve">
+    <value>أرسل إليك دعم Resgrid رسالة بخصوص «{0}»: {1}</value>
+  </data>
+  <data name="Consequence.personnel.reactivates-removed" xml:space="preserve">
+    <value>سيعود {0} من الأشخاص الذين أُزيلوا من قسمك. ومثل كل من يضيفه هذا الاستيراد، لن يتمكنوا من تسجيل الدخول أو تلقي أي شيء إلى أن تدعوهم.</value>
+  </data>
+  <data name="WriteMode.Replace" xml:space="preserve">
+    <value>الاستبدال</value>
+  </data>
+  <data name="WriteModeReplaceHelp" xml:space="preserve">
+    <value>يسحب الاستبدال أيضًا سجلات هذا النوع التي لا يحتويها ملفك؛ ويعيدها التراجع عن الاستيراد. ويتطلب وصول دعم Resgrid (التحضير أو أعلى) ومسؤولًا ثانيًا.</value>
+  </data>
+  <data name="Consequence.replace.retires" xml:space="preserve">
+    <value>سيُسحب {0} من السجلات الموجودة التي لا يحتويها ملفك. ويستعيدها التراجع عن الاستيراد.</value>
+  </data>
+  <data name="Issue.IMP-REPLACE-UNSUPPORTED.Title" xml:space="preserve">
+    <value>الاستبدال غير متاح لهذا النوع من البيانات</value>
+  </data>
+  <data name="Issue.IMP-REPLACE-UNSUPPORTED.Help" xml:space="preserve">
+    <value>يعمل الاستبدال لأولويات البلاغات وأنواع الشهادات. اختر الإضافة فقط أو مراجعة التحديثات، أو استبعد مجموعة البيانات هذه.</value>
+  </data>
+  <data name="Issue.IMP-REPLACE-ONE-DATASET.Title" xml:space="preserve">
+    <value>يستخدم الاستبدال ملفًا واحدًا لكل نوع من البيانات</value>
+  </data>
+  <data name="Issue.IMP-REPLACE-ONE-DATASET.Help" xml:space="preserve">
+    <value>توجد مجموعة بيانات أخرى بالوجهة نفسها. استبعد إحداهما، أو ضع كل الصفوف في ملف واحد.</value>
+  </data>
+  <data name="Issue.IMP-REPLACE-CANNOT-RETIRE.Title" xml:space="preserve">
+    <value>لا يمكن سحب بعض السجلات الموجودة</value>
+  </data>
+  <data name="Issue.IMP-REPLACE-CANNOT-RETIRE.Help" xml:space="preserve">
+    <value>لا تزال قيد الاستخدام، مثل نوع شهادة يحمله أشخاص، لذا لا يمكن للاستبدال سحبها. أضفها إلى ملفك، أو اختر مراجعة التحديثات.</value>
+  </data>
+  <data name="Issue.IMP-REPLACE-RETIRE-FAILED.Title" xml:space="preserve">
+    <value>لم تُسحب بعض السجلات</value>
+  </data>
+  <data name="Issue.IMP-REPLACE-RETIRE-FAILED.Help" xml:space="preserve">
+    <value>بدأ استخدامها بعد المعاينة، لذا احتُفظ بها.</value>
+  </data>
+  <data name="Error.import_replace_needs_support" xml:space="preserve">
+    <value>لا يتوفر الاستبدال إلا عندما يملك دعم Resgrid وصول التحضير أو أعلى إلى مساحة العمل هذه.</value>
+  </data>
+  <data name="Error.import_replace_not_allowed" xml:space="preserve">
+    <value>لا يسمح وصول الدعم الذي منحته بالاستبدال.</value>
+  </data>
+  <data name="Error.import_replace_one_dataset" xml:space="preserve">
+    <value>يستورد الاستبدال مجموعة بيانات واحدة فقط في كل مرة.</value>
+  </data>
+  <data name="Journal.Reactivate" xml:space="preserve">
+    <value>{0} من الأعضاء العائدين ستُعاد إزالتهم</value>
+  </data>
+  <data name="Journal.Retire" xml:space="preserve">
+    <value>{0} من السجلات المسحوبة ستُستعاد</value>
+  </data>
+  <data name="Entity.emergency-contacts" xml:space="preserve">
+    <value>جهات اتصال الطوارئ</value>
+  </data>
+  <data name="EntityDesc.emergency-contacts" xml:space="preserve">
+    <value>بمن يُتصل في حالات الطوارئ لكل شخص. كل القيم باستثناء الترتيب والجهة الرئيسية محمية عندما يستخدم قسمك حماية البيانات المتقدمة، ولا يراها فريق Resgrid أبدًا.</value>
+  </data>
+  <data name="Field.emergency-contacts.source_id" xml:space="preserve">
+    <value>معرّف المصدر</value>
+  </data>
+  <data name="FieldDesc.emergency-contacts.source_id" xml:space="preserve">
+    <value>معرّف جهة الاتصال في النظام الذي تتركه. يُتعرَّف به على إعادة استيراد جهة الاتصال نفسها (في مساحة العمل نفسها أو في استيراد يتابعها) بدلًا من إضافتها مرة أخرى.</value>
+  </data>
+  <data name="Field.emergency-contacts.person" xml:space="preserve">
+    <value>الشخص</value>
+  </data>
+  <data name="FieldDesc.emergency-contacts.person" xml:space="preserve">
+    <value>صاحب جهة الاتصال هذه، بمعرّف المصدر الخاص بالشخص أو ببريده الإلكتروني.</value>
+  </data>
+  <data name="Field.emergency-contacts.name" xml:space="preserve">
+    <value>اسم جهة الاتصال</value>
+  </data>
+  <data name="FieldDesc.emergency-contacts.name" xml:space="preserve">
+    <value>الاسم الكامل للشخص الذي يُتصل به.</value>
+  </data>
+  <data name="Field.emergency-contacts.relationship" xml:space="preserve">
+    <value>صلة القرابة</value>
+  </data>
+  <data name="FieldDesc.emergency-contacts.relationship" xml:space="preserve">
+    <value>صلة جهة الاتصال بالشخص، مثل الزوج أو أحد الوالدين.</value>
+  </data>
+  <data name="Field.emergency-contacts.phone" xml:space="preserve">
+    <value>الهاتف</value>
+  </data>
+  <data name="FieldDesc.emergency-contacts.phone" xml:space="preserve">
+    <value>رقم هاتف جهة الاتصال. أدرج رمز الدولة، مثل +1 555 987 6543.</value>
+  </data>
+  <data name="Field.emergency-contacts.alternate_phone" xml:space="preserve">
+    <value>هاتف بديل</value>
+  </data>
+  <data name="FieldDesc.emergency-contacts.alternate_phone" xml:space="preserve">
+    <value>رقم ثانٍ للمحاولة.</value>
+  </data>
+  <data name="Field.emergency-contacts.email" xml:space="preserve">
+    <value>البريد الإلكتروني لجهة الاتصال</value>
+  </data>
+  <data name="FieldDesc.emergency-contacts.email" xml:space="preserve">
+    <value>عنوان البريد الإلكتروني لجهة الاتصال.</value>
+  </data>
+  <data name="Field.emergency-contacts.notes" xml:space="preserve">
+    <value>الملاحظات</value>
+  </data>
+  <data name="FieldDesc.emergency-contacts.notes" xml:space="preserve">
+    <value>أي معلومة تساعد على الوصول إلى جهة الاتصال، مثل وقت الاتصال.</value>
+  </data>
+  <data name="Field.emergency-contacts.is_primary" xml:space="preserve">
+    <value>جهة الاتصال الرئيسية</value>
+  </data>
+  <data name="FieldDesc.emergency-contacts.is_primary" xml:space="preserve">
+    <value>نعم لجهة الاتصال التي يُتصل بها أولًا. للشخص جهة واحدة على الأكثر، وتُعتمد آخر جهة محددة.</value>
+  </data>
+  <data name="Field.emergency-contacts.sort" xml:space="preserve">
+    <value>الترتيب</value>
+  </data>
+  <data name="FieldDesc.emergency-contacts.sort" xml:space="preserve">
+    <value>موضع جهة الاتصال في قائمة الشخص؛ القيمة الأدنى تأتي أولًا.</value>
+  </data>
+  <data name="Entity.unit-certifications" xml:space="preserve">
+    <value>شهادات الوحدات</value>
+  </data>
+  <data name="EntityDesc.unit-certifications" xml:space="preserve">
+    <value>فحوصات كل وحدة وتسجيلاتها واختباراتها، مع أرقامها وتواريخها. تُستورد السجلات المنتهية بالفعل على أنها منتهية، فلا يُعلَن عن شيء.</value>
+  </data>
+  <data name="Field.unit-certifications.source_id" xml:space="preserve">
+    <value>معرّف المصدر</value>
+  </data>
+  <data name="FieldDesc.unit-certifications.source_id" xml:space="preserve">
+    <value>معرّف السجل في النظام الذي تتركه. يتيح لإعادة الاستيراد التعرف عليه بدلًا من إضافته مرتين.</value>
+  </data>
+  <data name="Field.unit-certifications.unit" xml:space="preserve">
+    <value>الوحدة</value>
+  </data>
+  <data name="FieldDesc.unit-certifications.unit" xml:space="preserve">
+    <value>الوحدة المعنية، بمعرّف المصدر الخاص بها أو باسمها.</value>
+  </data>
+  <data name="Field.unit-certifications.certification_type" xml:space="preserve">
+    <value>الشهادة</value>
+  </data>
+  <data name="FieldDesc.unit-certifications.certification_type" xml:space="preserve">
+    <value>الشهادة المعنية، باسمها أو رمزها أو معرّف المصدر الخاص بها. يجب أن تكون من نوع مخصص للوحدات.</value>
+  </data>
+  <data name="Field.unit-certifications.number" xml:space="preserve">
+    <value>رقم الشهادة</value>
+  </data>
+  <data name="FieldDesc.unit-certifications.number" xml:space="preserve">
+    <value>الرقم المدوَّن على الشهادة أو التسجيل.</value>
+  </data>
+  <data name="Field.unit-certifications.issued_by" xml:space="preserve">
+    <value>صادرة عن</value>
+  </data>
+  <data name="FieldDesc.unit-certifications.issued_by" xml:space="preserve">
+    <value>الجهة التي أصدرته أو أجرت الفحص.</value>
+  </data>
+  <data name="Field.unit-certifications.issued_on" xml:space="preserve">
+    <value>تاريخ الإصدار</value>
+  </data>
+  <data name="FieldDesc.unit-certifications.issued_on" xml:space="preserve">
+    <value>تاريخ الإصدار أو إجراء الفحص.</value>
+  </data>
+  <data name="Field.unit-certifications.expires_on" xml:space="preserve">
+    <value>تاريخ الانتهاء</value>
+  </data>
+  <data name="FieldDesc.unit-certifications.expires_on" xml:space="preserve">
+    <value>تاريخ الانتهاء أو الاستحقاق التالي. اتركه فارغًا إذا كان لا ينتهي.</value>
+  </data>
+  <data name="Field.unit-certifications.notes" xml:space="preserve">
+    <value>الملاحظات</value>
+  </data>
+  <data name="FieldDesc.unit-certifications.notes" xml:space="preserve">
+    <value>نتائج أو ملاحظات حول السجل.</value>
+  </data>
+  <data name="Entity.role-requirements" xml:space="preserve">
+    <value>متطلبات الأدوار</value>
+  </data>
+  <data name="EntityDesc.role-requirements" xml:space="preserve">
+    <value>الشهادات التي يتطلبها كل دور. تبقى المتطلبات الأخرى للدور كما هي. إذا كان قسمك يطبّق المتطلبات، فقد يفقد من ينقصه أحدها الدور عند الفحص الليلي التالي.</value>
+  </data>
+  <data name="Field.role-requirements.role" xml:space="preserve">
+    <value>الدور</value>
+  </data>
+  <data name="FieldDesc.role-requirements.role" xml:space="preserve">
+    <value>الدور المعني، باسمه أو بمعرّف المصدر الخاص به.</value>
+  </data>
+  <data name="Field.role-requirements.certification_type" xml:space="preserve">
+    <value>الشهادة المطلوبة</value>
+  </data>
+  <data name="FieldDesc.role-requirements.certification_type" xml:space="preserve">
+    <value>الشهادة التي يتطلبها الدور، باسمها أو رمزها أو معرّف المصدر الخاص بها. يجب أن تكون من نوع يحمله الأشخاص.</value>
+  </data>
+  <data name="Field.role-requirements.mandatory" xml:space="preserve">
+    <value>إلزامية</value>
+  </data>
+  <data name="FieldDesc.role-requirements.mandatory" xml:space="preserve">
+    <value>نعم عندما لا يمكن شغل الدور من دونها (الافتراضي)؛ لا للشهادة الموصى بها.</value>
+  </data>
+  <data name="Field.role-requirements.any_of_group" xml:space="preserve">
+    <value>مجموعة البدائل</value>
+  </data>
+  <data name="FieldDesc.role-requirements.any_of_group" xml:space="preserve">
+    <value>متطلبات الدور الواحد التي تحمل الرقم نفسه بدائل: يكفي امتلاك أي منها.</value>
+  </data>
+  <data name="Field.role-requirements.allow_trainee" xml:space="preserve">
+    <value>يُسمح للمتدرب</value>
+  </data>
+  <data name="FieldDesc.role-requirements.allow_trainee" xml:space="preserve">
+    <value>نعم عندما يُسمح لمن لا يزال يتدرب على الشهادة بشغل الدور.</value>
+  </data>
+  <data name="Field.role-requirements.grace_days" xml:space="preserve">
+    <value>أيام السماح</value>
+  </data>
+  <data name="FieldDesc.role-requirements.grace_days" xml:space="preserve">
+    <value>عدد الأيام التي يحتفظ فيها الشخص بالدور بعد انتهاء الشهادة، بدلًا من القيمة الافتراضية للقسم.</value>
+  </data>
+  <data name="Consequence.unit-certifications.already-expired" xml:space="preserve">
+    <value>انتهت صلاحية {0} من شهادات الوحدات بالفعل. سيضع Resgrid عليها علامة «منتهية» ولن يعلن عنها.</value>
+  </data>
+  <data name="Consequence.role-requirements.enforced" xml:space="preserve">
+    <value>ستُضاف {0} من متطلبات الأدوار أو تُعدَّل بينما يطبّق قسمك المتطلبات. قد يفقد من لا يحمل هذه الشهادات الدور عند الفحص الليلي التالي.</value>
+  </data>
+  <data name="Issue.IMP-UNIT-CERT-TYPE-SCOPE.Title" xml:space="preserve">
+    <value>{0} من شهادات الوحدات تستخدم نوعًا مخصصًا للأشخاص</value>
+  </data>
+  <data name="Issue.IMP-UNIT-CERT-TYPE-SCOPE.Help" xml:space="preserve">
+    <value>اختر نوع شهادة مخصصًا للوحدات.</value>
+  </data>
+  <data name="Error.IMP-UNIT-CERT-TYPE-SCOPE" xml:space="preserve">
+    <value>تستخدم بعض شهادات الوحدات نوعًا مخصصًا للأشخاص</value>
+  </data>
+  <data name="Issue.IMP-REQUIREMENT-TYPE-SCOPE.Title" xml:space="preserve">
+    <value>{0} من متطلبات الأدوار تستخدم نوعًا مخصصًا للوحدات</value>
+  </data>
+  <data name="Issue.IMP-REQUIREMENT-TYPE-SCOPE.Help" xml:space="preserve">
+    <value>لا يمكن للدور أن يتطلب إلا نوع شهادة يحمله الأشخاص.</value>
+  </data>
+  <data name="Error.IMP-REQUIREMENT-TYPE-SCOPE" xml:space="preserve">
+    <value>تستخدم بعض متطلبات الأدوار نوعًا مخصصًا للوحدات</value>
+  </data>
+  <data name="Issue.IMP-PROTECTED-WRITE-BLOCKED.Title" xml:space="preserve">
+    <value>تعذّر حفظ {0} من الصفوف مع حمايتها</value>
+  </data>
+  <data name="Issue.IMP-PROTECTED-WRITE-BLOCKED.Help" xml:space="preserve">
+    <value>تعذّر على حماية البيانات المتقدمة حماية هذه القيم، لذا لم تُحفظ. أعد محاولة الاستيراد لاحقًا أو تواصل مع دعم Resgrid.</value>
+  </data>
+  <data name="Error.IMP-PROTECTED-WRITE-BLOCKED" xml:space="preserve">
+    <value>تعذّر حفظ بعض القيم مع حمايتها</value>
+  </data>
+  <data name="TabConfigure" xml:space="preserve">
+    <value>الإعداد</value>
+  </data>
+  <data name="Step.Configure" xml:space="preserve">
+    <value>إعداد Resgrid</value>
+  </data>
+  <data name="ConfigureIntro" xml:space="preserve">
+    <value>راجع الإعدادات التي سيغيّرها هذا الاستيراد في Resgrid. تأتي الاقتراحات من ملف التشغيل الخاص بك ومن البيانات التي تستوردها. لا يتغير شيء حتى توافق على استيراد.</value>
+  </data>
+  <data name="ConfigureLocked" xml:space="preserve">
+    <value>هناك استيراد أو تراجع قيد الانتظار أو التنفيذ. يمكن تغيير الإعدادات مرة أخرى بعد انتهائه.</value>
+  </data>
+  <data name="ConfigProfileHeader" xml:space="preserve">
+    <value>قسمك</value>
+  </data>
+  <data name="ConfigProfileMissing" xml:space="preserve">
+    <value>لم تصف قسمك بعد. صِفه للحصول على اقتراحات تناسب طريقة عملك.</value>
+  </data>
+  <data name="ConfigProfileDescribe" xml:space="preserve">
+    <value>صِف قسمك</value>
+  </data>
+  <data name="ConfigProfileEdit" xml:space="preserve">
+    <value>تعديل ملف التشغيل</value>
+  </data>
+  <data name="ConfigProfileHelp" xml:space="preserve">
+    <value>يُحفظ ملف التشغيل فورًا ويُشارك مع Admin Assist.</value>
+  </data>
+  <data name="ConfigPendingTile" xml:space="preserve">
+    <value>سيتم تغييره</value>
+  </data>
+  <data name="ConfigSuggestionsTile" xml:space="preserve">
+    <value>بانتظار قرارك</value>
+  </data>
+  <data name="ConfigAcceptAll" xml:space="preserve">
+    <value>قبول جميع الاقتراحات</value>
+  </data>
+  <data name="ConfigAcceptGroup" xml:space="preserve">
+    <value>قبول اقتراحات هذه المجموعة</value>
+  </data>
+  <data name="ConfigApplyHelp" xml:space="preserve">
+    <value>تُغيَّر الإعدادات المقبولة أولًا عند موافقتك على الاستيراد التالي، قبل أي بيانات. ويمكن التراجع عن كل تغيير ما دام أحد لم يغيّر ذلك الإعداد منذئذٍ.</value>
+  </data>
+  <data name="ConfigGroupPending" xml:space="preserve">
+    <value>{0} للتغيير</value>
+  </data>
+  <data name="ConfigGroupSuggestions" xml:space="preserve">
+    <value>{0} مقترحة</value>
+  </data>
+  <data name="ConfigPermissionPreviewRequired" xml:space="preserve">
+    <value>تحتاج تغييرات الأذونات إلى معاينة الأثر في Admin Assist، وهي غير متاحة لك. استخدم صفحة الأمان لتغيير الأذونات.</value>
+  </data>
+  <data name="ConfigColSetting" xml:space="preserve">
+    <value>الإعداد</value>
+  </data>
+  <data name="ConfigColNow" xml:space="preserve">
+    <value>الحالي</value>
+  </data>
+  <data name="ConfigColProposed" xml:space="preserve">
+    <value>المقترح</value>
+  </data>
+  <data name="ConfigColStatus" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>الإجراءات</value>
+  </data>
+  <data name="ConfigImpactHeader" xml:space="preserve">
+    <value>ما الذي يغيّره هذا</value>
+  </data>
+  <data name="ConfigImpactUnknown" xml:space="preserve">
+    <value>غير معروف</value>
+  </data>
+  <data name="ConfigState.Pending" xml:space="preserve">
+    <value>سيتم تغييره</value>
+  </data>
+  <data name="ConfigState.Suggested" xml:space="preserve">
+    <value>مقترح</value>
+  </data>
+  <data name="ConfigState.Rejected" xml:space="preserve">
+    <value>مرفوض</value>
+  </data>
+  <data name="ConfigState.Applied" xml:space="preserve">
+    <value>تم التغيير</value>
+  </data>
+  <data name="ConfigState.Failed" xml:space="preserve">
+    <value>لم يتغير</value>
+  </data>
+  <data name="ConfigState.RolledBack" xml:space="preserve">
+    <value>تم التراجع</value>
+  </data>
+  <data name="ConfigState.Matches" xml:space="preserve">
+    <value>مضبوط بالفعل</value>
+  </data>
+  <data name="ConfigAccept" xml:space="preserve">
+    <value>قبول</value>
+  </data>
+  <data name="ConfigReject" xml:space="preserve">
+    <value>رفض</value>
+  </data>
+  <data name="ConfigUndo" xml:space="preserve">
+    <value>تراجع</value>
+  </data>
+  <data name="ConfigChange" xml:space="preserve">
+    <value>تغيير</value>
+  </data>
+  <data name="ConfigSave" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="ConfigSaved" xml:space="preserve">
+    <value>تم الحفظ. سيُجرى التغيير عند موافقتك على الاستيراد التالي.</value>
+  </data>
+  <data name="ConfigAcceptedCount" xml:space="preserve">
+    <value>تم قبول {0} من الاقتراحات.</value>
+  </data>
+  <data name="ConfigNextHelp" xml:space="preserve">
+    <value>تابع ترقيم نظامك القديم. لا يمكن للرقم التالي إلا أن يرتفع، ولا يخفضه التراجع.</value>
+  </data>
+  <data name="ConfigLatitude" xml:space="preserve">
+    <value>خط العرض</value>
+  </data>
+  <data name="ConfigLongitude" xml:space="preserve">
+    <value>خط الطول</value>
+  </data>
+  <data name="ConfigAddress1" xml:space="preserve">
+    <value>عنوان الشارع</value>
+  </data>
+  <data name="ConfigCity" xml:space="preserve">
+    <value>المدينة</value>
+  </data>
+  <data name="ConfigRegion" xml:space="preserve">
+    <value>الولاية أو المنطقة</value>
+  </data>
+  <data name="ConfigPostalCode" xml:space="preserve">
+    <value>الرمز البريدي</value>
+  </data>
+  <data name="ConfigCountry" xml:space="preserve">
+    <value>الدولة</value>
+  </data>
+  <data name="ConfigMonth" xml:space="preserve">
+    <value>الشهر</value>
+  </data>
+  <data name="ConfigDay" xml:space="preserve">
+    <value>اليوم</value>
+  </data>
+  <data name="ConfigWho" xml:space="preserve">
+    <value>من يمكنه القيام بذلك</value>
+  </data>
+  <data name="ConfigRoles" xml:space="preserve">
+    <value>الأدوار</value>
+  </data>
+  <data name="ConfigRolesHelp" xml:space="preserve">
+    <value>يُستخدم فقط عند السماح لأدوار محددة.</value>
+  </data>
+  <data name="ConfigLockedToGroup" xml:space="preserve">
+    <value>داخل مجموعتهم فقط</value>
+  </data>
+  <data name="ConfigLogoChoose" xml:space="preserve">
+    <value>الشعار المراد استخدامه</value>
+  </data>
+  <data name="ConfigTermHelp" xml:space="preserve">
+    <value>اتركه فارغًا للإبقاء على اسم Resgrid. يظهر الاسم بكل اللغات.</value>
+  </data>
+  <data name="ConfigPatternHelp" xml:space="preserve">
+    <value>استخدم {YYYY} و{YY} و{MM} و{DD} و{SEQ} (مرة واحدة بالضبط) مع الحروف والأرقام و- _ . /</value>
+  </data>
+  <data name="ConfigUploadLogo" xml:space="preserve">
+    <value>رفع شعار</value>
+  </data>
+  <data name="ConfigLogoHelp" xml:space="preserve">
+    <value>PNG أو JPEG، بحد أقصى 2 ميغابايت، و200 بكسل على الأقل في الضلع الأطول.</value>
+  </data>
+  <data name="ConfigGroup.department" xml:space="preserve">
+    <value>القسم</value>
+  </data>
+  <data name="ConfigGroup.branding" xml:space="preserve">
+    <value>الملف التعريفي والشعار</value>
+  </data>
+  <data name="ConfigGroup.modules" xml:space="preserve">
+    <value>الوحدات النمطية</value>
+  </data>
+  <data name="ConfigGroup.terminology" xml:space="preserve">
+    <value>الأسماء</value>
+  </data>
+  <data name="ConfigGroup.map" xml:space="preserve">
+    <value>الخريطة</value>
+  </data>
+  <data name="ConfigGroup.numbering" xml:space="preserve">
+    <value>الترقيم</value>
+  </data>
+  <data name="ConfigGroup.access" xml:space="preserve">
+    <value>الأذونات</value>
+  </data>
+  <data name="ConfigGroupHelp.department" xml:space="preserve">
+    <value>اسم قسمك ومنطقته الزمنية وتنسيق الساعة وعنوانه. لا يغيّر الاستيراد أبدًا المستخدم المسؤول عن القسم.</value>
+  </data>
+  <data name="ConfigGroupHelp.branding" xml:space="preserve">
+    <value>ما يعرضه ملفك التعريفي ومطبوعاتك ورسائل بريدك الإلكتروني.</value>
+  </data>
+  <data name="ConfigGroupHelp.modules" xml:space="preserve">
+    <value>يؤدي إيقاف وحدة نمطية إلى إخفائها عن الجميع، مع الاحتفاظ ببياناتها.</value>
+  </data>
+  <data name="ConfigGroupHelp.terminology" xml:space="preserve">
+    <value>أعد تسمية الوحدات النمطية وأنواع السجلات بالكلمات التي يستخدمها قسمك.</value>
+  </data>
+  <data name="ConfigGroupHelp.map" xml:space="preserve">
+    <value>أين تُفتح الخرائط وكيف تبدو.</value>
+  </data>
+  <data name="ConfigGroupHelp.numbering" xml:space="preserve">
+    <value>كيفية ترقيم البلاغات والمستندات، والرقم التالي الذي سيُستخدم.</value>
+  </data>
+  <data name="ConfigGroupHelp.access" xml:space="preserve">
+    <value>من يمكنه فعل ماذا. لا تُقرأ الأذونات من ملف أبدًا: بل تُقترح أو تُختار هنا، مع معاينة Admin Assist.</value>
+  </data>
+  <data name="ConfigModule.Messaging" xml:space="preserve">
+    <value>الرسائل</value>
+  </data>
+  <data name="ConfigModule.Mapping" xml:space="preserve">
+    <value>الخرائط</value>
+  </data>
+  <data name="ConfigModule.Shifts" xml:space="preserve">
+    <value>الورديات</value>
+  </data>
+  <data name="ConfigModule.Logs" xml:space="preserve">
+    <value>السجلات</value>
+  </data>
+  <data name="ConfigModule.Reports" xml:space="preserve">
+    <value>التقارير</value>
+  </data>
+  <data name="ConfigModule.Documents" xml:space="preserve">
+    <value>المستندات</value>
+  </data>
+  <data name="ConfigModule.Calendar" xml:space="preserve">
+    <value>التقويم</value>
+  </data>
+  <data name="ConfigModule.Notes" xml:space="preserve">
+    <value>الملاحظات</value>
+  </data>
+  <data name="ConfigModule.Training" xml:space="preserve">
+    <value>التدريبات</value>
+  </data>
+  <data name="ConfigModule.Inventory" xml:space="preserve">
+    <value>المخزون</value>
+  </data>
+  <data name="ConfigModule.Maintenance" xml:space="preserve">
+    <value>الصيانة وأوامر العمل (Readiness Pro)</value>
+  </data>
+  <data name="ConfigModule.Checklists" xml:space="preserve">
+    <value>قوائم التحقق</value>
+  </data>
+  <data name="ConfigModule.BusinessOperations" xml:space="preserve">
+    <value>Business Operations</value>
+  </data>
+  <data name="ConfigKind.calls" xml:space="preserve">
+    <value>أرقام البلاغات</value>
+  </data>
+  <data name="ConfigKind.documents" xml:space="preserve">
+    <value>أرقام المستندات</value>
+  </data>
+  <data name="ConfigKind.work-order" xml:space="preserve">
+    <value>أوامر العمل</value>
+  </data>
+  <data name="ConfigKind.invoice" xml:space="preserve">
+    <value>الفواتير</value>
+  </data>
+  <data name="ConfigKind.bid" xml:space="preserve">
+    <value>العروض</value>
+  </data>
+  <data name="ConfigKind.time-report" xml:space="preserve">
+    <value>تقارير الوقت</value>
+  </data>
+  <data name="ConfigField.pattern" xml:space="preserve">
+    <value>النمط</value>
+  </data>
+  <data name="ConfigField.width" xml:space="preserve">
+    <value>أرقام التسلسل</value>
+  </data>
+  <data name="ConfigField.year_start" xml:space="preserve">
+    <value>بداية سنة الترقيم</value>
+  </data>
+  <data name="ConfigField.next" xml:space="preserve">
+    <value>الرقم التالي</value>
+  </data>
+  <data name="Config.department.name" xml:space="preserve">
+    <value>اسم القسم</value>
+  </data>
+  <data name="Config.department.time_zone" xml:space="preserve">
+    <value>المنطقة الزمنية</value>
+  </data>
+  <data name="Config.department.use_24_hour_time" xml:space="preserve">
+    <value>نظام 24 ساعة</value>
+  </data>
+  <data name="Config.department.address" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="Config.branding.short_name" xml:space="preserve">
+    <value>الاسم المختصر</value>
+  </data>
+  <data name="Config.branding.description" xml:space="preserve">
+    <value>الوصف</value>
+  </data>
+  <data name="Config.branding.phone" xml:space="preserve">
+    <value>رقم الهاتف</value>
+  </data>
+  <data name="Config.branding.website" xml:space="preserve">
+    <value>الموقع الإلكتروني</value>
+  </data>
+  <data name="Config.branding.logo" xml:space="preserve">
+    <value>الشعار</value>
+  </data>
+  <data name="Config.map.center" xml:space="preserve">
+    <value>مركز الخريطة</value>
+  </data>
+  <data name="Config.map.zoom" xml:space="preserve">
+    <value>مستوى تكبير الخريطة</value>
+  </data>
+  <data name="Config.map.day_style" xml:space="preserve">
+    <value>نمط الخريطة نهارًا</value>
+  </data>
+  <data name="Config.map.night_style" xml:space="preserve">
+    <value>نمط الخريطة ليلًا</value>
+  </data>
+  <data name="ConfigResgridName" xml:space="preserve">
+    <value>اسم Resgrid ({0})</value>
+  </data>
+  <data name="ConfigNotSet" xml:space="preserve">
+    <value>غير محدد</value>
+  </data>
+  <data name="ConfigOn" xml:space="preserve">
+    <value>مفعّل</value>
+  </data>
+  <data name="ConfigOff" xml:space="preserve">
+    <value>معطّل</value>
+  </data>
+  <data name="ConfigYes" xml:space="preserve">
+    <value>نعم</value>
+  </data>
+  <data name="ConfigNo" xml:space="preserve">
+    <value>لا</value>
+  </data>
+  <data name="ConfigMapAutomatic" xml:space="preserve">
+    <value>تلقائي</value>
+  </data>
+  <data name="ConfigBuiltInNumbers" xml:space="preserve">
+    <value>أرقام Resgrid المدمجة</value>
+  </data>
+  <data name="ConfigNoLogo" xml:space="preserve">
+    <value>لا يوجد شعار</value>
+  </data>
+  <data name="ConfigHasLogo" xml:space="preserve">
+    <value>يوجد شعار</value>
+  </data>
+  <data name="ConfigLogoFile" xml:space="preserve">
+    <value>الشعار المرفوع {0}</value>
+  </data>
+  <data name="ConfigOrigin.Preset" xml:space="preserve">
+    <value>مقترح بناءً على ملف التشغيل</value>
+  </data>
+  <data name="ConfigOrigin.ImportedData" xml:space="preserve">
+    <value>من البيانات التي تستوردها</value>
+  </data>
+  <data name="ConfigOrigin.Administrator" xml:space="preserve">
+    <value>أدخلته أنت</value>
+  </data>
+  <data name="ConfigOrigin.Staff" xml:space="preserve">
+    <value>أدخله دعم Resgrid</value>
+  </data>
+  <data name="ConfigOriginExternalDispatch" xml:space="preserve">
+    <value>تأتي البلاغات من نظام CAD خارجي</value>
+  </data>
+  <data name="ConfigOriginDataset" xml:space="preserve">
+    <value>لـ {0}</value>
+  </data>
+  <data name="ReviewConfigurationHeader" xml:space="preserve">
+    <value>الإعدادات</value>
+  </data>
+  <data name="ReviewConfigurationCount" xml:space="preserve">
+    <value>سيتم تغيير {0} من الإعدادات أولًا، قبل أي بيانات.</value>
+  </data>
+  <data name="ReviewConfigurationIssues" xml:space="preserve">
+    <value>لا يمكن تغيير {0} من الإعدادات كما هي: أصلحها في علامة تبويب الإعداد.</value>
+  </data>
+  <data name="ReviewConfigurationLink" xml:space="preserve">
+    <value>مراجعة الإعدادات</value>
+  </data>
+  <data name="StatementConfiguration" xml:space="preserve">
+    <value>راجعت الإعدادات التي ستتغير. ويمكن التراجع عن كل منها ما دام أحد لم يغيّره منذئذٍ.</value>
+  </data>
+  <data name="PreviewBlockerConfigurationIssues" xml:space="preserve">
+    <value>لا يمكن تغيير بعض الإعدادات المقبولة كما هي: أصلحها أولًا في علامة تبويب الإعداد.</value>
+  </data>
+  <data name="ConfigEntity" xml:space="preserve">
+    <value>الإعدادات</value>
+  </data>
+  <data name="Event.ConfigurationAccepted" xml:space="preserve">
+    <value>تم قبول الإعداد</value>
+  </data>
+  <data name="Event.ConfigurationRejected" xml:space="preserve">
+    <value>تم رفض الإعداد المقترح</value>
+  </data>
+  <data name="Event.ConfigurationReset" xml:space="preserve">
+    <value>تم التراجع عن قرار إعداد</value>
+  </data>
+  <data name="Event.LogoUploaded" xml:space="preserve">
+    <value>تم رفع الشعار</value>
+  </data>
+  <data name="Event.ConfigurationApplied" xml:space="preserve">
+    <value>غيّر الاستيراد الإعدادات</value>
+  </data>
+  <data name="Preset.Term.sar.calls" xml:space="preserve">
+    <value>المهمات</value>
+  </data>
+  <data name="Preset.Term.sar.units" xml:space="preserve">
+    <value>الفرق</value>
+  </data>
+  <data name="Preset.Term.security.calls" xml:space="preserve">
+    <value>الحوادث</value>
+  </data>
+  <data name="Preset.Term.security.personnel" xml:space="preserve">
+    <value>أفراد الأمن</value>
+  </data>
+  <data name="Preset.Term.industrial.calls" xml:space="preserve">
+    <value>الحوادث</value>
+  </data>
+  <data name="Error.IMP-CONFIG-UNKNOWN" xml:space="preserve">
+    <value>لا يمكن للاستيراد تغيير هذا الإعداد.</value>
+  </data>
+  <data name="Error.IMP-CONFIG-REQUIRED" xml:space="preserve">
+    <value>يحتاج هذا الإعداد إلى قيمة.</value>
+  </data>
+  <data name="Error.IMP-CONFIG-TOO-LONG" xml:space="preserve">
+    <value>هذه القيمة طويلة جدًا لهذا الإعداد.</value>
+  </data>
+  <data name="Error.IMP-CONFIG-INVALID" xml:space="preserve">
+    <value>لا يمكن استخدام هذه القيمة لهذا الإعداد.</value>
+  </data>
+  <data name="Error.IMP-CONFIG-OUT-OF-RANGE" xml:space="preserve">
+    <value>هذه القيمة خارج النطاق المسموح به لهذا الإعداد.</value>
+  </data>
+  <data name="Error.IMP-CONFIG-PATTERN" xml:space="preserve">
+    <value>نمط الترقيم هذا غير صالح: يحتاج إلى {SEQ} مرة واحدة بالضبط، ولا شيء حول الرموز سوى الحروف والأرقام و- _ . /.</value>
+  </data>
+  <data name="Error.IMP-CONFIG-ROLES-REQUIRED" xml:space="preserve">
+    <value>اختر دورًا واحدًا على الأقل، أو اختر بطريقة أخرى من يمكنه القيام بذلك.</value>
+  </data>
+  <data name="Error.IMP-CONFIG-ROLES-MISSING" xml:space="preserve">
+    <value>أحد الأدوار المختارة لم يعد موجودًا في قسمك.</value>
+  </data>
+  <data name="Error.IMP-CONFIG-PREVIEW-UNAVAILABLE" xml:space="preserve">
+    <value>يحتاج تغيير الإذن إلى معاينة الأثر في Admin Assist، وهي غير متاحة لك.</value>
+  </data>
+  <data name="Error.IMP-CONFIG-LOGO-MISSING" xml:space="preserve">
+    <value>لم يعد هذا الشعار محفوظًا مع هذا الاستيراد: ارفعه مرة أخرى.</value>
+  </data>
+  <data name="Error.IMP-CONFIG-LOGO-REJECTED" xml:space="preserve">
+    <value>لا يمكن استخدام هذه الصورة شعارًا: استخدم PNG أو JPEG بحجم 2 ميغابايت كحد أقصى، و200 بكسل على الأقل في الضلع الأطول.</value>
+  </data>
+  <data name="Error.IMP-CONFIG-NEEDS-PATTERN" xml:space="preserve">
+    <value>امنح هذا النوع من المستندات نمطًا خاصًا به أولًا: لا تحتوي أرقام Resgrid المدمجة على أرقام تسلسل أو رقم تالٍ.</value>
+  </data>
+  <data name="Error.IMP-CONFIG-BELOW-CURRENT" xml:space="preserve">
+    <value>لا يمكن أن يكون الرقم التالي أقل من الرقم الذي سيستخدمه Resgrid تاليًا بالفعل.</value>
+  </data>
+  <data name="Error.IMP-CONFIG-NOT-APPLIED" xml:space="preserve">
+    <value>تغيّر الترقيم أثناء تنفيذ الاستيراد، لذا لم يُضبط الرقم التالي. أدخله مرة أخرى.</value>
+  </data>
+  <data name="Error.IMP-CONFIG-WRITE-FAILED" xml:space="preserve">
+    <value>تعذّر على Resgrid تغيير هذا الإعداد. حاول مرة أخرى، أو اسأل دعم Resgrid.</value>
+  </data>
+  <data name="Error.IMP-CONFIG-NO-SUGGESTION" xml:space="preserve">
+    <value>لم يعد هناك اقتراح لهذا الإعداد.</value>
+  </data>
+  <data name="Error.import_configuration_changed" xml:space="preserve">
+    <value>غيّر شخص آخر هذا الإعداد في الوقت نفسه. أعد تحميل الصفحة وحاول مرة أخرى.</value>
+  </data>
+  <data name="Error.import_configuration_applied" xml:space="preserve">
+    <value>سبق أن غيّر استيرادٌ هذا الإعداد. اقبل قيمة جديدة بدلًا من ذلك؛ فالتراجع يلغي التغيير.</value>
+  </data>
+  <data name="Error.import_configuration_issues" xml:space="preserve">
+    <value>لا يمكن تغيير بعض الإعدادات المقبولة كما هي: أصلحها أولًا في علامة تبويب الإعداد.</value>
+  </data>
+  <data name="Field.call-types.base_type" xml:space="preserve">
+    <value>الفئة</value>
+  </data>
+  <data name="FieldDesc.call-types.base_type" xml:space="preserve">
+    <value>نوع البلاغ الذي يمثله هذا النوع. يستخدم Resgrid الفئة لا الاسم في التقارير والقيم الافتراضية والتكاملات، لذا يمكن للقسم تسمية أنواع البلاغات كما يشاء.</value>
+  </data>
+  <data name="Field.unit-types.base_type" xml:space="preserve">
+    <value>الفئة</value>
+  </data>
+  <data name="FieldDesc.unit-types.base_type" xml:space="preserve">
+    <value>نوع الوحدة الذي يمثله هذا النوع. يستخدم Resgrid الفئة لا الاسم في التقارير والقيم الافتراضية والتكاملات.</value>
+  </data>
+  <data name="Field.call-priorities.base_type" xml:space="preserve">
+    <value>المعنى</value>
+  </data>
+  <data name="FieldDesc.call-priorities.base_type" xml:space="preserve">
+    <value>الأولوية القياسية التي تعنيها هذه الأولوية. يستخدمها Resgrid حيثما يلزم مقارنة الأولويات بين الأقسام أو التطبيقات، مثل التقارير والترتيب حسب الاستعجال.</value>
+  </data>
+  <data name="Choice.rescue" xml:space="preserve">
+    <value>إنقاذ</value>
+  </data>
+  <data name="Choice.traffic-collision" xml:space="preserve">
+    <value>حادث مروري</value>
+  </data>
+  <data name="Choice.hazardous-materials" xml:space="preserve">
+    <value>مواد خطرة</value>
+  </data>
+  <data name="Choice.alarm" xml:space="preserve">
+    <value>إنذار</value>
+  </data>
+  <data name="Choice.service-call" xml:space="preserve">
+    <value>طلب خدمة</value>
+  </data>
+  <data name="Choice.law-enforcement" xml:space="preserve">
+    <value>إنفاذ القانون</value>
+  </data>
+  <data name="Choice.disaster-weather" xml:space="preserve">
+    <value>كارثة أو طقس</value>
+  </data>
+  <data name="Choice.mutual-aid" xml:space="preserve">
+    <value>مساعدة متبادلة</value>
+  </data>
+  <data name="Choice.non-emergency" xml:space="preserve">
+    <value>نشاط غير طارئ</value>
+  </data>
+  <data name="Choice.engine" xml:space="preserve">
+    <value>سيارة إطفاء</value>
+  </data>
+  <data name="Choice.aerial" xml:space="preserve">
+    <value>سلم هوائي</value>
+  </data>
+  <data name="Choice.tanker" xml:space="preserve">
+    <value>صهريج</value>
+  </data>
+  <data name="Choice.ambulance" xml:space="preserve">
+    <value>إسعاف</value>
+  </data>
+  <data name="Choice.medical-response" xml:space="preserve">
+    <value>استجابة طبية</value>
+  </data>
+  <data name="Choice.command" xml:space="preserve">
+    <value>قيادة</value>
+  </data>
+  <data name="Choice.support" xml:space="preserve">
+    <value>دعم</value>
+  </data>
+  <data name="Choice.watercraft" xml:space="preserve">
+    <value>قارب</value>
+  </data>
+  <data name="Choice.aircraft" xml:space="preserve">
+    <value>طائرة</value>
+  </data>
+  <data name="Choice.patrol" xml:space="preserve">
+    <value>دورية</value>
+  </data>
+  <data name="Choice.low" xml:space="preserve">
+    <value>منخفضة</value>
+  </data>
+  <data name="Choice.medium" xml:space="preserve">
+    <value>متوسطة</value>
+  </data>
+  <data name="Choice.high" xml:space="preserve">
+    <value>عالية</value>
+  </data>
+  <data name="Choice.emergency" xml:space="preserve">
+    <value>طارئة</value>
+  </data>
+  <data name="ConfigOriginStations" xml:space="preserve">
+    <value>منتصف المحطات التي تستوردها (عددها {0})</value>
+  </data>
+  <data name="ProductsHeader" xml:space="preserve">
+    <value>مصدر بياناتك</value>
+  </data>
+  <data name="ProductsHelp" xml:space="preserve">
+    <value>أخبر Resgrid بالمنتجات التي تنتقل منها. يعرض Resgrid عندها ما تُسمّى به مصطلحاتها في Resgrid، ويقترح في علامة التبويب «الإعداد» أسماءها لميزاتك. تُقرأ ملفاتك وتُطابَق بالطريقة نفسها أيًّا كانت المنتجات التي تختارها.</value>
+  </data>
+  <data name="ProductRemoveLabel" xml:space="preserve">
+    <value>إزالة {0}</value>
+  </data>
+  <data name="ProductRemove" xml:space="preserve">
+    <value>إزالة</value>
+  </data>
+  <data name="ProductStatusGlossary" xml:space="preserve">
+    <value>يتوفر مسرد</value>
+  </data>
+  <data name="ProductStatusNone" xml:space="preserve">
+    <value>لا يوجد استيراد مباشر — استخدم جدول بيانات</value>
+  </data>
+  <data name="ProductNoneHelp" xml:space="preserve">
+    <value>للمنتج الذي ليس له استيراد مباشر، صدّر بياناتك منه إلى جدول بيانات أو ملف CSV وطابِق أعمدته هنا.</value>
+  </data>
+  <data name="ProductSpreadsheetGuide" xml:space="preserve">
+    <value>كيفية إعداد جدول بيانات</value>
+  </data>
+  <data name="ProductAdd" xml:space="preserve">
+    <value>إضافة منتج</value>
+  </data>
+  <data name="ProductChoose" xml:space="preserve">
+    <value>اختر منتجًا…</value>
+  </data>
+  <data name="ProductNotListed" xml:space="preserve">
+    <value>غير مدرج؟ صدّر بياناتك إلى جدول بيانات أو ملف CSV: تُطابَق كل الملفات بالطريقة نفسها.</value>
+  </data>
+  <data name="ProductAddButton" xml:space="preserve">
+    <value>إضافة المنتج</value>
+  </data>
+  <data name="ProductAddedMessage" xml:space="preserve">
+    <value>أُضيف {0}.</value>
+  </data>
+  <data name="ProductRemovedMessage" xml:space="preserve">
+    <value>أُزيل المنتج.</value>
+  </data>
+  <data name="GlossaryHeader" xml:space="preserve">
+    <value>المسرد</value>
+  </data>
+  <data name="GlossaryHelp" xml:space="preserve">
+    <value>ما تسمّي به المنتجاتُ التي تنتقل منها الأشياءَ، وما يسمّيها به Resgrid. يقرأ Resgrid كل ملف بالطريقة نفسها، فاستخدم هذه القائمة عندما تختار محتوى كل ملف.</value>
+  </data>
+  <data name="GlossaryCaption" xml:space="preserve">
+    <value>مسرد {0}</value>
+  </data>
+  <data name="GlossaryProductColumn" xml:space="preserve">
+    <value>في {0}</value>
+  </data>
+  <data name="GlossaryResgridColumn" xml:space="preserve">
+    <value>في Resgrid</value>
+  </data>
+  <data name="GlossaryFeatureNotImported" xml:space="preserve">
+    <value>{0} (لا يُستورد)</value>
+  </data>
+  <data name="GlossaryNoEquivalent" xml:space="preserve">
+    <value>لا يُستورد</value>
+  </data>
+  <data name="GlossaryOffered" xml:space="preserve">
+    <value>اسم مقترح</value>
+  </data>
+  <data name="GlossaryOfferedHelp" xml:space="preserve">
+    <value>يقترح Resgrid هذه الكلمة اسمًا لديك لهذه الميزة في علامة التبويب «الإعداد».</value>
+  </data>
+  <data name="ConfigOrigin.Product" xml:space="preserve">
+    <value>مقترح بناءً على المنتجات التي تنتقل منها</value>
+  </data>
+  <data name="Event.SourceRemoved" xml:space="preserve">
+    <value>أُزيل مصدر</value>
+  </data>
+  <data name="Error.import_source_unknown" xml:space="preserve">
+    <value>تعذّر العثور على هذا المنتج. أعد تحميل الصفحة وحاول مرة أخرى.</value>
+  </data>
+  <data name="Error.import_source_exists" xml:space="preserve">
+    <value>أُضيف هذا المنتج بالفعل.</value>
+  </data>
+  <data name="Error.import_source_in_use" xml:space="preserve">
+    <value>إحدى مجموعات البيانات في هذا الاستيراد مصدرها هذا المنتج، لذا لا يمكن إزالته.</value>
+  </data>
+  <data name="ConfigGroup.records" xml:space="preserve">
+    <value>ترقيم السجلات</value>
+  </data>
+  <data name="ConfigGroupHelp.records" xml:space="preserve">
+    <value>كيفية ترقيم السجلات: النمط، وبادئة كل نوع سجل ورقمه التالي، وأرقام طلبات الاطلاع على السجلات والمباني وعمليات التفتيش والتصاريح والتحقيقات والأدلة. يظهر ما دامت السجلات مفعّلة لقسمك.</value>
+  </data>
+  <data name="ConfigKind.records" xml:space="preserve">
+    <value>أرقام السجلات</value>
+  </data>
+  <data name="ConfigKind.records-request" xml:space="preserve">
+    <value>الاطلاع على السجلات</value>
+  </data>
+  <data name="ConfigKind.occupancy" xml:space="preserve">
+    <value>المباني</value>
+  </data>
+  <data name="ConfigKind.inspection" xml:space="preserve">
+    <value>عمليات التفتيش</value>
+  </data>
+  <data name="ConfigKind.permit" xml:space="preserve">
+    <value>التصاريح</value>
+  </data>
+  <data name="ConfigKind.investigation" xml:space="preserve">
+    <value>التحقيقات</value>
+  </data>
+  <data name="ConfigKind.evidence" xml:space="preserve">
+    <value>الأدلة</value>
+  </data>
+  <data name="ConfigField.prefix" xml:space="preserve">
+    <value>البادئة</value>
+  </data>
+  <data name="ConfigRecordsPatternHelp" xml:space="preserve">
+    <value>استخدم {PREFIX} (نوع السجل) و{YYYY} أو {YY} و{GROUP} (المحطة، ويليه - أو _ أو .) و{SEQ} (مرة واحدة بالضبط) مع الحروف والأرقام و- _ .</value>
+  </data>
+  <data name="ConfigPrefixHelp" xml:space="preserve">
+    <value>من 2 إلى 6 أحرف أو أرقام. اتركه فارغًا لاستخدام البادئة الافتراضية لنوع السجل. تبدأ البادئة الجديدة تسلسلًا خاصًا بها.</value>
+  </data>
+  <data name="Error.IMP-CONFIG-PREFIX" xml:space="preserve">
+    <value>بادئة نوع السجل من 2 إلى 6 أحرف أو أرقام.</value>
+  </data>
+  <data name="Error.IMP-CONFIG-RECORDS-PER-GROUP" xml:space="preserve">
+    <value>يرقّم هذا النمط كل محطة على حدة، لذا اضبط أرقامه التالية في إعدادات السجلات.</value>
+  </data>
+  <data name="Error.IMP-CONFIG-RECORDS-SHARED" xml:space="preserve">
+    <value>تتشارك أنواع السجلات هذه تسلسلًا واحدًا، لذا امنحها الرقم التالي نفسه.</value>
+  </data>
+  <data name="Error.IMP-CONFIG-UNAVAILABLE" xml:space="preserve">
+    <value>السجلات غير مفعّلة لقسمك، لذا لا يمكن تغيير ترقيم السجلات هنا. تراجع عن هذا التغيير.</value>
+  </data>
+</root>

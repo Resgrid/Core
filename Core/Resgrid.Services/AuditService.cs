@@ -82,6 +82,26 @@ namespace Resgrid.Services
 					return "Department API Key Created";
 				case AuditLogTypes.DepartmentApiKeyRevoked:
 					return "Department API Key Revoked";
+				case AuditLogTypes.DepartmentImportApproved:
+					return "Department Import Approved";
+				case AuditLogTypes.DepartmentImportCommitted:
+					return "Department Import Committed";
+				case AuditLogTypes.DepartmentImportRolledBack:
+					return "Department Import Rolled Back";
+				case AuditLogTypes.DepartmentImportActivated:
+					return "Department Import Activated";
+				case AuditLogTypes.DepartmentImportInvitationsSent:
+					return "Department Import Invitations Sent";
+				case AuditLogTypes.DepartmentImportSupportAccessGranted:
+					return "Department Import Support Access Granted";
+				case AuditLogTypes.DepartmentImportSupportAccessRevoked:
+					return "Department Import Support Access Revoked";
+				case AuditLogTypes.DepartmentImportStaffValuesViewed:
+					return "Department Import Staff Values Viewed";
+				case AuditLogTypes.DepartmentImportArtifactDownloaded:
+					return "Department Import Artifact Downloaded";
+				case AuditLogTypes.DepartmentImportArtifactsPurged:
+					return "Department Import Artifacts Purged";
 				case AuditLogTypes.AdminAssistReviewChanged:
 					return "Admin Assist Review Changed";
 				case AuditLogTypes.DepartmentSettingsChanged:

@@ -1,0 +1,37 @@
+{
+  "Key": "eso",
+  "Version": "2026.11.1",
+  "ProductName": "ESO Fire RMS",
+  "Kind": "file-sample-validated",
+  "Grade": "B",
+  "Published": false,
+  "SourceUrl": "https://go.eso.com/fire-rms-b-ppc",
+  "VerifiedOn": "2026-10-12",
+  "Glossary": [
+    {
+      "Term": "Personnel",
+      "Language": "en",
+      "Target": "entity:personnel"
+    },
+    {
+      "Term": "Assets",
+      "Language": "en",
+      "Target": "term:module.inventory"
+    },
+    {
+      "Term": "Hydrants",
+      "Language": "en",
+      "Target": "term:module.records"
+    },
+    {
+      "Term": "Properties",
+      "Language": "en",
+      "Target": "term:module.records"
+    },
+    {
+      "Term": "Incidents",
+      "Language": "en",
+      "Target": "term:module.calls"
+    }
+  ]
+}

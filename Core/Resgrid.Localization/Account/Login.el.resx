@@ -264,4 +264,28 @@
   <data name="Region" xml:space="preserve">
     <value>Περιοχή</value>
   </data>
+  <data name="ImportInviteText" xml:space="preserve">
+    <value>Το {0} δημιούργησε έναν λογαριασμό Resgrid για εσάς. Επιλέξτε έναν κωδικό πρόσβασης για να συνδεθείτε για πρώτη φορά.</value>
+  </data>
+  <data name="ImportInviteUserName" xml:space="preserve">
+    <value>Το όνομα χρήστη σας</value>
+  </data>
+  <data name="ImportInviteSetPassword" xml:space="preserve">
+    <value>Ορισμός κωδικού πρόσβασης και σύνδεση</value>
+  </data>
+  <data name="ImportJoinText" xml:space="preserve">
+    <value>Το {0} σας προσκάλεσε να συμμετάσχετε με τον υπάρχοντα λογαριασμό σας στο Resgrid.</value>
+  </data>
+  <data name="ImportJoinSignIn" xml:space="preserve">
+    <value>Συνδεθείτε για αποδοχή</value>
+  </data>
+  <data name="ImportJoinAccept" xml:space="preserve">
+    <value>Συμμετοχή στο {0}</value>
+  </data>
+  <data name="ImportJoinWrongAccount" xml:space="preserve">
+    <value>Αυτή η πρόσκληση στάλθηκε σε διαφορετική διεύθυνση email. Συνδεθείτε με τον λογαριασμό στον οποίο στάλθηκε.</value>
+  </data>
+  <data name="ImportInviteFailed" xml:space="preserve">
+    <value>Αυτή η πρόσκληση δεν μπορεί πλέον να γίνει αποδεκτή. Επικοινωνήστε με τον διαχειριστή που σας προσκάλεσε.</value>
+  </data>
 </root>

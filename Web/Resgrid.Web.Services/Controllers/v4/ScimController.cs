@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Resgrid.Config;
 using Resgrid.Model;
+using Resgrid.Model.Onboarding;
 using Resgrid.Model.Services;
 using Resgrid.Web.Services.Helpers;
 
@@ -36,6 +37,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IExternalIdentityLinkService _externalIdentityLinkService;
 		private readonly IUserSessionService _userSessionService;
 		private readonly ILimitsService _limitsService;
+		private readonly IMemberProvisioningService _memberProvisioning;
 
 		public ScimController(
 			IDepartmentSsoService ssoService,
@@ -45,8 +47,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 			UserManager<Model.Identity.IdentityUser> userManager,
 			IExternalIdentityLinkService externalIdentityLinkService,
 			IUserSessionService userSessionService,
-			ILimitsService limitsService)
+			ILimitsService limitsService,
+			IMemberProvisioningService memberProvisioning)
 		{
+			_memberProvisioning = memberProvisioning;
 			_ssoService = ssoService;
 			_departmentsService = departmentsService;
 			_userProfileService = userProfileService;
@@ -169,34 +173,36 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return Conflict(ScimError("uniqueness", "A user with this email already exists."));
 			}
 
-			var newUser = new Model.Identity.IdentityUser
-			{
-				UserName = resource.UserName,
-				Email = email,
-				EmailConfirmed = true
-			};
-
-			var createResult = await _userManager.CreateAsync(newUser, Guid.NewGuid().ToString("N") + "Aa1!");
-			if (!createResult.Succeeded)
-			{
-				var errors = string.Join("; ", createResult.Errors.Select(e => e.Description));
-				await SaveScimAuditAsync(departmentId, null, AuditLogTypes.ScimUserCreated,
-					successful: false, data: $"IdentityUser creation failed: {errors}");
-				return ScimBadRequest(errors);
-			}
-
-			// Add to department
-			await _departmentsService.AddUserToDepartmentAsync(departmentId, newUser.Id, false, cancellationToken);
-
-			// Create profile
+			// Account, membership and profile through the shared member provisioning (Department Import plan section 11.2),
+			// with today's interactive effects. SCIM keeps not creating the user-role and extension rows.
 			var profile = new UserProfile
 			{
-				UserId = newUser.Id,
 				FirstName = resource.Name?.GivenName ?? string.Empty,
 				LastName = resource.Name?.FamilyName ?? string.Empty,
 				MobileCarrier = 0
 			};
-			await _userProfileService.SaveProfileAsync(departmentId, profile, cancellationToken);
+			var provisioned = await _memberProvisioning.ProvisionAsync(new MemberProvisioningRequest
+			{
+				DepartmentId = departmentId,
+				UserId = Guid.NewGuid().ToString().ToUpper(),
+				UserName = resource.UserName,
+				Email = email,
+				Password = Guid.NewGuid().ToString("N") + "Aa1!",
+				EmailConfirmed = true,
+				InitializeAccountExtras = false,
+				Profile = profile
+			}, ImportEffectPolicy.Interactive, cancellationToken);
+
+			if (!provisioned.Succeeded)
+			{
+				await SaveScimAuditAsync(departmentId, null, AuditLogTypes.ScimUserCreated,
+					successful: false, data: $"IdentityUser creation failed: {provisioned.ErrorCode}");
+				return provisioned.ErrorCode == "account_exists"
+					? Conflict(ScimError("uniqueness", "A user with this email already exists."))
+					: ScimBadRequest(provisioned.ErrorCode);
+			}
+
+			var newUser = await _userManager.FindByIdAsync(provisioned.UserId);
 
 			var member = await _departmentsService.GetDepartmentMemberAsync(newUser.Id, departmentId);
 

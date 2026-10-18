@@ -66,6 +66,13 @@ namespace Resgrid.Tests.AdminAssist
 		[TestCase("shift-open-slots", "upcomingOpenShiftSlots", 1, 0)]
 		[TestCase("shift-overlaps", "overlappingShiftPersonnel", 1, 0)]
 		[TestCase("shift-trades", "unfilledShiftTrades", 1, 0)]
+		[TestCase("import-blocking-issues", "importBlockingIssueCount", 1, 0)]
+		[TestCase("import-unreconciled", "importUnreconciledRunCount", 1, 0)]
+		[TestCase("import-dormant-members", "importOldestDormantDays", 15, 14)]
+		[TestCase("import-paused-intake", "importPausedIntakeCount", 1, 0)]
+		[TestCase("import-disabled-automation", "importDisabledScheduleCount", 1, 0)]
+		[TestCase("import-enforcement-relaxed", "importRelaxedEnforcementCount", 1, 0)]
+		[TestCase("import-files-retained", "importArtifactsRetainedCount", 1, 0)]
 		public void Numeric_rules_preserve_thresholds(string ruleId, string fact, double failing, double passing)
 		{
 			var rule = Rule(ruleId);

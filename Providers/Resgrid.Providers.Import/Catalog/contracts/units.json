@@ -1,0 +1,191 @@
+{
+  "Key": "units",
+  "Version": "2026.11.1",
+  "LabelKey": "Entity.units",
+  "DescriptionKey": "EntityDesc.units",
+  "Icon": "fa-ambulance",
+  "Area": "units",
+  "Wave": "2",
+  "Order": 80,
+  "DependsOn": [
+    "unit-types",
+    "groups"
+  ],
+  "Gate": {
+    "Flags": [
+      "Onboarding.MigrationWizard"
+    ],
+    "Permissions": []
+  },
+  "IdentityFields": [
+    "source_id"
+  ],
+  "NaturalKey": [
+    "name"
+  ],
+  "SupportsCustomFields": true,
+  "MatchPolicy": "name",
+  "MaxRows": 0,
+  "Fields": [
+    {
+      "Key": "source_id",
+      "LabelKey": "Field.units.source_id",
+      "DescriptionKey": "FieldDesc.units.source_id",
+      "Type": "text",
+      "MaxLength": 256,
+      "Unique": "in-file",
+      "WriterPath": "ImportExternalId.SourceId",
+      "Aliases": [
+        "id",
+        "source id",
+        "external id",
+        "record id",
+        "key"
+      ],
+      "Example": "1042",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "name",
+      "LabelKey": "Field.units.name",
+      "DescriptionKey": "FieldDesc.units.name",
+      "Type": "text",
+      "Required": true,
+      "MaxLength": 100,
+      "Unique": "in-file",
+      "WriterPath": "Unit.Name",
+      "Aliases": [
+        "name",
+        "unit",
+        "unit name",
+        "call sign",
+        "callsign",
+        "apparatus",
+        "vehicle"
+      ],
+      "Example": "Engine 1",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "type",
+      "LabelKey": "Field.units.type",
+      "DescriptionKey": "FieldDesc.units.type",
+      "Type": "reference",
+      "References": "unit-types",
+      "ReferenceMatch": "name",
+      "WriterPath": "Unit.Type",
+      "Aliases": [
+        "type",
+        "unit type",
+        "apparatus type",
+        "vehicle type"
+      ],
+      "Example": "Engine",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "station",
+      "LabelKey": "Field.units.station",
+      "DescriptionKey": "FieldDesc.units.station",
+      "Type": "reference",
+      "References": "groups",
+      "ReferenceMatch": "source-id",
+      "WriterPath": "Unit.StationGroupId",
+      "Aliases": [
+        "station",
+        "group",
+        "home station",
+        "quarters"
+      ],
+      "Example": "Station 1",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "vin",
+      "LabelKey": "Field.units.vin",
+      "DescriptionKey": "FieldDesc.units.vin",
+      "Type": "text",
+      "MaxLength": 50,
+      "WriterPath": "Unit.VIN",
+      "Aliases": [
+        "vin",
+        "vehicle identification number",
+        "serial number"
+      ],
+      "Example": "1FDUF5HT1JDA00000",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "plate_number",
+      "LabelKey": "Field.units.plate_number",
+      "DescriptionKey": "FieldDesc.units.plate_number",
+      "Type": "text",
+      "MaxLength": 50,
+      "WriterPath": "Unit.PlateNumber",
+      "Aliases": [
+        "plate",
+        "plate number",
+        "license plate",
+        "registration",
+        "tag"
+      ],
+      "Example": "FD 1234",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "four_wheel_drive",
+      "LabelKey": "Field.units.four_wheel_drive",
+      "DescriptionKey": "FieldDesc.units.four_wheel_drive",
+      "Type": "boolean",
+      "WriterPath": "Unit.FourWheel",
+      "Aliases": [
+        "4wd",
+        "four wheel drive",
+        "4x4",
+        "awd"
+      ],
+      "Example": "no",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "special_permit",
+      "LabelKey": "Field.units.special_permit",
+      "DescriptionKey": "FieldDesc.units.special_permit",
+      "Type": "boolean",
+      "WriterPath": "Unit.SpecialPermit",
+      "Aliases": [
+        "special permit",
+        "permit",
+        "cdl"
+      ],
+      "Example": "no",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "seats",
+      "LabelKey": "Field.units.seats",
+      "DescriptionKey": "FieldDesc.units.seats",
+      "Type": "multi",
+      "ItemType": "text",
+      "Separator": ";",
+      "WriterPath": "UnitRole.Name",
+      "Aliases": [
+        "seats",
+        "positions",
+        "riding positions",
+        "roles",
+        "crew"
+      ],
+      "Example": "Officer; Driver; Firefighter; Firefighter",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    }
+  ],
+  "RowRules": []
+}

@@ -1,0 +1,28 @@
+{
+  "Key": "mark43",
+  "Version": "2026.11.1",
+  "ProductName": "Mark43 CAD",
+  "Kind": "api-extraction",
+  "Grade": "A",
+  "Phase": "2B",
+  "Published": false,
+  "SourceUrl": "https://developers.mark43.com/",
+  "VerifiedOn": "2026-10-12",
+  "Glossary": [
+    {
+      "Term": "Stations",
+      "Language": "en",
+      "Target": "entity:groups"
+    },
+    {
+      "Term": "Units",
+      "Language": "en",
+      "Target": "entity:units"
+    },
+    {
+      "Term": "Unit statuses",
+      "Language": "en",
+      "Target": "entity:custom-statuses"
+    }
+  ]
+}

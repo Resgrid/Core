@@ -1,0 +1,165 @@
+{
+  "Key": "personnel-certifications",
+  "Version": "2026.11.1",
+  "LabelKey": "Entity.personnel-certifications",
+  "DescriptionKey": "EntityDesc.personnel-certifications",
+  "Icon": "fa-graduation-cap",
+  "Area": "people",
+  "Wave": "2",
+  "Order": 60,
+  "DependsOn": [
+    "personnel",
+    "certification-types"
+  ],
+  "Gate": {
+    "Flags": [
+      "Onboarding.MigrationWizard"
+    ],
+    "Permissions": []
+  },
+  "IdentityFields": [],
+  "NaturalKey": [
+    "person",
+    "certification_type",
+    "number"
+  ],
+  "SupportsCustomFields": false,
+  "MatchPolicy": "none",
+  "MaxRows": 0,
+  "Fields": [
+    {
+      "Key": "person",
+      "LabelKey": "Field.personnel-certifications.person",
+      "DescriptionKey": "FieldDesc.personnel-certifications.person",
+      "Type": "reference",
+      "Required": true,
+      "References": "personnel",
+      "ReferenceMatch": "email",
+      "WriterPath": "PersonnelCertification.UserId",
+      "Aliases": [
+        "person",
+        "member",
+        "email",
+        "employee",
+        "name"
+      ],
+      "Example": "alex.rivera@example.org",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "certification_type",
+      "LabelKey": "Field.personnel-certifications.certification_type",
+      "DescriptionKey": "FieldDesc.personnel-certifications.certification_type",
+      "Type": "reference",
+      "Required": true,
+      "References": "certification-types",
+      "ReferenceMatch": "name",
+      "WriterPath": "PersonnelCertification.DepartmentCertificationTypeId",
+      "Aliases": [
+        "certification",
+        "certification type",
+        "qualification",
+        "type",
+        "course"
+      ],
+      "Example": "Firefighter I",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "number",
+      "LabelKey": "Field.personnel-certifications.number",
+      "DescriptionKey": "FieldDesc.personnel-certifications.number",
+      "Type": "text",
+      "MaxLength": 200,
+      "Sensitivity": "Restricted",
+      "Protected": "personnelcertifications.number",
+      "WriterPath": "PersonnelCertification.Number",
+      "Aliases": [
+        "number",
+        "certificate number",
+        "license number",
+        "cert number"
+      ],
+      "Example": "FF-2019-0042",
+      "Unique": "none"
+    },
+    {
+      "Key": "area",
+      "LabelKey": "Field.personnel-certifications.area",
+      "DescriptionKey": "FieldDesc.personnel-certifications.area",
+      "Type": "text",
+      "MaxLength": 200,
+      "Sensitivity": "Personal",
+      "WriterPath": "PersonnelCertification.Area",
+      "Aliases": [
+        "area",
+        "state",
+        "jurisdiction"
+      ],
+      "Example": "Illinois",
+      "Unique": "none"
+    },
+    {
+      "Key": "issued_by",
+      "LabelKey": "Field.personnel-certifications.issued_by",
+      "DescriptionKey": "FieldDesc.personnel-certifications.issued_by",
+      "Type": "text",
+      "MaxLength": 200,
+      "Sensitivity": "Personal",
+      "WriterPath": "PersonnelCertification.IssuedBy",
+      "Aliases": [
+        "issued by",
+        "issuer",
+        "authority"
+      ],
+      "Example": "State Fire Academy",
+      "Unique": "none"
+    },
+    {
+      "Key": "issued_on",
+      "LabelKey": "Field.personnel-certifications.issued_on",
+      "DescriptionKey": "FieldDesc.personnel-certifications.issued_on",
+      "Type": "date",
+      "WriterPath": "PersonnelCertification.RecievedOn",
+      "Aliases": [
+        "issued",
+        "issued on",
+        "issue date",
+        "received",
+        "date issued",
+        "certified on"
+      ],
+      "Example": "2019-05-14",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "expires_on",
+      "LabelKey": "Field.personnel-certifications.expires_on",
+      "DescriptionKey": "FieldDesc.personnel-certifications.expires_on",
+      "Type": "date",
+      "WriterPath": "PersonnelCertification.ExpiresOn",
+      "Aliases": [
+        "expires",
+        "expires on",
+        "expiration",
+        "expiration date",
+        "expiry",
+        "valid until"
+      ],
+      "Example": "2027-05-14",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    }
+  ],
+  "RowRules": [
+    {
+      "Kind": "after-or-equal",
+      "Field": "expires_on",
+      "Other": "issued_on",
+      "Code": "IMP-ROW-EXPIRES-BEFORE-ISSUED"
+    }
+  ]
+}

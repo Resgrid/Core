@@ -28,12 +28,15 @@ namespace Resgrid.Services
 			_mapLayersDocRepository = mapLayersDocRepository;
 		}
 
-		public async Task<PoiType> SavePOITypeAsync(PoiType type, CancellationToken cancellationToken = default(CancellationToken))
+		public Task<PoiType> SavePOITypeAsync(PoiType type, CancellationToken cancellationToken = default(CancellationToken))
+			=> SavePOITypeAsync(type, Resgrid.Model.Onboarding.ImportEffectPolicy.Interactive, cancellationToken);
+
+		public async Task<PoiType> SavePOITypeAsync(PoiType type, Resgrid.Model.Onboarding.ImportEffectPolicy effects, CancellationToken cancellationToken)
 		{
 			var saved = await _poiTypesRepository.SaveOrUpdateAsync(type, cancellationToken);
 
 			// Each POI's projection carries its type name; a renamed type re-projects them.
-			if (_searchProjections != null && saved != null && type != null && type.PoiTypeId > 0)
+			if (effects.ImmediateSearchProjection && _searchProjections != null && saved != null && type != null && type.PoiTypeId > 0)
 			{
 				var stored = await _poiTypesRepository.GetPoiTypeByTypeIdAsync(saved.PoiTypeId);
 				foreach (var poi in stored?.Pois ?? Enumerable.Empty<Poi>())
@@ -46,10 +49,13 @@ namespace Resgrid.Services
 			return saved;
 		}
 
-		public async Task<Poi> SavePOIAsync(Poi poi, CancellationToken cancellationToken = default(CancellationToken))
+		public Task<Poi> SavePOIAsync(Poi poi, CancellationToken cancellationToken = default(CancellationToken))
+			=> SavePOIAsync(poi, Resgrid.Model.Onboarding.ImportEffectPolicy.Interactive, cancellationToken);
+
+		public async Task<Poi> SavePOIAsync(Poi poi, Resgrid.Model.Onboarding.ImportEffectPolicy effects, CancellationToken cancellationToken)
 		{
 			var saved = await _poisRepository.SaveOrUpdateAsync(poi, cancellationToken);
-			if (_searchProjections != null && saved != null)
+			if (effects.ImmediateSearchProjection && _searchProjections != null && saved != null)
 				await _searchProjections.Value.ProjectPoiAsync(saved, cancellationToken);
 			return saved;
 		}

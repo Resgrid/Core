@@ -52,8 +52,9 @@ namespace Resgrid.Tests.Web.User
 				"public async Task<IActionResult> AddPerson(AddPersonModel model");
 
 			var clearLegacy = body.IndexOf("model.Profile.IdentificationNumber = null;", StringComparison.Ordinal);
-			var saveProfile = body.IndexOf("_userProfileService.SaveProfileAsync", StringComparison.Ordinal);
-			var addMembership = body.IndexOf("_departmentsService.AddUserToDepartmentAsync", StringComparison.Ordinal);
+			// Profile and membership are written by the shared member provisioning (Department Import plan section 11.2).
+			var saveProfile = body.IndexOf("_memberProvisioning.ProvisionAsync", StringComparison.Ordinal);
+			var addMembership = saveProfile;
 			var saveDepartmentValue = body.IndexOf("_memberSensitiveDataService.SaveAsync", StringComparison.Ordinal);
 
 			clearLegacy.Should().BeGreaterThan(0, "the posted value must not reach the global profile writer");

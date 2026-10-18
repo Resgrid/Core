@@ -114,6 +114,40 @@ namespace Resgrid.Services
 			return saved;
 		}
 
+		public async Task<DepartmentGroup> SaveAsync(DepartmentGroup departmentGroup, Model.Onboarding.ImportEffectPolicy effects, CancellationToken cancellationToken)
+		{
+			if (departmentGroup.Address != null)
+			{
+				var address = await _addressService.SaveAddressAsync(departmentGroup.Address, cancellationToken);
+				if (address != null)
+					departmentGroup.AddressId = address.AddressId;
+			}
+
+			// Joins the caller's unit of work (the import chunk transaction) and never commits it; firstLevelOnly for the
+			// same self-referencing Children reason as SaveAsync above. Import groups carry no members here.
+			var saved = await _departmentGroupsRepository.SaveOrUpdateAsync(departmentGroup, cancellationToken, true);
+
+			await InvalidateGroupInCache(saved.DepartmentGroupId);
+			if (effects.ImmediateSecurityRefresh)
+				SendGroupVisibilityRefresh(saved.DepartmentId);
+			if (effects.ImmediateSearchProjection)
+				await ProjectGroupAndDependentsAsync(saved, null, cancellationToken);
+
+			return saved;
+		}
+
+		public async Task<DepartmentGroupMember> SaveGroupMemberAsync(DepartmentGroupMember depMember, Model.Onboarding.ImportEffectPolicy effects, CancellationToken cancellationToken)
+		{
+			// Never UserAssignedToGroupEvent (notification + workflow 7) on this path: that belongs to MoveUserIntoGroupAsync.
+			await _departmentGroupMembersRepository.SaveOrUpdateAsync(depMember, cancellationToken);
+			await InvalidateGroupInCache(depMember.DepartmentGroupId);
+			if (effects.ImmediateSecurityRefresh)
+				SendGroupVisibilityRefresh(depMember.DepartmentId);
+			if (effects.ImmediateSearchProjection)
+				await RefreshPersonnelProjectionsAsync(depMember.DepartmentId, new[] { depMember.UserId }, cancellationToken);
+			return depMember;
+		}
+
 		/// <summary>The group's own projection, then its members and units (theirs carry the group name), then members who just left it.</summary>
 		private async Task ProjectGroupAndDependentsAsync(DepartmentGroup group, IEnumerable<string> formerMembers, CancellationToken cancellationToken)
 		{

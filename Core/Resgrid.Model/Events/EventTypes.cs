@@ -114,7 +114,19 @@ namespace Resgrid.Model.Events
 
 		/// <summary>A reporting destination rejected a submitted Record revision (RMS-2).</summary>
 		[NotMapped]
-		RecordSubmissionRejected = 33
+		RecordSubmissionRejected = 33,
+
+		// -- Department Import block 50-51 -- Identifier Allocation Registry section 4A. Both are targeted at the
+		// workspace owner and delivered by IDepartmentImportNotificationService (NotificationBroadcastLogic), so they
+		// stay NotMapped: they are not department broadcasts the notification settings UI should offer.
+
+		/// <summary>An import run finished, failed, paused or awaits action; also the abandoned-workspace reminder.</summary>
+		[NotMapped]
+		DepartmentImportRunFinished = 50,
+
+		/// <summary>Resgrid support posted a message, suggestion or support-request status change on an import workspace.</summary>
+		[NotMapped]
+		DepartmentImportSupportMessage = 51
 	}
 
 	public static class EventOptions

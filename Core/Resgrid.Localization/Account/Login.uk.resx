@@ -206,4 +206,28 @@
   <data name="Region" xml:space="preserve">
     <value>Регіон</value>
   </data>
+  <data name="ImportInviteText" xml:space="preserve">
+    <value>{0} створив для вас обліковий запис Resgrid. Виберіть пароль, щоб увійти вперше.</value>
+  </data>
+  <data name="ImportInviteUserName" xml:space="preserve">
+    <value>Ваше ім'я користувача</value>
+  </data>
+  <data name="ImportInviteSetPassword" xml:space="preserve">
+    <value>Встановити пароль і увійти</value>
+  </data>
+  <data name="ImportJoinText" xml:space="preserve">
+    <value>{0} запрошує вас приєднатися з вашим наявним обліковим записом Resgrid.</value>
+  </data>
+  <data name="ImportJoinSignIn" xml:space="preserve">
+    <value>Увійдіть, щоб прийняти</value>
+  </data>
+  <data name="ImportJoinAccept" xml:space="preserve">
+    <value>Приєднатися до {0}</value>
+  </data>
+  <data name="ImportJoinWrongAccount" xml:space="preserve">
+    <value>Це запрошення надіслано на іншу адресу електронної пошти. Увійдіть з обліковим записом, на який його надіслано.</value>
+  </data>
+  <data name="ImportInviteFailed" xml:space="preserve">
+    <value>Це запрошення більше не можна прийняти. Зверніться до адміністратора, який вас запросив.</value>
+  </data>
 </root>

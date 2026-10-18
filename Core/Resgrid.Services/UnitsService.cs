@@ -97,18 +97,24 @@ namespace Resgrid.Services
 			return new List<Unit>();
 		}
 
-		public async Task<Unit> SaveUnitAsync(Unit unit, CancellationToken cancellationToken = default(CancellationToken))
+		public Task<Unit> SaveUnitAsync(Unit unit, CancellationToken cancellationToken = default(CancellationToken))
+			=> SaveUnitAsync(unit, Resgrid.Model.Onboarding.ImportEffectPolicy.Interactive, cancellationToken);
+
+		public async Task<Unit> SaveUnitAsync(Unit unit, Resgrid.Model.Onboarding.ImportEffectPolicy effects, CancellationToken cancellationToken)
 		{
 			var saved = await _unitsRepository.SaveOrUpdateAsync(unit, cancellationToken);
 			await _limitsService.InvalidateDepartmentsEntityLimitsCache(unit.DepartmentId);
 
-			_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = saved.DepartmentId });
+			// An import resyncs the apps once per run and refreshes the unit matrices once per chunk (wizard plan section 11.5).
+			if (effects.RaiseDomainEvents)
+				_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = saved.DepartmentId });
 
 			// The unit visibility matrix is keyed by unit id and by station group; a new unit is absent
 			// from it and a re-stationed unit is filed under the wrong group until it is rebuilt.
-			SendUnitVisibilityRefresh(saved.DepartmentId);
+			if (effects.ImmediateSecurityRefresh)
+				SendUnitVisibilityRefresh(saved.DepartmentId);
 
-			if (_searchProjections != null) await _searchProjections.Value.ProjectUnitAsync(saved, cancellationToken);
+			if (effects.ImmediateSearchProjection && _searchProjections != null) await _searchProjections.Value.ProjectUnitAsync(saved, cancellationToken);
 			return saved;
 		}
 

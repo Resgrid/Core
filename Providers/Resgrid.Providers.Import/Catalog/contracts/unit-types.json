@@ -1,0 +1,231 @@
+{
+  "Key": "unit-types",
+  "Version": "2026.11.1",
+  "LabelKey": "Entity.unit-types",
+  "DescriptionKey": "EntityDesc.unit-types",
+  "Icon": "fa-truck",
+  "Area": "units",
+  "Wave": "2",
+  "Order": 70,
+  "DependsOn": [
+    "custom-statuses"
+  ],
+  "Gate": {
+    "Flags": [
+      "Onboarding.MigrationWizard"
+    ],
+    "Permissions": []
+  },
+  "IdentityFields": [
+    "source_id"
+  ],
+  "NaturalKey": [
+    "name"
+  ],
+  "SupportsCustomFields": false,
+  "MatchPolicy": "name",
+  "MaxRows": 0,
+  "Fields": [
+    {
+      "Key": "source_id",
+      "LabelKey": "Field.unit-types.source_id",
+      "DescriptionKey": "FieldDesc.unit-types.source_id",
+      "Type": "text",
+      "MaxLength": 256,
+      "Unique": "in-file",
+      "WriterPath": "ImportExternalId.SourceId",
+      "Aliases": [
+        "id",
+        "source id",
+        "external id",
+        "record id",
+        "key"
+      ],
+      "Example": "1042",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "name",
+      "LabelKey": "Field.unit-types.name",
+      "DescriptionKey": "FieldDesc.unit-types.name",
+      "Type": "text",
+      "Required": true,
+      "MaxLength": 100,
+      "Unique": "in-file",
+      "WriterPath": "UnitType.Type",
+      "Aliases": [
+        "name",
+        "type",
+        "unit type",
+        "apparatus type",
+        "vehicle type"
+      ],
+      "Example": "Engine",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "status_set",
+      "LabelKey": "Field.unit-types.status_set",
+      "DescriptionKey": "FieldDesc.unit-types.status_set",
+      "Type": "reference",
+      "References": "custom-statuses",
+      "ReferenceMatch": "name",
+      "WriterPath": "UnitType.CustomStatesId",
+      "Aliases": [
+        "status set",
+        "statuses",
+        "status"
+      ],
+      "Example": "Engine statuses",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "base_type",
+      "LabelKey": "Field.unit-types.base_type",
+      "DescriptionKey": "FieldDesc.unit-types.base_type",
+      "Type": "choice",
+      "Choices": [
+        {
+          "Code": "engine",
+          "LabelKey": "Choice.engine",
+          "Aliases": [
+            "pumper",
+            "pump",
+            "fire engine"
+          ]
+        },
+        {
+          "Code": "aerial",
+          "LabelKey": "Choice.aerial",
+          "Aliases": [
+            "ladder",
+            "truck",
+            "tower",
+            "platform"
+          ]
+        },
+        {
+          "Code": "rescue",
+          "LabelKey": "Choice.rescue",
+          "Aliases": [
+            "rescue unit",
+            "heavy rescue",
+            "squad"
+          ]
+        },
+        {
+          "Code": "tanker",
+          "LabelKey": "Choice.tanker",
+          "Aliases": [
+            "tender",
+            "water tender"
+          ]
+        },
+        {
+          "Code": "ambulance",
+          "LabelKey": "Choice.ambulance",
+          "Aliases": [
+            "als",
+            "bls",
+            "medic",
+            "transport"
+          ]
+        },
+        {
+          "Code": "medical-response",
+          "LabelKey": "Choice.medical-response",
+          "Aliases": [
+            "first responder",
+            "qrv",
+            "fly car",
+            "response vehicle"
+          ]
+        },
+        {
+          "Code": "wildland",
+          "LabelKey": "Choice.wildland",
+          "Aliases": [
+            "brush",
+            "brush truck",
+            "type 6",
+            "type 3"
+          ]
+        },
+        {
+          "Code": "hazardous-materials",
+          "LabelKey": "Choice.hazardous-materials",
+          "Aliases": [
+            "hazmat",
+            "haz mat"
+          ]
+        },
+        {
+          "Code": "command",
+          "LabelKey": "Choice.command",
+          "Aliases": [
+            "chief",
+            "command vehicle",
+            "battalion"
+          ]
+        },
+        {
+          "Code": "support",
+          "LabelKey": "Choice.support",
+          "Aliases": [
+            "utility",
+            "logistics",
+            "rehab",
+            "air unit"
+          ]
+        },
+        {
+          "Code": "watercraft",
+          "LabelKey": "Choice.watercraft",
+          "Aliases": [
+            "boat",
+            "fire boat",
+            "vessel"
+          ]
+        },
+        {
+          "Code": "aircraft",
+          "LabelKey": "Choice.aircraft",
+          "Aliases": [
+            "helicopter",
+            "drone",
+            "uav"
+          ]
+        },
+        {
+          "Code": "patrol",
+          "LabelKey": "Choice.patrol",
+          "Aliases": [
+            "police",
+            "security vehicle",
+            "patrol car"
+          ]
+        },
+        {
+          "Code": "other",
+          "LabelKey": "Choice.other",
+          "Aliases": [
+            "misc",
+            "miscellaneous"
+          ]
+        }
+      ],
+      "WriterPath": "UnitType.BaseType",
+      "Aliases": [
+        "base type",
+        "unit class",
+        "apparatus class",
+        "class",
+        "classification"
+      ],
+      "Example": "engine",
+      "Sensitivity": "Internal"
+    }
+  ],
+  "RowRules": []
+}

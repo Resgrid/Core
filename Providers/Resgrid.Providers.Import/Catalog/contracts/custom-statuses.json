@@ -1,0 +1,298 @@
+{
+  "Key": "custom-statuses",
+  "Version": "2026.11.1",
+  "LabelKey": "Entity.custom-statuses",
+  "DescriptionKey": "EntityDesc.custom-statuses",
+  "Icon": "fa-list-ol",
+  "Area": "dispatch",
+  "Wave": "2",
+  "Order": 10,
+  "DependsOn": [],
+  "Gate": {
+    "Flags": [
+      "Onboarding.MigrationWizard"
+    ],
+    "Permissions": []
+  },
+  "IdentityFields": [],
+  "NaturalKey": [
+    "set_name",
+    "set_type",
+    "button_text"
+  ],
+  "SupportsCustomFields": false,
+  "MatchPolicy": "name",
+  "MaxRows": 0,
+  "Fields": [
+    {
+      "Key": "set_name",
+      "LabelKey": "Field.custom-statuses.set_name",
+      "DescriptionKey": "FieldDesc.custom-statuses.set_name",
+      "Type": "text",
+      "Required": true,
+      "MaxLength": 200,
+      "WriterPath": "CustomState.Name",
+      "Aliases": [
+        "set",
+        "set name",
+        "status set",
+        "group"
+      ],
+      "Example": "Engine statuses",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "set_type",
+      "LabelKey": "Field.custom-statuses.set_type",
+      "DescriptionKey": "FieldDesc.custom-statuses.set_type",
+      "Type": "choice",
+      "Required": true,
+      "WriterPath": "CustomState.Type",
+      "Choices": [
+        {
+          "Code": "personnel",
+          "LabelKey": "Choice.personnel",
+          "Aliases": [
+            "people",
+            "person",
+            "member",
+            "responder",
+            "response"
+          ]
+        },
+        {
+          "Code": "unit",
+          "LabelKey": "Choice.unit",
+          "Aliases": [
+            "units",
+            "apparatus",
+            "vehicle"
+          ]
+        },
+        {
+          "Code": "staffing",
+          "LabelKey": "Choice.staffing",
+          "Aliases": [
+            "availability",
+            "staffing level"
+          ]
+        }
+      ],
+      "Aliases": [
+        "set type",
+        "type",
+        "applies to",
+        "for"
+      ],
+      "Example": "unit",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "button_text",
+      "LabelKey": "Field.custom-statuses.button_text",
+      "DescriptionKey": "FieldDesc.custom-statuses.button_text",
+      "Type": "text",
+      "Required": true,
+      "MaxLength": 100,
+      "WriterPath": "CustomStateDetail.ButtonText",
+      "Aliases": [
+        "status",
+        "button",
+        "button text",
+        "name",
+        "label"
+      ],
+      "Example": "En route",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "button_color",
+      "LabelKey": "Field.custom-statuses.button_color",
+      "DescriptionKey": "FieldDesc.custom-statuses.button_color",
+      "Type": "colour",
+      "WriterPath": "CustomStateDetail.ButtonColor",
+      "Aliases": [
+        "color",
+        "colour",
+        "button color",
+        "background"
+      ],
+      "Example": "#2a78d6",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "text_color",
+      "LabelKey": "Field.custom-statuses.text_color",
+      "DescriptionKey": "FieldDesc.custom-statuses.text_color",
+      "Type": "colour",
+      "WriterPath": "CustomStateDetail.TextColor",
+      "Aliases": [
+        "text color",
+        "text colour",
+        "font color"
+      ],
+      "Example": "#ffffff",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "gps_required",
+      "LabelKey": "Field.custom-statuses.gps_required",
+      "DescriptionKey": "FieldDesc.custom-statuses.gps_required",
+      "Type": "boolean",
+      "WriterPath": "CustomStateDetail.GpsRequired",
+      "Aliases": [
+        "gps",
+        "gps required",
+        "location required"
+      ],
+      "Example": "no",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "note",
+      "LabelKey": "Field.custom-statuses.note",
+      "DescriptionKey": "FieldDesc.custom-statuses.note",
+      "Type": "choice",
+      "WriterPath": "CustomStateDetail.NoteType",
+      "Choices": [
+        {
+          "Code": "none",
+          "LabelKey": "Choice.none",
+          "Aliases": [
+            "no"
+          ]
+        },
+        {
+          "Code": "optional",
+          "LabelKey": "Choice.optional",
+          "Aliases": [
+            "allowed"
+          ]
+        },
+        {
+          "Code": "required",
+          "LabelKey": "Choice.required",
+          "Aliases": [
+            "mandatory"
+          ]
+        }
+      ],
+      "Aliases": [
+        "note",
+        "note type",
+        "comment"
+      ],
+      "Example": "none",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "destination",
+      "LabelKey": "Field.custom-statuses.destination",
+      "DescriptionKey": "FieldDesc.custom-statuses.destination",
+      "Type": "choice",
+      "WriterPath": "CustomStateDetail.DetailType",
+      "Choices": [
+        {
+          "Code": "none",
+          "LabelKey": "Choice.none",
+          "Aliases": []
+        },
+        {
+          "Code": "stations",
+          "LabelKey": "Choice.stations",
+          "Aliases": [
+            "station"
+          ]
+        },
+        {
+          "Code": "calls",
+          "LabelKey": "Choice.calls",
+          "Aliases": [
+            "call"
+          ]
+        },
+        {
+          "Code": "calls-and-stations",
+          "LabelKey": "Choice.calls-and-stations",
+          "Aliases": []
+        },
+        {
+          "Code": "pois",
+          "LabelKey": "Choice.pois",
+          "Aliases": [
+            "poi",
+            "points of interest"
+          ]
+        },
+        {
+          "Code": "calls-and-pois",
+          "LabelKey": "Choice.calls-and-pois",
+          "Aliases": []
+        },
+        {
+          "Code": "stations-and-pois",
+          "LabelKey": "Choice.stations-and-pois",
+          "Aliases": []
+        },
+        {
+          "Code": "calls-stations-and-pois",
+          "LabelKey": "Choice.calls-stations-and-pois",
+          "Aliases": [
+            "all"
+          ]
+        }
+      ],
+      "Aliases": [
+        "destination",
+        "destination type",
+        "detail type"
+      ],
+      "Example": "none",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "order",
+      "LabelKey": "Field.custom-statuses.order",
+      "DescriptionKey": "FieldDesc.custom-statuses.order",
+      "Type": "integer",
+      "Min": 0,
+      "Max": 1000,
+      "WriterPath": "CustomStateDetail.Order",
+      "Aliases": [
+        "order",
+        "sort",
+        "position",
+        "sequence"
+      ],
+      "Example": "1",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "next_statuses",
+      "LabelKey": "Field.custom-statuses.next_statuses",
+      "DescriptionKey": "FieldDesc.custom-statuses.next_statuses",
+      "Type": "multi",
+      "ItemType": "text",
+      "Separator": ";",
+      "WriterPath": "CustomStateDetail.NextStateDetailIds",
+      "Aliases": [
+        "next",
+        "next statuses",
+        "next status"
+      ],
+      "Example": "On scene; Available",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    }
+  ],
+  "RowRules": []
+}

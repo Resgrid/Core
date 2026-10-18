@@ -13,7 +13,7 @@ namespace Resgrid.Repositories.DataRepository
 {
 	/// <summary>
 	/// Department tables without a foreign key to Departments, in the caller's transaction, after the legal hold checks: the
-	/// chat, Incident Command, workforce and workflow subtrees, then the remaining tables below. Nothing forces their delete,
+	/// chat, Incident Command, workforce, workflow and Department Import subtrees, then the remaining tables below. Nothing forces their delete,
 	/// so they live here rather than in the SQL Server script, and department deletion and the sweep of departments deleted
 	/// before their tables were purged (DeletedDepartmentCleanup) run the same code. Not here: the readiness subtree (checklist
 	/// cleanup, under its fence), RMS (its own cleanup and orphan sweep) and ADP (deleted last). Retained by design (decided
@@ -24,7 +24,7 @@ namespace Resgrid.Repositories.DataRepository
 	{
 		/// <summary>Every table this cleanup deletes by DepartmentId, module subtrees included.</summary>
 		internal static IEnumerable<string> AllTables => ChatDepartmentCleanup.Tables.Concat(IncidentCommandDepartmentCleanup.AllTables)
-			.Concat(WorkforceDepartmentCleanup.Tables).Concat(WorkflowDepartmentCleanup.Tables).Concat(Tables);
+			.Concat(WorkforceDepartmentCleanup.Tables).Concat(WorkflowDepartmentCleanup.Tables).Concat(DepartmentImportDepartmentCleanup.Tables).Concat(Tables);
 
 		/// <summary>The tables outside the module subtrees, in delete order.</summary>
 		internal static readonly string[] Tables =
@@ -51,6 +51,7 @@ namespace Resgrid.Repositories.DataRepository
 			await IncidentCommandDepartmentCleanup.DeleteWithinTransactionAsync(connection, transaction, departmentId, type, ct);
 			await WorkforceDepartmentCleanup.DeleteWithinTransactionAsync(connection, transaction, departmentId, type, ct);
 			await WorkflowDepartmentCleanup.DeleteWithinTransactionAsync(connection, transaction, departmentId, type, ct);
+			await DepartmentImportDepartmentCleanup.DeleteWithinTransactionAsync(connection, transaction, departmentId, type, ct);
 
 			// Counters, index state and API keys
 			await Delete("CallLocationIndexStates", "CallNumberSequences", "DocumentNumberSequences", "DepartmentApiKeys");

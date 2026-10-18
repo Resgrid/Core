@@ -26,6 +26,7 @@ namespace Resgrid.Model.Providers
 		Task<bool> EnqueueCommunicationTest(CommunicationTestQueueItem communicationTestQueue);
 
 		Task<bool> EnqueueAiDispatchTriage(AiDispatchQueueItem aiDispatchQueue);
+		Task<bool> EnqueueDepartmentImport(DepartmentImportQueueItem departmentImportQueue);
 		Task<bool> VerifyAndCreateClients();
 	}
 }

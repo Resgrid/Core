@@ -82,8 +82,10 @@ namespace Resgrid.Services
 			return await _repository.DeleteAsync(row, cancellationToken);
 		}
 
-		public async Task<DepartmentMemberSensitiveData> SaveAsync(DepartmentMemberSensitiveData data,
-			CancellationToken cancellationToken = default)
+		public Task<DepartmentMemberSensitiveData> SaveAsync(DepartmentMemberSensitiveData data, CancellationToken cancellationToken = default)
+			=> SaveAsync(data, Resgrid.Model.Onboarding.ImportEffectPolicy.Interactive, cancellationToken);
+
+		public async Task<DepartmentMemberSensitiveData> SaveAsync(DepartmentMemberSensitiveData data, Resgrid.Model.Onboarding.ImportEffectPolicy effects, CancellationToken cancellationToken)
 		{
 			if (data == null)
 				return null;
@@ -134,7 +136,7 @@ namespace Resgrid.Services
 			}
 
 			// The identification number is part of the member's search projection.
-			if (_searchProjections != null && saved != null)
+			if (effects.ImmediateSearchProjection && _searchProjections != null && saved != null)
 				await _searchProjections.Value.RefreshAsync(saved.DepartmentId, SearchEntityTypes.Personnel, saved.UserId, cancellationToken);
 			return saved;
 		}

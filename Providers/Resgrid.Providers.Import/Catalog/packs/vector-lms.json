@@ -1,0 +1,27 @@
+{
+  "Key": "vector-lms",
+  "Version": "2026.11.1",
+  "ProductName": "Vector LMS (TargetSolutions)",
+  "Kind": "api-extraction",
+  "Grade": "B",
+  "Published": false,
+  "SourceUrl": "https://developers.targetsolutions.com/worldoftargetsolutions",
+  "VerifiedOn": "2026-10-12",
+  "Glossary": [
+    {
+      "Term": "Users",
+      "Language": "en",
+      "Target": "entity:personnel"
+    },
+    {
+      "Term": "Credentials",
+      "Language": "en",
+      "Target": "entity:personnel-certifications"
+    },
+    {
+      "Term": "Courses",
+      "Language": "en",
+      "Target": "term:module.trainings"
+    }
+  ]
+}

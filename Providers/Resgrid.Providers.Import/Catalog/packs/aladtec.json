@@ -1,0 +1,59 @@
+{
+  "Key": "aladtec",
+  "Version": "2026.11.1",
+  "ProductName": "Aladtec",
+  "Kind": "api-extraction",
+  "Grade": "A",
+  "Phase": "2B",
+  "Published": false,
+  "SourceUrl": "https://developer.aladtec.com/",
+  "VerifiedOn": "2026-10-12",
+  "Glossary": [
+    {
+      "Term": "Members",
+      "Language": "en",
+      "Target": "entity:personnel",
+      "Names": "module.personnel"
+    },
+    {
+      "Term": "Work groups",
+      "Language": "en",
+      "Target": "entity:groups"
+    },
+    {
+      "Term": "Positions",
+      "Language": "en",
+      "Target": "entity:roles"
+    },
+    {
+      "Term": "Qualifications",
+      "Language": "en",
+      "Target": "entity:certification-types"
+    },
+    {
+      "Term": "Schedules",
+      "Language": "en",
+      "Target": "term:module.shifts"
+    },
+    {
+      "Term": "Events",
+      "Language": "en",
+      "Target": "term:module.calendar"
+    },
+    {
+      "Term": "Time off",
+      "Language": "en",
+      "Target": "none"
+    },
+    {
+      "Term": "Availability",
+      "Language": "en",
+      "Target": "none"
+    },
+    {
+      "Term": "Payroll",
+      "Language": "en",
+      "Target": "none"
+    }
+  ]
+}

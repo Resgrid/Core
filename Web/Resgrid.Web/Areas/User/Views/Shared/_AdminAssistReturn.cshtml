@@ -1,6 +1,11 @@
-@model string
+﻿@model string
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.AdminAssist.AdminAssist> aaLabels
-<aside class="alert alert-info" aria-label="@aaLabels[Model == "plans" ? "Plan.Return" : "Ui.ReturnToSetup"]">
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.DepartmentImport.DepartmentImport> importLabels
+@{
+    var label = Model == "import" ? importLabels["ReturnToImport"].Value : aaLabels[Model == "plans" ? "Plan.Return" : "Ui.ReturnToSetup"].Value;
+    var href = Model == "import" ? "/User/DepartmentImport" : Model == "plans" ? "/User/AdminAssist/Plans" : Model == "wizard" ? "/User/Department/SetupWizard" : "/User/Help/SetupReport";
+}
+<aside class="alert alert-info" aria-label="@label">
     <p>@aaLabels["Ui.SaveThenReturn"]</p>
-    <a href="@(Model == "plans" ? "/User/AdminAssist/Plans" : Model == "wizard" ? "/User/Department/SetupWizard" : "/User/Help/SetupReport")">@aaLabels[Model == "plans" ? "Plan.Return" : "Ui.ReturnToSetup"]</a>
+    <a href="@href">@label</a>
 </aside>

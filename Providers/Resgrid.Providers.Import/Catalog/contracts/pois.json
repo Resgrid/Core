@@ -1,0 +1,155 @@
+{
+  "Key": "pois",
+  "Version": "2026.11.1",
+  "LabelKey": "Entity.pois",
+  "DescriptionKey": "EntityDesc.pois",
+  "Icon": "fa-map-marker",
+  "Area": "geography",
+  "Wave": "2",
+  "Order": 110,
+  "DependsOn": [
+    "poi-types"
+  ],
+  "Gate": {
+    "Flags": [
+      "Onboarding.MigrationWizard"
+    ],
+    "Module": "Mapping",
+    "Permissions": []
+  },
+  "IdentityFields": [
+    "source_id"
+  ],
+  "NaturalKey": [
+    "type",
+    "name",
+    "latitude",
+    "longitude"
+  ],
+  "SupportsCustomFields": false,
+  "MatchPolicy": "name",
+  "MaxRows": 0,
+  "Fields": [
+    {
+      "Key": "source_id",
+      "LabelKey": "Field.pois.source_id",
+      "DescriptionKey": "FieldDesc.pois.source_id",
+      "Type": "text",
+      "MaxLength": 256,
+      "Unique": "in-file",
+      "WriterPath": "ImportExternalId.SourceId",
+      "Aliases": [
+        "id",
+        "source id",
+        "external id",
+        "record id",
+        "key"
+      ],
+      "Example": "1042",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "type",
+      "LabelKey": "Field.pois.type",
+      "DescriptionKey": "FieldDesc.pois.type",
+      "Type": "reference",
+      "Required": true,
+      "References": "poi-types",
+      "ReferenceMatch": "name",
+      "WriterPath": "Poi.PoiTypeId",
+      "Aliases": [
+        "type",
+        "category",
+        "layer",
+        "poi type"
+      ],
+      "Example": "Hospital",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "name",
+      "LabelKey": "Field.pois.name",
+      "DescriptionKey": "FieldDesc.pois.name",
+      "Type": "text",
+      "MaxLength": 200,
+      "WriterPath": "Poi.Name",
+      "Aliases": [
+        "name",
+        "title",
+        "place"
+      ],
+      "Example": "Memorial Hospital",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "latitude",
+      "LabelKey": "Field.pois.latitude",
+      "DescriptionKey": "FieldDesc.pois.latitude",
+      "Type": "latitude",
+      "Required": true,
+      "WriterPath": "Poi.Latitude",
+      "Aliases": [
+        "latitude",
+        "lat",
+        "y"
+      ],
+      "Example": "39.7990",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "longitude",
+      "LabelKey": "Field.pois.longitude",
+      "DescriptionKey": "FieldDesc.pois.longitude",
+      "Type": "longitude",
+      "Required": true,
+      "WriterPath": "Poi.Longitude",
+      "Aliases": [
+        "longitude",
+        "long",
+        "lng",
+        "lon",
+        "x"
+      ],
+      "Example": "-89.6440",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "address",
+      "LabelKey": "Field.pois.address",
+      "DescriptionKey": "FieldDesc.pois.address",
+      "Type": "text",
+      "MaxLength": 500,
+      "WriterPath": "Poi.Address",
+      "Aliases": [
+        "address",
+        "street",
+        "location"
+      ],
+      "Example": "701 N First St",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "note",
+      "LabelKey": "Field.pois.note",
+      "DescriptionKey": "FieldDesc.pois.note",
+      "Type": "text",
+      "MaxLength": 2000,
+      "WriterPath": "Poi.Note",
+      "Aliases": [
+        "note",
+        "notes",
+        "description",
+        "comments"
+      ],
+      "Example": "Helipad on roof",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    }
+  ],
+  "RowRules": []
+}

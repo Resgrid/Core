@@ -1,0 +1,31 @@
+@model ImportPageView
+@{
+    var current = (string)ViewData["Tab"] ?? "Workspace";
+    var id = Model.Workspace.Id;
+    var blocking = Model.Summary?.OpenBlockingIssues ?? 0;
+    var tabs = new List<(string Action, string Icon, string Label, int Count)>
+    {
+        ("Workspace", "fa-home", localizer["TabOverview"].Value, 0),
+        ("Files", "fa-files-o", localizer["TabDatasets"].Value, 0),
+        ("Issues", "fa-exclamation-triangle", localizer["TabIssues"].Value, blocking),
+        ("Configure", "fa-sliders", localizer["TabConfigure"].Value, 0),
+        ("Review", "fa-check-circle-o", localizer["TabReview"].Value, 0),
+        ("Verify", "fa-flag-checkered", localizer["TabVerify"].Value, 0),
+        ("History", "fa-history", localizer["TabHistory"].Value, 0),
+        ("Support", "fa-life-ring", localizer["TabSupport"].Value, Model.Summary?.UnreadMessages ?? 0)
+    };
+}
+<ul class="nav nav-pills rgw-module-tabs">
+    @foreach (var tab in tabs)
+    {
+        <li class="nav-item @(current == tab.Action ? "active" : null)">
+            <a asp-controller="DepartmentImport" asp-action="@tab.Action" asp-route-id="@id" asp-route-area="User" aria-current="@(current == tab.Action ? "page" : "false")">
+                <i class="fa @tab.Icon" aria-hidden="true"></i> @tab.Label
+                @if (tab.Count > 0)
+                {
+                    <span class="badge">@tab.Count</span>
+                }
+            </a>
+        </li>
+    }
+</ul>

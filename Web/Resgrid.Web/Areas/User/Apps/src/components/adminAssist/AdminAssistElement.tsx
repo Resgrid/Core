@@ -241,6 +241,13 @@ export default function AdminAssistElement({ page, setup, loadingLabel, errorLab
   const explore = (search = '', addons = false) => { setQuery(search); setAddonsOnly(addons); setTab('explore'); };
   const planFrom = catalog.plansAvailable ? (finding: Finding) => { setPlanSource({ source: 'finding', sourceId: finding.ruleId, goal: t(finding.titleKey) }); setTab('plans'); } : undefined;
   const link = (url: string) => localLink(url);
+  // Import & Migration (bringing people, stations, units and settings from spreadsheets or another system) starts here: a
+  // toolbar button on every tab and a card beside the review, while its flag is on and the reader may run it.
+  const importLink = localLink(overview.access.find(a => a.capabilityId === 'import-migration' && a.canConfigure)?.destination);
+  const importPanel = importLink && <Ibox title={t('Feature.import-migration')}>
+    <p>{ui('ImportHelp')}</p>
+    <a className="btn btn-primary btn-sm" href={importLink}><i className="fa fa-cloud-upload" aria-hidden="true" /> {ui('OpenImport')}</a>
+  </Ibox>;
 
   // Setup teaches key features only; detail features (and older learned ids) are left to Explore and Ask.
   const keyFeatureIds = new Set(catalog.capabilities.filter(isKey).map(c => c.id));
@@ -304,17 +311,18 @@ export default function AdminAssistElement({ page, setup, loadingLabel, errorLab
     <h2 className="sr-only">{ui(tab)}</h2>
     <div className="rgaa-toolbar">
       {busy && <span className="rgaa-muted rgaa-small" role="status"><i className="fa fa-spinner fa-spin" aria-hidden="true" /> {ui('Loading')}</span>}
+      {importLink && <a className="btn btn-white btn-sm" href={importLink}><i className="fa fa-cloud-upload" aria-hidden="true" /> {t('Feature.import-migration')}</a>}
       <button type="button" className="btn btn-white btn-sm" disabled={busy} onClick={() => void verify()}><i className="fa fa-refresh" aria-hidden="true" /> {ui('Verify')}</button>
     </div>
     {error && <div role="alert" className="alert alert-danger">{error}</div>}
     {tab === 'overview' && <>{summary}
-      <div className="rgaa-columns"><div>{nextActions}{areaPanel}</div><div>{reviewPanel}
+      <div className="rgaa-columns"><div>{nextActions}{areaPanel}</div><div>{reviewPanel}{importPanel}
         {catalog.canSetup && <Ibox title={ui('wizard')}><p>{ui('SetupPrompt')}</p><button type="button" className="btn btn-primary btn-sm" onClick={() => setTab('wizard')}><i className="fa fa-magic" aria-hidden="true" /> {ui('ResumeSetup')}</button></Ibox>}
       </div></div>
       {previews}
     </>}
     {tab === 'report' && <>{summary}
-      <div className="rgaa-columns"><div>{nextActions}{areaPanel}</div><div>{reviewPanel}</div></div>
+      <div className="rgaa-columns"><div>{nextActions}{areaPanel}</div><div>{reviewPanel}{importPanel}</div></div>
       {overview.setupPlan && overview.setupPlan.tasks.length > 0 && <Ibox title={ui('SetupChecklist')}><SetupChecklist plan={overview.setupPlan} t={t} capabilities={catalog.capabilities} areas={areas} localLink={localLink} /></Ibox>}
       <Ibox title={ui('AllChecks')}><FindingGroups findings={scoped.filter(f => f.result !== 'NotApplicable')} t={t} ui={ui} areas={areas} link={link} onPlan={planFrom} /></Ibox>
     </>}

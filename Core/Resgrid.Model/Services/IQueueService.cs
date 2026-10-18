@@ -86,6 +86,9 @@ namespace Resgrid.Model.Services
 		/// </summary>
 		Task<bool> EnqueueAiDispatchTriageAsync(AiDispatchQueueItem item, CancellationToken cancellationToken = default(CancellationToken));
 
+		/// <summary>The Department Import run start nudge (worker 47 sweeps anything it misses). False, never a throw, when the publish fails.</summary>
+		Task<bool> EnqueueDepartmentImportAsync(DepartmentImportQueueItem item, CancellationToken cancellationToken = default(CancellationToken));
+
 		/// <summary>
 		/// Sets the queue item completed asynchronous.
 		/// </summary>

@@ -1,0 +1,38 @@
+{
+  "Key": "vector-scheduling",
+  "Version": "2026.11.1",
+  "ProductName": "Vector Scheduling (CrewSense)",
+  "Kind": "api-extraction",
+  "Grade": "A",
+  "Phase": "2B",
+  "Published": false,
+  "SourceUrl": "https://api.crewsense.com/openapi.yml",
+  "VerifiedOn": "2026-10-12",
+  "Glossary": [
+    {
+      "Term": "Users",
+      "Language": "en",
+      "Target": "entity:personnel"
+    },
+    {
+      "Term": "Certifications",
+      "Language": "en",
+      "Target": "entity:certification-types"
+    },
+    {
+      "Term": "Groups",
+      "Language": "en",
+      "Target": "entity:groups"
+    },
+    {
+      "Term": "Titles",
+      "Language": "en",
+      "Target": "entity:roles"
+    },
+    {
+      "Term": "Schedule",
+      "Language": "en",
+      "Target": "term:module.shifts"
+    }
+  ]
+}

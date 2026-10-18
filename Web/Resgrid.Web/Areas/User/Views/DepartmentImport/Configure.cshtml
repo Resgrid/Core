@@ -1,0 +1,368 @@
+@model ImportConfigureView
+@using System.Globalization
+@using Resgrid.Model.AdminAssist
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> securityLocalizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> departmentLocalizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.AdminAssist.AdminAssist> assistLocalizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["ModuleName"];
+    ViewData["Title"] = localizer["TabConfigure"].Value;
+    ViewData["Tab"] = "Configure";
+    var id = Model.Workspace.Id;
+    var config = Model.Configuration;
+    var display = ImportConfigurationDisplays.For(localizer, securityLocalizer, departmentLocalizer, assistLocalizer, departmentTerms, config.Roles, config.Logos, Model.Catalog);
+    var profile = config.Profile;
+}
+@await Html.PartialAsync("_Shell", Model)
+
+<div class="wrapper wrapper-content rgw-page">
+    <p class="text-muted">@localizer["ConfigureIntro"]</p>
+    @if (!config.CanEdit)
+    {
+        <div class="alert alert-info" role="status"><i class="fa fa-lock" aria-hidden="true"></i> @localizer["ConfigureLocked"]</div>
+    }
+
+    <div class="row">
+        <div class="col-lg-4">
+            @* Step 2, "Describe your department": the Admin Assist operating profile the suggestions are composed from (plan section 7.2). *@
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["ConfigProfileHeader"]</h5></div>
+                <div class="ibox-content">
+                    @if (profile == null)
+                    {
+                        <p class="small">@localizer["ConfigProfileMissing"]</p>
+                    }
+                    else
+                    {
+                        <dl class="small">
+                            <dt>@assistLocalizer["ProfileField.Archetypes"]</dt>
+                            <dd>@(profile.Archetypes?.Count > 0 ? string.Join(", ", profile.Archetypes.Select(a => assistLocalizer["Pack." + a].Value)) : localizer["ConfigNotSet"].Value)</dd>
+                            <dt>@assistLocalizer["Profile.WorkforceMix"]</dt>
+                            <dd>@assistLocalizer["Profile." + profile.WorkforceMix]</dd>
+                            <dt>@assistLocalizer["Profile.DispatchModel"]</dt>
+                            <dd>@assistLocalizer["Profile." + profile.DispatchModel]</dd>
+                            <dt>@assistLocalizer["Profile.OperatingHours"]</dt>
+                            <dd>@assistLocalizer["Profile." + profile.OperatingHours]</dd>
+                        </dl>
+                    }
+                    <a class="btn btn-default btn-sm" asp-controller="Department" asp-action="OperatingProfile" asp-route-area="User"><i class="fa fa-pencil" aria-hidden="true"></i> @localizer[profile == null ? "ConfigProfileDescribe" : "ConfigProfileEdit"]</a>
+                    <p class="help-block small">@localizer["ConfigProfileHelp"]</p>
+                </div>
+            </div>
+
+            @await Html.PartialAsync("_Glossary", Model)
+
+            <div class="rgw-stat-tiles">
+                <a class="rgw-stat-tile" asp-action="Review" asp-route-id="@id"><div class="rgw-stat-label">@localizer["ConfigPendingTile"]</div><div class="rgw-stat-value">@config.Pending</div></a>
+                <div class="rgw-stat-tile"><div class="rgw-stat-label">@localizer["ConfigSuggestionsTile"]</div><div class="rgw-stat-value">@config.Suggestions</div></div>
+            </div>
+            @if (config.CanEdit && config.Suggestions > 0)
+            {
+                <form method="post" asp-action="ConfigureAcceptAll" asp-route-id="@id" style="margin-top:12px">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-primary btn-block"><i class="fa fa-check" aria-hidden="true"></i> @localizer["ConfigAcceptAll"]</button>
+                </form>
+            }
+            <p class="help-block small" style="margin-top:12px">@localizer["ConfigApplyHelp"]</p>
+        </div>
+
+        <div class="col-lg-8">
+            @foreach (var group in config.Groups)
+            {
+                var open = Model.OpenGroup == group.Key || Model.OpenGroup == null && (group.Pending > 0 || group.Suggestions > 0);
+                <details class="ibox float-e-margins" open="@open" id="config-@group.Key">
+                    <summary class="ibox-title" style="cursor:pointer; display:list-item">
+                        <h5 style="display:inline">@display.Group(group.Key)</h5>
+                        @if (group.Pending > 0)
+                        {
+                            <span class="label label-primary">@string.Format(localizer["ConfigGroupPending"].Value, group.Pending)</span>
+                        }
+                        @if (group.Suggestions > 0)
+                        {
+                            <span class="label label-warning">@string.Format(localizer["ConfigGroupSuggestions"].Value, group.Suggestions)</span>
+                        }
+                    </summary>
+                    <div class="ibox-content">
+                        <p class="small text-muted">@display.GroupHelp(group.Key)</p>
+                        @if (group.Key == ImportConfigurationGroups.Access && !config.PermissionPreviewAvailable)
+                        {
+                            <div class="alert alert-info small"><i class="fa fa-info-circle" aria-hidden="true"></i> @localizer["ConfigPermissionPreviewRequired"]</div>
+                        }
+                        @if (config.CanEdit && group.Suggestions > 0)
+                        {
+                            <form method="post" asp-action="ConfigureAcceptAll" asp-route-id="@id" asp-route-group="@group.Key" style="margin-bottom:8px">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-xs btn-default"><i class="fa fa-check" aria-hidden="true"></i> @localizer["ConfigAcceptGroup"]</button>
+                            </form>
+                        }
+                        <div class="table-responsive">
+                            <table class="table rgw-table">
+                                <thead><tr><th>@localizer["ConfigColSetting"]</th><th>@localizer["ConfigColNow"]</th><th>@localizer["ConfigColProposed"]</th><th>@localizer["ConfigColStatus"]</th><th class="rgw-row-actions"><span class="sr-only">@localizer["Actions"]</span></th></tr></thead>
+                                <tbody>
+                                    @foreach (var row in group.Rows)
+                                    {
+                                        var item = row.Item;
+                                        var change = row.Change;
+                                        var proposed = change?.Value ?? row.Suggested;
+                                        var origin = change != null ? (ImportConfigurationOrigin)change.Origin : row.SuggestedOrigin;
+                                        var originKey = change != null ? change.OriginKey : row.SuggestedOriginKey;
+                                        var state = (ImportConfigurationChangeState?)change?.State;
+                                        var editValue = proposed ?? row.Current;
+                                        var formId = "config-form-" + item.Key.Replace(".", "-");
+                                        <tr>
+                                            <td>@display.Label(item)</td>
+                                            <td class="small">@display.Value(item, row.Current)</td>
+                                            <td class="small">
+                                                @if (proposed != null)
+                                                {
+                                                    <strong>@display.Value(item, proposed)</strong>
+                                                    @if (origin.HasValue)
+                                                    {
+                                                        var detail = display.OriginDetail(origin.Value, originKey);
+                                                        <div class="text-muted">@display.Origin(origin.Value)@(detail == null ? null : " · " + detail)</div>
+                                                    }
+                                                    @if (change?.StaffAuthored == true)
+                                                    {
+                                                        @* Decided by Resgrid staff on the department's behalf (Prepare or Operate access); the department can change or undo it. *@
+                                                        <span class="label label-warning">@localizer["ResgridStaff"]</span>
+                                                    }
+                                                    @if (Model.Impacts.TryGetValue(item.Key, out var impact) && impact?.Metrics?.Count > 0)
+                                                    {
+                                                        <div class="text-muted">
+                                                            <span class="sr-only">@localizer["ConfigImpactHeader"]</span>
+                                                            @foreach (var metric in impact.Metrics)
+                                                            {
+                                                                <div>@assistLocalizer[metric.LabelKey]: @(metric.State == EvidenceState.Known ? (metric.Before?.ToString("N0", CultureInfo.CurrentCulture) ?? "-") + " → " + (metric.After?.ToString("N0", CultureInfo.CurrentCulture) ?? "-") : localizer["ConfigImpactUnknown"].Value)</div>
+                                                            }
+                                                        </div>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">—</span>
+                                                }
+                                            </td>
+                                            <td class="small">
+                                                @if (row.Pending)
+                                                {
+                                                    <span class="label label-primary"><i class="fa fa-arrow-right" aria-hidden="true"></i> @localizer["ConfigState.Pending"]</span>
+                                                }
+                                                else if (row.AwaitingDecision)
+                                                {
+                                                    <span class="label label-warning"><i class="fa fa-question-circle" aria-hidden="true"></i> @localizer["ConfigState.Suggested"]</span>
+                                                }
+                                                else if (state == ImportConfigurationChangeState.Rejected)
+                                                {
+                                                    <span class="label label-default"><i class="fa fa-times" aria-hidden="true"></i> @localizer["ConfigState.Rejected"]</span>
+                                                }
+                                                else if (state == ImportConfigurationChangeState.Applied)
+                                                {
+                                                    <span class="label label-success"><i class="fa fa-check" aria-hidden="true"></i> @localizer["ConfigState.Applied"]</span>
+                                                }
+                                                else if (state == ImportConfigurationChangeState.Failed)
+                                                {
+                                                    <span class="label label-danger"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @localizer["ConfigState.Failed"]</span>
+                                                    <div class="text-danger">@display.Issue(change.FailureCode)</div>
+                                                }
+                                                else if (state == ImportConfigurationChangeState.RolledBack)
+                                                {
+                                                    <span class="label label-default"><i class="fa fa-undo" aria-hidden="true"></i> @localizer["ConfigState.RolledBack"]</span>
+                                                }
+                                                else if (state == ImportConfigurationChangeState.Accepted)
+                                                {
+                                                    <span class="label label-default"><i class="fa fa-check" aria-hidden="true"></i> @localizer["ConfigState.Matches"]</span>
+                                                }
+                                                @if (row.IssueCode != null)
+                                                {
+                                                    <div class="text-warning"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @display.Issue(row.IssueCode)</div>
+                                                }
+                                            </td>
+                                            <td class="rgw-row-actions small">
+                                                @if (config.CanEdit)
+                                                {
+                                                    @if (row.AwaitingDecision)
+                                                    {
+                                                        <form method="post" asp-action="ConfigureDecide" asp-route-id="@id" style="display:inline">
+                                                            @Html.AntiForgeryToken()
+                                                            <input type="hidden" name="ItemKey" value="@item.Key" />
+                                                            <button type="submit" name="Decision" value="suggestion" class="btn btn-xs btn-primary" disabled="@(item.Group == ImportConfigurationGroups.Access && !config.PermissionPreviewAvailable)"><i class="fa fa-check" aria-hidden="true"></i> @localizer["ConfigAccept"]</button>
+                                                            <button type="submit" name="Decision" value="reject" class="btn btn-xs btn-default"><i class="fa fa-times" aria-hidden="true"></i> @localizer["ConfigReject"]</button>
+                                                        </form>
+                                                    }
+                                                    @if (change != null && state != ImportConfigurationChangeState.Applied)
+                                                    {
+                                                        <form method="post" asp-action="ConfigureReset" asp-route-id="@id" asp-route-itemKey="@item.Key" style="display:inline">
+                                                            @Html.AntiForgeryToken()
+                                                            <button type="submit" class="btn btn-xs btn-default"><i class="fa fa-undo" aria-hidden="true"></i> @localizer["ConfigUndo"]</button>
+                                                        </form>
+                                                    }
+                                                    @if (item.Group != ImportConfigurationGroups.Access || config.PermissionPreviewAvailable)
+                                                    {
+                                                        <details style="display:inline-block; text-align:left">
+                                                            <summary class="btn btn-xs btn-default"><i class="fa fa-pencil" aria-hidden="true"></i> @localizer["ConfigChange"]</summary>
+                                                            <form method="post" asp-action="ConfigureDecide" asp-route-id="@id" id="@formId" class="well well-sm" style="margin-top:6px; min-width:260px">
+                                                                @Html.AntiForgeryToken()
+                                                                <input type="hidden" name="ItemKey" value="@item.Key" />
+                                                                <input type="hidden" name="Decision" value="accept" />
+                                                                @switch (item.Kind)
+                                                                {
+                                                                    case ImportConfigurationValueKind.Boolean:
+                                                                        <label class="sr-only" for="@formId-value">@display.Label(item)</label>
+                                                                        <select id="@formId-value" name="Value" class="form-control input-sm">
+                                                                            <option value="true" selected="@(editValue == "true")">@display.Value(item, "true")</option>
+                                                                            <option value="false" selected="@(editValue != "true")">@display.Value(item, "false")</option>
+                                                                        </select>
+                                                                        break;
+                                                                    case ImportConfigurationValueKind.TimeZone:
+                                                                        <label class="sr-only" for="@formId-value">@display.Label(item)</label>
+                                                                        <select id="@formId-value" name="Value" class="form-control input-sm">
+                                                                            @foreach (var zone in TimeZones.Zones)
+                                                                            {
+                                                                                <option value="@zone.Key" selected="@(zone.Key == editValue)">@zone.Value</option>
+                                                                            }
+                                                                        </select>
+                                                                        break;
+                                                                    case ImportConfigurationValueKind.Choice:
+                                                                        <label class="sr-only" for="@formId-value">@display.Label(item)</label>
+                                                                        <select id="@formId-value" name="Value" class="form-control input-sm">
+                                                                            @foreach (var choice in item.Choices)
+                                                                            {
+                                                                                <option value="@choice" selected="@(choice == editValue || editValue.Length == 0 && choice == ImportConfigurationCatalog.MapAutomatic)">@display.Value(item, choice)</option>
+                                                                            }
+                                                                        </select>
+                                                                        break;
+                                                                    case ImportConfigurationValueKind.Integer:
+                                                                        <label class="sr-only" for="@formId-value">@display.Label(item)</label>
+                                                                        <input id="@formId-value" type="number" name="Value" value="@editValue" min="@item.Min" max="@item.Max" class="form-control input-sm" required />
+                                                                        @if (item.Key.EndsWith(".next"))
+                                                                        {
+                                                                            <p class="help-block">@localizer["ConfigNextHelp"]</p>
+                                                                        }
+                                                                        break;
+                                                                    case ImportConfigurationValueKind.Coordinates:
+                                                                    {
+                                                                        var coordinates = (editValue ?? string.Empty).Split(',');
+                                                                        <label for="@formId-lat">@localizer["ConfigLatitude"]</label>
+                                                                        <input id="@formId-lat" name="Latitude" value="@(coordinates.Length == 2 ? coordinates[0] : null)" class="form-control input-sm" inputmode="decimal" required />
+                                                                        <label for="@formId-lon">@localizer["ConfigLongitude"]</label>
+                                                                        <input id="@formId-lon" name="Longitude" value="@(coordinates.Length == 2 ? coordinates[1] : null)" class="form-control input-sm" inputmode="decimal" required />
+                                                                        break;
+                                                                    }
+                                                                    case ImportConfigurationValueKind.Address:
+                                                                    {
+                                                                        var address = ImportConfigurationCatalog.ReadJson<ImportConfigurationAddress>(editValue) ?? new ImportConfigurationAddress();
+                                                                        <label for="@formId-a1">@localizer["ConfigAddress1"]</label>
+                                                                        <input id="@formId-a1" name="Address1" value="@address.Address1" maxlength="500" class="form-control input-sm" required />
+                                                                        <label for="@formId-city">@localizer["ConfigCity"]</label>
+                                                                        <input id="@formId-city" name="City" value="@address.City" maxlength="150" class="form-control input-sm" required />
+                                                                        <label for="@formId-state">@localizer["ConfigRegion"]</label>
+                                                                        <input id="@formId-state" name="State" value="@address.State" maxlength="100" class="form-control input-sm" required />
+                                                                        <label for="@formId-postal">@localizer["ConfigPostalCode"]</label>
+                                                                        <input id="@formId-postal" name="PostalCode" value="@address.PostalCode" maxlength="32" class="form-control input-sm" />
+                                                                        <label for="@formId-country">@localizer["ConfigCountry"]</label>
+                                                                        <input id="@formId-country" name="Country" value="@address.Country" maxlength="100" class="form-control input-sm" required />
+                                                                        break;
+                                                                    }
+                                                                    case ImportConfigurationValueKind.MonthDay:
+                                                                    {
+                                                                        var parts = (editValue ?? "01-01").Split('-');
+                                                                        var month = parts.Length == 2 && int.TryParse(parts[0], out var m) ? m : 1;
+                                                                        var day = parts.Length == 2 && int.TryParse(parts[1], out var dd) ? dd : 1;
+                                                                        <label for="@formId-month">@localizer["ConfigMonth"]</label>
+                                                                        <select id="@formId-month" name="Month" class="form-control input-sm">
+                                                                            @for (var i = 1; i <= 12; i++)
+                                                                            {
+                                                                                <option value="@i" selected="@(i == month)">@CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i)</option>
+                                                                            }
+                                                                        </select>
+                                                                        <label for="@formId-day">@localizer["ConfigDay"]</label>
+                                                                        <input id="@formId-day" type="number" name="Day" value="@day" min="1" max="31" class="form-control input-sm" required />
+                                                                        break;
+                                                                    }
+                                                                    case ImportConfigurationValueKind.Permission:
+                                                                    {
+                                                                        var permission = ImportConfigurationCatalog.ReadJson<ImportConfigurationPermission>(editValue) ?? new ImportConfigurationPermission { Action = (int)PermissionActions.Everyone };
+                                                                        <label for="@formId-action">@localizer["ConfigWho"]</label>
+                                                                        <select id="@formId-action" name="Action" class="form-control input-sm">
+                                                                            @foreach (var action in ImportConfigurationCatalog.PermissionActionChoices)
+                                                                            {
+                                                                                <option value="@action" selected="@(action == permission.Action)">@display.ActionLabel(action)</option>
+                                                                            }
+                                                                        </select>
+                                                                        <label for="@formId-roles">@localizer["ConfigRoles"]</label>
+                                                                        <select id="@formId-roles" name="Roles" class="form-control input-sm" multiple size="4">
+                                                                            @foreach (var role in config.Roles)
+                                                                            {
+                                                                                <option value="@role.PersonnelRoleId" selected="@(permission.Roles?.Contains(role.PersonnelRoleId) == true)">@role.Name</option>
+                                                                            }
+                                                                        </select>
+                                                                        <p class="help-block">@localizer["ConfigRolesHelp"]</p>
+                                                                        @if (ImportConfigurationCatalog.GroupScopedPermissions.Contains(item.Target))
+                                                                        {
+                                                                            <div class="checkbox"><label><input type="checkbox" name="LockToGroup" value="true" checked="@permission.LockToGroup" /> @localizer["ConfigLockedToGroup"]</label></div>
+                                                                        }
+                                                                        break;
+                                                                    }
+                                                                    case ImportConfigurationValueKind.Logo:
+                                                                        <label for="@formId-value">@localizer["ConfigLogoChoose"]</label>
+                                                                        <select id="@formId-value" name="Value" class="form-control input-sm">
+                                                                            @foreach (var logo in config.Logos)
+                                                                            {
+                                                                                <option value="@logo.Id" selected="@(string.Equals(logo.Id, editValue, StringComparison.OrdinalIgnoreCase))">@logo.OriginalName (@logo.CreatedOn.ToLocalTime().ToString("g"))</option>
+                                                                            }
+                                                                        </select>
+                                                                        break;
+                                                                    default:
+                                                                        <label class="sr-only" for="@formId-value">@display.Label(item)</label>
+                                                                        <input id="@formId-value" name="Value" value="@editValue" maxlength="@(item.MaxLength > 0 ? item.MaxLength : 500)" class="form-control input-sm"
+                                                                               required="@(!item.AllowsBlank && item.Kind != ImportConfigurationValueKind.NumberPrefix)" style="@(item.Kind == ImportConfigurationValueKind.NumberPrefix ? "text-transform:uppercase" : null)" />
+                                                                        @if (item.Group == ImportConfigurationGroups.Terminology)
+                                                                        {
+                                                                            <p class="help-block">@localizer["ConfigTermHelp"]</p>
+                                                                        }
+                                                                        else if (item.Kind == ImportConfigurationValueKind.NumberPattern)
+                                                                        {
+                                                                            <p class="help-block">@localizer[item.Target == "records" ? "ConfigRecordsPatternHelp" : "ConfigPatternHelp"]</p>
+                                                                        }
+                                                                        else if (item.Kind == ImportConfigurationValueKind.NumberPrefix)
+                                                                        {
+                                                                            <p class="help-block">@localizer["ConfigPrefixHelp"]</p>
+                                                                        }
+                                                                        break;
+                                                                }
+                                                                @if (item.Kind != ImportConfigurationValueKind.Logo || config.Logos.Count > 0)
+                                                                {
+                                                                    <button type="submit" class="btn btn-xs btn-primary" style="margin-top:6px"><i class="fa fa-check" aria-hidden="true"></i> @localizer["ConfigSave"]</button>
+                                                                }
+                                                            </form>
+                                                        </details>
+                                                    }
+                                                    @if (item.Kind == ImportConfigurationValueKind.Logo)
+                                                    {
+                                                        <form method="post" asp-action="ConfigureLogo" asp-route-id="@id" enctype="multipart/form-data" class="well well-sm" style="margin-top:6px; text-align:left">
+                                                            @Html.AntiForgeryToken()
+                                                            <label for="config-logo-file">@localizer["ConfigUploadLogo"]</label>
+                                                            <input id="config-logo-file" type="file" name="file" accept="image/png,image/jpeg" required />
+                                                            <p class="help-block">@localizer["ConfigLogoHelp"]</p>
+                                                            <button type="submit" class="btn btn-xs btn-default"><i class="fa fa-upload" aria-hidden="true"></i> @localizer["ConfigUploadLogo"]</button>
+                                                        </form>
+                                                    }
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </details>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
+@section Scripts { @await Html.PartialAsync("_Scripts", "configure") }

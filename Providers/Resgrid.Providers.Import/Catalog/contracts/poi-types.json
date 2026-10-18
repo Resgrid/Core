@@ -1,0 +1,94 @@
+{
+  "Key": "poi-types",
+  "Version": "2026.11.1",
+  "LabelKey": "Entity.poi-types",
+  "DescriptionKey": "EntityDesc.poi-types",
+  "Icon": "fa-map-signs",
+  "Area": "geography",
+  "Wave": "2",
+  "Order": 100,
+  "DependsOn": [],
+  "Gate": {
+    "Flags": [
+      "Onboarding.MigrationWizard"
+    ],
+    "Module": "Mapping",
+    "Permissions": []
+  },
+  "IdentityFields": [
+    "source_id"
+  ],
+  "NaturalKey": [
+    "name"
+  ],
+  "SupportsCustomFields": false,
+  "MatchPolicy": "name",
+  "MaxRows": 0,
+  "Fields": [
+    {
+      "Key": "source_id",
+      "LabelKey": "Field.poi-types.source_id",
+      "DescriptionKey": "FieldDesc.poi-types.source_id",
+      "Type": "text",
+      "MaxLength": 256,
+      "Unique": "in-file",
+      "WriterPath": "ImportExternalId.SourceId",
+      "Aliases": [
+        "id",
+        "source id",
+        "external id",
+        "record id",
+        "key"
+      ],
+      "Example": "1042",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "name",
+      "LabelKey": "Field.poi-types.name",
+      "DescriptionKey": "FieldDesc.poi-types.name",
+      "Type": "text",
+      "Required": true,
+      "MaxLength": 100,
+      "Unique": "in-file",
+      "WriterPath": "PoiType.Name",
+      "Aliases": [
+        "name",
+        "type",
+        "category",
+        "layer"
+      ],
+      "Example": "Hospital",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "color",
+      "LabelKey": "Field.poi-types.color",
+      "DescriptionKey": "FieldDesc.poi-types.color",
+      "Type": "colour",
+      "WriterPath": "PoiType.Color",
+      "Aliases": [
+        "color",
+        "colour"
+      ],
+      "Example": "#1baf7a",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "is_destination",
+      "LabelKey": "Field.poi-types.is_destination",
+      "DescriptionKey": "FieldDesc.poi-types.is_destination",
+      "Type": "boolean",
+      "WriterPath": "PoiType.IsDestination",
+      "Aliases": [
+        "destination",
+        "is destination"
+      ],
+      "Example": "no",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    }
+  ],
+  "RowRules": []
+}

@@ -1,0 +1,101 @@
+@model ImportValuesView
+@using Newtonsoft.Json
+@{
+    ViewBag.Title = "Resgrid | " + localizer["ModuleName"];
+    ViewData["Title"] = localizer[Model.Field.LabelKey].Value;
+    ViewData["Tab"] = "Files";
+    var id = Model.Workspace.Id;
+    var isChoice = Model.Field.Type == ImportFieldTypes.Choice || Model.Field.ItemType == ImportFieldTypes.Choice;
+    var page = new
+    {
+        datasetId = Model.Dataset.Id,
+        fieldKey = Model.Field.Key,
+        saveUrl = Url.Action("SaveValues"),
+        reloadUrl = Url.Action("Dataset", new { id, datasetId = Model.Dataset.Id }),
+        text = new { saved = localizer["ValuesSaved"].Value, failed = localizer["Error.Generic"].Value }
+    };
+}
+@await Html.PartialAsync("_Shell", Model)
+
+<div class="wrapper wrapper-content rgw-page">
+    <script id="import-values-page" type="application/json">@Html.Raw(JsonConvert.SerializeObject(page, new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml }))</script>
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5>@localizer["MatchValues"] — @localizer[Model.Field.LabelKey]</h5></div>
+        <div class="ibox-content">
+            <p class="text-muted">@localizer[isChoice ? "MatchChoicesHelp" : "MatchReferencesHelp"]</p>
+            <div class="well well-sm form-inline">
+                <label for="import-values-bulk">@localizer["BulkApply"]</label>
+                <select id="import-values-bulk" class="form-control input-sm" disabled>
+                    <option value="">—</option>
+                    <option value="suggested">@localizer["AcceptSuggestions"]</option>
+                    @if (!isChoice)
+                    {
+                        <option value="create">@localizer["CreateNewForAll"]</option>
+                    }
+                    <option value="empty">@localizer["LeaveEmptyForAll"]</option>
+                </select>
+            </div>
+            @if (Model.Candidates.Count == 0)
+            {
+                <p class="text-muted">@localizer["NoValuesToMatch"]</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped rgw-table" id="import-values-table">
+                        <thead><tr><th>@localizer["ValueInFile"]</th><th class="text-right">@localizer["Rows"]</th><th>@localizer["Suggestion"]</th><th>@localizer["Decision"]</th></tr></thead>
+                        <tbody>
+                            @for (var i = 0; i < Model.Candidates.Count; i++)
+                            {
+                                var candidate = Model.Candidates[i];
+                                var decided = candidate.Decision;
+                                <tr data-value="@candidate.SourceValue" data-suggested="@candidate.SuggestedCode" data-confidence="@candidate.Confidence">
+                                    <td><strong>@candidate.SourceValue</strong></td>
+                                    <td class="text-right">@candidate.RowCount</td>
+                                    <td>
+                                        @if (candidate.SuggestedCode != null)
+                                        {
+                                            <span>@(isChoice ? localizer["Choice." + candidate.SuggestedCode].Value : candidate.SuggestedLabel)</span>
+                                            <span class="label @(candidate.Confidence >= 80 ? "label-primary" : "label-warning")">@string.Format(localizer["Confidence"].Value, candidate.Confidence)</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <label class="sr-only" for="value-@i">@localizer["Decision"]</label>
+                                        <select class="form-control input-sm import-value-decision" id="value-@i" disabled>
+                                            <option value="">@localizer["Undecided"]</option>
+                                            @if (isChoice)
+                                            {
+                                                @foreach (var choice in Model.Field.Choices)
+                                                {
+                                                    <option value="map:@choice.Code" selected="@(decided == ImportValueMapAction.MapToExisting && candidate.DecidedCode == choice.Code)">@localizer[choice.LabelKey]</option>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                @if (candidate.SuggestedCode != null)
+                                                {
+                                                    <option value="map:@candidate.SuggestedCode" selected="@(decided == ImportValueMapAction.MapToExisting)">@candidate.SuggestedLabel</option>
+                                                }
+                                                <option value="create" selected="@(decided == ImportValueMapAction.CreateNew)">@localizer["CreateNew"]</option>
+                                                <option value="label" selected="@(decided == ImportValueMapAction.KeepAsSourceLabel)">@localizer["KeepAsLabel"]</option>
+                                            }
+                                            <option value="empty" selected="@(decided == ImportValueMapAction.LeaveEmpty)">@localizer["LeaveEmpty"]</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <button type="button" id="import-values-save" class="btn btn-primary" disabled><i class="fa fa-save" aria-hidden="true"></i> @localizer["SaveValues"]</button>
+                <span id="import-values-status" class="rgw-progress-honest" aria-live="polite"></span>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
+@section Scripts { @await Html.PartialAsync("_Scripts", "values") }

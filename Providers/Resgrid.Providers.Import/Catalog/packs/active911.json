@@ -1,0 +1,39 @@
+{
+  "Key": "active911",
+  "Version": "2026.11.1",
+  "ProductName": "Active911",
+  "Kind": "api-extraction",
+  "Grade": "A",
+  "Phase": "2B",
+  "Published": false,
+  "SourceUrl": "https://active911.atlassian.net/wiki/spaces/AED",
+  "VerifiedOn": "2026-10-12",
+  "Glossary": [
+    {
+      "Term": "Members",
+      "Language": "en",
+      "Target": "entity:personnel",
+      "Names": "module.personnel"
+    },
+    {
+      "Term": "Locations",
+      "Language": "en",
+      "Target": "entity:pois"
+    },
+    {
+      "Term": "Location icons",
+      "Language": "en",
+      "Target": "entity:poi-types"
+    },
+    {
+      "Term": "Alerts",
+      "Language": "en",
+      "Target": "term:module.calls"
+    },
+    {
+      "Term": "Devices",
+      "Language": "en",
+      "Target": "none"
+    }
+  ]
+}

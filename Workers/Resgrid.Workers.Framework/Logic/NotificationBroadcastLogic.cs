@@ -48,6 +48,21 @@ namespace Resgrid.Workers.Framework.Logic
 				return true;
 			}
 
+			if (ni?.Type == (int)EventTypes.DepartmentImportRunFinished)
+			{
+				// Department Import notice 50: targeted at the workspace owner (registry section 4A), so it bypasses the
+				// department settings pipeline below like the Records notices.
+				await scope.Resolve<IDepartmentImportNotificationService>().DeliverRunNoticeAsync(ni.DepartmentId, ni.Value, cancellationToken);
+				return true;
+			}
+
+			if (ni?.Type == (int)EventTypes.DepartmentImportSupportMessage)
+			{
+				// Department Import notice 51: a support message, suggestion or request status change for the workspace owner.
+				await scope.Resolve<IDepartmentImportNotificationService>().DeliverSupportNoticeAsync(ni.DepartmentId, ni.Value, cancellationToken);
+				return true;
+			}
+
 			if (ni?.Type == (int)EventTypes.RecordSubmissionRejected)
 			{
 				// Records notification 33 (RMS-2): the destination rejected the author's incident report; author-targeted like 31.

@@ -328,6 +328,8 @@ namespace Resgrid.Web.ServicesCore
 				options.AddPolicy(ResgridResources.MutualAidReimbursement_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.MutualAidReimbursement, ResgridClaimTypes.Actions.Update));
 				options.AddPolicy(ResgridResources.MutualAidReimbursement_Submit, policy => policy.RequireClaim(ResgridClaimTypes.Resources.MutualAidReimbursement, ResgridClaimTypes.Actions.Submit));
 				options.AddPolicy(ResgridResources.MutualAidReimbursement_Reconcile, policy => policy.RequireClaim(ResgridClaimTypes.Resources.MutualAidReimbursement, ResgridClaimTypes.Actions.Reconcile));
+				options.AddPolicy(ResgridResources.DepartmentImport_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.DepartmentImport, ResgridClaimTypes.Actions.Update));
+				options.AddPolicy(ResgridResources.RecordImports_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.RecordImports, ResgridClaimTypes.Actions.Update));
 				options.AddPolicy(ResgridResources.Workforce_View, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Workforce, ResgridClaimTypes.Actions.View));
 				options.AddPolicy(ResgridResources.Workforce_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Workforce, ResgridClaimTypes.Actions.Update));
 				options.AddPolicy(ResgridResources.WorkforceCompensation_View, policy => policy.RequireClaim(ResgridClaimTypes.Resources.WorkforceCompensation, ResgridClaimTypes.Actions.View));
@@ -741,6 +743,7 @@ namespace Resgrid.Web.ServicesCore
 			builder.RegisterType<Resgrid.Web.Services.Helpers.HttpProtectedGrantContext>().As<IProtectedGrantContext>().InstancePerLifetimeScope();
 			builder.RegisterModule(new Resgrid.Search.SearchModule());
 			builder.RegisterModule(new Resgrid.Providers.Scanning.ScanningProviderModule());
+			builder.RegisterModule(new Resgrid.Providers.Import.ImportProviderModule());
 			builder.RegisterModule(new Resgrid.Providers.Neris.NerisProviderModule());
 			builder.RegisterModule(new ProviderModule());
 			builder.RegisterModule(new EmailProviderModule());

@@ -1670,7 +1670,7 @@ namespace Resgrid.Providers.Claims
 		{
 			AddClaimOnce(identity, ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.View);
 
-			foreach (var descriptor in RecordPermissionCatalog.All.Concat(ChecklistPermissionCatalog.All).Concat(WorkOrderPermissionCatalog.All).Concat(InvoicingPermissionCatalog.All).Concat(CertificationPermissionCatalog.All).Concat(DeploymentPermissionCatalog.All).Concat(WorkforcePermissionCatalog.All))
+			foreach (var descriptor in RecordPermissionCatalog.All.Concat(ChecklistPermissionCatalog.All).Concat(WorkOrderPermissionCatalog.All).Concat(InvoicingPermissionCatalog.All).Concat(CertificationPermissionCatalog.All).Concat(DeploymentPermissionCatalog.All).Concat(WorkforcePermissionCatalog.All).Concat(Model.Onboarding.DepartmentImportPermissionCatalog.All))
 			{
 				var grants = RecordClaimGrants(descriptor.Type);
 				if (grants.Length == 0)
@@ -1798,6 +1798,11 @@ namespace Resgrid.Providers.Claims
 						new RecordClaimGrant(ResgridClaimTypes.Resources.MutualAidReimbursement, ResgridClaimTypes.Actions.Submit),
 						new RecordClaimGrant(ResgridClaimTypes.Resources.MutualAidReimbursement, ResgridClaimTypes.Actions.Reconcile)
 					};
+				// Department Import (registry 72-73): department administrators only, never offered on the Security screen.
+				case PermissionTypes.ManageDepartmentImport:
+					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.DepartmentImport, ResgridClaimTypes.Actions.Update) };
+				case PermissionTypes.ManageRecordImports:
+					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.RecordImports, ResgridClaimTypes.Actions.Update) };
 				// Workforce & Business Operations plan, Phase E (registry 74-78).
 				case PermissionTypes.ViewInternalCosts:
 					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.InternalCosts, ResgridClaimTypes.Actions.View) };

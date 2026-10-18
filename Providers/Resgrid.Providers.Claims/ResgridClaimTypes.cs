@@ -71,6 +71,10 @@ namespace Resgrid.Providers.Claims
 			public const string ServiceContracts = "ServiceContracts";
 			/// <summary>Cal OES MARS cost recovery (Workforce & Business Operations plan, C-M3; permission 79).</summary>
 			public const string MutualAidReimbursement = "MutualAidReimbursement";
+			/// <summary>Department Import &amp; Migration workspace (permission 72, wizard plan section 5.1).</summary>
+			public const string DepartmentImport = "DepartmentImport";
+			/// <summary>Import third-party history into Records (permission 73; RMS owns enforcement).</summary>
+			public const string RecordImports = "RecordImports";
 			/// <summary>Workforce & Business Operations plan, Phase E (permissions 74-78): employer / establishments / workers / employments.</summary>
 			public const string Workforce = "Workforce";
 			public const string WorkforceCompensation = "WorkforceCompensation";

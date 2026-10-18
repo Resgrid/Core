@@ -1,0 +1,152 @@
+@model ImportIssuesView
+@using Newtonsoft.Json
+@using System.Globalization
+@{
+    var culture = CultureInfo.CurrentUICulture;
+    var dayFirst = ImportDateQuestion.Render(ImportDateQuestion.StandIn, true, culture);
+    var monthFirst = ImportDateQuestion.Render(ImportDateQuestion.StandIn, false, culture);
+    ViewBag.Title = "Resgrid | " + localizer["ModuleName"];
+    ViewData["Title"] = localizer["TabIssues"].Value;
+    ViewData["Tab"] = "Issues";
+    var id = Model.Workspace.Id;
+    var page = new
+    {
+        workspaceId = id,
+        actionUrl = Url.Action("IssueAction"),
+        reloadUrl = Url.Action("Issues", new { id, datasetId = Model.DatasetId, all = !Model.OpenOnly }),
+        text = new { failed = localizer["Error.Generic"].Value, confirmExclude = localizer["ConfirmExcludeRows"].Value }
+    };
+}
+@await Html.PartialAsync("_Shell", Model)
+
+<div class="wrapper wrapper-content rgw-page">
+    <script id="import-issues-page" type="application/json">@Html.Raw(JsonConvert.SerializeObject(page, new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml }))</script>
+    <form method="get" asp-action="Issues" class="rgw-filter">
+        <input type="hidden" name="id" value="@id" />
+        <div class="rgw-grid">
+            <div class="form-group">
+                <label for="issues-dataset">@localizer["Dataset"]</label>
+                <select id="issues-dataset" name="datasetId" class="form-control">
+                    <option value="">@localizer["AllDatasets"]</option>
+                    @foreach (var dataset in Model.Datasets.Where(d => d.Status != (int)ImportDatasetStatus.Superseded))
+                    {
+                        <option value="@dataset.Id" selected="@(dataset.Id == Model.DatasetId)">@dataset.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <div class="checkbox" style="margin-top:28px"><label><input type="checkbox" name="all" value="true" checked="@(!Model.OpenOnly)" /> @localizer["ShowResolved"]</label></div>
+            </div>
+        </div>
+        <div class="rgw-filter-actions"><button type="submit" class="btn btn-default btn-sm">@localizer["Filter"]</button></div>
+    </form>
+
+    @if (Model.Groups.Count == 0)
+    {
+        <div class="ibox"><div class="ibox-content text-center" style="padding:30px 0">
+            <i class="fa fa-check-circle fa-3x text-success" aria-hidden="true"></i>
+            <h4>@localizer["NoIssuesTitle"]</h4>
+            <p class="text-muted">@localizer["NoIssuesHelp"]</p>
+            <a class="btn btn-primary" asp-action="Review" asp-route-id="@id">@localizer["Action.ReviewAndImport"]</a>
+        </div></div>
+    }
+    @foreach (var group in Model.Groups)
+    {
+        var why = localizer["Issue." + group.Code + ".Help"];
+        <div class="ibox float-e-margins import-issue-group" data-issues="@string.Join(",", group.IssueIds)">
+            <div class="ibox-title">
+                <h5>@await Html.PartialAsync("_Badge", ImportBadges.Severity(group.Severity)) @string.Format(localizer["Issue." + group.Code + ".Title"].Value, group.OpenCount)</h5>
+                <div class="ibox-tools"><span class="rgw-mono">@group.Code</span></div>
+            </div>
+            <div class="ibox-content">
+                <p class="text-muted small">@group.DatasetName@(group.ColumnName != null ? " · " + group.ColumnName : null)@(group.SampleRows.Count > 0 ? " · " + string.Format(localizer["RowsLabel"].Value, string.Join(", ", group.SampleRows)) : null)</p>
+                @if (!why.ResourceNotFound)
+                {
+                    <p>@why.Value</p>
+                }
+                @if ((group.Code == "IMP-TYPE-DATE-AMBIGUOUS" || group.Code == "IMP-TYPE-DATE") && group.ColumnName != null && group.OpenCount > 0)
+                {
+                    @* Answered once per column, with both readings shown (plan section 6.4). *@
+                    <form method="post" asp-action="SetDateFormat" asp-route-id="@id" class="rgw-filter">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="datasetId" value="@group.DatasetId" />
+                        <input type="hidden" name="column" value="@group.ColumnName" />
+                        <p><strong>@string.Format(localizer["DateQuestion"].Value, ImportDateQuestion.StandIn, dayFirst, monthFirst)</strong></p>
+                        <button type="submit" name="format" value="@ImportDateQuestion.DayFirst" class="btn btn-sm btn-primary">@string.Format(localizer["DateDayFirst"].Value, dayFirst)</button>
+                        <button type="submit" name="format" value="@ImportDateQuestion.MonthFirst" class="btn btn-sm btn-primary">@string.Format(localizer["DateMonthFirst"].Value, monthFirst)</button>
+                    </form>
+                }
+                @if (group.Code == "IMP-MAP-REQUIRED-UNMAPPED" && group.FieldKey != null && group.OpenCount > 0)
+                {
+                    var entityKey = Model.Datasets.FirstOrDefault(d => d.Id == group.DatasetId)?.EntityKey;
+                    var field = entityKey == null ? null : Model.Catalog.GetContract(entityKey)?.Field(group.FieldKey);
+                    if (field != null && field.AllowsConstant)
+                    {
+                        <form method="post" asp-action="SetConstant" asp-route-id="@id" class="form-inline rgw-filter">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="datasetId" value="@group.DatasetId" />
+                            <input type="hidden" name="fieldKey" value="@field.Key" />
+                            <label for="const-@group.DatasetId-@field.Key">@string.Format(localizer["SameValueForField"].Value, localizer[field.LabelKey].Value)</label>
+                            @if (field.Type == ImportFieldTypes.Choice)
+                            {
+                                <select class="form-control input-sm" id="const-@group.DatasetId-@field.Key" name="value" required>
+                                    <option value=""></option>
+                                    @foreach (var choice in field.Choices)
+                                    {
+                                        <option value="@choice.Code">@localizer[choice.LabelKey]</option>
+                                    }
+                                </select>
+                            }
+                            else if (field.Type == ImportFieldTypes.Boolean)
+                            {
+                                <select class="form-control input-sm" id="const-@group.DatasetId-@field.Key" name="value" required>
+                                    <option value=""></option>
+                                    <option value="true">@localizer["SameValueYes"]</option>
+                                    <option value="false">@localizer["SameValueNo"]</option>
+                                </select>
+                            }
+                            else
+                            {
+                                <input type="text" class="form-control input-sm" id="const-@group.DatasetId-@field.Key" name="value" placeholder="@field.Example" maxlength="1000" required />
+                            }
+                            <button type="submit" class="btn btn-sm btn-primary">@localizer["UseForEveryRow"]</button>
+                            <a class="btn btn-sm btn-link" asp-action="Dataset" asp-route-id="@id" asp-route-datasetId="@group.DatasetId">@localizer["MatchAColumn"]</a>
+                        </form>
+                    }
+                }
+                @if (group.OpenCount > 0)
+                {
+                    <div class="btn-toolbar">
+                        @if (group.Severity != (int)ImportIssueSeverity.Blocking)
+                        {
+                            <button type="button" class="btn btn-sm btn-default import-issue-action" data-action="accept" disabled><i class="fa fa-check" aria-hidden="true"></i> @localizer["AcceptWarning"]</button>
+                        }
+                        @if (group.SampleRows.Count > 0)
+                        {
+                            <button type="button" class="btn btn-sm btn-default import-issue-action" data-action="exclude" disabled><i class="fa fa-eye-slash" aria-hidden="true"></i> @string.Format(localizer["ExcludeRows"].Value, group.OpenCount)</button>
+                        }
+                        @if (group.ColumnName != null && group.SampleRows.Count > 0)
+                        {
+                            <span class="form-inline">
+                                <label class="sr-only" for="set-@group.Code-@group.DatasetId">@localizer["SetValue"]</label>
+                                <input type="text" class="form-control input-sm import-issue-value" id="set-@group.Code-@group.DatasetId" placeholder="@localizer["SetValuePlaceholder"]" disabled />
+                                <button type="button" class="btn btn-sm btn-default import-issue-action" data-action="set" disabled>@localizer["SetValue"]</button>
+                            </span>
+                        }
+                        <a class="btn btn-sm btn-link" asp-action="Support" asp-route-id="@id" asp-route-datasetId="@group.DatasetId" asp-route-issueCode="@group.Code"><i class="fa fa-life-ring" aria-hidden="true"></i> @localizer["AskSupport"]</a>
+                    </div>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-sm btn-link import-issue-action" data-action="reopen" disabled>@localizer["Reopen"]</button>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
+@section Scripts { @await Html.PartialAsync("_Scripts", "issues") }

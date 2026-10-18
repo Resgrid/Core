@@ -88,6 +88,12 @@ namespace Resgrid.Model.Repositories
 		void InitUserExtInfo(string userId);
 
 		/// <summary>
+		/// True when the user's ext information row (written by <see cref="InitUserExtInfo"/>) exists.
+		/// </summary>
+		/// <param name="userId">The user identifier.</param>
+		Task<bool> HasUserExtInfoAsync(string userId);
+
+		/// <summary>
 		/// Gets all users for group.
 		/// </summary>
 		/// <param name="groupId">The group identifier.</param>

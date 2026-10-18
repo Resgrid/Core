@@ -27,6 +27,7 @@ namespace Resgrid.Model.Helpers
 			Serializer.PrepareSerializer<CallQueueItem>();
 			Serializer.PrepareSerializer<ChatbotMessageQueueItem>();
 			Serializer.PrepareSerializer<AiDispatchQueueItem>();
+			Serializer.PrepareSerializer<DepartmentImportQueueItem>();
 			Serializer.PrepareSerializer<MessageQueueItem>();
 			Serializer.PrepareSerializer<DistributionListQueueItem>();
 			Serializer.PrepareSerializer<NotificationItem>();

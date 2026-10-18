@@ -1,0 +1,243 @@
+{
+  "Key": "groups",
+  "Version": "2026.11.1",
+  "LabelKey": "Entity.groups",
+  "DescriptionKey": "EntityDesc.groups",
+  "Icon": "fa-sitemap",
+  "Area": "organization",
+  "Wave": "2",
+  "Order": 30,
+  "DependsOn": [],
+  "Gate": {
+    "Flags": [
+      "Onboarding.MigrationWizard"
+    ],
+    "Permissions": []
+  },
+  "IdentityFields": [
+    "source_id"
+  ],
+  "NaturalKey": [
+    "name"
+  ],
+  "SupportsCustomFields": false,
+  "MatchPolicy": "name",
+  "MaxRows": 0,
+  "Fields": [
+    {
+      "Key": "source_id",
+      "LabelKey": "Field.groups.source_id",
+      "DescriptionKey": "FieldDesc.groups.source_id",
+      "Type": "text",
+      "MaxLength": 256,
+      "Unique": "in-file",
+      "WriterPath": "ImportExternalId.SourceId",
+      "Aliases": [
+        "id",
+        "source id",
+        "external id",
+        "record id",
+        "key"
+      ],
+      "Example": "1042",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "name",
+      "LabelKey": "Field.groups.name",
+      "DescriptionKey": "FieldDesc.groups.name",
+      "Type": "text",
+      "Required": true,
+      "MaxLength": 50,
+      "Unique": "in-file",
+      "WriterPath": "DepartmentGroup.Name",
+      "Aliases": [
+        "name",
+        "station",
+        "group",
+        "station name",
+        "group name"
+      ],
+      "Example": "Station 1",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "type",
+      "LabelKey": "Field.groups.type",
+      "DescriptionKey": "FieldDesc.groups.type",
+      "Type": "choice",
+      "WriterPath": "DepartmentGroup.Type",
+      "Choices": [
+        {
+          "Code": "station",
+          "LabelKey": "Choice.station",
+          "Aliases": [
+            "firehouse",
+            "house",
+            "base",
+            "post"
+          ]
+        },
+        {
+          "Code": "organizational",
+          "LabelKey": "Choice.organizational",
+          "Aliases": [
+            "organisational",
+            "group",
+            "team",
+            "company",
+            "division"
+          ]
+        }
+      ],
+      "Aliases": [
+        "type",
+        "group type",
+        "kind"
+      ],
+      "Example": "station",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "parent",
+      "LabelKey": "Field.groups.parent",
+      "DescriptionKey": "FieldDesc.groups.parent",
+      "Type": "reference",
+      "References": "groups",
+      "ReferenceMatch": "source-id",
+      "WriterPath": "DepartmentGroup.ParentDepartmentGroupId",
+      "Aliases": [
+        "parent",
+        "parent group",
+        "belongs to",
+        "battalion",
+        "district"
+      ],
+      "Example": "Battalion 1",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "street",
+      "LabelKey": "Field.groups.street",
+      "DescriptionKey": "FieldDesc.groups.street",
+      "Type": "text",
+      "MaxLength": 500,
+      "WriterPath": "Address.Address1",
+      "Aliases": [
+        "address",
+        "street",
+        "address 1",
+        "address1"
+      ],
+      "Example": "120 Main St",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "city",
+      "LabelKey": "Field.groups.city",
+      "DescriptionKey": "FieldDesc.groups.city",
+      "Type": "text",
+      "MaxLength": 150,
+      "WriterPath": "Address.City",
+      "Aliases": [
+        "city",
+        "town"
+      ],
+      "Example": "Springfield",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "state",
+      "LabelKey": "Field.groups.state",
+      "DescriptionKey": "FieldDesc.groups.state",
+      "Type": "text",
+      "MaxLength": 100,
+      "WriterPath": "Address.State",
+      "Aliases": [
+        "state",
+        "province",
+        "region"
+      ],
+      "Example": "IL",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "postal_code",
+      "LabelKey": "Field.groups.postal_code",
+      "DescriptionKey": "FieldDesc.groups.postal_code",
+      "Type": "text",
+      "MaxLength": 32,
+      "WriterPath": "Address.PostalCode",
+      "Aliases": [
+        "zip",
+        "zip code",
+        "postal code",
+        "postcode"
+      ],
+      "Example": "62701",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "country",
+      "LabelKey": "Field.groups.country",
+      "DescriptionKey": "FieldDesc.groups.country",
+      "Type": "text",
+      "MaxLength": 100,
+      "WriterPath": "Address.Country",
+      "Aliases": [
+        "country"
+      ],
+      "Example": "United States",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "latitude",
+      "LabelKey": "Field.groups.latitude",
+      "DescriptionKey": "FieldDesc.groups.latitude",
+      "Type": "latitude",
+      "WriterPath": "DepartmentGroup.Latitude",
+      "Aliases": [
+        "latitude",
+        "lat",
+        "y"
+      ],
+      "Example": "39.7817",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "longitude",
+      "LabelKey": "Field.groups.longitude",
+      "DescriptionKey": "FieldDesc.groups.longitude",
+      "Type": "longitude",
+      "WriterPath": "DepartmentGroup.Longitude",
+      "Aliases": [
+        "longitude",
+        "long",
+        "lng",
+        "lon",
+        "x"
+      ],
+      "Example": "-89.6501",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    }
+  ],
+  "RowRules": [
+    {
+      "Kind": "both-or-neither",
+      "Fields": [
+        "latitude",
+        "longitude"
+      ],
+      "Code": "IMP-ROW-COORDINATES-PAIR"
+    }
+  ]
+}

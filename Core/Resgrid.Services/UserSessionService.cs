@@ -61,7 +61,7 @@ namespace Resgrid.Services
 			{
 				var member = await _departmentsService.GetDepartmentMemberAsync(context.UserId,
 					context.DepartmentId.Value, bypassCache: true);
-				if (member == null || member.IsDeleted || member.IsDisabled == true)
+				if (member == null || member.IsDeleted || member.IsDisabled == true || member.IsImportDormant)
 					throw new SessionCreationDeniedException("membership_inactive");
 
 				// Read for every new session: whether the department requires shared mode is not behind the session-policy
@@ -200,7 +200,7 @@ namespace Resgrid.Services
 			{
 				var member = await _departmentsService.GetDepartmentMemberAsync(context.UserId,
 					session.DepartmentId.Value, bypassCache: true);
-				if (member == null || member.IsDeleted || member.IsDisabled == true)
+				if (member == null || member.IsDeleted || member.IsDisabled == true || member.IsImportDormant)
 					return SessionValidationResult.Invalid("membership_inactive");
 
 				if (TryGetDepartmentPolicyGate(out var policyGate) && session.CreatedOn >= policyGate)
@@ -365,7 +365,7 @@ namespace Resgrid.Services
 				return false;
 
 			var member = await _departmentsService.GetDepartmentMemberAsync(userId, departmentId, bypassCache: true);
-			if (member == null || member.IsDeleted || member.IsDisabled == true)
+			if (member == null || member.IsDeleted || member.IsDisabled == true || member.IsImportDormant)
 				return false;
 
 			return await _sessionsRepository.UpdateDepartmentAsync(userId, sessionId, departmentId,

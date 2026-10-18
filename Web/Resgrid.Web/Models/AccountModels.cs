@@ -92,6 +92,15 @@ namespace Resgrid.Web.Models
 		/// <summary>The inviting department is at its plan's personnel limit (or the plan could not be checked), so no account is created.</summary>
 		public bool DepartmentFull { get; set; }
 
+		/// <summary>Department Import invitation kind (<see cref="InviteKinds"/>); Classic shows the account sign-up form.</summary>
+		public int ImportKind { get; set; }
+
+		/// <summary>The visitor is signed in (an invitation to join is accepted by the account it was sent to).</summary>
+		public bool SignedIn { get; set; }
+
+		/// <summary>Why an import invitation could not be accepted (ImportInvitationAcceptance.ErrorCode).</summary>
+		public string ImportError { get; set; }
+
 		public string DepartmentName { get; set; }
 
 		[Required]

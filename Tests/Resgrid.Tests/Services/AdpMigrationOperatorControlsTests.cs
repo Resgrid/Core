@@ -197,6 +197,24 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task Aborting_leaves_a_department_import_lock_to_its_own_run()
+		{
+			_policy.State = (int)DepartmentDataProtectionState.Encrypting;
+			_lockService.Setup(x => x.GetActiveLockAsync(DeptId, It.IsAny<bool>())).ReturnsAsync(new DepartmentOperationLock
+			{
+				DepartmentOperationLockId = 56, DepartmentId = DeptId, LockType = (int)DepartmentOperationLockType.DepartmentImport
+			});
+			_policyRepo.Setup(x => x.TryTransitionStateAsync(DeptId, DepartmentDataProtectionState.Encrypting,
+					DepartmentDataProtectionState.Failed, It.IsAny<int?>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(1);
+
+			await _service.AbortActiveMigrationAsync(DeptId, Operator);
+
+			_lockService.Verify(x => x.ReleaseLockAsync(56, It.IsAny<DepartmentOperationLockReleaseKind>(), It.IsAny<string>(), It.IsAny<CancellationToken>()),
+				Times.Never);
+		}
+
+		[Test]
 		public async Task Aborting_leaves_the_run_retryable()
 		{
 			_policy.State = (int)DepartmentDataProtectionState.Decrypting;

@@ -1,0 +1,184 @@
+@model ImportReviewView
+@{
+    ViewBag.Title = "Resgrid | " + localizer["ModuleName"];
+    ViewData["Title"] = localizer["TabReview"].Value;
+    ViewData["Tab"] = "Review";
+    var id = Model.Workspace.Id;
+    var preview = Model.Preview;
+    var ready = preview.Datasets.Where(d => d.Status == (int)ImportDatasetStatus.Ready || d.Status == (int)ImportDatasetStatus.Approved).ToList();
+    var waiting = preview.PendingRun != null && preview.PendingRun.Status == (int)ImportRunStatus.AwaitingChecker;
+    var writeMode = Model.Workspace.DefaultWriteMode == (int)ImportWriteMode.ReviewedUpdate ? ImportWriteMode.ReviewedUpdate
+        : Model.Workspace.DefaultWriteMode == (int)ImportWriteMode.Replace ? ImportWriteMode.Replace : ImportWriteMode.CreateOnly;
+    var chart = new
+    {
+        labels = preview.Datasets.Select(d => localizer[Model.Catalog.GetContract(d.EntityKey)?.LabelKey ?? "DestinationUnknown"].Value),
+        create = preview.Datasets.Select(d => d.Create),
+        update = preview.Datasets.Select(d => d.Update + d.Link + d.Reactivate),
+        skip = preview.Datasets.Select(d => d.Skip + d.InviteToJoin + d.Unchanged),
+        blocked = preview.Datasets.Select(d => d.Blocked),
+        text = new { create = localizer["Decision.Create"].Value, update = localizer["Decision.UpdateOrLink"].Value, skip = localizer["Decision.Skip"].Value, blocked = localizer["Blocked"].Value }
+    };
+}
+@await Html.PartialAsync("_Shell", Model)
+
+<div class="wrapper wrapper-content rgw-page">
+    <script id="import-review-chart" type="application/json">@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(chart, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }))</script>
+    @if (waiting && preview.PendingRunWaitsForStaff)
+    {
+        @* Managed migration: the second Resgrid staff member signs before the department is asked (plan section 17.8). *@
+        <div class="alert alert-info" role="status">
+            <i class="fa fa-users" aria-hidden="true"></i> @localizer["AwaitingStaffChecker"]
+            <span class="label label-warning">@localizer["ResgridStaff"]</span>
+        </div>
+    }
+    else if (waiting)
+    {
+        <div class="alert alert-warning" role="status">
+            <i class="fa fa-user-plus" aria-hidden="true"></i> @localizer[preview.PendingRunIsStaff ? "AwaitingYourSignOff" : "AwaitingChecker"]
+            <form method="post" asp-action="ApproveAsChecker" asp-route-id="@id" asp-route-runId="@preview.PendingRun.Id" style="display:inline">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-xs btn-primary">@localizer[preview.PendingRunIsStaff ? "ApproveManagedRun" : "ApproveAsSecond"]</button>
+            </form>
+        </div>
+    }
+
+    <div class="rgw-stat-tiles">
+        <div class="rgw-stat-tile"><div class="rgw-stat-label">@localizer["Decision.Create"]</div><div class="rgw-stat-value">@preview.Datasets.Sum(d => d.Create)</div></div>
+        <div class="rgw-stat-tile"><div class="rgw-stat-label">@localizer["Decision.UpdateOrLink"]</div><div class="rgw-stat-value">@preview.Datasets.Sum(d => d.Update + d.Link + d.Reactivate)</div></div>
+        <div class="rgw-stat-tile"><div class="rgw-stat-label">@localizer["Decision.Unchanged"]</div><div class="rgw-stat-value">@preview.Datasets.Sum(d => d.Unchanged)</div></div>
+        <div class="rgw-stat-tile"><div class="rgw-stat-label">@localizer["Decision.InviteToJoin"]</div><div class="rgw-stat-value">@preview.Datasets.Sum(d => d.InviteToJoin)</div></div>
+        <a class="rgw-stat-tile" asp-action="Issues" asp-route-id="@id"><div class="rgw-stat-label">@localizer["Blocked"]</div><div class="rgw-stat-value">@preview.Datasets.Sum(d => d.Blocked)</div></a>
+    </div>
+
+    <div class="row" style="margin-top:16px">
+        <div class="col-lg-8">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["WhatWillHappen"]</h5></div>
+                <div class="ibox-content">
+                    <div style="position:relative; height:260px"><canvas id="import-review-canvas" aria-label="@localizer["WhatWillHappen"]" role="img"></canvas></div>
+                    <div class="table-responsive">
+                        <table class="table table-striped rgw-table">
+                            <thead><tr><th>@localizer["Dataset"]</th><th>@localizer["Status"]</th><th class="text-right">@localizer["Decision.Create"]</th><th class="text-right">@localizer["Decision.UpdateOrLink"]</th><th class="text-right">@localizer["Decision.Unchanged"]</th><th class="text-right">@localizer["Decision.Skip"]</th><th class="text-right">@localizer["Blocked"]</th></tr></thead>
+                            <tbody>
+                                @foreach (var dataset in preview.Datasets)
+                                {
+                                    var contract = Model.Catalog.GetContract(dataset.EntityKey);
+                                    <tr>
+                                        <td><i class="fa @(contract?.Icon ?? "fa-table")" aria-hidden="true"></i> @(contract == null ? dataset.Name : localizer[contract.LabelKey].Value) <div class="small text-muted">@dataset.Name</div></td>
+                                        <td>@await Html.PartialAsync("_Badge", ImportBadges.Dataset(dataset.Status))</td>
+                                        <td class="text-right">@dataset.Create</td>
+                                        <td class="text-right">@(dataset.Update + dataset.Link + dataset.Reactivate)</td>
+                                        <td class="text-right">@dataset.Unchanged</td>
+                                        <td class="text-right">@(dataset.Skip + dataset.InviteToJoin)</td>
+                                        <td class="text-right">@if (dataset.Blocked > 0 || dataset.OpenBlockingIssues > 0) { <a asp-action="Issues" asp-route-id="@id" asp-route-datasetId="@dataset.DatasetId">@dataset.Blocked</a> } else { @dataset.Blocked }</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["Approve"]</h5></div>
+                <div class="ibox-content">
+                    @if (preview.Capacity != null)
+                    {
+                        <p class="small">
+                            @if (!preview.Capacity.Known)
+                            {
+                                <span class="text-warning"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @localizer["CapacityUnknown"]</span>
+                            }
+                            else
+                            {
+                                <span>@string.Format(localizer["CapacityStatement"].Value, preview.PersonnelSeatsNeeded, preview.Capacity.Personnel, preview.UnitSeatsNeeded, preview.Capacity.Units)</span>
+                            }
+                        </p>
+                    }
+                    @foreach (var blocker in preview.Blockers)
+                    {
+                        <div class="alert alert-warning small"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @localizer[blocker]</div>
+                    }
+                    @* The preview and every row decision are planned for one write mode: changing it plans them again (plan section 10.2). *@
+                    <form method="post" asp-action="SetWriteMode" asp-route-id="@id" id="import-write-mode-form">
+                        @Html.AntiForgeryToken()
+                        <div class="form-group">
+                            <label for="import-write-mode">@localizer["WriteMode"]</label>
+                            <select id="import-write-mode" name="writeMode" class="form-control" disabled="@(preview.PendingRun != null)">
+                                <option value="@((int)ImportWriteMode.CreateOnly)" selected="@(writeMode == ImportWriteMode.CreateOnly)">@localizer["WriteMode.CreateOnly"]</option>
+                                <option value="@((int)ImportWriteMode.ReviewedUpdate)" selected="@(writeMode == ImportWriteMode.ReviewedUpdate)">@localizer["WriteMode.ReviewedUpdate"]</option>
+                                @if (Model.ReplaceAvailable || writeMode == ImportWriteMode.Replace)
+                                {
+                                    <option value="@((int)ImportWriteMode.Replace)" selected="@(writeMode == ImportWriteMode.Replace)">@localizer["WriteMode.Replace"]</option>
+                                }
+                            </select>
+                            <p class="help-block">@localizer["WriteModeHelp"] @localizer["WriteModeRecalculateHelp"]</p>
+                            @if (Model.ReplaceAvailable || writeMode == ImportWriteMode.Replace)
+                            {
+                                <p class="help-block"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @localizer["WriteModeReplaceHelp"]</p>
+                            }
+                        </div>
+                        @if (preview.PendingRun == null)
+                        {
+                            <button type="submit" class="btn btn-default btn-sm"><i class="fa fa-refresh" aria-hidden="true"></i> @localizer["RecalculatePreview"]</button>
+                        }
+                    </form>
+                    <hr />
+                    <form method="post" asp-action="Approve" id="import-approve-form">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="WorkspaceId" value="@id" />
+                        <fieldset disabled="@(!preview.CanApprove)">
+                            @if (preview.Configuration.Count > 0)
+                            {
+                                @* Accepted Configure values go with every wave and are written before any data set (plan section 7.5). *@
+                                <h5>@localizer["ReviewConfigurationHeader"]</h5>
+                                <p class="small">@string.Format(localizer["ReviewConfigurationCount"].Value, preview.Configuration.Count)</p>
+                                <ul class="small">
+                                    @foreach (var group in preview.Configuration.GroupBy(c => ImportConfigurationCatalog.Find(c.ItemKey)?.Group).Where(g => g.Key != null))
+                                    {
+                                        <li>@localizer["ConfigGroup." + group.Key]: @group.Count()</li>
+                                    }
+                                </ul>
+                                @if (preview.ConfigurationIssues.Count > 0)
+                                {
+                                    <p class="small text-warning"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @string.Format(localizer["ReviewConfigurationIssues"].Value, preview.ConfigurationIssues.Count)</p>
+                                }
+                                <p class="small"><a asp-action="Configure" asp-route-id="@id"><i class="fa fa-sliders" aria-hidden="true"></i> @localizer["ReviewConfigurationLink"]</a></p>
+                                <div class="checkbox"><label><input type="checkbox" required /> @localizer["StatementConfiguration"]</label></div>
+                            }
+                            <h5>@localizer["DatasetsInThisWave"]</h5>
+                            @foreach (var dataset in ready)
+                            {
+                                var contract = Model.Catalog.GetContract(dataset.EntityKey);
+                                <div class="checkbox"><label><input type="checkbox" name="DatasetIds" value="@dataset.DatasetId" checked /> @(contract == null ? dataset.Name : localizer[contract.LabelKey].Value) — @dataset.Name</label></div>
+                            }
+                            <h5>@localizer["Statements"]</h5>
+                            <div class="checkbox"><label><input type="checkbox" required /> @string.Format(localizer["StatementPeople"].Value, preview.PersonnelSeatsNeeded)</label></div>
+                            @foreach (var consequence in preview.Consequences.GroupBy(c => c.Key))
+                            {
+                                var count = consequence.Sum(c => c.Count);
+                                <div class="checkbox"><label><input type="checkbox" name="Acknowledged" value="@consequence.Key" required checked="@consequence.All(c => c.Acknowledged)" /> @string.Format(localizer["Consequence." + consequence.Key].Value, count)</label></div>
+                            }
+                            <input type="hidden" name="WriteMode" value="@((int)writeMode)" />
+                            <p class="small"><strong>@localizer["WriteMode"]:</strong> @localizer["WriteMode." + writeMode]</p>
+                            <input type="hidden" name="SuppressExpiredCertificationNotices" value="true" />
+                            @if (preview.RequiresSecondApprover)
+                            {
+                                <p class="small text-muted"><i class="fa fa-user-plus" aria-hidden="true"></i> @localizer["SecondApproverRequired"]</p>
+                            }
+                            <p class="small text-muted"><i class="fa fa-shield" aria-hidden="true"></i> @localizer["StepUpNote"]</p>
+                            <button type="submit" class="btn btn-primary btn-block"><i class="fa fa-check" aria-hidden="true"></i> @localizer["ApproveAndImport"]</button>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
+@section Scripts { @await Html.PartialAsync("_Scripts", "review") }

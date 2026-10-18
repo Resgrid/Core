@@ -41,6 +41,12 @@ namespace Resgrid.Services
 				if (activeLock == null || activeLock.DepartmentOperationLockId <= 0)
 					return false;
 
+				// Only write-blocking lock types freeze the department. A Department Import lock is
+				// held for mutual exclusion (ADP, deletion, a second import) while the department
+				// keeps working (wizard plan section 11.7).
+				if (!DepartmentOperationLockTypeExtensions.BlocksDepartmentWrites(activeLock.LockType))
+					return false;
+
 				return activeLock.ExpiresUtc > DateTime.UtcNow;
 			}
 			catch (Exception ex)

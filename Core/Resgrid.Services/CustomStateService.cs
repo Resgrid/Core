@@ -168,13 +168,18 @@ namespace Resgrid.Services
 			_cacheProvider.Remove(string.Format(CacheKey, departmentId));
 		}
 
-		public async Task<CustomState> SaveAsync(CustomState customState, CancellationToken cancellationToken = default(CancellationToken))
+		public Task<CustomState> SaveAsync(CustomState customState, CancellationToken cancellationToken = default(CancellationToken))
+			=> SaveAsync(customState, Resgrid.Model.Onboarding.ImportEffectPolicy.Interactive, cancellationToken);
+
+		public async Task<CustomState> SaveAsync(CustomState customState, Resgrid.Model.Onboarding.ImportEffectPolicy effects, CancellationToken cancellationToken)
 		{
 			var saved = await _customStateRepository.SaveOrUpdateAsync(customState, cancellationToken);
 
 			await _cacheProvider.RemoveAsync(string.Format(CacheKey, customState.DepartmentId));
 
-			_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = customState.DepartmentId });
+			// An import resyncs the apps once per run instead (wizard plan section 11.5).
+			if (effects.RaiseDomainEvents)
+				_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = customState.DepartmentId });
 
 			return saved;
 		}
@@ -184,7 +189,10 @@ namespace Resgrid.Services
 			return await _customStateDetailRepository.GetByIdAsync(detailId);
 		}
 
-		public async Task<CustomStateDetail> SaveDetailAsync(CustomStateDetail customStateDetail, int departmentId, CancellationToken cancellationToken = default(CancellationToken))
+		public Task<CustomStateDetail> SaveDetailAsync(CustomStateDetail customStateDetail, int departmentId, CancellationToken cancellationToken = default(CancellationToken))
+			=> SaveDetailAsync(customStateDetail, departmentId, Resgrid.Model.Onboarding.ImportEffectPolicy.Interactive, cancellationToken);
+
+		public async Task<CustomStateDetail> SaveDetailAsync(CustomStateDetail customStateDetail, int departmentId, Resgrid.Model.Onboarding.ImportEffectPolicy effects, CancellationToken cancellationToken)
 		{
 			var saved = await _customStateDetailRepository.SaveOrUpdateAsync(customStateDetail, cancellationToken);
 
@@ -192,7 +200,8 @@ namespace Resgrid.Services
 			// old text, colour and destination setting in the apps and call records for up to the 7 day cache length.
 			await _cacheProvider.RemoveAsync(string.Format(CacheKey, departmentId));
 
-			_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = departmentId });
+			if (effects.RaiseDomainEvents)
+				_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = departmentId });
 
 			return saved;
 		}

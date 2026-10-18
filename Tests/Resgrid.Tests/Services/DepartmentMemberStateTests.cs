@@ -62,6 +62,24 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public void Dormant_and_invited_imported_members_are_neither_current_nor_active_until_activated()
+		{
+			// Department Import plan section 14.3: an imported member receives nothing and is in no sweep until invited and activated.
+			foreach (var state in new[] { Resgrid.Model.Onboarding.ImportActivationState.Dormant, Resgrid.Model.Onboarding.ImportActivationState.Invited })
+			{
+				var imported = Member("imported");
+				imported.ImportActivationState = (int)state;
+				DepartmentMemberStateHelper.IsCurrentMember(imported, Dept).Should().BeFalse(state.ToString());
+				DepartmentMemberStateHelper.IsActiveMember(imported, Dept).Should().BeFalse(state.ToString());
+			}
+
+			var activated = Member("activated");
+			activated.ImportActivationState = (int)Resgrid.Model.Onboarding.ImportActivationState.Activated;
+			DepartmentMemberStateHelper.IsCurrentMember(activated, Dept).Should().BeTrue();
+			DepartmentMemberStateHelper.IsActiveMember(activated, Dept).Should().BeTrue();
+		}
+
+		[Test]
 		public async Task Active_member_ids_come_from_the_unlimited_roster_and_leave_out_removed_disabled_and_hidden()
 		{
 			var members = new Mock<IDepartmentMembersRepository>();

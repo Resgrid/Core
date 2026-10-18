@@ -1,0 +1,206 @@
+{
+  "Key": "emergency-contacts",
+  "Version": "2026.11.1",
+  "LabelKey": "Entity.emergency-contacts",
+  "DescriptionKey": "EntityDesc.emergency-contacts",
+  "Icon": "fa-phone-square",
+  "Area": "people",
+  "Wave": "2",
+  "Order": 55,
+  "DependsOn": [
+    "personnel"
+  ],
+  "Gate": {
+    "Flags": [
+      "Onboarding.MigrationWizard"
+    ],
+    "Permissions": []
+  },
+  "IdentityFields": [
+    "source_id"
+  ],
+  "NaturalKey": [],
+  "SupportsCustomFields": false,
+  "MatchPolicy": "none",
+  "MaxRows": 0,
+  "Fields": [
+    {
+      "Key": "source_id",
+      "LabelKey": "Field.emergency-contacts.source_id",
+      "DescriptionKey": "FieldDesc.emergency-contacts.source_id",
+      "Type": "text",
+      "MaxLength": 256,
+      "Unique": "in-file",
+      "Sensitivity": "Internal",
+      "WriterPath": "ImportExternalId.SourceId",
+      "Aliases": [
+        "id",
+        "source id",
+        "external id",
+        "record id",
+        "key"
+      ],
+      "Example": "1042"
+    },
+    {
+      "Key": "person",
+      "LabelKey": "Field.emergency-contacts.person",
+      "DescriptionKey": "FieldDesc.emergency-contacts.person",
+      "Type": "reference",
+      "Required": true,
+      "References": "personnel",
+      "ReferenceMatch": "email",
+      "Unique": "none",
+      "Sensitivity": "Internal",
+      "WriterPath": "DepartmentMemberEmergencyContact.UserId",
+      "Aliases": [
+        "person",
+        "member",
+        "member email",
+        "employee",
+        "employee email",
+        "staff"
+      ],
+      "Example": "alex.rivera@example.org"
+    },
+    {
+      "Key": "name",
+      "LabelKey": "Field.emergency-contacts.name",
+      "DescriptionKey": "FieldDesc.emergency-contacts.name",
+      "Type": "text",
+      "Required": true,
+      "MaxLength": 200,
+      "Unique": "none",
+      "Sensitivity": "Restricted",
+      "Protected": "departmentmemberemergencycontacts.name",
+      "WriterPath": "DepartmentMemberEmergencyContact.Name",
+      "Aliases": [
+        "contact name",
+        "emergency contact",
+        "emergency contact name",
+        "next of kin",
+        "contact"
+      ],
+      "Example": "Jordan Rivera"
+    },
+    {
+      "Key": "relationship",
+      "LabelKey": "Field.emergency-contacts.relationship",
+      "DescriptionKey": "FieldDesc.emergency-contacts.relationship",
+      "Type": "text",
+      "MaxLength": 100,
+      "Unique": "none",
+      "Sensitivity": "Restricted",
+      "Protected": "departmentmemberemergencycontacts.relationship",
+      "WriterPath": "DepartmentMemberEmergencyContact.Relationship",
+      "Aliases": [
+        "relationship",
+        "relation",
+        "relationship to member"
+      ],
+      "Example": "Spouse"
+    },
+    {
+      "Key": "phone",
+      "LabelKey": "Field.emergency-contacts.phone",
+      "DescriptionKey": "FieldDesc.emergency-contacts.phone",
+      "Type": "phone",
+      "Unique": "none",
+      "Sensitivity": "Restricted",
+      "Protected": "departmentmemberemergencycontacts.phonenumber",
+      "WriterPath": "DepartmentMemberEmergencyContact.PhoneNumber",
+      "Aliases": [
+        "contact phone",
+        "emergency phone",
+        "phone",
+        "telephone"
+      ],
+      "Example": "+1 555 987 6543"
+    },
+    {
+      "Key": "alternate_phone",
+      "LabelKey": "Field.emergency-contacts.alternate_phone",
+      "DescriptionKey": "FieldDesc.emergency-contacts.alternate_phone",
+      "Type": "phone",
+      "Unique": "none",
+      "Sensitivity": "Restricted",
+      "Protected": "departmentmemberemergencycontacts.alternatephonenumber",
+      "WriterPath": "DepartmentMemberEmergencyContact.AlternatePhoneNumber",
+      "Aliases": [
+        "alternate phone",
+        "other phone",
+        "second phone",
+        "phone 2"
+      ],
+      "Example": "+1 555 222 3333"
+    },
+    {
+      "Key": "email",
+      "LabelKey": "Field.emergency-contacts.email",
+      "DescriptionKey": "FieldDesc.emergency-contacts.email",
+      "Type": "email",
+      "MaxLength": 256,
+      "Unique": "none",
+      "Sensitivity": "Restricted",
+      "Protected": "departmentmemberemergencycontacts.email",
+      "WriterPath": "DepartmentMemberEmergencyContact.Email",
+      "Aliases": [
+        "contact email",
+        "emergency contact email",
+        "emergency email"
+      ],
+      "Example": "jordan.rivera@example.org"
+    },
+    {
+      "Key": "notes",
+      "LabelKey": "Field.emergency-contacts.notes",
+      "DescriptionKey": "FieldDesc.emergency-contacts.notes",
+      "Type": "text",
+      "MaxLength": 4000,
+      "Unique": "none",
+      "Sensitivity": "Restricted",
+      "Protected": "departmentmemberemergencycontacts.notes",
+      "WriterPath": "DepartmentMemberEmergencyContact.Notes",
+      "Aliases": [
+        "notes",
+        "comments",
+        "contact notes"
+      ],
+      "Example": "Call after 6 pm"
+    },
+    {
+      "Key": "is_primary",
+      "LabelKey": "Field.emergency-contacts.is_primary",
+      "DescriptionKey": "FieldDesc.emergency-contacts.is_primary",
+      "Type": "boolean",
+      "Unique": "none",
+      "Sensitivity": "Internal",
+      "WriterPath": "DepartmentMemberEmergencyContact.IsPrimary",
+      "Aliases": [
+        "primary",
+        "is primary",
+        "first contact",
+        "primary contact"
+      ],
+      "Example": "yes"
+    },
+    {
+      "Key": "sort",
+      "LabelKey": "Field.emergency-contacts.sort",
+      "DescriptionKey": "FieldDesc.emergency-contacts.sort",
+      "Type": "integer",
+      "Min": 0,
+      "Max": 1000,
+      "Unique": "none",
+      "Sensitivity": "Internal",
+      "WriterPath": "DepartmentMemberEmergencyContact.SortOrder",
+      "Aliases": [
+        "order",
+        "sort",
+        "sort order",
+        "priority"
+      ],
+      "Example": "1"
+    }
+  ]
+}

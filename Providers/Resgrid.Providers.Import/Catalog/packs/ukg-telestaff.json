@@ -1,0 +1,17 @@
+{
+  "Key": "ukg-telestaff",
+  "Version": "2026.11.1",
+  "ProductName": "UKG TeleStaff",
+  "Kind": "file-sample-validated",
+  "Grade": "B",
+  "Published": false,
+  "SourceUrl": "https://phtelestaff.albertahealthservices.ca/help/Online_Help_v7/RosterScheduling/Task/exportPeopleFilter.html",
+  "VerifiedOn": "2026-10-12",
+  "Glossary": [
+    {
+      "Term": "People",
+      "Language": "en",
+      "Target": "entity:personnel"
+    }
+  ]
+}

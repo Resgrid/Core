@@ -1,0 +1,79 @@
+@model ImportPageView
+@*
+    Page heading shared by every workspace screen (wizard plan section 6.2): title, breadcrumb, status strip
+    (mode, progress, support access, requests and messages, last saved) and the module tabs.
+    ViewData["Title"] heading and last crumb; ViewData["Tab"] the owning tab.
+*@
+@{
+    var title = (string)ViewData["Title"] ?? Model.Workspace.Name;
+    var summary = Model.Summary;
+    var grant = Model.ActiveGrant;
+}
+<div class="row wrapper border-bottom white-bg page-heading rgw-page-heading">
+    <div class="col-sm-12">
+        <h2>@title</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-controller="DepartmentImport" asp-action="Index" asp-route-area="User">@localizer["ModuleName"]</a></li>
+            @if (!string.Equals(title, Model.Workspace.Name, StringComparison.Ordinal))
+            {
+                <li><a asp-controller="DepartmentImport" asp-action="Workspace" asp-route-id="@Model.Workspace.Id" asp-route-area="User">@Model.Workspace.Name</a></li>
+            }
+            <li class="active"><strong>@title</strong></li>
+        </ol>
+        <div class="text-muted" aria-live="polite">
+            @await Html.PartialAsync("_Badge", ImportBadges.Workspace(Model.Workspace.Status))
+            <span>@localizer["Mode." + ((ImportWorkspaceMode)Model.Workspace.Mode)]</span>
+            @if (Model.Workspace.TargetActivationDate.HasValue)
+            {
+                <span>· @string.Format(localizer["TargetDate"].Value, Model.Workspace.TargetActivationDate.Value.ToString("d"))</span>
+            }
+            @if (summary != null && summary.TotalDatasets > 0)
+            {
+                <span>· @string.Format(localizer["DatasetsReady"].Value, summary.ReadyDatasets, summary.TotalDatasets)</span>
+            }
+            <span>·
+                @if (grant == null)
+                {
+                    <span class="label label-default"><i class="fa fa-lock" aria-hidden="true"></i> @localizer["SupportAccess.None"]</span>
+                }
+                else
+                {
+                    <span class="label label-warning"><i class="fa fa-life-ring" aria-hidden="true"></i> @localizer["SupportAccess." + ((ImportSupportAccessLevel)grant.Level)] (@grant.ExpiresOn.ToString("d"))</span>
+                }
+            </span>
+            @if (summary != null && summary.OpenSupportRequests > 0)
+            {
+                <span>· <a asp-action="Support" asp-route-id="@Model.Workspace.Id">@string.Format(localizer["OpenRequestsCount"].Value, summary.OpenSupportRequests)</a></span>
+            }
+            @if (summary != null && summary.UnreadMessages > 0)
+            {
+                <span>· <a asp-action="Support" asp-route-id="@Model.Workspace.Id"><i class="fa fa-envelope" aria-hidden="true"></i> @string.Format(localizer["UnreadMessages"].Value, summary.UnreadMessages)</a></span>
+            }
+            <span>· @string.Format(localizer["LastSaved"].Value, Model.Workspace.UpdatedOn.ToLocalTime().ToString("g"))</span>
+        </div>
+    </div>
+    @if (grant != null && grant.Level == (int)ImportSupportAccessLevel.Operate)
+    {
+        <div class="col-sm-12">
+            <div class="alert alert-warning" role="status">
+                <i class="fa fa-life-ring" aria-hidden="true"></i> @string.Format(localizer["ManagedByResgrid"].Value, grant.EngagementReference, grant.ExpiresOn.ToString("d"))
+                <form method="post" asp-action="RevokeAccess" asp-route-id="@Model.Workspace.Id" class="pull-right">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-xs btn-default">@localizer["RevokeAccess"]</button>
+                </form>
+            </div>
+        </div>
+    }
+    <div class="col-sm-12 rgw-module-navigation">
+        @await Html.PartialAsync("_Tabs")
+    </div>
+</div>
+@if (TempData["ImportError"] is string error)
+{
+    <div class="wrapper wrapper-content rgw-page" style="padding-bottom:0"><div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> @error</div></div>
+}
+@if (TempData["ImportMessage"] is string message)
+{
+    <div class="wrapper wrapper-content rgw-page" style="padding-bottom:0"><div class="alert alert-success" role="status"><i class="fa fa-check" aria-hidden="true"></i> @message</div></div>
+}

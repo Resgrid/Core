@@ -58,7 +58,7 @@ namespace Resgrid.Tests.Services
 				userSessionService: null, externalIdentityLinkService: null, passwordRecoveryService: null, limitsService: _limits.Object,
 				mfaEvidenceService: null, securityNotices: null, mfaActivity: null, loginTransactions: null, passkeys: null, approvals: null,
 				mfaPolicy: null, twoFactorLocalizer: null, ssoBroker: null, ssoReturnTargets: null, dataProtection: null, adpStepUp: null, mfaState: null,
-				userStore: null, recoveries: null, passkeyRows: null, challenges: null, approvalRows: null, sharedSessions: null);
+				userStore: null, recoveries: null, passkeyRows: null, challenges: null, approvalRows: null, sharedSessions: null, importActivation: null);
 		}
 
 		[Test]
@@ -213,7 +213,8 @@ namespace Resgrid.Tests.Services
 			http.Request.Headers["Authorization"] = "Bearer token";
 			http.Connection.RemoteIpAddress = IPAddress.Loopback;
 			_controller = new ScimController(sso.Object, _departments.Object, new Mock<IUserProfileService>().Object, new Mock<ISystemAuditsService>().Object,
-				users.Object, new Mock<IExternalIdentityLinkService>().Object, new Mock<IUserSessionService>().Object, _limits.Object)
+				users.Object, new Mock<IExternalIdentityLinkService>().Object, new Mock<IUserSessionService>().Object, _limits.Object,
+				new Mock<IMemberProvisioningService>().Object)
 			{
 				ControllerContext = new ControllerContext { HttpContext = http }
 			};

@@ -195,10 +195,16 @@ namespace Resgrid.Services
 			return values?.ToList() ?? new List<UdfFieldValue>();
 		}
 
-		public async Task<Dictionary<string, List<string>>> SaveFieldValuesForEntityAsync(int departmentId, int entityType,
+		public Task<Dictionary<string, List<string>>> SaveFieldValuesForEntityAsync(int departmentId, int entityType,
 			string entityId, List<UdfFieldValue> values, string userId,
 			bool isDepartmentAdmin = false, bool isGroupAdmin = false,
 			CancellationToken cancellationToken = default)
+			=> SaveFieldValuesForEntityAsync(departmentId, entityType, entityId, values, userId, isDepartmentAdmin, isGroupAdmin,
+				Resgrid.Model.Onboarding.ImportEffectPolicy.Interactive, cancellationToken);
+
+		public async Task<Dictionary<string, List<string>>> SaveFieldValuesForEntityAsync(int departmentId, int entityType,
+			string entityId, List<UdfFieldValue> values, string userId, bool isDepartmentAdmin, bool isGroupAdmin,
+			Resgrid.Model.Onboarding.ImportEffectPolicy effects, CancellationToken cancellationToken)
 		{
 			if (entityType == (int)UdfEntityType.Record) throw new UnauthorizedAccessException("Record extensions require the RMS definition and record authorization workflow.");
 			var definition = await _definitionRepository.GetActiveDefinitionByDepartmentAndEntityTypeAsync(departmentId, entityType);
@@ -287,8 +293,12 @@ namespace Resgrid.Services
 
 			// Delete existing values for this entity + definition version, then re-insert.
 			// Wrap both operations in a single transaction so a failed insert cannot leave
-			// the entity with no field values (partial data loss).
-			_unitOfWork.CreateOrGetConnection();
+			// the entity with no field values (partial data loss). A caller that already holds the
+			// unit of work's transaction (the Department Import chunk) owns its commit; the values
+			// join it instead of committing the caller's other writes early.
+			var joinsCallerTransaction = effects.JoinCallerTransaction && _unitOfWork.Connection != null;
+			if (!joinsCallerTransaction)
+				_unitOfWork.CreateOrGetConnection();
 
 			try
 			{
@@ -308,16 +318,18 @@ namespace Resgrid.Services
 					await _valueRepository.SaveOrUpdateAsync(value, cancellationToken);
 				}
 
-				_unitOfWork.CommitChanges();
+				if (!joinsCallerTransaction)
+					_unitOfWork.CommitChanges();
 			}
 			catch
 			{
-				_unitOfWork.DiscardChanges();
+				if (!joinsCallerTransaction)
+					_unitOfWork.DiscardChanges();
 				throw;
 			}
 
 			// Custom field values are part of the owning entity's search text; the entity was saved before its values.
-			if (_searchProjections != null && SearchFamily(entityType) is string family)
+			if (effects.ImmediateSearchProjection && _searchProjections != null && SearchFamily(entityType) is string family)
 				await _searchProjections.Value.RefreshAsync(departmentId, family, entityId, cancellationToken);
 
 			return new Dictionary<string, List<string>>();

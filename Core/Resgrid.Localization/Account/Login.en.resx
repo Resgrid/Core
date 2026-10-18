@@ -264,4 +264,28 @@
   <data name="Region" xml:space="preserve">
     <value>Region</value>
   </data>
+  <data name="ImportInviteText" xml:space="preserve">
+    <value>{0} has set up a Resgrid account for you. Choose a password to sign in for the first time.</value>
+  </data>
+  <data name="ImportInviteUserName" xml:space="preserve">
+    <value>Your user name</value>
+  </data>
+  <data name="ImportInviteSetPassword" xml:space="preserve">
+    <value>Set password and sign in</value>
+  </data>
+  <data name="ImportJoinText" xml:space="preserve">
+    <value>{0} has invited you to join with your existing Resgrid account.</value>
+  </data>
+  <data name="ImportJoinSignIn" xml:space="preserve">
+    <value>Sign in to accept</value>
+  </data>
+  <data name="ImportJoinAccept" xml:space="preserve">
+    <value>Join {0}</value>
+  </data>
+  <data name="ImportJoinWrongAccount" xml:space="preserve">
+    <value>This invitation was sent to a different email address. Sign in with the account it was sent to.</value>
+  </data>
+  <data name="ImportInviteFailed" xml:space="preserve">
+    <value>This invitation can no longer be accepted. Please contact the administrator who invited you.</value>
+  </data>
 </root>

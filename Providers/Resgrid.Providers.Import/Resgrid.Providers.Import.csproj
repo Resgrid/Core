@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <Description>Department Import (Import &amp; Migration): file readers, the RustFS artifact store, workbook templates, embedded import catalogs and the helpdesk client.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Explicit names: built through a symlinked path (int-BackOffice reaches Core via dev/Resgrid), the default manifest
+         name loses the folders ("Resgrid.Providers.Import.personnel.json") and ImportCatalog finds nothing. -->
+    <EmbeddedResource Include="Catalog\**\*.json">
+      <LogicalName>Resgrid.Providers.Import.Catalog.$([System.String]::Copy('%(RecursiveDir)').Replace('/', '.').Replace('\', '.'))%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="8.2.0" />
+    <PackageReference Include="AWSSDK.S3" Version="3.7.414.5" />
+    <PackageReference Include="CsvHelper" Version="33.0.1" />
+    <PackageReference Include="DocumentFormat.OpenXml" Version="3.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\Resgrid.Config\Resgrid.Config.csproj" />
+    <ProjectReference Include="..\..\Core\Resgrid.Framework\Resgrid.Framework.csproj" />
+    <ProjectReference Include="..\..\Core\Resgrid.Model\Resgrid.Model.csproj" />
+  </ItemGroup>
+
+</Project>

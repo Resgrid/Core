@@ -24,6 +24,7 @@
 		public static string ChatbotProcessingQueueName = "chatbotprocessingtest";
 		public static string CommunicationTestQueueName = "communicationtesttest";
 		public static string AiDispatchTriageQueueName = "aidispatchtriagetest";
+		public static string DepartmentImportQueueName = "departmentimporttest";
 #else
 		public static string CallBroadcastQueueName = "callbroadcast";
 		public static string MessageBroadcastQueueName = "messagebroadcast";
@@ -43,6 +44,7 @@
 		public static string ChatbotProcessingQueueName = "chatbotprocessing";
 		public static string CommunicationTestQueueName = "communicationtest";
 		public static string AiDispatchTriageQueueName = "aidispatchtriage";
+		public static string DepartmentImportQueueName = "departmentimport";
 #endif
 
 		#region RabbitMQ Bus Values

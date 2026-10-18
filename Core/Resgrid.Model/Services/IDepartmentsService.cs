@@ -70,6 +70,14 @@ namespace Resgrid.Model.Services
 		Task<DepartmentMember> AddUserToDepartmentAsync(int departmentId, string userId, bool isAdmin = false,
 			CancellationToken cancellationToken = default(CancellationToken));
 
+		/// <summary>
+		/// Adds a fully specified membership (Department Import and member provisioning, wizard plan section 11.2). Returns the
+		/// existing row when the user is already a member (idempotent by user). The apps resync event, visibility refresh and
+		/// the administrator marketing sync happen only when <paramref name="effects"/> allows them; an import defers or
+		/// suppresses them.
+		/// </summary>
+		Task<DepartmentMember> AddMemberAsync(DepartmentMember member, Onboarding.ImportEffectPolicy effects, CancellationToken cancellationToken = default);
+
 		Task<Department> GetDepartmentForUserAsync(string userName);
 
 		Task<Department> GetDepartmentByUserIdAsync(string userId, bool bypassCache = false);

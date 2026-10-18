@@ -1,0 +1,219 @@
+@model ImportVerifyView
+@{
+    ViewBag.Title = "Resgrid | " + localizer["ModuleName"];
+    ViewData["Title"] = localizer["TabVerify"].Value;
+    ViewData["Tab"] = "Verify";
+    var id = Model.Workspace.Id;
+    var c = Model.Checklist;
+}
+@await Html.PartialAsync("_Shell", Model)
+
+<div class="wrapper wrapper-content rgw-page">
+    @foreach (var managed in Model.ManagedRuns)
+    {
+        var request = managed.Request;
+        @* Planned by Resgrid staff on the department's behalf (section 17.8): the department can always see it, approve it or cancel it. *@
+        <div class="alert @(managed.WaitsForDepartment ? "alert-warning" : "alert-info")" role="status">
+            <p>
+                <span class="label label-warning">@localizer["ResgridStaff"]</span>
+                <strong>@localizer["ManagedRunTitle"]</strong>
+                @if (request.Kind == ImportManagedActivationKind.Invitations)
+                {
+                    <span>@string.Format(localizer["ManagedRunInvitations"].Value, request.People)</span>
+                }
+                else
+                {
+                    @if (request.AdministratorUserIds.Count > 0)
+                    {
+                        <span>@string.Format(localizer["ManagedRunAdministrators"].Value, request.AdministratorUserIds.Count)</span>
+                    }
+                    @if (request.SignOff)
+                    {
+                        <span>@localizer["ManagedRunSignOff"]</span>
+                    }
+                }
+            </p>
+            <p class="small">@string.Format(localizer["ManagedRunRequestedBy"].Value, managed.Operator, managed.Run.RequestedOn.ToLocalTime().ToString("g"))</p>
+            @if (managed.WaitsForStaff)
+            {
+                <p>@localizer["ManagedRunWaitsForStaff"]</p>
+            }
+            else if (managed.WaitsForDepartment)
+            {
+                <p>@localizer["AwaitingYourSignOff"]</p>
+            }
+            else if (managed.InNoticePeriod)
+            {
+                <p>@string.Format(localizer["ManagedRunScheduled"].Value, managed.Run.NextAttemptOn?.ToLocalTime().ToString("g"))</p>
+            }
+            else
+            {
+                <p>@localizer["ManagedRunStarting"]</p>
+            }
+            <div>
+                @if (managed.WaitsForDepartment || managed.InNoticePeriod)
+                {
+                    <form method="post" asp-action="ApproveManagedRun" asp-route-id="@id" asp-route-runId="@managed.Run.Id" style="display:inline">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-sm btn-primary">@localizer[managed.WaitsForDepartment ? "ApproveManagedRun" : "ManagedRunStartNow"]</button>
+                    </form>
+                }
+                @if (managed.WaitsForStaff || managed.WaitsForDepartment || managed.InNoticePeriod)
+                {
+                    <form method="post" asp-action="CancelManagedRun" asp-route-id="@id" asp-route-runId="@managed.Run.Id" style="display:inline">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-sm btn-default">@localizer["ManagedRunCancel"]</button>
+                    </form>
+                }
+            </div>
+        </div>
+    }
+
+    <div class="rgw-stat-tiles">
+        <div class="rgw-stat-tile"><div class="rgw-stat-label">@localizer["PeopleCreated"]</div><div class="rgw-stat-value">@c.PeopleCreated</div></div>
+        <div class="rgw-stat-tile"><div class="rgw-stat-label">@localizer["PeopleDormant"]</div><div class="rgw-stat-value">@c.PeopleDormant</div></div>
+        <div class="rgw-stat-tile"><div class="rgw-stat-label">@localizer["PeopleInvited"]</div><div class="rgw-stat-value">@c.PeopleInvited</div></div>
+        <div class="rgw-stat-tile"><div class="rgw-stat-label">@localizer["PeopleActivated"]</div><div class="rgw-stat-value">@c.PeopleActivated</div></div>
+        <a class="rgw-stat-tile" asp-action="History" asp-route-id="@id"><div class="rgw-stat-label">@localizer["UnexplainedChecks"]</div><div class="rgw-stat-value">@c.UnexplainedChecks</div></a>
+    </div>
+
+    <div class="row" style="margin-top:16px">
+        <div class="col-lg-4">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["ActivationChecklist"]</h5></div>
+                <div class="ibox-content">
+                    <ol class="rgw-journey">
+                        @foreach (var item in c.Items)
+                        {
+                            var chip = item.Done ? ("label-success", "fa-check", "Chip.Done") : item.Required ? ("label-warning", "fa-exclamation-triangle", "Chip.Required") : ("label-default", "fa-circle-o", "Chip.Advisory");
+                            <li>
+                                <span>@localizer["Checklist." + item.Key]
+                                    @if (item.Url != null)
+                                    {
+                                        <a href="@item.Url?aaReturn=import" target="_blank" rel="noopener"><i class="fa fa-external-link" aria-hidden="true"></i><span class="sr-only">@localizer["OpenOwningScreen"]</span></a>
+                                    }
+                                </span>
+                                @await Html.PartialAsync("_Badge", chip)
+                            </li>
+                        }
+                    </ol>
+                    @if (c.SignedOff)
+                    {
+                        <div class="alert alert-success small" style="margin-top:12px"><i class="fa fa-check" aria-hidden="true"></i> @string.Format(localizer["SignedOffOn"].Value, Model.Workspace.ActivatedOn?.ToLocalTime().ToString("g"))</div>
+                    }
+                    else
+                    {
+                        <form method="post" asp-action="SignOff" asp-route-id="@id" style="margin-top:12px">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-primary btn-block" disabled="@(!c.CanSignOff)"><i class="fa fa-flag-checkered" aria-hidden="true"></i> @localizer["SignOff"]</button>
+                            <p class="help-block small">@localizer["SignOffHelp"]</p>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8">
+            @if (c.PendingAdministrators.Count > 0)
+            {
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["WillBecomeAdministrators"]</h5></div>
+                    <div class="ibox-content">
+                        <p class="text-muted">@localizer["WillBecomeAdministratorsHelp"]</p>
+                        <form method="post" asp-action="ApplyAdministrators" asp-route-id="@id">
+                            @Html.AntiForgeryToken()
+                            @foreach (var person in c.PendingAdministrators)
+                            {
+                                <div class="checkbox"><label><input type="checkbox" name="userIds" value="@person.UserId" /> @(person.Name ?? person.UserId)</label></div>
+                            }
+                            <button type="submit" class="btn btn-default btn-sm">@localizer["MakeAdministrators"]</button>
+                        </form>
+                    </div>
+                </div>
+            }
+
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["InvitePeople"]</h5></div>
+                <div class="ibox-content">
+                    <p class="text-muted">@localizer["InvitePeopleHelp"]</p>
+                    @if (c.PeopleDormant == 0 && c.ExistingAccountsToInvite == 0)
+                    {
+                        <p class="text-muted"><i class="fa fa-check" aria-hidden="true"></i> @localizer["NobodyToInvite"]</p>
+                    }
+                    else
+                    {
+                        <form method="post" asp-action="Invite">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="WorkspaceId" value="@id" />
+                            @if (c.Dormant.Count > 0)
+                            {
+                                <div class="checkbox"><label><input type="checkbox" id="import-invite-all" checked /> <strong>@string.Format(localizer["InviteAllDormant"].Value, c.Dormant.Count)</strong></label></div>
+                                <div style="max-height:260px; overflow:auto; border:1px solid #e7eaec; padding:6px 10px; margin-bottom:10px">
+                                    @foreach (var person in c.Dormant)
+                                    {
+                                        <div class="checkbox" style="margin:2px 0"><label><input type="checkbox" class="import-invite-person" name="UserIds" value="@person.UserId" checked /> @(person.Name ?? person.UserId)</label></div>
+                                    }
+                                </div>
+                            }
+                            @if (c.ExistingAccountsToInvite > 0)
+                            {
+                                <div class="checkbox"><label><input type="checkbox" name="IncludeExistingAccounts" value="true" checked /> @string.Format(localizer["InviteExistingAccounts"].Value, c.ExistingAccountsToInvite)</label></div>
+                            }
+                            <div class="form-group">
+                                <label for="import-send-after">@localizer["SendAfter"]</label>
+                                <input id="import-send-after" name="SendAfter" type="datetime-local" class="form-control" />
+                                <p class="help-block">@localizer["SendAfterHelp"]</p>
+                            </div>
+                            <button type="submit" class="btn btn-primary"><i class="fa fa-envelope" aria-hidden="true"></i> @localizer["ScheduleInvitations"]</button>
+                        </form>
+                    }
+                </div>
+            </div>
+
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["Invitations"]</h5></div>
+                <div class="ibox-content">
+                    @if (Model.Invitations.Count == 0)
+                    {
+                        <p class="text-muted">@localizer["NoInvitations"]</p>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped rgw-table">
+                                <thead><tr><th>@localizer["Email"]</th><th>@localizer["InvitationKind"]</th><th>@localizer["Status"]</th><th class="rgw-row-actions"></th></tr></thead>
+                                <tbody>
+                                    @foreach (var invite in Model.Invitations)
+                                    {
+                                        var state = invite.CompletedOn.HasValue ? ("label-success", "fa-check", "Invite.Accepted")
+                                            : invite.SendState == (int)InviteSendStates.Pending ? ("label-info", "fa-hourglass-half", "Invite.Pending")
+                                            : invite.SendState == (int)InviteSendStates.Failed ? ("label-danger", "fa-times", "Invite.Failed")
+                                            : invite.SendState == (int)InviteSendStates.Revoked ? ("label-default", "fa-ban", "Invite.Revoked")
+                                            : ("label-primary", "fa-envelope", "Invite.Sent");
+                                        <tr>
+                                            <td>@invite.EmailAddress</td>
+                                            <td>@localizer[invite.Kind == (int)InviteKinds.ImportJoin ? "InvitationKind.Join" : "InvitationKind.Account"]</td>
+                                            <td>@await Html.PartialAsync("_Badge", state)</td>
+                                            <td class="rgw-row-actions">
+                                                @if (!invite.CompletedOn.HasValue && invite.SendState != (int)InviteSendStates.Revoked)
+                                                {
+                                                    <form method="post" asp-action="InvitationControl" asp-route-id="@id" asp-route-inviteId="@invite.InviteId" asp-route-control="resend" style="display:inline">@Html.AntiForgeryToken()<button class="btn btn-xs btn-default" type="submit">@localizer["Resend"]</button></form>
+                                                    <form method="post" asp-action="InvitationControl" asp-route-id="@id" asp-route-inviteId="@invite.InviteId" asp-route-control="revoke" style="display:inline">@Html.AntiForgeryToken()<button class="btn btn-xs btn-default" type="submit">@localizer["Revoke"]</button></form>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
+@section Scripts { @await Html.PartialAsync("_Scripts", "verify") }

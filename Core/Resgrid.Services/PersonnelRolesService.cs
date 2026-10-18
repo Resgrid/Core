@@ -125,7 +125,10 @@ namespace Resgrid.Services
 			return new List<PersonnelRole>();
 		}
 
-		public async Task<PersonnelRole> SaveRoleAsync(PersonnelRole role, CancellationToken cancellationToken = default(CancellationToken), string actingUserId = null)
+		public Task<PersonnelRole> SaveRoleAsync(PersonnelRole role, CancellationToken cancellationToken = default(CancellationToken), string actingUserId = null)
+			=> SaveRoleAsync(role, Resgrid.Model.Onboarding.ImportEffectPolicy.Interactive, cancellationToken, actingUserId);
+
+		public async Task<PersonnelRole> SaveRoleAsync(PersonnelRole role, Resgrid.Model.Onboarding.ImportEffectPolicy effects, CancellationToken cancellationToken, string actingUserId = null)
 		{
 			// Members carried on the role are cascaded by the repository; gate and audit them here (plan D4).
 			var incoming = role?.Users?.Where(u => u != null && !string.IsNullOrWhiteSpace(u.UserId)).Select(u => u.UserId).Distinct().ToList() ?? new List<string>();
@@ -140,10 +143,13 @@ namespace Resgrid.Services
 			}
 
 			var saved = await _personnelRolesRepository.SaveOrUpdateAsync(role, cancellationToken);
-			foreach (var userId in added)
-				AuditMembership(role.DepartmentId, actingUserId, AuditLogTypes.RoleMemberAdded, userId, saved.PersonnelRoleId, saved.Name);
+			// An import writes one summary audit per chunk and its own journal instead of one audit per member (section 11.2).
+			if (effects.PerRowAudit)
+				foreach (var userId in added)
+					AuditMembership(role.DepartmentId, actingUserId, AuditLogTypes.RoleMemberAdded, userId, saved.PersonnelRoleId, saved.Name);
 			// Member projections carry role names: a rename touches every member, a membership change the members it moved.
-			await RefreshPersonnelProjectionsAsync(role.DepartmentId, previous.Concat(incoming), cancellationToken);
+			if (effects.ImmediateSearchProjection)
+				await RefreshPersonnelProjectionsAsync(role.DepartmentId, previous.Concat(incoming), cancellationToken);
 			return saved;
 		}
 

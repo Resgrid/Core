@@ -39,6 +39,9 @@ namespace Resgrid.Model.Services
 		/// <returns>Task&lt;UserProfile&gt;.</returns>
 		Task<UserProfile> SaveProfileAsync(int DepartmentId, UserProfile profile, CancellationToken cancellationToken = default(CancellationToken));
 
+		/// <summary>Department Import quiet overload: the side effects named by <paramref name="effects"/> are skipped or deferred to the import engine.</summary>
+		Task<UserProfile> SaveProfileAsync(int DepartmentId, UserProfile profile, Onboarding.ImportEffectPolicy effects, CancellationToken cancellationToken);
+
 		/// <summary>
 		/// Clears the user profile from cache.
 		/// </summary>

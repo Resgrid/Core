@@ -20,6 +20,7 @@ namespace Resgrid.Services
 			builder.RegisterType<AdminAssist.AdminAssistAccessService>().As<Resgrid.Model.AdminAssist.IAdminAssistAccessService>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.ConfigurationSnapshotProvider>().As<Resgrid.Model.AdminAssist.IConfigurationSnapshotProvider>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.SettingsEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
+			builder.RegisterType<AdminAssist.DepartmentImportEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.AdministrativeReferenceEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.OperatingProfileEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.OrganizationEvidenceSource>().As<Resgrid.Model.AdminAssist.IAdminAssistEvidenceSource>().InstancePerLifetimeScope();
@@ -431,6 +432,56 @@ namespace Resgrid.Services
 			builder.RegisterType<Records.RecordsApiIdempotencyService>().As<IRecordsApiIdempotencyService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RecordAttachmentUploadService>().As<IRecordAttachmentUploadService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RecordsNotificationService>().As<IRecordsNotificationService>().InstancePerLifetimeScope();
+
+			// Member provisioning shared by AddPerson, SCIM and Department Import (wizard plan section 11.2). The account
+			// service needs UserManager, which the Web, API and worker hosts register.
+			builder.RegisterType<MemberAccountService>().As<IMemberAccountService>().InstancePerLifetimeScope();
+			builder.RegisterType<MemberProvisioningService>().As<IMemberProvisioningService>().InstancePerLifetimeScope();
+
+			// Department Import (Import & Migration, wizard plan section 18.2)
+			builder.RegisterType<Onboarding.DepartmentImportAccessService>().As<IDepartmentImportAccessService>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.DepartmentImportService>().As<IDepartmentImportService>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.ImportUploadService>().As<IImportUploadService>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.ImportRunQueue>().As<IImportRunQueue>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.ImportRunService>().As<IImportRunService>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.ImportTimelineService>().As<IImportTimelineService>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.DepartmentImportNotificationService>().As<IDepartmentImportNotificationService>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.ImportKeyService>().As<Onboarding.IImportKeyService>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.ImportStagingService>().AsSelf().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.ImportValidationService>().As<Onboarding.IImportValidationService>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.ImportAnalysisHandler>().As<IImportRunHandler>().As<IImportAnalysisService>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.ImportMappingService>().As<IImportMappingService>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.ImportIssueService>().As<IImportIssueService>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.DepartmentImportSupportService>().As<IDepartmentImportSupportService>().As<IDepartmentImportSupportOutbox>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.DepartmentImportMaintenanceService>().As<IDepartmentImportMaintenanceService>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.ImportPlanService>().As<IImportPlanService>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.ImportEffectsRunner>().AsSelf().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.ImportCommitHandler>().As<IImportRunHandler>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.ImportRollbackHandler>().As<IImportRunHandler>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.ImportActivationRunHandler>().As<IImportRunHandler>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.ImportApprovalService>().As<IImportApprovalService>().InstancePerLifetimeScope();
+			// Configure step (wizard plan section 7.5): the Phase 2 configuration domains, written first in a commit run.
+			builder.RegisterType<Onboarding.ImportConfigurationTargets>().AsSelf().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.ImportConfigurationService>().As<IImportConfigurationService>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.ImportActivationService>().As<IImportActivationService>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.ImportTemplateService>().As<IImportTemplateService>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.DepartmentImportStaffService>().As<IDepartmentImportStaffService>().InstancePerLifetimeScope();
+			// Wave-1 target writers (wizard plan section 11.1): resolved as IEnumerable<IImportTargetWriter>, per chunk scope by the commit engine.
+			builder.RegisterType<Onboarding.Writers.CustomStatusesImportWriter>().As<Model.Onboarding.IImportTargetWriter>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.Writers.CertificationTypesImportWriter>().As<Model.Onboarding.IImportTargetWriter>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.Writers.GroupsImportWriter>().As<Model.Onboarding.IImportTargetWriter>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.Writers.RolesImportWriter>().As<Model.Onboarding.IImportTargetWriter>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.Writers.PersonnelImportWriter>().As<Model.Onboarding.IImportTargetWriter>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.Writers.PersonnelCertificationsImportWriter>().As<Model.Onboarding.IImportTargetWriter>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.Writers.EmergencyContactsImportWriter>().As<Model.Onboarding.IImportTargetWriter>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.Writers.UnitCertificationsImportWriter>().As<Model.Onboarding.IImportTargetWriter>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.Writers.RoleRequirementsImportWriter>().As<Model.Onboarding.IImportTargetWriter>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.Writers.UnitTypesImportWriter>().As<Model.Onboarding.IImportTargetWriter>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.Writers.UnitsImportWriter>().As<Model.Onboarding.IImportTargetWriter>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.Writers.CallTypesImportWriter>().As<Model.Onboarding.IImportTargetWriter>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.Writers.CallPrioritiesImportWriter>().As<Model.Onboarding.IImportTargetWriter>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.Writers.PoiTypesImportWriter>().As<Model.Onboarding.IImportTargetWriter>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.Writers.PoisImportWriter>().As<Model.Onboarding.IImportTargetWriter>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RecordsSearchIndexMaintenanceService>().As<IRecordsSearchIndexMaintenanceService>().InstancePerLifetimeScope();
 			// Unified Search (plan R4 Phase 1b/2, worker 70): projections written from the entity services, the global
 			// index sweep, the unified endpoint and the system-functionality catalog.

@@ -1,0 +1,374 @@
+{
+  "Key": "personnel",
+  "Version": "2026.11.1",
+  "LabelKey": "Entity.personnel",
+  "DescriptionKey": "EntityDesc.personnel",
+  "Icon": "fa-users",
+  "Area": "people",
+  "Wave": "2",
+  "Order": 50,
+  "DependsOn": [
+    "groups",
+    "roles"
+  ],
+  "Gate": {
+    "Flags": [
+      "Onboarding.MigrationWizard"
+    ],
+    "Permissions": []
+  },
+  "IdentityFields": [
+    "source_id"
+  ],
+  "NaturalKey": [
+    "email"
+  ],
+  "SupportsCustomFields": true,
+  "MatchPolicy": "email",
+  "MaxRows": 0,
+  "Fields": [
+    {
+      "Key": "source_id",
+      "LabelKey": "Field.personnel.source_id",
+      "DescriptionKey": "FieldDesc.personnel.source_id",
+      "Type": "text",
+      "MaxLength": 256,
+      "Unique": "in-file",
+      "WriterPath": "ImportExternalId.SourceId",
+      "Aliases": [
+        "id",
+        "source id",
+        "external id",
+        "record id",
+        "key"
+      ],
+      "Example": "1042",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "first_name",
+      "LabelKey": "Field.personnel.first_name",
+      "DescriptionKey": "FieldDesc.personnel.first_name",
+      "Type": "text",
+      "Required": true,
+      "MaxLength": 100,
+      "Sensitivity": "Personal",
+      "WriterPath": "UserProfile.FirstName",
+      "Aliases": [
+        "first name",
+        "firstname",
+        "given name",
+        "first"
+      ],
+      "Example": "Alex",
+      "Unique": "none"
+    },
+    {
+      "Key": "last_name",
+      "LabelKey": "Field.personnel.last_name",
+      "DescriptionKey": "FieldDesc.personnel.last_name",
+      "Type": "text",
+      "Required": true,
+      "MaxLength": 100,
+      "Sensitivity": "Personal",
+      "WriterPath": "UserProfile.LastName",
+      "Aliases": [
+        "last name",
+        "lastname",
+        "surname",
+        "family name",
+        "last"
+      ],
+      "Example": "Rivera",
+      "Unique": "none"
+    },
+    {
+      "Key": "email",
+      "LabelKey": "Field.personnel.email",
+      "DescriptionKey": "FieldDesc.personnel.email",
+      "Type": "email",
+      "Required": true,
+      "MaxLength": 256,
+      "Unique": "in-file",
+      "Sensitivity": "Personal",
+      "WriterPath": "IdentityUser.Email",
+      "Aliases": [
+        "email",
+        "e-mail",
+        "email address",
+        "mail"
+      ],
+      "Example": "alex.rivera@example.org"
+    },
+    {
+      "Key": "mobile_phone",
+      "LabelKey": "Field.personnel.mobile_phone",
+      "DescriptionKey": "FieldDesc.personnel.mobile_phone",
+      "Type": "phone",
+      "Sensitivity": "Personal",
+      "WriterPath": "UserProfile.MobileNumber",
+      "Aliases": [
+        "mobile",
+        "cell",
+        "mobile phone",
+        "cell phone",
+        "mobile number",
+        "phone"
+      ],
+      "Example": "+1 555 123 4567",
+      "Unique": "none"
+    },
+    {
+      "Key": "home_phone",
+      "LabelKey": "Field.personnel.home_phone",
+      "DescriptionKey": "FieldDesc.personnel.home_phone",
+      "Type": "phone",
+      "Sensitivity": "Personal",
+      "WriterPath": "UserProfile.HomeNumber",
+      "Aliases": [
+        "home phone",
+        "home",
+        "home number",
+        "landline"
+      ],
+      "Example": "+1 555 765 4321",
+      "Unique": "none"
+    },
+    {
+      "Key": "group",
+      "LabelKey": "Field.personnel.group",
+      "DescriptionKey": "FieldDesc.personnel.group",
+      "Type": "reference",
+      "References": "groups",
+      "ReferenceMatch": "source-id",
+      "WriterPath": "DepartmentGroupMember.DepartmentGroupId",
+      "Aliases": [
+        "group",
+        "station",
+        "company",
+        "assigned station",
+        "home station"
+      ],
+      "Example": "Station 1",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "group_admin",
+      "LabelKey": "Field.personnel.group_admin",
+      "DescriptionKey": "FieldDesc.personnel.group_admin",
+      "Type": "boolean",
+      "WriterPath": "DepartmentGroupMember.IsAdmin",
+      "Aliases": [
+        "group admin",
+        "group administrator",
+        "station officer"
+      ],
+      "Example": "no",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "roles",
+      "LabelKey": "Field.personnel.roles",
+      "DescriptionKey": "FieldDesc.personnel.roles",
+      "Type": "multi",
+      "ItemType": "reference",
+      "References": "roles",
+      "ReferenceMatch": "name",
+      "Separator": ";",
+      "WriterPath": "PersonnelRoleUser.PersonnelRoleId",
+      "Aliases": [
+        "roles",
+        "role",
+        "positions",
+        "qualifications"
+      ],
+      "Example": "Engineer; EMT",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "will_be_admin",
+      "LabelKey": "Field.personnel.will_be_admin",
+      "DescriptionKey": "FieldDesc.personnel.will_be_admin",
+      "Type": "boolean",
+      "WriterPath": "DepartmentMember.IsAdmin",
+      "Aliases": [
+        "admin",
+        "administrator",
+        "department admin",
+        "is admin"
+      ],
+      "Example": "no",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "identification_number",
+      "LabelKey": "Field.personnel.identification_number",
+      "DescriptionKey": "FieldDesc.personnel.identification_number",
+      "Type": "text",
+      "MaxLength": 100,
+      "Sensitivity": "Restricted",
+      "Protected": "departmentmembersensitivedata.identificationnumber",
+      "WriterPath": "DepartmentMemberSensitiveData.IdentificationNumber",
+      "Aliases": [
+        "id number",
+        "badge",
+        "badge number",
+        "employee number",
+        "member number",
+        "employee id"
+      ],
+      "Example": "E-1042",
+      "Unique": "none"
+    },
+    {
+      "Key": "time_zone",
+      "LabelKey": "Field.personnel.time_zone",
+      "DescriptionKey": "FieldDesc.personnel.time_zone",
+      "Type": "timezone",
+      "WriterPath": "UserProfile.TimeZone",
+      "Aliases": [
+        "time zone",
+        "timezone",
+        "tz"
+      ],
+      "Example": "Central Standard Time",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "language",
+      "LabelKey": "Field.personnel.language",
+      "DescriptionKey": "FieldDesc.personnel.language",
+      "Type": "language",
+      "WriterPath": "UserProfile.Language",
+      "Aliases": [
+        "language",
+        "locale",
+        "preferred language"
+      ],
+      "Example": "en",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "notes",
+      "LabelKey": "Field.personnel.notes",
+      "DescriptionKey": "FieldDesc.personnel.notes",
+      "Type": "text",
+      "MaxLength": 4000,
+      "Sensitivity": "Restricted",
+      "Protected": "departmentmembersensitivedata.notes",
+      "WriterPath": "DepartmentMemberSensitiveData.Notes",
+      "Aliases": [
+        "notes",
+        "comments",
+        "remarks"
+      ],
+      "Example": "Prefers night shifts",
+      "Unique": "none"
+    },
+    {
+      "Key": "home_street",
+      "LabelKey": "Field.personnel.home_street",
+      "DescriptionKey": "FieldDesc.personnel.home_street",
+      "Type": "text",
+      "MaxLength": 500,
+      "Sensitivity": "Restricted",
+      "Protected": "departmentmembersensitivedata.homeaddress1",
+      "WriterPath": "DepartmentMemberSensitiveData.HomeAddress1",
+      "Aliases": [
+        "home address",
+        "street",
+        "address"
+      ],
+      "Example": "15 Oak Ave",
+      "Unique": "none"
+    },
+    {
+      "Key": "home_city",
+      "LabelKey": "Field.personnel.home_city",
+      "DescriptionKey": "FieldDesc.personnel.home_city",
+      "Type": "text",
+      "MaxLength": 150,
+      "Sensitivity": "Restricted",
+      "Protected": "departmentmembersensitivedata.homecity",
+      "WriterPath": "DepartmentMemberSensitiveData.HomeCity",
+      "Aliases": [
+        "home city",
+        "city"
+      ],
+      "Example": "Springfield",
+      "Unique": "none"
+    },
+    {
+      "Key": "home_state",
+      "LabelKey": "Field.personnel.home_state",
+      "DescriptionKey": "FieldDesc.personnel.home_state",
+      "Type": "text",
+      "MaxLength": 100,
+      "Sensitivity": "Restricted",
+      "Protected": "departmentmembersensitivedata.homestate",
+      "WriterPath": "DepartmentMemberSensitiveData.HomeState",
+      "Aliases": [
+        "home state",
+        "state"
+      ],
+      "Example": "IL",
+      "Unique": "none"
+    },
+    {
+      "Key": "home_postal_code",
+      "LabelKey": "Field.personnel.home_postal_code",
+      "DescriptionKey": "FieldDesc.personnel.home_postal_code",
+      "Type": "text",
+      "MaxLength": 32,
+      "Sensitivity": "Restricted",
+      "Protected": "departmentmembersensitivedata.homepostalcode",
+      "WriterPath": "DepartmentMemberSensitiveData.HomePostalCode",
+      "Aliases": [
+        "home zip",
+        "zip",
+        "postal code"
+      ],
+      "Example": "62704",
+      "Unique": "none"
+    },
+    {
+      "Key": "home_country",
+      "LabelKey": "Field.personnel.home_country",
+      "DescriptionKey": "FieldDesc.personnel.home_country",
+      "Type": "text",
+      "MaxLength": 100,
+      "Sensitivity": "Restricted",
+      "Protected": "departmentmembersensitivedata.homecountry",
+      "WriterPath": "DepartmentMemberSensitiveData.HomeCountry",
+      "Aliases": [
+        "home country",
+        "country"
+      ],
+      "Example": "United States",
+      "Unique": "none"
+    },
+    {
+      "Key": "active",
+      "LabelKey": "Field.personnel.active",
+      "DescriptionKey": "FieldDesc.personnel.active",
+      "Type": "boolean",
+      "WriterPath": "DepartmentMember.IsDisabled",
+      "Aliases": [
+        "active",
+        "status",
+        "is active",
+        "enabled"
+      ],
+      "Example": "yes",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    }
+  ],
+  "RowRules": []
+}

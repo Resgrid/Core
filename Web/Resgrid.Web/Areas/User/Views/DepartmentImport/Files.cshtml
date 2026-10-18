@@ -1,0 +1,271 @@
+@model ImportFilesView
+@using Resgrid.Services.Onboarding
+@{
+    ViewBag.Title = "Resgrid | " + localizer["ModuleName"];
+    ViewData["Title"] = localizer["TabDatasets"].Value;
+    ViewData["Tab"] = "Files";
+    var id = Model.Workspace.Id;
+    var contracts = Model.Catalog.InDependencyOrder();
+    var glossary = ImportGlossaryDisplays.For(localizer, await departmentTerms.GetAsync(), departmentTerms, Model.Catalog);
+    var chosen = glossary.Products(Model.Sources);
+    var choosable = Model.Catalog.Packs.Where(p => chosen.All(c => c.Key != p.Key)).OrderBy(p => p.ProductName, StringComparer.CurrentCultureIgnoreCase).ToList();
+}
+@await Html.PartialAsync("_Shell", Model)
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["UploadFile"]</h5></div>
+                <div class="ibox-content">
+                    <p class="text-muted">@localizer["UploadHelp"]</p>
+                    <div id="import-upload" class="rgw-filter" data-workspace="@id" data-chunk="@Model.ChunkSizeBytes"
+                         data-start="@Url.Action("UploadStart")" data-status="@Url.Action("UploadStatus")" data-chunk-url="@Url.Action("UploadChunk")" data-complete="@Url.Action("UploadComplete")" data-reload="@Url.Action("Files", new { id })">
+                        <label for="import-file" class="control-label">@localizer["ChooseFile"]</label>
+                        <input type="file" id="import-file" class="form-control" accept=".csv,.tsv,.txt,.xlsx,.json,.jsonl,.geojson" disabled />
+                        <p class="help-block">@localizer["SupportedFormats"]</p>
+                        <button type="button" id="import-upload-start" class="btn btn-primary" disabled><i class="fa fa-upload" aria-hidden="true"></i> @localizer["Upload"]</button>
+                        <div class="progress" style="margin-top:10px; display:none" id="import-upload-progress-wrap">
+                            <div id="import-upload-progress" class="progress-bar progress-bar-success" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width:0%"></div>
+                        </div>
+                        <p id="import-upload-status" class="rgw-progress-honest" aria-live="polite"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["Datasets"]</h5></div>
+                <div class="ibox-content">
+                    @if (Model.Datasets.Count == 0)
+                    {
+                        <p class="text-muted">@localizer["NoDatasetsHelp"]</p>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover rgw-table">
+                                <thead>
+                                    <tr>
+                                        <th>@localizer["Dataset"]</th>
+                                        <th>@localizer["Destination"]</th>
+                                        <th>@localizer["Status"]</th>
+                                        <th class="text-right">@localizer["Rows"]</th>
+                                        <th class="text-right">@localizer["Ready"]</th>
+                                        <th class="text-right">@localizer["Blocked"]</th>
+                                        <th class="rgw-row-actions"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var dataset in Model.Datasets.OrderBy(d => d.Wave).ThenBy(d => d.CreatedOn))
+                                    {
+                                        var contract = dataset.EntityKey == null ? null : Model.Catalog.GetContract(dataset.EntityKey);
+                                        var excluded = dataset.Status == (int)ImportDatasetStatus.Excluded;
+                                        <tr>
+                                            <td><a asp-action="Dataset" asp-route-id="@id" asp-route-datasetId="@dataset.Id">@dataset.Name</a></td>
+                                            <td>@(contract == null ? localizer["DestinationUnknown"].Value : localizer[contract.LabelKey].Value)
+                                                @if (!dataset.DestinationConfirmed && contract != null)
+                                                {
+                                                    <span class="label label-warning">@string.Format(localizer["Confidence"].Value, dataset.DetectionConfidence)</span>
+                                                }
+                                            </td>
+                                            <td>@await Html.PartialAsync("_Badge", ImportBadges.Dataset(dataset.Status))</td>
+                                            <td class="text-right">@dataset.RowCount</td>
+                                            <td class="text-right">@dataset.ReadyCount</td>
+                                            <td class="text-right">@if (dataset.BlockedCount > 0) { <a asp-action="Issues" asp-route-id="@id" asp-route-datasetId="@dataset.Id">@dataset.BlockedCount</a> } else { @dataset.BlockedCount }</td>
+                                            <td class="rgw-row-actions">
+                                                <a class="btn btn-xs btn-default" asp-action="Dataset" asp-route-id="@id" asp-route-datasetId="@dataset.Id">@localizer["Open"]</a>
+                                                @if (dataset.Status < (int)ImportDatasetStatus.Importing || excluded)
+                                                {
+                                                    <form method="post" asp-action="ExcludeDataset" asp-route-id="@id" asp-route-datasetId="@dataset.Id" asp-route-excluded="@(!excluded)" style="display:inline">
+                                                        @Html.AntiForgeryToken()
+                                                        <button type="submit" class="btn btn-xs btn-default">@localizer[excluded ? "Include" : "Exclude"]</button>
+                                                    </form>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["Files"]</h5></div>
+                <div class="ibox-content">
+                    @if (Model.Artifacts.Count == 0)
+                    {
+                        <p class="text-muted">@localizer["NoFiles"]</p>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped rgw-table">
+                                <thead><tr><th>@localizer["FileName"]</th><th>@localizer["Size"]</th><th>@localizer["Status"]</th><th>@localizer["Uploaded"]</th></tr></thead>
+                                <tbody>
+                                    @foreach (var artifact in Model.Artifacts)
+                                    {
+                                        <tr>
+                                            <td>@artifact.OriginalName</td>
+                                            <td>@((artifact.SizeBytes / 1024.0).ToString("N0")) KB</td>
+                                            <td>
+                                                @if (artifact.RejectionCode != null)
+                                                {
+                                                    <span class="label label-danger"><i class="fa fa-times-circle" aria-hidden="true"></i> @string.Format(localizer["Issue." + artifact.RejectionCode + ".Title"].Value, 1)</span>
+                                                }
+                                                else if (artifact.PurgedOn.HasValue)
+                                                {
+                                                    <span class="label label-default"><i class="fa fa-trash" aria-hidden="true"></i> @localizer["FilePurged"]</span>
+                                                }
+                                                else if (artifact.UploadState == (int)ImportArtifactUploadState.Completed)
+                                                {
+                                                    <span class="label label-success"><i class="fa fa-check" aria-hidden="true"></i> @localizer["FileReceived"]</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="label label-info"><i class="fa fa-upload" aria-hidden="true"></i> @localizer["FileUploading"]</span>
+                                                }
+                                            </td>
+                                            <td>@artifact.CreatedOn.ToLocalTime().ToString("g")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            @* The products the department is moving from (plan section 7.6): their glossaries and their words for Resgrid's features. *@
+            <div class="ibox float-e-margins" id="import-products">
+                <div class="ibox-title"><h5>@localizer["ProductsHeader"]</h5></div>
+                <div class="ibox-content">
+                    <p class="text-muted small">@localizer["ProductsHelp"]</p>
+                    @if (chosen.Count > 0)
+                    {
+                        <ul class="list-unstyled">
+                            @foreach (var pack in chosen)
+                            {
+                                var source = Model.Sources.First(s => string.Equals(s.ProductKey, pack.Key, StringComparison.OrdinalIgnoreCase));
+                                <li style="margin-bottom:8px">
+                                    <form method="post" asp-action="RemoveProduct" asp-route-id="@id" asp-route-sourceId="@source.Id" style="float:right">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-link btn-xs" aria-label="@string.Format(localizer["ProductRemoveLabel"].Value, pack.ProductName)" title="@localizer["ProductRemove"]"><i class="fa fa-times" aria-hidden="true"></i></button>
+                                    </form>
+                                    <strong>@pack.ProductName</strong><br />
+                                    <span class="label @(ImportGlossaryDisplay.HasGlossary(pack) ? "label-info" : "label-default")">@glossary.Status(pack)</span>
+                                </li>
+                            }
+                        </ul>
+                        @if (chosen.Any(p => !ImportGlossaryDisplay.HasGlossary(p)))
+                        {
+                            <p class="small">@localizer["ProductNoneHelp"] <a href="https://docs.resgrid.com/web-app/import-and-migration/starter-workbook" target="_blank" rel="noopener">@localizer["ProductSpreadsheetGuide"]</a></p>
+                        }
+                    }
+                    @if (choosable.Count > 0)
+                    {
+                        <form method="post" asp-action="AddProduct" asp-route-id="@id">
+                            @Html.AntiForgeryToken()
+                            <div class="form-group">
+                                <label for="import-product">@localizer["ProductAdd"]</label>
+                                <select id="import-product" name="productKey" class="form-control" required>
+                                    <option value="">@localizer["ProductChoose"]</option>
+                                    <optgroup label="@localizer["ProductStatusGlossary"]">
+                                        @foreach (var pack in choosable.Where(ImportGlossaryDisplay.HasGlossary))
+                                        {
+                                            <option value="@pack.Key">@pack.ProductName</option>
+                                        }
+                                    </optgroup>
+                                    <optgroup label="@localizer["ProductStatusNone"]">
+                                        @foreach (var pack in choosable.Where(p => !ImportGlossaryDisplay.HasGlossary(p)))
+                                        {
+                                            <option value="@pack.Key">@pack.ProductName</option>
+                                        }
+                                    </optgroup>
+                                </select>
+                                <p class="help-block small">@localizer["ProductNotListed"]</p>
+                            </div>
+                            <button type="submit" class="btn btn-default btn-block"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["ProductAddButton"]</button>
+                        </form>
+                    }
+                </div>
+            </div>
+
+            @await Html.PartialAsync("_Glossary", Model)
+
+            @* Incremental continuation (plan section 5.2): Source IDs an earlier import wrote are recognized here. *@
+            <div class="ibox float-e-margins" id="import-continuation">
+                <div class="ibox-title"><h5>@localizer["ContinueEarlierImport"]</h5></div>
+                <div class="ibox-content">
+                    <p class="text-muted small">@localizer["ContinueEarlierImportHelp"]</p>
+                    @if (Model.Continuation != null)
+                    {
+                        <p><i class="fa fa-link" aria-hidden="true"></i> @string.Format(localizer["ContinuingFrom"].Value, Model.Continuation.Label)</p>
+                    }
+                    @if (Model.ContinuationLocked)
+                    {
+                        <p class="small text-muted">@localizer["ContinuationLocked"]</p>
+                    }
+                    else if (Model.ContinuationCandidates.Count == 0 && Model.Continuation == null)
+                    {
+                        <p class="small text-muted">@localizer["NoEarlierImports"]</p>
+                    }
+                    else
+                    {
+                        <form method="post" asp-action="SetContinuation" asp-route-id="@id">
+                            @Html.AntiForgeryToken()
+                            <div class="form-group">
+                                <label for="import-continue-from">@localizer["ContinueFrom"]</label>
+                                <select id="import-continue-from" name="earlierWorkspaceId" class="form-control">
+                                    <option value="">@localizer["ContinueNothing"]</option>
+                                    @foreach (var candidate in Model.ContinuationCandidates)
+                                    {
+                                        <option value="@candidate.WorkspaceId" selected="@(Model.Continuation?.ConnectorReference == candidate.WorkspaceId)">@candidate.Name — @string.Format(localizer["ContinuationCandidateDetail"].Value, candidate.DatasetsImported, candidate.LastImportedOn?.ToLocalTime().ToString("d") ?? "")</option>
+                                    }
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-default btn-block">@localizer["Save"]</button>
+                        </form>
+                    }
+                </div>
+            </div>
+
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["StarterWorkbook"]</h5></div>
+                <div class="ibox-content">
+                    <p class="text-muted">@localizer["StarterWorkbookHelp"]</p>
+                    <form method="get" asp-action="Template" id="import-template-form">
+                        <input type="hidden" name="entities" id="import-template-entities" />
+                        @foreach (var contract in contracts)
+                        {
+                            <div class="checkbox"><label><input type="checkbox" class="import-template-entity" value="@contract.Key" checked /> <i class="fa @contract.Icon" aria-hidden="true"></i> @localizer[contract.LabelKey]</label></div>
+                        }
+                        <button type="submit" class="btn btn-primary btn-block"><i class="fa fa-download" aria-hidden="true"></i> @localizer["DownloadWorkbook"]</button>
+                    </form>
+                    <hr />
+                    <p class="small text-muted">@localizer["CsvTemplatesHelp"]</p>
+                    <ul class="list-unstyled small">
+                        @foreach (var contract in contracts)
+                        {
+                            <li><a asp-action="Template" asp-route-entities="@contract.Key" asp-route-format="csv"><i class="fa fa-file-text-o" aria-hidden="true"></i> @localizer[contract.LabelKey] (CSV)</a></li>
+                        }
+                    </ul>
+                    @if (Model.Exportable.Count > 0)
+                    {
+                        <hr />
+                        <p class="small text-muted">@localizer["CurrentDataHelp"]</p>
+                        <a class="btn btn-default btn-block" asp-action="CurrentData" asp-route-entities="@string.Join(",", Model.Exportable)"><i class="fa fa-table" aria-hidden="true"></i> @localizer["DownloadCurrentData"]</a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
+@section Scripts { @await Html.PartialAsync("_Scripts", "files") }

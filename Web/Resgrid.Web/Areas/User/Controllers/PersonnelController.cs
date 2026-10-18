@@ -24,6 +24,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Localization;
 using Resgrid.Model.Identity;
+using Resgrid.Model.Onboarding;
 using Resgrid.WebCore.Areas.User.Models.Personnel;
 using IdentityUser = Resgrid.Model.Identity.IdentityUser;
 using Resgrid.WebCore.Areas.User.Models;
@@ -66,6 +67,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IExternalIdentityLinkService _externalIdentityLinkService;
 		private readonly IProtectedReadService _protectedReadService;
 		private readonly IDepartmentMemberSensitiveDataService _memberSensitiveDataService;
+		private readonly IMemberProvisioningService _memberProvisioning;
 
 		public PersonnelController(IDepartmentsService departmentsService, IUsersService usersService, IActionLogsService actionLogsService,
 			IEmailService emailService, IUserProfileService userProfileService, IDeleteService deleteService, Model.Services.IAuthorizationService authorizationService,
@@ -77,8 +79,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IExternalIdentityLinkService externalIdentityLinkService, IProtectedReadService protectedReadService,
 			IDepartmentMemberSensitiveDataService memberSensitiveDataService, IRecordsService recordsService,
 			IDispatchScopeService dispatchScopeService,
-			IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> certificationLocalizer = null)
+			IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> certificationLocalizer = null,
+			IMemberProvisioningService memberProvisioning = null)
 		{
+			_memberProvisioning = memberProvisioning;
 			_dispatchScopeService = dispatchScopeService;
 			_certificationLocalizer = certificationLocalizer;
 			_departmentsService = departmentsService;
@@ -595,32 +599,34 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (ModelState.IsValid && !model.PersonnelLimitReached)
 			{
-				var user = new IdentityUser { UserName = model.Username, Email = model.Email, SecurityStamp = Guid.NewGuid().ToString().ToUpper() };
-				var result = await _userManager.CreateAsync(user, model.NewPassword);
-				if (result.Succeeded)
+				// IdentificationNumber is department-issued. Keep it off the new global profile
+				// row even while the legacy columns remain available as relocation sources.
+				var identificationNumber = model.Profile.IdentificationNumber;
+				model.Profile.IdentificationNumber = null;
+				model.Profile.HomeAddressId = null;
+				model.Profile.MailingAddressId = null;
+				model.Profile.MobileCarrier = (int)model.Carrier;
+				model.Profile.FirstName = model.FirstName;
+				model.Profile.LastName = model.LastName;
+
+				// Account, profile, user role, extension info and membership through the shared member provisioning
+				// (Department Import plan section 11.2) with today's interactive effects; the rest of this action is unchanged.
+				var provisioned = await _memberProvisioning.ProvisionAsync(new MemberProvisioningRequest
 				{
-					// IdentificationNumber is department-issued. Keep it off the new global profile
-					// row even while the legacy columns remain available as relocation sources.
-					var identificationNumber = model.Profile.IdentificationNumber;
-					model.Profile.IdentificationNumber = null;
-					model.Profile.HomeAddressId = null;
-					model.Profile.MailingAddressId = null;
-					model.Profile.UserId = user.UserId;
-					model.Profile.MobileCarrier = (int)model.Carrier;
-					model.Profile.FirstName = model.FirstName;
-					model.Profile.LastName = model.LastName;
-					await _userProfileService.SaveProfileAsync(DepartmentId, model.Profile, cancellationToken);
+					DepartmentId = DepartmentId,
+					UserId = Guid.NewGuid().ToString().ToUpper(),
+					UserName = model.Username,
+					Email = model.Email,
+					Password = model.NewPassword,
+					EmailConfirmed = true,
+					Profile = model.Profile,
+					MustChangePassword = model.MustChangePasswordOnLogin,
+					ActingUserId = UserId
+				}, ImportEffectPolicy.Interactive, cancellationToken);
 
-					_usersService.AddUserToUserRole(user.Id);
-
-					// Don't know why this is still erroring out.
-					try
-					{
-						_usersService.InitUserExtInfo(user.Id);
-					}
-					catch { }
-
-					await _departmentsService.AddUserToDepartmentAsync(DepartmentId, user.UserId, false, cancellationToken);
+				var user = provisioned.Succeeded ? await _userManager.FindByIdAsync(provisioned.UserId) : null;
+				if (user != null)
+				{
 
 					if (!string.IsNullOrWhiteSpace(identificationNumber))
 					{
@@ -639,16 +645,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 						catch (InvalidOperationException ex)
 						{
 							Logging.LogException(ex);
-						}
-					}
-
-					if (model.MustChangePasswordOnLogin)
-					{
-						var member = await _departmentsService.GetDepartmentMemberAsync(user.UserId, DepartmentId);
-						if (member != null)
-						{
-							member.MustChangePassword = true;
-							await _departmentsService.SaveDepartmentMemberAsync(member, cancellationToken);
 						}
 					}
 

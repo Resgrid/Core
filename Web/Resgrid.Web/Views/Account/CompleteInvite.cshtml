@@ -25,17 +25,33 @@
                 <div style="text-align: center;">
                     <a href="@Resgrid.Config.UrlsConfig.HomeUrl"><img src="~/images/Resgrid_JustText.png" style="width: 200px;" /></a>
                 </div>
-                <p>
-                    @localizer["CompleteInviteText1"] @Model.DepartmentName.
-                </p>
+                @if (Model.ImportKind == (int)Resgrid.Model.InviteKinds.ImportAccount)
+                {
+                    <p>@string.Format(localizer["ImportInviteText"].Value, Model.DepartmentName)</p>
+                }
+                else if (Model.ImportKind == (int)Resgrid.Model.InviteKinds.ImportJoin)
+                {
+                    <p>@string.Format(localizer["ImportJoinText"].Value, Model.DepartmentName)</p>
+                }
+                else
+                {
+                    <p>
+                        @localizer["CompleteInviteText1"] @Model.DepartmentName.
+                    </p>
 
-                <p>
-                    @localizer["CompleteInviteText2"]
-                </p>
+                    <p>
+                        @localizer["CompleteInviteText2"]
+                    </p>
 
-                <p>
-                    @localizer["CompleteInviteText3"]
-                </p>
+                    <p>
+                        @localizer["CompleteInviteText3"]
+                    </p>
+                }
+
+                @if (!string.IsNullOrEmpty(Model.ImportError) && Model.ImportError != "password_rejected")
+                {
+                    <div class="alert alert-danger">@(Model.ImportError == "invite_wrong_account" ? localizer["ImportJoinWrongAccount"] : localizer["ImportInviteFailed"])</div>
+                }
 
                 @if (Model.DepartmentFull)
                 {
@@ -53,6 +69,49 @@
             </div>
             <div class="col-md-6">
                 <div class="ibox-content">
+                    @if (Model.ImportKind == (int)Resgrid.Model.InviteKinds.ImportJoin)
+                    {
+                        @if (Model.SignedIn)
+                        {
+                            <form class="m-t" role="form" asp-controller="Account" asp-action="CompleteInvite" method="post">
+                                @Html.HiddenFor(x => x.Code)
+                                <button type="submit" class="btn btn-primary block full-width m-b">@string.Format(localizer["ImportJoinAccept"].Value, Model.DepartmentName)</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <a class="btn btn-primary block full-width m-b" asp-controller="Account" asp-action="LogOn"
+                               asp-route-returnUrl="@Url.Action("CompleteInvite", "Account", new { inviteCode = Model.Code })">@localizer["ImportJoinSignIn"]</a>
+                        }
+                    }
+                    else if (Model.ImportKind == (int)Resgrid.Model.InviteKinds.ImportAccount)
+                    {
+                        <form class="m-t" role="form" asp-controller="Account" asp-action="CompleteInvite" method="post">
+                            <div class="form-group">
+                                <input type="email" class="form-control" placeholder="@localizer["EmailAddress"]" value="@Model.Email" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label>@localizer["ImportInviteUserName"]</label>
+                                <input type="text" class="form-control" value="@Model.UserName" disabled>
+                            </div>
+                            <div class="form-group">
+                                <span>@localizer["PasswordHelp"]</span>
+                            </div>
+                            <div class="form-group">
+                                <input asp-for="Password" class="pr-password form-control" placeholder="@localizer["Password"]" required="" />
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <input asp-for="ConfirmPassword" class="pr-password form-control" placeholder="@localizer["ConfirmPassword"]" required="" />
+                                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                            </div>
+                            <button type="submit" class="btn btn-primary block full-width m-b">@localizer["ImportInviteSetPassword"]</button>
+                            @Html.HiddenFor(x => x.Code)
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        </form>
+                    }
+                    else
+                    {
                     <form class="m-t" role="form" asp-controller="Account" asp-action="CompleteInvite" method="post">
                         <div class="form-group">
                             <input type="text" class="form-control" placeholder="@localizer["FirstName"]" asp-for="FirstName" required="">
@@ -88,6 +147,7 @@
                         @Html.HiddenFor(x => x.Code)
                         <div asp-validation-summary="All" class="text-danger"></div>
                     </form>
+                    }
                     <p class="m-t">
 
                     </p>

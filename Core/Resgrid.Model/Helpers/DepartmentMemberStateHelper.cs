@@ -3,7 +3,8 @@ namespace Resgrid.Model.Helpers
 	/// <summary>
 	/// Membership-state predicates shared by the automated paths. Two tiers, on purpose:
 	/// <list type="bullet">
-	/// <item><see cref="IsCurrentMember"/> — not deleted, not disabled. Who may still act in the department
+	/// <item><see cref="IsCurrentMember"/> — not deleted, not disabled, and not a dormant (imported, not yet activated)
+	/// membership (Department Import plan section 14.3). Who may still act in the department
 	/// (perform an assigned checklist, log labor on a work order).</item>
 	/// <item><see cref="IsActiveMember"/> — current and not hidden. Who automation addresses and who reports
 	/// name: reminders, escalations, digests, notifications, compliance rows, pickers.</item>
@@ -14,7 +15,7 @@ namespace Resgrid.Model.Helpers
 	{
 		public static bool IsCurrentMember(DepartmentMember member, int departmentId) =>
 			member != null && member.DepartmentId == departmentId && !string.IsNullOrWhiteSpace(member.UserId) &&
-			!member.IsDeleted && !member.IsDisabled.GetValueOrDefault();
+			!member.IsDeleted && !member.IsDisabled.GetValueOrDefault() && !member.IsImportDormant;
 
 		public static bool IsActiveMember(DepartmentMember member, int departmentId) =>
 			IsCurrentMember(member, departmentId) && !member.IsHidden.GetValueOrDefault();

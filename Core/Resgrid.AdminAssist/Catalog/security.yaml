@@ -3373,6 +3373,70 @@
       "Availability": "available"
     },
     {
+      "Id": "permission.ManageDepartmentImport",
+      "AreaId": "security",
+      "LabelKey": "Permission.ManageDepartmentImport",
+      "HelpKey": "PermissionHelp.ManageDepartmentImport",
+      "Binding": "PermissionTypes.ManageDepartmentImport",
+      "ValueType": "permission",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Security",
+        "Action": "Index"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-12T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.security",
+        "TimingKey": "Impact.PermissionTiming",
+        "ReversibilityKey": "Impact.PermissionReversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "permission.ManageDepartmentImport",
+      "DefaultValue": "Not offered on the Security screen; the claim is issued to department admins only (no row can be saved), and it is not expandable by role",
+      "AllowedValues": "None — not offered on the Security screen and refused by SetPermission (DepartmentImportPermissionCatalog ShownOnSecurityScreen = false)",
+      "EvidenceSource": "ClaimsLogic.AddRecordClaims (DepartmentImport:Update) → DepartmentImport_Update policy on the MVC DepartmentImportController; services re-check department admin and permission 72 at every boundary, and worker runs re-check the approving administrator at commit start and resume",
+      "Availability": "available"
+    },
+    {
+      "Id": "permission.ManageRecordImports",
+      "AreaId": "security",
+      "LabelKey": "Permission.ManageRecordImports",
+      "HelpKey": "PermissionHelp.ManageRecordImports",
+      "Binding": "PermissionTypes.ManageRecordImports",
+      "ValueType": "permission",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Security",
+        "Action": "Index"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-12T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.security",
+        "TimingKey": "Impact.PermissionTiming",
+        "ReversibilityKey": "Impact.PermissionReversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "permission.ManageRecordImports",
+      "DefaultValue": "Not offered on the Security screen yet; the claim is issued to department admins only (no row can be saved) until RMS owns its enforcement (wizard Phase 3R, decision D9)",
+      "AllowedValues": "None — not offered on the Security screen and refused by SetPermission (DepartmentImportPermissionCatalog ShownOnSecurityScreen = false)",
+      "EvidenceSource": "ClaimsLogic.AddRecordClaims (RecordImports:Update) → RecordImports_Update policy; required in addition to 72 for any dataset whose destination is Records",
+      "Availability": "available"
+    },
+    {
       "Id": "permission.ViewInternalCosts",
       "AreaId": "security",
       "LabelKey": "Permission.ViewInternalCosts",
@@ -5746,6 +5810,8 @@
         "permission.ManageDeployments",
         "permission.ManageInvoicing",
         "permission.ManageMutualAidReimbursement",
+        "permission.ManageDepartmentImport",
+        "permission.ManageRecordImports",
         "permission.ManagePayDataReporting",
         "permission.ManageRecordDefinitions",
         "permission.ManageRecordDisclosures",

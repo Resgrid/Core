@@ -206,4 +206,28 @@
   <data name="Region" xml:space="preserve">
     <value>Region</value>
   </data>
+  <data name="ImportInviteText" xml:space="preserve">
+    <value>{0} hat ein Resgrid-Konto für Sie eingerichtet. Wählen Sie ein Passwort, um sich zum ersten Mal anzumelden.</value>
+  </data>
+  <data name="ImportInviteUserName" xml:space="preserve">
+    <value>Ihr Benutzername</value>
+  </data>
+  <data name="ImportInviteSetPassword" xml:space="preserve">
+    <value>Passwort festlegen und anmelden</value>
+  </data>
+  <data name="ImportJoinText" xml:space="preserve">
+    <value>{0} hat Sie eingeladen, mit Ihrem bestehenden Resgrid-Konto beizutreten.</value>
+  </data>
+  <data name="ImportJoinSignIn" xml:space="preserve">
+    <value>Zum Annehmen anmelden</value>
+  </data>
+  <data name="ImportJoinAccept" xml:space="preserve">
+    <value>{0} beitreten</value>
+  </data>
+  <data name="ImportJoinWrongAccount" xml:space="preserve">
+    <value>Diese Einladung wurde an eine andere E-Mail-Adresse gesendet. Melden Sie sich mit dem Konto an, an das sie gesendet wurde.</value>
+  </data>
+  <data name="ImportInviteFailed" xml:space="preserve">
+    <value>Diese Einladung kann nicht mehr angenommen werden. Bitte wenden Sie sich an den Administrator, der Sie eingeladen hat.</value>
+  </data>
 </root>

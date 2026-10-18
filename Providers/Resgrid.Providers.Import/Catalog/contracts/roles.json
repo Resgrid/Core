@@ -1,0 +1,82 @@
+{
+  "Key": "roles",
+  "Version": "2026.11.1",
+  "LabelKey": "Entity.roles",
+  "DescriptionKey": "EntityDesc.roles",
+  "Icon": "fa-id-badge",
+  "Area": "people",
+  "Wave": "2",
+  "Order": 40,
+  "DependsOn": [],
+  "Gate": {
+    "Flags": [
+      "Onboarding.MigrationWizard"
+    ],
+    "Permissions": []
+  },
+  "IdentityFields": [
+    "source_id"
+  ],
+  "NaturalKey": [
+    "name"
+  ],
+  "SupportsCustomFields": false,
+  "MatchPolicy": "name",
+  "MaxRows": 0,
+  "Fields": [
+    {
+      "Key": "source_id",
+      "LabelKey": "Field.roles.source_id",
+      "DescriptionKey": "FieldDesc.roles.source_id",
+      "Type": "text",
+      "MaxLength": 256,
+      "Unique": "in-file",
+      "WriterPath": "ImportExternalId.SourceId",
+      "Aliases": [
+        "id",
+        "source id",
+        "external id",
+        "record id",
+        "key"
+      ],
+      "Example": "1042",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "name",
+      "LabelKey": "Field.roles.name",
+      "DescriptionKey": "FieldDesc.roles.name",
+      "Type": "text",
+      "Required": true,
+      "MaxLength": 250,
+      "Unique": "in-file",
+      "WriterPath": "PersonnelRole.Name",
+      "Aliases": [
+        "name",
+        "role",
+        "role name",
+        "position",
+        "rank",
+        "title"
+      ],
+      "Example": "Engineer",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "description",
+      "LabelKey": "Field.roles.description",
+      "DescriptionKey": "FieldDesc.roles.description",
+      "Type": "text",
+      "MaxLength": 3000,
+      "WriterPath": "PersonnelRole.Description",
+      "Aliases": [
+        "description",
+        "notes"
+      ],
+      "Example": "Drives and pumps the engine",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    }
+  ],
+  "RowRules": []
+}

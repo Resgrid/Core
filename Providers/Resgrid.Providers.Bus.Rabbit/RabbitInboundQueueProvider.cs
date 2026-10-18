@@ -20,6 +20,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 		private IChannel _unitLocationChannel;
 		private IChannel _personnelLocationChannel;
 		private IChannel _aiDispatchChannel;
+		private IChannel _departmentImportChannel;
 		public Func<CallQueueItem, Task> CallQueueReceived;
 		public Func<MessageQueueItem, Task> MessageQueueReceived;
 		public Func<DistributionListQueueItem, Task> DistributionListQueueReceived;
@@ -35,6 +36,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 		public Func<ChatbotMessageQueueItem, Task> ChatbotMessageQueueReceived;
 		public Func<CommunicationTestQueueItem, Task> CommunicationTestQueueReceived;
 		public Func<AiDispatchQueueItem, Task> AiDispatchTriageQueueReceived;
+		public Func<DepartmentImportQueueItem, Task> DepartmentImportQueueReceived;
 
 		public RabbitInboundQueueProvider()
 		{
@@ -90,6 +92,14 @@ namespace Resgrid.Providers.Bus.Rabbit
 						// channel so it never holds up message, chatbot or communication-test callbacks.
 						_aiDispatchChannel = await connection.CreateChannelAsync();
 						await _aiDispatchChannel.BasicQosAsync(0, 1, false);
+					}
+
+					if (DepartmentImportQueueReceived != null)
+					{
+						// An import run works for up to its claim budget (about 50 seconds); its own one-at-a-time channel
+						// keeps it from delaying any other queue callback.
+						_departmentImportChannel = await connection.CreateChannelAsync();
+						await _departmentImportChannel.BasicQosAsync(0, 1, false);
 					}
 
 					await StartMonitoring();
@@ -802,17 +812,63 @@ namespace Resgrid.Providers.Bus.Rabbit
 							autoAck: false,
 							consumer: aiDispatchConsumer);
 				}
+
+				if (DepartmentImportQueueReceived != null)
+				{
+					var departmentImportConsumer = new AsyncEventingBasicConsumer(_departmentImportChannel);
+					departmentImportConsumer.ReceivedAsync += async (model, ea) =>
+					{
+						if (ea == null)
+							return;
+
+						DepartmentImportQueueItem item = null;
+						try
+						{
+							if (ea.Body.Length > 0)
+								item = ObjectSerialization.Deserialize<DepartmentImportQueueItem>(Encoding.UTF8.GetString(ea.Body.ToArray()));
+						}
+						catch (Exception ex)
+						{
+							Logging.LogException(ex);
+						}
+
+						if (item == null || string.IsNullOrWhiteSpace(item.RunId))
+						{
+							await _departmentImportChannel.BasicNackAsync(ea.DeliveryTag, false, false);
+							Logging.LogInfo("DepartmentImport: dropping an empty or unreadable queue delivery.");
+							return;
+						}
+
+						try
+						{
+							await DepartmentImportQueueReceived.Invoke(item);
+							await _departmentImportChannel.BasicAckAsync(ea.DeliveryTag, false);
+						}
+						catch (Exception ex)
+						{
+							// The nudge is only a start-latency optimisation: worker 47's sweep claims the run anyway.
+							Logging.LogException(ex);
+							await _departmentImportChannel.BasicNackAsync(ea.DeliveryTag, false, false);
+						}
+					};
+
+					await _departmentImportChannel.BasicConsumeAsync(
+							queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.DepartmentImportQueueName),
+							autoAck: false,
+							consumer: departmentImportConsumer);
+				}
 			}
 		}
 
 		private async Task DisposeChannelsAsync()
 		{
-			var channels = new[] { _channel, _callChannel, _unitLocationChannel, _personnelLocationChannel, _aiDispatchChannel };
+			var channels = new[] { _channel, _callChannel, _unitLocationChannel, _personnelLocationChannel, _aiDispatchChannel, _departmentImportChannel };
 			_channel = null;
 			_callChannel = null;
 			_unitLocationChannel = null;
 			_personnelLocationChannel = null;
 			_aiDispatchChannel = null;
+			_departmentImportChannel = null;
 
 			foreach (var channel in channels)
 			{
@@ -836,14 +892,16 @@ namespace Resgrid.Providers.Bus.Rabbit
 				(CallQueueReceived != null && _callChannel == null) ||
 				(UnitLocationEventQueueReceived != null && _unitLocationChannel == null) ||
 				(PersonnelLocationEventQueueReceived != null && _personnelLocationChannel == null) ||
-				(AiDispatchTriageQueueReceived != null && _aiDispatchChannel == null))
+				(AiDispatchTriageQueueReceived != null && _aiDispatchChannel == null) ||
+				(DepartmentImportQueueReceived != null && _departmentImportChannel == null))
 				return false;
 
 			return _channel.IsOpen &&
 				(_callChannel?.IsOpen ?? true) &&
 				(_unitLocationChannel?.IsOpen ?? true) &&
 				(_personnelLocationChannel?.IsOpen ?? true) &&
-				(_aiDispatchChannel?.IsOpen ?? true);
+				(_aiDispatchChannel?.IsOpen ?? true) &&
+				(_departmentImportChannel?.IsOpen ?? true);
 		}
 
 		private async Task StartUnitLocationConsumer(string queueName)

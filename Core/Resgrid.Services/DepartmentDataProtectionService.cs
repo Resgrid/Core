@@ -1020,8 +1020,9 @@ namespace Resgrid.Services
 				// The lock goes first. The worker checks it on every heartbeat, so releasing it is
 				// what actually makes the run stop; flipping the state first would leave a worker
 				// writing into a department the state says is idle.
+				// Never a Department Import run's lock: that one belongs to the import run, which stops on its own terms.
 				var activeLock = await _departmentLockService.GetActiveLockAsync(departmentId, bypassCache: true);
-				if (activeLock != null)
+				if (activeLock != null && activeLock.LockType != (int)DepartmentOperationLockType.DepartmentImport)
 					await _departmentLockService.ReleaseLockAsync(activeLock.DepartmentOperationLockId,
 						DepartmentOperationLockReleaseKind.Aborted, requestingUserId, cancellationToken);
 

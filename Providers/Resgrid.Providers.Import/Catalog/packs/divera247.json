@@ -1,0 +1,55 @@
+{
+  "Key": "divera247",
+  "Version": "2026.11.1",
+  "ProductName": "DIVERA 24/7",
+  "Kind": "api-extraction",
+  "Grade": "A",
+  "Phase": "2B",
+  "Published": false,
+  "SourceUrl": "https://api.divera247.com/",
+  "VerifiedOn": "2026-10-12",
+  "Glossary": [
+    {
+      "Term": "Users",
+      "Language": "en",
+      "Target": "entity:personnel"
+    },
+    {
+      "Term": "Qualifications",
+      "Language": "en",
+      "Target": "entity:certification-types"
+    },
+    {
+      "Term": "Groups",
+      "Language": "en",
+      "Target": "entity:groups"
+    },
+    {
+      "Term": "Vehicles",
+      "Language": "en",
+      "Target": "entity:units",
+      "Names": "module.units"
+    },
+    {
+      "Term": "Alarms",
+      "Language": "en",
+      "Target": "term:module.calls"
+    },
+    {
+      "Term": "Gruppen",
+      "Language": "de",
+      "Target": "entity:groups"
+    },
+    {
+      "Term": "Fahrzeuge",
+      "Language": "de",
+      "Target": "entity:units",
+      "Names": "module.units"
+    },
+    {
+      "Term": "Alarme",
+      "Language": "de",
+      "Target": "term:module.calls"
+    }
+  ]
+}

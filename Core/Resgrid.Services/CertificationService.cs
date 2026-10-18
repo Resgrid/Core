@@ -98,15 +98,18 @@ namespace Resgrid.Services
 			return await _departmentCertificationTypeRepository.GetByIdAsync(certificationTypeId);
 		}
 
+		public async Task<bool> IsCertificationTypeInUseAsync(int certificationTypeId) =>
+			await _requirements.CountByTypeIdAsync(certificationTypeId) > 0
+			|| await _personnelCertificationRepository.CountByTypeIdAsync(certificationTypeId) > 0
+			|| await _unitRecords.CountByTypeIdAsync(certificationTypeId) > 0;
+
 		public async Task<bool> DeleteCertificationTypeByIdAsync(int certificationTypeId, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var type = await GetCertificationTypeByIdAsync(certificationTypeId);
 			if (type == null || type.IsDeleted)
 				return false;
 
-			if (await _requirements.CountByTypeIdAsync(certificationTypeId) > 0
-				|| await _personnelCertificationRepository.CountByTypeIdAsync(certificationTypeId) > 0
-				|| await _unitRecords.CountByTypeIdAsync(certificationTypeId) > 0)
+			if (await IsCertificationTypeInUseAsync(certificationTypeId))
 				throw new InvalidOperationException("certifications_type_in_use");
 
 			var before = Snapshot(type);
@@ -152,7 +155,10 @@ namespace Resgrid.Services
 			return (from doc in await GetAllCertificationTypesByDepartmentAsync(departmentId) where !doc.IsDeleted select doc.Type).Distinct().ToList();
 		}
 
-		public async Task<PersonnelCertification> SaveCertificationAsync(PersonnelCertification certification, CancellationToken cancellationToken = default(CancellationToken))
+		public Task<PersonnelCertification> SaveCertificationAsync(PersonnelCertification certification, CancellationToken cancellationToken = default(CancellationToken))
+			=> SaveCertificationAsync(certification, Resgrid.Model.Onboarding.ImportEffectPolicy.Interactive, cancellationToken);
+
+		public async Task<PersonnelCertification> SaveCertificationAsync(PersonnelCertification certification, Resgrid.Model.Onboarding.ImportEffectPolicy effects, CancellationToken cancellationToken)
 		{
 			// The stored row backs REDACTED-sentinel restoration: an admin who edits a member's
 			// certification without a grant posts back placeholders, and those must not be written
@@ -230,8 +236,10 @@ namespace Resgrid.Services
 					saved = await _personnelCertificationRepository.SaveOrUpdateAsync(saved, cancellationToken);
 			}
 
-			Audit(saved.DepartmentId, null, isExistingRow ? AuditLogTypes.CertificationUpdated : AuditLogTypes.CertificationAdded, existing == null ? null : Snapshot(existing), Snapshot(saved));
-			if (!isExistingRow)
+			if (effects.PerRowAudit)
+				Audit(saved.DepartmentId, null, isExistingRow ? AuditLogTypes.CertificationUpdated : AuditLogTypes.CertificationAdded, existing == null ? null : Snapshot(existing), Snapshot(saved));
+			// CertificationAddedEvent triggers workflows (87); an import never fires them (wizard plan section 11.2).
+			if (!isExistingRow && effects.RaiseDomainEvents)
 				_eventAggregator.SendMessage(new CertificationAddedEvent { DepartmentId = saved.DepartmentId, Certification = saved, TypeCode = type?.Code, TypeName = type?.Type });
 			return saved;
 		}
@@ -276,7 +284,10 @@ namespace Resgrid.Services
 		public Task<DepartmentCertificationType> GetCertificationTypeByCodeAsync(int departmentId, string code)
 			=> _departmentCertificationTypeRepository.GetByCodeAsync(departmentId, (code ?? string.Empty).Trim());
 
-		public async Task<DepartmentCertificationType> SaveCertificationTypeAsync(DepartmentCertificationType type, string userId, CancellationToken cancellationToken = default)
+		public Task<DepartmentCertificationType> SaveCertificationTypeAsync(DepartmentCertificationType type, string userId, CancellationToken cancellationToken = default)
+			=> SaveCertificationTypeAsync(type, userId, Resgrid.Model.Onboarding.ImportEffectPolicy.Interactive, cancellationToken);
+
+		public async Task<DepartmentCertificationType> SaveCertificationTypeAsync(DepartmentCertificationType type, string userId, Resgrid.Model.Onboarding.ImportEffectPolicy effects, CancellationToken cancellationToken)
 		{
 			if (type == null || type.DepartmentId <= 0)
 				throw new ArgumentException("A certification type needs a department.", nameof(type));
@@ -336,8 +347,9 @@ namespace Resgrid.Services
 			}
 
 			var saved = await _departmentCertificationTypeRepository.SaveOrUpdateAsync(type, cancellationToken);
-			if (_searchProjections?.Value != null) await _searchProjections.Value.ProjectCertificationTypeAsync(type, cancellationToken);
-			Audit(saved.DepartmentId, userId, existing == null ? AuditLogTypes.CertificationTypeAdded : AuditLogTypes.CertificationTypeEdited, existing == null ? null : Snapshot(existing), Snapshot(saved));
+			if (effects.ImmediateSearchProjection && _searchProjections?.Value != null) await _searchProjections.Value.ProjectCertificationTypeAsync(type, cancellationToken);
+			if (effects.PerRowAudit)
+				Audit(saved.DepartmentId, userId, existing == null ? AuditLogTypes.CertificationTypeAdded : AuditLogTypes.CertificationTypeEdited, existing == null ? null : Snapshot(existing), Snapshot(saved));
 			return saved;
 		}
 
@@ -590,7 +602,15 @@ namespace Resgrid.Services
 			return row;
 		}
 
-		public async Task<UnitCertification> SaveUnitCertificationAsync(UnitCertification certification, string userId, CancellationToken cancellationToken = default)
+		public Task<UnitCertification> SaveUnitCertificationAsync(UnitCertification certification, string userId, CancellationToken cancellationToken = default) =>
+			SaveUnitCertificationCoreAsync(certification, userId, audit: true, events: true, cancellationToken);
+
+		public Task<UnitCertification> SaveUnitCertificationAsync(UnitCertification certification, string userId, Resgrid.Model.Onboarding.ImportEffectPolicy effects,
+			CancellationToken cancellationToken) =>
+			SaveUnitCertificationCoreAsync(certification, userId, effects?.PerRowAudit ?? true, effects?.RaiseDomainEvents ?? true, cancellationToken);
+
+		private async Task<UnitCertification> SaveUnitCertificationCoreAsync(UnitCertification certification, string userId, bool audit, bool events,
+			CancellationToken cancellationToken)
 		{
 			if (certification == null || certification.UnitId <= 0 || certification.DepartmentId <= 0)
 				throw new ArgumentException("A unit certification needs a unit and a department.", nameof(certification));
@@ -663,7 +683,10 @@ namespace Resgrid.Services
 			else if (existing != null && existing.Data != null)
 				saved.Data = existing.Data;
 
-			Audit(saved.DepartmentId, userId, existing == null ? AuditLogTypes.UnitCertificationAdded : AuditLogTypes.UnitCertificationUpdated, existing == null ? null : Snapshot(existing), Snapshot(saved));
+			if (audit)
+				Audit(saved.DepartmentId, userId, existing == null ? AuditLogTypes.UnitCertificationAdded : AuditLogTypes.UnitCertificationUpdated, existing == null ? null : Snapshot(existing), Snapshot(saved));
+			if (!events)
+				return WithoutBytes(saved);
 			if (existing == null)
 				_eventAggregator.SendMessage(new UnitCertificationAddedEvent { DepartmentId = saved.DepartmentId, Certification = WithoutBytes(saved), UnitName = unit.Name, TypeCode = type.Code, TypeName = type.Type });
 			else if (existing.Status != saved.Status)

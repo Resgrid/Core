@@ -113,7 +113,12 @@ export default function SetupWizard(props: {
             <select id="rgaa-mode" className="form-control" value={props.mode} disabled={props.busy || !props.canSetup} onChange={e => props.save('mode', null, e.target.value)}>
               {['Fresh', 'Review', 'Import'].map(mode => <option key={mode} value={mode}>{ui(mode)}</option>)}
             </select></div>
-          {props.mode === 'Import' && <div className="alert alert-info">{ui('ImportHelp')}</div>}
+          {props.mode === 'Import' && <div className="alert alert-info">
+            <p>{ui('ImportHelp')}</p>
+            {props.localLink(access.find(a => a.capabilityId === 'import-migration' && a.canConfigure)?.destination) &&
+              <a className="btn btn-primary btn-sm" href={props.localLink(access.find(a => a.capabilityId === 'import-migration' && a.canConfigure)?.destination)}>
+                <i className="fa fa-cloud-upload" aria-hidden="true" /> {ui('OpenImport')}</a>}
+          </div>}
           <div className="rgaa-tier-overview">{tiers.map(tier => <div key={tier} className={`rgaa-tier-card rgaa-tier-card--${tier}`}>
             <h4>{ui(`Tier.${tier}`)}</h4><p className="rgaa-small rgaa-muted">{ui(`TierHelp.${tier}`)}</p>
             <p className="rgaa-small">{modules.filter(m => m.tier === tier).map(m => t(m.labelKey)).join(' · ')}</p>

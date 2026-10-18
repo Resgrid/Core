@@ -1,0 +1,64 @@
+{
+  "Key": "first-due",
+  "Version": "2026.11.1",
+  "ProductName": "First Due",
+  "Kind": "file-documented",
+  "Grade": "A",
+  "Phase": "2B",
+  "Published": false,
+  "SourceUrl": "https://support.firstduesizeup.com/hc/en-us/articles/50163592155163",
+  "VerifiedOn": "2026-10-12",
+  "Glossary": [
+    {
+      "Term": "Personnel",
+      "Language": "en",
+      "Target": "entity:personnel"
+    },
+    {
+      "Term": "Roles",
+      "Language": "en",
+      "Target": "entity:roles"
+    },
+    {
+      "Term": "Training certifications",
+      "Language": "en",
+      "Target": "entity:personnel-certifications"
+    },
+    {
+      "Term": "Apparatus",
+      "Language": "en",
+      "Target": "entity:units",
+      "Names": "module.units"
+    },
+    {
+      "Term": "Equipment",
+      "Language": "en",
+      "Target": "term:module.inventory"
+    },
+    {
+      "Term": "Hydrants",
+      "Language": "en",
+      "Target": "term:module.records"
+    },
+    {
+      "Term": "Occupancies",
+      "Language": "en",
+      "Target": "term:module.records"
+    },
+    {
+      "Term": "Pre-plans",
+      "Language": "en",
+      "Target": "term:module.contacts"
+    },
+    {
+      "Term": "Training classes",
+      "Language": "en",
+      "Target": "term:module.trainings"
+    },
+    {
+      "Term": "Knox and gate codes",
+      "Language": "en",
+      "Target": "none"
+    }
+  ]
+}

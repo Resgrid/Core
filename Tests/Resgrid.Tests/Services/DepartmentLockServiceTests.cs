@@ -53,6 +53,28 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task Department_import_lock_does_not_freeze_the_department()
+		{
+			// Wizard plan section 11.7: the import lock gives mutual exclusion (ADP, deletion, a second
+			// import) while a live department keeps working, so it never reads as write-blocking.
+			var importLock = ActiveLock();
+			importLock.LockType = (int)DepartmentOperationLockType.DepartmentImport;
+			_lockRepo.Setup(x => x.GetActiveByDepartmentIdAsync(9)).ReturnsAsync(importLock);
+
+			(await _service.IsDepartmentLockedAsync(9)).Should().BeFalse();
+			(await _service.GetActiveLockAsync(9)).Should().NotBeNull("the lock is still live for mutual exclusion");
+		}
+
+		[Test]
+		public void Only_department_import_locks_leave_writes_open()
+		{
+			DepartmentOperationLockType.AdpMigration.BlocksDepartmentWrites().Should().BeTrue();
+			DepartmentOperationLockType.DepartmentImport.BlocksDepartmentWrites().Should().BeFalse();
+			DepartmentOperationLockTypeExtensions.BlocksDepartmentWrites(99).Should().BeTrue(
+				"a lock type added without a decision keeps the original freeze-everything behaviour");
+		}
+
+		[Test]
 		public async Task Lock_past_its_safety_valve_stops_enforcing_immediately()
 		{
 			_lockRepo.Setup(x => x.GetActiveByDepartmentIdAsync(9)).ReturnsAsync(ActiveLock(expiresInMinutes: -1));

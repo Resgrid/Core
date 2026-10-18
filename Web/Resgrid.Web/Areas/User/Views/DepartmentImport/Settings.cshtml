@@ -1,0 +1,84 @@
+@model ImportSettingsView
+@{
+    ViewBag.Title = "Resgrid | " + localizer["ImportSettings"];
+}
+<div class="row wrapper border-bottom white-bg page-heading rgw-page-heading">
+    <div class="col-sm-12">
+        <h2>@localizer["ImportSettings"]</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-controller="DepartmentImport" asp-action="Index" asp-route-area="User">@localizer["ModuleName"]</a></li>
+            <li class="active"><strong>@localizer["ImportSettings"]</strong></li>
+        </ol>
+        <small class="text-muted">@localizer["ImportSettingsHelp"]</small>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (Model.Saved)
+    {
+        <div class="alert alert-success" role="status"><i class="fa fa-check" aria-hidden="true"></i> @localizer["SettingsSaved"]</div>
+    }
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5>@localizer["ImportSettings"]</h5></div>
+        <div class="ibox-content">
+            <form method="post" asp-action="Settings" class="form-horizontal">
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    <label asp-for="ArtifactRetentionDaysAfterSuccess" class="col-sm-4 control-label">@localizer["ArtifactRetentionDaysAfterSuccess"]</label>
+                    <div class="col-sm-8">
+                        <input asp-for="ArtifactRetentionDaysAfterSuccess" type="number" min="0" max="180" class="form-control" />
+                        <p class="help-block">@localizer["ArtifactRetentionDaysAfterSuccessHelp"]</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ArtifactRetentionDaysAfterFailure" class="col-sm-4 control-label">@localizer["ArtifactRetentionDaysAfterFailure"]</label>
+                    <div class="col-sm-8">
+                        <input asp-for="ArtifactRetentionDaysAfterFailure" type="number" min="0" max="180" class="form-control" />
+                        <p class="help-block">@localizer["ArtifactRetentionDaysAfterFailureHelp"]</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="StagingRetentionDaysAfterActivation" class="col-sm-4 control-label">@localizer["StagingRetentionDaysAfterActivation"]</label>
+                    <div class="col-sm-8">
+                        <input asp-for="StagingRetentionDaysAfterActivation" type="number" min="0" max="180" class="form-control" />
+                        <p class="help-block">@localizer["StagingRetentionDaysAfterActivationHelp"]</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="DefaultWriteMode" class="col-sm-4 control-label">@localizer["DefaultWriteMode"]</label>
+                    <div class="col-sm-8">
+                        <select asp-for="DefaultWriteMode" class="form-control">
+                            <option value="@((int)ImportWriteMode.CreateOnly)">@localizer["WriteMode.CreateOnly"]</option>
+                            <option value="@((int)ImportWriteMode.ReviewedUpdate)">@localizer["WriteMode.ReviewedUpdate"]</option>
+                        </select>
+                        <p class="help-block">@localizer["WriteModeHelp"]</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="SupportGrantDefaultDays" class="col-sm-4 control-label">@localizer["SupportGrantDefaultDays"]</label>
+                    <div class="col-sm-8">
+                        <input asp-for="SupportGrantDefaultDays" type="number" min="0" max="30" class="form-control" />
+                        <p class="help-block">@localizer["SupportGrantDefaultDaysHelp"]</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-4 col-sm-8">
+                        <div class="checkbox"><label><input asp-for="RequireSecondApprover" type="checkbox" /> @localizer["RequireSecondApprover"]</label></div>
+                        <p class="help-block">@localizer["RequireSecondApproverHelp"]</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-4 col-sm-8">
+                        <button type="submit" class="btn btn-primary">@localizer["Save"]</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

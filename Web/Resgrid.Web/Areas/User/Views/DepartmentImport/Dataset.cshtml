@@ -1,0 +1,324 @@
+@model ImportDatasetView
+@using Newtonsoft.Json
+@using System.Globalization
+@{
+    ViewBag.Title = "Resgrid | " + localizer["ModuleName"];
+    var mapping = Model.Mapping;
+    var dataset = mapping.Dataset;
+    var contract = mapping.Contract;
+    ViewData["Title"] = dataset.Name;
+    ViewData["Tab"] = "Files";
+    var id = Model.Workspace.Id;
+    var locked = dataset.Status >= (int)ImportDatasetStatus.Importing && dataset.Status != (int)ImportDatasetStatus.Excluded && dataset.Status != (int)ImportDatasetStatus.Failed;
+    var profiles = mapping.Profile?.Columns ?? new List<ImportColumnProfile>();
+    var body = mapping.Body ?? new ImportColumnMapBody();
+    var culture = CultureInfo.CurrentUICulture;
+    var formats = body.Formats ?? new Dictionary<string, string>();
+    var constants = body.Constants ?? new Dictionary<string, string>();
+    var boundKeys = new HashSet<string>(body.Columns.Where(c => c.FieldKey != null && c.Kind != (int)ImportColumnBindingKind.Ignore).Select(c => c.FieldKey), StringComparer.OrdinalIgnoreCase);
+    // Same value for every row: fields no column fills yet, and those that already have one (plan section 6.3 step 6).
+    var constantFields = contract?.Fields.Where(f => f.AllowsConstant && (!boundKeys.Contains(f.Key) || constants.ContainsKey(f.Key)))
+        .OrderByDescending(f => f.Required).ToList() ?? new List<ImportFieldContract>();
+    var seenColumns = new HashSet<string>(StringComparer.Ordinal);
+    var valueFields = contract?.Fields.Where(f => (f.Type == ImportFieldTypes.Choice || f.Type == ImportFieldTypes.Reference || f.ItemType == ImportFieldTypes.Reference || f.ItemType == ImportFieldTypes.Choice)
+        && body.Columns.Any(c => c.FieldKey == f.Key && c.Kind != (int)ImportColumnBindingKind.Ignore)).ToList() ?? new List<ImportFieldContract>();
+    var page = new
+    {
+        datasetId = dataset.Id,
+        revision = dataset.Revision,
+        locked,
+        body,
+        fields = contract?.Fields.Select(f => new { key = f.Key, label = localizer[f.LabelKey].Value, type = f.Type, itemType = f.ItemType, references = f.References, required = f.Required }),
+        saveUrl = Url.Action("SaveMapping"),
+        reloadUrl = Url.Action("Dataset", new { id, datasetId = dataset.Id }),
+        text = new
+        {
+            saved = localizer["MappingSaved"].Value,
+            failed = localizer["Error.Generic"].Value,
+            sameColumn = localizer["SameColumnAnotherField"].Value,
+            remove = localizer["RemoveThisUse"].Value
+        }
+    };
+}
+@await Html.PartialAsync("_Shell", Model)
+
+<div class="wrapper wrapper-content rgw-page">
+    <script id="import-dataset-page" type="application/json">@Html.Raw(JsonConvert.SerializeObject(page, new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml }))</script>
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["MatchColumns"]</h5></div>
+                <div class="ibox-content">
+                    @if (contract == null)
+                    {
+                        <div class="alert alert-warning">@localizer["ChooseDestinationFirst"]</div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">@localizer["MatchColumnsHelp"]</p>
+                        <div class="table-responsive">
+                            <table class="table table-striped rgw-table" id="import-mapping-table">
+                                <thead>
+                                    <tr>
+                                        <th>@localizer["SourceColumn"]</th>
+                                        <th>@localizer["WhatWeFound"]</th>
+                                        <th>@localizer["ResgridField"]</th>
+                                        <th>@localizer["Transforms"]</th>
+                                        <th>@localizer["DatesWrittenAs"]</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (var columnIndex = 0; columnIndex < body.Columns.Count; columnIndex++)
+                                    {
+                                        var column = body.Columns[columnIndex];
+                                        // A column that feeds more than one field (a full name split into first and last) has one row per use.
+                                        var extra = !seenColumns.Add(column.SourceColumn);
+                                        var profile = profiles.FirstOrDefault(p => string.Equals(p.Header, column.SourceColumn, StringComparison.Ordinal));
+                                        var selected = column.Kind == (int)ImportColumnBindingKind.KeepAsCustomField ? "::custom" : column.Kind == (int)ImportColumnBindingKind.Ignore || column.FieldKey == null ? "::ignore" : column.FieldKey;
+                                        var fieldType = column.FieldKey == null ? null : contract.Field(column.FieldKey)?.Type;
+                                        var isDate = fieldType == ImportFieldTypes.Date || fieldType == ImportFieldTypes.DateTime;
+                                        var format = formats.TryGetValue(column.SourceColumn, out var saved) ? saved : string.Empty;
+                                        var sample = ImportDateQuestion.Sample(profile == null || profile.LooksSensitive || profile.LooksExcluded ? null : profile.Examples);
+                                        <tr data-source="@column.SourceColumn" class="@(extra ? "import-map-extra" : null)">
+                                            <td>
+                                                @if (extra)
+                                                {
+                                                    <span class="text-muted">&#8627; @column.SourceColumn</span>
+                                                    <div class="small text-muted">@localizer["SameColumnAnotherField"]</div>
+                                                    @if (!locked)
+                                                    {
+                                                        <button type="button" class="btn btn-xs btn-link import-map-remove" disabled>@localizer["RemoveThisUse"]</button>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <strong>@column.SourceColumn</strong>
+                                                    @if (column.Confidence > 0 && column.Kind != (int)ImportColumnBindingKind.Ignore)
+                                                    {
+                                                        <div><span class="label @(column.Confidence >= 80 ? "label-primary" : "label-warning")">@string.Format(localizer["Confidence"].Value, column.Confidence)</span></div>
+                                                    }
+                                                    @if (!locked)
+                                                    {
+                                                        <div><button type="button" class="btn btn-xs btn-link import-map-add" disabled><i class="fa fa-plus" aria-hidden="true"></i> @localizer["AlsoUseColumn"]</button></div>
+                                                    }
+                                                }
+                                            </td>
+                                            <td class="small">
+                                                @if (profile != null && !extra)
+                                                {
+                                                    <div><span class="label label-default">@localizer["Type." + (profile.InferredType ?? "text")]</span> @string.Format(localizer["FillRate"].Value, mapping.Profile.RowCount == 0 ? 0 : profile.FilledCount * 100 / Math.Max(1, mapping.Profile.RowCount))</div>
+                                                    @if (profile.LooksExcluded)
+                                                    {
+                                                        <div class="text-danger"><i class="fa fa-ban" aria-hidden="true"></i> @localizer["ColumnExcluded"]</div>
+                                                    }
+                                                    else if (profile.LooksSensitive)
+                                                    {
+                                                        <div class="text-muted"><i class="fa fa-eye-slash" aria-hidden="true"></i> @localizer["ValuesHidden"]</div>
+                                                    }
+                                                    else if (profile.Examples.Count > 0)
+                                                    {
+                                                        <div class="text-muted">@string.Join(" · ", profile.Examples.Take(3))</div>
+                                                    }
+                                                }
+                                            </td>
+                                            <td>
+                                                <label class="sr-only" for="map-@columnIndex">@localizer["ResgridField"]</label>
+                                                <select class="form-control input-sm import-map-field" id="map-@columnIndex" disabled>
+                                                    <option value="::ignore" selected="@(selected == "::ignore")">@localizer["DoNotImport"]</option>
+                                                    @foreach (var field in contract.Fields)
+                                                    {
+                                                        <option value="@field.Key" selected="@(selected == field.Key)">@localizer[field.LabelKey]@(field.Required ? " *" : "")</option>
+                                                    }
+                                                    @if (contract.SupportsCustomFields)
+                                                    {
+                                                        <option value="::custom" selected="@(selected == "::custom")">@localizer["KeepAsCustomField"]</option>
+                                                    }
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <label class="sr-only" for="tr-@columnIndex">@localizer["Transforms"]</label>
+                                                <select class="form-control input-sm import-map-transforms" id="tr-@columnIndex" multiple size="2" disabled>
+                                                    @foreach (var transform in mapping.Transforms)
+                                                    {
+                                                        <option value="@transform" selected="@(column.Transforms.Contains(transform))">@localizer["Transform." + transform]</option>
+                                                    }
+                                                </select>
+                                            </td>
+                                            <td>
+                                                @* "Is 03/04/2026 the 3rd of April or March 4th?", asked once per column with both readings (plan section 6.4). *@
+                                                <div class="import-map-dates" style="@(isDate ? null : "display:none")">
+                                                    <label class="sr-only" for="df-@columnIndex">@localizer["DatesWrittenAs"]</label>
+                                                    <select class="form-control input-sm import-map-dateformat" id="df-@columnIndex" disabled>
+                                                        <option value="" selected="@(format.Length == 0)">@localizer["DateFormatDetect"]</option>
+                                                        <option value="@ImportDateQuestion.DayFirst" selected="@(format == ImportDateQuestion.DayFirst)">@string.Format(localizer["DateFormatDayFirst"].Value, sample, ImportDateQuestion.Render(sample, true, culture))</option>
+                                                        <option value="@ImportDateQuestion.MonthFirst" selected="@(format == ImportDateQuestion.MonthFirst)">@string.Format(localizer["DateFormatMonthFirst"].Value, sample, ImportDateQuestion.Render(sample, false, culture))</option>
+                                                        <option value="@ImportDateQuestion.YearFirst" selected="@(format == ImportDateQuestion.YearFirst)">@localizer["DateFormatYearFirst"]</option>
+                                                        @if (format.Length > 0 && format != ImportDateQuestion.DayFirst && format != ImportDateQuestion.MonthFirst && format != ImportDateQuestion.YearFirst)
+                                                        {
+                                                            <option value="@format" selected>@format</option>
+                                                        }
+                                                    </select>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        @if (constantFields.Count > 0)
+                        {
+                            <h4 id="import-constants" style="margin-top:20px">@localizer["SameValueForEveryRow"]</h4>
+                            <p class="text-muted small">@localizer["SameValueHelp"]</p>
+                            <div class="table-responsive">
+                                <table class="table table-condensed rgw-table" id="import-constants-table">
+                                    <tbody>
+                                        @foreach (var field in constantFields)
+                                        {
+                                            var current = constants.TryGetValue(field.Key, out var value) ? value : null;
+                                            <tr>
+                                                <td style="width:40%"><label for="const-@field.Key">@localizer[field.LabelKey]@(field.Required ? " *" : "")</label></td>
+                                                <td>
+                                                    @if (field.Type == ImportFieldTypes.Choice)
+                                                    {
+                                                        <select class="form-control input-sm import-constant" id="const-@field.Key" data-field="@field.Key" disabled>
+                                                            <option value=""></option>
+                                                            @foreach (var choice in field.Choices)
+                                                            {
+                                                                <option value="@choice.Code" selected="@(string.Equals(current, choice.Code, StringComparison.OrdinalIgnoreCase))">@localizer[choice.LabelKey]</option>
+                                                            }
+                                                        </select>
+                                                    }
+                                                    else if (field.Type == ImportFieldTypes.Boolean)
+                                                    {
+                                                        <select class="form-control input-sm import-constant" id="const-@field.Key" data-field="@field.Key" disabled>
+                                                            <option value=""></option>
+                                                            <option value="true" selected="@(current == "true")">@localizer["SameValueYes"]</option>
+                                                            <option value="false" selected="@(current == "false")">@localizer["SameValueNo"]</option>
+                                                        </select>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="text" class="form-control input-sm import-constant" id="const-@field.Key" data-field="@field.Key" value="@current" placeholder="@field.Example" maxlength="1000" disabled />
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                        @if (!locked)
+                        {
+                            <button type="button" id="import-mapping-save" class="btn btn-primary" disabled><i class="fa fa-save" aria-hidden="true"></i> @localizer["SaveMapping"]</button>
+                            <span id="import-mapping-status" class="rgw-progress-honest" aria-live="polite"></span>
+                        }
+                    }
+                </div>
+            </div>
+
+            @if (valueFields.Count > 0)
+            {
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["MatchValues"]</h5></div>
+                    <div class="ibox-content">
+                        <p class="text-muted">@localizer["MatchValuesHelp"]</p>
+                        <ul class="list-unstyled">
+                            @foreach (var field in valueFields)
+                            {
+                                <li><a asp-action="Values" asp-route-id="@id" asp-route-datasetId="@dataset.Id" asp-route-field="@field.Key"><i class="fa fa-exchange" aria-hidden="true"></i> @localizer[field.LabelKey]</a></li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="col-lg-4">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["Destination"]</h5></div>
+                <div class="ibox-content">
+                    <p>@await Html.PartialAsync("_Badge", ImportBadges.Dataset(dataset.Status))</p>
+                    <p class="small text-muted">@string.Format(localizer["DatasetCounts"].Value, dataset.RowCount, dataset.ReadyCount, dataset.WarningCount, dataset.BlockedCount)</p>
+                    <form method="post" asp-action="SetDestination" asp-route-id="@id" asp-route-datasetId="@dataset.Id" asp-route-revision="@dataset.Revision">
+                        @Html.AntiForgeryToken()
+                        <div class="form-group">
+                            <label for="import-destination">@localizer["WhatIsInThisFile"]</label>
+                            <select id="import-destination" name="entityKey" class="form-control" disabled="@locked">
+                                @foreach (var destination in mapping.Destinations)
+                                {
+                                    <option value="@destination.Key" selected="@(destination.Key == dataset.EntityKey)">@localizer[destination.LabelKey]</option>
+                                }
+                            </select>
+                            @if (contract != null)
+                            {
+                                <p class="help-block">@localizer[contract.DescriptionKey]</p>
+                            }
+                        </div>
+                        @if (!locked)
+                        {
+                            <button type="submit" class="btn btn-default">@localizer[dataset.DestinationConfirmed ? "ChangeDestination" : "ConfirmDestination"]</button>
+                        }
+                    </form>
+                </div>
+            </div>
+
+            @{ ViewData["GlossaryOpen"] = true; }
+            @await Html.PartialAsync("_Glossary", Model)
+
+            @if (contract != null && !locked)
+            {
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["SavedMappings"]</h5></div>
+                    <div class="ibox-content">
+                        @if (Model.SavedMaps.Count > 0)
+                        {
+                            <form method="post" asp-action="ApplySavedMap" asp-route-id="@id" asp-route-datasetId="@dataset.Id">
+                                @Html.AntiForgeryToken()
+                                <div class="form-group">
+                                    <label for="import-saved-map">@localizer["UseSavedMapping"]</label>
+                                    <select id="import-saved-map" name="mapId" class="form-control">
+                                        @foreach (var map in Model.SavedMaps)
+                                        {
+                                            <option value="@map.Id">@map.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-default btn-sm">@localizer["Apply"]</button>
+                            </form>
+                            <hr />
+                        }
+                        <form method="post" asp-action="SaveMapAs" asp-route-id="@id" asp-route-datasetId="@dataset.Id">
+                            @Html.AntiForgeryToken()
+                            <div class="form-group">
+                                <label for="import-map-name">@localizer["SaveMappingAs"]</label>
+                                <input id="import-map-name" name="name" class="form-control" maxlength="200" required />
+                            </div>
+                            <button type="submit" class="btn btn-default btn-sm">@localizer["Save"]</button>
+                        </form>
+                    </div>
+                </div>
+            }
+
+            @if (Model.Issues.Count > 0)
+            {
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["TabIssues"]</h5></div>
+                    <div class="ibox-content">
+                        <ul class="list-unstyled small">
+                            @foreach (var group in Model.Issues.Take(8))
+                            {
+                                <li>@await Html.PartialAsync("_Badge", ImportBadges.Severity(group.Severity)) @string.Format(localizer["Issue." + group.Code + ".Title"].Value, group.OpenCount)</li>
+                            }
+                        </ul>
+                        <a asp-action="Issues" asp-route-id="@id" asp-route-datasetId="@dataset.Id">@localizer["FixIssues"]</a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
+@section Scripts { @await Html.PartialAsync("_Scripts", "dataset") }

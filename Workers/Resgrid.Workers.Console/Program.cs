@@ -501,6 +501,21 @@ namespace Resgrid.Workers.Console
 					Cron.MinuteIntervals(1),
 					stoppingToken);
 
+				// Worker IDs 47 and 48 (Identifier Allocation Registry section 4A, Department Import). 47 is the durable
+				// sweep behind the departmentimport RabbitMQ nudge (leases 2 min, 30 s heartbeat, 50 s budget per claim,
+				// watchdog every 5 min); 48 is the hourly expiry, retention purge, reminder and helpdesk outbox pass.
+				_logger.Log(LogLevel.Information, "Scheduling Department Import");
+				await Client.ScheduleAsync("Department Import",
+					new Commands.DepartmentImportCommand(47),
+					Cron.MinuteIntervals(1),
+					stoppingToken);
+
+				_logger.Log(LogLevel.Information, "Scheduling Department Import Maintenance");
+				await Client.ScheduleAsync("Department Import Maintenance",
+					new Commands.DepartmentImportMaintenanceCommand(48),
+					Cron.MinuteIntervals(60),
+					stoppingToken);
+
 				// Worker 63 is the readiness registry allocation. Department gating and pauses are evaluated by the service.
 				await Client.ScheduleAsync("Checklist Scheduling", new Commands.ChecklistSchedulingCommand(63), Cron.MinuteIntervals(5), stoppingToken);
 				await Client.ScheduleAsync("Checklist Reminders", new Commands.ChecklistReminderCommand(64), Cron.MinuteIntervals(5), stoppingToken);

@@ -1,0 +1,18 @@
+{
+  "Key": "ontario-sir",
+  "Version": "2026.11.1",
+  "ProductName": "Ontario Standard Incident Report (SIR)",
+  "Kind": "file-sample-validated",
+  "Grade": "B",
+  "Phase": "3R",
+  "Published": false,
+  "SourceUrl": "https://www.oafc.on.ca/standard-incident-report-sir",
+  "VerifiedOn": "2026-10-12",
+  "Glossary": [
+    {
+      "Term": "Incidents",
+      "Language": "en",
+      "Target": "term:module.calls"
+    }
+  ]
+}

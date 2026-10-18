@@ -134,6 +134,12 @@ namespace Resgrid.Model.Services
 		Task<DepartmentSetting> SetDepartmentTerminologyAsync(int departmentId, DepartmentTerminologyConfig config,
 			CancellationToken cancellationToken = default(CancellationToken));
 
+		/// <summary>Setting 83: the department's Import &amp; Migration policy; never null (missing = plan defaults).</summary>
+		Task<Onboarding.DepartmentImportConfig> GetDepartmentImportConfigAsync(int departmentId, bool bypassCache = false);
+
+		Task<DepartmentSetting> SetDepartmentImportConfigAsync(int departmentId, Onboarding.DepartmentImportConfig config,
+			CancellationToken cancellationToken = default(CancellationToken));
+
 		Task<DepartmentSetting> SetCallNumberingConfigAsync(int departmentId, CallNumberingConfig config,
 			CancellationToken cancellationToken = default(CancellationToken));
 

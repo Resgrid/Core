@@ -210,7 +210,8 @@ namespace Resgrid.Services.Search
 			Act("call-settings", "Call Settings", "Call types, priorities, email import and dispatch settings", "/User/Department/CallSettings", SystemActionCategories.Manage, new[] { "call types", "priorities", "email import", "dispatch settings" }, adminOnly: true),
 			Act("dispatch-settings", "Dispatch Settings", "Dispatch behaviour and notification settings", "/User/Department/DispatchSettings", SystemActionCategories.Manage, new[] { "dispatch", "notifications", "paging" }, adminOnly: true),
 			Act("api-keys", "API Keys", "Keys that let another system call the Resgrid API for the department", "/User/Security/ApiKeys", SystemActionCategories.Manage, new[] { "api key", "api token", "integration", "x-resgrid-apikey", "external system" }, adminOnly: true),
-			Act("data-protection", "Data Protection", "Advanced Data Protection enrollment and policies", "/User/DataProtection", SystemActionCategories.Manage, new[] { "adp", "encryption", "privacy", "protected data", "kms" }, adminOnly: true)
+			Act("data-protection", "Data Protection", "Advanced Data Protection enrollment and policies", "/User/DataProtection", SystemActionCategories.Manage, new[] { "adp", "encryption", "privacy", "protected data", "kms" }, adminOnly: true),
+			Act("import-migration", "Import & Migration", "Bring people, stations, apparatus and settings from spreadsheets or another system", "/User/DepartmentImport", SystemActionCategories.Manage, new[] { "import data", "migrate", "migration", "bulk add people", "spreadsheet", "excel", "csv", "onboarding" }, flag: FeatureFlagKeys.OnboardingMigrationWizard, adminOnly: true)
 		};
 	}
 }

@@ -3140,9 +3140,26 @@ New Workflow Create an automation workflow. Automate repeated administrative ste
 Workflow Runs The history of workflow runs, including failures. Automate repeated administrative steps and connect Resgrid to the other systems you use. A workflow posts new calls to a team channel, and a custom field records the fire district on each call. Have the destination systems and credentials ready, and decide who owns each automation.
 
 <a id="import-migration"></a>
-## Import and migration planning
+## Import & Migration
 
-Import and migration planning Plan moving your data from another system into Resgrid. Avoid duplicate resources and verify resulting configuration in Setup Report. A workflow posts new calls to a team channel, and a custom field records the fire district on each call. Have the destination systems and credentials ready, and decide who owns each automation.
+Import & Migration Bring people, stations, apparatus and settings into Resgrid from spreadsheets or the system you are leaving. Start a workspace, download the Resgrid starter workbook or upload your own export, match columns and values, and fix the issues the checks find. Nothing is saved until you review and approve an import; every import is journaled and can be rolled back for 30 days. Imported people stay dormant (they cannot sign in and receive nothing) until you invite them from Verify & activate, and Admin Assist then verifies the result in Setup Report.
+
+<a id="setting-departmentimportconfig"></a>
+## Import & Migration settings
+
+Import & Migration settings How long uploaded files and checked data are kept and how imports are approved. Uploaded files are kept 7 days after a successful import (72 hours with Advanced Data Protection) and 30 days after a failure; checked data is kept 30 days after go-live because rollback needs it. A rollback is possible until go-live plus 30 days for a new department, and for 30 days after the import in a live department. Require a second administrator to have every import approved by two different people. Add only never changes existing records; Review updates changes only the fields approved in the preview.
+
+Default: missing = plan defaults. Source: DepartmentSettingTypes.DepartmentImportConfig.
+
+<a id="import-dormant-members"></a>
+## Dormant imported members
+
+Dormant imported members People created by an import are dormant: they cannot sign in, receive no dispatches, messages or reminders, and are left out of every notification sweep until you invite them. Already-expired certifications are imported as expired so nobody is emailed, and reminders for certifications expiring soon wait until the holder is invited. Invite people from Verify & activate; invitations go out in small batches outside night hours, and accepting one lets the person choose a password. People who already have a Resgrid account in another department get an invitation to join instead.
+
+<a id="import-support-access"></a>
+## Support access for imports
+
+Support access for imports Resgrid support sees nothing in an import workspace unless an administrator grants access, for a limited time, at one of four levels: Observe (progress, counts and issue codes), Inspect (also sample values to diagnose a problem), Prepare (also fix mappings and values as drafts the department approves) and Operate (staff run the import, with two-person control, only under an agreed managed migration). Every staff action is logged on the workspace timeline, and access can be revoked at any time.
 
 <a id="module-maintenancedisabled"></a>
 ## Maintenance availability

@@ -355,6 +355,27 @@ ChecklistReminderSettingsUpdated,
 		/// <summary>A department API key was issued (pending-calls integration work, 2026-10-06). Append-only.</summary>
 		DepartmentApiKeyCreated,
 		/// <summary>A department API key was revoked. Append-only.</summary>
-		DepartmentApiKeyRevoked
+		DepartmentApiKeyRevoked,
+		// Department Import (wizard plan section 18.3 I9). Append-only.
+		/// <summary>An import run's preview was approved (approval digest frozen).</summary>
+		DepartmentImportApproved,
+		/// <summary>An import commit run finished; one summary entry per run, never per row.</summary>
+		DepartmentImportCommitted,
+		/// <summary>An import commit run was rolled back.</summary>
+		DepartmentImportRolledBack,
+		/// <summary>An import activation item was completed (activation sign-off, enablement or administrator flags).</summary>
+		DepartmentImportActivated,
+		/// <summary>Invitations for imported people were scheduled or sent.</summary>
+		DepartmentImportInvitationsSent,
+		/// <summary>Resgrid support access to an import workspace was granted or raised.</summary>
+		DepartmentImportSupportAccessGranted,
+		/// <summary>Resgrid support access to an import workspace was revoked or expired.</summary>
+		DepartmentImportSupportAccessRevoked,
+		/// <summary>Resgrid staff viewed sampled values of an import workspace under a grant.</summary>
+		DepartmentImportStaffValuesViewed,
+		/// <summary>A raw import artifact or a report containing values was downloaded.</summary>
+		DepartmentImportArtifactDownloaded,
+		/// <summary>Import artifacts were purged early on request.</summary>
+		DepartmentImportArtifactsPurged
 	}
 }

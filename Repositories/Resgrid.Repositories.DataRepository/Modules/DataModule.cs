@@ -328,6 +328,26 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<DepartmentApiKeysRepository>().As<IDepartmentApiKeysRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<SystemOperationRequestsRepository>().As<ISystemOperationRequestsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<InboundEmailReceiptsRepository>().As<IInboundEmailReceiptsRepository>().InstancePerLifetimeScope();
+			// Department Import (Import & Migration, M0273-M0276, M0281)
+			builder.RegisterType<Onboarding.ImportWorkspacesRepository>().As<IImportWorkspacesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.ImportInvitesRepository>().As<IImportInvitesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.ImportSourcesRepository>().As<IImportSourcesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.ImportArtifactsRepository>().As<IImportArtifactsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.ImportDatasetsRepository>().As<IImportDatasetsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.ImportColumnMapsRepository>().As<IImportColumnMapsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.ImportValueMapsRepository>().As<IImportValueMapsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.ImportStagedRowsRepository>().As<IImportStagedRowsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.ImportIssuesRepository>().As<IImportIssuesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.ImportExternalIdsRepository>().As<IImportExternalIdsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.ImportRunsRepository>().As<IImportRunsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.ImportChangeJournalRepository>().As<IImportChangeJournalRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.ImportReconciliationsRepository>().As<IImportReconciliationsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.ImportSupportGrantsRepository>().As<IImportSupportGrantsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.ImportSupportRequestsRepository>().As<IImportSupportRequestsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.ImportMessagesRepository>().As<IImportMessagesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.ImportSuggestionsRepository>().As<IImportSuggestionsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.ImportConfigurationChangesRepository>().As<IImportConfigurationChangesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<Onboarding.ImportEventsRepository>().As<IImportEventsRepository>().InstancePerLifetimeScope();
 
 			// CheckIn Repositories
 			builder.RegisterType<CheckInTimerConfigRepository>().As<ICheckInTimerConfigRepository>().InstancePerLifetimeScope();

@@ -1,0 +1,19 @@
+@model string
+@using Newtonsoft.Json
+@* Page strings for departmentimport.js (no inline handlers; one JSON block, HTML-escaped). The token backs the JSON calls. *@
+@Html.AntiForgeryToken()
+<script id="import-page" type="application/json">@Html.Raw(JsonConvert.SerializeObject(new
+{
+    page = Model,
+    text = new
+    {
+        failed = localizer["Error.Generic"].Value,
+        hashing = localizer["UploadHashing"].Value,
+        uploading = localizer["UploadProgress"].Value,
+        finishing = localizer["UploadFinishing"].Value,
+        uploaded = localizer["UploadDone"].Value,
+        tooLarge = localizer["Issue.IMP-FILE-TOO-LARGE.Title"].Value,
+        confirm = localizer["AreYouSure"].Value
+    }
+}, new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml }))</script>
+<script src="~/js/app/internal/departmentimport/departmentimport.js" asp-append-version="true"></script>

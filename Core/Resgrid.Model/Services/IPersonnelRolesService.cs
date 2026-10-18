@@ -42,6 +42,9 @@ namespace Resgrid.Model.Services
 		/// <returns>Task&lt;PersonnelRole&gt;.</returns>
 		Task<PersonnelRole> SaveRoleAsync(PersonnelRole role, CancellationToken cancellationToken = default(CancellationToken), string actingUserId = null);
 
+		/// <summary>Department Import quiet overload: the side effects named by <paramref name="effects"/> are skipped or deferred to the import engine.</summary>
+		Task<PersonnelRole> SaveRoleAsync(PersonnelRole role, Onboarding.ImportEffectPolicy effects, CancellationToken cancellationToken, string actingUserId = null);
+
 		/// <summary>
 		/// Saves the role and replaces its membership with <paramref name="userIds"/> in one transaction: the certification
 		/// gate (plan D4) runs against the members the role gains before anything is deleted, and a failure anywhere leaves

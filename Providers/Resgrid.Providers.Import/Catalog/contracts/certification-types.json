@@ -1,0 +1,283 @@
+{
+  "Key": "certification-types",
+  "Version": "2026.11.1",
+  "LabelKey": "Entity.certification-types",
+  "DescriptionKey": "EntityDesc.certification-types",
+  "Icon": "fa-certificate",
+  "Area": "people",
+  "Wave": "2",
+  "Order": 20,
+  "DependsOn": [],
+  "Gate": {
+    "Flags": [
+      "Onboarding.MigrationWizard"
+    ],
+    "Permissions": []
+  },
+  "IdentityFields": [
+    "source_id"
+  ],
+  "NaturalKey": [
+    "name"
+  ],
+  "SupportsCustomFields": false,
+  "MatchPolicy": "name",
+  "MaxRows": 0,
+  "Fields": [
+    {
+      "Key": "source_id",
+      "LabelKey": "Field.certification-types.source_id",
+      "DescriptionKey": "FieldDesc.certification-types.source_id",
+      "Type": "text",
+      "MaxLength": 256,
+      "Unique": "in-file",
+      "WriterPath": "ImportExternalId.SourceId",
+      "Aliases": [
+        "id",
+        "source id",
+        "external id",
+        "record id",
+        "key"
+      ],
+      "Example": "1042",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "name",
+      "LabelKey": "Field.certification-types.name",
+      "DescriptionKey": "FieldDesc.certification-types.name",
+      "Type": "text",
+      "Required": true,
+      "MaxLength": 100,
+      "Unique": "in-file",
+      "WriterPath": "DepartmentCertificationType.Type",
+      "Aliases": [
+        "name",
+        "certification",
+        "certification name",
+        "type",
+        "qualification"
+      ],
+      "Example": "Firefighter I",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "code",
+      "LabelKey": "Field.certification-types.code",
+      "DescriptionKey": "FieldDesc.certification-types.code",
+      "Type": "text",
+      "MaxLength": 50,
+      "Unique": "in-file",
+      "WriterPath": "DepartmentCertificationType.Code",
+      "Aliases": [
+        "code",
+        "abbreviation",
+        "short name"
+      ],
+      "Example": "FF1",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "category",
+      "LabelKey": "Field.certification-types.category",
+      "DescriptionKey": "FieldDesc.certification-types.category",
+      "Type": "choice",
+      "WriterPath": "DepartmentCertificationType.Category",
+      "Choices": [
+        {
+          "Code": "fire",
+          "LabelKey": "Choice.fire",
+          "Aliases": [
+            "firefighting"
+          ]
+        },
+        {
+          "Code": "ems",
+          "LabelKey": "Choice.ems",
+          "Aliases": [
+            "medical services",
+            "emergency medical"
+          ]
+        },
+        {
+          "Code": "sar",
+          "LabelKey": "Choice.sar",
+          "Aliases": [
+            "search and rescue",
+            "rescue"
+          ]
+        },
+        {
+          "Code": "wildland",
+          "LabelKey": "Choice.wildland",
+          "Aliases": [
+            "wildfire"
+          ]
+        },
+        {
+          "Code": "emergency-management",
+          "LabelKey": "Choice.emergency-management",
+          "Aliases": [
+            "em"
+          ]
+        },
+        {
+          "Code": "industrial",
+          "LabelKey": "Choice.industrial",
+          "Aliases": []
+        },
+        {
+          "Code": "security",
+          "LabelKey": "Choice.security",
+          "Aliases": []
+        },
+        {
+          "Code": "medical",
+          "LabelKey": "Choice.medical",
+          "Aliases": [
+            "health"
+          ]
+        },
+        {
+          "Code": "driver",
+          "LabelKey": "Choice.driver",
+          "Aliases": [
+            "driving",
+            "evoc"
+          ]
+        },
+        {
+          "Code": "vehicle",
+          "LabelKey": "Choice.vehicle",
+          "Aliases": []
+        },
+        {
+          "Code": "other",
+          "LabelKey": "Choice.other",
+          "Aliases": []
+        }
+      ],
+      "Aliases": [
+        "category",
+        "discipline"
+      ],
+      "Example": "fire",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "applies_to",
+      "LabelKey": "Field.certification-types.applies_to",
+      "DescriptionKey": "FieldDesc.certification-types.applies_to",
+      "Type": "choice",
+      "WriterPath": "DepartmentCertificationType.AppliesTo",
+      "Choices": [
+        {
+          "Code": "person",
+          "LabelKey": "Choice.person",
+          "Aliases": [
+            "people",
+            "personnel",
+            "member"
+          ]
+        },
+        {
+          "Code": "unit",
+          "LabelKey": "Choice.unit",
+          "Aliases": [
+            "apparatus",
+            "vehicle"
+          ]
+        }
+      ],
+      "Aliases": [
+        "applies to",
+        "scope",
+        "held by"
+      ],
+      "Example": "person",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "issuing_authority",
+      "LabelKey": "Field.certification-types.issuing_authority",
+      "DescriptionKey": "FieldDesc.certification-types.issuing_authority",
+      "Type": "text",
+      "MaxLength": 200,
+      "WriterPath": "DepartmentCertificationType.IssuingAuthority",
+      "Aliases": [
+        "issuing authority",
+        "issuer",
+        "issued by",
+        "authority"
+      ],
+      "Example": "State Fire Academy",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "validity_months",
+      "LabelKey": "Field.certification-types.validity_months",
+      "DescriptionKey": "FieldDesc.certification-types.validity_months",
+      "Type": "integer",
+      "Min": 1,
+      "Max": 600,
+      "WriterPath": "DepartmentCertificationType.DefaultValidityMonths",
+      "Aliases": [
+        "validity",
+        "valid months",
+        "renewal period",
+        "months valid"
+      ],
+      "Example": "24",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "never_expires",
+      "LabelKey": "Field.certification-types.never_expires",
+      "DescriptionKey": "FieldDesc.certification-types.never_expires",
+      "Type": "boolean",
+      "WriterPath": "DepartmentCertificationType.NeverExpires",
+      "Aliases": [
+        "never expires",
+        "no expiry",
+        "permanent"
+      ],
+      "Example": "no",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "requires_verification",
+      "LabelKey": "Field.certification-types.requires_verification",
+      "DescriptionKey": "FieldDesc.certification-types.requires_verification",
+      "Type": "boolean",
+      "WriterPath": "DepartmentCertificationType.RequiresVerification",
+      "Aliases": [
+        "requires verification",
+        "verify"
+      ],
+      "Example": "no",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    },
+    {
+      "Key": "description",
+      "LabelKey": "Field.certification-types.description",
+      "DescriptionKey": "FieldDesc.certification-types.description",
+      "Type": "text",
+      "MaxLength": 2000,
+      "WriterPath": "DepartmentCertificationType.Description",
+      "Aliases": [
+        "description",
+        "notes"
+      ],
+      "Example": "Basic structural firefighting",
+      "Unique": "none",
+      "Sensitivity": "Internal"
+    }
+  ],
+  "RowRules": []
+}

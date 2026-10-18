@@ -820,7 +820,7 @@
     <value>تتبع موقع الأجهزة</value>
   </data>
   <data xml:space="preserve" name="Feature.import-migration">
-    <value>تخطيط الاستيراد والترحيل</value>
+    <value>الاستيراد والترحيل</value>
   </data>
   <data xml:space="preserve" name="Feature.inbox">
     <value>صندوق الوارد</value>
@@ -1312,7 +1312,7 @@
     <value>أجهزة GPS تُبلّغ عن مواقع الوحدات.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.import-migration">
-    <value>خطّط لنقل بياناتك من نظام آخر إلى Resgrid.</value>
+    <value>انقل الأفراد والمحطات والآليات والإعدادات من جداول البيانات أو من النظام الذي تتركه.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.inbox">
     <value>الرسائل المُرسَلة إليك.</value>
@@ -1864,7 +1864,7 @@
     <value>راجع ملكية الجهاز، وسلوك المواقع القديمة، والمصادر البديلة.</value>
   </data>
   <data xml:space="preserve" name="FeatureValue.import-migration">
-    <value>تجنَّب الموارد المكرَّرة وتحقق من الإعداد الناتج في تقرير الإعداد.</value>
+    <value>يُفحص كل صف ويُعرض للمعاينة قبل حفظ أي شيء، ويمكن التراجع عن الاستيراد.</value>
   </data>
   <data xml:space="preserve" name="FeatureValue.incident-command">
     <value>جهّز هياكل القيادة والوصول قبل تمرين أو استجابة.</value>
@@ -6070,7 +6070,7 @@
     <value>الاستيراد أو الترحيل</value>
   </data>
   <data xml:space="preserve" name="Ui.ImportHelp">
-    <value>لا يقوم تخطيط الاستيراد بنسخ البيانات. استخدم أدوات الاستيراد الحالية التي تمت مراجعتها وتحقق من الإعداد الناتج هنا.</value>
+    <value>انقل البيانات من أنظمتك الحالية باستخدام الاستيراد والترحيل. ثم يتحقق Admin Assist من النتيجة.</value>
   </data>
   <data xml:space="preserve" name="Ui.InReview">
     <value>قيد المراجعة</value>
@@ -6944,5 +6944,128 @@
   </data>
   <data name="RuleNext.unit-status-timers" xml:space="preserve">
     <value>امنح حالة التوزيع معنى في الحالات المخصصة، أو عيّن مؤقتًا لمعناها في إعدادات الخرائط.</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ManageDepartmentImport">
+    <value>إدارة استيراد القسم</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ManageDepartmentImport">
+    <value>من يمكنه استخدام الاستيراد والترحيل لإدخال البيانات إلى القسم: رفع الملفات ومطابقة الأعمدة وإصلاح المشكلات واعتماد عمليات الاستيراد وتنفيذها والتراجع عنها وتفعيل الأشخاص المستوردين ومنح الوصول لدعم Resgrid. لمسؤولي القسم فقط؛ ولا يُعرض في شاشة الأمان.</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ManageRecordImports">
+    <value>إدارة استيراد السجلات</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ManageRecordImports">
+    <value>من يمكنه استيراد سجل الحوادث من أنظمة أخرى إلى السجلات وحذف دفعة استيراد. لمسؤولي القسم فقط. وهو مخصص لاستيراد السجلات التاريخية ولا يُعرض بعد في شاشة الأمان.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.DepartmentImportConfig">
+    <value>إعداد استيراد القسم</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DepartmentImportConfig">
+    <value>كيف يحتفظ الاستيراد والترحيل بالملفات المرفوعة والبيانات التي تم التحقق منها، وما إذا كان الاستيراد يحتاج إلى اعتماد مسؤول ثانٍ، وكيف تتعامل عمليات الاستيراد الجديدة مع السجلات الموجودة، وكم يدوم وصول دعم Resgrid افتراضيًا.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DepartmentImportConfig.ArtifactRetentionDaysAfterSuccess">
+    <value>إعداد استيراد القسم / الاحتفاظ بالملفات بعد الاستيراد</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DepartmentImportConfig.ArtifactRetentionDaysAfterSuccess">
+    <value>عدد أيام الاحتفاظ بالملفات المرفوعة بعد استيراد بياناتها. عند عدم التحديد 7 أيام؛ وتحتفظ بها الأقسام التي تستخدم Advanced Data Protection لمدة 72 ساعة.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DepartmentImportConfig.ArtifactRetentionDaysAfterFailure">
+    <value>إعداد استيراد القسم / الاحتفاظ بالملفات بعد الإخفاق</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DepartmentImportConfig.ArtifactRetentionDaysAfterFailure">
+    <value>عدد أيام الاحتفاظ بالملفات المرفوعة بعد إخفاق الاستيراد أو إلغائه. عند عدم التحديد 30 يومًا.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DepartmentImportConfig.StagingRetentionDaysAfterActivation">
+    <value>إعداد استيراد القسم / الاحتفاظ بالبيانات المتحقق منها بعد التفعيل</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DepartmentImportConfig.StagingRetentionDaysAfterActivation">
+    <value>عدد أيام الاحتفاظ بالصفوف المتحقق منها والمشكلات ومطابقات القيم بعد التفعيل، حتى يظل من الممكن شرح الاستيراد أو التراجع عنه. عند عدم التحديد 30 يومًا.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DepartmentImportConfig.RequireSecondApprover">
+    <value>إعداد استيراد القسم / اشتراط معتمد ثانٍ</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DepartmentImportConfig.RequireSecondApprover">
+    <value>عند التفعيل، لا يبدأ الاستيراد إلا بعد أن يعتمده أيضًا مسؤول ثانٍ مختلف.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DepartmentImportConfig.DefaultWriteMode">
+    <value>إعداد استيراد القسم / وضع الكتابة الافتراضي</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DepartmentImportConfig.DefaultWriteMode">
+    <value>كيف تتعامل عمليات الاستيراد الجديدة مع السجلات الموجودة: الإنشاء فقط (الافتراضي: يتم الإبلاغ عن السجلات الموجودة وتخطيها) أو التحديث بعد المراجعة (يتم تحديث الحقول المعتمدة في السجلات المطابقة).</value>
+  </data>
+  <data xml:space="preserve" name="Field.DepartmentImportConfig.SupportGrantDefaultDays">
+    <value>إعداد استيراد القسم / مدة وصول الدعم</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DepartmentImportConfig.SupportGrantDefaultDays">
+    <value>عدد الأيام التي يدوم فيها وصول دعم Resgrid عند منحه دون اختيار مدة. عند عدم التحديد 7 أيام؛ والحد الأقصى 30.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.OpenImport">
+    <value>فتح الاستيراد والترحيل</value>
+  </data>
+  <data xml:space="preserve" name="SetupEvidence.import-migration">
+    <value>يكتمل عند التحقق من عملية استيراد في الاستيراد والترحيل.</value>
+  </data>
+  <data xml:space="preserve" name="Rule.import-blocking-issues">
+    <value>عملية استيراد متوقفة بسبب مشكلات مانعة منذ أكثر من أسبوع</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.import-blocking-issues">
+    <value>البيانات المنتظرة في الاستيراد والترحيل ليست في Resgrid بعد، لذا قد يكون هناك نقص في الأفراد أو المحطات أو الآليات.</value>
+  </data>
+  <data xml:space="preserve" name="RuleNext.import-blocking-issues">
+    <value>افتح الاستيراد والترحيل وأصلح الصفوف المحظورة أو استبعدها، أو اسأل دعم Resgrid.</value>
+  </data>
+  <data xml:space="preserve" name="Rule.import-unreconciled">
+    <value>انتهت عملية استيراد بفروق غير مفسّرة</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.import-unreconciled">
+    <value>أحصى الفحص بعد الاستيراد شيئًا مختلفًا عمّا كُتب، لذا قد لا تتطابق البيانات مع مصدرك.</value>
+  </data>
+  <data xml:space="preserve" name="RuleNext.import-unreconciled">
+    <value>قارن الأعداد في سجل الاستيراد واسأل دعم Resgrid إذا لم تتطابق.</value>
+  </data>
+  <data xml:space="preserve" name="Rule.import-dormant-members">
+    <value>لم تتم دعوة الأشخاص المستوردين منذ أكثر من أسبوعين</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.import-dormant-members">
+    <value>لا يستطيع الأشخاص المستوردون تسجيل الدخول ولا يتلقون أي إرسال حتى تتم دعوتهم.</value>
+  </data>
+  <data xml:space="preserve" name="RuleNext.import-dormant-members">
+    <value>ادعهم من التحقق والتفعيل، أو أزل الأشخاص الذين لا ينبغي أن يكونوا في Resgrid.</value>
+  </data>
+  <data xml:space="preserve" name="Rule.import-paused-intake">
+    <value>استقبال البلاغات الذي أنشأه الاستيراد لا يزال متوقفًا مؤقتًا</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.import-paused-intake">
+    <value>لا تصل البلاغات من نظام CAD لديك إلى Resgrid ما دام الاستقبال متوقفًا مؤقتًا.</value>
+  </data>
+  <data xml:space="preserve" name="RuleNext.import-paused-intake">
+    <value>اختبر رسالة نموذجية، ثم فعّل الاستقبال من التحقق والتفعيل.</value>
+  </data>
+  <data xml:space="preserve" name="Rule.import-disabled-automation">
+    <value>الأتمتة التي أنشأها الاستيراد لا تزال معطّلة</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.import-disabled-automation">
+    <value>لا تعمل جداول قوائم التحقق وخطط الصيانة والمهام المجدولة وسير العمل القادمة من الاستيراد ما دامت معطّلة.</value>
+  </data>
+  <data xml:space="preserve" name="RuleNext.import-disabled-automation">
+    <value>راجعها وفعّل ما تحتاجه منها من التحقق والتفعيل.</value>
+  </data>
+  <data xml:space="preserve" name="Rule.import-enforcement-relaxed">
+    <value>فرض الشهادات الذي خفّفه الاستيراد لا يزال مخففًا</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.import-enforcement-relaxed">
+    <value>متطلبات الأدوار تكتفي بالتحذير بدلًا من فرضها.</value>
+  </data>
+  <data xml:space="preserve" name="RuleNext.import-enforcement-relaxed">
+    <value>أعد تفعيل فرض الشهادات عند اكتمال الشهادات.</value>
+  </data>
+  <data xml:space="preserve" name="Rule.import-files-retained">
+    <value>يُحتفظ بالملفات المستوردة مدة أطول من المعتاد</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.import-files-retained">
+    <value>قد تحتوي الملفات المرفوعة على معلومات شخصية؛ والاحتفاظ بها مدة أطول من اللازم يزيد المخاطر.</value>
+  </data>
+  <data xml:space="preserve" name="RuleNext.import-files-retained">
+    <value>احذف الملفات التي لم تعد تحتاجها، أو قصّر مدة الاحتفاظ في إعدادات الاستيراد والترحيل.</value>
   </data>
 </root>

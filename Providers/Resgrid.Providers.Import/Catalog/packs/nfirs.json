@@ -1,0 +1,44 @@
+{
+  "Key": "nfirs",
+  "Version": "2026.11.1",
+  "ProductName": "NFIRS 5.0",
+  "Kind": "file-documented",
+  "Grade": "A",
+  "Phase": "2B",
+  "Published": false,
+  "SourceUrl": "https://www.usfa.fema.gov/data-insights/nfirs/documentation/",
+  "VerifiedOn": "2026-10-12",
+  "Glossary": [
+    {
+      "Term": "Personnel",
+      "Language": "en",
+      "Target": "entity:personnel"
+    },
+    {
+      "Term": "Apparatus",
+      "Language": "en",
+      "Target": "entity:units",
+      "Names": "module.units"
+    },
+    {
+      "Term": "Apparatus type",
+      "Language": "en",
+      "Target": "entity:unit-types"
+    },
+    {
+      "Term": "Incidents",
+      "Language": "en",
+      "Target": "term:module.calls"
+    },
+    {
+      "Term": "Casualties",
+      "Language": "en",
+      "Target": "none"
+    },
+    {
+      "Term": "EMS patient care",
+      "Language": "en",
+      "Target": "none"
+    }
+  ]
+}

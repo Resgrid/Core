@@ -1,0 +1,28 @@
+{
+  "Key": "iamresponding",
+  "Version": "2026.11.1",
+  "ProductName": "IamResponding",
+  "Kind": "file-sample-validated",
+  "Grade": "B",
+  "Published": false,
+  "SourceUrl": "https://www.iamresponding.com/features/",
+  "VerifiedOn": "2026-10-12",
+  "Glossary": [
+    {
+      "Term": "Members",
+      "Language": "en",
+      "Target": "entity:personnel",
+      "Names": "module.personnel"
+    },
+    {
+      "Term": "Hydrants",
+      "Language": "en",
+      "Target": "term:module.records"
+    },
+    {
+      "Term": "Incidents",
+      "Language": "en",
+      "Target": "term:module.calls"
+    }
+  ]
+}

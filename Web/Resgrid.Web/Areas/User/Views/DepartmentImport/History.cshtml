@@ -1,0 +1,133 @@
+@model ImportHistoryView
+@{
+    ViewBag.Title = "Resgrid | " + localizer["ModuleName"];
+    ViewData["Title"] = localizer["TabHistory"].Value;
+    ViewData["Tab"] = "History";
+    var id = Model.Workspace.Id;
+    var open = new[] { (int)ImportRunStatus.Queued, (int)ImportRunStatus.Running, (int)ImportRunStatus.Reconciling };
+}
+@await Html.PartialAsync("_Shell", Model)
+
+<div class="wrapper wrapper-content rgw-page" id="import-history" data-status-url="@Url.Action("RunStatus")">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5>@localizer["Runs"]</h5></div>
+        <div class="ibox-content">
+            @if (Model.Runs.Count == 0)
+            {
+                <p class="text-muted">@localizer["NoRuns"]</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped rgw-table">
+                        <thead><tr><th>@localizer["RunKind"]</th><th>@localizer["Status"]</th><th>@localizer["Requested"]</th><th>@localizer["Progress"]</th><th class="rgw-row-actions"></th></tr></thead>
+                        <tbody>
+                            @foreach (var run in Model.Runs)
+                            {
+                                var counts = string.IsNullOrWhiteSpace(run.Counts) ? null : Newtonsoft.Json.JsonConvert.DeserializeObject<ImportRunCounts>(run.Counts);
+                                <tr data-run="@run.Id" data-live="@(open.Contains(run.Status) ? "1" : "0")">
+                                    <td>@localizer[ImportBadges.RunKindKey(run.Kind)]</td>
+                                    <td class="import-run-status" aria-live="polite">
+                                        @await Html.PartialAsync("_Badge", ImportBadges.Run(run.Status))
+                                        @if (run.LastErrorCode != null)
+                                        {
+                                            <div class="small text-muted">@string.Format(localizer["Issue." + run.LastErrorCode + ".Title"].Value, 1) <span class="rgw-mono">@run.LastErrorCode</span></div>
+                                        }
+                                        @if (run.Status == (int)ImportRunStatus.Failed && run.NextAttemptOn.HasValue)
+                                        {
+                                            <div class="small text-muted">@localizer["RetryingAutomatically"]</div>
+                                        }
+                                    </td>
+                                    <td>@run.RequestedOn.ToLocalTime().ToString("g")</td>
+                                    <td class="small">
+                                        @if (counts != null)
+                                        {
+                                            @foreach (var (entity, c) in counts.Entities)
+                                            {
+                                                var contract = Model.Catalog.GetContract(entity);
+                                                var entityLabel = entity == ImportConfigurationCatalog.JournalEntityType ? localizer["ConfigEntity"].Value : contract == null ? entity : localizer[contract.LabelKey].Value;
+                                                <div>@entityLabel: @string.Format(localizer["RunEntityCounts"].Value, c.Created, c.Updated + c.Linked, c.Unchanged, c.Skipped, c.Failed)</div>
+                                            }
+                                        }
+                                        @if (Model.Reconciliations.TryGetValue(run.Id, out var checks) && checks.Count > 0)
+                                        {
+                                            var unexplained = checks.Count(c => c.State == (int)ImportReconciliationState.Unexplained);
+                                            <div>
+                                                @if (unexplained == 0)
+                                                {
+                                                    <span class="label label-success"><i class="fa fa-check" aria-hidden="true"></i> @string.Format(localizer["ChecksMatched"].Value, checks.Count)</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="label label-warning"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @string.Format(localizer["ChecksUnexplained"].Value, unexplained)</span>
+                                                }
+                                            </div>
+                                        }
+                                    </td>
+                                    <td class="rgw-row-actions">
+                                        @if (run.Status == (int)ImportRunStatus.Queued || run.Status == (int)ImportRunStatus.Running)
+                                        {
+                                            <form method="post" asp-action="RunControl" asp-route-id="@id" asp-route-runId="@run.Id" asp-route-control="pause" style="display:inline">@Html.AntiForgeryToken()<button class="btn btn-xs btn-default" type="submit"><i class="fa fa-pause" aria-hidden="true"></i> @localizer["Pause"]</button></form>
+                                            <form method="post" asp-action="RunControl" asp-route-id="@id" asp-route-runId="@run.Id" asp-route-control="cancel" style="display:inline" class="import-confirm" data-confirm-text="@localizer["CancelRunConfirm"]">@Html.AntiForgeryToken()<button class="btn btn-xs btn-default" type="submit"><i class="fa fa-ban" aria-hidden="true"></i> @localizer["CancelRun"]</button></form>
+                                        }
+                                        @if (run.Status == (int)ImportRunStatus.Paused || run.Status == (int)ImportRunStatus.Failed)
+                                        {
+                                            <form method="post" asp-action="RunControl" asp-route-id="@id" asp-route-runId="@run.Id" asp-route-control="resume" style="display:inline">@Html.AntiForgeryToken()<button class="btn btn-xs btn-primary" type="submit"><i class="fa fa-play" aria-hidden="true"></i> @localizer["Resume"]</button></form>
+                                        }
+                                        @if (Model.Rollbacks.TryGetValue(run.Id, out var rollback))
+                                        {
+                                            @if (rollback.CanRollback)
+                                            {
+                                                <button type="button" class="btn btn-xs btn-default" data-toggle="modal" data-target="#rollback-@run.Id"><i class="fa fa-undo" aria-hidden="true"></i> @localizer["Rollback"]</button>
+                                                <div class="modal fade rgw-modal" id="rollback-@run.Id" tabindex="-1" role="dialog" aria-labelledby="rollback-title-@run.Id">
+                                                    <div class="modal-dialog" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Close"]"><span aria-hidden="true">&times;</span></button><h4 class="modal-title" id="rollback-title-@run.Id">@localizer["RollbackTitle"]</h4></div>
+                                                            <div class="modal-body text-left">
+                                                                <p>@localizer["RollbackHelp"]</p>
+                                                                @if (rollback.WindowEndsOn.HasValue)
+                                                                {
+                                                                    <p class="small text-muted">@string.Format(localizer["RollbackWindow"].Value, rollback.WindowEndsOn.Value.ToLocalTime().ToString("d"))</p>
+                                                                }
+                                                                <ul class="small">
+                                                                    @foreach (var (entity, operations) in rollback.Entries)
+                                                                    {
+                                                                        var contract = Model.Catalog.GetContract(entity);
+                                                                        var entityLabel = entity == ImportConfigurationCatalog.JournalEntityType ? localizer["ConfigEntity"].Value : contract == null ? entity : localizer[contract.LabelKey].Value;
+                                                                        <li>@entityLabel: @string.Join(", ", operations.Select(o => string.Format(localizer["Journal." + o.Key].Value, o.Value)))</li>
+                                                                    }
+                                                                </ul>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <form method="post" asp-action="Rollback" asp-route-id="@id" asp-route-runId="@run.Id">
+                                                                    @Html.AntiForgeryToken()
+                                                                    <button type="button" class="btn btn-default" data-dismiss="modal">@localizer["Close"]</button>
+                                                                    <button type="submit" class="btn btn-danger"><i class="fa fa-undo" aria-hidden="true"></i> @localizer["RollbackConfirm"]</button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                            else if (rollback.RefusalCode != null)
+                                            {
+                                                <span class="small text-muted">@localizer["Error." + rollback.RefusalCode]</span>
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <p class="rgw-progress-honest"><i class="fa fa-info-circle" aria-hidden="true"></i> @localizer["BackgroundWork"]</p>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
+@section Scripts { @await Html.PartialAsync("_Scripts", "history") }

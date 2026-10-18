@@ -820,7 +820,7 @@
     <value>Παρακολούθηση τοποθεσίας υλικού εξοπλισμού</value>
   </data>
   <data xml:space="preserve" name="Feature.import-migration">
-    <value>Σχεδιασμός εισαγωγής και μετάπτωσης</value>
+    <value>Εισαγωγή και μετάβαση</value>
   </data>
   <data xml:space="preserve" name="Feature.inbox">
     <value>Εισερχόμενα</value>
@@ -1312,7 +1312,7 @@
     <value>Συσκευές GPS που αναφέρουν τις τοποθεσίες μονάδων.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.import-migration">
-    <value>Σχεδιάστε τη μετάβαση των δεδομένων σας από άλλο σύστημα στο Resgrid.</value>
+    <value>Μεταφέρετε προσωπικό, σταθμούς, οχήματα και ρυθμίσεις από υπολογιστικά φύλλα ή από το σύστημα που αφήνετε.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.inbox">
     <value>Μηνύματα που σας έχουν σταλεί.</value>
@@ -1864,7 +1864,7 @@
     <value>Εξετάστε την ιδιοκτησία συσκευών, τη συμπεριφορά σε μη ενημερωμένες θέσεις και τις εναλλακτικές πηγές.</value>
   </data>
   <data xml:space="preserve" name="FeatureValue.import-migration">
-    <value>Αποφύγετε διπλότυπους πόρους και επαληθεύστε την προκύπτουσα διαμόρφωση στην Αναφορά ρύθμισης.</value>
+    <value>Κάθε γραμμή ελέγχεται και εμφανίζεται σε προεπισκόπηση πριν αποθηκευτεί οτιδήποτε, και μια εισαγωγή μπορεί να αναιρεθεί.</value>
   </data>
   <data xml:space="preserve" name="FeatureValue.incident-command">
     <value>Προετοιμάστε δομές διοίκησης και πρόσβαση πριν από μια άσκηση ή επέμβαση.</value>
@@ -6070,7 +6070,7 @@
     <value>Εισαγωγή ή μετάβαση</value>
   </data>
   <data xml:space="preserve" name="Ui.ImportHelp">
-    <value>Ο σχεδιασμός εισαγωγής δεν αντιγράφει δεδομένα. Χρησιμοποιήστε τα υπάρχοντα ελεγμένα εργαλεία εισαγωγής και επαληθεύστε εδώ την προκύπτουσα ρύθμιση.</value>
+    <value>Μεταφέρετε δεδομένα από τα τρέχοντα συστήματά σας με την Εισαγωγή και μετάβαση. Στη συνέχεια το Admin Assist επαληθεύει το αποτέλεσμα.</value>
   </data>
   <data xml:space="preserve" name="Ui.InReview">
     <value>Υπό έλεγχο</value>
@@ -6944,5 +6944,128 @@
   </data>
   <data name="RuleNext.unit-status-timers" xml:space="preserve">
     <value>Δώστε σημασία στην κατάσταση αποστολής στις Προσαρμοσμένες καταστάσεις ή ορίστε χρονόμετρο για τη σημασία της στις Ρυθμίσεις χαρτών.</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ManageDepartmentImport">
+    <value>Διαχείριση εισαγωγής τμήματος</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ManageDepartmentImport">
+    <value>Ποιος μπορεί να χρησιμοποιεί την Εισαγωγή και μετάπτωση για να φέρει δεδομένα στο τμήμα: να ανεβάζει αρχεία, να αντιστοιχίζει στήλες, να διορθώνει προβλήματα, να εγκρίνει και να εκτελεί εισαγωγές, να τις αναιρεί, να ενεργοποιεί τα άτομα που εισήχθησαν και να παρέχει πρόσβαση στην υποστήριξη της Resgrid. Μόνο διαχειριστές του τμήματος· δεν προσφέρεται στην οθόνη Ασφάλειας.</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ManageRecordImports">
+    <value>Διαχείριση εισαγωγών αναφορών</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ManageRecordImports">
+    <value>Ποιος μπορεί να εισάγει στις Αναφορές ιστορικό συμβάντων από άλλα συστήματα και να διαγράφει μια παρτίδα εισαγωγής. Μόνο διαχειριστές του τμήματος. Προορίζεται για εισαγωγές ιστορικών αναφορών και δεν προσφέρεται ακόμη στην οθόνη Ασφάλειας.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.DepartmentImportConfig">
+    <value>Ρύθμιση εισαγωγής τμήματος</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DepartmentImportConfig">
+    <value>Πώς η Εισαγωγή και μετάπτωση διατηρεί τα αρχεία που ανεβαίνουν και τα ελεγμένα δεδομένα, αν μια εισαγωγή χρειάζεται έγκριση από δεύτερο διαχειριστή, πώς οι νέες εισαγωγές χειρίζονται τις υπάρχουσες εγγραφές και πόσο διαρκεί από προεπιλογή η πρόσβαση της υποστήριξης της Resgrid.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DepartmentImportConfig.ArtifactRetentionDaysAfterSuccess">
+    <value>Ρύθμιση εισαγωγής τμήματος / Διατήρηση αρχείων μετά την εισαγωγή</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DepartmentImportConfig.ArtifactRetentionDaysAfterSuccess">
+    <value>Ημέρες διατήρησης των αρχείων που ανέβηκαν αφού εισαχθούν τα δεδομένα τους. Χωρίς τιμή, 7 ημέρες· τα τμήματα με Advanced Data Protection τα διατηρούν 72 ώρες.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DepartmentImportConfig.ArtifactRetentionDaysAfterFailure">
+    <value>Ρύθμιση εισαγωγής τμήματος / Διατήρηση αρχείων μετά από αποτυχία</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DepartmentImportConfig.ArtifactRetentionDaysAfterFailure">
+    <value>Ημέρες διατήρησης των αρχείων που ανέβηκαν αφού μια εισαγωγή αποτύχει ή ακυρωθεί. Χωρίς τιμή, 30 ημέρες.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DepartmentImportConfig.StagingRetentionDaysAfterActivation">
+    <value>Ρύθμιση εισαγωγής τμήματος / Διατήρηση ελεγμένων δεδομένων μετά την ενεργοποίηση</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DepartmentImportConfig.StagingRetentionDaysAfterActivation">
+    <value>Ημέρες διατήρησης των ελεγμένων γραμμών, των προβλημάτων και των αντιστοιχίσεων τιμών μετά την ενεργοποίηση, ώστε μια εισαγωγή να μπορεί ακόμη να εξηγηθεί ή να αναιρεθεί. Χωρίς τιμή, 30 ημέρες.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DepartmentImportConfig.RequireSecondApprover">
+    <value>Ρύθμιση εισαγωγής τμήματος / Απαιτείται δεύτερος εγκρίνων</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DepartmentImportConfig.RequireSecondApprover">
+    <value>Όταν είναι ενεργό, μια εισαγωγή ξεκινά μόνο αφού την εγκρίνει και ένας δεύτερος, διαφορετικός διαχειριστής.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DepartmentImportConfig.DefaultWriteMode">
+    <value>Ρύθμιση εισαγωγής τμήματος / Προεπιλεγμένη λειτουργία εγγραφής</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DepartmentImportConfig.DefaultWriteMode">
+    <value>Πώς οι νέες εισαγωγές χειρίζονται τις εγγραφές που υπάρχουν ήδη: μόνο δημιουργία (προεπιλογή: οι υπάρχουσες εγγραφές αναφέρονται και παραλείπονται) ή ελεγμένη ενημέρωση (ενημερώνονται τα εγκεκριμένα πεδία των εγγραφών που αντιστοιχίστηκαν).</value>
+  </data>
+  <data xml:space="preserve" name="Field.DepartmentImportConfig.SupportGrantDefaultDays">
+    <value>Ρύθμιση εισαγωγής τμήματος / Διάρκεια πρόσβασης υποστήριξης</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DepartmentImportConfig.SupportGrantDefaultDays">
+    <value>Πόσες ημέρες διαρκεί η πρόσβαση της υποστήριξης της Resgrid όταν την παρέχετε χωρίς να επιλέξετε διάρκεια. Χωρίς τιμή, 7 ημέρες· το πολύ 30.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.OpenImport">
+    <value>Άνοιγμα Εισαγωγής και μετάβασης</value>
+  </data>
+  <data xml:space="preserve" name="SetupEvidence.import-migration">
+    <value>Ολοκληρώνεται όταν μια εισαγωγή έχει επαληθευτεί στην Εισαγωγή και μετάβαση.</value>
+  </data>
+  <data xml:space="preserve" name="Rule.import-blocking-issues">
+    <value>Μια εισαγωγή έχει κολλήσει σε προβλήματα αποκλεισμού για πάνω από μία εβδομάδα</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.import-blocking-issues">
+    <value>Τα δεδομένα που περιμένουν στην Εισαγωγή και μετάβαση δεν είναι ακόμη στο Resgrid, οπότε μπορεί να λείπουν άτομα, σταθμοί ή οχήματα.</value>
+  </data>
+  <data xml:space="preserve" name="RuleNext.import-blocking-issues">
+    <value>Ανοίξτε την Εισαγωγή και μετάβαση και διορθώστε ή εξαιρέστε τις αποκλεισμένες γραμμές, ή ρωτήστε την υποστήριξη του Resgrid.</value>
+  </data>
+  <data xml:space="preserve" name="Rule.import-unreconciled">
+    <value>Μια εισαγωγή ολοκληρώθηκε με ανεξήγητες διαφορές</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.import-unreconciled">
+    <value>Ο έλεγχος μετά την εισαγωγή μέτρησε κάτι διαφορετικό από ό,τι γράφτηκε, οπότε τα δεδομένα ίσως δεν ταιριάζουν με την πηγή σας.</value>
+  </data>
+  <data xml:space="preserve" name="RuleNext.import-unreconciled">
+    <value>Συγκρίνετε τα πλήθη στο ιστορικό της εισαγωγής και ρωτήστε την υποστήριξη του Resgrid αν δεν ταιριάζουν.</value>
+  </data>
+  <data xml:space="preserve" name="Rule.import-dormant-members">
+    <value>Άτομα που εισήχθησαν δεν έχουν προσκληθεί για πάνω από δύο εβδομάδες</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.import-dormant-members">
+    <value>Τα άτομα που εισήχθησαν δεν μπορούν να συνδεθούν και δεν λαμβάνουν κλήσεις μέχρι να προσκληθούν.</value>
+  </data>
+  <data xml:space="preserve" name="RuleNext.import-dormant-members">
+    <value>Προσκαλέστε τα από την Επαλήθευση και ενεργοποίηση ή αφαιρέστε άτομα που δεν πρέπει να είναι στο Resgrid.</value>
+  </data>
+  <data xml:space="preserve" name="Rule.import-paused-intake">
+    <value>Η λήψη κλήσεων που δημιουργήθηκε από εισαγωγή είναι ακόμη σε παύση</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.import-paused-intake">
+    <value>Οι κλήσεις από το CAD σας δεν φτάνουν στο Resgrid όσο η λήψη είναι σε παύση.</value>
+  </data>
+  <data xml:space="preserve" name="RuleNext.import-paused-intake">
+    <value>Δοκιμάστε ένα δείγμα μηνύματος και, στη συνέχεια, ενεργοποιήστε τη λήψη από την Επαλήθευση και ενεργοποίηση.</value>
+  </data>
+  <data xml:space="preserve" name="Rule.import-disabled-automation">
+    <value>Ο αυτοματισμός που δημιουργήθηκε από εισαγωγή είναι ακόμη απενεργοποιημένος</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.import-disabled-automation">
+    <value>Χρονοδιαγράμματα λιστών ελέγχου, σχέδια συντήρησης, προγραμματισμένες εργασίες ή ροές εργασίας από την εισαγωγή δεν εκτελούνται όσο είναι απενεργοποιημένα.</value>
+  </data>
+  <data xml:space="preserve" name="RuleNext.import-disabled-automation">
+    <value>Ελέγξτε τα και ενεργοποιήστε όσα χρειάζεστε από την Επαλήθευση και ενεργοποίηση.</value>
+  </data>
+  <data xml:space="preserve" name="Rule.import-enforcement-relaxed">
+    <value>Ο έλεγχος πιστοποιήσεων που χαλάρωσε από εισαγωγή παραμένει χαλαρός</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.import-enforcement-relaxed">
+    <value>Οι απαιτήσεις ρόλων απλώς προειδοποιούν αντί να εφαρμόζονται.</value>
+  </data>
+  <data xml:space="preserve" name="RuleNext.import-enforcement-relaxed">
+    <value>Ενεργοποιήστε ξανά τον έλεγχο πιστοποιήσεων μόλις ολοκληρωθούν οι πιστοποιήσεις.</value>
+  </data>
+  <data xml:space="preserve" name="Rule.import-files-retained">
+    <value>Τα αρχεία εισαγωγής διατηρούνται περισσότερο από το συνηθισμένο</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.import-files-retained">
+    <value>Τα αρχεία που μεταφορτώθηκαν μπορεί να περιέχουν προσωπικά δεδομένα· η διατήρησή τους περισσότερο από όσο χρειάζεται αυξάνει τον κίνδυνο.</value>
+  </data>
+  <data xml:space="preserve" name="RuleNext.import-files-retained">
+    <value>Διαγράψτε τα αρχεία που δεν χρειάζεστε πια ή μειώστε τη διατήρηση στις ρυθμίσεις της Εισαγωγής και μετάβασης.</value>
   </data>
 </root>

@@ -1,0 +1,27 @@
+{
+  "Key": "pstrax",
+  "Version": "2026.11.1",
+  "ProductName": "PSTrax",
+  "Kind": "file-sample-validated",
+  "Grade": "B",
+  "Published": false,
+  "SourceUrl": "https://help.pstrax.com/import-templates",
+  "VerifiedOn": "2026-10-12",
+  "Glossary": [
+    {
+      "Term": "Checks",
+      "Language": "en",
+      "Target": "term:module.checklists"
+    },
+    {
+      "Term": "Assets",
+      "Language": "en",
+      "Target": "term:module.inventory"
+    },
+    {
+      "Term": "Supplies",
+      "Language": "en",
+      "Target": "term:module.inventory"
+    }
+  ]
+}

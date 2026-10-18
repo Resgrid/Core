@@ -29,8 +29,10 @@ namespace Resgrid.Model.Services
 		Task<bool> DeleteForMemberAsync(int departmentId, string userId,
 			CancellationToken cancellationToken = default);
 
-		Task<DepartmentMemberSensitiveData> SaveAsync(DepartmentMemberSensitiveData data,
-			CancellationToken cancellationToken = default);
+		Task<DepartmentMemberSensitiveData> SaveAsync(DepartmentMemberSensitiveData data, CancellationToken cancellationToken = default);
+
+		/// <summary>Department Import quiet overload: the side effects named by <paramref name="effects"/> are skipped or deferred to the import engine.</summary>
+		Task<DepartmentMemberSensitiveData> SaveAsync(DepartmentMemberSensitiveData data, Onboarding.ImportEffectPolicy effects, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Stamps each profile's <see cref="UserProfile.IdentificationNumber"/> with the value this

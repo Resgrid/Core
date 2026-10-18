@@ -153,6 +153,15 @@ namespace Resgrid.Model.Services
 			CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
+		/// Department Import quiet overloads (wizard plan section 11.3): the group (and its address) are written inside the
+		/// caller's unit of work without committing it, so the engine commits the target and its external-id claim together;
+		/// visibility refresh and search projection are deferred when <paramref name="effects"/> says so.
+		/// </summary>
+		Task<DepartmentGroup> SaveAsync(DepartmentGroup departmentGroup, Onboarding.ImportEffectPolicy effects, CancellationToken cancellationToken);
+
+		Task<DepartmentGroupMember> SaveGroupMemberAsync(DepartmentGroupMember depMember, Onboarding.ImportEffectPolicy effects, CancellationToken cancellationToken);
+
+		/// <summary>
 		/// Gets all department groups for department asynchronous.
 		/// </summary>
 		/// <param name="departmentId">The department identifier.</param>

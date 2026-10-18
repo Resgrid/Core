@@ -81,7 +81,10 @@ namespace Resgrid.Services
 			return profile.ToDictionary(userProfile => userProfile.UserId);
 		}
 
-		public async Task<UserProfile> SaveProfileAsync(int DepartmentId, UserProfile profile, CancellationToken cancellationToken = default(CancellationToken))
+		public Task<UserProfile> SaveProfileAsync(int DepartmentId, UserProfile profile, CancellationToken cancellationToken = default(CancellationToken))
+			=> SaveProfileAsync(DepartmentId, profile, Resgrid.Model.Onboarding.ImportEffectPolicy.Interactive, cancellationToken);
+
+		public async Task<UserProfile> SaveProfileAsync(int DepartmentId, UserProfile profile, Resgrid.Model.Onboarding.ImportEffectPolicy effects, CancellationToken cancellationToken)
 		{
 			// Load existing profile directly from repository (bypass cache) to detect contact changes
 			var existing = await _userProfileRepository.GetProfileByUserIdAsync(profile.UserId);
@@ -153,7 +156,8 @@ namespace Resgrid.Services
 			foreach (var departmentId in departments.Where(d => d > 0))
 				ClearAllUserProfilesFromCache(departmentId);
 
-			await ProjectProfileAsync(DepartmentId, savedProfile, memberships, cancellationToken);
+			if (effects.ImmediateSearchProjection)
+				await ProjectProfileAsync(DepartmentId, savedProfile, memberships, cancellationToken);
 			return savedProfile;
 		}
 

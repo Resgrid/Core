@@ -21,6 +21,8 @@ namespace Resgrid.Model.Services
 		/// <summary>Soft delete (Phase D); refused with certifications_type_in_use while a requirement or a live record references the type.
 		/// The service writes the audit row, attributed to <paramref name="userId"/>.</summary>
 		Task<bool> DeleteCertificationTypeByIdAsync(int certificationTypeId, string userId, CancellationToken cancellationToken = default(CancellationToken));
+		/// <summary>True while a requirement or a live record references the type: exactly when <see cref="DeleteCertificationTypeByIdAsync"/> refuses.</summary>
+		Task<bool> IsCertificationTypeInUseAsync(int certificationTypeId);
 		/// <summary>Creates a person-scoped type from its display name; Code derives from the name. Audited as <paramref name="userId"/>.</summary>
 		Task<DepartmentCertificationType> SaveNewCertificationTypeAsync(string certificationType, int departmentId, string userId, CancellationToken cancellationToken = default(CancellationToken));
 		/// <summary>Full legacy read of a member's records (bytes included). Soft-deleted rows are excluded.</summary>
@@ -28,6 +30,9 @@ namespace Resgrid.Model.Services
 		Task<List<string>> GetDepartmentCertificationTypesAsync(int departmentId);
 		/// <summary>Creates or updates a record (ADP catalog 6 seam). New typed records of a RequiresVerification type start PendingVerification; raises trigger 87 on create.</summary>
 		Task<PersonnelCertification> SaveCertificationAsync(PersonnelCertification certification, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>Department Import quiet overload: the side effects named by <paramref name="effects"/> are skipped or deferred to the import engine.</summary>
+		Task<PersonnelCertification> SaveCertificationAsync(PersonnelCertification certification, Onboarding.ImportEffectPolicy effects, CancellationToken cancellationToken);
 		Task<PersonnelCertification> GetCertificationByIdAsync(int certificationId);
 		/// <summary>Hard delete kept for the legacy Profile page and purge paths; Phase D surfaces use <see cref="SoftDeleteCertificationAsync"/>.</summary>
 		Task<bool> DeleteCertification(PersonnelCertification certification, CancellationToken cancellationToken = default(CancellationToken));
@@ -44,6 +49,9 @@ namespace Resgrid.Model.Services
 		/// AppliesTo is immutable once records of the type exist; unit-scoped types cannot carry credits or verification.
 		/// </summary>
 		Task<DepartmentCertificationType> SaveCertificationTypeAsync(DepartmentCertificationType type, string userId, CancellationToken cancellationToken = default);
+
+		/// <summary>Department Import quiet overload: the side effects named by <paramref name="effects"/> are skipped or deferred to the import engine.</summary>
+		Task<DepartmentCertificationType> SaveCertificationTypeAsync(DepartmentCertificationType type, string userId, Onboarding.ImportEffectPolicy effects, CancellationToken cancellationToken);
 		/// <summary>Projects a <see cref="Certifications.CertificationTypeTemplateCatalog"/> template into a new department type.</summary>
 		Task<DepartmentCertificationType> CreateCertificationTypeFromTemplateAsync(int departmentId, string templateId, string userId, CancellationToken cancellationToken = default);
 
@@ -75,6 +83,8 @@ namespace Resgrid.Model.Services
 		Task<UnitCertification> GetUnitCertificationByIdAsync(int unitCertificationId, bool includeData = false);
 		/// <summary>Creates or updates a unit record; the type must be unit-scoped (certifications_type_scope).</summary>
 		Task<UnitCertification> SaveUnitCertificationAsync(UnitCertification certification, string userId, CancellationToken cancellationToken = default);
+		/// <summary>The import's quiet overload (wizard plan section 11.2): per-row audit and domain events follow <paramref name="effects"/>.</summary>
+		Task<UnitCertification> SaveUnitCertificationAsync(UnitCertification certification, string userId, Onboarding.ImportEffectPolicy effects, CancellationToken cancellationToken);
 		Task<UnitCertification> SetUnitCertificationStatusAsync(int unitCertificationId, int departmentId, UnitCertificationStatuses status, string reason, string userId, CancellationToken cancellationToken = default);
 		Task<bool> DeleteUnitCertificationAsync(int unitCertificationId, int departmentId, string userId, CancellationToken cancellationToken = default);
 

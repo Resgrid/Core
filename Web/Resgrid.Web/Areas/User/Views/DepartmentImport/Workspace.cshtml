@@ -1,0 +1,188 @@
+@model ImportOverviewView
+@{
+    ViewBag.Title = "Resgrid | " + localizer["ModuleName"];
+    ViewData["Title"] = Model.Workspace.Name;
+    ViewData["Tab"] = "Workspace";
+    var s = Model.Summary;
+    var id = Model.Workspace.Id;
+    var datasets = s.Datasets.Where(d => d.Status != (int)ImportDatasetStatus.Superseded).ToList();
+    var nextAction = s.NextActionKey switch
+    {
+        "Next.MatchColumns" => Url.Action("Dataset", new { id, datasetId = s.NextActionDatasetId }),
+        "Next.FixIssues" => Url.Action("Issues", new { id, datasetId = s.NextActionDatasetId }),
+        "Next.ReviewAndImport" => Url.Action("Review", new { id }),
+        "Next.RunPaused" => Url.Action("History", new { id }),
+        "Next.Verify" => Url.Action("Verify", new { id }),
+        "Next.Activate" => Url.Action("Verify", new { id }),
+        _ => Url.Action("Files", new { id })
+    };
+    var steps = new List<(string Key, bool Done, bool Attention, string Action)>
+    {
+        ("Step.Start", true, false, "Workspace"),
+        ("Step.Files", datasets.Count > 0, false, "Files"),
+        ("Step.Match", datasets.Count > 0 && datasets.All(d => d.Status != (int)ImportDatasetStatus.NeedsMapping), datasets.Any(d => d.Status == (int)ImportDatasetStatus.NeedsMapping), "Files"),
+        ("Step.Fix", datasets.Count > 0 && s.OpenBlockingIssues == 0, s.OpenBlockingIssues > 0, "Issues"),
+        ("Step.Configure", Model.ConfigurationDecided && Model.ConfigurationPending == 0, false, "Configure"),
+        ("Step.Review", datasets.Any(d => d.Status >= (int)ImportDatasetStatus.Approved && d.Status <= (int)ImportDatasetStatus.Verified), false, "Review"),
+        ("Step.Import", datasets.Any(d => d.Status == (int)ImportDatasetStatus.Imported || d.Status == (int)ImportDatasetStatus.Verified), false, "History"),
+        ("Step.Verify", datasets.Count > 0 && datasets.Where(d => d.Status != (int)ImportDatasetStatus.Excluded).All(d => d.Status == (int)ImportDatasetStatus.Verified), false, "Verify"),
+        ("Step.Activate", Model.Workspace.ActivatedOn.HasValue, false, "Verify")
+    };
+}
+@await Html.PartialAsync("_Shell", Model)
+
+<div class="wrapper wrapper-content rgw-page" id="import-overview" data-summary-url="@Url.Action("Summary", new { id })">
+    <div class="rgw-next-action" aria-live="polite">
+        <strong>@localizer["NextBestAction"]</strong>
+        <div>@string.Format(localizer[s.NextActionKey ?? "Next.UploadFirst"].Value, s.NextActionArgs.Cast<object>().ToArray())</div>
+        <a class="btn btn-primary btn-sm" href="@nextAction" style="margin-top:6px">@localizer["Continue"] <i class="fa fa-arrow-right" aria-hidden="true"></i></a>
+        @if (s.OpenRuns.Any())
+        {
+            <p class="rgw-progress-honest" style="margin:8px 0 0 0"><i class="fa fa-cog fa-spin" aria-hidden="true"></i> @localizer["BackgroundWork"]</p>
+        }
+    </div>
+
+    <div class="rgw-stat-tiles">
+        <a class="rgw-stat-tile" asp-action="Files" asp-route-id="@id"><div class="rgw-stat-label">@localizer["RowsAnalysed"]</div><div class="rgw-stat-value" data-stat="RowsAnalysed">@s.RowsAnalysed</div></a>
+        <a class="rgw-stat-tile" asp-action="Review" asp-route-id="@id"><div class="rgw-stat-label">@localizer["RowsReady"]</div><div class="rgw-stat-value" data-stat="RowsReady">@s.RowsReady</div></a>
+        <a class="rgw-stat-tile" asp-action="Issues" asp-route-id="@id"><div class="rgw-stat-label">@localizer["RowsNeedingAttention"]</div><div class="rgw-stat-value" data-stat="RowsNeedingAttention">@s.RowsNeedingAttention</div></a>
+        <a class="rgw-stat-tile" asp-action="History" asp-route-id="@id"><div class="rgw-stat-label">@localizer["RowsImported"]</div><div class="rgw-stat-value" data-stat="RowsImported">@s.RowsImported</div></a>
+        <a class="rgw-stat-tile" asp-action="Verify" asp-route-id="@id"><div class="rgw-stat-label">@localizer["PeopleToInvite"]</div><div class="rgw-stat-value" data-stat="PeopleToInvite">@s.PeopleToInvite</div></a>
+    </div>
+
+    <div class="row" style="margin-top:16px">
+        <div class="col-lg-3">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["Journey"]</h5></div>
+                <div class="ibox-content">
+                    <ol class="rgw-journey">
+                        @foreach (var step in steps)
+                        {
+                            var chip = step.Done ? ("label-success", "fa-check", "Chip.Done") : step.Attention ? ("label-warning", "fa-exclamation-triangle", "Chip.NeedsAttention") : ("label-default", "fa-circle-o", "Chip.ToDo");
+                            <li>
+                                <a asp-action="@step.Action" asp-route-id="@id">@localizer[step.Key]</a>
+                                @await Html.PartialAsync("_Badge", chip)
+                            </li>
+                        }
+                    </ol>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["Datasets"]</h5>
+                    <div class="ibox-tools"><a class="btn btn-xs btn-primary" asp-action="Files" asp-route-id="@id"><i class="fa fa-upload" aria-hidden="true"></i> @localizer["UploadFile"]</a></div>
+                </div>
+                <div class="ibox-content">
+                    @if (datasets.Count == 0)
+                    {
+                        <div class="text-center" style="padding:20px 0">
+                            <i class="fa fa-file-excel-o fa-3x text-muted" aria-hidden="true"></i>
+                            <h4>@localizer["NoDatasetsTitle"]</h4>
+                            <p class="text-muted">@localizer["NoDatasetsHelp"]</p>
+                            <a class="btn btn-primary" asp-action="Files" asp-route-id="@id">@localizer["GetYourFiles"]</a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="rgw-card-grid">
+                            @foreach (var dataset in datasets)
+                            {
+                                var contract = dataset.EntityKey == null ? null : Model.Catalog.GetContract(dataset.EntityKey);
+                                var action = dataset.Status == (int)ImportDatasetStatus.NeedsMapping ? ("Dataset", "Action.MatchColumns")
+                                    : dataset.Status == (int)ImportDatasetStatus.NeedsAttention ? ("Issues", "Action.FixIssues")
+                                    : dataset.Status == (int)ImportDatasetStatus.Ready || dataset.Status == (int)ImportDatasetStatus.Approved ? ("Review", "Action.ReviewAndImport")
+                                    : dataset.Status == (int)ImportDatasetStatus.Imported || dataset.Status == (int)ImportDatasetStatus.Verified ? ("Verify", "Action.Verify")
+                                    : ("Dataset", "Action.Open");
+                                <div class="rgw-card">
+                                    <h4><i class="fa @(contract?.Icon ?? "fa-table")" aria-hidden="true"></i> @(contract == null ? localizer["DestinationUnknown"].Value : localizer[contract.LabelKey].Value)</h4>
+                                    <div class="rgw-card-meta">@dataset.Name</div>
+                                    <div>@await Html.PartialAsync("_Badge", ImportBadges.Dataset(dataset.Status))</div>
+                                    <div class="rgw-card-meta">@string.Format(localizer["DatasetCounts"].Value, dataset.RowCount, dataset.ReadyCount, dataset.WarningCount, dataset.BlockedCount)</div>
+                                    <div class="rgw-card-action">
+                                        <a class="btn btn-xs btn-default" asp-action="@action.Item1" asp-route-id="@id" asp-route-datasetId="@dataset.Id">@localizer[action.Item2]</a>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+
+            @if (Model.TopIssues.Count > 0)
+            {
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["TopIssues"]</h5><div class="ibox-tools"><a asp-action="Issues" asp-route-id="@id">@localizer["SeeAll"]</a></div></div>
+                    <div class="ibox-content">
+                        <ul class="list-unstyled">
+                            @foreach (var group in Model.TopIssues)
+                            {
+                                <li style="margin-bottom:6px">
+                                    @await Html.PartialAsync("_Badge", ImportBadges.Severity(group.Severity))
+                                    <a asp-action="Issues" asp-route-id="@id" asp-route-datasetId="@group.DatasetId">@string.Format(localizer["Issue." + group.Code + ".Title"].Value, group.OpenCount)</a>
+                                    <span class="text-muted small">— @group.DatasetName</span>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="col-lg-3">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["SupportPanel"]</h5></div>
+                <div class="ibox-content">
+                    <p class="text-muted small">@localizer["SupportPanelHelp"]</p>
+                    <a class="btn btn-default btn-block" asp-action="Support" asp-route-id="@id"><i class="fa fa-life-ring" aria-hidden="true"></i> @localizer["GetHelp"]</a>
+                    @if (Model.Requests.Count > 0)
+                    {
+                        <h5 style="margin-top:12px">@localizer["SupportRequests"]</h5>
+                        <ul class="list-unstyled small">
+                            @foreach (var request in Model.Requests)
+                            {
+                                <li><span class="rgw-mono">@request.Number</span> @request.Subject <span class="label label-default">@localizer["RequestStatus." + ((ImportSupportRequestStatus)request.Status)]</span></li>
+                            }
+                        </ul>
+                    }
+                    @if (Model.Suggestions.Count > 0)
+                    {
+                        <div class="alert alert-info small" style="margin-top:12px">
+                            <i class="fa fa-lightbulb-o" aria-hidden="true"></i> @string.Format(localizer["SuggestionsWaiting"].Value, Model.Suggestions.Count)
+                            <a asp-action="Support" asp-route-id="@id">@localizer["Review"]</a>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["Timeline"]</h5></div>
+                <div class="ibox-content">
+                    @if (Model.Events.Count == 0)
+                    {
+                        <p class="text-muted small">@localizer["TimelineEmpty"]</p>
+                    }
+                    <ul class="list-unstyled small">
+                        @foreach (var item in Model.Events)
+                        {
+                            var key = "Event." + item.Action;
+                            var text = localizer[key];
+                            <li style="margin-bottom:4px">
+                                <span class="text-muted">@item.CreatedOn.ToLocalTime().ToString("g")</span>
+                                @(text.ResourceNotFound ? item.Action : text.Value)
+                                @if (item.ActorKind == (int)ImportActorKind.ResgridStaff)
+                                {
+                                    <span class="label label-warning">@localizer["ResgridStaff"]</span>
+                                }
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
+@section Scripts { @await Html.PartialAsync("_Scripts", "overview") }

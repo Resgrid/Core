@@ -1,0 +1,33 @@
+{
+  "Key": "gis-layers",
+  "Version": "2026.11.1",
+  "ProductName": "GIS layers (ArcGIS, CalTopo)",
+  "Kind": "file-documented",
+  "Grade": "A",
+  "Phase": "2B",
+  "Published": false,
+  "SourceUrl": "https://doc.arcgis.com/en/arcgis-online/manage-data/use-hosted-layers.htm",
+  "VerifiedOn": "2026-10-12",
+  "Glossary": [
+    {
+      "Term": "Point features",
+      "Language": "en",
+      "Target": "entity:pois"
+    },
+    {
+      "Term": "Waypoints",
+      "Language": "en",
+      "Target": "entity:pois"
+    },
+    {
+      "Term": "Hydrant layers",
+      "Language": "en",
+      "Target": "term:module.records"
+    },
+    {
+      "Term": "Tracks",
+      "Language": "en",
+      "Target": "term:module.mapping"
+    }
+  ]
+}

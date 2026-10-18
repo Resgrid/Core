@@ -1,0 +1,222 @@
+@model ImportSupportView
+@{
+    ViewBag.Title = "Resgrid | " + localizer["ModuleName"];
+    ViewData["Title"] = localizer["TabSupport"].Value;
+    ViewData["Tab"] = "Support";
+    var id = Model.Workspace.Id;
+    var levels = new List<ImportSupportAccessLevel> { ImportSupportAccessLevel.Observe, ImportSupportAccessLevel.Inspect, ImportSupportAccessLevel.Prepare };
+    if (Model.ManagedMigration)
+    {
+        levels.Add(ImportSupportAccessLevel.Operate);
+    }
+    // "Please run the migration for us" is offered only where managed migration is available (plan section 17.5).
+    var categories = new List<ImportSupportRequestCategory> { ImportSupportRequestCategory.Error, ImportSupportRequestCategory.DataProblem, ImportSupportRequestCategory.Question };
+    if (Model.ManagedMigration)
+    {
+        categories.Add(ImportSupportRequestCategory.RequestManagedMigration);
+    }
+    // Operate grants may run to 90 days; every other level is capped at 30 by the service.
+    var maxGrantDays = Model.ManagedMigration ? DepartmentImportConfig.MaxOperateGrantDays : DepartmentImportConfig.MaxSupportGrantDays;
+}
+@await Html.PartialAsync("_Shell", Model)
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="row">
+        <div class="col-lg-7">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["GetHelp"]</h5></div>
+                <div class="ibox-content">
+                    <p class="text-muted">@localizer["GetHelpText"]</p>
+                    <form method="post" asp-action="OpenRequest" asp-route-id="@id">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="datasetId" value="@Model.RequestDatasetId" />
+                        <input type="hidden" name="runId" value="@Model.RequestRunId" />
+                        <input type="hidden" name="issueCode" value="@Model.RequestIssueCode" />
+                        @if (!string.IsNullOrWhiteSpace(Model.RequestIssueCode))
+                        {
+                            <p><span class="label label-default">@localizer["AttachedContext"]</span> <span class="rgw-mono">@Model.RequestIssueCode</span></p>
+                        }
+                        <div class="rgw-grid">
+                            <div class="form-group">
+                                <label for="support-category">@localizer["RequestCategory"]</label>
+                                <select id="support-category" name="category" class="form-control">
+                                    @foreach (var category in categories)
+                                    {
+                                        <option value="@((int)category)">@localizer["RequestCategory." + category]</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group rgw-wide">
+                                <label for="support-subject">@localizer["Subject"]</label>
+                                <input id="support-subject" name="subject" class="form-control" maxlength="200" required />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="support-description">@localizer["Description"]</label>
+                            <textarea id="support-description" name="description" class="form-control" rows="4" maxlength="4000"></textarea>
+                            <p class="help-block">@localizer["NoValuesInRequests"]</p>
+                        </div>
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-paper-plane" aria-hidden="true"></i> @localizer["SendRequest"]</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["SupportRequests"]</h5></div>
+                <div class="ibox-content">
+                    @if (Model.Requests.Count == 0)
+                    {
+                        <p class="text-muted">@localizer["NoRequests"]</p>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped rgw-table">
+                                <thead><tr><th>@localizer["RequestNumber"]</th><th>@localizer["Subject"]</th><th>@localizer["Status"]</th><th>@localizer["Opened"]</th><th class="rgw-row-actions"></th></tr></thead>
+                                <tbody>
+                                    @foreach (var request in Model.Requests)
+                                    {
+                                        <tr>
+                                            <td><span class="rgw-mono">@request.Number</span></td>
+                                            <td>@request.Subject <div class="small text-muted">@localizer["RequestCategory." + ((ImportSupportRequestCategory)request.Category)]</div></td>
+                                            <td><span class="label label-default">@localizer["RequestStatus." + ((ImportSupportRequestStatus)request.Status)]</span></td>
+                                            <td>@request.OpenedOn.ToLocalTime().ToString("g")</td>
+                                            <td class="rgw-row-actions">
+                                                @if (request.Status == (int)ImportSupportRequestStatus.Resolved)
+                                                {
+                                                    <form method="post" asp-action="RequestControl" asp-route-id="@id" asp-route-requestId="@request.Id" asp-route-reopen="false" style="display:inline">@Html.AntiForgeryToken()<button class="btn btn-xs btn-primary" type="submit">@localizer["ConfirmResolved"]</button></form>
+                                                    <form method="post" asp-action="RequestControl" asp-route-id="@id" asp-route-requestId="@request.Id" asp-route-reopen="true" style="display:inline">@Html.AntiForgeryToken()<button class="btn btn-xs btn-default" type="submit">@localizer["Reopen"]</button></form>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["Messages"]</h5></div>
+                <div class="ibox-content">
+                    <div style="max-height:360px; overflow:auto">
+                        @if (Model.Messages.Count == 0)
+                        {
+                            <p class="text-muted">@localizer["NoMessages"]</p>
+                        }
+                        @foreach (var message in Model.Messages.OrderBy(m => m.CreatedOn))
+                        {
+                            var staff = message.AuthorKind == (int)ImportActorKind.ResgridStaff;
+                            <div class="well well-sm" style="@(staff ? "background:#f3faf8" : null)">
+                                <div class="small text-muted">@message.CreatedOn.ToLocalTime().ToString("g") · @(staff ? localizer["ResgridSupport"].Value : localizer["YourDepartment"].Value)</div>
+                                @if (!string.IsNullOrEmpty(message.BodyKey))
+                                {
+                                    <div>@localizer[message.BodyKey]</div>
+                                }
+                                else
+                                {
+                                    <div style="white-space:pre-wrap">@message.Body</div>
+                                }
+                            </div>
+                        }
+                    </div>
+                    <form method="post" asp-action="PostMessage" asp-route-id="@id">
+                        @Html.AntiForgeryToken()
+                        <label for="support-message" class="sr-only">@localizer["Message"]</label>
+                        <textarea id="support-message" name="body" class="form-control" rows="3" maxlength="4000" required></textarea>
+                        <button type="submit" class="btn btn-default btn-sm" style="margin-top:6px">@localizer["Send"]</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["SupportAccess"]</h5></div>
+                <div class="ibox-content">
+                    <p class="text-muted">@localizer["SupportAccessHelp"]</p>
+                    @if (Model.ActiveGrant != null)
+                    {
+                        <p>@string.Format(localizer["SupportAccessActive"].Value, localizer["SupportAccess." + ((ImportSupportAccessLevel)Model.ActiveGrant.Level)].Value, Model.ActiveGrant.ExpiresOn.ToLocalTime().ToString("g"))</p>
+                        <form method="post" asp-action="RevokeAccess" asp-route-id="@id">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-default"><i class="fa fa-lock" aria-hidden="true"></i> @localizer["RevokeAccess"]</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <form method="post" asp-action="GrantAccess" asp-route-id="@id">
+                            @Html.AntiForgeryToken()
+                            <div class="form-group">
+                                <label for="grant-level">@localizer["AccessLevel"]</label>
+                                <select id="grant-level" name="level" class="form-control">
+                                    @foreach (var level in levels)
+                                    {
+                                        <option value="@((int)level)">@localizer["SupportAccess." + level] — @localizer["SupportAccessHelp." + level]</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="grant-days">@localizer["AccessDays"]</label>
+                                <input id="grant-days" name="days" type="number" min="1" max="@maxGrantDays" value="@Model.SupportGrantDefaultDays" class="form-control" />
+                            </div>
+                            <div class="checkbox"><label><input type="checkbox" name="requireSignOff" value="true" checked /> @localizer["RequireMySignOff"]</label></div>
+                            <div class="form-group">
+                                <label for="grant-message">@localizer["MessageToSupport"]</label>
+                                <input id="grant-message" name="message" class="form-control" maxlength="500" />
+                            </div>
+                            <button type="submit" class="btn btn-primary"><i class="fa fa-unlock" aria-hidden="true"></i> @localizer["GrantAccess"]</button>
+                        </form>
+                    }
+                </div>
+            </div>
+
+            @if (Model.Suggestions.Count > 0)
+            {
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["Suggestions"]</h5></div>
+                    <div class="ibox-content">
+                        @foreach (var suggestion in Model.Suggestions)
+                        {
+                            <div class="well well-sm">
+                                <div class="small text-muted"><span class="label label-info">@localizer["SuggestedByResgrid"]</span> @suggestion.SuggestedOn.ToLocalTime().ToString("g")</div>
+                                <div>@localizer["SuggestionKind." + suggestion.Kind]</div>
+                                @if (!string.IsNullOrWhiteSpace(suggestion.Note))
+                                {
+                                    <div class="small" style="white-space:pre-wrap">@suggestion.Note</div>
+                                }
+                                @if (suggestion.Status == 0)
+                                {
+                                    <form method="post" asp-action="DecideSuggestion" asp-route-id="@id" asp-route-suggestionId="@suggestion.Id" asp-route-accept="true" style="display:inline">@Html.AntiForgeryToken()<button type="submit" class="btn btn-xs btn-primary">@localizer["Accept"]</button></form>
+                                    <form method="post" asp-action="DecideSuggestion" asp-route-id="@id" asp-route-suggestionId="@suggestion.Id" asp-route-accept="false" style="display:inline">@Html.AntiForgeryToken()<button type="submit" class="btn btn-xs btn-default">@localizer["Reject"]</button></form>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["AccessLog"]</h5></div>
+                <div class="ibox-content">
+                    @if (Model.Grants.Count == 0)
+                    {
+                        <p class="text-muted small">@localizer["NoGrants"]</p>
+                    }
+                    <ul class="list-unstyled small">
+                        @foreach (var grant in Model.Grants.OrderByDescending(g => g.GrantedOn))
+                        {
+                            <li>@grant.GrantedOn.ToLocalTime().ToString("g") — @localizer["SupportAccess." + ((ImportSupportAccessLevel)grant.Level)] @(grant.RevokedOn.HasValue ? "· " + localizer["Revoked"].Value : grant.ExpiresOn < DateTime.UtcNow ? "· " + localizer["Expired"].Value : null)</li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
+@section Scripts { @await Html.PartialAsync("_Scripts", "support") }

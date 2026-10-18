@@ -54,6 +54,7 @@ namespace Resgrid.Workers.Console.Tasks
 			queue.ChatbotMessageQueueReceived += OnChatbotMessageReceived;
 			queue.CommunicationTestQueueReceived += OnCommunicationTestReceived;
 			queue.AiDispatchTriageQueueReceived += OnAiDispatchTriageReceived;
+			queue.DepartmentImportQueueReceived += OnDepartmentImportReceived;
 
 			try
 			{
@@ -238,6 +239,12 @@ namespace Resgrid.Workers.Console.Tasks
 		{
 			_logger.LogInformation($"{Name}: AI dispatch enrichment received for call {item.CallId} in department {item.DepartmentId}.");
 			await AiDispatchTriageLogic.ProcessAiDispatchQueueItem(item);
+		}
+
+		private async Task OnDepartmentImportReceived(DepartmentImportQueueItem item)
+		{
+			_logger.LogInformation($"{Name}: Department import nudge received for run {item.RunId} in department {item.DepartmentId}.");
+			await DepartmentImportLogic.ProcessQueueItem(item);
 		}
 	}
 }

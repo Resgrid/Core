@@ -218,6 +218,8 @@ namespace Resgrid.Providers.Claims
 		public const string MutualAidReimbursement_Update = "MutualAidReimbursement_Update";
 		public const string MutualAidReimbursement_Submit = "MutualAidReimbursement_Submit";
 		public const string MutualAidReimbursement_Reconcile = "MutualAidReimbursement_Reconcile";
+		public const string DepartmentImport_Update = "DepartmentImport_Update";
+		public const string RecordImports_Update = "RecordImports_Update";
 		public const string Workforce_View = "Workforce_View";
 		public const string Workforce_Update = "Workforce_Update";
 		public const string WorkforceCompensation_View = "WorkforceCompensation_View";

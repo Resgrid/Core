@@ -206,4 +206,28 @@
   <data name="Region" xml:space="preserve">
     <value>Region</value>
   </data>
+  <data name="ImportInviteText" xml:space="preserve">
+    <value>{0} har skapat ett Resgrid-konto åt dig. Välj ett lösenord för att logga in för första gången.</value>
+  </data>
+  <data name="ImportInviteUserName" xml:space="preserve">
+    <value>Ditt användarnamn</value>
+  </data>
+  <data name="ImportInviteSetPassword" xml:space="preserve">
+    <value>Ange lösenord och logga in</value>
+  </data>
+  <data name="ImportJoinText" xml:space="preserve">
+    <value>{0} har bjudit in dig att gå med med ditt befintliga Resgrid-konto.</value>
+  </data>
+  <data name="ImportJoinSignIn" xml:space="preserve">
+    <value>Logga in för att acceptera</value>
+  </data>
+  <data name="ImportJoinAccept" xml:space="preserve">
+    <value>Gå med i {0}</value>
+  </data>
+  <data name="ImportJoinWrongAccount" xml:space="preserve">
+    <value>Den här inbjudan skickades till en annan e-postadress. Logga in med kontot den skickades till.</value>
+  </data>
+  <data name="ImportInviteFailed" xml:space="preserve">
+    <value>Den här inbjudan kan inte längre accepteras. Kontakta administratören som bjöd in dig.</value>
+  </data>
 </root>

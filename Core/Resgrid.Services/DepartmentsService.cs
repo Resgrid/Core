@@ -520,6 +520,26 @@ namespace Resgrid.Services
 			return null;
 		}
 
+		public async Task<DepartmentMember> AddMemberAsync(DepartmentMember member, Model.Onboarding.ImportEffectPolicy effects, CancellationToken cancellationToken = default)
+		{
+			var current = await GetDepartmentMemberAsync(member.UserId, member.DepartmentId, true);
+			if (current != null)
+				return current;
+
+			var saved = await _departmentMembersRepository.SaveOrUpdateAsync(member, cancellationToken);
+			InvalidateDepartmentUsersInCache(member.DepartmentId);
+
+			if (effects.RaiseDomainEvents)
+				_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = member.DepartmentId });
+			if (effects.ImmediateSecurityRefresh)
+				SendMembershipVisibilityRefresh(member.DepartmentId);
+			// The marketing sync waits until an imported administrator is real (activation, section 12.3).
+			if (effects.ExternalCalls && member.IsAdmin == true && !member.IsImportDormant)
+				await SyncAdministratorToEmailMarketingAsync(member.DepartmentId, member.UserId, cancellationToken);
+
+			return saved;
+		}
+
 		public async Task<Department> GetDepartmentForUserAsync(string userName)
 		{
 			return await _departmentRepository.GetDepartmentForUserByUsernameAsync(userName);

@@ -1,0 +1,69 @@
+{
+  "Key": "emergency-reporting",
+  "Version": "2026.11.1",
+  "ProductName": "Emergency Reporting",
+  "Kind": "api-extraction",
+  "Grade": "A",
+  "Phase": "2B",
+  "Published": false,
+  "SourceUrl": "https://api.emergencyreporting.com/v2/spec/er-api.json",
+  "VerifiedOn": "2026-10-12",
+  "Glossary": [
+    {
+      "Term": "Users",
+      "Language": "en",
+      "Target": "entity:personnel"
+    },
+    {
+      "Term": "Roles",
+      "Language": "en",
+      "Target": "entity:roles"
+    },
+    {
+      "Term": "Certifications",
+      "Language": "en",
+      "Target": "entity:personnel-certifications"
+    },
+    {
+      "Term": "Stations",
+      "Language": "en",
+      "Target": "entity:groups"
+    },
+    {
+      "Term": "Apparatus",
+      "Language": "en",
+      "Target": "entity:units",
+      "Names": "module.units"
+    },
+    {
+      "Term": "Equipment",
+      "Language": "en",
+      "Target": "term:module.inventory"
+    },
+    {
+      "Term": "Hydrants",
+      "Language": "en",
+      "Target": "term:module.records"
+    },
+    {
+      "Term": "Occupancies",
+      "Language": "en",
+      "Target": "term:module.records"
+    },
+    {
+      "Term": "Classes",
+      "Language": "en",
+      "Target": "term:module.trainings"
+    },
+    {
+      "Term": "Incidents",
+      "Language": "en",
+      "Target": "term:module.calls"
+    },
+    {
+      "Term": "Patients",
+      "Language": "en",
+      "Target": "none"
+    }
+  ]
+}

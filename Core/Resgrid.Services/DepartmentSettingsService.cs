@@ -42,6 +42,7 @@ namespace Resgrid.Services
 		private static string CallNumberingConfigCacheKey = "DSetCallNumbering_{0}";
 		private static string DocumentNumberingConfigCacheKey = "DSetDocumentNumbering_{0}";
 		private static string DepartmentTerminologyCacheKey = "DSetTerminology_{0}";
+		private static string DepartmentImportConfigCacheKey = "DSetDepartmentImport_{0}";
 		private static TimeSpan LongCacheLength = TimeSpan.FromDays(14);
 		// Security-relevant settings ride the standard department-data window instead, so a missed
 		// invalidation cannot keep an old policy in force for two weeks.
@@ -1324,6 +1325,46 @@ namespace Resgrid.Services
 				DepartmentSettingTypes.DepartmentTerminology, cancellationToken);
 		}
 
+		public async Task<Model.Onboarding.DepartmentImportConfig> GetDepartmentImportConfigAsync(int departmentId, bool bypassCache = false)
+		{
+			async Task<string> getSetting()
+			{
+				var setting = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.DepartmentImportConfig);
+				return setting?.Setting ?? string.Empty;
+			}
+
+			string value;
+			if (Config.SystemBehaviorConfig.CacheEnabled && !bypassCache)
+				value = await _cacheProvider.RetrieveAsync<string>(string.Format(DepartmentImportConfigCacheKey, departmentId), getSetting, LongCacheLength);
+			else
+				value = await getSetting();
+
+			if (!String.IsNullOrWhiteSpace(value))
+			{
+				try
+				{
+					var config = ObjectSerialization.Deserialize<Model.Onboarding.DepartmentImportConfig>(value);
+
+					if (config != null)
+						return config;
+				}
+				catch (Exception)
+				{
+					// A corrupt blob falls back to the plan defaults (create-only, default retention, no second approver).
+				}
+			}
+
+			return new Model.Onboarding.DepartmentImportConfig();
+		}
+
+		public async Task<DepartmentSetting> SetDepartmentImportConfigAsync(int departmentId, Model.Onboarding.DepartmentImportConfig config,
+			CancellationToken cancellationToken = default(CancellationToken))
+		{
+			// SaveOrUpdateSettingAsync invalidates the cached value (see the DepartmentImportConfig case in its cache switch).
+			return await SaveOrUpdateSettingAsync(departmentId, ObjectSerialization.Serialize(config ?? new Model.Onboarding.DepartmentImportConfig()),
+				DepartmentSettingTypes.DepartmentImportConfig, cancellationToken);
+		}
+
 		public async Task<DispatchRecommendationConfig> GetDispatchRecommendationConfigAsync(int departmentId, bool bypassCache = false)
 		{
 			async Task<string> getSetting()
@@ -1759,6 +1800,9 @@ namespace Resgrid.Services
 					break;
 				case DepartmentSettingTypes.DepartmentTerminology:
 					cacheKey = string.Format(DepartmentTerminologyCacheKey, departmentId);
+					break;
+				case DepartmentSettingTypes.DepartmentImportConfig:
+					cacheKey = string.Format(DepartmentImportConfigCacheKey, departmentId);
 					break;
 				case DepartmentSettingTypes.RecordsDefaultLifecyclePreset:
 				case DepartmentSettingTypes.RecordsReviewDueHours:

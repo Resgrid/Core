@@ -62,6 +62,9 @@ namespace Resgrid.Model.Services
 		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 		/// <returns>Task&lt;CustomState&gt;.</returns>
 		Task<CustomState> SaveAsync(CustomState customState, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>Department Import quiet overload: the side effects named by <paramref name="effects"/> are skipped or deferred to the import engine.</summary>
+		Task<CustomState> SaveAsync(CustomState customState, Onboarding.ImportEffectPolicy effects, CancellationToken cancellationToken);
 		/// <summary>
 		/// Gets the custom detail by identifier asynchronous.
 		/// </summary>
@@ -76,6 +79,9 @@ namespace Resgrid.Model.Services
 		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 		/// <returns>Task&lt;CustomStateDetail&gt;.</returns>
 		Task<CustomStateDetail> SaveDetailAsync(CustomStateDetail customStateDetail, int departmentId, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>Department Import quiet overload: the side effects named by <paramref name="effects"/> are skipped or deferred to the import engine.</summary>
+		Task<CustomStateDetail> SaveDetailAsync(CustomStateDetail customStateDetail, int departmentId, Onboarding.ImportEffectPolicy effects, CancellationToken cancellationToken);
 		/// <summary>
 		/// Deletes the asynchronous.
 		/// </summary>

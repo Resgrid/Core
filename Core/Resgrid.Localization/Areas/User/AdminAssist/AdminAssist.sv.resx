@@ -820,7 +820,7 @@
     <value>Positionsspårning för hårdvara</value>
   </data>
   <data xml:space="preserve" name="Feature.import-migration">
-    <value>Planering för import och migrering</value>
+    <value>Import och migrering</value>
   </data>
   <data xml:space="preserve" name="Feature.inbox">
     <value>Inkorg</value>
@@ -1312,7 +1312,7 @@
     <value>GPS-enheter som rapporterar enheters positioner.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.import-migration">
-    <value>Planera att flytta dina data från ett annat system till Resgrid.</value>
+    <value>Ta med personal, stationer, fordon och inställningar från kalkylblad eller från systemet du lämnar.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.inbox">
     <value>Meddelanden som skickats till dig.</value>
@@ -1864,7 +1864,7 @@
     <value>Granska enhetsägarskap, beteende vid inaktuella positioner och reservkällor.</value>
   </data>
   <data xml:space="preserve" name="FeatureValue.import-migration">
-    <value>Undvik dubblerade resurser och verifiera den resulterande konfigurationen i Konfigurationsrapporten.</value>
+    <value>Varje rad kontrolleras och förhandsgranskas innan något sparas, och en import kan återställas.</value>
   </data>
   <data xml:space="preserve" name="FeatureValue.incident-command">
     <value>Förbered ledningsstrukturer och åtkomst innan en övning eller insats.</value>
@@ -6070,7 +6070,7 @@
     <value>Import eller migrering</value>
   </data>
   <data xml:space="preserve" name="Ui.ImportHelp">
-    <value>Importplanering kopierar inte data. Använd de befintliga granskade importverktygen och verifiera den resulterande konfigurationen här.</value>
+    <value>Ta med data från dina nuvarande system med Import och migrering. Admin Assist kontrollerar sedan resultatet.</value>
   </data>
   <data xml:space="preserve" name="Ui.InReview">
     <value>Under granskning</value>
@@ -6944,5 +6944,128 @@
   </data>
   <data name="RuleNext.unit-status-timers" xml:space="preserve">
     <value>Ge utlarmningsstatusen en betydelse under Anpassade statusar, eller ställ in en timer för dess betydelse under Kartinställningar.</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ManageDepartmentImport">
+    <value>Hantera avdelningsimport</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ManageDepartmentImport">
+    <value>Vem som får använda Import och migrering för att föra in data i avdelningen: ladda upp filer, matcha kolumner, åtgärda problem, godkänna och genomföra importer, ångra dem, aktivera importerade personer och ge Resgrids support åtkomst. Endast avdelningsadministratörer; behörigheten erbjuds inte på säkerhetssidan.</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ManageRecordImports">
+    <value>Hantera rapportimporter</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ManageRecordImports">
+    <value>Vem som får importera händelsehistorik från andra system till Rapporter och ta bort en importomgång. Endast avdelningsadministratörer. Behörigheten är reserverad för import av historiska rapporter och erbjuds ännu inte på säkerhetssidan.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.DepartmentImportConfig">
+    <value>Konfiguration för avdelningsimport</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DepartmentImportConfig">
+    <value>Hur Import och migrering sparar uppladdade filer och kontrollerade data, om en import behöver godkännas av en andra administratör, hur nya importer behandlar befintliga poster och hur länge Resgrids supportåtkomst gäller som standard.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DepartmentImportConfig.ArtifactRetentionDaysAfterSuccess">
+    <value>Konfiguration för avdelningsimport / Lagring av filer efter import</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DepartmentImportConfig.ArtifactRetentionDaysAfterSuccess">
+    <value>Antal dagar som uppladdade filer sparas efter att deras data har importerats. Utan värde 7 dagar; avdelningar som använder Advanced Data Protection sparar dem i 72 timmar.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DepartmentImportConfig.ArtifactRetentionDaysAfterFailure">
+    <value>Konfiguration för avdelningsimport / Lagring av filer efter fel</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DepartmentImportConfig.ArtifactRetentionDaysAfterFailure">
+    <value>Antal dagar som uppladdade filer sparas efter att en import har misslyckats eller avbrutits. Utan värde 30 dagar.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DepartmentImportConfig.StagingRetentionDaysAfterActivation">
+    <value>Konfiguration för avdelningsimport / Lagring av kontrollerade data efter aktivering</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DepartmentImportConfig.StagingRetentionDaysAfterActivation">
+    <value>Antal dagar som kontrollerade rader, problem och värdematchningar sparas efter aktivering, så att en import fortfarande kan förklaras eller ångras. Utan värde 30 dagar.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DepartmentImportConfig.RequireSecondApprover">
+    <value>Konfiguration för avdelningsimport / Kräv en andra godkännare</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DepartmentImportConfig.RequireSecondApprover">
+    <value>När det är på startar en import först när en andra, annan administratör också har godkänt den.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DepartmentImportConfig.DefaultWriteMode">
+    <value>Konfiguration för avdelningsimport / Standardläge för skrivning</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DepartmentImportConfig.DefaultWriteMode">
+    <value>Hur nya importer behandlar poster som redan finns: endast skapa (standard: befintliga poster rapporteras och hoppas över) eller granskad uppdatering (godkända fält i matchade poster uppdateras).</value>
+  </data>
+  <data xml:space="preserve" name="Field.DepartmentImportConfig.SupportGrantDefaultDays">
+    <value>Konfiguration för avdelningsimport / Supportåtkomstens längd</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DepartmentImportConfig.SupportGrantDefaultDays">
+    <value>Hur många dagar Resgrids supportåtkomst gäller när du ger den utan att välja längd. Utan värde 7 dagar; som mest 30.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.OpenImport">
+    <value>Öppna Import och migrering</value>
+  </data>
+  <data xml:space="preserve" name="SetupEvidence.import-migration">
+    <value>Klart när en import har verifierats i Import och migrering.</value>
+  </data>
+  <data xml:space="preserve" name="Rule.import-blocking-issues">
+    <value>En import har stått still på blockerande problem i över en vecka</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.import-blocking-issues">
+    <value>Data som väntar i Import och migrering finns inte i Resgrid än, så personal, stationer eller fordon kan saknas.</value>
+  </data>
+  <data xml:space="preserve" name="RuleNext.import-blocking-issues">
+    <value>Öppna Import och migrering och åtgärda eller uteslut de blockerade raderna, eller fråga Resgrids support.</value>
+  </data>
+  <data xml:space="preserve" name="Rule.import-unreconciled">
+    <value>En import avslutades med oförklarade skillnader</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.import-unreconciled">
+    <value>Kontrollen efter importen räknade något annat än det som skrevs, så datan kanske inte stämmer med din källa.</value>
+  </data>
+  <data xml:space="preserve" name="RuleNext.import-unreconciled">
+    <value>Jämför antalen i importens historik och fråga Resgrids support om de inte stämmer.</value>
+  </data>
+  <data xml:space="preserve" name="Rule.import-dormant-members">
+    <value>Importerade personer har inte bjudits in på över två veckor</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.import-dormant-members">
+    <value>Importerade personer kan inte logga in och får inga larm förrän de har bjudits in.</value>
+  </data>
+  <data xml:space="preserve" name="RuleNext.import-dormant-members">
+    <value>Bjud in dem under Verifiera och aktivera, eller ta bort personer som inte ska finnas i Resgrid.</value>
+  </data>
+  <data xml:space="preserve" name="Rule.import-paused-intake">
+    <value>Larmmottagning som skapats av en import är fortfarande pausad</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.import-paused-intake">
+    <value>Larm från ditt CAD-system kommer inte till Resgrid så länge mottagningen är pausad.</value>
+  </data>
+  <data xml:space="preserve" name="RuleNext.import-paused-intake">
+    <value>Testa ett exempelmeddelande och aktivera sedan mottagningen under Verifiera och aktivera.</value>
+  </data>
+  <data xml:space="preserve" name="Rule.import-disabled-automation">
+    <value>Automatisering som skapats av en import är fortfarande avstängd</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.import-disabled-automation">
+    <value>Checklistscheman, underhållsplaner, schemalagda uppgifter eller arbetsflöden från importen körs inte så länge de är avstängda.</value>
+  </data>
+  <data xml:space="preserve" name="RuleNext.import-disabled-automation">
+    <value>Granska dem och slå på de du behöver under Verifiera och aktivera.</value>
+  </data>
+  <data xml:space="preserve" name="Rule.import-enforcement-relaxed">
+    <value>Certifieringskontroll som lättats av en import är fortfarande lättad</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.import-enforcement-relaxed">
+    <value>Rollkrav varnar bara i stället för att tillämpas.</value>
+  </data>
+  <data xml:space="preserve" name="RuleNext.import-enforcement-relaxed">
+    <value>Slå på certifieringskontrollen igen när certifieringarna är kompletta.</value>
+  </data>
+  <data xml:space="preserve" name="Rule.import-files-retained">
+    <value>Importerade filer sparas längre än vanligt</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.import-files-retained">
+    <value>Uppladdade filer kan innehålla personuppgifter; att spara dem längre än nödvändigt ökar risken.</value>
+  </data>
+  <data xml:space="preserve" name="RuleNext.import-files-retained">
+    <value>Ta bort filer du inte längre behöver, eller förkorta lagringstiden i inställningarna för Import och migrering.</value>
   </data>
 </root>

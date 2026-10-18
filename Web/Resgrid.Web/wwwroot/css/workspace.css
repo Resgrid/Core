@@ -195,3 +195,23 @@
 @media (max-width: 767px) {
     .top-page-buttons { float: none; padding: 0 15px 10px 15px; }
 }
+
+/* KPI tiles in the CallSummaryReport style, shared by Reports and Import & Migration. A tile that is an <a> drills through. */
+.rgw-stat-tiles { display: flex; flex-wrap: wrap; gap: 12px; margin: 12px 0 4px 0; }
+.rgw-stat-tile { flex: 1 1 140px; border: 1px solid #e3e2de; border-radius: 4px; padding: 10px 12px; background: #ffffff; color: inherit; }
+a.rgw-stat-tile:hover, a.rgw-stat-tile:focus { border-color: #1ab394; text-decoration: none; }
+.rgw-stat-tile .rgw-stat-label { color: #52514e; font-size: 12px; }
+.rgw-stat-tile .rgw-stat-value { font-size: 22px; font-weight: 600; color: #0b0b0b; }
+
+/* Journey stepper and domain cards (Import & Migration hub). Chips always pair an icon with text. */
+.rgw-journey { list-style: none; margin: 0; padding: 0; }
+.rgw-journey li { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
+.rgw-journey li:last-child { border-bottom: 0; }
+.rgw-card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+.rgw-card { border: 1px solid #e7eaec; border-radius: 4px; padding: 12px; background: #ffffff; display: flex; flex-direction: column; gap: 6px; }
+.rgw-card h4 { margin: 0; }
+.rgw-card .rgw-card-meta { color: #676a6c; font-size: 12px; }
+.rgw-card .rgw-card-action { margin-top: auto; }
+.rgw-next-action { border-left: 4px solid #1ab394; background: #f3faf8; padding: 12px 16px; margin-bottom: 16px; }
+.rgw-progress-honest { color: #676a6c; font-size: 12px; }
+.rgw-mono { font-family: Menlo, Consolas, monospace; font-size: 11px; color: #888888; }

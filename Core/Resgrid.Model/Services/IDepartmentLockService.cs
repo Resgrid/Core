@@ -16,7 +16,10 @@ namespace Resgrid.Model.Services
 	public interface IDepartmentLockService
 	{
 		/// <summary>
-		/// True when the department has an active, unexpired lock. Served from a short-TTL cache; an
+		/// True when the department has an active, unexpired lock whose type blocks department writes
+		/// (<see cref="DepartmentOperationLockTypeExtensions.BlocksDepartmentWrites(DepartmentOperationLockType)"/>).
+		/// A Department Import lock is live without freezing the department, so it reads false here;
+		/// use <see cref="GetActiveLockAsync"/> to test for any lock. Served from a short-TTL cache; an
 		/// expired lock reports false immediately even before the sweep releases it durably.
 		/// </summary>
 		Task<bool> IsDepartmentLockedAsync(int departmentId);

@@ -1,0 +1,132 @@
+{
+  "Key": "role-requirements",
+  "Version": "2026.11.1",
+  "LabelKey": "Entity.role-requirements",
+  "DescriptionKey": "EntityDesc.role-requirements",
+  "Icon": "fa-check-square-o",
+  "Area": "people",
+  "Wave": "2",
+  "Order": 45,
+  "DependsOn": [
+    "roles",
+    "certification-types"
+  ],
+  "Gate": {
+    "Flags": [
+      "Onboarding.MigrationWizard"
+    ],
+    "Permissions": []
+  },
+  "IdentityFields": [],
+  "NaturalKey": [
+    "role",
+    "certification_type"
+  ],
+  "SupportsCustomFields": false,
+  "MatchPolicy": "natural",
+  "MaxRows": 0,
+  "Fields": [
+    {
+      "Key": "role",
+      "LabelKey": "Field.role-requirements.role",
+      "DescriptionKey": "FieldDesc.role-requirements.role",
+      "Type": "reference",
+      "Required": true,
+      "References": "roles",
+      "ReferenceMatch": "name",
+      "Unique": "none",
+      "Sensitivity": "Internal",
+      "WriterPath": "PersonnelRoleCertificationRequirement.PersonnelRoleId",
+      "Aliases": [
+        "role",
+        "position",
+        "role name"
+      ],
+      "Example": "Engineer"
+    },
+    {
+      "Key": "certification_type",
+      "LabelKey": "Field.role-requirements.certification_type",
+      "DescriptionKey": "FieldDesc.role-requirements.certification_type",
+      "Type": "reference",
+      "Required": true,
+      "References": "certification-types",
+      "ReferenceMatch": "name",
+      "Unique": "none",
+      "Sensitivity": "Internal",
+      "WriterPath": "PersonnelRoleCertificationRequirement.DepartmentCertificationTypeId",
+      "Aliases": [
+        "certification",
+        "certification type",
+        "required certification",
+        "qualification"
+      ],
+      "Example": "Driver/Operator"
+    },
+    {
+      "Key": "mandatory",
+      "LabelKey": "Field.role-requirements.mandatory",
+      "DescriptionKey": "FieldDesc.role-requirements.mandatory",
+      "Type": "boolean",
+      "Unique": "none",
+      "Sensitivity": "Internal",
+      "WriterPath": "PersonnelRoleCertificationRequirement.IsMandatory",
+      "Aliases": [
+        "mandatory",
+        "required",
+        "is required"
+      ],
+      "Example": "yes"
+    },
+    {
+      "Key": "any_of_group",
+      "LabelKey": "Field.role-requirements.any_of_group",
+      "DescriptionKey": "FieldDesc.role-requirements.any_of_group",
+      "Type": "integer",
+      "Min": 1,
+      "Max": 99,
+      "Unique": "none",
+      "Sensitivity": "Internal",
+      "WriterPath": "PersonnelRoleCertificationRequirement.AnyOfGroup",
+      "Aliases": [
+        "any of group",
+        "group",
+        "one of group",
+        "alternative group"
+      ],
+      "Example": "1"
+    },
+    {
+      "Key": "allow_trainee",
+      "LabelKey": "Field.role-requirements.allow_trainee",
+      "DescriptionKey": "FieldDesc.role-requirements.allow_trainee",
+      "Type": "boolean",
+      "Unique": "none",
+      "Sensitivity": "Internal",
+      "WriterPath": "PersonnelRoleCertificationRequirement.AllowTrainee",
+      "Aliases": [
+        "allow trainee",
+        "trainee allowed",
+        "trainee"
+      ],
+      "Example": "no"
+    },
+    {
+      "Key": "grace_days",
+      "LabelKey": "Field.role-requirements.grace_days",
+      "DescriptionKey": "FieldDesc.role-requirements.grace_days",
+      "Type": "integer",
+      "Min": 0,
+      "Max": 3650,
+      "Unique": "none",
+      "Sensitivity": "Internal",
+      "WriterPath": "PersonnelRoleCertificationRequirement.GraceDaysOverride",
+      "Aliases": [
+        "grace days",
+        "grace period",
+        "grace"
+      ],
+      "Example": "30"
+    }
+  ]
+}

@@ -150,6 +150,24 @@ namespace Resgrid.Model
 		/// </summary>
 		RecordsPreventionAdmin = 69,
 
+		// -- Department Import (registry section 4A, 72-73) --------------------------------------------------
+
+		/// <summary>
+		/// Department Import &amp; Migration workspace (registry 72; renamed from the reserved ManageDepartmentMigration):
+		/// upload, map, fix, approve, commit, roll back, activate, invite and grant support access. Department
+		/// administrators only and deliberately not expandable by role: the wizard writes across nearly every module,
+		/// so it is not offered on the Security screen (wizard plan section 5.1).
+		/// </summary>
+		ManageDepartmentImport = 72,
+
+		/// <summary>
+		/// Import third-party history into Records as ImportedHistorical and delete an import batch (registry 73). RMS owns
+		/// enforcement once wizard Phase 3R proceeds (decision D9); until then it is declared, issued to department
+		/// administrators and not offered on the Security screen. Separate from 72 so a configuration migration never
+		/// implies authority to write history into Records.
+		/// </summary>
+		ManageRecordImports = 73,
+
 		ManageChecklists = 112,
 ViewChecklistResults = 113,
 		ManageWorkOrders = 114,

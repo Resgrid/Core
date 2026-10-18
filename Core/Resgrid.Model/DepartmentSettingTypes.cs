@@ -81,6 +81,13 @@
 		/// </summary>
 		RequirePasswordResetViaEmail = 63,
 
+		/// <summary>
+		/// ProtoBuf-serialized <see cref="Onboarding.DepartmentImportConfig"/>: the department's Import &amp; Migration policy
+		/// (retention, second approver, default write mode, support-grant length). Registry section 4A; 84 is reserved for
+		/// Phase 4 connector configuration. Missing = the plan defaults.
+		/// </summary>
+		DepartmentImportConfig = 83,
+
 		// -- Records (RMS) block 70-77 -- Identifier Allocation Registry section 3.4. 64-69 is the
 		// cross-plan buffer and must not be taken here. All are edited from the Records Settings screen
 		// (RMS plan section 4.9); RecordsActivatedOn is deliberately NOT a setting (RmsDepartmentCutover).

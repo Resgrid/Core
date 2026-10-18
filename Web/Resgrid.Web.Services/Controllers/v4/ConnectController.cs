@@ -150,7 +150,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				}
 				var activeMembership = await _departmentsService.GetDepartmentMemberAsync(user.Id,
 					userDepartment.DepartmentId, bypassCache: true);
-				if (activeMembership == null || activeMembership.IsDeleted || activeMembership.IsDisabled == true)
+				if (activeMembership == null || activeMembership.IsDeleted || activeMembership.IsDisabled == true || activeMembership.IsImportDormant)
 				{
 					audit.UserId = user.Id;
 					await _systemAuditsService.SaveSystemAuditAsync(audit);
@@ -822,7 +822,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					firstFactorStillAllowed = authenticationMethod != UserSessionAuthenticationMethod.LocalPassword;
 				}
 
-				if (membership == null || membership.IsDeleted || membership.IsDisabled == true || !firstFactorStillAllowed)
+				if (membership == null || membership.IsDeleted || membership.IsDisabled == true || membership.IsImportDormant || !firstFactorStillAllowed)
 				{
 					await _systemAuditsService.SaveSystemAuditAsync(audit);
 					return InvalidGrant("The username or password is invalid.");
@@ -1237,7 +1237,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				user = await _userManager.FindByIdAsync(continuation.UserId);
 				var member = user == null ? null : await _departmentsService.GetDepartmentMemberAsync(user.Id, department.DepartmentId, bypassCache: true);
 				if (user == null || user.AuthenticationGeneration != continuation.AuthenticationGeneration || ssoConfig?.IsEnabled != true ||
-					ssoConfig.DepartmentSsoConfigId != continuation.DepartmentSsoConfigId || member == null || member.IsDeleted || member.IsDisabled == true ||
+					ssoConfig.DepartmentSsoConfigId != continuation.DepartmentSsoConfigId || member == null || member.IsDeleted || member.IsDisabled == true || member.IsImportDormant ||
 					!await _userManager.GetTwoFactorEnabledAsync(user))
 				{
 					await ForgetSamlMfaContinuationAsync(samlRelayId);

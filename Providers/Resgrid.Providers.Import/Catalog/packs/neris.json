@@ -1,0 +1,38 @@
+{
+  "Key": "neris",
+  "Version": "2026.11.1",
+  "ProductName": "NERIS",
+  "Kind": "api-extraction",
+  "Grade": "A",
+  "Phase": "2B",
+  "Published": false,
+  "SourceUrl": "https://api.neris.fsri.org/v1/openapi.json",
+  "VerifiedOn": "2026-10-12",
+  "Glossary": [
+    {
+      "Term": "Stations",
+      "Language": "en",
+      "Target": "entity:groups"
+    },
+    {
+      "Term": "Units",
+      "Language": "en",
+      "Target": "entity:units"
+    },
+    {
+      "Term": "Incidents",
+      "Language": "en",
+      "Target": "term:module.calls"
+    },
+    {
+      "Term": "Medical details",
+      "Language": "en",
+      "Target": "none"
+    },
+    {
+      "Term": "Casualty rescues",
+      "Language": "en",
+      "Target": "none"
+    }
+  ]
+}

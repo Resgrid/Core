@@ -820,7 +820,7 @@
     <value>Standortverfolgung von Hardware</value>
   </data>
   <data xml:space="preserve" name="Feature.import-migration">
-    <value>Planung von Import und Migration</value>
+    <value>Import &amp; Migration</value>
   </data>
   <data xml:space="preserve" name="Feature.inbox">
     <value>Posteingang</value>
@@ -1312,7 +1312,7 @@
     <value>GPS-Geräte, die Einheitenstandorte melden.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.import-migration">
-    <value>Planen Sie die Übernahme Ihrer Daten aus einem anderen System nach Resgrid.</value>
+    <value>Übernehmen Sie Personal, Wachen, Fahrzeuge und Einstellungen aus Tabellen oder aus Ihrem bisherigen System.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.inbox">
     <value>An Sie gesendete Nachrichten.</value>
@@ -1864,7 +1864,7 @@
     <value>Prüfen Sie die Gerätezuordnung, das Verhalten bei veralteten Positionen und Ausweichquellen.</value>
   </data>
   <data xml:space="preserve" name="FeatureValue.import-migration">
-    <value>Vermeiden Sie doppelte Ressourcen und überprüfen Sie die resultierende Konfiguration im Einrichtungsbericht.</value>
+    <value>Jede Zeile wird geprüft und in einer Vorschau gezeigt, bevor etwas gespeichert wird, und ein Import lässt sich rückgängig machen.</value>
   </data>
   <data xml:space="preserve" name="FeatureValue.incident-command">
     <value>Bereiten Sie Führungsstrukturen und Zugriff vor einer Übung oder einem Einsatz vor.</value>
@@ -6070,7 +6070,7 @@
     <value>Import oder Migration</value>
   </data>
   <data xml:space="preserve" name="Ui.ImportHelp">
-    <value>Die Importplanung kopiert keine Daten. Verwenden Sie die vorhandenen geprüften Importwerkzeuge und verifizieren Sie die resultierende Konfiguration hier.</value>
+    <value>Übernehmen Sie Daten aus Ihren bisherigen Systemen mit Import &amp; Migration. Admin Assist prüft anschließend das Ergebnis.</value>
   </data>
   <data xml:space="preserve" name="Ui.InReview">
     <value>In Prüfung</value>
@@ -6944,5 +6944,128 @@
   </data>
   <data name="RuleNext.unit-status-timers" xml:space="preserve">
     <value>Geben Sie dem Alarmierungsstatus unter Benutzerdefinierte Status eine Bedeutung oder legen Sie in den Karteneinstellungen einen Timer für seine Bedeutung fest.</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ManageDepartmentImport">
+    <value>Abteilungsimport verwalten</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ManageDepartmentImport">
+    <value>Wer mit Import &amp; Migration Daten in die Abteilung übernehmen darf: Dateien hochladen, Spalten zuordnen, Probleme beheben, Importe freigeben und ausführen, sie zurücksetzen, importierte Personen aktivieren und dem Resgrid-Support Zugriff gewähren. Nur Abteilungsadministratoren; die Berechtigung wird auf der Sicherheitsseite nicht angeboten.</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ManageRecordImports">
+    <value>Berichtsimporte verwalten</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ManageRecordImports">
+    <value>Wer Einsatzhistorie aus Drittsystemen in Berichte importieren und einen Importstapel löschen darf. Nur Abteilungsadministratoren. Die Berechtigung ist für historische Berichtsimporte reserviert und wird auf der Sicherheitsseite noch nicht angeboten.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.DepartmentImportConfig">
+    <value>Konfiguration des Abteilungsimports</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DepartmentImportConfig">
+    <value>Wie Import &amp; Migration hochgeladene Dateien und geprüfte Daten aufbewahrt, ob ein Import die Freigabe eines zweiten Administrators braucht, wie neue Importe vorhandene Datensätze behandeln und wie lange der Zugriff des Resgrid-Supports standardmäßig gilt.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DepartmentImportConfig.ArtifactRetentionDaysAfterSuccess">
+    <value>Konfiguration des Abteilungsimports / Aufbewahrung der Dateien nach dem Import</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DepartmentImportConfig.ArtifactRetentionDaysAfterSuccess">
+    <value>Tage, die hochgeladene Dateien nach dem Import ihrer Daten aufbewahrt werden. Ohne Angabe 7 Tage; Abteilungen mit Advanced Data Protection bewahren sie 72 Stunden auf.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DepartmentImportConfig.ArtifactRetentionDaysAfterFailure">
+    <value>Konfiguration des Abteilungsimports / Aufbewahrung der Dateien nach einem Fehler</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DepartmentImportConfig.ArtifactRetentionDaysAfterFailure">
+    <value>Tage, die hochgeladene Dateien aufbewahrt werden, nachdem ein Import fehlgeschlagen ist oder abgebrochen wurde. Ohne Angabe 30 Tage.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DepartmentImportConfig.StagingRetentionDaysAfterActivation">
+    <value>Konfiguration des Abteilungsimports / Aufbewahrung der geprüften Daten nach der Aktivierung</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DepartmentImportConfig.StagingRetentionDaysAfterActivation">
+    <value>Tage, die geprüfte Zeilen, Probleme und Wertzuordnungen nach der Aktivierung aufbewahrt werden, damit ein Import noch erklärt oder zurückgesetzt werden kann. Ohne Angabe 30 Tage.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DepartmentImportConfig.RequireSecondApprover">
+    <value>Konfiguration des Abteilungsimports / Zweite Freigabe erforderlich</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DepartmentImportConfig.RequireSecondApprover">
+    <value>Wenn aktiviert, startet ein Import erst, nachdem ein zweiter, anderer Administrator ihn ebenfalls freigegeben hat.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DepartmentImportConfig.DefaultWriteMode">
+    <value>Konfiguration des Abteilungsimports / Standard-Schreibmodus</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DepartmentImportConfig.DefaultWriteMode">
+    <value>Wie neue Importe bereits vorhandene Datensätze behandeln: nur anlegen (Standard: vorhandene Datensätze werden gemeldet und übersprungen) oder geprüfte Aktualisierung (freigegebene Felder zugeordneter Datensätze werden aktualisiert).</value>
+  </data>
+  <data xml:space="preserve" name="Field.DepartmentImportConfig.SupportGrantDefaultDays">
+    <value>Konfiguration des Abteilungsimports / Dauer des Supportzugriffs</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DepartmentImportConfig.SupportGrantDefaultDays">
+    <value>Wie viele Tage der Zugriff des Resgrid-Supports gilt, wenn Sie ihn ohne Angabe einer Dauer gewähren. Ohne Angabe 7 Tage; höchstens 30.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.OpenImport">
+    <value>Import &amp; Migration öffnen</value>
+  </data>
+  <data xml:space="preserve" name="SetupEvidence.import-migration">
+    <value>Erledigt, sobald ein Import in Import &amp; Migration geprüft wurde.</value>
+  </data>
+  <data xml:space="preserve" name="Rule.import-blocking-issues">
+    <value>Ein Import hängt seit über einer Woche an blockierenden Problemen</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.import-blocking-issues">
+    <value>Daten, die in Import &amp; Migration warten, sind noch nicht in Resgrid; Personal, Wachen oder Fahrzeuge fehlen eventuell.</value>
+  </data>
+  <data xml:space="preserve" name="RuleNext.import-blocking-issues">
+    <value>Öffnen Sie Import &amp; Migration und beheben oder schließen Sie die blockierten Zeilen aus, oder fragen Sie den Resgrid-Support.</value>
+  </data>
+  <data xml:space="preserve" name="Rule.import-unreconciled">
+    <value>Ein Import endete mit ungeklärten Abweichungen</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.import-unreconciled">
+    <value>Die Prüfung nach dem Import hat etwas anderes gezählt als geschrieben wurde; die Daten stimmen eventuell nicht mit Ihrer Quelle überein.</value>
+  </data>
+  <data xml:space="preserve" name="RuleNext.import-unreconciled">
+    <value>Vergleichen Sie die Zahlen im Verlauf des Imports und fragen Sie den Resgrid-Support, wenn sie nicht übereinstimmen.</value>
+  </data>
+  <data xml:space="preserve" name="Rule.import-dormant-members">
+    <value>Importiertes Personal wurde seit über zwei Wochen nicht eingeladen</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.import-dormant-members">
+    <value>Importierte Personen können sich nicht anmelden und erhalten keine Alarmierungen, bis sie eingeladen werden.</value>
+  </data>
+  <data xml:space="preserve" name="RuleNext.import-dormant-members">
+    <value>Laden Sie sie unter „Prüfen &amp; aktivieren“ ein oder entfernen Sie Personen, die nicht in Resgrid sein sollen.</value>
+  </data>
+  <data xml:space="preserve" name="Rule.import-paused-intake">
+    <value>Die durch einen Import angelegte Einsatzannahme ist noch pausiert</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.import-paused-intake">
+    <value>Einsätze aus Ihrem Einsatzleitsystem kommen nicht in Resgrid an, solange die Annahme pausiert ist.</value>
+  </data>
+  <data xml:space="preserve" name="RuleNext.import-paused-intake">
+    <value>Testen Sie eine Beispielnachricht und aktivieren Sie die Annahme dann unter „Prüfen &amp; aktivieren“.</value>
+  </data>
+  <data xml:space="preserve" name="Rule.import-disabled-automation">
+    <value>Durch einen Import angelegte Automatisierungen sind noch ausgeschaltet</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.import-disabled-automation">
+    <value>Checklisten-Zeitpläne, Wartungspläne, geplante Aufgaben oder Workflows aus dem Import laufen nicht, solange sie deaktiviert sind.</value>
+  </data>
+  <data xml:space="preserve" name="RuleNext.import-disabled-automation">
+    <value>Prüfen Sie sie und schalten Sie die benötigten unter „Prüfen &amp; aktivieren“ ein.</value>
+  </data>
+  <data xml:space="preserve" name="Rule.import-enforcement-relaxed">
+    <value>Die durch einen Import gelockerte Zertifizierungsprüfung ist noch gelockert</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.import-enforcement-relaxed">
+    <value>Rollenanforderungen warnen nur, statt durchgesetzt zu werden.</value>
+  </data>
+  <data xml:space="preserve" name="RuleNext.import-enforcement-relaxed">
+    <value>Schalten Sie die Zertifizierungsprüfung wieder ein, sobald die Zertifizierungen vollständig sind.</value>
+  </data>
+  <data xml:space="preserve" name="Rule.import-files-retained">
+    <value>Importierte Dateien werden länger als üblich aufbewahrt</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.import-files-retained">
+    <value>Hochgeladene Dateien können personenbezogene Daten enthalten; sie länger als nötig aufzubewahren erhöht das Risiko.</value>
+  </data>
+  <data xml:space="preserve" name="RuleNext.import-files-retained">
+    <value>Löschen Sie nicht mehr benötigte Dateien oder verkürzen Sie die Aufbewahrung in den Einstellungen von Import &amp; Migration.</value>
   </data>
 </root>

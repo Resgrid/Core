@@ -331,6 +331,8 @@ namespace Resgrid.Web.Helpers
 		public static bool CanManageMutualAidReimbursement() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.MutualAidReimbursement, ResgridClaimTypes.Actions.Update);
 		public static bool CanSubmitMutualAidReimbursement() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.MutualAidReimbursement, ResgridClaimTypes.Actions.Submit);
 		public static bool CanReconcileMutualAidReimbursement() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.MutualAidReimbursement, ResgridClaimTypes.Actions.Reconcile);
+		public static bool CanManageDepartmentImport() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.DepartmentImport, ResgridClaimTypes.Actions.Update);
+		public static bool CanManageRecordImports() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.RecordImports, ResgridClaimTypes.Actions.Update);
 		public static bool CanViewWorkforce() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Workforce, ResgridClaimTypes.Actions.View);
 		public static bool CanManageWorkforce() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Workforce, ResgridClaimTypes.Actions.Update);
 		public static bool CanViewWorkforceCompensation() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.WorkforceCompensation, ResgridClaimTypes.Actions.View);

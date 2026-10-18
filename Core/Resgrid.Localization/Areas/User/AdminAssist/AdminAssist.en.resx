@@ -820,7 +820,7 @@
     <value>Hardware location tracking</value>
   </data>
   <data xml:space="preserve" name="Feature.import-migration">
-    <value>Import and migration planning</value>
+    <value>Import &amp; Migration</value>
   </data>
   <data xml:space="preserve" name="Feature.inbox">
     <value>Inbox</value>
@@ -1312,7 +1312,7 @@
     <value>GPS devices that report unit locations.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.import-migration">
-    <value>Plan moving your data from another system into Resgrid.</value>
+    <value>Bring people, stations, apparatus and settings from spreadsheets or the system you are leaving.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.inbox">
     <value>Messages sent to you.</value>
@@ -1864,7 +1864,7 @@
     <value>Review device ownership, stale-position behavior and fallback sources.</value>
   </data>
   <data xml:space="preserve" name="FeatureValue.import-migration">
-    <value>Avoid duplicate resources and verify resulting configuration in Setup Report.</value>
+    <value>Every row is checked and previewed before anything is saved, and an import can be rolled back.</value>
   </data>
   <data xml:space="preserve" name="FeatureValue.incident-command">
     <value>Prepare command structures and access before an exercise or response.</value>
@@ -6070,7 +6070,7 @@
     <value>Import or migration</value>
   </data>
   <data xml:space="preserve" name="Ui.ImportHelp">
-    <value>Import planning does not copy data. Use the existing reviewed import tools and verify the resulting configuration here.</value>
+    <value>Bring data from your current systems with Import &amp; Migration. Admin Assist then verifies the result.</value>
   </data>
   <data xml:space="preserve" name="Ui.InReview">
     <value>In review</value>
@@ -6944,5 +6944,128 @@
   </data>
   <data name="RuleNext.unit-status-timers" xml:space="preserve">
     <value>Give the dispatch status a meaning in Custom Statuses, or set a timer for its meaning in Mapping Settings.</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ManageDepartmentImport">
+    <value>Manage Department Import</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ManageDepartmentImport">
+    <value>Who can use Import &amp; Migration to bring data into the department: upload files, match columns, fix issues, approve and commit imports, roll them back, activate imported people and grant Resgrid support access. Department administrators only; it is not offered on the Security screen.</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ManageRecordImports">
+    <value>Manage Record Imports</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ManageRecordImports">
+    <value>Who can import third-party incident history into Records and delete an import batch. Department administrators only. It is reserved for historical Records imports and is not yet offered on the Security screen.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.DepartmentImportConfig">
+    <value>Department Import Config</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DepartmentImportConfig">
+    <value>How Import &amp; Migration keeps uploaded files and checked data, whether an import needs a second administrator to approve it, how new imports treat existing records and how long Resgrid support access lasts by default.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DepartmentImportConfig.ArtifactRetentionDaysAfterSuccess">
+    <value>Department Import Config / File Retention After Import</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DepartmentImportConfig.ArtifactRetentionDaysAfterSuccess">
+    <value>Days uploaded files are kept after their data is imported. Unset keeps them 7 days; departments using Advanced Data Protection keep them 72 hours.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DepartmentImportConfig.ArtifactRetentionDaysAfterFailure">
+    <value>Department Import Config / File Retention After Failure</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DepartmentImportConfig.ArtifactRetentionDaysAfterFailure">
+    <value>Days uploaded files are kept after an import fails or is cancelled. Unset keeps them 30 days.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DepartmentImportConfig.StagingRetentionDaysAfterActivation">
+    <value>Department Import Config / Checked Data Retention After Activation</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DepartmentImportConfig.StagingRetentionDaysAfterActivation">
+    <value>Days the checked rows, issues and value matches are kept after activation, so an import can still be explained or rolled back. Unset keeps them 30 days.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DepartmentImportConfig.RequireSecondApprover">
+    <value>Department Import Config / Require Second Approver</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DepartmentImportConfig.RequireSecondApprover">
+    <value>When on, an import starts only after a second, different administrator also approves it.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DepartmentImportConfig.DefaultWriteMode">
+    <value>Department Import Config / Default Write Mode</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DepartmentImportConfig.DefaultWriteMode">
+    <value>How new imports treat records that already exist: create only (the default: existing records are reported and skipped) or reviewed update (approved fields of matched records are updated).</value>
+  </data>
+  <data xml:space="preserve" name="Field.DepartmentImportConfig.SupportGrantDefaultDays">
+    <value>Department Import Config / Support Access Length</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DepartmentImportConfig.SupportGrantDefaultDays">
+    <value>How many days Resgrid support access lasts when you grant it without choosing a length. Unset is 7 days; the longest is 30.</value>
+  </data>
+  <data xml:space="preserve" name="Ui.OpenImport">
+    <value>Open Import &amp; Migration</value>
+  </data>
+  <data xml:space="preserve" name="SetupEvidence.import-migration">
+    <value>Complete when an import has been verified in Import &amp; Migration.</value>
+  </data>
+  <data xml:space="preserve" name="Rule.import-blocking-issues">
+    <value>An import has been stuck on blocking issues for over a week</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.import-blocking-issues">
+    <value>Data waiting in Import &amp; Migration is not in Resgrid yet, so people, stations or apparatus may be missing.</value>
+  </data>
+  <data xml:space="preserve" name="RuleNext.import-blocking-issues">
+    <value>Open Import &amp; Migration and fix or exclude the blocking rows, or ask Resgrid support.</value>
+  </data>
+  <data xml:space="preserve" name="Rule.import-unreconciled">
+    <value>An import finished with unexplained differences</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.import-unreconciled">
+    <value>The check after the import counted something different from what was written, so the data may not match your source.</value>
+  </data>
+  <data xml:space="preserve" name="RuleNext.import-unreconciled">
+    <value>Compare the counts in the import's history and ask Resgrid support if they do not match.</value>
+  </data>
+  <data xml:space="preserve" name="Rule.import-dormant-members">
+    <value>Imported people have not been invited for over two weeks</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.import-dormant-members">
+    <value>Imported people cannot sign in and receive no dispatches until they are invited.</value>
+  </data>
+  <data xml:space="preserve" name="RuleNext.import-dormant-members">
+    <value>Invite them from Verify &amp; activate, or remove people who should not be in Resgrid.</value>
+  </data>
+  <data xml:space="preserve" name="Rule.import-paused-intake">
+    <value>Call intake created by an import is still paused</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.import-paused-intake">
+    <value>Calls from your CAD do not arrive in Resgrid while intake is paused.</value>
+  </data>
+  <data xml:space="preserve" name="RuleNext.import-paused-intake">
+    <value>Test a sample message, then enable intake from Verify &amp; activate.</value>
+  </data>
+  <data xml:space="preserve" name="Rule.import-disabled-automation">
+    <value>Automation created by an import is still switched off</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.import-disabled-automation">
+    <value>Checklist schedules, maintenance plans, scheduled tasks or workflows from the import do not run while they are disabled.</value>
+  </data>
+  <data xml:space="preserve" name="RuleNext.import-disabled-automation">
+    <value>Review them and switch on the ones you need from Verify &amp; activate.</value>
+  </data>
+  <data xml:space="preserve" name="Rule.import-enforcement-relaxed">
+    <value>Certification enforcement relaxed by an import is still relaxed</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.import-enforcement-relaxed">
+    <value>Role requirements only warn instead of being enforced.</value>
+  </data>
+  <data xml:space="preserve" name="RuleNext.import-enforcement-relaxed">
+    <value>Switch certification enforcement back on once certifications are complete.</value>
+  </data>
+  <data xml:space="preserve" name="Rule.import-files-retained">
+    <value>Imported files are kept longer than usual</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.import-files-retained">
+    <value>Uploaded files can contain personal information; keeping them longer than needed adds risk.</value>
+  </data>
+  <data xml:space="preserve" name="RuleNext.import-files-retained">
+    <value>Delete files you no longer need, or shorten retention in the Import &amp; Migration settings.</value>
   </data>
 </root>

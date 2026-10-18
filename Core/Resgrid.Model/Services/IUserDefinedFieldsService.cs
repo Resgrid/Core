@@ -68,6 +68,14 @@ namespace Resgrid.Model.Services
 			CancellationToken cancellationToken = default);
 
 		/// <summary>
+		/// Department Import quiet overload: with the import policy the values join the caller's open unit-of-work
+		/// transaction (never committing it) and the search projection is left to the run's department rebuild.
+		/// </summary>
+		Task<Dictionary<string, List<string>>> SaveFieldValuesForEntityAsync(int departmentId, int entityType,
+			string entityId, List<UdfFieldValue> values, string userId, bool isDepartmentAdmin, bool isGroupAdmin,
+			Onboarding.ImportEffectPolicy effects, CancellationToken cancellationToken);
+
+		/// <summary>
 		/// Creates a new definition version without the specified field, preserving history.
 		/// </summary>
 		Task<UdfDefinition> DeleteFieldFromDefinitionAsync(string fieldId, int departmentId,

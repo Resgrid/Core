@@ -1,0 +1,138 @@
+@model ImportIndexView
+@{
+    ViewBag.Title = "Resgrid | " + localizer["ModuleName"];
+    var modes = new[] { ImportWorkspaceMode.NewDepartment, ImportWorkspaceMode.ExistingAdd, ImportWorkspaceMode.ExistingReviewedUpdate, ImportWorkspaceMode.IncrementalContinuation };
+}
+<div class="row wrapper border-bottom white-bg page-heading rgw-page-heading">
+    <div class="col-sm-12">
+        <h2>@localizer["ModuleName"]</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li class="active"><strong>@localizer["ModuleName"]</strong></li>
+        </ol>
+        <small class="text-muted">@localizer["ModuleSubtitle"]</small>
+    </div>
+    <div class="col-sm-12 rgw-heading-actions">
+        <div class="btn-toolbar top-page-buttons rgw-header-actions">
+            <a class="btn btn-default" asp-action="Settings"><i class="fa fa-cog" aria-hidden="true"></i> @localizer["Settings"]</a>
+        </div>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (TempData["ImportError"] is string error)
+    {
+        <div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> @error</div>
+    }
+    @if (Model.StoreHealth != null && !Model.StoreHealth.Configured)
+    {
+        <div class="alert alert-warning" role="status"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @localizer["StoreNotConfigured"]</div>
+    }
+    @if (Model.RunInProgress)
+    {
+        <div class="alert alert-info" role="status"><i class="fa fa-cog" aria-hidden="true"></i> @localizer["RunInProgressWarning"]</div>
+    }
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["Workspaces"]</h5></div>
+                <div class="ibox-content">
+                    @if (Model.Workspaces.Count == 0)
+                    {
+                        <div class="text-center" style="padding:30px 0">
+                            <i class="fa fa-cloud-upload fa-3x text-muted" aria-hidden="true"></i>
+                            <h4>@localizer["NoWorkspacesTitle"]</h4>
+                            <p class="text-muted">@localizer["NoWorkspacesHelp"]</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover rgw-table">
+                                <thead>
+                                    <tr>
+                                        <th>@localizer["WorkspaceName"]</th>
+                                        <th>@localizer["Mode"]</th>
+                                        <th>@localizer["Status"]</th>
+                                        <th>@localizer["LastActivity"]</th>
+                                        <th class="rgw-row-actions"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var workspace in Model.Workspaces)
+                                    {
+                                        var terminal = workspace.Status == (int)ImportWorkspaceStatus.Closed || workspace.Status == (int)ImportWorkspaceStatus.Cancelled || workspace.Status == (int)ImportWorkspaceStatus.Abandoned;
+                                        <tr>
+                                            <td>
+                                                <a asp-action="Workspace" asp-route-id="@workspace.Id">@workspace.Name</a>
+                                                @if (!string.IsNullOrWhiteSpace(workspace.InternalReference))
+                                                {
+                                                    <div class="text-muted small">@workspace.InternalReference</div>
+                                                }
+                                            </td>
+                                            <td>@localizer["Mode." + ((ImportWorkspaceMode)workspace.Mode)]</td>
+                                            <td>@await Html.PartialAsync("_Badge", ImportBadges.Workspace(workspace.Status))</td>
+                                            <td>@workspace.LastActivityOn.ToLocalTime().ToString("g")</td>
+                                            <td class="rgw-row-actions">
+                                                <a class="btn btn-xs btn-primary" asp-action="Workspace" asp-route-id="@workspace.Id">@localizer[terminal ? "Open" : "Resume"]</a>
+                                                @if (!terminal && workspace.Status != (int)ImportWorkspaceStatus.Active)
+                                                {
+                                                    <form method="post" asp-action="CancelWorkspace" asp-route-id="@workspace.Id" class="rgw-inline-form import-confirm" data-confirm-text="@localizer["CancelWorkspaceConfirm"]" style="display:inline">
+                                                        @Html.AntiForgeryToken()
+                                                        <button type="submit" class="btn btn-xs btn-default">@localizer["CancelWorkspace"]</button>
+                                                    </form>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["StartImport"]</h5></div>
+                <div class="ibox-content">
+                    <form method="post" asp-action="Create">
+                        @Html.AntiForgeryToken()
+                        <div class="form-group">
+                            <label for="import-mode">@localizer["Mode"]</label>
+                            <select id="import-mode" name="Mode" class="form-control">
+                                @foreach (var mode in modes)
+                                {
+                                    <option value="@((int)mode)">@localizer["Mode." + mode]</option>
+                                }
+                            </select>
+                            <p class="help-block">@localizer["ModeHelp"]</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="import-name">@localizer["WorkspaceName"]</label>
+                            <input id="import-name" name="Name" class="form-control" maxlength="200" placeholder="@localizer["WorkspaceNamePlaceholder"]" />
+                        </div>
+                        <div class="form-group">
+                            <label for="import-reference">@localizer["InternalReference"]</label>
+                            <input id="import-reference" name="InternalReference" class="form-control" maxlength="200" />
+                        </div>
+                        <div class="form-group">
+                            <label for="import-target">@localizer["TargetActivationDate"]</label>
+                            <input id="import-target" name="TargetActivationDate" class="form-control" type="date" />
+                        </div>
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["StartImport"]</button>
+                    </form>
+                    <hr />
+                    <p class="text-muted small"><i class="fa fa-book" aria-hidden="true"></i> <a href="https://docs.resgrid.com/web-app/import-and-migration/" target="_blank" rel="noopener">@localizer["DocsLink"]</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
+@section Scripts { @await Html.PartialAsync("_Scripts", "index") }

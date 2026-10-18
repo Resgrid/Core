@@ -14,6 +14,9 @@ namespace Resgrid.Model.Services
 		/// <returns>Task&lt;PoiType&gt;.</returns>
 		Task<PoiType> SavePOITypeAsync(PoiType type, CancellationToken cancellationToken = default(CancellationToken));
 
+		/// <summary>Department Import quiet overload: the side effects named by <paramref name="effects"/> are skipped or deferred to the import engine.</summary>
+		Task<PoiType> SavePOITypeAsync(PoiType type, Onboarding.ImportEffectPolicy effects, CancellationToken cancellationToken);
+
 		/// <summary>
 		/// Saves the poi asynchronous.
 		/// </summary>
@@ -21,6 +24,9 @@ namespace Resgrid.Model.Services
 		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 		/// <returns>Task&lt;Poi&gt;.</returns>
 		Task<Poi> SavePOIAsync(Poi poi, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>Department Import quiet overload: the side effects named by <paramref name="effects"/> are skipped or deferred to the import engine.</summary>
+		Task<Poi> SavePOIAsync(Poi poi, Onboarding.ImportEffectPolicy effects, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Gets the poi types for department asynchronous.

@@ -1,0 +1,59 @@
+@model ImportPageView
+@using System.Globalization
+@using Resgrid.Services.Onboarding
+@*
+    The glossary drawer (plan section 6.4): the words of the products the department is moving from, next to what Resgrid
+    calls that kind of record. Features are named as the department names them.
+*@
+@{
+    var glossary = ImportGlossaryDisplays.For(localizer, await departmentTerms.GetAsync(), departmentTerms, Model.Catalog);
+    var products = glossary.Products(Model.Sources).Where(ImportGlossaryDisplay.HasGlossary).ToList();
+    var language = ImportGlossary.LanguageOf(CultureInfo.CurrentUICulture);
+}
+@if (products.Count > 0)
+{
+    <details class="ibox float-e-margins" id="import-glossary" open="@(ViewData["GlossaryOpen"] as bool? == true)">
+        <summary class="ibox-title" style="cursor:pointer; display:list-item"><h5 style="display:inline"><i class="fa fa-book" aria-hidden="true"></i> @localizer["GlossaryHeader"]</h5></summary>
+        <div class="ibox-content">
+            <p class="small text-muted">@localizer["GlossaryHelp"]</p>
+            @foreach (var pack in products)
+            {
+                <table class="table table-condensed small">
+                    <caption class="sr-only">@string.Format(localizer["GlossaryCaption"].Value, pack.ProductName)</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">@string.Format(localizer["GlossaryProductColumn"].Value, pack.ProductName)</th>
+                            <th scope="col">@localizer["GlossaryResgridColumn"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var row in glossary.Rows(pack, language))
+                        {
+                            <tr>
+                                <td>@row.Term</td>
+                                <td>
+                                    @if (row.Imported)
+                                    {
+                                        @row.Resgrid
+                                    }
+                                    else if (row.Equivalent)
+                                    {
+                                        <span class="text-muted">@string.Format(localizer["GlossaryFeatureNotImported"].Value, row.Resgrid)</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">@row.Resgrid</span>
+                                    }
+                                    @if (row.OfferedAsName)
+                                    {
+                                        <span class="label label-default" title="@localizer["GlossaryOfferedHelp"]">@localizer["GlossaryOffered"]</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </details>
+}

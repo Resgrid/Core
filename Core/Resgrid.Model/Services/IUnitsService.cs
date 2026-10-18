@@ -24,6 +24,9 @@ namespace Resgrid.Model.Services
 		/// <returns>Task&lt;Unit&gt;.</returns>
 		Task<Unit> SaveUnitAsync(Unit unit, CancellationToken cancellationToken = default(CancellationToken));
 
+		/// <summary>Department Import quiet overload: the side effects named by <paramref name="effects"/> are skipped or deferred to the import engine.</summary>
+		Task<Unit> SaveUnitAsync(Unit unit, Onboarding.ImportEffectPolicy effects, CancellationToken cancellationToken);
+
 		/// <summary>
 		/// Saves the unit log asynchronous.
 		/// </summary>

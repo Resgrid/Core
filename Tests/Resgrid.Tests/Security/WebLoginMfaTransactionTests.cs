@@ -296,7 +296,7 @@ namespace Resgrid.Tests.Security
 			var controller = new WebAccountController(_users.Object, _signIn.Object, departments.Object, usersService.Object, null, null, null, null, null, null,
 				_audits.Object, null, _sso.Object, null, _sessions.Object, _links.Object, null, null, _evidenceService ?? _evidence.Object, _notices.Object, _activity.Object,
 				_transactions, _passkeys.Object, _approvals.Object, _policyService, twoFactor.Object, _broker.Object, _returnTargets.Object, _dataProtection,
-				_adpStepUp.Object, _mfaState, _userStore.Object, _recoveries, _passkeyRows, _challenges.Object, _approvalRows.Object, _sharedSessions)
+				_adpStepUp.Object, _mfaState, _userStore.Object, _recoveries, _passkeyRows, _challenges.Object, _approvalRows.Object, _sharedSessions, null)
 			{
 				ControllerContext = new ControllerContext { HttpContext = http },
 				TempData = new TempDataDictionary(http, Mock.Of<ITempDataProvider>()),

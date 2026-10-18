@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Resgrid.Model.Identity;
@@ -87,6 +88,21 @@ namespace Resgrid.Model
 		/// </summary>
 		[ProtoMember(13)]
 		public bool MustChangePassword { get; set; }
+
+		/// <summary>
+		/// Department Import activation state (<see cref="Onboarding.ImportActivationState"/>; wizard plan section 15).
+		/// Null for every member not created by an import, and once an imported member is active. A Dormant member
+		/// cannot sign in and receives nothing until an administrator invites them.
+		/// </summary>
+		[DefaultValue(null)]
+		[ProtoMember(14)]
+		public int? ImportActivationState { get; set; }
+
+		/// <summary>True while this membership is a dormant (imported, not yet activated) one.</summary>
+		[NotMapped]
+		[JsonIgnore]
+		public bool IsImportDormant => ImportActivationState == (int)Onboarding.ImportActivationState.Dormant
+			|| ImportActivationState == (int)Onboarding.ImportActivationState.Invited;
 
 		[NotMapped]
 		public string TableName => "DepartmentMembers";

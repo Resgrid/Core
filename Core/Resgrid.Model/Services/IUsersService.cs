@@ -23,6 +23,12 @@ namespace Resgrid.Model.Services
 		void InitUserExtInfo(string userId);
 		Task<List<UserGroupRole>> GetUserGroupAndRolesByDepartmentIdAsync(int deparmentId, bool retrieveHidden, bool retrieveDisabled, bool retrieveDeleted);
 		Task<bool> DoesUserHaveAnyActiveDepartments(string userName);
+
+		/// <summary>
+		/// True when every live membership of the user is a dormant Department Import membership (not yet invited and
+		/// activated). Such an account cannot sign in and password recovery is refused for it (plan section 14.3).
+		/// </summary>
+		Task<bool> IsImportDormantOnlyAsync(string userId);
 		void ClearCacheForDepartment(int departmentId);
 		Task<IdentityUser> GetUserByNameAsync(string userName);
 		Task<PersonnelLocation> SavePersonnelLocationAsync(PersonnelLocation personnelLocation, System.Threading.CancellationToken cancellationToken = default);

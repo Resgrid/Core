@@ -210,4 +210,28 @@
   <data name="Region" xml:space="preserve">
     <value>المنطقة</value>
   </data>
+  <data name="ImportInviteText" xml:space="preserve">
+    <value>أنشأ {0} حسابًا على Resgrid لك. اختر كلمة مرور لتسجيل الدخول لأول مرة.</value>
+  </data>
+  <data name="ImportInviteUserName" xml:space="preserve">
+    <value>اسم المستخدم الخاص بك</value>
+  </data>
+  <data name="ImportInviteSetPassword" xml:space="preserve">
+    <value>تعيين كلمة المرور وتسجيل الدخول</value>
+  </data>
+  <data name="ImportJoinText" xml:space="preserve">
+    <value>دعاك {0} للانضمام باستخدام حسابك الحالي على Resgrid.</value>
+  </data>
+  <data name="ImportJoinSignIn" xml:space="preserve">
+    <value>سجّل الدخول للقبول</value>
+  </data>
+  <data name="ImportJoinAccept" xml:space="preserve">
+    <value>الانضمام إلى {0}</value>
+  </data>
+  <data name="ImportJoinWrongAccount" xml:space="preserve">
+    <value>أُرسلت هذه الدعوة إلى عنوان بريد إلكتروني مختلف. سجّل الدخول بالحساب الذي أُرسلت إليه.</value>
+  </data>
+  <data name="ImportInviteFailed" xml:space="preserve">
+    <value>لم يعد بالإمكان قبول هذه الدعوة. يرجى التواصل مع المسؤول الذي دعاك.</value>
+  </data>
 </root>

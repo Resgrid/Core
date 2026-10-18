@@ -18,7 +18,251 @@
       "DocsPath": "/web-app/workflows/"
     }
   ],
-  "Settings": [],
+  "Settings": [
+    {
+      "Id": "setting.DepartmentImportConfig",
+      "AreaId": "automation",
+      "LabelKey": "Setting.DepartmentImportConfig",
+      "HelpKey": "SettingHelp.DepartmentImportConfig",
+      "Binding": "DepartmentSettingTypes.DepartmentImportConfig",
+      "ValueType": "protobuf",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "DepartmentImport",
+        "Action": "Settings",
+        "Field": "DepartmentImportConfig"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-12T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.automation",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.DepartmentImportConfig",
+      "DefaultValue": "missing = plan defaults (files kept 7 days after import, 30 after failure; checked data 30 days after activation; no second approver; create-only; support access 7 days)",
+      "AllowedValues": "Validated by the Import & Migration settings dialog and DepartmentImportConfig; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.DepartmentImportConfig.ArtifactRetentionDaysAfterSuccess",
+      "AreaId": "automation",
+      "LabelKey": "Field.DepartmentImportConfig.ArtifactRetentionDaysAfterSuccess",
+      "HelpKey": "FieldHelp.DepartmentImportConfig.ArtifactRetentionDaysAfterSuccess",
+      "Binding": "DepartmentImportConfig.ArtifactRetentionDaysAfterSuccess",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "DepartmentImport",
+        "Action": "Settings",
+        "Field": "ArtifactRetentionDaysAfterSuccess"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-12T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.automation",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.DepartmentImportConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.DepartmentImportConfig.ArtifactRetentionDaysAfterSuccess",
+      "DefaultValue": "0 (7 days; 72 hours for ADP departments)",
+      "AllowedValues": "0-180 days",
+      "EvidenceSource": "DepartmentImportConfig",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.DepartmentImportConfig.ArtifactRetentionDaysAfterFailure",
+      "AreaId": "automation",
+      "LabelKey": "Field.DepartmentImportConfig.ArtifactRetentionDaysAfterFailure",
+      "HelpKey": "FieldHelp.DepartmentImportConfig.ArtifactRetentionDaysAfterFailure",
+      "Binding": "DepartmentImportConfig.ArtifactRetentionDaysAfterFailure",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "DepartmentImport",
+        "Action": "Settings",
+        "Field": "ArtifactRetentionDaysAfterFailure"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-12T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.automation",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.DepartmentImportConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.DepartmentImportConfig.ArtifactRetentionDaysAfterFailure",
+      "DefaultValue": "0 (30 days)",
+      "AllowedValues": "0-180 days",
+      "EvidenceSource": "DepartmentImportConfig",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.DepartmentImportConfig.StagingRetentionDaysAfterActivation",
+      "AreaId": "automation",
+      "LabelKey": "Field.DepartmentImportConfig.StagingRetentionDaysAfterActivation",
+      "HelpKey": "FieldHelp.DepartmentImportConfig.StagingRetentionDaysAfterActivation",
+      "Binding": "DepartmentImportConfig.StagingRetentionDaysAfterActivation",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "DepartmentImport",
+        "Action": "Settings",
+        "Field": "StagingRetentionDaysAfterActivation"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-12T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.automation",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.DepartmentImportConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.DepartmentImportConfig.StagingRetentionDaysAfterActivation",
+      "DefaultValue": "0 (30 days)",
+      "AllowedValues": "0-180 days",
+      "EvidenceSource": "DepartmentImportConfig",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.DepartmentImportConfig.RequireSecondApprover",
+      "AreaId": "automation",
+      "LabelKey": "Field.DepartmentImportConfig.RequireSecondApprover",
+      "HelpKey": "FieldHelp.DepartmentImportConfig.RequireSecondApprover",
+      "Binding": "DepartmentImportConfig.RequireSecondApprover",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "DepartmentImport",
+        "Action": "Settings",
+        "Field": "RequireSecondApprover"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-12T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.automation",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.DepartmentImportConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.DepartmentImportConfig.RequireSecondApprover",
+      "DefaultValue": "false",
+      "AllowedValues": "true or false",
+      "EvidenceSource": "DepartmentImportConfig",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.DepartmentImportConfig.DefaultWriteMode",
+      "AreaId": "automation",
+      "LabelKey": "Field.DepartmentImportConfig.DefaultWriteMode",
+      "HelpKey": "FieldHelp.DepartmentImportConfig.DefaultWriteMode",
+      "Binding": "DepartmentImportConfig.DefaultWriteMode",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "DepartmentImport",
+        "Action": "Settings",
+        "Field": "DefaultWriteMode"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-12T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.automation",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.DepartmentImportConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.DepartmentImportConfig.DefaultWriteMode",
+      "DefaultValue": "0 (create-only)",
+      "AllowedValues": "1 create-only or 2 reviewed update; Replace is never a default",
+      "EvidenceSource": "DepartmentImportConfig",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.DepartmentImportConfig.SupportGrantDefaultDays",
+      "AreaId": "automation",
+      "LabelKey": "Field.DepartmentImportConfig.SupportGrantDefaultDays",
+      "HelpKey": "FieldHelp.DepartmentImportConfig.SupportGrantDefaultDays",
+      "Binding": "DepartmentImportConfig.SupportGrantDefaultDays",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "DepartmentImport",
+        "Action": "Settings",
+        "Field": "SupportGrantDefaultDays"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-12T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.automation",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.DepartmentImportConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.DepartmentImportConfig.SupportGrantDefaultDays",
+      "DefaultValue": "0 (7 days)",
+      "AllowedValues": "0-30 days",
+      "EvidenceSource": "DepartmentImportConfig",
+      "Availability": "available"
+    }
+  ],
   "Capabilities": [
     {
       "Id": "workflows",
@@ -168,14 +412,53 @@
       "AdoptionKey": "ModuleAdoption.automation",
       "ReleaseStatus": "available",
       "Location": {
-        "Controller": "Department",
-        "Action": "SetupWizard"
+        "Controller": "DepartmentImport",
+        "Action": "Index"
       },
-      "Requirements": [],
-      "SettingIds": [],
-      "RuleIds": [],
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Onboarding.MigrationWizard"
+        },
+        {
+          "Kind": "permission",
+          "Id": "ManageDepartmentImport"
+        }
+      ],
+      "SettingIds": [
+        "setting.DepartmentImportConfig",
+        "field.DepartmentImportConfig.ArtifactRetentionDaysAfterSuccess",
+        "field.DepartmentImportConfig.ArtifactRetentionDaysAfterFailure",
+        "field.DepartmentImportConfig.StagingRetentionDaysAfterActivation",
+        "field.DepartmentImportConfig.RequireSecondApprover",
+        "field.DepartmentImportConfig.DefaultWriteMode",
+        "field.DepartmentImportConfig.SupportGrantDefaultDays"
+      ],
+      "RuleIds": [
+        "import-blocking-issues",
+        "import-unreconciled",
+        "import-dormant-members",
+        "import-paused-intake",
+        "import-disabled-automation",
+        "import-enforcement-relaxed",
+        "import-files-retained"
+      ],
+      "Setup": {
+        "EvidenceId": "importWorkspaceVerified",
+        "Minimum": 1,
+        "RuleIds": [
+          "import-blocking-issues",
+          "import-unreconciled",
+          "import-dormant-members",
+          "import-paused-intake",
+          "import-disabled-automation",
+          "import-enforcement-relaxed",
+          "import-files-retained"
+        ],
+        "GuidanceKey": "SetupEvidence.import-migration"
+      },
       "Prominence": "Detail",
-      "DocsPath": "/web-app/help-setup/"
+      "DocsPath": "/web-app/import-and-migration/"
     }
   ],
   "Rules": [
@@ -194,6 +477,158 @@
       "FailsWhen": [
         {
           "EvidenceId": "failedWorkflowCount",
+          "Comparison": "Greater",
+          "Number": 0
+        }
+      ]
+    },
+    {
+      "Id": "import-blocking-issues",
+      "AreaId": "automation",
+      "Severity": "Warning",
+      "TitleKey": "Rule.import-blocking-issues",
+      "ExplanationKey": "RuleWhy.import-blocking-issues",
+      "NextActionKey": "RuleNext.import-blocking-issues",
+      "Location": {
+        "Controller": "DepartmentImport",
+        "Action": "Index"
+      },
+      "AppliesWhen": [
+        {
+          "EvidenceId": "importWorkspaceOpen",
+          "Comparison": "Greater",
+          "Number": 0
+        }
+      ],
+      "FailsWhen": [
+        {
+          "EvidenceId": "importBlockingIssueCount",
+          "Comparison": "Greater",
+          "Number": 0
+        }
+      ]
+    },
+    {
+      "Id": "import-unreconciled",
+      "AreaId": "automation",
+      "Severity": "Warning",
+      "TitleKey": "Rule.import-unreconciled",
+      "ExplanationKey": "RuleWhy.import-unreconciled",
+      "NextActionKey": "RuleNext.import-unreconciled",
+      "Location": {
+        "Controller": "DepartmentImport",
+        "Action": "Index"
+      },
+      "AppliesWhen": [],
+      "FailsWhen": [
+        {
+          "EvidenceId": "importUnreconciledRunCount",
+          "Comparison": "Greater",
+          "Number": 0
+        }
+      ]
+    },
+    {
+      "Id": "import-dormant-members",
+      "AreaId": "automation",
+      "Severity": "Warning",
+      "TitleKey": "Rule.import-dormant-members",
+      "ExplanationKey": "RuleWhy.import-dormant-members",
+      "NextActionKey": "RuleNext.import-dormant-members",
+      "Location": {
+        "Controller": "DepartmentImport",
+        "Action": "Index"
+      },
+      "AppliesWhen": [
+        {
+          "EvidenceId": "importDormantMemberCount",
+          "Comparison": "Greater",
+          "Number": 0
+        }
+      ],
+      "FailsWhen": [
+        {
+          "EvidenceId": "importOldestDormantDays",
+          "Comparison": "Greater",
+          "Number": 14
+        }
+      ]
+    },
+    {
+      "Id": "import-paused-intake",
+      "AreaId": "automation",
+      "Severity": "Critical",
+      "TitleKey": "Rule.import-paused-intake",
+      "ExplanationKey": "RuleWhy.import-paused-intake",
+      "NextActionKey": "RuleNext.import-paused-intake",
+      "Location": {
+        "Controller": "DepartmentImport",
+        "Action": "Index"
+      },
+      "AppliesWhen": [],
+      "FailsWhen": [
+        {
+          "EvidenceId": "importPausedIntakeCount",
+          "Comparison": "Greater",
+          "Number": 0
+        }
+      ]
+    },
+    {
+      "Id": "import-disabled-automation",
+      "AreaId": "automation",
+      "Severity": "Warning",
+      "TitleKey": "Rule.import-disabled-automation",
+      "ExplanationKey": "RuleWhy.import-disabled-automation",
+      "NextActionKey": "RuleNext.import-disabled-automation",
+      "Location": {
+        "Controller": "DepartmentImport",
+        "Action": "Index"
+      },
+      "AppliesWhen": [],
+      "FailsWhen": [
+        {
+          "EvidenceId": "importDisabledScheduleCount",
+          "Comparison": "Greater",
+          "Number": 0
+        }
+      ]
+    },
+    {
+      "Id": "import-enforcement-relaxed",
+      "AreaId": "automation",
+      "Severity": "Warning",
+      "TitleKey": "Rule.import-enforcement-relaxed",
+      "ExplanationKey": "RuleWhy.import-enforcement-relaxed",
+      "NextActionKey": "RuleNext.import-enforcement-relaxed",
+      "Location": {
+        "Controller": "DepartmentImport",
+        "Action": "Index"
+      },
+      "AppliesWhen": [],
+      "FailsWhen": [
+        {
+          "EvidenceId": "importRelaxedEnforcementCount",
+          "Comparison": "Greater",
+          "Number": 0
+        }
+      ]
+    },
+    {
+      "Id": "import-files-retained",
+      "AreaId": "automation",
+      "Severity": "Information",
+      "TitleKey": "Rule.import-files-retained",
+      "ExplanationKey": "RuleWhy.import-files-retained",
+      "NextActionKey": "RuleNext.import-files-retained",
+      "Location": {
+        "Controller": "DepartmentImport",
+        "Action": "Index"
+      },
+      "AppliesWhen": [],
+      "FailsWhen": [
+        {
+          "EvidenceId": "importArtifactsRetainedCount",
           "Comparison": "Greater",
           "Number": 0
         }
@@ -261,12 +696,45 @@
       "Id": "import-migration",
       "Locale": "en",
       "TitleKey": "Feature.import-migration",
-      "Body": "Import and migration planning Plan moving your data from another system into Resgrid. Avoid duplicate resources and verify resulting configuration in Setup Report. A workflow posts new calls to a team channel, and a custom field records the fire district on each call. Have the destination systems and credentials ready, and decide who owns each automation.",
+      "Body": "Import & Migration Bring people, stations, apparatus and settings into Resgrid from spreadsheets or the system you are leaving. Start a workspace, download the Resgrid starter workbook or upload your own export, match columns and values, and fix the issues the checks find. Nothing is saved until you review and approve an import; every import is journaled and can be rolled back for 30 days. Imported people stay dormant (they cannot sign in and receive nothing) until you invite them from Verify & activate, and Admin Assist then verifies the result in Setup Report.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "import-migration",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
+      "ReviewedOn": "2026-10-12T00:00:00Z"
+    },
+    {
+      "Id": "setting.DepartmentImportConfig",
+      "Locale": "en",
+      "TitleKey": "Setting.DepartmentImportConfig",
+      "Body": "Import & Migration settings How long uploaded files and checked data are kept and how imports are approved. Uploaded files are kept 7 days after a successful import (72 hours with Advanced Data Protection) and 30 days after a failure; checked data is kept 30 days after go-live because rollback needs it. A rollback is possible until go-live plus 30 days for a new department, and for 30 days after the import in a live department. Require a second administrator to have every import approved by two different people. Add only never changes existing records; Review updates changes only the fields approved in the preview.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-departmentimportconfig",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-12T00:00:00Z"
+    },
+    {
+      "Id": "import-dormant-members",
+      "Locale": "en",
+      "TitleKey": "Rule.import-dormant-members",
+      "Body": "Dormant imported members People created by an import are dormant: they cannot sign in, receive no dispatches, messages or reminders, and are left out of every notification sweep until you invite them. Already-expired certifications are imported as expired so nobody is emailed, and reminders for certifications expiring soon wait until the holder is invited. Invite people from Verify & activate; invitations go out in small batches outside night hours, and accepting one lets the person choose a password. People who already have a Resgrid account in another department get an invitation to join instead.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "import-dormant-members",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-12T00:00:00Z"
+    },
+    {
+      "Id": "import-support-access",
+      "Locale": "en",
+      "TitleKey": "Field.DepartmentImportConfig.SupportGrantDefaultDays",
+      "Body": "Support access for imports Resgrid support sees nothing in an import workspace unless an administrator grants access, for a limited time, at one of four levels: Observe (progress, counts and issue codes), Inspect (also sample values to diagnose a problem), Prepare (also fix mappings and values as drafts the department approves) and Operate (staff run the import, with two-person control, only under an agreed managed migration). Every staff action is logged on the workspace timeline, and access can be revoked at any time.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "import-support-access",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-12T00:00:00Z"
     }
   ]
 }

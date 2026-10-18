@@ -2084,17 +2084,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return model;
 		}
 
-		/// <summary>Quotes a CSV cell and neutralises spreadsheet formula prefixes in user-entered text.</summary>
-		private static string CsvCell(string value)
-		{
-			if (string.IsNullOrEmpty(value))
-				return string.Empty;
-
-			if ("=+-@\t\r".Contains(value[0]))
-				value = "'" + value;
-
-			return "\"" + value.Replace("\"", "\"\"") + "\"";
-		}
+		/// <summary>Quotes a CSV cell and neutralises spreadsheet formula prefixes in user-entered text (the shared Framework helper).</summary>
+		private static string CsvCell(string value) => Resgrid.Framework.CsvCell.Format(value);
 
 		private async Task<PersonnelStatusHistoryView> PersonnelStatusHistoryReportModel(int departmentId,
 			bool groupSelect, int groupId, string userId, DateTime? start, DateTime? end)

@@ -252,7 +252,9 @@ namespace Resgrid.Services.Onboarding
 				throw new DepartmentImportException("import_message_empty");
 			if (await _workspaces.GetByIdAsync(departmentId, workspaceId, cancellationToken) == null)
 				throw new DepartmentImportException("import_workspace_not_found", 404);
-			if (supportRequestId != null && await _requests.GetByIdAsync(departmentId, supportRequestId, cancellationToken) == null)
+			// A request of another workspace (same department) is not this thread's: the reply would land in the wrong one.
+			var request = string.IsNullOrWhiteSpace(supportRequestId) ? null : await _requests.GetByIdAsync(departmentId, supportRequestId, cancellationToken);
+			if (!string.IsNullOrWhiteSpace(supportRequestId) && (request == null || !string.Equals(request.WorkspaceId, workspaceId, StringComparison.OrdinalIgnoreCase)))
 				throw new DepartmentImportException("import_request_not_found", 404);
 
 			var now = DateTime.UtcNow;
@@ -260,7 +262,7 @@ namespace Resgrid.Services.Onboarding
 			{
 				DepartmentId = departmentId,
 				WorkspaceId = workspaceId,
-				SupportRequestId = supportRequestId,
+				SupportRequestId = request?.Id,
 				AuthorKind = (int)ImportActorKind.Administrator,
 				AuthorIdentity = userId,
 				// Plain text; HTML-encoded at render, never interpreted as markup (section 17.5).

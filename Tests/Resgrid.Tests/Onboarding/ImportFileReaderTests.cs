@@ -82,6 +82,17 @@ namespace Resgrid.Tests.Onboarding
 		}
 
 		[Test]
+		public void A_file_with_exactly_the_row_limit_is_read_whole()
+		{
+			using var stream = Text("h\n" + string.Join("\n", Enumerable.Range(1, 5)));
+			var rows = new List<int>();
+			var result = _reader.ReadSheet(stream, ImportFileFormat.Csv, 0, new ImportReadOptions { MaxRows = 5 }, (row, _) => rows.Add(row));
+
+			result.Truncated.Should().BeFalse("the header row does not count toward the data-row limit");
+			rows.Should().HaveCount(6);
+		}
+
+		[Test]
 		public void Generated_workbooks_read_back_with_inline_strings_hidden_lists_and_example_markers()
 		{
 			var writer = new ImportTemplateWriter();

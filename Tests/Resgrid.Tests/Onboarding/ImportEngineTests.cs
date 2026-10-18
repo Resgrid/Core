@@ -332,6 +332,7 @@ namespace Resgrid.Tests.Onboarding
 
 			result.Outcome.Should().Be(ImportRowOutcome.Created);
 			seen.UserId.Should().Be("PRE");
+			seen.UserIdReserved.Should().BeTrue("the key is the engine's committed account claim");
 			seen.Password.Should().BeNull();
 			seen.EmailConfirmed.Should().BeFalse();
 			seen.IsAdmin.Should().BeFalse();
@@ -360,6 +361,42 @@ namespace Resgrid.Tests.Onboarding
 
 			fixture.Delete.Verify(d => d.RevokeDepartmentAccessAsync("SHARED", 7, "admin", It.IsAny<CancellationToken>()), Times.Once);
 			fixture.Delete.Verify(d => d.DeleteUserAsync(7, It.IsAny<string>(), "ACT", It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task A_replayed_row_journals_the_account_its_first_attempt_created_so_rollback_deletes_it()
+		{
+			// The first attempt created the account outside the chunk transaction; the chunk then rolled back (or was replayed row
+			// by row), so the replay finds the account under the claimed key with no journal entry for it.
+			var fixture = new PersonnelFixture();
+			fixture.Accounts.Setup(a => a.FindByIdAsync("PRE")).ReturnsAsync(new IdentityUser { Id = "PRE", UserName = "new", Email = "new@example.org" });
+			var users = new Mock<IUsersService>();
+			users.Setup(u => u.HasUserExtInfoAsync("PRE")).ReturnsAsync(true);
+			var provisioning = new Resgrid.Services.MemberProvisioningService(fixture.Accounts.Object, users.Object, Mock.Of<IUserProfileService>(),
+				fixture.Departments.Object, Mock.Of<IDepartmentMemberSensitiveDataService>(), Mock.Of<IDepartmentGroupsService>(), Mock.Of<IPersonnelRolesService>(),
+				Mock.Of<IUserDefinedFieldsService>());
+			var writer = new PersonnelImportWriter(provisioning, fixture.Accounts.Object, fixture.Departments.Object, Mock.Of<IDepartmentGroupsService>(),
+				Mock.Of<IPersonnelRolesService>(), Mock.Of<IDepartmentMemberSensitiveDataService>(), Mock.Of<IUserDefinedFieldsService>(), fixture.Delete.Object);
+			var context = Context();
+			context.PersonnelCapacity = 1;
+			context.ResolveReference = (_, _, _) => Task.FromResult<string>(null);
+			var row = Person("new@example.org", ImportRowDecision.Create);
+			row.TargetKey = "PRE";
+			var (journal, entries) = Journal();
+
+			(await writer.WriteRowAsync(context, row, journal, CancellationToken.None)).Outcome.Should().Be(ImportRowOutcome.Created);
+
+			var entry = entries.Should().ContainSingle(e => e.TargetKey == "PRE").Subject;
+			entry.CreatedAccount.Should().BeTrue();
+			fixture.Accounts.Verify(a => a.CreateAsync(It.IsAny<IdentityUser>(), It.IsAny<string>()), Times.Never);
+
+			fixture.Departments.Setup(d => d.GetDepartmentMemberAsync("PRE", 7, true))
+				.ReturnsAsync(new DepartmentMember { DepartmentId = 7, UserId = "PRE", ImportActivationState = (int)ImportActivationState.Dormant });
+			fixture.Departments.Setup(d => d.GetAllDepartmentsForUserAsync("PRE")).ReturnsAsync(new List<DepartmentMember> { new DepartmentMember { DepartmentId = 7 } });
+			fixture.Delete.Setup(d => d.DeleteUserAsync(7, "admin", "PRE", It.IsAny<CancellationToken>())).ReturnsAsync(DeleteUserResults.NoFailure);
+
+			(await writer.RollbackAsync(context, entry, CancellationToken.None)).Outcome.Should().Be(ImportRollbackOutcome.Deleted);
+			fixture.Delete.Verify(d => d.RevokeDepartmentAccessAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 
 		// ---- Kept custom fields ----------------------------------------------------------------------------------------

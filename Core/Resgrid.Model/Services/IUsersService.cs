@@ -21,6 +21,7 @@ namespace Resgrid.Model.Services
 		List<IdentityUser> GetAllMembershipsForDepartment(int departmentId);
 		IdentityUser SaveUser(IdentityUser user);
 		void InitUserExtInfo(string userId);
+		Task<bool> HasUserExtInfoAsync(string userId);
 		Task<List<UserGroupRole>> GetUserGroupAndRolesByDepartmentIdAsync(int deparmentId, bool retrieveHidden, bool retrieveDisabled, bool retrieveDeleted);
 		Task<bool> DoesUserHaveAnyActiveDepartments(string userName);
 

@@ -163,6 +163,8 @@ namespace Resgrid.Services.Onboarding.Writers
 					{
 						DepartmentId = context.DepartmentId,
 						UserId = row.TargetKey,
+						// The engine's account claim, committed before the chunk transaction (IImportPregeneratedKeys).
+						UserIdReserved = true,
 						Email = row.Text("email"),
 						// No password and an unconfirmed email: the person sets a password when they accept the invitation (section 15).
 						Password = null,

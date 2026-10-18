@@ -252,8 +252,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost, ValidateAntiForgeryToken]
 		public Task<IActionResult> UploadStart([FromBody] ImportUploadStartInput input, CancellationToken cancellationToken) =>
-			JsonAsync(() => _uploads.StartAsync(DepartmentId, UserId, input.WorkspaceId, input.FileName, input.SizeBytes, input.Sha256, input.ContentType,
-				input.SourceId, false, cancellationToken));
+			JsonAsync(() =>
+			{
+				RequireBody(input);
+				return _uploads.StartAsync(DepartmentId, UserId, input.WorkspaceId, input.FileName, input.SizeBytes, input.Sha256, input.ContentType,
+					input.SourceId, false, cancellationToken);
+			});
 
 		/// <summary>One chunk of an upload: the raw bytes are the request body (no form encoding, no base64).</summary>
 		[HttpPost, ValidateAntiForgeryToken, RequestSizeLimit(16 * 1024 * 1024)]
@@ -372,6 +376,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public Task<IActionResult> SaveMapping([FromBody] ImportMappingInput input, CancellationToken cancellationToken) =>
 			JsonAsync(async () =>
 			{
+				RequireBody(input);
 				var map = await _mapping.SaveColumnMapAsync(DepartmentId, UserId, ImportActorKind.Administrator, input.DatasetId, input.Body, input.ExpectedRevision,
 					cancellationToken);
 				return new { map.Id, map.Version };
@@ -467,10 +472,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost, ValidateAntiForgeryToken]
 		public Task<IActionResult> SaveValues([FromBody] ImportValuesInput input, CancellationToken cancellationToken) =>
-			JsonAsync(async () => new
+			JsonAsync(async () =>
 			{
-				saved = await _mapping.SaveValueMapsAsync(DepartmentId, UserId, ImportActorKind.Administrator, input.DatasetId, input.FieldKey, input.Decisions,
-					cancellationToken)
+				RequireBody(input);
+				return new
+				{
+					saved = await _mapping.SaveValueMapsAsync(DepartmentId, UserId, ImportActorKind.Administrator, input.DatasetId, input.FieldKey, input.Decisions,
+						cancellationToken)
+				};
 			});
 
 		// ---- Issues -----------------------------------------------------------------------------------------------------
@@ -494,6 +503,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public Task<IActionResult> IssueAction([FromBody] ImportIssueActionInput input, CancellationToken cancellationToken) =>
 			JsonAsync(async () =>
 			{
+				RequireBody(input);
 				var ids = input.IssueIds ?? new List<string>();
 				var changed = input.Action switch
 				{
@@ -1132,6 +1142,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var value = _localizer["Error." + code];
 			return value.ResourceNotFound ? _localizer["Error.Generic"].Value : value.Value;
+		}
+
+		/// <summary>An empty or malformed JSON body binds to null: a controlled import error rather than a null dereference (a 500).</summary>
+		private static void RequireBody(object input)
+		{
+			if (input == null)
+				throw new DepartmentImportException("import_unknown_field");
 		}
 
 		private async Task<IActionResult> JsonAsync<T>(Func<Task<T>> action)

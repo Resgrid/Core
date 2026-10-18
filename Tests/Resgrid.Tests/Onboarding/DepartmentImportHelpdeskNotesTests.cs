@@ -237,5 +237,25 @@ namespace Resgrid.Tests.Onboarding
 
 			text.Should().Contain("opened 3 row(s)").And.Contain("2 staff member(s)").And.Contain("Spring roster").And.Contain("/DepartmentImport/Workspace/W1");
 		}
+
+		// ---- administrator messages ---------------------------------------------------------------------------------------
+
+		[Test]
+		public async Task An_administrator_message_threads_only_onto_a_request_of_its_own_workspace()
+		{
+			_workspaces.Setup(w => w.GetByIdAsync(DepartmentId, WorkspaceId, It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new ImportWorkspace { Id = WorkspaceId, DepartmentId = DepartmentId });
+			var request = Request(ImportHelpdeskState.Pending);
+			request.WorkspaceId = "W2";
+
+			var thrown = await FluentActions.Awaiting(() => Outbox().PostMessageAsync(DepartmentId, "ADMIN", WorkspaceId, "Any news?", "R1"))
+				.Should().ThrowAsync<DepartmentImportException>();
+			thrown.Which.Code.Should().Be("import_request_not_found");
+			_messages.Verify(m => m.InsertAsync(It.IsAny<ImportMessage>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never);
+
+			request.WorkspaceId = WorkspaceId;
+			(await Outbox().PostMessageAsync(DepartmentId, "ADMIN", WorkspaceId, "Any news?", "R1")).SupportRequestId.Should().Be("R1");
+			(await Outbox().PostMessageAsync(DepartmentId, "ADMIN", WorkspaceId, "Hello", null)).SupportRequestId.Should().BeNull();
+		}
 	}
 }

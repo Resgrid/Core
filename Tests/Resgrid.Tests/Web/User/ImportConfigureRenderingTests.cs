@@ -205,7 +205,7 @@ namespace Resgrid.Tests.Web.User
 			{
 				await app.StartAsync();
 				using var client = new HttpClient { BaseAddress = new Uri(app.Urls.Single()) };
-				var response = await client.GetAsync(path);
+				using var response = await client.GetAsync(path);
 				var html = await response.Content.ReadAsStringAsync();
 				response.StatusCode.Should().Be(HttpStatusCode.OK, html);
 				return html;

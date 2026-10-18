@@ -177,7 +177,7 @@ namespace Resgrid.Services.Onboarding
 				Runs = (await _runs.GetAllForWorkspaceAsync(departmentId, workspaceId, cancellationToken)).OrderByDescending(r => r.RequestedOn).ToList(),
 				Requests = await _requests.GetForWorkspaceAsync(departmentId, workspaceId, cancellationToken),
 				Messages = await _messages.GetPageAsync(departmentId, workspaceId, 0, 200, cancellationToken),
-				Suggestions = await _suggestions.GetAllForWorkspaceAsync(departmentId, workspaceId, cancellationToken),
+				Suggestions = Scrub(await _suggestions.GetAllForWorkspaceAsync(departmentId, workspaceId, cancellationToken), observe),
 				Timeline = await _events.GetPageAsync(departmentId, workspaceId, 0, 200, cancellationToken)
 			};
 
@@ -282,6 +282,20 @@ namespace Resgrid.Services.Onboarding
 			copy.InternalReference = null;
 			copy.DomainPlan = null;
 			return copy;
+		}
+
+		/// <summary>
+		/// A suggestion's payload is a column map or value decisions, so it carries column headers: below Observe (a grant that
+		/// expired or was revoked after the suggestion was made) staff keep its kind, status and note, not the payload.
+		/// </summary>
+		private static List<ImportSuggestion> Scrub(List<ImportSuggestion> suggestions, bool observe)
+		{
+			if (observe || suggestions == null)
+				return suggestions;
+			var copies = JsonConvert.DeserializeObject<List<ImportSuggestion>>(JsonConvert.SerializeObject(suggestions));
+			foreach (var suggestion in copies)
+				suggestion.Payload = null;
+			return copies;
 		}
 
 		// ---- support requests and messages ----------------------------------------------------------------------------------

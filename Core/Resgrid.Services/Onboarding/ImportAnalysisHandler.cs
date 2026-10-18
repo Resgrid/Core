@@ -401,7 +401,7 @@ namespace Resgrid.Services.Onboarding
 			}
 			catch (Exception ex)
 			{
-				Logging.LogException(ex);
+				Logging.LogException(ex, $"Import row limit: plan lookup for department {departmentId} failed; using the free plan's limit");
 				return ImportConfig.FreePlanMaxRowsPerDataset;
 			}
 		}

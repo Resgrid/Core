@@ -22,6 +22,11 @@ namespace Resgrid.Services.Onboarding
 		public const int PageSize = 500;
 		private const int ProfileExamples = 3;
 		private const int DistinctTrackingLimit = 5000;
+		/// <summary>How many values of a column are judged for the shape of excluded data (profiling keeps as many).</summary>
+		private const int ValueSampleSize = 50;
+		/// <summary>At most this many rows (header included) are held back unsealed while the value check collects its sample.</summary>
+		private const int ValueCheckRows = 1000;
+		private const string ExcludedCode = "IMP-EXCLUDED-SENSITIVE";
 
 		private readonly IImportArtifactStore _store;
 		private readonly IImportArtifactCipher _cipher;
@@ -99,10 +104,20 @@ namespace Resgrid.Services.Onboarding
 			// Rows past the cursor may have been written by a slice that crashed before saving it: replace them.
 			await DeleteRowsAfterAsync(dataset, afterRow, cancellationToken);
 
-			// The header is the first non-empty row; columns whose header names excluded data are blanked in every row.
+			// The header is the first non-empty row; columns whose header names excluded data are blanked in every row, and so
+			// are the columns an earlier pass over this sheet recorded as excluded by their values.
+			var recorded = await RecordedExclusionsAsync(dataset, cancellationToken);
 			List<string> headers = afterRow > 0 ? await HeadersAsync(dataset, afterRow, key, codec, cancellationToken) : null;
-			var blanked = headers == null ? Array.Empty<int>() : ExcludedColumns(headers);
+			var blanked = headers == null ? Array.Empty<int>() : ExcludedColumns(dataset, headers, recorded);
 			var headerRowNumber = -1;
+
+			// Values shaped like card numbers or national identifiers are excluded whatever the header says (section 8.2). From
+			// the header on, rows are held back unsealed until every column has the sample profiling judges it by (or
+			// ValueCheckRows rows were read); the decision is recorded before any of them is written, so a later slice of this
+			// sheet, or a retry, reads it back above.
+			var decided = afterRow > 0;
+			var samples = new List<List<string>>();
+			var held = new List<(int Row, string[] Values)>();
 
 			var page = new List<ImportStagedRow>(PageSize);
 			var lastRow = afterRow;
@@ -118,6 +133,36 @@ namespace Resgrid.Services.Onboarding
 				page.Clear();
 				if (heartbeat != null && !heartbeat(cancellationToken).GetAwaiter().GetResult())
 					throw new OperationCanceledException("Import run lease lost.");
+			}
+
+			ImportStagedRow Sealed(int row, string[] values) => new ImportStagedRow
+			{
+				DepartmentId = dataset.DepartmentId,
+				WorkspaceId = dataset.WorkspaceId,
+				DatasetId = dataset.Id,
+				RowNumber = row,
+				SourcePayload = codec.Seal(key, ImportStagingCodec.Binding(dataset.Id, row, "source"), values),
+				IsEncrypted = true,
+				ValidationState = (int)ImportRowValidationState.Pending,
+				CreatedOn = now,
+				UpdatedOn = now
+			};
+
+			void Decide()
+			{
+				decided = true;
+				var byValue = headers == null ? Array.Empty<int>() : Enumerable.Range(0, Math.Min(headers.Count, samples.Count))
+					.Where(i => !blanked.Contains(i) && ImportColumnMatcher.LooksLikeExcludedValues(samples[i])).ToArray();
+				if (byValue.Length > 0)
+				{
+					// Like Flush, the worker thread blocks on the write.
+					RaiseExcludedColumnsAsync(dataset, headers, byValue, cancellationToken).GetAwaiter().GetResult();
+					blanked = blanked.Concat(byValue).ToArray();
+				}
+
+				foreach (var (row, values) in held)
+					page.Add(Sealed(row, row > headerRowNumber ? Blank(values, byValue) : values));
+				held.Clear();
 			}
 
 			ImportSheetReadResult read;
@@ -140,29 +185,26 @@ namespace Resgrid.Services.Onboarding
 					if (headers == null && cells.Any(c => !string.IsNullOrWhiteSpace(c)))
 					{
 						headers = cells.Select(c => c ?? string.Empty).ToList();
-						blanked = ExcludedColumns(headers);
+						blanked = ExcludedColumns(dataset, headers, recorded);
 						headerRowNumber = row;
 					}
-					else if (blanked.Length > 0)
+					else if (headers != null)
 					{
-						values = (string[])cells.Clone();
-						foreach (var index in blanked.Where(i => i < values.Length))
-							values[index] = null;
+						if (!decided)
+							AddSamples(samples, cells, headers.Count);
+						values = Blank(cells, blanked);
 					}
-
-					page.Add(new ImportStagedRow
-					{
-						DepartmentId = dataset.DepartmentId,
-						WorkspaceId = dataset.WorkspaceId,
-						DatasetId = dataset.Id,
-						RowNumber = row,
-						SourcePayload = codec.Seal(key, ImportStagingCodec.Binding(dataset.Id, row, "source"), values),
-						IsEncrypted = true,
-						ValidationState = (int)ImportRowValidationState.Pending,
-						CreatedOn = now,
-						UpdatedOn = now
-					});
 					lastRow = row;
+
+					if (decided || headers == null)
+						page.Add(Sealed(row, values));
+					else
+					{
+						held.Add((row, values));
+						if (held.Count < ValueCheckRows && !SamplesComplete(samples, headers.Count, blanked))
+							return;
+						Decide();
+					}
 
 					if (page.Count >= PageSize)
 					{
@@ -178,6 +220,8 @@ namespace Resgrid.Services.Onboarding
 				read = new ImportSheetReadResult();
 			}
 
+			if (!decided)
+				Decide();
 			Flush();
 
 			if (!stoppedEarly && blanked.Length > 0 && headers != null)
@@ -186,8 +230,44 @@ namespace Resgrid.Services.Onboarding
 			return (lastRow, !stoppedEarly, read);
 		}
 
-		private static int[] ExcludedColumns(IReadOnlyList<string> headers) =>
-			headers.Select((h, i) => ImportColumnMatcher.IsExcludedHeader(h) ? i : -1).Where(i => i >= 0).ToArray();
+		private static int[] ExcludedColumns(ImportDataset dataset, IReadOnlyList<string> headers, ISet<string> recorded) =>
+			headers.Select((h, i) => ImportColumnMatcher.IsExcludedHeader(h) || recorded.Contains(ExcludedIdentity(dataset, h)) ? i : -1)
+				.Where(i => i >= 0).ToArray();
+
+		private static string ExcludedIdentity(ImportDataset dataset, string header) => ImportIssueFactory.IdentityKey(dataset.Id, null, header, ExcludedCode);
+
+		/// <summary>Identity keys of the columns recorded as excluded data for this dataset, by their header or by their values.</summary>
+		private async Task<HashSet<string>> RecordedExclusionsAsync(ImportDataset dataset, CancellationToken cancellationToken) =>
+			new HashSet<string>((await _issues.GetForDatasetAsync(dataset.DepartmentId, dataset.Id, cancellationToken))
+				.Where(i => i.Code == ExcludedCode).Select(i => i.IdentityKey), StringComparer.Ordinal);
+
+		/// <summary>The sample a column's values are judged by: its first non-empty values in row order, header excluded.</summary>
+		private static void AddSamples(List<List<string>> samples, string[] cells, int columns)
+		{
+			while (samples.Count < columns)
+				samples.Add(new List<string>());
+			for (var i = 0; i < columns && i < cells.Length; i++)
+			{
+				if (samples[i].Count >= ValueSampleSize)
+					continue;
+				var value = ImportFieldConverter.Clean(cells[i]);
+				if (value != null)
+					samples[i].Add(value);
+			}
+		}
+
+		private static bool SamplesComplete(List<List<string>> samples, int columns, int[] blanked) =>
+			Enumerable.Range(0, columns).All(i => blanked.Contains(i) || i < samples.Count && samples[i].Count >= ValueSampleSize);
+
+		private static string[] Blank(string[] cells, IReadOnlyCollection<int> columns)
+		{
+			if (columns.Count == 0)
+				return cells;
+			var values = (string[])cells.Clone();
+			foreach (var index in columns.Where(i => i < values.Length))
+				values[index] = null;
+			return values;
+		}
 
 		private sealed class StopReading : Exception { }
 
@@ -198,7 +278,9 @@ namespace Resgrid.Services.Onboarding
 			var key = await _keys.UnwrapAsync(artifact.DepartmentId, artifact.WrappedDataKey);
 			var codec = new ImportStagingCodec(_cipher);
 			var profile = new ImportDatasetProfile();
+			var recorded = await RecordedExclusionsAsync(dataset, cancellationToken);
 			List<string> headers = null;
+			var excludedByRecord = new List<bool>();
 			var headerRow = 0;
 			var distinct = new List<HashSet<string>>();
 			var samples = new List<List<string>>();
@@ -219,6 +301,8 @@ namespace Resgrid.Services.Onboarding
 						if (cells.All(string.IsNullOrWhiteSpace))
 							continue;
 						headers = cells.Select(c => c?.Trim() ?? string.Empty).ToList();
+						// Staging records exclusions against the header as read; a column blanked for its values has none left to judge.
+						excludedByRecord = cells.Select(c => recorded.Contains(ExcludedIdentity(dataset, c ?? string.Empty))).ToList();
 						headerRow = row.RowNumber;
 						for (var i = 0; i < headers.Count; i++)
 						{
@@ -241,7 +325,7 @@ namespace Resgrid.Services.Onboarding
 						profile.Columns[i].FilledCount++;
 						if (distinct[i].Count < DistinctTrackingLimit)
 							distinct[i].Add(value);
-						if (samples[i].Count < 50)
+						if (samples[i].Count < ValueSampleSize)
 							samples[i].Add(value);
 					}
 				}
@@ -252,7 +336,8 @@ namespace Resgrid.Services.Onboarding
 				var column = profile.Columns[i];
 				column.DistinctCount = distinct[i].Count;
 				column.InferredType = InferType(samples[i]);
-				column.LooksExcluded = ImportColumnMatcher.IsExcludedHeader(column.Header) || ImportColumnMatcher.LooksLikeExcludedValues(samples[i]);
+				column.LooksExcluded = ImportColumnMatcher.IsExcludedHeader(column.Header) || ImportColumnMatcher.LooksLikeExcludedValues(samples[i]) ||
+					excludedByRecord[i];
 				// Examples are kept only for code-like columns: personal values (emails, phones, names) stay in the sealed rows.
 				column.LooksSensitive = column.InferredType == ImportFieldTypes.Email || column.InferredType == ImportFieldTypes.Phone ||
 					(column.InferredType == ImportFieldTypes.Text && column.DistinctCount > 20);
@@ -317,10 +402,10 @@ namespace Resgrid.Services.Onboarding
 				DatasetId = dataset.Id,
 				ArtifactId = dataset.ArtifactId,
 				ColumnName = Truncate(headers[i], 255),
-				Code = "IMP-EXCLUDED-SENSITIVE",
+				Code = ExcludedCode,
 				Severity = (int)ImportIssueSeverity.Info,
 				Level = (int)ImportLadderLevel.L4RowRules,
-				IdentityKey = ImportIssueFactory.IdentityKey(dataset.Id, null, headers[i], "IMP-EXCLUDED-SENSITIVE"),
+				IdentityKey = ExcludedIdentity(dataset, headers[i]),
 				Parameters = JsonConvert.SerializeObject(new { column = Truncate(headers[i], 255) }),
 				Status = (int)ImportIssueStatus.Resolved,
 				ResolutionKind = (int)ImportIssueResolutionKind.ResolvedBySystem,

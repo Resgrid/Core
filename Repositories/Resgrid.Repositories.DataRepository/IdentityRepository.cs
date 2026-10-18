@@ -144,6 +144,24 @@ namespace Resgrid.Repositories.DataRepository
 			}
 		}
 
+		public async Task<bool> HasUserExtInfoAsync(string userId)
+		{
+			if (DataConfig.DatabaseType == DatabaseTypes.Postgres)
+			{
+				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
+				{
+					return await db.ExecuteScalarAsync<int>("SELECT CASE WHEN EXISTS (SELECT 1 FROM public.aspnetusersext WHERE userid = @userId) THEN 1 ELSE 0 END", new { userId = userId }) == 1;
+				}
+			}
+			else
+			{
+				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
+				{
+					return await db.ExecuteScalarAsync<int>("SELECT CASE WHEN EXISTS (SELECT 1 FROM AspNetUsersExt WHERE UserId = @userId) THEN 1 ELSE 0 END", new { userId = userId }) == 1;
+				}
+			}
+		}
+
 		public IdentityUserRole GetRoleForUserRole(string userId, string roleId)
 		{
 			if (DataConfig.DatabaseType == DatabaseTypes.Postgres)

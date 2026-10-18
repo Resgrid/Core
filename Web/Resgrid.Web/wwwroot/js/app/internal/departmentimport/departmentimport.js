@@ -17,6 +17,20 @@
         return node ? JSON.parse(node.textContent) : null;
     }
 
+    // Navigation targets come from the page's markup and response headers: only ever a page on this site (never another
+    // origin or a javascript: address).
+    function navigate(address) {
+        if (!address) return false;
+        try {
+            var url = new URL(address, window.location.origin);
+            if (url.origin !== window.location.origin) return false;
+            window.location.assign(url.href);
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
     function setStatus(node, message, isError) {
         if (!node) return;
         node.textContent = message || '';
@@ -32,7 +46,7 @@
             body: JSON.stringify(body)
         });
         var stepUp = response.headers.get('X-Resgrid-Step-Up');
-        if (stepUp) { window.location.href = stepUp; return null; }
+        if (stepUp && navigate(stepUp)) return null;
         var result = null;
         try { result = await response.json(); } catch (e) { result = null; }
         if (!response.ok) throw new Error((result && result.message) || text.failed);
@@ -139,7 +153,7 @@
                 await postJson(upload.getAttribute('data-complete') + '?artifactId=' + encodeURIComponent(started.ArtifactId), {});
                 remember(file, null);
                 setStatus(status, text.uploaded);
-                window.setTimeout(function () { window.location.href = upload.getAttribute('data-reload'); }, 1200);
+                window.setTimeout(function () { navigate(upload.getAttribute('data-reload')); }, 1200);
             } catch (error) {
                 setStatus(status, error.message, true);
                 startButton.disabled = false;
@@ -267,7 +281,7 @@
                 try {
                     await postJson(dataset.saveUrl, { DatasetId: dataset.datasetId, ExpectedRevision: dataset.revision, Body: body });
                     setStatus(mappingStatus, dataset.text.saved);
-                    window.setTimeout(function () { window.location.href = dataset.reloadUrl; }, 800);
+                    window.setTimeout(function () { navigate(dataset.reloadUrl); }, 800);
                 } catch (error) {
                     setStatus(mappingStatus, error.message, true);
                     saveButton.disabled = false;
@@ -311,7 +325,7 @@
                 try {
                     await postJson(values.saveUrl, { DatasetId: values.datasetId, FieldKey: values.fieldKey, Decisions: decisions });
                     setStatus(valuesStatus, values.text.saved);
-                    window.setTimeout(function () { window.location.href = values.reloadUrl; }, 800);
+                    window.setTimeout(function () { navigate(values.reloadUrl); }, 800);
                 } catch (error) {
                     setStatus(valuesStatus, error.message, true);
                     valuesButton.disabled = false;
@@ -335,7 +349,7 @@
                     button.disabled = true;
                     try {
                         await postJson(issues.actionUrl, { WorkspaceId: issues.workspaceId, Action: action, IssueIds: ids, Value: input ? input.value : null });
-                        window.location.href = issues.reloadUrl;
+                        navigate(issues.reloadUrl);
                     } catch (error) {
                         window.alert(error.message);
                         button.disabled = false;

@@ -467,7 +467,30 @@ namespace Resgrid.Tests.Onboarding
 			view.Artifacts.Single().FileName.Should().BeNull();
 			view.Artifacts.Single().SizeBytes.Should().Be(2048);
 		}
-	
+
+		[Test]
+		public async Task A_suggestion_s_payload_carries_column_headers_and_is_hidden_below_observe()
+		{
+			var fixture = new Fixture();
+			var stored = new ImportSuggestion
+			{
+				Id = "S1", DepartmentId = DepartmentId, WorkspaceId = WorkspaceId, Kind = (int)ImportSuggestionKind.ColumnMap,
+				Payload = "{\"Columns\":[{\"SourceColumn\":\"Smith family roster\"}]}", Note = "Map the roster columns", Status = (int)ImportSuggestionStatus.Proposed
+			};
+			fixture.Suggestions.Setup(s => s.GetAllForWorkspaceAsync(DepartmentId, WorkspaceId, It.IsAny<CancellationToken>()))
+				.ReturnsAsync(() => new List<ImportSuggestion> { stored });
+
+			// The grant that allowed the suggestion has expired: kind, status and note stay, the headers do not.
+			var hidden = (await fixture.Service().GetWorkspaceAsync(ReadOnly, DepartmentId, WorkspaceId)).Suggestions.Single();
+			hidden.Payload.Should().BeNull();
+			hidden.Note.Should().Be("Map the roster columns");
+			hidden.Kind.Should().Be((int)ImportSuggestionKind.ColumnMap);
+			stored.Payload.Should().NotBeNull("the projection copies, it never edits the stored suggestion");
+
+			fixture.Grant(ImportSupportAccessLevel.Observe);
+			(await fixture.Service().GetWorkspaceAsync(ReadOnly, DepartmentId, WorkspaceId)).Suggestions.Single().Payload.Should().Be(stored.Payload);
+		}
+
 		// ---- workbench: matching ------------------------------------------------------------------------------------------
 
 		[Test]

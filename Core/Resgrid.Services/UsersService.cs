@@ -222,6 +222,11 @@ namespace Resgrid.Services
 			_identityRepository.InitUserExtInfo(userId);
 		}
 
+		public Task<bool> HasUserExtInfoAsync(string userId)
+		{
+			return _identityRepository.HasUserExtInfoAsync(userId);
+		}
+
 		public IdentityUser SaveUser(IdentityUser user)
 		{
 			_identityRepository.Update(user);

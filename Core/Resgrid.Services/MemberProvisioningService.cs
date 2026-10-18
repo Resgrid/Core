@@ -51,6 +51,7 @@ namespace Resgrid.Services
 
 			// ---- 1. Account (pre-generated id; a retry finds it) -------------------------------------------------------
 			var user = await _accounts.FindByIdAsync(request.UserId);
+			var createdNow = false;
 			if (user == null)
 			{
 				var byEmail = await _accounts.FindByEmailAsync(request.Email);
@@ -79,6 +80,11 @@ namespace Resgrid.Services
 					return result;
 				}
 
+				result.CreatedAccount = createdNow = true;
+			}
+			else if (request.UserIdReserved)
+			{
+				// Under a reserved id the account can only be an earlier attempt's: still the import's to delete on rollback.
 				result.CreatedAccount = true;
 			}
 
@@ -86,9 +92,11 @@ namespace Resgrid.Services
 			result.UserName = user.UserName;
 
 			// ---- 2. Role and extension rows (InitUserExtInfo is not idempotent and confirms the email) ----------------
+			// The extension row is written when it is missing, not only when this call created the account: a retry after a
+			// crash between creating the account and initializing it finishes the job.
 			if (request.InitializeAccountExtras)
 				_usersService.AddUserToUserRole(user.Id);
-			if (result.CreatedAccount && request.InitializeAccountExtras)
+			if (request.InitializeAccountExtras && (createdNow || !await _usersService.HasUserExtInfoAsync(user.Id)))
 			{
 				try
 				{
@@ -96,7 +104,7 @@ namespace Resgrid.Services
 				}
 				catch (Exception ex)
 				{
-					// Already initialized by an earlier attempt; the caller's original AddPerson path tolerates this the same way.
+					// The caller's original AddPerson path tolerates a failure here the same way.
 					Logging.LogException(ex, "InitUserExtInfo during member provisioning");
 				}
 
@@ -110,7 +118,7 @@ namespace Resgrid.Services
 			}
 
 			// ---- 3. Profile (only for an account this call created: a global profile is never changed by import) ------
-			if (request.Profile != null && (result.CreatedAccount || await _profiles.GetProfileByUserIdAsync(user.Id, true) == null))
+			if (request.Profile != null && (createdNow || await _profiles.GetProfileByUserIdAsync(user.Id, true) == null))
 			{
 				request.Profile.UserId = user.Id;
 				// Department-issued identifiers never live on the global profile (they belong to member sensitive data).

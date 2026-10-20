@@ -42,11 +42,15 @@ namespace Resgrid.Services.Records
 				throw new ArgumentException("The contact does not exist in this department.");
 		}
 
-		/// <summary>The occupancy must be a live occupancy of this department.</summary>
+		/// <summary>
+		/// The occupancy must be a live, unmerged occupancy of this department. A merge moves alarm history to the survivor
+		/// once, so a row attached to the merged source afterwards would drop out of the survivor's counts and queue.
+		/// </summary>
 		public static async Task<RmsOccupancy> RequireOccupancyAsync(IRmsOccupanciesRepository occupancies, int departmentId, string occupancyId)
 		{
 			var occupancy = await occupancies.GetByIdForDepartmentAsync(departmentId, occupancyId);
 			if (occupancy == null || occupancy.DeletedOn != null) throw new ArgumentException("The occupancy does not exist.");
+			if (occupancy.Status == (int)RmsOccupancyStatus.Merged) throw new ArgumentException("The occupancy was merged; use the occupancy it was merged into.");
 			return occupancy;
 		}
 	}

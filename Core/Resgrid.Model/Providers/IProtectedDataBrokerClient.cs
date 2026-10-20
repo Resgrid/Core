@@ -18,8 +18,9 @@ namespace Resgrid.Model.Providers
 		bool IsConfigured { get; }
 
 		/// <summary>
-		/// Shallow broker liveness probe (GET /health) for the wizard preflight. False when the
-		/// broker is unconfigured, unreachable, or unhealthy — never throws.
+		/// Broker readiness probe (GET /health/ready) for the wizard preflight: the broker is up AND its
+		/// KMS and database are reachable. False when the broker is unconfigured, unreachable, or not
+		/// ready — never throws.
 		/// </summary>
 		Task<bool> IsHealthyAsync(CancellationToken cancellationToken = default);
 

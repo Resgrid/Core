@@ -68,6 +68,42 @@ namespace Resgrid.Tests.Providers
 			client.IsConfigured.Should().BeTrue();
 		}
 
+		private sealed class StatusHandler : HttpMessageHandler
+		{
+			private readonly System.Net.HttpStatusCode _status;
+			public string LastPath;
+
+			public StatusHandler(System.Net.HttpStatusCode status) => _status = status;
+
+			protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+			{
+				LastPath = request.RequestUri.AbsolutePath;
+				return Task.FromResult(new HttpResponseMessage(_status));
+			}
+		}
+
+		[Test]
+		public async Task Health_probe_asks_for_readiness_not_liveness()
+		{
+			// The wizard preflight must fail while the broker is up but its KMS or database is not.
+			DataProtectionConfig.BrokerBaseUrl = "https://broker.test:8443";
+			var handler = new StatusHandler(System.Net.HttpStatusCode.OK);
+			using var client = new ProtectedDataBrokerClient(handler, Moq.Mock.Of<Resgrid.Model.Repositories.IAdpAuditRepository>());
+
+			(await client.IsHealthyAsync()).Should().BeTrue();
+			handler.LastPath.Should().Be("/health/ready");
+		}
+
+		[Test]
+		public async Task Not_ready_broker_fails_the_health_probe()
+		{
+			DataProtectionConfig.BrokerBaseUrl = "https://broker.test:8443";
+			var handler = new StatusHandler(System.Net.HttpStatusCode.ServiceUnavailable);
+			using var client = new ProtectedDataBrokerClient(handler, Moq.Mock.Of<Resgrid.Model.Repositories.IAdpAuditRepository>());
+
+			(await client.IsHealthyAsync()).Should().BeFalse();
+		}
+
 		[Test]
 		public async Task Empty_broker_url_reads_as_unconfigured()
 		{

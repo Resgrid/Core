@@ -254,7 +254,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 						{
 							model.Activity.CallId = call.CallId;
 							model.Activity.Kind = (int)RmsCrrActivityKind.SmokeAlarmInstallation;
-							model.Activity.LocationText = call.Address;
+							if (!ProtectedDataEnvelope.HasEnvelopePrefix(call.Address))
+								model.Activity.LocationText = call.Address;
 							model.Activity.Title = Localizer["AlarmLeftDuringCall"].Value + " " + (string.IsNullOrWhiteSpace(call.Number) ? call.CallId.ToString() : call.Number);
 						}
 					}

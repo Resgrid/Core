@@ -8,10 +8,21 @@ using Resgrid.Model.Repositories;
 
 namespace Resgrid.Providers.ProtectedData
 {
-	/// <summary>Audits every broker-host KMS operation, including migration work outside the HTTP pipeline.</summary>
-	public sealed class AuditedKeyWrappingProvider(IKeyWrappingProvider inner, IAdpAuditRepository audit) : IKeyWrappingProvider
+	/// <summary>
+	/// Audits every broker-host KMS operation, including migration work outside the HTTP pipeline. Forwards the
+	/// status surface to the provider it wraps. Without that, the decorator hides the fail-closed placeholder from
+	/// the broker's startup check and from the migration engine's availability check.
+	/// </summary>
+	public sealed class AuditedKeyWrappingProvider(IKeyWrappingProvider inner, IAdpAuditRepository audit)
+		: IKeyWrappingProvider, IKeyWrappingProviderStatus
 	{
 		public string ProviderType => inner.ProviderType;
+
+		public bool IsConfigured => inner.IsKmsConfigured();
+
+		// Probes move no key material, so they are not audited.
+		public Task<KeyWrappingProviderHealth> CheckHealthAsync(CancellationToken cancellationToken = default) =>
+			inner.CheckKmsHealthAsync(cancellationToken);
 
 		public async Task<WrappedDataKey> GenerateWrappedDataKeyAsync(int departmentId, CancellationToken cancellationToken = default)
 		{

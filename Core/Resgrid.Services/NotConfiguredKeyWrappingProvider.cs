@@ -13,9 +13,14 @@ namespace Resgrid.Services
 	/// runs a real KMS adapter — Web/API/worker hosts land here by design). Every operation throws:
 	/// protected operations fail closed rather than degrading to a local or null crypto path.
 	/// </summary>
-	public class NotConfiguredKeyWrappingProvider : IKeyWrappingProvider
+	public class NotConfiguredKeyWrappingProvider : IKeyWrappingProvider, IKeyWrappingProviderStatus
 	{
 		public string ProviderType => DataProtectionConfig.KeyWrappingProviderType;
+
+		public bool IsConfigured => false;
+
+		public Task<KeyWrappingProviderHealth> CheckHealthAsync(CancellationToken cancellationToken = default) =>
+			Task.FromResult(KeyWrappingProviderHealth.Unhealthy("kms_not_configured"));
 
 		public Task<WrappedDataKey> GenerateWrappedDataKeyAsync(int departmentId, CancellationToken cancellationToken = default) =>
 			throw Fail();

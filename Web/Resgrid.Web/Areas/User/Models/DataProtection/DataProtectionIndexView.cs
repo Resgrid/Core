@@ -25,7 +25,7 @@ namespace Resgrid.Web.Areas.User.Models.DataProtection
 
 		public AdpEnrollmentPreflight Preflight { get; set; } = new AdpEnrollmentPreflight();
 
-		/// <summary>Shallow broker /health probe result (wizard preflight step 4).</summary>
+		/// <summary>Broker /health/ready probe result: broker, KMS and database reachable (wizard preflight step 4).</summary>
 		public bool BrokerHealthy { get; set; }
 
 		/// <summary>

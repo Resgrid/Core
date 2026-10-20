@@ -76,7 +76,10 @@ namespace Resgrid.Services.Records
 		{
 			await RequireAdminAsync(departmentId, userId);
 			if (input == null) throw new ArgumentNullException(nameof(input));
-			var existing = string.IsNullOrWhiteSpace(input.RmsCrrAlarmRequestId) ? null : await LiveAsync(departmentId, input.RmsCrrAlarmRequestId);
+			// A blank id creates a request. An id that no longer loads (deleted, or not this department's) is refused rather than
+			// saved as a new request, so an edit to a request removed meanwhile does not bring it back under a new number.
+			var existing = string.IsNullOrWhiteSpace(input.RmsCrrAlarmRequestId) ? null
+				: await LiveAsync(departmentId, input.RmsCrrAlarmRequestId) ?? throw new ArgumentException("The request does not exist.");
 			var isNew = existing == null;
 			if (!isNew)
 			{

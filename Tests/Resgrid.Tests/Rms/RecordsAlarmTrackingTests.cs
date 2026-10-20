@@ -295,6 +295,40 @@ namespace Resgrid.Tests.Rms
 		}
 
 		[Test]
+		public async Task An_activity_that_completed_a_request_keeps_an_alarm_and_the_request_occupancy()
+		{
+			var occupancy = _h.SeedOccupancy();
+			var other = _h.SeedOccupancy("Next door", "6 Elm St");
+			var request = await _h.AlarmRequestsService.SaveAsync(Dept, Admin, new RmsCrrAlarmRequest { RmsOccupancyId = occupancy.RmsOccupancyId, SmokeAlarmsRequested = 1 });
+			var done = await _h.AlarmRequestsService.CompleteAsync(Dept, Admin, new AlarmRequestCompletionInput { RequestId = request.RmsCrrAlarmRequestId, SmokeAlarmsInstalled = 1 });
+			var id = done.Activity.RmsCrrActivityId;
+
+			Func<Task> none = () => _h.CrrService.SaveAsync(Dept, Admin, new RmsCrrActivity { RmsCrrActivityId = id, Title = "Alarm visit", RmsOccupancyId = occupancy.RmsOccupancyId });
+			Func<Task> moved = () => _h.CrrService.SaveAsync(Dept, Admin, new RmsCrrActivity { RmsCrrActivityId = id, Title = "Alarm visit", RmsOccupancyId = other.RmsOccupancyId, SmokeAlarmsInstalled = 1 });
+			await none.Should().ThrowAsync<ArgumentException>();
+			await moved.Should().ThrowAsync<InvalidOperationException>();
+			done.Activity.SmokeAlarmsInstalled.Should().Be(1);
+			done.Activity.RmsOccupancyId.Should().Be(occupancy.RmsOccupancyId);
+
+			var corrected = await _h.CrrService.SaveAsync(Dept, Admin, new RmsCrrActivity { RmsCrrActivityId = id, Title = "Alarm visit", RmsOccupancyId = occupancy.RmsOccupancyId, ComboAlarmsInstalled = 2 });
+			corrected.AlarmsInstalledTotal().Should().Be(2);
+			request.Status.Should().Be((int)RmsAlarmRequestStatus.Completed);
+		}
+
+		[Test]
+		public async Task Saving_a_request_id_that_does_not_load_is_refused_instead_of_creating_one()
+		{
+			var request = await OpenRequestAsync();
+			await _h.AlarmRequestsService.DeleteAsync(Dept, Admin, request.RmsCrrAlarmRequestId);
+
+			Func<Task> deleted = () => _h.AlarmRequestsService.SaveAsync(Dept, Admin, new RmsCrrAlarmRequest { RmsCrrAlarmRequestId = request.RmsCrrAlarmRequestId, LocationText = "4 Elm St" });
+			Func<Task> unknown = () => _h.AlarmRequestsService.SaveAsync(Dept, Admin, new RmsCrrAlarmRequest { RmsCrrAlarmRequestId = Guid.NewGuid().ToString(), LocationText = "4 Elm St" });
+			await deleted.Should().ThrowAsync<ArgumentException>();
+			await unknown.Should().ThrowAsync<ArgumentException>();
+			_h.AlarmRequests.Rows.Should().ContainSingle();
+		}
+
+		[Test]
 		public async Task Open_and_declined_requests_can_be_deleted()
 		{
 			var request = await OpenRequestAsync();
@@ -334,6 +368,21 @@ namespace Resgrid.Tests.Rms
 			request.RmsOccupancyId.Should().Be(survivor.RmsOccupancyId);
 			(await _h.CrrService.GetForOccupancyAsync(Dept, Member, survivor.RmsOccupancyId)).Should().ContainSingle();
 			(await _h.AlarmRequestsService.GetForOccupancyAsync(Dept, Member, survivor.RmsOccupancyId)).Should().ContainSingle();
+		}
+
+		[Test]
+		public async Task A_merged_occupancy_takes_no_new_alarm_activity_or_request()
+		{
+			var source = _h.SeedOccupancy("Old record", "5 Mill Ln");
+			var survivor = _h.SeedOccupancy("Mill Lane house", "5 Mill Lane");
+			await _h.OccupancyService.MergeAsync(Dept, Admin, source.RmsOccupancyId, survivor.RmsOccupancyId);
+
+			Func<Task> activity = () => _h.CrrService.SaveAsync(Dept, Admin, new RmsCrrActivity { Title = "Alarm visit", RmsOccupancyId = source.RmsOccupancyId, SmokeAlarmsInstalled = 1 });
+			Func<Task> request = () => _h.AlarmRequestsService.SaveAsync(Dept, Admin, new RmsCrrAlarmRequest { RmsOccupancyId = source.RmsOccupancyId, CoAlarmsRequested = 1 });
+			await activity.Should().ThrowAsync<ArgumentException>();
+			await request.Should().ThrowAsync<ArgumentException>();
+			_h.Crr.Rows.Should().BeEmpty();
+			_h.AlarmRequests.Rows.Should().BeEmpty();
 		}
 	}
 }

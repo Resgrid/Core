@@ -63,6 +63,18 @@ namespace Resgrid.Services.Records
 			var entity = string.IsNullOrWhiteSpace(input.RmsCrrActivityId) ? null : await _activities.GetByIdForDepartmentAsync(departmentId, input.RmsCrrActivityId);
 			if (entity != null && entity.DeletedOn != null) entity = null;
 			var isNew = entity == null;
+			var smoke = CrrAlarmRules.Units(input.SmokeAlarmsInstalled, "Smoke alarms");
+			var co = CrrAlarmRules.Units(input.CoAlarmsInstalled, "CO alarms");
+			var combo = CrrAlarmRules.Units(input.ComboAlarmsInstalled, "Combination alarms");
+			// An activity that completed an alarm request is the record of that visit: it stays under the request's occupancy and
+			// keeps at least one unit, or the request would read as served with nothing counted. Deleting it reopens the request.
+			if (!isNew && !string.IsNullOrWhiteSpace(entity.RmsCrrAlarmRequestId))
+			{
+				if (!string.Equals(RecordsPreventionGate.Trim(input.RmsOccupancyId, 36), entity.RmsOccupancyId, StringComparison.Ordinal))
+					throw new InvalidOperationException("This activity completed an alarm request and stays under that request's occupancy; delete the activity to reopen the request instead.");
+				if (smoke + co + combo == 0)
+					throw new ArgumentException("This activity completed an alarm request; keep at least one alarm, or delete the activity to reopen the request.");
+			}
 			// A call link is checked when it is set or changed; one the user can no longer see stays as it was.
 			if (input.CallId.HasValue && (isNew || entity.CallId != input.CallId))
 				await CrrAlarmRules.RequireCallAsync(_calls, _authorization, departmentId, userId, input.CallId.Value);
@@ -73,9 +85,7 @@ namespace Resgrid.Services.Records
 			entity.Description = RecordsPreventionGate.Trim(input.Description, 4000); entity.RmsOccupancyId = RecordsPreventionGate.Trim(input.RmsOccupancyId, 36);
 			entity.LocationText = RecordsPreventionGate.Trim(input.LocationText, 500); entity.Latitude = input.Latitude; entity.Longitude = input.Longitude;
 			entity.AudienceCount = Math.Max(0, input.AudienceCount); entity.HoursSpent = Math.Max(0, input.HoursSpent);
-			entity.SmokeAlarmsInstalled = CrrAlarmRules.Units(input.SmokeAlarmsInstalled, "Smoke alarms");
-			entity.CoAlarmsInstalled = CrrAlarmRules.Units(input.CoAlarmsInstalled, "CO alarms");
-			entity.ComboAlarmsInstalled = CrrAlarmRules.Units(input.ComboAlarmsInstalled, "Combination alarms");
+			entity.SmokeAlarmsInstalled = smoke; entity.CoAlarmsInstalled = co; entity.ComboAlarmsInstalled = combo;
 			entity.AlarmReason = entity.AlarmsInstalledTotal() == 0 ? (int)RmsAlarmReason.Unspecified : CrrAlarmRules.Reason(input.AlarmReason);
 			entity.CallId = input.CallId;
 			entity.StaffUserIdsCsv = RecordsPreventionGate.Trim(input.StaffUserIdsCsv, 4000); entity.Outcome = RecordsPreventionGate.Trim(input.Outcome, 4000); entity.NerisSecondaryJson = RecordsPreventionGate.Trim(input.NerisSecondaryJson, 8000);

@@ -128,7 +128,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 						{
 							model.Request.CallId = call.CallId;
 							model.Request.Source = (int)RmsAlarmRequestSource.DuringCall;
-							model.Request.LocationText = call.Address;
+							// An enveloped address would be stored and shown as an unusable location; leave it for the user to enter.
+							if (!ProtectedDataEnvelope.HasEnvelopePrefix(call.Address))
+								model.Request.LocationText = call.Address;
 						}
 					}
 				}
@@ -158,6 +160,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (failure != null) return failure;
 				Prepare(model);
 				model.ErrorMessage = TempData["RecordsError"] as string;
+				// The form does not post the number; the title and the Cancel link show it.
+				if (!model.IsNew)
+					model.Request.RequestNumber = (await _requests.GetAsync(DepartmentId, UserId, model.Request.RmsCrrAlarmRequestId))?.RequestNumber;
 				await PopulateEditAsync(model);
 				return View(model);
 			}

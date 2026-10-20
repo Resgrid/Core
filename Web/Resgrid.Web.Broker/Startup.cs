@@ -6,6 +6,7 @@ using Autofac.Extensions.DependencyInjection;
 using Autofac.Extras.CommonServiceLocator;
 using CommonServiceLocator;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -71,7 +72,9 @@ namespace Resgrid.Web.Broker
 
 			services.AddControllers();
 			services.AddMemoryCache();
-			services.AddHealthChecks();
+			// /health is liveness (process up, runs no checks); /health/ready adds the KMS and database (see Configure).
+			services.AddHealthChecks()
+				.AddCheck<BrokerReadinessHealthCheck>("kms-and-database", tags: new[] { BrokerReadinessHealthCheck.ReadyTag });
 			services.AddHostedService<AdpMigrationSweepService>();
 		}
 
@@ -121,13 +124,22 @@ namespace Resgrid.Web.Broker
 
 			app.UseRouting();
 
-			// Per-host credential gate for every broker API call; /health stays open for k8s probes.
+			// Per-host credential gate for every broker API call; /health and /health/ready stay open for k8s probes.
 			app.UseMiddleware<Middleware.BrokerCredentialMiddleware>();
 
 			app.UseEndpoints(endpoints =>
 			{
 				endpoints.MapControllers();
-				endpoints.MapHealthChecks("/health");
+
+				// Liveness: restart only a dead process, never because the KMS is down.
+				endpoints.MapHealthChecks("/health", new HealthCheckOptions { Predicate = _ => false });
+
+				// Readiness: the KMS and database are reachable. Used by the kubelet readiness probe and the
+				// enrollment wizard's broker preflight.
+				endpoints.MapHealthChecks("/health/ready", new HealthCheckOptions
+				{
+					Predicate = check => check.Tags.Contains(BrokerReadinessHealthCheck.ReadyTag)
+				});
 			});
 		}
 
@@ -140,8 +152,9 @@ namespace Resgrid.Web.Broker
 		/// </summary>
 		private void ValidateCryptoConfiguration()
 		{
+			// Resolves to the audit decorator, so ask the provider; a type check never sees the placeholder inside it.
 			var keyWrappingProvider = AutofacContainer.Resolve<IKeyWrappingProvider>();
-			if (keyWrappingProvider is NotConfiguredKeyWrappingProvider)
+			if (!keyWrappingProvider.IsKmsConfigured())
 				throw new InvalidOperationException(
 					$"The Protected Data Broker has no usable key wrapping provider (configured type: '{DataProtectionConfig.KeyWrappingProviderType}'). Configure OpenBaoTransit (production) or LocalDev (synthetic testing only).");
 

@@ -86,7 +86,7 @@ namespace Resgrid.Services
 				return NoSuggestions;
 
 			var target = AiDecisionSettings.Resolve(AiConfig.DecisionProvider, AiConfig.DecisionEndpoint, AiConfig.AllowPrivateEndpoint, AiConfig.DecisionApiKey,
-				AiConfig.DecisionModel, AiConfig.DecisionModelRevision, AiConfig.DecisionRuntimeDigest);
+				AiConfig.DecisionModel, AiConfig.DecisionModelRevision, AiConfig.DecisionRuntimeDigest, AiConfig.DecisionGatewayId);
 			if (target == null || !await _enhancedAi.CanUseAsync(departmentId, CapabilityFlag))
 				return NoSuggestions;
 

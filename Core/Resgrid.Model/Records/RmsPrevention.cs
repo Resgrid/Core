@@ -114,6 +114,48 @@ namespace Resgrid.Model
 		Other = 7
 	}
 
+	/// <summary>Why a smoke or CO alarm was left, on a CRR activity and on the request that led to it. Persisted; append only.</summary>
+	public enum RmsAlarmReason
+	{
+		Unspecified = 0,
+		Faulty = 1,
+		Missing = 2,
+		Expired = 3,
+		LowBattery = 4,
+		NewInstall = 5,
+		Other = 6
+	}
+
+	/// <summary>Alarm request queue state: Open until an activity is recorded (Completed) or the department declines it.</summary>
+	public enum RmsAlarmRequestStatus
+	{
+		Open = 1,
+		Completed = 2,
+		Declined = 3
+	}
+
+	/// <summary>How an alarm request reached the department. Persisted; append only.</summary>
+	public enum RmsAlarmRequestSource
+	{
+		Phone = 1,
+		WalkIn = 2,
+		DuringCall = 3,
+		Online = 4,
+		Referral = 5,
+		Other = 6
+	}
+
+	/// <summary>Why an alarm request was declined. Persisted; append only.</summary>
+	public enum RmsAlarmRequestDeclineReason
+	{
+		None = 0,
+		UnableToContact = 1,
+		ResidentDeclined = 2,
+		NotEligible = 3,
+		Duplicate = 4,
+		Other = 5
+	}
+
 	/// <summary>Parent aggregate of a prevention attachment.</summary>
 	public enum RmsPreventionParentKind
 	{
@@ -136,6 +178,7 @@ namespace Resgrid.Model
 		public const string Permit = "PRM";
 		public const string Investigation = "INV";
 		public const string Evidence = "EV";
+		public const string AlarmRequest = "ALM";
 	}
 
 	/// <summary>An adopted code set (e.g. IFC 2021 with local amendments).</summary>
@@ -527,7 +570,17 @@ namespace Resgrid.Model
 		public decimal? Latitude { get; set; }
 		public decimal? Longitude { get; set; }
 		public int AudienceCount { get; set; }
+		/// <summary>Smoke-only alarm units left (M0186). CO-only and combination units are counted separately (M0284).</summary>
 		public int SmokeAlarmsInstalled { get; set; }
+		public int CoAlarmsInstalled { get; set; }
+		/// <summary>Combination smoke and CO units.</summary>
+		public int ComboAlarmsInstalled { get; set; }
+		/// <summary><see cref="RmsAlarmReason"/>; Unspecified when no alarm was left.</summary>
+		public int AlarmReason { get; set; }
+		/// <summary>The call during which the units were left, when any.</summary>
+		public int? CallId { get; set; }
+		/// <summary>The alarm request this activity completed, when any.</summary>
+		public string RmsCrrAlarmRequestId { get; set; }
 		public decimal HoursSpent { get; set; }
 		/// <summary>Department members who staffed the activity, comma separated user ids.</summary>
 		public string StaffUserIdsCsv { get; set; }
@@ -540,9 +593,72 @@ namespace Resgrid.Model
 		public long RowVersion { get; set; }
 		public DateTime? DeletedOn { get; set; }
 
+		/// <summary>Every alarm unit left: smoke, CO and combination.</summary>
+		public int AlarmsInstalledTotal() => SmokeAlarmsInstalled + CoAlarmsInstalled + ComboAlarmsInstalled;
+
 		public object IdValue { get => RmsCrrActivityId; set => RmsCrrActivityId = (string)value; }
 		public string TableName => "RmsCrrActivities";
 		public string IdName => "RmsCrrActivityId";
+		public int IdType => 1;
+		public IEnumerable<string> IgnoredProperties => new[] { "IdValue", "IdType", "TableName", "IdName" };
+	}
+
+	/// <summary>
+	/// A request for a smoke or CO alarm (M0284): a resident reports a faulty, missing or expired alarm and the department
+	/// visits later, or a crew finds one during a call. Open until completing it records a CRR activity with the units left,
+	/// or the department declines it. The resident is a Contact reference only; the row stores no name, phone or other
+	/// identity, so it stays outside the ADP catalog like the activity it produces.
+	/// </summary>
+	public class RmsCrrAlarmRequest : IEntity
+	{
+		public string RmsCrrAlarmRequestId { get; set; }
+		public int DepartmentId { get; set; }
+		public string ProtectionId { get; set; }
+		/// <summary>Department-facing number, ALM-{year}-{sequence}.</summary>
+		public string RequestNumber { get; set; }
+		/// <summary><see cref="RmsAlarmRequestStatus"/>.</summary>
+		public int Status { get; set; }
+		/// <summary><see cref="RmsAlarmRequestSource"/>.</summary>
+		public int Source { get; set; }
+		/// <summary><see cref="RmsAlarmReason"/>.</summary>
+		public int Reason { get; set; }
+		public DateTime RequestedOn { get; set; }
+		public int SmokeAlarmsRequested { get; set; }
+		public int CoAlarmsRequested { get; set; }
+		public int ComboAlarmsRequested { get; set; }
+		public string RmsOccupancyId { get; set; }
+		public string LocationText { get; set; }
+		public decimal? Latitude { get; set; }
+		public decimal? Longitude { get; set; }
+		/// <summary>The resident or caller as a department Contact; their identity lives (and is protected) there.</summary>
+		public string RequesterContactId { get; set; }
+		/// <summary>The call the request came from, when any.</summary>
+		public int? CallId { get; set; }
+		/// <summary>Operational notes (where the alarm is, access); not for personal details.</summary>
+		public string Notes { get; set; }
+		public DateTime? ScheduledFor { get; set; }
+		public string AssignedToUserId { get; set; }
+		/// <summary>When the request was completed or declined.</summary>
+		public DateTime? ClosedOn { get; set; }
+		public string ClosedByUserId { get; set; }
+		/// <summary><see cref="RmsAlarmRequestDeclineReason"/>; None unless declined.</summary>
+		public int DeclineReason { get; set; }
+		public string ResolutionNotes { get; set; }
+		/// <summary>The CRR activity that completed the request.</summary>
+		public string RmsCrrActivityId { get; set; }
+		public DateTime CreatedOn { get; set; }
+		public string CreatedByUserId { get; set; }
+		public DateTime ModifiedOn { get; set; }
+		public string ModifiedByUserId { get; set; }
+		public long RowVersion { get; set; }
+		public DateTime? DeletedOn { get; set; }
+
+		public bool IsOpen() => Status == (int)RmsAlarmRequestStatus.Open;
+		public int AlarmsRequestedTotal() => SmokeAlarmsRequested + CoAlarmsRequested + ComboAlarmsRequested;
+
+		public object IdValue { get => RmsCrrAlarmRequestId; set => RmsCrrAlarmRequestId = (string)value; }
+		public string TableName => "RmsCrrAlarmRequests";
+		public string IdName => "RmsCrrAlarmRequestId";
 		public int IdType => 1;
 		public IEnumerable<string> IgnoredProperties => new[] { "IdValue", "IdType", "TableName", "IdName" };
 	}

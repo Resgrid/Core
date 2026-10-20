@@ -1,0 +1,66 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Records
+@model RecordAlarmRequestEditView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
+@{
+	var departmentTime = DepartmentTime.From(ViewData);
+	var title = Model.IsNew ? L["NewAlarmRequest"].Value : L["Edit"].Value + ": " + Model.Request.RequestNumber;
+	ViewBag.Title = "Resgrid | " + title;
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@title</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@L["RecordsHeader"]</a></li>
+			<li><a asp-controller="RecordAlarmRequests" asp-action="Index" asp-route-area="User">@L["AlarmRequests"]</a></li>
+			<li class="active"><strong>@title</strong></li>
+		</ol>
+	</div>
+</div>
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+	<div class="ibox"><div class="ibox-content">
+		<form method="post" class="form-horizontal" asp-controller="RecordAlarmRequests" asp-action="Edit" asp-route-area="User">
+			@Html.AntiForgeryToken()
+			<input type="hidden" asp-for="Request.RmsCrrAlarmRequestId" /><input type="hidden" asp-for="Request.RowVersion" />
+			<div class="form-group"><label class="col-sm-3 control-label" for="requestedOn">@L["RequestedOn"]</label><div class="col-sm-9"><input type="date" class="form-control" id="requestedOn" name="requestedOn" value="@departmentTime.Date(Model.Request.RequestedOn)" required /></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label" for="Request_Source">@L["Source"]</label><div class="col-sm-9"><select class="form-control" asp-for="Request.Source" asp-items="Model.Sources"></select></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label" for="Request_Reason">@L["AlarmReason"]</label><div class="col-sm-9"><select class="form-control" asp-for="Request.Reason" asp-items="Model.Reasons"></select></div></div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">@L["AlarmsRequested"]</label>
+				<div class="col-sm-9">
+					<div class="row" style="display:flex;flex-wrap:wrap;align-items:flex-end">
+						<div class="col-sm-4"><label class="control-label" for="Request_SmokeAlarmsRequested">@L["SmokeOnlyAlarms"]</label><input class="form-control" type="number" min="0" max="10000" asp-for="Request.SmokeAlarmsRequested" /></div>
+						<div class="col-sm-4"><label class="control-label" for="Request_CoAlarmsRequested">@L["CoAlarms"]</label><input class="form-control" type="number" min="0" max="10000" asp-for="Request.CoAlarmsRequested" /></div>
+						<div class="col-sm-4"><label class="control-label" for="Request_ComboAlarmsRequested">@L["ComboAlarms"]</label><input class="form-control" type="number" min="0" max="10000" asp-for="Request.ComboAlarmsRequested" /></div>
+					</div>
+					<span class="help-block">@L["AlarmsRequestedHelp"]</span>
+				</div>
+			</div>
+			<div class="form-group"><label class="col-sm-3 control-label" for="Request_RmsOccupancyId">@L["Occupancies"]</label><div class="col-sm-9"><select class="form-control" asp-for="Request.RmsOccupancyId" asp-items="Model.Occupancies"></select></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label" for="Request_LocationText">@L["Location"]</label><div class="col-sm-9"><input class="form-control" asp-for="Request.LocationText" maxlength="500" /><span class="help-block">@L["AlarmLocationHelp"]</span></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label">@L["Coordinates"]</label><div class="col-sm-4"><input class="form-control" asp-for="Request.Latitude" aria-label="@L["Coordinates"]" /></div><div class="col-sm-5"><input class="form-control" asp-for="Request.Longitude" aria-label="@L["Coordinates"]" /></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label" for="Request_RequesterContactId">@L["AlarmRequester"]</label><div class="col-sm-9"><select class="form-control" asp-for="Request.RequesterContactId" asp-items="Model.Contacts"></select><span class="help-block">@L["RequesterHelp"]</span></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label" for="CallId">@L["Call"]</label><div class="col-sm-9"><partial name="_RecordCallPicker" model="Model.Request.CallId" /></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label" for="scheduledFor">@L["ScheduledFor"]</label><div class="col-sm-9"><input type="date" class="form-control" id="scheduledFor" name="scheduledFor" value="@departmentTime.Date(Model.Request.ScheduledFor)" /></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label" for="Request_AssignedToUserId">@L["AssignedTo"]</label><div class="col-sm-9"><select class="form-control" asp-for="Request.AssignedToUserId" asp-items="Model.Members"></select></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label" for="Request_Notes">@L["AlarmRequestNotes"]</label><div class="col-sm-9"><textarea class="form-control" asp-for="Request.Notes" rows="3" maxlength="4000"></textarea><span class="help-block">@L["AlarmRequestNotesHelp"]</span></div></div>
+			<div class="form-group"><div class="col-sm-offset-3 col-sm-9">
+				<button class="btn btn-primary"><i class="fa fa-save"></i> @L["Save"]</button>
+				@if (Model.IsNew)
+				{
+					<a class="btn btn-default" asp-controller="RecordAlarmRequests" asp-action="Index" asp-route-area="User">@L["AlarmRequests"]</a>
+				}
+				else
+				{
+					<a class="btn btn-default" asp-controller="RecordAlarmRequests" asp-action="Details" asp-route-area="User" asp-route-id="@Model.Request.RmsCrrAlarmRequestId">@Model.Request.RequestNumber</a>
+				}
+			</div></div>
+		</form>
+	</div></div>
+</div>
+
+@section Scripts {
+	<script src="~/js/record-call-picker.js" asp-append-version="true"></script>
+}

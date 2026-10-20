@@ -35,12 +35,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly ICallsService _calls;
 		private readonly IDepartmentsService _departments;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.LocationHistory> _historyLocalizer;
+		private readonly IRecordsCrrService _crr;
+		private readonly IRecordsAlarmRequestsService _alarmRequests;
 
 		public RecordOccupanciesController(IRecordsOccupancyService occupancies, IRecordsInspectionsService inspections, IRecordsPermitsService permits, IRecordsHydrantsService hydrants,
 			IRecordsPreventionAttachmentsService attachments, IContactsService contacts, IRecordsCutoverService cutover, IFeatureToggleService featureToggles,
 			IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer, ICallLocationHistoryService callLocationHistory, ICallsService calls,
-			IDepartmentsService departments, IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.LocationHistory> historyLocalizer) : base(cutover, featureToggles, localizer)
+			IDepartmentsService departments, IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.LocationHistory> historyLocalizer, IRecordsCrrService crr,
+			IRecordsAlarmRequestsService alarmRequests) : base(cutover, featureToggles, localizer)
 		{
+			_crr = crr;
+			_alarmRequests = alarmRequests;
 			_callLocationHistory = callLocationHistory;
 			_calls = calls;
 			_departments = departments;
@@ -94,6 +99,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 					model.Programs = (await _inspections.GetProgramsAsync(DepartmentId, UserId, false)).Select(p => new SelectListItem { Value = p.RmsInspectionProgramId, Text = p.Name }).ToList();
 				}
 				if (model.PermitsOn) model.Permits = await _permits.ListAsync(DepartmentId, UserId, new RmsPermitQuery { OccupancyId = id, Take = 25 });
+				model.CrrOn = await FlagAsync(FeatureFlagKeys.RecordsPreventionCrr);
+				if (model.CrrOn)
+				{
+					try
+					{
+						model.AlarmActivities = await _crr.GetForOccupancyAsync(DepartmentId, UserId, id);
+						model.AlarmRequests = await _alarmRequests.GetForOccupancyAsync(DepartmentId, UserId, id);
+					}
+					catch (RecordsModuleDisabledException) { model.CrrOn = false; }
+				}
 				model.Attachments = await _attachments.GetMetadataAsync(DepartmentId, UserId, RmsPreventionParentKind.Occupancy, id);
 				return View(model);
 			}

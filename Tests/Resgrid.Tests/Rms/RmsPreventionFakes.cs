@@ -222,6 +222,23 @@ namespace Resgrid.Tests.Rms
 		public Task<IEnumerable<RmsCrrActivity>> GetForOccupancyAsync(int departmentId, string occupancyId) => Task.FromResult<IEnumerable<RmsCrrActivity>>(Live(departmentId).Where(a => a.RmsOccupancyId == occupancyId).ToList());
 	}
 
+	public class FakeAlarmRequests : InMemoryRepo<RmsCrrAlarmRequest>, IRmsCrrAlarmRequestsRepository
+	{
+		/// <summary>Makes the next row-version claim fail, as when another change committed first.</summary>
+		public bool RefuseNextClaim { get; set; }
+		public Task<RmsCrrAlarmRequest> GetByIdForDepartmentAsync(int departmentId, string requestId) => Task.FromResult(Rows.FirstOrDefault(r => r.DepartmentId == departmentId && r.RmsCrrAlarmRequestId == requestId));
+		private IEnumerable<RmsCrrAlarmRequest> Filter(int departmentId, RmsAlarmRequestQuery q) => Live(departmentId).Where(r => (q.Statuses == null || q.Statuses.Count == 0 || q.Statuses.Contains(r.Status)) && (q.OccupancyId == null || r.RmsOccupancyId == q.OccupancyId) && (q.AssignedToUserId == null || r.AssignedToUserId == q.AssignedToUserId) && (!q.RequestedFrom.HasValue || r.RequestedOn >= q.RequestedFrom) && (!q.RequestedBefore.HasValue || r.RequestedOn < q.RequestedBefore));
+		public Task<IEnumerable<RmsCrrAlarmRequest>> QueryAsync(int departmentId, RmsAlarmRequestQuery query) { query ??= new RmsAlarmRequestQuery(); var rows = Filter(departmentId, query); rows = query.OldestFirst ? rows.OrderBy(r => r.RequestedOn) : rows.OrderByDescending(r => r.RequestedOn); return Task.FromResult<IEnumerable<RmsCrrAlarmRequest>>(rows.Skip(query.Skip).Take(query.Take).ToList()); }
+		public Task<int> CountAsync(int departmentId, RmsAlarmRequestQuery query) => Task.FromResult(Filter(departmentId, query ?? new RmsAlarmRequestQuery()).Count());
+		public Task<IEnumerable<RmsCrrAlarmRequest>> GetForOccupancyAsync(int departmentId, string occupancyId) => Task.FromResult<IEnumerable<RmsCrrAlarmRequest>>(Live(departmentId).Where(r => r.RmsOccupancyId == occupancyId).ToList());
+		public Task<bool> TryBumpRowVersionAsync(int departmentId, string requestId, long expectedVersion, CancellationToken cancellationToken = default)
+		{
+			if (RefuseNextClaim) { RefuseNextClaim = false; return Task.FromResult(false); }
+			var row = Rows.FirstOrDefault(r => r.DepartmentId == departmentId && r.RmsCrrAlarmRequestId == requestId);
+			return Task.FromResult(row != null && row.RowVersion == expectedVersion);
+		}
+	}
+
 	public class FakePreventionAttachments : InMemoryRepo<RmsPreventionAttachment>, IRmsPreventionAttachmentsRepository
 	{
 		public Task<RmsPreventionAttachment> GetByIdForDepartmentAsync(int departmentId, string attachmentId) => Task.FromResult(Rows.FirstOrDefault(a => a.DepartmentId == departmentId && a.RmsPreventionAttachmentId == attachmentId));
@@ -368,6 +385,8 @@ namespace Resgrid.Tests.Rms
 		public FakePermits Permits { get; } = new FakePermits();
 		public FakePlanReviews PlanReviews { get; } = new FakePlanReviews();
 		public FakeCrr Crr { get; } = new FakeCrr();
+		public FakeAlarmRequests AlarmRequests { get; } = new FakeAlarmRequests();
+		public Mock<ICallsRepository> Calls { get; } = new Mock<ICallsRepository>();
 		public FakePreventionAttachments Attachments { get; } = new FakePreventionAttachments();
 		public FakeCases Cases { get; } = new FakeCases();
 		public FakeCaseIncidents CaseIncidents { get; } = new FakeCaseIncidents();
@@ -385,6 +404,7 @@ namespace Resgrid.Tests.Rms
 		public RecordsHydrantsService HydrantsService { get; }
 		public RecordsPermitsService PermitsService { get; }
 		public RecordsCrrService CrrService { get; }
+		public RecordsAlarmRequestsService AlarmRequestsService { get; }
 		public RecordsPreventionAttachmentsService AttachmentsService { get; }
 		public RecordsInvestigationsService InvestigationsService { get; }
 		public RecordsQualityReviewService QualityService { get; }
@@ -419,11 +439,12 @@ namespace Resgrid.Tests.Rms
 			};
 			var numbering = new Resgrid.Services.DocumentNumberingService(numberingSettings.Object, Departments.Object, DocumentSequences);
 			Gate = new RecordsPreventionGate(Cutover.Object, Flags.Object, Authorization.Object, Sequences, Audits, numbering);
-			OccupancyService = new RecordsOccupancyService(Gate, Occupancies, Links, Hazards, Crosswalks, Provenance, Ownerships, Violations, Hydrants, ContactPreplans.Object, ContactHazards.Object, Contacts.Object, Addresses.Object, Pois.Object, PoiTypes.Object, ProtectedReads.Object, Grant.Object, Protection, UnitOfWork.Object);
+			OccupancyService = new RecordsOccupancyService(Gate, Occupancies, Links, Hazards, Crosswalks, Provenance, Ownerships, Violations, Hydrants, ContactPreplans.Object, ContactHazards.Object, Contacts.Object, Addresses.Object, Pois.Object, PoiTypes.Object, ProtectedReads.Object, Grant.Object, Protection, UnitOfWork.Object, Crr, AlarmRequests);
 			InspectionsService = new RecordsInspectionsService(Gate, CodeSets, CodeSections, Programs, Inspections, Violations, Occupancies, Attachments, Protection, Outbox, UnitOfWork.Object);
 			HydrantsService = new RecordsHydrantsService(Gate, Hydrants, FlowTests, Maintenance, Attachments, UnitOfWork.Object);
 			PermitsService = new RecordsPermitsService(Gate, PermitTypes, Permits, PlanReviews, Occupancies, Attachments, Protection, Outbox, UnitOfWork.Object);
-			CrrService = new RecordsCrrService(Gate, Crr, Occupancies);
+			CrrService = new RecordsCrrService(Gate, Crr, AlarmRequests, Occupancies, Calls.Object, Authorization.Object, UnitOfWork.Object);
+			AlarmRequestsService = new RecordsAlarmRequestsService(Gate, AlarmRequests, Crr, Occupancies, Contacts.Object, Calls.Object, Authorization.Object, UnitOfWork.Object);
 			AttachmentsService = new RecordsPreventionAttachmentsService(Gate, Attachments, CaseMembers, Evidence, Scanner.Object, Protection);
 			InvestigationsService = new RecordsInvestigationsService(Gate, Cases, CaseIncidents, CaseMembers, CaseNotes, Evidence, Custody, Referrals, Attachments, Reports.Object, Audits, Authorization.Object, Protection, UnitOfWork.Object);
 			QualityService = new RecordsQualityReviewService(Gate, Rubrics, QualityReviews, Records.Object, Units.Object, Authorization.Object, Protection, Audits);

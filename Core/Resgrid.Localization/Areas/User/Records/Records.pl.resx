@@ -2197,4 +2197,59 @@
   <data name="NerisWorkflowsOffNotice" xml:space="preserve"><value>Procesy NERIS są wyłączone dla tej jednostki. Raporty ze zdarzeń są przechowywane jako rejestry jednostki i nie są walidowane według NERIS ani do niego przesyłane. Administrator może ponownie włączyć NERIS w ustawieniach Rejestrów.</value></data>
   <data name="ManageNerisProfile" xml:space="preserve"><value>Profil NERIS i mapowania kodów</value></data>
   <data name="CorrectWithoutNeris" xml:space="preserve"><value>Zapisz korektę (bez przesyłania do NERIS)</value></data>
+  <data name="AlarmsLeft" xml:space="preserve"><value>Pozostawione czujki</value></data>
+  <data name="AlarmsLeftHelp" xml:space="preserve"><value>Policz każde pozostawione urządzenie: tylko dym, tylko tlenek węgla (CO) lub czujka łączona dymu i CO.</value></data>
+  <data name="SmokeOnlyAlarms" xml:space="preserve"><value>Tylko dym</value></data>
+  <data name="CoAlarms" xml:space="preserve"><value>Tylko CO</value></data>
+  <data name="ComboAlarms" xml:space="preserve"><value>Łączona (dym + CO)</value></data>
+  <data name="AlarmReason" xml:space="preserve"><value>Powód czujki</value></data>
+  <data name="AlarmCallHelp" xml:space="preserve"><value>Zgłoszenie, podczas którego pozostawiono czujkę, jeśli dotyczy.</value></data>
+  <data name="AlarmLeftDuringCall" xml:space="preserve"><value>Czujka pozostawiona podczas zgłoszenia</value></data>
+  <data name="CompletesAlarmRequest" xml:space="preserve"><value>Ta aktywność zakończyła wniosek o czujkę</value></data>
+  <data name="AlarmRequests" xml:space="preserve"><value>Wnioski o czujki</value></data>
+  <data name="AlarmRequest" xml:space="preserve"><value>Wniosek o czujkę</value></data>
+  <data name="ThisYear" xml:space="preserve"><value>Ten rok</value></data>
+  <data name="LastYear" xml:space="preserve"><value>Zeszły rok</value></data>
+  <data name="AlarmsColumnHelp" xml:space="preserve"><value>Łącznie pozostawionych urządzeń (tylko dym / tylko CO / łączone)</value></data>
+  <data name="AlarmsInstalledTotal" xml:space="preserve"><value>Pozostawione czujki (wszystkie rodzaje)</value></data>
+  <data name="AlarmVisits" xml:space="preserve"><value>Obsłużone domy i obiekty</value></data>
+  <data name="OpenAlarmRequests" xml:space="preserve"><value>Otwarte wnioski o czujki</value></data>
+  <data name="AlarmsByReason" xml:space="preserve"><value>Czujki według powodu</value></data>
+  <data name="AlarmsByType" xml:space="preserve"><value>Czujki według rodzaju</value></data>
+  <data name="AlarmsByMonth" xml:space="preserve"><value>Pozostawione czujki według miesiąca</value></data>
+  <data name="NewAlarmRequest" xml:space="preserve"><value>Nowy wniosek o czujkę</value></data>
+  <data name="AlarmRequestsHelp" xml:space="preserve"><value>Wnioski o czujki dymu i CO, na przykład gdy mieszkaniec zgłasza uszkodzoną lub brakującą czujkę. Zakończenie wniosku rejestruje pozostawione czujki, które wliczają się do sum rocznych.</value></data>
+  <data name="AllStatuses" xml:space="preserve"><value>Wszystkie stany</value></data>
+  <data name="AssignedToMe" xml:space="preserve"><value>Przypisane do mnie</value></data>
+  <data name="NoAlarmRequests" xml:space="preserve"><value>Żaden wniosek o czujkę nie pasuje do filtra.</value></data>
+  <data name="RequestedOn" xml:space="preserve"><value>Data wniosku</value></data>
+  <data name="AlarmsRequested" xml:space="preserve"><value>Wnioskowane czujki</value></data>
+  <data name="AlarmsRequestedHelp" xml:space="preserve"><value>Czego potrzebuje mieszkaniec, jeśli wiadomo. Przy zakończeniu wniosku zespół rejestruje, co faktycznie pozostawiono.</value></data>
+  <data name="ScheduledFor" xml:space="preserve"><value>Wizyta zaplanowana na</value></data>
+  <data name="AlarmLocationHelp" xml:space="preserve"><value>Adres mieszkania. Pozostaw puste, aby użyć adresu obiektu.</value></data>
+  <data name="AlarmRequester" xml:space="preserve"><value>Mieszkaniec lub wnioskodawca</value></data>
+  <data name="RequesterHelp" xml:space="preserve"><value>Wybierz mieszkańca z Kontaktów. Imię, nazwisko i numer telefonu pozostają w Kontaktach i nie są kopiowane do wniosku.</value></data>
+  <data name="AlarmRequestNotes" xml:space="preserve"><value>Notatki do wniosku</value></data>
+  <data name="AlarmRequestNotesHelp" xml:space="preserve"><value>Gdzie jest czujka, dostęp i co zespół musi zabrać. Nie wpisuj tu danych osobowych ani medycznych.</value></data>
+  <data name="Resolution" xml:space="preserve"><value>Rozstrzygnięcie</value></data>
+  <data name="DeclineReason" xml:space="preserve"><value>Powód odrzucenia</value></data>
+  <data name="ResolutionNotes" xml:space="preserve"><value>Notatki do rozstrzygnięcia</value></data>
+  <data name="RecordedActivity" xml:space="preserve"><value>Zarejestrowana aktywność</value></data>
+  <data name="ReopenRequest" xml:space="preserve"><value>Otwórz wniosek ponownie</value></data>
+  <data name="CompletedRequestHelp" xml:space="preserve"><value>Aby zmienić pozostawione czujki, edytuj zarejestrowaną aktywność. Usunięcie aktywności ponownie otwiera ten wniosek.</value></data>
+  <data name="CompleteRequest" xml:space="preserve"><value>Zakończ wniosek</value></data>
+  <data name="CompleteRequestHelp" xml:space="preserve"><value>Wpisz pozostawione czujki. Zakończenie rejestruje aktywność ograniczania ryzyka, która wlicza się do sum rocznych.</value></data>
+  <data name="InstalledOn" xml:space="preserve"><value>Data pozostawienia</value></data>
+  <data name="DeclineRequest" xml:space="preserve"><value>Odrzuć wniosek</value></data>
+  <data name="DeleteAlarmRequest" xml:space="preserve"><value>Usuń wniosek</value></data>
+  <data name="DeleteAlarmRequestConfirm" xml:space="preserve"><value>Usunąć ten wniosek o czujkę?</value></data>
+  <data name="AlarmRequestSaved" xml:space="preserve"><value>Zapisano wniosek o czujkę {0}.</value></data>
+  <data name="AlarmRequestCompleted" xml:space="preserve"><value>Zakończono wniosek o czujkę {0}, zarejestrowano czujki: {1}.</value></data>
+  <data name="AlarmRequestDeclined" xml:space="preserve"><value>Odrzucono wniosek o czujkę {0}.</value></data>
+  <data name="AlarmRequestReopened" xml:space="preserve"><value>Ponownie otwarto wniosek o czujkę {0}.</value></data>
+  <data name="AlarmRequestDeleted" xml:space="preserve"><value>Usunięto wniosek o czujkę.</value></data>
+  <data name="SmokeCoAlarms" xml:space="preserve"><value>Czujki dymu i CO</value></data>
+  <data name="NoAlarmActivity" xml:space="preserve"><value>Nie zarejestrowano tu jeszcze czujek ani aktywności ograniczania ryzyka.</value></data>
+  <data name="RecordAlarmLeft" xml:space="preserve"><value>Zarejestruj pozostawioną czujkę</value></data>
+  <data name="AlarmsRequestedColumnHelp" xml:space="preserve"><value>Łącznie wnioskowanych urządzeń (tylko dym / tylko CO / łączone)</value></data>
 </root>

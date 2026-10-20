@@ -2197,4 +2197,59 @@
   <data name="NerisWorkflowsOffNotice" xml:space="preserve"><value>NERIS-Abläufe sind für diese Abteilung deaktiviert. Einsatzberichte werden als Datensätze der Abteilung geführt und weder anhand von NERIS geprüft noch an NERIS übermittelt. Ein Administrator kann NERIS in den Datensatz-Einstellungen wieder aktivieren.</value></data>
   <data name="ManageNerisProfile" xml:space="preserve"><value>NERIS-Profil und Code-Zuordnungen</value></data>
   <data name="CorrectWithoutNeris" xml:space="preserve"><value>Korrektur speichern (nicht an NERIS übermittelt)</value></data>
+  <data name="AlarmsLeft" xml:space="preserve"><value>Hinterlassene Melder</value></data>
+  <data name="AlarmsLeftHelp" xml:space="preserve"><value>Jedes hinterlassene Gerät zählen: nur Rauch, nur Kohlenmonoxid (CO) oder kombinierter Rauch- und CO-Melder.</value></data>
+  <data name="SmokeOnlyAlarms" xml:space="preserve"><value>Nur Rauch</value></data>
+  <data name="CoAlarms" xml:space="preserve"><value>Nur CO</value></data>
+  <data name="ComboAlarms" xml:space="preserve"><value>Kombination (Rauch + CO)</value></data>
+  <data name="AlarmReason" xml:space="preserve"><value>Grund für den Melder</value></data>
+  <data name="AlarmCallHelp" xml:space="preserve"><value>Der Einsatz, bei dem der Melder hinterlassen wurde, falls vorhanden.</value></data>
+  <data name="AlarmLeftDuringCall" xml:space="preserve"><value>Melder bei Einsatz hinterlassen</value></data>
+  <data name="CompletesAlarmRequest" xml:space="preserve"><value>Diese Aktivität hat folgende Melderanfrage abgeschlossen</value></data>
+  <data name="AlarmRequests" xml:space="preserve"><value>Melderanfragen</value></data>
+  <data name="AlarmRequest" xml:space="preserve"><value>Melderanfrage</value></data>
+  <data name="ThisYear" xml:space="preserve"><value>Dieses Jahr</value></data>
+  <data name="LastYear" xml:space="preserve"><value>Letztes Jahr</value></data>
+  <data name="AlarmsColumnHelp" xml:space="preserve"><value>Hinterlassene Geräte gesamt (nur Rauch / nur CO / Kombination)</value></data>
+  <data name="AlarmsInstalledTotal" xml:space="preserve"><value>Hinterlassene Melder (alle Arten)</value></data>
+  <data name="AlarmVisits" xml:space="preserve"><value>Versorgte Wohnungen und Objekte</value></data>
+  <data name="OpenAlarmRequests" xml:space="preserve"><value>Offene Melderanfragen</value></data>
+  <data name="AlarmsByReason" xml:space="preserve"><value>Melder nach Grund</value></data>
+  <data name="AlarmsByType" xml:space="preserve"><value>Melder nach Art</value></data>
+  <data name="AlarmsByMonth" xml:space="preserve"><value>Hinterlassene Melder nach Monat</value></data>
+  <data name="NewAlarmRequest" xml:space="preserve"><value>Neue Melderanfrage</value></data>
+  <data name="AlarmRequestsHelp" xml:space="preserve"><value>Anfragen für Rauch- und CO-Melder, etwa wenn Bewohner einen defekten oder fehlenden Melder melden. Beim Abschließen einer Anfrage werden die hinterlassenen Melder erfasst und zählen zur Jahressumme.</value></data>
+  <data name="AllStatuses" xml:space="preserve"><value>Alle Status</value></data>
+  <data name="AssignedToMe" xml:space="preserve"><value>Mir zugewiesen</value></data>
+  <data name="NoAlarmRequests" xml:space="preserve"><value>Keine Melderanfragen entsprechen dem Filter.</value></data>
+  <data name="RequestedOn" xml:space="preserve"><value>Angefragt am</value></data>
+  <data name="AlarmsRequested" xml:space="preserve"><value>Angefragte Melder</value></data>
+  <data name="AlarmsRequestedHelp" xml:space="preserve"><value>Was die Bewohner brauchen, falls bekannt. Beim Abschließen erfasst die Besatzung, was tatsächlich hinterlassen wurde.</value></data>
+  <data name="ScheduledFor" xml:space="preserve"><value>Besuch geplant für</value></data>
+  <data name="AlarmLocationHelp" xml:space="preserve"><value>Adresse der Wohnung. Leer lassen, um die Adresse des Objekts zu verwenden.</value></data>
+  <data name="AlarmRequester" xml:space="preserve"><value>Bewohner oder Anfragender</value></data>
+  <data name="RequesterHelp" xml:space="preserve"><value>Wählen Sie die Bewohner aus den Kontakten. Name und Telefonnummer bleiben in den Kontakten und werden nicht in die Anfrage kopiert.</value></data>
+  <data name="AlarmRequestNotes" xml:space="preserve"><value>Notizen zur Anfrage</value></data>
+  <data name="AlarmRequestNotesHelp" xml:space="preserve"><value>Wo sich der Melder befindet, Zugang und was die Besatzung mitbringen muss. Keine persönlichen oder medizinischen Angaben hier eintragen.</value></data>
+  <data name="Resolution" xml:space="preserve"><value>Erledigung</value></data>
+  <data name="DeclineReason" xml:space="preserve"><value>Ablehnungsgrund</value></data>
+  <data name="ResolutionNotes" xml:space="preserve"><value>Notizen zur Erledigung</value></data>
+  <data name="RecordedActivity" xml:space="preserve"><value>Erfasste Aktivität</value></data>
+  <data name="ReopenRequest" xml:space="preserve"><value>Anfrage wieder öffnen</value></data>
+  <data name="CompletedRequestHelp" xml:space="preserve"><value>Um die hinterlassenen Melder zu ändern, bearbeiten Sie die erfasste Aktivität. Wird die Aktivität gelöscht, öffnet sich diese Anfrage wieder.</value></data>
+  <data name="CompleteRequest" xml:space="preserve"><value>Anfrage abschließen</value></data>
+  <data name="CompleteRequestHelp" xml:space="preserve"><value>Geben Sie die hinterlassenen Melder ein. Beim Abschließen wird eine Aktivität zur Risikominderung erfasst, die zur Jahressumme zählt.</value></data>
+  <data name="InstalledOn" xml:space="preserve"><value>Hinterlassen am</value></data>
+  <data name="DeclineRequest" xml:space="preserve"><value>Anfrage ablehnen</value></data>
+  <data name="DeleteAlarmRequest" xml:space="preserve"><value>Anfrage löschen</value></data>
+  <data name="DeleteAlarmRequestConfirm" xml:space="preserve"><value>Diese Melderanfrage löschen?</value></data>
+  <data name="AlarmRequestSaved" xml:space="preserve"><value>Melderanfrage {0} gespeichert.</value></data>
+  <data name="AlarmRequestCompleted" xml:space="preserve"><value>Melderanfrage {0} abgeschlossen, {1} Melder erfasst.</value></data>
+  <data name="AlarmRequestDeclined" xml:space="preserve"><value>Melderanfrage {0} abgelehnt.</value></data>
+  <data name="AlarmRequestReopened" xml:space="preserve"><value>Melderanfrage {0} wieder geöffnet.</value></data>
+  <data name="AlarmRequestDeleted" xml:space="preserve"><value>Melderanfrage gelöscht.</value></data>
+  <data name="SmokeCoAlarms" xml:space="preserve"><value>Rauch- und CO-Melder</value></data>
+  <data name="NoAlarmActivity" xml:space="preserve"><value>Hier wurden noch keine Melder oder Aktivitäten zur Risikominderung erfasst.</value></data>
+  <data name="RecordAlarmLeft" xml:space="preserve"><value>Hinterlassenen Melder erfassen</value></data>
+  <data name="AlarmsRequestedColumnHelp" xml:space="preserve"><value>Angefragte Geräte gesamt (nur Rauch / nur CO / Kombination)</value></data>
 </root>

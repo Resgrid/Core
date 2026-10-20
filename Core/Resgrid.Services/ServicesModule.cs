@@ -52,10 +52,11 @@ namespace Resgrid.Services
 			}).As<Resgrid.Llm.ILlmClient>().InstancePerLifetimeScope();
 			builder.Register(_ => {
 				var target = Resgrid.Ai.AiDecisionSettings.Resolve(AiConfig.DecisionProvider, AiConfig.DecisionEndpoint, AiConfig.AllowPrivateEndpoint, AiConfig.DecisionApiKey,
-					AiConfig.DecisionModel, AiConfig.DecisionModelRevision, AiConfig.DecisionRuntimeDigest) ?? throw new Resgrid.Llm.LlmUnavailableException();
+					AiConfig.DecisionModel, AiConfig.DecisionModelRevision, AiConfig.DecisionRuntimeDigest, AiConfig.DecisionGatewayId) ?? throw new Resgrid.Llm.LlmUnavailableException();
 				// A remote (Workers AI) endpoint never gets private-network access, whatever the self-hosted setting says.
 				var allowPrivate = AiConfig.AllowPrivateEndpoint && !target.Remote;
-				return new Resgrid.Llm.SystemOneDecisionClient(Resgrid.Llm.OperatorEndpointPolicy.CreateClient(target.Endpoint, allowPrivate), target.Endpoint, AiConfig.DecisionApiKey, target.Remote);
+				return new Resgrid.Llm.SystemOneDecisionClient(Resgrid.Llm.OperatorEndpointPolicy.CreateClient(target.Endpoint, allowPrivate), target.Endpoint, AiConfig.DecisionApiKey, target.Remote,
+					target.GatewayId);
 			}).As<Resgrid.Llm.IDecisionClient>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.AdminAssistService>().As<Resgrid.Model.AdminAssist.IAdminAssistService>().InstancePerLifetimeScope();
 			builder.RegisterType<AdminAssist.ConfigurationImpactService>().As<Resgrid.Model.AdminAssist.IConfigurationImpactService>().InstancePerLifetimeScope();
@@ -541,6 +542,7 @@ namespace Resgrid.Services
 			builder.RegisterType<Records.RecordsHydrantsService>().As<IRecordsHydrantsService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RecordsPermitsService>().As<IRecordsPermitsService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RecordsCrrService>().As<IRecordsCrrService>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.RecordsAlarmRequestsService>().As<IRecordsAlarmRequestsService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RecordsPreventionAttachmentsService>().As<IRecordsPreventionAttachmentsService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RecordsInvestigationsService>().As<IRecordsInvestigationsService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RecordsQualityReviewService>().As<IRecordsQualityReviewService>().InstancePerLifetimeScope();

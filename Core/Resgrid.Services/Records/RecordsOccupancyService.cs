@@ -46,6 +46,8 @@ namespace Resgrid.Services.Records
 		private readonly IProtectedGrantContext _grant;
 		private readonly IRecordsProtectionService _protection;
 		private readonly IUnitOfWork _unitOfWork;
+		private readonly IRmsCrrActivitiesRepository _crrActivities;
+		private readonly IRmsCrrAlarmRequestsRepository _alarmRequests;
 		private readonly Lazy<ISearchProjectionService> _searchProjections;
 
 		public RecordsOccupancyService(RecordsPreventionGate gate, IRmsOccupanciesRepository occupancies, IRmsOccupancyContactLinksRepository links,
@@ -53,8 +55,10 @@ namespace Resgrid.Services.Records
 			IRmsOccupancyOwnershipsRepository ownerships, IRmsViolationsRepository violations, IRmsHydrantsRepository hydrants,
 			IContactPreplanRepository contactPreplans, IContactPreplanHazardRepository contactHazards, IContactsRepository contacts, IAddressRepository addresses,
 			IPoisRepository pois, IPoiTypesRepository poiTypes, IProtectedReadService protectedReads, IProtectedGrantContext grant, IRecordsProtectionService protection, IUnitOfWork unitOfWork,
-			Lazy<ISearchProjectionService> searchProjections = null)
+			IRmsCrrActivitiesRepository crrActivities, IRmsCrrAlarmRequestsRepository alarmRequests, Lazy<ISearchProjectionService> searchProjections = null)
 		{
+			_crrActivities = crrActivities;
+			_alarmRequests = alarmRequests;
 			_searchProjections = searchProjections;
 			_gate = gate;
 			_occupancies = occupancies;
@@ -719,6 +723,9 @@ namespace Resgrid.Services.Records
 				}
 				foreach (var c in (await _crosswalks.GetForOccupancyAsync(departmentId, sourceOccupancyId)) ?? Enumerable.Empty<RmsOccupancyCrosswalk>()) { c.RmsOccupancyId = targetOccupancyId; c.ModifiedOn = now; c.RowVersion++; await _crosswalks.UpdateAsync(c, cancellationToken, true); }
 				foreach (var p in (await _provenance.GetForOccupancyAsync(departmentId, sourceOccupancyId)) ?? Enumerable.Empty<RmsOccupancyFieldProvenance>()) { p.RmsOccupancyId = targetOccupancyId; await _provenance.UpdateAsync(p, cancellationToken, true); }
+				// Alarm history follows the structure, so the survivor's yearly counts and open requests include the merged site's.
+				foreach (var a in (await _crrActivities.GetForOccupancyAsync(departmentId, sourceOccupancyId)) ?? Enumerable.Empty<RmsCrrActivity>()) { a.RmsOccupancyId = targetOccupancyId; a.ModifiedOn = now; a.RowVersion++; await _crrActivities.UpdateAsync(a, cancellationToken, true); }
+				foreach (var r in (await _alarmRequests.GetForOccupancyAsync(departmentId, sourceOccupancyId)) ?? Enumerable.Empty<RmsCrrAlarmRequest>()) { r.RmsOccupancyId = targetOccupancyId; r.ModifiedOn = now; r.ModifiedByUserId = userId; r.RowVersion++; await _alarmRequests.UpdateAsync(r, cancellationToken, true); }
 				source.Status = (int)RmsOccupancyStatus.Merged; source.MergedIntoOccupancyId = targetOccupancyId; source.ModifiedOn = now; source.ModifiedByUserId = userId; source.RowVersion++;
 				await _occupancies.UpdateAsync(source, cancellationToken, true);
 				target.ModifiedOn = now; target.ModifiedByUserId = userId; target.RowVersion++;

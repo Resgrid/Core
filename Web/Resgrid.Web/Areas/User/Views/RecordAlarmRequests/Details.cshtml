@@ -1,0 +1,117 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Records
+@model RecordAlarmRequestDetailsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
+@{
+	var departmentTime = DepartmentTime.From(ViewData);
+	var r = Model.Request;
+	ViewBag.Title = "Resgrid | " + L["AlarmRequest"] + " " + r.RequestNumber;
+	var isOpen = r.Status == (int)RmsAlarmRequestStatus.Open;
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-6">
+		<h2>@L["AlarmRequest"] @r.RequestNumber <span class="label label-@AlarmRequestDisplay.StatusClass(r.Status)">@(RmsEnumDisplay.Label<RmsAlarmRequestStatus>(r.Status))</span></h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@L["RecordsHeader"]</a></li>
+			<li><a asp-controller="RecordAlarmRequests" asp-action="Index" asp-route-area="User">@L["AlarmRequests"]</a></li>
+			<li class="active"><strong>@r.RequestNumber</strong></li>
+		</ol>
+	</div>
+	<div class="col-sm-6">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			@if (Model.CanAdminister && isOpen)
+			{
+				<a class="btn btn-primary" asp-controller="RecordAlarmRequests" asp-action="Edit" asp-route-area="User" asp-route-id="@r.RmsCrrAlarmRequestId"><i class="fa fa-pencil"></i> @L["Edit"]</a>
+			}
+		</div>
+	</div>
+</div>
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.Message)) { <div class="alert alert-success">@Model.Message</div> }
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+	<div class="row">
+		<div class="col-md-6">
+			<div class="ibox"><div class="ibox-title"><h5>@L["AlarmRequest"]</h5></div><div class="ibox-content">
+				<dl class="dl-horizontal">
+					<dt>@L["RequestedOn"]</dt><dd>@departmentTime.Date(r.RequestedOn)</dd>
+					<dt>@L["Source"]</dt><dd>@(RmsEnumDisplay.Label<RmsAlarmRequestSource>(r.Source))</dd>
+					<dt>@L["AlarmReason"]</dt><dd>@(RmsEnumDisplay.Label<RmsAlarmReason>(r.Reason))</dd>
+					<dt>@L["AlarmsRequested"]</dt><dd>@L["SmokeOnlyAlarms"] @r.SmokeAlarmsRequested · @L["CoAlarms"] @r.CoAlarmsRequested · @L["ComboAlarms"] @r.ComboAlarmsRequested</dd>
+					@if (Model.Occupancy != null) { <dt>@L["Occupancies"]</dt><dd><a asp-controller="RecordOccupancies" asp-action="Details" asp-route-area="User" asp-route-id="@Model.Occupancy.RmsOccupancyId">@Model.Occupancy.OccupancyNumber @Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(Model.Occupancy.Name)</a></dd> }
+					@if (!string.IsNullOrWhiteSpace(r.LocationText) || r.Latitude.HasValue) { <dt>@L["Location"]</dt><dd>@r.LocationText @(r.Latitude.HasValue ? "(" + r.Latitude + ", " + r.Longitude + ")" : "")</dd> }
+					@if (!string.IsNullOrWhiteSpace(r.RequesterContactId)) { <dt>@L["AlarmRequester"]</dt><dd><a asp-controller="Contacts" asp-action="View" asp-route-area="User" asp-route-contactId="@r.RequesterContactId">@Model.ContactName</a></dd> }
+					@if (r.CallId.HasValue) { <dt>@L["Call"]</dt><dd><a asp-controller="Dispatch" asp-action="ViewCall" asp-route-area="User" asp-route-callId="@r.CallId">@L["Call"] #@r.CallId</a></dd> }
+					@if (r.ScheduledFor.HasValue) { <dt>@L["ScheduledFor"]</dt><dd>@departmentTime.Date(r.ScheduledFor)</dd> }
+					@if (!string.IsNullOrWhiteSpace(r.AssignedToUserId)) { <dt>@L["AssignedTo"]</dt><dd>@Model.UserName(r.AssignedToUserId)</dd> }
+					@if (!string.IsNullOrWhiteSpace(r.Notes)) { <dt>@L["AlarmRequestNotes"]</dt><dd><span style="white-space:pre-wrap">@r.Notes</span></dd> }
+				</dl>
+			</div></div>
+			@if (!isOpen)
+			{
+				<div class="ibox"><div class="ibox-title"><h5>@L["Resolution"]</h5></div><div class="ibox-content">
+					<dl class="dl-horizontal">
+						<dt>@L["ClosedOn"]</dt><dd>@departmentTime.Format(r.ClosedOn) · @Model.UserName(r.ClosedByUserId)</dd>
+						@if (r.Status == (int)RmsAlarmRequestStatus.Declined)
+						{
+							<dt>@L["DeclineReason"]</dt><dd>@(RmsEnumDisplay.Label<RmsAlarmRequestDeclineReason>(r.DeclineReason))</dd>
+							if (!string.IsNullOrWhiteSpace(r.ResolutionNotes)) { <dt>@L["ResolutionNotes"]</dt><dd><span style="white-space:pre-wrap">@r.ResolutionNotes</span></dd> }
+						}
+						@if (Model.Activity != null)
+						{
+							<dt>@L["AlarmsLeft"]</dt><dd><strong>@Model.Activity.AlarmsInstalledTotal()</strong> (@L["SmokeOnlyAlarms"] @Model.Activity.SmokeAlarmsInstalled · @L["CoAlarms"] @Model.Activity.CoAlarmsInstalled · @L["ComboAlarms"] @Model.Activity.ComboAlarmsInstalled)</dd>
+							<dt>@L["RecordedActivity"]</dt><dd>@if (Model.CanAdminister) { <a asp-controller="RecordCrr" asp-action="Edit" asp-route-area="User" asp-route-id="@Model.Activity.RmsCrrActivityId">@Model.Activity.Title</a> } else { @Model.Activity.Title } · @departmentTime.Date(Model.Activity.OccurredOn)</dd>
+						}
+					</dl>
+					@if (Model.CanAdminister && r.Status == (int)RmsAlarmRequestStatus.Declined)
+					{
+						<form method="post" asp-controller="RecordAlarmRequests" asp-action="Reopen" asp-route-area="User" style="display:inline">
+							@Html.AntiForgeryToken()<input type="hidden" name="id" value="@r.RmsCrrAlarmRequestId" />
+							<button class="btn btn-sm btn-default"><i class="fa fa-undo"></i> @L["ReopenRequest"]</button>
+						</form>
+					}
+					@if (r.Status == (int)RmsAlarmRequestStatus.Completed)
+					{
+						<p class="text-muted m-t-sm">@L["CompletedRequestHelp"]</p>
+					}
+				</div></div>
+			}
+		</div>
+		<div class="col-md-6">
+			@if (Model.CanAdminister && isOpen)
+			{
+				<div class="ibox"><div class="ibox-title"><h5>@L["CompleteRequest"]</h5></div><div class="ibox-content">
+					<p class="text-muted">@L["CompleteRequestHelp"]</p>
+					<form method="post" asp-controller="RecordAlarmRequests" asp-action="Complete" asp-route-area="User">
+						@Html.AntiForgeryToken()<input type="hidden" name="id" value="@r.RmsCrrAlarmRequestId" />
+						<div class="form-group"><label class="control-label" for="occurredOn">@L["InstalledOn"]</label><input type="date" class="form-control" id="occurredOn" name="occurredOn" value="@departmentTime.Today.ToString("yyyy-MM-dd")" required /></div>
+						<div class="row" style="display:flex;flex-wrap:wrap;align-items:flex-end">
+							<div class="col-sm-4 form-group"><label class="control-label" for="smokeAlarmsInstalled">@L["SmokeOnlyAlarms"]</label><input class="form-control" type="number" min="0" max="10000" id="smokeAlarmsInstalled" name="smokeAlarmsInstalled" value="@r.SmokeAlarmsRequested" /></div>
+							<div class="col-sm-4 form-group"><label class="control-label" for="coAlarmsInstalled">@L["CoAlarms"]</label><input class="form-control" type="number" min="0" max="10000" id="coAlarmsInstalled" name="coAlarmsInstalled" value="@r.CoAlarmsRequested" /></div>
+							<div class="col-sm-4 form-group"><label class="control-label" for="comboAlarmsInstalled">@L["ComboAlarms"]</label><input class="form-control" type="number" min="0" max="10000" id="comboAlarmsInstalled" name="comboAlarmsInstalled" value="@r.ComboAlarmsRequested" /></div>
+						</div>
+						<div class="form-group"><label class="control-label" for="alarmReason">@L["AlarmReason"]</label><select class="form-control" id="alarmReason" name="alarmReason" asp-items="Model.Reasons"></select></div>
+						<div class="form-group"><label class="control-label" for="hoursSpent">@L["HoursSpent"]</label><input class="form-control" type="number" step="0.25" min="0" id="hoursSpent" name="hoursSpent" value="0" /></div>
+						<div class="form-group"><label class="control-label" for="outcome">@L["Outcome"]</label><textarea class="form-control" id="outcome" name="outcome" rows="2" maxlength="2000"></textarea></div>
+						<button class="btn btn-primary"><i class="fa fa-check"></i> @L["CompleteRequest"]</button>
+					</form>
+				</div></div>
+				<div class="ibox"><div class="ibox-title"><h5>@L["DeclineRequest"]</h5></div><div class="ibox-content">
+					<form method="post" asp-controller="RecordAlarmRequests" asp-action="Decline" asp-route-area="User">
+						@Html.AntiForgeryToken()<input type="hidden" name="id" value="@r.RmsCrrAlarmRequestId" />
+						<div class="form-group"><label class="control-label" for="declineReason">@L["DeclineReason"]</label><select class="form-control" id="declineReason" name="declineReason" asp-items="Model.DeclineReasons"></select></div>
+						<div class="form-group"><label class="control-label" for="notes">@L["ResolutionNotes"]</label><textarea class="form-control" id="notes" name="notes" rows="2" maxlength="4000"></textarea></div>
+						<button class="btn btn-warning"><i class="fa fa-ban"></i> @L["DeclineRequest"]</button>
+					</form>
+				</div></div>
+			}
+			@if (Model.CanAdminister && r.Status != (int)RmsAlarmRequestStatus.Completed)
+			{
+				<form method="post" asp-controller="RecordAlarmRequests" asp-action="Delete" asp-route-area="User" onsubmit="return confirm('@JsEncoder.Encode(L["DeleteAlarmRequestConfirm"])');">
+					@Html.AntiForgeryToken()<input type="hidden" name="id" value="@r.RmsCrrAlarmRequestId" />
+					<button class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> @L["DeleteAlarmRequest"]</button>
+				</form>
+			}
+		</div>
+	</div>
+</div>

@@ -29,11 +29,21 @@
 						<dl class="dl-horizontal">
 							<dt>@L["AnalyticsActivities"]</dt><dd>@r.Crr.Activities</dd>
 							<dt>@L["AnalyticsAudience"]</dt><dd>@r.Crr.Audience</dd>
-							<dt>@L["SmokeAlarmsInstalled"]</dt><dd>@r.Crr.SmokeAlarmsInstalled</dd>
+							<dt>@L["AlarmsInstalledTotal"]</dt><dd><strong>@r.Crr.AlarmsInstalled</strong></dd>
+							<dt>@L["SmokeOnlyAlarms"]</dt><dd>@r.Crr.SmokeAlarmsInstalled</dd>
+							<dt>@L["CoAlarms"]</dt><dd>@r.Crr.CoAlarmsInstalled</dd>
+							<dt>@L["ComboAlarms"]</dt><dd>@r.Crr.ComboAlarmsInstalled</dd>
+							<dt>@L["AlarmVisits"]</dt><dd>@r.Crr.AlarmVisits</dd>
 							<dt>@L["AnalyticsHours"]</dt><dd>@RmsAnalyticsDisplay.Hours(r.Crr.Hours)</dd>
 						</dl>
 						@await Html.PartialAsync("_AnalyticsCounts", r.Crr.ByKind, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { ["Title"] = L["AnalyticsByKind"].Value, ["Chart"] = "doughnut", ["ShowHours"] = true })
 						@await Html.PartialAsync("_AnalyticsCounts", r.Crr.ByMonth, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { ["Title"] = L["AnalyticsByMonth"].Value, ["ShowHours"] = true, ["Take"] = 24 })
+						@if (r.Crr.AlarmsInstalled > 0)
+						{
+							@await Html.PartialAsync("_AnalyticsCounts", r.Crr.AlarmsByType, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { ["Title"] = L["AlarmsByType"].Value, ["Chart"] = "doughnut" })
+							@await Html.PartialAsync("_AnalyticsCounts", r.Crr.AlarmsByReason, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { ["Title"] = L["AlarmsByReason"].Value })
+							@await Html.PartialAsync("_AnalyticsCounts", r.Crr.AlarmsByMonth, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { ["Title"] = L["AlarmsByMonth"].Value, ["Take"] = 24 })
+						}
 					}
 				</div></div>
 			</div>

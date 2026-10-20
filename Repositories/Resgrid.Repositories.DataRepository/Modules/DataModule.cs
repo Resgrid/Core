@@ -474,6 +474,7 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<RmsPermitsRepository>().As<IRmsPermitsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsPlanReviewsRepository>().As<IRmsPlanReviewsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsCrrActivitiesRepository>().As<IRmsCrrActivitiesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsCrrAlarmRequestsRepository>().As<IRmsCrrAlarmRequestsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsPreventionAttachmentsRepository>().As<IRmsPreventionAttachmentsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsPreventionSequencesRepository>().As<IRmsPreventionSequencesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsInvestigationCasesRepository>().As<IRmsInvestigationCasesRepository>().InstancePerLifetimeScope();

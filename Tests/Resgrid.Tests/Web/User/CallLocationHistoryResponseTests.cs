@@ -91,7 +91,7 @@ namespace Resgrid.Tests.Web.User
 			var controller = new RecordOccupanciesController(Mock.Of<IRecordsOccupancyService>(), Mock.Of<IRecordsInspectionsService>(), Mock.Of<IRecordsPermitsService>(),
 				Mock.Of<IRecordsHydrantsService>(), Mock.Of<IRecordsPreventionAttachmentsService>(), Mock.Of<IContactsService>(), cutover.Object, flags.Object,
 				Mock.Of<IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records>>(), history.Object, Mock.Of<ICallsService>(), Mock.Of<IDepartmentsService>(),
-				Mock.Of<IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.LocationHistory>>())
+				Mock.Of<IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.LocationHistory>>(), Mock.Of<IRecordsCrrService>(), Mock.Of<IRecordsAlarmRequestsService>())
 			{ ControllerContext = new ControllerContext { HttpContext = http } };
 
 			(await controller.CallHistory("occ")).Should().BeOfType<ForbidResult>();

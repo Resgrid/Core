@@ -185,19 +185,26 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 	}
 
-	/// <summary>RMS-5 community risk reduction activities (RMS plan section 4.3).</summary>
+	/// <summary>RMS-5 community risk reduction activities (RMS plan section 4.3), including the smoke / CO alarm counts (M0284).</summary>
 	[Area("User")]
 	[Authorize(Policy = ResgridResources.Record_View)]
 	public class RecordCrrController : RecordsPreventionMvcControllerBase
 	{
 		private readonly IRecordsCrrService _crr;
 		private readonly IRecordsOccupancyService _occupancies;
+		private readonly IRecordsAlarmRequestsService _alarmRequests;
+		private readonly ICallsService _calls;
+		private readonly IRecordsAuthorizationService _authorization;
 
 		public RecordCrrController(IRecordsCrrService crr, IRecordsOccupancyService occupancies, IRecordsCutoverService cutover, IFeatureToggleService featureToggles,
-			IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer) : base(cutover, featureToggles, localizer)
+			IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer, IRecordsAlarmRequestsService alarmRequests, ICallsService calls,
+			IRecordsAuthorizationService authorization) : base(cutover, featureToggles, localizer)
 		{
 			_crr = crr;
 			_occupancies = occupancies;
+			_alarmRequests = alarmRequests;
+			_calls = calls;
+			_authorization = authorization;
 		}
 
 		private const string Flag = FeatureFlagKeys.RecordsPreventionCrr;
@@ -216,9 +223,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			catch (UnauthorizedAccessException) { return Forbid(); }
 		}
 
+		/// <summary>New or existing activity. From an occupancy or a call the form opens as an alarm installation there.</summary>
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Record_PreventionAdmin)]
-		public async Task<IActionResult> Edit(string id = null)
+		public async Task<IActionResult> Edit(string id = null, string occupancyId = null, int? callId = null)
 		{
 			if (!await ModuleOnAsync(Flag)) return NotFound();
 			try
@@ -231,6 +239,26 @@ namespace Resgrid.Web.Areas.User.Controllers
 					if (activity == null) return NotFound();
 					model.Activity = activity;
 				}
+				else
+				{
+					if (!string.IsNullOrWhiteSpace(occupancyId))
+					{
+						model.Activity.RmsOccupancyId = occupancyId;
+						model.Activity.Kind = (int)RmsCrrActivityKind.SmokeAlarmInstallation;
+						model.ReturnOccupancyId = occupancyId;
+					}
+					if (callId.HasValue)
+					{
+						var call = await ReadableCallAsync(callId.Value);
+						if (call != null)
+						{
+							model.Activity.CallId = call.CallId;
+							model.Activity.Kind = (int)RmsCrrActivityKind.SmokeAlarmInstallation;
+							model.Activity.LocationText = call.Address;
+							model.Activity.Title = Localizer["AlarmLeftDuringCall"].Value + " " + (string.IsNullOrWhiteSpace(call.Number) ? call.CallId.ToString() : call.Number);
+						}
+					}
+				}
 				await PopulateAsync(model);
 				return View(model);
 			}
@@ -239,14 +267,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost, ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Record_PreventionAdmin)]
-		public async Task<IActionResult> Edit(RecordCrrEditView model, string occurredOn, CancellationToken cancellationToken)
+		public async Task<IActionResult> Edit(RecordCrrEditView model, string occurredOn, int? callId, CancellationToken cancellationToken)
 		{
 			if (!await ModuleOnAsync(Flag)) return NotFound();
 			try
 			{
 				model.Activity.OccurredOn = ParseEnteredUtc(occurredOn) ?? model.Activity.OccurredOn;
+				model.Activity.CallId = callId;
 				await _crr.SaveAsync(DepartmentId, UserId, model.Activity, cancellationToken);
 				Notify("CrrSaved");
+				if (!string.IsNullOrWhiteSpace(model.ReturnOccupancyId))
+					return RedirectToAction("Details", "RecordOccupancies", new { area = "User", id = model.ReturnOccupancyId });
 				return RedirectToAction(nameof(Index));
 			}
 			catch (Exception ex)
@@ -270,6 +301,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction(nameof(Index));
 		}
 
+		private async Task<Call> ReadableCallAsync(int callId)
+		{
+			var call = await _calls.GetCallByIdAsync(callId);
+			return call != null && !call.IsDeleted && await _authorization.CanReadSourceCallAsync(UserId, DepartmentId, call) ? call : null;
+		}
+
 		private async Task PopulateAsync(RecordCrrEditView model)
 		{
 			try
@@ -279,6 +316,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 					.ToList();
 			}
 			catch (RecordsModuleDisabledException) { }
+			if (!string.IsNullOrWhiteSpace(model.Activity?.RmsCrrAlarmRequestId))
+				model.AlarmRequest = await _alarmRequests.GetAsync(DepartmentId, UserId, model.Activity.RmsCrrAlarmRequestId);
 		}
 	}
 }

@@ -253,6 +253,60 @@ namespace Resgrid.Tests.AiDispatch
 		}
 
 		[Test]
+		public void An_ai_gateway_id_is_optional_and_only_for_workers_ai()
+		{
+			const string route = "https://api.cloudflare.com/client/v4/accounts/0123456789abcdef0123456789abcdef/ai/run/@cf/cloudflare/clef-flash";
+			AiDecisionSettings.Resolve(DecisionProviders.WorkersAi, route, false, "cf-token", "Cloudflare/clef-flash", "", "", "resgrid-clef").GatewayId.Should().Be("resgrid-clef");
+			AiDecisionSettings.Resolve(DecisionProviders.WorkersAi, route, false, "cf-token", "Cloudflare/clef-flash", "", "", " resgrid_clef ").GatewayId.Should().Be("resgrid_clef");
+			AiDecisionSettings.Resolve(DecisionProviders.WorkersAi, route, false, "cf-token", "Cloudflare/clef-flash", "", "", "").GatewayId.Should().BeNull("blank calls Workers AI directly");
+			AiDecisionSettings.Resolve(DecisionProviders.WorkersAi, route, false, "cf-token", "Cloudflare/clef-flash", "", "", "   ").GatewayId.Should().BeNull();
+			AiDecisionSettings.Resolve(DecisionProviders.WorkersAi, route, false, "cf-token", "Cloudflare/clef-flash", "", "").GatewayId.Should().BeNull();
+
+			AiDecisionSettings.Resolve(DecisionProviders.WorkersAi, route, false, "cf-token", "Cloudflare/clef-flash", "", "", "resgrid clef").Should().BeNull("a mistyped gateway must not quietly skip the gateway's limits");
+			AiDecisionSettings.Resolve(DecisionProviders.WorkersAi, route, false, "cf-token", "Cloudflare/clef-flash", "", "", "g\r\nX-Injected: 1").Should().BeNull();
+			AiDecisionSettings.Resolve(DecisionProviders.WorkersAi, route, false, "cf-token", "Cloudflare/clef-flash", "", "", new string('g', 65)).Should().BeNull();
+
+			var own = AiDecisionSettings.Resolve(DecisionProviders.SelfHosted, "http://10.40.0.10:8444/v1/systemone", true, "k", "Cloudflare/clef-flash", new string('c', 40), "sha256:" + new string('d', 64), "resgrid-clef");
+			own.Should().NotBeNull("a gateway id left over from Workers AI does not break a self-hosted endpoint");
+			own.GatewayId.Should().BeNull("a Cloudflare gateway never applies to the operator's own server");
+		}
+
+		[Test]
+		public async Task A_gateway_id_routes_the_same_workers_ai_request_through_ai_gateway()
+		{
+			var envelope = "{\"result\":" + Answers + ",\"success\":true,\"errors\":[],\"messages\":[]}";
+			var endpoint = new Uri("https://api.cloudflare.com/client/v4/accounts/0123456789abcdef0123456789abcdef/ai/run/@cf/cloudflare/clef-flash");
+			var request = Simple() with { DataClass = DecisionDataClass.DepartmentConfiguration };
+
+			var routed = new Handler(envelope);
+			using (var client = new SystemOneDecisionClient(new HttpClient(routed), endpoint, "cf-token", workersAi: true, gatewayId: "resgrid-clef"))
+				(await client.DecideAsync(request, CancellationToken.None)).Answers.Should().HaveCount(3);
+			routed.Request.RequestUri.Should().Be(endpoint, "the gateway is chosen by header; the destination stays api.cloudflare.com");
+			routed.Request.Headers.GetValues(SystemOneDecisionClient.GatewayHeader).Should().Equal("resgrid-clef");
+			routed.Request.Headers.Authorization.Parameter.Should().Be("cf-token");
+
+			var direct = new Handler(envelope);
+			using (var client = new SystemOneDecisionClient(new HttpClient(direct), endpoint, "cf-token", workersAi: true))
+				await client.DecideAsync(request, CancellationToken.None);
+			direct.Request.Headers.Contains(SystemOneDecisionClient.GatewayHeader).Should().BeFalse();
+		}
+
+		[Test]
+		public void A_gateway_id_is_refused_for_a_self_hosted_endpoint_or_when_malformed()
+		{
+			var selfHosted = new Handler(Answers);
+			using (var client = new SystemOneDecisionClient(new HttpClient(selfHosted), new Uri("https://decide.invalid/v1/systemone"), "k", gatewayId: "resgrid-clef"))
+				Assert.ThrowsAsync<LlmUnavailableException>(async () => await client.DecideAsync(Simple(), CancellationToken.None));
+			selfHosted.Request.Should().BeNull();
+
+			var malformed = new Handler(Answers);
+			var endpoint = new Uri("https://api.cloudflare.com/client/v4/accounts/0123456789abcdef0123456789abcdef/ai/run/@cf/cloudflare/clef-flash");
+			using (var client = new SystemOneDecisionClient(new HttpClient(malformed), endpoint, "cf-token", workersAi: true, gatewayId: "g\r\nX-Injected: 1"))
+				Assert.ThrowsAsync<LlmUnavailableException>(async () => await client.DecideAsync(Simple() with { DataClass = DecisionDataClass.NonSensitive }, CancellationToken.None));
+			malformed.Request.Should().BeNull("nothing is sent with a header value that is not a gateway id");
+		}
+
+		[Test]
 		public void Workers_AI_refuses_department_content_before_anything_is_sent()
 		{
 			var handler = new Handler(Answers);

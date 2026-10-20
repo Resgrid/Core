@@ -6,6 +6,8 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> localizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.LocationHistory> historyLocalizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.ReportSources> reportSourcesLocalizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> recordsLocalizer
+@inject Resgrid.Model.Services.IFeatureToggleService featureToggleService
 @{
     ViewBag.Title = $"Resgrid | " + @localizer["ViewCallHeader"] + ": " + @Model.Call.Name;
     Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
@@ -89,14 +91,28 @@
                     <a class="btn btn-primary" asp-controller="Dispatch" asp-action="UpdateCall" asp-route-area="User" asp-route-callId="@Model.Call.CallId">@localizer["UpdateCallHeader"]</a>
                     <a style="text-decoration:none;" class="btn btn-warning" asp-controller="Dispatch" asp-action="CloseCall" asp-route-area="User" asp-route-callId="@Model.Call.CallId">@localizer["CloseCallHeader"]</a>
                 }
-                @if (Model.RecordsUsable && ClaimsAuthorizationHelper.CanCreateRecord())
+                @{
+                    // A crew that leaves a smoke or CO alarm on this call records it from here (CRR module, prevention administrators).
+                    var canCreateCallRecord = Model.RecordsUsable && ClaimsAuthorizationHelper.CanCreateRecord();
+                    var alarmMenuOn = Model.RecordsUsable && ClaimsAuthorizationHelper.CanAdministerRecordsPrevention()
+                        && await featureToggleService.IsEnabledAsync(FeatureFlagKeys.RecordsPreventionCrr, Model.Call.DepartmentId);
+                }
+                @if (canCreateCallRecord || alarmMenuOn)
                 {
                     <div class="btn-group">
                         <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-file-text-o"></i> @localizer["ReportsMenu"] <span class="caret"></span></button>
                         <ul class="dropdown-menu dropdown-menu-right call-reports-menu">
-                            <li><form id="start-incident-report-form" method="post" asp-controller="IncidentReports" asp-action="Start" asp-route-area="User" asp-route-callId="@Model.Call.CallId">@Html.AntiForgeryToken()<button type="submit"><i class="fa fa-fire"></i> @(await departmentTerms.NameAsync(DepartmentTerms.RecordTypeKey(Resgrid.Model.RmsDefinitionKeys.NerisIncidentReport), localizer["IncidentReport"]))</button></form></li>
-                            @* A run report started here opens with the call's times, units and personnel already filled in. *@
-                            <li><a asp-controller="Records" asp-action="New" asp-route-area="User" asp-route-definitionKey="@Resgrid.Model.RmsDefinitionKeys.Run" asp-route-callId="@Model.Call.CallId"><i class="fa fa-file-text-o"></i> @(await departmentTerms.NameAsync(DepartmentTerms.RecordTypeKey(Resgrid.Model.RmsDefinitionKeys.Run), reportSourcesLocalizer["StartRunReport"]))</a></li>
+                            @if (canCreateCallRecord)
+                            {
+                                <li><form id="start-incident-report-form" method="post" asp-controller="IncidentReports" asp-action="Start" asp-route-area="User" asp-route-callId="@Model.Call.CallId">@Html.AntiForgeryToken()<button type="submit"><i class="fa fa-fire"></i> @(await departmentTerms.NameAsync(DepartmentTerms.RecordTypeKey(Resgrid.Model.RmsDefinitionKeys.NerisIncidentReport), localizer["IncidentReport"]))</button></form></li>
+                                @* A run report started here opens with the call's times, units and personnel already filled in. *@
+                                <li><a asp-controller="Records" asp-action="New" asp-route-area="User" asp-route-definitionKey="@Resgrid.Model.RmsDefinitionKeys.Run" asp-route-callId="@Model.Call.CallId"><i class="fa fa-file-text-o"></i> @(await departmentTerms.NameAsync(DepartmentTerms.RecordTypeKey(Resgrid.Model.RmsDefinitionKeys.Run), reportSourcesLocalizer["StartRunReport"]))</a></li>
+                            }
+                            @if (alarmMenuOn)
+                            {
+                                <li><a asp-controller="RecordCrr" asp-action="Edit" asp-route-area="User" asp-route-callId="@Model.Call.CallId"><i class="fa fa-bell"></i> @recordsLocalizer["RecordAlarmLeft"]</a></li>
+                                <li><a asp-controller="RecordAlarmRequests" asp-action="Edit" asp-route-area="User" asp-route-callId="@Model.Call.CallId"><i class="fa fa-bell-o"></i> @recordsLocalizer["NewAlarmRequest"]</a></li>
+                            }
                         </ul>
                     </div>
                 }

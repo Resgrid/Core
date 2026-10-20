@@ -344,10 +344,23 @@ namespace Resgrid.Model
 	{
 		public int Activities { get; set; }
 		public int Audience { get; set; }
+		/// <summary>Smoke-only units.</summary>
 		public int SmokeAlarmsInstalled { get; set; }
+		public int CoAlarmsInstalled { get; set; }
+		public int ComboAlarmsInstalled { get; set; }
+		/// <summary>Every alarm unit left: smoke, CO and combination.</summary>
+		public int AlarmsInstalled { get; set; }
+		/// <summary>Activities that left at least one alarm.</summary>
+		public int AlarmVisits { get; set; }
 		public double Hours { get; set; }
 		public List<RecordsAnalyticsCount> ByKind { get; set; } = new List<RecordsAnalyticsCount>();
 		public List<RecordsAnalyticsCount> ByMonth { get; set; } = new List<RecordsAnalyticsCount>();
+		/// <summary>Units by type (smoke, co, combo); Count is units, not activities.</summary>
+		public List<RecordsAnalyticsCount> AlarmsByType { get; set; } = new List<RecordsAnalyticsCount>();
+		/// <summary>Units by <see cref="RmsAlarmReason"/>; Count is units.</summary>
+		public List<RecordsAnalyticsCount> AlarmsByReason { get; set; } = new List<RecordsAnalyticsCount>();
+		/// <summary>Units per department-local month; Count is units.</summary>
+		public List<RecordsAnalyticsCount> AlarmsByMonth { get; set; } = new List<RecordsAnalyticsCount>();
 	}
 
 	public class RecordsIncidentMetrics

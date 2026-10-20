@@ -181,7 +181,7 @@ namespace Resgrid.Services.AiDispatch
 			if (!AiDispatchConfig.DecisionsEnabled)
 				return null;
 			var target = AiDecisionSettings.Resolve(AiConfig.DecisionProvider, AiConfig.DecisionEndpoint, AiConfig.AllowPrivateEndpoint, AiConfig.DecisionApiKey,
-				AiConfig.DecisionModel, AiConfig.DecisionModelRevision, AiConfig.DecisionRuntimeDigest);
+				AiConfig.DecisionModel, AiConfig.DecisionModelRevision, AiConfig.DecisionRuntimeDigest, AiConfig.DecisionGatewayId);
 			return target is { Remote: false } ? target : null;
 		}
 

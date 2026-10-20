@@ -2197,4 +2197,59 @@
   <data name="NerisWorkflowsOffNotice" xml:space="preserve"><value>I flussi di lavoro NERIS sono disattivati per questo dipartimento. I rapporti di intervento sono conservati come registri del dipartimento e non vengono convalidati né inviati a NERIS. Un amministratore può riattivare NERIS nelle impostazioni dei Registri.</value></data>
   <data name="ManageNerisProfile" xml:space="preserve"><value>Profilo NERIS e corrispondenze dei codici</value></data>
   <data name="CorrectWithoutNeris" xml:space="preserve"><value>Salva correzione (non inviata a NERIS)</value></data>
+  <data name="AlarmsLeft" xml:space="preserve"><value>Rilevatori lasciati</value></data>
+  <data name="AlarmsLeftHelp" xml:space="preserve"><value>Conta ogni dispositivo lasciato: solo fumo, solo monossido di carbonio (CO) o rilevatore combinato fumo e CO.</value></data>
+  <data name="SmokeOnlyAlarms" xml:space="preserve"><value>Solo fumo</value></data>
+  <data name="CoAlarms" xml:space="preserve"><value>Solo CO</value></data>
+  <data name="ComboAlarms" xml:space="preserve"><value>Combinato (fumo + CO)</value></data>
+  <data name="AlarmReason" xml:space="preserve"><value>Motivo del rilevatore</value></data>
+  <data name="AlarmCallHelp" xml:space="preserve"><value>La chiamata durante la quale è stato lasciato il rilevatore, se presente.</value></data>
+  <data name="AlarmLeftDuringCall" xml:space="preserve"><value>Rilevatore lasciato durante la chiamata</value></data>
+  <data name="CompletesAlarmRequest" xml:space="preserve"><value>Questa attività ha completato la richiesta di rilevatore</value></data>
+  <data name="AlarmRequests" xml:space="preserve"><value>Richieste di rilevatori</value></data>
+  <data name="AlarmRequest" xml:space="preserve"><value>Richiesta di rilevatore</value></data>
+  <data name="ThisYear" xml:space="preserve"><value>Quest'anno</value></data>
+  <data name="LastYear" xml:space="preserve"><value>Anno scorso</value></data>
+  <data name="AlarmsColumnHelp" xml:space="preserve"><value>Totale dispositivi lasciati (solo fumo / solo CO / combinati)</value></data>
+  <data name="AlarmsInstalledTotal" xml:space="preserve"><value>Rilevatori lasciati (tutti i tipi)</value></data>
+  <data name="AlarmVisits" xml:space="preserve"><value>Abitazioni e siti serviti</value></data>
+  <data name="OpenAlarmRequests" xml:space="preserve"><value>Richieste di rilevatori aperte</value></data>
+  <data name="AlarmsByReason" xml:space="preserve"><value>Rilevatori per motivo</value></data>
+  <data name="AlarmsByType" xml:space="preserve"><value>Rilevatori per tipo</value></data>
+  <data name="AlarmsByMonth" xml:space="preserve"><value>Rilevatori lasciati per mese</value></data>
+  <data name="NewAlarmRequest" xml:space="preserve"><value>Nuova richiesta di rilevatore</value></data>
+  <data name="AlarmRequestsHelp" xml:space="preserve"><value>Richieste di rilevatori di fumo e CO, ad esempio quando un residente segnala un rilevatore guasto o mancante. Completare una richiesta registra i rilevatori lasciati, che contano nei totali annuali.</value></data>
+  <data name="AllStatuses" xml:space="preserve"><value>Tutti gli stati</value></data>
+  <data name="AssignedToMe" xml:space="preserve"><value>Assegnate a me</value></data>
+  <data name="NoAlarmRequests" xml:space="preserve"><value>Nessuna richiesta di rilevatore corrisponde al filtro.</value></data>
+  <data name="RequestedOn" xml:space="preserve"><value>Richiesta il</value></data>
+  <data name="AlarmsRequested" xml:space="preserve"><value>Rilevatori richiesti</value></data>
+  <data name="AlarmsRequestedHelp" xml:space="preserve"><value>Ciò di cui ha bisogno il residente, se noto. La squadra registra ciò che è stato effettivamente lasciato al completamento della richiesta.</value></data>
+  <data name="ScheduledFor" xml:space="preserve"><value>Visita prevista per</value></data>
+  <data name="AlarmLocationHelp" xml:space="preserve"><value>Indirizzo dell'abitazione. Lascia vuoto per usare l'indirizzo dell'occupazione.</value></data>
+  <data name="AlarmRequester" xml:space="preserve"><value>Residente o richiedente</value></data>
+  <data name="RequesterHelp" xml:space="preserve"><value>Scegli il residente dai Contatti. Nome e telefono restano nei Contatti e non vengono copiati nella richiesta.</value></data>
+  <data name="AlarmRequestNotes" xml:space="preserve"><value>Note della richiesta</value></data>
+  <data name="AlarmRequestNotesHelp" xml:space="preserve"><value>Dove si trova il rilevatore, l'accesso e cosa deve portare la squadra. Non inserire qui dati personali o medici.</value></data>
+  <data name="Resolution" xml:space="preserve"><value>Esito</value></data>
+  <data name="DeclineReason" xml:space="preserve"><value>Motivo del rifiuto</value></data>
+  <data name="ResolutionNotes" xml:space="preserve"><value>Note sull'esito</value></data>
+  <data name="RecordedActivity" xml:space="preserve"><value>Attività registrata</value></data>
+  <data name="ReopenRequest" xml:space="preserve"><value>Riapri richiesta</value></data>
+  <data name="CompletedRequestHelp" xml:space="preserve"><value>Per modificare i rilevatori lasciati, modifica l'attività registrata. Eliminando l'attività questa richiesta si riapre.</value></data>
+  <data name="CompleteRequest" xml:space="preserve"><value>Completa richiesta</value></data>
+  <data name="CompleteRequestHelp" xml:space="preserve"><value>Inserisci i rilevatori lasciati. Il completamento registra un'attività di riduzione del rischio che conta nei totali annuali.</value></data>
+  <data name="InstalledOn" xml:space="preserve"><value>Lasciati il</value></data>
+  <data name="DeclineRequest" xml:space="preserve"><value>Rifiuta richiesta</value></data>
+  <data name="DeleteAlarmRequest" xml:space="preserve"><value>Elimina richiesta</value></data>
+  <data name="DeleteAlarmRequestConfirm" xml:space="preserve"><value>Eliminare questa richiesta di rilevatore?</value></data>
+  <data name="AlarmRequestSaved" xml:space="preserve"><value>Richiesta di rilevatore {0} salvata.</value></data>
+  <data name="AlarmRequestCompleted" xml:space="preserve"><value>Richiesta di rilevatore {0} completata con {1} rilevatore/i registrato/i.</value></data>
+  <data name="AlarmRequestDeclined" xml:space="preserve"><value>Richiesta di rilevatore {0} rifiutata.</value></data>
+  <data name="AlarmRequestReopened" xml:space="preserve"><value>Richiesta di rilevatore {0} riaperta.</value></data>
+  <data name="AlarmRequestDeleted" xml:space="preserve"><value>Richiesta di rilevatore eliminata.</value></data>
+  <data name="SmokeCoAlarms" xml:space="preserve"><value>Rilevatori di fumo e CO</value></data>
+  <data name="NoAlarmActivity" xml:space="preserve"><value>Nessun rilevatore o attività di riduzione del rischio registrati qui finora.</value></data>
+  <data name="RecordAlarmLeft" xml:space="preserve"><value>Registra rilevatore lasciato</value></data>
+  <data name="AlarmsRequestedColumnHelp" xml:space="preserve"><value>Totale dispositivi richiesti (solo fumo / solo CO / combinati)</value></data>
 </root>

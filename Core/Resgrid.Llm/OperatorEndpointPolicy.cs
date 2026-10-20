@@ -23,10 +23,12 @@ public static class OperatorEndpointPolicy
     }
 
     private static readonly Regex WorkersAiDecisionPath = new("\\A/client/v4/accounts/[0-9a-f]{32}/ai/run/@cf/cloudflare/(clef|clef-flash)\\z", RegexOptions.CultureInvariant);
+    private static readonly Regex AiGatewayIdPattern = new("\\A[A-Za-z0-9_-]{1,64}\\z", RegexOptions.CultureInvariant);
 
     /// <summary>
-    /// The Cloudflare Workers AI REST route for a Clef model, called directly on api.cloudflare.com over HTTPS (never through AI
-    /// Gateway, whose request logging would keep department messages). <paramref name="model"/> is the Workers AI selector.
+    /// The Cloudflare Workers AI REST route for a Clef model, always on api.cloudflare.com over HTTPS. AI Gateway routing is the
+    /// optional <c>cf-aig-gateway-id</c> header on this same route (<see cref="IsAiGatewayId"/>), never the gateway.ai.cloudflare.com
+    /// host, so the destination stays pinned either way. <paramref name="model"/> is the Workers AI selector.
     /// </summary>
     public static Uri ValidateWorkersAiDecisionUri(string endpoint, out string model)
     {
@@ -38,6 +40,9 @@ public static class OperatorEndpointPolicy
         model = match.Groups[1].Value;
         return uri;
     }
+
+    /// <summary>An AI Gateway id safe to send as the <c>cf-aig-gateway-id</c> header: letters, digits, '-' and '_', up to 64.</summary>
+    public static bool IsAiGatewayId(string? gatewayId) => gatewayId != null && AiGatewayIdPattern.IsMatch(gatewayId);
 
     public static bool IsAllowedAddress(IPAddress address, bool operatorPrivateEndpoint, bool clearText)
     {

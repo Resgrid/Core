@@ -258,7 +258,7 @@ namespace Resgrid.Services.Records
 			if (await _gate.IsEnabledAsync(departmentId, RecordsPreventionModule.Crr))
 			{
 				var rows = ((await _crrRows.GetForRangeAsync(departmentId, now.AddDays(-90), now.AddDays(1), 2000)) ?? Enumerable.Empty<RmsCrrActivity>()).ToList();
-				summary.CrrActivitiesLast90Days = rows.Count; summary.CrrSmokeAlarmsLast90Days = rows.Sum(r => r.SmokeAlarmsInstalled);
+				summary.CrrActivitiesLast90Days = rows.Count; summary.CrrSmokeAlarmsLast90Days = rows.Sum(r => r.SmokeAlarmsInstalled); summary.CrrAlarmsLast90Days = rows.Sum(r => r.AlarmsInstalledTotal());
 			}
 			if (await _gate.IsEnabledAsync(departmentId, RecordsPreventionModule.Investigations))
 				summary.InvestigationCasesOpen = await _caseRows.CountOpenAsync(departmentId);

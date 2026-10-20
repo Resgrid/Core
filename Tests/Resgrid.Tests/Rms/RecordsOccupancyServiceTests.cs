@@ -286,7 +286,7 @@ namespace Resgrid.Tests.Rms
 		{
 			var broken = new Mock<IRmsOccupancyOwnershipsRepository>();
 			broken.Setup(o => o.GetForDepartmentAsync(It.IsAny<int>())).ThrowsAsync(new InvalidOperationException("relation does not exist"));
-			var service = new RecordsOccupancyService(_h.Gate, _h.Occupancies, _h.Links, _h.Hazards, _h.Crosswalks, _h.Provenance, broken.Object, _h.Violations, _h.Hydrants, _h.ContactPreplans.Object, _h.ContactHazards.Object, _h.Contacts.Object, _h.Addresses.Object, _h.Pois.Object, _h.PoiTypes.Object, _h.ProtectedReads.Object, _h.Grant.Object, _h.Protection, _h.UnitOfWork.Object);
+			var service = new RecordsOccupancyService(_h.Gate, _h.Occupancies, _h.Links, _h.Hazards, _h.Crosswalks, _h.Provenance, broken.Object, _h.Violations, _h.Hydrants, _h.ContactPreplans.Object, _h.ContactHazards.Object, _h.Contacts.Object, _h.Addresses.Object, _h.Pois.Object, _h.PoiTypes.Object, _h.ProtectedReads.Object, _h.Grant.Object, _h.Protection, _h.UnitOfWork.Object, _h.Crr, _h.AlarmRequests);
 			(await service.IsRecordsOwnedAsync(Dept)).Should().BeFalse();
 			(await service.GetPreplanProjectionsAsync(Dept, new[] { "c1" })).Should().BeEmpty();
 		}

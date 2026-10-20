@@ -199,6 +199,57 @@
 					</table>
 				</div></div>
 			}
+			@if (Model.CrrOn)
+			{
+				var alarmYears = Model.AlarmActivities.Where(a => a.AlarmsInstalledTotal() > 0).GroupBy(a => departmentTime.Local(a.OccurredOn).Year).OrderByDescending(g => g.Key).Take(5).ToList();
+				var openAlarmRequests = Model.AlarmRequests.Where(r => r.IsOpen()).OrderBy(r => r.RequestedOn).ToList();
+				<div class="ibox"><div class="ibox-title"><h5>@L["SmokeCoAlarms"] @if (openAlarmRequests.Count > 0) { <span class="badge badge-warning" title="@L["OpenAlarmRequests"]">@openAlarmRequests.Count</span> }</h5></div><div class="ibox-content">
+					@if (Model.AlarmActivities.Count == 0 && Model.AlarmRequests.Count == 0) { <p class="text-muted">@L["NoAlarmActivity"]</p> }
+					@if (alarmYears.Count > 0)
+					{
+						<table class="table table-condensed">
+							<thead><tr><th>@L["Year"]</th><th>@L["SmokeOnlyAlarms"]</th><th>@L["CoAlarms"]</th><th>@L["ComboAlarms"]</th><th>@L["AlarmsInstalledTotal"]</th></tr></thead>
+							<tbody>
+							@foreach (var y in alarmYears)
+							{
+								<tr><td>@y.Key</td><td>@y.Sum(a => a.SmokeAlarmsInstalled)</td><td>@y.Sum(a => a.CoAlarmsInstalled)</td><td>@y.Sum(a => a.ComboAlarmsInstalled)</td><td><strong>@y.Sum(a => a.AlarmsInstalledTotal())</strong></td></tr>
+							}
+							</tbody>
+						</table>
+					}
+					@if (openAlarmRequests.Count > 0)
+					{
+						<h5>@L["OpenAlarmRequests"]</h5>
+						<ul class="list-unstyled">
+						@foreach (var ar in openAlarmRequests)
+						{
+							<li><a asp-controller="RecordAlarmRequests" asp-action="Details" asp-route-area="User" asp-route-id="@ar.RmsCrrAlarmRequestId">@ar.RequestNumber</a> · @(RmsEnumDisplay.Label<RmsAlarmReason>(ar.Reason)) · @departmentTime.Date(ar.RequestedOn)</li>
+						}
+						</ul>
+					}
+					@if (Model.AlarmActivities.Count > 0)
+					{
+						<table class="table table-condensed">
+							<thead><tr><th>@L["OccurredOn"]</th><th>@L["Title"]</th><th title="@L["AlarmsColumnHelp"]">@L["AlarmsLeft"]</th></tr></thead>
+							<tbody>
+							@foreach (var a in Model.AlarmActivities.OrderByDescending(a => a.OccurredOn).Take(10))
+							{
+								<tr>
+									<td class="text-nowrap">@departmentTime.Date(a.OccurredOn)</td>
+									<td>@if (Model.CanAdminister) { <a asp-controller="RecordCrr" asp-action="Edit" asp-route-area="User" asp-route-id="@a.RmsCrrActivityId">@a.Title</a> } else { @a.Title }</td>
+									<td class="text-nowrap">@if (a.AlarmsInstalledTotal() > 0) { <text>@a.AlarmsInstalledTotal() <small class="text-muted">(@AlarmRequestDisplay.Breakdown(a.SmokeAlarmsInstalled, a.CoAlarmsInstalled, a.ComboAlarmsInstalled))</small></text> }</td>
+								</tr>
+							}
+							</tbody>
+						</table>
+					}
+					@if (Model.CanAdminister && o.Status != (int)RmsOccupancyStatus.Merged)
+					{
+						<a class="btn btn-sm btn-primary" asp-controller="RecordAlarmRequests" asp-action="Edit" asp-route-area="User" asp-route-occupancyId="@o.RmsOccupancyId"><i class="fa fa-bell-o"></i> @L["NewAlarmRequest"]</a>
+						<a class="btn btn-sm btn-default" asp-controller="RecordCrr" asp-action="Edit" asp-route-area="User" asp-route-occupancyId="@o.RmsOccupancyId"><i class="fa fa-plus"></i> @L["RecordAlarmLeft"]</a>
+					}
+				</div></div>
+			}
 			<partial name="_PreventionAttachments" model="new PreventionAttachmentsPartialView { ParentKind = RmsPreventionParentKind.Occupancy, ParentId = o.RmsOccupancyId, Attachments = Model.Attachments, CanWrite = Model.CanAdminister, ReturnUrl = returnUrl }" />
 			@if (Model.Aggregate.Crosswalks.Count > 0 || Model.Aggregate.Provenance.Count > 0)
 			{

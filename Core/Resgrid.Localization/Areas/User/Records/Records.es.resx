@@ -2197,4 +2197,59 @@
   <data name="NerisWorkflowsOffNotice" xml:space="preserve"><value>Los flujos de trabajo de NERIS están desactivados para este departamento. Los informes de incidentes se conservan como registros del departamento y no se validan con NERIS ni se envían a NERIS. Un administrador puede volver a activar NERIS en la configuración de Registros.</value></data>
   <data name="ManageNerisProfile" xml:space="preserve"><value>Perfil de NERIS y correspondencias de códigos</value></data>
   <data name="CorrectWithoutNeris" xml:space="preserve"><value>Guardar corrección (no se envía a NERIS)</value></data>
+  <data name="AlarmsLeft" xml:space="preserve"><value>Alarmas dejadas</value></data>
+  <data name="AlarmsLeftHelp" xml:space="preserve"><value>Cuente cada unidad dejada: solo humo, solo monóxido de carbono (CO) o alarma combinada de humo y CO.</value></data>
+  <data name="SmokeOnlyAlarms" xml:space="preserve"><value>Solo humo</value></data>
+  <data name="CoAlarms" xml:space="preserve"><value>Solo CO</value></data>
+  <data name="ComboAlarms" xml:space="preserve"><value>Combinada (humo + CO)</value></data>
+  <data name="AlarmReason" xml:space="preserve"><value>Motivo de la alarma</value></data>
+  <data name="AlarmCallHelp" xml:space="preserve"><value>La llamada durante la cual se dejó la alarma, si la hubo.</value></data>
+  <data name="AlarmLeftDuringCall" xml:space="preserve"><value>Alarma dejada durante la llamada</value></data>
+  <data name="CompletesAlarmRequest" xml:space="preserve"><value>Esta actividad completó la solicitud de alarma</value></data>
+  <data name="AlarmRequests" xml:space="preserve"><value>Solicitudes de alarmas</value></data>
+  <data name="AlarmRequest" xml:space="preserve"><value>Solicitud de alarma</value></data>
+  <data name="ThisYear" xml:space="preserve"><value>Este año</value></data>
+  <data name="LastYear" xml:space="preserve"><value>Año pasado</value></data>
+  <data name="AlarmsColumnHelp" xml:space="preserve"><value>Total de unidades dejadas (solo humo / solo CO / combinadas)</value></data>
+  <data name="AlarmsInstalledTotal" xml:space="preserve"><value>Alarmas dejadas (todos los tipos)</value></data>
+  <data name="AlarmVisits" xml:space="preserve"><value>Hogares y sitios atendidos</value></data>
+  <data name="OpenAlarmRequests" xml:space="preserve"><value>Solicitudes de alarmas abiertas</value></data>
+  <data name="AlarmsByReason" xml:space="preserve"><value>Alarmas por motivo</value></data>
+  <data name="AlarmsByType" xml:space="preserve"><value>Alarmas por tipo</value></data>
+  <data name="AlarmsByMonth" xml:space="preserve"><value>Alarmas dejadas por mes</value></data>
+  <data name="NewAlarmRequest" xml:space="preserve"><value>Nueva solicitud de alarma</value></data>
+  <data name="AlarmRequestsHelp" xml:space="preserve"><value>Solicitudes de alarmas de humo y CO, por ejemplo cuando un residente informa de una alarma defectuosa o ausente. Al completar una solicitud se registran las alarmas dejadas, que cuentan para los totales anuales.</value></data>
+  <data name="AllStatuses" xml:space="preserve"><value>Todos los estados</value></data>
+  <data name="AssignedToMe" xml:space="preserve"><value>Asignadas a mí</value></data>
+  <data name="NoAlarmRequests" xml:space="preserve"><value>Ninguna solicitud de alarma coincide con el filtro.</value></data>
+  <data name="RequestedOn" xml:space="preserve"><value>Solicitada el</value></data>
+  <data name="AlarmsRequested" xml:space="preserve"><value>Alarmas solicitadas</value></data>
+  <data name="AlarmsRequestedHelp" xml:space="preserve"><value>Lo que necesita el residente, si se sabe. El equipo registra lo que realmente dejó al completar la solicitud.</value></data>
+  <data name="ScheduledFor" xml:space="preserve"><value>Visita prevista para</value></data>
+  <data name="AlarmLocationHelp" xml:space="preserve"><value>Dirección de la vivienda. Déjela en blanco para usar la dirección de la ocupación.</value></data>
+  <data name="AlarmRequester" xml:space="preserve"><value>Residente o solicitante</value></data>
+  <data name="RequesterHelp" xml:space="preserve"><value>Elija al residente en Contactos. Su nombre y teléfono permanecen en Contactos y no se copian a la solicitud.</value></data>
+  <data name="AlarmRequestNotes" xml:space="preserve"><value>Notas de la solicitud</value></data>
+  <data name="AlarmRequestNotesHelp" xml:space="preserve"><value>Dónde está la alarma, el acceso y lo que debe llevar el equipo. No introduzca aquí datos personales ni médicos.</value></data>
+  <data name="Resolution" xml:space="preserve"><value>Resolución</value></data>
+  <data name="DeclineReason" xml:space="preserve"><value>Motivo del rechazo</value></data>
+  <data name="ResolutionNotes" xml:space="preserve"><value>Notas de resolución</value></data>
+  <data name="RecordedActivity" xml:space="preserve"><value>Actividad registrada</value></data>
+  <data name="ReopenRequest" xml:space="preserve"><value>Reabrir solicitud</value></data>
+  <data name="CompletedRequestHelp" xml:space="preserve"><value>Para cambiar las alarmas dejadas, edite la actividad registrada. Al eliminar la actividad, esta solicitud se vuelve a abrir.</value></data>
+  <data name="CompleteRequest" xml:space="preserve"><value>Completar solicitud</value></data>
+  <data name="CompleteRequestHelp" xml:space="preserve"><value>Indique las alarmas que se dejaron. Al completar se registra una actividad de reducción de riesgos comunitarios que cuenta para los totales anuales.</value></data>
+  <data name="InstalledOn" xml:space="preserve"><value>Dejadas el</value></data>
+  <data name="DeclineRequest" xml:space="preserve"><value>Rechazar solicitud</value></data>
+  <data name="DeleteAlarmRequest" xml:space="preserve"><value>Eliminar solicitud</value></data>
+  <data name="DeleteAlarmRequestConfirm" xml:space="preserve"><value>¿Eliminar esta solicitud de alarma?</value></data>
+  <data name="AlarmRequestSaved" xml:space="preserve"><value>Solicitud de alarma {0} guardada.</value></data>
+  <data name="AlarmRequestCompleted" xml:space="preserve"><value>Solicitud de alarma {0} completada con {1} alarma(s) registrada(s).</value></data>
+  <data name="AlarmRequestDeclined" xml:space="preserve"><value>Solicitud de alarma {0} rechazada.</value></data>
+  <data name="AlarmRequestReopened" xml:space="preserve"><value>Solicitud de alarma {0} reabierta.</value></data>
+  <data name="AlarmRequestDeleted" xml:space="preserve"><value>Solicitud de alarma eliminada.</value></data>
+  <data name="SmokeCoAlarms" xml:space="preserve"><value>Alarmas de humo y CO</value></data>
+  <data name="NoAlarmActivity" xml:space="preserve"><value>Aún no se han registrado alarmas ni actividades de reducción de riesgos aquí.</value></data>
+  <data name="RecordAlarmLeft" xml:space="preserve"><value>Registrar alarma dejada</value></data>
+  <data name="AlarmsRequestedColumnHelp" xml:space="preserve"><value>Total de unidades solicitadas (solo humo / solo CO / combinadas)</value></data>
 </root>

@@ -4,8 +4,8 @@ namespace Resgrid.Llm;
 public static class DecisionProviders
 {
     /// <summary>
-    /// Cloudflare Workers AI REST (<c>/client/v4/accounts/{id}/ai/run/@cf/cloudflare/clef-flash</c>); answers arrive in Cloudflare's
-    /// <c>result</c> envelope. A third party: <see cref="DecisionDataClass.NonSensitive"/> and
+    /// Cloudflare Workers AI REST (<c>/client/v4/accounts/{id}/ai/run/@cf/cloudflare/clef-flash</c>), directly or through an AI Gateway
+    /// named by header; answers arrive in Cloudflare's <c>result</c> envelope. A third party: <see cref="DecisionDataClass.NonSensitive"/> and
     /// <see cref="DecisionDataClass.DepartmentConfiguration"/> requests only, never department content.
     /// </summary>
     public const string WorkersAi = "WorkersAi";

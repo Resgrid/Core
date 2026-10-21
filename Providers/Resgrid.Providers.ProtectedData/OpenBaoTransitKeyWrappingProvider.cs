@@ -30,7 +30,7 @@ namespace Resgrid.Providers.ProtectedData
 	/// on Protected Data Broker hosts ONLY (register via ProtectedDataProviderModule); Web/API/worker
 	/// hosts keep the fail-closed NotConfiguredKeyWrappingProvider.
 	/// </summary>
-	public class OpenBaoTransitKeyWrappingProvider : IKeyWrappingProvider, IDisposable
+	public class OpenBaoTransitKeyWrappingProvider : IKeyWrappingProvider, IKeyWrappingProviderStatus, IDisposable
 	{
 		// Refresh the token this many seconds before its lease actually expires.
 		private const int TokenRefreshSkewSeconds = 60;
@@ -68,6 +68,50 @@ namespace Resgrid.Providers.ProtectedData
 		}
 
 		public string ProviderType => "OpenBaoTransit";
+
+		public bool IsConfigured => true;
+
+		/// <summary>
+		/// Readiness probe for the broker's /health/ready. It checks two things: the node reports itself
+		/// initialized and unsealed (sys/health, which needs no token), and the broker certificate can still log in
+		/// (the token is cached, so this usually sends nothing). It makes no Transit call. Proving the key end to
+		/// end would mint a throwaway DEK and an audit entry on every probe.
+		/// </summary>
+		public async Task<KeyWrappingProviderHealth> CheckHealthAsync(CancellationToken cancellationToken = default)
+		{
+			try
+			{
+				// standbyok: a Raft standby forwards requests to the active node, so it can serve the broker.
+				using (var response = await _httpClient.GetAsync("v1/sys/health?standbyok=true", cancellationToken))
+				{
+					switch ((int)response.StatusCode)
+					{
+						case 503:
+							return KeyWrappingProviderHealth.Unhealthy("kms_sealed");
+						case 501:
+							return KeyWrappingProviderHealth.Unhealthy("kms_not_initialized");
+					}
+
+					if (!response.IsSuccessStatusCode)
+						return KeyWrappingProviderHealth.Unhealthy("kms_unhealthy");
+				}
+
+				await EnsureTokenAsync(cancellationToken);
+				return KeyWrappingProviderHealth.Healthy();
+			}
+			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+			{
+				throw;
+			}
+			catch (CryptographicException)
+			{
+				return KeyWrappingProviderHealth.Unhealthy("kms_auth_failed");
+			}
+			catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException)
+			{
+				return KeyWrappingProviderHealth.Unhealthy("kms_unreachable");
+			}
+		}
 
 		public async Task<WrappedDataKey> GenerateWrappedDataKeyAsync(int departmentId, CancellationToken cancellationToken = default)
 		{

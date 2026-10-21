@@ -2197,4 +2197,59 @@
   <data name="NerisWorkflowsOffNotice" xml:space="preserve"><value>Les processus NERIS sont désactivés pour ce service. Les rapports d’intervention sont conservés comme dossiers du service et ne sont ni validés selon NERIS ni transmis à NERIS. Un administrateur peut réactiver NERIS dans les paramètres des dossiers.</value></data>
   <data name="ManageNerisProfile" xml:space="preserve"><value>Profil NERIS et correspondances de codes</value></data>
   <data name="CorrectWithoutNeris" xml:space="preserve"><value>Enregistrer la correction (non transmise à NERIS)</value></data>
+  <data name="AlarmsLeft" xml:space="preserve"><value>Détecteurs laissés</value></data>
+  <data name="AlarmsLeftHelp" xml:space="preserve"><value>Comptez chaque appareil laissé : fumée seule, monoxyde de carbone (CO) seul, ou détecteur combiné fumée et CO.</value></data>
+  <data name="SmokeOnlyAlarms" xml:space="preserve"><value>Fumée seule</value></data>
+  <data name="CoAlarms" xml:space="preserve"><value>CO seul</value></data>
+  <data name="ComboAlarms" xml:space="preserve"><value>Combiné (fumée + CO)</value></data>
+  <data name="AlarmReason" xml:space="preserve"><value>Motif du détecteur</value></data>
+  <data name="AlarmCallHelp" xml:space="preserve"><value>L'appel pendant lequel le détecteur a été laissé, le cas échéant.</value></data>
+  <data name="AlarmLeftDuringCall" xml:space="preserve"><value>Détecteur laissé lors de l'appel</value></data>
+  <data name="CompletesAlarmRequest" xml:space="preserve"><value>Cette activité a clôturé la demande de détecteur</value></data>
+  <data name="AlarmRequests" xml:space="preserve"><value>Demandes de détecteurs</value></data>
+  <data name="AlarmRequest" xml:space="preserve"><value>Demande de détecteur</value></data>
+  <data name="ThisYear" xml:space="preserve"><value>Cette année</value></data>
+  <data name="LastYear" xml:space="preserve"><value>L'an dernier</value></data>
+  <data name="AlarmsColumnHelp" xml:space="preserve"><value>Total des appareils laissés (fumée seule / CO seul / combinés)</value></data>
+  <data name="AlarmsInstalledTotal" xml:space="preserve"><value>Détecteurs laissés (tous types)</value></data>
+  <data name="AlarmVisits" xml:space="preserve"><value>Logements et sites desservis</value></data>
+  <data name="OpenAlarmRequests" xml:space="preserve"><value>Demandes de détecteurs ouvertes</value></data>
+  <data name="AlarmsByReason" xml:space="preserve"><value>Détecteurs par motif</value></data>
+  <data name="AlarmsByType" xml:space="preserve"><value>Détecteurs par type</value></data>
+  <data name="AlarmsByMonth" xml:space="preserve"><value>Détecteurs laissés par mois</value></data>
+  <data name="NewAlarmRequest" xml:space="preserve"><value>Nouvelle demande de détecteur</value></data>
+  <data name="AlarmRequestsHelp" xml:space="preserve"><value>Demandes de détecteurs de fumée et de CO, par exemple lorsqu'un résident signale un détecteur défectueux ou absent. Clôturer une demande enregistre les détecteurs laissés, qui comptent dans les totaux annuels.</value></data>
+  <data name="AllStatuses" xml:space="preserve"><value>Tous les états</value></data>
+  <data name="AssignedToMe" xml:space="preserve"><value>Qui me sont assignées</value></data>
+  <data name="NoAlarmRequests" xml:space="preserve"><value>Aucune demande de détecteur ne correspond au filtre.</value></data>
+  <data name="RequestedOn" xml:space="preserve"><value>Demandée le</value></data>
+  <data name="AlarmsRequested" xml:space="preserve"><value>Détecteurs demandés</value></data>
+  <data name="AlarmsRequestedHelp" xml:space="preserve"><value>Ce dont le résident a besoin, si on le sait. L'équipe enregistre ce qui a réellement été laissé en clôturant la demande.</value></data>
+  <data name="ScheduledFor" xml:space="preserve"><value>Visite prévue le</value></data>
+  <data name="AlarmLocationHelp" xml:space="preserve"><value>Adresse du logement. Laissez vide pour utiliser l'adresse de l'occupation.</value></data>
+  <data name="AlarmRequester" xml:space="preserve"><value>Résident ou demandeur</value></data>
+  <data name="RequesterHelp" xml:space="preserve"><value>Choisissez le résident dans les Contacts. Son nom et son téléphone restent dans les Contacts et ne sont pas copiés dans la demande.</value></data>
+  <data name="AlarmRequestNotes" xml:space="preserve"><value>Notes de la demande</value></data>
+  <data name="AlarmRequestNotesHelp" xml:space="preserve"><value>Emplacement du détecteur, accès et matériel à apporter. N'indiquez ici aucune donnée personnelle ou médicale.</value></data>
+  <data name="Resolution" xml:space="preserve"><value>Résolution</value></data>
+  <data name="DeclineReason" xml:space="preserve"><value>Motif du refus</value></data>
+  <data name="ResolutionNotes" xml:space="preserve"><value>Notes de résolution</value></data>
+  <data name="RecordedActivity" xml:space="preserve"><value>Activité enregistrée</value></data>
+  <data name="ReopenRequest" xml:space="preserve"><value>Rouvrir la demande</value></data>
+  <data name="CompletedRequestHelp" xml:space="preserve"><value>Pour modifier les détecteurs laissés, modifiez l'activité enregistrée. Supprimer l'activité rouvre cette demande.</value></data>
+  <data name="CompleteRequest" xml:space="preserve"><value>Clôturer la demande</value></data>
+  <data name="CompleteRequestHelp" xml:space="preserve"><value>Saisissez les détecteurs laissés. La clôture enregistre une activité de réduction des risques qui compte dans les totaux annuels.</value></data>
+  <data name="InstalledOn" xml:space="preserve"><value>Laissés le</value></data>
+  <data name="DeclineRequest" xml:space="preserve"><value>Refuser la demande</value></data>
+  <data name="DeleteAlarmRequest" xml:space="preserve"><value>Supprimer la demande</value></data>
+  <data name="DeleteAlarmRequestConfirm" xml:space="preserve"><value>Supprimer cette demande de détecteur ?</value></data>
+  <data name="AlarmRequestSaved" xml:space="preserve"><value>Demande de détecteur {0} enregistrée.</value></data>
+  <data name="AlarmRequestCompleted" xml:space="preserve"><value>Demande de détecteur {0} clôturée, {1} détecteur(s) enregistré(s).</value></data>
+  <data name="AlarmRequestDeclined" xml:space="preserve"><value>Demande de détecteur {0} refusée.</value></data>
+  <data name="AlarmRequestReopened" xml:space="preserve"><value>Demande de détecteur {0} rouverte.</value></data>
+  <data name="AlarmRequestDeleted" xml:space="preserve"><value>Demande de détecteur supprimée.</value></data>
+  <data name="SmokeCoAlarms" xml:space="preserve"><value>Détecteurs de fumée et de CO</value></data>
+  <data name="NoAlarmActivity" xml:space="preserve"><value>Aucun détecteur ni aucune activité de réduction des risques enregistrés ici pour l'instant.</value></data>
+  <data name="RecordAlarmLeft" xml:space="preserve"><value>Enregistrer un détecteur laissé</value></data>
+  <data name="AlarmsRequestedColumnHelp" xml:space="preserve"><value>Total des appareils demandés (fumée seule / CO seul / combinés)</value></data>
 </root>

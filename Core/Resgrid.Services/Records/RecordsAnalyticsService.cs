@@ -742,14 +742,31 @@ namespace Resgrid.Services.Records
 		private async Task<RecordsCrrMetrics> CrrMetricsAsync(Context c)
 		{
 			var rows = ((await _crr.GetForRangeAsync(c.DepartmentId, c.Start, c.End, PreventionPage)) ?? Enumerable.Empty<RmsCrrActivity>()).Where(a => a != null && a.DeletedOn == null).ToList();
+			var alarmRows = rows.Where(a => a.AlarmsInstalledTotal() > 0).ToList();
+			var smoke = rows.Sum(a => a.SmokeAlarmsInstalled);
+			var co = rows.Sum(a => a.CoAlarmsInstalled);
+			var combo = rows.Sum(a => a.ComboAlarmsInstalled);
+			var units = smoke + co + combo;
 			return new RecordsCrrMetrics
 			{
 				Activities = rows.Count,
 				Audience = rows.Sum(a => a.AudienceCount),
-				SmokeAlarmsInstalled = rows.Sum(a => a.SmokeAlarmsInstalled),
+				SmokeAlarmsInstalled = smoke,
+				CoAlarmsInstalled = co,
+				ComboAlarmsInstalled = combo,
+				AlarmsInstalled = units,
+				AlarmVisits = alarmRows.Count,
 				Hours = Math.Round((double)rows.Sum(a => a.HoursSpent), 2),
 				ByKind = Counts(rows, a => a.Kind.ToString(), k => EnumLabel<RmsCrrActivityKind>(int.Parse(k)), a => (double)a.HoursSpent),
-				ByMonth = Counts(rows, a => Month(a.OccurredOn, c), k => k, a => (double)a.HoursSpent, false, StringComparer.Ordinal)
+				ByMonth = Counts(rows, a => Month(a.OccurredOn, c), k => k, a => (double)a.HoursSpent, false, StringComparer.Ordinal),
+				// Alarm figures count units, not activities: one visit can leave several.
+				AlarmsByType = new[] { ("smoke", "Smoke", smoke), ("co", "CO", co), ("combo", "Smoke + CO", combo) }
+					.Where(t => t.Item3 > 0).Select(t => new RecordsAnalyticsCount { Key = t.Item1, Label = t.Item2, Count = t.Item3, Percent = Pct(t.Item3, units) }).ToList(),
+				AlarmsByReason = alarmRows.GroupBy(a => a.AlarmReason)
+					.Select(g => new RecordsAnalyticsCount { Key = g.Key.ToString(), Label = EnumLabel<RmsAlarmReason>(g.Key), Count = g.Sum(a => a.AlarmsInstalledTotal()), Percent = Pct(g.Sum(a => a.AlarmsInstalledTotal()), units) })
+					.OrderByDescending(r => r.Count).ThenBy(r => r.Label, StringComparer.OrdinalIgnoreCase).ToList(),
+				AlarmsByMonth = alarmRows.GroupBy(a => Month(a.OccurredOn, c), StringComparer.Ordinal).OrderBy(g => g.Key, StringComparer.Ordinal)
+					.Select(g => new RecordsAnalyticsCount { Key = g.Key, Label = g.Key, Count = g.Sum(a => a.AlarmsInstalledTotal()) }).ToList()
 			};
 		}
 

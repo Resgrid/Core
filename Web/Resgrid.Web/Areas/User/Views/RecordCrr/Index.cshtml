@@ -5,6 +5,8 @@
 @{
     var departmentTime = DepartmentTime.From(ViewData);
 	ViewBag.Title = "Resgrid | " + L["CrrActivities"];
+	var thisYear = departmentTime.Today.Year;
+	string YearStart(int year) => new DateTime(year, 1, 1).ToString("yyyy-MM-dd");
 }
 @section Styles {
 	<style>
@@ -24,6 +26,11 @@
 			margin: 0;
 			text-align: right;
 		}
+
+		.crr-summary dt.crr-summary-part {
+			padding-left: 14px;
+			font-weight: normal;
+		}
 	</style>
 }
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -41,6 +48,7 @@
 			{
 				<a class="btn btn-success" asp-controller="RecordCrr" asp-action="Edit" asp-route-area="User"><i class="fa fa-plus"></i> @L["NewCrrActivity"]</a>
 			}
+			<a class="btn btn-default" asp-controller="RecordAlarmRequests" asp-action="Index" asp-route-area="User"><i class="fa fa-bell-o"></i> @L["AlarmRequests"] <span class="badge">@Model.Summary.OpenAlarmRequests</span></a>
 		</div>
 	</div>
 </div>
@@ -54,22 +62,24 @@
 					<input type="date" class="form-control" name="start" value="@departmentTime.Date(Model.Start)" />
 					<input type="date" class="form-control" name="end" value="@departmentTime.Date(Model.End)" />
 					<button class="btn btn-default">@L["Filter"]</button>
+					<a class="btn btn-link" asp-controller="RecordCrr" asp-action="Index" asp-route-area="User" asp-route-start="@YearStart(thisYear)" asp-route-end="@YearStart(thisYear + 1)">@L["ThisYear"]</a>
+					<a class="btn btn-link" asp-controller="RecordCrr" asp-action="Index" asp-route-area="User" asp-route-start="@YearStart(thisYear - 1)" asp-route-end="@YearStart(thisYear)">@L["LastYear"]</a>
 				</form>
 				@if (Model.Activities.Count == 0) { <p class="m-t-sm">@L["NoCrr"]</p> }
 				else
 				{
 					<table class="table table-striped table-hover m-t-sm">
-						<thead><tr><th>@L["OccurredOn"]</th><th>@L["Kind"]</th><th>@L["Title"]</th><th>@L["Location"]</th><th>@L["AudienceCount"]</th><th>@L["SmokeAlarmsInstalled"]</th><th>@L["HoursSpent"]</th><th></th></tr></thead>
+						<thead><tr><th>@L["OccurredOn"]</th><th>@L["Kind"]</th><th>@L["Title"]</th><th>@L["Location"]</th><th>@L["AudienceCount"]</th><th title="@L["AlarmsColumnHelp"]">@L["AlarmsLeft"]</th><th>@L["HoursSpent"]</th><th></th></tr></thead>
 						<tbody>
 						@foreach (var a in Model.Activities)
 						{
 							<tr>
-								<td>@departmentTime.Date(a.OccurredOn)</td>
+								<td class="text-nowrap">@departmentTime.Date(a.OccurredOn)</td>
 								<td>@(RmsEnumDisplay.Label<RmsCrrActivityKind>(a.Kind))</td>
 								<td>@a.Title</td>
 								<td>@a.LocationText</td>
 								<td>@a.AudienceCount</td>
-								<td>@a.SmokeAlarmsInstalled</td>
+								<td class="text-nowrap">@if (a.AlarmsInstalledTotal() > 0) { <text>@a.AlarmsInstalledTotal() <small class="text-muted">(@AlarmRequestDisplay.Breakdown(a.SmokeAlarmsInstalled, a.CoAlarmsInstalled, a.ComboAlarmsInstalled))</small></text> }</td>
 								<td>@a.HoursSpent</td>
 								<td>@if (Model.CanAdminister) { <a class="btn btn-xs btn-default" asp-controller="RecordCrr" asp-action="Edit" asp-route-area="User" asp-route-id="@a.RmsCrrActivityId">@L["Edit"]</a> }</td>
 							</tr>
@@ -84,12 +94,24 @@
 				<dl class="crr-summary">
 					<dt>@L["CrrActivities"]</dt><dd>@Model.Summary.Activities</dd>
 					<dt>@L["AudienceCount"]</dt><dd>@Model.Summary.Audience</dd>
-					<dt>@L["SmokeAlarmsInstalled"]</dt><dd>@Model.Summary.SmokeAlarmsInstalled</dd>
+					<dt>@L["AlarmsInstalledTotal"]</dt><dd><strong>@Model.Summary.AlarmsInstalled</strong></dd>
+					<dt class="crr-summary-part">@L["SmokeOnlyAlarms"]</dt><dd>@Model.Summary.SmokeAlarmsInstalled</dd>
+					<dt class="crr-summary-part">@L["CoAlarms"]</dt><dd>@Model.Summary.CoAlarmsInstalled</dd>
+					<dt class="crr-summary-part">@L["ComboAlarms"]</dt><dd>@Model.Summary.ComboAlarmsInstalled</dd>
+					<dt>@L["AlarmVisits"]</dt><dd>@Model.Summary.AlarmVisits</dd>
+					<dt>@L["OpenAlarmRequests"]</dt><dd><a asp-controller="RecordAlarmRequests" asp-action="Index" asp-route-area="User">@Model.Summary.OpenAlarmRequests</a></dd>
 					<dt>@L["HoursSpent"]</dt><dd>@Model.Summary.Hours</dd>
 				</dl>
 				<table class="table table-condensed">
 					<tbody>@foreach (var kv in Model.Summary.ByKind.OrderByDescending(k => k.Value)) { <tr><td>@(RmsEnumDisplay.Label<RmsCrrActivityKind>(kv.Key))</td><td>@kv.Value</td></tr> }</tbody>
 				</table>
+				@if (Model.Summary.AlarmsByReason.Count > 0)
+				{
+					<h5>@L["AlarmsByReason"]</h5>
+					<table class="table table-condensed">
+						<tbody>@foreach (var kv in Model.Summary.AlarmsByReason.OrderByDescending(k => k.Value)) { <tr><td>@(RmsEnumDisplay.Label<RmsAlarmReason>(kv.Key))</td><td>@kv.Value</td></tr> }</tbody>
+					</table>
+				}
 			</div></div>
 		</div>
 	</div>

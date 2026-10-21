@@ -82,6 +82,10 @@ jobs:
             dockerfile: Web/Resgrid.Web.Mcp/Dockerfile
           - image: resgridllc/resgridwebtts
             dockerfile: Web/Resgrid.Web.Tts/Dockerfile
+          # Protected Data Broker (ADP): the only image with a KMS route. No secrets in the image;
+          # its OpenBao client certificate and keys are mounted at deploy time.
+          - image: resgridllc/resgridwebbroker
+            dockerfile: Web/Resgrid.Web.Broker/Dockerfile
           - image: resgridllc/resgridworkersconsole
             dockerfile: Workers/Resgrid.Workers.Console/Dockerfile
           - image: resgridllc/resgridtrackergateway

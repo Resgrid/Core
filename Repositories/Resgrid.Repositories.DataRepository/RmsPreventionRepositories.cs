@@ -553,6 +553,48 @@ namespace Resgrid.Repositories.DataRepository
 			=> QueryAsync<RmsCrrActivity>($"SELECT * FROM {Tbl("RmsCrrActivities")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsOccupancyId")} = {P}Id AND {Col("DeletedOn")} IS NULL ORDER BY {Col("OccurredOn")} DESC", new { DepartmentId = departmentId, Id = occupancyId });
 	}
 
+	public class RmsCrrAlarmRequestsRepository : RmsRepositoryBase<RmsCrrAlarmRequest>, IRmsCrrAlarmRequestsRepository
+	{
+		public RmsCrrAlarmRequestsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
+			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory) { }
+
+		public Task<RmsCrrAlarmRequest> GetByIdForDepartmentAsync(int departmentId, string requestId)
+			=> QueryFirstOrDefaultAsync<RmsCrrAlarmRequest>($"SELECT * FROM {Tbl("RmsCrrAlarmRequests")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsCrrAlarmRequestId")} = {P}Id", new { DepartmentId = departmentId, Id = requestId });
+
+		private string Where(RmsAlarmRequestQuery query, DynamicParameters p)
+		{
+			var clauses = new List<string> { $"{Col("DepartmentId")} = {P}DepartmentId", $"{Col("DeletedOn")} IS NULL" };
+			if (query.Statuses != null && query.Statuses.Count > 0) { clauses.Add(InList("Status", "Statuses")); p.Add("Statuses", InListValue(query.Statuses)); }
+			if (!string.IsNullOrWhiteSpace(query.OccupancyId)) { clauses.Add($"{Col("RmsOccupancyId")} = {P}OccupancyId"); p.Add("OccupancyId", query.OccupancyId); }
+			if (!string.IsNullOrWhiteSpace(query.AssignedToUserId)) { clauses.Add($"{Col("AssignedToUserId")} = {P}AssignedTo"); p.Add("AssignedTo", query.AssignedToUserId); }
+			if (query.RequestedFrom.HasValue) { clauses.Add($"{Col("RequestedOn")} >= {P}From"); p.Add("From", query.RequestedFrom.Value); }
+			if (query.RequestedBefore.HasValue) { clauses.Add($"{Col("RequestedOn")} < {P}Before"); p.Add("Before", query.RequestedBefore.Value); }
+			return string.Join(" AND ", clauses);
+		}
+
+		public Task<IEnumerable<RmsCrrAlarmRequest>> QueryAsync(int departmentId, RmsAlarmRequestQuery query)
+		{
+			query ??= new RmsAlarmRequestQuery();
+			var p = RmsPreventionSql.Paged(departmentId, query.Skip, query.Take, 2000);
+			var direction = query.OldestFirst ? "ASC" : "DESC";
+			return QueryAsync<RmsCrrAlarmRequest>($"SELECT * FROM {Tbl("RmsCrrAlarmRequests")} WHERE {Where(query, p)} ORDER BY {Col("RequestedOn")} {direction}, {Col("RmsCrrAlarmRequestId")} {Paging()}", p);
+		}
+
+		public Task<int> CountAsync(int departmentId, RmsAlarmRequestQuery query)
+		{
+			query ??= new RmsAlarmRequestQuery();
+			var p = new DynamicParameters(); p.Add("DepartmentId", departmentId);
+			return ScalarAsync<int>($"SELECT COUNT(1) FROM {Tbl("RmsCrrAlarmRequests")} WHERE {Where(query, p)}", p);
+		}
+
+		public Task<IEnumerable<RmsCrrAlarmRequest>> GetForOccupancyAsync(int departmentId, string occupancyId)
+			=> QueryAsync<RmsCrrAlarmRequest>($"SELECT * FROM {Tbl("RmsCrrAlarmRequests")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsOccupancyId")} = {P}Id AND {Col("DeletedOn")} IS NULL ORDER BY {Col("RequestedOn")} DESC", new { DepartmentId = departmentId, Id = occupancyId });
+
+		public async Task<bool> TryBumpRowVersionAsync(int departmentId, string requestId, long expectedVersion, CancellationToken cancellationToken = default)
+			=> await ExecuteAsync($"UPDATE {Tbl("RmsCrrAlarmRequests")} SET {Col("RowVersion")} = {Col("RowVersion")} + 1, {Col("ModifiedOn")} = {P}Now WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsCrrAlarmRequestId")} = {P}Id AND {Col("RowVersion")} = {P}Expected",
+				new { DepartmentId = departmentId, Id = requestId, Expected = expectedVersion, Now = DateTime.UtcNow }, cancellationToken) == 1;
+	}
+
 	public class RmsPreventionAttachmentsRepository : RmsRepositoryBase<RmsPreventionAttachment>, IRmsPreventionAttachmentsRepository
 	{
 		private static readonly string[] MetadataColumns =

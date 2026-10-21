@@ -2197,4 +2197,59 @@
   <data name="NerisWorkflowsOffNotice" xml:space="preserve"><value>NERIS-flöden är avstängda för den här avdelningen. Insatsrapporter sparas som avdelningens register och valideras inte mot eller skickas till NERIS. En administratör kan slå på NERIS igen i inställningarna för Register.</value></data>
   <data name="ManageNerisProfile" xml:space="preserve"><value>NERIS-profil och kodmappningar</value></data>
   <data name="CorrectWithoutNeris" xml:space="preserve"><value>Spara rättelse (skickas inte till NERIS)</value></data>
+  <data name="AlarmsLeft" xml:space="preserve"><value>Lämnade varnare</value></data>
+  <data name="AlarmsLeftHelp" xml:space="preserve"><value>Räkna varje enhet som lämnats: endast rök, endast kolmonoxid (CO) eller kombinerad rök- och CO-varnare.</value></data>
+  <data name="SmokeOnlyAlarms" xml:space="preserve"><value>Endast rök</value></data>
+  <data name="CoAlarms" xml:space="preserve"><value>Endast CO</value></data>
+  <data name="ComboAlarms" xml:space="preserve"><value>Kombinerad (rök + CO)</value></data>
+  <data name="AlarmReason" xml:space="preserve"><value>Orsak till varnaren</value></data>
+  <data name="AlarmCallHelp" xml:space="preserve"><value>Larmet då varnaren lämnades, om något.</value></data>
+  <data name="AlarmLeftDuringCall" xml:space="preserve"><value>Varnare lämnad under larm</value></data>
+  <data name="CompletesAlarmRequest" xml:space="preserve"><value>Den här aktiviteten slutförde varnarförfrågan</value></data>
+  <data name="AlarmRequests" xml:space="preserve"><value>Varnarförfrågningar</value></data>
+  <data name="AlarmRequest" xml:space="preserve"><value>Varnarförfrågan</value></data>
+  <data name="ThisYear" xml:space="preserve"><value>I år</value></data>
+  <data name="LastYear" xml:space="preserve"><value>Förra året</value></data>
+  <data name="AlarmsColumnHelp" xml:space="preserve"><value>Totalt lämnade enheter (endast rök / endast CO / kombinerade)</value></data>
+  <data name="AlarmsInstalledTotal" xml:space="preserve"><value>Lämnade varnare (alla typer)</value></data>
+  <data name="AlarmVisits" xml:space="preserve"><value>Betjänade bostäder och platser</value></data>
+  <data name="OpenAlarmRequests" xml:space="preserve"><value>Öppna varnarförfrågningar</value></data>
+  <data name="AlarmsByReason" xml:space="preserve"><value>Varnare per orsak</value></data>
+  <data name="AlarmsByType" xml:space="preserve"><value>Varnare per typ</value></data>
+  <data name="AlarmsByMonth" xml:space="preserve"><value>Lämnade varnare per månad</value></data>
+  <data name="NewAlarmRequest" xml:space="preserve"><value>Ny varnarförfrågan</value></data>
+  <data name="AlarmRequestsHelp" xml:space="preserve"><value>Förfrågningar om brand- och CO-varnare, till exempel när en boende anmäler en trasig eller saknad varnare. När en förfrågan slutförs registreras de lämnade varnarna, som räknas in i årssummorna.</value></data>
+  <data name="AllStatuses" xml:space="preserve"><value>Alla statusar</value></data>
+  <data name="AssignedToMe" xml:space="preserve"><value>Tilldelade mig</value></data>
+  <data name="NoAlarmRequests" xml:space="preserve"><value>Inga varnarförfrågningar matchar filtret.</value></data>
+  <data name="RequestedOn" xml:space="preserve"><value>Begärd den</value></data>
+  <data name="AlarmsRequested" xml:space="preserve"><value>Begärda varnare</value></data>
+  <data name="AlarmsRequestedHelp" xml:space="preserve"><value>Vad den boende behöver, om det är känt. Besättningen registrerar vad som faktiskt lämnades när förfrågan slutförs.</value></data>
+  <data name="ScheduledFor" xml:space="preserve"><value>Besök planerat till</value></data>
+  <data name="AlarmLocationHelp" xml:space="preserve"><value>Bostadens adress. Lämna tomt för att använda objektets adress.</value></data>
+  <data name="AlarmRequester" xml:space="preserve"><value>Boende eller beställare</value></data>
+  <data name="RequesterHelp" xml:space="preserve"><value>Välj den boende i Kontakter. Namn och telefonnummer stannar i Kontakter och kopieras inte till förfrågan.</value></data>
+  <data name="AlarmRequestNotes" xml:space="preserve"><value>Anteckningar om förfrågan</value></data>
+  <data name="AlarmRequestNotesHelp" xml:space="preserve"><value>Var varnaren sitter, åtkomst och vad besättningen behöver ta med. Ange inga personuppgifter eller medicinska uppgifter här.</value></data>
+  <data name="Resolution" xml:space="preserve"><value>Utfall</value></data>
+  <data name="DeclineReason" xml:space="preserve"><value>Orsak till avslag</value></data>
+  <data name="ResolutionNotes" xml:space="preserve"><value>Anteckningar om utfallet</value></data>
+  <data name="RecordedActivity" xml:space="preserve"><value>Registrerad aktivitet</value></data>
+  <data name="ReopenRequest" xml:space="preserve"><value>Öppna förfrågan igen</value></data>
+  <data name="CompletedRequestHelp" xml:space="preserve"><value>Ändra de lämnade varnarna genom att redigera den registrerade aktiviteten. Om aktiviteten tas bort öppnas förfrågan igen.</value></data>
+  <data name="CompleteRequest" xml:space="preserve"><value>Slutför förfrågan</value></data>
+  <data name="CompleteRequestHelp" xml:space="preserve"><value>Ange de varnare som lämnades. Slutförandet registrerar en riskreducerande aktivitet som räknas in i årssummorna.</value></data>
+  <data name="InstalledOn" xml:space="preserve"><value>Lämnade den</value></data>
+  <data name="DeclineRequest" xml:space="preserve"><value>Avslå förfrågan</value></data>
+  <data name="DeleteAlarmRequest" xml:space="preserve"><value>Ta bort förfrågan</value></data>
+  <data name="DeleteAlarmRequestConfirm" xml:space="preserve"><value>Ta bort den här varnarförfrågan?</value></data>
+  <data name="AlarmRequestSaved" xml:space="preserve"><value>Varnarförfrågan {0} sparad.</value></data>
+  <data name="AlarmRequestCompleted" xml:space="preserve"><value>Varnarförfrågan {0} slutförd med {1} registrerade varnare.</value></data>
+  <data name="AlarmRequestDeclined" xml:space="preserve"><value>Varnarförfrågan {0} avslagen.</value></data>
+  <data name="AlarmRequestReopened" xml:space="preserve"><value>Varnarförfrågan {0} öppnad igen.</value></data>
+  <data name="AlarmRequestDeleted" xml:space="preserve"><value>Varnarförfrågan borttagen.</value></data>
+  <data name="SmokeCoAlarms" xml:space="preserve"><value>Brand- och CO-varnare</value></data>
+  <data name="NoAlarmActivity" xml:space="preserve"><value>Inga varnare eller riskreducerande aktiviteter har registrerats här ännu.</value></data>
+  <data name="RecordAlarmLeft" xml:space="preserve"><value>Registrera lämnad varnare</value></data>
+  <data name="AlarmsRequestedColumnHelp" xml:space="preserve"><value>Totalt begärda enheter (endast rök / endast CO / kombinerade)</value></data>
 </root>

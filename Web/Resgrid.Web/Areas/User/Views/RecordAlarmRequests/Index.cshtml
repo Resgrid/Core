@@ -1,0 +1,80 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Records
+@model RecordAlarmRequestsIndexView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
+@{
+	var departmentTime = DepartmentTime.From(ViewData);
+	ViewBag.Title = "Resgrid | " + L["AlarmRequests"];
+	string Occ(string id) => string.IsNullOrWhiteSpace(id) ? "" : Model.OccupancyNames.TryGetValue(id, out var n) ? n : id;
+	string Person(string id) => string.IsNullOrWhiteSpace(id) ? "" : Model.UserNames.TryGetValue(id, out var n) && !string.IsNullOrWhiteSpace(n) ? n : id;
+	var pages = (int)Math.Ceiling(Model.Total / (double)Model.PageSize);
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-6">
+		<h2>@L["AlarmRequests"]</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@L["RecordsHeader"]</a></li>
+			<li><a asp-controller="RecordCrr" asp-action="Index" asp-route-area="User">@L["CrrActivities"]</a></li>
+			<li class="active"><strong>@L["AlarmRequests"]</strong></li>
+		</ol>
+	</div>
+	<div class="col-sm-6">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			@if (Model.CanAdminister)
+			{
+				<a class="btn btn-success" asp-controller="RecordAlarmRequests" asp-action="Edit" asp-route-area="User"><i class="fa fa-plus"></i> @L["NewAlarmRequest"]</a>
+			}
+		</div>
+	</div>
+</div>
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.Message)) { <div class="alert alert-success">@Model.Message</div> }
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+	<div class="ibox"><div class="ibox-content">
+		<p class="text-muted">@L["AlarmRequestsHelp"]</p>
+		<form method="get" class="form-inline" asp-controller="RecordAlarmRequests" asp-action="Index" asp-route-area="User">
+			<label class="sr-only" for="status">@L["State"]</label>
+			<select class="form-control" id="status" name="status">
+				<option value="0">@L["AllStatuses"]</option>
+				@foreach (var s in Model.Statuses) { <option value="@s.Value" selected="@s.Selected">@s.Text</option> }
+			</select>
+			<label class="checkbox-inline"><input type="checkbox" name="mine" value="true" @(Model.MineOnly ? "checked" : "") /> @L["AssignedToMe"]</label>
+			<button class="btn btn-default">@L["Filter"]</button>
+			<span class="m-l-sm">@L["OpenAlarmRequests"]: <strong>@Model.OpenCount</strong></span>
+		</form>
+		@if (Model.Requests.Count == 0) { <p class="m-t-sm">@L["NoAlarmRequests"]</p> }
+		else
+		{
+			<div class="table-responsive">
+				<table class="table table-striped table-hover m-t-sm">
+					<thead><tr><th>@L["RequestNumber"]</th><th>@L["State"]</th><th>@L["RequestedOn"]</th><th>@L["AlarmReason"]</th><th>@L["Location"]</th><th title="@L["AlarmsRequestedColumnHelp"]">@L["AlarmsRequested"]</th><th>@L["ScheduledFor"]</th><th>@L["AssignedTo"]</th></tr></thead>
+					<tbody>
+					@foreach (var r in Model.Requests)
+					{
+						<tr>
+							<td class="text-nowrap"><a asp-controller="RecordAlarmRequests" asp-action="Details" asp-route-area="User" asp-route-id="@r.RmsCrrAlarmRequestId">@r.RequestNumber</a></td>
+							<td><span class="label label-@AlarmRequestDisplay.StatusClass(r.Status)">@(RmsEnumDisplay.Label<RmsAlarmRequestStatus>(r.Status))</span></td>
+							<td class="text-nowrap">@departmentTime.Date(r.RequestedOn)</td>
+							<td>@(RmsEnumDisplay.Label<RmsAlarmReason>(r.Reason))</td>
+							<td>@Occ(r.RmsOccupancyId)@(string.IsNullOrWhiteSpace(r.RmsOccupancyId) || string.IsNullOrWhiteSpace(r.LocationText) ? "" : " · ")@r.LocationText</td>
+							<td class="text-nowrap">@if (r.AlarmsRequestedTotal() > 0) { <text>@r.AlarmsRequestedTotal() <small class="text-muted">(@AlarmRequestDisplay.Breakdown(r.SmokeAlarmsRequested, r.CoAlarmsRequested, r.ComboAlarmsRequested))</small></text> }</td>
+							<td class="text-nowrap">@departmentTime.Date(r.ScheduledFor)</td>
+							<td>@Person(r.AssignedToUserId)</td>
+						</tr>
+					}
+					</tbody>
+				</table>
+			</div>
+			@if (pages > 1)
+			{
+				<ul class="pagination">
+					@for (var p = 1; p <= pages; p++)
+					{
+						<li class="@(p == Model.Page ? "active" : "")"><a asp-controller="RecordAlarmRequests" asp-action="Index" asp-route-area="User" asp-route-status="@(Model.Status ?? 0)" asp-route-mine="@Model.MineOnly" asp-route-page="@p">@p</a></li>
+					}
+				</ul>
+			}
+		}
+	</div></div>
+</div>

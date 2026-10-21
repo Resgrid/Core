@@ -56,6 +56,12 @@ namespace Resgrid.Tests.Providers
 				return this;
 			}
 
+			public ScriptedHandler EnqueueFailure(Exception exception)
+			{
+				_responses.Enqueue(_ => throw exception);
+				return this;
+			}
+
 			protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
 			{
 				var body = request.Content == null ? null : await request.Content.ReadAsStringAsync(cancellationToken);
@@ -171,6 +177,64 @@ namespace Resgrid.Tests.Providers
 
 			var act = async () => await provider.GenerateWrappedDataKeyAsync(42);
 			await act.Should().ThrowAsync<CryptographicException>();
+		}
+
+		[Test]
+		public async Task Health_probe_checks_seal_status_and_login_but_never_touches_transit()
+		{
+			var handler = new ScriptedHandler()
+				.Enqueue(HttpStatusCode.OK, "{\"initialized\":true,\"sealed\":false,\"standby\":false}")
+				.Enqueue(HttpStatusCode.OK, LoginJson())
+				.Enqueue(HttpStatusCode.OK, "{\"initialized\":true,\"sealed\":false,\"standby\":false}");
+
+			using var provider = new OpenBaoTransitKeyWrappingProvider(handler);
+
+			(await provider.CheckHealthAsync()).IsHealthy.Should().BeTrue();
+			(await provider.CheckHealthAsync()).IsHealthy.Should().BeTrue();
+
+			handler.Requests.Select(r => r.Path).Should().Equal(
+				new[] { "/v1/sys/health", "/v1/auth/cert/login", "/v1/sys/health" },
+				"the second probe reuses the cached token, and no probe calls a Transit path");
+		}
+
+		[Test]
+		public async Task Health_probe_reports_a_sealed_node_without_logging_in()
+		{
+			var handler = new ScriptedHandler()
+				.Enqueue(HttpStatusCode.ServiceUnavailable, "{\"initialized\":true,\"sealed\":true}");
+
+			using var provider = new OpenBaoTransitKeyWrappingProvider(handler);
+			var health = await provider.CheckHealthAsync();
+
+			health.IsHealthy.Should().BeFalse();
+			health.Reason.Should().Be("kms_sealed");
+			handler.Requests.Should().HaveCount(1);
+		}
+
+		[Test]
+		public async Task Health_probe_reports_a_refused_broker_certificate()
+		{
+			var handler = new ScriptedHandler()
+				.Enqueue(HttpStatusCode.OK, "{\"initialized\":true,\"sealed\":false}")
+				.Enqueue(HttpStatusCode.Forbidden, "{\"errors\":[\"invalid certificate\"]}");
+
+			using var provider = new OpenBaoTransitKeyWrappingProvider(handler);
+			var health = await provider.CheckHealthAsync();
+
+			health.IsHealthy.Should().BeFalse();
+			health.Reason.Should().Be("kms_auth_failed");
+		}
+
+		[Test]
+		public async Task Health_probe_reports_an_unreachable_node_instead_of_throwing()
+		{
+			var handler = new ScriptedHandler().EnqueueFailure(new HttpRequestException("connection refused"));
+
+			using var provider = new OpenBaoTransitKeyWrappingProvider(handler);
+			var health = await provider.CheckHealthAsync();
+
+			health.IsHealthy.Should().BeFalse();
+			health.Reason.Should().Be("kms_unreachable");
 		}
 
 		[Test]

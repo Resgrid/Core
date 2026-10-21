@@ -406,11 +406,91 @@ namespace Resgrid.Web.Services.Models.v4.Records
 
 	#region CRR
 
-	public class CrrActivityData { public string ActivityId { get; set; } public int Kind { get; set; } public DateTime OccurredOn { get; set; } public string Title { get; set; } public string Description { get; set; } public string OccupancyId { get; set; } public string LocationText { get; set; } public decimal? Latitude { get; set; } public decimal? Longitude { get; set; } public int AudienceCount { get; set; } public int SmokeAlarmsInstalled { get; set; } public decimal HoursSpent { get; set; } public string StaffUserIdsCsv { get; set; } public string Outcome { get; set; } public long RowVersion { get; set; } }
-	public class CrrActivityInput { public string ActivityId { get; set; } public int Kind { get; set; } public DateTime? OccurredOn { get; set; } public string Title { get; set; } public string Description { get; set; } public string OccupancyId { get; set; } public string LocationText { get; set; } public decimal? Latitude { get; set; } public decimal? Longitude { get; set; } public int AudienceCount { get; set; } public int SmokeAlarmsInstalled { get; set; } public decimal HoursSpent { get; set; } public string StaffUserIdsCsv { get; set; } public string Outcome { get; set; } }
+	/// <summary>A CRR activity. SmokeAlarmsInstalled counts smoke-only units; CO-only and combination units are counted separately (M0284).</summary>
+	public class CrrActivityData { public string ActivityId { get; set; } public int Kind { get; set; } public DateTime OccurredOn { get; set; } public string Title { get; set; } public string Description { get; set; } public string OccupancyId { get; set; } public string LocationText { get; set; } public decimal? Latitude { get; set; } public decimal? Longitude { get; set; } public int AudienceCount { get; set; } public int SmokeAlarmsInstalled { get; set; } public int CoAlarmsInstalled { get; set; } public int ComboAlarmsInstalled { get; set; } public int AlarmsInstalled { get; set; } public int AlarmReason { get; set; } public int? CallId { get; set; } public string AlarmRequestId { get; set; } public decimal HoursSpent { get; set; } public string StaffUserIdsCsv { get; set; } public string Outcome { get; set; } public long RowVersion { get; set; } }
+	/// <summary>The alarm request link is set only by completing a request (RecordAlarmRequests/Complete) and kept on update.</summary>
+	public class CrrActivityInput { public string ActivityId { get; set; } public int Kind { get; set; } public DateTime? OccurredOn { get; set; } public string Title { get; set; } public string Description { get; set; } public string OccupancyId { get; set; } public string LocationText { get; set; } public decimal? Latitude { get; set; } public decimal? Longitude { get; set; } public int AudienceCount { get; set; } public int SmokeAlarmsInstalled { get; set; } public int CoAlarmsInstalled { get; set; } public int ComboAlarmsInstalled { get; set; } public int AlarmReason { get; set; } public int? CallId { get; set; } public decimal HoursSpent { get; set; } public string StaffUserIdsCsv { get; set; } public string Outcome { get; set; } }
 	public class CrrActivitiesResult : StandardApiResponseV4Base { public List<CrrActivityData> Data { get; set; } = new List<CrrActivityData>(); }
 	public class CrrActivityResult : StandardApiResponseV4Base { public CrrActivityData Data { get; set; } }
 	public class CrrSummaryResult : StandardApiResponseV4Base { public CrrSummary Data { get; set; } }
+
+	/// <summary>A smoke / CO alarm request (M0284). The resident is a Contact id only; no name or phone is carried.</summary>
+	public class AlarmRequestData
+	{
+		public string RequestId { get; set; }
+		public string RequestNumber { get; set; }
+		/// <summary>RmsAlarmRequestStatus: 1 Open, 2 Completed, 3 Declined.</summary>
+		public int Status { get; set; }
+		/// <summary>RmsAlarmRequestSource.</summary>
+		public int Source { get; set; }
+		/// <summary>RmsAlarmReason.</summary>
+		public int Reason { get; set; }
+		public DateTime RequestedOn { get; set; }
+		public int SmokeAlarmsRequested { get; set; }
+		public int CoAlarmsRequested { get; set; }
+		public int ComboAlarmsRequested { get; set; }
+		public string OccupancyId { get; set; }
+		public string LocationText { get; set; }
+		public decimal? Latitude { get; set; }
+		public decimal? Longitude { get; set; }
+		public string RequesterContactId { get; set; }
+		public int? CallId { get; set; }
+		public string Notes { get; set; }
+		public DateTime? ScheduledFor { get; set; }
+		public string AssignedToUserId { get; set; }
+		public DateTime? ClosedOn { get; set; }
+		public string ClosedByUserId { get; set; }
+		/// <summary>RmsAlarmRequestDeclineReason; 0 unless declined.</summary>
+		public int DeclineReason { get; set; }
+		public string ResolutionNotes { get; set; }
+		/// <summary>The CRR activity that completed the request.</summary>
+		public string ActivityId { get; set; }
+		public DateTime CreatedOn { get; set; }
+		public long RowVersion { get; set; }
+	}
+
+	public class AlarmRequestInput
+	{
+		/// <summary>Blank creates a request; an id updates an open one.</summary>
+		public string RequestId { get; set; }
+		/// <summary>When set, the update is refused (409) if the request changed since it was read.</summary>
+		public long RowVersion { get; set; }
+		public int Source { get; set; }
+		public int Reason { get; set; }
+		public DateTime? RequestedOn { get; set; }
+		public int SmokeAlarmsRequested { get; set; }
+		public int CoAlarmsRequested { get; set; }
+		public int ComboAlarmsRequested { get; set; }
+		public string OccupancyId { get; set; }
+		public string LocationText { get; set; }
+		public decimal? Latitude { get; set; }
+		public decimal? Longitude { get; set; }
+		public string RequesterContactId { get; set; }
+		public int? CallId { get; set; }
+		public string Notes { get; set; }
+		public DateTime? ScheduledFor { get; set; }
+		public string AssignedToUserId { get; set; }
+	}
+
+	public class AlarmRequestCompleteInput
+	{
+		public string RequestId { get; set; }
+		public DateTime? OccurredOn { get; set; }
+		public int SmokeAlarmsInstalled { get; set; }
+		public int CoAlarmsInstalled { get; set; }
+		public int ComboAlarmsInstalled { get; set; }
+		/// <summary>RmsAlarmReason; the request's reason when 0.</summary>
+		public int AlarmReason { get; set; }
+		public decimal HoursSpent { get; set; }
+		public string StaffUserIdsCsv { get; set; }
+		public string Outcome { get; set; }
+	}
+
+	public class AlarmRequestDeclineInput { public string RequestId { get; set; } public int DeclineReason { get; set; } public string Notes { get; set; } }
+	public class AlarmRequestCompletionData { public AlarmRequestData Request { get; set; } public CrrActivityData Activity { get; set; } }
+	public class AlarmRequestsResult : StandardApiResponseV4Base { public List<AlarmRequestData> Data { get; set; } = new List<AlarmRequestData>(); public int TotalCount { get; set; } }
+	public class AlarmRequestResult : StandardApiResponseV4Base { public AlarmRequestData Data { get; set; } }
+	public class AlarmRequestCompletionResult : StandardApiResponseV4Base { public AlarmRequestCompletionData Data { get; set; } }
 
 	#endregion
 
@@ -568,8 +648,25 @@ namespace Resgrid.Web.Services.Models.v4.Records
 		public static PermitAggregateData ToPermitAggregate(PermitAggregate a) => a == null ? null : new PermitAggregateData { Permit = ToPermit(a.Permit), Type = ToPermitType(a.Type), Occupancy = ToOccupancy(a.Occupancy), PlanReviews = a.PlanReviews.Select(ToPlanReview).ToList(), Attachments = a.Attachments.Select(x => ToAttachment(x, false)).ToList(), IsProtected = a.Protection.IsProtected, RedactedFields = a.Protection.RedactedFields.Distinct().ToList() };
 		public static RmsPermit FromPermit(PermitInput i) => new RmsPermit { RmsPermitId = i.PermitId, RowVersion = i.RowVersion, RmsPermitTypeId = i.PermitTypeId, RmsOccupancyId = i.OccupancyId, ApplicantContactId = i.ApplicantContactId, ApplicantName = i.ApplicantName, ApplicantPhone = i.ApplicantPhone, ApplicantEmail = i.ApplicantEmail, Description = i.Description, Conditions = i.Conditions, ReviewNotes = i.ReviewNotes, FeeAmount = i.FeeAmount, EffectiveOn = i.EffectiveOn, ExpiresOn = i.ExpiresOn };
 
-		public static CrrActivityData ToCrr(RmsCrrActivity a) => a == null ? null : new CrrActivityData { ActivityId = a.RmsCrrActivityId, Kind = a.Kind, OccurredOn = a.OccurredOn, Title = a.Title, Description = a.Description, OccupancyId = a.RmsOccupancyId, LocationText = a.LocationText, Latitude = a.Latitude, Longitude = a.Longitude, AudienceCount = a.AudienceCount, SmokeAlarmsInstalled = a.SmokeAlarmsInstalled, HoursSpent = a.HoursSpent, StaffUserIdsCsv = a.StaffUserIdsCsv, Outcome = a.Outcome, RowVersion = a.RowVersion };
-		public static RmsCrrActivity FromCrr(CrrActivityInput i) => new RmsCrrActivity { RmsCrrActivityId = i.ActivityId, Kind = i.Kind, OccurredOn = i.OccurredOn ?? default, Title = i.Title, Description = i.Description, RmsOccupancyId = i.OccupancyId, LocationText = i.LocationText, Latitude = i.Latitude, Longitude = i.Longitude, AudienceCount = i.AudienceCount, SmokeAlarmsInstalled = i.SmokeAlarmsInstalled, HoursSpent = i.HoursSpent, StaffUserIdsCsv = i.StaffUserIdsCsv, Outcome = i.Outcome };
+		public static CrrActivityData ToCrr(RmsCrrActivity a) => a == null ? null : new CrrActivityData { ActivityId = a.RmsCrrActivityId, Kind = a.Kind, OccurredOn = a.OccurredOn, Title = a.Title, Description = a.Description, OccupancyId = a.RmsOccupancyId, LocationText = a.LocationText, Latitude = a.Latitude, Longitude = a.Longitude, AudienceCount = a.AudienceCount, SmokeAlarmsInstalled = a.SmokeAlarmsInstalled, CoAlarmsInstalled = a.CoAlarmsInstalled, ComboAlarmsInstalled = a.ComboAlarmsInstalled, AlarmsInstalled = a.AlarmsInstalledTotal(), AlarmReason = a.AlarmReason, CallId = a.CallId, AlarmRequestId = a.RmsCrrAlarmRequestId, HoursSpent = a.HoursSpent, StaffUserIdsCsv = a.StaffUserIdsCsv, Outcome = a.Outcome, RowVersion = a.RowVersion };
+		public static RmsCrrActivity FromCrr(CrrActivityInput i) => new RmsCrrActivity { RmsCrrActivityId = i.ActivityId, Kind = i.Kind, OccurredOn = i.OccurredOn ?? default, Title = i.Title, Description = i.Description, RmsOccupancyId = i.OccupancyId, LocationText = i.LocationText, Latitude = i.Latitude, Longitude = i.Longitude, AudienceCount = i.AudienceCount, SmokeAlarmsInstalled = i.SmokeAlarmsInstalled, CoAlarmsInstalled = i.CoAlarmsInstalled, ComboAlarmsInstalled = i.ComboAlarmsInstalled, AlarmReason = i.AlarmReason, CallId = i.CallId, HoursSpent = i.HoursSpent, StaffUserIdsCsv = i.StaffUserIdsCsv, Outcome = i.Outcome };
+
+		public static AlarmRequestData ToAlarmRequest(RmsCrrAlarmRequest r) => r == null ? null : new AlarmRequestData
+		{
+			RequestId = r.RmsCrrAlarmRequestId, RequestNumber = r.RequestNumber, Status = r.Status, Source = r.Source, Reason = r.Reason, RequestedOn = r.RequestedOn,
+			SmokeAlarmsRequested = r.SmokeAlarmsRequested, CoAlarmsRequested = r.CoAlarmsRequested, ComboAlarmsRequested = r.ComboAlarmsRequested,
+			OccupancyId = r.RmsOccupancyId, LocationText = r.LocationText, Latitude = r.Latitude, Longitude = r.Longitude, RequesterContactId = r.RequesterContactId, CallId = r.CallId,
+			Notes = r.Notes, ScheduledFor = r.ScheduledFor, AssignedToUserId = r.AssignedToUserId, ClosedOn = r.ClosedOn, ClosedByUserId = r.ClosedByUserId,
+			DeclineReason = r.DeclineReason, ResolutionNotes = r.ResolutionNotes, ActivityId = r.RmsCrrActivityId, CreatedOn = r.CreatedOn, RowVersion = r.RowVersion
+		};
+
+		public static RmsCrrAlarmRequest FromAlarmRequest(AlarmRequestInput i) => new RmsCrrAlarmRequest
+		{
+			RmsCrrAlarmRequestId = i.RequestId, RowVersion = i.RowVersion, Source = i.Source, Reason = i.Reason, RequestedOn = i.RequestedOn ?? default,
+			SmokeAlarmsRequested = i.SmokeAlarmsRequested, CoAlarmsRequested = i.CoAlarmsRequested, ComboAlarmsRequested = i.ComboAlarmsRequested,
+			RmsOccupancyId = i.OccupancyId, LocationText = i.LocationText, Latitude = i.Latitude, Longitude = i.Longitude, RequesterContactId = i.RequesterContactId, CallId = i.CallId,
+			Notes = i.Notes, ScheduledFor = i.ScheduledFor, AssignedToUserId = i.AssignedToUserId
+		};
 
 		public static PreventionAttachmentData ToAttachment(RmsPreventionAttachment a, bool includeData) => a == null ? null : new PreventionAttachmentData { AttachmentId = a.RmsPreventionAttachmentId, ParentKind = a.ParentKind, ParentId = a.ParentId, FileName = a.FileName, ContentType = a.ContentType, ByteSize = a.ByteSize, Checksum = a.Checksum, Description = a.Description, UploadedByUserId = a.UploadedByUserId, UploadedOn = a.UploadedOn, ScanState = a.ScanState, Classification = a.Classification, IsProtected = a.IsProtected, Data = includeData && a.Data != null ? Convert.ToBase64String(a.Data) : null };
 

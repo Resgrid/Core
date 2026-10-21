@@ -145,6 +145,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 			catch (Exception ex) { return Fail(ex); }
 		}
 
+		/// <summary>Every CRR activity at an occupancy, newest first, with its smoke / CO / combination alarm counts.</summary>
+		[HttpGet("ForOccupancy")]
+		[Authorize(Policy = ResgridResources.Record_View)]
+		public async Task<ActionResult<CrrActivitiesResult>> ForOccupancy(string occupancyId)
+		{
+			if (!await FlagOnAsync()) return NotFound();
+			try { var r = new CrrActivitiesResult { Data = (await _crr.GetForOccupancyAsync(DepartmentId, UserId, occupancyId)).Select(RecordsRms5ApiMapper.ToCrr).ToList() }; r.PageSize = r.Data.Count; return Ok(Done(r)); }
+			catch (Exception ex) { return Fail(ex); }
+		}
+
 		[HttpGet("Get")]
 		[Authorize(Policy = ResgridResources.Record_View)]
 		public async Task<ActionResult<CrrActivityResult>> Get(string id)
@@ -179,6 +189,105 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			if (!await FlagOnAsync()) return NotFound();
 			try { return Ok(Done(new CrrSummaryResult { Data = await _crr.GetSummaryAsync(DepartmentId, UserId, start ?? DateTime.UtcNow.AddDays(-90), end ?? DateTime.UtcNow.AddDays(1)), PageSize = 1 })); }
+			catch (Exception ex) { return Fail(ex); }
+		}
+	}
+
+	/// <summary>
+	/// Smoke / CO alarm requests (M0284) in the CRR module: Open until completing one records the CRR activity for the units
+	/// left, or it is declined. A double-submitted completion or an edit of a closed request answers 409.
+	/// </summary>
+	[Route("api/v{VersionId:apiVersion}/[controller]")]
+	[ApiVersion("4.0")]
+	[ApiExplorerSettings(GroupName = "v4")]
+	[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+	public class RecordAlarmRequestsController : RecordsPreventionApiControllerBase
+	{
+		private readonly IRecordsAlarmRequestsService _requests;
+
+		public RecordAlarmRequestsController(IRecordsAlarmRequestsService requests, IRecordsCutoverService cutover) : base(cutover)
+		{
+			_requests = requests;
+		}
+
+		/// <summary>Requests by status (RmsAlarmRequestStatus values; none = all), occupancy, assignee and RequestedOn window.</summary>
+		[HttpGet("List")]
+		[Authorize(Policy = ResgridResources.Record_View)]
+		public async Task<ActionResult<AlarmRequestsResult>> List([FromQuery] List<int> statuses = null, string occupancyId = null, bool assignedToMe = false, DateTime? from = null, DateTime? to = null, bool oldestFirst = false, int skip = 0, int take = 50)
+		{
+			if (!await FlagOnAsync()) return NotFound();
+			try
+			{
+				var query = new RmsAlarmRequestQuery { Statuses = statuses, OccupancyId = occupancyId, AssignedToUserId = assignedToMe ? UserId : null, RequestedFrom = from, RequestedBefore = to, OldestFirst = oldestFirst, Skip = skip, Take = take };
+				var r = new AlarmRequestsResult { Data = (await _requests.ListAsync(DepartmentId, UserId, query)).Select(RecordsRms5ApiMapper.ToAlarmRequest).ToList(), TotalCount = await _requests.CountAsync(DepartmentId, UserId, query) };
+				r.PageSize = r.Data.Count;
+				return Ok(Done(r));
+			}
+			catch (Exception ex) { return Fail(ex); }
+		}
+
+		[HttpGet("Get")]
+		[Authorize(Policy = ResgridResources.Record_View)]
+		public async Task<ActionResult<AlarmRequestResult>> Get(string id)
+		{
+			if (!await FlagOnAsync()) return NotFound();
+			try { var a = await _requests.GetAsync(DepartmentId, UserId, id); if (a == null) return NotFound(); return Ok(Done(new AlarmRequestResult { Data = RecordsRms5ApiMapper.ToAlarmRequest(a), PageSize = 1 })); }
+			catch (Exception ex) { return Fail(ex); }
+		}
+
+		[HttpPost("Save")]
+		[Authorize(Policy = ResgridResources.Record_PreventionAdmin)]
+		public async Task<ActionResult<AlarmRequestResult>> Save([FromBody] AlarmRequestInput input, CancellationToken cancellationToken)
+		{
+			if (!await FlagOnAsync()) return NotFound();
+			if (input == null) return BadRequest();
+			try { return Ok(Done(new AlarmRequestResult { Data = RecordsRms5ApiMapper.ToAlarmRequest(await _requests.SaveAsync(DepartmentId, UserId, RecordsRms5ApiMapper.FromAlarmRequest(input), cancellationToken)), PageSize = 1 })); }
+			catch (Exception ex) { return Fail(ex); }
+		}
+
+		[HttpPost("Complete")]
+		[Authorize(Policy = ResgridResources.Record_PreventionAdmin)]
+		public async Task<ActionResult<AlarmRequestCompletionResult>> Complete([FromBody] AlarmRequestCompleteInput input, CancellationToken cancellationToken)
+		{
+			if (!await FlagOnAsync()) return NotFound();
+			if (input == null) return BadRequest();
+			try
+			{
+				var done = await _requests.CompleteAsync(DepartmentId, UserId, new AlarmRequestCompletionInput
+				{
+					RequestId = input.RequestId, OccurredOn = input.OccurredOn, SmokeAlarmsInstalled = input.SmokeAlarmsInstalled, CoAlarmsInstalled = input.CoAlarmsInstalled,
+					ComboAlarmsInstalled = input.ComboAlarmsInstalled, AlarmReason = input.AlarmReason, HoursSpent = input.HoursSpent, StaffUserIdsCsv = input.StaffUserIdsCsv, Outcome = input.Outcome
+				}, cancellationToken);
+				return Ok(Done(new AlarmRequestCompletionResult { Data = new AlarmRequestCompletionData { Request = RecordsRms5ApiMapper.ToAlarmRequest(done.Request), Activity = RecordsRms5ApiMapper.ToCrr(done.Activity) }, PageSize = 1 }));
+			}
+			catch (Exception ex) { return Fail(ex); }
+		}
+
+		[HttpPost("Decline")]
+		[Authorize(Policy = ResgridResources.Record_PreventionAdmin)]
+		public async Task<ActionResult<AlarmRequestResult>> Decline([FromBody] AlarmRequestDeclineInput input, CancellationToken cancellationToken)
+		{
+			if (!await FlagOnAsync()) return NotFound();
+			if (input == null) return BadRequest();
+			try { return Ok(Done(new AlarmRequestResult { Data = RecordsRms5ApiMapper.ToAlarmRequest(await _requests.DeclineAsync(DepartmentId, UserId, input.RequestId, (RmsAlarmRequestDeclineReason)input.DeclineReason, input.Notes, cancellationToken)), PageSize = 1 })); }
+			catch (Exception ex) { return Fail(ex); }
+		}
+
+		[HttpPost("Reopen")]
+		[Authorize(Policy = ResgridResources.Record_PreventionAdmin)]
+		public async Task<ActionResult<AlarmRequestResult>> Reopen(string id, CancellationToken cancellationToken)
+		{
+			if (!await FlagOnAsync()) return NotFound();
+			try { return Ok(Done(new AlarmRequestResult { Data = RecordsRms5ApiMapper.ToAlarmRequest(await _requests.ReopenAsync(DepartmentId, UserId, id, cancellationToken)), PageSize = 1 })); }
+			catch (Exception ex) { return Fail(ex); }
+		}
+
+		[HttpDelete("Delete")]
+		[Authorize(Policy = ResgridResources.Record_PreventionAdmin)]
+		public async Task<ActionResult<StandardApiResponseV4Base>> Delete(string id, CancellationToken cancellationToken)
+		{
+			if (!await FlagOnAsync()) return NotFound();
+			try { await _requests.DeleteAsync(DepartmentId, UserId, id, cancellationToken); return Ok(Done(new StandardApiResponseV4Base())); }
 			catch (Exception ex) { return Fail(ex); }
 		}
 	}

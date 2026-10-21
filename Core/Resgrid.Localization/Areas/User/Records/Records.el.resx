@@ -2197,4 +2197,59 @@
   <data name="NerisWorkflowsOffNotice" xml:space="preserve"><value>Οι ροές εργασίας NERIS είναι απενεργοποιημένες για αυτή την υπηρεσία. Οι αναφορές συμβάντων διατηρούνται ως αρχεία της υπηρεσίας και δεν επικυρώνονται ούτε υποβάλλονται στο NERIS. Ένας διαχειριστής μπορεί να ενεργοποιήσει ξανά το NERIS στις ρυθμίσεις Αρχείων.</value></data>
   <data name="ManageNerisProfile" xml:space="preserve"><value>Προφίλ NERIS και αντιστοιχίσεις κωδικών</value></data>
   <data name="CorrectWithoutNeris" xml:space="preserve"><value>Αποθήκευση διόρθωσης (δεν υποβάλλεται στο NERIS)</value></data>
+  <data name="AlarmsLeft" xml:space="preserve"><value>Ανιχνευτές που αφέθηκαν</value></data>
+  <data name="AlarmsLeftHelp" xml:space="preserve"><value>Μετρήστε κάθε συσκευή που αφέθηκε: μόνο καπνού, μόνο μονοξειδίου του άνθρακα (CO) ή συνδυασμένος ανιχνευτής καπνού και CO.</value></data>
+  <data name="SmokeOnlyAlarms" xml:space="preserve"><value>Μόνο καπνού</value></data>
+  <data name="CoAlarms" xml:space="preserve"><value>Μόνο CO</value></data>
+  <data name="ComboAlarms" xml:space="preserve"><value>Συνδυασμένος (καπνός + CO)</value></data>
+  <data name="AlarmReason" xml:space="preserve"><value>Αιτία ανιχνευτή</value></data>
+  <data name="AlarmCallHelp" xml:space="preserve"><value>Η κλήση κατά την οποία αφέθηκε ο ανιχνευτής, αν υπάρχει.</value></data>
+  <data name="AlarmLeftDuringCall" xml:space="preserve"><value>Ανιχνευτής αφέθηκε κατά την κλήση</value></data>
+  <data name="CompletesAlarmRequest" xml:space="preserve"><value>Αυτή η δραστηριότητα ολοκλήρωσε το αίτημα ανιχνευτή</value></data>
+  <data name="AlarmRequests" xml:space="preserve"><value>Αιτήματα ανιχνευτών</value></data>
+  <data name="AlarmRequest" xml:space="preserve"><value>Αίτημα ανιχνευτή</value></data>
+  <data name="ThisYear" xml:space="preserve"><value>Φέτος</value></data>
+  <data name="LastYear" xml:space="preserve"><value>Πέρυσι</value></data>
+  <data name="AlarmsColumnHelp" xml:space="preserve"><value>Σύνολο συσκευών που αφέθηκαν (μόνο καπνού / μόνο CO / συνδυασμένοι)</value></data>
+  <data name="AlarmsInstalledTotal" xml:space="preserve"><value>Ανιχνευτές που αφέθηκαν (όλοι οι τύποι)</value></data>
+  <data name="AlarmVisits" xml:space="preserve"><value>Κατοικίες και χώροι που εξυπηρετήθηκαν</value></data>
+  <data name="OpenAlarmRequests" xml:space="preserve"><value>Ανοιχτά αιτήματα ανιχνευτών</value></data>
+  <data name="AlarmsByReason" xml:space="preserve"><value>Ανιχνευτές ανά αιτία</value></data>
+  <data name="AlarmsByType" xml:space="preserve"><value>Ανιχνευτές ανά τύπο</value></data>
+  <data name="AlarmsByMonth" xml:space="preserve"><value>Ανιχνευτές που αφέθηκαν ανά μήνα</value></data>
+  <data name="NewAlarmRequest" xml:space="preserve"><value>Νέο αίτημα ανιχνευτή</value></data>
+  <data name="AlarmRequestsHelp" xml:space="preserve"><value>Αιτήματα για ανιχνευτές καπνού και CO, για παράδειγμα όταν ένας κάτοικος αναφέρει ελαττωματικό ή ανύπαρκτο ανιχνευτή. Η ολοκλήρωση ενός αιτήματος καταγράφει τους ανιχνευτές που αφέθηκαν, οι οποίοι μετρούν στα ετήσια σύνολα.</value></data>
+  <data name="AllStatuses" xml:space="preserve"><value>Όλες οι καταστάσεις</value></data>
+  <data name="AssignedToMe" xml:space="preserve"><value>Ανατεθειμένα σε εμένα</value></data>
+  <data name="NoAlarmRequests" xml:space="preserve"><value>Κανένα αίτημα ανιχνευτή δεν ταιριάζει με το φίλτρο.</value></data>
+  <data name="RequestedOn" xml:space="preserve"><value>Ημερομηνία αιτήματος</value></data>
+  <data name="AlarmsRequested" xml:space="preserve"><value>Ανιχνευτές που ζητήθηκαν</value></data>
+  <data name="AlarmsRequestedHelp" xml:space="preserve"><value>Τι χρειάζεται ο κάτοικος, αν είναι γνωστό. Το πλήρωμα καταγράφει τι αφέθηκε πραγματικά κατά την ολοκλήρωση του αιτήματος.</value></data>
+  <data name="ScheduledFor" xml:space="preserve"><value>Προγραμματισμένη επίσκεψη</value></data>
+  <data name="AlarmLocationHelp" xml:space="preserve"><value>Διεύθυνση της κατοικίας. Αφήστε κενό για να χρησιμοποιηθεί η διεύθυνση του κτιρίου.</value></data>
+  <data name="AlarmRequester" xml:space="preserve"><value>Κάτοικος ή αιτών</value></data>
+  <data name="RequesterHelp" xml:space="preserve"><value>Επιλέξτε τον κάτοικο από τις Επαφές. Το όνομα και το τηλέφωνο παραμένουν στις Επαφές και δεν αντιγράφονται στο αίτημα.</value></data>
+  <data name="AlarmRequestNotes" xml:space="preserve"><value>Σημειώσεις αιτήματος</value></data>
+  <data name="AlarmRequestNotesHelp" xml:space="preserve"><value>Πού βρίσκεται ο ανιχνευτής, πρόσβαση και τι πρέπει να φέρει το πλήρωμα. Μην εισάγετε εδώ προσωπικά ή ιατρικά στοιχεία.</value></data>
+  <data name="Resolution" xml:space="preserve"><value>Έκβαση</value></data>
+  <data name="DeclineReason" xml:space="preserve"><value>Αιτία απόρριψης</value></data>
+  <data name="ResolutionNotes" xml:space="preserve"><value>Σημειώσεις έκβασης</value></data>
+  <data name="RecordedActivity" xml:space="preserve"><value>Καταγεγραμμένη δραστηριότητα</value></data>
+  <data name="ReopenRequest" xml:space="preserve"><value>Επαναφορά αιτήματος</value></data>
+  <data name="CompletedRequestHelp" xml:space="preserve"><value>Για να αλλάξετε τους ανιχνευτές που αφέθηκαν, επεξεργαστείτε την καταγεγραμμένη δραστηριότητα. Η διαγραφή της δραστηριότητας ανοίγει ξανά αυτό το αίτημα.</value></data>
+  <data name="CompleteRequest" xml:space="preserve"><value>Ολοκλήρωση αιτήματος</value></data>
+  <data name="CompleteRequestHelp" xml:space="preserve"><value>Καταχωρίστε τους ανιχνευτές που αφέθηκαν. Η ολοκλήρωση καταγράφει μια δραστηριότητα μείωσης κινδύνου που μετρά στα ετήσια σύνολα.</value></data>
+  <data name="InstalledOn" xml:space="preserve"><value>Αφέθηκαν στις</value></data>
+  <data name="DeclineRequest" xml:space="preserve"><value>Απόρριψη αιτήματος</value></data>
+  <data name="DeleteAlarmRequest" xml:space="preserve"><value>Διαγραφή αιτήματος</value></data>
+  <data name="DeleteAlarmRequestConfirm" xml:space="preserve"><value>Διαγραφή αυτού του αιτήματος ανιχνευτή;</value></data>
+  <data name="AlarmRequestSaved" xml:space="preserve"><value>Το αίτημα ανιχνευτή {0} αποθηκεύτηκε.</value></data>
+  <data name="AlarmRequestCompleted" xml:space="preserve"><value>Το αίτημα ανιχνευτή {0} ολοκληρώθηκε με {1} καταγεγραμμένους ανιχνευτές.</value></data>
+  <data name="AlarmRequestDeclined" xml:space="preserve"><value>Το αίτημα ανιχνευτή {0} απορρίφθηκε.</value></data>
+  <data name="AlarmRequestReopened" xml:space="preserve"><value>Το αίτημα ανιχνευτή {0} άνοιξε ξανά.</value></data>
+  <data name="AlarmRequestDeleted" xml:space="preserve"><value>Το αίτημα ανιχνευτή διαγράφηκε.</value></data>
+  <data name="SmokeCoAlarms" xml:space="preserve"><value>Ανιχνευτές καπνού και CO</value></data>
+  <data name="NoAlarmActivity" xml:space="preserve"><value>Δεν έχουν καταγραφεί ακόμη ανιχνευτές ή δραστηριότητες μείωσης κινδύνου εδώ.</value></data>
+  <data name="RecordAlarmLeft" xml:space="preserve"><value>Καταγραφή ανιχνευτή που αφέθηκε</value></data>
+  <data name="AlarmsRequestedColumnHelp" xml:space="preserve"><value>Σύνολο συσκευών που ζητήθηκαν (μόνο καπνού / μόνο CO / συνδυασμένοι)</value></data>
 </root>

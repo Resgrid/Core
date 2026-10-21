@@ -23,7 +23,11 @@
 	<div class="ibox"><div class="ibox-content">
 		<form method="post" class="form-horizontal" asp-controller="RecordCrr" asp-action="Edit" asp-route-area="User">
 			@Html.AntiForgeryToken()
-			<input type="hidden" asp-for="Activity.RmsCrrActivityId" /><input type="hidden" asp-for="Activity.RowVersion" />
+			<input type="hidden" asp-for="Activity.RmsCrrActivityId" /><input type="hidden" asp-for="Activity.RowVersion" /><input type="hidden" asp-for="ReturnOccupancyId" />
+			@if (Model.AlarmRequest != null)
+			{
+				<div class="alert alert-info">@L["CompletesAlarmRequest"] <a asp-controller="RecordAlarmRequests" asp-action="Details" asp-route-area="User" asp-route-id="@Model.AlarmRequest.RmsCrrAlarmRequestId">@Model.AlarmRequest.RequestNumber</a></div>
+			}
 			<div class="form-group"><label class="col-sm-3 control-label">@L["Kind"]</label><div class="col-sm-9"><select class="form-control" asp-for="Activity.Kind" asp-items="Model.Kinds"></select></div></div>
 			<div class="form-group"><label class="col-sm-3 control-label">@L["OccurredOn"]</label><div class="col-sm-9"><input type="date" class="form-control" name="occurredOn" value="@departmentTime.Date(Model.Activity.OccurredOn)" required /></div></div>
 			<div class="form-group"><label class="col-sm-3 control-label">@L["Title"]</label><div class="col-sm-9"><input class="form-control" asp-for="Activity.Title" maxlength="200" required /></div></div>
@@ -32,13 +36,32 @@
 			<div class="form-group"><label class="col-sm-3 control-label">@L["Location"]</label><div class="col-sm-9"><input class="form-control" asp-for="Activity.LocationText" maxlength="500" /></div></div>
 			<div class="form-group"><label class="col-sm-3 control-label">@L["Coordinates"]</label><div class="col-sm-4"><input class="form-control" asp-for="Activity.Latitude" /></div><div class="col-sm-5"><input class="form-control" asp-for="Activity.Longitude" /></div></div>
 			<div class="form-group"><label class="col-sm-3 control-label">@L["AudienceCount"]</label><div class="col-sm-9"><input class="form-control" type="number" min="0" asp-for="Activity.AudienceCount" /></div></div>
-			<div class="form-group"><label class="col-sm-3 control-label">@L["SmokeAlarmsInstalled"]</label><div class="col-sm-9"><input class="form-control" type="number" min="0" asp-for="Activity.SmokeAlarmsInstalled" /></div></div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">@L["AlarmsLeft"]</label>
+				<div class="col-sm-9">
+					<div class="row" style="display:flex;flex-wrap:wrap;align-items:flex-end">
+						<div class="col-sm-4"><label class="control-label" for="Activity_SmokeAlarmsInstalled">@L["SmokeOnlyAlarms"]</label><input class="form-control" type="number" min="0" max="10000" asp-for="Activity.SmokeAlarmsInstalled" /></div>
+						<div class="col-sm-4"><label class="control-label" for="Activity_CoAlarmsInstalled">@L["CoAlarms"]</label><input class="form-control" type="number" min="0" max="10000" asp-for="Activity.CoAlarmsInstalled" /></div>
+						<div class="col-sm-4"><label class="control-label" for="Activity_ComboAlarmsInstalled">@L["ComboAlarms"]</label><input class="form-control" type="number" min="0" max="10000" asp-for="Activity.ComboAlarmsInstalled" /></div>
+					</div>
+					<span class="help-block">@L["AlarmsLeftHelp"]</span>
+				</div>
+			</div>
+			<div class="form-group"><label class="col-sm-3 control-label" for="Activity_AlarmReason">@L["AlarmReason"]</label><div class="col-sm-9"><select class="form-control" asp-for="Activity.AlarmReason" asp-items="Model.AlarmReasons"></select></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label" for="CallId">@L["Call"]</label><div class="col-sm-9"><partial name="_RecordCallPicker" model="Model.Activity.CallId" /><span class="help-block">@L["AlarmCallHelp"]</span></div></div>
 			<div class="form-group"><label class="col-sm-3 control-label">@L["HoursSpent"]</label><div class="col-sm-9"><input class="form-control" type="number" step="0.25" min="0" asp-for="Activity.HoursSpent" /></div></div>
 			<div class="form-group"><label class="col-sm-3 control-label">@L["Staff"]</label><div class="col-sm-9"><input class="form-control" asp-for="Activity.StaffUserIdsCsv" maxlength="2000" /><span class="help-block">@L["StaffHelp"]</span></div></div>
 			<div class="form-group"><label class="col-sm-3 control-label">@L["Outcome"]</label><div class="col-sm-9"><textarea class="form-control" asp-for="Activity.Outcome" rows="2" maxlength="2000"></textarea></div></div>
 			<div class="form-group"><div class="col-sm-offset-3 col-sm-9">
 				<button class="btn btn-primary"><i class="fa fa-save"></i> @L["Save"]</button>
-				<a class="btn btn-default" asp-controller="RecordCrr" asp-action="Index" asp-route-area="User">@L["BackToRecords"]</a>
+				@if (!string.IsNullOrWhiteSpace(Model.ReturnOccupancyId))
+				{
+					<a class="btn btn-default" asp-controller="RecordOccupancies" asp-action="Details" asp-route-area="User" asp-route-id="@Model.ReturnOccupancyId">@L["BackToRecords"]</a>
+				}
+				else
+				{
+					<a class="btn btn-default" asp-controller="RecordCrr" asp-action="Index" asp-route-area="User">@L["BackToRecords"]</a>
+				}
 			</div></div>
 		</form>
 		@if (!Model.IsNew)
@@ -50,3 +73,7 @@
 		}
 	</div></div>
 </div>
+
+@section Scripts {
+	<script src="~/js/record-call-picker.js" asp-append-version="true"></script>
+}

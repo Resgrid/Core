@@ -68,8 +68,10 @@ namespace Resgrid.Services
 		/// hosts): the coordinator then SKIPS nights instead of opening a window that can only fail
 		/// with kms_unavailable — queued departments wait for a host with a real KMS adapter (the
 		/// Protected Data Broker) rather than being marked Failed by a host that can never succeed.
+		/// Asks the provider rather than checking its type: on the broker the provider is the audit
+		/// decorator, so a type check never sees the placeholder inside it.
 		/// </summary>
-		public bool IsAvailable => !(_keyWrappingProvider is NotConfiguredKeyWrappingProvider);
+		public bool IsAvailable => _keyWrappingProvider.IsKmsConfigured();
 
 		public async Task<AdpMigrationNightResult> RunEncryptionNightAsync(AdpMigrationNightContext context, CancellationToken cancellationToken)
 		{

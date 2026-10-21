@@ -2197,4 +2197,59 @@
   <data name="NerisWorkflowsOffNotice" xml:space="preserve"><value>Процеси NERIS вимкнено для цього підрозділу. Звіти про інциденти зберігаються як записи підрозділу і не перевіряються за NERIS та не надсилаються до NERIS. Адміністратор може знову ввімкнути NERIS у налаштуваннях Записів.</value></data>
   <data name="ManageNerisProfile" xml:space="preserve"><value>Профіль NERIS і зіставлення кодів</value></data>
   <data name="CorrectWithoutNeris" xml:space="preserve"><value>Зберегти виправлення (не надсилається до NERIS)</value></data>
+  <data name="AlarmsLeft" xml:space="preserve"><value>Залишені сповіщувачі</value></data>
+  <data name="AlarmsLeftHelp" xml:space="preserve"><value>Рахуйте кожен залишений пристрій: лише дим, лише чадний газ (CO) або комбінований сповіщувач диму та CO.</value></data>
+  <data name="SmokeOnlyAlarms" xml:space="preserve"><value>Лише дим</value></data>
+  <data name="CoAlarms" xml:space="preserve"><value>Лише CO</value></data>
+  <data name="ComboAlarms" xml:space="preserve"><value>Комбінований (дим + CO)</value></data>
+  <data name="AlarmReason" xml:space="preserve"><value>Причина сповіщувача</value></data>
+  <data name="AlarmCallHelp" xml:space="preserve"><value>Виклик, під час якого залишили сповіщувач, якщо був.</value></data>
+  <data name="AlarmLeftDuringCall" xml:space="preserve"><value>Сповіщувач залишено під час виклику</value></data>
+  <data name="CompletesAlarmRequest" xml:space="preserve"><value>Цей захід завершив запит на сповіщувач</value></data>
+  <data name="AlarmRequests" xml:space="preserve"><value>Запити на сповіщувачі</value></data>
+  <data name="AlarmRequest" xml:space="preserve"><value>Запит на сповіщувач</value></data>
+  <data name="ThisYear" xml:space="preserve"><value>Цього року</value></data>
+  <data name="LastYear" xml:space="preserve"><value>Минулого року</value></data>
+  <data name="AlarmsColumnHelp" xml:space="preserve"><value>Усього залишених пристроїв (лише дим / лише CO / комбіновані)</value></data>
+  <data name="AlarmsInstalledTotal" xml:space="preserve"><value>Залишені сповіщувачі (усі типи)</value></data>
+  <data name="AlarmVisits" xml:space="preserve"><value>Обслуговані домівки та об’єкти</value></data>
+  <data name="OpenAlarmRequests" xml:space="preserve"><value>Відкриті запити на сповіщувачі</value></data>
+  <data name="AlarmsByReason" xml:space="preserve"><value>Сповіщувачі за причиною</value></data>
+  <data name="AlarmsByType" xml:space="preserve"><value>Сповіщувачі за типом</value></data>
+  <data name="AlarmsByMonth" xml:space="preserve"><value>Залишені сповіщувачі за місяцями</value></data>
+  <data name="NewAlarmRequest" xml:space="preserve"><value>Новий запит на сповіщувач</value></data>
+  <data name="AlarmRequestsHelp" xml:space="preserve"><value>Запити на сповіщувачі диму та CO, наприклад коли мешканець повідомляє про несправний або відсутній сповіщувач. Завершення запиту фіксує залишені сповіщувачі, які враховуються в річних підсумках.</value></data>
+  <data name="AllStatuses" xml:space="preserve"><value>Усі стани</value></data>
+  <data name="AssignedToMe" xml:space="preserve"><value>Призначені мені</value></data>
+  <data name="NoAlarmRequests" xml:space="preserve"><value>Жоден запит на сповіщувач не відповідає фільтру.</value></data>
+  <data name="RequestedOn" xml:space="preserve"><value>Дата запиту</value></data>
+  <data name="AlarmsRequested" xml:space="preserve"><value>Запитані сповіщувачі</value></data>
+  <data name="AlarmsRequestedHelp" xml:space="preserve"><value>Що потрібно мешканцю, якщо відомо. Під час завершення запиту екіпаж фіксує, що фактично залишили.</value></data>
+  <data name="ScheduledFor" xml:space="preserve"><value>Візит заплановано на</value></data>
+  <data name="AlarmLocationHelp" xml:space="preserve"><value>Адреса житла. Залиште порожнім, щоб використати адресу об’єкта.</value></data>
+  <data name="AlarmRequester" xml:space="preserve"><value>Мешканець або заявник</value></data>
+  <data name="RequesterHelp" xml:space="preserve"><value>Виберіть мешканця з Контактів. Ім’я та телефон залишаються в Контактах і не копіюються в запит.</value></data>
+  <data name="AlarmRequestNotes" xml:space="preserve"><value>Нотатки до запиту</value></data>
+  <data name="AlarmRequestNotesHelp" xml:space="preserve"><value>Де розташований сповіщувач, доступ і що має взяти екіпаж. Не вводьте тут особисті чи медичні дані.</value></data>
+  <data name="Resolution" xml:space="preserve"><value>Результат</value></data>
+  <data name="DeclineReason" xml:space="preserve"><value>Причина відмови</value></data>
+  <data name="ResolutionNotes" xml:space="preserve"><value>Нотатки щодо результату</value></data>
+  <data name="RecordedActivity" xml:space="preserve"><value>Зафіксований захід</value></data>
+  <data name="ReopenRequest" xml:space="preserve"><value>Відкрити запит знову</value></data>
+  <data name="CompletedRequestHelp" xml:space="preserve"><value>Щоб змінити залишені сповіщувачі, відредагуйте зафіксований захід. Видалення заходу знову відкриває цей запит.</value></data>
+  <data name="CompleteRequest" xml:space="preserve"><value>Завершити запит</value></data>
+  <data name="CompleteRequestHelp" xml:space="preserve"><value>Введіть залишені сповіщувачі. Завершення фіксує захід зі зниження ризиків, який враховується в річних підсумках.</value></data>
+  <data name="InstalledOn" xml:space="preserve"><value>Дата встановлення</value></data>
+  <data name="DeclineRequest" xml:space="preserve"><value>Відхилити запит</value></data>
+  <data name="DeleteAlarmRequest" xml:space="preserve"><value>Видалити запит</value></data>
+  <data name="DeleteAlarmRequestConfirm" xml:space="preserve"><value>Видалити цей запит на сповіщувач?</value></data>
+  <data name="AlarmRequestSaved" xml:space="preserve"><value>Запит на сповіщувач {0} збережено.</value></data>
+  <data name="AlarmRequestCompleted" xml:space="preserve"><value>Запит на сповіщувач {0} завершено, зафіксовано сповіщувачів: {1}.</value></data>
+  <data name="AlarmRequestDeclined" xml:space="preserve"><value>Запит на сповіщувач {0} відхилено.</value></data>
+  <data name="AlarmRequestReopened" xml:space="preserve"><value>Запит на сповіщувач {0} відкрито знову.</value></data>
+  <data name="AlarmRequestDeleted" xml:space="preserve"><value>Запит на сповіщувач видалено.</value></data>
+  <data name="SmokeCoAlarms" xml:space="preserve"><value>Сповіщувачі диму та CO</value></data>
+  <data name="NoAlarmActivity" xml:space="preserve"><value>Тут ще не зафіксовано сповіщувачів чи заходів зі зниження ризиків.</value></data>
+  <data name="RecordAlarmLeft" xml:space="preserve"><value>Зафіксувати залишений сповіщувач</value></data>
+  <data name="AlarmsRequestedColumnHelp" xml:space="preserve"><value>Усього запитаних пристроїв (лише дим / лише CO / комбіновані)</value></data>
 </root>

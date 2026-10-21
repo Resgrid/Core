@@ -117,9 +117,22 @@ namespace Resgrid.Model.Services
 		public DateTime End { get; set; }
 		public int Activities { get; set; }
 		public int Audience { get; set; }
+		/// <summary>Smoke-only units.</summary>
 		public int SmokeAlarmsInstalled { get; set; }
+		public int CoAlarmsInstalled { get; set; }
+		public int ComboAlarmsInstalled { get; set; }
+		/// <summary>Every alarm unit left: smoke, CO and combination.</summary>
+		public int AlarmsInstalled { get; set; }
+		/// <summary>Activities that left at least one alarm (homes or sites served).</summary>
+		public int AlarmVisits { get; set; }
 		public decimal Hours { get; set; }
 		public Dictionary<int, int> ByKind { get; set; } = new Dictionary<int, int>();
+		/// <summary>Alarm units left, keyed by <see cref="RmsAlarmReason"/>.</summary>
+		public Dictionary<int, int> AlarmsByReason { get; set; } = new Dictionary<int, int>();
+		/// <summary>Alarm requests still open now (not limited to the window).</summary>
+		public int OpenAlarmRequests { get; set; }
+		/// <summary>Alarm requests received in the window, by <see cref="RmsAlarmRequestStatus"/>.</summary>
+		public Dictionary<int, int> AlarmRequestsByStatus { get; set; } = new Dictionary<int, int>();
 	}
 
 	/// <summary>Community risk reduction activities and their summary.</summary>
@@ -127,10 +140,57 @@ namespace Resgrid.Model.Services
 	{
 		Task<bool> IsModuleEnabledAsync(int departmentId);
 		Task<List<RmsCrrActivity>> ListAsync(int departmentId, string userId, DateTime startUtc, DateTime endUtc, int take);
+		Task<List<RmsCrrActivity>> GetForOccupancyAsync(int departmentId, string userId, string occupancyId);
 		Task<RmsCrrActivity> GetAsync(int departmentId, string userId, string activityId);
+		/// <summary>Creates or updates an activity. The alarm request link is set only by completing a request and is kept on update.</summary>
 		Task<RmsCrrActivity> SaveAsync(int departmentId, string userId, RmsCrrActivity input, CancellationToken cancellationToken = default);
+		/// <summary>Removes an activity; the alarm request it completed, if any, goes back to Open.</summary>
 		Task DeleteAsync(int departmentId, string userId, string activityId, CancellationToken cancellationToken = default);
 		Task<CrrSummary> GetSummaryAsync(int departmentId, string userId, DateTime startUtc, DateTime endUtc);
+	}
+
+	/// <summary>What the crew left when completing an alarm request; becomes a CRR activity.</summary>
+	public class AlarmRequestCompletionInput
+	{
+		public string RequestId { get; set; }
+		/// <summary>The date the units were left; today when not set.</summary>
+		public DateTime? OccurredOn { get; set; }
+		public int SmokeAlarmsInstalled { get; set; }
+		public int CoAlarmsInstalled { get; set; }
+		public int ComboAlarmsInstalled { get; set; }
+		/// <summary><see cref="RmsAlarmReason"/>; the request's reason when Unspecified.</summary>
+		public int AlarmReason { get; set; }
+		public decimal HoursSpent { get; set; }
+		public string StaffUserIdsCsv { get; set; }
+		public string Outcome { get; set; }
+	}
+
+	public class AlarmRequestCompletion
+	{
+		public RmsCrrAlarmRequest Request { get; set; }
+		public RmsCrrActivity Activity { get; set; }
+	}
+
+	/// <summary>
+	/// The smoke / CO alarm request queue (M0284), part of the CRR module: Open until completing it records a CRR activity
+	/// with the units left, or it is declined. Reads need Records access; changes need the prevention administrator permission.
+	/// </summary>
+	public interface IRecordsAlarmRequestsService
+	{
+		Task<bool> IsModuleEnabledAsync(int departmentId);
+		Task<List<RmsCrrAlarmRequest>> ListAsync(int departmentId, string userId, RmsAlarmRequestQuery query);
+		Task<int> CountAsync(int departmentId, string userId, RmsAlarmRequestQuery query);
+		Task<RmsCrrAlarmRequest> GetAsync(int departmentId, string userId, string requestId);
+		Task<List<RmsCrrAlarmRequest>> GetForOccupancyAsync(int departmentId, string userId, string occupancyId);
+		/// <summary>Creates a request, or updates one that is still open.</summary>
+		Task<RmsCrrAlarmRequest> SaveAsync(int departmentId, string userId, RmsCrrAlarmRequest input, CancellationToken cancellationToken = default);
+		/// <summary>Records the activity for the units left and closes the request as Completed, in one transaction.</summary>
+		Task<AlarmRequestCompletion> CompleteAsync(int departmentId, string userId, AlarmRequestCompletionInput input, CancellationToken cancellationToken = default);
+		Task<RmsCrrAlarmRequest> DeclineAsync(int departmentId, string userId, string requestId, RmsAlarmRequestDeclineReason reason, string notes, CancellationToken cancellationToken = default);
+		/// <summary>Opens a declined request again. A completed request reopens only when its activity is deleted.</summary>
+		Task<RmsCrrAlarmRequest> ReopenAsync(int departmentId, string userId, string requestId, CancellationToken cancellationToken = default);
+		/// <summary>Removes an open or declined request; a completed one stays with its activity.</summary>
+		Task DeleteAsync(int departmentId, string userId, string requestId, CancellationToken cancellationToken = default);
 	}
 
 	/// <summary>Attachments on prevention and investigation aggregates; hygiene and scanning are the record-attachment pipeline.</summary>

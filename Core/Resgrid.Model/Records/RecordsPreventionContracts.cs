@@ -178,6 +178,8 @@ namespace Resgrid.Model
 		public int PermitsAwaitingReview { get; set; }
 		public int CrrActivitiesLast90Days { get; set; }
 		public int CrrSmokeAlarmsLast90Days { get; set; }
+		/// <summary>Every alarm unit (smoke, CO and combination) left in the last 90 days.</summary>
+		public int CrrAlarmsLast90Days { get; set; }
 		public int InvestigationCasesOpen { get; set; }
 	}
 }

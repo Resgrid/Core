@@ -133,6 +133,10 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public List<RmsPreventionAttachment> Attachments { get; set; } = new List<RmsPreventionAttachment>();
 		public bool InspectionsOn { get; set; }
 		public bool PermitsOn { get; set; }
+		/// <summary>CRR module on: the smoke / CO alarm panel shows.</summary>
+		public bool CrrOn { get; set; }
+		public List<RmsCrrActivity> AlarmActivities { get; set; } = new List<RmsCrrActivity>();
+		public List<RmsCrrAlarmRequest> AlarmRequests { get; set; } = new List<RmsCrrAlarmRequest>();
 		public List<SelectListItem> HazardTypes => RmsEnumDisplay.Items<ContactPreplanHazardTypes>();
 		public List<SelectListItem> HazardSeverities => RmsEnumDisplay.Items<ContactPreplanHazardSeverities>();
 		public List<SelectListItem> ContactRoles => RmsEnumDisplay.Items<RmsOccupancyContactRole>();
@@ -308,7 +312,68 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public RmsCrrActivity Activity { get; set; } = new RmsCrrActivity { Kind = (int)RmsCrrActivityKind.PublicEducation, OccurredOn = DateTime.UtcNow.Date };
 		public bool IsNew => string.IsNullOrWhiteSpace(Activity?.RmsCrrActivityId);
 		public List<SelectListItem> Kinds => RmsEnumDisplay.Items<RmsCrrActivityKind>(Activity?.Kind, false);
+		public List<SelectListItem> AlarmReasons => RmsEnumDisplay.Items<RmsAlarmReason>(Activity?.AlarmReason);
 		public List<SelectListItem> Occupancies { get; set; } = new List<SelectListItem>();
+		/// <summary>The request this activity completed, shown read-only.</summary>
+		public RmsCrrAlarmRequest AlarmRequest { get; set; }
+		/// <summary>Where Save and Cancel go back to (an occupancy page), when the form was opened from one.</summary>
+		public string ReturnOccupancyId { get; set; }
+	}
+
+	// ---- Smoke / CO alarm requests (M0284) -----------------------------------------------------------------------
+
+	public static class AlarmRequestDisplay
+	{
+		public static string StatusClass(int status)
+		{
+			switch ((RmsAlarmRequestStatus)status)
+			{
+				case RmsAlarmRequestStatus.Open: return "warning";
+				case RmsAlarmRequestStatus.Completed: return "success";
+				case RmsAlarmRequestStatus.Declined: return "default";
+				default: return "default";
+			}
+		}
+
+		/// <summary>Smoke only / CO only / combination, in that order everywhere a count is split.</summary>
+		public static string Breakdown(int smoke, int co, int combo) => smoke + " / " + co + " / " + combo;
+	}
+
+	public class RecordAlarmRequestsIndexView : RecordsPreventionBaseView
+	{
+		public List<RmsCrrAlarmRequest> Requests { get; set; } = new List<RmsCrrAlarmRequest>();
+		public int Total { get; set; }
+		public int OpenCount { get; set; }
+		public int? Status { get; set; }
+		public bool MineOnly { get; set; }
+		public int Page { get; set; } = 1;
+		public int PageSize { get; set; } = 50;
+		public Dictionary<string, string> OccupancyNames { get; set; } = new Dictionary<string, string>();
+		public Dictionary<string, string> UserNames { get; set; } = new Dictionary<string, string>();
+		public List<SelectListItem> Statuses => RmsEnumDisplay.Items<RmsAlarmRequestStatus>(Status, false);
+	}
+
+	public class RecordAlarmRequestEditView : RecordsPreventionBaseView
+	{
+		public RmsCrrAlarmRequest Request { get; set; } = new RmsCrrAlarmRequest { Status = (int)RmsAlarmRequestStatus.Open, Source = (int)RmsAlarmRequestSource.Phone, RequestedOn = DateTime.UtcNow };
+		public bool IsNew => string.IsNullOrWhiteSpace(Request?.RmsCrrAlarmRequestId);
+		public List<SelectListItem> Sources => RmsEnumDisplay.Items<RmsAlarmRequestSource>(Request?.Source, false);
+		public List<SelectListItem> Reasons => RmsEnumDisplay.Items<RmsAlarmReason>(Request?.Reason);
+		public List<SelectListItem> Occupancies { get; set; } = new List<SelectListItem>();
+		public List<SelectListItem> Contacts { get; set; } = new List<SelectListItem>();
+		public List<SelectListItem> Members { get; set; } = new List<SelectListItem>();
+	}
+
+	public class RecordAlarmRequestDetailsView : RecordsPreventionBaseView
+	{
+		public RmsCrrAlarmRequest Request { get; set; }
+		public RmsCrrActivity Activity { get; set; }
+		public RmsOccupancy Occupancy { get; set; }
+		public string ContactName { get; set; }
+		public Dictionary<string, string> UserNames { get; set; } = new Dictionary<string, string>();
+		public string UserName(string userId) => string.IsNullOrWhiteSpace(userId) ? "" : UserNames.TryGetValue(userId, out var name) && !string.IsNullOrWhiteSpace(name) ? name : userId;
+		public List<SelectListItem> Reasons => RmsEnumDisplay.Items<RmsAlarmReason>(Request?.Reason);
+		public List<SelectListItem> DeclineReasons => RmsEnumDisplay.Items<RmsAlarmRequestDeclineReason>(includeZero: false);
 	}
 
 	// ---- Investigations ----------------------------------------------------------------------------------------

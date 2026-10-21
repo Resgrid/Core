@@ -66,6 +66,8 @@ namespace Resgrid.Tests.Rms
 			Resolve<IRecordsHydrantsService>().Should().NotBeNull();
 			Resolve<IRecordsPermitsService>().Should().NotBeNull();
 			Resolve<IRecordsCrrService>().Should().NotBeNull();
+			Resolve<IRecordsAlarmRequestsService>().Should().NotBeNull();
+			Resolve<IRmsCrrAlarmRequestsRepository>().Should().NotBeNull();
 			Resolve<IRecordsPreventionAttachmentsService>().Should().NotBeNull();
 			Resolve<IRecordsInvestigationsService>().Should().NotBeNull();
 			Resolve<IRecordsQualityReviewService>().Should().NotBeNull();

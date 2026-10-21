@@ -200,6 +200,30 @@ namespace Resgrid.Model.Repositories
 		Task<IEnumerable<RmsCrrActivity>> GetForOccupancyAsync(int departmentId, string occupancyId);
 	}
 
+	public sealed class RmsAlarmRequestQuery
+	{
+		public IList<int> Statuses { get; set; }
+		public string OccupancyId { get; set; }
+		public string AssignedToUserId { get; set; }
+		/// <summary>RequestedOn in [RequestedFrom, RequestedBefore).</summary>
+		public DateTime? RequestedFrom { get; set; }
+		public DateTime? RequestedBefore { get; set; }
+		/// <summary>Oldest request first (the working queue); newest first otherwise.</summary>
+		public bool OldestFirst { get; set; }
+		public int Skip { get; set; }
+		public int Take { get; set; } = 50;
+	}
+
+	public interface IRmsCrrAlarmRequestsRepository : IRepository<RmsCrrAlarmRequest>
+	{
+		Task<RmsCrrAlarmRequest> GetByIdForDepartmentAsync(int departmentId, string requestId);
+		Task<IEnumerable<RmsCrrAlarmRequest>> QueryAsync(int departmentId, RmsAlarmRequestQuery query);
+		Task<int> CountAsync(int departmentId, RmsAlarmRequestQuery query);
+		Task<IEnumerable<RmsCrrAlarmRequest>> GetForOccupancyAsync(int departmentId, string occupancyId);
+		/// <summary>Claims the row for a state change: true only when RowVersion still equals <paramref name="expectedVersion"/>.</summary>
+		Task<bool> TryBumpRowVersionAsync(int departmentId, string requestId, long expectedVersion, CancellationToken cancellationToken = default);
+	}
+
 	public interface IRmsPreventionAttachmentsRepository : IRepository<RmsPreventionAttachment>
 	{
 		Task<RmsPreventionAttachment> GetByIdForDepartmentAsync(int departmentId, string attachmentId);

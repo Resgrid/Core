@@ -2197,4 +2197,59 @@
   <data name="NerisWorkflowsOffNotice" xml:space="preserve"><value>سير عمل NERIS متوقف لهذه الإدارة. تُحفظ تقارير الحوادث كسجلات للإدارة ولا يتم التحقق منها وفق NERIS أو إرسالها إليه. يمكن للمسؤول إعادة تشغيل NERIS من إعدادات السجلات.</value></data>
   <data name="ManageNerisProfile" xml:space="preserve"><value>ملف NERIS وربط الرموز</value></data>
   <data name="CorrectWithoutNeris" xml:space="preserve"><value>حفظ التصحيح (دون إرساله إلى NERIS)</value></data>
+  <data name="AlarmsLeft" xml:space="preserve"><value>أجهزة الإنذار المتروكة</value></data>
+  <data name="AlarmsLeftHelp" xml:space="preserve"><value>احسب كل جهاز تُرك: دخان فقط، أو أول أكسيد الكربون (CO) فقط، أو جهاز مدمج للدخان وأول أكسيد الكربون.</value></data>
+  <data name="SmokeOnlyAlarms" xml:space="preserve"><value>دخان فقط</value></data>
+  <data name="CoAlarms" xml:space="preserve"><value>أول أكسيد الكربون فقط</value></data>
+  <data name="ComboAlarms" xml:space="preserve"><value>مدمج (دخان + CO)</value></data>
+  <data name="AlarmReason" xml:space="preserve"><value>سبب جهاز الإنذار</value></data>
+  <data name="AlarmCallHelp" xml:space="preserve"><value>البلاغ الذي تُرك خلاله جهاز الإنذار، إن وُجد.</value></data>
+  <data name="AlarmLeftDuringCall" xml:space="preserve"><value>جهاز إنذار تُرك أثناء البلاغ</value></data>
+  <data name="CompletesAlarmRequest" xml:space="preserve"><value>أكمل هذا النشاط طلب جهاز الإنذار</value></data>
+  <data name="AlarmRequests" xml:space="preserve"><value>طلبات أجهزة الإنذار</value></data>
+  <data name="AlarmRequest" xml:space="preserve"><value>طلب جهاز إنذار</value></data>
+  <data name="ThisYear" xml:space="preserve"><value>هذا العام</value></data>
+  <data name="LastYear" xml:space="preserve"><value>العام الماضي</value></data>
+  <data name="AlarmsColumnHelp" xml:space="preserve"><value>إجمالي الأجهزة المتروكة (دخان فقط / أول أكسيد الكربون فقط / مدمج)</value></data>
+  <data name="AlarmsInstalledTotal" xml:space="preserve"><value>أجهزة الإنذار المتروكة (جميع الأنواع)</value></data>
+  <data name="AlarmVisits" xml:space="preserve"><value>المنازل والمواقع المخدومة</value></data>
+  <data name="OpenAlarmRequests" xml:space="preserve"><value>طلبات أجهزة الإنذار المفتوحة</value></data>
+  <data name="AlarmsByReason" xml:space="preserve"><value>أجهزة الإنذار حسب السبب</value></data>
+  <data name="AlarmsByType" xml:space="preserve"><value>أجهزة الإنذار حسب النوع</value></data>
+  <data name="AlarmsByMonth" xml:space="preserve"><value>أجهزة الإنذار المتروكة حسب الشهر</value></data>
+  <data name="NewAlarmRequest" xml:space="preserve"><value>طلب جهاز إنذار جديد</value></data>
+  <data name="AlarmRequestsHelp" xml:space="preserve"><value>طلبات أجهزة إنذار الدخان وأول أكسيد الكربون، مثل إبلاغ أحد السكان عن جهاز معطل أو مفقود. يؤدي إكمال الطلب إلى تسجيل الأجهزة المتروكة التي تُحتسب في الإجماليات السنوية.</value></data>
+  <data name="AllStatuses" xml:space="preserve"><value>جميع الحالات</value></data>
+  <data name="AssignedToMe" xml:space="preserve"><value>المسندة إليّ</value></data>
+  <data name="NoAlarmRequests" xml:space="preserve"><value>لا توجد طلبات أجهزة إنذار تطابق عامل التصفية.</value></data>
+  <data name="RequestedOn" xml:space="preserve"><value>تاريخ الطلب</value></data>
+  <data name="AlarmsRequested" xml:space="preserve"><value>أجهزة الإنذار المطلوبة</value></data>
+  <data name="AlarmsRequestedHelp" xml:space="preserve"><value>ما يحتاجه الساكن إن كان معروفًا. يسجل الطاقم ما تُرك فعليًا عند إكمال الطلب.</value></data>
+  <data name="ScheduledFor" xml:space="preserve"><value>موعد الزيارة المخطط</value></data>
+  <data name="AlarmLocationHelp" xml:space="preserve"><value>عنوان المنزل. اتركه فارغًا لاستخدام عنوان المبنى.</value></data>
+  <data name="AlarmRequester" xml:space="preserve"><value>الساكن أو مقدم الطلب</value></data>
+  <data name="RequesterHelp" xml:space="preserve"><value>اختر الساكن من جهات الاتصال. يبقى الاسم ورقم الهاتف في جهات الاتصال ولا يُنسخان إلى الطلب.</value></data>
+  <data name="AlarmRequestNotes" xml:space="preserve"><value>ملاحظات الطلب</value></data>
+  <data name="AlarmRequestNotesHelp" xml:space="preserve"><value>مكان جهاز الإنذار وطريقة الوصول وما يجب أن يحضره الطاقم. لا تُدخل هنا بيانات شخصية أو طبية.</value></data>
+  <data name="Resolution" xml:space="preserve"><value>النتيجة</value></data>
+  <data name="DeclineReason" xml:space="preserve"><value>سبب الرفض</value></data>
+  <data name="ResolutionNotes" xml:space="preserve"><value>ملاحظات النتيجة</value></data>
+  <data name="RecordedActivity" xml:space="preserve"><value>النشاط المسجل</value></data>
+  <data name="ReopenRequest" xml:space="preserve"><value>إعادة فتح الطلب</value></data>
+  <data name="CompletedRequestHelp" xml:space="preserve"><value>لتغيير الأجهزة المتروكة، عدّل النشاط المسجل. يؤدي حذف النشاط إلى إعادة فتح هذا الطلب.</value></data>
+  <data name="CompleteRequest" xml:space="preserve"><value>إكمال الطلب</value></data>
+  <data name="CompleteRequestHelp" xml:space="preserve"><value>أدخل أجهزة الإنذار التي تُركت. يسجل الإكمال نشاطًا للحد من المخاطر يُحتسب في الإجماليات السنوية.</value></data>
+  <data name="InstalledOn" xml:space="preserve"><value>تاريخ الترك</value></data>
+  <data name="DeclineRequest" xml:space="preserve"><value>رفض الطلب</value></data>
+  <data name="DeleteAlarmRequest" xml:space="preserve"><value>حذف الطلب</value></data>
+  <data name="DeleteAlarmRequestConfirm" xml:space="preserve"><value>هل تريد حذف طلب جهاز الإنذار هذا؟</value></data>
+  <data name="AlarmRequestSaved" xml:space="preserve"><value>تم حفظ طلب جهاز الإنذار {0}.</value></data>
+  <data name="AlarmRequestCompleted" xml:space="preserve"><value>تم إكمال طلب جهاز الإنذار {0} وتسجيل {1} جهاز.</value></data>
+  <data name="AlarmRequestDeclined" xml:space="preserve"><value>تم رفض طلب جهاز الإنذار {0}.</value></data>
+  <data name="AlarmRequestReopened" xml:space="preserve"><value>تمت إعادة فتح طلب جهاز الإنذار {0}.</value></data>
+  <data name="AlarmRequestDeleted" xml:space="preserve"><value>تم حذف طلب جهاز الإنذار.</value></data>
+  <data name="SmokeCoAlarms" xml:space="preserve"><value>أجهزة إنذار الدخان وأول أكسيد الكربون</value></data>
+  <data name="NoAlarmActivity" xml:space="preserve"><value>لم تُسجل هنا أي أجهزة إنذار أو أنشطة للحد من المخاطر بعد.</value></data>
+  <data name="RecordAlarmLeft" xml:space="preserve"><value>تسجيل جهاز إنذار متروك</value></data>
+  <data name="AlarmsRequestedColumnHelp" xml:space="preserve"><value>إجمالي الأجهزة المطلوبة (دخان فقط / أول أكسيد الكربون فقط / مدمج)</value></data>
 </root>

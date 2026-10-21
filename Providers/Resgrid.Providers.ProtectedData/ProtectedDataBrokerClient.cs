@@ -111,7 +111,8 @@ namespace Resgrid.Providers.ProtectedData
 
 			try
 			{
-				using var response = await _httpClient.GetAsync(new Uri(baseUri, "health"), cancellationToken);
+				// Readiness, not liveness: a broker whose KMS or database is down must fail the wizard preflight.
+				using var response = await _httpClient.GetAsync(new Uri(baseUri, "health/ready"), cancellationToken);
 				return response.IsSuccessStatusCode;
 			}
 			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)

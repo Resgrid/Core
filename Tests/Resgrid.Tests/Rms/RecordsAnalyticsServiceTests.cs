@@ -325,6 +325,22 @@ namespace Resgrid.Tests.Rms
 		}
 
 		[Test]
+		public async Task Community_risk_counts_alarm_units_by_type_reason_and_month()
+		{
+			_h.Crr.Rows.Add(new RmsCrrActivity { RmsCrrActivityId = "a1", DepartmentId = Dept, Kind = (int)RmsCrrActivityKind.SmokeAlarmInstallation, OccurredOn = T0.AddHours(12), SmokeAlarmsInstalled = 2, ComboAlarmsInstalled = 1, AlarmReason = (int)RmsAlarmReason.Faulty, CreatedOn = T0 });
+			_h.Crr.Rows.Add(new RmsCrrActivity { RmsCrrActivityId = "a2", DepartmentId = Dept, Kind = (int)RmsCrrActivityKind.HomeSafetyVisit, OccurredOn = Start.AddDays(3), CoAlarmsInstalled = 3, AlarmReason = (int)RmsAlarmReason.Missing, CreatedOn = T0 });
+			_h.Crr.Rows.Add(new RmsCrrActivity { RmsCrrActivityId = "a3", DepartmentId = Dept, Kind = (int)RmsCrrActivityKind.SchoolProgram, OccurredOn = T0.AddDays(2), AudienceCount = 50, CreatedOn = T0 });
+
+			var r = await _svc.GetCommunityRiskAsync(Dept, Member, Q());
+
+			r.Crr.AlarmsInstalled.Should().Be(6); r.Crr.SmokeAlarmsInstalled.Should().Be(2); r.Crr.CoAlarmsInstalled.Should().Be(3); r.Crr.ComboAlarmsInstalled.Should().Be(1);
+			r.Crr.AlarmVisits.Should().Be(2);
+			r.Crr.AlarmsByType.Select(t => (t.Key, t.Count)).Should().BeEquivalentTo(new[] { ("smoke", 2), ("co", 3), ("combo", 1) });
+			r.Crr.AlarmsByReason.Select(c => (c.Label, c.Count)).Should().Equal(new[] { ("Faulty", 3), ("Missing", 3) }, "units, not activities, are counted; ties sort by label");
+			r.Crr.AlarmsByMonth.Select(m => (m.Key, m.Count)).Should().Equal(("2026-07", 3), ("2026-08", 3));
+		}
+
+		[Test]
 		public async Task Community_risk_sums_crr_and_classifies_incidents_by_primary_type_and_call_type()
 		{
 			_h.Crr.Rows.Add(new RmsCrrActivity { RmsCrrActivityId = "c1", DepartmentId = Dept, Kind = (int)RmsCrrActivityKind.SmokeAlarmInstallation, OccurredOn = T0, AudienceCount = 12, SmokeAlarmsInstalled = 9, HoursSpent = 2.5m, CreatedOn = T0 });

@@ -13,13 +13,15 @@ namespace Resgrid.Llm;
 /// requests: department content (anything that may hold PII or PHI) is refused before a byte leaves. Same rules as OpenAiToolClient (no retries, redirects, payload logs, provider
 /// fallback or network tools; bounded request and response; every failure is LlmUnavailableException with nothing from the payload
 /// in it). Only the probabilities of the options asked are read back, and they must cover exactly those options; anything else is
-/// a failure, never a repair.
+/// a failure, never a repair. <paramref name="gatewayId"/> (Workers AI only) routes the same request through that Cloudflare AI
+/// Gateway with the <c>cf-aig-gateway-id</c> header, so the gateway's own limits and settings apply; null calls Workers AI directly.
 /// </summary>
-public sealed class SystemOneDecisionClient(HttpClient client, Uri endpoint, string apiKey, bool workersAi = false) : IDecisionClient, IDisposable
+public sealed class SystemOneDecisionClient(HttpClient client, Uri endpoint, string apiKey, bool workersAi = false, string? gatewayId = null) : IDecisionClient, IDisposable
 {
     public const int MaxQuestions = 64;
     public const int MaxOptions = 64;
     public const int MaxBytes = 65536;
+    public const string GatewayHeader = "cf-aig-gateway-id";
     private static readonly Regex IdPattern = new("\\A[A-Za-z0-9_.-]{1,100}\\z", RegexOptions.CultureInvariant);
 
     public void Dispose() => client.Dispose();
@@ -27,12 +29,15 @@ public sealed class SystemOneDecisionClient(HttpClient client, Uri endpoint, str
     public async Task<DecisionResult> DecideAsync(DecisionRequest request, CancellationToken ct)
     {
         if (string.IsNullOrWhiteSpace(apiKey)) throw new LlmUnavailableException();
+        // A gateway is Cloudflare's, so it applies only to Workers AI, and its id goes into a header, so it must be well formed.
+        if (gatewayId != null && (!workersAi || !OperatorEndpointPolicy.IsAiGatewayId(gatewayId))) throw new LlmUnavailableException();
         // Fail closed: a third-party host never receives department content, whatever the caller configured.
         if (workersAi && request?.DataClass is not (DecisionDataClass.NonSensitive or DecisionDataClass.DepartmentConfiguration)) throw new LlmUnavailableException();
         var body = Body(request!);
         using var outgoing = new HttpRequestMessage(HttpMethod.Post, endpoint) { Content = new ByteArrayContent(body) };
         outgoing.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json") { CharSet = "utf-8" };
         outgoing.Headers.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
+        if (gatewayId != null) outgoing.Headers.Add(GatewayHeader, gatewayId);
         try
         {
             using var response = await client.SendAsync(outgoing, HttpCompletionOption.ResponseHeadersRead, ct);

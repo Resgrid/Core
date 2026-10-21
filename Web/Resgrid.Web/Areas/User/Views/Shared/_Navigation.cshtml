@@ -126,7 +126,7 @@
 				// Records owns a lot of screens, so it is a collapsible group rather than a dozen
 				// top level entries. The group opens and highlights on any records page, including
 				// the ones reached from inside Records that have no link of their own.
-				var onRecordsPage = Html.IsController("Records", "RecordCrr", "RecordDefinitions",
+				var onRecordsPage = Html.IsController("Records", "RecordAlarmRequests", "RecordCrr", "RecordDefinitions",
 					"RecordDeployments", "RecordDocuments", "RecordEvidence", "RecordHydrants", "RecordInspections",
 					"RecordInvestigations", "RecordLegalHolds", "RecordOccupancies", "RecordPermits", "RecordSavedReports",
 					"RecordSubmissions", "RecordsAnalytics", "RecordsExportTemplates", "RecordsHealth", "RecordsInventory",
@@ -179,6 +179,7 @@
 						@if (preventionCrrOn)
 						{
 							<li class="@Html.IsSelected(controller: "RecordCrr")"><a asp-controller="RecordCrr" asp-action="Index" asp-route-area="User" title="@recordsLocalizer["CrrActivities"]"><i class="fa fa-bullhorn"></i> @recordsLocalizer["AnalyticsCommunityRisk"]</a></li>
+							<li class="@Html.IsSelected(controller: "RecordAlarmRequests")"><a asp-controller="RecordAlarmRequests" asp-action="Index" asp-route-area="User"><i class="fa fa-bell-o"></i> @recordsLocalizer["AlarmRequests"]</a></li>
 						}
 						@if (investigationsOn)
 						{

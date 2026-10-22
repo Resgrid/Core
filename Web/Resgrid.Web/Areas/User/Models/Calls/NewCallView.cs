@@ -29,6 +29,9 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 		public string MapCenterLongitude { get; set; }
 		public bool ReCalcuateCallNumbers { get; set; }
 		public List<Unit> Units { get; set; }
+
+		/// <summary>The department's unit types, for the type icon beside each unit.</summary>
+		public List<UnitType> UnitTypes { get; set; } = new List<UnitType>();
 		public List<UnitState> UnitStates { get; set; }
 		public List<CustomState> UnitStatuses { get; set; }
 		public SelectList CallTemplates { get; set; }

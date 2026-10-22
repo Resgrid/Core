@@ -243,6 +243,17 @@
         // Live qualification warning: when a member is chosen for a seat that requires a personnel role
         // they don't hold, surface a warning. Hard "required" seats are also blocked server-side on save.
         $(function () {
+            // The member's roles for a picked option. setstaffing.js turns these selects into selectize controls on
+            // document ready, before this runs; selectize keeps each option's data-data in its own option store and
+            // leaves only the selected <option> (without data-data) in the select, so read the store first.
+            function rolesForOption(el, val) {
+                if (el.selectize && el.selectize.options && el.selectize.options[val])
+                    return el.selectize.options[val].Roles || '';
+
+                var data = $(el).find('option[value="' + val + '"]').attr('data-data');
+                return data ? (JSON.parse(data).Roles || '') : null;
+            }
+
             function checkRoleQualification(el) {
                 var $sel = $(el);
                 var required = $sel.attr('data-required-role');
@@ -255,16 +266,15 @@
                 if (!val) { $warning.hide(); return; }
 
                 var qualified = false;
-                var opt = $sel.find('option[value="' + val + '"]');
-                var data = opt.attr('data-data');
-                if (data) {
-                    try {
-                        var roles = (JSON.parse(data).Roles || '').split(',').map(function (s) { return s.trim(); });
+                try {
+                    var roleNames = rolesForOption(el, val);
+                    if (roleNames !== null) {
+                        var roles = roleNames.split(',').map(function (s) { return s.trim(); });
                         qualified = roles.indexOf(required) !== -1;
-                    } catch (e) {
-                        // Malformed option data -- leave qualified as false (safe default) so the warning shows.
-                        if (window.console) console.warn('Failed to parse personnel role data for qualification check', e);
                     }
+                } catch (e) {
+                    // Malformed option data -- leave qualified as false (safe default) so the warning shows.
+                    if (window.console) console.warn('Failed to parse personnel role data for qualification check', e);
                 }
 
                 if (qualified) {

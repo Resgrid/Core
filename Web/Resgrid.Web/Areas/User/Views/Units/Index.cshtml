@@ -442,12 +442,12 @@
 
         if (Model.IsUserAdminOrGroupAdmin)
         {
-            @Html.Raw("<tr><td><input type='checkbox' id='dispatchUnit_" + u.UnitId + "' name='dispatchUnitCheckbox' value='" + u.UnitId + "' data-customState='" + customState + "' /></td><td>" + Html.Encode(u.Name) + "</td><td>" + Html.Encode(u.Type) + "</td><td><span class='label' style='color:" + Html.Encode(stateTextColor) + ";background-color:" + Html.Encode(stateColor) + ";'>" + Html.Encode(stateText) + "</span></td><td>" + Html.Encode(timestamp) + "</td>")
+            @Html.Raw("<tr><td><input type='checkbox' id='dispatchUnit_" + u.UnitId + "' name='dispatchUnitCheckbox' value='" + u.UnitId + "' data-customState='" + customState + "' /></td><td>" + TypeIconHtml.Image(Model.UnitTypes, u.Type) + Html.Encode(u.Name) + "</td><td>" + Html.Encode(u.Type) + "</td><td><span class='label' style='color:" + Html.Encode(stateTextColor) + ";background-color:" + Html.Encode(stateColor) + ";'>" + Html.Encode(stateText) + "</span></td><td>" + Html.Encode(timestamp) + "</td>")
             @Html.Raw($"<td><button class='btn btn-xs btn-primary' data-toggle='modal' data-target='#setUnitStatusModal' data-id='{u.UnitId}' data-customstateid='{customState}'>{Html.Encode(localizer["SetStatus"].Value)}</button></td>")
         }
         else
         {
-            @Html.Raw("<tr><td></td><td>" + Html.Encode(u.Name) + "</td><td>" + Html.Encode(u.Type) + "</td><td><span class='label' style='color:" + Html.Encode(stateTextColor) + ";background-color:" + Html.Encode(stateColor) + ";'>" + Html.Encode(stateText) + "</span></td><td>" + Html.Encode(timestamp) + "</td>")
+            @Html.Raw("<tr><td></td><td>" + TypeIconHtml.Image(Model.UnitTypes, u.Type) + Html.Encode(u.Name) + "</td><td>" + Html.Encode(u.Type) + "</td><td><span class='label' style='color:" + Html.Encode(stateTextColor) + ";background-color:" + Html.Encode(stateColor) + ";'>" + Html.Encode(stateText) + "</span></td><td>" + Html.Encode(timestamp) + "</td>")
             @Html.Raw("<td></td>")
         }
         

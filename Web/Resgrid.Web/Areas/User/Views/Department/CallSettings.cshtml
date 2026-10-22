@@ -90,12 +90,14 @@
                         <p class="text-muted">@localizer["CallNumberingIntro"]</p>
                         <div class="form-group">
                             <label class="col-sm-2 control-label" for="CallNumberPattern">@localizer["CallNumberPattern"]</label>
-                            <div class="col-sm-4">
-                                <input type="text" class="form-control" maxlength="@CallNumberFormat.MaxPatternLength" autocomplete="off" spellcheck="false" asp-for="CallNumberPattern" />
-                            </div>
-                            <div class="col-sm-6">
-                                <p class="form-control-static">@localizer["CallNumberExample"] <code id="call-number-preview"></code></p>
-                            </div>
+                            <admin-assist-help-after help-class="col-sm-offset-2 col-sm-10">
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" maxlength="@CallNumberFormat.MaxPatternLength" autocomplete="off" spellcheck="false" asp-for="CallNumberPattern" />
+                                </div>
+                                <div class="col-sm-6">
+                                    <p class="form-control-static">@localizer["CallNumberExample"] <code id="call-number-preview"></code></p>
+                                </div>
+                            </admin-assist-help-after>
                         </div>
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-10">
@@ -104,12 +106,14 @@
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label" for="CallNumberSequenceWidth">@localizer["CallNumberSequenceWidth"]</label>
-                            <div class="col-sm-2">
-                                <input type="number" class="form-control" min="@CallNumberFormat.MinWidth" max="@CallNumberFormat.MaxWidth" asp-for="CallNumberSequenceWidth" />
-                            </div>
-                            <div class="col-sm-8">
-                                <span class="help-block m-b-none">@localizer["CallNumberSequenceWidthHelp"]</span>
-                            </div>
+                            <admin-assist-help-after help-class="col-sm-offset-2 col-sm-10">
+                                <div class="col-sm-2">
+                                    <input type="number" class="form-control" min="@CallNumberFormat.MinWidth" max="@CallNumberFormat.MaxWidth" asp-for="CallNumberSequenceWidth" />
+                                </div>
+                                <div class="col-sm-8">
+                                    <span class="help-block m-b-none">@localizer["CallNumberSequenceWidthHelp"]</span>
+                                </div>
+                            </admin-assist-help-after>
                         </div>
                         @{
                             var callYearStart = new NumberingYearStart(Model.CallNumberYearStartMonth, Model.CallNumberYearStartDay, (NumberingYearLabel)Model.CallNumberYearLabel);

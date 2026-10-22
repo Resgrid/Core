@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Mapping Index -->
+  <data name="IconCustomLabel" xml:space="preserve">
+    <value>Egen ikon</value>
+  </data>
+  <data name="IconGuidanceHeading" xml:space="preserve">
+    <value>Riktlinjer för ikonen</value>
+  </data>
+  <data name="IconGuidanceFormat" xml:space="preserve">
+    <value>PNG, JPEG, GIF eller WebP, högst 1 MB. SVG stöds inte, och en animerad GIF använder sin första bildruta.</value>
+  </data>
+  <data name="IconGuidanceSize" xml:space="preserve">
+    <value>Minst 16 px och högst 4096 px på varje sida. En kvadratisk bild på 128 × 128 px eller större blir skarpast.</value>
+  </data>
+  <data name="IconGuidanceDesign" xml:space="preserve">
+    <value>Använd en genomskinlig bakgrund och en tydlig, enkel form. Kartor visar ikonen i 32 × 32 px och listor i 20 × 20 px, så små detaljer och text går inte att läsa.</value>
+  </data>
+  <data name="IconGuidanceProcessing" xml:space="preserve">
+    <value>Varje ikon skalas till 128 × 128 px och sparas som PNG. En bild som inte är kvadratisk centreras på en genomskinlig kvadrat och beskärs aldrig.</value>
+  </data>
+  <data name="IconRemove" xml:space="preserve">
+    <value>Ta bort den egna ikonen</value>
+  </data>
+  <data name="IconPreviewHeading" xml:space="preserve">
+    <value>Förhandsgranskning</value>
+  </data>
+  <data name="IconPreviewLightMap" xml:space="preserve">
+    <value>Ljus karta</value>
+  </data>
+  <data name="IconPreviewDarkMap" xml:space="preserve">
+    <value>Mörk karta</value>
+  </data>
+  <data name="IconPreviewList" xml:space="preserve">
+    <value>I en lista</value>
+  </data>
+  <data name="IconPreviewSaved" xml:space="preserve">
+    <value>Sparas som 128 × 128</value>
+  </data>
+  <data name="IconPreviewStateCurrent" xml:space="preserve">
+    <value>Den nuvarande egna ikonen visas.</value>
+  </data>
+  <data name="IconPreviewStateNew" xml:space="preserve">
+    <value>Den nya ikonen visas. Den sparas när du sparar formuläret.</value>
+  </data>
+  <data name="IconPreviewStateDefault" xml:space="preserve">
+    <value>Ingen egen ikon. Standardikonen visas.</value>
+  </data>
+  <data name="IconPreviewStateNone" xml:space="preserve">
+    <value>Ingen egen ikon. Standardmarkören används.</value>
+  </data>
+  <data name="IconPreviewStateRemoved" xml:space="preserve">
+    <value>Den egna ikonen tas bort när du sparar formuläret.</value>
+  </data>
+  <data name="IconPreviewSampleName" xml:space="preserve">
+    <value>Exempel</value>
+  </data>
+  <data name="IconWarningSmall" xml:space="preserve">
+    <value>Bilden är {0} × {1} px. Den förstoras och kan bli suddig; 128 × 128 px eller större rekommenderas.</value>
+  </data>
+  <data name="IconWarningNotSquare" xml:space="preserve">
+    <value>Bilden är inte kvadratisk. Den centreras på en genomskinlig kvadrat.</value>
+  </data>
+  <data name="IconWarningOpaque" xml:space="preserve">
+    <value>Bilden har ingen genomskinlig bakgrund och visas därför som en fylld kvadrat på kartan.</value>
+  </data>
+  <data name="IconRejectRequired" xml:space="preserve">
+    <value>Välj en ikonfil.</value>
+  </data>
+  <data name="IconRejectTooManyBytes" xml:space="preserve">
+    <value>Ikonfilen får vara högst 1 MB.</value>
+  </data>
+  <data name="IconRejectUnreadable" xml:space="preserve">
+    <value>Filen kunde inte läsas som en PNG-, JPEG-, GIF- eller WebP-bild.</value>
+  </data>
+  <data name="IconRejectUnsupportedFormat" xml:space="preserve">
+    <value>Endast PNG-, JPEG-, GIF- och WebP-bilder kan användas som ikoner.</value>
+  </data>
+  <data name="IconRejectTooLarge" xml:space="preserve">
+    <value>Ikonen får vara högst 4096 px på varje sida.</value>
+  </data>
+  <data name="IconRejectTooSmall" xml:space="preserve">
+    <value>Ikonen måste vara minst 16 px på sin längsta sida.</value>
+  </data>
+  <data name="IconFileSizeDetail" xml:space="preserve">
+    <value>Filen är {0}.</value>
+  </data>
+  <data name="IconImageSizeDetail" xml:space="preserve">
+    <value>Bilden är {0} × {1} px.</value>
+  </data>
+  <data name="IconSave" xml:space="preserve">
+    <value>Spara ikon</value>
+  </data>
+  <data name="IconColumn" xml:space="preserve">
+    <value>Ikon</value>
+  </data>
+  <data name="UnitTypeIconHelp" xml:space="preserve">
+    <value>Valfritt. Visas bredvid enheter av den här typen i listor, väljare och apparna, och på kartan i stället för kartikonen ovan.</value>
+  </data>
+  <data name="CallTypeIconHelp" xml:space="preserve">
+    <value>Valfritt. Visas bredvid larm av den här typen i listor och apparna, och på kartan i stället för kartikonen ovan.</value>
+  </data>
+  <data name="PoiTypeIconHelp" xml:space="preserve">
+    <value>Valfritt. Visas för intressepunkter av den här typen på kartan och i apparna, i stället för markören ovan.</value>
+  </data>
+  <data name="RoleIconHelp" xml:space="preserve">
+    <value>Valfritt. Medlemmar i rollen visas med den här ikonen på kartan. Den som har flera roller får ikonen från sin första roll som har en, i den ordning som är inställd på sidan Roller.</value>
+  </data>
+  <data name="RoleOrderHeading" xml:space="preserve">
+    <value>Rollordning</value>
+  </data>
+  <data name="RoleOrderHelp" xml:space="preserve">
+    <value>Dra rollerna, eller använd pilarna, för att ordna dem och spara sedan. En persons kartmarkör använder ikonen från den första roll personen har, i den här ordningen, som har en ikon. Personer utan en sådan roll får standardmarkören för personer.</value>
+  </data>
+  <data name="RoleOrderMoveUp" xml:space="preserve">
+    <value>Flytta upp</value>
+  </data>
+  <data name="RoleOrderMoveDown" xml:space="preserve">
+    <value>Flytta ned</value>
+  </data>
+  <data name="RoleOrderSave" xml:space="preserve">
+    <value>Spara ordning</value>
+  </data>
+  <data name="RoleOrderSaved" xml:space="preserve">
+    <value>Rollordningen sparades.</value>
+  </data>
+  <data name="RoleOrderColumn" xml:space="preserve">
+    <value>Ordning</value>
+  </data>
+  <data name="RoleOrderUnsaved" xml:space="preserve">
+    <value>Ordningen har ändrats. Spara den för att tillämpa den.</value>
+  </data>
+</root>

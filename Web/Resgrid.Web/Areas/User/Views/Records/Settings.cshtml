@@ -40,11 +40,11 @@
 						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label">@localizer["DefaultLifecyclePreset"]</label>
-							<div class="col-sm-4"><select class="form-control" asp-for="DefaultLifecyclePreset" asp-items="Model.Presets"></select></div>
+							<admin-assist-help-after help-class="col-sm-offset-3 col-sm-9"><div class="col-sm-4"><select class="form-control" asp-for="DefaultLifecyclePreset" asp-items="Model.Presets"></select></div></admin-assist-help-after>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label">@localizer["ReviewDueHours"]</label>
-							<div class="col-sm-2"><input type="number" min="1" max="8760" class="form-control" asp-for="ReviewDueHours" /></div>
+							<admin-assist-help-after help-class="col-sm-offset-3 col-sm-9"><div class="col-sm-2"><input type="number" min="1" max="8760" class="form-control" asp-for="ReviewDueHours" /></div></admin-assist-help-after>
 						</div>
 					</div>
 				</div>
@@ -54,7 +54,7 @@
 					<div class="ibox-content">
 						<p class="text-muted">@localizer["NerisWorkflowsIntro"]</p>
 						<div class="form-group">
-							<div class="col-sm-offset-3 col-sm-9"><label><input type="checkbox" asp-for="NerisWorkflowsEnabled" /> @localizer["NerisWorkflowsEnabled"]</label></div>
+							<div class="col-sm-offset-3 col-sm-9"><admin-assist-help-after><label><input type="checkbox" asp-for="NerisWorkflowsEnabled" /> @localizer["NerisWorkflowsEnabled"]</label></admin-assist-help-after></div>
 						</div>
 						<p class="text-muted">@localizer["NerisWorkflowsOffHelp"]</p>
 						@if (Model.NerisWorkflowsEnabled)
@@ -73,15 +73,17 @@
 					<div class="ibox-content">
 						<div class="form-group">
 							<label class="col-sm-3 control-label">@localizer["NumberPattern"]</label>
-							<div class="col-sm-5"><input type="text" class="form-control" maxlength="@RecordNumberFormat.MaxPatternLength" autocomplete="off" spellcheck="false" asp-for="NumberPattern" /></div>
-							<div class="col-sm-4"><p class="form-control-static">@localizer["NumberPatternExample"] <code id="number-pattern-preview"></code></p></div>
+							<admin-assist-help-after help-class="col-sm-offset-3 col-sm-9">
+								<div class="col-sm-5"><input type="text" class="form-control" maxlength="@RecordNumberFormat.MaxPatternLength" autocomplete="off" spellcheck="false" asp-for="NumberPattern" /></div>
+								<div class="col-sm-4"><p class="form-control-static">@localizer["NumberPatternExample"] <code id="number-pattern-preview"></code></p></div>
+							</admin-assist-help-after>
 						</div>
 						<div class="form-group">
 							<div class="col-sm-offset-3 col-sm-9"><span class="help-block">@localizer["NumberPatternHelp"]</span></div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label">@localizer["SequenceWidth"]</label>
-							<div class="col-sm-2"><input type="number" min="@RecordNumberFormat.MinWidth" max="@RecordNumberFormat.MaxWidth" class="form-control" asp-for="SequenceWidth" /></div>
+							<admin-assist-help-after help-class="col-sm-offset-3 col-sm-9"><div class="col-sm-2"><input type="number" min="@RecordNumberFormat.MinWidth" max="@RecordNumberFormat.MaxWidth" class="form-control" asp-for="SequenceWidth" /></div></admin-assist-help-after>
 						</div>
 						@{
 							var recordYearStart = new NumberingYearStart(Model.NumberingYearStartMonth, Model.NumberingYearStartDay, (Resgrid.Model.NumberingYearLabel)Model.NumberingYearLabel);
@@ -231,7 +233,7 @@
 						<p class="text-muted">@localizer["RetentionIntro"]</p>
 						<div class="form-group">
 							<label class="col-sm-3 control-label">@localizer["DepartmentDefaultYears"]</label>
-							<div class="col-sm-2"><input type="number" min="1" max="100" class="form-control" asp-for="DepartmentDefaultYears" /></div>
+							<admin-assist-help-after help-class="col-sm-offset-3 col-sm-9"><div class="col-sm-2"><input type="number" min="1" max="100" class="form-control" asp-for="DepartmentDefaultYears" /></div></admin-assist-help-after>
 						</div>
 						<h5>@localizer["RetentionOverrides"]</h5>
 						<table class="table table-condensed">
@@ -267,7 +269,7 @@
 					<div class="ibox-content">
 						<div class="form-group">
 							<label class="col-sm-3 control-label">@localizer["GroupVisibility"]</label>
-							<div class="col-sm-4"><select class="form-control" asp-for="GroupVisibilityMode" asp-items="Model.VisibilityModes"></select></div>
+							<admin-assist-help-after help-class="col-sm-offset-3 col-sm-9"><div class="col-sm-4"><select class="form-control" asp-for="GroupVisibilityMode" asp-items="Model.VisibilityModes"></select></div></admin-assist-help-after>
 						</div>
 						<p class="text-muted">@localizer["GroupVisibilityNote"]</p>
 						@if (Model.GroupScopePreview != null)
@@ -358,18 +360,24 @@
 						<p class="text-muted">@localizer["DisclosureSettingsIntro"]</p>
 						<div class="form-group">
 							<label class="col-sm-3 control-label">@localizer["StatutoryClockDays"]</label>
-							<div class="col-sm-2"><input type="number" min="1" max="365" class="form-control" asp-for="DisclosureStatutoryClockDays" /></div>
-							<div class="col-sm-7"><span class="help-block">@localizer["StatutoryClockDaysHelp"]</span></div>
+							<admin-assist-help-after help-class="col-sm-offset-3 col-sm-9">
+								<div class="col-sm-2"><input type="number" min="1" max="365" class="form-control" asp-for="DisclosureStatutoryClockDays" /></div>
+								<div class="col-sm-7"><span class="help-block">@localizer["StatutoryClockDaysHelp"]</span></div>
+							</admin-assist-help-after>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label">@localizer["DefaultRedactionProfile"]</label>
-							<div class="col-sm-4"><select class="form-control" asp-for="DisclosureDefaultRedactionProfile" asp-items="Model.RedactionProfiles"></select></div>
-							<div class="col-sm-5"><span class="help-block">@localizer["DefaultRedactionProfileHelp"]</span></div>
+							<admin-assist-help-after help-class="col-sm-offset-3 col-sm-9">
+								<div class="col-sm-4"><select class="form-control" asp-for="DisclosureDefaultRedactionProfile" asp-items="Model.RedactionProfiles"></select></div>
+								<div class="col-sm-5"><span class="help-block">@localizer["DefaultRedactionProfileHelp"]</span></div>
+							</admin-assist-help-after>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label">@localizer["DisclosureReleaseApprover"]</label>
-							<div class="col-sm-4"><select class="form-control" asp-for="DisclosureReleaseApproverUserId" asp-items="Model.ReleaseApprovers"></select></div>
-							<div class="col-sm-5"><span class="help-block">@localizer["DisclosureReleaseApproverHelp"]</span></div>
+							<admin-assist-help-after help-class="col-sm-offset-3 col-sm-9">
+								<div class="col-sm-4"><select class="form-control" asp-for="DisclosureReleaseApproverUserId" asp-items="Model.ReleaseApprovers"></select></div>
+								<div class="col-sm-5"><span class="help-block">@localizer["DisclosureReleaseApproverHelp"]</span></div>
+							</admin-assist-help-after>
 						</div>
 					</div>
 				</div>

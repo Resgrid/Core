@@ -250,6 +250,41 @@ namespace Resgrid.Tests.Web.Services
 			_protocolsService.Verify(service => service.GetProtocolByIdAsync(999), Times.Never);
 		}
 
+		[Test]
+		public async Task GetCall_ForASystemKeyNamingAnotherDepartment_TakesTheTypeIconFromThatDepartment()
+		{
+			const int otherDepartmentId = 77;
+			var httpContext = new DefaultHttpContext
+			{
+				User = new ClaimsPrincipal(new ClaimsIdentity(new[]
+				{
+					new Claim(ClaimTypes.PrimaryGroupSid, DepartmentId.ToString())
+				}, "SystemApiKey"))
+			};
+			ClaimsAuthorizationHelper._httpContextAccessor = new HttpContextAccessor { HttpContext = httpContext };
+			_controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
+
+			var call = new Call { CallId = 42, DepartmentId = otherDepartmentId, Name = "Structure Fire", Type = "Fire", Address = "123 Main St", LoggedOn = DateTime.UtcNow };
+			_callsService.Setup(service => service.GetCallByIdAsync(42, It.IsAny<bool>())).ReturnsAsync(call);
+			_callsService
+				.Setup(service => service.PopulateCallData(call, It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(),
+					It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(),
+					It.IsAny<bool>(), It.IsAny<bool>()))
+				.ReturnsAsync(call);
+			_callsService.Setup(service => service.GetCallTypesForDepartmentAsync(otherDepartmentId))
+				.ReturnsAsync(new List<CallType> { new CallType { CallTypeId = 5, DepartmentId = otherDepartmentId, Type = "Fire", IconKey = "0123456789abcdef0123456789abcdef" } });
+			_callsService.Setup(service => service.GetCallTypesForDepartmentAsync(DepartmentId))
+				.ReturnsAsync(new List<CallType> { new CallType { CallTypeId = 6, DepartmentId = DepartmentId, Type = "Fire", IconKey = "fedcba9876543210fedcba9876543210" } });
+
+			var response = await _controller.GetCall("42", otherDepartmentId.ToString());
+
+			var result = response.Result.Should().BeOfType<OkObjectResult>().Subject.Value
+				.Should().BeOfType<CallResult>().Subject;
+			result.Data.TypeIconUrl.Should().EndWith("/api/v4/TypeIcons/0123456789abcdef0123456789abcdef",
+				"the call belongs to the department the key named, so its type is that department's");
+			_callsService.Verify(service => service.GetCallTypesForDepartmentAsync(DepartmentId), Times.Never);
+		}
+
 		private void UseBigBoardSession()
 		{
 			var httpContext = new DefaultHttpContext

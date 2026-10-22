@@ -39,7 +39,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		public async Task<ActionResult<RolesResult>> GetAllRoles()
 		{
 			var result = new RolesResult();
-			var allRoles = await _personnelRolesService.GetRolesForDepartmentAsync(DepartmentId);
+			var allRoles = TypeIcons.InRoleOrder(await _personnelRolesService.GetRolesForDepartmentAsync(DepartmentId)).ToList();
 
 			if (allRoles != null && allRoles.Any())
 			{
@@ -112,6 +112,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			result.RoleId = role.PersonnelRoleId.ToString();
 			result.Name = role.Name;
+			result.IconUrl = TypeIcons.ApiIconUrl(Config.SystemBehaviorConfig.ResgridApiBaseUrl, role);
+			result.SortOrder = role.SortOrder;
 
 			return result;
 		}

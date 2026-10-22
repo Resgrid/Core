@@ -103,6 +103,13 @@ namespace Resgrid.Model.Services
 		/// <returns>Task&lt;Dictionary&lt;System.String, List&lt;PersonnelRole&gt;&gt;&gt;.</returns>
 		Task<Dictionary<string, List<PersonnelRole>>> GetAllRolesForUsersInDepartmentAsync(int departmentId);
 
+		/// <summary>
+		/// Sets the department's role order (M0286) from <paramref name="orderedRoleIds"/>, first to last. Ids that are not
+		/// the department's are ignored; its roles left out keep their relative order after the listed ones. A person's map
+		/// pin uses the icon of the first role they hold, in this order, that has one.
+		/// </summary>
+		Task<bool> SetRoleOrderAsync(int departmentId, IEnumerable<int> orderedRoleIds, CancellationToken cancellationToken = default(CancellationToken));
+
 
 		/// <summary>
 		/// Removes the user from all roles asynchronous.

@@ -30,7 +30,7 @@
 		<div class="wrapper wrapper-content">
 			<div class="ibox float-e-margins">
 				<div class="ibox-content">
-					<form class="form-horizontal" role="form" asp-controller="Personnel" asp-action="EditRole" asp-route-area="User" method="post">
+					<form class="form-horizontal" role="form" asp-controller="Personnel" asp-action="EditRole" asp-route-area="User" method="post" enctype="multipart/form-data">
 
 						@Html.HiddenFor(x => x.Role.PersonnelRoleId)
 						@Html.AntiForgeryToken()
@@ -57,6 +57,8 @@
 								<select id="users" name="users"></select>
 							</div>
 						</div>
+						@{ var iconPicker = new TypeIconPicker { HelpKey = "RoleIconHelp", SampleNameInputId = "Role_Name", SampleName = Model.Role?.Name, DefaultIconUrl = "/images/Mapping/Person_RespondingCall.png", CurrentIconUrl = TypeIcons.WebIconUrl(Model.Role?.IconKey), RemoveFieldName = "RemoveCustomIcon", RemoveChecked = Model.RemoveCustomIcon }; }
+						<partial name="_TypeIconPicker" model="iconPicker" />
 
 						<div class="form-group">
 							<div class="col-sm-4 col-sm-offset-2">

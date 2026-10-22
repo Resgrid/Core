@@ -5,6 +5,7 @@ import 'leaflet/dist/leaflet.css';
 import {
   getLayerColor,
   getMarkerIconUrl,
+  hasUploadedMarkerIcon,
   getPoiIconClass,
   getPoiMarkerShapePath,
   isPoiMarker,
@@ -18,6 +19,7 @@ interface MarkerState {
   longitude: number;
   title: string;
   imagePath: string;
+  iconUrl: string;
   poiImage: string;
   markerShape: string;
   color: string;
@@ -33,7 +35,8 @@ function createMarkerIcon(marker: MapMarkerInfo): L.Icon | L.DivIcon {
     dot.style.backgroundColor = marker.Color || '#999999';
     return L.divIcon({ className: '', html: dot, iconSize: [18, 18], iconAnchor: [9, 9] });
   }
-  if (isPoiMarker(marker)) {
+  // An uploaded type icon replaces the POI shape-and-glyph marker too; it is drawn as the image below.
+  if (isPoiMarker(marker) && !hasUploadedMarkerIcon(marker)) {
     const iconClass = getPoiIconClass(marker);
     const color = marker.Color || '#2563eb';
 
@@ -52,10 +55,13 @@ function createMarkerIcon(marker: MapMarkerInfo): L.Icon | L.DivIcon {
     });
   }
 
+  // Uploaded unit type icons are square; the built-in pins are 32x37.
+  const square = hasUploadedMarkerIcon(marker);
+
   return L.icon({
     iconUrl: getMarkerIconUrl(marker),
-    iconSize: [32, 37],
-    iconAnchor: [16, 37],
+    iconSize: square ? [32, 32] : [32, 37],
+    iconAnchor: square ? [16, 32] : [16, 37],
   });
 }
 
@@ -183,6 +189,7 @@ export default function LeafletMapView({
         !existingMarkerState ||
           existingMarkerState.title !== markerInfo.Title ||
           existingMarkerState.imagePath !== markerInfo.ImagePath ||
+          existingMarkerState.iconUrl !== (markerInfo.IconUrl ?? '') ||
           existingMarkerState.poiImage !== (markerInfo.PoiImage ?? '') ||
           existingMarkerState.markerShape !== (markerInfo.Marker ?? '') ||
           existingMarkerState.color !== (markerInfo.Color ?? '') ||
@@ -202,6 +209,7 @@ export default function LeafletMapView({
           longitude: markerInfo.Longitude,
           title: markerInfo.Title,
           imagePath: markerInfo.ImagePath,
+          iconUrl: markerInfo.IconUrl ?? '',
           poiImage: markerInfo.PoiImage ?? '',
           markerShape: markerInfo.Marker ?? '',
           color: markerInfo.Color ?? '',

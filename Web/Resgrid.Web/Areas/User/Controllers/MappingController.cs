@@ -46,6 +46,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IRecordsHydrantsService _hydrantsService;
 		private readonly IDispatchScopeService _dispatchScopeService;
 		private readonly Model.Services.IAuthorizationService _authorizationService;
+		private readonly ITypeIconsService _typeIconsService;
+		private readonly Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Icons.IconUpload> _iconLocalizer;
 
 		public MappingController(IDepartmentSettingsService departmentSettingsService,
 			IGeoLocationProvider geoLocationProvider, ICallsService callsService,
@@ -53,9 +55,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IActionLogsService actionLogsService, IUnitsService unitsService, IMappingService mappingService,
 			IKmlProvider kmlProvider, IPermissionsService permissionsService, IPersonnelRolesService personnelRolesService,
 			IProtectedReadService protectedReadService, IRecordsHydrantsService hydrantsService, IDispatchScopeService dispatchScopeService,
-			Model.Services.IAuthorizationService authorizationService)
+			Model.Services.IAuthorizationService authorizationService, ITypeIconsService typeIconsService,
+			Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Icons.IconUpload> iconLocalizer)
 		{
+			_iconLocalizer = iconLocalizer;
 			_authorizationService = authorizationService;
+			_typeIconsService = typeIconsService;
 			_dispatchScopeService = dispatchScopeService;
 			_departmentSettingsService = departmentSettingsService;
 			_geoLocationProvider = geoLocationProvider;
@@ -495,15 +500,60 @@ namespace Resgrid.Web.Areas.User.Controllers
 			    !Regex.IsMatch(modal.Type.Image, @"^[a-zA-Z0-9_-]+$"))
 				ModelState.AddModelError("Type.Image", "Image class name may only contain letters, digits, hyphens, and underscores.");
 
+			// A posted IconKey is ignored: only an upload sets one.
+			modal.Type.IconKey = null;
+			var iconData = await ReadIconUploadAsync(modal.IconFile, cancellationToken);
+
 			if (ModelState.IsValid)
 			{
-				await _mappingService.SavePOITypeAsync(modal.Type, cancellationToken);
+				var saved = await _mappingService.SavePOITypeAsync(modal.Type, cancellationToken);
+
+				if (saved != null && iconData != null)
+					await _typeIconsService.UploadIconAsync(DepartmentId, TypeIconKinds.PoiType, saved.PoiTypeId, UserId, iconData, cancellationToken);
 
 				return RedirectToAction("POIs");
 			}
 
 			return View(modal);
 		}
+
+		/// <summary>Uploads or removes the custom icon of one of this department's POI types (from its View Type page).</summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> SetPOITypeIcon(int poiTypeId, IFormFile iconFile, bool removeCustomIcon, CancellationToken cancellationToken)
+		{
+			if (!CanManageMapData())
+				return Unauthorized();
+
+			var type = await _mappingService.GetTypeByIdAsync(poiTypeId);
+
+			if (type == null)
+				return NotFound();
+
+			if (type.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			var iconData = await ReadIconUploadAsync(iconFile, cancellationToken);
+
+			if (!ModelState.IsValid)
+				TempData["PoiTypeIconError"] = ModelState[IconFileField]?.Errors.FirstOrDefault()?.ErrorMessage;
+			else if (iconData != null)
+				await _typeIconsService.UploadIconAsync(DepartmentId, TypeIconKinds.PoiType, poiTypeId, UserId, iconData, cancellationToken);
+			else if (removeCustomIcon)
+				await _typeIconsService.RemoveIconAsync(DepartmentId, TypeIconKinds.PoiType, poiTypeId, cancellationToken);
+
+			return RedirectToAction("ViewType", new { poiTypeId });
+		}
+
+		/// <summary>
+		/// The posted custom icon's bytes, or null when none was posted. A file that cannot be an icon adds a model error
+		/// on IconFile and returns null, so nothing is saved.
+		/// </summary>
+		private Task<byte[]> ReadIconUploadAsync(IFormFile iconFile, CancellationToken cancellationToken) =>
+			TypeIconUploads.ReadAsync(iconFile, _typeIconsService, ModelState, _iconLocalizer, cancellationToken);
+
+		/// <summary>The form field the POI type pages post the custom icon in.</summary>
+		private const string IconFileField = TypeIconUploads.FileField;
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]

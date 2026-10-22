@@ -51,6 +51,17 @@ namespace Resgrid.Web.Services.Models.v4.Units
 		public string CustomStatusSetId { get; set; }
 
 		/// <summary>
+		/// Absolute URL of the department's uploaded icon for the unit's type (a 128 px square PNG, anonymous GET,
+		/// immutable); null when the type has no uploaded icon
+		/// </summary>
+		public string TypeIconUrl { get; set; }
+
+		/// <summary>
+		/// Built-in icon name the unit's type picked (e.g. "ambulance", same names as map marker ImagePath); null when none
+		/// </summary>
+		public string TypeMapIcon { get; set; }
+
+		/// <summary>
 		/// Station Id of the station housing the unit (0 means no station)
 		/// </summary>
 		public string GroupId { get; set; }

@@ -471,6 +471,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				}
 			}
 
+			personnelData.RoleIconUrl = TypeIcons.ApiIconUrl(Config.SystemBehaviorConfig.ResgridApiBaseUrl, TypeIcons.MapIconRole(roles));
+
 			personnelData.StatusId = ((int)ActionTypes.StandingBy).ToString();
 
 			if (userState == null)

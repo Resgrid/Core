@@ -1614,4 +1614,142 @@
   <data name="UnitStatusOverrideNoMeaning" xml:space="preserve">
     <value>{0}: يعيّن التجاوز "{1}" عند {2}، لكن هذه الحالة ليس لها معنى، لذا لا يمكن لمؤقتات الحالة وقواعد التحرير وبطاقات التشغيل التعرف عليها. امنحها معنى في الحالات المخصصة.</value>
   </data>
+  <data name="OrgTypeLabel" xml:space="preserve">
+    <value>نوع المنظمة</value>
+  </data>
+  <data name="OrgTypeHelp" xml:space="preserve">
+    <value>يصف منظمتك. تبقى جميع القوالب والحزم والوحدات متاحة أيًا كان النوع الذي تختاره.</value>
+  </data>
+  <data name="OrgTypeProfileHint" xml:space="preserve">
+    <value>هل تقوم منظمتك بأنواع متعددة من العمل؟ اختر كل قطاع ينطبق عليها في ملف التشغيل للحصول على اقتراحات إعداد لكل منها.</value>
+  </data>
+  <data name="OrgTypeProfileLink" xml:space="preserve">
+    <value>ملف تشغيل القسم</value>
+  </data>
+  <data name="OrgTypeNotSet" xml:space="preserve">
+    <value>غير محدد</value>
+  </data>
+  <data name="OrgTypeInvalid" xml:space="preserve">
+    <value>اختر نوع منظمة من القائمة.</value>
+  </data>
+  <data name="OrgTypeGroup.FireAndRescue" xml:space="preserve">
+    <value>الإطفاء والإنقاذ</value>
+  </data>
+  <data name="OrgTypeGroup.HealthAndEms" xml:space="preserve">
+    <value>الإسعاف والرعاية الصحية</value>
+  </data>
+  <data name="OrgTypeGroup.EmergencyManagement" xml:space="preserve">
+    <value>إدارة الطوارئ والاستجابة المجتمعية</value>
+  </data>
+  <data name="OrgTypeGroup.SecurityAndEvents" xml:space="preserve">
+    <value>الأمن والفعاليات</value>
+  </data>
+  <data name="OrgTypeGroup.IndustrialAndUtilities" xml:space="preserve">
+    <value>الصناعة والمرافق</value>
+  </data>
+  <data name="OrgTypeGroup.ContractorsAndFieldServices" xml:space="preserve">
+    <value>المقاولون والخدمات الميدانية</value>
+  </data>
+  <data name="OrgTypeGroup.Other" xml:space="preserve">
+    <value>أخرى</value>
+  </data>
+  <data name="OrgType.volunteer-fire" xml:space="preserve">
+    <value>إطفاء تطوعي</value>
+  </data>
+  <data name="OrgType.career-fire" xml:space="preserve">
+    <value>إطفاء محترف</value>
+  </data>
+  <data name="OrgType.combination-fire" xml:space="preserve">
+    <value>إطفاء مختلط</value>
+  </data>
+  <data name="OrgType.wildland-fire" xml:space="preserve">
+    <value>مكافحة حرائق الغابات</value>
+  </data>
+  <data name="OrgType.search-and-rescue" xml:space="preserve">
+    <value>البحث والإنقاذ</value>
+  </data>
+  <data name="OrgType.hazmat" xml:space="preserve">
+    <value>المواد الخطرة (HAZMAT)</value>
+  </data>
+  <data name="OrgType.ems" xml:space="preserve">
+    <value>الخدمات الطبية الطارئة</value>
+  </data>
+  <data name="OrgType.private-ambulance" xml:space="preserve">
+    <value>الإسعاف الخاص والنقل بين المنشآت</value>
+  </data>
+  <data name="OrgType.hospital" xml:space="preserve">
+    <value>المستشفيات والأنظمة الصحية</value>
+  </data>
+  <data name="OrgType.community-paramedicine" xml:space="preserve">
+    <value>الإسعاف المجتمعي والرعاية الصحية المتكاملة المتنقلة</value>
+  </data>
+  <data name="OrgType.crisis-response" xml:space="preserve">
+    <value>الاستجابة للأزمات والصحة النفسية</value>
+  </data>
+  <data name="OrgType.emergency-management" xml:space="preserve">
+    <value>إدارة الطوارئ</value>
+  </data>
+  <data name="OrgType.public-safety" xml:space="preserve">
+    <value>السلامة العامة</value>
+  </data>
+  <data name="OrgType.cert" xml:space="preserve">
+    <value>CERT (فريق الاستجابة المجتمعي)</value>
+  </data>
+  <data name="OrgType.disaster-response" xml:space="preserve">
+    <value>الاستجابة للكوارث</value>
+  </data>
+  <data name="OrgType.relief-org" xml:space="preserve">
+    <value>منظمة إغاثة</value>
+  </data>
+  <data name="OrgType.multi-discipline" xml:space="preserve">
+    <value>استجابة متعددة التخصصات</value>
+  </data>
+  <data name="OrgType.security" xml:space="preserve">
+    <value>الأمن والحراسة</value>
+  </data>
+  <data name="OrgType.event-venue" xml:space="preserve">
+    <value>الفعاليات والمرافق</value>
+  </data>
+  <data name="OrgType.industrial-emergency-response" xml:space="preserve">
+    <value>الاستجابة للطوارئ الصناعية</value>
+  </data>
+  <data name="OrgType.oil-and-gas" xml:space="preserve">
+    <value>النفط والغاز</value>
+  </data>
+  <data name="OrgType.power" xml:space="preserve">
+    <value>الطاقة</value>
+  </data>
+  <data name="OrgType.chemical" xml:space="preserve">
+    <value>الصناعات الكيميائية</value>
+  </data>
+  <data name="OrgType.nuclear" xml:space="preserve">
+    <value>الطاقة النووية</value>
+  </data>
+  <data name="OrgType.other-industrial" xml:space="preserve">
+    <value>صناعات أخرى</value>
+  </data>
+  <data name="OrgType.response-contractor" xml:space="preserve">
+    <value>مقاول الاستجابة للطوارئ</value>
+  </data>
+  <data name="OrgType.drone-aerial-survey" xml:space="preserve">
+    <value>الطائرات المسيّرة والمسح الجوي</value>
+  </data>
+  <data name="OrgType.repair-services" xml:space="preserve">
+    <value>خدمات الإصلاح</value>
+  </data>
+  <data name="OrgType.delivery-services" xml:space="preserve">
+    <value>خدمات التوصيل</value>
+  </data>
+  <data name="OrgType.bus-and-shuttle" xml:space="preserve">
+    <value>الحافلات والنقل المكوكي</value>
+  </data>
+  <data name="OrgType.other-public" xml:space="preserve">
+    <value>جهة عامة أخرى</value>
+  </data>
+  <data name="OrgType.other-private" xml:space="preserve">
+    <value>جهة خاصة أخرى</value>
+  </data>
+  <data name="OrgType.other" xml:space="preserve">
+    <value>أخرى</value>
+  </data>
 </root>

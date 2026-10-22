@@ -82,8 +82,6 @@ namespace Resgrid.Web.Models
 
 		[Display(Name = "Department Type")]
 		public string DepartmentType { get; set; }
-
-		public SelectList DepartmentTypes = new SelectList(new List<string>() { "Emergency Management", "Volunteer Fire", "Career Fire", "Search and Rescue", "HAZMAT", "EMS", "CERT", "Public Safety", "Disaster Response", "Relief Org", "Private", "Security", "Other" });
 	}
 
 	public class CompleteInviteModel

@@ -3,6 +3,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import {
   getLayerColor,
   getMarkerIconUrl,
+  hasUploadedMarkerIcon,
   getPoiIconClass,
   getPoiMarkerShapePath,
   isPoiMarker,
@@ -20,6 +21,7 @@ interface MarkerState {
   longitude: number;
   title: string;
   imagePath: string;
+  iconUrl: string;
   poiImage: string;
   markerShape: string;
   color: string;
@@ -38,7 +40,7 @@ function createMarkerElement(markerInfo: MapMarkerInfo, hideLabels: boolean): HT
     dot.className = 'rg-map__hydrant-dot';
     dot.style.backgroundColor = markerInfo.Color || '#999999';
     wrapper.appendChild(dot);
-  } else if (isPoiMarker(markerInfo)) {
+  } else if (isPoiMarker(markerInfo) && !hasUploadedMarkerIcon(markerInfo)) {
     wrapper.classList.add('rg-map__marker--poi');
     wrapper.style.setProperty('--rg-map-poi-color', markerInfo.Color || '#2563eb');
 
@@ -334,6 +336,7 @@ export default function MapboxMapView({
         !existingMarkerState ||
           existingMarkerState.title !== markerInfo.Title ||
           existingMarkerState.imagePath !== markerInfo.ImagePath ||
+          existingMarkerState.iconUrl !== (markerInfo.IconUrl ?? '') ||
           existingMarkerState.poiImage !== (markerInfo.PoiImage ?? '') ||
           existingMarkerState.markerShape !== (markerInfo.Marker ?? '') ||
           existingMarkerState.color !== (markerInfo.Color ?? '') ||
@@ -361,6 +364,7 @@ export default function MapboxMapView({
           longitude: markerInfo.Longitude,
           title: markerInfo.Title,
           imagePath: markerInfo.ImagePath,
+          iconUrl: markerInfo.IconUrl ?? '',
           poiImage: markerInfo.PoiImage ?? '',
           markerShape: markerInfo.Marker ?? '',
           color: markerInfo.Color ?? '',

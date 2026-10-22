@@ -113,6 +113,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			type.Id = callType.CallTypeId.ToString();
 			type.Name = callType.Type;
 			type.BaseType = callType.BaseType;
+			type.IconUrl = TypeIcons.ApiIconUrl(Config.SystemBehaviorConfig.ResgridApiBaseUrl, callType);
+			type.MapIcon = TypeIcons.BuiltInIconName(callType);
 
 			return type;
 		}

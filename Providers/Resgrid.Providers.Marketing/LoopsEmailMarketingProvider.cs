@@ -36,6 +36,13 @@ namespace Resgrid.Providers.Marketing
 			{
 				var response = await SendAsync(Method.Put, "contacts/update", BuildContactBody(contact, true), cancellationToken);
 
+				// The stored address is one Loops will never take, so the fallback below would be rejected the same way.
+				if (IsInvalidEmailRejection(response.StatusCode, response.Content))
+				{
+					Logging.LogWarning($"Loops will not accept the email address of user {contact.UserId}, so the contact was not synced: {response.Content}");
+					return false;
+				}
+
 				// Loops requires custom properties and mailing lists to exist before they are used. If a missing one gets
 				// the call rejected, that must not cost us the contact itself, so retry with the default properties only.
 				if (response.StatusCode == HttpStatusCode.BadRequest && HasAccountSpecificFields(contact))
@@ -92,6 +99,10 @@ namespace Resgrid.Providers.Marketing
 		{
 			var response = await SendAsync(Method.Get, "contacts/find", null, cancellationToken, (key, value));
 
+			// No contact can exist under an address Loops will not accept, so this is a clean miss, not a failure.
+			if (IsInvalidEmailRejection(response.StatusCode, response.Content))
+				return false;
+
 			if (!response.IsSuccessful || string.IsNullOrWhiteSpace(response.Content))
 			{
 				Logging.LogError($"Loops contact lookup by {key} failed: {(int)response.StatusCode} {response.Content}");
@@ -136,6 +147,17 @@ namespace Resgrid.Providers.Marketing
 			}
 
 			return body;
+		}
+
+		/// <summary>
+		/// Loops validates address syntax itself and answers 400 "Invalid email address" for one it will not accept, such as
+		/// a member's placeholder address or the masked one a deleted login carries. That is the stored data, not a fault
+		/// here, and no retry will change it.
+		/// </summary>
+		internal static bool IsInvalidEmailRejection(HttpStatusCode statusCode, string content)
+		{
+			return statusCode == HttpStatusCode.BadRequest && !string.IsNullOrWhiteSpace(content) &&
+				content.IndexOf("invalid email", StringComparison.OrdinalIgnoreCase) >= 0;
 		}
 
 		private static bool HasAccountSpecificFields(EmailMarketingContact contact)

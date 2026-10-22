@@ -71,6 +71,13 @@ namespace Resgrid.Web.Services.Models.v4.Personnel
 		public List<string> Roles { get; set; }
 
 		/// <summary>
+		/// Absolute URL of the person's map icon: the uploaded icon of the first role they hold, in the department's role
+		/// order, that has one (a 128 px square PNG, anonymous GET, immutable). Null when none of their roles has an icon;
+		/// clients then use their default person marker.
+		/// </summary>
+		public string RoleIconUrl { get; set; }
+
+		/// <summary>
 		/// The current action/status type for the user
 		/// </summary>
 		public string StatusId { get; set; }

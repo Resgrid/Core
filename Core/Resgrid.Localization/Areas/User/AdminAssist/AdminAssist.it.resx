@@ -1624,7 +1624,7 @@
     <value>Aggiungi riunioni ricorrenti e serate di formazione.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.call-types-priorities">
-    <value>Aggiungi i tipi di chiamata usati dai tuoi operatori e imposta le loro priorità. Dai a ogni tipo di chiamata una classe e a ogni priorità un significato, così report e app possono raggrupparli e ordinarli.</value>
+    <value>Aggiungi i tipi di chiamata usati dai tuoi operatori e imposta le loro priorità. Dai a ogni tipo di chiamata una classe e a ogni priorità un significato, così report e app possono raggrupparli e ordinarli. Un tipo di chiamata può avere anche un'icona personalizzata, mostrata accanto alle sue chiamate negli elenchi, nelle app e sulla mappa.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.certification-dashboard">
     <value>Registra le certificazioni attuali dei membri, quindi verifica cosa sta per scadere.</value>
@@ -1726,10 +1726,10 @@
     <value>Invita i membri o aggiungili direttamente, quindi verifica che ognuno abbia un numero di cellulare o un indirizzo e-mail.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.personnel-roles">
-    <value>Crea i ruoli su cui dispacci o rendiconti e assegnali ai membri.</value>
+    <value>Crea i ruoli su cui dispacci o rendiconti e assegnali ai membri. Carica un'icona mappa per i ruoli che devono risaltare, poi imposta l'ordine nella pagina Ruoli: l'indicatore di ogni persona usa l'icona del suo primo ruolo, in quell'ordine, che ne ha una.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.pois">
-    <value>Aggiungi le posizioni che gli operatori di centrale devono vedere.</value>
+    <value>Aggiungi le posizioni che gli operatori di centrale devono vedere. Assegna a un tipo di POI un'icona personalizzata che sostituisca il suo indicatore sulla mappa e nelle app.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.preventive-maintenance">
     <value>Pianifica la manutenzione ordinaria per ogni mezzo.</value>
@@ -1771,7 +1771,7 @@
     <value>Installa l'app Unit su ogni tablet dei mezzi e seleziona la relativa unità.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.unit-types">
-    <value>Crea i tipi di unità prima di aggiungere le unità, così ogni unità può essere classificata. Dai a ogni tipo una classe, come Autopompa o Ambulanza, e scegli il suo set di stati.</value>
+    <value>Crea i tipi di unità prima di aggiungere le unità, così ogni unità può essere classificata. Dai a ogni tipo una classe, come Autopompa o Ambulanza, e scegli il suo set di stati. Carica un'icona personalizzata per un tipo (PNG, JPEG, GIF o WebP, fino a 1 MB, meglio se quadrata) per distinguere facilmente le sue unità negli elenchi, nelle app e sulla mappa.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.units">
     <value>Aggiungi ogni unità con il relativo tipo e il gruppo stazione di appartenenza.</value>
@@ -5440,7 +5440,7 @@
     <value>Codice del dipartimento usato dai flussi di identificazione e accesso supportati. Rivedi tali consumer prima di modificarlo.</value>
   </data>
   <data xml:space="preserve" name="TableHelp.Department.DepartmentType">
-    <value>Etichetta legacy del tipo di organizzazione. Il profilo operativo fornisce più settori; nessuno dei due stabilisce l'ambito clinico o le qualifiche di risposta.</value>
+    <value>Etichetta del tipo di organizzazione, impostata nelle impostazioni del dipartimento. Non limita mai modelli, pacchetti o moduli. Il profilo operativo registra più settori; nessuno dei due stabilisce l'ambito clinico o le qualifiche di risposta.</value>
   </data>
   <data xml:space="preserve" name="TableHelp.Department.LinkCode">
     <value>Codice di collegamento del dipartimento. Rivedi chi può usare un link e ruotalo tramite il flusso di lavoro di origine.</value>
@@ -7067,5 +7067,14 @@
   </data>
   <data xml:space="preserve" name="RuleNext.import-files-retained">
     <value>Elimina i file che non ti servono più o riduci la conservazione nelle impostazioni di Importazione e migrazione.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.custom-map-icons">
+    <value>Icone mappa personalizzate</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.custom-map-icons">
+    <value>Icone personalizzate per tipi di unità, tipi di chiamata, punti di interesse e ruoli del personale, mostrate negli elenchi, nelle app e sulla mappa.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.custom-map-icons">
+    <value>Carica un PNG quadrato con sfondo trasparente, di 128 × 128 px o più, nella pagina del tipo di unità, del tipo di chiamata, del tipo di POI o del ruolo; la pagina ne mostra l'anteprima su una mappa chiara e una scura. Per scegliere l'icona di una persona con più ruoli, ordina i ruoli nella pagina Ruoli.</value>
   </data>
 </root>

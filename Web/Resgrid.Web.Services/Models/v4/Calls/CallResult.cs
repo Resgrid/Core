@@ -202,6 +202,17 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public string Type { get; set; }
 
 		/// <summary>
+		/// Absolute URL of the department's uploaded icon for the call's type (a 128 px square PNG, anonymous GET,
+		/// immutable); null when the type has no uploaded icon
+		/// </summary>
+		public string TypeIconUrl { get; set; }
+
+		/// <summary>
+		/// Built-in icon name the call's type picked (e.g. "fire", same names as map marker ImagePath); null when none
+		/// </summary>
+		public string TypeMapIcon { get; set; }
+
+		/// <summary>
 		/// The id of the department's call type the call was logged with (matches CallTypes/GetAllCallTypes), which survives
 		/// a rename of the type; null when the call's type matches none of the department's types.
 		/// </summary>

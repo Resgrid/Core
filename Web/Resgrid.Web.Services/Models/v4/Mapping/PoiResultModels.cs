@@ -17,6 +17,12 @@ namespace Resgrid.Web.Services.Models.v4.Mapping
 		/// ImagePath carries the bitmap-asset name resolved by PoiIconHelper for clients that ship PNGs.
 		/// </summary>
 		public string PoiImage { get; set; }
+
+		/// <summary>
+		/// Absolute URL of the department's uploaded icon for the POI type (a 128 px square PNG, anonymous GET,
+		/// immutable); null when the type has no uploaded icon, so PoiImage / ImagePath stay the marker icon.
+		/// </summary>
+		public string IconUrl { get; set; }
 	}
 
 	public class PoiResultData
@@ -40,6 +46,12 @@ namespace Resgrid.Web.Services.Models.v4.Mapping
 		/// ImagePath carries the bitmap-asset name resolved by PoiIconHelper for clients that ship PNGs.
 		/// </summary>
 		public string PoiImage { get; set; }
+
+		/// <summary>
+		/// Absolute URL of the department's uploaded icon for the POI type (a 128 px square PNG, anonymous GET,
+		/// immutable); null when the type has no uploaded icon, so PoiImage / ImagePath stay the marker icon.
+		/// </summary>
+		public string IconUrl { get; set; }
 	}
 
 	public class PoiTypesResult : StandardApiResponseV4Base

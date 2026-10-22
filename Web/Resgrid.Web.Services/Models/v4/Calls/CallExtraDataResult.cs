@@ -86,5 +86,16 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		/// non-status entries.
 		/// </summary>
 		public int? DestinationSource { get; set; }
+
+		/// <summary>
+		/// Unit entries only: absolute URL of the department's uploaded icon for the unit's type (a 128 px square PNG,
+		/// anonymous GET, immutable); null for other entries and when the type has no uploaded icon.
+		/// </summary>
+		public string TypeIconUrl { get; set; }
+
+		/// <summary>
+		/// Unit entries only: built-in icon name the unit's type picked (e.g. "ambulance"); null when none.
+		/// </summary>
+		public string TypeMapIcon { get; set; }
 	}
 }

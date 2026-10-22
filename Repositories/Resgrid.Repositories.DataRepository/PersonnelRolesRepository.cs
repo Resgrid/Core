@@ -234,6 +234,38 @@ namespace Resgrid.Repositories.DataRepository
 				() => DeleteRoleDependenciesCoreAsync(personnelRoleId, cancellationToken), cancellationToken);
 		}
 
+		public async Task<int> SetRoleSortOrdersAsync(int departmentId, IReadOnlyList<int> orderedRoleIds, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			if (orderedRoleIds == null || orderedRoleIds.Count == 0)
+				return 0;
+
+			// Targeted updates rather than a role save: a save cascades the role's Users collection.
+			async Task<int> Write()
+			{
+				var updated = 0;
+				for (var i = 0; i < orderedRoleIds.Count; i++)
+					updated += await ExecuteAsync(
+						$"UPDATE {Tbl("PersonnelRoles")} SET {Col("SortOrder")} = {P}SortOrder WHERE {Col("PersonnelRoleId")} = {P}RoleId AND {Col("DepartmentId")} = {P}DepartmentId",
+						new { SortOrder = i + 1, RoleId = orderedRoleIds[i], DepartmentId = departmentId }, cancellationToken);
+
+				return updated;
+			}
+
+			if (!HasConfigurationJournal)
+				return await Write();
+
+			async Task<Resgrid.Model.AdminAssist.ConfigurationChangeStamp> Read()
+			{
+				var rows = await QueryAsync<PersonnelRole>(
+					$"SELECT {Col("PersonnelRoleId")}, {Col("SortOrder")} FROM {Tbl("PersonnelRoles")} WHERE {Col("DepartmentId")} = {P}DepartmentId",
+					new { DepartmentId = departmentId }, cancellationToken);
+				var value = Newtonsoft.Json.JsonConvert.SerializeObject(rows.OrderBy(r => r.PersonnelRoleId).Select(r => new[] { r.PersonnelRoleId, r.SortOrder }));
+				return new(Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(value))), value);
+			}
+
+			return await ExecuteConfigurationMutationAsync(departmentId, "PersonnelRoles.Order", Read, Write, cancellationToken);
+		}
+
 		private async Task<bool> DeleteRoleDependenciesCoreAsync(int personnelRoleId, CancellationToken cancellationToken)
 		{
 			try

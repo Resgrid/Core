@@ -15,5 +15,8 @@ namespace Resgrid.Web.Areas.User.Models.Units
 		public string TreeData { get; set; }
 
 		public Dictionary<int, CustomState> UnitCustomStates { get; set; }
+
+		/// <summary>The department's unit types, for each row's type icon.</summary>
+		public List<UnitType> UnitTypes { get; set; } = new List<UnitType>();
 	}
 }

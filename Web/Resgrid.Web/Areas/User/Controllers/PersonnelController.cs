@@ -68,6 +68,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IProtectedReadService _protectedReadService;
 		private readonly IDepartmentMemberSensitiveDataService _memberSensitiveDataService;
 		private readonly IMemberProvisioningService _memberProvisioning;
+		private readonly ITypeIconsService _typeIconsService;
+		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Icons.IconUpload> _iconLocalizer;
 
 		public PersonnelController(IDepartmentsService departmentsService, IUsersService usersService, IActionLogsService actionLogsService,
 			IEmailService emailService, IUserProfileService userProfileService, IDeleteService deleteService, Model.Services.IAuthorizationService authorizationService,
@@ -80,9 +82,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IDepartmentMemberSensitiveDataService memberSensitiveDataService, IRecordsService recordsService,
 			IDispatchScopeService dispatchScopeService,
 			IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> certificationLocalizer = null,
-			IMemberProvisioningService memberProvisioning = null)
+			IMemberProvisioningService memberProvisioning = null, ITypeIconsService typeIconsService = null,
+			IStringLocalizer<Resgrid.Localization.Areas.User.Icons.IconUpload> iconLocalizer = null)
 		{
 			_memberProvisioning = memberProvisioning;
+			_typeIconsService = typeIconsService;
+			_iconLocalizer = iconLocalizer;
 			_dispatchScopeService = dispatchScopeService;
 			_certificationLocalizer = certificationLocalizer;
 			_departmentsService = departmentsService;
@@ -2117,11 +2122,36 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> Roles()
 		{
 			PersonnelRolesModel model = new PersonnelRolesModel();
-			model.Roles = await _personnelRolesService.GetRolesForDepartmentAsync(DepartmentId);
+			model.Roles = TypeIcons.InRoleOrder(await _personnelRolesService.GetRolesForDepartmentAsync(DepartmentId)).ToList();
 			model.CanAddNewRole = true;
+			model.CanOrderRoles = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
 
 			return View(model);
 		}
+
+		/// <summary>
+		/// Saves the role order from the Roles page, first to last. A person's map pin uses the icon of the first role
+		/// they hold, in this order, that has one.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Role_Update)]
+		public async Task<IActionResult> SetRoleOrder([FromForm] List<int> roleIds, CancellationToken cancellationToken)
+		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return Unauthorized();
+
+			if (await _personnelRolesService.SetRoleOrderAsync(DepartmentId, roleIds ?? new List<int>(), cancellationToken))
+				TempData["RoleOrderSaved"] = "true";
+
+			return RedirectToAction("Roles");
+		}
+
+		/// <summary>The posted role icon, or null; a file that cannot be an icon adds a localized error on IconFile.</summary>
+		private Task<byte[]> ReadRoleIconAsync(IFormFile iconFile, CancellationToken cancellationToken) =>
+			_typeIconsService == null
+				? Task.FromResult<byte[]>(null)
+				: TypeIconUploads.ReadAsync(iconFile, _typeIconsService, ModelState, _iconLocalizer, cancellationToken);
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Role_Create)]
@@ -2143,9 +2173,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (await _personnelRolesService.GetRoleByDepartmentAndNameAsync(model.Role.DepartmentId, model.Role.Name) != null)
 				ModelState.AddModelError("Role.Name", "Role with that name already exists in the department.");
 
+			var iconData = await ReadRoleIconAsync(model.IconFile, cancellationToken);
+
 			if (ModelState.IsValid)
 			{
-				await _personnelRolesService.SaveRoleAsync(model.Role, cancellationToken);
+				// The icon and the order come from the icon upload and the Roles page, never from the posted role.
+				model.Role.IconKey = null;
+				model.Role.SortOrder = 0;
+
+				var saved = await _personnelRolesService.SaveRoleAsync(model.Role, cancellationToken);
+
+				if (saved != null && iconData != null)
+					await _typeIconsService.UploadIconAsync(DepartmentId, TypeIconKinds.PersonnelRole, saved.PersonnelRoleId, UserId, iconData, cancellationToken);
 
 				return RedirectToAction("Roles");
 			}
@@ -2197,6 +2236,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (blocked.Count > 0)
 				ModelState.AddModelError("Role.Users", string.Format(_certificationLocalizer["RoleMembersBlocked"].Value, string.Join(", ", await PersonnelDisplayNamesAsync(blocked))));
 
+			var iconData = await ReadRoleIconAsync(model.IconFile, cancellationToken);
+			// The form shows the role's saved icon whatever was posted for it.
+			model.Role.IconKey = role.IconKey;
+
 			if (ModelState.IsValid)
 			{
 				if (warned.Count > 0)
@@ -2218,6 +2261,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 					model.Users = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId);
 					return View(model);
 				}
+
+				// After the role save, which writes back the IconKey it loaded: the upload then points the role at the new key.
+				if (iconData != null)
+					await _typeIconsService.UploadIconAsync(DepartmentId, TypeIconKinds.PersonnelRole, role.PersonnelRoleId, UserId, iconData, cancellationToken);
+				else if (model.RemoveCustomIcon && _typeIconsService != null)
+					await _typeIconsService.RemoveIconAsync(DepartmentId, TypeIconKinds.PersonnelRole, role.PersonnelRoleId, cancellationToken);
 
 				//_userProfileService.ClearUserProfileFromCache(model.UserId);
 				_userProfileService.ClearAllUserProfilesFromCache(DepartmentId);

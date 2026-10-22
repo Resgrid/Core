@@ -3541,12 +3541,12 @@
       "Id": "call-types-priorities",
       "Locale": "en",
       "TitleKey": "Feature.call-types-priorities",
-      "Body": "Call types and priorities The call types and priorities used to classify calls. Use consistent reporting and run-card matching terms. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Add the call types your dispatchers use and set their priorities. Give each call type a class and each priority a meaning so reports and the apps can group and sort them.",
+      "Body": "Call types and priorities The call types and priorities used to classify calls. Use consistent reporting and run-card matching terms. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Add the call types your dispatchers use and set their priorities. Give each call type a class and each priority a meaning so reports and the apps can group and sort them. A call type can also have a custom icon, shown beside its calls in lists, the apps and on the map.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "call-types-priorities",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-10-13T00:00:00Z"
+      "ReviewedOn": "2026-10-21T00:00:00Z"
     },
     {
       "Id": "custom-statuses",

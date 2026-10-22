@@ -251,6 +251,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (String.IsNullOrWhiteSpace(model.Department.TimeZone))
 				model.Department.TimeZone = "Pacific Standard Time";
 
+			// Preselect the catalog spelling when an older sign-up stored a different case.
+			model.Department.DepartmentType = DepartmentTypeCatalog.Find(model.Department.DepartmentType)?.Value ?? model.Department.DepartmentType;
+
 			ViewBag.Countries = new SelectList(Countries.CountryNames);
 			ViewBag.TimeZones = new SelectList(TimeZones.Zones, "Key", "Value");
 			ViewBag.Users = new SelectList(model.Users, "Key", "Value");
@@ -398,6 +401,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.EnableStatusReset = false;
 			}
 
+			// The organization type is one label; a department doing several kinds of work records them in the operating profile.
+			ViewBag.CanConfigureOperatingProfile = await CanEditOperatingProfileAsync();
+
 			return View(model);
 		}
 
@@ -425,6 +431,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 			d.TimeZone = model.Department.TimeZone;
 			d.Name = model.Department.Name;
 			d.Use24HourTime = model.Use24HourTime;
+
+			if (DepartmentTypeCatalog.TryResolveSelection(d.DepartmentType, model.Department.DepartmentType, out var departmentType))
+			{
+				d.DepartmentType = departmentType;
+			}
+			else
+			{
+				// Redisplay the saved type, not the refused one (the picker reads the attempted value first).
+				ModelState.AddModelError("Department.DepartmentType", _departmentLocalizer["OrgTypeInvalid"]);
+				ModelState.SetModelValue("Department.DepartmentType", d.DepartmentType, d.DepartmentType);
+				model.Department.DepartmentType = d.DepartmentType;
+			}
 
 			ViewBag.Countries = new SelectList(Countries.CountryNames);
 			ViewBag.TimeZones = new SelectList(TimeZones.Zones, "Key", "Value");
@@ -721,6 +739,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			// Load staffing suppression info for view rendering, but preserve the user's submitted EnableStaffingSupress value
 			model.SuppressStaffingInfo = await _departmentSettingsService.GetDepartmentStaffingSuppressInfoAsync(DepartmentId, false);
+			ViewBag.CanConfigureOperatingProfile = await CanEditOperatingProfileAsync();
 
 			return View(model);
 		}
@@ -2018,9 +2037,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Department_View)]
 		public async Task<IActionResult> GetDepartmentTypes()
 		{
-			var model = new RegisterViewModel();
-
-			return Json(new SelectList(model.DepartmentTypes));
+			return Json(new SelectList(DepartmentTypeCatalog.Values));
 		}
 
 		#endregion Stations Grid

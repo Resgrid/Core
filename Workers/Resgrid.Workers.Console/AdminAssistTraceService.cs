@@ -14,8 +14,14 @@ namespace Resgrid.Workers.Console
 	{
 		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
-			await database.WaitForCompletionAsync(stoppingToken);
-			await Task.WhenAll(PublishAsync(stoppingToken), DrainAsync(stoppingToken));
+			try
+			{
+				await database.WaitForCompletionAsync(stoppingToken);
+				await Task.WhenAll(PublishAsync(stoppingToken), DrainAsync(stoppingToken));
+			}
+			// Host shutdown, including one that lands before this service starts (StartAsync then sees a completed
+			// task and rethrows it out of Host.StartAsync). Unacknowledged envelopes stay queued for the next consumer.
+			catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested) { }
 		}
 		private async Task PublishAsync(CancellationToken stoppingToken)
 		{

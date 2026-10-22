@@ -139,6 +139,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			//var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
 			var people = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(DepartmentId, false, false, false);
 			var personnelLocations = await _usersService.GetLatestLocationsForDepartmentPersonnelAsync(DepartmentId);
+			// A person's pin uses the icon of the first role they hold, in the department's role order, that has one.
+			var rolesById = (await _personnelRolesService.GetRolesForDepartmentAsync(DepartmentId) ?? new List<PersonnelRole>())
+				.GroupBy(r => r.PersonnelRoleId).ToDictionary(g => g.Key, g => g.First());
 
 			var personnelLocationTTL = await _departmentSettingsService.GetMappingPersonnelLocationTTLAsync(DepartmentId);
 			var unitLocationTTL = await _departmentSettingsService.GetMappingUnitLocationTTLAsync(DepartmentId);
@@ -311,9 +314,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 						{
 							var type = CallTypeLink.Find(call, callTypes);
 
-						if (type != null && type.MapIconType.HasValue)
-							info.ImagePath = MapIcons.ConvertTypeToName((MapIconTypes)type.MapIconType.Value);
-					}
+							if (type != null && type.MapIconType.HasValue)
+								info.ImagePath = MapIcons.ConvertTypeToName((MapIconTypes)type.MapIconType.Value);
+
+							info.IconUrl = TypeIcons.ApiIconUrl(Config.SystemBehaviorConfig.ResgridApiBaseUrl, type);
+						}
 						//	if (type != null && type.MapIconType.HasValue)
 						//		info.ImagePath = ((MapIconTypes)type.MapIconType.Value).ToString();
 						//}
@@ -372,8 +377,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 						{
 							var type = unitTypes.FirstOrDefault(x => x.Type == unit.Type);
 
-							if (type != null && type.MapIconType.HasValue)
-								info.ImagePath = ((MapIconTypes)type.MapIconType.Value).ToString();
+							// The lowercase asset name: the web map loads /images/Mapping/{ImagePath}.png, and the enum name
+							// ("Ambulance", "CarTwo") missed the lowercase file on case-sensitive hosts.
+							var builtInIcon = TypeIcons.BuiltInIconName(type);
+							if (builtInIcon != null)
+								info.ImagePath = builtInIcon;
+
+							info.IconUrl = TypeIcons.ApiIconUrl(Config.SystemBehaviorConfig.ResgridApiBaseUrl, type);
 						}
 
 						var markerSource = MappingMarkerSelection.Select(latestLocation?.Timestamp, state?.Timestamp, () => state?.HasLocation() == true,
@@ -415,6 +425,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 					try
 					{
+						info.IconUrl = TypeIcons.ApiIconUrl(Config.SystemBehaviorConfig.ResgridApiBaseUrl,
+							TypeIcons.MapIconRole(person.RoleList.Where(rolesById.ContainsKey).Select(id => rolesById[id])));
+
 						var markerSource = MappingMarkerSelection.Select(latestLocation?.Timestamp, state?.Timestamp, () => state?.HasLocation() == true,
 							personnelLocationTTL, personnelAllowStatusWithNoLocationToOverwrite, DateTime.UtcNow);
 						if (markerSource == MappingMarkerSource.LocationPing)
@@ -462,7 +475,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 						ImagePath = PoiIconHelper.ResolveIconName(poiType.Image),
 						PoiImage = poiType.Image,
 						Marker = poiType.Marker,
-						IsDestination = poiType.IsDestination
+						IsDestination = poiType.IsDestination,
+						IconUrl = TypeIcons.ApiIconUrl(Config.SystemBehaviorConfig.ResgridApiBaseUrl, poiType)
 					});
 
 					foreach (var poi in poiType.Pois.Where(p => !hydrantPoiIds.Contains(p.PoiId)))
@@ -624,7 +638,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				ImagePath = PoiIconHelper.ResolveIconName(poiType.Image),
 				PoiImage = poiType.Image,
 				Marker = poiType.Marker,
-				IsDestination = poiType.IsDestination
+				IsDestination = poiType.IsDestination,
+				IconUrl = TypeIcons.ApiIconUrl(Config.SystemBehaviorConfig.ResgridApiBaseUrl, poiType)
 			};
 		}
 
@@ -644,7 +659,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				ImagePath = PoiIconHelper.ResolveIconName(poiType.Image),
 				PoiImage = poiType.Image,
 				Marker = poiType.Marker,
-				IsDestination = poiType.IsDestination
+				IsDestination = poiType.IsDestination,
+				IconUrl = TypeIcons.ApiIconUrl(Config.SystemBehaviorConfig.ResgridApiBaseUrl, poiType)
 			};
 		}
 
@@ -689,7 +705,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				Address = poi.Address,
 				Note = poi.Note,
 				LayerId = GetPoiLayerId(poiType),
-				LayerName = poiType.Name
+				LayerName = poiType.Name,
+				IconUrl = TypeIcons.ApiIconUrl(Config.SystemBehaviorConfig.ResgridApiBaseUrl, poiType)
 			};
 		}
 

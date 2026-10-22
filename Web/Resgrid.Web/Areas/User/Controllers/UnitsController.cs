@@ -97,13 +97,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.States = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(DepartmentId);
 			model.UnitStatuses = await _customStateService.GetAllActiveUnitStatesForDepartmentAsync(DepartmentId);
 			model.UnitCustomStates = new Dictionary<int, CustomState>();
+			model.UnitTypes = await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId) ?? new List<UnitType>();
 
 			foreach (var unit in units)
 			{
 				if (!await _authorizationService.CanUserViewUnitViaMatrixAsync(unit.UnitId, UserId, DepartmentId))
 					continue;
 
-				var type = await _unitsService.GetUnitTypeByNameAsync(DepartmentId, unit.Type);
+				// One department-wide type read above instead of one query per unit; names match case-insensitively, like the
+				// by-name query did.
+				var type = string.IsNullOrWhiteSpace(unit.Type) ? null : model.UnitTypes.FirstOrDefault(x => string.Equals(x.Type, unit.Type, StringComparison.OrdinalIgnoreCase));
 				if (type != null && type.CustomStatesId.HasValue)
 				{
 					var customStates = await _customStateService.GetCustomSateByIdAsync(type.CustomStatesId.Value);
@@ -1394,6 +1397,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
 			var states = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(DepartmentId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+			var unitTypes = await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId);
 			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 
 			foreach (var unit in units)
@@ -1405,6 +1409,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				unitJson.Name = unit.Name;
 				unitJson.Type = unit.Type;
 				unitJson.UnitId = unit.UnitId;
+				unitJson.TypeIconUrl = TypeIconHtml.UrlForTypeName(unitTypes, unit.Type);
 
 				if (unit.StationGroupId.HasValue)
 				{
@@ -1454,6 +1459,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
 			var states = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(DepartmentId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+			var unitTypes = await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId);
 
 			foreach (var unit in units)
 			{
@@ -1465,6 +1471,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				unitJson.Name = unit.Name;
 				unitJson.Type = unit.Type;
 				unitJson.UnitId = unit.UnitId;
+				unitJson.TypeIconUrl = TypeIconHtml.UrlForTypeName(unitTypes, unit.Type);
 
 				if (unit.StationGroup != null)
 					unitJson.Station = unit.StationGroup.Name;

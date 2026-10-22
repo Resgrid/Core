@@ -382,7 +382,7 @@
                                                                 if (Model.Call.HasUnitBeenDispatched(unit.UnitId))
                                                                 {
                                                                     <tr>
-                                                                        <td>@unit.Name</td>
+                                                                        <td>@TypeIconHtml.Image(Model.UnitTypes, unit.Type)@unit.Name</td>
                                                                         <td>@unit.Type</td>
                                                                     </tr>
                                                                 }
@@ -441,7 +441,7 @@
                                                                 if (Model.Call.HasUnitBeenDispatched(unit.UnitId))
                                                                 {
                                                                     <tr>
-                                                                        <td>@unit.Name</td>
+                                                                        <td>@TypeIconHtml.Image(Model.UnitTypes, unit.Type)@unit.Name</td>
                                                                         <td>@unit.Type</td>
                                                                     </tr>
                                                                 }

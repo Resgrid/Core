@@ -1624,7 +1624,7 @@
     <value>Agregue reuniones recurrentes y noches de capacitación.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.call-types-priorities">
-    <value>Añada los tipos de llamada que usan sus despachadores y defina sus prioridades. Dé a cada tipo de llamada una clase y a cada prioridad un significado para que los informes y las aplicaciones puedan agruparlos y ordenarlos.</value>
+    <value>Añada los tipos de llamada que usan sus despachadores y defina sus prioridades. Dé a cada tipo de llamada una clase y a cada prioridad un significado para que los informes y las aplicaciones puedan agruparlos y ordenarlos. Un tipo de llamada también puede tener un icono personalizado, que se muestra junto a sus llamadas en listas, las aplicaciones y el mapa.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.certification-dashboard">
     <value>Registre las certificaciones actuales de los miembros y luego revise cuáles vencen pronto.</value>
@@ -1726,10 +1726,10 @@
     <value>Invite a los miembros o agréguelos directamente, y luego verifique que cada uno tenga un número de celular o correo electrónico.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.personnel-roles">
-    <value>Cree los roles que despacha o sobre los que informa, y asígnelos a los miembros.</value>
+    <value>Cree los roles que despacha o sobre los que informa, y asígnelos a los miembros. Suba un icono de mapa para los roles que deban destacar y luego defina el orden en la página Roles: el marcador de cada persona usa el icono de su primer rol, en ese orden, que tenga uno.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.pois">
-    <value>Agregue las ubicaciones que los despachadores necesitan ver.</value>
+    <value>Agregue las ubicaciones que los despachadores necesitan ver. Asigne a un tipo de POI un icono personalizado que sustituya su marcador en el mapa y en las aplicaciones.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.preventive-maintenance">
     <value>Programe el servicio de rutina para cada vehículo.</value>
@@ -1771,7 +1771,7 @@
     <value>Instale la aplicación Unit en la tableta de cada vehículo y seleccione su unidad.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.unit-types">
-    <value>Cree tipos de unidad antes de añadir unidades para que cada unidad pueda clasificarse. Dé a cada tipo una clase, como Autobomba o Ambulancia, y elija su conjunto de estados.</value>
+    <value>Cree tipos de unidad antes de añadir unidades para que cada unidad pueda clasificarse. Dé a cada tipo una clase, como Autobomba o Ambulancia, y elija su conjunto de estados. Suba un icono personalizado para un tipo (PNG, JPEG, GIF o WebP, hasta 1 MB, mejor cuadrado) para distinguir fácilmente sus unidades en listas, las aplicaciones y el mapa.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.units">
     <value>Agregue cada unidad con su tipo y su grupo de estación base.</value>
@@ -5440,7 +5440,7 @@
     <value>Código del departamento usado por los flujos admitidos de identificación y acceso. Revise esos consumidores antes de cambiarlo.</value>
   </data>
   <data xml:space="preserve" name="TableHelp.Department.DepartmentType">
-    <value>Etiqueta heredada de tipo de organización. El perfil operativo ofrece varios sectores; ninguno de los dos establece el alcance clínico ni las calificaciones de respuesta.</value>
+    <value>Etiqueta de tipo de organización, definida en la configuración del departamento. Nunca limita plantillas, paquetes ni módulos. El perfil operativo registra varios sectores; ninguno de los dos establece el alcance clínico ni las calificaciones de respuesta.</value>
   </data>
   <data xml:space="preserve" name="TableHelp.Department.LinkCode">
     <value>Código de vinculación del departamento. Revise quién puede usar un enlace y rótelo mediante el flujo de trabajo correspondiente.</value>
@@ -7067,5 +7067,14 @@
   </data>
   <data xml:space="preserve" name="RuleNext.import-files-retained">
     <value>Elimine los archivos que ya no necesite o acorte la conservación en la configuración de Importación y migración.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.custom-map-icons">
+    <value>Iconos de mapa personalizados</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.custom-map-icons">
+    <value>Iconos propios para tipos de unidad, tipos de llamada, puntos de interés y roles de personal, que se muestran en listas, las aplicaciones y el mapa.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.custom-map-icons">
+    <value>Suba un PNG cuadrado con fondo transparente, de 128 × 128 px o más, en la página del tipo de unidad, tipo de llamada, tipo de POI o rol; la página muestra una vista previa en un mapa claro y uno oscuro. Para elegir el icono de una persona con varios roles, ordene los roles en la página Roles.</value>
   </data>
 </root>

@@ -28,6 +28,7 @@ namespace Resgrid.Web.Models.AccountViewModels
 		[Display(Name = "Department Name")]
 		public string DepartmentName { get; set; }
 
+		[Required]
 		[Display(Name = "Department Type")]
 		public string DepartmentType { get; set; }
 
@@ -58,7 +59,5 @@ namespace Resgrid.Web.Models.AccountViewModels
 
 		[Display(Name = "Affiliate Code")]
 		public string AffiliateCode { get; set; }
-
-		public IEnumerable<string> DepartmentTypes = new List<string>() { "Volunteer Fire", "Career Fire", "Search and Rescue", "HAZMAT", "EMS", "CERT", "Public Safety", "Disaster Response", "Relief Org", "Security", "Repair Services", "Delivery Services", "Oil and Gas", "Power", "Chemical", "Nuclear", "Other Industrial", "Other Private", "Other Public", "Other" };
 	}
 }

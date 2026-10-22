@@ -60,6 +60,14 @@ namespace Resgrid.Web.Services.Models.v4.Mapping
 		/// ImagePath carries the bitmap-asset name resolved by PoiIconHelper for clients that ship PNGs.
 		/// </summary>
 		public string PoiImage { get; set; }
+
+		/// <summary>
+		/// Absolute URL of the department's uploaded type icon for the marker's unit type (Type=1), call type (Type=0) or
+		/// POI type (Type=4), or for a person (Type=3) the icon of the first role they hold, in the department's role
+		/// order, that has one: a 128 px square PNG, anonymous GET, immutable. Null when there is no uploaded icon;
+		/// ImagePath / PoiImage stay the bundled fallback.
+		/// </summary>
+		public string IconUrl { get; set; }
 	}
 
 	public class PoiLayerData
@@ -77,5 +85,11 @@ namespace Resgrid.Web.Services.Models.v4.Mapping
 		/// ImagePath carries the bitmap-asset name resolved by PoiIconHelper for clients that ship PNGs.
 		/// </summary>
 		public string PoiImage { get; set; }
+
+		/// <summary>
+		/// Absolute URL of the department's uploaded icon for the POI type (a 128 px square PNG, anonymous GET,
+		/// immutable); null when the type has no uploaded icon, so PoiImage / ImagePath stay the marker icon.
+		/// </summary>
+		public string IconUrl { get; set; }
 	}
 }

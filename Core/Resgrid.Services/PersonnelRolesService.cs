@@ -24,12 +24,14 @@ namespace Resgrid.Services
 		// Lazy: the certification service evaluates role requirements and calls back here for members (plan D4).
 		private readonly Lazy<ICertificationService> _certifications;
 		private readonly Lazy<ISearchProjectionService> _searchProjections;
+		private readonly ITypeIconsRepository _typeIconsRepository;
 
 		public PersonnelRolesService(IPersonnelRolesRepository personnelRolesRepository, IPersonnelRoleUsersRepository personnelRoleUsersRepository,
 			ISubscriptionsService subscriptionsService, IDepartmentMembersRepository departmentMemberRepository,
 			IEventAggregator eventAggregator, IUnitOfWork unitOfWork, Lazy<ICertificationService> certifications = null,
-			Lazy<ISearchProjectionService> searchProjections = null)
+			Lazy<ISearchProjectionService> searchProjections = null, ITypeIconsRepository typeIconsRepository = null)
 		{
+			_typeIconsRepository = typeIconsRepository;
 			_searchProjections = searchProjections;
 			_personnelRolesRepository = personnelRolesRepository;
 			_personnelRoleUsersRepository = personnelRoleUsersRepository;
@@ -142,6 +144,15 @@ namespace Resgrid.Services
 					throw new RoleMembershipException(RoleMembershipException.RequirementsUnmet, userId);
 			}
 
+			// A new role goes to the end of a department that has ordered its roles; one that never has keeps 0 (by name).
+			if (role.PersonnelRoleId == 0 && role.SortOrder == 0)
+			{
+				var existing = await GetAllRolesForDepartmentAsync(role.DepartmentId);
+				var last = existing.Count > 0 ? existing.Max(r => r.SortOrder) : 0;
+				if (last > 0)
+					role.SortOrder = last + 1;
+			}
+
 			var saved = await _personnelRolesRepository.SaveOrUpdateAsync(role, cancellationToken);
 			// An import writes one summary audit per chunk and its own journal instead of one audit per member (section 11.2).
 			if (effects.PerRowAudit)
@@ -167,7 +178,11 @@ namespace Resgrid.Services
 				throw new ArgumentException("An existing role is required.", nameof(role));
 
 			var incoming = (userIds ?? Enumerable.Empty<string>()).Where(u => !string.IsNullOrWhiteSpace(u)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
-			var current = (await _personnelRoleUsersRepository.GetAllMembersOfRoleAsync(role.PersonnelRoleId))?.Where(m => m != null).ToList() ?? new List<PersonnelRoleUser>();
+			// Every row of the role, disabled and deleted members included. GetAllMembersOfRoleAsync leaves those members out, so
+			// their rows survived the delete below while the cascade re-inserted them from the posted list (the edit page posts
+			// every member): each save added another copy, and counted them as members the role gained.
+			var current = (await _personnelRoleUsersRepository.GetAllRoleUsersForDepartmentAsync(role.DepartmentId))?
+				.Where(m => m != null && m.PersonnelRoleId == role.PersonnelRoleId).ToList() ?? new List<PersonnelRoleUser>();
 			var currentIds = new HashSet<string>(current.Select(m => m.UserId), StringComparer.OrdinalIgnoreCase);
 			var incomingIds = new HashSet<string>(incoming, StringComparer.OrdinalIgnoreCase);
 			var added = incoming.Where(u => !currentIds.Contains(u)).ToList();
@@ -265,6 +280,10 @@ namespace Resgrid.Services
 				_unitOfWork.DiscardChanges();
 				throw;
 			}
+
+			// The role's uploaded map icon has no foreign key; it goes with the role.
+			if (result && _typeIconsRepository != null)
+				await _typeIconsRepository.DeleteForTypeAsync(role.DepartmentId, TypeIconKinds.PersonnelRole, roleId, null, cancellationToken);
 
 			SendRoleVisibilityRefresh(role.DepartmentId);
 			await RefreshPersonnelProjectionsAsync(role.DepartmentId, formerMembers, cancellationToken);
@@ -374,6 +393,20 @@ namespace Resgrid.Services
 			SendRoleVisibilityRefresh(departmentId);
 			await RefreshPersonnelProjectionsAsync(departmentId, new[] { userId }, cancellationToken);
 
+			return true;
+		}
+
+		public async Task<bool> SetRoleOrderAsync(int departmentId, IEnumerable<int> orderedRoleIds, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var roles = await GetAllRolesForDepartmentAsync(departmentId);
+			if (roles.Count == 0)
+				return false;
+
+			var known = roles.Select(r => r.PersonnelRoleId).ToHashSet();
+			var listed = (orderedRoleIds ?? Enumerable.Empty<int>()).Where(known.Contains).Distinct().ToList();
+			var order = listed.Concat(TypeIcons.InRoleOrder(roles).Select(r => r.PersonnelRoleId).Where(id => !listed.Contains(id))).ToList();
+
+			await _personnelRolesRepository.SetRoleSortOrdersAsync(departmentId, order, cancellationToken);
 			return true;
 		}
 

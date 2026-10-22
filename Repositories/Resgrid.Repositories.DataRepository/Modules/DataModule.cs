@@ -326,6 +326,7 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<CallNumberSequencesRepository>().As<ICallNumberSequencesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DocumentNumberSequencesRepository>().As<IDocumentNumberSequencesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentApiKeysRepository>().As<IDepartmentApiKeysRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<TypeIconsRepository>().As<ITypeIconsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<SystemOperationRequestsRepository>().As<ISystemOperationRequestsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<InboundEmailReceiptsRepository>().As<IInboundEmailReceiptsRepository>().InstancePerLifetimeScope();
 			// Department Import (Import & Migration, M0273-M0276, M0281)

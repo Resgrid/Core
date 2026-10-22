@@ -54,7 +54,7 @@
 		<div class="wrapper wrapper-content">
 			<div class="ibox float-e-margins">
 				<div class="ibox-content">
-					<form class="form-horizontal" role="form" asp-controller="Mapping" asp-action="AddPOIType" asp-route-area="User" method="post">
+					<form class="form-horizontal" role="form" asp-controller="Mapping" asp-action="AddPOIType" asp-route-area="User" method="post" enctype="multipart/form-data">
 
 						<div class="row">
 							<div class="col-md-8 col-md-offset-1">
@@ -386,6 +386,9 @@
 								</ul>
 							</div>
 						</div>
+
+						@{ var iconPicker = new TypeIconPicker { HelpKey = "PoiTypeIconHelp", SampleNameInputId = "Type_Name", SampleName = Model.Type?.Name }; }
+						<partial name="_TypeIconPicker" model="iconPicker" />
 
 						<div class="form-group">
 							<div class="col-sm-4 col-sm-offset-2">

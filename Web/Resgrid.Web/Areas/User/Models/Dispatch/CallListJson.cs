@@ -22,5 +22,8 @@ namespace Resgrid.Web.Areas.User.Models.Dispatch
 		public bool CanDeleteCall { get; set; }
 		public bool CanCloseCall { get; set; }
 		public bool CanUpdateCall { get; set; }
+
+		/// <summary>Root-relative URL of the call type's icon (uploaded, else built-in); null when the type has none.</summary>
+		public string TypeIconUrl { get; set; }
 	}
 }

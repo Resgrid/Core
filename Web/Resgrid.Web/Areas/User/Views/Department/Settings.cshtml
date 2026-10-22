@@ -54,6 +54,18 @@
                             </div>
                         </div>
                         <div class="form-group">
+                            <label class="col-sm-2 control-label" for="Department_DepartmentType">@localizer["OrgTypeLabel"]</label>
+                            <div class="col-sm-10">
+                                <select asp-for="Department.DepartmentType" asp-items="DepartmentTypeSelectList.Build(localizer, Model.Department?.DepartmentType, true)" style="padding-left: 0; width: 100%;"></select>
+                                <span asp-validation-for="Department.DepartmentType" class="text-danger"></span>
+                                <span class="help-block m-b-none">@localizer["OrgTypeHelp"]</span>
+                                @if (ViewBag.CanConfigureOperatingProfile == true)
+                                {
+                                    <span class="help-block m-b-none">@localizer["OrgTypeProfileHint"] <a asp-controller="Department" asp-action="OperatingProfile" asp-route-area="User">@localizer["OrgTypeProfileLink"]</a></span>
+                                }
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <label class="col-sm-2 control-label required">@localizer["TimeZone"]</label>
                             <div class="col-sm-10">
                                 <select asp-for="Department.TimeZone" asp-items="ViewBag.TimeZones" style="padding-left: 0; width: 100%;"></select>
@@ -207,14 +219,16 @@
                                 @localizer["DefaultMapCenterLabel"]
                             </label>
                             <div class="col-sm-10">
-                                <div class="col-md-5">
-                                    <input type="text" class="form-control" placeholder="@localizer["LatitudePlaceholder"]" asp-for="MapCenterGpsCoordinatesLatitude">
-                                    <span class="help-inline">@localizer["LatitudePlaceholderHelp"]</span>
-                                </div>
-                                <div class="col-md-5">
-                                    <input type="text" class="form-control" placeholder="@localizer["LongitudePlaceholder"]" asp-for="MapCenterGpsCoordinatesLongitude">
-                                    <span class="help-inline">@localizer["LongitudePlaceholderHelp"]</span>
-                                </div>
+                                <admin-assist-help-after help-class="col-md-10">
+                                    <div class="col-md-5">
+                                        <input type="text" class="form-control" placeholder="@localizer["LatitudePlaceholder"]" asp-for="MapCenterGpsCoordinatesLatitude">
+                                        <span class="help-inline">@localizer["LatitudePlaceholderHelp"]</span>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <input type="text" class="form-control" placeholder="@localizer["LongitudePlaceholder"]" asp-for="MapCenterGpsCoordinatesLongitude">
+                                        <span class="help-inline">@localizer["LongitudePlaceholderHelp"]</span>
+                                    </div>
+                                </admin-assist-help-after>
                                 <div class="col-md-10">
                                     <span class="help-block">@localizer["DefaultMapCenterHelp"]</span>
                                 </div>
@@ -324,18 +338,20 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">@localizer["EnableSupressStaffings"]</label>
-                            <div class="col-sm-8">
-                                <div class="switch">
-                                    <div class="onoffswitch">
-                                        <input type="checkbox" class="onoffswitch-checkbox" asp-for="EnableStaffingSupress">
-                                        <label class="onoffswitch-label" for="EnableStaffingSupress">
-                                            <span class="onoffswitch-inner"></span>
-                                            <span class="onoffswitch-switch"></span>
-                                        </label>
+                            <admin-assist-help-after help-class="col-sm-12">
+                                <label class="col-sm-4 control-label">@localizer["EnableSupressStaffings"]</label>
+                                <div class="col-sm-8">
+                                    <div class="switch">
+                                        <div class="onoffswitch">
+                                            <input type="checkbox" class="onoffswitch-checkbox" asp-for="EnableStaffingSupress">
+                                            <label class="onoffswitch-label" for="EnableStaffingSupress">
+                                                <span class="onoffswitch-inner"></span>
+                                                <span class="onoffswitch-switch"></span>
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            </admin-assist-help-after>
                         </div>
                         <div class="form-group">
                             <div class="col-md-12">

@@ -240,12 +240,12 @@
       "Id": "unit-types",
       "Locale": "en",
       "TitleKey": "Feature.unit-types",
-      "Body": "Unit types Categories such as Engine, Ladder or Ambulance. Group comparable resources without assuming staffing or qualification. Engine 1 and Rescue 1 are added with their unit types and assigned to Station 1. Create unit types before adding units so each unit can be classified. Give each type a class, such as Engine or Ambulance, and choose its status set.",
+      "Body": "Unit types Categories such as Engine, Ladder or Ambulance. Group comparable resources without assuming staffing or qualification. Engine 1 and Rescue 1 are added with their unit types and assigned to Station 1. Create unit types before adding units so each unit can be classified. Give each type a class, such as Engine or Ambulance, and choose its status set. Upload a custom icon for a type (PNG, JPEG, GIF or WebP, up to 1 MB, square works best) so its units are easy to tell apart in lists, the apps and on the map.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "unit-types",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-10-13T00:00:00Z"
+      "ReviewedOn": "2026-10-21T00:00:00Z"
     },
     {
       "Id": "hardware-tracking",

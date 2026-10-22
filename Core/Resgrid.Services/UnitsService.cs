@@ -48,6 +48,7 @@ namespace Resgrid.Services
 		// Deleting a unit drops its push subscriber; the department supplies the code the subscriber is keyed by.
 		private readonly INovuProvider _novuProvider;
 		private readonly Lazy<IDepartmentsService> _departmentsService;
+		private readonly ITypeIconsRepository _typeIconsRepository;
 
 		public UnitsService(IUnitsRepository unitsRepository, IUnitStatesRepository unitStatesRepository,
 			IUnitLogsRepository unitLogsRepository, IUnitTypesRepository unitTypesRepository, ISubscriptionsService subscriptionsService,
@@ -59,11 +60,12 @@ namespace Resgrid.Services
 			Lazy<IProtectedWriteService> protectedWriteService, Lazy<IRecordsCutoverService> recordsCutoverService,
 			ICallStatusAttributionService callStatusAttributionService, Lazy<ISearchProjectionService> searchProjections = null,
 			Lazy<ICallAutoCloseService> callAutoCloseService = null, INovuProvider novuProvider = null,
-			Lazy<IDepartmentsService> departmentsService = null)
+			Lazy<IDepartmentsService> departmentsService = null, ITypeIconsRepository typeIconsRepository = null)
 		{
 			_callAutoCloseService = callAutoCloseService;
 			_novuProvider = novuProvider;
 			_departmentsService = departmentsService;
+			_typeIconsRepository = typeIconsRepository;
 			_recordsCutoverService = recordsCutoverService;
 			_callStatusAttributionService = callStatusAttributionService;
 			_unitsRepository = unitsRepository;
@@ -408,7 +410,15 @@ namespace Resgrid.Services
 			var type = await GetUnitTypeByIdAsync(unitTypeId);
 
 			if (type != null)
-				return await _unitTypesRepository.DeleteAsync(type, cancellationToken);
+			{
+				var deleted = await _unitTypesRepository.DeleteAsync(type, cancellationToken);
+
+				// TypeIcons has no foreign key to the type, so its uploaded icon goes with it once the type is gone.
+				if (deleted && _typeIconsRepository != null)
+					await _typeIconsRepository.DeleteForTypeAsync(type.DepartmentId, TypeIconKinds.UnitType, type.UnitTypeId, null, cancellationToken);
+
+				return deleted;
+			}
 
 			return false;
 		}

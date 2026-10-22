@@ -376,7 +376,6 @@ namespace Resgrid.Web.Controllers
 				return RedirectToAction("LogOn", "Account");
 
 			RegisterViewModel model = new RegisterViewModel();
-			ViewBag.DepartmentTypes = new SelectList(model.DepartmentTypes);
 			model.SiteKey = WebConfig.RecaptchaPublicKey;
 			model.AffiliateCode = affiliateCode;
 			ViewData["ReturnUrl"] = returnUrl;
@@ -394,10 +393,14 @@ namespace Resgrid.Web.Controllers
 			if (String.IsNullOrWhiteSpace(SystemBehaviorConfig.BillingApiBaseUrl) || String.IsNullOrWhiteSpace(ApiConfig.BackendInternalApikey))
 				return RedirectToAction("LogOn", "Account");
 
-
-			ViewBag.DepartmentTypes = new SelectList(model.DepartmentTypes);
 			model.SiteKey = WebConfig.RecaptchaPublicKey;
 			ViewData["ReturnUrl"] = returnUrl;
+
+			// The picker only offers catalog types; store the catalog spelling and refuse anything else.
+			if (DepartmentTypeCatalog.TryResolveSelection(null, model.DepartmentType, out var departmentType))
+				model.DepartmentType = departmentType;
+			else
+				ModelState.AddModelError(nameof(model.DepartmentType), "Choose an organization type from the list.");
 
 			if (ModelState.IsValid)
 			{

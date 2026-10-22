@@ -55,10 +55,12 @@
 
                         <div class="form-group">
                             <div class="checkbox">
-                                <label>
-                                    <input asp-for="RequireMfa" />
-                                    <strong>@localizer["SecurityPolicyRequireMfaLabel"]</strong>
-                                </label>
+                                <admin-assist-help-after>
+                                    <label>
+                                        <input asp-for="RequireMfa" />
+                                        <strong>@localizer["SecurityPolicyRequireMfaLabel"]</strong>
+                                    </label>
+                                </admin-assist-help-after>
                                 <small class="text-muted d-block m-l-lg">
                                     @localizer["SecurityPolicyRequireMfaNote"]
                                 </small>
@@ -67,14 +69,16 @@
 
                         <div class="form-group">
                             <div class="checkbox @(!Model.HasActiveSsoConfig ? "text-muted" : "")">
-                                <label>
-                                    <input asp-for="RequireSso" disabled="@(!Model.HasActiveSsoConfig)" />
-                                    <strong>@localizer["SecurityPolicyRequireSsoLabel"]</strong>
-                                    @if (!Model.HasActiveSsoConfig)
-                                    {
-                                        <span class="label label-default m-l-xs">@localizer["SecurityPolicyRequiresSsoConfig"]</span>
-                                    }
-                                </label>
+                                <admin-assist-help-after>
+                                    <label>
+                                        <input asp-for="RequireSso" disabled="@(!Model.HasActiveSsoConfig)" />
+                                        <strong>@localizer["SecurityPolicyRequireSsoLabel"]</strong>
+                                        @if (!Model.HasActiveSsoConfig)
+                                        {
+                                            <span class="label label-default m-l-xs">@localizer["SecurityPolicyRequiresSsoConfig"]</span>
+                                        }
+                                    </label>
+                                </admin-assist-help-after>
                                 <small class="text-muted d-block m-l-lg">
                                     <span class="text-danger"><i class="fa fa-exclamation-triangle"></i></span>
                                     @localizer["SecurityPolicyRequireSsoWarning"]
@@ -191,58 +195,68 @@
                         }
                         <div class="form-group">
                             <div class="checkbox">
-                                <label>
-                                    <input asp-for="AllowPasskeysForLoginMfa" disabled="@(!Model.CanChangeMethodSwitches)" />
-                                    <strong>@localizer["SecurityPolicyAllowPasskeysForLoginMfaLabel"]</strong>
-                                </label>
+                                <admin-assist-help-after>
+                                    <label>
+                                        <input asp-for="AllowPasskeysForLoginMfa" disabled="@(!Model.CanChangeMethodSwitches)" />
+                                        <strong>@localizer["SecurityPolicyAllowPasskeysForLoginMfaLabel"]</strong>
+                                    </label>
+                                </admin-assist-help-after>
                                 <small class="text-muted d-block m-l-lg">@localizer["SecurityPolicyAllowPasskeysForLoginMfaNote"]</small>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="checkbox">
-                                <label>
-                                    <input asp-for="AllowPasskeysForAdp" disabled="@(!Model.CanChangeMethodSwitches)" />
-                                    <strong>@localizer["SecurityPolicyAllowPasskeysForAdpLabel"]</strong>
-                                </label>
+                                <admin-assist-help-after>
+                                    <label>
+                                        <input asp-for="AllowPasskeysForAdp" disabled="@(!Model.CanChangeMethodSwitches)" />
+                                        <strong>@localizer["SecurityPolicyAllowPasskeysForAdpLabel"]</strong>
+                                    </label>
+                                </admin-assist-help-after>
                                 <small class="text-muted d-block m-l-lg">@localizer["SecurityPolicyAllowPasskeysForAdpNote"]</small>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="checkbox">
-                                <label>
-                                    <input asp-for="AllowResponderApproval" disabled="@(!Model.CanChangeMethodSwitches)" />
-                                    <strong>@localizer["SecurityPolicyAllowResponderApprovalLabel"]</strong>
-                                    @if (!Model.ResponderApprovalAvailable)
-                                    {
-                                        <span class="label label-default m-l-xs">@localizer["SecurityPolicyMethodNotYetAvailable"]</span>
-                                    }
-                                </label>
+                                <admin-assist-help-after>
+                                    <label>
+                                        <input asp-for="AllowResponderApproval" disabled="@(!Model.CanChangeMethodSwitches)" />
+                                        <strong>@localizer["SecurityPolicyAllowResponderApprovalLabel"]</strong>
+                                        @if (!Model.ResponderApprovalAvailable)
+                                        {
+                                            <span class="label label-default m-l-xs">@localizer["SecurityPolicyMethodNotYetAvailable"]</span>
+                                        }
+                                    </label>
+                                </admin-assist-help-after>
                                 <small class="text-muted d-block m-l-lg">@localizer["SecurityPolicyAllowResponderApprovalNote"]</small>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="checkbox">
-                                <label>
-                                    <input asp-for="AllowFederatedMfaForLoginMfa" disabled="@(!Model.CanChangeMethodSwitches)" />
-                                    <strong>@localizer["SecurityPolicyAllowFederatedMfaForLoginMfaLabel"]</strong>
-                                    @if (!Model.ProviderStepUpAvailable)
-                                    {
-                                        <span class="label label-default m-l-xs">@localizer["SecurityPolicyMethodNotYetAvailable"]</span>
-                                    }
-                                </label>
+                                <admin-assist-help-after>
+                                    <label>
+                                        <input asp-for="AllowFederatedMfaForLoginMfa" disabled="@(!Model.CanChangeMethodSwitches)" />
+                                        <strong>@localizer["SecurityPolicyAllowFederatedMfaForLoginMfaLabel"]</strong>
+                                        @if (!Model.ProviderStepUpAvailable)
+                                        {
+                                            <span class="label label-default m-l-xs">@localizer["SecurityPolicyMethodNotYetAvailable"]</span>
+                                        }
+                                    </label>
+                                </admin-assist-help-after>
                                 <small class="text-muted d-block m-l-lg">@localizer["SecurityPolicyAllowFederatedMfaForLoginMfaNote"]</small>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="checkbox">
-                                <label>
-                                    <input asp-for="AllowFederatedMfaForAdp" disabled="@(!Model.CanChangeMethodSwitches)" />
-                                    <strong>@localizer["SecurityPolicyAllowFederatedMfaForAdpLabel"]</strong>
-                                    @if (!Model.ProviderStepUpAvailable)
-                                    {
-                                        <span class="label label-default m-l-xs">@localizer["SecurityPolicyMethodNotYetAvailable"]</span>
-                                    }
-                                </label>
+                                <admin-assist-help-after>
+                                    <label>
+                                        <input asp-for="AllowFederatedMfaForAdp" disabled="@(!Model.CanChangeMethodSwitches)" />
+                                        <strong>@localizer["SecurityPolicyAllowFederatedMfaForAdpLabel"]</strong>
+                                        @if (!Model.ProviderStepUpAvailable)
+                                        {
+                                            <span class="label label-default m-l-xs">@localizer["SecurityPolicyMethodNotYetAvailable"]</span>
+                                        }
+                                    </label>
+                                </admin-assist-help-after>
                                 <small class="text-muted d-block m-l-lg">@localizer["SecurityPolicyAllowFederatedMfaForAdpNote"]</small>
                             </div>
                         </div>
@@ -252,19 +266,23 @@
                         }
                         <div class="form-group">
                             <div class="checkbox">
-                                <label>
-                                    <input asp-for="AcceptRecentLoginMfaForAdp" disabled="@(!Model.CanChangeMethodSwitches)" />
-                                    <strong>@localizer["SecurityPolicyAcceptRecentLoginMfaForAdpLabel"]</strong>
-                                </label>
+                                <admin-assist-help-after>
+                                    <label>
+                                        <input asp-for="AcceptRecentLoginMfaForAdp" disabled="@(!Model.CanChangeMethodSwitches)" />
+                                        <strong>@localizer["SecurityPolicyAcceptRecentLoginMfaForAdpLabel"]</strong>
+                                    </label>
+                                </admin-assist-help-after>
                                 <small class="text-muted d-block m-l-lg">@localizer["SecurityPolicyAcceptRecentLoginMfaForAdpNote"]</small>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="checkbox">
-                                <label>
-                                    <input asp-for="AcceptRecentUnlockMfaForAdp" disabled="@(!Model.CanChangeMethodSwitches)" />
-                                    <strong>@localizer["SecurityPolicyAcceptRecentUnlockMfaForAdpLabel"]</strong>
-                                </label>
+                                <admin-assist-help-after>
+                                    <label>
+                                        <input asp-for="AcceptRecentUnlockMfaForAdp" disabled="@(!Model.CanChangeMethodSwitches)" />
+                                        <strong>@localizer["SecurityPolicyAcceptRecentUnlockMfaForAdpLabel"]</strong>
+                                    </label>
+                                </admin-assist-help-after>
                                 <small class="text-muted d-block m-l-lg">@localizer["SecurityPolicyAcceptRecentUnlockMfaForAdpNote"]</small>
                             </div>
                         </div>

@@ -28,6 +28,10 @@ namespace Resgrid.Model
 
 		public int? MapIconType { get; set; }
 
+		/// <summary>Key of the department's uploaded <see cref="TypeIcon"/>; null when none is uploaded (M0285).</summary>
+		[MaxLength(64)]
+		public string IconKey { get; set; }
+
 		/// <summary>What kind of unit the type is, a <see cref="UnitTypeClasses"/> value; -1 (None) until the department sets it.</summary>
 		public int BaseType { get; set; } = (int)UnitTypeClasses.None;
 

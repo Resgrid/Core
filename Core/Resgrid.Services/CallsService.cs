@@ -54,6 +54,7 @@ namespace Resgrid.Services
 
 		// Lazy: the location history service reads back through dispatch scope, which depends on this service.
 		private readonly Lazy<ICallLocationHistoryService> _callLocationHistory;
+		private readonly ITypeIconsRepository _typeIconsRepository;
 
 		public CallsService(ICallsRepository callsRepository, ICommunicationService communicationService,
 			ICallDispatchesRepository callDispatchesRepository, ICallTypesRepository callTypesRepository, ICallEmailFactory callEmailFactory,
@@ -65,10 +66,11 @@ namespace Resgrid.Services
 			ICallReferencesRepository callReferencesRepository, ICallContactsRepository callContactsRepository,
 			IIndoorMapService indoorMapService, ICallVideoFeedRepository callVideoFeedRepository, ICallNumberingService callNumberingService,
 			Lazy<IProtectedWriteService> protectedWriteService, Lazy<ISearchProjectionService> searchProjections = null,
-			Lazy<ICallLocationHistoryService> callLocationHistory = null)
+			Lazy<ICallLocationHistoryService> callLocationHistory = null, ITypeIconsRepository typeIconsRepository = null)
 		{
 			_protectedWriteService = protectedWriteService;
 			_callLocationHistory = callLocationHistory;
+			_typeIconsRepository = typeIconsRepository;
 			_callsRepository = callsRepository;
 			_communicationService = communicationService;
 			_callDispatchesRepository = callDispatchesRepository;
@@ -437,7 +439,13 @@ namespace Resgrid.Services
 		{
 			var callType = await _callTypesRepository.GetByIdAsync(callTypeId);
 
-			return await _callTypesRepository.DeleteAsync(callType, cancellationToken);
+			var deleted = await _callTypesRepository.DeleteAsync(callType, cancellationToken);
+
+			// TypeIcons has no foreign key to the type, so its uploaded icon goes with it once the type is gone.
+			if (deleted && callType != null && _typeIconsRepository != null)
+				await _typeIconsRepository.DeleteForTypeAsync(callType.DepartmentId, TypeIconKinds.CallType, callType.CallTypeId, null, cancellationToken);
+
+			return deleted;
 		}
 
 		public async Task<CallType> GetCallTypeByIdAsync(int callTypeId)

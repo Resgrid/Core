@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Mapping Index -->
+  <data name="IconCustomLabel" xml:space="preserve">
+    <value>Własna ikona</value>
+  </data>
+  <data name="IconGuidanceHeading" xml:space="preserve">
+    <value>Wskazówki dotyczące ikony</value>
+  </data>
+  <data name="IconGuidanceFormat" xml:space="preserve">
+    <value>PNG, JPEG, GIF lub WebP, do 1 MB. Format SVG nie jest obsługiwany, a animowany GIF używa pierwszej klatki.</value>
+  </data>
+  <data name="IconGuidanceSize" xml:space="preserve">
+    <value>Co najmniej 16 px i najwyżej 4096 px na każdym boku. Najostrzej wygląda kwadratowy obraz o wymiarach 128 × 128 px lub większy.</value>
+  </data>
+  <data name="IconGuidanceDesign" xml:space="preserve">
+    <value>Użyj przezroczystego tła i wyraźnego, prostego kształtu. Mapy pokazują ikonę w rozmiarze 32 × 32 px, a listy 20 × 20 px, więc drobne szczegóły i tekst nie będą czytelne.</value>
+  </data>
+  <data name="IconGuidanceProcessing" xml:space="preserve">
+    <value>Każda ikona jest skalowana do 128 × 128 px i zapisywana jako PNG. Obraz, który nie jest kwadratowy, jest wyśrodkowany na przezroczystym kwadracie i nigdy nie jest przycinany.</value>
+  </data>
+  <data name="IconRemove" xml:space="preserve">
+    <value>Usuń własną ikonę</value>
+  </data>
+  <data name="IconPreviewHeading" xml:space="preserve">
+    <value>Podgląd</value>
+  </data>
+  <data name="IconPreviewLightMap" xml:space="preserve">
+    <value>Jasna mapa</value>
+  </data>
+  <data name="IconPreviewDarkMap" xml:space="preserve">
+    <value>Ciemna mapa</value>
+  </data>
+  <data name="IconPreviewList" xml:space="preserve">
+    <value>Na liście</value>
+  </data>
+  <data name="IconPreviewSaved" xml:space="preserve">
+    <value>Zapisana jako 128 × 128</value>
+  </data>
+  <data name="IconPreviewStateCurrent" xml:space="preserve">
+    <value>Wyświetlana jest obecna własna ikona.</value>
+  </data>
+  <data name="IconPreviewStateNew" xml:space="preserve">
+    <value>Wyświetlana jest nowa ikona. Zostanie zapisana po zapisaniu tego formularza.</value>
+  </data>
+  <data name="IconPreviewStateDefault" xml:space="preserve">
+    <value>Brak własnej ikony. Wyświetlana jest ikona domyślna.</value>
+  </data>
+  <data name="IconPreviewStateNone" xml:space="preserve">
+    <value>Brak własnej ikony. Używany jest domyślny znacznik.</value>
+  </data>
+  <data name="IconPreviewStateRemoved" xml:space="preserve">
+    <value>Własna ikona zostanie usunięta po zapisaniu tego formularza.</value>
+  </data>
+  <data name="IconPreviewSampleName" xml:space="preserve">
+    <value>Przykład</value>
+  </data>
+  <data name="IconWarningSmall" xml:space="preserve">
+    <value>Ten obraz ma {0} × {1} px. Zostanie powiększony i może być rozmyty; zalecane jest 128 × 128 px lub więcej.</value>
+  </data>
+  <data name="IconWarningNotSquare" xml:space="preserve">
+    <value>Ten obraz nie jest kwadratowy. Zostanie wyśrodkowany na przezroczystym kwadracie.</value>
+  </data>
+  <data name="IconWarningOpaque" xml:space="preserve">
+    <value>Ten obraz nie ma przezroczystego tła, więc na mapie będzie widoczny jako wypełniony kwadrat.</value>
+  </data>
+  <data name="IconRejectRequired" xml:space="preserve">
+    <value>Wybierz plik ikony.</value>
+  </data>
+  <data name="IconRejectTooManyBytes" xml:space="preserve">
+    <value>Plik ikony może mieć najwyżej 1 MB.</value>
+  </data>
+  <data name="IconRejectUnreadable" xml:space="preserve">
+    <value>Nie udało się odczytać pliku jako obrazu PNG, JPEG, GIF ani WebP.</value>
+  </data>
+  <data name="IconRejectUnsupportedFormat" xml:space="preserve">
+    <value>Jako ikony można używać tylko obrazów PNG, JPEG, GIF i WebP.</value>
+  </data>
+  <data name="IconRejectTooLarge" xml:space="preserve">
+    <value>Ikona może mieć najwyżej 4096 px na każdym boku.</value>
+  </data>
+  <data name="IconRejectTooSmall" xml:space="preserve">
+    <value>Ikona musi mieć co najmniej 16 px na dłuższym boku.</value>
+  </data>
+  <data name="IconFileSizeDetail" xml:space="preserve">
+    <value>Ten plik ma {0}.</value>
+  </data>
+  <data name="IconImageSizeDetail" xml:space="preserve">
+    <value>Ten obraz ma {0} × {1} px.</value>
+  </data>
+  <data name="IconSave" xml:space="preserve">
+    <value>Zapisz ikonę</value>
+  </data>
+  <data name="IconColumn" xml:space="preserve">
+    <value>Ikona</value>
+  </data>
+  <data name="UnitTypeIconHelp" xml:space="preserve">
+    <value>Opcjonalnie. Wyświetlana obok jednostek tego typu na listach, w polach wyboru i w aplikacjach, a na mapie zamiast powyższej ikony mapy.</value>
+  </data>
+  <data name="CallTypeIconHelp" xml:space="preserve">
+    <value>Opcjonalnie. Wyświetlana obok zgłoszeń tego typu na listach i w aplikacjach, a na mapie zamiast powyższej ikony mapy.</value>
+  </data>
+  <data name="PoiTypeIconHelp" xml:space="preserve">
+    <value>Opcjonalnie. Wyświetlana dla punktów zainteresowania tego typu na mapie i w aplikacjach zamiast powyższego znacznika.</value>
+  </data>
+  <data name="RoleIconHelp" xml:space="preserve">
+    <value>Opcjonalnie. Członkowie tej roli są pokazywani na mapie z tą ikoną. Osoba z kilkoma rolami otrzymuje ikonę swojej pierwszej roli, która ją ma, w kolejności ustawionej na stronie Role.</value>
+  </data>
+  <data name="RoleOrderHeading" xml:space="preserve">
+    <value>Kolejność ról</value>
+  </data>
+  <data name="RoleOrderHelp" xml:space="preserve">
+    <value>Przeciągnij role lub użyj strzałek, aby ustawić ich kolejność, a następnie zapisz. Znacznik osoby na mapie używa ikony pierwszej posiadanej roli w tej kolejności, która ma ikonę. Osoby bez takiej roli mają domyślny znacznik osoby.</value>
+  </data>
+  <data name="RoleOrderMoveUp" xml:space="preserve">
+    <value>W górę</value>
+  </data>
+  <data name="RoleOrderMoveDown" xml:space="preserve">
+    <value>W dół</value>
+  </data>
+  <data name="RoleOrderSave" xml:space="preserve">
+    <value>Zapisz kolejność</value>
+  </data>
+  <data name="RoleOrderSaved" xml:space="preserve">
+    <value>Kolejność ról została zapisana.</value>
+  </data>
+  <data name="RoleOrderColumn" xml:space="preserve">
+    <value>Kolejność</value>
+  </data>
+  <data name="RoleOrderUnsaved" xml:space="preserve">
+    <value>Kolejność została zmieniona. Zapisz ją, aby ją zastosować.</value>
+  </data>
+</root>

@@ -38,13 +38,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IProtocolsService _protocolsService;
 		private readonly ITemplatesService _templatesService;
 		private readonly IBaseTypeAiSuggestionService _baseTypeAiSuggestions;
+		private readonly ITypeIconsService _typeIconsService;
+		private readonly Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Icons.IconUpload> _iconLocalizer;
 
 		public TypesController(IUnitsService unitsService, ICustomStateService customStateService, ICallsService callsService, IDepartmentSettingsService departmentSettingsService,
 			IAuthorizationService authorizationService, IEventAggregator eventAggregator, ICertificationService certificationService, IDocumentsService documentsService,
 			INotesService notesService,
 			IContactsService contactsService, IBusinessOperationsAccessService businessOperationsAccess,
-			IProtocolsService protocolsService, ITemplatesService templatesService, IBaseTypeAiSuggestionService baseTypeAiSuggestions)
+			IProtocolsService protocolsService, ITemplatesService templatesService, IBaseTypeAiSuggestionService baseTypeAiSuggestions,
+			ITypeIconsService typeIconsService, Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Icons.IconUpload> iconLocalizer)
 		{
+			_iconLocalizer = iconLocalizer;
 			_unitsService = unitsService;
 			_customStateService = customStateService;
 			_callsService = callsService;
@@ -59,6 +63,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_protocolsService = protocolsService;
 			_templatesService = templatesService;
 			_baseTypeAiSuggestions = baseTypeAiSuggestions;
+			_typeIconsService = typeIconsService;
 		}
 
 		/// <summary>A posted class (base type) kept only when it is a value of its enum; anything else is -1 (none).</summary>
@@ -128,6 +133,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (String.IsNullOrWhiteSpace(model.UnitType.Type))
 				ModelState.AddModelError("NewUnitType", "You Must specify the new unit type.");
 
+			var iconData = await ReadIconUploadAsync(model.IconFile, cancellationToken);
+
 			if (ModelState.IsValid)
 			{
 				var auditEvent = new AuditEvent();
@@ -141,11 +148,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 				auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
 				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
-				UnitType added;
-				if (model.UnitType.CustomStatesId.HasValue && model.UnitType.CustomStatesId.Value > 0)
-					added = await _unitsService.AddUnitTypeAsync(DepartmentId, model.UnitType.Type, model.UnitType.CustomStatesId.Value, model.UnitType.MapIconType, cancellationToken);
-				else
-					added = await _unitsService.AddUnitTypeAsync(DepartmentId, model.UnitType.Type, model.UnitType.MapIconType, cancellationToken);
+				// The page posts the status set and the icon as UnitCustomStatesId and UnitTypeIcon, the fields EditUnitType
+				// reads; UnitType.CustomStatesId / UnitType.MapIconType still count when those are not posted (scripted posts).
+				var customStatesId = model.UnitCustomStatesId != 0 ? model.UnitCustomStatesId : model.UnitType.CustomStatesId.GetValueOrDefault();
+				int? mapIconType = model.UnitTypeIcon != 0 ? model.UnitTypeIcon : model.UnitType.MapIconType;
+
+				// Only one of this department's unit status sets can be linked; any other posted id means standard statuses.
+				if (customStatesId != 0)
+				{
+					var departmentStates = await _customStateService.GetAllActiveUnitStatesForDepartmentAsync(DepartmentId);
+					if (departmentStates == null || !departmentStates.Any(x => x.CustomStateId == customStatesId))
+						customStatesId = 0;
+				}
+
+				var added = await _unitsService.AddUnitTypeAsync(DepartmentId, model.UnitType.Type, customStatesId, mapIconType, cancellationToken);
 
 				var unitClass = ValidClass<UnitTypeClasses>(model.UnitType.BaseType);
 				if (added != null && unitClass != (int)UnitTypeClasses.None)
@@ -153,9 +169,40 @@ namespace Resgrid.Web.Areas.User.Controllers
 					added.BaseType = unitClass;
 					await _unitsService.SaveUnitTypeAsync(added, cancellationToken);
 				}
+
+				if (added != null && iconData != null)
+					await _typeIconsService.UploadIconAsync(DepartmentId, TypeIconKinds.UnitType, added.UnitTypeId, UserId, iconData, cancellationToken);
+			}
+			else if (ModelState[IconFileField]?.Errors.Count > 0)
+			{
+				// A rejected icon comes back to the form with its reason; the name check keeps its old redirect.
+				model.States = await GetUnitTypeStatesAsync();
+				return View(model);
 			}
 
 			return RedirectToAction("Types", "Department", new { Area = "User" });
+		}
+
+		/// <summary>
+		/// The posted custom icon's bytes, or null when none was posted. A file that cannot be an icon adds a model error
+		/// on IconFile and returns null, so nothing is saved.
+		/// </summary>
+		private Task<byte[]> ReadIconUploadAsync(IFormFile iconFile, CancellationToken cancellationToken) =>
+			TypeIconUploads.ReadAsync(iconFile, _typeIconsService, ModelState, _iconLocalizer, cancellationToken);
+
+		/// <summary>The form field the unit and call type pages post the custom icon in.</summary>
+		private const string IconFileField = TypeIconUploads.FileField;
+
+		private async Task<List<CustomState>> GetUnitTypeStatesAsync()
+		{
+			var states = new List<CustomState>();
+			states.Add(new CustomState
+			{
+				Name = "Standard Actions"
+			});
+			states.AddRange(await _customStateService.GetAllActiveUnitStatesForDepartmentAsync(DepartmentId));
+
+			return states;
 		}
 
 		[HttpGet]
@@ -177,8 +224,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.States = states;
 			model.UnitCustomStatesId = model.UnitType.CustomStatesId.GetValueOrDefault();
 
-			if (model.UnitType.MapIconType.HasValue)
-				model.UnitTypeIcon = model.UnitType.MapIconType.Value;
+			// -1 = the Default option, so a type without an icon re-posts "no icon" rather than a value no option has.
+			model.UnitTypeIcon = model.UnitType.MapIconType ?? -1;
 
 			return View(model);
 		}
@@ -203,6 +250,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (unitTypes.Any(x => x.Type == model.UnitType.Type && x.UnitTypeId != model.UnitType.UnitTypeId))
 				ModelState.AddModelError("Type", string.Format("A Unit Type of ({0}) already exists.", model.UnitType.Type));
 
+			var iconData = await ReadIconUploadAsync(model.IconFile, cancellationToken);
+
 			if (ModelState.IsValid)
 			{
 				var unitType = await _unitsService.GetUnitTypeByIdAsync(model.UnitType.UnitTypeId);
@@ -213,10 +262,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 				unitType.Type = model.UnitType.Type;
 				unitType.BaseType = ValidClass<UnitTypeClasses>(model.UnitType.BaseType);
 
-				if (model.UnitCustomStatesId != 0)
-					unitType.CustomStatesId = model.UnitCustomStatesId;
-				else
+				// States holds the "Standard Actions" entry (id 0) plus this department's unit status sets; a posted id
+				// outside it is another department's set, so the stored link is kept.
+				if (model.UnitCustomStatesId == 0)
 					unitType.CustomStatesId = null;
+				else if (states.Any(x => x.CustomStateId == model.UnitCustomStatesId))
+					unitType.CustomStatesId = model.UnitCustomStatesId;
 
 				if (model.UnitTypeIcon >= 0)
 					unitType.MapIconType = model.UnitTypeIcon;
@@ -235,8 +286,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				await _unitsService.SaveUnitTypeAsync(unitType, cancellationToken);
 
+				// After the field save, which writes the IconKey it loaded: the icon calls then set the new key themselves.
+				if (iconData != null)
+					await _typeIconsService.UploadIconAsync(DepartmentId, TypeIconKinds.UnitType, unitType.UnitTypeId, UserId, iconData, cancellationToken);
+				else if (model.RemoveCustomIcon)
+					await _typeIconsService.RemoveIconAsync(DepartmentId, TypeIconKinds.UnitType, unitType.UnitTypeId, cancellationToken);
+
 				return RedirectToAction("Types", "Department", new { Area = "User" });
 			}
+
+			// The posted type carries no IconKey; show the stored icon again beside the error.
+			model.UnitType.IconKey = unitTypes.FirstOrDefault(x => x.UnitTypeId == model.UnitType.UnitTypeId)?.IconKey;
 
 			return View(model);
 		}
@@ -270,6 +330,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await _authorizationService.CanUserAddCallTypeAsync(UserId))
 				return Unauthorized();
 
+			var iconData = await ReadIconUploadAsync(model.IconFile, cancellationToken);
+
 			if (ModelState.IsValid)
 			{
 				CallType newCallType = new CallType();
@@ -291,7 +353,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 				auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
 				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
-				await _callsService.SaveCallTypeAsync(newCallType, cancellationToken);
+				var saved = await _callsService.SaveCallTypeAsync(newCallType, cancellationToken);
+
+				if (saved != null && iconData != null)
+					await _typeIconsService.UploadIconAsync(DepartmentId, TypeIconKinds.CallType, saved.CallTypeId, UserId, iconData, cancellationToken);
+			}
+			else if (ModelState[IconFileField]?.Errors.Count > 0)
+			{
+				// A rejected icon comes back to the form with its reason; the name check keeps its old redirect.
+				return View(model);
 			}
 
 			return RedirectToAction("Types", "Department", new { Area = "User" });
@@ -320,6 +390,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> EditCallType(EditCallTypeView model, CancellationToken cancellationToken)
 		{
+			var iconData = await ReadIconUploadAsync(model.IconFile, cancellationToken);
+
 			if (ModelState.IsValid)
 			{
 				var auditEvent = new AuditEvent();
@@ -356,8 +428,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 				await _protocolsService.RenameCallTypeInTriggersAsync(DepartmentId, previousName, callType.Type, cancellationToken);
 				await _templatesService.RenameCallTypeInTemplatesAsync(DepartmentId, previousName, callType.Type, cancellationToken);
 
+				// After the field save, which writes the IconKey it loaded: the icon calls then set the new key themselves.
+				if (iconData != null)
+					await _typeIconsService.UploadIconAsync(DepartmentId, TypeIconKinds.CallType, callType.CallTypeId, UserId, iconData, cancellationToken);
+				else if (model.RemoveCustomIcon)
+					await _typeIconsService.RemoveIconAsync(DepartmentId, TypeIconKinds.CallType, callType.CallTypeId, cancellationToken);
+
 				return RedirectToAction("Types", "Department", new { Area = "User" });
 			}
+
+			// The posted type carries no IconKey; show the stored icon again beside the error.
+			var stored = model.CallType == null ? null : await _callsService.GetCallTypeByIdAsync(model.CallType.CallTypeId);
+			if (model.CallType != null && stored != null && stored.DepartmentId == DepartmentId)
+				model.CallType.IconKey = stored.IconKey;
 
 			return View(model);
 		}

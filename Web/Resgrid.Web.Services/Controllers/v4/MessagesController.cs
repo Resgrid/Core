@@ -264,7 +264,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				foreach (var role in roles)
 				{
-					result.Data.Add(new RecipientsResultData { Id = "R:" + role.PersonnelRoleId, Type = "Roles", Name = role.Name });
+					result.Data.Add(new RecipientsResultData
+					{
+						Id = "R:" + role.PersonnelRoleId,
+						Type = "Roles",
+						Name = role.Name,
+						TypeIconUrl = TypeIcons.ApiIconUrl(Config.SystemBehaviorConfig.ResgridApiBaseUrl, role)
+					});
 				}
 			}
 
@@ -281,9 +287,20 @@ namespace Resgrid.Web.Services.Controllers.v4
 				var units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
 				if (units != null && units.Any())
 				{
+					var unitTypes = await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId);
+
 					foreach (var u in units)
 					{
-						result.Data.Add(new RecipientsResultData { Id = "U:" + u.UnitId, Type = "Unit", Name = u.Name });
+						var unitType = string.IsNullOrWhiteSpace(u.Type) ? null : unitTypes?.FirstOrDefault(x => x.Type == u.Type);
+
+						result.Data.Add(new RecipientsResultData
+						{
+							Id = "U:" + u.UnitId,
+							Type = "Unit",
+							Name = u.Name,
+							TypeIconUrl = TypeIcons.ApiIconUrl(Config.SystemBehaviorConfig.ResgridApiBaseUrl, unitType),
+							TypeMapIcon = TypeIcons.BuiltInIconName(unitType)
+						});
 					}
 				}
 			}

@@ -1624,7 +1624,7 @@
     <value>Dodaj cykliczne spotkania i wieczory szkoleniowe.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.call-types-priorities">
-    <value>Dodaj typy zgłoszeń używane przez dyspozytorów i ustaw ich priorytety. Nadaj każdemu typowi zgłoszenia klasę, a każdemu priorytetowi znaczenie, aby raporty i aplikacje mogły je grupować i sortować.</value>
+    <value>Dodaj typy zgłoszeń używane przez dyspozytorów i ustaw ich priorytety. Nadaj każdemu typowi zgłoszenia klasę, a każdemu priorytetowi znaczenie, aby raporty i aplikacje mogły je grupować i sortować. Typ zgłoszenia może też mieć własną ikonę, wyświetlaną obok jego zgłoszeń na listach, w aplikacjach i na mapie.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.certification-dashboard">
     <value>Zarejestruj bieżące certyfikaty członków, a następnie sprawdź, co wkrótce wygasa.</value>
@@ -1726,10 +1726,10 @@
     <value>Zaproś członków lub dodaj ich bezpośrednio, a następnie sprawdź, czy każdy ma numer telefonu komórkowego lub adres e-mail.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.personnel-roles">
-    <value>Utwórz role, którymi dysponujesz lub które raportujesz, i przypisz je członkom.</value>
+    <value>Utwórz role, którymi dysponujesz lub które raportujesz, i przypisz je członkom. Prześlij ikonę mapy dla ról, które mają się wyróżniać, a potem ustaw kolejność na stronie Role: znacznik każdej osoby używa ikony jej pierwszej roli w tej kolejności, która ją ma.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.pois">
-    <value>Dodaj lokalizacje, które muszą widzieć dyspozytorzy.</value>
+    <value>Dodaj lokalizacje, które muszą widzieć dyspozytorzy. Nadaj typowi POI własną ikonę, która zastąpi jego znacznik na mapie i w aplikacjach.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.preventive-maintenance">
     <value>Zaplanuj rutynowy serwis dla każdego pojazdu.</value>
@@ -1771,7 +1771,7 @@
     <value>Zainstaluj aplikację Unit na tablecie każdego pojazdu i wybierz jego jednostkę.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.unit-types">
-    <value>Utwórz typy jednostek przed dodaniem jednostek, aby każdą jednostkę można było sklasyfikować. Nadaj każdemu typowi klasę, np. Gaśniczy lub Karetka, i wybierz jego zestaw statusów.</value>
+    <value>Utwórz typy jednostek przed dodaniem jednostek, aby każdą jednostkę można było sklasyfikować. Nadaj każdemu typowi klasę, np. Gaśniczy lub Karetka, i wybierz jego zestaw statusów. Prześlij własną ikonę dla typu (PNG, JPEG, GIF lub WebP, do 1 MB, najlepiej kwadratową), aby jego jednostki łatwo było odróżnić na listach, w aplikacjach i na mapie.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.units">
     <value>Dodaj każdą jednostkę wraz z jej typem i macierzystą grupą stacji.</value>
@@ -5440,7 +5440,7 @@
     <value>Kod oddziału używany przez obsługiwane procesy identyfikacji i dostępu. Przed jego zmianą sprawdź te procesy.</value>
   </data>
   <data xml:space="preserve" name="TableHelp.Department.DepartmentType">
-    <value>Starsza etykieta typu organizacji. Profil operacyjny udostępnia wiele sektorów — żadne z nich nie określają zakresu klinicznego ani kwalifikacji do reagowania.</value>
+    <value>Etykieta typu organizacji, ustawiana w ustawieniach oddziału. Nigdy nie ogranicza szablonów, pakietów ani modułów. Profil operacyjny zapisuje wiele sektorów — żadne z nich nie określają zakresu klinicznego ani kwalifikacji do reagowania.</value>
   </data>
   <data xml:space="preserve" name="TableHelp.Department.LinkCode">
     <value>Kod powiązania oddziału. Sprawdź, kto może korzystać z łącza, i zmieniaj je za pomocą właściwego procesu.</value>
@@ -7067,5 +7067,14 @@
   </data>
   <data xml:space="preserve" name="RuleNext.import-files-retained">
     <value>Usuń niepotrzebne pliki albo skróć okres przechowywania w ustawieniach Importu i migracji.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.custom-map-icons">
+    <value>Własne ikony mapy</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.custom-map-icons">
+    <value>Własne ikony dla typów jednostek, typów zgłoszeń, punktów zainteresowania i ról personelu, wyświetlane na listach, w aplikacjach i na mapie.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.custom-map-icons">
+    <value>Prześlij kwadratowy plik PNG z przezroczystym tłem, o wymiarach co najmniej 128 × 128 px, na stronie typu jednostki, typu zgłoszenia, typu POI lub roli; strona pokaże podgląd na jasnej i ciemnej mapie. Aby wybrać ikonę osoby z kilkoma rolami, ustaw kolejność ról na stronie Role.</value>
   </data>
 </root>

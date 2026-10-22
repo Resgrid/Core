@@ -28,6 +28,19 @@ namespace Resgrid.Model
 		[MaxLength(3000)]
 		public string Description { get; set; }
 
+		/// <summary>
+		/// The department's uploaded icon for the role (M0286; <see cref="TypeIconKinds.PersonnelRole"/>), or null. Members'
+		/// map pins use it, by <see cref="SortOrder"/>; set only through the type icon service.
+		/// </summary>
+		[MaxLength(64)]
+		public string IconKey { get; set; }
+
+		/// <summary>
+		/// Position on the Roles page (M0286), lowest first; ties order by name. A person's map pin uses the icon of the
+		/// first role they hold, in this order, that has one.
+		/// </summary>
+		public int SortOrder { get; set; }
+
 		public virtual ICollection<PersonnelRoleUser> Users { get; set; }
 
 		[NotMapped]

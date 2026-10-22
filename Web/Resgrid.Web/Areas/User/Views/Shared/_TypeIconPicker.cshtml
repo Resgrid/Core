@@ -1,0 +1,117 @@
+@model Resgrid.Web.Helpers.TypeIconPicker
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Icons.IconUpload> iconLocalizer
+@{
+    // The shared custom icon picker for unit types, call types, POI types and personnel roles. The browser checks
+    // (resgrid.types.iconpicker.js) use the same limits and messages as the server (TypeIconUploads), so a file the
+    // page lets through is one the server accepts; the server check still runs on every post.
+    var fieldId = Model.FieldName;
+    var errors = ViewData.ModelState.TryGetValue(fieldId, out var fieldState)
+        ? fieldState.Errors.Select(e => e.ErrorMessage).Where(m => !String.IsNullOrWhiteSpace(m)).ToList()
+        : new List<string>();
+    if (!String.IsNullOrWhiteSpace(Model.ErrorMessage))
+        errors.Add(Model.ErrorMessage);
+    var sampleName = String.IsNullOrWhiteSpace(Model.SampleName) ? iconLocalizer["IconPreviewSampleName"].Value : Model.SampleName;
+    var canRemove = !String.IsNullOrWhiteSpace(Model.RemoveFieldName) && !String.IsNullOrWhiteSpace(Model.CurrentIconUrl);
+}
+<div class="form-group rg-icon-picker" data-rg-icon-picker="true"
+     data-field="@fieldId"
+     data-remove-field="@(canRemove ? Model.RemoveFieldName : "")"
+     data-current-url="@Model.CurrentIconUrl"
+     data-default-url="@Model.DefaultIconUrl"
+     data-base-url="@Model.BaseIconUrl"
+     data-default-select="@Model.DefaultIconSelectId"
+     data-sample-input="@Model.SampleNameInputId"
+     data-sample-name="@sampleName"
+     data-max-bytes="@TypeIcons.MaxUploadBytes"
+     data-min-edge="@TypeIcons.MinimumEdge"
+     data-max-edge="@TypeIcons.MaximumEdge"
+     data-stored-size="@TypeIcons.StoredSize"
+     data-msg-format="@iconLocalizer["IconRejectUnsupportedFormat"]"
+     data-msg-bytes="@iconLocalizer["IconRejectTooManyBytes"]"
+     data-msg-unreadable="@iconLocalizer["IconRejectUnreadable"]"
+     data-msg-too-large="@iconLocalizer["IconRejectTooLarge"]"
+     data-msg-too-small="@iconLocalizer["IconRejectTooSmall"]"
+     data-msg-file-size="@iconLocalizer["IconFileSizeDetail"]"
+     data-msg-image-size="@iconLocalizer["IconImageSizeDetail"]"
+     data-msg-warn-small="@iconLocalizer["IconWarningSmall"]"
+     data-msg-warn-square="@iconLocalizer["IconWarningNotSquare"]"
+     data-msg-warn-opaque="@iconLocalizer["IconWarningOpaque"]"
+     data-msg-state-current="@iconLocalizer["IconPreviewStateCurrent"]"
+     data-msg-state-new="@iconLocalizer["IconPreviewStateNew"]"
+     data-msg-state-default="@iconLocalizer["IconPreviewStateDefault"]"
+     data-msg-state-none="@iconLocalizer["IconPreviewStateNone"]"
+     data-msg-state-removed="@iconLocalizer["IconPreviewStateRemoved"]">
+    <label class="@(Model.Horizontal ? "col-sm-2 control-label" : "control-label")" for="@fieldId">@iconLocalizer["IconCustomLabel"]</label>
+    <div class="@(Model.Horizontal ? "col-sm-10" : "")">
+        <input type="file" id="@fieldId" name="@fieldId" accept="image/png,image/jpeg,image/gif,image/webp" aria-describedby="@(fieldId)_help @(fieldId)_guidance" />
+        @if (!String.IsNullOrWhiteSpace(Model.HelpKey))
+        {
+            <span class="help-block m-b-none" id="@(fieldId)_help">@iconLocalizer[Model.HelpKey]</span>
+        }
+        <div class="text-danger rg-icon-picker__error" role="alert" data-icon-error="true">
+            @foreach (var error in errors)
+            {
+                <div>@error</div>
+            }
+        </div>
+        <ul class="rg-icon-picker__warnings" data-icon-warnings="true" hidden></ul>
+        @if (canRemove)
+        {
+            <div class="checkbox">
+                <label><input type="checkbox" id="@(fieldId)_remove" name="@Model.RemoveFieldName" value="true" checked="@Model.RemoveChecked" data-icon-remove="true" /> @iconLocalizer["IconRemove"]</label>
+            </div>
+        }
+        <div class="rg-icon-picker__body">
+            <div class="rg-icon-picker__preview">
+                <div class="rg-icon-picker__heading">@iconLocalizer["IconPreviewHeading"]</div>
+                <div class="rg-icon-picker__tiles">
+                    <figure class="rg-icon-picker__tile">
+                        <div class="rg-icon-picker__map rg-icon-picker__map--light">
+                            <span class="rg-icon-picker__marker">
+                                <img alt="" data-icon-map="true" width="32" height="32" hidden />
+                                <span class="rg-icon-picker__placeholder" data-icon-placeholder="true" aria-hidden="true"></span>
+                                <span class="rg-icon-picker__label" data-icon-name="true">@sampleName</span>
+                            </span>
+                        </div>
+                        <figcaption>@iconLocalizer["IconPreviewLightMap"]</figcaption>
+                    </figure>
+                    <figure class="rg-icon-picker__tile">
+                        <div class="rg-icon-picker__map rg-icon-picker__map--dark">
+                            <span class="rg-icon-picker__marker">
+                                <img alt="" data-icon-map="true" width="32" height="32" hidden />
+                                <span class="rg-icon-picker__placeholder" data-icon-placeholder="true" aria-hidden="true"></span>
+                                <span class="rg-icon-picker__label" data-icon-name="true">@sampleName</span>
+                            </span>
+                        </div>
+                        <figcaption>@iconLocalizer["IconPreviewDarkMap"]</figcaption>
+                    </figure>
+                    <figure class="rg-icon-picker__tile">
+                        <div class="rg-icon-picker__list">
+                            <img alt="" data-icon-list="true" width="20" height="20" hidden />
+                            <span data-icon-name="true">@sampleName</span>
+                        </div>
+                        <figcaption>@iconLocalizer["IconPreviewList"]</figcaption>
+                    </figure>
+                    <figure class="rg-icon-picker__tile" data-icon-saved-tile="true" hidden>
+                        <div class="rg-icon-picker__saved">
+                            <img alt="" data-icon-saved="true" width="64" height="64" />
+                        </div>
+                        <figcaption>@iconLocalizer["IconPreviewSaved"]</figcaption>
+                    </figure>
+                </div>
+                <p class="rg-icon-picker__state" data-icon-state="true" aria-live="polite"></p>
+            </div>
+            <div class="rg-icon-picker__guidance" id="@(fieldId)_guidance">
+                <div class="rg-icon-picker__heading">@iconLocalizer["IconGuidanceHeading"]</div>
+                <ul>
+                    <li>@iconLocalizer["IconGuidanceFormat"]</li>
+                    <li>@iconLocalizer["IconGuidanceSize"]</li>
+                    <li>@iconLocalizer["IconGuidanceDesign"]</li>
+                    <li>@iconLocalizer["IconGuidanceProcessing"]</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<link rel="stylesheet" href="~/css/type-icon-picker.css" asp-append-version="true" />
+<script src="~/js/app/internal/types/resgrid.types.iconpicker.js" asp-append-version="true" defer></script>

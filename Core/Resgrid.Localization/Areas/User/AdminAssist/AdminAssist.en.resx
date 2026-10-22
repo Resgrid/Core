@@ -1624,7 +1624,7 @@
     <value>Add recurring meetings and training nights.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.call-types-priorities">
-    <value>Add the call types your dispatchers use and set their priorities. Give each call type a class and each priority a meaning so reports and the apps can group and sort them.</value>
+    <value>Add the call types your dispatchers use and set their priorities. Give each call type a class and each priority a meaning so reports and the apps can group and sort them. A call type can also have a custom icon, shown beside its calls in lists, the apps and on the map.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.certification-dashboard">
     <value>Record members' current certifications, then review what expires soon.</value>
@@ -1726,10 +1726,10 @@
     <value>Invite members or add them directly, then check that each has a mobile number or email address.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.personnel-roles">
-    <value>Create the roles you dispatch or report on, and assign them to members.</value>
+    <value>Create the roles you dispatch or report on, and assign them to members. Upload a map icon for roles that should stand out, then set the role order on the Roles page: each person's map pin uses the icon of the first role they hold, in that order, that has one.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.pois">
-    <value>Add the locations dispatchers need to see.</value>
+    <value>Add the locations dispatchers need to see. Give a POI type a custom icon to replace its marker on the map and in the apps.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.preventive-maintenance">
     <value>Schedule routine service for each apparatus.</value>
@@ -1771,7 +1771,7 @@
     <value>Install the Unit app on each apparatus tablet and select its unit.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.unit-types">
-    <value>Create unit types before adding units so each unit can be classified. Give each type a class, such as Engine or Ambulance, and choose its status set.</value>
+    <value>Create unit types before adding units so each unit can be classified. Give each type a class, such as Engine or Ambulance, and choose its status set. Upload a custom icon for a type (PNG, JPEG, GIF or WebP, up to 1 MB, square works best) so its units are easy to tell apart in lists, the apps and on the map.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.units">
     <value>Add each unit with its type and home station group.</value>
@@ -5440,7 +5440,7 @@
     <value>Department code used by supported identification and access flows. Review those consumers before changing it.</value>
   </data>
   <data xml:space="preserve" name="TableHelp.Department.DepartmentType">
-    <value>Legacy organization-type label. The operating profile provides multiple sectors; neither establishes clinical scope or response qualifications.</value>
+    <value>Organization-type label, set on Department Settings. It never limits templates, packs or modules. The operating profile records several sectors; neither establishes clinical scope or response qualifications.</value>
   </data>
   <data xml:space="preserve" name="TableHelp.Department.LinkCode">
     <value>Department linking code. Review who can use a link and rotate it using the owning workflow.</value>
@@ -7067,5 +7067,14 @@
   </data>
   <data xml:space="preserve" name="RuleNext.import-files-retained">
     <value>Delete files you no longer need, or shorten retention in the Import &amp; Migration settings.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.custom-map-icons">
+    <value>Custom map icons</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.custom-map-icons">
+    <value>Your own icons for unit types, call types, points of interest and personnel roles, shown in lists, the apps and on the map.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.custom-map-icons">
+    <value>Upload a square PNG with a transparent background, 128 × 128 px or larger, on the unit type, call type, POI type or role page; the page previews it on a light and a dark map. To choose which icon a person with several roles shows, order the roles on the Roles page.</value>
   </data>
 </root>

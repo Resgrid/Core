@@ -3640,11 +3640,11 @@
       "Secret": false,
       "Location": {
         "Controller": "Department",
-        "Action": "Profile",
+        "Action": "Settings",
         "Field": null
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-10-21T00:00:00Z",
       "Impact": {
         "Risk": "Critical",
         "AudienceKey": "Impact.Audience",
@@ -7307,12 +7307,12 @@
       "Id": "table.Department.DepartmentType",
       "Locale": "en",
       "TitleKey": "TableField.Department.DepartmentType",
-      "Body": "Department / Department Type. Legacy organization-type label. The operating profile provides multiple sectors; neither establishes clinical scope or response qualifications.",
+      "Body": "Department / Department Type. Organization-type label, set on Department Settings. It never limits templates, packs or modules. The operating profile records several sectors; neither establishes clinical scope or response qualifications.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "table-department-departmenttype",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
+      "ReviewedOn": "2026-10-21T00:00:00Z"
     },
     {
       "Id": "table.Department.TimeZone",

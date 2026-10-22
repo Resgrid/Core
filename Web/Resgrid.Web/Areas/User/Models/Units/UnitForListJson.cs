@@ -12,5 +12,8 @@
 		public string TextColor { get; set; }
 		public string Timestamp { get; set; }
 		public string Eta { get; set; }
+
+		/// <summary>Root-relative URL of the unit type's icon (uploaded, else built-in); null when the type has none.</summary>
+		public string TypeIconUrl { get; set; }
 	}
 }

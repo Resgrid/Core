@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Mapping Index -->
+  <data name="IconCustomLabel" xml:space="preserve">
+    <value>أيقونة مخصصة</value>
+  </data>
+  <data name="IconGuidanceHeading" xml:space="preserve">
+    <value>إرشادات الأيقونة</value>
+  </data>
+  <data name="IconGuidanceFormat" xml:space="preserve">
+    <value>PNG أو JPEG أو GIF أو WebP، بحد أقصى 1 ميغابايت. صيغة SVG غير مدعومة، وتُستخدم الصورة الأولى من ملف GIF المتحرك.</value>
+  </data>
+  <data name="IconGuidanceSize" xml:space="preserve">
+    <value>16 بكسل على الأقل و4096 بكسل على الأكثر لكل ضلع. تبدو الصورة المربعة بحجم 128 × 128 بكسل أو أكبر أكثر وضوحًا.</value>
+  </data>
+  <data name="IconGuidanceDesign" xml:space="preserve">
+    <value>استخدم خلفية شفافة وشكلًا بسيطًا وواضحًا. تعرض الخرائط الأيقونة بحجم 32 × 32 بكسل والقوائم بحجم 20 × 20 بكسل، لذا لن تكون التفاصيل الدقيقة والنصوص مقروءة.</value>
+  </data>
+  <data name="IconGuidanceProcessing" xml:space="preserve">
+    <value>يُغيَّر حجم كل أيقونة إلى 128 × 128 بكسل وتُحفظ بصيغة PNG. الصورة غير المربعة توضع في وسط مربع شفاف ولا تُقص أبدًا.</value>
+  </data>
+  <data name="IconRemove" xml:space="preserve">
+    <value>إزالة الأيقونة المخصصة</value>
+  </data>
+  <data name="IconPreviewHeading" xml:space="preserve">
+    <value>معاينة</value>
+  </data>
+  <data name="IconPreviewLightMap" xml:space="preserve">
+    <value>خريطة فاتحة</value>
+  </data>
+  <data name="IconPreviewDarkMap" xml:space="preserve">
+    <value>خريطة داكنة</value>
+  </data>
+  <data name="IconPreviewList" xml:space="preserve">
+    <value>في قائمة</value>
+  </data>
+  <data name="IconPreviewSaved" xml:space="preserve">
+    <value>تُحفظ بحجم 128 × 128</value>
+  </data>
+  <data name="IconPreviewStateCurrent" xml:space="preserve">
+    <value>تُعرض الأيقونة المخصصة الحالية.</value>
+  </data>
+  <data name="IconPreviewStateNew" xml:space="preserve">
+    <value>تُعرض الأيقونة الجديدة. ستُحفظ عند حفظ هذا النموذج.</value>
+  </data>
+  <data name="IconPreviewStateDefault" xml:space="preserve">
+    <value>لا توجد أيقونة مخصصة. تُعرض الأيقونة الافتراضية.</value>
+  </data>
+  <data name="IconPreviewStateNone" xml:space="preserve">
+    <value>لا توجد أيقونة مخصصة. تُستخدم العلامة الافتراضية.</value>
+  </data>
+  <data name="IconPreviewStateRemoved" xml:space="preserve">
+    <value>ستُزال الأيقونة المخصصة عند حفظ هذا النموذج.</value>
+  </data>
+  <data name="IconPreviewSampleName" xml:space="preserve">
+    <value>مثال</value>
+  </data>
+  <data name="IconWarningSmall" xml:space="preserve">
+    <value>أبعاد هذه الصورة {0} × {1} بكسل. سيتم تكبيرها وقد تبدو ضبابية؛ يُنصح بحجم 128 × 128 بكسل أو أكبر.</value>
+  </data>
+  <data name="IconWarningNotSquare" xml:space="preserve">
+    <value>هذه الصورة ليست مربعة. ستوضع في وسط مربع شفاف.</value>
+  </data>
+  <data name="IconWarningOpaque" xml:space="preserve">
+    <value>هذه الصورة بلا خلفية شفافة، لذا ستظهر على الخريطة كمربع ممتلئ.</value>
+  </data>
+  <data name="IconRejectRequired" xml:space="preserve">
+    <value>اختر ملف أيقونة.</value>
+  </data>
+  <data name="IconRejectTooManyBytes" xml:space="preserve">
+    <value>يجب ألا يتجاوز حجم ملف الأيقونة 1 ميغابايت.</value>
+  </data>
+  <data name="IconRejectUnreadable" xml:space="preserve">
+    <value>تعذرت قراءة الملف كصورة PNG أو JPEG أو GIF أو WebP.</value>
+  </data>
+  <data name="IconRejectUnsupportedFormat" xml:space="preserve">
+    <value>يمكن استخدام صور PNG وJPEG وGIF وWebP فقط كأيقونات.</value>
+  </data>
+  <data name="IconRejectTooLarge" xml:space="preserve">
+    <value>يجب ألا تتجاوز الأيقونة 4096 بكسل لكل ضلع.</value>
+  </data>
+  <data name="IconRejectTooSmall" xml:space="preserve">
+    <value>يجب أن تكون الأيقونة 16 بكسل على الأقل في ضلعها الأطول.</value>
+  </data>
+  <data name="IconFileSizeDetail" xml:space="preserve">
+    <value>حجم هذا الملف {0}.</value>
+  </data>
+  <data name="IconImageSizeDetail" xml:space="preserve">
+    <value>أبعاد هذه الصورة {0} × {1} بكسل.</value>
+  </data>
+  <data name="IconSave" xml:space="preserve">
+    <value>حفظ الأيقونة</value>
+  </data>
+  <data name="IconColumn" xml:space="preserve">
+    <value>الأيقونة</value>
+  </data>
+  <data name="UnitTypeIconHelp" xml:space="preserve">
+    <value>اختياري. تظهر بجانب الوحدات من هذا النوع في القوائم وأدوات الاختيار والتطبيقات، وعلى الخريطة بدلًا من أيقونة الخريطة أعلاه.</value>
+  </data>
+  <data name="CallTypeIconHelp" xml:space="preserve">
+    <value>اختياري. تظهر بجانب البلاغات من هذا النوع في القوائم والتطبيقات، وعلى الخريطة بدلًا من أيقونة الخريطة أعلاه.</value>
+  </data>
+  <data name="PoiTypeIconHelp" xml:space="preserve">
+    <value>اختياري. تظهر لنقاط الاهتمام من هذا النوع على الخريطة وفي التطبيقات بدلًا من العلامة أعلاه.</value>
+  </data>
+  <data name="RoleIconHelp" xml:space="preserve">
+    <value>اختياري. يظهر أعضاء هذا الدور على الخريطة بهذه الأيقونة. من لديه عدة أدوار تظهر له أيقونة أول دور لديه أيقونة، بحسب الترتيب المحدد في صفحة الأدوار.</value>
+  </data>
+  <data name="RoleOrderHeading" xml:space="preserve">
+    <value>ترتيب الأدوار</value>
+  </data>
+  <data name="RoleOrderHelp" xml:space="preserve">
+    <value>اسحب الأدوار أو استخدم الأسهم لترتيبها، ثم احفظ. تستخدم علامة الشخص على الخريطة أيقونة أول دور لديه، بهذا الترتيب، له أيقونة. ومن ليس لديه مثل هذا الدور تُستخدم له علامة الشخص الافتراضية.</value>
+  </data>
+  <data name="RoleOrderMoveUp" xml:space="preserve">
+    <value>تحريك لأعلى</value>
+  </data>
+  <data name="RoleOrderMoveDown" xml:space="preserve">
+    <value>تحريك لأسفل</value>
+  </data>
+  <data name="RoleOrderSave" xml:space="preserve">
+    <value>حفظ الترتيب</value>
+  </data>
+  <data name="RoleOrderSaved" xml:space="preserve">
+    <value>تم حفظ ترتيب الأدوار.</value>
+  </data>
+  <data name="RoleOrderColumn" xml:space="preserve">
+    <value>الترتيب</value>
+  </data>
+  <data name="RoleOrderUnsaved" xml:space="preserve">
+    <value>تغيّر الترتيب. احفظه لتطبيقه.</value>
+  </data>
+</root>

@@ -481,7 +481,7 @@
                                                             }
                                                         }
 
-                                                        @Html.Raw("<tr><td><input type='checkbox' id='dispatchUnit_" + u.UnitId + "' name='dispatchUnit_" + u.UnitId + "' /></td><td>" + Html.Encode(u.Name) + "</td><td>" + Html.Encode(u.Type) + "</td><td><span class='label label-default' style='color:" + Html.Encode(stateTextColor) + ";background-color:" + Html.Encode(stateColor) + ";'>" + Html.Encode(stateText) + "</span></td></tr>")
+                                                        @Html.Raw("<tr><td><input type='checkbox' id='dispatchUnit_" + u.UnitId + "' name='dispatchUnit_" + u.UnitId + "' /></td><td>" + TypeIconHtml.Image(Model.UnitTypes, u.Type) + Html.Encode(u.Name) + "</td><td>" + Html.Encode(u.Type) + "</td><td><span class='label label-default' style='color:" + Html.Encode(stateTextColor) + ";background-color:" + Html.Encode(stateColor) + ";'>" + Html.Encode(stateText) + "</span></td></tr>")
                                                         ;
                                                     }
                                                 }
@@ -532,7 +532,7 @@
                                                                 }
                                                             }
 
-                                                            @Html.Raw("<tr><td><input type='checkbox' id='dispatchUnit_" + u.UnitId + "' name='dispatchUnit_" + u.UnitId + "' /></td><td>" + Html.Encode(u.Name) + "</td><td>" + Html.Encode(u.Type) + "</td><td><span class='label label-default' style='color:" + Html.Encode(stateTextColor) + ";background-color:" + Html.Encode(stateColor) + ";'>" + Html.Encode(stateText) + "</span></td></tr>")
+                                                            @Html.Raw("<tr><td><input type='checkbox' id='dispatchUnit_" + u.UnitId + "' name='dispatchUnit_" + u.UnitId + "' /></td><td>" + TypeIconHtml.Image(Model.UnitTypes, u.Type) + Html.Encode(u.Name) + "</td><td>" + Html.Encode(u.Type) + "</td><td><span class='label label-default' style='color:" + Html.Encode(stateTextColor) + ";background-color:" + Html.Encode(stateColor) + ";'>" + Html.Encode(stateText) + "</span></td></tr>")
                                                             ;
                                                         }
                                                     }

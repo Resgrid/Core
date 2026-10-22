@@ -5,6 +5,16 @@ var resgrid;
         var archive;
         (function (archive) {
             var archiveTable;
+            // A call's name with its type icon (uploaded or built-in, from TypeIconUrl) in front, both escaped; sorting and
+            // search keep using the plain name.
+            function typeIconNameCell(name, type, row) {
+                if (type !== 'display') { return name; }
+                var text = $('<div/>').text(name || '').html();
+                if (!row || !row.TypeIconUrl) { return text; }
+                return '<img src="' + $('<div/>').text(row.TypeIconUrl).html() + '" alt="" aria-hidden="true" class="rg-type-icon" ' +
+                    'style="width:20px;height:20px;object-fit:contain;vertical-align:middle;margin-right:4px;" />' + text;
+            }
+
             function getText(key, fallback) {
                 return (resgrid.dispatch && typeof resgrid.dispatch.getText === 'function')
                     ? resgrid.dispatch.getText(key, fallback)
@@ -21,7 +31,7 @@ var resgrid;
                     pageLength: 50,
                     columns: [
                         { data: 'Number', title: getText('number', 'Number') },
-                        { data: 'Name', title: getText('name', 'Name') },
+                        { data: 'Name', title: getText('name', 'Name'), render: typeIconNameCell },
                         { data: 'Timestamp', title: getText('timestamp', 'Timestamp') },
                         {
                             data: null, title: getText('priority', 'Priority'), orderable: false,

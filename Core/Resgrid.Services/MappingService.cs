@@ -17,11 +17,14 @@ namespace Resgrid.Services
 		private readonly Lazy<IMongoRepository<MapLayer>> _mapLayersRepository;
 		private readonly IMapLayersDocRepository _mapLayersDocRepository;
 		private readonly Lazy<ISearchProjectionService> _searchProjections;
+		private readonly ITypeIconsRepository _typeIconsRepository;
 
 		public MappingService(IPoiTypesRepository poiTypesRepository, IPoisRepository poisRepository, Lazy<IMongoRepository<MapLayer>> mapLayersRepository,
-			IMapLayersDocRepository mapLayersDocRepository, Lazy<ISearchProjectionService> searchProjections = null)
+			IMapLayersDocRepository mapLayersDocRepository, Lazy<ISearchProjectionService> searchProjections = null,
+			ITypeIconsRepository typeIconsRepository = null)
 		{
 			_searchProjections = searchProjections;
+			_typeIconsRepository = typeIconsRepository;
 			_poiTypesRepository = poiTypesRepository;
 			_poisRepository = poisRepository;
 			_mapLayersRepository = mapLayersRepository;
@@ -128,6 +131,10 @@ namespace Resgrid.Services
 
 			if (type != null)
 			{
+				// TypeIcons has no foreign key to the type, so its uploaded icon goes with it here.
+				if (_typeIconsRepository != null)
+					await _typeIconsRepository.DeleteForTypeAsync(type.DepartmentId, TypeIconKinds.PoiType, type.PoiTypeId, null, cancellationToken);
+
 				var deleted = await _poiTypesRepository.DeleteAsync(type, cancellationToken);
 				if (deleted && _searchProjections != null)
 					foreach (var poi in type.Pois ?? Enumerable.Empty<Poi>())

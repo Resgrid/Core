@@ -558,6 +558,7 @@ namespace Resgrid.Services
 			// Default attachment scanner: no engine, rows stay Skipped. A real scanner provider replaces this registration.
 			builder.RegisterType<Records.NullRecordAttachmentScanner>().As<Resgrid.Model.Providers.IRecordAttachmentScanner>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentProfileMediaService>().As<IDepartmentProfileMediaService>().InstancePerLifetimeScope();
+			builder.RegisterType<TypeIconsService>().As<ITypeIconsService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RecordsPrintLayoutService>().As<IRecordsPrintLayoutService>().InstancePerLifetimeScope();
 		}
 	}

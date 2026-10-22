@@ -259,6 +259,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return locatable;
 		}
 
+		private static void SetUnitTypeIcon(DispatchedEventResultData eventResult, List<UnitType> unitTypes, string unitTypeName)
+		{
+			var unitType = string.IsNullOrWhiteSpace(unitTypeName) ? null : unitTypes?.FirstOrDefault(x => x.Type == unitTypeName);
+
+			eventResult.TypeIconUrl = TypeIcons.ApiIconUrl(Config.SystemBehaviorConfig.ResgridApiBaseUrl, unitType);
+			eventResult.TypeMapIcon = TypeIcons.BuiltInIconName(unitType);
+		}
+
 		private static void ApplyProtectedReadMetadata(CallResultData data, ProtectedReadResult read)
 		{
 			if (data == null || read == null)
@@ -280,6 +288,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		public async Task<ActionResult<ActiveCallsResult>> GetActiveCalls()
 		{
 			var result = new ActiveCallsResult();
+			var callTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId);
 
 			// Group-scoped dispatch (off by default) trims this to the caller's area and the calls they are on.
 			var calls = (await ScopeCallsAsync(await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId)))
@@ -310,7 +319,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 						address = c.Address;
 
 					destinationPoiLookup.TryGetValue(callWithData.DestinationPoiId.GetValueOrDefault(), out var destinationPoi);
-					var callData = ConvertCall(callWithData, null, address, TimeZone, destinationPoi);
+					var callData = ConvertCall(callWithData, null, address, TimeZone, destinationPoi, callTypes);
 					if (protectedReads.TryGetValue(callWithData.CallId, out var protectedRead))
 						ApplyProtectedReadMetadata(callData, protectedRead);
 					contactPairs.Add(new KeyValuePair<Call, CallResultData>(callWithData, callData));
@@ -349,6 +358,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return BadRequest();
 
 			var result = new CallResult();
+			var callTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId);
 			var c = await _callsService.GetCallByIdAsync(parsedCallId);
 
 			if (c == null)
@@ -397,7 +407,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				}
 			}
 
-			result.Data = ConvertCall(c, protocols, address, TimeZone, destinationPoi);
+			result.Data = ConvertCall(c, protocols, address, TimeZone, destinationPoi, callTypes);
 			ApplyProtectedReadMetadata(result.Data, protectedRead);
 
 			// Linked contacts with pre-plan / alert / hazard indicators (Contacts plan Phase A, 3a).
@@ -662,6 +672,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 			// The call's units as dispatched, deleted ones included.
 			var units = await _unitsService.GetUnitsForDepartmentIncludingDeletedAsync(call.DepartmentId);
+			var unitTypes = await _unitsService.GetUnitTypesForDepartmentAsync(call.DepartmentId);
 			var unitStates = (await _unitsService.GetUnitStatesForCallAsync(call.DepartmentId, callId)).OrderBy(y => y.Timestamp).ThenBy(x => x.UnitId).ToList();
 			var actionLogs = (await _actionLogsService.GetActionLogsForCallAsync(call.DepartmentId, callId)).OrderBy(y => y.Timestamp).ThenBy(x => x.UserId).ToList();
 			var names = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(DepartmentId, true, true, true);
@@ -736,6 +747,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				eventResult.Timestamp = unitLog.Timestamp;
 				eventResult.Type = "Unit";
 				eventResult.Name = unitLog.Unit.Name;
+				SetUnitTypeIcon(eventResult, unitTypes, unitLog.Unit.Type);
 
 				var group = groups.FirstOrDefault(x => x.DepartmentGroupId == unitLog.Unit.StationGroupId);
 				if (group != null)
@@ -843,6 +855,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					if (unit != null)
 					{
 						eventResult.Name = unit.Name;
+						SetUnitTypeIcon(eventResult, unitTypes, unit.Type);
 
 						if (unit.StationGroupId.HasValue)
 						{
@@ -2399,6 +2412,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		public async Task<ActionResult<ScheduledCallsResult>> GetAllPendingScheduledCalls()
 		{
 			var result = new ScheduledCallsResult();
+			var callTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId);
 
 			// Scheduled calls are active calls: group-scoped dispatch trims them as it does GetActiveCalls.
 			var calls = (await ScopeCallsAsync(await _callsService.GetAllNonDispatchedScheduledCallsByDepartmentIdAsync(DepartmentId)))
@@ -2425,7 +2439,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 						address = c.Address;
 
 					destinationPoiLookup.TryGetValue(c.DestinationPoiId.GetValueOrDefault(), out var destinationPoi);
-					var callData = ConvertCall(c, null, address, TimeZone, destinationPoi);
+					var callData = ConvertCall(c, null, address, TimeZone, destinationPoi, callTypes);
 					if (protectedReads.TryGetValue(c.CallId, out var protectedRead))
 						ApplyProtectedReadMetadata(callData, protectedRead);
 					result.Data.Add(callData);
@@ -2458,6 +2472,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		public async Task<ActionResult<PendingCallsResult>> GetPendingCalls()
 		{
 			var result = new PendingCallsResult();
+			var callTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId);
 
 			var calls = (await ScopeCallsAsync(await _callsService.GetPendingCallsByDepartmentIdAsync(DepartmentId)))
 				.OrderBy(x => x.LoggedOn).ToList();
@@ -2471,7 +2486,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				foreach (var c in calls)
 				{
 					destinationPoiLookup.TryGetValue(c.DestinationPoiId.GetValueOrDefault(), out var destinationPoi);
-					var callData = ConvertCall(c, null, c.Address, TimeZone, destinationPoi);
+					var callData = ConvertCall(c, null, c.Address, TimeZone, destinationPoi, callTypes);
 					if (protectedReads.TryGetValue(c.CallId, out var protectedRead))
 						ApplyProtectedReadMetadata(callData, protectedRead);
 					result.Data.Add(callData);
@@ -2843,6 +2858,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return BadRequest("endDate must be on or after startDate.");
 
 			var result = new ActiveCallsResult();
+			var callTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId);
 
 			// Group-scoped dispatch (off by default) trims this to the caller's area and the calls they are on, as GetCall does.
 			var calls = (await ScopeCallsAsync(await _callsService.GetAllCallsByDepartmentDateRangeAsync(DepartmentId, startDate, endDate)))
@@ -2876,7 +2892,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 						address = c.Address;
 
 					destinationPoiLookup.TryGetValue(callWithData.DestinationPoiId.GetValueOrDefault(), out var destinationPoi);
-					var callData = ConvertCall(callWithData, null, address, TimeZone, destinationPoi);
+					var callData = ConvertCall(callWithData, null, address, TimeZone, destinationPoi, callTypes);
 					if (protectedReads.TryGetValue(callWithData.CallId, out var protectedRead))
 						ApplyProtectedReadMetadata(callData, protectedRead);
 					result.Data.Add(callData);
@@ -2909,7 +2925,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				: null;
 		}
 
-		public static CallResultData ConvertCall(Call call, List<DispatchProtocol> protocol, string geoLocationAddress, string timeZone, Poi destinationPoi = null)
+		public static CallResultData ConvertCall(Call call, List<DispatchProtocol> protocol, string geoLocationAddress, string timeZone, Poi destinationPoi = null,
+			IEnumerable<CallType> callTypes = null)
 		{
 			var callResult = new CallResultData();
 
@@ -2996,6 +3013,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 					callResult.Protocols.Add(CallProtocolsController.ConvertProtocolData(callProtocol));
 				}
 			}
+
+			// The call's type icon: the uploaded one, else the built-in map icon the type picked.
+			var callType = callTypes == null ? null : CallTypeLink.Find(call, callTypes);
+			callResult.TypeIconUrl = TypeIcons.ApiIconUrl(Config.SystemBehaviorConfig.ResgridApiBaseUrl, callType);
+			callResult.TypeMapIcon = TypeIcons.BuiltInIconName(callType);
 
 			return callResult;
 		}

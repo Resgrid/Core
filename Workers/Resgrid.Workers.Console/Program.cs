@@ -670,7 +670,17 @@ namespace Resgrid.Workers.Console
 			{
 				// Start Quidjibo
 				workServer.Start();
-				stoppingToken.WaitHandle.WaitOne();
+
+				// Await, never block: in events-only mode nothing above yields, so a blocking wait here held
+				// Host.StartAsync open for the life of the process and every hosted service registered after this
+				// one only started at shutdown, with an already-cancelled token (crashed the events pod on SIGTERM).
+				try
+				{
+					await Task.Delay(Timeout.Infinite, stoppingToken);
+				}
+				catch (OperationCanceledException)
+				{
+				}
 			}
 
 			//var test = "a";

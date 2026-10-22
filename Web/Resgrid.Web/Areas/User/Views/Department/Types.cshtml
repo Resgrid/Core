@@ -59,6 +59,8 @@
                                             @c.Type
                                         </td>
                                         <td>
+                                            @* The uploaded custom icon when there is one, else the map icon's image; the name follows. *@
+                                            @TypeIconHtml.Image(c, 24)
                                             @if (c.MapIconType.HasValue)
                                             {
                                                 <span>@(((MapIconTypes)c.MapIconType.Value).ToString())</span>
@@ -213,6 +215,8 @@
                                             }
                                         </td>
                                         <td>
+                                            @* The uploaded custom icon when there is one, else the map icon's image; the name follows. *@
+                                            @TypeIconHtml.Image(c, 24)
                                             @if (c.MapIconType.HasValue)
                                             {
                                                 <span>@(((MapIconTypes)c.MapIconType.Value).ToString())</span>

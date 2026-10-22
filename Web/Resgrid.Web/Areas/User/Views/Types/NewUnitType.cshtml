@@ -27,7 +27,7 @@
         <div class="wrapper wrapper-content">
             <div class="ibox float-e-margins">
                 <div class="ibox-content">
-                    <form class="form-horizontal" role="form" asp-controller="Types" asp-action="NewUnitType" asp-route-area="User" method="post">
+                    <form class="form-horizontal" role="form" asp-controller="Types" asp-action="NewUnitType" asp-route-area="User" method="post" enctype="multipart/form-data">
                         <div class="row">
                             <div class="col-md-8 col-md-offset-1 col-md-pull-1">
                                 @if (!String.IsNullOrEmpty(Model.Message))
@@ -91,6 +91,8 @@
                             </div>
                             <div class="col-sm-2"><img id="newUnitTypePreview" style="height: 37px; width: 32px;"></div>
                         </div>
+                        @{ var iconPicker = new TypeIconPicker { HelpKey = "UnitTypeIconHelp", SampleNameInputId = "UnitType_Type", SampleName = Model.UnitType?.Type, DefaultIconSelectId = "UnitTypeIcon", BaseIconUrl = "/images/Mapping/Engine_Responding.png" }; }
+                        <partial name="_TypeIconPicker" model="iconPicker" />
                         <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-2">
                                 <a class="btn btn-white" asp-controller="Department" asp-action="Types" asp-route-area="User">@commonLocalizer["Cancel"]</a>

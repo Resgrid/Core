@@ -648,12 +648,12 @@
       "Id": "personnel-roles",
       "Locale": "en",
       "TitleKey": "Feature.personnel-roles",
-      "Body": "Personnel roles Roles such as Firefighter, EMT or Officer. Describe responsibility consistently without assuming that a role proves qualification. A volunteer department creates Station 1 and Station 2 groups, invites 24 members and assigns Engineer and Firefighter roles. Create the roles you dispatch or report on, and assign them to members.",
+      "Body": "Personnel roles Roles such as Firefighter, EMT or Officer. Describe responsibility consistently without assuming that a role proves qualification. A volunteer department creates Station 1 and Station 2 groups, invites 24 members and assigns Engineer and Firefighter roles. Create the roles you dispatch or report on, and assign them to members. Upload a map icon for roles that should stand out, then set the role order on the Roles page: each person's map pin uses the icon of the first role they hold, in that order, that has one.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "personnel-roles",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
+      "ReviewedOn": "2026-10-21T00:00:00Z"
     },
     {
       "Id": "add-person",

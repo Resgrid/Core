@@ -3333,10 +3333,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 				.Where(x => !x.DispatchOn.HasValue || x.DispatchOn.Value <= DateTime.UtcNow || x.HasBeenDispatched == true)
 				.OrderByDescending(x => x.LoggedOn);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+			var callTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId);
 
 			foreach (var call in calls)
 			{
 				var callJson = new CallListJson();
+				callJson.TypeIconUrl = TypeIconHtml.Url(CallTypeLink.Find(call, callTypes));
 				callJson.CallId = call.CallId;
 				callJson.Number = call.Number;
 				callJson.Name = ProtectedDataEnvelope.SafeDisplay(call.Name);
@@ -3374,10 +3376,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 				calls = await _callsService.GetClosedCallsByDepartmentYearAsync(DepartmentId, normalizedYear);
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+			var callTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId);
 
 			foreach (var call in calls)
 			{
 				var callJson = new CallListJson();
+				callJson.TypeIconUrl = TypeIconHtml.Url(CallTypeLink.Find(call, callTypes));
 				callJson.CallId = call.CallId;
 				callJson.Number = call.Number;
 				callJson.Name = ProtectedDataEnvelope.SafeDisplay(call.Name);
@@ -3820,6 +3824,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.CenterCoordinates = await _departmentSettingsService.GetMapCenterCoordinatesAsync(model.Department);
 			model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(model.Department.DepartmentId);
 			model.Units = await GetViewableUnitsAsync(await _unitsService.GetUnitsForDepartmentAsync(model.Department.DepartmentId));
+			model.UnitTypes = await _unitsService.GetUnitTypesForDepartmentAsync(model.Department.DepartmentId) ?? new List<UnitType>();
 			model.UnitStates = FilterToUnits(await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(model.Department.DepartmentId), model.Units);
 			model.UnitStatuses = await _customStateService.GetAllActiveUnitStatesForDepartmentAsync(model.Department.DepartmentId);
 
@@ -4059,6 +4064,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Units = units;
 			else
 				model.Units = new List<Unit>();
+
+			model.UnitTypes = await _unitsService.GetUnitTypesForDepartmentAsync(model.Call.DepartmentId) ?? new List<UnitType>();
 
 			// Security > View Contacts: without it the call's Contacts tab lists none.
 			var contacts = ClaimsAuthorizationHelper.CanViewContacts()

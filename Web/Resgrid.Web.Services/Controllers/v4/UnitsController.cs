@@ -334,7 +334,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return result;
 			}
 
-			result.Data = ConvertUnitsData(unit, null, null, TimeZone);
+			var unitType = string.IsNullOrWhiteSpace(unit.Type) ? null : await _unitsService.GetUnitTypeByNameAsync(DepartmentId, unit.Type);
+
+			result.Data = ConvertUnitsData(unit, null, unitType, TimeZone);
 			result.PageSize = 1;
 			result.Status = ResponseHelper.Success;
 			ResponseHelper.PopulateV4ResponseData(result);
@@ -384,6 +386,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				data.CustomStatusSetId = type.CustomStatesId.GetValueOrDefault().ToString();
 				data.TypeId = type.UnitTypeId;
+				data.TypeIconUrl = TypeIcons.ApiIconUrl(Config.SystemBehaviorConfig.ResgridApiBaseUrl, type);
+				data.TypeMapIcon = TypeIcons.BuiltInIconName(type);
 			}
 
 			if (unit.StationGroup != null)
@@ -440,6 +444,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				data.CustomStatusSetId = type.CustomStatesId.GetValueOrDefault().ToString();
 				data.TypeId = type.UnitTypeId;
+				data.TypeIconUrl = TypeIcons.ApiIconUrl(Config.SystemBehaviorConfig.ResgridApiBaseUrl, type);
+				data.TypeMapIcon = TypeIcons.BuiltInIconName(type);
 			}
 
 			if (unit.StationGroup != null)

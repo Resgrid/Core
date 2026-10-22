@@ -167,6 +167,10 @@ namespace Resgrid.Tests.Services
 					new DepartmentMember { DepartmentId = 1, UserId = "keep" }, new DepartmentMember { DepartmentId = 1, UserId = "drop" }, new DepartmentMember { DepartmentId = 1, UserId = "new" }
 				});
 				_personnelRoleUsersRepositoryMock.Setup(x => x.GetAllMembersOfRoleAsync(6787)).ReturnsAsync(new List<PersonnelRoleUser>(_current));
+				_personnelRoleUsersRepositoryMock.Setup(x => x.GetAllRoleUsersForDepartmentAsync(1)).ReturnsAsync(new List<PersonnelRoleUser>(_current)
+				{
+					new PersonnelRoleUser { PersonnelRoleUserId = 9, PersonnelRoleId = 7000, DepartmentId = 1, UserId = "other-role" }
+				});
 				_personnelRoleUsersRepositoryMock
 					.Setup(x => x.DeleteAsync(It.IsAny<PersonnelRoleUser>(), It.IsAny<CancellationToken>()))
 					.Callback<PersonnelRoleUser, CancellationToken>((u, _) => _repositoryCallOrder.Add("delete:" + u.UserId))
@@ -245,6 +249,26 @@ namespace Resgrid.Tests.Services
 
 				_repositoryCallOrder.Should().Equal("connection", "delete:keep", "delete:drop", "save", "commit");
 				_eventAggregatorMock.Verify(x => x.SendMessage<AuditEvent>(It.IsAny<AuditEvent>()), Times.Never);
+			}
+
+			[Test]
+			public async Task a_disabled_members_row_is_replaced_not_duplicated()
+			{
+				Arrange();
+				// "disabled" is on the role, but GetAllMembersOfRoleAsync (active members only) does not return them; the edit
+				// page posts them with the rest of the members.
+				_personnelRoleUsersRepositoryMock.Setup(x => x.GetAllRoleUsersForDepartmentAsync(1)).ReturnsAsync(new List<PersonnelRoleUser>(_current)
+				{
+					new PersonnelRoleUser { PersonnelRoleUserId = 3, PersonnelRoleId = 6787, DepartmentId = 1, UserId = "disabled" },
+					new PersonnelRoleUser { PersonnelRoleUserId = 9, PersonnelRoleId = 7000, DepartmentId = 1, UserId = "other-role" }
+				});
+
+				var saved = await _personnelRolesService.ReplaceRoleMembersAsync(Role(), new[] { "keep", "drop", "disabled" });
+
+				_repositoryCallOrder.Should().Equal(new[] { "connection", "delete:keep", "delete:drop", "delete:disabled", "save", "commit" },
+					"the disabled member's old row is deleted with the rest, so the cascade's insert is its only row; another role's rows are untouched");
+				saved.Users.Select(u => u.UserId).Should().BeEquivalentTo("keep", "drop", "disabled");
+				_eventAggregatorMock.Verify(x => x.SendMessage<AuditEvent>(It.IsAny<AuditEvent>()), Times.Never, "nobody joined or left the role");
 			}
 		}
 	}

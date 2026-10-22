@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Mapping Index -->
+  <data name="IconCustomLabel" xml:space="preserve">
+    <value>Власна іконка</value>
+  </data>
+  <data name="IconGuidanceHeading" xml:space="preserve">
+    <value>Поради щодо іконки</value>
+  </data>
+  <data name="IconGuidanceFormat" xml:space="preserve">
+    <value>PNG, JPEG, GIF або WebP, до 1 МБ. SVG не підтримується, а анімований GIF використовує перший кадр.</value>
+  </data>
+  <data name="IconGuidanceSize" xml:space="preserve">
+    <value>Щонайменше 16 px і щонайбільше 4096 px з кожного боку. Найчіткішим буде квадратне зображення 128 × 128 px або більше.</value>
+  </data>
+  <data name="IconGuidanceDesign" xml:space="preserve">
+    <value>Використовуйте прозоре тло й чітку просту форму. На картах іконка має розмір 32 × 32 px, а в списках — 20 × 20 px, тож дрібні деталі й текст не читатимуться.</value>
+  </data>
+  <data name="IconGuidanceProcessing" xml:space="preserve">
+    <value>Кожна іконка масштабується до 128 × 128 px і зберігається як PNG. Неквадратне зображення розміщується по центру прозорого квадрата й ніколи не обрізається.</value>
+  </data>
+  <data name="IconRemove" xml:space="preserve">
+    <value>Видалити власну іконку</value>
+  </data>
+  <data name="IconPreviewHeading" xml:space="preserve">
+    <value>Попередній перегляд</value>
+  </data>
+  <data name="IconPreviewLightMap" xml:space="preserve">
+    <value>Світла карта</value>
+  </data>
+  <data name="IconPreviewDarkMap" xml:space="preserve">
+    <value>Темна карта</value>
+  </data>
+  <data name="IconPreviewList" xml:space="preserve">
+    <value>У списку</value>
+  </data>
+  <data name="IconPreviewSaved" xml:space="preserve">
+    <value>Зберігається як 128 × 128</value>
+  </data>
+  <data name="IconPreviewStateCurrent" xml:space="preserve">
+    <value>Показано поточну власну іконку.</value>
+  </data>
+  <data name="IconPreviewStateNew" xml:space="preserve">
+    <value>Показано нову іконку. Її буде збережено, коли ви збережете цю форму.</value>
+  </data>
+  <data name="IconPreviewStateDefault" xml:space="preserve">
+    <value>Власної іконки немає. Показано стандартну іконку.</value>
+  </data>
+  <data name="IconPreviewStateNone" xml:space="preserve">
+    <value>Власної іконки немає. Використовується стандартний маркер.</value>
+  </data>
+  <data name="IconPreviewStateRemoved" xml:space="preserve">
+    <value>Власну іконку буде видалено, коли ви збережете цю форму.</value>
+  </data>
+  <data name="IconPreviewSampleName" xml:space="preserve">
+    <value>Приклад</value>
+  </data>
+  <data name="IconWarningSmall" xml:space="preserve">
+    <value>Це зображення має розмір {0} × {1} px. Його буде збільшено, і воно може виглядати розмитим; рекомендовано 128 × 128 px або більше.</value>
+  </data>
+  <data name="IconWarningNotSquare" xml:space="preserve">
+    <value>Це зображення не квадратне. Його буде розміщено по центру прозорого квадрата.</value>
+  </data>
+  <data name="IconWarningOpaque" xml:space="preserve">
+    <value>Це зображення не має прозорого тла, тож на карті воно виглядатиме як заповнений квадрат.</value>
+  </data>
+  <data name="IconRejectRequired" xml:space="preserve">
+    <value>Виберіть файл іконки.</value>
+  </data>
+  <data name="IconRejectTooManyBytes" xml:space="preserve">
+    <value>Файл іконки має бути не більшим за 1 МБ.</value>
+  </data>
+  <data name="IconRejectUnreadable" xml:space="preserve">
+    <value>Не вдалося прочитати файл як зображення PNG, JPEG, GIF або WebP.</value>
+  </data>
+  <data name="IconRejectUnsupportedFormat" xml:space="preserve">
+    <value>Як іконки можна використовувати лише зображення PNG, JPEG, GIF і WebP.</value>
+  </data>
+  <data name="IconRejectTooLarge" xml:space="preserve">
+    <value>Іконка має бути не більшою за 4096 px з кожного боку.</value>
+  </data>
+  <data name="IconRejectTooSmall" xml:space="preserve">
+    <value>Іконка має бути щонайменше 16 px за довшим боком.</value>
+  </data>
+  <data name="IconFileSizeDetail" xml:space="preserve">
+    <value>Розмір цього файлу — {0}.</value>
+  </data>
+  <data name="IconImageSizeDetail" xml:space="preserve">
+    <value>Це зображення має розмір {0} × {1} px.</value>
+  </data>
+  <data name="IconSave" xml:space="preserve">
+    <value>Зберегти іконку</value>
+  </data>
+  <data name="IconColumn" xml:space="preserve">
+    <value>Іконка</value>
+  </data>
+  <data name="UnitTypeIconHelp" xml:space="preserve">
+    <value>Необов'язково. Показується поруч із підрозділами цього типу в списках, полях вибору й застосунках, а на карті — замість іконки карти вище.</value>
+  </data>
+  <data name="CallTypeIconHelp" xml:space="preserve">
+    <value>Необов'язково. Показується поруч із викликами цього типу в списках і застосунках, а на карті — замість іконки карти вище.</value>
+  </data>
+  <data name="PoiTypeIconHelp" xml:space="preserve">
+    <value>Необов'язково. Показується для точок інтересу цього типу на карті й у застосунках замість маркера вище.</value>
+  </data>
+  <data name="RoleIconHelp" xml:space="preserve">
+    <value>Необов'язково. Учасники цієї ролі показуються на карті з цією іконкою. Людина з кількома ролями отримує іконку своєї першої ролі, що її має, у порядку, заданому на сторінці «Ролі».</value>
+  </data>
+  <data name="RoleOrderHeading" xml:space="preserve">
+    <value>Порядок ролей</value>
+  </data>
+  <data name="RoleOrderHelp" xml:space="preserve">
+    <value>Перетягніть ролі або скористайтеся стрілками, щоб упорядкувати їх, а потім збережіть. Маркер людини на карті використовує іконку першої її ролі в цьому порядку, що має іконку. Люди без такої ролі отримують стандартний маркер особи.</value>
+  </data>
+  <data name="RoleOrderMoveUp" xml:space="preserve">
+    <value>Вгору</value>
+  </data>
+  <data name="RoleOrderMoveDown" xml:space="preserve">
+    <value>Вниз</value>
+  </data>
+  <data name="RoleOrderSave" xml:space="preserve">
+    <value>Зберегти порядок</value>
+  </data>
+  <data name="RoleOrderSaved" xml:space="preserve">
+    <value>Порядок ролей збережено.</value>
+  </data>
+  <data name="RoleOrderColumn" xml:space="preserve">
+    <value>Порядок</value>
+  </data>
+  <data name="RoleOrderUnsaved" xml:space="preserve">
+    <value>Порядок змінено. Збережіть його, щоб застосувати.</value>
+  </data>
+</root>

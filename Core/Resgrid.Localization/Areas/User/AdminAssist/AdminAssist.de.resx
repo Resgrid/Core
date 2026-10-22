@@ -1624,7 +1624,7 @@
     <value>Fügen Sie wiederkehrende Besprechungen und Ausbildungsabende hinzu.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.call-types-priorities">
-    <value>Fügen Sie die Einsatztypen hinzu, die Ihre Disponenten verwenden, und legen Sie deren Prioritäten fest. Geben Sie jedem Einsatztyp eine Klasse und jeder Priorität eine Bedeutung, damit Berichte und die Apps sie gruppieren und sortieren können.</value>
+    <value>Fügen Sie die Einsatztypen hinzu, die Ihre Disponenten verwenden, und legen Sie deren Prioritäten fest. Geben Sie jedem Einsatztyp eine Klasse und jeder Priorität eine Bedeutung, damit Berichte und die Apps sie gruppieren und sortieren können. Ein Einsatztyp kann auch ein eigenes Symbol erhalten, das neben seinen Einsätzen in Listen, den Apps und auf der Karte angezeigt wird.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.certification-dashboard">
     <value>Erfassen Sie die aktuellen Zertifizierungen der Mitglieder und prüfen Sie anschließend, was bald abläuft.</value>
@@ -1726,10 +1726,10 @@
     <value>Laden Sie Mitglieder ein oder fügen Sie sie direkt hinzu, und prüfen Sie dann, ob jedes eine Mobilnummer oder E-Mail-Adresse hat.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.personnel-roles">
-    <value>Erstellen Sie die Rollen, die Sie disponieren oder auswerten, und weisen Sie sie Mitgliedern zu.</value>
+    <value>Erstellen Sie die Rollen, die Sie disponieren oder auswerten, und weisen Sie sie Mitgliedern zu. Laden Sie für Rollen, die hervorstechen sollen, ein Kartensymbol hoch und legen Sie dann auf der Rollenseite die Reihenfolge fest: Die Kartenmarkierung jeder Person verwendet das Symbol ihrer ersten Rolle in dieser Reihenfolge, die eines hat.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.pois">
-    <value>Fügen Sie die Standorte hinzu, die Disponenten sehen müssen.</value>
+    <value>Fügen Sie die Standorte hinzu, die Disponenten sehen müssen. Geben Sie einem POI-Typ ein eigenes Symbol, das seine Markierung auf der Karte und in den Apps ersetzt.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.preventive-maintenance">
     <value>Planen Sie routinemäßige Wartung für jedes Fahrzeug.</value>
@@ -1771,7 +1771,7 @@
     <value>Installieren Sie die Unit-App auf jedem Fahrzeug-Tablet und wählen Sie dessen Einheit aus.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.unit-types">
-    <value>Erstellen Sie Einheitentypen, bevor Sie Einheiten hinzufügen, damit jede Einheit klassifiziert werden kann. Geben Sie jedem Typ eine Klasse, etwa Löschfahrzeug oder Rettungswagen, und wählen Sie seinen Statussatz.</value>
+    <value>Erstellen Sie Einheitentypen, bevor Sie Einheiten hinzufügen, damit jede Einheit klassifiziert werden kann. Geben Sie jedem Typ eine Klasse, etwa Löschfahrzeug oder Rettungswagen, und wählen Sie seinen Statussatz. Laden Sie für einen Typ ein eigenes Symbol hoch (PNG, JPEG, GIF oder WebP, bis 1 MB, am besten quadratisch), damit seine Einheiten in Listen, den Apps und auf der Karte leicht zu unterscheiden sind.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.units">
     <value>Fügen Sie jede Einheit mit ihrem Typ und ihrer Heimatwachengruppe hinzu.</value>
@@ -5440,7 +5440,7 @@
     <value>Abteilungscode, der von unterstützten Identifikations- und Zugriffsabläufen verwendet wird. Prüfen Sie diese Verbraucher, bevor Sie ihn ändern.</value>
   </data>
   <data xml:space="preserve" name="TableHelp.Department.DepartmentType">
-    <value>Veraltete Organisationstyp-Bezeichnung. Das Betriebsprofil bietet mehrere Einsatzbereiche; keines der beiden begründet klinischen Umfang oder Einsatzqualifikationen.</value>
+    <value>Bezeichnung des Organisationstyps, festgelegt in den Abteilungseinstellungen. Sie schränkt Vorlagen, Pakete oder Module nie ein. Das Betriebsprofil erfasst mehrere Einsatzbereiche; keines der beiden begründet klinischen Umfang oder Einsatzqualifikationen.</value>
   </data>
   <data xml:space="preserve" name="TableHelp.Department.LinkCode">
     <value>Verknüpfungscode der Abteilung. Prüfen Sie, wer einen Link verwenden kann, und rotieren Sie ihn über den zuständigen Ablauf.</value>
@@ -7067,5 +7067,14 @@
   </data>
   <data xml:space="preserve" name="RuleNext.import-files-retained">
     <value>Löschen Sie nicht mehr benötigte Dateien oder verkürzen Sie die Aufbewahrung in den Einstellungen von Import &amp; Migration.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.custom-map-icons">
+    <value>Eigene Kartensymbole</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.custom-map-icons">
+    <value>Eigene Symbole für Einheitentypen, Einsatztypen, Points of Interest und Personalrollen, angezeigt in Listen, den Apps und auf der Karte.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.custom-map-icons">
+    <value>Laden Sie auf der Seite des Einheitentyps, Einsatztyps, POI-Typs oder der Rolle ein quadratisches PNG mit transparentem Hintergrund ab 128 × 128 px hoch; die Seite zeigt eine Vorschau auf einer hellen und einer dunklen Karte. Welches Symbol eine Person mit mehreren Rollen erhält, legen Sie über die Reihenfolge auf der Rollenseite fest.</value>
   </data>
 </root>

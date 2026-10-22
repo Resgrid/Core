@@ -51,22 +51,26 @@
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">@localizer["MappingSettingsPersonnelAllowOverwriteLabel"]</label>
                                 <div class="col-sm-6">
-                                    <div class="row">
-                                        <div class="col-sm-6">
-                                            <input type="checkbox" asp-for="PersonnelAllowStatusWithNoLocationToOverwrite">
+                                    <admin-assist-help-after>
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <input type="checkbox" asp-for="PersonnelAllowStatusWithNoLocationToOverwrite">
+                                            </div>
                                         </div>
-                                    </div>
+                                    </admin-assist-help-after>
                                     <span class="help-block m-b-none">@localizer["PersonnelAllowOverwriteHelp"]</span>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">@localizer["MappingSettingsPersonnelTTLLabel"]</label>
                                 <div class="col-sm-6">
-                                    <div class="row">
-                                        <div class="col-sm-6">
-                                            <input type="number" asp-for="PersonnelLocationTTL" min="0" max="1440">
+                                    <admin-assist-help-after>
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <input type="number" asp-for="PersonnelLocationTTL" min="0" max="1440">
+                                            </div>
                                         </div>
-                                    </div>
+                                    </admin-assist-help-after>
                                     <span class="help-block m-b-none">@localizer["PersonnelTTLHelp"]</span>
                                 </div>
                             </div>
@@ -75,22 +79,26 @@
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">@localizer["MappingSettingsUnitAllowOverwriteLabel"]</label>
                                 <div class="col-sm-6">
-                                    <div class="row">
-                                        <div class="col-sm-6">
-                                            <input type="checkbox" asp-for="UnitAllowStatusWithNoLocationToOverwrite">
+                                    <admin-assist-help-after>
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <input type="checkbox" asp-for="UnitAllowStatusWithNoLocationToOverwrite">
+                                            </div>
                                         </div>
-                                    </div>
+                                    </admin-assist-help-after>
                                     <span class="help-block m-b-none">@localizer["UnitAllowOverwriteHelp"]</span>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">@localizer["MappingSettingsUnitTTLLabel"]</label>
                                 <div class="col-sm-6">
-                                    <div class="row">
-                                        <div class="col-sm-6">
-                                            <input type="number" asp-for="UnitLocationTTL" min="0" max="1440">
+                                    <admin-assist-help-after>
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <input type="number" asp-for="UnitLocationTTL" min="0" max="1440">
+                                            </div>
                                         </div>
-                                    </div>
+                                    </admin-assist-help-after>
                                     <span class="help-block m-b-none">@localizer["UnitTTLHelp"]</span>
                                 </div>
                             </div>
@@ -158,11 +166,13 @@
 							<div class="form-group">
 								<label class="col-sm-3 control-label">Use Department Mapbox Map</label>
 								<div class="col-sm-6">
-									<div class="row">
-										<div class="col-sm-6">
-											<input type="checkbox" asp-for="UseMapboxOverride">
+									<admin-assist-help-after>
+										<div class="row">
+											<div class="col-sm-6">
+												<input type="checkbox" asp-for="UseMapboxOverride">
+											</div>
 										</div>
-									</div>
+									</admin-assist-help-after>
 									<span class="help-block m-b-none">When enabled, this department's own Mapbox style and public token replace the Map Style above everywhere: the department website views (even when the system stays on Leaflet) and the Dispatch, Responder, Unit, IC and BigBoard apps, which load the token and style the next time they fetch their configuration. The custom style is used in both light and dark mode.</span>
 								</div>
 							</div>

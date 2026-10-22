@@ -7,6 +7,16 @@ var resgrid;
             var personnelTable, groupsTable, unitsTable, rolesTable;
             var initialDrawCount = 0;
             var totalTables = 4;
+            // A unit's or call's name with its type icon (uploaded or built-in, from TypeIconUrl) in front, both escaped;
+            // sorting and search keep using the plain name.
+            function typeIconNameCell(name, type, row) {
+                if (type !== 'display') { return name; }
+                var text = $('<div/>').text(name || '').html();
+                if (!row || !row.TypeIconUrl) { return text; }
+                return '<img src="' + $('<div/>').text(row.TypeIconUrl).html() + '" alt="" aria-hidden="true" class="rg-type-icon" ' +
+                    'style="width:20px;height:20px;object-fit:contain;vertical-align:middle;margin-right:4px;" />' + text;
+            }
+
             function getText(key, fallback) {
                 return (resgrid.dispatch && typeof resgrid.dispatch.getText === 'function')
                     ? resgrid.dispatch.getText(key, fallback)
@@ -367,7 +377,7 @@ var resgrid;
                     paging: false,
                     columns: [
                         { data: 'UnitId', title: '', orderable: false, searchable: false, render: function(data) { return '<input type="checkbox" id="dispatchUnit_'+data+'" name="dispatchUnit_'+data+'" />'; } },
-                        { data: 'Name', title: getText('name', 'Name') },
+                        { data: 'Name', title: getText('name', 'Name'), render: typeIconNameCell },
                         { data: 'Eta', title: getText('eta', 'ETA') },
                         { data: 'Type', title: getText('type', 'Type') },
                         { data: null, title: getText('status', 'Status'), orderable: false, render: function(d,t,row) { return unitStatusLabel(row); } }

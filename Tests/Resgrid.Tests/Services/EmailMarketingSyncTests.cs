@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -370,6 +371,19 @@ namespace Resgrid.Tests.Services
 			var fallback = LoopsEmailMarketingProvider.BuildContactBody(contact, false);
 			fallback.Should().NotContainKeys("departmentId", "departmentName", "isManagingMember", "mailingLists");
 			fallback["userGroup"].Should().Be(EmailMarketingService.ManagingMemberUserGroup, "userGroup is a default Loops property");
+		}
+
+		[TestCase(HttpStatusCode.BadRequest, "{\"success\":false,\"message\":\"Invalid email address\"}", true)]
+		[TestCase(HttpStatusCode.BadRequest, "{\"success\":false,\"message\":\"invalid email address.\"}", true)]
+		[TestCase(HttpStatusCode.BadRequest, "{\"success\":false,\"message\":\"Custom property departmentId does not exist\"}", false)]
+		[TestCase(HttpStatusCode.BadRequest, null, false)]
+		[TestCase(HttpStatusCode.TooManyRequests, "{\"success\":false,\"message\":\"Invalid email address\"}", false)]
+		[TestCase(HttpStatusCode.OK, "[]", false)]
+		public void Loops_invalid_email_rejection_is_told_apart_from_other_failures(HttpStatusCode statusCode, string content, bool expected)
+		{
+			// Seen on DeletePerson: Loops refused the deleted member's address and the lookup logged it as an error,
+			// although an address Loops will not accept can never hold a contact.
+			LoopsEmailMarketingProvider.IsInvalidEmailRejection(statusCode, content).Should().Be(expected);
 		}
 
 		#endregion Loops request body

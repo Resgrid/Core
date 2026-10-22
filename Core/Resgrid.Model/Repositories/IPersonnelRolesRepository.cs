@@ -51,5 +51,11 @@ namespace Resgrid.Model.Repositories
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <returns>Task&lt;bool&gt;.</returns>
 		Task<bool> DeleteRoleDependenciesAsync(int personnelRoleId, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// Writes SortOrder 1..n to the department's roles in the order given (M0286). Each update is scoped to the
+		/// department, so an id from another department changes nothing. Returns the number of roles updated.
+		/// </summary>
+		Task<int> SetRoleSortOrdersAsync(int departmentId, IReadOnlyList<int> orderedRoleIds, CancellationToken cancellationToken = default(CancellationToken));
 	}
 }

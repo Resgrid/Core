@@ -117,6 +117,33 @@ namespace Resgrid.Tests.Web.Services
 		}
 
 		[Test]
+		public async Task GetRecipients_role_rows_carry_the_roles_map_icon()
+		{
+			const string iconKey = "0123456789abcdef0123456789abcdef";
+			var previousApiBaseUrl = Resgrid.Config.SystemBehaviorConfig.ResgridApiBaseUrl;
+			Resgrid.Config.SystemBehaviorConfig.ResgridApiBaseUrl = "https://api.example.test";
+			try
+			{
+				_personnelRolesService
+					.Setup(service => service.GetRolesForDepartmentAsync(DepartmentId))
+					.ReturnsAsync(new List<PersonnelRole>
+					{
+						new PersonnelRole { PersonnelRoleId = RoleId, DepartmentId = DepartmentId, Name = "Paramedic", IconKey = iconKey },
+						new PersonnelRole { PersonnelRoleId = RoleId + 1, DepartmentId = DepartmentId, Name = "Driver" }
+					});
+
+				var result = (await _controller.GetRecipients(disallowNoone: true, includeUnits: false)).Value;
+
+				result.Data.Should().ContainSingle(r => r.Id == "R:" + RoleId).Which.TypeIconUrl.Should().Be("https://api.example.test/api/v4/TypeIcons/" + iconKey);
+				result.Data.Should().ContainSingle(r => r.Id == "R:" + (RoleId + 1)).Which.TypeIconUrl.Should().BeNull();
+			}
+			finally
+			{
+				Resgrid.Config.SystemBehaviorConfig.ResgridApiBaseUrl = previousApiBaseUrl;
+			}
+		}
+
+		[Test]
 		public async Task SendMessage_UsesParsedRoleId_ForPrefixedRoleRecipient()
 		{
 			Message messageToSave = null;

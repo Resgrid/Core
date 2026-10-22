@@ -21,5 +21,14 @@ namespace Resgrid.Web.Services.Models.v4.CallTypes
 		/// Activity, 12 Other); -1 when the department has not set one.
 		/// </summary>
 		public int BaseType { get; set; }
+
+		/// <summary>
+		/// Absolute URL of the department's uploaded icon for the type (a 128 px square PNG, anonymous GET, immutable);
+		/// null when it has no uploaded icon
+		/// </summary>
+		public string IconUrl { get; set; }
+
+		/// <summary>Built-in map icon name the type picked (e.g. "fire"); null when none</summary>
+		public string MapIcon { get; set; }
 	}
 }

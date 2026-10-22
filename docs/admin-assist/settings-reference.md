@@ -85,7 +85,7 @@ Groups & Stations Stations and groups that organize members and units. Dispatch,
 <a id="personnel-roles"></a>
 ## Personnel roles
 
-Personnel roles Roles such as Firefighter, EMT or Officer. Describe responsibility consistently without assuming that a role proves qualification. A volunteer department creates Station 1 and Station 2 groups, invites 24 members and assigns Engineer and Firefighter roles. Create the roles you dispatch or report on, and assign them to members.
+Personnel roles Roles such as Firefighter, EMT or Officer. Describe responsibility consistently without assuming that a role proves qualification. A volunteer department creates Station 1 and Station 2 groups, invites 24 members and assigns Engineer and Firefighter roles. Create the roles you dispatch or report on, and assign them to members. Upload a map icon for roles that should stand out, then set the role order on the Roles page: each person's map pin uses the icon of the first role they hold, in that order, that has one.
 
 <a id="add-person"></a>
 ## Add Person
@@ -856,7 +856,7 @@ Default: required. Source: Department.Name.
 <a id="table-department-departmenttype"></a>
 ## Department / Department Type
 
-Department / Department Type. Legacy organization-type label. The operating profile provides multiple sectors; neither establishes clinical scope or response qualifications.
+Department / Department Type. Organization-type label, set on Department Settings. It never limits templates, packs or modules. The operating profile records several sectors; neither establishes clinical scope or response qualifications.
 
 Default: unset. Source: Department.DepartmentType.
 
@@ -1686,7 +1686,7 @@ Default: owning voice default. Source: DepartmentSettingTypes.TtsLanguage.
 <a id="call-types-priorities"></a>
 ## Call types and priorities
 
-Call types and priorities The call types and priorities used to classify calls. Use consistent reporting and run-card matching terms. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Add the call types your dispatchers use and set their priorities. Give each call type a class and each priority a meaning so reports and the apps can group and sort them.
+Call types and priorities The call types and priorities used to classify calls. Use consistent reporting and run-card matching terms. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Add the call types your dispatchers use and set their priorities. Give each call type a class and each priority a meaning so reports and the apps can group and sort them. A call type can also have a custom icon, shown beside its calls in lists, the apps and on the map.
 
 <a id="custom-statuses"></a>
 ## Personnel and unit statuses
@@ -1768,7 +1768,7 @@ Units Your apparatus, vehicles and response teams. Units let dispatchers send th
 <a id="unit-types"></a>
 ## Unit types
 
-Unit types Categories such as Engine, Ladder or Ambulance. Group comparable resources without assuming staffing or qualification. Engine 1 and Rescue 1 are added with their unit types and assigned to Station 1. Create unit types before adding units so each unit can be classified. Give each type a class, such as Engine or Ambulance, and choose its status set.
+Unit types Categories such as Engine, Ladder or Ambulance. Group comparable resources without assuming staffing or qualification. Engine 1 and Rescue 1 are added with their unit types and assigned to Station 1. Create unit types before adding units so each unit can be classified. Give each type a class, such as Engine or Ambulance, and choose its status set. Upload a custom icon for a type (PNG, JPEG, GIF or WebP, up to 1 MB, square works best) so its units are easy to tell apart in lists, the apps and on the map.
 
 <a id="hardware-tracking"></a>
 ## Hardware location tracking
@@ -2382,7 +2382,12 @@ Mapping The live map of personnel, units and calls. A current map shows where re
 <a id="pois"></a>
 ## Points of Interest
 
-Points of Interest Points of interest such as stations, hospitals and hydrants. A current map shows where responders and apparatus are and puts important locations in front of dispatchers. A department adds its stations and hospitals as points of interest and lets personnel locations expire after 60 minutes so old positions disappear. Add the locations dispatchers need to see.
+Points of Interest Points of interest such as stations, hospitals and hydrants. A current map shows where responders and apparatus are and puts important locations in front of dispatchers. A department adds its stations and hospitals as points of interest and lets personnel locations expire after 60 minutes so old positions disappear. Add the locations dispatchers need to see. Give a POI type a custom icon to replace its marker on the map and in the apps.
+
+<a id="custom-map-icons"></a>
+## Custom map icons
+
+Custom map icons Your own icons for unit types, call types, points of interest and personnel roles, shown in lists, the apps and on the map. A current map shows where responders and apparatus are and puts important locations in front of dispatchers. Upload a square PNG with a transparent background, 128 × 128 px or larger, on the unit type, call type, POI type or role page; the page previews it on a light and a dark map. To choose which icon a person with several roles shows, order the roles on the Roles page. Icons can be PNG, JPEG, GIF (first frame) or WebP files up to 1 MB and between 16 and 4096 px on each edge; SVG is not accepted. Every icon is stored as a 128 × 128 px PNG and drawn at 32 × 32 px on the map and 20 × 20 px in lists, so a bold shape works better than fine detail or text. A type without a custom icon keeps its built-in map icon. A person's map pin uses the icon of the first role they hold, in the role order, that has one; people without one keep the default person marker.
 
 <a id="weather"></a>
 ## Weather zones and alerts

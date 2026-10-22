@@ -27,7 +27,7 @@
         <div class="wrapper wrapper-content">
             <div class="ibox float-e-margins">
                 <div class="ibox-content">
-                    <form class="form-horizontal" role="form" asp-controller="Types" asp-action="EditUnitType" asp-route-area="User" method="post">
+                    <form class="form-horizontal" role="form" asp-controller="Types" asp-action="EditUnitType" asp-route-area="User" method="post" enctype="multipart/form-data">
 
                         <div class="row">
                             <div class="col-md-8 col-md-offset-1 col-md-pull-1">
@@ -82,7 +82,9 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["UnitTypeMapIconLabel"]</label>
                             <div class="col-sm-2">
-                                <select name="UnitTypeIcon" id="UnitTypeIcon">
+                                @* asp-for lets the option tag helper mark the saved icon as selected; a plain select always
+                                   showed Default, so saving the page cleared the icon. *@
+                                <select asp-for="UnitTypeIcon">
                                     <option value="-1">Default</option>
                                     <option value="20">Aircraft</option>
                                     <option value="21">Ambulance</option>
@@ -108,6 +110,8 @@
                             </div>
                             <div class="col-sm-2"><img id="newUnitTypePreview" style="height: 37px; width: 32px;"></div>
                         </div>
+                        @{ var iconPicker = new TypeIconPicker { HelpKey = "UnitTypeIconHelp", SampleNameInputId = "UnitType_Type", SampleName = Model.UnitType?.Type, DefaultIconSelectId = "UnitTypeIcon", BaseIconUrl = "/images/Mapping/Engine_Responding.png", CurrentIconUrl = TypeIcons.WebIconUrl(Model.UnitType?.IconKey), RemoveFieldName = "RemoveCustomIcon", RemoveChecked = Model.RemoveCustomIcon }; }
+                        <partial name="_TypeIconPicker" model="iconPicker" />
                         <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-2">
                                 <a class="btn btn-white" asp-controller="Department" asp-action="Types" asp-route-area="User">@commonLocalizer["Cancel"]</a>
@@ -138,7 +142,7 @@
           } else {
               $('#newUnitTypePreview').hide();
           }
-      });
+      }).trigger('change');
     });
 </script>
 }

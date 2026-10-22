@@ -31,7 +31,7 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			"CallLocationIndexStates", "CallNumberSequences", "DocumentNumberSequences", "DepartmentApiKeys", "ScheduledTasks", "UserStates",
 			"UdfDefinitions", "ChatbotSessions", "ChatbotMessageLog", "ChatbotDepartmentConfigs", "AiDispatchAudits", "DepartmentAiDispatchConfigs",
-			"AiBillingAccounts", "ContactPreplanHazards", "ContactPreplans", "ContactAttachments", "DepartmentProfileMedia", "RunCardActivations",
+			"AiBillingAccounts", "ContactPreplanHazards", "ContactPreplans", "ContactAttachments", "DepartmentProfileMedia", "TypeIcons", "RunCardActivations",
 			"RunCards", "StationCoverageRequirements", "ModerationActions", "ModerationReports", "ModerationRequests", "MessageRecipients", "Messages",
 			"DepartmentMemberSensitiveData", "DepartmentMemberEmergencyContacts", "UserExternalIdentityLinks", "DepartmentSecurityPolicies",
 			"DepartmentSsoConfigs", "GdprDataExportRequests", "Autofills", "DomainEventOutbox", "ReportingDailyRollup", "SearchProjections",
@@ -68,8 +68,8 @@ namespace Resgrid.Repositories.DataRepository
 			// Chatbot, AI dispatch triage and the AI add-on billing account
 			await Delete("ChatbotSessions", "ChatbotMessageLog", "ChatbotDepartmentConfigs", "AiDispatchAudits", "DepartmentAiDispatchConfigs", "AiBillingAccounts");
 
-			// Contact preplans, their hazards and contact attachments; profile media is keyed by department, not profile
-			await Delete("ContactPreplanHazards", "ContactPreplans", "ContactAttachments", "DepartmentProfileMedia");
+			// Contact preplans, their hazards and contact attachments; profile media and type icons are keyed by department
+			await Delete("ContactPreplanHazards", "ContactPreplans", "ContactAttachments", "DepartmentProfileMedia", "TypeIcons");
 
 			// Run cards: requirements hang off alarm levels, the other children off the run card
 			foreach (var requirement in new[] { "RunCardRoleRequirements", "RunCardUnitRequirements" })

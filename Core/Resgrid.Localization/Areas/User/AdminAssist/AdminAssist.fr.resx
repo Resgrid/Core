@@ -1624,7 +1624,7 @@
     <value>Ajoutez les réunions récurrentes et les soirées de formation.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.call-types-priorities">
-    <value>Ajoutez les types d'appel utilisés par vos répartiteurs et définissez leurs priorités. Donnez à chaque type d'appel une classe et à chaque priorité une signification pour que les rapports et les applications puissent les regrouper et les trier.</value>
+    <value>Ajoutez les types d'appel utilisés par vos répartiteurs et définissez leurs priorités. Donnez à chaque type d'appel une classe et à chaque priorité une signification pour que les rapports et les applications puissent les regrouper et les trier. Un type d'appel peut aussi avoir une icône personnalisée, affichée à côté de ses appels dans les listes, les applications et sur la carte.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.certification-dashboard">
     <value>Enregistrez les certifications actuelles des membres, puis vérifiez ce qui expire prochainement.</value>
@@ -1726,10 +1726,10 @@
     <value>Invitez des membres ou ajoutez-les directement, puis vérifiez que chacun dispose d'un numéro de mobile ou d'une adresse e-mail.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.personnel-roles">
-    <value>Créez les rôles que vous régulez ou sur lesquels vous établissez des rapports, et attribuez-les aux membres.</value>
+    <value>Créez les rôles que vous régulez ou sur lesquels vous établissez des rapports, et attribuez-les aux membres. Téléversez une icône de carte pour les rôles qui doivent ressortir, puis définissez l'ordre des rôles sur la page Rôles : le marqueur de chaque personne utilise l'icône de son premier rôle, dans cet ordre, qui en a une.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.pois">
-    <value>Ajoutez les emplacements que les régulateurs doivent voir.</value>
+    <value>Ajoutez les emplacements que les régulateurs doivent voir. Donnez à un type de POI une icône personnalisée qui remplace son marqueur sur la carte et dans les applications.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.preventive-maintenance">
     <value>Planifiez l'entretien courant de chaque engin.</value>
@@ -1771,7 +1771,7 @@
     <value>Installez l'application Unit sur la tablette de chaque engin et sélectionnez son unité.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.unit-types">
-    <value>Créez les types d'unité avant d'ajouter des unités afin que chaque unité puisse être classée. Donnez à chaque type une classe, comme Fourgon ou Ambulance, et choisissez son jeu de statuts.</value>
+    <value>Créez les types d'unité avant d'ajouter des unités afin que chaque unité puisse être classée. Donnez à chaque type une classe, comme Fourgon ou Ambulance, et choisissez son jeu de statuts. Téléversez une icône personnalisée pour un type (PNG, JPEG, GIF ou WebP, jusqu'à 1 Mo, de préférence carrée) pour distinguer facilement ses unités dans les listes, les applications et sur la carte.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.units">
     <value>Ajoutez chaque unité avec son type et son groupe de caserne d'attache.</value>
@@ -5440,7 +5440,7 @@
     <value>Code de département utilisé par les flux d’identification et d’accès pris en charge. Examinez ces consommateurs avant de le modifier.</value>
   </data>
   <data xml:space="preserve" name="TableHelp.Department.DepartmentType">
-    <value>Libellé hérité du type d’organisation. Le profil d’exploitation fournit plusieurs secteurs ; ni l’un ni l’autre n’établit de périmètre clinique ou de qualifications d’intervention.</value>
+    <value>Libellé du type d’organisation, défini dans les paramètres du département. Il ne limite jamais les modèles, packs ou modules. Le profil d’exploitation enregistre plusieurs secteurs ; ni l’un ni l’autre n’établit de périmètre clinique ou de qualifications d’intervention.</value>
   </data>
   <data xml:space="preserve" name="TableHelp.Department.LinkCode">
     <value>Code de liaison du département. Examinez qui peut utiliser un lien et renouvelez-le via le workflow correspondant.</value>
@@ -7067,5 +7067,14 @@
   </data>
   <data xml:space="preserve" name="RuleNext.import-files-retained">
     <value>Supprimez les fichiers dont vous n'avez plus besoin ou réduisez la conservation dans les paramètres d'Import et migration.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.custom-map-icons">
+    <value>Icônes de carte personnalisées</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.custom-map-icons">
+    <value>Vos propres icônes pour les types d'unités, les types d'appels, les points d'intérêt et les rôles du personnel, affichées dans les listes, les applications et sur la carte.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.custom-map-icons">
+    <value>Téléversez un PNG carré à fond transparent, de 128 × 128 px ou plus, sur la page du type d'unité, du type d'appel, du type de POI ou du rôle ; la page en affiche un aperçu sur une carte claire et une carte sombre. Pour choisir l'icône d'une personne ayant plusieurs rôles, ordonnez les rôles sur la page Rôles.</value>
   </data>
 </root>

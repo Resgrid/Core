@@ -87,6 +87,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
 				var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 				var pois = await _mappingService.GetPOIsForDepartmentAsync(DepartmentId);
+				var unitTypes = await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId);
 
 				var sortedUnits = from u in units
 								  let station = u.StationGroup
@@ -114,12 +115,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 						var customState = await CustomStatesHelper.GetCustomUnitState(stateFound);
 						var latestUnitLocation = await _unitsService.GetLatestUnitLocationAsync(unit.Unit.UnitId, timestamp);
 
-						result.Data.Add(await WithLocationIfVisibleAsync(ConvertUnitStatusData(unit.Unit, stateFound, latestUnitLocation, customState, unit.Station, TimeZone, activeCalls, groups, pois), unit.Unit.UnitId));
+						result.Data.Add(await WithLocationIfVisibleAsync(ConvertUnitStatusData(unit.Unit, stateFound, latestUnitLocation, customState, unit.Station, TimeZone, activeCalls, groups, pois, unitTypes?.FirstOrDefault(x => x.Type == unit.Unit.Type)), unit.Unit.UnitId));
 					}
 					else
 					{
 						var latestUnitLocation = await _unitsService.GetLatestUnitLocationAsync(unit.Unit.UnitId, timestamp);
-						result.Data.Add(await WithLocationIfVisibleAsync(ConvertUnitStatusData(unit.Unit, stateFound, latestUnitLocation, null, unit.Station, TimeZone, activeCalls, groups, pois), unit.Unit.UnitId));
+						result.Data.Add(await WithLocationIfVisibleAsync(ConvertUnitStatusData(unit.Unit, stateFound, latestUnitLocation, null, unit.Station, TimeZone, activeCalls, groups, pois, unitTypes?.FirstOrDefault(x => x.Type == unit.Unit.Type)), unit.Unit.UnitId));
 					}
 				}
 
@@ -173,6 +174,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 			var pois = await _mappingService.GetPOIsForDepartmentAsync(DepartmentId);
 			var status = await _unitsService.GetLastUnitStateByUnitIdAsync(int.Parse(unitId));
+			var unitType = string.IsNullOrWhiteSpace(unit.Type) ? null : await _unitsService.GetUnitTypeByNameAsync(DepartmentId, unit.Type);
 
 			DepartmentGroup group = null;
 			if (unit.StationGroupId.HasValue)
@@ -185,12 +187,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 				var customState = await CustomStatesHelper.GetCustomUnitState(status);
 				var latestUnitLocation = await _unitsService.GetLatestUnitLocationAsync(status.UnitId, timestamp);
 
-				result.Data = await WithLocationIfVisibleAsync(ConvertUnitStatusData(unit, status, latestUnitLocation, customState, group, TimeZone, activeCalls, groups, pois), unit.UnitId);
+				result.Data = await WithLocationIfVisibleAsync(ConvertUnitStatusData(unit, status, latestUnitLocation, customState, group, TimeZone, activeCalls, groups, pois, unitType), unit.UnitId);
 			}
 			else
 			{
 				var latestUnitLocation = await _unitsService.GetLatestUnitLocationAsync(unit.UnitId, timestamp);
-				result.Data = await WithLocationIfVisibleAsync(ConvertUnitStatusData(unit, null, latestUnitLocation, null, group, TimeZone, activeCalls, groups, pois), unit.UnitId);
+				result.Data = await WithLocationIfVisibleAsync(ConvertUnitStatusData(unit, null, latestUnitLocation, null, group, TimeZone, activeCalls, groups, pois, unitType), unit.UnitId);
 			}
 
 			result.PageSize = 1;
@@ -415,7 +417,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 
 		public static UnitStatusResultData ConvertUnitStatusData(Unit unit, UnitState stateFound, UnitsLocation latestUnitLocation,
-			CustomStateDetail customState, DepartmentGroup group, string timeZone, List<Call> activeCalls, List<DepartmentGroup> groups, List<Poi> pois)
+			CustomStateDetail customState, DepartmentGroup group, string timeZone, List<Call> activeCalls, List<DepartmentGroup> groups, List<Poi> pois,
+			UnitType unitType = null)
 		{
 			var state = "Unknown";
 			var stateId = 0;
@@ -476,6 +479,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				UnitId = unit.UnitId.ToString(),
 				Name = unit.Name,
 				Type = unit.Type,
+				TypeIconUrl = TypeIcons.ApiIconUrl(Config.SystemBehaviorConfig.ResgridApiBaseUrl, unitType),
+				TypeMapIcon = TypeIcons.BuiltInIconName(unitType),
 				State = state,
 				StateId = stateId,
 				StateCss = stateCss,

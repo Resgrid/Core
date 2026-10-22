@@ -1556,4 +1556,142 @@
   <data name="UnitStatusOverrideNoMeaning" xml:space="preserve">
     <value>{0}: перевизначення встановлює "{1}" під час {2}, але цей статус не має значення, тому таймери статусу, правила звільнення та картки реагування не можуть його розпізнати. Надайте йому значення у Власних статусах.</value>
   </data>
+  <data name="OrgTypeLabel" xml:space="preserve">
+    <value>Тип організації</value>
+  </data>
+  <data name="OrgTypeHelp" xml:space="preserve">
+    <value>Описує вашу організацію. Усі шаблони, пакети та модулі залишаються доступними незалежно від обраного типу.</value>
+  </data>
+  <data name="OrgTypeProfileHint" xml:space="preserve">
+    <value>Ваша організація виконує кілька видів роботи? Виберіть в операційному профілі кожен відповідний сектор, щоб отримати пропозиції щодо налаштування для кожного.</value>
+  </data>
+  <data name="OrgTypeProfileLink" xml:space="preserve">
+    <value>Операційний профіль підрозділу</value>
+  </data>
+  <data name="OrgTypeNotSet" xml:space="preserve">
+    <value>Не вказано</value>
+  </data>
+  <data name="OrgTypeInvalid" xml:space="preserve">
+    <value>Виберіть тип організації зі списку.</value>
+  </data>
+  <data name="OrgTypeGroup.FireAndRescue" xml:space="preserve">
+    <value>Пожежна служба та рятування</value>
+  </data>
+  <data name="OrgTypeGroup.HealthAndEms" xml:space="preserve">
+    <value>Екстрена медична допомога та охорона здоров’я</value>
+  </data>
+  <data name="OrgTypeGroup.EmergencyManagement" xml:space="preserve">
+    <value>Управління надзвичайними ситуаціями та громадське реагування</value>
+  </data>
+  <data name="OrgTypeGroup.SecurityAndEvents" xml:space="preserve">
+    <value>Охорона та заходи</value>
+  </data>
+  <data name="OrgTypeGroup.IndustrialAndUtilities" xml:space="preserve">
+    <value>Промисловість та комунальні послуги</value>
+  </data>
+  <data name="OrgTypeGroup.ContractorsAndFieldServices" xml:space="preserve">
+    <value>Підрядники та виїзні служби</value>
+  </data>
+  <data name="OrgTypeGroup.Other" xml:space="preserve">
+    <value>Інше</value>
+  </data>
+  <data name="OrgType.volunteer-fire" xml:space="preserve">
+    <value>Добровільна пожежна служба</value>
+  </data>
+  <data name="OrgType.career-fire" xml:space="preserve">
+    <value>Професійна пожежна служба</value>
+  </data>
+  <data name="OrgType.combination-fire" xml:space="preserve">
+    <value>Змішана пожежна служба</value>
+  </data>
+  <data name="OrgType.wildland-fire" xml:space="preserve">
+    <value>Гасіння лісових пожеж</value>
+  </data>
+  <data name="OrgType.search-and-rescue" xml:space="preserve">
+    <value>Пошук і рятування</value>
+  </data>
+  <data name="OrgType.hazmat" xml:space="preserve">
+    <value>Небезпечні речовини (HAZMAT)</value>
+  </data>
+  <data name="OrgType.ems" xml:space="preserve">
+    <value>Екстрена медична допомога</value>
+  </data>
+  <data name="OrgType.private-ambulance" xml:space="preserve">
+    <value>Приватна швидка допомога та міжлікарняне транспортування</value>
+  </data>
+  <data name="OrgType.hospital" xml:space="preserve">
+    <value>Лікарні та системи охорони здоров’я</value>
+  </data>
+  <data name="OrgType.community-paramedicine" xml:space="preserve">
+    <value>Громадська парамедицина та мобільна інтегрована допомога</value>
+  </data>
+  <data name="OrgType.crisis-response" xml:space="preserve">
+    <value>Кризове реагування та психічне здоров’я</value>
+  </data>
+  <data name="OrgType.emergency-management" xml:space="preserve">
+    <value>Управління надзвичайними ситуаціями</value>
+  </data>
+  <data name="OrgType.public-safety" xml:space="preserve">
+    <value>Громадська безпека</value>
+  </data>
+  <data name="OrgType.cert" xml:space="preserve">
+    <value>CERT (громадська команда реагування)</value>
+  </data>
+  <data name="OrgType.disaster-response" xml:space="preserve">
+    <value>Реагування на катастрофи</value>
+  </data>
+  <data name="OrgType.relief-org" xml:space="preserve">
+    <value>Гуманітарна організація</value>
+  </data>
+  <data name="OrgType.multi-discipline" xml:space="preserve">
+    <value>Багатопрофільне реагування</value>
+  </data>
+  <data name="OrgType.security" xml:space="preserve">
+    <value>Охорона</value>
+  </data>
+  <data name="OrgType.event-venue" xml:space="preserve">
+    <value>Заходи та майданчики</value>
+  </data>
+  <data name="OrgType.industrial-emergency-response" xml:space="preserve">
+    <value>Промислове аварійне реагування</value>
+  </data>
+  <data name="OrgType.oil-and-gas" xml:space="preserve">
+    <value>Нафта і газ</value>
+  </data>
+  <data name="OrgType.power" xml:space="preserve">
+    <value>Енергетика</value>
+  </data>
+  <data name="OrgType.chemical" xml:space="preserve">
+    <value>Хімічна промисловість</value>
+  </data>
+  <data name="OrgType.nuclear" xml:space="preserve">
+    <value>Ядерна галузь</value>
+  </data>
+  <data name="OrgType.other-industrial" xml:space="preserve">
+    <value>Інша промисловість</value>
+  </data>
+  <data name="OrgType.response-contractor" xml:space="preserve">
+    <value>Підрядник аварійного реагування</value>
+  </data>
+  <data name="OrgType.drone-aerial-survey" xml:space="preserve">
+    <value>Дрони та аерозйомка</value>
+  </data>
+  <data name="OrgType.repair-services" xml:space="preserve">
+    <value>Ремонтні послуги</value>
+  </data>
+  <data name="OrgType.delivery-services" xml:space="preserve">
+    <value>Служби доставки</value>
+  </data>
+  <data name="OrgType.bus-and-shuttle" xml:space="preserve">
+    <value>Автобуси та шатли</value>
+  </data>
+  <data name="OrgType.other-public" xml:space="preserve">
+    <value>Інша державна організація</value>
+  </data>
+  <data name="OrgType.other-private" xml:space="preserve">
+    <value>Інша приватна організація</value>
+  </data>
+  <data name="OrgType.other" xml:space="preserve">
+    <value>Інше</value>
+  </data>
 </root>

@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Mapping Index -->
+  <data name="IconCustomLabel" xml:space="preserve">
+    <value>Eigenes Symbol</value>
+  </data>
+  <data name="IconGuidanceHeading" xml:space="preserve">
+    <value>Hinweise zum Symbol</value>
+  </data>
+  <data name="IconGuidanceFormat" xml:space="preserve">
+    <value>PNG, JPEG, GIF oder WebP, bis 1 MB. SVG wird nicht unterstützt; bei animierten GIFs wird das erste Bild verwendet.</value>
+  </data>
+  <data name="IconGuidanceSize" xml:space="preserve">
+    <value>Mindestens 16 px und höchstens 4096 px pro Seite. Ein quadratisches Bild ab 128 × 128 px wirkt am schärfsten.</value>
+  </data>
+  <data name="IconGuidanceDesign" xml:space="preserve">
+    <value>Verwenden Sie einen transparenten Hintergrund und eine kräftige, einfache Form. Karten zeigen das Symbol mit 32 × 32 px, Listen mit 20 × 20 px; feine Details und Text sind dann nicht lesbar.</value>
+  </data>
+  <data name="IconGuidanceProcessing" xml:space="preserve">
+    <value>Jedes Symbol wird auf 128 × 128 px skaliert und als PNG gespeichert. Ein nicht quadratisches Bild wird auf einem transparenten Quadrat zentriert und nie beschnitten.</value>
+  </data>
+  <data name="IconRemove" xml:space="preserve">
+    <value>Eigenes Symbol entfernen</value>
+  </data>
+  <data name="IconPreviewHeading" xml:space="preserve">
+    <value>Vorschau</value>
+  </data>
+  <data name="IconPreviewLightMap" xml:space="preserve">
+    <value>Helle Karte</value>
+  </data>
+  <data name="IconPreviewDarkMap" xml:space="preserve">
+    <value>Dunkle Karte</value>
+  </data>
+  <data name="IconPreviewList" xml:space="preserve">
+    <value>In einer Liste</value>
+  </data>
+  <data name="IconPreviewSaved" xml:space="preserve">
+    <value>Gespeichert als 128 × 128</value>
+  </data>
+  <data name="IconPreviewStateCurrent" xml:space="preserve">
+    <value>Das aktuelle eigene Symbol wird angezeigt.</value>
+  </data>
+  <data name="IconPreviewStateNew" xml:space="preserve">
+    <value>Das neue Symbol wird angezeigt. Es wird gespeichert, wenn Sie dieses Formular speichern.</value>
+  </data>
+  <data name="IconPreviewStateDefault" xml:space="preserve">
+    <value>Kein eigenes Symbol. Das Standardsymbol wird angezeigt.</value>
+  </data>
+  <data name="IconPreviewStateNone" xml:space="preserve">
+    <value>Kein eigenes Symbol. Die Standardmarkierung wird verwendet.</value>
+  </data>
+  <data name="IconPreviewStateRemoved" xml:space="preserve">
+    <value>Das eigene Symbol wird beim Speichern dieses Formulars entfernt.</value>
+  </data>
+  <data name="IconPreviewSampleName" xml:space="preserve">
+    <value>Beispiel</value>
+  </data>
+  <data name="IconWarningSmall" xml:space="preserve">
+    <value>Dieses Bild ist {0} × {1} px groß. Es wird vergrößert und kann unscharf wirken; empfohlen sind 128 × 128 px oder mehr.</value>
+  </data>
+  <data name="IconWarningNotSquare" xml:space="preserve">
+    <value>Dieses Bild ist nicht quadratisch. Es wird auf einem transparenten Quadrat zentriert.</value>
+  </data>
+  <data name="IconWarningOpaque" xml:space="preserve">
+    <value>Dieses Bild hat keinen transparenten Hintergrund und erscheint auf der Karte als gefülltes Quadrat.</value>
+  </data>
+  <data name="IconRejectRequired" xml:space="preserve">
+    <value>Wählen Sie eine Symboldatei aus.</value>
+  </data>
+  <data name="IconRejectTooManyBytes" xml:space="preserve">
+    <value>Die Symboldatei darf höchstens 1 MB groß sein.</value>
+  </data>
+  <data name="IconRejectUnreadable" xml:space="preserve">
+    <value>Die Datei konnte nicht als PNG-, JPEG-, GIF- oder WebP-Bild gelesen werden.</value>
+  </data>
+  <data name="IconRejectUnsupportedFormat" xml:space="preserve">
+    <value>Als Symbole können nur PNG-, JPEG-, GIF- und WebP-Bilder verwendet werden.</value>
+  </data>
+  <data name="IconRejectTooLarge" xml:space="preserve">
+    <value>Das Symbol darf pro Seite höchstens 4096 px groß sein.</value>
+  </data>
+  <data name="IconRejectTooSmall" xml:space="preserve">
+    <value>Das Symbol muss an seiner längsten Seite mindestens 16 px groß sein.</value>
+  </data>
+  <data name="IconFileSizeDetail" xml:space="preserve">
+    <value>Diese Datei ist {0} groß.</value>
+  </data>
+  <data name="IconImageSizeDetail" xml:space="preserve">
+    <value>Dieses Bild ist {0} × {1} px groß.</value>
+  </data>
+  <data name="IconSave" xml:space="preserve">
+    <value>Symbol speichern</value>
+  </data>
+  <data name="IconColumn" xml:space="preserve">
+    <value>Symbol</value>
+  </data>
+  <data name="UnitTypeIconHelp" xml:space="preserve">
+    <value>Optional. Wird neben Einheiten dieses Typs in Listen, Auswahlfeldern und den Apps angezeigt und auf der Karte anstelle des obigen Kartensymbols.</value>
+  </data>
+  <data name="CallTypeIconHelp" xml:space="preserve">
+    <value>Optional. Wird neben Einsätzen dieses Typs in Listen und den Apps angezeigt und auf der Karte anstelle des obigen Kartensymbols.</value>
+  </data>
+  <data name="PoiTypeIconHelp" xml:space="preserve">
+    <value>Optional. Wird für Points of Interest dieses Typs auf der Karte und in den Apps anstelle der obigen Markierung angezeigt.</value>
+  </data>
+  <data name="RoleIconHelp" xml:space="preserve">
+    <value>Optional. Mitglieder dieser Rolle werden auf der Karte mit diesem Symbol angezeigt. Wer mehrere Rollen hat, erhält das Symbol seiner ersten Rolle mit Symbol, in der auf der Rollenseite festgelegten Reihenfolge.</value>
+  </data>
+  <data name="RoleOrderHeading" xml:space="preserve">
+    <value>Rollenreihenfolge</value>
+  </data>
+  <data name="RoleOrderHelp" xml:space="preserve">
+    <value>Ziehen Sie die Rollen oder verwenden Sie die Pfeile, um sie zu ordnen, und speichern Sie dann. Die Kartenmarkierung einer Person verwendet das Symbol ihrer ersten Rolle in dieser Reihenfolge, die ein Symbol hat. Personen ohne eine solche Rolle erhalten die Standardmarkierung für Personen.</value>
+  </data>
+  <data name="RoleOrderMoveUp" xml:space="preserve">
+    <value>Nach oben</value>
+  </data>
+  <data name="RoleOrderMoveDown" xml:space="preserve">
+    <value>Nach unten</value>
+  </data>
+  <data name="RoleOrderSave" xml:space="preserve">
+    <value>Reihenfolge speichern</value>
+  </data>
+  <data name="RoleOrderSaved" xml:space="preserve">
+    <value>Die Rollenreihenfolge wurde gespeichert.</value>
+  </data>
+  <data name="RoleOrderColumn" xml:space="preserve">
+    <value>Reihenfolge</value>
+  </data>
+  <data name="RoleOrderUnsaved" xml:space="preserve">
+    <value>Die Reihenfolge wurde geändert. Speichern Sie sie, damit sie gilt.</value>
+  </data>
+</root>

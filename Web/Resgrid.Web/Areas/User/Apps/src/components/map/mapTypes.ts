@@ -27,6 +27,8 @@ export interface MapMarkerInfo {
   Note?: string;
   LayerId?: string;
   LayerName?: string;
+  /** The department's uploaded unit, call or POI type icon for the marker (absolute URL, 128 px square PNG). */
+  IconUrl?: string | null;
 }
 
 export interface PoiLayerInfo {
@@ -325,7 +327,16 @@ export function isMapboxRendererEnabled(mapConfig: ResolvedMapConfig): boolean {
   );
 }
 
-export function getMarkerIconUrl(marker: Pick<MapMarkerInfo, 'ImagePath'>): string {
+export function hasUploadedMarkerIcon(marker: Pick<MapMarkerInfo, 'IconUrl'>): boolean {
+  return typeof marker.IconUrl === 'string' && marker.IconUrl.length > 0;
+}
+
+export function getMarkerIconUrl(marker: Pick<MapMarkerInfo, 'ImagePath' | 'IconUrl'>): string {
+  // A type's uploaded icon wins over the built-in pin named by ImagePath.
+  if (hasUploadedMarkerIcon(marker)) {
+    return marker.IconUrl as string;
+  }
+
   const imagePath = typeof marker.ImagePath === 'string' && marker.ImagePath.length > 0
     ? marker.ImagePath
     : 'pin';

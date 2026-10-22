@@ -135,7 +135,7 @@
 				case MapIconTypes.Car:
 					return "car";
 				case MapIconTypes.CarTwo:
-					return "car2";
+					return "cartwo"; // the asset is cartwo.png on the web and in the apps
 				case MapIconTypes.Check:
 					return "check";
 				case MapIconTypes.Flag:

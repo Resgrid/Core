@@ -33,6 +33,10 @@ namespace Resgrid.Model
 
 		public bool IsDestination { get; set; }
 
+		/// <summary>Key of the department's uploaded <see cref="TypeIcon"/>; null when none is uploaded (M0285).</summary>
+		[MaxLength(64)]
+		public string IconKey { get; set; }
+
 		public virtual ICollection<Poi> Pois { get; set; }
 
 		[NotMapped]

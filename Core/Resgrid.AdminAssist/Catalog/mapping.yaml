@@ -1175,6 +1175,25 @@
       "DocsPath": "/web-app/mapping/#points-of-interest-pois"
     },
     {
+      "Id": "custom-map-icons",
+      "AreaId": "mapping",
+      "LabelKey": "Feature.custom-map-icons",
+      "PurposeKey": "FeaturePurpose.custom-map-icons",
+      "ValueKey": "AreaValue.mapping",
+      "ExampleKey": "AreaExample.mapping",
+      "AdoptionKey": "FeatureSetup.custom-map-icons",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Department",
+        "Action": "Types"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/mapping/#custom-map-icons"
+    },
+    {
       "Id": "weather",
       "AreaId": "mapping",
       "LabelKey": "Feature.weather",
@@ -1865,12 +1884,23 @@
       "Id": "pois",
       "Locale": "en",
       "TitleKey": "Feature.pois",
-      "Body": "Points of Interest Points of interest such as stations, hospitals and hydrants. A current map shows where responders and apparatus are and puts important locations in front of dispatchers. A department adds its stations and hospitals as points of interest and lets personnel locations expire after 60 minutes so old positions disappear. Add the locations dispatchers need to see.",
+      "Body": "Points of Interest Points of interest such as stations, hospitals and hydrants. A current map shows where responders and apparatus are and puts important locations in front of dispatchers. A department adds its stations and hospitals as points of interest and lets personnel locations expire after 60 minutes so old positions disappear. Add the locations dispatchers need to see. Give a POI type a custom icon to replace its marker on the map and in the apps.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "pois",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
+      "ReviewedOn": "2026-10-21T00:00:00Z"
+    },
+    {
+      "Id": "custom-map-icons",
+      "Locale": "en",
+      "TitleKey": "Feature.custom-map-icons",
+      "Body": "Custom map icons Your own icons for unit types, call types, points of interest and personnel roles, shown in lists, the apps and on the map. A current map shows where responders and apparatus are and puts important locations in front of dispatchers. Upload a square PNG with a transparent background, 128 × 128 px or larger, on the unit type, call type, POI type or role page; the page previews it on a light and a dark map. To choose which icon a person with several roles shows, order the roles on the Roles page. Icons can be PNG, JPEG, GIF (first frame) or WebP files up to 1 MB and between 16 and 4096 px on each edge; SVG is not accepted. Every icon is stored as a 128 × 128 px PNG and drawn at 32 × 32 px on the map and 20 × 20 px in lists, so a bold shape works better than fine detail or text. A type without a custom icon keeps its built-in map icon. A person's map pin uses the icon of the first role they hold, in the role order, that has one; people without one keep the default person marker.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "custom-map-icons",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-21T00:00:00Z"
     },
     {
       "Id": "weather",

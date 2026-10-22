@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Mapping Index -->
+  <data name="IconCustomLabel" xml:space="preserve">
+    <value>Προσαρμοσμένο εικονίδιο</value>
+  </data>
+  <data name="IconGuidanceHeading" xml:space="preserve">
+    <value>Οδηγίες για το εικονίδιο</value>
+  </data>
+  <data name="IconGuidanceFormat" xml:space="preserve">
+    <value>PNG, JPEG, GIF ή WebP, έως 1 MB. Το SVG δεν υποστηρίζεται και ένα κινούμενο GIF χρησιμοποιεί το πρώτο του καρέ.</value>
+  </data>
+  <data name="IconGuidanceSize" xml:space="preserve">
+    <value>Τουλάχιστον 16 px και το πολύ 4096 px σε κάθε πλευρά. Μια τετράγωνη εικόνα 128 × 128 px ή μεγαλύτερη δίνει το πιο καθαρό αποτέλεσμα.</value>
+  </data>
+  <data name="IconGuidanceDesign" xml:space="preserve">
+    <value>Χρησιμοποιήστε διαφανές φόντο και ένα έντονο, απλό σχήμα. Οι χάρτες δείχνουν το εικονίδιο σε 32 × 32 px και οι λίστες σε 20 × 20 px, οπότε οι λεπτομέρειες και το κείμενο δεν θα διαβάζονται.</value>
+  </data>
+  <data name="IconGuidanceProcessing" xml:space="preserve">
+    <value>Κάθε εικονίδιο αλλάζει μέγεθος σε 128 × 128 px και αποθηκεύεται ως PNG. Μια μη τετράγωνη εικόνα κεντράρεται σε διαφανές τετράγωνο και δεν περικόπτεται ποτέ.</value>
+  </data>
+  <data name="IconRemove" xml:space="preserve">
+    <value>Αφαίρεση του προσαρμοσμένου εικονιδίου</value>
+  </data>
+  <data name="IconPreviewHeading" xml:space="preserve">
+    <value>Προεπισκόπηση</value>
+  </data>
+  <data name="IconPreviewLightMap" xml:space="preserve">
+    <value>Φωτεινός χάρτης</value>
+  </data>
+  <data name="IconPreviewDarkMap" xml:space="preserve">
+    <value>Σκούρος χάρτης</value>
+  </data>
+  <data name="IconPreviewList" xml:space="preserve">
+    <value>Σε λίστα</value>
+  </data>
+  <data name="IconPreviewSaved" xml:space="preserve">
+    <value>Αποθηκεύεται ως 128 × 128</value>
+  </data>
+  <data name="IconPreviewStateCurrent" xml:space="preserve">
+    <value>Εμφανίζεται το τρέχον προσαρμοσμένο εικονίδιο.</value>
+  </data>
+  <data name="IconPreviewStateNew" xml:space="preserve">
+    <value>Εμφανίζεται το νέο εικονίδιο. Θα αποθηκευτεί όταν αποθηκεύσετε αυτή τη φόρμα.</value>
+  </data>
+  <data name="IconPreviewStateDefault" xml:space="preserve">
+    <value>Δεν υπάρχει προσαρμοσμένο εικονίδιο. Εμφανίζεται το προεπιλεγμένο εικονίδιο.</value>
+  </data>
+  <data name="IconPreviewStateNone" xml:space="preserve">
+    <value>Δεν υπάρχει προσαρμοσμένο εικονίδιο. Χρησιμοποιείται ο προεπιλεγμένος δείκτης.</value>
+  </data>
+  <data name="IconPreviewStateRemoved" xml:space="preserve">
+    <value>Το προσαρμοσμένο εικονίδιο θα αφαιρεθεί όταν αποθηκεύσετε αυτή τη φόρμα.</value>
+  </data>
+  <data name="IconPreviewSampleName" xml:space="preserve">
+    <value>Δείγμα</value>
+  </data>
+  <data name="IconWarningSmall" xml:space="preserve">
+    <value>Η εικόνα είναι {0} × {1} px. Θα μεγεθυνθεί και μπορεί να φαίνεται θολή· συνιστάται 128 × 128 px ή μεγαλύτερη.</value>
+  </data>
+  <data name="IconWarningNotSquare" xml:space="preserve">
+    <value>Η εικόνα δεν είναι τετράγωνη. Θα κεντραριστεί σε διαφανές τετράγωνο.</value>
+  </data>
+  <data name="IconWarningOpaque" xml:space="preserve">
+    <value>Η εικόνα δεν έχει διαφανές φόντο, οπότε στον χάρτη θα φαίνεται ως γεμάτο τετράγωνο.</value>
+  </data>
+  <data name="IconRejectRequired" xml:space="preserve">
+    <value>Επιλέξτε ένα αρχείο εικονιδίου.</value>
+  </data>
+  <data name="IconRejectTooManyBytes" xml:space="preserve">
+    <value>Το αρχείο του εικονιδίου πρέπει να είναι έως 1 MB.</value>
+  </data>
+  <data name="IconRejectUnreadable" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η ανάγνωση του αρχείου ως εικόνας PNG, JPEG, GIF ή WebP.</value>
+  </data>
+  <data name="IconRejectUnsupportedFormat" xml:space="preserve">
+    <value>Ως εικονίδια μπορούν να χρησιμοποιηθούν μόνο εικόνες PNG, JPEG, GIF και WebP.</value>
+  </data>
+  <data name="IconRejectTooLarge" xml:space="preserve">
+    <value>Το εικονίδιο πρέπει να είναι έως 4096 px σε κάθε πλευρά.</value>
+  </data>
+  <data name="IconRejectTooSmall" xml:space="preserve">
+    <value>Το εικονίδιο πρέπει να είναι τουλάχιστον 16 px στη μεγαλύτερη πλευρά του.</value>
+  </data>
+  <data name="IconFileSizeDetail" xml:space="preserve">
+    <value>Το αρχείο είναι {0}.</value>
+  </data>
+  <data name="IconImageSizeDetail" xml:space="preserve">
+    <value>Η εικόνα είναι {0} × {1} px.</value>
+  </data>
+  <data name="IconSave" xml:space="preserve">
+    <value>Αποθήκευση εικονιδίου</value>
+  </data>
+  <data name="IconColumn" xml:space="preserve">
+    <value>Εικονίδιο</value>
+  </data>
+  <data name="UnitTypeIconHelp" xml:space="preserve">
+    <value>Προαιρετικό. Εμφανίζεται δίπλα στις μονάδες αυτού του τύπου σε λίστες, επιλογείς και στις εφαρμογές, και στον χάρτη στη θέση του παραπάνω εικονιδίου χάρτη.</value>
+  </data>
+  <data name="CallTypeIconHelp" xml:space="preserve">
+    <value>Προαιρετικό. Εμφανίζεται δίπλα στις κλήσεις αυτού του τύπου σε λίστες και στις εφαρμογές, και στον χάρτη στη θέση του παραπάνω εικονιδίου χάρτη.</value>
+  </data>
+  <data name="PoiTypeIconHelp" xml:space="preserve">
+    <value>Προαιρετικό. Εμφανίζεται για τα σημεία ενδιαφέροντος αυτού του τύπου στον χάρτη και στις εφαρμογές, στη θέση του παραπάνω δείκτη.</value>
+  </data>
+  <data name="RoleIconHelp" xml:space="preserve">
+    <value>Προαιρετικό. Τα μέλη αυτού του ρόλου εμφανίζονται στον χάρτη με αυτό το εικονίδιο. Όποιος έχει πολλούς ρόλους εμφανίζει το εικονίδιο του πρώτου ρόλου του που έχει εικονίδιο, με τη σειρά που ορίζεται στη σελίδα Ρόλοι.</value>
+  </data>
+  <data name="RoleOrderHeading" xml:space="preserve">
+    <value>Σειρά ρόλων</value>
+  </data>
+  <data name="RoleOrderHelp" xml:space="preserve">
+    <value>Σύρετε τους ρόλους ή χρησιμοποιήστε τα βέλη για να τους ταξινομήσετε και μετά αποθηκεύστε. Ο δείκτης ενός ατόμου στον χάρτη χρησιμοποιεί το εικονίδιο του πρώτου ρόλου του, με αυτή τη σειρά, που έχει εικονίδιο. Όσοι δεν έχουν τέτοιο ρόλο χρησιμοποιούν τον προεπιλεγμένο δείκτη ατόμου.</value>
+  </data>
+  <data name="RoleOrderMoveUp" xml:space="preserve">
+    <value>Μετακίνηση πάνω</value>
+  </data>
+  <data name="RoleOrderMoveDown" xml:space="preserve">
+    <value>Μετακίνηση κάτω</value>
+  </data>
+  <data name="RoleOrderSave" xml:space="preserve">
+    <value>Αποθήκευση σειράς</value>
+  </data>
+  <data name="RoleOrderSaved" xml:space="preserve">
+    <value>Η σειρά των ρόλων αποθηκεύτηκε.</value>
+  </data>
+  <data name="RoleOrderColumn" xml:space="preserve">
+    <value>Σειρά</value>
+  </data>
+  <data name="RoleOrderUnsaved" xml:space="preserve">
+    <value>Η σειρά άλλαξε. Αποθηκεύστε την για να εφαρμοστεί.</value>
+  </data>
+</root>

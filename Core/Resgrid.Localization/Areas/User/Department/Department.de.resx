@@ -1556,4 +1556,142 @@
   <data name="UnitStatusOverrideNoMeaning" xml:space="preserve">
     <value>{0}: Die Überschreibung setzt bei {2} den Status "{1}", der keine Bedeutung hat, daher können Status-Timer, Freigaberegeln und Einsatzpläne ihn nicht erkennen. Geben Sie ihm unter Benutzerdefinierte Status eine Bedeutung.</value>
   </data>
+  <data name="OrgTypeLabel" xml:space="preserve">
+    <value>Organisationstyp</value>
+  </data>
+  <data name="OrgTypeHelp" xml:space="preserve">
+    <value>Beschreibt Ihre Organisation. Alle Vorlagen, Pakete und Module bleiben verfügbar, egal welchen Typ Sie wählen.</value>
+  </data>
+  <data name="OrgTypeProfileHint" xml:space="preserve">
+    <value>Ist Ihre Organisation in mehreren Bereichen tätig? Wählen Sie im Betriebsprofil jeden zutreffenden Bereich aus, um Einrichtungsvorschläge für jeden zu erhalten.</value>
+  </data>
+  <data name="OrgTypeProfileLink" xml:space="preserve">
+    <value>Betriebsprofil der Abteilung</value>
+  </data>
+  <data name="OrgTypeNotSet" xml:space="preserve">
+    <value>Nicht festgelegt</value>
+  </data>
+  <data name="OrgTypeInvalid" xml:space="preserve">
+    <value>Wählen Sie einen Organisationstyp aus der Liste.</value>
+  </data>
+  <data name="OrgTypeGroup.FireAndRescue" xml:space="preserve">
+    <value>Feuerwehr und Rettung</value>
+  </data>
+  <data name="OrgTypeGroup.HealthAndEms" xml:space="preserve">
+    <value>Rettungsdienst und Gesundheitswesen</value>
+  </data>
+  <data name="OrgTypeGroup.EmergencyManagement" xml:space="preserve">
+    <value>Katastrophenmanagement und Bevölkerungshilfe</value>
+  </data>
+  <data name="OrgTypeGroup.SecurityAndEvents" xml:space="preserve">
+    <value>Sicherheit und Veranstaltungen</value>
+  </data>
+  <data name="OrgTypeGroup.IndustrialAndUtilities" xml:space="preserve">
+    <value>Industrie und Versorgung</value>
+  </data>
+  <data name="OrgTypeGroup.ContractorsAndFieldServices" xml:space="preserve">
+    <value>Auftragnehmer und Außendienst</value>
+  </data>
+  <data name="OrgTypeGroup.Other" xml:space="preserve">
+    <value>Sonstige</value>
+  </data>
+  <data name="OrgType.volunteer-fire" xml:space="preserve">
+    <value>Freiwillige Feuerwehr</value>
+  </data>
+  <data name="OrgType.career-fire" xml:space="preserve">
+    <value>Berufsfeuerwehr</value>
+  </data>
+  <data name="OrgType.combination-fire" xml:space="preserve">
+    <value>Gemischte Feuerwehr (haupt- und ehrenamtlich)</value>
+  </data>
+  <data name="OrgType.wildland-fire" xml:space="preserve">
+    <value>Waldbrandbekämpfung</value>
+  </data>
+  <data name="OrgType.search-and-rescue" xml:space="preserve">
+    <value>Suche und Rettung</value>
+  </data>
+  <data name="OrgType.hazmat" xml:space="preserve">
+    <value>Gefahrstoffe (HAZMAT)</value>
+  </data>
+  <data name="OrgType.ems" xml:space="preserve">
+    <value>Rettungsdienst</value>
+  </data>
+  <data name="OrgType.private-ambulance" xml:space="preserve">
+    <value>Privater Krankentransport und Verlegungstransporte</value>
+  </data>
+  <data name="OrgType.hospital" xml:space="preserve">
+    <value>Krankenhaus und Gesundheitsverbund</value>
+  </data>
+  <data name="OrgType.community-paramedicine" xml:space="preserve">
+    <value>Gemeindenotfallsanitäter und mobile integrierte Versorgung</value>
+  </data>
+  <data name="OrgType.crisis-response" xml:space="preserve">
+    <value>Krisendienst und psychiatrische Notfallhilfe</value>
+  </data>
+  <data name="OrgType.emergency-management" xml:space="preserve">
+    <value>Katastrophenmanagement</value>
+  </data>
+  <data name="OrgType.public-safety" xml:space="preserve">
+    <value>Öffentliche Sicherheit</value>
+  </data>
+  <data name="OrgType.cert" xml:space="preserve">
+    <value>CERT (Bürger-Einsatzteam)</value>
+  </data>
+  <data name="OrgType.disaster-response" xml:space="preserve">
+    <value>Katastropheneinsatz</value>
+  </data>
+  <data name="OrgType.relief-org" xml:space="preserve">
+    <value>Hilfsorganisation</value>
+  </data>
+  <data name="OrgType.multi-discipline" xml:space="preserve">
+    <value>Fachübergreifende Einsatzorganisation</value>
+  </data>
+  <data name="OrgType.security" xml:space="preserve">
+    <value>Sicherheitsdienst</value>
+  </data>
+  <data name="OrgType.event-venue" xml:space="preserve">
+    <value>Veranstaltungen und Veranstaltungsstätten</value>
+  </data>
+  <data name="OrgType.industrial-emergency-response" xml:space="preserve">
+    <value>Betriebliche Gefahrenabwehr</value>
+  </data>
+  <data name="OrgType.oil-and-gas" xml:space="preserve">
+    <value>Öl und Gas</value>
+  </data>
+  <data name="OrgType.power" xml:space="preserve">
+    <value>Energieversorgung</value>
+  </data>
+  <data name="OrgType.chemical" xml:space="preserve">
+    <value>Chemie</value>
+  </data>
+  <data name="OrgType.nuclear" xml:space="preserve">
+    <value>Kerntechnik</value>
+  </data>
+  <data name="OrgType.other-industrial" xml:space="preserve">
+    <value>Sonstige Industrie</value>
+  </data>
+  <data name="OrgType.response-contractor" xml:space="preserve">
+    <value>Einsatzdienstleister</value>
+  </data>
+  <data name="OrgType.drone-aerial-survey" xml:space="preserve">
+    <value>Drohnen und Luftvermessung</value>
+  </data>
+  <data name="OrgType.repair-services" xml:space="preserve">
+    <value>Reparaturdienste</value>
+  </data>
+  <data name="OrgType.delivery-services" xml:space="preserve">
+    <value>Lieferdienste</value>
+  </data>
+  <data name="OrgType.bus-and-shuttle" xml:space="preserve">
+    <value>Bus- und Shuttledienste</value>
+  </data>
+  <data name="OrgType.other-public" xml:space="preserve">
+    <value>Sonstige öffentliche Organisation</value>
+  </data>
+  <data name="OrgType.other-private" xml:space="preserve">
+    <value>Sonstige private Organisation</value>
+  </data>
+  <data name="OrgType.other" xml:space="preserve">
+    <value>Sonstige</value>
+  </data>
 </root>

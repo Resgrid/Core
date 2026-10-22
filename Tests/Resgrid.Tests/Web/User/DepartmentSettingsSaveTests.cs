@@ -31,13 +31,15 @@ namespace Resgrid.Tests.Web.User
 		private const string UserId = "settings-admin";
 
 		private Mock<IDepartmentSettingsService> _settings;
+		private Mock<IDepartmentsService> _departments;
+		private Department _department;
 		private DepartmentController _controller;
 
 		[SetUp]
 		public void SetUp()
 		{
-			var department = new Department { DepartmentId = DepartmentId, ManagingUserId = UserId, Name = "Station 1", TimeZone = "Eastern Standard Time" };
-			var departments = new Mock<IDepartmentsService>();
+			var department = _department = new Department { DepartmentId = DepartmentId, ManagingUserId = UserId, Name = "Station 1", TimeZone = "Eastern Standard Time", DepartmentType = "Disaster Response" };
+			var departments = _departments = new Mock<IDepartmentsService>();
 			departments.Setup(d => d.GetDepartmentByIdAsync(DepartmentId, It.IsAny<bool>())).ReturnsAsync(department);
 			departments.Setup(d => d.GetAllUsersForDepartmentAsync(DepartmentId, It.IsAny<bool>(), It.IsAny<bool>())).ReturnsAsync(new List<IdentityUser>());
 			departments.Setup(d => d.GetAllPersonnelNamesForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<PersonName>());
@@ -51,6 +53,9 @@ namespace Resgrid.Tests.Web.User
 				.ReturnsAsync((Address a, CancellationToken ct) => { a.AddressId = 44; return a; });
 
 			_settings = new Mock<IDepartmentSettingsService>();
+
+			var localizer = new Mock<IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department>>();
+			localizer.Setup(l => l[It.IsAny<string>()]).Returns((string key) => new LocalizedString(key, key));
 
 			var httpContext = new DefaultHttpContext
 			{
@@ -72,7 +77,7 @@ namespace Resgrid.Tests.Web.User
 				Mock.Of<IEventAggregator>(), Mock.Of<ICustomStateService>(), Mock.Of<ICqrsProvider>(), Mock.Of<IPrinterProvider>(), Mock.Of<IQueueService>(),
 				Mock.Of<IDocumentsService>(), Mock.Of<INotesService>(), Mock.Of<IContactsService>(), Mock.Of<ICheckInTimerService>(), Mock.Of<ISecurityPinService>(),
 				Mock.Of<IRunCardsService>(), Mock.Of<IFeatureToggleService>(), Mock.Of<IDepartmentProfileMediaService>(),
-				Mock.Of<IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department>>(), Mock.Of<Resgrid.Model.AiDispatch.IAiDispatchEnrichmentService>(),
+				localizer.Object, Mock.Of<Resgrid.Model.AiDispatch.IAiDispatchEnrichmentService>(),
 				Mock.Of<IProtectedReadService>(), Mock.Of<ICallNumberingService>(), Mock.Of<IDocumentNumberingService>())
 			{
 				ControllerContext = new ControllerContext { HttpContext = httpContext }
@@ -121,6 +126,68 @@ namespace Resgrid.Tests.Web.User
 			var view = System.IO.File.ReadAllText(System.IO.Path.Combine(directory!.FullName, "Web", "Resgrid.Web", "Areas", "User", "Views", "Department", "Settings.cshtml"));
 
 			view.Should().NotContain("MapHideUnavailable").And.NotContain("MapZoomLevel").And.NotContain("RefreshTime");
+		}
+
+		[TestCase("Security", "Security")]
+		[TestCase("crisis and mental health response", "Crisis and Mental Health Response")]
+		public async Task Choosing_an_organization_type_saves_its_catalog_spelling(string posted, string stored)
+		{
+			var model = Model();
+			model.Department.DepartmentType = posted;
+
+			var result = await _controller.Settings(model, new FormCollection(new Dictionary<string, StringValues>()), CancellationToken.None);
+
+			result.Should().BeOfType<RedirectToActionResult>();
+			_departments.Verify(d => d.UpdateDepartmentAsync(It.Is<Department>(x => x.DepartmentType == stored), It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[TestCase(null)]
+		[TestCase("")]
+		public async Task A_form_without_a_type_keeps_the_saved_one(string posted)
+		{
+			var model = Model();
+			model.Department.DepartmentType = posted;
+
+			await _controller.Settings(model, new FormCollection(new Dictionary<string, StringValues>()), CancellationToken.None);
+
+			_departments.Verify(d => d.UpdateDepartmentAsync(It.Is<Department>(x => x.DepartmentType == "Disaster Response"), It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task A_type_from_an_older_sign_up_list_survives_a_save()
+		{
+			_department.DepartmentType = "Private";
+			var model = Model();
+			model.Department.DepartmentType = "Private";
+
+			await _controller.Settings(model, new FormCollection(new Dictionary<string, StringValues>()), CancellationToken.None);
+
+			_departments.Verify(d => d.UpdateDepartmentAsync(It.Is<Department>(x => x.DepartmentType == "Private"), It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task A_type_that_is_not_in_the_list_is_refused_and_nothing_is_saved()
+		{
+			var model = Model();
+			model.Department.DepartmentType = "Anything I like";
+
+			var result = await _controller.Settings(model, new FormCollection(new Dictionary<string, StringValues>()), CancellationToken.None);
+
+			result.Should().BeOfType<ViewResult>();
+			_controller.ModelState["Department.DepartmentType"].Errors.Should().ContainSingle().Which.ErrorMessage.Should().Be("OrgTypeInvalid");
+			model.Department.DepartmentType.Should().Be("Disaster Response", "the page redisplays the saved type");
+			_departments.Verify(d => d.UpdateDepartmentAsync(It.IsAny<Department>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public void The_settings_view_offers_the_organization_type()
+		{
+			var directory = new System.IO.DirectoryInfo(TestContext.CurrentContext.TestDirectory);
+			while (directory != null && !System.IO.File.Exists(System.IO.Path.Combine(directory.FullName, "Resgrid.sln")))
+				directory = directory.Parent;
+			var view = System.IO.File.ReadAllText(System.IO.Path.Combine(directory!.FullName, "Web", "Resgrid.Web", "Areas", "User", "Views", "Department", "Settings.cshtml"));
+
+			view.Should().Contain("asp-for=\"Department.DepartmentType\"").And.Contain("DepartmentTypeSelectList.Build(");
 		}
 
 		private static DepartmentSettingsModel Model() => new DepartmentSettingsModel

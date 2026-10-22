@@ -3,6 +3,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import {
   getLayerColor,
   getMarkerIconUrl,
+  hasUploadedMarkerIcon,
   getPoiIconClass,
   getPoiMarkerShapePath,
   isPoiMarker,
@@ -38,7 +39,7 @@ function createMarkerElement(markerInfo: MapMarkerInfo, hideLabels: boolean): HT
     dot.className = 'rg-map__hydrant-dot';
     dot.style.backgroundColor = markerInfo.Color || '#999999';
     wrapper.appendChild(dot);
-  } else if (isPoiMarker(markerInfo)) {
+  } else if (isPoiMarker(markerInfo) && !hasUploadedMarkerIcon(markerInfo)) {
     wrapper.classList.add('rg-map__marker--poi');
     wrapper.style.setProperty('--rg-map-poi-color', markerInfo.Color || '#2563eb');
 

@@ -189,7 +189,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				{
 					var unitType = unitTypes.FirstOrDefault(x => x.Type == unit.Type);
 
-					result.Units.Add(await UnitWithLocationIfVisibleAsync(UnitsController.ConvertUnitsData(unit, unitStatuses.FirstOrDefault(x => x.UnitId == unit.UnitId), null, TimeZone), unit.UnitId));
+					result.Units.Add(await UnitWithLocationIfVisibleAsync(UnitsController.ConvertUnitsData(unit, unitStatuses.FirstOrDefault(x => x.UnitId == unit.UnitId), unitType, TimeZone), unit.UnitId));
 				}
 				else
 				{
@@ -210,7 +210,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				var latestUnitLocation = await _unitsService.GetLatestUnitLocationAsync(us.UnitId, us.Timestamp);
 
 				var group = allGroups.FirstOrDefault(x => x.DepartmentGroupId == us.Unit.StationGroupId);
-				var unitStatus = UnitStatusController.ConvertUnitStatusData(us.Unit, us, latestUnitLocation, customState, group, TimeZone, activeCalls, allGroups, pois);
+				var unitStatus = UnitStatusController.ConvertUnitStatusData(us.Unit, us, latestUnitLocation, customState, group, TimeZone, activeCalls, allGroups, pois,
+					unitTypes.FirstOrDefault(x => x.Type == us.Unit.Type));
 				if (!await UnitLocationVisibility.CanSeeAsync(_authorizationService, us.UnitId, UserId, DepartmentId))
 					UnitLocationVisibility.Withhold(unitStatus);
 				result.UnitStatuses.Add(unitStatus);

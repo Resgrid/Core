@@ -23,6 +23,9 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 		public List<ActionLog> ActionLogs { get; set; }
 		public List<UserGroupRole> UserGroupRoles { get; set; }
 		public List<Unit> Units { get; set; }
+
+		/// <summary>The department's unit types, for the type icon beside each unit.</summary>
+		public List<UnitType> UnitTypes { get; set; } = new List<UnitType>();
 		public List<DepartmentGroup> Stations { get; set; }
 		public List<DispatchProtocol> Protocols { get; set; }
 		public List<CallReference> ChildCalls { get; set; }

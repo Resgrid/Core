@@ -5024,6 +5024,17 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.TimeReportsController.TryResolve(System.String,System.DateTime,Resgrid.Model.Department,System.DateTime@)">
             <summary>A department-local wall clock wins when sent; otherwise the UTC instant (the converter already normalised it).</summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.TypeIconsController">
+            <summary>
+            Department-uploaded unit, call and POI type icons, linked from the TypeIconUrl / IconUrl fields of the unit, call, POI, dispatch and map
+            results. Anonymous so image components can load them without an auth header: the opaque key is the capability,
+            and a new upload gets a new key, so responses are immutable.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.TypeIconsController.Get(System.String)">
+            <summary>The icon as a 128 px square PNG.</summary>
+            <param name="key">The icon key at the end of a TypeIconUrl.</param>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.UnitLocationController">
             <summary>
             Operations involving the location of a unit setting the real-time location or getting the latest location for a unit.
@@ -9266,6 +9277,17 @@
             non-status entries.
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.DispatchedEventResultData.TypeIconUrl">
+            <summary>
+            Unit entries only: absolute URL of the department's uploaded icon for the unit's type (a 128 px square PNG,
+            anonymous GET, immutable); null for other entries and when the type has no uploaded icon.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.DispatchedEventResultData.TypeMapIcon">
+            <summary>
+            Unit entries only: built-in icon name the unit's type picked (e.g. "ambulance"); null when none.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Calls.CallHistoryResult">
             <summary>
             Gets the history of all actions taken during a call
@@ -9504,6 +9526,17 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.Type">
             <summary>
             Call Type
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.TypeIconUrl">
+            <summary>
+            Absolute URL of the department's uploaded icon for the call's type (a 128 px square PNG, anonymous GET,
+            immutable); null when the type has no uploaded icon
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.TypeMapIcon">
+            <summary>
+            Built-in icon name the call's type picked (e.g. "fire", same names as map marker ImagePath); null when none
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.TypeId">
@@ -10473,6 +10506,15 @@
             Materials, 6 Alarm, 7 Service Call, 8 Law Enforcement, 9 Disaster or Weather, 10 Mutual Aid, 11 Non-Emergency
             Activity, 12 Other); -1 when the department has not set one.
             </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallTypes.CallTypeResultData.IconUrl">
+            <summary>
+            Absolute URL of the department's uploaded icon for the type (a 128 px square PNG, anonymous GET, immutable);
+            null when it has no uploaded icon
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallTypes.CallTypeResultData.MapIcon">
+            <summary>Built-in map icon name the type picked (e.g. "fire"); null when none</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.CallTypes.CallTypesResult">
             <summary>
@@ -14384,11 +14426,25 @@
             ImagePath carries the bitmap-asset name resolved by PoiIconHelper for clients that ship PNGs.
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.MapMakerInfoData.IconUrl">
+            <summary>
+            Absolute URL of the department's uploaded type icon for the marker's unit type (Type=1), call type (Type=0) or
+            POI type (Type=4), or for a person (Type=3) the icon of the first role they hold, in the department's role
+            order, that has one: a 128 px square PNG, anonymous GET, immutable. Null when there is no uploaded icon;
+            ImagePath / PoiImage stay the bundled fallback.
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Mapping.PoiLayerData.PoiImage">
             <summary>
             The POI-specific custom icon image name.
             New app versions should use this field for POI type icons.
             ImagePath carries the bitmap-asset name resolved by PoiIconHelper for clients that ship PNGs.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.PoiLayerData.IconUrl">
+            <summary>
+            Absolute URL of the department's uploaded icon for the POI type (a 128 px square PNG, anonymous GET,
+            immutable); null when the type has no uploaded icon, so PoiImage / ImagePath stay the marker icon.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetMapLayersResult.Data">
@@ -14418,11 +14474,23 @@
             ImagePath carries the bitmap-asset name resolved by PoiIconHelper for clients that ship PNGs.
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.PoiTypeResultData.IconUrl">
+            <summary>
+            Absolute URL of the department's uploaded icon for the POI type (a 128 px square PNG, anonymous GET,
+            immutable); null when the type has no uploaded icon, so PoiImage / ImagePath stay the marker icon.
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Mapping.PoiResultData.PoiImage">
             <summary>
             The POI-specific custom icon image name.
             New app versions should use this field for POI icons.
             ImagePath carries the bitmap-asset name resolved by PoiIconHelper for clients that ship PNGs.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.PoiResultData.IconUrl">
+            <summary>
+            Absolute URL of the department's uploaded icon for the POI type (a 128 px square PNG, anonymous GET,
+            immutable); null when the type has no uploaded icon, so PoiImage / ImagePath stay the marker icon.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Mapping.MapFeatureResultData.FeatureType">
@@ -14621,6 +14689,17 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Messages.RecipientsResultData.Selected">
             <summary>
             Is the recipient selected or not
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Messages.RecipientsResultData.TypeIconUrl">
+            <summary>
+            Unit rows: absolute URL of the department's uploaded icon for the unit's type; Roles rows: the role's uploaded map
+            icon (a 128 px square PNG, anonymous GET, immutable). Null for other rows and when there is no uploaded icon.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Messages.RecipientsResultData.TypeMapIcon">
+            <summary>
+            Unit rows only: built-in icon name the unit's type picked (e.g. "ambulance"); null when none.
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Messages.NewMessageInput">
@@ -15602,6 +15681,13 @@
             Enumeration/List of roles the user currently holds
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.RoleIconUrl">
+            <summary>
+            Absolute URL of the person's map icon: the uploaded icon of the first role they hold, in the department's role
+            order, that has one (a 128 px square PNG, anonymous GET, immutable). Null when none of their roles has an icon;
+            clients then use their default person marker.
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.StatusId">
             <summary>
             The current action/status type for the user
@@ -16265,6 +16351,18 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Roles.RoleResultData.Name">
             <summary>
             Name of the Role
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Roles.RoleResultData.IconUrl">
+            <summary>
+            Absolute URL of the role's uploaded map icon (a 128 px square PNG, anonymous GET, immutable), or null. A person's
+            map pin uses the icon of the first role they hold, by <see cref="P:Resgrid.Web.Services.Models.v4.Roles.RoleResultData.SortOrder"/>, that has one.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Roles.RoleResultData.SortOrder">
+            <summary>
+            The role's position in the department's role order (lowest first; ties order by name). 0 until the department
+            orders its roles.
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Roles.RolesResult">
@@ -18338,6 +18436,17 @@
             The Type of the Unit
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.TypeIconUrl">
+            <summary>
+            Absolute URL of the department's uploaded icon for the unit's type (a 128 px square PNG, anonymous GET,
+            immutable); null when the type has no uploaded icon
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.TypeMapIcon">
+            <summary>
+            Built-in icon name the unit's type picked (e.g. "ambulance", same names as map marker ImagePath); null when none
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.State">
             <summary>
             Units current Status (State)
@@ -18492,6 +18601,17 @@
             Custom Statuses Set Id
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Units.UnitResultData.TypeIconUrl">
+            <summary>
+            Absolute URL of the department's uploaded icon for the unit's type (a 128 px square PNG, anonymous GET,
+            immutable); null when the type has no uploaded icon
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Units.UnitResultData.TypeMapIcon">
+            <summary>
+            Built-in icon name the unit's type picked (e.g. "ambulance", same names as map marker ImagePath); null when none
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Units.UnitResultData.GroupId">
             <summary>
             Station Id of the station housing the unit (0 means no station)
@@ -18636,6 +18756,17 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Units.UnitsInfoResultData.CustomStatusSetId">
             <summary>
             Custom Statuses Set Id
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Units.UnitsInfoResultData.TypeIconUrl">
+            <summary>
+            Absolute URL of the department's uploaded icon for the unit's type (a 128 px square PNG, anonymous GET,
+            immutable); null when the type has no uploaded icon
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Units.UnitsInfoResultData.TypeMapIcon">
+            <summary>
+            Built-in icon name the unit's type picked (e.g. "ambulance", same names as map marker ImagePath); null when none
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Units.UnitsInfoResultData.GroupId">

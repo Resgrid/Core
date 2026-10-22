@@ -1624,7 +1624,7 @@
     <value>Lägg till återkommande möten och utbildningskvällar.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.call-types-priorities">
-    <value>Lägg till de ärendetyper era operatörer använder och ange deras prioriteter. Ge varje ärendetyp en klass och varje prioritet en betydelse så att rapporter och appar kan gruppera och sortera dem.</value>
+    <value>Lägg till de ärendetyper era operatörer använder och ange deras prioriteter. Ge varje ärendetyp en klass och varje prioritet en betydelse så att rapporter och appar kan gruppera och sortera dem. En larmtyp kan också ha en egen ikon som visas bredvid dess larm i listor, apparna och på kartan.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.certification-dashboard">
     <value>Registrera medlemmarnas aktuella certifieringar och granska sedan vad som snart går ut.</value>
@@ -1726,10 +1726,10 @@
     <value>Bjud in medlemmar eller lägg till dem direkt, och kontrollera sedan att alla har ett mobilnummer eller en e-postadress.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.personnel-roles">
-    <value>Skapa rollerna ni larmar ut eller rapporterar på, och tilldela dem till medlemmar.</value>
+    <value>Skapa rollerna ni larmar ut eller rapporterar på, och tilldela dem till medlemmar. Ladda upp en kartikon för roller som ska synas tydligt och ställ sedan in ordningen på sidan Roller: varje persons kartmarkör använder ikonen från den första roll personen har, i den ordningen, som har en.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.pois">
-    <value>Lägg till de platser larmoperatörer behöver se.</value>
+    <value>Lägg till de platser larmoperatörer behöver se. Ge en POI-typ en egen ikon som ersätter dess markör på kartan och i apparna.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.preventive-maintenance">
     <value>Schemalägg rutinservice för varje fordon.</value>
@@ -1771,7 +1771,7 @@
     <value>Installera Unit-appen på varje fordons surfplatta och välj dess enhet.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.unit-types">
-    <value>Skapa enhetstyper innan ni lägger till enheter så att varje enhet kan klassificeras. Ge varje typ en klass, till exempel Släckbil eller Ambulans, och välj dess statusuppsättning.</value>
+    <value>Skapa enhetstyper innan ni lägger till enheter så att varje enhet kan klassificeras. Ge varje typ en klass, till exempel Släckbil eller Ambulans, och välj dess statusuppsättning. Ladda upp en egen ikon för en typ (PNG, JPEG, GIF eller WebP, högst 1 MB, helst kvadratisk) så att dess enheter är lätta att skilja åt i listor, apparna och på kartan.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.units">
     <value>Lägg till varje enhet med dess typ och hemstationsgrupp.</value>
@@ -5440,7 +5440,7 @@
     <value>Avdelningskod som används av identifierings- och åtkomstflöden som stöds. Granska dessa mottagare innan du ändrar den.</value>
   </data>
   <data xml:space="preserve" name="TableHelp.Department.DepartmentType">
-    <value>Äldre etikett för organisationstyp. Driftprofilen ger flera sektorer; ingen av dem fastställer kliniskt omfång eller insatskvalifikationer.</value>
+    <value>Etikett för organisationstyp, anges i avdelningens inställningar. Den begränsar aldrig mallar, paket eller moduler. Driftprofilen registrerar flera sektorer; ingen av dem fastställer kliniskt omfång eller insatskvalifikationer.</value>
   </data>
   <data xml:space="preserve" name="TableHelp.Department.LinkCode">
     <value>Avdelningens länkningskod. Granska vem som kan använda en länk och rotera den via tillhörande arbetsflöde.</value>
@@ -7067,5 +7067,14 @@
   </data>
   <data xml:space="preserve" name="RuleNext.import-files-retained">
     <value>Ta bort filer du inte längre behöver, eller förkorta lagringstiden i inställningarna för Import och migrering.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.custom-map-icons">
+    <value>Egna kartikoner</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.custom-map-icons">
+    <value>Egna ikoner för enhetstyper, larmtyper, intressepunkter och personalroller som visas i listor, apparna och på kartan.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.custom-map-icons">
+    <value>Ladda upp en kvadratisk PNG med genomskinlig bakgrund, 128 × 128 px eller större, på sidan för enhetstypen, larmtypen, POI-typen eller rollen; sidan förhandsgranskar den på en ljus och en mörk karta. Ordna rollerna på sidan Roller för att välja vilken ikon en person med flera roller får.</value>
   </data>
 </root>

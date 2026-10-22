@@ -1556,4 +1556,142 @@
   <data name="UnitStatusOverrideNoMeaning" xml:space="preserve">
     <value>{0}: åsidosättningen sätter "{1}" vid {2}, men den statusen saknar betydelse, så statustimrar, frisläppningsregler och insatskort kan inte känna igen den. Ge den en betydelse under Anpassade statusar.</value>
   </data>
+  <data name="OrgTypeLabel" xml:space="preserve">
+    <value>Organisationstyp</value>
+  </data>
+  <data name="OrgTypeHelp" xml:space="preserve">
+    <value>Beskriver er organisation. Alla mallar, paket och moduler är tillgängliga oavsett vilken typ ni väljer.</value>
+  </data>
+  <data name="OrgTypeProfileHint" xml:space="preserve">
+    <value>Arbetar er organisation inom flera områden? Välj varje sektor som gäller i driftprofilen för att få inställningsförslag för var och en.</value>
+  </data>
+  <data name="OrgTypeProfileLink" xml:space="preserve">
+    <value>Avdelningens driftprofil</value>
+  </data>
+  <data name="OrgTypeNotSet" xml:space="preserve">
+    <value>Inte angiven</value>
+  </data>
+  <data name="OrgTypeInvalid" xml:space="preserve">
+    <value>Välj en organisationstyp i listan.</value>
+  </data>
+  <data name="OrgTypeGroup.FireAndRescue" xml:space="preserve">
+    <value>Brand och räddning</value>
+  </data>
+  <data name="OrgTypeGroup.HealthAndEms" xml:space="preserve">
+    <value>Ambulans och hälso- och sjukvård</value>
+  </data>
+  <data name="OrgTypeGroup.EmergencyManagement" xml:space="preserve">
+    <value>Krisberedskap och frivilliga insatser</value>
+  </data>
+  <data name="OrgTypeGroup.SecurityAndEvents" xml:space="preserve">
+    <value>Säkerhet och evenemang</value>
+  </data>
+  <data name="OrgTypeGroup.IndustrialAndUtilities" xml:space="preserve">
+    <value>Industri och försörjning</value>
+  </data>
+  <data name="OrgTypeGroup.ContractorsAndFieldServices" xml:space="preserve">
+    <value>Entreprenörer och fälttjänster</value>
+  </data>
+  <data name="OrgTypeGroup.Other" xml:space="preserve">
+    <value>Övrigt</value>
+  </data>
+  <data name="OrgType.volunteer-fire" xml:space="preserve">
+    <value>Frivillig brandkår</value>
+  </data>
+  <data name="OrgType.career-fire" xml:space="preserve">
+    <value>Heltidsbrandkår</value>
+  </data>
+  <data name="OrgType.combination-fire" xml:space="preserve">
+    <value>Kombinerad brandkår</value>
+  </data>
+  <data name="OrgType.wildland-fire" xml:space="preserve">
+    <value>Skogsbrandsbekämpning</value>
+  </data>
+  <data name="OrgType.search-and-rescue" xml:space="preserve">
+    <value>Sök och räddning</value>
+  </data>
+  <data name="OrgType.hazmat" xml:space="preserve">
+    <value>Farliga ämnen (HAZMAT)</value>
+  </data>
+  <data name="OrgType.ems" xml:space="preserve">
+    <value>Ambulanssjukvård</value>
+  </data>
+  <data name="OrgType.private-ambulance" xml:space="preserve">
+    <value>Privat ambulans och sekundärtransporter</value>
+  </data>
+  <data name="OrgType.hospital" xml:space="preserve">
+    <value>Sjukhus och vårdorganisationer</value>
+  </data>
+  <data name="OrgType.community-paramedicine" xml:space="preserve">
+    <value>Samhällsbaserad ambulanssjukvård och mobil integrerad vård</value>
+  </data>
+  <data name="OrgType.crisis-response" xml:space="preserve">
+    <value>Kris- och psykiatriska insatser</value>
+  </data>
+  <data name="OrgType.emergency-management" xml:space="preserve">
+    <value>Krisberedskap</value>
+  </data>
+  <data name="OrgType.public-safety" xml:space="preserve">
+    <value>Allmän säkerhet</value>
+  </data>
+  <data name="OrgType.cert" xml:space="preserve">
+    <value>CERT (frivilligt insatsteam)</value>
+  </data>
+  <data name="OrgType.disaster-response" xml:space="preserve">
+    <value>Katastrofinsatser</value>
+  </data>
+  <data name="OrgType.relief-org" xml:space="preserve">
+    <value>Hjälporganisation</value>
+  </data>
+  <data name="OrgType.multi-discipline" xml:space="preserve">
+    <value>Tvärdisciplinära insatser</value>
+  </data>
+  <data name="OrgType.security" xml:space="preserve">
+    <value>Säkerhet och bevakning</value>
+  </data>
+  <data name="OrgType.event-venue" xml:space="preserve">
+    <value>Evenemang och arenor</value>
+  </data>
+  <data name="OrgType.industrial-emergency-response" xml:space="preserve">
+    <value>Industriell räddningstjänst</value>
+  </data>
+  <data name="OrgType.oil-and-gas" xml:space="preserve">
+    <value>Olja och gas</value>
+  </data>
+  <data name="OrgType.power" xml:space="preserve">
+    <value>Energi</value>
+  </data>
+  <data name="OrgType.chemical" xml:space="preserve">
+    <value>Kemi</value>
+  </data>
+  <data name="OrgType.nuclear" xml:space="preserve">
+    <value>Kärnkraft</value>
+  </data>
+  <data name="OrgType.other-industrial" xml:space="preserve">
+    <value>Övrig industri</value>
+  </data>
+  <data name="OrgType.response-contractor" xml:space="preserve">
+    <value>Entreprenör för räddningsinsatser</value>
+  </data>
+  <data name="OrgType.drone-aerial-survey" xml:space="preserve">
+    <value>Drönare och flygkartering</value>
+  </data>
+  <data name="OrgType.repair-services" xml:space="preserve">
+    <value>Reparationstjänster</value>
+  </data>
+  <data name="OrgType.delivery-services" xml:space="preserve">
+    <value>Leveranstjänster</value>
+  </data>
+  <data name="OrgType.bus-and-shuttle" xml:space="preserve">
+    <value>Buss och skyttel</value>
+  </data>
+  <data name="OrgType.other-public" xml:space="preserve">
+    <value>Övrig offentlig verksamhet</value>
+  </data>
+  <data name="OrgType.other-private" xml:space="preserve">
+    <value>Övrig privat verksamhet</value>
+  </data>
+  <data name="OrgType.other" xml:space="preserve">
+    <value>Övrigt</value>
+  </data>
 </root>

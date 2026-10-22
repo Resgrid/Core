@@ -1,0 +1,191 @@
+/* Custom icon picker (Areas/User/Views/Shared/_TypeIconPicker.cshtml): guidance and a preview on the map, in a list
+   and as the stored image. The map label matches the web map's marker label (Apps/src/components/map/map.css). */
+.rg-icon-picker [hidden] {
+    display: none !important;
+}
+
+.rg-icon-picker__error:empty {
+    display: none;
+}
+
+.rg-icon-picker__warnings {
+    margin: 6px 0 0;
+    padding-left: 18px;
+    color: #8a6d3b;
+    font-size: 12px;
+}
+
+.rg-icon-picker__body {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 10px;
+}
+
+.rg-icon-picker__preview {
+    flex: 1 1 360px;
+    min-width: 0;
+}
+
+.rg-icon-picker__guidance {
+    flex: 1 1 260px;
+    max-width: 440px;
+    padding: 10px 12px;
+    border: 1px solid #e5e6e7;
+    border-radius: 4px;
+    background: #f9fafb;
+    font-size: 12px;
+}
+
+.rg-icon-picker__guidance ul {
+    margin: 0;
+    padding-left: 18px;
+}
+
+.rg-icon-picker__guidance li + li {
+    margin-top: 4px;
+}
+
+.rg-icon-picker__heading {
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.rg-icon-picker__tiles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.rg-icon-picker__tile {
+    margin: 0;
+    text-align: center;
+}
+
+.rg-icon-picker__tile figcaption {
+    margin-top: 4px;
+    color: #676a6c;
+    font-size: 11px;
+}
+
+.rg-icon-picker__map {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 150px;
+    height: 100px;
+    overflow: hidden;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+}
+
+.rg-icon-picker__map--light {
+    background-color: #ece9e1;
+    background-image:
+        linear-gradient(90deg, transparent 44%, #ffffff 44%, #ffffff 52%, transparent 52%),
+        linear-gradient(0deg, transparent 64%, #f6dd8a 64%, #f6dd8a 70%, transparent 70%),
+        linear-gradient(35deg, transparent 18%, #cde3c1 18%, #cde3c1 34%, transparent 34%);
+}
+
+.rg-icon-picker__map--dark {
+    border-color: #111827;
+    background-color: #1f2933;
+    background-image:
+        linear-gradient(90deg, transparent 44%, #3b4754 44%, #3b4754 52%, transparent 52%),
+        linear-gradient(0deg, transparent 64%, #5b6470 64%, #5b6470 70%, transparent 70%),
+        linear-gradient(35deg, transparent 18%, #23372b 18%, #23372b 34%, transparent 34%);
+}
+
+.rg-icon-picker__marker {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.rg-icon-picker__marker img {
+    display: block;
+    object-fit: contain;
+}
+
+.rg-icon-picker__placeholder {
+    width: 22px;
+    height: 22px;
+    margin: 4px 0 6px;
+    border: 2px solid #ffffff;
+    border-radius: 50% 50% 50% 0;
+    background: #9ca3af;
+    transform: rotate(-45deg);
+}
+
+.rg-icon-picker__label {
+    max-width: 136px;
+    overflow: hidden;
+    padding: 2px 6px;
+    border: 1px solid #111827;
+    border-radius: 4px;
+    color: #111827;
+    background: rgba(255, 255, 255, 0.96);
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.2;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.rg-icon-picker__list {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    min-width: 130px;
+    max-width: 200px;
+    height: 100px;
+    padding: 0 10px;
+    border: 1px solid #e5e6e7;
+    border-radius: 4px;
+    background: #ffffff;
+    font-size: 13px;
+}
+
+.rg-icon-picker__list span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.rg-icon-picker__list img {
+    flex: 0 0 auto;
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
+.rg-icon-picker__saved {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 100px;
+    border: 1px solid #e5e6e7;
+    border-radius: 4px;
+    background-color: #ffffff;
+    background-image:
+        linear-gradient(45deg, #e5e7eb 25%, transparent 25%),
+        linear-gradient(-45deg, #e5e7eb 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #e5e7eb 75%),
+        linear-gradient(-45deg, transparent 75%, #e5e7eb 75%);
+    background-position: 0 0, 0 6px, 6px -6px, -6px 0;
+    background-size: 12px 12px;
+}
+
+.rg-icon-picker__saved img {
+    width: 64px;
+    height: 64px;
+}
+
+.rg-icon-picker__state {
+    margin: 8px 0 0;
+    color: #676a6c;
+    font-size: 12px;
+}

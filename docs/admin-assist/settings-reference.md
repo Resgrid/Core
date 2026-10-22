@@ -1382,6 +1382,13 @@ Dispatch Recommendation Config. Location, ETA, rest, crew and move-up settings u
 
 Default: DispatchRecommendationConfig constructor. Source: DepartmentSettingTypes.DispatchRecommendationConfig.
 
+<a id="setting-dispatchresponsecodes"></a>
+## Dispatch Response Codes
+
+Dispatch Response Codes. Optional per-unit response codes (for example C3 for lights and siren) that conditional run card rows propose, and whether crews see them on unit pushes and in the field apps. Empty means codes appear nowhere.
+
+Default: DispatchResponseCodesConfig constructor. Source: DepartmentSettingTypes.DispatchResponseCodes.
+
 <a id="setting-newcallfieldpolicy"></a>
 ## New Call Field Policy
 
@@ -1563,6 +1570,27 @@ Default: 0. Source: DispatchRecommendationConfig.InQuartersTurnoutSeconds.
 Dispatch Recommendation Config / Mobile Turnout Seconds. Seconds a unit that is already out and available needs before it is moving; applies to units ranked from GPS. Added to travel time when ranking closest units; zero means none.
 
 Default: 0. Source: DispatchRecommendationConfig.MobileTurnoutSeconds.
+
+<a id="field-dispatchrecommendationconfig-personnelturnoutseconds"></a>
+## Dispatch Recommendation Config / Personnel Turnout Seconds
+
+Dispatch Recommendation Config / Personnel Turnout Seconds. Seconds a person needs before they are moving; added to their travel time when run card rows that accept people rank them against units. Zero means none.
+
+Default: 0. Source: DispatchRecommendationConfig.PersonnelTurnoutSeconds.
+
+<a id="field-dispatchrecommendationconfig-waitingcallautodispatch"></a>
+## Dispatch Recommendation Config / Waiting Call Auto Dispatch
+
+Dispatch Recommendation Config / Waiting Call Auto Dispatch. When a unit becomes available that matches a call awaiting resources, send it to the highest-priority waiting call automatically instead of only alerting dispatchers. Run cards can override this; off by default.
+
+Default: false. Source: DispatchRecommendationConfig.WaitingCallAutoDispatch.
+
+<a id="field-dispatchrecommendationconfig-waitingcallmaxresponseseconds"></a>
+## Dispatch Recommendation Config / Waiting Call Max Response Seconds
+
+Dispatch Recommendation Config / Waiting Call Max Response Seconds. Limit for automatic dispatch to calls awaiting resources: a freed unit whose estimated response is longer than this is alerted, not sent. Zero means no limit; the alert itself always fires.
+
+Default: 0. Source: DispatchRecommendationConfig.WaitingCallMaxResponseSeconds.
 
 <a id="field-dispatchrecommendationconfig-restperiodminutes"></a>
 ## Dispatch Recommendation Config / Rest Period Minutes
@@ -2388,6 +2416,11 @@ Points of Interest Points of interest such as stations, hospitals and hydrants. 
 ## Custom map icons
 
 Custom map icons Your own icons for unit types, call types, points of interest and personnel roles, shown in lists, the apps and on the map. A current map shows where responders and apparatus are and puts important locations in front of dispatchers. Upload a square PNG with a transparent background, 128 × 128 px or larger, on the unit type, call type, POI type or role page; the page previews it on a light and a dark map. To choose which icon a person with several roles shows, order the roles on the Roles page. Icons can be PNG, JPEG, GIF (first frame) or WebP files up to 1 MB and between 16 and 4096 px on each edge; SVG is not accepted. Every icon is stored as a 128 × 128 px PNG and drawn at 32 × 32 px on the map and 20 × 20 px in lists, so a bold shape works better than fine detail or text. A type without a custom icon keeps its built-in map icon. A person's map pin uses the icon of the first role they hold, in the role order, that has one; people without one keep the default person marker.
+
+<a id="map-visualizations"></a>
+## Map visualizations
+
+Map visualizations Heat maps, hexagon grids and overlays of calls, response times, station coverage, unit and personnel responses and movement, from a built-in library or saved by the department. A current map shows where responders and apparatus are and puts important locations in front of dispatchers. Open Mapping, then Visualizations, pick a library visualization such as Call hot zones, adjust its date range, filters and layers on the Customize tab, and save it. Department admins can share a saved visualization with everyone. Every visualization reads its data fresh under the viewer's own permissions: dispatch scope limits the calls, and the location visibility settings limit member and unit locations, so sharing a visualization never shares data. Response times run from the call being logged to the first unit on scene or responding, using status base types, so they appear only when units set statuses. Unit and member paths cover at most 7 days, status positions at most 12 months, and one view at most 100,000 calls.
 
 <a id="weather"></a>
 ## Weather zones and alerts

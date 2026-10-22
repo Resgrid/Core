@@ -7077,4 +7077,37 @@
   <data xml:space="preserve" name="FeatureSetup.custom-map-icons">
     <value>Prześlij kwadratowy plik PNG z przezroczystym tłem, o wymiarach co najmniej 128 × 128 px, na stronie typu jednostki, typu zgłoszenia, typu POI lub roli; strona pokaże podgląd na jasnej i ciemnej mapie. Aby wybrać ikonę osoby z kilkoma rolami, ustaw kolejność ról na stronie Role.</value>
   </data>
+  <data xml:space="preserve" name="Feature.map-visualizations">
+    <value>Wizualizacje mapy</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.map-visualizations">
+    <value>Mapy cieplne, siatki heksagonalne i nakładki zgłoszeń, czasów reakcji, pokrycia stacji, wyjazdów i przemieszczeń jednostek oraz personelu – z wbudowanej biblioteki lub zapisane przez dział.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.map-visualizations">
+    <value>Otwórz Mapowanie, a następnie Wizualizacje, wybierz wizualizację z biblioteki, np. „Gorące strefy zgłoszeń”, dostosuj zakres dat, filtry i warstwy na karcie Dostosuj i zapisz ją. Administratorzy działu mogą udostępnić zapisaną wizualizację wszystkim.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.PersonnelTurnoutSeconds">
+    <value>Konfiguracja rekomendacji dysponowania / Czas wyjazdu personelu w sekundach</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.PersonnelTurnoutSeconds">
+    <value>Sekundy potrzebne osobie przed wyruszeniem; dodawane do czasu dojazdu, gdy wiersze akceptujące osoby porównują ją z jednostkami. Zero oznacza brak.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.WaitingCallAutoDispatch">
+    <value>Konfiguracja rekomendacji dysponowania / Automatyczne wysyłanie do oczekujących zgłoszeń</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.WaitingCallAutoDispatch">
+    <value>Gdy zwolni się jednostka pasująca do zgłoszenia oczekującego na zasoby, jest automatycznie wysyłana do oczekującego zgłoszenia o najwyższym priorytecie zamiast tylko powiadomienia. Karty mogą to zmienić; domyślnie wyłączone.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.WaitingCallMaxResponseSeconds">
+    <value>Konfiguracja rekomendacji dysponowania / Maksymalny czas dotarcia dla oczekujących zgłoszeń w sekundach</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.WaitingCallMaxResponseSeconds">
+    <value>Limit automatycznego wysyłania: zwolniona jednostka z dłuższym szacowanym czasem dotarcia jest zgłaszana, a nie wysyłana. Zero oznacza brak limitu; powiadomienie jest zawsze wysyłane.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.DispatchResponseCodes">
+    <value>Kody odpowiedzi dysponowania</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DispatchResponseCodes">
+    <value>Opcjonalne kody na jednostkę (np. C3 dla sygnałów) proponowane przez wiersze kart warunkowych oraz to, czy załogi widzą je w powiadomieniach i aplikacjach. Puste oznacza, że kody nie pojawiają się nigdzie.</value>
+  </data>
 </root>

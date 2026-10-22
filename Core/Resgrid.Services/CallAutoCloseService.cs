@@ -38,13 +38,15 @@ namespace Resgrid.Services
 		private readonly IUnitsRepository _unitsRepository;
 		private readonly IEventAggregator _eventAggregator;
 		private readonly ICacheProvider _cacheProvider;
+		private readonly IOutstandingRequirementsService _outstandingRequirementsService;
 
 		public CallAutoCloseService(IDepartmentSettingsService departmentSettingsService, ICustomStateService customStateService,
 			ICallDispatchUnitRepository callDispatchUnitRepository, IUnitStatesRepository unitStatesRepository, ICallsService callsService,
 			ICallClosureService callClosureService, ICallDispatchStatusService callDispatchStatusService,
 			Lazy<IProtectedWriteService> protectedWriteService, IDepartmentsService departmentsService, IUnitsRepository unitsRepository,
-			IEventAggregator eventAggregator, ICacheProvider cacheProvider)
+			IEventAggregator eventAggregator, ICacheProvider cacheProvider, IOutstandingRequirementsService outstandingRequirementsService = null)
 		{
+			_outstandingRequirementsService = outstandingRequirementsService;
 			_departmentSettingsService = departmentSettingsService;
 			_customStateService = customStateService;
 			_callDispatchUnitRepository = callDispatchUnitRepository;
@@ -178,6 +180,13 @@ namespace Resgrid.Services
 			if (await _callClosureService.GetBlockingIncidentCommandAsync(departmentId, callId) != null)
 			{
 				Logging.LogInfo($"Call {callId} not closed automatically: it has an active incident command.");
+				return false;
+			}
+
+			// A call still awaiting a required resource stays open until it is sent, dismissed, or a person closes the call.
+			if (_outstandingRequirementsService != null && await _outstandingRequirementsService.HasOpenRequirementsAsync(departmentId, callId, cancellationToken))
+			{
+				Logging.LogInfo($"Call {callId} not closed automatically: it is still awaiting a required resource.");
 				return false;
 			}
 

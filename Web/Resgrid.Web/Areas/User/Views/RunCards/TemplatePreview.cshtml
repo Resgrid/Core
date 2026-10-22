@@ -1,0 +1,96 @@
+@model Resgrid.Model.Services.RunCardTemplatePreview
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["RunCardTemplatesHeader"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-8">
+        <h2>@Model.Template.Name</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-controller="RunCards" asp-action="Index" asp-route-area="User">@localizer["RunCardsHeader"]</a></li>
+            <li><a asp-controller="RunCards" asp-action="Templates" asp-route-area="User">@localizer["RunCardTemplatesHeader"]</a></li>
+            <li class="active"><strong>@Model.Template.Name</strong></li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    @if (TempData["TemplateError"] != null)
+                    {
+                        <div class="alert alert-danger">@TempData["TemplateError"]</div>
+                    }
+
+                    <p>@Model.Template.Description</p>
+
+                    <h4>@localizer["RunCardTemplateMappingsHeader"]</h4>
+                    <ul>
+                        @foreach (var mapping in Model.Mappings)
+                        {
+                            <li>@mapping</li>
+                        }
+                        @foreach (var unmatched in Model.Unmatched)
+                        {
+                            <li class="text-danger"><strong>@unmatched</strong> &mdash; @localizer["RunCardTemplateUnmatched"]</li>
+                        }
+                    </ul>
+
+                    <h4>@localizer["RunCardTriggersHeader"]</h4>
+                    @if (Model.Triggers.Any())
+                    {
+                        <ul>
+                            @foreach (var trigger in Model.Triggers)
+                            {
+                                <li>@trigger</li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p class="text-warning">@localizer["RunCardTemplateNoTriggers"]</p>
+                    }
+
+                    <h4>@localizer["ResponsePackagesHeader"]</h4>
+                    <ul>
+                        @foreach (var package in Model.PackagesCreated)
+                        {
+                            <li>@package <span class="label label-primary">@localizer["RunCardTemplateNewBadge"]</span></li>
+                        }
+                        @foreach (var package in Model.PackagesReused)
+                        {
+                            <li>@package <span class="label label-default">@localizer["RunCardTemplateReusedBadge"]</span></li>
+                        }
+                    </ul>
+
+                    @if (Model.CodesAdded.Any())
+                    {
+                        <h4>@localizer["ResponseCodesLabel"]</h4>
+                        <p class="text-muted">@localizer["RunCardTemplateCodesAdded"] @string.Join(", ", Model.CodesAdded)</p>
+                    }
+
+                    @foreach (var warning in Model.Warnings)
+                    {
+                        <div class="alert alert-warning">@warning</div>
+                    }
+
+                    <div class="hr-line-dashed"></div>
+                    <form asp-controller="RunCards" asp-action="ApplyTemplate" asp-route-area="User" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="templateId" value="@Model.Template.Id" />
+                        <a class="btn btn-white" asp-controller="RunCards" asp-action="Templates" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                        <button type="submit" class="btn btn-primary" @(Model.CanApply ? "" : "disabled")>@localizer["RunCardTemplateCreateButton"]</button>
+                        @if (!Model.CanApply)
+                        {
+                            <span class="text-danger">@localizer["RunCardTemplateBlocked"]</span>
+                        }
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

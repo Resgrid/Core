@@ -69,6 +69,7 @@ namespace Resgrid.Providers.Bus
 			_eventAggregator.AddAsyncListener(unitLocationUpdatedTopicHandler);
 			_eventAggregator.AddListener(chatEventTopicHandler);
 			_eventAggregator.AddAsyncListener(unitStatusAlertUpdatedTopicHandler);
+			_eventAggregator.AddAsyncListener(outstandingRequirementsUpdatedTopicHandler);
 			_eventAggregator.AddAsyncListener<DomainEventDispatchedEvent>(async message =>
 			{
 				if (message.ProducerSubsystem != "Checklists") return;
@@ -710,6 +711,14 @@ namespace Resgrid.Providers.Bus
 				_rabbitTopicProvider = new RabbitTopicProvider();
 
 			await _rabbitTopicProvider.UnitStatusAlertUpdated(message.DepartmentId, message.UnitId);
+		};
+
+		public Func<OutstandingRequirementsUpdatedEvent, Task> outstandingRequirementsUpdatedTopicHandler = async delegate (OutstandingRequirementsUpdatedEvent message)
+		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
+			await _rabbitTopicProvider.OutstandingRequirementsUpdated(message.DepartmentId, message.CallId, message.Payload);
 		};
 
 		public Action<ChatEventRaised> chatEventTopicHandler = async delegate (ChatEventRaised message)

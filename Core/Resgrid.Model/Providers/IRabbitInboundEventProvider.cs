@@ -35,5 +35,8 @@ namespace Resgrid.Model.Providers
 
 		/// <summary>Unit status timer acknowledgement changes (department id, unit id).</summary>
 		void RegisterForUnitStatusAlertEvents(Func<int, string, Task> unitStatusAlertEvent);
+
+		/// <summary>Calls awaiting resources changed or a freed unit matches one (department id, call id, alert payload).</summary>
+		void RegisterForOutstandingRequirementsEvents(Func<int, string, string, Task> outstandingRequirementsEvent);
 	}
 }

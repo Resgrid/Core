@@ -177,5 +177,12 @@
 		/// record types (Department -> Terminology), e.g. "Incident" for Run. Missing = the shipped names. Labels only.
 		/// </summary>
 		DepartmentTerminology = 118,
+
+		/// <summary>
+		/// ProtoBuf-serialized <see cref="DispatchResponseCodesConfig"/>: the department's optional response code catalog
+		/// (a category per proposed resource, e.g. "Code 3") and whether crews see the codes (Dispatch Settings). Missing =
+		/// no codes; the feature is invisible.
+		/// </summary>
+		DispatchResponseCodes = 119,
 	}
 }

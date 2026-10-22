@@ -43,9 +43,11 @@ namespace Resgrid.Web.Areas.User.Models
 
 		public bool EnableStaffingReset { get; set; }
 		public string TimeToResetStaffing { get; set; }
-		public SelectList StaffingLevels { get; set; }
+		/// <summary>Staffing meanings ("b{n}") and the department's levels; see DepartmentController.BuildResetOptionsAsync.</summary>
+		public List<SelectListItem> StaffingLevels { get; set; }
 		public List<CustomStateDetail> Staffings { get; set; }
-		public int ResetStaffingTo { get; set; }
+		/// <summary>"b{n}" for a staffing meaning, or a staffing level value (the format saved before meanings).</summary>
+		public string ResetStaffingTo { get; set; }
 		public UserStateTypes UserStateTypes { get; set; }
 
 		public bool EnableStaffingSupress { get; set; }
@@ -53,8 +55,10 @@ namespace Resgrid.Web.Areas.User.Models
 
 		public bool EnableStatusReset { get; set; }
 		public string TimeToResetStatus { get; set; }
-		public SelectList StatusLevels { get; set; }
-		public int ResetStatusTo { get; set; }
+		/// <summary>Status meanings ("b{n}") and the department's statuses; see DepartmentController.BuildResetOptionsAsync.</summary>
+		public List<SelectListItem> StatusLevels { get; set; }
+		/// <summary>"b{n}" for a status meaning, or a status value (the format saved before meanings).</summary>
+		public string ResetStatusTo { get; set; }
 		public ActionTypes UserStatusTypes { get; set; }
 
 		public int PersonnelSort { get; set; }

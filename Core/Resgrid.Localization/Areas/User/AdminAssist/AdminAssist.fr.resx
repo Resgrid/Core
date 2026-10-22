@@ -7077,4 +7077,37 @@
   <data xml:space="preserve" name="FeatureSetup.custom-map-icons">
     <value>Téléversez un PNG carré à fond transparent, de 128 × 128 px ou plus, sur la page du type d'unité, du type d'appel, du type de POI ou du rôle ; la page en affiche un aperçu sur une carte claire et une carte sombre. Pour choisir l'icône d'une personne ayant plusieurs rôles, ordonnez les rôles sur la page Rôles.</value>
   </data>
+  <data xml:space="preserve" name="Feature.map-visualizations">
+    <value>Visualisations cartographiques</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.map-visualizations">
+    <value>Cartes de chaleur, grilles hexagonales et superpositions des appels, des délais d’intervention, de la couverture des casernes, des interventions et déplacements des unités et du personnel, à partir d’une bibliothèque intégrée ou enregistrées par le service.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.map-visualizations">
+    <value>Ouvrez Cartographie, puis Visualisations, choisissez une visualisation de la bibliothèque comme « Zones chaudes des appels », ajustez la période, les filtres et les calques dans l’onglet Personnaliser, puis enregistrez-la. Les administrateurs du service peuvent partager une visualisation enregistrée avec tout le monde.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.PersonnelTurnoutSeconds">
+    <value>Configuration des recommandations de régulation / Délai de départ du personnel en secondes</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.PersonnelTurnoutSeconds">
+    <value>Secondes nécessaires à une personne avant de partir ; ajoutées à son temps de trajet quand les lignes acceptant des personnes la comparent aux unités. Zéro signifie aucun.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.WaitingCallAutoDispatch">
+    <value>Configuration des recommandations de régulation / Engagement automatique des appels en attente</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.WaitingCallAutoDispatch">
+    <value>Quand une unité correspondant à un appel en attente de ressources se libère, elle est engagée automatiquement sur l'appel en attente le plus prioritaire au lieu d'une simple alerte. Les cartes peuvent le remplacer ; désactivé par défaut.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.WaitingCallMaxResponseSeconds">
+    <value>Configuration des recommandations de régulation / Réponse maximale pour les appels en attente en secondes</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.WaitingCallMaxResponseSeconds">
+    <value>Limite de l'engagement automatique : une unité libérée dont la réponse estimée dépasse cette valeur est signalée, pas engagée. Zéro signifie aucune limite ; l'alerte est toujours émise.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.DispatchResponseCodes">
+    <value>Codes de réponse de régulation</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DispatchResponseCodes">
+    <value>Codes facultatifs par unité (par exemple C3 pour gyrophares et sirène) proposés par les lignes des cartes conditionnelles, et si les équipages les voient dans les notifications et les applications. Vide signifie qu'aucun code n'apparaît.</value>
+  </data>
 </root>

@@ -1,0 +1,111 @@
+@model Resgrid.Web.Areas.User.Models.RunCards.RunCardTemplatesModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["RunCardTemplatesHeader"];
+    var categories = Model.Templates.Select(t => t.Category).Distinct().ToList();
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-8">
+        <h2>@localizer["RunCardTemplatesHeader"]</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-controller="RunCards" asp-action="Index" asp-route-area="User">@localizer["RunCardsHeader"]</a></li>
+            <li class="active"><strong>@localizer["RunCardTemplatesHeader"]</strong></li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <p class="text-muted">@localizer["RunCardTemplatesHelp"]</p>
+                    @if (Model.UnitTypesWithoutClass > 0)
+                    {
+                        <div class="alert alert-warning">
+                            @localizer["RunCardTemplatesSetClasses", Model.UnitTypesWithoutClass]
+                            <a asp-controller="Department" asp-action="Types" asp-route-area="User">@localizer["RunCardTemplatesSetClassesLink"]</a>
+                        </div>
+                    }
+
+                    @if (Model.Suggestions.Any())
+                    {
+                        <h4>@localizer["RunCardTemplatesSuggested"]</h4>
+                        <div class="row" style="display: flex; flex-wrap: wrap;">
+                            @foreach (var suggestion in Model.Suggestions)
+                            {
+                                <div class="col-sm-4">
+                                    <div class="panel panel-primary">
+                                        <div class="panel-heading">@suggestion.Template.Name</div>
+                                        <div class="panel-body">
+                                            <p>@suggestion.Template.Description</p>
+                                            <p class="text-muted"><small>@suggestion.Reason @suggestion.ResolvedTargets / @suggestion.TotalTargets</small></p>
+                                            <a asp-controller="RunCards" asp-action="TemplatePreview" asp-route-area="User" asp-route-templateId="@suggestion.Template.Id" class="btn btn-primary btn-xs">@localizer["RunCardTemplateUseButton"]</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+
+                    <div class="form-inline m-b-md">
+                        <select id="templateCategory" class="form-control">
+                            <option value="">@localizer["RunCardTemplatesAllCategories"]</option>
+                            @foreach (var category in categories)
+                            {
+                                <option value="@category">@category</option>
+                            }
+                        </select>
+                        <input type="text" id="templateSearch" class="form-control" placeholder="@localizer["RunCardTemplatesSearch"]" style="width: 300px" />
+                    </div>
+
+                    <div class="row" id="templateGrid" style="display: flex; flex-wrap: wrap;">
+                        @foreach (var template in Model.Templates)
+                        {
+                            <div class="col-sm-4 template-card" data-category="@template.Category" data-search="@template.SearchText">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <strong>@template.Name</strong>
+                                        <span class="label label-default pull-right">@template.Category</span>
+                                    </div>
+                                    <div class="panel-body" style="min-height: 120px">
+                                        <p>@template.Description</p>
+                                        <p class="text-muted"><small>
+                                            @(template.HasGraph ? localizer["RunCardTemplateShapeGraph"] : localizer["RunCardTemplateShapePackage"])
+                                            &middot; @template.Levels.Count @localizer["RunCardAlarmLevelsHeader"]
+                                        </small></p>
+                                        <a asp-controller="RunCards" asp-action="TemplatePreview" asp-route-area="User" asp-route-templateId="@template.Id" class="btn btn-white btn-xs">@localizer["RunCardTemplateUseButton"]</a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+<script>
+    $(function () {
+        function filter() {
+            var category = $('#templateCategory').val();
+            var terms = ($('#templateSearch').val() || '').toLowerCase().split(/[\s,]+/).filter(function (x) { return x; });
+            $('#templateGrid .template-card').each(function () {
+                var $card = $(this);
+                var text = String($card.data('search') || '');
+                var visible = (!category || $card.data('category') === category)
+                    && terms.every(function (term) { return text.indexOf(term) >= 0; });
+                $card.toggle(visible);
+            });
+        }
+
+        $('#templateCategory').on('change', filter);
+        $('#templateSearch').on('input', filter);
+    });
+</script>
+}

@@ -426,6 +426,11 @@ namespace Resgrid.Model.Services
 		/// <summary>Engine tuning (location age/radius, ETA re-rank, rest period, staffing gate, move-up). Never null. Cached.</summary>
 		Task<DispatchRecommendationConfig> GetDispatchRecommendationConfigAsync(int departmentId, bool bypassCache = false);
 
+		/// <summary>The department's optional response code catalog (conditional run cards). Missing = no codes.</summary>
+		Task<DispatchResponseCodesConfig> GetDispatchResponseCodesAsync(int departmentId, bool bypassCache = false);
+
+		Task<DepartmentSetting> SetDispatchResponseCodesAsync(int departmentId, DispatchResponseCodesConfig config, CancellationToken cancellationToken = default(CancellationToken));
+
 		Task<DepartmentSetting> SetDispatchRecommendationConfigAsync(int departmentId, DispatchRecommendationConfig config, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>Group-scoped dispatch switch and its department-wide roles. Never null; defaults to off. Cached on the security-setting window.</summary>

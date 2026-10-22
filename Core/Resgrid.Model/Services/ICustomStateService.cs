@@ -39,6 +39,20 @@ namespace Resgrid.Model.Services
 		/// </summary>
 		Task<int?> ResolvePersonnelStatusAsync(int departmentId, ActionBaseTypes baseType, DestinationEntityTypes destination = DestinationEntityTypes.None);
 		/// <summary>
+		/// The staffing level for a meaning: the first active level of the department's own staffing levels with that base type
+		/// (by order), or the built-in level with that meaning (Available..On Shift). Null when there is none (for example Off
+		/// Duty on the built-in levels).
+		/// </summary>
+		Task<int?> ResolvePersonnelStaffingAsync(int departmentId, StaffingBaseTypes baseType);
+		/// <summary>
+		/// The status a daily status reset sets everyone to. <paramref name="target"/> is the reset's stored value: "b{n}" is a
+		/// meaning, resolved to the department's status with it; a plain value saved before meanings is kept while it is still
+		/// one of the department's statuses, otherwise it follows its meaning. Null when nothing matches (nobody is reset).
+		/// </summary>
+		Task<int?> ResolveStatusResetAsync(int departmentId, string target);
+		/// <summary>The staffing level a daily staffing reset sets everyone to; the same rules as <see cref="ResolveStatusResetAsync"/>.</summary>
+		Task<int?> ResolveStaffingResetAsync(int departmentId, string target);
+		/// <summary>
 		/// Gets the custom personnel statuses or defaults asynchronous.
 		/// </summary>
 		/// <param name="departmentId">The department identifier.</param>
@@ -112,6 +126,12 @@ namespace Resgrid.Model.Services
 		/// <param name="state">The state.</param>
 		/// <returns>Task&lt;CustomStateDetail&gt;.</returns>
 		Task<CustomStateDetail> GetCustomPersonnelStatusAsync(int departmentId, ActionLog state);
+		/// <summary>
+		/// The status shown for a person with no status (or none inside the auto-available hour): the first Available
+		/// option of the department's own staff statuses, or the built-in Standing By for a department on the built-in ones.
+		/// The detail's CustomStateDetailId is the status id (0 for Standing By).
+		/// </summary>
+		Task<CustomStateDetail> GetDefaultPersonnelStatusAsync(int departmentId);
 		/// <summary>
 		/// Gets the custom unit state asynchronous.
 		/// </summary>

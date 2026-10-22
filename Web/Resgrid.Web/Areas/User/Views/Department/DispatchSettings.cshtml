@@ -326,6 +326,53 @@
                                     <span class="help-block m-b-none">@localizer["MobileTurnoutHelp"]</span>
                                 </div>
                             </div>
+                            @if (Model.RunCardConditionsFeatureEnabled)
+                            {
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">@localizer["PersonnelTurnoutLabel"]</label>
+                                    <div class="col-sm-9">
+                                        <input type="number" min="0" max="1800" asp-for="RecommendationPersonnelTurnoutSeconds" class="form-control" style="width: 30%" />
+                                        <span class="help-block m-b-none">@localizer["PersonnelTurnoutHelp"]</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">@localizer["WaitingCallAutoDispatchLabel"]</label>
+                                    <div class="col-sm-9">
+                                        <input type="checkbox" asp-for="RecommendationWaitingCallAutoDispatch">
+                                        <span class="help-block m-b-none">@localizer["WaitingCallAutoDispatchHelp"]</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">@localizer["WaitingCallMaxResponseLabel"]</label>
+                                    <div class="col-sm-9">
+                                        <input type="number" min="0" max="7200" asp-for="RecommendationWaitingCallMaxResponseSeconds" class="form-control" style="width: 30%" />
+                                        <span class="help-block m-b-none">@localizer["WaitingCallMaxResponseHelp"]</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">@localizer["ResponseCodesLabel"]</label>
+                                    <div class="col-sm-9">
+                                        <span class="help-block">@localizer["ResponseCodesHelp"]</span>
+                                        <input type="hidden" asp-for="ResponseCodesJson" id="ResponseCodesJson" />
+                                        <table class="table table-condensed" id="responseCodesTable">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 110px;">@localizer["ResponseCodeCodeColumn"]</th>
+                                                    <th>@localizer["ResponseCodeNameColumn"]</th>
+                                                    <th style="width: 110px;">@localizer["ResponseCodeColorColumn"]</th>
+                                                    <th style="width: 90px;">@localizer["ResponsePackageRetiredBadge"]</th>
+                                                    <th style="width: 60px;"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                        <button type="button" class="btn btn-white btn-xs" id="addResponseCodeButton">@localizer["ResponseCodeAddButton"]</button>
+                                        <div class="checkbox">
+                                            <label><input type="checkbox" asp-for="ResponseCodesShowToCrews"> @localizer["ResponseCodesShowToCrewsLabel"]</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
                         }
 
                         <div class="hr-line-dashed"></div>
@@ -726,6 +773,54 @@
 @section Scripts
 {
 <script>
+    // Conditional run cards: the response code catalog, edited as a table and posted back as JSON.
+    $(function () {
+        var $codesField = $('#ResponseCodesJson');
+        if (!$codesField.length) { return; }
+
+        var codes = [];
+        try { codes = JSON.parse($codesField.val() || '[]') || []; } catch (e) { codes = []; }
+
+        function esc(text) {
+            return $('<span>').text(text === null || text === undefined ? '' : text).html();
+        }
+
+        function render() {
+            var $body = $('#responseCodesTable tbody').empty();
+            $.each(codes, function (i, c) {
+                $body.append('<tr data-index="' + i + '">'
+                    + '<td><input type="text" class="form-control input-sm code-code" maxlength="16" value="' + esc(c.code) + '" /></td>'
+                    + '<td><input type="text" class="form-control input-sm code-name" maxlength="100" style="min-width: 180px" value="' + esc(c.name) + '" /></td>'
+                    + '<td><input type="color" class="form-control input-sm code-color" value="' + esc(c.color || '#d9534f') + '" /></td>'
+                    + '<td><input type="checkbox" class="code-retired"' + (c.retired ? ' checked' : '') + ' /></td>'
+                    + '<td><button type="button" class="btn btn-danger btn-xs remove-code">&times;</button></td></tr>');
+            });
+            $codesField.val(JSON.stringify(codes));
+        }
+
+        $('#addResponseCodeButton').on('click', function () {
+            codes.push({ id: 0, code: '', name: '', color: '#d9534f', retired: false });
+            render();
+        });
+
+        $('#responseCodesTable').on('click', '.remove-code', function () {
+            codes.splice($(this).closest('tr').data('index'), 1);
+            render();
+        });
+
+        $('#responseCodesTable').on('change', 'input', function () {
+            var $row = $(this).closest('tr');
+            var code = codes[$row.data('index')];
+            code.code = $row.find('.code-code').val();
+            code.name = $row.find('.code-name').val();
+            code.color = $row.find('.code-color').val();
+            code.retired = $row.find('.code-retired').is(':checked');
+            $codesField.val(JSON.stringify(codes));
+        });
+
+        render();
+    });
+
     $(function () {
         var statesUrl = '@Url.Action("GetActiveStatesForTimerTarget", "Department", new { area = "User" })';
 

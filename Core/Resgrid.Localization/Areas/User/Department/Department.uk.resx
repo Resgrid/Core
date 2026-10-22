@@ -1694,4 +1694,340 @@
   <data name="OrgType.other" xml:space="preserve">
     <value>Інше</value>
   </data>
+  <data name="SettingsGroupDispatch" xml:space="preserve">
+    <value>Виклики та Диспетчеризація</value>
+  </data>
+  <data name="SettingsGroupOperations" xml:space="preserve">
+    <value>Операції</value>
+  </data>
+  <data name="SettingsGroupCustomization" xml:space="preserve">
+    <value>Персоналізація</value>
+  </data>
+  <data name="SettingsGroupIntegrations" xml:space="preserve">
+    <value>Інтеграції</value>
+  </data>
+  <data name="ResetStaffingMeaningGroup" xml:space="preserve">
+    <value>Значення рівня укомплектування (ваш рівень із цим значенням)</value>
+  </data>
+  <data name="ResetStaffingOptionGroup" xml:space="preserve">
+    <value>Конкретний рівень укомплектування</value>
+  </data>
+  <data name="ResetStatusMeaningGroup" xml:space="preserve">
+    <value>Значення статусу (ваш статус із цим значенням)</value>
+  </data>
+  <data name="ResetStatusOptionGroup" xml:space="preserve">
+    <value>Конкретний статус</value>
+  </data>
+  <data name="ResetTargetSavedOption" xml:space="preserve">
+    <value>{0} (збережено раніше, більше не пропонується)</value>
+  </data>
+  <data name="RunCardRelaxUnfilledRowsLabel" xml:space="preserve">
+    <value>Послаблювати фільтри статусу для незаповнених рядків</value>
+  </data>
+  <data name="RunCardRelaxUnfilledRowsHelp" xml:space="preserve">
+    <value>Якщо фільтр статусу рядка нічого не знаходить, пропонується найшвидший доступний підрозділ того ж типу.</value>
+  </data>
+  <data name="RunCardWaitingAutoDispatchLabel" xml:space="preserve">
+    <value>Направляти звільнені підрозділи на виклики, що на них очікують</value>
+  </data>
+  <data name="RunCardWaitingAutoDispatchOff" xml:space="preserve">
+    <value>Вимкнено (лише сповіщати диспетчерів)</value>
+  </data>
+  <data name="RunCardWaitingAutoDispatchOn" xml:space="preserve">
+    <value>Увімкнено (направляти автоматично)</value>
+  </data>
+  <data name="RunCardWaitingAutoDispatchHelp" xml:space="preserve">
+    <value>Замінює налаштування підрозділу для викликів, які ця картка залишає в очікуванні ресурсу.</value>
+  </data>
+  <data name="RunCardDecisionGraphHelp" xml:space="preserve">
+    <value>Рівень може ставити запитання (який підрозділ прибуде першим, чи є доступний вчасно) і пропонувати пакет реагування для отриманого результату. Рядки вище надсилаються завжди.</value>
+  </data>
+  <data name="ResponsePackagesHeader" xml:space="preserve">
+    <value>Пакети реагування</value>
+  </data>
+  <data name="RunCardShowRawJson" xml:space="preserve">
+    <value>Показати необроблений результат</value>
+  </data>
+  <data name="RunCardTargetUnitsGroup" xml:space="preserve">
+    <value>Підрозділи</value>
+  </data>
+  <data name="RunCardTargetPeopleGroup" xml:space="preserve">
+    <value>Люди</value>
+  </data>
+  <data name="RunCardTargetAnyUnit" xml:space="preserve">
+    <value>Будь-який підрозділ</value>
+  </data>
+  <data name="RunCardTargetAnyPerson" xml:space="preserve">
+    <value>Будь-яка особа</value>
+  </data>
+  <data name="RunCardTargetAnyClass" xml:space="preserve">
+    <value>Будь-який: {0}</value>
+  </data>
+  <data name="RunCardStatusAnyAvailable" xml:space="preserve">
+    <value>Будь-який доступний</value>
+  </data>
+  <data name="RunCardStatusInQuarters" xml:space="preserve">
+    <value>У розташуванні</value>
+  </data>
+  <data name="RunCardStatusAwayFromQuarters" xml:space="preserve">
+    <value>Поза розташуванням</value>
+  </data>
+  <data name="RunCardStatusBaseTypes" xml:space="preserve">
+    <value>Статуси зі значенням</value>
+  </data>
+  <data name="RunCardNodeChoose" xml:space="preserve">
+    <value>Оберіть...</value>
+  </data>
+  <data name="RunCardOutcomePrefix" xml:space="preserve">
+    <value>Результат</value>
+  </data>
+  <data name="RunCardConditionPrefix" xml:space="preserve">
+    <value>Умова</value>
+  </data>
+  <data name="RunCardNodeStartLabel" xml:space="preserve">
+    <value>Початок</value>
+  </data>
+  <data name="RunCardNodeLabelPlaceholder" xml:space="preserve">
+    <value>Мітка для диспетчерів</value>
+  </data>
+  <data name="RunCardOutcomePackageLabel" xml:space="preserve">
+    <value>Надіслати пакет</value>
+  </data>
+  <data name="RunCardNoPackageOption" xml:space="preserve">
+    <value>Без пакета</value>
+  </data>
+  <data name="RunCardOutcomeAdviceLabel" xml:space="preserve">
+    <value>Порада для диспетчерів</value>
+  </data>
+  <data name="RunCardConditionArrivesBefore" xml:space="preserve">
+    <value>Прибуває раніше ніж</value>
+  </data>
+  <data name="RunCardConditionAvailableWithin" xml:space="preserve">
+    <value>Доступний протягом</value>
+  </data>
+  <data name="RunCardConditionSubjectLabel" xml:space="preserve">
+    <value>Ресурс</value>
+  </data>
+  <data name="RunCardConditionReferenceLabel" xml:space="preserve">
+    <value>Порівняно з</value>
+  </data>
+  <data name="RunCardConditionMarginLabel" xml:space="preserve">
+    <value>Щонайменше на (секунд)</value>
+  </data>
+  <data name="RunCardConditionWithinLabel" xml:space="preserve">
+    <value>Протягом (секунд)</value>
+  </data>
+  <data name="RunCardConditionCountLabel" xml:space="preserve">
+    <value>Скільки</value>
+  </data>
+  <data name="RunCardConditionYesLabel" xml:space="preserve">
+    <value>Якщо так</value>
+  </data>
+  <data name="RunCardConditionNoLabel" xml:space="preserve">
+    <value>Якщо ні</value>
+  </data>
+  <data name="RunCardLevelPackageLabel" xml:space="preserve">
+    <value>Пакет реагування</value>
+  </data>
+  <data name="RunCardDecisionGraphLabel" xml:space="preserve">
+    <value>Дерево рішень</value>
+  </data>
+  <data name="RunCardAddConditionButton" xml:space="preserve">
+    <value>Додати умову</value>
+  </data>
+  <data name="RunCardAddOutcomeButton" xml:space="preserve">
+    <value>Додати результат</value>
+  </data>
+  <data name="NewResponsePackageButton" xml:space="preserve">
+    <value>Новий пакет реагування</value>
+  </data>
+  <data name="ResponsePackagesHelp" xml:space="preserve">
+    <value>Пакет реагування — це іменований набір ресурсів (наприклад, «Автоцистерна і швидка»), який надсилають рівні та результати карток. Зміна пакета змінює всі картки, що його використовують.</value>
+  </data>
+  <data name="ResponsePackageNameLabel" xml:space="preserve">
+    <value>Назва</value>
+  </data>
+  <data name="ResponsePackageDescriptionLabel" xml:space="preserve">
+    <value>Опис</value>
+  </data>
+  <data name="ResponsePackageRetiredLabel" xml:space="preserve">
+    <value>Виведено (приховано у списках)</value>
+  </data>
+  <data name="ResponsePackageRowsLabel" xml:space="preserve">
+    <value>Рядки</value>
+  </data>
+  <data name="ResponsePackageRowsHelp" xml:space="preserve">
+    <value>Кожен рядок приймає будь-який зі своїх типів ресурсів. Замінний пакет заповнює те, що рядок не зміг, а «тримати очікування» змушує виклик чекати на початковий ресурс.</value>
+  </data>
+  <data name="ResponsePackageAddRowButton" xml:space="preserve">
+    <value>Додати рядок</value>
+  </data>
+  <data name="ResponsePackageRowTargetsLabel" xml:space="preserve">
+    <value>Будь-що з цього</value>
+  </data>
+  <data name="ResponsePackageRowLabelLabel" xml:space="preserve">
+    <value>Мітка рядка (необов'язково)</value>
+  </data>
+  <data name="ResponsePackageFillCount" xml:space="preserve">
+    <value>Обрати</value>
+  </data>
+  <data name="ResponsePackageFillFirstArriving" xml:space="preserve">
+    <value>Забезпечити першого, хто прибуде</value>
+  </data>
+  <data name="ResponsePackageRowStatusLabel" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="ResponsePackageRowCodeLabel" xml:space="preserve">
+    <value>Код реагування</value>
+  </data>
+  <data name="ResponsePackageNoCode" xml:space="preserve">
+    <value>Без коду</value>
+  </data>
+  <data name="ResponsePackageRowSubstituteLabel" xml:space="preserve">
+    <value>Замінний пакет</value>
+  </data>
+  <data name="ResponsePackageNoSubstitute" xml:space="preserve">
+    <value>Без заміни</value>
+  </data>
+  <data name="ResponsePackageRowOutstandingLabel" xml:space="preserve">
+    <value>Тримати очікування до надсилання</value>
+  </data>
+  <data name="ResponsePackageUsedBy" xml:space="preserve">
+    <value>Використовується</value>
+  </data>
+  <data name="ResponsePackageNotUsed" xml:space="preserve">
+    <value>Не використовується</value>
+  </data>
+  <data name="ResponsePackageRetiredBadge" xml:space="preserve">
+    <value>Виведено</value>
+  </data>
+  <data name="ResponsePackageDeleteConfirm" xml:space="preserve">
+    <value>Видалити цей пакет реагування?</value>
+  </data>
+  <data name="PersonnelTurnoutLabel" xml:space="preserve">
+    <value>Час виїзду персоналу (секунд)</value>
+  </data>
+  <data name="PersonnelTurnoutHelp" xml:space="preserve">
+    <value>Додається до часу дороги особи, коли рядки, що приймають людей, порівнюють її з підрозділами.</value>
+  </data>
+  <data name="WaitingCallAutoDispatchLabel" xml:space="preserve">
+    <value>Направляти звільнені підрозділи на виклики, що на них очікують</value>
+  </data>
+  <data name="WaitingCallAutoDispatchHelp" xml:space="preserve">
+    <value>Вимкнено: диспетчери отримують сповіщення, коли відповідний підрозділ звільняється. Увімкнено: підрозділ автоматично направляється на виклик з найвищим пріоритетом. Картки можуть це змінити.</value>
+  </data>
+  <data name="WaitingCallMaxResponseLabel" xml:space="preserve">
+    <value>Ліміт автоматичного направлення (секунд, 0 = без ліміту)</value>
+  </data>
+  <data name="WaitingCallMaxResponseHelp" xml:space="preserve">
+    <value>Про звільнений підрозділ, що далі цього ліміту, сповіщають, але не направляють. Сповіщення надсилається завжди.</value>
+  </data>
+  <data name="ResponseCodesLabel" xml:space="preserve">
+    <value>Коди реагування</value>
+  </data>
+  <data name="ResponseCodesHelp" xml:space="preserve">
+    <value>Необов'язкові коди для кожного підрозділу в пропозиціях, наприклад C3 для маячків і сирени. Залиште порожнім, щоб коди ніде не показувалися.</value>
+  </data>
+  <data name="ResponseCodeCodeColumn" xml:space="preserve">
+    <value>Код</value>
+  </data>
+  <data name="ResponseCodeNameColumn" xml:space="preserve">
+    <value>Назва</value>
+  </data>
+  <data name="ResponseCodeColorColumn" xml:space="preserve">
+    <value>Колір</value>
+  </data>
+  <data name="ResponseCodeAddButton" xml:space="preserve">
+    <value>Додати код</value>
+  </data>
+  <data name="ResponseCodesShowToCrewsLabel" xml:space="preserve">
+    <value>Показувати коди екіпажам (сповіщення і застосунки)</value>
+  </data>
+  <data name="AwaitingResourcesLabel" xml:space="preserve">
+    <value>Очікує ресурси</value>
+  </data>
+  <data name="AwaitingResourcesHelp" xml:space="preserve">
+    <value>Активні виклики, що досі чекають на ресурс, який вимагала картка, але який був недоступний під час направлення. Виклик зникає зі списку, коли надіслано відповідний ресурс, вимогу відхилено або виклик закрито.</value>
+  </data>
+  <data name="AwaitingDispatchTo" xml:space="preserve">
+    <value>Направити на {0}</value>
+  </data>
+  <data name="AwaitingDispatchUnit" xml:space="preserve">
+    <value>Направити {0}</value>
+  </data>
+  <data name="AwaitingDismiss" xml:space="preserve">
+    <value>Відхилити</value>
+  </data>
+  <data name="AwaitingDismissPrompt" xml:space="preserve">
+    <value>Чому цей ресурс більше не потрібен? (необов'язково)</value>
+  </data>
+  <data name="AwaitingSentInstead" xml:space="preserve">
+    <value>надіслано замість: {0}</value>
+  </data>
+  <data name="AwaitingAvailableNow" xml:space="preserve">
+    <value>Доступно зараз:</value>
+  </data>
+  <data name="AwaitingNoneAvailable" xml:space="preserve">
+    <value>Немає доступного відповідного підрозділу.</value>
+  </data>
+  <data name="AwaitingNone" xml:space="preserve">
+    <value>Жоден виклик не очікує ресурсів.</value>
+  </data>
+  <data name="RunCardTemplatesHeader" xml:space="preserve">
+    <value>Шаблони карток реагування</value>
+  </data>
+  <data name="RunCardTemplatesHelp" xml:space="preserve">
+    <value>Почніть із робочої картки. Шаблони називають ресурси за значенням, тож відповідають вашим типам підрозділів і ролям; перевірте, протестуйте та увімкніть.</value>
+  </data>
+  <data name="RunCardTemplatesSetClasses" xml:space="preserve">
+    <value>{0} тип(и) підрозділів не мають класу, тож шаблони розпізнають їх лише за назвою.</value>
+  </data>
+  <data name="RunCardTemplatesSetClassesLink" xml:space="preserve">
+    <value>Задати класи підрозділів</value>
+  </data>
+  <data name="RunCardTemplatesSuggested" xml:space="preserve">
+    <value>Рекомендовано вам</value>
+  </data>
+  <data name="RunCardTemplateUseButton" xml:space="preserve">
+    <value>Використати шаблон</value>
+  </data>
+  <data name="RunCardTemplatesAllCategories" xml:space="preserve">
+    <value>Усі категорії</value>
+  </data>
+  <data name="RunCardTemplatesSearch" xml:space="preserve">
+    <value>Пошук шаблонів</value>
+  </data>
+  <data name="RunCardTemplateShapeGraph" xml:space="preserve">
+    <value>Дерево рішень</value>
+  </data>
+  <data name="RunCardTemplateShapePackage" xml:space="preserve">
+    <value>Пакети реагування</value>
+  </data>
+  <data name="RunCardTemplateMappingsHeader" xml:space="preserve">
+    <value>Як шаблон відповідає вашому підрозділу</value>
+  </data>
+  <data name="RunCardTemplateUnmatched" xml:space="preserve">
+    <value>немає відповідника в цьому підрозділі. Задайте клас підрозділу або додайте тип чи роль.</value>
+  </data>
+  <data name="RunCardTemplateNoTriggers" xml:space="preserve">
+    <value>Тригер не знайдено; додайте його в редакторі перед увімкненням картки.</value>
+  </data>
+  <data name="RunCardTemplateNewBadge" xml:space="preserve">
+    <value>новий</value>
+  </data>
+  <data name="RunCardTemplateReusedBadge" xml:space="preserve">
+    <value>наявний</value>
+  </data>
+  <data name="RunCardTemplateCodesAdded" xml:space="preserve">
+    <value>Ці коди буде додано до каталогу:</value>
+  </data>
+  <data name="RunCardTemplateCreateButton" xml:space="preserve">
+    <value>Створити картку (вимкнену)</value>
+  </data>
+  <data name="RunCardTemplateBlocked" xml:space="preserve">
+    <value>Спершу вирішіть ресурси без відповідності.</value>
+  </data>
+  <data name="RunCardTemplateAppliedMessage" xml:space="preserve">
+    <value>Створено з шаблону та збережено вимкненою. Перевірте тригери й рядки, протестуйте на вкладці «Тест», потім увімкніть.</value>
+  </data>
 </root>

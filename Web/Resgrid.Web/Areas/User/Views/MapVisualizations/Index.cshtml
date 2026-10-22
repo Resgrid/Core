@@ -1,0 +1,45 @@
+@model Resgrid.Web.Areas.User.Models.Mapping.MapVisualizationsIndexView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.Mapping> mappingLocalizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.MapVisualizations> localizer
+@{
+	var moduleTitle = await departmentTerms.NameAsync(DepartmentTerms.Mapping, mappingLocalizer["MappingHeader"]);
+	ViewBag.Title = "Resgrid | " + localizer["PageTitle"];
+	ViewData["Title"] = ViewBag.Title;
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@localizer["PageTitle"]</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+			</li>
+			<li>
+				<a asp-controller="Mapping" asp-action="Index" asp-route-area="User">@moduleTitle</a>
+			</li>
+			<li class="active">
+				<strong>@localizer["PageTitle"]</strong>
+			</li>
+		</ol>
+	</div>
+	<div class="col-sm-4">
+		<p class="text-muted" style="margin-top:24px;">@localizer["PageIntro"]</p>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<rg-map-visualizer strings="@System.Text.Json.JsonSerializer.Serialize(Model.Strings)"
+					                   tileurl="@Model.TileUrl"
+					                   attribution="@Model.Attribution"
+					                   initialid="@Model.InitialId"
+					                   initialtemplate="@Model.InitialTemplate"
+					                   initialcallid="@Model.InitialCallId"></rg-map-visualizer>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

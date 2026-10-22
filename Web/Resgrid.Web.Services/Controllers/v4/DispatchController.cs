@@ -139,6 +139,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var poiTypes = await _mappingService.GetPOITypesForDepartmentAsync(DepartmentId);
 			var pois = await _mappingService.GetPOIsForDepartmentAsync(DepartmentId);
 			var canViewPII = await _authorizationService.CanUserViewPIIAsync(UserId, DepartmentId);
+			// Shown for anyone without a status inside the auto-available hour (the department's own Available option, if any).
+			var defaultPersonnelStatus = await _customStateService.GetDefaultPersonnelStatusAsync(DepartmentId);
 
 			foreach (var user in users)
 			{
@@ -163,7 +165,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 				// Security > See Personnel Locations, the rule the map applies: the last status position is withheld otherwise.
 				var canViewLocation = await _authorizationService.CanUserViewPersonLocationViaMatrixAsync(user.UserId, UserId, DepartmentId);
-				var personnelInfo = await PersonnelController.ConvertPersonnelInfo(user, department, profile, group, roles, action, userState, canViewPII, canViewLocation);
+				var personnelInfo = await PersonnelController.ConvertPersonnelInfo(user, department, profile, group, roles, action, userState, canViewPII, canViewLocation, defaultPersonnelStatus);
 
 				result.Personnel.Add(personnelInfo);
 			}
@@ -421,6 +423,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			var lastUserActionlogs = await _actionLogsService.GetLastActionLogsForDepartmentAsync(DepartmentId);
 			var userStates = await _userStateService.GetLatestStatesForDepartmentAsync(DepartmentId);
+			// Shown for anyone without a status inside the auto-available hour (the department's own Available option, if any).
+			var defaultStatus = await _customStateService.GetDefaultPersonnelStatusAsync(DepartmentId);
 
 			var personnelSortOrder = await _departmentSettingsService.GetDepartmentPersonnelSortOrderAsync(DepartmentId);
 			var personnelStatusSortOrder = await _departmentSettingsService.GetDepartmentPersonnelListStatusSortOrderAsync(DepartmentId);
@@ -480,8 +484,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				}
 				else
 				{
-					person.Status = "Standing By";
-					person.StatusColor = "#000";
+					person.Status = defaultStatus?.ButtonText ?? "Standing By";
+					person.StatusColor = defaultStatus?.ButtonClassToColor() ?? "#777";
 				}
 
 				person.Eta = "N/A";

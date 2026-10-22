@@ -91,6 +91,11 @@ namespace Resgrid.Providers.Bus.Rabbit
 			Id = Guid.NewGuid(), Type = (int)EventingTypes.UnitStatusAlertUpdated, TimeStamp = DateTime.UtcNow, DepartmentId = departmentId, ItemId = unitId.ToString()
 		}.SerializeJson());
 
+		public Task<bool> OutstandingRequirementsUpdated(int departmentId, int callId, string payload) => SendMessage(Topics.EventingTopic, new EventingMessage
+		{
+			Id = Guid.NewGuid(), Type = (int)EventingTypes.OutstandingRequirementsUpdated, TimeStamp = DateTime.UtcNow, DepartmentId = departmentId, ItemId = callId.ToString(), Payload = payload
+		}.SerializeJson());
+
 		/// <summary>An event for one session's realtime connections (passkey workbook section 7.4).</summary>
 		public Task<bool> SessionEvent(string sessionId, string payload) => SendMessage(Topics.EventingTopic, new EventingMessage
 		{

@@ -31,7 +31,7 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			"CallLocationIndexStates", "CallNumberSequences", "DocumentNumberSequences", "DepartmentApiKeys", "ScheduledTasks", "UserStates",
 			"UdfDefinitions", "ChatbotSessions", "ChatbotMessageLog", "ChatbotDepartmentConfigs", "AiDispatchAudits", "DepartmentAiDispatchConfigs",
-			"AiBillingAccounts", "ContactPreplanHazards", "ContactPreplans", "ContactAttachments", "DepartmentProfileMedia", "TypeIcons", "RunCardActivations",
+			"AiBillingAccounts", "ContactPreplanHazards", "ContactPreplans", "ContactAttachments", "DepartmentProfileMedia", "TypeIcons", "MapVisualizations", "RunCardActivations",
 			"RunCards", "StationCoverageRequirements", "ModerationActions", "ModerationReports", "ModerationRequests", "MessageRecipients", "Messages",
 			"DepartmentMemberSensitiveData", "DepartmentMemberEmergencyContacts", "UserExternalIdentityLinks", "DepartmentSecurityPolicies",
 			"DepartmentSsoConfigs", "GdprDataExportRequests", "Autofills", "DomainEventOutbox", "ReportingDailyRollup", "SearchProjections",
@@ -70,6 +70,9 @@ namespace Resgrid.Repositories.DataRepository
 
 			// Contact preplans, their hazards and contact attachments; profile media and type icons are keyed by department
 			await Delete("ContactPreplanHazards", "ContactPreplans", "ContactAttachments", "DepartmentProfileMedia", "TypeIcons");
+
+			// Saved map visualizations (definitions only; the data they show is never stored)
+			await Delete("MapVisualizations");
 
 			// Run cards: requirements hang off alarm levels, the other children off the run card
 			foreach (var requirement in new[] { "RunCardRoleRequirements", "RunCardUnitRequirements" })

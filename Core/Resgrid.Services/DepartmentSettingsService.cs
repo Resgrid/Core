@@ -42,6 +42,7 @@ namespace Resgrid.Services
 		private static string CallNumberingConfigCacheKey = "DSetCallNumbering_{0}";
 		private static string DocumentNumberingConfigCacheKey = "DSetDocumentNumbering_{0}";
 		private static string DepartmentTerminologyCacheKey = "DSetTerminology_{0}";
+		private static string DispatchResponseCodesCacheKey = "DSetDispatchResponseCodes_{0}";
 		private static string DepartmentImportConfigCacheKey = "DSetDepartmentImport_{0}";
 		private static TimeSpan LongCacheLength = TimeSpan.FromDays(14);
 		// Security-relevant settings ride the standard department-data window instead, so a missed
@@ -1325,6 +1326,49 @@ namespace Resgrid.Services
 				DepartmentSettingTypes.DepartmentTerminology, cancellationToken);
 		}
 
+		public async Task<DispatchResponseCodesConfig> GetDispatchResponseCodesAsync(int departmentId, bool bypassCache = false)
+		{
+			async Task<string> getSetting()
+			{
+				var setting = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.DispatchResponseCodes);
+				return setting?.Setting ?? string.Empty;
+			}
+
+			string value;
+			if (Config.SystemBehaviorConfig.CacheEnabled && !bypassCache)
+				value = await _cacheProvider.RetrieveAsync<string>(string.Format(DispatchResponseCodesCacheKey, departmentId), getSetting, LongCacheLength);
+			else
+				value = await getSetting();
+
+			if (!String.IsNullOrWhiteSpace(value))
+			{
+				try
+				{
+					var config = ObjectSerialization.Deserialize<DispatchResponseCodesConfig>(value);
+
+					if (config != null)
+					{
+						config.Codes = config.Codes ?? new List<DispatchResponseCode>();
+						return config;
+					}
+				}
+				catch (Exception)
+				{
+					// Run card proposals read this on every recommendation; a corrupt blob means no codes, never a failed dispatch.
+				}
+			}
+
+			return new DispatchResponseCodesConfig();
+		}
+
+		public async Task<DepartmentSetting> SetDispatchResponseCodesAsync(int departmentId, DispatchResponseCodesConfig config,
+			CancellationToken cancellationToken = default(CancellationToken))
+		{
+			// SaveOrUpdateSettingAsync invalidates the cached value (see the DispatchResponseCodes case in its cache switch).
+			return await SaveOrUpdateSettingAsync(departmentId, ObjectSerialization.Serialize(config ?? new DispatchResponseCodesConfig()),
+				DepartmentSettingTypes.DispatchResponseCodes, cancellationToken);
+		}
+
 		public async Task<Model.Onboarding.DepartmentImportConfig> GetDepartmentImportConfigAsync(int departmentId, bool bypassCache = false)
 		{
 			async Task<string> getSetting()
@@ -1411,6 +1455,8 @@ namespace Resgrid.Services
 			config.RestPeriodMinutes = ClampToRange(config.RestPeriodMinutes, DispatchRecommendationConfig.MaximumRestPeriodMinutes);
 			config.InQuartersTurnoutSeconds = ClampToRange(config.InQuartersTurnoutSeconds, DispatchRecommendationConfig.MaximumTurnoutSeconds);
 			config.MobileTurnoutSeconds = ClampToRange(config.MobileTurnoutSeconds, DispatchRecommendationConfig.MaximumTurnoutSeconds);
+			config.PersonnelTurnoutSeconds = ClampToRange(config.PersonnelTurnoutSeconds, DispatchRecommendationConfig.MaximumTurnoutSeconds);
+			config.WaitingCallMaxResponseSeconds = ClampToRange(config.WaitingCallMaxResponseSeconds, DispatchRecommendationConfig.MaximumWaitingCallResponseSeconds);
 
 			config.EtaShortlistSize = config.EtaShortlistSize > 0
 				? Math.Min(config.EtaShortlistSize, DispatchRecommendationConfig.MaximumEtaShortlistSize)
@@ -1800,6 +1846,9 @@ namespace Resgrid.Services
 					break;
 				case DepartmentSettingTypes.DepartmentTerminology:
 					cacheKey = string.Format(DepartmentTerminologyCacheKey, departmentId);
+					break;
+				case DepartmentSettingTypes.DispatchResponseCodes:
+					cacheKey = string.Format(DispatchResponseCodesCacheKey, departmentId);
 					break;
 				case DepartmentSettingTypes.DepartmentImportConfig:
 					cacheKey = string.Format(DepartmentImportConfigCacheKey, departmentId);

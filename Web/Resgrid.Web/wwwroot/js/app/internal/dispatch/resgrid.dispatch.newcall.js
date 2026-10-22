@@ -661,10 +661,16 @@ var resgrid;
                     var row = $('#runCardPanelRow');
                     var result = prop(response, 'result');
 
+                    $('#RunCardOutcomeNodeKey').val('');
+                    $('#runCardCodePickers').empty();
+
                     if (!response || !prop(response, 'success') || !result || !prop(result, 'matchedRunCardId')) {
                         row.hide();
                         return;
                     }
+
+                    var decision = prop(result, 'decision');
+                    var decisionRenderer = resgrid.dispatch.runcarddecision;
 
                     var autoDispatch = prop(result, 'autoDispatch') === true;
                     var units = prop(result, 'units') || [];
@@ -677,6 +683,10 @@ var resgrid;
                         html += ' <span class="label label-warning">Auto-dispatch is ON — recommended resources will be dispatched automatically on save.</span>';
                     }
 
+                    if (decision && decisionRenderer) {
+                        html += decisionRenderer.renderDecision(decision);
+                    }
+
                     if (units.length) {
                         html += '<div><b>Units:</b> ' + units.map(function (u) {
                             var text = prop(u, 'unitName') || ('#' + prop(u, 'unitId'));
@@ -687,7 +697,11 @@ var resgrid;
                             } else if (distance) {
                                 text += ' (' + (distance / 1000).toFixed(1) + ' km)';
                             }
-                            return $('<span>').text(text).html();
+                            if (prop(u, 'rowLabel') && decision) {
+                                text += ' - ' + prop(u, 'rowLabel');
+                            }
+                            return $('<span>').text(text).html()
+                                + (decisionRenderer ? decisionRenderer.codeChip(prop(u, 'responseCode'), prop(u, 'responseCodeName'), prop(u, 'responseCodeColor')) : '');
                         }).join(', ') + '</div>';
                     }
                     if (personnel.length) {
@@ -704,6 +718,15 @@ var resgrid;
 
                     panel.html(html);
                     row.show();
+
+                    // Conditional run cards: post the outcome shown here so the saved call keeps what the dispatcher reviewed,
+                    // and offer a code per proposed unit when the department uses response codes.
+                    if (decision) {
+                        $('#RunCardOutcomeNodeKey').val(prop(decision, 'outcomeNodeKey') || '');
+                    }
+                    if (decisionRenderer) {
+                        $('#runCardCodePickers').html(decisionRenderer.renderCodePickers(units, prop(response, 'codes')));
+                    }
 
                     // Pre-check recommended resources when NOT auto-dispatching (dispatcher
                     // reviews and can uncheck; the normal form post picks these up).

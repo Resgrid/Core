@@ -44,6 +44,20 @@ namespace Resgrid.Model
 		[ProtoMember(6)]
 		public virtual ICollection<RunCardRoleRequirement> RoleRequirements { get; set; }
 
+		/// <summary>
+		/// Conditional run cards: the level's decision graph. Empty for a fixed level. When it has nodes, the outcome it
+		/// walks to names the package to fill, and the level's own rows act as always rows beside it.
+		/// </summary>
+		[ProtoMember(7)]
+		public virtual ICollection<RunCardDecisionNode> DecisionNodes { get; set; }
+
+		/// <summary>
+		/// Conditional run cards: a response package this level fills in addition to its own rows (how a fixed level gets
+		/// "any of" targets, codes, substitutes and outstanding requirements without a graph).
+		/// </summary>
+		[ProtoMember(8)]
+		public int? ResponsePackageId { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue
@@ -62,6 +76,6 @@ namespace Resgrid.Model
 		public int IdType => 0;
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "RunCard", "UnitRequirements", "RoleRequirements" };
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "RunCard", "UnitRequirements", "RoleRequirements", "DecisionNodes" };
 	}
 }

@@ -7077,4 +7077,37 @@
   <data xml:space="preserve" name="FeatureSetup.custom-map-icons">
     <value>Laden Sie auf der Seite des Einheitentyps, Einsatztyps, POI-Typs oder der Rolle ein quadratisches PNG mit transparentem Hintergrund ab 128 × 128 px hoch; die Seite zeigt eine Vorschau auf einer hellen und einer dunklen Karte. Welches Symbol eine Person mit mehreren Rollen erhält, legen Sie über die Reihenfolge auf der Rollenseite fest.</value>
   </data>
+  <data xml:space="preserve" name="Feature.map-visualizations">
+    <value>Kartenvisualisierungen</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.map-visualizations">
+    <value>Heatmaps, Sechseckraster und Overlays von Einsätzen, Ausrückzeiten, Wachenabdeckung, Einsätzen von Einheiten und Personal sowie deren Bewegungen – aus einer mitgelieferten Bibliothek oder von der Abteilung gespeichert.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.map-visualizations">
+    <value>Öffnen Sie Kartierung und dann Visualisierungen, wählen Sie eine Visualisierung aus der Bibliothek wie „Einsatz-Hotspots“, passen Sie Zeitraum, Filter und Ebenen auf der Registerkarte „Anpassen“ an und speichern Sie sie. Abteilungsadministratoren können eine gespeicherte Visualisierung für alle freigeben.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.PersonnelTurnoutSeconds">
+    <value>Konfiguration der Dispositionsempfehlungen / Ausrückzeit Personal in Sekunden</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.PersonnelTurnoutSeconds">
+    <value>Sekunden, die eine Person braucht, bevor sie unterwegs ist; wird zur Fahrzeit addiert, wenn Kartenzeilen, die Personen akzeptieren, sie mit Einheiten vergleichen. Null bedeutet keine.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.WaitingCallAutoDispatch">
+    <value>Konfiguration der Dispositionsempfehlungen / Automatische Alarmierung wartender Einsätze</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.WaitingCallAutoDispatch">
+    <value>Wird eine Einheit frei, die zu einem auf Einsatzmittel wartenden Einsatz passt, wird sie automatisch zum wichtigsten wartenden Einsatz gesendet, statt nur Disponenten zu benachrichtigen. Einsatzkarten können dies überschreiben; standardmäßig aus.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.WaitingCallMaxResponseSeconds">
+    <value>Konfiguration der Dispositionsempfehlungen / Höchste Antwortzeit für wartende Einsätze in Sekunden</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.WaitingCallMaxResponseSeconds">
+    <value>Grenze für die automatische Alarmierung wartender Einsätze: Eine frei gewordene Einheit mit längerer geschätzter Anfahrt wird gemeldet, nicht gesendet. Null bedeutet keine Grenze; die Benachrichtigung erfolgt immer.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.DispatchResponseCodes">
+    <value>Einsatzcodes</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DispatchResponseCodes">
+    <value>Optionale Codes je Einheit (z. B. C3 für Sondersignal), die Zeilen bedingter Einsatzkarten vorschlagen, und ob Besatzungen sie in Push-Nachrichten und Apps sehen. Leer bedeutet, dass Codes nirgends erscheinen.</value>
+  </data>
 </root>

@@ -30,6 +30,9 @@ namespace Resgrid.Services
 		private readonly IPersonnelRolesService _personnelRolesService;
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly ICustomStateService _customStateService;
+		private readonly IRunCardDecisionNodesRepository _runCardDecisionNodesRepository;
+		private readonly IRunCardTargetsRepository _runCardTargetsRepository;
+		private readonly IResponsePackagesRepository _responsePackagesRepository;
 
 		public RunCardsService(IRunCardsRepository runCardsRepository, IRunCardTriggersRepository runCardTriggersRepository,
 			IRunCardAlarmLevelsRepository runCardAlarmLevelsRepository, IRunCardUnitRequirementsRepository runCardUnitRequirementsRepository,
@@ -37,8 +40,12 @@ namespace Resgrid.Services
 			IStationCoverageRequirementsRepository stationCoverageRequirementsRepository, ICallTypesRepository callTypesRepository,
 			ICacheProvider cacheProvider, IUnitOfWork unitOfWork, IUnitsService unitsService,
 			IPersonnelRolesService personnelRolesService, IDepartmentGroupsService departmentGroupsService,
-			ICustomStateService customStateService)
+			ICustomStateService customStateService, IRunCardDecisionNodesRepository runCardDecisionNodesRepository,
+			IRunCardTargetsRepository runCardTargetsRepository, IResponsePackagesRepository responsePackagesRepository)
 		{
+			_runCardDecisionNodesRepository = runCardDecisionNodesRepository;
+			_runCardTargetsRepository = runCardTargetsRepository;
+			_responsePackagesRepository = responsePackagesRepository;
 			_runCardsRepository = runCardsRepository;
 			_runCardTriggersRepository = runCardTriggersRepository;
 			_runCardAlarmLevelsRepository = runCardAlarmLevelsRepository;
@@ -65,8 +72,10 @@ namespace Resgrid.Services
 					return new List<RunCard>();
 
 				var list = cards.ToList();
+				var nodeTargets = list.Any() ? await GetDepartmentNodeTargetsAsync(departmentId) : new List<RunCardTarget>();
+
 				foreach (var card in list)
-					await HydrateRunCardAsync(card);
+					await HydrateRunCardAsync(card, nodeTargets);
 
 				return list;
 			}
@@ -84,9 +93,16 @@ namespace Resgrid.Services
 			if (card == null)
 				return null;
 
-			await HydrateRunCardAsync(card);
+			await HydrateRunCardAsync(card, await GetDepartmentNodeTargetsAsync(card.DepartmentId));
 
 			return card;
+		}
+
+		private async Task<List<RunCardTarget>> GetDepartmentNodeTargetsAsync(int departmentId)
+		{
+			return (await _runCardTargetsRepository.GetAllByDepartmentIdAsync(departmentId))?
+				.Where(t => t.OwnerKind == (int)RunCardTargetOwners.NodeSubject || t.OwnerKind == (int)RunCardTargetOwners.NodeReference)
+				.ToList() ?? new List<RunCardTarget>();
 		}
 
 		public async Task<RunCard> SaveRunCardAsync(RunCard runCard, CancellationToken cancellationToken = default(CancellationToken))
@@ -110,6 +126,7 @@ namespace Resgrid.Services
 
 			await ValidateRunCardReferencesAsync(runCard);
 			await ValidateRunCardChildOwnershipAsync(runCard);
+			await ValidateConditionalLevelsAsync(runCard);
 
 			var isNew = runCard.RunCardId == 0;
 
@@ -153,6 +170,12 @@ namespace Resgrid.Services
 				var existingRoleReqs = isNew
 					? new List<RunCardRoleRequirement>()
 					: (await _runCardRoleRequirementsRepository.GetRoleRequirementsByRunCardIdAsync(runCard.RunCardId)).ToList();
+				var existingNodes = isNew
+					? new List<RunCardDecisionNode>()
+					: ((await _runCardDecisionNodesRepository.GetNodesByRunCardIdAsync(runCard.RunCardId))?.ToList() ?? new List<RunCardDecisionNode>());
+				var existingNodeTargets = isNew || !existingNodes.Any()
+					? new List<RunCardTarget>()
+					: await GetDepartmentNodeTargetsAsync(runCard.DepartmentId);
 
 				foreach (var removedLevel in existingLevels.Where(e => alarmLevels.All(l => l.RunCardAlarmLevelId != e.RunCardAlarmLevelId)))
 				{
@@ -161,6 +184,9 @@ namespace Resgrid.Services
 
 					foreach (var req in existingRoleReqs.Where(r => r.RunCardAlarmLevelId == removedLevel.RunCardAlarmLevelId))
 						await _runCardRoleRequirementsRepository.DeleteAsync(req, cancellationToken);
+
+					foreach (var node in existingNodes.Where(n => n.RunCardAlarmLevelId == removedLevel.RunCardAlarmLevelId))
+						await DeleteNodeAsync(node, existingNodeTargets, cancellationToken);
 
 					await _runCardAlarmLevelsRepository.DeleteAsync(removedLevel, cancellationToken);
 				}
@@ -192,6 +218,8 @@ namespace Resgrid.Services
 						req.RunCardAlarmLevelId = level.RunCardAlarmLevelId;
 						await _runCardRoleRequirementsRepository.SaveOrUpdateAsync(req, cancellationToken, true);
 					}
+
+					await SyncDecisionNodesAsync(runCard.DepartmentId, level, existingNodes, existingNodeTargets, cancellationToken);
 				}
 
 				// Availability selections
@@ -286,6 +314,163 @@ namespace Resgrid.Services
 
 			if (selections.Any(s => s.RunCardAvailabilitySelectionId != 0 && !storedSelectionIds.Contains(s.RunCardAvailabilitySelectionId)))
 				throw new ArgumentException("A status selection does not belong to this run card.", nameof(runCard));
+		}
+
+		/// <summary>
+		/// Conditional run cards: a level's decision graph must be a valid chart (one start, every node reachable, no loops,
+		/// both branches on every condition), its targets must name the department's own unit types and roles, and the
+		/// packages its outcomes and the level itself reference must be the department's. Rejected with the reasons, so the
+		/// editor can show them.
+		/// </summary>
+		private async Task ValidateConditionalLevelsAsync(RunCard runCard)
+		{
+			var levels = runCard.AlarmLevels ?? new List<RunCardAlarmLevel>();
+			var anyGraph = levels.Any(RunCardDecisionGraph.HasGraph);
+			var anyPackage = levels.Any(l => l.ResponsePackageId.HasValue);
+
+			if (!anyGraph && !anyPackage)
+				return;
+
+			var errors = new List<string>();
+			var packageIds = new HashSet<int>(((await _responsePackagesRepository.GetAllByDepartmentIdAsync(runCard.DepartmentId)) ?? Enumerable.Empty<ResponsePackage>())
+				.Select(p => p.ResponsePackageId));
+
+			HashSet<int> unitTypeIds = null;
+			HashSet<int> roleIds = null;
+
+			if (anyGraph)
+			{
+				unitTypeIds = await GetDepartmentUnitTypeIdsAsync(runCard.DepartmentId);
+				roleIds = await GetDepartmentRoleIdsAsync(runCard.DepartmentId);
+			}
+
+			foreach (var level in levels)
+			{
+				if (level.ResponsePackageId.HasValue && !packageIds.Contains(level.ResponsePackageId.Value))
+					errors.Add($"Alarm level {level.AlarmLevel}: the response package does not belong to this department.");
+
+				if (!RunCardDecisionGraph.HasGraph(level))
+					continue;
+
+				var nodes = level.DecisionNodes.Where(n => n != null).ToList();
+
+				foreach (var error in RunCardDecisionGraph.Validate(nodes))
+					errors.Add($"Alarm level {level.AlarmLevel}: {error}");
+
+				foreach (var node in nodes)
+				{
+					var nodeName = string.IsNullOrWhiteSpace(node.Label) ? (node.IsOutcome ? "An outcome" : "A condition") : $"'{node.Label.Trim()}'";
+
+					if (node.IsCondition)
+					{
+						foreach (var error in RunCardTargetRules.Validate(node.SubjectTargets, unitTypeIds, roleIds, nodeName))
+							errors.Add($"Alarm level {level.AlarmLevel}: {error}");
+
+						if (node.ConditionType == (int)RunCardConditionTypes.ArrivesBefore)
+						{
+							foreach (var error in RunCardTargetRules.Validate(node.ReferenceTargets, unitTypeIds, roleIds, nodeName))
+								errors.Add($"Alarm level {level.AlarmLevel}: {error}");
+						}
+					}
+
+					if (node.IsOutcome && node.ResponsePackageId.HasValue && !packageIds.Contains(node.ResponsePackageId.Value))
+						errors.Add($"Alarm level {level.AlarmLevel}: {nodeName} uses a response package that does not belong to this department.");
+
+					if (!string.IsNullOrEmpty(node.Label) && node.Label.Length > 200)
+						errors.Add($"Alarm level {level.AlarmLevel}: {nodeName} has a label longer than 200 characters.");
+
+					if (!string.IsNullOrEmpty(node.AdviceText) && node.AdviceText.Length > 1000)
+						errors.Add($"Alarm level {level.AlarmLevel}: {nodeName} has advice longer than 1000 characters.");
+				}
+			}
+
+			if (errors.Any())
+				throw new RunCardValidationException(errors);
+		}
+
+		/// <summary>
+		/// Writes one level's decision nodes. Nodes are matched to the stored ones by key within the level (the key is what
+		/// the Yes/No pointers use), so a node edited in place keeps its row; nodes no longer posted are deleted with their
+		/// targets. Targets are rewritten whole per node. Child ids posted by the client are never trusted: only the stored
+		/// row matched by key supplies an id.
+		/// </summary>
+		private async Task SyncDecisionNodesAsync(int departmentId, RunCardAlarmLevel level, List<RunCardDecisionNode> existingNodes,
+			List<RunCardTarget> existingNodeTargets, CancellationToken cancellationToken)
+		{
+			var posted = (level.DecisionNodes ?? new List<RunCardDecisionNode>()).Where(n => n != null).ToList();
+			var stored = existingNodes.Where(n => n.RunCardAlarmLevelId == level.RunCardAlarmLevelId).ToList();
+
+			foreach (var removed in stored.Where(s => posted.All(p => !string.Equals(p.NodeKey, s.NodeKey, StringComparison.OrdinalIgnoreCase))))
+				await DeleteNodeAsync(removed, existingNodeTargets, cancellationToken);
+
+			var sort = 0;
+			foreach (var node in posted)
+			{
+				var match = stored.FirstOrDefault(s => string.Equals(s.NodeKey, node.NodeKey, StringComparison.OrdinalIgnoreCase));
+				var subjectTargets = (node.SubjectTargets ?? new List<RunCardTarget>()).Where(t => t != null).ToList();
+				var referenceTargets = (node.ReferenceTargets ?? new List<RunCardTarget>()).Where(t => t != null).ToList();
+
+				node.RunCardDecisionNodeId = match?.RunCardDecisionNodeId ?? 0;
+				node.RunCardAlarmLevelId = level.RunCardAlarmLevelId;
+				node.SortOrder = sort++;
+
+				if (node.NodeKind == (int)RunCardDecisionNodeKinds.Outcome)
+				{
+					node.ConditionType = (int)RunCardConditionTypes.None;
+					node.YesNodeKey = null;
+					node.NoNodeKey = null;
+					subjectTargets.Clear();
+					referenceTargets.Clear();
+				}
+				else
+				{
+					node.ResponsePackageId = null;
+					node.AdviceText = null;
+
+					if (node.ConditionType != (int)RunCardConditionTypes.ArrivesBefore)
+						referenceTargets.Clear();
+				}
+
+				await _runCardDecisionNodesRepository.SaveOrUpdateAsync(node, cancellationToken, true);
+
+				foreach (var old in existingNodeTargets.Where(t => t.OwnerId == node.RunCardDecisionNodeId
+					&& (t.OwnerKind == (int)RunCardTargetOwners.NodeSubject || t.OwnerKind == (int)RunCardTargetOwners.NodeReference)))
+					await _runCardTargetsRepository.DeleteAsync(old, cancellationToken);
+
+				node.SubjectTargets = await WriteTargetsAsync(departmentId, RunCardTargetOwners.NodeSubject, node.RunCardDecisionNodeId, subjectTargets, cancellationToken);
+				node.ReferenceTargets = await WriteTargetsAsync(departmentId, RunCardTargetOwners.NodeReference, node.RunCardDecisionNodeId, referenceTargets, cancellationToken);
+			}
+		}
+
+		private async Task<List<RunCardTarget>> WriteTargetsAsync(int departmentId, RunCardTargetOwners owner, int ownerId, List<RunCardTarget> targets,
+			CancellationToken cancellationToken)
+		{
+			var written = new List<RunCardTarget>();
+
+			foreach (var target in targets)
+			{
+				var copy = new RunCardTarget
+				{
+					DepartmentId = departmentId,
+					OwnerKind = (int)owner,
+					OwnerId = ownerId,
+					TargetKind = target.TargetKind,
+					TargetRefId = target.TargetKind == (int)RunCardTargetKinds.AnyUnit || target.TargetKind == (int)RunCardTargetKinds.AnyPerson ? null : target.TargetRefId
+				};
+
+				written.Add(await _runCardTargetsRepository.SaveOrUpdateAsync(copy, cancellationToken, true));
+			}
+
+			return written;
+		}
+
+		private async Task DeleteNodeAsync(RunCardDecisionNode node, List<RunCardTarget> existingNodeTargets, CancellationToken cancellationToken)
+		{
+			foreach (var target in existingNodeTargets.Where(t => t.OwnerId == node.RunCardDecisionNodeId
+				&& (t.OwnerKind == (int)RunCardTargetOwners.NodeSubject || t.OwnerKind == (int)RunCardTargetOwners.NodeReference)))
+				await _runCardTargetsRepository.DeleteAsync(target, cancellationToken);
+
+			await _runCardDecisionNodesRepository.DeleteAsync(node, cancellationToken);
 		}
 
 		/// <summary>
@@ -458,6 +643,36 @@ namespace Resgrid.Services
 			if (runCard.AvailabilitySelections != null)
 				runCard.AvailabilitySelections = selections;
 
+			// Conditional run cards: decision node targets and package references to things the department deleted.
+			if (levels.Any(l => RunCardDecisionGraph.HasGraph(l) || l.ResponsePackageId.HasValue))
+			{
+				var unitTypeIds = await GetDepartmentUnitTypeIdsAsync(runCard.DepartmentId);
+				var roleIds = await GetDepartmentRoleIdsAsync(runCard.DepartmentId);
+				var packageIds = new HashSet<int>(((await _responsePackagesRepository.GetAllByDepartmentIdAsync(runCard.DepartmentId)) ?? Enumerable.Empty<ResponsePackage>())
+					.Select(p => p.ResponsePackageId));
+
+				foreach (var level in levels)
+				{
+					if (level.ResponsePackageId.HasValue && !packageIds.Contains(level.ResponsePackageId.Value))
+					{
+						level.ResponsePackageId = null;
+						removed++;
+					}
+
+					foreach (var node in level.DecisionNodes ?? new List<RunCardDecisionNode>())
+					{
+						removed += RunCardTargetRules.RemoveDetached(node.SubjectTargets, unitTypeIds, roleIds);
+						removed += RunCardTargetRules.RemoveDetached(node.ReferenceTargets, unitTypeIds, roleIds);
+
+						if (node.ResponsePackageId.HasValue && !packageIds.Contains(node.ResponsePackageId.Value))
+						{
+							node.ResponsePackageId = null;
+							removed++;
+						}
+					}
+				}
+			}
+
 			return removed;
 		}
 
@@ -520,6 +735,10 @@ namespace Resgrid.Services
 
 			// Children are removed before the header, so a partial failure would strand rows
 			// pointing at a card that no longer exists (or leave a card with no alarm levels).
+			var nodeTargets = (card.AlarmLevels ?? Enumerable.Empty<RunCardAlarmLevel>()).Any(RunCardDecisionGraph.HasGraph)
+				? await GetDepartmentNodeTargetsAsync(card.DepartmentId)
+				: new List<RunCardTarget>();
+
 			_unitOfWork.CreateOrGetConnection();
 			try
 			{
@@ -530,6 +749,9 @@ namespace Resgrid.Services
 
 					foreach (var req in level.RoleRequirements ?? Enumerable.Empty<RunCardRoleRequirement>())
 						await _runCardRoleRequirementsRepository.DeleteAsync(req, cancellationToken);
+
+					foreach (var node in level.DecisionNodes ?? Enumerable.Empty<RunCardDecisionNode>())
+						await DeleteNodeAsync(node, nodeTargets, cancellationToken);
 
 					await _runCardAlarmLevelsRepository.DeleteAsync(level, cancellationToken);
 				}
@@ -717,7 +939,7 @@ namespace Resgrid.Services
 				.ToDictionary(x => x.UserId, x => x.LastDispatchedOn);
 		}
 
-		private async Task HydrateRunCardAsync(RunCard card)
+		private async Task HydrateRunCardAsync(RunCard card, List<RunCardTarget> nodeTargets)
 		{
 			var triggers = await _runCardTriggersRepository.GetTriggersByRunCardIdAsync(card.RunCardId);
 			card.Triggers = triggers?.ToList() ?? new List<RunCardTrigger>();
@@ -728,11 +950,22 @@ namespace Resgrid.Services
 				?? new List<RunCardUnitRequirement>();
 			var roleReqs = (await _runCardRoleRequirementsRepository.GetRoleRequirementsByRunCardIdAsync(card.RunCardId))?.ToList()
 				?? new List<RunCardRoleRequirement>();
+			var nodes = (await _runCardDecisionNodesRepository.GetNodesByRunCardIdAsync(card.RunCardId))?.ToList()
+				?? new List<RunCardDecisionNode>();
+
+			foreach (var node in nodes)
+			{
+				node.SubjectTargets = (nodeTargets ?? new List<RunCardTarget>())
+					.Where(t => t.OwnerKind == (int)RunCardTargetOwners.NodeSubject && t.OwnerId == node.RunCardDecisionNodeId).OrderBy(t => t.RunCardTargetId).ToList();
+				node.ReferenceTargets = (nodeTargets ?? new List<RunCardTarget>())
+					.Where(t => t.OwnerKind == (int)RunCardTargetOwners.NodeReference && t.OwnerId == node.RunCardDecisionNodeId).OrderBy(t => t.RunCardTargetId).ToList();
+			}
 
 			foreach (var level in levels)
 			{
 				level.UnitRequirements = unitReqs.Where(r => r.RunCardAlarmLevelId == level.RunCardAlarmLevelId).ToList();
 				level.RoleRequirements = roleReqs.Where(r => r.RunCardAlarmLevelId == level.RunCardAlarmLevelId).ToList();
+				level.DecisionNodes = nodes.Where(n => n.RunCardAlarmLevelId == level.RunCardAlarmLevelId).ToList();
 			}
 
 			card.AlarmLevels = levels;

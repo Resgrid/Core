@@ -7077,4 +7077,37 @@
   <data xml:space="preserve" name="FeatureSetup.custom-map-icons">
     <value>ارفع صورة PNG مربعة بخلفية شفافة بحجم 128 × 128 بكسل أو أكبر في صفحة نوع الوحدة أو نوع البلاغ أو نوع نقطة الاهتمام أو الدور؛ وتعرض الصفحة معاينة على خريطة فاتحة وأخرى داكنة. لاختيار الأيقونة التي تظهر لشخص لديه عدة أدوار، رتّب الأدوار في صفحة الأدوار.</value>
   </data>
+  <data xml:space="preserve" name="Feature.map-visualizations">
+    <value>التصورات المرئية للخريطة</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.map-visualizations">
+    <value>خرائط حرارية وشبكات سداسية وطبقات للبلاغات وأوقات الاستجابة وتغطية المراكز واستجابات الوحدات والأفراد وتحركاتهم، من مكتبة مدمجة أو محفوظة من قبل الإدارة.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.map-visualizations">
+    <value>افتح الخرائط ثم التصورات، واختر تصورًا من المكتبة مثل «المناطق الساخنة للبلاغات»، واضبط النطاق الزمني والمرشحات والطبقات في علامة التبويب «التخصيص»، ثم احفظه. يمكن لمسؤولي الإدارة مشاركة تصور محفوظ مع الجميع.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.PersonnelTurnoutSeconds">
+    <value>إعداد توصيات الإرسال / زمن انطلاق الأفراد بالثواني</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.PersonnelTurnoutSeconds">
+    <value>الثواني التي يحتاجها الشخص قبل التحرك؛ تُضاف إلى زمن تنقله عندما تقارنه الصفوف التي تقبل الأشخاص بالوحدات. الصفر يعني لا شيء.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.WaitingCallAutoDispatch">
+    <value>إعداد توصيات الإرسال / الإرسال التلقائي للبلاغات المنتظرة</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.WaitingCallAutoDispatch">
+    <value>عندما تصبح وحدة مطابقة لبلاغ ينتظر الموارد متاحة، تُرسل تلقائياً إلى البلاغ المنتظر الأعلى أولوية بدلاً من مجرد التنبيه. يمكن للبطاقات تجاوز ذلك؛ متوقف افتراضياً.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.WaitingCallMaxResponseSeconds">
+    <value>إعداد توصيات الإرسال / أقصى زمن استجابة للبلاغات المنتظرة بالثواني</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.WaitingCallMaxResponseSeconds">
+    <value>حد الإرسال التلقائي: الوحدة المتاحة ذات زمن الاستجابة المقدر الأطول يُنبه بها ولا تُرسل. الصفر يعني بلا حد؛ يصدر التنبيه دائماً.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.DispatchResponseCodes">
+    <value>رموز استجابة الإرسال</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DispatchResponseCodes">
+    <value>رموز اختيارية لكل وحدة (مثل C3 للأضواء وصفارة الإنذار) تقترحها صفوف البطاقات المشروطة، وما إذا كانت الطواقم تراها في الإشعارات والتطبيقات. الفراغ يعني عدم ظهور الرموز في أي مكان.</value>
+  </data>
 </root>

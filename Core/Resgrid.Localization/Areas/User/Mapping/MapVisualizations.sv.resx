@@ -1,0 +1,1061 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Mapping Index -->
+  <data name="PageTitle" xml:space="preserve">
+    <value>Kartvisualiseringar</value>
+  </data>
+  <data name="PageIntro" xml:space="preserve">
+    <value>Värmekartor och dataöverlägg för dina larm, utryckningar och enheters rörelser.</value>
+  </data>
+  <data name="Loading" xml:space="preserve">
+    <value>Läser in visualiseringar…</value>
+  </data>
+  <data name="Running" xml:space="preserve">
+    <value>Uppdaterar kartan…</value>
+  </data>
+  <data name="Untitled" xml:space="preserve">
+    <value>Namnlös visualisering</value>
+  </data>
+  <data name="Unsaved" xml:space="preserve">
+    <value>Osparade ändringar</value>
+  </data>
+  <data name="Station" xml:space="preserve">
+    <value>Station</value>
+  </data>
+  <data name="NoValue" xml:space="preserve">
+    <value>Inget värde</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Spara</value>
+  </data>
+  <data name="SaveAs" xml:space="preserve">
+    <value>Spara som ny</value>
+  </data>
+  <data name="SaveTitle" xml:space="preserve">
+    <value>Spara visualisering</value>
+  </data>
+  <data name="SaveAsTitle" xml:space="preserve">
+    <value>Spara som ny visualisering</value>
+  </data>
+  <data name="SaveName" xml:space="preserve">
+    <value>Namn</value>
+  </data>
+  <data name="SaveDescription" xml:space="preserve">
+    <value>Beskrivning (valfritt)</value>
+  </data>
+  <data name="SaveShare" xml:space="preserve">
+    <value>Dela med hela avdelningen</value>
+  </data>
+  <data name="SaveShareHint" xml:space="preserve">
+    <value>Alla som kan se larm ser den här visualiseringen i sin lista. Varje person ser fortfarande bara de data som personen har behörighet att se.</value>
+  </data>
+  <data name="SavePersonalHint" xml:space="preserve">
+    <value>Sparade visualiseringar syns bara för dig. Avdelningsadministratörer kan dela visualiseringar med alla.</value>
+  </data>
+  <data name="SaveErrorNameRequired" xml:space="preserve">
+    <value>Ange ett namn.</value>
+  </data>
+  <data name="SaveErrorNotFound" xml:space="preserve">
+    <value>Den här visualiseringen finns inte längre.</value>
+  </data>
+  <data name="SaveErrorNotAllowed" xml:space="preserve">
+    <value>Du kan inte ändra den här visualiseringen. Delade visualiseringar kan bara ändras av avdelningsadministratörer.</value>
+  </data>
+  <data name="SaveErrorLimitReached" xml:space="preserve">
+    <value>Din avdelning har nått gränsen för sparade visualiseringar. Ta bort en först.</value>
+  </data>
+  <data name="SaveErrorDefinitionTooLarge" xml:space="preserve">
+    <value>Den här visualiseringen har för många inställningar för att kunna sparas.</value>
+  </data>
+  <data name="SaveErrorUnknown" xml:space="preserve">
+    <value>Visualiseringen kunde inte sparas.</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Visualiseringen har sparats.</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Avbryt</value>
+  </data>
+  <data name="CopyOf" xml:space="preserve">
+    <value>Kopia av {0}</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Ta bort</value>
+  </data>
+  <data name="DeleteNamed" xml:space="preserve">
+    <value>Ta bort {0}</value>
+  </data>
+  <data name="DeleteConfirm" xml:space="preserve">
+    <value>Vill du ta bort visualiseringen ”{0}”? Det går inte att ångra.</value>
+  </data>
+  <data name="DeleteFailed" xml:space="preserve">
+    <value>Visualiseringen kunde inte tas bort.</value>
+  </data>
+  <data name="Deleted" xml:space="preserve">
+    <value>Visualiseringen har tagits bort.</value>
+  </data>
+  <data name="ExportCsv" xml:space="preserve">
+    <value>Ladda ned CSV</value>
+  </data>
+  <data name="CopyLink" xml:space="preserve">
+    <value>Kopiera länk</value>
+  </data>
+  <data name="LinkCopied" xml:space="preserve">
+    <value>Länken har kopierats.</value>
+  </data>
+  <data name="Fullscreen" xml:space="preserve">
+    <value>Helskärm</value>
+  </data>
+  <data name="PanelHide" xml:space="preserve">
+    <value>Dölj sidopanelen</value>
+  </data>
+  <data name="PanelShow" xml:space="preserve">
+    <value>Visa sidopanelen</value>
+  </data>
+  <data name="ErrorLoad" xml:space="preserve">
+    <value>Visualiseringen kunde inte läsas in. Försök igen om en stund.</value>
+  </data>
+  <data name="ErrorForbidden" xml:space="preserve">
+    <value>Du har inte behörighet att se de här uppgifterna.</value>
+  </data>
+  <data name="ErrorNoTiles" xml:space="preserve">
+    <value>Kartan är inte konfigurerad för din avdelning.</value>
+  </data>
+  <data name="TabLibrary" xml:space="preserve">
+    <value>Bibliotek</value>
+  </data>
+  <data name="TabCustomize" xml:space="preserve">
+    <value>Anpassa</value>
+  </data>
+  <data name="SavedTitle" xml:space="preserve">
+    <value>Sparade visualiseringar</value>
+  </data>
+  <data name="SavedShared" xml:space="preserve">
+    <value>Delade med avdelningen</value>
+  </data>
+  <data name="SavedMine" xml:space="preserve">
+    <value>Mina visualiseringar</value>
+  </data>
+  <data name="SavedPersonal" xml:space="preserve">
+    <value>Syns bara för dig</value>
+  </data>
+  <data name="SavedSharedBy" xml:space="preserve">
+    <value>Delad av {0}</value>
+  </data>
+  <data name="SavedSharedBadge" xml:space="preserve">
+    <value>Delad</value>
+  </data>
+  <data name="LibraryTitle" xml:space="preserve">
+    <value>Visualiseringsbibliotek</value>
+  </data>
+  <data name="LibraryHint" xml:space="preserve">
+    <value>Välj en utgångspunkt, justera den sedan på fliken Anpassa och spara din egen version.</value>
+  </data>
+  <data name="LibrarySearch" xml:space="preserve">
+    <value>Sök i biblioteket</value>
+  </data>
+  <data name="LibraryRecommended" xml:space="preserve">
+    <value>Rekommenderat för din organisation</value>
+  </data>
+  <data name="LibraryRecommendedBadge" xml:space="preserve">
+    <value>Rekommenderad</value>
+  </data>
+  <data name="LibraryShowAll" xml:space="preserve">
+    <value>Visa alla {0} visualiseringar</value>
+  </data>
+  <data name="LibraryNeedsCall" xml:space="preserve">
+    <value>Välj ett larm på fliken Anpassa.</value>
+  </data>
+  <data name="Category_CallDemand" xml:space="preserve">
+    <value>Larmvolym</value>
+  </data>
+  <data name="Category_ResponsePerformance" xml:space="preserve">
+    <value>Insatsprestanda</value>
+  </data>
+  <data name="Category_Coverage" xml:space="preserve">
+    <value>Täckning</value>
+  </data>
+  <data name="Category_Resources" xml:space="preserve">
+    <value>Enheter och personal</value>
+  </data>
+  <data name="Category_Tracking" xml:space="preserve">
+    <value>Spårning</value>
+  </data>
+  <data name="Category_CommunityRisk" xml:space="preserve">
+    <value>Samhällsrisk</value>
+  </data>
+  <data name="Library_call_hot_zones_Name" xml:space="preserve">
+    <value>Larmens hotspots</value>
+  </data>
+  <data name="Library_call_hot_zones_Description" xml:space="preserve">
+    <value>Värmekarta över alla larm de senaste 12 månaderna. De ljusaste områdena är där larmen samlas.</value>
+  </data>
+  <data name="Library_busiest_areas_Name" xml:space="preserve">
+    <value>Mest belastade områden (rutnät)</value>
+  </data>
+  <data name="Library_busiest_areas_Description" xml:space="preserve">
+    <value>Ett hexagonrutnät som räknar larmen i varje område, så att du kan jämföra stadsdelar utifrån antal i stället för ljusstyrka.</value>
+  </data>
+  <data name="Library_calls_by_type_Name" xml:space="preserve">
+    <value>Larm per typ</value>
+  </data>
+  <data name="Library_calls_by_type_Description" xml:space="preserve">
+    <value>Varje larm de senaste 90 dagarna som en punkt, färgad efter larmtyp.</value>
+  </data>
+  <data name="Library_dominant_call_type_Name" xml:space="preserve">
+    <value>Vanligaste larmtyp per område</value>
+  </data>
+  <data name="Library_dominant_call_type_Description" xml:space="preserve">
+    <value>Ett rutnät färgat efter den vanligaste larmtypen i varje område. Starkare färg betyder fler larm.</value>
+  </data>
+  <data name="Library_calls_by_priority_Name" xml:space="preserve">
+    <value>Larm per prioritet</value>
+  </data>
+  <data name="Library_calls_by_priority_Description" xml:space="preserve">
+    <value>Larm de senaste 90 dagarna färgade efter prioritet, för att se var brådskande larm kommer ifrån.</value>
+  </data>
+  <data name="Library_call_outcomes_Name" xml:space="preserve">
+    <value>Larmutfall</value>
+  </data>
+  <data name="Library_call_outcomes_Description" xml:space="preserve">
+    <value>Larm färgade efter hur de avslutades: avslutat, avbrutet, obefogat, falsklarm, överfört med mera.</value>
+  </data>
+  <data name="Library_time_of_day_Name" xml:space="preserve">
+    <value>Tid på dygnet</value>
+  </data>
+  <data name="Library_time_of_day_Description" xml:space="preserve">
+    <value>Larm färgade efter när de kom in: natt, morgon, eftermiddag eller kväll. Användbart för bemanning och skiftplanering.</value>
+  </data>
+  <data name="Library_weekday_vs_weekend_Name" xml:space="preserve">
+    <value>Vardag jämfört med helg</value>
+  </data>
+  <data name="Library_weekday_vs_weekend_Description" xml:space="preserve">
+    <value>Larm uppdelade på vardag och helg, för planering av frivilligas tillgänglighet.</value>
+  </data>
+  <data name="Library_seasonal_patterns_Name" xml:space="preserve">
+    <value>Säsongsmönster</value>
+  </data>
+  <data name="Library_seasonal_patterns_Description" xml:space="preserve">
+    <value>Två år av larm färgade efter månad, för att upptäcka säsongsbunden efterfrågan, till exempel skogs- och markbränder, vattenräddning eller evenemangssäsonger.</value>
+  </data>
+  <data name="Library_response_time_by_area_Name" xml:space="preserve">
+    <value>Insatstid per område (90:e percentilen)</value>
+  </data>
+  <data name="Library_response_time_by_area_Description" xml:space="preserve">
+    <value>Ett rutnät färgat efter 90:e percentilen av tiden från registrerat larm till första enhet på plats, på samma sätt som målen i NFPA 1710 och 1720 mäts. Kräver att enheter sätter statusen på plats.</value>
+  </data>
+  <data name="Library_response_time_bands_Name" xml:space="preserve">
+    <value>Insatstidsintervall</value>
+  </data>
+  <data name="Library_response_time_bands_Description" xml:space="preserve">
+    <value>Varje larm färgat efter antal minuter till första enhet på plats: under 4, 4 till 8, 8 till 12, 12 till 20 och över 20.</value>
+  </data>
+  <data name="Library_turnout_by_area_Name" xml:space="preserve">
+    <value>Tid till första utryckning per område</value>
+  </data>
+  <data name="Library_turnout_by_area_Description" xml:space="preserve">
+    <value>Ett rutnät färgat efter mediantiden från registrerat larm till första enhet som rycker ut eller är på väg.</value>
+  </data>
+  <data name="Library_time_committed_Name" xml:space="preserve">
+    <value>Bunden tid per område</value>
+  </data>
+  <data name="Library_time_committed_Description" xml:space="preserve">
+    <value>Ett rutnät färgat efter genomsnittlig tid från registrerat larm till avslutat larm: var larm binder resurser längst.</value>
+  </data>
+  <data name="Library_station_coverage_gaps_Name" xml:space="preserve">
+    <value>Larm utanför stationernas täckning</value>
+  </data>
+  <data name="Library_station_coverage_gaps_Description" xml:space="preserve">
+    <value>Larm färgade efter fågelvägen till närmaste station, med ringar på 1,5, 2,5 och 5 miles (vanliga riktmärken vid försäkringsbedömning).</value>
+  </data>
+  <data name="Library_station_area_workload_Name" xml:space="preserve">
+    <value>Arbetsbelastning per stationsområde</value>
+  </data>
+  <data name="Library_station_area_workload_Description" xml:space="preserve">
+    <value>Larm färgade efter hemmastation (först dess geofence, sedan vilka som larmades ut), för att jämföra belastningen vid första utryckning.</value>
+  </data>
+  <data name="Library_where_units_go_Name" xml:space="preserve">
+    <value>Vart enheterna åker</value>
+  </data>
+  <data name="Library_where_units_go_Description" xml:space="preserve">
+    <value>Varje enhetsutryckning de senaste 90 dagarna på larmplatsen, färgad efter enhet.</value>
+  </data>
+  <data name="Library_unit_type_demand_Name" xml:space="preserve">
+    <value>Efterfrågan per enhetstyp</value>
+  </data>
+  <data name="Library_unit_type_demand_Description" xml:space="preserve">
+    <value>Ett rutnät färgat efter den enhetstyp som rycker ut mest i varje område, till exempel brandbilar, ambulanser eller räddningsfordon.</value>
+  </data>
+  <data name="Library_personnel_response_footprint_Name" xml:space="preserve">
+    <value>Personalens utryckningsavtryck</value>
+  </data>
+  <data name="Library_personnel_response_footprint_Description" xml:space="preserve">
+    <value>Värmekarta över larm som medlemmar har ryckt ut till. Larm med fler utryckande lyser starkare.</value>
+  </data>
+  <data name="Library_responder_origins_Name" xml:space="preserve">
+    <value>Varifrån personalen kommer</value>
+  </data>
+  <data name="Library_responder_origins_Description" xml:space="preserve">
+    <value>Värmekarta över var medlemmar befann sig när de markerade sig som utryckande, med en ring på 5 miles runt stationen. Kräver platsdelning i appen.</value>
+  </data>
+  <data name="Library_repeat_locations_Name" xml:space="preserve">
+    <value>Återkommande platser</value>
+  </data>
+  <data name="Library_repeat_locations_Description" xml:space="preserve">
+    <value>Platser med 3 eller fler larm de senaste 12 månaderna, med storlek och färg efter antal. Användbart för frekventa larmare, problem med larmanläggningar och uppföljning av förebyggande arbete.</value>
+  </data>
+  <data name="Library_false_alarm_hot_spots_Name" xml:space="preserve">
+    <value>Falsklarmshotspots</value>
+  </data>
+  <data name="Library_false_alarm_hot_spots_Description" xml:space="preserve">
+    <value>Värmekarta över larm som avslutats som falsklarm eller obefogade.</value>
+  </data>
+  <data name="Library_unit_movement_24h_Name" xml:space="preserve">
+    <value>Enheters rörelser (senaste 24 timmarna)</value>
+  </data>
+  <data name="Library_unit_movement_24h_Description" xml:space="preserve">
+    <value>Registrerade färdvägar för enheter under det senaste dygnet, färgade efter enhet.</value>
+  </data>
+  <data name="Library_patrol_coverage_Name" xml:space="preserve">
+    <value>Patrulltäckning</value>
+  </data>
+  <data name="Library_patrol_coverage_Description" xml:space="preserve">
+    <value>Värmekarta över enheters positioner de senaste 7 dagarna: var patruller och fältenheter tillbringar sin tid.</value>
+  </data>
+  <data name="Library_search_coverage_Name" xml:space="preserve">
+    <value>Söktäckning</value>
+  </data>
+  <data name="Library_search_coverage_Description" xml:space="preserve">
+    <value>Ett rutnät med medlemmars positioner samt medlemmars och enheters färdvägar de senaste 3 dagarna, för att se vilka områden som har täckts.</value>
+  </data>
+  <data name="Library_incident_footprint_Name" xml:space="preserve">
+    <value>Händelseavtryck</value>
+  </data>
+  <data name="Library_incident_footprint_Description" xml:space="preserve">
+    <value>Välj ett larm för att se vart varje enhet och medlem tog vägen under arbetet med det: deras färdvägar, statuspositioner och varifrån de utryckande kom.</value>
+  </data>
+  <data name="SectionWhen" xml:space="preserve">
+    <value>När</value>
+  </data>
+  <data name="SectionWhich" xml:space="preserve">
+    <value>Vilka larm</value>
+  </data>
+  <data name="SectionLayers" xml:space="preserve">
+    <value>Lager</value>
+  </data>
+  <data name="SectionStations" xml:space="preserve">
+    <value>Stationer och avstånd</value>
+  </data>
+  <data name="FilterWindow" xml:space="preserve">
+    <value>Datumintervall</value>
+  </data>
+  <data name="Window_1" xml:space="preserve">
+    <value>Senaste 24 timmarna</value>
+  </data>
+  <data name="Window_7" xml:space="preserve">
+    <value>Senaste 7 dagarna</value>
+  </data>
+  <data name="Window_30" xml:space="preserve">
+    <value>Senaste 30 dagarna</value>
+  </data>
+  <data name="Window_90" xml:space="preserve">
+    <value>Senaste 90 dagarna</value>
+  </data>
+  <data name="Window_365" xml:space="preserve">
+    <value>Senaste 12 månaderna</value>
+  </data>
+  <data name="Window_730" xml:space="preserve">
+    <value>Senaste 2 åren</value>
+  </data>
+  <data name="Window_1825" xml:space="preserve">
+    <value>Senaste 5 åren</value>
+  </data>
+  <data name="Window_Custom" xml:space="preserve">
+    <value>Anpassade datum</value>
+  </data>
+  <data name="WindowDays" xml:space="preserve">
+    <value>Senaste {0} dagarna</value>
+  </data>
+  <data name="FilterStart" xml:space="preserve">
+    <value>Från</value>
+  </data>
+  <data name="FilterEnd" xml:space="preserve">
+    <value>Till</value>
+  </data>
+  <data name="FilterDays" xml:space="preserve">
+    <value>Veckodagar</value>
+  </data>
+  <data name="FilterHours" xml:space="preserve">
+    <value>Timmar på dygnet</value>
+  </data>
+  <data name="FilterHoursHint" xml:space="preserve">
+    <value>Lämna allt omarkerat för att ta med alla dagar och timmar. Tiderna anges i din avdelnings tidszon.</value>
+  </data>
+  <data name="FilterCall" xml:space="preserve">
+    <value>Ett larm</value>
+  </data>
+  <data name="FilterCallPlaceholder" xml:space="preserve">
+    <value>Sök på nummer, namn, typ eller adress</value>
+  </data>
+  <data name="FilterCallHint" xml:space="preserve">
+    <value>Välj ett larm för att bara visa det och vart dess enheter och medlemmar tog vägen.</value>
+  </data>
+  <data name="FilterCallActiveHint" xml:space="preserve">
+    <value>Bara det här larmet visas. Datumintervallet och övriga larmfilter ignoreras.</value>
+  </data>
+  <data name="FilterCallClear" xml:space="preserve">
+    <value>Visa alla larm</value>
+  </data>
+  <data name="FilterCallNoMatches" xml:space="preserve">
+    <value>Inga larm från det senaste året matchar.</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>Söker…</value>
+  </data>
+  <data name="FilterCallTypes" xml:space="preserve">
+    <value>Larmtyper</value>
+  </data>
+  <data name="FilterPriorities" xml:space="preserve">
+    <value>Prioriteter</value>
+  </data>
+  <data name="FilterOutcomes" xml:space="preserve">
+    <value>Utfall</value>
+  </data>
+  <data name="FilterGroups" xml:space="preserve">
+    <value>Hemmastation eller grupp</value>
+  </data>
+  <data name="FilterUnits" xml:space="preserve">
+    <value>Inblandade enheter</value>
+  </data>
+  <data name="FilterMinCalls" xml:space="preserve">
+    <value>Minsta antal larm på en plats</value>
+  </data>
+  <data name="FilterMinCallsHint" xml:space="preserve">
+    <value>Visa bara platser med minst så många larm i datumintervallet. 0 visar alla larm.</value>
+  </data>
+  <data name="FilterAll" xml:space="preserve">
+    <value>Alla</value>
+  </data>
+  <data name="FilterSelected" xml:space="preserve">
+    <value>{0} valda</value>
+  </data>
+  <data name="FilterNoChoices" xml:space="preserve">
+    <value>Inga har skapats</value>
+  </data>
+  <data name="FilterSearch" xml:space="preserve">
+    <value>Sök</value>
+  </data>
+  <data name="FilterClear" xml:space="preserve">
+    <value>Rensa val</value>
+  </data>
+  <data name="LayersHint" xml:space="preserve">
+    <value>Lager ritas i ordning: det översta lagret i den här listan ritas överst på kartan.</value>
+  </data>
+  <data name="LayerAdd" xml:space="preserve">
+    <value>Lägg till ett lager</value>
+  </data>
+  <data name="LayerName" xml:space="preserve">
+    <value>Lagernamn</value>
+  </data>
+  <data name="LayerSource" xml:space="preserve">
+    <value>Data</value>
+  </data>
+  <data name="LayerDisplay" xml:space="preserve">
+    <value>Visa som</value>
+  </data>
+  <data name="LayerColorBy" xml:space="preserve">
+    <value>Färga efter</value>
+  </data>
+  <data name="LayerMetric" xml:space="preserve">
+    <value>Mått</value>
+  </data>
+  <data name="LayerWeight" xml:space="preserve">
+    <value>Väg varje punkt efter</value>
+  </data>
+  <data name="LayerSize" xml:space="preserve">
+    <value>Värde</value>
+  </data>
+  <data name="LayerAggregate" xml:space="preserve">
+    <value>Kombinera värden med</value>
+  </data>
+  <data name="LayerPalette" xml:space="preserve">
+    <value>Färger</value>
+  </data>
+  <data name="LayerOpacity" xml:space="preserve">
+    <value>Opacitet</value>
+  </data>
+  <data name="LayerRadius" xml:space="preserve">
+    <value>Värmeradie</value>
+  </data>
+  <data name="LayerIntensity" xml:space="preserve">
+    <value>Värmeintensitet</value>
+  </data>
+  <data name="LayerCellSize" xml:space="preserve">
+    <value>Rutstorlek</value>
+  </data>
+  <data name="LayerPointSize" xml:space="preserve">
+    <value>Punktstorlek</value>
+  </data>
+  <data name="LayerSizeByMetric" xml:space="preserve">
+    <value>Storleksanpassa punkter efter värde</value>
+  </data>
+  <data name="LayerUp" xml:space="preserve">
+    <value>Flytta upp (rita ovanpå)</value>
+  </data>
+  <data name="LayerDown" xml:space="preserve">
+    <value>Flytta ned (rita under)</value>
+  </data>
+  <data name="LayerRemove" xml:space="preserve">
+    <value>Ta bort lager</value>
+  </data>
+  <data name="OptionShowStations" xml:space="preserve">
+    <value>Visa stationer på kartan</value>
+  </data>
+  <data name="OptionDistanceUnit" xml:space="preserve">
+    <value>Avståndsenhet</value>
+  </data>
+  <data name="OptionRings" xml:space="preserve">
+    <value>Täckningsringar runt stationer</value>
+  </data>
+  <data name="OptionRingsHint" xml:space="preserve">
+    <value>Upp till 4 avstånd, avgränsade med kommatecken, till exempel 1.5, 2.5, 5. Ringarna visar fågelvägen, inte körtid.</value>
+  </data>
+  <data name="OptionDistanceBands" xml:space="preserve">
+    <value>Avståndsintervall</value>
+  </data>
+  <data name="OptionDistanceBandsHint" xml:space="preserve">
+    <value>Används vid färgning efter avstånd till station. Lämna tomt för standardvärdena.</value>
+  </data>
+  <data name="OptionMinuteBands" xml:space="preserve">
+    <value>Insatstidsintervall (minuter)</value>
+  </data>
+  <data name="OptionMinuteBandsHint" xml:space="preserve">
+    <value>Används vid färgning efter insatstidsintervall, till exempel 4, 8, 12, 20. Lämna tomt för standardvärdena.</value>
+  </data>
+  <data name="UnitKilometers" xml:space="preserve">
+    <value>km</value>
+  </data>
+  <data name="UnitMiles" xml:space="preserve">
+    <value>mi</value>
+  </data>
+  <data name="UnitMinutes" xml:space="preserve">
+    <value>min</value>
+  </data>
+  <data name="Source_calls" xml:space="preserve">
+    <value>Larm</value>
+  </data>
+  <data name="Source_unitResponses" xml:space="preserve">
+    <value>Enhetsutryckningar</value>
+  </data>
+  <data name="Source_personnelResponses" xml:space="preserve">
+    <value>Personalutryckningar</value>
+  </data>
+  <data name="Source_responderOrigins" xml:space="preserve">
+    <value>Personalens utgångsplatser</value>
+  </data>
+  <data name="Source_unitStatusLocations" xml:space="preserve">
+    <value>Enheters statuspositioner</value>
+  </data>
+  <data name="Source_unitTracks" xml:space="preserve">
+    <value>Enheters färdvägar</value>
+  </data>
+  <data name="Source_personnelTracks" xml:space="preserve">
+    <value>Personalens färdvägar</value>
+  </data>
+  <data name="SourceHint_calls" xml:space="preserve">
+    <value>En punkt per larm, på larmplatsen.</value>
+  </data>
+  <data name="SourceHint_unitResponses" xml:space="preserve">
+    <value>En punkt för varje enhet som larmats ut till ett larm, på larmplatsen.</value>
+  </data>
+  <data name="SourceHint_personnelResponses" xml:space="preserve">
+    <value>En punkt för varje medlem som ryckt ut till ett larm, på larmplatsen.</value>
+  </data>
+  <data name="SourceHint_responderOrigins" xml:space="preserve">
+    <value>Var medlemmar befann sig när de satte en utryckningsstatus. Bara medlemmar som delar sin plats visas. Upp till 12 månader.</value>
+  </data>
+  <data name="SourceHint_unitStatusLocations" xml:space="preserve">
+    <value>Var enheter befann sig när de bytte status. Upp till 12 månader.</value>
+  </data>
+  <data name="SourceHint_unitTracks" xml:space="preserve">
+    <value>Registrerade enhetspositioner från Unit-appen eller en spårare, upp till 7 dagar.</value>
+  </data>
+  <data name="SourceHint_personnelTracks" xml:space="preserve">
+    <value>Registrerade medlemspositioner från Responder-appen, upp till 7 dagar.</value>
+  </data>
+  <data name="Display_heat" xml:space="preserve">
+    <value>Värmekarta</value>
+  </data>
+  <data name="Display_points" xml:space="preserve">
+    <value>Punkter</value>
+  </data>
+  <data name="Display_hexbins" xml:space="preserve">
+    <value>Hexagonrutnät</value>
+  </data>
+  <data name="Display_tracks" xml:space="preserve">
+    <value>Färdvägar</value>
+  </data>
+  <data name="ColorBy_none" xml:space="preserve">
+    <value>Enfärgad</value>
+  </data>
+  <data name="ColorBy_callType" xml:space="preserve">
+    <value>Larmtyp</value>
+  </data>
+  <data name="ColorBy_priority" xml:space="preserve">
+    <value>Prioritet</value>
+  </data>
+  <data name="ColorBy_outcome" xml:space="preserve">
+    <value>Utfall</value>
+  </data>
+  <data name="ColorBy_group" xml:space="preserve">
+    <value>Hemmastation</value>
+  </data>
+  <data name="ColorBy_timeOfDay" xml:space="preserve">
+    <value>Tid på dygnet</value>
+  </data>
+  <data name="ColorBy_hourOfDay" xml:space="preserve">
+    <value>Timme på dygnet</value>
+  </data>
+  <data name="ColorBy_dayOfWeek" xml:space="preserve">
+    <value>Veckodag</value>
+  </data>
+  <data name="ColorBy_weekpart" xml:space="preserve">
+    <value>Vardag eller helg</value>
+  </data>
+  <data name="ColorBy_month" xml:space="preserve">
+    <value>Månad</value>
+  </data>
+  <data name="ColorBy_year" xml:space="preserve">
+    <value>År</value>
+  </data>
+  <data name="ColorBy_unit" xml:space="preserve">
+    <value>Enhet</value>
+  </data>
+  <data name="ColorBy_unitType" xml:space="preserve">
+    <value>Enhetstyp</value>
+  </data>
+  <data name="ColorBy_station" xml:space="preserve">
+    <value>Enhetens station</value>
+  </data>
+  <data name="ColorBy_person" xml:space="preserve">
+    <value>Person</value>
+  </data>
+  <data name="ColorBy_status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="ColorBy_responseBand" xml:space="preserve">
+    <value>Insatstidsintervall</value>
+  </data>
+  <data name="ColorBy_distanceBand" xml:space="preserve">
+    <value>Avståndsintervall till station</value>
+  </data>
+  <data name="ColorBy_repeatBand" xml:space="preserve">
+    <value>Larm på samma plats</value>
+  </data>
+  <data name="Metric_count" xml:space="preserve">
+    <value>Antal</value>
+  </data>
+  <data name="Metric_responseMinutes" xml:space="preserve">
+    <value>Minuter till första på plats</value>
+  </data>
+  <data name="Metric_turnoutMinutes" xml:space="preserve">
+    <value>Minuter till första utryckning</value>
+  </data>
+  <data name="Metric_durationMinutes" xml:space="preserve">
+    <value>Minuter tills avslutat</value>
+  </data>
+  <data name="Metric_unitsDispatched" xml:space="preserve">
+    <value>Utlarmade enheter</value>
+  </data>
+  <data name="Metric_personnelResponded" xml:space="preserve">
+    <value>Personal som ryckt ut</value>
+  </data>
+  <data name="Metric_stationDistance" xml:space="preserve">
+    <value>Avstånd till station</value>
+  </data>
+  <data name="Metric_callsAtLocation" xml:space="preserve">
+    <value>Larm på samma plats</value>
+  </data>
+  <data name="Aggregate_count" xml:space="preserve">
+    <value>Antal</value>
+  </data>
+  <data name="Aggregate_sum" xml:space="preserve">
+    <value>Summa</value>
+  </data>
+  <data name="Aggregate_mean" xml:space="preserve">
+    <value>Medelvärde</value>
+  </data>
+  <data name="Aggregate_median" xml:space="preserve">
+    <value>Median</value>
+  </data>
+  <data name="Aggregate_p90" xml:space="preserve">
+    <value>90:e percentilen</value>
+  </data>
+  <data name="Aggregate_max" xml:space="preserve">
+    <value>Maximum</value>
+  </data>
+  <data name="Palette_heat" xml:space="preserve">
+    <value>Klassisk värme</value>
+  </data>
+  <data name="Palette_fire" xml:space="preserve">
+    <value>Eld</value>
+  </data>
+  <data name="Palette_viridis" xml:space="preserve">
+    <value>Viridis (färgblindsvänlig)</value>
+  </data>
+  <data name="Palette_blues" xml:space="preserve">
+    <value>Blått</value>
+  </data>
+  <data name="Palette_traffic" xml:space="preserve">
+    <value>Grönt till rött</value>
+  </data>
+  <data name="Day_0" xml:space="preserve">
+    <value>Söndag</value>
+  </data>
+  <data name="DayShort_0" xml:space="preserve">
+    <value>Sön</value>
+  </data>
+  <data name="Day_1" xml:space="preserve">
+    <value>Måndag</value>
+  </data>
+  <data name="DayShort_1" xml:space="preserve">
+    <value>Mån</value>
+  </data>
+  <data name="Day_2" xml:space="preserve">
+    <value>Tisdag</value>
+  </data>
+  <data name="DayShort_2" xml:space="preserve">
+    <value>Tis</value>
+  </data>
+  <data name="Day_3" xml:space="preserve">
+    <value>Onsdag</value>
+  </data>
+  <data name="DayShort_3" xml:space="preserve">
+    <value>Ons</value>
+  </data>
+  <data name="Day_4" xml:space="preserve">
+    <value>Torsdag</value>
+  </data>
+  <data name="DayShort_4" xml:space="preserve">
+    <value>Tors</value>
+  </data>
+  <data name="Day_5" xml:space="preserve">
+    <value>Fredag</value>
+  </data>
+  <data name="DayShort_5" xml:space="preserve">
+    <value>Fre</value>
+  </data>
+  <data name="Day_6" xml:space="preserve">
+    <value>Lördag</value>
+  </data>
+  <data name="DayShort_6" xml:space="preserve">
+    <value>Lör</value>
+  </data>
+  <data name="Month_1" xml:space="preserve">
+    <value>Januari</value>
+  </data>
+  <data name="Month_2" xml:space="preserve">
+    <value>Februari</value>
+  </data>
+  <data name="Month_3" xml:space="preserve">
+    <value>Mars</value>
+  </data>
+  <data name="Month_4" xml:space="preserve">
+    <value>April</value>
+  </data>
+  <data name="Month_5" xml:space="preserve">
+    <value>Maj</value>
+  </data>
+  <data name="Month_6" xml:space="preserve">
+    <value>Juni</value>
+  </data>
+  <data name="Month_7" xml:space="preserve">
+    <value>Juli</value>
+  </data>
+  <data name="Month_8" xml:space="preserve">
+    <value>Augusti</value>
+  </data>
+  <data name="Month_9" xml:space="preserve">
+    <value>September</value>
+  </data>
+  <data name="Month_10" xml:space="preserve">
+    <value>Oktober</value>
+  </data>
+  <data name="Month_11" xml:space="preserve">
+    <value>November</value>
+  </data>
+  <data name="Month_12" xml:space="preserve">
+    <value>December</value>
+  </data>
+  <data name="TimeOfDay_0" xml:space="preserve">
+    <value>Natt (00:00–06:00)</value>
+  </data>
+  <data name="TimeOfDay_1" xml:space="preserve">
+    <value>Morgon (06:00–12:00)</value>
+  </data>
+  <data name="TimeOfDay_2" xml:space="preserve">
+    <value>Eftermiddag (12:00–18:00)</value>
+  </data>
+  <data name="TimeOfDay_3" xml:space="preserve">
+    <value>Kväll (18:00–24:00)</value>
+  </data>
+  <data name="Weekday" xml:space="preserve">
+    <value>Vardag</value>
+  </data>
+  <data name="Weekend" xml:space="preserve">
+    <value>Helg</value>
+  </data>
+  <data name="Outcome_0" xml:space="preserve">
+    <value>Aktivt</value>
+  </data>
+  <data name="Outcome_1" xml:space="preserve">
+    <value>Avslutat</value>
+  </data>
+  <data name="Outcome_2" xml:space="preserve">
+    <value>Avbrutet</value>
+  </data>
+  <data name="Outcome_3" xml:space="preserve">
+    <value>Obefogat</value>
+  </data>
+  <data name="Outcome_4" xml:space="preserve">
+    <value>Befogat</value>
+  </data>
+  <data name="Outcome_5" xml:space="preserve">
+    <value>Mindre</value>
+  </data>
+  <data name="Outcome_6" xml:space="preserve">
+    <value>Överfört</value>
+  </data>
+  <data name="Outcome_7" xml:space="preserve">
+    <value>Falsklarm</value>
+  </data>
+  <data name="Outcome_8" xml:space="preserve">
+    <value>Väntande</value>
+  </data>
+  <data name="UnitStatus_0" xml:space="preserve">
+    <value>Tillgänglig</value>
+  </data>
+  <data name="UnitStatus_1" xml:space="preserve">
+    <value>Försenad</value>
+  </data>
+  <data name="UnitStatus_2" xml:space="preserve">
+    <value>Otillgänglig</value>
+  </data>
+  <data name="UnitStatus_3" xml:space="preserve">
+    <value>Engagerad</value>
+  </data>
+  <data name="UnitStatus_4" xml:space="preserve">
+    <value>Ur tjänst</value>
+  </data>
+  <data name="UnitStatus_5" xml:space="preserve">
+    <value>Rycker ut</value>
+  </data>
+  <data name="UnitStatus_6" xml:space="preserve">
+    <value>På plats</value>
+  </data>
+  <data name="UnitStatus_7" xml:space="preserve">
+    <value>Uppställd</value>
+  </data>
+  <data name="UnitStatus_8" xml:space="preserve">
+    <value>Återvänder</value>
+  </data>
+  <data name="UnitStatus_9" xml:space="preserve">
+    <value>Avbruten</value>
+  </data>
+  <data name="UnitStatus_10" xml:space="preserve">
+    <value>Frisläppt</value>
+  </data>
+  <data name="UnitStatus_11" xml:space="preserve">
+    <value>Manuell</value>
+  </data>
+  <data name="UnitStatus_12" xml:space="preserve">
+    <value>På väg</value>
+  </data>
+  <data name="PersonnelStatus_0" xml:space="preserve">
+    <value>Tillgänglig</value>
+  </data>
+  <data name="PersonnelStatus_1" xml:space="preserve">
+    <value>Rycker inte ut</value>
+  </data>
+  <data name="PersonnelStatus_2" xml:space="preserve">
+    <value>Rycker ut</value>
+  </data>
+  <data name="PersonnelStatus_3" xml:space="preserve">
+    <value>På plats</value>
+  </data>
+  <data name="PersonnelStatus_4" xml:space="preserve">
+    <value>Tillgänglig på stationen</value>
+  </data>
+  <data name="PersonnelStatus_5" xml:space="preserve">
+    <value>På väg till stationen</value>
+  </data>
+  <data name="PersonnelStatus_6" xml:space="preserve">
+    <value>På väg till platsen</value>
+  </data>
+  <data name="PersonnelStatus_7" xml:space="preserve">
+    <value>På en enhet</value>
+  </data>
+  <data name="CategoryOther" xml:space="preserve">
+    <value>Övrigt</value>
+  </data>
+  <data name="CategoryNoType" xml:space="preserve">
+    <value>Ingen typ</value>
+  </data>
+  <data name="CategoryNoStation" xml:space="preserve">
+    <value>Ingen station</value>
+  </data>
+  <data name="RepeatBand" xml:space="preserve">
+    <value>{0} larm</value>
+  </data>
+  <data name="LegendTitle" xml:space="preserve">
+    <value>Teckenförklaring</value>
+  </data>
+  <data name="LegendFewer" xml:space="preserve">
+    <value>Färre</value>
+  </data>
+  <data name="LegendMore" xml:space="preserve">
+    <value>Fler</value>
+  </data>
+  <data name="LegendLower" xml:space="preserve">
+    <value>Lägre</value>
+  </data>
+  <data name="LegendHigher" xml:space="preserve">
+    <value>Högre</value>
+  </data>
+  <data name="LegendUpTo" xml:space="preserve">
+    <value>Upp till {0}</value>
+  </data>
+  <data name="LegendRange" xml:space="preserve">
+    <value>{0} till {1}</value>
+  </data>
+  <data name="LegendDominant" xml:space="preserve">
+    <value>Varje ruta visar sin vanligaste kategori. Starkare färg betyder fler larm.</value>
+  </data>
+  <data name="LegendEmpty" xml:space="preserve">
+    <value>Inget att visa för de här filtren.</value>
+  </data>
+  <data name="TooltipRows" xml:space="preserve">
+    <value>{0} poster</value>
+  </data>
+  <data name="TooltipDominant" xml:space="preserve">
+    <value>Mestadels {0} ({1} %)</value>
+  </data>
+  <data name="PopupOpenCall" xml:space="preserve">
+    <value>Öppna larm</value>
+  </data>
+  <data name="PopupFocusCall" xml:space="preserve">
+    <value>Visa det här larmets avtryck</value>
+  </data>
+  <data name="PopupUnavailable" xml:space="preserve">
+    <value>Larmuppgifterna är inte tillgängliga.</value>
+  </data>
+  <data name="SummaryWindow" xml:space="preserve">
+    <value>Visar {0} till {1}</value>
+  </data>
+  <data name="SummaryCall" xml:space="preserve">
+    <value>Visar larm {0}</value>
+  </data>
+  <data name="SummaryWhen" xml:space="preserve">
+    <value>När larm kommer in</value>
+  </data>
+  <data name="SummaryTopTypes" xml:space="preserve">
+    <value>Vanligaste larmtyperna</value>
+  </data>
+  <data name="KpiCalls" xml:space="preserve">
+    <value>Larm</value>
+  </data>
+  <data name="KpiMapped" xml:space="preserve">
+    <value>Larm med plats</value>
+  </data>
+  <data name="KpiMedianResponse" xml:space="preserve">
+    <value>Mediantid till på plats</value>
+  </data>
+  <data name="KpiP90Response" xml:space="preserve">
+    <value>90:e percentilen av tid till på plats</value>
+  </data>
+  <data name="KpiResponseHint" xml:space="preserve">
+    <value>Insatstider visas när ett lager använder ett mått eller intervall för insatstid och enheter sätter statusen på plats.</value>
+  </data>
+  <data name="NoticeCallsTruncated" xml:space="preserve">
+    <value>Det här datumintervallet har fler än 100 000 larm. De 100 000 senaste visas; välj ett kortare intervall för att se alla.</value>
+  </data>
+  <data name="Notice_personnelLocationsHidden" xml:space="preserve">
+    <value>{0}: vissa medlemmar utelämnas eftersom du inte kan se deras platser.</value>
+  </data>
+  <data name="Notice_unitLocationsHidden" xml:space="preserve">
+    <value>{0}: vissa enheter utelämnas eftersom du inte kan se deras platser.</value>
+  </data>
+  <data name="Notice_trackWindowShortened" xml:space="preserve">
+    <value>{0}: bara den senaste delen av datumintervallet visas, eftersom plats- och statushistoriken har begränsad längd.</value>
+  </data>
+  <data name="Notice_layerTruncated" xml:space="preserve">
+    <value>{0}: det finns för många punkter för att visa dem alla, så de senaste visas.</value>
+  </data>
+  <data name="Notice_noStationLocations" xml:space="preserve">
+    <value>{0}: ingen station har någon plats, så avstånd och ringar kan inte visas. Lägg till en stationsadress eller koordinater under Grupper.</value>
+  </data>
+  <data name="Notice_noStatusTimes" xml:space="preserve">
+    <value>{0}: inget av de här larmen har statusen på plats eller utryckning, så insatstiderna är tomma.</value>
+  </data>
+  <data name="Notice_callNotFound" xml:space="preserve">
+    <value>{0}: det valda larmet hittades inte, eller så har du inte behörighet att se det.</value>
+  </data>
+</root>

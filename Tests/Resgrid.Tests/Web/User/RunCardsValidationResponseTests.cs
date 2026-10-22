@@ -38,7 +38,8 @@ namespace Resgrid.Tests.Web.User
 				flags.Setup(x => x.IsEnabledAsync(FeatureFlagKeys.DispatchRunCards, 12, It.IsAny<bool>(), It.IsAny<IDictionary<string, string>>())).ReturnsAsync(true);
 				var controller = new RunCardsController(cards.Object, Mock.Of<ICallsService>(), Mock.Of<IUnitsService>(),
 					Mock.Of<IPersonnelRolesService>(), Mock.Of<ICustomStateService>(), Mock.Of<IDepartmentGroupsService>(),
-					Mock.Of<IDispatchRecommendationService>(), auth.Object, flags.Object)
+					Mock.Of<IDispatchRecommendationService>(), auth.Object, flags.Object, Mock.Of<IResponsePackagesService>(), Mock.Of<IDepartmentSettingsService>(),
+					Mock.Of<IRunCardTemplatesService>())
 					{ ControllerContext = new ControllerContext { HttpContext = http } };
 				var input = new RunCardEditInput { Name = "Response", Triggers = new List<RunCardTriggerInput> { new RunCardTriggerInput() },
 					AlarmLevels = new List<RunCardAlarmLevelInput> { new RunCardAlarmLevelInput { AlarmLevel = 1 } } };

@@ -1194,6 +1194,32 @@
       "DocsPath": "/web-app/mapping/#custom-map-icons"
     },
     {
+      "Id": "map-visualizations",
+      "AreaId": "mapping",
+      "LabelKey": "Feature.map-visualizations",
+      "PurposeKey": "FeaturePurpose.map-visualizations",
+      "ValueKey": "AreaValue.mapping",
+      "ExampleKey": "AreaExample.mapping",
+      "AdoptionKey": "FeatureSetup.map-visualizations",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "MapVisualizations",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Mapping"
+        }
+      ],
+      "SettingIds": [
+        "module.MappingDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/mapping/#map-visualizations"
+    },
+    {
       "Id": "weather",
       "AreaId": "mapping",
       "LabelKey": "Feature.weather",
@@ -1901,6 +1927,17 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-10-21T00:00:00Z"
+    },
+    {
+      "Id": "map-visualizations",
+      "Locale": "en",
+      "TitleKey": "Feature.map-visualizations",
+      "Body": "Map visualizations Heat maps, hexagon grids and overlays of calls, response times, station coverage, unit and personnel responses and movement, from a built-in library or saved by the department. A current map shows where responders and apparatus are and puts important locations in front of dispatchers. Open Mapping, then Visualizations, pick a library visualization such as Call hot zones, adjust its date range, filters and layers on the Customize tab, and save it. Department admins can share a saved visualization with everyone. Every visualization reads its data fresh under the viewer's own permissions: dispatch scope limits the calls, and the location visibility settings limit member and unit locations, so sharing a visualization never shares data. Response times run from the call being logged to the first unit on scene or responding, using status base types, so they appear only when units set statuses. Unit and member paths cover at most 7 days, status positions at most 12 months, and one view at most 100,000 calls.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "map-visualizations",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-22T00:00:00Z"
     },
     {
       "Id": "weather",

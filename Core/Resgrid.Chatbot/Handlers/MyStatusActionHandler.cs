@@ -44,7 +44,10 @@ namespace Resgrid.Chatbot.Handlers
 				var departmentStaffing = await _userStateService.GetLatestStatesForDepartmentAsync(session.DepartmentId);
 				var userStaffing = departmentStaffing?.FirstOrDefault(x => x.UserId == session.UserId);
 
-				var customStatus = await _customStateService.GetCustomPersonnelStatusAsync(session.DepartmentId, userStatus);
+				// No status inside the auto-available hour reads as the department's Available status.
+				var customStatus = userStatus != null
+					? await _customStateService.GetCustomPersonnelStatusAsync(session.DepartmentId, userStatus)
+					: await _customStateService.GetDefaultPersonnelStatusAsync(session.DepartmentId);
 				var customStaffing = await _customStateService.GetCustomPersonnelStaffingAsync(session.DepartmentId, userStaffing);
 
 				var timeStr = DateTime.UtcNow.TimeConverterToString(department);

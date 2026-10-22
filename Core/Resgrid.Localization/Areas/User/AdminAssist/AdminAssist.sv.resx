@@ -7077,4 +7077,37 @@
   <data xml:space="preserve" name="FeatureSetup.custom-map-icons">
     <value>Ladda upp en kvadratisk PNG med genomskinlig bakgrund, 128 × 128 px eller större, på sidan för enhetstypen, larmtypen, POI-typen eller rollen; sidan förhandsgranskar den på en ljus och en mörk karta. Ordna rollerna på sidan Roller för att välja vilken ikon en person med flera roller får.</value>
   </data>
+  <data xml:space="preserve" name="Feature.map-visualizations">
+    <value>Kartvisualiseringar</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.map-visualizations">
+    <value>Värmekartor, hexagonrutnät och lager med larm, insatstider, stationstäckning samt enheters och personals insatser och förflyttningar, från ett inbyggt bibliotek eller sparade av avdelningen.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.map-visualizations">
+    <value>Öppna Kartläggning och sedan Visualiseringar, välj en visualisering i biblioteket, till exempel ”Larmens hotspots”, justera datumintervall, filter och lager på fliken Anpassa och spara den. Avdelningens administratörer kan dela en sparad visualisering med alla.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.PersonnelTurnoutSeconds">
+    <value>Inställningar för utlarmningsrekommendationer / Utryckningstid personal i sekunder</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.PersonnelTurnoutSeconds">
+    <value>Sekunder en person behöver innan den är på väg; läggs till restiden när rader som accepterar personer jämför dem med enheter. Noll betyder ingen.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.WaitingCallAutoDispatch">
+    <value>Inställningar för utlarmningsrekommendationer / Automatisk larmning av väntande ärenden</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.WaitingCallAutoDispatch">
+    <value>När en enhet som passar ett ärende som väntar på resurser blir tillgänglig skickas den automatiskt till det väntande ärendet med högst prioritet i stället för att bara avisera. Kort kan åsidosätta detta; av som standard.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.WaitingCallMaxResponseSeconds">
+    <value>Inställningar för utlarmningsrekommendationer / Längsta insatstid för väntande ärenden i sekunder</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.WaitingCallMaxResponseSeconds">
+    <value>Gräns för automatisk larmning: en frigjord enhet med längre beräknad insatstid aviseras, skickas inte. Noll betyder ingen gräns; aviseringen skickas alltid.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.DispatchResponseCodes">
+    <value>Responskoder för utlarmning</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DispatchResponseCodes">
+    <value>Valfria koder per enhet (till exempel C3 för blåljus och siren) som villkorade korts rader föreslår, och om besättningar ser dem i push och appar. Tomt betyder att koder inte visas någonstans.</value>
+  </data>
 </root>

@@ -205,6 +205,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.UsersGroup = await _departmentGroupsService.GetGroupForUserAsync(UserId, DepartmentId);
 			model.States = await _customStateService.GetActivePersonnelStateForDepartmentAsync(DepartmentId);
 			model.StaffingLevels = await _customStateService.GetActiveStaffingLevelsForDepartmentAsync(DepartmentId);
+			model.DefaultStatus = await _customStateService.GetDefaultPersonnelStatusAsync(DepartmentId);
 
 			var personnelSortOrder = await _departmentSettingsService.GetDepartmentPersonnelSortOrderAsync(DepartmentId);
 			var personnelStatusSortOrder = await _departmentSettingsService.GetDepartmentPersonnelListStatusSortOrderAsync(DepartmentId);

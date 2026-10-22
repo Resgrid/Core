@@ -40,6 +40,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly Model.Services.IAuthorizationService _authorizationService;
 		private readonly IIncidentCommandService _incidentCommandService;
 		private readonly IDispatchScopeService _dispatchScopeService;
+		private readonly ICustomStateService _customStateService;
 
 		public PersonnelStatusesController(
 			IUsersService usersService,
@@ -54,9 +55,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IDepartmentSettingsService departmentSettingsService,
 			Model.Services.IAuthorizationService authorizationService,
 			IIncidentCommandService incidentCommandService,
-			IDispatchScopeService dispatchScopeService)
+			IDispatchScopeService dispatchScopeService,
+			ICustomStateService customStateService = null)
 		{
 			_dispatchScopeService = dispatchScopeService;
+			_customStateService = customStateService;
 			_usersService = usersService;
 			_actionLogsService = actionLogsService;
 			_departmentsService = departmentsService;
@@ -118,9 +121,20 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 			else
 			{
-				result.Data = null;
-				result.PageSize = 0;
-				result.Status = ResponseHelper.NotFound;
+				// No status inside the auto-available hour: the person reads as available, the department's own Available
+				// option when it uses custom staff statuses, else the built-in Standing By (what the personnel lists show).
+				var defaultStatus = _customStateService != null ? await _customStateService.GetDefaultPersonnelStatusAsync(DepartmentId) : null;
+				var available = new ActionLog
+				{
+					UserId = userId,
+					DepartmentId = DepartmentId,
+					ActionTypeId = defaultStatus?.CustomStateDetailId ?? (int)ActionTypes.StandingBy,
+					Timestamp = DateTime.UtcNow
+				};
+
+				result.Data = ConvertPersonStatus(available, department, userId, activeCalls, stations, pois);
+				result.PageSize = 1;
+				result.Status = ResponseHelper.Success;
 			}
 
 			ResponseHelper.PopulateV4ResponseData(result);

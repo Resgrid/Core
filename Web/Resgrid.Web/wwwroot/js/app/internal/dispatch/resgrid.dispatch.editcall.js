@@ -438,6 +438,18 @@ var resgrid;
                     evt.preventDefault();
                     checkForRecommendation();
                 });
+                // Conditional run cards: walk the decision graph fresh instead of the decision pinned at save.
+                $('#runCardPanel').on('click', '#runCardReevaluate', function (evt) {
+                    evt.preventDefault();
+                    reevaluateNext = true;
+                    checkForRecommendation();
+                });
+                $('#outstandingRequirementsPanel').on('click', '.dismiss-requirement', function (evt) {
+                    evt.preventDefault();
+                    dismissRequirement($(this).data('requirement-id'));
+                });
+
+                loadOutstandingRequirements();
 
                 checkForProtocols();
                 scheduleRecommendation();
@@ -451,6 +463,8 @@ var resgrid;
             var recommendationSequence = 0;
             var recommendationTimer = null;
             var currentRecommendation = null;
+            var reevaluateNext = false;
+            var responseCodes = [];
             var appliedUnitIds = [];
             var appliedUserIds = [];
 
@@ -519,6 +533,12 @@ var resgrid;
                     html += '<div>' + escapeText(formatText(getText('runCardCovered', 'The resources on this call already cover the run card (alarm {0}).'), level)) + '</div>';
                 }
 
+                var decision = prop(result, 'decision');
+                var decisionRenderer = resgrid.dispatch.runcarddecision;
+                if (decision && decisionRenderer) {
+                    html += decisionRenderer.renderDecision(decision);
+                }
+
                 if (units.length) {
                     html += '<div><b>' + escapeText(getText('units', 'Units')) + ':</b> ' + units.map(function (u) {
                         var text = prop(u, 'unitName') || ('#' + prop(u, 'unitId'));
@@ -526,7 +546,10 @@ var resgrid;
                         if (distance) {
                             text += ' (' + (distance / 1000).toFixed(1) + ' km)';
                         }
-                        return escapeText(text);
+                        if (decision && prop(u, 'rowLabel')) {
+                            text += ' - ' + prop(u, 'rowLabel');
+                        }
+                        return escapeText(text) + (decisionRenderer ? decisionRenderer.codeChip(prop(u, 'responseCode'), prop(u, 'responseCodeName'), prop(u, 'responseCodeColor')) : '');
                     }).join(', ') + '</div>';
                 }
                 if (personnel.length) {
@@ -552,9 +575,70 @@ var resgrid;
                     }
                 }
                 html += '<a href="#" id="runCardRefresh"><i class="fa fa-refresh"></i> ' + escapeText(getText('runCardRefresh', 'Refresh')) + '</a>';
+                if (decision && prop(decision, 'pinned') && prop(decision, 'levelHasGraph')) {
+                    html += ' &middot; <a href="#" id="runCardReevaluate"><i class="fa fa-random"></i> ' + escapeText(getText('runCardReevaluate', 'Re-evaluate')) + '</a>';
+                }
                 html += '</div>';
 
                 $('#runCardPanel').html(html);
+                $('#runCardCodePickers').html(decisionRenderer && decision ? decisionRenderer.renderCodePickers(units, responseCodes) : '');
+            }
+
+            // ── Outstanding requirements (conditional run cards) ──
+            function loadOutstandingRequirements() {
+                if (!$('#outstandingRequirementsPanel').length) {
+                    return;
+                }
+
+                $.ajax({
+                    url: resgrid.absoluteBaseUrl + '/User/Dispatch/GetCallOutstandingRequirements',
+                    data: { callId: callId },
+                    type: 'GET'
+                }).done(function (response) {
+                    var requirements = prop(response, 'requirements') || [];
+                    if (!prop(response, 'success') || !requirements.length) {
+                        $('#outstandingRequirementsRow').hide();
+                        return;
+                    }
+
+                    var html = '<ul style="margin: 0; padding-left: 18px;">';
+                    requirements.forEach(function (r) {
+                        var remaining = prop(r, 'requiredCount') - prop(r, 'resolvedCount');
+                        html += '<li><b>' + escapeText(prop(r, 'label')) + '</b> (' + escapeText(remaining) + ')';
+                        if (prop(r, 'sentInstead')) {
+                            html += ' <span class="text-muted">' + escapeText(formatText(getText('awaitingSentInstead', 'sent instead: {0}'), prop(r, 'sentInstead'))) + '</span>';
+                        }
+                        if (prop(r, 'responseCode')) {
+                            html += ' <span class="label label-default">' + escapeText(prop(r, 'responseCode')) + '</span>';
+                        }
+                        html += ' <a href="#" class="dismiss-requirement" data-requirement-id="' + prop(r, 'callOutstandingRequirementId') + '">' + escapeText(getText('awaitingDismiss', 'Dismiss')) + '</a></li>';
+                    });
+                    html += '</ul>';
+
+                    $('#outstandingRequirementsPanel').html(html);
+                    $('#outstandingRequirementsRow').show();
+                });
+            }
+            editcall.loadOutstandingRequirements = loadOutstandingRequirements;
+
+            function dismissRequirement(requirementId) {
+                var note = window.prompt(getText('awaitingDismissPrompt', 'Why is this resource no longer needed? (optional)'), '');
+                if (note === null) {
+                    return;
+                }
+
+                $.ajax({
+                    url: resgrid.absoluteBaseUrl + '/User/Dispatch/DismissOutstandingRequirement',
+                    type: 'POST',
+                    data: {
+                        callId: callId,
+                        requirementId: requirementId,
+                        note: note,
+                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').first().val()
+                    }
+                }).always(function () {
+                    loadOutstandingRequirements();
+                });
             }
 
             // Debounced: a map click sets the marker before it writes the coordinate fields.
@@ -588,13 +672,17 @@ var resgrid;
                         priority: $('#CallPriority').val(),
                         type: $('#Call_Type').val(),
                         latitude: $('#Latitude').val() || null,
-                        longitude: $('#Longitude').val() || null
+                        longitude: $('#Longitude').val() || null,
+                        reevaluate: reevaluateNext
                     },
                     type: 'GET'
                 }).done(function (response) {
                     if (requestSequence !== recommendationSequence) {
                         return;
                     }
+
+                    reevaluateNext = false;
+                    responseCodes = prop(response, 'codes') || [];
 
                     var result = prop(response, 'result');
                     if (!response || !prop(response, 'success') || !result || !prop(result, 'matchedRunCardId')) {

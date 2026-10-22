@@ -1,0 +1,238 @@
+@model Resgrid.Web.Areas.User.Models.RunCards.EditResponsePackageModel
+@using Newtonsoft.Json
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["ResponsePackagesHeader"];
+
+    // Admin-entered names go through Html.Raw into a script block; escape HTML-significant characters.
+    var jsonSettings = new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml };
+
+    var packageJson = JsonConvert.SerializeObject(new
+    {
+        responsePackageId = Model.Package.ResponsePackageId,
+        name = Model.Package.Name,
+        description = Model.Package.Description,
+        isRetired = Model.Package.IsRetired,
+        rows = (Model.Package.Rows ?? new List<Resgrid.Model.ResponsePackageRow>()).OrderBy(r => r.SortOrder).Select(r => new
+        {
+            responsePackageRowId = r.ResponsePackageRowId,
+            label = r.Label,
+            fillMode = r.FillMode,
+            requiredCount = r.RequiredCount,
+            statusFilter = r.StatusFilter,
+            statusBaseTypes = r.StatusBaseTypes,
+            responseCodeId = r.ResponseCodeId,
+            substitutePackageId = r.SubstitutePackageId,
+            keepOutstanding = r.KeepOutstanding,
+            targets = (r.Targets ?? new List<Resgrid.Model.RunCardTarget>()).Select(t => new { targetKind = t.TargetKind, targetRefId = t.TargetRefId })
+        })
+    }, jsonSettings);
+
+    var lookupsJson = JsonConvert.SerializeObject(new
+    {
+        unitTypes = Model.UnitTypes.Select(t => new { id = t.UnitTypeId, name = t.Type }),
+        roles = Model.PersonnelRoles.Select(r => new { id = r.PersonnelRoleId, name = r.Name }),
+        unitClasses = Enum.GetValues(typeof(Resgrid.Model.UnitTypeClasses)).Cast<Resgrid.Model.UnitTypeClasses>().Where(c => c != Resgrid.Model.UnitTypeClasses.None)
+            .Select(c => new { id = (int)c, name = localizer["RunCardTargetAnyClass", Resgrid.Framework.StringHelpers.GetDisplayString(c)].Value }),
+        baseTypes = Enum.GetValues(typeof(Resgrid.Model.ActionBaseTypes)).Cast<Resgrid.Model.ActionBaseTypes>().Where(b => b != Resgrid.Model.ActionBaseTypes.None)
+            .Select(b => new { id = (int)b, name = Resgrid.Framework.StringHelpers.GetDisplayString(b) }),
+        packages = Model.OtherPackages.Select(p => new { id = p.ResponsePackageId, name = p.Name }),
+        codes = Model.ResponseCodes.ActiveCodes().Select(c => new { id = c.Id, name = c.Code + " " + c.Name })
+    }, jsonSettings);
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-8">
+        <h2>@(Model.IsNew ? localizer["NewResponsePackageButton"] : Model.Package.Name)</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-controller="RunCards" asp-action="Index" asp-route-area="User">@localizer["RunCardsHeader"]</a></li>
+            <li><a asp-controller="RunCards" asp-action="Packages" asp-route-area="User">@localizer["ResponsePackagesHeader"]</a></li>
+            <li class="active"><strong>@(Model.IsNew ? localizer["NewResponsePackageButton"] : Model.Package.Name)</strong></li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content form-horizontal">
+                    <div class="alert alert-danger" id="saveError" style="display: none"></div>
+                    @if (Model.Usage.Any())
+                    {
+                        <div class="alert alert-info">@localizer["ResponsePackageUsedBy"]: @string.Join(", ", Model.Usage)</div>
+                    }
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">@localizer["ResponsePackageNameLabel"]</label>
+                        <div class="col-sm-9"><input type="text" id="packageName" class="form-control" maxlength="100" /></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">@localizer["ResponsePackageDescriptionLabel"]</label>
+                        <div class="col-sm-9"><input type="text" id="packageDescription" class="form-control" maxlength="500" /></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">@localizer["ResponsePackageRetiredLabel"]</label>
+                        <div class="col-sm-9"><input type="checkbox" id="packageRetired" /></div>
+                    </div>
+
+                    <h4>@localizer["ResponsePackageRowsLabel"]</h4>
+                    <p class="text-muted">@localizer["ResponsePackageRowsHelp"]</p>
+                    <div id="packageRows"></div>
+                    <button type="button" class="btn btn-white" id="addRowButton">@localizer["ResponsePackageAddRowButton"]</button>
+
+                    <div class="hr-line-dashed"></div>
+                    <form id="savePackageForm">@Html.AntiForgeryToken()</form>
+                    <a class="btn btn-white" asp-controller="RunCards" asp-action="Packages" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                    <button class="btn btn-primary" type="button" id="savePackageButton">@commonLocalizer["Save"]</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+<script>
+    $(function () {
+        var pkg = @Html.Raw(packageJson);
+        var lookups = @Html.Raw(lookupsJson);
+        pkg.rows = pkg.rows || [];
+
+        function esc(text) {
+            return $('<span>').text(text === null || text === undefined ? '' : text).html();
+        }
+
+        function optionList(items, selected, emptyText) {
+            var html = '<option value="">' + esc(emptyText) + '</option>';
+            $.each(items, function (i, item) {
+                html += '<option value="' + item.id + '"' + (selected !== null && selected !== undefined && String(selected) === String(item.id) ? ' selected' : '') + '>' + esc(item.name) + '</option>';
+            });
+            return html;
+        }
+
+        function targetOptions(targets) {
+            var chosen = {};
+            $.each(targets || [], function (i, t) { chosen[t.targetKind + ':' + (t.targetRefId === null || t.targetRefId === undefined ? '' : t.targetRefId)] = true; });
+            function opt(kind, ref, name) {
+                var value = kind + ':' + (ref === null ? '' : ref);
+                return '<option value="' + value + '"' + (chosen[value] ? ' selected' : '') + '>' + esc(name) + '</option>';
+            }
+            var html = '<optgroup label="@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["RunCardTargetUnitsGroup"].Value))">' + opt(3, null, '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["RunCardTargetAnyUnit"].Value))');
+            $.each(lookups.unitClasses, function (i, c) { html += opt(2, c.id, c.name); });
+            $.each(lookups.unitTypes, function (i, u) { html += opt(1, u.id, u.name); });
+            html += '</optgroup><optgroup label="@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["RunCardTargetPeopleGroup"].Value))">' + opt(5, null, '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["RunCardTargetAnyPerson"].Value))');
+            $.each(lookups.roles, function (i, r) { html += opt(4, r.id, r.name); });
+            return html + '</optgroup>';
+        }
+
+        function rowHtml(row, index) {
+            var html = '<div class="panel panel-default package-row" data-row-index="' + index + '"><div class="panel-body">';
+            html += '<div class="row">';
+            html += '<div class="col-sm-5"><label>@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["ResponsePackageRowTargetsLabel"].Value))</label><select multiple class="form-control row-targets" size="6">' + targetOptions(row.targets) + '</select></div>';
+            html += '<div class="col-sm-7">';
+            html += '<div class="form-inline m-b-xs"><input type="text" class="form-control input-sm row-label" maxlength="200" style="width: 240px" placeholder="@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["ResponsePackageRowLabelLabel"].Value))" value="' + esc(row.label) + '" /> ';
+            html += '<select class="form-control input-sm row-fill"><option value="1"' + (row.fillMode !== 2 ? ' selected' : '') + '>@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["ResponsePackageFillCount"].Value))</option>';
+            html += '<option value="2"' + (row.fillMode === 2 ? ' selected' : '') + '>@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["ResponsePackageFillFirstArriving"].Value))</option></select> ';
+            html += '<input type="number" class="form-control input-sm row-count" min="1" max="25" style="width: 70px" value="' + (row.requiredCount || 1) + '"' + (row.fillMode === 2 ? ' disabled' : '') + ' /></div>';
+            html += '<div class="form-inline m-b-xs">@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["ResponsePackageRowStatusLabel"].Value)) <select class="form-control input-sm row-filter">';
+            $.each([[0, '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["RunCardStatusAnyAvailable"].Value))'], [1, '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["RunCardStatusInQuarters"].Value))'], [2, '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["RunCardStatusAwayFromQuarters"].Value))'], [3, '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["RunCardStatusBaseTypes"].Value))']], function (i, o) {
+                html += '<option value="' + o[0] + '"' + ((row.statusFilter || 0) === o[0] ? ' selected' : '') + '>' + o[1] + '</option>';
+            });
+            html += '</select> ';
+            var selectedBaseTypes = (row.statusBaseTypes || '').split(',');
+            html += '<select multiple class="form-control input-sm row-basetypes" size="3" style="display: ' + (row.statusFilter === 3 ? 'inline-block' : 'none') + '">';
+            $.each(lookups.baseTypes, function (i, b) { html += '<option value="' + b.id + '"' + (selectedBaseTypes.indexOf(String(b.id)) >= 0 ? ' selected' : '') + '>' + esc(b.name) + '</option>'; });
+            html += '</select></div>';
+            if (lookups.codes.length) {
+                html += '<div class="form-inline m-b-xs">@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["ResponsePackageRowCodeLabel"].Value)) <select class="form-control input-sm row-code">' + optionList(lookups.codes, row.responseCodeId, '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["ResponsePackageNoCode"].Value))') + '</select></div>';
+            }
+            html += '<div class="form-inline m-b-xs">@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["ResponsePackageRowSubstituteLabel"].Value)) <select class="form-control input-sm row-substitute"' + (row.fillMode === 2 ? ' disabled' : '') + '>' + optionList(lookups.packages, row.substitutePackageId, '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["ResponsePackageNoSubstitute"].Value))') + '</select></div>';
+            html += '<label style="font-weight: normal"><input type="checkbox" class="row-outstanding"' + (row.keepOutstanding ? ' checked' : '') + ' /> @Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["ResponsePackageRowOutstandingLabel"].Value))</label>';
+            html += ' <button type="button" class="btn btn-danger btn-xs pull-right remove-row">@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(commonLocalizer["Delete"].Value))</button>';
+            html += '</div></div></div></div>';
+            return html;
+        }
+
+        function renderRows() {
+            var $rows = $('#packageRows').empty();
+            $.each(pkg.rows, function (i, row) { $rows.append(rowHtml(row, i)); });
+        }
+
+        function readRow($row, row) {
+            row.targets = ($row.find('.row-targets').val() || []).map(function (value) {
+                var parts = value.split(':');
+                return { targetKind: parseInt(parts[0], 10), targetRefId: parts[1] === '' ? null : parseInt(parts[1], 10) };
+            });
+            row.label = $row.find('.row-label').val();
+            row.fillMode = parseInt($row.find('.row-fill').val(), 10) || 1;
+            row.requiredCount = row.fillMode === 2 ? 1 : (parseInt($row.find('.row-count').val(), 10) || 1);
+            row.statusFilter = parseInt($row.find('.row-filter').val(), 10) || 0;
+            row.statusBaseTypes = ($row.find('.row-basetypes').val() || []).join(',');
+            var code = $row.find('.row-code').val();
+            row.responseCodeId = code ? parseInt(code, 10) : null;
+            var substitute = $row.find('.row-substitute').val();
+            row.substitutePackageId = row.fillMode === 2 || !substitute ? null : parseInt(substitute, 10);
+            row.keepOutstanding = $row.find('.row-outstanding').is(':checked');
+        }
+
+        $('#packageName').val(pkg.name || '');
+        $('#packageDescription').val(pkg.description || '');
+        $('#packageRetired').prop('checked', pkg.isRetired === true);
+
+        $('#addRowButton').on('click', function () {
+            pkg.rows.push({ responsePackageRowId: 0, label: '', fillMode: 1, requiredCount: 1, statusFilter: 0, targets: [], keepOutstanding: false });
+            renderRows();
+        });
+
+        $('#packageRows').on('click', '.remove-row', function () {
+            pkg.rows.splice($(this).closest('.package-row').data('row-index'), 1);
+            renderRows();
+        });
+
+        $('#packageRows').on('change', 'input, select', function () {
+            var $row = $(this).closest('.package-row');
+            var row = pkg.rows[$row.data('row-index')];
+            var wasFill = row.fillMode;
+            readRow($row, row);
+            $row.find('.row-basetypes').toggle(row.statusFilter === 3);
+            if (wasFill !== row.fillMode) { renderRows(); }
+        });
+
+        $('#savePackageButton').on('click', function () {
+            $('#packageRows .package-row').each(function () {
+                readRow($(this), pkg.rows[$(this).data('row-index')]);
+            });
+
+            var payload = {
+                responsePackageId: pkg.responsePackageId || 0,
+                name: $('#packageName').val(),
+                description: $('#packageDescription').val(),
+                isRetired: $('#packageRetired').is(':checked'),
+                rows: pkg.rows.map(function (row, i) { row.sortOrder = i; return row; })
+            };
+
+            $.ajax({
+                url: '@Url.Action("SavePackage", "RunCards", new { area = "User" })',
+                type: 'POST',
+                contentType: 'application/json',
+                headers: { 'RequestVerificationToken': $('#savePackageForm input[name="__RequestVerificationToken"]').val() },
+                data: JSON.stringify(payload),
+                success: function (response) {
+                    if (response.success) {
+                        window.location.href = '@Url.Action("Packages", "RunCards", new { area = "User" })';
+                    } else {
+                        $('#saveError').show().text(response.message);
+                    }
+                },
+                error: function (xhr) {
+                    $('#saveError').show().text(xhr.responseJSON && xhr.responseJSON.message || 'Save failed.');
+                }
+            });
+        });
+
+        renderRows();
+    });
+</script>
+}

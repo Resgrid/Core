@@ -13,7 +13,7 @@ using Resgrid.Services;
 namespace Resgrid.Tests.Services
 {
 	[TestFixture]
-	public class DispatchRecommendationServiceTests
+	public partial class DispatchRecommendationServiceTests
 	{
 		private const int DepartmentId = 1;
 		private const int EngineTypeId = 100;
@@ -36,6 +36,10 @@ namespace Resgrid.Tests.Services
 		private Mock<Resgrid.Model.Repositories.IRunCardActivationsRepository> _runCardActivationsRepository;
 		private Mock<Resgrid.Model.Providers.IEventAggregator> _eventAggregator;
 		private Mock<IDepartmentsService> _departmentsService;
+		private Mock<IResponsePackagesService> _responsePackagesService;
+		private Mock<Resgrid.Model.Repositories.IRunCardDecisionsRepository> _runCardDecisionsRepository;
+		private Mock<IFeatureToggleService> _featureToggleService;
+		private Mock<IOutstandingRequirementsService> _outstandingRequirementsService;
 		private DispatchRecommendationService _service;
 
 		private DepartmentGroup _stationA;
@@ -59,6 +63,10 @@ namespace Resgrid.Tests.Services
 			_runCardActivationsRepository = new Mock<Resgrid.Model.Repositories.IRunCardActivationsRepository>();
 			_eventAggregator = new Mock<Resgrid.Model.Providers.IEventAggregator>();
 			_departmentsService = new Mock<IDepartmentsService>();
+			_responsePackagesService = new Mock<IResponsePackagesService>();
+			_runCardDecisionsRepository = new Mock<Resgrid.Model.Repositories.IRunCardDecisionsRepository>();
+			_featureToggleService = new Mock<IFeatureToggleService>();
+			_outstandingRequirementsService = new Mock<IOutstandingRequirementsService>();
 
 			_stationA = new DepartmentGroup { DepartmentGroupId = StationAId, DepartmentId = DepartmentId, Name = "Station 1", Type = (int)DepartmentGroupTypes.Station };
 			_stationB = new DepartmentGroup { DepartmentGroupId = StationBId, DepartmentId = DepartmentId, Name = "Station 2", Type = (int)DepartmentGroupTypes.Station };
@@ -154,7 +162,11 @@ namespace Resgrid.Tests.Services
 				_shiftsService.Object,
 				_runCardActivationsRepository.Object,
 				_eventAggregator.Object,
-				_departmentsService.Object);
+				_departmentsService.Object,
+				_responsePackagesService.Object,
+				_runCardDecisionsRepository.Object,
+				_featureToggleService.Object,
+				_outstandingRequirementsService.Object);
 		}
 
 		private RunCard BuildCard(int engineCount = 0, int roleCount = 0, int alarmLevel = 1)

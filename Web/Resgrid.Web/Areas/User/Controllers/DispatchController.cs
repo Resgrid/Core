@@ -86,6 +86,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IRecordsProtectionService _recordsProtection;
 		private readonly IIndoorMapService _indoorMapService;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> _departmentLocalizer;
+		private readonly IOutstandingRequirementsService _outstandingRequirementsService;
 
 		public DispatchController(IDepartmentsService departmentsService, IUsersService usersService, ICallsService callsService,
 			IDepartmentGroupsService departmentGroupsService, ICommunicationService communicationService, IQueueService queueService,
@@ -103,8 +104,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IDispatchScopeService dispatchScopeService, INearestUnitService nearestUnitService,
 			ICallLocationHistoryService callLocationHistoryService, IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.LocationHistory> locationHistoryLocalizer,
 			IPendingCallsService pendingCallsService, ICallClosureService callClosureService, IIndoorMapService indoorMapService,
-			IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> departmentLocalizer)
+			IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> departmentLocalizer,
+			IOutstandingRequirementsService outstandingRequirementsService)
 		{
+			_outstandingRequirementsService = outstandingRequirementsService;
 			_callLocationHistoryService = callLocationHistoryService;
 			_locationHistoryLocalizer = locationHistoryLocalizer;
 			_departmentsService = departmentsService;
@@ -666,7 +669,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				DispatchRecommendationResult recommendationResult = null;
 				if (shouldDispatchNow && await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCards, DepartmentId))
 				{
-					recommendationResult = await _dispatchRecommendationService.EnrichCallForDispatchAsync(model.Call, 1, true, cancellationToken);
+					// Conditional run cards: the outcome the dispatcher saw on the preview, so the call keeps what they reviewed.
+					recommendationResult = await _dispatchRecommendationService.EnrichCallForDispatchAsync(model.Call, 1, true,
+						collection["RunCardOutcomeNodeKey"].ToString(), cancellationToken);
 
 					if (recommendationResult.AutoDispatch)
 					{
@@ -678,10 +683,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 				}
 
+				// Per-unit response codes the dispatcher kept, changed or cleared on the proposal (conditional run cards).
+				var responseCodeSelections = ReadResponseCodeSelections(collection);
+				if (responseCodeSelections.Any())
+					ResponseCodeSelections.ApplyAll(model.Call.UnitDispatches, responseCodeSelections, await _departmentSettingsService.GetDispatchResponseCodesAsync(DepartmentId));
+
 				var call = await _callsService.SaveCallAsync(model.Call, cancellationToken);
 
 				if (recommendationResult != null && recommendationResult.MatchedRunCardId.HasValue && recommendationResult.AutoDispatch)
 					await _dispatchRecommendationService.RecordActivationAsync(call, recommendationResult, UserId, cancellationToken);
+				else if (recommendationResult?.Decision != null)
+					await _dispatchRecommendationService.RecordDecisionAsync(call, recommendationResult, UserId, RunCardDecisionSources.SaveTime, cancellationToken);
 
 				// Attach weather alerts as call notes if enabled
 				await _weatherAlertService.AttachWeatherAlertsToCallAsync(call, cancellationToken);
@@ -778,7 +790,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 				TargetAlarmLevel = alarmLevel
 			});
 
-			return Json(new { success = true, result });
+			// Conditional run cards: the code catalog for the per-unit pickers (empty when the department uses none).
+			var codes = result.Decision != null
+				? (await _departmentSettingsService.GetDispatchResponseCodesAsync(DepartmentId))?.ActiveCodes().ToList()
+				: null;
+
+			return Json(new { success = true, result, codes });
 		}
 
 		/// <summary>
@@ -789,7 +806,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		/// </summary>
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Call_Update)]
-		public async Task<IActionResult> GetCallDispatchRecommendation(int callId, int? priority, string type, double? latitude, double? longitude)
+		public async Task<IActionResult> GetCallDispatchRecommendation(int callId, int? priority, string type, double? latitude, double? longitude, bool reevaluate = false)
 		{
 			if (!await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCards, DepartmentId))
 				return Json(new { success = false });
@@ -819,9 +836,137 @@ namespace Resgrid.Web.Areas.User.Controllers
 				request.Longitude = longitude;
 			}
 
+			// Conditional run cards: walk the decision graph fresh instead of the decision pinned when the call was saved.
+			request.Reevaluate = reevaluate;
+
 			var result = await _dispatchRecommendationService.GetRecommendationAsync(request);
 
-			return Json(new { success = true, result });
+			var codes = result.Decision != null
+				? (await _departmentSettingsService.GetDispatchResponseCodesAsync(DepartmentId))?.ActiveCodes().ToList()
+				: null;
+
+			return Json(new { success = true, result, codes });
+		}
+
+		/// <summary>
+		/// Calls awaiting resources (conditional run cards): every active call still holding a required resource that was
+		/// not available when it was dispatched, with what went instead and the nearest units now available that match.
+		/// Feeds the awaiting-resources badge, the toast and the list page.
+		/// </summary>
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Call_Create)]
+		public async Task<IActionResult> GetAwaitingResources(bool countOnly, CancellationToken cancellationToken)
+		{
+			if (!await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCardConditions, DepartmentId))
+				return Json(new { success = true, enabled = false, calls = new List<AwaitingResourcesCall>() });
+
+			// The top-bar badge polls: it needs the count only, not the available units and their response times.
+			if (countOnly)
+				return Json(new { success = true, enabled = true, count = await _outstandingRequirementsService.GetAwaitingCallCountAsync(DepartmentId, cancellationToken) });
+
+			var calls = await _outstandingRequirementsService.GetAwaitingCallsAsync(DepartmentId, cancellationToken);
+
+			return Json(new { success = true, enabled = true, calls });
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Call_Create)]
+		public async Task<IActionResult> AwaitingResources()
+		{
+			if (!await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCardConditions, DepartmentId))
+				return RedirectToAction("Dashboard", "Dispatch", new { Area = "User" });
+
+			return View();
+		}
+
+		/// <summary>The call's open outstanding requirements (reconciled with its dispatches first).</summary>
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<IActionResult> GetCallOutstandingRequirements(int callId, CancellationToken cancellationToken)
+		{
+			if (!await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCardConditions, DepartmentId))
+				return Json(new { success = true, requirements = new List<CallOutstandingRequirement>() });
+
+			var call = await _callsService.GetCallByIdAsync(callId);
+
+			if (call == null || call.DepartmentId != DepartmentId)
+				return Json(new { success = false });
+
+			if (!await _authorizationService.CanUserViewCallAsync(UserId, callId))
+				return Unauthorized();
+
+			var requirements = await _outstandingRequirementsService.GetForCallAsync(DepartmentId, callId, false, cancellationToken);
+
+			return Json(new { success = true, requirements });
+		}
+
+		/// <summary>A person clears a requirement the call no longer needs (with an optional note); the same authority as editing the call.</summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Call_Update)]
+		public async Task<IActionResult> DismissOutstandingRequirement([FromForm] int callId, [FromForm] int requirementId, [FromForm] string note, CancellationToken cancellationToken)
+		{
+			var call = await _callsService.GetCallByIdAsync(callId);
+
+			if (call == null || call.DepartmentId != DepartmentId)
+				return Json(new { success = false, message = "Call not found." });
+
+			if (!await _authorizationService.CanUserEditCallAsync(UserId, callId))
+				return Unauthorized();
+
+			// The requirement must belong to the call named (never trust a posted key on its own).
+			var requirement = (await _outstandingRequirementsService.GetForCallAsync(DepartmentId, callId, false, cancellationToken))
+				.FirstOrDefault(r => r.CallOutstandingRequirementId == requirementId);
+
+			if (requirement == null)
+				return Json(new { success = false, message = "That requirement is no longer open." });
+
+			var dismissed = await _outstandingRequirementsService.DismissAsync(DepartmentId, requirementId, UserId, note, cancellationToken);
+
+			return Json(new { success = dismissed });
+		}
+
+		/// <summary>
+		/// One-step dispatch from the awaiting-resources toast or list: adds the unit to the call (additive, notifying only
+		/// that unit), which resolves the requirement it matches.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Call_Update)]
+		public async Task<IActionResult> DispatchToAwaitingCall([FromForm] int callId, [FromForm] int unitId, CancellationToken cancellationToken)
+		{
+			var call = await _callsService.GetCallByIdAsync(callId);
+
+			if (call == null || call.DepartmentId != DepartmentId)
+				return Json(new { success = false, message = "Call not found." });
+
+			if (!await _authorizationService.CanUserEditCallAsync(UserId, callId))
+				return Unauthorized();
+
+			var unit = await _unitsService.GetUnitByIdAsync(unitId);
+
+			if (unit == null || unit.DepartmentId != DepartmentId || unit.IsDeleted)
+				return Json(new { success = false, message = "Unit not found." });
+
+			var result = await _outstandingRequirementsService.DispatchUnitToCallAsync(DepartmentId, callId, unitId, UserId, cancellationToken);
+
+			return Json(new { success = result.Success, message = result.Message, resolved = result.ResolvedRequirements });
+		}
+
+		/// <summary>The web form's per-unit response code fields (<c>unitResponseCode_{unitId}</c>; empty = cleared).</summary>
+		private static Dictionary<int, int?> ReadResponseCodeSelections(IFormCollection collection)
+		{
+			var selections = new Dictionary<int, int?>();
+
+			foreach (var key in collection.Keys.Where(k => k.StartsWith(ResponseCodeSelections.FormFieldPrefix, StringComparison.Ordinal)))
+			{
+				if (!int.TryParse(key.Substring(ResponseCodeSelections.FormFieldPrefix.Length), out var unitId))
+					continue;
+
+				selections[unitId] = int.TryParse(collection[key].ToString(), out var codeId) ? codeId : (int?)null;
+			}
+
+			return selections;
 		}
 
 		/// <summary>
@@ -1235,6 +1380,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 							call.UnitDispatches.Add(dispatch);
 						}
 					}
+
+					// Response codes chosen for units on the add-resources proposal (conditional run cards).
+					var responseCodeSelections = ReadResponseCodeSelections(collection);
+					if (responseCodeSelections.Any())
+						ResponseCodeSelections.ApplyAll(call.UnitDispatches, responseCodeSelections, await _departmentSettingsService.GetDispatchResponseCodesAsync(DepartmentId));
 				}
 
 				// Add all role dispatch's

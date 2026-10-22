@@ -52,6 +52,10 @@ namespace Resgrid.Repositories.DataRepository
 			RunCardAvailabilitySelection row => ParentDepartmentAsync("RunCards", "RunCardId", row.RunCardId, null, ct),
 			RunCardUnitRequirement row => NestedDepartmentAsync("RunCardAlarmLevels", "RunCardAlarmLevelId", row.RunCardAlarmLevelId, "RunCardId", "RunCards", ct),
 			RunCardRoleRequirement row => NestedDepartmentAsync("RunCardAlarmLevels", "RunCardAlarmLevelId", row.RunCardAlarmLevelId, "RunCardId", "RunCards", ct),
+			RunCardDecisionNode row => NestedDepartmentAsync("RunCardAlarmLevels", "RunCardAlarmLevelId", row.RunCardAlarmLevelId, "RunCardId", "RunCards", ct),
+			RunCardTarget row => Task.FromResult(row.DepartmentId),
+			ResponsePackage row => Task.FromResult(row.DepartmentId),
+			ResponsePackageRow row => ParentDepartmentAsync("ResponsePackages", "ResponsePackageId", row.ResponsePackageId, null, ct),
 			ShiftDay row => ParentDepartmentAsync("Shifts", "ShiftId", row.ShiftId, null, ct),
 			ShiftGroup row => ParentDepartmentAsync("Shifts", "ShiftId", row.ShiftId, null, ct),
 			ShiftPerson row => ParentDepartmentAsync("Shifts", "ShiftId", row.ShiftId, null, ct),
@@ -125,7 +129,11 @@ namespace Resgrid.Repositories.DataRepository
 						{
 							children.AddRange(await QueryAsync<RunCardUnitRequirement>($"SELECT * FROM {Tbl("RunCardUnitRequirements")} WHERE {Col("RunCardAlarmLevelId")}={P}Id", new { Id = level.RunCardAlarmLevelId }, ct));
 							children.AddRange(await QueryAsync<RunCardRoleRequirement>($"SELECT * FROM {Tbl("RunCardRoleRequirements")} WHERE {Col("RunCardAlarmLevelId")}={P}Id", new { Id = level.RunCardAlarmLevelId }, ct));
+							children.AddRange(await QueryAsync<RunCardDecisionNode>($"SELECT * FROM {Tbl("RunCardDecisionNodes")} WHERE {Col("RunCardAlarmLevelId")}={P}Id", new { Id = level.RunCardAlarmLevelId }, ct));
 						}
+						break;
+					case ResponsePackage package:
+						children.AddRange(await QueryAsync<ResponsePackageRow>($"SELECT * FROM {Tbl("ResponsePackageRows")} WHERE {Col("ResponsePackageId")}={P}Id", new { Id = package.ResponsePackageId }, ct));
 						break;
 					case Shift shift:
 						children.AddRange(await QueryAsync<ShiftDay>($"SELECT * FROM {Tbl("ShiftDays")} WHERE {Col("ShiftId")}={P}Id", new { Id = shift.ShiftId }, ct));

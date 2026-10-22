@@ -7077,4 +7077,37 @@
   <data xml:space="preserve" name="FeatureSetup.custom-map-icons">
     <value>Carica un PNG quadrato con sfondo trasparente, di 128 × 128 px o più, nella pagina del tipo di unità, del tipo di chiamata, del tipo di POI o del ruolo; la pagina ne mostra l'anteprima su una mappa chiara e una scura. Per scegliere l'icona di una persona con più ruoli, ordina i ruoli nella pagina Ruoli.</value>
   </data>
+  <data xml:space="preserve" name="Feature.map-visualizations">
+    <value>Visualizzazioni mappa</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.map-visualizations">
+    <value>Mappe di calore, griglie esagonali e sovrapposizioni di chiamate, tempi di risposta, copertura delle stazioni, interventi e spostamenti di unità e personale, da una libreria integrata o salvate dal dipartimento.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.map-visualizations">
+    <value>Apri Mappatura e poi Visualizzazioni, scegli una visualizzazione della libreria come «Zone calde delle chiamate», modifica intervallo di date, filtri e livelli nella scheda Personalizza e salvala. Gli amministratori del dipartimento possono condividere una visualizzazione salvata con tutti.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.PersonnelTurnoutSeconds">
+    <value>Configurazione raccomandazioni di dispaccio / Tempo di uscita del personale in secondi</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.PersonnelTurnoutSeconds">
+    <value>Secondi necessari a una persona prima di muoversi; aggiunti al tempo di viaggio quando le righe che accettano persone la confrontano con le unità. Zero significa nessuno.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.WaitingCallAutoDispatch">
+    <value>Configurazione raccomandazioni di dispaccio / Invio automatico alle chiamate in attesa</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.WaitingCallAutoDispatch">
+    <value>Quando si libera un'unità adatta a una chiamata in attesa di risorse, viene inviata automaticamente alla chiamata in attesa con priorità più alta invece di avvisare soltanto. Le schede possono sostituirlo; disattivato per impostazione predefinita.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.WaitingCallMaxResponseSeconds">
+    <value>Configurazione raccomandazioni di dispaccio / Risposta massima per chiamate in attesa in secondi</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.WaitingCallMaxResponseSeconds">
+    <value>Limite dell'invio automatico: un'unità liberata con risposta stimata più lunga viene segnalata, non inviata. Zero significa nessun limite; l'avviso viene sempre emesso.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.DispatchResponseCodes">
+    <value>Codici di risposta del dispaccio</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DispatchResponseCodes">
+    <value>Codici facoltativi per unità (ad esempio C3 per luci e sirena) proposti dalle righe delle schede condizionali, e se gli equipaggi li vedono nelle notifiche e nelle app. Vuoto significa che i codici non compaiono da nessuna parte.</value>
+  </data>
 </root>

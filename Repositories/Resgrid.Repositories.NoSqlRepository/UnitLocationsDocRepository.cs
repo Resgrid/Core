@@ -62,6 +62,32 @@ namespace Resgrid.Repositories.NoSqlRepository
 			}
 		}
 
+		public async Task<List<UnitsLocation>> GetLocationsForDepartmentInRangeAsync(int departmentId, DateTime startUtc, DateTime endUtc, IReadOnlyCollection<int> unitIds, int maxRows, CancellationToken cancellationToken = default)
+		{
+			var filterUnits = unitIds != null && unitIds.Count > 0;
+
+			using (var connection = new NpgsqlConnection(Config.DataConfig.DocumentConnectionString))
+			{
+				await connection.OpenAsync(cancellationToken);
+				var unitLocationsData = await connection.QueryAsync<UnitsLocation>(new Dapper.CommandDefinition(
+					@"SELECT data FROM public.unitlocations ul
+					WHERE ul.departmentid = @departmentId AND ul.""timestamp"" >= @startUtc AND ul.""timestamp"" < @endUtc" +
+					(filterUnits ? " AND ul.unitid = ANY(@unitIds)" : string.Empty) + @"
+					ORDER BY ul.""timestamp"" DESC
+					LIMIT @maxRows;",
+					new
+					{
+						departmentId,
+						startUtc = ToPostgresTimestamp(startUtc),
+						endUtc = ToPostgresTimestamp(endUtc),
+						unitIds = filterUnits ? unitIds.ToArray() : null,
+						maxRows
+					}, cancellationToken: cancellationToken));
+
+				return unitLocationsData?.ToList() ?? new List<UnitsLocation>();
+			}
+		}
+
 		public async Task<UnitsLocation> GetByIdAsync(string id)
 		{
 			using (var connection = new NpgsqlConnection(Config.DataConfig.DocumentConnectionString))

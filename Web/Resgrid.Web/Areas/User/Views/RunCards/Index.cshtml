@@ -21,6 +21,11 @@
     </div>
     <div class="col-sm-4">
         <div class="title-action">
+            @if (Model.ConditionsEnabled)
+            {
+                <a asp-controller="RunCards" asp-action="Templates" asp-route-area="User" class="btn btn-white">@localizer["RunCardTemplatesHeader"]</a>
+                <a asp-controller="RunCards" asp-action="Packages" asp-route-area="User" class="btn btn-white">@localizer["ResponsePackagesHeader"]</a>
+            }
             <a asp-controller="RunCards" asp-action="New" asp-route-area="User" class="btn btn-primary">@localizer["NewRunCardButton"]</a>
         </div>
     </div>

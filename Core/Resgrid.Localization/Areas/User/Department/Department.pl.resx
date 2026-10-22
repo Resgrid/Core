@@ -1694,4 +1694,340 @@
   <data name="OrgType.other" xml:space="preserve">
     <value>Inne</value>
   </data>
+  <data name="SettingsGroupDispatch" xml:space="preserve">
+    <value>Wezwania i Dyspozycja</value>
+  </data>
+  <data name="SettingsGroupOperations" xml:space="preserve">
+    <value>Operacje</value>
+  </data>
+  <data name="SettingsGroupCustomization" xml:space="preserve">
+    <value>Dostosowanie</value>
+  </data>
+  <data name="SettingsGroupIntegrations" xml:space="preserve">
+    <value>Integracje</value>
+  </data>
+  <data name="ResetStaffingMeaningGroup" xml:space="preserve">
+    <value>Znaczenie dostępności (wasz poziom o tym znaczeniu)</value>
+  </data>
+  <data name="ResetStaffingOptionGroup" xml:space="preserve">
+    <value>Konkretny poziom dostępności</value>
+  </data>
+  <data name="ResetStatusMeaningGroup" xml:space="preserve">
+    <value>Znaczenie statusu (wasz status o tym znaczeniu)</value>
+  </data>
+  <data name="ResetStatusOptionGroup" xml:space="preserve">
+    <value>Konkretny status</value>
+  </data>
+  <data name="ResetTargetSavedOption" xml:space="preserve">
+    <value>{0} (zapisany wcześniej, już niedostępny)</value>
+  </data>
+  <data name="RunCardRelaxUnfilledRowsLabel" xml:space="preserve">
+    <value>Złagodź filtry statusu dla niewypełnionych wierszy</value>
+  </data>
+  <data name="RunCardRelaxUnfilledRowsHelp" xml:space="preserve">
+    <value>Gdy filtr statusu wiersza nic nie znajdzie, proponowana jest najszybsza dostępna jednostka tego samego rodzaju.</value>
+  </data>
+  <data name="RunCardWaitingAutoDispatchLabel" xml:space="preserve">
+    <value>Wysyłaj zwolnione jednostki do zgłoszeń, które na nie czekają</value>
+  </data>
+  <data name="RunCardWaitingAutoDispatchOff" xml:space="preserve">
+    <value>Wyłączone (tylko powiadom dyspozytorów)</value>
+  </data>
+  <data name="RunCardWaitingAutoDispatchOn" xml:space="preserve">
+    <value>Włączone (wysyłaj automatycznie)</value>
+  </data>
+  <data name="RunCardWaitingAutoDispatchHelp" xml:space="preserve">
+    <value>Zastępuje ustawienie jednostki dla zgłoszeń, które ta karta pozostawia w oczekiwaniu na zasób.</value>
+  </data>
+  <data name="RunCardDecisionGraphHelp" xml:space="preserve">
+    <value>Poziom może zadawać pytania (która jednostka dotrze pierwsza, czy jakaś jest dostępna na czas) i proponować pakiet odpowiedzi wyniku, do którego dojdzie. Wiersze powyżej są zawsze wysyłane.</value>
+  </data>
+  <data name="ResponsePackagesHeader" xml:space="preserve">
+    <value>Pakiety odpowiedzi</value>
+  </data>
+  <data name="RunCardShowRawJson" xml:space="preserve">
+    <value>Pokaż surowy wynik</value>
+  </data>
+  <data name="RunCardTargetUnitsGroup" xml:space="preserve">
+    <value>Jednostki</value>
+  </data>
+  <data name="RunCardTargetPeopleGroup" xml:space="preserve">
+    <value>Osoby</value>
+  </data>
+  <data name="RunCardTargetAnyUnit" xml:space="preserve">
+    <value>Dowolna jednostka</value>
+  </data>
+  <data name="RunCardTargetAnyPerson" xml:space="preserve">
+    <value>Dowolna osoba</value>
+  </data>
+  <data name="RunCardTargetAnyClass" xml:space="preserve">
+    <value>Dowolny: {0}</value>
+  </data>
+  <data name="RunCardStatusAnyAvailable" xml:space="preserve">
+    <value>Dowolna dostępna</value>
+  </data>
+  <data name="RunCardStatusInQuarters" xml:space="preserve">
+    <value>W remizie</value>
+  </data>
+  <data name="RunCardStatusAwayFromQuarters" xml:space="preserve">
+    <value>Poza remizą</value>
+  </data>
+  <data name="RunCardStatusBaseTypes" xml:space="preserve">
+    <value>Statusy oznaczające</value>
+  </data>
+  <data name="RunCardNodeChoose" xml:space="preserve">
+    <value>Wybierz...</value>
+  </data>
+  <data name="RunCardOutcomePrefix" xml:space="preserve">
+    <value>Wynik</value>
+  </data>
+  <data name="RunCardConditionPrefix" xml:space="preserve">
+    <value>Warunek</value>
+  </data>
+  <data name="RunCardNodeStartLabel" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="RunCardNodeLabelPlaceholder" xml:space="preserve">
+    <value>Etykieta dla dyspozytorów</value>
+  </data>
+  <data name="RunCardOutcomePackageLabel" xml:space="preserve">
+    <value>Wyślij pakiet</value>
+  </data>
+  <data name="RunCardNoPackageOption" xml:space="preserve">
+    <value>Brak pakietu</value>
+  </data>
+  <data name="RunCardOutcomeAdviceLabel" xml:space="preserve">
+    <value>Wskazówka dla dyspozytorów</value>
+  </data>
+  <data name="RunCardConditionArrivesBefore" xml:space="preserve">
+    <value>Dociera przed</value>
+  </data>
+  <data name="RunCardConditionAvailableWithin" xml:space="preserve">
+    <value>Dostępna w ciągu</value>
+  </data>
+  <data name="RunCardConditionSubjectLabel" xml:space="preserve">
+    <value>Zasób</value>
+  </data>
+  <data name="RunCardConditionReferenceLabel" xml:space="preserve">
+    <value>W porównaniu z</value>
+  </data>
+  <data name="RunCardConditionMarginLabel" xml:space="preserve">
+    <value>O co najmniej (sekundy)</value>
+  </data>
+  <data name="RunCardConditionWithinLabel" xml:space="preserve">
+    <value>W ciągu (sekundy)</value>
+  </data>
+  <data name="RunCardConditionCountLabel" xml:space="preserve">
+    <value>Ile</value>
+  </data>
+  <data name="RunCardConditionYesLabel" xml:space="preserve">
+    <value>Jeśli tak</value>
+  </data>
+  <data name="RunCardConditionNoLabel" xml:space="preserve">
+    <value>Jeśli nie</value>
+  </data>
+  <data name="RunCardLevelPackageLabel" xml:space="preserve">
+    <value>Pakiet odpowiedzi</value>
+  </data>
+  <data name="RunCardDecisionGraphLabel" xml:space="preserve">
+    <value>Drzewo decyzyjne</value>
+  </data>
+  <data name="RunCardAddConditionButton" xml:space="preserve">
+    <value>Dodaj warunek</value>
+  </data>
+  <data name="RunCardAddOutcomeButton" xml:space="preserve">
+    <value>Dodaj wynik</value>
+  </data>
+  <data name="NewResponsePackageButton" xml:space="preserve">
+    <value>Nowy pakiet odpowiedzi</value>
+  </data>
+  <data name="ResponsePackagesHelp" xml:space="preserve">
+    <value>Pakiet odpowiedzi to nazwany zestaw zasobów (np. "Wóz gaśniczy i karetka") wysyłany przez poziomy i wyniki kart. Zmiana pakietu zmienia wszystkie karty, które go używają.</value>
+  </data>
+  <data name="ResponsePackageNameLabel" xml:space="preserve">
+    <value>Nazwa</value>
+  </data>
+  <data name="ResponsePackageDescriptionLabel" xml:space="preserve">
+    <value>Opis</value>
+  </data>
+  <data name="ResponsePackageRetiredLabel" xml:space="preserve">
+    <value>Wycofany (ukryty na listach)</value>
+  </data>
+  <data name="ResponsePackageRowsLabel" xml:space="preserve">
+    <value>Wiersze</value>
+  </data>
+  <data name="ResponsePackageRowsHelp" xml:space="preserve">
+    <value>Każdy wiersz akceptuje dowolny ze swoich typów zasobów. Pakiet zastępczy uzupełnia to, czego wiersz nie mógł, a "pozostaw oczekujące" sprawia, że zgłoszenie nadal czeka na pierwotny zasób.</value>
+  </data>
+  <data name="ResponsePackageAddRowButton" xml:space="preserve">
+    <value>Dodaj wiersz</value>
+  </data>
+  <data name="ResponsePackageRowTargetsLabel" xml:space="preserve">
+    <value>Dowolny z tych</value>
+  </data>
+  <data name="ResponsePackageRowLabelLabel" xml:space="preserve">
+    <value>Etykieta wiersza (opcjonalnie)</value>
+  </data>
+  <data name="ResponsePackageFillCount" xml:space="preserve">
+    <value>Wybierz</value>
+  </data>
+  <data name="ResponsePackageFillFirstArriving" xml:space="preserve">
+    <value>Zapewnij pierwszego na miejscu</value>
+  </data>
+  <data name="ResponsePackageRowStatusLabel" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="ResponsePackageRowCodeLabel" xml:space="preserve">
+    <value>Kod odpowiedzi</value>
+  </data>
+  <data name="ResponsePackageNoCode" xml:space="preserve">
+    <value>Brak kodu</value>
+  </data>
+  <data name="ResponsePackageRowSubstituteLabel" xml:space="preserve">
+    <value>Pakiet zastępczy</value>
+  </data>
+  <data name="ResponsePackageNoSubstitute" xml:space="preserve">
+    <value>Brak zastępstwa</value>
+  </data>
+  <data name="ResponsePackageRowOutstandingLabel" xml:space="preserve">
+    <value>Pozostaw oczekujące do wysłania</value>
+  </data>
+  <data name="ResponsePackageUsedBy" xml:space="preserve">
+    <value>Używany przez</value>
+  </data>
+  <data name="ResponsePackageNotUsed" xml:space="preserve">
+    <value>Nieużywany</value>
+  </data>
+  <data name="ResponsePackageRetiredBadge" xml:space="preserve">
+    <value>Wycofany</value>
+  </data>
+  <data name="ResponsePackageDeleteConfirm" xml:space="preserve">
+    <value>Usunąć ten pakiet odpowiedzi?</value>
+  </data>
+  <data name="PersonnelTurnoutLabel" xml:space="preserve">
+    <value>Czas wyjazdu personelu (sekundy)</value>
+  </data>
+  <data name="PersonnelTurnoutHelp" xml:space="preserve">
+    <value>Dodawany do czasu dojazdu osoby, gdy wiersze akceptujące osoby porównują ją z jednostkami.</value>
+  </data>
+  <data name="WaitingCallAutoDispatchLabel" xml:space="preserve">
+    <value>Wysyłaj zwolnione jednostki do zgłoszeń, które na nie czekają</value>
+  </data>
+  <data name="WaitingCallAutoDispatchHelp" xml:space="preserve">
+    <value>Wyłączone: dyspozytorzy są powiadamiani, gdy pasująca jednostka stanie się dostępna. Włączone: jednostka jest automatycznie wysyłana do oczekującego zgłoszenia o najwyższym priorytecie. Karty mogą to zmienić.</value>
+  </data>
+  <data name="WaitingCallMaxResponseLabel" xml:space="preserve">
+    <value>Limit wysyłania automatycznego (sekundy, 0 = brak)</value>
+  </data>
+  <data name="WaitingCallMaxResponseHelp" xml:space="preserve">
+    <value>Zwolniona jednostka dalej niż ten limit jest zgłaszana, a nie wysyłana. Powiadomienie jest zawsze wysyłane.</value>
+  </data>
+  <data name="ResponseCodesLabel" xml:space="preserve">
+    <value>Kody odpowiedzi</value>
+  </data>
+  <data name="ResponseCodesHelp" xml:space="preserve">
+    <value>Opcjonalne kody na jednostkę w propozycjach, np. C3 dla sygnałów. Pozostaw puste, aby kody nie pojawiały się nigdzie.</value>
+  </data>
+  <data name="ResponseCodeCodeColumn" xml:space="preserve">
+    <value>Kod</value>
+  </data>
+  <data name="ResponseCodeNameColumn" xml:space="preserve">
+    <value>Nazwa</value>
+  </data>
+  <data name="ResponseCodeColorColumn" xml:space="preserve">
+    <value>Kolor</value>
+  </data>
+  <data name="ResponseCodeAddButton" xml:space="preserve">
+    <value>Dodaj kod</value>
+  </data>
+  <data name="ResponseCodesShowToCrewsLabel" xml:space="preserve">
+    <value>Pokazuj kody załogom (powiadomienia i aplikacje)</value>
+  </data>
+  <data name="AwaitingResourcesLabel" xml:space="preserve">
+    <value>Oczekuje na zasoby</value>
+  </data>
+  <data name="AwaitingResourcesHelp" xml:space="preserve">
+    <value>Aktywne zgłoszenia wciąż czekające na zasób wymagany przez kartę, który nie był dostępny przy dysponowaniu. Zgłoszenie znika z listy po wysłaniu pasującego zasobu, odrzuceniu wymagania lub zamknięciu zgłoszenia.</value>
+  </data>
+  <data name="AwaitingDispatchTo" xml:space="preserve">
+    <value>Wyślij do {0}</value>
+  </data>
+  <data name="AwaitingDispatchUnit" xml:space="preserve">
+    <value>Wyślij {0}</value>
+  </data>
+  <data name="AwaitingDismiss" xml:space="preserve">
+    <value>Odrzuć</value>
+  </data>
+  <data name="AwaitingDismissPrompt" xml:space="preserve">
+    <value>Dlaczego ten zasób nie jest już potrzebny? (opcjonalnie)</value>
+  </data>
+  <data name="AwaitingSentInstead" xml:space="preserve">
+    <value>wysłano zamiast: {0}</value>
+  </data>
+  <data name="AwaitingAvailableNow" xml:space="preserve">
+    <value>Dostępne teraz:</value>
+  </data>
+  <data name="AwaitingNoneAvailable" xml:space="preserve">
+    <value>Brak dostępnej pasującej jednostki.</value>
+  </data>
+  <data name="AwaitingNone" xml:space="preserve">
+    <value>Żadne zgłoszenie nie czeka na zasoby.</value>
+  </data>
+  <data name="RunCardTemplatesHeader" xml:space="preserve">
+    <value>Szablony kart odpowiedzi</value>
+  </data>
+  <data name="RunCardTemplatesHelp" xml:space="preserve">
+    <value>Zacznij od działającej karty. Szablony nazywają zasoby według znaczenia, więc pasują do Twoich typów jednostek i ról; sprawdź, przetestuj i włącz.</value>
+  </data>
+  <data name="RunCardTemplatesSetClasses" xml:space="preserve">
+    <value>{0} typ(y) jednostek nie mają klasy, więc szablony rozpoznają je tylko po nazwie.</value>
+  </data>
+  <data name="RunCardTemplatesSetClassesLink" xml:space="preserve">
+    <value>Ustaw klasy jednostek</value>
+  </data>
+  <data name="RunCardTemplatesSuggested" xml:space="preserve">
+    <value>Sugerowane dla Ciebie</value>
+  </data>
+  <data name="RunCardTemplateUseButton" xml:space="preserve">
+    <value>Użyj tego szablonu</value>
+  </data>
+  <data name="RunCardTemplatesAllCategories" xml:space="preserve">
+    <value>Wszystkie kategorie</value>
+  </data>
+  <data name="RunCardTemplatesSearch" xml:space="preserve">
+    <value>Szukaj szablonów</value>
+  </data>
+  <data name="RunCardTemplateShapeGraph" xml:space="preserve">
+    <value>Drzewo decyzyjne</value>
+  </data>
+  <data name="RunCardTemplateShapePackage" xml:space="preserve">
+    <value>Pakiety odpowiedzi</value>
+  </data>
+  <data name="RunCardTemplateMappingsHeader" xml:space="preserve">
+    <value>Dopasowanie do Twojej jednostki</value>
+  </data>
+  <data name="RunCardTemplateUnmatched" xml:space="preserve">
+    <value>brak odpowiednika w tej jednostce. Ustaw klasę jednostki lub dodaj typ albo rolę.</value>
+  </data>
+  <data name="RunCardTemplateNoTriggers" xml:space="preserve">
+    <value>Nie dopasowano wyzwalacza; dodaj go w edytorze przed włączeniem karty.</value>
+  </data>
+  <data name="RunCardTemplateNewBadge" xml:space="preserve">
+    <value>nowy</value>
+  </data>
+  <data name="RunCardTemplateReusedBadge" xml:space="preserve">
+    <value>istniejący</value>
+  </data>
+  <data name="RunCardTemplateCodesAdded" xml:space="preserve">
+    <value>Te kody zostaną dodane do katalogu:</value>
+  </data>
+  <data name="RunCardTemplateCreateButton" xml:space="preserve">
+    <value>Utwórz kartę (wyłączoną)</value>
+  </data>
+  <data name="RunCardTemplateBlocked" xml:space="preserve">
+    <value>Najpierw rozwiąż niedopasowane zasoby.</value>
+  </data>
+  <data name="RunCardTemplateAppliedMessage" xml:space="preserve">
+    <value>Utworzona z szablonu i zapisana jako wyłączona. Sprawdź wyzwalacze i wiersze, przetestuj w zakładce Test, a potem włącz.</value>
+  </data>
 </root>

@@ -92,6 +92,20 @@ namespace Resgrid.Model
 		[ProtoMember(16)]
 		public virtual ICollection<RunCardAvailabilitySelection> AvailabilitySelections { get; set; }
 
+		/// <summary>
+		/// Conditional run cards: when a row's configured fill falls short, take the fastest available resources matching
+		/// its targets with the status filter dropped before trying the row's substitute ("never return no proposal").
+		/// </summary>
+		[ProtoMember(17)]
+		public bool RelaxUnfilledRows { get; set; }
+
+		/// <summary>
+		/// Per-card override of DispatchRecommendationConfig.WaitingCallAutoDispatch for the outstanding requirements this
+		/// card creates. Null = department setting, 0 = alert only, 1 = dispatch a freed unit automatically.
+		/// </summary>
+		[ProtoMember(18)]
+		public int? WaitingCallAutoDispatchOverride { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue

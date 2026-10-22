@@ -38,6 +38,22 @@ namespace Resgrid.Model
 
 		public DateTime DispatchedOn { get; set; }
 
+		/// <summary>
+		/// Optional response code the unit was sent with (DispatchResponseCode.Id in the department's catalog). The code and
+		/// its name are snapshotted beside it, so a later catalog edit never rewrites history. Shown to crews only when the
+		/// department's codes setting has ShowToCrews on.
+		/// </summary>
+		[ProtoMember(8)]
+		public int? ResponseCodeId { get; set; }
+
+		[MaxLength(16)]
+		[ProtoMember(9)]
+		public string ResponseCode { get; set; }
+
+		[MaxLength(100)]
+		[ProtoMember(10)]
+		public string ResponseCodeName { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue

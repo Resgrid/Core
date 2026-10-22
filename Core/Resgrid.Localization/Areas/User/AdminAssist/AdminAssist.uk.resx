@@ -7077,4 +7077,37 @@
   <data xml:space="preserve" name="FeatureSetup.custom-map-icons">
     <value>Завантажте квадратний PNG із прозорим тлом розміром від 128 × 128 px на сторінці типу підрозділу, типу виклику, типу POI або ролі; сторінка покаже попередній перегляд на світлій і темній карті. Щоб вибрати іконку людини з кількома ролями, упорядкуйте ролі на сторінці «Ролі».</value>
   </data>
+  <data xml:space="preserve" name="Feature.map-visualizations">
+    <value>Візуалізації на карті</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.map-visualizations">
+    <value>Теплові карти, шестикутні сітки та накладення викликів, часу реагування, покриття станцій, виїздів і переміщень підрозділів та персоналу — з вбудованої бібліотеки або збережені службою.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.map-visualizations">
+    <value>Відкрийте Картографування, потім Візуалізації, оберіть візуалізацію з бібліотеки, наприклад «Гарячі зони викликів», налаштуйте період, фільтри та шари на вкладці «Налаштування» і збережіть її. Адміністратори служби можуть поділитися збереженою візуалізацією з усіма.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.PersonnelTurnoutSeconds">
+    <value>Налаштування рекомендацій диспетчеризації / Час виїзду персоналу в секундах</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.PersonnelTurnoutSeconds">
+    <value>Секунди, потрібні особі перед вирушенням; додаються до часу дороги, коли рядки, що приймають людей, порівнюють її з підрозділами. Нуль означає без затримки.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.WaitingCallAutoDispatch">
+    <value>Налаштування рекомендацій диспетчеризації / Автоматичне направлення на виклики в очікуванні</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.WaitingCallAutoDispatch">
+    <value>Коли звільняється підрозділ, що відповідає виклику в очікуванні ресурсів, його автоматично направляють на виклик з найвищим пріоритетом замість простого сповіщення. Картки можуть це змінити; типово вимкнено.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.WaitingCallMaxResponseSeconds">
+    <value>Налаштування рекомендацій диспетчеризації / Максимальний час реагування для викликів в очікуванні в секундах</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.WaitingCallMaxResponseSeconds">
+    <value>Ліміт автоматичного направлення: про звільнений підрозділ із довшим розрахунковим часом сповіщають, але не направляють. Нуль означає без ліміту; сповіщення надсилається завжди.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.DispatchResponseCodes">
+    <value>Коди реагування диспетчеризації</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DispatchResponseCodes">
+    <value>Необов'язкові коди для кожного підрозділу (наприклад, C3 для маячків і сирени), які пропонують рядки умовних карток, і чи бачать їх екіпажі у сповіщеннях і застосунках. Порожньо означає, що коди ніде не показуються.</value>
+  </data>
 </root>

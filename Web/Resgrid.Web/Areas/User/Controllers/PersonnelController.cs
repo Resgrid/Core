@@ -175,6 +175,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var sortOrder = await _departmentSettingsService.GetDepartmentPersonnelSortOrderAsync(DepartmentId);
 
+			// No status inside the auto-available hour reads as the department's Available status (built-in Standing By is 0).
+			var defaultStatusId = (await _customStateService.GetDefaultPersonnelStatusAsync(DepartmentId))?.CustomStateDetailId ?? (int)ActionTypes.StandingBy;
+
 			foreach (var user in users)
 			{
 				if (!await _authorizationService.CanUserViewPersonViaMatrixAsync(user.UserId, UserId, DepartmentId))
@@ -278,6 +281,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (actionLog != null)
 				{
 					person.StatusId = actionLog.ActionTypeId;
+				}
+				else
+				{
+					person.StatusId = defaultStatusId;
 				}
 
 				if (staffing != null)
@@ -891,6 +898,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var lastUserActionlogs = await _actionLogsService.GetLastActionLogsForDepartmentAsync(DepartmentId);
 			var userStates = await _userStateService.GetLatestStatesForDepartmentAsync(DepartmentId);
+			// Shown for anyone without a status inside the auto-available hour (the department's own Available option, if any).
+			var defaultStatus = await _customStateService.GetDefaultPersonnelStatusAsync(DepartmentId);
 
 			var personnelSortOrder = await _departmentSettingsService.GetDepartmentPersonnelSortOrderAsync(DepartmentId);
 			var personnelStatusSortOrder = await _departmentSettingsService.GetDepartmentPersonnelListStatusSortOrderAsync(DepartmentId);
@@ -944,8 +953,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 				else
 				{
-					person.Status = "Standing By";
-					person.StatusColor = "#000";
+					person.Status = defaultStatus?.ButtonText ?? "Standing By";
+					person.StatusColor = defaultStatus?.ButtonClassToColor() ?? "#777";
 				}
 
 				// The ETA is worked out from the member's last status position, so it needs Security > See Personnel Locations.

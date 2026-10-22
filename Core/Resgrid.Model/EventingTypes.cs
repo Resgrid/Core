@@ -18,6 +18,9 @@ namespace Resgrid.Model
 		SessionEvent = 12,
 
 		/// <summary>A unit status timer acknowledgement changed; the item id is the unit id.</summary>
-		UnitStatusAlertUpdated = 13
+		UnitStatusAlertUpdated = 13,
+
+		/// <summary>Calls awaiting resources changed, or a freed unit matches one; item id = call id (0 = several), payload = OutstandingRequirementsAlert.</summary>
+		OutstandingRequirementsUpdated = 14
 	}
 }

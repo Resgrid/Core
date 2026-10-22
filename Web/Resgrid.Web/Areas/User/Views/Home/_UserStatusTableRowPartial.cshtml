@@ -18,6 +18,7 @@
     var stations = model.Stations;
     var states = model.States;
     var staffingLevels = model.StaffingLevels;
+    var defaultStatus = model.DefaultStatus;
 
     int? groupId = null;
 
@@ -164,6 +165,10 @@
                     <span class='label label-default'>@commonLocalizer["Unknown"]</span>
                 }
             }
+        }
+        else if (defaultStatus != null && defaultStatus.CustomStateDetailId > 0)
+        {
+            <span class='label label-default' style="color: @defaultStatus.TextColor; background-color: @defaultStatus.ButtonColor;">@defaultStatus.ButtonText</span>
         }
         else
         {

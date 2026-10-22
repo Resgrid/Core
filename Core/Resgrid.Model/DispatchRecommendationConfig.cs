@@ -33,6 +33,9 @@ namespace Resgrid.Model
 		/// <summary>No crew needs more than half an hour to get rolling; anything above is a typo.</summary>
 		public const int MaximumTurnoutSeconds = 1800;
 
+		/// <summary>Beyond two hours "auto-dispatch a freed unit to an awaiting call" is no longer a response.</summary>
+		public const int MaximumWaitingCallResponseSeconds = 7200;
+
 		public DispatchRecommendationConfig()
 		{
 			MaxLocationAgeSeconds = DefaultMaxLocationAgeSeconds;
@@ -105,5 +108,27 @@ namespace Resgrid.Model
 		/// </summary>
 		[ProtoMember(11)]
 		public int MobileTurnoutSeconds { get; set; }
+
+		/// <summary>
+		/// Conditional run cards: seconds a person needs before they are moving, added to their travel time when people
+		/// and units are ranked together ("any person", "the fastest resource regardless of type"). 0 = no turnout.
+		/// </summary>
+		[ProtoMember(12)]
+		public int PersonnelTurnoutSeconds { get; set; }
+
+		/// <summary>
+		/// Conditional run cards: when a unit becomes available and a call is still awaiting a resource of its kind, dispatch
+		/// the unit to that call automatically instead of only alerting dispatchers. Off by default; a run card can override
+		/// it for the requirements it creates. The alert always fires either way.
+		/// </summary>
+		[ProtoMember(13)]
+		public bool WaitingCallAutoDispatch { get; set; }
+
+		/// <summary>
+		/// Conditional run cards: automatic dispatch to an awaiting call only sends a freed unit that can arrive within this
+		/// many seconds; farther units are alerted, not sent. 0 = no limit. Never removes the alert itself.
+		/// </summary>
+		[ProtoMember(14)]
+		public int WaitingCallMaxResponseSeconds { get; set; }
 	}
 }

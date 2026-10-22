@@ -19,6 +19,7 @@ interface MarkerState {
   longitude: number;
   title: string;
   imagePath: string;
+  iconUrl: string;
   poiImage: string;
   markerShape: string;
   color: string;
@@ -188,6 +189,7 @@ export default function LeafletMapView({
         !existingMarkerState ||
           existingMarkerState.title !== markerInfo.Title ||
           existingMarkerState.imagePath !== markerInfo.ImagePath ||
+          existingMarkerState.iconUrl !== (markerInfo.IconUrl ?? '') ||
           existingMarkerState.poiImage !== (markerInfo.PoiImage ?? '') ||
           existingMarkerState.markerShape !== (markerInfo.Marker ?? '') ||
           existingMarkerState.color !== (markerInfo.Color ?? '') ||
@@ -207,6 +209,7 @@ export default function LeafletMapView({
           longitude: markerInfo.Longitude,
           title: markerInfo.Title,
           imagePath: markerInfo.ImagePath,
+          iconUrl: markerInfo.IconUrl ?? '',
           poiImage: markerInfo.PoiImage ?? '',
           markerShape: markerInfo.Marker ?? '',
           color: markerInfo.Color ?? '',

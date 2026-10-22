@@ -48,6 +48,20 @@ namespace Resgrid.Tests.Web.User
 			DepartmentTypeSelectList.Build(Localizer(), null, false).Select(i => i.Value).Should().Equal(DepartmentTypeCatalog.Values, "sign-up starts on a real type");
 		}
 
+		[TestCase(null)]
+		[TestCase("")]
+		[TestCase("   ")]
+		public void Sign_up_refuses_a_post_without_a_type(string postedType)
+		{
+			// The sign-up picker offers no blank option, so only a hand-made post arrives without one; a new department
+			// always starts with a type (Department -> Settings keeps the blank-is-unchanged rule for older departments).
+			var model = new Resgrid.Web.Models.AccountViewModels.RegisterViewModel { DepartmentType = postedType };
+			var context = new System.ComponentModel.DataAnnotations.ValidationContext(model) { MemberName = nameof(model.DepartmentType) };
+
+			System.ComponentModel.DataAnnotations.Validator.TryValidateProperty(model.DepartmentType, context, new System.Collections.Generic.List<System.ComponentModel.DataAnnotations.ValidationResult>())
+				.Should().BeFalse();
+		}
+
 		[Test]
 		public void Falls_back_to_the_stored_text_when_a_name_is_missing()
 		{

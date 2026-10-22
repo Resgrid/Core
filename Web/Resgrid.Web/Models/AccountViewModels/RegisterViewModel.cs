@@ -28,6 +28,7 @@ namespace Resgrid.Web.Models.AccountViewModels
 		[Display(Name = "Department Name")]
 		public string DepartmentName { get; set; }
 
+		[Required]
 		[Display(Name = "Department Type")]
 		public string DepartmentType { get; set; }
 

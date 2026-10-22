@@ -358,7 +358,6 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return BadRequest();
 
 			var result = new CallResult();
-			var callTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId);
 			var c = await _callsService.GetCallByIdAsync(parsedCallId);
 
 			if (c == null)
@@ -374,6 +373,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (!IsSystemApiKeyRequest && !await CanViewOrEditCallAsync(parsedCallId, edit: false))
 				return Unauthorized();
+
+			// The call's own department, which a system API key may have named through departmentId.
+			var callTypes = await _callsService.GetCallTypesForDepartmentAsync(effectiveDepartmentId);
 
 			c = await _callsService.PopulateCallData(c, false, true, true, false, false, false, true, true, true);
 

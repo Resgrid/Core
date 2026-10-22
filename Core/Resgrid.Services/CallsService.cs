@@ -439,11 +439,13 @@ namespace Resgrid.Services
 		{
 			var callType = await _callTypesRepository.GetByIdAsync(callTypeId);
 
-			// TypeIcons has no foreign key to the type, so its uploaded icon goes with it here.
-			if (callType != null && _typeIconsRepository != null)
+			var deleted = await _callTypesRepository.DeleteAsync(callType, cancellationToken);
+
+			// TypeIcons has no foreign key to the type, so its uploaded icon goes with it once the type is gone.
+			if (deleted && callType != null && _typeIconsRepository != null)
 				await _typeIconsRepository.DeleteForTypeAsync(callType.DepartmentId, TypeIconKinds.CallType, callType.CallTypeId, null, cancellationToken);
 
-			return await _callTypesRepository.DeleteAsync(callType, cancellationToken);
+			return deleted;
 		}
 
 		public async Task<CallType> GetCallTypeByIdAsync(int callTypeId)

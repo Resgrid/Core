@@ -443,6 +443,62 @@ namespace Resgrid.Tests.Services
 			icons.Verify(x => x.DeleteForTypeAsync(DepartmentId, TypeIconKinds.PoiType, TypeId, null, It.IsAny<CancellationToken>()), Times.Once);
 		}
 
+		[Test]
+		public async Task DeleteCallTypeAsync_deletes_the_types_uploaded_icon()
+		{
+			var callTypes = new Mock<ICallTypesRepository>();
+			var type = new CallType { CallTypeId = TypeId, DepartmentId = DepartmentId, Type = "Structure Fire" };
+			callTypes.Setup(x => x.GetByIdAsync(TypeId)).ReturnsAsync(type);
+			callTypes.Setup(x => x.DeleteAsync(type, It.IsAny<CancellationToken>())).ReturnsAsync(true);
+			var icons = new Mock<ITypeIconsRepository>();
+
+			(await CallsService(callTypes, icons).DeleteCallTypeAsync(TypeId)).Should().BeTrue();
+			icons.Verify(x => x.DeleteForTypeAsync(DepartmentId, TypeIconKinds.CallType, TypeId, null, It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[TestCase(TypeIconKinds.UnitType)]
+		[TestCase(TypeIconKinds.CallType)]
+		[TestCase(TypeIconKinds.PoiType)]
+		public async Task A_type_delete_that_fails_keeps_the_types_uploaded_icon(TypeIconKinds kind)
+		{
+			var icons = new Mock<ITypeIconsRepository>();
+			bool deleted;
+
+			switch (kind)
+			{
+				case TypeIconKinds.UnitType:
+					var unitTypes = new Mock<IUnitTypesRepository>();
+					var unitType = new UnitType { UnitTypeId = TypeId, DepartmentId = DepartmentId, Type = "MUG" };
+					unitTypes.Setup(x => x.GetByIdAsync(TypeId)).ReturnsAsync(unitType);
+					unitTypes.Setup(x => x.DeleteAsync(unitType, It.IsAny<CancellationToken>())).ReturnsAsync(false);
+					deleted = await new UnitsService(null, null, null, unitTypes.Object, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+						typeIconsRepository: icons.Object).DeleteUnitTypeAsync(TypeId);
+					break;
+				case TypeIconKinds.CallType:
+					var callTypes = new Mock<ICallTypesRepository>();
+					var callType = new CallType { CallTypeId = TypeId, DepartmentId = DepartmentId, Type = "Structure Fire" };
+					callTypes.Setup(x => x.GetByIdAsync(TypeId)).ReturnsAsync(callType);
+					callTypes.Setup(x => x.DeleteAsync(callType, It.IsAny<CancellationToken>())).ReturnsAsync(false);
+					deleted = await CallsService(callTypes, icons).DeleteCallTypeAsync(TypeId);
+					break;
+				default:
+					var poiTypes = new Mock<IPoiTypesRepository>();
+					var poiType = new PoiType { PoiTypeId = TypeId, DepartmentId = DepartmentId, Name = "Hospitals" };
+					poiTypes.Setup(x => x.GetPoiTypeByTypeIdAsync(TypeId)).ReturnsAsync(poiType);
+					poiTypes.Setup(x => x.DeleteAsync(poiType, It.IsAny<CancellationToken>())).ReturnsAsync(false);
+					deleted = await new MappingService(poiTypes.Object, null, null, null, null, icons.Object).DeletePOITypeAsync(TypeId);
+					break;
+			}
+
+			deleted.Should().BeFalse();
+			icons.Verify(x => x.DeleteForTypeAsync(It.IsAny<int>(), It.IsAny<TypeIconKinds>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never,
+				"the type is still there and its IconKey still points at the icon, so the icon has to stay too");
+		}
+
+		private static CallsService CallsService(Mock<ICallTypesRepository> callTypes, Mock<ITypeIconsRepository> icons) =>
+			new CallsService(null, null, null, callTypes.Object, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+				typeIconsRepository: icons.Object);
+
 		#endregion Type deletes
 
 		private static byte[] Png(int width, int height, Rgba32 color)

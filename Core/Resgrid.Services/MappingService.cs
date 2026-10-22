@@ -131,11 +131,12 @@ namespace Resgrid.Services
 
 			if (type != null)
 			{
-				// TypeIcons has no foreign key to the type, so its uploaded icon goes with it here.
-				if (_typeIconsRepository != null)
+				var deleted = await _poiTypesRepository.DeleteAsync(type, cancellationToken);
+
+				// TypeIcons has no foreign key to the type, so its uploaded icon goes with it once the type is gone.
+				if (deleted && _typeIconsRepository != null)
 					await _typeIconsRepository.DeleteForTypeAsync(type.DepartmentId, TypeIconKinds.PoiType, type.PoiTypeId, null, cancellationToken);
 
-				var deleted = await _poiTypesRepository.DeleteAsync(type, cancellationToken);
 				if (deleted && _searchProjections != null)
 					foreach (var poi in type.Pois ?? Enumerable.Empty<Poi>())
 						await _searchProjections.Value.RemoveAsync(type.DepartmentId, SearchEntityTypes.Poi, poi.PoiId.ToString(), cancellationToken);

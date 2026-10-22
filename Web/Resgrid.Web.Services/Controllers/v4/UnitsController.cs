@@ -334,7 +334,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return result;
 			}
 
-			var unitType = string.IsNullOrWhiteSpace(unit.Type) ? null : await _unitsService.GetUnitTypeByNameAsync(DepartmentId, unit.Type);
+			var unitType = string.IsNullOrWhiteSpace(unit.Type) ? null : await _unitsService.GetUnitTypeByNameAsync(effectiveDepartmentId, unit.Type);
 
 			result.Data = ConvertUnitsData(unit, null, unitType, TimeZone);
 			result.PageSize = 1;

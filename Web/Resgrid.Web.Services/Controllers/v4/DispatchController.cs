@@ -324,9 +324,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (activeCalls != null)
 			{
+				var callTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId);
+
 				foreach (var c in activeCalls)
 				{
-					result.Data.Calls.Add(CallsController.ConvertCall(c, null, null, TimeZone));
+					result.Data.Calls.Add(CallsController.ConvertCall(c, null, null, TimeZone, null, callTypes));
 				}
 			}
 

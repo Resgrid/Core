@@ -204,7 +204,13 @@ namespace Resgrid.Model
 
 		public string StatusText { get; set; }
 
+		/// <summary>The status's colour (hex) as the department set it up, the colour it shows everywhere else; null when it has none.</summary>
+		public string StatusColor { get; set; }
+
 		public string StaffingText { get; set; }
+
+		/// <summary>The staffing level's colour (hex); null when it has none.</summary>
+		public string StaffingColor { get; set; }
 
 		public bool IsAvailable { get; set; }
 

@@ -1507,13 +1507,13 @@
     <value>Terminología</value>
   </data>
   <data name="TerminologyIntro" xml:space="preserve">
-    <value>Use las palabras propias de su departamento. Un nombre definido aquí reemplaza el nombre de Resgrid para ese módulo o tipo de registro en la navegación, en los títulos de página, dondequiera que se listen los tipos de registro y en las apps Responder, Unit, IC y Dispatch, para todos los miembros y en todos los idiomas. Solo cambia la etiqueta: los permisos, enlaces e integraciones no se ven afectados. Deje un campo vacío para mantener el nombre de Resgrid.</value>
+    <value>Use las palabras propias de su departamento. Un nombre definido aquí reemplaza el nombre de Resgrid para ese módulo o tipo de registro en todo el sitio web: en la navegación, los títulos de página, los botones, los encabezados de columna, los mensajes, las impresiones y las exportaciones, y en las apps Responder, Unit, IC y Dispatch, para todos los miembros y en todos los idiomas. Solo cambia la redacción: los permisos, enlaces, integraciones y todo lo que escriban sus miembros se mantienen igual. Deje un campo vacío para mantener el nombre de Resgrid.</value>
   </data>
   <data name="TerminologyModules" xml:space="preserve">
     <value>Módulos</value>
   </data>
   <data name="TerminologyModulesHelp" xml:space="preserve">
-    <value>Se muestra en la navegación, como título de la página principal del módulo y en los menús de las apps. Las frases en otros lugares que mencionan un módulo conservan la redacción de Resgrid.</value>
+    <value>Indique el nombre del módulo y, cuando lo tenga, la palabra para un solo elemento, como Equipos y Equipo para Unidades, para que botones como Nuevo equipo se lean con naturalidad; deje el elemento vacío para deducirlo del nombre. Los módulos marcados En todo Resgrid cambian dondequiera que Resgrid los menciona. Los demás cambian dentro de su propio módulo, porque palabras como nota, bitácora, registro o contacto también tienen significados cotidianos en otros lugares.</value>
   </data>
   <data name="TerminologyRecordTypes" xml:space="preserve">
     <value>Tipos de registro</value>
@@ -1535,6 +1535,9 @@
   </data>
   <data name="TerminologyTooLong" xml:space="preserve">
     <value>Los nombres pueden tener como máximo {0} caracteres; los nombres más largos no se guardaron y se muestran para corregirlos.</value>
+  </data>
+  <data name="TerminologyInvalidCharacters" xml:space="preserve">
+    <value>Los nombres no pueden contener &lt; &gt; { ni }; esos nombres no se guardaron y se muestran para corregirlos.</value>
   </data>
   <data name="TerminologyRecordDefinitionsLink" xml:space="preserve">
     <value>Definiciones de registro</value>
@@ -1751,5 +1754,353 @@
   </data>
   <data name="OrgType.other" xml:space="preserve">
     <value>Otro</value>
+  </data>
+  <data name="SettingsGroupDispatch" xml:space="preserve">
+    <value>Llamadas y Despacho</value>
+  </data>
+  <data name="SettingsGroupOperations" xml:space="preserve">
+    <value>Operaciones</value>
+  </data>
+  <data name="SettingsGroupCustomization" xml:space="preserve">
+    <value>Personalización</value>
+  </data>
+  <data name="SettingsGroupIntegrations" xml:space="preserve">
+    <value>Integraciones</value>
+  </data>
+  <data name="ResetStaffingMeaningGroup" xml:space="preserve">
+    <value>Significado del nivel de personal (su nivel con este significado)</value>
+  </data>
+  <data name="ResetStaffingOptionGroup" xml:space="preserve">
+    <value>Nivel de personal específico</value>
+  </data>
+  <data name="ResetStatusMeaningGroup" xml:space="preserve">
+    <value>Significado del estado (su estado con este significado)</value>
+  </data>
+  <data name="ResetStatusOptionGroup" xml:space="preserve">
+    <value>Estado específico</value>
+  </data>
+  <data name="ResetTargetSavedOption" xml:space="preserve">
+    <value>{0} (guardado antes, ya no disponible)</value>
+  </data>
+  <data name="RunCardRelaxUnfilledRowsLabel" xml:space="preserve">
+    <value>Relajar los filtros de estado en filas sin cubrir</value>
+  </data>
+  <data name="RunCardRelaxUnfilledRowsHelp" xml:space="preserve">
+    <value>Si el filtro de estado de una fila no encuentra nada, se propone la unidad disponible más rápida del mismo tipo.</value>
+  </data>
+  <data name="RunCardWaitingAutoDispatchLabel" xml:space="preserve">
+    <value>Despachar unidades liberadas a las llamadas que las esperan</value>
+  </data>
+  <data name="RunCardWaitingAutoDispatchOff" xml:space="preserve">
+    <value>Desactivado (solo avisar a los despachadores)</value>
+  </data>
+  <data name="RunCardWaitingAutoDispatchOn" xml:space="preserve">
+    <value>Activado (despachar automáticamente)</value>
+  </data>
+  <data name="RunCardWaitingAutoDispatchHelp" xml:space="preserve">
+    <value>Sustituye el ajuste del departamento para las llamadas que esta tarjeta deja esperando un recurso.</value>
+  </data>
+  <data name="RunCardDecisionGraphHelp" xml:space="preserve">
+    <value>Un nivel puede hacer preguntas (qué unidad llega primero, si hay una disponible a tiempo) y proponer el paquete de respuesta del resultado al que llega. Sus filas de arriba siempre se envían.</value>
+  </data>
+  <data name="ResponsePackagesHeader" xml:space="preserve">
+    <value>Paquetes de respuesta</value>
+  </data>
+  <data name="RunCardShowRawJson" xml:space="preserve">
+    <value>Mostrar resultado sin formato</value>
+  </data>
+  <data name="RunCardTargetUnitsGroup" xml:space="preserve">
+    <value>Unidades</value>
+  </data>
+  <data name="RunCardTargetPeopleGroup" xml:space="preserve">
+    <value>Personas</value>
+  </data>
+  <data name="RunCardTargetAnyUnit" xml:space="preserve">
+    <value>Cualquier unidad</value>
+  </data>
+  <data name="RunCardTargetAnyPerson" xml:space="preserve">
+    <value>Cualquier persona</value>
+  </data>
+  <data name="RunCardTargetAnyClass" xml:space="preserve">
+    <value>Cualquier {0}</value>
+  </data>
+  <data name="RunCardStatusAnyAvailable" xml:space="preserve">
+    <value>Cualquiera disponible</value>
+  </data>
+  <data name="RunCardStatusInQuarters" xml:space="preserve">
+    <value>En el cuartel</value>
+  </data>
+  <data name="RunCardStatusAwayFromQuarters" xml:space="preserve">
+    <value>Fuera del cuartel</value>
+  </data>
+  <data name="RunCardStatusBaseTypes" xml:space="preserve">
+    <value>Estados que significan</value>
+  </data>
+  <data name="RunCardNodeChoose" xml:space="preserve">
+    <value>Elegir...</value>
+  </data>
+  <data name="RunCardOutcomePrefix" xml:space="preserve">
+    <value>Resultado</value>
+  </data>
+  <data name="RunCardConditionPrefix" xml:space="preserve">
+    <value>Condición</value>
+  </data>
+  <data name="RunCardNodeStartLabel" xml:space="preserve">
+    <value>Inicio</value>
+  </data>
+  <data name="RunCardNodeLabelPlaceholder" xml:space="preserve">
+    <value>Etiqueta para los despachadores</value>
+  </data>
+  <data name="RunCardOutcomePackageLabel" xml:space="preserve">
+    <value>Enviar paquete</value>
+  </data>
+  <data name="RunCardNoPackageOption" xml:space="preserve">
+    <value>Sin paquete</value>
+  </data>
+  <data name="RunCardOutcomeAdviceLabel" xml:space="preserve">
+    <value>Indicación para los despachadores</value>
+  </data>
+  <data name="RunCardConditionArrivesBefore" xml:space="preserve">
+    <value>Llega antes que</value>
+  </data>
+  <data name="RunCardConditionAvailableWithin" xml:space="preserve">
+    <value>Disponible en</value>
+  </data>
+  <data name="RunCardConditionSubjectLabel" xml:space="preserve">
+    <value>Recurso</value>
+  </data>
+  <data name="RunCardConditionReferenceLabel" xml:space="preserve">
+    <value>Comparado con</value>
+  </data>
+  <data name="RunCardConditionMarginLabel" xml:space="preserve">
+    <value>Por al menos (segundos)</value>
+  </data>
+  <data name="RunCardConditionWithinLabel" xml:space="preserve">
+    <value>En (segundos)</value>
+  </data>
+  <data name="RunCardConditionCountLabel" xml:space="preserve">
+    <value>Cuántos</value>
+  </data>
+  <data name="RunCardConditionYesLabel" xml:space="preserve">
+    <value>Si sí</value>
+  </data>
+  <data name="RunCardConditionNoLabel" xml:space="preserve">
+    <value>Si no</value>
+  </data>
+  <data name="RunCardLevelPackageLabel" xml:space="preserve">
+    <value>Paquete de respuesta</value>
+  </data>
+  <data name="RunCardDecisionGraphLabel" xml:space="preserve">
+    <value>Árbol de decisión</value>
+  </data>
+  <data name="RunCardAddConditionButton" xml:space="preserve">
+    <value>Agregar condición</value>
+  </data>
+  <data name="RunCardAddOutcomeButton" xml:space="preserve">
+    <value>Agregar resultado</value>
+  </data>
+  <data name="NewResponsePackageButton" xml:space="preserve">
+    <value>Nuevo paquete de respuesta</value>
+  </data>
+  <data name="ResponsePackagesHelp" xml:space="preserve">
+    <value>Un paquete de respuesta es un conjunto con nombre de recursos (por ejemplo "Autobomba y ambulancia") que envían los niveles y resultados de las tarjetas. Cambiarlo cambia todas las tarjetas que lo usan.</value>
+  </data>
+  <data name="ResponsePackageNameLabel" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="ResponsePackageDescriptionLabel" xml:space="preserve">
+    <value>Descripción</value>
+  </data>
+  <data name="ResponsePackageRetiredLabel" xml:space="preserve">
+    <value>Retirado (oculto en las listas)</value>
+  </data>
+  <data name="ResponsePackageRowsLabel" xml:space="preserve">
+    <value>Filas</value>
+  </data>
+  <data name="ResponsePackageRowsHelp" xml:space="preserve">
+    <value>Cada fila acepta cualquiera de sus tipos de recurso. Un paquete sustituto cubre lo que una fila no pudo, y "mantener pendiente" hace que la llamada siga esperando el recurso original.</value>
+  </data>
+  <data name="ResponsePackageAddRowButton" xml:space="preserve">
+    <value>Agregar fila</value>
+  </data>
+  <data name="ResponsePackageRowTargetsLabel" xml:space="preserve">
+    <value>Cualquiera de estos</value>
+  </data>
+  <data name="ResponsePackageRowLabelLabel" xml:space="preserve">
+    <value>Etiqueta de fila (opcional)</value>
+  </data>
+  <data name="ResponsePackageFillCount" xml:space="preserve">
+    <value>Elegir</value>
+  </data>
+  <data name="ResponsePackageFillFirstArriving" xml:space="preserve">
+    <value>Asegurar el primero en llegar</value>
+  </data>
+  <data name="ResponsePackageRowStatusLabel" xml:space="preserve">
+    <value>Estado</value>
+  </data>
+  <data name="ResponsePackageRowCodeLabel" xml:space="preserve">
+    <value>Código de respuesta</value>
+  </data>
+  <data name="ResponsePackageNoCode" xml:space="preserve">
+    <value>Sin código</value>
+  </data>
+  <data name="ResponsePackageRowSubstituteLabel" xml:space="preserve">
+    <value>Paquete sustituto</value>
+  </data>
+  <data name="ResponsePackageNoSubstitute" xml:space="preserve">
+    <value>Sin sustituto</value>
+  </data>
+  <data name="ResponsePackageRowOutstandingLabel" xml:space="preserve">
+    <value>Mantener pendiente hasta enviarlo</value>
+  </data>
+  <data name="ResponsePackageUsedBy" xml:space="preserve">
+    <value>Usado por</value>
+  </data>
+  <data name="ResponsePackageNotUsed" xml:space="preserve">
+    <value>Sin usar</value>
+  </data>
+  <data name="ResponsePackageRetiredBadge" xml:space="preserve">
+    <value>Retirado</value>
+  </data>
+  <data name="ResponsePackageDeleteConfirm" xml:space="preserve">
+    <value>¿Eliminar este paquete de respuesta?</value>
+  </data>
+  <data name="PersonnelTurnoutLabel" xml:space="preserve">
+    <value>Tiempo de salida del personal (segundos)</value>
+  </data>
+  <data name="PersonnelTurnoutHelp" xml:space="preserve">
+    <value>Se suma al tiempo de viaje de una persona cuando las filas que aceptan personas la comparan con unidades.</value>
+  </data>
+  <data name="WaitingCallAutoDispatchLabel" xml:space="preserve">
+    <value>Despachar unidades liberadas a las llamadas que las esperan</value>
+  </data>
+  <data name="WaitingCallAutoDispatchHelp" xml:space="preserve">
+    <value>Desactivado: se avisa a los despachadores cuando una unidad adecuada queda disponible. Activado: la unidad se envía automáticamente a la llamada en espera de mayor prioridad. Las tarjetas pueden cambiarlo.</value>
+  </data>
+  <data name="WaitingCallMaxResponseLabel" xml:space="preserve">
+    <value>Límite del despacho automático (segundos, 0 = sin límite)</value>
+  </data>
+  <data name="WaitingCallMaxResponseHelp" xml:space="preserve">
+    <value>Una unidad liberada más lejos que esto se avisa, no se envía. El aviso siempre se emite.</value>
+  </data>
+  <data name="ResponseCodesLabel" xml:space="preserve">
+    <value>Códigos de respuesta</value>
+  </data>
+  <data name="ResponseCodesHelp" xml:space="preserve">
+    <value>Códigos opcionales por unidad para las propuestas, como C3 para luces y sirena. Déjelo vacío para no mostrar códigos en ninguna pantalla.</value>
+  </data>
+  <data name="ResponseCodeCodeColumn" xml:space="preserve">
+    <value>Código</value>
+  </data>
+  <data name="ResponseCodeNameColumn" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="ResponseCodeColorColumn" xml:space="preserve">
+    <value>Color</value>
+  </data>
+  <data name="ResponseCodeAddButton" xml:space="preserve">
+    <value>Agregar código</value>
+  </data>
+  <data name="ResponseCodesShowToCrewsLabel" xml:space="preserve">
+    <value>Mostrar códigos a las dotaciones (avisos y aplicaciones)</value>
+  </data>
+  <data name="AwaitingResourcesLabel" xml:space="preserve">
+    <value>En espera de recursos</value>
+  </data>
+  <data name="AwaitingResourcesHelp" xml:space="preserve">
+    <value>Llamadas activas que siguen esperando un recurso que su tarjeta exigía y que no estaba disponible al despacharlas. Una llamada sale de esta lista cuando se envía un recurso adecuado, se descarta el requisito o se cierra la llamada.</value>
+  </data>
+  <data name="AwaitingDispatchTo" xml:space="preserve">
+    <value>Despachar a {0}</value>
+  </data>
+  <data name="AwaitingDispatchUnit" xml:space="preserve">
+    <value>Despachar {0}</value>
+  </data>
+  <data name="AwaitingDismiss" xml:space="preserve">
+    <value>Descartar</value>
+  </data>
+  <data name="AwaitingDismissPrompt" xml:space="preserve">
+    <value>¿Por qué ya no se necesita este recurso? (opcional)</value>
+  </data>
+  <data name="AwaitingSentInstead" xml:space="preserve">
+    <value>enviado en su lugar: {0}</value>
+  </data>
+  <data name="AwaitingAvailableNow" xml:space="preserve">
+    <value>Disponible ahora:</value>
+  </data>
+  <data name="AwaitingNoneAvailable" xml:space="preserve">
+    <value>No hay ninguna unidad adecuada disponible.</value>
+  </data>
+  <data name="AwaitingNone" xml:space="preserve">
+    <value>Ninguna llamada espera recursos.</value>
+  </data>
+  <data name="RunCardTemplatesHeader" xml:space="preserve">
+    <value>Plantillas de tarjetas de respuesta</value>
+  </data>
+  <data name="RunCardTemplatesHelp" xml:space="preserve">
+    <value>Empiece con una tarjeta que funciona. Las plantillas nombran los recursos por su significado y se ajustan a sus tipos de unidad y funciones; revise, pruebe y active.</value>
+  </data>
+  <data name="RunCardTemplatesSetClasses" xml:space="preserve">
+    <value>{0} tipo(s) de unidad no tienen clase, así que las plantillas solo los reconocen por nombre.</value>
+  </data>
+  <data name="RunCardTemplatesSetClassesLink" xml:space="preserve">
+    <value>Definir clases de unidad</value>
+  </data>
+  <data name="RunCardTemplatesSuggested" xml:space="preserve">
+    <value>Sugeridas para usted</value>
+  </data>
+  <data name="RunCardTemplateUseButton" xml:space="preserve">
+    <value>Usar esta plantilla</value>
+  </data>
+  <data name="RunCardTemplatesAllCategories" xml:space="preserve">
+    <value>Todas las categorías</value>
+  </data>
+  <data name="RunCardTemplatesSearch" xml:space="preserve">
+    <value>Buscar plantillas</value>
+  </data>
+  <data name="RunCardTemplateShapeGraph" xml:space="preserve">
+    <value>Árbol de decisión</value>
+  </data>
+  <data name="RunCardTemplateShapePackage" xml:space="preserve">
+    <value>Paquetes de respuesta</value>
+  </data>
+  <data name="RunCardTemplateMappingsHeader" xml:space="preserve">
+    <value>Cómo encaja en su departamento</value>
+  </data>
+  <data name="RunCardTemplateUnmatched" xml:space="preserve">
+    <value>sin coincidencia en este departamento. Defina una clase de unidad o agregue el tipo o la función.</value>
+  </data>
+  <data name="RunCardTemplateNoTriggers" xml:space="preserve">
+    <value>No se encontró ningún disparador; agregue uno en el editor antes de activar la tarjeta.</value>
+  </data>
+  <data name="RunCardTemplateNewBadge" xml:space="preserve">
+    <value>nuevo</value>
+  </data>
+  <data name="RunCardTemplateReusedBadge" xml:space="preserve">
+    <value>existente</value>
+  </data>
+  <data name="RunCardTemplateCodesAdded" xml:space="preserve">
+    <value>Estos códigos se agregarán a su catálogo:</value>
+  </data>
+  <data name="RunCardTemplateCreateButton" xml:space="preserve">
+    <value>Crear tarjeta (desactivada)</value>
+  </data>
+  <data name="RunCardTemplateBlocked" xml:space="preserve">
+    <value>Resuelva primero los recursos sin coincidencia.</value>
+  </data>
+  <data name="RunCardTemplateAppliedMessage" xml:space="preserve">
+    <value>Creada desde una plantilla y guardada desactivada. Revise disparadores y filas, pruébela en la pestaña de prueba y actívela.</value>
+  </data>
+  <data name="TerminologySingularColumn" xml:space="preserve">
+    <value>Un elemento</value>
+  </data>
+  <data name="TerminologyWhereColumn" xml:space="preserve">
+    <value>Dónde cambia</value>
+  </data>
+  <data name="TerminologyScopeEverywhere" xml:space="preserve">
+    <value>En todo Resgrid</value>
+  </data>
+  <data name="TerminologyScopeModule" xml:space="preserve">
+    <value>En su propio módulo</value>
   </data>
 </root>

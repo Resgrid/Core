@@ -6886,13 +6886,13 @@
     <value>Terminologia jednostki</value>
   </data>
   <data name="SettingHelp.DepartmentTerminology" xml:space="preserve">
-    <value>Własne nazwy jednostki dla modułów i wbudowanych typów rejestrów, wyświetlane w nawigacji, w tytułach stron modułów, wszędzie tam, gdzie wymieniane są typy rejestrów, oraz w aplikacjach Responder, Unit, IC i Dispatch, we wszystkich językach. Tylko etykiety: uprawnienia, łącza i wartości API się nie zmieniają. Termin bez nazwy używa nazwy Resgrid.</value>
+    <value>Własne nazwy jednostki dla modułów, ze słowem dla jednego elementu (Zespół dla Jednostek przemianowanych na Zespoły), oraz dla wbudowanych typów rejestrów. Obowiązują w nawigacji, tytułach stron, przyciskach, nagłówkach kolumn, komunikatach i eksportach witryny oraz są wyświetlane w aplikacjach Responder, Unit, IC i Dispatch, we wszystkich językach. Tylko etykiety: uprawnienia, łącza, wartości API i teksty członków się nie zmieniają. Termin bez nazwy używa nazwy Resgrid.</value>
   </data>
   <data name="Field.DepartmentTerminologyConfig.Terms" xml:space="preserve">
     <value>Terminologia jednostki / Terminy</value>
   </data>
   <data name="FieldHelp.DepartmentTerminologyConfig.Terms" xml:space="preserve">
-    <value>Jeden wpis na każdy przemianowany moduł lub typ rejestru, np. Zdarzenie zamiast Run lub Dyżur zamiast Work. Termin niewymieniony pokazuje nazwę Resgrid w języku członka. Nazwy mają najwyżej 50 znaków.</value>
+    <value>Jeden wpis na każdy przemianowany moduł lub typ rejestru, np. Zdarzenie zamiast Run lub Dyżur zamiast Work. Wpis modułu może też zawierać słowo dla jednego elementu, np. Zespół dla Jednostek przemianowanych na Zespoły; pozostawione puste jest wyprowadzane z nazwy. Termin niewymieniony pokazuje nazwę Resgrid w języku członka. Nazwy mają najwyżej 50 znaków.</value>
   </data>
   <data name="Field.DepartmentTermOverride.Key" xml:space="preserve">
     <value>Termin jednostki / Klucz</value>
@@ -7076,5 +7076,44 @@
   </data>
   <data xml:space="preserve" name="FeatureSetup.custom-map-icons">
     <value>Prześlij kwadratowy plik PNG z przezroczystym tłem, o wymiarach co najmniej 128 × 128 px, na stronie typu jednostki, typu zgłoszenia, typu POI lub roli; strona pokaże podgląd na jasnej i ciemnej mapie. Aby wybrać ikonę osoby z kilkoma rolami, ustaw kolejność ról na stronie Role.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.map-visualizations">
+    <value>Wizualizacje mapy</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.map-visualizations">
+    <value>Mapy cieplne, siatki heksagonalne i nakładki zgłoszeń, czasów reakcji, pokrycia stacji, wyjazdów i przemieszczeń jednostek oraz personelu – z wbudowanej biblioteki lub zapisane przez dział.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.map-visualizations">
+    <value>Otwórz Mapowanie, a następnie Wizualizacje, wybierz wizualizację z biblioteki, np. „Gorące strefy zgłoszeń”, dostosuj zakres dat, filtry i warstwy na karcie Dostosuj i zapisz ją. Administratorzy działu mogą udostępnić zapisaną wizualizację wszystkim.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.PersonnelTurnoutSeconds">
+    <value>Konfiguracja rekomendacji dysponowania / Czas wyjazdu personelu w sekundach</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.PersonnelTurnoutSeconds">
+    <value>Sekundy potrzebne osobie przed wyruszeniem; dodawane do czasu dojazdu, gdy wiersze akceptujące osoby porównują ją z jednostkami. Zero oznacza brak.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.WaitingCallAutoDispatch">
+    <value>Konfiguracja rekomendacji dysponowania / Automatyczne wysyłanie do oczekujących zgłoszeń</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.WaitingCallAutoDispatch">
+    <value>Gdy zwolni się jednostka pasująca do zgłoszenia oczekującego na zasoby, jest automatycznie wysyłana do oczekującego zgłoszenia o najwyższym priorytecie zamiast tylko powiadomienia. Karty mogą to zmienić; domyślnie wyłączone.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.WaitingCallMaxResponseSeconds">
+    <value>Konfiguracja rekomendacji dysponowania / Maksymalny czas dotarcia dla oczekujących zgłoszeń w sekundach</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.WaitingCallMaxResponseSeconds">
+    <value>Limit automatycznego wysyłania: zwolniona jednostka z dłuższym szacowanym czasem dotarcia jest zgłaszana, a nie wysyłana. Zero oznacza brak limitu; powiadomienie jest zawsze wysyłane.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.DispatchResponseCodes">
+    <value>Kody odpowiedzi dysponowania</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DispatchResponseCodes">
+    <value>Opcjonalne kody na jednostkę (np. C3 dla sygnałów) proponowane przez wiersze kart warunkowych oraz to, czy załogi widzą je w powiadomieniach i aplikacjach. Puste oznacza, że kody nie pojawiają się nigdzie.</value>
+  </data>
+  <data name="Field.DepartmentTermOverride.Singular" xml:space="preserve">
+    <value>Termin jednostki / Jeden element</value>
+  </data>
+  <data name="FieldHelp.DepartmentTermOverride.Singular" xml:space="preserve">
+    <value>Dla modułu słowo jednostki oznaczające jeden element, np. Zespół dla Jednostek przemianowanych na Zespoły, używane na przyciskach i w nagłówkach, takich jak Nowy zespół; najwyżej 50 znaków. Puste jest wyprowadzane z nazwy. Typy rejestrów go nie mają.</value>
   </data>
 </root>

@@ -18,6 +18,7 @@
     var stations = model.Stations;
     var states = model.States;
     var staffingLevels = model.StaffingLevels;
+    var defaultStatus = model.DefaultStatus;
 
     int? groupId = null;
 
@@ -165,32 +166,14 @@
                 }
             }
         }
+        else if (defaultStatus != null && defaultStatus.CustomStateDetailId > 0)
+        {
+            <span class='label label-default' style="color: @defaultStatus.TextColor; background-color: @defaultStatus.ButtonColor;">@defaultStatus.ButtonText</span>
+        }
         else
         {
             <span class='label label-default'>@commonLocalizer["StandingBy"]</span>
         }
-    </td>
-    <td class="hidden-xs">
-        <div class="hidden-xs" style="font-size: 8pt;">
-            @if (al != null && al.Eta > 60)
-            {
-                var time = Math.Round(al.Eta / 60);
-
-                <span>@time</span>
-
-                <span class="small">m</span>
-            }
-            else if (al != null && al.Eta < 60 && al.Eta > 0)
-            {
-                <span>@al.Eta</span>
-
-                <span class="small">s</span>
-            }
-            else
-            {
-                <span></span>
-            }
-        </div>
     </td>
     <td class="hidden-xs">
         <div class="hidden-xs" style="font-size: 8pt; max-width: 150px;">

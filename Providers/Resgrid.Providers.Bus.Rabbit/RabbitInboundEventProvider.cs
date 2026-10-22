@@ -32,6 +32,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 		public Func<int, string, Task> ProcessChecklistEvent;
 		public Func<string, string, Task> ProcessSessionEvent;
 		public Func<int, string, Task> ProcessUnitStatusAlertEvent;
+		public Func<int, string, string, Task> ProcessOutstandingRequirementsEvent;
 
 		public async Task Start(string clientName, string queueName)
 		{
@@ -181,6 +182,9 @@ namespace Resgrid.Providers.Bus.Rabbit
 							case EventingTypes.UnitStatusAlertUpdated:
 								if (ProcessUnitStatusAlertEvent != null) await ProcessUnitStatusAlertEvent.Invoke(eventingMessage.DepartmentId, eventingMessage.ItemId);
 								break;
+							case EventingTypes.OutstandingRequirementsUpdated:
+								if (ProcessOutstandingRequirementsEvent != null) await ProcessOutstandingRequirementsEvent.Invoke(eventingMessage.DepartmentId, eventingMessage.ItemId, eventingMessage.Payload);
+								break;
 							case EventingTypes.SessionEvent:
 								if (ProcessSessionEvent != null) await ProcessSessionEvent.Invoke(eventingMessage.ItemId, eventingMessage.Payload);
 								break;
@@ -253,6 +257,8 @@ namespace Resgrid.Providers.Bus.Rabbit
 		public void RegisterForSessionEvents(Func<string, string, Task> sessionEvent) => ProcessSessionEvent = sessionEvent;
 
 		public void RegisterForUnitStatusAlertEvents(Func<int, string, Task> unitStatusAlertEvent) => ProcessUnitStatusAlertEvent = unitStatusAlertEvent;
+
+		public void RegisterForOutstandingRequirementsEvents(Func<int, string, string, Task> outstandingRequirementsEvent) => ProcessOutstandingRequirementsEvent = outstandingRequirementsEvent;
 
 		public void RegisterForChatEvents(Func<int, string, Task> chatEvent)
 		{

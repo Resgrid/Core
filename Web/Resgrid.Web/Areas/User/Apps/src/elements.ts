@@ -83,6 +83,20 @@ defineReactElement<ChatModerationElementProps>(
 );
 
 
+defineReactElement<import('./components/mapViz/MapVisualizerElement').MapVisualizerElementProps>(
+  'rg-map-visualizer',
+  () => import('./components/mapViz/MapVisualizerElement'),
+  [
+    { attribute: 'strings', property: 'strings', type: 'json', defaultValue: {} },
+    { attribute: 'tileurl', property: 'tileUrl', type: 'string', defaultValue: '' },
+    { attribute: 'attribution', property: 'attribution', type: 'string', defaultValue: '' },
+    { attribute: 'initialid', property: 'initialId', type: 'string', defaultValue: '' },
+    { attribute: 'initialtemplate', property: 'initialTemplate', type: 'string', defaultValue: '' },
+    { attribute: 'initialcallid', property: 'initialCallId', type: 'number', defaultValue: 0 },
+    { attribute: 'mapheight', property: 'mapHeight', type: 'string', defaultValue: '' },
+  ],
+);
+
 defineReactElement<import('./components/adminAssist/AdminAssistElement').AdminAssistElementProps>(
   'rg-admin-assist',
   () => import('./components/adminAssist/AdminAssistElement'),

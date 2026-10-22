@@ -795,4 +795,43 @@
   <data name="Terminology" xml:space="preserve">
     <value>Terminologi</value>
   </data>
+  <data name="TermCall" xml:space="preserve">
+    <value>Larm</value>
+  </data>
+  <data name="TermPerson" xml:space="preserve">
+    <value>Person</value>
+  </data>
+  <data name="TermUnit" xml:space="preserve">
+    <value>Enhet</value>
+  </data>
+  <data name="TermContact" xml:space="preserve">
+    <value>Kontakt</value>
+  </data>
+  <data name="TermShift" xml:space="preserve">
+    <value>Skift</value>
+  </data>
+  <data name="TermRecord" xml:space="preserve">
+    <value>Journal</value>
+  </data>
+  <data name="TermLog" xml:space="preserve">
+    <value>Logg</value>
+  </data>
+  <data name="TermReport" xml:space="preserve">
+    <value>Rapport</value>
+  </data>
+  <data name="TermDocument" xml:space="preserve">
+    <value>Dokument</value>
+  </data>
+  <data name="TermNote" xml:space="preserve">
+    <value>Anteckning</value>
+  </data>
+  <data name="TermTraining" xml:space="preserve">
+    <value>Utbildning</value>
+  </data>
+  <data name="TermWorkOrder" xml:space="preserve">
+    <value>Arbetsorder</value>
+  </data>
+  <data name="TermChecklist" xml:space="preserve">
+    <value>Checklista</value>
+  </data>
 </root>

@@ -144,12 +144,12 @@ var resgrid;
                             }
                         }
                         else {
-                            resgrid.common.notifications.showError('Unit Already Exists', 'Unit already exists in log, cannot add again.');
+                            resgrid.common.notifications.showError(resgrid.terms.apply('Unit Already Exists', 'module.logs'), resgrid.terms.apply('Unit already exists in log, cannot add again.', 'module.logs'));
                         }
                     }
                 });
                 $("#nonUnitPersonnel").select2({
-                    placeholder: "Select Personnel...",
+                    placeholder: resgrid.terms.apply("Select Personnel..."),
                     allowClear: true,
                     multiple: true,
                     ajax: {

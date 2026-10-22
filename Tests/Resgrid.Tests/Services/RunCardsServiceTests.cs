@@ -54,7 +54,10 @@ namespace Resgrid.Tests.Services
 					_unitsService.Object,
 					Mock.Of<IPersonnelRolesService>(),
 					_departmentGroupsService.Object,
-					Mock.Of<ICustomStateService>());
+					Mock.Of<ICustomStateService>(),
+					Mock.Of<IRunCardDecisionNodesRepository>(),
+					Mock.Of<IRunCardTargetsRepository>(),
+					Mock.Of<IResponsePackagesRepository>());
 			}
 
 			[Test]
@@ -228,7 +231,10 @@ namespace Resgrid.Tests.Services
 					unitsService.Object,
 					personnelRolesService.Object,
 					departmentGroupsService.Object,
-					customStateService.Object);
+					customStateService.Object,
+					Mock.Of<IRunCardDecisionNodesRepository>(),
+					Mock.Of<IRunCardTargetsRepository>(),
+					Mock.Of<IResponsePackagesRepository>());
 			}
 
 			private static RunCard StoredCard()

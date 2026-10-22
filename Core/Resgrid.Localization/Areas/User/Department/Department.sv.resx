@@ -1449,13 +1449,13 @@
     <value>Terminologi</value>
   </data>
   <data name="TerminologyIntro" xml:space="preserve">
-    <value>Använd er organisations egna ord. Ett namn som anges här ersätter Resgrids namn på modulen eller journaltypen i navigeringen, i sidrubriker, överallt där journaltyper listas och i apparna Responder, Unit, IC och Dispatch, för alla medlemmar och på alla språk. Bara etiketten ändras: behörigheter, länkar och integrationer påverkas inte. Lämna en ruta tom för att behålla Resgrids namn.</value>
+    <value>Använd er organisations egna ord. Ett namn som anges här ersätter Resgrids namn på modulen eller journaltypen på hela webbplatsen: i navigeringen, sidrubriker, knappar, kolumnrubriker, meddelanden, utskrifter och exporter, och i apparna Responder, Unit, IC och Dispatch, för alla medlemmar och på alla språk. Bara formuleringen ändras: behörigheter, länkar, integrationer och allt era medlemmar har skrivit förblir som de är. Lämna en ruta tom för att behålla Resgrids namn.</value>
   </data>
   <data name="TerminologyModules" xml:space="preserve">
     <value>Moduler</value>
   </data>
   <data name="TerminologyModulesHelp" xml:space="preserve">
-    <value>Visas i navigeringen, som rubrik på modulens huvudsida och i apparnas menyer. Meningar på andra ställen som nämner en modul behåller Resgrids formulering.</value>
+    <value>Ange modulens namn och, där det finns, ordet för ett enskilt objekt, till exempel Lag och Lag för Enheter, så att knappar som Nytt lag läses naturligt; lämna objektet tomt för att härleda det från namnet. Moduler märkta I hela Resgrid ändras överallt där Resgrid nämner dem. Övriga ändras i den egna modulen, eftersom ord som anteckning, logg, journal och kontakt också har vardagliga betydelser på andra ställen.</value>
   </data>
   <data name="TerminologyRecordTypes" xml:space="preserve">
     <value>Journaltyper</value>
@@ -1477,6 +1477,9 @@
   </data>
   <data name="TerminologyTooLong" xml:space="preserve">
     <value>Namn får vara högst {0} tecken; längre namn sparades inte och visas för rättning.</value>
+  </data>
+  <data name="TerminologyInvalidCharacters" xml:space="preserve">
+    <value>Namn får inte innehålla &lt; &gt; { eller }; de namnen sparades inte och visas för rättning.</value>
   </data>
   <data name="TerminologyRecordDefinitionsLink" xml:space="preserve">
     <value>Journaldefinitioner</value>
@@ -1693,5 +1696,353 @@
   </data>
   <data name="OrgType.other" xml:space="preserve">
     <value>Övrigt</value>
+  </data>
+  <data name="SettingsGroupDispatch" xml:space="preserve">
+    <value>Larm &amp; Utskick</value>
+  </data>
+  <data name="SettingsGroupOperations" xml:space="preserve">
+    <value>Drift</value>
+  </data>
+  <data name="SettingsGroupCustomization" xml:space="preserve">
+    <value>Anpassning</value>
+  </data>
+  <data name="SettingsGroupIntegrations" xml:space="preserve">
+    <value>Integrationer</value>
+  </data>
+  <data name="ResetStaffingMeaningGroup" xml:space="preserve">
+    <value>Bemanningens betydelse (er nivå med denna betydelse)</value>
+  </data>
+  <data name="ResetStaffingOptionGroup" xml:space="preserve">
+    <value>Specifik bemanningsnivå</value>
+  </data>
+  <data name="ResetStatusMeaningGroup" xml:space="preserve">
+    <value>Statusens betydelse (er status med denna betydelse)</value>
+  </data>
+  <data name="ResetStatusOptionGroup" xml:space="preserve">
+    <value>Specifik status</value>
+  </data>
+  <data name="ResetTargetSavedOption" xml:space="preserve">
+    <value>{0} (sparad tidigare, erbjuds inte längre)</value>
+  </data>
+  <data name="RunCardRelaxUnfilledRowsLabel" xml:space="preserve">
+    <value>Lätta på statusfilter för ofyllda rader</value>
+  </data>
+  <data name="RunCardRelaxUnfilledRowsHelp" xml:space="preserve">
+    <value>När en rads statusfilter inte hittar något föreslås den snabbaste tillgängliga enheten av samma slag i stället.</value>
+  </data>
+  <data name="RunCardWaitingAutoDispatchLabel" xml:space="preserve">
+    <value>Larma frigjorda enheter till ärenden som väntar på dem</value>
+  </data>
+  <data name="RunCardWaitingAutoDispatchOff" xml:space="preserve">
+    <value>Av (avisera endast operatörer)</value>
+  </data>
+  <data name="RunCardWaitingAutoDispatchOn" xml:space="preserve">
+    <value>På (larma automatiskt)</value>
+  </data>
+  <data name="RunCardWaitingAutoDispatchHelp" xml:space="preserve">
+    <value>Åsidosätter avdelningens inställning för ärenden som det här kortet lämnar i väntan på en resurs.</value>
+  </data>
+  <data name="RunCardDecisionGraphHelp" xml:space="preserve">
+    <value>En nivå kan ställa frågor (vilken enhet kommer först, finns en tillgänglig i tid) och föreslå responspaketet för det utfall den når. Raderna ovan skickas alltid.</value>
+  </data>
+  <data name="ResponsePackagesHeader" xml:space="preserve">
+    <value>Responspaket</value>
+  </data>
+  <data name="RunCardShowRawJson" xml:space="preserve">
+    <value>Visa rådata</value>
+  </data>
+  <data name="RunCardTargetUnitsGroup" xml:space="preserve">
+    <value>Enheter</value>
+  </data>
+  <data name="RunCardTargetPeopleGroup" xml:space="preserve">
+    <value>Personer</value>
+  </data>
+  <data name="RunCardTargetAnyUnit" xml:space="preserve">
+    <value>Valfri enhet</value>
+  </data>
+  <data name="RunCardTargetAnyPerson" xml:space="preserve">
+    <value>Valfri person</value>
+  </data>
+  <data name="RunCardTargetAnyClass" xml:space="preserve">
+    <value>Valfri {0}</value>
+  </data>
+  <data name="RunCardStatusAnyAvailable" xml:space="preserve">
+    <value>Valfri tillgänglig</value>
+  </data>
+  <data name="RunCardStatusInQuarters" xml:space="preserve">
+    <value>På station</value>
+  </data>
+  <data name="RunCardStatusAwayFromQuarters" xml:space="preserve">
+    <value>Utanför station</value>
+  </data>
+  <data name="RunCardStatusBaseTypes" xml:space="preserve">
+    <value>Statusar som betyder</value>
+  </data>
+  <data name="RunCardNodeChoose" xml:space="preserve">
+    <value>Välj...</value>
+  </data>
+  <data name="RunCardOutcomePrefix" xml:space="preserve">
+    <value>Utfall</value>
+  </data>
+  <data name="RunCardConditionPrefix" xml:space="preserve">
+    <value>Villkor</value>
+  </data>
+  <data name="RunCardNodeStartLabel" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="RunCardNodeLabelPlaceholder" xml:space="preserve">
+    <value>Etikett som visas för operatörer</value>
+  </data>
+  <data name="RunCardOutcomePackageLabel" xml:space="preserve">
+    <value>Skicka paket</value>
+  </data>
+  <data name="RunCardNoPackageOption" xml:space="preserve">
+    <value>Inget paket</value>
+  </data>
+  <data name="RunCardOutcomeAdviceLabel" xml:space="preserve">
+    <value>Råd till operatörer</value>
+  </data>
+  <data name="RunCardConditionArrivesBefore" xml:space="preserve">
+    <value>Anländer före</value>
+  </data>
+  <data name="RunCardConditionAvailableWithin" xml:space="preserve">
+    <value>Tillgänglig inom</value>
+  </data>
+  <data name="RunCardConditionSubjectLabel" xml:space="preserve">
+    <value>Resurs</value>
+  </data>
+  <data name="RunCardConditionReferenceLabel" xml:space="preserve">
+    <value>Jämfört med</value>
+  </data>
+  <data name="RunCardConditionMarginLabel" xml:space="preserve">
+    <value>Med minst (sekunder)</value>
+  </data>
+  <data name="RunCardConditionWithinLabel" xml:space="preserve">
+    <value>Inom (sekunder)</value>
+  </data>
+  <data name="RunCardConditionCountLabel" xml:space="preserve">
+    <value>Hur många</value>
+  </data>
+  <data name="RunCardConditionYesLabel" xml:space="preserve">
+    <value>Om ja</value>
+  </data>
+  <data name="RunCardConditionNoLabel" xml:space="preserve">
+    <value>Om nej</value>
+  </data>
+  <data name="RunCardLevelPackageLabel" xml:space="preserve">
+    <value>Responspaket</value>
+  </data>
+  <data name="RunCardDecisionGraphLabel" xml:space="preserve">
+    <value>Beslutsträd</value>
+  </data>
+  <data name="RunCardAddConditionButton" xml:space="preserve">
+    <value>Lägg till villkor</value>
+  </data>
+  <data name="RunCardAddOutcomeButton" xml:space="preserve">
+    <value>Lägg till utfall</value>
+  </data>
+  <data name="NewResponsePackageButton" xml:space="preserve">
+    <value>Nytt responspaket</value>
+  </data>
+  <data name="ResponsePackagesHelp" xml:space="preserve">
+    <value>Ett responspaket är en namngiven uppsättning resurser (till exempel "Släckbil och ambulans") som kortens nivåer och utfall skickar. Ändras paketet ändras alla kort som använder det.</value>
+  </data>
+  <data name="ResponsePackageNameLabel" xml:space="preserve">
+    <value>Namn</value>
+  </data>
+  <data name="ResponsePackageDescriptionLabel" xml:space="preserve">
+    <value>Beskrivning</value>
+  </data>
+  <data name="ResponsePackageRetiredLabel" xml:space="preserve">
+    <value>Avvecklat (dolt i listor)</value>
+  </data>
+  <data name="ResponsePackageRowsLabel" xml:space="preserve">
+    <value>Rader</value>
+  </data>
+  <data name="ResponsePackageRowsHelp" xml:space="preserve">
+    <value>Varje rad accepterar vilken som helst av sina resurstyper. Ett ersättningspaket fyller det en rad inte kunde, och "behåll som utestående" gör att ärendet fortsätter vänta på den ursprungliga resursen.</value>
+  </data>
+  <data name="ResponsePackageAddRowButton" xml:space="preserve">
+    <value>Lägg till rad</value>
+  </data>
+  <data name="ResponsePackageRowTargetsLabel" xml:space="preserve">
+    <value>Någon av dessa</value>
+  </data>
+  <data name="ResponsePackageRowLabelLabel" xml:space="preserve">
+    <value>Radetikett (valfritt)</value>
+  </data>
+  <data name="ResponsePackageFillCount" xml:space="preserve">
+    <value>Välj</value>
+  </data>
+  <data name="ResponsePackageFillFirstArriving" xml:space="preserve">
+    <value>Säkerställ först på plats</value>
+  </data>
+  <data name="ResponsePackageRowStatusLabel" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="ResponsePackageRowCodeLabel" xml:space="preserve">
+    <value>Responskod</value>
+  </data>
+  <data name="ResponsePackageNoCode" xml:space="preserve">
+    <value>Ingen kod</value>
+  </data>
+  <data name="ResponsePackageRowSubstituteLabel" xml:space="preserve">
+    <value>Ersättningspaket</value>
+  </data>
+  <data name="ResponsePackageNoSubstitute" xml:space="preserve">
+    <value>Ingen ersättning</value>
+  </data>
+  <data name="ResponsePackageRowOutstandingLabel" xml:space="preserve">
+    <value>Behåll som utestående tills den skickas</value>
+  </data>
+  <data name="ResponsePackageUsedBy" xml:space="preserve">
+    <value>Används av</value>
+  </data>
+  <data name="ResponsePackageNotUsed" xml:space="preserve">
+    <value>Används inte</value>
+  </data>
+  <data name="ResponsePackageRetiredBadge" xml:space="preserve">
+    <value>Avvecklad</value>
+  </data>
+  <data name="ResponsePackageDeleteConfirm" xml:space="preserve">
+    <value>Ta bort det här responspaketet?</value>
+  </data>
+  <data name="PersonnelTurnoutLabel" xml:space="preserve">
+    <value>Utryckningstid personal (sekunder)</value>
+  </data>
+  <data name="PersonnelTurnoutHelp" xml:space="preserve">
+    <value>Läggs till en persons restid när rader som accepterar personer jämför dem med enheter.</value>
+  </data>
+  <data name="WaitingCallAutoDispatchLabel" xml:space="preserve">
+    <value>Larma frigjorda enheter till ärenden som väntar på dem</value>
+  </data>
+  <data name="WaitingCallAutoDispatchHelp" xml:space="preserve">
+    <value>Av: operatörer aviseras när en passande enhet blir tillgänglig. På: enheten skickas automatiskt till det väntande ärendet med högst prioritet. Kort kan åsidosätta detta.</value>
+  </data>
+  <data name="WaitingCallMaxResponseLabel" xml:space="preserve">
+    <value>Gräns för automatisk larmning (sekunder, 0 = ingen)</value>
+  </data>
+  <data name="WaitingCallMaxResponseHelp" xml:space="preserve">
+    <value>En frigjord enhet längre bort än så aviseras, skickas inte. Aviseringen skickas alltid.</value>
+  </data>
+  <data name="ResponseCodesLabel" xml:space="preserve">
+    <value>Responskoder</value>
+  </data>
+  <data name="ResponseCodesHelp" xml:space="preserve">
+    <value>Valfria koder per enhet för förslag, till exempel C3 för blåljus och siren. Lämna tomt för att hålla koder borta från alla skärmar.</value>
+  </data>
+  <data name="ResponseCodeCodeColumn" xml:space="preserve">
+    <value>Kod</value>
+  </data>
+  <data name="ResponseCodeNameColumn" xml:space="preserve">
+    <value>Namn</value>
+  </data>
+  <data name="ResponseCodeColorColumn" xml:space="preserve">
+    <value>Färg</value>
+  </data>
+  <data name="ResponseCodeAddButton" xml:space="preserve">
+    <value>Lägg till kod</value>
+  </data>
+  <data name="ResponseCodesShowToCrewsLabel" xml:space="preserve">
+    <value>Visa koder för besättningar (push och appar)</value>
+  </data>
+  <data name="AwaitingResourcesLabel" xml:space="preserve">
+    <value>Väntar på resurser</value>
+  </data>
+  <data name="AwaitingResourcesHelp" xml:space="preserve">
+    <value>Aktiva ärenden som fortfarande väntar på en resurs som kortet krävde men som inte var tillgänglig vid larmningen. Ett ärende lämnar listan när en passande resurs skickas, kravet avfärdas eller ärendet stängs.</value>
+  </data>
+  <data name="AwaitingDispatchTo" xml:space="preserve">
+    <value>Larma till {0}</value>
+  </data>
+  <data name="AwaitingDispatchUnit" xml:space="preserve">
+    <value>Larma {0}</value>
+  </data>
+  <data name="AwaitingDismiss" xml:space="preserve">
+    <value>Avfärda</value>
+  </data>
+  <data name="AwaitingDismissPrompt" xml:space="preserve">
+    <value>Varför behövs inte resursen längre? (valfritt)</value>
+  </data>
+  <data name="AwaitingSentInstead" xml:space="preserve">
+    <value>skickades i stället: {0}</value>
+  </data>
+  <data name="AwaitingAvailableNow" xml:space="preserve">
+    <value>Tillgänglig nu:</value>
+  </data>
+  <data name="AwaitingNoneAvailable" xml:space="preserve">
+    <value>Ingen passande enhet är tillgänglig.</value>
+  </data>
+  <data name="AwaitingNone" xml:space="preserve">
+    <value>Inga ärenden väntar på resurser.</value>
+  </data>
+  <data name="RunCardTemplatesHeader" xml:space="preserve">
+    <value>Mallar för larmkort</value>
+  </data>
+  <data name="RunCardTemplatesHelp" xml:space="preserve">
+    <value>Börja från ett fungerande kort. Mallar namnger resurser efter betydelse och passar dina enhetstyper och roller; granska, testa och aktivera.</value>
+  </data>
+  <data name="RunCardTemplatesSetClasses" xml:space="preserve">
+    <value>{0} enhetstyp(er) saknar klass, så mallar kan bara matcha dem på namn.</value>
+  </data>
+  <data name="RunCardTemplatesSetClassesLink" xml:space="preserve">
+    <value>Ange enhetsklasser</value>
+  </data>
+  <data name="RunCardTemplatesSuggested" xml:space="preserve">
+    <value>Förslag för dig</value>
+  </data>
+  <data name="RunCardTemplateUseButton" xml:space="preserve">
+    <value>Använd mallen</value>
+  </data>
+  <data name="RunCardTemplatesAllCategories" xml:space="preserve">
+    <value>Alla kategorier</value>
+  </data>
+  <data name="RunCardTemplatesSearch" xml:space="preserve">
+    <value>Sök mallar</value>
+  </data>
+  <data name="RunCardTemplateShapeGraph" xml:space="preserve">
+    <value>Beslutsträd</value>
+  </data>
+  <data name="RunCardTemplateShapePackage" xml:space="preserve">
+    <value>Responspaket</value>
+  </data>
+  <data name="RunCardTemplateMappingsHeader" xml:space="preserve">
+    <value>Så passar mallen er avdelning</value>
+  </data>
+  <data name="RunCardTemplateUnmatched" xml:space="preserve">
+    <value>ingen motsvarighet i avdelningen. Ange en enhetsklass eller lägg till typen eller rollen.</value>
+  </data>
+  <data name="RunCardTemplateNoTriggers" xml:space="preserve">
+    <value>Ingen utlösare matchade; lägg till en i redigeraren innan kortet aktiveras.</value>
+  </data>
+  <data name="RunCardTemplateNewBadge" xml:space="preserve">
+    <value>ny</value>
+  </data>
+  <data name="RunCardTemplateReusedBadge" xml:space="preserve">
+    <value>befintlig</value>
+  </data>
+  <data name="RunCardTemplateCodesAdded" xml:space="preserve">
+    <value>Dessa koder läggs till i katalogen:</value>
+  </data>
+  <data name="RunCardTemplateCreateButton" xml:space="preserve">
+    <value>Skapa kort (inaktiverat)</value>
+  </data>
+  <data name="RunCardTemplateBlocked" xml:space="preserve">
+    <value>Lös de omatchade resurserna först.</value>
+  </data>
+  <data name="RunCardTemplateAppliedMessage" xml:space="preserve">
+    <value>Skapad från en mall och sparad inaktiverad. Kontrollera utlösare och rader, testa på fliken Test och aktivera sedan.</value>
+  </data>
+  <data name="TerminologySingularColumn" xml:space="preserve">
+    <value>Ett objekt</value>
+  </data>
+  <data name="TerminologyWhereColumn" xml:space="preserve">
+    <value>Var det ändras</value>
+  </data>
+  <data name="TerminologyScopeEverywhere" xml:space="preserve">
+    <value>I hela Resgrid</value>
+  </data>
+  <data name="TerminologyScopeModule" xml:space="preserve">
+    <value>I den egna modulen</value>
   </data>
 </root>

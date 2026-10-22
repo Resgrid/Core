@@ -6886,13 +6886,13 @@
     <value>Ορολογία τμήματος</value>
   </data>
   <data name="SettingHelp.DepartmentTerminology" xml:space="preserve">
-    <value>Τα δικά του ονόματα του τμήματος για ενότητες και ενσωματωμένους τύπους αρχείων, που εμφανίζονται στην πλοήγηση, στους τίτλους των σελίδων των ενοτήτων, όπου αναφέρονται τύποι αρχείων και στις εφαρμογές Responder, Unit, IC και Dispatch, σε όλες τις γλώσσες. Μόνο ετικέτες: τα δικαιώματα, οι σύνδεσμοι και οι τιμές του API δεν αλλάζουν. Ένας όρος χωρίς όνομα χρησιμοποιεί το όνομα του Resgrid.</value>
+    <value>Τα δικά του ονόματα του τμήματος για ενότητες, με τη λέξη για ένα στοιχείο (Ομάδα για Μονάδες που μετονομάστηκαν σε Ομάδες), και για ενσωματωμένους τύπους αρχείων. Ισχύουν στην πλοήγηση, στους τίτλους σελίδων, στα κουμπιά, στις κεφαλίδες στηλών, στα μηνύματα και στις εξαγωγές του ιστότοπου και εμφανίζονται στις εφαρμογές Responder, Unit, IC και Dispatch, σε όλες τις γλώσσες. Μόνο ετικέτες: τα δικαιώματα, οι σύνδεσμοι, οι τιμές του API και το κείμενο των μελών δεν αλλάζουν. Ένας όρος χωρίς όνομα χρησιμοποιεί το όνομα του Resgrid.</value>
   </data>
   <data name="Field.DepartmentTerminologyConfig.Terms" xml:space="preserve">
     <value>Ορολογία τμήματος / Όροι</value>
   </data>
   <data name="FieldHelp.DepartmentTerminologyConfig.Terms" xml:space="preserve">
-    <value>Μία καταχώριση ανά μετονομασμένη ενότητα ή τύπο αρχείου, για παράδειγμα Συμβάν αντί για Run ή Βάρδια υπηρεσίας αντί για Work. Ένας όρος που δεν αναφέρεται εμφανίζει το όνομα του Resgrid στη γλώσσα του μέλους. Τα ονόματα έχουν έως 50 χαρακτήρες.</value>
+    <value>Μία καταχώριση ανά μετονομασμένη ενότητα ή τύπο αρχείου, για παράδειγμα Συμβάν αντί για Run ή Βάρδια υπηρεσίας αντί για Work. Η καταχώριση μιας ενότητας μπορεί επίσης να περιέχει τη λέξη για ένα στοιχείο, όπως Ομάδα για Μονάδες που μετονομάστηκαν σε Ομάδες· αν μείνει κενή, προκύπτει από το όνομα. Ένας όρος που δεν αναφέρεται εμφανίζει το όνομα του Resgrid στη γλώσσα του μέλους. Τα ονόματα έχουν έως 50 χαρακτήρες.</value>
   </data>
   <data name="Field.DepartmentTermOverride.Key" xml:space="preserve">
     <value>Όρος τμήματος / Κλειδί</value>
@@ -7076,5 +7076,44 @@
   </data>
   <data xml:space="preserve" name="FeatureSetup.custom-map-icons">
     <value>Ανεβάστε ένα τετράγωνο PNG με διαφανές φόντο, 128 × 128 px ή μεγαλύτερο, στη σελίδα του τύπου μονάδας, του τύπου κλήσης, του τύπου POI ή του ρόλου· η σελίδα δείχνει προεπισκόπηση σε φωτεινό και σκούρο χάρτη. Για να επιλέξετε ποιο εικονίδιο εμφανίζει ένα άτομο με πολλούς ρόλους, ταξινομήστε τους ρόλους στη σελίδα Ρόλοι.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.map-visualizations">
+    <value>Απεικονίσεις χάρτη</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.map-visualizations">
+    <value>Χάρτες θερμότητας, εξαγωνικά πλέγματα και επικαλύψεις κλήσεων, χρόνων απόκρισης, κάλυψης σταθμών, αποκρίσεων και μετακινήσεων μονάδων και προσωπικού, από ενσωματωμένη βιβλιοθήκη ή αποθηκευμένες από το τμήμα.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.map-visualizations">
+    <value>Ανοίξτε τη Χαρτογράφηση και μετά τις Απεικονίσεις, επιλέξτε μια απεικόνιση της βιβλιοθήκης, όπως «Θερμές ζώνες κλήσεων», προσαρμόστε το χρονικό διάστημα, τα φίλτρα και τα επίπεδα στην καρτέλα «Προσαρμογή» και αποθηκεύστε την. Οι διαχειριστές του τμήματος μπορούν να μοιραστούν μια αποθηκευμένη απεικόνιση με όλους.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.PersonnelTurnoutSeconds">
+    <value>Διαμόρφωση συστάσεων αποστολής / Χρόνος εξόδου προσωπικού σε δευτερόλεπτα</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.PersonnelTurnoutSeconds">
+    <value>Δευτερόλεπτα που χρειάζεται ένα άτομο πριν κινηθεί· προστίθενται στον χρόνο μετάβασης όταν γραμμές που δέχονται άτομα το συγκρίνουν με μονάδες. Το μηδέν σημαίνει κανένας.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.WaitingCallAutoDispatch">
+    <value>Διαμόρφωση συστάσεων αποστολής / Αυτόματη αποστολή σε κλήσεις αναμονής</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.WaitingCallAutoDispatch">
+    <value>Όταν μια μονάδα που ταιριάζει σε κλήση που περιμένει πόρους γίνει διαθέσιμη, αποστέλλεται αυτόματα στην κλήση αναμονής με την υψηλότερη προτεραιότητα αντί μόνο για ειδοποίηση. Οι κάρτες μπορούν να το παρακάμψουν· ανενεργό από προεπιλογή.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.WaitingCallMaxResponseSeconds">
+    <value>Διαμόρφωση συστάσεων αποστολής / Μέγιστος χρόνος απόκρισης για κλήσεις αναμονής σε δευτερόλεπτα</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.WaitingCallMaxResponseSeconds">
+    <value>Όριο αυτόματης αποστολής: μια μονάδα με μεγαλύτερο εκτιμώμενο χρόνο ειδοποιείται, δεν αποστέλλεται. Το μηδέν σημαίνει χωρίς όριο· η ειδοποίηση γίνεται πάντα.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.DispatchResponseCodes">
+    <value>Κωδικοί απόκρισης αποστολής</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DispatchResponseCodes">
+    <value>Προαιρετικοί κωδικοί ανά μονάδα (π.χ. C3 για φάρους και σειρήνα) που προτείνουν οι γραμμές των υπό συνθήκη καρτών, και αν τους βλέπουν τα πληρώματα σε ειδοποιήσεις και εφαρμογές. Κενό σημαίνει ότι οι κωδικοί δεν εμφανίζονται πουθενά.</value>
+  </data>
+  <data name="Field.DepartmentTermOverride.Singular" xml:space="preserve">
+    <value>Όρος τμήματος / Ένα στοιχείο</value>
+  </data>
+  <data name="FieldHelp.DepartmentTermOverride.Singular" xml:space="preserve">
+    <value>Για μια ενότητα, η λέξη του τμήματος για ένα στοιχείο, όπως Ομάδα για Μονάδες που μετονομάστηκαν σε Ομάδες, που χρησιμοποιείται σε κουμπιά και επικεφαλίδες όπως Νέα ομάδα· έως 50 χαρακτήρες. Αν μείνει κενή, προκύπτει από το όνομα. Οι τύποι αρχείων δεν έχουν.</value>
   </data>
 </root>

@@ -1507,13 +1507,13 @@
     <value>المصطلحات</value>
   </data>
   <data name="TerminologyIntro" xml:space="preserve">
-    <value>استخدم مصطلحات إدارتك الخاصة. يحل الاسم المحدد هنا محل اسم Resgrid لتلك الوحدة أو نوع السجل في التنقل وفي عناوين الصفحات وفي كل مكان تُدرج فيه أنواع السجلات وفي تطبيقات Responder وUnit وIC وDispatch، لجميع الأعضاء وبجميع اللغات. تتغير التسمية فقط: لا تتأثر الأذونات والروابط والتكاملات. اترك الحقل فارغًا للإبقاء على اسم Resgrid.</value>
+    <value>استخدم مصطلحات إدارتك الخاصة. يحل الاسم المحدد هنا محل اسم Resgrid لتلك الوحدة أو نوع السجل في جميع أنحاء الموقع: في التنقل وعناوين الصفحات والأزرار وعناوين الأعمدة والرسائل والمطبوعات وعمليات التصدير، وفي تطبيقات Responder وUnit وIC وDispatch، لجميع الأعضاء وبجميع اللغات. تتغير الصياغة فقط: تبقى الأذونات والروابط والتكاملات وكل ما كتبه أعضاؤك كما هي. اترك الحقل فارغًا للإبقاء على اسم Resgrid.</value>
   </data>
   <data name="TerminologyModules" xml:space="preserve">
     <value>الوحدات</value>
   </data>
   <data name="TerminologyModulesHelp" xml:space="preserve">
-    <value>يظهر في التنقل وكعنوان للصفحة الرئيسية للوحدة وفي قوائم التطبيقات. تحتفظ الجمل الأخرى التي تذكر الوحدة بصياغة Resgrid.</value>
+    <value>أدخل اسم الوحدة، وإن وُجدت، الكلمة الدالة على عنصر واحد، مثل الفرق والفريق بدلًا من الوحدات، لتبدو الأزرار مثل «فريق جديد» طبيعية؛ اترك العنصر فارغًا ليُستنتج من الاسم. تتغير الوحدات المعلّمة بـ «في كل أنحاء Resgrid» أينما ذكرها Resgrid. أما الباقي فيتغير داخل وحدته فقط، لأن كلمات مثل ملاحظة وسجل وجهة اتصال لها أيضًا معانٍ يومية في أماكن أخرى.</value>
   </data>
   <data name="TerminologyRecordTypes" xml:space="preserve">
     <value>أنواع السجلات</value>
@@ -1535,6 +1535,9 @@
   </data>
   <data name="TerminologyTooLong" xml:space="preserve">
     <value>يمكن أن يتكون الاسم من {0} حرفًا كحد أقصى؛ لم تُحفظ الأسماء الأطول وهي معروضة لتصحيحها.</value>
+  </data>
+  <data name="TerminologyInvalidCharacters" xml:space="preserve">
+    <value>لا يمكن أن تحتوي الأسماء على &lt; &gt; { أو }؛ لم تُحفظ هذه الأسماء وهي معروضة لتصحيحها.</value>
   </data>
   <data name="TerminologyRecordDefinitionsLink" xml:space="preserve">
     <value>تعريفات السجلات</value>
@@ -1751,5 +1754,353 @@
   </data>
   <data name="OrgType.other" xml:space="preserve">
     <value>أخرى</value>
+  </data>
+  <data name="SettingsGroupDispatch" xml:space="preserve">
+    <value>المكالمات والإرسال</value>
+  </data>
+  <data name="SettingsGroupOperations" xml:space="preserve">
+    <value>العمليات</value>
+  </data>
+  <data name="SettingsGroupCustomization" xml:space="preserve">
+    <value>التخصيص</value>
+  </data>
+  <data name="SettingsGroupIntegrations" xml:space="preserve">
+    <value>التكاملات</value>
+  </data>
+  <data name="ResetStaffingMeaningGroup" xml:space="preserve">
+    <value>معنى مستوى التأهيل (مستواك بهذا المعنى)</value>
+  </data>
+  <data name="ResetStaffingOptionGroup" xml:space="preserve">
+    <value>مستوى تأهيل محدد</value>
+  </data>
+  <data name="ResetStatusMeaningGroup" xml:space="preserve">
+    <value>معنى الحالة (حالتك بهذا المعنى)</value>
+  </data>
+  <data name="ResetStatusOptionGroup" xml:space="preserve">
+    <value>حالة محددة</value>
+  </data>
+  <data name="ResetTargetSavedOption" xml:space="preserve">
+    <value>{0} (محفوظ سابقًا، لم يعد متاحًا)</value>
+  </data>
+  <data name="RunCardRelaxUnfilledRowsLabel" xml:space="preserve">
+    <value>تخفيف عوامل تصفية الحالة للصفوف غير المكتملة</value>
+  </data>
+  <data name="RunCardRelaxUnfilledRowsHelp" xml:space="preserve">
+    <value>عندما لا يجد عامل تصفية الحالة لصف أي شيء، تُقترح أسرع وحدة متاحة من النوع نفسه بدلاً من ذلك.</value>
+  </data>
+  <data name="RunCardWaitingAutoDispatchLabel" xml:space="preserve">
+    <value>إرسال الوحدات المتاحة إلى البلاغات التي تنتظرها</value>
+  </data>
+  <data name="RunCardWaitingAutoDispatchOff" xml:space="preserve">
+    <value>إيقاف (تنبيه المرسلين فقط)</value>
+  </data>
+  <data name="RunCardWaitingAutoDispatchOn" xml:space="preserve">
+    <value>تشغيل (إرسال تلقائي)</value>
+  </data>
+  <data name="RunCardWaitingAutoDispatchHelp" xml:space="preserve">
+    <value>يتجاوز إعداد القسم للبلاغات التي تتركها هذه البطاقة في انتظار مورد.</value>
+  </data>
+  <data name="RunCardDecisionGraphHelp" xml:space="preserve">
+    <value>يمكن للمستوى طرح أسئلة (أي وحدة تصل أولاً، هل توجد وحدة متاحة في الوقت المناسب) واقتراح حزمة الاستجابة للنتيجة التي يصل إليها. تُرسل صفوفه أعلاه دائماً.</value>
+  </data>
+  <data name="ResponsePackagesHeader" xml:space="preserve">
+    <value>حزم الاستجابة</value>
+  </data>
+  <data name="RunCardShowRawJson" xml:space="preserve">
+    <value>عرض النتيجة الخام</value>
+  </data>
+  <data name="RunCardTargetUnitsGroup" xml:space="preserve">
+    <value>الوحدات</value>
+  </data>
+  <data name="RunCardTargetPeopleGroup" xml:space="preserve">
+    <value>الأشخاص</value>
+  </data>
+  <data name="RunCardTargetAnyUnit" xml:space="preserve">
+    <value>أي وحدة</value>
+  </data>
+  <data name="RunCardTargetAnyPerson" xml:space="preserve">
+    <value>أي شخص</value>
+  </data>
+  <data name="RunCardTargetAnyClass" xml:space="preserve">
+    <value>أي {0}</value>
+  </data>
+  <data name="RunCardStatusAnyAvailable" xml:space="preserve">
+    <value>أي متاح</value>
+  </data>
+  <data name="RunCardStatusInQuarters" xml:space="preserve">
+    <value>في المقر</value>
+  </data>
+  <data name="RunCardStatusAwayFromQuarters" xml:space="preserve">
+    <value>خارج المقر</value>
+  </data>
+  <data name="RunCardStatusBaseTypes" xml:space="preserve">
+    <value>الحالات التي تعني</value>
+  </data>
+  <data name="RunCardNodeChoose" xml:space="preserve">
+    <value>اختر...</value>
+  </data>
+  <data name="RunCardOutcomePrefix" xml:space="preserve">
+    <value>النتيجة</value>
+  </data>
+  <data name="RunCardConditionPrefix" xml:space="preserve">
+    <value>الشرط</value>
+  </data>
+  <data name="RunCardNodeStartLabel" xml:space="preserve">
+    <value>البداية</value>
+  </data>
+  <data name="RunCardNodeLabelPlaceholder" xml:space="preserve">
+    <value>تسمية تظهر للمرسلين</value>
+  </data>
+  <data name="RunCardOutcomePackageLabel" xml:space="preserve">
+    <value>إرسال الحزمة</value>
+  </data>
+  <data name="RunCardNoPackageOption" xml:space="preserve">
+    <value>بدون حزمة</value>
+  </data>
+  <data name="RunCardOutcomeAdviceLabel" xml:space="preserve">
+    <value>نصيحة للمرسلين</value>
+  </data>
+  <data name="RunCardConditionArrivesBefore" xml:space="preserve">
+    <value>يصل قبل</value>
+  </data>
+  <data name="RunCardConditionAvailableWithin" xml:space="preserve">
+    <value>متاح خلال</value>
+  </data>
+  <data name="RunCardConditionSubjectLabel" xml:space="preserve">
+    <value>المورد</value>
+  </data>
+  <data name="RunCardConditionReferenceLabel" xml:space="preserve">
+    <value>مقارنة مع</value>
+  </data>
+  <data name="RunCardConditionMarginLabel" xml:space="preserve">
+    <value>بفارق لا يقل عن (ثوانٍ)</value>
+  </data>
+  <data name="RunCardConditionWithinLabel" xml:space="preserve">
+    <value>خلال (ثوانٍ)</value>
+  </data>
+  <data name="RunCardConditionCountLabel" xml:space="preserve">
+    <value>كم عدد</value>
+  </data>
+  <data name="RunCardConditionYesLabel" xml:space="preserve">
+    <value>إذا نعم</value>
+  </data>
+  <data name="RunCardConditionNoLabel" xml:space="preserve">
+    <value>إذا لا</value>
+  </data>
+  <data name="RunCardLevelPackageLabel" xml:space="preserve">
+    <value>حزمة الاستجابة</value>
+  </data>
+  <data name="RunCardDecisionGraphLabel" xml:space="preserve">
+    <value>مخطط القرار</value>
+  </data>
+  <data name="RunCardAddConditionButton" xml:space="preserve">
+    <value>إضافة شرط</value>
+  </data>
+  <data name="RunCardAddOutcomeButton" xml:space="preserve">
+    <value>إضافة نتيجة</value>
+  </data>
+  <data name="NewResponsePackageButton" xml:space="preserve">
+    <value>حزمة استجابة جديدة</value>
+  </data>
+  <data name="ResponsePackagesHelp" xml:space="preserve">
+    <value>حزمة الاستجابة مجموعة مسماة من الموارد (مثل "سيارة إطفاء وإسعاف") ترسلها مستويات البطاقات ونتائج القرار. تغيير الحزمة يغير كل البطاقات التي تستخدمها.</value>
+  </data>
+  <data name="ResponsePackageNameLabel" xml:space="preserve">
+    <value>الاسم</value>
+  </data>
+  <data name="ResponsePackageDescriptionLabel" xml:space="preserve">
+    <value>الوصف</value>
+  </data>
+  <data name="ResponsePackageRetiredLabel" xml:space="preserve">
+    <value>متقاعد (مخفي من القوائم)</value>
+  </data>
+  <data name="ResponsePackageRowsLabel" xml:space="preserve">
+    <value>الصفوف</value>
+  </data>
+  <data name="ResponsePackageRowsHelp" xml:space="preserve">
+    <value>يقبل كل صف أياً من أنواع موارده. تملأ الحزمة البديلة ما لم يستطع الصف ملأه، ويجعل "الإبقاء معلقاً" البلاغ ينتظر المورد الأصلي.</value>
+  </data>
+  <data name="ResponsePackageAddRowButton" xml:space="preserve">
+    <value>إضافة صف</value>
+  </data>
+  <data name="ResponsePackageRowTargetsLabel" xml:space="preserve">
+    <value>أي من هذه</value>
+  </data>
+  <data name="ResponsePackageRowLabelLabel" xml:space="preserve">
+    <value>تسمية الصف (اختياري)</value>
+  </data>
+  <data name="ResponsePackageFillCount" xml:space="preserve">
+    <value>اختيار</value>
+  </data>
+  <data name="ResponsePackageFillFirstArriving" xml:space="preserve">
+    <value>ضمان أول الواصلين</value>
+  </data>
+  <data name="ResponsePackageRowStatusLabel" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="ResponsePackageRowCodeLabel" xml:space="preserve">
+    <value>رمز الاستجابة</value>
+  </data>
+  <data name="ResponsePackageNoCode" xml:space="preserve">
+    <value>بدون رمز</value>
+  </data>
+  <data name="ResponsePackageRowSubstituteLabel" xml:space="preserve">
+    <value>حزمة بديلة</value>
+  </data>
+  <data name="ResponsePackageNoSubstitute" xml:space="preserve">
+    <value>بدون بديل</value>
+  </data>
+  <data name="ResponsePackageRowOutstandingLabel" xml:space="preserve">
+    <value>إبقاء معلقاً حتى الإرسال</value>
+  </data>
+  <data name="ResponsePackageUsedBy" xml:space="preserve">
+    <value>مستخدم بواسطة</value>
+  </data>
+  <data name="ResponsePackageNotUsed" xml:space="preserve">
+    <value>غير مستخدم</value>
+  </data>
+  <data name="ResponsePackageRetiredBadge" xml:space="preserve">
+    <value>متقاعد</value>
+  </data>
+  <data name="ResponsePackageDeleteConfirm" xml:space="preserve">
+    <value>حذف حزمة الاستجابة هذه؟</value>
+  </data>
+  <data name="PersonnelTurnoutLabel" xml:space="preserve">
+    <value>زمن خروج الأفراد (ثوانٍ)</value>
+  </data>
+  <data name="PersonnelTurnoutHelp" xml:space="preserve">
+    <value>يُضاف إلى زمن تنقل الشخص عندما تقارنه الصفوف التي تقبل الأشخاص بالوحدات.</value>
+  </data>
+  <data name="WaitingCallAutoDispatchLabel" xml:space="preserve">
+    <value>إرسال الوحدات المتاحة إلى البلاغات التي تنتظرها</value>
+  </data>
+  <data name="WaitingCallAutoDispatchHelp" xml:space="preserve">
+    <value>إيقاف: يُنبه المرسلون عندما تصبح وحدة مطابقة متاحة. تشغيل: تُرسل الوحدة تلقائياً إلى البلاغ المنتظر الأعلى أولوية. يمكن للبطاقات تجاوز ذلك.</value>
+  </data>
+  <data name="WaitingCallMaxResponseLabel" xml:space="preserve">
+    <value>حد الإرسال التلقائي (ثوانٍ، 0 = بلا حد)</value>
+  </data>
+  <data name="WaitingCallMaxResponseHelp" xml:space="preserve">
+    <value>الوحدة المتاحة الأبعد من ذلك يُنبه بها ولا تُرسل. يصدر التنبيه دائماً.</value>
+  </data>
+  <data name="ResponseCodesLabel" xml:space="preserve">
+    <value>رموز الاستجابة</value>
+  </data>
+  <data name="ResponseCodesHelp" xml:space="preserve">
+    <value>رموز اختيارية لكل وحدة في الاقتراحات، مثل C3 للأضواء وصفارة الإنذار. اتركه فارغاً لإخفاء الرموز من كل الشاشات.</value>
+  </data>
+  <data name="ResponseCodeCodeColumn" xml:space="preserve">
+    <value>الرمز</value>
+  </data>
+  <data name="ResponseCodeNameColumn" xml:space="preserve">
+    <value>الاسم</value>
+  </data>
+  <data name="ResponseCodeColorColumn" xml:space="preserve">
+    <value>اللون</value>
+  </data>
+  <data name="ResponseCodeAddButton" xml:space="preserve">
+    <value>إضافة رمز</value>
+  </data>
+  <data name="ResponseCodesShowToCrewsLabel" xml:space="preserve">
+    <value>عرض الرموز على الطواقم (الإشعارات والتطبيقات)</value>
+  </data>
+  <data name="AwaitingResourcesLabel" xml:space="preserve">
+    <value>في انتظار الموارد</value>
+  </data>
+  <data name="AwaitingResourcesHelp" xml:space="preserve">
+    <value>بلاغات نشطة لا تزال تنتظر مورداً طلبته بطاقتها ولم يكن متاحاً عند الإرسال. يخرج البلاغ من القائمة عند إرسال مورد مطابق أو رفض المتطلب أو إغلاق البلاغ.</value>
+  </data>
+  <data name="AwaitingDispatchTo" xml:space="preserve">
+    <value>إرسال إلى {0}</value>
+  </data>
+  <data name="AwaitingDispatchUnit" xml:space="preserve">
+    <value>إرسال {0}</value>
+  </data>
+  <data name="AwaitingDismiss" xml:space="preserve">
+    <value>رفض</value>
+  </data>
+  <data name="AwaitingDismissPrompt" xml:space="preserve">
+    <value>لماذا لم يعد هذا المورد مطلوباً؟ (اختياري)</value>
+  </data>
+  <data name="AwaitingSentInstead" xml:space="preserve">
+    <value>أُرسل بدلاً منه: {0}</value>
+  </data>
+  <data name="AwaitingAvailableNow" xml:space="preserve">
+    <value>متاح الآن:</value>
+  </data>
+  <data name="AwaitingNoneAvailable" xml:space="preserve">
+    <value>لا توجد وحدة مطابقة متاحة.</value>
+  </data>
+  <data name="AwaitingNone" xml:space="preserve">
+    <value>لا توجد بلاغات في انتظار الموارد.</value>
+  </data>
+  <data name="RunCardTemplatesHeader" xml:space="preserve">
+    <value>قوالب بطاقات الاستجابة</value>
+  </data>
+  <data name="RunCardTemplatesHelp" xml:space="preserve">
+    <value>ابدأ من بطاقة جاهزة. تسمي القوالب الموارد حسب معناها فتتوافق مع أنواع وحداتك وأدوارك؛ راجع واختبر ثم فعّل.</value>
+  </data>
+  <data name="RunCardTemplatesSetClasses" xml:space="preserve">
+    <value>{0} من أنواع الوحدات بلا فئة، لذا لا تطابقها القوالب إلا بالاسم.</value>
+  </data>
+  <data name="RunCardTemplatesSetClassesLink" xml:space="preserve">
+    <value>تعيين فئات الوحدات</value>
+  </data>
+  <data name="RunCardTemplatesSuggested" xml:space="preserve">
+    <value>مقترحة لك</value>
+  </data>
+  <data name="RunCardTemplateUseButton" xml:space="preserve">
+    <value>استخدام هذا القالب</value>
+  </data>
+  <data name="RunCardTemplatesAllCategories" xml:space="preserve">
+    <value>كل الفئات</value>
+  </data>
+  <data name="RunCardTemplatesSearch" xml:space="preserve">
+    <value>البحث في القوالب</value>
+  </data>
+  <data name="RunCardTemplateShapeGraph" xml:space="preserve">
+    <value>مخطط القرار</value>
+  </data>
+  <data name="RunCardTemplateShapePackage" xml:space="preserve">
+    <value>حزم الاستجابة</value>
+  </data>
+  <data name="RunCardTemplateMappingsHeader" xml:space="preserve">
+    <value>مدى ملاءمته لقسمك</value>
+  </data>
+  <data name="RunCardTemplateUnmatched" xml:space="preserve">
+    <value>لا يوجد ما يطابقه في هذا القسم. عيّن فئة وحدة أو أضف النوع أو الدور.</value>
+  </data>
+  <data name="RunCardTemplateNoTriggers" xml:space="preserve">
+    <value>لم يُطابق أي مشغل؛ أضف واحداً في المحرر قبل تفعيل البطاقة.</value>
+  </data>
+  <data name="RunCardTemplateNewBadge" xml:space="preserve">
+    <value>جديد</value>
+  </data>
+  <data name="RunCardTemplateReusedBadge" xml:space="preserve">
+    <value>موجود</value>
+  </data>
+  <data name="RunCardTemplateCodesAdded" xml:space="preserve">
+    <value>ستُضاف هذه الرموز إلى الكتالوج:</value>
+  </data>
+  <data name="RunCardTemplateCreateButton" xml:space="preserve">
+    <value>إنشاء البطاقة (معطلة)</value>
+  </data>
+  <data name="RunCardTemplateBlocked" xml:space="preserve">
+    <value>عالج الموارد غير المطابقة أولاً.</value>
+  </data>
+  <data name="RunCardTemplateAppliedMessage" xml:space="preserve">
+    <value>أُنشئت من قالب وحُفظت معطلة. تحقق من المشغلات والصفوف واختبرها في تبويب الاختبار ثم فعّلها.</value>
+  </data>
+  <data name="TerminologySingularColumn" xml:space="preserve">
+    <value>عنصر واحد</value>
+  </data>
+  <data name="TerminologyWhereColumn" xml:space="preserve">
+    <value>أين يتغير</value>
+  </data>
+  <data name="TerminologyScopeEverywhere" xml:space="preserve">
+    <value>في كل أنحاء Resgrid</value>
+  </data>
+  <data name="TerminologyScopeModule" xml:space="preserve">
+    <value>داخل وحدته فقط</value>
   </data>
 </root>

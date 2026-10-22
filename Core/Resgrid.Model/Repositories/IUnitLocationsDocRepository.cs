@@ -10,6 +10,12 @@ namespace Resgrid.Model.Repositories
 		Task<List<UnitsLocation>> GetAllLocationsByUnitIdAsync(int unitId);
 		Task<UnitsLocation> GetLatestLocationsByUnitIdAsync(int unitId);
 		Task<List<UnitsLocation>> GetLatestLocationsByDepartmentIdAsync(int departmentId);
+
+		/// <summary>
+		/// The department's unit location history in [startUtc, endUtc), newest first, at most <paramref name="maxRows"/> rows.
+		/// <paramref name="unitIds"/> null or empty reads every unit.
+		/// </summary>
+		Task<List<UnitsLocation>> GetLocationsForDepartmentInRangeAsync(int departmentId, DateTime startUtc, DateTime endUtc, IReadOnlyCollection<int> unitIds, int maxRows, CancellationToken cancellationToken = default);
 		Task<UnitsLocation> GetByIdAsync(string id);
 		Task<UnitsLocation> GetByOldIdAsync(string id);
 		Task<UnitLocationWriteResult> InsertAsync(UnitsLocation location, CancellationToken cancellationToken = default);

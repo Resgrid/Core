@@ -795,4 +795,43 @@
   <data name="Terminology" xml:space="preserve">
     <value>Термінологія</value>
   </data>
+  <data name="TermCall" xml:space="preserve">
+    <value>Виклик</value>
+  </data>
+  <data name="TermPerson" xml:space="preserve">
+    <value>Особа</value>
+  </data>
+  <data name="TermUnit" xml:space="preserve">
+    <value>Одиниця</value>
+  </data>
+  <data name="TermContact" xml:space="preserve">
+    <value>Контакт</value>
+  </data>
+  <data name="TermShift" xml:space="preserve">
+    <value>Зміна</value>
+  </data>
+  <data name="TermRecord" xml:space="preserve">
+    <value>Запис</value>
+  </data>
+  <data name="TermLog" xml:space="preserve">
+    <value>Журнал</value>
+  </data>
+  <data name="TermReport" xml:space="preserve">
+    <value>Звіт</value>
+  </data>
+  <data name="TermDocument" xml:space="preserve">
+    <value>Документ</value>
+  </data>
+  <data name="TermNote" xml:space="preserve">
+    <value>Нотатка</value>
+  </data>
+  <data name="TermTraining" xml:space="preserve">
+    <value>Навчання</value>
+  </data>
+  <data name="TermWorkOrder" xml:space="preserve">
+    <value>Наряд на роботи</value>
+  </data>
+  <data name="TermChecklist" xml:space="preserve">
+    <value>Контрольний список</value>
+  </data>
 </root>

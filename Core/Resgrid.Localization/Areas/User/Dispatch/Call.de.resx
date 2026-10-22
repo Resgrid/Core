@@ -1068,4 +1068,37 @@
   <data name="NewCallFieldRequired" xml:space="preserve">
     <value>{0} ist in dieser Abteilung ein Pflichtfeld.</value>
   </data>
+  <data name="NearestUnitsPick" xml:space="preserve">
+    <value>Alarmieren</value>
+  </data>
+  <data name="NearestPersonnelLabel" xml:space="preserve">
+    <value>Nächstes Personal</value>
+  </data>
+  <data name="NearestPersonnelPerson" xml:space="preserve">
+    <value>Person</value>
+  </data>
+  <data name="NearestPersonnelStaffing" xml:space="preserve">
+    <value>Verfügbarkeit</value>
+  </data>
+  <data name="NearestPersonnelGroupRoles" xml:space="preserve">
+    <value>Gruppe / Rollen</value>
+  </data>
+  <data name="NearestUnitsNearest" xml:space="preserve">
+    <value>Nächste #{0}</value>
+  </data>
+  <data name="NearestUnitsHidden" xml:space="preserve">
+    <value>Standort verborgen</value>
+  </data>
+  <data name="NearestPersonnelOnUnit" xml:space="preserve">
+    <value>Auf {0}</value>
+  </data>
+  <data name="NearestUnitsMapUnits" xml:space="preserve">
+    <value>Einheiten</value>
+  </data>
+  <data name="NearestUnitsMapPersonnel" xml:space="preserve">
+    <value>Personal</value>
+  </data>
+  <data name="NearestUnitsMapBoundaries" xml:space="preserve">
+    <value>Wachbereiche</value>
+  </data>
 </root>

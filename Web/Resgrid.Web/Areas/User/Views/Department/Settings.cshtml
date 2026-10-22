@@ -6,8 +6,32 @@
     ViewBag.Title = "Resgrid | " + @localizer["DepartmentSettingsHeader"];
 }
 
+@section Styles
+{
+    <style>
+        .settings-nav-buttons { padding-right: 15px; }
+        /* The theme restates `.dropdown-menu { left: 0 }` after Bootstrap, which undoes `.dropdown-menu-right`;
+           the right-hand menus would hang off the page. */
+        .settings-nav-buttons .dropdown-menu-right { left: auto; right: 0; }
+        .settings-nav-buttons .dropdown-menu > li > a { white-space: nowrap; }
+        /* Below md the heading columns stack, so the buttons get their own row under the title, left aligned, and
+           any that wrap on a phone read as separate buttons rather than a broken group. */
+        @@media (max-width: 991px) {
+            .settings-nav-buttons { float: none; padding: 10px 0; }
+            .settings-nav-buttons > .btn-group { margin-right: 4px; margin-bottom: 4px; }
+            .settings-nav-buttons > .btn-group > .btn { border-radius: 3px !important; }
+            .settings-nav-buttons .dropdown-menu-right { left: 0; right: auto; }
+        }
+        /* On a phone a menu opened from a button in the middle of the row runs off the right edge, so every menu
+           opens from the left of the whole button row instead. */
+        @@media (max-width: 767px) {
+            .settings-nav-buttons > .btn-group { position: static; }
+        }
+    </style>
+}
+
 <div class="row wrapper border-bottom white-bg page-heading">
-    <div class="col-sm-4">
+    <div class="col-md-4">
         <h2>@localizer["DepartmentSettingsHeader"]</h2>
         <ol class="breadcrumb">
             <li>
@@ -18,19 +42,42 @@
             </li>
         </ol>
     </div>
-    <div class="col-sm-8">
-        <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-            <a title="@localizer["CallDispatchSettingsNav"]" class="btn btn-inverse" href="@Url.Action("DispatchSettings", "Department", new { area = "User" })">@localizer["CallDispatchSettingsNav"]</a>
-            @if (await featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCards, ClaimsAuthorizationHelper.GetDepartmentId()))
-            {
-                <a title="@localizer["RunCardsNav"]" class="btn btn-inverse" href="@Url.Action("Index", "RunCards", new { area = "User" })">@localizer["RunCardsNav"]</a>
-            }
-            <a title="@localizer["ShiftSettings"]" class="btn btn-inverse" href="@Url.Action("ShiftSettings", "Department", new { area = "User" })">@localizer["ShiftSettings"]</a>
-            <a title="@localizer["MappingSettingsHeader"]" class="btn btn-inverse" href="@Url.Action("MappingSettings", "Department", new { area = "User" })">@localizer["MappingSettingsHeader"]</a>
-            <a title="@localizer["ApiRssSettings"]" class="btn btn-inverse" href="@Url.Action("Api", "Department", new { area = "User" })">@localizer["ApiRssSettings"]</a>
-            <a title="@localizer["DispatchSettingsModuleHeader"]" class="btn btn-inverse" href="@Url.Action("ModuleSettings", "Department", new { area = "User" })">@localizer["DispatchSettingsModuleHeader"]</a>
-            <a title="@commonLocalizer["Terminology"]" class="btn btn-inverse" href="@Url.Action("Terminology", "Department", new { area = "User" })">@commonLocalizer["Terminology"]</a>
-            <a title="@localizer["ChatbotSettingsNav"]" class="btn btn-inverse" href="@Url.Action("Index", "ChatbotSettings", new { area = "User" })">@localizer["ChatbotSettingsNav"]</a>
+    <div class="col-md-8">
+        @* The settings sub-pages are grouped into dropdown buttons so the heading stays on one row as pages are added. *@
+        <div class="btn-group top-page-buttons settings-nav-buttons">
+            <div class="btn-group">
+                <button type="button" class="btn btn-inverse dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-bullhorn"></i> @localizer["SettingsGroupDispatch"] <span class="caret"></span></button>
+                <ul class="dropdown-menu">
+                    <li><a href="@Url.Action("DispatchSettings", "Department", new { area = "User" })">@localizer["CallDispatchSettingsNav"]</a></li>
+                    <li><a href="@Url.Action("CallSettings", "Department", new { area = "User" })">@commonLocalizer["CallSettings"]</a></li>
+                    @if (await featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCards, ClaimsAuthorizationHelper.GetDepartmentId()))
+                    {
+                        <li><a href="@Url.Action("Index", "RunCards", new { area = "User" })">@localizer["RunCardsNav"]</a></li>
+                    }
+                </ul>
+            </div>
+            <div class="btn-group">
+                <button type="button" class="btn btn-inverse dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-map-o"></i> @localizer["SettingsGroupOperations"] <span class="caret"></span></button>
+                <ul class="dropdown-menu">
+                    <li><a href="@Url.Action("ShiftSettings", "Department", new { area = "User" })">@localizer["ShiftSettings"]</a></li>
+                    <li><a href="@Url.Action("MappingSettings", "Department", new { area = "User" })">@localizer["MappingSettingsHeader"]</a></li>
+                </ul>
+            </div>
+            <div class="btn-group">
+                <button type="button" class="btn btn-inverse dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-sliders"></i> @localizer["SettingsGroupCustomization"] <span class="caret"></span></button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href="@Url.Action("ModuleSettings", "Department", new { area = "User" })">@localizer["DispatchSettingsModuleHeader"]</a></li>
+                    <li><a href="@Url.Action("Terminology", "Department", new { area = "User" })">@commonLocalizer["Terminology"]</a></li>
+                    <li><a href="@Url.Action("DocumentNumbering", "Department", new { area = "User" })">@commonLocalizer["DocumentNumbering"]</a></li>
+                </ul>
+            </div>
+            <div class="btn-group">
+                <button type="button" class="btn btn-inverse dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-plug"></i> @localizer["SettingsGroupIntegrations"] <span class="caret"></span></button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href="@Url.Action("Api", "Department", new { area = "User" })">@localizer["ApiRssSettings"]</a></li>
+                    <li><a href="@Url.Action("Index", "ChatbotSettings", new { area = "User" })">@localizer["ChatbotSettingsNav"]</a></li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
@@ -355,7 +402,7 @@
                         </div>
                         <div class="form-group">
                             <div class="col-md-12">
-                                <select id="staffingLevelsToSupress" name="staffingLevelsToSupress" class="selectpicker" style="width:100%;" multiple>
+                                <select id="staffingLevelsToSupress" name="staffingLevelsToSupress" style="width:100%;" multiple>
                                     @foreach (var level in Model.Staffings)
                                     {
                                         if (Model.SuppressStaffingInfo.StaffingLevelsToSupress.Contains(level.CustomStateDetailId))
@@ -372,6 +419,13 @@
                                     {
                                         var meaningValue = Resgrid.Model.StatusMatch.MeaningListValue((int)meaning);
                                         <option value="@meaningValue" selected="@(Model.SuppressStaffingInfo.StaffingLevelsToSupress.Contains(meaningValue))">@string.Format(localizer["StatusMeaningOption"].Value, Resgrid.Framework.StringHelpers.GetDisplayString(meaning))</option>
+                                    }
+                                    @* A saved level that is no longer offered (deleted, or a built-in level saved before the department moved to its own
+                                       levels) stays listed and selected, so saving the page doesn't silently drop it from the mute list. *@
+                                    @foreach (var savedLevel in Model.SuppressStaffingInfo.StaffingLevelsToSupress.Where(x => !Resgrid.Model.StatusMatch.MeaningFromListValue(x).HasValue && Model.Staffings.All(s => s.CustomStateDetailId != x)).Distinct())
+                                    {
+                                        var savedName = Enum.IsDefined(typeof(Resgrid.Model.UserStateTypes), savedLevel) ? Resgrid.Framework.StringHelpers.GetDisplayString((Resgrid.Model.UserStateTypes)savedLevel) : "#" + savedLevel;
+                                        <option value="@savedLevel" selected="true">@string.Format(localizer["ResetTargetSavedOption"].Value, savedName)</option>
                                     }
                                 </select>
                             </div>

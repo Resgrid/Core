@@ -32,7 +32,7 @@ var resgrid;
 
                 function initPersonnelSelect2(selector) {
                     $(selector).select2({
-                        placeholder: "Select Personnel...",
+                        placeholder: resgrid.terms.apply("Select Personnel..."),
                         allowClear: true,
                         multiple: true,
                         ajax: {

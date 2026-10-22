@@ -6886,13 +6886,13 @@
     <value>Terminologia del dipartimento</value>
   </data>
   <data name="SettingHelp.DepartmentTerminology" xml:space="preserve">
-    <value>I nomi propri del dipartimento per moduli e tipi di registro predefiniti, mostrati nella navigazione, nei titoli delle pagine dei moduli, ovunque siano elencati i tipi di registro e nelle app Responder, Unit, IC e Dispatch, in tutte le lingue. Solo etichette: autorizzazioni, collegamenti e valori API non cambiano. Un termine senza nome usa quello di Resgrid.</value>
+    <value>I nomi propri del dipartimento per i moduli, con la parola per un elemento (Squadra per Unità rinominate Squadre), e per i tipi di registro predefiniti. Valgono nella navigazione, nei titoli delle pagine, nei pulsanti, nelle intestazioni di colonna, nei messaggi e nelle esportazioni del sito web e sono mostrati nelle app Responder, Unit, IC e Dispatch, in tutte le lingue. Solo etichette: autorizzazioni, collegamenti, valori API e testi dei membri non cambiano. Un termine senza nome usa quello di Resgrid.</value>
   </data>
   <data name="Field.DepartmentTerminologyConfig.Terms" xml:space="preserve">
     <value>Terminologia del dipartimento / Termini</value>
   </data>
   <data name="FieldHelp.DepartmentTerminologyConfig.Terms" xml:space="preserve">
-    <value>Una voce per ogni modulo o tipo di registro rinominato, ad esempio Intervento invece di Run o Turno di servizio invece di Work. Un termine non elencato mostra il nome Resgrid nella lingua del membro. I nomi hanno al massimo 50 caratteri.</value>
+    <value>Una voce per ogni modulo o tipo di registro rinominato, ad esempio Intervento invece di Run o Turno di servizio invece di Work. La voce di un modulo può contenere anche la parola per un elemento, come Squadra per Unità rinominate Squadre; se vuota, viene ricavata dal nome. Un termine non elencato mostra il nome Resgrid nella lingua del membro. I nomi hanno al massimo 50 caratteri.</value>
   </data>
   <data name="Field.DepartmentTermOverride.Key" xml:space="preserve">
     <value>Termine del dipartimento / Chiave</value>
@@ -7076,5 +7076,44 @@
   </data>
   <data xml:space="preserve" name="FeatureSetup.custom-map-icons">
     <value>Carica un PNG quadrato con sfondo trasparente, di 128 × 128 px o più, nella pagina del tipo di unità, del tipo di chiamata, del tipo di POI o del ruolo; la pagina ne mostra l'anteprima su una mappa chiara e una scura. Per scegliere l'icona di una persona con più ruoli, ordina i ruoli nella pagina Ruoli.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.map-visualizations">
+    <value>Visualizzazioni mappa</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.map-visualizations">
+    <value>Mappe di calore, griglie esagonali e sovrapposizioni di chiamate, tempi di risposta, copertura delle stazioni, interventi e spostamenti di unità e personale, da una libreria integrata o salvate dal dipartimento.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.map-visualizations">
+    <value>Apri Mappatura e poi Visualizzazioni, scegli una visualizzazione della libreria come «Zone calde delle chiamate», modifica intervallo di date, filtri e livelli nella scheda Personalizza e salvala. Gli amministratori del dipartimento possono condividere una visualizzazione salvata con tutti.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.PersonnelTurnoutSeconds">
+    <value>Configurazione raccomandazioni di dispaccio / Tempo di uscita del personale in secondi</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.PersonnelTurnoutSeconds">
+    <value>Secondi necessari a una persona prima di muoversi; aggiunti al tempo di viaggio quando le righe che accettano persone la confrontano con le unità. Zero significa nessuno.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.WaitingCallAutoDispatch">
+    <value>Configurazione raccomandazioni di dispaccio / Invio automatico alle chiamate in attesa</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.WaitingCallAutoDispatch">
+    <value>Quando si libera un'unità adatta a una chiamata in attesa di risorse, viene inviata automaticamente alla chiamata in attesa con priorità più alta invece di avvisare soltanto. Le schede possono sostituirlo; disattivato per impostazione predefinita.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.WaitingCallMaxResponseSeconds">
+    <value>Configurazione raccomandazioni di dispaccio / Risposta massima per chiamate in attesa in secondi</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.WaitingCallMaxResponseSeconds">
+    <value>Limite dell'invio automatico: un'unità liberata con risposta stimata più lunga viene segnalata, non inviata. Zero significa nessun limite; l'avviso viene sempre emesso.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.DispatchResponseCodes">
+    <value>Codici di risposta del dispaccio</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DispatchResponseCodes">
+    <value>Codici facoltativi per unità (ad esempio C3 per luci e sirena) proposti dalle righe delle schede condizionali, e se gli equipaggi li vedono nelle notifiche e nelle app. Vuoto significa che i codici non compaiono da nessuna parte.</value>
+  </data>
+  <data name="Field.DepartmentTermOverride.Singular" xml:space="preserve">
+    <value>Termine del dipartimento / Un elemento</value>
+  </data>
+  <data name="FieldHelp.DepartmentTermOverride.Singular" xml:space="preserve">
+    <value>Per un modulo, la parola del dipartimento per un elemento, come Squadra per Unità rinominate Squadre, usata su pulsanti e intestazioni come Nuova squadra; al massimo 50 caratteri. Se vuota viene ricavata dal nome. I tipi di registro non ne hanno.</value>
   </data>
 </root>

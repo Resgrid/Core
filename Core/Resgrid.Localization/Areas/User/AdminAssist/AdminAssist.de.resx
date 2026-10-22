@@ -6886,13 +6886,13 @@
     <value>Terminologie der Organisation</value>
   </data>
   <data name="SettingHelp.DepartmentTerminology" xml:space="preserve">
-    <value>Die eigenen Namen der Organisation für Module und integrierte Aktentypen, angezeigt in der Navigation, in Titeln der Modulseiten, überall, wo Aktentypen aufgeführt werden, und in den Apps Responder, Unit, IC und Dispatch, in jeder Sprache. Nur Bezeichnungen: Berechtigungen, Links und API-Werte ändern sich nicht. Ein Begriff ohne Namen verwendet den Resgrid-Namen.</value>
+    <value>Die eigenen Namen der Organisation für Module, mit dem Wort für einen Eintrag (Team für in Teams umbenannte Einheiten), und für integrierte Aktentypen. Sie gelten in Navigation, Seitentiteln, Schaltflächen, Spaltenüberschriften, Meldungen und Exporten der Website und werden in den Apps Responder, Unit, IC und Dispatch angezeigt, in jeder Sprache. Nur Bezeichnungen: Berechtigungen, Links, API-Werte und Texte der Mitglieder ändern sich nicht. Ein Begriff ohne Namen verwendet den Resgrid-Namen.</value>
   </data>
   <data name="Field.DepartmentTerminologyConfig.Terms" xml:space="preserve">
     <value>Terminologie der Organisation / Begriffe</value>
   </data>
   <data name="FieldHelp.DepartmentTerminologyConfig.Terms" xml:space="preserve">
-    <value>Ein Eintrag je umbenanntem Modul oder Aktentyp, zum Beispiel Einsatz für Run oder Schichtdienst für Work. Ein nicht aufgeführter Begriff zeigt den Resgrid-Namen in der Sprache des Mitglieds. Namen haben höchstens 50 Zeichen.</value>
+    <value>Ein Eintrag je umbenanntem Modul oder Aktentyp, zum Beispiel Einsatz für Run oder Schichtdienst für Work. Der Eintrag eines Moduls kann auch das Wort für einen Eintrag enthalten, etwa Team für in Teams umbenannte Einheiten; bleibt es leer, wird es aus dem Namen abgeleitet. Ein nicht aufgeführter Begriff zeigt den Resgrid-Namen in der Sprache des Mitglieds. Namen haben höchstens 50 Zeichen.</value>
   </data>
   <data name="Field.DepartmentTermOverride.Key" xml:space="preserve">
     <value>Begriff der Organisation / Schlüssel</value>
@@ -7076,5 +7076,44 @@
   </data>
   <data xml:space="preserve" name="FeatureSetup.custom-map-icons">
     <value>Laden Sie auf der Seite des Einheitentyps, Einsatztyps, POI-Typs oder der Rolle ein quadratisches PNG mit transparentem Hintergrund ab 128 × 128 px hoch; die Seite zeigt eine Vorschau auf einer hellen und einer dunklen Karte. Welches Symbol eine Person mit mehreren Rollen erhält, legen Sie über die Reihenfolge auf der Rollenseite fest.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.map-visualizations">
+    <value>Kartenvisualisierungen</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.map-visualizations">
+    <value>Heatmaps, Sechseckraster und Overlays von Einsätzen, Ausrückzeiten, Wachenabdeckung, Einsätzen von Einheiten und Personal sowie deren Bewegungen – aus einer mitgelieferten Bibliothek oder von der Abteilung gespeichert.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.map-visualizations">
+    <value>Öffnen Sie Kartierung und dann Visualisierungen, wählen Sie eine Visualisierung aus der Bibliothek wie „Einsatz-Hotspots“, passen Sie Zeitraum, Filter und Ebenen auf der Registerkarte „Anpassen“ an und speichern Sie sie. Abteilungsadministratoren können eine gespeicherte Visualisierung für alle freigeben.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.PersonnelTurnoutSeconds">
+    <value>Konfiguration der Dispositionsempfehlungen / Ausrückzeit Personal in Sekunden</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.PersonnelTurnoutSeconds">
+    <value>Sekunden, die eine Person braucht, bevor sie unterwegs ist; wird zur Fahrzeit addiert, wenn Kartenzeilen, die Personen akzeptieren, sie mit Einheiten vergleichen. Null bedeutet keine.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.WaitingCallAutoDispatch">
+    <value>Konfiguration der Dispositionsempfehlungen / Automatische Alarmierung wartender Einsätze</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.WaitingCallAutoDispatch">
+    <value>Wird eine Einheit frei, die zu einem auf Einsatzmittel wartenden Einsatz passt, wird sie automatisch zum wichtigsten wartenden Einsatz gesendet, statt nur Disponenten zu benachrichtigen. Einsatzkarten können dies überschreiben; standardmäßig aus.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.WaitingCallMaxResponseSeconds">
+    <value>Konfiguration der Dispositionsempfehlungen / Höchste Antwortzeit für wartende Einsätze in Sekunden</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.WaitingCallMaxResponseSeconds">
+    <value>Grenze für die automatische Alarmierung wartender Einsätze: Eine frei gewordene Einheit mit längerer geschätzter Anfahrt wird gemeldet, nicht gesendet. Null bedeutet keine Grenze; die Benachrichtigung erfolgt immer.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.DispatchResponseCodes">
+    <value>Einsatzcodes</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DispatchResponseCodes">
+    <value>Optionale Codes je Einheit (z. B. C3 für Sondersignal), die Zeilen bedingter Einsatzkarten vorschlagen, und ob Besatzungen sie in Push-Nachrichten und Apps sehen. Leer bedeutet, dass Codes nirgends erscheinen.</value>
+  </data>
+  <data name="Field.DepartmentTermOverride.Singular" xml:space="preserve">
+    <value>Begriff der Organisation / Ein Eintrag</value>
+  </data>
+  <data name="FieldHelp.DepartmentTermOverride.Singular" xml:space="preserve">
+    <value>Für ein Modul das Wort der Organisation für einen Eintrag, etwa Team für in Teams umbenannte Einheiten, verwendet auf Schaltflächen und Überschriften wie Neues Team; höchstens 50 Zeichen. Leer wird es aus dem Namen abgeleitet. Aktentypen haben keines.</value>
   </data>
 </root>

@@ -335,6 +335,84 @@ namespace Resgrid.Services
 			return detail;
 		}
 
+		public async Task<int?> ResolvePersonnelStaffingAsync(int departmentId, StaffingBaseTypes baseType)
+		{
+			if (baseType == StaffingBaseTypes.None)
+				return null;
+
+			var staffingSet = await GetActiveStaffingLevelsForDepartmentAsync(departmentId);
+			var options = staffingSet?.GetActiveDetails();
+			if (options != null && options.Any())
+				return options.FirstOrDefault(x => x.BaseType == (int)baseType)?.CustomStateDetailId;
+
+			// The built-in levels Available..On Shift carry the same numbers as their meanings; Off Duty and On Call have none.
+			return Enum.IsDefined(typeof(UserStateTypes), (int)baseType) ? (int)baseType : (int?)null;
+		}
+
+		public async Task<int?> ResolveStatusResetAsync(int departmentId, string target)
+		{
+			var meaning = StatusMatch.BaseTypeOf(target);
+			if (meaning.HasValue)
+				return meaning.Value != (int)ActionBaseTypes.None && Enum.IsDefined(typeof(ActionBaseTypes), meaning.Value)
+					? await ResolvePersonnelStatusAsync(departmentId, (ActionBaseTypes)meaning.Value)
+					: null;
+
+			if (!int.TryParse(target?.Trim(), out var raw))
+				return null;
+
+			// A value saved before meanings: kept when it is still one of the department's statuses; otherwise (a built-in value
+			// after the department moved to its own statuses, or an option since deleted) the status with the same meaning.
+			var personnelSet = await GetActivePersonnelStateForDepartmentAsync(departmentId);
+			var option = await FindDepartmentOptionAsync(departmentId, CustomStateTypes.Personnel, raw);
+
+			if (personnelSet == null && option == null)
+				return Enum.IsDefined(typeof(ActionTypes), raw) ? raw : (int?)null;
+
+			if (personnelSet != null && option != null && !option.IsDeleted && option.CustomStateId == personnelSet.CustomStateId)
+				return raw;
+
+			var rawMeaning = option != null ? option.BaseType : (int)BuiltInStatusBaseTypes.ForPersonnelStatus(raw);
+			return rawMeaning != (int)ActionBaseTypes.None && Enum.IsDefined(typeof(ActionBaseTypes), rawMeaning)
+				? await ResolvePersonnelStatusAsync(departmentId, (ActionBaseTypes)rawMeaning)
+				: null;
+		}
+
+		public async Task<int?> ResolveStaffingResetAsync(int departmentId, string target)
+		{
+			var meaning = StatusMatch.BaseTypeOf(target);
+			if (meaning.HasValue)
+				return Enum.IsDefined(typeof(StaffingBaseTypes), meaning.Value) ? await ResolvePersonnelStaffingAsync(departmentId, (StaffingBaseTypes)meaning.Value) : null;
+
+			if (!int.TryParse(target?.Trim(), out var raw))
+				return null;
+
+			// Same rule as statuses: a value that is still one of the department's levels is kept, anything else follows its meaning.
+			var staffingSet = await GetActiveStaffingLevelsForDepartmentAsync(departmentId);
+			var option = await FindDepartmentOptionAsync(departmentId, CustomStateTypes.Staffing, raw);
+
+			if (staffingSet == null && option == null)
+				return Enum.IsDefined(typeof(UserStateTypes), raw) ? raw : (int?)null;
+
+			if (staffingSet != null && option != null && !option.IsDeleted && option.CustomStateId == staffingSet.CustomStateId)
+				return raw;
+
+			var rawMeaning = option != null ? option.BaseType : (int)BuiltInStatusBaseTypes.ForStaffing(raw);
+			return Enum.IsDefined(typeof(StaffingBaseTypes), rawMeaning) ? await ResolvePersonnelStaffingAsync(departmentId, (StaffingBaseTypes)rawMeaning) : null;
+		}
+
+		public async Task<CustomStateDetail> GetDefaultPersonnelStatusAsync(int departmentId)
+		{
+			// A person with no status, or none inside the auto-available hour, reads as available. For a department on its
+			// own staff statuses that is the set's first Available option; the built-in Standing By is not one of its options.
+			var available = await ResolvePersonnelStatusAsync(departmentId, ActionBaseTypes.Available);
+
+			CustomStateDetail detail = null;
+			if (available.HasValue && available.Value != (int)ActionTypes.StandingBy)
+				detail = await FindDepartmentOptionAsync(departmentId, CustomStateTypes.Personnel, available.Value);
+
+			return detail ?? await GetCustomPersonnelStatusAsync(departmentId, new ActionLog { DepartmentId = departmentId, ActionTypeId = (int)ActionTypes.StandingBy });
+		}
+
 		public async Task<CustomStateDetail> GetCustomUnitStateAsync(UnitState state)
 		{
 			if (state == null)

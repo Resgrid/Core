@@ -853,4 +853,43 @@
   <data name="Terminology" xml:space="preserve">
     <value>Ορολογία</value>
   </data>
+  <data name="TermCall" xml:space="preserve">
+    <value>Κλήση</value>
+  </data>
+  <data name="TermPerson" xml:space="preserve">
+    <value>Άτομο</value>
+  </data>
+  <data name="TermUnit" xml:space="preserve">
+    <value>Μονάδα</value>
+  </data>
+  <data name="TermContact" xml:space="preserve">
+    <value>Επαφή</value>
+  </data>
+  <data name="TermShift" xml:space="preserve">
+    <value>Βάρδια</value>
+  </data>
+  <data name="TermRecord" xml:space="preserve">
+    <value>Αρχείο</value>
+  </data>
+  <data name="TermLog" xml:space="preserve">
+    <value>Καταγραφή</value>
+  </data>
+  <data name="TermReport" xml:space="preserve">
+    <value>Αναφορά</value>
+  </data>
+  <data name="TermDocument" xml:space="preserve">
+    <value>Έγγραφο</value>
+  </data>
+  <data name="TermNote" xml:space="preserve">
+    <value>Σημείωση</value>
+  </data>
+  <data name="TermTraining" xml:space="preserve">
+    <value>Εκπαίδευση</value>
+  </data>
+  <data name="TermWorkOrder" xml:space="preserve">
+    <value>Εντολή εργασίας</value>
+  </data>
+  <data name="TermChecklist" xml:space="preserve">
+    <value>Λίστα ελέγχου</value>
+  </data>
 </root>

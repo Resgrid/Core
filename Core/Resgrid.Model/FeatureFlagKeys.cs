@@ -51,6 +51,13 @@ namespace Resgrid.Model
 		public const string DispatchRunCards = "Dispatch.RunCards";
 
 		/// <summary>
+		/// Gates conditional run cards (decision graphs, response packages, "any of" targets, response codes, outstanding
+		/// requirements and the template gallery) on top of Dispatch.RunCards. Off means cards behave exactly as fixed
+		/// cards did before. Seeded off by M0287.
+		/// </summary>
+		public const string DispatchRunCardConditions = "Dispatch.RunCardConditions";
+
+		/// <summary>
 		/// Global admission gate for Advanced Data Protection (ADP) enrollment. When true, any department
 		/// with an active paid ADP addon may enroll via the Enrollment Wizard; when false, no new enrollment
 		/// commits anywhere (operator platform-wide pause). This flag gates NEW enrollment only — it is never

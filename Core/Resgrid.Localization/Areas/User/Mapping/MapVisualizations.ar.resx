@@ -1,0 +1,1061 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Mapping Index -->
+  <data name="PageTitle" xml:space="preserve">
+    <value>التصورات المرئية للخريطة</value>
+  </data>
+  <data name="PageIntro" xml:space="preserve">
+    <value>خرائط حرارية وطبقات بيانات لبلاغاتك واستجاباتك وحركة وحداتك.</value>
+  </data>
+  <data name="Loading" xml:space="preserve">
+    <value>جارٍ تحميل التصورات المرئية…</value>
+  </data>
+  <data name="Running" xml:space="preserve">
+    <value>جارٍ تحديث الخريطة…</value>
+  </data>
+  <data name="Untitled" xml:space="preserve">
+    <value>تصور مرئي بلا عنوان</value>
+  </data>
+  <data name="Unsaved" xml:space="preserve">
+    <value>تغييرات غير محفوظة</value>
+  </data>
+  <data name="Station" xml:space="preserve">
+    <value>المحطة</value>
+  </data>
+  <data name="NoValue" xml:space="preserve">
+    <value>لا توجد قيمة</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="SaveAs" xml:space="preserve">
+    <value>حفظ كتصور جديد</value>
+  </data>
+  <data name="SaveTitle" xml:space="preserve">
+    <value>حفظ التصور المرئي</value>
+  </data>
+  <data name="SaveAsTitle" xml:space="preserve">
+    <value>حفظ كتصور مرئي جديد</value>
+  </data>
+  <data name="SaveName" xml:space="preserve">
+    <value>الاسم</value>
+  </data>
+  <data name="SaveDescription" xml:space="preserve">
+    <value>الوصف (اختياري)</value>
+  </data>
+  <data name="SaveShare" xml:space="preserve">
+    <value>المشاركة مع الإدارة بأكملها</value>
+  </data>
+  <data name="SaveShareHint" xml:space="preserve">
+    <value>سيظهر هذا التصور المرئي في قائمة كل من يمكنه عرض البلاغات. ولا يرى كل شخص سوى البيانات المسموح له بعرضها.</value>
+  </data>
+  <data name="SavePersonalHint" xml:space="preserve">
+    <value>التصورات المرئية المحفوظة تظهر لك وحدك. يمكن لمسؤولي الإدارة مشاركة التصورات المرئية مع الجميع.</value>
+  </data>
+  <data name="SaveErrorNameRequired" xml:space="preserve">
+    <value>أدخل اسمًا.</value>
+  </data>
+  <data name="SaveErrorNotFound" xml:space="preserve">
+    <value>هذا التصور المرئي لم يعد موجودًا.</value>
+  </data>
+  <data name="SaveErrorNotAllowed" xml:space="preserve">
+    <value>لا يمكنك تغيير هذا التصور المرئي. لا يمكن تغيير التصورات المرئية المشتركة إلا بواسطة مسؤولي الإدارة.</value>
+  </data>
+  <data name="SaveErrorLimitReached" xml:space="preserve">
+    <value>بلغت إدارتك الحد الأقصى للتصورات المرئية المحفوظة. احذف أحدها أولًا.</value>
+  </data>
+  <data name="SaveErrorDefinitionTooLarge" xml:space="preserve">
+    <value>يحتوي هذا التصور المرئي على عدد كبير جدًا من الإعدادات بحيث لا يمكن حفظه.</value>
+  </data>
+  <data name="SaveErrorUnknown" xml:space="preserve">
+    <value>تعذّر حفظ التصور المرئي.</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>تم حفظ التصور المرئي.</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="CopyOf" xml:space="preserve">
+    <value>نسخة من {0}</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="DeleteNamed" xml:space="preserve">
+    <value>حذف {0}</value>
+  </data>
+  <data name="DeleteConfirm" xml:space="preserve">
+    <value>هل تريد حذف التصور المرئي «{0}»؟ لا يمكن التراجع عن هذا الإجراء.</value>
+  </data>
+  <data name="DeleteFailed" xml:space="preserve">
+    <value>تعذّر حذف التصور المرئي.</value>
+  </data>
+  <data name="Deleted" xml:space="preserve">
+    <value>تم حذف التصور المرئي.</value>
+  </data>
+  <data name="ExportCsv" xml:space="preserve">
+    <value>تنزيل CSV</value>
+  </data>
+  <data name="CopyLink" xml:space="preserve">
+    <value>نسخ الرابط</value>
+  </data>
+  <data name="LinkCopied" xml:space="preserve">
+    <value>تم نسخ الرابط.</value>
+  </data>
+  <data name="Fullscreen" xml:space="preserve">
+    <value>ملء الشاشة</value>
+  </data>
+  <data name="PanelHide" xml:space="preserve">
+    <value>إخفاء اللوحة الجانبية</value>
+  </data>
+  <data name="PanelShow" xml:space="preserve">
+    <value>إظهار اللوحة الجانبية</value>
+  </data>
+  <data name="ErrorLoad" xml:space="preserve">
+    <value>تعذّر تحميل التصور المرئي. حاول مرة أخرى بعد قليل.</value>
+  </data>
+  <data name="ErrorForbidden" xml:space="preserve">
+    <value>ليس لديك إذن لعرض هذه البيانات.</value>
+  </data>
+  <data name="ErrorNoTiles" xml:space="preserve">
+    <value>لم يتم إعداد الخريطة لإدارتك.</value>
+  </data>
+  <data name="TabLibrary" xml:space="preserve">
+    <value>المكتبة</value>
+  </data>
+  <data name="TabCustomize" xml:space="preserve">
+    <value>التخصيص</value>
+  </data>
+  <data name="SavedTitle" xml:space="preserve">
+    <value>التصورات المرئية المحفوظة</value>
+  </data>
+  <data name="SavedShared" xml:space="preserve">
+    <value>مشتركة مع الإدارة</value>
+  </data>
+  <data name="SavedMine" xml:space="preserve">
+    <value>تصوراتي المرئية</value>
+  </data>
+  <data name="SavedPersonal" xml:space="preserve">
+    <value>تظهر لك وحدك</value>
+  </data>
+  <data name="SavedSharedBy" xml:space="preserve">
+    <value>شاركها {0}</value>
+  </data>
+  <data name="SavedSharedBadge" xml:space="preserve">
+    <value>مشتركة</value>
+  </data>
+  <data name="LibraryTitle" xml:space="preserve">
+    <value>مكتبة التصورات المرئية</value>
+  </data>
+  <data name="LibraryHint" xml:space="preserve">
+    <value>اختر نقطة بداية، ثم عدّلها في تبويب التخصيص واحفظ نسختك الخاصة.</value>
+  </data>
+  <data name="LibrarySearch" xml:space="preserve">
+    <value>البحث في المكتبة</value>
+  </data>
+  <data name="LibraryRecommended" xml:space="preserve">
+    <value>موصى به لمؤسستك</value>
+  </data>
+  <data name="LibraryRecommendedBadge" xml:space="preserve">
+    <value>موصى به</value>
+  </data>
+  <data name="LibraryShowAll" xml:space="preserve">
+    <value>عرض جميع التصورات المرئية ({0})</value>
+  </data>
+  <data name="LibraryNeedsCall" xml:space="preserve">
+    <value>اختر بلاغًا في تبويب التخصيص.</value>
+  </data>
+  <data name="Category_CallDemand" xml:space="preserve">
+    <value>الطلب على البلاغات</value>
+  </data>
+  <data name="Category_ResponsePerformance" xml:space="preserve">
+    <value>أداء الاستجابة</value>
+  </data>
+  <data name="Category_Coverage" xml:space="preserve">
+    <value>التغطية</value>
+  </data>
+  <data name="Category_Resources" xml:space="preserve">
+    <value>الوحدات والأفراد</value>
+  </data>
+  <data name="Category_Tracking" xml:space="preserve">
+    <value>التتبع</value>
+  </data>
+  <data name="Category_CommunityRisk" xml:space="preserve">
+    <value>مخاطر المجتمع</value>
+  </data>
+  <data name="Library_call_hot_zones_Name" xml:space="preserve">
+    <value>المناطق الساخنة للبلاغات</value>
+  </data>
+  <data name="Library_call_hot_zones_Description" xml:space="preserve">
+    <value>خريطة حرارية لجميع البلاغات خلال آخر 12 شهرًا. أشد المناطق سطوعًا هي حيث تتركز البلاغات.</value>
+  </data>
+  <data name="Library_busiest_areas_Name" xml:space="preserve">
+    <value>المناطق الأكثر نشاطًا (شبكة)</value>
+  </data>
+  <data name="Library_busiest_areas_Description" xml:space="preserve">
+    <value>شبكة سداسية تحصي البلاغات في كل منطقة، لتتمكن من مقارنة الأحياء بالأرقام بدلًا من التوهج.</value>
+  </data>
+  <data name="Library_calls_by_type_Name" xml:space="preserve">
+    <value>البلاغات حسب النوع</value>
+  </data>
+  <data name="Library_calls_by_type_Description" xml:space="preserve">
+    <value>كل بلاغ خلال آخر 90 يومًا كنقطة، ملوّنة حسب نوع البلاغ.</value>
+  </data>
+  <data name="Library_dominant_call_type_Name" xml:space="preserve">
+    <value>نوع البلاغ الأبرز حسب المنطقة</value>
+  </data>
+  <data name="Library_dominant_call_type_Description" xml:space="preserve">
+    <value>شبكة ملوّنة حسب نوع البلاغ الأكثر شيوعًا في كل منطقة. كلما اشتد اللون زاد عدد البلاغات.</value>
+  </data>
+  <data name="Library_calls_by_priority_Name" xml:space="preserve">
+    <value>البلاغات حسب الأولوية</value>
+  </data>
+  <data name="Library_calls_by_priority_Description" xml:space="preserve">
+    <value>بلاغات آخر 90 يومًا ملوّنة حسب الأولوية، لمعرفة مصدر البلاغات العاجلة.</value>
+  </data>
+  <data name="Library_call_outcomes_Name" xml:space="preserve">
+    <value>نتائج البلاغات</value>
+  </data>
+  <data name="Library_call_outcomes_Description" xml:space="preserve">
+    <value>بلاغات ملوّنة حسب طريقة إغلاقها: مغلق، ملغى، غير مثبت، إنذار كاذب، محوَّل وغير ذلك.</value>
+  </data>
+  <data name="Library_time_of_day_Name" xml:space="preserve">
+    <value>وقت اليوم</value>
+  </data>
+  <data name="Library_time_of_day_Description" xml:space="preserve">
+    <value>بلاغات ملوّنة حسب وقت ورودها: بعد منتصف الليل أو الصباح أو بعد الظهر أو المساء. مفيد لتخطيط الكوادر والمناوبات.</value>
+  </data>
+  <data name="Library_weekday_vs_weekend_Name" xml:space="preserve">
+    <value>أيام العمل مقابل عطلة نهاية الأسبوع</value>
+  </data>
+  <data name="Library_weekday_vs_weekend_Description" xml:space="preserve">
+    <value>البلاغات مقسّمة إلى أيام العمل وعطلة نهاية الأسبوع، لتخطيط توافر المتطوعين.</value>
+  </data>
+  <data name="Library_seasonal_patterns_Name" xml:space="preserve">
+    <value>الأنماط الموسمية</value>
+  </data>
+  <data name="Library_seasonal_patterns_Description" xml:space="preserve">
+    <value>بلاغات عامين ملوّنة حسب الشهر، لرصد الطلب الموسمي مثل حرائق الغابات أو الإنقاذ المائي أو مواسم الفعاليات.</value>
+  </data>
+  <data name="Library_response_time_by_area_Name" xml:space="preserve">
+    <value>زمن الاستجابة حسب المنطقة (المئين 90)</value>
+  </data>
+  <data name="Library_response_time_by_area_Description" xml:space="preserve">
+    <value>شبكة ملوّنة حسب المئين 90 للزمن من تسجيل البلاغ حتى وصول أول وحدة إلى الموقع، بالطريقة التي تُقاس بها أهداف NFPA 1710 وNFPA 1720. تتطلب أن تضبط الوحدات حالات الوصول إلى الموقع.</value>
+  </data>
+  <data name="Library_response_time_bands_Name" xml:space="preserve">
+    <value>شرائح زمن الاستجابة</value>
+  </data>
+  <data name="Library_response_time_bands_Description" xml:space="preserve">
+    <value>كل بلاغ ملوّن حسب الدقائق حتى وصول أول وحدة إلى الموقع: أقل من 4، من 4 إلى 8، من 8 إلى 12، من 12 إلى 20، وأكثر من 20.</value>
+  </data>
+  <data name="Library_turnout_by_area_Name" xml:space="preserve">
+    <value>الزمن حتى أول استجابة حسب المنطقة</value>
+  </data>
+  <data name="Library_turnout_by_area_Description" xml:space="preserve">
+    <value>شبكة ملوّنة حسب الوسيط للزمن من تسجيل البلاغ حتى أول وحدة تستجيب أو تكون في الطريق.</value>
+  </data>
+  <data name="Library_time_committed_Name" xml:space="preserve">
+    <value>الزمن المستغرق حسب المنطقة</value>
+  </data>
+  <data name="Library_time_committed_Description" xml:space="preserve">
+    <value>شبكة ملوّنة حسب متوسط الزمن من تسجيل البلاغ حتى إغلاقه: أين تشغل البلاغات الموارد لأطول وقت.</value>
+  </data>
+  <data name="Library_station_coverage_gaps_Name" xml:space="preserve">
+    <value>البلاغات خارج تغطية المحطات</value>
+  </data>
+  <data name="Library_station_coverage_gaps_Description" xml:space="preserve">
+    <value>بلاغات ملوّنة حسب المسافة المباشرة إلى أقرب محطة، مع حلقات عند 1.5 و2.5 و5 أميال (معايير شائعة لتصنيف التأمين).</value>
+  </data>
+  <data name="Library_station_area_workload_Name" xml:space="preserve">
+    <value>عبء العمل حسب منطقة المحطة</value>
+  </data>
+  <data name="Library_station_area_workload_Description" xml:space="preserve">
+    <value>بلاغات ملوّنة حسب محطتها الأصلية (نطاقها الجغرافي أولًا، ثم من تم إرساله)، لمقارنة عبء العمل للاستجابة الأولى.</value>
+  </data>
+  <data name="Library_where_units_go_Name" xml:space="preserve">
+    <value>وجهات الوحدات</value>
+  </data>
+  <data name="Library_where_units_go_Description" xml:space="preserve">
+    <value>كل استجابة وحدة خلال آخر 90 يومًا عند موقع البلاغ، ملوّنة حسب الوحدة.</value>
+  </data>
+  <data name="Library_unit_type_demand_Name" xml:space="preserve">
+    <value>الطلب حسب نوع الوحدة</value>
+  </data>
+  <data name="Library_unit_type_demand_Description" xml:space="preserve">
+    <value>شبكة ملوّنة حسب نوع الوحدة الأكثر استجابة في كل منطقة، مثل سيارات الإطفاء أو سيارات الإسعاف أو وحدات الإنقاذ.</value>
+  </data>
+  <data name="Library_personnel_response_footprint_Name" xml:space="preserve">
+    <value>بصمة استجابة الأفراد</value>
+  </data>
+  <data name="Library_personnel_response_footprint_Description" xml:space="preserve">
+    <value>خريطة حرارية للبلاغات التي استجاب لها الأعضاء. البلاغات ذات المستجيبين الأكثر تتوهج بشكل أكبر.</value>
+  </data>
+  <data name="Library_responder_origins_Name" xml:space="preserve">
+    <value>من أين يأتي المستجيبون</value>
+  </data>
+  <data name="Library_responder_origins_Description" xml:space="preserve">
+    <value>خريطة حرارية لمواقع الأعضاء عندما سجّلوا أنفسهم مستجيبين، مع حلقة بنصف قطر 5 أميال حول المحطة. تتطلب مشاركة الموقع في التطبيق.</value>
+  </data>
+  <data name="Library_repeat_locations_Name" xml:space="preserve">
+    <value>المواقع المتكررة</value>
+  </data>
+  <data name="Library_repeat_locations_Description" xml:space="preserve">
+    <value>المواقع التي سُجّل فيها 3 بلاغات أو أكثر خلال آخر 12 شهرًا، بحجم ولون حسب العدد. مفيد للمتصلين المتكررين ومشكلات الإنذار ومتابعة الوقاية.</value>
+  </data>
+  <data name="Library_false_alarm_hot_spots_Name" xml:space="preserve">
+    <value>بؤر الإنذارات الكاذبة</value>
+  </data>
+  <data name="Library_false_alarm_hot_spots_Description" xml:space="preserve">
+    <value>خريطة حرارية للبلاغات المغلقة كإنذار كاذب أو غير مثبتة.</value>
+  </data>
+  <data name="Library_unit_movement_24h_Name" xml:space="preserve">
+    <value>حركة الوحدات (آخر 24 ساعة)</value>
+  </data>
+  <data name="Library_unit_movement_24h_Description" xml:space="preserve">
+    <value>مسارات الوحدات المسجّلة لآخر يوم، ملوّنة حسب الوحدة.</value>
+  </data>
+  <data name="Library_patrol_coverage_Name" xml:space="preserve">
+    <value>تغطية الدوريات</value>
+  </data>
+  <data name="Library_patrol_coverage_Description" xml:space="preserve">
+    <value>خريطة حرارية لمواقع الوحدات خلال آخر 7 أيام: أين تقضي الدوريات والوحدات الميدانية وقتها.</value>
+  </data>
+  <data name="Library_search_coverage_Name" xml:space="preserve">
+    <value>تغطية البحث</value>
+  </data>
+  <data name="Library_search_coverage_Description" xml:space="preserve">
+    <value>شبكة من مواقع الأعضاء إضافة إلى مسارات الأعضاء والوحدات خلال آخر 3 أيام، لمعرفة المناطق التي تمت تغطيتها.</value>
+  </data>
+  <data name="Library_incident_footprint_Name" xml:space="preserve">
+    <value>بصمة الحادث</value>
+  </data>
+  <data name="Library_incident_footprint_Description" xml:space="preserve">
+    <value>اختر بلاغًا لترى أين ذهبت كل وحدة وكل عضو أثناء العمل عليه: مساراتهم ومواقع حالاتهم ومن أين جاء المستجيبون.</value>
+  </data>
+  <data name="SectionWhen" xml:space="preserve">
+    <value>متى</value>
+  </data>
+  <data name="SectionWhich" xml:space="preserve">
+    <value>أي البلاغات</value>
+  </data>
+  <data name="SectionLayers" xml:space="preserve">
+    <value>الطبقات</value>
+  </data>
+  <data name="SectionStations" xml:space="preserve">
+    <value>المحطات والمسافات</value>
+  </data>
+  <data name="FilterWindow" xml:space="preserve">
+    <value>النطاق الزمني</value>
+  </data>
+  <data name="Window_1" xml:space="preserve">
+    <value>آخر 24 ساعة</value>
+  </data>
+  <data name="Window_7" xml:space="preserve">
+    <value>آخر 7 أيام</value>
+  </data>
+  <data name="Window_30" xml:space="preserve">
+    <value>آخر 30 يومًا</value>
+  </data>
+  <data name="Window_90" xml:space="preserve">
+    <value>آخر 90 يومًا</value>
+  </data>
+  <data name="Window_365" xml:space="preserve">
+    <value>آخر 12 شهرًا</value>
+  </data>
+  <data name="Window_730" xml:space="preserve">
+    <value>آخر سنتين</value>
+  </data>
+  <data name="Window_1825" xml:space="preserve">
+    <value>آخر 5 سنوات</value>
+  </data>
+  <data name="Window_Custom" xml:space="preserve">
+    <value>تواريخ مخصصة</value>
+  </data>
+  <data name="WindowDays" xml:space="preserve">
+    <value>آخر {0} يوم</value>
+  </data>
+  <data name="FilterStart" xml:space="preserve">
+    <value>من</value>
+  </data>
+  <data name="FilterEnd" xml:space="preserve">
+    <value>إلى</value>
+  </data>
+  <data name="FilterDays" xml:space="preserve">
+    <value>أيام الأسبوع</value>
+  </data>
+  <data name="FilterHours" xml:space="preserve">
+    <value>ساعات اليوم</value>
+  </data>
+  <data name="FilterHoursHint" xml:space="preserve">
+    <value>اترك جميع الخيارات بلا تحديد لتشمل كل الأيام والساعات. الأوقات بتوقيت المنطقة الزمنية لإدارتك.</value>
+  </data>
+  <data name="FilterCall" xml:space="preserve">
+    <value>بلاغ واحد</value>
+  </data>
+  <data name="FilterCallPlaceholder" xml:space="preserve">
+    <value>ابحث بالرقم أو الاسم أو النوع أو العنوان</value>
+  </data>
+  <data name="FilterCallHint" xml:space="preserve">
+    <value>اختر بلاغًا لعرضه وحده مع أماكن ذهاب وحداته وأعضائه.</value>
+  </data>
+  <data name="FilterCallActiveHint" xml:space="preserve">
+    <value>يتم عرض هذا البلاغ فقط. يتم تجاهل النطاق الزمني ومرشحات البلاغات الأخرى.</value>
+  </data>
+  <data name="FilterCallClear" xml:space="preserve">
+    <value>عرض جميع البلاغات</value>
+  </data>
+  <data name="FilterCallNoMatches" xml:space="preserve">
+    <value>لا توجد بلاغات مطابقة خلال آخر سنة.</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>جارٍ البحث…</value>
+  </data>
+  <data name="FilterCallTypes" xml:space="preserve">
+    <value>أنواع البلاغات</value>
+  </data>
+  <data name="FilterPriorities" xml:space="preserve">
+    <value>الأولويات</value>
+  </data>
+  <data name="FilterOutcomes" xml:space="preserve">
+    <value>النتائج</value>
+  </data>
+  <data name="FilterGroups" xml:space="preserve">
+    <value>المحطة الأصلية أو المجموعة</value>
+  </data>
+  <data name="FilterUnits" xml:space="preserve">
+    <value>الوحدات المشاركة</value>
+  </data>
+  <data name="FilterMinCalls" xml:space="preserve">
+    <value>الحد الأدنى للبلاغات في الموقع</value>
+  </data>
+  <data name="FilterMinCallsHint" xml:space="preserve">
+    <value>اعرض فقط المواقع التي فيها هذا العدد من البلاغات على الأقل ضمن النطاق الزمني. القيمة 0 تعرض كل بلاغ.</value>
+  </data>
+  <data name="FilterAll" xml:space="preserve">
+    <value>الكل</value>
+  </data>
+  <data name="FilterSelected" xml:space="preserve">
+    <value>تم تحديد {0}</value>
+  </data>
+  <data name="FilterNoChoices" xml:space="preserve">
+    <value>لم يتم إعداد أي خيار</value>
+  </data>
+  <data name="FilterSearch" xml:space="preserve">
+    <value>بحث</value>
+  </data>
+  <data name="FilterClear" xml:space="preserve">
+    <value>مسح التحديد</value>
+  </data>
+  <data name="LayersHint" xml:space="preserve">
+    <value>تُرسم الطبقات بالترتيب: الطبقة العليا في هذه القائمة تُرسم في الأعلى على الخريطة.</value>
+  </data>
+  <data name="LayerAdd" xml:space="preserve">
+    <value>إضافة طبقة</value>
+  </data>
+  <data name="LayerName" xml:space="preserve">
+    <value>اسم الطبقة</value>
+  </data>
+  <data name="LayerSource" xml:space="preserve">
+    <value>البيانات</value>
+  </data>
+  <data name="LayerDisplay" xml:space="preserve">
+    <value>عرض كـ</value>
+  </data>
+  <data name="LayerColorBy" xml:space="preserve">
+    <value>التلوين حسب</value>
+  </data>
+  <data name="LayerMetric" xml:space="preserve">
+    <value>المقياس</value>
+  </data>
+  <data name="LayerWeight" xml:space="preserve">
+    <value>ترجيح كل نقطة حسب</value>
+  </data>
+  <data name="LayerSize" xml:space="preserve">
+    <value>القيمة</value>
+  </data>
+  <data name="LayerAggregate" xml:space="preserve">
+    <value>دمج القيم باستخدام</value>
+  </data>
+  <data name="LayerPalette" xml:space="preserve">
+    <value>الألوان</value>
+  </data>
+  <data name="LayerOpacity" xml:space="preserve">
+    <value>العتامة</value>
+  </data>
+  <data name="LayerRadius" xml:space="preserve">
+    <value>نصف قطر الحرارة</value>
+  </data>
+  <data name="LayerIntensity" xml:space="preserve">
+    <value>شدة الحرارة</value>
+  </data>
+  <data name="LayerCellSize" xml:space="preserve">
+    <value>حجم خلية الشبكة</value>
+  </data>
+  <data name="LayerPointSize" xml:space="preserve">
+    <value>حجم النقطة</value>
+  </data>
+  <data name="LayerSizeByMetric" xml:space="preserve">
+    <value>تحديد حجم النقاط حسب القيمة</value>
+  </data>
+  <data name="LayerUp" xml:space="preserve">
+    <value>نقل للأعلى (الرسم فوق)</value>
+  </data>
+  <data name="LayerDown" xml:space="preserve">
+    <value>نقل للأسفل (الرسم تحت)</value>
+  </data>
+  <data name="LayerRemove" xml:space="preserve">
+    <value>إزالة الطبقة</value>
+  </data>
+  <data name="OptionShowStations" xml:space="preserve">
+    <value>إظهار المحطات على الخريطة</value>
+  </data>
+  <data name="OptionDistanceUnit" xml:space="preserve">
+    <value>وحدة المسافة</value>
+  </data>
+  <data name="OptionRings" xml:space="preserve">
+    <value>حلقات التغطية حول المحطات</value>
+  </data>
+  <data name="OptionRingsHint" xml:space="preserve">
+    <value>حتى 4 مسافات، تفصل بينها فواصل، مثل 1.5, 2.5, 5. الحلقات تمثل المسافة المباشرة وليس زمن القيادة.</value>
+  </data>
+  <data name="OptionDistanceBands" xml:space="preserve">
+    <value>شرائح المسافة</value>
+  </data>
+  <data name="OptionDistanceBandsHint" xml:space="preserve">
+    <value>تُستخدم عند التلوين حسب المسافة إلى المحطة. اتركه فارغًا لاستخدام القيم الافتراضية.</value>
+  </data>
+  <data name="OptionMinuteBands" xml:space="preserve">
+    <value>شرائح زمن الاستجابة (بالدقائق)</value>
+  </data>
+  <data name="OptionMinuteBandsHint" xml:space="preserve">
+    <value>تُستخدم عند التلوين حسب شريحة زمن الاستجابة، مثل 4, 8, 12, 20. اتركه فارغًا لاستخدام القيم الافتراضية.</value>
+  </data>
+  <data name="UnitKilometers" xml:space="preserve">
+    <value>كم</value>
+  </data>
+  <data name="UnitMiles" xml:space="preserve">
+    <value>ميل</value>
+  </data>
+  <data name="UnitMinutes" xml:space="preserve">
+    <value>د</value>
+  </data>
+  <data name="Source_calls" xml:space="preserve">
+    <value>البلاغات</value>
+  </data>
+  <data name="Source_unitResponses" xml:space="preserve">
+    <value>استجابات الوحدات</value>
+  </data>
+  <data name="Source_personnelResponses" xml:space="preserve">
+    <value>استجابات الأفراد</value>
+  </data>
+  <data name="Source_responderOrigins" xml:space="preserve">
+    <value>أماكن انطلاق المستجيبين</value>
+  </data>
+  <data name="Source_unitStatusLocations" xml:space="preserve">
+    <value>مواقع حالات الوحدات</value>
+  </data>
+  <data name="Source_unitTracks" xml:space="preserve">
+    <value>مسارات الوحدات</value>
+  </data>
+  <data name="Source_personnelTracks" xml:space="preserve">
+    <value>مسارات الأفراد</value>
+  </data>
+  <data name="SourceHint_calls" xml:space="preserve">
+    <value>نقطة واحدة لكل بلاغ، عند موقع البلاغ.</value>
+  </data>
+  <data name="SourceHint_unitResponses" xml:space="preserve">
+    <value>نقطة واحدة لكل وحدة تم إرسالها إلى بلاغ، عند موقع البلاغ.</value>
+  </data>
+  <data name="SourceHint_personnelResponses" xml:space="preserve">
+    <value>نقطة واحدة لكل عضو استجاب لبلاغ، عند موقع البلاغ.</value>
+  </data>
+  <data name="SourceHint_responderOrigins" xml:space="preserve">
+    <value>أين كان الأعضاء عندما حدّدوا حالة الاستجابة. يظهر فقط الأعضاء الذين يشاركون موقعهم. حتى 12 شهرًا.</value>
+  </data>
+  <data name="SourceHint_unitStatusLocations" xml:space="preserve">
+    <value>أين كانت الوحدات عندما غيّرت حالتها. حتى 12 شهرًا.</value>
+  </data>
+  <data name="SourceHint_unitTracks" xml:space="preserve">
+    <value>مواقع الوحدات المسجّلة من تطبيق Unit أو من جهاز تتبع، حتى 7 أيام.</value>
+  </data>
+  <data name="SourceHint_personnelTracks" xml:space="preserve">
+    <value>مواقع الأعضاء المسجّلة من تطبيق Responder، حتى 7 أيام.</value>
+  </data>
+  <data name="Display_heat" xml:space="preserve">
+    <value>خريطة حرارية</value>
+  </data>
+  <data name="Display_points" xml:space="preserve">
+    <value>نقاط</value>
+  </data>
+  <data name="Display_hexbins" xml:space="preserve">
+    <value>شبكة سداسية</value>
+  </data>
+  <data name="Display_tracks" xml:space="preserve">
+    <value>مسارات</value>
+  </data>
+  <data name="ColorBy_none" xml:space="preserve">
+    <value>لون واحد</value>
+  </data>
+  <data name="ColorBy_callType" xml:space="preserve">
+    <value>نوع البلاغ</value>
+  </data>
+  <data name="ColorBy_priority" xml:space="preserve">
+    <value>الأولوية</value>
+  </data>
+  <data name="ColorBy_outcome" xml:space="preserve">
+    <value>النتيجة</value>
+  </data>
+  <data name="ColorBy_group" xml:space="preserve">
+    <value>المحطة الأصلية</value>
+  </data>
+  <data name="ColorBy_timeOfDay" xml:space="preserve">
+    <value>وقت اليوم</value>
+  </data>
+  <data name="ColorBy_hourOfDay" xml:space="preserve">
+    <value>ساعة اليوم</value>
+  </data>
+  <data name="ColorBy_dayOfWeek" xml:space="preserve">
+    <value>يوم الأسبوع</value>
+  </data>
+  <data name="ColorBy_weekpart" xml:space="preserve">
+    <value>أيام العمل أو عطلة نهاية الأسبوع</value>
+  </data>
+  <data name="ColorBy_month" xml:space="preserve">
+    <value>الشهر</value>
+  </data>
+  <data name="ColorBy_year" xml:space="preserve">
+    <value>السنة</value>
+  </data>
+  <data name="ColorBy_unit" xml:space="preserve">
+    <value>الوحدة</value>
+  </data>
+  <data name="ColorBy_unitType" xml:space="preserve">
+    <value>نوع الوحدة</value>
+  </data>
+  <data name="ColorBy_station" xml:space="preserve">
+    <value>محطة الوحدة</value>
+  </data>
+  <data name="ColorBy_person" xml:space="preserve">
+    <value>الشخص</value>
+  </data>
+  <data name="ColorBy_status" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="ColorBy_responseBand" xml:space="preserve">
+    <value>شريحة زمن الاستجابة</value>
+  </data>
+  <data name="ColorBy_distanceBand" xml:space="preserve">
+    <value>شريحة المسافة إلى المحطة</value>
+  </data>
+  <data name="ColorBy_repeatBand" xml:space="preserve">
+    <value>البلاغات في الموقع نفسه</value>
+  </data>
+  <data name="Metric_count" xml:space="preserve">
+    <value>العدد</value>
+  </data>
+  <data name="Metric_responseMinutes" xml:space="preserve">
+    <value>الدقائق حتى أول وصول إلى الموقع</value>
+  </data>
+  <data name="Metric_turnoutMinutes" xml:space="preserve">
+    <value>الدقائق حتى أول استجابة</value>
+  </data>
+  <data name="Metric_durationMinutes" xml:space="preserve">
+    <value>الدقائق حتى الإغلاق</value>
+  </data>
+  <data name="Metric_unitsDispatched" xml:space="preserve">
+    <value>الوحدات المرسلة</value>
+  </data>
+  <data name="Metric_personnelResponded" xml:space="preserve">
+    <value>الأفراد المستجيبون</value>
+  </data>
+  <data name="Metric_stationDistance" xml:space="preserve">
+    <value>المسافة إلى المحطة</value>
+  </data>
+  <data name="Metric_callsAtLocation" xml:space="preserve">
+    <value>البلاغات في الموقع نفسه</value>
+  </data>
+  <data name="Aggregate_count" xml:space="preserve">
+    <value>العدد</value>
+  </data>
+  <data name="Aggregate_sum" xml:space="preserve">
+    <value>الإجمالي</value>
+  </data>
+  <data name="Aggregate_mean" xml:space="preserve">
+    <value>المتوسط</value>
+  </data>
+  <data name="Aggregate_median" xml:space="preserve">
+    <value>الوسيط</value>
+  </data>
+  <data name="Aggregate_p90" xml:space="preserve">
+    <value>المئين 90</value>
+  </data>
+  <data name="Aggregate_max" xml:space="preserve">
+    <value>الحد الأقصى</value>
+  </data>
+  <data name="Palette_heat" xml:space="preserve">
+    <value>حرارة كلاسيكية</value>
+  </data>
+  <data name="Palette_fire" xml:space="preserve">
+    <value>نار</value>
+  </data>
+  <data name="Palette_viridis" xml:space="preserve">
+    <value>Viridis (ملائمة لعمى الألوان)</value>
+  </data>
+  <data name="Palette_blues" xml:space="preserve">
+    <value>درجات الأزرق</value>
+  </data>
+  <data name="Palette_traffic" xml:space="preserve">
+    <value>من الأخضر إلى الأحمر</value>
+  </data>
+  <data name="Day_0" xml:space="preserve">
+    <value>الأحد</value>
+  </data>
+  <data name="DayShort_0" xml:space="preserve">
+    <value>أحد</value>
+  </data>
+  <data name="Day_1" xml:space="preserve">
+    <value>الاثنين</value>
+  </data>
+  <data name="DayShort_1" xml:space="preserve">
+    <value>اثنين</value>
+  </data>
+  <data name="Day_2" xml:space="preserve">
+    <value>الثلاثاء</value>
+  </data>
+  <data name="DayShort_2" xml:space="preserve">
+    <value>ثلاثاء</value>
+  </data>
+  <data name="Day_3" xml:space="preserve">
+    <value>الأربعاء</value>
+  </data>
+  <data name="DayShort_3" xml:space="preserve">
+    <value>أربعاء</value>
+  </data>
+  <data name="Day_4" xml:space="preserve">
+    <value>الخميس</value>
+  </data>
+  <data name="DayShort_4" xml:space="preserve">
+    <value>خميس</value>
+  </data>
+  <data name="Day_5" xml:space="preserve">
+    <value>الجمعة</value>
+  </data>
+  <data name="DayShort_5" xml:space="preserve">
+    <value>جمعة</value>
+  </data>
+  <data name="Day_6" xml:space="preserve">
+    <value>السبت</value>
+  </data>
+  <data name="DayShort_6" xml:space="preserve">
+    <value>سبت</value>
+  </data>
+  <data name="Month_1" xml:space="preserve">
+    <value>يناير</value>
+  </data>
+  <data name="Month_2" xml:space="preserve">
+    <value>فبراير</value>
+  </data>
+  <data name="Month_3" xml:space="preserve">
+    <value>مارس</value>
+  </data>
+  <data name="Month_4" xml:space="preserve">
+    <value>أبريل</value>
+  </data>
+  <data name="Month_5" xml:space="preserve">
+    <value>مايو</value>
+  </data>
+  <data name="Month_6" xml:space="preserve">
+    <value>يونيو</value>
+  </data>
+  <data name="Month_7" xml:space="preserve">
+    <value>يوليو</value>
+  </data>
+  <data name="Month_8" xml:space="preserve">
+    <value>أغسطس</value>
+  </data>
+  <data name="Month_9" xml:space="preserve">
+    <value>سبتمبر</value>
+  </data>
+  <data name="Month_10" xml:space="preserve">
+    <value>أكتوبر</value>
+  </data>
+  <data name="Month_11" xml:space="preserve">
+    <value>نوفمبر</value>
+  </data>
+  <data name="Month_12" xml:space="preserve">
+    <value>ديسمبر</value>
+  </data>
+  <data name="TimeOfDay_0" xml:space="preserve">
+    <value>بعد منتصف الليل (00:00–06:00)</value>
+  </data>
+  <data name="TimeOfDay_1" xml:space="preserve">
+    <value>الصباح (06:00–12:00)</value>
+  </data>
+  <data name="TimeOfDay_2" xml:space="preserve">
+    <value>بعد الظهر (12:00–18:00)</value>
+  </data>
+  <data name="TimeOfDay_3" xml:space="preserve">
+    <value>المساء (18:00–24:00)</value>
+  </data>
+  <data name="Weekday" xml:space="preserve">
+    <value>أيام العمل</value>
+  </data>
+  <data name="Weekend" xml:space="preserve">
+    <value>عطلة نهاية الأسبوع</value>
+  </data>
+  <data name="Outcome_0" xml:space="preserve">
+    <value>نشط</value>
+  </data>
+  <data name="Outcome_1" xml:space="preserve">
+    <value>مغلق</value>
+  </data>
+  <data name="Outcome_2" xml:space="preserve">
+    <value>ملغى</value>
+  </data>
+  <data name="Outcome_3" xml:space="preserve">
+    <value>غير مثبت</value>
+  </data>
+  <data name="Outcome_4" xml:space="preserve">
+    <value>مثبت</value>
+  </data>
+  <data name="Outcome_5" xml:space="preserve">
+    <value>بسيط</value>
+  </data>
+  <data name="Outcome_6" xml:space="preserve">
+    <value>محوَّل</value>
+  </data>
+  <data name="Outcome_7" xml:space="preserve">
+    <value>إنذار كاذب</value>
+  </data>
+  <data name="Outcome_8" xml:space="preserve">
+    <value>قيد الانتظار</value>
+  </data>
+  <data name="UnitStatus_0" xml:space="preserve">
+    <value>متاحة</value>
+  </data>
+  <data name="UnitStatus_1" xml:space="preserve">
+    <value>متأخرة</value>
+  </data>
+  <data name="UnitStatus_2" xml:space="preserve">
+    <value>غير متاحة</value>
+  </data>
+  <data name="UnitStatus_3" xml:space="preserve">
+    <value>مشغولة</value>
+  </data>
+  <data name="UnitStatus_4" xml:space="preserve">
+    <value>خارج الخدمة</value>
+  </data>
+  <data name="UnitStatus_5" xml:space="preserve">
+    <value>تستجيب</value>
+  </data>
+  <data name="UnitStatus_6" xml:space="preserve">
+    <value>في الموقع</value>
+  </data>
+  <data name="UnitStatus_7" xml:space="preserve">
+    <value>في منطقة التجمع</value>
+  </data>
+  <data name="UnitStatus_8" xml:space="preserve">
+    <value>عائدة</value>
+  </data>
+  <data name="UnitStatus_9" xml:space="preserve">
+    <value>ملغاة</value>
+  </data>
+  <data name="UnitStatus_10" xml:space="preserve">
+    <value>مُحرَّرة</value>
+  </data>
+  <data name="UnitStatus_11" xml:space="preserve">
+    <value>يدوية</value>
+  </data>
+  <data name="UnitStatus_12" xml:space="preserve">
+    <value>في الطريق</value>
+  </data>
+  <data name="PersonnelStatus_0" xml:space="preserve">
+    <value>متاح</value>
+  </data>
+  <data name="PersonnelStatus_1" xml:space="preserve">
+    <value>غير مستجيب</value>
+  </data>
+  <data name="PersonnelStatus_2" xml:space="preserve">
+    <value>مستجيب</value>
+  </data>
+  <data name="PersonnelStatus_3" xml:space="preserve">
+    <value>في الموقع</value>
+  </data>
+  <data name="PersonnelStatus_4" xml:space="preserve">
+    <value>متاح في المحطة</value>
+  </data>
+  <data name="PersonnelStatus_5" xml:space="preserve">
+    <value>مستجيب إلى المحطة</value>
+  </data>
+  <data name="PersonnelStatus_6" xml:space="preserve">
+    <value>مستجيب إلى الموقع</value>
+  </data>
+  <data name="PersonnelStatus_7" xml:space="preserve">
+    <value>ضمن وحدة</value>
+  </data>
+  <data name="CategoryOther" xml:space="preserve">
+    <value>أخرى</value>
+  </data>
+  <data name="CategoryNoType" xml:space="preserve">
+    <value>بلا نوع</value>
+  </data>
+  <data name="CategoryNoStation" xml:space="preserve">
+    <value>بلا محطة</value>
+  </data>
+  <data name="RepeatBand" xml:space="preserve">
+    <value>عدد البلاغات: {0}</value>
+  </data>
+  <data name="LegendTitle" xml:space="preserve">
+    <value>دليل الألوان</value>
+  </data>
+  <data name="LegendFewer" xml:space="preserve">
+    <value>أقل</value>
+  </data>
+  <data name="LegendMore" xml:space="preserve">
+    <value>أكثر</value>
+  </data>
+  <data name="LegendLower" xml:space="preserve">
+    <value>أدنى</value>
+  </data>
+  <data name="LegendHigher" xml:space="preserve">
+    <value>أعلى</value>
+  </data>
+  <data name="LegendUpTo" xml:space="preserve">
+    <value>حتى {0}</value>
+  </data>
+  <data name="LegendRange" xml:space="preserve">
+    <value>من {0} إلى {1}</value>
+  </data>
+  <data name="LegendDominant" xml:space="preserve">
+    <value>تعرض كل خلية الفئة الأكثر شيوعًا فيها. كلما اشتد اللون زاد عدد البلاغات.</value>
+  </data>
+  <data name="LegendEmpty" xml:space="preserve">
+    <value>لا يوجد ما يمكن عرضه لهذه المرشحات.</value>
+  </data>
+  <data name="TooltipRows" xml:space="preserve">
+    <value>السجلات: {0}</value>
+  </data>
+  <data name="TooltipDominant" xml:space="preserve">
+    <value>غالبًا {0} ({1}%)</value>
+  </data>
+  <data name="PopupOpenCall" xml:space="preserve">
+    <value>فتح البلاغ</value>
+  </data>
+  <data name="PopupFocusCall" xml:space="preserve">
+    <value>عرض بصمة هذا البلاغ</value>
+  </data>
+  <data name="PopupUnavailable" xml:space="preserve">
+    <value>تفاصيل البلاغ غير متاحة.</value>
+  </data>
+  <data name="SummaryWindow" xml:space="preserve">
+    <value>العرض من {0} إلى {1}</value>
+  </data>
+  <data name="SummaryCall" xml:space="preserve">
+    <value>عرض البلاغ {0}</value>
+  </data>
+  <data name="SummaryWhen" xml:space="preserve">
+    <value>متى ترد البلاغات</value>
+  </data>
+  <data name="SummaryTopTypes" xml:space="preserve">
+    <value>أكثر أنواع البلاغات شيوعًا</value>
+  </data>
+  <data name="KpiCalls" xml:space="preserve">
+    <value>البلاغات</value>
+  </data>
+  <data name="KpiMapped" xml:space="preserve">
+    <value>البلاغات ذات الموقع</value>
+  </data>
+  <data name="KpiMedianResponse" xml:space="preserve">
+    <value>الزمن الوسيط حتى الوصول إلى الموقع</value>
+  </data>
+  <data name="KpiP90Response" xml:space="preserve">
+    <value>المئين 90 للزمن حتى الوصول إلى الموقع</value>
+  </data>
+  <data name="KpiResponseHint" xml:space="preserve">
+    <value>تظهر أزمنة الاستجابة عندما تستخدم طبقة مقياسًا أو شريحة لزمن الاستجابة وتضبط الوحدات حالات الوصول إلى الموقع.</value>
+  </data>
+  <data name="NoticeCallsTruncated" xml:space="preserve">
+    <value>يحتوي هذا النطاق الزمني على أكثر من 100,000 بلاغ. يتم عرض أحدث 100,000 بلاغ؛ اختر نطاقًا أقصر لرؤية كل شيء.</value>
+  </data>
+  <data name="Notice_personnelLocationsHidden" xml:space="preserve">
+    <value>{0}: تم استبعاد بعض الأعضاء لأنه لا يمكنك رؤية مواقعهم.</value>
+  </data>
+  <data name="Notice_unitLocationsHidden" xml:space="preserve">
+    <value>{0}: تم استبعاد بعض الوحدات لأنه لا يمكنك رؤية مواقعها.</value>
+  </data>
+  <data name="Notice_trackWindowShortened" xml:space="preserve">
+    <value>{0}: يتم عرض الجزء الأحدث فقط من النطاق الزمني، لأن سجل المواقع والحالات محدود المدة.</value>
+  </data>
+  <data name="Notice_layerTruncated" xml:space="preserve">
+    <value>{0}: عدد النقاط أكبر من أن يُعرض كله، لذا يتم عرض الأحدث.</value>
+  </data>
+  <data name="Notice_noStationLocations" xml:space="preserve">
+    <value>{0}: لا تملك أي محطة موقعًا، لذا لا يمكن عرض المسافات والحلقات. أضف عنوان محطة أو إحداثياتها ضمن المجموعات.</value>
+  </data>
+  <data name="Notice_noStatusTimes" xml:space="preserve">
+    <value>{0}: لا توجد في هذه البلاغات حالات وصول إلى الموقع أو استجابة، لذا أزمنة الاستجابة فارغة.</value>
+  </data>
+  <data name="Notice_callNotFound" xml:space="preserve">
+    <value>{0}: لم يتم العثور على البلاغ المحدد، أو لا يمكنك عرضه.</value>
+  </data>
+</root>

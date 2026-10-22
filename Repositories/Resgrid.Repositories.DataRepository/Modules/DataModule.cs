@@ -327,6 +327,7 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<DocumentNumberSequencesRepository>().As<IDocumentNumberSequencesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentApiKeysRepository>().As<IDepartmentApiKeysRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<TypeIconsRepository>().As<ITypeIconsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<MapVisualizationsRepository>().As<IMapVisualizationsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<SystemOperationRequestsRepository>().As<ISystemOperationRequestsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<InboundEmailReceiptsRepository>().As<IInboundEmailReceiptsRepository>().InstancePerLifetimeScope();
 			// Department Import (Import & Migration, M0273-M0276, M0281)
@@ -364,6 +365,12 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<RunCardAvailabilitySelectionsRepository>().As<IRunCardAvailabilitySelectionsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<StationCoverageRequirementsRepository>().As<IStationCoverageRequirementsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RunCardActivationsRepository>().As<IRunCardActivationsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RunCardDecisionNodesRepository>().As<IRunCardDecisionNodesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ResponsePackagesRepository>().As<IResponsePackagesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ResponsePackageRowsRepository>().As<IResponsePackageRowsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RunCardTargetsRepository>().As<IRunCardTargetsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RunCardDecisionsRepository>().As<IRunCardDecisionsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<CallOutstandingRequirementsRepository>().As<ICallOutstandingRequirementsRepository>().InstancePerLifetimeScope();
 
 			// Calendar Check-In Repositories
 			builder.RegisterType<CalendarItemCheckInRepository>().As<ICalendarItemCheckInRepository>().InstancePerLifetimeScope();

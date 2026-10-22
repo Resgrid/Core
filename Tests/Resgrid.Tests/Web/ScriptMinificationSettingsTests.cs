@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using FluentAssertions;
 using NUglify;
 using NUglify.JavaScript;
@@ -66,6 +70,72 @@ namespace Resgrid.Tests.Web
 			// Assert
 			result.HasErrors.Should().BeFalse();
 			result.Code.Should().MatchRegex(InvertedGuard);
+		}
+
+		[Test]
+		public void Minify_EveryAppScript_WithProductionSettings_HasNoErrors()
+		{
+			// The same files Startup minifies in Release. A script NUglify cannot parse is a script the browser cannot run.
+
+			// Arrange
+			var scripts = GetMinifiedScripts();
+			var failures = new List<string>();
+
+			// Act
+			foreach (var script in scripts)
+			{
+				try
+				{
+					var result = Uglify.Js(File.ReadAllText(script.FullName), ScriptMinificationSettings.Create());
+					if (result.HasErrors)
+						failures.Add($"{script.Name}: {result.Errors.First(e => e.IsError)}");
+				}
+				catch (Exception ex)
+				{
+					failures.Add($"{script.Name}: NUglify threw {ex.GetType().Name}");
+				}
+			}
+
+			// Assert
+			scripts.Should().NotBeEmpty();
+			failures.Should().BeEmpty();
+		}
+
+		[Test]
+		public void AppScripts_HaveNoRawLineSeparators()
+		{
+			// A raw U+2028/U+2029 is a line break to JavaScript and invisible in an editor. Inside a regex literal it
+			// ends the line, so the page throws "Invalid regular expression: missing /" in every build
+			// (resgrid.department.terminology.js, 2026-10-22). Write the escape instead.
+
+			// Arrange
+			var scripts = GetMinifiedScripts();
+
+			// Act
+			var offenders = scripts
+				.Where(s => File.ReadAllText(s.FullName).IndexOfAny(new[] { (char)0x2028, (char)0x2029 }) >= 0)
+				.Select(s => s.Name)
+				.ToList();
+
+			// Assert
+			offenders.Should().BeEmpty();
+		}
+
+		private static List<FileInfo> GetMinifiedScripts()
+		{
+			var directory = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
+
+			while (directory != null && !File.Exists(Path.Combine(directory.FullName, "Resgrid.sln")))
+				directory = directory.Parent;
+
+			if (directory == null)
+				throw new InvalidOperationException("Unable to locate the repository root.");
+
+			var js = new DirectoryInfo(Path.Combine(directory.FullName, "Web", "Resgrid.Web", "wwwroot", "js"));
+
+			return js.GetDirectories("app").Single().GetFiles("*.js", SearchOption.AllDirectories)
+				.Append(new FileInfo(Path.Combine(js.FullName, "site.js")))
+				.ToList();
 		}
 	}
 }

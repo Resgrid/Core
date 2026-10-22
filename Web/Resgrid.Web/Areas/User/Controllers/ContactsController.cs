@@ -114,15 +114,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			List<BSTreeModel> trees = new List<BSTreeModel>();
+			// The tree renders labels as HTML; the department's words are encoded like the group names.
 			var tree0 = new BSTreeModel();
 			tree0.id = "TreeGroup_-1";
-			tree0.text = "All Contacts";
+			tree0.text = System.Net.WebUtility.HtmlEncode(HttpContext.WithDepartmentTerms("All Contacts", "Contacts"));
 			tree0.icon = "";
 			trees.Add(tree0);
 
 			var tree1 = new BSTreeModel();
 			tree1.id = "TreeGroup_0";
-			tree1.text = "No Category Contacts";
+			tree1.text = System.Net.WebUtility.HtmlEncode(HttpContext.WithDepartmentTerms("No Category Contacts", "Contacts"));
 			tree1.icon = "";
 			trees.Add(tree1);
 
@@ -1338,7 +1339,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var contact = await _contactsService.GetContactByIdAsync(input.ContactId);
 			if (contact == null || contact.IsDeleted || contact.DepartmentId != DepartmentId)
-				return Json(new { success = false, error = "Contact not found." });
+				return Json(new { success = false, error = HttpContext.WithDepartmentTerms("Contact not found.", "Contacts") });
 
 			if (!Enum.IsDefined(typeof(ContactPreplanHazardTypes), input.HazardType) ||
 				!Enum.IsDefined(typeof(ContactPreplanHazardSeverities), input.Severity))

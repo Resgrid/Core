@@ -393,6 +393,14 @@ namespace Resgrid.Services
 			spc.DepartmentId = call.DepartmentId;
 			spc.DepartmentCode = call.Department?.Code;
 
+			// Conditional run cards: the unit's response code leads the title when the department shows codes to crews.
+			if (!string.IsNullOrWhiteSpace(dispatch?.ResponseCode)
+				&& (await _departmentSettingsService.GetDispatchResponseCodesAsync(call.DepartmentId))?.ShowToCrews == true)
+			{
+				spc.ResponseCode = dispatch.ResponseCode;
+				spc.Title = string.Format("{0} Call {1}", dispatch.ResponseCode, call.Name);
+			}
+
 			if (call.CallPriority != null && !String.IsNullOrWhiteSpace(call.CallPriority.Color))
 			{
 				spc.Color = call.CallPriority.Color;
@@ -1154,25 +1162,16 @@ namespace Resgrid.Services
 			var lastUserStaffing = await _userStateService.GetLastUserStateByUserIdAsync(userId);
 
 			// Looks like this was a bug, lastUserStaffing was going through here == null. -SJ
-			if (lastUserStaffing != null && supressStaffingInfo != null)
+			if (lastUserStaffing != null && supressStaffingInfo != null && supressStaffingInfo.EnableSupressStaffing)
 			{
-				if (supressStaffingInfo.EnableSupressStaffing)
-				{
-					if (supressStaffingInfo.StaffingLevelsToSupress.Contains(lastUserStaffing.State))
-						return false;
+				// The shared rule (StaffingSuppression): an exact level, or a meaning entry for every level with that staffing base
+				// type, built-in or the department's own; the department's levels are only read when such an entry exists.
+				var staffingBaseTypes = StaffingSuppression.HasMeanings(supressStaffingInfo)
+					? StatusMatch.StaffingBaseTypes(_customStateService != null ? await _customStateService.GetAllCustomStatesForDepartmentAsync(departmentId) : null)
+					: null;
 
-					// A meaning entry (StatusMatch.MeaningListValue) mutes every level with that staffing base type, built-in or the
-					// department's own; the department's levels are only read when such an entry exists.
-					if (supressStaffingInfo.StaffingLevelsToSupress.Any(x => StatusMatch.MeaningFromListValue(x).HasValue))
-					{
-						var staffingBaseTypes = StatusMatch.StaffingBaseTypes(_customStateService != null
-							? await _customStateService.GetAllCustomStatesForDepartmentAsync(departmentId)
-							: null);
-
-						if (supressStaffingInfo.StaffingLevelsToSupress.Contains(StatusMatch.MeaningListValue(staffingBaseTypes(lastUserStaffing.State))))
-							return false;
-					}
-				}
+				if (StaffingSuppression.IsSuppressed(supressStaffingInfo, lastUserStaffing.State, staffingBaseTypes))
+					return false;
 			}
 
 			return true;

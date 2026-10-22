@@ -40,6 +40,10 @@ CREATE INDEX IF NOT EXISTS ix_unitlocations_department_unit_source_timestamp
 CREATE INDEX IF NOT EXISTS ix_unitlocations_retention
   ON public.unitlocations (departmentid, sourcetype, "timestamp");
 
+-- Map visualization tracks read a whole department's history for a time window.
+CREATE INDEX IF NOT EXISTS ix_unitlocations_department_timestamp
+  ON public.unitlocations (departmentid, "timestamp" DESC);
+
 
 --
 -- CREATE TABLE IF NOT EXISTS "public"."personnellocations"
@@ -57,6 +61,9 @@ IF NOT exists (select constraint_name from information_schema.table_constraints 
   ALTER TABLE public.personnellocations 
     ADD PRIMARY KEY (id);
 END IF;
+
+CREATE INDEX IF NOT EXISTS ix_personnellocations_department_timestamp
+  ON public.personnellocations (departmentid, "timestamp" DESC);
 
 
 --

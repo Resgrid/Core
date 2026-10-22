@@ -39,6 +39,7 @@ namespace Resgrid.Tests.Services
 		private Mock<IUnitsRepository> _units;
 		private Mock<IEventAggregator> _events;
 		private Mock<ICacheProvider> _cache;
+		private Mock<IOutstandingRequirementsService> _outstanding;
 		private CallAutoCloseService _service;
 
 		private DateTime _now;
@@ -93,9 +94,11 @@ namespace Resgrid.Tests.Services
 			_units.Setup(x => x.GetByIdAsync(UnitA)).ReturnsAsync(new Unit { UnitId = UnitA, DepartmentId = DeptId, Name = "Ambulance Zottegem" });
 			_cache.Setup(x => x.IncrementAsync(It.IsAny<string>(), It.IsAny<TimeSpan>())).ReturnsAsync(1);
 
+			_outstanding = new Mock<IOutstandingRequirementsService>();
+
 			_service = new CallAutoCloseService(_settings.Object, _customStates.Object, _unitDispatches.Object, _unitStates.Object, _calls.Object,
 				_closure.Object, _dispatchStatuses.Object, new Lazy<IProtectedWriteService>(() => _protectedWrite.Object), _departments.Object,
-				_units.Object, _events.Object, _cache.Object);
+				_units.Object, _events.Object, _cache.Object, _outstanding.Object);
 		}
 
 		private UnitState Saved(int state, int? callId = CallId, DateTime? timestamp = null) => new UnitState
@@ -222,6 +225,15 @@ namespace Resgrid.Tests.Services
 		public async Task an_active_incident_command_keeps_the_call_open()
 		{
 			_closure.Setup(x => x.GetBlockingIncidentCommandAsync(DeptId, CallId)).ReturnsAsync(new IncidentCommand());
+
+			(await _service.CloseCallsFinishedByUnitStateAsync(DeptId, Saved((int)UnitStateTypes.Available), Previous((int)UnitStateTypes.OnScene))).Should().BeEmpty();
+			VerifyNotClosed();
+		}
+
+		[Test]
+		public async Task a_call_still_awaiting_a_required_resource_stays_open()
+		{
+			_outstanding.Setup(x => x.HasOpenRequirementsAsync(DeptId, CallId, It.IsAny<CancellationToken>())).ReturnsAsync(true);
 
 			(await _service.CloseCallsFinishedByUnitStateAsync(DeptId, Saved((int)UnitStateTypes.Available), Previous((int)UnitStateTypes.OnScene))).Should().BeEmpty();
 			VerifyNotClosed();

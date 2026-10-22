@@ -423,6 +423,46 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task responders_carry_their_status_and_staffing_as_the_lists_show_them()
+		{
+			var board = await GetBoardAsync();
+
+			var medic = board.Personnel.Single(p => p.UserId == "medic-b");
+			medic.StatusText.Should().Be("On Scene", "the built-in status's name, not the enum's");
+			medic.StatusColor.Should().Be("#000", "label-inverse");
+			medic.StaffingText.Should().Be("Available");
+			medic.StaffingColor.Should().Be("#777");
+
+			var ana = board.Personnel.Single(p => p.UserId == "clin-a");
+			ana.StatusText.Should().Be("Standing By", "no status inside the auto-available hour on the built-in statuses");
+			ana.StatusColor.Should().Be("#777");
+		}
+
+		[Test]
+		public async Task responders_with_no_recent_status_show_the_departments_own_available_option()
+		{
+			_customStateService.Setup(x => x.GetDefaultPersonnelStatusAsync(DepartmentId))
+				.ReturnsAsync(new CustomStateDetail { CustomStateDetailId = 19721, ButtonText = "Available", ButtonColor = "#2f9e44", BaseType = (int)ActionBaseTypes.Available });
+			_customStateService.Setup(x => x.GetActiveStaffingLevelsForDepartmentAsync(DepartmentId)).ReturnsAsync(new CustomState
+			{
+				CustomStateId = 4548,
+				DepartmentId = DepartmentId,
+				Type = (int)CustomStateTypes.Staffing,
+				Details = new List<CustomStateDetail> { new CustomStateDetail { CustomStateDetailId = 19801, CustomStateId = 4548, ButtonText = "On Duty", ButtonColor = "#1971c2", BaseType = (int)StaffingBaseTypes.Available } }
+			});
+			_userStateService.Setup(x => x.GetLatestStatesForDepartmentAsync(DepartmentId, It.IsAny<bool>()))
+				.ReturnsAsync(new List<UserState> { new UserState { UserId = "clin-a", State = 19801, Timestamp = DateTime.UtcNow } });
+
+			var board = await GetBoardAsync();
+
+			var ana = board.Personnel.Single(p => p.UserId == "clin-a");
+			ana.StatusText.Should().Be("Available");
+			ana.StatusColor.Should().Be("#2f9e44");
+			ana.StaffingText.Should().Be("On Duty");
+			ana.StaffingColor.Should().Be("#1971c2");
+		}
+
+		[Test]
 		public async Task boundaries_containing_the_incident_are_listed()
 		{
 			var board = await GetBoardAsync();

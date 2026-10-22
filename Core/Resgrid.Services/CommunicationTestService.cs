@@ -438,6 +438,10 @@ namespace Resgrid.Services
 			// someone who is off duty, so a test that ignored it would both report a delivery rate no
 			// real dispatch could reach and page every off-duty member of the department to do it.
 			var suppressInfo = await _departmentSettingsService.GetDepartmentStaffingSuppressInfoAsync(departmentId);
+			// Meaning entries ("any Off Duty level") need the department's levels to know each level's meaning.
+			var staffingBaseTypes = StaffingSuppression.HasMeanings(suppressInfo)
+				? StatusMatch.StaffingBaseTypes(await _customStateService.GetAllCustomStatesForDepartmentAsync(departmentId))
+				: null;
 			var latestStates = BuildLatestStateLookup(await _userStateService.GetLatestStatesForDepartmentAsync(departmentId));
 			var staffingNames = await BuildStaffingNameLookupAsync(departmentId);
 
@@ -454,7 +458,7 @@ namespace Resgrid.Services
 				latestStates.TryGetValue(member.UserId, out var memberState);
 				int? staffingLevel = memberState?.State;
 				var staffingLevelText = ResolveStaffingLevelText(staffingLevel, staffingNames);
-				var suppressed = IsStaffingSuppressed(suppressInfo, staffingLevel);
+				var suppressed = IsStaffingSuppressed(suppressInfo, staffingLevel, staffingBaseTypes);
 
 				if (test.TestEmail)
 				{
@@ -910,15 +914,12 @@ namespace Resgrid.Services
 
 		/// <summary>
 		/// Whether the department's Suppress (Mute) Staffing Levels setting mutes a member sitting on
-		/// this staffing level. Mirrors CommunicationService.CanSendToUser, including its treatment of
-		/// a member with no recorded state: there is no level to match against, so they are not muted.
+		/// this staffing level: the rule CommunicationService.CanSendToUser applies (StaffingSuppression,
+		/// exact levels and meanings). A member with no recorded state has no level to match, so is not muted.
 		/// </summary>
-		private static bool IsStaffingSuppressed(DepartmentSuppressStaffingInfo suppressInfo, int? staffingLevel)
+		private static bool IsStaffingSuppressed(DepartmentSuppressStaffingInfo suppressInfo, int? staffingLevel, Func<int, int> staffingBaseTypes)
 		{
-			if (suppressInfo == null || !suppressInfo.EnableSupressStaffing || suppressInfo.StaffingLevelsToSupress == null)
-				return false;
-
-			return staffingLevel.HasValue && suppressInfo.StaffingLevelsToSupress.Contains(staffingLevel.Value);
+			return staffingLevel.HasValue && StaffingSuppression.IsSuppressed(suppressInfo, staffingLevel.Value, staffingBaseTypes);
 		}
 
 		#endregion Delivery

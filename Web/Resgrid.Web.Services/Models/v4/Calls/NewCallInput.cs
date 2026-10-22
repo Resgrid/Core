@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Resgrid.Web.Services.Models.v4.UserDefinedFields;
@@ -67,6 +67,18 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		/// P:c0a0f71a-0758-434c-868b-c77d245db78a|P:c0a0f71a-0758-434c-868b-c77d245db78a|U:1995012|G:991031|R:893139
 		/// </example>
 		public string DispatchList { get; set; }
+
+		/// <summary>
+		/// Optional (conditional run cards). Pipe separated per-unit response codes, "unitId:codeId", from the department's
+		/// response code catalog; "unitId:" clears a unit's code. Units not listed keep the code the run card proposed.
+		/// </summary>
+		public string UnitResponseCodes { get; set; }
+
+		/// <summary>
+		/// Optional (conditional run cards). The run card outcome the dispatcher saw on the recommendation
+		/// (Decision.OutcomeNodeKey), so the saved call keeps the proposal they reviewed instead of walking the graph again.
+		/// </summary>
+		public string RunCardOutcomeNodeKey { get; set; }
 
 		/// <summary>
 		/// Contact Name

@@ -62,6 +62,32 @@ namespace Resgrid.Repositories.NoSqlRepository
 			}
 		}
 
+		public async Task<List<PersonnelLocation>> GetLocationsForDepartmentInRangeAsync(int departmentId, DateTime startUtc, DateTime endUtc, IReadOnlyCollection<string> userIds, int maxRows, CancellationToken cancellationToken = default)
+		{
+			var filterUsers = userIds != null && userIds.Count > 0;
+
+			using (var connection = new NpgsqlConnection(Config.DataConfig.DocumentConnectionString))
+			{
+				await connection.OpenAsync(cancellationToken);
+				var personLocationsData = await connection.QueryAsync<PersonnelLocation>(new Dapper.CommandDefinition(
+					@"SELECT data FROM public.personnellocations pl
+					WHERE pl.departmentid = @departmentId AND pl.""timestamp"" >= @startUtc AND pl.""timestamp"" < @endUtc" +
+					(filterUsers ? " AND pl.userid = ANY(@userIds)" : string.Empty) + @"
+					ORDER BY pl.""timestamp"" DESC
+					LIMIT @maxRows;",
+					new
+					{
+						departmentId,
+						startUtc = DateTime.SpecifyKind(startUtc, DateTimeKind.Unspecified),
+						endUtc = DateTime.SpecifyKind(endUtc, DateTimeKind.Unspecified),
+						userIds = filterUsers ? userIds.ToArray() : null,
+						maxRows
+					}, cancellationToken: cancellationToken));
+
+				return personLocationsData?.ToList() ?? new List<PersonnelLocation>();
+			}
+		}
+
 		public async Task<PersonnelLocation> GetByIdAsync(string id)
 		{
 			using (var connection = new NpgsqlConnection(Config.DataConfig.DocumentConnectionString))

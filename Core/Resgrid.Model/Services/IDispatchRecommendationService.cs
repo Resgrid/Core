@@ -32,11 +32,27 @@ namespace Resgrid.Model.Services
 		Task<DispatchRecommendationResult> EnrichCallForDispatchAsync(Call call, int targetAlarmLevel, bool onlyWhenAutoDispatch = false, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
+		/// As above, with the outcome node a dispatcher saw on the New Call preview (conditional run cards). The posted key is
+		/// used only when it is an outcome of the matched card's level; anything else walks the graph fresh.
+		/// </summary>
+		Task<DispatchRecommendationResult> EnrichCallForDispatchAsync(Call call, int targetAlarmLevel, bool onlyWhenAutoDispatch, string forcedLeafNodeKey,
+			CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
 		/// Persists the RunCardActivation audit row and raises the workflow events
 		/// (RunCardActivated, DispatchShortfallDetected, StationCoverageGapDetected)
 		/// for an applied recommendation. Call AFTER the call is saved so CallId is
 		/// assigned. No-op when the result matched no card.
 		/// </summary>
 		Task RecordActivationAsync(Call call, DispatchRecommendationResult result, string createdByUserId, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// Conditional run cards: pins the level's decision on the saved call (RunCardDecisions) and records the outstanding
+		/// requirements it left. RecordActivationAsync does this itself; call it directly where a recommendation was applied
+		/// without an activation (the dispatcher accepted the New Call preview). No-op for a fixed level, an already pinned
+		/// result, or a call not yet saved; never throws.
+		/// </summary>
+		Task RecordDecisionAsync(Call call, DispatchRecommendationResult result, string createdByUserId, RunCardDecisionSources source,
+			CancellationToken cancellationToken = default(CancellationToken));
 	}
 }

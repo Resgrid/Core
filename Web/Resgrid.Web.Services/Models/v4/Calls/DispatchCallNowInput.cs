@@ -19,5 +19,11 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		/// already on the call.
 		/// </summary>
 		public string DispatchList { get; set; }
+
+		/// <summary>
+		/// Optional (conditional run cards). Pipe separated per-unit response codes, "unitId:codeId", from the department's
+		/// response code catalog; "unitId:" clears a unit's code. Units not listed keep the code the run card proposed.
+		/// </summary>
+		public string UnitResponseCodes { get; set; }
 	}
 }

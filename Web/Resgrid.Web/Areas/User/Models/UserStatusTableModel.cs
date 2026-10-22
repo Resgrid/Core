@@ -21,6 +21,9 @@ namespace Resgrid.Web.Areas.User.Models
 		public CustomState States { get; set; }
 		public CustomState StaffingLevels { get; set; }
 
+		/// <summary>What a person with no status inside the auto-available hour shows: the department's Available status.</summary>
+		public CustomStateDetail DefaultStatus { get; set; }
+
 
 		public List<UserStatusGroup> UserStatusGroups {get;set;}
 

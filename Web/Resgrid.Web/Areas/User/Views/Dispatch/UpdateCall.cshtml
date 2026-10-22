@@ -1,5 +1,6 @@
 @model Resgrid.Web.Areas.User.Models.Calls.UpdateCallView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> departmentLocalizer
 @{
     ViewBag.Title = "Resgrid | " + @localizer["UpdateCallHeader"];
     Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
@@ -381,10 +382,19 @@
                                 <label class="col-sm-2 control-label">@localizer["RunCardSuggestionsLabel"]</label>
                                 <div class="col-sm-10">
                                     <div class="alert alert-info" id="runCardPanel" style="margin-bottom: 0;"></div>
+                                    <div id="runCardCodePickers"></div>
                                     <span class="help-block m-b-none">@localizer["RunCardSuggestionsHelp"]</span>
                                 </div>
                             </div>
+                            @* Conditional run cards: what the call still awaits; filled and shown by the page script when there is any. *@
+                            <div class="form-group" id="outstandingRequirementsRow" style="display: none;">
+                                <label class="col-sm-2 control-label">@departmentLocalizer["AwaitingResourcesLabel"]</label>
+                                <div class="col-sm-10">
+                                    <div class="alert alert-warning" id="outstandingRequirementsPanel" style="margin-bottom: 0;"></div>
+                                </div>
+                            </div>
                         }
+                        @await Html.PartialAsync("_NearestUnitsBoard", Model.Groups)
                         @if (showDispatchList)
                         {
                         <div class="form-group">
@@ -632,6 +642,8 @@
     </script>
 
     @await Html.PartialAsync("_DispatchLocalizationScript")
+    <script src="~/js/app/internal/dispatch/resgrid.dispatch.runcarddecision.js"></script>
+    <script src="~/js/app/internal/dispatch/resgrid.dispatch.nearestboard.js"></script>
     <script src="~/js/app/internal/dispatch/resgrid.dispatch.editcall.js"></script>
 
     <script type="text/javascript">

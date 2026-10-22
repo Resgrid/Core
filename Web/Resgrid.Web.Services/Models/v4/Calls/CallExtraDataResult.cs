@@ -97,5 +97,15 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		/// Unit entries only: built-in icon name the unit's type picked (e.g. "ambulance"); null when none.
 		/// </summary>
 		public string TypeMapIcon { get; set; }
+
+		/// <summary>
+		/// Unit dispatch entries only (conditional run cards): the response code the unit was sent with ("C3"), its name and
+		/// colour. Null unless the department shows response codes to crews.
+		/// </summary>
+		public string ResponseCode { get; set; }
+
+		public string ResponseCodeName { get; set; }
+
+		public string ResponseCodeColor { get; set; }
 	}
 }

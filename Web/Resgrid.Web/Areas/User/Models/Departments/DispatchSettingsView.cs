@@ -76,6 +76,15 @@ namespace Resgrid.Web.Areas.User.Models.Departments
 		public bool RecommendationMoveUpEnabled { get; set; }
 		public int RecommendationInQuartersTurnoutSeconds { get; set; }
 		public int RecommendationMobileTurnoutSeconds { get; set; }
+
+		// Conditional run cards (Dispatch.RunCardConditions)
+		public bool RunCardConditionsFeatureEnabled { get; set; }
+		public int RecommendationPersonnelTurnoutSeconds { get; set; }
+		public bool RecommendationWaitingCallAutoDispatch { get; set; }
+		public int RecommendationWaitingCallMaxResponseSeconds { get; set; }
+		public bool ResponseCodesShowToCrews { get; set; }
+		/// <summary>The response code catalog as JSON (the page edits it as a table and posts it back whole).</summary>
+		public string ResponseCodesJson { get; set; }
 		public List<StationCoverageRequirement> StationCoverageRequirements { get; set; }
 		public List<DepartmentGroup> StationGroups { get; set; }
 		public List<PersonnelRole> PersonnelRoles { get; set; }

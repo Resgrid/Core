@@ -386,6 +386,9 @@ namespace Resgrid.Services
 			builder.RegisterType<UnitStatusAlertsService>().As<IUnitStatusAlertsService>().InstancePerLifetimeScope();
 			builder.RegisterType<CallLocationHistoryService>().As<ICallLocationHistoryService>().InstancePerLifetimeScope();
 			builder.RegisterType<RunCardsService>().As<IRunCardsService>().InstancePerLifetimeScope();
+			builder.RegisterType<ResponsePackagesService>().As<IResponsePackagesService>().InstancePerLifetimeScope();
+			builder.RegisterType<OutstandingRequirementsService>().As<IOutstandingRequirementsService>().InstancePerLifetimeScope();
+			builder.RegisterType<RunCardTemplatesService>().As<IRunCardTemplatesService>().InstancePerLifetimeScope();
 			builder.RegisterType<PersonnelLocationResolver>().As<IPersonnelLocationResolver>().InstancePerLifetimeScope();
 			// Singleton: it keeps each department's reduced visibility matrix in memory between location pings.
 			builder.RegisterType<LocationVisibilityService>().As<ILocationVisibilityService>().SingleInstance();
@@ -559,6 +562,7 @@ namespace Resgrid.Services
 			builder.RegisterType<Records.NullRecordAttachmentScanner>().As<Resgrid.Model.Providers.IRecordAttachmentScanner>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentProfileMediaService>().As<IDepartmentProfileMediaService>().InstancePerLifetimeScope();
 			builder.RegisterType<TypeIconsService>().As<ITypeIconsService>().InstancePerLifetimeScope();
+			builder.RegisterType<MapVisualizationService>().As<IMapVisualizationService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RecordsPrintLayoutService>().As<IRecordsPrintLayoutService>().InstancePerLifetimeScope();
 		}
 	}

@@ -110,6 +110,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[Authorize(Policy = ResgridResources.Record_View)]
+		// Only reads (a page filled from as many projection pages as it takes): nothing to finish for a caller that left.
+		[Resgrid.Web.Services.Filters.CancelOnClientDisconnect]
 		public async Task<ActionResult<RecordReportRunResult>> Run(string id, CancellationToken cancellationToken)
 		{
 			if (!await FlagOnAsync()) return NotFound();

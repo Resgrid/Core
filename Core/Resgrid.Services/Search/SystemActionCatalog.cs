@@ -114,6 +114,8 @@ namespace Resgrid.Services.Search
 			Nav("mapping", "Mapping", "Large map with layers, personnel and units", "/User/Mapping", new[] { "map", "gps", "avl", "location", "layers" }, module: SystemActionModules.Mapping),
 			Nav("pois", "Points of Interest", "Manage map points of interest", "/User/Mapping/POIs", new[] { "poi", "hydrants", "landmarks", "map markers" }, module: SystemActionModules.Mapping),
 			Nav("map-layers", "Map Layers", "Manage map layers", "/User/Mapping/Layers", new[] { "layers", "kml", "geojson" }, module: SystemActionModules.Mapping),
+			Nav("map-visualizations", "Map Visualizations", "Call heat maps, hot zones, response times and unit tracks on the map", "/User/MapVisualizations",
+				new[] { "heat map", "heatmap", "hot zone", "hot spots", "density", "response time map", "coverage", "tracks", "analytics" }, Call, View, SystemActionModules.Mapping),
 			Nav("live-routing", "Live Routing", "Routing and directions for active resources", "/User/Mapping/LiveRouting", new[] { "routes", "directions", "navigation" }, module: SystemActionModules.Mapping),
 
 			// ---- Shifts / calendar

@@ -1068,4 +1068,37 @@
   <data name="NewCallFieldRequired" xml:space="preserve">
     <value>Поле {0} є обов'язковим у цьому підрозділі.</value>
   </data>
+  <data name="NearestUnitsPick" xml:space="preserve">
+    <value>Направити</value>
+  </data>
+  <data name="NearestPersonnelLabel" xml:space="preserve">
+    <value>Найближчий персонал</value>
+  </data>
+  <data name="NearestPersonnelPerson" xml:space="preserve">
+    <value>Особа</value>
+  </data>
+  <data name="NearestPersonnelStaffing" xml:space="preserve">
+    <value>Укомплектування</value>
+  </data>
+  <data name="NearestPersonnelGroupRoles" xml:space="preserve">
+    <value>Група / ролі</value>
+  </data>
+  <data name="NearestUnitsNearest" xml:space="preserve">
+    <value>Найближчий №{0}</value>
+  </data>
+  <data name="NearestUnitsHidden" xml:space="preserve">
+    <value>Розташування приховано</value>
+  </data>
+  <data name="NearestPersonnelOnUnit" xml:space="preserve">
+    <value>На {0}</value>
+  </data>
+  <data name="NearestUnitsMapUnits" xml:space="preserve">
+    <value>Підрозділи</value>
+  </data>
+  <data name="NearestUnitsMapPersonnel" xml:space="preserve">
+    <value>Персонал</value>
+  </data>
+  <data name="NearestUnitsMapBoundaries" xml:space="preserve">
+    <value>Межі станцій</value>
+  </data>
 </root>

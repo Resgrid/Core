@@ -388,6 +388,38 @@
             <param name="id">ID of the user</param>
             <returns></returns>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.AwaitingResourcesController">
+            <summary>
+            Calls awaiting resources (conditional run cards): the list dispatch clients show as a banner and a screen, a call's
+            open requirements, dismissing one, and dispatching a freed unit to a waiting call in one step. Gated behind the
+            Dispatch.RunCardConditions feature flag.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AwaitingResourcesController.GetAwaitingCalls(System.Threading.CancellationToken)">
+            <summary>
+            Every active call of the department still awaiting a required resource, highest priority then oldest first, with
+            the units now available that match each requirement (nearest first when it can be measured). Under group-scoped
+            dispatch, only the calls the user dispatches (the same calls as the active call list).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AwaitingResourcesController.GetCallRequirements(System.Int32,System.Threading.CancellationToken)">
+            <summary>The call's open outstanding requirements, reconciled with its dispatches first.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AwaitingResourcesController.DismissRequirement(Resgrid.Web.Services.Models.v4.AwaitingResources.DismissOutstandingRequirementInput,System.Threading.CancellationToken)">
+            <summary>Dismisses an open requirement the call no longer needs; the same authority as editing the call.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AwaitingResourcesController.DispatchUnit(Resgrid.Web.Services.Models.v4.AwaitingResources.DispatchToAwaitingCallInput,System.Threading.CancellationToken)">
+            <summary>
+            Adds a unit to a call awaiting resources in one step (additive; only that unit is notified), which resolves the
+            requirement it matches.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AwaitingResourcesController.GetResponseCodes">
+            <summary>
+            The department's response code catalog, for the per-unit code choice on a run card proposal. Empty when the
+            department uses no codes (the feature is then invisible).
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.BidsController">
             <summary>
             Contractor bids and the deployment charge run (Workforce &amp; Business Operations plan, C5). Gated by the
@@ -3597,10 +3629,11 @@
             </summary>
             <returns>GetPersonnelFilterOptionsResult with information pertaining to each filter option</returns>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.PersonnelController.ConvertPersonnelInfo(Resgrid.Model.Identity.IdentityUser,Resgrid.Model.Department,Resgrid.Model.UserProfile,Resgrid.Model.DepartmentGroup,System.Collections.Generic.List{Resgrid.Model.PersonnelRole},Resgrid.Model.ActionLog,Resgrid.Model.UserState,System.Boolean,System.Boolean)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.PersonnelController.ConvertPersonnelInfo(Resgrid.Model.Identity.IdentityUser,Resgrid.Model.Department,Resgrid.Model.UserProfile,Resgrid.Model.DepartmentGroup,System.Collections.Generic.List{Resgrid.Model.PersonnelRole},Resgrid.Model.ActionLog,Resgrid.Model.UserState,System.Boolean,System.Boolean,Resgrid.Model.CustomStateDetail)">
             <summary>
             The person's info for a caller. Without Security &gt; See Personnel Locations for this person (canViewLocation,
-            from CanUserViewPersonLocationViaMatrixAsync) the last status position is left out.
+            from CanUserViewPersonLocationViaMatrixAsync) the last status position is left out. defaultStatus (from
+            ICustomStateService.GetDefaultPersonnelStatusAsync) is shown when there is no status inside the auto-available hour.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.PersonnelController.ApplyMemberIdentificationNumberAsync(Resgrid.Model.UserProfile)">
@@ -4470,7 +4503,7 @@
             this priority/type/location right now? Nothing is dispatched.
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.RunCardsController.GetCallRecommendation(System.Int32,System.Nullable{System.Int32})">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RunCardsController.GetCallRecommendation(System.Int32,System.Nullable{System.Int32},System.Boolean)">
             <summary>
             Recommendation for adding resources to a call already out: the run card for the call's priority, type and
             location at its current alarm level, with the units and people already on the call counted toward the level's
@@ -4479,6 +4512,7 @@
             </summary>
             <param name="callId">The active call.</param>
             <param name="alarmLevel">Alarm level to fill; defaults to the call's current level.</param>
+            <param name="reevaluate">Conditional run cards: ignore the decision pinned when the call was saved and walk the graph fresh.</param>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.ScimController">
             <summary>
@@ -7725,6 +7759,14 @@
             never be blocked by the very lock it releases).
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Filters.CancelOnClientDisconnectAttribute">
+            <summary>
+            Gives a POST/PUT/PATCH/DELETE action (or a whole controller) the request-aborted token instead of the one
+            <see cref="T:Resgrid.Web.Services.Filters.MutationCancellationTokenBinder"/> hands writes, so the work stops when the client goes away. Use ONLY
+            where stopping partway leaves nothing half saved: a read that is posted (a preview, a report run) or work built to
+            settle its own cancellation (Admin Assist Ask and diagnostics release their lease and meter the outcome).
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Filters.DepartmentLockActionFilter">
              <summary>
              Global department-operation-lock mutation gate (ADP plan section 20.2). While a department's
@@ -7740,6 +7782,22 @@
              protects a migration, but dispatch availability beats migration progress, and the migration
              worker separately refuses to proceed when it cannot verify its own lock.
              </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Filters.MutationCancellationTokenBinder">
+            <summary>
+            Binds the <see cref="T:System.Threading.CancellationToken"/> an action takes. A read gets the request-aborted token, as MVC's own binder
+            gives it, so a client that went away stops work nobody will see. A mutating request (POST/PUT/PATCH/DELETE) gets a
+            token that never fires: its writes go out in several steps with no transaction around them (a call's row, then its
+            dispatches and unit statuses), and an app that drops its connection partway (a phone changing networks, a request
+            timed out on the device) would otherwise leave the record half saved -- a call closed with its units never
+            released, which no retry can release because the call is no longer active. Opt back in with
+            <see cref="T:Resgrid.Web.Services.Filters.CancelOnClientDisconnectAttribute"/>. Code that reads HttpContext.RequestAborted itself is unaffected.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Filters.MutationCancellationTokenBinderProvider">
+            <summary>
+            Puts <see cref="T:Resgrid.Web.Services.Filters.MutationCancellationTokenBinder"/> ahead of MVC's own CancellationToken binder.
+            </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Filters.ProtectedDataEgressFilter">
              <summary>
@@ -8487,6 +8545,63 @@
             <summary>
             Added on as UTC
             </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.AwaitingResources.AwaitingResourcesResult">
+            <summary>
+            Calls awaiting resources (conditional run cards): active calls still holding a required resource that was not
+            available when they were dispatched, with what went instead and the units now available that match.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AwaitingResources.AwaitingResourcesResult.Enabled">
+            <summary>False when the department does not have conditional run cards; Data is then empty.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AwaitingResources.AwaitingResourcesResult.Data">
+            <summary>Response Data</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.AwaitingResources.CallOutstandingRequirementsResult">
+            <summary>A call's open outstanding requirements.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AwaitingResources.CallOutstandingRequirementsResult.Data">
+            <summary>Response Data</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.AwaitingResources.DismissOutstandingRequirementInput">
+            <summary>Dismisses an open requirement of a call.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AwaitingResources.DismissOutstandingRequirementInput.CallId">
+            <summary>The call the requirement belongs to.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AwaitingResources.DismissOutstandingRequirementInput.RequirementId">
+            <summary>The requirement (CallOutstandingRequirementId).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AwaitingResources.DismissOutstandingRequirementInput.Note">
+            <summary>Optional note saying why it is no longer needed.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.AwaitingResources.DispatchToAwaitingCallInput">
+            <summary>Dispatches a unit to a call awaiting resources in one step.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AwaitingResources.DispatchToAwaitingCallInput.CallId">
+            <summary>The waiting call.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AwaitingResources.DispatchToAwaitingCallInput.UnitId">
+            <summary>The unit to add to it.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.AwaitingResources.AwaitingResourcesActionResult">
+            <summary>Outcome of a dismiss or one-step dispatch.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AwaitingResources.AwaitingResourcesActionResult.Success">
+            <summary>Whether the action took effect.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AwaitingResources.AwaitingResourcesActionResult.Message">
+            <summary>Plain-English outcome for the dispatcher.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AwaitingResources.AwaitingResourcesActionResult.Resolved">
+            <summary>How many requirements the dispatch resolved.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.AwaitingResources.ResponseCodesResult">
+            <summary>The department's response code catalog (optional; empty when the department uses none).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AwaitingResources.ResponseCodesResult.Data">
+            <summary>Response Data</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Calendar.CalendarCheckInInput">
             <summary>
@@ -9288,6 +9403,12 @@
             Unit entries only: built-in icon name the unit's type picked (e.g. "ambulance"); null when none.
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.DispatchedEventResultData.ResponseCode">
+            <summary>
+            Unit dispatch entries only (conditional run cards): the response code the unit was sent with ("C3"), its name and
+            colour. Null unless the department shows response codes to crews.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Calls.CallHistoryResult">
             <summary>
             Gets the history of all actions taken during a call
@@ -9749,6 +9870,12 @@
             already on the call.
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.DispatchCallNowInput.UnitResponseCodes">
+            <summary>
+            Optional (conditional run cards). Pipe separated per-unit response codes, "unitId:codeId", from the department's
+            response code catalog; "unitId:" clears a unit's code. Units not listed keep the code the run card proposed.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Calls.DispatchCallNowResult">
             <summary>
             Result of dispatching a waiting call
@@ -9817,6 +9944,12 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.DispatchList">
             <summary>
             Comma seperated list of users,units,roles and groups to dipstach
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.UnitResponseCodes">
+            <summary>
+            Optional (conditional run cards). Pipe separated per-unit response codes, "unitId:codeId", from the department's
+            response code catalog; "unitId:" clears a unit's code. Units not listed keep the code the run card proposed.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.ContactName">
@@ -10149,6 +10282,18 @@
             Say you want to dispatch 2 users, 1 unit, 1 group and 1 role. The string would look like this:
             P:c0a0f71a-0758-434c-868b-c77d245db78a|P:c0a0f71a-0758-434c-868b-c77d245db78a|U:1995012|G:991031|R:893139
             </example>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.UnitResponseCodes">
+            <summary>
+            Optional (conditional run cards). Pipe separated per-unit response codes, "unitId:codeId", from the department's
+            response code catalog; "unitId:" clears a unit's code. Units not listed keep the code the run card proposed.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.RunCardOutcomeNodeKey">
+            <summary>
+            Optional (conditional run cards). The run card outcome the dispatcher saw on the recommendation
+            (Decision.OutcomeNodeKey), so the saved call keeps the proposal they reviewed instead of walking the graph again.
+            </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.ContactName">
             <summary>
@@ -12773,6 +12918,15 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Configs.DepartmentTermData.Name">
             <summary>The department's name for the term; null when it uses Resgrid's.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.DepartmentTermData.DefaultSingular">
+            <summary>Resgrid's English word for one item of a module ("Unit" for Units); null for a term without one.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.DepartmentTermData.Singular">
+            <summary>
+            The department's word for one item ("Team" for Units renamed Teams), saved or guessed from <see cref="P:Resgrid.Web.Services.Models.v4.Configs.DepartmentTermData.Name"/>; null when
+            the term keeps Resgrid's names or has no item word. Apps put it on buttons such as "New Team".
+            </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.ContactFiles.ContactFilesResult">
             <summary>

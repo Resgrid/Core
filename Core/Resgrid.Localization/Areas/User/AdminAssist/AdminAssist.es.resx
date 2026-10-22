@@ -6886,13 +6886,13 @@
     <value>Terminología del departamento</value>
   </data>
   <data name="SettingHelp.DepartmentTerminology" xml:space="preserve">
-    <value>Los nombres propios del departamento para módulos y tipos de registro integrados, mostrados en la navegación, en los títulos de las páginas de módulos, dondequiera que se listen tipos de registro y en las apps Responder, Unit, IC y Dispatch, en todos los idiomas. Solo etiquetas: los permisos, enlaces y valores de la API no cambian. Un término sin nombre usa el de Resgrid.</value>
+    <value>Los nombres propios del departamento para los módulos, con la palabra para un elemento (Equipo para Unidades renombradas Equipos), y para los tipos de registro integrados. Se aplican en la navegación, los títulos de página, los botones, los encabezados de columna, los mensajes y las exportaciones del sitio web, y se muestran en las apps Responder, Unit, IC y Dispatch, en todos los idiomas. Solo etiquetas: los permisos, enlaces, valores de la API y el texto de los miembros no cambian. Un término sin nombre usa el de Resgrid.</value>
   </data>
   <data name="Field.DepartmentTerminologyConfig.Terms" xml:space="preserve">
     <value>Terminología del departamento / Términos</value>
   </data>
   <data name="FieldHelp.DepartmentTerminologyConfig.Terms" xml:space="preserve">
-    <value>Una entrada por cada módulo o tipo de registro renombrado, por ejemplo Incidente en lugar de Run o Turno de servicio en lugar de Work. Un término no listado muestra el nombre de Resgrid en el idioma del miembro. Los nombres tienen como máximo 50 caracteres.</value>
+    <value>Una entrada por cada módulo o tipo de registro renombrado, por ejemplo Incidente en lugar de Run o Turno de servicio en lugar de Work. La entrada de un módulo también puede incluir la palabra para un elemento, como Equipo para Unidades renombradas Equipos; si se deja vacía, se deduce del nombre. Un término no listado muestra el nombre de Resgrid en el idioma del miembro. Los nombres tienen como máximo 50 caracteres.</value>
   </data>
   <data name="Field.DepartmentTermOverride.Key" xml:space="preserve">
     <value>Término del departamento / Clave</value>
@@ -7076,5 +7076,44 @@
   </data>
   <data xml:space="preserve" name="FeatureSetup.custom-map-icons">
     <value>Suba un PNG cuadrado con fondo transparente, de 128 × 128 px o más, en la página del tipo de unidad, tipo de llamada, tipo de POI o rol; la página muestra una vista previa en un mapa claro y uno oscuro. Para elegir el icono de una persona con varios roles, ordene los roles en la página Roles.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.map-visualizations">
+    <value>Visualizaciones del mapa</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.map-visualizations">
+    <value>Mapas de calor, cuadrículas hexagonales y capas de llamadas, tiempos de respuesta, cobertura de estaciones, respuestas y desplazamientos de unidades y personal, desde una biblioteca integrada o guardadas por el departamento.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.map-visualizations">
+    <value>Abra Cartografía y luego Visualizaciones, elija una visualización de la biblioteca como «Zonas calientes de llamadas», ajuste el rango de fechas, los filtros y las capas en la pestaña Personalizar y guárdela. Los administradores del departamento pueden compartir una visualización guardada con todos.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.PersonnelTurnoutSeconds">
+    <value>Configuración de recomendaciones de despacho / Tiempo de salida del personal en segundos</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.PersonnelTurnoutSeconds">
+    <value>Segundos que necesita una persona antes de ponerse en marcha; se suman a su tiempo de viaje cuando las filas que aceptan personas la comparan con unidades. Cero significa ninguno.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.WaitingCallAutoDispatch">
+    <value>Configuración de recomendaciones de despacho / Despacho automático a llamadas en espera</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.WaitingCallAutoDispatch">
+    <value>Cuando queda disponible una unidad que encaja con una llamada en espera de recursos, se envía automáticamente a la llamada en espera de mayor prioridad en lugar de solo avisar. Las tarjetas pueden cambiarlo; desactivado por defecto.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.WaitingCallMaxResponseSeconds">
+    <value>Configuración de recomendaciones de despacho / Respuesta máxima para llamadas en espera en segundos</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.WaitingCallMaxResponseSeconds">
+    <value>Límite del despacho automático a llamadas en espera: una unidad liberada con una respuesta estimada mayor se avisa, no se envía. Cero significa sin límite; el aviso siempre se emite.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.DispatchResponseCodes">
+    <value>Códigos de respuesta de despacho</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DispatchResponseCodes">
+    <value>Códigos opcionales por unidad (por ejemplo C3 para luces y sirena) que proponen las filas de las tarjetas condicionales, y si las dotaciones los ven en los avisos y las aplicaciones. Vacío significa que no aparecen en ningún lugar.</value>
+  </data>
+  <data name="Field.DepartmentTermOverride.Singular" xml:space="preserve">
+    <value>Término del departamento / Un elemento</value>
+  </data>
+  <data name="FieldHelp.DepartmentTermOverride.Singular" xml:space="preserve">
+    <value>Para un módulo, la palabra del departamento para un elemento, como Equipo para Unidades renombradas Equipos, usada en botones y encabezados como Nuevo equipo; como máximo 50 caracteres. Vacío la deduce del nombre. Los tipos de registro no tienen.</value>
   </data>
 </root>

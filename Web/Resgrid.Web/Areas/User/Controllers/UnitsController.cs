@@ -137,15 +137,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			List<BSTreeModel> trees = new List<BSTreeModel>();
+			// The tree renders labels as HTML; the department's words are encoded like the group names.
 			var tree0 = new BSTreeModel();
 			tree0.id = "TreeGroup_-1";
-			tree0.text = "All Units";
+			tree0.text = System.Net.WebUtility.HtmlEncode(HttpContext.WithDepartmentTerms("All Units"));
 			tree0.icon = "";
 			trees.Add(tree0);
 
 			var tree1 = new BSTreeModel();
 			tree1.id = "TreeGroup_0";
-			tree1.text = "Ungrouped Units";
+			tree1.text = System.Net.WebUtility.HtmlEncode(HttpContext.WithDepartmentTerms("Ungrouped Units"));
 			tree1.icon = "";
 			trees.Add(tree1);
 
@@ -352,7 +353,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
 
 			if ((await _unitsService.GetUnitByNameDepartmentIdAsync(DepartmentId, model.Unit.Name)) != null)
-				ModelState.AddModelError("Name", "Unit with that name already exists.");
+				ModelState.AddModelError("Name", HttpContext.WithDepartmentTerms("Unit with that name already exists."));
 
 			var unitRoleNames = (from object key in form.Keys where key.ToString().StartsWith("unitRole_") select form[key.ToString()]).ToList();
 
@@ -603,7 +604,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var unitCheck = await _unitsService.GetUnitByNameDepartmentIdAsync(DepartmentId, model.Unit.Name);
 			if (unitCheck != null && unitCheck.UnitId != model.Unit.UnitId)
-				ModelState.AddModelError("Name", "Unit with that name already exists.");
+				ModelState.AddModelError("Name", HttpContext.WithDepartmentTerms("Unit with that name already exists."));
 
 			var unitRoleNames = (from object key in form.Keys where key.ToString().StartsWith("unitRole_") select form[key.ToString()]).ToList();
 
@@ -1616,7 +1617,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (state != null)
 			{
-				AppendDestinationOptions(sb, state, activeCalls, stations, destinationPois);
+				AppendDestinationOptions(sb, state, activeCalls, stations, destinationPois, _localizer["Calls"].Value, _localizer["Call"].Value);
 			}
 
 			return Content(sb.ToString());
@@ -1772,14 +1773,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return _customStateService.GetDefaultUnitStatuses();
 		}
 
-		private static void AppendDestinationOptions(StringBuilder sb, CustomStateDetail state, List<Call> activeCalls, List<DepartmentGroup> stations, List<Poi> destinationPois)
+		private static void AppendDestinationOptions(StringBuilder sb, CustomStateDetail state, List<Call> activeCalls, List<DepartmentGroup> stations, List<Poi> destinationPois,
+			string callsLabel, string callPrefix)
 		{
 			if (state.DetailType.SupportsCalls())
 			{
-				sb.Append("<optgroup label='Calls'>");
+				sb.Append($"<optgroup label='{HttpUtility.HtmlEncode(callsLabel)}'>");
 				foreach (var call in activeCalls)
 				{
-					sb.Append($"<option value='{(int)DestinationEntityTypes.Call}:{call.CallId}'>Call {call.GetIdentifier()}:{HttpUtility.HtmlEncode(ProtectedDataEnvelope.SafeDisplay(call.Name))}</option>");
+					sb.Append($"<option value='{(int)DestinationEntityTypes.Call}:{call.CallId}'>{HttpUtility.HtmlEncode(callPrefix)} {call.GetIdentifier()}:{HttpUtility.HtmlEncode(ProtectedDataEnvelope.SafeDisplay(call.Name))}</option>");
 				}
 				sb.Append("</optgroup>");
 			}
@@ -1829,7 +1831,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				sb.Append($"<ul class='dropdown-menu unitStateList_{cssKey}'>");
 				sb.Append($"<li><a href='#' data-post-url='{withoutDestinationHref}'>{buttonText}</a></li>");
 				sb.Append("<li class='divider'></li>");
-				AppendDestinationMenuEntries(sb, unitId, unitIds, actionWithDestination, activeCalls, stations, destinationPois, state);
+				AppendDestinationMenuEntries(sb, unitId, unitIds, actionWithDestination, activeCalls, stations, destinationPois, state, _localizer["Calls"].Value);
 				sb.Append("</ul>");
 				sb.Append("</li>");
 			}
@@ -1886,11 +1888,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return HttpUtility.HtmlAttributeEncode(href);
 		}
 
-		private static void AppendDestinationMenuEntries(StringBuilder sb, int? unitId, IReadOnlyCollection<int> unitIds, string actionWithDestination, IEnumerable<Call> activeCalls, IEnumerable<DepartmentGroup> stations, IEnumerable<Poi> destinationPois, CustomStateDetail state)
+		private static void AppendDestinationMenuEntries(StringBuilder sb, int? unitId, IReadOnlyCollection<int> unitIds, string actionWithDestination, IEnumerable<Call> activeCalls, IEnumerable<DepartmentGroup> stations, IEnumerable<Poi> destinationPois, CustomStateDetail state,
+			string callsLabel)
 		{
 			if (state.DetailType.SupportsCalls())
 			{
-				sb.Append("<li class='dropdown-header'>Calls</li>");
+				sb.Append($"<li class='dropdown-header'>{HttpUtility.HtmlEncode(callsLabel)}</li>");
 				foreach (var call in activeCalls)
 				{
 					var callHref = BuildUnitStateHref(actionWithDestination, unitId, unitIds, state.CustomStateDetailId, (int)DestinationEntityTypes.Call, call.CallId);

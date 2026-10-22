@@ -6886,13 +6886,13 @@
     <value>Terminologie du service</value>
   </data>
   <data name="SettingHelp.DepartmentTerminology" xml:space="preserve">
-    <value>Les noms propres au service pour les modules et les types de dossier intégrés, affichés dans la navigation, dans les titres des pages de module, partout où les types de dossier sont listés et dans les applications Responder, Unit, IC et Dispatch, dans toutes les langues. Libellés uniquement : les autorisations, les liens et les valeurs de l'API ne changent pas. Un terme sans nom utilise celui de Resgrid.</value>
+    <value>Les noms propres au service pour les modules, avec le mot désignant un élément (Équipe pour des Unités renommées Équipes), et pour les types de dossier intégrés. Ils s'appliquent à la navigation, aux titres de page, aux boutons, aux en-têtes de colonne, aux messages et aux exports du site web, et s'affichent dans les applications Responder, Unit, IC et Dispatch, dans toutes les langues. Libellés uniquement : les autorisations, les liens, les valeurs de l'API et le texte des membres ne changent pas. Un terme sans nom utilise celui de Resgrid.</value>
   </data>
   <data name="Field.DepartmentTerminologyConfig.Terms" xml:space="preserve">
     <value>Terminologie du service / Termes</value>
   </data>
   <data name="FieldHelp.DepartmentTerminologyConfig.Terms" xml:space="preserve">
-    <value>Une entrée par module ou type de dossier renommé, par exemple Intervention au lieu de Run ou Garde au lieu de Work. Un terme absent affiche le nom Resgrid dans la langue du membre. Les noms comptent au plus 50 caractères.</value>
+    <value>Une entrée par module ou type de dossier renommé, par exemple Intervention au lieu de Run ou Garde au lieu de Work. L'entrée d'un module peut aussi contenir le mot désignant un élément, par exemple Équipe pour des Unités renommées Équipes ; laissé vide, il est déduit du nom. Un terme absent affiche le nom Resgrid dans la langue du membre. Les noms comptent au plus 50 caractères.</value>
   </data>
   <data name="Field.DepartmentTermOverride.Key" xml:space="preserve">
     <value>Terme du service / Clé</value>
@@ -7076,5 +7076,44 @@
   </data>
   <data xml:space="preserve" name="FeatureSetup.custom-map-icons">
     <value>Téléversez un PNG carré à fond transparent, de 128 × 128 px ou plus, sur la page du type d'unité, du type d'appel, du type de POI ou du rôle ; la page en affiche un aperçu sur une carte claire et une carte sombre. Pour choisir l'icône d'une personne ayant plusieurs rôles, ordonnez les rôles sur la page Rôles.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.map-visualizations">
+    <value>Visualisations cartographiques</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.map-visualizations">
+    <value>Cartes de chaleur, grilles hexagonales et superpositions des appels, des délais d’intervention, de la couverture des casernes, des interventions et déplacements des unités et du personnel, à partir d’une bibliothèque intégrée ou enregistrées par le service.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.map-visualizations">
+    <value>Ouvrez Cartographie, puis Visualisations, choisissez une visualisation de la bibliothèque comme « Zones chaudes des appels », ajustez la période, les filtres et les calques dans l’onglet Personnaliser, puis enregistrez-la. Les administrateurs du service peuvent partager une visualisation enregistrée avec tout le monde.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.PersonnelTurnoutSeconds">
+    <value>Configuration des recommandations de régulation / Délai de départ du personnel en secondes</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.PersonnelTurnoutSeconds">
+    <value>Secondes nécessaires à une personne avant de partir ; ajoutées à son temps de trajet quand les lignes acceptant des personnes la comparent aux unités. Zéro signifie aucun.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.WaitingCallAutoDispatch">
+    <value>Configuration des recommandations de régulation / Engagement automatique des appels en attente</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.WaitingCallAutoDispatch">
+    <value>Quand une unité correspondant à un appel en attente de ressources se libère, elle est engagée automatiquement sur l'appel en attente le plus prioritaire au lieu d'une simple alerte. Les cartes peuvent le remplacer ; désactivé par défaut.</value>
+  </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.WaitingCallMaxResponseSeconds">
+    <value>Configuration des recommandations de régulation / Réponse maximale pour les appels en attente en secondes</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.WaitingCallMaxResponseSeconds">
+    <value>Limite de l'engagement automatique : une unité libérée dont la réponse estimée dépasse cette valeur est signalée, pas engagée. Zéro signifie aucune limite ; l'alerte est toujours émise.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.DispatchResponseCodes">
+    <value>Codes de réponse de régulation</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DispatchResponseCodes">
+    <value>Codes facultatifs par unité (par exemple C3 pour gyrophares et sirène) proposés par les lignes des cartes conditionnelles, et si les équipages les voient dans les notifications et les applications. Vide signifie qu'aucun code n'apparaît.</value>
+  </data>
+  <data name="Field.DepartmentTermOverride.Singular" xml:space="preserve">
+    <value>Terme du service / Un élément</value>
+  </data>
+  <data name="FieldHelp.DepartmentTermOverride.Singular" xml:space="preserve">
+    <value>Pour un module, le mot du service désignant un élément, par exemple Équipe pour des Unités renommées Équipes, utilisé sur les boutons et titres comme Nouvelle équipe ; au plus 50 caractères. Vide, il est déduit du nom. Les types de dossier n'en ont pas.</value>
   </data>
 </root>

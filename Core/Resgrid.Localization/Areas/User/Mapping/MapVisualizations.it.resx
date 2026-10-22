@@ -1,0 +1,1061 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Mapping Index -->
+  <data name="PageTitle" xml:space="preserve">
+    <value>Visualizzazioni mappa</value>
+  </data>
+  <data name="PageIntro" xml:space="preserve">
+    <value>Mappe di calore e sovrapposizioni di dati su chiamate, risposte e movimenti delle unità.</value>
+  </data>
+  <data name="Loading" xml:space="preserve">
+    <value>Caricamento delle visualizzazioni…</value>
+  </data>
+  <data name="Running" xml:space="preserve">
+    <value>Aggiornamento della mappa…</value>
+  </data>
+  <data name="Untitled" xml:space="preserve">
+    <value>Visualizzazione senza titolo</value>
+  </data>
+  <data name="Unsaved" xml:space="preserve">
+    <value>Modifiche non salvate</value>
+  </data>
+  <data name="Station" xml:space="preserve">
+    <value>Stazione</value>
+  </data>
+  <data name="NoValue" xml:space="preserve">
+    <value>Nessun valore</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Salva</value>
+  </data>
+  <data name="SaveAs" xml:space="preserve">
+    <value>Salva come nuova</value>
+  </data>
+  <data name="SaveTitle" xml:space="preserve">
+    <value>Salva visualizzazione</value>
+  </data>
+  <data name="SaveAsTitle" xml:space="preserve">
+    <value>Salva come nuova visualizzazione</value>
+  </data>
+  <data name="SaveName" xml:space="preserve">
+    <value>Nome</value>
+  </data>
+  <data name="SaveDescription" xml:space="preserve">
+    <value>Descrizione (facoltativa)</value>
+  </data>
+  <data name="SaveShare" xml:space="preserve">
+    <value>Condividi con l'intero dipartimento</value>
+  </data>
+  <data name="SaveShareHint" xml:space="preserve">
+    <value>Chiunque possa visualizzare le chiamate vedrà questa visualizzazione nel proprio elenco. Ogni persona continua a vedere solo i dati che è autorizzata a vedere.</value>
+  </data>
+  <data name="SavePersonalHint" xml:space="preserve">
+    <value>Le visualizzazioni salvate sono visibili solo a te. Gli amministratori del dipartimento possono condividere le visualizzazioni con tutti.</value>
+  </data>
+  <data name="SaveErrorNameRequired" xml:space="preserve">
+    <value>Inserisci un nome.</value>
+  </data>
+  <data name="SaveErrorNotFound" xml:space="preserve">
+    <value>Questa visualizzazione non esiste più.</value>
+  </data>
+  <data name="SaveErrorNotAllowed" xml:space="preserve">
+    <value>Non puoi modificare questa visualizzazione. Le visualizzazioni condivise possono essere modificate solo dagli amministratori del dipartimento.</value>
+  </data>
+  <data name="SaveErrorLimitReached" xml:space="preserve">
+    <value>Il tuo dipartimento ha raggiunto il limite di visualizzazioni salvate. Eliminane prima una.</value>
+  </data>
+  <data name="SaveErrorDefinitionTooLarge" xml:space="preserve">
+    <value>Questa visualizzazione ha troppe impostazioni per essere salvata.</value>
+  </data>
+  <data name="SaveErrorUnknown" xml:space="preserve">
+    <value>Non è stato possibile salvare la visualizzazione.</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Visualizzazione salvata.</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Annulla</value>
+  </data>
+  <data name="CopyOf" xml:space="preserve">
+    <value>Copia di {0}</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Elimina</value>
+  </data>
+  <data name="DeleteNamed" xml:space="preserve">
+    <value>Elimina {0}</value>
+  </data>
+  <data name="DeleteConfirm" xml:space="preserve">
+    <value>Eliminare la visualizzazione «{0}»? L'operazione non può essere annullata.</value>
+  </data>
+  <data name="DeleteFailed" xml:space="preserve">
+    <value>Non è stato possibile eliminare la visualizzazione.</value>
+  </data>
+  <data name="Deleted" xml:space="preserve">
+    <value>Visualizzazione eliminata.</value>
+  </data>
+  <data name="ExportCsv" xml:space="preserve">
+    <value>Scarica CSV</value>
+  </data>
+  <data name="CopyLink" xml:space="preserve">
+    <value>Copia link</value>
+  </data>
+  <data name="LinkCopied" xml:space="preserve">
+    <value>Link copiato.</value>
+  </data>
+  <data name="Fullscreen" xml:space="preserve">
+    <value>Schermo intero</value>
+  </data>
+  <data name="PanelHide" xml:space="preserve">
+    <value>Nascondi il pannello laterale</value>
+  </data>
+  <data name="PanelShow" xml:space="preserve">
+    <value>Mostra il pannello laterale</value>
+  </data>
+  <data name="ErrorLoad" xml:space="preserve">
+    <value>Non è stato possibile caricare la visualizzazione. Riprova tra un attimo.</value>
+  </data>
+  <data name="ErrorForbidden" xml:space="preserve">
+    <value>Non hai l'autorizzazione per visualizzare questi dati.</value>
+  </data>
+  <data name="ErrorNoTiles" xml:space="preserve">
+    <value>La mappa non è configurata per il tuo dipartimento.</value>
+  </data>
+  <data name="TabLibrary" xml:space="preserve">
+    <value>Libreria</value>
+  </data>
+  <data name="TabCustomize" xml:space="preserve">
+    <value>Personalizza</value>
+  </data>
+  <data name="SavedTitle" xml:space="preserve">
+    <value>Visualizzazioni salvate</value>
+  </data>
+  <data name="SavedShared" xml:space="preserve">
+    <value>Condivise con il dipartimento</value>
+  </data>
+  <data name="SavedMine" xml:space="preserve">
+    <value>Le mie visualizzazioni</value>
+  </data>
+  <data name="SavedPersonal" xml:space="preserve">
+    <value>Visibile solo a te</value>
+  </data>
+  <data name="SavedSharedBy" xml:space="preserve">
+    <value>Condivisa da {0}</value>
+  </data>
+  <data name="SavedSharedBadge" xml:space="preserve">
+    <value>Condivisa</value>
+  </data>
+  <data name="LibraryTitle" xml:space="preserve">
+    <value>Libreria di visualizzazioni</value>
+  </data>
+  <data name="LibraryHint" xml:space="preserve">
+    <value>Scegli un punto di partenza, poi modificalo nella scheda Personalizza e salva la tua versione.</value>
+  </data>
+  <data name="LibrarySearch" xml:space="preserve">
+    <value>Cerca nella libreria</value>
+  </data>
+  <data name="LibraryRecommended" xml:space="preserve">
+    <value>Consigliate per la tua organizzazione</value>
+  </data>
+  <data name="LibraryRecommendedBadge" xml:space="preserve">
+    <value>Consigliata</value>
+  </data>
+  <data name="LibraryShowAll" xml:space="preserve">
+    <value>Mostra tutte le {0} visualizzazioni</value>
+  </data>
+  <data name="LibraryNeedsCall" xml:space="preserve">
+    <value>Scegli una chiamata nella scheda Personalizza.</value>
+  </data>
+  <data name="Category_CallDemand" xml:space="preserve">
+    <value>Volume di chiamate</value>
+  </data>
+  <data name="Category_ResponsePerformance" xml:space="preserve">
+    <value>Prestazioni di risposta</value>
+  </data>
+  <data name="Category_Coverage" xml:space="preserve">
+    <value>Copertura</value>
+  </data>
+  <data name="Category_Resources" xml:space="preserve">
+    <value>Unità e personale</value>
+  </data>
+  <data name="Category_Tracking" xml:space="preserve">
+    <value>Tracciamento</value>
+  </data>
+  <data name="Category_CommunityRisk" xml:space="preserve">
+    <value>Rischio per la comunità</value>
+  </data>
+  <data name="Library_call_hot_zones_Name" xml:space="preserve">
+    <value>Zone calde delle chiamate</value>
+  </data>
+  <data name="Library_call_hot_zones_Description" xml:space="preserve">
+    <value>Mappa di calore di tutte le chiamate degli ultimi 12 mesi. Le aree più luminose sono quelle in cui le chiamate si concentrano.</value>
+  </data>
+  <data name="Library_busiest_areas_Name" xml:space="preserve">
+    <value>Aree più attive (griglia)</value>
+  </data>
+  <data name="Library_busiest_areas_Description" xml:space="preserve">
+    <value>Una griglia esagonale che conta le chiamate di ogni area, per confrontare i quartieri in base al numero anziché alla luminosità.</value>
+  </data>
+  <data name="Library_calls_by_type_Name" xml:space="preserve">
+    <value>Chiamate per tipo</value>
+  </data>
+  <data name="Library_calls_by_type_Description" xml:space="preserve">
+    <value>Ogni chiamata degli ultimi 90 giorni come punto, colorato per tipo di chiamata.</value>
+  </data>
+  <data name="Library_dominant_call_type_Name" xml:space="preserve">
+    <value>Tipo di chiamata principale per area</value>
+  </data>
+  <data name="Library_dominant_call_type_Description" xml:space="preserve">
+    <value>Una griglia colorata in base al tipo di chiamata più frequente in ogni area. Un colore più intenso indica più chiamate.</value>
+  </data>
+  <data name="Library_calls_by_priority_Name" xml:space="preserve">
+    <value>Chiamate per priorità</value>
+  </data>
+  <data name="Library_calls_by_priority_Description" xml:space="preserve">
+    <value>Chiamate degli ultimi 90 giorni colorate per priorità, per vedere da dove provengono le chiamate urgenti.</value>
+  </data>
+  <data name="Library_call_outcomes_Name" xml:space="preserve">
+    <value>Esiti delle chiamate</value>
+  </data>
+  <data name="Library_call_outcomes_Description" xml:space="preserve">
+    <value>Chiamate colorate in base a come sono state chiuse: chiusa, annullata, infondata, falso allarme, trasferita e altro.</value>
+  </data>
+  <data name="Library_time_of_day_Name" xml:space="preserve">
+    <value>Momento della giornata</value>
+  </data>
+  <data name="Library_time_of_day_Description" xml:space="preserve">
+    <value>Chiamate colorate in base al momento in cui sono arrivate: notte, mattina, pomeriggio o sera. Utile per la pianificazione del personale e dei turni.</value>
+  </data>
+  <data name="Library_weekday_vs_weekend_Name" xml:space="preserve">
+    <value>Giorni feriali e fine settimana</value>
+  </data>
+  <data name="Library_weekday_vs_weekend_Description" xml:space="preserve">
+    <value>Chiamate suddivise tra giorni feriali e fine settimana, per pianificare la disponibilità dei volontari.</value>
+  </data>
+  <data name="Library_seasonal_patterns_Name" xml:space="preserve">
+    <value>Andamento stagionale</value>
+  </data>
+  <data name="Library_seasonal_patterns_Description" xml:space="preserve">
+    <value>Due anni di chiamate colorate per mese, per individuare la domanda stagionale, come le stagioni degli incendi boschivi, dei soccorsi in acqua o degli eventi.</value>
+  </data>
+  <data name="Library_response_time_by_area_Name" xml:space="preserve">
+    <value>Tempo di risposta per area (90° percentile)</value>
+  </data>
+  <data name="Library_response_time_by_area_Description" xml:space="preserve">
+    <value>Una griglia colorata in base al 90° percentile del tempo che intercorre tra la registrazione della chiamata e l'arrivo sul posto della prima unità, secondo il metodo con cui vengono misurati gli obiettivi NFPA 1710 e 1720. Richiede che le unità impostino gli stati di arrivo sul posto.</value>
+  </data>
+  <data name="Library_response_time_bands_Name" xml:space="preserve">
+    <value>Fasce di tempo di risposta</value>
+  </data>
+  <data name="Library_response_time_bands_Description" xml:space="preserve">
+    <value>Ogni chiamata colorata in base ai minuti necessari alla prima unità per arrivare sul posto: meno di 4, da 4 a 8, da 8 a 12, da 12 a 20 e oltre 20.</value>
+  </data>
+  <data name="Library_turnout_by_area_Name" xml:space="preserve">
+    <value>Tempo alla prima risposta per area</value>
+  </data>
+  <data name="Library_turnout_by_area_Description" xml:space="preserve">
+    <value>Una griglia colorata in base al tempo mediano che intercorre tra la registrazione della chiamata e la prima unità in risposta o in viaggio.</value>
+  </data>
+  <data name="Library_time_committed_Name" xml:space="preserve">
+    <value>Tempo impegnato per area</value>
+  </data>
+  <data name="Library_time_committed_Description" xml:space="preserve">
+    <value>Una griglia colorata in base al tempo medio che intercorre tra la registrazione e la chiusura della chiamata: dove le chiamate impegnano le risorse più a lungo.</value>
+  </data>
+  <data name="Library_station_coverage_gaps_Name" xml:space="preserve">
+    <value>Chiamate fuori dalla copertura delle stazioni</value>
+  </data>
+  <data name="Library_station_coverage_gaps_Description" xml:space="preserve">
+    <value>Chiamate colorate in base alla distanza in linea d'aria dalla stazione più vicina, con anelli a 1,5 mi, 2,5 mi e 5 mi (parametri comuni nelle valutazioni assicurative).</value>
+  </data>
+  <data name="Library_station_area_workload_Name" xml:space="preserve">
+    <value>Carico di lavoro per area di stazione</value>
+  </data>
+  <data name="Library_station_area_workload_Description" xml:space="preserve">
+    <value>Chiamate colorate in base alla stazione di appartenenza (prima la sua geofence, poi chi è stato inviato), per confrontare il carico di lavoro di primo intervento.</value>
+  </data>
+  <data name="Library_where_units_go_Name" xml:space="preserve">
+    <value>Dove vanno le unità</value>
+  </data>
+  <data name="Library_where_units_go_Description" xml:space="preserve">
+    <value>Ogni risposta delle unità negli ultimi 90 giorni nel luogo della chiamata, colorata per unità.</value>
+  </data>
+  <data name="Library_unit_type_demand_Name" xml:space="preserve">
+    <value>Richiesta per tipo di unità</value>
+  </data>
+  <data name="Library_unit_type_demand_Description" xml:space="preserve">
+    <value>Una griglia colorata in base al tipo di unità che risponde più spesso in ogni area, ad esempio autopompe, ambulanze o mezzi di soccorso.</value>
+  </data>
+  <data name="Library_personnel_response_footprint_Name" xml:space="preserve">
+    <value>Impronta di risposta del personale</value>
+  </data>
+  <data name="Library_personnel_response_footprint_Description" xml:space="preserve">
+    <value>Mappa di calore delle chiamate a cui i membri hanno risposto. Le chiamate con più persone in risposta risultano più luminose.</value>
+  </data>
+  <data name="Library_responder_origins_Name" xml:space="preserve">
+    <value>Da dove arrivano i soccorritori</value>
+  </data>
+  <data name="Library_responder_origins_Description" xml:space="preserve">
+    <value>Mappa di calore dei luoghi in cui si trovavano i membri quando si sono segnati in risposta, con un anello di 5 miglia attorno alla stazione. Richiede la condivisione della posizione nell'app.</value>
+  </data>
+  <data name="Library_repeat_locations_Name" xml:space="preserve">
+    <value>Luoghi ricorrenti</value>
+  </data>
+  <data name="Library_repeat_locations_Description" xml:space="preserve">
+    <value>Luoghi con 3 o più chiamate negli ultimi 12 mesi, dimensionati e colorati in base al numero. Utile per chi chiama spesso, problemi di allarme e follow-up di prevenzione.</value>
+  </data>
+  <data name="Library_false_alarm_hot_spots_Name" xml:space="preserve">
+    <value>Punti caldi dei falsi allarmi</value>
+  </data>
+  <data name="Library_false_alarm_hot_spots_Description" xml:space="preserve">
+    <value>Mappa di calore delle chiamate chiuse come falso allarme o infondate.</value>
+  </data>
+  <data name="Library_unit_movement_24h_Name" xml:space="preserve">
+    <value>Movimento delle unità (ultime 24 ore)</value>
+  </data>
+  <data name="Library_unit_movement_24h_Description" xml:space="preserve">
+    <value>Percorsi registrati delle unità nell'ultimo giorno, colorati per unità.</value>
+  </data>
+  <data name="Library_patrol_coverage_Name" xml:space="preserve">
+    <value>Copertura del pattugliamento</value>
+  </data>
+  <data name="Library_patrol_coverage_Description" xml:space="preserve">
+    <value>Mappa di calore delle posizioni delle unità negli ultimi 7 giorni: dove le pattuglie e le unità sul campo trascorrono il loro tempo.</value>
+  </data>
+  <data name="Library_search_coverage_Name" xml:space="preserve">
+    <value>Copertura della ricerca</value>
+  </data>
+  <data name="Library_search_coverage_Description" xml:space="preserve">
+    <value>Una griglia delle posizioni dei membri più i percorsi di membri e unità negli ultimi 3 giorni, per vedere quali aree sono state coperte.</value>
+  </data>
+  <data name="Library_incident_footprint_Name" xml:space="preserve">
+    <value>Impronta dell'evento</value>
+  </data>
+  <data name="Library_incident_footprint_Description" xml:space="preserve">
+    <value>Scegli una chiamata per vedere dove sono andati ogni unità e ogni membro mentre la gestivano: i loro percorsi, le posizioni degli stati e da dove sono arrivati i soccorritori.</value>
+  </data>
+  <data name="SectionWhen" xml:space="preserve">
+    <value>Quando</value>
+  </data>
+  <data name="SectionWhich" xml:space="preserve">
+    <value>Quali chiamate</value>
+  </data>
+  <data name="SectionLayers" xml:space="preserve">
+    <value>Livelli</value>
+  </data>
+  <data name="SectionStations" xml:space="preserve">
+    <value>Stazioni e distanze</value>
+  </data>
+  <data name="FilterWindow" xml:space="preserve">
+    <value>Intervallo di date</value>
+  </data>
+  <data name="Window_1" xml:space="preserve">
+    <value>Ultime 24 ore</value>
+  </data>
+  <data name="Window_7" xml:space="preserve">
+    <value>Ultimi 7 giorni</value>
+  </data>
+  <data name="Window_30" xml:space="preserve">
+    <value>Ultimi 30 giorni</value>
+  </data>
+  <data name="Window_90" xml:space="preserve">
+    <value>Ultimi 90 giorni</value>
+  </data>
+  <data name="Window_365" xml:space="preserve">
+    <value>Ultimi 12 mesi</value>
+  </data>
+  <data name="Window_730" xml:space="preserve">
+    <value>Ultimi 2 anni</value>
+  </data>
+  <data name="Window_1825" xml:space="preserve">
+    <value>Ultimi 5 anni</value>
+  </data>
+  <data name="Window_Custom" xml:space="preserve">
+    <value>Date personalizzate</value>
+  </data>
+  <data name="WindowDays" xml:space="preserve">
+    <value>Ultimi {0} giorni</value>
+  </data>
+  <data name="FilterStart" xml:space="preserve">
+    <value>Da</value>
+  </data>
+  <data name="FilterEnd" xml:space="preserve">
+    <value>A</value>
+  </data>
+  <data name="FilterDays" xml:space="preserve">
+    <value>Giorni della settimana</value>
+  </data>
+  <data name="FilterHours" xml:space="preserve">
+    <value>Ore del giorno</value>
+  </data>
+  <data name="FilterHoursHint" xml:space="preserve">
+    <value>Lascia tutto deselezionato per includere ogni giorno e ogni ora. Gli orari sono nel fuso orario del tuo dipartimento.</value>
+  </data>
+  <data name="FilterCall" xml:space="preserve">
+    <value>Una chiamata</value>
+  </data>
+  <data name="FilterCallPlaceholder" xml:space="preserve">
+    <value>Cerca per numero, nome, tipo o indirizzo</value>
+  </data>
+  <data name="FilterCallHint" xml:space="preserve">
+    <value>Scegli una chiamata per mostrare solo quella e gli spostamenti delle sue unità e dei suoi membri.</value>
+  </data>
+  <data name="FilterCallActiveHint" xml:space="preserve">
+    <value>Viene mostrata solo questa chiamata. L'intervallo di date e gli altri filtri delle chiamate vengono ignorati.</value>
+  </data>
+  <data name="FilterCallClear" xml:space="preserve">
+    <value>Mostra tutte le chiamate</value>
+  </data>
+  <data name="FilterCallNoMatches" xml:space="preserve">
+    <value>Nessuna chiamata dell'ultimo anno corrisponde.</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>Ricerca in corso…</value>
+  </data>
+  <data name="FilterCallTypes" xml:space="preserve">
+    <value>Tipi di chiamata</value>
+  </data>
+  <data name="FilterPriorities" xml:space="preserve">
+    <value>Priorità</value>
+  </data>
+  <data name="FilterOutcomes" xml:space="preserve">
+    <value>Esiti</value>
+  </data>
+  <data name="FilterGroups" xml:space="preserve">
+    <value>Stazione di appartenenza o gruppo</value>
+  </data>
+  <data name="FilterUnits" xml:space="preserve">
+    <value>Unità coinvolte</value>
+  </data>
+  <data name="FilterMinCalls" xml:space="preserve">
+    <value>Numero minimo di chiamate in un luogo</value>
+  </data>
+  <data name="FilterMinCallsHint" xml:space="preserve">
+    <value>Mostra solo i luoghi con almeno questo numero di chiamate nell'intervallo di date. 0 mostra tutte le chiamate.</value>
+  </data>
+  <data name="FilterAll" xml:space="preserve">
+    <value>Tutti</value>
+  </data>
+  <data name="FilterSelected" xml:space="preserve">
+    <value>{0} selezionati</value>
+  </data>
+  <data name="FilterNoChoices" xml:space="preserve">
+    <value>Nessuno configurato</value>
+  </data>
+  <data name="FilterSearch" xml:space="preserve">
+    <value>Cerca</value>
+  </data>
+  <data name="FilterClear" xml:space="preserve">
+    <value>Cancella selezione</value>
+  </data>
+  <data name="LayersHint" xml:space="preserve">
+    <value>I livelli vengono disegnati in ordine: il livello in cima a questo elenco viene disegnato sopra la mappa.</value>
+  </data>
+  <data name="LayerAdd" xml:space="preserve">
+    <value>Aggiungi un livello</value>
+  </data>
+  <data name="LayerName" xml:space="preserve">
+    <value>Nome del livello</value>
+  </data>
+  <data name="LayerSource" xml:space="preserve">
+    <value>Dati</value>
+  </data>
+  <data name="LayerDisplay" xml:space="preserve">
+    <value>Mostra come</value>
+  </data>
+  <data name="LayerColorBy" xml:space="preserve">
+    <value>Colora per</value>
+  </data>
+  <data name="LayerMetric" xml:space="preserve">
+    <value>Misura</value>
+  </data>
+  <data name="LayerWeight" xml:space="preserve">
+    <value>Pesa ogni punto per</value>
+  </data>
+  <data name="LayerSize" xml:space="preserve">
+    <value>Valore</value>
+  </data>
+  <data name="LayerAggregate" xml:space="preserve">
+    <value>Combina i valori con</value>
+  </data>
+  <data name="LayerPalette" xml:space="preserve">
+    <value>Colori</value>
+  </data>
+  <data name="LayerOpacity" xml:space="preserve">
+    <value>Opacità</value>
+  </data>
+  <data name="LayerRadius" xml:space="preserve">
+    <value>Raggio del calore</value>
+  </data>
+  <data name="LayerIntensity" xml:space="preserve">
+    <value>Intensità del calore</value>
+  </data>
+  <data name="LayerCellSize" xml:space="preserve">
+    <value>Dimensione delle celle della griglia</value>
+  </data>
+  <data name="LayerPointSize" xml:space="preserve">
+    <value>Dimensione dei punti</value>
+  </data>
+  <data name="LayerSizeByMetric" xml:space="preserve">
+    <value>Dimensiona i punti in base al valore</value>
+  </data>
+  <data name="LayerUp" xml:space="preserve">
+    <value>Sposta su (disegna sopra)</value>
+  </data>
+  <data name="LayerDown" xml:space="preserve">
+    <value>Sposta giù (disegna sotto)</value>
+  </data>
+  <data name="LayerRemove" xml:space="preserve">
+    <value>Rimuovi livello</value>
+  </data>
+  <data name="OptionShowStations" xml:space="preserve">
+    <value>Mostra le stazioni sulla mappa</value>
+  </data>
+  <data name="OptionDistanceUnit" xml:space="preserve">
+    <value>Unità di distanza</value>
+  </data>
+  <data name="OptionRings" xml:space="preserve">
+    <value>Anelli di copertura attorno alle stazioni</value>
+  </data>
+  <data name="OptionRingsHint" xml:space="preserve">
+    <value>Fino a 4 distanze, separate da virgole, ad esempio 1.5, 2.5, 5. Gli anelli indicano la distanza in linea d'aria, non il tempo di percorrenza.</value>
+  </data>
+  <data name="OptionDistanceBands" xml:space="preserve">
+    <value>Fasce di distanza</value>
+  </data>
+  <data name="OptionDistanceBandsHint" xml:space="preserve">
+    <value>Usate per colorare in base alla distanza dalla stazione. Lascia vuoto per i valori predefiniti.</value>
+  </data>
+  <data name="OptionMinuteBands" xml:space="preserve">
+    <value>Fasce di tempo di risposta (minuti)</value>
+  </data>
+  <data name="OptionMinuteBandsHint" xml:space="preserve">
+    <value>Usate per colorare in base alla fascia di tempo di risposta, ad esempio 4, 8, 12, 20. Lascia vuoto per i valori predefiniti.</value>
+  </data>
+  <data name="UnitKilometers" xml:space="preserve">
+    <value>km</value>
+  </data>
+  <data name="UnitMiles" xml:space="preserve">
+    <value>mi</value>
+  </data>
+  <data name="UnitMinutes" xml:space="preserve">
+    <value>min</value>
+  </data>
+  <data name="Source_calls" xml:space="preserve">
+    <value>Chiamate</value>
+  </data>
+  <data name="Source_unitResponses" xml:space="preserve">
+    <value>Risposte delle unità</value>
+  </data>
+  <data name="Source_personnelResponses" xml:space="preserve">
+    <value>Risposte del personale</value>
+  </data>
+  <data name="Source_responderOrigins" xml:space="preserve">
+    <value>Punti di partenza dei soccorritori</value>
+  </data>
+  <data name="Source_unitStatusLocations" xml:space="preserve">
+    <value>Posizioni degli stati delle unità</value>
+  </data>
+  <data name="Source_unitTracks" xml:space="preserve">
+    <value>Percorsi delle unità</value>
+  </data>
+  <data name="Source_personnelTracks" xml:space="preserve">
+    <value>Percorsi del personale</value>
+  </data>
+  <data name="SourceHint_calls" xml:space="preserve">
+    <value>Un punto per chiamata, nel luogo della chiamata.</value>
+  </data>
+  <data name="SourceHint_unitResponses" xml:space="preserve">
+    <value>Un punto per ogni unità inviata a una chiamata, nel luogo della chiamata.</value>
+  </data>
+  <data name="SourceHint_personnelResponses" xml:space="preserve">
+    <value>Un punto per ogni membro che ha risposto a una chiamata, nel luogo della chiamata.</value>
+  </data>
+  <data name="SourceHint_responderOrigins" xml:space="preserve">
+    <value>Dove si trovavano i membri quando hanno impostato lo stato di risposta. Compaiono solo i membri che condividono la posizione. Fino a 12 mesi.</value>
+  </data>
+  <data name="SourceHint_unitStatusLocations" xml:space="preserve">
+    <value>Dove si trovavano le unità quando hanno cambiato stato. Fino a 12 mesi.</value>
+  </data>
+  <data name="SourceHint_unitTracks" xml:space="preserve">
+    <value>Posizioni registrate delle unità dall'app Unit o da un tracker, fino a 7 giorni.</value>
+  </data>
+  <data name="SourceHint_personnelTracks" xml:space="preserve">
+    <value>Posizioni registrate dei membri dall'app Responder, fino a 7 giorni.</value>
+  </data>
+  <data name="Display_heat" xml:space="preserve">
+    <value>Mappa di calore</value>
+  </data>
+  <data name="Display_points" xml:space="preserve">
+    <value>Punti</value>
+  </data>
+  <data name="Display_hexbins" xml:space="preserve">
+    <value>Griglia esagonale</value>
+  </data>
+  <data name="Display_tracks" xml:space="preserve">
+    <value>Percorsi</value>
+  </data>
+  <data name="ColorBy_none" xml:space="preserve">
+    <value>Colore unico</value>
+  </data>
+  <data name="ColorBy_callType" xml:space="preserve">
+    <value>Tipo di chiamata</value>
+  </data>
+  <data name="ColorBy_priority" xml:space="preserve">
+    <value>Priorità</value>
+  </data>
+  <data name="ColorBy_outcome" xml:space="preserve">
+    <value>Esito</value>
+  </data>
+  <data name="ColorBy_group" xml:space="preserve">
+    <value>Stazione di appartenenza</value>
+  </data>
+  <data name="ColorBy_timeOfDay" xml:space="preserve">
+    <value>Momento della giornata</value>
+  </data>
+  <data name="ColorBy_hourOfDay" xml:space="preserve">
+    <value>Ora del giorno</value>
+  </data>
+  <data name="ColorBy_dayOfWeek" xml:space="preserve">
+    <value>Giorno della settimana</value>
+  </data>
+  <data name="ColorBy_weekpart" xml:space="preserve">
+    <value>Giorno feriale o fine settimana</value>
+  </data>
+  <data name="ColorBy_month" xml:space="preserve">
+    <value>Mese</value>
+  </data>
+  <data name="ColorBy_year" xml:space="preserve">
+    <value>Anno</value>
+  </data>
+  <data name="ColorBy_unit" xml:space="preserve">
+    <value>Unità</value>
+  </data>
+  <data name="ColorBy_unitType" xml:space="preserve">
+    <value>Tipo di unità</value>
+  </data>
+  <data name="ColorBy_station" xml:space="preserve">
+    <value>Stazione dell'unità</value>
+  </data>
+  <data name="ColorBy_person" xml:space="preserve">
+    <value>Persona</value>
+  </data>
+  <data name="ColorBy_status" xml:space="preserve">
+    <value>Stato</value>
+  </data>
+  <data name="ColorBy_responseBand" xml:space="preserve">
+    <value>Fascia di tempo di risposta</value>
+  </data>
+  <data name="ColorBy_distanceBand" xml:space="preserve">
+    <value>Fascia di distanza dalla stazione</value>
+  </data>
+  <data name="ColorBy_repeatBand" xml:space="preserve">
+    <value>Chiamate nello stesso luogo</value>
+  </data>
+  <data name="Metric_count" xml:space="preserve">
+    <value>Conteggio</value>
+  </data>
+  <data name="Metric_responseMinutes" xml:space="preserve">
+    <value>Minuti alla prima unità sul posto</value>
+  </data>
+  <data name="Metric_turnoutMinutes" xml:space="preserve">
+    <value>Minuti alla prima risposta</value>
+  </data>
+  <data name="Metric_durationMinutes" xml:space="preserve">
+    <value>Minuti fino alla chiusura</value>
+  </data>
+  <data name="Metric_unitsDispatched" xml:space="preserve">
+    <value>Unità inviate</value>
+  </data>
+  <data name="Metric_personnelResponded" xml:space="preserve">
+    <value>Personale in risposta</value>
+  </data>
+  <data name="Metric_stationDistance" xml:space="preserve">
+    <value>Distanza dalla stazione</value>
+  </data>
+  <data name="Metric_callsAtLocation" xml:space="preserve">
+    <value>Chiamate nello stesso luogo</value>
+  </data>
+  <data name="Aggregate_count" xml:space="preserve">
+    <value>Conteggio</value>
+  </data>
+  <data name="Aggregate_sum" xml:space="preserve">
+    <value>Totale</value>
+  </data>
+  <data name="Aggregate_mean" xml:space="preserve">
+    <value>Media</value>
+  </data>
+  <data name="Aggregate_median" xml:space="preserve">
+    <value>Mediana</value>
+  </data>
+  <data name="Aggregate_p90" xml:space="preserve">
+    <value>90° percentile</value>
+  </data>
+  <data name="Aggregate_max" xml:space="preserve">
+    <value>Massimo</value>
+  </data>
+  <data name="Palette_heat" xml:space="preserve">
+    <value>Calore classico</value>
+  </data>
+  <data name="Palette_fire" xml:space="preserve">
+    <value>Fuoco</value>
+  </data>
+  <data name="Palette_viridis" xml:space="preserve">
+    <value>Viridis (adatta ai daltonici)</value>
+  </data>
+  <data name="Palette_blues" xml:space="preserve">
+    <value>Blu</value>
+  </data>
+  <data name="Palette_traffic" xml:space="preserve">
+    <value>Dal verde al rosso</value>
+  </data>
+  <data name="Day_0" xml:space="preserve">
+    <value>Domenica</value>
+  </data>
+  <data name="DayShort_0" xml:space="preserve">
+    <value>Dom</value>
+  </data>
+  <data name="Day_1" xml:space="preserve">
+    <value>Lunedì</value>
+  </data>
+  <data name="DayShort_1" xml:space="preserve">
+    <value>Lun</value>
+  </data>
+  <data name="Day_2" xml:space="preserve">
+    <value>Martedì</value>
+  </data>
+  <data name="DayShort_2" xml:space="preserve">
+    <value>Mar</value>
+  </data>
+  <data name="Day_3" xml:space="preserve">
+    <value>Mercoledì</value>
+  </data>
+  <data name="DayShort_3" xml:space="preserve">
+    <value>Mer</value>
+  </data>
+  <data name="Day_4" xml:space="preserve">
+    <value>Giovedì</value>
+  </data>
+  <data name="DayShort_4" xml:space="preserve">
+    <value>Gio</value>
+  </data>
+  <data name="Day_5" xml:space="preserve">
+    <value>Venerdì</value>
+  </data>
+  <data name="DayShort_5" xml:space="preserve">
+    <value>Ven</value>
+  </data>
+  <data name="Day_6" xml:space="preserve">
+    <value>Sabato</value>
+  </data>
+  <data name="DayShort_6" xml:space="preserve">
+    <value>Sab</value>
+  </data>
+  <data name="Month_1" xml:space="preserve">
+    <value>Gennaio</value>
+  </data>
+  <data name="Month_2" xml:space="preserve">
+    <value>Febbraio</value>
+  </data>
+  <data name="Month_3" xml:space="preserve">
+    <value>Marzo</value>
+  </data>
+  <data name="Month_4" xml:space="preserve">
+    <value>Aprile</value>
+  </data>
+  <data name="Month_5" xml:space="preserve">
+    <value>Maggio</value>
+  </data>
+  <data name="Month_6" xml:space="preserve">
+    <value>Giugno</value>
+  </data>
+  <data name="Month_7" xml:space="preserve">
+    <value>Luglio</value>
+  </data>
+  <data name="Month_8" xml:space="preserve">
+    <value>Agosto</value>
+  </data>
+  <data name="Month_9" xml:space="preserve">
+    <value>Settembre</value>
+  </data>
+  <data name="Month_10" xml:space="preserve">
+    <value>Ottobre</value>
+  </data>
+  <data name="Month_11" xml:space="preserve">
+    <value>Novembre</value>
+  </data>
+  <data name="Month_12" xml:space="preserve">
+    <value>Dicembre</value>
+  </data>
+  <data name="TimeOfDay_0" xml:space="preserve">
+    <value>Notte (00:00–06:00)</value>
+  </data>
+  <data name="TimeOfDay_1" xml:space="preserve">
+    <value>Mattina (06:00–12:00)</value>
+  </data>
+  <data name="TimeOfDay_2" xml:space="preserve">
+    <value>Pomeriggio (12:00–18:00)</value>
+  </data>
+  <data name="TimeOfDay_3" xml:space="preserve">
+    <value>Sera (18:00–24:00)</value>
+  </data>
+  <data name="Weekday" xml:space="preserve">
+    <value>Giorno feriale</value>
+  </data>
+  <data name="Weekend" xml:space="preserve">
+    <value>Fine settimana</value>
+  </data>
+  <data name="Outcome_0" xml:space="preserve">
+    <value>Attiva</value>
+  </data>
+  <data name="Outcome_1" xml:space="preserve">
+    <value>Chiusa</value>
+  </data>
+  <data name="Outcome_2" xml:space="preserve">
+    <value>Annullata</value>
+  </data>
+  <data name="Outcome_3" xml:space="preserve">
+    <value>Infondata</value>
+  </data>
+  <data name="Outcome_4" xml:space="preserve">
+    <value>Fondata</value>
+  </data>
+  <data name="Outcome_5" xml:space="preserve">
+    <value>Minore</value>
+  </data>
+  <data name="Outcome_6" xml:space="preserve">
+    <value>Trasferita</value>
+  </data>
+  <data name="Outcome_7" xml:space="preserve">
+    <value>Falso allarme</value>
+  </data>
+  <data name="Outcome_8" xml:space="preserve">
+    <value>In sospeso</value>
+  </data>
+  <data name="UnitStatus_0" xml:space="preserve">
+    <value>Disponibile</value>
+  </data>
+  <data name="UnitStatus_1" xml:space="preserve">
+    <value>In ritardo</value>
+  </data>
+  <data name="UnitStatus_2" xml:space="preserve">
+    <value>Non disponibile</value>
+  </data>
+  <data name="UnitStatus_3" xml:space="preserve">
+    <value>Impegnata</value>
+  </data>
+  <data name="UnitStatus_4" xml:space="preserve">
+    <value>Fuori servizio</value>
+  </data>
+  <data name="UnitStatus_5" xml:space="preserve">
+    <value>In risposta</value>
+  </data>
+  <data name="UnitStatus_6" xml:space="preserve">
+    <value>Sul posto</value>
+  </data>
+  <data name="UnitStatus_7" xml:space="preserve">
+    <value>In attesa</value>
+  </data>
+  <data name="UnitStatus_8" xml:space="preserve">
+    <value>In rientro</value>
+  </data>
+  <data name="UnitStatus_9" xml:space="preserve">
+    <value>Annullata</value>
+  </data>
+  <data name="UnitStatus_10" xml:space="preserve">
+    <value>Rilasciata</value>
+  </data>
+  <data name="UnitStatus_11" xml:space="preserve">
+    <value>Manuale</value>
+  </data>
+  <data name="UnitStatus_12" xml:space="preserve">
+    <value>In viaggio</value>
+  </data>
+  <data name="PersonnelStatus_0" xml:space="preserve">
+    <value>Disponibile</value>
+  </data>
+  <data name="PersonnelStatus_1" xml:space="preserve">
+    <value>Non in risposta</value>
+  </data>
+  <data name="PersonnelStatus_2" xml:space="preserve">
+    <value>In risposta</value>
+  </data>
+  <data name="PersonnelStatus_3" xml:space="preserve">
+    <value>Sul posto</value>
+  </data>
+  <data name="PersonnelStatus_4" xml:space="preserve">
+    <value>Disponibile in stazione</value>
+  </data>
+  <data name="PersonnelStatus_5" xml:space="preserve">
+    <value>In risposta verso la stazione</value>
+  </data>
+  <data name="PersonnelStatus_6" xml:space="preserve">
+    <value>In risposta verso il luogo</value>
+  </data>
+  <data name="PersonnelStatus_7" xml:space="preserve">
+    <value>Su un'unità</value>
+  </data>
+  <data name="CategoryOther" xml:space="preserve">
+    <value>Altro</value>
+  </data>
+  <data name="CategoryNoType" xml:space="preserve">
+    <value>Nessun tipo</value>
+  </data>
+  <data name="CategoryNoStation" xml:space="preserve">
+    <value>Nessuna stazione</value>
+  </data>
+  <data name="RepeatBand" xml:space="preserve">
+    <value>{0} chiamate</value>
+  </data>
+  <data name="LegendTitle" xml:space="preserve">
+    <value>Legenda</value>
+  </data>
+  <data name="LegendFewer" xml:space="preserve">
+    <value>Meno</value>
+  </data>
+  <data name="LegendMore" xml:space="preserve">
+    <value>Più</value>
+  </data>
+  <data name="LegendLower" xml:space="preserve">
+    <value>Più basso</value>
+  </data>
+  <data name="LegendHigher" xml:space="preserve">
+    <value>Più alto</value>
+  </data>
+  <data name="LegendUpTo" xml:space="preserve">
+    <value>Fino a {0}</value>
+  </data>
+  <data name="LegendRange" xml:space="preserve">
+    <value>Da {0} a {1}</value>
+  </data>
+  <data name="LegendDominant" xml:space="preserve">
+    <value>Ogni cella mostra la categoria più frequente. Un colore più intenso indica più chiamate.</value>
+  </data>
+  <data name="LegendEmpty" xml:space="preserve">
+    <value>Niente da mostrare con questi filtri.</value>
+  </data>
+  <data name="TooltipRows" xml:space="preserve">
+    <value>{0} record</value>
+  </data>
+  <data name="TooltipDominant" xml:space="preserve">
+    <value>Prevalentemente {0} ({1}%)</value>
+  </data>
+  <data name="PopupOpenCall" xml:space="preserve">
+    <value>Apri chiamata</value>
+  </data>
+  <data name="PopupFocusCall" xml:space="preserve">
+    <value>Mostra l'impronta di questa chiamata</value>
+  </data>
+  <data name="PopupUnavailable" xml:space="preserve">
+    <value>I dettagli della chiamata non sono disponibili.</value>
+  </data>
+  <data name="SummaryWindow" xml:space="preserve">
+    <value>Mostra da {0} a {1}</value>
+  </data>
+  <data name="SummaryCall" xml:space="preserve">
+    <value>Mostra la chiamata {0}</value>
+  </data>
+  <data name="SummaryWhen" xml:space="preserve">
+    <value>Quando arrivano le chiamate</value>
+  </data>
+  <data name="SummaryTopTypes" xml:space="preserve">
+    <value>Tipi di chiamata più frequenti</value>
+  </data>
+  <data name="KpiCalls" xml:space="preserve">
+    <value>Chiamate</value>
+  </data>
+  <data name="KpiMapped" xml:space="preserve">
+    <value>Chiamate con una posizione</value>
+  </data>
+  <data name="KpiMedianResponse" xml:space="preserve">
+    <value>Tempo mediano all'arrivo sul posto</value>
+  </data>
+  <data name="KpiP90Response" xml:space="preserve">
+    <value>90° percentile del tempo all'arrivo sul posto</value>
+  </data>
+  <data name="KpiResponseHint" xml:space="preserve">
+    <value>I tempi di risposta compaiono quando un livello usa una misura o una fascia di tempo di risposta e le unità impostano gli stati di arrivo sul posto.</value>
+  </data>
+  <data name="NoticeCallsTruncated" xml:space="preserve">
+    <value>Questo intervallo di date contiene più di 100.000 chiamate. Vengono mostrate le 100.000 più recenti; scegli un intervallo più breve per vederle tutte.</value>
+  </data>
+  <data name="Notice_personnelLocationsHidden" xml:space="preserve">
+    <value>{0}: alcuni membri sono esclusi perché non puoi vedere la loro posizione.</value>
+  </data>
+  <data name="Notice_unitLocationsHidden" xml:space="preserve">
+    <value>{0}: alcune unità sono escluse perché non puoi vedere la loro posizione.</value>
+  </data>
+  <data name="Notice_trackWindowShortened" xml:space="preserve">
+    <value>{0}: viene mostrata solo la parte più recente dell'intervallo di date, perché la cronologia delle posizioni e degli stati ha una durata limitata.</value>
+  </data>
+  <data name="Notice_layerTruncated" xml:space="preserve">
+    <value>{0}: i punti sono troppi per mostrarli tutti, quindi vengono mostrati i più recenti.</value>
+  </data>
+  <data name="Notice_noStationLocations" xml:space="preserve">
+    <value>{0}: nessuna stazione ha una posizione, quindi non è possibile mostrare distanze e anelli. Aggiungi l'indirizzo o le coordinate di una stazione in Gruppi.</value>
+  </data>
+  <data name="Notice_noStatusTimes" xml:space="preserve">
+    <value>{0}: nessuna di queste chiamate ha stati di arrivo sul posto o di risposta, quindi i tempi di risposta sono vuoti.</value>
+  </data>
+  <data name="Notice_callNotFound" xml:space="preserve">
+    <value>{0}: la chiamata selezionata non è stata trovata oppure non hai il permesso di visualizzarla.</value>
+  </data>
+</root>

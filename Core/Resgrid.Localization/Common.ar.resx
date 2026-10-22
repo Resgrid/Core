@@ -369,4 +369,43 @@
   <data name="Terminology" xml:space="preserve">
     <value>المصطلحات</value>
   </data>
+  <data name="TermCall" xml:space="preserve">
+    <value>بلاغ</value>
+  </data>
+  <data name="TermPerson" xml:space="preserve">
+    <value>فرد</value>
+  </data>
+  <data name="TermUnit" xml:space="preserve">
+    <value>وحدة</value>
+  </data>
+  <data name="TermContact" xml:space="preserve">
+    <value>جهة اتصال</value>
+  </data>
+  <data name="TermShift" xml:space="preserve">
+    <value>وردية</value>
+  </data>
+  <data name="TermRecord" xml:space="preserve">
+    <value>سجل</value>
+  </data>
+  <data name="TermLog" xml:space="preserve">
+    <value>سجل</value>
+  </data>
+  <data name="TermReport" xml:space="preserve">
+    <value>تقرير</value>
+  </data>
+  <data name="TermDocument" xml:space="preserve">
+    <value>مستند</value>
+  </data>
+  <data name="TermNote" xml:space="preserve">
+    <value>ملاحظة</value>
+  </data>
+  <data name="TermTraining" xml:space="preserve">
+    <value>تدريب</value>
+  </data>
+  <data name="TermWorkOrder" xml:space="preserve">
+    <value>أمر عمل</value>
+  </data>
+  <data name="TermChecklist" xml:space="preserve">
+    <value>قائمة تحقق</value>
+  </data>
 </root>

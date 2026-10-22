@@ -31,7 +31,7 @@
           <h5>@localizer["CurrentUnitStatusesHeader"]</h5>
           <div class="ibox-tools">
             <div class="buttons-actions">
-              <a title="Add a new Custom Unit Statuses" class="btn btn-success" asp-controller="CustomStatuses" asp-action="Templates" asp-route-area="User" asp-route-type="2">Add Unit Statuses</a>
+              <a title="@departmentTerms.Apply("Add a new Custom Unit Statuses")" class="btn btn-success" asp-controller="CustomStatuses" asp-action="Templates" asp-route-area="User" asp-route-type="2">@departmentTerms.Apply("Add Unit Statuses")</a>
             </div>
           </div>
         </div>

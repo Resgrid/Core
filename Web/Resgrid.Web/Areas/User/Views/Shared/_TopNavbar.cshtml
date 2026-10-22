@@ -3,6 +3,7 @@
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.AdminAssist.AdminAssist> aaLocalizer
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Search.Search> searchLocalizer
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.DepartmentImport.DepartmentImport> importLocalizer
+@inject Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> departmentLocalizer
 @{
 	// Admin Assist opens on its setup tabs (Admin.Setup), or on its Admin AI tab once Admin.Assist and Ai.AdminAssist are on.
 	var adminAssistVisible = ClaimsAuthorizationHelper.IsUserDepartmentAdmin() &&
@@ -16,6 +17,10 @@
 	// Import & Migration: department administrators (permission 72) once Onboarding.MigrationWizard is on.
 	var importVisible = ClaimsAuthorizationHelper.IsUserDepartmentAdmin() &&
 		await featureToggleService.IsEnabledAsync(FeatureFlagKeys.OnboardingMigrationWizard, ClaimsAuthorizationHelper.GetDepartmentId());
+	// Calls awaiting resources (conditional run cards): dispatchers only; the badge stays hidden until a call is waiting.
+	var awaitingResourcesVisible = ClaimsAuthorizationHelper.CanCreateCall() &&
+		await featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCards, ClaimsAuthorizationHelper.GetDepartmentId()) &&
+		await featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCardConditions, ClaimsAuthorizationHelper.GetDepartmentId());
 }
 <div class="row border-bottom" style="height: 50px;">
     <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
@@ -34,6 +39,24 @@
                     <a asp-controller="Search" asp-action="Index" asp-route-area="User" title="@searchLocalizer["PageTitle"]" aria-label="@searchLocalizer["PageTitle"]"><i class="fa fa-search" aria-hidden="true"></i></a>
                 </li>
             }
+            @if (awaitingResourcesVisible)
+            {
+                <li id="awaitingResourcesNav" style="display: none"
+                    data-awaitingtitle="@departmentLocalizer["AwaitingResourcesLabel"]"
+                    data-awaitingdispatchto="@departmentLocalizer["AwaitingDispatchTo"]"
+                    data-awaitingdispatchunit="@departmentLocalizer["AwaitingDispatchUnit"]"
+                    data-awaitingdismiss="@departmentLocalizer["AwaitingDismiss"]"
+                    data-awaitingdismissprompt="@departmentLocalizer["AwaitingDismissPrompt"]"
+                    data-awaitingsentinstead="@departmentLocalizer["AwaitingSentInstead"]"
+                    data-awaitingavailable="@departmentLocalizer["AwaitingAvailableNow"]"
+                    data-awaitingnoneavailable="@departmentLocalizer["AwaitingNoneAvailable"]"
+                    data-awaitingnone="@departmentLocalizer["AwaitingNone"]">
+                    <a asp-controller="Dispatch" asp-action="AwaitingResources" asp-route-area="User" title="@departmentLocalizer["AwaitingResourcesLabel"]" aria-label="@departmentLocalizer["AwaitingResourcesLabel"]">
+                        <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> <span class="label label-danger" id="awaitingResourcesCount">0</span>
+                    </a>
+                    <span id="awaitingResourcesToken" style="display: none">@Html.AntiForgeryToken()</span>
+                </li>
+            }
             <li class="btn dropdown" id="menu-department">
                 <a href="#" data-toggle="dropdown" class="dropdown-toggle"><span class="text">@ClaimsAuthorizationHelper.GetDepartmentName().Truncate(45)</span>&nbsp;<b class="caret"></b></a>
                 <ul class="dropdown-menu">
@@ -47,8 +70,6 @@
                         <li class="@Html.IsSelected(controller: "Department", action: "Profile")"><a asp-controller="Department" asp-action="Profile" asp-route-area="User">@commonLocalizer["DepartmentProfile"]</a></li>
                         <li class="@Html.IsSelected(controller: "Groups", action: "Index")"><a asp-controller="Groups" asp-action="Index" asp-route-area="User">@commonLocalizer["StationAndGroups"]</a></li>
                         <li class="@Html.IsSelected(controller: "Department", action: "CallSettings")"><a asp-controller="Department" asp-action="CallSettings" asp-route-area="User">@commonLocalizer["CallSettings"]</a></li>
-                        <li class="@Html.IsSelected(controller: "Department", action: "DocumentNumbering")"><a asp-controller="Department" asp-action="DocumentNumbering" asp-route-area="User">@commonLocalizer["DocumentNumbering"]</a></li>
-                        <li class="@Html.IsSelected(controller: "Department", action: "Terminology")"><a asp-controller="Department" asp-action="Terminology" asp-route-area="User">@commonLocalizer["Terminology"]</a></li>
                         <li class="@Html.IsSelected(controller: "CustomStatuses", action: "Index")"><a asp-controller="CustomStatuses" asp-action="Index" asp-route-area="User">@commonLocalizer["CustomStatuses"]</a></li>
                         <li class="@Html.IsSelected(controller: "Department", action: "TextSettings")"><a asp-controller="Department" asp-action="TextSettings" asp-route-area="User">@commonLocalizer["TextMessaging"]</a></li>
                         <li class="@Html.IsSelected(controller: "Templates", action: "Index")"><a asp-controller="Templates" asp-action="Index" asp-route-area="User">@commonLocalizer["Templates"]</a></li>

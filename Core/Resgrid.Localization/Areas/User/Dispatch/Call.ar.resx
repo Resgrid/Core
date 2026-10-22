@@ -510,4 +510,37 @@
   <data name="NewCallFieldRequired" xml:space="preserve">
     <value>الحقل {0} مطلوب في هذه الإدارة.</value>
   </data>
+  <data name="NearestUnitsPick" xml:space="preserve">
+    <value>إرسال</value>
+  </data>
+  <data name="NearestPersonnelLabel" xml:space="preserve">
+    <value>أقرب الأفراد</value>
+  </data>
+  <data name="NearestPersonnelPerson" xml:space="preserve">
+    <value>الشخص</value>
+  </data>
+  <data name="NearestPersonnelStaffing" xml:space="preserve">
+    <value>الجاهزية</value>
+  </data>
+  <data name="NearestPersonnelGroupRoles" xml:space="preserve">
+    <value>المجموعة / الأدوار</value>
+  </data>
+  <data name="NearestUnitsNearest" xml:space="preserve">
+    <value>الأقرب رقم {0}</value>
+  </data>
+  <data name="NearestUnitsHidden" xml:space="preserve">
+    <value>الموقع مخفي</value>
+  </data>
+  <data name="NearestPersonnelOnUnit" xml:space="preserve">
+    <value>على {0}</value>
+  </data>
+  <data name="NearestUnitsMapUnits" xml:space="preserve">
+    <value>الوحدات</value>
+  </data>
+  <data name="NearestUnitsMapPersonnel" xml:space="preserve">
+    <value>الأفراد</value>
+  </data>
+  <data name="NearestUnitsMapBoundaries" xml:space="preserve">
+    <value>حدود المحطات</value>
+  </data>
 </root>

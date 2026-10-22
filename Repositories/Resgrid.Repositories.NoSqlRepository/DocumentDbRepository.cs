@@ -1,5 +1,7 @@
+using MongoDB.Driver;
 using Npgsql;
 using Resgrid.Config;
+using Resgrid.Model;
 using Resgrid.Model.Repositories;
 using System;
 using System.IO;
@@ -11,10 +13,13 @@ namespace Resgrid.Repositories.NoSqlRepository
 	public class DocumentDbRepository : IDocumentDbRepository
 	{
 		private readonly Lazy<IUnitLocationsMongoRepository> _unitLocationsMongoRepository;
+		private readonly Lazy<IMongoRepository<PersonnelLocation>> _personnelLocationsMongoRepository;
 
-		public DocumentDbRepository(Lazy<IUnitLocationsMongoRepository> unitLocationsMongoRepository)
+		public DocumentDbRepository(Lazy<IUnitLocationsMongoRepository> unitLocationsMongoRepository,
+			Lazy<IMongoRepository<PersonnelLocation>> personnelLocationsMongoRepository)
 		{
 			_unitLocationsMongoRepository = unitLocationsMongoRepository;
+			_personnelLocationsMongoRepository = personnelLocationsMongoRepository;
 		}
 
 		public async Task<bool> UpdateDocumentDatabaseAsync()
@@ -24,6 +29,12 @@ namespace Resgrid.Repositories.NoSqlRepository
 				if (DataConfig.DocDatabaseType == DatabaseTypes.MongoDb)
 				{
 					await _unitLocationsMongoRepository.Value.EnsureIndexesAsync();
+					await _unitLocationsMongoRepository.Value.EnsureReadIndexesAsync();
+
+					// Map visualization paths read a department's member locations for a time window.
+					await _personnelLocationsMongoRepository.Value.GetCollection().Indexes.CreateOneAsync(new CreateIndexModel<PersonnelLocation>(
+						Builders<PersonnelLocation>.IndexKeys.Ascending(location => location.DepartmentId).Descending(location => location.Timestamp),
+						new CreateIndexOptions { Name = "ix_personnellocations_department_timestamp" }));
 					return true;
 				}
 

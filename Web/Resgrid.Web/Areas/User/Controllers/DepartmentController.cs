@@ -295,16 +295,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.UnitsSort = (int)unitsSortOrder;
 
 			var staffingLevels = await _customStateService.GetActiveStaffingLevelsForDepartmentAsync(DepartmentId);
-			if (staffingLevels == null)
-			{
-				model.Staffings = _customStateService.GetDefaultPersonStaffings();
-				model.StaffingLevels = model.UserStateTypes.ToSelectListInt();
-			}
-			else
-			{
-				model.Staffings = staffingLevels.GetActiveDetails();
-				model.StaffingLevels = new SelectList(staffingLevels.GetActiveDetails(), "CustomStateDetailId", "ButtonText");
-			}
+			model.Staffings = staffingLevels == null ? _customStateService.GetDefaultPersonStaffings() : staffingLevels.GetActiveDetails();
 
 			model.SuppressStaffingInfo = await _departmentSettingsService.GetDepartmentStaffingSuppressInfoAsync(DepartmentId, false);
 
@@ -314,14 +305,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			var actionLogs = await _customStateService.GetActivePersonnelStateForDepartmentAsync(DepartmentId);
-			if (actionLogs == null)
-			{
-				model.StatusLevels = model.UserStatusTypes.ToSelectListInt();
-			}
-			else
-			{
-				model.StatusLevels = new SelectList(actionLogs.GetActiveDetails(), "CustomStateDetailId", "ButtonText");
-			}
 
 			if (zoomLevel.HasValue)
 				model.MapZoomLevel = zoomLevel.Value.ToString();
@@ -373,16 +356,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				model.EnableStaffingReset = true;
 				model.TimeToResetStaffing = tasks[0].Time;
-
-				int result = 2; // Default to Unavailable
-				int.TryParse(tasks[0].Data, out result);
-
-				model.ResetStaffingTo = result;
+				model.ResetStaffingTo = tasks[0].Data;
 			}
 			else
 			{
 				model.EnableStaffingReset = false;
 			}
+
+			model.StaffingLevels = await BuildStaffingResetOptionsAsync(staffingLevels, model.ResetStaffingTo);
 
 			// Status Reset
 			var statusTask = await _scheduledTasksService.GetScheduledTasksByUserTypeAsync(model.Department.ManagingUserId, (int)TaskTypes.DepartmentStatusReset);
@@ -390,16 +371,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				model.EnableStatusReset = true;
 				model.TimeToResetStatus = statusTask[0].Time;
-
-				int result = 0; // Default to Standing By
-				int.TryParse(statusTask[0].Data, out result);
-
-				model.ResetStatusTo = result;
+				model.ResetStatusTo = statusTask[0].Data;
 			}
 			else
 			{
 				model.EnableStatusReset = false;
 			}
+
+			model.StatusLevels = await BuildStatusResetOptionsAsync(actionLogs, model.ResetStatusTo);
 
 			// The organization type is one label; a department doing several kinds of work records them in the operating profile.
 			ViewBag.CanConfigureOperatingProfile = await CanEditOperatingProfileAsync();
@@ -460,26 +439,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.TtsLanguages = BuildTtsLanguageSelectList(model.TtsLanguage);
 
 			var staffingLevels = await _customStateService.GetActiveStaffingLevelsForDepartmentAsync(DepartmentId);
-			if (staffingLevels == null)
-			{
-				model.Staffings = _customStateService.GetDefaultPersonStaffings();
-				model.StaffingLevels = model.UserStateTypes.ToSelectListInt();
-			}
-			else
-			{
-				model.Staffings = staffingLevels.GetActiveDetails();
-				model.StaffingLevels = new SelectList(staffingLevels.GetActiveDetails(), "CustomStateDetailId", "ButtonText");
-			}
+			model.Staffings = staffingLevels == null ? _customStateService.GetDefaultPersonStaffings() : staffingLevels.GetActiveDetails();
 
 			var actionLogs = await _customStateService.GetActivePersonnelStateForDepartmentAsync(DepartmentId);
-			if (actionLogs == null)
-			{
-				model.StatusLevels = model.UserStatusTypes.ToSelectListInt();
-			}
-			else
-			{
-				model.StatusLevels = new SelectList(actionLogs.GetActiveDetails(), "CustomStateDetailId", "ButtonText");
-			}
+
+			// The reset choices are the department's meanings and statuses, plus the value saved now (a value saved before
+			// meanings stays valid); a posted value outside them is refused rather than written to the scheduled task.
+			var savedResetDepartment = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+			var savedStaffingReset = (await _scheduledTasksService.GetScheduledTasksByUserTypeAsync(savedResetDepartment.ManagingUserId, (int)TaskTypes.DepartmentStaffingReset))?.FirstOrDefault()?.Data;
+			var savedStatusReset = (await _scheduledTasksService.GetScheduledTasksByUserTypeAsync(savedResetDepartment.ManagingUserId, (int)TaskTypes.DepartmentStatusReset))?.FirstOrDefault()?.Data;
+			var staffingResetOptions = await BuildStaffingResetOptionsAsync(staffingLevels, savedStaffingReset);
+			var statusResetOptions = await BuildStatusResetOptionsAsync(actionLogs, savedStatusReset);
+			model.StaffingLevels = SelectResetOption(staffingResetOptions, model.ResetStaffingTo);
+			model.StatusLevels = SelectResetOption(statusResetOptions, model.ResetStatusTo);
 
 			Address departmentAddress = null;
 			if (model.Department.Address.AddressId != 0)
@@ -546,12 +518,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				if (String.IsNullOrWhiteSpace(model.TimeToResetStaffing))
 					ModelState.AddModelError("TimeToResetStaffing", "If you want to reset staffing levels you need to supply a time to reset them.");
+
+				if (!staffingResetOptions.Any(x => x.Value == model.ResetStaffingTo))
+					ModelState.AddModelError(nameof(model.ResetStaffingTo), "Pick a staffing meaning or staffing level to reset everyone to.");
 			}
 
 			if (model.EnableStatusReset)
 			{
 				if (String.IsNullOrWhiteSpace(model.TimeToResetStatus))
 					ModelState.AddModelError("TimeToResetStatus", "If you want to reset status levels you need to supply a time to reset them.");
+
+				if (!statusResetOptions.Any(x => x.Value == model.ResetStatusTo))
+					ModelState.AddModelError(nameof(model.ResetStatusTo), "Pick a status meaning or status to reset everyone to.");
 			}
 
 			if (!IsSupportedTtsLanguage(model.TtsLanguage))
@@ -677,7 +655,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					var task = new ScheduledTask();
 					task.Active = true;
 					task.TaskType = (int)TaskTypes.DepartmentStaffingReset;
-					task.Data = model.ResetStaffingTo.ToString();
+					task.Data = model.ResetStaffingTo;
 					task.AddedOn = DateTime.UtcNow;
 					task.Time = model.TimeToResetStaffing;
 					task.Monday = true;
@@ -696,7 +674,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 				else
 				{
-					model.ResetStaffingTo = (int)UserStateTypes.Available;
+					model.ResetStaffingTo = null;
 					model.TimeToResetStaffing = String.Empty;
 					await _scheduledTasksService.DeleteDepartmentStaffingResetJobAsync(DepartmentId, cancellationToken);
 				}
@@ -706,7 +684,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					var task = new ScheduledTask();
 					task.Active = true;
 					task.TaskType = (int)TaskTypes.DepartmentStatusReset;
-					task.Data = model.ResetStatusTo.ToString();
+					task.Data = model.ResetStatusTo;
 					task.AddedOn = DateTime.UtcNow;
 					task.Time = model.TimeToResetStatus;
 					task.Monday = true;
@@ -725,7 +703,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 				else
 				{
-					model.ResetStatusTo = (int)ActionTypes.StandingBy;
+					model.ResetStatusTo = null;
 					model.TimeToResetStatus = String.Empty;
 					await _scheduledTasksService.DeleteDepartmentStatusResetJob(DepartmentId, cancellationToken);
 				}
@@ -2355,6 +2333,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCards, DepartmentId))
 				{
+					// Conditional run cards: their fields are only on the page with the feature on; otherwise keep the stored values.
+					var conditionsEnabled = await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCardConditions, DepartmentId);
+					var storedConfig = await _departmentSettingsService.GetDispatchRecommendationConfigAsync(DepartmentId, true);
+
 					var mode = Enum.IsDefined(typeof(DispatchRecommendationModes), model.DispatchRecommendationMode)
 						? (DispatchRecommendationModes)model.DispatchRecommendationMode
 						: Model.DispatchRecommendationModes.Off;
@@ -2373,14 +2355,24 @@ namespace Resgrid.Web.Areas.User.Controllers
 						UnitMinimumStaffingLevel = Math.Max(0, model.RecommendationUnitMinimumStaffingLevel),
 						MoveUpRecommendationsEnabled = model.RecommendationMoveUpEnabled,
 						InQuartersTurnoutSeconds = Math.Max(0, model.RecommendationInQuartersTurnoutSeconds),
-						MobileTurnoutSeconds = Math.Max(0, model.RecommendationMobileTurnoutSeconds)
+						MobileTurnoutSeconds = Math.Max(0, model.RecommendationMobileTurnoutSeconds),
+						PersonnelTurnoutSeconds = conditionsEnabled ? Math.Max(0, model.RecommendationPersonnelTurnoutSeconds) : storedConfig.PersonnelTurnoutSeconds,
+						WaitingCallAutoDispatch = conditionsEnabled ? model.RecommendationWaitingCallAutoDispatch : storedConfig.WaitingCallAutoDispatch,
+						WaitingCallMaxResponseSeconds = conditionsEnabled ? Math.Max(0, model.RecommendationWaitingCallMaxResponseSeconds) : storedConfig.WaitingCallMaxResponseSeconds
 					}, cancellationToken);
+
+					if (conditionsEnabled)
+						await _departmentSettingsService.SetDispatchResponseCodesAsync(DepartmentId,
+							ParseResponseCodes(model.ResponseCodesJson, model.ResponseCodesShowToCrews,
+								await _departmentSettingsService.GetDispatchResponseCodesAsync(DepartmentId, true)), cancellationToken);
 				}
 
 				ModelState.Clear();
 				model.UnitTypeStatusOverrides = new List<UnitTypeDispatchStatusOverrideView>();
 				await PopulateDispatchSettingsUnitTypeOverridesAsync(model, unitTypeStatusOverrides);
 				await PopulateUnitStatusTargetsAsync(model);
+				// Reload the code catalog as stored, so the page carries the ids the save assigned.
+				model.ResponseCodesJson = null;
 				await PopulateRunCardRecommendationSettingsAsync(model, false);
 				model.SaveSuccess = true;
 				return View(model);
@@ -2397,6 +2389,77 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			model.SaveSuccess = false;
 			return View(model);
+		}
+
+		/// <summary>
+		/// The posted response code table as the catalog: codes trimmed and capped, blank rows dropped, duplicates (same code)
+		/// dropped, and stored ids kept so dispatches and package rows that refer to a code keep naming it. A code removed from
+		/// the table is kept as retired when it existed, so history stays readable.
+		/// </summary>
+		private static DispatchResponseCodesConfig ParseResponseCodes(string json, bool showToCrews, DispatchResponseCodesConfig stored)
+		{
+			var config = new DispatchResponseCodesConfig { ShowToCrews = showToCrews };
+			var existing = (stored?.Codes ?? new List<DispatchResponseCode>()).Where(c => c != null).ToList();
+			var nextId = existing.Any() ? existing.Max(c => c.Id) + 1 : 1;
+
+			List<DispatchResponseCode> posted;
+			try
+			{
+				posted = string.IsNullOrWhiteSpace(json) ? new List<DispatchResponseCode>() : JsonConvert.DeserializeObject<List<DispatchResponseCode>>(json) ?? new List<DispatchResponseCode>();
+			}
+			catch (JsonException)
+			{
+				// A malformed table keeps the stored catalog rather than wiping it.
+				return new DispatchResponseCodesConfig { ShowToCrews = showToCrews, Codes = existing };
+			}
+
+			var sort = 0;
+			foreach (var code in posted.Where(c => c != null && !string.IsNullOrWhiteSpace(c.Code)))
+			{
+				var text = code.Code.Trim();
+				if (text.Length > DispatchResponseCodesConfig.MaximumCodeLength)
+					text = text.Substring(0, DispatchResponseCodesConfig.MaximumCodeLength);
+
+				if (config.Codes.Any(c => string.Equals(c.Code, text, StringComparison.OrdinalIgnoreCase)) || config.Codes.Count >= DispatchResponseCodesConfig.MaximumCodes)
+					continue;
+
+				var name = code.Name?.Trim();
+				if (name != null && name.Length > DispatchResponseCodesConfig.MaximumNameLength)
+					name = name.Substring(0, DispatchResponseCodesConfig.MaximumNameLength);
+
+				var description = code.Description?.Trim();
+				if (description != null && description.Length > DispatchResponseCodesConfig.MaximumDescriptionLength)
+					description = description.Substring(0, DispatchResponseCodesConfig.MaximumDescriptionLength);
+
+				// A row without a stored id (added on the page, or posted again before a reload) keeps the id of the stored
+				// code with the same text, so dispatches and package rows that refer to it keep naming it.
+				var id = code.Id > 0 && existing.Any(c => c.Id == code.Id)
+					? code.Id
+					: existing.FirstOrDefault(c => string.Equals(c.Code, text, StringComparison.OrdinalIgnoreCase) && config.Codes.All(x => x.Id != c.Id))?.Id ?? nextId++;
+
+				config.Codes.Add(new DispatchResponseCode
+				{
+					Id = id,
+					Code = text,
+					Name = name,
+					Description = description,
+					Color = DispatchResponseCodesConfig.NormalizeColor(code.Color),
+					SortOrder = sort++,
+					Retired = code.Retired
+				});
+			}
+
+			foreach (var removed in existing.Where(e => config.Codes.All(c => c.Id != e.Id)))
+			{
+				if (config.Codes.Count >= DispatchResponseCodesConfig.MaximumCodes)
+					break;
+
+				removed.Retired = true;
+				removed.SortOrder = sort++;
+				config.Codes.Add(removed);
+			}
+
+			return config;
 		}
 
 		private async Task PopulateRunCardRecommendationSettingsAsync(DispatchSettingsView model, bool loadValues = true)
@@ -2423,13 +2486,28 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.RecommendationMoveUpEnabled = config.MoveUpRecommendationsEnabled;
 				model.RecommendationInQuartersTurnoutSeconds = config.InQuartersTurnoutSeconds;
 				model.RecommendationMobileTurnoutSeconds = config.MobileTurnoutSeconds;
+				model.RecommendationPersonnelTurnoutSeconds = config.PersonnelTurnoutSeconds;
+				model.RecommendationWaitingCallAutoDispatch = config.WaitingCallAutoDispatch;
+				model.RecommendationWaitingCallMaxResponseSeconds = config.WaitingCallMaxResponseSeconds;
+			}
+
+			model.RunCardConditionsFeatureEnabled = await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCardConditions, DepartmentId);
+
+			if (model.RunCardConditionsFeatureEnabled && (loadValues || string.IsNullOrWhiteSpace(model.ResponseCodesJson)))
+			{
+				var codes = await _departmentSettingsService.GetDispatchResponseCodesAsync(DepartmentId, true) ?? new DispatchResponseCodesConfig();
+				model.ResponseCodesShowToCrews = codes.ShowToCrews;
+				model.ResponseCodesJson = JsonConvert.SerializeObject((codes.Codes ?? new List<DispatchResponseCode>()).OrderBy(c => c.SortOrder).Select(c => new
+				{
+					id = c.Id, code = c.Code, name = c.Name, description = c.Description, color = c.Color, retired = c.Retired
+				}));
 			}
 
 			model.DispatchRecommendationModes = new SelectList(new[]
 			{
 				new SelectListItem { Value = ((int)Model.DispatchRecommendationModes.Off).ToString(), Text = "Off (Manual Dispatch)" },
 				new SelectListItem { Value = ((int)Model.DispatchRecommendationModes.StationBased).ToString(), Text = "Station Based Dispatching" },
-				new SelectListItem { Value = ((int)Model.DispatchRecommendationModes.ClosestUnit).ToString(), Text = "Closest Unit Response" }
+				new SelectListItem { Value = ((int)Model.DispatchRecommendationModes.ClosestUnit).ToString(), Text = HttpContext.WithDepartmentTerms("Closest Unit Response") }
 			}, "Value", "Text", model.DispatchRecommendationMode);
 
 			model.StaffingLevelOptions = new SelectList(new[]
@@ -2730,6 +2808,87 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			return Enum.GetValues(typeof(ActionBaseTypes)).Cast<ActionBaseTypes>()
 				.Where(x => x != ActionBaseTypes.None && x != ActionBaseTypes.NotResponding);
+		}
+
+		/// <summary>
+		/// "Reset Staffing Level To": a staffing meaning ("b{n}"), which the reset resolves to the department's level with that
+		/// meaning when it runs (so it follows renamed or replaced levels), or one of the department's levels. A meaning no level
+		/// has is left out. <paramref name="saved"/> is selected (a value no longer offered stays as its own entry, so saving
+		/// the page doesn't change it); with nothing saved, Unavailable is preselected.
+		/// </summary>
+		private async Task<List<SelectListItem>> BuildStaffingResetOptionsAsync(CustomState staffingSet, string saved)
+		{
+			var meanings = new List<(string Value, string Text)>();
+			foreach (StaffingBaseTypes meaning in Enum.GetValues(typeof(StaffingBaseTypes)))
+			{
+				if (meaning != StaffingBaseTypes.None && (await _customStateService.ResolvePersonnelStaffingAsync(DepartmentId, meaning)).HasValue)
+					meanings.Add((StatusMatch.BaseTypeToken((int)meaning), StaffingMeaningName(meaning)));
+			}
+
+			var levels = staffingSet != null
+				? staffingSet.GetActiveDetails().Select(x => (x.CustomStateDetailId.ToString(), x.ButtonText)).ToList()
+				: Enum.GetValues(typeof(UserStateTypes)).Cast<UserStateTypes>().Select(x => (((int)x).ToString(), x.DisplayName())).ToList();
+
+			return BuildResetOptions(meanings, _departmentLocalizer["ResetStaffingMeaningGroup"], levels, _departmentLocalizer["ResetStaffingOptionGroup"],
+				saved, StatusMatch.BaseTypeToken((int)StaffingBaseTypes.Unavailable),
+				raw => Enum.IsDefined(typeof(UserStateTypes), raw) ? ((UserStateTypes)raw).DisplayName() : null,
+				meaning => Enum.IsDefined(typeof(StaffingBaseTypes), meaning) ? StaffingMeaningName((StaffingBaseTypes)meaning) : null);
+		}
+
+		/// <summary>"Reset Status To": the same as <see cref="BuildStaffingResetOptionsAsync"/> for statuses; Available is preselected.</summary>
+		private async Task<List<SelectListItem>> BuildStatusResetOptionsAsync(CustomState personnelSet, string saved)
+		{
+			var meanings = new List<(string Value, string Text)>();
+			foreach (ActionBaseTypes meaning in Enum.GetValues(typeof(ActionBaseTypes)))
+			{
+				if (meaning != ActionBaseTypes.None && (await _customStateService.ResolvePersonnelStatusAsync(DepartmentId, meaning)).HasValue)
+					meanings.Add((StatusMatch.BaseTypeToken((int)meaning), MeaningName(meaning)));
+			}
+
+			var statuses = personnelSet != null
+				? personnelSet.GetActiveDetails().Select(x => (x.CustomStateDetailId.ToString(), x.ButtonText)).ToList()
+				: Enum.GetValues(typeof(ActionTypes)).Cast<ActionTypes>().Select(x => (((int)x).ToString(), x.DisplayName())).ToList();
+
+			return BuildResetOptions(meanings, _departmentLocalizer["ResetStatusMeaningGroup"], statuses, _departmentLocalizer["ResetStatusOptionGroup"],
+				saved, StatusMatch.BaseTypeToken((int)ActionBaseTypes.Available),
+				raw => Enum.IsDefined(typeof(ActionTypes), raw) ? ((ActionTypes)raw).DisplayName() : null,
+				meaning => Enum.IsDefined(typeof(ActionBaseTypes), meaning) ? MeaningName((ActionBaseTypes)meaning) : null);
+		}
+
+		private List<SelectListItem> BuildResetOptions(List<(string Value, string Text)> meanings, string meaningGroupName, List<(string Value, string Text)> options,
+			string optionGroupName, string saved, string defaultValue, Func<int, string> builtInName, Func<int, string> meaningName)
+		{
+			var meaningGroup = new SelectListGroup { Name = meaningGroupName };
+			var optionGroup = new SelectListGroup { Name = optionGroupName };
+
+			var items = meanings.Select(x => new SelectListItem { Value = x.Value, Text = x.Text, Group = meaningGroup })
+				.Concat(options.Select(x => new SelectListItem { Value = x.Value, Text = x.Text, Group = optionGroup }))
+				.ToList();
+
+			if (!String.IsNullOrWhiteSpace(saved) && items.All(x => x.Value != saved.Trim()))
+			{
+				var meaning = StatusMatch.BaseTypeOf(saved);
+				var name = meaning.HasValue ? meaningName(meaning.Value) : int.TryParse(saved, out var raw) ? builtInName(raw) : null;
+				items.Add(new SelectListItem { Value = saved.Trim(), Text = string.Format(_departmentLocalizer["ResetTargetSavedOption"], name ?? saved.Trim()) });
+			}
+
+			var selected = !String.IsNullOrWhiteSpace(saved) ? saved.Trim() : items.Any(x => x.Value == defaultValue) ? defaultValue : items.FirstOrDefault()?.Value;
+			return SelectResetOption(items, selected);
+		}
+
+		private static List<SelectListItem> SelectResetOption(List<SelectListItem> items, string selected)
+		{
+			foreach (var item in items)
+				item.Selected = item.Value == selected;
+
+			return items;
+		}
+
+		/// <summary>The localized name of a staffing meaning (the Custom Statuses strings), or its display name without one.</summary>
+		private string StaffingMeaningName(StaffingBaseTypes baseType)
+		{
+			var name = _statusLocalizer?["Staffing" + baseType];
+			return name == null || name.ResourceNotFound ? baseType.DisplayName() : name.Value;
 		}
 
 		private List<SelectListItem> BuildUnitStatusTargetOptions(int storedValue, bool isDispatch)
@@ -3338,8 +3497,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		#endregion Delete Department
 
 		#region Terminology
+		// The page names Resgrid's own terms next to the department's, so its text keeps Resgrid's wording.
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_Update)]
+		[Resgrid.Web.Filters.SuppressDepartmentTerms]
 		public async Task<IActionResult> Terminology()
 		{
 			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
@@ -3351,6 +3512,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
+		[Resgrid.Web.Filters.SuppressDepartmentTerms]
 		public async Task<IActionResult> Terminology(TerminologyView model, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
@@ -3358,28 +3520,31 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var before = await _departmentSettingsService.GetDepartmentTerminologyAsync(DepartmentId, true);
 			var posted = (model?.Terms ?? new List<TerminologyRow>()).Where(r => r != null && DepartmentTerms.IsKnown(r.Key))
-				.GroupBy(r => r.Key, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.Last().Text, StringComparer.Ordinal);
+				.GroupBy(r => r.Key, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.Last(), StringComparer.Ordinal);
 
-			// Start from what is saved so a term missing from the post keeps its name; a name over the limit keeps the saved one.
+			// Start from what is saved so a term missing from the post keeps its names; a name over the limit keeps the saved ones.
 			var config = new DepartmentTerminologyConfig();
 			var tooLong = new List<string>();
+			var badCharacters = false;
 			foreach (var term in DepartmentTerms.All)
 			{
-				if (!posted.TryGetValue(term.Key, out var text))
+				if (!posted.TryGetValue(term.Key, out var row))
 				{
-					config.Set(term.Key, before.TextFor(term.Key));
+					config.Set(term.Key, before.TextFor(term.Key), before.SavedSingularFor(term.Key));
 					continue;
 				}
 
-				var normalized = DepartmentTerms.Normalize(text);
-				if (!DepartmentTerms.IsValidText(normalized))
+				var normalized = DepartmentTerms.Normalize(row.Text);
+				var normalizedSingular = term.HasSingular ? DepartmentTerms.Normalize(row.Singular) : null;
+				if (!DepartmentTerms.IsValidText(normalized) || !DepartmentTerms.IsValidText(normalizedSingular))
 				{
+					badCharacters |= DepartmentTerms.HasForbiddenCharacters(normalized) || DepartmentTerms.HasForbiddenCharacters(normalizedSingular);
 					tooLong.Add(term.Key);
-					config.Set(term.Key, before.TextFor(term.Key));
+					config.Set(term.Key, before.TextFor(term.Key), before.SavedSingularFor(term.Key));
 					continue;
 				}
 
-				config.Set(term.Key, normalized);
+				config.Set(term.Key, normalized, normalizedSingular);
 			}
 
 			await _departmentSettingsService.SetDepartmentTerminologyAsync(DepartmentId, config, cancellationToken);
@@ -3389,10 +3554,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ModelState.Clear();
 			var view = TerminologyView.From(config);
 			foreach (var row in view.Terms.Where(r => tooLong.Contains(r.Key)))
-				row.Text = posted[row.Key];
+			{
+				row.Text = posted[row.Key].Text;
+				row.Singular = posted[row.Key].Singular;
+			}
 
 			if (tooLong.Count > 0)
-				view.ErrorMessage = string.Format(_departmentLocalizer["TerminologyTooLong"].Value, DepartmentTerms.MaxLength);
+				view.ErrorMessage = badCharacters
+					? _departmentLocalizer["TerminologyInvalidCharacters"].Value
+					: string.Format(_departmentLocalizer["TerminologyTooLong"].Value, DepartmentTerms.MaxLength);
 			view.Message = _departmentLocalizer[tooLong.Count == 0 ? "TerminologySaved" : "TerminologyPartlySaved"];
 
 			return View(view);
@@ -3400,8 +3570,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		private static Dictionary<string, string> TerminologyAudit(DepartmentTerminologyConfig config)
 		{
-			return DepartmentTerms.All.Select(t => new { t.Key, Text = config?.TextFor(t.Key) }).Where(t => t.Text != null)
+			var audit = DepartmentTerms.All.Select(t => new { t.Key, Text = config?.TextFor(t.Key) }).Where(t => t.Text != null)
 				.ToDictionary(t => t.Key, t => t.Text, StringComparer.Ordinal);
+			foreach (var term in DepartmentTerms.All.Where(t => t.HasSingular))
+			{
+				var singular = config?.SavedSingularFor(term.Key);
+				if (singular != null)
+					audit[term.Key + ".singular"] = singular;
+			}
+
+			return audit;
 		}
 		#endregion Terminology
 

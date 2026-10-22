@@ -143,6 +143,10 @@ var resgrid;
             }
             function registerClientMethods() {
                 eventHub.on("checklistUpdated", function () { document.dispatchEvent(new Event("resgrid:checklists-updated")); });
+                // Conditional run cards: calls awaiting resources changed, or a freed unit matches one (payload = alert JSON).
+                eventHub.on("outstandingRequirementsUpdated", function (id, payload) {
+                    document.dispatchEvent(new CustomEvent("resgrid:outstanding-requirements-updated", { detail: { id: id, payload: payload } }));
+                });
                 eventHub.on("onConnected", function (id) {
                     //connectionId = id;
                 });

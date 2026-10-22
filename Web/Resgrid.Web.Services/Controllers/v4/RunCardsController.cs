@@ -156,6 +156,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			card.MinimumStaffingLevelOverride = input.MinimumStaffingLevelOverride;
 			card.HomeStationGroupId = input.HomeStationGroupId;
 
+			// This API does not edit decision graphs or packages (conditional run cards); keep the stored ones.
+			var storedLevels = card.AlarmLevels;
+
 			card.Triggers = input.Triggers.Select(t => new RunCardTrigger
 			{
 				RunCardTriggerId = t.RunCardTriggerId,
@@ -190,6 +193,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 					SortOrder = r.SortOrder
 				}).ToList()
 			}).ToList();
+
+			RunCardDecisionGraph.CarryOverConditionalParts(storedLevels, card.AlarmLevels);
 
 			card.AvailabilitySelections = (input.Selections ?? new List<RunCardSelectionData>()).Select(s => new RunCardAvailabilitySelection
 			{
@@ -298,10 +303,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// </summary>
 		/// <param name="callId">The active call.</param>
 		/// <param name="alarmLevel">Alarm level to fill; defaults to the call's current level.</param>
+		/// <param name="reevaluate">Conditional run cards: ignore the decision pinned when the call was saved and walk the graph fresh.</param>
 		[HttpGet("GetCallRecommendation")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Call_View)]
-		public async Task<ActionResult<RunCardRecommendationResult>> GetCallRecommendation(int callId, int? alarmLevel = null)
+		public async Task<ActionResult<RunCardRecommendationResult>> GetCallRecommendation(int callId, int? alarmLevel = null, bool reevaluate = false)
 		{
 			if (!await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCards, DepartmentId))
 				return NotFound();
@@ -316,7 +322,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			call = await _callsService.PopulateCallData(call, true, false, false, false, true, false, false, false, false);
 
-			var recommendation = await _dispatchRecommendationService.GetRecommendationAsync(DispatchRecommendationRequest.ForCallInProgress(call, alarmLevel));
+			var request = DispatchRecommendationRequest.ForCallInProgress(call, alarmLevel);
+			// Conditional run cards: walk the decision graph fresh instead of the decision pinned when the call was saved.
+			request.Reevaluate = reevaluate;
+
+			var recommendation = await _dispatchRecommendationService.GetRecommendationAsync(request);
 
 			var result = new RunCardRecommendationResult
 			{

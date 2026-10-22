@@ -56,6 +56,9 @@ namespace Resgrid.Chatbot.Handlers
 				if (allUsers == null || !allUsers.Any())
 					return new ChatbotResponse { Text = ChatbotResources.Get("Personnel_None", culture), Processed = true };
 
+				// No status inside the auto-available hour reads as the department's Available status.
+				var defaultStatus = await _customStateService.GetDefaultPersonnelStatusAsync(session.DepartmentId);
+
 				// Optional search filter: "who is John", "where is captain smith" supply a query.
 				intent.Parameters.TryGetValue("query", out var query);
 				var hasQuery = !string.IsNullOrWhiteSpace(query);
@@ -89,7 +92,7 @@ namespace Resgrid.Chatbot.Handlers
 				{
 					var lastAction = lastActionLogs.FirstOrDefault(x => x.UserId == user.UserId);
 					var state = userStates.FirstOrDefault(x => x.UserId == user.UserId);
-					var status = await _customStateService.GetCustomPersonnelStatusAsync(session.DepartmentId, lastAction);
+					var status = lastAction != null ? await _customStateService.GetCustomPersonnelStatusAsync(session.DepartmentId, lastAction) : defaultStatus;
 					var staffing = await _customStateService.GetCustomPersonnelStaffingAsync(session.DepartmentId, state);
 
 					var statusText = status?.ButtonText ?? ChatbotResources.Get("Personnel_Unknown", culture);

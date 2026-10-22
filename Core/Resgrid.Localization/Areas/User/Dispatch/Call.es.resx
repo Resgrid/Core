@@ -1126,4 +1126,37 @@
   <data name="NewCallFieldRequired" xml:space="preserve">
     <value>{0} es obligatorio en este departamento.</value>
   </data>
+  <data name="NearestUnitsPick" xml:space="preserve">
+    <value>Despachar</value>
+  </data>
+  <data name="NearestPersonnelLabel" xml:space="preserve">
+    <value>Personal más cercano</value>
+  </data>
+  <data name="NearestPersonnelPerson" xml:space="preserve">
+    <value>Persona</value>
+  </data>
+  <data name="NearestPersonnelStaffing" xml:space="preserve">
+    <value>Disponibilidad</value>
+  </data>
+  <data name="NearestPersonnelGroupRoles" xml:space="preserve">
+    <value>Grupo / funciones</value>
+  </data>
+  <data name="NearestUnitsNearest" xml:space="preserve">
+    <value>Más cercano #{0}</value>
+  </data>
+  <data name="NearestUnitsHidden" xml:space="preserve">
+    <value>Ubicación oculta</value>
+  </data>
+  <data name="NearestPersonnelOnUnit" xml:space="preserve">
+    <value>En {0}</value>
+  </data>
+  <data name="NearestUnitsMapUnits" xml:space="preserve">
+    <value>Unidades</value>
+  </data>
+  <data name="NearestUnitsMapPersonnel" xml:space="preserve">
+    <value>Personal</value>
+  </data>
+  <data name="NearestUnitsMapBoundaries" xml:space="preserve">
+    <value>Límites de estaciones</value>
+  </data>
 </root>

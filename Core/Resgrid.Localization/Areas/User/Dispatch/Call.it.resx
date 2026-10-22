@@ -1068,4 +1068,37 @@
   <data name="NewCallFieldRequired" xml:space="preserve">
     <value>{0} è obbligatorio in questo dipartimento.</value>
   </data>
+  <data name="NearestUnitsPick" xml:space="preserve">
+    <value>Invia</value>
+  </data>
+  <data name="NearestPersonnelLabel" xml:space="preserve">
+    <value>Personale più vicino</value>
+  </data>
+  <data name="NearestPersonnelPerson" xml:space="preserve">
+    <value>Persona</value>
+  </data>
+  <data name="NearestPersonnelStaffing" xml:space="preserve">
+    <value>Disponibilità</value>
+  </data>
+  <data name="NearestPersonnelGroupRoles" xml:space="preserve">
+    <value>Gruppo / ruoli</value>
+  </data>
+  <data name="NearestUnitsNearest" xml:space="preserve">
+    <value>Più vicino n. {0}</value>
+  </data>
+  <data name="NearestUnitsHidden" xml:space="preserve">
+    <value>Posizione nascosta</value>
+  </data>
+  <data name="NearestPersonnelOnUnit" xml:space="preserve">
+    <value>Su {0}</value>
+  </data>
+  <data name="NearestUnitsMapUnits" xml:space="preserve">
+    <value>Unità</value>
+  </data>
+  <data name="NearestUnitsMapPersonnel" xml:space="preserve">
+    <value>Personale</value>
+  </data>
+  <data name="NearestUnitsMapBoundaries" xml:space="preserve">
+    <value>Confini delle sedi</value>
+  </data>
 </root>

@@ -843,6 +843,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (call.UnitDispatches != null && call.UnitDispatches.Any())
 			{
+				// Response codes reach crews only when the department turned that on (conditional run cards).
+				var responseCodes = call.UnitDispatches.Any(d => !string.IsNullOrWhiteSpace(d.ResponseCode))
+					? await _departmentSettingsService.GetDispatchResponseCodesAsync(DepartmentId)
+					: null;
+
 				foreach (var unitDispatch in call.UnitDispatches)
 				{
 					var eventResult = new DispatchedEventResultData();
@@ -852,6 +857,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 						eventResult.Timestamp = unitDispatch.LastDispatchedOn.Value;
 					}
 					eventResult.Type = "Unit";
+
+					if (responseCodes != null && responseCodes.ShowToCrews && !string.IsNullOrWhiteSpace(unitDispatch.ResponseCode))
+					{
+						eventResult.ResponseCode = unitDispatch.ResponseCode;
+						eventResult.ResponseCodeName = unitDispatch.ResponseCodeName;
+						eventResult.ResponseCodeColor = responseCodes.Find(unitDispatch.ResponseCodeId)?.Color;
+					}
 
 					var unit = units.FirstOrDefault(x => x.UnitId == unitDispatch.UnitId);
 					if (unit != null)
@@ -1288,7 +1300,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 			// API-originated calls, including chatbot/MCP sources.
 			DispatchRecommendationResult recommendationResult = null;
 			if (shouldDispatchNow && await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCards, effectiveDepartmentId))
-				recommendationResult = await _dispatchRecommendationService.EnrichCallForDispatchAsync(call, 1, true, cancellationToken);
+				recommendationResult = await _dispatchRecommendationService.EnrichCallForDispatchAsync(call, 1, true, newCallInput.RunCardOutcomeNodeKey, cancellationToken);
+
+			// Per-unit response codes the dispatcher kept, changed or cleared (conditional run cards).
+			if (!string.IsNullOrWhiteSpace(newCallInput.UnitResponseCodes))
+				ResponseCodeSelections.ApplyAll(call.UnitDispatches, ResponseCodeSelections.Parse(newCallInput.UnitResponseCodes),
+					await _departmentSettingsService.GetDispatchResponseCodesAsync(effectiveDepartmentId));
 
 			// ADP write preflight (plan 3.3): refuse BEFORE inserting — attended callers need a
 			// current grant; system-key/workload callers pass (broker encrypt-only lane).
@@ -1355,10 +1372,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			try
 			{
-				if (Pending(InboundEmailPendingSteps.RunCardActivation) &&
-					recommendationResult != null && recommendationResult.MatchedRunCardId.HasValue && recommendationResult.AutoDispatch)
+				// One step for both records, so a retry of a finished request writes neither again.
+				if (Pending(InboundEmailPendingSteps.RunCardActivation) && recommendationResult != null)
 				{
-					await _dispatchRecommendationService.RecordActivationAsync(savedCall, recommendationResult, UserId, cancellationToken);
+					if (recommendationResult.MatchedRunCardId.HasValue && recommendationResult.AutoDispatch)
+						await _dispatchRecommendationService.RecordActivationAsync(savedCall, recommendationResult, UserId, cancellationToken);
+					else if (recommendationResult.Decision != null)
+						// Conditional run cards without auto-dispatch: pin what the dispatcher reviewed (never throws).
+						await _dispatchRecommendationService.RecordDecisionAsync(savedCall, recommendationResult, UserId, RunCardDecisionSources.SaveTime, cancellationToken);
+
 					await _inboundEmailReceiptsService.CompleteStepAsync(receipt, InboundEmailPendingSteps.RunCardActivation);
 				}
 
@@ -1879,6 +1901,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 					Logging.LogException(ex);
 				}
 			}
+
+			// Codes apply to the units the edit leaves on the call, whichever way the dispatch list was handled above
+			// (kept for a pending call or a hidden list, "everyone", or an explicit list).
+			if (!string.IsNullOrWhiteSpace(editCallInput.UnitResponseCodes))
+				ResponseCodeSelections.ApplyAll(call.UnitDispatches, ResponseCodeSelections.Parse(editCallInput.UnitResponseCodes),
+					await _departmentSettingsService.GetDispatchResponseCodesAsync(DepartmentId));
 
 			// Checked against the call as the edit leaves it (a blank input keeps the stored value) and before anything
 			// below changes stored data. The dispatch time only means something before a call goes out.
@@ -2550,6 +2578,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (!string.IsNullOrWhiteSpace(input.DispatchList))
 				await ReplaceDispatchListAsync(call, input.DispatchList);
+
+			if (!string.IsNullOrWhiteSpace(input.UnitResponseCodes))
+				ResponseCodeSelections.ApplyAll(call.UnitDispatches, ResponseCodeSelections.Parse(input.UnitResponseCodes),
+					await _departmentSettingsService.GetDispatchResponseCodesAsync(DepartmentId));
 
 			var outcome = await _pendingCallsService.DispatchNowAsync(call, UserId, cancellationToken);
 

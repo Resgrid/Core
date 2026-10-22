@@ -204,6 +204,11 @@ namespace Resgrid.Repositories.DataRepository
 					return await insertFunction(conn);
 				}
 			}
+			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+			{
+				// The caller stopped waiting (a closed page, a stopping host): not a fault to report.
+				throw;
+			}
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
@@ -250,6 +255,11 @@ namespace Resgrid.Repositories.DataRepository
 					return await updateFunction(conn);
 				}
 			}
+			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+			{
+				// The caller stopped waiting (a closed page, a stopping host): not a fault to report.
+				throw;
+			}
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
@@ -291,6 +301,11 @@ namespace Resgrid.Repositories.DataRepository
 						conn = _unitOfWork.CreateOrGetConnection();
 						return await removeFunction(conn);
 					}
+				}
+				catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+				{
+					// The caller stopped waiting (a closed page, a stopping host): not a fault to report.
+					throw;
 				}
 				catch (Exception ex)
 				{
@@ -399,6 +414,11 @@ namespace Resgrid.Repositories.DataRepository
 					conn = _unitOfWork.CreateOrGetConnection();
 					return await removeFunction(conn);
 				}
+			}
+			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+			{
+				// The caller stopped waiting (a closed page, a stopping host): not a fault to report.
+				throw;
 			}
 			catch (Exception ex)
 			{

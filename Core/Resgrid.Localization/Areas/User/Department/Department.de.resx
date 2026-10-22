@@ -1449,13 +1449,13 @@
     <value>Terminologie</value>
   </data>
   <data name="TerminologyIntro" xml:space="preserve">
-    <value>Verwenden Sie die Begriffe Ihrer Organisation. Ein hier festgelegter Name ersetzt den Resgrid-Namen dieses Moduls oder Aktentyps in der Navigation, in Seitentiteln, überall, wo Aktentypen aufgeführt werden, und in den Apps Responder, Unit, IC und Dispatch – für alle Mitglieder und in jeder Sprache. Nur die Bezeichnung ändert sich: Berechtigungen, Links und Integrationen bleiben unberührt. Lassen Sie ein Feld leer, um den Resgrid-Namen beizubehalten.</value>
+    <value>Verwenden Sie die Begriffe Ihrer Organisation. Ein hier festgelegter Name ersetzt den Resgrid-Namen dieses Moduls oder Aktentyps auf der gesamten Website – in der Navigation, in Seitentiteln, auf Schaltflächen, in Spaltenüberschriften, Meldungen, Ausdrucken und Exporten – sowie in den Apps Responder, Unit, IC und Dispatch, für alle Mitglieder und in jeder Sprache. Nur die Formulierung ändert sich: Berechtigungen, Links, Integrationen und alles, was Ihre Mitglieder eingegeben haben, bleiben unverändert. Lassen Sie ein Feld leer, um den Resgrid-Namen beizubehalten.</value>
   </data>
   <data name="TerminologyModules" xml:space="preserve">
     <value>Module</value>
   </data>
   <data name="TerminologyModulesHelp" xml:space="preserve">
-    <value>Wird in der Navigation, als Titel der Hauptseite des Moduls und in den Menüs der Apps angezeigt. Sätze an anderer Stelle, die ein Modul erwähnen, behalten die Resgrid-Formulierung.</value>
+    <value>Geben Sie den Namen des Moduls und, falls vorhanden, das Wort für einen einzelnen Eintrag an, etwa Teams und Team für Einheiten, damit Schaltflächen wie Neues Team natürlich klingen; lassen Sie den Eintrag leer, um ihn aus dem Namen ableiten zu lassen. Mit „In ganz Resgrid“ markierte Module ändern sich überall, wo Resgrid sie erwähnt. Die übrigen ändern sich in ihrem eigenen Modul, weil Wörter wie Notiz, Protokoll, Akte oder Kontakt anderswo auch alltägliche Bedeutungen haben.</value>
   </data>
   <data name="TerminologyRecordTypes" xml:space="preserve">
     <value>Aktentypen</value>
@@ -1477,6 +1477,9 @@
   </data>
   <data name="TerminologyTooLong" xml:space="preserve">
     <value>Namen dürfen höchstens {0} Zeichen lang sein; längere Namen wurden nicht gespeichert und werden zur Korrektur angezeigt.</value>
+  </data>
+  <data name="TerminologyInvalidCharacters" xml:space="preserve">
+    <value>Namen dürfen weder &lt; &gt; { noch } enthalten; diese Namen wurden nicht gespeichert und werden zur Korrektur angezeigt.</value>
   </data>
   <data name="TerminologyRecordDefinitionsLink" xml:space="preserve">
     <value>Aktendefinitionen</value>
@@ -1693,5 +1696,353 @@
   </data>
   <data name="OrgType.other" xml:space="preserve">
     <value>Sonstige</value>
+  </data>
+  <data name="SettingsGroupDispatch" xml:space="preserve">
+    <value>Einsatz &amp; Alarmierung</value>
+  </data>
+  <data name="SettingsGroupOperations" xml:space="preserve">
+    <value>Betrieb</value>
+  </data>
+  <data name="SettingsGroupCustomization" xml:space="preserve">
+    <value>Anpassung</value>
+  </data>
+  <data name="SettingsGroupIntegrations" xml:space="preserve">
+    <value>Integrationen</value>
+  </data>
+  <data name="ResetStaffingMeaningGroup" xml:space="preserve">
+    <value>Bedeutung der Verfügbarkeit (Ihre Stufe mit dieser Bedeutung)</value>
+  </data>
+  <data name="ResetStaffingOptionGroup" xml:space="preserve">
+    <value>Bestimmte Verfügbarkeitsstufe</value>
+  </data>
+  <data name="ResetStatusMeaningGroup" xml:space="preserve">
+    <value>Bedeutung des Status (Ihr Status mit dieser Bedeutung)</value>
+  </data>
+  <data name="ResetStatusOptionGroup" xml:space="preserve">
+    <value>Bestimmter Status</value>
+  </data>
+  <data name="ResetTargetSavedOption" xml:space="preserve">
+    <value>{0} (früher gespeichert, nicht mehr angeboten)</value>
+  </data>
+  <data name="RunCardRelaxUnfilledRowsLabel" xml:space="preserve">
+    <value>Statusfilter bei offenen Zeilen lockern</value>
+  </data>
+  <data name="RunCardRelaxUnfilledRowsHelp" xml:space="preserve">
+    <value>Findet der Statusfilter einer Zeile nichts, wird stattdessen die schnellste verfügbare Einheit derselben Art vorgeschlagen.</value>
+  </data>
+  <data name="RunCardWaitingAutoDispatchLabel" xml:space="preserve">
+    <value>Frei gewordene Einheiten zu wartenden Einsätzen alarmieren</value>
+  </data>
+  <data name="RunCardWaitingAutoDispatchOff" xml:space="preserve">
+    <value>Aus (nur Disponenten benachrichtigen)</value>
+  </data>
+  <data name="RunCardWaitingAutoDispatchOn" xml:space="preserve">
+    <value>Ein (automatisch alarmieren)</value>
+  </data>
+  <data name="RunCardWaitingAutoDispatchHelp" xml:space="preserve">
+    <value>Überschreibt die Abteilungseinstellung für Einsätze, die diese Karte auf ein Einsatzmittel warten lässt.</value>
+  </data>
+  <data name="RunCardDecisionGraphHelp" xml:space="preserve">
+    <value>Eine Stufe kann Fragen stellen (welche Einheit ist zuerst da, ist rechtzeitig eine verfügbar) und das Einsatzpaket des erreichten Ergebnisses vorschlagen. Die Zeilen darüber werden immer gesendet.</value>
+  </data>
+  <data name="ResponsePackagesHeader" xml:space="preserve">
+    <value>Einsatzpakete</value>
+  </data>
+  <data name="RunCardShowRawJson" xml:space="preserve">
+    <value>Rohergebnis anzeigen</value>
+  </data>
+  <data name="RunCardTargetUnitsGroup" xml:space="preserve">
+    <value>Einheiten</value>
+  </data>
+  <data name="RunCardTargetPeopleGroup" xml:space="preserve">
+    <value>Personen</value>
+  </data>
+  <data name="RunCardTargetAnyUnit" xml:space="preserve">
+    <value>Beliebige Einheit</value>
+  </data>
+  <data name="RunCardTargetAnyPerson" xml:space="preserve">
+    <value>Beliebige Person</value>
+  </data>
+  <data name="RunCardTargetAnyClass" xml:space="preserve">
+    <value>Beliebig: {0}</value>
+  </data>
+  <data name="RunCardStatusAnyAvailable" xml:space="preserve">
+    <value>Beliebig verfügbar</value>
+  </data>
+  <data name="RunCardStatusInQuarters" xml:space="preserve">
+    <value>In der Wache</value>
+  </data>
+  <data name="RunCardStatusAwayFromQuarters" xml:space="preserve">
+    <value>Außerhalb der Wache</value>
+  </data>
+  <data name="RunCardStatusBaseTypes" xml:space="preserve">
+    <value>Status mit Bedeutung</value>
+  </data>
+  <data name="RunCardNodeChoose" xml:space="preserve">
+    <value>Auswählen...</value>
+  </data>
+  <data name="RunCardOutcomePrefix" xml:space="preserve">
+    <value>Ergebnis</value>
+  </data>
+  <data name="RunCardConditionPrefix" xml:space="preserve">
+    <value>Bedingung</value>
+  </data>
+  <data name="RunCardNodeStartLabel" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="RunCardNodeLabelPlaceholder" xml:space="preserve">
+    <value>Bezeichnung für Disponenten</value>
+  </data>
+  <data name="RunCardOutcomePackageLabel" xml:space="preserve">
+    <value>Paket senden</value>
+  </data>
+  <data name="RunCardNoPackageOption" xml:space="preserve">
+    <value>Kein Paket</value>
+  </data>
+  <data name="RunCardOutcomeAdviceLabel" xml:space="preserve">
+    <value>Hinweis für Disponenten</value>
+  </data>
+  <data name="RunCardConditionArrivesBefore" xml:space="preserve">
+    <value>Trifft früher ein als</value>
+  </data>
+  <data name="RunCardConditionAvailableWithin" xml:space="preserve">
+    <value>Verfügbar innerhalb</value>
+  </data>
+  <data name="RunCardConditionSubjectLabel" xml:space="preserve">
+    <value>Einsatzmittel</value>
+  </data>
+  <data name="RunCardConditionReferenceLabel" xml:space="preserve">
+    <value>Verglichen mit</value>
+  </data>
+  <data name="RunCardConditionMarginLabel" xml:space="preserve">
+    <value>Um mindestens (Sekunden)</value>
+  </data>
+  <data name="RunCardConditionWithinLabel" xml:space="preserve">
+    <value>Innerhalb (Sekunden)</value>
+  </data>
+  <data name="RunCardConditionCountLabel" xml:space="preserve">
+    <value>Wie viele</value>
+  </data>
+  <data name="RunCardConditionYesLabel" xml:space="preserve">
+    <value>Wenn ja</value>
+  </data>
+  <data name="RunCardConditionNoLabel" xml:space="preserve">
+    <value>Wenn nein</value>
+  </data>
+  <data name="RunCardLevelPackageLabel" xml:space="preserve">
+    <value>Einsatzpaket</value>
+  </data>
+  <data name="RunCardDecisionGraphLabel" xml:space="preserve">
+    <value>Entscheidungsbaum</value>
+  </data>
+  <data name="RunCardAddConditionButton" xml:space="preserve">
+    <value>Bedingung hinzufügen</value>
+  </data>
+  <data name="RunCardAddOutcomeButton" xml:space="preserve">
+    <value>Ergebnis hinzufügen</value>
+  </data>
+  <data name="NewResponsePackageButton" xml:space="preserve">
+    <value>Neues Einsatzpaket</value>
+  </data>
+  <data name="ResponsePackagesHelp" xml:space="preserve">
+    <value>Ein Einsatzpaket ist ein benannter Satz von Einsatzmitteln (z. B. "Löschfahrzeug und RTW"), den Stufen und Ergebnisse von Einsatzkarten senden. Eine Änderung wirkt auf alle Karten, die es nutzen.</value>
+  </data>
+  <data name="ResponsePackageNameLabel" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="ResponsePackageDescriptionLabel" xml:space="preserve">
+    <value>Beschreibung</value>
+  </data>
+  <data name="ResponsePackageRetiredLabel" xml:space="preserve">
+    <value>Außer Dienst (in Auswahllisten ausgeblendet)</value>
+  </data>
+  <data name="ResponsePackageRowsLabel" xml:space="preserve">
+    <value>Zeilen</value>
+  </data>
+  <data name="ResponsePackageRowsHelp" xml:space="preserve">
+    <value>Jede Zeile akzeptiert jeden ihrer Einsatzmitteltypen. Ein Ersatzpaket füllt, was eine Zeile nicht konnte, und "offen halten" lässt den Einsatz weiter auf das ursprüngliche Einsatzmittel warten.</value>
+  </data>
+  <data name="ResponsePackageAddRowButton" xml:space="preserve">
+    <value>Zeile hinzufügen</value>
+  </data>
+  <data name="ResponsePackageRowTargetsLabel" xml:space="preserve">
+    <value>Eines davon</value>
+  </data>
+  <data name="ResponsePackageRowLabelLabel" xml:space="preserve">
+    <value>Zeilenbezeichnung (optional)</value>
+  </data>
+  <data name="ResponsePackageFillCount" xml:space="preserve">
+    <value>Auswählen</value>
+  </data>
+  <data name="ResponsePackageFillFirstArriving" xml:space="preserve">
+    <value>Erstes Eintreffen sicherstellen</value>
+  </data>
+  <data name="ResponsePackageRowStatusLabel" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="ResponsePackageRowCodeLabel" xml:space="preserve">
+    <value>Einsatzcode</value>
+  </data>
+  <data name="ResponsePackageNoCode" xml:space="preserve">
+    <value>Kein Code</value>
+  </data>
+  <data name="ResponsePackageRowSubstituteLabel" xml:space="preserve">
+    <value>Ersatzpaket</value>
+  </data>
+  <data name="ResponsePackageNoSubstitute" xml:space="preserve">
+    <value>Kein Ersatz</value>
+  </data>
+  <data name="ResponsePackageRowOutstandingLabel" xml:space="preserve">
+    <value>Offen halten bis gesendet</value>
+  </data>
+  <data name="ResponsePackageUsedBy" xml:space="preserve">
+    <value>Verwendet von</value>
+  </data>
+  <data name="ResponsePackageNotUsed" xml:space="preserve">
+    <value>Nicht verwendet</value>
+  </data>
+  <data name="ResponsePackageRetiredBadge" xml:space="preserve">
+    <value>Außer Dienst</value>
+  </data>
+  <data name="ResponsePackageDeleteConfirm" xml:space="preserve">
+    <value>Dieses Einsatzpaket löschen?</value>
+  </data>
+  <data name="PersonnelTurnoutLabel" xml:space="preserve">
+    <value>Ausrückzeit Personal (Sekunden)</value>
+  </data>
+  <data name="PersonnelTurnoutHelp" xml:space="preserve">
+    <value>Wird zur Fahrzeit einer Person addiert, wenn Kartenzeilen, die Personen akzeptieren, sie mit Einheiten vergleichen.</value>
+  </data>
+  <data name="WaitingCallAutoDispatchLabel" xml:space="preserve">
+    <value>Frei gewordene Einheiten zu wartenden Einsätzen alarmieren</value>
+  </data>
+  <data name="WaitingCallAutoDispatchHelp" xml:space="preserve">
+    <value>Aus: Disponenten werden benachrichtigt, wenn eine passende Einheit frei wird. Ein: Die Einheit wird automatisch zum wichtigsten wartenden Einsatz gesendet. Einsatzkarten können dies überschreiben.</value>
+  </data>
+  <data name="WaitingCallMaxResponseLabel" xml:space="preserve">
+    <value>Grenze für automatische Alarmierung (Sekunden, 0 = keine)</value>
+  </data>
+  <data name="WaitingCallMaxResponseHelp" xml:space="preserve">
+    <value>Eine weiter entfernte frei gewordene Einheit wird gemeldet, nicht gesendet. Die Benachrichtigung erfolgt immer.</value>
+  </data>
+  <data name="ResponseCodesLabel" xml:space="preserve">
+    <value>Einsatzcodes</value>
+  </data>
+  <data name="ResponseCodesHelp" xml:space="preserve">
+    <value>Optionale Codes je Einheit für Kartenvorschläge, z. B. C3 für Sondersignal. Leer lassen, um Codes nirgends anzuzeigen.</value>
+  </data>
+  <data name="ResponseCodeCodeColumn" xml:space="preserve">
+    <value>Code</value>
+  </data>
+  <data name="ResponseCodeNameColumn" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="ResponseCodeColorColumn" xml:space="preserve">
+    <value>Farbe</value>
+  </data>
+  <data name="ResponseCodeAddButton" xml:space="preserve">
+    <value>Code hinzufügen</value>
+  </data>
+  <data name="ResponseCodesShowToCrewsLabel" xml:space="preserve">
+    <value>Codes den Besatzungen zeigen (Push und Apps)</value>
+  </data>
+  <data name="AwaitingResourcesLabel" xml:space="preserve">
+    <value>Wartet auf Einsatzmittel</value>
+  </data>
+  <data name="AwaitingResourcesHelp" xml:space="preserve">
+    <value>Aktive Einsätze, die noch auf ein von ihrer Einsatzkarte gefordertes Einsatzmittel warten, das bei der Alarmierung nicht verfügbar war. Ein Einsatz verlässt diese Liste, wenn ein passendes Einsatzmittel gesendet, die Anforderung verworfen oder der Einsatz geschlossen wird.</value>
+  </data>
+  <data name="AwaitingDispatchTo" xml:space="preserve">
+    <value>Zu {0} alarmieren</value>
+  </data>
+  <data name="AwaitingDispatchUnit" xml:space="preserve">
+    <value>{0} alarmieren</value>
+  </data>
+  <data name="AwaitingDismiss" xml:space="preserve">
+    <value>Verwerfen</value>
+  </data>
+  <data name="AwaitingDismissPrompt" xml:space="preserve">
+    <value>Warum wird dieses Einsatzmittel nicht mehr benötigt? (optional)</value>
+  </data>
+  <data name="AwaitingSentInstead" xml:space="preserve">
+    <value>stattdessen gesendet: {0}</value>
+  </data>
+  <data name="AwaitingAvailableNow" xml:space="preserve">
+    <value>Jetzt verfügbar:</value>
+  </data>
+  <data name="AwaitingNoneAvailable" xml:space="preserve">
+    <value>Keine passende Einheit verfügbar.</value>
+  </data>
+  <data name="AwaitingNone" xml:space="preserve">
+    <value>Keine Einsätze warten auf Einsatzmittel.</value>
+  </data>
+  <data name="RunCardTemplatesHeader" xml:space="preserve">
+    <value>Vorlagen für Einsatzkarten</value>
+  </data>
+  <data name="RunCardTemplatesHelp" xml:space="preserve">
+    <value>Beginnen Sie mit einer funktionierenden Karte. Vorlagen benennen Einsatzmittel nach Bedeutung und passen so zu Ihren Fahrzeugtypen und Rollen; prüfen, testen und dann aktivieren.</value>
+  </data>
+  <data name="RunCardTemplatesSetClasses" xml:space="preserve">
+    <value>{0} Fahrzeugtyp(en) haben keine Klasse; Vorlagen erkennen sie nur am Namen.</value>
+  </data>
+  <data name="RunCardTemplatesSetClassesLink" xml:space="preserve">
+    <value>Fahrzeugklassen festlegen</value>
+  </data>
+  <data name="RunCardTemplatesSuggested" xml:space="preserve">
+    <value>Für Sie vorgeschlagen</value>
+  </data>
+  <data name="RunCardTemplateUseButton" xml:space="preserve">
+    <value>Vorlage verwenden</value>
+  </data>
+  <data name="RunCardTemplatesAllCategories" xml:space="preserve">
+    <value>Alle Kategorien</value>
+  </data>
+  <data name="RunCardTemplatesSearch" xml:space="preserve">
+    <value>Vorlagen durchsuchen</value>
+  </data>
+  <data name="RunCardTemplateShapeGraph" xml:space="preserve">
+    <value>Entscheidungsbaum</value>
+  </data>
+  <data name="RunCardTemplateShapePackage" xml:space="preserve">
+    <value>Einsatzpakete</value>
+  </data>
+  <data name="RunCardTemplateMappingsHeader" xml:space="preserve">
+    <value>So passt die Vorlage zu Ihrer Organisation</value>
+  </data>
+  <data name="RunCardTemplateUnmatched" xml:space="preserve">
+    <value>keine Entsprechung in dieser Organisation. Legen Sie eine Fahrzeugklasse fest oder fügen Sie den Typ bzw. die Rolle hinzu.</value>
+  </data>
+  <data name="RunCardTemplateNoTriggers" xml:space="preserve">
+    <value>Kein Auslöser passt; fügen Sie im Editor einen hinzu, bevor Sie die Karte aktivieren.</value>
+  </data>
+  <data name="RunCardTemplateNewBadge" xml:space="preserve">
+    <value>neu</value>
+  </data>
+  <data name="RunCardTemplateReusedBadge" xml:space="preserve">
+    <value>vorhanden</value>
+  </data>
+  <data name="RunCardTemplateCodesAdded" xml:space="preserve">
+    <value>Diese Codes werden Ihrem Katalog hinzugefügt:</value>
+  </data>
+  <data name="RunCardTemplateCreateButton" xml:space="preserve">
+    <value>Karte anlegen (deaktiviert)</value>
+  </data>
+  <data name="RunCardTemplateBlocked" xml:space="preserve">
+    <value>Lösen Sie zuerst die fehlenden Zuordnungen.</value>
+  </data>
+  <data name="RunCardTemplateAppliedMessage" xml:space="preserve">
+    <value>Aus einer Vorlage erstellt und deaktiviert gespeichert. Prüfen Sie Auslöser und Zeilen, testen Sie sie im Test-Tab und aktivieren Sie sie dann.</value>
+  </data>
+  <data name="TerminologySingularColumn" xml:space="preserve">
+    <value>Ein Eintrag</value>
+  </data>
+  <data name="TerminologyWhereColumn" xml:space="preserve">
+    <value>Wo es sich ändert</value>
+  </data>
+  <data name="TerminologyScopeEverywhere" xml:space="preserve">
+    <value>In ganz Resgrid</value>
+  </data>
+  <data name="TerminologyScopeModule" xml:space="preserve">
+    <value>Im eigenen Modul</value>
   </data>
 </root>

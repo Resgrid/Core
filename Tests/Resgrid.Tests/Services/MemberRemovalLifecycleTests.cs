@@ -108,6 +108,8 @@ namespace Resgrid.Tests.Services
 			public readonly Mock<IWorkforceService> Workforce = new Mock<IWorkforceService>();
 			public readonly Mock<IDepartmentsService> Departments = new Mock<IDepartmentsService>();
 			public readonly Mock<IMfaAccountCleanupService> MfaCleanup = new Mock<IMfaAccountCleanupService>();
+			public readonly Mock<IUserSessionService> Sessions = new Mock<IUserSessionService>();
+			public readonly Mock<IUsersService> Users = new Mock<IUsersService>();
 			public DeleteService Service;
 		}
 
@@ -133,11 +135,11 @@ namespace Resgrid.Tests.Services
 			});
 			var authorization = new Mock<IAuthorizationService>();
 			authorization.Setup(a => a.CanUserDeleteUserAsync(Dept, "chief", "leaver")).ReturnsAsync(true);
-			r.Service = new DeleteService(authorization.Object, r.Departments.Object, Mock.Of<ICallsService>(), Mock.Of<IActionLogsService>(), Mock.Of<IUsersService>(), Mock.Of<IUserProfileService>(),
+			r.Service = new DeleteService(authorization.Object, r.Departments.Object, Mock.Of<ICallsService>(), Mock.Of<IActionLogsService>(), r.Users.Object, Mock.Of<IUserProfileService>(),
 				Mock.Of<IMessageService>(), Mock.Of<IDepartmentGroupsService>(), Mock.Of<IWorkLogsService>(), Mock.Of<IUserStateService>(), Mock.Of<IPersonnelRolesService>(), Mock.Of<IDistributionListsService>(),
 				Mock.Of<IShiftsService>(), Mock.Of<IUnitsService>(), Mock.Of<ICertificationService>(), Mock.Of<ILogService>(), Mock.Of<IInventoryService>(), Mock.Of<IEventAggregator>(),
 				Mock.Of<IAddressService>(), Mock.Of<IQueueService>(), Mock.Of<IEmailService>(), Mock.Of<IDeleteRepository>(), Mock.Of<IAuditLogsRepository>(), Mock.Of<IScheduledTasksService>(),
-				Mock.Of<IUserSessionService>(), Mock.Of<IDepartmentMemberSensitiveDataService>(), Mock.Of<IDepartmentMemberEmergencyContactService>(),
+				r.Sessions.Object, Mock.Of<IDepartmentMemberSensitiveDataService>(), Mock.Of<IDepartmentMemberEmergencyContactService>(),
 				deploymentService: r.Deployments.Object, deploymentPersonnel: seats.Object, workforceService: r.Workforce.Object,
 				mfaAccountCleanup: r.MfaCleanup.Object);
 			return r;
@@ -185,6 +187,69 @@ namespace Resgrid.Tests.Services
 			Func<Task> revoke = () => r.Service.RevokeDepartmentAccessAsync("leaver", Dept, "chief");
 			await revoke.Should().ThrowAsync<TimeoutException>();
 			r.Calls.Should().NotContain("membership", "the removal stays retryable");
+		}
+
+		#endregion
+
+		#region Request aborts
+
+		// The web callers pass the request's abort token. Production (Sentry, PersonnelController.DeletePerson): the admin's
+		// browser went away mid-removal, the token cancelled RevokeAllAsync, and the account was left with its memberships
+		// soft-deleted but its login, sessions and security stamp still live.
+
+		private static Removal AbortsWhileEndingEmployment(Removal r, CancellationTokenSource aborted)
+		{
+			r.Workforce.Setup(w => w.EndEmploymentsForMemberAsync(Dept, "leaver", It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(() => { aborted.Cancel(); return 1; });
+			return r;
+		}
+
+		[Test]
+		public async Task An_abort_after_the_account_removal_starts_writing_does_not_stop_it_part_way()
+		{
+			using var aborted = new CancellationTokenSource();
+			var r = AbortsWhileEndingEmployment(Build(), aborted);
+			r.Departments.Setup(d => d.GetAllDepartmentsForUserAsync("leaver"))
+				.ReturnsAsync(new List<DepartmentMember> { new DepartmentMember { DepartmentId = Dept, UserId = "leaver" } });
+
+			(await r.Service.DeleteUserAsync(Dept, "chief", "leaver", aborted.Token)).Should().Be(DeleteUserResults.NoFailure);
+
+			aborted.IsCancellationRequested.Should().BeTrue();
+			r.Sessions.Verify(s => s.RevokeAllAsync("leaver", "leaver", UserSessionRevocationReason.AccountDeactivated, It.IsAny<DateTime>(),
+				It.Is<CancellationToken>(t => !t.CanBeCanceled)), Times.Once, "the security stamp and sessions go with the memberships");
+			r.Users.Verify(u => u.ClearOutUserLoginAsync("leaver"), Times.Once);
+			r.MfaCleanup.Verify(c => c.RemoveForDeletedAccountAsync("leaver", "chief", It.Is<CancellationToken>(t => !t.CanBeCanceled)), Times.Once);
+		}
+
+		[Test]
+		public async Task An_abort_after_a_department_revocation_starts_writing_does_not_stop_it_part_way()
+		{
+			using var aborted = new CancellationTokenSource();
+			var r = AbortsWhileEndingEmployment(Build(), aborted);
+
+			// The member has another department, so only this one is revoked.
+			(await r.Service.DeleteUserAsync(Dept, "chief", "leaver", aborted.Token)).Should().Be(DeleteUserResults.NoFailure);
+
+			aborted.IsCancellationRequested.Should().BeTrue();
+			r.Departments.Verify(d => d.DeleteUserAsync(Dept, "leaver", "chief", It.Is<CancellationToken>(t => !t.CanBeCanceled)), Times.Once);
+		}
+
+		[Test]
+		public async Task An_abort_before_the_removal_writes_anything_stops_it_with_nothing_changed()
+		{
+			var r = Build();
+			r.Seats.Add(new DeploymentPersonnel { DeploymentPersonnelId = "seat-open", DeploymentId = "open", DepartmentId = Dept, UserId = "leaver" });
+			using var aborted = new CancellationTokenSource();
+			aborted.Cancel();
+
+			Func<Task> revoke = () => r.Service.RevokeDepartmentAccessAsync("leaver", Dept, "chief", aborted.Token);
+			await revoke.Should().ThrowAsync<OperationCanceledException>();
+			r.Calls.Should().BeEmpty("nothing was written, so the removal can simply be run again");
+
+			Func<Task> delete = () => r.Service.DeleteUserAccountAsync(Dept, "leaver", "leaver", null, null, aborted.Token);
+			await delete.Should().ThrowAsync<OperationCanceledException>();
+			r.Sessions.Verify(s => s.RevokeAllAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<UserSessionRevocationReason>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Never);
+			r.Departments.Verify(d => d.SaveDepartmentMemberAsync(It.IsAny<DepartmentMember>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 
 		#endregion

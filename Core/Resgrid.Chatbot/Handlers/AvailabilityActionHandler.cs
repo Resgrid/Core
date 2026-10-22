@@ -60,6 +60,8 @@ namespace Resgrid.Chatbot.Handlers
 
 				var lastActionLogs = await _actionLogsService.GetLastActionLogsForDepartmentAsync(session.DepartmentId);
 				var userStates = await _userStateService.GetLatestStatesForDepartmentAsync(session.DepartmentId);
+				// No status inside the auto-available hour reads as the department's Available status.
+				var defaultStatus = await _customStateService.GetDefaultPersonnelStatusAsync(session.DepartmentId);
 
 				var availableLines = new StringBuilder();
 				var availableCount = 0;
@@ -73,7 +75,9 @@ namespace Resgrid.Chatbot.Handlers
 					// around (anything but an unavailable staffing level).
 					var statusClass = lastAction != null
 						? await _platformReportingService.ClassifyPersonnelAvailabilityAsync(session.DepartmentId, lastAction.ActionTypeId)
-						: AvailabilityClass.Unknown;
+						: defaultStatus != null
+							? await _platformReportingService.ClassifyPersonnelAvailabilityAsync(session.DepartmentId, defaultStatus.CustomStateDetailId)
+							: AvailabilityClass.Unknown;
 					var staffingClass = await ClassifyStaffingAsync(session.DepartmentId, state);
 
 					if (statusClass != AvailabilityClass.Available || staffingClass == AvailabilityClass.Unavailable)
@@ -83,7 +87,7 @@ namespace Resgrid.Chatbot.Handlers
 					if (availableCount > MaxPersonnelToList)
 						continue;
 
-					var status = await _customStateService.GetCustomPersonnelStatusAsync(session.DepartmentId, lastAction);
+					var status = lastAction != null ? await _customStateService.GetCustomPersonnelStatusAsync(session.DepartmentId, lastAction) : defaultStatus;
 					var staffing = await _customStateService.GetCustomPersonnelStaffingAsync(session.DepartmentId, state);
 					var unknown = ChatbotResources.Get("Personnel_Unknown", culture);
 

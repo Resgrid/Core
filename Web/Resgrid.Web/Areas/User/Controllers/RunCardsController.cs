@@ -32,12 +32,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IDispatchRecommendationService _dispatchRecommendationService;
 		private readonly IAuthorizationService _authorizationService;
 		private readonly IFeatureToggleService _featureToggleService;
+		private readonly IResponsePackagesService _responsePackagesService;
+		private readonly IDepartmentSettingsService _departmentSettingsService;
+		private readonly IRunCardTemplatesService _runCardTemplatesService;
 
 		public RunCardsController(IRunCardsService runCardsService, ICallsService callsService, IUnitsService unitsService,
 			IPersonnelRolesService personnelRolesService, ICustomStateService customStateService,
 			IDepartmentGroupsService departmentGroupsService, IDispatchRecommendationService dispatchRecommendationService,
-			IAuthorizationService authorizationService, IFeatureToggleService featureToggleService)
+			IAuthorizationService authorizationService, IFeatureToggleService featureToggleService,
+			IResponsePackagesService responsePackagesService, IDepartmentSettingsService departmentSettingsService,
+			IRunCardTemplatesService runCardTemplatesService)
 		{
+			_runCardTemplatesService = runCardTemplatesService;
+			_responsePackagesService = responsePackagesService;
+			_departmentSettingsService = departmentSettingsService;
 			_runCardsService = runCardsService;
 			_callsService = callsService;
 			_unitsService = unitsService;
@@ -58,7 +66,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var model = new RunCardsIndexModel
 			{
-				RunCards = await _runCardsService.GetAllRunCardsForDepartmentAsync(DepartmentId, true)
+				RunCards = await _runCardsService.GetAllRunCardsForDepartmentAsync(DepartmentId, true),
+				ConditionsEnabled = await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCardConditions, DepartmentId)
 			};
 
 			return View(model);
@@ -159,6 +168,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 			card.MinimumStaffingLevelOverride = input.MinimumStaffingLevelOverride;
 			card.HomeStationGroupId = input.HomeStationGroupId;
 
+			// Conditional run cards: with the feature off the editor shows no graphs or packages, so keep the stored ones.
+			var conditionsEnabled = await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCardConditions, DepartmentId);
+			var storedLevels = card.AlarmLevels;
+
+			if (conditionsEnabled)
+			{
+				card.RelaxUnfilledRows = input.RelaxUnfilledRows;
+				card.WaitingCallAutoDispatchOverride = input.WaitingCallAutoDispatchOverride.HasValue ? Math.Max(0, Math.Min(1, input.WaitingCallAutoDispatchOverride.Value)) : (int?)null;
+			}
+
 			card.Triggers = input.Triggers.Select(t => new RunCardTrigger
 			{
 				RunCardTriggerId = t.RunCardTriggerId,
@@ -191,8 +210,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 					PersonnelRoleId = r.PersonnelRoleId,
 					RequiredCount = Math.Max(1, r.RequiredCount),
 					SortOrder = r.SortOrder
-				}).ToList()
+				}).ToList(),
+				ResponsePackageId = conditionsEnabled ? l.ResponsePackageId : null,
+				DecisionNodes = conditionsEnabled ? ToDecisionNodes(l) : new List<RunCardDecisionNode>()
 			}).ToList();
+
+			if (!conditionsEnabled)
+				RunCardDecisionGraph.CarryOverConditionalParts(storedLevels, card.AlarmLevels);
 
 			card.AvailabilitySelections = (input.Selections ?? new List<RunCardSelectionInput>()).Select(s => new RunCardAvailabilitySelection
 			{
@@ -208,6 +232,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			try
 			{
 				saved = await _runCardsService.SaveRunCardAsync(card, cancellationToken);
+			}
+			catch (RunCardValidationException ex)
+			{
+				// Decision graph and package problems read as they are ("Alarm level 1: 'PIT first?' has no No branch.").
+				return BadRequest(new { success = false, message = ex.Message });
 			}
 			catch (ArgumentException)
 			{
@@ -243,7 +272,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		/// </summary>
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public async Task<IActionResult> Preview(int priority, string type, double? latitude, double? longitude, int alarmLevel = 1)
+		public async Task<IActionResult> Preview(int priority, string type, double? latitude, double? longitude, int alarmLevel = 1, int? runCardId = null)
 		{
 			if (!await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCards, DepartmentId))
 				return Json(new { success = false });
@@ -255,14 +284,263 @@ namespace Resgrid.Web.Areas.User.Controllers
 				CallTypeName = type,
 				Latitude = latitude,
 				Longitude = longitude,
-				TargetAlarmLevel = alarmLevel
+				TargetAlarmLevel = alarmLevel,
+				// The card being edited, disabled or not; the service ignores a card of another department.
+				RunCardId = runCardId > 0 ? runCardId : null
 			});
 
 			return Json(new { success = true, result });
 		}
 
+		/// <summary>The posted decision graph of a level as nodes; ids come from the stored rows matched by key on save.</summary>
+		private static List<RunCardDecisionNode> ToDecisionNodes(RunCardAlarmLevelInput level)
+		{
+			return (level.DecisionNodes ?? new List<RunCardDecisionNodeInput>()).Where(n => n != null).Select(n => new RunCardDecisionNode
+			{
+				RunCardAlarmLevelId = level.RunCardAlarmLevelId,
+				NodeKey = string.IsNullOrWhiteSpace(n.NodeKey) ? null : n.NodeKey.Trim(),
+				IsRoot = n.IsRoot,
+				NodeKind = n.NodeKind,
+				Label = n.Label?.Trim(),
+				ConditionType = n.ConditionType,
+				SubjectStatusFilter = n.SubjectStatusFilter,
+				SubjectStatusBaseTypes = n.SubjectStatusBaseTypes,
+				ReferenceStatusFilter = n.ReferenceStatusFilter,
+				ReferenceStatusBaseTypes = n.ReferenceStatusBaseTypes,
+				ThresholdSeconds = n.ThresholdSeconds,
+				RequiredCount = Math.Max(1, n.RequiredCount),
+				YesNodeKey = string.IsNullOrWhiteSpace(n.YesNodeKey) ? null : n.YesNodeKey.Trim(),
+				NoNodeKey = string.IsNullOrWhiteSpace(n.NoNodeKey) ? null : n.NoNodeKey.Trim(),
+				ResponsePackageId = n.ResponsePackageId,
+				AdviceText = n.AdviceText?.Trim(),
+				SortOrder = n.SortOrder,
+				SubjectTargets = ToTargets(n.SubjectTargets),
+				ReferenceTargets = ToTargets(n.ReferenceTargets)
+			}).ToList();
+		}
+
+		private static List<RunCardTarget> ToTargets(IEnumerable<RunCardTargetInput> targets)
+		{
+			return (targets ?? Enumerable.Empty<RunCardTargetInput>()).Where(t => t != null).Select(t => new RunCardTarget
+			{
+				TargetKind = t.TargetKind,
+				TargetRefId = t.TargetKind == (int)RunCardTargetKinds.AnyUnit || t.TargetKind == (int)RunCardTargetKinds.AnyPerson ? null : t.TargetRefId
+			}).ToList();
+		}
+
+		#region Templates
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> Templates()
+		{
+			if (!await ConditionsEnabledAsync())
+				return RedirectToAction("Index", "RunCards", new { area = "User" });
+
+			var model = new RunCardTemplatesModel
+			{
+				Templates = Resgrid.Model.RunCards.RunCardTemplateCatalog.All.ToList(),
+				Suggestions = await _runCardTemplatesService.GetSuggestionsAsync(DepartmentId),
+				UnitTypesWithoutClass = (await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId) ?? new List<UnitType>())
+					.Count(t => t.BaseType <= 0)
+			};
+
+			return View(model);
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> TemplatePreview(string templateId)
+		{
+			if (!await ConditionsEnabledAsync())
+				return RedirectToAction("Index", "RunCards", new { area = "User" });
+
+			var preview = await _runCardTemplatesService.PreviewAsync(DepartmentId, templateId);
+
+			if (preview == null)
+				return RedirectToAction("Templates", "RunCards", new { area = "User" });
+
+			return View(preview);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> ApplyTemplate([FromForm] string templateId, CancellationToken cancellationToken)
+		{
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
+			if (!await ConditionsEnabledAsync())
+				return RedirectToAction("Index", "RunCards", new { area = "User" });
+
+			var result = await _runCardTemplatesService.ApplyAsync(DepartmentId, templateId, UserId, cancellationToken);
+
+			if (!result.Success || !result.RunCardId.HasValue)
+			{
+				TempData["TemplateError"] = result.Message;
+				return RedirectToAction("TemplatePreview", "RunCards", new { area = "User", templateId });
+			}
+
+			TempData["TemplateApplied"] = result.Message;
+			return RedirectToAction("Edit", "RunCards", new { area = "User", runCardId = result.RunCardId.Value });
+		}
+
+		#endregion
+
+		#region Response packages
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> Packages()
+		{
+			if (!await ConditionsEnabledAsync())
+				return RedirectToAction("Index", "RunCards", new { area = "User" });
+
+			var model = new ResponsePackagesIndexModel
+			{
+				Packages = await _responsePackagesService.GetPackagesForDepartmentAsync(DepartmentId, true)
+			};
+
+			var usage = await _responsePackagesService.GetAllPackageUsageAsync(DepartmentId);
+			foreach (var package in model.Packages)
+				model.Usage[package.ResponsePackageId] = usage.TryGetValue(package.ResponsePackageId, out var places) ? places : new List<string>();
+
+			return View(model);
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> NewPackage()
+		{
+			if (!await ConditionsEnabledAsync())
+				return RedirectToAction("Index", "RunCards", new { area = "User" });
+
+			var model = new EditResponsePackageModel { IsNew = true, Package = new ResponsePackage { DepartmentId = DepartmentId } };
+			await PopulatePackageModelAsync(model);
+
+			return View("EditPackage", model);
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> EditPackage(int responsePackageId)
+		{
+			if (!await ConditionsEnabledAsync())
+				return RedirectToAction("Index", "RunCards", new { area = "User" });
+
+			var package = await _responsePackagesService.GetPackageByIdAsync(DepartmentId, responsePackageId, true);
+
+			if (package == null)
+				return Unauthorized();
+
+			var model = new EditResponsePackageModel
+			{
+				Package = package,
+				Usage = await _responsePackagesService.GetPackageUsageAsync(DepartmentId, responsePackageId)
+			};
+			await PopulatePackageModelAsync(model);
+
+			return View("EditPackage", model);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> SavePackage([FromBody] ResponsePackageEditInput input, CancellationToken cancellationToken)
+		{
+			if (input == null)
+				return new StatusCodeResult((int)HttpStatusCode.BadRequest);
+
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
+			if (!await ConditionsEnabledAsync())
+				return Json(new { success = false, message = "Conditional run cards are not enabled for this department." });
+
+			var package = new ResponsePackage
+			{
+				ResponsePackageId = input.ResponsePackageId,
+				DepartmentId = DepartmentId,
+				Name = input.Name?.Trim(),
+				Description = input.Description,
+				IsRetired = input.IsRetired,
+				Rows = (input.Rows ?? new List<ResponsePackageRowInput>()).Where(r => r != null).Select(r => new ResponsePackageRow
+				{
+					ResponsePackageRowId = r.ResponsePackageRowId,
+					ResponsePackageId = input.ResponsePackageId,
+					Label = r.Label?.Trim(),
+					FillMode = r.FillMode,
+					RequiredCount = r.RequiredCount,
+					StatusFilter = r.StatusFilter,
+					StatusBaseTypes = r.StatusBaseTypes,
+					ResponseCodeId = r.ResponseCodeId,
+					SubstitutePackageId = r.SubstitutePackageId,
+					KeepOutstanding = r.KeepOutstanding,
+					SortOrder = r.SortOrder,
+					Targets = ToTargets(r.Targets)
+				}).ToList()
+			};
+
+			try
+			{
+				var saved = await _responsePackagesService.SavePackageAsync(package, UserId, cancellationToken);
+				return Json(new { success = true, responsePackageId = saved.ResponsePackageId });
+			}
+			catch (RunCardValidationException ex)
+			{
+				return BadRequest(new { success = false, message = ex.Message });
+			}
+			catch (ArgumentException)
+			{
+				return BadRequest(new { success = false, message = "The package contains invalid references. Reload the editor and review the package." });
+			}
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> DeletePackage([FromForm] int responsePackageId, CancellationToken cancellationToken)
+		{
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
+			try
+			{
+				return Json(new { success = await _responsePackagesService.DeletePackageAsync(DepartmentId, responsePackageId, cancellationToken) });
+			}
+			catch (InvalidOperationException ex)
+			{
+				// Still used by a card, an outcome or another package's substitute: deleting it would silently empty them.
+				return Json(new { success = false, message = ex.Message });
+			}
+		}
+
+		private async Task PopulatePackageModelAsync(EditResponsePackageModel model)
+		{
+			model.UnitTypes = await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId) ?? new List<UnitType>();
+			model.PersonnelRoles = await _personnelRolesService.GetRolesForDepartmentAsync(DepartmentId) ?? new List<PersonnelRole>();
+			model.OtherPackages = (await _responsePackagesService.GetPackagesForDepartmentAsync(DepartmentId) ?? new List<ResponsePackage>())
+				.Where(p => p.ResponsePackageId != model.Package.ResponsePackageId)
+				.ToList();
+			model.ResponseCodes = await _departmentSettingsService.GetDispatchResponseCodesAsync(DepartmentId) ?? new DispatchResponseCodesConfig();
+		}
+
+		private async Task<bool> ConditionsEnabledAsync()
+		{
+			return await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCards, DepartmentId)
+				&& await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCardConditions, DepartmentId);
+		}
+
+		#endregion
+
 		private async Task PopulateEditModelAsync(EditRunCardModel model)
 		{
+			model.ConditionsEnabled = await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCardConditions, DepartmentId);
+
+			if (model.ConditionsEnabled)
+				model.ResponsePackages = await _responsePackagesService.GetPackagesForDepartmentAsync(DepartmentId) ?? new List<ResponsePackage>();
+
 			var priorities = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(DepartmentId);
 			model.CallPriorities = new SelectList(priorities, "DepartmentCallPriorityId", "Name");
 

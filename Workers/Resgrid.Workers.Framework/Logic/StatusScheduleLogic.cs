@@ -20,6 +20,7 @@ namespace Resgrid.Workers.Framework.Logic
 				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
 				var actionLogsService = scope.Resolve<IActionLogsService>();
 				var scheduledTasksService = scope.Resolve<IScheduledTasksService>();
+				var customStateService = scope.Resolve<ICustomStateService>();
 
 				// ADP department operation lock: status mutations are deferred, not dropped — the
 				// occurrence is skipped WITHOUT a completion log so the scheduler re-picks it after
@@ -31,8 +32,19 @@ namespace Resgrid.Workers.Framework.Logic
 				{
 					if (item.ScheduledTask.TaskType == (int)TaskTypes.DepartmentStatusReset)
 					{
-						using (StatusWriteActor.Begin(null, StatusSetOrigins.Schedule))
-							await actionLogsService.SetActionForEntireDepartmentAsync(item.ScheduledTask.DepartmentId, int.Parse(item.ScheduledTask.Data), $"Department Status Reset {item.ScheduledTask.ScheduledTaskId}");
+						// The stored target is a meaning ("b{n}") or a status saved before meanings; either way it becomes the
+						// department's own status (custom or built-in) when the reset runs.
+						var status = await customStateService.ResolveStatusResetAsync(item.ScheduledTask.DepartmentId, item.ScheduledTask.Data);
+
+						if (status.HasValue)
+						{
+							using (StatusWriteActor.Begin(null, StatusSetOrigins.Schedule))
+								await actionLogsService.SetActionForEntireDepartmentAsync(item.ScheduledTask.DepartmentId, status.Value, $"Department Status Reset {item.ScheduledTask.ScheduledTaskId}");
+						}
+						else
+						{
+							Logging.LogError($"Department Status Reset {item.ScheduledTask.ScheduledTaskId}: '{item.ScheduledTask.Data}' matches none of department {item.ScheduledTask.DepartmentId}'s statuses; nobody was reset.");
+						}
 					}
 				}
 				catch (Exception ex)

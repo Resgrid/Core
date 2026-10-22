@@ -163,5 +163,15 @@ namespace Resgrid.Repositories.NoSqlRepository
 
 			await _collection.Indexes.CreateManyAsync(indexes);
 		}
+
+		public async Task EnsureReadIndexesAsync()
+		{
+			// Map visualization paths read a whole department's history for a time window.
+			await _collection.Indexes.CreateOneAsync(new CreateIndexModel<UnitsLocation>(
+				Builders<UnitsLocation>.IndexKeys
+					.Ascending(location => location.DepartmentId)
+					.Descending(location => location.Timestamp),
+				new CreateIndexOptions { Name = "ix_unitlocations_department_timestamp" }));
+		}
 	}
 }

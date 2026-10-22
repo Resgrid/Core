@@ -136,6 +136,7 @@
     <script src="~/js/app/internal/resgrid.user.js" asp-append-version="true"></script>
     <script src="~/js/app/common/analytics/resgrid.common.analytics.js" asp-append-version="true"></script>
     <script src="~/js/app/common/notifications/resgrid.common.notifications.js" asp-append-version="true"></script>
+    <script src="~/js/app/internal/dispatch/resgrid.dispatch.awaitingresources.js" asp-append-version="true"></script>
 
     <script>
         var departmentId = '@(ClaimsAuthorizationHelper.GetDepartmentId())';
@@ -167,6 +168,8 @@
         resgrid.absoluteBaseUrl = "@Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl";
         resgrid.absoluteApiBaseUrl = "@Resgrid.Config.SystemBehaviorConfig.ResgridApiBaseUrl";
         resgrid.absoluteEventingBaseUrl = "@Resgrid.Config.SystemBehaviorConfig.ResgridEventingBaseUrl";
+        @* Text built in page scripts carries the department's terminology too (resgrid.terms.apply). *@
+        resgrid.terms.setup(@Html.Raw(System.Text.Json.JsonSerializer.Serialize(await departmentTerms.ClientRulesAsync())));
 
 		localStorage.removeItem("RgWebApp.auth-tokens");
     </script>

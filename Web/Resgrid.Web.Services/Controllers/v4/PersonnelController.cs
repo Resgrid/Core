@@ -120,7 +120,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var canViewPII = await _authorizationService.CanUserViewPIIAsync(UserId, DepartmentId);
 			var canViewLocation = await _authorizationService.CanUserViewPersonLocationViaMatrixAsync(user.UserId, UserId, DepartmentId);
 
-			result.Data = await ConvertPersonnelInfo(user, department, profile, group, roles, action, userState, canViewPII, canViewLocation);
+			var defaultStatus = await _customStateService.GetDefaultPersonnelStatusAsync(DepartmentId);
+			result.Data = await ConvertPersonnelInfo(user, department, profile, group, roles, action, userState, canViewPII, canViewLocation, defaultStatus);
 
 			var udfValues = await _userDefinedFieldsService.GetFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Personnel, user.UserId);
 			// Only the values the caller may see: the Udf view right (ViewUdfFields) and each field's visibility, the
@@ -169,6 +170,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var filters = await GetFilterOptions();
 			var actionLogs = await _actionLogsService.GetLastActionLogsForDepartmentAsync(DepartmentId, includeHiddenAndDisabled: true);
 			var userStates = await _userStateService.GetLatestStatesForDepartmentAsync(DepartmentId);
+			var defaultStatus = await _customStateService.GetDefaultPersonnelStatusAsync(DepartmentId);
 			var users = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId);
 			Department department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 			var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
@@ -225,7 +227,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 						: null;
 
 				var canViewLocation = await _authorizationService.CanUserViewPersonLocationViaMatrixAsync(u.UserId, UserId, DepartmentId);
-				var s = await ConvertPersonnelInfo(u, department, profile, group, roles, log, state, canViewPII, canViewLocation);
+				var s = await ConvertPersonnelInfo(u, department, profile, group, roles, log, state, canViewPII, canViewLocation, defaultStatus);
 
 				if (log != null)
 				{
@@ -427,10 +429,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		/// <summary>
 		/// The person's info for a caller. Without Security &gt; See Personnel Locations for this person (canViewLocation,
-		/// from CanUserViewPersonLocationViaMatrixAsync) the last status position is left out.
+		/// from CanUserViewPersonLocationViaMatrixAsync) the last status position is left out. defaultStatus (from
+		/// ICustomStateService.GetDefaultPersonnelStatusAsync) is shown when there is no status inside the auto-available hour.
 		/// </summary>
 		public static async Task<PersonnelInfoResultData> ConvertPersonnelInfo(IdentityUser user, Department department, UserProfile profile,
-			DepartmentGroup group, List<PersonnelRole> roles, ActionLog action, UserState userState, bool canViewPII, bool canViewLocation)
+			DepartmentGroup group, List<PersonnelRole> roles, ActionLog action, UserState userState, bool canViewPII, bool canViewLocation,
+			CustomStateDetail defaultStatus = null)
 		{
 			var personnelData = new PersonnelInfoResultData();
 			if (profile != null)
@@ -505,9 +509,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (action == null)
 			{
+				// No status, or none inside the auto-available hour: defaultStatus is the department's own Available option
+				// when it uses custom staff statuses (the built-in Standing By is not one of them); without it, Standing By.
+				var available = defaultStatus;
+
 				personnelData.StatusTimestamp = DateTime.UtcNow.TimeConverter(department);
-				personnelData.Status = "Standing By";
-				personnelData.StatusColor = "#000";
+				personnelData.StatusId = (available?.CustomStateDetailId ?? (int)ActionTypes.StandingBy).ToString();
+				personnelData.Status = available?.ButtonText ?? "Standing By";
+				personnelData.StatusColor = available?.ButtonClassToColor() ?? "#777";
 				personnelData.StatusBaseType = (int)ActionBaseTypes.Available;
 			}
 			else

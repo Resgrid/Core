@@ -1,5 +1,6 @@
 ﻿using Resgrid.Model;
 using Resgrid.Model.Events;
+using Resgrid.Model.Helpers;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
@@ -350,7 +351,8 @@ namespace Resgrid.Services
 			var members = await _departmentMembersRepository.GetAllByDepartmentIdAsync(departmentId);
 
 			var logs = new List<ActionLog>();
-			foreach (var member in members)
+			// Active members only: deleted, disabled and hidden members are left out of department-wide sweeps.
+			foreach (var member in members.Where(x => DepartmentMemberStateHelper.IsActiveMember(x, departmentId)))
 			{
 				var al = new ActionLog();
 				al.ActionTypeId = actionType;

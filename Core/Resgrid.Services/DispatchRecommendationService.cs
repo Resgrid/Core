@@ -15,7 +15,7 @@ using Resgrid.Model.Services;
 
 namespace Resgrid.Services
 {
-	public class DispatchRecommendationService : IDispatchRecommendationService
+	public partial class DispatchRecommendationService : IDispatchRecommendationService
 	{
 		private readonly IRunCardsService _runCardsService;
 		private readonly IUnitsService _unitsService;
@@ -31,6 +31,10 @@ namespace Resgrid.Services
 		private readonly IRunCardActivationsRepository _runCardActivationsRepository;
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IDepartmentsService _departmentsService;
+		private readonly IResponsePackagesService _responsePackagesService;
+		private readonly IRunCardDecisionsRepository _runCardDecisionsRepository;
+		private readonly IFeatureToggleService _featureToggleService;
+		private readonly IOutstandingRequirementsService _outstandingRequirementsService;
 
 		public DispatchRecommendationService(IRunCardsService runCardsService, IUnitsService unitsService,
 			IActionLogsService actionLogsService, IUserStateService userStateService, IPersonnelRolesService personnelRolesService,
@@ -38,8 +42,14 @@ namespace Resgrid.Services
 			IDepartmentSettingsService departmentSettingsService, IGeoService geoService,
 			IPersonnelLocationResolver personnelLocationResolver, IShiftsService shiftsService,
 			IRunCardActivationsRepository runCardActivationsRepository, IEventAggregator eventAggregator,
-			IDepartmentsService departmentsService)
+			IDepartmentsService departmentsService, IResponsePackagesService responsePackagesService,
+			IRunCardDecisionsRepository runCardDecisionsRepository, IFeatureToggleService featureToggleService,
+			IOutstandingRequirementsService outstandingRequirementsService)
 		{
+			_responsePackagesService = responsePackagesService;
+			_runCardDecisionsRepository = runCardDecisionsRepository;
+			_featureToggleService = featureToggleService;
+			_outstandingRequirementsService = outstandingRequirementsService;
 			_runCardsService = runCardsService;
 			_unitsService = unitsService;
 			_actionLogsService = actionLogsService;
@@ -63,9 +73,20 @@ namespace Resgrid.Services
 
 			var result = new DispatchRecommendationResult { AlarmLevel = request.TargetAlarmLevel };
 
-			var card = request.CallTypeId.HasValue
-				? await _runCardsService.GetMatchingRunCardAsync(request.DepartmentId, request.Priority, request.CallTypeName, request.CallTypeId)
-				: await _runCardsService.GetMatchingRunCardAsync(request.DepartmentId, request.Priority, request.CallTypeName);
+			RunCard card;
+			if (request.RunCardId.HasValue)
+			{
+				card = await _runCardsService.GetRunCardByIdAsync(request.RunCardId.Value);
+
+				if (card != null && card.DepartmentId != request.DepartmentId)
+					card = null;
+			}
+			else
+			{
+				card = request.CallTypeId.HasValue
+					? await _runCardsService.GetMatchingRunCardAsync(request.DepartmentId, request.Priority, request.CallTypeName, request.CallTypeId)
+					: await _runCardsService.GetMatchingRunCardAsync(request.DepartmentId, request.Priority, request.CallTypeName);
+			}
 
 			if (card == null)
 			{
@@ -117,6 +138,20 @@ namespace Resgrid.Services
 			await BuildUnitCandidatesAsync(context);
 			await BuildPersonnelCandidatesAsync(context);
 
+			// Conditional run cards (decision graph, packages, "any of" targets) take their own fill path; a fixed level with no
+			// package, or a department with the feature off, continues below exactly as before.
+			if (await IsConditionalLevelAsync(request.DepartmentId, level))
+			{
+				await RunConditionalLevelAsync(context, mode);
+
+				if (config.MoveUpRecommendationsEnabled)
+					await RunMoveUpPassAsync(context);
+
+				await FillDisplayNamesAsync(context);
+
+				return result;
+			}
+
 			if (request.CountDispatchedTowardRequirements)
 			{
 				context.Level = CountDispatchedTowardLevel(context);
@@ -149,7 +184,13 @@ namespace Resgrid.Services
 			return result;
 		}
 
-		public async Task<DispatchRecommendationResult> EnrichCallForDispatchAsync(Call call, int targetAlarmLevel, bool onlyWhenAutoDispatch = false, CancellationToken cancellationToken = default(CancellationToken))
+		public Task<DispatchRecommendationResult> EnrichCallForDispatchAsync(Call call, int targetAlarmLevel, bool onlyWhenAutoDispatch = false, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return EnrichCallForDispatchAsync(call, targetAlarmLevel, onlyWhenAutoDispatch, null, cancellationToken);
+		}
+
+		public async Task<DispatchRecommendationResult> EnrichCallForDispatchAsync(Call call, int targetAlarmLevel, bool onlyWhenAutoDispatch, string forcedLeafNodeKey,
+			CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (call == null)
 				throw new ArgumentNullException(nameof(call));
@@ -166,7 +207,9 @@ namespace Resgrid.Services
 				Longitude = location?.Longitude,
 				TargetAlarmLevel = targetAlarmLevel,
 				AlreadyDispatchedUnitIds = call.UnitDispatches?.Select(d => d.UnitId).ToList() ?? new List<int>(),
-				AlreadyDispatchedUserIds = call.Dispatches?.Select(d => d.UserId).Where(id => !string.IsNullOrWhiteSpace(id)).ToList() ?? new List<string>()
+				AlreadyDispatchedUserIds = call.Dispatches?.Select(d => d.UserId).Where(id => !string.IsNullOrWhiteSpace(id)).ToList() ?? new List<string>(),
+				CallId = call.CallId > 0 ? call.CallId : (int?)null,
+				ForcedLeafNodeKey = forcedLeafNodeKey
 			};
 
 			var result = await GetRecommendationAsync(request, cancellationToken);
@@ -198,7 +241,12 @@ namespace Resgrid.Services
 					call.UnitDispatches.Add(new CallDispatchUnit
 					{
 						CallId = call.CallId,
-						UnitId = unit.UnitId
+						UnitId = unit.UnitId,
+						// Conditional run cards: the optional response code snapshot (shown to crews only when the department's
+						// code setting says so; stored either way so the record says what was proposed).
+						ResponseCodeId = unit.ResponseCodeId,
+						ResponseCode = unit.ResponseCode,
+						ResponseCodeName = unit.ResponseCodeName
 					});
 				}
 			}
@@ -278,6 +326,8 @@ namespace Resgrid.Services
 					MoveUps = result.MoveUps
 				});
 			}
+
+			await RecordDecisionAsync(call, result, createdByUserId, RunCardDecisionSources.SaveTime, cancellationToken);
 		}
 
 		#region Candidate pools
@@ -300,6 +350,10 @@ namespace Resgrid.Services
 			public bool LocationIsStale { get; set; }
 			public UnitPositionSources PositionSource { get; set; }
 			public int TurnoutSeconds { get; set; }
+			/// <summary>The current status's meaning (ActionBaseTypes), built-in statuses included, for row and operand status filters.</summary>
+			public int BaseType { get; set; }
+			/// <summary>The unit type's meaning (UnitTypeClasses), for "unit class" targets.</summary>
+			public int UnitTypeClass { get; set; }
 		}
 
 		private sealed class PersonnelCandidate
@@ -379,8 +433,8 @@ namespace Resgrid.Services
 			{
 				if (alreadyDispatched.Contains(unit.UnitId))
 				{
-					if (context.Request.CountDispatchedTowardRequirements && !string.IsNullOrWhiteSpace(unit.Type) &&
-						typeByName.TryGetValue(unit.Type.Trim(), out var dispatchedType))
+					// Kept for every request (only CountDispatchedTowardLevel and conditional levels read it).
+					if (!string.IsNullOrWhiteSpace(unit.Type) && typeByName.TryGetValue(unit.Type.Trim(), out var dispatchedType))
 						context.DispatchedUnitTypes[unit.UnitId] = dispatchedType;
 
 					continue;
@@ -423,7 +477,9 @@ namespace Resgrid.Services
 					StatusColor = statusColors.Color,
 					StatusTextColor = statusColors.TextColor,
 					StaffingLevel = staffingLevel,
-					InQuarters = UnitResponseOrigin.IsInQuarters(stateId, customDetails)
+					InQuarters = UnitResponseOrigin.IsInQuarters(stateId, customDetails),
+					BaseType = isCustom ? customDetails[stateId].BaseType : (int)BuiltInStatusBaseTypes.ForUnitState(stateId),
+					UnitTypeClass = unitType.BaseType
 				});
 			}
 		}
@@ -475,8 +531,7 @@ namespace Resgrid.Services
 
 				if (alreadyDispatched.Contains(userId))
 				{
-					if (context.Request.CountDispatchedTowardRequirements)
-						context.DispatchedUserRoles[userId] = pair.Value?.Where(r => r != null).ToList() ?? new List<PersonnelRole>();
+					context.DispatchedUserRoles[userId] = pair.Value?.Where(r => r != null).ToList() ?? new List<PersonnelRole>();
 
 					continue;
 				}

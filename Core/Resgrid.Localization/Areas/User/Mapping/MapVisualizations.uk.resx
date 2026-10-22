@@ -1,0 +1,1061 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Mapping Index -->
+  <data name="PageTitle" xml:space="preserve">
+    <value>Візуалізації на карті</value>
+  </data>
+  <data name="PageIntro" xml:space="preserve">
+    <value>Теплові карти та накладення даних про ваші виклики, реагування та переміщення підрозділів.</value>
+  </data>
+  <data name="Loading" xml:space="preserve">
+    <value>Завантаження візуалізацій…</value>
+  </data>
+  <data name="Running" xml:space="preserve">
+    <value>Оновлення карти…</value>
+  </data>
+  <data name="Untitled" xml:space="preserve">
+    <value>Візуалізація без назви</value>
+  </data>
+  <data name="Unsaved" xml:space="preserve">
+    <value>Незбережені зміни</value>
+  </data>
+  <data name="Station" xml:space="preserve">
+    <value>Станція</value>
+  </data>
+  <data name="NoValue" xml:space="preserve">
+    <value>Немає значення</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Зберегти</value>
+  </data>
+  <data name="SaveAs" xml:space="preserve">
+    <value>Зберегти як нову</value>
+  </data>
+  <data name="SaveTitle" xml:space="preserve">
+    <value>Зберегти візуалізацію</value>
+  </data>
+  <data name="SaveAsTitle" xml:space="preserve">
+    <value>Зберегти як нову візуалізацію</value>
+  </data>
+  <data name="SaveName" xml:space="preserve">
+    <value>Назва</value>
+  </data>
+  <data name="SaveDescription" xml:space="preserve">
+    <value>Опис (необов’язково)</value>
+  </data>
+  <data name="SaveShare" xml:space="preserve">
+    <value>Поділитися з усією службою</value>
+  </data>
+  <data name="SaveShareHint" xml:space="preserve">
+    <value>Усі, хто може переглядати виклики, бачитимуть цю візуалізацію у своєму списку. Кожен бачить лише ті дані, до яких має доступ.</value>
+  </data>
+  <data name="SavePersonalHint" xml:space="preserve">
+    <value>Збережені візуалізації бачите лише ви. Адміністратори служби можуть ділитися візуалізаціями з усіма.</value>
+  </data>
+  <data name="SaveErrorNameRequired" xml:space="preserve">
+    <value>Введіть назву.</value>
+  </data>
+  <data name="SaveErrorNotFound" xml:space="preserve">
+    <value>Цієї візуалізації більше не існує.</value>
+  </data>
+  <data name="SaveErrorNotAllowed" xml:space="preserve">
+    <value>Ви не можете змінити цю візуалізацію. Спільні візуалізації можуть змінювати лише адміністратори служби.</value>
+  </data>
+  <data name="SaveErrorLimitReached" xml:space="preserve">
+    <value>Ваша служба досягла ліміту збережених візуалізацій. Спершу видаліть одну.</value>
+  </data>
+  <data name="SaveErrorDefinitionTooLarge" xml:space="preserve">
+    <value>Ця візуалізація має забагато налаштувань, щоб її можна було зберегти.</value>
+  </data>
+  <data name="SaveErrorUnknown" xml:space="preserve">
+    <value>Не вдалося зберегти візуалізацію.</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Візуалізацію збережено.</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Скасувати</value>
+  </data>
+  <data name="CopyOf" xml:space="preserve">
+    <value>Копія {0}</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Видалити</value>
+  </data>
+  <data name="DeleteNamed" xml:space="preserve">
+    <value>Видалити {0}</value>
+  </data>
+  <data name="DeleteConfirm" xml:space="preserve">
+    <value>Видалити візуалізацію «{0}»? Цю дію неможливо скасувати.</value>
+  </data>
+  <data name="DeleteFailed" xml:space="preserve">
+    <value>Не вдалося видалити візуалізацію.</value>
+  </data>
+  <data name="Deleted" xml:space="preserve">
+    <value>Візуалізацію видалено.</value>
+  </data>
+  <data name="ExportCsv" xml:space="preserve">
+    <value>Завантажити CSV</value>
+  </data>
+  <data name="CopyLink" xml:space="preserve">
+    <value>Копіювати посилання</value>
+  </data>
+  <data name="LinkCopied" xml:space="preserve">
+    <value>Посилання скопійовано.</value>
+  </data>
+  <data name="Fullscreen" xml:space="preserve">
+    <value>На весь екран</value>
+  </data>
+  <data name="PanelHide" xml:space="preserve">
+    <value>Сховати бічну панель</value>
+  </data>
+  <data name="PanelShow" xml:space="preserve">
+    <value>Показати бічну панель</value>
+  </data>
+  <data name="ErrorLoad" xml:space="preserve">
+    <value>Не вдалося завантажити візуалізацію. Спробуйте ще раз за мить.</value>
+  </data>
+  <data name="ErrorForbidden" xml:space="preserve">
+    <value>У вас немає дозволу переглядати ці дані.</value>
+  </data>
+  <data name="ErrorNoTiles" xml:space="preserve">
+    <value>Карту не налаштовано для вашої служби.</value>
+  </data>
+  <data name="TabLibrary" xml:space="preserve">
+    <value>Бібліотека</value>
+  </data>
+  <data name="TabCustomize" xml:space="preserve">
+    <value>Налаштування</value>
+  </data>
+  <data name="SavedTitle" xml:space="preserve">
+    <value>Збережені візуалізації</value>
+  </data>
+  <data name="SavedShared" xml:space="preserve">
+    <value>Спільні для служби</value>
+  </data>
+  <data name="SavedMine" xml:space="preserve">
+    <value>Мої візуалізації</value>
+  </data>
+  <data name="SavedPersonal" xml:space="preserve">
+    <value>Бачите лише ви</value>
+  </data>
+  <data name="SavedSharedBy" xml:space="preserve">
+    <value>Надано у спільний доступ: {0}</value>
+  </data>
+  <data name="SavedSharedBadge" xml:space="preserve">
+    <value>Спільна</value>
+  </data>
+  <data name="LibraryTitle" xml:space="preserve">
+    <value>Бібліотека візуалізацій</value>
+  </data>
+  <data name="LibraryHint" xml:space="preserve">
+    <value>Виберіть відправну точку, змініть її на вкладці «Налаштування» та збережіть власну версію.</value>
+  </data>
+  <data name="LibrarySearch" xml:space="preserve">
+    <value>Пошук у бібліотеці</value>
+  </data>
+  <data name="LibraryRecommended" xml:space="preserve">
+    <value>Рекомендовано для вашої організації</value>
+  </data>
+  <data name="LibraryRecommendedBadge" xml:space="preserve">
+    <value>Рекомендовано</value>
+  </data>
+  <data name="LibraryShowAll" xml:space="preserve">
+    <value>Показати всі візуалізації ({0})</value>
+  </data>
+  <data name="LibraryNeedsCall" xml:space="preserve">
+    <value>Виберіть виклик на вкладці «Налаштування».</value>
+  </data>
+  <data name="Category_CallDemand" xml:space="preserve">
+    <value>Попит на виклики</value>
+  </data>
+  <data name="Category_ResponsePerformance" xml:space="preserve">
+    <value>Ефективність реагування</value>
+  </data>
+  <data name="Category_Coverage" xml:space="preserve">
+    <value>Охоплення</value>
+  </data>
+  <data name="Category_Resources" xml:space="preserve">
+    <value>Підрозділи та персонал</value>
+  </data>
+  <data name="Category_Tracking" xml:space="preserve">
+    <value>Відстеження</value>
+  </data>
+  <data name="Category_CommunityRisk" xml:space="preserve">
+    <value>Ризики для громади</value>
+  </data>
+  <data name="Library_call_hot_zones_Name" xml:space="preserve">
+    <value>Гарячі зони викликів</value>
+  </data>
+  <data name="Library_call_hot_zones_Description" xml:space="preserve">
+    <value>Теплова карта всіх викликів за останні 12 місяців. Найяскравіші ділянки — там, де виклики концентруються.</value>
+  </data>
+  <data name="Library_busiest_areas_Name" xml:space="preserve">
+    <value>Найзавантаженіші райони (сітка)</value>
+  </data>
+  <data name="Library_busiest_areas_Description" xml:space="preserve">
+    <value>Шестикутна сітка, що рахує виклики в кожному районі, щоб порівнювати райони за числами, а не за яскравістю.</value>
+  </data>
+  <data name="Library_calls_by_type_Name" xml:space="preserve">
+    <value>Виклики за типом</value>
+  </data>
+  <data name="Library_calls_by_type_Description" xml:space="preserve">
+    <value>Кожен виклик за останні 90 днів як крапка, пофарбована за типом виклику.</value>
+  </data>
+  <data name="Library_dominant_call_type_Name" xml:space="preserve">
+    <value>Основний тип виклику за районом</value>
+  </data>
+  <data name="Library_dominant_call_type_Description" xml:space="preserve">
+    <value>Сітка, пофарбована за найпоширенішим типом виклику в кожному районі. Насиченіший колір означає більше викликів.</value>
+  </data>
+  <data name="Library_calls_by_priority_Name" xml:space="preserve">
+    <value>Виклики за пріоритетом</value>
+  </data>
+  <data name="Library_calls_by_priority_Description" xml:space="preserve">
+    <value>Виклики за останні 90 днів, пофарбовані за пріоритетом, щоб побачити, звідки надходять термінові виклики.</value>
+  </data>
+  <data name="Library_call_outcomes_Name" xml:space="preserve">
+    <value>Результати викликів</value>
+  </data>
+  <data name="Library_call_outcomes_Description" xml:space="preserve">
+    <value>Виклики, пофарбовані за способом закриття: закритий, скасований, необґрунтований, хибна тривога, переданий тощо.</value>
+  </data>
+  <data name="Library_time_of_day_Name" xml:space="preserve">
+    <value>Частина доби</value>
+  </data>
+  <data name="Library_time_of_day_Description" xml:space="preserve">
+    <value>Виклики, пофарбовані за часом надходження: вночі, зранку, вдень або ввечері. Корисно для планування персоналу та змін.</value>
+  </data>
+  <data name="Library_weekday_vs_weekend_Name" xml:space="preserve">
+    <value>Будні та вихідні</value>
+  </data>
+  <data name="Library_weekday_vs_weekend_Description" xml:space="preserve">
+    <value>Виклики, розділені на будні та вихідні, для планування доступності добровольців.</value>
+  </data>
+  <data name="Library_seasonal_patterns_Name" xml:space="preserve">
+    <value>Сезонні закономірності</value>
+  </data>
+  <data name="Library_seasonal_patterns_Description" xml:space="preserve">
+    <value>Виклики за два роки, пофарбовані за місяцями, щоб помітити сезонний попит, як-от лісові пожежі, порятунок на воді або сезони масових заходів.</value>
+  </data>
+  <data name="Library_response_time_by_area_Name" xml:space="preserve">
+    <value>Час реагування за районом (90-й перцентиль)</value>
+  </data>
+  <data name="Library_response_time_by_area_Description" xml:space="preserve">
+    <value>Сітка, пофарбована за 90-м перцентилем часу від реєстрації виклику до прибуття першого підрозділу на місце, так, як вимірюються цілі NFPA 1710 і NFPA 1720. Потрібно, щоб підрозділи встановлювали статуси «на місці».</value>
+  </data>
+  <data name="Library_response_time_bands_Name" xml:space="preserve">
+    <value>Діапазони часу реагування</value>
+  </data>
+  <data name="Library_response_time_bands_Description" xml:space="preserve">
+    <value>Кожен виклик пофарбований за хвилинами до прибуття першого підрозділу на місце: менше 4, від 4 до 8, від 8 до 12, від 12 до 20 і понад 20.</value>
+  </data>
+  <data name="Library_turnout_by_area_Name" xml:space="preserve">
+    <value>Час до першого виїзду за районом</value>
+  </data>
+  <data name="Library_turnout_by_area_Description" xml:space="preserve">
+    <value>Сітка, пофарбована за медіаною часу від реєстрації виклику до першого підрозділу, що реагує або прямує на виклик.</value>
+  </data>
+  <data name="Library_time_committed_Name" xml:space="preserve">
+    <value>Зайнятість за районом</value>
+  </data>
+  <data name="Library_time_committed_Description" xml:space="preserve">
+    <value>Сітка, пофарбована за середнім часом від реєстрації виклику до його закриття: де виклики найдовше зв’язують ресурси.</value>
+  </data>
+  <data name="Library_station_coverage_gaps_Name" xml:space="preserve">
+    <value>Виклики поза зоною покриття станцій</value>
+  </data>
+  <data name="Library_station_coverage_gaps_Description" xml:space="preserve">
+    <value>Виклики, пофарбовані за відстанню по прямій до найближчої станції, з кільцями 1.5, 2.5 і 5 миль (поширені страхові орієнтири).</value>
+  </data>
+  <data name="Library_station_area_workload_Name" xml:space="preserve">
+    <value>Навантаження за районом станції</value>
+  </data>
+  <data name="Library_station_area_workload_Description" xml:space="preserve">
+    <value>Виклики, пофарбовані за їхньою базовою станцією (спершу за геозоною, потім за тим, кого відправили), щоб порівнювати навантаження першого виїзду.</value>
+  </data>
+  <data name="Library_where_units_go_Name" xml:space="preserve">
+    <value>Куди їдуть підрозділи</value>
+  </data>
+  <data name="Library_where_units_go_Description" xml:space="preserve">
+    <value>Кожне реагування підрозділу за останні 90 днів у місці виклику, пофарбоване за підрозділом.</value>
+  </data>
+  <data name="Library_unit_type_demand_Name" xml:space="preserve">
+    <value>Попит за типом підрозділу</value>
+  </data>
+  <data name="Library_unit_type_demand_Description" xml:space="preserve">
+    <value>Сітка, пофарбована за типом підрозділу, який найчастіше реагує в кожному районі, наприклад автоцистерни, швидкі або рятувальні.</value>
+  </data>
+  <data name="Library_personnel_response_footprint_Name" xml:space="preserve">
+    <value>Слід реагування персоналу</value>
+  </data>
+  <data name="Library_personnel_response_footprint_Description" xml:space="preserve">
+    <value>Теплова карта викликів, на які реагували члени. Виклики з більшою кількістю тих, хто реагував, світяться яскравіше.</value>
+  </data>
+  <data name="Library_responder_origins_Name" xml:space="preserve">
+    <value>Звідки прибувають ті, хто реагує</value>
+  </data>
+  <data name="Library_responder_origins_Description" xml:space="preserve">
+    <value>Теплова карта того, де перебували члени, коли позначили себе як тих, що реагують, з кільцем 5 миль навколо станції. Потрібне надання геолокації в застосунку.</value>
+  </data>
+  <data name="Library_repeat_locations_Name" xml:space="preserve">
+    <value>Повторні місця</value>
+  </data>
+  <data name="Library_repeat_locations_Description" xml:space="preserve">
+    <value>Місця з 3 і більше викликами за останні 12 місяців, розмір і колір залежать від кількості. Корисно для частих заявників, проблем із сигналізацією та профілактичних заходів.</value>
+  </data>
+  <data name="Library_false_alarm_hot_spots_Name" xml:space="preserve">
+    <value>Осередки хибних тривог</value>
+  </data>
+  <data name="Library_false_alarm_hot_spots_Description" xml:space="preserve">
+    <value>Теплова карта викликів, закритих як хибна тривога або необґрунтовані.</value>
+  </data>
+  <data name="Library_unit_movement_24h_Name" xml:space="preserve">
+    <value>Переміщення підрозділів (останні 24 години)</value>
+  </data>
+  <data name="Library_unit_movement_24h_Description" xml:space="preserve">
+    <value>Записані маршрути підрозділів за останню добу, пофарбовані за підрозділом.</value>
+  </data>
+  <data name="Library_patrol_coverage_Name" xml:space="preserve">
+    <value>Охоплення патрулюванням</value>
+  </data>
+  <data name="Library_patrol_coverage_Description" xml:space="preserve">
+    <value>Теплова карта положень підрозділів за останні 7 днів: де патрулі та польові підрозділи проводять свій час.</value>
+  </data>
+  <data name="Library_search_coverage_Name" xml:space="preserve">
+    <value>Охоплення пошуку</value>
+  </data>
+  <data name="Library_search_coverage_Description" xml:space="preserve">
+    <value>Сітка положень членів, а також маршрути членів і підрозділів за останні 3 дні, щоб побачити, які райони вже оглянуто.</value>
+  </data>
+  <data name="Library_incident_footprint_Name" xml:space="preserve">
+    <value>Слід події</value>
+  </data>
+  <data name="Library_incident_footprint_Description" xml:space="preserve">
+    <value>Виберіть виклик, щоб побачити, куди рухався кожен підрозділ і член під час роботи за ним: їхні маршрути, місця зміни статусів і звідки прибували ті, хто реагував.</value>
+  </data>
+  <data name="SectionWhen" xml:space="preserve">
+    <value>Коли</value>
+  </data>
+  <data name="SectionWhich" xml:space="preserve">
+    <value>Які виклики</value>
+  </data>
+  <data name="SectionLayers" xml:space="preserve">
+    <value>Шари</value>
+  </data>
+  <data name="SectionStations" xml:space="preserve">
+    <value>Станції та відстані</value>
+  </data>
+  <data name="FilterWindow" xml:space="preserve">
+    <value>Діапазон дат</value>
+  </data>
+  <data name="Window_1" xml:space="preserve">
+    <value>Останні 24 години</value>
+  </data>
+  <data name="Window_7" xml:space="preserve">
+    <value>Останні 7 днів</value>
+  </data>
+  <data name="Window_30" xml:space="preserve">
+    <value>Останні 30 днів</value>
+  </data>
+  <data name="Window_90" xml:space="preserve">
+    <value>Останні 90 днів</value>
+  </data>
+  <data name="Window_365" xml:space="preserve">
+    <value>Останні 12 місяців</value>
+  </data>
+  <data name="Window_730" xml:space="preserve">
+    <value>Останні 2 роки</value>
+  </data>
+  <data name="Window_1825" xml:space="preserve">
+    <value>Останні 5 років</value>
+  </data>
+  <data name="Window_Custom" xml:space="preserve">
+    <value>Власні дати</value>
+  </data>
+  <data name="WindowDays" xml:space="preserve">
+    <value>Останні {0} дн.</value>
+  </data>
+  <data name="FilterStart" xml:space="preserve">
+    <value>Від</value>
+  </data>
+  <data name="FilterEnd" xml:space="preserve">
+    <value>До</value>
+  </data>
+  <data name="FilterDays" xml:space="preserve">
+    <value>Дні тижня</value>
+  </data>
+  <data name="FilterHours" xml:space="preserve">
+    <value>Години доби</value>
+  </data>
+  <data name="FilterHoursHint" xml:space="preserve">
+    <value>Залиште все невибраним, щоб охопити всі дні та години. Час вказано за часовим поясом вашої служби.</value>
+  </data>
+  <data name="FilterCall" xml:space="preserve">
+    <value>Один виклик</value>
+  </data>
+  <data name="FilterCallPlaceholder" xml:space="preserve">
+    <value>Пошук за номером, назвою, типом або адресою</value>
+  </data>
+  <data name="FilterCallHint" xml:space="preserve">
+    <value>Виберіть виклик, щоб показати лише його та те, куди рухалися його підрозділи й члени.</value>
+  </data>
+  <data name="FilterCallActiveHint" xml:space="preserve">
+    <value>Показано лише цей виклик. Діапазон дат та інші фільтри викликів ігноруються.</value>
+  </data>
+  <data name="FilterCallClear" xml:space="preserve">
+    <value>Показати всі виклики</value>
+  </data>
+  <data name="FilterCallNoMatches" xml:space="preserve">
+    <value>Жоден виклик за останній рік не збігається.</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>Пошук…</value>
+  </data>
+  <data name="FilterCallTypes" xml:space="preserve">
+    <value>Типи викликів</value>
+  </data>
+  <data name="FilterPriorities" xml:space="preserve">
+    <value>Пріоритети</value>
+  </data>
+  <data name="FilterOutcomes" xml:space="preserve">
+    <value>Результати</value>
+  </data>
+  <data name="FilterGroups" xml:space="preserve">
+    <value>Базова станція або група</value>
+  </data>
+  <data name="FilterUnits" xml:space="preserve">
+    <value>Залучені підрозділи</value>
+  </data>
+  <data name="FilterMinCalls" xml:space="preserve">
+    <value>Мінімум викликів у місці</value>
+  </data>
+  <data name="FilterMinCallsHint" xml:space="preserve">
+    <value>Показувати лише місця принаймні з такою кількістю викликів у діапазоні дат. 0 показує кожен виклик.</value>
+  </data>
+  <data name="FilterAll" xml:space="preserve">
+    <value>Усі</value>
+  </data>
+  <data name="FilterSelected" xml:space="preserve">
+    <value>Вибрано: {0}</value>
+  </data>
+  <data name="FilterNoChoices" xml:space="preserve">
+    <value>Не налаштовано</value>
+  </data>
+  <data name="FilterSearch" xml:space="preserve">
+    <value>Пошук</value>
+  </data>
+  <data name="FilterClear" xml:space="preserve">
+    <value>Очистити вибір</value>
+  </data>
+  <data name="LayersHint" xml:space="preserve">
+    <value>Шари малюються по черзі: верхній шар у цьому списку малюється поверх решти на карті.</value>
+  </data>
+  <data name="LayerAdd" xml:space="preserve">
+    <value>Додати шар</value>
+  </data>
+  <data name="LayerName" xml:space="preserve">
+    <value>Назва шару</value>
+  </data>
+  <data name="LayerSource" xml:space="preserve">
+    <value>Дані</value>
+  </data>
+  <data name="LayerDisplay" xml:space="preserve">
+    <value>Показувати як</value>
+  </data>
+  <data name="LayerColorBy" xml:space="preserve">
+    <value>Колір за</value>
+  </data>
+  <data name="LayerMetric" xml:space="preserve">
+    <value>Показник</value>
+  </data>
+  <data name="LayerWeight" xml:space="preserve">
+    <value>Вага кожної точки за</value>
+  </data>
+  <data name="LayerSize" xml:space="preserve">
+    <value>Значення</value>
+  </data>
+  <data name="LayerAggregate" xml:space="preserve">
+    <value>Об’єднувати значення за допомогою</value>
+  </data>
+  <data name="LayerPalette" xml:space="preserve">
+    <value>Кольори</value>
+  </data>
+  <data name="LayerOpacity" xml:space="preserve">
+    <value>Непрозорість</value>
+  </data>
+  <data name="LayerRadius" xml:space="preserve">
+    <value>Радіус тепла</value>
+  </data>
+  <data name="LayerIntensity" xml:space="preserve">
+    <value>Інтенсивність тепла</value>
+  </data>
+  <data name="LayerCellSize" xml:space="preserve">
+    <value>Розмір клітинки сітки</value>
+  </data>
+  <data name="LayerPointSize" xml:space="preserve">
+    <value>Розмір крапки</value>
+  </data>
+  <data name="LayerSizeByMetric" xml:space="preserve">
+    <value>Розмір крапок за значенням</value>
+  </data>
+  <data name="LayerUp" xml:space="preserve">
+    <value>Перемістити вгору (малювати вище)</value>
+  </data>
+  <data name="LayerDown" xml:space="preserve">
+    <value>Перемістити вниз (малювати нижче)</value>
+  </data>
+  <data name="LayerRemove" xml:space="preserve">
+    <value>Видалити шар</value>
+  </data>
+  <data name="OptionShowStations" xml:space="preserve">
+    <value>Показувати станції на карті</value>
+  </data>
+  <data name="OptionDistanceUnit" xml:space="preserve">
+    <value>Одиниця відстані</value>
+  </data>
+  <data name="OptionRings" xml:space="preserve">
+    <value>Кільця покриття навколо станцій</value>
+  </data>
+  <data name="OptionRingsHint" xml:space="preserve">
+    <value>До 4 відстаней через кому, наприклад 1.5, 2.5, 5. Кільця показують відстань по прямій, а не час у дорозі.</value>
+  </data>
+  <data name="OptionDistanceBands" xml:space="preserve">
+    <value>Діапазони відстані</value>
+  </data>
+  <data name="OptionDistanceBandsHint" xml:space="preserve">
+    <value>Використовується, коли колір залежить від відстані до станції. Залиште порожнім для значень за замовчуванням.</value>
+  </data>
+  <data name="OptionMinuteBands" xml:space="preserve">
+    <value>Діапазони часу реагування (хвилини)</value>
+  </data>
+  <data name="OptionMinuteBandsHint" xml:space="preserve">
+    <value>Використовується, коли колір залежить від діапазону часу реагування, наприклад 4, 8, 12, 20. Залиште порожнім для значень за замовчуванням.</value>
+  </data>
+  <data name="UnitKilometers" xml:space="preserve">
+    <value>км</value>
+  </data>
+  <data name="UnitMiles" xml:space="preserve">
+    <value>миль</value>
+  </data>
+  <data name="UnitMinutes" xml:space="preserve">
+    <value>хв</value>
+  </data>
+  <data name="Source_calls" xml:space="preserve">
+    <value>Виклики</value>
+  </data>
+  <data name="Source_unitResponses" xml:space="preserve">
+    <value>Реагування підрозділів</value>
+  </data>
+  <data name="Source_personnelResponses" xml:space="preserve">
+    <value>Реагування персоналу</value>
+  </data>
+  <data name="Source_responderOrigins" xml:space="preserve">
+    <value>Точки виїзду на виклик</value>
+  </data>
+  <data name="Source_unitStatusLocations" xml:space="preserve">
+    <value>Положення зміни статусів підрозділів</value>
+  </data>
+  <data name="Source_unitTracks" xml:space="preserve">
+    <value>Маршрути підрозділів</value>
+  </data>
+  <data name="Source_personnelTracks" xml:space="preserve">
+    <value>Маршрути персоналу</value>
+  </data>
+  <data name="SourceHint_calls" xml:space="preserve">
+    <value>Одна точка на виклик, у місці виклику.</value>
+  </data>
+  <data name="SourceHint_unitResponses" xml:space="preserve">
+    <value>Одна точка на кожен підрозділ, відправлений на виклик, у місці виклику.</value>
+  </data>
+  <data name="SourceHint_personnelResponses" xml:space="preserve">
+    <value>Одна точка на кожного члена, який відреагував на виклик, у місці виклику.</value>
+  </data>
+  <data name="SourceHint_responderOrigins" xml:space="preserve">
+    <value>Де перебували члени, коли встановили статус реагування. Відображаються лише ті, хто ділиться геолокацією. До 12 місяців.</value>
+  </data>
+  <data name="SourceHint_unitStatusLocations" xml:space="preserve">
+    <value>Де перебували підрозділи, коли змінювали статус. До 12 місяців.</value>
+  </data>
+  <data name="SourceHint_unitTracks" xml:space="preserve">
+    <value>Записані положення підрозділів із застосунку Unit або трекера, до 7 днів.</value>
+  </data>
+  <data name="SourceHint_personnelTracks" xml:space="preserve">
+    <value>Записані положення членів із застосунку Responder, до 7 днів.</value>
+  </data>
+  <data name="Display_heat" xml:space="preserve">
+    <value>Теплова карта</value>
+  </data>
+  <data name="Display_points" xml:space="preserve">
+    <value>Крапки</value>
+  </data>
+  <data name="Display_hexbins" xml:space="preserve">
+    <value>Шестикутна сітка</value>
+  </data>
+  <data name="Display_tracks" xml:space="preserve">
+    <value>Маршрути</value>
+  </data>
+  <data name="ColorBy_none" xml:space="preserve">
+    <value>Один колір</value>
+  </data>
+  <data name="ColorBy_callType" xml:space="preserve">
+    <value>Тип виклику</value>
+  </data>
+  <data name="ColorBy_priority" xml:space="preserve">
+    <value>Пріоритет</value>
+  </data>
+  <data name="ColorBy_outcome" xml:space="preserve">
+    <value>Результат</value>
+  </data>
+  <data name="ColorBy_group" xml:space="preserve">
+    <value>Базова станція</value>
+  </data>
+  <data name="ColorBy_timeOfDay" xml:space="preserve">
+    <value>Частина доби</value>
+  </data>
+  <data name="ColorBy_hourOfDay" xml:space="preserve">
+    <value>Година доби</value>
+  </data>
+  <data name="ColorBy_dayOfWeek" xml:space="preserve">
+    <value>День тижня</value>
+  </data>
+  <data name="ColorBy_weekpart" xml:space="preserve">
+    <value>Будні чи вихідні</value>
+  </data>
+  <data name="ColorBy_month" xml:space="preserve">
+    <value>Місяць</value>
+  </data>
+  <data name="ColorBy_year" xml:space="preserve">
+    <value>Рік</value>
+  </data>
+  <data name="ColorBy_unit" xml:space="preserve">
+    <value>Підрозділ</value>
+  </data>
+  <data name="ColorBy_unitType" xml:space="preserve">
+    <value>Тип підрозділу</value>
+  </data>
+  <data name="ColorBy_station" xml:space="preserve">
+    <value>Станція підрозділу</value>
+  </data>
+  <data name="ColorBy_person" xml:space="preserve">
+    <value>Особа</value>
+  </data>
+  <data name="ColorBy_status" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="ColorBy_responseBand" xml:space="preserve">
+    <value>Діапазон часу реагування</value>
+  </data>
+  <data name="ColorBy_distanceBand" xml:space="preserve">
+    <value>Діапазон відстані до станції</value>
+  </data>
+  <data name="ColorBy_repeatBand" xml:space="preserve">
+    <value>Виклики в одному місці</value>
+  </data>
+  <data name="Metric_count" xml:space="preserve">
+    <value>Кількість</value>
+  </data>
+  <data name="Metric_responseMinutes" xml:space="preserve">
+    <value>Хвилин до першого на місці</value>
+  </data>
+  <data name="Metric_turnoutMinutes" xml:space="preserve">
+    <value>Хвилин до першого виїзду</value>
+  </data>
+  <data name="Metric_durationMinutes" xml:space="preserve">
+    <value>Хвилин до закриття</value>
+  </data>
+  <data name="Metric_unitsDispatched" xml:space="preserve">
+    <value>Відправлено підрозділів</value>
+  </data>
+  <data name="Metric_personnelResponded" xml:space="preserve">
+    <value>Відреагувало персоналу</value>
+  </data>
+  <data name="Metric_stationDistance" xml:space="preserve">
+    <value>Відстань до станції</value>
+  </data>
+  <data name="Metric_callsAtLocation" xml:space="preserve">
+    <value>Виклики в одному місці</value>
+  </data>
+  <data name="Aggregate_count" xml:space="preserve">
+    <value>Кількість</value>
+  </data>
+  <data name="Aggregate_sum" xml:space="preserve">
+    <value>Сума</value>
+  </data>
+  <data name="Aggregate_mean" xml:space="preserve">
+    <value>Середнє</value>
+  </data>
+  <data name="Aggregate_median" xml:space="preserve">
+    <value>Медіана</value>
+  </data>
+  <data name="Aggregate_p90" xml:space="preserve">
+    <value>90-й перцентиль</value>
+  </data>
+  <data name="Aggregate_max" xml:space="preserve">
+    <value>Максимум</value>
+  </data>
+  <data name="Palette_heat" xml:space="preserve">
+    <value>Класична теплова</value>
+  </data>
+  <data name="Palette_fire" xml:space="preserve">
+    <value>Вогонь</value>
+  </data>
+  <data name="Palette_viridis" xml:space="preserve">
+    <value>Viridis (зручна для людей із порушенням кольоросприйняття)</value>
+  </data>
+  <data name="Palette_blues" xml:space="preserve">
+    <value>Відтінки синього</value>
+  </data>
+  <data name="Palette_traffic" xml:space="preserve">
+    <value>Від зеленого до червоного</value>
+  </data>
+  <data name="Day_0" xml:space="preserve">
+    <value>Неділя</value>
+  </data>
+  <data name="DayShort_0" xml:space="preserve">
+    <value>Нд</value>
+  </data>
+  <data name="Day_1" xml:space="preserve">
+    <value>Понеділок</value>
+  </data>
+  <data name="DayShort_1" xml:space="preserve">
+    <value>Пн</value>
+  </data>
+  <data name="Day_2" xml:space="preserve">
+    <value>Вівторок</value>
+  </data>
+  <data name="DayShort_2" xml:space="preserve">
+    <value>Вт</value>
+  </data>
+  <data name="Day_3" xml:space="preserve">
+    <value>Середа</value>
+  </data>
+  <data name="DayShort_3" xml:space="preserve">
+    <value>Ср</value>
+  </data>
+  <data name="Day_4" xml:space="preserve">
+    <value>Четвер</value>
+  </data>
+  <data name="DayShort_4" xml:space="preserve">
+    <value>Чт</value>
+  </data>
+  <data name="Day_5" xml:space="preserve">
+    <value>П’ятниця</value>
+  </data>
+  <data name="DayShort_5" xml:space="preserve">
+    <value>Пт</value>
+  </data>
+  <data name="Day_6" xml:space="preserve">
+    <value>Субота</value>
+  </data>
+  <data name="DayShort_6" xml:space="preserve">
+    <value>Сб</value>
+  </data>
+  <data name="Month_1" xml:space="preserve">
+    <value>Січень</value>
+  </data>
+  <data name="Month_2" xml:space="preserve">
+    <value>Лютий</value>
+  </data>
+  <data name="Month_3" xml:space="preserve">
+    <value>Березень</value>
+  </data>
+  <data name="Month_4" xml:space="preserve">
+    <value>Квітень</value>
+  </data>
+  <data name="Month_5" xml:space="preserve">
+    <value>Травень</value>
+  </data>
+  <data name="Month_6" xml:space="preserve">
+    <value>Червень</value>
+  </data>
+  <data name="Month_7" xml:space="preserve">
+    <value>Липень</value>
+  </data>
+  <data name="Month_8" xml:space="preserve">
+    <value>Серпень</value>
+  </data>
+  <data name="Month_9" xml:space="preserve">
+    <value>Вересень</value>
+  </data>
+  <data name="Month_10" xml:space="preserve">
+    <value>Жовтень</value>
+  </data>
+  <data name="Month_11" xml:space="preserve">
+    <value>Листопад</value>
+  </data>
+  <data name="Month_12" xml:space="preserve">
+    <value>Грудень</value>
+  </data>
+  <data name="TimeOfDay_0" xml:space="preserve">
+    <value>Вночі (00:00–06:00)</value>
+  </data>
+  <data name="TimeOfDay_1" xml:space="preserve">
+    <value>Зранку (06:00–12:00)</value>
+  </data>
+  <data name="TimeOfDay_2" xml:space="preserve">
+    <value>Вдень (12:00–18:00)</value>
+  </data>
+  <data name="TimeOfDay_3" xml:space="preserve">
+    <value>Ввечері (18:00–24:00)</value>
+  </data>
+  <data name="Weekday" xml:space="preserve">
+    <value>Будній день</value>
+  </data>
+  <data name="Weekend" xml:space="preserve">
+    <value>Вихідний</value>
+  </data>
+  <data name="Outcome_0" xml:space="preserve">
+    <value>Активний</value>
+  </data>
+  <data name="Outcome_1" xml:space="preserve">
+    <value>Закритий</value>
+  </data>
+  <data name="Outcome_2" xml:space="preserve">
+    <value>Скасований</value>
+  </data>
+  <data name="Outcome_3" xml:space="preserve">
+    <value>Необґрунтований</value>
+  </data>
+  <data name="Outcome_4" xml:space="preserve">
+    <value>Обґрунтований</value>
+  </data>
+  <data name="Outcome_5" xml:space="preserve">
+    <value>Незначний</value>
+  </data>
+  <data name="Outcome_6" xml:space="preserve">
+    <value>Переданий</value>
+  </data>
+  <data name="Outcome_7" xml:space="preserve">
+    <value>Хибна тривога</value>
+  </data>
+  <data name="Outcome_8" xml:space="preserve">
+    <value>Очікує</value>
+  </data>
+  <data name="UnitStatus_0" xml:space="preserve">
+    <value>Доступний</value>
+  </data>
+  <data name="UnitStatus_1" xml:space="preserve">
+    <value>Із затримкою</value>
+  </data>
+  <data name="UnitStatus_2" xml:space="preserve">
+    <value>Недоступний</value>
+  </data>
+  <data name="UnitStatus_3" xml:space="preserve">
+    <value>Зайнятий</value>
+  </data>
+  <data name="UnitStatus_4" xml:space="preserve">
+    <value>Поза службою</value>
+  </data>
+  <data name="UnitStatus_5" xml:space="preserve">
+    <value>Реагує</value>
+  </data>
+  <data name="UnitStatus_6" xml:space="preserve">
+    <value>На місці</value>
+  </data>
+  <data name="UnitStatus_7" xml:space="preserve">
+    <value>У зоні збору</value>
+  </data>
+  <data name="UnitStatus_8" xml:space="preserve">
+    <value>Повертається</value>
+  </data>
+  <data name="UnitStatus_9" xml:space="preserve">
+    <value>Скасований</value>
+  </data>
+  <data name="UnitStatus_10" xml:space="preserve">
+    <value>Звільнений</value>
+  </data>
+  <data name="UnitStatus_11" xml:space="preserve">
+    <value>Вручну</value>
+  </data>
+  <data name="UnitStatus_12" xml:space="preserve">
+    <value>У дорозі</value>
+  </data>
+  <data name="PersonnelStatus_0" xml:space="preserve">
+    <value>Доступний</value>
+  </data>
+  <data name="PersonnelStatus_1" xml:space="preserve">
+    <value>Не реагує</value>
+  </data>
+  <data name="PersonnelStatus_2" xml:space="preserve">
+    <value>Реагує</value>
+  </data>
+  <data name="PersonnelStatus_3" xml:space="preserve">
+    <value>На місці</value>
+  </data>
+  <data name="PersonnelStatus_4" xml:space="preserve">
+    <value>Доступний на станції</value>
+  </data>
+  <data name="PersonnelStatus_5" xml:space="preserve">
+    <value>Реагує на станцію</value>
+  </data>
+  <data name="PersonnelStatus_6" xml:space="preserve">
+    <value>Реагує на місце події</value>
+  </data>
+  <data name="PersonnelStatus_7" xml:space="preserve">
+    <value>У складі підрозділу</value>
+  </data>
+  <data name="CategoryOther" xml:space="preserve">
+    <value>Інше</value>
+  </data>
+  <data name="CategoryNoType" xml:space="preserve">
+    <value>Без типу</value>
+  </data>
+  <data name="CategoryNoStation" xml:space="preserve">
+    <value>Без станції</value>
+  </data>
+  <data name="RepeatBand" xml:space="preserve">
+    <value>Викликів: {0}</value>
+  </data>
+  <data name="LegendTitle" xml:space="preserve">
+    <value>Легенда</value>
+  </data>
+  <data name="LegendFewer" xml:space="preserve">
+    <value>Менше</value>
+  </data>
+  <data name="LegendMore" xml:space="preserve">
+    <value>Більше</value>
+  </data>
+  <data name="LegendLower" xml:space="preserve">
+    <value>Нижче</value>
+  </data>
+  <data name="LegendHigher" xml:space="preserve">
+    <value>Вище</value>
+  </data>
+  <data name="LegendUpTo" xml:space="preserve">
+    <value>До {0}</value>
+  </data>
+  <data name="LegendRange" xml:space="preserve">
+    <value>Від {0} до {1}</value>
+  </data>
+  <data name="LegendDominant" xml:space="preserve">
+    <value>Кожна клітинка показує свою найпоширенішу категорію. Насиченіший колір означає більше викликів.</value>
+  </data>
+  <data name="LegendEmpty" xml:space="preserve">
+    <value>Для цих фільтрів немає що показувати.</value>
+  </data>
+  <data name="TooltipRows" xml:space="preserve">
+    <value>Записів: {0}</value>
+  </data>
+  <data name="TooltipDominant" xml:space="preserve">
+    <value>Переважно {0} ({1}%)</value>
+  </data>
+  <data name="PopupOpenCall" xml:space="preserve">
+    <value>Відкрити виклик</value>
+  </data>
+  <data name="PopupFocusCall" xml:space="preserve">
+    <value>Показати слід цього виклику</value>
+  </data>
+  <data name="PopupUnavailable" xml:space="preserve">
+    <value>Подробиці виклику недоступні.</value>
+  </data>
+  <data name="SummaryWindow" xml:space="preserve">
+    <value>Показано з {0} по {1}</value>
+  </data>
+  <data name="SummaryCall" xml:space="preserve">
+    <value>Показано виклик {0}</value>
+  </data>
+  <data name="SummaryWhen" xml:space="preserve">
+    <value>Коли надходять виклики</value>
+  </data>
+  <data name="SummaryTopTypes" xml:space="preserve">
+    <value>Найпоширеніші типи викликів</value>
+  </data>
+  <data name="KpiCalls" xml:space="preserve">
+    <value>Виклики</value>
+  </data>
+  <data name="KpiMapped" xml:space="preserve">
+    <value>Виклики з місцем</value>
+  </data>
+  <data name="KpiMedianResponse" xml:space="preserve">
+    <value>Медіанний час до прибуття на місце</value>
+  </data>
+  <data name="KpiP90Response" xml:space="preserve">
+    <value>90-й перцентиль часу до прибуття на місце</value>
+  </data>
+  <data name="KpiResponseHint" xml:space="preserve">
+    <value>Час реагування з’являється, коли шар використовує показник або діапазон часу реагування, а підрозділи встановлюють статуси «на місці».</value>
+  </data>
+  <data name="NoticeCallsTruncated" xml:space="preserve">
+    <value>У цьому діапазоні дат понад 100,000 викликів. Показано найновіші 100,000; виберіть коротший діапазон, щоб побачити все.</value>
+  </data>
+  <data name="Notice_personnelLocationsHidden" xml:space="preserve">
+    <value>{0}: деякі члени пропущені, бо ви не можете бачити їхнє розташування.</value>
+  </data>
+  <data name="Notice_unitLocationsHidden" xml:space="preserve">
+    <value>{0}: деякі підрозділи пропущені, бо ви не можете бачити їхнє розташування.</value>
+  </data>
+  <data name="Notice_trackWindowShortened" xml:space="preserve">
+    <value>{0}: показано лише найновішу частину діапазону дат, бо історія розташування та статусів обмежена за тривалістю.</value>
+  </data>
+  <data name="Notice_layerTruncated" xml:space="preserve">
+    <value>{0}: забагато точок, щоб показати їх усі, тому показано найновіші.</value>
+  </data>
+  <data name="Notice_noStationLocations" xml:space="preserve">
+    <value>{0}: жодна станція не має розташування, тому відстані й кільця не можна показати. Додайте адресу або координати станції в розділі «Групи».</value>
+  </data>
+  <data name="Notice_noStatusTimes" xml:space="preserve">
+    <value>{0}: жоден із цих викликів не має статусів «на місці» чи реагування, тому час реагування порожній.</value>
+  </data>
+  <data name="Notice_callNotFound" xml:space="preserve">
+    <value>{0}: вибраний виклик не знайдено, або ви не можете його переглядати.</value>
+  </data>
+</root>

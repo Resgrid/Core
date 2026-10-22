@@ -9,11 +9,13 @@ using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.AdminAssist;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Services;
 
 namespace Resgrid.Services.AdminAssist
 {
 	public sealed class NotificationImpactService(IAdminAssistAccessService access, IAdminAssistRepository repository,
-		IAdminAssistCatalog catalog, IDepartmentSettingsRepository settings, INotificationImpactStore store, TimeProvider clock) : INotificationImpactService
+		IAdminAssistCatalog catalog, IDepartmentSettingsRepository settings, INotificationImpactStore store, TimeProvider clock,
+		ICustomStateService customStates = null) : INotificationImpactService
 	{
 		public async Task<ConfigurationImpactReport> PreviewAsync(AdminAssistActor actor, NotificationImpactRequest request, CancellationToken ct = default)
 		{
@@ -36,8 +38,12 @@ namespace Resgrid.Services.AdminAssist
 				var blocked = BroadcastBlocked(actor.DepartmentId);
 				var members = await store.ReadNotificationMembersAsync(actor.DepartmentId, bound, ct);
 				Validate(members, actor.DepartmentId, bound);
-				var before = Count(members, suppression.EnableSupressStaffing, suppression.StaffingLevelsToSupress, blocked);
-				var after = Count(members, request.SuppressStaffing, suppression.StaffingLevelsToSupress, blocked);
+				// Meaning entries ("any Off Duty level") mute by each level's base type, so they need the department's levels.
+				var staffingBaseTypes = StaffingSuppression.HasMeanings(suppression) && customStates != null
+					? StatusMatch.StaffingBaseTypes(await customStates.GetAllCustomStatesForDepartmentAsync(actor.DepartmentId))
+					: null;
+				var before = Count(members, suppression.EnableSupressStaffing, suppression.StaffingLevelsToSupress, blocked, staffingBaseTypes);
+				var after = Count(members, request.SuppressStaffing, suppression.StaffingLevelsToSupress, blocked, staffingBaseTypes);
 				if (JsonConvert.SerializeObject(suppression) != JsonConvert.SerializeObject(await ReadSuppressionAsync(actor.DepartmentId, ct)) ||
 					JsonConvert.SerializeObject(members) != JsonConvert.SerializeObject(await store.ReadNotificationMembersAsync(actor.DepartmentId, bound, ct)) ||
 					blocked != BroadcastBlocked(actor.DepartmentId)) throw new AdminAssistConcurrencyException();
@@ -92,13 +98,15 @@ namespace Resgrid.Services.AdminAssist
 			public int Suppressed, UnknownStaffing, RecipientsMinimum, RecipientsMaximum, SmsMinimum, SmsMaximum,
 				EmailMinimum, EmailMaximum, PushMinimum, PushMaximum, NoChannels;
 		}
-		private static Counts Count(IReadOnlyList<NotificationMemberEvidence> rows, bool suppress, List<int> levels, bool blocked)
+		private static Counts Count(IReadOnlyList<NotificationMemberEvidence> rows, bool suppress, List<int> levels, bool blocked, Func<int, int> staffingBaseTypes = null)
 		{
 			var result = new Counts();
+			// The rule real sends apply (StaffingSuppression): exact levels and meanings.
+			var rule = new DepartmentSuppressStaffingInfo { EnableSupressStaffing = suppress, StaffingLevelsToSupress = levels };
 			foreach (var row in rows)
 			{
 				if (blocked) { result.Suppressed++; continue; }
-				if (suppress && row.StaffingKnown && levels.Contains(row.Staffing.Value)) { result.Suppressed++; continue; }
+				if (row.StaffingKnown && StaffingSuppression.IsSuppressed(rule, row.Staffing.Value, staffingBaseTypes)) { result.Suppressed++; continue; }
 				var staffingUnknown = suppress && levels.Count > 0 && !row.StaffingKnown;
 				if (staffingUnknown) result.UnknownStaffing++;
 				if (!row.ProfileId.HasValue)

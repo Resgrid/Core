@@ -1,0 +1,1061 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Mapping Index -->
+  <data name="PageTitle" xml:space="preserve">
+    <value>Απεικονίσεις χάρτη</value>
+  </data>
+  <data name="PageIntro" xml:space="preserve">
+    <value>Θερμικοί χάρτες και επικαλύψεις δεδομένων για τις κλήσεις, τις αποκρίσεις και τις κινήσεις των μονάδων σας.</value>
+  </data>
+  <data name="Loading" xml:space="preserve">
+    <value>Φόρτωση απεικονίσεων…</value>
+  </data>
+  <data name="Running" xml:space="preserve">
+    <value>Ενημέρωση χάρτη…</value>
+  </data>
+  <data name="Untitled" xml:space="preserve">
+    <value>Απεικόνιση χωρίς τίτλο</value>
+  </data>
+  <data name="Unsaved" xml:space="preserve">
+    <value>Μη αποθηκευμένες αλλαγές</value>
+  </data>
+  <data name="Station" xml:space="preserve">
+    <value>Σταθμός</value>
+  </data>
+  <data name="NoValue" xml:space="preserve">
+    <value>Χωρίς τιμή</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Αποθήκευση</value>
+  </data>
+  <data name="SaveAs" xml:space="preserve">
+    <value>Αποθήκευση ως νέα</value>
+  </data>
+  <data name="SaveTitle" xml:space="preserve">
+    <value>Αποθήκευση απεικόνισης</value>
+  </data>
+  <data name="SaveAsTitle" xml:space="preserve">
+    <value>Αποθήκευση ως νέα απεικόνιση</value>
+  </data>
+  <data name="SaveName" xml:space="preserve">
+    <value>Όνομα</value>
+  </data>
+  <data name="SaveDescription" xml:space="preserve">
+    <value>Περιγραφή (προαιρετική)</value>
+  </data>
+  <data name="SaveShare" xml:space="preserve">
+    <value>Κοινή χρήση με όλο το τμήμα</value>
+  </data>
+  <data name="SaveShareHint" xml:space="preserve">
+    <value>Όλοι όσοι μπορούν να βλέπουν κλήσεις θα βλέπουν αυτή την απεικόνιση στη λίστα τους. Κάθε άτομο βλέπει πάντα μόνο τα δεδομένα στα οποία έχει πρόσβαση.</value>
+  </data>
+  <data name="SavePersonalHint" xml:space="preserve">
+    <value>Οι αποθηκευμένες απεικονίσεις είναι ορατές μόνο σε εσάς. Οι διαχειριστές του τμήματος μπορούν να μοιραστούν απεικονίσεις με όλους.</value>
+  </data>
+  <data name="SaveErrorNameRequired" xml:space="preserve">
+    <value>Εισαγάγετε ένα όνομα.</value>
+  </data>
+  <data name="SaveErrorNotFound" xml:space="preserve">
+    <value>Αυτή η απεικόνιση δεν υπάρχει πλέον.</value>
+  </data>
+  <data name="SaveErrorNotAllowed" xml:space="preserve">
+    <value>Δεν μπορείτε να αλλάξετε αυτή την απεικόνιση. Οι κοινόχρηστες απεικονίσεις μπορούν να αλλαχθούν μόνο από διαχειριστές του τμήματος.</value>
+  </data>
+  <data name="SaveErrorLimitReached" xml:space="preserve">
+    <value>Το τμήμα σας έχει φτάσει το όριο αποθηκευμένων απεικονίσεων. Διαγράψτε πρώτα μία.</value>
+  </data>
+  <data name="SaveErrorDefinitionTooLarge" xml:space="preserve">
+    <value>Αυτή η απεικόνιση έχει υπερβολικά πολλές ρυθμίσεις για να αποθηκευτεί.</value>
+  </data>
+  <data name="SaveErrorUnknown" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η αποθήκευση της απεικόνισης.</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Η απεικόνιση αποθηκεύτηκε.</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Ακύρωση</value>
+  </data>
+  <data name="CopyOf" xml:space="preserve">
+    <value>{0} (αντίγραφο)</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Διαγραφή</value>
+  </data>
+  <data name="DeleteNamed" xml:space="preserve">
+    <value>Διαγραφή {0}</value>
+  </data>
+  <data name="DeleteConfirm" xml:space="preserve">
+    <value>Διαγραφή της απεικόνισης «{0}»; Η ενέργεια αυτή δεν μπορεί να αναιρεθεί.</value>
+  </data>
+  <data name="DeleteFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η διαγραφή της απεικόνισης.</value>
+  </data>
+  <data name="Deleted" xml:space="preserve">
+    <value>Η απεικόνιση διαγράφηκε.</value>
+  </data>
+  <data name="ExportCsv" xml:space="preserve">
+    <value>Λήψη CSV</value>
+  </data>
+  <data name="CopyLink" xml:space="preserve">
+    <value>Αντιγραφή συνδέσμου</value>
+  </data>
+  <data name="LinkCopied" xml:space="preserve">
+    <value>Ο σύνδεσμος αντιγράφηκε.</value>
+  </data>
+  <data name="Fullscreen" xml:space="preserve">
+    <value>Πλήρης οθόνη</value>
+  </data>
+  <data name="PanelHide" xml:space="preserve">
+    <value>Απόκρυψη πλευρικού πίνακα</value>
+  </data>
+  <data name="PanelShow" xml:space="preserve">
+    <value>Εμφάνιση πλευρικού πίνακα</value>
+  </data>
+  <data name="ErrorLoad" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η φόρτωση της απεικόνισης. Δοκιμάστε ξανά σε λίγο.</value>
+  </data>
+  <data name="ErrorForbidden" xml:space="preserve">
+    <value>Δεν έχετε δικαίωμα προβολής αυτών των δεδομένων.</value>
+  </data>
+  <data name="ErrorNoTiles" xml:space="preserve">
+    <value>Ο χάρτης δεν έχει ρυθμιστεί για το τμήμα σας.</value>
+  </data>
+  <data name="TabLibrary" xml:space="preserve">
+    <value>Βιβλιοθήκη</value>
+  </data>
+  <data name="TabCustomize" xml:space="preserve">
+    <value>Προσαρμογή</value>
+  </data>
+  <data name="SavedTitle" xml:space="preserve">
+    <value>Αποθηκευμένες απεικονίσεις</value>
+  </data>
+  <data name="SavedShared" xml:space="preserve">
+    <value>Κοινόχρηστες με το τμήμα</value>
+  </data>
+  <data name="SavedMine" xml:space="preserve">
+    <value>Οι απεικονίσεις μου</value>
+  </data>
+  <data name="SavedPersonal" xml:space="preserve">
+    <value>Ορατή μόνο σε εσάς</value>
+  </data>
+  <data name="SavedSharedBy" xml:space="preserve">
+    <value>Κοινοποιήθηκε από {0}</value>
+  </data>
+  <data name="SavedSharedBadge" xml:space="preserve">
+    <value>Κοινόχρηστη</value>
+  </data>
+  <data name="LibraryTitle" xml:space="preserve">
+    <value>Βιβλιοθήκη απεικονίσεων</value>
+  </data>
+  <data name="LibraryHint" xml:space="preserve">
+    <value>Επιλέξτε ένα σημείο εκκίνησης, προσαρμόστε το στην καρτέλα Προσαρμογή και αποθηκεύστε τη δική σας έκδοση.</value>
+  </data>
+  <data name="LibrarySearch" xml:space="preserve">
+    <value>Αναζήτηση στη βιβλιοθήκη</value>
+  </data>
+  <data name="LibraryRecommended" xml:space="preserve">
+    <value>Προτεινόμενες για τον οργανισμό σας</value>
+  </data>
+  <data name="LibraryRecommendedBadge" xml:space="preserve">
+    <value>Προτείνεται</value>
+  </data>
+  <data name="LibraryShowAll" xml:space="preserve">
+    <value>Εμφάνιση όλων των {0} απεικονίσεων</value>
+  </data>
+  <data name="LibraryNeedsCall" xml:space="preserve">
+    <value>Επιλέξτε μια κλήση στην καρτέλα Προσαρμογή.</value>
+  </data>
+  <data name="Category_CallDemand" xml:space="preserve">
+    <value>Ζήτηση κλήσεων</value>
+  </data>
+  <data name="Category_ResponsePerformance" xml:space="preserve">
+    <value>Επίδοση απόκρισης</value>
+  </data>
+  <data name="Category_Coverage" xml:space="preserve">
+    <value>Κάλυψη</value>
+  </data>
+  <data name="Category_Resources" xml:space="preserve">
+    <value>Μονάδες και προσωπικό</value>
+  </data>
+  <data name="Category_Tracking" xml:space="preserve">
+    <value>Παρακολούθηση</value>
+  </data>
+  <data name="Category_CommunityRisk" xml:space="preserve">
+    <value>Κίνδυνος κοινότητας</value>
+  </data>
+  <data name="Library_call_hot_zones_Name" xml:space="preserve">
+    <value>Θερμές ζώνες κλήσεων</value>
+  </data>
+  <data name="Library_call_hot_zones_Description" xml:space="preserve">
+    <value>Θερμικός χάρτης όλων των κλήσεων των τελευταίων 12 μηνών. Οι πιο φωτεινές περιοχές είναι εκεί όπου συγκεντρώνονται οι κλήσεις.</value>
+  </data>
+  <data name="Library_busiest_areas_Name" xml:space="preserve">
+    <value>Πιο πολυάσχολες περιοχές (πλέγμα)</value>
+  </data>
+  <data name="Library_busiest_areas_Description" xml:space="preserve">
+    <value>Εξαγωνικό πλέγμα που μετρά τις κλήσεις σε κάθε περιοχή, ώστε να συγκρίνετε τις γειτονιές με αριθμούς αντί για λάμψη.</value>
+  </data>
+  <data name="Library_calls_by_type_Name" xml:space="preserve">
+    <value>Κλήσεις ανά τύπο</value>
+  </data>
+  <data name="Library_calls_by_type_Description" xml:space="preserve">
+    <value>Κάθε κλήση των τελευταίων 90 ημερών ως κουκκίδα, χρωματισμένη ανά τύπο κλήσης.</value>
+  </data>
+  <data name="Library_dominant_call_type_Name" xml:space="preserve">
+    <value>Κύριος τύπος κλήσης ανά περιοχή</value>
+  </data>
+  <data name="Library_dominant_call_type_Description" xml:space="preserve">
+    <value>Πλέγμα χρωματισμένο ανά τον συχνότερο τύπο κλήσης σε κάθε περιοχή. Πιο έντονο χρώμα σημαίνει περισσότερες κλήσεις.</value>
+  </data>
+  <data name="Library_calls_by_priority_Name" xml:space="preserve">
+    <value>Κλήσεις ανά προτεραιότητα</value>
+  </data>
+  <data name="Library_calls_by_priority_Description" xml:space="preserve">
+    <value>Κλήσεις των τελευταίων 90 ημερών χρωματισμένες ανά προτεραιότητα, για να δείτε από πού προέρχονται οι επείγουσες κλήσεις.</value>
+  </data>
+  <data name="Library_call_outcomes_Name" xml:space="preserve">
+    <value>Αποτελέσματα κλήσεων</value>
+  </data>
+  <data name="Library_call_outcomes_Description" xml:space="preserve">
+    <value>Κλήσεις χρωματισμένες ανά τον τρόπο που έκλεισαν: κλειστή, ακυρωμένη, αβάσιμη, ψευδής συναγερμός, μεταφερμένη και άλλα.</value>
+  </data>
+  <data name="Library_time_of_day_Name" xml:space="preserve">
+    <value>Μέρος της ημέρας</value>
+  </data>
+  <data name="Library_time_of_day_Description" xml:space="preserve">
+    <value>Κλήσεις χρωματισμένες ανά την ώρα που ήρθαν: νύχτα, πρωί, απόγευμα ή βράδυ. Χρήσιμο για τον προγραμματισμό προσωπικού και βαρδιών.</value>
+  </data>
+  <data name="Library_weekday_vs_weekend_Name" xml:space="preserve">
+    <value>Καθημερινές και Σαββατοκύριακα</value>
+  </data>
+  <data name="Library_weekday_vs_weekend_Description" xml:space="preserve">
+    <value>Κλήσεις χωρισμένες σε καθημερινές και Σαββατοκύριακο, για τον προγραμματισμό της διαθεσιμότητας εθελοντών.</value>
+  </data>
+  <data name="Library_seasonal_patterns_Name" xml:space="preserve">
+    <value>Εποχικά πρότυπα</value>
+  </data>
+  <data name="Library_seasonal_patterns_Description" xml:space="preserve">
+    <value>Κλήσεις δύο ετών χρωματισμένες ανά μήνα, για τον εντοπισμό εποχικής ζήτησης, όπως δασικές πυρκαγιές, διάσωση από το νερό ή περίοδοι εκδηλώσεων.</value>
+  </data>
+  <data name="Library_response_time_by_area_Name" xml:space="preserve">
+    <value>Χρόνος απόκρισης ανά περιοχή (90ό εκατοστημόριο)</value>
+  </data>
+  <data name="Library_response_time_by_area_Description" xml:space="preserve">
+    <value>Πλέγμα χρωματισμένο ανά το 90ό εκατοστημόριο του χρόνου από την καταγραφή της κλήσης έως την άφιξη της πρώτης μονάδας στο σημείο, με τον τρόπο που μετριούνται οι στόχοι NFPA 1710 και NFPA 1720. Απαιτεί οι μονάδες να ορίζουν καταστάσεις άφιξης στο σημείο.</value>
+  </data>
+  <data name="Library_response_time_bands_Name" xml:space="preserve">
+    <value>Ζώνες χρόνου απόκρισης</value>
+  </data>
+  <data name="Library_response_time_bands_Description" xml:space="preserve">
+    <value>Κάθε κλήση χρωματισμένη ανά λεπτά έως την πρώτη μονάδα στο σημείο: κάτω από 4, 4 έως 8, 8 έως 12, 12 έως 20 και πάνω από 20.</value>
+  </data>
+  <data name="Library_turnout_by_area_Name" xml:space="preserve">
+    <value>Χρόνος έως την πρώτη ανταπόκριση ανά περιοχή</value>
+  </data>
+  <data name="Library_turnout_by_area_Description" xml:space="preserve">
+    <value>Πλέγμα χρωματισμένο ανά τη διάμεσο του χρόνου από την καταγραφή της κλήσης έως την πρώτη μονάδα που ανταποκρίνεται ή βρίσκεται καθ' οδόν.</value>
+  </data>
+  <data name="Library_time_committed_Name" xml:space="preserve">
+    <value>Χρόνος δέσμευσης ανά περιοχή</value>
+  </data>
+  <data name="Library_time_committed_Description" xml:space="preserve">
+    <value>Πλέγμα χρωματισμένο ανά τον μέσο χρόνο από την καταγραφή έως το κλείσιμο της κλήσης: πού οι κλήσεις δεσμεύουν τους πόρους για περισσότερο.</value>
+  </data>
+  <data name="Library_station_coverage_gaps_Name" xml:space="preserve">
+    <value>Κλήσεις εκτός κάλυψης σταθμών</value>
+  </data>
+  <data name="Library_station_coverage_gaps_Description" xml:space="preserve">
+    <value>Κλήσεις χρωματισμένες ανά την ευθεία απόσταση από τον πλησιέστερο σταθμό, με δακτυλίους 1.5, 2.5 και 5 μιλίων (συνηθισμένα κριτήρια ασφαλιστικής αξιολόγησης).</value>
+  </data>
+  <data name="Library_station_area_workload_Name" xml:space="preserve">
+    <value>Φόρτος εργασίας ανά περιοχή σταθμού</value>
+  </data>
+  <data name="Library_station_area_workload_Description" xml:space="preserve">
+    <value>Κλήσεις χρωματισμένες ανά τον βασικό τους σταθμό (πρώτα το γεωγραφικό του όριο, μετά όσοι στάλθηκαν), για σύγκριση του φόρτου πρώτης ανταπόκρισης.</value>
+  </data>
+  <data name="Library_where_units_go_Name" xml:space="preserve">
+    <value>Πού πηγαίνουν οι μονάδες</value>
+  </data>
+  <data name="Library_where_units_go_Description" xml:space="preserve">
+    <value>Κάθε απόκριση μονάδας των τελευταίων 90 ημερών στη θέση της κλήσης, χρωματισμένη ανά μονάδα.</value>
+  </data>
+  <data name="Library_unit_type_demand_Name" xml:space="preserve">
+    <value>Ζήτηση ανά τύπο μονάδας</value>
+  </data>
+  <data name="Library_unit_type_demand_Description" xml:space="preserve">
+    <value>Πλέγμα χρωματισμένο ανά τον τύπο μονάδας που ανταποκρίνεται περισσότερο σε κάθε περιοχή, όπως πυροσβεστικά οχήματα, ασθενοφόρα ή μονάδες διάσωσης.</value>
+  </data>
+  <data name="Library_personnel_response_footprint_Name" xml:space="preserve">
+    <value>Αποτύπωμα απόκρισης προσωπικού</value>
+  </data>
+  <data name="Library_personnel_response_footprint_Description" xml:space="preserve">
+    <value>Θερμικός χάρτης των κλήσεων στις οποίες ανταποκρίθηκαν μέλη. Οι κλήσεις με περισσότερους ανταποκρινόμενους λάμπουν περισσότερο.</value>
+  </data>
+  <data name="Library_responder_origins_Name" xml:space="preserve">
+    <value>Από πού έρχονται οι ανταποκρινόμενοι</value>
+  </data>
+  <data name="Library_responder_origins_Description" xml:space="preserve">
+    <value>Θερμικός χάρτης της θέσης των μελών όταν δήλωσαν ότι ανταποκρίνονται, με δακτύλιο 5 μιλίων γύρω από τον σταθμό. Απαιτεί κοινοποίηση τοποθεσίας στην εφαρμογή.</value>
+  </data>
+  <data name="Library_repeat_locations_Name" xml:space="preserve">
+    <value>Επαναλαμβανόμενες τοποθεσίες</value>
+  </data>
+  <data name="Library_repeat_locations_Description" xml:space="preserve">
+    <value>Τοποθεσίες με 3 ή περισσότερες κλήσεις τους τελευταίους 12 μήνες, με μέγεθος και χρώμα ανάλογα με το πλήθος. Χρήσιμο για συχνούς καλούντες, προβλήματα συναγερμών και παρακολούθηση πρόληψης.</value>
+  </data>
+  <data name="Library_false_alarm_hot_spots_Name" xml:space="preserve">
+    <value>Εστίες ψευδών συναγερμών</value>
+  </data>
+  <data name="Library_false_alarm_hot_spots_Description" xml:space="preserve">
+    <value>Θερμικός χάρτης των κλήσεων που έκλεισαν ως ψευδής συναγερμός ή αβάσιμη κλήση.</value>
+  </data>
+  <data name="Library_unit_movement_24h_Name" xml:space="preserve">
+    <value>Κίνηση μονάδων (τελευταίες 24 ώρες)</value>
+  </data>
+  <data name="Library_unit_movement_24h_Description" xml:space="preserve">
+    <value>Καταγεγραμμένες διαδρομές μονάδων για την τελευταία ημέρα, χρωματισμένες ανά μονάδα.</value>
+  </data>
+  <data name="Library_patrol_coverage_Name" xml:space="preserve">
+    <value>Κάλυψη περιπολιών</value>
+  </data>
+  <data name="Library_patrol_coverage_Description" xml:space="preserve">
+    <value>Θερμικός χάρτης των θέσεων των μονάδων τις τελευταίες 7 ημέρες: πού περνούν τον χρόνο τους οι περιπολίες και οι μονάδες πεδίου.</value>
+  </data>
+  <data name="Library_search_coverage_Name" xml:space="preserve">
+    <value>Κάλυψη έρευνας</value>
+  </data>
+  <data name="Library_search_coverage_Description" xml:space="preserve">
+    <value>Πλέγμα θέσεων μελών μαζί με διαδρομές μελών και μονάδων τις τελευταίες 3 ημέρες, για να δείτε ποιες περιοχές έχουν καλυφθεί.</value>
+  </data>
+  <data name="Library_incident_footprint_Name" xml:space="preserve">
+    <value>Αποτύπωμα συμβάντος</value>
+  </data>
+  <data name="Library_incident_footprint_Description" xml:space="preserve">
+    <value>Επιλέξτε μια κλήση για να δείτε πού πήγε κάθε μονάδα και μέλος κατά τον χειρισμό της: τις διαδρομές τους, τις θέσεις καταστάσεων και από πού ήρθαν οι ανταποκρινόμενοι.</value>
+  </data>
+  <data name="SectionWhen" xml:space="preserve">
+    <value>Πότε</value>
+  </data>
+  <data name="SectionWhich" xml:space="preserve">
+    <value>Ποιες κλήσεις</value>
+  </data>
+  <data name="SectionLayers" xml:space="preserve">
+    <value>Επίπεδα</value>
+  </data>
+  <data name="SectionStations" xml:space="preserve">
+    <value>Σταθμοί και αποστάσεις</value>
+  </data>
+  <data name="FilterWindow" xml:space="preserve">
+    <value>Εύρος ημερομηνιών</value>
+  </data>
+  <data name="Window_1" xml:space="preserve">
+    <value>Τελευταίες 24 ώρες</value>
+  </data>
+  <data name="Window_7" xml:space="preserve">
+    <value>Τελευταίες 7 ημέρες</value>
+  </data>
+  <data name="Window_30" xml:space="preserve">
+    <value>Τελευταίες 30 ημέρες</value>
+  </data>
+  <data name="Window_90" xml:space="preserve">
+    <value>Τελευταίες 90 ημέρες</value>
+  </data>
+  <data name="Window_365" xml:space="preserve">
+    <value>Τελευταίοι 12 μήνες</value>
+  </data>
+  <data name="Window_730" xml:space="preserve">
+    <value>Τελευταία 2 έτη</value>
+  </data>
+  <data name="Window_1825" xml:space="preserve">
+    <value>Τελευταία 5 έτη</value>
+  </data>
+  <data name="Window_Custom" xml:space="preserve">
+    <value>Προσαρμοσμένες ημερομηνίες</value>
+  </data>
+  <data name="WindowDays" xml:space="preserve">
+    <value>Τελευταίες {0} ημέρες</value>
+  </data>
+  <data name="FilterStart" xml:space="preserve">
+    <value>Από</value>
+  </data>
+  <data name="FilterEnd" xml:space="preserve">
+    <value>Έως</value>
+  </data>
+  <data name="FilterDays" xml:space="preserve">
+    <value>Ημέρες της εβδομάδας</value>
+  </data>
+  <data name="FilterHours" xml:space="preserve">
+    <value>Ώρες της ημέρας</value>
+  </data>
+  <data name="FilterHoursHint" xml:space="preserve">
+    <value>Αφήστε όλες τις επιλογές αποεπιλεγμένες για να συμπεριληφθούν όλες οι ημέρες και ώρες. Οι ώρες αναφέρονται στη ζώνη ώρας του τμήματός σας.</value>
+  </data>
+  <data name="FilterCall" xml:space="preserve">
+    <value>Μία κλήση</value>
+  </data>
+  <data name="FilterCallPlaceholder" xml:space="preserve">
+    <value>Αναζήτηση με αριθμό, όνομα, τύπο ή διεύθυνση</value>
+  </data>
+  <data name="FilterCallHint" xml:space="preserve">
+    <value>Επιλέξτε μια κλήση για να εμφανιστεί μόνο αυτή και το πού πήγαν οι μονάδες και τα μέλη της.</value>
+  </data>
+  <data name="FilterCallActiveHint" xml:space="preserve">
+    <value>Εμφανίζεται μόνο αυτή η κλήση. Το εύρος ημερομηνιών και τα άλλα φίλτρα κλήσεων αγνοούνται.</value>
+  </data>
+  <data name="FilterCallClear" xml:space="preserve">
+    <value>Εμφάνιση όλων των κλήσεων</value>
+  </data>
+  <data name="FilterCallNoMatches" xml:space="preserve">
+    <value>Καμία κλήση του τελευταίου έτους δεν ταιριάζει.</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>Αναζήτηση…</value>
+  </data>
+  <data name="FilterCallTypes" xml:space="preserve">
+    <value>Τύποι κλήσεων</value>
+  </data>
+  <data name="FilterPriorities" xml:space="preserve">
+    <value>Προτεραιότητες</value>
+  </data>
+  <data name="FilterOutcomes" xml:space="preserve">
+    <value>Αποτελέσματα</value>
+  </data>
+  <data name="FilterGroups" xml:space="preserve">
+    <value>Βασικός σταθμός ή ομάδα</value>
+  </data>
+  <data name="FilterUnits" xml:space="preserve">
+    <value>Εμπλεκόμενες μονάδες</value>
+  </data>
+  <data name="FilterMinCalls" xml:space="preserve">
+    <value>Ελάχιστες κλήσεις ανά τοποθεσία</value>
+  </data>
+  <data name="FilterMinCallsHint" xml:space="preserve">
+    <value>Εμφάνιση μόνο τοποθεσιών με τουλάχιστον τόσες κλήσεις στο εύρος ημερομηνιών. Το 0 εμφανίζει κάθε κλήση.</value>
+  </data>
+  <data name="FilterAll" xml:space="preserve">
+    <value>Όλα</value>
+  </data>
+  <data name="FilterSelected" xml:space="preserve">
+    <value>{0} επιλεγμένα</value>
+  </data>
+  <data name="FilterNoChoices" xml:space="preserve">
+    <value>Δεν έχουν οριστεί</value>
+  </data>
+  <data name="FilterSearch" xml:space="preserve">
+    <value>Αναζήτηση</value>
+  </data>
+  <data name="FilterClear" xml:space="preserve">
+    <value>Εκκαθάριση επιλογής</value>
+  </data>
+  <data name="LayersHint" xml:space="preserve">
+    <value>Τα επίπεδα σχεδιάζονται με τη σειρά: το επάνω επίπεδο της λίστας σχεδιάζεται πάνω από τα υπόλοιπα στον χάρτη.</value>
+  </data>
+  <data name="LayerAdd" xml:space="preserve">
+    <value>Προσθήκη επιπέδου</value>
+  </data>
+  <data name="LayerName" xml:space="preserve">
+    <value>Όνομα επιπέδου</value>
+  </data>
+  <data name="LayerSource" xml:space="preserve">
+    <value>Δεδομένα</value>
+  </data>
+  <data name="LayerDisplay" xml:space="preserve">
+    <value>Εμφάνιση ως</value>
+  </data>
+  <data name="LayerColorBy" xml:space="preserve">
+    <value>Χρωματισμός ανά</value>
+  </data>
+  <data name="LayerMetric" xml:space="preserve">
+    <value>Μέτρηση</value>
+  </data>
+  <data name="LayerWeight" xml:space="preserve">
+    <value>Στάθμιση κάθε σημείου ανά</value>
+  </data>
+  <data name="LayerSize" xml:space="preserve">
+    <value>Τιμή</value>
+  </data>
+  <data name="LayerAggregate" xml:space="preserve">
+    <value>Συνδυασμός τιμών με</value>
+  </data>
+  <data name="LayerPalette" xml:space="preserve">
+    <value>Χρώματα</value>
+  </data>
+  <data name="LayerOpacity" xml:space="preserve">
+    <value>Αδιαφάνεια</value>
+  </data>
+  <data name="LayerRadius" xml:space="preserve">
+    <value>Ακτίνα θερμότητας</value>
+  </data>
+  <data name="LayerIntensity" xml:space="preserve">
+    <value>Ένταση θερμότητας</value>
+  </data>
+  <data name="LayerCellSize" xml:space="preserve">
+    <value>Μέγεθος κελιού πλέγματος</value>
+  </data>
+  <data name="LayerPointSize" xml:space="preserve">
+    <value>Μέγεθος κουκκίδας</value>
+  </data>
+  <data name="LayerSizeByMetric" xml:space="preserve">
+    <value>Μέγεθος κουκκίδων ανά τιμή</value>
+  </data>
+  <data name="LayerUp" xml:space="preserve">
+    <value>Μετακίνηση επάνω (σχεδίαση από πάνω)</value>
+  </data>
+  <data name="LayerDown" xml:space="preserve">
+    <value>Μετακίνηση κάτω (σχεδίαση από κάτω)</value>
+  </data>
+  <data name="LayerRemove" xml:space="preserve">
+    <value>Αφαίρεση επιπέδου</value>
+  </data>
+  <data name="OptionShowStations" xml:space="preserve">
+    <value>Εμφάνιση σταθμών στον χάρτη</value>
+  </data>
+  <data name="OptionDistanceUnit" xml:space="preserve">
+    <value>Μονάδα απόστασης</value>
+  </data>
+  <data name="OptionRings" xml:space="preserve">
+    <value>Δακτύλιοι κάλυψης γύρω από τους σταθμούς</value>
+  </data>
+  <data name="OptionRingsHint" xml:space="preserve">
+    <value>Έως 4 αποστάσεις, χωρισμένες με κόμματα, για παράδειγμα 1.5, 2.5, 5. Οι δακτύλιοι δείχνουν ευθεία απόσταση, όχι χρόνο οδήγησης.</value>
+  </data>
+  <data name="OptionDistanceBands" xml:space="preserve">
+    <value>Ζώνες απόστασης</value>
+  </data>
+  <data name="OptionDistanceBandsHint" xml:space="preserve">
+    <value>Χρησιμοποιούνται όταν ο χρωματισμός γίνεται ανά απόσταση από τον σταθμό. Αφήστε κενό για τις προεπιλογές.</value>
+  </data>
+  <data name="OptionMinuteBands" xml:space="preserve">
+    <value>Ζώνες χρόνου απόκρισης (λεπτά)</value>
+  </data>
+  <data name="OptionMinuteBandsHint" xml:space="preserve">
+    <value>Χρησιμοποιούνται όταν ο χρωματισμός γίνεται ανά ζώνη χρόνου απόκρισης, για παράδειγμα 4, 8, 12, 20. Αφήστε κενό για τις προεπιλογές.</value>
+  </data>
+  <data name="UnitKilometers" xml:space="preserve">
+    <value>χλμ.</value>
+  </data>
+  <data name="UnitMiles" xml:space="preserve">
+    <value>μίλια</value>
+  </data>
+  <data name="UnitMinutes" xml:space="preserve">
+    <value>λ.</value>
+  </data>
+  <data name="Source_calls" xml:space="preserve">
+    <value>Κλήσεις</value>
+  </data>
+  <data name="Source_unitResponses" xml:space="preserve">
+    <value>Αποκρίσεις μονάδων</value>
+  </data>
+  <data name="Source_personnelResponses" xml:space="preserve">
+    <value>Αποκρίσεις προσωπικού</value>
+  </data>
+  <data name="Source_responderOrigins" xml:space="preserve">
+    <value>Αφετηρίες ανταποκρινομένων</value>
+  </data>
+  <data name="Source_unitStatusLocations" xml:space="preserve">
+    <value>Θέσεις καταστάσεων μονάδων</value>
+  </data>
+  <data name="Source_unitTracks" xml:space="preserve">
+    <value>Διαδρομές μονάδων</value>
+  </data>
+  <data name="Source_personnelTracks" xml:space="preserve">
+    <value>Διαδρομές προσωπικού</value>
+  </data>
+  <data name="SourceHint_calls" xml:space="preserve">
+    <value>Ένα σημείο ανά κλήση, στη θέση της κλήσης.</value>
+  </data>
+  <data name="SourceHint_unitResponses" xml:space="preserve">
+    <value>Ένα σημείο για κάθε μονάδα που στάλθηκε σε κλήση, στη θέση της κλήσης.</value>
+  </data>
+  <data name="SourceHint_personnelResponses" xml:space="preserve">
+    <value>Ένα σημείο για κάθε μέλος που ανταποκρίθηκε σε κλήση, στη θέση της κλήσης.</value>
+  </data>
+  <data name="SourceHint_responderOrigins" xml:space="preserve">
+    <value>Πού βρίσκονταν τα μέλη όταν όρισαν κατάσταση ανταπόκρισης. Εμφανίζονται μόνο τα μέλη που κοινοποιούν την τοποθεσία τους. Έως 12 μήνες.</value>
+  </data>
+  <data name="SourceHint_unitStatusLocations" xml:space="preserve">
+    <value>Πού βρίσκονταν οι μονάδες όταν άλλαξαν κατάσταση. Έως 12 μήνες.</value>
+  </data>
+  <data name="SourceHint_unitTracks" xml:space="preserve">
+    <value>Καταγεγραμμένες θέσεις μονάδων από την εφαρμογή Unit ή από συσκευή εντοπισμού, έως 7 ημέρες.</value>
+  </data>
+  <data name="SourceHint_personnelTracks" xml:space="preserve">
+    <value>Καταγεγραμμένες θέσεις μελών από την εφαρμογή Responder, έως 7 ημέρες.</value>
+  </data>
+  <data name="Display_heat" xml:space="preserve">
+    <value>Θερμικός χάρτης</value>
+  </data>
+  <data name="Display_points" xml:space="preserve">
+    <value>Κουκκίδες</value>
+  </data>
+  <data name="Display_hexbins" xml:space="preserve">
+    <value>Εξαγωνικό πλέγμα</value>
+  </data>
+  <data name="Display_tracks" xml:space="preserve">
+    <value>Διαδρομές</value>
+  </data>
+  <data name="ColorBy_none" xml:space="preserve">
+    <value>Ένα χρώμα</value>
+  </data>
+  <data name="ColorBy_callType" xml:space="preserve">
+    <value>Τύπος κλήσης</value>
+  </data>
+  <data name="ColorBy_priority" xml:space="preserve">
+    <value>Προτεραιότητα</value>
+  </data>
+  <data name="ColorBy_outcome" xml:space="preserve">
+    <value>Αποτέλεσμα</value>
+  </data>
+  <data name="ColorBy_group" xml:space="preserve">
+    <value>Βασικός σταθμός</value>
+  </data>
+  <data name="ColorBy_timeOfDay" xml:space="preserve">
+    <value>Μέρος της ημέρας</value>
+  </data>
+  <data name="ColorBy_hourOfDay" xml:space="preserve">
+    <value>Ώρα της ημέρας</value>
+  </data>
+  <data name="ColorBy_dayOfWeek" xml:space="preserve">
+    <value>Ημέρα της εβδομάδας</value>
+  </data>
+  <data name="ColorBy_weekpart" xml:space="preserve">
+    <value>Καθημερινή ή Σαββατοκύριακο</value>
+  </data>
+  <data name="ColorBy_month" xml:space="preserve">
+    <value>Μήνας</value>
+  </data>
+  <data name="ColorBy_year" xml:space="preserve">
+    <value>Έτος</value>
+  </data>
+  <data name="ColorBy_unit" xml:space="preserve">
+    <value>Μονάδα</value>
+  </data>
+  <data name="ColorBy_unitType" xml:space="preserve">
+    <value>Τύπος μονάδας</value>
+  </data>
+  <data name="ColorBy_station" xml:space="preserve">
+    <value>Σταθμός της μονάδας</value>
+  </data>
+  <data name="ColorBy_person" xml:space="preserve">
+    <value>Άτομο</value>
+  </data>
+  <data name="ColorBy_status" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="ColorBy_responseBand" xml:space="preserve">
+    <value>Ζώνη χρόνου απόκρισης</value>
+  </data>
+  <data name="ColorBy_distanceBand" xml:space="preserve">
+    <value>Ζώνη απόστασης από σταθμό</value>
+  </data>
+  <data name="ColorBy_repeatBand" xml:space="preserve">
+    <value>Κλήσεις στην ίδια τοποθεσία</value>
+  </data>
+  <data name="Metric_count" xml:space="preserve">
+    <value>Πλήθος</value>
+  </data>
+  <data name="Metric_responseMinutes" xml:space="preserve">
+    <value>Λεπτά έως την πρώτη άφιξη στο σημείο</value>
+  </data>
+  <data name="Metric_turnoutMinutes" xml:space="preserve">
+    <value>Λεπτά έως την πρώτη ανταπόκριση</value>
+  </data>
+  <data name="Metric_durationMinutes" xml:space="preserve">
+    <value>Λεπτά έως το κλείσιμο</value>
+  </data>
+  <data name="Metric_unitsDispatched" xml:space="preserve">
+    <value>Μονάδες που στάλθηκαν</value>
+  </data>
+  <data name="Metric_personnelResponded" xml:space="preserve">
+    <value>Προσωπικό που ανταποκρίθηκε</value>
+  </data>
+  <data name="Metric_stationDistance" xml:space="preserve">
+    <value>Απόσταση από σταθμό</value>
+  </data>
+  <data name="Metric_callsAtLocation" xml:space="preserve">
+    <value>Κλήσεις στην ίδια τοποθεσία</value>
+  </data>
+  <data name="Aggregate_count" xml:space="preserve">
+    <value>Πλήθος</value>
+  </data>
+  <data name="Aggregate_sum" xml:space="preserve">
+    <value>Σύνολο</value>
+  </data>
+  <data name="Aggregate_mean" xml:space="preserve">
+    <value>Μέσος όρος</value>
+  </data>
+  <data name="Aggregate_median" xml:space="preserve">
+    <value>Διάμεσος</value>
+  </data>
+  <data name="Aggregate_p90" xml:space="preserve">
+    <value>90ό εκατοστημόριο</value>
+  </data>
+  <data name="Aggregate_max" xml:space="preserve">
+    <value>Μέγιστο</value>
+  </data>
+  <data name="Palette_heat" xml:space="preserve">
+    <value>Κλασική θερμική</value>
+  </data>
+  <data name="Palette_fire" xml:space="preserve">
+    <value>Φωτιά</value>
+  </data>
+  <data name="Palette_viridis" xml:space="preserve">
+    <value>Viridis (φιλική σε άτομα με αχρωματοψία)</value>
+  </data>
+  <data name="Palette_blues" xml:space="preserve">
+    <value>Αποχρώσεις του μπλε</value>
+  </data>
+  <data name="Palette_traffic" xml:space="preserve">
+    <value>Από πράσινο σε κόκκινο</value>
+  </data>
+  <data name="Day_0" xml:space="preserve">
+    <value>Κυριακή</value>
+  </data>
+  <data name="DayShort_0" xml:space="preserve">
+    <value>Κυρ</value>
+  </data>
+  <data name="Day_1" xml:space="preserve">
+    <value>Δευτέρα</value>
+  </data>
+  <data name="DayShort_1" xml:space="preserve">
+    <value>Δευ</value>
+  </data>
+  <data name="Day_2" xml:space="preserve">
+    <value>Τρίτη</value>
+  </data>
+  <data name="DayShort_2" xml:space="preserve">
+    <value>Τρί</value>
+  </data>
+  <data name="Day_3" xml:space="preserve">
+    <value>Τετάρτη</value>
+  </data>
+  <data name="DayShort_3" xml:space="preserve">
+    <value>Τετ</value>
+  </data>
+  <data name="Day_4" xml:space="preserve">
+    <value>Πέμπτη</value>
+  </data>
+  <data name="DayShort_4" xml:space="preserve">
+    <value>Πέμ</value>
+  </data>
+  <data name="Day_5" xml:space="preserve">
+    <value>Παρασκευή</value>
+  </data>
+  <data name="DayShort_5" xml:space="preserve">
+    <value>Παρ</value>
+  </data>
+  <data name="Day_6" xml:space="preserve">
+    <value>Σάββατο</value>
+  </data>
+  <data name="DayShort_6" xml:space="preserve">
+    <value>Σάβ</value>
+  </data>
+  <data name="Month_1" xml:space="preserve">
+    <value>Ιανουάριος</value>
+  </data>
+  <data name="Month_2" xml:space="preserve">
+    <value>Φεβρουάριος</value>
+  </data>
+  <data name="Month_3" xml:space="preserve">
+    <value>Μάρτιος</value>
+  </data>
+  <data name="Month_4" xml:space="preserve">
+    <value>Απρίλιος</value>
+  </data>
+  <data name="Month_5" xml:space="preserve">
+    <value>Μάιος</value>
+  </data>
+  <data name="Month_6" xml:space="preserve">
+    <value>Ιούνιος</value>
+  </data>
+  <data name="Month_7" xml:space="preserve">
+    <value>Ιούλιος</value>
+  </data>
+  <data name="Month_8" xml:space="preserve">
+    <value>Αύγουστος</value>
+  </data>
+  <data name="Month_9" xml:space="preserve">
+    <value>Σεπτέμβριος</value>
+  </data>
+  <data name="Month_10" xml:space="preserve">
+    <value>Οκτώβριος</value>
+  </data>
+  <data name="Month_11" xml:space="preserve">
+    <value>Νοέμβριος</value>
+  </data>
+  <data name="Month_12" xml:space="preserve">
+    <value>Δεκέμβριος</value>
+  </data>
+  <data name="TimeOfDay_0" xml:space="preserve">
+    <value>Νύχτα (00:00–06:00)</value>
+  </data>
+  <data name="TimeOfDay_1" xml:space="preserve">
+    <value>Πρωί (06:00–12:00)</value>
+  </data>
+  <data name="TimeOfDay_2" xml:space="preserve">
+    <value>Απόγευμα (12:00–18:00)</value>
+  </data>
+  <data name="TimeOfDay_3" xml:space="preserve">
+    <value>Βράδυ (18:00–24:00)</value>
+  </data>
+  <data name="Weekday" xml:space="preserve">
+    <value>Καθημερινή</value>
+  </data>
+  <data name="Weekend" xml:space="preserve">
+    <value>Σαββατοκύριακο</value>
+  </data>
+  <data name="Outcome_0" xml:space="preserve">
+    <value>Ενεργή</value>
+  </data>
+  <data name="Outcome_1" xml:space="preserve">
+    <value>Κλειστή</value>
+  </data>
+  <data name="Outcome_2" xml:space="preserve">
+    <value>Ακυρωμένη</value>
+  </data>
+  <data name="Outcome_3" xml:space="preserve">
+    <value>Αβάσιμη</value>
+  </data>
+  <data name="Outcome_4" xml:space="preserve">
+    <value>Βάσιμη</value>
+  </data>
+  <data name="Outcome_5" xml:space="preserve">
+    <value>Ήσσονος σημασίας</value>
+  </data>
+  <data name="Outcome_6" xml:space="preserve">
+    <value>Μεταφερμένη</value>
+  </data>
+  <data name="Outcome_7" xml:space="preserve">
+    <value>Ψευδής συναγερμός</value>
+  </data>
+  <data name="Outcome_8" xml:space="preserve">
+    <value>Σε αναμονή</value>
+  </data>
+  <data name="UnitStatus_0" xml:space="preserve">
+    <value>Διαθέσιμη</value>
+  </data>
+  <data name="UnitStatus_1" xml:space="preserve">
+    <value>Σε καθυστέρηση</value>
+  </data>
+  <data name="UnitStatus_2" xml:space="preserve">
+    <value>Μη διαθέσιμη</value>
+  </data>
+  <data name="UnitStatus_3" xml:space="preserve">
+    <value>Δεσμευμένη</value>
+  </data>
+  <data name="UnitStatus_4" xml:space="preserve">
+    <value>Εκτός υπηρεσίας</value>
+  </data>
+  <data name="UnitStatus_5" xml:space="preserve">
+    <value>Ανταποκρίνεται</value>
+  </data>
+  <data name="UnitStatus_6" xml:space="preserve">
+    <value>Στο σημείο</value>
+  </data>
+  <data name="UnitStatus_7" xml:space="preserve">
+    <value>Σε χώρο συγκέντρωσης</value>
+  </data>
+  <data name="UnitStatus_8" xml:space="preserve">
+    <value>Επιστρέφει</value>
+  </data>
+  <data name="UnitStatus_9" xml:space="preserve">
+    <value>Ακυρωμένη</value>
+  </data>
+  <data name="UnitStatus_10" xml:space="preserve">
+    <value>Απελευθερωμένη</value>
+  </data>
+  <data name="UnitStatus_11" xml:space="preserve">
+    <value>Χειροκίνητη</value>
+  </data>
+  <data name="UnitStatus_12" xml:space="preserve">
+    <value>Καθ' οδόν</value>
+  </data>
+  <data name="PersonnelStatus_0" xml:space="preserve">
+    <value>Διαθέσιμο</value>
+  </data>
+  <data name="PersonnelStatus_1" xml:space="preserve">
+    <value>Δεν ανταποκρίνεται</value>
+  </data>
+  <data name="PersonnelStatus_2" xml:space="preserve">
+    <value>Ανταποκρίνεται</value>
+  </data>
+  <data name="PersonnelStatus_3" xml:space="preserve">
+    <value>Στο σημείο</value>
+  </data>
+  <data name="PersonnelStatus_4" xml:space="preserve">
+    <value>Διαθέσιμο στον σταθμό</value>
+  </data>
+  <data name="PersonnelStatus_5" xml:space="preserve">
+    <value>Ανταποκρίνεται προς τον σταθμό</value>
+  </data>
+  <data name="PersonnelStatus_6" xml:space="preserve">
+    <value>Ανταποκρίνεται προς το σημείο</value>
+  </data>
+  <data name="PersonnelStatus_7" xml:space="preserve">
+    <value>Σε μονάδα</value>
+  </data>
+  <data name="CategoryOther" xml:space="preserve">
+    <value>Άλλο</value>
+  </data>
+  <data name="CategoryNoType" xml:space="preserve">
+    <value>Χωρίς τύπο</value>
+  </data>
+  <data name="CategoryNoStation" xml:space="preserve">
+    <value>Χωρίς σταθμό</value>
+  </data>
+  <data name="RepeatBand" xml:space="preserve">
+    <value>{0} κλήσεις</value>
+  </data>
+  <data name="LegendTitle" xml:space="preserve">
+    <value>Υπόμνημα</value>
+  </data>
+  <data name="LegendFewer" xml:space="preserve">
+    <value>Λιγότερες</value>
+  </data>
+  <data name="LegendMore" xml:space="preserve">
+    <value>Περισσότερες</value>
+  </data>
+  <data name="LegendLower" xml:space="preserve">
+    <value>Χαμηλότερο</value>
+  </data>
+  <data name="LegendHigher" xml:space="preserve">
+    <value>Υψηλότερο</value>
+  </data>
+  <data name="LegendUpTo" xml:space="preserve">
+    <value>Έως {0}</value>
+  </data>
+  <data name="LegendRange" xml:space="preserve">
+    <value>{0} έως {1}</value>
+  </data>
+  <data name="LegendDominant" xml:space="preserve">
+    <value>Κάθε κελί δείχνει την πιο συχνή κατηγορία του. Πιο έντονο χρώμα σημαίνει περισσότερες κλήσεις.</value>
+  </data>
+  <data name="LegendEmpty" xml:space="preserve">
+    <value>Δεν υπάρχει τίποτα προς εμφάνιση για αυτά τα φίλτρα.</value>
+  </data>
+  <data name="TooltipRows" xml:space="preserve">
+    <value>{0} εγγραφές</value>
+  </data>
+  <data name="TooltipDominant" xml:space="preserve">
+    <value>Κυρίως {0} ({1}%)</value>
+  </data>
+  <data name="PopupOpenCall" xml:space="preserve">
+    <value>Άνοιγμα κλήσης</value>
+  </data>
+  <data name="PopupFocusCall" xml:space="preserve">
+    <value>Εμφάνιση αποτυπώματος αυτής της κλήσης</value>
+  </data>
+  <data name="PopupUnavailable" xml:space="preserve">
+    <value>Τα στοιχεία της κλήσης δεν είναι διαθέσιμα.</value>
+  </data>
+  <data name="SummaryWindow" xml:space="preserve">
+    <value>Εμφάνιση από {0} έως {1}</value>
+  </data>
+  <data name="SummaryCall" xml:space="preserve">
+    <value>Εμφάνιση κλήσης {0}</value>
+  </data>
+  <data name="SummaryWhen" xml:space="preserve">
+    <value>Πότε έρχονται οι κλήσεις</value>
+  </data>
+  <data name="SummaryTopTypes" xml:space="preserve">
+    <value>Συχνότεροι τύποι κλήσεων</value>
+  </data>
+  <data name="KpiCalls" xml:space="preserve">
+    <value>Κλήσεις</value>
+  </data>
+  <data name="KpiMapped" xml:space="preserve">
+    <value>Κλήσεις με τοποθεσία</value>
+  </data>
+  <data name="KpiMedianResponse" xml:space="preserve">
+    <value>Διάμεσος χρόνος έως την άφιξη στο σημείο</value>
+  </data>
+  <data name="KpiP90Response" xml:space="preserve">
+    <value>90ό εκατοστημόριο χρόνου έως την άφιξη στο σημείο</value>
+  </data>
+  <data name="KpiResponseHint" xml:space="preserve">
+    <value>Οι χρόνοι απόκρισης εμφανίζονται όταν ένα επίπεδο χρησιμοποιεί μέτρηση ή ζώνη χρόνου απόκρισης και οι μονάδες ορίζουν καταστάσεις άφιξης στο σημείο.</value>
+  </data>
+  <data name="NoticeCallsTruncated" xml:space="preserve">
+    <value>Αυτό το εύρος ημερομηνιών έχει πάνω από 100,000 κλήσεις. Εμφανίζονται οι 100,000 νεότερες· επιλέξτε μικρότερο εύρος για να δείτε τα πάντα.</value>
+  </data>
+  <data name="Notice_personnelLocationsHidden" xml:space="preserve">
+    <value>{0}: ορισμένα μέλη παραλείπονται επειδή δεν μπορείτε να δείτε τις τοποθεσίες τους.</value>
+  </data>
+  <data name="Notice_unitLocationsHidden" xml:space="preserve">
+    <value>{0}: ορισμένες μονάδες παραλείπονται επειδή δεν μπορείτε να δείτε τις τοποθεσίες τους.</value>
+  </data>
+  <data name="Notice_trackWindowShortened" xml:space="preserve">
+    <value>{0}: εμφανίζεται μόνο το πιο πρόσφατο τμήμα του εύρους ημερομηνιών, επειδή το ιστορικό τοποθεσίας και καταστάσεων έχει περιορισμένη διάρκεια.</value>
+  </data>
+  <data name="Notice_layerTruncated" xml:space="preserve">
+    <value>{0}: υπάρχουν πάρα πολλά σημεία για να εμφανιστούν όλα, γι' αυτό εμφανίζονται τα νεότερα.</value>
+  </data>
+  <data name="Notice_noStationLocations" xml:space="preserve">
+    <value>{0}: κανένας σταθμός δεν έχει τοποθεσία, επομένως δεν μπορούν να εμφανιστούν αποστάσεις και δακτύλιοι. Προσθέστε διεύθυνση ή συντεταγμένες σταθμού στις Ομάδες.</value>
+  </data>
+  <data name="Notice_noStatusTimes" xml:space="preserve">
+    <value>{0}: καμία από αυτές τις κλήσεις δεν έχει καταστάσεις άφιξης στο σημείο ή ανταπόκρισης, επομένως οι χρόνοι απόκρισης είναι κενοί.</value>
+  </data>
+  <data name="Notice_callNotFound" xml:space="preserve">
+    <value>{0}: η επιλεγμένη κλήση δεν βρέθηκε ή δεν μπορείτε να τη δείτε.</value>
+  </data>
+</root>

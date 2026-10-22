@@ -605,11 +605,14 @@ namespace Resgrid.Web.Services.Controllers
 									var userStatus = await _actionLogsService.GetLastActionLogForUserAsync(profile.UserId);
 									var userStaffing = await _userStateService.GetLastUserStateByUserIdAsync(profile.UserId);
 
-									var customStatusLevel = await _customStateService.GetCustomPersonnelStatusAsync(department.DepartmentId, userStatus);
+									// No status inside the auto-available hour reads as the department's Available status.
+									var customStatusLevel = userStatus != null
+										? await _customStateService.GetCustomPersonnelStatusAsync(department.DepartmentId, userStatus)
+										: await _customStateService.GetDefaultPersonnelStatusAsync(department.DepartmentId);
 									var customStaffingLevel = await _customStateService.GetCustomPersonnelStaffingAsync(department.DepartmentId, userStaffing);
 
 									response.Message(
-										$"Hello {profile.FullName.AsFirstNameLastName} at {DateTime.UtcNow.TimeConverterToString(department)} your current status is {customStatusLevel.ButtonText} and your current staffing is {customStaffingLevel.ButtonText}.");
+										$"Hello {profile.FullName.AsFirstNameLastName} at {DateTime.UtcNow.TimeConverterToString(department)} your current status is {customStatusLevel?.ButtonText ?? "Unknown"} and your current staffing is {customStaffingLevel?.ButtonText ?? "Unknown"}.");
 									break;
 								case TextCommandTypes.Calls:
 									messageEvent.Processed = true;
@@ -1306,13 +1309,17 @@ namespace Resgrid.Web.Services.Controllers
 					// generated in parallel by the TTS layer instead of one sequential
 					// round-trip per person.
 					var lines = new List<string>();
+					var defaultStatus = await _customStateService.GetDefaultPersonnelStatusAsync(department.DepartmentId);
 
 					foreach (var user in allUsers)
 					{
 						var lastActionLog = lastUserActionlogs.FirstOrDefault(x => x.UserId == user.UserId);
 						var userState = userStates.FirstOrDefault(x => x.UserId == user.UserId);
 						var staffingLevel = await _customStateService.GetCustomPersonnelStaffingAsync(department.DepartmentId, userState);
-						var status = await _customStateService.GetCustomPersonnelStatusAsync(department.DepartmentId, lastActionLog);
+						// No status inside the auto-available hour reads as the department's Available status.
+						var status = lastActionLog != null
+							? await _customStateService.GetCustomPersonnelStatusAsync(department.DepartmentId, lastActionLog)
+							: defaultStatus;
 
 						// A user with no recorded action log or state resolves to a null detail;
 						// dereferencing it here 500s the webhook and Twilio speaks "application error".

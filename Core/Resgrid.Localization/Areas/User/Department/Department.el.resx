@@ -1507,13 +1507,13 @@
     <value>Ορολογία</value>
   </data>
   <data name="TerminologyIntro" xml:space="preserve">
-    <value>Χρησιμοποιήστε τους όρους του τμήματός σας. Ένα όνομα που ορίζεται εδώ αντικαθιστά το όνομα του Resgrid για αυτή την ενότητα ή τον τύπο αρχείου στην πλοήγηση, στους τίτλους σελίδων, όπου αναφέρονται τύποι αρχείων και στις εφαρμογές Responder, Unit, IC και Dispatch, για όλα τα μέλη και σε όλες τις γλώσσες. Αλλάζει μόνο η ετικέτα: τα δικαιώματα, οι σύνδεσμοι και οι ενσωματώσεις δεν επηρεάζονται. Αφήστε ένα πεδίο κενό για να διατηρήσετε το όνομα του Resgrid.</value>
+    <value>Χρησιμοποιήστε τους όρους του τμήματός σας. Ένα όνομα που ορίζεται εδώ αντικαθιστά το όνομα του Resgrid για αυτή την ενότητα ή τον τύπο αρχείου σε όλο τον ιστότοπο: στην πλοήγηση, στους τίτλους σελίδων, στα κουμπιά, στις κεφαλίδες στηλών, στα μηνύματα, στις εκτυπώσεις και στις εξαγωγές, καθώς και στις εφαρμογές Responder, Unit, IC και Dispatch, για όλα τα μέλη και σε όλες τις γλώσσες. Αλλάζει μόνο η διατύπωση: τα δικαιώματα, οι σύνδεσμοι, οι ενσωματώσεις και ό,τι έχουν πληκτρολογήσει τα μέλη σας παραμένουν ως έχουν. Αφήστε ένα πεδίο κενό για να διατηρήσετε το όνομα του Resgrid.</value>
   </data>
   <data name="TerminologyModules" xml:space="preserve">
     <value>Ενότητες</value>
   </data>
   <data name="TerminologyModulesHelp" xml:space="preserve">
-    <value>Εμφανίζεται στην πλοήγηση, ως τίτλος της κύριας σελίδας της ενότητας και στα μενού των εφαρμογών. Οι προτάσεις αλλού που αναφέρουν μια ενότητα διατηρούν τη διατύπωση του Resgrid.</value>
+    <value>Δώστε το όνομα της ενότητας και, όπου υπάρχει, τη λέξη για ένα μεμονωμένο στοιχείο, όπως Ομάδες και Ομάδα για τις Μονάδες, ώστε κουμπιά όπως Νέα ομάδα να διαβάζονται φυσικά· αφήστε το στοιχείο κενό για να προκύψει από το όνομα. Οι ενότητες με την ένδειξη «Σε όλο το Resgrid» αλλάζουν όπου τις αναφέρει το Resgrid. Οι υπόλοιπες αλλάζουν μέσα στη δική τους ενότητα, επειδή λέξεις όπως σημείωση, καταγραφή, αρχείο ή επαφή έχουν και καθημερινές σημασίες αλλού.</value>
   </data>
   <data name="TerminologyRecordTypes" xml:space="preserve">
     <value>Τύποι αρχείων</value>
@@ -1535,6 +1535,9 @@
   </data>
   <data name="TerminologyTooLong" xml:space="preserve">
     <value>Τα ονόματα μπορούν να έχουν έως {0} χαρακτήρες· τα μεγαλύτερα ονόματα δεν αποθηκεύτηκαν και εμφανίζονται για διόρθωση.</value>
+  </data>
+  <data name="TerminologyInvalidCharacters" xml:space="preserve">
+    <value>Τα ονόματα δεν μπορούν να περιέχουν &lt; &gt; { ή }· αυτά τα ονόματα δεν αποθηκεύτηκαν και εμφανίζονται για διόρθωση.</value>
   </data>
   <data name="TerminologyRecordDefinitionsLink" xml:space="preserve">
     <value>Ορισμοί αρχείων</value>
@@ -1751,5 +1754,353 @@
   </data>
   <data name="OrgType.other" xml:space="preserve">
     <value>Άλλο</value>
+  </data>
+  <data name="SettingsGroupDispatch" xml:space="preserve">
+    <value>Κλήσεις και Αποστολή</value>
+  </data>
+  <data name="SettingsGroupOperations" xml:space="preserve">
+    <value>Λειτουργίες</value>
+  </data>
+  <data name="SettingsGroupCustomization" xml:space="preserve">
+    <value>Προσαρμογή</value>
+  </data>
+  <data name="SettingsGroupIntegrations" xml:space="preserve">
+    <value>Ενσωματώσεις</value>
+  </data>
+  <data name="ResetStaffingMeaningGroup" xml:space="preserve">
+    <value>Σημασία στελέχωσης (το επίπεδό σας με αυτή τη σημασία)</value>
+  </data>
+  <data name="ResetStaffingOptionGroup" xml:space="preserve">
+    <value>Συγκεκριμένο επίπεδο στελέχωσης</value>
+  </data>
+  <data name="ResetStatusMeaningGroup" xml:space="preserve">
+    <value>Σημασία κατάστασης (η κατάστασή σας με αυτή τη σημασία)</value>
+  </data>
+  <data name="ResetStatusOptionGroup" xml:space="preserve">
+    <value>Συγκεκριμένη κατάσταση</value>
+  </data>
+  <data name="ResetTargetSavedOption" xml:space="preserve">
+    <value>{0} (αποθηκεύτηκε νωρίτερα, δεν προσφέρεται πια)</value>
+  </data>
+  <data name="RunCardRelaxUnfilledRowsLabel" xml:space="preserve">
+    <value>Χαλάρωση φίλτρων κατάστασης για μη καλυμμένες γραμμές</value>
+  </data>
+  <data name="RunCardRelaxUnfilledRowsHelp" xml:space="preserve">
+    <value>Όταν το φίλτρο κατάστασης μιας γραμμής δεν βρίσκει τίποτα, προτείνεται η ταχύτερη διαθέσιμη μονάδα του ίδιου είδους.</value>
+  </data>
+  <data name="RunCardWaitingAutoDispatchLabel" xml:space="preserve">
+    <value>Αποστολή μονάδων που ελευθερώθηκαν σε κλήσεις που τις αναμένουν</value>
+  </data>
+  <data name="RunCardWaitingAutoDispatchOff" xml:space="preserve">
+    <value>Ανενεργό (μόνο ειδοποίηση συντονιστών)</value>
+  </data>
+  <data name="RunCardWaitingAutoDispatchOn" xml:space="preserve">
+    <value>Ενεργό (αυτόματη αποστολή)</value>
+  </data>
+  <data name="RunCardWaitingAutoDispatchHelp" xml:space="preserve">
+    <value>Παρακάμπτει τη ρύθμιση της υπηρεσίας για κλήσεις που αυτή η κάρτα αφήνει σε αναμονή πόρου.</value>
+  </data>
+  <data name="RunCardDecisionGraphHelp" xml:space="preserve">
+    <value>Ένα επίπεδο μπορεί να κάνει ερωτήσεις (ποια μονάδα φτάνει πρώτη, υπάρχει διαθέσιμη εγκαίρως) και να προτείνει το πακέτο απόκρισης του αποτελέσματος που φτάνει. Οι γραμμές του παραπάνω αποστέλλονται πάντα.</value>
+  </data>
+  <data name="ResponsePackagesHeader" xml:space="preserve">
+    <value>Πακέτα απόκρισης</value>
+  </data>
+  <data name="RunCardShowRawJson" xml:space="preserve">
+    <value>Εμφάνιση ακατέργαστου αποτελέσματος</value>
+  </data>
+  <data name="RunCardTargetUnitsGroup" xml:space="preserve">
+    <value>Μονάδες</value>
+  </data>
+  <data name="RunCardTargetPeopleGroup" xml:space="preserve">
+    <value>Άτομα</value>
+  </data>
+  <data name="RunCardTargetAnyUnit" xml:space="preserve">
+    <value>Οποιαδήποτε μονάδα</value>
+  </data>
+  <data name="RunCardTargetAnyPerson" xml:space="preserve">
+    <value>Οποιοδήποτε άτομο</value>
+  </data>
+  <data name="RunCardTargetAnyClass" xml:space="preserve">
+    <value>Οποιοδήποτε {0}</value>
+  </data>
+  <data name="RunCardStatusAnyAvailable" xml:space="preserve">
+    <value>Οποιαδήποτε διαθέσιμη</value>
+  </data>
+  <data name="RunCardStatusInQuarters" xml:space="preserve">
+    <value>Στον σταθμό</value>
+  </data>
+  <data name="RunCardStatusAwayFromQuarters" xml:space="preserve">
+    <value>Εκτός σταθμού</value>
+  </data>
+  <data name="RunCardStatusBaseTypes" xml:space="preserve">
+    <value>Καταστάσεις που σημαίνουν</value>
+  </data>
+  <data name="RunCardNodeChoose" xml:space="preserve">
+    <value>Επιλογή...</value>
+  </data>
+  <data name="RunCardOutcomePrefix" xml:space="preserve">
+    <value>Αποτέλεσμα</value>
+  </data>
+  <data name="RunCardConditionPrefix" xml:space="preserve">
+    <value>Συνθήκη</value>
+  </data>
+  <data name="RunCardNodeStartLabel" xml:space="preserve">
+    <value>Έναρξη</value>
+  </data>
+  <data name="RunCardNodeLabelPlaceholder" xml:space="preserve">
+    <value>Ετικέτα για τους συντονιστές</value>
+  </data>
+  <data name="RunCardOutcomePackageLabel" xml:space="preserve">
+    <value>Αποστολή πακέτου</value>
+  </data>
+  <data name="RunCardNoPackageOption" xml:space="preserve">
+    <value>Χωρίς πακέτο</value>
+  </data>
+  <data name="RunCardOutcomeAdviceLabel" xml:space="preserve">
+    <value>Συμβουλή για συντονιστές</value>
+  </data>
+  <data name="RunCardConditionArrivesBefore" xml:space="preserve">
+    <value>Φτάνει πριν από</value>
+  </data>
+  <data name="RunCardConditionAvailableWithin" xml:space="preserve">
+    <value>Διαθέσιμη εντός</value>
+  </data>
+  <data name="RunCardConditionSubjectLabel" xml:space="preserve">
+    <value>Πόρος</value>
+  </data>
+  <data name="RunCardConditionReferenceLabel" xml:space="preserve">
+    <value>Σε σύγκριση με</value>
+  </data>
+  <data name="RunCardConditionMarginLabel" xml:space="preserve">
+    <value>Τουλάχιστον κατά (δευτερόλεπτα)</value>
+  </data>
+  <data name="RunCardConditionWithinLabel" xml:space="preserve">
+    <value>Εντός (δευτερόλεπτα)</value>
+  </data>
+  <data name="RunCardConditionCountLabel" xml:space="preserve">
+    <value>Πόσες</value>
+  </data>
+  <data name="RunCardConditionYesLabel" xml:space="preserve">
+    <value>Αν ναι</value>
+  </data>
+  <data name="RunCardConditionNoLabel" xml:space="preserve">
+    <value>Αν όχι</value>
+  </data>
+  <data name="RunCardLevelPackageLabel" xml:space="preserve">
+    <value>Πακέτο απόκρισης</value>
+  </data>
+  <data name="RunCardDecisionGraphLabel" xml:space="preserve">
+    <value>Δέντρο αποφάσεων</value>
+  </data>
+  <data name="RunCardAddConditionButton" xml:space="preserve">
+    <value>Προσθήκη συνθήκης</value>
+  </data>
+  <data name="RunCardAddOutcomeButton" xml:space="preserve">
+    <value>Προσθήκη αποτελέσματος</value>
+  </data>
+  <data name="NewResponsePackageButton" xml:space="preserve">
+    <value>Νέο πακέτο απόκρισης</value>
+  </data>
+  <data name="ResponsePackagesHelp" xml:space="preserve">
+    <value>Ένα πακέτο απόκρισης είναι ένα ονομασμένο σύνολο πόρων (π.χ. «Πυροσβεστικό και ασθενοφόρο») που στέλνουν τα επίπεδα και τα αποτελέσματα των καρτών. Η αλλαγή του αλλάζει όλες τις κάρτες που το χρησιμοποιούν.</value>
+  </data>
+  <data name="ResponsePackageNameLabel" xml:space="preserve">
+    <value>Όνομα</value>
+  </data>
+  <data name="ResponsePackageDescriptionLabel" xml:space="preserve">
+    <value>Περιγραφή</value>
+  </data>
+  <data name="ResponsePackageRetiredLabel" xml:space="preserve">
+    <value>Αποσυρμένο (κρυφό από λίστες)</value>
+  </data>
+  <data name="ResponsePackageRowsLabel" xml:space="preserve">
+    <value>Γραμμές</value>
+  </data>
+  <data name="ResponsePackageRowsHelp" xml:space="preserve">
+    <value>Κάθε γραμμή δέχεται οποιονδήποτε από τους τύπους πόρων της. Ένα πακέτο αντικατάστασης καλύπτει ό,τι δεν μπόρεσε η γραμμή, και το «διατήρηση σε εκκρεμότητα» κρατά την κλήση σε αναμονή του αρχικού πόρου.</value>
+  </data>
+  <data name="ResponsePackageAddRowButton" xml:space="preserve">
+    <value>Προσθήκη γραμμής</value>
+  </data>
+  <data name="ResponsePackageRowTargetsLabel" xml:space="preserve">
+    <value>Οποιοδήποτε από αυτά</value>
+  </data>
+  <data name="ResponsePackageRowLabelLabel" xml:space="preserve">
+    <value>Ετικέτα γραμμής (προαιρετικό)</value>
+  </data>
+  <data name="ResponsePackageFillCount" xml:space="preserve">
+    <value>Επιλογή</value>
+  </data>
+  <data name="ResponsePackageFillFirstArriving" xml:space="preserve">
+    <value>Εξασφάλιση πρώτης άφιξης</value>
+  </data>
+  <data name="ResponsePackageRowStatusLabel" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="ResponsePackageRowCodeLabel" xml:space="preserve">
+    <value>Κωδικός απόκρισης</value>
+  </data>
+  <data name="ResponsePackageNoCode" xml:space="preserve">
+    <value>Χωρίς κωδικό</value>
+  </data>
+  <data name="ResponsePackageRowSubstituteLabel" xml:space="preserve">
+    <value>Πακέτο αντικατάστασης</value>
+  </data>
+  <data name="ResponsePackageNoSubstitute" xml:space="preserve">
+    <value>Χωρίς αντικατάσταση</value>
+  </data>
+  <data name="ResponsePackageRowOutstandingLabel" xml:space="preserve">
+    <value>Διατήρηση σε εκκρεμότητα μέχρι την αποστολή</value>
+  </data>
+  <data name="ResponsePackageUsedBy" xml:space="preserve">
+    <value>Χρησιμοποιείται από</value>
+  </data>
+  <data name="ResponsePackageNotUsed" xml:space="preserve">
+    <value>Δεν χρησιμοποιείται</value>
+  </data>
+  <data name="ResponsePackageRetiredBadge" xml:space="preserve">
+    <value>Αποσυρμένο</value>
+  </data>
+  <data name="ResponsePackageDeleteConfirm" xml:space="preserve">
+    <value>Διαγραφή αυτού του πακέτου απόκρισης;</value>
+  </data>
+  <data name="PersonnelTurnoutLabel" xml:space="preserve">
+    <value>Χρόνος εξόδου προσωπικού (δευτερόλεπτα)</value>
+  </data>
+  <data name="PersonnelTurnoutHelp" xml:space="preserve">
+    <value>Προστίθεται στον χρόνο μετάβασης ενός ατόμου όταν γραμμές που δέχονται άτομα το συγκρίνουν με μονάδες.</value>
+  </data>
+  <data name="WaitingCallAutoDispatchLabel" xml:space="preserve">
+    <value>Αποστολή μονάδων που ελευθερώθηκαν σε κλήσεις που τις αναμένουν</value>
+  </data>
+  <data name="WaitingCallAutoDispatchHelp" xml:space="preserve">
+    <value>Ανενεργό: οι συντονιστές ειδοποιούνται όταν μια κατάλληλη μονάδα γίνεται διαθέσιμη. Ενεργό: η μονάδα αποστέλλεται αυτόματα στην κλήση αναμονής με την υψηλότερη προτεραιότητα. Οι κάρτες μπορούν να το παρακάμψουν.</value>
+  </data>
+  <data name="WaitingCallMaxResponseLabel" xml:space="preserve">
+    <value>Όριο αυτόματης αποστολής (δευτερόλεπτα, 0 = κανένα)</value>
+  </data>
+  <data name="WaitingCallMaxResponseHelp" xml:space="preserve">
+    <value>Μια μονάδα που ελευθερώθηκε πιο μακριά ειδοποιείται, δεν αποστέλλεται. Η ειδοποίηση γίνεται πάντα.</value>
+  </data>
+  <data name="ResponseCodesLabel" xml:space="preserve">
+    <value>Κωδικοί απόκρισης</value>
+  </data>
+  <data name="ResponseCodesHelp" xml:space="preserve">
+    <value>Προαιρετικοί κωδικοί ανά μονάδα στις προτάσεις, όπως C3 για φάρους και σειρήνα. Αφήστε κενό για να μην εμφανίζονται κωδικοί πουθενά.</value>
+  </data>
+  <data name="ResponseCodeCodeColumn" xml:space="preserve">
+    <value>Κωδικός</value>
+  </data>
+  <data name="ResponseCodeNameColumn" xml:space="preserve">
+    <value>Όνομα</value>
+  </data>
+  <data name="ResponseCodeColorColumn" xml:space="preserve">
+    <value>Χρώμα</value>
+  </data>
+  <data name="ResponseCodeAddButton" xml:space="preserve">
+    <value>Προσθήκη κωδικού</value>
+  </data>
+  <data name="ResponseCodesShowToCrewsLabel" xml:space="preserve">
+    <value>Εμφάνιση κωδικών στα πληρώματα (ειδοποιήσεις και εφαρμογές)</value>
+  </data>
+  <data name="AwaitingResourcesLabel" xml:space="preserve">
+    <value>Σε αναμονή πόρων</value>
+  </data>
+  <data name="AwaitingResourcesHelp" xml:space="preserve">
+    <value>Ενεργές κλήσεις που ακόμη περιμένουν έναν πόρο που απαιτούσε η κάρτα τους αλλά δεν ήταν διαθέσιμος κατά την αποστολή. Μια κλήση φεύγει από τη λίστα όταν σταλεί κατάλληλος πόρος, απορριφθεί η απαίτηση ή κλείσει η κλήση.</value>
+  </data>
+  <data name="AwaitingDispatchTo" xml:space="preserve">
+    <value>Αποστολή σε {0}</value>
+  </data>
+  <data name="AwaitingDispatchUnit" xml:space="preserve">
+    <value>Αποστολή {0}</value>
+  </data>
+  <data name="AwaitingDismiss" xml:space="preserve">
+    <value>Απόρριψη</value>
+  </data>
+  <data name="AwaitingDismissPrompt" xml:space="preserve">
+    <value>Γιατί δεν χρειάζεται πλέον αυτός ο πόρος; (προαιρετικό)</value>
+  </data>
+  <data name="AwaitingSentInstead" xml:space="preserve">
+    <value>στάλθηκε αντί αυτού: {0}</value>
+  </data>
+  <data name="AwaitingAvailableNow" xml:space="preserve">
+    <value>Διαθέσιμα τώρα:</value>
+  </data>
+  <data name="AwaitingNoneAvailable" xml:space="preserve">
+    <value>Δεν υπάρχει διαθέσιμη κατάλληλη μονάδα.</value>
+  </data>
+  <data name="AwaitingNone" xml:space="preserve">
+    <value>Καμία κλήση δεν περιμένει πόρους.</value>
+  </data>
+  <data name="RunCardTemplatesHeader" xml:space="preserve">
+    <value>Πρότυπα καρτών απόκρισης</value>
+  </data>
+  <data name="RunCardTemplatesHelp" xml:space="preserve">
+    <value>Ξεκινήστε από μια λειτουργική κάρτα. Τα πρότυπα ονομάζουν πόρους κατά σημασία, ώστε να ταιριάζουν στους τύπους μονάδων και ρόλους σας· ελέγξτε, δοκιμάστε και ενεργοποιήστε.</value>
+  </data>
+  <data name="RunCardTemplatesSetClasses" xml:space="preserve">
+    <value>{0} τύπος(οι) μονάδων δεν έχουν κατηγορία, οπότε τα πρότυπα τους αναγνωρίζουν μόνο με το όνομα.</value>
+  </data>
+  <data name="RunCardTemplatesSetClassesLink" xml:space="preserve">
+    <value>Ορισμός κατηγοριών μονάδων</value>
+  </data>
+  <data name="RunCardTemplatesSuggested" xml:space="preserve">
+    <value>Προτάσεις για εσάς</value>
+  </data>
+  <data name="RunCardTemplateUseButton" xml:space="preserve">
+    <value>Χρήση προτύπου</value>
+  </data>
+  <data name="RunCardTemplatesAllCategories" xml:space="preserve">
+    <value>Όλες οι κατηγορίες</value>
+  </data>
+  <data name="RunCardTemplatesSearch" xml:space="preserve">
+    <value>Αναζήτηση προτύπων</value>
+  </data>
+  <data name="RunCardTemplateShapeGraph" xml:space="preserve">
+    <value>Δέντρο αποφάσεων</value>
+  </data>
+  <data name="RunCardTemplateShapePackage" xml:space="preserve">
+    <value>Πακέτα απόκρισης</value>
+  </data>
+  <data name="RunCardTemplateMappingsHeader" xml:space="preserve">
+    <value>Πώς ταιριάζει στην υπηρεσία σας</value>
+  </data>
+  <data name="RunCardTemplateUnmatched" xml:space="preserve">
+    <value>χωρίς αντιστοιχία στην υπηρεσία. Ορίστε κατηγορία μονάδας ή προσθέστε τον τύπο ή τον ρόλο.</value>
+  </data>
+  <data name="RunCardTemplateNoTriggers" xml:space="preserve">
+    <value>Δεν βρέθηκε έναυσμα· προσθέστε ένα στον επεξεργαστή πριν ενεργοποιήσετε την κάρτα.</value>
+  </data>
+  <data name="RunCardTemplateNewBadge" xml:space="preserve">
+    <value>νέο</value>
+  </data>
+  <data name="RunCardTemplateReusedBadge" xml:space="preserve">
+    <value>υπάρχον</value>
+  </data>
+  <data name="RunCardTemplateCodesAdded" xml:space="preserve">
+    <value>Αυτοί οι κωδικοί θα προστεθούν στον κατάλογο:</value>
+  </data>
+  <data name="RunCardTemplateCreateButton" xml:space="preserve">
+    <value>Δημιουργία κάρτας (ανενεργή)</value>
+  </data>
+  <data name="RunCardTemplateBlocked" xml:space="preserve">
+    <value>Επιλύστε πρώτα τους πόρους χωρίς αντιστοιχία.</value>
+  </data>
+  <data name="RunCardTemplateAppliedMessage" xml:space="preserve">
+    <value>Δημιουργήθηκε από πρότυπο και αποθηκεύτηκε ανενεργή. Ελέγξτε εναύσματα και γραμμές, δοκιμάστε τη στην καρτέλα Δοκιμή και μετά ενεργοποιήστε τη.</value>
+  </data>
+  <data name="TerminologySingularColumn" xml:space="preserve">
+    <value>Ένα στοιχείο</value>
+  </data>
+  <data name="TerminologyWhereColumn" xml:space="preserve">
+    <value>Πού αλλάζει</value>
+  </data>
+  <data name="TerminologyScopeEverywhere" xml:space="preserve">
+    <value>Σε όλο το Resgrid</value>
+  </data>
+  <data name="TerminologyScopeModule" xml:space="preserve">
+    <value>Στη δική του ενότητα</value>
   </data>
 </root>

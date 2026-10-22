@@ -25,7 +25,7 @@ namespace Resgrid.Tests.Services
 			protected IActionLogsService _actionLogsServiceMocked;
 
 			private Mock<IActionLogsRepository> _actionLogsRepositoryMock;
-			private Mock<IDepartmentMembersRepository> _departmentMembersRepositoryMock;
+			protected Mock<IDepartmentMembersRepository> _departmentMembersRepositoryMock;
 			private Mock<IUsersService> _usersServiceMock;
 			private Mock<IDepartmentGroupsService> _departmentGroupsServiceMock;
 			private Mock<IDepartmentsService> _departmentsServiceMock;
@@ -295,6 +295,24 @@ namespace Resgrid.Tests.Services
 					l.ActionTypeId.Should().Be((int)ActionTypes.Responding);
 					l.DepartmentId.Should().Be(2);
 				}
+			}
+
+			[Test]
+			public async Task should_leave_deleted_disabled_and_hidden_members_out_of_a_department_wide_status()
+			{
+				_departmentMembersRepositoryMock.Setup(m => m.GetAllByDepartmentIdAsync(3)).ReturnsAsync(new List<DepartmentMember>
+				{
+					new DepartmentMember { DepartmentMemberId = 301, DepartmentId = 3, UserId = TestData.Users.TestUser1Id },
+					new DepartmentMember { DepartmentMemberId = 302, DepartmentId = 3, UserId = TestData.Users.TestUser2Id, IsDeleted = true },
+					new DepartmentMember { DepartmentMemberId = 303, DepartmentId = 3, UserId = TestData.Users.TestUser3Id, IsDisabled = true },
+					new DepartmentMember { DepartmentMemberId = 304, DepartmentId = 3, UserId = TestData.Users.TestUser4Id, IsHidden = true },
+				});
+
+				await _actionLogsServiceMocked.SetActionForEntireDepartmentAsync(3, (int)ActionTypes.StandingBy, String.Empty);
+
+				var fetchLogs = await _actionLogsServiceMocked.GetAllActionLogsForDepartmentAsync(3);
+
+				fetchLogs.Select(x => x.UserId).Should().BeEquivalentTo(new[] { TestData.Users.TestUser1Id });
 			}
 
 			[Test]

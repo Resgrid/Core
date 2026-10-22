@@ -183,9 +183,24 @@ namespace Resgrid.Model
 			return cleaned.Length == 0 ? null : cleaned;
 		}
 
+		/// <summary>
+		/// Characters a name cannot hold: markup (the department's words go into HTML built in script and in tree labels) and
+		/// braces (they go into format strings, where "{" or "}" would break every string that carries the word).
+		/// </summary>
+		public static readonly char[] ForbiddenCharacters = { '<', '>', '{', '}' };
+
+		/// <summary>
+		/// Whether a normalized name can be used: within <see cref="MaxLength"/> and free of <see cref="ForbiddenCharacters"/>.
+		/// Every read checks it too, so a name stored before a rule existed falls back to the default instead of being shown.
+		/// </summary>
 		public static bool IsValidText(string normalizedText)
 		{
-			return normalizedText == null || normalizedText.Length <= MaxLength;
+			return normalizedText == null || (normalizedText.Length <= MaxLength && !HasForbiddenCharacters(normalizedText));
+		}
+
+		public static bool HasForbiddenCharacters(string text)
+		{
+			return text != null && text.IndexOfAny(ForbiddenCharacters) >= 0;
 		}
 
 		/// <summary>

@@ -1536,6 +1536,9 @@
   <data name="TerminologyTooLong" xml:space="preserve">
     <value>يمكن أن يتكون الاسم من {0} حرفًا كحد أقصى؛ لم تُحفظ الأسماء الأطول وهي معروضة لتصحيحها.</value>
   </data>
+  <data name="TerminologyInvalidCharacters" xml:space="preserve">
+    <value>لا يمكن أن تحتوي الأسماء على &lt; &gt; { أو }؛ لم تُحفظ هذه الأسماء وهي معروضة لتصحيحها.</value>
+  </data>
   <data name="TerminologyRecordDefinitionsLink" xml:space="preserve">
     <value>تعريفات السجلات</value>
   </data>

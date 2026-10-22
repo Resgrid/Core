@@ -1536,6 +1536,9 @@
   <data name="TerminologyTooLong" xml:space="preserve">
     <value>Los nombres pueden tener como máximo {0} caracteres; los nombres más largos no se guardaron y se muestran para corregirlos.</value>
   </data>
+  <data name="TerminologyInvalidCharacters" xml:space="preserve">
+    <value>Los nombres no pueden contener &lt; &gt; { ni }; esos nombres no se guardaron y se muestran para corregirlos.</value>
+  </data>
   <data name="TerminologyRecordDefinitionsLink" xml:space="preserve">
     <value>Definiciones de registro</value>
   </data>

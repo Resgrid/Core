@@ -1478,6 +1478,9 @@
   <data name="TerminologyTooLong" xml:space="preserve">
     <value>Назва може мати щонайбільше {0} символів; довші назви не збережено, їх показано для виправлення.</value>
   </data>
+  <data name="TerminologyInvalidCharacters" xml:space="preserve">
+    <value>Назви не можуть містити &lt; &gt; { або }; ці назви не збережено, їх показано для виправлення.</value>
+  </data>
   <data name="TerminologyRecordDefinitionsLink" xml:space="preserve">
     <value>Визначення записів</value>
   </data>

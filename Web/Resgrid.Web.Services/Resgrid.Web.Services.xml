@@ -7759,6 +7759,14 @@
             never be blocked by the very lock it releases).
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Filters.CancelOnClientDisconnectAttribute">
+            <summary>
+            Gives a POST/PUT/PATCH/DELETE action (or a whole controller) the request-aborted token instead of the one
+            <see cref="T:Resgrid.Web.Services.Filters.MutationCancellationTokenBinder"/> hands writes, so the work stops when the client goes away. Use ONLY
+            where stopping partway leaves nothing half saved: a read that is posted (a preview, a report run) or work built to
+            settle its own cancellation (Admin Assist Ask and diagnostics release their lease and meter the outcome).
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Filters.DepartmentLockActionFilter">
              <summary>
              Global department-operation-lock mutation gate (ADP plan section 20.2). While a department's
@@ -7774,6 +7782,22 @@
              protects a migration, but dispatch availability beats migration progress, and the migration
              worker separately refuses to proceed when it cannot verify its own lock.
              </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Filters.MutationCancellationTokenBinder">
+            <summary>
+            Binds the <see cref="T:System.Threading.CancellationToken"/> an action takes. A read gets the request-aborted token, as MVC's own binder
+            gives it, so a client that went away stops work nobody will see. A mutating request (POST/PUT/PATCH/DELETE) gets a
+            token that never fires: its writes go out in several steps with no transaction around them (a call's row, then its
+            dispatches and unit statuses), and an app that drops its connection partway (a phone changing networks, a request
+            timed out on the device) would otherwise leave the record half saved -- a call closed with its units never
+            released, which no retry can release because the call is no longer active. Opt back in with
+            <see cref="T:Resgrid.Web.Services.Filters.CancelOnClientDisconnectAttribute"/>. Code that reads HttpContext.RequestAborted itself is unaffected.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Filters.MutationCancellationTokenBinderProvider">
+            <summary>
+            Puts <see cref="T:Resgrid.Web.Services.Filters.MutationCancellationTokenBinder"/> ahead of MVC's own CancellationToken binder.
+            </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Filters.ProtectedDataEgressFilter">
              <summary>

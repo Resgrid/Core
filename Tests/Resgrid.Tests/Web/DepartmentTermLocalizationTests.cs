@@ -178,7 +178,11 @@ namespace Resgrid.Tests.Web
 			rules.Rules.Should().ContainSingle(r => r.Key == DepartmentTerms.Personnel && r.Text == "Member" && !r.Everywhere, "\"person\" is generic outside Personnel");
 			rules.Phrases.Should().Contain("log in");
 			rules.Patterns.Should().NotBeEmpty();
+			rules.Values.Should().BeEmpty("Calls keeps its name here");
 			(await DepartmentTerminologyFactory.Create().ClientRulesAsync()).Should().BeNull();
+
+			var renamedCalls = await DepartmentTerminologyFactory.CreateForRequest(Config((DepartmentTerms.Calls, "Incidents"))).Terms.ClientRulesAsync();
+			renamedCalls.Values.Should().Contain("On Call", "the staffing level keeps its wording in script as on the server");
 		}
 
 		[Test]

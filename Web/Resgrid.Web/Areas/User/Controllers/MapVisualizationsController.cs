@@ -13,6 +13,7 @@ using Resgrid.Model.Helpers;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
 using Resgrid.Web.Areas.User.Models.Mapping;
+using Resgrid.Web.Filters;
 using Resgrid.Web.Helpers;
 
 namespace Resgrid.Web.Areas.User.Controllers
@@ -154,6 +155,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
+		[CancelOnClientDisconnect]
 		public async Task<IActionResult> Data([FromBody] MapVisualizationDefinition definition, CancellationToken cancellationToken)
 		{
 			// A body that does not bind must not silently run the default definition in its place.

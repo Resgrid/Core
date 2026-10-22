@@ -1478,6 +1478,9 @@
   <data name="TerminologyTooLong" xml:space="preserve">
     <value>Les noms peuvent comporter au plus {0} caractères ; les noms plus longs n'ont pas été enregistrés et sont affichés pour correction.</value>
   </data>
+  <data name="TerminologyInvalidCharacters" xml:space="preserve">
+    <value>Les noms ne peuvent pas contenir &lt; &gt; { ou } ; ces noms n'ont pas été enregistrés et sont affichés pour correction.</value>
+  </data>
   <data name="TerminologyRecordDefinitionsLink" xml:space="preserve">
     <value>Définitions de dossier</value>
   </data>

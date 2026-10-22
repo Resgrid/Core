@@ -1478,6 +1478,9 @@
   <data name="TerminologyTooLong" xml:space="preserve">
     <value>Namn får vara högst {0} tecken; längre namn sparades inte och visas för rättning.</value>
   </data>
+  <data name="TerminologyInvalidCharacters" xml:space="preserve">
+    <value>Namn får inte innehålla &lt; &gt; { eller }; de namnen sparades inte och visas för rättning.</value>
+  </data>
   <data name="TerminologyRecordDefinitionsLink" xml:space="preserve">
     <value>Journaldefinitioner</value>
   </data>

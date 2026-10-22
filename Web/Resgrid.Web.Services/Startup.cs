@@ -187,6 +187,8 @@ namespace Resgrid.Web.ServicesCore
 				options.Filters.Add<Resgrid.Web.Services.Filters.StatusWriteActorFilter>();
 				// A Records module not enabled for the department is a message for the caller, never a 500 (or a Sentry issue).
 				options.Filters.Add<Resgrid.Web.Services.Filters.RecordsModuleDisabledExceptionFilter>();
+				// A write runs to the end once it starts, so an app that drops its connection partway never leaves a call half saved.
+				Resgrid.Web.Services.Filters.MutationCancellationTokenBinderProvider.Register(options);
 			}).AddNewtonsoftJson(options =>
 			{
 				options.SerializerSettings.ContractResolver = new DefaultContractResolver();

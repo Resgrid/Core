@@ -1478,6 +1478,9 @@
   <data name="TerminologyTooLong" xml:space="preserve">
     <value>Nazwy mogą mieć najwyżej {0} znaków; dłuższe nazwy nie zostały zapisane i są pokazane do poprawienia.</value>
   </data>
+  <data name="TerminologyInvalidCharacters" xml:space="preserve">
+    <value>Nazwy nie mogą zawierać znaków &lt; &gt; { ani }; te nazwy nie zostały zapisane i są pokazane do poprawienia.</value>
+  </data>
   <data name="TerminologyRecordDefinitionsLink" xml:space="preserve">
     <value>Definicje rejestrów</value>
   </data>

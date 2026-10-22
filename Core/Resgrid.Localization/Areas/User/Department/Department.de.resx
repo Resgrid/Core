@@ -1478,6 +1478,9 @@
   <data name="TerminologyTooLong" xml:space="preserve">
     <value>Namen dürfen höchstens {0} Zeichen lang sein; längere Namen wurden nicht gespeichert und werden zur Korrektur angezeigt.</value>
   </data>
+  <data name="TerminologyInvalidCharacters" xml:space="preserve">
+    <value>Namen dürfen weder &lt; &gt; { noch } enthalten; diese Namen wurden nicht gespeichert und werden zur Korrektur angezeigt.</value>
+  </data>
   <data name="TerminologyRecordDefinitionsLink" xml:space="preserve">
     <value>Aktendefinitionen</value>
   </data>

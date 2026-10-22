@@ -257,6 +257,12 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 
 				return await work(UnitOfWork.CreateOrGetConnection());
 			}
+			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+			{
+				// The caller gave up (an aborted page request, a stopping worker); that is not a database fault. A
+				// cancellation nobody asked for still falls through and is logged.
+				throw;
+			}
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);

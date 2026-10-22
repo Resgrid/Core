@@ -3525,6 +3525,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			// Start from what is saved so a term missing from the post keeps its names; a name over the limit keeps the saved ones.
 			var config = new DepartmentTerminologyConfig();
 			var tooLong = new List<string>();
+			var badCharacters = false;
 			foreach (var term in DepartmentTerms.All)
 			{
 				if (!posted.TryGetValue(term.Key, out var row))
@@ -3537,6 +3538,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var normalizedSingular = term.HasSingular ? DepartmentTerms.Normalize(row.Singular) : null;
 				if (!DepartmentTerms.IsValidText(normalized) || !DepartmentTerms.IsValidText(normalizedSingular))
 				{
+					badCharacters |= DepartmentTerms.HasForbiddenCharacters(normalized) || DepartmentTerms.HasForbiddenCharacters(normalizedSingular);
 					tooLong.Add(term.Key);
 					config.Set(term.Key, before.TextFor(term.Key), before.SavedSingularFor(term.Key));
 					continue;
@@ -3558,7 +3560,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			if (tooLong.Count > 0)
-				view.ErrorMessage = string.Format(_departmentLocalizer["TerminologyTooLong"].Value, DepartmentTerms.MaxLength);
+				view.ErrorMessage = badCharacters
+					? _departmentLocalizer["TerminologyInvalidCharacters"].Value
+					: string.Format(_departmentLocalizer["TerminologyTooLong"].Value, DepartmentTerms.MaxLength);
 			view.Message = _departmentLocalizer[tooLong.Count == 0 ? "TerminologySaved" : "TerminologyPartlySaved"];
 
 			return View(view);

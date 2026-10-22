@@ -324,15 +324,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			List<BSTreeModel> trees = new List<BSTreeModel>();
+			// The tree renders labels as HTML; the department's words are encoded like the group names.
 			var tree0 = new BSTreeModel();
 			tree0.id = "TreeGroup_-1";
-			tree0.text = HttpContext.WithDepartmentTerms("All Personnel");
+			tree0.text = System.Net.WebUtility.HtmlEncode(HttpContext.WithDepartmentTerms("All Personnel"));
 			tree0.icon = "";
 			trees.Add(tree0);
 
 			var tree1 = new BSTreeModel();
 			tree1.id = "TreeGroup_0";
-			tree1.text = HttpContext.WithDepartmentTerms("Ungrouped Personnel");
+			tree1.text = System.Net.WebUtility.HtmlEncode(HttpContext.WithDepartmentTerms("Ungrouped Personnel"));
 			tree1.icon = "";
 			trees.Add(tree1);
 

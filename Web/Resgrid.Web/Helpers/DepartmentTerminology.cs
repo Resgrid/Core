@@ -74,6 +74,10 @@ namespace Resgrid.Web.Helpers
 
 		[System.Text.Json.Serialization.JsonPropertyName("patterns")]
 		public List<string> Patterns { get; } = new List<string>();
+
+		/// <summary>Whole strings that keep their wording ("On Call" the staffing level), as on the server.</summary>
+		[System.Text.Json.Serialization.JsonPropertyName("values")]
+		public List<string> Values { get; } = new List<string>();
 	}
 
 	public sealed class DepartmentTermClientRule
@@ -321,6 +325,8 @@ namespace Resgrid.Web.Helpers
 					client.Phrases.AddRange(phrases);
 				if (DepartmentTermSubstitution.ProtectedPatterns.TryGetValue(term.Key, out var patterns))
 					client.Patterns.AddRange(patterns);
+				if (DepartmentTermSubstitution.ProtectedValues.TryGetValue(term.Key, out var values))
+					client.Values.AddRange(values);
 			}
 
 			return client.Rules.Count == 0 ? null : client;

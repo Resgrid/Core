@@ -147,6 +147,8 @@ namespace Resgrid.Services
 
 		public async Task<bool> RevokeDepartmentAccessAsync(string userId, int departmentId, string revokingUserId, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			cancellationToken = RunToCompletionOnceWriting(cancellationToken);
+
 			// Strip everything that would keep the department reaching the user: roles,
 			// group memberships, distribution lists and their scheduled automations
 			// (status changes, staffing changes, report deliveries) for this department.
@@ -185,6 +187,18 @@ namespace Resgrid.Services
 			}
 
 			return member != null && member.IsDeleted;
+		}
+
+		/// <summary>
+		/// A member removal is a run of separate writes with no transaction around it, so the caller's token is honoured
+		/// only up to the first one. Stopping part-way is worse than finishing: the web caller passes the request's abort
+		/// token, and an admin's browser going away once left the memberships soft-deleted with the login, sessions and
+		/// security stamp still live, and the member gone from the personnel list so nobody could run the removal again.
+		/// </summary>
+		private static CancellationToken RunToCompletionOnceWriting(CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			return CancellationToken.None;
 		}
 
 		/// <summary>
@@ -271,7 +285,12 @@ namespace Resgrid.Services
 					if (dep != null && dep.ManagingUserId == userIdToDelete)
 						return DeleteUserResults.UserIsManagingDepartmentAdmin;
 				}
+			}
 
+			cancellationToken = RunToCompletionOnceWriting(cancellationToken);
+
+			if (departments != null && departments.Any())
+			{
 				// Strip roles and group memberships before touching the membership rows so a
 				// failure part-way through leaves the memberships intact and the whole
 				// operation retryable (mirrors the ordering in RevokeDepartmentAccessAsync).

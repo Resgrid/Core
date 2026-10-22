@@ -1536,6 +1536,9 @@
   <data name="TerminologyTooLong" xml:space="preserve">
     <value>Τα ονόματα μπορούν να έχουν έως {0} χαρακτήρες· τα μεγαλύτερα ονόματα δεν αποθηκεύτηκαν και εμφανίζονται για διόρθωση.</value>
   </data>
+  <data name="TerminologyInvalidCharacters" xml:space="preserve">
+    <value>Τα ονόματα δεν μπορούν να περιέχουν &lt; &gt; { ή }· αυτά τα ονόματα δεν αποθηκεύτηκαν και εμφανίζονται για διόρθωση.</value>
+  </data>
   <data name="TerminologyRecordDefinitionsLink" xml:space="preserve">
     <value>Ορισμοί αρχείων</value>
   </data>

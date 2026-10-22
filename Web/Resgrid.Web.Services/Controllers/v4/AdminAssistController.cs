@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Resgrid.Model.AdminAssist;
+using Resgrid.Web.Services.Filters;
 using Labels = Resgrid.Localization.Areas.User.AdminAssist.AdminAssist;
 
 namespace Resgrid.Web.Services.Controllers.v4
@@ -62,12 +63,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 		public Task<IActionResult> PlanTemplates(CancellationToken ct) => ExecuteAsync(async () => await plans.TemplatesAsync(Actor, ct));
 		/// <summary>Build a transient proposal from authorized live evidence.</summary>
 		[HttpPost("PlanDraft"), RequestSizeLimit(16384)]
+		[CancelOnClientDisconnect]
 		public Task<IActionResult> PlanDraft([FromBody] PlanDraftRequest request, CancellationToken ct) => ExecuteAsync(async () => await planQueries.DraftAsync(Actor, request, ct));
 		/// <summary>Explicitly save a reviewed proposal as private metadata.</summary>
 		[HttpPost("PlanCreate"), RequestSizeLimit(16384)]
 		public Task<IActionResult> PlanCreate([FromBody] PlanCreateCommand command, CancellationToken ct) => ExecuteAsync(async () => await plans.CreateAsync(Actor, command, ct));
 		/// <summary>Read a plan with fresh source authorization and verification.</summary>
 		[HttpPost("Plan"), RequestSizeLimit(1024)]
+		[CancelOnClientDisconnect]
 		public Task<IActionResult> Plan([FromBody] PlanReference reference, CancellationToken ct) => ExecuteAsync(async () => await plans.ReadAsync(Actor, reference, ct));
 		/// <summary>List currently authorized private and deliberately shared plans.</summary>
 		[HttpGet("Plans")]
@@ -77,14 +80,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 		public Task<IActionResult> PlanCommand([FromBody] PlanCommand command, CancellationToken ct) => ExecuteAsync(async () => await plans.CommandAsync(Actor, command, ct));
 		/// <summary>Export a freshly reauthorized and escaped as-of PDF.</summary>
 		[HttpPost("PlanExport"), RequestSizeLimit(1024)]
+		[CancelOnClientDisconnect]
 		public Task<IActionResult> PlanExport([FromBody] PlanCommand command, CancellationToken ct) => ExecuteAsync(async () => await plans.ExportAsync(Actor, command, ct));
 
 		/// <summary>Run an attended, read-only diagnostic within the current department.</summary>
 		[HttpPost("Diagnose")]
+		[CancelOnClientDisconnect]
 		[RequestSizeLimit(4096)]
 		public Task<IActionResult> Diagnose([FromBody] DiagnosticRequest request, CancellationToken ct) => ExecuteAsync(async () => await diagnostics.RunAsync(Actor, request, ct));
 		/// <summary>Refresh an owned diagnostic using current source permissions and evidence.</summary>
 		[HttpPost("Diagnostic")]
+		[CancelOnClientDisconnect]
 		[RequestSizeLimit(1024)]
 		public Task<IActionResult> Diagnostic([FromBody] DiagnosticRunCommand command, CancellationToken ct) => ExecuteAsync(async () => await diagnostics.ReadAsync(Actor, command, ct));
 		/// <summary>List recent private diagnostic runs; contains no subject names or identifiers.</summary>
@@ -92,10 +98,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 		public Task<IActionResult> Diagnostics(CancellationToken ct) => ExecuteAsync(async () => await diagnostics.ListAsync(Actor, ct));
 		/// <summary>Preview a reauthorized support bundle without sending it.</summary>
 		[HttpPost("DiagnosticSupportPreview")]
+		[CancelOnClientDisconnect]
 		[RequestSizeLimit(1024)]
 		public Task<IActionResult> DiagnosticSupportPreview([FromBody] DiagnosticRunCommand command, CancellationToken ct) => ExecuteAsync(async () => await diagnostics.PreviewSupportAsync(Actor, command, ct));
 		/// <summary>Export only when authorized evidence still matches the reviewed preview.</summary>
 		[HttpPost("DiagnosticSupportExport")]
+		[CancelOnClientDisconnect]
 		[RequestSizeLimit(1024)]
 		public Task<IActionResult> DiagnosticSupportExport([FromBody] DiagnosticRunCommand command, CancellationToken ct) => ExecuteAsync(async () => await diagnostics.ExportSupportAsync(Actor, command, ct));
 		/// <summary>Tombstone an owned diagnostic; protected content follows hold-aware cleanup.</summary>
@@ -146,24 +154,28 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		/// <summary>Preview a scalar proposal against fresh evidence without saving configuration.</summary>
 		[HttpPost("Impact")]
+		[CancelOnClientDisconnect]
 		[RequestSizeLimit(2048)]
 		public Task<IActionResult> Impact([FromBody] ConfigurationImpactRequest request, CancellationToken cancellationToken) =>
 			ExecuteAsync(async () => await impacts.PreviewAsync(Actor, request, cancellationToken));
 
 		/// <summary>Preview base-plan headroom for proposed total personnel and unit counts without provisioning.</summary>
 		[HttpPost("CapacityImpact")]
+		[CancelOnClientDisconnect]
 		[RequestSizeLimit(1024)]
 		public Task<IActionResult> CapacityImpact([FromBody] CapacityImpactRequest request, CancellationToken cancellationToken) =>
 			ExecuteAsync(async () => await impacts.PreviewCapacityAsync(Actor, request, cancellationToken));
 
 		/// <summary>Simulate a saved call's routes using current authorized membership and an explicit roster time; never sends.</summary>
 		[HttpPost("DispatchImpact")]
+		[CancelOnClientDisconnect]
 		[RequestSizeLimit(2048)]
 		public Task<IActionResult> DispatchImpact([FromBody] DispatchImpactRequest request, CancellationToken cancellationToken) =>
 			ExecuteAsync(async () => await dispatchImpacts.PreviewAsync(Actor, request, cancellationToken));
 
 		/// <summary>Compare the proposed permission gate for current members and resource targets; never changes access.</summary>
 		[HttpPost("PermissionImpact")]
+		[CancelOnClientDisconnect]
 		[RequestSizeLimit(4096)]
 		public Task<IActionResult> PermissionImpact([FromBody] PermissionImpactRequest request, CancellationToken cancellationToken) =>
 			ExecuteAsync(async () => await permissionImpacts.PreviewAsync(Actor, request, cancellationToken));
@@ -175,30 +187,35 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		/// <summary>Preview module navigation and bounded content counts without changing module availability.</summary>
 		[HttpPost("ModuleImpact")]
+		[CancelOnClientDisconnect]
 		[RequestSizeLimit(1024)]
 		public Task<IActionResult> ModuleImpact([FromBody] ModuleImpactRequest request, CancellationToken cancellationToken) =>
 			ExecuteAsync(async () => await moduleImpacts.PreviewAsync(Actor, request, cancellationToken));
 
 		/// <summary>Compare a masked sender scenario against provider-specific routing; never receives or sends a message.</summary>
 		[HttpPost("TextImportImpact")]
+		[CancelOnClientDisconnect]
 		[RequestSizeLimit(2048)]
 		public Task<IActionResult> TextImportImpact([FromBody] TextImportImpactRequest request, CancellationToken cancellationToken) =>
 			ExecuteAsync(async () => await textImportImpacts.PreviewAsync(Actor, request, cancellationToken));
 
 		/// <summary>Compare supported department security-policy gates; never changes credentials or sessions.</summary>
 		[HttpPost("SecurityImpact")]
+		[CancelOnClientDisconnect]
 		[RequestSizeLimit(1024)]
 		public Task<IActionResult> SecurityImpact([FromBody] ConfigurationImpactRequest request, CancellationToken cancellationToken) =>
 			ExecuteAsync(async () => await securityImpacts.PreviewAsync(Actor, request, cancellationToken));
 
 		/// <summary>Estimate ordinary notification channel gates for a declared future cohort scenario; never sends.</summary>
 		[HttpPost("NotificationImpact")]
+		[CancelOnClientDisconnect]
 		[RequestSizeLimit(1024)]
 		public Task<IActionResult> NotificationImpact([FromBody] NotificationImpactRequest request, CancellationToken cancellationToken) =>
 			ExecuteAsync(async () => await notificationImpacts.PreviewAsync(Actor, request, cancellationToken));
 
 		/// <summary>Preview prospective retention windows and known hold exclusions using metadata only; never purges.</summary>
 		[HttpPost("RetentionImpact")]
+		[CancelOnClientDisconnect]
 		[RequestSizeLimit(1024)]
 		public Task<IActionResult> RetentionImpact([FromBody] RetentionImpactRequest request, CancellationToken cancellationToken) =>
 			ExecuteAsync(async () => await retentionImpacts.PreviewAsync(Actor, request, cancellationToken));
@@ -231,6 +248,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		/// <summary>Select freshly authorized evidence cards using the separately gated local model.</summary>
 		[HttpPost("Ask")]
+		[CancelOnClientDisconnect]
 		[RequestSizeLimit(16384)]
 		public Task<IActionResult> Ask([FromBody] AdminAssistAskRequest request, CancellationToken cancellationToken) =>
 			ExecuteAsync(async () => await ask.AskAsync(Actor, request, cancellationToken));

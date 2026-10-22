@@ -705,7 +705,7 @@ var resgrid;
                     }
 
                     if (units.length) {
-                        html += '<div><b>' + resgrid.terms.apply('Units:') + '</b> ' + units.map(function (u) {
+                        html += '<div><b>' + $('<span>').text(resgrid.terms.apply('Units:')).html() + '</b> ' + units.map(function (u) {
                             var text = prop(u, 'unitName') || ('#' + prop(u, 'unitId'));
                             var distance = prop(u, 'distanceMeters');
                             var response = prop(u, 'responseSeconds');
@@ -722,7 +722,7 @@ var resgrid;
                         }).join(', ') + '</div>';
                     }
                     if (personnel.length) {
-                        html += '<div><b>' + resgrid.terms.apply('Personnel:') + '</b> ' + personnel.length + ' recommended</div>';
+                        html += '<div><b>' + $('<span>').text(resgrid.terms.apply('Personnel:')).html() + '</b> ' + personnel.length + ' recommended</div>';
                     }
                     if (shortfalls.length) {
                         html += '<div class="text-danger"><b>Shortfalls:</b> ' + shortfalls.map(function (s) {

@@ -59,6 +59,7 @@ var resgrid;
         var matcher = null;
         var shield = null;
         var byForm = {};
+        var keptValues = {};
 
         function escapeRegex(text) {
             return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -72,9 +73,15 @@ var resgrid;
             matcher = null;
             shield = null;
             byForm = {};
+            keptValues = {};
             if (!data || !data.rules || !data.rules.length) {
                 return;
             }
+
+            // Whole strings that keep their wording ("On Call" the staffing level), compared as the server does.
+            (data.values || []).forEach(function (value) {
+                keptValues[value.trim().toLowerCase()] = true;
+            });
 
             var forms = [];
             data.rules.forEach(function (rule) {
@@ -142,6 +149,9 @@ var resgrid;
                 return text;
             }
             text = String(text);
+            if (keptValues[text.trim().toLowerCase()]) {
+                return text;
+            }
 
             var spans = [];
             if (shield) {

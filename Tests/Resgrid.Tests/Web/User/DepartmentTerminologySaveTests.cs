@@ -179,6 +179,44 @@ namespace Resgrid.Tests.Web.User
 		}
 
 		[Test]
+		public async Task A_name_with_markup_or_braces_keeps_the_saved_one_and_says_why()
+		{
+			var model = TerminologyView.From(_saved);
+			model.Terms.Single(t => t.Key == DepartmentTerms.Units).Text = "Teams {A}";
+			model.Terms.Single(t => t.Key == DepartmentTerms.Calls).Singular = "<img src=x onerror=alert(1)>";
+			model.Terms.Single(t => t.Key == Run).Text = "Fire & Rescue";
+
+			var result = await _controller.Terminology(model, CancellationToken.None);
+
+			_saved.TextFor(DepartmentTerms.Units).Should().Be("Apparatus", "a brace would break every format string that carries the word");
+			_saved.SavedSingularFor(DepartmentTerms.Calls).Should().BeNull("markup never reaches the pages that build HTML from the word");
+			_saved.TextFor(Run).Should().Be("Fire & Rescue", "other punctuation is fine");
+			var view = (TerminologyView)((ViewResult)result).Model;
+			view.Terms.Single(t => t.Key == DepartmentTerms.Units).Text.Should().Be("Teams {A}");
+			view.ErrorMessage.Should().Be("TerminologyInvalidCharacters");
+			view.Message.Should().Be("TerminologyPartlySaved");
+		}
+
+		[Test]
+		public void A_stored_name_with_markup_or_braces_reads_as_the_default()
+		{
+			// Saved before the rule (or by a path that skipped it): every read checks it, so the default shows instead.
+			var config = new DepartmentTerminologyConfig
+			{
+				Terms = new List<DepartmentTermOverride>
+				{
+					new DepartmentTermOverride { Key = DepartmentTerms.Units, Text = "Team}", Singular = "<b>Rig</b>" },
+					new DepartmentTermOverride { Key = Run, Text = "Incident" }
+				}
+			};
+
+			config.TextFor(DepartmentTerms.Units).Should().BeNull();
+			config.SavedSingularFor(DepartmentTerms.Units).Should().BeNull();
+			config.SingularFor(DepartmentTerms.Units).Should().BeNull();
+			config.TextFor(Run).Should().Be("Incident");
+		}
+
+		[Test]
 		public async Task Terms_missing_from_the_post_and_unknown_keys_change_nothing()
 		{
 			var model = new TerminologyView

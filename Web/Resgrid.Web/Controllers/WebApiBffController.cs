@@ -62,6 +62,8 @@ namespace Resgrid.Web.Controllers
 
 		[AcceptVerbs("GET", "POST", "PUT", "PATCH", "DELETE")]
 		[Route("{**path}")]
+		// The API runs the work; a disconnect is handed on to it (an Admin Assist answer nobody will read stops there).
+		[Filters.CancelOnClientDisconnect]
 		public async Task Proxy(string path, CancellationToken cancellationToken)
 		{
 			// Per-user authenticated payloads on the app's own origin: never let a browser, CDN or any

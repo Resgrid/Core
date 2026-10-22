@@ -514,6 +514,8 @@ namespace Resgrid.Web
 				options.Filters.Add<Filters.StatusWriteActorFilter>();
 				// The department's terminology is read before the action, so its words reach every localized string the page shows.
 				options.Filters.Add(new Filters.DepartmentTermsFilter());
+				// A write runs to the end once it starts, so a browser that leaves partway never leaves a call half saved.
+				Filters.MutationCancellationTokenBinderProvider.Register(options);
 			}).AddJsonOptions(jsonOptions =>
 			{
 				jsonOptions.JsonSerializerOptions.PropertyNamingPolicy = null;

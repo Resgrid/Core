@@ -860,11 +860,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCardConditions, DepartmentId))
 				return Json(new { success = true, enabled = false, calls = new List<AwaitingResourcesCall>() });
 
+			// Group-scoped dispatch: the same calls as the dispatcher's other call lists, for the badge and the list alike.
+			var visibleCallIds = await GetVisibleActiveCallIdsAsync();
+
 			// The top-bar badge polls: it needs the count only, not the available units and their response times.
 			if (countOnly)
-				return Json(new { success = true, enabled = true, count = await _outstandingRequirementsService.GetAwaitingCallCountAsync(DepartmentId, cancellationToken) });
+				return Json(new { success = true, enabled = true, count = await _outstandingRequirementsService.GetAwaitingCallCountAsync(DepartmentId, visibleCallIds, cancellationToken) });
 
-			var calls = await _outstandingRequirementsService.GetAwaitingCallsAsync(DepartmentId, cancellationToken);
+			var calls = await _outstandingRequirementsService.GetAwaitingCallsAsync(DepartmentId, visibleCallIds, cancellationToken);
 
 			return Json(new { success = true, enabled = true, calls });
 		}
@@ -909,7 +912,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var call = await _callsService.GetCallByIdAsync(callId);
 
 			if (call == null || call.DepartmentId != DepartmentId)
-				return Json(new { success = false, message = "Call not found." });
+				return Json(new { success = false, message = HttpContext.WithDepartmentTerms("Call not found.") });
 
 			if (!await _authorizationService.CanUserEditCallAsync(UserId, callId))
 				return Unauthorized();
@@ -938,7 +941,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var call = await _callsService.GetCallByIdAsync(callId);
 
 			if (call == null || call.DepartmentId != DepartmentId)
-				return Json(new { success = false, message = "Call not found." });
+				return Json(new { success = false, message = HttpContext.WithDepartmentTerms("Call not found.") });
 
 			if (!await _authorizationService.CanUserEditCallAsync(UserId, callId))
 				return Unauthorized();
@@ -946,11 +949,26 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var unit = await _unitsService.GetUnitByIdAsync(unitId);
 
 			if (unit == null || unit.DepartmentId != DepartmentId || unit.IsDeleted)
-				return Json(new { success = false, message = "Unit not found." });
+				return Json(new { success = false, message = HttpContext.WithDepartmentTerms("Unit not found.") });
 
 			var result = await _outstandingRequirementsService.DispatchUnitToCallAsync(DepartmentId, callId, unitId, UserId, cancellationToken);
 
 			return Json(new { success = result.Success, message = result.Message, resolved = result.ResolvedRequirements });
+		}
+
+		/// <summary>
+		/// The active calls this user dispatches under group-scoped dispatch, or null when they see the whole department (no
+		/// call list is read then). Only active calls can be awaiting a resource.
+		/// </summary>
+		private async Task<HashSet<int>> GetVisibleActiveCallIdsAsync()
+		{
+			var scope = await _dispatchScopeService.GetScopeForUserAsync(DepartmentId, UserId);
+
+			if (scope.IsDepartmentWide)
+				return null;
+
+			return new HashSet<int>((await _dispatchScopeService.FilterCallsAsync(scope, await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId)))
+				.Select(c => c.CallId));
 		}
 
 		/// <summary>The web form's per-unit response code fields (<c>unitResponseCode_{unitId}</c>; empty = cleared).</summary>
@@ -1005,7 +1023,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var call = await _callsService.GetCallByIdAsync(callId);
 
 			if (call == null || call.DepartmentId != DepartmentId)
-				return Json(new { success = false, message = "Call not found." });
+				return Json(new { success = false, message = HttpContext.WithDepartmentTerms("Call not found.") });
 
 			// The Call_Update claim and the department check above are not enough on their
 			// own: escalating dispatches units and notifies personnel, so it takes the same

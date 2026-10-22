@@ -117,6 +117,50 @@ namespace Resgrid.Tests.Web.User
 		}
 
 		[Test]
+		public async Task Saving_stores_the_item_words_for_modules_that_have_them()
+		{
+			var model = TerminologyView.From(_saved);
+			model.Terms.Single(t => t.Key == DepartmentTerms.Units).HasSingular.Should().BeTrue();
+			model.Terms.Single(t => t.Key == DepartmentTerms.Calendar).HasSingular.Should().BeFalse();
+			model.Terms.Single(t => t.Key == DepartmentTerms.Units).Singular = " Rig ";
+			model.Terms.Single(t => t.Key == DepartmentTerms.Calls).Singular = "Incident";
+			model.Terms.Single(t => t.Key == Run).Singular = "Ignored";
+
+			await _controller.Terminology(model, CancellationToken.None);
+
+			_saved.TextFor(DepartmentTerms.Units).Should().Be("Apparatus");
+			_saved.SavedSingularFor(DepartmentTerms.Units).Should().Be("Rig");
+			_saved.TextFor(DepartmentTerms.Calls).Should().BeNull("an item word can be renamed on its own");
+			_saved.SingularFor(DepartmentTerms.Calls).Should().Be("Incident");
+			_saved.Terms.Should().NotContain(t => t.Key == Run, "record types have no item word, so a lone one saves nothing");
+		}
+
+		[Test]
+		public async Task An_item_word_over_the_limit_keeps_the_saved_names()
+		{
+			var tooLong = new string('x', DepartmentTerms.MaxLength + 1);
+			var model = TerminologyView.From(_saved);
+			model.Terms.Single(t => t.Key == DepartmentTerms.Units).Text = "Teams";
+			model.Terms.Single(t => t.Key == DepartmentTerms.Units).Singular = tooLong;
+
+			var result = await _controller.Terminology(model, CancellationToken.None);
+
+			_saved.TextFor(DepartmentTerms.Units).Should().Be("Apparatus", "the row is refused as a whole");
+			var view = (TerminologyView)((ViewResult)result).Model;
+			view.Terms.Single(t => t.Key == DepartmentTerms.Units).Singular.Should().Be(tooLong);
+			view.Terms.Single(t => t.Key == DepartmentTerms.Units).Text.Should().Be("Teams");
+			view.Message.Should().Be("TerminologyPartlySaved");
+		}
+
+		[Test]
+		public void The_page_shows_resgrids_own_wording()
+		{
+			typeof(Resgrid.Web.Areas.User.Controllers.DepartmentController).GetMethods()
+				.Where(m => m.Name == nameof(Resgrid.Web.Areas.User.Controllers.DepartmentController.Terminology))
+				.Should().HaveCount(2).And.OnlyContain(m => m.GetCustomAttributes(typeof(Resgrid.Web.Filters.SuppressDepartmentTermsAttribute), false).Any());
+		}
+
+		[Test]
 		public async Task A_name_over_the_limit_keeps_the_saved_one_and_stays_in_its_box()
 		{
 			var tooLong = new string('x', DepartmentTerms.MaxLength + 1);

@@ -394,6 +394,7 @@
                                 </div>
                             </div>
                         }
+                        @await Html.PartialAsync("_NearestUnitsBoard", Model.Groups)
                         @if (showDispatchList)
                         {
                         <div class="form-group">
@@ -642,6 +643,7 @@
 
     @await Html.PartialAsync("_DispatchLocalizationScript")
     <script src="~/js/app/internal/dispatch/resgrid.dispatch.runcarddecision.js"></script>
+    <script src="~/js/app/internal/dispatch/resgrid.dispatch.nearestboard.js"></script>
     <script src="~/js/app/internal/dispatch/resgrid.dispatch.editcall.js"></script>
 
     <script type="text/javascript">

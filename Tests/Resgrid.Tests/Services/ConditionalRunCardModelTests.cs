@@ -51,6 +51,37 @@ namespace Resgrid.Tests.Services
 			RunCardDecisionGraph.Validate(new[] { self, Outcome("b"), Outcome("c") }).Should().BeEmpty("different status filters make different sets");
 		}
 
+		/// <summary>A chain of <paramref name="questions"/> conditions, each No ending at one shared outcome.</summary>
+		private static List<RunCardDecisionNode> Chain(int questions)
+		{
+			var nodes = new List<RunCardDecisionNode>();
+
+			for (var i = 1; i <= questions; i++)
+				nodes.Add(Condition($"q{i}", i == questions ? "yes" : $"q{i + 1}", "no", root: i == 1));
+
+			nodes.Add(Outcome("yes"));
+			nodes.Add(Outcome("no"));
+			return nodes;
+		}
+
+		[Test]
+		public void the_depth_limit_counts_questions_not_the_outcome_that_ends_the_path()
+		{
+			RunCardDecisionGraph.Validate(Chain(RunCardDecisionGraph.MaximumDepth)).Should().BeEmpty("eight questions in a row are allowed");
+			RunCardDecisionGraph.Validate(Chain(RunCardDecisionGraph.MaximumDepth + 1)).Should().Contain(e => e.Contains("questions deep"));
+		}
+
+		[Test]
+		public void response_code_colours_keep_only_hex_colours()
+		{
+			DispatchResponseCodesConfig.NormalizeColor(" #d9534f ").Should().Be("#d9534f");
+			DispatchResponseCodesConfig.NormalizeColor("#FFF").Should().Be("#FFF");
+			DispatchResponseCodesConfig.NormalizeColor("red").Should().BeNull();
+			DispatchResponseCodesConfig.NormalizeColor("#fff\" onmouseover=\"alert(1)").Should().BeNull("it goes into a style attribute");
+			DispatchResponseCodesConfig.NormalizeColor("").Should().BeNull();
+			DispatchResponseCodesConfig.NormalizeColor(null).Should().BeNull();
+		}
+
 		[Test]
 		public void an_advice_only_outcome_is_a_valid_graph()
 		{

@@ -38,6 +38,7 @@ namespace Resgrid.Tests.Services
 		private Mock<IGeoService> _geo;
 		private Mock<IPersonnelRolesService> _roles;
 		private Mock<IFeatureToggleService> _flags;
+		private Mock<ICacheProvider> _cache;
 		private OutstandingRequirementsService _service;
 		private List<CallOutstandingRequirement> _stored;
 		private Call _call;
@@ -59,6 +60,7 @@ namespace Resgrid.Tests.Services
 			_geo = new Mock<IGeoService>();
 			_roles = new Mock<IPersonnelRolesService>();
 			_flags = new Mock<IFeatureToggleService>();
+			_cache = new Mock<ICacheProvider>();
 			_stored = new List<CallOutstandingRequirement>();
 			_config = new DispatchRecommendationConfig();
 
@@ -104,28 +106,32 @@ namespace Resgrid.Tests.Services
 			_flags.Setup(x => x.IsEnabledAsync(FeatureFlagKeys.DispatchRunCardConditions, DepartmentId, It.IsAny<bool>(), It.IsAny<IDictionary<string, string>>())).ReturnsAsync(true);
 
 			_service = new OutstandingRequirementsService(_repository.Object, _calls.Object, _units.Object, _customStates.Object, _settings.Object, _runCards.Object,
-				_dispatchStatuses.Object, _queue.Object, _events.Object, _groups.Object, _geo.Object, _roles.Object, _flags.Object);
+				_dispatchStatuses.Object, _queue.Object, _events.Object, _groups.Object, _geo.Object, _roles.Object, _flags.Object, _cache.Object);
 		}
 
-		private static DispatchRecommendationResult ResultWithOutstandingMug(RequirementFallbackSteps step = RequirementFallbackSteps.Substitute)
+		private static DispatchRecommendationResult ResultWithOutstandingMug(RequirementFallbackSteps step = RequirementFallbackSteps.Substitute, int requiredCount = 1)
 		{
-			var row = new ResolvedRequirementRow
-			{
-				Scope = RequirementScopes.Package, RequirementId = 500, Label = "MUG", RequiredCount = 1, KeepOutstanding = true,
-				Targets = new List<RunCardTarget> { new RunCardTarget { TargetKind = (int)RunCardTargetKinds.UnitType, TargetRefId = MugTypeId } }
-			};
+			return ResultWithOutstandingRows(step, requiredCount, Tuple.Create(500, "MUG"));
+		}
 
+		private static DispatchRecommendationResult ResultWithOutstandingRows(RequirementFallbackSteps step, int requiredCount, params Tuple<int, string>[] rows)
+		{
 			return new DispatchRecommendationResult
 			{
 				MatchedRunCardId = 8,
 				AlarmLevel = 1,
 				Decision = new RunCardDecisionExplanation
 				{
-					ResolvedRows = new List<ResolvedRequirementRow> { row },
-					Fallbacks = new List<RunCardFallbackExplanation>
+					ResolvedRows = rows.Select(r => new ResolvedRequirementRow
 					{
-						new RunCardFallbackExplanation { RowLabel = "MUG", RequirementScope = RequirementScopes.Package, RequirementId = 500, Step = step, Outstanding = true, RequiredCount = 1, FilledCount = 0, SentInstead = "P-21" }
-					}
+						Scope = RequirementScopes.Package, RequirementId = r.Item1, Label = r.Item2, RequiredCount = requiredCount, KeepOutstanding = true,
+						Targets = new List<RunCardTarget> { new RunCardTarget { TargetKind = (int)RunCardTargetKinds.UnitType, TargetRefId = MugTypeId } }
+					}).ToList(),
+					Fallbacks = rows.Select(r => new RunCardFallbackExplanation
+					{
+						RowLabel = r.Item2, RequirementScope = RequirementScopes.Package, RequirementId = r.Item1, Step = step, Outstanding = true,
+						RequiredCount = requiredCount, FilledCount = 0, SentInstead = "P-21"
+					}).ToList()
 				}
 			};
 		}
@@ -287,6 +293,123 @@ namespace Resgrid.Tests.Services
 			_call.UnitDispatches.Should().ContainSingle(d => d.UnitId == 1);
 			_stored.Single().Resolution.Should().Be((int)OutstandingRequirementResolutions.Dispatched);
 			_stored.Single().ResolvedByUserId.Should().Be("dispatcher");
+		}
+
+		[Test]
+		public async Task repeated_reads_count_a_dispatch_once()
+		{
+			await _service.CreateFromRecommendationAsync(_call, ResultWithOutstandingMug(requiredCount: 2), "user-1");
+			var createdOn = _stored.Single().CreatedOn;
+			_call.UnitDispatches.Add(new CallDispatchUnit { CallId = CallId, UnitId = 1, DispatchedOn = createdOn.AddMinutes(3) });
+
+			// Badge polls, refreshes and status changes all reconcile; one MUG of the two must stay one.
+			for (var i = 0; i < 3; i++)
+				(await _service.GetForCallAsync(DepartmentId, CallId)).Should().ContainSingle();
+
+			_stored.Single().ResolvedCount.Should().Be(1);
+			_stored.Single().IsOpen.Should().BeTrue();
+			(await _service.GetAwaitingCallCountAsync(DepartmentId)).Should().Be(1);
+
+			_units.Setup(x => x.GetUnitsForDepartmentUnlimitedAsync(DepartmentId)).ReturnsAsync(new List<Unit>
+			{
+				new Unit { UnitId = 1, DepartmentId = DepartmentId, Name = "M-1", Type = "MUG" },
+				new Unit { UnitId = 3, DepartmentId = DepartmentId, Name = "M-3", Type = "MUG" }
+			});
+			_call.UnitDispatches.Add(new CallDispatchUnit { CallId = CallId, UnitId = 3, DispatchedOn = createdOn.AddMinutes(5) });
+
+			(await _service.GetForCallAsync(DepartmentId, CallId)).Should().BeEmpty();
+			_stored.Single().ResolvedCount.Should().Be(2);
+			_stored.Single().Resolution.Should().Be((int)OutstandingRequirementResolutions.Dispatched);
+		}
+
+		[Test]
+		public async Task a_unit_that_fulfilled_one_requirement_does_not_count_toward_the_next()
+		{
+			await _service.CreateFromRecommendationAsync(_call, ResultWithOutstandingRows(RequirementFallbackSteps.Substitute, 1,
+				Tuple.Create(500, "MUG"), Tuple.Create(501, "Second MUG")), "user-1");
+			_stored.Should().HaveCount(2);
+			_call.UnitDispatches.Add(new CallDispatchUnit { CallId = CallId, UnitId = 1, DispatchedOn = _stored.Max(r => r.CreatedOn).AddMinutes(3) });
+
+			// The awaiting list passes only the open requirements; the fulfilled one must still hold on to M-1.
+			for (var i = 0; i < 3; i++)
+				(await _service.GetAwaitingCallCountAsync(DepartmentId)).Should().Be(1);
+
+			_stored.Count(r => r.IsOpen).Should().Be(1);
+			_stored.Single(r => r.IsOpen).ResolvedCount.Should().Be(0);
+		}
+
+		[Test]
+		public async Task the_awaiting_list_and_count_keep_to_the_calls_the_reader_may_see()
+		{
+			await _service.CreateFromRecommendationAsync(_call, ResultWithOutstandingMug(), "user-1");
+
+			(await _service.GetAwaitingCallCountAsync(DepartmentId)).Should().Be(1);
+			(await _service.GetAwaitingCallCountAsync(DepartmentId, new HashSet<int> { CallId })).Should().Be(1);
+			(await _service.GetAwaitingCallCountAsync(DepartmentId, new HashSet<int> { CallId + 1 })).Should().Be(0);
+			(await _service.GetAwaitingCallsAsync(DepartmentId, new HashSet<int> { CallId })).Should().ContainSingle(c => c.CallId == CallId);
+			(await _service.GetAwaitingCallsAsync(DepartmentId, new HashSet<int>())).Should().BeEmpty();
+		}
+
+		[Test]
+		public async Task auto_dispatch_stands_down_while_another_pass_holds_the_unit()
+		{
+			await _service.CreateFromRecommendationAsync(_call, ResultWithOutstandingMug(), "user-1");
+			_config.WaitingCallAutoDispatch = true;
+			_units.Setup(x => x.GetLastUnitStateByUnitIdAsync(1)).ReturnsAsync(new UnitState { UnitId = 1, State = (int)UnitStateTypes.Available, SetByUserId = "crew" });
+			_cache.Setup(x => x.IncrementAsync("OutstandingAutoDispatch_1", It.IsAny<TimeSpan>())).ReturnsAsync(2);
+			_events.Invocations.Clear();
+
+			await _service.OnUnitStateSavedAsync(DepartmentId,
+				new UnitState { UnitId = 1, State = (int)UnitStateTypes.Available, Timestamp = DateTime.UtcNow },
+				new UnitState { UnitId = 1, State = (int)UnitStateTypes.Committed, Timestamp = DateTime.UtcNow.AddMinutes(-30) });
+
+			// The other pass owns this unit: no second claim, no second dispatch, no "unit available" alert, and its claim stays.
+			_repository.Verify(x => x.TryClaimAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Never);
+			_call.UnitDispatches.Should().BeEmpty();
+			_events.Verify(x => x.SendMessageAsync(It.IsAny<OutstandingRequirementsUpdatedEvent>()), Times.Never);
+			_cache.Verify(x => x.RemoveAsync(It.IsAny<string>()), Times.Never);
+			_stored.Single().IsOpen.Should().BeTrue();
+		}
+
+		[Test]
+		public async Task auto_dispatch_releases_its_unit_claim_when_done()
+		{
+			await _service.CreateFromRecommendationAsync(_call, ResultWithOutstandingMug(), "user-1");
+			_config.WaitingCallAutoDispatch = true;
+			_units.Setup(x => x.GetLastUnitStateByUnitIdAsync(1)).ReturnsAsync(new UnitState { UnitId = 1, State = (int)UnitStateTypes.Available, SetByUserId = "crew" });
+			_cache.Setup(x => x.IncrementAsync("OutstandingAutoDispatch_1", It.IsAny<TimeSpan>())).ReturnsAsync(1);
+
+			await _service.OnUnitStateSavedAsync(DepartmentId,
+				new UnitState { UnitId = 1, State = (int)UnitStateTypes.Available, Timestamp = DateTime.UtcNow },
+				new UnitState { UnitId = 1, State = (int)UnitStateTypes.Committed, Timestamp = DateTime.UtcNow.AddMinutes(-30) });
+
+			_call.UnitDispatches.Should().ContainSingle(d => d.UnitId == 1);
+			_cache.Verify(x => x.RemoveAsync("OutstandingAutoDispatch_1"), Times.Once);
+		}
+
+		[Test]
+		public async Task one_step_dispatch_of_a_unit_already_on_the_call_does_not_count_it_again()
+		{
+			await _service.CreateFromRecommendationAsync(_call, ResultWithOutstandingMug(requiredCount: 2), "user-1");
+			_call.UnitDispatches.Add(new CallDispatchUnit { CallId = CallId, UnitId = 1, DispatchedOn = _stored.Single().CreatedOn.AddMinutes(3) });
+			(await _service.GetForCallAsync(DepartmentId, CallId)).Single().ResolvedCount.Should().Be(1);
+
+			var result = await _service.DispatchUnitToCallAsync(DepartmentId, CallId, 1, "dispatcher");
+
+			result.ResolvedRequirements.Should().Be(0);
+			_stored.Single().ResolvedCount.Should().Be(1);
+			_stored.Single().IsOpen.Should().BeTrue();
+		}
+
+		[Test]
+		public async Task sent_instead_is_cut_to_the_column_length()
+		{
+			var result = ResultWithOutstandingMug();
+			result.Decision.Fallbacks.Single().SentInstead = string.Join(", ", Enumerable.Range(1, 80).Select(i => $"Unit {i}"));
+
+			var created = await _service.CreateFromRecommendationAsync(_call, result, "user-1");
+
+			created.Single().SentInstead.Length.Should().Be(200);
 		}
 	}
 }

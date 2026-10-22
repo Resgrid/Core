@@ -1507,13 +1507,13 @@
     <value>Terminology</value>
   </data>
   <data name="TerminologyIntro" xml:space="preserve">
-    <value>Use your department's own words. A name set here replaces Resgrid's name for that module or record type in the navigation, on page titles, wherever record types are listed and in the Responder, Unit, IC and Dispatch apps, for every member and in every language. Only the label changes: permissions, links and integrations are not affected. Leave a box empty to keep Resgrid's name.</value>
+    <value>Use your department's own words. A name set here replaces Resgrid's name for that module or record type throughout the website: in the navigation, page titles, buttons, column headings, messages, printouts and exports, and in the Responder, Unit, IC and Dispatch apps, for every member and in every language. Only the wording changes: permissions, links, integrations and anything your members typed stay as they are. Leave a box empty to keep Resgrid's name.</value>
   </data>
   <data name="TerminologyModules" xml:space="preserve">
     <value>Modules</value>
   </data>
   <data name="TerminologyModulesHelp" xml:space="preserve">
-    <value>Shown in the navigation, as the title of the module's main page and in the apps' menus. Sentences elsewhere that mention a module keep Resgrid's wording.</value>
+    <value>Give the module's name and, where it has one, the word for a single item, such as Teams and Team for Units, so buttons like New Team read naturally; leave the item empty to have it worked out from the name. Modules marked Throughout Resgrid change wherever Resgrid mentions them. The others change inside their own module, because words such as note, log, record and contact also have everyday meanings elsewhere.</value>
   </data>
   <data name="TerminologyRecordTypes" xml:space="preserve">
     <value>Record types</value>
@@ -2087,5 +2087,17 @@
   </data>
   <data name="RunCardTemplateAppliedMessage" xml:space="preserve">
     <value>Created from a template and saved disabled. Check its triggers and rows, run it on the Test tab, then enable it.</value>
+  </data>
+  <data name="TerminologySingularColumn" xml:space="preserve">
+    <value>One item</value>
+  </data>
+  <data name="TerminologyWhereColumn" xml:space="preserve">
+    <value>Where it changes</value>
+  </data>
+  <data name="TerminologyScopeEverywhere" xml:space="preserve">
+    <value>Throughout Resgrid</value>
+  </data>
+  <data name="TerminologyScopeModule" xml:space="preserve">
+    <value>In its own module</value>
   </data>
 </root>

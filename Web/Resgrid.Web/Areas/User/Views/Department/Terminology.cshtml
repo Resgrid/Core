@@ -51,14 +51,20 @@
 
                         @foreach (var termSection in termSections)
                         {
+                            var isModules = termSection.Category == DepartmentTermCategories.Module;
                             <h3 class="m-t-lg">@termSection.Title</h3>
                             <p class="help-block">@termSection.Help</p>
                             <div class="table-responsive">
                                 <table class="table table-condensed terminology-table">
                                     <thead>
                                         <tr>
-                                            <th style="width:35%">@localizer["TerminologyDefaultColumn"]</th>
+                                            <th style="width:@(isModules ? "22%" : "35%")">@localizer["TerminologyDefaultColumn"]</th>
                                             <th>@localizer["TerminologyNameColumn"]</th>
+                                            @if (isModules)
+                                            {
+                                                <th>@localizer["TerminologySingularColumn"]</th>
+                                                <th style="width:16%">@localizer["TerminologyWhereColumn"]</th>
+                                            }
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -69,7 +75,9 @@
                                                 continue;
                                             }
                                             var defaultName = departmentTerms.DefaultName(Model.Terms[i].Key);
+                                            var defaultSingular = departmentTerms.DefaultSingular(Model.Terms[i].Key);
                                             var inputId = "term-" + i;
+                                            var singularId = "term-singular-" + i;
                                             <tr>
                                                 <td>
                                                     <label class="control-label" for="@inputId" style="font-weight:normal;">@defaultName</label>
@@ -77,8 +85,34 @@
                                                 </td>
                                                 <td>
                                                     <input type="text" class="form-control" id="@inputId" name="Terms[@i].Text" value="@Model.Terms[i].Text"
-                                                           maxlength="@DepartmentTerms.MaxLength" placeholder="@defaultName" autocomplete="off" />
+                                                           maxlength="@DepartmentTerms.MaxLength" placeholder="@defaultName" autocomplete="off"
+                                                           data-singular-input="@(Model.Terms[i].HasSingular ? singularId : null)" />
                                                 </td>
+                                                @if (isModules)
+                                                {
+                                                    <td>
+                                                        @if (Model.Terms[i].HasSingular)
+                                                        {
+                                                            <input type="text" class="form-control" id="@singularId" name="Terms[@i].Singular" value="@Model.Terms[i].Singular"
+                                                                   maxlength="@DepartmentTerms.MaxLength" placeholder="@defaultSingular" data-default-singular="@defaultSingular"
+                                                                   aria-label="@localizer["TerminologySingularColumn"]: @defaultName" autocomplete="off" />
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="text-muted">&mdash;</span>
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        @if (DepartmentTermScopes.IsEverywhere(Model.Terms[i].Key))
+                                                        {
+                                                            <span class="label label-primary">@localizer["TerminologyScopeEverywhere"]</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="label label-default">@localizer["TerminologyScopeModule"]</span>
+                                                        }
+                                                    </td>
+                                                }
                                             </tr>
                                         }
                                     </tbody>
@@ -98,3 +132,8 @@
         </div>
     </div>
 </div>
+
+@section Scripts
+{
+    <script src="~/js/app/internal/department/resgrid.department.terminology.js" type="text/javascript"></script>
+}

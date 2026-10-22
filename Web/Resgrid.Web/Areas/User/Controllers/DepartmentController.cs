@@ -2427,6 +2427,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (name != null && name.Length > DispatchResponseCodesConfig.MaximumNameLength)
 					name = name.Substring(0, DispatchResponseCodesConfig.MaximumNameLength);
 
+				var description = code.Description?.Trim();
+				if (description != null && description.Length > DispatchResponseCodesConfig.MaximumDescriptionLength)
+					description = description.Substring(0, DispatchResponseCodesConfig.MaximumDescriptionLength);
+
 				// A row without a stored id (added on the page, or posted again before a reload) keeps the id of the stored
 				// code with the same text, so dispatches and package rows that refer to it keep naming it.
 				var id = code.Id > 0 && existing.Any(c => c.Id == code.Id)
@@ -2438,8 +2442,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 					Id = id,
 					Code = text,
 					Name = name,
-					Description = code.Description?.Trim(),
-					Color = string.IsNullOrWhiteSpace(code.Color) ? null : code.Color.Trim(),
+					Description = description,
+					Color = DispatchResponseCodesConfig.NormalizeColor(code.Color),
 					SortOrder = sort++,
 					Retired = code.Retired
 				});
@@ -2503,7 +2507,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				new SelectListItem { Value = ((int)Model.DispatchRecommendationModes.Off).ToString(), Text = "Off (Manual Dispatch)" },
 				new SelectListItem { Value = ((int)Model.DispatchRecommendationModes.StationBased).ToString(), Text = "Station Based Dispatching" },
-				new SelectListItem { Value = ((int)Model.DispatchRecommendationModes.ClosestUnit).ToString(), Text = "Closest Unit Response" }
+				new SelectListItem { Value = ((int)Model.DispatchRecommendationModes.ClosestUnit).ToString(), Text = HttpContext.WithDepartmentTerms("Closest Unit Response") }
 			}, "Value", "Text", model.DispatchRecommendationMode);
 
 			model.StaffingLevelOptions = new SelectList(new[]
@@ -3493,8 +3497,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		#endregion Delete Department
 
 		#region Terminology
+		// The page names Resgrid's own terms next to the department's, so its text keeps Resgrid's wording.
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_Update)]
+		[Resgrid.Web.Filters.SuppressDepartmentTerms]
 		public async Task<IActionResult> Terminology()
 		{
 			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
@@ -3506,6 +3512,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
+		[Resgrid.Web.Filters.SuppressDepartmentTerms]
 		public async Task<IActionResult> Terminology(TerminologyView model, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
@@ -3513,28 +3520,29 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var before = await _departmentSettingsService.GetDepartmentTerminologyAsync(DepartmentId, true);
 			var posted = (model?.Terms ?? new List<TerminologyRow>()).Where(r => r != null && DepartmentTerms.IsKnown(r.Key))
-				.GroupBy(r => r.Key, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.Last().Text, StringComparer.Ordinal);
+				.GroupBy(r => r.Key, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.Last(), StringComparer.Ordinal);
 
-			// Start from what is saved so a term missing from the post keeps its name; a name over the limit keeps the saved one.
+			// Start from what is saved so a term missing from the post keeps its names; a name over the limit keeps the saved ones.
 			var config = new DepartmentTerminologyConfig();
 			var tooLong = new List<string>();
 			foreach (var term in DepartmentTerms.All)
 			{
-				if (!posted.TryGetValue(term.Key, out var text))
+				if (!posted.TryGetValue(term.Key, out var row))
 				{
-					config.Set(term.Key, before.TextFor(term.Key));
+					config.Set(term.Key, before.TextFor(term.Key), before.SavedSingularFor(term.Key));
 					continue;
 				}
 
-				var normalized = DepartmentTerms.Normalize(text);
-				if (!DepartmentTerms.IsValidText(normalized))
+				var normalized = DepartmentTerms.Normalize(row.Text);
+				var normalizedSingular = term.HasSingular ? DepartmentTerms.Normalize(row.Singular) : null;
+				if (!DepartmentTerms.IsValidText(normalized) || !DepartmentTerms.IsValidText(normalizedSingular))
 				{
 					tooLong.Add(term.Key);
-					config.Set(term.Key, before.TextFor(term.Key));
+					config.Set(term.Key, before.TextFor(term.Key), before.SavedSingularFor(term.Key));
 					continue;
 				}
 
-				config.Set(term.Key, normalized);
+				config.Set(term.Key, normalized, normalizedSingular);
 			}
 
 			await _departmentSettingsService.SetDepartmentTerminologyAsync(DepartmentId, config, cancellationToken);
@@ -3544,7 +3552,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ModelState.Clear();
 			var view = TerminologyView.From(config);
 			foreach (var row in view.Terms.Where(r => tooLong.Contains(r.Key)))
-				row.Text = posted[row.Key];
+			{
+				row.Text = posted[row.Key].Text;
+				row.Singular = posted[row.Key].Singular;
+			}
 
 			if (tooLong.Count > 0)
 				view.ErrorMessage = string.Format(_departmentLocalizer["TerminologyTooLong"].Value, DepartmentTerms.MaxLength);
@@ -3555,8 +3566,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		private static Dictionary<string, string> TerminologyAudit(DepartmentTerminologyConfig config)
 		{
-			return DepartmentTerms.All.Select(t => new { t.Key, Text = config?.TextFor(t.Key) }).Where(t => t.Text != null)
+			var audit = DepartmentTerms.All.Select(t => new { t.Key, Text = config?.TextFor(t.Key) }).Where(t => t.Text != null)
 				.ToDictionary(t => t.Key, t => t.Text, StringComparer.Ordinal);
+			foreach (var term in DepartmentTerms.All.Where(t => t.HasSingular))
+			{
+				var singular = config?.SavedSingularFor(term.Key);
+				if (singular != null)
+					audit[term.Key + ".singular"] = singular;
+			}
+
+			return audit;
 		}
 		#endregion Terminology
 

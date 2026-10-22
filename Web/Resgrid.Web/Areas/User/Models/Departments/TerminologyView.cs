@@ -18,7 +18,14 @@ namespace Resgrid.Web.Areas.User.Models.Departments
 			config ??= new DepartmentTerminologyConfig();
 			return new TerminologyView
 			{
-				Terms = DepartmentTerms.All.Select(t => new TerminologyRow { Key = t.Key, Category = t.Category, Text = config.TextFor(t.Key) }).ToList()
+				Terms = DepartmentTerms.All.Select(t => new TerminologyRow
+				{
+					Key = t.Key,
+					Category = t.Category,
+					HasSingular = t.HasSingular,
+					Text = config.TextFor(t.Key),
+					Singular = config.SavedSingularFor(t.Key)
+				}).ToList()
 			};
 		}
 	}
@@ -30,5 +37,11 @@ namespace Resgrid.Web.Areas.User.Models.Departments
 
 		/// <summary>The department's name; blank uses Resgrid's.</summary>
 		public string Text { get; set; }
+
+		/// <summary>Whether the term also has a word for one item (Units: Unit).</summary>
+		public bool HasSingular { get; set; }
+
+		/// <summary>The department's word for one item; blank guesses it from <see cref="Text"/>.</summary>
+		public string Singular { get; set; }
 	}
 }

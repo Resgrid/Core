@@ -1507,13 +1507,13 @@
     <value>المصطلحات</value>
   </data>
   <data name="TerminologyIntro" xml:space="preserve">
-    <value>استخدم مصطلحات إدارتك الخاصة. يحل الاسم المحدد هنا محل اسم Resgrid لتلك الوحدة أو نوع السجل في التنقل وفي عناوين الصفحات وفي كل مكان تُدرج فيه أنواع السجلات وفي تطبيقات Responder وUnit وIC وDispatch، لجميع الأعضاء وبجميع اللغات. تتغير التسمية فقط: لا تتأثر الأذونات والروابط والتكاملات. اترك الحقل فارغًا للإبقاء على اسم Resgrid.</value>
+    <value>استخدم مصطلحات إدارتك الخاصة. يحل الاسم المحدد هنا محل اسم Resgrid لتلك الوحدة أو نوع السجل في جميع أنحاء الموقع: في التنقل وعناوين الصفحات والأزرار وعناوين الأعمدة والرسائل والمطبوعات وعمليات التصدير، وفي تطبيقات Responder وUnit وIC وDispatch، لجميع الأعضاء وبجميع اللغات. تتغير الصياغة فقط: تبقى الأذونات والروابط والتكاملات وكل ما كتبه أعضاؤك كما هي. اترك الحقل فارغًا للإبقاء على اسم Resgrid.</value>
   </data>
   <data name="TerminologyModules" xml:space="preserve">
     <value>الوحدات</value>
   </data>
   <data name="TerminologyModulesHelp" xml:space="preserve">
-    <value>يظهر في التنقل وكعنوان للصفحة الرئيسية للوحدة وفي قوائم التطبيقات. تحتفظ الجمل الأخرى التي تذكر الوحدة بصياغة Resgrid.</value>
+    <value>أدخل اسم الوحدة، وإن وُجدت، الكلمة الدالة على عنصر واحد، مثل الفرق والفريق بدلًا من الوحدات، لتبدو الأزرار مثل «فريق جديد» طبيعية؛ اترك العنصر فارغًا ليُستنتج من الاسم. تتغير الوحدات المعلّمة بـ «في كل أنحاء Resgrid» أينما ذكرها Resgrid. أما الباقي فيتغير داخل وحدته فقط، لأن كلمات مثل ملاحظة وسجل وجهة اتصال لها أيضًا معانٍ يومية في أماكن أخرى.</value>
   </data>
   <data name="TerminologyRecordTypes" xml:space="preserve">
     <value>أنواع السجلات</value>
@@ -2087,5 +2087,17 @@
   </data>
   <data name="RunCardTemplateAppliedMessage" xml:space="preserve">
     <value>أُنشئت من قالب وحُفظت معطلة. تحقق من المشغلات والصفوف واختبرها في تبويب الاختبار ثم فعّلها.</value>
+  </data>
+  <data name="TerminologySingularColumn" xml:space="preserve">
+    <value>عنصر واحد</value>
+  </data>
+  <data name="TerminologyWhereColumn" xml:space="preserve">
+    <value>أين يتغير</value>
+  </data>
+  <data name="TerminologyScopeEverywhere" xml:space="preserve">
+    <value>في كل أنحاء Resgrid</value>
+  </data>
+  <data name="TerminologyScopeModule" xml:space="preserve">
+    <value>داخل وحدته فقط</value>
   </data>
 </root>

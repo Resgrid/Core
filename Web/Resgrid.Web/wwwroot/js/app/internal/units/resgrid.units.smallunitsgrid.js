@@ -22,7 +22,7 @@ var resgrid;
                             orderable: false,
                             searchable: false,
                             render: function (data, type, row) {
-                                return '<a class="btn btn-sm btn-success" onclick="resgrid.units.smallunitsgrid.selectUnit(' + data + ', \'' + row.Name + '\');">Select Unit</a>';
+                                return '<a class="btn btn-sm btn-success" onclick="resgrid.units.smallunitsgrid.selectUnit(' + data + ', \'' + row.Name + '\');">' + resgrid.terms.apply('Select Unit') + '</a>';
                             }
                         }
                     ]

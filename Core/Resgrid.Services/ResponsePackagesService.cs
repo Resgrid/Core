@@ -262,30 +262,45 @@ namespace Resgrid.Services
 
 		public async Task<List<string>> GetPackageUsageAsync(int departmentId, int responsePackageId)
 		{
-			var usage = new List<string>();
+			var usage = await GetAllPackageUsageAsync(departmentId);
+
+			return usage.TryGetValue(responsePackageId, out var places) ? places : new List<string>();
+		}
+
+		public async Task<Dictionary<int, List<string>>> GetAllPackageUsageAsync(int departmentId)
+		{
+			var usage = new Dictionary<int, List<string>>();
+
+			void add(int? packageId, string place)
+			{
+				if (!packageId.HasValue)
+					return;
+
+				if (!usage.TryGetValue(packageId.Value, out var places))
+					usage[packageId.Value] = places = new List<string>();
+
+				if (!places.Contains(place))
+					places.Add(place);
+			}
 
 			foreach (var card in await _runCardsService.GetAllRunCardsForDepartmentAsync(departmentId, true) ?? new List<RunCard>())
 			{
 				foreach (var level in card.AlarmLevels ?? new List<RunCardAlarmLevel>())
 				{
-					if (level.ResponsePackageId == responsePackageId)
-						usage.Add($"{card.Name}, alarm level {level.AlarmLevel}");
+					add(level.ResponsePackageId, $"{card.Name}, alarm level {level.AlarmLevel}");
 
-					foreach (var node in (level.DecisionNodes ?? new List<RunCardDecisionNode>()).Where(n => n.ResponsePackageId == responsePackageId))
-						usage.Add($"{card.Name}, alarm level {level.AlarmLevel}: {(string.IsNullOrWhiteSpace(node.Label) ? "outcome" : node.Label)}");
+					foreach (var node in level.DecisionNodes ?? new List<RunCardDecisionNode>())
+						add(node.ResponsePackageId, $"{card.Name}, alarm level {level.AlarmLevel}: {(string.IsNullOrWhiteSpace(node.Label) ? "outcome" : node.Label)}");
 				}
 			}
 
 			foreach (var package in await GetPackagesForDepartmentAsync(departmentId, true))
 			{
-				if (package.ResponsePackageId == responsePackageId)
-					continue;
-
-				if ((package.Rows ?? new List<ResponsePackageRow>()).Any(r => r.SubstitutePackageId == responsePackageId))
-					usage.Add($"Substitute in package '{package.Name}'");
+				foreach (var row in (package.Rows ?? new List<ResponsePackageRow>()).Where(r => r.SubstitutePackageId != package.ResponsePackageId))
+					add(row.SubstitutePackageId, $"Substitute in package '{package.Name}'");
 			}
 
-			return usage.Distinct().ToList();
+			return usage;
 		}
 
 		public async Task<bool> DeletePackageAsync(int departmentId, int responsePackageId, CancellationToken cancellationToken = default(CancellationToken))

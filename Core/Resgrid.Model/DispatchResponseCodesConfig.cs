@@ -1,6 +1,7 @@
 using ProtoBuf;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Resgrid.Model
 {
@@ -16,6 +17,19 @@ namespace Resgrid.Model
 		public const int MaximumCodes = 50;
 		public const int MaximumCodeLength = 16;
 		public const int MaximumNameLength = 100;
+		public const int MaximumDescriptionLength = 500;
+
+		private static readonly Regex HexColor = new Regex("^#(?:[0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$", RegexOptions.Compiled);
+
+		/// <summary>
+		/// The badge colour as stored: a hex colour ("#d9534f"), or null for anything else. Clients put it in a style attribute,
+		/// so nothing but a colour may get through.
+		/// </summary>
+		public static string NormalizeColor(string color)
+		{
+			var trimmed = color?.Trim();
+			return !string.IsNullOrEmpty(trimmed) && HexColor.IsMatch(trimmed) ? trimmed : null;
+		}
 
 		[ProtoMember(1)]
 		public List<DispatchResponseCode> Codes { get; set; } = new List<DispatchResponseCode>();

@@ -26,7 +26,7 @@
         <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
             @if (ClaimsAuthorizationHelper.CanCreateContacts())
             {
-                <a title="Create Contact" class="btn btn-success" asp-controller="Contacts" asp-action="Add" asp-route-area="User">@localizer["NewContact"]</a>
+                <a title="@localizer["NewContact"]" class="btn btn-success" asp-controller="Contacts" asp-action="Add" asp-route-area="User">@localizer["NewContact"]</a>
             }
             @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
             {

@@ -6886,13 +6886,13 @@
     <value>Terminologie du service</value>
   </data>
   <data name="SettingHelp.DepartmentTerminology" xml:space="preserve">
-    <value>Les noms propres au service pour les modules et les types de dossier intégrés, affichés dans la navigation, dans les titres des pages de module, partout où les types de dossier sont listés et dans les applications Responder, Unit, IC et Dispatch, dans toutes les langues. Libellés uniquement : les autorisations, les liens et les valeurs de l'API ne changent pas. Un terme sans nom utilise celui de Resgrid.</value>
+    <value>Les noms propres au service pour les modules, avec le mot désignant un élément (Équipe pour des Unités renommées Équipes), et pour les types de dossier intégrés. Ils s'appliquent à la navigation, aux titres de page, aux boutons, aux en-têtes de colonne, aux messages et aux exports du site web, et s'affichent dans les applications Responder, Unit, IC et Dispatch, dans toutes les langues. Libellés uniquement : les autorisations, les liens, les valeurs de l'API et le texte des membres ne changent pas. Un terme sans nom utilise celui de Resgrid.</value>
   </data>
   <data name="Field.DepartmentTerminologyConfig.Terms" xml:space="preserve">
     <value>Terminologie du service / Termes</value>
   </data>
   <data name="FieldHelp.DepartmentTerminologyConfig.Terms" xml:space="preserve">
-    <value>Une entrée par module ou type de dossier renommé, par exemple Intervention au lieu de Run ou Garde au lieu de Work. Un terme absent affiche le nom Resgrid dans la langue du membre. Les noms comptent au plus 50 caractères.</value>
+    <value>Une entrée par module ou type de dossier renommé, par exemple Intervention au lieu de Run ou Garde au lieu de Work. L'entrée d'un module peut aussi contenir le mot désignant un élément, par exemple Équipe pour des Unités renommées Équipes ; laissé vide, il est déduit du nom. Un terme absent affiche le nom Resgrid dans la langue du membre. Les noms comptent au plus 50 caractères.</value>
   </data>
   <data name="Field.DepartmentTermOverride.Key" xml:space="preserve">
     <value>Terme du service / Clé</value>
@@ -7109,5 +7109,11 @@
   </data>
   <data xml:space="preserve" name="SettingHelp.DispatchResponseCodes">
     <value>Codes facultatifs par unité (par exemple C3 pour gyrophares et sirène) proposés par les lignes des cartes conditionnelles, et si les équipages les voient dans les notifications et les applications. Vide signifie qu'aucun code n'apparaît.</value>
+  </data>
+  <data name="Field.DepartmentTermOverride.Singular" xml:space="preserve">
+    <value>Terme du service / Un élément</value>
+  </data>
+  <data name="FieldHelp.DepartmentTermOverride.Singular" xml:space="preserve">
+    <value>Pour un module, le mot du service désignant un élément, par exemple Équipe pour des Unités renommées Équipes, utilisé sur les boutons et titres comme Nouvelle équipe ; au plus 50 caractères. Vide, il est déduit du nom. Les types de dossier n'en ont pas.</value>
   </data>
 </root>

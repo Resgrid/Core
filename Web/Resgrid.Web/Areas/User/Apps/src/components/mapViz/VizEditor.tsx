@@ -112,7 +112,14 @@ function CallPicker(props: { callId: number | null; label: string | null; onChan
         .finally(() => setSearching(false));
     }, 300);
 
-    return () => controller.abort();
+    return () => {
+      // A pending search must not start after the picker closes (or the term changes).
+      if (timer.current) {
+        clearTimeout(timer.current);
+        timer.current = null;
+      }
+      controller.abort();
+    };
   }, [term]);
 
   if (props.callId) {

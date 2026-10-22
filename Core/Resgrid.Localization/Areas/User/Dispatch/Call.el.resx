@@ -980,4 +980,37 @@
   <data name="NewCallFieldRequired" xml:space="preserve">
     <value>Το πεδίο {0} είναι υποχρεωτικό σε αυτό το τμήμα.</value>
   </data>
+  <data name="NearestUnitsPick" xml:space="preserve">
+    <value>Αποστολή</value>
+  </data>
+  <data name="NearestPersonnelLabel" xml:space="preserve">
+    <value>Πλησιέστερο προσωπικό</value>
+  </data>
+  <data name="NearestPersonnelPerson" xml:space="preserve">
+    <value>Άτομο</value>
+  </data>
+  <data name="NearestPersonnelStaffing" xml:space="preserve">
+    <value>Στελέχωση</value>
+  </data>
+  <data name="NearestPersonnelGroupRoles" xml:space="preserve">
+    <value>Ομάδα / ρόλοι</value>
+  </data>
+  <data name="NearestUnitsNearest" xml:space="preserve">
+    <value>Πλησιέστερος #{0}</value>
+  </data>
+  <data name="NearestUnitsHidden" xml:space="preserve">
+    <value>Η θέση είναι κρυφή</value>
+  </data>
+  <data name="NearestPersonnelOnUnit" xml:space="preserve">
+    <value>Στο {0}</value>
+  </data>
+  <data name="NearestUnitsMapUnits" xml:space="preserve">
+    <value>Μονάδες</value>
+  </data>
+  <data name="NearestUnitsMapPersonnel" xml:space="preserve">
+    <value>Προσωπικό</value>
+  </data>
+  <data name="NearestUnitsMapBoundaries" xml:space="preserve">
+    <value>Όρια σταθμών</value>
+  </data>
 </root>

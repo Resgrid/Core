@@ -1449,13 +1449,13 @@
     <value>Термінологія</value>
   </data>
   <data name="TerminologyIntro" xml:space="preserve">
-    <value>Використовуйте слова вашого підрозділу. Назва, задана тут, замінює назву Resgrid для цього модуля або типу запису в навігації, у заголовках сторінок, усюди, де перелічено типи записів, і в застосунках Responder, Unit, IC та Dispatch, для всіх учасників і всіма мовами. Змінюється лише підпис: дозволи, посилання та інтеграції не зачіпаються. Залиште поле порожнім, щоб зберегти назву Resgrid.</value>
+    <value>Використовуйте слова вашого підрозділу. Назва, задана тут, замінює назву Resgrid для цього модуля або типу запису на всьому вебсайті: у навігації, заголовках сторінок, кнопках, заголовках стовпців, повідомленнях, роздруківках та експортах, а також у застосунках Responder, Unit, IC та Dispatch, для всіх учасників і всіма мовами. Змінюється лише формулювання: дозволи, посилання, інтеграції та все, що ввели ваші учасники, залишаються без змін. Залиште поле порожнім, щоб зберегти назву Resgrid.</value>
   </data>
   <data name="TerminologyModules" xml:space="preserve">
     <value>Модулі</value>
   </data>
   <data name="TerminologyModulesHelp" xml:space="preserve">
-    <value>Відображається в навігації, як заголовок головної сторінки модуля та в меню застосунків. Речення в інших місцях, що згадують модуль, зберігають формулювання Resgrid.</value>
+    <value>Вкажіть назву модуля і, якщо є, слово для одного елемента, наприклад «Команди» й «Команда» для «Одиниць», щоб кнопки на кшталт «Нова команда» звучали природно; залиште елемент порожнім, щоб його було виведено з назви. Модулі з позначкою «У всьому Resgrid» змінюються всюди, де Resgrid їх згадує. Інші змінюються у власному модулі, бо такі слова, як нотатка, журнал, запис чи контакт, мають і повсякденні значення деінде.</value>
   </data>
   <data name="TerminologyRecordTypes" xml:space="preserve">
     <value>Типи записів</value>
@@ -2029,5 +2029,17 @@
   </data>
   <data name="RunCardTemplateAppliedMessage" xml:space="preserve">
     <value>Створено з шаблону та збережено вимкненою. Перевірте тригери й рядки, протестуйте на вкладці «Тест», потім увімкніть.</value>
+  </data>
+  <data name="TerminologySingularColumn" xml:space="preserve">
+    <value>Один елемент</value>
+  </data>
+  <data name="TerminologyWhereColumn" xml:space="preserve">
+    <value>Де змінюється</value>
+  </data>
+  <data name="TerminologyScopeEverywhere" xml:space="preserve">
+    <value>У всьому Resgrid</value>
+  </data>
+  <data name="TerminologyScopeModule" xml:space="preserve">
+    <value>У власному модулі</value>
   </data>
 </root>

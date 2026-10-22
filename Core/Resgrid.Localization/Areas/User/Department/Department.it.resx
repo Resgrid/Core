@@ -1449,13 +1449,13 @@
     <value>Terminologia</value>
   </data>
   <data name="TerminologyIntro" xml:space="preserve">
-    <value>Usate le parole del vostro dipartimento. Un nome impostato qui sostituisce il nome Resgrid di quel modulo o tipo di registro nella navigazione, nei titoli delle pagine, ovunque siano elencati i tipi di registro e nelle app Responder, Unit, IC e Dispatch, per tutti i membri e in tutte le lingue. Cambia solo l'etichetta: autorizzazioni, collegamenti e integrazioni non sono interessati. Lasciate un campo vuoto per mantenere il nome Resgrid.</value>
+    <value>Usate le parole del vostro dipartimento. Un nome impostato qui sostituisce il nome Resgrid di quel modulo o tipo di registro in tutto il sito web: nella navigazione, nei titoli delle pagine, nei pulsanti, nelle intestazioni di colonna, nei messaggi, nelle stampe e nelle esportazioni, e nelle app Responder, Unit, IC e Dispatch, per tutti i membri e in tutte le lingue. Cambia solo la formulazione: autorizzazioni, collegamenti, integrazioni e tutto ciò che i vostri membri hanno scritto restano invariati. Lasciate un campo vuoto per mantenere il nome Resgrid.</value>
   </data>
   <data name="TerminologyModules" xml:space="preserve">
     <value>Moduli</value>
   </data>
   <data name="TerminologyModulesHelp" xml:space="preserve">
-    <value>Mostrato nella navigazione, come titolo della pagina principale del modulo e nei menu delle app. Le frasi altrove che citano un modulo mantengono la formulazione di Resgrid.</value>
+    <value>Indicate il nome del modulo e, se esiste, la parola per un singolo elemento, ad esempio Squadre e Squadra per Unità, così che pulsanti come Nuova squadra si leggano in modo naturale; lasciate vuoto l'elemento per ricavarlo dal nome. I moduli contrassegnati In tutto Resgrid cambiano ovunque Resgrid li citi. Gli altri cambiano all'interno del proprio modulo, perché parole come nota, log, registro o contatto hanno anche significati comuni altrove.</value>
   </data>
   <data name="TerminologyRecordTypes" xml:space="preserve">
     <value>Tipi di registro</value>
@@ -2029,5 +2029,17 @@
   </data>
   <data name="RunCardTemplateAppliedMessage" xml:space="preserve">
     <value>Creata da un modello e salvata disattivata. Controlla attivatori e righe, provala nella scheda Test e poi attivala.</value>
+  </data>
+  <data name="TerminologySingularColumn" xml:space="preserve">
+    <value>Un elemento</value>
+  </data>
+  <data name="TerminologyWhereColumn" xml:space="preserve">
+    <value>Dove cambia</value>
+  </data>
+  <data name="TerminologyScopeEverywhere" xml:space="preserve">
+    <value>In tutto Resgrid</value>
+  </data>
+  <data name="TerminologyScopeModule" xml:space="preserve">
+    <value>Nel proprio modulo</value>
   </data>
 </root>

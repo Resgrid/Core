@@ -29,6 +29,7 @@ namespace Resgrid.Repositories.NoSqlRepository
 				if (DataConfig.DocDatabaseType == DatabaseTypes.MongoDb)
 				{
 					await _unitLocationsMongoRepository.Value.EnsureIndexesAsync();
+					await _unitLocationsMongoRepository.Value.EnsureReadIndexesAsync();
 
 					// Map visualization paths read a department's member locations for a time window.
 					await _personnelLocationsMongoRepository.Value.GetCollection().Indexes.CreateOneAsync(new CreateIndexModel<PersonnelLocation>(

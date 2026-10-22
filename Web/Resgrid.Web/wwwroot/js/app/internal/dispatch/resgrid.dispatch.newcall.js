@@ -22,6 +22,12 @@ var resgrid;
             $(document).ready(function () {
                 callMarker = null;
                 map = null;
+                // Units are the server-rendered station tabs (no DataTable); personnel are the #personnelGrid list.
+                resgrid.dispatch.nearestboard.init({
+                    getMap: function () { return map; },
+                    getPersonnelGrid: function () { return personnelGrid; },
+                    personnelEtaColumn: 2
+                });
                 // A typed address always wins over a reverse-geocoded one (a re-rendered form after a
                 // validation failure already carries the dispatcher's address).
                 userSuppliedAddress = jQuery.trim($("#Call_Address").val() || '') !== '';
@@ -137,7 +143,7 @@ var resgrid;
                         resgrid.dispatch.newcall.geocodeCoordinates(e.latlng.lat, e.latlng.lng);
                     });
 
-                    navigator.geolocation.getCurrentPosition(foundLocation, noLocation, { timeout: 10000 });
+                    resgrid.dispatch.nearestboard.drawBoundaries();
                 }
                 $("#searchButton").click(function (evt) {
                     var where = jQuery.trim($("#Call_Address").val());
@@ -210,13 +216,15 @@ var resgrid;
                     columns: [
                         { data: 'UserId', title: '', orderable: false, searchable: false, render: function(data) { return '<input type="checkbox" id="dispatchUser_'+data+'" name="dispatchUser_'+data+'" />'; } },
                         { data: 'Name', title: getText('name', 'Name') },
-                        { data: 'Eta', title: getText('eta', 'ETA') },
-                        { data: null, title: getText('status', 'Status'), orderable: false, render: function(d,t,row) { return '<span style="color:'+row.StatusColor+'">'+row.Status+'</span>'; } },
-                        { data: null, title: getText('staffing', 'Staffing'), orderable: false, render: function(d,t,row) { return '<span style="color:'+row.StaffingColor+'">'+row.Staffing+'</span>'; } },
+                        // Distance and ETA from the nearest-unit board once the call has a location; sorts closest first.
+                        { data: 'Eta', title: getText('eta', 'ETA'), render: resgrid.dispatch.nearestboard.etaRender('user') },
+                        { data: null, title: getText('status', 'Status'), orderable: false, render: function(d,t,row) { return coloredText(row.Status, row.StatusColor); } },
+                        { data: null, title: getText('staffing', 'Staffing'), orderable: false, render: function(d,t,row) { return coloredText(row.Staffing, row.StaffingColor); } },
                         { data: 'Group', title: getText('group', 'Group') },
                         { data: 'Roles', title: getText('roles', 'Roles') }
                     ]
                 });
+                personnelGrid = personnelTable;
                 personnelTable.on('draw', function() {
                     $('#personnelGrid thead th:first').html('<label><input type="checkbox" id="checkAllPersonnel"/></label>');
 
@@ -412,6 +420,7 @@ var resgrid;
 
                 $('#personnelGrid').on('click', '#checkAllPersonnel', function () {
                     $('#personnelGrid').find('tbody :checkbox').prop('checked', this.checked);
+                    resgrid.dispatch.nearestboard.syncPicks();
                 });
                 $('#groupsGrid').on('click', '#checkAllGroups', function () {
                     $('#groupsGrid').find('tbody :checkbox').prop('checked', this.checked);
@@ -517,11 +526,15 @@ var resgrid;
             }
             newcall.findLocation = findLocation;
             function refreshPersonnelGrid() {
-                personnelTable.ajax.url(resgrid.absoluteBaseUrl + '/User/Personnel/GetPersonnelForCallGrid?callLat=' + $("#Latitude").val() + '&callLong=' + $("#Longitude").val()).load();
+                if (!personnelGrid) {
+                    return;
+                }
+                personnelGrid.ajax.url(resgrid.absoluteBaseUrl + '/User/Personnel/GetPersonnelForCallGrid?callLat=' + $("#Latitude").val() + '&callLong=' + $("#Longitude").val()).load();
             }
             newcall.refreshPersonnelGrid = refreshPersonnelGrid;
             function checkAllUnits(gridName, item) {
                 $('#' + gridName).find(':checkbox').prop('checked', item.checked);
+                resgrid.dispatch.nearestboard.syncPicks();
             }
             newcall.checkAllUnits = checkAllUnits;
             // Type, priority and template changes can overlap; only the latest request's protocols are shown.
@@ -622,6 +635,7 @@ var resgrid;
 
                 recommendedUnitIds = [];
                 recommendedUserIds = [];
+                resgrid.dispatch.nearestboard.syncPicks();
             }
 
             // Personnel checkboxes are rendered by the DataTable, so they may not exist when
@@ -634,6 +648,7 @@ var resgrid;
                 recommendedUserIds.forEach(function (id) {
                     $('input[name="dispatchUser_' + id + '"]').prop('checked', true);
                 });
+                resgrid.dispatch.nearestboard.syncPicks();
             }
             newcall.applyRecommendationSelections = applyRecommendationSelections;
 
@@ -643,6 +658,11 @@ var resgrid;
                 var lat = $('#Latitude').val();
                 var lon = $('#Longitude').val();
                 var requestSequence = ++recommendationSequence;
+
+                // Drop the previous proposal's outcome and codes as the lookup starts, so a save while it runs, or after it
+                // fails, never posts an outcome for a type or priority the dispatcher has since changed.
+                $('#RunCardOutcomeNodeKey').val('');
+                $('#runCardCodePickers').empty();
 
                 $.ajax({
                     url: resgrid.absoluteBaseUrl + '/User/Dispatch/GetDispatchRecommendation',
@@ -660,9 +680,6 @@ var resgrid;
                     var panel = $('#runCardPanel');
                     var row = $('#runCardPanelRow');
                     var result = prop(response, 'result');
-
-                    $('#RunCardOutcomeNodeKey').val('');
-                    $('#runCardCodePickers').empty();
 
                     if (!response || !prop(response, 'success') || !result || !prop(result, 'matchedRunCardId')) {
                         row.hide();
@@ -688,7 +705,7 @@ var resgrid;
                     }
 
                     if (units.length) {
-                        html += '<div><b>Units:</b> ' + units.map(function (u) {
+                        html += '<div><b>' + resgrid.terms.apply('Units:') + '</b> ' + units.map(function (u) {
                             var text = prop(u, 'unitName') || ('#' + prop(u, 'unitId'));
                             var distance = prop(u, 'distanceMeters');
                             var response = prop(u, 'responseSeconds');
@@ -705,7 +722,7 @@ var resgrid;
                         }).join(', ') + '</div>';
                     }
                     if (personnel.length) {
-                        html += '<div><b>Personnel:</b> ' + personnel.length + ' recommended</div>';
+                        html += '<div><b>' + resgrid.terms.apply('Personnel:') + '</b> ' + personnel.length + ' recommended</div>';
                     }
                     if (shortfalls.length) {
                         html += '<div class="text-danger"><b>Shortfalls:</b> ' + shortfalls.map(function (s) {
@@ -751,171 +768,29 @@ var resgrid;
             }
             newcall.checkForRecommendations = checkForRecommendations;
 
-            // Nearest available unit board (a unit can be a team, an apparatus or an individual).
-            // Location changes come in bursts (a click, then a drag, then a geocode), so requests
-            // are debounced and only the latest response is drawn.
-            var nearestUnitsSequence = 0;
-            var nearestUnitsTimer = null;
+            // Nearest available unit board: resgrid.dispatch.nearestboard (shared with Update Call).
+            var personnelGrid = null;
             function nearestText(key) {
                 return (typeof nearestUnitStrings !== 'undefined' && nearestUnitStrings && nearestUnitStrings[key]) || key;
             }
             function escapeHtml(text) {
                 return $('<span>').text(text === null || text === undefined ? '' : String(text)).html();
             }
-            // Enums arrive as numbers or names depending on the serializer; accept both.
-            function isEnum(value, number, name) {
-                return value === number || value === name;
-            }
-            function formatEta(seconds, source) {
-                if (seconds === null || seconds === undefined) {
-                    return '&mdash;';
+            function coloredText(text, color) {
+                var span = $('<span>').text(text === null || text === undefined ? '' : String(text));
+                if (color && /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(String(color).trim())) {
+                    span.css('color', String(color).trim());
                 }
-                var text = escapeHtml(Math.max(1, Math.round(seconds / 60)) + ' ' + nearestText('minutes'));
-                if (isEnum(source, 1, 'Estimated')) {
-                    text += ' <small class="text-muted">(' + escapeHtml(nearestText('estimate')) + ')</small>';
-                }
-                return text;
+                return span.prop('outerHTML');
             }
             function scheduleNearestUnits(lat, lng) {
-                if (nearestUnitsTimer) {
-                    clearTimeout(nearestUnitsTimer);
-                }
-                nearestUnitsTimer = setTimeout(function () { checkForNearestUnits(lat, lng); }, 400);
+                resgrid.dispatch.nearestboard.schedule(lat, lng);
             }
             newcall.scheduleNearestUnits = scheduleNearestUnits;
             function checkForNearestUnits(lat, lng) {
-                if (lat === undefined || lng === undefined) {
-                    lat = $('#Latitude').val();
-                    lng = $('#Longitude').val();
-                }
-                lat = parseFloat(lat);
-                lng = parseFloat(lng);
-
-                var row = $('#nearestUnitsRow');
-                var requestSequence = ++nearestUnitsSequence;
-
-                if (isNaN(lat) || isNaN(lng) || (lat === 0 && lng === 0)) {
-                    row.hide();
-                    return;
-                }
-
-                $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Dispatch/GetNearestUnits',
-                    data: { latitude: lat, longitude: lng },
-                    type: 'GET'
-                }).done(function (response) {
-                    if (requestSequence !== nearestUnitsSequence) {
-                        return;
-                    }
-                    var board = prop(response, 'board');
-                    if (!response || !prop(response, 'success') || !board) {
-                        row.hide();
-                        return;
-                    }
-                    renderNearestUnits(board);
-                    row.show();
-                }).fail(function () {
-                    if (requestSequence === nearestUnitsSequence) {
-                        row.hide();
-                    }
-                });
+                resgrid.dispatch.nearestboard.check(lat, lng);
             }
             newcall.checkForNearestUnits = checkForNearestUnits;
-            function renderNearestUnits(board) {
-                var boundaries = prop(board, 'containingBoundaries') || [];
-                var header = boundaries.length
-                    ? escapeHtml(nearestText('incidentInside')) + ' <strong>' + boundaries.map(function (b) { return escapeHtml(prop(b, 'name')); }).join(', ') + '</strong>'
-                    : escapeHtml(nearestText('noBoundary'));
-                if (prop(board, 'isDepartmentWide') === false) {
-                    header += ' &middot; ' + escapeHtml(nearestText('scoped'));
-                }
-                $('#nearestUnitsBoundaries').html(header);
-
-                var rows = (prop(board, 'units') || []).map(function (unit) {
-                    var name = '<strong>' + escapeHtml(prop(unit, 'name')) + '</strong>';
-                    if (prop(unit, 'unitType')) {
-                        name += ' <small class="text-muted">' + escapeHtml(prop(unit, 'unitType')) + '</small>';
-                    }
-                    if (prop(unit, 'incidentInGroupBoundary')) {
-                        name += ' <span class="label label-info">' + escapeHtml(nearestText('inBoundary')) + '</span>';
-                    } else if (prop(unit, 'incidentInParentBoundary')) {
-                        name += ' <span class="label label-default">' + escapeHtml(nearestText('inParentBoundary')) + '</span>';
-                    }
-                    var place = [prop(unit, 'groupName'), prop(unit, 'parentGroupName')].filter(function (x) { return !!x; });
-                    if (place.length) {
-                        name += '<br/><small class="text-muted">' + place.map(escapeHtml).join(' &middot; ') + '</small>';
-                    }
-
-                    // The status's own colours, as everywhere else; the class colour stays as the fallback for a
-                    // status that has none. Set through .css() so a colour never lands in the markup unchecked.
-                    // The border keeps a white or very light status visible on the table's white rows.
-                    var status = $('<span class="label">')
-                        .addClass(prop(unit, 'isAvailable') ? 'label-primary' : 'label-warning')
-                        .text(prop(unit, 'statusText') || '');
-                    if (prop(unit, 'statusColor')) {
-                        status.css({ 'background-color': prop(unit, 'statusColor'), 'border': '1px solid rgba(0, 0, 0, 0.2)' });
-                    }
-                    if (prop(unit, 'statusTextColor')) {
-                        status.css('color', prop(unit, 'statusTextColor'));
-                    }
-                    var statusHtml = status.prop('outerHTML');
-
-                    // With a turnout configured the row shows the response time it is ranked on (turnout + travel).
-                    var turnout = prop(unit, 'turnoutSeconds') || 0;
-                    var response = prop(unit, 'responseSeconds');
-                    var eta = formatEta(turnout > 0 && response !== null && response !== undefined ? response : prop(unit, 'etaSeconds'), prop(unit, 'etaSource'));
-                    if (turnout > 0 && response !== null && response !== undefined) {
-                        eta += '<br/><small class="text-muted">' + escapeHtml(nearestText('includesTurnout').replace('{0}', turnout)) + '</small>';
-                    }
-                    var distance = prop(unit, 'distanceMeters');
-                    if (distance !== null && distance !== undefined) {
-                        eta += '<br/><small class="text-muted">' + escapeHtml((distance / 1000).toFixed(1) + ' km') + '</small>';
-                    }
-
-                    var source = prop(unit, 'positionSource');
-                    var position = isEnum(source, 1, 'Live')
-                        ? escapeHtml(nearestText('live'))
-                        : isEnum(source, 2, 'Station') ? escapeHtml(nearestText('station')) : escapeHtml(nearestText('noPosition'));
-                    if (prop(unit, 'positionIsStale')) {
-                        position += ' <span class="label label-warning">' + escapeHtml(nearestText('stale')) + '</span>';
-                    }
-                    var latitude = prop(unit, 'latitude');
-                    var longitude = prop(unit, 'longitude');
-                    if (latitude !== null && latitude !== undefined && longitude !== null && longitude !== undefined) {
-                        position += '<br/><small class="text-muted">' + Number(latitude).toFixed(4) + ', ' + Number(longitude).toFixed(4) + '</small>';
-                    }
-
-                    var crewSource = prop(unit, 'crewSource');
-                    var shift;
-                    if (isEnum(crewSource, 0, 'None')) {
-                        shift = '<small class="text-muted">' + escapeHtml(nearestText('noCrew')) + '</small>';
-                    } else {
-                        shift = escapeHtml((prop(unit, 'onShiftCount') || 0) + '/' + (prop(unit, 'crewCount') || 0) + ' ' + nearestText('crewOnShift'));
-                        if (isEnum(crewSource, 2, 'StationShift')) {
-                            shift += ' <small class="text-muted">(' + escapeHtml(nearestText('stationShift')) + ')</small>';
-                        }
-                        var shiftNames = prop(unit, 'shiftNames') || [];
-                        if (shiftNames.length) {
-                            shift += '<br/><small class="text-muted">' + shiftNames.map(escapeHtml).join(', ') + '</small>';
-                        }
-                        var crew = prop(unit, 'crew') || [];
-                        if (crew.length) {
-                            shift += '<br/><small class="text-muted">' + crew.map(escapeHtml).join(', ') + '</small>';
-                        }
-                    }
-
-                    var roleMix = prop(unit, 'roleMix') || [];
-                    var roles = roleMix.length
-                        ? roleMix.map(function (r) { return escapeHtml(prop(r, 'name') + ' x' + prop(r, 'count')); }).join(', ')
-                        : '&mdash;';
-
-                    return '<tr><td>' + name + '</td><td>' + statusHtml + '</td><td>' + eta + '</td><td>' + position + '</td><td>' + shift + '</td><td>' + roles + '</td></tr>';
-                });
-                $('#nearestUnitsTable tbody').html(rows.join(''));
-
-                var notes = prop(board, 'notes') || [];
-                $('#nearestUnitsNotes').html(notes.map(escapeHtml).join('<br/>'));
-            }
 
             checkForProtocols();
             checkForRecommendations();

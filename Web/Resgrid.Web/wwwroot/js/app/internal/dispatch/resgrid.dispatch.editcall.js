@@ -5,8 +5,27 @@ var resgrid;
         var editcall;
         (function (editcall) {
             var personnelTable, groupsTable, unitsTable, rolesTable;
-            var initialDrawCount = 0;
             var totalTables = 4;
+            var drawnTables = {};
+            var dispatchedEntitiesApplied = false;
+            // Ticks what the call is already dispatched to once every list has drawn its rows. Only once: a later redraw (a
+            // search, a sort, the nearest board re-sorting closest first) must not tick again what the dispatcher has
+            // since unticked to take it off the call.
+            function onInitialDraw(table) {
+                drawnTables[table] = true;
+                if (!dispatchedEntitiesApplied && Object.keys(drawnTables).length >= totalTables) {
+                    dispatchedEntitiesApplied = true;
+                    resgrid.dispatch.editcall.updateDispatchedEntities();
+                }
+            }
+            // A status or staffing level's text in its colour, escaped; only a hex colour is applied.
+            function coloredText(text, color) {
+                var span = $('<span>').text(text === null || text === undefined ? '' : String(text));
+                if (color && /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(String(color).trim())) {
+                    span.css('color', String(color).trim());
+                }
+                return span.prop('outerHTML');
+            }
             // A unit's or call's name with its type icon (uploaded or built-in, from TypeIconUrl) in front, both escaped;
             // sorting and search keep using the plain name.
             function typeIconNameCell(name, type, row) {
@@ -52,6 +71,13 @@ var resgrid;
             $(document).ready(function () {
                 callMarker = null;
                 map = null;
+                resgrid.dispatch.nearestboard.init({
+                    getMap: function () { return map; },
+                    getPersonnelGrid: function () { return personnelTable; },
+                    getUnitsGrid: function () { return unitsTable; },
+                    personnelEtaColumn: 2,
+                    unitsEtaColumn: 2
+                });
                 // A typed (or previously saved) address always wins over a reverse-geocoded one; only an
                 // empty field is filled from the map pin.
                 userSuppliedAddress = jQuery.trim($("#Call_Address").val() || '') !== '';
@@ -151,6 +177,8 @@ var resgrid;
                         map = L.map('callMap', {
                             scrollWheelZoom: false
                         }).setView([data.centerLat, data.centerLon], 11).addLayer(tiles1);
+
+                        resgrid.dispatch.nearestboard.drawBoundaries();
 
                         map.on('click', function (e) {
                             resgrid.dispatch.editcall.setMarkerLocation(e.latlng.lat.toString(), e.latlng.lng.toString());
@@ -337,15 +365,16 @@ var resgrid;
                     $('#selectLinkedCall').empty();
                 });
 
+                // Distance and ETA come from the nearest board (one ranked request) rather than a routed lookup per person.
                 personnelTable = $("#personnelGrid").DataTable({
-                    ajax: { url: resgrid.absoluteBaseUrl + '/User/Personnel/GetPersonnelForCallGrid?callLat=' + encodeURI($("#Latitude").val()) + '&callLong=' + encodeURI($("#Longitude").val()), dataSrc: '' },
+                    ajax: { url: resgrid.absoluteBaseUrl + '/User/Personnel/GetPersonnelForCallGrid', dataSrc: '' },
                     paging: false,
                     columns: [
                         { data: 'UserId', title: '', orderable: false, searchable: false, render: function(data) { return '<input type="checkbox" id="dispatchUser_'+data+'" name="dispatchUser_'+data+'" />'; } },
                         { data: 'Name', title: getText('name', 'Name') },
-                        { data: 'Eta', title: getText('eta', 'ETA') },
-                        { data: null, title: getText('status', 'Status'), orderable: false, render: function(d,t,row) { return '<span style="color:'+row.StatusColor+'">'+row.Status+'</span>'; } },
-                        { data: null, title: getText('staffing', 'Staffing'), orderable: false, render: function(d,t,row) { return '<span style="color:'+row.StaffingColor+'">'+row.Staffing+'</span>'; } },
+                        { data: 'Eta', title: getText('eta', 'ETA'), render: resgrid.dispatch.nearestboard.etaRender('user') },
+                        { data: null, title: getText('status', 'Status'), orderable: false, render: function(d,t,row) { return coloredText(row.Status, row.StatusColor); } },
+                        { data: null, title: getText('staffing', 'Staffing'), orderable: false, render: function(d,t,row) { return coloredText(row.Staffing, row.StaffingColor); } },
                         { data: 'Group', title: getText('group', 'Group') },
                         { data: 'Roles', title: getText('roles', 'Roles') }
                     ]
@@ -353,8 +382,7 @@ var resgrid;
                 personnelTable.on('draw', function() {
                     $('#personnelGrid thead th:first').html('<label><input type="checkbox" id="checkAllPersonnel"/></label>');
                     applyRecommendationSelections();
-                    initialDrawCount++;
-                    if (initialDrawCount >= totalTables) { resgrid.dispatch.editcall.updateDispatchedEntities(); }
+                    onInitialDraw('personnel');
                 });
 
                 groupsTable = $("#groupsGrid").DataTable({
@@ -368,17 +396,16 @@ var resgrid;
                 });
                 groupsTable.on('draw', function() {
                     $('#groupsGrid thead th:first').html('<label><input type="checkbox" id="checkAllGroups"/></label>');
-                    initialDrawCount++;
-                    if (initialDrawCount >= totalTables) { resgrid.dispatch.editcall.updateDispatchedEntities(); }
+                    onInitialDraw('groups');
                 });
 
                 unitsTable = $("#unitsGrid").DataTable({
-                    ajax: { url: resgrid.absoluteBaseUrl + '/User/Units/GetUnitsForCallGrid?callLat=' + encodeURI($("#Latitude").val()) + '&callLong=' + encodeURI($("#Longitude").val()), dataSrc: '' },
+                    ajax: { url: resgrid.absoluteBaseUrl + '/User/Units/GetUnitsForCallGrid', dataSrc: '' },
                     paging: false,
                     columns: [
                         { data: 'UnitId', title: '', orderable: false, searchable: false, render: function(data) { return '<input type="checkbox" id="dispatchUnit_'+data+'" name="dispatchUnit_'+data+'" />'; } },
                         { data: 'Name', title: getText('name', 'Name'), render: typeIconNameCell },
-                        { data: 'Eta', title: getText('eta', 'ETA') },
+                        { data: 'Eta', title: getText('eta', 'ETA'), render: resgrid.dispatch.nearestboard.etaRender('unit') },
                         { data: 'Type', title: getText('type', 'Type') },
                         { data: null, title: getText('status', 'Status'), orderable: false, render: function(d,t,row) { return unitStatusLabel(row); } }
                     ]
@@ -386,8 +413,7 @@ var resgrid;
                 unitsTable.on('draw', function() {
                     $('#unitsGrid thead th:first').html('<label><input type="checkbox" id="checkAllUnits"/></label>');
                     applyRecommendationSelections();
-                    initialDrawCount++;
-                    if (initialDrawCount >= totalTables) { resgrid.dispatch.editcall.updateDispatchedEntities(); }
+                    onInitialDraw('units');
                 });
 
                 rolesTable = $("#rolesGrid").DataTable({
@@ -401,13 +427,12 @@ var resgrid;
                 });
                 rolesTable.on('draw', function() {
                     $('#rolesGrid thead th:first').html('<label><input type="checkbox" id="checkAllRoles"/></label>');
-                    initialDrawCount++;
-                    if (initialDrawCount >= totalTables) { resgrid.dispatch.editcall.updateDispatchedEntities(); }
+                    onInitialDraw('roles');
                 });
 
-                $('#personnelGrid').on('click', '#checkAllPersonnel', function () { $('#personnelGrid').find('tbody :checkbox').prop('checked', this.checked); });
+                $('#personnelGrid').on('click', '#checkAllPersonnel', function () { $('#personnelGrid').find('tbody :checkbox').prop('checked', this.checked); resgrid.dispatch.nearestboard.syncPicks(); });
                 $('#groupsGrid').on('click', '#checkAllGroups', function () { $('#groupsGrid').find('tbody :checkbox').prop('checked', this.checked); });
-                $('#unitsGrid').on('click', '#checkAllUnits', function () { $('#unitsGrid').find('tbody :checkbox').prop('checked', this.checked); });
+                $('#unitsGrid').on('click', '#checkAllUnits', function () { $('#unitsGrid').find('tbody :checkbox').prop('checked', this.checked); resgrid.dispatch.nearestboard.syncPicks(); });
                 $('#rolesGrid').on('click', '#checkAllRoles', function () { $('#rolesGrid').find('tbody :checkbox').prop('checked', this.checked); });
                 $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
                     var targetTab = e.target && e.target.getAttribute('href');
@@ -493,6 +518,7 @@ var resgrid;
                 appliedUserIds.forEach(function (id) {
                     $('input[name="dispatchUser_' + id + '"]').prop('checked', true);
                 });
+                resgrid.dispatch.nearestboard.syncPicks();
             }
             editcall.applyRecommendationSelections = applyRecommendationSelections;
 
@@ -686,8 +712,10 @@ var resgrid;
 
                     var result = prop(response, 'result');
                     if (!response || !prop(response, 'success') || !result || !prop(result, 'matchedRunCardId')) {
-                        // No run card applies to this call: stay out of the way.
+                        // No run card applies to this call: stay out of the way. A hidden picker still posts, so drop the
+                        // previous proposal's codes too.
                         currentRecommendation = null;
+                        $('#runCardCodePickers').empty();
                         $('#runCardPanelRow').hide();
                         return;
                     }
@@ -702,6 +730,7 @@ var resgrid;
 
                     // A failed lookup must not read as "no run card applies"; the manual selection still works.
                     currentRecommendation = null;
+                    $('#runCardCodePickers').empty();
                     $('#runCardPanelRow').show();
                     panel.html('<span class="text-warning">' + escapeText(getText('runCardLookupFailed', "Couldn't check run cards. You can still select resources by hand.")) +
                         '</span> <a href="#" id="runCardRefresh"><i class="fa fa-refresh"></i> ' + escapeText(getText('runCardRefresh', 'Refresh')) + '</a>');
@@ -730,6 +759,8 @@ var resgrid;
             editcall.findLocation = findLocation;
 
             function setMarkerLocation(lat, lng) {
+                resgrid.dispatch.nearestboard.schedule();
+
                 if (!map) {
                     scheduleRecommendation();
                     return;
@@ -750,6 +781,7 @@ var resgrid;
 
                         resgrid.dispatch.editcall.geocodeCoordinates(position.lat, position.lng);
                         scheduleRecommendation();
+                        resgrid.dispatch.nearestboard.schedule();
                     });
                 }
 
@@ -787,6 +819,7 @@ var resgrid;
                     for (var i = 0; i < result.length; i++) {
                         $(result[i].DisptachCode).prop('checked', true);
                     }
+                    resgrid.dispatch.nearestboard.syncPicks();
                 });
             }
             editcall.updateDispatchedEntities = updateDispatchedEntities;

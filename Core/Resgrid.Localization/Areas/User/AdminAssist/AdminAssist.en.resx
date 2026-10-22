@@ -6886,13 +6886,13 @@
     <value>Department Terminology</value>
   </data>
   <data name="SettingHelp.DepartmentTerminology" xml:space="preserve">
-    <value>The department's own names for modules and built-in record types, shown in the navigation, on module page titles, wherever record types are listed and in the Responder, Unit, IC and Dispatch apps, in every language. Labels only: permissions, links and API values do not change. A term with no name uses Resgrid's.</value>
+    <value>The department's own names for modules, with the word for one item (Team for Units renamed Teams), and for built-in record types. They are carried through the website's navigation, page titles, buttons, column headings, messages and exports, and shown in the Responder, Unit, IC and Dispatch apps, in every language. Labels only: permissions, links, API values and members' own text do not change. A term with no name uses Resgrid's.</value>
   </data>
   <data name="Field.DepartmentTerminologyConfig.Terms" xml:space="preserve">
     <value>Department Terminology / Terms</value>
   </data>
   <data name="FieldHelp.DepartmentTerminologyConfig.Terms" xml:space="preserve">
-    <value>One entry per renamed module or record type, for example Incident for Run or Shift On Duty for Work. A term not listed shows Resgrid's name in the member's language. Names are at most 50 characters.</value>
+    <value>One entry per renamed module or record type, for example Incident for Run or Shift On Duty for Work. A module entry can also hold the word for one item, such as Team for Units renamed Teams; left empty, it is worked out from the name. A term not listed shows Resgrid's name in the member's language. Names are at most 50 characters.</value>
   </data>
   <data name="Field.DepartmentTermOverride.Key" xml:space="preserve">
     <value>Department Term / Key</value>
@@ -7109,5 +7109,11 @@
   </data>
   <data xml:space="preserve" name="SettingHelp.DispatchResponseCodes">
     <value>Optional per-unit response codes (for example C3 for lights and siren) that conditional run card rows propose, and whether crews see them on unit pushes and in the field apps. Empty means codes appear nowhere.</value>
+  </data>
+  <data name="Field.DepartmentTermOverride.Singular" xml:space="preserve">
+    <value>Department Term / One Item</value>
+  </data>
+  <data name="FieldHelp.DepartmentTermOverride.Singular" xml:space="preserve">
+    <value>For a module, the department's word for one item, such as Team for Units renamed Teams, used on buttons and headings like New Team; at most 50 characters. Empty works it out from the name. Record types have none.</value>
   </data>
 </root>

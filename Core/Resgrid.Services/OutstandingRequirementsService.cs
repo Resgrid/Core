@@ -25,6 +25,8 @@ namespace Resgrid.Services
 	public class OutstandingRequirementsService : IOutstandingRequirementsService
 	{
 		private static readonly JsonSerializerSettings AlertJson = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
+		private static readonly TimeSpan AutoDispatchClaimLength = TimeSpan.FromMinutes(2);
+		private const string AutoDispatchClaimCacheKey = "OutstandingAutoDispatch_{0}";
 
 		private readonly ICallOutstandingRequirementsRepository _requirementsRepository;
 		private readonly ICallsService _callsService;
@@ -39,14 +41,16 @@ namespace Resgrid.Services
 		private readonly IGeoService _geoService;
 		private readonly IPersonnelRolesService _personnelRolesService;
 		private readonly IFeatureToggleService _featureToggleService;
+		private readonly ICacheProvider _cacheProvider;
 
 		public OutstandingRequirementsService(ICallOutstandingRequirementsRepository requirementsRepository, ICallsService callsService,
 			IUnitsService unitsService, ICustomStateService customStateService, IDepartmentSettingsService departmentSettingsService,
 			IRunCardsService runCardsService, ICallDispatchStatusService callDispatchStatusService, IQueueService queueService,
 			IEventAggregator eventAggregator, IDepartmentGroupsService departmentGroupsService, IGeoService geoService,
-			IPersonnelRolesService personnelRolesService, IFeatureToggleService featureToggleService)
+			IPersonnelRolesService personnelRolesService, IFeatureToggleService featureToggleService, ICacheProvider cacheProvider)
 		{
 			_featureToggleService = featureToggleService;
+			_cacheProvider = cacheProvider;
 			_personnelRolesService = personnelRolesService;
 			_requirementsRepository = requirementsRepository;
 			_callsService = callsService;
@@ -111,7 +115,7 @@ namespace Resgrid.Services
 					RunCardId = result.MatchedRunCardId,
 					AlarmLevel = result.AlarmLevel,
 					ResponsePackageRowId = packageRowId,
-					SentInstead = Truncate(fallback.SentInstead, 500),
+					SentInstead = Truncate(fallback.SentInstead, 200),
 					CreatedOn = DateTime.UtcNow,
 					CreatedByUserId = userId,
 					Resolution = (int)OutstandingRequirementResolutions.Open
@@ -145,12 +149,11 @@ namespace Resgrid.Services
 			return (await GetForCallAsync(departmentId, callId, false, cancellationToken)).Any();
 		}
 
-		public async Task<List<AwaitingResourcesCall>> GetAwaitingCallsAsync(int departmentId, CancellationToken cancellationToken = default(CancellationToken))
+		public async Task<List<AwaitingResourcesCall>> GetAwaitingCallsAsync(int departmentId, ICollection<int> visibleCallIds = null,
+			CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var awaiting = new List<AwaitingResourcesCall>();
-			var open = (await _requirementsRepository.GetOpenByDepartmentIdAsync(departmentId) ?? Enumerable.Empty<CallOutstandingRequirement>())
-				.Where(r => r != null && r.IsOpen)
-				.ToList();
+			var open = await GetOpenRequirementsAsync(departmentId, visibleCallIds);
 
 			if (!open.Any())
 				return awaiting;
@@ -223,11 +226,10 @@ namespace Resgrid.Services
 			return awaiting.OrderBy(a => a.Priority == 0 ? int.MaxValue : a.Priority).ThenBy(a => a.LoggedOn).ToList();
 		}
 
-		public async Task<int> GetAwaitingCallCountAsync(int departmentId, CancellationToken cancellationToken = default(CancellationToken))
+		public async Task<int> GetAwaitingCallCountAsync(int departmentId, ICollection<int> visibleCallIds = null,
+			CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var open = (await _requirementsRepository.GetOpenByDepartmentIdAsync(departmentId) ?? Enumerable.Empty<CallOutstandingRequirement>())
-				.Where(r => r != null && r.IsOpen)
-				.ToList();
+			var open = await GetOpenRequirementsAsync(departmentId, visibleCallIds);
 			var count = 0;
 
 			foreach (var group in open.GroupBy(r => r.CallId))
@@ -454,13 +456,18 @@ namespace Resgrid.Services
 			var usedUnits = new HashSet<int>();
 			var usedUsers = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-			foreach (var requirement in requirements.Where(r => r.IsOpen).OrderBy(r => r.CreatedOn))
+			// The count is recomputed from the call's dispatches on every read, never added to the stored value: reads repeat
+			// (badge polls, refreshes, every unit status change), so a running total would count the same dispatch again.
+			// Requirements already fulfilled are walked too, so the resources they used are not counted a second time.
+			foreach (var requirement in await WithFulfilledRequirementsAsync(departmentId, callId, requirements))
 			{
 				var targets = ReadTargets(requirement);
+				var resolvedCount = 0;
+				int? resolvedByUnitId = null;
 
 				foreach (var dispatch in (call.UnitDispatches ?? new List<CallDispatchUnit>()).Where(d => d.DispatchedOn > requirement.CreatedOn).OrderBy(d => d.DispatchedOn))
 				{
-					if (requirement.ResolvedCount >= requirement.RequiredCount || usedUnits.Contains(dispatch.UnitId))
+					if (resolvedCount >= requirement.RequiredCount || usedUnits.Contains(dispatch.UnitId))
 						continue;
 
 					if (!units.TryGetValue(dispatch.UnitId, out var unit) || string.IsNullOrWhiteSpace(unit.Type) || !unitTypes.TryGetValue(unit.Type.Trim(), out var type))
@@ -470,18 +477,17 @@ namespace Resgrid.Services
 						continue;
 
 					usedUnits.Add(dispatch.UnitId);
-					requirement.ResolvedCount++;
-					requirement.ResolvedByUnitId = dispatch.UnitId;
-					changed = true;
+					resolvedCount++;
+					resolvedByUnitId = dispatch.UnitId;
 				}
 
-				if (requirement.ResolvedCount < requirement.RequiredCount && RunCardTargetRules.HasPersonTargets(targets))
+				if (resolvedCount < requirement.RequiredCount && RunCardTargetRules.HasPersonTargets(targets))
 				{
 					roles = roles ?? await GetRolesAsync(departmentId);
 
 					foreach (var dispatch in (call.Dispatches ?? new List<CallDispatch>()).Where(d => d.DispatchedOn > requirement.CreatedOn && !string.IsNullOrWhiteSpace(d.UserId)).OrderBy(d => d.DispatchedOn))
 					{
-						if (requirement.ResolvedCount >= requirement.RequiredCount || usedUsers.Contains(dispatch.UserId))
+						if (resolvedCount >= requirement.RequiredCount || usedUsers.Contains(dispatch.UserId))
 							continue;
 
 						roles.TryGetValue(dispatch.UserId, out var userRoles);
@@ -490,25 +496,69 @@ namespace Resgrid.Services
 							continue;
 
 						usedUsers.Add(dispatch.UserId);
-						requirement.ResolvedCount++;
-						changed = true;
+						resolvedCount++;
 					}
 				}
 
-				if (requirement.ResolvedCount >= requirement.RequiredCount)
+				// A fulfilled requirement only holds on to the resources it used.
+				if (!requirement.IsOpen)
+					continue;
+
+				var requirementChanged = resolvedCount != requirement.ResolvedCount;
+				requirement.ResolvedCount = resolvedCount;
+
+				if (resolvedByUnitId.HasValue && requirement.ResolvedByUnitId != resolvedByUnitId)
+				{
+					requirement.ResolvedByUnitId = resolvedByUnitId;
+					requirementChanged = true;
+				}
+
+				if (resolvedCount >= requirement.RequiredCount)
 				{
 					requirement.ResolvedOn = now;
 					requirement.Resolution = (int)OutstandingRequirementResolutions.Dispatched;
 					requirement.ClaimedOn = null;
 					requirement.ClaimedByUnitId = null;
+					requirementChanged = true;
 				}
 
-				if (changed)
+				if (requirementChanged)
+				{
 					await _requirementsRepository.SaveOrUpdateAsync(requirement, cancellationToken, true);
+					changed = true;
+				}
 			}
 
 			if (changed)
 				await RaiseChangedAsync(departmentId, callId);
+		}
+
+		/// <summary>
+		/// The requirements a reconcile walks, oldest first: the ones passed in (the instances the caller reads afterwards)
+		/// plus the call's other stored requirements. Callers often pass only the open ones, and the fulfilled ones must still
+		/// claim their resources first.
+		/// </summary>
+		private async Task<List<CallOutstandingRequirement>> WithFulfilledRequirementsAsync(int departmentId, int callId, List<CallOutstandingRequirement> requirements)
+		{
+			var walk = requirements.Where(r => r != null).ToList();
+			var passed = new HashSet<int>(walk.Select(r => r.CallOutstandingRequirementId));
+
+			walk.AddRange((await _requirementsRepository.GetByCallIdAsync(callId) ?? Enumerable.Empty<CallOutstandingRequirement>())
+				.Where(r => r != null && r.DepartmentId == departmentId && !passed.Contains(r.CallOutstandingRequirementId)));
+
+			return walk
+				.Where(r => r.IsOpen || r.Resolution == (int)OutstandingRequirementResolutions.Dispatched || r.Resolution == (int)OutstandingRequirementResolutions.AutoDispatched)
+				.OrderBy(r => r.CreatedOn)
+				.ThenBy(r => r.CallOutstandingRequirementId)
+				.ToList();
+		}
+
+		/// <summary>The department's open requirements, limited to the calls the reader may see when a set is given (group-scoped dispatch).</summary>
+		private async Task<List<CallOutstandingRequirement>> GetOpenRequirementsAsync(int departmentId, ICollection<int> visibleCallIds)
+		{
+			return (await _requirementsRepository.GetOpenByDepartmentIdAsync(departmentId) ?? Enumerable.Empty<CallOutstandingRequirement>())
+				.Where(r => r != null && r.IsOpen && (visibleCallIds == null || visibleCallIds.Contains(r.CallId)))
+				.ToList();
 		}
 
 		private async Task<bool> TryAutoDispatchAsync(int departmentId, AvailableUnit candidate, List<Tuple<Call, CallOutstandingRequirement, double?>> matches,
@@ -516,76 +566,97 @@ namespace Resgrid.Services
 		{
 			var config = await _departmentSettingsService.GetDispatchRecommendationConfigAsync(departmentId) ?? new DispatchRecommendationConfig();
 			Dictionary<int, DateTime> lastDispatched = null;
+			var unitClaimKey = string.Format(AutoDispatchClaimCacheKey, candidate.Unit.UnitId);
+			var unitClaimed = false;
 
-			foreach (var match in matches)
+			try
 			{
-				var call = match.Item1;
-				var requirement = match.Item2;
-				var responseSeconds = match.Item3;
-				var card = requirement.RunCardId.HasValue ? await _runCardsService.GetRunCardByIdAsync(requirement.RunCardId.Value) : null;
-				var enabled = card?.WaitingCallAutoDispatchOverride.HasValue == true ? card.WaitingCallAutoDispatchOverride.Value == 1 : config.WaitingCallAutoDispatch;
-
-				if (!enabled)
-					continue;
-
-				// The limit applies to automatic dispatch only; a unit too far away (or unmeasurable) is alerted instead.
-				if (config.WaitingCallMaxResponseSeconds > 0 && (!responseSeconds.HasValue || responseSeconds.Value > config.WaitingCallMaxResponseSeconds))
-					continue;
-
-				if (config.RestPeriodMinutes > 0)
+				foreach (var match in matches)
 				{
-					lastDispatched = lastDispatched ?? await _runCardsService.GetLastUnitDispatchTimesAsync(departmentId);
+					var call = match.Item1;
+					var requirement = match.Item2;
+					var responseSeconds = match.Item3;
+					var card = requirement.RunCardId.HasValue ? await _runCardsService.GetRunCardByIdAsync(requirement.RunCardId.Value) : null;
+					var enabled = card?.WaitingCallAutoDispatchOverride.HasValue == true ? card.WaitingCallAutoDispatchOverride.Value == 1 : config.WaitingCallAutoDispatch;
 
-					if (lastDispatched.TryGetValue(candidate.Unit.UnitId, out var last) && (DateTime.UtcNow - last).TotalMinutes < config.RestPeriodMinutes)
+					if (!enabled)
+						continue;
+
+					// The limit applies to automatic dispatch only; a unit too far away (or unmeasurable) is alerted instead.
+					if (config.WaitingCallMaxResponseSeconds > 0 && (!responseSeconds.HasValue || responseSeconds.Value > config.WaitingCallMaxResponseSeconds))
+						continue;
+
+					if (config.RestPeriodMinutes > 0)
+					{
+						lastDispatched = lastDispatched ?? await _runCardsService.GetLastUnitDispatchTimesAsync(departmentId);
+
+						if (lastDispatched.TryGetValue(candidate.Unit.UnitId, out var last) && (DateTime.UtcNow - last).TotalMinutes < config.RestPeriodMinutes)
+							return false;
+					}
+
+					// One unit, one call: the same unit's status saved twice at once (an app tap racing its release) would
+					// otherwise lose the first row's claim in one pass and take the next waiting call's row in the other. The pass
+					// holding the claim owns this unit, and its alert.
+					if (!unitClaimed)
+					{
+						if (await _cacheProvider.IncrementAsync(unitClaimKey, AutoDispatchClaimLength) > 1)
+							return true;
+
+						unitClaimed = true;
+					}
+
+					// Re-read: the status may have moved on since the change that triggered this.
+					var latest = await _unitsService.GetLastUnitStateByUnitIdAsync(candidate.Unit.UnitId);
+					if (latest == null || !IsDispatchable(latest.State, await BuildUnitStatusDetailsAsync(departmentId)))
 						return false;
-				}
 
-				// Re-read: the status may have moved on since the change that triggered this.
-				var latest = await _unitsService.GetLastUnitStateByUnitIdAsync(candidate.Unit.UnitId);
-				if (latest == null || !IsDispatchable(latest.State, await BuildUnitStatusDetailsAsync(departmentId)))
-					return false;
+					// Two units freeing together cannot both take the row.
+					if (!await _requirementsRepository.TryClaimAsync(requirement.CallOutstandingRequirementId, departmentId, candidate.Unit.UnitId, DateTime.UtcNow, cancellationToken))
+						continue;
 
-				// One unit, one call: two units freeing together cannot both take the row, nor one unit two calls.
-				if (!await _requirementsRepository.TryClaimAsync(requirement.CallOutstandingRequirementId, departmentId, candidate.Unit.UnitId, DateTime.UtcNow, cancellationToken))
-					continue;
-
-				try
-				{
-					var systemUserId = latest.SetByUserId ?? call.ReportingUserId;
-					await AddUnitAndResolveAsync(departmentId, call, candidate.Unit, requirement, systemUserId, OutstandingRequirementResolutions.AutoDispatched, cancellationToken);
-
-					await _callsService.SaveCallNoteAsync(new CallNote
+					try
 					{
-						CallId = call.CallId,
-						UserId = systemUserId,
-						Note = $"Auto-dispatched {candidate.Unit.Name}: the call was waiting for {requirement.Label}" + (card != null ? $" (run card {card.Name})." : "."),
-						Timestamp = DateTime.UtcNow
-					}, cancellationToken);
+						var systemUserId = latest.SetByUserId ?? call.ReportingUserId;
+						await AddUnitAndResolveAsync(departmentId, call, candidate.Unit, requirement, systemUserId, OutstandingRequirementResolutions.AutoDispatched, cancellationToken);
 
-					await RaiseAsync(departmentId, call.CallId, new OutstandingRequirementsAlert
-					{
-						Kind = OutstandingRequirementsAlertKinds.AutoDispatched,
-						UnitId = candidate.Unit.UnitId,
-						UnitName = candidate.Unit.Name,
-						UnitTypeName = candidate.UnitType.Type,
-						Message = $"{candidate.Unit.Name} auto-dispatched to call {call.Number} (was waiting for {requirement.Label}).",
-						Calls = new List<OutstandingRequirementsAlertCall>
+						await _callsService.SaveCallNoteAsync(new CallNote
 						{
-							new OutstandingRequirementsAlertCall { CallId = call.CallId, CallNumber = call.Number, CallName = call.Name, Priority = call.Priority, Label = requirement.Label, ResponseSeconds = responseSeconds }
-						}
-					});
+							CallId = call.CallId,
+							UserId = systemUserId,
+							Note = $"Auto-dispatched {candidate.Unit.Name}: the call was waiting for {requirement.Label}" + (card != null ? $" (run card {card.Name})." : "."),
+							Timestamp = DateTime.UtcNow
+						}, cancellationToken);
 
-					return true;
+						await RaiseAsync(departmentId, call.CallId, new OutstandingRequirementsAlert
+						{
+							Kind = OutstandingRequirementsAlertKinds.AutoDispatched,
+							UnitId = candidate.Unit.UnitId,
+							UnitName = candidate.Unit.Name,
+							UnitTypeName = candidate.UnitType.Type,
+							Message = $"{candidate.Unit.Name} auto-dispatched to call {call.Number} (was waiting for {requirement.Label}).",
+							Calls = new List<OutstandingRequirementsAlertCall>
+							{
+								new OutstandingRequirementsAlertCall { CallId = call.CallId, CallNumber = call.Number, CallName = call.Name, Priority = call.Priority, Label = requirement.Label, ResponseSeconds = responseSeconds }
+							}
+						});
+
+						return true;
+					}
+					catch (Exception ex)
+					{
+						Logging.LogException(ex, $"Auto-dispatching unit {candidate.Unit.UnitId} to call {call.CallId} failed; dispatchers are alerted instead.");
+						await _requirementsRepository.ReleaseClaimAsync(requirement.CallOutstandingRequirementId, departmentId, candidate.Unit.UnitId, cancellationToken);
+						return false;
+					}
 				}
-				catch (Exception ex)
-				{
-					Logging.LogException(ex, $"Auto-dispatching unit {candidate.Unit.UnitId} to call {call.CallId} failed; dispatchers are alerted instead.");
-					await _requirementsRepository.ReleaseClaimAsync(requirement.CallOutstandingRequirementId, departmentId, candidate.Unit.UnitId, cancellationToken);
-					return false;
-				}
+
+				return false;
 			}
-
-			return false;
+			finally
+			{
+				if (unitClaimed)
+					await _cacheProvider.RemoveAsync(unitClaimKey);
+			}
 		}
 
 		/// <summary>
@@ -601,9 +672,11 @@ namespace Resgrid.Services
 				call.UnitDispatches = new Collection<CallDispatchUnit>();
 
 			var resolved = 0;
+			var added = false;
 
 			if (call.UnitDispatches.All(d => d.UnitId != unit.UnitId))
 			{
+				added = true;
 				call.UnitDispatches.Add(new CallDispatchUnit
 				{
 					CallId = call.CallId,
@@ -627,8 +700,14 @@ namespace Resgrid.Services
 
 			if (requirement != null && requirement.IsOpen)
 			{
-				requirement.ResolvedCount = Math.Min(requirement.RequiredCount, requirement.ResolvedCount + 1);
-				requirement.ResolvedByUnitId = unit.UnitId;
+				// Only a unit this adds counts here, as the read-time reconcile counts it; a unit already on the call was
+				// counted by the reconcile (or was on the call when the requirement was written).
+				if (added)
+				{
+					requirement.ResolvedCount = Math.Min(requirement.RequiredCount, requirement.ResolvedCount + 1);
+					requirement.ResolvedByUnitId = unit.UnitId;
+				}
+
 				requirement.ClaimedOn = null;
 				requirement.ClaimedByUnitId = null;
 

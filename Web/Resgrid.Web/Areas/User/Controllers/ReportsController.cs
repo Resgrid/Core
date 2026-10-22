@@ -484,7 +484,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				department);
 
 			var units = new List<Unit>();
-			units.Add(new Unit() { UnitId = 0, Name = "All Units" });
+			units.Add(new Unit() { UnitId = 0, Name = HttpContext.WithDepartmentTerms("All Units") });
 
 			// A history report can cover a unit deleted since: current units first, then deleted ones, marked so a
 			// reused name is not ambiguous.
@@ -656,7 +656,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var csv = new StringBuilder();
 			csv.AppendLine(string.Join(",", new[] { "Call Number", "Call Name", "Call Type", "Logged On", "Closed On", "Unit", "Group",
-				"Dispatched", "En Route", "On Scene", "Staging", "Cleared", "Linked By" }.Select(CsvCell)));
+				"Dispatched", "En Route", "On Scene", "Staging", "Cleared", "Linked By" }.Select(h => CsvCell(HttpContext.WithDepartmentTerms(h, "Reports")))));
 
 			foreach (var call in model.Calls)
 			{

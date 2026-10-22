@@ -27,6 +27,8 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Resgrid.Config;
@@ -510,6 +512,8 @@ namespace Resgrid.Web
 				// Statuses saved by a website request record who set them (M0260), so reports can tell a dispatcher's entry
 				// from the crew's own.
 				options.Filters.Add<Filters.StatusWriteActorFilter>();
+				// The department's terminology is read before the action, so its words reach every localized string the page shows.
+				options.Filters.Add(new Filters.DepartmentTermsFilter());
 			}).AddJsonOptions(jsonOptions =>
 			{
 				jsonOptions.JsonSerializerOptions.PropertyNamingPolicy = null;
@@ -539,6 +543,13 @@ namespace Resgrid.Web
 			StripeConfiguration.ApiKey = Config.PaymentProviderConfig.GetStripeApiKey();
 
 			services.AddLocalization();
+			// Every IStringLocalizer<T> carries the signed-in department's terminology (Department -> Terminology), so a renamed
+			// module reads the department's words on its buttons, headings and exports too; the terminology itself reads the
+			// shipped strings.
+			services.AddSingleton<ResourceManagerStringLocalizerFactory>();
+			services.AddSingleton<Helpers.IShippedStringLocalizerFactory, Helpers.ShippedStringLocalizerFactory>();
+			services.Replace(ServiceDescriptor.Singleton<IStringLocalizerFactory>(sp => new Helpers.DepartmentTermStringLocalizerFactory(
+				sp.GetRequiredService<ResourceManagerStringLocalizerFactory>(), sp.GetRequiredService<IHttpContextAccessor>())));
 
 			services.Configure<RequestLocalizationOptions>(
 				opts =>

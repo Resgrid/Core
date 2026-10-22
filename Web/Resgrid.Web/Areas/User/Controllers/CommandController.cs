@@ -12,6 +12,7 @@ using Resgrid.Web.Areas.User.Models.Command;
 using Microsoft.AspNetCore.Authorization;
 using Resgrid.Providers.Claims;
 using Resgrid.Model.CommandBoards;
+using Resgrid.Web.Helpers;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -198,7 +199,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.CallTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId);
 
 			var types = new List<CallType>();
-			types.Add(new CallType() { Type = "Any Call Type" });
+			types.Add(new CallType() { Type = HttpContext.WithDepartmentTerms("Any Call Type") });
 			if (model.CallTypes != null)
 				types.AddRange(model.CallTypes);
 

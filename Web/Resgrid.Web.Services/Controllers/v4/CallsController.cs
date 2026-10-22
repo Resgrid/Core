@@ -1372,16 +1372,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			try
 			{
-				if (Pending(InboundEmailPendingSteps.RunCardActivation) &&
-					recommendationResult != null && recommendationResult.MatchedRunCardId.HasValue && recommendationResult.AutoDispatch)
+				// One step for both records, so a retry of a finished request writes neither again.
+				if (Pending(InboundEmailPendingSteps.RunCardActivation) && recommendationResult != null)
 				{
-					await _dispatchRecommendationService.RecordActivationAsync(savedCall, recommendationResult, UserId, cancellationToken);
+					if (recommendationResult.MatchedRunCardId.HasValue && recommendationResult.AutoDispatch)
+						await _dispatchRecommendationService.RecordActivationAsync(savedCall, recommendationResult, UserId, cancellationToken);
+					else if (recommendationResult.Decision != null)
+						// Conditional run cards without auto-dispatch: pin what the dispatcher reviewed (never throws).
+						await _dispatchRecommendationService.RecordDecisionAsync(savedCall, recommendationResult, UserId, RunCardDecisionSources.SaveTime, cancellationToken);
+
 					await _inboundEmailReceiptsService.CompleteStepAsync(receipt, InboundEmailPendingSteps.RunCardActivation);
-				}
-				else if (recommendationResult?.Decision != null)
-				{
-					// Conditional run cards without auto-dispatch: pin what the dispatcher reviewed (never throws).
-					await _dispatchRecommendationService.RecordDecisionAsync(savedCall, recommendationResult, UserId, RunCardDecisionSources.SaveTime, cancellationToken);
 				}
 
 				if (Pending(InboundEmailPendingSteps.WeatherAlerts))
@@ -1895,16 +1895,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 							}
 						}
 					}
-
-					if (!string.IsNullOrWhiteSpace(editCallInput.UnitResponseCodes))
-						ResponseCodeSelections.ApplyAll(call.UnitDispatches, ResponseCodeSelections.Parse(editCallInput.UnitResponseCodes),
-							await _departmentSettingsService.GetDispatchResponseCodesAsync(DepartmentId));
 				}
 				catch (Exception ex)
 				{
 					Logging.LogException(ex);
 				}
 			}
+
+			// Codes apply to the units the edit leaves on the call, whichever way the dispatch list was handled above
+			// (kept for a pending call or a hidden list, "everyone", or an explicit list).
+			if (!string.IsNullOrWhiteSpace(editCallInput.UnitResponseCodes))
+				ResponseCodeSelections.ApplyAll(call.UnitDispatches, ResponseCodeSelections.Parse(editCallInput.UnitResponseCodes),
+					await _departmentSettingsService.GetDispatchResponseCodesAsync(DepartmentId));
 
 			// Checked against the call as the edit leaves it (a blank input keeps the stored value) and before anything
 			// below changes stored data. The dispatch time only means something before a call goes out.

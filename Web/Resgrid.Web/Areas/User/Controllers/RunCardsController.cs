@@ -402,8 +402,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Packages = await _responsePackagesService.GetPackagesForDepartmentAsync(DepartmentId, true)
 			};
 
+			var usage = await _responsePackagesService.GetAllPackageUsageAsync(DepartmentId);
 			foreach (var package in model.Packages)
-				model.Usage[package.ResponsePackageId] = await _responsePackagesService.GetPackageUsageAsync(DepartmentId, package.ResponsePackageId);
+				model.Usage[package.ResponsePackageId] = usage.TryGetValue(package.ResponsePackageId, out var places) ? places : new List<string>();
 
 			return View(model);
 		}

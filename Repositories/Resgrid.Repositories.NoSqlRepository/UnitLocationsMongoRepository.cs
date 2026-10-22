@@ -158,16 +158,20 @@ namespace Resgrid.Repositories.NoSqlRepository
 						.Ascending(location => location.DepartmentId)
 						.Ascending(location => location.SourceType)
 						.Ascending(location => location.Timestamp),
-					new CreateIndexOptions { Name = "ix_unitlocations_retention" }),
-				// Map visualization paths read a whole department's history for a time window.
-				new CreateIndexModel<UnitsLocation>(
-					Builders<UnitsLocation>.IndexKeys
-						.Ascending(location => location.DepartmentId)
-						.Descending(location => location.Timestamp),
-					new CreateIndexOptions { Name = "ix_unitlocations_department_timestamp" })
+					new CreateIndexOptions { Name = "ix_unitlocations_retention" })
 			};
 
 			await _collection.Indexes.CreateManyAsync(indexes);
+		}
+
+		public async Task EnsureReadIndexesAsync()
+		{
+			// Map visualization paths read a whole department's history for a time window.
+			await _collection.Indexes.CreateOneAsync(new CreateIndexModel<UnitsLocation>(
+				Builders<UnitsLocation>.IndexKeys
+					.Ascending(location => location.DepartmentId)
+					.Descending(location => location.Timestamp),
+				new CreateIndexOptions { Name = "ix_unitlocations_department_timestamp" }));
 		}
 	}
 }

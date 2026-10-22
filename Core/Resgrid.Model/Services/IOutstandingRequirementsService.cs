@@ -26,11 +26,19 @@ namespace Resgrid.Model.Services
 		/// <summary>True when the call still awaits a resource (used by automatic call close, which must leave such a call open).</summary>
 		Task<bool> HasOpenRequirementsAsync(int departmentId, int callId, CancellationToken cancellationToken = default(CancellationToken));
 
-		/// <summary>Every active call of the department still awaiting a resource, oldest and highest priority first.</summary>
-		Task<List<AwaitingResourcesCall>> GetAwaitingCallsAsync(int departmentId, CancellationToken cancellationToken = default(CancellationToken));
+		/// <summary>
+		/// Every active call of the department still awaiting a resource, oldest and highest priority first. With
+		/// <paramref name="visibleCallIds"/> (group-scoped dispatch), only those calls; null means every call.
+		/// </summary>
+		Task<List<AwaitingResourcesCall>> GetAwaitingCallsAsync(int departmentId, ICollection<int> visibleCallIds = null,
+			CancellationToken cancellationToken = default(CancellationToken));
 
-		/// <summary>How many calls still await a resource (reconciled, without the available-unit lookups), for badges that poll.</summary>
-		Task<int> GetAwaitingCallCountAsync(int departmentId, CancellationToken cancellationToken = default(CancellationToken));
+		/// <summary>
+		/// How many calls still await a resource (reconciled, without the available-unit lookups), for badges that poll. With
+		/// <paramref name="visibleCallIds"/>, only those calls are counted; null means every call.
+		/// </summary>
+		Task<int> GetAwaitingCallCountAsync(int departmentId, ICollection<int> visibleCallIds = null,
+			CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>A person dismisses an open requirement (with an optional note).</summary>
 		Task<bool> DismissAsync(int departmentId, int callOutstandingRequirementId, string userId, string note,

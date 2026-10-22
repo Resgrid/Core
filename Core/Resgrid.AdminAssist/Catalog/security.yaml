@@ -5475,7 +5475,7 @@
         "Field": null
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-10-13T00:00:00Z",
+      "ReviewedOn": "2026-10-22T00:00:00Z",
       "Impact": {
         "Risk": "Low",
         "AudienceKey": "Impact.Audience",
@@ -5508,7 +5508,7 @@
         "Field": "Terms"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-10-13T00:00:00Z",
+      "ReviewedOn": "2026-10-22T00:00:00Z",
       "Impact": {
         "Risk": "Low",
         "AudienceKey": "Impact.Audience",
@@ -5594,6 +5594,41 @@
       "Conflicts": [],
       "DocumentationId": "field.DepartmentTermOverride.Text",
       "DefaultValue": "unset (Resgrid's name)",
+      "AllowedValues": "Validated by the owning configuration workflow",
+      "EvidenceSource": "DepartmentTermOverride",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.DepartmentTermOverride.Singular",
+      "AreaId": "security",
+      "LabelKey": "Field.DepartmentTermOverride.Singular",
+      "HelpKey": "FieldHelp.DepartmentTermOverride.Singular",
+      "Binding": "DepartmentTermOverride.Singular",
+      "ValueType": "string",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "Terminology",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-22T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.security",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.DepartmentTerminology"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.DepartmentTermOverride.Singular",
+      "DefaultValue": "unset (worked out from the name)",
       "AllowedValues": "Validated by the owning configuration workflow",
       "EvidenceSource": "DepartmentTermOverride",
       "Availability": "reference-only"
@@ -5696,6 +5731,7 @@
       "Requirements": [],
       "SettingIds": [
         "field.DepartmentTermOverride.Key",
+        "field.DepartmentTermOverride.Singular",
         "field.DepartmentTermOverride.Text",
         "field.DepartmentTerminologyConfig.Terms",
         "setting.DepartmentTerminology"
@@ -8044,23 +8080,23 @@
       "Id": "setting.DepartmentTerminology",
       "Locale": "en",
       "TitleKey": "Setting.DepartmentTerminology",
-      "Body": "Department Terminology. The department's own names for modules and built-in record types, shown in the navigation, on module page titles, wherever record types are listed and in the Responder, Unit, IC and Dispatch apps, in every language. Labels only: permissions, links and API values do not change. A term with no name uses Resgrid's.",
+      "Body": "Department Terminology. The department's own names for modules, with the word for one item (Team for Units renamed Teams), and for built-in record types. They are carried through the website's navigation, page titles, buttons, column headings, messages and exports, and shown in the Responder, Unit, IC and Dispatch apps, in every language. Labels only: permissions, links, API values and members' own text do not change. A term with no name uses Resgrid's.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-departmentterminology",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-10-13T00:00:00Z"
+      "ReviewedOn": "2026-10-22T00:00:00Z"
     },
     {
       "Id": "field.DepartmentTerminologyConfig.Terms",
       "Locale": "en",
       "TitleKey": "Field.DepartmentTerminologyConfig.Terms",
-      "Body": "Department Terminology / Terms. One entry per renamed module or record type, for example Incident for Run or Shift On Duty for Work. A term not listed shows Resgrid's name in the member's language. Names are at most 50 characters.",
+      "Body": "Department Terminology / Terms. One entry per renamed module or record type, for example Incident for Run or Shift On Duty for Work. A module entry can also hold the word for one item, such as Team for Units renamed Teams; left empty, it is worked out from the name. A term not listed shows Resgrid's name in the member's language. Names are at most 50 characters.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-departmentterminologyconfig-terms",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-10-13T00:00:00Z"
+      "ReviewedOn": "2026-10-22T00:00:00Z"
     },
     {
       "Id": "field.DepartmentTermOverride.Key",
@@ -8083,6 +8119,17 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-10-13T00:00:00Z"
+    },
+    {
+      "Id": "field.DepartmentTermOverride.Singular",
+      "Locale": "en",
+      "TitleKey": "Field.DepartmentTermOverride.Singular",
+      "Body": "Department Term / One Item. For a module, the department's word for one item, such as Team for Units renamed Teams, used on buttons and headings like New Team; at most 50 characters. Empty works it out from the name. Record types have none.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-departmenttermoverride-singular",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-22T00:00:00Z"
     }
   ]
 }

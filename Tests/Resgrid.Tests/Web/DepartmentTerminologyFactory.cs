@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Localization;
 using Moq;
 using Resgrid.Model;
 using Resgrid.Model.Services;
@@ -16,6 +15,13 @@ namespace Resgrid.Tests.Web
 		/// </summary>
 		public static DepartmentTerminology Create(DepartmentTerminologyConfig config = null, int departmentId = 1)
 		{
+			return CreateForRequest(config, departmentId).Terms;
+		}
+
+		/// <summary>As <see cref="Create"/>, with the request it reads from (where <see cref="DepartmentTerminology.PrepareAsync"/> stores the substitution).</summary>
+		public static (DepartmentTerminology Terms, HttpContext Context, IHttpContextAccessor Accessor) CreateForRequest(
+			DepartmentTerminologyConfig config = null, int departmentId = 1)
+		{
 			var settings = new Mock<IDepartmentSettingsService>();
 			settings.Setup(s => s.GetDepartmentTerminologyAsync(It.IsAny<int>(), It.IsAny<bool>())).ReturnsAsync(config ?? new DepartmentTerminologyConfig());
 
@@ -27,11 +33,8 @@ namespace Resgrid.Tests.Web
 			var accessor = new Mock<IHttpContextAccessor>();
 			accessor.SetupGet(a => a.HttpContext).Returns(context);
 
-			return new DepartmentTerminology(settings.Object, accessor.Object,
-				Mock.Of<IStringLocalizer<Resgrid.Localization.Common>>(),
-				Mock.Of<IStringLocalizer<Resgrid.Localization.Areas.User.UserDefinedFields.UserDefinedFields>>(),
-				Mock.Of<IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders>>(),
-				Mock.Of<IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists>>());
+			var terms = new DepartmentTerminology(settings.Object, accessor.Object, new AdminAssistFieldHelpTestServices.ShippedLocalizers(null));
+			return (terms, context, accessor.Object);
 		}
 	}
 }

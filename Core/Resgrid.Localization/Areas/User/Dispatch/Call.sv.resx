@@ -1068,4 +1068,37 @@
   <data name="NewCallFieldRequired" xml:space="preserve">
     <value>{0} är obligatoriskt i den här avdelningen.</value>
   </data>
+  <data name="NearestUnitsPick" xml:space="preserve">
+    <value>Larma</value>
+  </data>
+  <data name="NearestPersonnelLabel" xml:space="preserve">
+    <value>Närmaste personal</value>
+  </data>
+  <data name="NearestPersonnelPerson" xml:space="preserve">
+    <value>Person</value>
+  </data>
+  <data name="NearestPersonnelStaffing" xml:space="preserve">
+    <value>Bemanning</value>
+  </data>
+  <data name="NearestPersonnelGroupRoles" xml:space="preserve">
+    <value>Grupp / roller</value>
+  </data>
+  <data name="NearestUnitsNearest" xml:space="preserve">
+    <value>Närmast #{0}</value>
+  </data>
+  <data name="NearestUnitsHidden" xml:space="preserve">
+    <value>Position dold</value>
+  </data>
+  <data name="NearestPersonnelOnUnit" xml:space="preserve">
+    <value>På {0}</value>
+  </data>
+  <data name="NearestUnitsMapUnits" xml:space="preserve">
+    <value>Enheter</value>
+  </data>
+  <data name="NearestUnitsMapPersonnel" xml:space="preserve">
+    <value>Personal</value>
+  </data>
+  <data name="NearestUnitsMapBoundaries" xml:space="preserve">
+    <value>Stationsområden</value>
+  </data>
 </root>

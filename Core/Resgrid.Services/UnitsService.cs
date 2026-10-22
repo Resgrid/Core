@@ -476,6 +476,10 @@ namespace Resgrid.Services
 
 			await CloseCallsFinishedByAsync(departmentId, saved, previousState, cancellationToken);
 
+			// Calls awaiting resources (conditional run cards), as for every other status save. It never throws.
+			if (_outstandingRequirementsService != null)
+				await _outstandingRequirementsService.Value.OnUnitStateSavedAsync(departmentId, saved, previousState, cancellationToken);
+
 			return saved;
 		}
 

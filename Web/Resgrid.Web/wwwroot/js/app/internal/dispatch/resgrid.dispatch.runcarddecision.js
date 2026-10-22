@@ -12,8 +12,9 @@ var resgrid;
                     : fallback;
             }
 
+            // Also used inside attribute values (title, style), so quotes are escaped too.
             function escapeHtml(value) {
-                return $('<div/>').text(value == null ? '' : String(value)).html();
+                return $('<div/>').text(value == null ? '' : String(value)).html().replace(/"/g, '&quot;').replace(/'/g, '&#39;');
             }
 
             // MVC JSON is camelCase and v4 is PascalCase; read either.

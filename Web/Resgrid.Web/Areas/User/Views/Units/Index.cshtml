@@ -91,7 +91,7 @@
     {
         <div class="col-sm-8">
             <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-                <a title="Add a new unit" class="btn btn-success" asp-controller="Units" asp-action="NewUnit" asp-route-area="User">New Unit</a>
+                <a title="@localizer["NewUnitHeader"]" class="btn btn-success" asp-controller="Units" asp-action="NewUnit" asp-route-area="User">@localizer["NewUnitHeader"]</a>
                 <a id="shiftDayStaffingButton" class="btn btn-info top-button" title="@localizer["UnitStaffing"]" asp-controller="Units" asp-action="UnitStaffing" asp-route-area="User">@localizer["UnitStaffing"]</a>
             </div>
         </div>

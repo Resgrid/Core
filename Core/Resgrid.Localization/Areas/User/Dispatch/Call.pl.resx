@@ -1068,4 +1068,37 @@
   <data name="NewCallFieldRequired" xml:space="preserve">
     <value>Pole {0} jest wymagane w tym wydziale.</value>
   </data>
+  <data name="NearestUnitsPick" xml:space="preserve">
+    <value>Zadysponuj</value>
+  </data>
+  <data name="NearestPersonnelLabel" xml:space="preserve">
+    <value>Najbliższy personel</value>
+  </data>
+  <data name="NearestPersonnelPerson" xml:space="preserve">
+    <value>Osoba</value>
+  </data>
+  <data name="NearestPersonnelStaffing" xml:space="preserve">
+    <value>Dostępność</value>
+  </data>
+  <data name="NearestPersonnelGroupRoles" xml:space="preserve">
+    <value>Grupa / role</value>
+  </data>
+  <data name="NearestUnitsNearest" xml:space="preserve">
+    <value>Najbliższy nr {0}</value>
+  </data>
+  <data name="NearestUnitsHidden" xml:space="preserve">
+    <value>Lokalizacja ukryta</value>
+  </data>
+  <data name="NearestPersonnelOnUnit" xml:space="preserve">
+    <value>Na {0}</value>
+  </data>
+  <data name="NearestUnitsMapUnits" xml:space="preserve">
+    <value>Jednostki</value>
+  </data>
+  <data name="NearestUnitsMapPersonnel" xml:space="preserve">
+    <value>Personel</value>
+  </data>
+  <data name="NearestUnitsMapBoundaries" xml:space="preserve">
+    <value>Granice rejonów</value>
+  </data>
 </root>

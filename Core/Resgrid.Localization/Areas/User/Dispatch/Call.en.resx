@@ -980,4 +980,37 @@
   <data name="NewCallFieldRequired" xml:space="preserve">
     <value>{0} is required by this department.</value>
   </data>
+  <data name="NearestUnitsPick" xml:space="preserve">
+    <value>Dispatch</value>
+  </data>
+  <data name="NearestPersonnelLabel" xml:space="preserve">
+    <value>Closest personnel</value>
+  </data>
+  <data name="NearestPersonnelPerson" xml:space="preserve">
+    <value>Person</value>
+  </data>
+  <data name="NearestPersonnelStaffing" xml:space="preserve">
+    <value>Staffing</value>
+  </data>
+  <data name="NearestPersonnelGroupRoles" xml:space="preserve">
+    <value>Group / roles</value>
+  </data>
+  <data name="NearestUnitsNearest" xml:space="preserve">
+    <value>Nearest #{0}</value>
+  </data>
+  <data name="NearestUnitsHidden" xml:space="preserve">
+    <value>Location hidden</value>
+  </data>
+  <data name="NearestPersonnelOnUnit" xml:space="preserve">
+    <value>On {0}</value>
+  </data>
+  <data name="NearestUnitsMapUnits" xml:space="preserve">
+    <value>Units</value>
+  </data>
+  <data name="NearestUnitsMapPersonnel" xml:space="preserve">
+    <value>Personnel</value>
+  </data>
+  <data name="NearestUnitsMapBoundaries" xml:space="preserve">
+    <value>Station boundaries</value>
+  </data>
 </root>

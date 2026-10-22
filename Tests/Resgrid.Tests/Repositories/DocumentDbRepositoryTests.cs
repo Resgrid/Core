@@ -36,6 +36,9 @@ namespace Resgrid.Tests.Repositories
 			mongoRepository
 				.Setup(repository => repository.EnsureIndexesAsync())
 				.Returns(Task.CompletedTask);
+			mongoRepository
+				.Setup(repository => repository.EnsureReadIndexesAsync())
+				.Returns(Task.CompletedTask);
 			var personnelIndexes = new Mock<IMongoIndexManager<PersonnelLocation>>();
 			var personnelCollection = new Mock<IMongoCollection<PersonnelLocation>>();
 			personnelCollection.SetupGet(collection => collection.Indexes).Returns(personnelIndexes.Object);
@@ -49,6 +52,7 @@ namespace Resgrid.Tests.Repositories
 
 			result.Should().BeTrue();
 			mongoRepository.Verify(locationRepository => locationRepository.EnsureIndexesAsync(), Times.Once);
+			mongoRepository.Verify(locationRepository => locationRepository.EnsureReadIndexesAsync(), Times.Once);
 			personnelIndexes.Verify(indexes => indexes.CreateOneAsync(
 				It.Is<CreateIndexModel<PersonnelLocation>>(model => model.Options.Name == "ix_personnellocations_department_timestamp"),
 				It.IsAny<CreateOneIndexOptions>(), It.IsAny<System.Threading.CancellationToken>()), Times.Once);

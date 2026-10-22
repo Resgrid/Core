@@ -6886,13 +6886,13 @@
     <value>Organisationens terminologi</value>
   </data>
   <data name="SettingHelp.DepartmentTerminology" xml:space="preserve">
-    <value>Organisationens egna namn på moduler och inbyggda journaltyper, som visas i navigeringen, i rubriker på modulsidor, överallt där journaltyper listas och i apparna Responder, Unit, IC och Dispatch, på alla språk. Endast etiketter: behörigheter, länkar och API-värden ändras inte. En term utan namn använder Resgrids namn.</value>
+    <value>Organisationens egna namn på moduler, med ordet för ett objekt (Lag för Enheter som döpts om till Lag), och på inbyggda journaltyper. De används i webbplatsens navigering, sidrubriker, knappar, kolumnrubriker, meddelanden och exporter och visas i apparna Responder, Unit, IC och Dispatch, på alla språk. Endast etiketter: behörigheter, länkar, API-värden och medlemmarnas egen text ändras inte. En term utan namn använder Resgrids namn.</value>
   </data>
   <data name="Field.DepartmentTerminologyConfig.Terms" xml:space="preserve">
     <value>Organisationens terminologi / Termer</value>
   </data>
   <data name="FieldHelp.DepartmentTerminologyConfig.Terms" xml:space="preserve">
-    <value>En post per omdöpt modul eller journaltyp, till exempel Insats i stället för Run eller Passtjänst i stället för Work. En term som inte listas visar Resgrids namn på medlemmens språk. Namn är högst 50 tecken.</value>
+    <value>En post per omdöpt modul eller journaltyp, till exempel Insats i stället för Run eller Passtjänst i stället för Work. En moduls post kan också innehålla ordet för ett objekt, till exempel Lag för Enheter som döpts om till Lag; lämnas det tomt härleds det från namnet. En term som inte listas visar Resgrids namn på medlemmens språk. Namn är högst 50 tecken.</value>
   </data>
   <data name="Field.DepartmentTermOverride.Key" xml:space="preserve">
     <value>Organisationens term / Nyckel</value>
@@ -7109,5 +7109,11 @@
   </data>
   <data xml:space="preserve" name="SettingHelp.DispatchResponseCodes">
     <value>Valfria koder per enhet (till exempel C3 för blåljus och siren) som villkorade korts rader föreslår, och om besättningar ser dem i push och appar. Tomt betyder att koder inte visas någonstans.</value>
+  </data>
+  <data name="Field.DepartmentTermOverride.Singular" xml:space="preserve">
+    <value>Organisationens term / Ett objekt</value>
+  </data>
+  <data name="FieldHelp.DepartmentTermOverride.Singular" xml:space="preserve">
+    <value>För en modul organisationens ord för ett objekt, till exempel Lag för Enheter som döpts om till Lag, som används på knappar och rubriker som Nytt lag; högst 50 tecken. Tomt härleds från namnet. Journaltyper har inget.</value>
   </data>
 </root>

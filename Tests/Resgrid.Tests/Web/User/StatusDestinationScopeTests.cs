@@ -96,10 +96,14 @@ namespace Resgrid.Tests.Web.User
 			};
 			ClaimsAuthorizationHelper._httpContextAccessor = new HttpContextAccessor { HttpContext = _http };
 
+			// The destination picker labels its call group from the localizer; echo the key like the real resources would.
+			var common = new Mock<IStringLocalizer<Resgrid.Localization.Common>>();
+			common.Setup(l => l[It.IsAny<string>()]).Returns((string key) => new LocalizedString(key, key));
+
 			_unitsController = new UnitsController(_departments.Object, Mock.Of<IUsersService>(), _units.Object, _authorization.Object,
 				Mock.Of<ILimitsService>(), groups.Object, _calls.Object, Mock.Of<IEventAggregator>(), customStates.Object, Mock.Of<IGeoService>(),
 				Mock.Of<IDepartmentSettingsService>(), Mock.Of<IGeoLocationProvider>(), Mock.Of<INovuProvider>(), mapping.Object,
-				Mock.Of<IUserDefinedFieldsService>(), Mock.Of<IUdfRenderingService>(), Mock.Of<IStringLocalizer<Resgrid.Localization.Common>>(),
+				Mock.Of<IUserDefinedFieldsService>(), Mock.Of<IUdfRenderingService>(), common.Object,
 				Mock.Of<IPersonnelRolesService>(), Mock.Of<IProtectedReadService>(), Mock.Of<IRecordsCutoverService>(), _scope.Object)
 			{ ControllerContext = new ControllerContext { HttpContext = _http } };
 		}

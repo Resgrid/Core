@@ -1449,13 +1449,13 @@
     <value>Terminologi</value>
   </data>
   <data name="TerminologyIntro" xml:space="preserve">
-    <value>Använd er organisations egna ord. Ett namn som anges här ersätter Resgrids namn på modulen eller journaltypen i navigeringen, i sidrubriker, överallt där journaltyper listas och i apparna Responder, Unit, IC och Dispatch, för alla medlemmar och på alla språk. Bara etiketten ändras: behörigheter, länkar och integrationer påverkas inte. Lämna en ruta tom för att behålla Resgrids namn.</value>
+    <value>Använd er organisations egna ord. Ett namn som anges här ersätter Resgrids namn på modulen eller journaltypen på hela webbplatsen: i navigeringen, sidrubriker, knappar, kolumnrubriker, meddelanden, utskrifter och exporter, och i apparna Responder, Unit, IC och Dispatch, för alla medlemmar och på alla språk. Bara formuleringen ändras: behörigheter, länkar, integrationer och allt era medlemmar har skrivit förblir som de är. Lämna en ruta tom för att behålla Resgrids namn.</value>
   </data>
   <data name="TerminologyModules" xml:space="preserve">
     <value>Moduler</value>
   </data>
   <data name="TerminologyModulesHelp" xml:space="preserve">
-    <value>Visas i navigeringen, som rubrik på modulens huvudsida och i apparnas menyer. Meningar på andra ställen som nämner en modul behåller Resgrids formulering.</value>
+    <value>Ange modulens namn och, där det finns, ordet för ett enskilt objekt, till exempel Lag och Lag för Enheter, så att knappar som Nytt lag läses naturligt; lämna objektet tomt för att härleda det från namnet. Moduler märkta I hela Resgrid ändras överallt där Resgrid nämner dem. Övriga ändras i den egna modulen, eftersom ord som anteckning, logg, journal och kontakt också har vardagliga betydelser på andra ställen.</value>
   </data>
   <data name="TerminologyRecordTypes" xml:space="preserve">
     <value>Journaltyper</value>
@@ -2029,5 +2029,17 @@
   </data>
   <data name="RunCardTemplateAppliedMessage" xml:space="preserve">
     <value>Skapad från en mall och sparad inaktiverad. Kontrollera utlösare och rader, testa på fliken Test och aktivera sedan.</value>
+  </data>
+  <data name="TerminologySingularColumn" xml:space="preserve">
+    <value>Ett objekt</value>
+  </data>
+  <data name="TerminologyWhereColumn" xml:space="preserve">
+    <value>Var det ändras</value>
+  </data>
+  <data name="TerminologyScopeEverywhere" xml:space="preserve">
+    <value>I hela Resgrid</value>
+  </data>
+  <data name="TerminologyScopeModule" xml:space="preserve">
+    <value>I den egna modulen</value>
   </data>
 </root>

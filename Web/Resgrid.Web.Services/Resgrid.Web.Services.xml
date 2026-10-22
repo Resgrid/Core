@@ -398,7 +398,8 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.AwaitingResourcesController.GetAwaitingCalls(System.Threading.CancellationToken)">
             <summary>
             Every active call of the department still awaiting a required resource, highest priority then oldest first, with
-            the units now available that match each requirement (nearest first when it can be measured).
+            the units now available that match each requirement (nearest first when it can be measured). Under group-scoped
+            dispatch, only the calls the user dispatches (the same calls as the active call list).
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.AwaitingResourcesController.GetCallRequirements(System.Int32,System.Threading.CancellationToken)">
@@ -12893,6 +12894,15 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Configs.DepartmentTermData.Name">
             <summary>The department's name for the term; null when it uses Resgrid's.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.DepartmentTermData.DefaultSingular">
+            <summary>Resgrid's English word for one item of a module ("Unit" for Units); null for a term without one.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.DepartmentTermData.Singular">
+            <summary>
+            The department's word for one item ("Team" for Units renamed Teams), saved or guessed from <see cref="P:Resgrid.Web.Services.Models.v4.Configs.DepartmentTermData.Name"/>; null when
+            the term keeps Resgrid's names or has no item word. Apps put it on buttons such as "New Team".
+            </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.ContactFiles.ContactFilesResult">
             <summary>

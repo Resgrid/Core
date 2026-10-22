@@ -86,7 +86,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var result = new GetTerminologyResult();
 
 			foreach (var term in DepartmentTerms.All)
-				result.Data.Add(new DepartmentTermData { Key = term.Key, Category = term.Category.ToString(), DefaultName = term.DefaultName, Name = config.TextFor(term.Key) });
+				result.Data.Add(new DepartmentTermData
+				{
+					Key = term.Key,
+					Category = term.Category.ToString(),
+					DefaultName = term.DefaultName,
+					Name = config.TextFor(term.Key),
+					DefaultSingular = term.DefaultSingular,
+					Singular = config.SingularFor(term.Key)
+				});
 
 			result.PageSize = result.Data.Count;
 			result.Status = ResponseHelper.Success;

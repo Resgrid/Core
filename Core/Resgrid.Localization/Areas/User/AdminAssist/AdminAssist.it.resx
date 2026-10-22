@@ -6886,13 +6886,13 @@
     <value>Terminologia del dipartimento</value>
   </data>
   <data name="SettingHelp.DepartmentTerminology" xml:space="preserve">
-    <value>I nomi propri del dipartimento per moduli e tipi di registro predefiniti, mostrati nella navigazione, nei titoli delle pagine dei moduli, ovunque siano elencati i tipi di registro e nelle app Responder, Unit, IC e Dispatch, in tutte le lingue. Solo etichette: autorizzazioni, collegamenti e valori API non cambiano. Un termine senza nome usa quello di Resgrid.</value>
+    <value>I nomi propri del dipartimento per i moduli, con la parola per un elemento (Squadra per Unità rinominate Squadre), e per i tipi di registro predefiniti. Valgono nella navigazione, nei titoli delle pagine, nei pulsanti, nelle intestazioni di colonna, nei messaggi e nelle esportazioni del sito web e sono mostrati nelle app Responder, Unit, IC e Dispatch, in tutte le lingue. Solo etichette: autorizzazioni, collegamenti, valori API e testi dei membri non cambiano. Un termine senza nome usa quello di Resgrid.</value>
   </data>
   <data name="Field.DepartmentTerminologyConfig.Terms" xml:space="preserve">
     <value>Terminologia del dipartimento / Termini</value>
   </data>
   <data name="FieldHelp.DepartmentTerminologyConfig.Terms" xml:space="preserve">
-    <value>Una voce per ogni modulo o tipo di registro rinominato, ad esempio Intervento invece di Run o Turno di servizio invece di Work. Un termine non elencato mostra il nome Resgrid nella lingua del membro. I nomi hanno al massimo 50 caratteri.</value>
+    <value>Una voce per ogni modulo o tipo di registro rinominato, ad esempio Intervento invece di Run o Turno di servizio invece di Work. La voce di un modulo può contenere anche la parola per un elemento, come Squadra per Unità rinominate Squadre; se vuota, viene ricavata dal nome. Un termine non elencato mostra il nome Resgrid nella lingua del membro. I nomi hanno al massimo 50 caratteri.</value>
   </data>
   <data name="Field.DepartmentTermOverride.Key" xml:space="preserve">
     <value>Termine del dipartimento / Chiave</value>
@@ -7109,5 +7109,11 @@
   </data>
   <data xml:space="preserve" name="SettingHelp.DispatchResponseCodes">
     <value>Codici facoltativi per unità (ad esempio C3 per luci e sirena) proposti dalle righe delle schede condizionali, e se gli equipaggi li vedono nelle notifiche e nelle app. Vuoto significa che i codici non compaiono da nessuna parte.</value>
+  </data>
+  <data name="Field.DepartmentTermOverride.Singular" xml:space="preserve">
+    <value>Termine del dipartimento / Un elemento</value>
+  </data>
+  <data name="FieldHelp.DepartmentTermOverride.Singular" xml:space="preserve">
+    <value>Per un modulo, la parola del dipartimento per un elemento, come Squadra per Unità rinominate Squadre, usata su pulsanti e intestazioni come Nuova squadra; al massimo 50 caratteri. Se vuota viene ricavata dal nome. I tipi di registro non ne hanno.</value>
   </data>
 </root>

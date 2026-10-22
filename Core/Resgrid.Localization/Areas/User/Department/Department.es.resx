@@ -1507,13 +1507,13 @@
     <value>Terminología</value>
   </data>
   <data name="TerminologyIntro" xml:space="preserve">
-    <value>Use las palabras propias de su departamento. Un nombre definido aquí reemplaza el nombre de Resgrid para ese módulo o tipo de registro en la navegación, en los títulos de página, dondequiera que se listen los tipos de registro y en las apps Responder, Unit, IC y Dispatch, para todos los miembros y en todos los idiomas. Solo cambia la etiqueta: los permisos, enlaces e integraciones no se ven afectados. Deje un campo vacío para mantener el nombre de Resgrid.</value>
+    <value>Use las palabras propias de su departamento. Un nombre definido aquí reemplaza el nombre de Resgrid para ese módulo o tipo de registro en todo el sitio web: en la navegación, los títulos de página, los botones, los encabezados de columna, los mensajes, las impresiones y las exportaciones, y en las apps Responder, Unit, IC y Dispatch, para todos los miembros y en todos los idiomas. Solo cambia la redacción: los permisos, enlaces, integraciones y todo lo que escriban sus miembros se mantienen igual. Deje un campo vacío para mantener el nombre de Resgrid.</value>
   </data>
   <data name="TerminologyModules" xml:space="preserve">
     <value>Módulos</value>
   </data>
   <data name="TerminologyModulesHelp" xml:space="preserve">
-    <value>Se muestra en la navegación, como título de la página principal del módulo y en los menús de las apps. Las frases en otros lugares que mencionan un módulo conservan la redacción de Resgrid.</value>
+    <value>Indique el nombre del módulo y, cuando lo tenga, la palabra para un solo elemento, como Equipos y Equipo para Unidades, para que botones como Nuevo equipo se lean con naturalidad; deje el elemento vacío para deducirlo del nombre. Los módulos marcados En todo Resgrid cambian dondequiera que Resgrid los menciona. Los demás cambian dentro de su propio módulo, porque palabras como nota, bitácora, registro o contacto también tienen significados cotidianos en otros lugares.</value>
   </data>
   <data name="TerminologyRecordTypes" xml:space="preserve">
     <value>Tipos de registro</value>
@@ -2087,5 +2087,17 @@
   </data>
   <data name="RunCardTemplateAppliedMessage" xml:space="preserve">
     <value>Creada desde una plantilla y guardada desactivada. Revise disparadores y filas, pruébela en la pestaña de prueba y actívela.</value>
+  </data>
+  <data name="TerminologySingularColumn" xml:space="preserve">
+    <value>Un elemento</value>
+  </data>
+  <data name="TerminologyWhereColumn" xml:space="preserve">
+    <value>Dónde cambia</value>
+  </data>
+  <data name="TerminologyScopeEverywhere" xml:space="preserve">
+    <value>En todo Resgrid</value>
+  </data>
+  <data name="TerminologyScopeModule" xml:space="preserve">
+    <value>En su propio módulo</value>
   </data>
 </root>

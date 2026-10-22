@@ -123,7 +123,7 @@ var resgrid;
 
             function getUnitStates(value) {
                 if (value) {
-                    initCurrentStatesSelect2(resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetUnitStatusesLevelsForDepartment?includeAny=False&includeMeanings=True&unitTypeId=' + value, 'Select available unit states...');
+                    initCurrentStatesSelect2(resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetUnitStatusesLevelsForDepartment?includeAny=False&includeMeanings=True&unitTypeId=' + value, resgrid.terms.apply('Select available unit states...'));
                 }
             }
             function setUnitStateDataDropdowns() {
@@ -179,8 +179,8 @@ var resgrid;
                     $('#beforeState, #currentState').hide();
                     $('#lockToGroupSection, #lowerLimitGroup, #unitTypesToMonitor, #currentStateMulti').show();
                     $('#roleToMonitor').hide();
-                    $('#currentStateMultiLabel').empty().append("Available Unit States");
-                    initCurrentStatesSelect2(resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetUnitStatusesLevelsForDepartment?includeAny=False&includeMeanings=True&unitTypeId=' + $('#SelectedUnitType').val(), 'Select available unit states...');
+                    $('#currentStateMultiLabel').empty().append(resgrid.terms.apply("Available Unit States"));
+                    initCurrentStatesSelect2(resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetUnitStatusesLevelsForDepartment?includeAny=False&includeMeanings=True&unitTypeId=' + $('#SelectedUnitType').val(), resgrid.terms.apply('Select available unit states...'));
                     initLowerLimit();
                 } else if (value === "13") {
                     $('#beforeState, #currentState').hide();
@@ -193,8 +193,8 @@ var resgrid;
                     $('#beforeState, #currentState').hide();
                     $('#lowerLimitGroup, #unitTypesToMonitor, #currentStateMulti').show();
                     $('#lockToGroupSection, #roleToMonitor').hide();
-                    $('#currentStateMultiLabel').empty().append("Available Unit States");
-                    initCurrentStatesSelect2(resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetUnitStatusesLevelsForDepartment?includeAny=False&includeMeanings=True&unitTypeId=' + $('#SelectedUnitType').val(), 'Select available unit states...');
+                    $('#currentStateMultiLabel').empty().append(resgrid.terms.apply("Available Unit States"));
+                    initCurrentStatesSelect2(resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetUnitStatusesLevelsForDepartment?includeAny=False&includeMeanings=True&unitTypeId=' + $('#SelectedUnitType').val(), resgrid.terms.apply('Select available unit states...'));
                     initLowerLimit();
                 } else if (value === "15" || value === "5" || value === "16") {
                     $('#beforeState, #currentState, #unitTypesToMonitor, #lowerLimitGroup, #roleToMonitor, #currentStateMulti, #usersToNotify').hide();

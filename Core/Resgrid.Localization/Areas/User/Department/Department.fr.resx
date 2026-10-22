@@ -1449,13 +1449,13 @@
     <value>Terminologie</value>
   </data>
   <data name="TerminologyIntro" xml:space="preserve">
-    <value>Utilisez les termes propres à votre service. Un nom défini ici remplace le nom Resgrid de ce module ou de ce type de dossier dans la navigation, dans les titres de page, partout où les types de dossier sont listés et dans les applications Responder, Unit, IC et Dispatch, pour tous les membres et dans toutes les langues. Seul le libellé change : les autorisations, les liens et les intégrations ne sont pas affectés. Laissez un champ vide pour conserver le nom Resgrid.</value>
+    <value>Utilisez les termes propres à votre service. Un nom défini ici remplace le nom Resgrid de ce module ou de ce type de dossier dans tout le site web : navigation, titres de page, boutons, en-têtes de colonne, messages, impressions et exports, ainsi que dans les applications Responder, Unit, IC et Dispatch, pour tous les membres et dans toutes les langues. Seule la formulation change : les autorisations, les liens, les intégrations et tout ce que vos membres ont saisi restent inchangés. Laissez un champ vide pour conserver le nom Resgrid.</value>
   </data>
   <data name="TerminologyModules" xml:space="preserve">
     <value>Modules</value>
   </data>
   <data name="TerminologyModulesHelp" xml:space="preserve">
-    <value>Affiché dans la navigation, comme titre de la page principale du module et dans les menus des applications. Les phrases ailleurs qui mentionnent un module gardent la formulation de Resgrid.</value>
+    <value>Indiquez le nom du module et, s'il en a un, le mot désignant un seul élément, par exemple Équipes et Équipe pour Unités, afin que des boutons comme Nouvelle équipe se lisent naturellement ; laissez l'élément vide pour qu'il soit déduit du nom. Les modules marqués Dans tout Resgrid changent partout où Resgrid les mentionne. Les autres changent dans leur propre module, car des mots comme note, journal, dossier ou contact ont aussi un sens courant ailleurs.</value>
   </data>
   <data name="TerminologyRecordTypes" xml:space="preserve">
     <value>Types de dossier</value>
@@ -2029,5 +2029,17 @@
   </data>
   <data name="RunCardTemplateAppliedMessage" xml:space="preserve">
     <value>Créée à partir d'un modèle et enregistrée désactivée. Vérifiez déclencheurs et lignes, testez-la dans l'onglet Test, puis activez-la.</value>
+  </data>
+  <data name="TerminologySingularColumn" xml:space="preserve">
+    <value>Un élément</value>
+  </data>
+  <data name="TerminologyWhereColumn" xml:space="preserve">
+    <value>Où il change</value>
+  </data>
+  <data name="TerminologyScopeEverywhere" xml:space="preserve">
+    <value>Dans tout Resgrid</value>
+  </data>
+  <data name="TerminologyScopeModule" xml:space="preserve">
+    <value>Dans son propre module</value>
   </data>
 </root>

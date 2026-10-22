@@ -330,29 +330,7 @@
                                 <div id="runCardCodePickers"></div>
                             </div>
                         </div>
-                        <div class="form-group" id="nearestUnitsRow" style="display: none;">
-                            <label class="col-sm-2 control-label">@localizer["NearestUnitsLabel"]</label>
-                            <div class="col-sm-10">
-                                <div class="text-muted" style="font-size: 11px;">@localizer["NearestUnitsHint"]</div>
-                                <div id="nearestUnitsBoundaries" class="text-muted" style="margin-bottom: 6px;"></div>
-                                <div class="table-responsive">
-                                    <table id="nearestUnitsTable" class="table table-striped table-bordered table-condensed" style="margin-bottom: 4px;">
-                                        <thead>
-                                            <tr>
-                                                <th>@localizer["NearestUnitsUnit"]</th>
-                                                <th>@localizer["NearestUnitsStatus"]</th>
-                                                <th>@localizer["NearestUnitsEta"]</th>
-                                                <th>@localizer["NearestUnitsPosition"]</th>
-                                                <th>@localizer["NearestUnitsShift"]</th>
-                                                <th>@localizer["NearestUnitsRoleMix"]</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody></tbody>
-                                    </table>
-                                </div>
-                                <div id="nearestUnitsNotes" class="text-muted" style="font-size: 11px;"></div>
-                            </div>
-                        </div>
+                        @await Html.PartialAsync("_NearestUnitsBoard", Model.Groups)
                         @if (showLinkedCall)
                         {
                             <div class="form-group">
@@ -460,7 +438,7 @@
                                             {
                                                 @Html.Raw("<div role='tabpanel' class='tab-pane active' id='unitsTab0'>")
                                                 ;
-                                                @Html.Raw("<div class='table-responsive'><table class='table table-striped'><thead><tr><th class='span1'><input type='checkbox' id='checkAllUnits0' class='check-all-units' data-unit-grid='unitGroups_0'/></th><th>" + Html.Encode(commonLocalizer["Name"].Value) + "</th><th>" + Html.Encode(commonLocalizer["Type"].Value) + "</th><th>" + Html.Encode(commonLocalizer["Status"].Value) + "</th></tr></thead><tbody id='unitGroups_0'>")
+                                                @Html.Raw("<div class='table-responsive'><table class='table table-striped'><thead><tr><th class='span1'><input type='checkbox' id='checkAllUnits0' class='check-all-units' data-unit-grid='unitGroups_0'/></th><th>" + Html.Encode(commonLocalizer["Name"].Value) + "</th><th>" + Html.Encode(commonLocalizer["Type"].Value) + "</th><th>" + Html.Encode(commonLocalizer["Status"].Value) + "</th><th>" + Html.Encode(localizer["NearestUnitsEta"].Value) + "</th></tr></thead><tbody id='unitGroups_0'>")
                                                 ;
 
                                                 if (ungroupedUnits2 != null && ungroupedUnits2.Any())
@@ -484,7 +462,7 @@
                                                             }
                                                         }
 
-                                                        @Html.Raw("<tr><td><input type='checkbox' id='dispatchUnit_" + u.UnitId + "' name='dispatchUnit_" + u.UnitId + "' /></td><td>" + TypeIconHtml.Image(Model.UnitTypes, u.Type) + Html.Encode(u.Name) + "</td><td>" + Html.Encode(u.Type) + "</td><td><span class='label label-default' style='color:" + Html.Encode(stateTextColor) + ";background-color:" + Html.Encode(stateColor) + ";'>" + Html.Encode(stateText) + "</span></td></tr>")
+                                                        @Html.Raw("<tr><td><input type='checkbox' id='dispatchUnit_" + u.UnitId + "' name='dispatchUnit_" + u.UnitId + "' /></td><td>" + TypeIconHtml.Image(Model.UnitTypes, u.Type) + Html.Encode(u.Name) + "<div class='unit-board-crew text-muted small' data-unit-id='" + u.UnitId + "'></div></td><td>" + Html.Encode(u.Type) + "</td><td><span class='label label-default' style='color:" + Html.Encode(stateTextColor) + ";background-color:" + Html.Encode(stateColor) + ";'>" + Html.Encode(stateText) + "</span></td><td class='unit-board-eta' data-unit-id='" + u.UnitId + "'>&mdash;</td></tr>")
                                                         ;
                                                     }
                                                 }
@@ -511,7 +489,7 @@
                                                         ;
                                                     }
 
-                                                    @Html.Raw("<div class='table-responsive'><table class='table table-striped'><thead><tr><th class='span1'><input type='checkbox' id='checkAllUnits" + Model.Groups[i].DepartmentGroupId + "' class='check-all-units' data-unit-grid='unitGroups_" + Model.Groups[i].DepartmentGroupId + "'/></th><th>" + Html.Encode(commonLocalizer["Name"].Value) + "</th><th>" + Html.Encode(commonLocalizer["Type"].Value) + "</th><th>" + Html.Encode(commonLocalizer["Status"].Value) + "</th></tr></thead><tbody id='unitGroups_" + Model.Groups[i].DepartmentGroupId + "'>")
+                                                    @Html.Raw("<div class='table-responsive'><table class='table table-striped'><thead><tr><th class='span1'><input type='checkbox' id='checkAllUnits" + Model.Groups[i].DepartmentGroupId + "' class='check-all-units' data-unit-grid='unitGroups_" + Model.Groups[i].DepartmentGroupId + "'/></th><th>" + Html.Encode(commonLocalizer["Name"].Value) + "</th><th>" + Html.Encode(commonLocalizer["Type"].Value) + "</th><th>" + Html.Encode(commonLocalizer["Status"].Value) + "</th><th>" + Html.Encode(localizer["NearestUnitsEta"].Value) + "</th></tr></thead><tbody id='unitGroups_" + Model.Groups[i].DepartmentGroupId + "'>")
                                                     ;
 
                                                     if (groupUnits != null && groupUnits.Any())
@@ -535,7 +513,7 @@
                                                                 }
                                                             }
 
-                                                            @Html.Raw("<tr><td><input type='checkbox' id='dispatchUnit_" + u.UnitId + "' name='dispatchUnit_" + u.UnitId + "' /></td><td>" + TypeIconHtml.Image(Model.UnitTypes, u.Type) + Html.Encode(u.Name) + "</td><td>" + Html.Encode(u.Type) + "</td><td><span class='label label-default' style='color:" + Html.Encode(stateTextColor) + ";background-color:" + Html.Encode(stateColor) + ";'>" + Html.Encode(stateText) + "</span></td></tr>")
+                                                            @Html.Raw("<tr><td><input type='checkbox' id='dispatchUnit_" + u.UnitId + "' name='dispatchUnit_" + u.UnitId + "' /></td><td>" + TypeIconHtml.Image(Model.UnitTypes, u.Type) + Html.Encode(u.Name) + "<div class='unit-board-crew text-muted small' data-unit-id='" + u.UnitId + "'></div></td><td>" + Html.Encode(u.Type) + "</td><td><span class='label label-default' style='color:" + Html.Encode(stateTextColor) + ";background-color:" + Html.Encode(stateColor) + ";'>" + Html.Encode(stateText) + "</span></td><td class='unit-board-eta' data-unit-id='" + u.UnitId + "'>&mdash;</td></tr>")
                                                             ;
                                                         }
                                                     }
@@ -776,36 +754,19 @@
         var osmTileAttribution = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(mapConfig.Attribution, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
         var nominatimUrl = '@Resgrid.Config.MappingConfig.NominatimUrl';
         var osrmUrl = '@Resgrid.Config.MappingConfig.OsrmUrl';
-        var nearestUnitStrings = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(new Dictionary<string, string>
-        {
-            ["inBoundary"] = localizer["NearestUnitsInBoundary"].Value,
-            ["inParentBoundary"] = localizer["NearestUnitsInParentBoundary"].Value,
-            ["incidentInside"] = localizer["NearestUnitsIncidentInside"].Value,
-            ["noBoundary"] = localizer["NearestUnitsNoBoundary"].Value,
-            ["estimate"] = localizer["NearestUnitsEstimate"].Value,
-            ["minutes"] = localizer["NearestUnitsMinutes"].Value,
-            ["includesTurnout"] = localizer["NearestUnitsIncludesTurnout"].Value,
-            ["live"] = localizer["NearestUnitsLive"].Value,
-            ["station"] = localizer["NearestUnitsStation"].Value,
-            ["stale"] = localizer["NearestUnitsStale"].Value,
-            ["noPosition"] = localizer["NearestUnitsNoPosition"].Value,
-            ["crewOnShift"] = localizer["NearestUnitsCrewOnShift"].Value,
-            ["stationShift"] = localizer["NearestUnitsStationShift"].Value,
-            ["noCrew"] = localizer["NearestUnitsNoCrew"].Value,
-            ["scoped"] = localizer["NearestUnitsScoped"].Value
-        }, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
     </script>
 
     @if (Model.CenterCoordinates != null && Model.CenterCoordinates.Latitude.HasValue && Model.CenterCoordinates.Longitude.HasValue)
     {
         <script type="text/javascript">
-            var centerLat = @(Model.CenterCoordinates.Latitude.Value);
-            var centerLng = @(Model.CenterCoordinates.Longitude.Value);
+            var centerLat = @(Model.CenterCoordinates.Latitude.Value.ToString(System.Globalization.CultureInfo.InvariantCulture));
+            var centerLng = @(Model.CenterCoordinates.Longitude.Value.ToString(System.Globalization.CultureInfo.InvariantCulture));
         </script>
     }
 
     @await Html.PartialAsync("_DispatchLocalizationScript")
     <script src="~/js/app/internal/dispatch/resgrid.dispatch.runcarddecision.js"></script>
+    <script src="~/js/app/internal/dispatch/resgrid.dispatch.nearestboard.js"></script>
     <script src="~/js/app/internal/dispatch/resgrid.dispatch.newcall.js"></script>
 
     <script type="text/javascript">

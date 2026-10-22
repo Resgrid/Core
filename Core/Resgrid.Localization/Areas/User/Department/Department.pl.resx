@@ -1449,13 +1449,13 @@
     <value>Terminologia</value>
   </data>
   <data name="TerminologyIntro" xml:space="preserve">
-    <value>Używaj słownictwa swojej jednostki. Nazwa ustawiona tutaj zastępuje nazwę Resgrid danego modułu lub typu rejestru w nawigacji, w tytułach stron, wszędzie tam, gdzie wymieniane są typy rejestrów, oraz w aplikacjach Responder, Unit, IC i Dispatch, dla wszystkich członków i we wszystkich językach. Zmienia się tylko etykieta: uprawnienia, łącza i integracje pozostają bez zmian. Pozostaw pole puste, aby zachować nazwę Resgrid.</value>
+    <value>Używaj słownictwa swojej jednostki. Nazwa ustawiona tutaj zastępuje nazwę Resgrid danego modułu lub typu rejestru w całej witrynie: w nawigacji, tytułach stron, przyciskach, nagłówkach kolumn, komunikatach, wydrukach i eksportach, a także w aplikacjach Responder, Unit, IC i Dispatch, dla wszystkich członków i we wszystkich językach. Zmienia się tylko brzmienie: uprawnienia, łącza, integracje i wszystko, co wpisali Twoi członkowie, pozostają bez zmian. Pozostaw pole puste, aby zachować nazwę Resgrid.</value>
   </data>
   <data name="TerminologyModules" xml:space="preserve">
     <value>Moduły</value>
   </data>
   <data name="TerminologyModulesHelp" xml:space="preserve">
-    <value>Wyświetlana w nawigacji, jako tytuł strony głównej modułu i w menu aplikacji. Zdania w innych miejscach, które wspominają moduł, zachowują brzmienie Resgrid.</value>
+    <value>Podaj nazwę modułu i, jeśli istnieje, słowo oznaczające pojedynczy element, np. Zespoły i Zespół dla Jednostek, aby przyciski takie jak Nowy zespół brzmiały naturalnie; pozostaw element pusty, aby został wyprowadzony z nazwy. Moduły oznaczone „W całym Resgrid” zmieniają się wszędzie, gdzie Resgrid o nich wspomina. Pozostałe zmieniają się we własnym module, ponieważ słowa takie jak notatka, dziennik, rejestr czy kontakt mają też codzienne znaczenia w innych miejscach.</value>
   </data>
   <data name="TerminologyRecordTypes" xml:space="preserve">
     <value>Typy rejestrów</value>
@@ -2029,5 +2029,17 @@
   </data>
   <data name="RunCardTemplateAppliedMessage" xml:space="preserve">
     <value>Utworzona z szablonu i zapisana jako wyłączona. Sprawdź wyzwalacze i wiersze, przetestuj w zakładce Test, a potem włącz.</value>
+  </data>
+  <data name="TerminologySingularColumn" xml:space="preserve">
+    <value>Jeden element</value>
+  </data>
+  <data name="TerminologyWhereColumn" xml:space="preserve">
+    <value>Gdzie się zmienia</value>
+  </data>
+  <data name="TerminologyScopeEverywhere" xml:space="preserve">
+    <value>W całym Resgrid</value>
+  </data>
+  <data name="TerminologyScopeModule" xml:space="preserve">
+    <value>We własnym module</value>
   </data>
 </root>

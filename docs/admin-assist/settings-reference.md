@@ -3459,14 +3459,14 @@ Default: the kind's built-in width. Source: DocumentNumberPattern.SequenceWidth.
 <a id="setting-departmentterminology"></a>
 ## Department Terminology
 
-Department Terminology. The department's own names for modules and built-in record types, shown in the navigation, on module page titles, wherever record types are listed and in the Responder, Unit, IC and Dispatch apps, in every language. Labels only: permissions, links and API values do not change. A term with no name uses Resgrid's.
+Department Terminology. The department's own names for modules, with the word for one item (Team for Units renamed Teams), and for built-in record types. They are carried through the website's navigation, page titles, buttons, column headings, messages and exports, and shown in the Responder, Unit, IC and Dispatch apps, in every language. Labels only: permissions, links, API values and members' own text do not change. A term with no name uses Resgrid's.
 
 Default: missing = the shipped names. Source: DepartmentSettingTypes.DepartmentTerminology.
 
 <a id="field-departmentterminologyconfig-terms"></a>
 ## Department Terminology / Terms
 
-Department Terminology / Terms. One entry per renamed module or record type, for example Incident for Run or Shift On Duty for Work. A term not listed shows Resgrid's name in the member's language. Names are at most 50 characters.
+Department Terminology / Terms. One entry per renamed module or record type, for example Incident for Run or Shift On Duty for Work. A module entry can also hold the word for one item, such as Team for Units renamed Teams; left empty, it is worked out from the name. A term not listed shows Resgrid's name in the member's language. Names are at most 50 characters.
 
 Default: empty. Source: DepartmentTerminologyConfig.Terms.
 
@@ -3483,3 +3483,10 @@ Default: unset. Source: DepartmentTermOverride.Key.
 Department Term / Name. The department's word for the term, at most 50 characters. The same word shows for every member in every language; empty uses Resgrid's name.
 
 Default: unset (Resgrid's name). Source: DepartmentTermOverride.Text.
+
+<a id="field-departmenttermoverride-singular"></a>
+## Department Term / One Item
+
+Department Term / One Item. For a module, the department's word for one item, such as Team for Units renamed Teams, used on buttons and headings like New Team; at most 50 characters. Empty works it out from the name. Record types have none.
+
+Default: unset (worked out from the name). Source: DepartmentTermOverride.Singular.

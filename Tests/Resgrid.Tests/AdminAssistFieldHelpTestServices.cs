@@ -41,17 +41,25 @@ namespace Resgrid.Tests
 				settings.Setup(s => s.GetDepartmentTerminologyAsync(It.IsAny<int>(), It.IsAny<bool>())).ReturnsAsync(new DepartmentTerminologyConfig());
 				return new Resgrid.Web.Helpers.DepartmentTerminology(settings.Object,
 					sp.GetService<IHttpContextAccessor>() ?? Mock.Of<IHttpContextAccessor>(),
-					Localizer<Resgrid.Localization.Common>(sp),
-					Localizer<Resgrid.Localization.Areas.User.UserDefinedFields.UserDefinedFields>(sp),
-					Localizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders>(sp),
-					Localizer<Resgrid.Localization.Areas.User.Checklists.Checklists>(sp));
+					new ShippedLocalizers(sp.GetService<IStringLocalizerFactory>()));
 			});
 			return services;
 		}
 
-		private static IStringLocalizer<T> Localizer<T>(IServiceProvider sp)
+		/// <summary>The harness's own localizers when it registered localization, else loose mocks (English catalog names).</summary>
+		internal sealed class ShippedLocalizers : Resgrid.Web.Helpers.IShippedStringLocalizerFactory
 		{
-			return sp.GetService<IStringLocalizer<T>>() ?? Mock.Of<IStringLocalizer<T>>();
+			private readonly IStringLocalizerFactory _factory;
+
+			public ShippedLocalizers(IStringLocalizerFactory factory)
+			{
+				_factory = factory;
+			}
+
+			public IStringLocalizer Create(Type resourceSource)
+			{
+				return _factory?.Create(resourceSource) ?? Mock.Of<IStringLocalizer>();
+			}
 		}
 	}
 }

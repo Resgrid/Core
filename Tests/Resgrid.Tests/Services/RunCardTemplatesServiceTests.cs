@@ -141,6 +141,45 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task a_comparison_whose_sides_collapse_to_one_class_blocks_applying()
+		{
+			// The department has an aerial but no "Quint": the quint side falls back to the Aerial class, the side it is
+			// compared with.
+			_unitTypes = new List<UnitType>
+			{
+				new UnitType { UnitTypeId = 1, Type = "Engine", BaseType = (int)UnitTypeClasses.Engine },
+				new UnitType { UnitTypeId = 8, Type = "Tower", BaseType = (int)UnitTypeClasses.Aerial }
+			};
+
+			var preview = await _service.PreviewAsync(DepartmentId, "fire-ladder-or-quint");
+
+			preview.CanApply.Should().BeFalse();
+			preview.Unmatched.Should().ContainSingle(u => u.Contains("Quint") && u.Contains("tell it apart"));
+
+			var result = await _service.ApplyAsync(DepartmentId, "fire-ladder-or-quint", "admin");
+			result.Success.Should().BeFalse();
+			_packages.Verify(x => x.SavePackageAsync(It.IsAny<ResponsePackage>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task a_card_refused_on_save_takes_the_packages_it_created_with_it()
+		{
+			_runCards.Setup(x => x.SaveRunCardAsync(It.IsAny<RunCard>(), It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new RunCardValidationException(new[] { "Alarm level 1: refused." }));
+			var deleted = new List<int>();
+			_packages.Setup(x => x.DeletePackageAsync(DepartmentId, It.IsAny<int>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((int d, int id, CancellationToken c) => { deleted.Add(id); return true; });
+
+			var result = await _service.ApplyAsync(DepartmentId, "fire-structure-first-alarm", "admin");
+
+			result.Success.Should().BeFalse();
+			result.Message.Should().Contain("refused");
+			_savedPackages.Should().NotBeEmpty();
+			// Newest first, so a package naming another as its substitute goes before it.
+			deleted.Should().Equal(_savedPackages.Select(p => p.ResponsePackageId).Reverse().ToList());
+		}
+
+		[Test]
 		public async Task suggestions_favour_call_types_no_card_covers()
 		{
 			var suggestions = await _service.GetSuggestionsAsync(DepartmentId, 20);

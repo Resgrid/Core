@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,9 +30,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly ICallsService _callsService;
 		private readonly IUnitsService _unitsService;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
+		private readonly IDispatchScopeService _dispatchScopeService;
 
 		public AwaitingResourcesController(IOutstandingRequirementsService outstandingRequirementsService, IFeatureToggleService featureToggleService,
-			IAuthorizationService authorizationService, ICallsService callsService, IUnitsService unitsService, IDepartmentSettingsService departmentSettingsService)
+			IAuthorizationService authorizationService, ICallsService callsService, IUnitsService unitsService, IDepartmentSettingsService departmentSettingsService,
+			IDispatchScopeService dispatchScopeService)
 		{
 			_outstandingRequirementsService = outstandingRequirementsService;
 			_featureToggleService = featureToggleService;
@@ -39,11 +42,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_callsService = callsService;
 			_unitsService = unitsService;
 			_departmentSettingsService = departmentSettingsService;
+			_dispatchScopeService = dispatchScopeService;
 		}
 
 		/// <summary>
 		/// Every active call of the department still awaiting a required resource, highest priority then oldest first, with
-		/// the units now available that match each requirement (nearest first when it can be measured).
+		/// the units now available that match each requirement (nearest first when it can be measured). Under group-scoped
+		/// dispatch, only the calls the user dispatches (the same calls as the active call list).
 		/// </summary>
 		[HttpGet("GetAwaitingCalls")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
@@ -53,7 +58,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var result = new AwaitingResourcesResult { Enabled = await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCardConditions, DepartmentId) };
 
 			if (result.Enabled)
-				result.Data = await _outstandingRequirementsService.GetAwaitingCallsAsync(DepartmentId, cancellationToken);
+			{
+				var scope = await _dispatchScopeService.GetScopeForUserAsync(DepartmentId, UserId);
+				var visibleCallIds = scope.IsDepartmentWide
+					? null
+					: new HashSet<int>((await _dispatchScopeService.FilterCallsAsync(scope, await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId))).Select(c => c.CallId));
+
+				result.Data = await _outstandingRequirementsService.GetAwaitingCallsAsync(DepartmentId, visibleCallIds, cancellationToken);
+			}
 
 			result.PageSize = result.Data.Count;
 			result.Status = ResponseHelper.Success;

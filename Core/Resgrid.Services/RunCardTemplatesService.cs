@@ -75,7 +75,33 @@ namespace Resgrid.Services
 			// Substitute packages before the packages that point at them.
 			var packageIds = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
 			var substituteKeys = new HashSet<string>(template.Packages.SelectMany(p => p.Rows).Where(r => r.SubstitutePackageKey != null).Select(r => r.SubstitutePackageKey), StringComparer.OrdinalIgnoreCase);
+			var createdPackageIds = new List<int>();
 
+			try
+			{
+				return await CreatePackagesAndCardAsync(departmentId, template, userId, lookups, preview, codeIds, packageIds, substituteKeys, createdPackageIds, cancellationToken);
+			}
+			catch (RunCardValidationException ex)
+			{
+				Logging.LogException(ex, $"Run card template '{template.Id}' produced an invalid card for department {departmentId}.");
+				await RemoveCreatedPackagesAsync(departmentId, createdPackageIds);
+				return new RunCardTemplateApplyResult { Success = false, Preview = preview, Message = ex.Message };
+			}
+			catch
+			{
+				await RemoveCreatedPackagesAsync(departmentId, createdPackageIds);
+				throw;
+			}
+		}
+
+		/// <summary>
+		/// The template's packages (reusing ones the department already has by name), then the disabled card. Every package
+		/// it creates is added to <paramref name="createdPackageIds"/> as soon as it exists, so a failed apply can remove them.
+		/// </summary>
+		private async Task<RunCardTemplateApplyResult> CreatePackagesAndCardAsync(int departmentId, RunCardTemplate template, string userId, DepartmentLookups lookups,
+			RunCardTemplatePreview preview, Dictionary<string, int> codeIds, Dictionary<string, int> packageIds, HashSet<string> substituteKeys,
+			List<int> createdPackageIds, CancellationToken cancellationToken)
+		{
 			foreach (var package in template.Packages.OrderBy(p => substituteKeys.Contains(p.Key) ? 0 : 1))
 			{
 				var existing = lookups.Packages.FirstOrDefault(p => string.Equals(p.Name?.Trim(), package.Name, StringComparison.OrdinalIgnoreCase));
@@ -112,6 +138,7 @@ namespace Resgrid.Services
 					Rows = rows
 				}, userId, cancellationToken);
 
+				createdPackageIds.Add(saved.ResponsePackageId);
 				packageIds[package.Key] = saved.ResponsePackageId;
 				lookups.Packages.Add(saved);
 			}
@@ -162,15 +189,27 @@ namespace Resgrid.Services
 				AvailabilitySelections = new List<RunCardAvailabilitySelection>()
 			};
 
-			try
+			var savedCard = await _runCardsService.SaveRunCardAsync(card, cancellationToken);
+			return new RunCardTemplateApplyResult { Success = true, RunCardId = savedCard.RunCardId, Preview = preview, Message = "Created disabled: test it on the Test tab, then enable it." };
+		}
+
+		/// <summary>
+		/// Removes the packages a failed apply created, newest first (a package naming another as its substitute goes before
+		/// it), so a retry builds them again instead of reusing leftovers by name. The codes it added stay: they are the
+		/// department's catalog, and a retry reuses them.
+		/// </summary>
+		private async Task RemoveCreatedPackagesAsync(int departmentId, List<int> createdPackageIds)
+		{
+			foreach (var packageId in Enumerable.Reverse(createdPackageIds))
 			{
-				var saved = await _runCardsService.SaveRunCardAsync(card, cancellationToken);
-				return new RunCardTemplateApplyResult { Success = true, RunCardId = saved.RunCardId, Preview = preview, Message = "Created disabled: test it on the Test tab, then enable it." };
-			}
-			catch (RunCardValidationException ex)
-			{
-				Logging.LogException(ex, $"Run card template '{template.Id}' produced an invalid card for department {departmentId}.");
-				return new RunCardTemplateApplyResult { Success = false, Preview = preview, Message = ex.Message };
+				try
+				{
+					await _responsePackagesService.DeletePackageAsync(departmentId, packageId, CancellationToken.None);
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex, $"Removing response package {packageId} after a failed run card template apply for department {departmentId} failed.");
+				}
 			}
 		}
 
@@ -241,6 +280,12 @@ namespace Resgrid.Services
 					preview.Unmatched.Add(DescribeTemplateTarget(target));
 			}
 
+			foreach (var unmatched in DescribeIndistinctComparisons(template, lookups))
+			{
+				if (!preview.Unmatched.Contains(unmatched))
+					preview.Unmatched.Add(unmatched);
+			}
+
 			foreach (var trigger in BuildTriggers(template, lookups, preview))
 			{
 				var priority = lookups.Priorities.FirstOrDefault(p => p.DepartmentCallPriorityId == trigger.Priority)?.Name;
@@ -270,6 +315,48 @@ namespace Resgrid.Services
 			}
 
 			return preview;
+		}
+
+		/// <summary>
+		/// "Arrives before" conditions whose two sides map to the same units here. A named unit type with no match falls back
+		/// to its whole class ("Quint" to Aerial), so a department with the class but not the name gets a condition comparing
+		/// the class with itself: meaningless, and refused by the card's validation after the packages were written. Each side
+		/// that fell back is named as the missing resource.
+		/// </summary>
+		private static IEnumerable<string> DescribeIndistinctComparisons(RunCardTemplate template, DepartmentLookups lookups)
+		{
+			var conditions = template.Levels.SelectMany(l => l.Nodes)
+				.Where(n => n.Kind == RunCardDecisionNodeKinds.Condition && n.ConditionType == RunCardConditionTypes.ArrivesBefore);
+
+			foreach (var node in conditions)
+			{
+				var subject = node.SubjectTargets.SelectMany(t => ResolveTarget(t, lookups, null)).ToList();
+				var reference = node.ReferenceTargets.SelectMany(t => ResolveTarget(t, lookups, null)).ToList();
+
+				// The same rule as RunCardDecisionGraph.Validate (templates set no status meanings).
+				if (!subject.Any() || !reference.Any() || node.SubjectStatusFilter != node.ReferenceStatusFilter || !RunCardDecisionGraph.SameTargets(subject, reference))
+					continue;
+
+				var fellBack = node.SubjectTargets.Where(t => ResolvesByClassOnly(t, lookups)).Select(t => Tuple.Create(t, node.ReferenceTargets))
+					.Concat(node.ReferenceTargets.Where(t => ResolvesByClassOnly(t, lookups)).Select(t => Tuple.Create(t, node.SubjectTargets)))
+					.ToList();
+
+				if (!fellBack.Any())
+				{
+					yield return $"'{node.Label}': both sides map to the same units";
+					continue;
+				}
+
+				foreach (var side in fellBack)
+					yield return $"{DescribeTemplateTarget(side.Item1)} (needed to tell it apart from {string.Join(", ", side.Item2.Select(DescribeTemplateTarget))})";
+			}
+		}
+
+		/// <summary>A unit type target that matched no type by name, so it maps to its whole class.</summary>
+		private static bool ResolvesByClassOnly(RunCardTemplateTarget target, DepartmentLookups lookups)
+		{
+			return target.Kind == RunCardTargetKinds.UnitType
+				&& !lookups.UnitTypes.Any(t => target.SuggestedNames.Any(n => string.Equals(t.Type?.Trim(), n, StringComparison.OrdinalIgnoreCase)));
 		}
 
 		/// <summary>The department targets a template target maps to; empty when nothing matches.</summary>

@@ -168,6 +168,8 @@
         resgrid.absoluteBaseUrl = "@Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl";
         resgrid.absoluteApiBaseUrl = "@Resgrid.Config.SystemBehaviorConfig.ResgridApiBaseUrl";
         resgrid.absoluteEventingBaseUrl = "@Resgrid.Config.SystemBehaviorConfig.ResgridEventingBaseUrl";
+        @* Text built in page scripts carries the department's terminology too (resgrid.terms.apply). *@
+        resgrid.terms.setup(@Html.Raw(System.Text.Json.JsonSerializer.Serialize(await departmentTerms.ClientRulesAsync())));
 
 		localStorage.removeItem("RgWebApp.auth-tokens");
     </script>

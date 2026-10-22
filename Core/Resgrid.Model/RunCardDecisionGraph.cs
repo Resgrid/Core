@@ -124,7 +124,8 @@ namespace Resgrid.Model
 				if (cycle)
 					return;
 
-				if (depth > MaximumDepth)
+				// Questions count toward the depth, not the outcome that ends a path: eight questions in a row are allowed.
+				if (depth > MaximumDepth && node.NodeKind == (int)RunCardDecisionNodeKinds.Condition)
 				{
 					tooDeep = true;
 					return;

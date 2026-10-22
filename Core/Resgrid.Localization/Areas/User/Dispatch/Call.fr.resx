@@ -1068,4 +1068,37 @@
   <data name="NewCallFieldRequired" xml:space="preserve">
     <value>{0} est obligatoire dans ce service.</value>
   </data>
+  <data name="NearestUnitsPick" xml:space="preserve">
+    <value>Engager</value>
+  </data>
+  <data name="NearestPersonnelLabel" xml:space="preserve">
+    <value>Personnel le plus proche</value>
+  </data>
+  <data name="NearestPersonnelPerson" xml:space="preserve">
+    <value>Personne</value>
+  </data>
+  <data name="NearestPersonnelStaffing" xml:space="preserve">
+    <value>Disponibilité</value>
+  </data>
+  <data name="NearestPersonnelGroupRoles" xml:space="preserve">
+    <value>Groupe / rôles</value>
+  </data>
+  <data name="NearestUnitsNearest" xml:space="preserve">
+    <value>Plus proche n°{0}</value>
+  </data>
+  <data name="NearestUnitsHidden" xml:space="preserve">
+    <value>Position masquée</value>
+  </data>
+  <data name="NearestPersonnelOnUnit" xml:space="preserve">
+    <value>Sur {0}</value>
+  </data>
+  <data name="NearestUnitsMapUnits" xml:space="preserve">
+    <value>Unités</value>
+  </data>
+  <data name="NearestUnitsMapPersonnel" xml:space="preserve">
+    <value>Personnel</value>
+  </data>
+  <data name="NearestUnitsMapBoundaries" xml:space="preserve">
+    <value>Secteurs des casernes</value>
+  </data>
 </root>

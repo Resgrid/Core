@@ -272,7 +272,9 @@ namespace Resgrid.Services
 					UnitId = Person.UnitId,
 					UnitName = Person.UnitName,
 					StatusText = Person.StatusText,
+					StatusColor = Person.StatusColor,
 					StaffingText = Person.StaffingText,
+					StaffingColor = Person.StaffingColor,
 					IsAvailable = IsAvailable,
 					IsOnShift = Person.IsOnShift,
 					Roles = Person.Roles.Where(r => !string.IsNullOrWhiteSpace(r.Name)).Select(r => r.Name)
@@ -309,7 +311,11 @@ namespace Resgrid.Services
 
 			public string StatusText { get; set; }
 
+			public string StatusColor { get; set; }
+
 			public string StaffingText { get; set; }
+
+			public string StaffingColor { get; set; }
 
 			public bool IsAvailable { get; set; }
 
@@ -340,6 +346,8 @@ namespace Resgrid.Services
 			var userStates = await _userStateService.GetLatestStatesForDepartmentAsync(departmentId) ?? new List<UserState>();
 			var personnelDetails = BuildCustomDetailMap(await _customStateService.GetActivePersonnelStateForDepartmentAsync(departmentId));
 			var staffingDetails = BuildCustomDetailMap(await _customStateService.GetActiveStaffingLevelsForDepartmentAsync(departmentId));
+			// No status inside the auto-available hour reads as the department's Available status, as on every other list.
+			var defaultStatus = await _customStateService.GetDefaultPersonnelStatusAsync(departmentId);
 			var locations = await _personnelLocationResolver.GetLatestLocationsAsync(departmentId, config.PersonnelMaxLocationAgeSeconds, now)
 				?? new Dictionary<string, ResolvedPersonnelLocation>();
 			var onShift = await _shiftsService.GetOnShiftPersonnelAsync(departmentId, now) ?? new List<OnShiftAssignment>();
@@ -376,14 +384,19 @@ namespace Resgrid.Services
 				stateByUser.TryGetValue(row.UserId, out var lastState);
 				locations.TryGetValue(row.UserId, out var location);
 
+				var status = GetPersonnelStatus(lastLog, personnelDetails, defaultStatus);
+				var staffing = GetStaffing(lastState, staffingDetails);
+
 				var person = new Person
 				{
 					UserId = row.UserId,
 					Name = row.Name?.Trim(),
 					HomeGroupId = row.DepartmentGroupId,
 					Roles = rolesByUser.TryGetValue(row.UserId, out var roles) ? roles.Where(r => r != null).ToList() : new List<PersonnelRole>(),
-					StatusText = GetPersonnelStatusText(lastLog, personnelDetails),
-					StaffingText = GetStaffingText(lastState, staffingDetails),
+					StatusText = status.Text,
+					StatusColor = status.Color,
+					StaffingText = staffing.Text,
+					StaffingColor = staffing.Color,
 					IsAvailable = IsPersonnelStatusAvailable(lastLog, personnelDetails, latestUnitAvailability) && IsPersonnelStaffingAvailable(lastState, staffingDetails),
 					Location = location != null && IsUsableCoordinate(location.Latitude, location.Longitude) ? location : null
 				};
@@ -692,26 +705,41 @@ namespace Resgrid.Services
 			return Enum.IsDefined(typeof(UnitStateTypes), stateId) ? ((UnitStateTypes)stateId).ToString() : stateId.ToString(CultureInfo.InvariantCulture);
 		}
 
-		private static string GetPersonnelStatusText(ActionLog lastLog, Dictionary<int, CustomStateDetail> customDetails)
+		/// <summary>
+		/// The person's status as the lists show it: the department's own option, else the built-in status's name ("On Scene",
+		/// not "OnScene"); with no status inside the auto-available hour, the department's default (its Available option).
+		/// The colour is hex or null.
+		/// </summary>
+		private static (string Text, string Color) GetPersonnelStatus(ActionLog lastLog, Dictionary<int, CustomStateDetail> customDetails, CustomStateDetail defaultStatus)
 		{
 			if (lastLog == null)
-				return ActionTypes.StandingBy.ToString();
+			{
+				return defaultStatus != null
+					? (defaultStatus.ButtonText, UnitStatusColors.ToHexColor(defaultStatus.ButtonClassToColor()))
+					: ("Standing By", "#777");
+			}
 
 			if (customDetails.TryGetValue(lastLog.ActionTypeId, out var detail))
-				return detail.ButtonText;
+				return (detail.ButtonText, UnitStatusColors.ToHexColor(detail.ButtonClassToColor()));
 
-			return Enum.IsDefined(typeof(ActionTypes), lastLog.ActionTypeId) ? ((ActionTypes)lastLog.ActionTypeId).ToString() : lastLog.ActionTypeId.ToString(CultureInfo.InvariantCulture);
+			if (!Enum.IsDefined(typeof(ActionTypes), lastLog.ActionTypeId))
+				return (lastLog.ActionTypeId.ToString(CultureInfo.InvariantCulture), null);
+
+			return (lastLog.GetActionText(), UnitStatusColors.ToHexColor(new CustomStateDetail { ButtonColor = lastLog.GetActionCss() }.ButtonClassToColor()));
 		}
 
-		private static string GetStaffingText(UserState lastState, Dictionary<int, CustomStateDetail> customDetails)
+		/// <summary>The person's staffing level: the department's own level, else the built-in level's name. The colour is hex or null.</summary>
+		private static (string Text, string Color) GetStaffing(UserState lastState, Dictionary<int, CustomStateDetail> customDetails)
 		{
-			if (lastState == null)
-				return UserStateTypes.Available.ToString();
+			var state = lastState ?? new UserState { State = (int)UserStateTypes.Available };
 
-			if (customDetails.TryGetValue(lastState.State, out var detail))
-				return detail.ButtonText;
+			if (customDetails.TryGetValue(state.State, out var detail))
+				return (detail.ButtonText, UnitStatusColors.ToHexColor(detail.ButtonClassToColor()));
 
-			return Enum.IsDefined(typeof(UserStateTypes), lastState.State) ? ((UserStateTypes)lastState.State).ToString() : lastState.State.ToString(CultureInfo.InvariantCulture);
+			if (!Enum.IsDefined(typeof(UserStateTypes), state.State))
+				return (state.State.ToString(CultureInfo.InvariantCulture), null);
+
+			return (state.GetStaffingText(), UnitStatusColors.ToHexColor(new CustomStateDetail { ButtonColor = state.GetStaffingCss() }.ButtonClassToColor()));
 		}
 
 		#endregion

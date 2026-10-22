@@ -781,8 +781,9 @@
         var codes = [];
         try { codes = JSON.parse($codesField.val() || '[]') || []; } catch (e) { codes = []; }
 
+        // The table puts these in value="..." attributes, so quotes are escaped too.
         function esc(text) {
-            return $('<span>').text(text === null || text === undefined ? '' : text).html();
+            return $('<span>').text(text === null || text === undefined ? '' : text).html().replace(/"/g, '&quot;').replace(/'/g, '&#39;');
         }
 
         function render() {

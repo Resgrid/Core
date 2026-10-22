@@ -25,6 +25,9 @@ namespace Resgrid.Model.Services
 		/// <summary>Where the package is used: run card levels, decision outcomes, and other packages' substitute rows.</summary>
 		Task<List<string>> GetPackageUsageAsync(int departmentId, int responsePackageId);
 
+		/// <summary>Where every used package is used, by package id, read once for the department (packages that are not used are absent).</summary>
+		Task<Dictionary<int, List<string>>> GetAllPackageUsageAsync(int departmentId);
+
 		/// <summary>
 		/// Deletes an unused package. Throws InvalidOperationException listing where it is used, because removing a package a
 		/// card relies on would silently stop that card from proposing anything.

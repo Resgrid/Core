@@ -831,7 +831,7 @@ namespace Resgrid.Services
 			if (ids != null && ids.Length > 0)
 				query = query.Where(x => ids.Contains(x.UnitId));
 
-			return query.OrderByDescending(x => x.Timestamp).Take(max).ToList();
+			return await MongoDB.Driver.Linq.MongoQueryable.ToListAsync(query.OrderByDescending(x => x.Timestamp).Take(max), cancellationToken);
 		}
 
 		private async Task<List<PersonnelLocation>> ReadPersonnelLocationsAsync(int departmentId, DateTime startUtc, DateTime endUtc, IReadOnlyCollection<string> userIds, int max,
@@ -850,7 +850,7 @@ namespace Resgrid.Services
 			if (ids != null && ids.Length > 0)
 				query = query.Where(x => ids.Contains(x.UserId));
 
-			return query.OrderByDescending(x => x.Timestamp).Take(max).ToList();
+			return await MongoDB.Driver.Linq.MongoQueryable.ToListAsync(query.OrderByDescending(x => x.Timestamp).Take(max), cancellationToken);
 		}
 
 		/// <summary>

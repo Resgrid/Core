@@ -33,13 +33,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private const string Flag = FeatureFlagKeys.RecordsPreventionPermits;
 
 		[HttpGet]
-		public async Task<IActionResult> Index(int? state = null, string typeId = null, bool expiring = false, int page = 1)
+		public async Task<IActionResult> Index(int? state = null, string typeId = null, bool expiring = false, int page = 1, string number = null)
 		{
 			if (!await ModuleOnAsync(Flag)) return NotFound();
 			try
 			{
-				var model = Prepare(new RecordPermitsIndexView { State = state, PermitTypeId = typeId, ExpiringOnly = expiring, Page = Math.Max(1, page) });
-				var query = new RmsPermitQuery { States = state.HasValue ? new List<int> { state.Value } : null, PermitTypeId = typeId, ExpiresBefore = expiring ? DateTime.UtcNow.AddDays(30) : (DateTime?)null, Skip = (model.Page - 1) * model.PageSize, Take = model.PageSize };
+				var model = Prepare(new RecordPermitsIndexView { State = state, PermitTypeId = typeId, ExpiringOnly = expiring, Number = IdentifierSearchKeys.FilterSearch(number), Page = Math.Max(1, page) });
+				var query = new RmsPermitQuery { States = state.HasValue ? new List<int> { state.Value } : null, PermitTypeId = typeId, ExpiresBefore = expiring ? DateTime.UtcNow.AddDays(30) : (DateTime?)null, Number = model.Number, Skip = (model.Page - 1) * model.PageSize, Take = model.PageSize };
 				model.Permits = await _permits.ListAsync(DepartmentId, UserId, query);
 				model.Total = await _permits.CountAsync(DepartmentId, UserId, query);
 				model.Types = await _permits.GetTypesAsync(DepartmentId, UserId, true);

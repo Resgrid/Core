@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Search;
@@ -117,6 +118,10 @@ namespace Resgrid.Services
 			await _recordsCutoverService.Value.EnsureLegacyWriteAllowedAsync(log.DepartmentId, "WorkLogsService.SaveLogAsync", log.LoggedByUserId);
 
 			log.LoggedOn = DateTime.UtcNow;
+			// Rich text the log views and reports render as HTML: scripts, handlers and frames are never stored.
+			log.Narrative = StringHelpers.SanitizeHtmlForStorage(log.Narrative);
+			log.InitialReport = StringHelpers.SanitizeHtmlForStorage(log.InitialReport);
+			log.Cause = StringHelpers.SanitizeHtmlForStorage(log.Cause);
 
 			var savedLog = await _logsRepository.SaveOrUpdateAsync(log, cancellationToken, true);
 

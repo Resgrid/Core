@@ -38,7 +38,7 @@ var resgrid;
 
                 $('#addQuestionModal').modal('hide');
                 $('#questions tbody').first().append(`<tr>
-                    <td style='max-width: 215px;'>${$('#newQuestion').val()}<input type='text' id='question_${newprotocol.questionsCount}' name='question_${newprotocol.questionsCount}' style='display:none;' value='${$('#newQuestion').val()}'></input></td>
+                    <td style='max-width: 215px;'>${resgrid.escapeHtml($('#newQuestion').val())}<input type='text' id='question_${newprotocol.questionsCount}' name='question_${newprotocol.questionsCount}' style='display:none;' value='${resgrid.escapeHtml($('#newQuestion').val())}'></input></td>
                     <td>${resgrid.protocols.newprotocol.generateAnswersTable(newprotocol.questionsCount)}</td>"
                     <td style='text-align:center;'><a onclick='$(this).parent().parent().remove();' class='tip-top' data-original-title='Remove this question'><i class='fa fa-minus' style='color: red;'></i></a></td>
                 </tr>`);
@@ -83,11 +83,11 @@ var resgrid;
                 resgrid.protocols.newprotocol.triggerCount++;
                 $('#addTriggerModal').modal('hide');
                 $('#triggers tbody').first().append(`<tr>
-                    <td style='max-width: 215px;'>${$('#newTriggerType').find(":selected").text()}<input type='text' id='triggerType_${newprotocol.triggerCount}' name='triggerType_${newprotocol.triggerCount}' style='display:none;' value='${$('#newTriggerType').val()}'></input></td>
-                    <td>${$('#newTriggerStartsOn').val()}<input type='text' id='triggerStartsOn_${newprotocol.triggerCount}' name='triggerStartsOn_${newprotocol.triggerCount}' style='display:none;' value='${$('#newTriggerStartsOn').val()}'></input></td>"
-                    <td>${$('#newTriggerEndsOn').val()}<input type='text' id='triggerEndsOn_${newprotocol.triggerCount}' name='triggerEndsOn_${newprotocol.triggerCount}' style='display:none;' value='${$('#newTriggerEndsOn').val()}'></input></td>"
-                    <td>${$('#newTriggerCallPriority').find(":selected").text()}<input type='text' id='triggerCallPriority_${newprotocol.triggerCount}' name='triggerCallPriority_${newprotocol.triggerCount}' style='display:none;'value='${$('#newTriggerCallPriority').val()}'></input></td>"
-                    <td>${$('#newTriggerCallType').find(":selected").text()}<input type='text' id='triggerCallType_${newprotocol.triggerCount}' name='triggerCallType_${newprotocol.triggerCount}' style='display:none;' value='${$('#newTriggerCallType').val()}'></input></td>"
+                    <td style='max-width: 215px;'>${resgrid.escapeHtml($('#newTriggerType').find(":selected").text())}<input type='text' id='triggerType_${newprotocol.triggerCount}' name='triggerType_${newprotocol.triggerCount}' style='display:none;' value='${resgrid.escapeHtml($('#newTriggerType').val())}'></input></td>
+                    <td>${resgrid.escapeHtml($('#newTriggerStartsOn').val())}<input type='text' id='triggerStartsOn_${newprotocol.triggerCount}' name='triggerStartsOn_${newprotocol.triggerCount}' style='display:none;' value='${resgrid.escapeHtml($('#newTriggerStartsOn').val())}'></input></td>"
+                    <td>${resgrid.escapeHtml($('#newTriggerEndsOn').val())}<input type='text' id='triggerEndsOn_${newprotocol.triggerCount}' name='triggerEndsOn_${newprotocol.triggerCount}' style='display:none;' value='${resgrid.escapeHtml($('#newTriggerEndsOn').val())}'></input></td>"
+                    <td>${resgrid.escapeHtml($('#newTriggerCallPriority').find(":selected").text())}<input type='text' id='triggerCallPriority_${newprotocol.triggerCount}' name='triggerCallPriority_${newprotocol.triggerCount}' style='display:none;'value='${resgrid.escapeHtml($('#newTriggerCallPriority').val())}'></input></td>"
+                    <td>${resgrid.escapeHtml($('#newTriggerCallType').find(":selected").text())}<input type='text' id='triggerCallType_${newprotocol.triggerCount}' name='triggerCallType_${newprotocol.triggerCount}' style='display:none;' value='${resgrid.escapeHtml($('#newTriggerCallType').val())}'></input></td>"
                     <td style='text-align:center;'><a onclick='$(this).parent().parent().remove();' class='tip-top' data-original-title='Remove this trigger'><i class='fa fa-minus' style='color: red;'></i></a></td>
                 </tr>`);
 

@@ -54,6 +54,7 @@
   <data name="BidExpired" xml:space="preserve"><value>Offerta scaduta</value></data>
   <data name="BidLine" xml:space="preserve"><value>Riga offerta</value></data>
   <data name="BidNumber" xml:space="preserve"><value>Offerta n.</value></data>
+  <data name="Filter" xml:space="preserve"><value>Filtra</value></data>
   <data name="BidScheduleHelp" xml:space="preserve"><value>Le righe copiano la tariffa da questo listino quando aggiunte.</value></data>
   <data name="BidSent" xml:space="preserve"><value>Offerta inviata</value></data>
   <data name="BidStatusAccepted" xml:space="preserve"><value>Accettata</value></data>

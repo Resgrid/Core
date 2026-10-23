@@ -13,7 +13,7 @@ var resgrid;
                     },
                     pageLength: 10,
                     columns: [
-                        { data: 'Name', title: 'Name' },
+                        { data: 'Name', title: 'Name', render: resgrid.textCell },
                         {
                             data: 'GroupId',
                             title: 'Actions',

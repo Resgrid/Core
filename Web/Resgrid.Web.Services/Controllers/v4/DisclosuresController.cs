@@ -49,13 +49,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>The disclosure queue, newest first; <paramref name="state"/> filters to one state.</summary>
 		[HttpGet("GetRequests")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		public async Task<ActionResult<DisclosureRequestsResult>> GetRequests(int? state, int skip = 0, int take = 50)
+		public async Task<ActionResult<DisclosureRequestsResult>> GetRequests(int? state, int skip = 0, int take = 50, string number = null)
 		{
 			if (!await FlagOnAsync())
 				return NotFound();
 
 			var states = state.HasValue ? new List<RmsDisclosureState> { (RmsDisclosureState)state.Value } : null;
-			var requests = await _disclosures.QueryAsync(DepartmentId, UserId, states, Math.Max(0, skip), Math.Max(1, Math.Min(RecordsController.MaxPageSize, take)));
+			var requests = await _disclosures.QueryAsync(DepartmentId, UserId, states, Math.Max(0, skip), Math.Max(1, Math.Min(RecordsController.MaxPageSize, take)), number);
 			var canViewRestricted = await _authorization.HasPermissionAsync(UserId, DepartmentId, PermissionTypes.ViewRestrictedRecords);
 
 			var result = new DisclosureRequestsResult

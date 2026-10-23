@@ -58,6 +58,8 @@ namespace Resgrid.Model.WorkOrders
 		public int? UnitId { get; set; }
 		public int? GroupId { get; set; }
 		public string AssetId { get; set; }
+		/// <summary>Part of the work order number as issued, in the department's format (IdentifierSearchKeys.ContainsParts).</summary>
+		public string Number { get; set; }
 	}
 	public sealed class WorkOrderReadScope
 	{

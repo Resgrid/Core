@@ -186,6 +186,53 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 			return IsPostgres ? $"EXTRACT(YEAR FROM {columnExpression})::int" : $"YEAR({columnExpression})";
 		}
 
+		/// <summary>
+		/// A list filter on a department-formatted number: <paramref name="numberExpression"/> holds the search's letter and digit
+		/// runs in that order, ignoring case (IdentifierSearchKeys.ContainsParts), so "WO-26-0007", "26 0007" or "0007" find
+		/// WO26-0007 whatever separators the pattern uses. The runs hold only letters and digits, so nothing in them is a LIKE
+		/// wildcard. Null when the search has no letters or digits: the caller adds no clause.
+		/// </summary>
+		protected string NumberContains(string numberExpression, string search, DynamicParameters parameters, string name = "NumberSearch")
+		{
+			var parts = IdentifierSearchKeys.TypedParts(search);
+			if (parts.Count == 0)
+				return null;
+
+			parameters.Add(name, "%" + string.Join("%", parts) + "%");
+			return $"{numberExpression} {(IsPostgres ? "ILIKE" : "LIKE")} {P}{name}";
+		}
+
+		/// <summary>An integer column as text, for a number filter over rows that predate their stored DisplayNumber.</summary>
+		protected static string IntegerAsText(string columnExpression)
+		{
+			return IsPostgres ? $"CAST({columnExpression} AS text)" : $"CAST({columnExpression} AS nvarchar(20))";
+		}
+
+		/// <summary>
+		/// The numbering years among <paramref name="windows"/> that <paramref name="dateExpression"/> falls in for some live row
+		/// of the department, newest first: a department-local or fiscal year is a window, not a YEAR() of the stored UTC date.
+		/// </summary>
+		protected Task<IEnumerable<int>> NumberingYearsAsync(string table, string dateExpression, int departmentId, IReadOnlyList<NumberingYearWindow> windows)
+		{
+			if (windows == null || windows.Count == 0)
+				return Task.FromResult<IEnumerable<int>>(new List<int>());
+
+			var parameters = new DynamicParameters();
+			parameters.Add("DepartmentId", departmentId);
+			var year = new StringBuilder("CASE");
+			for (var i = 0; i < windows.Count; i++)
+			{
+				year.Append($" WHEN {dateExpression} >= {P}YearFrom{i} AND {dateExpression} < {P}YearBefore{i} THEN {windows[i].Year.ToString(System.Globalization.CultureInfo.InvariantCulture)}");
+				parameters.Add("YearFrom" + i, DatabaseTimestamp(windows[i].FromUtc), System.Data.DbType.DateTime2);
+				parameters.Add("YearBefore" + i, DatabaseTimestamp(windows[i].BeforeUtc), System.Data.DbType.DateTime2);
+			}
+			year.Append(" END");
+
+			return QueryAsync<int>(
+				$"SELECT DISTINCT y FROM (SELECT {year} AS y FROM {Tbl(table)} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("DeletedOn")} IS NULL) w WHERE y IS NOT NULL ORDER BY y DESC",
+				parameters);
+		}
+
 		protected static string Paging()
 		{
 			return IsPostgres ? "OFFSET @Skip LIMIT @Take" : "OFFSET @Skip ROWS FETCH NEXT @Take ROWS ONLY";
@@ -1058,6 +1105,11 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 				new { DepartmentId = departmentId });
 		}
 
+		public Task<IEnumerable<int>> GetNumberingYearsAsync(int departmentId, IReadOnlyList<NumberingYearWindow> windows)
+		{
+			return NumberingYearsAsync("RmsRecordSearchProjections", $"COALESCE({Col("OccurredOn")}, {Col("RecordCreatedOn")})", departmentId, windows);
+		}
+
 		/// <summary>
 		/// Visibility is a join, never a post-filter, so paging counts cannot leak (plan section 5.7.1).
 		/// The always-visible cases (author, owner, reviewer, named participant) resolve inside the query.
@@ -1133,7 +1185,20 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 				parameters.Add("DefinitionKey", query.DefinitionKey);
 			}
 
-			if (query.Year.HasValue)
+			if (query.OccurredFrom.HasValue || query.OccurredBefore.HasValue)
+			{
+				if (query.OccurredFrom.HasValue)
+				{
+					sb.Append($" AND COALESCE(p.{Col("OccurredOn")}, p.{Col("RecordCreatedOn")}) >= {P}OccurredFrom");
+					parameters.Add("OccurredFrom", DatabaseTimestamp(query.OccurredFrom.Value), System.Data.DbType.DateTime2);
+				}
+				if (query.OccurredBefore.HasValue)
+				{
+					sb.Append($" AND COALESCE(p.{Col("OccurredOn")}, p.{Col("RecordCreatedOn")}) < {P}OccurredBefore");
+					parameters.Add("OccurredBefore", DatabaseTimestamp(query.OccurredBefore.Value), System.Data.DbType.DateTime2);
+				}
+			}
+			else if (query.Year.HasValue)
 			{
 				sb.Append($" AND {YearOf($"COALESCE(p.{Col("OccurredOn")}, p.{Col("RecordCreatedOn")})")} = {P}Year");
 				parameters.Add("Year", query.Year.Value);
@@ -1453,7 +1518,7 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 				new { DepartmentId = departmentId, RequestId = requestId });
 		}
 
-		public Task<IEnumerable<RmsDisclosureRequest>> GetForDepartmentAsync(int departmentId, IEnumerable<int> states, int skip, int take)
+		public Task<IEnumerable<RmsDisclosureRequest>> GetForDepartmentAsync(int departmentId, IEnumerable<int> states, string number, int skip, int take)
 		{
 			var stateList = states?.ToList();
 			var parameters = new DynamicParameters();
@@ -1467,6 +1532,9 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 				where += $" AND {InList("State", "States")}";
 				parameters.Add("States", InListValue(stateList));
 			}
+			var numberMatch = NumberContains(Col("RequestNumber"), number, parameters);
+			if (numberMatch != null)
+				where += " AND " + numberMatch;
 
 			// Oldest deadline first: the request closest to breaching its statutory clock is the one that matters.
 			return QueryAsync<RmsDisclosureRequest>(

@@ -108,6 +108,11 @@ namespace Resgrid.Services
 		{
 			// Round-tripped REDACTED placeholder on an edit means "unchanged" — fetch the stored row
 			// before it is overwritten so the safety net can restore the stored envelopes.
+			// Rich text the contact views render as HTML: scripts, handlers and frames are never stored. Envelopes and the
+			// REDACTED placeholder hold no markup and pass through unchanged.
+			contact.Description = StringHelpers.SanitizeHtmlForStorage(contact.Description);
+			contact.OtherInfo = StringHelpers.SanitizeHtmlForStorage(contact.OtherInfo);
+
 			Contact existingContactForRestore = null;
 			if (!string.IsNullOrWhiteSpace(contact.ContactId) &&
 				ProtectedReadService.ContactFieldAccessors.Any(a => a.Value.Get(contact) == ProtectedDataEnvelope.RedactionValue))
@@ -243,6 +248,7 @@ namespace Resgrid.Services
 
 		public async Task<ContactNote> SaveContactNoteAsync(ContactNote note, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			note.Note = StringHelpers.SanitizeHtmlForStorage(note.Note);
 			var savedNote = await _contactNotesRepository.SaveOrUpdateAsync(note, cancellationToken);
 
 			var protectedWrite = await _protectedWriteService.Value.PrepareContactNoteWriteAsync(savedNote.DepartmentId,

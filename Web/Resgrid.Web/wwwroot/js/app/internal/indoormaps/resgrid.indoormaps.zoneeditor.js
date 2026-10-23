@@ -61,7 +61,7 @@ $(document).ready(function () {
                         fillOpacity: 0.3
                     }).addTo(map);
 
-                    polygon.bindTooltip(zone.Name, { permanent: false, direction: 'center' });
+                    polygon.bindTooltip(resgrid.escapeHtml(zone.Name), { permanent: false, direction: 'center' });
                     polygon.zoneData = zone;
                     zoneLayerMap[zone.IndoorMapZoneId] = polygon;
 
@@ -140,7 +140,7 @@ $(document).ready(function () {
                 if (result.success) {
                     currentLayer.existingZoneId = result.zoneId;
                     currentLayer.setStyle({ color: $('#zoneColor').val() });
-                    currentLayer.bindTooltip($('#zoneName').val(), { permanent: false, direction: 'center' });
+                    currentLayer.bindTooltip(resgrid.escapeHtml($('#zoneName').val()), { permanent: false, direction: 'center' });
                     location.reload();
                 } else {
                     alert('Failed to save zone: ' + (result.message || ''));

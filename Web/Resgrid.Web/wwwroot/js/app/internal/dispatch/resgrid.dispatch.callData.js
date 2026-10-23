@@ -40,7 +40,7 @@ var resgrid;
                     if (result) {
                         notesHtml.empty();
                         for (var i = 0; i < result.length; i++) {
-                            notesHtml.append('<p class="show"><span class="msg-block" ><strong>' + result[i].Name + '</strong><span class="time"> ' + timestampLabel + ': ' + result[i].Timestamp + '</span><span class="msg">' + result[i].Note + '</span></span></p>');
+                            notesHtml.append('<p class="show"><span class="msg-block" ><strong>' + resgrid.escapeHtml(result[i].Name) + '</strong><span class="time"> ' + timestampLabel + ': ' + resgrid.escapeHtml(result[i].Timestamp) + '</span><span class="msg">' + result[i].Note + '</span></span></p>');
                         }
                     }
                 });

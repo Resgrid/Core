@@ -1071,17 +1071,8 @@
   <data name="NearestUnitsPick" xml:space="preserve">
     <value>Larma</value>
   </data>
-  <data name="NearestPersonnelLabel" xml:space="preserve">
-    <value>Närmaste personal</value>
-  </data>
-  <data name="NearestPersonnelPerson" xml:space="preserve">
-    <value>Person</value>
-  </data>
   <data name="NearestPersonnelStaffing" xml:space="preserve">
     <value>Bemanning</value>
-  </data>
-  <data name="NearestPersonnelGroupRoles" xml:space="preserve">
-    <value>Grupp / roller</value>
   </data>
   <data name="NearestUnitsNearest" xml:space="preserve">
     <value>Närmast #{0}</value>
@@ -1101,7 +1092,19 @@
   <data name="NearestUnitsMapBoundaries" xml:space="preserve">
     <value>Stationsområden</value>
   </data>
-  <data name="NearestUnitsShowingClosest" xml:space="preserve">
-    <value>Visar de {0} närmaste av {1}. Larmlistorna nedan innehåller alla, närmast först.</value>
+  <data name="UngroupedUnitsTab" xml:space="preserve">
+    <value>Ogrupperade enheter</value>
+  </data>
+  <data name="NearestUnitsLoadFailed" xml:space="preserve">
+    <value>Enheterna kunde inte läsas in. Ladda om sidan för att försöka igen.</value>
+  </data>
+  <data name="NearestUnitsShowOnMap" xml:space="preserve">
+    <value>Visa den här positionen och händelsen på en karta</value>
+  </data>
+  <data name="NearestUnitsPositionTitle" xml:space="preserve">
+    <value>{0}: position</value>
+  </data>
+  <data name="NearestUnitsCallLocation" xml:space="preserve">
+    <value>Händelsens plats</value>
   </data>
 </root>

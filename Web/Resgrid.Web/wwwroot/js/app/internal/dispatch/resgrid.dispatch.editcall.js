@@ -4,7 +4,8 @@ var resgrid;
     (function (dispatch) {
         var editcall;
         (function (editcall) {
-            var personnelTable, groupsTable, unitsTable, rolesTable;
+            // The unit lists are built by resgrid.dispatch.nearestboard and count as drawn once they are loaded.
+            var personnelTable, groupsTable, rolesTable;
             var totalTables = 4;
             var drawnTables = {};
             var dispatchedEntitiesApplied = false;
@@ -17,23 +18,6 @@ var resgrid;
                     dispatchedEntitiesApplied = true;
                     resgrid.dispatch.editcall.updateDispatchedEntities();
                 }
-            }
-            // A status or staffing level's text in its colour, escaped; only a hex colour is applied.
-            function coloredText(text, color) {
-                var span = $('<span>').text(text === null || text === undefined ? '' : String(text));
-                if (color && /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(String(color).trim())) {
-                    span.css('color', String(color).trim());
-                }
-                return span.prop('outerHTML');
-            }
-            // A unit's or call's name with its type icon (uploaded or built-in, from TypeIconUrl) in front, both escaped;
-            // sorting and search keep using the plain name.
-            function typeIconNameCell(name, type, row) {
-                if (type !== 'display') { return name; }
-                var text = $('<div/>').text(name || '').html();
-                if (!row || !row.TypeIconUrl) { return text; }
-                return '<img src="' + $('<div/>').text(row.TypeIconUrl).html() + '" alt="" aria-hidden="true" class="rg-type-icon" ' +
-                    'style="width:20px;height:20px;object-fit:contain;vertical-align:middle;margin-right:4px;" />' + text;
             }
 
             function getText(key, fallback) {
@@ -50,22 +34,6 @@ var resgrid;
                     return typeof args[index] !== 'undefined' ? args[index] : match;
                 });
             }
-            // A unit's status in its own button and text colours, as on the New Call unit list. Older built-in
-            // statuses carry a label class instead of a colour. Colours go through .css() so one never lands in
-            // the markup unchecked; the border keeps a white or very light status visible on white rows.
-            function unitStatusLabel(row) {
-                var label = $('<span class="label label-default">').text(row.State || '');
-                var color = $.trim(row.StateColor || '');
-                if (/^label-[a-z]+$/.test(color)) {
-                    label.addClass(color);
-                } else if (color) {
-                    label.css({ 'background-color': color, 'border': '1px solid rgba(0, 0, 0, 0.2)' });
-                    if (row.TextColor) {
-                        label.css('color', row.TextColor);
-                    }
-                }
-                return label.prop('outerHTML');
-            }
             editcall.protocolCount = 0;
             editcall.protocolData = {};
             $(document).ready(function () {
@@ -74,9 +42,10 @@ var resgrid;
                 resgrid.dispatch.nearestboard.init({
                     getMap: function () { return map; },
                     getPersonnelGrid: function () { return personnelTable; },
-                    getUnitsGrid: function () { return unitsTable; },
-                    personnelEtaColumn: 2,
-                    unitsEtaColumn: 2
+                    onUnitsLoaded: function () {
+                        applyRecommendationSelections();
+                        onInitialDraw('units');
+                    }
                 });
                 // A typed (or previously saved) address always wins over a reverse-geocoded one; only an
                 // empty field is filled from the map pin.
@@ -280,14 +249,14 @@ var resgrid;
                     var questionHtml = "";
                     for (var t = 0; t < protocol.Questions.length; t++) {
                         var question = protocol.Questions[t];
-                        questionHtml = questionHtml + `<div class="form-group"><label class=" control-label">${question.Question}</label><div class="controls"><select id="questionAnswer_${question.Id}" name="questionAnswer_${question.Id}">`;
+                        questionHtml = questionHtml + `<div class="form-group"><label class=" control-label">${resgrid.escapeHtml(question.Question)}</label><div class="controls"><select id="questionAnswer_${question.Id}" name="questionAnswer_${question.Id}">`;
 
                         for (var r = 0; r < protocol.Questions[t].Answers.length; r++) {
                             var answer = protocol.Questions[t].Answers[r];
                             if (r === 0) {
-                                questionHtml = questionHtml + `<option selected="selected" value="${answer.Weight}">${answer.Answer}</option>`;
+                                questionHtml = questionHtml + `<option selected="selected" value="${answer.Weight}">${resgrid.escapeHtml(answer.Answer)}</option>`;
                             } else {
-                                questionHtml = questionHtml + `<option value="${answer.Weight}">${answer.Answer}</option>`;
+                                questionHtml = questionHtml + `<option value="${answer.Weight}">${resgrid.escapeHtml(answer.Answer)}</option>`;
                             }
                         }
 
@@ -366,22 +335,9 @@ var resgrid;
                     $('#selectLinkedCall').empty();
                 });
 
-                // Distance and ETA come from the nearest board (one ranked request) rather than a routed lookup per person.
-                personnelTable = $("#personnelGrid").DataTable({
-                    ajax: { url: resgrid.absoluteBaseUrl + '/User/Personnel/GetPersonnelForCallGrid', dataSrc: '' },
-                    paging: false,
-                    columns: [
-                        { data: 'UserId', title: '', orderable: false, searchable: false, render: function(data) { return '<input type="checkbox" id="dispatchUser_'+data+'" name="dispatchUser_'+data+'" />'; } },
-                        { data: 'Name', title: getText('name', 'Name') },
-                        { data: 'Eta', title: getText('eta', 'ETA'), render: resgrid.dispatch.nearestboard.etaRender('user') },
-                        { data: null, title: getText('status', 'Status'), orderable: false, render: function(d,t,row) { return coloredText(row.Status, row.StatusColor); } },
-                        { data: null, title: getText('staffing', 'Staffing'), orderable: false, render: function(d,t,row) { return coloredText(row.Staffing, row.StaffingColor); } },
-                        { data: 'Group', title: getText('group', 'Group') },
-                        { data: 'Roles', title: getText('roles', 'Roles') }
-                    ]
-                });
+                // Distance, ETA and position come from the nearest board (one ranked request) rather than a routed lookup per person.
+                personnelTable = $("#personnelGrid").DataTable(resgrid.dispatch.nearestboard.personnelTableOptions(resgrid.absoluteBaseUrl + '/User/Personnel/GetPersonnelForCallGrid'));
                 personnelTable.on('draw', function() {
-                    $('#personnelGrid thead th:first').html('<label><input type="checkbox" id="checkAllPersonnel"/></label>');
                     applyRecommendationSelections();
                     onInitialDraw('personnel');
                 });
@@ -391,7 +347,7 @@ var resgrid;
                     paging: false,
                     columns: [
                         { data: 'GroupId', title: '', orderable: false, searchable: false, render: function(data) { return '<input type="checkbox" id="dispatchGroup_'+data+'" name="dispatchGroup_'+data+'" />'; } },
-                        { data: 'Name', title: getText('name', 'Name') },
+                        { data: 'Name', title: getText('name', 'Name'), render: resgrid.textCell },
                         { data: 'Count', title: getText('personnelCount', 'Personnel Count') }
                     ]
                 });
@@ -400,29 +356,12 @@ var resgrid;
                     onInitialDraw('groups');
                 });
 
-                unitsTable = $("#unitsGrid").DataTable({
-                    ajax: { url: resgrid.absoluteBaseUrl + '/User/Units/GetUnitsForCallGrid', dataSrc: '' },
-                    paging: false,
-                    columns: [
-                        { data: 'UnitId', title: '', orderable: false, searchable: false, render: function(data) { return '<input type="checkbox" id="dispatchUnit_'+data+'" name="dispatchUnit_'+data+'" />'; } },
-                        { data: 'Name', title: getText('name', 'Name'), render: typeIconNameCell },
-                        { data: 'Eta', title: getText('eta', 'ETA'), render: resgrid.dispatch.nearestboard.etaRender('unit') },
-                        { data: 'Type', title: getText('type', 'Type') },
-                        { data: null, title: getText('status', 'Status'), orderable: false, render: function(d,t,row) { return unitStatusLabel(row); } }
-                    ]
-                });
-                unitsTable.on('draw', function() {
-                    $('#unitsGrid thead th:first').html('<label><input type="checkbox" id="checkAllUnits"/></label>');
-                    applyRecommendationSelections();
-                    onInitialDraw('units');
-                });
-
                 rolesTable = $("#rolesGrid").DataTable({
                     ajax: { url: resgrid.absoluteBaseUrl + '/User/Personnel/GetRolesForCallGrid', dataSrc: '' },
                     paging: false,
                     columns: [
                         { data: 'RoleId', title: '', orderable: false, searchable: false, render: function(data) { return '<input type="checkbox" id="dispatchRole_'+data+'" name="dispatchRole_'+data+'" />'; } },
-                        { data: 'Name', title: getText('name', 'Name') },
+                        { data: 'Name', title: getText('name', 'Name'), render: resgrid.textCell },
                         { data: 'Count', title: getText('personnelCount', 'Personnel Count') }
                     ]
                 });
@@ -431,9 +370,8 @@ var resgrid;
                     onInitialDraw('roles');
                 });
 
-                $('#personnelGrid').on('click', '#checkAllPersonnel', function () { $('#personnelGrid').find('tbody :checkbox').prop('checked', this.checked); resgrid.dispatch.nearestboard.syncPicks(); });
+                $('#personnelGrid').on('click', '#checkAllPersonnel', function () { $('#personnelGrid').find('tbody :checkbox').prop('checked', this.checked); });
                 $('#groupsGrid').on('click', '#checkAllGroups', function () { $('#groupsGrid').find('tbody :checkbox').prop('checked', this.checked); });
-                $('#unitsGrid').on('click', '#checkAllUnits', function () { $('#unitsGrid').find('tbody :checkbox').prop('checked', this.checked); resgrid.dispatch.nearestboard.syncPicks(); });
                 $('#rolesGrid').on('click', '#checkAllRoles', function () { $('#rolesGrid').find('tbody :checkbox').prop('checked', this.checked); });
                 $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
                     var targetTab = e.target && e.target.getAttribute('href');
@@ -442,8 +380,9 @@ var resgrid;
                     else if (targetTab === '#rolesTab') { rolesTable.columns.adjust(); }
                 });
 
-                // A recommended resource the dispatcher unticks stays unticked across grid redraws.
-                $('#unitsGrid, #personnelGrid').on('change', 'tbody :checkbox', function () {
+                // A recommended resource the dispatcher unticks stays unticked across grid redraws. A unit's box is the
+                // hidden dispatch box the unit tables' copies change.
+                $(document).on('change', 'input[name^="dispatchUnit_"], input[name^="dispatchUser_"]', function () {
                     if (this.checked) {
                         return;
                     }
@@ -806,12 +745,6 @@ var resgrid;
             }
             editcall.geocodeCoordinates = geocodeCoordinates;
 
-            function refreshPersonnelGrid() {
-                personnelTable.ajax.url(resgrid.absoluteBaseUrl + '/User/Personnel/GetPersonnelForCallGrid?callLat=' + encodeURI($("#Latitude").val()) + '&callLong=' + encodeURI($("#Longitude").val())).load();
-                unitsTable.ajax.url(resgrid.absoluteBaseUrl + '/User/Units/GetUnitsForCallGrid?callLat=' + encodeURI($("#Latitude").val()) + '&callLong=' + encodeURI($("#Longitude").val())).load();
-            }
-            editcall.refreshPersonnelGrid = refreshPersonnelGrid;
-
             function updateDispatchedEntities() {
                 $.ajax({
                     url: resgrid.absoluteBaseUrl + '/User/Dispatch/GetAllDispatchesForCall?callId=' + callId,
@@ -903,8 +836,8 @@ var resgrid;
             function addProtocol(id, name, code, state) {
                 resgrid.dispatch.editcall.protocolCount++;
                 $('#protocols tbody').first().append(`<tr>
-                    <td style='max-width: 50px;'>${code}</td>
-                    <td>${name}</td>
+                    <td style='max-width: 50px;'>${resgrid.escapeHtml(code)}</td>
+                    <td>${resgrid.escapeHtml(name)}</td>
                     <td>${resgrid.dispatch.editcall.getStatusField(id, state, code)}</td>
                 </tr>`);
             }
@@ -918,9 +851,9 @@ var resgrid;
                 if (state === 0) {
                     return inactiveText;
                 } else if (state === 1) {
-                    return `${activeText} <input type='text' id='activeProtocol_${id}' name='activeProtocol_${id}' style='display:none;' value='1'></input><input type='text' id='protocolCode_${id}' name='protocolCode_${id}' style='display:none;' value='${code}'></input>`;
+                    return `${activeText} <input type='text' id='activeProtocol_${id}' name='activeProtocol_${id}' style='display:none;' value='1'></input><input type='text' id='protocolCode_${id}' name='protocolCode_${id}' style='display:none;' value='${resgrid.escapeHtml(code)}'></input>`;
                 } else if (state === 2) {
-                    return `<a id="answerProcotolQuestions_${id}" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#protocolQuestionWindow" data-protocolId="${id}">${answerQuestionsText}</a> <input type='text' id='pendingProtocol_${id}' name='pendingProtocol_${id}' style='display:none;' value='0'></input><input type='text' id='protocolCode_${id}' name='protocolCode_${id}' style='display:none;' value='${code}'></input>`;
+                    return `<a id="answerProcotolQuestions_${id}" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#protocolQuestionWindow" data-protocolId="${id}">${answerQuestionsText}</a> <input type='text' id='pendingProtocol_${id}' name='pendingProtocol_${id}' style='display:none;' value='0'></input><input type='text' id='protocolCode_${id}' name='protocolCode_${id}' style='display:none;' value='${resgrid.escapeHtml(code)}'></input>`;
                 } else {
                     return unknownText;
                 }

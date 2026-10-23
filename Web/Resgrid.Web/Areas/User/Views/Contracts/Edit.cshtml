@@ -68,8 +68,8 @@
 @section Scripts {
     <script>
         (function () {
-            var stages = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(stages.Select(s => new { v = (int)s, t = localizer["Stage" + s].Value })));
-            var docTypes = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(docTypes.Select(d => new { v = (int)d, t = localizer["DocType" + d].Value })));
+            var stages = @Html.ScriptJson(stages.Select(s => new { v = (int)s, t = localizer["Stage" + s].Value }));
+            var docTypes = @Html.ScriptJson(docTypes.Select(d => new { v = (int)d, t = localizer["DocType" + d].Value }));
             var existing = @Html.Raw(string.IsNullOrWhiteSpace(Model.RequirementsJson) ? "[]" : Model.RequirementsJson);
             function opts(list, selected, blank) { return (blank ? '<option value="">—</option>' : '') + list.map(function (o) { return '<option value="' + o.v + '"' + (o.v === selected ? ' selected' : '') + '>' + o.t + '</option>'; }).join(''); }
             function row(r) {

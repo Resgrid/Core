@@ -62,7 +62,7 @@
                                 <input type="hidden" asp-for="Description">
 
                                 <div id="editor-container" style="width:100%; height: 200px;">
-                                    @Html.Raw(Model.Description)
+                                    @Html.SanitizedHtml(Model.Description)
                                 </div>
                             </div>
                         </div>

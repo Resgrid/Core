@@ -54,7 +54,7 @@
 									<dt>@localizer["Group"]:</dt>
 									<dd> @if (Model.Inventory.Group != null)
 									{
-										@Html.Raw(Model.Inventory.Group.Name)
+										@Model.Inventory.Group.Name
 									}
 									else
 									{
@@ -63,7 +63,7 @@
 									<dt>@localizer["Unit"]:</dt>
 									<dd>@if (Model.Inventory.Unit != null)
 									{
-										@Html.Raw(Model.Inventory.Unit.Name)
+										@Model.Inventory.Unit.Name
 									}
 									else
 									{
@@ -87,7 +87,7 @@
 						</div>
 						<div class="row">
 							<div class="col-lg-12">
-								<p>@Html.Raw(Model.Inventory.Note)</p>
+								<p>@Html.SanitizedHtml(Model.Inventory.Note)</p>
 							</div>
 						</div>
 				</div>

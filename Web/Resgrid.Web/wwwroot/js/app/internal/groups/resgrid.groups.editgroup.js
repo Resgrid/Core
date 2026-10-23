@@ -75,11 +75,11 @@ var resgrid;
 							type: 'GET'
 						}).done(function (results) {
 							$('#printersTableBody').empty();
-							var tableHtml;
+							var tableHtml = '';
 							$.each(results, function (index, value) {
 								var tr = '<tr>';
-								tr += '<td>' + value.Name + " on " + value.Computer.Name + '</td>';
-								tr += `<td><a class="btn btn-xs btn-primary" onclick='resgrid.groups.editgroup.selectPrinter("${value.Id}","${value.Name.replace(/\//g, "-").replace(/ /g, "_")}");' data-dismiss="modal">Select this Printer</a></td>`;
+								tr += '<td>' + resgrid.escapeHtml(value.Name) + " on " + resgrid.escapeHtml(value.Computer.Name) + '</td>';
+								tr += `<td><a class="btn btn-xs btn-primary select-printer" data-printer-id="${resgrid.escapeHtml(value.Id)}" data-printer-name="${resgrid.escapeHtml(value.Name.replace(/\//g, "-").replace(/ /g, "_"))}" data-dismiss="modal">Select this Printer</a></td>`;
 								tr += '</tr>';
 								tableHtml += tr;
 							});
@@ -87,6 +87,10 @@ var resgrid;
 							$('#printersTableBody').html(tableHtml);
 						});
 					}
+				});
+				// Printer names come from PrintNode; pass them through data attributes, never an inline onclick string.
+				$('#printersTableBody').on('click', '.select-printer', function () {
+					resgrid.groups.editgroup.selectPrinter($(this).attr('data-printer-id'), $(this).attr('data-printer-name'));
 				});
 			});
 			function selectPrinter(printerId, printerName) {

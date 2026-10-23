@@ -125,6 +125,57 @@ namespace Resgrid.Tests.Services
 
 		#endregion
 
+		#region Sorting
+
+		[Test]
+		public void Legacy_numbers_sort_by_year_then_sequence_not_by_text()
+		{
+			Sorted(CallNumberFormat.LegacyPattern, "26-10", "26-11", "26-12", "26-25", "26-38", "26-5", "26-6", "26-7", "26-8", "25-100", "99-4")
+				.Should().Equal("99-4", "25-100", "26-5", "26-6", "26-7", "26-8", "26-10", "26-11", "26-12", "26-25", "26-38");
+		}
+
+		[TestCase("FD{YYYY}-{SEQ}", "FD2026-0010,FD2026-12345,FD2026-0002,FD2025-0150,FD2026-9999", "FD2025-0150,FD2026-0002,FD2026-0010,FD2026-9999,FD2026-12345")]
+		[TestCase("{SEQ}/{YYYY}", "10/2025,2/2026,1/2026,9/2025", "9/2025,10/2025,1/2026,2/2026")]
+		[TestCase("{YY}{MM}{DD}{SEQ}", "26102310,2610239,2610241,2609309", "2609309,2610239,26102310,2610241")]
+		[TestCase("CAD.{YYYY}.{MM}.{SEQ}", "CAD.2026.10.10,CAD.2026.09.12,CAD.2026.10.7", "CAD.2026.09.12,CAD.2026.10.7,CAD.2026.10.10")]
+		[TestCase("{SEQ}", "100,9,10", "9,10,100")]
+		public void Custom_numbers_sort_in_the_order_they_were_issued(string pattern, string numbers, string expected)
+		{
+			// ',' is never a pattern literal, so it can separate the numbers here.
+			Sorted(pattern, numbers.Split(',')).Should().Equal(expected.Split(','));
+		}
+
+		[Test]
+		public void Legacy_numbers_issued_before_a_pattern_change_still_sort_by_year_and_sequence()
+		{
+			Sorted("FD{YYYY}-{SEQ}", "FD2026-0154", "26-153", "25-900", "FD2026-0155")
+				.Should().Equal("25-900", "26-153", "FD2026-0154", "FD2026-0155");
+		}
+
+		[Test]
+		public void Text_no_pattern_wrote_sorts_first_with_digit_runs_compared_as_numbers()
+		{
+			Sorted("{YYYY}-{SEQ}", "2026-1", "OLD-10", "old-9", null, "OLD-2-B")
+				.Should().Equal(null, "OLD-2-B", "old-9", "OLD-10", "2026-1");
+		}
+
+		[Test]
+		public void Sort_keys_compare_the_same_in_csharp_and_javascript()
+		{
+			// The grids compare keys with JavaScript's < (UTF-16 code units, like Ordinal) after DataTables lower-cases them, so a
+			// key that is already lower case sorts there exactly as asserted here.
+			var key = CallNumberFormat.SortKeys("Fd{YYYY}-{SEQ}");
+			foreach (var number in new[] { "Fd2026-7", "26-153", "OLD-12", "X/Y_Z.9" })
+				key(number).Should().Be(key(number).ToLowerInvariant());
+		}
+
+		private static string[] Sorted(string pattern, params string[] numbers)
+		{
+			return numbers.OrderBy(CallNumberFormat.SortKeys(pattern), StringComparer.Ordinal).ToArray();
+		}
+
+		#endregion
+
 		#region Numbering year
 
 		[TestCase(2026, 10, 31, 2026, "the day before the fiscal year starts is still FY2026")]

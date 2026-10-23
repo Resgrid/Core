@@ -10,10 +10,10 @@ var resgrid;
                     ajax: { url: resgrid.absoluteBaseUrl + '/User/Connect/GetPostsList?departmentProfileId=' + departmentProfileId, dataSrc: '' },
                     pageLength: 50,
                     columns: [
-                        { data: 'Title', title: 'Title' },
+                        { data: 'Title', title: 'Title', render: resgrid.textCell },
                         { data: 'CreatedOn', title: 'Created On' },
                         { data: 'ExpiresOn', title: 'Expires On' },
-                        { data: 'CreatedBy', title: 'Created By' },
+                        { data: 'CreatedBy', title: 'Created By', render: resgrid.textCell },
                         {
                             data: 'Id', title: 'Actions', orderable: false, searchable: false,
                             render: function (data) {

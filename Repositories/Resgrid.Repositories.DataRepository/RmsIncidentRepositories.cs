@@ -95,9 +95,22 @@ namespace Resgrid.Repositories.DataRepository
 				where.Append($" AND {InList("State", "States", R)}");
 				parameters.Add("States", InListValue(query.States));
 			}
-			if (query.Year.HasValue)
+			if (query.YearFrom.HasValue || query.YearBefore.HasValue)
 			{
-				where.Append($" AND {YearOf(C("CreatedOn"))} = {P}Year");
+				if (query.YearFrom.HasValue)
+				{
+					where.Append($" AND COALESCE({C("CallCreatedOn")}, {C("CreatedOn")}) >= {P}YearFrom");
+					parameters.Add("YearFrom", DatabaseTimestamp(query.YearFrom.Value), System.Data.DbType.DateTime2);
+				}
+				if (query.YearBefore.HasValue)
+				{
+					where.Append($" AND COALESCE({C("CallCreatedOn")}, {C("CreatedOn")}) < {P}YearBefore");
+					parameters.Add("YearBefore", DatabaseTimestamp(query.YearBefore.Value), System.Data.DbType.DateTime2);
+				}
+			}
+			else if (query.Year.HasValue)
+			{
+				where.Append($" AND {YearOf($"COALESCE({C("CallCreatedOn")}, {C("CreatedOn")})")} = {P}Year");
 				parameters.Add("Year", query.Year.Value);
 			}
 			if (query.CallId.HasValue)
@@ -177,8 +190,13 @@ namespace Resgrid.Repositories.DataRepository
 		public Task<IEnumerable<int>> GetYearsAsync(int departmentId)
 		{
 			return QueryAsync<int>(
-				$"SELECT DISTINCT {YearOf(Col("CreatedOn"))} AS Y FROM {Tbl("RmsIncidentReports")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("DeletedOn")} IS NULL ORDER BY Y DESC",
+				$"SELECT DISTINCT {YearOf($"COALESCE({Col("CallCreatedOn")}, {Col("CreatedOn")})")} AS Y FROM {Tbl("RmsIncidentReports")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("DeletedOn")} IS NULL ORDER BY Y DESC",
 				new { DepartmentId = departmentId });
+		}
+
+		public Task<IEnumerable<int>> GetNumberingYearsAsync(int departmentId, IReadOnlyList<NumberingYearWindow> windows)
+		{
+			return NumberingYearsAsync("RmsIncidentReports", $"COALESCE({Col("CallCreatedOn")}, {Col("CreatedOn")})", departmentId, windows);
 		}
 
 		public Task<int> GetMaxRecordNumberSequenceAsync(int departmentId, string numberPrefix, string numberSuffix)

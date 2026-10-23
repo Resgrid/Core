@@ -27,14 +27,14 @@ var resgrid;
                             data: 'Subject',
                             title: 'Subject',
                             render: function (data, type, row) {
-                                return row.Read ? data : '<strong>' + data + '</strong>';
+                                return row.Read ? resgrid.escapeHtml(data) : '<strong>' + resgrid.escapeHtml(data) + '</strong>';
                             }
                         },
                         {
                             data: 'SentBy',
                             title: 'Sent By',
                             render: function (data, type, row) {
-                                return row.Read ? data : '<strong>' + data + '</strong>';
+                                return row.Read ? resgrid.escapeHtml(data) : '<strong>' + resgrid.escapeHtml(data) + '</strong>';
                             }
                         },
                         {

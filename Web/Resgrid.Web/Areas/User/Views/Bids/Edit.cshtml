@@ -81,7 +81,7 @@
     <script>
         (function () {
             var lines = @Html.Raw(Model.LinesJson ?? "[]"), entries = @Html.Raw(Model.EntriesJson ?? "[]"), premiums = @Html.Raw(Model.PremiumsJson ?? "[]");
-            var lineTypes = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(lineTypes.Select(t => new { v = (int)t, t = localizer["LineType" + t].Value })));
+            var lineTypes = @Html.ScriptJson(lineTypes.Select(t => new { v = (int)t, t = localizer["LineType" + t].Value }));
             var currency = '@Model.Currency';
             function esc(v) { return (v === null || v === undefined ? '' : String(v)).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
             function val(v) { return v === null || v === undefined ? '' : v; }

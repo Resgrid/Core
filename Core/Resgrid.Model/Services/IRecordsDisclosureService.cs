@@ -25,7 +25,8 @@ namespace Resgrid.Model.Services
 
 		Task<RmsDisclosureRequest> GetAsync(int departmentId, string userId, string requestId);
 
-		Task<List<RmsDisclosureRequest>> QueryAsync(int departmentId, string userId, IEnumerable<RmsDisclosureState> states, int skip = 0, int take = 50);
+		/// <summary>The request queue, oldest deadline first; <paramref name="number"/> filters by part of the request number as issued (IdentifierSearchKeys.ContainsParts).</summary>
+		Task<List<RmsDisclosureRequest>> QueryAsync(int departmentId, string userId, IEnumerable<RmsDisclosureState> states, int skip = 0, int take = 50, string number = null);
 
 		/// <summary>Saves the scope query and narrative; refused once a production exists, because the scope is what was produced against.</summary>
 		Task<RmsDisclosureRequest> SaveScopeAsync(int departmentId, string userId, string requestId, string scopeNarrative, RmsRecordQuery scope, string redactionProfile, CancellationToken cancellationToken = default);

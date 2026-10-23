@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
@@ -56,6 +57,7 @@ namespace Resgrid.Services
 		public async Task<Inventory> SaveInventoryAsync(Inventory inventory, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			await GuardLegacyWriteAsync(inventory.DepartmentId);
+			inventory.Note = StringHelpers.SanitizeHtmlForStorage(inventory.Note);
 			return await _inventoryRepository.SaveOrUpdateAsync(inventory, cancellationToken);
 		}
 

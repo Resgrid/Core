@@ -14,7 +14,7 @@
 					},
 					pageLength: 50,
 					columns: [
-						{ data: 'Title', title: 'Title' },
+						{ data: 'Title', title: 'Title', render: resgrid.textCell },
 						{ data: 'OpenDate', title: 'Open Date' },
 						{ data: 'Status', title: 'Status' },
 						{ data: 'VisibilityName', title: 'Visibility' },
@@ -39,7 +39,7 @@
 					},
 					pageLength: 50,
 					columns: [
-						{ data: 'Title', title: 'Title' },
+						{ data: 'Title', title: 'Title', render: resgrid.textCell },
 						{ data: 'OpenDate', title: 'Open Date' },
 						{ data: 'Status', title: 'Status' },
 						{ data: 'VisibilityName', title: 'Visibility' },

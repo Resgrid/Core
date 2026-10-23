@@ -260,7 +260,7 @@
     {
         <script>
             (function () {
-                var bandTypes = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(bandTypes.Select(b => new { v = (int)b, t = localizer["Band" + b].Value })));
+                var bandTypes = @Html.ScriptJson(bandTypes.Select(b => new { v = (int)b, t = localizer["Band" + b].Value }));
                 function val(v) { return v === null || v === undefined ? '' : v; }
                 function esc(v) { return String(val(v)).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
                 function bandRow(b) {

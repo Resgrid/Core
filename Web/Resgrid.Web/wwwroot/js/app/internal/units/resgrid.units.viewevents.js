@@ -30,10 +30,10 @@ var resgrid;
                                 return '<input type="checkbox" id="selectEvent_' + data + '" name="selectEvent_' + data + '" />';
                             }
                         },
-                        { data: 'State', title: 'State' },
-                        { data: 'DestinationName', title: 'Destination' },
+                        { data: 'State', title: 'State', render: resgrid.textCell },
+                        { data: 'DestinationName', title: 'Destination', render: resgrid.textCell },
                         { data: 'Timestamp', title: 'Timestamp' },
-                        { data: 'Note', title: 'Note' }
+                        { data: 'Note', title: 'Note', render: resgrid.textCell }
                     ]
                 });
 
@@ -68,7 +68,7 @@ var resgrid;
                                 draggable: false,
                                 title: item.State + ' ' + item.Timestamp,
                                 tooltip: item.State + ' ' + item.Timestamp
-                            }).bindTooltip(item.State + ' ' + item.Timestamp,
+                            }).bindTooltip(resgrid.escapeHtml(item.State + ' ' + item.Timestamp),
                                 {
                                     permanent: true,
                                     direction: 'bottom'

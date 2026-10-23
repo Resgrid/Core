@@ -29,7 +29,8 @@ namespace Resgrid.Model.Services
 		Task<bool> IsModuleEnabledAsync(int departmentId);
 
 		/// <summary>Cases the caller is an active member of. Nobody lists cases they are not on.</summary>
-		Task<List<RmsInvestigationCase>> ListMyCasesAsync(int departmentId, string userId, bool includeClosed);
+		/// <summary>The caller's cases; <paramref name="number"/> keeps those whose case number, or one of whose evidence numbers, holds it (IdentifierSearchKeys.ContainsParts).</summary>
+		Task<List<RmsInvestigationCase>> ListMyCasesAsync(int departmentId, string userId, bool includeClosed, string number = null);
 		Task<InvestigationCaseAggregate> GetAsync(int departmentId, string userId, string caseId, string ipAddress = null);
 		/// <summary>Opens a case; the opener becomes Lead. Needs RecordRestricted_View.</summary>
 		Task<RmsInvestigationCase> OpenAsync(int departmentId, string userId, string title, string occupancyId, int? callId, string incidentSummary, CancellationToken cancellationToken = default);

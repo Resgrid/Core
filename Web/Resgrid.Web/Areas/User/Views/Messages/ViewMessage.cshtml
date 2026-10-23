@@ -110,7 +110,7 @@
         <div class="mail-body">
           @* The body is raw HTML for an unprotected message; a revealed value is written with
              text() by the reveal module, so decrypted content can never execute as markup. *@
-          <span data-adp-field="messages.body">@Html.Raw(Model.Message.Body)</span>
+          <span data-adp-field="messages.body">@Html.SanitizedHtml(Model.Message.Body)</span>
         </div>
 
         @if (!String.IsNullOrWhiteSpace(Model.ModerationMessage))
@@ -243,7 +243,7 @@
                     <div class="col-md-6">
                       @if (!String.IsNullOrWhiteSpace(recipient.Note))
 					  {
-                        <span>@Html.Raw(recipient.Note)</span>
+                        <span>@Html.SanitizedHtml(recipient.Note)</span>
 					  }
                     </div>
                   </div>
@@ -327,7 +327,7 @@
 						  }
                         </td>
                         <td>
-                          @Html.Raw(recipient.Note)
+                          @Html.SanitizedHtml(recipient.Note)
                         </td>
                       </tr>
 					}

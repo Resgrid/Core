@@ -47,17 +47,17 @@
 
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["CallNoteTextLabel"]</label>
-                            <div class="col-sm-10">@Html.Raw(Model.CallNote)</div>
+                            <div class="col-sm-10">@Html.SanitizedHtml(Model.CallNote)</div>
                         </div>
 
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["CallNoteAddedOnLabel"]</label>
-                            <div class="col-sm-10">@Html.Raw(Model.AddedOn)</div>
+                            <div class="col-sm-10">@Model.AddedOn</div>
                         </div>
 
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["CallNoteAddedByLabel"]</label>
-                            <div class="col-sm-10">@Html.Raw(Model.AddedBy)</div>
+                            <div class="col-sm-10">@Model.AddedBy</div>
                         </div>
 
                         @if (Model.IsFlagged)

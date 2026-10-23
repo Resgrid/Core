@@ -52,7 +52,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		#region Queue
 
 		[HttpGet]
-		public async Task<IActionResult> Index(int? state)
+		public async Task<IActionResult> Index(int? state, string number = null)
 		{
 			var moduleState = await _cutoverService.GetModuleStateAsync(DepartmentId);
 			if (!moduleState.FlagEnabled)
@@ -64,6 +64,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				ModuleState = moduleState,
 				Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false),
 				StateFilter = state,
+				NumberFilter = IdentifierSearchKeys.FilterSearch(number),
 				States = StateItems(),
 				RedactionProfiles = ProfileItems(),
 				CanViewRestricted = await _authorization.HasPermissionAsync(UserId, DepartmentId, PermissionTypes.ViewRestrictedRecords),
@@ -74,7 +75,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				.OrderBy(n => n.Name).Select(n => new SelectListItem { Value = n.UserId, Text = n.Name }).ToList();
 
 			if (moduleState.RecordsUsable)
-				model.Requests = await _disclosures.QueryAsync(DepartmentId, UserId, states, 0, 200);
+				model.Requests = await _disclosures.QueryAsync(DepartmentId, UserId, states, 0, 200, model.NumberFilter);
 
 			if (TempData["RecordsMessage"] is string message)
 				model.Message = message;

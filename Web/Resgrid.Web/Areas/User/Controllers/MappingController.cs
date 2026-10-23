@@ -302,7 +302,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return Unauthorized();
 
 			var feature = layer.Data.Convert();
-			model.GeoJson = JsonConvert.SerializeObject(feature);
+			model.GeoJson = JsonConvert.SerializeObject(feature, HtmlHelpers.ScriptJsonSettings);
 
 			model.Id = layer.Id.ToString();
 			model.Name = layer.Name;

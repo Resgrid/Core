@@ -17,8 +17,14 @@ var resgrid;
                 showEasing: "swing",
                 hideEasing: "linear",
                 showMethod: "fadeIn",
-                hideMethod: "fadeOut"
+                hideMethod: "fadeOut",
+                // Titles and messages are text: server messages carry unit, call and requirement names.
+                escapeHtml: true
             };
+            // Pages that call toastr directly get the same default (toastr 2.1 writes messages as HTML unless told not to).
+            if (typeof toastr !== 'undefined' && toastr.options) {
+                toastr.options.escapeHtml = true;
+            }
             function showInformational(title, message) {
                 toastr.info(message, title, options);
             }

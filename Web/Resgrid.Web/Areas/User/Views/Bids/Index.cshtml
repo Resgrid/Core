@@ -27,11 +27,20 @@
         </div>
         <div class="ibox-content">
             <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["HelpBids"]</div>
+            <form method="get" asp-action="Index" class="form-inline m-b-sm">
+                @if (Model.StatusFilter.HasValue)
+                {
+                    <input type="hidden" name="status" value="@Model.StatusFilter" />
+                }
+                <label for="filter-number" class="m-r-xs">@localizer["BidNumber"]</label>
+                <input class="form-control input-sm" id="filter-number" name="number" value="@Model.Number" maxlength="50" autocomplete="off" />
+                <button type="submit" class="btn btn-sm btn-default m-l-xs"><i class="fa fa-filter"></i> @localizer["Filter"]</button>
+            </form>
             <div class="btn-group m-b-sm">
-                <a asp-action="Index" class="btn btn-xs @(Model.StatusFilter.HasValue ? "btn-default" : "btn-primary")">@localizer["AllStatuses"]</a>
+                <a asp-action="Index" asp-route-number="@Model.Number" class="btn btn-xs @(Model.StatusFilter.HasValue ? "btn-default" : "btn-primary")">@localizer["AllStatuses"]</a>
                 @foreach (var st in statuses)
                 {
-                    <a asp-action="Index" asp-route-status="@((int)st)" class="btn btn-xs @(Model.StatusFilter == (int)st ? "btn-primary" : "btn-default")">@localizer["BidStatus" + st]</a>
+                    <a asp-action="Index" asp-route-status="@((int)st)" asp-route-number="@Model.Number" class="btn btn-xs @(Model.StatusFilter == (int)st ? "btn-primary" : "btn-default")">@localizer["BidStatus" + st]</a>
                 }
             </div>
             @if (Model.Bids.Count == 0)
@@ -61,7 +70,7 @@
                 @if (pages > 1)
                 {
                     <ul class="pagination">
-                        @for (var p = 1; p <= pages; p++) { <li class="@(p == Model.Page ? "active" : null)"><a asp-action="Index" asp-route-status="@Model.StatusFilter" asp-route-page="@p">@p</a></li> }
+                        @for (var p = 1; p <= pages; p++) { <li class="@(p == Model.Page ? "active" : null)"><a asp-action="Index" asp-route-status="@Model.StatusFilter" asp-route-number="@Model.Number" asp-route-page="@p">@p</a></li> }
                     </ul>
                 }
             }

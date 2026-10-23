@@ -589,6 +589,14 @@
   <data name="M5ReportIssuance" xml:space="preserve"><value>Ausgabeverlauf des Inventars</value></data>
   <data name="M5ReportValuation" xml:space="preserve"><value>Bestandsbewertung</value></data>
   <data name="M5ReportControlledSubstanceLog" xml:space="preserve"><value>Protokoll kontrollierter Substanzen</value></data>
+  <data name="M5ReportSummaryOnHand" xml:space="preserve"><value>Aktueller Bestand und serialisierte Anlagegüter an jedem für Sie sichtbaren Standort, mit Charge, Seriennummer, Status und Ablaufdatum.</value></data>
+  <data name="M5ReportSummaryUsage" xml:space="preserve"><value>In einem Zeitraum verbrauchter oder abgeschriebener Bestand, mit dem Einsatz oder Bericht, der ihn verwendet hat.</value></data>
+  <data name="M5ReportSummaryExpiration" xml:space="preserve"><value>Bestand und Anlagegüter, die in einem Zeitraum ablaufen, einschließlich bereits abgelaufener Artikel und der Tage bis zum Ablauf.</value></data>
+  <data name="M5ReportSummaryLowStock" xml:space="preserve"><value>Aktive Artikel, die ihren Meldebestand oder Mindestbestand erreicht oder unterschritten haben, mit Fehlmenge und Bestellmenge.</value></data>
+  <data name="M5ReportSummaryTransferHistory" xml:space="preserve"><value>Bestandsumbuchungen zwischen Standorten in einem Zeitraum, mit der ausführenden Person jeder Umbuchung und etwaigen Stornierungen.</value></data>
+  <data name="M5ReportSummaryIssuance" xml:space="preserve"><value>In einem Zeitraum an Personal oder Einheiten ausgegebene Ausrüstung, mit zurückgegebenen und offenen Mengen.</value></data>
+  <data name="M5ReportSummaryValuation" xml:space="preserve"><value>Aktueller Bestandswert nach Artikel und Standort auf Basis erfasster Stückkosten, summiert je Währung.</value></data>
+  <data name="M5ReportSummaryControlledSubstanceLog" xml:space="preserve"><value>Jede Bewegung kontrollierter Substanzen in einem Zeitraum, mit Mengen vorher und nachher, Zeuge und Bestätigung.</value></data>
   <data name="M5DaysUntilExpiry" xml:space="preserve"><value>Tage bis zum Ablauf</value></data>
   <data name="M5Shortfall" xml:space="preserve"><value>Fehlmenge zum Meldebestand</value></data>
   <data name="M5ReorderQuantity" xml:space="preserve"><value>Vorgeschlagene Nachbestellmenge</value></data>

@@ -80,4 +80,24 @@ namespace Resgrid.Model
 
 		private bool NamedByStartYear => IsCalendarYear || Label == NumberingYearLabel.StartYear;
 	}
+
+	/// <summary>
+	/// One numbering year as a half-open UTC window [FromUtc, BeforeUtc): what a year filter matches so it keeps the documents
+	/// whose numbers name that year (department-local, a fiscal year when the department sets one).
+	/// </summary>
+	public sealed class NumberingYearWindow
+	{
+		public NumberingYearWindow(int year, DateTime fromUtc, DateTime beforeUtc)
+		{
+			Year = year;
+			FromUtc = fromUtc;
+			BeforeUtc = beforeUtc;
+		}
+
+		public int Year { get; }
+
+		public DateTime FromUtc { get; }
+
+		public DateTime BeforeUtc { get; }
+	}
 }

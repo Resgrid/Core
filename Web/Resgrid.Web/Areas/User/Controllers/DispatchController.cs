@@ -2740,7 +2740,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 					note.IsFlagged = flaggedCallNoteIds.Contains(callNote.CallNoteId.ToString(CultureInfo.InvariantCulture));
 					note.Name = name.Name;
 					note.Timestamp = callNote.Timestamp.TimeConverter(call.Department).FormatForDepartment(call.Department);
-					note.Note = ProtectedDataEnvelope.SafeDisplay(callNote.Note);
+					// Rendered as HTML by the call view; markup from any save path (v4 API, older clients) is sanitized here.
+					note.Note = StringHelpers.SanitizeHtmlForDisplay(ProtectedDataEnvelope.SafeDisplay(callNote.Note));
 					note.UserId = callNote.UserId;
 
 					if (callNote.Latitude.HasValue && callNote.Longitude.HasValue)
@@ -3248,7 +3249,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			call.PriorityEnum = (CallPriority)savedCall.Priority;
 			call.Name = ProtectedDataEnvelope.SafeDisplay(savedCall.Name);
 			call.State = DispatchDisplayHelper.GetLocalizedCallState(savedCall.State, _dispatchLocalizer, _commonLocalizer);
-			call.Nature = ProtectedDataEnvelope.SafeDisplay(savedCall.NatureOfCall);
+			// The new-log page puts the nature into its editor as HTML.
+			call.Nature = StringHelpers.SanitizeHtmlForDisplay(ProtectedDataEnvelope.SafeDisplay(savedCall.NatureOfCall));
 			call.Address = ProtectedDataEnvelope.SafeDisplay(savedCall.Address);
 
 			return Json(call);
@@ -3502,6 +3504,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				.OrderByDescending(x => x.LoggedOn);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 			var callTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId);
+			var numberSort = await CallNumberSortKeysAsync(DepartmentId);
 
 			foreach (var call in calls)
 			{
@@ -3509,6 +3512,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				callJson.TypeIconUrl = TypeIconHtml.Url(CallTypeLink.Find(call, callTypes));
 				callJson.CallId = call.CallId;
 				callJson.Number = call.Number;
+				callJson.NumberSort = numberSort(call.Number);
 				callJson.Name = ProtectedDataEnvelope.SafeDisplay(call.Name);
 				callJson.State = DispatchDisplayHelper.GetLocalizedCallState(call.State, _dispatchLocalizer, _commonLocalizer);
 				callJson.StateColor = _callsService.CallStateToColor((CallStates)call.State);
@@ -3545,6 +3549,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 			var callTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId);
+			var numberSort = await CallNumberSortKeysAsync(DepartmentId);
 
 			foreach (var call in calls)
 			{
@@ -3552,6 +3557,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				callJson.TypeIconUrl = TypeIconHtml.Url(CallTypeLink.Find(call, callTypes));
 				callJson.CallId = call.CallId;
 				callJson.Number = call.Number;
+				callJson.NumberSort = numberSort(call.Number);
 				callJson.Name = ProtectedDataEnvelope.SafeDisplay(call.Name);
 				callJson.State = DispatchDisplayHelper.GetLocalizedCallState(call.State, _dispatchLocalizer, _commonLocalizer);
 				callJson.StateColor = _callsService.CallStateToColor((CallStates)call.State);
@@ -3582,12 +3588,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 				.OrderBy(x => x.DispatchOn);
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+			var numberSort = await CallNumberSortKeysAsync(DepartmentId);
 
 			foreach (var call in calls)
 			{
 				var callJson = new CallListJson();
 				callJson.CallId = call.CallId;
 				callJson.Number = call.Number;
+				callJson.NumberSort = numberSort(call.Number);
 				callJson.Name = ProtectedDataEnvelope.SafeDisplay(call.Name);
 				callJson.State = DispatchDisplayHelper.GetLocalizedCallState(call.State, _dispatchLocalizer, _commonLocalizer);
 				callJson.StateColor = _callsService.CallStateToColor((CallStates)call.State);
@@ -3620,12 +3628,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 				await _callsService.GetPendingCallsByDepartmentIdAsync(DepartmentId));
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+			var numberSort = await CallNumberSortKeysAsync(DepartmentId);
 
 			foreach (var call in calls.OrderBy(x => x.LoggedOn))
 			{
 				var callJson = new CallListJson();
 				callJson.CallId = call.CallId;
 				callJson.Number = call.Number;
+				callJson.NumberSort = numberSort(call.Number);
 				callJson.Name = ProtectedDataEnvelope.SafeDisplay(call.Name);
 				callJson.Address = ProtectedDataEnvelope.SafeDisplay(call.Address);
 				callJson.State = DispatchDisplayHelper.GetLocalizedCallState(call.State, _dispatchLocalizer, _commonLocalizer);
@@ -3657,6 +3667,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 				await _callsService.GetAllNonDispatchedScheduledCallsByDepartmentIdAsync(DepartmentId));
 
 			return Json(new { pending = pending.Count(), scheduled = scheduled.Count() });
+		}
+
+		/// <summary>Sort keys for the department's call numbers, so the call grids order them as issued under any numbering pattern.</summary>
+		private async Task<Func<string, string>> CallNumberSortKeysAsync(int departmentId)
+		{
+			return CallNumberFormat.SortKeys(CallNumberFormat.EffectivePattern(await _departmentSettingsService.GetCallNumberingConfigAsync(departmentId)));
 		}
 
 		[HttpPost]
@@ -3867,7 +3883,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 							ContactNoteJson json = new ContactNoteJson();
 							json.Id = note.ContactNoteTypeId;
 							json.ContactId = contactId;
-							json.Note = note.Note;
+							json.Note = StringHelpers.SanitizeHtmlForDisplay(ProtectedDataEnvelope.SafeDisplay(note.Note));
 							json.ShouldAlert = note.ShouldAlert;
 							json.AddedOn = note.AddedOn.FormatForDepartment(department, true);
 							json.AddedBy = await UserHelper.GetFullNameForUser(note.AddedByUserId);
@@ -3992,8 +4008,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.CenterCoordinates = await _departmentSettingsService.GetMapCenterCoordinatesAsync(model.Department);
 			model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(model.Department.DepartmentId);
 			model.Units = await GetViewableUnitsAsync(await _unitsService.GetUnitsForDepartmentAsync(model.Department.DepartmentId));
-			model.UnitTypes = await _unitsService.GetUnitTypesForDepartmentAsync(model.Department.DepartmentId) ?? new List<UnitType>();
-			model.UnitStates = FilterToUnits(await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(model.Department.DepartmentId), model.Units);
 			model.UnitStatuses = await _customStateService.GetAllActiveUnitStatesForDepartmentAsync(model.Department.DepartmentId);
 
 			var priorites = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(model.Department.DepartmentId);

@@ -771,18 +771,48 @@ namespace Resgrid.Services.Records
 		public async Task<List<RmsRecordSearchProjection>> QueryAsync(int departmentId, RmsRecordQuery query)
 		{
 			if (!string.IsNullOrEmpty(query?.ViewerUserId) && !await _authorization.IsActiveMemberAsync(query.ViewerUserId, departmentId)) return new List<RmsRecordSearchProjection>();
-			return (await _projections.QueryAsync(departmentId, query ?? new RmsRecordQuery()))?.ToList() ?? new List<RmsRecordSearchProjection>();
+			return (await _projections.QueryAsync(departmentId, await WithYearWindowAsync(departmentId, query ?? new RmsRecordQuery())))?.ToList() ?? new List<RmsRecordSearchProjection>();
 		}
 
 		public async Task<int> CountAsync(int departmentId, RmsRecordQuery query)
 		{
 			if (!string.IsNullOrEmpty(query?.ViewerUserId) && !await _authorization.IsActiveMemberAsync(query.ViewerUserId, departmentId)) return 0;
-			return await _projections.CountAsync(departmentId, query ?? new RmsRecordQuery());
+			return await _projections.CountAsync(departmentId, await WithYearWindowAsync(departmentId, query ?? new RmsRecordQuery()));
 		}
 
+		/// <summary>The department's numbering years that hold a record (department-local, fiscal when it sets one), newest first.</summary>
 		public async Task<List<int>> GetYearsAsync(int departmentId)
 		{
-			return (await _projections.GetYearsAsync(departmentId))?.ToList() ?? new List<int>();
+			var calendarYears = (await _projections.GetYearsAsync(departmentId))?.ToList() ?? new List<int>();
+			if (calendarYears.Count == 0)
+				return calendarYears;
+
+			var config = await _settings.GetRecordsNumberingConfigAsync(departmentId);
+			var timeZone = (await _departments.GetDepartmentByIdAsync(departmentId, false))?.TimeZone;
+			var windows = RecordsNumberingService.CandidateYearWindows(config, calendarYears, timeZone);
+			return (await _projections.GetNumberingYearsAsync(departmentId, windows))?.ToList() ?? new List<int>();
+		}
+
+		public async Task<NumberingYearWindow> GetYearWindowAsync(int departmentId, int year)
+		{
+			var config = await _settings.GetRecordsNumberingConfigAsync(departmentId);
+			var timeZone = (await _departments.GetDepartmentByIdAsync(departmentId, false))?.TimeZone;
+			return RecordsNumberingService.YearWindow(config, year, timeZone);
+		}
+
+		/// <summary>
+		/// A year filter is the department's numbering year, so "2027" lists the records numbered RUN-2027-* (or the department's
+		/// own pattern) even when its fiscal 2027 started in November 2026, and a record started on a US December 31 evening stays in its year.
+		/// </summary>
+		private async Task<RmsRecordQuery> WithYearWindowAsync(int departmentId, RmsRecordQuery query)
+		{
+			if (query.Year.HasValue && !query.OccurredFrom.HasValue && !query.OccurredBefore.HasValue)
+			{
+				var window = await GetYearWindowAsync(departmentId, query.Year.Value);
+				query.OccurredFrom = window.FromUtc;
+				query.OccurredBefore = window.BeforeUtc;
+			}
+			return query;
 		}
 
 		public async Task<List<RmsRecordSearchProjection>> GetChangesSinceAsync(int departmentId, DateTime? since, int take, string sinceId = null)

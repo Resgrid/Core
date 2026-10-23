@@ -151,7 +151,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			trees.Add(tree1);
 
 			trees.AddRange(BSTreeModel.ForDepartmentGroups(model.Groups));
-			model.TreeData = Newtonsoft.Json.JsonConvert.SerializeObject(trees);
+			model.TreeData = Newtonsoft.Json.JsonConvert.SerializeObject(trees, HtmlHelpers.ScriptJsonSettings);
 
 			return View(model);
 		}
@@ -1473,9 +1473,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 				unitJson.Type = unit.Type;
 				unitJson.UnitId = unit.UnitId;
 				unitJson.TypeIconUrl = TypeIconHtml.UrlForTypeName(unitTypes, unit.Type);
-
+				// New Call and Update Call split the units into a tab per station; a unit whose station group no longer
+				// exists counts as ungrouped.
 				if (unit.StationGroup != null)
+				{
 					unitJson.Station = unit.StationGroup.Name;
+					unitJson.StationGroupId = unit.StationGroup.DepartmentGroupId;
+				}
 
 				var state = states.FirstOrDefault(x => x.UnitId == unit.UnitId);
 

@@ -289,7 +289,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var protocolText = "No Protocol Text Present";
 
 			if (!String.IsNullOrWhiteSpace(protocol.ProtocolText))
-				protocolText = protocol.ProtocolText;
+				protocolText = StringHelpers.SanitizeHtmlForDisplay(protocol.ProtocolText);
 
 			dynamic protocolJson = new
 			{

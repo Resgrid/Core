@@ -983,17 +983,8 @@
   <data name="NearestUnitsPick" xml:space="preserve">
     <value>Dispatch</value>
   </data>
-  <data name="NearestPersonnelLabel" xml:space="preserve">
-    <value>Closest personnel</value>
-  </data>
-  <data name="NearestPersonnelPerson" xml:space="preserve">
-    <value>Person</value>
-  </data>
   <data name="NearestPersonnelStaffing" xml:space="preserve">
     <value>Staffing</value>
-  </data>
-  <data name="NearestPersonnelGroupRoles" xml:space="preserve">
-    <value>Group / roles</value>
   </data>
   <data name="NearestUnitsNearest" xml:space="preserve">
     <value>Nearest #{0}</value>
@@ -1013,7 +1004,19 @@
   <data name="NearestUnitsMapBoundaries" xml:space="preserve">
     <value>Station boundaries</value>
   </data>
-  <data name="NearestUnitsShowingClosest" xml:space="preserve">
-    <value>Showing the {0} closest of {1}. The dispatch lists below include everyone, closest first.</value>
+  <data name="UngroupedUnitsTab" xml:space="preserve">
+    <value>Ungrouped Units</value>
+  </data>
+  <data name="NearestUnitsLoadFailed" xml:space="preserve">
+    <value>The units could not be loaded. Reload the page to try again.</value>
+  </data>
+  <data name="NearestUnitsShowOnMap" xml:space="preserve">
+    <value>Show this position and the call on a map</value>
+  </data>
+  <data name="NearestUnitsPositionTitle" xml:space="preserve">
+    <value>{0}: position</value>
+  </data>
+  <data name="NearestUnitsCallLocation" xml:space="preserve">
+    <value>Call location</value>
   </data>
 </root>

@@ -69,7 +69,7 @@
                       @t.Name
                     </td>
                     <td style="max-width: 300px;">
-                      @Html.Raw(t.Description)
+                      @Html.SanitizedHtml(t.Description)
                     </td>
                     <td>
                       @if (t.ToBeCompletedBy != null)

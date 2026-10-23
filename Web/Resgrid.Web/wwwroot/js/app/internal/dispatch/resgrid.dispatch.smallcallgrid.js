@@ -18,9 +18,9 @@ var resgrid;
                     },
                     pageLength: 6,
                     columns: [
-                        { data: 'Priority', title: getText('priority', 'Priority') },
+                        { data: 'Priority', title: getText('priority', 'Priority'), render: resgrid.textCell },
                         { data: 'DispatchTime', title: getText('dispatchTime', 'Dispatch Time') },
-                        { data: 'Name', title: getText('name', 'Name') },
+                        { data: 'Name', title: getText('name', 'Name'), render: resgrid.textCell },
                         {
                             data: 'CallId',
                             title: getText('actions', 'Actions'),

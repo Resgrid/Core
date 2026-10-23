@@ -117,7 +117,7 @@ var resgrid;
                     // "Any" must post "-1", not "" — the notification engine treats the value as a
                     // state id and an empty string used to make the setting never match.
                     var $sel = $(selector).empty().append('<option value="-1">-- Any --</option>');
-                    $.each(data, function (i, item) { $sel.append('<option value="' + item.Id + '">' + item.Name + '</option>'); });
+                    $.each(data, function (i, item) { $sel.append('<option value="' + resgrid.escapeHtml(item.Id) + '">' + resgrid.escapeHtml(item.Name) + '</option>'); });
                 });
             }
 

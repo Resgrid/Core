@@ -174,11 +174,11 @@ namespace Resgrid.Services.Records
 			return row?.DeletedOn == null ? ProjectRequest(row, restricted) : null;
 		}
 
-		public async Task<List<RmsDisclosureRequest>> QueryAsync(int departmentId, string userId, IEnumerable<RmsDisclosureState> states, int skip = 0, int take = 50)
+		public async Task<List<RmsDisclosureRequest>> QueryAsync(int departmentId, string userId, IEnumerable<RmsDisclosureState> states, int skip = 0, int take = 50, string number = null)
 		{
 			await RequireDisclosureAsync(departmentId, userId);
 			var stateValues = states?.Select(s => (int)s).ToList();
-			var rows = (await _requests.GetForDepartmentAsync(departmentId, stateValues, skip, take))?.ToList() ?? new List<RmsDisclosureRequest>();
+			var rows = (await _requests.GetForDepartmentAsync(departmentId, stateValues, IdentifierSearchKeys.FilterSearch(number), skip, take))?.ToList() ?? new List<RmsDisclosureRequest>();
 			await _protection.RevealDisclosureRequestsAsync(departmentId, rows);
 			var restricted = await _authorization.HasPermissionAsync(userId, departmentId, PermissionTypes.ViewRestrictedRecords);
 			await RequireDisclosureAsync(departmentId, userId);

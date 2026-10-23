@@ -35,10 +35,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private InvestigationCaseSavedResult Wrap(RmsInvestigationCase c) => Done(new InvestigationCaseSavedResult { Data = RecordsRms5ApiMapper.ToCase(c), PageSize = 1 });
 
 		[HttpGet("MyCases")]
-		public async Task<ActionResult<InvestigationCasesResult>> MyCases(bool includeClosed = false)
+		public async Task<ActionResult<InvestigationCasesResult>> MyCases(bool includeClosed = false, string number = null)
 		{
 			if (!await FlagOnAsync()) return NotFound();
-			try { var r = new InvestigationCasesResult { Data = (await _investigations.ListMyCasesAsync(DepartmentId, UserId, includeClosed)).Select(RecordsRms5ApiMapper.ToCase).ToList() }; r.PageSize = r.Data.Count; return Ok(Done(r)); }
+			try { var r = new InvestigationCasesResult { Data = (await _investigations.ListMyCasesAsync(DepartmentId, UserId, includeClosed, number)).Select(RecordsRms5ApiMapper.ToCase).ToList() }; r.PageSize = r.Data.Count; return Ok(Done(r)); }
 			catch (Exception ex) { return Fail(ex); }
 		}
 

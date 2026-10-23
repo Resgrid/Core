@@ -14,6 +14,8 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public List<RmsDisclosureRequest> Requests { get; set; } = new List<RmsDisclosureRequest>();
 		public Dictionary<string, string> PersonnelNames { get; set; } = new Dictionary<string, string>();
 		public int? StateFilter { get; set; }
+		/// <summary>The request number filter as applied.</summary>
+		public string NumberFilter { get; set; }
 		public List<SelectListItem> States { get; set; } = new List<SelectListItem>();
 		public List<SelectListItem> RedactionProfiles { get; set; } = new List<SelectListItem>();
 		public List<SelectListItem> Personnel { get; set; } = new List<SelectListItem>();

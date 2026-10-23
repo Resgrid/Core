@@ -589,6 +589,14 @@
   <data name="M5ReportIssuance" xml:space="preserve"><value>Historial de entregas de inventario</value></data>
   <data name="M5ReportValuation" xml:space="preserve"><value>Valoración del inventario</value></data>
   <data name="M5ReportControlledSubstanceLog" xml:space="preserve"><value>Registro de sustancias controladas</value></data>
+  <data name="M5ReportSummaryOnHand" xml:space="preserve"><value>Existencias actuales y activos serializados en cada ubicación que puede ver, con lote, número de serie, estado y caducidad.</value></data>
+  <data name="M5ReportSummaryUsage" xml:space="preserve"><value>Inventario consumido o dado de baja durante un intervalo de fechas, con la llamada o el registro que lo utilizó.</value></data>
+  <data name="M5ReportSummaryExpiration" xml:space="preserve"><value>Existencias y activos que caducan en un intervalo de fechas, incluidos los artículos ya caducados y los días hasta la caducidad.</value></data>
+  <data name="M5ReportSummaryLowStock" xml:space="preserve"><value>Artículos activos en su punto de reorden o nivel mínimo, o por debajo, con el déficit y la cantidad de reorden.</value></data>
+  <data name="M5ReportSummaryTransferHistory" xml:space="preserve"><value>Transferencias de existencias entre ubicaciones durante un intervalo de fechas, con quién realizó cada movimiento y las reversiones.</value></data>
+  <data name="M5ReportSummaryIssuance" xml:space="preserve"><value>Equipo entregado a personal o unidades durante un intervalo de fechas, con las cantidades devueltas y pendientes.</value></data>
+  <data name="M5ReportSummaryValuation" xml:space="preserve"><value>Valor actual del inventario por artículo y ubicación según los costes unitarios registrados, con totales por moneda.</value></data>
+  <data name="M5ReportSummaryControlledSubstanceLog" xml:space="preserve"><value>Cada movimiento de sustancias controladas durante un intervalo de fechas, con las cantidades antes y después, el testigo y la declaración.</value></data>
   <data name="M5DaysUntilExpiry" xml:space="preserve"><value>Días hasta la caducidad</value></data>
   <data name="M5Shortfall" xml:space="preserve"><value>Cantidad que falta para el punto de reposición</value></data>
   <data name="M5ReorderQuantity" xml:space="preserve"><value>Cantidad de reposición sugerida</value></data>

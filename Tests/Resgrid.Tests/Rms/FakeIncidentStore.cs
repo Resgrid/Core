@@ -88,6 +88,10 @@ namespace Resgrid.Tests.Rms
 				.ReturnsAsync((int d, RmsIncidentReportQuery q) => MatchReports(d, q).Count());
 			ReportsRepo.Setup(r => r.GetYearsAsync(It.IsAny<int>()))
 				.ReturnsAsync((int d) => Reports.Where(x => x.DepartmentId == d).Select(x => (x.CallCreatedOn ?? x.CreatedOn).Year).Distinct().ToList());
+			ReportsRepo.Setup(r => r.GetNumberingYearsAsync(It.IsAny<int>(), It.IsAny<IReadOnlyList<NumberingYearWindow>>()))
+				.ReturnsAsync((int d, IReadOnlyList<NumberingYearWindow> windows) => windows
+					.Where(w => Reports.Any(x => x.DepartmentId == d && x.DeletedOn == null && (x.CallCreatedOn ?? x.CreatedOn) >= w.FromUtc && (x.CallCreatedOn ?? x.CreatedOn) < w.BeforeUtc))
+					.Select(w => w.Year).OrderByDescending(y => y).ToList());
 			ReportsRepo.Setup(r => r.GetMaxRecordNumberSequenceAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
 				.ReturnsAsync((int d, string prefix, string suffix) => FakeRmsStore.MaxRecordNumberSequence(Reports.Where(x => x.DepartmentId == d).Select(x => x.RecordNumber), prefix, suffix));
 			ReportsRepo.Setup(r => r.TryBumpRowVersionAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<long>(), It.IsAny<CancellationToken>()))
@@ -280,6 +284,12 @@ namespace Resgrid.Tests.Rms
 				rows = rows.Where(x => x.FinalizedOn != null && x.FinalizedOn.Value >= query.FinalizedOnStart.Value);
 			if (query?.FinalizedOnEnd != null)
 				rows = rows.Where(x => x.FinalizedOn != null && x.FinalizedOn.Value < query.FinalizedOnEnd.Value);
+			if (query?.YearFrom != null)
+				rows = rows.Where(x => (x.CallCreatedOn ?? x.CreatedOn) >= query.YearFrom.Value);
+			if (query?.YearBefore != null)
+				rows = rows.Where(x => (x.CallCreatedOn ?? x.CreatedOn) < query.YearBefore.Value);
+			if (query?.Year != null && query.YearFrom == null && query.YearBefore == null)
+				rows = rows.Where(x => (x.CallCreatedOn ?? x.CreatedOn).Year == query.Year.Value);
 			return rows;
 		}
 

@@ -64,7 +64,7 @@
                                 <input type="hidden" asp-for="Body">
 
                                 <div id="editor-container" style="width:100%; height: 250px;">
-                                    @Html.Raw(Model.Body)
+                                    @Html.SanitizedHtml(Model.Body)
                                 </div>
                             </div>
                         </div>

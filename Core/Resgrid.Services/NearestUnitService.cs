@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Helpers;
+using Resgrid.Model.Identity;
 using Resgrid.Model.Reporting;
 using Resgrid.Model.Services;
 
@@ -33,13 +34,16 @@ namespace Resgrid.Services
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IGeoService _geoService;
 		private readonly IAuthorizationService _authorizationService;
+		private readonly IDepartmentsService _departmentsService;
 
 		public NearestUnitService(IDispatchScopeService dispatchScopeService, IDepartmentGroupsService departmentGroupsService,
 			IUnitsService unitsService, IUsersService usersService, IPersonnelRolesService personnelRolesService,
 			IActionLogsService actionLogsService, IUserStateService userStateService, ICustomStateService customStateService,
 			IPersonnelLocationResolver personnelLocationResolver, IShiftsService shiftsService,
-			IDepartmentSettingsService departmentSettingsService, IGeoService geoService, IAuthorizationService authorizationService)
+			IDepartmentSettingsService departmentSettingsService, IGeoService geoService, IAuthorizationService authorizationService,
+			IDepartmentsService departmentsService)
 		{
+			_departmentsService = departmentsService;
 			_dispatchScopeService = dispatchScopeService;
 			_departmentGroupsService = departmentGroupsService;
 			_unitsService = unitsService;
@@ -341,6 +345,11 @@ namespace Resgrid.Services
 			Dictionary<int, List<string>> crewByUnit, List<Unit> units, DateTime now)
 		{
 			var rows = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(departmentId, false, false, false) ?? new List<UserGroupRole>();
+			// Only the members the dispatch lists offer (GetAllUsersForDepartmentAsync, capped at the plan's personnel limit), so
+			// the board never ranks, maps or crews someone the dispatcher has no box to tick. The same cached call picks the
+			// same members when the department is over its limit.
+			var members = await _departmentsService.GetAllUsersForDepartmentAsync(departmentId) ?? new List<IdentityUser>();
+			var memberIds = new HashSet<string>(members.Where(u => !string.IsNullOrWhiteSpace(u?.UserId)).Select(u => u.UserId), StringComparer.OrdinalIgnoreCase);
 			var rolesByUser = await _personnelRolesService.GetAllRolesForUsersInDepartmentAsync(departmentId) ?? new Dictionary<string, List<PersonnelRole>>();
 			var actionLogs = await _actionLogsService.GetLastActionLogsForDepartmentAsync(departmentId) ?? new List<ActionLog>();
 			var userStates = await _userStateService.GetLatestStatesForDepartmentAsync(departmentId) ?? new List<UserState>();
@@ -377,7 +386,7 @@ namespace Resgrid.Services
 
 			foreach (var row in rows.Where(r => !string.IsNullOrWhiteSpace(r?.UserId)))
 			{
-				if (people.ContainsKey(row.UserId))
+				if (people.ContainsKey(row.UserId) || !memberIds.Contains(row.UserId))
 					continue;
 
 				logByUser.TryGetValue(row.UserId, out var lastLog);

@@ -611,6 +611,41 @@ namespace Resgrid.Tests.Rms
 		}
 
 		[Test]
+		public void A_year_window_is_the_departments_local_numbering_year_in_utc()
+		{
+			// Calendar year in Chicago: local midnights, 6 hours behind UTC in January.
+			var calendar = RecordsNumberingService.YearWindow(new RecordsNumberingConfig(), 2026, "Central Standard Time");
+			calendar.FromUtc.Should().Be(new DateTime(2026, 1, 1, 6, 0, 0));
+			calendar.BeforeUtc.Should().Be(new DateTime(2027, 1, 1, 6, 0, 0));
+
+			// FY2027 starting 1 November 2026, named by the year it ends in; Los Angeles is still on daylight time at midnight on both days.
+			var fiscal = RecordsNumberingService.YearWindow(new RecordsNumberingConfig { YearStartMonth = 11, YearStartDay = 1 }, 2027, "Pacific Standard Time");
+			fiscal.Year.Should().Be(2027);
+			fiscal.FromUtc.Should().Be(new DateTime(2026, 11, 1, 7, 0, 0));
+			fiscal.BeforeUtc.Should().Be(new DateTime(2027, 11, 1, 7, 0, 0));
+
+			var startNamed = RecordsNumberingService.YearWindow(new RecordsNumberingConfig { YearStartMonth = 11, YearStartDay = 1, YearLabel = (int)NumberingYearLabel.StartYear }, 2026, null);
+			startNamed.FromUtc.Should().Be(new DateTime(2026, 11, 1));
+			startNamed.BeforeUtc.Should().Be(new DateTime(2027, 11, 1));
+
+			RecordsNumberingService.YearWindow(null, 2026, "Not A Zone").FromUtc.Should().Be(new DateTime(2026, 1, 1), "an unknown zone reads the dates as UTC");
+		}
+
+		[Test]
+		public void Every_numbering_year_a_window_check_could_find_comes_from_the_calendar_years()
+		{
+			// A record numbered by its numbering year always lands in one of the candidates: west of UTC the first hours of a UTC
+			// year are the previous local year; east of UTC the last hours are the next; a fiscal year straddles two calendar years.
+			Years(new RecordsNumberingConfig(), new[] { 2026 }, null).Should().Equal(2026);
+			Years(new RecordsNumberingConfig(), new[] { 2026, 2024 }, "Central Standard Time").Should().Equal(2026, 2025, 2024, 2023);
+			Years(new RecordsNumberingConfig(), new[] { 2026 }, "Tokyo Standard Time").Should().Equal(2027, 2026);
+			Years(new RecordsNumberingConfig { YearStartMonth = 11, YearStartDay = 1 }, new[] { 2026 }, null).Should().Equal(2027, 2026);
+
+			IReadOnlyList<int> Years(RecordsNumberingConfig config, int[] calendarYears, string timeZone) =>
+				RecordsNumberingService.CandidateYearWindows(config, calendarYears, timeZone).Select(w => w.Year).ToList();
+		}
+
+		[Test]
 		public void The_records_year_start_round_trips_through_protobuf()
 		{
 			var copy = ObjectSerialization.Deserialize<RecordsNumberingConfig>(ObjectSerialization.Serialize(

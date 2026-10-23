@@ -63,6 +63,7 @@ namespace Resgrid.Model.Services
 
 		Task<int> CountAsync(int departmentId, RmsIncidentReportQuery query);
 
+		/// <summary>The department's numbering years that hold a report (department-local, fiscal when it sets one), newest first.</summary>
 		Task<List<int>> GetYearsAsync(int departmentId);
 
 		/// <summary>

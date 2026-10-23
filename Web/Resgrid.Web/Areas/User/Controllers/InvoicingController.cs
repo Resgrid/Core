@@ -164,9 +164,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Invoicing_View)]
-		public async Task<IActionResult> Index(int? status = null, string contactId = null, int page = 0)
+		public async Task<IActionResult> Index(int? status = null, string contactId = null, string number = null, int page = 0)
 		{
-			var filter = new InvoiceListFilter { Statuses = status.HasValue ? new[] { status.Value } : null, ContactId = contactId, Skip = Math.Max(0, page) * PageSize, Take = PageSize };
+			number = IdentifierSearchKeys.FilterSearch(number);
+			var filter = new InvoiceListFilter { Statuses = status.HasValue ? new[] { status.Value } : null, ContactId = contactId, Number = number, Skip = Math.Max(0, page) * PageSize, Take = PageSize };
 			var invoices = await _invoicing.GetInvoicesForDepartmentAsync(DepartmentId, filter);
 			var aging = await _invoicing.GetAccountsReceivableAgingAsync(DepartmentId);
 			var overdue = aging.Buckets.Where(b => b.Label != "Current").ToList();
@@ -176,6 +177,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Invoices = invoices,
 				Status = status,
 				ContactId = contactId,
+				Number = number,
 				Page = Math.Max(0, page),
 				PageSize = PageSize,
 				TotalCount = await _invoicing.CountInvoicesForDepartmentAsync(DepartmentId, filter),

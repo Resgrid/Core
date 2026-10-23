@@ -10,8 +10,8 @@ namespace Resgrid.Model
 	/// </summary>
 	public static class RecordsSearchGeneration
 	{
-		/// <summary>Bump when the document schema in RecordsSearchDocumentBuilder changes.</summary>
-		public const int SchemaVersion = 1;
+		/// <summary>Bump when the document schema in RecordsSearchDocumentBuilder changes. 2: record and call number keys.</summary>
+		public const int SchemaVersion = 2;
 
 		public static string Compute(int protectedCatalogVersion, long policyEpoch)
 		{
@@ -51,7 +51,11 @@ namespace Resgrid.Model
 		public string ViewerUserId { get; set; }
 		public List<int> States { get; set; }
 		public string DefinitionKey { get; set; }
+		/// <summary>UTC calendar year of the occurrence; <see cref="OccurredFrom"/>/<see cref="OccurredBefore"/> take its place when set.</summary>
 		public int? Year { get; set; }
+		/// <summary>Half-open UTC occurrence window [OccurredFrom, OccurredBefore): a department numbering year (IRecordsService.GetYearWindowAsync).</summary>
+		public DateTime? OccurredFrom { get; set; }
+		public DateTime? OccurredBefore { get; set; }
 		public int? CallId { get; set; }
 		public bool IncludeLegacy { get; set; }
 		public int Skip { get; set; }

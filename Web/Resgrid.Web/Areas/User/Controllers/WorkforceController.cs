@@ -661,7 +661,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var deployments = await _deployments.GetDeploymentsForDepartmentAsync(DepartmentId, false, 0, 200) ?? new List<Deployment>();
 			view.Deployments = deployments.OrderByDescending(d => d.StartOn).Select(d => new SelectListItem(d.Name, d.DeploymentId)).ToList();
 			var bids = await _bids.GetBidsForDepartmentAsync(DepartmentId, null, 0, 200) ?? new List<Bid>();
-			view.Bids = bids.OrderByDescending(b => b.BidNumber).Select(b => new SelectListItem($"#{b.BidNumber} {b.Title}", b.BidId)).ToList();
+			view.Bids = bids.OrderByDescending(b => b.BidNumber).Select(b => new SelectListItem($"{b.NumberLabel()} {b.Title}", b.BidId)).ToList();
 			foreach (var d in deployments) view.ContextLabels["D:" + d.DeploymentId] = d.Name;
 			foreach (var b in bids) view.ContextLabels["B:" + b.BidId] = $"{b.NumberLabel()} {b.Title}";
 			return View(view);

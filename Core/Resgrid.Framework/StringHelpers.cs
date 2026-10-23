@@ -79,12 +79,166 @@ namespace Resgrid.Framework
 			if (string.IsNullOrWhiteSpace(source))
 				return source;
 
-			StringCollection sc = new StringCollection();
-			string temp = source;
+			var cleanHtml = SanitizeHtml(source);
+			if (cleanHtml == null)
+			{
+				Logging.LogError("Following string could not be stripped of Word HTML: " + source);
+				return "Invalid HTML in Source String";
+			}
 
-			// get rid of unnecessary tag spans (comments and title)
+			if (!String.IsNullOrWhiteSpace(cleanHtml))
+				return cleanHtml.Trim();
+
+			//Logging.LogError("Following string could not be sanitized: " + source);
+			return "Invalid HTML in Source String";
+		}
+
+		/// <summary>
+		/// Stored rich text (call nature and notes, messages, department notes, trainings, protocols, documents, calendar
+		/// items, logs, contact notes...) made safe to write into a page with Html.Raw: the same allow-list as
+		/// <see cref="SanitizeHtmlInString"/>, so scripts, event handlers, styles, frames and script URLs never reach the
+		/// browser, whichever path stored the value (web form, v4 API, inbound e-mail, import, workers) and however old it
+		/// is. Unlike the save-time sanitizer it never substitutes a placeholder: nothing left to show is an empty string.
+		/// Text without a '&lt;' cannot hold markup and is returned unchanged; plain text that only mentions angle brackets
+		/// ("pt &lt;unconscious&gt; bp 80", which the sanitizer would delete with its text) is shown literally.
+		/// </summary>
+		public static string SanitizeHtmlForDisplay(string source)
+		{
+			if (string.IsNullOrWhiteSpace(source))
+				return string.Empty;
+			if (source.IndexOf('<') < 0)
+				return source;
+
+			try
+			{
+				if (!LooksLikeHtml(source))
+					return EncodeAngleBrackets(source);
+				return SanitizeHtml(source)?.Trim() ?? string.Empty;
+			}
+			catch (Exception ex)
+			{
+				// Fail closed: the text is shown encoded rather than as markup.
+				Logging.LogException(ex, "Rich text could not be sanitized for display; encoding it instead.");
+				return System.Net.WebUtility.HtmlEncode(source);
+			}
+		}
+
+		/// <summary>
+		/// Free text about to be stored where pages, apps or exports may treat it as HTML: markup goes through the same
+		/// allow-list as <see cref="SanitizeHtmlInString"/>, so a script, handler, frame or script URL is never stored, while
+		/// plain text (including text that mentions "&lt;" or "&lt;word&gt;") and protected-data envelopes are stored unchanged.
+		/// Unlike <see cref="SanitizeHtmlInString"/> it never substitutes a placeholder for the text.
+		/// </summary>
+		public static string SanitizeHtmlForStorage(string value)
+		{
+			if (string.IsNullOrWhiteSpace(value) || value.IndexOf('<') < 0)
+				return value;
+
+			try
+			{
+				if (!LooksLikeHtml(value))
+					return value;
+				return SanitizeHtml(value)?.Trim() ?? string.Empty;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, "Rich text could not be sanitized for storage; storing it with its angle brackets encoded.");
+				return EncodeAngleBrackets(value);
+			}
+		}
+
+		/// <summary>
+		/// True when the text holds markup: a comment, a known HTML element, a namespaced (Word "o:p") or custom ("x-el")
+		/// element, or any tag carrying attributes. "pressure &lt; 90", "x&lt;y" and "&lt;unconscious&gt;" are plain text.
+		/// </summary>
+		public static bool LooksLikeHtml(string text)
+		{
+			if (string.IsNullOrEmpty(text) || text.IndexOf('<') < 0)
+				return false;
+
+			foreach (Match match in HtmlTagToken.Matches(text))
+			{
+				if (match.Value.StartsWith("<!", StringComparison.Ordinal))
+					return true;
+				var name = match.Groups[2].Value;
+				if (KnownHtmlTags.Contains(name) || name.IndexOf(':') >= 0 || name.IndexOf('-') >= 0)
+					return true;
+				if (match.Groups[3].Success && match.Groups[3].Value.IndexOf('=') >= 0)
+					return true;
+			}
+			return false;
+		}
+
+		private static string EncodeAngleBrackets(string text) => text.Replace("<", "&lt;").Replace(">", "&gt;");
+
+		private static readonly Regex HtmlTagToken = new Regex(@"<!--|<!doctype|<(/?)([a-zA-Z][\w:.-]*)(\s[^<>]*)?/?>",
+			RegexOptions.IgnoreCase | RegexOptions.Compiled, TimeSpan.FromSeconds(1));
+
+		private static readonly HashSet<string> KnownHtmlTags = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+		{
+			"a", "abbr", "address", "area", "article", "aside", "audio", "b", "base", "basefont", "bdi", "bdo", "big", "blink",
+			"blockquote", "body", "br", "button", "canvas", "caption", "center", "cite", "code", "col", "colgroup", "data",
+			"datalist", "dd", "del", "details", "dfn", "dialog", "dir", "div", "dl", "dt", "em", "embed", "fieldset", "figcaption",
+			"figure", "font", "footer", "form", "frame", "frameset", "h1", "h2", "h3", "h4", "h5", "h6", "head", "header", "hgroup",
+			"hr", "html", "i", "iframe", "image", "img", "input", "ins", "isindex", "kbd", "keygen", "label", "legend", "li", "link",
+			"listing", "main", "map", "mark", "marquee", "math", "menu", "menuitem", "meta", "meter", "nav", "nobr", "noembed",
+			"noframes", "noscript", "object", "ol", "optgroup", "option", "output", "p", "param", "picture", "plaintext", "portal",
+			"pre", "progress", "q", "rp", "rt", "ruby", "s", "samp", "script", "search", "section", "select", "slot", "small",
+			"source", "span", "strike", "strong", "style", "sub", "summary", "sup", "svg", "table", "tbody", "td", "template",
+			"textarea", "tfoot", "th", "thead", "time", "title", "tr", "track", "tt", "u", "ul", "var", "video", "wbr", "xml", "xmp"
+		};
+
+		private static readonly Regex HtmlNonTextBlocks = new Regex(@"<!--[\s\S]*?(-->|$)|<(script|style|head|title|xml)\b[^>]*>[\s\S]*?(</\2\s*>|$)",
+			RegexOptions.IgnoreCase | RegexOptions.Compiled, TimeSpan.FromSeconds(1));
+		// A tag needs a name and a closing '>' with no '<' in between, so "pressure < 90" and "x<y" stay text.
+		private static readonly Regex HtmlTagPattern = new Regex(@"<(/?)([a-zA-Z][a-zA-Z0-9:-]*)(\s[^<>]*)?/?>|<![^<>]*>",
+			RegexOptions.Compiled, TimeSpan.FromSeconds(1));
+		private static readonly Regex PlainWhitespace = new Regex(@"\s+", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
+		private static readonly HashSet<string> InlineHtmlTags = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+		{
+			"a", "abbr", "b", "big", "cite", "code", "em", "font", "i", "ins", "del", "kbd", "mark", "q", "s", "samp", "small",
+			"span", "strike", "strong", "sub", "sup", "tt", "u", "var"
+		};
+
+		/// <summary>
+		/// The readable text of stored rich text, for previews, excerpts and search: comments, scripts, styles and document
+		/// heads are dropped with their content, other tags are removed (block tags leave a space so "&lt;div&gt;a&lt;/div&gt;&lt;div&gt;b&lt;/div&gt;"
+		/// reads "a b"), entities are decoded and whitespace is collapsed. The result is text, not HTML: encode it when it is
+		/// written into a page. Null or blank in, empty string out.
+		/// </summary>
+		public static string HtmlToPlainText(string html)
+		{
+			if (string.IsNullOrWhiteSpace(html))
+				return string.Empty;
+
+			var text = html;
+			try
+			{
+				if (text.IndexOf('<') >= 0)
+				{
+					text = HtmlNonTextBlocks.Replace(text, " ");
+					text = HtmlTagPattern.Replace(text, m => m.Groups[2].Success && InlineHtmlTags.Contains(m.Groups[2].Value) ? string.Empty : " ");
+				}
+				if (text.IndexOf('&') >= 0)
+					text = System.Net.WebUtility.HtmlDecode(text);
+				return PlainWhitespace.Replace(text.Replace(' ', ' '), " ").Trim();
+			}
+			catch (RegexMatchTimeoutException)
+			{
+				return StripHtmlTagsCharArray(html).Trim();
+			}
+		}
+
+		/// <summary>The allow-list sanitizer behind <see cref="SanitizeHtmlInString"/> and <see cref="SanitizeHtmlForDisplay"/>;
+		/// null when the clean-up left nothing.</summary>
+		private static string SanitizeHtml(string source)
+		{
+			StringCollection sc = new StringCollection();
+
+			// get rid of unnecessary tag spans (comments, title, and style blocks whose CSS would otherwise be left behind as text)
 			sc.Add(@"<!--[\s\S]*?-->");
 			sc.Add(@"<title>[\s\S]*?</title>");
+			sc.Add(@"<style\b[^>]*>[\s\S]*?</style\s*>");
 
 			// Get rid of unnecessary tags but keep the text they wrap (document wrappers, Word's <o:p> and <st1:place> smart tags)
 			sc.Add(@"<(meta|link|/?o:|/?style|/?st\d|/?head|/?html|body|/?body)[^>]*?>");
@@ -100,10 +254,7 @@ namespace Resgrid.Framework
 			}
 
 			if (String.IsNullOrWhiteSpace(source))
-			{
-				Logging.LogError("Following string could not be stripped of Word HTML: " + temp);
-				return "Invalid HTML in Source String";
-			}
+				return null;
 
 			var sanitizer = new HtmlSanitizer();
 			sanitizer.Tag("h1").RemoveEmpty();
@@ -149,14 +300,21 @@ namespace Resgrid.Framework
 							  .SanitizeAttributes("href", new SpaceEncodingUrlAttributeSanitizer())
 							  .RemoveEmpty();
 
-			string cleanHtml = sanitizer.Sanitize(source);
-
-			if (!String.IsNullOrWhiteSpace(cleanHtml))
-				return cleanHtml.Trim();
-
-			//Logging.LogError("Following string could not be sanitized: " + source);
-			return "Invalid HTML in Source String";
+			// The sanitizer writes every non-ASCII character and the apostrophe as an entity ("l'école" becomes "l&#39;&#233;cole").
+			// Those characters can never form markup (attributes are written in double quotes), and exports, voice prompts and
+			// texts that strip tags without decoding entities printed or read the entity, so they are put back as characters.
+			// &amp; &lt; &gt; &quot; and &nbsp; stay encoded.
+			return NonAsciiEntity.Replace(sanitizer.Sanitize(source) ?? string.Empty, m =>
+			{
+				var decoded = System.Net.WebUtility.HtmlDecode(m.Value);
+				if (decoded.Length == 0 || decoded == m.Value)
+					return m.Value;
+				return decoded[0] > ' ' || decoded == "'" ? decoded : m.Value;
+			});
 		}
+
+		private static readonly Regex NonAsciiEntity = new Regex(@"&(?:#[0-9]{1,7}|#[xX][0-9a-fA-F]{1,6}|[a-zA-Z][a-zA-Z0-9]{1,31});",
+			RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
 		/// <summary>
 		/// Tags <see cref="SanitizeHtmlInString"/> unwraps (tag removed, text kept) instead of deleting with their content.

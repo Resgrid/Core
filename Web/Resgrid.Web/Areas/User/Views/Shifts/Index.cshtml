@@ -44,7 +44,7 @@
 		<div class="col-sm-8">
 			<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
 				<a id="yourShiftsButton" class="btn btn-primary top-button" title="@localizer["YourShiftsButton"]" href="@Url.Action("YourShifts", "Shifts", new {area = "User"})">@localizer["YourShiftsButton"]</a>
-				<a id="onDutyButton" class="btn btn-success top-button" title="@localizer["OnDutyButton"]" href="@Url.Action("OnDuty", "Shifts", new {area = "User"})"><i class="fa fa-user-circle"></i> @localizer["OnDutyButton"]</a>
+				<a id="onDutyButton" class="btn btn-success top-button" title="@localizer["OnDutyButton"]" href="@Url.Action("OnDuty", "Shifts", new {area = "User"})">@localizer["OnDutyButton"]</a>
 				@if (Model.IsUserAdminOrGroupAdmin)
 				{
 					<a id="shiftApprovalsButton" class="btn btn-warning top-button" title="@localizer["ApprovalsButton"]" href="@Url.Action("Approvals", "Shifts", new {area = "User"})">

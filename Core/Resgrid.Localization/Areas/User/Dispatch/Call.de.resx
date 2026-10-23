@@ -1071,17 +1071,8 @@
   <data name="NearestUnitsPick" xml:space="preserve">
     <value>Alarmieren</value>
   </data>
-  <data name="NearestPersonnelLabel" xml:space="preserve">
-    <value>Nächstes Personal</value>
-  </data>
-  <data name="NearestPersonnelPerson" xml:space="preserve">
-    <value>Person</value>
-  </data>
   <data name="NearestPersonnelStaffing" xml:space="preserve">
     <value>Verfügbarkeit</value>
-  </data>
-  <data name="NearestPersonnelGroupRoles" xml:space="preserve">
-    <value>Gruppe / Rollen</value>
   </data>
   <data name="NearestUnitsNearest" xml:space="preserve">
     <value>Nächste #{0}</value>
@@ -1101,7 +1092,19 @@
   <data name="NearestUnitsMapBoundaries" xml:space="preserve">
     <value>Wachbereiche</value>
   </data>
-  <data name="NearestUnitsShowingClosest" xml:space="preserve">
-    <value>Die {0} nächsten von {1} werden angezeigt. Die Alarmierungslisten unten enthalten alle, die nächsten zuerst.</value>
+  <data name="UngroupedUnitsTab" xml:space="preserve">
+    <value>Nicht gruppierte Einheiten</value>
+  </data>
+  <data name="NearestUnitsLoadFailed" xml:space="preserve">
+    <value>Die Einheiten konnten nicht geladen werden. Laden Sie die Seite neu, um es erneut zu versuchen.</value>
+  </data>
+  <data name="NearestUnitsShowOnMap" xml:space="preserve">
+    <value>Diese Position und den Einsatzort auf einer Karte anzeigen</value>
+  </data>
+  <data name="NearestUnitsPositionTitle" xml:space="preserve">
+    <value>{0}: Position</value>
+  </data>
+  <data name="NearestUnitsCallLocation" xml:space="preserve">
+    <value>Einsatzort</value>
   </data>
 </root>

@@ -338,7 +338,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			trees.Add(tree1);
 
 			trees.AddRange(BSTreeModel.ForDepartmentGroups(model.Groups));
-			model.TreeData = Newtonsoft.Json.JsonConvert.SerializeObject(trees);
+			model.TreeData = Newtonsoft.Json.JsonConvert.SerializeObject(trees, HtmlHelpers.ScriptJsonSettings);
 
 
 			return View(model);
@@ -1394,7 +1394,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			foreach (var state in activeDetails.OrderBy(x => x.Order))
 			{
-				sb.Append($"<option value='{state.CustomStateDetailId}'>{state.ButtonText}</option>");
+				sb.Append($"<option value='{state.CustomStateDetailId}'>{System.Net.WebUtility.HtmlEncode(state.ButtonText)}</option>");
 			}
 
 			buttonHtml = sb.ToString();
@@ -1429,7 +1429,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			foreach (var state in activeDetails.OrderBy(x => x.Order))
 			{
-				sb.Append($"<option value='{state.CustomStateDetailId}'>{state.ButtonText}</option>");
+				sb.Append($"<option value='{state.CustomStateDetailId}'>{System.Net.WebUtility.HtmlEncode(state.ButtonText)}</option>");
 			}
 
 			buttonHtml = sb.ToString();

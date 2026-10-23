@@ -184,7 +184,7 @@
                                 <input type="hidden" asp-for="Call.NatureOfCall">
 
                                 <div id="nature-container" style="width:100%; height: 300px;">
-                                    @Html.Raw(Model.Call.NatureOfCall)
+                                    @Html.SanitizedHtml(Model.Call.NatureOfCall)
                                 </div>
                             </div>
                         </div>
@@ -196,7 +196,7 @@
                                     <input type="hidden" asp-for="Call.Notes">
 
                                     <div id="note-container" style="width:100%; height: 300px;">
-                                        @Html.Raw(Model.Call.Notes)
+                                        @Html.SanitizedHtml(Model.Call.Notes)
                                     </div>
                                 </div>
                             </div>
@@ -371,7 +371,7 @@
                                     <div class="tab-content" style="height: 600px;">
                                         <div role="tabpanel" class="tab-pane active" id="personnelTab">
                                             <table id="personnelGrid"
-                                                   class="table table-striped table-bordered table-hover"
+                                                   class="table table-striped table-bordered table-hover table-condensed"
                                                    width="100%"></table>
                                         </div>
                                         <div role="tabpanel" class="tab-pane" id="groupsTab">
@@ -391,142 +391,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["UnitsDispatchLabel"]@requiredMark(NewCallFieldKeys.DispatchList)</label>
                             <div class="col-sm-10">
-                                <div>
-                                    <ul class="nav nav-tabs" role="tablist">
-                                        @{
-                                            var count = 0;
-
-                                            var ungroupedUnits = Model.Units.Where(x => x.StationGroupId == null);
-
-                                            if (ungroupedUnits != null && ungroupedUnits.Any())
-                                            {
-                                                @Html.Raw("<li role='presentation' class='active'><a href='#unitsTab0' aria-controls='home' role='tab' data-toggle='tab'>" + Html.Encode(commonLocalizer["Units"].Value) + "</a></li>")
-                                                ;
-                                                count++;
-                                            }
-
-
-                                            for (var i = 0; i < Model.Groups.Count(); i++)
-                                            {
-                                                var units = Model.Units.Where(x => x.StationGroupId == Model.Groups[i].DepartmentGroupId);
-
-                                                if (units != null && units.Any())
-                                                {
-                                                    if (count == 0)
-                                                    {
-                                                        @Html.Raw("<li role='presentation' class='active'><a href='#unitsTab" + Model.Groups[i].DepartmentGroupId + "' aria-controls='home' role='tab' data-toggle='tab'>" + Html.Encode(Model.Groups[i].Name) + "</a></li>")
-                                                        ;
-                                                    }
-                                                    else
-                                                    {
-                                                        @Html.Raw("<li role='presentation'><a href='#unitsTab" + Model.Groups[i].DepartmentGroupId + "' aria-controls='home' role='tab' data-toggle='tab'>" + Html.Encode(Model.Groups[i].Name) + "</a></li>")
-                                                        ;
-                                                    }
-
-                                                    count++;
-                                                }
-                                            }
-                                        }
-                                    </ul>
-                                    <div class="tab-content">
-                                        @{
-                                            var count2 = 0;
-
-                                            var ungroupedUnits2 = Model.Units.Where(x => x.StationGroupId == null);
-
-                                            if (ungroupedUnits2 != null && ungroupedUnits2.Any())
-                                            {
-                                                @Html.Raw("<div role='tabpanel' class='tab-pane active' id='unitsTab0'>")
-                                                ;
-                                                @Html.Raw("<div class='table-responsive'><table class='table table-striped'><thead><tr><th class='span1'><input type='checkbox' id='checkAllUnits0' class='check-all-units' data-unit-grid='unitGroups_0'/></th><th>" + Html.Encode(commonLocalizer["Name"].Value) + "</th><th>" + Html.Encode(commonLocalizer["Type"].Value) + "</th><th>" + Html.Encode(commonLocalizer["Status"].Value) + "</th><th>" + Html.Encode(localizer["NearestUnitsEta"].Value) + "</th></tr></thead><tbody id='unitGroups_0'>")
-                                                ;
-
-                                                if (ungroupedUnits2 != null && ungroupedUnits2.Any())
-                                                {
-                                                    foreach (var u in ungroupedUnits2)
-                                                    {
-                                                        var unitStatus = Model.UnitStates.FirstOrDefault(x => x.UnitId == u.UnitId);
-                                                        var stateText = commonLocalizer["Unknown"].Value;
-                                                        var stateColor = "#000000";
-                                                        var stateTextColor = "#FFFFFF";
-
-                                                        if (unitStatus != null)
-                                                        {
-                                                            var state = await CustomStatesHelper.GetCustomUnitState(unitStatus);
-
-                                                            if (state != null)
-                                                            {
-                                                                stateText = state.ButtonText;
-                                                                stateColor = state.ButtonColor;
-                                                                stateTextColor = state.TextColor;
-                                                            }
-                                                        }
-
-                                                        @Html.Raw("<tr><td><input type='checkbox' id='dispatchUnit_" + u.UnitId + "' name='dispatchUnit_" + u.UnitId + "' /></td><td>" + TypeIconHtml.Image(Model.UnitTypes, u.Type) + Html.Encode(u.Name) + "<div class='unit-board-crew text-muted small' data-unit-id='" + u.UnitId + "'></div></td><td>" + Html.Encode(u.Type) + "</td><td><span class='label label-default' style='color:" + Html.Encode(stateTextColor) + ";background-color:" + Html.Encode(stateColor) + ";'>" + Html.Encode(stateText) + "</span></td><td class='unit-board-eta' data-unit-id='" + u.UnitId + "'>&mdash;</td></tr>")
-                                                        ;
-                                                    }
-                                                }
-
-                                                @Html.Raw("</tbody></table></div></div>")
-                                                ;
-                                                count2++;
-                                            }
-
-                                            for (var i = 0; i < Model.Groups.Count(); i++)
-                                            {
-                                                var groupUnits = Model.Units.Where(x => x.StationGroupId == Model.Groups[i].DepartmentGroupId);
-
-                                                if (groupUnits != null && groupUnits.Any())
-                                                {
-                                                    if (count2 == 0)
-                                                    {
-                                                        @Html.Raw("<div role='tabpanel' class='tab-pane active' id='unitsTab" + Model.Groups[i].DepartmentGroupId + "'>")
-                                                        ;
-                                                    }
-                                                    else
-                                                    {
-                                                        @Html.Raw("<div role='tabpanel' class='tab-pane' id='unitsTab" + Model.Groups[i].DepartmentGroupId + "'>")
-                                                        ;
-                                                    }
-
-                                                    @Html.Raw("<div class='table-responsive'><table class='table table-striped'><thead><tr><th class='span1'><input type='checkbox' id='checkAllUnits" + Model.Groups[i].DepartmentGroupId + "' class='check-all-units' data-unit-grid='unitGroups_" + Model.Groups[i].DepartmentGroupId + "'/></th><th>" + Html.Encode(commonLocalizer["Name"].Value) + "</th><th>" + Html.Encode(commonLocalizer["Type"].Value) + "</th><th>" + Html.Encode(commonLocalizer["Status"].Value) + "</th><th>" + Html.Encode(localizer["NearestUnitsEta"].Value) + "</th></tr></thead><tbody id='unitGroups_" + Model.Groups[i].DepartmentGroupId + "'>")
-                                                    ;
-
-                                                    if (groupUnits != null && groupUnits.Any())
-                                                    {
-                                                        foreach (var u in groupUnits)
-                                                        {
-                                                            var unitStatus = Model.UnitStates.FirstOrDefault(x => x.UnitId == u.UnitId);
-                                                            var stateText = commonLocalizer["Unknown"].Value;
-                                                            var stateColor = "#000000";
-                                                            var stateTextColor = "#FFFFFF";
-
-                                                            if (unitStatus != null)
-                                                            {
-                                                                var state = await CustomStatesHelper.GetCustomUnitState(unitStatus);
-
-                                                                if (state != null)
-                                                                {
-                                                                    stateText = state.ButtonText;
-                                                                    stateColor = state.ButtonColor;
-                                                                    stateTextColor = state.TextColor;
-                                                                }
-                                                            }
-
-                                                            @Html.Raw("<tr><td><input type='checkbox' id='dispatchUnit_" + u.UnitId + "' name='dispatchUnit_" + u.UnitId + "' /></td><td>" + TypeIconHtml.Image(Model.UnitTypes, u.Type) + Html.Encode(u.Name) + "<div class='unit-board-crew text-muted small' data-unit-id='" + u.UnitId + "'></div></td><td>" + Html.Encode(u.Type) + "</td><td><span class='label label-default' style='color:" + Html.Encode(stateTextColor) + ";background-color:" + Html.Encode(stateColor) + ";'>" + Html.Encode(stateText) + "</span></td><td class='unit-board-eta' data-unit-id='" + u.UnitId + "'>&mdash;</td></tr>")
-                                                            ;
-                                                        }
-                                                    }
-
-                                                    @Html.Raw("</tbody></table></div></div>")
-                                                    ;
-
-                                                    count2++;
-                                                }
-                                            }
-                                        }
-                                    </div>
-                                </div>
+                                @await Html.PartialAsync("_DispatchUnitLists")
                             </div>
                         </div>
                         }
@@ -774,17 +639,17 @@
         var _alertNoteIndex = 0;
 
         function buildNoteHtml(note) {
-            var bgStyle = note.TypeColor ? ' style="background-color:' + note.TypeColor + '"' : '';
+            var bgStyle = note.TypeColor ? ' style="background-color:' + resgrid.escapeHtml(note.TypeColor) + '"' : '';
             return '<div class="note-card">' +
                 '<div class="ibox">' +
                 '<div class="ibox-content"' + bgStyle + '>' +
                 '<div class="row"><div class="col-md-12">' +
-                '<h4 class="note-title">' + (note.TypeName ? note.TypeName : '') + '</h4>' +
+                '<h4 class="note-title">' + resgrid.escapeHtml(note.TypeName) + '</h4>' +
                 '<p class="small text-muted">' +
-                '<i class="fa fa-clock-o"></i> ' + note.AddedOn +
-                (note.AddedBy ? ' | <i class="fa fa-user"></i> ' + note.AddedBy : '') +
+                '<i class="fa fa-clock-o"></i> ' + resgrid.escapeHtml(note.AddedOn) +
+                (note.AddedBy ? ' | <i class="fa fa-user"></i> ' + resgrid.escapeHtml(note.AddedBy) : '') +
                 '</p></div></div>' +
-                '<div class="row"><div class="col-md-12 note-content">' + note.Note + '</div></div>' +
+                '<div class="row"><div class="col-md-12 note-content">' + (note.Note || '') + '</div></div>' +
                 '</div></div></div>';
         }
 

@@ -33,6 +33,7 @@
 		<form method="get" class="form-inline" asp-controller="RecordPermits" asp-action="Index" asp-route-area="User">
 			<select class="form-control" name="state" asp-items="Model.States"><option value="">@L["AllStates"]</option></select>
 			<select class="form-control" name="typeId" asp-items="Model.TypeItems"><option value="">@L["AllTypes"]</option></select>
+			<input class="form-control" name="number" value="@Model.Number" maxlength="50" autocomplete="off" placeholder="@L["PermitNumber"]" aria-label="@L["PermitNumber"]" />
 			<label class="checkbox-inline"><input type="checkbox" name="expiring" value="true" @(Model.ExpiringOnly ? "checked" : "") /> @L["ExpiringSoon"]</label>
 			<button class="btn btn-default">@L["Filter"]</button>
 		</form>
@@ -61,7 +62,7 @@
 			</div>
 			@if (Model.Total > Model.PageSize)
 			{
-				<ul class="pagination">@for (var pg = 1; pg <= (Model.Total + Model.PageSize - 1) / Model.PageSize; pg++) { <li class="@(pg == Model.Page ? "active" : "")"><a asp-controller="RecordPermits" asp-action="Index" asp-route-area="User" asp-route-state="@Model.State" asp-route-typeId="@Model.PermitTypeId" asp-route-expiring="@Model.ExpiringOnly" asp-route-page="@pg">@pg</a></li> }</ul>
+				<ul class="pagination">@for (var pg = 1; pg <= (Model.Total + Model.PageSize - 1) / Model.PageSize; pg++) { <li class="@(pg == Model.Page ? "active" : "")"><a asp-controller="RecordPermits" asp-action="Index" asp-route-area="User" asp-route-state="@Model.State" asp-route-typeId="@Model.PermitTypeId" asp-route-expiring="@Model.ExpiringOnly" asp-route-number="@Model.Number" asp-route-page="@pg">@pg</a></li> }</ul>
 			}
 		}
 	</div></div>

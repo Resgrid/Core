@@ -36,7 +36,7 @@ var resgrid;
                             if (result) {
                                 $(`#callAutomationOperationValue_${forCount} option`).remove();
 
-                                result.forEach(callType => $(`#callAutomationOperationValue_${forCount}`).append(`<option value="${callType.Id}" >${callType.Name}</option>`));
+                                result.forEach(callType => $(`#callAutomationOperationValue_${forCount}`).append(`<option value="${callType.Id}" >${resgrid.escapeHtml(callType.Name)}</option>`));
                             }
                         });
                     } else if (type == 2) {
@@ -48,7 +48,7 @@ var resgrid;
                             if (result) {
                                 $(`#callAutomationOperationValue_${forCount} option`).remove();
 
-                                result.forEach(callType => $(`#callAutomationOperationValue_${forCount}`).append(`<option value="${callType.Id}" >${callType.Name}</option>`));
+                                result.forEach(callType => $(`#callAutomationOperationValue_${forCount}`).append(`<option value="${callType.Id}" >${resgrid.escapeHtml(callType.Name)}</option>`));
                             }
                         });
                     } else {

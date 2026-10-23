@@ -12,15 +12,15 @@ var resgrid;
 					},
 					pageLength: 50,
 					columns: [
-						{ data: 'Number', title: 'Number' },
-						{ data: 'Name', title: 'Name' },
+						{ data: 'Number', title: 'Number', type: 'string', render: resgrid.callNumberCell },
+						{ data: 'Name', title: 'Name', render: resgrid.textCell },
 						{ data: 'Timestamp', title: 'Timestamp' },
 						{
 							data: null,
 							title: 'Priority',
 							orderable: false,
 							render: function (data, type, row) {
-								return '<span style="background-color:' + row.Color + ';color:#fff;padding:2px 6px;border-radius:3px;">' + row.Priority + '</span>';
+								return '<span style="background-color:' + resgrid.escapeHtml(row.Color) + ';color:#fff;padding:2px 6px;border-radius:3px;">' + resgrid.escapeHtml(row.Priority) + '</span>';
 							}
 						}
 					]
@@ -33,15 +33,15 @@ var resgrid;
 					},
 					pageLength: 50,
 					columns: [
-						{ data: 'Name', title: 'Name' },
-						{ data: 'Type', title: 'Type' },
-						{ data: 'Station', title: 'Station' },
+						{ data: 'Name', title: 'Name', render: resgrid.textCell },
+						{ data: 'Type', title: 'Type', render: resgrid.textCell },
+						{ data: 'Station', title: 'Station', render: resgrid.textCell },
 						{
 							data: null,
 							title: 'State',
 							orderable: false,
 							render: function (data, type, row) {
-								return '<span style="background-color:' + row.StateColor + ';color:' + row.TextColor + ';padding:2px 6px;border-radius:3px;">' + row.State + '</span>';
+								return '<span style="background-color:' + resgrid.escapeHtml(row.StateColor) + ';color:' + resgrid.escapeHtml(row.TextColor) + ';padding:2px 6px;border-radius:3px;">' + resgrid.escapeHtml(row.State) + '</span>';
 							}
 						},
 						{ data: 'Timestamp', title: 'Timestamp' }
@@ -55,13 +55,13 @@ var resgrid;
 					},
 					pageLength: 50,
 					columns: [
-						{ data: 'Name', title: 'Name' },
-						{ data: 'Group', title: 'Group' },
-						{ data: 'Roles', title: 'Roles' },
-						{ data: 'State', title: 'Staffing' },
-						{ data: 'Status', title: 'Status' },
+						{ data: 'Name', title: 'Name', render: resgrid.textCell },
+						{ data: 'Group', title: 'Group', render: resgrid.textCell },
+						{ data: 'Roles', title: 'Roles', render: resgrid.textCell },
+						{ data: 'State', title: 'Staffing', render: resgrid.textCell },
+						{ data: 'Status', title: 'Status', render: resgrid.textCell },
 						{ data: 'UpdatedDate', title: 'Timestamp' },
-						{ data: 'Eta', title: 'ETA' }
+						{ data: 'Eta', title: 'ETA', render: resgrid.textCell }
 					]
 				});
 			});

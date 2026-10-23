@@ -201,6 +201,21 @@ namespace Resgrid.Tests.Services
 			InventoryReportDocuments.Locked(InventoryReportKind.OnHand, CultureInfo.GetCultureInfo("ar")).Should().Contain("dir=\"rtl\"").And.NotContain("canary");
 		}
 
+		[Test]
+		public void M5_every_report_kind_has_a_title_and_reports_list_summary_in_each_supported_locale()
+		{
+			// Reports/Index lists every kind beside the classic reports; a missing key would silently show English or the raw key.
+			var strings = new System.Resources.ResourceManager("Resgrid.Localization.Areas.User.Inventory.Inventory", typeof(Resgrid.Localization.SupportedLocales).Assembly);
+			foreach (var language in Resgrid.Localization.SupportedLocales.GetSupportedCultures())
+			{
+				var resources = strings.GetResourceSet(CultureInfo.GetCultureInfo(language), true, false);
+				resources.Should().NotBeNull(language);
+				foreach (var kind in Enum.GetValues<InventoryReportKind>())
+					foreach (var key in new[] { "M5Report" + kind, "M5ReportSummary" + kind })
+						resources.GetString(key).Should().NotBeNullOrWhiteSpace(key + " in " + language).And.NotBe(key);
+			}
+		}
+
 		private InventoryAsset M5Asset(InventoryItem item, InventoryLocation location, int status, string serial) => _store.Seed(new InventoryAsset {
 			DepartmentId = Department, ItemId = item.Id, CurrentLocationId = location.Id, Status = status, Content = JsonConvert.SerializeObject(new InventoryAssetContent { SerialNumber = serial }) });
 		private InventoryTransaction M5Ledger(InventoryItem item, InventoryLocation from, InventoryLocation to, decimal quantity, InventoryTransactionType type) => _store.Seed(new InventoryTransaction {

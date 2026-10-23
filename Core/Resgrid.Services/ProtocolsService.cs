@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Search;
@@ -68,6 +69,10 @@ namespace Resgrid.Services
 
 		public async Task<DispatchProtocol> SaveProtocolAsync(DispatchProtocol protocol, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			// Rich text the call views render as HTML: scripts, handlers and frames are never stored.
+			protocol.Description = StringHelpers.SanitizeHtmlForStorage(protocol.Description);
+			protocol.ProtocolText = StringHelpers.SanitizeHtmlForStorage(protocol.ProtocolText);
+
 			var saved = await _dispatchProtocolRepository.SaveOrUpdateAsync(protocol, cancellationToken);
 
 			if (saved.Questions != null)

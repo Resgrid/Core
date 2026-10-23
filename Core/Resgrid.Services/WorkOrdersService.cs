@@ -385,6 +385,7 @@ namespace Resgrid.Services
 		public async Task<WorkOrderPage> ListAsync(ChecklistActor actor, WorkOrderFilter filter)
 		{
 			if (filter == null || filter.Page < 0 || filter.Page > 10000 || filter.Status.HasValue && !Enum.IsDefined(filter.Status.Value) || filter.Priority.HasValue && !Enum.IsDefined(filter.Priority.Value) || filter.AssetId != null && !Guid.TryParseExact(filter.AssetId, "D", out _) || filter.ChecklistCompletionId != null && !Guid.TryParseExact(filter.ChecklistCompletionId, "D", out _)) throw new WorkOrderException(400, "InvalidInput");
+			filter.Number = IdentifierSearchKeys.FilterSearch(filter.Number);
 			var scope = await _authorization.ScopeAsync(actor); var rows = await _store.ListAsync(actor.DepartmentId, scope, filter);
 			var page = new WorkOrderPage { HasMore = rows.Count > 50, CanWrite = await _access.CanUseMaintenanceAsync(actor.DepartmentId) };
 			foreach (var row in rows.Take(50))

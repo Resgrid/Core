@@ -132,7 +132,7 @@
         var boundsSW = [@((Model.Layer.BoundsSWLat ?? Model.Map.BoundsSWLat).ToString("G", System.Globalization.CultureInfo.InvariantCulture)), @((Model.Layer.BoundsSWLon ?? Model.Map.BoundsSWLon).ToString("G", System.Globalization.CultureInfo.InvariantCulture))];
         var centerLat = @Model.Map.CenterLatitude.ToString("G", System.Globalization.CultureInfo.InvariantCulture);
         var centerLon = @Model.Map.CenterLongitude.ToString("G", System.Globalization.CultureInfo.InvariantCulture);
-        var existingRegions = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Regions ?? new System.Collections.Generic.List<Resgrid.Model.IndoorMapZone>()));
+        var existingRegions = @Html.ScriptJson(Model.Regions ?? new System.Collections.Generic.List<Resgrid.Model.IndoorMapZone>());
         var saveRegionUrl = '@Url.Action("SaveRegion", "CustomMaps", new { area = "User" })';
         var deleteRegionUrl = '@Url.Action("DeleteRegion", "CustomMaps", new { area = "User" })';
     </script>

@@ -181,12 +181,12 @@ var resgrid;
                         for (var j = 0; j < data2.length; j++) {
                             if (data2[j] && data2[j].Roles) {
                                 //var unitsHtml = `<div class="col-sm-10">${data2[j].Name}</div>`;
-                                var unitsHtml = `<div class="form-group"><label class="control-label">${data2[j].Name}</label><div class="controls"><div class="col-md-6">`
+                                var unitsHtml = `<div class="form-group"><label class="control-label">${resgrid.escapeHtml(data2[j].Name)}</label><div class="controls"><div class="col-md-6">`
 
                                 var roleIds = new Array();
                                 for (var k = 0; k < data2[j].Roles.length; k++) {
                                     roleIds.push(data2[j].Roles[k].UnitRoleId);
-                                    unitsHtml = unitsHtml + `<div class="row"><div class="col-sm-5">${data2[j].Roles[k].Name}</div>`;
+                                    unitsHtml = unitsHtml + `<div class="row"><div class="col-sm-5">${resgrid.escapeHtml(data2[j].Roles[k].Name)}</div>`;
                                     unitsHtml = unitsHtml + `<div class="col-sm-5"><select id="unitRole_${data2[j].UnitId}_${data2[j].Roles[k].UnitRoleId}" name="unitRole_${data2[j].UnitId}_${data2[j].Roles[k].RoleId}" class="unitRoleSelect"></select></div></div>`;
                                 }
 

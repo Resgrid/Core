@@ -648,6 +648,14 @@
   <data name="M5ReportIssuance" xml:space="preserve"><value>Ιστορικό χορηγήσεων αποθέματος</value></data>
   <data name="M5ReportValuation" xml:space="preserve"><value>Αποτίμηση αποθέματος</value></data>
   <data name="M5ReportControlledSubstanceLog" xml:space="preserve"><value>Μητρώο ελεγχόμενων ουσιών</value></data>
+  <data name="M5ReportSummaryOnHand" xml:space="preserve"><value>Τρέχον απόθεμα και σειριοποιημένα πάγια σε κάθε τοποθεσία που μπορείτε να δείτε, με παρτίδα, σειριακό αριθμό, κατάσταση και ημερομηνία λήξης.</value></data>
+  <data name="M5ReportSummaryUsage" xml:space="preserve"><value>Απόθεμα που καταναλώθηκε ή διαγράφηκε σε ένα χρονικό διάστημα, με το συμβάν ή την εγγραφή που το χρησιμοποίησε.</value></data>
+  <data name="M5ReportSummaryExpiration" xml:space="preserve"><value>Απόθεμα και πάγια που λήγουν σε ένα χρονικό διάστημα, συμπεριλαμβανομένων ήδη ληγμένων ειδών και των ημερών έως τη λήξη.</value></data>
+  <data name="M5ReportSummaryLowStock" xml:space="preserve"><value>Ενεργά είδη στο σημείο αναπαραγγελίας ή στο ελάχιστο επίπεδο ή κάτω από αυτά, με το έλλειμμα και την ποσότητα αναπαραγγελίας.</value></data>
+  <data name="M5ReportSummaryTransferHistory" xml:space="preserve"><value>Μεταφορές αποθέματος μεταξύ τοποθεσιών σε ένα χρονικό διάστημα, με το άτομο που εκτέλεσε κάθε μεταφορά και τυχόν αντιλογισμούς.</value></data>
+  <data name="M5ReportSummaryIssuance" xml:space="preserve"><value>Εξοπλισμός που χορηγήθηκε σε προσωπικό ή μονάδες σε ένα χρονικό διάστημα, με τις επιστραμμένες και εκκρεμείς ποσότητες.</value></data>
+  <data name="M5ReportSummaryValuation" xml:space="preserve"><value>Τρέχουσα αξία αποθέματος ανά είδος και τοποθεσία βάσει του καταγεγραμμένου κόστους μονάδας, με σύνολα ανά νόμισμα.</value></data>
+  <data name="M5ReportSummaryControlledSubstanceLog" xml:space="preserve"><value>Κάθε κίνηση ελεγχόμενων ουσιών σε ένα χρονικό διάστημα, με τις ποσότητες πριν και μετά, τον μάρτυρα και τη βεβαίωση.</value></data>
   <data name="M5DaysUntilExpiry" xml:space="preserve"><value>Ημέρες μέχρι τη λήξη</value></data>
   <data name="M5Shortfall" xml:space="preserve"><value>Ποσότητα που υπολείπεται του σημείου αναπαραγγελίας</value></data>
   <data name="M5ReorderQuantity" xml:space="preserve"><value>Προτεινόμενη ποσότητα αναπαραγγελίας</value></data>

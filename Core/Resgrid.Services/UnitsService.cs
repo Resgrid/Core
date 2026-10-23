@@ -151,6 +151,9 @@ namespace Resgrid.Services
 			if (owningUnit != null)
 				await _recordsCutoverService.Value.EnsureLegacyWriteAllowedAsync(owningUnit.DepartmentId, "UnitsService.SaveUnitLogAsync");
 
+			// Rich text the unit log views render as HTML: scripts, handlers and frames are never stored.
+			unitLog.Narrative = StringHelpers.SanitizeHtmlForStorage(unitLog.Narrative);
+
 			var saved = await _unitLogsRepository.SaveOrUpdateAsync(unitLog, cancellationToken);
 
 			// ADP write safety net (plan 4.2/19.2, catalog v9). Runs AFTER the save because the AAD

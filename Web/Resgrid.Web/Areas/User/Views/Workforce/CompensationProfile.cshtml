@@ -120,10 +120,10 @@
         var readOnly = @(readOnly ? "true" : "false");
         var pay = @Html.Raw(Model.PayComponentsJson ?? "[]");
         var cost = @Html.Raw(Model.CostComponentsJson ?? "[]");
-        var payCategories = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Enum.GetValues(typeof(PayComponentCategories)).Cast<PayComponentCategories>().Select(c => new { v = (int)c, t = localizer["PayCategory" + c].Value })));
-        var payBases = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Enum.GetValues(typeof(PayComponentBases)).Cast<PayComponentBases>().Select(c => new { v = (int)c, t = localizer["PayComponentBasis" + c].Value })));
-        var costCategories = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Enum.GetValues(typeof(CostComponentCategories)).Cast<CostComponentCategories>().Select(c => new { v = (int)c, t = localizer["CostCategory" + c].Value })));
-        var costBases = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Enum.GetValues(typeof(CostComponentBases)).Cast<CostComponentBases>().Select(c => new { v = (int)c, t = localizer["CostComponentBasis" + c].Value })));
+        var payCategories = @Html.ScriptJson(Enum.GetValues(typeof(PayComponentCategories)).Cast<PayComponentCategories>().Select(c => new { v = (int)c, t = localizer["PayCategory" + c].Value }));
+        var payBases = @Html.ScriptJson(Enum.GetValues(typeof(PayComponentBases)).Cast<PayComponentBases>().Select(c => new { v = (int)c, t = localizer["PayComponentBasis" + c].Value }));
+        var costCategories = @Html.ScriptJson(Enum.GetValues(typeof(CostComponentCategories)).Cast<CostComponentCategories>().Select(c => new { v = (int)c, t = localizer["CostCategory" + c].Value }));
+        var costBases = @Html.ScriptJson(Enum.GetValues(typeof(CostComponentBases)).Cast<CostComponentBases>().Select(c => new { v = (int)c, t = localizer["CostComponentBasis" + c].Value }));
         function select(name, options, value) { var s = $('<select class="form-control input-sm"></select>').attr('data-f', name); options.forEach(function (o) { s.append($('<option></option>').val(o.v).text(o.t).prop('selected', o.v == value)); }); return s; }
         function input(name, value, type) { return $('<input class="form-control input-sm" />').attr('type', type || 'text').attr('data-f', name).val(value == null ? '' : value); }
         function payRow(c) {

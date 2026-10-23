@@ -80,13 +80,20 @@ namespace Resgrid.Services.Records
 
 		#region Cases
 
-		public async Task<List<RmsInvestigationCase>> ListMyCasesAsync(int departmentId, string userId, bool includeClosed)
+		public async Task<List<RmsInvestigationCase>> ListMyCasesAsync(int departmentId, string userId, bool includeClosed, string number = null)
 		{
 			await _gate.RequireEnabledAsync(departmentId, RecordsPreventionModule.Investigations);
 			await _gate.RequireRestrictedAsync(departmentId, userId);
 			var memberships = (await _members.GetActiveForUserAsync(departmentId, userId))?.Select(m => m.RmsInvestigationCaseId).Distinct().ToList() ?? new List<string>();
 			if (memberships.Count == 0) return new List<RmsInvestigationCase>();
 			var cases = ((await _cases.GetByIdsAsync(departmentId, memberships)) ?? Enumerable.Empty<RmsInvestigationCase>()).Where(c => includeClosed || !c.IsClosed).ToList();
+			number = IdentifierSearchKeys.FilterSearch(number);
+			if (number != null && cases.Count > 0)
+			{
+				// A case is found by its own number or by the number of any evidence item it holds (EV-2026-0042 finds its case).
+				var byEvidence = new HashSet<string>((await _evidence.GetCaseIdsWithEvidenceNumberAsync(departmentId, cases.Select(c => c.RmsInvestigationCaseId), number)) ?? Enumerable.Empty<string>(), StringComparer.Ordinal);
+				cases = cases.Where(c => IdentifierSearchKeys.ContainsParts(c.CaseNumber, number) || byEvidence.Contains(c.RmsInvestigationCaseId)).ToList();
+			}
 			await _protection.RevealInvestigationCasesAsync(departmentId, cases);
 			return cases;
 		}

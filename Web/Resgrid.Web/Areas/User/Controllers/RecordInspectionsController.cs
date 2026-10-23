@@ -34,13 +34,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private const string Flag = FeatureFlagKeys.RecordsPreventionInspections;
 
 		[HttpGet]
-		public async Task<IActionResult> Index(int? state = null, string programId = null, int page = 1)
+		public async Task<IActionResult> Index(int? state = null, string programId = null, int page = 1, string number = null)
 		{
 			if (!await ModuleOnAsync(Flag)) return NotFound();
 			try
 			{
-				var model = Prepare(new RecordInspectionsIndexView { State = state, ProgramId = programId, Page = Math.Max(1, page) });
-				var query = new RmsInspectionQuery { States = state.HasValue ? new List<int> { state.Value } : null, ProgramId = programId, Skip = (model.Page - 1) * model.PageSize, Take = model.PageSize };
+				var model = Prepare(new RecordInspectionsIndexView { State = state, ProgramId = programId, Number = IdentifierSearchKeys.FilterSearch(number), Page = Math.Max(1, page) });
+				var query = new RmsInspectionQuery { States = state.HasValue ? new List<int> { state.Value } : null, ProgramId = programId, Number = model.Number, Skip = (model.Page - 1) * model.PageSize, Take = model.PageSize };
 				model.Inspections = await _inspections.ListAsync(DepartmentId, UserId, query);
 				model.Total = await _inspections.CountAsync(DepartmentId, UserId, query);
 				model.Programs = await _inspections.GetProgramsAsync(DepartmentId, UserId, false);

@@ -9,7 +9,15 @@ namespace Resgrid.Model.Repositories
 	public sealed class RmsIncidentReportQuery
 	{
 		public IList<int> States { get; set; }
+		/// <summary>
+		/// A numbering year of the department: IIncidentReportsService turns it into <see cref="YearFrom"/>/<see cref="YearBefore"/>
+		/// (department-local, a fiscal year when one is set) so it keeps the reports whose numbers name it. Read directly by the
+		/// repository only when no window is set, as the UTC calendar year of COALESCE(CallCreatedOn, CreatedOn).
+		/// </summary>
 		public int? Year { get; set; }
+		/// <summary>Half-open UTC window [YearFrom, YearBefore) on COALESCE(CallCreatedOn, CreatedOn), the date a report is numbered by.</summary>
+		public DateTime? YearFrom { get; set; }
+		public DateTime? YearBefore { get; set; }
 		public int? CallId { get; set; }
 		public string OwnerUserId { get; set; }
 		public int? StationGroupId { get; set; }
@@ -51,7 +59,10 @@ namespace Resgrid.Model.Repositories
 		Task<RmsIncidentReport> GetByNerisIncidentIdAsync(int departmentId, string nerisIncidentId);
 		Task<IEnumerable<RmsIncidentReport>> QueryAsync(int departmentId, RmsIncidentReportQuery query);
 		Task<int> CountAsync(int departmentId, RmsIncidentReportQuery query);
+		/// <summary>UTC calendar years of COALESCE(CallCreatedOn, CreatedOn), newest first.</summary>
 		Task<IEnumerable<int>> GetYearsAsync(int departmentId);
+		/// <summary>The years of <paramref name="windows"/> that COALESCE(CallCreatedOn, CreatedOn) of a live report falls in, newest first.</summary>
+		Task<IEnumerable<int>> GetNumberingYearsAsync(int departmentId, IReadOnlyList<NumberingYearWindow> windows);
 		/// <summary>Highest sequence already issued between a number prefix and suffix, across Records and incident reports; 0 when none.</summary>
 		Task<int> GetMaxRecordNumberSequenceAsync(int departmentId, string numberPrefix, string numberSuffix);
 		Task<bool> TryBumpRowVersionAsync(int departmentId, string reportId, long expectedRowVersion, CancellationToken cancellationToken = default);

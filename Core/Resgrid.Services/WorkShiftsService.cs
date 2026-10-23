@@ -43,6 +43,8 @@ namespace Resgrid.Services
 			workshift.AddedOn = DateTime.UtcNow;
 			workshift.Start = workshift.Start.ToUniversalTime();
 			workshift.End = workshift.End.ToUniversalTime();
+			// Rich text the workshift views render as HTML: scripts, handlers and frames are never stored.
+			workshift.Description = StringHelpers.SanitizeHtmlForStorage(workshift.Description);
 
 			var savedWorkItem = await _workshiftsRepository.SaveOrUpdateAsync(workshift, cancellationToken, true);
 
@@ -76,6 +78,8 @@ namespace Resgrid.Services
 
 			workshift.Start = workshift.Start.ToUniversalTime();
 			workshift.End = workshift.End.ToUniversalTime();
+			// Rich text the workshift views render as HTML: scripts, handlers and frames are never stored.
+			workshift.Description = StringHelpers.SanitizeHtmlForStorage(workshift.Description);
 
 			var savedWorkItem = await _workshiftsRepository.SaveOrUpdateAsync(workshift, cancellationToken, true);
 

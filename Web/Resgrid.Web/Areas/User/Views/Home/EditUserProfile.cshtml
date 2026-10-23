@@ -992,15 +992,15 @@
                         window.resgridAdpReveal.applyGrantHeader(xhr);
                 },
                 messages: {
-                    addTitle: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(adpLocalizer["AddEmergencyContact"].Value)),
-                    editTitle: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(adpLocalizer["EditEmergencyContact"].Value)),
-                    none: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(adpLocalizer["NoEmergencyContacts"].Value)),
-                    yes: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(adpLocalizer["YesLabel"].Value)),
-                    edit: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(adpLocalizer["EditAction"].Value)),
-                    remove: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(adpLocalizer["DeleteAction"].Value)),
-                    nameRequired: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(adpLocalizer["NameRequired"].Value)),
-                    saveFailed: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(adpLocalizer["ContactSaveFailed"].Value)),
-                    confirmRemove: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(adpLocalizer["ConfirmRemoveContact"].Value))
+                    addTitle: @Html.ScriptJson(adpLocalizer["AddEmergencyContact"].Value),
+                    editTitle: @Html.ScriptJson(adpLocalizer["EditEmergencyContact"].Value),
+                    none: @Html.ScriptJson(adpLocalizer["NoEmergencyContacts"].Value),
+                    yes: @Html.ScriptJson(adpLocalizer["YesLabel"].Value),
+                    edit: @Html.ScriptJson(adpLocalizer["EditAction"].Value),
+                    remove: @Html.ScriptJson(adpLocalizer["DeleteAction"].Value),
+                    nameRequired: @Html.ScriptJson(adpLocalizer["NameRequired"].Value),
+                    saveFailed: @Html.ScriptJson(adpLocalizer["ContactSaveFailed"].Value),
+                    confirmRemove: @Html.ScriptJson(adpLocalizer["ConfirmRemoveContact"].Value)
                 },
                 antiForgeryToken: $('input[name="__RequestVerificationToken"]').first().val()
             });

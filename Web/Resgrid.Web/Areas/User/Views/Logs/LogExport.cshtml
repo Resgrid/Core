@@ -265,7 +265,7 @@
                             <tr>
                                 <td colspan="4">
                                     <strong><small>@localizer["NatureOfCall"]</small></strong>
-                                    <div class="narrative-box">@Html.Raw(Model.WorkLog.Call.NatureOfCall)</div>
+                                    <div class="narrative-box">@Html.SanitizedHtml(Model.WorkLog.Call.NatureOfCall)</div>
                                 </td>
                             </tr>
                         }
@@ -437,7 +437,7 @@
         <div class="row">
             <div class="col-xs-12">
                 <strong><small>@localizer["ConditionInitialReport"]</small></strong>
-                <div class="narrative-box">@Html.Raw(Model.WorkLog.InitialReport)</div>
+                <div class="narrative-box">@Html.SanitizedHtml(Model.WorkLog.InitialReport)</div>
             </div>
         </div>
     }
@@ -447,7 +447,7 @@
         <div class="row" style="margin-top: 8px;">
             <div class="col-xs-12">
                 <strong><small>@localizer["Narrative"]</small></strong>
-                <div class="narrative-box">@Html.Raw(Model.WorkLog.Narrative)</div>
+                <div class="narrative-box">@Html.SanitizedHtml(Model.WorkLog.Narrative)</div>
             </div>
         </div>
     }
@@ -457,7 +457,7 @@
         <div class="row" style="margin-top: 8px;">
             <div class="col-xs-12">
                 <strong><small>@localizer["Cause"]</small></strong>
-                <div class="narrative-box">@Html.Raw(Model.WorkLog.Cause)</div>
+                <div class="narrative-box">@Html.SanitizedHtml(Model.WorkLog.Cause)</div>
             </div>
         </div>
     }

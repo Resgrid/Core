@@ -14,12 +14,12 @@ var resgrid;
                     },
                     pageLength: 50,
                     columns: [
-                        { data: 'Type', title: 'Type' },
-                        { data: 'Group', title: 'Group' },
-                        { data: 'LoggedBy', title: 'Logged By' },
+                        { data: 'Type', title: 'Type', render: resgrid.textCell },
+                        { data: 'Group', title: 'Group', render: resgrid.textCell },
+                        { data: 'LoggedBy', title: 'Logged By', render: resgrid.textCell },
                         { data: 'LoggedOn', title: 'Logged On' },
-                        { data: 'Narrative', title: 'Narrative', visible: false, searchable: true },
-                        { data: 'SearchTerms', title: 'SearchTerms', visible: false, searchable: true },
+                        { data: 'Narrative', title: 'Narrative', visible: false, searchable: true, render: resgrid.textCell },
+                        { data: 'SearchTerms', title: 'SearchTerms', visible: false, searchable: true, render: resgrid.textCell },
                         {
                             data: 'LogId',
                             title: 'Actions',

@@ -2398,7 +2398,7 @@
             </para>
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.DisclosuresController.GetRequests(System.Nullable{System.Int32},System.Int32,System.Int32)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DisclosuresController.GetRequests(System.Nullable{System.Int32},System.Int32,System.Int32,System.String)">
             <summary>The disclosure queue, newest first; <paramref name="state"/> filters to one state.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.DisclosuresController.PreviewScope(System.String,System.Int32)">
@@ -3180,7 +3180,7 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.InvoicesController.GetAccess">
             <summary>Whether invoicing is available to this department and what the add-on costs. Always answers.</summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.InvoicesController.GetInvoices(System.Nullable{System.Int32},System.String,System.Int32,System.Int32)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.InvoicesController.GetInvoices(System.Nullable{System.Int32},System.String,System.Int32,System.Int32,System.String)">
             <summary>Invoices for the department, newest number first. Optional status filter (InvoiceStatus value) and contact filter.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.InvoicesController.GetInvoice(System.String)">

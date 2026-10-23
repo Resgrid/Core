@@ -140,7 +140,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					trees.Add(tree);
 				}
 			}
-			model.TreeData = Newtonsoft.Json.JsonConvert.SerializeObject(trees);
+			model.TreeData = Newtonsoft.Json.JsonConvert.SerializeObject(trees, HtmlHelpers.ScriptJsonSettings);
 
 			return View(model);
 		}
@@ -1115,7 +1115,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					var noteJson = new ContactNoteJson();
 					noteJson.ContactNoteId = note.ContactNoteId;
-					noteJson.Note = ProtectedDataEnvelope.SafeDisplay(note.Note);
+					noteJson.Note = StringHelpers.SanitizeHtmlForDisplay(ProtectedDataEnvelope.SafeDisplay(note.Note));
 
 					if (note.ExpiresOn.HasValue)
 						noteJson.ExpiresOn = note.ExpiresOn.Value.FormatForDepartment(department);

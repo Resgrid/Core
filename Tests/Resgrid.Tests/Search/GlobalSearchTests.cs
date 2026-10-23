@@ -166,6 +166,27 @@ namespace Resgrid.Tests.Search
 			partial.Hits.Select(h => h.EntityId).Should().Contain("10");
 		}
 
+		[TestCase(false)]
+		[TestCase(true)]
+		public async Task Department_number_formats_match_by_any_part_however_typed(bool prefix)
+		{
+			await _indexer.IndexAsync(new[]
+			{
+				Projection(3, SearchEntityTypes.Invoice, "inv-1", "Mutual aid billing", keywords: "INV2026.0042 42", occurred: new DateTime(2026, 2, 1)),
+				Projection(3, SearchEntityTypes.Bid, "bid-1", "Wildland standby", keywords: "BID_26_0007 7", occurred: new DateTime(2026, 2, 2))
+			}, "1.25.3");
+			await _indexer.CommitAsync();
+
+			async Task<List<string>> Find(string text) => (await _search.SearchAsync(3, new GlobalSearchQuery { Text = text, ViewerUserId = "u1", Prefix = prefix })).Hits.Select(h => h.EntityId).ToList();
+
+			(await Find("INV2026.0042")).Should().Equal("inv-1");
+			(await Find("inv-2026-42")).Should().Equal(new[] { "inv-1" }, "separators and zero padding are formatting");
+			(await Find("2026-0042")).Should().Equal(new[] { "inv-1" }, "the analyzer keeps INV2026.0042 as one word");
+			(await Find("BID-26-7")).Should().Equal(new[] { "bid-1" }, "'_' joins BID_26_0007 into one word for the analyzer");
+			(await Find("26 0007")).Should().Equal("bid-1");
+			(await Find("2026-0043")).Should().BeEmpty();
+		}
+
 		[Test]
 		public async Task Entity_type_filter_and_date_sort_without_text()
 		{

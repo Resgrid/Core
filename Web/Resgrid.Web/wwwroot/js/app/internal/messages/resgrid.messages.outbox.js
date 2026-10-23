@@ -23,7 +23,7 @@ var resgrid;
                                 return '<input type="checkbox" id="message" name="message" value="' + data + '" />';
                             }
                         },
-                        { data: 'Subject', title: 'Subject' },
+                        { data: 'Subject', title: 'Subject', render: resgrid.textCell },
                         { data: 'SentOn', title: 'Sent On' },
                         {
                             data: 'MessageId',

@@ -334,19 +334,19 @@
         <div class="row">
             <div class="col-xs-12">
                 <strong><small>@localizer["CallNatureLabel"]</small></strong>
-                <div style="border: 1px solid #ddd; padding: 10px;">@Html.Raw(Model.Call.NatureOfCall)</div>
+                <div style="border: 1px solid #ddd; padding: 10px;">@Html.SanitizedHtml(Model.Call.NatureOfCall)</div>
             </div>
         </div>
         <div class="row">
             <div class="col-xs-12">
                 <strong><small>@localizer["NotesLabel"]</small></strong>
-                <div style="border: 1px solid #ddd; padding: 10px;">@Html.Raw(Model.Call.Notes)</div>
+                <div style="border: 1px solid #ddd; padding: 10px;">@Html.SanitizedHtml(Model.Call.Notes)</div>
             </div>
         </div>
         <div class="row">
             <div class="col-xs-12">
                 <strong><small>@localizer["CompletedNotesLabel"]</small></strong>
-                <div style="border: 1px solid #ddd; padding: 10px;">@Html.Raw(Model.Call.CompletedNotes)</div>
+                <div style="border: 1px solid #ddd; padding: 10px;">@Html.SanitizedHtml(Model.Call.CompletedNotes)</div>
             </div>
         </div>
         <div class="row">
@@ -367,7 +367,7 @@
                             <tr>
                                 <td>@note.Timestamp.TimeConverterToString(Model.Department)</td>
                                 <td>@name.FirstName @name.LastName</td>
-                                <td>@note.Note</td>
+                                <td>@Html.SanitizedHtml(note.Note)</td>
                             </tr>
 
                         }

@@ -801,5 +801,47 @@ INSERT RmsRecordAttachments (RmsRecordAttachmentId,DepartmentId,ProtectionId,Rec
 				(await missing.Should().ThrowAsync<InvalidOperationException>(aggregateType + " names a Record that does not exist")).Which.Message.Should().Contain("missing or purged");
 			}
 		}
+
+		[Test]
+		public async Task Year_filters_and_year_lists_run_on_numbering_year_windows()
+		{
+			// FY2027 starting 1 September 2026 (UTC, no zone): one record and report on each side of the start, and a draft
+			// with no occurrence or call time that falls back to when it was created.
+			const int department = 1340;
+			var fy2026 = new DateTime(2026, 8, 31, 23, 0, 0); var fy2027 = new DateTime(2026, 9, 1, 8, 0, 0); var created = new DateTime(2027, 3, 1);
+			using var db = new SqlConnection(_connection); await db.OpenAsync();
+			var call = 0;
+			foreach (var (id, occurred, recordCreated) in new[] { ("yr-1", (DateTime?)fy2026, fy2026), ("yr-2", fy2027, fy2027), ("yr-3", null, created) })
+			{
+				call++;
+				await db.ExecuteAsync(@"INSERT RmsRecordSearchProjections (RmsRecordSearchProjectionId,DepartmentId,ProtectionId,SourceType,SourceId,DefinitionKey,State,OccurredOn,RecordCreatedOn,CreatedOn,ModifiedOn,DisplaySummary,RowVersion)
+VALUES (@Id,@Department,@Id,1,@Id,'system.run',4,@Occurred,@RecordCreated,@RecordCreated,@RecordCreated,'summary',1);
+INSERT RmsIncidentReports (RmsIncidentReportId,DepartmentId,ProtectionId,CallId,ReportingEntityId,DefinitionKey,DefinitionVersion,LifecyclePreset,State,AuthorUserId,CallCreatedOn,CreatedOn,ModifiedOn)
+VALUES (@Id,@Department,@Id,@Call,'entity','neris.incident',1,0,1,'officer',@Occurred,@RecordCreated,@RecordCreated)",
+					new { Id = id, Department = department, Call = call, Occurred = occurred, RecordCreated = recordCreated });
+			}
+
+			var connections = Connections(); using var unit = new UnitOfWork(connections);
+			var projections = new RmsRecordSearchProjectionsRepository(connections, new SqlServerConfiguration(), unit, Mock.Of<IQueryFactory>());
+			var reports = new RmsIncidentReportsRepository(connections, new SqlServerConfiguration(), unit, Mock.Of<IQueryFactory>());
+			var config = new RecordsNumberingConfig { YearStartMonth = 9, YearStartDay = 1 };
+			var window = Resgrid.Services.Records.RecordsNumberingService.YearWindow(config, 2027, null);
+
+			(await projections.QueryAsync(department, new RmsRecordQuery { Year = 2026, OccurredFrom = window.FromUtc, OccurredBefore = window.BeforeUtc })).Select(p => p.RmsRecordSearchProjectionId)
+				.Should().BeEquivalentTo(new[] { "yr-2", "yr-3" }, "the window replaces the calendar year");
+			(await projections.CountAsync(department, new RmsRecordQuery { OccurredFrom = window.FromUtc, OccurredBefore = window.BeforeUtc })).Should().Be(2);
+			(await projections.CountAsync(department, new RmsRecordQuery { Year = 2026 })).Should().Be(2, "no window still reads the UTC calendar year");
+			(await reports.QueryAsync(department, new RmsIncidentReportQuery { YearFrom = window.FromUtc, YearBefore = window.BeforeUtc })).Select(r => r.RmsIncidentReportId)
+				.Should().BeEquivalentTo("yr-2", "yr-3");
+			(await reports.CountAsync(department, new RmsIncidentReportQuery { Year = 2026 })).Should().Be(2);
+
+			var calendarYears = (await projections.GetYearsAsync(department)).ToList();
+			calendarYears.Should().Equal(2027, 2026);
+			var windows = Resgrid.Services.Records.RecordsNumberingService.CandidateYearWindows(config, calendarYears, null);
+			(await projections.GetNumberingYearsAsync(department, windows)).Should().Equal(2027, 2026);
+			(await reports.GetYearsAsync(department)).Should().Equal(2027, 2026);
+			(await reports.GetNumberingYearsAsync(department, windows)).Should().Equal(2027, 2026);
+			(await projections.GetNumberingYearsAsync(department, windows.Where(w => w.Year != 2026).ToList())).Should().Equal(new[] { 2027 }, "rows outside every window are left out");
+		}
 	}
 }

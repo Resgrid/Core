@@ -546,8 +546,8 @@ namespace Resgrid.Tests.Security.Audit20261005
 
 			var model = (await Build<DispatchController>().NewCall()).Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<NewCallView>().Which;
 
+			// The page lists the units' statuses from Units/GetUnitsForCallGrid, which applies the same filter.
 			model.Units.Select(u => u.UnitId).Should().Equal(1);
-			model.UnitStates.Select(s => s.UnitId).Should().Equal(1);
 			model.Contacts.Should().BeEmpty();
 			model.ContactsList.Should().BeNull();
 		}

@@ -23,6 +23,8 @@ namespace Resgrid.Web.Areas.User.Models.Invoicing
 		public List<Invoice> Invoices { get; set; } = new List<Invoice>();
 		public int? Status { get; set; }
 		public string ContactId { get; set; }
+		/// <summary>The number filter as typed.</summary>
+		public string Number { get; set; }
 		public int Page { get; set; }
 		public int PageSize { get; set; } = 50;
 		public int TotalCount { get; set; }

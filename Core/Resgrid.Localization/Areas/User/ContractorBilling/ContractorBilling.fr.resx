@@ -54,6 +54,7 @@
   <data name="BidExpired" xml:space="preserve"><value>Offre expirée</value></data>
   <data name="BidLine" xml:space="preserve"><value>Ligne d'offre</value></data>
   <data name="BidNumber" xml:space="preserve"><value>Offre n°</value></data>
+  <data name="Filter" xml:space="preserve"><value>Filtrer</value></data>
   <data name="BidScheduleHelp" xml:space="preserve"><value>Les lignes figent leur taux depuis cette grille à l'ajout.</value></data>
   <data name="BidSent" xml:space="preserve"><value>Offre envoyée</value></data>
   <data name="BidStatusAccepted" xml:space="preserve"><value>Acceptée</value></data>

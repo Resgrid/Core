@@ -21,8 +21,8 @@ var resgrid;
                     pageLength: 50,
                     order: [[3, 'asc']],
                     columns: [
-                        { data: 'Number', title: getText('number', 'Number') },
-                        { data: 'Name', title: getText('name', 'Name') },
+                        { data: 'Number', title: getText('number', 'Number'), type: 'string', render: resgrid.callNumberCell },
+                        { data: 'Name', title: getText('name', 'Name'), render: resgrid.textCell },
                         { data: 'Timestamp', title: getText('timestamp', 'Timestamp') },
                         {
                             data: 'DispatchOn', title: getText('scheduledDispatch', 'Scheduled Dispatch'),
@@ -37,13 +37,13 @@ var resgrid;
                         {
                             data: 'Priority', title: getText('priority', 'Priority'),
                             render: function (data, type, row) {
-                                return '<span style="background-color:' + row.Color + ';color:#fff;padding:2px 6px;border-radius:3px;">' + row.Priority + '</span>';
+                                return '<span style="background-color:' + resgrid.escapeHtml(row.Color) + ';color:#fff;padding:2px 6px;border-radius:3px;">' + resgrid.escapeHtml(row.Priority) + '</span>';
                             }
                         },
                         {
                             data: null, title: getText('state', 'State'), orderable: false,
                             render: function (data, type, row) {
-                                return '<span style="background-color:' + row.StateColor + ';color:#fff;padding:2px 6px;border-radius:3px;">' + row.State + '</span>';
+                                return '<span style="background-color:' + resgrid.escapeHtml(row.StateColor) + ';color:#fff;padding:2px 6px;border-radius:3px;">' + resgrid.escapeHtml(row.State) + '</span>';
                             }
                         },
                         {

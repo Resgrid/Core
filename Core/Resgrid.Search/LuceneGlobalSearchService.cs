@@ -10,6 +10,7 @@ using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Resgrid.Config;
 using Resgrid.Framework;
+using Resgrid.Model;
 using Resgrid.Model.Search;
 using Resgrid.Model.Services;
 
@@ -309,6 +310,10 @@ namespace Resgrid.Search
 				}
 
 				textQuery.Add(new TermQuery(new Term(GlobalIndexFields.KeywordExact, text.ToLowerInvariant())) { Boost = 6f }, Occur.SHOULD);
+				// A department's own number format: "INV2026-1", "2026-0001" or "0001" still find INV2026-0001.
+				var numberKey = IdentifierSearchKeys.Canonical(text);
+				if (numberKey != null)
+					textQuery.Add(new TermQuery(new Term(GlobalIndexFields.KeywordKeys, numberKey)) { Boost = 5f }, Occur.SHOULD);
 				query.Add(textQuery, Occur.MUST);
 			}
 

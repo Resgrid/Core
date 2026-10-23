@@ -89,7 +89,7 @@ $(document).ready(function () {
                             style: { color: region.Color || '#3388ff', fillOpacity: 0.3 }
                         });
                         geoLayer.addTo(map);
-                        geoLayer.bindTooltip(region.Name, { permanent: false, direction: 'center' });
+                        geoLayer.bindTooltip(resgrid.escapeHtml(region.Name), { permanent: false, direction: 'center' });
                         geoLayer.regionData = region;
                         regionLayerMap[region.IndoorMapZoneId] = geoLayer;
                         geoLayer.on('click', function () {
@@ -103,7 +103,7 @@ $(document).ready(function () {
                             fillOpacity: 0.3
                         }).addTo(map);
 
-                        polygon.bindTooltip(region.Name, { permanent: false, direction: 'center' });
+                        polygon.bindTooltip(resgrid.escapeHtml(region.Name), { permanent: false, direction: 'center' });
                         polygon.regionData = region;
                         regionLayerMap[region.IndoorMapZoneId] = polygon;
 
@@ -200,7 +200,7 @@ $(document).ready(function () {
                         currentLayer.setStyle({ color: $('#regionColor').val() });
                     }
                     if (currentLayer.bindTooltip) {
-                        currentLayer.bindTooltip($('#regionName').val(), { permanent: false, direction: 'center' });
+                        currentLayer.bindTooltip(resgrid.escapeHtml($('#regionName').val()), { permanent: false, direction: 'center' });
                     }
                     location.reload();
                 } else {

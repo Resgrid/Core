@@ -6,6 +6,7 @@ using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Identity;
 using Resgrid.Model.Services;
 using Resgrid.Services;
 
@@ -55,6 +56,7 @@ namespace Resgrid.Tests.Services
 		private Mock<IDepartmentSettingsService> _departmentSettingsService;
 		private Mock<IGeoService> _geoService;
 		private Mock<IAuthorizationService> _authorizationService;
+		private Mock<IDepartmentsService> _departmentsService;
 
 		private DispatchScope _scope;
 		private DispatchRecommendationConfig _config;
@@ -75,6 +77,7 @@ namespace Resgrid.Tests.Services
 			_departmentSettingsService = new Mock<IDepartmentSettingsService>();
 			_geoService = new Mock<IGeoService>();
 			_authorizationService = new Mock<IAuthorizationService>();
+			_departmentsService = new Mock<IDepartmentsService>();
 
 			var now = DateTime.UtcNow;
 
@@ -131,6 +134,9 @@ namespace Resgrid.Tests.Services
 				new UserGroupRole { UserId = "medic-b", DepartmentGroupId = StationB, FirstName = "Bo", LastName = "Medic" },
 				new UserGroupRole { UserId = "night-c", DepartmentGroupId = StationC, FirstName = "Nia", LastName = "Night" }
 			});
+			// The dispatch lists' member set (plan-limited); everyone fits the plan here.
+			_departmentsService.Setup(x => x.GetAllUsersForDepartmentAsync(DepartmentId, false, false))
+				.ReturnsAsync(() => new[] { "clin-a", "peer-a", "medic-b", "night-c" }.Select(id => new IdentityUser { Id = id }).ToList());
 			_personnelRolesService.Setup(x => x.GetAllRolesForUsersInDepartmentAsync(DepartmentId)).ReturnsAsync(new Dictionary<string, List<PersonnelRole>>
 			{
 				{ "clin-a", new List<PersonnelRole> { new PersonnelRole { PersonnelRoleId = ClinicianRoleId, Name = "Clinician" } } },
@@ -169,7 +175,7 @@ namespace Resgrid.Tests.Services
 			return new NearestUnitService(_dispatchScopeService.Object, _departmentGroupsService.Object, _unitsService.Object, _usersService.Object,
 				_personnelRolesService.Object, _actionLogsService.Object, _userStateService.Object, _customStateService.Object,
 				_personnelLocationResolver.Object, _shiftsService.Object, _departmentSettingsService.Object, _geoService.Object,
-				_authorizationService.Object);
+				_authorizationService.Object, _departmentsService.Object);
 		}
 
 		private Task<NearestUnitBoard> GetBoardAsync(bool? useRoadEta = null)
@@ -420,6 +426,21 @@ namespace Resgrid.Tests.Services
 			ana.IsOnShift.Should().BeTrue();
 			board.Personnel.Single(p => p.UserId == "night-c").UnitId.Should().BeNull();
 			board.Personnel.Single(p => p.UserId == "medic-b").IsAvailable.Should().BeFalse();
+		}
+
+		[Test]
+		public async Task a_member_outside_the_plans_personnel_limit_is_left_off_the_board_as_the_dispatch_lists_leave_them_off()
+		{
+			// Over its plan's limit, the department's dispatch lists stop at the first three members; Nia is past the cap.
+			_departmentsService.Setup(x => x.GetAllUsersForDepartmentAsync(DepartmentId, false, false))
+				.ReturnsAsync(new[] { "clin-a", "peer-a", "medic-b" }.Select(id => new IdentityUser { Id = id }).ToList());
+
+			var board = await GetBoardAsync();
+
+			board.Personnel.Select(p => p.UserId).Should().BeEquivalentTo(new[] { "clin-a", "peer-a", "medic-b" });
+			// Nor is she crew: the far team's station shift has nobody left on it.
+			UnitRow(board, FarTeamUnit).CrewSource.Should().Be(UnitCrewSources.None);
+			UnitRow(board, FarTeamUnit).Crew.Should().BeEmpty();
 		}
 
 		[Test]

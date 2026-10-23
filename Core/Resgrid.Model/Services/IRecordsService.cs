@@ -62,7 +62,14 @@ namespace Resgrid.Model.Services
 		/// <summary>Live projections by record id, in no particular order; the search path re-checks each before showing it.</summary>
 		Task<List<RmsRecordSearchProjection>> GetProjectionsByIdsAsync(int departmentId, IEnumerable<string> recordIds);
 
+		/// <summary>The department's numbering years that hold a record (department-local, fiscal when it sets one), newest first.</summary>
 		Task<List<int>> GetYearsAsync(int departmentId);
+
+		/// <summary>
+		/// The UTC window of the department's numbering year <paramref name="year"/> (Records numbering, setting 72): what a year
+		/// filter on the records index matches, so it keeps the records whose numbers name that year. QueryAsync/CountAsync apply it to Year themselves.
+		/// </summary>
+		Task<NumberingYearWindow> GetYearWindowAsync(int departmentId, int year);
 
 		/// <summary>Delta cursor for clients (plan section 5.3): projections modified after <paramref name="since"/>, oldest first, including tombstones (cancelled, voided, deleted).</summary>
 		Task<List<RmsRecordSearchProjection>> GetChangesSinceAsync(int departmentId, DateTime? since, int take, string sinceId = null);

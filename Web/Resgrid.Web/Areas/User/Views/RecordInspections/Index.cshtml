@@ -36,6 +36,7 @@
 			<form method="get" class="form-inline" asp-controller="RecordInspections" asp-action="Index" asp-route-area="User">
 				<select class="form-control" name="state" asp-items="Model.States"><option value="">@L["AllStates"]</option></select>
 				<select class="form-control" name="programId" asp-items="Model.ProgramItems"><option value="">@L["AllPrograms"]</option></select>
+				<input class="form-control" name="number" value="@Model.Number" maxlength="50" autocomplete="off" placeholder="@L["InspectionNumber"]" aria-label="@L["InspectionNumber"]" />
 				<button class="btn btn-default">@L["Filter"]</button>
 			</form>
 			@if (Model.Inspections.Count == 0) { <p class="m-t-sm">@L["NoInspections"]</p> }
@@ -64,7 +65,7 @@
 				@if (Model.Total > Model.PageSize)
 				{
 					<ul class="pagination">
-						@for (var p = 1; p <= (Model.Total + Model.PageSize - 1) / Model.PageSize; p++) { <li class="@(p == Model.Page ? "active" : "")"><a asp-controller="RecordInspections" asp-action="Index" asp-route-area="User" asp-route-state="@Model.State" asp-route-programId="@Model.ProgramId" asp-route-page="@p">@p</a></li> }
+						@for (var p = 1; p <= (Model.Total + Model.PageSize - 1) / Model.PageSize; p++) { <li class="@(p == Model.Page ? "active" : "")"><a asp-controller="RecordInspections" asp-action="Index" asp-route-area="User" asp-route-state="@Model.State" asp-route-programId="@Model.ProgramId" asp-route-number="@Model.Number" asp-route-page="@p">@p</a></li> }
 					</ul>
 				}
 			}

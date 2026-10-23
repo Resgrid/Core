@@ -54,7 +54,7 @@ namespace Resgrid.Tests.Localization
 		// inside an HTML attribute as well. Json.Serialize is not on the attribute list: it returns
 		// IHtmlContent, so its surrounding double quotes are written raw and close the attribute.
 		private static readonly Regex HandlerSafe = new Regex(@"JsEncoder\.Encode\(|JavaScriptEncoder\.|JavaScriptStringEncode\(|JsonConvert\.SerializeObject\(", RegexOptions.Compiled);
-		private static readonly Regex ScriptSafe = new Regex(@"JsEncoder\.Encode\(|JavaScriptEncoder\.|JavaScriptStringEncode\(|JsonConvert\.SerializeObject\(|Json\.Serialize\(|JsonSerializer\.Serialize\(", RegexOptions.Compiled);
+		private static readonly Regex ScriptSafe = new Regex(@"JsEncoder\.Encode\(|JavaScriptEncoder\.|JavaScriptStringEncode\(|JsonConvert\.SerializeObject\(|Json\.Serialize\(|JsonSerializer\.Serialize\(|Html\.ScriptJson\(", RegexOptions.Compiled);
 		private static readonly Regex HandlerUnsafe = new Regex(@"Html\.Raw\(|Json\.Serialize\(", RegexOptions.Compiled);
 
 		// Calls whose result is safe to splice into markup built inside Html.Raw.
@@ -70,7 +70,7 @@ namespace Resgrid.Tests.Localization
 			"reviewBadge", // badge built from Html.Encode'd text (Contacts/Index)
 			"callsHeader", // <th> built from Html.Encode'd localized text, or empty (Contacts/Index)
 			"callsCell",   // <td> built from an int call count, or empty (Contacts/Index)
-			"TypeIconHtml.Image(Model.UnitTypes, u.Type)" // <img> whose only value, the icon URL, the helper HTML-encodes (Units/Index, Dispatch/NewCall)
+			"TypeIconHtml.Image(Model.UnitTypes, u.Type)" // <img> whose only value, the icon URL, the helper HTML-encodes (Units/Index)
 		};
 
 		private static readonly HashSet<string> RazorKeywords = new HashSet<string>(StringComparer.Ordinal)

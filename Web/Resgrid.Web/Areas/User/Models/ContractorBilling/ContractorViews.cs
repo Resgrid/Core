@@ -204,6 +204,8 @@ namespace Resgrid.Web.Areas.User.Models.ContractorBilling
 		public List<Bid> Bids { get; set; } = new List<Bid>();
 		public Dictionary<string, string> ContactNames { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 		public int? StatusFilter { get; set; }
+		/// <summary>The number filter as applied.</summary>
+		public string Number { get; set; }
 		public int Page { get; set; } = 1;
 		public int PageSize { get; set; } = 50;
 		public int Total { get; set; }

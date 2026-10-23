@@ -47,7 +47,7 @@
                                 <input type="hidden" asp-for="DeleteCallNotes">
 
                                 <div id="editor-container" style="width:100%; height: 200px;">
-                                   @Html.Raw(Model.DeleteCallNotes)
+                                   @Html.SanitizedHtml(Model.DeleteCallNotes)
                                 </div>
                             </div>
                         </div>

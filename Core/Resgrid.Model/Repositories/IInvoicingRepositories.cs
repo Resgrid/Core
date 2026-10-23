@@ -57,6 +57,8 @@ namespace Resgrid.Model.Repositories
 		public string ServiceContractId { get; set; }
 		public DateTime? IssuedFromUtc { get; set; }
 		public DateTime? IssuedToUtc { get; set; }
+		/// <summary>Part of the invoice number as issued, in the department's format (IdentifierSearchKeys.ContainsParts).</summary>
+		public string Number { get; set; }
 		public int Skip { get; set; }
 		public int Take { get; set; } = 50;
 	}

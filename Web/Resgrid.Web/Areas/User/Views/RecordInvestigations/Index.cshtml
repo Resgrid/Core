@@ -27,6 +27,8 @@
 	<div class="ibox"><div class="ibox-content">
 		<p class="text-muted">@L["InvestigationsIntro"]</p>
 		<form method="get" class="form-inline" asp-controller="RecordInvestigations" asp-action="Index" asp-route-area="User">
+			@{ var numberLabel = L["CaseNumber"].Value + " / " + L["EvidenceNumber"].Value; }
+			<input class="form-control" name="number" value="@Model.Number" maxlength="50" autocomplete="off" placeholder="@numberLabel" aria-label="@numberLabel" />
 			<label class="checkbox-inline"><input type="checkbox" name="includeClosed" value="true" @(Model.IncludeClosed ? "checked" : "") /> @L["IncludeClosed"]</label>
 			<button class="btn btn-default">@L["Filter"]</button>
 		</form>

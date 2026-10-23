@@ -171,6 +171,9 @@ namespace Resgrid.Repositories.DataRepository
 				sql.Append($" AND {Col("IssuedOn")} < {P}IssuedTo");
 				parameters.Add("IssuedTo", filter.IssuedToUtc.Value);
 			}
+			var number = NumberContains($"COALESCE({Col("DisplayNumber")}, {IntegerAsText(Col("InvoiceNumber"))})", filter.Number, parameters);
+			if (number != null)
+				sql.Append(" AND ").Append(number);
 			return sql.ToString();
 		}
 

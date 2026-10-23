@@ -1101,4 +1101,7 @@
   <data name="NearestUnitsMapBoundaries" xml:space="preserve">
     <value>Wachbereiche</value>
   </data>
+  <data name="NearestUnitsShowingClosest" xml:space="preserve">
+    <value>Die {0} nächsten von {1} werden angezeigt. Die Alarmierungslisten unten enthalten alle, die nächsten zuerst.</value>
+  </data>
 </root>

@@ -1101,4 +1101,7 @@
   <data name="NearestUnitsMapBoundaries" xml:space="preserve">
     <value>Granice rejonów</value>
   </data>
+  <data name="NearestUnitsShowingClosest" xml:space="preserve">
+    <value>Pokazano {0} najbliższych z {1}. Listy dysponowania poniżej zawierają wszystkich, najpierw najbliższych.</value>
+  </data>
 </root>

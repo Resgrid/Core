@@ -1101,4 +1101,7 @@
   <data name="NearestUnitsMapBoundaries" xml:space="preserve">
     <value>Межі станцій</value>
   </data>
+  <data name="NearestUnitsShowingClosest" xml:space="preserve">
+    <value>Показано {0} найближчих із {1}. Списки відправлення нижче містять усіх, найближчі першими.</value>
+  </data>
 </root>

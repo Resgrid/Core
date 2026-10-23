@@ -26,6 +26,7 @@
                 <tbody></tbody>
             </table>
         </div>
+        <div id="nearestUnitsMore" class="text-muted" style="display: none; font-size: 11px;"></div>
         <div id="nearestPersonnelSection" style="display: none;">
             <h5 style="margin: 10px 0 4px 0;">@localizer["NearestPersonnelLabel"]</h5>
             <div class="table-responsive">
@@ -44,6 +45,7 @@
                     <tbody></tbody>
                 </table>
             </div>
+            <div id="nearestPersonnelMore" class="text-muted" style="display: none; font-size: 11px;"></div>
         </div>
         <div id="nearestUnitsNotes" class="text-muted" style="font-size: 11px;"></div>
     </div>
@@ -72,7 +74,8 @@
         ["mapUnits"] = localizer["NearestUnitsMapUnits"].Value,
         ["mapPersonnel"] = localizer["NearestUnitsMapPersonnel"].Value,
         ["mapBoundaries"] = localizer["NearestUnitsMapBoundaries"].Value,
-        ["pick"] = localizer["NearestUnitsPick"].Value
+        ["pick"] = localizer["NearestUnitsPick"].Value,
+        ["showingClosest"] = localizer["NearestUnitsShowingClosest"].Value
     }, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
     var groupBoundaries = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject((Model ?? new List<DepartmentGroup>())
         .Select(g => new { group = g, points = Resgrid.Model.GeoMath.ParseGeofence(g.Geofence) })

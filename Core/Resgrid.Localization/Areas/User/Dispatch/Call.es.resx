@@ -1159,4 +1159,7 @@
   <data name="NearestUnitsMapBoundaries" xml:space="preserve">
     <value>Límites de estaciones</value>
   </data>
+  <data name="NearestUnitsShowingClosest" xml:space="preserve">
+    <value>Se muestran los {0} más cercanos de {1}. Las listas de despacho de abajo incluyen a todos, primero los más cercanos.</value>
+  </data>
 </root>

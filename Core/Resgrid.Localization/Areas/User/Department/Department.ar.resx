@@ -2103,4 +2103,100 @@
   <data name="TerminologyScopeModule" xml:space="preserve">
     <value>داخل وحدته فقط</value>
   </data>
+  <data name="RunCardSelectionsGuideTitle" xml:space="preserve">
+    <value>كيف تعمل الحالات القابلة للإرسال</value>
+  </data>
+  <data name="RunCardSelectionsGuideDefault" xml:space="preserve">
+    <value>يمكن لمعظم بطاقات الإرسال ترك هذا التبويب فارغًا. عند عدم تحديد أي شيء تستخدم البطاقة قواعد التوفر القياسية: الوحدات والأفراد الذين تُحتسب حالتهم متاحة أو متأخرة، ومستويات الجاهزية التي تُحتسب متاحة أو في المناوبة أو متأخرة.</value>
+  </data>
+  <data name="RunCardSelectionsGuideReplace" xml:space="preserve">
+    <value>تحديد أي شيء في قسم يستبدل القواعد القياسية لذلك القسم: يُحتسب متاحًا فقط ما تحدده، ويُتخطى كل ما عداه.</value>
+  </data>
+  <data name="RunCardSelectionsGuideStart" xml:space="preserve">
+    <value>لتوسيع القواعد القياسية، انقر على "البدء من القواعد القياسية" ثم حدد الحالات الإضافية، مثل العودة، حتى يمكن اقتراح الوحدات العائدة من بلاغ آخر أيضًا.</value>
+  </data>
+  <data name="RunCardSelectionsGuideMeanings" xml:space="preserve">
+    <value>فضّل معاني الحالات على الحالات المفردة. يشمل المعنى كل حالة بهذا المعنى، مدمجة أو خاصة بك، بما في ذلك الحالات التي تضيفها لاحقًا.</value>
+  </data>
+  <data name="RunCardSelectionsUnitsTitle" xml:space="preserve">
+    <value>حالات الوحدات</value>
+  </data>
+  <data name="RunCardSelectionsUnitsHelp" xml:space="preserve">
+    <value>حدد قاعدة واحدة لجميع أنواع الوحدات، ثم خصص نوع وحدة فقط عندما يحتاج إلى شيء مختلف. نوع الوحدة المخصص يستخدم تحديداته فقط.</value>
+  </data>
+  <data name="RunCardSelectionsAllUnitTypes" xml:space="preserve">
+    <value>جميع أنواع الوحدات</value>
+  </data>
+  <data name="RunCardSelectionsAllUnitTypesHelp" xml:space="preserve">
+    <value>تنطبق على كل نوع وحدة غير مخصص أدناه.</value>
+  </data>
+  <data name="RunCardSelectionsByUnitType" xml:space="preserve">
+    <value>حسب نوع الوحدة</value>
+  </data>
+  <data name="RunCardSelectionsPersonnelTitle" xml:space="preserve">
+    <value>حالات الأفراد</value>
+  </data>
+  <data name="RunCardSelectionsPersonnelHelp" xml:space="preserve">
+    <value>أي حالات الأفراد تُحتسب متاحة لهذه البطاقة.</value>
+  </data>
+  <data name="RunCardSelectionsStaffingHelp" xml:space="preserve">
+    <value>أي مستويات الجاهزية تُحتسب متاحة. يجب أن يستوفي الشخص قاعدة حالة الأفراد وقاعدة مستوى الجاهزية معًا.</value>
+  </data>
+  <data name="RunCardSelectionsStandardRules" xml:space="preserve">
+    <value>القواعد القياسية</value>
+  </data>
+  <data name="RunCardSelectionsSelectedCount" xml:space="preserve">
+    <value>{0} محدد</value>
+  </data>
+  <data name="RunCardSelectionsFollowsAll" xml:space="preserve">
+    <value>يتبع جميع أنواع الوحدات</value>
+  </data>
+  <data name="RunCardSelectionsOwnRule" xml:space="preserve">
+    <value>قاعدة خاصة</value>
+  </data>
+  <data name="RunCardSelectionsCustomize" xml:space="preserve">
+    <value>تخصيص</value>
+  </data>
+  <data name="RunCardSelectionsDone" xml:space="preserve">
+    <value>تم</value>
+  </data>
+  <data name="RunCardSelectionsStartStandard" xml:space="preserve">
+    <value>البدء من القواعد القياسية</value>
+  </data>
+  <data name="RunCardSelectionsCopyAll" xml:space="preserve">
+    <value>النسخ من جميع أنواع الوحدات</value>
+  </data>
+  <data name="RunCardSelectionsClear" xml:space="preserve">
+    <value>مسح</value>
+  </data>
+  <data name="RunCardSelectionsMeaningsTitle" xml:space="preserve">
+    <value>معاني الحالات</value>
+  </data>
+  <data name="RunCardSelectionsMeaningsHelp" xml:space="preserve">
+    <value>أي حالة بهذا المعنى، مدمجة أو خاصة بك، الآن ولاحقًا</value>
+  </data>
+  <data name="RunCardSelectionsSpecificTitle" xml:space="preserve">
+    <value>حالات مفردة</value>
+  </data>
+  <data name="RunCardSelectionsSpecificHelp" xml:space="preserve">
+    <value>هذه الأزرار بالتحديد فقط من مجموعة الحالات</value>
+  </data>
+  <data name="RunCardSelectionsColumnAvailable" xml:space="preserve">
+    <value>متاح أو متأخر</value>
+  </data>
+  <data name="RunCardSelectionsColumnAvailableNote" xml:space="preserve">
+    <value>تحتسبها القواعد القياسية</value>
+  </data>
+  <data name="RunCardSelectionsColumnBusy" xml:space="preserve">
+    <value>مشغول أو ملتزم</value>
+  </data>
+  <data name="RunCardSelectionsColumnUnavailable" xml:space="preserve">
+    <value>غير متاح أو غير ذلك</value>
+  </data>
+  <data name="RunCardSelectionsNoUnitTypes" xml:space="preserve">
+    <value>لا توجد أنواع وحدات في هذه الإدارة بعد.</value>
+  </data>
+  <data name="RunCardSelectionsMore" xml:space="preserve">
+    <value>+{0} أخرى</value>
+  </data>
 </root>

@@ -132,6 +132,7 @@ var resgrid;
                     }).setView([centerLat, centerLng], 11).addLayer(tiles1);
 
                     map.on('click', function (e) {
+                        resgrid.dispatch.nearestboard.keepView(e.latlng.lat, e.latlng.lng);
                         resgrid.dispatch.newcall.setMarkerLocation(e.latlng.lat, e.latlng.lng);
 
                         $("#Latitude").val(e.latlng.lat.toString());
@@ -486,6 +487,7 @@ var resgrid;
                         //$("#What3Word").val('');
 
                         resgrid.dispatch.newcall.geocodeCoordinates(position.lat, position.lng);
+                        resgrid.dispatch.nearestboard.keepView(position.lat, position.lng);
                         scheduleNearestUnits(position.lat, position.lng);
                         scheduleRecommendations();
                     });

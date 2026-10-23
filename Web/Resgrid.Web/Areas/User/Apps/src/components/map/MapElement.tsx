@@ -120,6 +120,11 @@ export default function MapElement(props: MapElementProps) {
   const unknownMarkerReloadsRef = useRef<Map<string, number>>(new Map());
   const reloadTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const reloadInFlightRef = useRef(false);
+  const layersButtonRef = useRef<HTMLButtonElement | null>(null);
+  const layersCloseRef = useRef<HTMLButtonElement | null>(null);
+  // Set by the open and close buttons, so focus follows the layer panel only after a toggle, never when the saved
+  // open state restores it on load.
+  const layersToggledRef = useRef(false);
 
   const [mapData, setMapData] = useState<GetMapDataResult['Data'] | null>(null);
   // Kept apart from mapData so a background marker reload does not re-fit the camera.
@@ -135,6 +140,8 @@ export default function MapElement(props: MapElementProps) {
   const [showPois, setShowPois] = useState(() => readBooleanPreference('rg-map:show-pois', true));
   const [poiLayerVisibility, setPoiLayerVisibility] = useState<Record<string, boolean>>({});
   const [hideLabels, setHideLabels] = useState(() => readBooleanPreference('rg-map:hide-labels', false));
+  // The layer list sits over the map, so it starts folded to a button and remembers being opened.
+  const [layersOpen, setLayersOpen] = useState(() => readBooleanPreference('rg-map:layers-open', false));
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState(() => new Date().toString());
@@ -228,6 +235,17 @@ export default function MapElement(props: MapElementProps) {
   useEffect(() => writeBooleanPreference('rg-map:show-pois', showPois), [showPois]);
   useEffect(() => writeBooleanPreference('rg-map:show-hydrants', showHydrants), [showHydrants]);
   useEffect(() => writeBooleanPreference('rg-map:hide-labels', hideLabels), [hideLabels]);
+  useEffect(() => writeBooleanPreference('rg-map:layers-open', layersOpen), [layersOpen]);
+
+  // The button that was used goes away with the toggle, so focus moves to the one that replaced it.
+  useEffect(() => {
+    if (!layersToggledRef.current) {
+      return;
+    }
+
+    layersToggledRef.current = false;
+    (layersOpen ? layersCloseRef.current : layersButtonRef.current)?.focus();
+  }, [layersOpen]);
 
   useEffect(() => {
     Object.entries(layerVisibility).forEach(([layerId, isVisible]) => {
@@ -576,6 +594,11 @@ export default function MapElement(props: MapElementProps) {
 
   const combinedError = error ?? rendererError;
 
+  const toggleLayers = (open: boolean) => {
+    layersToggledRef.current = true;
+    setLayersOpen(open);
+  };
+
   const handleShowPoisChanged = (checked: boolean) => {
     setShowPois(checked);
 
@@ -691,8 +714,38 @@ export default function MapElement(props: MapElementProps) {
           />
         )}
 
-        {(layers.length > 0 || poiLayers.length > 0 || mapData?.HydrantsAvailable) && (
+        {(layers.length > 0 || poiLayers.length > 0 || mapData?.HydrantsAvailable) && !layersOpen && (
+          <button
+            ref={layersButtonRef}
+            type="button"
+            className="rg-map__layers-button rg-card"
+            title="Show map layers"
+            aria-expanded={false}
+            onClick={() => toggleLayers(true)}
+          >
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+              <path fill="currentColor" d="M12 3 2 8l10 5 10-5-10-5Zm-7.76 8.62L2 12.74l10 5 10-5-2.24-1.12L12 15.5l-7.76-3.88Zm0 4L2 16.74l10 5 10-5-2.24-1.12L12 19.5l-7.76-3.88Z" />
+            </svg>
+            <span>Layers</span>
+          </button>
+        )}
+
+        {(layers.length > 0 || poiLayers.length > 0 || mapData?.HydrantsAvailable) && layersOpen && (
           <div className="rg-map__layers rg-card">
+            <div className="rg-map__layers-header">
+              <span>Layers</span>
+              <button
+                ref={layersCloseRef}
+                type="button"
+                className="rg-map__layers-close"
+                title="Hide map layers"
+                aria-label="Hide map layers"
+                aria-expanded={true}
+                onClick={() => toggleLayers(false)}
+              >
+                &times;
+              </button>
+            </div>
             {mapData?.HydrantsAvailable && (
               <label className="rg-map__layer-toggle">
                 <input type="checkbox" checked={showHydrants} onChange={(event) => setShowHydrants(event.target.checked)} />

@@ -1101,4 +1101,7 @@
   <data name="NearestUnitsMapBoundaries" xml:space="preserve">
     <value>Confini delle sedi</value>
   </data>
+  <data name="NearestUnitsShowingClosest" xml:space="preserve">
+    <value>Vengono mostrati i {0} più vicini su {1}. Gli elenchi di invio qui sotto includono tutti, prima i più vicini.</value>
+  </data>
 </root>

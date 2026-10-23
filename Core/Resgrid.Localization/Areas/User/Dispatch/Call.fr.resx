@@ -1101,4 +1101,7 @@
   <data name="NearestUnitsMapBoundaries" xml:space="preserve">
     <value>Secteurs des casernes</value>
   </data>
+  <data name="NearestUnitsShowingClosest" xml:space="preserve">
+    <value>Affichage des {0} plus proches sur {1}. Les listes d'engagement ci-dessous incluent tout le monde, les plus proches en premier.</value>
+  </data>
 </root>

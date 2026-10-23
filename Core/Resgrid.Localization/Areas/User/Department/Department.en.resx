@@ -2103,4 +2103,100 @@
   <data name="TerminologyScopeModule" xml:space="preserve">
     <value>In its own module</value>
   </data>
+  <data name="RunCardSelectionsGuideTitle" xml:space="preserve">
+    <value>How dispatchable statuses work</value>
+  </data>
+  <data name="RunCardSelectionsGuideDefault" xml:space="preserve">
+    <value>Most run cards can leave this tab empty. With nothing selected the card uses the standard availability rules: units and personnel whose status counts as available or delayed, and staffing levels that count as available, on shift or delayed.</value>
+  </data>
+  <data name="RunCardSelectionsGuideReplace" xml:space="preserve">
+    <value>Selecting anything in a section replaces the standard rules for that section: only what you select counts as available, and everything else is skipped.</value>
+  </data>
+  <data name="RunCardSelectionsGuideStart" xml:space="preserve">
+    <value>To widen the standard rules, click "Start from the standard rules" and then tick the extra statuses, for example Returning, so units heading back from another call can still be recommended.</value>
+  </data>
+  <data name="RunCardSelectionsGuideMeanings" xml:space="preserve">
+    <value>Prefer status meanings to individual statuses. A meaning matches every status with that meaning, built-in or your own, including statuses you add later.</value>
+  </data>
+  <data name="RunCardSelectionsUnitsTitle" xml:space="preserve">
+    <value>Unit statuses</value>
+  </data>
+  <data name="RunCardSelectionsUnitsHelp" xml:space="preserve">
+    <value>Set one rule for all unit types, then customize a unit type only when it needs something different. A customized unit type uses only its own selections.</value>
+  </data>
+  <data name="RunCardSelectionsAllUnitTypes" xml:space="preserve">
+    <value>All unit types</value>
+  </data>
+  <data name="RunCardSelectionsAllUnitTypesHelp" xml:space="preserve">
+    <value>Applies to every unit type that is not customized below.</value>
+  </data>
+  <data name="RunCardSelectionsByUnitType" xml:space="preserve">
+    <value>By unit type</value>
+  </data>
+  <data name="RunCardSelectionsPersonnelTitle" xml:space="preserve">
+    <value>Personnel statuses</value>
+  </data>
+  <data name="RunCardSelectionsPersonnelHelp" xml:space="preserve">
+    <value>Which personnel statuses count as available for this card.</value>
+  </data>
+  <data name="RunCardSelectionsStaffingHelp" xml:space="preserve">
+    <value>Which staffing levels count as available. A person must pass both the personnel status rule and the staffing level rule.</value>
+  </data>
+  <data name="RunCardSelectionsStandardRules" xml:space="preserve">
+    <value>Standard rules</value>
+  </data>
+  <data name="RunCardSelectionsSelectedCount" xml:space="preserve">
+    <value>{0} selected</value>
+  </data>
+  <data name="RunCardSelectionsFollowsAll" xml:space="preserve">
+    <value>Follows all unit types</value>
+  </data>
+  <data name="RunCardSelectionsOwnRule" xml:space="preserve">
+    <value>Own rule</value>
+  </data>
+  <data name="RunCardSelectionsCustomize" xml:space="preserve">
+    <value>Customize</value>
+  </data>
+  <data name="RunCardSelectionsDone" xml:space="preserve">
+    <value>Done</value>
+  </data>
+  <data name="RunCardSelectionsStartStandard" xml:space="preserve">
+    <value>Start from the standard rules</value>
+  </data>
+  <data name="RunCardSelectionsCopyAll" xml:space="preserve">
+    <value>Copy from all unit types</value>
+  </data>
+  <data name="RunCardSelectionsClear" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="RunCardSelectionsMeaningsTitle" xml:space="preserve">
+    <value>Status meanings</value>
+  </data>
+  <data name="RunCardSelectionsMeaningsHelp" xml:space="preserve">
+    <value>Any status with this meaning, built-in or your own, now and later</value>
+  </data>
+  <data name="RunCardSelectionsSpecificTitle" xml:space="preserve">
+    <value>Individual statuses</value>
+  </data>
+  <data name="RunCardSelectionsSpecificHelp" xml:space="preserve">
+    <value>Only these exact buttons from the status set</value>
+  </data>
+  <data name="RunCardSelectionsColumnAvailable" xml:space="preserve">
+    <value>Available or delayed</value>
+  </data>
+  <data name="RunCardSelectionsColumnAvailableNote" xml:space="preserve">
+    <value>Counted by the standard rules</value>
+  </data>
+  <data name="RunCardSelectionsColumnBusy" xml:space="preserve">
+    <value>Busy or committed</value>
+  </data>
+  <data name="RunCardSelectionsColumnUnavailable" xml:space="preserve">
+    <value>Unavailable or other</value>
+  </data>
+  <data name="RunCardSelectionsNoUnitTypes" xml:space="preserve">
+    <value>This department has no unit types yet.</value>
+  </data>
+  <data name="RunCardSelectionsMore" xml:space="preserve">
+    <value>+{0} more</value>
+  </data>
 </root>

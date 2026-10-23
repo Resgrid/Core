@@ -2045,4 +2045,100 @@
   <data name="TerminologyScopeModule" xml:space="preserve">
     <value>Im eigenen Modul</value>
   </data>
+  <data name="RunCardSelectionsGuideTitle" xml:space="preserve">
+    <value>So funktionieren alarmierbare Status</value>
+  </data>
+  <data name="RunCardSelectionsGuideDefault" xml:space="preserve">
+    <value>Die meisten Ausrückeordnungen können diesen Reiter leer lassen. Ohne Auswahl gelten die Standard-Verfügbarkeitsregeln: Einheiten und Personal, deren Status als verfügbar oder verzögert gilt, und Bereitschaftsstufen, die als verfügbar, im Dienst oder verzögert gelten.</value>
+  </data>
+  <data name="RunCardSelectionsGuideReplace" xml:space="preserve">
+    <value>Eine Auswahl in einem Abschnitt ersetzt dort die Standardregeln: Nur was Sie auswählen, gilt als verfügbar, alles andere wird übersprungen.</value>
+  </data>
+  <data name="RunCardSelectionsGuideStart" xml:space="preserve">
+    <value>Um die Standardregeln zu erweitern, klicken Sie auf „Mit den Standardregeln beginnen“ und haken dann weitere Status an, zum Beispiel Rückfahrt, damit auch Einheiten auf dem Rückweg von einem anderen Einsatz vorgeschlagen werden können.</value>
+  </data>
+  <data name="RunCardSelectionsGuideMeanings" xml:space="preserve">
+    <value>Bevorzugen Sie Statusbedeutungen gegenüber einzelnen Status. Eine Bedeutung erfasst jeden Status mit dieser Bedeutung, integriert oder eigen, auch später hinzugefügte.</value>
+  </data>
+  <data name="RunCardSelectionsUnitsTitle" xml:space="preserve">
+    <value>Einheitenstatus</value>
+  </data>
+  <data name="RunCardSelectionsUnitsHelp" xml:space="preserve">
+    <value>Legen Sie eine Regel für alle Einheitentypen fest und passen Sie einen Einheitentyp nur an, wenn er etwas anderes braucht. Ein angepasster Einheitentyp verwendet nur seine eigene Auswahl.</value>
+  </data>
+  <data name="RunCardSelectionsAllUnitTypes" xml:space="preserve">
+    <value>Alle Einheitentypen</value>
+  </data>
+  <data name="RunCardSelectionsAllUnitTypesHelp" xml:space="preserve">
+    <value>Gilt für jeden Einheitentyp, der unten nicht angepasst ist.</value>
+  </data>
+  <data name="RunCardSelectionsByUnitType" xml:space="preserve">
+    <value>Nach Einheitentyp</value>
+  </data>
+  <data name="RunCardSelectionsPersonnelTitle" xml:space="preserve">
+    <value>Personalstatus</value>
+  </data>
+  <data name="RunCardSelectionsPersonnelHelp" xml:space="preserve">
+    <value>Welche Personalstatus für diese Ausrückeordnung als verfügbar gelten.</value>
+  </data>
+  <data name="RunCardSelectionsStaffingHelp" xml:space="preserve">
+    <value>Welche Bereitschaftsstufen als verfügbar gelten. Eine Person muss sowohl die Regel für den Personalstatus als auch die für die Bereitschaftsstufe erfüllen.</value>
+  </data>
+  <data name="RunCardSelectionsStandardRules" xml:space="preserve">
+    <value>Standardregeln</value>
+  </data>
+  <data name="RunCardSelectionsSelectedCount" xml:space="preserve">
+    <value>{0} ausgewählt</value>
+  </data>
+  <data name="RunCardSelectionsFollowsAll" xml:space="preserve">
+    <value>Folgt allen Einheitentypen</value>
+  </data>
+  <data name="RunCardSelectionsOwnRule" xml:space="preserve">
+    <value>Eigene Regel</value>
+  </data>
+  <data name="RunCardSelectionsCustomize" xml:space="preserve">
+    <value>Anpassen</value>
+  </data>
+  <data name="RunCardSelectionsDone" xml:space="preserve">
+    <value>Fertig</value>
+  </data>
+  <data name="RunCardSelectionsStartStandard" xml:space="preserve">
+    <value>Mit den Standardregeln beginnen</value>
+  </data>
+  <data name="RunCardSelectionsCopyAll" xml:space="preserve">
+    <value>Von allen Einheitentypen übernehmen</value>
+  </data>
+  <data name="RunCardSelectionsClear" xml:space="preserve">
+    <value>Leeren</value>
+  </data>
+  <data name="RunCardSelectionsMeaningsTitle" xml:space="preserve">
+    <value>Statusbedeutungen</value>
+  </data>
+  <data name="RunCardSelectionsMeaningsHelp" xml:space="preserve">
+    <value>Jeder Status mit dieser Bedeutung, integriert oder eigen, jetzt und künftig</value>
+  </data>
+  <data name="RunCardSelectionsSpecificTitle" xml:space="preserve">
+    <value>Einzelne Status</value>
+  </data>
+  <data name="RunCardSelectionsSpecificHelp" xml:space="preserve">
+    <value>Nur genau diese Schaltflächen aus dem Statussatz</value>
+  </data>
+  <data name="RunCardSelectionsColumnAvailable" xml:space="preserve">
+    <value>Verfügbar oder verzögert</value>
+  </data>
+  <data name="RunCardSelectionsColumnAvailableNote" xml:space="preserve">
+    <value>Von den Standardregeln gezählt</value>
+  </data>
+  <data name="RunCardSelectionsColumnBusy" xml:space="preserve">
+    <value>Beschäftigt oder gebunden</value>
+  </data>
+  <data name="RunCardSelectionsColumnUnavailable" xml:space="preserve">
+    <value>Nicht verfügbar oder sonstige</value>
+  </data>
+  <data name="RunCardSelectionsNoUnitTypes" xml:space="preserve">
+    <value>Diese Abteilung hat noch keine Einheitentypen.</value>
+  </data>
+  <data name="RunCardSelectionsMore" xml:space="preserve">
+    <value>+{0} weitere</value>
+  </data>
 </root>

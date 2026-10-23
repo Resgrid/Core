@@ -2045,4 +2045,100 @@
   <data name="TerminologyScopeModule" xml:space="preserve">
     <value>We własnym module</value>
   </data>
+  <data name="RunCardSelectionsGuideTitle" xml:space="preserve">
+    <value>Jak działają statusy do dysponowania</value>
+  </data>
+  <data name="RunCardSelectionsGuideDefault" xml:space="preserve">
+    <value>Większość kart dysponowania może pozostawić tę zakładkę pustą. Bez zaznaczeń karta stosuje standardowe zasady dostępności: jednostki i personel, których status liczy się jako dostępny lub opóźniony, oraz poziomy gotowości liczone jako dostępny, na służbie lub opóźniony.</value>
+  </data>
+  <data name="RunCardSelectionsGuideReplace" xml:space="preserve">
+    <value>Zaznaczenie czegokolwiek w sekcji zastępuje w niej zasady standardowe: jako dostępne liczy się tylko to, co zaznaczysz, a wszystko inne jest pomijane.</value>
+  </data>
+  <data name="RunCardSelectionsGuideStart" xml:space="preserve">
+    <value>Aby rozszerzyć zasady standardowe, kliknij „Zacznij od zasad standardowych”, a następnie zaznacz dodatkowe statusy, na przykład Powrót, aby jednostki wracające z innego zdarzenia też mogły być proponowane.</value>
+  </data>
+  <data name="RunCardSelectionsGuideMeanings" xml:space="preserve">
+    <value>Wybieraj znaczenia statusów zamiast pojedynczych statusów. Znaczenie obejmuje każdy status o tym znaczeniu, wbudowany lub własny, także dodany później.</value>
+  </data>
+  <data name="RunCardSelectionsUnitsTitle" xml:space="preserve">
+    <value>Statusy jednostek</value>
+  </data>
+  <data name="RunCardSelectionsUnitsHelp" xml:space="preserve">
+    <value>Ustal jedną zasadę dla wszystkich typów jednostek, a typ jednostki dostosuj tylko wtedy, gdy potrzebuje czegoś innego. Dostosowany typ jednostki używa wyłącznie własnych zaznaczeń.</value>
+  </data>
+  <data name="RunCardSelectionsAllUnitTypes" xml:space="preserve">
+    <value>Wszystkie typy jednostek</value>
+  </data>
+  <data name="RunCardSelectionsAllUnitTypesHelp" xml:space="preserve">
+    <value>Dotyczy każdego typu jednostki, który nie jest dostosowany poniżej.</value>
+  </data>
+  <data name="RunCardSelectionsByUnitType" xml:space="preserve">
+    <value>Według typu jednostki</value>
+  </data>
+  <data name="RunCardSelectionsPersonnelTitle" xml:space="preserve">
+    <value>Statusy personelu</value>
+  </data>
+  <data name="RunCardSelectionsPersonnelHelp" xml:space="preserve">
+    <value>Które statusy personelu liczą się jako dostępne dla tej karty.</value>
+  </data>
+  <data name="RunCardSelectionsStaffingHelp" xml:space="preserve">
+    <value>Które poziomy gotowości liczą się jako dostępne. Osoba musi spełnić zarówno zasadę statusu personelu, jak i zasadę poziomu gotowości.</value>
+  </data>
+  <data name="RunCardSelectionsStandardRules" xml:space="preserve">
+    <value>Zasady standardowe</value>
+  </data>
+  <data name="RunCardSelectionsSelectedCount" xml:space="preserve">
+    <value>Zaznaczono: {0}</value>
+  </data>
+  <data name="RunCardSelectionsFollowsAll" xml:space="preserve">
+    <value>Według wszystkich typów jednostek</value>
+  </data>
+  <data name="RunCardSelectionsOwnRule" xml:space="preserve">
+    <value>Własna zasada</value>
+  </data>
+  <data name="RunCardSelectionsCustomize" xml:space="preserve">
+    <value>Dostosuj</value>
+  </data>
+  <data name="RunCardSelectionsDone" xml:space="preserve">
+    <value>Gotowe</value>
+  </data>
+  <data name="RunCardSelectionsStartStandard" xml:space="preserve">
+    <value>Zacznij od zasad standardowych</value>
+  </data>
+  <data name="RunCardSelectionsCopyAll" xml:space="preserve">
+    <value>Kopiuj ze wszystkich typów jednostek</value>
+  </data>
+  <data name="RunCardSelectionsClear" xml:space="preserve">
+    <value>Wyczyść</value>
+  </data>
+  <data name="RunCardSelectionsMeaningsTitle" xml:space="preserve">
+    <value>Znaczenia statusów</value>
+  </data>
+  <data name="RunCardSelectionsMeaningsHelp" xml:space="preserve">
+    <value>Każdy status o tym znaczeniu, wbudowany lub własny, teraz i w przyszłości</value>
+  </data>
+  <data name="RunCardSelectionsSpecificTitle" xml:space="preserve">
+    <value>Pojedyncze statusy</value>
+  </data>
+  <data name="RunCardSelectionsSpecificHelp" xml:space="preserve">
+    <value>Tylko te konkretne przyciski z zestawu statusów</value>
+  </data>
+  <data name="RunCardSelectionsColumnAvailable" xml:space="preserve">
+    <value>Dostępny lub opóźniony</value>
+  </data>
+  <data name="RunCardSelectionsColumnAvailableNote" xml:space="preserve">
+    <value>Liczone przez zasady standardowe</value>
+  </data>
+  <data name="RunCardSelectionsColumnBusy" xml:space="preserve">
+    <value>Zajęty lub zaangażowany</value>
+  </data>
+  <data name="RunCardSelectionsColumnUnavailable" xml:space="preserve">
+    <value>Niedostępny lub inne</value>
+  </data>
+  <data name="RunCardSelectionsNoUnitTypes" xml:space="preserve">
+    <value>Ten departament nie ma jeszcze typów jednostek.</value>
+  </data>
+  <data name="RunCardSelectionsMore" xml:space="preserve">
+    <value>+{0} więcej</value>
+  </data>
 </root>

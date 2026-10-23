@@ -181,6 +181,7 @@ var resgrid;
                         resgrid.dispatch.nearestboard.drawBoundaries();
 
                         map.on('click', function (e) {
+                            resgrid.dispatch.nearestboard.keepView(e.latlng.lat, e.latlng.lng);
                             resgrid.dispatch.editcall.setMarkerLocation(e.latlng.lat.toString(), e.latlng.lng.toString());
 
                             $("#Latitude").val(e.latlng.lat.toString());
@@ -781,6 +782,7 @@ var resgrid;
 
                         resgrid.dispatch.editcall.geocodeCoordinates(position.lat, position.lng);
                         scheduleRecommendation();
+                        resgrid.dispatch.nearestboard.keepView(position.lat, position.lng);
                         resgrid.dispatch.nearestboard.schedule();
                     });
                 }

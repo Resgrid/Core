@@ -2045,4 +2045,100 @@
   <data name="TerminologyScopeModule" xml:space="preserve">
     <value>Dans son propre module</value>
   </data>
+  <data name="RunCardSelectionsGuideTitle" xml:space="preserve">
+    <value>Fonctionnement des statuts mobilisables</value>
+  </data>
+  <data name="RunCardSelectionsGuideDefault" xml:space="preserve">
+    <value>La plupart des plans de départ peuvent laisser cet onglet vide. Sans sélection, le plan applique les règles de disponibilité standard : unités et personnel dont le statut compte comme disponible ou retardé, et niveaux de disponibilité qui comptent comme disponible, en service ou retardé.</value>
+  </data>
+  <data name="RunCardSelectionsGuideReplace" xml:space="preserve">
+    <value>Sélectionner quoi que ce soit dans une section remplace les règles standard de cette section : seul ce que vous sélectionnez compte comme disponible, tout le reste est ignoré.</value>
+  </data>
+  <data name="RunCardSelectionsGuideStart" xml:space="preserve">
+    <value>Pour élargir les règles standard, cliquez sur « Partir des règles standard » puis cochez les statuts supplémentaires, par exemple Retour, afin que les unités qui reviennent d'une autre intervention puissent aussi être proposées.</value>
+  </data>
+  <data name="RunCardSelectionsGuideMeanings" xml:space="preserve">
+    <value>Privilégiez les significations de statut plutôt que les statuts individuels. Une signification couvre tous les statuts ayant ce sens, intégrés ou personnalisés, y compris ceux ajoutés plus tard.</value>
+  </data>
+  <data name="RunCardSelectionsUnitsTitle" xml:space="preserve">
+    <value>Statuts des unités</value>
+  </data>
+  <data name="RunCardSelectionsUnitsHelp" xml:space="preserve">
+    <value>Définissez une règle pour tous les types d'unité, puis personnalisez un type d'unité seulement s'il a besoin d'autre chose. Un type d'unité personnalisé n'utilise que sa propre sélection.</value>
+  </data>
+  <data name="RunCardSelectionsAllUnitTypes" xml:space="preserve">
+    <value>Tous les types d'unité</value>
+  </data>
+  <data name="RunCardSelectionsAllUnitTypesHelp" xml:space="preserve">
+    <value>S'applique à chaque type d'unité non personnalisé ci-dessous.</value>
+  </data>
+  <data name="RunCardSelectionsByUnitType" xml:space="preserve">
+    <value>Par type d'unité</value>
+  </data>
+  <data name="RunCardSelectionsPersonnelTitle" xml:space="preserve">
+    <value>Statuts du personnel</value>
+  </data>
+  <data name="RunCardSelectionsPersonnelHelp" xml:space="preserve">
+    <value>Quels statuts du personnel comptent comme disponibles pour ce plan.</value>
+  </data>
+  <data name="RunCardSelectionsStaffingHelp" xml:space="preserve">
+    <value>Quels niveaux de disponibilité comptent comme disponibles. Une personne doit respecter à la fois la règle de statut du personnel et celle du niveau de disponibilité.</value>
+  </data>
+  <data name="RunCardSelectionsStandardRules" xml:space="preserve">
+    <value>Règles standard</value>
+  </data>
+  <data name="RunCardSelectionsSelectedCount" xml:space="preserve">
+    <value>{0} sélectionné(s)</value>
+  </data>
+  <data name="RunCardSelectionsFollowsAll" xml:space="preserve">
+    <value>Suit tous les types d'unité</value>
+  </data>
+  <data name="RunCardSelectionsOwnRule" xml:space="preserve">
+    <value>Règle propre</value>
+  </data>
+  <data name="RunCardSelectionsCustomize" xml:space="preserve">
+    <value>Personnaliser</value>
+  </data>
+  <data name="RunCardSelectionsDone" xml:space="preserve">
+    <value>Terminé</value>
+  </data>
+  <data name="RunCardSelectionsStartStandard" xml:space="preserve">
+    <value>Partir des règles standard</value>
+  </data>
+  <data name="RunCardSelectionsCopyAll" xml:space="preserve">
+    <value>Copier depuis tous les types d'unité</value>
+  </data>
+  <data name="RunCardSelectionsClear" xml:space="preserve">
+    <value>Effacer</value>
+  </data>
+  <data name="RunCardSelectionsMeaningsTitle" xml:space="preserve">
+    <value>Significations de statut</value>
+  </data>
+  <data name="RunCardSelectionsMeaningsHelp" xml:space="preserve">
+    <value>Tout statut ayant ce sens, intégré ou personnalisé, maintenant et plus tard</value>
+  </data>
+  <data name="RunCardSelectionsSpecificTitle" xml:space="preserve">
+    <value>Statuts individuels</value>
+  </data>
+  <data name="RunCardSelectionsSpecificHelp" xml:space="preserve">
+    <value>Uniquement ces boutons précis du jeu de statuts</value>
+  </data>
+  <data name="RunCardSelectionsColumnAvailable" xml:space="preserve">
+    <value>Disponible ou retardé</value>
+  </data>
+  <data name="RunCardSelectionsColumnAvailableNote" xml:space="preserve">
+    <value>Comptés par les règles standard</value>
+  </data>
+  <data name="RunCardSelectionsColumnBusy" xml:space="preserve">
+    <value>Occupé ou engagé</value>
+  </data>
+  <data name="RunCardSelectionsColumnUnavailable" xml:space="preserve">
+    <value>Indisponible ou autre</value>
+  </data>
+  <data name="RunCardSelectionsNoUnitTypes" xml:space="preserve">
+    <value>Ce service n'a pas encore de types d'unité.</value>
+  </data>
+  <data name="RunCardSelectionsMore" xml:space="preserve">
+    <value>+{0} de plus</value>
+  </data>
 </root>

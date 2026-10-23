@@ -34,6 +34,9 @@ namespace Resgrid.Web.Areas.User.Models.RunCards
 		/// <summary>Selectable unit statuses per unit type (built-in or the type's custom status set).</summary>
 		public Dictionary<int, List<StatusOptionModel>> UnitStatusOptions { get; set; } = new Dictionary<int, List<StatusOptionModel>>();
 
+		/// <summary>The unit status meanings, for selections that apply to every unit type (no UnitTypeId).</summary>
+		public List<StatusOptionModel> UnitMeaningOptions { get; set; } = new List<StatusOptionModel>();
+
 		public List<StatusOptionModel> PersonnelStatusOptions { get; set; } = new List<StatusOptionModel>();
 
 		public List<StatusOptionModel> StaffingOptions { get; set; } = new List<StatusOptionModel>();
@@ -139,6 +142,15 @@ namespace Resgrid.Web.Areas.User.Models.RunCards
 		public bool IsCustomState { get; set; }
 
 		public string Text { get; set; }
+
+		/// <summary>A status meaning (every status with one base type, see RunCardSelectionMeaning) rather than one status.</summary>
+		public bool IsMeaning { get; set; }
+
+		/// <summary>The meaning's own name ("Returning") for a meaning option; null otherwise.</summary>
+		public string MeaningName { get; set; }
+
+		/// <summary>How the standard availability rules class this option (an AvailabilityClass value).</summary>
+		public int Availability { get; set; }
 	}
 
 	/// <summary>JSON payload the run card editor posts back.</summary>

@@ -2045,4 +2045,100 @@
   <data name="TerminologyScopeModule" xml:space="preserve">
     <value>У власному модулі</value>
   </data>
+  <data name="RunCardSelectionsGuideTitle" xml:space="preserve">
+    <value>Як працюють статуси для відправлення</value>
+  </data>
+  <data name="RunCardSelectionsGuideDefault" xml:space="preserve">
+    <value>Більшість карток виїзду можуть залишити цю вкладку порожньою. Без вибору картка застосовує стандартні правила доступності: підрозділи й персонал, чий статус вважається доступним або із затримкою, та рівні готовності, що вважаються доступними, на зміні або із затримкою.</value>
+  </data>
+  <data name="RunCardSelectionsGuideReplace" xml:space="preserve">
+    <value>Будь-який вибір у розділі замінює стандартні правила для цього розділу: доступним вважається лише те, що ви вибрали, а все інше пропускається.</value>
+  </data>
+  <data name="RunCardSelectionsGuideStart" xml:space="preserve">
+    <value>Щоб розширити стандартні правила, натисніть «Почати зі стандартних правил», а потім позначте додаткові статуси, наприклад Повернення, щоб підрозділи, які повертаються з іншого виклику, теж могли пропонуватися.</value>
+  </data>
+  <data name="RunCardSelectionsGuideMeanings" xml:space="preserve">
+    <value>Надавайте перевагу значенням статусів, а не окремим статусам. Значення охоплює кожен статус із таким значенням, вбудований чи власний, включно з доданими пізніше.</value>
+  </data>
+  <data name="RunCardSelectionsUnitsTitle" xml:space="preserve">
+    <value>Статуси підрозділів</value>
+  </data>
+  <data name="RunCardSelectionsUnitsHelp" xml:space="preserve">
+    <value>Задайте одне правило для всіх типів підрозділів, а тип підрозділу налаштовуйте лише тоді, коли йому потрібне інше. Налаштований тип підрозділу використовує лише власний вибір.</value>
+  </data>
+  <data name="RunCardSelectionsAllUnitTypes" xml:space="preserve">
+    <value>Усі типи підрозділів</value>
+  </data>
+  <data name="RunCardSelectionsAllUnitTypesHelp" xml:space="preserve">
+    <value>Застосовується до кожного типу підрозділу, не налаштованого нижче.</value>
+  </data>
+  <data name="RunCardSelectionsByUnitType" xml:space="preserve">
+    <value>За типом підрозділу</value>
+  </data>
+  <data name="RunCardSelectionsPersonnelTitle" xml:space="preserve">
+    <value>Статуси персоналу</value>
+  </data>
+  <data name="RunCardSelectionsPersonnelHelp" xml:space="preserve">
+    <value>Які статуси персоналу вважаються доступними для цієї картки.</value>
+  </data>
+  <data name="RunCardSelectionsStaffingHelp" xml:space="preserve">
+    <value>Які рівні готовності вважаються доступними. Особа має відповідати і правилу статусу персоналу, і правилу рівня готовності.</value>
+  </data>
+  <data name="RunCardSelectionsStandardRules" xml:space="preserve">
+    <value>Стандартні правила</value>
+  </data>
+  <data name="RunCardSelectionsSelectedCount" xml:space="preserve">
+    <value>Вибрано: {0}</value>
+  </data>
+  <data name="RunCardSelectionsFollowsAll" xml:space="preserve">
+    <value>Як для всіх типів підрозділів</value>
+  </data>
+  <data name="RunCardSelectionsOwnRule" xml:space="preserve">
+    <value>Власне правило</value>
+  </data>
+  <data name="RunCardSelectionsCustomize" xml:space="preserve">
+    <value>Налаштувати</value>
+  </data>
+  <data name="RunCardSelectionsDone" xml:space="preserve">
+    <value>Готово</value>
+  </data>
+  <data name="RunCardSelectionsStartStandard" xml:space="preserve">
+    <value>Почати зі стандартних правил</value>
+  </data>
+  <data name="RunCardSelectionsCopyAll" xml:space="preserve">
+    <value>Скопіювати з усіх типів підрозділів</value>
+  </data>
+  <data name="RunCardSelectionsClear" xml:space="preserve">
+    <value>Очистити</value>
+  </data>
+  <data name="RunCardSelectionsMeaningsTitle" xml:space="preserve">
+    <value>Значення статусів</value>
+  </data>
+  <data name="RunCardSelectionsMeaningsHelp" xml:space="preserve">
+    <value>Будь-який статус із цим значенням, вбудований чи власний, зараз і надалі</value>
+  </data>
+  <data name="RunCardSelectionsSpecificTitle" xml:space="preserve">
+    <value>Окремі статуси</value>
+  </data>
+  <data name="RunCardSelectionsSpecificHelp" xml:space="preserve">
+    <value>Лише ці конкретні кнопки з набору статусів</value>
+  </data>
+  <data name="RunCardSelectionsColumnAvailable" xml:space="preserve">
+    <value>Доступний або із затримкою</value>
+  </data>
+  <data name="RunCardSelectionsColumnAvailableNote" xml:space="preserve">
+    <value>Враховуються стандартними правилами</value>
+  </data>
+  <data name="RunCardSelectionsColumnBusy" xml:space="preserve">
+    <value>Зайнятий або задіяний</value>
+  </data>
+  <data name="RunCardSelectionsColumnUnavailable" xml:space="preserve">
+    <value>Недоступний або інше</value>
+  </data>
+  <data name="RunCardSelectionsNoUnitTypes" xml:space="preserve">
+    <value>У цьому департаменті ще немає типів підрозділів.</value>
+  </data>
+  <data name="RunCardSelectionsMore" xml:space="preserve">
+    <value>+{0} ще</value>
+  </data>
 </root>

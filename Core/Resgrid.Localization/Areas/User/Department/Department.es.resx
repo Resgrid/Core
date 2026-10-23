@@ -2103,4 +2103,100 @@
   <data name="TerminologyScopeModule" xml:space="preserve">
     <value>En su propio módulo</value>
   </data>
+  <data name="RunCardSelectionsGuideTitle" xml:space="preserve">
+    <value>Cómo funcionan los estados despachables</value>
+  </data>
+  <data name="RunCardSelectionsGuideDefault" xml:space="preserve">
+    <value>La mayoría de las tarjetas de despacho pueden dejar esta pestaña vacía. Sin nada seleccionado, la tarjeta usa las reglas de disponibilidad estándar: unidades y personal cuyo estado cuenta como disponible o retrasado, y niveles de dotación que cuentan como disponible, de turno o retrasado.</value>
+  </data>
+  <data name="RunCardSelectionsGuideReplace" xml:space="preserve">
+    <value>Seleccionar cualquier cosa en una sección reemplaza las reglas estándar de esa sección: solo lo que seleccione cuenta como disponible y todo lo demás se omite.</value>
+  </data>
+  <data name="RunCardSelectionsGuideStart" xml:space="preserve">
+    <value>Para ampliar las reglas estándar, haga clic en "Empezar con las reglas estándar" y marque los estados adicionales, por ejemplo Regresando, para que las unidades que vuelven de otra llamada también puedan recomendarse.</value>
+  </data>
+  <data name="RunCardSelectionsGuideMeanings" xml:space="preserve">
+    <value>Prefiera los significados de estado a los estados individuales. Un significado abarca todos los estados con ese significado, integrados o propios, incluidos los que añada más adelante.</value>
+  </data>
+  <data name="RunCardSelectionsUnitsTitle" xml:space="preserve">
+    <value>Estados de unidades</value>
+  </data>
+  <data name="RunCardSelectionsUnitsHelp" xml:space="preserve">
+    <value>Defina una regla para todos los tipos de unidad y personalice un tipo de unidad solo cuando necesite algo distinto. Un tipo de unidad personalizado usa solo su propia selección.</value>
+  </data>
+  <data name="RunCardSelectionsAllUnitTypes" xml:space="preserve">
+    <value>Todos los tipos de unidad</value>
+  </data>
+  <data name="RunCardSelectionsAllUnitTypesHelp" xml:space="preserve">
+    <value>Se aplica a todos los tipos de unidad que no estén personalizados abajo.</value>
+  </data>
+  <data name="RunCardSelectionsByUnitType" xml:space="preserve">
+    <value>Por tipo de unidad</value>
+  </data>
+  <data name="RunCardSelectionsPersonnelTitle" xml:space="preserve">
+    <value>Estados del personal</value>
+  </data>
+  <data name="RunCardSelectionsPersonnelHelp" xml:space="preserve">
+    <value>Qué estados del personal cuentan como disponibles para esta tarjeta.</value>
+  </data>
+  <data name="RunCardSelectionsStaffingHelp" xml:space="preserve">
+    <value>Qué niveles de dotación cuentan como disponibles. Una persona debe cumplir tanto la regla de estado del personal como la de nivel de dotación.</value>
+  </data>
+  <data name="RunCardSelectionsStandardRules" xml:space="preserve">
+    <value>Reglas estándar</value>
+  </data>
+  <data name="RunCardSelectionsSelectedCount" xml:space="preserve">
+    <value>{0} seleccionados</value>
+  </data>
+  <data name="RunCardSelectionsFollowsAll" xml:space="preserve">
+    <value>Sigue a todos los tipos de unidad</value>
+  </data>
+  <data name="RunCardSelectionsOwnRule" xml:space="preserve">
+    <value>Regla propia</value>
+  </data>
+  <data name="RunCardSelectionsCustomize" xml:space="preserve">
+    <value>Personalizar</value>
+  </data>
+  <data name="RunCardSelectionsDone" xml:space="preserve">
+    <value>Listo</value>
+  </data>
+  <data name="RunCardSelectionsStartStandard" xml:space="preserve">
+    <value>Empezar con las reglas estándar</value>
+  </data>
+  <data name="RunCardSelectionsCopyAll" xml:space="preserve">
+    <value>Copiar de todos los tipos de unidad</value>
+  </data>
+  <data name="RunCardSelectionsClear" xml:space="preserve">
+    <value>Borrar</value>
+  </data>
+  <data name="RunCardSelectionsMeaningsTitle" xml:space="preserve">
+    <value>Significados de estado</value>
+  </data>
+  <data name="RunCardSelectionsMeaningsHelp" xml:space="preserve">
+    <value>Cualquier estado con este significado, integrado o propio, ahora y en el futuro</value>
+  </data>
+  <data name="RunCardSelectionsSpecificTitle" xml:space="preserve">
+    <value>Estados individuales</value>
+  </data>
+  <data name="RunCardSelectionsSpecificHelp" xml:space="preserve">
+    <value>Solo estos botones exactos del conjunto de estados</value>
+  </data>
+  <data name="RunCardSelectionsColumnAvailable" xml:space="preserve">
+    <value>Disponible o retrasado</value>
+  </data>
+  <data name="RunCardSelectionsColumnAvailableNote" xml:space="preserve">
+    <value>Contados por las reglas estándar</value>
+  </data>
+  <data name="RunCardSelectionsColumnBusy" xml:space="preserve">
+    <value>Ocupado o comprometido</value>
+  </data>
+  <data name="RunCardSelectionsColumnUnavailable" xml:space="preserve">
+    <value>No disponible u otros</value>
+  </data>
+  <data name="RunCardSelectionsNoUnitTypes" xml:space="preserve">
+    <value>Este departamento aún no tiene tipos de unidad.</value>
+  </data>
+  <data name="RunCardSelectionsMore" xml:space="preserve">
+    <value>+{0} más</value>
+  </data>
 </root>

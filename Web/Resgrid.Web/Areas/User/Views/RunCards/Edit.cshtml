@@ -78,6 +78,16 @@
         })
     }, jsonSettings);
 
+    Func<Resgrid.Web.Areas.User.Models.RunCards.StatusOptionModel, object> statusOption = o => new
+    {
+        stateId = o.StateId,
+        isCustomState = o.IsCustomState,
+        text = o.Text,
+        isMeaning = o.IsMeaning,
+        meaningName = o.MeaningName,
+        availability = o.Availability
+    };
+
     var lookupsJson = JsonConvert.SerializeObject(new
     {
         priorities = Model.CallPriorities.Items.Cast<Resgrid.Model.DepartmentCallPriority>().Select(p => new { id = p.DepartmentCallPriorityId, name = p.Name }),
@@ -85,9 +95,10 @@
         stations = Model.StationGroups.Select(s => new { id = s.DepartmentGroupId, name = s.Name }),
         unitTypes = Model.UnitTypes.Select(t => new { id = t.UnitTypeId, name = t.Type }),
         roles = Model.PersonnelRoles.Select(r => new { id = r.PersonnelRoleId, name = r.Name }),
-        unitStatusOptions = Model.UnitStatusOptions.ToDictionary(kv => kv.Key.ToString(), kv => kv.Value.Select(o => new { stateId = o.StateId, isCustomState = o.IsCustomState, text = o.Text })),
-        personnelStatusOptions = Model.PersonnelStatusOptions.Select(o => new { stateId = o.StateId, isCustomState = o.IsCustomState, text = o.Text }),
-        staffingOptions = Model.StaffingOptions.Select(o => new { stateId = o.StateId, isCustomState = o.IsCustomState, text = o.Text }),
+        unitStatusOptions = Model.UnitStatusOptions.ToDictionary(kv => kv.Key.ToString(), kv => kv.Value.Select(statusOption)),
+        unitMeaningOptions = Model.UnitMeaningOptions.Select(statusOption),
+        personnelStatusOptions = Model.PersonnelStatusOptions.Select(statusOption),
+        staffingOptions = Model.StaffingOptions.Select(statusOption),
         conditionsEnabled = Model.ConditionsEnabled,
         packages = Model.ResponsePackages.Select(p => new { id = p.ResponsePackageId, name = p.IsRetired ? p.Name + " (" + localizer["ResponsePackageRetiredBadge"].Value + ")" : p.Name }),
         unitClasses = Enum.GetValues(typeof(Resgrid.Model.UnitTypeClasses)).Cast<Resgrid.Model.UnitTypeClasses>().Where(c => c != Resgrid.Model.UnitTypeClasses.None)
@@ -95,6 +106,46 @@
         baseTypes = Enum.GetValues(typeof(Resgrid.Model.ActionBaseTypes)).Cast<Resgrid.Model.ActionBaseTypes>().Where(b => b != Resgrid.Model.ActionBaseTypes.None)
             .Select(b => new { id = (int)b, name = Resgrid.Framework.StringHelpers.GetDisplayString(b) })
     }, jsonSettings);
+}
+
+@section Styles
+{
+    <style>
+        #tab-selections .rc-guide { margin-bottom: 18px; padding: 12px 16px; border: 1px solid #d6e9f5; border-left: 4px solid #23c6c8; border-radius: 4px; background: #f4f9fc; }
+        #tab-selections .rc-guide h4 { margin: 0 0 6px 0; }
+        #tab-selections .rc-guide ul { margin: 0; padding-left: 18px; }
+        #tab-selections .rc-guide li { margin-bottom: 3px; }
+        #tab-selections .rc-section { margin-bottom: 16px; border: 1px solid #e7eaec; border-radius: 4px; }
+        #tab-selections .rc-section-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 1px solid #e7eaec; background: #f9fafb; }
+        #tab-selections .rc-section-head h4 { flex: 1 1 auto; margin: 0; }
+        #tab-selections .rc-section-body { padding: 12px 14px; }
+        #tab-selections .rc-help { margin-bottom: 10px; color: #676a6c; }
+        #tab-selections .rc-subsection, #tab-selections .rc-unit-body { padding: 10px 12px; border: 1px solid #eef0f2; border-radius: 4px; background: #fbfcfd; }
+        #tab-selections .rc-subsection-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 4px; }
+        #tab-selections .rc-actions { margin-left: auto; }
+        #tab-selections .rc-actions .btn { margin: 0 0 0 4px; }
+        #tab-selections .rc-group + .rc-group { margin-top: 12px; }
+        #tab-selections .rc-group-title { margin-bottom: 6px; font-weight: 600; }
+        #tab-selections .rc-group-title small { margin-left: 6px; font-weight: 400; color: #999; }
+        #tab-selections .rc-cols { display: flex; flex-wrap: wrap; gap: 12px; }
+        #tab-selections .rc-col { flex: 1 1 200px; min-width: 180px; }
+        #tab-selections .rc-col-title { margin-bottom: 6px; font-size: 12px; font-weight: 600; }
+        #tab-selections .rc-col-title small { display: block; font-weight: 400; color: #999; }
+        #tab-selections .rc-col--available .rc-col-title { color: #18a689; }
+        #tab-selections .rc-col--busy .rc-col-title { color: #c27c0e; }
+        #tab-selections .rc-col--unavailable .rc-col-title { color: #a94442; }
+        #tab-selections .rc-option { display: flex; align-items: center; gap: 8px; margin: 0 0 4px 0; padding: 4px 8px; border: 1px solid #e7eaec; border-radius: 4px; background: #fff; font-weight: 400; cursor: pointer; }
+        #tab-selections .rc-option:hover { border-color: #c4c9cc; }
+        #tab-selections .rc-option.is-on { border-color: #1ab394; background: #e8f7f3; }
+        #tab-selections .rc-option input { margin: 0; }
+        #tab-selections .rc-unit-row { padding: 8px 0; border-top: 1px solid #f0f0f0; }
+        #tab-selections .rc-unit-row-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+        #tab-selections .rc-unit-name { min-width: 140px; font-weight: 600; }
+        #tab-selections .rc-unit-state { flex: 1 1 auto; color: #676a6c; }
+        #tab-selections .rc-unit-body { margin-top: 8px; }
+        #tab-selections .rc-unit-body .rc-actions { display: block; margin: 0 0 10px 0; }
+        #tab-selections .rc-unit-body .rc-actions .btn { margin: 0 4px 0 0; }
+    </style>
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -242,13 +293,66 @@
 
                             <div id="tab-selections" class="tab-pane">
                                 <div class="panel-body">
-                                    <p class="text-muted">@localizer["RunCardSelectionsHelp"]</p>
-                                    <h4>@localizer["UnitCallDispatchStatusLabel"]</h4>
-                                    <div id="unitStatusSelections"></div>
-                                    <h4>@localizer["PersonCallDispatchStatusLabel"]</h4>
-                                    <div id="personnelStatusSelections" class="row" style="margin-left: 0"></div>
-                                    <h4>@localizer["RunCardStaffingSelectionsLabel"]</h4>
-                                    <div id="staffingSelections" class="row" style="margin-left: 0"></div>
+                                    <div class="rc-guide">
+                                        <h4>@localizer["RunCardSelectionsGuideTitle"]</h4>
+                                        <ul>
+                                            <li>@localizer["RunCardSelectionsGuideDefault"]</li>
+                                            <li>@localizer["RunCardSelectionsGuideReplace"]</li>
+                                            <li>@localizer["RunCardSelectionsGuideStart"]</li>
+                                            <li>@localizer["RunCardSelectionsGuideMeanings"]</li>
+                                        </ul>
+                                    </div>
+
+                                    <div class="rc-section">
+                                        <div class="rc-section-head">
+                                            <h4>@localizer["RunCardSelectionsUnitsTitle"] <span id="rcUnitsSummary"></span></h4>
+                                            <button type="button" class="btn btn-white btn-xs rc-clear" data-type="1" data-scope="all">@localizer["RunCardSelectionsClear"]</button>
+                                        </div>
+                                        <div class="rc-section-body">
+                                            <p class="rc-help">@localizer["RunCardSelectionsUnitsHelp"]</p>
+                                            <div class="rc-subsection">
+                                                <div class="rc-subsection-head">
+                                                    <strong>@localizer["RunCardSelectionsAllUnitTypes"]</strong> <span id="rcUnitAllSummary"></span>
+                                                    <span class="rc-actions">
+                                                        <button type="button" class="btn btn-white btn-xs rc-start-standard" data-type="1" data-unit-type-id="">@localizer["RunCardSelectionsStartStandard"]</button>
+                                                        <button type="button" class="btn btn-white btn-xs rc-clear" data-type="1" data-unit-type-id="">@localizer["RunCardSelectionsClear"]</button>
+                                                    </span>
+                                                </div>
+                                                <p class="rc-help">@localizer["RunCardSelectionsAllUnitTypesHelp"]</p>
+                                                <div id="rcUnitAllOptions"></div>
+                                            </div>
+                                            <div class="rc-group-title" style="margin-top: 14px;">@localizer["RunCardSelectionsByUnitType"]</div>
+                                            <div id="rcUnitTypes"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="rc-section">
+                                        <div class="rc-section-head">
+                                            <h4>@localizer["RunCardSelectionsPersonnelTitle"] <span id="rcPersonnelSummary"></span></h4>
+                                            <span class="rc-actions">
+                                                <button type="button" class="btn btn-white btn-xs rc-start-standard" data-type="2" data-unit-type-id="">@localizer["RunCardSelectionsStartStandard"]</button>
+                                                <button type="button" class="btn btn-white btn-xs rc-clear" data-type="2" data-unit-type-id="">@localizer["RunCardSelectionsClear"]</button>
+                                            </span>
+                                        </div>
+                                        <div class="rc-section-body">
+                                            <p class="rc-help">@localizer["RunCardSelectionsPersonnelHelp"]</p>
+                                            <div id="rcPersonnelOptions"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="rc-section">
+                                        <div class="rc-section-head">
+                                            <h4>@localizer["RunCardStaffingSelectionsLabel"] <span id="rcStaffingSummary"></span></h4>
+                                            <span class="rc-actions">
+                                                <button type="button" class="btn btn-white btn-xs rc-start-standard" data-type="3" data-unit-type-id="">@localizer["RunCardSelectionsStartStandard"]</button>
+                                                <button type="button" class="btn btn-white btn-xs rc-clear" data-type="3" data-unit-type-id="">@localizer["RunCardSelectionsClear"]</button>
+                                            </span>
+                                        </div>
+                                        <div class="rc-section-body">
+                                            <p class="rc-help">@localizer["RunCardSelectionsStaffingHelp"]</p>
+                                            <div id="rcStaffingOptions"></div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -641,57 +745,243 @@
             renderAlarmLevels();
         });
 
-        // ── Selections tab ──
-        function isSelected(selectionType, unitTypeId, option) {
-            return card.selections.some(function (s) {
-                return s.selectionType === selectionType
-                    && String(s.unitTypeId || '') === String(unitTypeId || '')
-                    && s.isCustomState === option.isCustomState
-                    && s.stateId === option.stateId;
-            });
+        // ── Dispatchable statuses tab ──
+        // A selection set is a scope: unit statuses for all unit types (no unit type) or for one unit type, personnel
+        // statuses, or staffing levels. Anything selected in a scope replaces the standard availability rules there,
+        // and a unit type with its own selections ignores the all-unit-types ones (DispatchRecommendationService).
+        var selectionText = @Html.Raw(JsonConvert.SerializeObject(new Dictionary<string, string>
+        {
+            ["standard"] = localizer["RunCardSelectionsStandardRules"].Value,
+            ["selected"] = localizer["RunCardSelectionsSelectedCount"].Value,
+            ["followsAll"] = localizer["RunCardSelectionsFollowsAll"].Value,
+            ["ownRule"] = localizer["RunCardSelectionsOwnRule"].Value,
+            ["customize"] = localizer["RunCardSelectionsCustomize"].Value,
+            ["done"] = localizer["RunCardSelectionsDone"].Value,
+            ["startStandard"] = localizer["RunCardSelectionsStartStandard"].Value,
+            ["copyAll"] = localizer["RunCardSelectionsCopyAll"].Value,
+            ["clear"] = localizer["RunCardSelectionsClear"].Value,
+            ["meaningsTitle"] = localizer["RunCardSelectionsMeaningsTitle"].Value,
+            ["meaningsHelp"] = localizer["RunCardSelectionsMeaningsHelp"].Value,
+            ["specificTitle"] = localizer["RunCardSelectionsSpecificTitle"].Value,
+            ["specificHelp"] = localizer["RunCardSelectionsSpecificHelp"].Value,
+            ["colAvailable"] = localizer["RunCardSelectionsColumnAvailable"].Value,
+            ["colAvailableNote"] = localizer["RunCardSelectionsColumnAvailableNote"].Value,
+            ["colBusy"] = localizer["RunCardSelectionsColumnBusy"].Value,
+            ["colUnavailable"] = localizer["RunCardSelectionsColumnUnavailable"].Value,
+            ["noUnitTypes"] = localizer["RunCardSelectionsNoUnitTypes"].Value,
+            ["more"] = localizer["RunCardSelectionsMore"].Value
+        }, jsonSettings));
+
+        // AvailabilityClass: Unknown 0, Available 1, Committed 2, Unavailable 3, Delayed 4. The standard rules count
+        // Available and Delayed.
+        var selectionColumns = [
+            { key: 'available', classes: [1, 4], title: selectionText.colAvailable, note: selectionText.colAvailableNote },
+            { key: 'busy', classes: [2], title: selectionText.colBusy },
+            { key: 'unavailable', classes: [3, 0], title: selectionText.colUnavailable }
+        ];
+        var expandedUnitTypes = {};
+
+        function scopeKey(unitTypeId) {
+            return unitTypeId === null || unitTypeId === undefined ? '' : String(unitTypeId);
         }
 
-        function checkboxes(selectionType, unitTypeId, options) {
-            var html = '';
-            $.each(options, function (i, option) {
-                var checked = isSelected(selectionType, unitTypeId, option) ? ' checked' : '';
-                html += '<label class="checkbox-inline" style="margin-right: 12px">';
-                html += '<input type="checkbox" class="selection-check" data-selection-type="' + selectionType + '" data-unit-type-id="' + (unitTypeId || '') + '" data-custom="' + option.isCustomState + '" data-state-id="' + option.stateId + '"' + checked + '> ' + $('<span>').text(option.text).html();
-                html += '</label>';
+        function sameSelection(a, b) {
+            return a.selectionType === b.selectionType && scopeKey(a.unitTypeId) === scopeKey(b.unitTypeId)
+                && a.isCustomState === b.isCustomState && a.stateId === b.stateId;
+        }
+
+        function selectionsIn(type, unitTypeId) {
+            return card.selections.filter(function (s) { return s.selectionType === type && scopeKey(s.unitTypeId) === scopeKey(unitTypeId); });
+        }
+
+        function hasSelection(type, unitTypeId, option) {
+            var probe = { selectionType: type, unitTypeId: unitTypeId, isCustomState: option.isCustomState, stateId: option.stateId };
+            return card.selections.some(function (s) { return sameSelection(s, probe); });
+        }
+
+        // A selection already on the card keeps its row id, so ticking it again never re-inserts it.
+        function setSelection(type, unitTypeId, option, on) {
+            var selection = { runCardAvailabilitySelectionId: 0, selectionType: type, unitTypeId: scopeKey(unitTypeId) === '' ? null : parseInt(scopeKey(unitTypeId), 10), isCustomState: option.isCustomState, stateId: option.stateId };
+            if (!on) {
+                card.selections = card.selections.filter(function (s) { return !sameSelection(s, selection); });
+            } else if (!hasSelection(type, unitTypeId, option)) {
+                card.selections.push(selection);
+            }
+        }
+
+        function clearScope(type, unitTypeId) {
+            card.selections = card.selections.filter(function (s) { return !(s.selectionType === type && scopeKey(s.unitTypeId) === scopeKey(unitTypeId)); });
+        }
+
+        function optionsFor(type, unitTypeId) {
+            if (type === 2) { return lookups.personnelStatusOptions; }
+            if (type === 3) { return lookups.staffingOptions; }
+            if (scopeKey(unitTypeId) !== '') { return lookups.unitStatusOptions[scopeKey(unitTypeId)] || []; }
+
+            // All unit types offers the meanings; anything else saved there (not something this editor creates) is
+            // still listed so it can be seen and removed.
+            var options = lookups.unitMeaningOptions.slice();
+            $.each(selectionsIn(1, null), function (i, s) {
+                if (options.some(function (o) { return o.isCustomState === s.isCustomState && o.stateId === s.stateId; })) { return; }
+                var known = null;
+                $.each(lookups.unitStatusOptions, function (typeId, typeOptions) {
+                    known = known || typeOptions.filter(function (o) { return o.isCustomState === s.isCustomState && o.stateId === s.stateId; })[0] || null;
+                });
+                options.push(known || { stateId: s.stateId, isCustomState: s.isCustomState, text: '#' + s.stateId, isMeaning: false, availability: 0 });
             });
+            return options;
+        }
+
+        function optionLabel(option) {
+            return option.isMeaning ? option.meaningName : option.text;
+        }
+
+        function summaryHtml(count) {
+            return count
+                ? '<span class="label label-primary">' + esc(selectionText.selected.replace('{0}', count)) + '</span>'
+                : '<span class="label label-default">' + esc(selectionText.standard) + '</span>';
+        }
+
+        function optionHtml(type, unitTypeId, option) {
+            var on = hasSelection(type, unitTypeId, option);
+            return '<label class="rc-option' + (on ? ' is-on' : '') + '"><input type="checkbox" class="selection-check" data-selection-type="' + type
+                + '" data-unit-type-id="' + scopeKey(unitTypeId) + '" data-custom="' + option.isCustomState + '" data-state-id="' + option.stateId + '"'
+                + (on ? ' checked' : '') + ' /> <span>' + esc(optionLabel(option)) + '</span></label>';
+        }
+
+        function optionColumns(type, unitTypeId, options) {
+            var html = '<div class="rc-cols">';
+            $.each(selectionColumns, function (i, column) {
+                var items = options.filter(function (o) { return column.classes.indexOf(o.availability) >= 0; });
+                if (!items.length) { return; }
+                html += '<div class="rc-col rc-col--' + column.key + '"><div class="rc-col-title">' + esc(column.title) + (column.note ? '<small>' + esc(column.note) + '</small>' : '') + '</div>';
+                $.each(items, function (j, option) { html += optionHtml(type, unitTypeId, option); });
+                html += '</div>';
+            });
+            return html + '</div>';
+        }
+
+        // Meanings first: they keep working when a status set changes, so they are the better default.
+        function optionGroups(type, unitTypeId, options) {
+            var meanings = options.filter(function (o) { return o.isMeaning; });
+            var statuses = options.filter(function (o) { return !o.isMeaning; });
+            var html = '';
+            if (meanings.length) {
+                html += '<div class="rc-group"><div class="rc-group-title">' + esc(selectionText.meaningsTitle) + '<small>' + esc(selectionText.meaningsHelp) + '</small></div>' + optionColumns(type, unitTypeId, meanings) + '</div>';
+            }
+            if (statuses.length) {
+                html += '<div class="rc-group"><div class="rc-group-title">' + esc(selectionText.specificTitle) + '<small>' + esc(selectionText.specificHelp) + '</small></div>' + optionColumns(type, unitTypeId, statuses) + '</div>';
+            }
             return html;
         }
 
-        function renderSelections() {
-            var $units = $('#unitStatusSelections').empty();
-            $.each(lookups.unitTypes, function (i, unitType) {
-                var options = lookups.unitStatusOptions[String(unitType.id)] || [];
-                $units.append('<div class="m-b-sm"><strong>' + $('<span>').text(unitType.name).html() + '</strong><br/>' + checkboxes(1, unitType.id, options) + '</div>');
+        function selectedNames(type, unitTypeId) {
+            var options = optionsFor(type, unitTypeId);
+            var names = selectionsIn(type, unitTypeId).map(function (s) {
+                var option = options.filter(function (o) { return o.isCustomState === s.isCustomState && o.stateId === s.stateId; })[0];
+                return option ? option.text : '#' + s.stateId;
             });
-            $('#personnelStatusSelections').html(checkboxes(2, null, lookups.personnelStatusOptions));
-            $('#staffingSelections').html(checkboxes(3, null, lookups.staffingOptions));
+            var shown = names.slice(0, 4).map(esc).join(', ');
+            return names.length > 4 ? shown + ' ' + esc(selectionText.more.replace('{0}', names.length - 4)) : shown;
+        }
+
+        function scopeButton(cssClass, type, unitTypeId, label) {
+            return '<button type="button" class="btn btn-white btn-xs ' + cssClass + '" data-type="' + type + '" data-unit-type-id="' + scopeKey(unitTypeId) + '">' + esc(label) + '</button>';
+        }
+
+        function unitTypeRowHtml(unitType, followsAll) {
+            var own = selectionsIn(1, unitType.id).length;
+            var open = !!expandedUnitTypes[unitType.id];
+            var state = own
+                ? '<span class="label label-primary">' + esc(selectionText.ownRule) + '</span> ' + selectedNames(1, unitType.id)
+                : followsAll
+                    ? '<span class="label label-info">' + esc(selectionText.followsAll) + '</span>'
+                    : '<span class="label label-default">' + esc(selectionText.standard) + '</span>';
+
+            var html = '<div class="rc-unit-row" data-unit-type-id="' + unitType.id + '"><div class="rc-unit-row-head">'
+                + '<span class="rc-unit-name">' + esc(unitType.name) + '</span><span class="rc-unit-state">' + state + '</span>'
+                + '<button type="button" class="btn btn-white btn-xs rc-toggle-unit" aria-expanded="' + open + '">' + esc(open ? selectionText.done : selectionText.customize) + '</button></div>';
+            if (open) {
+                html += '<div class="rc-unit-body"><div class="rc-actions">' + scopeButton('rc-start-standard', 1, unitType.id, selectionText.startStandard)
+                    + (followsAll ? scopeButton('rc-copy-all', 1, unitType.id, selectionText.copyAll) : '')
+                    + scopeButton('rc-clear', 1, unitType.id, selectionText.clear) + '</div>'
+                    + optionGroups(1, unitType.id, optionsFor(1, unitType.id)) + '</div>';
+            }
+            return html + '</div>';
+        }
+
+        function renderSelections() {
+            var generic = selectionsIn(1, null).length;
+            var unitTotal = card.selections.filter(function (s) { return s.selectionType === 1; }).length;
+
+            $('#rcUnitsSummary').html(summaryHtml(unitTotal));
+            $('#rcUnitAllSummary').html(summaryHtml(generic));
+            $('#rcUnitAllOptions').html(optionGroups(1, null, optionsFor(1, null)));
+            $('#rcUnitTypes').html(lookups.unitTypes.length
+                ? lookups.unitTypes.map(function (unitType) { return unitTypeRowHtml(unitType, generic > 0); }).join('')
+                : '<p class="text-muted">' + esc(selectionText.noUnitTypes) + '</p>');
+
+            $('#rcPersonnelSummary').html(summaryHtml(selectionsIn(2, null).length));
+            $('#rcPersonnelOptions').html(optionGroups(2, null, optionsFor(2, null)));
+            $('#rcStaffingSummary').html(summaryHtml(selectionsIn(3, null).length));
+            $('#rcStaffingOptions').html(optionGroups(3, null, optionsFor(3, null)));
+        }
+
+        function scopeOf(element) {
+            var $el = $(element);
+            var unitTypeId = String($el.attr('data-unit-type-id') || '');
+            return { type: parseInt($el.attr('data-type') || $el.attr('data-selection-type'), 10), unitTypeId: unitTypeId === '' ? null : parseInt(unitTypeId, 10) };
+        }
+
+        // Every change re-renders the tab (summaries and unit type states follow the selections), then puts focus back
+        // on the control that was used.
+        function rerenderKeepingFocus(selector) {
+            renderSelections();
+            $('#tab-selections').find(selector).first().trigger('focus');
         }
 
         $('#tab-selections').on('change', '.selection-check', function () {
-            var $check = $(this);
-            var selection = {
-                runCardAvailabilitySelectionId: 0,
-                selectionType: parseInt($check.data('selection-type'), 10),
-                unitTypeId: $check.data('unit-type-id') === '' ? null : parseInt($check.data('unit-type-id'), 10),
-                isCustomState: String($check.data('custom')) === 'true',
-                stateId: parseInt($check.data('state-id'), 10)
-            };
+            var scope = scopeOf(this);
+            var option = { isCustomState: String($(this).attr('data-custom')) === 'true', stateId: parseInt($(this).attr('data-state-id'), 10) };
+            setSelection(scope.type, scope.unitTypeId, option, this.checked);
+            rerenderKeepingFocus('.selection-check[data-selection-type="' + scope.type + '"][data-unit-type-id="' + scopeKey(scope.unitTypeId)
+                + '"][data-custom="' + option.isCustomState + '"][data-state-id="' + option.stateId + '"]');
+        });
 
-            if ($check.is(':checked')) {
-                card.selections.push(selection);
+        // Starting from the standard rules ticks the meanings they count as available, so a dispatcher can add to
+        // them (Returning, say) instead of rebuilding them from memory.
+        $('#tab-selections').on('click', '.rc-start-standard', function () {
+            var scope = scopeOf(this);
+            clearScope(scope.type, scope.unitTypeId);
+            $.each(optionsFor(scope.type, scope.unitTypeId), function (i, option) {
+                if (option.isMeaning && (option.availability === 1 || option.availability === 4)) {
+                    setSelection(scope.type, scope.unitTypeId, option, true);
+                }
+            });
+            renderSelections();
+        });
+
+        $('#tab-selections').on('click', '.rc-copy-all', function () {
+            var scope = scopeOf(this);
+            clearScope(1, scope.unitTypeId);
+            $.each(selectionsIn(1, null), function (i, s) { setSelection(1, scope.unitTypeId, s, true); });
+            renderSelections();
+        });
+
+        $('#tab-selections').on('click', '.rc-clear', function () {
+            var scope = scopeOf(this);
+            if ($(this).attr('data-scope') === 'all') {
+                card.selections = card.selections.filter(function (s) { return s.selectionType !== scope.type; });
             } else {
-                card.selections = card.selections.filter(function (s) {
-                    return !(s.selectionType === selection.selectionType
-                        && String(s.unitTypeId || '') === String(selection.unitTypeId || '')
-                        && s.isCustomState === selection.isCustomState
-                        && s.stateId === selection.stateId);
-                });
+                clearScope(scope.type, scope.unitTypeId);
             }
+            renderSelections();
+        });
+
+        $('#tab-selections').on('click', '.rc-toggle-unit', function () {
+            var unitTypeId = $(this).closest('.rc-unit-row').attr('data-unit-type-id');
+            expandedUnitTypes[unitTypeId] = !expandedUnitTypes[unitTypeId];
+            rerenderKeepingFocus('.rc-unit-row[data-unit-type-id="' + unitTypeId + '"] .rc-toggle-unit');
         });
 
         // ── Test tab ──

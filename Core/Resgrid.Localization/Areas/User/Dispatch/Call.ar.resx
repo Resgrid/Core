@@ -543,4 +543,7 @@
   <data name="NearestUnitsMapBoundaries" xml:space="preserve">
     <value>حدود المحطات</value>
   </data>
+  <data name="NearestUnitsShowingClosest" xml:space="preserve">
+    <value>يتم عرض أقرب {0} من أصل {1}. تتضمن قوائم الإرسال أدناه الجميع، الأقرب أولًا.</value>
+  </data>
 </root>

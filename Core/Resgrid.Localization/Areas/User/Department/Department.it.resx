@@ -2045,4 +2045,100 @@
   <data name="TerminologyScopeModule" xml:space="preserve">
     <value>Nel proprio modulo</value>
   </data>
+  <data name="RunCardSelectionsGuideTitle" xml:space="preserve">
+    <value>Come funzionano gli stati inviabili</value>
+  </data>
+  <data name="RunCardSelectionsGuideDefault" xml:space="preserve">
+    <value>La maggior parte delle schede di intervento può lasciare vuota questa parte. Senza selezioni, la scheda usa le regole di disponibilità standard: unità e personale il cui stato conta come disponibile o in ritardo, e livelli di disponibilità che contano come disponibile, in turno o in ritardo.</value>
+  </data>
+  <data name="RunCardSelectionsGuideReplace" xml:space="preserve">
+    <value>Selezionare qualcosa in una sezione sostituisce le regole standard di quella sezione: conta come disponibile solo ciò che selezioni, tutto il resto viene saltato.</value>
+  </data>
+  <data name="RunCardSelectionsGuideStart" xml:space="preserve">
+    <value>Per ampliare le regole standard, fai clic su "Parti dalle regole standard" e poi spunta gli stati aggiuntivi, ad esempio In rientro, così anche le unità che tornano da un altro intervento possono essere proposte.</value>
+  </data>
+  <data name="RunCardSelectionsGuideMeanings" xml:space="preserve">
+    <value>Preferisci i significati di stato agli stati singoli. Un significato comprende ogni stato con quel significato, predefinito o tuo, inclusi quelli aggiunti in seguito.</value>
+  </data>
+  <data name="RunCardSelectionsUnitsTitle" xml:space="preserve">
+    <value>Stati delle unità</value>
+  </data>
+  <data name="RunCardSelectionsUnitsHelp" xml:space="preserve">
+    <value>Imposta una regola per tutti i tipi di unità, poi personalizza un tipo di unità solo quando serve qualcosa di diverso. Un tipo di unità personalizzato usa solo la propria selezione.</value>
+  </data>
+  <data name="RunCardSelectionsAllUnitTypes" xml:space="preserve">
+    <value>Tutti i tipi di unità</value>
+  </data>
+  <data name="RunCardSelectionsAllUnitTypesHelp" xml:space="preserve">
+    <value>Si applica a ogni tipo di unità non personalizzato qui sotto.</value>
+  </data>
+  <data name="RunCardSelectionsByUnitType" xml:space="preserve">
+    <value>Per tipo di unità</value>
+  </data>
+  <data name="RunCardSelectionsPersonnelTitle" xml:space="preserve">
+    <value>Stati del personale</value>
+  </data>
+  <data name="RunCardSelectionsPersonnelHelp" xml:space="preserve">
+    <value>Quali stati del personale contano come disponibili per questa scheda di intervento.</value>
+  </data>
+  <data name="RunCardSelectionsStaffingHelp" xml:space="preserve">
+    <value>Quali livelli di disponibilità contano come disponibili. Una persona deve soddisfare sia la regola sullo stato del personale sia quella sul livello di disponibilità.</value>
+  </data>
+  <data name="RunCardSelectionsStandardRules" xml:space="preserve">
+    <value>Regole standard</value>
+  </data>
+  <data name="RunCardSelectionsSelectedCount" xml:space="preserve">
+    <value>{0} selezionati</value>
+  </data>
+  <data name="RunCardSelectionsFollowsAll" xml:space="preserve">
+    <value>Segue tutti i tipi di unità</value>
+  </data>
+  <data name="RunCardSelectionsOwnRule" xml:space="preserve">
+    <value>Regola propria</value>
+  </data>
+  <data name="RunCardSelectionsCustomize" xml:space="preserve">
+    <value>Personalizza</value>
+  </data>
+  <data name="RunCardSelectionsDone" xml:space="preserve">
+    <value>Fatto</value>
+  </data>
+  <data name="RunCardSelectionsStartStandard" xml:space="preserve">
+    <value>Parti dalle regole standard</value>
+  </data>
+  <data name="RunCardSelectionsCopyAll" xml:space="preserve">
+    <value>Copia da tutti i tipi di unità</value>
+  </data>
+  <data name="RunCardSelectionsClear" xml:space="preserve">
+    <value>Cancella</value>
+  </data>
+  <data name="RunCardSelectionsMeaningsTitle" xml:space="preserve">
+    <value>Significati di stato</value>
+  </data>
+  <data name="RunCardSelectionsMeaningsHelp" xml:space="preserve">
+    <value>Qualsiasi stato con questo significato, predefinito o tuo, ora e in futuro</value>
+  </data>
+  <data name="RunCardSelectionsSpecificTitle" xml:space="preserve">
+    <value>Stati singoli</value>
+  </data>
+  <data name="RunCardSelectionsSpecificHelp" xml:space="preserve">
+    <value>Solo questi pulsanti esatti dell'insieme di stati</value>
+  </data>
+  <data name="RunCardSelectionsColumnAvailable" xml:space="preserve">
+    <value>Disponibile o in ritardo</value>
+  </data>
+  <data name="RunCardSelectionsColumnAvailableNote" xml:space="preserve">
+    <value>Contati dalle regole standard</value>
+  </data>
+  <data name="RunCardSelectionsColumnBusy" xml:space="preserve">
+    <value>Occupato o impegnato</value>
+  </data>
+  <data name="RunCardSelectionsColumnUnavailable" xml:space="preserve">
+    <value>Non disponibile o altro</value>
+  </data>
+  <data name="RunCardSelectionsNoUnitTypes" xml:space="preserve">
+    <value>Questo dipartimento non ha ancora tipi di unità.</value>
+  </data>
+  <data name="RunCardSelectionsMore" xml:space="preserve">
+    <value>+{0} altri</value>
+  </data>
 </root>

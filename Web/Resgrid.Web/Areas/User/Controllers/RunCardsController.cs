@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Reporting;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
 using Resgrid.Web.Areas.User.Models.RunCards;
@@ -558,13 +559,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 					? unitCustomStates.FirstOrDefault(s => s.CustomStateId == unitType.CustomStatesId.Value)
 					: null;
 
+				// Each option carries how the standard availability rules (DispatchRecommendationService) class it, so the
+				// editor can group the options and offer "start from the standard rules".
 				if (customState != null)
 				{
 					options.AddRange(customState.GetActiveDetails().Select(d => new StatusOptionModel
 					{
 						StateId = d.CustomStateDetailId,
 						IsCustomState = true,
-						Text = d.ButtonText
+						Text = d.ButtonText,
+						Availability = (int)AvailabilityMatrix.ForCustomBaseType(d.BaseType)
 					}));
 				}
 				else
@@ -573,7 +577,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 					{
 						StateId = (int)s,
 						IsCustomState = false,
-						Text = s.ToString()
+						Text = BuiltInStatusName(s),
+						Availability = (int)AvailabilityMatrix.ForUnitStateType((int)s)
 					}));
 				}
 
@@ -587,7 +592,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					StateId = d.CustomStateDetailId,
 					IsCustomState = true,
-					Text = d.ButtonText
+					Text = d.ButtonText,
+					Availability = (int)AvailabilityMatrix.ForCustomBaseType(d.BaseType)
 				}).ToList();
 			}
 			else
@@ -596,7 +602,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					StateId = (int)s,
 					IsCustomState = false,
-					Text = s.ToString()
+					Text = BuiltInStatusName(s),
+					Availability = (int)AvailabilityMatrix.ForBuiltInPersonnelActionType((int)s)
 				}).ToList();
 			}
 
@@ -607,7 +614,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					StateId = d.CustomStateDetailId,
 					IsCustomState = true,
-					Text = d.ButtonText
+					Text = d.ButtonText,
+					Availability = (int)AvailabilityMatrix.ForStaffingBaseType(d.BaseType)
 				}).ToList();
 			}
 			else
@@ -616,7 +624,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					StateId = (int)s,
 					IsCustomState = false,
-					Text = s.ToString()
+					Text = BuiltInStatusName(s),
+					Availability = (int)AvailabilityMatrix.ForStaffingBaseType((int)BuiltInStatusBaseTypes.ForStaffing((int)s))
 				}).ToList();
 			}
 
@@ -624,22 +633,36 @@ namespace Resgrid.Web.Areas.User.Controllers
 			// (RunCardSelectionMeaning), so one selection keeps working when a unit type's status set changes.
 			var statusMeanings = Enum.GetValues(typeof(ActionBaseTypes)).Cast<ActionBaseTypes>().Where(x => x != ActionBaseTypes.None).ToList();
 
-			foreach (var options in model.UnitStatusOptions.Values)
-				options.AddRange(StatusMeaningOptions(statusMeanings.Where(x => x != ActionBaseTypes.NotResponding).Select(x => ((int)x, x.GetDisplayString()))));
+			model.UnitMeaningOptions = StatusMeaningOptions(statusMeanings.Where(x => x != ActionBaseTypes.NotResponding).Select(x => ((int)x, x.GetDisplayString())),
+				AvailabilityMatrix.ForCustomBaseType).ToList();
 
-			model.PersonnelStatusOptions.AddRange(StatusMeaningOptions(statusMeanings.Select(x => ((int)x, x.GetDisplayString()))));
+			foreach (var options in model.UnitStatusOptions.Values)
+				options.AddRange(model.UnitMeaningOptions);
+
+			model.PersonnelStatusOptions.AddRange(StatusMeaningOptions(statusMeanings.Select(x => ((int)x, x.GetDisplayString())), AvailabilityMatrix.ForCustomBaseType));
 			model.StaffingOptions.AddRange(StatusMeaningOptions(Enum.GetValues(typeof(StaffingBaseTypes)).Cast<StaffingBaseTypes>()
-				.Where(x => x != StaffingBaseTypes.None).Select(x => ((int)x, x.GetDisplayString()))));
+				.Where(x => x != StaffingBaseTypes.None).Select(x => ((int)x, x.GetDisplayString())), AvailabilityMatrix.ForStaffingBaseType));
 		}
 
-		private static IEnumerable<StatusOptionModel> StatusMeaningOptions(IEnumerable<(int Value, string Name)> meanings)
+		private static IEnumerable<StatusOptionModel> StatusMeaningOptions(IEnumerable<(int Value, string Name)> meanings, Func<int, AvailabilityClass> availability)
 		{
 			return meanings.Select(x => new StatusOptionModel
 			{
 				StateId = RunCardSelectionMeaning.StateIdFor(x.Value),
 				IsCustomState = false,
-				Text = $"Any \"{x.Name}\" status"
+				Text = $"Any \"{x.Name}\" status",
+				IsMeaning = true,
+				MeaningName = x.Name,
+				Availability = (int)availability(x.Value)
 			});
+		}
+
+		// "Out Of Service" rather than "OutOfService"; an enum value with no display name keeps its own name.
+		private static string BuiltInStatusName(Enum status)
+		{
+			var name = status.GetDisplayString();
+
+			return string.IsNullOrWhiteSpace(name) ? status.ToString() : name;
 		}
 	}
 }

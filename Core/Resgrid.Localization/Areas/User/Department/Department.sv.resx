@@ -2045,4 +2045,100 @@
   <data name="TerminologyScopeModule" xml:space="preserve">
     <value>I den egna modulen</value>
   </data>
+  <data name="RunCardSelectionsGuideTitle" xml:space="preserve">
+    <value>Så fungerar larmbara statusar</value>
+  </data>
+  <data name="RunCardSelectionsGuideDefault" xml:space="preserve">
+    <value>De flesta larmplaner kan lämna den här fliken tom. Utan val använder planen standardreglerna för tillgänglighet: enheter och personal vars status räknas som tillgänglig eller fördröjd, och beredskapsnivåer som räknas som tillgänglig, i tjänst eller fördröjd.</value>
+  </data>
+  <data name="RunCardSelectionsGuideReplace" xml:space="preserve">
+    <value>Ett val i en sektion ersätter standardreglerna för den sektionen: bara det du väljer räknas som tillgängligt, allt annat hoppas över.</value>
+  </data>
+  <data name="RunCardSelectionsGuideStart" xml:space="preserve">
+    <value>Vill du bredda standardreglerna klickar du på ”Utgå från standardreglerna” och bockar sedan i fler statusar, till exempel Återvänder, så att enheter på väg tillbaka från ett annat larm också kan föreslås.</value>
+  </data>
+  <data name="RunCardSelectionsGuideMeanings" xml:space="preserve">
+    <value>Välj hellre statusbetydelser än enskilda statusar. En betydelse omfattar varje status med den betydelsen, inbyggd eller egen, även sådana som läggs till senare.</value>
+  </data>
+  <data name="RunCardSelectionsUnitsTitle" xml:space="preserve">
+    <value>Enhetsstatusar</value>
+  </data>
+  <data name="RunCardSelectionsUnitsHelp" xml:space="preserve">
+    <value>Ange en regel för alla enhetstyper och anpassa en enhetstyp bara när den behöver något annat. En anpassad enhetstyp använder bara sina egna val.</value>
+  </data>
+  <data name="RunCardSelectionsAllUnitTypes" xml:space="preserve">
+    <value>Alla enhetstyper</value>
+  </data>
+  <data name="RunCardSelectionsAllUnitTypesHelp" xml:space="preserve">
+    <value>Gäller varje enhetstyp som inte är anpassad nedan.</value>
+  </data>
+  <data name="RunCardSelectionsByUnitType" xml:space="preserve">
+    <value>Per enhetstyp</value>
+  </data>
+  <data name="RunCardSelectionsPersonnelTitle" xml:space="preserve">
+    <value>Personalstatusar</value>
+  </data>
+  <data name="RunCardSelectionsPersonnelHelp" xml:space="preserve">
+    <value>Vilka personalstatusar som räknas som tillgängliga för den här planen.</value>
+  </data>
+  <data name="RunCardSelectionsStaffingHelp" xml:space="preserve">
+    <value>Vilka beredskapsnivåer som räknas som tillgängliga. En person måste klara både regeln för personalstatus och regeln för beredskapsnivå.</value>
+  </data>
+  <data name="RunCardSelectionsStandardRules" xml:space="preserve">
+    <value>Standardregler</value>
+  </data>
+  <data name="RunCardSelectionsSelectedCount" xml:space="preserve">
+    <value>{0} valda</value>
+  </data>
+  <data name="RunCardSelectionsFollowsAll" xml:space="preserve">
+    <value>Följer alla enhetstyper</value>
+  </data>
+  <data name="RunCardSelectionsOwnRule" xml:space="preserve">
+    <value>Egen regel</value>
+  </data>
+  <data name="RunCardSelectionsCustomize" xml:space="preserve">
+    <value>Anpassa</value>
+  </data>
+  <data name="RunCardSelectionsDone" xml:space="preserve">
+    <value>Klar</value>
+  </data>
+  <data name="RunCardSelectionsStartStandard" xml:space="preserve">
+    <value>Utgå från standardreglerna</value>
+  </data>
+  <data name="RunCardSelectionsCopyAll" xml:space="preserve">
+    <value>Kopiera från alla enhetstyper</value>
+  </data>
+  <data name="RunCardSelectionsClear" xml:space="preserve">
+    <value>Rensa</value>
+  </data>
+  <data name="RunCardSelectionsMeaningsTitle" xml:space="preserve">
+    <value>Statusbetydelser</value>
+  </data>
+  <data name="RunCardSelectionsMeaningsHelp" xml:space="preserve">
+    <value>Varje status med den här betydelsen, inbyggd eller egen, nu och framöver</value>
+  </data>
+  <data name="RunCardSelectionsSpecificTitle" xml:space="preserve">
+    <value>Enskilda statusar</value>
+  </data>
+  <data name="RunCardSelectionsSpecificHelp" xml:space="preserve">
+    <value>Bara exakt de här knapparna i statusuppsättningen</value>
+  </data>
+  <data name="RunCardSelectionsColumnAvailable" xml:space="preserve">
+    <value>Tillgänglig eller fördröjd</value>
+  </data>
+  <data name="RunCardSelectionsColumnAvailableNote" xml:space="preserve">
+    <value>Räknas av standardreglerna</value>
+  </data>
+  <data name="RunCardSelectionsColumnBusy" xml:space="preserve">
+    <value>Upptagen eller bunden</value>
+  </data>
+  <data name="RunCardSelectionsColumnUnavailable" xml:space="preserve">
+    <value>Ej tillgänglig eller annat</value>
+  </data>
+  <data name="RunCardSelectionsNoUnitTypes" xml:space="preserve">
+    <value>Den här avdelningen har inga enhetstyper än.</value>
+  </data>
+  <data name="RunCardSelectionsMore" xml:space="preserve">
+    <value>+{0} till</value>
+  </data>
 </root>

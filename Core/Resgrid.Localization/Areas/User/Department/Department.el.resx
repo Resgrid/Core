@@ -2103,4 +2103,100 @@
   <data name="TerminologyScopeModule" xml:space="preserve">
     <value>Στη δική του ενότητα</value>
   </data>
+  <data name="RunCardSelectionsGuideTitle" xml:space="preserve">
+    <value>Πώς λειτουργούν οι καταστάσεις επιλέξιμες για αποστολή</value>
+  </data>
+  <data name="RunCardSelectionsGuideDefault" xml:space="preserve">
+    <value>Οι περισσότερες κάρτες εξόδου μπορούν να αφήσουν αυτή την καρτέλα κενή. Χωρίς επιλογές, η κάρτα εφαρμόζει τους τυπικούς κανόνες διαθεσιμότητας: μονάδες και προσωπικό των οποίων η κατάσταση μετρά ως διαθέσιμη ή καθυστερημένη, και επίπεδα στελέχωσης που μετρούν ως διαθέσιμο, σε βάρδια ή καθυστερημένο.</value>
+  </data>
+  <data name="RunCardSelectionsGuideReplace" xml:space="preserve">
+    <value>Οποιαδήποτε επιλογή σε μια ενότητα αντικαθιστά τους τυπικούς κανόνες της ενότητας: ως διαθέσιμο μετρά μόνο ό,τι επιλέξετε και όλα τα άλλα παραλείπονται.</value>
+  </data>
+  <data name="RunCardSelectionsGuideStart" xml:space="preserve">
+    <value>Για να διευρύνετε τους τυπικούς κανόνες, πατήστε «Έναρξη από τους τυπικούς κανόνες» και μετά επιλέξτε επιπλέον καταστάσεις, για παράδειγμα Επιστροφή, ώστε να προτείνονται και μονάδες που επιστρέφουν από άλλο συμβάν.</value>
+  </data>
+  <data name="RunCardSelectionsGuideMeanings" xml:space="preserve">
+    <value>Προτιμήστε τις σημασίες καταστάσεων αντί για μεμονωμένες καταστάσεις. Μια σημασία καλύπτει κάθε κατάσταση με αυτή τη σημασία, ενσωματωμένη ή δική σας, ακόμη και όσες προστεθούν αργότερα.</value>
+  </data>
+  <data name="RunCardSelectionsUnitsTitle" xml:space="preserve">
+    <value>Καταστάσεις μονάδων</value>
+  </data>
+  <data name="RunCardSelectionsUnitsHelp" xml:space="preserve">
+    <value>Ορίστε έναν κανόνα για όλους τους τύπους μονάδων και προσαρμόστε έναν τύπο μονάδας μόνο όταν χρειάζεται κάτι διαφορετικό. Ένας προσαρμοσμένος τύπος μονάδας χρησιμοποιεί μόνο τις δικές του επιλογές.</value>
+  </data>
+  <data name="RunCardSelectionsAllUnitTypes" xml:space="preserve">
+    <value>Όλοι οι τύποι μονάδων</value>
+  </data>
+  <data name="RunCardSelectionsAllUnitTypesHelp" xml:space="preserve">
+    <value>Ισχύει για κάθε τύπο μονάδας που δεν έχει προσαρμοστεί παρακάτω.</value>
+  </data>
+  <data name="RunCardSelectionsByUnitType" xml:space="preserve">
+    <value>Ανά τύπο μονάδας</value>
+  </data>
+  <data name="RunCardSelectionsPersonnelTitle" xml:space="preserve">
+    <value>Καταστάσεις προσωπικού</value>
+  </data>
+  <data name="RunCardSelectionsPersonnelHelp" xml:space="preserve">
+    <value>Ποιες καταστάσεις προσωπικού μετρούν ως διαθέσιμες για αυτή την κάρτα.</value>
+  </data>
+  <data name="RunCardSelectionsStaffingHelp" xml:space="preserve">
+    <value>Ποια επίπεδα στελέχωσης μετρούν ως διαθέσιμα. Ένα άτομο πρέπει να πληροί και τον κανόνα κατάστασης προσωπικού και τον κανόνα επιπέδου στελέχωσης.</value>
+  </data>
+  <data name="RunCardSelectionsStandardRules" xml:space="preserve">
+    <value>Τυπικοί κανόνες</value>
+  </data>
+  <data name="RunCardSelectionsSelectedCount" xml:space="preserve">
+    <value>{0} επιλεγμένα</value>
+  </data>
+  <data name="RunCardSelectionsFollowsAll" xml:space="preserve">
+    <value>Ακολουθεί όλους τους τύπους μονάδων</value>
+  </data>
+  <data name="RunCardSelectionsOwnRule" xml:space="preserve">
+    <value>Δικός του κανόνας</value>
+  </data>
+  <data name="RunCardSelectionsCustomize" xml:space="preserve">
+    <value>Προσαρμογή</value>
+  </data>
+  <data name="RunCardSelectionsDone" xml:space="preserve">
+    <value>Τέλος</value>
+  </data>
+  <data name="RunCardSelectionsStartStandard" xml:space="preserve">
+    <value>Έναρξη από τους τυπικούς κανόνες</value>
+  </data>
+  <data name="RunCardSelectionsCopyAll" xml:space="preserve">
+    <value>Αντιγραφή από όλους τους τύπους μονάδων</value>
+  </data>
+  <data name="RunCardSelectionsClear" xml:space="preserve">
+    <value>Εκκαθάριση</value>
+  </data>
+  <data name="RunCardSelectionsMeaningsTitle" xml:space="preserve">
+    <value>Σημασίες καταστάσεων</value>
+  </data>
+  <data name="RunCardSelectionsMeaningsHelp" xml:space="preserve">
+    <value>Κάθε κατάσταση με αυτή τη σημασία, ενσωματωμένη ή δική σας, τώρα και στο μέλλον</value>
+  </data>
+  <data name="RunCardSelectionsSpecificTitle" xml:space="preserve">
+    <value>Μεμονωμένες καταστάσεις</value>
+  </data>
+  <data name="RunCardSelectionsSpecificHelp" xml:space="preserve">
+    <value>Μόνο αυτά ακριβώς τα κουμπιά του συνόλου καταστάσεων</value>
+  </data>
+  <data name="RunCardSelectionsColumnAvailable" xml:space="preserve">
+    <value>Διαθέσιμο ή καθυστερημένο</value>
+  </data>
+  <data name="RunCardSelectionsColumnAvailableNote" xml:space="preserve">
+    <value>Μετρούν στους τυπικούς κανόνες</value>
+  </data>
+  <data name="RunCardSelectionsColumnBusy" xml:space="preserve">
+    <value>Απασχολημένο ή δεσμευμένο</value>
+  </data>
+  <data name="RunCardSelectionsColumnUnavailable" xml:space="preserve">
+    <value>Μη διαθέσιμο ή άλλο</value>
+  </data>
+  <data name="RunCardSelectionsNoUnitTypes" xml:space="preserve">
+    <value>Αυτό το τμήμα δεν έχει ακόμη τύπους μονάδων.</value>
+  </data>
+  <data name="RunCardSelectionsMore" xml:space="preserve">
+    <value>+{0} ακόμη</value>
+  </data>
 </root>

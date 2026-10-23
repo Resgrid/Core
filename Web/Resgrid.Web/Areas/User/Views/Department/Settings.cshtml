@@ -46,7 +46,7 @@
         @* The settings sub-pages are grouped into dropdown buttons so the heading stays on one row as pages are added. *@
         <div class="btn-group top-page-buttons settings-nav-buttons">
             <div class="btn-group">
-                <button type="button" class="btn btn-inverse dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-bullhorn"></i> @localizer["SettingsGroupDispatch"] <span class="caret"></span></button>
+                <button type="button" class="btn btn-inverse dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@localizer["SettingsGroupDispatch"] <span class="caret"></span></button>
                 <ul class="dropdown-menu">
                     <li><a href="@Url.Action("DispatchSettings", "Department", new { area = "User" })">@localizer["CallDispatchSettingsNav"]</a></li>
                     <li><a href="@Url.Action("CallSettings", "Department", new { area = "User" })">@commonLocalizer["CallSettings"]</a></li>
@@ -57,14 +57,14 @@
                 </ul>
             </div>
             <div class="btn-group">
-                <button type="button" class="btn btn-inverse dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-map-o"></i> @localizer["SettingsGroupOperations"] <span class="caret"></span></button>
+                <button type="button" class="btn btn-inverse dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@localizer["SettingsGroupOperations"] <span class="caret"></span></button>
                 <ul class="dropdown-menu">
                     <li><a href="@Url.Action("ShiftSettings", "Department", new { area = "User" })">@localizer["ShiftSettings"]</a></li>
                     <li><a href="@Url.Action("MappingSettings", "Department", new { area = "User" })">@localizer["MappingSettingsHeader"]</a></li>
                 </ul>
             </div>
             <div class="btn-group">
-                <button type="button" class="btn btn-inverse dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-sliders"></i> @localizer["SettingsGroupCustomization"] <span class="caret"></span></button>
+                <button type="button" class="btn btn-inverse dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@localizer["SettingsGroupCustomization"] <span class="caret"></span></button>
                 <ul class="dropdown-menu dropdown-menu-right">
                     <li><a href="@Url.Action("ModuleSettings", "Department", new { area = "User" })">@localizer["DispatchSettingsModuleHeader"]</a></li>
                     <li><a href="@Url.Action("Terminology", "Department", new { area = "User" })">@commonLocalizer["Terminology"]</a></li>
@@ -72,7 +72,7 @@
                 </ul>
             </div>
             <div class="btn-group">
-                <button type="button" class="btn btn-inverse dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-plug"></i> @localizer["SettingsGroupIntegrations"] <span class="caret"></span></button>
+                <button type="button" class="btn btn-inverse dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@localizer["SettingsGroupIntegrations"] <span class="caret"></span></button>
                 <ul class="dropdown-menu dropdown-menu-right">
                     <li><a href="@Url.Action("Api", "Department", new { area = "User" })">@localizer["ApiRssSettings"]</a></li>
                     <li><a href="@Url.Action("Index", "ChatbotSettings", new { area = "User" })">@localizer["ChatbotSettingsNav"]</a></li>

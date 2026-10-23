@@ -1101,4 +1101,7 @@
   <data name="NearestUnitsMapBoundaries" xml:space="preserve">
     <value>Stationsområden</value>
   </data>
+  <data name="NearestUnitsShowingClosest" xml:space="preserve">
+    <value>Visar de {0} närmaste av {1}. Larmlistorna nedan innehåller alla, närmast först.</value>
+  </data>
 </root>

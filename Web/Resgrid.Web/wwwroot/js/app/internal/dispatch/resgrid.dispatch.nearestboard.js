@@ -22,7 +22,11 @@ var resgrid;
             // yank the view or the order the dispatcher has since changed.
             var framedFor = null;
             var sortedFor = null;
+            // A view the dispatcher set by placing or dragging the call pin is theirs: no framing for that location.
+            var keepViewFor = null;
             var NEAREST_BADGES = 3;
+            // The board tables list the closest few of each; the dispatch lists below keep everyone, sorted by the board.
+            var BOARD_ROWS = 10;
             // Only resources this close frame the call; one with a far-off fix would zoom the map out to a continent.
             var FRAME_MAX_METERS = 50000;
             var NOT_RANKED = 1000000;
@@ -213,18 +217,27 @@ var resgrid;
                 personnel.forEach(function (person, i) { place(person, false, personRanks[i]); });
                 updateLegend(unitCount, personCount);
 
-                // Frame the call with the closest few, once per call location.
+                // Frame the call with the closest few, once per call location, keeping the call pin in the centre: each
+                // resource is mirrored through the call so the bounds are centred on it. A location the dispatcher set
+                // on the map keeps their view.
                 var lat = prop(board, 'latitude');
                 var lng = prop(board, 'longitude');
                 var key = locationKey(board);
-                if (closest.length && framedFor !== key) {
+                if (closest.length && framedFor !== key && keepViewFor !== key) {
                     framedFor = key;
-                    closest.push([lat, lng]);
-                    map.fitBounds(L.latLngBounds(closest), { padding: [30, 30], maxZoom: 15 });
+                    var bounds = L.latLngBounds([[lat, lng]]);
+                    closest.forEach(function (point) {
+                        bounds.extend(point);
+                        bounds.extend([2 * lat - point[0], 2 * lng - point[1]]);
+                    });
+                    map.fitBounds(bounds, { padding: [30, 30], maxZoom: 15 });
                 }
             }
             function locationKey(board) {
-                return Number(prop(board, 'latitude')).toFixed(5) + ',' + Number(prop(board, 'longitude')).toFixed(5);
+                return coordinateKey(prop(board, 'latitude'), prop(board, 'longitude'));
+            }
+            function coordinateKey(lat, lng) {
+                return Number(lat).toFixed(5) + ',' + Number(lng).toFixed(5);
             }
 
             // The board's distance, ETA and crew in the dispatch lists, closest first (the first board for a location).
@@ -277,9 +290,14 @@ var resgrid;
                 });
             }
 
+            // "Showing the 10 closest of 240" under a table that was cut; nothing when everything fits.
+            function moreNote(selector, shown, total) {
+                $(selector).text(total > shown ? text('showingClosest').replace('{0}', shown).replace('{1}', total) : '').toggle(total > shown);
+            }
+
             function renderPersonnel(personnel) {
                 var ranks = nearestRanks(personnel);
-                var rows = personnel.map(function (person, i) {
+                var rows = personnel.slice(0, BOARD_ROWS).map(function (person, i) {
                     var userId = prop(person, 'userId');
                     var pick = '<input type="checkbox" class="board-pick-user" data-user-id="' + escapeHtml(userId) + '" title="' + escapeHtml(text('pick')) + '"'
                         + (listBox('user', userId).is(':checked') ? ' checked' : '') + ' />';
@@ -314,11 +332,12 @@ var resgrid;
                 });
                 $('#nearestPersonnelTable tbody').html(rows.join(''));
                 $('#nearestPersonnelSection').toggle(rows.length > 0);
+                moreNote('#nearestPersonnelMore', rows.length, personnel.length);
             }
 
             function renderUnits(units) {
                 var unitRanks = nearestRanks(units);
-                var rows = units.map(function (unit, unitIndex) {
+                var rows = units.slice(0, BOARD_ROWS).map(function (unit, unitIndex) {
                     var unitId = prop(unit, 'unitId');
                     var pick = '<input type="checkbox" class="board-pick-unit" data-unit-id="' + escapeHtml(unitId) + '" title="' + escapeHtml(text('pick')) + '"'
                         + (listBox('unit', unitId).is(':checked') ? ' checked' : '') + ' />';
@@ -401,6 +420,7 @@ var resgrid;
                     return '<tr><td>' + pick + '</td><td>' + name + '</td><td>' + status.prop('outerHTML') + '</td><td>' + eta + '</td><td>' + position + '</td><td>' + shift + '</td><td>' + roles + '</td></tr>';
                 });
                 $('#nearestUnitsTable tbody').html(rows.join(''));
+                moreNote('#nearestUnitsMore', rows.length, units.length);
             }
 
             function render(board) {
@@ -475,6 +495,12 @@ var resgrid;
                 timer = setTimeout(function () { check(lat, lng); }, 400);
             }
             nearestboard.schedule = schedule;
+
+            // The dispatcher put the call here on the map (click or drag): the board must not move the map afterwards.
+            function keepView(lat, lng) {
+                keepViewFor = coordinateKey(lat, lng);
+            }
+            nearestboard.keepView = keepView;
 
             // options: getMap, getPersonnelGrid, getUnitsGrid (DataTables or null), personnelEtaColumn, unitsEtaColumn.
             function init(opts) {

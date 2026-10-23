@@ -218,19 +218,24 @@ var resgrid;
                 updateLegend(unitCount, personCount);
 
                 // Frame the call with the closest few, once per call location, keeping the call pin in the centre: each
-                // resource is mirrored through the call so the bounds are centred on it. A location the dispatcher set
-                // on the map keeps their view.
+                // resource is mirrored through the call so the bounds are centred on it. With none close enough the call
+                // is still brought into view (typed coordinates move no map). A location the dispatcher set on the map
+                // keeps their view.
                 var lat = prop(board, 'latitude');
                 var lng = prop(board, 'longitude');
                 var key = locationKey(board);
-                if (closest.length && framedFor !== key && keepViewFor !== key) {
+                if (framedFor !== key && keepViewFor !== key) {
                     framedFor = key;
-                    var bounds = L.latLngBounds([[lat, lng]]);
-                    closest.forEach(function (point) {
-                        bounds.extend(point);
-                        bounds.extend([2 * lat - point[0], 2 * lng - point[1]]);
-                    });
-                    map.fitBounds(bounds, { padding: [30, 30], maxZoom: 15 });
+                    if (closest.length) {
+                        var bounds = L.latLngBounds([[lat, lng]]);
+                        closest.forEach(function (point) {
+                            bounds.extend(point);
+                            bounds.extend([2 * lat - point[0], 2 * lng - point[1]]);
+                        });
+                        map.fitBounds(bounds, { padding: [30, 30], maxZoom: 15 });
+                    } else {
+                        map.panTo([lat, lng]);
+                    }
                 }
             }
             function locationKey(board) {

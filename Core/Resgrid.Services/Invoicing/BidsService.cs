@@ -79,12 +79,17 @@ namespace Resgrid.Services.Invoicing
 
 		#region Reads
 
-		public async Task<List<Bid>> GetBidsForDepartmentAsync(int departmentId, BidStatuses? status = null, int skip = 0, int take = 100)
+		public Task<List<Bid>> GetBidsForDepartmentAsync(int departmentId, BidStatuses? status = null, int skip = 0, int take = 100) => GetBidsForDepartmentAsync(departmentId, status, null, skip, take);
+
+		public Task<int> CountBidsForDepartmentAsync(int departmentId, BidStatuses? status = null) => CountBidsForDepartmentAsync(departmentId, status, null);
+
+		public async Task<List<Bid>> GetBidsForDepartmentAsync(int departmentId, BidStatuses? status, string number, int skip, int take)
 		{
-			return (await _bids.GetForDepartmentAsync(departmentId, status.HasValue ? (int?)status.Value : null, skip, take))?.ToList() ?? new List<Bid>();
+			return (await _bids.GetForDepartmentAsync(departmentId, status.HasValue ? (int?)status.Value : null, IdentifierSearchKeys.FilterSearch(number), skip, take))?.ToList() ?? new List<Bid>();
 		}
 
-		public Task<int> CountBidsForDepartmentAsync(int departmentId, BidStatuses? status = null) => _bids.CountForDepartmentAsync(departmentId, status.HasValue ? (int?)status.Value : null);
+		public Task<int> CountBidsForDepartmentAsync(int departmentId, BidStatuses? status, string number) =>
+			_bids.CountForDepartmentAsync(departmentId, status.HasValue ? (int?)status.Value : null, IdentifierSearchKeys.FilterSearch(number));
 
 		public async Task<List<Bid>> GetBidsByContactIdAsync(string contactId, int departmentId, int skip = 0, int take = 100)
 		{

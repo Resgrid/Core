@@ -58,7 +58,7 @@
                                 <input type="hidden" asp-for="ClosedCallNotes">
 
                                 <div id="editor-container" style="width:100%; height: 200px;">
-                                    @Html.Raw(Model.ClosedCallNotes)
+                                    @Html.SanitizedHtml(Model.ClosedCallNotes)
                                 </div>
                             </div>
                         </div>

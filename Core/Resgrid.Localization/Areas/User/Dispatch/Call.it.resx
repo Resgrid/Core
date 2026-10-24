@@ -1071,17 +1071,8 @@
   <data name="NearestUnitsPick" xml:space="preserve">
     <value>Invia</value>
   </data>
-  <data name="NearestPersonnelLabel" xml:space="preserve">
-    <value>Personale più vicino</value>
-  </data>
-  <data name="NearestPersonnelPerson" xml:space="preserve">
-    <value>Persona</value>
-  </data>
   <data name="NearestPersonnelStaffing" xml:space="preserve">
     <value>Disponibilità</value>
-  </data>
-  <data name="NearestPersonnelGroupRoles" xml:space="preserve">
-    <value>Gruppo / ruoli</value>
   </data>
   <data name="NearestUnitsNearest" xml:space="preserve">
     <value>Più vicino n. {0}</value>
@@ -1101,7 +1092,19 @@
   <data name="NearestUnitsMapBoundaries" xml:space="preserve">
     <value>Confini delle sedi</value>
   </data>
-  <data name="NearestUnitsShowingClosest" xml:space="preserve">
-    <value>Vengono mostrati i {0} più vicini su {1}. Gli elenchi di invio qui sotto includono tutti, prima i più vicini.</value>
+  <data name="UngroupedUnitsTab" xml:space="preserve">
+    <value>Unità non raggruppate</value>
+  </data>
+  <data name="NearestUnitsLoadFailed" xml:space="preserve">
+    <value>Impossibile caricare le unità. Ricarica la pagina per riprovare.</value>
+  </data>
+  <data name="NearestUnitsShowOnMap" xml:space="preserve">
+    <value>Mostra questa posizione e la chiamata su una mappa</value>
+  </data>
+  <data name="NearestUnitsPositionTitle" xml:space="preserve">
+    <value>{0}: posizione</value>
+  </data>
+  <data name="NearestUnitsCallLocation" xml:space="preserve">
+    <value>Luogo della chiamata</value>
   </data>
 </root>

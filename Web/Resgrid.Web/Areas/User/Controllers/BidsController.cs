@@ -119,12 +119,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		#endregion
 
 		[HttpGet]
-		public async Task<IActionResult> Index(int? status = null, int page = 1)
+		public async Task<IActionResult> Index(int? status = null, int page = 1, string number = null)
 		{
-			var view = Page(new BidIndexView { StatusFilter = status, Page = Math.Max(1, page) });
+			var view = Page(new BidIndexView { StatusFilter = status, Number = IdentifierSearchKeys.FilterSearch(number), Page = Math.Max(1, page) });
 			var filter = status.HasValue && Enum.IsDefined(typeof(BidStatuses), status.Value) ? (BidStatuses?)status.Value : null;
-			view.Total = await _bids.CountBidsForDepartmentAsync(DepartmentId, filter);
-			view.Bids = await _bids.GetBidsForDepartmentAsync(DepartmentId, filter, (view.Page - 1) * view.PageSize, view.PageSize);
+			view.Total = await _bids.CountBidsForDepartmentAsync(DepartmentId, filter, view.Number);
+			view.Bids = await _bids.GetBidsForDepartmentAsync(DepartmentId, filter, view.Number, (view.Page - 1) * view.PageSize, view.PageSize);
 			var wanted = new HashSet<string>(view.Bids.Select(b => b.ContactId), StringComparer.OrdinalIgnoreCase);
 			if (wanted.Count > 0)
 				foreach (var contact in await _contactsService.GetAllContactsForDepartmentAsync(DepartmentId) ?? new List<Contact>())

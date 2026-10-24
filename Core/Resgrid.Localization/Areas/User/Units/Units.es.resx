@@ -538,4 +538,46 @@
   <data name="RoleTemplatesRequiredNote" xml:space="preserve">
     <value>* = sugerido como requisito obligatorio (bloquea a los miembros no cualificados) cuando existe el rol de personal correspondiente.</value>
   </data>
+  <data name="UnitMapHeader" xml:space="preserve">
+    <value>Mapa de</value>
+  </data>
+  <data name="UnitMap" xml:space="preserve">
+    <value>Mapa</value>
+  </data>
+  <data name="UnitMapCrew" xml:space="preserve">
+    <value>Dotación</value>
+  </data>
+  <data name="UnitMapUnitPosition" xml:space="preserve">
+    <value>Posición de la unidad</value>
+  </data>
+  <data name="UnitMapNoUnitPosition" xml:space="preserve">
+    <value>Esta unidad no informa su posición, así que el mapa se ajusta a su dotación.</value>
+  </data>
+  <data name="UnitMapNoPositions" xml:space="preserve">
+    <value>Ni esta unidad ni su dotación tienen una posición actual.</value>
+  </data>
+  <data name="UnitMapNoCrew" xml:space="preserve">
+    <value>Nadie está asignado a los roles de esta unidad.</value>
+  </data>
+  <data name="UnitMapNoLocation" xml:space="preserve">
+    <value>Sin ubicación actual</value>
+  </data>
+  <data name="UnitMapLocatedAt" xml:space="preserve">
+    <value>Ubicado {0}</value>
+  </data>
+  <data name="UnitMapKeepInView" xml:space="preserve">
+    <value>Mantener la dotación a la vista</value>
+  </data>
+  <data name="UnitMapFitMap" xml:space="preserve">
+    <value>Ajustar mapa</value>
+  </data>
+  <data name="UnitMapLastUpdate" xml:space="preserve">
+    <value>Última actualización: {0}</value>
+  </data>
+  <data name="UnitMapLoadError" xml:space="preserve">
+    <value>No se pudo cargar el mapa de la unidad.</value>
+  </data>
+  <data name="UnitMapNotFound" xml:space="preserve">
+    <value>No se encontró esta unidad o no tiene permiso para verla.</value>
+  </data>
 </root>

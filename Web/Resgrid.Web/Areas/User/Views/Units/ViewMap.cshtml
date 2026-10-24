@@ -1,0 +1,53 @@
+@using Resgrid.Model
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Units.UnitMapView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Units.Units> localizer
+@{
+	var moduleTitle = await departmentTerms.NameAsync(DepartmentTerms.Units, commonLocalizer["UnitsModule"]);
+	ViewBag.Title = "Resgrid | " + localizer["UnitMapHeader"] + " " + Model.Unit.Name;
+	var mapConfig = SettingsHelper.GetDepartmentMapConfig(Resgrid.Config.InfoConfig.WebsiteKey);
+	// rg-unit-map reads its text from this dictionary; a key it does not find falls back to its built-in English.
+	var unitMapStrings = new[]
+	{
+		"UnitMapCrew", "UnitMapUnitPosition", "UnitMapNoUnitPosition", "UnitMapNoPositions", "UnitMapNoCrew", "UnitMapNoLocation",
+		"UnitMapLocatedAt", "UnitMapKeepInView", "UnitMapFitMap", "UnitMapLastUpdate", "UnitMapLoadError", "UnitMapNotFound"
+	}.ToDictionary(key => key, key => localizer[key].Value);
+}
+@section Styles
+{
+	<link rel="stylesheet" href="~/clib/mapMarkers/map-icons.min.css"/>
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@localizer["UnitMapHeader"] @Model.Unit.Name</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+			</li>
+			<li>
+				<a asp-controller="Units" asp-action="Index" asp-route-area="User">@moduleTitle</a>
+			</li>
+			<li class="active">
+				<strong>@localizer["UnitMapHeader"] @Model.Unit.Name</strong>
+			</li>
+		</ol>
+	</div>
+	<div class="col-sm-4">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			<a class="btn btn-primary" asp-controller="Units" asp-action="ViewEvents" asp-route-area="User" asp-route-unitId="@Model.Unit.UnitId">@localizer["ViewEvents"]</a>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<rg-unit-map unitid="@Model.Unit.UnitId" departmentid="@ClaimsAuthorizationHelper.GetDepartmentId()" mapheight="650px" strings="@System.Text.Json.JsonSerializer.Serialize(unitMapStrings)" leafletosmurl="@mapConfig.TileUrl" mapattribution="@mapConfig.Attribution" mapprovider="@mapConfig.MapProvider" mapstyleurl="@mapConfig.StyleUrl" mapaccesstoken="@mapConfig.AccessToken"></rg-unit-map>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

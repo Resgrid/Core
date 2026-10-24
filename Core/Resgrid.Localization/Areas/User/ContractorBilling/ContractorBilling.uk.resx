@@ -54,6 +54,7 @@
   <data name="BidExpired" xml:space="preserve"><value>Пропозицію прострочено</value></data>
   <data name="BidLine" xml:space="preserve"><value>Рядок пропозиції</value></data>
   <data name="BidNumber" xml:space="preserve"><value>Пропозиція №</value></data>
+  <data name="Filter" xml:space="preserve"><value>Фільтр</value></data>
   <data name="BidScheduleHelp" xml:space="preserve"><value>Рядки фіксують ставку з цих тарифів під час додавання.</value></data>
   <data name="BidSent" xml:space="preserve"><value>Пропозицію надіслано</value></data>
   <data name="BidStatusAccepted" xml:space="preserve"><value>Прийнято</value></data>

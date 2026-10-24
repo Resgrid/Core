@@ -480,4 +480,46 @@
   <data name="RoleTemplatesRequiredNote" xml:space="preserve">
     <value>* = sugerowane jako wymóg bezwzględny (blokuje niewykwalifikowanych członków), gdy istnieje odpowiadająca rola personelu.</value>
   </data>
+  <data name="UnitMapHeader" xml:space="preserve">
+    <value>Mapa dla</value>
+  </data>
+  <data name="UnitMap" xml:space="preserve">
+    <value>Mapa</value>
+  </data>
+  <data name="UnitMapCrew" xml:space="preserve">
+    <value>Załoga</value>
+  </data>
+  <data name="UnitMapUnitPosition" xml:space="preserve">
+    <value>Pozycja jednostki</value>
+  </data>
+  <data name="UnitMapNoUnitPosition" xml:space="preserve">
+    <value>Ta jednostka nie zgłasza pozycji, więc mapa jest dopasowana do jej załogi.</value>
+  </data>
+  <data name="UnitMapNoPositions" xml:space="preserve">
+    <value>Ani ta jednostka, ani jej załoga nie mają aktualnej pozycji.</value>
+  </data>
+  <data name="UnitMapNoCrew" xml:space="preserve">
+    <value>Nikt nie jest przypisany do ról tej jednostki.</value>
+  </data>
+  <data name="UnitMapNoLocation" xml:space="preserve">
+    <value>Brak aktualnej lokalizacji</value>
+  </data>
+  <data name="UnitMapLocatedAt" xml:space="preserve">
+    <value>Zlokalizowano {0}</value>
+  </data>
+  <data name="UnitMapKeepInView" xml:space="preserve">
+    <value>Utrzymuj załogę w widoku</value>
+  </data>
+  <data name="UnitMapFitMap" xml:space="preserve">
+    <value>Dopasuj mapę</value>
+  </data>
+  <data name="UnitMapLastUpdate" xml:space="preserve">
+    <value>Ostatnia aktualizacja: {0}</value>
+  </data>
+  <data name="UnitMapLoadError" xml:space="preserve">
+    <value>Nie można wczytać mapy jednostki.</value>
+  </data>
+  <data name="UnitMapNotFound" xml:space="preserve">
+    <value>Nie znaleziono tej jednostki lub nie masz uprawnień do jej wyświetlania.</value>
+  </data>
 </root>

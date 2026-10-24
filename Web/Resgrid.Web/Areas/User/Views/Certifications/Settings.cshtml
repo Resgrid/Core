@@ -72,7 +72,7 @@
             var initial = '@s.EnforcementMode';
             $('#certSettings').on('submit', function () {
                 if ($('#EnforcementMode').val() === '2' && initial !== '2') {
-                    if (!confirm(@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(string.Format(localizer["EnforceConfirm"].Value, Model.MandatoryRequirementCount))))) return false;
+                    if (!confirm(@Html.ScriptJson(string.Format(localizer["EnforceConfirm"].Value, Model.MandatoryRequirementCount)))) return false;
                     $('#ConfirmEnforce').val('true');
                 }
                 return true;

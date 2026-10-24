@@ -14,6 +14,8 @@ namespace Resgrid.Search
 		public const string SourceId = "SourceId";
 		public const string RecordNumber = "RecordNumber";
 		public const string RecordNumberExact = "RecordNumberExact";
+		/// <summary>IdentifierSearchKeys of the record and call numbers, one term each: custom-format numbers by any part.</summary>
+		public const string NumberKeys = "NumberKeys";
 		public const string DraftReference = "DraftReference";
 		public const string DefinitionKey = "DefinitionKey";
 		public const string DefinitionVersion = "DefinitionVersion";

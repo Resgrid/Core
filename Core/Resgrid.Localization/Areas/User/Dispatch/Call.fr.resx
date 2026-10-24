@@ -1071,17 +1071,8 @@
   <data name="NearestUnitsPick" xml:space="preserve">
     <value>Engager</value>
   </data>
-  <data name="NearestPersonnelLabel" xml:space="preserve">
-    <value>Personnel le plus proche</value>
-  </data>
-  <data name="NearestPersonnelPerson" xml:space="preserve">
-    <value>Personne</value>
-  </data>
   <data name="NearestPersonnelStaffing" xml:space="preserve">
     <value>Disponibilité</value>
-  </data>
-  <data name="NearestPersonnelGroupRoles" xml:space="preserve">
-    <value>Groupe / rôles</value>
   </data>
   <data name="NearestUnitsNearest" xml:space="preserve">
     <value>Plus proche n°{0}</value>
@@ -1101,7 +1092,19 @@
   <data name="NearestUnitsMapBoundaries" xml:space="preserve">
     <value>Secteurs des casernes</value>
   </data>
-  <data name="NearestUnitsShowingClosest" xml:space="preserve">
-    <value>Affichage des {0} plus proches sur {1}. Les listes d'engagement ci-dessous incluent tout le monde, les plus proches en premier.</value>
+  <data name="UngroupedUnitsTab" xml:space="preserve">
+    <value>Unités non groupées</value>
+  </data>
+  <data name="NearestUnitsLoadFailed" xml:space="preserve">
+    <value>Impossible de charger les unités. Rechargez la page pour réessayer.</value>
+  </data>
+  <data name="NearestUnitsShowOnMap" xml:space="preserve">
+    <value>Afficher cette position et l'appel sur une carte</value>
+  </data>
+  <data name="NearestUnitsPositionTitle" xml:space="preserve">
+    <value>{0} : position</value>
+  </data>
+  <data name="NearestUnitsCallLocation" xml:space="preserve">
+    <value>Lieu de l'appel</value>
   </data>
 </root>

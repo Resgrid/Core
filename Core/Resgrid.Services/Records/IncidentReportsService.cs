@@ -906,18 +906,43 @@ namespace Resgrid.Services.Records
 		public async Task<List<RmsIncidentReport>> QueryAsync(int departmentId, RmsIncidentReportQuery query)
 		{
 			if (!string.IsNullOrEmpty(query?.ViewerUserId) && !await _authorization.IsActiveMemberAsync(query.ViewerUserId, departmentId)) return new List<RmsIncidentReport>();
-			return (await _reports.QueryAsync(departmentId, query ?? new RmsIncidentReportQuery()))?.ToList() ?? new List<RmsIncidentReport>();
+			return (await _reports.QueryAsync(departmentId, await WithYearWindowAsync(departmentId, query ?? new RmsIncidentReportQuery())))?.ToList() ?? new List<RmsIncidentReport>();
 		}
 
 		public async Task<int> CountAsync(int departmentId, RmsIncidentReportQuery query)
 		{
 			if (!string.IsNullOrEmpty(query?.ViewerUserId) && !await _authorization.IsActiveMemberAsync(query.ViewerUserId, departmentId)) return 0;
-			return await _reports.CountAsync(departmentId, query ?? new RmsIncidentReportQuery());
+			return await _reports.CountAsync(departmentId, await WithYearWindowAsync(departmentId, query ?? new RmsIncidentReportQuery()));
 		}
 
+		/// <summary>The department's numbering years that hold a report (department-local, fiscal when it sets one), newest first.</summary>
 		public async Task<List<int>> GetYearsAsync(int departmentId)
 		{
-			return (await _reports.GetYearsAsync(departmentId))?.ToList() ?? new List<int>();
+			var calendarYears = (await _reports.GetYearsAsync(departmentId))?.ToList() ?? new List<int>();
+			if (calendarYears.Count == 0)
+				return calendarYears;
+
+			var config = await _settings.GetRecordsNumberingConfigAsync(departmentId);
+			var timeZone = (await _departments.GetDepartmentByIdAsync(departmentId, false))?.TimeZone;
+			var windows = RecordsNumberingService.CandidateYearWindows(config, calendarYears, timeZone);
+			return (await _reports.GetNumberingYearsAsync(departmentId, windows))?.ToList() ?? new List<int>();
+		}
+
+		/// <summary>
+		/// A year filter is the department's numbering year, so "2027" lists the reports numbered RUN-2027-* (or the department's
+		/// own pattern) even when its fiscal 2027 started in November 2026, and a call on a US December 31 evening stays in its year.
+		/// </summary>
+		private async Task<RmsIncidentReportQuery> WithYearWindowAsync(int departmentId, RmsIncidentReportQuery query)
+		{
+			if (query.Year.HasValue && !query.YearFrom.HasValue && !query.YearBefore.HasValue)
+			{
+				var config = await _settings.GetRecordsNumberingConfigAsync(departmentId);
+				var timeZone = (await _departments.GetDepartmentByIdAsync(departmentId, false))?.TimeZone;
+				var window = RecordsNumberingService.YearWindow(config, query.Year.Value, timeZone);
+				query.YearFrom = window.FromUtc;
+				query.YearBefore = window.BeforeUtc;
+			}
+			return query;
 		}
 
 		public Task RecordAccessAsync(int departmentId, string userId, string reportId, string revisionId, RmsAccessAuditAction action, string purpose = null, string ipAddress = null)

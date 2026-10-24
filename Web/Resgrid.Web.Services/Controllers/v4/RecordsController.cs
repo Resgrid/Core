@@ -337,9 +337,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				try
 				{
+					// The year filter is the department's numbering year, as on the queue without text.
+					var yearWindow = year.HasValue ? await _recordsService.GetYearWindowAsync(DepartmentId, year.Value) : null;
 					search = await _recordsSearch.SearchAsync(DepartmentId, new RecordsSearchRequest
 					{
-						Text = text.Trim(), VisibleGroupIds = visible, ViewerUserId = RecordsSystemPrincipal.IsSystemPrincipal(User) ? null : UserId, States = states, DefinitionKey = string.IsNullOrWhiteSpace(definitionKey) ? null : definitionKey, Year = year, Skip = skip, Take = take
+						Text = text.Trim(), VisibleGroupIds = visible, ViewerUserId = RecordsSystemPrincipal.IsSystemPrincipal(User) ? null : UserId, States = states, DefinitionKey = string.IsNullOrWhiteSpace(definitionKey) ? null : definitionKey, Year = year,
+						OccurredFrom = yearWindow?.FromUtc, OccurredBefore = yearWindow?.BeforeUtc, Skip = skip, Take = take
 					});
 				}
 				catch (Exception ex)

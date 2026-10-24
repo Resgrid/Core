@@ -983,17 +983,8 @@
   <data name="NearestUnitsPick" xml:space="preserve">
     <value>Αποστολή</value>
   </data>
-  <data name="NearestPersonnelLabel" xml:space="preserve">
-    <value>Πλησιέστερο προσωπικό</value>
-  </data>
-  <data name="NearestPersonnelPerson" xml:space="preserve">
-    <value>Άτομο</value>
-  </data>
   <data name="NearestPersonnelStaffing" xml:space="preserve">
     <value>Στελέχωση</value>
-  </data>
-  <data name="NearestPersonnelGroupRoles" xml:space="preserve">
-    <value>Ομάδα / ρόλοι</value>
   </data>
   <data name="NearestUnitsNearest" xml:space="preserve">
     <value>Πλησιέστερος #{0}</value>
@@ -1013,7 +1004,19 @@
   <data name="NearestUnitsMapBoundaries" xml:space="preserve">
     <value>Όρια σταθμών</value>
   </data>
-  <data name="NearestUnitsShowingClosest" xml:space="preserve">
-    <value>Εμφανίζονται οι {0} πλησιέστεροι από {1}. Οι λίστες αποστολής παρακάτω περιλαμβάνουν όλους, με τους πλησιέστερους πρώτους.</value>
+  <data name="UngroupedUnitsTab" xml:space="preserve">
+    <value>Μη ομαδοποιημένες μονάδες</value>
+  </data>
+  <data name="NearestUnitsLoadFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η φόρτωση των μονάδων. Ανανεώστε τη σελίδα για να δοκιμάσετε ξανά.</value>
+  </data>
+  <data name="NearestUnitsShowOnMap" xml:space="preserve">
+    <value>Εμφάνιση αυτής της θέσης και του συμβάντος σε χάρτη</value>
+  </data>
+  <data name="NearestUnitsPositionTitle" xml:space="preserve">
+    <value>{0}: θέση</value>
+  </data>
+  <data name="NearestUnitsCallLocation" xml:space="preserve">
+    <value>Τοποθεσία συμβάντος</value>
   </data>
 </root>

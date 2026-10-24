@@ -61,8 +61,9 @@ namespace Resgrid.Model.Repositories
 	public interface IBidRepository : IRepository<Bid>
 	{
 		Task<Bid> GetByIdForDepartmentAsync(string bidId, int departmentId);
-		Task<IEnumerable<Bid>> GetForDepartmentAsync(int departmentId, int? status, int skip, int take);
-		Task<int> CountForDepartmentAsync(int departmentId, int? status);
+		/// <summary>Newest number first; <paramref name="number"/> (optional) is part of the bid number as issued (IdentifierSearchKeys.ContainsParts).</summary>
+		Task<IEnumerable<Bid>> GetForDepartmentAsync(int departmentId, int? status, string number, int skip, int take);
+		Task<int> CountForDepartmentAsync(int departmentId, int? status, string number);
 		Task<IEnumerable<Bid>> GetByContactIdAsync(int departmentId, string contactId, int skip, int take);
 		Task<IEnumerable<Bid>> GetByContractAsync(string serviceContractId);
 		/// <summary>Submitted bids (all departments) whose <c>ValidUntil</c> is behind <paramref name="asOfUtc"/>.</summary>

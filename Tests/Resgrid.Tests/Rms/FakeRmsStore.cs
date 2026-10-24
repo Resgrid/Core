@@ -356,12 +356,13 @@ namespace Resgrid.Tests.Rms
 				.ReturnsAsync((int d, string id) => DisclosureRequests.FirstOrDefault(x => x.DepartmentId == d && x.RmsDisclosureRequestId == id));
 			DisclosureRequestsRepo.Setup(r => r.TryBumpRowVersionAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<long>(), It.IsAny<CancellationToken>())).ReturnsAsync((int d, string id, long version, CancellationToken ct) =>
 			{ var row = DisclosureRequests.SingleOrDefault(r => r.DepartmentId == d && r.RmsDisclosureRequestId == id && r.RowVersion == version && r.ClosedOn == null && r.DeletedOn == null); if (row == null) return false; row.RowVersion++; return true; });
-			DisclosureRequestsRepo.Setup(r => r.GetForDepartmentAsync(It.IsAny<int>(), It.IsAny<IEnumerable<int>>(), It.IsAny<int>(), It.IsAny<int>()))
-				.ReturnsAsync((int d, IEnumerable<int> states, int skip, int take) =>
+			DisclosureRequestsRepo.Setup(r => r.GetForDepartmentAsync(It.IsAny<int>(), It.IsAny<IEnumerable<int>>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>()))
+				.ReturnsAsync((int d, IEnumerable<int> states, string number, int skip, int take) =>
 				{
 					var list = states?.ToList();
 					return (IEnumerable<RmsDisclosureRequest>)DisclosureRequests
 						.Where(x => x.DepartmentId == d && x.DeletedOn == null && (list == null || list.Count == 0 || list.Contains(x.State)))
+						.Where(x => number == null || IdentifierSearchKeys.ContainsParts(x.RequestNumber, number))
 						.OrderBy(x => x.StatutoryDueOn).Skip(skip).Take(take).ToList();
 				});
 			DisclosureRequestsRepo.Setup(r => r.CountByStateAsync(It.IsAny<int>(), It.IsAny<RmsDisclosureState>()))

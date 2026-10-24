@@ -91,14 +91,14 @@
                 pageUrl: '@Url.Action("Index", "TwoFactor", new { area = "User" })',
                 signInUrl: '@Url.Action("LogOn", "Account", new { area = "" })',
                 messages: {
-                    failed: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(localizer["PasskeyFailed"].Value)),
-                    cancelled: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(localizer["PasskeyCancelled"].Value)),
-                    notSupported: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(localizer["PasskeyNotSupported"].Value)),
-                    alreadyRegistered: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(localizer["PasskeyAlreadyRegistered"].Value)),
-                    limit: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(localizer["PasskeyLimitReached"].Value)),
-                    unavailable: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(localizer["PasskeysUnavailable"].Value)),
-                    renamePrompt: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(localizer["PasskeyRenamePrompt"].Value)),
-                    removeConfirm: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(localizer["PasskeyRemoveConfirm"].Value))
+                    failed: @Html.ScriptJson(localizer["PasskeyFailed"].Value),
+                    cancelled: @Html.ScriptJson(localizer["PasskeyCancelled"].Value),
+                    notSupported: @Html.ScriptJson(localizer["PasskeyNotSupported"].Value),
+                    alreadyRegistered: @Html.ScriptJson(localizer["PasskeyAlreadyRegistered"].Value),
+                    limit: @Html.ScriptJson(localizer["PasskeyLimitReached"].Value),
+                    unavailable: @Html.ScriptJson(localizer["PasskeysUnavailable"].Value),
+                    renamePrompt: @Html.ScriptJson(localizer["PasskeyRenamePrompt"].Value),
+                    removeConfirm: @Html.ScriptJson(localizer["PasskeyRemoveConfirm"].Value)
                 }
             });
         });

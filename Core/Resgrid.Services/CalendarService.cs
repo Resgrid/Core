@@ -98,6 +98,10 @@ namespace Resgrid.Services
 		{
 			// The stored row backs REDACTED-sentinel restoration: an editor without a grant posts
 			// placeholders back from the form, and those must not overwrite the real values.
+			// The add and update paths sanitize the description; this path (the calendar's JSON create/update) did not.
+			if (calendarItem != null)
+				calendarItem.Description = StringHelpers.SanitizeHtmlForStorage(calendarItem.Description);
+
 			CalendarItem existing = null;
 			if (calendarItem != null && calendarItem.CalendarItemId > 0)
 				existing = await _calendarItemRepository.GetCalendarItemByIdAsync(calendarItem.CalendarItemId);

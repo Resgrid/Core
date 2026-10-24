@@ -6,6 +6,9 @@
 		public string Name { get; set; }
 		public string Type { get; set; }
 		public string Station { get; set; }
+
+		/// <summary>The unit's station group; null for a unit without one.</summary>
+		public int? StationGroupId { get; set; }
 		public int StateId { get; set; }
 		public string State { get; set; }
 		public string StateColor { get; set; }

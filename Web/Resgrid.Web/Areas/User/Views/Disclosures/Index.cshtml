@@ -48,6 +48,8 @@
 									<option value="@s.Value" selected="@(Model.StateFilter.HasValue && s.Value == Model.StateFilter.Value.ToString())">@s.Text</option>
 								}
 							</select>
+							<input class="form-control input-sm" name="number" value="@Model.NumberFilter" maxlength="50" autocomplete="off" placeholder="@localizer["RequestNumber"]" aria-label="@localizer["RequestNumber"]" />
+							<button type="submit" class="btn btn-sm btn-default"><i class="fa fa-filter"></i> @localizer["Filter"]</button>
 						</form>
 					</div>
 				</div>

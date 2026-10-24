@@ -54,6 +54,7 @@
   <data name="BidExpired" xml:space="preserve"><value>Anbud utgånget</value></data>
   <data name="BidLine" xml:space="preserve"><value>Anbudsrad</value></data>
   <data name="BidNumber" xml:space="preserve"><value>Anbud nr</value></data>
+  <data name="Filter" xml:space="preserve"><value>Filtrera</value></data>
   <data name="BidScheduleHelp" xml:space="preserve"><value>Rader låser sin taxa från denna prislista när de läggs till.</value></data>
   <data name="BidSent" xml:space="preserve"><value>Anbud skickat</value></data>
   <data name="BidStatusAccepted" xml:space="preserve"><value>Antaget</value></data>

@@ -8,6 +8,7 @@ using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
+using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Neris;
 using Resgrid.Services;
@@ -431,6 +432,39 @@ namespace Resgrid.Tests.Rms
 			var final = await _service.FinalizeAsync(Dept, "author", started.Report.RmsIncidentReportId, started.Report.RowVersion, null, "10.0.0.1", null, null);
 
 			final.Report.RecordNumber.Should().Be("INC26-0001");
+		}
+
+		[Test]
+		public async Task The_year_filter_and_year_list_follow_the_fiscal_numbering_year()
+		{
+			// The call was logged 1 September 2026, the first day of FY2027: the report is numbered EZKT27-0001, so the queue
+			// lists it under 2027, not under the calendar year its call falls in.
+			var config = new RecordsNumberingConfig { Pattern = "{PREFIX}{YY}-{SEQ}", YearStartMonth = 9, YearStartDay = 1 };
+			config.SetPrefix(RmsDefinitionKeys.NerisIncidentReport, "EZKT");
+			_settings.Setup(s => s.GetRecordsNumberingConfigAsync(Dept, It.IsAny<bool>())).ReturnsAsync(config);
+			var started = await _service.StartFromCallAsync(Dept, "author", CallId);
+			var final = await _service.FinalizeAsync(Dept, "author", started.Report.RmsIncidentReportId, started.Report.RowVersion, null, "10.0.0.1", null, null);
+			final.Report.RecordNumber.Should().Be("EZKT27-0001");
+
+			(await _service.GetYearsAsync(Dept)).Should().Equal(2027);
+			(await _service.QueryAsync(Dept, new RmsIncidentReportQuery { Year = 2027 })).Select(r => r.RecordNumber).Should().Equal("EZKT27-0001");
+			(await _service.CountAsync(Dept, new RmsIncidentReportQuery { Year = 2027 })).Should().Be(1);
+			(await _service.QueryAsync(Dept, new RmsIncidentReportQuery { Year = 2026 })).Should().BeEmpty();
+		}
+
+		[Test]
+		public async Task The_year_filter_reads_the_call_date_in_the_department_time_zone()
+		{
+			// 08:00 UTC on 1 September is 31 August in Honolulu: still FY2026, the year the report is numbered in.
+			_departments.Setup(d => d.GetDepartmentByIdAsync(Dept, It.IsAny<bool>())).ReturnsAsync(new Department { DepartmentId = Dept, TimeZone = "Hawaiian Standard Time" });
+			var config = new RecordsNumberingConfig { Pattern = "{PREFIX}{YY}-{SEQ}", YearStartMonth = 9, YearStartDay = 1 };
+			_settings.Setup(s => s.GetRecordsNumberingConfigAsync(Dept, It.IsAny<bool>())).ReturnsAsync(config);
+			var started = await _service.StartFromCallAsync(Dept, "author", CallId);
+			var final = await _service.FinalizeAsync(Dept, "author", started.Report.RmsIncidentReportId, started.Report.RowVersion, null, "10.0.0.1", null, null);
+
+			(await _service.GetYearsAsync(Dept)).Should().Equal(2026);
+			(await _service.QueryAsync(Dept, new RmsIncidentReportQuery { Year = 2026 })).Select(r => r.RecordNumber).Should().Equal(final.Report.RecordNumber);
+			(await _service.QueryAsync(Dept, new RmsIncidentReportQuery { Year = 2027 })).Should().BeEmpty();
 		}
 
 		[Test]

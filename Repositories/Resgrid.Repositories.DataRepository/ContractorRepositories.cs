@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Dapper;
 using Resgrid.Model.Invoicing;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Repositories.Connection;
@@ -150,14 +151,24 @@ namespace Resgrid.Repositories.DataRepository
 		public Task<Bid> GetByIdForDepartmentAsync(string bidId, int departmentId) =>
 			QueryFirstOrDefaultAsync<Bid>($"SELECT * FROM {Tbl("Bids")} WHERE {Col("BidId")} = {P}Id AND {Col("DepartmentId")} = {P}DepartmentId", new { Id = bidId, DepartmentId = departmentId });
 
-		public Task<IEnumerable<Bid>> GetForDepartmentAsync(int departmentId, int? status, int skip, int take) =>
-			QueryAsync<Bid>(
-				$"SELECT * FROM {Tbl("Bids")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("IsDeleted")} = {False}" + (status.HasValue ? $" AND {Col("Status")} = {P}Status" : string.Empty) +
-				$" ORDER BY {Col("BidNumber")} DESC {Paging()}",
-				new { DepartmentId = departmentId, Status = status ?? 0, Skip = Math.Max(0, skip), Take = Math.Clamp(take, 1, 500) });
+		public Task<IEnumerable<Bid>> GetForDepartmentAsync(int departmentId, int? status, string number, int skip, int take)
+		{
+			var parameters = new DynamicParameters(new { DepartmentId = departmentId, Status = status ?? 0, Skip = Math.Max(0, skip), Take = Math.Clamp(take, 1, 500) });
+			return QueryAsync<Bid>($"SELECT * FROM {Tbl("Bids")} WHERE {DepartmentFilter(status, number, parameters)} ORDER BY {Col("BidNumber")} DESC {Paging()}", parameters);
+		}
 
-		public Task<int> CountForDepartmentAsync(int departmentId, int? status) =>
-			ScalarAsync<int>($"SELECT COUNT(*) FROM {Tbl("Bids")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("IsDeleted")} = {False}" + (status.HasValue ? $" AND {Col("Status")} = {P}Status" : string.Empty), new { DepartmentId = departmentId, Status = status ?? 0 });
+		public Task<int> CountForDepartmentAsync(int departmentId, int? status, string number)
+		{
+			var parameters = new DynamicParameters(new { DepartmentId = departmentId, Status = status ?? 0 });
+			return ScalarAsync<int>($"SELECT COUNT(*) FROM {Tbl("Bids")} WHERE {DepartmentFilter(status, number, parameters)}", parameters);
+		}
+
+		private string DepartmentFilter(int? status, string number, DynamicParameters parameters)
+		{
+			var where = $"{Col("DepartmentId")} = {P}DepartmentId AND {Col("IsDeleted")} = {False}" + (status.HasValue ? $" AND {Col("Status")} = {P}Status" : string.Empty);
+			var numberMatch = NumberContains($"COALESCE({Col("DisplayNumber")}, {IntegerAsText(Col("BidNumber"))})", number, parameters);
+			return numberMatch == null ? where : where + " AND " + numberMatch;
+		}
 
 		public Task<IEnumerable<Bid>> GetByContactIdAsync(int departmentId, string contactId, int skip, int take) =>
 			QueryAsync<Bid>($"SELECT * FROM {Tbl("Bids")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("ContactId")} = {P}ContactId AND {Col("IsDeleted")} = {False} ORDER BY {Col("BidNumber")} DESC {Paging()}",

@@ -37,6 +37,37 @@ var resgrid;
         }
     }
     resgrid.showProgress = showProgress;
+
+    /**
+     * DataTables render for a call number column (give the column type 'string'). Shows the number, escaped, and sorts on
+     * the row's server-built NumberSort key, so numbers order as issued ("26-5" before "26-10") under any numbering pattern.
+     */
+    function callNumberCell(data, type, row) {
+        if (type === 'sort' || type === 'type') { return (row && row.NumberSort) || ''; }
+        return $('<div/>').text(data == null ? '' : data).html();
+    }
+    resgrid.callNumberCell = callNumberCell;
+
+    /**
+     * A value from the server (a name, subject, note, label...) made safe to splice into markup built as a string, as
+     * element text or inside a quoted attribute. Every user-entered value that goes into .html(), .append('<...>'),
+     * innerHTML, a template literal or a Leaflet tooltip/popup string goes through this first.
+     */
+    function escapeHtml(value) {
+        return value == null ? '' : String(value)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+    resgrid.escapeHtml = escapeHtml;
+
+    /**
+     * DataTables render for a plain-text column ({ data: 'Name', render: resgrid.textCell }). DataTables writes cells with
+     * innerHTML, hidden columns included, so a column without a render inserts the value as markup.
+     */
+    function textCell(data, type) {
+        if (type === 'display') { return escapeHtml(data); }
+        return data == null ? '' : data;
+    }
+    resgrid.textCell = textCell;
 })(resgrid || (resgrid = {}));
 (function (resgrid) {
     var helpers;

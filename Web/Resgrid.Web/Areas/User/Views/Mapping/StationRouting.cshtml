@@ -96,7 +96,7 @@
                       for (var i = 0; i < steps.length; i++) {
                           var s = steps[i];
                           if (s.maneuver && s.maneuver.type !== 'arrive') {
-                              html += '<li>' + s.maneuver.type + (s.name ? ' onto ' + s.name : '') +
+                              html += '<li>' + resgrid.escapeHtml(s.maneuver.type) + (s.name ? ' onto ' + resgrid.escapeHtml(s.name) : '') +
                                   ' (' + (s.distance / 1000).toFixed(1) + ' km)</li>';
                           }
                       }

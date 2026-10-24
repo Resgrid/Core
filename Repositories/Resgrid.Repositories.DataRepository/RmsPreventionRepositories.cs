@@ -54,8 +54,11 @@ namespace Resgrid.Repositories.DataRepository
 			if (query.ReviewOverdue == true) { clauses.Add($"{Col("NextReviewDue")} < {P}Now"); p.Add("Now", DateTime.UtcNow); }
 			if (!string.IsNullOrWhiteSpace(query.Search))
 			{
-				clauses.Add($"({Col("Name")} LIKE {P}Search OR {Col("AddressText")} LIKE {P}Search OR {Col("OccupancyNumber")} LIKE {P}Search)");
-				p.Add("Search", "%" + query.Search.Trim() + "%");
+				// Escaped: '_' is a literal in department number patterns (OCC_2026_0001), not a wildcard. Case-insensitive on
+				// PostgreSQL too (varchar columns), as on SQL Server's default collation: "occ-2026" finds OCC-2026-0001.
+				var like = IsPostgres ? "ILIKE" : "LIKE";
+				clauses.Add($"({Col("Name")} {like} {P}Search ESCAPE '!' OR {Col("AddressText")} {like} {P}Search ESCAPE '!' OR {Col("OccupancyNumber")} {like} {P}Search ESCAPE '!')");
+				p.Add("Search", "%" + Queries.Calls.SearchCallsQuery.EscapeLike(query.Search.Trim()) + "%");
 			}
 			return string.Join(" AND ", clauses);
 		}
@@ -265,6 +268,8 @@ namespace Resgrid.Repositories.DataRepository
 			if (!string.IsNullOrWhiteSpace(query.InspectorUserId)) { clauses.Add($"{Col("InspectorUserId")} = {P}Inspector"); p.Add("Inspector", query.InspectorUserId); }
 			if (query.States != null && query.States.Count > 0) { clauses.Add(InList("State", "States")); p.Add("States", InListValue(query.States)); }
 			if (query.ScheduledBefore.HasValue) { clauses.Add($"{Col("ScheduledOn")} <= {P}Before"); p.Add("Before", query.ScheduledBefore.Value); }
+			var number = NumberContains(Col("InspectionNumber"), query.Number, p);
+			if (number != null) clauses.Add(number);
 			return string.Join(" AND ", clauses);
 		}
 
@@ -483,6 +488,8 @@ namespace Resgrid.Repositories.DataRepository
 			if (!string.IsNullOrWhiteSpace(query.PermitTypeId)) { clauses.Add($"{Col("RmsPermitTypeId")} = {P}TypeId"); p.Add("TypeId", query.PermitTypeId); }
 			if (query.States != null && query.States.Count > 0) { clauses.Add(InList("State", "States")); p.Add("States", InListValue(query.States)); }
 			if (query.ExpiresBefore.HasValue) { clauses.Add($"{Col("ExpiresOn")} <= {P}Before"); p.Add("Before", query.ExpiresBefore.Value); }
+			var number = NumberContains(Col("PermitNumber"), query.Number, p);
+			if (number != null) clauses.Add(number);
 			return string.Join(" AND ", clauses);
 		}
 
@@ -717,6 +724,17 @@ namespace Resgrid.Repositories.DataRepository
 
 		public Task<IEnumerable<RmsInvestigationEvidence>> GetForCaseAsync(int departmentId, string caseId)
 			=> QueryAsync<RmsInvestigationEvidence>($"SELECT * FROM {Tbl("RmsInvestigationEvidence")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsInvestigationCaseId")} = {P}Id AND {Col("DeletedOn")} IS NULL ORDER BY {Col("CollectedOn")}", new { DepartmentId = departmentId, Id = caseId });
+
+		public Task<IEnumerable<string>> GetCaseIdsWithEvidenceNumberAsync(int departmentId, IEnumerable<string> caseIds, string number)
+		{
+			var ids = InListValue(caseIds);
+			var p = new DynamicParameters();
+			var match = NumberContains(Col("EvidenceNumber"), number, p);
+			if (ids.Length == 0 || match == null) return Task.FromResult<IEnumerable<string>>(new List<string>());
+			p.Add("DepartmentId", departmentId);
+			p.Add("Ids", ids);
+			return QueryAsync<string>($"SELECT DISTINCT {Col("RmsInvestigationCaseId")} FROM {Tbl("RmsInvestigationEvidence")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {InList("RmsInvestigationCaseId", "Ids")} AND {Col("DeletedOn")} IS NULL AND {match}", p);
+		}
 	}
 
 	public class RmsInvestigationCustodyRepository : RmsRepositoryBase<RmsInvestigationCustody>, IRmsInvestigationCustodyRepository

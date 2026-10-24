@@ -192,7 +192,7 @@
     <script>
         var osmTileUrl = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(mapConfig.TileUrl, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
         var osmTileAttribution = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(mapConfig.Attribution, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
-        var routeStops = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(
+        var routeStops = @Html.ScriptJson(
             Model.Stops.Select(s => new {
                 name = s.Name,
                 address = s.Address ?? "",
@@ -204,8 +204,8 @@
                 contactNumber = s.ContactNumber ?? "",
                 notes = s.Notes ?? ""
             })
-        ));
-        var routeColor = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Plan.RouteColor ?? "#1c84c6"));
+        );
+        var routeColor = @Html.ScriptJson(Model.Plan.RouteColor ?? "#1c84c6");
         var routeProfile = '@(Model.Plan.MapboxRouteProfile ?? "driving")';
         @{
             // Use the plan's explicit start point as the routing origin if coordinates are set.
@@ -217,7 +217,7 @@
                 startPoint = new { lat = Model.Plan.StartLatitude.Value, lng = Model.Plan.StartLongitude.Value, name = "Start" };
             }
         }
-        var startPoint = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(startPoint));
+        var startPoint = @Html.ScriptJson(startPoint);
     </script>
     <script src="~/js/app/internal/routes/resgrid.routes.directions.js"></script>
 }

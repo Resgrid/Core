@@ -1455,6 +1455,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			RecordsSearchResult result;
 			try
 			{
+				// The year filter is the department's numbering year, as on the queue without text.
+				var yearWindow = year.HasValue ? await _recordsService.GetYearWindowAsync(DepartmentId, year.Value) : null;
 				result = await _recordsSearch.SearchAsync(DepartmentId, new RecordsSearchRequest
 				{
 					Text = text,
@@ -1463,6 +1465,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 					States = states,
 					DefinitionKey = string.IsNullOrWhiteSpace(definitionKey) ? null : definitionKey,
 					Year = year,
+					OccurredFrom = yearWindow?.FromUtc,
+					OccurredBefore = yearWindow?.BeforeUtc,
 					Skip = skip,
 					Take = take
 				});

@@ -369,7 +369,7 @@
                                         <div class="panel-body">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <span data-adp-field="contacts.description">@Html.Raw(Model.Contact.Description)</span>
+                                                    <span data-adp-field="contacts.description">@Html.SanitizedHtml(Model.Contact.Description)</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -387,7 +387,7 @@
                                         <div class="panel-body">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <span data-adp-field="contacts.otherinfo">@Html.Raw(Model.Contact.OtherInfo)</span>
+                                                    <span data-adp-field="contacts.otherinfo">@Html.SanitizedHtml(Model.Contact.OtherInfo)</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -892,21 +892,21 @@
 
                 notes.forEach(function (note) {
                     const $noteCard = $(`
-                                                        <div class="col-md-4 note-card" data-date="${note.CreatedOn}">
+                                                        <div class="col-md-4 note-card" data-date="${resgrid.escapeHtml(note.CreatedOn)}">
                                                     <div class="ibox">
-                                                                <div class="ibox-content" style="background-color:${note.BackgroundColor}">
+                                                                <div class="ibox-content" style="background-color:${resgrid.escapeHtml(note.BackgroundColor)}">
                                                             <div class="row">
                                                                 <div class="col-md-12">
-                                                                                    <h4 class="note-title">${note.ContactNoteType}</h4>
+                                                                                    <h4 class="note-title">${resgrid.escapeHtml(note.ContactNoteType)}</h4>
                                                                     <p class="small text-muted">
-                                                                                <i class="fa fa-clock-o"></i> ${note.CreatedOn}
-                                                                                        ${note.CreatedBy ? `| <i class="fa fa-user"></i> ${note.CreatedBy}` : ''}
+                                                                                <i class="fa fa-clock-o"></i> ${resgrid.escapeHtml(note.CreatedOn)}
+                                                                                        ${note.CreatedBy ? `| <i class="fa fa-user"></i> ${resgrid.escapeHtml(note.CreatedBy)}` : ''}
                                                                     </p>
                                                                 </div>
                                                             </div>
                                                             <div class="row">
                                                                 <div class="col-md-12 note-content">
-                                                                            ${note.Note}
+                                                                            ${note.Note || ''}
                                                                 </div>
                                                             </div>
                                                         </div>

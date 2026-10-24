@@ -52,6 +52,24 @@ namespace Resgrid.Tests.Rms
 		}
 
 		[Test]
+		public async Task My_cases_filter_by_case_number_or_by_an_evidence_number()
+		{
+			var year = DateTime.UtcNow.Year;
+			var first = await _h.InvestigationsService.OpenAsync(Dept, Admin, "Warehouse fire", null, null, null);
+			var second = await _h.InvestigationsService.OpenAsync(Dept, Admin, "Vehicle fire", null, null, null);
+			var evidence = await _h.InvestigationsService.AddEvidenceAsync(Dept, Admin, second.RmsInvestigationCaseId, new RmsInvestigationEvidence { Kind = (int)RmsInvestigationEvidenceKind.Physical, Description = "Fuel can" });
+			evidence.EvidenceNumber.Should().Be($"EV-{year}-0001");
+
+			async Task<List<string>> Find(string number) => (await _h.InvestigationsService.ListMyCasesAsync(Dept, Admin, false, number)).Select(c => c.CaseNumber).ToList();
+
+			(await Find($"inv {year} 0002")).Should().Equal(second.CaseNumber);
+			(await Find($"ev-{year}")).Should().Equal(new[] { second.CaseNumber }, "a case is found by the evidence it holds");
+			(await Find("0001")).Should().BeEquivalentTo(new[] { first.CaseNumber, second.CaseNumber }, "INV-…-0001 by its own number, the other by EV-…-0001");
+			(await Find("INV-1999")).Should().BeEmpty();
+			(await Find(" ")).Should().HaveCount(2, "a blank search lists every case");
+		}
+
+		[Test]
 		public async Task Members_notes_evidence_and_custody_follow_the_case_rules()
 		{
 			var investigation = await _h.InvestigationsService.OpenAsync(Dept, Admin, "Warehouse fire", null, null, null);

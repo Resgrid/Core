@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using ProtoBuf;
 
 namespace Resgrid.Model
@@ -220,6 +221,84 @@ namespace Resgrid.Model
 				case DayToken: return localDate.Day.ToString("D2", CultureInfo.InvariantCulture);
 				default: return string.Empty;
 			}
+		}
+
+		/// <summary>
+		/// Keys that sort call numbers in the order they were issued, which their text does not ("26-10" reads before "26-5"):
+		/// by the year, month and day a number names, then by its sequence. A number is read with the department's
+		/// <paramref name="pattern"/>, else with the legacy one; text neither wrote (a pattern the department has since replaced)
+		/// sorts ahead of them, by its characters with each run of digits compared as a number. Keys compare ordinally.
+		/// </summary>
+		public static Func<string, string> SortKeys(string pattern)
+		{
+			var readers = new[] { pattern, LegacyPattern }.Distinct().Select(NumberReader).Where(r => r != null).ToList();
+			return number => SortKey(readers, number);
+		}
+
+		private static Regex NumberReader(string pattern)
+		{
+			var parts = Parse(pattern);
+			if (parts == null)
+				return null;
+
+			var reader = new StringBuilder("^");
+			foreach (var part in parts)
+			{
+				switch (part.Token)
+				{
+					case null: reader.Append(Regex.Escape(part.Literal)); break;
+					case YearToken: reader.Append("(?<year>[0-9]{4})"); break;
+					case ShortYearToken: reader.Append("(?<yy>[0-9]{2})"); break;
+					case MonthToken: reader.Append("(?<month>[0-9]{2})"); break;
+					case DayToken: reader.Append("(?<day>[0-9]{2})"); break;
+					case SequenceToken: reader.Append("(?<seq>[0-9]+)"); break;
+				}
+			}
+
+			return new Regex(reader.Append('$').ToString(), RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+		}
+
+		private static string SortKey(List<Regex> readers, string number)
+		{
+			if (string.IsNullOrWhiteSpace(number))
+				return string.Empty;
+
+			number = number.Trim();
+			foreach (var reader in readers)
+			{
+				var match = reader.Match(number);
+				if (!match.Success || !int.TryParse(match.Groups["seq"].Value, NumberStyles.None, CultureInfo.InvariantCulture, out var sequence))
+					continue;
+
+				var year = match.Groups["year"].Success ? Group(match, "year")
+					: match.Groups["yy"].Success ? CultureInfo.InvariantCulture.Calendar.ToFourDigitYear(Group(match, "yy")) : 0;
+
+				return "1" + year.ToString("D4", CultureInfo.InvariantCulture) + Group(match, "month").ToString("D2", CultureInfo.InvariantCulture) +
+					Group(match, "day").ToString("D2", CultureInfo.InvariantCulture) + sequence.ToString("D10", CultureInfo.InvariantCulture);
+			}
+
+			var key = new StringBuilder("0");
+			var i = 0;
+			while (i < number.Length)
+			{
+				if (number[i] < '0' || number[i] > '9')
+				{
+					key.Append(char.ToLowerInvariant(number[i++]));
+					continue;
+				}
+
+				var start = i;
+				while (i < number.Length && number[i] >= '0' && number[i] <= '9')
+					i++;
+				key.Append(number.Substring(start, i - start).TrimStart('0').PadLeft(10, '0'));
+			}
+
+			return key.ToString();
+		}
+
+		private static int Group(Match match, string name)
+		{
+			return match.Groups[name].Success ? int.Parse(match.Groups[name].Value, NumberStyles.None, CultureInfo.InvariantCulture) : 0;
 		}
 
 		private static bool IsLiteral(char c) => (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '-' || c == '_' || c == '.' || c == '/';

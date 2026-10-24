@@ -81,6 +81,7 @@ function fitMapToMarkers(
   mapboxgl: MapboxGl,
   markers: Map<string, MarkerState>,
   mapData: MapRendererProps['mapData'],
+  maxZoom = 16,
 ) {
   if (!mapData) {
     return;
@@ -94,7 +95,7 @@ function fitMapToMarkers(
     if (!bounds.isEmpty()) {
       map.fitBounds(bounds, {
         padding: 24,
-        maxZoom: 16,
+        maxZoom,
       });
       return;
     }
@@ -183,11 +184,16 @@ export default function MapboxMapView({
   hideLabels,
   resolvedMapConfig,
   fitBoundsKey,
+  fitMaxZoom,
+  keepMarkersInView = false,
 }: MapRendererProps) {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MapboxMap | null>(null);
   const mapboxRef = useRef<MapboxGl | null>(null);
   const markerRefs = useRef<Map<string, MarkerState>>(new Map());
+  // Read by the keep-in-view re-fit, which must not re-run when only the map data changes.
+  const mapDataRef = useRef(mapData);
+  mapDataRef.current = mapData;
   const layerIdsRef = useRef<string[]>([]);
   const sourceIdsRef = useRef<string[]>([]);
   const [styleReady, setStyleReady] = useState(false);
@@ -322,6 +328,7 @@ export default function MapboxMapView({
     }
 
     const activeMarkerIds = new Set(markers.map((marker) => marker.Id));
+    let markerLeftView = false;
 
     markerRefs.current.forEach((markerState, markerId) => {
       if (!activeMarkerIds.has(markerId)) {
@@ -383,9 +390,18 @@ export default function MapboxMapView({
         existingMarkerState.marker.setLngLat([markerInfo.Longitude, markerInfo.Latitude]);
         existingMarkerState.latitude = markerInfo.Latitude;
         existingMarkerState.longitude = markerInfo.Longitude;
+
+        if (keepMarkersInView && !map.getBounds()?.contains([markerInfo.Longitude, markerInfo.Latitude])) {
+          markerLeftView = true;
+        }
       }
     }
-  }, [hideLabels, markers, styleReady]);
+
+    // Only a move that leaves the view re-fits, so a viewer who zoomed in on part of the crew keeps that view.
+    if (markerLeftView) {
+      fitMapToMarkers(map, mapboxgl, markerRefs.current, mapDataRef.current, fitMaxZoom);
+    }
+  }, [fitMaxZoom, hideLabels, keepMarkersInView, markers, styleReady]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -395,7 +411,8 @@ export default function MapboxMapView({
       return;
     }
 
-    fitMapToMarkers(map, mapboxgl, markerRefs.current, mapData);
+    // fitMaxZoom only shapes the next fit; changing it alone must not move the camera.
+    fitMapToMarkers(map, mapboxgl, markerRefs.current, mapData, fitMaxZoom);
   }, [fitBoundsKey, mapData, styleReady]);
 
   useEffect(() => {

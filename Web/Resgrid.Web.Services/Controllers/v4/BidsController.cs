@@ -76,11 +76,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpGet("GetBids")]
 		[Authorize(Policy = ResgridResources.Bids_View)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		public async Task<ActionResult<BidsResult>> GetBids(int? status = null, string contactId = null, int skip = 0, int take = 100)
+		public async Task<ActionResult<BidsResult>> GetBids(int? status = null, string contactId = null, int skip = 0, int take = 100, string number = null)
 		{
 			if (!await EnabledAsync()) return Failed<BidsResult>("contractor_billing_disabled", StatusCodes.Status403Forbidden);
 			var bids = string.IsNullOrWhiteSpace(contactId)
-				? await _bids.GetBidsForDepartmentAsync(DepartmentId, status.HasValue && Enum.IsDefined(typeof(BidStatuses), status.Value) ? (BidStatuses?)status.Value : null, skip, take)
+				? await _bids.GetBidsForDepartmentAsync(DepartmentId, status.HasValue && Enum.IsDefined(typeof(BidStatuses), status.Value) ? (BidStatuses?)status.Value : null, number, skip, take)
 				: await _bids.GetBidsByContactIdAsync(contactId, DepartmentId, skip, take);
 			var result = new BidsResult { Data = bids.Select(b => Map(b, false)).ToList(), PageSize = bids.Count, Status = ResponseHelper.Success };
 			ResponseHelper.PopulateV4ResponseData(result);

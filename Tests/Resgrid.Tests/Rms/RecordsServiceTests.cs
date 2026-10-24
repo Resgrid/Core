@@ -99,6 +99,35 @@ namespace Resgrid.Tests.Rms
 		}
 
 		[Test]
+		public async Task The_year_filter_is_the_departments_numbering_year()
+		{
+			// A fiscal year starting 1 September, named by the year it ends in: records numbered RUN-2027-* occurred from
+			// 1 September 2026, so the queue's "2027" is that window, not the calendar year.
+			_settings.Setup(s => s.GetRecordsNumberingConfigAsync(Dept, It.IsAny<bool>())).ReturnsAsync(new RecordsNumberingConfig { YearStartMonth = 9, YearStartDay = 1 });
+			var queries = new List<RmsRecordQuery>();
+			_store.ProjectionsRepo.Setup(r => r.QueryAsync(Dept, It.IsAny<RmsRecordQuery>())).Callback((int d, RmsRecordQuery q) => queries.Add(q)).ReturnsAsync(new List<RmsRecordSearchProjection>());
+			_store.ProjectionsRepo.Setup(r => r.CountAsync(Dept, It.IsAny<RmsRecordQuery>())).Callback((int d, RmsRecordQuery q) => queries.Add(q)).ReturnsAsync(0);
+
+			await _service.QueryAsync(Dept, new RmsRecordQuery { Year = 2027 });
+			await _service.CountAsync(Dept, new RmsRecordQuery { Year = 2027 });
+
+			queries.Should().HaveCount(2).And.OnlyContain(q => q.OccurredFrom == new DateTime(2026, 9, 1) && q.OccurredBefore == new DateTime(2027, 9, 1));
+		}
+
+		[Test]
+		public async Task The_year_list_is_the_numbering_years_that_hold_a_record()
+		{
+			_settings.Setup(s => s.GetRecordsNumberingConfigAsync(Dept, It.IsAny<bool>())).ReturnsAsync(new RecordsNumberingConfig { YearStartMonth = 9, YearStartDay = 1 });
+			_store.ProjectionsRepo.Setup(r => r.GetYearsAsync(Dept)).ReturnsAsync(new List<int> { 2026 });
+			IReadOnlyList<NumberingYearWindow> asked = null;
+			_store.ProjectionsRepo.Setup(r => r.GetNumberingYearsAsync(Dept, It.IsAny<IReadOnlyList<NumberingYearWindow>>()))
+				.Callback((int d, IReadOnlyList<NumberingYearWindow> w) => asked = w).ReturnsAsync(new List<int> { 2027 });
+
+			(await _service.GetYearsAsync(Dept)).Should().Equal(2027);
+			asked.Select(w => w.Year).Should().Equal(new[] { 2027, 2026 }, "calendar 2026 holds the end of FY2026 and the start of FY2027");
+		}
+
+		[Test]
 		public async Task Historical_call_creation_is_authorized_versioned_linked_once_and_captured_in_the_run_revision()
 		{
 			var input = TrainingInput(); input.DefinitionKey = RmsDefinitionKeys.Run;

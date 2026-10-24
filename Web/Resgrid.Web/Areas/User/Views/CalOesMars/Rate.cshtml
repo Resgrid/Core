@@ -184,12 +184,12 @@
             var editable = @(editable ? "true" : "false");
             var lines = @Html.Raw(Model.LinesJson ?? "[]");
             var inputs = @Html.Raw(Model.InputsJson ?? "[]");
-            var kinds = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(lineKinds.Select(k => new { v = (int)k, t = localizer["LineKind" + k].Value })));
-            var bases = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(bases.Select(b => new { v = (int)b, t = localizer["Basis" + b].Value })));
-            var authorities = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(authorities.Select(a => new { v = (int)a, t = localizer["Authority" + a].Value })));
-            var classes = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(classifications.Select(c => new { v = (int)c, t = localizer["CostClass" + c].Value })));
-            var reviews = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(reviews.Select(r => new { v = (int)r, t = localizer["ReviewStatus" + r].Value })));
-            var classificationList = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Classifications));
+            var kinds = @Html.ScriptJson(lineKinds.Select(k => new { v = (int)k, t = localizer["LineKind" + k].Value }));
+            var bases = @Html.ScriptJson(bases.Select(b => new { v = (int)b, t = localizer["Basis" + b].Value }));
+            var authorities = @Html.ScriptJson(authorities.Select(a => new { v = (int)a, t = localizer["Authority" + a].Value }));
+            var classes = @Html.ScriptJson(classifications.Select(c => new { v = (int)c, t = localizer["CostClass" + c].Value }));
+            var reviews = @Html.ScriptJson(reviews.Select(r => new { v = (int)r, t = localizer["ReviewStatus" + r].Value }));
+            var classificationList = @Html.ScriptJson(Model.Classifications);
             function esc(v) { return (v == null ? '' : String(v)).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
             function opts(list, selected) { return list.map(function (o) { return '<option value="' + o.v + '"' + (o.v === selected ? ' selected' : '') + '>' + esc(o.t) + '</option>'; }).join(''); }
             function dis() { return editable ? '' : ' disabled'; }

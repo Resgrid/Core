@@ -237,7 +237,7 @@
                         <hr />
                         <h4 class="m-t-none m-b-sm">@commonLocalizer["Description"]</h4>
                         <div class="well well-sm" style="background:#f9f9f9; border:none;">
-                            @Html.Raw(Model.CalendarItem.Description)
+                            @Html.SanitizedHtml(Model.CalendarItem.Description)
                         </div>
                     }
                 </div>

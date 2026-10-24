@@ -54,6 +54,7 @@
   <data name="BidExpired" xml:space="preserve"><value>Oferta wygasła</value></data>
   <data name="BidLine" xml:space="preserve"><value>Pozycja oferty</value></data>
   <data name="BidNumber" xml:space="preserve"><value>Oferta nr</value></data>
+  <data name="Filter" xml:space="preserve"><value>Filtruj</value></data>
   <data name="BidScheduleHelp" xml:space="preserve"><value>Pozycje pobierają stawkę z tego cennika przy dodaniu.</value></data>
   <data name="BidSent" xml:space="preserve"><value>Oferta wysłana</value></data>
   <data name="BidStatusAccepted" xml:space="preserve"><value>Przyjęta</value></data>

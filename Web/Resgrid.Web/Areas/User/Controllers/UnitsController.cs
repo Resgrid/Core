@@ -151,7 +151,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			trees.Add(tree1);
 
 			trees.AddRange(BSTreeModel.ForDepartmentGroups(model.Groups));
-			model.TreeData = Newtonsoft.Json.JsonConvert.SerializeObject(trees);
+			model.TreeData = Newtonsoft.Json.JsonConvert.SerializeObject(trees, HtmlHelpers.ScriptJsonSettings);
 
 			return View(model);
 		}
@@ -261,6 +261,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 						}
 					}
 				}
+
+				// Every unit's seats were replaced, so one "several units" push rather than one per unit.
+				await _unitsService.NotifyActiveRolesUpdatedAsync(DepartmentId, 0);
 
 				return RedirectToAction("Index");
 			}
@@ -1009,6 +1012,25 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
+		/// <summary>
+		/// The unit's position and the positions of the members seated in its active roles, live. The page only hosts
+		/// rg-unit-map; the positions come from v4 Mapping/GetUnitMapData, which applies the location visibility matrix.
+		/// </summary>
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Unit_View)]
+		public async Task<IActionResult> ViewMap(int unitId)
+		{
+			if (!await _authorizationService.CanUserViewUnitAsync(UserId, unitId))
+				return Unauthorized();
+
+			var unit = await _unitsService.GetUnitByIdAsync(unitId);
+
+			if (unit == null || unit.IsDeleted)
+				return RedirectToAction("Index");
+
+			return View(new UnitMapView { Unit = unit });
+		}
+
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Unit_View)]
 		public async Task<IActionResult> ViewEvents(int unitId)
@@ -1473,9 +1495,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 				unitJson.Type = unit.Type;
 				unitJson.UnitId = unit.UnitId;
 				unitJson.TypeIconUrl = TypeIconHtml.UrlForTypeName(unitTypes, unit.Type);
-
+				// New Call and Update Call split the units into a tab per station; a unit whose station group no longer
+				// exists counts as ungrouped.
 				if (unit.StationGroup != null)
+				{
 					unitJson.Station = unit.StationGroup.Name;
+					unitJson.StationGroupId = unit.StationGroup.DepartmentGroupId;
+				}
 
 				var state = states.FirstOrDefault(x => x.UnitId == unit.UnitId);
 

@@ -130,7 +130,7 @@ namespace Resgrid.Tests.Rms
 	public class FakeInspections : InMemoryRepo<RmsInspection>, IRmsInspectionsRepository
 	{
 		public Task<RmsInspection> GetByIdForDepartmentAsync(int departmentId, string inspectionId) => Task.FromResult(Rows.FirstOrDefault(i => i.DepartmentId == departmentId && i.RmsInspectionId == inspectionId));
-		private IEnumerable<RmsInspection> Filter(int departmentId, RmsInspectionQuery q) => Live(departmentId).Where(i => (q.OccupancyId == null || i.RmsOccupancyId == q.OccupancyId) && (q.ProgramId == null || i.RmsInspectionProgramId == q.ProgramId) && (q.States == null || q.States.Count == 0 || q.States.Contains(i.State)) && (q.ScheduledBefore == null || i.ScheduledOn <= q.ScheduledBefore));
+		private IEnumerable<RmsInspection> Filter(int departmentId, RmsInspectionQuery q) => Live(departmentId).Where(i => (q.OccupancyId == null || i.RmsOccupancyId == q.OccupancyId) && (q.ProgramId == null || i.RmsInspectionProgramId == q.ProgramId) && (q.States == null || q.States.Count == 0 || q.States.Contains(i.State)) && (q.ScheduledBefore == null || i.ScheduledOn <= q.ScheduledBefore) && (q.Number == null || IdentifierSearchKeys.ContainsParts(i.InspectionNumber, q.Number)));
 		public Task<IEnumerable<RmsInspection>> QueryAsync(int departmentId, RmsInspectionQuery query) => Task.FromResult<IEnumerable<RmsInspection>>(Filter(departmentId, query).Skip(query.Skip).Take(query.Take).ToList());
 		public Task<int> CountAsync(int departmentId, RmsInspectionQuery query) => Task.FromResult(Filter(departmentId, query).Count());
 		public Task<IEnumerable<RmsInspection>> GetForOccupancyAsync(int departmentId, string occupancyId) => Task.FromResult<IEnumerable<RmsInspection>>(Live(departmentId).Where(i => i.RmsOccupancyId == occupancyId).ToList());
@@ -199,7 +199,7 @@ namespace Resgrid.Tests.Rms
 	public class FakePermits : InMemoryRepo<RmsPermit>, IRmsPermitsRepository
 	{
 		public Task<RmsPermit> GetByIdForDepartmentAsync(int departmentId, string permitId) => Task.FromResult(Rows.FirstOrDefault(p => p.DepartmentId == departmentId && p.RmsPermitId == permitId));
-		private IEnumerable<RmsPermit> Filter(int departmentId, RmsPermitQuery q) => Live(departmentId).Where(p => (q.OccupancyId == null || p.RmsOccupancyId == q.OccupancyId) && (q.PermitTypeId == null || p.RmsPermitTypeId == q.PermitTypeId) && (q.States == null || q.States.Count == 0 || q.States.Contains(p.State)) && (q.ExpiresBefore == null || p.ExpiresOn <= q.ExpiresBefore));
+		private IEnumerable<RmsPermit> Filter(int departmentId, RmsPermitQuery q) => Live(departmentId).Where(p => (q.OccupancyId == null || p.RmsOccupancyId == q.OccupancyId) && (q.PermitTypeId == null || p.RmsPermitTypeId == q.PermitTypeId) && (q.States == null || q.States.Count == 0 || q.States.Contains(p.State)) && (q.ExpiresBefore == null || p.ExpiresOn <= q.ExpiresBefore) && (q.Number == null || IdentifierSearchKeys.ContainsParts(p.PermitNumber, q.Number)));
 		public Task<IEnumerable<RmsPermit>> QueryAsync(int departmentId, RmsPermitQuery query) => Task.FromResult<IEnumerable<RmsPermit>>(Filter(departmentId, query).Skip(query.Skip).Take(query.Take).ToList());
 		public Task<int> CountAsync(int departmentId, RmsPermitQuery query) => Task.FromResult(Filter(departmentId, query).Count());
 		public Task<IEnumerable<RmsPermit>> GetForOccupancyAsync(int departmentId, string occupancyId) => Task.FromResult<IEnumerable<RmsPermit>>(Live(departmentId).Where(p => p.RmsOccupancyId == occupancyId).ToList());
@@ -278,6 +278,8 @@ namespace Resgrid.Tests.Rms
 	{
 		public Task<RmsInvestigationEvidence> GetByIdForDepartmentAsync(int departmentId, string evidenceId) => Task.FromResult(Rows.FirstOrDefault(e => e.DepartmentId == departmentId && e.RmsInvestigationEvidenceId == evidenceId));
 		public Task<IEnumerable<RmsInvestigationEvidence>> GetForCaseAsync(int departmentId, string caseId) => Task.FromResult<IEnumerable<RmsInvestigationEvidence>>(Live(departmentId).Where(e => e.RmsInvestigationCaseId == caseId).ToList());
+		public Task<IEnumerable<string>> GetCaseIdsWithEvidenceNumberAsync(int departmentId, IEnumerable<string> caseIds, string number) => Task.FromResult<IEnumerable<string>>(Live(departmentId)
+			.Where(e => caseIds.Contains(e.RmsInvestigationCaseId) && IdentifierSearchKeys.ContainsParts(e.EvidenceNumber, number)).Select(e => e.RmsInvestigationCaseId).Distinct().ToList());
 	}
 
 	public class FakeCustody : InMemoryRepo<RmsInvestigationCustody>, IRmsInvestigationCustodyRepository

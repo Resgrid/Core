@@ -513,17 +513,8 @@
   <data name="NearestUnitsPick" xml:space="preserve">
     <value>إرسال</value>
   </data>
-  <data name="NearestPersonnelLabel" xml:space="preserve">
-    <value>أقرب الأفراد</value>
-  </data>
-  <data name="NearestPersonnelPerson" xml:space="preserve">
-    <value>الشخص</value>
-  </data>
   <data name="NearestPersonnelStaffing" xml:space="preserve">
     <value>الجاهزية</value>
-  </data>
-  <data name="NearestPersonnelGroupRoles" xml:space="preserve">
-    <value>المجموعة / الأدوار</value>
   </data>
   <data name="NearestUnitsNearest" xml:space="preserve">
     <value>الأقرب رقم {0}</value>
@@ -543,7 +534,19 @@
   <data name="NearestUnitsMapBoundaries" xml:space="preserve">
     <value>حدود المحطات</value>
   </data>
-  <data name="NearestUnitsShowingClosest" xml:space="preserve">
-    <value>يتم عرض أقرب {0} من أصل {1}. تتضمن قوائم الإرسال أدناه الجميع، الأقرب أولًا.</value>
+  <data name="UngroupedUnitsTab" xml:space="preserve">
+    <value>وحدات غير مجمعة</value>
+  </data>
+  <data name="NearestUnitsLoadFailed" xml:space="preserve">
+    <value>تعذر تحميل الوحدات. أعد تحميل الصفحة للمحاولة مرة أخرى.</value>
+  </data>
+  <data name="NearestUnitsShowOnMap" xml:space="preserve">
+    <value>عرض هذا الموقع وموقع البلاغ على الخريطة</value>
+  </data>
+  <data name="NearestUnitsPositionTitle" xml:space="preserve">
+    <value>{0}: الموقع</value>
+  </data>
+  <data name="NearestUnitsCallLocation" xml:space="preserve">
+    <value>موقع البلاغ</value>
   </data>
 </root>

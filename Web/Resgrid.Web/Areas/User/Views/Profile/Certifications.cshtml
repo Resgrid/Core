@@ -202,16 +202,16 @@
                     revealUrl: '@Url.Action("RevealCertifications", "Profile", new { area = "User" })',
                     revealData: { userId: '@Model.UserId' },
                     messages: {
-                        invalid_totp: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpErrorInvalidCode"].Value)),
-                        too_many_attempts: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpErrorTooManyAttempts"].Value)),
-                        mfa_not_enrolled: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpErrorMfaNotEnrolled"].Value)),
-                        grants_not_configured: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpErrorGrantsNotConfigured"].Value)),
-                        step_up_required: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpErrorStepUpRequired"].Value)),
-                        grant_expired: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpErrorGrantExpired"].Value)),
-                        grant_revoked: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpErrorGrantRevoked"].Value)),
-                        protected_access_denied: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpErrorAccessDenied"].Value)),
-                        broker_unavailable: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpErrorBrokerUnavailable"].Value)),
-                        generic: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpErrorGeneric"].Value))
+                        invalid_totp: @Html.ScriptJson(commonLocalizer["AdpErrorInvalidCode"].Value),
+                        too_many_attempts: @Html.ScriptJson(commonLocalizer["AdpErrorTooManyAttempts"].Value),
+                        mfa_not_enrolled: @Html.ScriptJson(commonLocalizer["AdpErrorMfaNotEnrolled"].Value),
+                        grants_not_configured: @Html.ScriptJson(commonLocalizer["AdpErrorGrantsNotConfigured"].Value),
+                        step_up_required: @Html.ScriptJson(commonLocalizer["AdpErrorStepUpRequired"].Value),
+                        grant_expired: @Html.ScriptJson(commonLocalizer["AdpErrorGrantExpired"].Value),
+                        grant_revoked: @Html.ScriptJson(commonLocalizer["AdpErrorGrantRevoked"].Value),
+                        protected_access_denied: @Html.ScriptJson(commonLocalizer["AdpErrorAccessDenied"].Value),
+                        broker_unavailable: @Html.ScriptJson(commonLocalizer["AdpErrorBrokerUnavailable"].Value),
+                        generic: @Html.ScriptJson(commonLocalizer["AdpErrorGeneric"].Value)
                     },
                     antiForgeryToken: $('#adpAntiForgeryForm input[name="__RequestVerificationToken"]').val()
                 });

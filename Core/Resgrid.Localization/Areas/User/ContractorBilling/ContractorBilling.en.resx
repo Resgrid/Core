@@ -54,6 +54,7 @@
   <data name="BidExpired" xml:space="preserve"><value>Bid expired</value></data>
   <data name="BidLine" xml:space="preserve"><value>Bid line</value></data>
   <data name="BidNumber" xml:space="preserve"><value>Bid #</value></data>
+  <data name="Filter" xml:space="preserve"><value>Filter</value></data>
   <data name="BidScheduleHelp" xml:space="preserve"><value>Lines snapshot their rate from this schedule when added.</value></data>
   <data name="BidSent" xml:space="preserve"><value>Bid sent</value></data>
   <data name="BidStatusAccepted" xml:space="preserve"><value>Accepted</value></data>

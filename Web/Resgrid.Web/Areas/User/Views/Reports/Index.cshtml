@@ -226,10 +226,20 @@
                                     <a href="@Url.Action("EventAttendanceReportParams", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> @localizer["ViewReport"]</a>
                                 </td>
                             </tr>
-                            </tbody>
-                            <tbody>
-                            @foreach (var kind in Enum.GetValues<Resgrid.Model.Inventories.InventoryReportKind>()) {
-                                <tr><td><a href="@Url.Action("Operations", "Inventory", new { Area = "User", tab = "Reports", kind })">@Resgrid.Services.InventoryReportDocuments.Title(kind)</a></td><td colspan="2">@Resgrid.Services.InventoryReportDocuments.Text("M5ReportHelp")</td></tr>
+                            @foreach (var kind in Enum.GetValues<Resgrid.Model.Inventories.InventoryReportKind>())
+                            {
+                                var inventoryReportUrl = Url.Action("Operations", "Inventory", new { Area = "User", tab = "Reports", kind });
+                                <tr>
+                                    <td>
+                                        <a href="@inventoryReportUrl">@Resgrid.Services.InventoryReportDocuments.Title(kind)</a>
+                                    </td>
+                                    <td>
+                                        @Resgrid.Services.InventoryReportDocuments.Summary(kind)
+                                    </td>
+                                    <td>
+                                        <a href="@inventoryReportUrl" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> @localizer["ViewReport"]</a>
+                                    </td>
+                                </tr>
                             }
                             </tbody>
                         </table>

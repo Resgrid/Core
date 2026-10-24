@@ -57,6 +57,10 @@
         <div class="ibox-content">
 
             <form method="get" asp-controller="Invoicing" asp-action="Index" asp-route-area="User" class="form-inline m-b-md">
+                <div class="form-group m-r-sm">
+                    <label for="filter-number" class="m-r-xs">@localizer["Number"]</label>
+                    <input class="form-control" id="filter-number" name="number" value="@Model.Number" maxlength="50" autocomplete="off" />
+                </div>
                 <div class="form-group">
                     <label for="filter-status" class="m-r-xs">@localizer["Status"]</label>
                     <select class="form-control" id="filter-status" name="status">
@@ -125,11 +129,11 @@
                     <div class="text-center">
                         <ul class="pagination">
                             <li class="@(Model.Page == 0 ? "disabled" : null)">
-                                <a asp-controller="Invoicing" asp-action="Index" asp-route-area="User" asp-route-status="@Model.Status" asp-route-contactId="@Model.ContactId" asp-route-page="@(Math.Max(0, Model.Page - 1))">&laquo;</a>
+                                <a asp-controller="Invoicing" asp-action="Index" asp-route-area="User" asp-route-status="@Model.Status" asp-route-contactId="@Model.ContactId" asp-route-number="@Model.Number" asp-route-page="@(Math.Max(0, Model.Page - 1))">&laquo;</a>
                             </li>
                             <li class="disabled"><a>@(Model.Page + 1) / @pages</a></li>
                             <li class="@(Model.Page + 1 >= pages ? "disabled" : null)">
-                                <a asp-controller="Invoicing" asp-action="Index" asp-route-area="User" asp-route-status="@Model.Status" asp-route-contactId="@Model.ContactId" asp-route-page="@(Model.Page + 1)">&raquo;</a>
+                                <a asp-controller="Invoicing" asp-action="Index" asp-route-area="User" asp-route-status="@Model.Status" asp-route-contactId="@Model.ContactId" asp-route-number="@Model.Number" asp-route-page="@(Model.Page + 1)">&raquo;</a>
                             </li>
                         </ul>
                     </div>

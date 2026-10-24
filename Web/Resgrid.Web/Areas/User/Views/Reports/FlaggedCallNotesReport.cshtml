@@ -130,7 +130,7 @@
 									<td>@row.CallType</td>
 									<td>@row.CallAddress</td>
 									<td style="white-space: nowrap;">@row.CallLoggedOn.FormatForDepartment(Model.Department)</td>
-									<td style="max-width: 250px; word-wrap: break-word;">@row.NoteText</td>
+									<td style="max-width: 250px; word-wrap: break-word;">@Html.SanitizedHtml(row.NoteText)</td>
 									<td style="white-space: nowrap;">@row.NoteAuthorName</td>
 									<td style="white-space: nowrap;">@row.NoteTimestamp.FormatForDepartment(Model.Department)</td>
 									<td>

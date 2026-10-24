@@ -69,6 +69,7 @@ namespace Resgrid.Providers.Bus
 			_eventAggregator.AddAsyncListener(unitLocationUpdatedTopicHandler);
 			_eventAggregator.AddListener(chatEventTopicHandler);
 			_eventAggregator.AddAsyncListener(unitStatusAlertUpdatedTopicHandler);
+			_eventAggregator.AddAsyncListener(unitActiveRolesUpdatedTopicHandler);
 			_eventAggregator.AddAsyncListener(outstandingRequirementsUpdatedTopicHandler);
 			_eventAggregator.AddAsyncListener<DomainEventDispatchedEvent>(async message =>
 			{
@@ -711,6 +712,15 @@ namespace Resgrid.Providers.Bus
 				_rabbitTopicProvider = new RabbitTopicProvider();
 
 			await _rabbitTopicProvider.UnitStatusAlertUpdated(message.DepartmentId, message.UnitId);
+		};
+
+		public Func<UnitActiveRolesUpdatedEvent, Task> unitActiveRolesUpdatedTopicHandler = async delegate (UnitActiveRolesUpdatedEvent message)
+		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
+			if (!await _rabbitTopicProvider.UnitActiveRolesUpdated(message.DepartmentId, message.UnitId))
+				Framework.Logging.LogError($"Unable to publish the unit active roles realtime update for department {message.DepartmentId}.");
 		};
 
 		public Func<OutstandingRequirementsUpdatedEvent, Task> outstandingRequirementsUpdatedTopicHandler = async delegate (OutstandingRequirementsUpdatedEvent message)

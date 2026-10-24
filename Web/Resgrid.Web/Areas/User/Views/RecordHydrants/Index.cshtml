@@ -74,7 +74,7 @@
 			if (typeof L === 'undefined' || !document.getElementById('hydrantMap')) { return; }
 			var map = L.map('hydrantMap');
 			L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap' }).addTo(map);
-			var bounds = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.MapPoints.Select(p => new[] { p.Latitude, p.Longitude })));
+			var bounds = @Html.ScriptJson(Model.MapPoints.Select(p => new[] { p.Latitude, p.Longitude }));
 			if (bounds.length) { map.fitBounds(bounds, { padding: [20, 20], maxZoom: 17 }); } else { map.setView([39.5, -98.35], 4); }
 		})();
 	</script>

@@ -242,14 +242,14 @@
                     var questionHtml = "";
                     for (var t = 0; t < protocol.Questions.length; t++) {
                         var question = protocol.Questions[t];
-                        questionHtml = questionHtml + `<div class="form-group"><label class=" control-label">${question.Question}</label><div class="controls"><select id="questionAnswer_${question.Id}" name="questionAnswer_${question.Id}">`;
+                        questionHtml = questionHtml + `<div class="form-group"><label class=" control-label">${resgrid.escapeHtml(question.Question)}</label><div class="controls"><select id="questionAnswer_${question.Id}" name="questionAnswer_${question.Id}">`;
 
                         for (var r = 0; r < protocol.Questions[t].Answers.length; r++) {
                             var answer = protocol.Questions[t].Answers[r];
                             if (r === 0) {
-                                questionHtml = questionHtml + `<option selected="selected" value="${answer.Weight}">${answer.Answer}</option>`;
+                                questionHtml = questionHtml + `<option selected="selected" value="${answer.Weight}">${resgrid.escapeHtml(answer.Answer)}</option>`;
                             } else {
-                                questionHtml = questionHtml + `<option value="${answer.Weight}">${answer.Answer}</option>`;
+                                questionHtml = questionHtml + `<option value="${answer.Weight}">${resgrid.escapeHtml(answer.Answer)}</option>`;
                             }
                         }
 
@@ -333,12 +333,12 @@
                     paging: false,
                     columns: [
                         { data: 'UserId', title: '', orderable: false, searchable: false, render: function(data) { return '<input type="checkbox" id="dispatchUser_'+data+'" name="dispatchUser_'+data+'" />'; } },
-                        { data: 'Name', title: getText('name', 'Name') },
+                        { data: 'Name', title: getText('name', 'Name'), render: resgrid.textCell },
                         { data: 'Eta', title: getText('eta', 'ETA') },
-                        { data: null, title: getText('status', 'Status'), orderable: false, render: function(d,t,row) { return '<span style="color:'+row.StatusColor+'">'+row.Status+'</span>'; } },
-                        { data: null, title: getText('staffing', 'Staffing'), orderable: false, render: function(d,t,row) { return '<span style="color:'+row.StaffingColor+'">'+row.Staffing+'</span>'; } },
-                        { data: 'Group', title: getText('group', 'Group') },
-                        { data: 'Roles', title: getText('roles', 'Roles') }
+                        { data: null, title: getText('status', 'Status'), orderable: false, render: function(d,t,row) { return '<span style="color:'+resgrid.escapeHtml(row.StatusColor)+'">'+resgrid.escapeHtml(row.Status)+'</span>'; } },
+                        { data: null, title: getText('staffing', 'Staffing'), orderable: false, render: function(d,t,row) { return '<span style="color:'+resgrid.escapeHtml(row.StaffingColor)+'">'+resgrid.escapeHtml(row.Staffing)+'</span>'; } },
+                        { data: 'Group', title: getText('group', 'Group'), render: resgrid.textCell },
+                        { data: 'Roles', title: getText('roles', 'Roles'), render: resgrid.textCell }
                     ]
                 });
                 personnelTable.on('draw', function() {
@@ -350,7 +350,7 @@
                     paging: false,
                     columns: [
                         { data: 'GroupId', title: '', orderable: false, searchable: false, render: function(data) { return '<input type="checkbox" id="dispatchGroup_'+data+'" name="dispatchGroup_'+data+'" />'; } },
-                        { data: 'Name', title: getText('name', 'Name') },
+                        { data: 'Name', title: getText('name', 'Name'), render: resgrid.textCell },
                         { data: 'Count', title: getText('personnelCount', 'Personnel Count') }
                     ]
                 });
@@ -365,7 +365,7 @@
                         { data: 'UnitId', title: '', orderable: false, searchable: false, render: function(data) { return '<input type="checkbox" id="dispatchUnit_'+data+'" name="dispatchUnit_'+data+'" />'; } },
                         { data: 'Name', title: getText('name', 'Name'), render: typeIconNameCell },
                         { data: 'Eta', title: getText('eta', 'ETA') },
-                        { data: 'Type', title: getText('type', 'Type') },
+                        { data: 'Type', title: getText('type', 'Type'), render: resgrid.textCell },
                         { data: null, title: getText('status', 'Status'), orderable: false, render: function(d,t,row) { return unitStatusLabel(row); } }
                     ]
                 });
@@ -378,7 +378,7 @@
                     paging: false,
                     columns: [
                         { data: 'RoleId', title: '', orderable: false, searchable: false, render: function(data) { return '<input type="checkbox" id="dispatchRole_'+data+'" name="dispatchRole_'+data+'" />'; } },
-                        { data: 'Name', title: getText('name', 'Name') },
+                        { data: 'Name', title: getText('name', 'Name'), render: resgrid.textCell },
                         { data: 'Count', title: getText('personnelCount', 'Personnel Count') }
                     ]
                 });
@@ -569,8 +569,8 @@
             function addProtocol(id, name, code, state) {
                 resgrid.dispatch.addArchivedCall.protocolCount++;
                 $('#protocols tbody').first().append(`<tr>
-                    <td style='max-width: 50px;'>${code}</td>
-                    <td>${name}</td>
+                    <td style='max-width: 50px;'>${resgrid.escapeHtml(code)}</td>
+                    <td>${resgrid.escapeHtml(name)}</td>
                     <td>${resgrid.dispatch.addArchivedCall.getStatusField(id, state, code)}</td>
                 </tr>`);
             }
@@ -584,9 +584,9 @@
                 if (state === 0) {
                     return inactiveText;
                 } else if (state === 1) {
-                    return `${activeText} <input type='text' id='activeProtocol_${id}' name='activeProtocol_${id}' style='display:none;' value='1'></input><input type='text' id='protocolCode_${id}' name='protocolCode_${id}' style='display:none;' value='${code}'></input>`;
+                    return `${activeText} <input type='text' id='activeProtocol_${id}' name='activeProtocol_${id}' style='display:none;' value='1'></input><input type='text' id='protocolCode_${id}' name='protocolCode_${id}' style='display:none;' value='${resgrid.escapeHtml(code)}'></input>`;
                 } else if (state === 2) {
-                    return `<a id="answerProcotolQuestions_${id}" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#protocolQuestionWindow" data-protocolId="${id}">${answerQuestionsText}</a> <input type='text' id='pendingProtocol_${id}' name='pendingProtocol_${id}' style='display:none;' value='0'></input><input type='text' id='protocolCode_${id}' name='protocolCode_${id}' style='display:none;' value='${code}'></input>`;
+                    return `<a id="answerProcotolQuestions_${id}" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#protocolQuestionWindow" data-protocolId="${id}">${answerQuestionsText}</a> <input type='text' id='pendingProtocol_${id}' name='pendingProtocol_${id}' style='display:none;' value='0'></input><input type='text' id='protocolCode_${id}' name='protocolCode_${id}' style='display:none;' value='${resgrid.escapeHtml(code)}'></input>`;
                 } else {
                     return unknownText;
                 }

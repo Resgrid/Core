@@ -125,8 +125,6 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 			var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
 
-			var address = await _departmentSettingsService.GetBigBoardCenterAddressDepartmentAsync(DepartmentId);
-			var gpsCoordinates = await _departmentSettingsService.GetBigBoardCenterGpsCoordinatesDepartmentAsync(DepartmentId);
 			var calls = await _dispatchScopeService.FilterCallsForUserAsync(DepartmentId, UserId, await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId));
 			var units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
 			var unitStates = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(DepartmentId);
@@ -142,105 +140,21 @@ namespace Resgrid.Web.Services.Controllers.v4
 			// A person's pin uses the icon of the first role they hold, in the department's role order, that has one.
 			var rolesById = (await _personnelRolesService.GetRolesForDepartmentAsync(DepartmentId) ?? new List<PersonnelRole>())
 				.GroupBy(r => r.PersonnelRoleId).ToDictionary(g => g.Key, g => g.First());
+			// A person holding an active role on a unit is labelled "Name (Unit)", naming only units this member may view.
+			var unitNamesByUser = await PersonnelMapLabel.BuildUnitNamesByUserAsync(
+				await _unitsService.GetAllActiveRolesForUnitsByDepartmentIdAsync(DepartmentId), units,
+				unitId => _authorizationService.CanUserViewUnitViaMatrixAsync(unitId, UserId, DepartmentId));
 
 			var personnelLocationTTL = await _departmentSettingsService.GetMappingPersonnelLocationTTLAsync(DepartmentId);
 			var unitLocationTTL = await _departmentSettingsService.GetMappingUnitLocationTTLAsync(DepartmentId);
 			var personnelAllowStatusWithNoLocationToOverwrite = await _departmentSettingsService.GetMappingPersonnelAllowStatusWithNoLocationToOverwriteAsync(DepartmentId);
 			var unitAllowStatusWithNoLocationToOverwrite = await _departmentSettingsService.GetMappingUnitAllowStatusWithNoLocationToOverwriteAsync(DepartmentId);
 
-			string weatherUnits = "";
-			double? centerLat = null;
-			double? centerLon = null;
+			var center = await GetDepartmentMapCenterAsync(department);
 
-			if (address != null && !String.IsNullOrWhiteSpace(address.Country))
-			{
-				if (address.Country == "Canada")
-					weatherUnits = "ca";
-				else if (address.Country == "United Kingdom")
-					weatherUnits = "uk";
-				else if (address.Country == "Australia")
-					weatherUnits = "uk";
-				else
-					weatherUnits = "us";
-			}
-			else if (department.Address != null && !String.IsNullOrWhiteSpace(department.Address.Country))
-			{
-				if (department.Address.Country == "Canada")
-					weatherUnits = "ca";
-				else if (department.Address.Country == "United Kingdom")
-					weatherUnits = "uk";
-				else if (department.Address.Country == "Australia")
-					weatherUnits = "uk";
-				else
-					weatherUnits = "us";
-			}
-
-			if (!String.IsNullOrWhiteSpace(gpsCoordinates))
-			{
-				string[] coordinates = gpsCoordinates.Split(char.Parse(","));
-
-				if (coordinates.Count() == 2)
-				{
-					double newLat;
-					double newLon;
-					if (double.TryParse(coordinates[0], out newLat) && double.TryParse(coordinates[1], out newLon))
-					{
-						centerLat = newLat;
-						centerLon = newLon;
-					}
-				}
-			}
-
-			if (!centerLat.HasValue && !centerLon.HasValue && address != null)
-			{
-				string coordinates = await _geoLocationProvider.GetLatLonFromAddress(string.Format("{0} {1} {2} {3}", address.Address1,
-																		address.City, address.State, address.PostalCode));
-
-				if (!String.IsNullOrEmpty(coordinates))
-				{
-					double newLat;
-					double newLon;
-					var coordinatesArr = coordinates.Split(char.Parse(","));
-					if (double.TryParse(coordinatesArr[0], out newLat) && double.TryParse(coordinatesArr[1], out newLon))
-					{
-						centerLat = newLat;
-						centerLon = newLon;
-					}
-				}
-			}
-
-			if (!centerLat.HasValue && !centerLon.HasValue && department.Address != null)
-			{
-				string coordinates = await _geoLocationProvider.GetLatLonFromAddress(string.Format("{0} {1} {2} {3}", department.Address.Address1,
-																		department.Address.City,
-																		department.Address.State,
-																		department.Address.PostalCode));
-
-				if (!String.IsNullOrEmpty(coordinates))
-				{
-					double newLat;
-					double newLon;
-					var coordinatesArr = coordinates.Split(char.Parse(","));
-					if (double.TryParse(coordinatesArr[0], out newLat) && double.TryParse(coordinatesArr[1], out newLon))
-					{
-						centerLat = newLat;
-						centerLon = newLon;
-					}
-				}
-			}
-
-			if (!centerLat.HasValue || !centerLon.HasValue)
-			{
-				centerLat = 39.14086268299356;
-				centerLon = -119.7583809782715;
-			}
-
-			var zoomLevel = await _departmentSettingsService.GetBigBoardMapZoomLevelForDepartmentAsync(department.DepartmentId);
-
-
-			result.Data.CenterLat = centerLat.Value;
-			result.Data.CenterLon = centerLon.Value;
-			result.Data.ZoomLevel = zoomLevel.HasValue ? zoomLevel.Value : 9;
+			result.Data.CenterLat = center.Latitude;
+			result.Data.CenterLon = center.Longitude;
+			result.Data.ZoomLevel = center.ZoomLevel;
 
 			if (stations != null && stations.Any())
 			{
@@ -361,47 +275,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 					if (!await _authorizationService.CanUserViewUnitLocationViaMatrixAsync(unit.UnitId, UserId, DepartmentId))
 						continue;
 
-					var latestLocation = unitLocations.FirstOrDefault(x => x.UnitId == unit.UnitId);
-					var state = unitStates.FirstOrDefault(x => x.UnitId == unit.UnitId);
+					var unitMarker = BuildUnitMarker(unit, unitLocations.FirstOrDefault(x => x.UnitId == unit.UnitId),
+						unitStates.FirstOrDefault(x => x.UnitId == unit.UnitId), unitTypes, unitLocationTTL, unitAllowStatusWithNoLocationToOverwrite, DateTime.UtcNow);
 
-					MapMakerInfoData info = new MapMakerInfoData();
-					info.ImagePath = "Engine_Responding";
-					info.Id = $"u{unit.UnitId}";
-					info.Title = unit.Name;
-					info.InfoWindowContent = "";
-					info.Type = 1;
-
-					try
-					{
-						if (unitTypes != null && unitTypes.Count > 0 && !String.IsNullOrWhiteSpace(unit.Type))
-						{
-							var type = unitTypes.FirstOrDefault(x => x.Type == unit.Type);
-
-							// The lowercase asset name: the web map loads /images/Mapping/{ImagePath}.png, and the enum name
-							// ("Ambulance", "CarTwo") missed the lowercase file on case-sensitive hosts.
-							var builtInIcon = TypeIcons.BuiltInIconName(type);
-							if (builtInIcon != null)
-								info.ImagePath = builtInIcon;
-
-							info.IconUrl = TypeIcons.ApiIconUrl(Config.SystemBehaviorConfig.ResgridApiBaseUrl, type);
-						}
-
-						var markerSource = MappingMarkerSelection.Select(latestLocation?.Timestamp, state?.Timestamp, () => state?.HasLocation() == true,
-							unitLocationTTL, unitAllowStatusWithNoLocationToOverwrite, DateTime.UtcNow);
-						if (markerSource == MappingMarkerSource.LocationPing)
-						{
-							info.Latitude = (double)latestLocation.Latitude;
-							info.Longitude = (double)latestLocation.Longitude;
-							result.Data.MapMakerInfos.Add(info);
-						}
-						else if (markerSource == MappingMarkerSource.Status)
-						{
-							info.Latitude = (double)state.Latitude.Value;
-							info.Longitude = (double)state.Longitude.Value;
-							result.Data.MapMakerInfos.Add(info);
-						}
-					}
-					catch { }
+					if (unitMarker.Marker != null)
+						result.Data.MapMakerInfos.Add(unitMarker.Marker);
 				}
 			}
 
@@ -412,39 +290,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 					if (!await _authorizationService.CanUserViewPersonLocationViaMatrixAsync(person.UserId, UserId, DepartmentId))
 						continue;
 
-					var latestLocation = personnelLocations.FirstOrDefault(x => x.UserId == person.UserId);
-					var state = personnelStates.FirstOrDefault(x => x.UserId == person.UserId);
+					var personMarker = BuildPersonMarker(person, PersonnelMapLabel.Format(person.Name, person.UserId, unitNamesByUser),
+						personnelLocations.FirstOrDefault(x => x.UserId == person.UserId), personnelStates.FirstOrDefault(x => x.UserId == person.UserId),
+						rolesById, personnelLocationTTL, personnelAllowStatusWithNoLocationToOverwrite, DateTime.UtcNow);
 
-					MapMakerInfoData info = new MapMakerInfoData();
-
-					info.ImagePath = "Person_RespondingCall";
-					info.Id = $"p{person.UserId}";
-					info.Title = person.Name;
-					info.InfoWindowContent = "";
-					info.Type = 3;
-
-					try
-					{
-						info.IconUrl = TypeIcons.ApiIconUrl(Config.SystemBehaviorConfig.ResgridApiBaseUrl,
-							TypeIcons.MapIconRole(person.RoleList.Where(rolesById.ContainsKey).Select(id => rolesById[id])));
-
-						var markerSource = MappingMarkerSelection.Select(latestLocation?.Timestamp, state?.Timestamp, () => state?.HasLocation() == true,
-							personnelLocationTTL, personnelAllowStatusWithNoLocationToOverwrite, DateTime.UtcNow);
-						if (markerSource == MappingMarkerSource.LocationPing)
-						{
-							info.Latitude = (double)latestLocation.Latitude;
-							info.Longitude = (double)latestLocation.Longitude;
-							result.Data.MapMakerInfos.Add(info);
-						}
-						else if (markerSource == MappingMarkerSource.Status)
-						{
-							var location = state.GetCoordinates();
-							info.Latitude = location.Latitude.Value;
-							info.Longitude = location.Longitude.Value;
-							result.Data.MapMakerInfos.Add(info);
-						}
-					}
-					catch { }
+					if (personMarker.Marker != null)
+						result.Data.MapMakerInfos.Add(personMarker.Marker);
 				}
 			}
 
@@ -492,6 +343,284 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			return Ok(result);
 		}
+
+		/// <summary>
+		/// One unit's map: the unit's own position, when it reports one, and the positions of the members seated in its
+		/// active roles, plus the department's default view for when none of them has a position. Positions follow the same
+		/// location TTL, status fallback and location visibility matrix as GetMapDataAndMarkers. Live moves arrive on the
+		/// geolocation hub (onUnitLocationUpdated / onPersonnelLocationUpdated for "u{unitId}" and "p{userId}"), and a crew
+		/// change arrives on the eventing hub as unitActiveRolesUpdated, after which the client reloads this.
+		/// </summary>
+		/// <param name="unitId">The unit to map.</param>
+		/// <returns>GetUnitMapDataResult object</returns>
+		[HttpGet("GetUnitMapData")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Unit_View)]
+		public async Task<ActionResult<GetUnitMapDataResult>> GetUnitMapData(int unitId)
+		{
+			var result = new GetUnitMapDataResult();
+
+			var unit = unitId > 0 ? await _unitsService.GetUnitByIdAsync(unitId) : null;
+
+			// Another department's unit, a deleted one and one Security > View Units hides from this member all read as missing.
+			if (unit == null || unit.DepartmentId != DepartmentId || unit.IsDeleted ||
+				!await _authorizationService.CanUserViewUnitViaMatrixAsync(unit.UnitId, UserId, DepartmentId))
+			{
+				ResponseHelper.PopulateV4ResponseNotFound(result);
+				return Ok(result);
+			}
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+			var center = await GetDepartmentMapCenterAsync(department);
+			var now = DateTime.UtcNow;
+
+			result.Data.UnitId = unit.UnitId.ToString();
+			result.Data.Name = unit.Name;
+			result.Data.Type = unit.Type;
+			result.Data.CenterLat = center.Latitude;
+			result.Data.CenterLon = center.Longitude;
+			result.Data.ZoomLevel = center.ZoomLevel;
+
+			if (unit.StationGroupId.HasValue)
+				result.Data.GroupName = (await _departmentGroupsService.GetGroupByIdAsync(unit.StationGroupId.Value, false))?.Name;
+
+			if (await _authorizationService.CanUserViewUnitLocationViaMatrixAsync(unit.UnitId, UserId, DepartmentId))
+			{
+				var unitMarker = BuildUnitMarker(unit, await _unitsService.GetLatestUnitLocationAsync(unit.UnitId),
+					await _unitsService.GetLastUnitStateByUnitIdAsync(unit.UnitId), await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId),
+					await _departmentSettingsService.GetMappingUnitLocationTTLAsync(DepartmentId),
+					await _departmentSettingsService.GetMappingUnitAllowStatusWithNoLocationToOverwriteAsync(DepartmentId), now);
+
+				result.Data.UnitMarker = unitMarker.Marker;
+				result.Data.UnitLocationTimestamp = unitMarker.Timestamp;
+			}
+
+			// The crew is the seats the unit defines, matched by role name, exactly as Units/GetAllUnitsInfos reports them.
+			var roles = await _unitsService.GetRolesForUnitAsync(unit.UnitId) ?? new List<UnitRole>();
+			var activeRoles = await _unitsService.GetActiveRolesForUnitAsync(unit.UnitId) ?? new List<UnitActiveRole>();
+			var seats = roles
+				.Select(role => (Role: role, Seat: activeRoles.FirstOrDefault(x => x.Role == role.Name)))
+				.Where(x => x.Seat != null && !String.IsNullOrWhiteSpace(x.Seat.UserId))
+				.ToList();
+
+			if (seats.Any())
+			{
+				// Only current members are listed: a seat left behind by someone since removed, disabled or hidden shows no one.
+				var people = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(DepartmentId, false, false, false) ?? new List<UserGroupRole>();
+				var personnelLocations = await _usersService.GetLatestLocationsForDepartmentPersonnelAsync(DepartmentId) ?? new List<PersonnelLocation>();
+				var personnelStates = await _actionLogsService.GetLastActionLogsForDepartmentAsync(DepartmentId) ?? new List<ActionLog>();
+				var rolesById = (await _personnelRolesService.GetRolesForDepartmentAsync(DepartmentId) ?? new List<PersonnelRole>())
+					.GroupBy(r => r.PersonnelRoleId).ToDictionary(g => g.Key, g => g.First());
+				var personnelLocationTTL = await _departmentSettingsService.GetMappingPersonnelLocationTTLAsync(DepartmentId);
+				var personnelAllowStatusWithNoLocationToOverwrite = await _departmentSettingsService.GetMappingPersonnelAllowStatusWithNoLocationToOverwriteAsync(DepartmentId);
+
+				// One member in two seats is one person on the map, listed once with both role names.
+				foreach (var member in seats.GroupBy(x => x.Seat.UserId, StringComparer.OrdinalIgnoreCase))
+				{
+					var person = people.FirstOrDefault(p => String.Equals(p.UserId, member.Key, StringComparison.OrdinalIgnoreCase));
+
+					if (person == null)
+						continue;
+
+					var crewMember = new UnitMapCrewMemberData
+					{
+						UserId = person.UserId,
+						Name = person.Name,
+						RoleName = String.Join(", ", member.Select(x => x.Role.Name))
+					};
+
+					if (await _authorizationService.CanUserViewPersonLocationViaMatrixAsync(person.UserId, UserId, DepartmentId))
+					{
+						var personMarker = BuildPersonMarker(person, $"{person.Name} ({crewMember.RoleName})",
+							personnelLocations.FirstOrDefault(x => x.UserId == person.UserId), personnelStates.FirstOrDefault(x => x.UserId == person.UserId),
+							rolesById, personnelLocationTTL, personnelAllowStatusWithNoLocationToOverwrite, now);
+
+						crewMember.Marker = personMarker.Marker;
+						crewMember.LocationTimestamp = personMarker.Timestamp;
+					}
+
+					result.Data.Crew.Add(crewMember);
+				}
+			}
+
+			result.PageSize = 1;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// The department's default map view: the BigBoard center coordinates, else the BigBoard center address, else the
+		/// department address, else a fixed fallback; with the BigBoard zoom level (9 when unset).
+		/// </summary>
+		private async Task<(double Latitude, double Longitude, int ZoomLevel)> GetDepartmentMapCenterAsync(Department department)
+		{
+			var address = await _departmentSettingsService.GetBigBoardCenterAddressDepartmentAsync(DepartmentId);
+			var gpsCoordinates = await _departmentSettingsService.GetBigBoardCenterGpsCoordinatesDepartmentAsync(DepartmentId);
+
+			double? centerLat = null;
+			double? centerLon = null;
+
+			if (!String.IsNullOrWhiteSpace(gpsCoordinates))
+			{
+				string[] coordinates = gpsCoordinates.Split(char.Parse(","));
+
+				if (coordinates.Count() == 2)
+				{
+					double newLat;
+					double newLon;
+					if (double.TryParse(coordinates[0], out newLat) && double.TryParse(coordinates[1], out newLon))
+					{
+						centerLat = newLat;
+						centerLon = newLon;
+					}
+				}
+			}
+
+			if (!centerLat.HasValue && !centerLon.HasValue && address != null)
+			{
+				string coordinates = await _geoLocationProvider.GetLatLonFromAddress(string.Format("{0} {1} {2} {3}", address.Address1,
+																		address.City, address.State, address.PostalCode));
+
+				if (!String.IsNullOrEmpty(coordinates))
+				{
+					double newLat;
+					double newLon;
+					var coordinatesArr = coordinates.Split(char.Parse(","));
+					if (double.TryParse(coordinatesArr[0], out newLat) && double.TryParse(coordinatesArr[1], out newLon))
+					{
+						centerLat = newLat;
+						centerLon = newLon;
+					}
+				}
+			}
+
+			if (!centerLat.HasValue && !centerLon.HasValue && department?.Address != null)
+			{
+				string coordinates = await _geoLocationProvider.GetLatLonFromAddress(string.Format("{0} {1} {2} {3}", department.Address.Address1,
+																		department.Address.City,
+																		department.Address.State,
+																		department.Address.PostalCode));
+
+				if (!String.IsNullOrEmpty(coordinates))
+				{
+					double newLat;
+					double newLon;
+					var coordinatesArr = coordinates.Split(char.Parse(","));
+					if (double.TryParse(coordinatesArr[0], out newLat) && double.TryParse(coordinatesArr[1], out newLon))
+					{
+						centerLat = newLat;
+						centerLon = newLon;
+					}
+				}
+			}
+
+			if (!centerLat.HasValue || !centerLon.HasValue)
+			{
+				centerLat = 39.14086268299356;
+				centerLon = -119.7583809782715;
+			}
+
+			var zoomLevel = await _departmentSettingsService.GetBigBoardMapZoomLevelForDepartmentAsync(DepartmentId);
+
+			return (centerLat.Value, centerLon.Value, zoomLevel.HasValue ? zoomLevel.Value : 9);
+		}
+
+		/// <summary>
+		/// A unit's marker ("u{unitId}", Type 1) at its latest location ping, or at its status location when the ping has
+		/// expired or the status is newer; Marker is null when it has no current position. Timestamp is the source's time.
+		/// </summary>
+		private static (MapMakerInfoData Marker, DateTime? Timestamp) BuildUnitMarker(Unit unit, UnitsLocation latestLocation, UnitState state,
+			List<UnitType> unitTypes, int unitLocationTTL, bool allowStatusWithNoLocationToOverwrite, DateTime nowUtc)
+		{
+			MapMakerInfoData info = new MapMakerInfoData();
+			info.ImagePath = "Engine_Responding";
+			info.Id = $"u{unit.UnitId}";
+			info.Title = unit.Name;
+			info.InfoWindowContent = "";
+			info.Type = 1;
+
+			try
+			{
+				if (unitTypes != null && unitTypes.Count > 0 && !String.IsNullOrWhiteSpace(unit.Type))
+				{
+					var type = unitTypes.FirstOrDefault(x => x.Type == unit.Type);
+
+					// The lowercase asset name: the web map loads /images/Mapping/{ImagePath}.png, and the enum name
+					// ("Ambulance", "CarTwo") missed the lowercase file on case-sensitive hosts.
+					var builtInIcon = TypeIcons.BuiltInIconName(type);
+					if (builtInIcon != null)
+						info.ImagePath = builtInIcon;
+
+					info.IconUrl = TypeIcons.ApiIconUrl(Config.SystemBehaviorConfig.ResgridApiBaseUrl, type);
+				}
+
+				var markerSource = MappingMarkerSelection.Select(latestLocation?.Timestamp, state?.Timestamp, () => state?.HasLocation() == true,
+					unitLocationTTL, allowStatusWithNoLocationToOverwrite, nowUtc);
+				if (markerSource == MappingMarkerSource.LocationPing)
+				{
+					info.Latitude = (double)latestLocation.Latitude;
+					info.Longitude = (double)latestLocation.Longitude;
+					return (info, AsUtc(latestLocation.Timestamp));
+				}
+				else if (markerSource == MappingMarkerSource.Status)
+				{
+					info.Latitude = (double)state.Latitude.Value;
+					info.Longitude = (double)state.Longitude.Value;
+					return (info, AsUtc(state.Timestamp));
+				}
+			}
+			catch { }
+
+			return (null, null);
+		}
+
+		/// <summary>
+		/// A person's marker ("p{userId}", Type 3) titled <paramref name="title"/>, at their latest location ping or their
+		/// status location under the same rules as a unit; Marker is null when they have no current position.
+		/// </summary>
+		private static (MapMakerInfoData Marker, DateTime? Timestamp) BuildPersonMarker(UserGroupRole person, string title, PersonnelLocation latestLocation,
+			ActionLog state, Dictionary<int, PersonnelRole> rolesById, int personnelLocationTTL, bool allowStatusWithNoLocationToOverwrite, DateTime nowUtc)
+		{
+			MapMakerInfoData info = new MapMakerInfoData();
+
+			info.ImagePath = "Person_RespondingCall";
+			info.Id = $"p{person.UserId}";
+			info.Title = title;
+			info.InfoWindowContent = "";
+			info.Type = 3;
+
+			try
+			{
+				info.IconUrl = TypeIcons.ApiIconUrl(Config.SystemBehaviorConfig.ResgridApiBaseUrl,
+					TypeIcons.MapIconRole(person.RoleList.Where(rolesById.ContainsKey).Select(id => rolesById[id])));
+
+				var markerSource = MappingMarkerSelection.Select(latestLocation?.Timestamp, state?.Timestamp, () => state?.HasLocation() == true,
+					personnelLocationTTL, allowStatusWithNoLocationToOverwrite, nowUtc);
+				if (markerSource == MappingMarkerSource.LocationPing)
+				{
+					info.Latitude = (double)latestLocation.Latitude;
+					info.Longitude = (double)latestLocation.Longitude;
+					return (info, AsUtc(latestLocation.Timestamp));
+				}
+				else if (markerSource == MappingMarkerSource.Status)
+				{
+					var location = state.GetCoordinates();
+					info.Latitude = location.Latitude.Value;
+					info.Longitude = location.Longitude.Value;
+					return (info, AsUtc(state.Timestamp));
+				}
+			}
+			catch { }
+
+			return (null, null);
+		}
+
+		// Location and status times are stored as UTC but can come back from the document store as Unspecified; without a
+		// "Z" on the wire a browser would read them as local time.
+		private static DateTime AsUtc(DateTime timestamp) =>
+			timestamp.Kind == DateTimeKind.Unspecified ? DateTime.SpecifyKind(timestamp, DateTimeKind.Utc) : timestamp.ToUniversalTime();
 
 		/// <summary>
 		/// Gets the user created map layers in the system.

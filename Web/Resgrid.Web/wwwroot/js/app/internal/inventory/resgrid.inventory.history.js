@@ -14,13 +14,13 @@ var resgrid;
                     ajax: { url: resgrid.absoluteBaseUrl + '/User/Inventory/GetInventoryList', dataSrc: '' },
                     pageLength: 50,
                     columns: [
-                        { data: 'Type', title: strings.type },
+                        { data: 'Type', title: strings.type, render: resgrid.textCell },
                         { data: 'Amount', title: strings.amount },
-                        { data: 'Group', title: strings.group },
-                        { data: 'Unit', title: strings.unit },
-                        { data: 'Batch', title: strings.batch },
+                        { data: 'Group', title: strings.group, render: resgrid.textCell },
+                        { data: 'Unit', title: strings.unit, render: resgrid.textCell },
+                        { data: 'Batch', title: strings.batch, render: resgrid.textCell },
                         { data: 'Timestamp', title: strings.timestamp },
-                        { data: 'UserName', title: strings.addedBy },
+                        { data: 'UserName', title: strings.addedBy, render: resgrid.textCell },
                         {
                             data: 'InventoryId', title: strings.actions, orderable: false,
                             render: function (data) {

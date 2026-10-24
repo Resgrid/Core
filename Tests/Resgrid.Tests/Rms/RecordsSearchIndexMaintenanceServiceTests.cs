@@ -84,11 +84,11 @@ namespace Resgrid.Tests.Rms
 			result.Errors.Should().Be(0);
 			_indexer.Verify(i => i.DeleteDepartmentAsync(Dept, It.IsAny<CancellationToken>()), Times.Once);
 			_indexer.Verify(i => i.CommitAsync(It.IsAny<CancellationToken>()), Times.Once);
-			_indexed.Should().OnlyContain(d => d.Generation == "1.3.7" && d.Narrative.StartsWith("narrative of "));
+			_indexed.Should().OnlyContain(d => d.Generation == RecordsSearchGeneration.Compute(3, 7) && d.Narrative.StartsWith("narrative of "));
 
 			_savedStates.Select(s => (RmsSearchIndexBuildState)s.State).Should().Equal(RmsSearchIndexBuildState.Rebuilding, RmsSearchIndexBuildState.Ready);
 			var final = _savedStates.Last();
-			final.Generation.Should().Be("1.3.7");
+			final.Generation.Should().Be(RecordsSearchGeneration.Compute(3, 7));
 			final.SchemaVersion.Should().Be(RecordsSearchGeneration.SchemaVersion);
 			final.ProtectedCatalogVersion.Should().Be(3);
 			final.PolicyEpoch.Should().Be(7);
@@ -100,7 +100,7 @@ namespace Resgrid.Tests.Rms
 		public async Task Matching_generation_catches_up_modified_rows_and_removes_soft_deleted_ones()
 		{
 			var since = new DateTime(2026, 9, 1);
-			_states.Setup(s => s.GetAsync(Dept, RmsSearchIndexState.RecordsIndexName)).ReturnsAsync(new RmsSearchIndexState { DepartmentId = Dept, IndexName = RmsSearchIndexState.RecordsIndexName, Generation = "1.3.7", State = (int)RmsSearchIndexBuildState.Ready, LastIndexedModifiedOn = since });
+			_states.Setup(s => s.GetAsync(Dept, RmsSearchIndexState.RecordsIndexName)).ReturnsAsync(new RmsSearchIndexState { DepartmentId = Dept, IndexName = RmsSearchIndexState.RecordsIndexName, Generation = RecordsSearchGeneration.Compute(3, 7), State = (int)RmsSearchIndexBuildState.Ready, LastIndexedModifiedOn = since });
 			var deleted = Projection("rec-9", new DateTime(2026, 9, 3));
 			deleted.DeletedOn = DateTime.UtcNow;
 			_projections.SetupSequence(p => p.GetModifiedSinceAsync(Dept, since.AddSeconds(-1), It.IsAny<int>(), It.IsAny<string>())).ReturnsAsync(new[] { Projection("rec-5", new DateTime(2026, 9, 2)), deleted });
@@ -120,13 +120,13 @@ namespace Resgrid.Tests.Rms
 		[Test]
 		public async Task A_changed_generation_or_a_failed_state_forces_a_rebuild()
 		{
-			_states.Setup(s => s.GetAsync(Dept, RmsSearchIndexState.RecordsIndexName)).ReturnsAsync(new RmsSearchIndexState { DepartmentId = Dept, IndexName = RmsSearchIndexState.RecordsIndexName, Generation = "1.2.7", State = (int)RmsSearchIndexBuildState.Ready });
+			_states.Setup(s => s.GetAsync(Dept, RmsSearchIndexState.RecordsIndexName)).ReturnsAsync(new RmsSearchIndexState { DepartmentId = Dept, IndexName = RmsSearchIndexState.RecordsIndexName, Generation = RecordsSearchGeneration.Compute(2, 7), State = (int)RmsSearchIndexBuildState.Ready });
 			_projections.Setup(p => p.QueryAsync(Dept, It.IsAny<RmsRecordQuery>())).ReturnsAsync(new RmsRecordSearchProjection[0]);
 
 			(await _service.SweepAsync()).DepartmentsRebuilt.Should().Be(1, "the catalog version moved from 2 to 3");
 
 			_savedStates.Clear();
-			_states.Setup(s => s.GetAsync(Dept, RmsSearchIndexState.RecordsIndexName)).ReturnsAsync(new RmsSearchIndexState { DepartmentId = Dept, IndexName = RmsSearchIndexState.RecordsIndexName, Generation = "1.3.7", State = (int)RmsSearchIndexBuildState.Failed });
+			_states.Setup(s => s.GetAsync(Dept, RmsSearchIndexState.RecordsIndexName)).ReturnsAsync(new RmsSearchIndexState { DepartmentId = Dept, IndexName = RmsSearchIndexState.RecordsIndexName, Generation = RecordsSearchGeneration.Compute(3, 7), State = (int)RmsSearchIndexBuildState.Failed });
 			(await _service.SweepAsync()).DepartmentsRebuilt.Should().Be(1, "a failed build is retried");
 		}
 
@@ -173,7 +173,7 @@ namespace Resgrid.Tests.Rms
 				SearchConfig.IndexBatchSize = 50;
 				var stamp = new DateTime(2026, 9, 2);
 				_states.Setup(s => s.GetAsync(Dept, RmsSearchIndexState.RecordsIndexName)).ReturnsAsync(new RmsSearchIndexState
-				{ DepartmentId = Dept, IndexName = RmsSearchIndexState.RecordsIndexName, Generation = "1.3.7", State = (int)RmsSearchIndexBuildState.Ready, LastIndexedModifiedOn = stamp });
+				{ DepartmentId = Dept, IndexName = RmsSearchIndexState.RecordsIndexName, Generation = RecordsSearchGeneration.Compute(3, 7), State = (int)RmsSearchIndexBuildState.Ready, LastIndexedModifiedOn = stamp });
 				var rows = Enumerable.Range(0, 101).Select(i => Projection("rec-" + i.ToString("D3"), stamp)).ToList();
 				rows.Last().DeletedOn = stamp;
 				_projections.Setup(p => p.GetModifiedSinceAsync(Dept, It.IsAny<DateTime?>(), It.IsAny<int>(), It.IsAny<string>()))
@@ -193,7 +193,7 @@ namespace Resgrid.Tests.Rms
 		public async Task Failed_index_commit_does_not_advance_database_checkpoint_and_next_sweep_replays_the_tombstone()
 		{
 			var stamp = new DateTime(2026, 9, 2);
-			var state = new RmsSearchIndexState { DepartmentId = Dept, IndexName = RmsSearchIndexState.RecordsIndexName, Generation = "1.3.7", State = (int)RmsSearchIndexBuildState.Ready, LastIndexedModifiedOn = stamp };
+			var state = new RmsSearchIndexState { DepartmentId = Dept, IndexName = RmsSearchIndexState.RecordsIndexName, Generation = RecordsSearchGeneration.Compute(3, 7), State = (int)RmsSearchIndexBuildState.Ready, LastIndexedModifiedOn = stamp };
 			_states.Setup(s => s.GetAsync(Dept, RmsSearchIndexState.RecordsIndexName)).ReturnsAsync(() => Clone(state));
 			var deleted = Projection("purged", stamp.AddMinutes(1)); deleted.DeletedOn = deleted.ModifiedOn;
 			_projections.Setup(p => p.GetModifiedSinceAsync(Dept, It.IsAny<DateTime?>(), It.IsAny<int>(), It.IsAny<string>())).ReturnsAsync(new[] { deleted });

@@ -112,6 +112,32 @@ namespace Resgrid.Tests.Search
 		}
 
 		[Test]
+		public async Task Emailed_call_nature_is_projected_as_plain_text()
+		{
+			// Inbound e-mail stores the message HTML as the nature; the search page encodes what it shows, so tags left in
+			// the projection appeared as literal "<div dir="ltr">" text in every result.
+			var call = Call();
+			call.NatureOfCall = "<div dir=\"ltr\">Just a test!<div><br></div><div>Shawn</div></div>";
+			call.Notes = "<style>p { color: red; }</style><p>Second &amp; third</p>";
+
+			var p = await _service.BuildCallAsync(call);
+
+			p.Summary.Should().Be("Just a test! Shawn · Fire");
+			p.SearchText.Should().Contain("Just a test! Shawn").And.Contain("Second & third").And.NotContain("<").And.NotContain("color");
+		}
+
+		[Test]
+		public async Task Contact_and_document_rich_text_is_projected_as_plain_text()
+		{
+			var contact = await _service.BuildContactAsync(new Contact { ContactId = "c1", DepartmentId = 7, FirstName = "Ada", LastName = "Lovelace", Description = "<p>Alarm <b>panel</b> in lobby</p>", OtherInfo = "<ul><li>Knox box</li></ul>" });
+			contact.Summary.Should().Be("Alarm panel in lobby");
+			contact.SearchText.Should().Contain("Knox box").And.NotContain("<");
+
+			var document = await _service.BuildDocumentAsync(new Document { DocumentId = 4, DepartmentId = 7, Name = "SOP", Description = "<p>Hose <i>testing</i></p>", AddedOn = new DateTime(2026, 1, 1) });
+			document.Summary.Should().Be("Hose testing");
+		}
+
+		[Test]
 		public async Task Messages_carry_sender_and_recipients_for_query_scoping()
 		{
 			var p = await _service.BuildMessageAsync(new Message

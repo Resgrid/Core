@@ -97,9 +97,9 @@
     <script>
         var osmTileUrl = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(mapConfig.TileUrl, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
         var osmTileAttribution = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(mapConfig.Attribution, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
-        var routeStops = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Stops.OrderBy(s => s.StopOrder).Select(s => new { s.Name, lat = s.Latitude, lng = s.Longitude })));
-        var routeGeometry = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Plan.MapboxRouteGeometry ?? ""));
-        var routeColor = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Plan.RouteColor ?? "#3388ff"));
+        var routeStops = @Html.ScriptJson(Model.Stops.OrderBy(s => s.StopOrder).Select(s => new { s.Name, lat = s.Latitude, lng = s.Longitude }));
+        var routeGeometry = @Html.ScriptJson(Model.Plan.MapboxRouteGeometry ?? "");
+        var routeColor = @Html.ScriptJson(Model.Plan.RouteColor ?? "#3388ff");
     </script>
     <script src="~/js/app/internal/routes/resgrid.routes.view.js"></script>
 }

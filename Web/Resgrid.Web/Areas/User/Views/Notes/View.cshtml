@@ -52,7 +52,7 @@
                         </h1>
                     </div>
                     <p>
-                        @Html.Raw(Model.Note.Body)
+                        @Html.SanitizedHtml(Model.Note.Body)
                     </p>
                     <hr>
                     <div class="row">

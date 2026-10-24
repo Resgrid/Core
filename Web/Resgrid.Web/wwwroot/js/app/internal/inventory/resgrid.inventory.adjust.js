@@ -44,7 +44,7 @@ var resgrid;
                     if (data && $.isArray(data)) {
                         resetUnits();
                         $.each(data, function (index, value) {
-                            $('#UnitId').append('<option value="' + data[index].UnitId + '">' + data[index].Name + '</option>');
+                            $('#UnitId').append('<option value="' + data[index].UnitId + '">' + resgrid.escapeHtml(data[index].Name) + '</option>');
                         });
                     }
                 }).fail(function () {

@@ -476,12 +476,12 @@ Content-Type: application/scim+json
 
 @section Scripts {
     <script>
-        var deleteConfirmTemplate = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(localizer["SsoDeleteConfirmMessage"].Value));
-        var rotateConfirmMsg = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(localizer["SsoScimTokenModalRotateConfirm"].Value));
-        var provisionConfirmMsg = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(localizer["SsoScimTokenModalProvisionConfirm"].Value));
-        var provisionLabel = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(localizer["SsoScimProvisionTokenButton"].Value));
-        var rotateLabel = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(localizer["SsoScimRotateTokenButton"].Value));
-        var newScimConfigId = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.NewScimConfigId ?? ""));
+        var deleteConfirmTemplate = @Html.ScriptJson(localizer["SsoDeleteConfirmMessage"].Value);
+        var rotateConfirmMsg = @Html.ScriptJson(localizer["SsoScimTokenModalRotateConfirm"].Value);
+        var provisionConfirmMsg = @Html.ScriptJson(localizer["SsoScimTokenModalProvisionConfirm"].Value);
+        var provisionLabel = @Html.ScriptJson(localizer["SsoScimProvisionTokenButton"].Value);
+        var rotateLabel = @Html.ScriptJson(localizer["SsoScimRotateTokenButton"].Value);
+        var newScimConfigId = @Html.ScriptJson(Model.NewScimConfigId ?? "");
 
         function confirmDelete(id, provider) {
             document.getElementById('deleteConfirmText').textContent =

@@ -136,6 +136,36 @@ namespace Resgrid.Tests.Security.Audit20261005
 		}
 
 		[Test]
+		public async Task Saving_unit_seats_announces_the_crew_change_once_after_every_seat_is_saved()
+		{
+			var order = new List<string>();
+			M<IUnitsService>().Setup(x => x.GetRoleByIdAsync(5)).ReturnsAsync(new UnitRole { UnitRoleId = 5, UnitId = UnitId, Name = "Driver" });
+			M<IUnitsService>().Setup(x => x.GetRoleByIdAsync(6)).ReturnsAsync(new UnitRole { UnitRoleId = 6, UnitId = UnitId, Name = "Officer" });
+			M<IUnitsService>().Setup(x => x.SaveActiveRoleAsync(It.IsAny<UnitActiveRole>(), It.IsAny<CancellationToken>()))
+				.Callback<UnitActiveRole, CancellationToken>((r, _) => order.Add(r.Role)).ReturnsAsync((UnitActiveRole r, CancellationToken _) => r);
+			M<IUnitsService>().Setup(x => x.NotifyActiveRolesUpdatedAsync(DepartmentId, UnitId)).Callback(() => order.Add("notify")).Returns(Task.CompletedTask);
+			M<IDepartmentsService>().Setup(x => x.GetAllMembersForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<DepartmentMember>
+			{
+				new DepartmentMember { DepartmentId = DepartmentId, UserId = "member-1" },
+				new DepartmentMember { DepartmentId = DepartmentId, UserId = "member-2" }
+			});
+			var input = new SetUnitRolesInput
+			{
+				UnitId = UnitId.ToString(),
+				Roles = new List<SetUnitRolesRoleInput>
+				{
+					new SetUnitRolesRoleInput { RoleId = "5", UserId = "member-1" },
+					new SetUnitRolesRoleInput { RoleId = "6", UserId = "member-2" }
+				}
+			};
+
+			await Build<UnitRolesController>().SetRoleAssignmentsForUnit(input, CancellationToken.None);
+
+			order.Should().Equal("Driver", "Officer", "notify");
+			M<IUnitsService>().Verify(x => x.NotifyActiveRolesUpdatedAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
+		}
+
+		[Test]
 		public async Task The_department_unit_roles_list_keeps_to_units_the_member_may_view()
 		{
 			M<IUnitsService>().Setup(x => x.GetUnitsForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<Unit>

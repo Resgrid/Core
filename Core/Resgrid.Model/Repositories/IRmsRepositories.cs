@@ -14,7 +14,15 @@ namespace Resgrid.Model.Repositories
 	{
 		public IList<int> States { get; set; }
 		public string DefinitionKey { get; set; }
+		/// <summary>
+		/// A numbering year of the department: IRecordsService turns it into <see cref="OccurredFrom"/>/<see cref="OccurredBefore"/>
+		/// (department-local, a fiscal year when one is set) so it keeps the records whose numbers name it. Read directly by the
+		/// repository only when no window is set, as the UTC calendar year.
+		/// </summary>
 		public int? Year { get; set; }
+		/// <summary>Half-open UTC window [OccurredFrom, OccurredBefore) on COALESCE(OccurredOn, RecordCreatedOn).</summary>
+		public DateTime? OccurredFrom { get; set; }
+		public DateTime? OccurredBefore { get; set; }
 		/// <summary>Lower bound on COALESCE(FinalizedOn, OccurredOn, RecordCreatedOn): a report window belongs in the
 		/// query, never after the page has been cut, or matching Records fall off the end without any warning.</summary>
 		public DateTime? OccurredSince { get; set; }
@@ -193,7 +201,10 @@ namespace Resgrid.Model.Repositories
 		Task<RmsRecordSearchProjection> GetByRecordIdAsync(int departmentId, string recordId);
 		Task<IEnumerable<RmsRecordSearchProjection>> QueryAsync(int departmentId, RmsRecordQuery query);
 		Task<int> CountAsync(int departmentId, RmsRecordQuery query);
+		/// <summary>UTC calendar years of COALESCE(OccurredOn, RecordCreatedOn), newest first.</summary>
 		Task<IEnumerable<int>> GetYearsAsync(int departmentId);
+		/// <summary>The years of <paramref name="windows"/> that COALESCE(OccurredOn, RecordCreatedOn) of a live projection falls in, newest first.</summary>
+		Task<IEnumerable<int>> GetNumberingYearsAsync(int departmentId, IReadOnlyList<NumberingYearWindow> windows);
 		/// <summary>Projections (including soft-deleted ones) modified after <paramref name="since"/>, oldest first; the search index catch-up feed.</summary>
 		/// <summary>
 		/// Rows after the (ModifiedOn, id) cursor, oldest first. The id is part of the cursor because several rows
@@ -278,7 +289,8 @@ namespace Resgrid.Model.Repositories
 	{
 		Task<bool> TryBumpRowVersionAsync(int departmentId, string requestId, long expectedVersion, CancellationToken cancellationToken = default);
 		Task<RmsDisclosureRequest> GetByIdForDepartmentAsync(int departmentId, string requestId);
-		Task<IEnumerable<RmsDisclosureRequest>> GetForDepartmentAsync(int departmentId, IEnumerable<int> states, int skip, int take);
+		/// <summary>Oldest deadline first; <paramref name="number"/> (optional) is part of the request number as issued (IdentifierSearchKeys.ContainsParts).</summary>
+		Task<IEnumerable<RmsDisclosureRequest>> GetForDepartmentAsync(int departmentId, IEnumerable<int> states, string number, int skip, int take);
 		Task<int> CountByStateAsync(int departmentId, RmsDisclosureState state);
 		/// <summary>Open requests past their statutory due date; the number an officer is accountable for.</summary>
 		Task<int> CountOverdueAsync(int departmentId, DateTime utcNow);

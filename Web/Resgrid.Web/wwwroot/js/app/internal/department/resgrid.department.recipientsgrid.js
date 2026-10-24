@@ -15,11 +15,11 @@ var resgrid;
                         groups[item.Type].push(item);
                     });
                     $.each(groups, function (type, items) {
-                        $grid.append('<div class="list-group-header"><strong>' + type + '</strong></div>');
+                        $grid.append('<div class="list-group-header"><strong>' + resgrid.escapeHtml(type) + '</strong></div>');
                         $.each(items, function (j, item) {
                             $grid.append(
-                                '<a href="#" class="list-group-item recipient-item" data-id="' + item.Id + '" data-name="' + item.Name + '" data-type="' + item.Type + '">' +
-                                item.Name + '</a>'
+                                '<a href="#" class="list-group-item recipient-item" data-id="' + resgrid.escapeHtml(item.Id) + '" data-name="' + resgrid.escapeHtml(item.Name) + '" data-type="' + resgrid.escapeHtml(item.Type) + '">' +
+                                resgrid.escapeHtml(item.Name) + '</a>'
                             );
                         });
                     });

@@ -72,12 +72,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Invoicing_View)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public async Task<ActionResult<InvoicesResult>> GetInvoices(int? status = null, string contactId = null, int skip = 0, int take = 50)
+		public async Task<ActionResult<InvoicesResult>> GetInvoices(int? status = null, string contactId = null, int skip = 0, int take = 50, string number = null)
 		{
 			if (!await EnabledAsync())
 				return NotFound();
 
-			var filter = new InvoiceListFilter { Statuses = status.HasValue ? new[] { status.Value } : null, ContactId = contactId, Skip = Math.Max(0, skip), Take = Math.Clamp(take, 1, 200) };
+			var filter = new InvoiceListFilter { Statuses = status.HasValue ? new[] { status.Value } : null, ContactId = contactId, Number = IdentifierSearchKeys.FilterSearch(number), Skip = Math.Max(0, skip), Take = Math.Clamp(take, 1, 200) };
 			var invoices = await _invoicing.GetInvoicesForDepartmentAsync(DepartmentId, filter);
 			var names = await ContactNamesAsync(invoices.Select(x => x.ContactId));
 

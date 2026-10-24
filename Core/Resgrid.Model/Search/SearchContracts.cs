@@ -67,10 +67,11 @@ namespace Resgrid.Model.Search
 	{
 		/// <summary>
 		/// Bump when GlobalSearchDocumentBuilder or the projection allowlist changes. 3: call notes in the call full text.
+		/// 4: number keys of the keywords (department-formatted call, invoice and bid numbers by any part).
 		/// A bump blanks every department's results until its own rebuild runs (hits must carry the current generation), so
 		/// changes that only add rows go through a backfill instead (the M0261 call history backfill).
 		/// </summary>
-		public const int SchemaVersion = 3;
+		public const int SchemaVersion = 4;
 
 		public static string Compute(int protectedCatalogVersion, long policyEpoch)
 		{

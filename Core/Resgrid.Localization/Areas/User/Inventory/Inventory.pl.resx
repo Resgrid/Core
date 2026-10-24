@@ -589,6 +589,14 @@
   <data name="M5ReportIssuance" xml:space="preserve"><value>Historia wydań inwentarza</value></data>
   <data name="M5ReportValuation" xml:space="preserve"><value>Wycena zapasów</value></data>
   <data name="M5ReportControlledSubstanceLog" xml:space="preserve"><value>Rejestr substancji kontrolowanych</value></data>
+  <data name="M5ReportSummaryOnHand" xml:space="preserve"><value>Bieżące zapasy i zasoby z numerami seryjnymi w każdej lokalizacji, którą możesz wyświetlić, z partią, numerem seryjnym, stanem i datą ważności.</value></data>
+  <data name="M5ReportSummaryUsage" xml:space="preserve"><value>Zapasy zużyte lub odpisane w wybranym okresie, wraz ze zgłoszeniem lub raportem, w którym je wykorzystano.</value></data>
+  <data name="M5ReportSummaryExpiration" xml:space="preserve"><value>Zapasy i zasoby, których termin ważności upływa w wybranym okresie, w tym pozycje już przeterminowane i liczba dni do upływu ważności.</value></data>
+  <data name="M5ReportSummaryLowStock" xml:space="preserve"><value>Aktywne pozycje na poziomie punktu ponownego zamówienia lub stanu minimalnego albo poniżej, z niedoborem i ilością do zamówienia.</value></data>
+  <data name="M5ReportSummaryTransferHistory" xml:space="preserve"><value>Przesunięcia zapasów między lokalizacjami w wybranym okresie, z osobą wykonującą każde przesunięcie i ewentualnymi stornami.</value></data>
+  <data name="M5ReportSummaryIssuance" xml:space="preserve"><value>Sprzęt wydany personelowi lub jednostkom w wybranym okresie, z ilościami zwróconymi i pozostającymi do zwrotu.</value></data>
+  <data name="M5ReportSummaryValuation" xml:space="preserve"><value>Bieżąca wartość zapasów według pozycji i lokalizacji na podstawie zarejestrowanych kosztów jednostkowych, z sumami dla każdej waluty.</value></data>
+  <data name="M5ReportSummaryControlledSubstanceLog" xml:space="preserve"><value>Każdy ruch substancji kontrolowanych w wybranym okresie, z ilościami przed i po, świadkiem i oświadczeniem.</value></data>
   <data name="M5DaysUntilExpiry" xml:space="preserve"><value>Dni do upływu ważności</value></data>
   <data name="M5Shortfall" xml:space="preserve"><value>Brakująca ilość do progu ponownego zamówienia</value></data>
   <data name="M5ReorderQuantity" xml:space="preserve"><value>Sugerowana ilość do ponownego zamówienia</value></data>

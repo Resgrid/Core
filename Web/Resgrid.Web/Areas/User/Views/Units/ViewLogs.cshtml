@@ -78,7 +78,7 @@
                                 {
                                     <tr>
                                         <td>@log.Timestamp.TimeConverterToString(Model.Department)</td>
-                                        <td data-adp-field="unitlogs.narrative:@log.UnitLogId">@Html.Raw(log.Narrative)</td>
+                                        <td data-adp-field="unitlogs.narrative:@log.UnitLogId">@Html.SanitizedHtml(log.Narrative)</td>
                                     </tr>
                                 }
                             </tbody>

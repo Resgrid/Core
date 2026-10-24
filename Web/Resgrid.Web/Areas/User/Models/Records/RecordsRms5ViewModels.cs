@@ -163,6 +163,8 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public Dictionary<string, string> OccupancyNames { get; set; } = new Dictionary<string, string>();
 		public int? State { get; set; }
 		public string ProgramId { get; set; }
+		/// <summary>The inspection number filter as applied.</summary>
+		public string Number { get; set; }
 		public int Page { get; set; } = 1;
 		public int PageSize { get; set; } = 50;
 		public List<RmsViolation> OpenViolations { get; set; } = new List<RmsViolation>();
@@ -268,6 +270,8 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public int? State { get; set; }
 		public string PermitTypeId { get; set; }
 		public bool ExpiringOnly { get; set; }
+		/// <summary>The permit number filter as applied.</summary>
+		public string Number { get; set; }
 		public int Page { get; set; } = 1;
 		public int PageSize { get; set; } = 50;
 		public List<SelectListItem> States => RmsEnumDisplay.Items<RmsPermitState>(State, false);
@@ -382,6 +386,8 @@ namespace Resgrid.Web.Areas.User.Models.Records
 	{
 		public List<RmsInvestigationCase> Cases { get; set; } = new List<RmsInvestigationCase>();
 		public bool IncludeClosed { get; set; }
+		/// <summary>The case or evidence number filter as applied.</summary>
+		public string Number { get; set; }
 	}
 
 	public class RecordInvestigationOpenView : RecordsPreventionBaseView

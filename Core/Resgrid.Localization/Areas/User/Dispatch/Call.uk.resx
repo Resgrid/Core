@@ -1071,17 +1071,8 @@
   <data name="NearestUnitsPick" xml:space="preserve">
     <value>Направити</value>
   </data>
-  <data name="NearestPersonnelLabel" xml:space="preserve">
-    <value>Найближчий персонал</value>
-  </data>
-  <data name="NearestPersonnelPerson" xml:space="preserve">
-    <value>Особа</value>
-  </data>
   <data name="NearestPersonnelStaffing" xml:space="preserve">
     <value>Укомплектування</value>
-  </data>
-  <data name="NearestPersonnelGroupRoles" xml:space="preserve">
-    <value>Група / ролі</value>
   </data>
   <data name="NearestUnitsNearest" xml:space="preserve">
     <value>Найближчий №{0}</value>
@@ -1101,7 +1092,19 @@
   <data name="NearestUnitsMapBoundaries" xml:space="preserve">
     <value>Межі станцій</value>
   </data>
-  <data name="NearestUnitsShowingClosest" xml:space="preserve">
-    <value>Показано {0} найближчих із {1}. Списки відправлення нижче містять усіх, найближчі першими.</value>
+  <data name="UngroupedUnitsTab" xml:space="preserve">
+    <value>Незгруповані підрозділи</value>
+  </data>
+  <data name="NearestUnitsLoadFailed" xml:space="preserve">
+    <value>Не вдалося завантажити підрозділи. Перезавантажте сторінку, щоб спробувати ще раз.</value>
+  </data>
+  <data name="NearestUnitsShowOnMap" xml:space="preserve">
+    <value>Показати цю позицію та виклик на карті</value>
+  </data>
+  <data name="NearestUnitsPositionTitle" xml:space="preserve">
+    <value>{0}: позиція</value>
+  </data>
+  <data name="NearestUnitsCallLocation" xml:space="preserve">
+    <value>Місце виклику</value>
   </data>
 </root>

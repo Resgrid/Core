@@ -54,6 +54,7 @@
   <data name="BidExpired" xml:space="preserve"><value>Angebot abgelaufen</value></data>
   <data name="BidLine" xml:space="preserve"><value>Angebotsposition</value></data>
   <data name="BidNumber" xml:space="preserve"><value>Angebot Nr.</value></data>
+  <data name="Filter" xml:space="preserve"><value>Filtern</value></data>
   <data name="BidScheduleHelp" xml:space="preserve"><value>Positionen übernehmen ihren Satz beim Hinzufügen aus diesem Tarifplan.</value></data>
   <data name="BidSent" xml:space="preserve"><value>Angebot gesendet</value></data>
   <data name="BidStatusAccepted" xml:space="preserve"><value>Angenommen</value></data>

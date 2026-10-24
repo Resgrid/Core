@@ -121,6 +121,46 @@ namespace Resgrid.Tests.Rms
 		}
 
 		[Test]
+		public async Task Department_number_formats_match_by_any_part_however_typed()
+		{
+			await _indexer.IndexAsync(new[]
+			{
+				Source(Projection(5, "fmt-1", "RUN26-0001", "Chimney fire", RmsRecordState.Finalized, "a1", groups: "11", participants: "", occurred: new DateTime(2026, 2, 1), definition: RmsDefinitionKeys.Run)),
+				Source(Projection(5, "fmt-2", "2026.0042", "Lift assist", RmsRecordState.Finalized, "a1", groups: "11", participants: "", occurred: new DateTime(2026, 2, 2), definition: RmsDefinitionKeys.Run)),
+				Source(Projection(5, "fmt-3", "TRN_2026_0007", "Ladder drill", RmsRecordState.Finalized, "a1", groups: "11", participants: "", occurred: new DateTime(2026, 2, 3), definition: RmsDefinitionKeys.Training))
+			});
+			await _indexer.CommitAsync();
+
+			async Task<List<string>> Find(string text) => (await _search.SearchAsync(5, new RecordsSearchRequest { Text = text })).Hits.Select(h => h.SourceId).ToList();
+
+			(await Find("RUN26-0001")).Should().Equal("fmt-1");
+			(await Find("run26-1")).Should().Equal(new[] { "fmt-1" }, "the sequence without its zero padding");
+			(await Find("RUN-26-0001")).Should().Equal(new[] { "fmt-1" }, "separators typed where the pattern has none");
+			(await Find("RUN")).Should().Equal(new[] { "fmt-1" }, "the type prefix alone, though the analyzer keeps RUN26 as one word");
+			(await Find("0042")).Should().Equal(new[] { "fmt-2" }, "the sequence alone, though the analyzer keeps 2026.0042 as one word");
+			(await Find("2026-42")).Should().Equal("fmt-2");
+			(await Find("TRN 2026 7")).Should().Equal(new[] { "fmt-3" }, "'_' joins TRN_2026_0007 into one word for the analyzer");
+			(await Find("trn_2026")).Should().Equal("fmt-3");
+			(await Find("2026")).Should().BeEquivalentTo(new[] { "fmt-2", "fmt-3" }, "RUN26 names its year with two digits");
+			(await Find("2026-43")).Should().BeEmpty();
+		}
+
+		[Test]
+		public async Task A_numbering_year_window_takes_the_place_of_the_calendar_year()
+		{
+			// A fiscal year starting 1 November 2025 (FY2026 named by the year it ends in): rec-3 (December 2025) and rec-1 (March 2026)
+			// are in it, rec-2 (May 2026) is not; the calendar year 2026 would have kept rec-1 and rec-2.
+			var fiscal = await _search.SearchAsync(1, new RecordsSearchRequest
+			{
+				Year = 2026, OccurredFrom = new DateTime(2025, 11, 1, 0, 0, 0, DateTimeKind.Utc), OccurredBefore = new DateTime(2026, 4, 1, 0, 0, 0, DateTimeKind.Utc)
+			});
+
+			fiscal.Hits.Select(h => h.SourceId).Should().Equal("rec-1", "rec-3");
+			fiscal.Total.Should().Be(2);
+			(await _search.SearchAsync(1, new RecordsSearchRequest { Year = 2026 })).Hits.Select(h => h.SourceId).Should().Equal("rec-2", "rec-1");
+		}
+
+		[Test]
 		public async Task Narrative_is_searchable_only_when_supplied_and_withdrawn_on_reindex_without_it()
 		{
 			(await _search.SearchAsync(1, new RecordsSearchRequest { Text = "hydrant" })).Hits.Select(h => h.SourceId).Should().Equal("rec-1");

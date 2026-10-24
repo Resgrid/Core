@@ -15,13 +15,13 @@ var resgrid;
                     pageLength: 50,
                     order: [[0, 'asc']],
                     columns: [
-                        { data: 'Unit', title: strings.unit },
-                        { data: 'Type', title: strings.type },
+                        { data: 'Unit', title: strings.unit, render: resgrid.textCell },
+                        { data: 'Type', title: strings.type, render: resgrid.textCell },
                         { data: 'Amount', title: strings.amount },
-                        { data: 'Group', title: strings.group },
-                        { data: 'Batch', title: strings.batch },
+                        { data: 'Group', title: strings.group, render: resgrid.textCell },
+                        { data: 'Batch', title: strings.batch, render: resgrid.textCell },
                         { data: 'Timestamp', title: strings.timestamp },
-                        { data: 'UserName', title: strings.addedBy },
+                        { data: 'UserName', title: strings.addedBy, render: resgrid.textCell },
                         {
                             data: 'InventoryId', title: strings.actions, orderable: false,
                             render: function (data) {

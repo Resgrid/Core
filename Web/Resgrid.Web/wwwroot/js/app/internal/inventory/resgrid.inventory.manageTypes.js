@@ -13,7 +13,7 @@ var resgrid;
                     ajax: { url: resgrid.absoluteBaseUrl + '/User/Inventory/GetTypesList', dataSrc: '' },
                     pageLength: 50,
                     columns: [
-                        { data: 'Name', title: strings.name },
+                        { data: 'Name', title: strings.name, render: resgrid.textCell },
                         { data: 'ExpiresDays', title: strings.expiresDays },
                         {
                             data: 'TypeId', title: strings.actions, orderable: false,

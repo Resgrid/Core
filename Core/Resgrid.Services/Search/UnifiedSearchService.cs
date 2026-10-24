@@ -449,21 +449,32 @@ namespace Resgrid.Services.Search
 				catch { /* stored by us; a parse failure only loses badges */ }
 			}
 
+			// Rows projected before the builders stripped markup still carry the HTML of e-mailed calls and rich-text notes;
+			// hits are plain text (the page and the palette encode them), so the tags would show as literal text.
+			var summary = PlainText(hit.Summary);
 			return new UnifiedSearchHit
 			{
 				EntityType = hit.EntityType,
 				EntityId = hit.EntityId,
 				Title = hit.Title,
-				Summary = hit.Summary,
+				Summary = summary,
 				Url = hit.Url,
 				Score = score,
 				OccurredOn = hit.OccurredOn,
 				Category = hit.Category,
 				Status = hit.Status,
 				Snippet = snippetTerms == null || snippetTerms.Count == 0 ? null
-					: SearchSnippets.Build(hit.SearchText, snippetTerms) ?? SearchSnippets.Build(hit.Summary, snippetTerms),
+					: SearchSnippets.Build(PlainText(hit.SearchText), snippetTerms) ?? SearchSnippets.Build(summary, snippetTerms),
 				Metadata = metadata
 			};
+		}
+
+		private static string PlainText(string text)
+		{
+			if (string.IsNullOrEmpty(text) || (text.IndexOf('<') < 0 && text.IndexOf('&') < 0))
+				return text;
+			var plain = StringHelpers.HtmlToPlainText(text);
+			return plain.Length == 0 ? null : plain;
 		}
 
 		private async Task<(List<UnifiedSearchHit> hits, int? total)> FederateRecordsAsync(string text, SearchAccess access, int window, CancellationToken cancellationToken)

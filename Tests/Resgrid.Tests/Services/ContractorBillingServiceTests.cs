@@ -90,7 +90,7 @@ namespace Resgrid.Tests.Services
 			documents.Setup(r => r.GetExpiringAsync(It.IsAny<DateTime>())).ReturnsAsync((DateTime asOf) => _documents.Where(d => !d.IsDeleted && d.ExpiresOn.HasValue && d.ExpiresOn <= asOf.AddDays(d.AlertLeadDays)).ToList());
 			var bids = Repo<IBidRepository, Bid>(_bids, b => b.BidId, (b, id) => b.BidId = id);
 			bids.Setup(r => r.GetByIdForDepartmentAsync(It.IsAny<string>(), DeptId)).ReturnsAsync((string id, int _) => _bids.FirstOrDefault(b => b.BidId == id));
-			bids.Setup(r => r.GetForDepartmentAsync(DeptId, It.IsAny<int?>(), It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync((int _, int? status, int __, int ___) => _bids.Where(b => !b.IsDeleted && (!status.HasValue || b.Status == status)).ToList());
+			bids.Setup(r => r.GetForDepartmentAsync(DeptId, It.IsAny<int?>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync((int _, int? status, string number, int __, int ___) => _bids.Where(b => !b.IsDeleted && (!status.HasValue || b.Status == status) && (number == null || IdentifierSearchKeys.ContainsParts(b.NumberText(), number))).ToList());
 			bids.Setup(r => r.GetByContactIdAsync(DeptId, It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync((int _, string contactId, int __, int ___) => _bids.Where(b => b.ContactId == contactId && !b.IsDeleted).ToList());
 			bids.Setup(r => r.GetByContractAsync(It.IsAny<string>())).ReturnsAsync((string contractId) => _bids.Where(b => b.ServiceContractId == contractId && !b.IsDeleted).ToList());
 			bids.Setup(r => r.GetExpiryCandidatesAsync(It.IsAny<DateTime>())).ReturnsAsync((DateTime asOf) => _bids.Where(b => b.Status == (int)BidStatuses.Submitted && b.ValidUntil < asOf).ToList());

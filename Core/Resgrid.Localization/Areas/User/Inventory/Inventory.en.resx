@@ -648,6 +648,14 @@
   <data name="M5ReportIssuance" xml:space="preserve"><value>Inventory issuance history</value></data>
   <data name="M5ReportValuation" xml:space="preserve"><value>Inventory valuation</value></data>
   <data name="M5ReportControlledSubstanceLog" xml:space="preserve"><value>Controlled substance log</value></data>
+  <data name="M5ReportSummaryOnHand" xml:space="preserve"><value>Current stock and serialized assets at each location you can view, with batch, serial number, status and expiration.</value></data>
+  <data name="M5ReportSummaryUsage" xml:space="preserve"><value>Inventory consumed or written off during a date range, with the call or record that used it.</value></data>
+  <data name="M5ReportSummaryExpiration" xml:space="preserve"><value>Stock and assets expiring within a date range, including already expired items and days until expiry.</value></data>
+  <data name="M5ReportSummaryLowStock" xml:space="preserve"><value>Active items at or below their reorder point or minimum level, with the shortfall and reorder quantity.</value></data>
+  <data name="M5ReportSummaryTransferHistory" xml:space="preserve"><value>Stock transfers between locations during a date range, with who performed each move and any reversals.</value></data>
+  <data name="M5ReportSummaryIssuance" xml:space="preserve"><value>Equipment issued to personnel or units during a date range, with returned and outstanding quantities.</value></data>
+  <data name="M5ReportSummaryValuation" xml:space="preserve"><value>Current inventory value by item and location from recorded unit costs, totaled per currency.</value></data>
+  <data name="M5ReportSummaryControlledSubstanceLog" xml:space="preserve"><value>Every controlled substance movement during a date range, with before and after quantities, witness and attestation.</value></data>
   <data name="M5DaysUntilExpiry" xml:space="preserve"><value>Days until expiration</value></data>
   <data name="M5Shortfall" xml:space="preserve"><value>Quantity below reorder point</value></data>
   <data name="M5ReorderQuantity" xml:space="preserve"><value>Suggested reorder quantity</value></data>

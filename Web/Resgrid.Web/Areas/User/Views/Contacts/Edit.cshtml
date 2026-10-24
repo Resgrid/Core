@@ -162,7 +162,7 @@
                                 <input type="hidden" asp-for="Contact.Description">
 
                                 <div id="description-container" style="width:100%; height: 300px;">
-                                    @Html.Raw(Model.Contact.Description)
+                                    @Html.SanitizedHtml(Model.Contact.Description)
                                 </div>
                             </div>
                         </div>
@@ -172,7 +172,7 @@
                                 <input type="hidden" asp-for="Contact.OtherInfo">
 
                                 <div id="otherInfo-container" style="width:100%; height: 300px;">
-                                    @Html.Raw(Model.Contact.OtherInfo)
+                                    @Html.SanitizedHtml(Model.Contact.OtherInfo)
                                 </div>
                             </div>
                         </div>

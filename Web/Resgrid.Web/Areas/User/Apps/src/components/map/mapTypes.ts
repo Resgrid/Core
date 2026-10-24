@@ -124,6 +124,10 @@ export interface MapRendererProps {
   hideLabels: boolean;
   resolvedMapConfig: ResolvedMapConfig;
   fitBoundsKey: string;
+  /** Closest zoom a fit to the markers may reach; the renderer's own default when unset. */
+  fitMaxZoom?: number;
+  /** Re-fit to every marker when one moves outside the visible map, so a moving crew never drifts off screen. */
+  keepMarkersInView?: boolean;
 }
 
 const defaultPoiMarkerShape = 'MAP_PIN';

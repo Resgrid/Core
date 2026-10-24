@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Lucene.Net.Documents;
+using Resgrid.Model;
 using Resgrid.Model.Search;
 using Document = Lucene.Net.Documents.Document;
 
@@ -47,6 +48,8 @@ namespace Resgrid.Search
 				doc.Add(new TextField(GlobalIndexFields.KeywordsPrefix, p.Keywords, Field.Store.NO));
 				foreach (var keyword in SplitKeywords(p.Keywords))
 					doc.Add(new StringField(GlobalIndexFields.KeywordExact, keyword, Field.Store.NO));
+				foreach (var key in NumberKeys(p.Keywords))
+					doc.Add(new StringField(GlobalIndexFields.KeywordKeys, key, Field.Store.NO));
 			}
 			if (!string.IsNullOrWhiteSpace(p.Category))
 				doc.Add(new StringField(GlobalIndexFields.Category, p.Category, Field.Store.YES));
@@ -79,6 +82,21 @@ namespace Resgrid.Search
 				if (trimmed.Length > 0)
 					yield return trimmed;
 			}
+		}
+
+		/// <summary>
+		/// The IdentifierSearchKeys of every keyword holding a digit: department-formatted numbers (call, invoice, bid...) by any
+		/// part, however they were typed. Names and other words carry no number and are left to the text fields.
+		/// </summary>
+		public static IEnumerable<string> NumberKeys(string keywords)
+		{
+			var keys = new HashSet<string>(StringComparer.Ordinal);
+			foreach (var keyword in SplitKeywords(keywords))
+			{
+				if (IdentifierSearchKeys.HasDigit(keyword))
+					keys.UnionWith(IdentifierSearchKeys.For(keyword));
+			}
+			return keys;
 		}
 
 		/// <summary>Keywords are separated by whitespace or commas; each becomes one lower-cased exact term.</summary>

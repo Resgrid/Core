@@ -54,6 +54,7 @@
   <data name="BidExpired" xml:space="preserve"><value>Έληξε προσφορά</value></data>
   <data name="BidLine" xml:space="preserve"><value>Γραμμή προσφοράς</value></data>
   <data name="BidNumber" xml:space="preserve"><value>Προσφορά αρ.</value></data>
+  <data name="Filter" xml:space="preserve"><value>Φίλτρο</value></data>
   <data name="BidScheduleHelp" xml:space="preserve"><value>Οι γραμμές παίρνουν την τιμή τους από αυτόν τον τιμοκατάλογο κατά την προσθήκη.</value></data>
   <data name="BidSent" xml:space="preserve"><value>Απεστάλη προσφορά</value></data>
   <data name="BidStatusAccepted" xml:space="preserve"><value>Αποδεκτή</value></data>

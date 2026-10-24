@@ -113,7 +113,7 @@
         var boundsSW = [@(Model.Floor.BoundsSWLat ?? Model.IndoorMap.BoundsSWLat), @(Model.Floor.BoundsSWLon ?? Model.IndoorMap.BoundsSWLon)];
         var centerLat = @Model.IndoorMap.CenterLatitude;
         var centerLon = @Model.IndoorMap.CenterLongitude;
-        var existingZones = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Zones ?? new System.Collections.Generic.List<Resgrid.Model.IndoorMapZone>()));
+        var existingZones = @Html.ScriptJson(Model.Zones ?? new System.Collections.Generic.List<Resgrid.Model.IndoorMapZone>());
         var saveZoneUrl = '@Url.Action("SaveZone", "IndoorMaps", new { area = "User" })';
         var deleteZoneUrl = '@Url.Action("DeleteZone", "IndoorMaps", new { area = "User" })';
     </script>

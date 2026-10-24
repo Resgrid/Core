@@ -1,6 +1,7 @@
 import './styles/base.css';
 import { defineReactElement, type PropDefinition } from './runtime/customElement';
 import type { MapElementProps } from './components/map/MapElement';
+import type { UnitMapElementProps } from './components/unitMap/UnitMapElement';
 import type { ShiftsCalendarElementProps } from './components/shifts/ShiftsCalendarElement';
 import type { OmnibarElementProps } from './components/omnibar/OmnibarElement';
 import type { ChatPanelElementProps } from './components/chat/ChatPanelElement';
@@ -35,6 +36,23 @@ defineReactElement<MapElementProps>(
   'rg-map',
   () => import('./components/map/MapElement'),
   mapProps,
+);
+
+defineReactElement<UnitMapElementProps>(
+  'rg-unit-map',
+  () => import('./components/unitMap/UnitMapElement'),
+  [
+    { attribute: 'unitid', property: 'unitId', type: 'number' },
+    { attribute: 'departmentid', property: 'departmentId', type: 'number' },
+    { attribute: 'mapheight', property: 'mapHeight', type: 'string', defaultValue: '600px' },
+    { attribute: 'strings', property: 'strings', type: 'json', defaultValue: {} },
+    { attribute: 'leafletosmurl', property: 'leafletOsmUrl', type: 'string' },
+    { attribute: 'mapattribution', property: 'mapAttribution', type: 'string', defaultValue: '' },
+    { attribute: 'mapprovider', property: 'mapProvider', type: 'string', defaultValue: '' },
+    { attribute: 'mapstyleurl', property: 'mapStyleUrl', type: 'string', defaultValue: '' },
+    { attribute: 'mapaccesstoken', property: 'mapAccessToken', type: 'string', defaultValue: '' },
+    { attribute: 'mapconfig', property: 'mapConfig', type: 'json' },
+  ],
 );
 
 defineReactElement<ShiftsCalendarElementProps>(

@@ -538,4 +538,46 @@
   <data name="RoleTemplatesRequiredNote" xml:space="preserve">
     <value>* = مقترح كشرط إلزامي (يمنع الأعضاء غير المؤهلين) عند وجود دور الأفراد المطابق.</value>
   </data>
+  <data name="UnitMapHeader" xml:space="preserve">
+    <value>خريطة</value>
+  </data>
+  <data name="UnitMap" xml:space="preserve">
+    <value>الخريطة</value>
+  </data>
+  <data name="UnitMapCrew" xml:space="preserve">
+    <value>الطاقم</value>
+  </data>
+  <data name="UnitMapUnitPosition" xml:space="preserve">
+    <value>موقع الوحدة</value>
+  </data>
+  <data name="UnitMapNoUnitPosition" xml:space="preserve">
+    <value>لا تُبلغ هذه الوحدة عن موقعها، لذلك تُضبط الخريطة على طاقمها.</value>
+  </data>
+  <data name="UnitMapNoPositions" xml:space="preserve">
+    <value>لا يوجد موقع حالي لهذه الوحدة ولا لطاقمها.</value>
+  </data>
+  <data name="UnitMapNoCrew" xml:space="preserve">
+    <value>لم يُعيَّن أحد لأدوار هذه الوحدة.</value>
+  </data>
+  <data name="UnitMapNoLocation" xml:space="preserve">
+    <value>لا يوجد موقع حالي</value>
+  </data>
+  <data name="UnitMapLocatedAt" xml:space="preserve">
+    <value>تم تحديد الموقع {0}</value>
+  </data>
+  <data name="UnitMapKeepInView" xml:space="preserve">
+    <value>إبقاء الطاقم ضمن العرض</value>
+  </data>
+  <data name="UnitMapFitMap" xml:space="preserve">
+    <value>ملاءمة الخريطة</value>
+  </data>
+  <data name="UnitMapLastUpdate" xml:space="preserve">
+    <value>آخر تحديث: {0}</value>
+  </data>
+  <data name="UnitMapLoadError" xml:space="preserve">
+    <value>تعذّر تحميل خريطة الوحدة.</value>
+  </data>
+  <data name="UnitMapNotFound" xml:space="preserve">
+    <value>لم يتم العثور على هذه الوحدة، أو لا تملك صلاحية عرضها.</value>
+  </data>
 </root>

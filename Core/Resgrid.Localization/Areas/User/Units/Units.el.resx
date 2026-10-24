@@ -538,4 +538,46 @@
   <data name="RoleTemplatesRequiredNote" xml:space="preserve">
     <value>* = προτείνεται ως αυστηρή απαίτηση (αποκλείει μη πιστοποιημένα μέλη) όταν υπάρχει ο αντίστοιχος ρόλος προσωπικού.</value>
   </data>
+  <data name="UnitMapHeader" xml:space="preserve">
+    <value>Χάρτης για</value>
+  </data>
+  <data name="UnitMap" xml:space="preserve">
+    <value>Χάρτης</value>
+  </data>
+  <data name="UnitMapCrew" xml:space="preserve">
+    <value>Πλήρωμα</value>
+  </data>
+  <data name="UnitMapUnitPosition" xml:space="preserve">
+    <value>Θέση μονάδας</value>
+  </data>
+  <data name="UnitMapNoUnitPosition" xml:space="preserve">
+    <value>Αυτή η μονάδα δεν αναφέρει θέση, οπότε ο χάρτης προσαρμόζεται στο πλήρωμά της.</value>
+  </data>
+  <data name="UnitMapNoPositions" xml:space="preserve">
+    <value>Ούτε αυτή η μονάδα ούτε το πλήρωμά της έχουν τρέχουσα θέση.</value>
+  </data>
+  <data name="UnitMapNoCrew" xml:space="preserve">
+    <value>Κανείς δεν έχει ανατεθεί στους ρόλους αυτής της μονάδας.</value>
+  </data>
+  <data name="UnitMapNoLocation" xml:space="preserve">
+    <value>Καμία τρέχουσα τοποθεσία</value>
+  </data>
+  <data name="UnitMapLocatedAt" xml:space="preserve">
+    <value>Εντοπίστηκε {0}</value>
+  </data>
+  <data name="UnitMapKeepInView" xml:space="preserve">
+    <value>Διατήρηση του πληρώματος σε προβολή</value>
+  </data>
+  <data name="UnitMapFitMap" xml:space="preserve">
+    <value>Προσαρμογή χάρτη</value>
+  </data>
+  <data name="UnitMapLastUpdate" xml:space="preserve">
+    <value>Τελευταία ενημέρωση: {0}</value>
+  </data>
+  <data name="UnitMapLoadError" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η φόρτωση του χάρτη της μονάδας.</value>
+  </data>
+  <data name="UnitMapNotFound" xml:space="preserve">
+    <value>Αυτή η μονάδα δεν βρέθηκε ή δεν έχετε δικαίωμα να τη δείτε.</value>
+  </data>
 </root>

@@ -167,7 +167,7 @@
                                 <input type="hidden" asp-for="Call.NatureOfCall">
 
                                 <div id="nature-container" style="width:100%; height: 300px;">
-                                    @Html.Raw(Model.Call.NatureOfCall)
+                                    @Html.SanitizedHtml(Model.Call.NatureOfCall)
                                 </div>
                             </div>
                         </div>
@@ -179,7 +179,7 @@
                                     <input type="hidden" asp-for="Call.Notes">
 
                                     <div id="note-container" style="width:100%; height: 300px;">
-                                        @Html.Raw(Model.Call.Notes)
+                                        @Html.SanitizedHtml(Model.Call.Notes)
                                     </div>
                                 </div>
                             </div>
@@ -530,17 +530,17 @@
         var _alertNoteIndex = 0;
 
         function buildNoteHtml(note) {
-            var bgStyle = note.TypeColor ? ' style="background-color:' + note.TypeColor + '"' : '';
+            var bgStyle = note.TypeColor ? ' style="background-color:' + resgrid.escapeHtml(note.TypeColor) + '"' : '';
             return '<div class="note-card">' +
                 '<div class="ibox">' +
                 '<div class="ibox-content"' + bgStyle + '>' +
                 '<div class="row"><div class="col-md-12">' +
-                '<h4 class="note-title">' + (note.TypeName ? note.TypeName : '') + '</h4>' +
+                '<h4 class="note-title">' + resgrid.escapeHtml(note.TypeName) + '</h4>' +
                 '<p class="small text-muted">' +
-                '<i class="fa fa-clock-o"></i> ' + note.AddedOn +
-                (note.AddedBy ? ' | <i class="fa fa-user"></i> ' + note.AddedBy : '') +
+                '<i class="fa fa-clock-o"></i> ' + resgrid.escapeHtml(note.AddedOn) +
+                (note.AddedBy ? ' | <i class="fa fa-user"></i> ' + resgrid.escapeHtml(note.AddedBy) : '') +
                 '</p></div></div>' +
-                '<div class="row"><div class="col-md-12 note-content">' + note.Note + '</div></div>' +
+                '<div class="row"><div class="col-md-12 note-content">' + (note.Note || '') + '</div></div>' +
                 '</div></div></div>';
         }
 

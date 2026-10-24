@@ -1,0 +1,15 @@
+@*
+    The unit dispatch lists on New Call and Update Call, filled by resgrid.dispatch.nearestboard.js from one load of the
+    department's units: "Units" lists every unit, then "Ungrouped Units" and a tab per station are added for the units
+    there. Every unit's dispatch box (dispatchUnit_{id}, what the form posts) sits once in #dispatchUnitInputs; the boxes in
+    the tables are copies of it, so a unit ticked on one tab is ticked on all of them.
+*@
+<ul class="nav nav-tabs" role="tablist" id="unitDispatchTabs">
+    <li role="presentation" class="active"><a href="#unitsTabAll" aria-controls="unitsTabAll" role="tab" data-toggle="tab">@commonLocalizer["Units"]</a></li>
+</ul>
+<div class="tab-content" id="unitDispatchTabContent">
+    <div role="tabpanel" class="tab-pane active" id="unitsTabAll">
+        <table id="unitsGrid" class="table table-striped table-bordered table-hover table-condensed" width="100%"></table>
+    </div>
+</div>
+<div id="dispatchUnitInputs" style="display: none;"></div>

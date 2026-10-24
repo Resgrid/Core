@@ -130,9 +130,9 @@
     (function () {
         var readOnly = @(canEdit ? "false" : "true");
         var rows = @Html.Raw(Model.ComponentsJson ?? "[]");
-        var categories = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Enum.GetValues(typeof(ResourceCostCategories)).Cast<ResourceCostCategories>().Select(c => new { v = (int)c, t = localizer["ResourceCategory" + c].Value })));
-        var bases = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Enum.GetValues(typeof(ResourceCostBases)).Cast<ResourceCostBases>().Select(c => new { v = (int)c, t = localizer["ResourceBasis" + c].Value })));
-        var sources = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Enum.GetValues(typeof(ResourceCostSources)).Cast<ResourceCostSources>().Select(c => new { v = (int)c, t = localizer["ResourceSource" + c].Value })));
+        var categories = @Html.ScriptJson(Enum.GetValues(typeof(ResourceCostCategories)).Cast<ResourceCostCategories>().Select(c => new { v = (int)c, t = localizer["ResourceCategory" + c].Value }));
+        var bases = @Html.ScriptJson(Enum.GetValues(typeof(ResourceCostBases)).Cast<ResourceCostBases>().Select(c => new { v = (int)c, t = localizer["ResourceBasis" + c].Value }));
+        var sources = @Html.ScriptJson(Enum.GetValues(typeof(ResourceCostSources)).Cast<ResourceCostSources>().Select(c => new { v = (int)c, t = localizer["ResourceSource" + c].Value }));
         function select(name, options, value) { var s = $('<select class="form-control input-sm"></select>').attr('data-f', name); options.forEach(function (o) { s.append($('<option></option>').val(o.v).text(o.t).prop('selected', o.v == value)); }); return s; }
         function input(name, value, ph) { return $('<input class="form-control input-sm" type="text" />').attr('data-f', name).attr('placeholder', ph || '').val(value == null ? '' : value); }
         function row(c) {

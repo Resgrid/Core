@@ -54,6 +54,10 @@ namespace Resgrid.Search
 				doc.Add(new StringField(RecordsIndexFields.CallId, p.CallId.Value.ToString(), Field.Store.YES));
 			if (!string.IsNullOrWhiteSpace(p.CallNumber))
 				doc.Add(new TextField(RecordsIndexFields.CallNumber, p.CallNumber, Field.Store.YES));
+			var numberKeys = new HashSet<string>(IdentifierSearchKeys.For(p.RecordNumber), StringComparer.Ordinal);
+			numberKeys.UnionWith(IdentifierSearchKeys.For(p.CallNumber));
+			foreach (var key in numberKeys)
+				doc.Add(new StringField(RecordsIndexFields.NumberKeys, key, Field.Store.NO));
 			if (!string.IsNullOrWhiteSpace(p.DisplaySummary))
 				doc.Add(new TextField(RecordsIndexFields.Summary, p.DisplaySummary, Field.Store.YES));
 			if (!string.IsNullOrWhiteSpace(p.SearchText))

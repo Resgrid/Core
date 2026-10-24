@@ -96,6 +96,8 @@ namespace Resgrid.Model.Repositories
 		public IList<int> States { get; set; }
 		public string InspectorUserId { get; set; }
 		public DateTime? ScheduledBefore { get; set; }
+		/// <summary>Part of the inspection number as issued, in the department's format (IdentifierSearchKeys.ContainsParts).</summary>
+		public string Number { get; set; }
 		public int Skip { get; set; }
 		public int Take { get; set; } = 50;
 	}
@@ -170,6 +172,8 @@ namespace Resgrid.Model.Repositories
 		public string PermitTypeId { get; set; }
 		public IList<int> States { get; set; }
 		public DateTime? ExpiresBefore { get; set; }
+		/// <summary>Part of the permit number as issued, in the department's format (IdentifierSearchKeys.ContainsParts).</summary>
+		public string Number { get; set; }
 		public int Skip { get; set; }
 		public int Take { get; set; } = 50;
 	}
@@ -269,6 +273,8 @@ namespace Resgrid.Model.Repositories
 	{
 		Task<RmsInvestigationEvidence> GetByIdForDepartmentAsync(int departmentId, string evidenceId);
 		Task<IEnumerable<RmsInvestigationEvidence>> GetForCaseAsync(int departmentId, string caseId);
+		/// <summary>The cases among <paramref name="caseIds"/> holding live evidence whose number holds <paramref name="number"/> (IdentifierSearchKeys.ContainsParts).</summary>
+		Task<IEnumerable<string>> GetCaseIdsWithEvidenceNumberAsync(int departmentId, IEnumerable<string> caseIds, string number);
 	}
 
 	public interface IRmsInvestigationCustodyRepository : IRepository<RmsInvestigationCustody>

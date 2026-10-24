@@ -198,7 +198,7 @@ namespace Resgrid.Web.Areas.User.Controllers
             var d = await AccessibleAsync(id);
             if (d == null) return NotFound();
             // Explicit projection excludes protected notes, document bytes and ORM metadata.
-            var time = (await _time.GetTimeReportsWithEntriesAsync(id, DepartmentId)).Select(report => new { report.ReportNumber, report.ReportDate, report.Status,
+            var time = (await _time.GetTimeReportsWithEntriesAsync(id, DepartmentId)).Select(report => new { report.ReportNumber, Number = report.NumberText(), report.ReportDate, report.Status,
                 Entries = report.Entries.Select(e => new { e.SubjectType, e.SubjectId, e.EntryType, e.StartTime, e.EndTime, e.Hours, e.MileageKm }) }).ToList();
             var expenses = await _time.GetExpensesAsync(id, DepartmentId);
             var data = new

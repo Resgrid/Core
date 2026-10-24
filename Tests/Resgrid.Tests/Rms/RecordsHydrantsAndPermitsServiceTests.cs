@@ -102,6 +102,26 @@ namespace Resgrid.Tests.Rms
 		}
 
 		[Test]
+		public async Task The_permit_list_filters_by_a_department_formatted_number()
+		{
+			// The department's own pattern (Records Settings, Other record numbers) writes HW26-0007; any way of typing it finds it.
+			_h.NumberingConfig = new RecordsNumberingConfig();
+			_h.NumberingConfig.DocumentPatterns.Add(new DocumentNumberPattern { Kind = DocumentNumberKinds.Permit, Pattern = "HW{YY}-{SEQ}", SequenceWidth = 4 });
+			var yy = (DateTime.UtcNow.Year % 100).ToString("D2");
+			var occupancy = _h.SeedOccupancy();
+			foreach (var description in new[] { "Welding", "Grinding" })
+				await _h.PermitsService.ApplyAsync(Dept, Admin, new RmsPermit { RmsPermitTypeId = _hotWork.RmsPermitTypeId, RmsOccupancyId = occupancy.RmsOccupancyId, ApplicantName = "Sam", Description = description });
+
+			async Task<List<string>> Find(string number) => (await _h.PermitsService.ListAsync(Dept, Admin, new RmsPermitQuery { Number = number })).Select(p => p.PermitNumber).ToList();
+
+			(await Find($"hw-{yy}-0002")).Should().Equal($"HW{yy}-0002");
+			(await Find("0001")).Should().Equal($"HW{yy}-0001");
+			(await Find($"HW{yy}")).Should().HaveCount(2);
+			(await Find("PRM")).Should().BeEmpty("the built-in prefix is not what this department issues");
+			(await _h.PermitsService.CountAsync(Dept, Admin, new RmsPermitQuery { Number = "0002" })).Should().Be(1);
+		}
+
+		[Test]
 		public async Task A_permit_moves_through_review_issue_and_expiry_with_dates_from_its_type()
 		{
 			var occupancy = _h.SeedOccupancy();

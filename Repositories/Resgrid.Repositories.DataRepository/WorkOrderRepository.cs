@@ -51,6 +51,8 @@ namespace Resgrid.Repositories.DataRepository
 			if (filter.AssignedToMe) conditions.Add(AssignmentScope());
 			foreach (var item in new[] { (filter.Status.HasValue, "Status", "Status"), (filter.Priority.HasValue, "Priority", "Priority"), (filter.UnitId.HasValue, "TargetUnitId", "UnitId"), (filter.GroupId.HasValue, "TargetGroupId", "GroupId"), (filter.AssetId != null, "InventoryAssetId", "AssetId"), (filter.ChecklistCompletionId != null, "SourceChecklistCompletionId", "ChecklistCompletionId") })
 				if (item.Item1) conditions.Add(Col(item.Item2) + "=" + P + item.Item3);
+			var number = NumberContains(Col("DisplayNumber"), filter.Number, parameters);
+			if (number != null) conditions.Add(number);
 			return (await QueryAsync<WorkOrder>($"SELECT {Cols(Columns<WorkOrder>())} FROM {Tbl("WorkOrders")} WHERE {string.Join(" AND ", conditions)} ORDER BY {Col("NumberYear")} DESC,{Col("NumberSequence")} DESC {Paging()}", parameters, default)).ToList();
 		}
 		private string AssignmentScope()

@@ -93,6 +93,7 @@ function fitMapToMarkers(
   map: L.Map,
   markers: Map<string, MarkerState>,
   mapData: MapRendererProps['mapData'],
+  maxZoom?: number,
 ) {
   if (!mapData) {
     return;
@@ -109,6 +110,7 @@ function fitMapToMarkers(
     if (bounds.isValid()) {
       map.fitBounds(bounds, {
         padding: [24, 24],
+        ...(maxZoom !== undefined ? { maxZoom } : {}),
       });
       return;
     }
@@ -125,11 +127,16 @@ export default function LeafletMapView({
   hideLabels,
   resolvedMapConfig,
   fitBoundsKey,
+  fitMaxZoom,
+  keepMarkersInView = false,
 }: MapRendererProps) {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<L.Map | null>(null);
   const markerRefs = useRef<Map<string, MarkerState>>(new Map());
   const layerRefs = useRef<Map<string, L.GeoJSON>>(new Map());
+  // Read by the keep-in-view re-fit, which must not re-run when only the map data changes.
+  const mapDataRef = useRef(mapData);
+  mapDataRef.current = mapData;
 
   useEffect(() => {
     if (!mapContainerRef.current || resolvedMapConfig.tileUrl.length === 0) {
@@ -175,6 +182,7 @@ export default function LeafletMapView({
     }
 
     const activeMarkerIds = new Set(markers.map((marker) => marker.Id));
+    let markerLeftView = false;
 
     markerRefs.current.forEach((markerState, markerId) => {
       if (!activeMarkerIds.has(markerId)) {
@@ -228,16 +236,26 @@ export default function LeafletMapView({
         existingMarkerState.marker.setLatLng([markerInfo.Latitude, markerInfo.Longitude]);
         existingMarkerState.latitude = markerInfo.Latitude;
         existingMarkerState.longitude = markerInfo.Longitude;
+
+        if (keepMarkersInView && !map.getBounds().contains([markerInfo.Latitude, markerInfo.Longitude])) {
+          markerLeftView = true;
+        }
       }
     }
-  }, [hideLabels, markers]);
+
+    // Only a move that leaves the view re-fits, so a viewer who zoomed in on part of the crew keeps that view.
+    if (markerLeftView) {
+      fitMapToMarkers(map, markerRefs.current, mapDataRef.current, fitMaxZoom);
+    }
+  }, [fitMaxZoom, hideLabels, keepMarkersInView, markers]);
 
   useEffect(() => {
     if (!mapRef.current) {
       return;
     }
 
-    fitMapToMarkers(mapRef.current, markerRefs.current, mapData);
+    // fitMaxZoom only shapes the next fit; changing it alone must not move the camera.
+    fitMapToMarkers(mapRef.current, markerRefs.current, mapData, fitMaxZoom);
   }, [fitBoundsKey, mapData]);
 
   useEffect(() => {

@@ -49,12 +49,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		[HttpGet("List")]
 		[Authorize(Policy = ResgridResources.Record_View)]
-		public async Task<ActionResult<PermitsResult>> List(string occupancyId = null, string permitTypeId = null, [FromQuery] List<int> states = null, DateTime? expiresBefore = null, int skip = 0, int take = 50)
+		public async Task<ActionResult<PermitsResult>> List(string occupancyId = null, string permitTypeId = null, [FromQuery] List<int> states = null, DateTime? expiresBefore = null, int skip = 0, int take = 50, string number = null)
 		{
 			if (!await FlagOnAsync()) return NotFound();
 			try
 			{
-				var query = new RmsPermitQuery { OccupancyId = occupancyId, PermitTypeId = permitTypeId, States = states, ExpiresBefore = expiresBefore, Skip = skip, Take = take };
+				var query = new RmsPermitQuery { OccupancyId = occupancyId, PermitTypeId = permitTypeId, States = states, ExpiresBefore = expiresBefore, Number = IdentifierSearchKeys.FilterSearch(number), Skip = skip, Take = take };
 				var r = new PermitsResult { Data = (await _permits.ListAsync(DepartmentId, UserId, query)).Select(RecordsRms5ApiMapper.ToPermit).ToList(), TotalCount = await _permits.CountAsync(DepartmentId, UserId, query) };
 				r.PageSize = r.Data.Count;
 				return Ok(Done(r));

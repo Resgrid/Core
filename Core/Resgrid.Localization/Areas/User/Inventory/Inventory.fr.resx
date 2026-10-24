@@ -589,6 +589,14 @@
   <data name="M5ReportIssuance" xml:space="preserve"><value>Historique des dotations</value></data>
   <data name="M5ReportValuation" xml:space="preserve"><value>Valorisation du stock</value></data>
   <data name="M5ReportControlledSubstanceLog" xml:space="preserve"><value>Registre des substances contrôlées</value></data>
+  <data name="M5ReportSummaryOnHand" xml:space="preserve"><value>Stock actuel et équipements sérialisés dans chaque emplacement que vous pouvez consulter, avec lot, numéro de série, statut et date d’expiration.</value></data>
+  <data name="M5ReportSummaryUsage" xml:space="preserve"><value>Inventaire consommé ou mis au rebut pendant une période, avec l’appel ou le rapport qui l’a utilisé.</value></data>
+  <data name="M5ReportSummaryExpiration" xml:space="preserve"><value>Stock et équipements arrivant à expiration pendant une période, y compris les articles déjà expirés et les jours restants avant expiration.</value></data>
+  <data name="M5ReportSummaryLowStock" xml:space="preserve"><value>Articles actifs à leur seuil de réapprovisionnement ou niveau minimum, ou en dessous, avec le manque et la quantité à commander.</value></data>
+  <data name="M5ReportSummaryTransferHistory" xml:space="preserve"><value>Transferts de stock entre emplacements pendant une période, avec l’auteur de chaque mouvement et les éventuelles annulations.</value></data>
+  <data name="M5ReportSummaryIssuance" xml:space="preserve"><value>Équipement remis au personnel ou aux unités pendant une période, avec les quantités retournées et restantes.</value></data>
+  <data name="M5ReportSummaryValuation" xml:space="preserve"><value>Valeur actuelle de l’inventaire par article et emplacement selon les coûts unitaires enregistrés, totalisée par devise.</value></data>
+  <data name="M5ReportSummaryControlledSubstanceLog" xml:space="preserve"><value>Chaque mouvement de substances contrôlées pendant une période, avec les quantités avant et après, le témoin et l’attestation.</value></data>
   <data name="M5DaysUntilExpiry" xml:space="preserve"><value>Jours avant péremption</value></data>
   <data name="M5Shortfall" xml:space="preserve"><value>Quantité manquante pour atteindre le seuil de réapprovisionnement</value></data>
   <data name="M5ReorderQuantity" xml:space="preserve"><value>Quantité de réapprovisionnement suggérée</value></data>

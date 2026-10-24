@@ -42,20 +42,18 @@
     </ol>
   </div>
   <div class="col-sm-8">
-    <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-      <div class="buttons-actions">
-        @if (ClaimsAuthorizationHelper.CanViewRoutes())
-        {
-          <a id="routesButton" class="btn btn-inverse" asp-controller="Routes" asp-action="Index" asp-route-area="User">@localizer["Routes"]</a>
-        }
-        <a title="@localizer["ArchivedCalls"]" class="btn btn-info" asp-controller="Dispatch" asp-action="ArchivedCalls" asp-route-area="User">@localizer["ArchivedCalls"]</a>
-        <a title="@callLocalizer["PendingCallsHeader"]" class="btn btn-danger" asp-controller="Dispatch" asp-action="PendingCalls" asp-route-area="User">@callLocalizer["PendingCallsHeader"] <span class="badge" id="pendingCallsCount"></span></a>
-        <a title="@localizer["ScheduledCalls"]" class="btn btn-warning" asp-controller="Dispatch" asp-action="ScheduledCalls" asp-route-area="User">@localizer["ScheduledCalls"] <span class="badge" id="scheduledCallsCount"></span></a>
-        @if (ClaimsAuthorizationHelper.CanCreateCall())
-        {
-          <a id="newCallButton" title="@localizer["NewCallHelp"]" class="btn btn-success" href="@Url.Action("NewCall", "Dispatch", new { area = "User" })">@localizer["NewCall"]</a>
-        }
-      </div>
+    <div class="btn-group top-page-buttons buttons-actions" style="float:right;padding-right:15px;">
+      @if (ClaimsAuthorizationHelper.CanViewRoutes())
+      {
+        <a id="routesButton" class="btn btn-inverse" asp-controller="Routes" asp-action="Index" asp-route-area="User">@localizer["Routes"]</a>
+      }
+      <a title="@localizer["ArchivedCalls"]" class="btn btn-info" asp-controller="Dispatch" asp-action="ArchivedCalls" asp-route-area="User">@localizer["ArchivedCalls"]</a>
+      <a title="@callLocalizer["PendingCallsHeader"]" class="btn btn-danger" asp-controller="Dispatch" asp-action="PendingCalls" asp-route-area="User">@callLocalizer["PendingCallsHeader"] <span class="badge" id="pendingCallsCount"></span></a>
+      <a title="@localizer["ScheduledCalls"]" class="btn btn-warning" asp-controller="Dispatch" asp-action="ScheduledCalls" asp-route-area="User">@localizer["ScheduledCalls"] <span class="badge" id="scheduledCallsCount"></span></a>
+      @if (ClaimsAuthorizationHelper.CanCreateCall())
+      {
+        <a id="newCallButton" title="@localizer["NewCallHelp"]" class="btn btn-success" href="@Url.Action("NewCall", "Dispatch", new { area = "User" })">@localizer["NewCall"]</a>
+      }
     </div>
   </div>
 </div>

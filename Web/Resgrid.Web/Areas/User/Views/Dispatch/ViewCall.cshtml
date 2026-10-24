@@ -285,7 +285,7 @@
                             <dl class="dl-horizontal">
                                 <dt>@localizer["CallNatureLabel"]:</dt>
                                 <dd>
-                                    <span data-adp-field="calls.natureofcall">@Html.Raw(Model.Call.NatureOfCall)</span>
+                                    <span data-adp-field="calls.natureofcall">@Html.SanitizedHtml(Model.Call.NatureOfCall)</span>
                                 </dd>
                             </dl>
                         </div>
@@ -295,7 +295,7 @@
                             <dl class="dl-horizontal">
                                 <dt>@localizer["NotesLabel"]:</dt>
                                 <dd>
-                                    <span data-adp-field="calls.notes">@Html.Raw(Model.Call.Notes)</span>
+                                    <span data-adp-field="calls.notes">@Html.SanitizedHtml(Model.Call.Notes)</span>
                                 </dd>
                             </dl>
                         </div>
@@ -305,7 +305,7 @@
                             <dl class="dl-horizontal">
                                 <dt>@localizer["CompletedNotesLabel"]:</dt>
                                 <dd>
-                                    <span data-adp-field="calls.completednotes">@Html.Raw(Model.Call.CompletedNotes)</span>
+                                    <span data-adp-field="calls.completednotes">@Html.SanitizedHtml(Model.Call.CompletedNotes)</span>
                                 </dd>
                             </dl>
                         </div>
@@ -523,7 +523,7 @@
                                                             </td>
                                                             <td>
                                                                 <p class="small">
-                                                                    @Html.Raw(al.Note)
+                                                                    @Html.SanitizedHtml(al.Note)
                                                                 </p>
                                                             </td>
                                                         </tr>
@@ -581,7 +581,7 @@
                                                             </td>
                                                             <td>
                                                                 <p class="small">
-                                                                    @Html.Raw(us.Note)
+                                                                    @Html.SanitizedHtml(us.Note)
                                                                 </p>
                                                             </td>
                                                         </tr>
@@ -906,7 +906,7 @@
                                                                 <h4><i class="fa fa-bell text-danger"></i> @localizer["AlertNotes"]</h4>
                                                                 foreach (var note in site.AlertNotes)
                                                                 {
-                                                                    <div class="alert alert-warning">@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(note.Note)</div>
+                                                                    <div class="alert alert-warning">@Html.SanitizedHtml(Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(note.Note))</div>
                                                                 }
                                                             }
                                                             @if (site.Hazards.Any())

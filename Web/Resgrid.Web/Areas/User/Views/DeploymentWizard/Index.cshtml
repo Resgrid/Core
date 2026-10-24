@@ -99,13 +99,13 @@
     <script>
         (function () {
             var ctx = @Html.Raw(Model.ContextJson);
-            var L = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(new
+            var L = @Html.ScriptJson(new
             {
                 conflict = localizer["ConflictBadge"].Value, expired = localizer["CertExpired"].Value, expiring = localizer["CertExpiring"].Value, roleMissing = localizer["RoleMissing"].Value, qualified = localizer["Qualified"].Value,
                 seat = localizer["Seat"].Value, person = localizer["Person"].Value, none = localizer["None"].Value, crew = localizer["CrewIndicator"].Value, nearestLower = localizer["NearestLowerRate"].Value,
                 equipment = localizer["Equipment"].Value, freeText = localizer["FreeTextEquipment"].Value, rateEntry = localizer["RateEntry"].Value, premiums = localizer["Premiums"].Value, perDay = localizer["EstimatedDailyCharge"].Value,
                 units = localizer["Units"].Value, personnel = localizer["Personnel"].Value, callNameRequired = localizer["bids_call_name_required"].Value, add = localizer["Add"].Value, remove = localizer["Remove"].Value
-            }));
+            });
             var state = { step: 0, units: {}, unassigned: [] };
             var entries = (ctx.schedule && ctx.schedule.entries) || [], premiums = (ctx.schedule && ctx.schedule.premiums) || [];
             function esc(v) { return (v === null || v === undefined ? '' : String(v)).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); }

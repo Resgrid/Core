@@ -385,6 +385,41 @@ namespace Resgrid.Tests.Security.Audit20261005
 			await Build<UnitsController>().UnitStaffing(new UnitStaffingView(), Form(new Dictionary<string, StringValues> { ["Role_5"] = postedUserId }), CancellationToken.None);
 
 			M<IUnitsService>().Verify(x => x.SaveActiveRoleAsync(It.Is<UnitActiveRole>(r => r.UserId == postedUserId), It.IsAny<CancellationToken>()), Times.Exactly(expectedSaves));
+			// Every unit's seats were replaced: one "several units" announcement, not one per unit.
+			M<IUnitsService>().Verify(x => x.NotifyActiveRolesUpdatedAsync(DepartmentId, 0), Times.Once);
+		}
+
+		[Test]
+		public async Task ViewMap_refuses_a_unit_the_member_may_not_view()
+		{
+			Authorization.Setup(x => x.CanUserViewUnitAsync(UserId, UnitId)).ReturnsAsync(false);
+
+			var result = await Build<UnitsController>().ViewMap(UnitId);
+
+			ShouldBeRefused(result);
+			M<IUnitsService>().Verify(x => x.GetUnitByIdAsync(It.IsAny<int>()), Times.Never);
+		}
+
+		[Test]
+		public async Task ViewMap_sends_a_deleted_unit_back_to_the_units_list()
+		{
+			Authorization.Setup(x => x.CanUserViewUnitAsync(UserId, UnitId)).ReturnsAsync(true);
+			M<IUnitsService>().Setup(x => x.GetUnitByIdAsync(UnitId)).ReturnsAsync(new Unit { UnitId = UnitId, DepartmentId = DepartmentId, IsDeleted = true });
+
+			var result = await Build<UnitsController>().ViewMap(UnitId);
+
+			result.Should().BeOfType<RedirectToActionResult>().Which.ActionName.Should().Be("Index");
+		}
+
+		[Test]
+		public async Task ViewMap_shows_a_unit_the_member_may_view()
+		{
+			Authorization.Setup(x => x.CanUserViewUnitAsync(UserId, UnitId)).ReturnsAsync(true);
+			M<IUnitsService>().Setup(x => x.GetUnitByIdAsync(UnitId)).ReturnsAsync(new Unit { UnitId = UnitId, DepartmentId = DepartmentId, Name = "Engine 1" });
+
+			var result = await Build<UnitsController>().ViewMap(UnitId);
+
+			result.Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<UnitMapView>().Which.Unit.Name.Should().Be("Engine 1");
 		}
 
 		[Test]
@@ -546,8 +581,8 @@ namespace Resgrid.Tests.Security.Audit20261005
 
 			var model = (await Build<DispatchController>().NewCall()).Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<NewCallView>().Which;
 
+			// The page lists the units' statuses from Units/GetUnitsForCallGrid, which applies the same filter.
 			model.Units.Select(u => u.UnitId).Should().Equal(1);
-			model.UnitStates.Select(s => s.UnitId).Should().Equal(1);
 			model.Contacts.Should().BeEmpty();
 			model.ContactsList.Should().BeNull();
 		}
@@ -583,6 +618,39 @@ namespace Resgrid.Tests.Security.Audit20261005
 			var map = (await Build<MappingController>().GetMapData(new MapSettingsInput { ShowUnits = true })).Should().BeOfType<JsonResult>().Which.Value.Should().BeOfType<MapDataJson>().Which;
 
 			map.Markers.Select(m => m.Title).Should().Equal("Shown");
+		}
+
+		[Test]
+		public async Task The_map_names_a_seated_members_unit_only_when_the_member_may_view_it()
+		{
+			M<IDispatchScopeService>().Setup(x => x.FilterCallsForUserAsync(DepartmentId, UserId, It.IsAny<List<Call>>())).ReturnsAsync(new List<Call>());
+			M<IActionLogsService>().Setup(x => x.GetLastActionLogsForDepartmentAsync(DepartmentId, It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>())).ReturnsAsync(new List<ActionLog>
+			{
+				new ActionLog { UserId = "SEATED", GeoLocationData = "39.5,-119.8" },
+				new ActionLog { UserId = "HIDDEN-SEAT", GeoLocationData = "39.6,-119.7" },
+				new ActionLog { UserId = "UNSEATED", GeoLocationData = "39.7,-119.6" }
+			});
+			M<IDepartmentsService>().Setup(x => x.GetAllPersonnelNamesForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<PersonName>
+			{
+				new PersonName { UserId = "seated", FirstName = "Shawn", LastName = "Jackson" },
+				new PersonName { UserId = "hidden-seat", FirstName = "Hidden", LastName = "Rider" },
+				new PersonName { UserId = "unseated", FirstName = "Pat", LastName = "Walker" }
+			});
+			M<IUnitsService>().Setup(x => x.GetUnitsForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<Unit>
+			{
+				new Unit { UnitId = 1, Name = "Engine 1" },
+				new Unit { UnitId = 2, Name = "Hidden unit" }
+			});
+			M<IUnitsService>().Setup(x => x.GetAllActiveRolesForUnitsByDepartmentIdAsync(DepartmentId)).ReturnsAsync(new List<UnitActiveRole>
+			{
+				new UnitActiveRole { UnitId = 1, UserId = "seated", Role = "Operator" },
+				new UnitActiveRole { UnitId = 2, UserId = "hidden-seat", Role = "Driver" }
+			});
+			Authorization.Setup(x => x.CanUserViewUnitViaMatrixAsync(1, UserId, DepartmentId)).ReturnsAsync(true);
+
+			var map = (await Build<MappingController>().GetMapData(new MapSettingsInput { ShowPersonnel = true })).Should().BeOfType<JsonResult>().Which.Value.Should().BeOfType<MapDataJson>().Which;
+
+			map.Markers.Select(m => m.Title).Should().Equal("Shawn Jackson (Engine 1)", "Hidden Rider", "Pat Walker");
 		}
 
 		[Test]

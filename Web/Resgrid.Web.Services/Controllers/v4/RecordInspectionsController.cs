@@ -108,12 +108,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		[HttpGet("List")]
 		[Authorize(Policy = ResgridResources.Record_View)]
-		public async Task<ActionResult<InspectionsResult>> List(string occupancyId = null, string programId = null, [FromQuery] List<int> states = null, string inspectorUserId = null, DateTime? scheduledBefore = null, int skip = 0, int take = 50)
+		public async Task<ActionResult<InspectionsResult>> List(string occupancyId = null, string programId = null, [FromQuery] List<int> states = null, string inspectorUserId = null, DateTime? scheduledBefore = null, int skip = 0, int take = 50, string number = null)
 		{
 			if (!await FlagOnAsync()) return NotFound();
 			try
 			{
-				var query = new RmsInspectionQuery { OccupancyId = occupancyId, ProgramId = programId, States = states, InspectorUserId = inspectorUserId, ScheduledBefore = scheduledBefore, Skip = skip, Take = take };
+				var query = new RmsInspectionQuery { OccupancyId = occupancyId, ProgramId = programId, States = states, InspectorUserId = inspectorUserId, ScheduledBefore = scheduledBefore, Number = IdentifierSearchKeys.FilterSearch(number), Skip = skip, Take = take };
 				var r = new InspectionsResult { Data = (await _inspections.ListAsync(DepartmentId, UserId, query)).Select(RecordsRms5ApiMapper.ToInspection).ToList(), TotalCount = await _inspections.CountAsync(DepartmentId, UserId, query) };
 				r.PageSize = r.Data.Count;
 				return Ok(Done(r));

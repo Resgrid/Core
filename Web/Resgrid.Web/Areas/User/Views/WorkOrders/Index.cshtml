@@ -63,6 +63,10 @@
                     <input type="hidden" name="ChecklistCompletionId" value="@Model.Filter.ChecklistCompletionId" />
                     <div class="rgw-grid">
                         <div class="form-group">
+                            <label for="filter-number">@localizer["Number"]</label>
+                            <input class="form-control" id="filter-number" name="Number" value="@Model.Filter.Number" maxlength="50" autocomplete="off" />
+                        </div>
+                        <div class="form-group">
                             <label for="filter-status">@localizer["Status"]</label>
                             <select class="form-control" id="filter-status" name="Status">
                                 <option value="">@localizer["All"]</option>
@@ -189,11 +193,11 @@
                     <div class="rgw-pager">
                         @if (Model.Filter.Page > 0)
                         {
-                            <a class="btn btn-default btn-sm" asp-action="Index" asp-route-page="@(Model.Filter.Page - 1)" asp-route-status="@Model.Filter.Status" asp-route-priority="@Model.Filter.Priority" asp-route-unitId="@Model.Filter.UnitId" asp-route-groupId="@Model.Filter.GroupId" asp-route-assetId="@Model.Filter.AssetId" asp-route-checklistCompletionId="@Model.Filter.ChecklistCompletionId" asp-route-assignedToMe="@Model.Filter.AssignedToMe"><i class="fa fa-chevron-left"></i> @localizer["Previous"]</a>
+                            <a class="btn btn-default btn-sm" asp-action="Index" asp-route-page="@(Model.Filter.Page - 1)" asp-route-status="@Model.Filter.Status" asp-route-priority="@Model.Filter.Priority" asp-route-unitId="@Model.Filter.UnitId" asp-route-groupId="@Model.Filter.GroupId" asp-route-assetId="@Model.Filter.AssetId" asp-route-checklistCompletionId="@Model.Filter.ChecklistCompletionId" asp-route-assignedToMe="@Model.Filter.AssignedToMe" asp-route-number="@Model.Filter.Number"><i class="fa fa-chevron-left"></i> @localizer["Previous"]</a>
                         }
                         @if (Model.Orders.HasMore)
                         {
-                            <a class="btn btn-default btn-sm" asp-action="Index" asp-route-page="@(Model.Filter.Page + 1)" asp-route-status="@Model.Filter.Status" asp-route-priority="@Model.Filter.Priority" asp-route-unitId="@Model.Filter.UnitId" asp-route-groupId="@Model.Filter.GroupId" asp-route-assetId="@Model.Filter.AssetId" asp-route-checklistCompletionId="@Model.Filter.ChecklistCompletionId" asp-route-assignedToMe="@Model.Filter.AssignedToMe">@localizer["Next"] <i class="fa fa-chevron-right"></i></a>
+                            <a class="btn btn-default btn-sm" asp-action="Index" asp-route-page="@(Model.Filter.Page + 1)" asp-route-status="@Model.Filter.Status" asp-route-priority="@Model.Filter.Priority" asp-route-unitId="@Model.Filter.UnitId" asp-route-groupId="@Model.Filter.GroupId" asp-route-assetId="@Model.Filter.AssetId" asp-route-checklistCompletionId="@Model.Filter.ChecklistCompletionId" asp-route-assignedToMe="@Model.Filter.AssignedToMe" asp-route-number="@Model.Filter.Number">@localizer["Next"] <i class="fa fa-chevron-right"></i></a>
                         }
                         <span class="text-muted">@(Model.Filter.Page + 1)</span>
                     </div>

@@ -151,6 +151,9 @@ namespace Resgrid.Services
 			if (owningUnit != null)
 				await _recordsCutoverService.Value.EnsureLegacyWriteAllowedAsync(owningUnit.DepartmentId, "UnitsService.SaveUnitLogAsync");
 
+			// Rich text the unit log views render as HTML: scripts, handlers and frames are never stored.
+			unitLog.Narrative = StringHelpers.SanitizeHtmlForStorage(unitLog.Narrative);
+
 			var saved = await _unitLogsRepository.SaveOrUpdateAsync(unitLog, cancellationToken);
 
 			// ADP write safety net (plan 4.2/19.2, catalog v9). Runs AFTER the save because the AAD
@@ -253,6 +256,7 @@ namespace Resgrid.Services
 
 			// Nobody rides a deleted unit: release its current crew. Its seat definitions, states and logs stay.
 			await _unitActiveRolesRepository.DeleteActiveRolesByUnitIdAsync(unit.UnitId, cancellationToken);
+			await NotifyActiveRolesUpdatedAsync(unit.DepartmentId, unit.UnitId);
 			if (_searchProjections != null) await _searchProjections.Value.RemoveAsync(unit.DepartmentId, SearchEntityTypes.Unit, unit.UnitId.ToString(), cancellationToken);
 			await _limitsService.InvalidateDepartmentsEntityLimitsCache(unit.DepartmentId);
 
@@ -1004,6 +1008,21 @@ namespace Resgrid.Services
 		public async Task<bool> DeleteActiveRolesForUnitAsync(int unitId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return await _unitActiveRolesRepository.DeleteActiveRolesByUnitIdAsync(unitId, cancellationToken);
+		}
+
+		public async Task NotifyActiveRolesUpdatedAsync(int departmentId, int unitId)
+		{
+			if (departmentId <= 0)
+				return;
+
+			try
+			{
+				await _eventAggregator.SendMessageAsync(new UnitActiveRolesUpdatedEvent { DepartmentId = departmentId, UnitId = unitId });
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Unit active roles update could not be published for department {departmentId}, unit {unitId}.");
+			}
 		}
 
 		public async Task<bool> IsUserQualifiedForUnitRoleAsync(UnitRole role, string userId, int departmentId)

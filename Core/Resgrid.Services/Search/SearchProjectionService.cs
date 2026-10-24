@@ -2,7 +2,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -31,9 +30,6 @@ namespace Resgrid.Services.Search
 		private const int SearchTextMax = 8000;
 		/// <summary>Calls carry their dispatch notes and every call note in the full text, so they get more room than other families.</summary>
 		private const int CallSearchTextMax = 32000;
-
-		private static readonly Regex HtmlTags = new Regex("<[^>]+>", RegexOptions.Compiled);
-		private static readonly Regex Whitespace = new Regex("\\s+", RegexOptions.Compiled);
 
 		private readonly ISearchProjectionsRepository _projections;
 		private readonly IDepartmentDataProtectionService _dataProtection;
@@ -352,7 +348,7 @@ namespace Resgrid.Services.Search
 			var number = Safe(call.Number);
 			// Name, type, address and identifiers are operational, not ADP-protected (2026-10-17): projected for every department.
 			var name = Safe(call.Name);
-			var nature = ctx.ProtectedTextAllowed ? Safe(call.NatureOfCall) : null;
+			var nature = ctx.ProtectedTextAllowed ? Strip(Safe(call.NatureOfCall)) : null;
 			var type = Safe(call.Type);
 			var address = Safe(call.Address);
 			var incident = Safe(call.IncidentNumber);
@@ -504,9 +500,9 @@ namespace Resgrid.Services.Search
 
 			var p = New(contact.DepartmentId, SearchEntityTypes.Contact, contact.ContactId, ctx);
 			p.Title = Cap(title, TitleMax);
-			p.Summary = Cap(Join(" · ", company != null && title != company ? company : null, physical, Safe(contact.Description)), SummaryMax);
+			p.Summary = Cap(Join(" · ", company != null && title != company ? company : null, physical, Strip(Safe(contact.Description))), SummaryMax);
 			p.Keywords = Cap(Join(" ", Safe(contact.Email), Digits(contact.CellPhoneNumber), Digits(contact.HomePhoneNumber), Digits(contact.OfficePhoneNumber), Digits(contact.FaxPhoneNumber)), KeywordsMax);
-			p.SearchText = Cap(Join(" ", middle, other, company, category, physical, mailing, Safe(contact.Email), Safe(contact.OtherInfo), Safe(contact.Website), notes, custom), SearchTextMax);
+			p.SearchText = Cap(Join(" ", middle, other, company, category, physical, mailing, Safe(contact.Email), Strip(Safe(contact.OtherInfo)), Safe(contact.Website), notes, custom), SearchTextMax);
 			p.Category = contact.ContactType == 1 ? "Company" : "Person";
 			p.IsActive = true;
 			p.OccurredOn = DateTime.UtcNow;
@@ -522,7 +518,7 @@ namespace Resgrid.Services.Search
 
 			var ctx = await ContextAsync(message.DepartmentId.Value);
 			var subject = ctx.ProtectedTextAllowed ? Safe(message.Subject) : null;
-			var body = ctx.ProtectedTextAllowed ? Safe(Strip(message.Body)) : null;
+			var body = ctx.ProtectedTextAllowed ? Strip(Safe(message.Body)) : null;
 
 			var recipients = new List<string>();
 			if (!string.IsNullOrWhiteSpace(message.ReceivingUserId))
@@ -552,7 +548,7 @@ namespace Resgrid.Services.Search
 			var ctx = await ContextAsync(document.DepartmentId);
 			// A document's name is operational (2026-10-17); its description and original file name stay protected text.
 			var name = Safe(document.Name);
-			var description = ctx.ProtectedTextAllowed ? Safe(document.Description) : null;
+			var description = ctx.ProtectedTextAllowed ? Strip(Safe(document.Description)) : null;
 			var filename = ctx.ProtectedTextAllowed ? Safe(document.Filename) : null;
 
 			var p = New(document.DepartmentId, SearchEntityTypes.Document, document.DocumentId.ToString(), ctx);
@@ -578,7 +574,7 @@ namespace Resgrid.Services.Search
 			// Notes are not in the protected catalog; title and body are department-authored plain text.
 			var ctx = await ContextAsync(note.DepartmentId);
 			var title = Safe(note.Title);
-			var body = Safe(Strip(note.Body));
+			var body = Strip(Safe(note.Body));
 			if (title == null && body == null)
 				return null;
 
@@ -1111,13 +1107,12 @@ namespace Resgrid.Services.Search
 			return digits.Length >= 4 ? digits : null;
 		}
 
+		/// <summary>The readable text of a rich-text column (inbound e-mail calls store the message HTML), or null when none is left.
+		/// Titles, summaries and full text are plain text: the search page encodes them, so stored tags would show as literal markup.</summary>
 		private static string Strip(string html)
 		{
-			if (string.IsNullOrWhiteSpace(html))
-				return null;
-			var text = HtmlTags.Replace(html, " ");
-			text = System.Net.WebUtility.HtmlDecode(text);
-			return Whitespace.Replace(text, " ").Trim();
+			var text = StringHelpers.HtmlToPlainText(html);
+			return text.Length == 0 ? null : text;
 		}
 
 		private static string Join(string separator, params string[] parts)

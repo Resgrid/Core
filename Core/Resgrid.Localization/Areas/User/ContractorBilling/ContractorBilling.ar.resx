@@ -54,6 +54,7 @@
   <data name="BidExpired" xml:space="preserve"><value>انتهت صلاحية العرض</value></data>
   <data name="BidLine" xml:space="preserve"><value>بند العرض</value></data>
   <data name="BidNumber" xml:space="preserve"><value>العرض رقم</value></data>
+  <data name="Filter" xml:space="preserve"><value>تصفية</value></data>
   <data name="BidScheduleHelp" xml:space="preserve"><value>تأخذ البنود سعرها من هذا الجدول عند الإضافة.</value></data>
   <data name="BidSent" xml:space="preserve"><value>تم إرسال العرض</value></data>
   <data name="BidStatusAccepted" xml:space="preserve"><value>مقبول</value></data>

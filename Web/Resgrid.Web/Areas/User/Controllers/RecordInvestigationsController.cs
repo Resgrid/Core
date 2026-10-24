@@ -47,10 +47,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private string Ip => IpAddressHelper.GetRequestIP(Request, true);
 
 		[HttpGet]
-		public async Task<IActionResult> Index(bool includeClosed = false)
+		public async Task<IActionResult> Index(bool includeClosed = false, string number = null)
 		{
 			if (!await ModuleOnAsync(Flag)) return NotFound();
-			try { return View(Prepare(new RecordInvestigationsIndexView { IncludeClosed = includeClosed, Cases = await _investigations.ListMyCasesAsync(DepartmentId, UserId, includeClosed) })); }
+			number = IdentifierSearchKeys.FilterSearch(number);
+			try { return View(Prepare(new RecordInvestigationsIndexView { IncludeClosed = includeClosed, Number = number, Cases = await _investigations.ListMyCasesAsync(DepartmentId, UserId, includeClosed, number) })); }
 			catch (UnauthorizedAccessException) { return Forbid(); }
 		}
 

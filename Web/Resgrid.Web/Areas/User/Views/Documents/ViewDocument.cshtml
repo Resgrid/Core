@@ -144,8 +144,8 @@
                 $('a[href*="GetDocument"]').on('click', function (e) {
                     e.preventDefault();
                     resgridAdpReveal.download($(this).attr('href'),
-                        @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(
-                            string.IsNullOrWhiteSpace(Model.Document.Filename) ? Model.Document.Name : Model.Document.Filename)),
+                        @Html.ScriptJson(
+                            string.IsNullOrWhiteSpace(Model.Document.Filename) ? Model.Document.Name : Model.Document.Filename),
                         function (message) { window.alert(message); });
                 });
             });

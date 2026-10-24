@@ -7,7 +7,7 @@
     <script>
         document.querySelectorAll('form.checklist-form').forEach(function (form) {
             var grant = @Html.Raw(JsonConvert.SerializeObject((string)ViewBag.ProtectedGrant, new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml }));
-            var expiry = @Html.Raw(JsonConvert.SerializeObject((DateTime?)ViewBag.GrantExpiresOn));
+            var expiry = @Html.ScriptJson((DateTime?)ViewBag.GrantExpiresOn);
             if (grant) {
                 [['__ResgridProtectedGrant', grant], ['__ResgridProtectedGrantExpiresOn', expiry]].forEach(function (pair) {
                     var field = document.createElement('input'); field.type = 'hidden'; field.name = pair[0]; field.value = pair[1] || ''; form.appendChild(field);

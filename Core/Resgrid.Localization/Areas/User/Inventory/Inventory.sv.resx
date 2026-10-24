@@ -589,6 +589,14 @@
   <data name="M5ReportIssuance" xml:space="preserve"><value>Historik över lagerutlämningar</value></data>
   <data name="M5ReportValuation" xml:space="preserve"><value>Lagervärdering</value></data>
   <data name="M5ReportControlledSubstanceLog" xml:space="preserve"><value>Journal över kontrollerade substanser</value></data>
+  <data name="M5ReportSummaryOnHand" xml:space="preserve"><value>Aktuellt lager och serienumrerade tillgångar på varje plats du kan visa, med batch, serienummer, status och utgångsdatum.</value></data>
+  <data name="M5ReportSummaryUsage" xml:space="preserve"><value>Lager som förbrukats eller skrivits av under ett datumintervall, med det larm eller den rapport som använde det.</value></data>
+  <data name="M5ReportSummaryExpiration" xml:space="preserve"><value>Lager och tillgångar som löper ut inom ett datumintervall, inklusive redan utgångna artiklar och dagar kvar till utgång.</value></data>
+  <data name="M5ReportSummaryLowStock" xml:space="preserve"><value>Aktiva artiklar på eller under sin beställningspunkt eller miniminivå, med underskott och beställningskvantitet.</value></data>
+  <data name="M5ReportSummaryTransferHistory" xml:space="preserve"><value>Lagerflyttar mellan platser under ett datumintervall, med vem som utförde varje flytt och eventuella återföringar.</value></data>
+  <data name="M5ReportSummaryIssuance" xml:space="preserve"><value>Utrustning som lämnats ut till personal eller enheter under ett datumintervall, med returnerade och utestående kvantiteter.</value></data>
+  <data name="M5ReportSummaryValuation" xml:space="preserve"><value>Aktuellt lagervärde per artikel och plats utifrån registrerade styckkostnader, summerat per valuta.</value></data>
+  <data name="M5ReportSummaryControlledSubstanceLog" xml:space="preserve"><value>Varje förflyttning av kontrollerade substanser under ett datumintervall, med kvantiteter före och efter, vittne och intygande.</value></data>
   <data name="M5DaysUntilExpiry" xml:space="preserve"><value>Dagar till utgångsdatum</value></data>
   <data name="M5Shortfall" xml:space="preserve"><value>Antal under beställningspunkten</value></data>
   <data name="M5ReorderQuantity" xml:space="preserve"><value>Föreslaget beställningsantal</value></data>

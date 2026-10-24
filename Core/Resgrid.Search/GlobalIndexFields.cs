@@ -29,6 +29,8 @@ namespace Resgrid.Search
 		public const string KeywordsPrefix = "KeywordsPrefix";
 		/// <summary>Whole keywords lower-cased, one term each: exact identifier match.</summary>
 		public const string KeywordExact = "KeywordExact";
+		/// <summary>IdentifierSearchKeys of the keywords that hold a digit (call, invoice, bid numbers...), one term each.</summary>
+		public const string KeywordKeys = "KeywordKeys";
 		public const string Category = "Category";
 		public const string Status = "Status";
 		public const string Priority = "Priority";

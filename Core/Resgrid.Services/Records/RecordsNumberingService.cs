@@ -12,6 +12,10 @@ namespace Resgrid.Services.Records
 {
 	public class RecordsNumberingService : IRecordsNumberingService
 	{
+		/// <summary>The years a numbering-year window is built for; the window of a year next to DateTime's ends would overflow it.</summary>
+		private const int FirstWindowYear = 1000;
+		private const int LastWindowYear = 9000;
+
 		private readonly IDepartmentSettingsService _settings;
 		private readonly IRmsOperationalRecordsRepository _records;
 		private readonly IDepartmentGroupsService _groups;
@@ -48,6 +52,52 @@ namespace Resgrid.Services.Records
 		{
 			var local = string.IsNullOrWhiteSpace(timeZone) ? utcDate : DateTimeHelpers.GetLocalDateTime(utcDate, timeZone);
 			return (config ?? new RecordsNumberingConfig()).YearStart().YearOf(local);
+		}
+
+		/// <summary>
+		/// The UTC window of the numbering year named <paramref name="year"/>: department-local midnight of its first day up to the
+		/// next year's. A year filter over it keeps exactly the records <see cref="NumberingYear"/> numbers into that year, so
+		/// "2027" lists RUN-2027-* even when the department's fiscal 2027 started in November 2026.
+		/// </summary>
+		public static NumberingYearWindow YearWindow(RecordsNumberingConfig config, int year, string timeZone)
+		{
+			// A year no record can be numbered in (0 or 9999 typed into a list filter) is an empty window, so the filter finds
+			// nothing instead of overflowing DateTime.
+			if (year < FirstWindowYear || year > LastWindowYear)
+			{
+				var none = new DateTime(FirstWindowYear, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+				return new NumberingYearWindow(year, none, none);
+			}
+
+			var start = (config ?? new RecordsNumberingConfig()).YearStart();
+			timeZone = KnownZone(timeZone);
+			return new NumberingYearWindow(year, LocalToUtc(start.StartOfYear(year), timeZone), LocalToUtc(start.StartOfYear(year + 1), timeZone));
+		}
+
+		/// <summary>
+		/// The numbering years that can hold a date of the given UTC calendar years (a department-local or fiscal year straddles
+		/// two calendar years), newest first. The caller keeps the ones a query finds dates in.
+		/// </summary>
+		public static List<NumberingYearWindow> CandidateYearWindows(RecordsNumberingConfig config, IEnumerable<int> calendarYears, string timeZone)
+		{
+			timeZone = KnownZone(timeZone);
+			var years = new SortedSet<int>();
+			// Dates outside these years are bad data; their neighbouring years would overflow DateTime.
+			foreach (var year in (calendarYears ?? Enumerable.Empty<int>()).Where(y => y >= FirstWindowYear && y <= LastWindowYear))
+			{
+				years.Add(NumberingYear(config, new DateTime(year, 1, 1, 0, 0, 0, DateTimeKind.Utc), timeZone));
+				years.Add(NumberingYear(config, new DateTime(year, 12, 31, 23, 59, 59, DateTimeKind.Utc), timeZone));
+			}
+
+			return years.Reverse().Select(y => YearWindow(config, y, timeZone)).ToList();
+		}
+
+		/// <summary>No zone, or one that does not resolve, reads the dates as UTC, as <see cref="NumberingYear"/> does for no zone.</summary>
+		private static string KnownZone(string timeZone) => DateTimeHelpers.IsKnownTimeZone(timeZone) ? timeZone : null;
+
+		private static DateTime LocalToUtc(DateTime local, string timeZone)
+		{
+			return string.IsNullOrWhiteSpace(timeZone) ? DateTime.SpecifyKind(local, DateTimeKind.Utc) : DateTimeHelpers.ConvertToUtc(local, timeZone, true);
 		}
 
 		public async Task<List<RecordNumberSequenceStatus>> GetSequencesAsync(int departmentId, RecordsNumberingConfig config, int year)

@@ -16,7 +16,7 @@ var resgrid;
             }
 
             function escapeHtml(value) {
-                return $('<div/>').text(value == null ? '' : String(value)).html();
+                return $('<div/>').text(value == null ? '' : String(value)).html().replace(/"/g, '&quot;').replace(/'/g, '&#39;');
             }
 
             function refreshCounts() {
@@ -96,7 +96,7 @@ var resgrid;
                     order: [[3, 'asc']],
                     language: { emptyTable: getText('noPendingCalls', 'No calls are waiting to be dispatched.') },
                     columns: [
-                        { data: 'Number', title: getText('number', 'Number') },
+                        { data: 'Number', title: getText('number', 'Number'), type: 'string', render: resgrid.callNumberCell },
                         { data: 'Name', title: getText('name', 'Name'), render: function (data) { return escapeHtml(data); } },
                         { data: 'Address', title: getText('address', 'Address'), render: function (data) { return escapeHtml(data); } },
                         {

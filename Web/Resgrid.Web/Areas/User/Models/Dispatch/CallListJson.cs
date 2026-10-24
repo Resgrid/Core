@@ -10,6 +10,9 @@ namespace Resgrid.Web.Areas.User.Models.Dispatch
 	{
 		public int CallId { get; set; }
 		public string Number { get; set; }
+
+		/// <summary>Orders <see cref="Number"/> as the numbers were issued (<see cref="Resgrid.Model.CallNumberFormat.SortKeys"/>); the grids sort on it.</summary>
+		public string NumberSort { get; set; }
 		public string Priority { get; set; }
 		public string Color { get; set; }
 		public string Name { get; set; }

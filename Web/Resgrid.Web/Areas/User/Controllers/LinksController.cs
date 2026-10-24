@@ -33,12 +33,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IPersonnelRolesService _personnelRolesService;
 		private readonly ILimitsService _limitsService;
 		private readonly IMappingService _mappingService;
+		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IStringLocalizer<Resgrid.Localization.Common> _localizer;
 
-		public LinksController(IDepartmentLinksService departmentLinksService, IDepartmentsService departmentsService, IEmailService emailService, 
+		public LinksController(IDepartmentLinksService departmentLinksService, IDepartmentsService departmentsService, IEmailService emailService,
 			ICallsService callsService, IUnitsService unitsService, IActionLogsService actionLogsService, IDepartmentGroupsService departmentGroupsService,
 			IUserStateService userStateService, IPersonnelRolesService personnelRolesService, ILimitsService limitsService, IMappingService mappingService,
-			IStringLocalizer<Resgrid.Localization.Common> localizer)
+			IDepartmentSettingsService departmentSettingsService, IStringLocalizer<Resgrid.Localization.Common> localizer)
 		{
 			_departmentLinksService = departmentLinksService;
 			_departmentsService = departmentsService;
@@ -51,6 +52,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_personnelRolesService = personnelRolesService;
 			_limitsService = limitsService;
 			_mappingService = mappingService;
+			_departmentSettingsService = departmentSettingsService;
 			_localizer = localizer;
 		}
 		#endregion Private Members and Constructors
@@ -217,12 +219,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				var calls = (await _callsService.GetActiveCallsByDepartmentAsync(link.DepartmentId)).OrderByDescending(x => x.LoggedOn);
 				var department = await _departmentsService.GetDepartmentByIdAsync(link.DepartmentId, false);
+				// Read with the sharing department's pattern: these are its numbers, not the viewer's.
+				var numberSort = CallNumberFormat.SortKeys(CallNumberFormat.EffectivePattern(await _departmentSettingsService.GetCallNumberingConfigAsync(link.DepartmentId)));
 
 				foreach (var call in calls)
 				{
 					var callJson = new CallListJson();
 					callJson.CallId = call.CallId;
 					callJson.Number = call.Number;
+					callJson.NumberSort = numberSort(call.Number);
 					// ADP: a linked department is a DIFFERENT tenant — its members can never hold a
 					// grant for the sharing department, so a protected call name degrades to the
 					// system-generated number rather than leaking ciphertext across the link.

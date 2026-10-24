@@ -180,6 +180,20 @@ namespace Resgrid.Tests.Rms
 			_store.Audits.Count(a => a.Purpose == "Disclosure released").Should().Be(1);
 		}
 		[Test]
+		public async Task The_request_queue_filters_by_part_of_the_request_number()
+		{
+			var first = await OpenRequestAsync();
+			var second = await OpenRequestAsync();
+			var year = first.RequestNumber.Split('-')[1];
+
+			(await _service.QueryAsync(Dept, "clerk", null, number: $"prr {year} 2")).Select(r => r.RmsDisclosureRequestId).Should().Equal(second.RmsDisclosureRequestId);
+			(await _service.QueryAsync(Dept, "clerk", null, number: first.RequestNumber.ToLowerInvariant())).Select(r => r.RmsDisclosureRequestId).Should().Equal(first.RmsDisclosureRequestId);
+			(await _service.QueryAsync(Dept, "clerk", null, number: "PRR")).Should().HaveCount(2);
+			(await _service.QueryAsync(Dept, "clerk", null, number: " -- ")).Should().HaveCount(2, "a search with no letters or digits does not filter");
+			(await _service.QueryAsync(Dept, "clerk", null, number: "OCC")).Should().BeEmpty();
+		}
+
+		[Test]
 		public async Task Request_reads_use_live_permissions_and_never_mutate_stored_requester_identity()
 		{
 			var request = await OpenRequestAsync();

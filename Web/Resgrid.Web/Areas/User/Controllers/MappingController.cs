@@ -302,7 +302,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return Unauthorized();
 
 			var feature = layer.Data.Convert();
-			model.GeoJson = JsonConvert.SerializeObject(feature);
+			model.GeoJson = JsonConvert.SerializeObject(feature, HtmlHelpers.ScriptJsonSettings);
 
 			model.Id = layer.Id.ToString();
 			model.Name = layer.Name;
@@ -880,6 +880,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (input.ShowPersonnel)
 			{
+				// A person holding an active role on a unit is labelled "Name (Unit)", naming only units this member may view.
+				var unitNamesByUser = await PersonnelMapLabel.BuildUnitNamesByUserAsync(
+					await _unitsService.GetAllActiveRolesForUnitsByDepartmentIdAsync(DepartmentId),
+					await _unitsService.GetUnitsForDepartmentAsync(DepartmentId),
+					unitId => _authorizationService.CanUserViewUnitViaMatrixAsync(unitId, UserId, DepartmentId));
+
 				foreach (var person in lastUserActionlogs)
 				{
 					if (!String.IsNullOrWhiteSpace(person.GeoLocationData))
@@ -890,7 +896,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 						var name = personnelNames.FirstOrDefault(x => x.UserId == person.UserId);
 						if (name != null)
 						{
-							info.Title = name.Name;
+							info.Title = PersonnelMapLabel.Format(name.Name, person.UserId, unitNamesByUser);
 							info.InfoWindowContent = "";
 						}
 						else

@@ -29,12 +29,12 @@ var resgrid;
                     pageLength: 50,
                     order: [[3, 'desc']],
                     columns: [
-                        { data: 'Number', title: getText('number', 'Number') },
+                        { data: 'Number', title: getText('number', 'Number'), type: 'string', render: resgrid.callNumberCell },
                         { data: 'Name', title: getText('name', 'Name'), render: typeIconNameCell },
                         {
                             data: 'Priority', title: getText('priority', 'Priority'),
                             render: function (data, type, row) {
-                                return '<span style="background-color:' + row.Color + ';color:#fff;padding:2px 6px;border-radius:3px;">' + row.Priority + '</span>';
+                                return '<span style="background-color:' + resgrid.escapeHtml(row.Color) + ';color:#fff;padding:2px 6px;border-radius:3px;">' + resgrid.escapeHtml(row.Priority) + '</span>';
                             }
                         },
                         {
@@ -68,12 +68,12 @@ var resgrid;
                     pageLength: 50,
                     columns: [
                         { data: 'Name', title: getText('name', 'Name'), render: typeIconNameCell },
-                        { data: 'Type', title: getText('type', 'Type') },
-                        { data: 'Station', title: getText('station', 'Station') },
+                        { data: 'Type', title: getText('type', 'Type'), render: resgrid.textCell },
+                        { data: 'Station', title: getText('station', 'Station'), render: resgrid.textCell },
                         {
                             data: null, title: getText('state', 'State'), orderable: false,
                             render: function (data, type, row) {
-                                return '<span style="background-color:' + row.StateColor + ';color:' + row.TextColor + ';padding:2px 6px;border-radius:3px;">' + row.State + '</span>';
+                                return '<span style="background-color:' + resgrid.escapeHtml(row.StateColor) + ';color:' + resgrid.escapeHtml(row.TextColor) + ';padding:2px 6px;border-radius:3px;">' + resgrid.escapeHtml(row.State) + '</span>';
                             }
                         },
                         { data: 'Timestamp', title: getText('timestamp', 'Timestamp') }

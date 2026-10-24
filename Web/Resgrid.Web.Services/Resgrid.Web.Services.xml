@@ -3219,6 +3219,35 @@
             </summary>
             <returns>GetMapDataResult object</returns>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetUnitMapData(System.Int32)">
+            <summary>
+            One unit's map: the unit's own position, when it reports one, and the positions of the members seated in its
+            active roles, plus the department's default view for when none of them has a position. Positions follow the same
+            location TTL, status fallback and location visibility matrix as GetMapDataAndMarkers. Live moves arrive on the
+            geolocation hub (onUnitLocationUpdated / onPersonnelLocationUpdated for "u{unitId}" and "p{userId}"), and a crew
+            change arrives on the eventing hub as unitActiveRolesUpdated, after which the client reloads this.
+            </summary>
+            <param name="unitId">The unit to map.</param>
+            <returns>GetUnitMapDataResult object</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetDepartmentMapCenterAsync(Resgrid.Model.Department)">
+            <summary>
+            The department's default map view: the BigBoard center coordinates, else the BigBoard center address, else the
+            department address, else a fixed fallback; with the BigBoard zoom level (9 when unset).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.BuildUnitMarker(Resgrid.Model.Unit,Resgrid.Model.UnitsLocation,Resgrid.Model.UnitState,System.Collections.Generic.List{Resgrid.Model.UnitType},System.Int32,System.Boolean,System.DateTime)">
+            <summary>
+            A unit's marker ("u{unitId}", Type 1) at its latest location ping, or at its status location when the ping has
+            expired or the status is newer; Marker is null when it has no current position. Timestamp is the source's time.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.BuildPersonMarker(Resgrid.Model.UserGroupRole,System.String,Resgrid.Model.PersonnelLocation,Resgrid.Model.ActionLog,System.Collections.Generic.Dictionary{System.Int32,Resgrid.Model.PersonnelRole},System.Int32,System.Boolean,System.DateTime)">
+            <summary>
+            A person's marker ("p{userId}", Type 3) titled <paramref name="title"/>, at their latest location ping or their
+            status location under the same rules as a unit; Marker is null when they have no current position.
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetMayLayers(System.Int32)">
             <summary>
             Gets the user created map layers in the system.
@@ -14620,6 +14649,47 @@
             <summary>
             Map Layers
             </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Mapping.GetUnitMapDataResult">
+            <summary>
+            One unit's map: its own position (when it reports one) and the positions of the members seated in its active
+            roles. Either may be missing: a team whose members carry the app but whose unit never runs the Unit app has crew
+            positions only.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetUnitMapDataResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Models.v4.Mapping.GetUnitMapDataResult.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetUnitMapDataResultData.CenterLat">
+            <summary>The department's default map center and zoom, for when neither the unit nor its crew has a position.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetUnitMapDataResultData.UnitMarker">
+            <summary>
+            The unit's marker (Id "u{unitId}", Type 1), chosen by the same location TTL and status fallback as the department
+            map; null when the unit has no current position or the viewer may not see its location.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetUnitMapDataResultData.UnitLocationTimestamp">
+            <summary>UTC time of the fix or status the unit marker came from.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetUnitMapDataResultData.Crew">
+            <summary>The unit's seated members, in the unit's role order.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.UnitMapCrewMemberData.Marker">
+            <summary>
+            The member's marker (Id "p{userId}", Type 3), titled "Name (Role)"; null when the member has no current position
+            or the viewer may not see it.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.UnitMapCrewMemberData.LocationTimestamp">
+            <summary>UTC time of the fix or status the marker came from.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Mapping.PoiTypeResultData.PoiImage">
             <summary>

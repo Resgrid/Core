@@ -480,4 +480,46 @@
   <data name="RoleTemplatesRequiredNote" xml:space="preserve">
     <value>* = запропоновано як обов’язкову вимогу (блокує некваліфікованих членів), якщо відповідна роль персоналу існує.</value>
   </data>
+  <data name="UnitMapHeader" xml:space="preserve">
+    <value>Карта для</value>
+  </data>
+  <data name="UnitMap" xml:space="preserve">
+    <value>Карта</value>
+  </data>
+  <data name="UnitMapCrew" xml:space="preserve">
+    <value>Екіпаж</value>
+  </data>
+  <data name="UnitMapUnitPosition" xml:space="preserve">
+    <value>Позиція підрозділу</value>
+  </data>
+  <data name="UnitMapNoUnitPosition" xml:space="preserve">
+    <value>Цей підрозділ не передає свою позицію, тому карту підлаштовано під його екіпаж.</value>
+  </data>
+  <data name="UnitMapNoPositions" xml:space="preserve">
+    <value>Ні цей підрозділ, ні його екіпаж не мають поточної позиції.</value>
+  </data>
+  <data name="UnitMapNoCrew" xml:space="preserve">
+    <value>Нікого не призначено на ролі цього підрозділу.</value>
+  </data>
+  <data name="UnitMapNoLocation" xml:space="preserve">
+    <value>Немає поточного місцезнаходження</value>
+  </data>
+  <data name="UnitMapLocatedAt" xml:space="preserve">
+    <value>Визначено {0}</value>
+  </data>
+  <data name="UnitMapKeepInView" xml:space="preserve">
+    <value>Тримати екіпаж у полі зору</value>
+  </data>
+  <data name="UnitMapFitMap" xml:space="preserve">
+    <value>Вмістити на карті</value>
+  </data>
+  <data name="UnitMapLastUpdate" xml:space="preserve">
+    <value>Останнє оновлення: {0}</value>
+  </data>
+  <data name="UnitMapLoadError" xml:space="preserve">
+    <value>Не вдалося завантажити карту підрозділу.</value>
+  </data>
+  <data name="UnitMapNotFound" xml:space="preserve">
+    <value>Цей підрозділ не знайдено, або у вас немає дозволу на його перегляд.</value>
+  </data>
 </root>

@@ -21,6 +21,9 @@ namespace Resgrid.Model
 		UnitStatusAlertUpdated = 13,
 
 		/// <summary>Calls awaiting resources changed, or a freed unit matches one; item id = call id (0 = several), payload = OutstandingRequirementsAlert.</summary>
-		OutstandingRequirementsUpdated = 14
+		OutstandingRequirementsUpdated = 14,
+
+		/// <summary>Who holds a unit's active roles (its current crew) changed; item id = unit id (0 = several units).</summary>
+		UnitActiveRolesUpdated = 15
 	}
 }

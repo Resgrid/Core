@@ -480,4 +480,46 @@
   <data name="RoleTemplatesRequiredNote" xml:space="preserve">
     <value>* = suggéré comme exigence stricte (bloque les membres non qualifiés) lorsque le rôle de personnel correspondant existe.</value>
   </data>
+  <data name="UnitMapHeader" xml:space="preserve">
+    <value>Carte de</value>
+  </data>
+  <data name="UnitMap" xml:space="preserve">
+    <value>Carte</value>
+  </data>
+  <data name="UnitMapCrew" xml:space="preserve">
+    <value>Équipage</value>
+  </data>
+  <data name="UnitMapUnitPosition" xml:space="preserve">
+    <value>Position de l'unité</value>
+  </data>
+  <data name="UnitMapNoUnitPosition" xml:space="preserve">
+    <value>Cette unité ne transmet pas sa position ; la carte est donc ajustée à son équipage.</value>
+  </data>
+  <data name="UnitMapNoPositions" xml:space="preserve">
+    <value>Ni cette unité ni son équipage n'ont de position actuelle.</value>
+  </data>
+  <data name="UnitMapNoCrew" xml:space="preserve">
+    <value>Personne n'est affecté aux rôles de cette unité.</value>
+  </data>
+  <data name="UnitMapNoLocation" xml:space="preserve">
+    <value>Aucune position actuelle</value>
+  </data>
+  <data name="UnitMapLocatedAt" xml:space="preserve">
+    <value>Localisé {0}</value>
+  </data>
+  <data name="UnitMapKeepInView" xml:space="preserve">
+    <value>Garder l'équipage en vue</value>
+  </data>
+  <data name="UnitMapFitMap" xml:space="preserve">
+    <value>Ajuster la carte</value>
+  </data>
+  <data name="UnitMapLastUpdate" xml:space="preserve">
+    <value>Dernière mise à jour : {0}</value>
+  </data>
+  <data name="UnitMapLoadError" xml:space="preserve">
+    <value>Impossible de charger la carte de l'unité.</value>
+  </data>
+  <data name="UnitMapNotFound" xml:space="preserve">
+    <value>Cette unité est introuvable ou vous n'êtes pas autorisé à la voir.</value>
+  </data>
 </root>

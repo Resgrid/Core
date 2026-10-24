@@ -264,6 +264,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 					await _unitsService.SaveActiveRoleAsync(activeRole, cancellationToken);
 				}
+
+				await _unitsService.NotifyActiveRolesUpdatedAsync(DepartmentId, unit.UnitId);
 			}
 
 			ResponseHelper.PopulateV4ResponseData(result);

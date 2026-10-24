@@ -538,4 +538,46 @@
   <data name="RoleTemplatesRequiredNote" xml:space="preserve">
     <value>* = suggested as a hard requirement (blocks unqualified members) when the matching personnel role exists.</value>
   </data>
+  <data name="UnitMapHeader" xml:space="preserve">
+    <value>Map for</value>
+  </data>
+  <data name="UnitMap" xml:space="preserve">
+    <value>Map</value>
+  </data>
+  <data name="UnitMapCrew" xml:space="preserve">
+    <value>Crew</value>
+  </data>
+  <data name="UnitMapUnitPosition" xml:space="preserve">
+    <value>Unit position</value>
+  </data>
+  <data name="UnitMapNoUnitPosition" xml:space="preserve">
+    <value>This unit is not reporting a position, so the map is fitted to its crew.</value>
+  </data>
+  <data name="UnitMapNoPositions" xml:space="preserve">
+    <value>Neither this unit nor its crew has a current position.</value>
+  </data>
+  <data name="UnitMapNoCrew" xml:space="preserve">
+    <value>No one is assigned to this unit's roles.</value>
+  </data>
+  <data name="UnitMapNoLocation" xml:space="preserve">
+    <value>No current location</value>
+  </data>
+  <data name="UnitMapLocatedAt" xml:space="preserve">
+    <value>Located {0}</value>
+  </data>
+  <data name="UnitMapKeepInView" xml:space="preserve">
+    <value>Keep crew in view</value>
+  </data>
+  <data name="UnitMapFitMap" xml:space="preserve">
+    <value>Fit map</value>
+  </data>
+  <data name="UnitMapLastUpdate" xml:space="preserve">
+    <value>Last update: {0}</value>
+  </data>
+  <data name="UnitMapLoadError" xml:space="preserve">
+    <value>Unable to load the unit map.</value>
+  </data>
+  <data name="UnitMapNotFound" xml:space="preserve">
+    <value>This unit could not be found, or you may not view it.</value>
+  </data>
 </root>

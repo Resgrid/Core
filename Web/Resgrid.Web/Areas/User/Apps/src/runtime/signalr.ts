@@ -28,6 +28,18 @@ export interface UnitLocationUpdate {
   timestamp?: string | null;
 }
 
+/** Department events from the eventing hub. Every id is the event's item id as a string. */
+export interface EventingHandlers {
+  /** A unit's seated crew changed; the id is the unit id, or "0" when several units changed at once. */
+  onUnitActiveRolesUpdated?: (unitId: string) => void;
+  /** A unit status was saved; the id is the unit state id, not the unit id. */
+  onUnitStatusUpdated?: (unitStateId: string) => void;
+  /** A personnel status was saved; the id is the action log id, not the user id. */
+  onPersonnelStatusUpdated?: (actionLogId: string) => void;
+  /** Called after an automatic reconnect has re-joined the department group. Events sent while offline were missed. */
+  onResubscribed?: () => void;
+}
+
 export interface GeolocationHandlers {
   onPersonnelLocationUpdated: (update: PersonnelLocationUpdate) => void;
   onUnitLocationUpdated: (update: UnitLocationUpdate) => void;
@@ -70,6 +82,42 @@ export async function connectGeolocationHub(handlers: GeolocationHandlers): Prom
   try {
     await connection.start();
     await connection.invoke('geolocationConnect');
+  } catch (error) {
+    await connection.stop().catch(() => undefined);
+    throw error;
+  }
+
+  return connection;
+}
+
+export async function connectEventingHub(departmentId: number, handlers: EventingHandlers): Promise<HubConnection> {
+  const { channelUrl } = getBrowserConfig();
+  const connection = new HubConnectionBuilder()
+    .withUrl(`${channelUrl}/eventingHub`, { accessTokenFactory: getEventingToken })
+    .withAutomaticReconnect(new CappedRetryPolicy())
+    .configureLogging(LogLevel.Information)
+    .build();
+
+  // The server sends ids as strings or numbers depending on the publisher; hand them on as strings.
+  const asId = (value: unknown) => (value === null || value === undefined ? '' : String(value));
+
+  connection.on('unitActiveRolesUpdated', (id: unknown) => handlers.onUnitActiveRolesUpdated?.(asId(id)));
+  connection.on('unitStatusUpdated', (id: unknown) => handlers.onUnitStatusUpdated?.(asId(id)));
+  connection.on('personnelStatusUpdated', (id: unknown) => handlers.onPersonnelStatusUpdated?.(asId(id)));
+
+  // As with the geolocation hub, a reconnect gets a new connection id that is in no group yet.
+  connection.onreconnected(async () => {
+    try {
+      await connection.invoke('connect', departmentId);
+      handlers.onResubscribed?.();
+    } catch (error) {
+      console.error('Unable to re-join realtime department events after reconnecting.', error);
+    }
+  });
+
+  try {
+    await connection.start();
+    await connection.invoke('connect', departmentId);
   } catch (error) {
     await connection.stop().catch(() => undefined);
     throw error;

@@ -363,6 +363,13 @@ namespace Resgrid.Model.Services
 
 		Task<bool> DeleteActiveRolesForUnitAsync(int unitId, CancellationToken cancellationToken = default(CancellationToken));
 
+		/// <summary>
+		/// Publishes <c>unitActiveRolesUpdated</c> once a caller has finished replacing a unit's active roles, so live maps
+		/// reload the unit's crew. Pass a unit id of 0 when several units changed at once. Never throws: the seats are saved,
+		/// and a map that misses the push picks the crew up on its next reload.
+		/// </summary>
+		Task NotifyActiveRolesUpdatedAsync(int departmentId, int unitId);
+
 		Task<List<UnitActiveRole>> GetAllActiveRolesForUnitsByDepartmentIdAsync(int departmentId);
 
 		/// <summary>

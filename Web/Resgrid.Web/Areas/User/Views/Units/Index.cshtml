@@ -453,7 +453,7 @@
         
         @Html.Raw("<td>")
 
-        @Html.Raw($"<a type='button' href='{@Url.Action("ViewEvents", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-primary'>{Html.Encode(localizer["ViewEvents"].Value)}</a>&nbsp;<a type='button' href='{@Url.Action("ViewLogs", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-info'>{Html.Encode(localizer["Logs"].Value)}</a>&nbsp;")
+        @Html.Raw($"<a type='button' href='{@Url.Action("ViewEvents", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-primary'>{Html.Encode(localizer["ViewEvents"].Value)}</a>&nbsp;<a type='button' href='{@Url.Action("ViewLogs", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-info'>{Html.Encode(localizer["Logs"].Value)}</a>&nbsp;<a type='button' href='{@Url.Action("ViewMap", "Units", new { area = "User" })}?unitId={u.UnitId}' class='btn btn-xs btn-success'>{Html.Encode(localizer["UnitMap"].Value)}</a>&nbsp;")
 
         @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
         {

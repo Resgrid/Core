@@ -262,6 +262,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 				}
 
+				// Every unit's seats were replaced, so one "several units" push rather than one per unit.
+				await _unitsService.NotifyActiveRolesUpdatedAsync(DepartmentId, 0);
+
 				return RedirectToAction("Index");
 			}
 
@@ -1007,6 +1010,25 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.IsProtectedLogs = protectedRead.IsProtected;
 
 			return View(model);
+		}
+
+		/// <summary>
+		/// The unit's position and the positions of the members seated in its active roles, live. The page only hosts
+		/// rg-unit-map; the positions come from v4 Mapping/GetUnitMapData, which applies the location visibility matrix.
+		/// </summary>
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Unit_View)]
+		public async Task<IActionResult> ViewMap(int unitId)
+		{
+			if (!await _authorizationService.CanUserViewUnitAsync(UserId, unitId))
+				return Unauthorized();
+
+			var unit = await _unitsService.GetUnitByIdAsync(unitId);
+
+			if (unit == null || unit.IsDeleted)
+				return RedirectToAction("Index");
+
+			return View(new UnitMapView { Unit = unit });
 		}
 
 		[HttpGet]

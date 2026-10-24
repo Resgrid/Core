@@ -480,4 +480,46 @@
   <data name="RoleTemplatesRequiredNote" xml:space="preserve">
     <value>* = föreslaget som ett hårt krav (spärrar obehöriga medlemmar) när motsvarande personalroll finns.</value>
   </data>
+  <data name="UnitMapHeader" xml:space="preserve">
+    <value>Karta för</value>
+  </data>
+  <data name="UnitMap" xml:space="preserve">
+    <value>Karta</value>
+  </data>
+  <data name="UnitMapCrew" xml:space="preserve">
+    <value>Besättning</value>
+  </data>
+  <data name="UnitMapUnitPosition" xml:space="preserve">
+    <value>Enhetens position</value>
+  </data>
+  <data name="UnitMapNoUnitPosition" xml:space="preserve">
+    <value>Den här enheten rapporterar ingen position, så kartan anpassas efter besättningen.</value>
+  </data>
+  <data name="UnitMapNoPositions" xml:space="preserve">
+    <value>Varken enheten eller dess besättning har någon aktuell position.</value>
+  </data>
+  <data name="UnitMapNoCrew" xml:space="preserve">
+    <value>Ingen är tilldelad enhetens roller.</value>
+  </data>
+  <data name="UnitMapNoLocation" xml:space="preserve">
+    <value>Ingen aktuell plats</value>
+  </data>
+  <data name="UnitMapLocatedAt" xml:space="preserve">
+    <value>Positionerad {0}</value>
+  </data>
+  <data name="UnitMapKeepInView" xml:space="preserve">
+    <value>Håll besättningen i vyn</value>
+  </data>
+  <data name="UnitMapFitMap" xml:space="preserve">
+    <value>Anpassa kartan</value>
+  </data>
+  <data name="UnitMapLastUpdate" xml:space="preserve">
+    <value>Senast uppdaterad: {0}</value>
+  </data>
+  <data name="UnitMapLoadError" xml:space="preserve">
+    <value>Det gick inte att läsa in enhetens karta.</value>
+  </data>
+  <data name="UnitMapNotFound" xml:space="preserve">
+    <value>Enheten hittades inte, eller så har du inte behörighet att visa den.</value>
+  </data>
 </root>

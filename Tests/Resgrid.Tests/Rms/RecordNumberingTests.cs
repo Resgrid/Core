@@ -631,6 +631,22 @@ namespace Resgrid.Tests.Rms
 			RecordsNumberingService.YearWindow(null, 2026, "Not A Zone").FromUtc.Should().Be(new DateTime(2026, 1, 1), "an unknown zone reads the dates as UTC");
 		}
 
+		[TestCase(0)]
+		[TestCase(1)]
+		[TestCase(9999)]
+		[TestCase(int.MaxValue)]
+		[TestCase(int.MinValue)]
+		public void A_year_filter_no_record_can_be_numbered_in_is_an_empty_window_not_an_overflow(int year)
+		{
+			// The year comes straight from a list filter's query string; years next to DateTime's ends used to throw (a 500).
+			foreach (var timeZone in new[] { null, "Tokyo Standard Time", "Hawaiian Standard Time" })
+			{
+				var window = RecordsNumberingService.YearWindow(new RecordsNumberingConfig { YearStartMonth = 11, YearStartDay = 1 }, year, timeZone);
+				window.Year.Should().Be(year);
+				window.BeforeUtc.Should().Be(window.FromUtc, "a half-open window [x, x) matches nothing");
+			}
+		}
+
 		[Test]
 		public void Every_numbering_year_a_window_check_could_find_comes_from_the_calendar_years()
 		{

@@ -82,7 +82,8 @@ namespace Resgrid.Framework
 			var cleanHtml = SanitizeHtml(source);
 			if (cleanHtml == null)
 			{
-				Logging.LogError("Following string could not be stripped of Word HTML: " + source);
+				// The text itself is not logged: it is call, message or record content.
+				Logging.LogError($"Rich text of {source.Length} characters held only comments, styles or document tags; stored the placeholder.");
 				return "Invalid HTML in Source String";
 			}
 

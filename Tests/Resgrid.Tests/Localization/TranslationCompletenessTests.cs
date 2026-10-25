@@ -41,6 +41,8 @@ namespace Resgrid.Tests.Localization
 			"Areas/User/Records/ReportSources",
 			// Import & Migration (Department Onboarding wizard, 2026-10-12) shipped fully translated.
 			"Areas/User/DepartmentImport/DepartmentImport",
+			// Map Icon Legend and the status / priority map icon pages (2026-10-24) shipped fully translated.
+			"Areas/User/Mapping/MapIconLegend",
 		};
 
 		private static string LocalizationRoot()
@@ -73,6 +75,12 @@ namespace Resgrid.Tests.Localization
 		/// </summary>
 		private static readonly HashSet<string> KnownIdentical = new HashSet<string>(StringComparer.Ordinal)
 		{
+			// Map Icon Legend (2026-10-24): the same word in the target language, checked side by side.
+			"MapIconLegend|de|StatusColumn", "MapIconLegend|pl|StatusColumn", "MapIconLegend|sv|StatusColumn", // "Status"
+			"MapIconLegend|de|Hydrant", "MapIconLegend|pl|Hydrant",  // "Hydrant"
+			"MapIconLegend|sv|Station",                              // "Station"
+			"MapIconLegend|fr|Type",                                 // "Type"
+			"MapIconLegend|fr|PersonnelHeader",                      // "Personnel"
 			// Report sources (2026-10-04): "Personnel" is the French word too.
 			"ReportSources|fr|TabPersonnel",
 			"ReportSources|fr|FilterPersonnel",

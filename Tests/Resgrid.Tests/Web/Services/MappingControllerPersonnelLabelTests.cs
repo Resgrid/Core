@@ -36,6 +36,8 @@ namespace Resgrid.Tests.Web.Services
 			_mocks = new Dictionary<Type, Mock>();
 
 			M<IDepartmentsService>().Setup(x => x.GetDepartmentByIdAsync(DepartmentId, false)).ReturnsAsync(new Department { DepartmentId = DepartmentId });
+			M<IMapIconsService>().Setup(x => x.GetResolverAsync(DepartmentId, It.IsAny<IEnumerable<UnitState>>()))
+				.ReturnsAsync(new MapIconResolver(DepartmentId, null, null, null, null, null, null));
 			M<IUnitsService>().Setup(x => x.GetUnitsForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<Unit>
 			{
 				new Unit { UnitId = 1, DepartmentId = DepartmentId, Name = "Engine 1" },

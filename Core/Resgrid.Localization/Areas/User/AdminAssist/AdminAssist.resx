@@ -7021,7 +7021,16 @@
     <value>Your own icons for unit types, call types, points of interest and personnel roles, shown in lists, the apps and on the map.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.custom-map-icons">
-    <value>Upload a square PNG with a transparent background, 128 × 128 px or larger, on the unit type, call type, POI type or role page; the page previews it on a light and a dark map. To choose which icon a person with several roles shows, order the roles on the Roles page.</value>
+    <value>Upload a square PNG with a transparent background, 128 × 128 px or larger, on the unit type, call type, POI type or role page; the page previews it on a light and a dark map. To choose which icon a person with several roles shows, order the roles on the Roles page. Use Status map icons or Priority map icons on the same page to add an icon for each status or priority.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.map-icon-legend">
+    <value>Map icon legend</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.map-icon-legend">
+    <value>Every icon the map shows for calls, units and personnel in each priority and status, with the status and priority colors.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.map-icon-legend">
+    <value>Open Mapping, then Map Icon Legend. Department admins can choose Edit icons on a call type, unit type or role to upload an icon for a priority or status.</value>
   </data>
   <data xml:space="preserve" name="Feature.map-visualizations">
     <value>Map visualizations</value>

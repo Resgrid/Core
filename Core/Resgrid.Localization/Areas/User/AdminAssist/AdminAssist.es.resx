@@ -7075,7 +7075,16 @@
     <value>Iconos propios para tipos de unidad, tipos de llamada, puntos de interés y roles de personal, que se muestran en listas, las aplicaciones y el mapa.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.custom-map-icons">
-    <value>Suba un PNG cuadrado con fondo transparente, de 128 × 128 px o más, en la página del tipo de unidad, tipo de llamada, tipo de POI o rol; la página muestra una vista previa en un mapa claro y uno oscuro. Para elegir el icono de una persona con varios roles, ordene los roles en la página Roles.</value>
+    <value>Suba un PNG cuadrado con fondo transparente, de 128 × 128 px o más, en la página del tipo de unidad, tipo de llamada, tipo de POI o rol; la página muestra una vista previa en un mapa claro y uno oscuro. Para elegir el icono de una persona con varios roles, ordene los roles en la página Roles. Use Iconos del mapa por estado o Iconos del mapa por prioridad en la misma página para añadir un icono para cada estado o prioridad.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.map-icon-legend">
+    <value>Leyenda de iconos del mapa</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.map-icon-legend">
+    <value>Todos los iconos que el mapa muestra para llamadas, unidades y personal en cada prioridad y estado, con los colores de estado y de prioridad.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.map-icon-legend">
+    <value>Abra Mapa y luego Leyenda de iconos del mapa. Los administradores del departamento pueden elegir Editar iconos en un tipo de llamada, tipo de unidad o rol para subir un icono para una prioridad o un estado.</value>
   </data>
   <data xml:space="preserve" name="Feature.map-visualizations">
     <value>Visualizaciones del mapa</value>

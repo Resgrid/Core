@@ -1084,10 +1084,10 @@
     <value>Su {0}</value>
   </data>
   <data name="NearestUnitsMapUnits" xml:space="preserve">
-    <value>Unità</value>
+    <value>Unità disponibili</value>
   </data>
   <data name="NearestUnitsMapPersonnel" xml:space="preserve">
-    <value>Personale</value>
+    <value>Personale disponibile</value>
   </data>
   <data name="NearestUnitsMapBoundaries" xml:space="preserve">
     <value>Confini delle sedi</value>

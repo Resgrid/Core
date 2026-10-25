@@ -1084,10 +1084,10 @@
     <value>På {0}</value>
   </data>
   <data name="NearestUnitsMapUnits" xml:space="preserve">
-    <value>Enheter</value>
+    <value>Tillgängliga enheter</value>
   </data>
   <data name="NearestUnitsMapPersonnel" xml:space="preserve">
-    <value>Personal</value>
+    <value>Tillgänglig personal</value>
   </data>
   <data name="NearestUnitsMapBoundaries" xml:space="preserve">
     <value>Stationsområden</value>

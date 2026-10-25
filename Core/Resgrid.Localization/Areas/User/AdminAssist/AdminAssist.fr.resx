@@ -7075,7 +7075,16 @@
     <value>Vos propres icônes pour les types d'unités, les types d'appels, les points d'intérêt et les rôles du personnel, affichées dans les listes, les applications et sur la carte.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.custom-map-icons">
-    <value>Téléversez un PNG carré à fond transparent, de 128 × 128 px ou plus, sur la page du type d'unité, du type d'appel, du type de POI ou du rôle ; la page en affiche un aperçu sur une carte claire et une carte sombre. Pour choisir l'icône d'une personne ayant plusieurs rôles, ordonnez les rôles sur la page Rôles.</value>
+    <value>Téléversez un PNG carré à fond transparent, de 128 × 128 px ou plus, sur la page du type d'unité, du type d'appel, du type de POI ou du rôle ; la page en affiche un aperçu sur une carte claire et une carte sombre. Pour choisir l'icône d'une personne ayant plusieurs rôles, ordonnez les rôles sur la page Rôles. Utilisez Icônes de carte par statut ou Icônes de carte par priorité sur la même page pour ajouter une icône pour chaque statut ou priorité.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.map-icon-legend">
+    <value>Légende des icônes de la carte</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.map-icon-legend">
+    <value>Toutes les icônes que la carte affiche pour les appels, les unités et le personnel selon chaque priorité et chaque statut, avec les couleurs des statuts et des priorités.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.map-icon-legend">
+    <value>Ouvrez Carte, puis Légende des icônes de la carte. Les administrateurs du service peuvent choisir Modifier les icônes sur un type d'appel, un type d'unité ou un rôle pour téléverser une icône pour une priorité ou un statut.</value>
   </data>
   <data xml:space="preserve" name="Feature.map-visualizations">
     <value>Visualisations cartographiques</value>

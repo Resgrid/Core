@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+  <data name="LegendPageTitle" xml:space="preserve">
+    <value>Légende des icônes de la carte</value>
+  </data>
+  <data name="LegendIntro" xml:space="preserve">
+    <value>Toutes les icônes que la carte affiche pour les appels, les unités et le personnel. L'icône d'un appel dépend de son type et de sa priorité, celle d'une unité de son type et de son statut, et celle d'un membre de son rôle et de son statut. Les niveaux de disponibilité ne changent jamais une icône.</value>
+  </data>
+  <data name="HowPickedHeader" xml:space="preserve">
+    <value>Comment une icône est choisie</value>
+  </data>
+  <data name="HowPicked1" xml:space="preserve">
+    <value>Une icône téléversée pour le type ou le rôle pour cette priorité ou ce statut précis.</value>
+  </data>
+  <data name="HowPicked2" xml:space="preserve">
+    <value>Sinon, l'icône téléversée du type ou du rôle, avec un badge de la couleur de la priorité ou du statut.</value>
+  </data>
+  <data name="HowPicked3" xml:space="preserve">
+    <value>Sinon, le repère intégré de la couleur de la priorité ou du statut.</value>
+  </data>
+  <data name="HowPicked4" xml:space="preserve">
+    <value>Une priorité ou un statut sans signification définie prend la couleur que suggère son nom, comme Urgence ou Hors service ; si le nom ne suggère rien, un repère gris s'affiche, comme pour une unité ou un membre sans statut. Définissez les significations sur les pages Statuts personnalisés et Priorités des appels pour en être sûr.</value>
+  </data>
+  <data name="StatusColorsHeader" xml:space="preserve">
+    <value>Couleurs des statuts</value>
+  </data>
+  <data name="StatusColorsIntro" xml:space="preserve">
+    <value>Les unités et le personnel prennent la couleur de la signification de leur statut.</value>
+  </data>
+  <data name="PriorityColorsHeader" xml:space="preserve">
+    <value>Couleurs des priorités</value>
+  </data>
+  <data name="PriorityColorsIntro" xml:space="preserve">
+    <value>Les appels prennent la couleur de la signification de leur priorité.</value>
+  </data>
+  <data name="Style.available" xml:space="preserve">
+    <value>Disponible</value>
+  </data>
+  <data name="Style.dispatched" xml:space="preserve">
+    <value>Engagé</value>
+  </data>
+  <data name="Style.responding" xml:space="preserve">
+    <value>En intervention</value>
+  </data>
+  <data name="Style.onscene" xml:space="preserve">
+    <value>Sur les lieux</value>
+  </data>
+  <data name="Style.transporting" xml:space="preserve">
+    <value>En transport</value>
+  </data>
+  <data name="Style.returning" xml:space="preserve">
+    <value>En retour</value>
+  </data>
+  <data name="Style.staging" xml:space="preserve">
+    <value>Regroupement et attente</value>
+  </data>
+  <data name="Style.delayed" xml:space="preserve">
+    <value>En pause</value>
+  </data>
+  <data name="Style.unavailable" xml:space="preserve">
+    <value>Indisponible</value>
+  </data>
+  <data name="Style.unknown" xml:space="preserve">
+    <value>Sans signification ou sans statut</value>
+  </data>
+  <data name="Style.low" xml:space="preserve">
+    <value>Basse</value>
+  </data>
+  <data name="Style.medium" xml:space="preserve">
+    <value>Moyenne</value>
+  </data>
+  <data name="Style.high" xml:space="preserve">
+    <value>Haute</value>
+  </data>
+  <data name="Style.emergency" xml:space="preserve">
+    <value>Urgence</value>
+  </data>
+  <data name="CallsHeader" xml:space="preserve">
+    <value>Appels</value>
+  </data>
+  <data name="CallsIntro" xml:space="preserve">
+    <value>Une ligne par type d'appel, une colonne par priorité.</value>
+  </data>
+  <data name="UnitsHeader" xml:space="preserve">
+    <value>Unités</value>
+  </data>
+  <data name="UnitsIntro" xml:space="preserve">
+    <value>Une ligne par type d'unité, avec les statuts de son ensemble de statuts.</value>
+  </data>
+  <data name="PersonnelHeader" xml:space="preserve">
+    <value>Personnel</value>
+  </data>
+  <data name="PersonnelIntro" xml:space="preserve">
+    <value>Un membre affiche l'icône du premier de ses rôles, dans l'ordre des rôles, qui en a une. Un membre « Sur une unité » prend la couleur du statut de son unité.</value>
+  </data>
+  <data name="OtherHeader" xml:space="preserve">
+    <value>Casernes, bornes d'incendie et points d'intérêt</value>
+  </data>
+  <data name="OtherIntro" xml:space="preserve">
+    <value>Ces icônes ne changent pas avec le statut.</value>
+  </data>
+  <data name="NoCallType" xml:space="preserve">
+    <value>Appels sans type</value>
+  </data>
+  <data name="NoUnitType" xml:space="preserve">
+    <value>Unités sans type</value>
+  </data>
+  <data name="NoRoleIcon" xml:space="preserve">
+    <value>Membres sans icône de rôle</value>
+  </data>
+  <data name="BuiltInUnitStatuses" xml:space="preserve">
+    <value>Statuts d'unité intégrés</value>
+  </data>
+  <data name="Station" xml:space="preserve">
+    <value>Caserne</value>
+  </data>
+  <data name="Hydrant" xml:space="preserve">
+    <value>Borne d'incendie</value>
+  </data>
+  <data name="EditIcons" xml:space="preserve">
+    <value>Modifier les icônes</value>
+  </data>
+  <data name="KeyHeader" xml:space="preserve">
+    <value>Clé</value>
+  </data>
+  <data name="KeyVariant" xml:space="preserve">
+    <value>Téléversée pour ce statut ou cette priorité</value>
+  </data>
+  <data name="KeyBadge" xml:space="preserve">
+    <value>Icône de type ou de rôle avec un badge de statut ou de priorité</value>
+  </data>
+  <data name="KeyPin" xml:space="preserve">
+    <value>Repère intégré</value>
+  </data>
+  <data name="NoMeaning" xml:space="preserve">
+    <value>Sans signification : repère gris</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="Role" xml:space="preserve">
+    <value>Rôle</value>
+  </data>
+  <data name="StatusSet" xml:space="preserve">
+    <value>Ensemble de statuts</value>
+  </data>
+  <data name="StatusIconsTitle" xml:space="preserve">
+    <value>Icônes de la carte pour {0}</value>
+  </data>
+  <data name="StatusIconsUnitIntro" xml:space="preserve">
+    <value>Téléversez une icône pour un statut afin de l'afficher sur la carte tant qu'une unité de ce type est dans ce statut. Sans icône, celle affichée par défaut est utilisée.</value>
+  </data>
+  <data name="StatusIconsCallIntro" xml:space="preserve">
+    <value>Téléversez une icône pour une priorité afin de l'afficher sur la carte tant qu'un appel de ce type a cette priorité. Sans icône, celle affichée par défaut est utilisée.</value>
+  </data>
+  <data name="StatusIconsRoleIntro" xml:space="preserve">
+    <value>Téléversez une icône pour un statut afin de l'afficher sur la carte tant qu'un membre dont l'icône vient de ce rôle est dans ce statut. Sans icône, celle affichée par défaut est utilisée.</value>
+  </data>
+  <data name="OwnIcon" xml:space="preserve">
+    <value>Icône sans statut ni priorité</value>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>Statut</value>
+  </data>
+  <data name="PriorityColumn" xml:space="preserve">
+    <value>Priorité</value>
+  </data>
+  <data name="ColorColumn" xml:space="preserve">
+    <value>Couleur sur la carte</value>
+  </data>
+  <data name="DefaultColumn" xml:space="preserve">
+    <value>Par défaut</value>
+  </data>
+  <data name="UploadedColumn" xml:space="preserve">
+    <value>Icône téléversée</value>
+  </data>
+  <data name="Upload" xml:space="preserve">
+    <value>Téléverser</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="NoneUploaded" xml:space="preserve">
+    <value>Aucune</value>
+  </data>
+  <data name="IconSaved" xml:space="preserve">
+    <value>Icône enregistrée.</value>
+  </data>
+  <data name="IconRemoved" xml:space="preserve">
+    <value>Icône supprimée.</value>
+  </data>
+  <data name="StatusMapIcons" xml:space="preserve">
+    <value>Icônes de carte par statut</value>
+  </data>
+  <data name="PriorityMapIcons" xml:space="preserve">
+    <value>Icônes de carte par priorité</value>
+  </data>
+  <data name="StatusMapIconsHelp" xml:space="preserve">
+    <value>Une icône de carte différente pour chaque statut, pour lire d'un coup d'œil une unité ou un membre.</value>
+  </data>
+  <data name="PriorityMapIconsHelp" xml:space="preserve">
+    <value>Une icône de carte différente pour chaque priorité, pour lire d'un coup d'œil un appel.</value>
+  </data>
+</root>

@@ -1,0 +1,160 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Mapping
+@model Resgrid.Web.Areas.User.Models.Mapping.StatusIconsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.Mapping> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.MapIconLegend> legendStrings
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Icons.IconUpload> iconStrings
+@{
+	var moduleTitle = await departmentTerms.NameAsync(DepartmentTerms.Mapping, localizer["MappingHeader"]);
+	var title = string.Format(legendStrings["StatusIconsTitle"].Value, Model.TypeName);
+	ViewBag.Title = "Resgrid | " + title;
+
+	var kind = (TypeIconKinds)Model.Kind;
+	var isPriority = kind == TypeIconKinds.CallType;
+	var intro = kind == TypeIconKinds.CallType ? legendStrings["StatusIconsCallIntro"]
+		: kind == TypeIconKinds.PersonnelRole ? legendStrings["StatusIconsRoleIntro"]
+		: legendStrings["StatusIconsUnitIntro"];
+}
+@section Styles
+{
+	<style>
+		.rg-legend-icon { display: inline-block; vertical-align: bottom; }
+		.rg-legend-icon.pin { width: 32px; height: 37px; }
+		.rg-legend-icon.upload { width: 32px; height: 32px; object-fit: contain; }
+		.rg-legend-swatch { display: inline-block; width: 14px; height: 14px; border-radius: 3px; vertical-align: middle; margin-right: 6px; border: 1px solid rgba(0,0,0,.15); }
+		.rg-status-icons td { vertical-align: middle !important; }
+		.rg-status-icons form { display: inline-block; margin: 0 4px 0 0; }
+		.rg-status-icons input[type=file] { display: inline-block; max-width: 230px; }
+	</style>
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@title</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+			</li>
+			<li>
+				<a asp-controller="Mapping" asp-action="Index" asp-route-area="User">@moduleTitle</a>
+			</li>
+			<li>
+				<a asp-controller="Mapping" asp-action="Legend" asp-route-area="User">@legendStrings["LegendPageTitle"]</a>
+			</li>
+			<li class="active">
+				<strong>@title</strong>
+			</li>
+		</ol>
+	</div>
+	<div class="col-sm-4">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			@if (kind == TypeIconKinds.UnitType)
+			{
+				<a class="btn btn-white" asp-controller="Types" asp-action="EditUnitType" asp-route-area="User" asp-route-unitTypeId="@Model.TypeId">@commonLocalizer["Edit"]</a>
+			}
+			else if (kind == TypeIconKinds.CallType)
+			{
+				<a class="btn btn-white" asp-controller="Types" asp-action="EditCallType" asp-route-area="User" asp-route-callTypeId="@Model.TypeId">@commonLocalizer["Edit"]</a>
+			}
+			else
+			{
+				<a class="btn btn-white" asp-controller="Personnel" asp-action="EditRole" asp-route-area="User" asp-route-roleId="@Model.TypeId">@commonLocalizer["Edit"]</a>
+			}
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					@if (!String.IsNullOrEmpty(Model.Message))
+					{
+						<div class="alert alert-success">@Model.Message</div>
+					}
+					@if (!String.IsNullOrEmpty(Model.ErrorMessage))
+					{
+						<div class="alert alert-danger">@Model.ErrorMessage</div>
+					}
+					<p>@intro</p>
+					<p>
+						<img class="rg-legend-icon @(Model.OwnIcon.IsUploaded ? "upload" : "pin")" src="@Model.OwnIcon.Url" alt="" />
+						@legendStrings["OwnIcon"]
+					</p>
+					<p class="text-muted">@iconStrings["IconGuidanceFormat"]</p>
+
+					<div class="table-responsive">
+						<table class="table table-striped rg-status-icons">
+							<thead>
+								<tr>
+									<th>@(isPriority ? legendStrings["PriorityColumn"] : legendStrings["StatusColumn"])</th>
+									<th>@legendStrings["ColorColumn"]</th>
+									<th>@legendStrings["DefaultColumn"]</th>
+									<th>@legendStrings["UploadedColumn"]</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+								@foreach (var row in Model.Rows)
+								{
+									<tr>
+										<td>
+											@if (row.State.Color != null)
+											{
+												<span class="rg-legend-swatch" style="background: @row.State.Color;"></span>
+											}
+											@row.State.Name
+										</td>
+										<td>
+											@if (row.State.Style != null)
+											{
+												<span class="rg-legend-swatch" style="background: @MapIconStyles.ColorOf(row.State.Style);"></span>@legendStrings["Style." + row.State.Style]
+											}
+											else
+											{
+												<span class="text-muted">@legendStrings["NoMeaning"]</span>
+											}
+										</td>
+										<td><img class="rg-legend-icon @(row.DefaultIcon.IsUploaded ? "upload" : "pin")" src="@row.DefaultIcon.Url" alt="" /></td>
+										<td>
+											@if (row.UploadedUrl != null)
+											{
+												<img class="rg-legend-icon upload" src="@row.UploadedUrl" alt="" />
+											}
+											else
+											{
+												<span class="text-muted">@legendStrings["NoneUploaded"]</span>
+											}
+										</td>
+										<td style="white-space: nowrap;">
+											@if (row.State.Variant != null)
+											{
+												<form asp-controller="Mapping" asp-action="UploadStatusIcon" asp-route-area="User" method="post" enctype="multipart/form-data">
+													<input type="hidden" name="kind" value="@Model.Kind" />
+													<input type="hidden" name="typeId" value="@Model.TypeId" />
+													<input type="hidden" name="variant" value="@row.State.Variant" />
+													<input type="file" name="iconFile" accept="image/png,image/jpeg,image/gif,image/webp" required aria-label="@row.State.Name" />
+													<button class="btn btn-xs btn-primary" type="submit">@legendStrings["Upload"]</button>
+												</form>
+												@if (row.UploadedUrl != null)
+												{
+													<form asp-controller="Mapping" asp-action="RemoveStatusIcon" asp-route-area="User" method="post">
+														<input type="hidden" name="kind" value="@Model.Kind" />
+														<input type="hidden" name="typeId" value="@Model.TypeId" />
+														<input type="hidden" name="variant" value="@row.State.Variant" />
+														<button class="btn btn-xs btn-danger" type="submit">@legendStrings["Remove"]</button>
+													</form>
+												}
+											}
+										</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

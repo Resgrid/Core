@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+  <data name="LegendPageTitle" xml:space="preserve">
+    <value>دليل رموز الخريطة</value>
+  </data>
+  <data name="LegendIntro" xml:space="preserve">
+    <value>كل الرموز التي تعرضها الخريطة للبلاغات والوحدات والأفراد. يتبع رمز البلاغ نوعه وأولويته، ورمز الوحدة نوعها وحالتها، ورمز العضو دوره وحالته. لا تغيّر مستويات الجاهزية أي رمز أبدًا.</value>
+  </data>
+  <data name="HowPickedHeader" xml:space="preserve">
+    <value>كيف يُختار الرمز</value>
+  </data>
+  <data name="HowPicked1" xml:space="preserve">
+    <value>رمز مرفوع للنوع أو الدور لهذه الأولوية أو الحالة تحديدًا.</value>
+  </data>
+  <data name="HowPicked2" xml:space="preserve">
+    <value>وإلا فالرمز المرفوع الخاص بالنوع أو الدور، مع شارة بلون الأولوية أو الحالة.</value>
+  </data>
+  <data name="HowPicked3" xml:space="preserve">
+    <value>وإلا فالدبوس المدمج بلون الأولوية أو الحالة.</value>
+  </data>
+  <data name="HowPicked4" xml:space="preserve">
+    <value>تُلوَّن الأولوية أو الحالة التي لم يُضبط لها معنى بحسب ما يوحي به اسمها، مثل طارئة أو خارج الخدمة؛ وإن لم يوحِ الاسم بشيء يظهر دبوس رمادي، وكذلك للوحدة أو العضو بلا حالة. اضبط المعاني في صفحتي الحالات المخصصة وأولويات البلاغات للتأكد.</value>
+  </data>
+  <data name="StatusColorsHeader" xml:space="preserve">
+    <value>ألوان الحالات</value>
+  </data>
+  <data name="StatusColorsIntro" xml:space="preserve">
+    <value>تأخذ الوحدات والأفراد لون معنى حالتهم.</value>
+  </data>
+  <data name="PriorityColorsHeader" xml:space="preserve">
+    <value>ألوان الأولويات</value>
+  </data>
+  <data name="PriorityColorsIntro" xml:space="preserve">
+    <value>تأخذ البلاغات لون معنى أولويتها.</value>
+  </data>
+  <data name="Style.available" xml:space="preserve">
+    <value>متاح</value>
+  </data>
+  <data name="Style.dispatched" xml:space="preserve">
+    <value>مُرسَل</value>
+  </data>
+  <data name="Style.responding" xml:space="preserve">
+    <value>يستجيب</value>
+  </data>
+  <data name="Style.onscene" xml:space="preserve">
+    <value>في الموقع</value>
+  </data>
+  <data name="Style.transporting" xml:space="preserve">
+    <value>ينقل</value>
+  </data>
+  <data name="Style.returning" xml:space="preserve">
+    <value>عائد</value>
+  </data>
+  <data name="Style.staging" xml:space="preserve">
+    <value>تجمّع واستعداد</value>
+  </data>
+  <data name="Style.delayed" xml:space="preserve">
+    <value>في استراحة</value>
+  </data>
+  <data name="Style.unavailable" xml:space="preserve">
+    <value>غير متاح</value>
+  </data>
+  <data name="Style.unknown" xml:space="preserve">
+    <value>بلا معنى أو بلا حالة</value>
+  </data>
+  <data name="Style.low" xml:space="preserve">
+    <value>منخفضة</value>
+  </data>
+  <data name="Style.medium" xml:space="preserve">
+    <value>متوسطة</value>
+  </data>
+  <data name="Style.high" xml:space="preserve">
+    <value>عالية</value>
+  </data>
+  <data name="Style.emergency" xml:space="preserve">
+    <value>طارئة</value>
+  </data>
+  <data name="CallsHeader" xml:space="preserve">
+    <value>البلاغات</value>
+  </data>
+  <data name="CallsIntro" xml:space="preserve">
+    <value>صف لكل نوع بلاغ، وعمود لكل أولوية.</value>
+  </data>
+  <data name="UnitsHeader" xml:space="preserve">
+    <value>الوحدات</value>
+  </data>
+  <data name="UnitsIntro" xml:space="preserve">
+    <value>صف لكل نوع وحدة، مع حالات مجموعة حالاته.</value>
+  </data>
+  <data name="PersonnelHeader" xml:space="preserve">
+    <value>الأفراد</value>
+  </data>
+  <data name="PersonnelIntro" xml:space="preserve">
+    <value>يعرض العضو رمز أول دور يشغله، بترتيب الأدوار، له رمز. ويأخذ العضو «على وحدة» لون حالة وحدته.</value>
+  </data>
+  <data name="OtherHeader" xml:space="preserve">
+    <value>المحطات وصنابير الإطفاء ونقاط الاهتمام</value>
+  </data>
+  <data name="OtherIntro" xml:space="preserve">
+    <value>لا تتغير هذه الرموز بتغير الحالة.</value>
+  </data>
+  <data name="NoCallType" xml:space="preserve">
+    <value>بلاغات بلا نوع</value>
+  </data>
+  <data name="NoUnitType" xml:space="preserve">
+    <value>وحدات بلا نوع</value>
+  </data>
+  <data name="NoRoleIcon" xml:space="preserve">
+    <value>أعضاء بلا رمز دور</value>
+  </data>
+  <data name="BuiltInUnitStatuses" xml:space="preserve">
+    <value>حالات الوحدات المدمجة</value>
+  </data>
+  <data name="Station" xml:space="preserve">
+    <value>محطة</value>
+  </data>
+  <data name="Hydrant" xml:space="preserve">
+    <value>صنبور إطفاء</value>
+  </data>
+  <data name="EditIcons" xml:space="preserve">
+    <value>تعديل الرموز</value>
+  </data>
+  <data name="KeyHeader" xml:space="preserve">
+    <value>المفتاح</value>
+  </data>
+  <data name="KeyVariant" xml:space="preserve">
+    <value>مرفوع لهذه الحالة أو الأولوية</value>
+  </data>
+  <data name="KeyBadge" xml:space="preserve">
+    <value>رمز النوع أو الدور مع شارة الحالة أو الأولوية</value>
+  </data>
+  <data name="KeyPin" xml:space="preserve">
+    <value>دبوس مدمج</value>
+  </data>
+  <data name="NoMeaning" xml:space="preserve">
+    <value>بلا معنى: دبوس رمادي</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>النوع</value>
+  </data>
+  <data name="Role" xml:space="preserve">
+    <value>الدور</value>
+  </data>
+  <data name="StatusSet" xml:space="preserve">
+    <value>مجموعة الحالات</value>
+  </data>
+  <data name="StatusIconsTitle" xml:space="preserve">
+    <value>رموز الخريطة لـ {0}</value>
+  </data>
+  <data name="StatusIconsUnitIntro" xml:space="preserve">
+    <value>ارفع رمزًا لحالة لعرضه على الخريطة ما دامت وحدة من هذا النوع في تلك الحالة. وبدونه يُستخدم الرمز الافتراضي المعروض.</value>
+  </data>
+  <data name="StatusIconsCallIntro" xml:space="preserve">
+    <value>ارفع رمزًا لأولوية لعرضه على الخريطة ما دام بلاغ من هذا النوع بتلك الأولوية. وبدونه يُستخدم الرمز الافتراضي المعروض.</value>
+  </data>
+  <data name="StatusIconsRoleIntro" xml:space="preserve">
+    <value>ارفع رمزًا لحالة لعرضه على الخريطة ما دام عضو يأتي رمزه من هذا الدور في تلك الحالة. وبدونه يُستخدم الرمز الافتراضي المعروض.</value>
+  </data>
+  <data name="OwnIcon" xml:space="preserve">
+    <value>الرمز دون حالة أو أولوية</value>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="PriorityColumn" xml:space="preserve">
+    <value>الأولوية</value>
+  </data>
+  <data name="ColorColumn" xml:space="preserve">
+    <value>لون الخريطة</value>
+  </data>
+  <data name="DefaultColumn" xml:space="preserve">
+    <value>الافتراضي</value>
+  </data>
+  <data name="UploadedColumn" xml:space="preserve">
+    <value>الرمز المرفوع</value>
+  </data>
+  <data name="Upload" xml:space="preserve">
+    <value>رفع</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>إزالة</value>
+  </data>
+  <data name="NoneUploaded" xml:space="preserve">
+    <value>لا يوجد</value>
+  </data>
+  <data name="IconSaved" xml:space="preserve">
+    <value>تم حفظ الرمز.</value>
+  </data>
+  <data name="IconRemoved" xml:space="preserve">
+    <value>تمت إزالة الرمز.</value>
+  </data>
+  <data name="StatusMapIcons" xml:space="preserve">
+    <value>رموز الخريطة حسب الحالة</value>
+  </data>
+  <data name="PriorityMapIcons" xml:space="preserve">
+    <value>رموز الخريطة حسب الأولوية</value>
+  </data>
+  <data name="StatusMapIconsHelp" xml:space="preserve">
+    <value>رمز خريطة مختلف لكل حالة، ليسهل تمييز الوحدة أو العضو بنظرة.</value>
+  </data>
+  <data name="PriorityMapIconsHelp" xml:space="preserve">
+    <value>رمز خريطة مختلف لكل أولوية، ليسهل تمييز البلاغ بنظرة.</value>
+  </data>
+</root>

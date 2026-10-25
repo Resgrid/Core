@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+  <data name="LegendPageTitle" xml:space="preserve">
+    <value>Υπόμνημα εικονιδίων χάρτη</value>
+  </data>
+  <data name="LegendIntro" xml:space="preserve">
+    <value>Όλα τα εικονίδια που δείχνει ο χάρτης για κλήσεις, μονάδες και προσωπικό. Το εικονίδιο μιας κλήσης ακολουθεί τον τύπο και την προτεραιότητά της, μιας μονάδας τον τύπο και την κατάστασή της και ενός μέλους τον ρόλο και την κατάστασή του. Τα επίπεδα στελέχωσης δεν αλλάζουν ποτέ ένα εικονίδιο.</value>
+  </data>
+  <data name="HowPickedHeader" xml:space="preserve">
+    <value>Πώς επιλέγεται ένα εικονίδιο</value>
+  </data>
+  <data name="HowPicked1" xml:space="preserve">
+    <value>Ένα εικονίδιο που ανέβηκε για τον τύπο ή τον ρόλο για τη συγκεκριμένη προτεραιότητα ή κατάσταση.</value>
+  </data>
+  <data name="HowPicked2" xml:space="preserve">
+    <value>Αλλιώς το δικό του ανεβασμένο εικονίδιο του τύπου ή του ρόλου, με ένα σήμα στο χρώμα της προτεραιότητας ή της κατάστασης.</value>
+  </data>
+  <data name="HowPicked3" xml:space="preserve">
+    <value>Αλλιώς η ενσωματωμένη πινέζα στο χρώμα της προτεραιότητας ή της κατάστασης.</value>
+  </data>
+  <data name="HowPicked4" xml:space="preserve">
+    <value>Μια προτεραιότητα ή κατάσταση χωρίς ορισμένη σημασία χρωματίζεται σύμφωνα με ό,τι υποδηλώνει το όνομά της, όπως Έκτακτη ανάγκη ή Εκτός υπηρεσίας· αν το όνομα δεν υποδηλώνει τίποτα, εμφανίζεται γκρι πινέζα, όπως και για μονάδα ή μέλος χωρίς κατάσταση. Ορίστε σημασίες στις σελίδες Προσαρμοσμένες καταστάσεις και Προτεραιότητες κλήσεων για να είστε σίγουροι.</value>
+  </data>
+  <data name="StatusColorsHeader" xml:space="preserve">
+    <value>Χρώματα καταστάσεων</value>
+  </data>
+  <data name="StatusColorsIntro" xml:space="preserve">
+    <value>Οι μονάδες και το προσωπικό παίρνουν το χρώμα της σημασίας της κατάστασής τους.</value>
+  </data>
+  <data name="PriorityColorsHeader" xml:space="preserve">
+    <value>Χρώματα προτεραιοτήτων</value>
+  </data>
+  <data name="PriorityColorsIntro" xml:space="preserve">
+    <value>Οι κλήσεις παίρνουν το χρώμα της σημασίας της προτεραιότητάς τους.</value>
+  </data>
+  <data name="Style.available" xml:space="preserve">
+    <value>Διαθέσιμος</value>
+  </data>
+  <data name="Style.dispatched" xml:space="preserve">
+    <value>Σε αποστολή</value>
+  </data>
+  <data name="Style.responding" xml:space="preserve">
+    <value>Σε ανταπόκριση</value>
+  </data>
+  <data name="Style.onscene" xml:space="preserve">
+    <value>Επί τόπου</value>
+  </data>
+  <data name="Style.transporting" xml:space="preserve">
+    <value>Σε μεταφορά</value>
+  </data>
+  <data name="Style.returning" xml:space="preserve">
+    <value>Σε επιστροφή</value>
+  </data>
+  <data name="Style.staging" xml:space="preserve">
+    <value>Συγκέντρωση και αναμονή</value>
+  </data>
+  <data name="Style.delayed" xml:space="preserve">
+    <value>Σε διάλειμμα</value>
+  </data>
+  <data name="Style.unavailable" xml:space="preserve">
+    <value>Μη διαθέσιμος</value>
+  </data>
+  <data name="Style.unknown" xml:space="preserve">
+    <value>Χωρίς σημασία ή χωρίς κατάσταση</value>
+  </data>
+  <data name="Style.low" xml:space="preserve">
+    <value>Χαμηλή</value>
+  </data>
+  <data name="Style.medium" xml:space="preserve">
+    <value>Μεσαία</value>
+  </data>
+  <data name="Style.high" xml:space="preserve">
+    <value>Υψηλή</value>
+  </data>
+  <data name="Style.emergency" xml:space="preserve">
+    <value>Έκτακτη ανάγκη</value>
+  </data>
+  <data name="CallsHeader" xml:space="preserve">
+    <value>Κλήσεις</value>
+  </data>
+  <data name="CallsIntro" xml:space="preserve">
+    <value>Μία γραμμή ανά τύπο κλήσης, μία στήλη ανά προτεραιότητα.</value>
+  </data>
+  <data name="UnitsHeader" xml:space="preserve">
+    <value>Μονάδες</value>
+  </data>
+  <data name="UnitsIntro" xml:space="preserve">
+    <value>Μία γραμμή ανά τύπο μονάδας, με τις καταστάσεις του συνόλου καταστάσεών του.</value>
+  </data>
+  <data name="PersonnelHeader" xml:space="preserve">
+    <value>Προσωπικό</value>
+  </data>
+  <data name="PersonnelIntro" xml:space="preserve">
+    <value>Ένα μέλος δείχνει το εικονίδιο του πρώτου ρόλου του, κατά τη σειρά ρόλων, που έχει εικονίδιο. Ένα μέλος «Σε μονάδα» παίρνει το χρώμα της κατάστασης της μονάδας του.</value>
+  </data>
+  <data name="OtherHeader" xml:space="preserve">
+    <value>Σταθμοί, κρουνοί και σημεία ενδιαφέροντος</value>
+  </data>
+  <data name="OtherIntro" xml:space="preserve">
+    <value>Αυτά τα εικονίδια δεν αλλάζουν με την κατάσταση.</value>
+  </data>
+  <data name="NoCallType" xml:space="preserve">
+    <value>Κλήσεις χωρίς τύπο</value>
+  </data>
+  <data name="NoUnitType" xml:space="preserve">
+    <value>Μονάδες χωρίς τύπο</value>
+  </data>
+  <data name="NoRoleIcon" xml:space="preserve">
+    <value>Μέλη χωρίς εικονίδιο ρόλου</value>
+  </data>
+  <data name="BuiltInUnitStatuses" xml:space="preserve">
+    <value>Ενσωματωμένες καταστάσεις μονάδων</value>
+  </data>
+  <data name="Station" xml:space="preserve">
+    <value>Σταθμός</value>
+  </data>
+  <data name="Hydrant" xml:space="preserve">
+    <value>Κρουνός</value>
+  </data>
+  <data name="EditIcons" xml:space="preserve">
+    <value>Επεξεργασία εικονιδίων</value>
+  </data>
+  <data name="KeyHeader" xml:space="preserve">
+    <value>Επεξήγηση</value>
+  </data>
+  <data name="KeyVariant" xml:space="preserve">
+    <value>Ανέβηκε για αυτή την κατάσταση ή προτεραιότητα</value>
+  </data>
+  <data name="KeyBadge" xml:space="preserve">
+    <value>Εικονίδιο τύπου ή ρόλου με σήμα κατάστασης ή προτεραιότητας</value>
+  </data>
+  <data name="KeyPin" xml:space="preserve">
+    <value>Ενσωματωμένη πινέζα</value>
+  </data>
+  <data name="NoMeaning" xml:space="preserve">
+    <value>Χωρίς σημασία: γκρι πινέζα</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Τύπος</value>
+  </data>
+  <data name="Role" xml:space="preserve">
+    <value>Ρόλος</value>
+  </data>
+  <data name="StatusSet" xml:space="preserve">
+    <value>Σύνολο καταστάσεων</value>
+  </data>
+  <data name="StatusIconsTitle" xml:space="preserve">
+    <value>Εικονίδια χάρτη για {0}</value>
+  </data>
+  <data name="StatusIconsUnitIntro" xml:space="preserve">
+    <value>Ανεβάστε ένα εικονίδιο για μια κατάσταση ώστε να εμφανίζεται στον χάρτη όσο μια μονάδα αυτού του τύπου βρίσκεται σε αυτή. Χωρίς αυτό χρησιμοποιείται το προεπιλεγμένο που φαίνεται.</value>
+  </data>
+  <data name="StatusIconsCallIntro" xml:space="preserve">
+    <value>Ανεβάστε ένα εικονίδιο για μια προτεραιότητα ώστε να εμφανίζεται στον χάρτη όσο μια κλήση αυτού του τύπου έχει αυτή την προτεραιότητα. Χωρίς αυτό χρησιμοποιείται το προεπιλεγμένο που φαίνεται.</value>
+  </data>
+  <data name="StatusIconsRoleIntro" xml:space="preserve">
+    <value>Ανεβάστε ένα εικονίδιο για μια κατάσταση ώστε να εμφανίζεται στον χάρτη όσο ένα μέλος του οποίου το εικονίδιο προέρχεται από αυτόν τον ρόλο βρίσκεται σε αυτή. Χωρίς αυτό χρησιμοποιείται το προεπιλεγμένο που φαίνεται.</value>
+  </data>
+  <data name="OwnIcon" xml:space="preserve">
+    <value>Εικονίδιο χωρίς κατάσταση ή προτεραιότητα</value>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="PriorityColumn" xml:space="preserve">
+    <value>Προτεραιότητα</value>
+  </data>
+  <data name="ColorColumn" xml:space="preserve">
+    <value>Χρώμα χάρτη</value>
+  </data>
+  <data name="DefaultColumn" xml:space="preserve">
+    <value>Προεπιλογή</value>
+  </data>
+  <data name="UploadedColumn" xml:space="preserve">
+    <value>Ανεβασμένο εικονίδιο</value>
+  </data>
+  <data name="Upload" xml:space="preserve">
+    <value>Ανέβασμα</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Αφαίρεση</value>
+  </data>
+  <data name="NoneUploaded" xml:space="preserve">
+    <value>Κανένα</value>
+  </data>
+  <data name="IconSaved" xml:space="preserve">
+    <value>Το εικονίδιο αποθηκεύτηκε.</value>
+  </data>
+  <data name="IconRemoved" xml:space="preserve">
+    <value>Το εικονίδιο αφαιρέθηκε.</value>
+  </data>
+  <data name="StatusMapIcons" xml:space="preserve">
+    <value>Εικονίδια χάρτη ανά κατάσταση</value>
+  </data>
+  <data name="PriorityMapIcons" xml:space="preserve">
+    <value>Εικονίδια χάρτη ανά προτεραιότητα</value>
+  </data>
+  <data name="StatusMapIconsHelp" xml:space="preserve">
+    <value>Διαφορετικό εικονίδιο χάρτη για κάθε κατάσταση, ώστε μια μονάδα ή ένα μέλος να διαβάζεται με μια ματιά.</value>
+  </data>
+  <data name="PriorityMapIconsHelp" xml:space="preserve">
+    <value>Διαφορετικό εικονίδιο χάρτη για κάθε προτεραιότητα, ώστε μια κλήση να διαβάζεται με μια ματιά.</value>
+  </data>
+</root>

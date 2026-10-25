@@ -41,6 +41,8 @@ namespace Resgrid.Tests.Web.Services
 			_now = DateTime.UtcNow;
 
 			M<IDepartmentsService>().Setup(x => x.GetDepartmentByIdAsync(DepartmentId, false)).ReturnsAsync(new Department { DepartmentId = DepartmentId });
+			M<IMapIconsService>().Setup(x => x.GetResolverAsync(DepartmentId, It.IsAny<IEnumerable<UnitState>>()))
+				.ReturnsAsync(new MapIconResolver(DepartmentId, null, null, null, null, null, null));
 			M<IDepartmentSettingsService>().Setup(x => x.GetBigBoardCenterGpsCoordinatesDepartmentAsync(DepartmentId)).ReturnsAsync("39.5,-119.8");
 			M<IDepartmentSettingsService>().Setup(x => x.GetBigBoardMapZoomLevelForDepartmentAsync(DepartmentId)).ReturnsAsync(11);
 			M<IDepartmentSettingsService>().Setup(x => x.GetMappingUnitLocationTTLAsync(DepartmentId)).ReturnsAsync(60);
@@ -270,6 +272,32 @@ namespace Resgrid.Tests.Web.Services
 			M<IUnitsService>().Setup(x => x.GetUnitByIdAsync(UnitId)).ReturnsAsync(new Unit { UnitId = UnitId, DepartmentId = DepartmentId, Name = "Gone", IsDeleted = true });
 
 			(await Load()).Status.Should().Be(ResponseHelper.NotFound);
+		}
+
+		[Test]
+		public async Task Markers_carry_the_status_styled_pin_of_their_type_and_status()
+		{
+			var engineType = new UnitType { UnitTypeId = 3, DepartmentId = DepartmentId, Type = "Engine", MapIconType = (int)MapIconTypes.Truck };
+			var responding = new UnitState { UnitStateId = 90, UnitId = UnitId, State = (int)UnitStateTypes.Responding, Timestamp = _now.AddMinutes(-5) };
+			M<IUnitsService>().Setup(x => x.GetLastUnitStateByUnitIdAsync(UnitId)).ReturnsAsync(responding);
+			M<IActionLogsService>().Setup(x => x.GetLastActionLogsForDepartmentAsync(DepartmentId, It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>())).ReturnsAsync(new List<ActionLog>
+			{
+				new ActionLog { UserId = "officer-1", ActionTypeId = (int)ActionTypes.OnScene, Timestamp = _now.AddMinutes(-4) }
+			});
+			M<IMapIconsService>().Setup(x => x.GetResolverAsync(DepartmentId, It.IsAny<IEnumerable<UnitState>>()))
+				.ReturnsAsync(new MapIconResolver(DepartmentId, null, null, new[] { engineType }, null, null, null));
+
+			var result = await Load();
+
+			result.Data.UnitMarker.ImagePath.Should().Be("truck", "older clients keep the plain bundled icon");
+			result.Data.UnitMarker.IconStyle.Should().Be(MapIconStyles.Responding);
+			result.Data.UnitMarker.PinIconUrl.Should().EndWith("/api/v4/TypeIcons/Pins/truck-responding?v=" + MapIconStyles.Version);
+			result.Data.UnitMarker.IconUrl.Should().BeNull();
+
+			var officer = result.Data.Crew.Single(x => x.UserId == "officer-1").Marker;
+			officer.ImagePath.Should().Be(TypeIcons.LegacyPersonImage);
+			officer.IconStyle.Should().Be(MapIconStyles.OnScene);
+			officer.PinIconUrl.Should().EndWith("/api/v4/TypeIcons/Pins/person-onscene?v=" + MapIconStyles.Version);
 		}
 
 		[Test]

@@ -3,6 +3,7 @@ import type { HubConnection } from '@microsoft/signalr';
 import LoadingIndicator from '../shared/LoadingIndicator';
 import { apiFetchJson } from '../../runtime/api';
 import {
+  connectEventingHub,
   connectGeolocationHub,
   type PersonnelLocationUpdate,
   type UnitLocationUpdate,
@@ -547,6 +548,68 @@ export default function MapElement(props: MapElementProps) {
       }
     };
   }, [requestMarkerReload]);
+
+  // A call's priority and a unit's or person's status pick their icons, so status and call changes reload the markers.
+  useEffect(() => {
+    const departmentId = props.departmentId ?? 0;
+
+    if (departmentId <= 0) {
+      return undefined;
+    }
+
+    let disposed = false;
+    let retryTimer: ReturnType<typeof setTimeout> | null = null;
+    let connection: HubConnection | null = null;
+    const reload = () => requestMarkerReload();
+
+    const connectAsync = async (attempt: number) => {
+      try {
+        const connected = await connectEventingHub(departmentId, {
+          onUnitStatusUpdated: reload,
+          onPersonnelStatusUpdated: reload,
+          onCallsChanged: reload,
+          onResubscribed: reload,
+        });
+
+        if (disposed) {
+          await connected.stop();
+          return;
+        }
+
+        connection = connected;
+
+        // Changes made before a late first connection were missed.
+        if (attempt > 0) {
+          reload();
+        }
+      } catch (connectionError) {
+        console.error('Unable to connect to realtime department events.', connectionError);
+
+        if (!disposed) {
+          const delay = CONNECT_RETRY_DELAYS_MS[Math.min(attempt, CONNECT_RETRY_DELAYS_MS.length - 1)];
+          retryTimer = setTimeout(() => {
+            retryTimer = null;
+            void connectAsync(attempt + 1);
+          }, delay);
+        }
+      }
+    };
+
+    void connectAsync(0);
+
+    return () => {
+      disposed = true;
+
+      if (retryTimer) {
+        clearTimeout(retryTimer);
+      }
+
+      if (connection) {
+        void connection.stop();
+        connection = null;
+      }
+    };
+  }, [props.departmentId, requestMarkerReload]);
 
   // Re-fit when the user changes what is shown, not when realtime traffic or a background reload
   // changes the marker set: that would pull the camera away from wherever the user has panned.

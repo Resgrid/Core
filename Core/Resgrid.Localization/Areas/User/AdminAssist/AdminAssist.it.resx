@@ -7075,7 +7075,16 @@
     <value>Icone personalizzate per tipi di unità, tipi di chiamata, punti di interesse e ruoli del personale, mostrate negli elenchi, nelle app e sulla mappa.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.custom-map-icons">
-    <value>Carica un PNG quadrato con sfondo trasparente, di 128 × 128 px o più, nella pagina del tipo di unità, del tipo di chiamata, del tipo di POI o del ruolo; la pagina ne mostra l'anteprima su una mappa chiara e una scura. Per scegliere l'icona di una persona con più ruoli, ordina i ruoli nella pagina Ruoli.</value>
+    <value>Carica un PNG quadrato con sfondo trasparente, di 128 × 128 px o più, nella pagina del tipo di unità, del tipo di chiamata, del tipo di POI o del ruolo; la pagina ne mostra l'anteprima su una mappa chiara e una scura. Per scegliere l'icona di una persona con più ruoli, ordina i ruoli nella pagina Ruoli. Usa Icone della mappa per stato o Icone della mappa per priorità nella stessa pagina per aggiungere un'icona per ogni stato o priorità.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.map-icon-legend">
+    <value>Legenda delle icone della mappa</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.map-icon-legend">
+    <value>Tutte le icone che la mappa mostra per chiamate, unità e personale in ogni priorità e stato, con i colori di stati e priorità.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.map-icon-legend">
+    <value>Apri Mappa, poi Legenda delle icone della mappa. Gli amministratori del dipartimento possono scegliere Modifica icone su un tipo di chiamata, un tipo di unità o un ruolo per caricare un'icona per una priorità o uno stato.</value>
   </data>
   <data xml:space="preserve" name="Feature.map-visualizations">
     <value>Visualizzazioni mappa</value>

@@ -7075,7 +7075,16 @@
     <value>Egna ikoner för enhetstyper, larmtyper, intressepunkter och personalroller som visas i listor, apparna och på kartan.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.custom-map-icons">
-    <value>Ladda upp en kvadratisk PNG med genomskinlig bakgrund, 128 × 128 px eller större, på sidan för enhetstypen, larmtypen, POI-typen eller rollen; sidan förhandsgranskar den på en ljus och en mörk karta. Ordna rollerna på sidan Roller för att välja vilken ikon en person med flera roller får.</value>
+    <value>Ladda upp en kvadratisk PNG med genomskinlig bakgrund, 128 × 128 px eller större, på sidan för enhetstypen, larmtypen, POI-typen eller rollen; sidan förhandsgranskar den på en ljus och en mörk karta. Ordna rollerna på sidan Roller för att välja vilken ikon en person med flera roller får. Använd Kartikoner per status eller Kartikoner per prioritet på samma sida för att lägga till en ikon för varje status eller prioritet.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.map-icon-legend">
+    <value>Förklaring till kartikoner</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.map-icon-legend">
+    <value>Alla ikoner som kartan visar för larm, enheter och personal i varje prioritet och status, med status- och prioritetsfärgerna.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.map-icon-legend">
+    <value>Öppna Karta och sedan Förklaring till kartikoner. Avdelningsadministratörer kan välja Redigera ikoner på en larmtyp, enhetstyp eller roll för att ladda upp en ikon för en prioritet eller status.</value>
   </data>
   <data xml:space="preserve" name="Feature.map-visualizations">
     <value>Kartvisualiseringar</value>

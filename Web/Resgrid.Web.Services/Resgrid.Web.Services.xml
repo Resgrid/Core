@@ -3236,16 +3236,23 @@
             department address, else a fixed fallback; with the BigBoard zoom level (9 when unset).
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.BuildUnitMarker(Resgrid.Model.Unit,Resgrid.Model.UnitsLocation,Resgrid.Model.UnitState,System.Collections.Generic.List{Resgrid.Model.UnitType},System.Int32,System.Boolean,System.DateTime)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.BuildUnitMarker(Resgrid.Model.Unit,Resgrid.Model.UnitsLocation,Resgrid.Model.UnitState,Resgrid.Model.MapMarkerIcon,System.Int32,System.Boolean,System.DateTime)">
             <summary>
             A unit's marker ("u{unitId}", Type 1) at its latest location ping, or at its status location when the ping has
             expired or the status is newer; Marker is null when it has no current position. Timestamp is the source's time.
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.BuildPersonMarker(Resgrid.Model.UserGroupRole,System.String,Resgrid.Model.PersonnelLocation,Resgrid.Model.ActionLog,System.Collections.Generic.Dictionary{System.Int32,Resgrid.Model.PersonnelRole},System.Int32,System.Boolean,System.DateTime)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.BuildPersonMarker(Resgrid.Model.UserGroupRole,System.String,Resgrid.Model.PersonnelLocation,Resgrid.Model.ActionLog,Resgrid.Model.MapMarkerIcon,System.Int32,System.Boolean,System.DateTime)">
             <summary>
             A person's marker ("p{userId}", Type 3) titled <paramref name="title"/>, at their latest location ping or their
             status location under the same rules as a unit; Marker is null when they have no current position.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.ApplyIcon(Resgrid.Web.Services.Models.v4.Mapping.MapMakerInfoData,Resgrid.Model.MapMarkerIcon)">
+            <summary>
+            Sets a call, unit or person marker's icon fields: ImagePath stays the bundled icon older clients show, IconUrl the
+            department's uploaded icon (for the exact status or priority, else the type's own icon with a badge of the style),
+            PinIconUrl the built-in pin in the style of the status or priority and IconStyle that style.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetMayLayers(System.Int32)">
@@ -5090,13 +5097,18 @@
         <member name="T:Resgrid.Web.Services.Controllers.v4.TypeIconsController">
             <summary>
             Department-uploaded unit, call and POI type icons, linked from the TypeIconUrl / IconUrl fields of the unit, call, POI, dispatch and map
-            results. Anonymous so image components can load them without an auth header: the opaque key is the capability,
-            and a new upload gets a new key, so responses are immutable.
+            results, and the styled built-in map pins linked from map markers' PinIconUrl. Anonymous so image components can load
+            them without an auth header: the opaque key is the capability, and a new upload gets a new key, so responses are immutable.
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.TypeIconsController.Get(System.String)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.TypeIconsController.Get(System.String,System.String)">
             <summary>The icon as a 128 px square PNG.</summary>
             <param name="key">The icon key at the end of a TypeIconUrl.</param>
+            <param name="s">Optional status or priority style (an IconStyle value): the icon is returned with a badge of that colour.</param>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.TypeIconsController.GetPin(System.String)">
+            <summary>A built-in map pin in a status or priority style as a 32 x 37 PNG, e.g. "ambulance-responding" or "call-high".</summary>
+            <param name="name">The pin name at the end of a PinIconUrl.</param>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.UnitLocationController">
             <summary>
@@ -14613,8 +14625,25 @@
             <summary>
             Absolute URL of the department's uploaded type icon for the marker's unit type (Type=1), call type (Type=0) or
             POI type (Type=4), or for a person (Type=3) the icon of the first role they hold, in the department's role
-            order, that has one: a 128 px square PNG, anonymous GET, immutable. Null when there is no uploaded icon;
-            ImagePath / PoiImage stay the bundled fallback.
+            order, that has one: a 128 px square PNG, anonymous GET, immutable. For a call, unit or person it is the icon
+            uploaded for the current priority or status when there is one; otherwise the type's own icon, carrying a badge in
+            the colour of <see cref="P:Resgrid.Web.Services.Models.v4.Mapping.MapMakerInfoData.IconStyle"/> when that is set. Null when there is no uploaded icon; PinIconUrl, then
+            ImagePath / PoiImage, are the fallback.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.MapMakerInfoData.PinIconUrl">
+            <summary>
+            Absolute URL of the built-in pin for a call (Type=0), unit (Type=1) or person (Type=3) recoloured to the style of
+            its priority or status: a 32 x 37 PNG whose bottom tip is the position, anonymous GET, immutable. Shown when
+            IconUrl is null. A priority or status with no meaning (and a name that suggests none), or a unit or person with no
+            status, gets the gray "unknown" pin. Null for every other marker type, so ImagePath stays the bundled fallback.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.MapMakerInfoData.IconStyle">
+            <summary>
+            The style of a call's priority or a unit's or person's status: available, dispatched, responding, onscene,
+            transporting, returning, staging, delayed, unavailable (statuses), low, medium, high, emergency (priorities) or
+            unknown (no meaning, or no status). Null for every other marker type.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Mapping.PoiLayerData.PoiImage">

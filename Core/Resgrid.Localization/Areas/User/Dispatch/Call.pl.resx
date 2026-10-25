@@ -1084,10 +1084,10 @@
     <value>Na {0}</value>
   </data>
   <data name="NearestUnitsMapUnits" xml:space="preserve">
-    <value>Jednostki</value>
+    <value>Dostępne jednostki</value>
   </data>
   <data name="NearestUnitsMapPersonnel" xml:space="preserve">
-    <value>Personel</value>
+    <value>Dostępny personel</value>
   </data>
   <data name="NearestUnitsMapBoundaries" xml:space="preserve">
     <value>Granice rejonów</value>

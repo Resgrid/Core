@@ -7075,7 +7075,16 @@
     <value>Eigene Symbole für Einheitentypen, Einsatztypen, Points of Interest und Personalrollen, angezeigt in Listen, den Apps und auf der Karte.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.custom-map-icons">
-    <value>Laden Sie auf der Seite des Einheitentyps, Einsatztyps, POI-Typs oder der Rolle ein quadratisches PNG mit transparentem Hintergrund ab 128 × 128 px hoch; die Seite zeigt eine Vorschau auf einer hellen und einer dunklen Karte. Welches Symbol eine Person mit mehreren Rollen erhält, legen Sie über die Reihenfolge auf der Rollenseite fest.</value>
+    <value>Laden Sie auf der Seite des Einheitentyps, Einsatztyps, POI-Typs oder der Rolle ein quadratisches PNG mit transparentem Hintergrund ab 128 × 128 px hoch; die Seite zeigt eine Vorschau auf einer hellen und einer dunklen Karte. Welches Symbol eine Person mit mehreren Rollen erhält, legen Sie über die Reihenfolge auf der Rollenseite fest. Über „Kartensymbole nach Status“ bzw. „Kartensymbole nach Priorität“ auf derselben Seite fügen Sie ein Symbol für jeden Status oder jede Priorität hinzu.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.map-icon-legend">
+    <value>Legende der Kartensymbole</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.map-icon-legend">
+    <value>Alle Symbole, die die Karte für Einsätze, Einheiten und Personal in jeder Priorität und jedem Status zeigt, mit den Status- und Prioritätsfarben.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.map-icon-legend">
+    <value>Öffnen Sie Karte und dann Legende der Kartensymbole. Abteilungsadministratoren können bei einem Einsatztyp, Einheitentyp oder einer Rolle „Symbole bearbeiten“ wählen, um ein Symbol für eine Priorität oder einen Status hochzuladen.</value>
   </data>
   <data xml:space="preserve" name="Feature.map-visualizations">
     <value>Kartenvisualisierungen</value>

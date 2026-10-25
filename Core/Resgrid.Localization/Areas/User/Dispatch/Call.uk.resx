@@ -1084,10 +1084,10 @@
     <value>На {0}</value>
   </data>
   <data name="NearestUnitsMapUnits" xml:space="preserve">
-    <value>Підрозділи</value>
+    <value>Доступні підрозділи</value>
   </data>
   <data name="NearestUnitsMapPersonnel" xml:space="preserve">
-    <value>Персонал</value>
+    <value>Доступний персонал</value>
   </data>
   <data name="NearestUnitsMapBoundaries" xml:space="preserve">
     <value>Межі станцій</value>

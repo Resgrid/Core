@@ -1084,10 +1084,10 @@
     <value>Auf {0}</value>
   </data>
   <data name="NearestUnitsMapUnits" xml:space="preserve">
-    <value>Einheiten</value>
+    <value>Verfügbare Einheiten</value>
   </data>
   <data name="NearestUnitsMapPersonnel" xml:space="preserve">
-    <value>Personal</value>
+    <value>Verfügbares Personal</value>
   </data>
   <data name="NearestUnitsMapBoundaries" xml:space="preserve">
     <value>Wachbereiche</value>

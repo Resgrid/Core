@@ -7,6 +7,10 @@
     <None Include="..\..\Common\Resgrid-PubPriv-KeyFile.snk" Link="Resgrid-PubPriv-KeyFile.snk" />
   </ItemGroup>
   <ItemGroup>
+    <!-- Built-in map pin artwork the styled status and priority pins are drawn from (MapIconPinRenderer). -->
+    <EmbeddedResource Include="Resources\MapPins\*.png" LogicalName="Resgrid.Services.MapPins.%(Filename)%(Extension)" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Autofac" Version="8.2.0" />
     <PackageReference Include="CommonServiceLocator" Version="2.0.7" />
     <PackageReference Include="GeoJSON.Net" Version="1.4.1" />

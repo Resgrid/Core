@@ -64,10 +64,27 @@ namespace Resgrid.Web.Services.Models.v4.Mapping
 		/// <summary>
 		/// Absolute URL of the department's uploaded type icon for the marker's unit type (Type=1), call type (Type=0) or
 		/// POI type (Type=4), or for a person (Type=3) the icon of the first role they hold, in the department's role
-		/// order, that has one: a 128 px square PNG, anonymous GET, immutable. Null when there is no uploaded icon;
-		/// ImagePath / PoiImage stay the bundled fallback.
+		/// order, that has one: a 128 px square PNG, anonymous GET, immutable. For a call, unit or person it is the icon
+		/// uploaded for the current priority or status when there is one; otherwise the type's own icon, carrying a badge in
+		/// the colour of <see cref="IconStyle"/> when that is set. Null when there is no uploaded icon; PinIconUrl, then
+		/// ImagePath / PoiImage, are the fallback.
 		/// </summary>
 		public string IconUrl { get; set; }
+
+		/// <summary>
+		/// Absolute URL of the built-in pin for a call (Type=0), unit (Type=1) or person (Type=3) recoloured to the style of
+		/// its priority or status: a 32 x 37 PNG whose bottom tip is the position, anonymous GET, immutable. Shown when
+		/// IconUrl is null. A priority or status with no meaning (and a name that suggests none), or a unit or person with no
+		/// status, gets the gray "unknown" pin. Null for every other marker type, so ImagePath stays the bundled fallback.
+		/// </summary>
+		public string PinIconUrl { get; set; }
+
+		/// <summary>
+		/// The style of a call's priority or a unit's or person's status: available, dispatched, responding, onscene,
+		/// transporting, returning, staging, delayed, unavailable (statuses), low, medium, high, emergency (priorities) or
+		/// unknown (no meaning, or no status). Null for every other marker type.
+		/// </summary>
+		public string IconStyle { get; set; }
 	}
 
 	public class PoiLayerData

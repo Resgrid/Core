@@ -570,35 +570,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		public async Task<IActionResult> Legend()
 		{
-			var resolver = await _mapIconsService.GetResolverAsync(DepartmentId);
-			var priorities = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(DepartmentId);
-			var customStates = await _customStateService.GetAllCustomStatesForDepartmentAsync(DepartmentId);
-			var builtInUnitStatuses = _customStateService.GetDefaultUnitStatuses();
-			var personnelStatuses = await _customStateService.GetCustomPersonnelStatusesOrDefaultsAsync(DepartmentId);
-			var variants = await _typeIconsService.GetVariantsForDepartmentAsync(DepartmentId);
-			var rolesWithVariants = new HashSet<int>(variants.Where(x => x.TypeKind == (int)TypeIconKinds.PersonnelRole).Select(x => x.TypeId));
-
 			var model = new MapIconLegendView
 			{
-				StatusStyles = MapIconLegendBuilder.StatusStyles(),
-				PriorityStyles = MapIconLegendBuilder.PriorityStyles(),
+				Legend = await _mapIconsService.GetLegendAsync(DepartmentId, _legendLocalizer["NoCallType"], _legendLocalizer["NoUnitType"], _legendLocalizer["NoRoleIcon"]),
 				CanEditTypes = CanEditStatusIcons(TypeIconKinds.UnitType),
 				CanEditRoles = CanEditStatusIcons(TypeIconKinds.PersonnelRole)
 			};
-
-			model.CallRows.Add(MapIconLegendBuilder.CallRow(resolver, null, _legendLocalizer["NoCallType"], priorities));
-			foreach (var type in resolver.CallTypes.OrderBy(x => x.Type, StringComparer.CurrentCultureIgnoreCase))
-				model.CallRows.Add(MapIconLegendBuilder.CallRow(resolver, type, null, priorities));
-
-			model.UnitRows.Add(MapIconLegendBuilder.UnitRow(resolver, null, _legendLocalizer["NoUnitType"], customStates, builtInUnitStatuses));
-			foreach (var type in resolver.UnitTypes.OrderBy(x => x.Type, StringComparer.CurrentCultureIgnoreCase))
-				model.UnitRows.Add(MapIconLegendBuilder.UnitRow(resolver, type, null, customStates, builtInUnitStatuses));
-
-			// Roles without an icon of any kind look like the "no role icon" row, so only roles with one are listed.
-			model.PersonnelRows.Add(MapIconLegendBuilder.RoleRow(resolver, null, _legendLocalizer["NoRoleIcon"], personnelStatuses));
-			foreach (var role in TypeIcons.InRoleOrder(await _personnelRolesService.GetRolesForDepartmentAsync(DepartmentId))
-				.Where(x => !String.IsNullOrWhiteSpace(x.IconKey) || rolesWithVariants.Contains(x.PersonnelRoleId)))
-				model.PersonnelRows.Add(MapIconLegendBuilder.RoleRow(resolver, role, null, personnelStatuses));
 
 			foreach (var poiType in (await _mappingService.GetPOITypesForDepartmentAsync(DepartmentId) ?? new List<PoiType>()).OrderBy(x => x.Name, StringComparer.CurrentCultureIgnoreCase))
 			{
@@ -694,8 +671,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private async Task<StatusIconsView> BuildStatusIconsViewAsync(TypeIconKinds kind, int typeId)
 		{
 			var resolver = await _mapIconsService.GetResolverAsync(DepartmentId);
-			MapLegendRow row;
-			MapMarkerIcon ownIcon;
+			MapIconLegendRow row;
 
 			switch (kind)
 			{
@@ -707,7 +683,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 					row = MapIconLegendBuilder.UnitRow(resolver, type, null, await _customStateService.GetAllCustomStatesForDepartmentAsync(DepartmentId),
 						_customStateService.GetDefaultUnitStatuses());
-					ownIcon = resolver.ForUnitType(type, null);
 					break;
 				}
 				case TypeIconKinds.CallType:
@@ -717,7 +692,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 						return null;
 
 					row = MapIconLegendBuilder.CallRow(resolver, type, null, await _callsService.GetActiveCallPrioritiesForDepartmentAsync(DepartmentId));
-					ownIcon = resolver.ForCallType(type, null);
 					break;
 				}
 				case TypeIconKinds.PersonnelRole:
@@ -727,7 +701,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 						return null;
 
 					row = MapIconLegendBuilder.RoleRow(resolver, role, null, await _customStateService.GetCustomPersonnelStatusesOrDefaultsAsync(DepartmentId));
-					ownIcon = resolver.ForRole(role, null);
 					break;
 				}
 				default:
@@ -739,8 +712,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Kind = (int)kind,
 				TypeId = typeId,
 				TypeName = row.Name,
-				OwnIcon = MapLegendIcon.From(ownIcon),
-				Rows = MapIconLegendBuilder.IconRows(resolver, kind, typeId, row, ownIcon)
+				OwnIcon = MapLegendIcon.From(row.OwnIcon),
+				Rows = StatusIconRow.ForRow(resolver, kind, typeId, row)
 			};
 		}
 

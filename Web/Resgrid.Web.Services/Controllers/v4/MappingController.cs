@@ -52,6 +52,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IDepartmentDataProtectionService _dataProtectionService;
 		private readonly IDispatchScopeService _dispatchScopeService;
 		private readonly IMapIconsService _mapIconsService;
+		private readonly Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.MapIconLegend> _legendStrings;
 
 		public MappingController(
 			IUsersService usersService,
@@ -73,11 +74,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IDepartmentDataProtectionService dataProtectionService,
 			IRecordsHydrantsService hydrantsService,
 			IDispatchScopeService dispatchScopeService,
-			IMapIconsService mapIconsService
+			IMapIconsService mapIconsService,
+			Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.MapIconLegend> legendStrings
 			)
 		{
 			_dispatchScopeService = dispatchScopeService;
 			_mapIconsService = mapIconsService;
+			_legendStrings = legendStrings;
 			_usersService = usersService;
 			_actionLogsService = actionLogsService;
 			_departmentsService = departmentsService;
@@ -611,6 +614,87 @@ namespace Resgrid.Web.Services.Controllers.v4
 		// "Z" on the wire a browser would read them as local time.
 		private static DateTime AsUtc(DateTime timestamp) =>
 			timestamp.Kind == DateTimeKind.Unspecified ? DateTime.SpecifyKind(timestamp, DateTimeKind.Utc) : timestamp.ToUniversalTime();
+
+		/// <summary>
+		/// Every icon the department's map can show, for an in-app map legend: calls by type and priority, units by type and
+		/// status, members by role and status, the status and priority colours and the POI types. Built from the same icons as
+		/// GetMapDataAndMarkers, so the department's uploads, the built-in pin each type picked and its own names for types,
+		/// priorities, status sets, statuses and roles all show as they do on the map.
+		/// </summary>
+		/// <returns>GetMapIconLegendResult object</returns>
+		[HttpGet("GetMapIconLegend")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<ActionResult<GetMapIconLegendResult>> GetMapIconLegend()
+		{
+			var result = new GetMapIconLegendResult();
+			var apiBaseUrl = Config.SystemBehaviorConfig.ResgridApiBaseUrl;
+			var legend = await _mapIconsService.GetLegendAsync(DepartmentId, _legendStrings["NoCallType"], _legendStrings["NoUnitType"], _legendStrings["NoRoleIcon"]);
+
+			result.Data.StatusStyles = legend.StatusStyles.Select(style => new MapLegendStyleData
+			{
+				Key = style.Key,
+				Color = style.Color,
+				Meanings = style.Meanings.Select(x => (int)x).ToList(),
+				UnitStatuses = style.UnitStatusNames,
+				PersonnelStatuses = style.PersonnelStatusNames,
+				UnitPinIconUrl = TypeIcons.ApiPinUrl(apiBaseUrl, TypeIcons.PinName(TypeIcons.UnitPinBase, style.Key)),
+				PersonPinIconUrl = TypeIcons.ApiPinUrl(apiBaseUrl, TypeIcons.PinName(TypeIcons.PersonPinBase, style.Key))
+			}).ToList();
+
+			result.Data.PriorityStyles = legend.PriorityStyles.Select(style => new MapLegendStyleData
+			{
+				Key = style.Key,
+				Color = style.Color,
+				Priorities = style.PriorityNames,
+				CallPinIconUrl = TypeIcons.ApiPinUrl(apiBaseUrl, TypeIcons.PinName(TypeIcons.CallPinBase, style.Key))
+			}).ToList();
+
+			result.Data.Calls = legend.CallRows.Select(x => ConvertLegendRow(x, apiBaseUrl)).ToList();
+			result.Data.Units = legend.UnitRows.Select(x => ConvertLegendRow(x, apiBaseUrl)).ToList();
+			result.Data.Personnel = legend.PersonnelRows.Select(x => ConvertLegendRow(x, apiBaseUrl)).ToList();
+
+			var poiTypes = await _mappingService.GetPOITypesForDepartmentAsync(DepartmentId) ?? new List<PoiType>();
+			result.Data.PoiTypes = poiTypes.OrderBy(x => x.Name, StringComparer.CurrentCultureIgnoreCase).Select(poiType => new MapLegendPoiTypeData
+			{
+				PoiTypeId = poiType.PoiTypeId,
+				Name = poiType.Name,
+				Color = poiType.Color,
+				PoiImage = poiType.Image,
+				ImagePath = PoiIconHelper.ResolveIconName(poiType.Image),
+				Marker = poiType.Marker,
+				IconUrl = TypeIcons.ApiIconUrl(apiBaseUrl, poiType)
+			}).ToList();
+
+			result.PageSize = result.Data.Calls.Count + result.Data.Units.Count + result.Data.Personnel.Count;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
+		private static MapLegendRowData ConvertLegendRow(MapIconLegendRow row, string apiBaseUrl) =>
+			new MapLegendRowData
+			{
+				Id = row.Id,
+				Name = row.Name,
+				StatusSetName = row.StatusSetName,
+				IconUrl = TypeIcons.ApiIconUrl(apiBaseUrl, row.OwnIcon.IconKey, row.OwnIcon.BadgeStyle),
+				PinIconUrl = TypeIcons.ApiPinUrl(apiBaseUrl, row.OwnIcon.PinName),
+				ImagePath = row.OwnIcon.ImagePath,
+				States = row.States.Select(state => new MapLegendStateData
+				{
+					Id = state.Value,
+					Name = state.Name,
+					Color = state.Color,
+					IconStyle = state.Style,
+					IconUrl = TypeIcons.ApiIconUrl(apiBaseUrl, state.Icon.IconKey, state.Icon.BadgeStyle),
+					PinIconUrl = TypeIcons.ApiPinUrl(apiBaseUrl, state.Icon.PinName),
+					ImagePath = state.Icon.ImagePath,
+					IsVariant = state.Icon.IconIsVariant,
+					FollowsUnitStatus = state.FollowsUnitStatus
+				}).ToList()
+			};
 
 		/// <summary>
 		/// Gets the user created map layers in the system.

@@ -260,4 +260,16 @@
   <data name="PriorityMapIconsHelp" xml:space="preserve">
     <value>Ein anderes Kartensymbol für jede Priorität, damit ein Einsatz auf einen Blick erkennbar ist.</value>
   </data>
+  <data name="UnitStatusesInStyle" xml:space="preserve">
+    <value>Status Ihrer Einheiten: {0}</value>
+  </data>
+  <data name="PersonnelStatusesInStyle" xml:space="preserve">
+    <value>Status Ihres Personals: {0}</value>
+  </data>
+  <data name="PrioritiesInStyle" xml:space="preserve">
+    <value>Ihre Prioritäten: {0}</value>
+  </data>
+  <data name="KeyOnUnit" xml:space="preserve">
+    <value>Nimmt die Farbe des Status seiner Einheit an</value>
+  </data>
 </root>

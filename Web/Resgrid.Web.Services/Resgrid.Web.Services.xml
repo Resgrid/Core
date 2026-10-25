@@ -3255,6 +3255,15 @@
             PinIconUrl the built-in pin in the style of the status or priority and IconStyle that style.
             </summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetMapIconLegend">
+            <summary>
+            Every icon the department's map can show, for an in-app map legend: calls by type and priority, units by type and
+            status, members by role and status, the status and priority colours and the POI types. Built from the same icons as
+            GetMapDataAndMarkers, so the department's uploads, the built-in pin each type picked and its own names for types,
+            priorities, status sets, statuses and roles all show as they do on the map.
+            </summary>
+            <returns>GetMapIconLegendResult object</returns>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetMayLayers(System.Int32)">
             <summary>
             Gets the user created map layers in the system.
@@ -14658,6 +14667,158 @@
             Absolute URL of the department's uploaded icon for the POI type (a 128 px square PNG, anonymous GET,
             immutable); null when the type has no uploaded icon, so PoiImage / ImagePath stay the marker icon.
             </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Mapping.GetMapIconLegendResult">
+            <summary>
+            Every icon the department's map can show, named with the department's own call types, priorities, unit types, status
+            sets, statuses, roles and POI types, and drawn from the same icons as the map markers (GetMapDataAndMarkers): a
+            department's uploads, the built-in pin a type picked and the status and priority colours all show as they do on the map.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetMapIconLegendResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Models.v4.Mapping.GetMapIconLegendResult.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Mapping.GetMapIconLegendResultData">
+            <summary>
+            The legend. Each row's states use the marker icon fields with the marker precedence: IconUrl, else PinIconUrl, else the
+            bundled ImagePath.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetMapIconLegendResultData.StatusStyles">
+            <summary>
+            The unit and personnel status styles in legend order, then "unknown" (no meaning, or no status), with the
+            department's statuses that show in each.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetMapIconLegendResultData.PriorityStyles">
+            <summary>The call priority styles, least to most urgent, then "unknown", with the department's priorities in each.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetMapIconLegendResultData.Calls">
+            <summary>
+            Calls with no type first (Id null), then each call type by name; one state per active priority of the department,
+            in the department's priority order.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetMapIconLegendResultData.Units">
+            <summary>
+            Units with no type first (Id null), then each unit type by name; one state per status of the type's status set (the
+            built-in unit statuses when it has none).
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetMapIconLegendResultData.Personnel">
+            <summary>
+            Members with no role icon first (Id null), then each role with an uploaded icon, in the department's role order (a
+            member shows the icon of the first role they hold that has one); one state per personnel status of the department.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetMapIconLegendResultData.PoiTypes">
+            <summary>The department's POI types by name, with the icon their markers show.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Mapping.MapLegendStyleData">
+            <summary>A status or priority style.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.MapLegendStyleData.Key">
+            <summary>The style key, as map markers carry it in IconStyle (available, responding, low, emergency, unknown ...).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.MapLegendStyleData.Color">
+            <summary>The style's colour, "#RRGGBB".</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.MapLegendStyleData.Meanings">
+            <summary>The status meanings (ActionBaseTypes values) the style groups; status styles only, empty for unknown.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.MapLegendStyleData.UnitStatuses">
+            <summary>Status styles: the department's unit statuses, from every status set, that show in this style.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.MapLegendStyleData.PersonnelStatuses">
+            <summary>Status styles: the department's personnel statuses that show in this style.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.MapLegendStyleData.Priorities">
+            <summary>Priority styles: the department's priorities that show in this style.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.MapLegendStyleData.UnitPinIconUrl">
+            <summary>Status styles: the default unit pin in this style (32 x 37 PNG, tip at the bottom).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.MapLegendStyleData.PersonPinIconUrl">
+            <summary>Status styles: the default person pin in this style.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.MapLegendStyleData.CallPinIconUrl">
+            <summary>Priority styles: the default call pin in this style.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Mapping.MapLegendRowData">
+            <summary>A call type, unit type or role (or the "none" row) with its icon in each priority or status.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.MapLegendRowData.Id">
+            <summary>The call type, unit type or role id; null for the "none" row.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.MapLegendRowData.Name">
+            <summary>The department's name for the type or role; for the "none" row a generic label in the server's language, which clients should replace with their own.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.MapLegendRowData.StatusSetName">
+            <summary>Units: the name of the unit type's status set; null when it uses the built-in unit statuses.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.MapLegendRowData.IconUrl">
+            <summary>The type's or role's own uploaded icon (as it shows with no priority or status), or null.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.MapLegendRowData.PinIconUrl">
+            <summary>Always null here (an own icon has no style); present so a row reads like a marker.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.MapLegendRowData.ImagePath">
+            <summary>The bundled icon the type picked, or the default call, unit or person icon.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.MapLegendRowData.States">
+            <summary>The icon in each of the department's priorities (calls) or statuses (units, personnel).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Mapping.MapLegendStateData">
+            <summary>One priority or status and the icon a marker of the row shows in it.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.MapLegendStateData.Id">
+            <summary>The stored priority id (calls) or status id (units, personnel): the value a call's Priority or a unit's or person's status holds.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.MapLegendStateData.Name">
+            <summary>The department's name for the priority or status.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.MapLegendStateData.Color">
+            <summary>The priority's or status's own colour when it is a hex colour, else null.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.MapLegendStateData.IconStyle">
+            <summary>The style of the priority or status (see MapLegendStyleData.Key); "unknown" when it has no meaning.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.MapLegendStateData.IconUrl">
+            <summary>The department's uploaded icon for it (for this very priority or status, else the type's own with a badge), or null.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.MapLegendStateData.PinIconUrl">
+            <summary>The built-in pin the row's type picked (or the default pin), recoloured to the style.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.MapLegendStateData.ImagePath">
+            <summary>The bundled icon, for clients without styled pins.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.MapLegendStateData.IsVariant">
+            <summary>True when IconUrl was uploaded for this very priority or status rather than the type's own icon.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.MapLegendStateData.FollowsUnitStatus">
+            <summary>
+            Personnel only: true for the built-in On Unit status. A member On Unit takes the style of their unit's latest status
+            on the map; the icon given here (gray) shows only when there is no unit status to follow.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Mapping.MapLegendPoiTypeData">
+            <summary>A POI type and the icon its markers show.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.MapLegendPoiTypeData.PoiImage">
+            <summary>The POI type's icon name (as PoiLayerData.PoiImage).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.MapLegendPoiTypeData.ImagePath">
+            <summary>The bundled icon name resolved for clients that ship PNGs (as PoiLayerData.ImagePath).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.MapLegendPoiTypeData.IconUrl">
+            <summary>The department's uploaded icon for the POI type, or null.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetMapLayersResult.Data">
             <summary>

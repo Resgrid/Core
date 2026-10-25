@@ -260,4 +260,16 @@
   <data name="PriorityMapIconsHelp" xml:space="preserve">
     <value>Un'icona della mappa diversa per ogni priorità, per riconoscere a colpo d'occhio una chiamata.</value>
   </data>
+  <data name="UnitStatusesInStyle" xml:space="preserve">
+    <value>I tuoi stati delle unità: {0}</value>
+  </data>
+  <data name="PersonnelStatusesInStyle" xml:space="preserve">
+    <value>I tuoi stati del personale: {0}</value>
+  </data>
+  <data name="PrioritiesInStyle" xml:space="preserve">
+    <value>Le tue priorità: {0}</value>
+  </data>
+  <data name="KeyOnUnit" xml:space="preserve">
+    <value>Assume il colore dello stato della sua unità</value>
+  </data>
 </root>

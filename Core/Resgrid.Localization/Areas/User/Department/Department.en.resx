@@ -1782,6 +1782,12 @@
   <data name="ResetTargetSavedOption" xml:space="preserve">
     <value>{0} (saved earlier, no longer offered)</value>
   </data>
+  <data name="ResetTargetSetsNow" xml:space="preserve">
+    <value>This choice was saved earlier and is no longer offered. The daily reset currently sets everyone to {0}. Pick a meaning or one of your own options and save to change it.</value>
+  </data>
+  <data name="ResetTargetSetsNobody" xml:space="preserve">
+    <value>This choice was saved earlier and matches nothing the department uses, so the daily reset changes nobody. Pick a meaning or one of your own options and save.</value>
+  </data>
   <data name="RunCardRelaxUnfilledRowsLabel" xml:space="preserve">
     <value>Relax status filters for unfilled rows</value>
   </data>

@@ -1724,6 +1724,12 @@
   <data name="ResetTargetSavedOption" xml:space="preserve">
     <value>{0} (salvato in precedenza, non più disponibile)</value>
   </data>
+  <data name="ResetTargetSetsNow" xml:space="preserve">
+    <value>Questa scelta è stata salvata in precedenza e non è più disponibile. Il ripristino giornaliero imposta attualmente tutti su {0}. Scegli un significato o una delle tue opzioni e salva per modificarlo.</value>
+  </data>
+  <data name="ResetTargetSetsNobody" xml:space="preserve">
+    <value>Questa scelta è stata salvata in precedenza e non corrisponde a nulla di ciò che il dipartimento utilizza, quindi il ripristino giornaliero non modifica nessuno. Scegli un significato o una delle tue opzioni e salva.</value>
+  </data>
   <data name="RunCardRelaxUnfilledRowsLabel" xml:space="preserve">
     <value>Allenta i filtri di stato per le righe non coperte</value>
   </data>

@@ -401,13 +401,14 @@ namespace Resgrid.Tests.Services
 			var ambulance = MapIconLegendBuilder.UnitRow(Resolver(), AmbulanceType, null, CustomStates(), builtIns);
 			ambulance.StatusSetName.Should().Be("Ambulance statuses");
 			ambulance.States.Select(s => s.Name).Should().Equal("Free", "To hospital", "Spare");
-			ambulance.States[1].Icon.Url.Should().Be(TypeIcons.WebPinUrl("ambulance-transporting"));
-			ambulance.States[2].Icon.Url.Should().Be(TypeIcons.WebPinUrl("ambulance-unknown"), "no meaning and no suggestion, gray pin");
+			MapLegendIcon.From(ambulance.States[1].Icon).Url.Should().Be(TypeIcons.WebPinUrl("ambulance-transporting"));
+			MapLegendIcon.From(ambulance.States[2].Icon).Url.Should().Be(TypeIcons.WebPinUrl("ambulance-unknown"), "no meaning and no suggestion, gray pin");
+			ambulance.OwnIcon.ImagePath.Should().Be("ambulance", "the built-in icon the type picked");
 
 			var mug = MapIconLegendBuilder.UnitRow(Resolver(), MugType, null, CustomStates(), builtIns);
 			mug.StatusSetName.Should().BeNull();
-			mug.States.Single().Icon.Url.Should().Be(TypeIcons.WebIconUrl("mug-own", MapIconStyles.Available));
-			mug.States.Single().Icon.IsUploaded.Should().BeTrue();
+			MapLegendIcon.From(mug.States.Single().Icon).Url.Should().Be(TypeIcons.WebIconUrl("mug-own", MapIconStyles.Available));
+			MapLegendIcon.From(mug.States.Single().Icon).IsUploaded.Should().BeTrue();
 			mug.States.Single().Color.Should().Be("#d1dade");
 		}
 
@@ -422,12 +423,127 @@ namespace Resgrid.Tests.Services
 			};
 			var row = MapIconLegendBuilder.UnitRow(resolver, MugType, null, CustomStates(), builtIns);
 
-			var rows = MapIconLegendBuilder.IconRows(resolver, TypeIconKinds.UnitType, MugType.UnitTypeId, row, resolver.ForUnitType(MugType, null));
+			var rows = StatusIconRow.ForRow(resolver, TypeIconKinds.UnitType, MugType.UnitTypeId, row);
 
 			rows[0].UploadedUrl.Should().Be(TypeIcons.WebIconUrl("mug-responding"));
 			rows[0].DefaultIcon.Url.Should().Be(TypeIcons.WebIconUrl("mug-own", MapIconStyles.Responding));
 			rows[1].UploadedUrl.Should().BeNull();
-			rows[1].State.Icon.Url.Should().Be(TypeIcons.WebIconUrl("mug-own", MapIconStyles.Available));
+			MapLegendIcon.From(rows[1].State.Icon).Url.Should().Be(TypeIcons.WebIconUrl("mug-own", MapIconStyles.Available));
+		}
+
+		private static readonly List<DepartmentCallPriority> OwnPriorities = new List<DepartmentCallPriority>
+		{
+			new DepartmentCallPriority { DepartmentCallPriorityId = 901, DepartmentId = DepartmentId, Name = "P1 Life threat", BaseType = (int)CallPriority.Emergency, Color = "#ff0000" },
+			new DepartmentCallPriority { DepartmentCallPriorityId = 902, DepartmentId = DepartmentId, Name = "Zebra", BaseType = -1 }
+		};
+
+		private static readonly List<CustomStateDetail> BuiltInUnitStatuses = new List<CustomStateDetail>
+		{
+			new CustomStateDetail { CustomStateDetailId = (int)UnitStateTypes.Available, ButtonText = "Available" },
+			new CustomStateDetail { CustomStateDetailId = (int)UnitStateTypes.Responding, ButtonText = "Responding" }
+		};
+
+		private static MapIconLegend Legend(MapIconResolver resolver, IEnumerable<PersonnelRole> roles = null) =>
+			MapIconLegendBuilder.Build(resolver, OwnPriorities, CustomStates(), BuiltInUnitStatuses, CustomStates()[1].Details, roles,
+				"No call type", "No unit type", "No role icon");
+
+		[Test]
+		public void The_legend_is_named_and_drawn_from_the_departments_own_types_priorities_statuses_and_roles()
+		{
+			var withIcon = new PersonnelRole { PersonnelRoleId = 31, DepartmentId = DepartmentId, Name = "Paramedic", IconKey = "medic-own", SortOrder = 2 };
+			var withStatusIconOnly = new PersonnelRole { PersonnelRoleId = 32, DepartmentId = DepartmentId, Name = "Officer", SortOrder = 1 };
+			var plain = new PersonnelRole { PersonnelRoleId = 33, DepartmentId = DepartmentId, Name = "Firefighter" };
+			var roles = new[] { withIcon, withStatusIconOnly, plain };
+			var resolver = Resolver(OwnPriorities, roles, new[] { new TypeIconVariant { TypeKind = (int)TypeIconKinds.PersonnelRole, TypeId = 32, Variant = "o6002", IconKey = "officer-en-route" } });
+
+			var legend = Legend(resolver, roles);
+
+			legend.CallRows.Select(x => x.Name).Should().Equal("No call type", "Medical", "Structure Fire");
+			legend.CallRows[0].Id.Should().BeNull();
+			var fire = legend.CallRows[2];
+			fire.OwnIcon.ImagePath.Should().Be("fire");
+			fire.States.Select(x => x.Name).Should().Equal("P1 Life threat", "Zebra");
+			fire.States.Select(x => x.Icon.PinName).Should().Equal("fire-emergency", "fire-unknown");
+			fire.States[0].Color.Should().Be("#ff0000");
+			legend.CallRows[1].States[0].Icon.IconKey.Should().Be("medical-own");
+			legend.CallRows[1].States[0].Icon.BadgeStyle.Should().Be(MapIconStyles.PriorityEmergency);
+
+			legend.UnitRows.Select(x => x.Name).Should().Equal("No unit type", "Ambulance", "MUG");
+			legend.UnitRows[1].StatusSetName.Should().Be("Ambulance statuses");
+			legend.UnitRows[1].States.Select(x => x.Name).Should().Equal("Free", "To hospital", "Spare");
+			legend.UnitRows[0].States.Select(x => x.Icon.PinName).Should().Equal("engine-available", "engine-responding");
+
+			legend.PersonnelRows.Select(x => x.Name).Should().Equal(new[] { "No role icon", "Officer", "Paramedic" }, "only roles with an icon of any kind, in role order");
+			legend.PersonnelRows.Select(x => x.States.Count).Should().OnlyContain(c => c == 2);
+			legend.PersonnelRows[1].States[1].Icon.IconKey.Should().Be("officer-en-route");
+			legend.PersonnelRows[1].States[1].Icon.IconIsVariant.Should().BeTrue();
+			legend.PersonnelRows[2].States[0].Icon.IconKey.Should().Be("medic-own");
+		}
+
+		[Test]
+		public void The_colour_key_lists_the_departments_own_statuses_and_priorities_in_each_style()
+		{
+			var legend = Legend(Resolver(OwnPriorities));
+
+			legend.StatusStyles.Select(x => x.Key).Should().Equal(MapIconStyles.StatusStyles.Concat(new[] { MapIconStyles.Unknown }));
+			var available = legend.StatusStyles.Single(x => x.Key == MapIconStyles.Available);
+			available.UnitStatusNames.Should().Equal("Available", "Free");
+			available.PersonnelStatusNames.Should().Equal("Ready");
+			available.Meanings.Should().Contain(ActionBaseTypes.InQuarters);
+			legend.StatusStyles.Single(x => x.Key == MapIconStyles.Responding).PersonnelStatusNames.Should().Equal("En route");
+			legend.StatusStyles.Single(x => x.Key == MapIconStyles.Transporting).UnitStatusNames.Should().Equal("To hospital");
+			var unknown = legend.StatusStyles.Last();
+			unknown.UnitStatusNames.Should().Equal("Spare");
+			unknown.Meanings.Should().BeEmpty();
+
+			legend.PriorityStyles.Select(x => x.Key).Should().Equal(MapIconStyles.PriorityStyles.Concat(new[] { MapIconStyles.Unknown }));
+			legend.PriorityStyles.Single(x => x.Key == MapIconStyles.PriorityEmergency).PriorityNames.Should().Equal("P1 Life threat");
+			legend.PriorityStyles.Last().PriorityNames.Should().Equal("Zebra");
+			legend.PriorityStyles.Single(x => x.Key == MapIconStyles.PriorityLow).PriorityNames.Should().BeEmpty();
+		}
+
+		[Test]
+		public void On_unit_follows_its_units_status_so_it_is_never_listed_under_gray()
+		{
+			var builtInPersonnel = new List<CustomStateDetail>
+			{
+				new CustomStateDetail { CustomStateDetailId = (int)ActionTypes.StandingBy, ButtonText = "Standing By" },
+				new CustomStateDetail { CustomStateDetailId = (int)ActionTypes.OnUnit, ButtonText = "On Unit" }
+			};
+
+			var legend = MapIconLegendBuilder.Build(Resolver(), OwnPriorities, CustomStates(), BuiltInUnitStatuses, builtInPersonnel, null, "c", "u", "r");
+
+			var states = legend.PersonnelRows.Single().States;
+			states.Select(x => x.FollowsUnitStatus).Should().Equal(false, true);
+			states[1].Style.Should().Be(MapIconStyles.Unknown, "with no unit to follow the pin is gray");
+			legend.StatusStyles.SelectMany(x => x.PersonnelStatusNames).Should().NotContain("On Unit");
+			legend.StatusStyles.Single(x => x.Key == MapIconStyles.Available).PersonnelStatusNames.Should().Equal("Standing By");
+		}
+
+		[Test]
+		public void A_renamed_type_another_built_in_icon_and_a_new_upload_all_show_in_the_legend()
+		{
+			var renamed = new CallType { CallTypeId = FireType.CallTypeId, DepartmentId = DepartmentId, Type = "Working fire", MapIconType = (int)MapIconTypes.Ambulance };
+			var resolver = new MapIconResolver(DepartmentId, new[] { renamed }, OwnPriorities, new[] { AmbulanceType }, CustomStates(), null,
+				new[] { new TypeIconVariant { TypeKind = (int)TypeIconKinds.CallType, TypeId = renamed.CallTypeId, Variant = "p902", IconKey = "fire-whenever" } });
+
+			var row = Legend(resolver).CallRows.Single(x => x.Id == renamed.CallTypeId);
+
+			row.Name.Should().Be("Working fire");
+			row.OwnIcon.ImagePath.Should().Be("ambulance");
+			row.States[0].Icon.PinName.Should().Be("ambulance-emergency");
+			row.States[1].Icon.IconKey.Should().Be("fire-whenever");
+			row.States[1].Icon.BadgeStyle.Should().BeNull("an upload for the very priority carries no badge");
+		}
+
+		[Test]
+		public void The_resolver_knows_which_types_have_status_or_priority_icons()
+		{
+			var resolver = Resolver(variants: new[] { new TypeIconVariant { TypeKind = (int)TypeIconKinds.UnitType, TypeId = MugType.UnitTypeId, Variant = "s5", IconKey = "mug-responding" } });
+
+			resolver.HasVariantIcons(TypeIconKinds.UnitType, MugType.UnitTypeId).Should().BeTrue();
+			resolver.HasVariantIcons(TypeIconKinds.UnitType, AmbulanceType.UnitTypeId).Should().BeFalse();
+			resolver.HasVariantIcons(TypeIconKinds.PersonnelRole, MugType.UnitTypeId).Should().BeFalse("kinds never mix");
 		}
 
 		[TestCase("#fff", "#fff")]

@@ -1624,7 +1624,7 @@
     <value>Dodaj cykliczne spotkania i wieczory szkoleniowe.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.call-types-priorities">
-    <value>Dodaj typy zgłoszeń używane przez dyspozytorów i ustaw ich priorytety. Nadaj każdemu typowi zgłoszenia klasę, a każdemu priorytetowi znaczenie, aby raporty i aplikacje mogły je grupować i sortować. Typ zgłoszenia może też mieć własną ikonę, wyświetlaną obok jego zgłoszeń na listach, w aplikacjach i na mapie.</value>
+    <value>Dodaj typy zgłoszeń używane przez dyspozytorów i ustaw ich priorytety. Nadaj każdemu typowi zgłoszenia klasę, a każdemu priorytetowi znaczenie, aby raporty i aplikacje mogły je grupować i sortować. Typ zgłoszenia może też mieć własną ikonę, wyświetlaną obok jego zgłoszeń na listach, w aplikacjach i na mapie. Znaczenie priorytetu koloruje też pinezki jego zgłoszeń na mapie, a legenda ikon mapy pokazuje każdy priorytet pod jego kolorem.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.certification-dashboard">
     <value>Zarejestruj bieżące certyfikaty członków, a następnie sprawdź, co wkrótce wygasa.</value>
@@ -1654,7 +1654,7 @@
     <value>Dodaj swoje umowy serwisowe i ich stawki.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.custom-statuses">
-    <value>Przejrzyj wbudowane statusy i dodaj własne tam, gdzie Twoje nazewnictwo się różni. Nadaj każdej opcji znaczenie (typ bazowy): dysponowanie, dostępność, powiadomienia i aplikacje odczytują znaczenie, a nie tekst przycisku. „W remizie” informuje rekomendacje dysponowania, że jednostka jest w swojej remizie.</value>
+    <value>Przejrzyj wbudowane statusy i dodaj własne tam, gdzie Twoje nazewnictwo się różni. Nadaj każdej opcji znaczenie (typ bazowy): dysponowanie, dostępność, powiadomienia i aplikacje odczytują znaczenie, a nie tekst przycisku. „W remizie” informuje rekomendacje dysponowania, że jednostka jest w swojej remizie. Legenda ikon mapy pokazuje każdy status pod kolorem, który nadaje mu jego znaczenie; status pod kolorem szarym nie ma jeszcze znaczenia.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.data-protection">
     <value>Przejrzyj listę kontrolną rejestracji i zaplanuj odzyskiwanie kluczy przed rejestracją.</value>
@@ -7084,7 +7084,7 @@
     <value>Wszystkie ikony, które mapa pokazuje dla zgłoszeń, jednostek i personelu w każdym priorytecie i statusie, wraz z kolorami statusów i priorytetów.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.map-icon-legend">
-    <value>Otwórz Mapę, a następnie Legendę ikon mapy. Administratorzy jednostki mogą wybrać Edytuj ikony przy typie zgłoszenia, typie jednostki lub roli, aby przesłać ikonę dla priorytetu lub statusu.</value>
+    <value>Otwórz Mapę, a następnie Legendę ikon mapy. Administratorzy jednostki mogą wybrać Edytuj ikony przy typie zgłoszenia, typie jednostki lub roli, aby przesłać ikonę dla priorytetu lub statusu. W aplikacjach Responder, Unit i IC dotknij przycisku legendy na mapie, aby zobaczyć tę samą legendę.</value>
   </data>
   <data xml:space="preserve" name="Feature.map-visualizations">
     <value>Wizualizacje mapy</value>

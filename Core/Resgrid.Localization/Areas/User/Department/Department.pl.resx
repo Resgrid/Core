@@ -1724,6 +1724,12 @@
   <data name="ResetTargetSavedOption" xml:space="preserve">
     <value>{0} (zapisany wcześniej, już niedostępny)</value>
   </data>
+  <data name="ResetTargetSetsNow" xml:space="preserve">
+    <value>Ten wybór został zapisany wcześniej i nie jest już oferowany. Codzienny reset ustawia obecnie wszystkich na {0}. Wybierz znaczenie lub jedną z własnych opcji i zapisz, aby to zmienić.</value>
+  </data>
+  <data name="ResetTargetSetsNobody" xml:space="preserve">
+    <value>Ten wybór został zapisany wcześniej i nie pasuje do niczego, czego używa jednostka, więc codzienny reset nikogo nie zmienia. Wybierz znaczenie lub jedną z własnych opcji i zapisz.</value>
+  </data>
   <data name="RunCardRelaxUnfilledRowsLabel" xml:space="preserve">
     <value>Złagodź filtry statusu dla niewypełnionych wierszy</value>
   </data>

@@ -33,6 +33,7 @@
 		.rg-legend-state { display: flex; flex-direction: column; align-items: center; min-width: 72px; max-width: 110px; text-align: center; font-size: 12px; line-height: 15px; }
 		.rg-legend-state span { margin-top: 4px; word-break: break-word; }
 		.rg-legend-meanings { color: #777; font-size: 12px; }
+		.rg-legend-names { font-size: 12px; margin-top: 2px; }
 		.rg-legend-hydrant { display: inline-block; width: 18px; height: 18px; border-radius: 9px; background: #d32f2f; border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,.35); vertical-align: middle; }
 		.rg-legend-poi { font-size: 22px; vertical-align: middle; }
 	</style>
@@ -79,7 +80,7 @@
 							<p>@legendStrings["StatusColorsIntro"]</p>
 							<table class="table table-condensed">
 								<tbody>
-									@foreach (var style in Model.StatusStyles)
+									@foreach (var style in Model.Legend.StatusStyles)
 									{
 										<tr>
 											<td style="white-space: nowrap;">
@@ -88,20 +89,18 @@
 											</td>
 											<td>
 												<span class="rg-legend-swatch" style="background: @style.Color;"></span><strong>@legendStrings["Style." + style.Key]</strong>
-												<div class="rg-legend-meanings">@string.Join(", ", style.Meanings.Select(m => statusStrings[m.ToString()].Value))</div>
+												<div class="rg-legend-meanings">@(style.Key == MapIconStyles.Unknown ? legendStrings["NoMeaning"].Value : string.Join(", ", style.Meanings.Select(m => statusStrings[m.ToString()].Value)))</div>
+												@if (style.UnitStatusNames.Any())
+												{
+													<div class="rg-legend-names">@string.Format(legendStrings["UnitStatusesInStyle"].Value, string.Join(", ", style.UnitStatusNames))</div>
+												}
+												@if (style.PersonnelStatusNames.Any())
+												{
+													<div class="rg-legend-names">@string.Format(legendStrings["PersonnelStatusesInStyle"].Value, string.Join(", ", style.PersonnelStatusNames))</div>
+												}
 											</td>
 										</tr>
 									}
-									<tr>
-										<td style="white-space: nowrap;">
-											<img class="rg-legend-icon pin" src="@TypeIcons.WebPinUrl(TypeIcons.PinName(TypeIcons.UnitPinBase, MapIconStyles.Unknown))" alt="" />
-											<img class="rg-legend-icon pin" src="@TypeIcons.WebPinUrl(TypeIcons.PinName(TypeIcons.PersonPinBase, MapIconStyles.Unknown))" alt="" />
-										</td>
-										<td>
-											<span class="rg-legend-swatch" style="background: @MapIconStyles.ColorOf(MapIconStyles.Unknown);"></span><strong>@legendStrings["Style.unknown"]</strong>
-											<div class="rg-legend-meanings">@legendStrings["NoMeaning"]</div>
-										</td>
-									</tr>
 								</tbody>
 							</table>
 						</div>
@@ -114,17 +113,27 @@
 							<p>@legendStrings["PriorityColorsIntro"]</p>
 							<table class="table table-condensed">
 								<tbody>
-									@foreach (var style in Model.PriorityStyles)
+									@foreach (var style in Model.Legend.PriorityStyles)
 									{
 										<tr>
 											<td style="width: 1%;"><img class="rg-legend-icon pin" src="@TypeIcons.WebPinUrl(TypeIcons.PinName(TypeIcons.CallPinBase, style.Key))" alt="" /></td>
-											<td><span class="rg-legend-swatch" style="background: @style.Color;"></span><strong>@legendStrings["Style." + style.Key]</strong></td>
+											<td>
+												<span class="rg-legend-swatch" style="background: @style.Color;"></span>
+												@if (style.Key == MapIconStyles.Unknown)
+												{
+													@legendStrings["NoMeaning"]
+												}
+												else
+												{
+													<strong>@legendStrings["Style." + style.Key]</strong>
+												}
+												@if (style.PriorityNames.Any())
+												{
+													<div class="rg-legend-names">@string.Format(legendStrings["PrioritiesInStyle"].Value, string.Join(", ", style.PriorityNames))</div>
+												}
+											</td>
 										</tr>
 									}
-									<tr>
-										<td><img class="rg-legend-icon pin" src="@TypeIcons.WebPinUrl(TypeIcons.PinName(TypeIcons.CallPinBase, MapIconStyles.Unknown))" alt="" /></td>
-										<td><span class="rg-legend-swatch" style="background: @MapIconStyles.ColorOf(MapIconStyles.Unknown);"></span>@legendStrings["NoMeaning"]</td>
-									</tr>
 								</tbody>
 							</table>
 						</div>
@@ -141,7 +150,7 @@
 							<thead>
 								<tr>
 									<th>@legendStrings["Type"]</th>
-									@foreach (var priority in Model.CallRows.FirstOrDefault()?.States ?? new List<MapLegendState>())
+									@foreach (var priority in Model.Legend.CallRows.FirstOrDefault()?.States ?? new List<MapIconLegendState>())
 									{
 										<th>
 											@if (priority.Color != null)
@@ -158,14 +167,15 @@
 								</tr>
 							</thead>
 							<tbody>
-								@foreach (var row in Model.CallRows)
+								@foreach (var row in Model.Legend.CallRows)
 								{
 									<tr>
 										<td>@row.Name</td>
 										@foreach (var state in row.States)
 										{
-											var title = $"{row.Name} · {state.Name} · {IconKind(state.Icon, legendStrings)}";
-											<td><img class="rg-legend-icon @(state.Icon.IsUploaded ? "upload" : "pin")" src="@state.Icon.Url" alt="@title" title="@title" /></td>
+											var icon = MapLegendIcon.From(state.Icon);
+											var title = $"{row.Name} · {state.Name} · {(state.FollowsUnitStatus ? legendStrings["KeyOnUnit"].Value : IconKind(icon, legendStrings))}";
+											<td><img class="rg-legend-icon @(icon.IsUploaded ? "upload" : "pin")" src="@icon.Url" alt="@title" title="@title" /></td>
 										}
 										@if (Model.CanEditTypes)
 										{
@@ -190,7 +200,7 @@
 					<p>@legendStrings["UnitsIntro"]</p>
 					<table class="table table-striped">
 						<tbody>
-							@foreach (var row in Model.UnitRows)
+							@foreach (var row in Model.Legend.UnitRows)
 							{
 								<tr>
 									<td style="width: 20%;">
@@ -205,9 +215,10 @@
 										<div class="rg-legend-states">
 											@foreach (var state in row.States)
 											{
-												var title = $"{row.Name} · {state.Name} · {IconKind(state.Icon, legendStrings)}";
+												var icon = MapLegendIcon.From(state.Icon);
+												var title = $"{row.Name} · {state.Name} · {(state.FollowsUnitStatus ? legendStrings["KeyOnUnit"].Value : IconKind(icon, legendStrings))}";
 												<div class="rg-legend-state">
-													<img class="rg-legend-icon @(state.Icon.IsUploaded ? "upload" : "pin")" src="@state.Icon.Url" alt="@title" title="@title" />
+													<img class="rg-legend-icon @(icon.IsUploaded ? "upload" : "pin")" src="@icon.Url" alt="@title" title="@title" />
 													<span>@state.Name</span>
 												</div>
 											}
@@ -229,7 +240,7 @@
 							<thead>
 								<tr>
 									<th>@legendStrings["Role"]</th>
-									@foreach (var status in Model.PersonnelRows.FirstOrDefault()?.States ?? new List<MapLegendState>())
+									@foreach (var status in Model.Legend.PersonnelRows.FirstOrDefault()?.States ?? new List<MapIconLegendState>())
 									{
 										<th>@status.Name</th>
 									}
@@ -240,14 +251,15 @@
 								</tr>
 							</thead>
 							<tbody>
-								@foreach (var row in Model.PersonnelRows)
+								@foreach (var row in Model.Legend.PersonnelRows)
 								{
 									<tr>
 										<td>@row.Name</td>
 										@foreach (var state in row.States)
 										{
-											var title = $"{row.Name} · {state.Name} · {IconKind(state.Icon, legendStrings)}";
-											<td><img class="rg-legend-icon @(state.Icon.IsUploaded ? "upload" : "pin")" src="@state.Icon.Url" alt="@title" title="@title" /></td>
+											var icon = MapLegendIcon.From(state.Icon);
+											var title = $"{row.Name} · {state.Name} · {(state.FollowsUnitStatus ? legendStrings["KeyOnUnit"].Value : IconKind(icon, legendStrings))}";
+											<td><img class="rg-legend-icon @(icon.IsUploaded ? "upload" : "pin")" src="@icon.Url" alt="@title" title="@title" /></td>
 										}
 										@if (Model.CanEditRoles)
 										{

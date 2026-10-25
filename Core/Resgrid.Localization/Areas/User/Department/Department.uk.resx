@@ -1724,6 +1724,12 @@
   <data name="ResetTargetSavedOption" xml:space="preserve">
     <value>{0} (збережено раніше, більше не пропонується)</value>
   </data>
+  <data name="ResetTargetSetsNow" xml:space="preserve">
+    <value>Цей вибір було збережено раніше, і він більше не пропонується. Щоденне скидання зараз встановлює всім {0}. Виберіть значення або один зі своїх варіантів і збережіть, щоб змінити це.</value>
+  </data>
+  <data name="ResetTargetSetsNobody" xml:space="preserve">
+    <value>Цей вибір було збережено раніше, і він не відповідає нічому, що використовує підрозділ, тому щоденне скидання нікого не змінює. Виберіть значення або один зі своїх варіантів і збережіть.</value>
+  </data>
   <data name="RunCardRelaxUnfilledRowsLabel" xml:space="preserve">
     <value>Послаблювати фільтри статусу для незаповнених рядків</value>
   </data>

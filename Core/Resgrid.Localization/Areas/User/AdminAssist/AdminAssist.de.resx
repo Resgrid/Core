@@ -1624,7 +1624,7 @@
     <value>Fügen Sie wiederkehrende Besprechungen und Ausbildungsabende hinzu.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.call-types-priorities">
-    <value>Fügen Sie die Einsatztypen hinzu, die Ihre Disponenten verwenden, und legen Sie deren Prioritäten fest. Geben Sie jedem Einsatztyp eine Klasse und jeder Priorität eine Bedeutung, damit Berichte und die Apps sie gruppieren und sortieren können. Ein Einsatztyp kann auch ein eigenes Symbol erhalten, das neben seinen Einsätzen in Listen, den Apps und auf der Karte angezeigt wird.</value>
+    <value>Fügen Sie die Einsatztypen hinzu, die Ihre Disponenten verwenden, und legen Sie deren Prioritäten fest. Geben Sie jedem Einsatztyp eine Klasse und jeder Priorität eine Bedeutung, damit Berichte und die Apps sie gruppieren und sortieren können. Ein Einsatztyp kann auch ein eigenes Symbol erhalten, das neben seinen Einsätzen in Listen, den Apps und auf der Karte angezeigt wird. Die Bedeutung einer Priorität färbt auch die Kartenmarkierungen ihrer Einsätze, und die Legende der Kartensymbole führt jede Priorität unter ihrer Farbe auf.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.certification-dashboard">
     <value>Erfassen Sie die aktuellen Zertifizierungen der Mitglieder und prüfen Sie anschließend, was bald abläuft.</value>
@@ -1654,7 +1654,7 @@
     <value>Fügen Sie Ihre Dienstleistungsverträge und deren Tarife hinzu.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.custom-statuses">
-    <value>Prüfen Sie die integrierten Status und fügen Sie eigene hinzu, wo Ihre Begriffe abweichen. Geben Sie jeder Option eine Bedeutung (Basistyp): Disposition, Verfügbarkeit, Benachrichtigungen und die Apps lesen die Bedeutung, nicht den Schaltflächentext. „In der Wache“ teilt den Dispositionsempfehlungen mit, dass eine Einheit auf ihrer Wache ist.</value>
+    <value>Prüfen Sie die integrierten Status und fügen Sie eigene hinzu, wo Ihre Begriffe abweichen. Geben Sie jeder Option eine Bedeutung (Basistyp): Disposition, Verfügbarkeit, Benachrichtigungen und die Apps lesen die Bedeutung, nicht den Schaltflächentext. „In der Wache“ teilt den Dispositionsempfehlungen mit, dass eine Einheit auf ihrer Wache ist. Die Legende der Kartensymbole führt jeden Status unter der Kartenfarbe auf, die seine Bedeutung ergibt; ein Status unter Grau hat noch keine Bedeutung.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.data-protection">
     <value>Prüfen Sie die Checkliste zur Registrierung und planen Sie die Schlüsselwiederherstellung, bevor Sie sich registrieren.</value>
@@ -7084,7 +7084,7 @@
     <value>Alle Symbole, die die Karte für Einsätze, Einheiten und Personal in jeder Priorität und jedem Status zeigt, mit den Status- und Prioritätsfarben.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.map-icon-legend">
-    <value>Öffnen Sie Karte und dann Legende der Kartensymbole. Abteilungsadministratoren können bei einem Einsatztyp, Einheitentyp oder einer Rolle „Symbole bearbeiten“ wählen, um ein Symbol für eine Priorität oder einen Status hochzuladen.</value>
+    <value>Öffnen Sie Karte und dann Legende der Kartensymbole. Abteilungsadministratoren können bei einem Einsatztyp, Einheitentyp oder einer Rolle „Symbole bearbeiten“ wählen, um ein Symbol für eine Priorität oder einen Status hochzuladen. In den Apps Responder, Unit und IC zeigt die Legenden-Schaltfläche auf der Karte dieselbe Legende.</value>
   </data>
   <data xml:space="preserve" name="Feature.map-visualizations">
     <value>Kartenvisualisierungen</value>

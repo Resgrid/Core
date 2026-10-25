@@ -1782,6 +1782,12 @@
   <data name="ResetTargetSavedOption" xml:space="preserve">
     <value>{0} (محفوظ سابقًا، لم يعد متاحًا)</value>
   </data>
+  <data name="ResetTargetSetsNow" xml:space="preserve">
+    <value>تم حفظ هذا الاختيار سابقًا ولم يعد متاحًا. تقوم إعادة التعيين اليومية حاليًا بتعيين الجميع إلى {0}. اختر معنى أو أحد خياراتك الخاصة واحفظ لتغييره.</value>
+  </data>
+  <data name="ResetTargetSetsNobody" xml:space="preserve">
+    <value>تم حفظ هذا الاختيار سابقًا ولا يطابق أي شيء تستخدمه الإدارة، لذا لا تغيّر إعادة التعيين اليومية أحدًا. اختر معنى أو أحد خياراتك الخاصة واحفظ.</value>
+  </data>
   <data name="RunCardRelaxUnfilledRowsLabel" xml:space="preserve">
     <value>تخفيف عوامل تصفية الحالة للصفوف غير المكتملة</value>
   </data>

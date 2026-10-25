@@ -1782,6 +1782,12 @@
   <data name="ResetTargetSavedOption" xml:space="preserve">
     <value>{0} (guardado antes, ya no disponible)</value>
   </data>
+  <data name="ResetTargetSetsNow" xml:space="preserve">
+    <value>Esta opción se guardó anteriormente y ya no se ofrece. El restablecimiento diario establece actualmente a todos en {0}. Elija un significado o una de sus propias opciones y guarde para cambiarlo.</value>
+  </data>
+  <data name="ResetTargetSetsNobody" xml:space="preserve">
+    <value>Esta opción se guardó anteriormente y no coincide con nada que use el departamento, por lo que el restablecimiento diario no cambia a nadie. Elija un significado o una de sus propias opciones y guarde.</value>
+  </data>
   <data name="RunCardRelaxUnfilledRowsLabel" xml:space="preserve">
     <value>Relajar los filtros de estado en filas sin cubrir</value>
   </data>

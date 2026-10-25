@@ -1624,7 +1624,7 @@
     <value>Add recurring meetings and training nights.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.call-types-priorities">
-    <value>Add the call types your dispatchers use and set their priorities. Give each call type a class and each priority a meaning so reports and the apps can group and sort them. A call type can also have a custom icon, shown beside its calls in lists, the apps and on the map.</value>
+    <value>Add the call types your dispatchers use and set their priorities. Give each call type a class and each priority a meaning so reports and the apps can group and sort them. A call type can also have a custom icon, shown beside its calls in lists, the apps and on the map. A priority's meaning also colors its calls' map pins, and the Map Icon Legend lists each priority under its color.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.certification-dashboard">
     <value>Record members' current certifications, then review what expires soon.</value>
@@ -1654,7 +1654,7 @@
     <value>Add your service contracts and their rates.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.custom-statuses">
-    <value>Review the built-in statuses and add your own where your terms differ. Give every option a meaning (base type): dispatch, availability, notifications and the apps read the meaning, not the button text. In Quarters tells dispatch recommendations a unit is at its station.</value>
+    <value>Review the built-in statuses and add your own where your terms differ. Give every option a meaning (base type): dispatch, availability, notifications and the apps read the meaning, not the button text. In Quarters tells dispatch recommendations a unit is at its station. The Map Icon Legend lists each status under the map color its meaning gives it; one listed under gray has no meaning yet.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.data-protection">
     <value>Review the enrollment checklist and plan key recovery before enrolling.</value>
@@ -7030,7 +7030,7 @@
     <value>Every icon the map shows for calls, units and personnel in each priority and status, with the status and priority colors.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.map-icon-legend">
-    <value>Open Mapping, then Map Icon Legend. Department admins can choose Edit icons on a call type, unit type or role to upload an icon for a priority or status.</value>
+    <value>Open Mapping, then Map Icon Legend. Department admins can choose Edit icons on a call type, unit type or role to upload an icon for a priority or status. In the Responder, Unit and IC apps, tap the legend button on the map to see the same legend.</value>
   </data>
   <data xml:space="preserve" name="Feature.map-visualizations">
     <value>Map visualizations</value>

@@ -36,5 +36,16 @@ namespace Resgrid.Services
 				await _customStateService.GetDefaultPersonnelStatusAsync(departmentId),
 				latestUnitStates);
 		}
+
+		public async Task<MapIconLegend> GetLegendAsync(int departmentId, string noCallTypeName, string noUnitTypeName, string noRoleName)
+		{
+			return MapIconLegendBuilder.Build(await GetResolverAsync(departmentId),
+				await _callsService.GetActiveCallPrioritiesForDepartmentAsync(departmentId),
+				await _customStateService.GetAllCustomStatesForDepartmentAsync(departmentId),
+				_customStateService.GetDefaultUnitStatuses(),
+				await _customStateService.GetCustomPersonnelStatusesOrDefaultsAsync(departmentId),
+				await _personnelRolesService.GetRolesForDepartmentAsync(departmentId),
+				noCallTypeName, noUnitTypeName, noRoleName);
+		}
 	}
 }

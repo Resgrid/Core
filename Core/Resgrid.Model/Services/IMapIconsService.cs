@@ -12,5 +12,11 @@ namespace Resgrid.Model.Services
 		/// they ride (the map already holds them).
 		/// </summary>
 		Task<MapIconResolver> GetResolverAsync(int departmentId, IEnumerable<UnitState> latestUnitStates = null);
+
+		/// <summary>
+		/// Every icon the department's map can show (<see cref="MapIconLegendBuilder.Build"/>), named with the department's own
+		/// call types, priorities, unit types, status sets, statuses and roles. The "none" rows take the host's names.
+		/// </summary>
+		Task<MapIconLegend> GetLegendAsync(int departmentId, string noCallTypeName, string noUnitTypeName, string noRoleName);
 	}
 }

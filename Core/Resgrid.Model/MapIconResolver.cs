@@ -66,6 +66,7 @@ namespace Resgrid.Model
 		private readonly List<CustomState> _customStates;
 		private readonly Dictionary<int, PersonnelRole> _rolesById;
 		private readonly Dictionary<string, string> _variantIconKeys;
+		private readonly HashSet<string> _typesWithVariants;
 		private readonly Dictionary<int, UnitState> _unitStatesById;
 		private readonly CustomStateDetail _defaultPersonnelStatus;
 
@@ -90,8 +91,12 @@ namespace Resgrid.Model
 			_rolesById = (roles ?? Enumerable.Empty<PersonnelRole>()).Where(x => x != null)
 				.GroupBy(x => x.PersonnelRoleId).ToDictionary(g => g.Key, g => g.First());
 			_variantIconKeys = new Dictionary<string, string>(StringComparer.Ordinal);
+			_typesWithVariants = new HashSet<string>(StringComparer.Ordinal);
 			foreach (var variant in (variants ?? Enumerable.Empty<TypeIconVariant>()).Where(x => x != null && !string.IsNullOrEmpty(x.IconKey) && !string.IsNullOrEmpty(x.Variant)))
+			{
 				_variantIconKeys[VariantLookupKey((TypeIconKinds)variant.TypeKind, variant.TypeId, variant.Variant)] = variant.IconKey;
+				_typesWithVariants.Add(TypeLookupKey((TypeIconKinds)variant.TypeKind, variant.TypeId));
+			}
 			_unitStatesById = (latestUnitStates ?? Enumerable.Empty<UnitState>()).Where(x => x != null && x.UnitStateId > 0)
 				.GroupBy(x => x.UnitStateId).ToDictionary(g => g.Key, g => g.First());
 			_defaultPersonnelStatus = defaultPersonnelStatus;
@@ -306,6 +311,11 @@ namespace Resgrid.Model
 		public string VariantIconKey(TypeIconKinds kind, int typeId, string variant) =>
 			variant != null && _variantIconKeys.TryGetValue(VariantLookupKey(kind, typeId, variant), out var key) ? key : null;
 
-		private static string VariantLookupKey(TypeIconKinds kind, int typeId, string variant) => $"{(int)kind}:{typeId}:{variant}";
+		/// <summary>True when the type or role has an uploaded icon for at least one status or priority.</summary>
+		public bool HasVariantIcons(TypeIconKinds kind, int typeId) => _typesWithVariants.Contains(TypeLookupKey(kind, typeId));
+
+		private static string VariantLookupKey(TypeIconKinds kind, int typeId, string variant) => $"{TypeLookupKey(kind, typeId)}:{variant}";
+
+		private static string TypeLookupKey(TypeIconKinds kind, int typeId) => $"{(int)kind}:{typeId}";
 	}
 }
